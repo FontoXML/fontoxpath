@@ -18,6 +18,8 @@ define([
 	 * @param  {Selector}  descendantSelector
 	 */
 	function DescendantCombinatorSelector (ancestorSelector, descendantSelector) {
+		Selector.call(this, ancestorSelector.specificity.add(descendantSelector.specificity));
+
 		this._ancestorSelector = ancestorSelector;
 		this._descendantSelector = descendantSelector;
 	}

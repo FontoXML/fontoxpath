@@ -12,6 +12,8 @@ define([
 	 * @param  {Selector}  childSelector
 	 */
 	function ChildCombinatorSelector (parentSelector, childSelector) {
+		Selector.call(this, parentSelector.specificity.add(childSelector.specificity));
+
 		this._parentSelector = parentSelector;
 		this._childSelector = childSelector;
 	}
