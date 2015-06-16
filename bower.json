@@ -1,0 +1,17 @@
+{
+  "name": "fontoxml-selectors",
+  "version": "0.1.0",
+  "description": "A selector engine for (XML) nodes",
+  "main": "src/main.js",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "lib",
+    "test"
+  ],
+  "dependencies": {
+    "fontoxml-blueprints": "git@bitbucket.org:liones/fontoxml-blueprints.git#develop",
+    "fontoxml-dom-utils": "git@bitbucket.org:liones/fontoxml-dom-utils.git#develop"
+  }
+}
