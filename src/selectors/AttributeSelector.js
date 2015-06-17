@@ -31,10 +31,10 @@ define([
 	 */
 	AttributeSelector.prototype.matches = function (node, blueprint) {
 		if (this._attributeValue === undefined) {
-			return blueprint.hasAttribute(node, attributeName);
+			return blueprint.getAttribute(node, this._attributeName) !== null;
 		}
 
-		return blueprint.getAttribute(node, attributeName) === attributeValue;
+		return blueprint.getAttribute(node, this._attributeName) === this._attributeValue;
 	};
 
 	/**
