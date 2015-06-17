@@ -5,7 +5,7 @@ define([
 	'./selectors/AttributeSelector',
 	'./selectors/ChildCombinatorSelector',
 	'./selectors/DescendantCombinatorSelector',
-	'./selectors/NodeSpecSelector'
+	'./selectors/NodePredicateSelector'
 ], function (
 	UniversalSelector
 	) {

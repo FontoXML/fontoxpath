@@ -1,10 +1,10 @@
 define([
 	'./selectors/NodeNameSelector',
-	'./selectors/NodeSpecSelector',
+	'./selectors/NodePredicateSelector',
 	'./selectors/Selector'
 ], function (
 	NodeNameSelector,
-	NodeSpecSelector,
+	NodePredicateSelector,
 	Selector
 	) {
 	'use strict';
@@ -25,7 +25,7 @@ define([
 				break;
 
 			case 'function':
-				return new NodeSpecSelector(selectorOrNodeSpec);
+				return new NodePredicateSelector(selectorOrNodeSpec);
 		}
 
 		throw new Error('Argument is not a selector or node spec');
