@@ -12,14 +12,14 @@ define([
 	'use strict';
 
 	/**
-	 * @param  {String}  attributeName
-	 * @param  {String}  [attributeValue]  if omitted, the selector matches if the attribute is present
+	 * @param  {String}    attributeName
+	 * @param  {String[]}  [attributeValues]  if omitted, the selector matches if the attribute is present
 	 */
-	function AttributeSelector (attributeName, attributeValue) {
+	function AttributeSelector (attributeName, attributeValues) {
 		SimpleSelector.call(this, new Specificity({attribute: 1}));
 
 		this._attributeName = attributeName;
-		this._attributeValue = attributeValue;
+		this._attributeValues = attributeValues;
 	}
 
 	AttributeSelector.prototype = Object.create(SimpleSelector.prototype);
@@ -30,19 +30,25 @@ define([
 	 * @param  {Blueprint}  blueprint
 	 */
 	AttributeSelector.prototype.matches = function (node, blueprint) {
-		if (this._attributeValue === undefined) {
+		if (this._attributeValues === undefined) {
 			return blueprint.getAttribute(node, this._attributeName) !== null;
 		}
 
-		return blueprint.getAttribute(node, this._attributeName) === this._attributeValue;
+		return this._attributeValues.some(function (attributeValue) {
+			return blueprint.getAttribute(node, this._attributeName) === attributeValue;
+		}.bind(this));
 	};
 
 	/**
-	 * @param  {String}  attributeName
-	 * @param  {String}  [attributeValue]  if omitted, the selector matches if the attribute is present
+	 * @param  {String}           attributeName
+	 * @param  {String|String[]}  [attributeValues]  if omitted, the selector matches if the attribute is present
 	 */
-	Selector.prototype.requireAttribute = function (attributeName, attributeValue) {
-		return new SimpleSelectorSequenceSelector(this, new AttributeSelector(attributeName, attributeValue));
+	Selector.prototype.requireAttribute = function (attributeName, attributeValues) {
+		if (attributeValues !== undefined && !Array.isArray(attributeValues)) {
+			attributeValues = [attributeValues];
+		}
+
+		return new SimpleSelectorSequenceSelector(this, new AttributeSelector(attributeName, attributeValues));
 	};
 
 	return AttributeSelector;
