@@ -36,9 +36,14 @@ define([
 			return false;
 		}
 
+		var parentNode = blueprint.getParentNode(node);
+		if (!parentNode) {
+			return false;
+		}
+
 		return !!blueprintQuery.findClosestAncestor(
 			blueprint,
-			node,
+			parentNode,
 			this._ancestorSelector.matches.bind(this._ancestorSelector));
 	};
 
