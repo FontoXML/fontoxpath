@@ -41,10 +41,9 @@ define([
 			return false;
 		}
 
-		return !!blueprintQuery.findClosestAncestor(
-			blueprint,
-			parentNode,
-			this._ancestorSelector.matches.bind(this._ancestorSelector));
+		return !!blueprintQuery.findClosestAncestor(blueprint, parentNode, function (node) {
+			return this._ancestorSelector.matches(node, blueprint);
+		}.bind(this));
 	};
 
 	/**
