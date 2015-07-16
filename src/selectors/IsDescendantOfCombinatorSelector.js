@@ -17,21 +17,21 @@ define([
 	 * @param  {Selector}  ancestorSelector
 	 * @param  {Selector}  descendantSelector
 	 */
-	function DescendantCombinatorSelector (ancestorSelector, descendantSelector) {
+	function IsDescendantOfCombinatorSelector (ancestorSelector, descendantSelector) {
 		Selector.call(this, ancestorSelector.specificity.add(descendantSelector.specificity));
 
 		this._ancestorSelector = ancestorSelector;
 		this._descendantSelector = descendantSelector;
 	}
 
-	DescendantCombinatorSelector.prototype = Object.create(Selector.prototype);
-	DescendantCombinatorSelector.prototype.constructor = DescendantCombinatorSelector;
+	IsDescendantOfCombinatorSelector.prototype = Object.create(Selector.prototype);
+	IsDescendantOfCombinatorSelector.prototype.constructor = IsDescendantOfCombinatorSelector;
 
 	/**
 	 * @param  {Node}       node
 	 * @param  {Blueprint}  blueprint
 	 */
-	DescendantCombinatorSelector.prototype.matches = function (node, blueprint) {
+	IsDescendantOfCombinatorSelector.prototype.matches = function (node, blueprint) {
 		if (!this._descendantSelector.matches(node, blueprint)) {
 			return false;
 		}
@@ -41,8 +41,8 @@ define([
 			return false;
 		}
 
-		return !!blueprintQuery.findClosestAncestor(blueprint, parentNode, function (node) {
-			return this._ancestorSelector.matches(node, blueprint);
+		return !!blueprintQuery.findClosestAncestor(blueprint, parentNode, function (ancestorNode) {
+			return this._ancestorSelector.matches(ancestorNode, blueprint);
 		}.bind(this));
 	};
 
@@ -50,9 +50,9 @@ define([
 	 * @param  {Selector|NodeSpec}  ancestorSelector
 	 */
 	Selector.prototype.requireAncestor = function (ancestorSelector) {
-		return new DescendantCombinatorSelector(adaptNodeSpecToSelector(ancestorSelector), this);
+		return new IsDescendantOfCombinatorSelector(adaptNodeSpecToSelector(ancestorSelector), this);
 	};
 
-	return DescendantCombinatorSelector;
+	return IsDescendantOfCombinatorSelector;
 });
 

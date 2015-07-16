@@ -11,21 +11,21 @@ define([
 	 * @param  {Selector}  parentSelector
 	 * @param  {Selector}  childSelector
 	 */
-	function ChildCombinatorSelector (parentSelector, childSelector) {
+	function IsChildOfCombinatorSelector (parentSelector, childSelector) {
 		Selector.call(this, parentSelector.specificity.add(childSelector.specificity));
 
 		this._parentSelector = parentSelector;
 		this._childSelector = childSelector;
 	}
 
-	ChildCombinatorSelector.prototype = Object.create(Selector.prototype);
-	ChildCombinatorSelector.prototype.constructor = ChildCombinatorSelector;
+	IsChildOfCombinatorSelector.prototype = Object.create(Selector.prototype);
+	IsChildOfCombinatorSelector.prototype.constructor = IsChildOfCombinatorSelector;
 
 	/**
 	 * @param  {Node}       node
 	 * @param  {Blueprint}  blueprint
 	 */
-	ChildCombinatorSelector.prototype.matches = function (node, blueprint) {
+	IsChildOfCombinatorSelector.prototype.matches = function (node, blueprint) {
 		if (!this._childSelector.matches(node, blueprint)) {
 			return false;
 		}
@@ -42,8 +42,8 @@ define([
 	 * @param  {Selector|NodeSpec}  parentSelector
 	 */
 	Selector.prototype.requireParent = function (parentSelector) {
-		return new ChildCombinatorSelector(adaptNodeSpecToSelector(parentSelector), this);
+		return new IsChildOfCombinatorSelector(adaptNodeSpecToSelector(parentSelector), this);
 	};
 
-	return ChildCombinatorSelector;
+	return IsChildOfCombinatorSelector;
 });

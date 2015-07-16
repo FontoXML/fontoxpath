@@ -3,8 +3,9 @@ define([
 
 	// Have to import these to register extra methods on the Selector prototype
 	'./selectors/AttributeSelector',
-	'./selectors/ChildCombinatorSelector',
-	'./selectors/DescendantCombinatorSelector',
+	'./selectors/HasChildCombinatorSelector',
+	'./selectors/IsChildOfCombinatorSelector',
+	'./selectors/IsDescendantOfCombinatorSelector',
 	'./selectors/NodePredicateSelector'
 ], function (
 	NodeTypeSelector
