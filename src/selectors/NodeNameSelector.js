@@ -17,7 +17,7 @@ define([
 	function NodeNameSelector (nodeName) {
 		SimpleSelector.call(this, new Specificity({nodeName: 1}));
 
-		this._nodeNames = Array.isArray(nodeName) ? nodeName : [nodeName];
+		this._nodeName = nodeName;
 	}
 
 	NodeNameSelector.prototype = Object.create(SimpleSelector.prototype);
@@ -28,9 +28,8 @@ define([
 	 * @param  {Blueprint}  blueprint
 	 */
 	NodeNameSelector.prototype.matches = function (node, blueprint) {
-		return domInfo.isElement(node, this._nodeNames);
+		return domInfo.isElement(node, this._nodeName);
 	};
 
 	return NodeNameSelector;
 });
-
