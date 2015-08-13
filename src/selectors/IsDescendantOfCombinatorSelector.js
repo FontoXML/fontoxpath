@@ -46,6 +46,16 @@ define([
 		}.bind(this));
 	};
 
+	IsDescendantOfCombinatorSelector.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof IsDescendantOfCombinatorSelector &&
+			this._descendantSelector.equals(otherSelector._descendantSelector) &&
+			this._ancestorSelector.equals(otherSelector._ancestorSelector);
+	};
+
 	/**
 	 * @param  {Selector|NodeSpec}  ancestorSelector
 	 */
@@ -55,4 +65,3 @@ define([
 
 	return IsDescendantOfCombinatorSelector;
 });
-

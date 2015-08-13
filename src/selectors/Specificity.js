@@ -52,4 +52,3 @@ define([
 
 	return Specificity;
 });
-

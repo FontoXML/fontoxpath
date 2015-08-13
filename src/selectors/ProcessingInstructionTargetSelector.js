@@ -1,12 +1,12 @@
 define([
 	'fontoxml-dom-utils/domInfo',
 
-	'./SimpleSelector',
+	'./Selector',
 	'./Specificity'
 ], function (
 	domInfo,
 
-	SimpleSelector,
+	Selector,
 	Specificity
 	) {
 	'use strict';
@@ -15,12 +15,12 @@ define([
 	 * @param  {String}  target
 	 */
 	function ProcessingInstructionTargetSelector (target) {
-		SimpleSelector.call(this, new Specificity({nodeName: 1}));
+		Selector.call(this, new Specificity({nodeName: 1}));
 
 		this._target = target;
 	}
 
-	ProcessingInstructionTargetSelector.prototype = Object.create(SimpleSelector.prototype);
+	ProcessingInstructionTargetSelector.prototype = Object.create(Selector.prototype);
 	ProcessingInstructionTargetSelector.prototype.constructor = ProcessingInstructionTargetSelector;
 
 	/**
@@ -31,6 +31,14 @@ define([
 		return domInfo.isProcessingInstruction(node) && node.target === this._target;
 	};
 
+	ProcessingInstructionTargetSelector.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof ProcessingInstructionTargetSelector &&
+			this._target === otherSelector._target;
+	};
+
 	return ProcessingInstructionTargetSelector;
 });
-

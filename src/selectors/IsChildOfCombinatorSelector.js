@@ -38,6 +38,16 @@ define([
 		return this._parentSelector.matches(parentNode, blueprint);
 	};
 
+	IsChildOfCombinatorSelector.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof IsChildOfCombinatorSelector &&
+			this._childSelector.equals(otherSelector._childSelector) &&
+			this._parentSelector.equals(otherSelector._parentSelector);
+	};
+
 	/**
 	 * @param  {Selector|NodeSpec}  parentSelector
 	 */

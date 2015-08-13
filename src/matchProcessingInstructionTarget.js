@@ -20,4 +20,3 @@ define([
 		return new ProcessingInstructionTargetSelector(target);
 	};
 });
-

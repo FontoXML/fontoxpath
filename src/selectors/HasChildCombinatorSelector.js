@@ -41,6 +41,16 @@ define([
 		}.bind(this));
 	};
 
+	HasChildCombinatorSelector.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof HasChildCombinatorSelector &&
+			this._parentSelector.equals(otherSelector._parentSelector) &&
+			this._childSelector.equals(otherSelector._childSelector);
+	};
+
 	/**
 	 * @param  {Selector|NodeSpec}  childSelector
 	 */

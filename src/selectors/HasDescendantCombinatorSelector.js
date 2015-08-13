@@ -41,6 +41,12 @@ define([
 		}.bind(this)).length > 0;
 	};
 
+	HasDescendantCombinatorSelector.prototype.equals = function (otherSelector) {
+		return otherSelector instanceof HasDescendantCombinatorSelector &&
+			this._parentSelector.equals(otherSelector._parentSelector) &&
+			this._descendantSelector.equals(otherSelector._descendantSelector);
+	};
+
 	/**
 	 * @param  {Selector|NodeSpec}  descendantSelector
 	 */

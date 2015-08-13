@@ -1,8 +1,8 @@
 define([
-	'./SimpleSelector',
+	'./Selector',
 	'./Specificity'
 ], function (
-	SimpleSelector,
+	Selector,
 	Specificity
 	) {
 	'use strict';
@@ -11,12 +11,12 @@ define([
 	 * @param  {Number}  nodeType
 	 */
 	function NodeTypeSelector (nodeType) {
-		SimpleSelector.call(this, new Specificity({nodeType: 1}));
+		Selector.call(this, new Specificity({nodeType: 1}));
 
 		this._nodeType = nodeType;
 	}
 
-	NodeTypeSelector.prototype = Object.create(SimpleSelector.prototype);
+	NodeTypeSelector.prototype = Object.create(Selector.prototype);
 	NodeTypeSelector.prototype.constructor = NodeTypeSelector;
 
 	/**
@@ -27,6 +27,15 @@ define([
 		return node.nodeType === this._nodeType;
 	};
 
+	NodeTypeSelector.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof NodeTypeSelector &&
+			this._nodeType === otherSelector._nodeType;
+	};
+
+
 	return NodeTypeSelector;
 });
-

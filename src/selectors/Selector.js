@@ -21,6 +21,15 @@ define([
 		throw new Error('Not implemented');
 	};
 
+	/**
+	 * Compare this selector to the other selector, checking equivalence
+	 *
+	 * @param   {Selector}  selector
+	 * @return  {boolean}   Whether this selector is equivalent to the other
+	 */
+	Selector.prototype.equals = function (otherSelector) {
+		throw new Error('Not Implemented');
+	};
+
 	return Selector;
 });
-

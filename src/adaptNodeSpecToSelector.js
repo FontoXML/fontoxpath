@@ -31,4 +31,3 @@ define([
 		throw new Error('Argument is not a selector or node spec');
 	};
 });
-

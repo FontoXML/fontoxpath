@@ -17,4 +17,3 @@ define([
 		return new UniversalSelector();
 	};
 });
-

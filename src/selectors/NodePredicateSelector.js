@@ -1,12 +1,10 @@
 define([
 	'./Selector',
-	'./SimpleSelector',
-	'./SimpleSelectorSequenceSelector',
+	'./CompositeSelector',
 	'./Specificity'
 ], function (
 	Selector,
-	SimpleSelector,
-	SimpleSelectorSequenceSelector,
+	CompositeSelector,
 	Specificity
 	) {
 	'use strict';
@@ -15,12 +13,12 @@ define([
 	 * @param  {Function}  isMatchingNode  called with node and blueprint
 	 */
 	function NodePredicateSelector (isMatchingNode) {
-		SimpleSelector.call(this, new Specificity({external: 1}));
+		Selector.call(this, new Specificity({external: 1}));
 
 		this._isMatchingNode = isMatchingNode;
 	}
 
-	NodePredicateSelector.prototype = Object.create(SimpleSelector.prototype);
+	NodePredicateSelector.prototype = Object.create(Selector.prototype);
 	NodePredicateSelector.prototype.constructor = NodePredicateSelector;
 
 	/**
@@ -31,13 +29,22 @@ define([
 		return this._isMatchingNode.call(undefined, node, blueprint);
 	};
 
+	NodePredicateSelector.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof NodePredicateSelector &&
+			// Not perfect, but function logically compare cannot be done
+			this._isMatchingNode === otherSelector.isMatchingNode;
+	};
+
 	/**
 	 * @param  {Function}  isMatchingNode
 	 */
 	Selector.prototype.requireNodePredicate = function (isMatchingNode) {
-		return new SimpleSelectorSequenceSelector(this, new NodePredicateSelector(isMatchingNode));
+		return new CompositeSelector(this, new NodePredicateSelector(isMatchingNode));
 	};
 
 	return NodePredicateSelector;
 });
-

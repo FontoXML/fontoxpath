@@ -1,17 +1,17 @@
 define([
-	'./SimpleSelector',
+	'./Selector',
 	'./Specificity'
 ], function (
-	SimpleSelector,
+	Selector,
 	Specificity
 	) {
 	'use strict';
 
 	function UniversalSelector () {
-		SimpleSelector.call(this, new Specificity({universal: 1}));
+		Selector.call(this, new Specificity({universal: 1}));
 	}
 
-	UniversalSelector.prototype = Object.create(SimpleSelector.prototype);
+	UniversalSelector.prototype = Object.create(Selector.prototype);
 	UniversalSelector.prototype.constructor = UniversalSelector;
 
 	/**
@@ -22,6 +22,13 @@ define([
 		return true;
 	};
 
+	UniversalSelector.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof UniversalSelector;
+	};
+
 	return UniversalSelector;
 });
-
