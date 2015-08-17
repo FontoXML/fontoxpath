@@ -19,7 +19,7 @@ define([
 		Selector.call(this, new Specificity({attribute: 1}));
 
 		this._attributeName = attributeName;
-		this._attributeValues = attributeValues.concat().sort();
+		this._attributeValues = attributeValues && attributeValues.concat().sort();
 	}
 
 	AttributeSelector.prototype = Object.create(Selector.prototype);
@@ -42,6 +42,15 @@ define([
 	AttributeSelector.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
+		}
+
+		if (!this._attributeValues && !otherSelector.attributeValues) {
+			return true;
+		}
+
+		if ((this.attributeValues && !otherSelector.attributeValues) ||
+			(!this._attributeValues && otherSelector.attributeValues)) {
+			return false;
 		}
 
 		return this._attributeName === otherSelector.attributeName &&
