@@ -36,6 +36,9 @@ define([
 			this._nodeType === otherSelector._nodeType;
 	};
 
+	NodeTypeSelector.prototype.getBucket = function () {
+		return 'type-' + this._nodeType;
+	};
 
 	return NodeTypeSelector;
 });

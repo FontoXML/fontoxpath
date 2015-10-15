@@ -14,14 +14,14 @@ define([
 	var blueprintQuery = blueprints.blueprintQuery;
 
 	/**
-	 * @param  {Selector}  childSelector
-	 * @param  {Selector}  parentSelector
+	 * @param  {Selector}  descendantSelector
+	 * @param  {Selector}  ancestorSelector
 	 */
-	function HasDescendantCombinatorSelector (descendantSelector, parentSelector) {
-		Selector.call(this, descendantSelector.specificity.add(parentSelector.specificity));
+	function HasDescendantCombinatorSelector (descendantSelector, ancestorSelector) {
+		Selector.call(this, descendantSelector.specificity.add(ancestorSelector.specificity));
 
 		this._descendantSelector = descendantSelector;
-		this._parentSelector = parentSelector;
+		this._ancestorSelector = ancestorSelector;
 	}
 
 	HasDescendantCombinatorSelector.prototype = Object.create(Selector.prototype);
@@ -32,7 +32,7 @@ define([
 	 * @param  {Blueprint}  blueprint
 	 */
 	HasDescendantCombinatorSelector.prototype.matches = function (node, blueprint) {
-		if (!this._parentSelector.matches(node, blueprint)) {
+		if (!this._ancestorSelector.matches(node, blueprint)) {
 			return false;
 		}
 
@@ -43,8 +43,13 @@ define([
 
 	HasDescendantCombinatorSelector.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof HasDescendantCombinatorSelector &&
-			this._parentSelector.equals(otherSelector._parentSelector) &&
+			this._ancestorSelector.equals(otherSelector._ancestorSelector) &&
 			this._descendantSelector.equals(otherSelector._descendantSelector);
+	};
+
+	HasDescendantCombinatorSelector.prototype.getBucket = function () {
+		// Always use the bucket for the targeted node
+		return this._ancestorSelector.getBucket();
 	};
 
 	/**

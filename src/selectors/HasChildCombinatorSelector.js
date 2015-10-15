@@ -51,6 +51,11 @@ define([
 			this._childSelector.equals(otherSelector._childSelector);
 	};
 
+	HasChildCombinatorSelector.prototype.getBucket = function () {
+		// Always use the bucket for the targeted node
+		return this._parentSelector.getBucket();
+	};
+
 	/**
 	 * @param  {Selector|NodeSpec}  childSelector
 	 */

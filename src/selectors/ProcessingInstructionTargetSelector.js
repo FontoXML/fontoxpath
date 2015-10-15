@@ -40,5 +40,9 @@ define([
 			this._target === otherSelector._target;
 	};
 
+	ProcessingInstructionTargetSelector.prototype.getBucket = function () {
+		return 'type-7';
+	};
+
 	return ProcessingInstructionTargetSelector;
 });

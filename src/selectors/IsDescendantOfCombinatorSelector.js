@@ -56,6 +56,11 @@ define([
 			this._ancestorSelector.equals(otherSelector._ancestorSelector);
 	};
 
+	IsDescendantOfCombinatorSelector.prototype.getBucket = function () {
+		// Always use the bucket for the targeted node
+		return this._descendantSelector.getBucket();
+	};
+
 	/**
 	 * @param  {Selector|NodeSpec}  ancestorSelector
 	 */

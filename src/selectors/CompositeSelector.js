@@ -69,5 +69,16 @@ define([
 			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	};
 
+	CompositeSelector.prototype.getBucket = function () {
+		// Any bucket of our subselectors should do, and is preferable to no bucket
+		for (var i = 0, l = this._subSelectors.length; i < l; ++i) {
+			var bucket = this._subSelectors[i].getBucket();
+			if (bucket) {
+				return bucket;
+			}
+		}
+		return null;
+	};
+
 	return CompositeSelector;
 });

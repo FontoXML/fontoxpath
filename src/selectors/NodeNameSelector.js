@@ -53,5 +53,9 @@ define([
 		return isSameArray(nodeNames, otherNodeNames);
 	};
 
+	NodeNameSelector.prototype.getBucket = function () {
+		return 'name-' + this._nodeName;
+	};
+
 	return NodeNameSelector;
 });
