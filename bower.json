@@ -12,6 +12,6 @@
   ],
   "dependencies": {
     "fontoxml-blueprints": "git@bitbucket.org:liones/fontoxml-blueprints.git#develop",
-    "fontoxml-dom-utils": "git@bitbucket.org:liones/fontoxml-dom-utils.git#develop"
+    "fontoxml-dom-utils": "git@bitbucket.org:liones/fontoxml-dom-utils.git#1.0.0"
   }
 }
