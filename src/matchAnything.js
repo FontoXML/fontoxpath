@@ -7,6 +7,7 @@ define([
 	'./selectors/HasDescendantCombinatorSelector',
 	'./selectors/IsChildOfCombinatorSelector',
 	'./selectors/IsDescendantOfCombinatorSelector',
+	'./selectors/IsNotCombinatorSelector',
 	'./selectors/NodePredicateSelector'
 ], function (
 	UniversalSelector
