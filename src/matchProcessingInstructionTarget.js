@@ -3,11 +3,11 @@ define([
 
 	// Have to import these to register extra methods on the Selector prototype
 	'./selectors/AttributeSelector',
-	'./selectors/HasChildCombinatorSelector',
-	'./selectors/HasDescendantCombinatorSelector',
-	'./selectors/IsChildOfCombinatorSelector',
-	'./selectors/IsDescendantOfCombinatorSelector',
-	'./selectors/IsNotCombinatorSelector',
+	'./selectors/HasChildSelector',
+	'./selectors/HasDescendantSelector',
+	'./selectors/HasParentSelector',
+	'./selectors/HasAncestorSelector',
+	'./selectors/InvertedSelector',
 	'./selectors/NodePredicateSelector'
 ], function (
 	ProcessingInstructionTargetSelector

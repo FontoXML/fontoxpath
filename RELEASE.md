@@ -1,5 +1,10 @@
 # Release notes for fontoxml-selectors
 
+## 1.2.0
+
+Allow a subset of XPath (predicates, mainly) to be used as nodeSpecs:
+`someElement[@someAttribute and @someOtherAttribute="someValue" and ancestor::someAncestor]`.
+
 ## 1.1.0
 
 Add a requireNot method to all selectors: `matchNodeName('my-node').requireNot(someOtherSelectorOrNodeSpec)`.

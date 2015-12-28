@@ -57,17 +57,5 @@ define([
 			isSameArray(this._attributeValues, otherSelector.attributeValues);
 	};
 
-	/**
-	 * @param  {String}           attributeName
-	 * @param  {String|String[]}  [attributeValues]  if omitted, the selector matches if the attribute is present
-	 */
-	Selector.prototype.requireAttribute = function (attributeName, attributeValues) {
-		if (attributeValues !== undefined && !Array.isArray(attributeValues)) {
-			attributeValues = [attributeValues];
-		}
-
-		return new CompositeSelector(this, new AttributeSelector(attributeName, attributeValues));
-	};
-
 	return AttributeSelector;
 });

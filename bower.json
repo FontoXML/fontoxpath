@@ -1,6 +1,6 @@
 {
   "name": "fontoxml-selectors",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A selector engine for (XML) nodes",
   "main": "src/main.js",
   "private": true,
@@ -13,5 +13,8 @@
   "dependencies": {
     "fontoxml-blueprints": "git@bitbucket.org:liones/fontoxml-blueprints.git#^1.0.0",
     "fontoxml-dom-utils": "git@bitbucket.org:liones/fontoxml-dom-utils.git#^1.0.0"
+  },
+  "devDependencies": {
+    "fontoxml-vendor-slimdom": "git@bitbucket.org:liones/fontoxml-vendor-slimdom.git#0.5.2"
   }
 }

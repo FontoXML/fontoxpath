@@ -6,21 +6,26 @@ define([
 	'use strict';
 
 	/**
+	 * The 'and' combining selector
 	 * @param  {Selector}  firstSelector
 	 * @param  {Selector}  secondSelector
 	 */
 	function CompositeSelector (firstSelector, secondSelector) {
 		Selector.call(this, firstSelector.specificity.add(secondSelector.specificity));
-
-		this._subSelectors = [];
+		var subSelectors;
 		if (firstSelector instanceof CompositeSelector) {
-			this._subSelectors = firstSelector._subSelectors.concat();
-		}
-		else {
-			this._subSelectors.push(firstSelector);
+			subSelectors = firstSelector._subSelectors.concat();
+		} else {
+			subSelectors = [firstSelector];
 		}
 
-		this._subSelectors.push(secondSelector);
+		if (secondSelector instanceof CompositeSelector) {
+			subSelectors = subSelectors.concat(secondSelector._subSelectors);
+		} else {
+			subSelectors.push(secondSelector);
+		}
+
+		this._subSelectors = subSelectors;
 	}
 
 	CompositeSelector.prototype = Object.create(Selector.prototype);

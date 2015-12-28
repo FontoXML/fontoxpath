@@ -39,12 +39,5 @@ define([
 			this._isMatchingNode === otherSelector.isMatchingNode;
 	};
 
-	/**
-	 * @param  {Function}  isMatchingNode
-	 */
-	Selector.prototype.requireNodePredicate = function (isMatchingNode) {
-		return new CompositeSelector(this, new NodePredicateSelector(isMatchingNode));
-	};
-
 	return NodePredicateSelector;
 });

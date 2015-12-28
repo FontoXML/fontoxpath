@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<title>Test'em</title>
+<link rel="stylesheet" href="/testem/mocha.css">
+<script src="/testem/mocha.js"></script>
+<script src="/testem.js"></script>
+<script>mocha.setup('bdd');</script>
+<script src="/node_modules/chai/chai.js"></script>
+
+<script src="/node_modules/requirejs/require.js"></script>
+<script src="setup.js"></script>
+{{#styles}}<link rel="stylesheet" href="{{.}}">{{/styles}}
+</head>
+<body>
+<div id="mocha"></div>
+<script>
+	var files = [];
+	{{#serve_files}}
+	files.push("../{{& src}}");
+	{{/serve_files}}
+	require(files, function() {
+		mocha.run();
+	});
+</script>
+</body>
+</html>
