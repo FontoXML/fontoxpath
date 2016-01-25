@@ -23,7 +23,7 @@ define([
 	return function adaptNodeSpecToSelector (selectorOrNodeSpec) {
 		switch (typeof selectorOrNodeSpec) {
 			case 'string':
-				if (!/^([a-zA-Z0-9_\-.]*:)?[a-z-A-Z-09_\-.]*$/.test(selectorOrNodeSpec)) {
+				if (!/^([a-zA-Z0-9_\-.]*:)?[a-zA-Z0-9_\-.]*$/.test(selectorOrNodeSpec)) {
 					// Not a valid QName: must be an XPath selector
 					return createSelectorFromXPath(selectorOrNodeSpec);
 				}

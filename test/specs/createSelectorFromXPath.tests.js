@@ -213,6 +213,15 @@ define([
 				], documentNode);
 				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
 			});
+
+			it('can target the root element', function () {
+				var selector = parseSelector('parent::node() and not(parent::*)');
+				jsonMLMapper.parse([
+					'someOtherParentElement',
+					['someChildElement']
+				], documentNode);
+				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+			});
 		});
 
 		it('allows processing instruction targets', function () {

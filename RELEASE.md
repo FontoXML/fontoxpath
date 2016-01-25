@@ -1,5 +1,10 @@
 # Release notes for fontoxml-selectors
 
+## next (1.2.1)
+
+Fix regex for detecting xpath vs nodeNames.
+Add extra unrelated test.
+
 ## 1.2.0
 
 Allow a subset of XPath (predicates, mainly) to be used as nodeSpecs:
