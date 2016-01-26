@@ -169,13 +169,66 @@ define([
 				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
 			});
 
-			it('allows not in combination with and', function () {
-				var selector = parseSelector('someChildElement and not(someOtherChild)');
+			it('can parse an "or" selector', function () {
+				var selector = parseSelector('child::someElement or child::someOtherElement');
+				jsonMLMapper.parse([
+					'someParentElement',
+					[
+						'someMiddleElement',
+						['someElement']
+					]
+				], documentNode);
+				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+
+				jsonMLMapper.parse([
+					'someParentElement',
+					[
+						'someMiddleElement',
+						['someOtherElement']
+					]
+				], documentNode);
+				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+			});
+
+			it('can parse a double "or" selector', function () {
+				var selector = parseSelector('child::someElement or ancestor::someParentElement or @someAttribute=\'someValue\'');
+				jsonMLMapper.parse([
+					'someParentElement',
+					[
+						'someMiddleElement',
+						{ 'someAttribute': 'someValue' },
+						['someElement']
+					]
+				], documentNode);
+				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+			});
+
+			it('allows not in combination with or', function () {
+				var selector = parseSelector('someChildElement or not(someOtherChild)');
 				jsonMLMapper.parse([
 					'someOtherParentElement',
-					['someChildElement']
+					['someOtherChildElement']
 				], documentNode);
 				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+			});
+
+			it('uses correct operator precedence', function () {
+				var selector = parseSelector('(child::someElement and ancestor::someParentElement) or @someAttribute=\'someValue\'');
+				jsonMLMapper.parse([
+					'someParentElement',
+					[
+						'someMiddleElement',
+						{ 'someAttribute': 'someValue' },
+						['someOtherElement']
+					]
+				], documentNode);
+				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				// The other way around
+				selector = parseSelector('(child::someOtherElement and ancestor::someParentElement) or @someAttribute=\'someOtherValue\'');
+				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				// Changes to testcase A: Operator order changed because of parentheses
+				selector = parseSelector('child::someElement and (ancestor::someParentElement or @someAttribute="someValue")');
+				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(false);
 			});
 		});
 

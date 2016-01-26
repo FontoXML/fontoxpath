@@ -60,6 +60,8 @@ define([
 			// Operators
 			case 'and':
 				return and(args);
+			case 'or':
+				return or(args);
 			case 'not':
 				return not(args);
 
@@ -167,6 +169,10 @@ define([
 
 	function not (args) {
 		return new InvertedSelector(compile(args[0]));
+	}
+
+	function or (args) {
+		return new OrCombiningSelector(compile(args[0]), compile(args[1]));
 	}
 
 	function parent (args) {

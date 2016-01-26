@@ -11,7 +11,8 @@ define([
 	'./InvertedSelector',
 	'./NodeNameSelector',
 	'./NodePredicateSelector',
-	'./NodeTypeSelector'
+	'./NodeTypeSelector',
+	'./OrCombiningSelector'
 ], function (
 	Selector,
 	CompositeSelector,
@@ -24,7 +25,8 @@ define([
 	HasParentSelector,
 	InvertedSelector,
 	NodeNameSelector,
-	NodePredicateSelector
+	NodePredicateSelector,
+	OrCombiningSelector
 ) {
 	'use strict';
 
@@ -83,6 +85,15 @@ define([
 		return new CompositeSelector(
 			this,
 			new InvertedSelector(adaptNodeSpecToSelector(selectorToInvert)));
+	};
+
+	/**
+	 * @param  {Selector|NodeSpec}  selectorToRequire
+	 */
+	Selector.prototype.orRequire = function (selectorToRequire) {
+		return new OrCombiningSelector(
+			this,
+			new OrCombiningSelector(adaptNodeSpecToSelector, selectorToRequire));
 	};
 
 	/**

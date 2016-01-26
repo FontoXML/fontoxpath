@@ -1,7 +1,8 @@
 # Release notes for fontoxml-selectors
 
-## next (1.2.1)
+## next (1.3.0)
 
+Expose OrCombiningSelector in XPath and fluent API.
 Fix regex for detecting xpath vs nodeNames.
 Add extra unrelated test.
 
