@@ -334,5 +334,14 @@ define([
 				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
 			});
 		});
+		it('matches hovercrafts full of eels', function () {
+			jsonMLMapper.parse([
+				'hovercraft',
+				['eel'],
+				['eel']
+			], documentNode);
+			var selector = parseSelector('self::hovercraft[eel and not(*[not(self::eel)])]');
+			chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+		});
 	});
 });
