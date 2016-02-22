@@ -10,13 +10,18 @@ define([
 	 * These tests can be used with their fonto-prefixed name, followed by their arguments, being strings.
 	 * The arguments are bound to the predicate, making them appear first.
 	 * Example of a horrible custom test:
-	 * js: addXPathCustomTest('fonto-maybe', (a, b, node, blueprint) => Math.random()+.5|0);
-	 * selector: self::fonto-maybe("a", 'b')
+	 * js: addXPathCustomTest('fonto:maybe', (a, b, node, blueprint) => Math.random()+.5|0);
+	 * selector: self::fonto:maybe("a", 'b')
 	 *
-	 * @param  {string}    name        The name of this test, starts with fonto-
+	 * @param  {string}    name        The name of this test, starts with fonto:
 	 * @param  {function}  customTest  The custom test: (string.., Node, Blueprint) => boolean
 	 */
 	return function addXPathCustomTest (name, customTest) {
+		// The fonto- syntax is deprecated because the namespace approach better reflects later XPath standards.
+		// TODO: Remove at 7.0
+		if (name.startsWith('fonto-')) {
+			name = name.replace('fonto-', 'fonto:');
+		}
 		customTestsByName[name] = customTest;
 	};
 });

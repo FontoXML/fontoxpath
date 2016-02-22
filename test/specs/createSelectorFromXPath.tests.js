@@ -286,8 +286,57 @@ define([
 			chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
 		});
 
-		describe('custom nodeTest (fonto-.*())', function () {
+		describe('custom nodeTest (fonto:.*())', function () {
 			it('allows custom nodeTests', function () {
+				addXPathCustomTest(
+					'fonto:nodenameContains',
+					function (includeString, node, blueprint) {
+						return node.nodeName.includes(includeString);
+					});
+				var selector = parseSelector(
+						'descendant-or-self::fonto:nodenameContains("Child")');
+				jsonMLMapper.parse([
+					'someOtherParentElement',
+					['someChildElement']
+				], documentNode);
+				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+			});
+
+			it('allows custom nodeTests with 0 arguments', function () {
+				addXPathCustomTest(
+					'fonto:true',
+					function (node, blueprint) {
+						chai.expect(arguments.length).to.equal(2);
+						return true;
+					});
+				var selector = parseSelector(
+						'descendant-or-self::fonto:true()');
+				jsonMLMapper.parse([
+					'someOtherParentElement',
+					['someChildElement']
+				], documentNode);
+				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+			});
+
+			it('allows custom nodeTests with multiple arguments', function () {
+				addXPathCustomTest(
+					'fonto:nameWithinRange',
+					function (lower, upper, node, blueprint) {
+						chai.expect(lower).to.equal('a');
+						chai.expect(upper).to.equal('c');
+						return lower < node.nodeName &&
+							node.nodeName < upper;
+					});
+				var selector = parseSelector(
+						'descendant-or-self::fonto:nameWithinRange("a", "c")');
+				jsonMLMapper.parse([
+					'someOtherParentElement',
+					['b']
+				], documentNode);
+				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+			});
+
+			it('still allows deprecated syntax of custom nodeTests', function () {
 				addXPathCustomTest(
 					'fonto-nodenameContains',
 					function (includeString, node, blueprint) {
@@ -302,34 +351,17 @@ define([
 				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
 			});
 
-			it('allows custom nodeTests with 0 arguments', function () {
+			it('still allows deprecated syntax of custom nodeTests', function () {
 				addXPathCustomTest(
-					'fonto-true',
-					function (node, blueprint) {
-						chai.expect(arguments.length).to.equal(2);
-						return true;
+					'fonto-nodenameContains',
+					function (includeString, node, blueprint) {
+						return node.nodeName.includes(includeString);
 					});
 				var selector = parseSelector(
-						'descendant-or-self::fonto-true()');
+						'descendant-or-self::fonto:nodenameContains("Child")');
 				jsonMLMapper.parse([
 					'someOtherParentElement',
 					['someChildElement']
-				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
-			});
-
-			it('allows custom nodeTests with multiple arguments', function () {
-				addXPathCustomTest(
-					'fonto-nameWithinRange',
-					function (lower, upper, node, blueprint) {
-						return lower < node.nodeName &&
-							node.nodeName < upper;
-					});
-				var selector = parseSelector(
-						'descendant-or-self::fonto-nameWithinRange("a", "c")');
-				jsonMLMapper.parse([
-					'someOtherParentElement',
-					['b']
 				], documentNode);
 				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
 			});

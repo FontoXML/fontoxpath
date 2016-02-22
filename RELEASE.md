@@ -1,5 +1,9 @@
 # Release notes for fontoxml-selectors
 
+## next (1.4.0)
+
+Deprecate the `fonto-` syntax in favour of `fonto*` due to namespaces.
+
 ## 1.3.0
 
 Fix regex for detecting xpath vs nodeNames.

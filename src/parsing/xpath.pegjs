@@ -69,12 +69,14 @@ AbbreviatedStep
 NodeTest
  = nodeType:NodeType "()" { return ["nodeType", nodeType] }
  / fn:CustomNodeTestName "()" { return ["customTest", fn]}
- / fn:CustomNodeTestName "(" args:NodeTestArguments ")" { ["customTest", fn, args] }
+ / fn:CustomNodeTestName "(" args:NodeTestArguments ")" { return ["customTest", fn, args] }
  / "processing-instruction(" target:literal ")" { return ["nodeType", "processing-instruction", target] }
  / nodeName:NameTest { return ["nameTest", nodeName] }
 
 CustomNodeTestName
- = prefix:"fonto-" postfix:string { return prefix+postfix }
+ = prefix:[a-z]+ ":" postfix:string { return prefix.join('')+':'+postfix }
+ /* Note: deprecated, always force to the namespaced version */
+ / prefix:"fonto-" postfix:string { return "fonto:"+postfix }
 
 NodeTestArguments
  = first:literal "," " "? rest:NodeTestArguments { return [first].concat(rest) }
