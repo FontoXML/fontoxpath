@@ -4,10 +4,12 @@ define([
 
 	'../selectors/AttributeSelector',
 	'../selectors/CompositeSelector',
+	'../selectors/HasAncestorSelector',
 	'../selectors/HasChildSelector',
 	'../selectors/HasDescendantSelector',
+	'../selectors/HasFollowingSiblingSelector',
 	'../selectors/HasParentSelector',
-	'../selectors/HasAncestorSelector',
+	'../selectors/HasPrecedingSiblingSelector',
 	'../selectors/InvertedSelector',
 	'../selectors/NodeNameSelector',
 	'../selectors/NodePredicateSelector',
@@ -25,10 +27,12 @@ define([
 
 	AttributeSelector,
 	CompositeSelector,
+	HasAncestorSelector,
 	HasChildSelector,
 	HasDescendantSelector,
+	HasFollowingSiblingSelector,
 	HasParentSelector,
-	HasAncestorSelector,
+	HasPrecedingSiblingSelector,
 	InvertedSelector,
 	NodeNameSelector,
 	NodePredicateSelector,
@@ -88,6 +92,10 @@ define([
 				return descendantOrSelf(args);
 			case 'parent':
 				return parent(args);
+			case 'following-sibling':
+				return followingSibling(args);
+			case 'preceding-sibling':
+				return precedingSibling(args);
 			case 'self':
 				return self(args);
 
@@ -135,6 +143,10 @@ define([
 			new HasDescendantSelector(subSelector));
 	}
 
+	function followingSibling (args) {
+		return new HasFollowingSiblingSelector(compile(args[0]));
+	}
+
 	function nameTest (args) {
 		var nodeName = args[0],
 			predicate = args[1] && compile(args[1]);
@@ -177,6 +189,10 @@ define([
 
 	function parent (args) {
 		return new HasParentSelector(compile(args[0]));
+	}
+
+	function precedingSibling (args) {
+		return new HasPrecedingSiblingSelector(compile(args[0]));
 	}
 
 	function self (args) {

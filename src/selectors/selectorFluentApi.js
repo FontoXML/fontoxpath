@@ -7,7 +7,9 @@ define([
 	'./HasAncestorSelector',
 	'./HasChildSelector',
 	'./HasDescendantSelector',
+	'./HasFollowingSiblingSelector',
 	'./HasParentSelector',
+	'./HasPrecedingSiblingSelector',
 	'./InvertedSelector',
 	'./NodeNameSelector',
 	'./NodePredicateSelector',
@@ -22,13 +24,25 @@ define([
 	HasAncestorSelector,
 	HasChildSelector,
 	HasDescendantSelector,
+	HasFollowingSiblingSelector,
 	HasParentSelector,
+	HasPrecedingSiblingSelector,
 	InvertedSelector,
 	NodeNameSelector,
 	NodePredicateSelector,
 	OrCombiningSelector
 ) {
 	'use strict';
+
+
+	/**
+	 * @param  {Selector|NodeSpec}  ancestorSelector
+	 */
+	Selector.prototype.requireAncestor = function (ancestorSelector) {
+		return new CompositeSelector(
+			this,
+			new HasAncestorSelector(adaptNodeSpecToSelector(ancestorSelector)));
+	};
 
 	/**
 	 * @param  {String}           attributeName
@@ -41,16 +55,6 @@ define([
 
 		return new CompositeSelector(this, new AttributeSelector(attributeName, attributeValues));
 	};
-
-	/**
-	 * @param  {Selector|NodeSpec}  ancestorSelector
-	 */
-	Selector.prototype.requireAncestor = function (ancestorSelector) {
-		return new CompositeSelector(
-			this,
-			new HasAncestorSelector(adaptNodeSpecToSelector(ancestorSelector)));
-	};
-
 	/**
 	 * @param  {Selector|NodeSpec}  childSelector
 	 */
@@ -85,6 +89,24 @@ define([
 		return new CompositeSelector(
 			this,
 			new InvertedSelector(adaptNodeSpecToSelector(selectorToInvert)));
+	};
+
+	/**
+	 * @param  {Selector|NodeSpec}  siblingSelector
+	 */
+	Selector.prototype.requireFollowingSibling = function (siblingSelector) {
+		return new CompositeSelector(
+			this,
+			new HasFollowingSiblingSelector(adaptNodeSpecToSelector(siblingSelector)));
+	};
+
+	/**
+	 * @param  {Selector|NodeSpec}  siblingSelector
+	 */
+	Selector.prototype.requirePrecedingSibling = function (siblingSelector) {
+		return new CompositeSelector(
+			this,
+			new HasPrecedingSiblingSelector(adaptNodeSpecToSelector(siblingSelector)));
 	};
 
 	/**

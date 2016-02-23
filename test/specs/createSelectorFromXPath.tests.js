@@ -71,7 +71,31 @@ define([
 						'someParentElement',
 						['someElement', { 'someAttribute': 'someValue' }]
 					], documentNode);
-					chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+					chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
+				});
+			});
+
+			describe('following-sibling', function () {
+				it('parses following-sibling::', function () {
+					var selector = parseSelector('following-sibling::someSiblingElement');
+					jsonMLMapper.parse([
+						'someParentElement',
+						['someElement'],
+						['someSiblingElement']
+					], documentNode);
+					chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
+				});
+			});
+
+			describe('preceding-sibling', function () {
+				it('parses preceding-sibling::', function () {
+					var selector = parseSelector('preceding-sibling::someSiblingElement');
+					jsonMLMapper.parse([
+						'someParentElement',
+						['someSiblingElement'],
+						['someElement']
+					], documentNode);
+					chai.expect(selector.matches(documentNode.documentElement.lastChild, blueprint)).to.equal(true);
 				});
 			});
 
@@ -82,7 +106,7 @@ define([
 						'someParentElement',
 						['someElement']
 					], documentNode);
-					chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+					chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 				});
 				it('self part', function () {
 					var selector = parseSelector('descendant-or-self::someParentElement');
@@ -90,7 +114,7 @@ define([
 						'someParentElement',
 						['someElement']
 					], documentNode);
-					chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+					chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 				});
 			});
 
@@ -101,7 +125,7 @@ define([
 						'someParentElement',
 						['someElement', { 'someAttribute': 'someValue' }]
 					], documentNode);
-					chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+					chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 				});
 			});
 
@@ -112,7 +136,7 @@ define([
 						'someParentElement',
 						['someElement', { 'someAttribute': 'someValue' }]
 					], documentNode);
-					chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+					chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 				});
 				it('parses ancestor-or-self:: self part', function () {
 					var selector = parseSelector('ancestor-or-self::someParentElement');
@@ -120,7 +144,7 @@ define([
 						'someParentElement',
 						['someElement', { 'someAttribute': 'someValue' }]
 					], documentNode);
-					chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+					chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 				});
 			});
 			describe('child', function () {
@@ -130,7 +154,7 @@ define([
 						'someParentElement',
 						['someElement']
 					], documentNode);
-					chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+					chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 				});
 				it('is added implicitly', function () {
 					var selector = parseSelector('someElement');
@@ -138,7 +162,7 @@ define([
 						'someParentElement',
 						['someElement']
 					], documentNode);
-					chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+					chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 				});
 			});
 		});
@@ -153,7 +177,7 @@ define([
 						['someElement', { 'someAttribute': 'someValue' }]
 					]
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 			});
 
 			it('can parse a double "and" selector', function () {
@@ -166,7 +190,7 @@ define([
 						['someElement']
 					]
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 			});
 
 			it('can parse an "or" selector', function () {
@@ -178,7 +202,7 @@ define([
 						['someElement']
 					]
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 
 				jsonMLMapper.parse([
 					'someParentElement',
@@ -187,7 +211,7 @@ define([
 						['someOtherElement']
 					]
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 			});
 
 			it('can parse a double "or" selector', function () {
@@ -200,7 +224,7 @@ define([
 						['someElement']
 					]
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 			});
 
 			it('allows not in combination with or', function () {
@@ -209,7 +233,7 @@ define([
 					'someOtherParentElement',
 					['someOtherChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
 
 			it('uses correct operator precedence', function () {
@@ -222,13 +246,13 @@ define([
 						['someOtherElement']
 					]
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 				// The other way around
 				selector = parseSelector('(child::someOtherElement and ancestor::someParentElement) or @someAttribute=\'someOtherValue\'');
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 				// Changes to testcase A: Operator order changed because of parentheses
 				selector = parseSelector('child::someElement and (ancestor::someParentElement or @someAttribute="someValue")');
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(false);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(false);
 			});
 		});
 
@@ -238,7 +262,7 @@ define([
 				'someParentElement',
 				['someChildElement']
 			], documentNode);
-			chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true, 'someMiddleElement has a parent');
+			chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true, 'someMiddleElement has a parent');
 		});
 
 		describe('predicates', function () {
@@ -255,7 +279,7 @@ define([
 					'someParentElement',
 					['someChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 			});
 
 			it('allows not', function () {
@@ -264,7 +288,7 @@ define([
 					'someOtherParentElement',
 					['someChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
 
 			it('can target the root element', function () {
@@ -273,7 +297,7 @@ define([
 					'someOtherParentElement',
 					['someChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
 		});
 
@@ -283,7 +307,7 @@ define([
 				'someOtherParentElement',
 				['?someTarget', 'someData']
 			], documentNode);
-			chai.expect(selector.matches(documentNode.firstChild.firstChild, blueprint)).to.equal(true);
+			chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 		});
 
 		describe('custom nodeTest (fonto:.*())', function () {
@@ -299,7 +323,7 @@ define([
 					'someOtherParentElement',
 					['someChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
 
 			it('allows custom nodeTests with 0 arguments', function () {
@@ -315,7 +339,7 @@ define([
 					'someOtherParentElement',
 					['someChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
 
 			it('allows custom nodeTests with multiple arguments', function () {
@@ -333,7 +357,7 @@ define([
 					'someOtherParentElement',
 					['b']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
 
 			it('still allows deprecated syntax of custom nodeTests', function () {
@@ -348,7 +372,7 @@ define([
 					'someOtherParentElement',
 					['someChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
 
 			it('still allows deprecated syntax of custom nodeTests', function () {
@@ -363,7 +387,7 @@ define([
 					'someOtherParentElement',
 					['someChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
 		});
 		it('matches hovercrafts full of eels', function () {
@@ -373,7 +397,7 @@ define([
 				['eel']
 			], documentNode);
 			var selector = parseSelector('self::hovercraft[eel and not(*[not(self::eel)])]');
-			chai.expect(selector.matches(documentNode.firstChild, blueprint)).to.equal(true);
+			chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 		});
 	});
 });
