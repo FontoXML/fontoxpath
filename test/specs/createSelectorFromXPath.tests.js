@@ -39,6 +39,12 @@ define([
 					element.setAttribute('someAttribute', 'someValue');
 					chai.expect(selector.matches(element, blueprint)).to.equal(true);
 				});
+				it('allows namespaces', function () {
+					var selector = parseSelector('attribute::someNamespace:someAttribute');
+					var element = documentNode.createElement('someElement');
+					element.setAttribute('someNamespace:someAttribute', 'someValue');
+					chai.expect(selector.matches(element, blueprint)).to.equal(true);
+				});
 				it('parses the shorthand for existence', function () {
 					var selector = parseSelector('@someAttribute');
 					var element = documentNode.createElement('someElement');
@@ -49,6 +55,12 @@ define([
 					var selector = parseSelector('@someAttribute=\'someValue\'');
 					var element = documentNode.createElement('someElement');
 					element.setAttribute('someAttribute', 'someValue');
+					chai.expect(selector.matches(element, blueprint)).to.equal(true);
+				});
+				it('allows namespaces in the shorthand', function () {
+					var selector = parseSelector('@someNamespace:someAttribute="someValue"');
+					var element = documentNode.createElement('someElement');
+					element.setAttribute('someNamespace:someAttribute', 'someValue');
 					chai.expect(selector.matches(element, blueprint)).to.equal(true);
 				});
 			});
