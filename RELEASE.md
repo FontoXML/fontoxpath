@@ -4,6 +4,7 @@
 
 Deprecate the `fonto-` syntax in favour of `fonto*` due to namespaces.
 Introduce sibling axes.
+Allow using namespaces in both nodeName tests and attribute tests.
 
 ## 1.3.0
 

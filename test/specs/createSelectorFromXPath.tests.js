@@ -277,6 +277,12 @@ define([
 			chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true, 'someMiddleElement has a parent');
 		});
 
+		it('allows nodeNames containing namespaces', function () {
+			var selector = parseSelector('self::someNamespace:someElement');
+			var element = documentNode.createElement('someNamespace:someElement');
+			chai.expect(selector.matches(element, blueprint)).to.equal(true);
+		});
+
 		describe('predicates', function () {
 			it('can parse a simple nodeName + attribute selector', function () {
 				var selector = parseSelector('self::someElement[@someAttribute=\'someValue\']');

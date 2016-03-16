@@ -146,7 +146,7 @@ define([], function() {
         peg$c103 = { type: "literal", value: ",", description: "\",\"" },
         peg$c104 = function(first, rest) { return [first].concat(rest) },
         peg$c105 = function(argument) { return [argument] },
-        peg$c106 = function(_, nodeName) { return nodeName },
+        peg$c106 = function(nodeName) { return nodeName },
         peg$c107 = "comment",
         peg$c108 = { type: "literal", value: "comment", description: "\"comment\"" },
         peg$c109 = "text",
@@ -171,8 +171,8 @@ define([], function() {
         peg$c128 = { type: "literal", value: "'", description: "\"'\"" },
         peg$c129 = /^[^']/,
         peg$c130 = { type: "class", value: "[^\\']", description: "[^\\']" },
-        peg$c131 = /^[a-zA-Z0-9\-_]/,
-        peg$c132 = { type: "class", value: "[a-zA-Z0-9\\-_]", description: "[a-zA-Z0-9\\-_]" },
+        peg$c131 = /^[a-zA-Z0-9\-_:]/,
+        peg$c132 = { type: "class", value: "[a-zA-Z0-9\\-_:]", description: "[a-zA-Z0-9\\-_:]" },
         peg$c133 = function(chars) { return chars.join("") },
         peg$c134 = /^[0-9]/,
         peg$c135 = { type: "class", value: "[0-9]", description: "[0-9]" },
@@ -1275,7 +1275,7 @@ define([], function() {
     }
 
     function peg$parseNameTest() {
-      var s0, s1, s2, s3;
+      var s0, s1;
 
       if (input.charCodeAt(peg$currPos) === 42) {
         s0 = peg$c11;
@@ -1286,44 +1286,12 @@ define([], function() {
       }
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
-        s1 = peg$currPos;
-        s2 = peg$parsestring();
-        if (s2 !== peg$FAILED) {
-          if (input.charCodeAt(peg$currPos) === 58) {
-            s3 = peg$c96;
-            peg$currPos++;
-          } else {
-            s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c97); }
-          }
-          if (s3 !== peg$FAILED) {
-            s2 = [s2, s3];
-            s1 = s2;
-          } else {
-            peg$currPos = s1;
-            s1 = peg$FAILED;
-          }
-        } else {
-          peg$currPos = s1;
-          s1 = peg$FAILED;
-        }
-        if (s1 === peg$FAILED) {
-          s1 = null;
-        }
+        s1 = peg$parsestring();
         if (s1 !== peg$FAILED) {
-          s2 = peg$parsestring();
-          if (s2 !== peg$FAILED) {
-            peg$savedPos = s0;
-            s1 = peg$c106(s1, s2);
-            s0 = s1;
-          } else {
-            peg$currPos = s0;
-            s0 = peg$FAILED;
-          }
-        } else {
-          peg$currPos = s0;
-          s0 = peg$FAILED;
+          peg$savedPos = s0;
+          s1 = peg$c106(s1);
         }
+        s0 = s1;
       }
 
       return s0;

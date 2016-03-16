@@ -84,7 +84,7 @@ NodeTestArguments
 
 NameTest
  = "*"
- / _:(string ":")? nodeName:string { return nodeName }
+ / nodeName:string { return nodeName }
 
 NodeType
  = "comment"
@@ -105,7 +105,7 @@ literal
  / "'" value:[^\']* "'" { return value.join("") }
 
 string
- = chars:[a-zA-Z0-9\-_]+ { return chars.join("") }
+ = chars:[a-zA-Z0-9\-_:]+ { return chars.join("") }
 
 integer
  = digits: [0-9]+ { return parseInt(digits.join(""), 10) }
