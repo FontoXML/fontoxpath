@@ -1,6 +1,6 @@
 # Release notes for fontoxml-selectors
 
-## next (1.4.0)
+## 1.4.0
 
 Deprecate the `fonto-` syntax in favour of `fonto*` due to namespaces.
 Introduce sibling axes.

@@ -4,6 +4,6 @@
 		"fontoxml-dom-utils": "^1.0.0"
 	},
 	"devDependencies": {
-		"fontoxml-vendor-slimdom": "0.5.2"
+		"fontoxml-vendor-slimdom": "^0.5.3"
 	}
 }
