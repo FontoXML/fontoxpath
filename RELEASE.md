@@ -1,5 +1,9 @@
 # Release notes for fontoxml-selectors
 
+## next (1.5.0)
+
+Implement true / false.
+
 ## 1.4.0
 
 Deprecate the `fonto-` syntax in favour of `fonto*` due to namespaces.

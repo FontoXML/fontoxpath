@@ -283,6 +283,11 @@ define([
 			chai.expect(selector.matches(element, blueprint)).to.equal(true);
 		});
 
+		it('allows true and false in a test', function () {
+			var selector = parseSelector('self::false() or self::true()');
+			chai.expect(selector.matches(documentNode, blueprint)).to.equal(true);
+		});
+
 		describe('predicates', function () {
 			it('can parse a simple nodeName + attribute selector', function () {
 				var selector = parseSelector('self::someElement[@someAttribute=\'someValue\']');

@@ -68,6 +68,8 @@ AbbreviatedStep
 
 NodeTest
  = nodeType:NodeType "()" { return ["nodeType", nodeType] }
+ / "true()" { return ["true"] }
+ / "false()" { return ["false"] }
  / fn:CustomNodeTestName "()" { return ["customTest", fn]}
  / fn:CustomNodeTestName "(" args:NodeTestArguments ")" { return ["customTest", fn, args] }
  / "processing-instruction(" target:literal ")" { return ["nodeType", "processing-instruction", target] }

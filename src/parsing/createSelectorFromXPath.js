@@ -76,6 +76,10 @@ define([
 				return nodeType(args);
 			case 'customTest':
 				return customTest(args);
+			case 'true':
+				return trueTest(args);
+			case 'false':
+				return falseTest(args);
 
 			// Axes
 			case 'ancestor':
@@ -143,6 +147,10 @@ define([
 			new HasDescendantSelector(subSelector));
 	}
 
+	function falseTest (args) {
+		return new InvertedSelector(new UniversalSelector());
+	}
+
 	function followingSibling (args) {
 		return new HasFollowingSiblingSelector(compile(args[0]));
 	}
@@ -197,6 +205,10 @@ define([
 
 	function self (args) {
 		return compile(args[0]);
+	}
+
+	function trueTest (args) {
+		return new UniversalSelector();
 	}
 
 	// Custom tests are nodePredicates, and nodePredicates can not always be compared.
