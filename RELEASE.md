@@ -1,5 +1,9 @@
 # Release notes for fontoxml-selectors
 
+## 1.5.1
+
+Remove the restriction of using an or selector across multiple buckets.
+
 ## 1.5.0
 
 Implement true / false.

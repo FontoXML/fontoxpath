@@ -226,6 +226,16 @@ define([
 				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 			});
 
+			it('can parse an "or" selector with different buckets', function () {
+				var selector = parseSelector('self::someElement or self::processing-instruction()');
+				jsonMLMapper.parse([
+					'someParentElement',
+					['someElement']
+				], documentNode);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.getBucket()).to.equal(null);
+			});
+
 			it('can parse a double "or" selector', function () {
 				var selector = parseSelector('child::someElement or ancestor::someParentElement or @someAttribute=\'someValue\'');
 				jsonMLMapper.parse([

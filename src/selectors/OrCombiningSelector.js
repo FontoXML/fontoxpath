@@ -16,9 +16,7 @@ define([
 		// If both subSelectors define the same bucket: use that one, else, use no bucket.
 		var firstBucket = firstSelector.getBucket(),
 			secondBucket = secondSelector.getBucket();
-		if (firstBucket && secondBucket && firstBucket !== secondBucket) {
-			throw new Error('It is not allowed to make an or over selectors with different buckets');
-		}
+
 		this._bucket = firstBucket === secondBucket ? firstBucket : null;
 
 		this._subSelectors = [];
