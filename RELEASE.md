@@ -1,6 +1,6 @@
 # Release notes for fontoxml-selectors
 
-## next (1.5.0)
+## 1.5.0
 
 Implement true / false.
 
