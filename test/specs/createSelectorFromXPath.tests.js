@@ -306,6 +306,15 @@ define([
 				chai.expect(selector.matches(element, blueprint)).to.equal(true);
 			});
 
+			it('can parse a simple any element + attribute selector', function () {
+				var selector = parseSelector('self::*[@someAttribute=\'someValue\']');
+				var element = documentNode.createElement('someElement');
+				element.setAttribute('someAttribute', 'someValue');
+				chai.expect(selector.matches(element, blueprint)).to.equal(true);
+				var comment = documentNode.createComment('someComment');
+				chai.expect(selector.matches(comment, blueprint)).to.equal(false);
+			});
+
 			it('can parse nested predicates', function () {
 				var selector = parseSelector('descendant-or-self::node()[self::*[@someAttribute="someValue"]]');
 				jsonMLMapper.parse([

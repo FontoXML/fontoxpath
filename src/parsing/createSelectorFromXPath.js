@@ -158,15 +158,11 @@ define([
 	function nameTest (args) {
 		var nodeName = args[0],
 			predicate = args[1] && compile(args[1]);
-		if (nodeName === '*') {
-			// Match all elements
-			return predicate || new NodeTypeSelector(1);
-		}
-		var nodeNameSelector = new NodeNameSelector(nodeName);
+		var elementSelector = nodeName === '*' ? new NodeTypeSelector(1) : new NodeNameSelector(nodeName);
 		if (predicate) {
-			return new CompositeSelector(nodeNameSelector, predicate);
+			return new CompositeSelector(elementSelector, predicate);
 		}
-		return nodeNameSelector;
+		return elementSelector;
 	}
 
 	function nodeType (args) {

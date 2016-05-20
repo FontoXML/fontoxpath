@@ -1,5 +1,9 @@
 # Release notes for fontoxml-selectors
 
+## nexy (1.5.2)
+
+Fix selectors crashing with non-elements on '*[@..]'
+
 ## 1.5.1
 
 Remove the restriction of using an or selector across multiple buckets.
