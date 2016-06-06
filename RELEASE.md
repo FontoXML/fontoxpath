@@ -1,8 +1,8 @@
 # Release notes for fontoxml-selectors
 
-## nexy (1.5.2)
+## 1.5.2
 
-Fix selectors crashing with non-elements on '*[@..]'
+Fix selectors crashing with non-elements on `*[@..]`
 
 ## 1.5.1
 
