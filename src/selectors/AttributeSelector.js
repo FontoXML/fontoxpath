@@ -44,17 +44,13 @@ define([
 			return true;
 		}
 
-		if (!this._attributeValues && !otherSelector.attributeValues) {
-			return true;
-		}
-
-		if ((this.attributeValues && !otherSelector.attributeValues) ||
-			(!this._attributeValues && otherSelector.attributeValues)) {
+		if ((this._attributeValues && !otherSelector._attributeValues) ||
+			(!this._attributeValues && otherSelector._attributeValues)) {
 			return false;
 		}
 
-		return this._attributeName === otherSelector.attributeName &&
-			isSameArray(this._attributeValues, otherSelector.attributeValues);
+		return this._attributeName === otherSelector._attributeName &&
+			isSameArray(this._attributeValues, otherSelector._attributeValues);
 	};
 
 	return AttributeSelector;

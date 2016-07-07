@@ -1,5 +1,9 @@
 # Release notes for fontoxml-selectors
 
+## next (1.5.3)
+
+Fix equals function and add tests for it
+
 ## 1.5.2
 
 Fix selectors crashing with non-elements on `*[@..]`
