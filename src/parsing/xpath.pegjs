@@ -35,10 +35,17 @@ FunctionName
  / "not"
 
 Step
- = axis:AxisSpecifier test:NodeTest predicate:Predicate? {
-     return predicate ?
-       [axis, test.concat([predicate])] :
-       [axis, test]
+ = axis:AxisSpecifier test:NodeTest predicates:Predicate* {
+     if (!predicates.length) {
+	 	return [axis, test];
+	 }
+     return [
+     	axis,
+		[
+			"and",
+			test,
+			predicates.reduceRight(function (accum, predicate) { return ["and", predicate, accum];})
+		]];
 	 }
  / "@" test:AttributeTest { return ["attribute", test] }
  / AbbreviatedStep
@@ -70,7 +77,7 @@ NodeTest
  = nodeType:NodeType "()" { return ["nodeType", nodeType] }
  / "true()" { return ["true"] }
  / "false()" { return ["false"] }
- / fn:CustomNodeTestName "()" { return ["customTest", fn]}
+ / fn:CustomNodeTestName "()" { return ["customTest", fn, []]}
  / fn:CustomNodeTestName "(" args:NodeTestArguments ")" { return ["customTest", fn, args] }
  / "processing-instruction(" target:literal ")" { return ["nodeType", "processing-instruction", target] }
  / nodeName:NameTest { return ["nameTest", nodeName] }

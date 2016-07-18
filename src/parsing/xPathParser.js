@@ -79,11 +79,18 @@ define([], function() {
         peg$c40 = { type: "literal", value: "count", description: "\"count\"" },
         peg$c41 = "not",
         peg$c42 = { type: "literal", value: "not", description: "\"not\"" },
-        peg$c43 = function(axis, test, predicate) {
-             return predicate ?
-               [axis, test.concat([predicate])] :
-               [axis, test]
-           },
+        peg$c43 = function(axis, test, predicates) {
+             if (!predicates.length) {
+        	 	return [axis, test];
+        	 }
+             return [
+             	axis,
+        		[
+        			"and",
+        			test,
+        			predicates.reduceRight(function (accum, predicate) { return ["and", predicate, accum];})
+        		]];
+        	 },
         peg$c44 = "@",
         peg$c45 = { type: "literal", value: "@", description: "\"@\"" },
         peg$c46 = function(test) { return ["attribute", test] },
@@ -134,7 +141,7 @@ define([], function() {
         peg$c91 = "false()",
         peg$c92 = { type: "literal", value: "false()", description: "\"false()\"" },
         peg$c93 = function() { return ["false"] },
-        peg$c94 = function(fn) { return ["customTest", fn]},
+        peg$c94 = function(fn) { return ["customTest", fn, []]},
         peg$c95 = function(fn, args) { return ["customTest", fn, args] },
         peg$c96 = "processing-instruction(",
         peg$c97 = { type: "literal", value: "processing-instruction(", description: "\"processing-instruction(\"" },
@@ -742,16 +749,18 @@ define([], function() {
     }
 
     function peg$parseStep() {
-      var s0, s1, s2, s3;
+      var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
       s1 = peg$parseAxisSpecifier();
       if (s1 !== peg$FAILED) {
         s2 = peg$parseNodeTest();
         if (s2 !== peg$FAILED) {
-          s3 = peg$parsePredicate();
-          if (s3 === peg$FAILED) {
-            s3 = null;
+          s3 = [];
+          s4 = peg$parsePredicate();
+          while (s4 !== peg$FAILED) {
+            s3.push(s4);
+            s4 = peg$parsePredicate();
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;

@@ -321,7 +321,25 @@ define([
 					'someParentElement',
 					['someChildElement']
 				], documentNode);
-				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(false);
+			});
+
+			it('can parse multiple chained predicates', function () {
+				var selector = parseSelector('self::node()[self::*][child::someChildElement]');
+				jsonMLMapper.parse([
+					'someParentElement',
+					['someChildElement']
+				], documentNode);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
+			});
+
+			it('can parse multiple chained predicates, resulting in a false', function () {
+				var selector = parseSelector('self::node()[self::*][child::someChildElement][self::false()]');
+				jsonMLMapper.parse([
+					'someParentElement',
+					['someChildElement']
+				], documentNode);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(false);
 			});
 
 			it('allows not', function () {
@@ -367,6 +385,21 @@ define([
 				], documentNode);
 				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
 			});
+
+			it('allows predicates in conjunction with custom tests', function () {
+				addXPathCustomTest(
+					'fonto:nodenameContains',
+					function (includeString, node, blueprint) {
+						return node.nodeName.includes(includeString);
+					});
+				var selector = parseSelector(
+						'self::fonto:nodenameContains("someNode")[self::false()]');
+				jsonMLMapper.parse([
+					'someNode'
+				], documentNode);
+				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(false, 'The false() predicate should prevent the first part from matching');
+			});
+
 
 			it('allows custom nodeTests with 0 arguments', function () {
 				addXPathCustomTest(

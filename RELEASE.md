@@ -2,7 +2,8 @@
 
 ## next (1.5.3)
 
-Fix equals function and add tests for it
+Fix equals function and add tests for it.
+Fix predicates not working for anything other than name tests.
 
 ## 1.5.2
 

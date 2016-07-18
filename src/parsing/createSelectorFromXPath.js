@@ -156,13 +156,8 @@ define([
 	}
 
 	function nameTest (args) {
-		var nodeName = args[0],
-			predicate = args[1] && compile(args[1]);
-		var elementSelector = nodeName === '*' ? new NodeTypeSelector(1) : new NodeNameSelector(nodeName);
-		if (predicate) {
-			return new CompositeSelector(elementSelector, predicate);
-		}
-		return elementSelector;
+		var nodeName = args[0];
+		return nodeName === '*' ? new NodeTypeSelector(1) : new NodeNameSelector(nodeName);
 	}
 
 	function nodeType (args) {
@@ -231,6 +226,7 @@ define([
 
 	// Hold a cache containing earlier created selectors, to prevent recompiling
 	var selectorCache = Object.create(null);
+
 	/**
 	 * Parse an XPath string to a selector.
 	 * Only single step paths can be compiled
