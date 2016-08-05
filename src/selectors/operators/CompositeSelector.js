@@ -1,5 +1,5 @@
 define([
-	'./Selector'
+	'../Selector'
 ], function (
 	Selector
 	) {

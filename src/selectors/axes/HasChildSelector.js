@@ -1,7 +1,7 @@
 define([
 	'fontoxml-blueprints',
 
-	'./Selector'
+	'../Selector'
 ], function (
 	blueprints,
 
@@ -40,6 +40,17 @@ define([
 
 		return otherSelector instanceof HasChildSelector &&
 			this._childSelector.equals(otherSelector._childSelector);
+	};
+
+	HasChildSelector.prototype.walkStep = function (nodes, blueprint) {
+		return nodes.reduce(function (resultingNodes, node) {
+ 			Array.prototype.push.apply(
+				resultingNodes,
+				blueprintQuery.findChildren(blueprint, node, function (childNode) {
+						return this._childSelector.matches(childNode, blueprint);
+					}.bind(this)));
+			return resultingNodes;
+		}.bind(this), []);
 	};
 
 	return HasChildSelector;

@@ -1,9 +1,9 @@
 define([
 	'fontoxml-dom-utils/domInfo',
 
-	'./Selector',
-	'./Specificity',
-	'./isSameArray'
+	'../Selector',
+	'../Specificity',
+	'../isSameArray'
 ], function (
 	domInfo,
 

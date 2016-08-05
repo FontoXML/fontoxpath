@@ -1,10 +1,8 @@
 define([
-	'./Selector',
-	'./CompositeSelector',
-	'./Specificity'
+	'../Selector',
+	'../Specificity'
 ], function (
 	Selector,
-	CompositeSelector,
 	Specificity
 	) {
 	'use strict';

@@ -2,21 +2,24 @@ define([
 	'fontoxml-blueprints',
 	'fontoxml-dom-utils',
 
-	'../selectors/AttributeSelector',
-	'../selectors/CompositeSelector',
-	'../selectors/HasAncestorSelector',
-	'../selectors/HasChildSelector',
-	'../selectors/HasDescendantSelector',
-	'../selectors/HasFollowingSiblingSelector',
-	'../selectors/HasParentSelector',
-	'../selectors/HasPrecedingSiblingSelector',
-	'../selectors/InvertedSelector',
-	'../selectors/NodeNameSelector',
-	'../selectors/NodePredicateSelector',
-	'../selectors/NodeTypeSelector',
-	'../selectors/OrCombiningSelector',
-	'../selectors/ProcessingInstructionTargetSelector',
-	'../selectors/UniversalSelector',
+	'../selectors/PathSelector',
+	'../selectors/AbsolutePathSelector',
+	'../selectors/axes/AttributeSelector',
+	'../selectors/axes/HasAncestorSelector',
+	'../selectors/axes/HasChildSelector',
+	'../selectors/axes/HasDescendantSelector',
+	'../selectors/axes/HasFollowingSiblingSelector',
+	'../selectors/axes/HasParentSelector',
+	'../selectors/axes/HasPrecedingSiblingSelector',
+	'../selectors/axes/SelfSelector',
+	'../selectors/tests/NodeNameSelector',
+	'../selectors/tests/NodePredicateSelector',
+	'../selectors/tests/NodeTypeSelector',
+	'../selectors/tests/ProcessingInstructionTargetSelector',
+	'../selectors/operators/CompositeSelector',
+	'../selectors/operators/OrCombiningSelector',
+	'../selectors/operators/UniversalSelector',
+	'../selectors/operators/InvertedSelector',
 
 	'./xPathParser',
 
@@ -25,21 +28,24 @@ define([
 	blueprints,
 	domUtils,
 
+	PathSelector,
+	AbsolutePathSelector,
 	AttributeSelector,
-	CompositeSelector,
 	HasAncestorSelector,
 	HasChildSelector,
 	HasDescendantSelector,
 	HasFollowingSiblingSelector,
 	HasParentSelector,
 	HasPrecedingSiblingSelector,
-	InvertedSelector,
+	SelfSelector,
 	NodeNameSelector,
 	NodePredicateSelector,
 	NodeTypeSelector,
-	OrCombiningSelector,
 	ProcessingInstructionTargetSelector,
+	CompositeSelector,
+	OrCombiningSelector,
 	UniversalSelector,
+	InvertedSelector,
 
 	xPathParser,
 
@@ -55,9 +61,7 @@ define([
 	//    * first()
 	//    * position()
 	//    * name()
-	//    * boolean() // Always implied
 	//  * variables
-	//  * :D paths having multiple steps
 	function compile (ast) {
 		var args = ast.slice(1);
 		switch (ast[0]) {
@@ -103,9 +107,20 @@ define([
 			case 'self':
 				return self(args);
 
+			// Path
+			case 'absolutePath':
+				return absolutePath(args);
+			case 'path':
+				return path(args);
+
+
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
 		}
+	}
+
+	function absolutePath (args) {
+		return new AbsolutePathSelector(compile(args[0]));
 	}
 
 	function ancestor (args) {
@@ -115,7 +130,7 @@ define([
 	function ancestorOrSelf (args) {
 		var subSelector = compile(args[0]);
 		return new OrCombiningSelector(
-			subSelector,
+			new SelfSelector(subSelector),
 			new HasAncestorSelector(subSelector));
 	}
 
@@ -143,7 +158,7 @@ define([
 	function descendantOrSelf (args) {
 		var subSelector = compile(args[0]);
 		return new OrCombiningSelector(
-			subSelector,
+			new SelfSelector(subSelector),
 			new HasDescendantSelector(subSelector));
 	}
 
@@ -190,12 +205,18 @@ define([
 		return new HasParentSelector(compile(args[0]));
 	}
 
+	function path (args) {
+		var a = compile(args[0]),
+			b = compile(args[1]);
+		return new PathSelector([a, b]);
+	}
+
 	function precedingSibling (args) {
 		return new HasPrecedingSiblingSelector(compile(args[0]));
 	}
 
 	function self (args) {
-		return compile(args[0]);
+		return new SelfSelector(compile(args[0]));
 	}
 
 	function trueTest (args) {
@@ -230,7 +251,6 @@ define([
 	/**
 	 * Parse an XPath string to a selector.
 	 * Only single step paths can be compiled
-	 * TODO: Implement (following|preceding)(-sibling)? axes
 	 *
 	 * @param  {string}  xPathString      The string to parse
 	 */

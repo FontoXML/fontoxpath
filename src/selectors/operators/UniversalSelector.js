@@ -1,6 +1,6 @@
 define([
-	'./Selector',
-	'./Specificity'
+	'../Selector',
+	'../Specificity'
 ], function (
 	Selector,
 	Specificity

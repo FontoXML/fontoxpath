@@ -1,7 +1,7 @@
 define([
 	'fontoxml-blueprints',
 
-	'./Selector'
+	'../Selector'
 ], function (
 	blueprints,
 

@@ -1,12 +1,12 @@
 define([
-	'./Selector'
+	'../Selector'
 ], function (
 	Selector
 ) {
 	'use strict';
 
 	/**
-	 * The 'or' combining selector
+	 * The 'or' combining selector, union when evaluating
 	 * @param  {Selector}  firstSelector
 	 * @param  {Selector}  secondSelector
 	 */
@@ -76,6 +76,12 @@ define([
 
 		return otherSelector instanceof OrCombiningSelector &&
 			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
+	};
+
+	OrCombiningSelector.prototype.walkStep = function (nodes, blueprint) {
+		return this._subSelectors.reduce(function (accum, selector) {
+			return accum.concat(selector.walkStep(nodes, blueprint));
+		}, []);
 	};
 
 	OrCombiningSelector.prototype.getBucket = function () {

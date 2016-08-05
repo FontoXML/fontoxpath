@@ -1,6 +1,6 @@
 define([
 	'fontoxml-blueprints',
-	'./Selector'
+	'../Selector'
 ], function (
 	blueprints,
 	Selector
@@ -34,6 +34,17 @@ define([
 	HasDescendantSelector.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof HasDescendantSelector &&
 			this._descendantSelector.equals(otherSelector._descendantSelector);
+	};
+
+	HasDescendantSelector.prototype.walkStep = function (nodes, blueprint) {
+		return nodes.reduce(function (resultingNodes, node) {
+ 			Array.prototype.push.apply(
+				resultingNodes,
+				blueprintQuery.findDescendants(blueprint, node, function (descendantNode) {
+						return this._descendantSelector.matches(descendantNode, blueprint);
+					}.bind(this)));
+			return resultingNodes;
+		}.bind(this), []);
 	};
 
 

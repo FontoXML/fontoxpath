@@ -43,5 +43,9 @@ define([
 		return null;
 	};
 
+	Selector.prototype.walkStep = function (nodes, blueprint) {
+		throw new Error('Not Implemented');
+	};
+
 	return Selector;
 });

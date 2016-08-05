@@ -1,5 +1,5 @@
 define([
-	'fontoxml-selectors/selectors/AttributeSelector'
+	'fontoxml-selectors/selectors/axes/AttributeSelector'
 ], function (
 	AttributeSelector
 ) {

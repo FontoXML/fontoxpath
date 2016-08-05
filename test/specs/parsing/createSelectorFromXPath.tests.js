@@ -306,6 +306,18 @@ define([
 				chai.expect(selector.matches(element, blueprint)).to.equal(true);
 			});
 
+			it('uses correct contexts in predicates', function () {
+				var selector = parseSelector('parent::someParentElement[parent::someGrandParentElement]');
+				jsonMLMapper.parse([
+					'someGrandParentElement',
+					[
+						'someParentElement',
+						['someChildelement']
+					]
+				], documentNode);
+				chai.expect(selector.matches(documentNode.documentElement.firstChild.firstChild, blueprint)).to.equal(true);
+			});
+
 			it('can parse a simple any element + attribute selector', function () {
 				var selector = parseSelector('self::*[@someAttribute=\'someValue\']');
 				var element = documentNode.createElement('someElement');
@@ -473,6 +485,45 @@ define([
 			], documentNode);
 			var selector = parseSelector('self::hovercraft[eel and not(*[not(self::eel)])]');
 			chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
+		});
+
+		describe('paths', function () {
+			describe('absolute paths', function () {
+				it('supports absolute paths', function () {
+					jsonMLMapper.parse([
+						'someNode'
+					], documentNode);
+					var selector = parseSelector('/someNode');
+					chai.expect(selector.walkStep([documentNode], blueprint)).to.deep.equal([documentNode.documentElement]);
+				});
+				it('supports chaining from absolute paths', function () {
+					jsonMLMapper.parse([
+						'someNode',
+						['someChildNode']
+					], documentNode);
+					var selector = parseSelector('/someNode/someChildNode');
+					chai.expect(selector.walkStep([documentNode], blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+				});
+				it('allows // as root', function () {
+					jsonMLMapper.parse([
+						'someNode',
+						['someChildNode']
+					], documentNode);
+					var selector = parseSelector('//someChildNode');
+					chai.expect(selector.walkStep([documentNode], blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+				});
+			});
+
+			describe('relative paths', function () {
+				it('supports relative paths', function () {
+					jsonMLMapper.parse([
+						'someNode',
+						['someChildNode']
+					], documentNode);
+					var selector = parseSelector('someChildNode');
+					chai.expect(selector.walkStep([documentNode.documentElement], blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+				});
+			});
 		});
 	});
 });

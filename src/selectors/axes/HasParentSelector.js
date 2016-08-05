@@ -1,5 +1,5 @@
 define([
-	'./Selector'
+	'../Selector'
 ], function (
 	Selector
 ) {
@@ -37,6 +37,14 @@ define([
 
 		return otherSelector instanceof HasParentSelector &&
 			this._parentSelector.equals(otherSelector._parentSelector);
+	};
+
+	HasParentSelector.prototype.walkStep = function (nodes, blueprint) {
+		return nodes
+			.filter(function (node) {
+				return this.matches(node);
+			}.bind(this))
+			.map(blueprint.getParentNode.bind(blueprint));
 	};
 
 	return HasParentSelector;

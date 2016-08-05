@@ -2,19 +2,35 @@ start
  = Expression
 
 Expression
- = lhs:Test " " op:OperatorName " " rhs:Expression {return [op, lhs, rhs]}
- / "(" lhs:Expression ") " op:OperatorName " " rhs:Expression {return [op, lhs, rhs]}
+ = lhs:Test " " op:Operator " " rhs:Expression {return [op, lhs, rhs]}
+ / "(" lhs:Expression ") " op:Operator " " rhs:Expression {return [op, lhs, rhs]}
  / "(" ex:Expression ")" { return ex }
  / Test
 
 Test
  = fn:FunctionName "(" ex:Expression  ")" { return [fn, ex] }
+ / Path
+
+Path
+ = RelativeLocationPath
+ / AbsoluteLocationPath
+
+RelativeLocationPath
+ = lhs:Step abbrev:LocationPathAbbreviation rhs:RelativeLocationPath {return ["path",  lhs, ["path", abbrev, rhs]]}
+ / lhs:Step "/" rhs:RelativeLocationPath {return ["path", lhs, rhs]}
  / Step
+
+AbsoluteLocationPath
+ = "/" path:RelativeLocationPath { return ["absolutePath", path] }
+ / abbrev:LocationPathAbbreviation path: RelativeLocationPath { return ["absolutePath", ["path", abbrev, path]] }
+
+LocationPathAbbreviation
+ = "//" {return ["descendant-or-self", ["nodeType", "node"]]}
 
 Operator
  = OperatorName
  / "*"
- / "|"
+ / "|" {return "union"}
  / "+"
  / "-"
  / "="
@@ -70,7 +86,6 @@ AxisName
 
 AbbreviatedStep
  = ".." { return ["parent", ["nodeType", "node"]] }
- / "//" { return ["ancestor-or-self", ["node"]] }
  / "." { return ["self", ["nodeType", "node"]] }
 
 NodeTest
@@ -93,7 +108,7 @@ NodeTestArguments
 
 NameTest
  = "*"
- / nodeName:string { return nodeName }
+ / chars:([a-zA-Z0-9\-:]+) { return chars.join("") }
 
 NodeType
  = "comment"

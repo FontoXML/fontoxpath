@@ -1,8 +1,8 @@
 define([
 	'fontoxml-dom-utils/domInfo',
 
-	'./Selector',
-	'./Specificity'
+	'../Selector',
+	'../Specificity'
 ], function (
 	domInfo,
 

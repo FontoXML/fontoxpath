@@ -1,11 +1,9 @@
 define([
-	'./Selector',
-	'./CompositeSelector',
-	'./Specificity',
-	'./isSameArray'
+	'../Selector',
+	'../Specificity',
+	'../isSameArray'
 ], function (
 	Selector,
-	CompositeSelector,
 	Specificity,
 	isSameArray
 	) {
@@ -51,6 +49,21 @@ define([
 
 		return this._attributeName === otherSelector._attributeName &&
 			isSameArray(this._attributeValues, otherSelector._attributeValues);
+	};
+
+	AttributeSelector.prototype.walkStep = function (nodes, blueprint) {
+		return nodes.reduce(function (resultingAttributeNodes, node) {
+			var value = blueprint.getAttribute(node, this._attributeName);
+			if (value === null) {
+				return resultingAttributeNodes;
+			}
+			if (this._attributeValues && this._attributeValues.indexOf(value) >= 0) {
+				return resultingAttributeNodes;
+			}
+
+			resultingAttributeNodes.push(new AttributeNode(node, this._attributeName, value));
+			return resultingAttributeNodes;
+		});
 	};
 
 	return AttributeSelector;
