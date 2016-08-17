@@ -1,17 +1,8 @@
 define([
-	'./selectors/ProcessingInstructionTargetSelector',
-
-	// Have to import these to register extra methods on the Selector prototype
-	'./selectors/AttributeSelector',
-	'./selectors/HasChildSelector',
-	'./selectors/HasDescendantSelector',
-	'./selectors/HasParentSelector',
-	'./selectors/HasAncestorSelector',
-	'./selectors/InvertedSelector',
-	'./selectors/NodePredicateSelector'
+	'./selectors/tests/ProcessingInstructionTargetSelector',
 ], function (
 	ProcessingInstructionTargetSelector
-	) {
+) {
 	'use strict';
 
 	/**

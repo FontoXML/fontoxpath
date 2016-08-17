@@ -1,11 +1,15 @@
 define([
 	'fontoxml-blueprints',
-	'./Selector'
+	'./Selector',
+	'./dataTypes/Sequence'
 ], function (
 	blueprints,
-	Selector
+	Selector,
+	Sequence
 ) {
 	'use strict';
+
+	var blueprintQuery = blueprints.blueprintQuery;
 
 	/**
 	 * @param  {Selector}  relativePathSelector
@@ -19,22 +23,15 @@ define([
 	AbsolutePathSelector.prototype = Object.create(Selector.prototype);
 	AbsolutePathSelector.prototype.constructor = AbsolutePathSelector;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	AbsolutePathSelector.prototype.matches = function (node, blueprint) {
-		return this._selector.matches(node.ownerDocument, blueprint);
-	};
-
 	AbsolutePathSelector.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof AbsolutePathSelector &&
 			this._relativePathSelector.equals(otherSelector.relativePathSelector);
 	};
 
-	AbsolutePathSelector.prototype.walkStep = function (nodes, blueprint) {
-		// Assume this is the star, so only one node
-		return this._relativePathSelector.walkStep([nodes[0].ownerDocument], blueprint);
+	AbsolutePathSelector.prototype.evaluate = function (nodeSequence, blueprint) {
+		// Assume this is the start, so only one node
+		return this._relativePathSelector.evaluate(
+			Sequence.singleton(blueprintQuery.getDocumentNode(blueprint, nodeSequence.value[0])), blueprint);
 	};
 
 	return AbsolutePathSelector;

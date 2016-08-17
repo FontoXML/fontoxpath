@@ -1,13 +1,17 @@
 define([
 	'./parsing/createSelectorFromXPath',
-	'./selectors/NodeNameSelector',
-	'./selectors/NodePredicateSelector',
-	'./selectors/Selector'
+	'./selectors/tests/NodeNameSelector',
+	'./selectors/tests/NodePredicateSelector',
+	'./selectors/Selector',
+	'./selectors/dataTypes/Sequence',
+	'./selectors/dataTypes/NodeValue'
 ], function (
 	createSelectorFromXPath,
 	NodeNameSelector,
 	NodePredicateSelector,
-	Selector
+	Selector,
+	Sequence,
+	NodeValue
 	) {
 	'use strict';
 
@@ -25,7 +29,7 @@ define([
 			case 'string':
 				if (!/^([a-zA-Z0-9_\-.]*:)?[a-zA-Z0-9_\-.]*$/.test(selectorOrNodeSpec)) {
 					// Not a valid QName: must be an XPath selector
-					return createSelectorFromXPath(selectorOrNodeSpec);
+					return new WrappingSelector(createSelectorFromXPath(selectorOrNodeSpec));
 				}
 				return new NodeNameSelector(selectorOrNodeSpec);
 

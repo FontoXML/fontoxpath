@@ -1,8 +1,12 @@
 define([
 	'../Selector',
+	'../dataTypes/Sequence',
+	'../dataTypes/BooleanValue',
 	'../Specificity'
 ], function (
 	Selector,
+	Sequence,
+	BooleanValue,
 	Specificity
 	) {
 	'use strict';
@@ -25,6 +29,10 @@ define([
 	 */
 	NodeTypeSelector.prototype.matches = function (node, blueprint) {
 		return node.nodeType === this._nodeType;
+	};
+
+	NodeTypeSelector.prototype.evaluate = function (sequence, blueprint) {
+		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0], blueprint)));
 	};
 
 	NodeTypeSelector.prototype.equals = function (otherSelector) {

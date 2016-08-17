@@ -1,33 +1,43 @@
 define([
+	'fontoxml-dom-utils/domInfo',
 	'../Selector',
 	'../Specificity',
-	'../isSameArray'
+	'../isSameArray',
+	'../dataTypes/Sequence',
+	'../dataTypes/AttributeNodeValue'
 ], function (
+	domInfo,
 	Selector,
 	Specificity,
-	isSameArray
-	) {
+	isSameArray,
+	Sequence,
+	AttributeNodeValue
+) {
 	'use strict';
 
 	/**
 	 * @param  {String}    attributeName
 	 * @param  {String[]}  [attributeValues]  if omitted, the selector matches if the attribute is present
 	 */
-	function AttributeSelector (attributeName, attributeValues) {
+	function AttributeAxis (attributeName, attributeValues) {
 		Selector.call(this, new Specificity({attribute: 1}));
 
 		this._attributeName = attributeName;
 		this._attributeValues = attributeValues && attributeValues.concat().sort();
 	}
 
-	AttributeSelector.prototype = Object.create(Selector.prototype);
-	AttributeSelector.prototype.constructor = AttributeSelector;
+	AttributeAxis.prototype = Object.create(Selector.prototype);
+	AttributeAxis.prototype.constructor = AttributeAxis;
 
 	/**
 	 * @param  {Node}       node
 	 * @param  {Blueprint}  blueprint
 	 */
-	AttributeSelector.prototype.matches = function (node, blueprint) {
+	AttributeAxis.prototype.matches = function (node, blueprint) {
+		if (!domInfo.isElement(node)) {
+			// We can only traverse the attribute axis of element nodes
+			return false;
+		}
 		if (this._attributeValues === undefined) {
 			return blueprint.getAttribute(node, this._attributeName) !== null;
 		}
@@ -37,7 +47,7 @@ define([
 		}.bind(this));
 	};
 
-	AttributeSelector.prototype.equals = function (otherSelector) {
+	AttributeAxis.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
 		}
@@ -51,20 +61,15 @@ define([
 			isSameArray(this._attributeValues, otherSelector._attributeValues);
 	};
 
-	AttributeSelector.prototype.walkStep = function (nodes, blueprint) {
-		return nodes.reduce(function (resultingAttributeNodes, node) {
-			var value = blueprint.getAttribute(node, this._attributeName);
-			if (value === null) {
-				return resultingAttributeNodes;
+	AttributeAxis.prototype.evaluate = function (nodeSequence, blueprint) {
+		return new Sequence(nodeSequence.value.reduce(function (values, nodeValue) {
+			var attributeValue = blueprint.getAttribute(nodeValue, this._attributeName);
+			if (attributeValue) {
+				values.push(new AttributeNodeValue(blueprint, nodeValue, this._attributeName, attributeValue));
 			}
-			if (this._attributeValues && this._attributeValues.indexOf(value) >= 0) {
-				return resultingAttributeNodes;
-			}
-
-			resultingAttributeNodes.push(new AttributeNode(node, this._attributeName, value));
-			return resultingAttributeNodes;
-		});
+			return values;
+		}.bind(this), []));
 	};
 
-	return AttributeSelector;
+	return AttributeAxis;
 });

@@ -1,11 +1,15 @@
 define([
 	'fontoxml-dom-utils/domInfo',
 
+	'../dataTypes/BooleanValue',
+	'../dataTypes/Sequence',
 	'../Selector',
 	'../Specificity'
 ], function (
 	domInfo,
 
+	BooleanValue,
+	Sequence,
 	Selector,
 	Specificity
 	) {
@@ -29,6 +33,12 @@ define([
 	 */
 	ProcessingInstructionTargetSelector.prototype.matches = function (node, blueprint) {
 		return domInfo.isProcessingInstruction(node) && node.target === this._target;
+	};
+
+	ProcessingInstructionTargetSelector.prototype.evaluate = function (sequence, blueprint) {
+		// Assume singleton
+		var node = sequence.value[0];
+		return Sequence.singleton(new BooleanValue(domInfo.isProcessingInstruction(node) && node.target === this._target));
 	};
 
 	ProcessingInstructionTargetSelector.prototype.equals = function (otherSelector) {

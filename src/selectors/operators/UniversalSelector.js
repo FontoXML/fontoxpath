@@ -1,10 +1,14 @@
 define([
 	'../Selector',
-	'../Specificity'
+	'../Specificity',
+	'../dataTypes/Sequence',
+	'../dataTypes/BooleanValue'
 ], function (
 	Selector,
-	Specificity
-	) {
+	Specificity,
+	Sequence,
+	BooleanValue
+) {
 	'use strict';
 
 	function UniversalSelector () {
@@ -28,6 +32,10 @@ define([
 		}
 
 		return otherSelector instanceof UniversalSelector;
+	};
+
+	UniversalSelector.prototype.evaluate = function () {
+		return Sequence.singleton(new BooleanValue(true));
 	};
 
 	return UniversalSelector;

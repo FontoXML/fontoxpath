@@ -1,6 +1,10 @@
 define([
-	'../Selector'
+	'../../dataTypes/Sequence',
+	'../../dataTypes/BooleanValue',
+	'../../Selector'
 ], function (
+	Sequence,
+	BooleanValue,
 	Selector
 	) {
 	'use strict';
@@ -10,16 +14,16 @@ define([
 	 * @param  {Selector}  firstSelector
 	 * @param  {Selector}  secondSelector
 	 */
-	function CompositeSelector (firstSelector, secondSelector) {
+	function AndOperator (firstSelector, secondSelector) {
 		Selector.call(this, firstSelector.specificity.add(secondSelector.specificity));
 		var subSelectors;
-		if (firstSelector instanceof CompositeSelector) {
+		if (firstSelector instanceof AndOperator) {
 			subSelectors = firstSelector._subSelectors.concat();
 		} else {
 			subSelectors = [firstSelector];
 		}
 
-		if (secondSelector instanceof CompositeSelector) {
+		if (secondSelector instanceof AndOperator) {
 			subSelectors = subSelectors.concat(secondSelector._subSelectors);
 		} else {
 			subSelectors.push(secondSelector);
@@ -28,14 +32,14 @@ define([
 		this._subSelectors = subSelectors;
 	}
 
-	CompositeSelector.prototype = Object.create(Selector.prototype);
-	CompositeSelector.prototype.constructor = CompositeSelector;
+	AndOperator.prototype = Object.create(Selector.prototype);
+	AndOperator.prototype.constructor = AndOperator;
 
 	/**
 	 * @param  {Node}       node
 	 * @param  {Blueprint}  blueprint
 	 */
-	CompositeSelector.prototype.matches = function (node, blueprint) {
+	AndOperator.prototype.matches = function (node, blueprint) {
 		return this._subSelectors.every(function (subSelector) {
 			return subSelector.matches(node, blueprint);
 		});
@@ -65,16 +69,24 @@ define([
 		});
 	}
 
-	CompositeSelector.prototype.equals = function (otherSelector) {
+	AndOperator.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
 		}
 
-		return otherSelector instanceof CompositeSelector &&
+		return otherSelector instanceof AndOperator &&
 			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	};
 
-	CompositeSelector.prototype.getBucket = function () {
+	AndOperator.prototype.evaluate = function (sequence, blueprint) {
+		var result = this._subSelectors.every(function (subSelector) {
+				return subSelector.evaluate(sequence, blueprint).getEffectiveBooleanValue();
+			});
+
+		return Sequence.singleton(new BooleanValue(result));
+	};
+
+	AndOperator.prototype.getBucket = function () {
 		// Any bucket of our subselectors should do, and is preferable to no bucket
 		for (var i = 0, l = this._subSelectors.length; i < l; ++i) {
 			var bucket = this._subSelectors[i].getBucket();
@@ -85,5 +97,5 @@ define([
 		return null;
 	};
 
-	return CompositeSelector;
+	return AndOperator;
 });

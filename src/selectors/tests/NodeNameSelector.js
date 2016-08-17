@@ -1,16 +1,20 @@
 define([
 	'fontoxml-dom-utils/domInfo',
 
+	'../dataTypes/BooleanValue',
+	'../dataTypes/Sequence',
 	'../Selector',
 	'../Specificity',
 	'../isSameArray'
 ], function (
 	domInfo,
 
+	BooleanValue,
+	Sequence,
 	Selector,
 	Specificity,
 	isSameArray
-	) {
+) {
 	'use strict';
 
 	/**
@@ -48,14 +52,17 @@ define([
 		}
 
 		var nodeNames = Array.isArray(this._nodeName) ? this._nodeName : [this._nodeName],
-			otherNodeNames = Array.isArray(otherSelector._nodeName) ? otherSelector._nodeName : [otherSelector._nodeName];
+		otherNodeNames = Array.isArray(otherSelector._nodeName) ? otherSelector._nodeName : [otherSelector._nodeName];
 
 		return isSameArray(nodeNames, otherNodeNames);
+	};
+
+	NodeNameSelector.prototype.evaluate = function (sequence, blueprint) {
+		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0], blueprint)));
 	};
 
 	NodeNameSelector.prototype.getBucket = function () {
 		return 'name-' + this._nodeName;
 	};
-
 	return NodeNameSelector;
 });

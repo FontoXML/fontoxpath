@@ -1,7 +1,11 @@
 define([
+	'../dataTypes/Sequence',
+	'../dataTypes/BooleanValue',
 	'../Selector',
 	'../Specificity'
 ], function (
+	Sequence,
+	BooleanValue,
 	Selector,
 	Specificity
 	) {
@@ -25,6 +29,11 @@ define([
 	 */
 	NodePredicateSelector.prototype.matches = function (node, blueprint) {
 		return this._isMatchingNode.call(undefined, node, blueprint);
+	};
+
+	NodePredicateSelector.prototype.evaluate = function (sequence, blueprint) {
+		// TODO: non-singleton nodeTests
+		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0], blueprint)));
 	};
 
 	NodePredicateSelector.prototype.equals = function (otherSelector) {

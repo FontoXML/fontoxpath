@@ -1,5 +1,5 @@
 define([
-	'./selectors/NodeTypeSelector',
+	'./selectors/tests/NodeTypeSelector',
 
 	// Have to import this to register extra methods on the Selector prototype
 	'./selectors/selectorFluentApi'

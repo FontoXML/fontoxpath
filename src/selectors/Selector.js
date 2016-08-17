@@ -14,14 +14,6 @@ define([
 	}
 
 	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	Selector.prototype.matches = function (node, blueprint) {
-		throw new Error('Not implemented');
-	};
-
-	/**
 	 * Compare this selector to the other selector, checking equivalence
 	 *
 	 * @param   {Selector}  selector
@@ -43,7 +35,7 @@ define([
 		return null;
 	};
 
-	Selector.prototype.walkStep = function (nodes, blueprint) {
+	Selector.prototype.evaluate = function (nodes, blueprint) {
 		throw new Error('Not Implemented');
 	};
 

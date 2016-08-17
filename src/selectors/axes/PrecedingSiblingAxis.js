@@ -1,11 +1,13 @@
 define([
 	'fontoxml-blueprints',
 
-	'../Selector'
+	'../Selector',
+	'../dataTypes/Sequence'
 ], function (
 	blueprints,
 
-	Selector
+	Selector,
+	Sequence
 ) {
 	'use strict';
 
@@ -14,20 +16,20 @@ define([
 	/**
 	 * @param  {Selector}  siblingSelector
 	 */
-	function HasPrecedingSiblingSelector (siblingSelector) {
+	function PrecedingSiblingAxis (siblingSelector) {
 		Selector.call(this, siblingSelector.specificity);
 
 		this._siblingSelector = siblingSelector;
 	}
 
-	HasPrecedingSiblingSelector.prototype = Object.create(Selector.prototype);
-	HasPrecedingSiblingSelector.prototype.constructor = HasPrecedingSiblingSelector;
+	PrecedingSiblingAxis.prototype = Object.create(Selector.prototype);
+	PrecedingSiblingAxis.prototype.constructor = PrecedingSiblingAxis;
 
 	/**
 	 * @param  {Node}       node
 	 * @param  {Blueprint}  blueprint
 	 */
-	HasPrecedingSiblingSelector.prototype.matches = function (node, blueprint) {
+	PrecedingSiblingAxis.prototype.matches = function (node, blueprint) {
 		return !!blueprintQuery.findPreviousSibling(blueprint, node, function (childNode) {
 			return this._siblingSelector.matches(childNode, blueprint);
 		}.bind(this));
@@ -36,30 +38,35 @@ define([
 	/**
 	 * @param  {Selector}  otherSelector
 	 */
-	HasPrecedingSiblingSelector.prototype.equals = function (otherSelector) {
+	PrecedingSiblingAxis.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
 		}
 
-		return otherSelector instanceof HasPrecedingSiblingSelector &&
+		return otherSelector instanceof PrecedingSiblingAxis &&
 			this._siblingSelector.equals(otherSelector._siblingSelector);
 	};
 
-	HasPrecedingSiblingSelector.prototype.walkStep = function (nodes, blueprint) {
+
+	PrecedingSiblingAxis.prototype.evaluate = function (sequence, blueprint) {
 		function isMatchingSibling (selector, node) {
-				return selector.matches(node, blueprint);
+			return selector.evaluate(Sequence.singleton(node), blueprint).getEffectiveBooleanValue();
 		}
-		return nodes.reduce(function (resultingNodes, node) {
+		return sequence.value.reduce(function (resultingSequence, node) {
 			var sibling = node;
+			var nodes = [];
 			while ((sibling = blueprintQuery.findPreviousSibling(
+				blueprint,
 				sibling,
 				isMatchingSibling.bind(undefined, this._siblingSelector)))) {
 
-				resultingNodes.push(sibling);
+				nodes.push(sibling);
 			}
-			return resultingNodes;
-		}, []);
+			resultingSequence.merge(new Sequence(nodes));
+			return resultingSequence;
+		}.bind(this), new Sequence());
 	};
 
-	return HasPrecedingSiblingSelector;
+
+	return PrecedingSiblingAxis;
 });

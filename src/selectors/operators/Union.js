@@ -1,16 +1,19 @@
 define([
-	'../Selector'
+	'../Selector',
+	'../dataTypes/Sequence'
 ], function (
-	Selector
+	Selector,
+	Sequence
 ) {
 	'use strict';
 
 	/**
-	 * The 'or' combining selector, union when evaluating
+	 * The 'union' combining selector, or when matching, concats otherwise.
+	 * order is undefined.
 	 * @param  {Selector}  firstSelector
 	 * @param  {Selector}  secondSelector
 	 */
-	function OrCombiningSelector (firstSelector, secondSelector) {
+	function Union (firstSelector, secondSelector) {
 		Selector.call(this, firstSelector.specificity.add(secondSelector.specificity));
 
 		// If both subSelectors define the same bucket: use that one, else, use no bucket.
@@ -20,26 +23,26 @@ define([
 		this._bucket = firstBucket === secondBucket ? firstBucket : null;
 
 		this._subSelectors = [];
-		if (firstSelector instanceof OrCombiningSelector) {
+		if (firstSelector instanceof Union) {
 			this._subSelectors = firstSelector._subSelectors.concat();
 		} else {
 			this._subSelectors.push(firstSelector);
 		}
-		if (secondSelector instanceof OrCombiningSelector) {
+		if (secondSelector instanceof Union) {
 			this._subSelectors = this._subSelectors.concat(secondSelector._subSelectors);
 		} else {
 			this._subSelectors.push(secondSelector);
 		}
 	}
 
-	OrCombiningSelector.prototype = Object.create(Selector.prototype);
-	OrCombiningSelector.prototype.constructor = OrCombiningSelector;
+	Union.prototype = Object.create(Selector.prototype);
+	Union.prototype.constructor = Union;
 
 	/**
 	 * @param  {Node}       node
 	 * @param  {Blueprint}  blueprint
 	 */
-	OrCombiningSelector.prototype.matches = function (node, blueprint) {
+	Union.prototype.matches = function (node, blueprint) {
 		return this._subSelectors.some(function (subSelector) {
 			return subSelector.matches(node, blueprint);
 		});
@@ -69,24 +72,24 @@ define([
 		});
 	}
 
-	OrCombiningSelector.prototype.equals = function (otherSelector) {
+	Union.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
 		}
 
-		return otherSelector instanceof OrCombiningSelector &&
+		return otherSelector instanceof Union &&
 			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	};
 
-	OrCombiningSelector.prototype.walkStep = function (nodes, blueprint) {
+	Union.prototype.evaluate = function (nodes, blueprint) {
 		return this._subSelectors.reduce(function (accum, selector) {
-			return accum.concat(selector.walkStep(nodes, blueprint));
-		}, []);
+			return accum.merge(selector.evaluate(nodes, blueprint));
+		}, new Sequence());
 	};
 
-	OrCombiningSelector.prototype.getBucket = function () {
+	Union.prototype.getBucket = function () {
 		return this._bucket;
 	};
 
-	return OrCombiningSelector;
+	return Union;
 });

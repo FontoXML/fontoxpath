@@ -2,54 +2,74 @@ define([
 	'fontoxml-blueprints',
 	'fontoxml-dom-utils',
 
+	'./WrappingSelector',
+
 	'../selectors/PathSelector',
 	'../selectors/AbsolutePathSelector',
-	'../selectors/axes/AttributeSelector',
-	'../selectors/axes/HasAncestorSelector',
-	'../selectors/axes/HasChildSelector',
-	'../selectors/axes/HasDescendantSelector',
-	'../selectors/axes/HasFollowingSiblingSelector',
-	'../selectors/axes/HasParentSelector',
-	'../selectors/axes/HasPrecedingSiblingSelector',
-	'../selectors/axes/SelfSelector',
+	'../selectors/Filter',
+	'../selectors/axes/AttributeAxis',
+	'../selectors/axes/AncestorAxis',
+	'../selectors/axes/ChildAxis',
+	'../selectors/axes/DescendantAxis',
+	'../selectors/axes/FollowingSiblingAxis',
+	'../selectors/axes/ParentAxis',
+	'../selectors/axes/PrecedingSiblingAxis',
+	'../selectors/axes/SelfAxis',
 	'../selectors/tests/NodeNameSelector',
 	'../selectors/tests/NodePredicateSelector',
 	'../selectors/tests/NodeTypeSelector',
 	'../selectors/tests/ProcessingInstructionTargetSelector',
-	'../selectors/operators/CompositeSelector',
-	'../selectors/operators/OrCombiningSelector',
+
+	'../selectors/operators/boolean/AndOperator',
+	'../selectors/operators/boolean/OrOperator',
 	'../selectors/operators/UniversalSelector',
-	'../selectors/operators/InvertedSelector',
+	'../selectors/operators/boolean/NotOperator',
+	'../selectors/operators/Union',
+	'../selectors/operators/numeric/Unary',
+	'../selectors/operators/numeric/BinaryNumericOperator',
+	'../selectors/operators/compares/Compare',
+
+	'../selectors/literals/Literal',
 
 	'./xPathParser',
 
-	'./customTestsByName'
+	'./customTestsByName',
+	'./functionsByName'
 ], function (
 	blueprints,
 	domUtils,
 
+	WrappingSelector,
 	PathSelector,
 	AbsolutePathSelector,
+	Filter,
 	AttributeSelector,
-	HasAncestorSelector,
-	HasChildSelector,
-	HasDescendantSelector,
-	HasFollowingSiblingSelector,
-	HasParentSelector,
-	HasPrecedingSiblingSelector,
+	AncestorAxis,
+	ChildAxis,
+	DescendantAxis,
+	FollowingSiblingAxis,
+	ParentAxis,
+	PrecedingSiblingAxis,
 	SelfSelector,
 	NodeNameSelector,
 	NodePredicateSelector,
 	NodeTypeSelector,
 	ProcessingInstructionTargetSelector,
-	CompositeSelector,
-	OrCombiningSelector,
+	AndOperator,
+	OrOperator,
 	UniversalSelector,
-	InvertedSelector,
+	NotOperator,
+	Union,
+	Unary,
+	BinaryNumericOperator,
+	Compare,
+
+	Literal,
 
 	xPathParser,
 
-	customTestsByName
+	customTestsByName,
+	functionsByName
 ) {
 	'use strict';
 
@@ -61,6 +81,7 @@ define([
 	//    * first()
 	//    * position()
 	//    * name()
+	//  * operators, such as >, <, *, +, | and =, unless in the context of attributes
 	//  * variables
 	function compile (ast) {
 		var args = ast.slice(1);
@@ -70,20 +91,22 @@ define([
 				return and(args);
 			case 'or':
 				return or(args);
-			case 'not':
-				return not(args);
+			case 'compare':
+				return compare(args);
+			case 'unaryPlus':
+				return unaryPlus(args);
+			case 'unaryMinus':
+				return unaryMinus(args);
+			case 'binaryOperator':
+				return binaryOperator(args);
 
 			// Tests
 			case 'nameTest':
 				return nameTest(args);
-			case 'nodeType':
+			case 'kindTest':
 				return nodeType(args);
-			case 'customTest':
-				return customTest(args);
-			case 'true':
-				return trueTest(args);
-			case 'false':
-				return falseTest(args);
+			case 'functionCall':
+				return functionCall(args);
 
 			// Axes
 			case 'ancestor':
@@ -113,6 +136,11 @@ define([
 			case 'path':
 				return path(args);
 
+			case 'filter':
+				return filter(args);
+
+			case 'literal':
+				return literal(args);
 
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
@@ -124,20 +152,20 @@ define([
 	}
 
 	function ancestor (args) {
-		return new HasAncestorSelector(compile(args[0]));
+		return new AncestorAxis(compile(args[0]));
 	}
 
 	function ancestorOrSelf (args) {
 		var subSelector = compile(args[0]);
-		return new OrCombiningSelector(
+		return new Union(
 			new SelfSelector(subSelector),
-			new HasAncestorSelector(subSelector));
+			new AncestorAxis(subSelector));
 	}
 
 	function and (args) {
 		var a = compile(args[0]),
 			b = compile(args[1]);
-		return new CompositeSelector(a, b);
+		return new AndOperator(a, b);
 	}
 
 	function attribute (args) {
@@ -147,27 +175,55 @@ define([
 		return new AttributeSelector(args[0][1], value && [value]);
 	}
 
+	function binaryOperator (args) {
+		var kind = args[0];
+		var a = compile(args[1]);
+		var b = compile(args[2]);
+
+		return new BinaryNumericOperator(kind, a, b);
+	}
+
 	function child (args) {
-		return new HasChildSelector(compile(args[0]));
+		return new ChildAxis(compile(args[0]));
 	}
 
 	function descendant (args) {
-		return new HasDescendantSelector(compile(args[0]));
+		return new DescendantAxis(compile(args[0]));
 	}
 
 	function descendantOrSelf (args) {
 		var subSelector = compile(args[0]);
-		return new OrCombiningSelector(
+		return new Union(
 			new SelfSelector(subSelector),
-			new HasDescendantSelector(subSelector));
+			new DescendantAxis(subSelector));
 	}
 
-	function falseTest (args) {
-		return new InvertedSelector(new UniversalSelector());
+	// Binary compare (=, !=, le, is, etc)
+	function compare (args) {
+		return new Compare(args[0], compile(args[1]), compile(args[2]));
+	}
+
+	function filter (args) {
+		return new Filter(compile(args.shift()), args.map(compile));
 	}
 
 	function followingSibling (args) {
-		return new HasFollowingSiblingSelector(compile(args[0]));
+		return new FollowingSiblingAxis(compile(args[0]));
+	}
+
+	function functionCall (args) {
+		var functionName = args[0];
+
+		var createFunction = functionsByName[functionName];
+		if (createFunction) {
+			return createFunction(args.slice(1).map(compile));
+		}
+
+		return customTest(args);
+	}
+
+	function literal (args) {
+		return new Literal(args[0], args[1]);
 	}
 
 	function nameTest (args) {
@@ -193,42 +249,44 @@ define([
 		}
 	}
 
-	function not (args) {
-		return new InvertedSelector(compile(args[0]));
-	}
-
 	function or (args) {
-		return new OrCombiningSelector(compile(args[0]), compile(args[1]));
+		return new OrOperator(compile(args[0]), compile(args[1]));
 	}
 
 	function parent (args) {
-		return new HasParentSelector(compile(args[0]));
+		return new ParentAxis(compile(args[0]));
 	}
 
 	function path (args) {
-		var a = compile(args[0]),
-			b = compile(args[1]);
-		return new PathSelector([a, b]);
+		return new PathSelector(args.map(compile));
 	}
 
 	function precedingSibling (args) {
-		return new HasPrecedingSiblingSelector(compile(args[0]));
+		return new PrecedingSiblingAxis(compile(args[0]));
 	}
 
 	function self (args) {
 		return new SelfSelector(compile(args[0]));
 	}
 
-	function trueTest (args) {
-		return new UniversalSelector();
+	function unaryPlus (args) {
+		return new Unary('+', compile(args[0]));
+	}
+
+	function unaryMinus (args) {
+		return new Unary('-', compile(args[0]));
+	}
+
+	function union (args) {
+		return new Union(args.map(compile));
 	}
 
 	// Custom tests are nodePredicates, and nodePredicates can not always be compared.
 	// Therefore we should get the same instance of selectors wherever possible.
 	var customSelectorsByName = Object.create(null);
 	function customTest (args) {
-		var name = args[0],
-			params = args[1];
+		var name = args.shift(),
+			params = args.map(compile);
 		// Roughly approximate function call, to allow memoization
 		var key = name + '(' + (params ? ('"' + params.join('", ') + '"') : '') + ')';
 		if (customSelectorsByName[key]) {
@@ -236,10 +294,21 @@ define([
 		}
 		var test = customTestsByName[name];
 		if (!test) {
-			throw new Error('No such custom test ' + name + '.');
+			test = customTestsByName[name.replace('fonto-', 'fonto:')];
+			if (!test) {
+				throw new Error('No such custom test ' + name + '.');
+			}
 		}
 		// Optionally bind the test, if there are arguments
-		var boundTest = params ? test.bind.apply(test, [undefined].concat(params)): test;
+		var paramValues;
+		if (params) {
+			// Evaluate the params. Assume them being able to be statically evaluated to strings
+			paramValues = params.map(function (param) {
+				var resultSequence = param.evaluate(null, null);
+				return resultSequence.value[0].value;
+			});
+		}
+		var boundTest = paramValues ? test.bind.apply(test, [undefined].concat(paramValues)): test;
 		var selector = new NodePredicateSelector(boundTest);
 		customSelectorsByName[key] = selector;
 		return selector;
@@ -259,6 +328,6 @@ define([
 			var ast = xPathParser.parse(xPathString);
 			selectorCache[xPathString] = compile(ast);
 		}
-		return selectorCache[xPathString];
+		return new WrappingSelector(selectorCache[xPathString]);
 	};
 });

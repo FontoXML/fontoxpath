@@ -1,12 +1,14 @@
 define([
 	'fontoxml-blueprints',
 
-	'../Selector'
+	'../Selector',
+	'../dataTypes/Sequence'
 ], function (
 	blueprints,
 
-	Selector
-	) {
+	Selector,
+	Sequence
+) {
 	'use strict';
 
 	var blueprintQuery = blueprints.blueprintQuery;
@@ -14,20 +16,20 @@ define([
 	/**
 	 * @param  {Selector}  ancestorSelector
 	 */
-	function HasAncestorSelector (ancestorSelector) {
+	function AncestorAxis (ancestorSelector) {
 		Selector.call(this, ancestorSelector.specificity);
 
 		this._ancestorSelector = ancestorSelector;
 	}
 
-	HasAncestorSelector.prototype = Object.create(Selector.prototype);
-	HasAncestorSelector.prototype.constructor = HasAncestorSelector;
+	AncestorAxis.prototype = Object.create(Selector.prototype);
+	AncestorAxis.prototype.constructor = AncestorAxis;
 
 	/**
 	 * @param  {Node}       node
 	 * @param  {Blueprint}  blueprint
 	 */
-	HasAncestorSelector.prototype.matches = function (node, blueprint) {
+	AncestorAxis.prototype.matches = function (node, blueprint) {
 		var parentNode = blueprint.getParentNode(node);
 		if (!parentNode) {
 			// Out of document, fail
@@ -39,27 +41,26 @@ define([
 		}.bind(this));
 	};
 
-	HasAncestorSelector.prototype.equals = function (otherSelector) {
+	AncestorAxis.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
 		}
 
-		return otherSelector instanceof HasAncestorSelector &&
+		return otherSelector instanceof AncestorAxis &&
 			this._ancestorSelector.equals(otherSelector._ancestorSelector);
 	};
 
-	HasAncestorSelector.prototype.walkStep = function (nodes, blueprint) {
-		return nodes.reduce(function (resultingNodes, node) {
-			Array.prototype.push.apply(
-				resultingNodes,
+	AncestorAxis.prototype.evaluate = function (nodeSequence, blueprint) {
+		return nodeSequence.value.reduce(function (resultingSequence, node) {
+			return resultingSequence.merge(new Sequence(
 				blueprintQuery.findAllAncestors(blueprint, node, false)
 					.filter(function (node) {
-						return this._ancestorSelector.matches(node, blueprint);
-					}.bind(this)));
-
-			return resultingNodes;
-		}.bind(this), []);
+						return this._ancestorSelector.evaluate(
+							Sequence.singleton(node),
+							blueprint).getEffectiveBooleanValue();
+					}.bind(this))));
+			}.bind(this), new Sequence());
 	};
 
-	return HasAncestorSelector;
+	return AncestorAxis;
 });

@@ -1,5 +1,5 @@
 define([
-	'./selectors/UniversalSelector',
+	'./selectors/operators/UniversalSelector',
 
 	// Have to import these to register extra methods on the Selector prototype
 	'./selectors/selectorFluentApi'

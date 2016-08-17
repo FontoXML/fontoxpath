@@ -1,15 +1,13 @@
 define([
-	'fontoxml-blueprints',
 	'./Selector',
-	'./Specificity'
+	'./Specificity',
+	'./dataTypes/Sequence'
 ], function (
-	blueprints,
 	Selector,
-	Specificity
+	Specificity,
+	Sequence
 ) {
 	'use strict';
-
-	var blueprintQuery = blueprints.blueprintQuery;
 
 	/**
 	 * @param  {Selector[]}  stepSelectors
@@ -39,7 +37,7 @@ define([
 			var selector = this._stepSelectors[i];
 
 			for (var j = 0, k = intermediateResults.length; j < k; ++j) {
-				Array.prototype.push.apply(newResults, selector.walkStep(intermediateResults[j], blueprint));
+				Array.prototype.push.apply(newResults, selector.evaluate(intermediateResults[j], blueprint));
 			}
 
 			if (!newResults.length) {
@@ -60,19 +58,21 @@ define([
 			});
 	};
 
-	PathSelector.prototype.walkStep = function (nodes, blueprint) {
-		var intermediateResults = nodes,
-			newResults = [];
+	PathSelector.prototype.evaluate = function (nodeSequence, blueprint) {
+		var intermediateResults = nodeSequence,
+			newResults = new Sequence();
 		for (var i = 0, l = this._stepSelectors.length; i < l; ++i) {
 			var selector = this._stepSelectors[i];
 
-			newResults = selector.walkStep(intermediateResults, blueprint);
+			newResults = selector.evaluate(intermediateResults, blueprint);
 
-			if (!newResults.length) {
-				return [];
+			if (newResults.isEmpty()) {
+				return newResults;
 			}
 			intermediateResults = newResults;
-			newResults = [];
+
+			intermediateResults.value = intermediateResults.value
+			newResults = new Sequence();
 		}
 
 		return intermediateResults;

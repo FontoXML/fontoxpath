@@ -1,35 +1,35 @@
 define([
 	'./Selector',
-	'./CompositeSelector',
 	'../adaptNodeSpecToSelector',
 
-	'./axes/AttributeSelector',
-	'./axes/HasAncestorSelector',
-	'./axes/HasChildSelector',
-	'./axes/HasDescendantSelector',
-	'./axes/HasFollowingSiblingSelector',
-	'./axes/HasParentSelector',
-	'./axes/HasPrecedingSiblingSelector',
-	'./operators/InvertedSelector',
-	'./operators/OrCombiningSelector',
+	'./axes/AttributeAxis',
+	'./axes/AncestorAxis',
+	'./axes/ChildAxis',
+	'./axes/DescendantAxis',
+	'./axes/FollowingSiblingAxis',
+	'./axes/ParentAxis',
+	'./axes/PrecedingSiblingAxis',
+	'./operators/boolean/AndOperator',
+	'./operators/boolean/NotOperator',
+	'./operators/boolean/OrOperator',
 	'./tests/NodeNameSelector',
 	'./tests/NodePredicateSelector'
 ], function (
 	Selector,
-	CompositeSelector,
 	adaptNodeSpecToSelector,
-
 	AttributeSelector,
-	HasAncestorSelector,
-	HasChildSelector,
-	HasDescendantSelector,
-	HasFollowingSiblingSelector,
-	HasParentSelector,
-	HasPrecedingSiblingSelector,
-	InvertedSelector,
+
+	AncestorAxis,
+	ChildAxis,
+	DescendantAxis,
+	FollowingSiblingAxis,
+	ParentAxis,
+	PrecedingSiblingAxis,
+	AndOperator,
+	NotOperator,
 	NodeNameSelector,
 	NodePredicateSelector,
-	OrCombiningSelector
+	OrOperator
 ) {
 	'use strict';
 
@@ -38,9 +38,9 @@ define([
 	 * @param  {Selector|NodeSpec}  ancestorSelector
 	 */
 	Selector.prototype.requireAncestor = function (ancestorSelector) {
-		return new CompositeSelector(
+		return new AndOperator(
 			this,
-			new HasAncestorSelector(adaptNodeSpecToSelector(ancestorSelector)));
+			new AncestorAxis(adaptNodeSpecToSelector(ancestorSelector)));
 	};
 
 	/**
@@ -52,75 +52,75 @@ define([
 			attributeValues = [attributeValues];
 		}
 
-		return new CompositeSelector(this, new AttributeSelector(attributeName, attributeValues));
+		return new AndOperator(this, new AttributeSelector(attributeName, attributeValues));
 	};
 	/**
 	 * @param  {Selector|NodeSpec}  childSelector
 	 */
 	Selector.prototype.requireChild = function (childSelector) {
-		return new CompositeSelector(
+		return new AndOperator(
 			this,
-			new HasChildSelector(adaptNodeSpecToSelector(childSelector)));
+			new ChildAxis(adaptNodeSpecToSelector(childSelector)));
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  descendantSelector
 	 */
 	Selector.prototype.requireDescendant = function (descendantSelector) {
-		return new CompositeSelector(
+		return new AndOperator(
 			this,
-			new HasDescendantSelector(adaptNodeSpecToSelector(descendantSelector)));
+			new DescendantAxis(adaptNodeSpecToSelector(descendantSelector)));
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  parentSelector
 	 */
 	Selector.prototype.requireParent = function (parentSelector) {
-		return new CompositeSelector(
+		return new AndOperator(
 			this,
-			new HasParentSelector(adaptNodeSpecToSelector(parentSelector)));
+			new ParentAxis(adaptNodeSpecToSelector(parentSelector)));
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  selectorToInvert
 	 */
 	Selector.prototype.requireNot = function (selectorToInvert) {
-		return new CompositeSelector(
+		return new AndOperator(
 			this,
-			new InvertedSelector(adaptNodeSpecToSelector(selectorToInvert)));
+			new NotOperator(adaptNodeSpecToSelector(selectorToInvert)));
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  siblingSelector
 	 */
 	Selector.prototype.requireFollowingSibling = function (siblingSelector) {
-		return new CompositeSelector(
+		return new AndOperator(
 			this,
-			new HasFollowingSiblingSelector(adaptNodeSpecToSelector(siblingSelector)));
+			new FollowingSiblingAxis(adaptNodeSpecToSelector(siblingSelector)));
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  siblingSelector
 	 */
 	Selector.prototype.requirePrecedingSibling = function (siblingSelector) {
-		return new CompositeSelector(
+		return new AndOperator(
 			this,
-			new HasPrecedingSiblingSelector(adaptNodeSpecToSelector(siblingSelector)));
+			new PrecedingSiblingAxis(adaptNodeSpecToSelector(siblingSelector)));
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  selectorToRequire
 	 */
 	Selector.prototype.orRequire = function (selectorToRequire) {
-		return new OrCombiningSelector(
+		return new OrOperator(
 			this,
-			new OrCombiningSelector(adaptNodeSpecToSelector, selectorToRequire));
+			new OrOperator(adaptNodeSpecToSelector, selectorToRequire));
 	};
 
 	/**
 	 * @param  {Function}  isMatchingNode
 	 */
 	Selector.prototype.requireNodePredicate = function (isMatchingNode) {
-		return new CompositeSelector(this, new NodePredicateSelector(isMatchingNode));
+		return new AndOperator(this, new NodePredicateSelector(isMatchingNode));
 	};
 });
