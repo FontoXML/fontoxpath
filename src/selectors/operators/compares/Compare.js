@@ -37,9 +37,9 @@ define([
 	Compare.prototype = Object.create(Selector.prototype);
 	Compare.prototype.constructor = Compare;
 
-	Compare.prototype.evaluate = function (nodeSequence, blueprint) {
-		var firstSequence = this._firstSelector.evaluate(nodeSequence, blueprint),
-			secondSequence = this._secondSelector.evaluate(nodeSequence, blueprint);
+	Compare.prototype.evaluate = function (dynamicContext) {
+		var firstSequence = this._firstSelector.evaluate(dynamicContext),
+			secondSequence = this._secondSelector.evaluate(dynamicContext);
 
 		// Atomize both sequences
 		var firstAtomizedSequence = firstSequence.atomize();

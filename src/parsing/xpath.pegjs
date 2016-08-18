@@ -41,11 +41,11 @@ ExprSingle
 
 // 16
 OrExpr
- = first:AndExpr rest:( " or " expr:AndExpr {return expr})* {return rest.length ? appendRest(['or', first], rest) : first}
+ = first:AndExpr rest:( _ "or" _  expr:AndExpr {return expr})* {return rest.length ? appendRest(['or', first], rest) : first}
 
 // 17
 AndExpr
- = first:ComparisonExpr rest:(" and " expr:ComparisonExpr {return expr})* {return rest.length ? appendRest(['and', first], rest) : first}
+ = first:ComparisonExpr rest:( _ "and" _ expr:ComparisonExpr {return expr})* {return rest.length ? appendRest(["and", first], rest) : first}
 
 // 18
 ComparisonExpr
@@ -104,8 +104,12 @@ CastExpr
 
 // 29
 ArrowExpr
-// = lhs:UnaryExpr ( _ "=>" _ fs:ArrowFunctionSpecifier al:ArgumentList _ )+ {return ["arrow", fs, al]}
- = UnaryExpr
+ = lhs:UnaryExpr functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier argumentList:ArgumentList _ { return [functionName, argumentList]})* {
+     if (!functionParts.length) return lhs;
+     return functionParts.reduce(function (previousFunction, functionPart) {
+       return ["functionCall", functionPart[0], previousFunction].concat(functionPart[1]);
+     }, lhs);
+   }
 
 // 30
 UnaryExpr
@@ -156,7 +160,7 @@ AxisStep
    	  if (!predicates.length) {
      	return [axis, test];
   	   }
-       return ["filter", [axis, test]].concat(predicates)
+       return ["filter", [axis, test], predicates]
   	}
  / AbbreviatedStep
 
@@ -224,8 +228,8 @@ PrimaryExpr
 // 57
 Literal = NumericLiteral / StringLiteral
 
-// 58
-NumericLiteral = IntegerLiteral / DecimalLiteral / DoubleLiteral
+// 58 Note: changes because double accepts less than decimal, accepts less than integer
+NumericLiteral = DoubleLiteral / DecimalLiteral / IntegerLiteral
 
 // 59
 VarRef
@@ -258,27 +262,36 @@ Argument
 ArgumentPlaceholder
  = "?" {return "placeholder"}
 
+// 66
 FunctionItemExpr
  = NamedFunctionRef
  / InlineFunctionRef
 
+// 67
 NamedFunctionRef
  = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", name, integer]}
 
+// 68
 InlineFunctionRef
  = "function" _ "(" _ params:ParamList _ ")" _ body:FunctionBody {return ["inlineFunction", params, [], body]}
  / "function" _ "(" _ params:ParamList _ ") as " type:SequenceType  _ body:FunctionBody {return ["inlineFunction", params, type, body]}
 
+// Note: 69 - 77 are not implemented, they are the map / array constructors and operators
+
+// 77
 SingleType
  = typeName:SimpleTypeName multiplicity:"?"? {return ["type", typeName, !!multiplicity]}
 
+// 78
 TypeDeclaration
  = " as " SequenceType
 
+// 79
 SequenceType
  = "empty-sequence()"
  / ItemType  _ OccurenceIndicator
 
+// 80
 OccurenceIndicator = "?" / "*" / "+"
 
 // 81
@@ -291,8 +304,10 @@ ItemType
 // / AtomicOrUnionType
  / ParenthesizedItemType
 
+//82
 AtomicOrUnionType = EQName
 
+// 83
 KindTest
  = DocumentTest
  / ElementTest
@@ -311,7 +326,7 @@ KindTest
 AnyKindTest
  = "node()" {return ["kindTest", "node"]}
 
-// 84
+// 85
 DocumentTest
  = "document(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["kindTest", "document", innerTest]}
  / "document()" {return ["kindTest", "document"]}
@@ -375,12 +390,16 @@ ElementName = EQName
 // 100
 SimpleTypeName = TypeName
 
+// 101
 TypeName = EQName
 
+// 102
 FunctionTest = AnyFunctionTest / TypedFunctionTest
 
+// 103
 AnyFunctionTest = "function (*)"
 
+// 104
 TypedFunctionTest
  = "function (" _ (SequenceType ("," _ SequenceType)*)? _ ") as " SequenceType
 
@@ -418,7 +437,7 @@ DecimalLiteral
 
 // 115
 DoubleLiteral
- = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return parseInt(double, 10), "xs:double"}
+ = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["literal", parseFloat(double, 10), "xs:double"]}
 
 // 116
 StringLiteral
@@ -429,7 +448,7 @@ StringLiteral
 URIQualifiedName = BracedURILiteral / NCName
 
 // 118
-BracedURILiteral = "Q _ " [^{}]* "}"
+BracedURILiteral = "Q" _ "{" [^{}]* "}"
 
 // 119
 EscapeQuot
@@ -441,7 +460,16 @@ EscapeApos
 
 // 121
 Comment
- = "(:" (CommentContents / Comment) ":)"
+ = "(:" (CommentContents / Comment)* ":)"
+
+// 122 Note: https://www.w3.org/TR/REC-xml-names/#NT-QName
+QName = PrefixedName / UnprefixedName
+
+// 123 Note: https://www.w3.org/TR/REC-xml-names/#NT-NCName
+NCName = start:NCNameStartChar rest:(NCNameChar*) {return start+rest.join('')}
+
+// 124 Note: https://www.w3.org/TR/REC-xml/#NT-Char
+Char = "\u0009" / "\u000A" / "\u000D" / [\u0020-\uD7FF] / [\uE000-\uFFFD] / [\u10000-\u10FFFF]	/* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
 
 // 125
 Digits
@@ -449,12 +477,9 @@ Digits
 
 // 126
 CommentContents
- = [^(\(:)(:\))]*
-
+ = !"(:" !":)" Char
 
 // XML types
-QName = PrefixedName / UnprefixedName
-
 PrefixedName = $(Prefix ":" LocalPart)
 
 UnprefixedName = LocalPart
@@ -463,15 +488,17 @@ LocalPart = NCName
 
 Prefix = NCName
 
-NCName = start:NCNameStartChar rest:(NCNameChar*) {return start+rest.join('')}
-
 NCNameStartChar = [A-Z] / "_" / [a-z]
 
 NCNameChar = NCNameStartChar / [-.0-9]
 
-// Whitespace
+// Whitespace Note: https://www.w3.org/TR/REC-xml/#NT-S
 _
- = [\n\t\r ]*
+ = WhitespaceCharacter*
+
+WhitespaceCharacter
+ = "\u0020" / "\u0009" / "\u000D" / "\u000A"
+ / Comment // Note: comments can occur anywhere where whitespace is allowed: https://www.w3.org/TR/xpath-3/#DefaultWhitespaceHandling
 
 ReservedFunctionNames
  = "array"

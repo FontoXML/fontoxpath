@@ -36,9 +36,16 @@ define([
 			this._selector.equals(otherSelector._selector);
 	};
 
-	SelfAxis.prototype.evaluate = function (nodeSequence, blueprint) {
+	SelfAxis.prototype.evaluate = function (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
+
 		return new Sequence(nodeSequence.value.filter(function (node) {
-			return this._selector.evaluate(Sequence.singleton(node), blueprint).getEffectiveBooleanValue();
+			return this._selector.evaluate({
+				blueprint: blueprint,
+				contextItem: Sequence.singleton(node),
+				contextSequence: nodeSequence
+			}, blueprint).getEffectiveBooleanValue();
 		}.bind(this)));
 	};
 

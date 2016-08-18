@@ -35,10 +35,12 @@ define([
 		return domInfo.isProcessingInstruction(node) && node.target === this._target;
 	};
 
-	ProcessingInstructionTargetSelector.prototype.evaluate = function (sequence, blueprint) {
+	ProcessingInstructionTargetSelector.prototype.evaluate = function (dynamicContext) {
+		var sequence = dynamicContext.contextItem
 		// Assume singleton
 		var node = sequence.value[0];
-		return Sequence.singleton(new BooleanValue(domInfo.isProcessingInstruction(node) && node.target === this._target));
+		var isMatchingProcessingInstruction = domInfo.isProcessingInstruction(node) && node.target === this._target;
+		return Sequence.singleton(new BooleanValue(isMatchingProcessingInstruction));
 	};
 
 	ProcessingInstructionTargetSelector.prototype.equals = function (otherSelector) {

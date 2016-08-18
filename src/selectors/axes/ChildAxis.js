@@ -44,12 +44,18 @@ define([
 			this._childSelector.equals(otherSelector._childSelector);
 	};
 
-	ChildAxis.prototype.evaluate = function (nodeSequence, blueprint) {
+	ChildAxis.prototype.evaluate = function (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
 		return nodeSequence.value.reduce(function (resultingSequence, node) {
 			return resultingSequence.merge(new Sequence(
 				blueprintQuery.findChildren(blueprint, node, function (node) {
-						return this._childSelector.matches(node, blueprint);
-					}.bind(this))));
+					return this._childSelector.evaluate({
+						blueprint: blueprint,
+						contextItem: Sequence.singleton(node),
+						contextSequence: null
+					}).getEffectiveBooleanValue();
+				}.bind(this))));
 		}.bind(this), new Sequence());
 	};
 

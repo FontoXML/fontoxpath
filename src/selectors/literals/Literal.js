@@ -52,7 +52,7 @@ define([
 	Literal.prototype = Object.create(Selector.prototype);
 	Literal.prototype.constructor = Literal;
 
-	Literal.prototype.evaluate = function (sequence, blueprint) {
+	Literal.prototype.evaluate = function (dynamicContext) {
 		return this._value;
 	};
 

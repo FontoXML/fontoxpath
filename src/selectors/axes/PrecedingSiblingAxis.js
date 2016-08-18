@@ -48,10 +48,18 @@ define([
 	};
 
 
-	PrecedingSiblingAxis.prototype.evaluate = function (sequence, blueprint) {
+	PrecedingSiblingAxis.prototype.evaluate = function (dynamicContext) {
+		var sequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
+
 		function isMatchingSibling (selector, node) {
-			return selector.evaluate(Sequence.singleton(node), blueprint).getEffectiveBooleanValue();
+			return selector.evaluate({
+				contextItem: Sequence.singleton(node),
+				blueprint: blueprint,
+				contextSequence: null
+			}).getEffectiveBooleanValue();
 		}
+
 		return sequence.value.reduce(function (resultingSequence, node) {
 			var sibling = node;
 			var nodes = [];

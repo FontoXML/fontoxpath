@@ -18,7 +18,7 @@ define([
 		var decimalValue = DecimalValue.cast(value);
 
 		// Strip off any decimals
-		var integerValue = decimalValue.value % 1;
+		var integerValue = Math.abs(decimalValue.value);
 
 		return new IntegerValue(integerValue);
 	};

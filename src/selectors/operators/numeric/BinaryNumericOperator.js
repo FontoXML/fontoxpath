@@ -49,14 +49,14 @@ define([
 		}
 	}
 
-	Unary.prototype.evaluate = function (nodeSequence, blueprint) {
-		var firstValueSequence = this._firstValueExpr.evaluate(nodeSequence, blueprint).atomize();
+	Unary.prototype.evaluate = function (dynamicContext) {
+		var firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize();
 		if (firstValueSequence.isEmpty()) {
 			// Shortcut, if the first part is empty, we can return empty.
 			// As per spec, we do not have to evaluate the second part, though we could.
 			return firstValueSequence;
 		}
-		var secondValueSequence = this._secondValueExpr.evaluate(nodeSequence, blueprint);
+		var secondValueSequence = this._secondValueExpr.evaluate(dynamicContext);
 		if (secondValueSequence.isEmpty()) {
 			return secondValueSequence;
 		}

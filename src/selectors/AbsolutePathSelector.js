@@ -28,10 +28,15 @@ define([
 			this._relativePathSelector.equals(otherSelector.relativePathSelector);
 	};
 
-	AbsolutePathSelector.prototype.evaluate = function (nodeSequence, blueprint) {
+	AbsolutePathSelector.prototype.evaluate = function (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
 		// Assume this is the start, so only one node
-		return this._relativePathSelector.evaluate(
-			Sequence.singleton(blueprintQuery.getDocumentNode(blueprint, nodeSequence.value[0])), blueprint);
+		return this._relativePathSelector.evaluate({
+			contextItem: Sequence.singleton(blueprintQuery.getDocumentNode(blueprint, nodeSequence.value[0])),
+			contextSequence: null,
+			blueprint
+		});
 	};
 
 	return AbsolutePathSelector;

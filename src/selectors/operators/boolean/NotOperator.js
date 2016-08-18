@@ -33,8 +33,8 @@ define([
 		return !this._selectorToInvert.matches(node, blueprint);
 	};
 
-	NotOperator.prototype.evaluate = function (sequence, blueprint) {
-		var result = this._selectorToInvert.evaluate(sequence, blueprint);
+	NotOperator.prototype.evaluate = function (dynamicContext) {
+		var result = this._selectorToInvert.evaluate(dynamicContext);
 		return Sequence.singleton(new BooleanValue(!result.getEffectiveBooleanValue()));
 	};
 

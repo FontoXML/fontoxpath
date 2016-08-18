@@ -27,8 +27,8 @@ define([
 	Unary.prototype = Object.create(Selector.prototype);
 	Unary.prototype.constructor = Unary;
 
-	Unary.prototype.evaluate = function (nodeSequence, blueprint) {
-		var valueSequence = this._valueExpr.evaluate(nodeSequence, blueprint);
+	Unary.prototype.evaluate = function (dynamicContext) {
+		var valueSequence = this._valueExpr.evaluate(dynamicContext);
 		if (valueSequence.isEmpty()) {
 			return Sequence.singleton(new DoubleValue(Number.NaN));
 		}

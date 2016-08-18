@@ -47,9 +47,16 @@ define([
 			this._siblingSelector.equals(otherSelector._siblingSelector);
 	};
 
-	FollowingSiblingAxis.prototype.evaluate = function (sequence, blueprint) {
+	FollowingSiblingAxis.prototype.evaluate = function (dynamicContext) {
+		var sequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
+
 		function isMatchingSibling (selector, node) {
-			return selector.evaluate(Sequence.singleton(node), blueprint).getEffectiveBooleanValue();
+			return selector.evaluate({
+				blueprint: blueprint,
+				contextItem: Sequence.singleton(node),
+				contextSequence: null
+			}).getEffectiveBooleanValue();
 		}
 		return sequence.value.reduce(function (resultingSequence, node) {
 			var sibling = node;

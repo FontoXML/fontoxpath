@@ -31,7 +31,9 @@ define([
 		return node.nodeType === this._nodeType;
 	};
 
-	NodeTypeSelector.prototype.evaluate = function (sequence, blueprint) {
+	NodeTypeSelector.prototype.evaluate = function (dynamicContext) {
+		var sequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
 		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0], blueprint)));
 	};
 

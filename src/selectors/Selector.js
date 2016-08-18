@@ -35,7 +35,7 @@ define([
 		return null;
 	};
 
-	Selector.prototype.evaluate = function (nodes, blueprint) {
+	Selector.prototype.evaluate = function (dynamicContext) {
 		throw new Error('Not Implemented');
 	};
 

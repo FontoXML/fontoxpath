@@ -57,7 +57,9 @@ define([
 		return isSameArray(nodeNames, otherNodeNames);
 	};
 
-	NodeNameSelector.prototype.evaluate = function (sequence, blueprint) {
+	NodeNameSelector.prototype.evaluate = function (dynamicContext) {
+		var sequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
 		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0], blueprint)));
 	};
 

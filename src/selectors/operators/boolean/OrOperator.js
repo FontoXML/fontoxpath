@@ -1,39 +1,42 @@
 define([
 	'../../Selector',
+	'../../Specificity',
 	'../../dataTypes/Sequence',
 	'../../dataTypes/BooleanValue'
 ], function (
 	Selector,
+	Specificity,
 	Sequence,
 	BooleanValue
 ) {
 	'use strict';
 
 	/**
-	 * The 'or' combining selector, union when evaluating
-	 * @param  {Selector}  firstSelector
-	 * @param  {Selector}  secondSelector
+	 * The 'or' combining selector
+	 * @param  {Selector[]}  selectors
 	 */
-	function OrOperator (firstSelector, secondSelector) {
-		Selector.call(this, firstSelector.specificity.add(secondSelector.specificity));
+	function OrOperator (selectors) {
+		Selector.call(this, selectors.reduce(function (specificity, selector) {
+			return specificity.add(selector.specificity);
+		}, new Specificity({})));
 
-		// If both subSelectors define the same bucket: use that one, else, use no bucket.
-		var firstBucket = firstSelector.getBucket(),
-			secondBucket = secondSelector.getBucket();
+		// If all subSelectors define the same bucket: use that one, else, use no bucket.
+		this._bucket = selectors.reduce(function (bucket, selector) {
+			if (bucket === undefined) {
+				return selector.getBucket();
+			}
+			if (bucket === null) {
+				return null;
+			}
 
-		this._bucket = firstBucket === secondBucket ? firstBucket : null;
+			if (bucket !== selector.getBucket()) {
+				return null;
+			}
 
-		this._subSelectors = [];
-		if (firstSelector instanceof OrOperator) {
-			this._subSelectors = firstSelector._subSelectors.concat();
-		} else {
-			this._subSelectors.push(firstSelector);
-		}
-		if (secondSelector instanceof OrOperator) {
-			this._subSelectors = this._subSelectors.concat(secondSelector._subSelectors);
-		} else {
-			this._subSelectors.push(secondSelector);
-		}
+			return bucket;
+		}, undefined);
+
+		this._subSelectors = selectors;
 	}
 
 	OrOperator.prototype = Object.create(Selector.prototype);
@@ -82,9 +85,9 @@ define([
 			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	};
 
-	OrOperator.prototype.evaluate = function (sequence, blueprint) {
+	OrOperator.prototype.evaluate = function (dynamicContext) {
 		var result = this._subSelectors.some(function (subSelector) {
-				return subSelector.evaluate(sequence, blueprint).getEffectiveBooleanValue();
+				return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
 			});
 
 		return Sequence.singleton(new BooleanValue(result));

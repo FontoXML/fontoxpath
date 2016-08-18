@@ -2,12 +2,14 @@ define([
 	'../../dataTypes/Sequence',
 	'../../dataTypes/UntypedAtomicValue',
 	'../../dataTypes/StringValue',
-	'../../dataTypes/BooleanValue'
+	'../../dataTypes/FloatValue',
+	'../../dataTypes/DoubleValue'
 ], function (
 	Sequence,
 	UntypedAtomicValue,
 	StringValue,
-	BooleanValue
+	FloatValue,
+	DoubleValue
 ) {
 	'use strict';
 
@@ -32,8 +34,24 @@ define([
 		}
 
 		if (firstValue.primitiveType !== secondValue.primitiveType) {
-			// TODO: huge casting shite
-			throw new Error('ERRXPTY0004: Values to compare are not of the same type');
+			if ((firstValue.primitiveType === 'xs:string' || firstValue.primitiveType === 'xs:anyURI') &&
+				(secondValue.primitiveType === 'xs:string' || secondValue.primitiveType === 'xs:anyURI')) {
+				firstValue = StringValue.cast(firstValue);
+				secondValue = StringValue.cast(secondValue);
+			}
+			else if ((firstValue.primitiveType === 'xs:decimal' || firstValue.primitiveType === 'xs:float') &&
+					(secondValue.primitiveType === 'xs:decimal' || secondValue.primitiveType === 'xs:float')) {
+				firstValue = FloatValue.cast(firstValue);
+				secondValue = FloatValue.cast(secondValue);
+			}
+			else if ((firstValue.primitiveType === 'xs:decimal' || firstValue.primitiveType === 'xs:float' || firstValue.primitiveType === 'xs:double') &&
+					(secondValue.primitiveType === 'xs:decimal' || secondValue.primitiveType === 'xs:float' || secondValue.primitiveType === 'xs:double')) {
+				firstValue = DoubleValue.cast(firstValue);
+				secondValue = DoubleValue.cast(secondValue);
+			}
+			else {
+				throw new Error('ERRXPTY0004: Values to compare are not of the same type');
+			}
 		}
 
 		switch (operator) {
@@ -47,7 +65,7 @@ define([
 				return firstValue.value <= secondValue.value;
 			case 'gt':
 				return firstValue.value > secondValue.value;
-			case 'gte':
+			case 'ge':
 				return firstValue.value >= secondValue.value;
 		}
 	};

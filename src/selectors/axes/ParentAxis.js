@@ -28,12 +28,19 @@ define([
 			this._parentSelector.equals(otherSelector._parentSelector);
 	};
 
-	ParentAxis.prototype.evaluate = function (nodeSequence, blueprint) {
+	ParentAxis.prototype.evaluate = function (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
+
 		return new Sequence(
 			nodeSequence.value
 				.map(blueprint.getParentNode.bind(blueprint))
 				.filter(function (node) {
-					var result = this._parentSelector.evaluate(Sequence.singleton(node), blueprint);
+					var result = this._parentSelector.evaluate({
+							blueprint: blueprint,
+							contextItem: Sequence.singleton(node),
+							contextSequence: null
+						});
 					return result.getEffectiveBooleanValue();
 				}.bind(this)));
 	};

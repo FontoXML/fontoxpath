@@ -20,21 +20,20 @@ define([
 	'../selectors/tests/NodeTypeSelector',
 	'../selectors/tests/ProcessingInstructionTargetSelector',
 
+	'../selectors/functions/FunctionCall',
 	'../selectors/operators/boolean/AndOperator',
 	'../selectors/operators/boolean/OrOperator',
 	'../selectors/operators/UniversalSelector',
 	'../selectors/operators/boolean/NotOperator',
 	'../selectors/operators/Union',
+	'../selectors/operators/SequenceOperator',
 	'../selectors/operators/numeric/Unary',
 	'../selectors/operators/numeric/BinaryNumericOperator',
 	'../selectors/operators/compares/Compare',
 
 	'../selectors/literals/Literal',
 
-	'./xPathParser',
-
-	'./customTestsByName',
-	'./functionsByName'
+	'./xPathParser'
 ], function (
 	blueprints,
 	domUtils,
@@ -55,21 +54,21 @@ define([
 	NodePredicateSelector,
 	NodeTypeSelector,
 	ProcessingInstructionTargetSelector,
+
+	FunctionCall,
 	AndOperator,
 	OrOperator,
 	UniversalSelector,
 	NotOperator,
 	Union,
+	SequenceOperator,
 	Unary,
 	BinaryNumericOperator,
 	Compare,
 
 	Literal,
 
-	xPathParser,
-
-	customTestsByName,
-	functionsByName
+	xPathParser
 ) {
 	'use strict';
 
@@ -99,6 +98,10 @@ define([
 				return unaryMinus(args);
 			case 'binaryOperator':
 				return binaryOperator(args);
+			case 'sequence':
+				return sequence(args);
+			case 'union':
+				return union(args);
 
 			// Tests
 			case 'nameTest':
@@ -163,9 +166,7 @@ define([
 	}
 
 	function and (args) {
-		var a = compile(args[0]),
-			b = compile(args[1]);
-		return new AndOperator(a, b);
+		return new AndOperator(args.map(compile));
 	}
 
 	function attribute (args) {
@@ -204,7 +205,7 @@ define([
 	}
 
 	function filter (args) {
-		return new Filter(compile(args.shift()), args.map(compile));
+		return new Filter(compile(args[0]), args[1].map(compile));
 	}
 
 	function followingSibling (args) {
@@ -212,14 +213,10 @@ define([
 	}
 
 	function functionCall (args) {
-		var functionName = args[0];
-
-		var createFunction = functionsByName[functionName];
-		if (createFunction) {
-			return createFunction(args.slice(1).map(compile));
-		}
-
-		return customTest(args);
+		var functionName = args.shift();
+		// Note: due to deprecation, we need to switcharoo fonto- to fonto:
+		functionName = functionName.replace('fonto-', 'fonto:');
+		return new FunctionCall(functionName, args.map(compile));
 	}
 
 	function literal (args) {
@@ -250,7 +247,7 @@ define([
 	}
 
 	function or (args) {
-		return new OrOperator(compile(args[0]), compile(args[1]));
+		return new OrOperator(args.map(compile));
 	}
 
 	function parent (args) {
@@ -269,6 +266,10 @@ define([
 		return new SelfSelector(compile(args[0]));
 	}
 
+	function sequence (args) {
+		return new SequenceOperator(args.map(compile));
+	}
+
 	function unaryPlus (args) {
 		return new Unary('+', compile(args[0]));
 	}
@@ -279,39 +280,6 @@ define([
 
 	function union (args) {
 		return new Union(args.map(compile));
-	}
-
-	// Custom tests are nodePredicates, and nodePredicates can not always be compared.
-	// Therefore we should get the same instance of selectors wherever possible.
-	var customSelectorsByName = Object.create(null);
-	function customTest (args) {
-		var name = args.shift(),
-			params = args.map(compile);
-		// Roughly approximate function call, to allow memoization
-		var key = name + '(' + (params ? ('"' + params.join('", ') + '"') : '') + ')';
-		if (customSelectorsByName[key]) {
-			return customSelectorsByName[key];
-		}
-		var test = customTestsByName[name];
-		if (!test) {
-			test = customTestsByName[name.replace('fonto-', 'fonto:')];
-			if (!test) {
-				throw new Error('No such custom test ' + name + '.');
-			}
-		}
-		// Optionally bind the test, if there are arguments
-		var paramValues;
-		if (params) {
-			// Evaluate the params. Assume them being able to be statically evaluated to strings
-			paramValues = params.map(function (param) {
-				var resultSequence = param.evaluate(null, null);
-				return resultSequence.value[0].value;
-			});
-		}
-		var boundTest = paramValues ? test.bind.apply(test, [undefined].concat(paramValues)): test;
-		var selector = new NodePredicateSelector(boundTest);
-		customSelectorsByName[key] = selector;
-		return selector;
 	}
 
 	// Hold a cache containing earlier created selectors, to prevent recompiling

@@ -37,7 +37,10 @@ define([
 			var selector = this._stepSelectors[i];
 
 			for (var j = 0, k = intermediateResults.length; j < k; ++j) {
-				Array.prototype.push.apply(newResults, selector.evaluate(intermediateResults[j], blueprint));
+				Array.prototype.push.apply(newResults, selector.evaluate({
+					contextItem: intermediateResults[j],
+					blueprint: blueprint
+				}));
 			}
 
 			if (!newResults.length) {
@@ -58,20 +61,25 @@ define([
 			});
 	};
 
-	PathSelector.prototype.evaluate = function (nodeSequence, blueprint) {
+	PathSelector.prototype.evaluate = function (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
+
 		var intermediateResults = nodeSequence,
 			newResults = new Sequence();
 		for (var i = 0, l = this._stepSelectors.length; i < l; ++i) {
 			var selector = this._stepSelectors[i];
 
-			newResults = selector.evaluate(intermediateResults, blueprint);
+			newResults = selector.evaluate({
+				blueprint: blueprint,
+				contextItem: intermediateResults,
+				contextSequence: null
+			});
 
 			if (newResults.isEmpty()) {
 				return newResults;
 			}
 			intermediateResults = newResults;
-
-			intermediateResults.value = intermediateResults.value
 			newResults = new Sequence();
 		}
 

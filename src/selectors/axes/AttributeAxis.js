@@ -61,7 +61,10 @@ define([
 			isSameArray(this._attributeValues, otherSelector._attributeValues);
 	};
 
-	AttributeAxis.prototype.evaluate = function (nodeSequence, blueprint) {
+	AttributeAxis.prototype.evaluate = function (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
+
 		return new Sequence(nodeSequence.value.reduce(function (values, nodeValue) {
 			var attributeValue = blueprint.getAttribute(nodeValue, this._attributeName);
 			if (attributeValue) {

@@ -1,11 +1,13 @@
 define([
 	'./Selector',
 	'./Specificity',
-	'./dataTypes/Sequence'
+	'./dataTypes/Sequence',
+	'./dataTypes/NumericValue'
 ], function (
 	Selector,
 	Specificity,
-	Sequence
+	Sequence,
+	NumericValue
 ) {
 	'use strict';
 
@@ -34,14 +36,26 @@ define([
 			});
 	};
 
-	Filter.prototype.evaluate = function (sequence, blueprint) {
-		var valueSequence = this._valueSelector.evaluate(sequence, blueprint);
+	Filter.prototype.evaluate = function (dynamicContext) {
+		var	blueprint = dynamicContext.blueprint;
+		var valueSequence = this._valueSelector.evaluate(dynamicContext);
 		var filteredValues = this._filterSelectors.reduce(function (intermediateResult, selector) {
-			return intermediateResult.filter(function (value) {
-					var result = selector.evaluate(Sequence.singleton(value), blueprint);
+				return intermediateResult.filter(function (value, i) {
+					var result = selector.evaluate({
+							contextItem: Sequence.singleton(value),
+							blueprint: blueprint,
+							contextSequence: valueSequence
+						});
+
+					// The result should be a singleton sequence
+					var resultValue = result.value[0];
+					if (resultValue instanceof NumericValue) {
+						// Remember: XPath is one-based
+						return resultValue.value === i + 1;
+					}
 					return result.getEffectiveBooleanValue();
 				});
-		}, valueSequence.value);
+			}, valueSequence.value);
 
 		return new Sequence(filteredValues);
 	};

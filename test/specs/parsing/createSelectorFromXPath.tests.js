@@ -182,82 +182,48 @@ define([
 		});
 
 		describe('operators', function () {
-			it('can parse an "and" selector', function () {
-				var selector = parseSelector('child::someElement and ancestor::someParentElement');
-				jsonMLMapper.parse([
-					'someParentElement',
-					[
-						'someMiddleElement',
-						['someElement', { 'someAttribute': 'someValue' }]
-					]
-				], documentNode);
-				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
-			});
+			describe('boolean operators', function () {
+				describe('and', function () {
+					it('can parse an "and" selector', function () {
+						var selector = parseSelector('true() and true()');
+						chai.expect(selector.matches(documentNode, blueprint)).to.equal(true);
+					});
 
-			it('can parse a double "and" selector', function () {
-				var selector = parseSelector('child::someElement and ancestor::someParentElement and @someAttribute=\'someValue\'');
-				jsonMLMapper.parse([
-					'someParentElement',
-					[
-						'someMiddleElement',
-						{ 'someAttribute': 'someValue' },
-						['someElement']
-					]
-				], documentNode);
-				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
-			});
+					it('can parse a concatenation of ands', function () {
+						var selector = parseSelector('true() and true() and true() and false()');
+						chai.expect(selector.matches(documentNode, blueprint)).to.equal(false);
+					});
+				});
+				describe('or', function () {
+					it('can parse an "or" selector', function () {
+						var selector = parseSelector('false() or true()');
+						chai.expect(selector.matches(documentNode, blueprint)).to.equal(true);
+					});
 
-			it('can parse an "or" selector', function () {
-				var selector = parseSelector('child::someElement or child::someOtherElement');
-				jsonMLMapper.parse([
-					'someParentElement',
-					[
-						'someMiddleElement',
-						['someElement']
-					]
-				], documentNode);
-				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
+					it('can parse an "or" selector with different buckets', function () {
+						var selector = parseSelector('self::someElement or self::processing-instruction()');
+						jsonMLMapper.parse([
+							'someParentElement',
+							['someElement']
+						], documentNode);
+						chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
+						chai.expect(selector.getBucket()).to.equal(null);
+					});
 
-				jsonMLMapper.parse([
-					'someParentElement',
-					[
-						'someMiddleElement',
-						['someOtherElement']
-					]
-				], documentNode);
-				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
-			});
+					it('can parse a concatenation of ors', function () {
+						var selector = parseSelector('false() or false() or false() or (: Note: the last true() will make te result true:) true()');
+						chai.expect(selector.matches(documentNode, blueprint)).to.equal(true);
+					});
 
-			it('can parse an "or" selector with different buckets', function () {
-				var selector = parseSelector('self::someElement or self::processing-instruction()');
-				jsonMLMapper.parse([
-					'someParentElement',
-					['someElement']
-				], documentNode);
-				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
-				chai.expect(selector.getBucket()).to.equal(null);
-			});
-
-			it('can parse a double "or" selector', function () {
-				var selector = parseSelector('child::someElement or ancestor::someParentElement or @someAttribute=\'someValue\'');
-				jsonMLMapper.parse([
-					'someParentElement',
-					[
-						'someMiddleElement',
-						{ 'someAttribute': 'someValue' },
-						['someElement']
-					]
-				], documentNode);
-				chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
-			});
-
-			it('allows not in combination with or', function () {
-				var selector = parseSelector('someChildElement or not(someOtherChild)');
-				jsonMLMapper.parse([
-					'someOtherParentElement',
-					['someOtherChildElement']
-				], documentNode);
-				chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
+					it('allows not in combination with or', function () {
+						var selector = parseSelector('someChildElement or not(someOtherChild)');
+						jsonMLMapper.parse([
+							'someOtherParentElement',
+							['someOtherChildElement']
+						], documentNode);
+						chai.expect(selector.matches(documentNode.documentElement, blueprint)).to.equal(true);
+					});
+				});
 			});
 
 			it('uses correct operator precedence', function () {
@@ -569,46 +535,255 @@ define([
 					], documentNode);
 					var selector = parseSelector('.//*');
 					chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([
-							documentNode.documentElement.firstChild,
+						documentNode.documentElement.firstChild,
 						documentNode.documentElement.firstChild.firstChild
 					]);
 				});
 			});
 
+			describe('Arrow functions', function () {
+				// Our only 3.1 feature
+				it('pipes the result to the next function', function () {
+					var selector = parseSelector('true() => not()');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal(false);
+				});
+
+				it('can be chained', function () {
+					var selector = parseSelector('(1,2,3) => true() => count()');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal(1);
+				});
+			});
+
+			describe('filters', function () {
+				it('works with boolean values: all', function () {
+					var selector = parseSelector('(1,2,3)[true()]');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal([1,2,3]);
+				});
+				it('works with boolean values: none', function () {
+					var selector = parseSelector('(1,2,3)[false()]');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal([]);
+				});
+				it('works with integer values', function () {
+					var selector = parseSelector('(1,2,3)[2]');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal(2);
+				});
+				it('works with decimal values', function () {
+					var selector = parseSelector('(1,2,3)[.5]');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal([]);
+				});
+				it('is passed the context item', function () {
+					var selector = parseSelector('(1,2,3)[.!=2]');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal([1,3]);
+				});
+			});
+
+			describe('comments', function () {
+				it('can parse comments', function () {
+					var selector = parseSelector('true() (: and false() :) or true()');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal(true);
+				});
+
+				it('can parse nested comments', function () {
+					var selector = parseSelector('true() (: and false() (:and true():) :) or false');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal(true);
+				});
+			});
+
 			describe('operators', function () {
 				describe('boolan operators', function () {
-					it('1 = 1', function () {
-						var selector = parseSelector('1 = 1');
-						chai.expect(
-							evaluateXPath(selector, documentNode, blueprint)
-						).to.deep.equal(true);
+					describe('Value compares', function () {
+						it('works over singleton sequences', function () {
+							var selector = parseSelector('true() eq true()');
+							chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+						});
+
+						it('does not work over non-singleton sequences', function () {
+							var selector = parseSelector('(1, 2) eq true()');
+							chai.expect(function () {
+								evaluateXPath(selector, documentNode, blueprint);
+							}).to.throw(/ERRXPTY0004/);
+						});
+
+						describe('eq', function () {
+							it('returns true if the first operand is equal to the second', function () {
+								var selector = parseSelector('1 eq 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+							});
+
+							it('returns false if the first operand is not equal to the second', function () {
+								var selector = parseSelector('1 eq 2');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							});
+						});
+
+						describe('ne', function () {
+							it('returns true if the first operand is not equal to the second', function () {
+								var selector = parseSelector('1 ne 2');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+							});
+
+							it('returns false if the first operand is equal to the second', function () {
+								var selector = parseSelector('1 ne 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							});
+						});
+
+						describe('gt', function () {
+							it('returns true if the first operand is greater than the second', function () {
+								var selector = parseSelector('2 gt 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+							});
+
+							it('returns false if the first operand is equal to the second', function () {
+								var selector = parseSelector('1 gt 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							});
+
+							it('returns false if the first operand is less than the second', function () {
+								var selector = parseSelector('1 gt 2');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							});
+						});
+
+						describe('lt', function () {
+							it('returns true if the first operand is less than the second', function () {
+								var selector = parseSelector('1 lt 2');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+							});
+
+							it('returns false if the first operand is equal to the second', function () {
+								var selector = parseSelector('1 lt 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							});
+
+							it('returns false if the first operand is less than the second', function () {
+								var selector = parseSelector('2 lt 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							});
+						});
+
+						describe('ge', function () {
+							it('returns true if the first operand is greater than the second', function () {
+								var selector = parseSelector('2 ge 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+							});
+
+							it('returns true if the first operand is equal to the second', function () {
+								var selector = parseSelector('1 ge 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+							});
+
+							it('returns false if the first operand is less than the second', function () {
+								var selector = parseSelector('1 ge 2');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							});
+						});
+
+						describe('le', function () {
+							it('returns true if the first operand is less than the second', function () {
+								var selector = parseSelector('1 le 2');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+							});
+
+							it('returns true if the first operand is equal to the second', function () {
+								var selector = parseSelector('1 le 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+							});
+
+							it('returns false if the first operand is greater than the second', function () {
+								var selector = parseSelector('2 le 1');
+								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							});
+						});
 					});
 
-					it('@a = @b', function () {
-						jsonMLMapper.parse([
-							'someNode',
-							{
-								a: 'value',
-								b: 'value'
-							}
-						], documentNode);
-						var selector = parseSelector('@a = @b');
-						chai.expect(
-							evaluateXPath(selector, documentNode.documentElement, blueprint)
-						).to.deep.equal(true);
-					});
+					describe('General compares', function () {
+						it('1 = 1', function () {
+							var selector = parseSelector('1 = 1');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.deep.equal(true);
+						});
 
-					it('(does not) work with typing (1 = @a)', function () {
-						jsonMLMapper.parse([
-							'someNode',
-							{
-								a: 'value'
-							}
-						], documentNode);
-						var selector = parseSelector('@a = 1');
-						chai.expect(
-							evaluateXPath(selector, documentNode.documentElement, blueprint)
-						).to.throw(/ERRXPTY0004/);
+						it('@a = @b', function () {
+							jsonMLMapper.parse([
+								'someNode',
+								{
+									a: 'value',
+									b: 'value'
+								}
+							], documentNode);
+							var selector = parseSelector('@a = @b');
+							chai.expect(
+								evaluateXPath(selector, documentNode.documentElement, blueprint)
+							).to.deep.equal(true);
+						});
+
+						it('(does not) work with typing: untyped attributes', function () {
+							jsonMLMapper.parse([
+								'someNode',
+								{
+									a: 'value'
+								}
+							], documentNode);
+							var selector = parseSelector('@a = 1');
+							chai.expect(function () {
+								evaluateXPath(selector, documentNode.documentElement, blueprint);
+							}).to.throw(/ERRXPTY0004/);
+						});
+
+						it('(does not) work with typing: int to string', function () {
+							var selector = parseSelector('1 = "1"');
+							chai.expect(function () {
+								evaluateXPath(selector, documentNode, blueprint);
+							}).to.throw(/ERRXPTY0004/);
+						});
+
+						it('(does not) work with typing: boolean to string', function () {
+							var selector = parseSelector('true() = "true"');
+							chai.expect(function () {
+								evaluateXPath(selector, documentNode, blueprint);
+							}).to.throw(/ERRXPTY0004/);
+						});
+
+						it('Compares over sets', function () {
+							var selector = parseSelector('(1, 2, 3) = 3');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.equal(true);
+						});
+
+						it('Does work with typing: decimal to int', function () {
+							var selector = parseSelector('1 = 1.0');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.equal(true);
+						});
+
+						it('Does work with typing: double to int', function () {
+							var selector = parseSelector('100 = 1.0e2');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.equal(true);
+						});
 					});
 				});
 
@@ -724,6 +899,31 @@ define([
 						chai.expect(
 							evaluateXPath(selector, documentNode.documentElement, blueprint)
 						).to.equal(2);
+					});
+				});
+
+				describe('functions', function () {
+					describe('last()', function () {
+						it('returns the length of the dynamic context size', function () {
+							var selector = parseSelector('(1,2,3)[last()]');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.equal(3);
+						});
+						it('can target the second to last item', function () {
+							var selector = parseSelector('(1,2,3)[last() - 1]');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.equal(2);
+						});
+					});
+					describe('count()', function () {
+						it('returns the length of the sequence', function () {
+							var selector = parseSelector('count((1,2,3))');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.equal(3);
+						});
 					});
 				});
 			});

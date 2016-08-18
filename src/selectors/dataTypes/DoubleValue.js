@@ -1,13 +1,13 @@
 define([
-	'./AnyAtomicValue'
+	'./NumericValue'
 ], function (
-	AnyAtomicValue
+	NumericValue
 ) {
 	function DoubleValue (initialValue) {
-		AnyAtomicValue.call(this, initialValue, 'xs:double');
+		NumericValue.call(this, initialValue, 'xs:double');
 	}
 
-	DoubleValue.prototype = Object.create(AnyAtomicValue.prototype);
+	DoubleValue.prototype = Object.create(NumericValue.prototype);
 	DoubleValue.prototype.constructor = DoubleValue;
 
 	DoubleValue.cast = function (value) {
@@ -15,9 +15,8 @@ define([
 			return new DoubleValue(value.value);
 		}
 
-		// In JavaScript, doubles are the same as decimals
-		var decimalValue = AnyAtomicValue.cast(value);
-		return new DoubleValue(parseFloat(decimalValue.value, 10));
+		var numericValue = NumericValue.cast(value);
+		return new DoubleValue(numericValue.value);
 	};
 
 	return DoubleValue;

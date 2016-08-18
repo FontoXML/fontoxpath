@@ -1,13 +1,13 @@
 define([
-	'./AnyAtomicValue'
+	'./NumericValue'
 ], function (
-	AnyAtomicValue
+	NumericValue
 ) {
 	function DecimalValue (initialValue) {
-		AnyAtomicValue.call(this, initialValue, 'xs:decimal');
+		NumericValue.call(this, initialValue, 'xs:decimal');
 	}
 
-	DecimalValue.prototype = Object.create(AnyAtomicValue.prototype);
+	DecimalValue.prototype = Object.create(NumericValue.prototype);
 	DecimalValue.prototype.constructor = DecimalValue;
 
 	DecimalValue.cast = function (value) {
@@ -15,13 +15,8 @@ define([
 			return new DecimalValue(value.value);
 		}
 
-		var anyAtomicValue = AnyAtomicValue.cast(value);
-		var floatValue = parseFloat(anyAtomicValue.value, 10);
-
-		if (Number.isNaN(floatValue)) {
-			throw new Error('Can not cast ' + anyAtomicValue.value + ' to xs:decimal');
-		}
-		return new DecimalValue(floatValue);
+		var numericValue = NumericValue.cast(value);
+		return new DecimalValue(numericValue.value);
 	};
 
 	DecimalValue.prototype.getEffectiveBooleanValue = function () {

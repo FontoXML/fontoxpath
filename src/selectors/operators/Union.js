@@ -81,9 +81,10 @@ define([
 			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	};
 
-	Union.prototype.evaluate = function (nodes, blueprint) {
+	Union.prototype.evaluate = function (dynamicContext) {
 		return this._subSelectors.reduce(function (accum, selector) {
-			return accum.merge(selector.evaluate(nodes, blueprint));
+			// TODO: Dedupe
+			return accum.merge(selector.evaluate(dynamicContext));
 		}, new Sequence());
 	};
 

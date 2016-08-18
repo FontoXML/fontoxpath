@@ -1,8 +1,10 @@
 define([
+	'../../Specificity',
 	'../../dataTypes/Sequence',
 	'../../dataTypes/BooleanValue',
 	'../../Selector'
 ], function (
+	Specificity,
 	Sequence,
 	BooleanValue,
 	Selector
@@ -11,25 +13,13 @@ define([
 
 	/**
 	 * The 'and' combining selector
-	 * @param  {Selector}  firstSelector
-	 * @param  {Selector}  secondSelector
+	 * @param  {Selector[]}  selectors
 	 */
-	function AndOperator (firstSelector, secondSelector) {
-		Selector.call(this, firstSelector.specificity.add(secondSelector.specificity));
-		var subSelectors;
-		if (firstSelector instanceof AndOperator) {
-			subSelectors = firstSelector._subSelectors.concat();
-		} else {
-			subSelectors = [firstSelector];
-		}
-
-		if (secondSelector instanceof AndOperator) {
-			subSelectors = subSelectors.concat(secondSelector._subSelectors);
-		} else {
-			subSelectors.push(secondSelector);
-		}
-
-		this._subSelectors = subSelectors;
+	function AndOperator (selectors) {
+		Selector.call(this, selectors.reduce(function (specificity, selector) {
+			return specificity.add(selector.specificity);
+		}, new Specificity({})));
+		this._subSelectors = selectors;
 	}
 
 	AndOperator.prototype = Object.create(Selector.prototype);
@@ -78,9 +68,9 @@ define([
 			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	};
 
-	AndOperator.prototype.evaluate = function (sequence, blueprint) {
+	AndOperator.prototype.evaluate = function (dynamicContext) {
 		var result = this._subSelectors.every(function (subSelector) {
-				return subSelector.evaluate(sequence, blueprint).getEffectiveBooleanValue();
+				return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
 			});
 
 		return Sequence.singleton(new BooleanValue(result));

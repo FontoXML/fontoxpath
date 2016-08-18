@@ -15,13 +15,17 @@ define([
 	WrappingSelector.prototype = Object.create(Selector.prototype);
 	WrappingSelector.prototype.constructor = WrappingSelector;
 	WrappingSelector.prototype.matches = function (node, blueprint) {
-		var result = this._selectorToWrap.evaluate(Sequence.singleton(new NodeValue(node, blueprint)), blueprint);
+		var result = this._selectorToWrap.evaluate({
+				contextItem: Sequence.singleton(new NodeValue(node, blueprint)),
+				contextSequence: null,
+				blueprint: blueprint
+			});
 
 		return result.getEffectiveBooleanValue();
 	};
 
-	WrappingSelector.prototype.evaluate = function (sequence, blueprint) {
-		return this._selectorToWrap.evaluate(sequence, blueprint);
+	WrappingSelector.prototype.evaluate = function (dynamicContext) {
+		return this._selectorToWrap.evaluate(dynamicContext);
 	};
 
 	return WrappingSelector;

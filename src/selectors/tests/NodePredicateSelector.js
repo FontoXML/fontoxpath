@@ -31,7 +31,9 @@ define([
 		return this._isMatchingNode.call(undefined, node, blueprint);
 	};
 
-	NodePredicateSelector.prototype.evaluate = function (sequence, blueprint) {
+	NodePredicateSelector.prototype.evaluate = function (dynamicContext) {
+		var sequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
 		// TODO: non-singleton nodeTests
 		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0], blueprint)));
 	};

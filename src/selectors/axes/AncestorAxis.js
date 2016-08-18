@@ -50,14 +50,19 @@ define([
 			this._ancestorSelector.equals(otherSelector._ancestorSelector);
 	};
 
-	AncestorAxis.prototype.evaluate = function (nodeSequence, blueprint) {
+	AncestorAxis.prototype.evaluate = function (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem,
+			blueprint = dynamicContext.blueprint;
+
 		return nodeSequence.value.reduce(function (resultingSequence, node) {
 			return resultingSequence.merge(new Sequence(
 				blueprintQuery.findAllAncestors(blueprint, node, false)
 					.filter(function (node) {
-						return this._ancestorSelector.evaluate(
-							Sequence.singleton(node),
-							blueprint).getEffectiveBooleanValue();
+						return this._ancestorSelector.evaluate({
+							contextItem: Sequence.singleton(node),
+							contextSequence: null,
+							blueprint: blueprint
+						}).getEffectiveBooleanValue();
 					}.bind(this))));
 			}.bind(this), new Sequence());
 	};
