@@ -15,6 +15,10 @@ define([
 		return new Sequence([value]);
 	};
 
+	Sequence.empty = function (value) {
+		return new Sequence([]);
+	};
+
 	Sequence.prototype.atomize = function () {
 		return new Sequence(this.value.map(function (value) {
 			return value.atomize();

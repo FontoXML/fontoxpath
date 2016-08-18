@@ -558,6 +558,15 @@ define([
 				});
 			});
 
+			describe('stringConcat', function () {
+				it('can concatenate strings', function () {
+					var selector = parseSelector('"con" || "cat" || "enate"');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.deep.equal('concatenate');
+				});
+			});
+
 			describe('filters', function () {
 				it('works with boolean values: all', function () {
 					var selector = parseSelector('(1,2,3)[true()]');
@@ -584,7 +593,7 @@ define([
 					).to.deep.equal([]);
 				});
 				it('is passed the context item', function () {
-					var selector = parseSelector('(1,2,3)[.!=2]');
+					var selector = parseSelector('(1 to 3)[.!=2]');
 					chai.expect(
 						evaluateXPath(selector, documentNode, blueprint)
 					).to.deep.equal([1,3]);
@@ -609,180 +618,180 @@ define([
 
 			describe('operators', function () {
 				describe('boolan operators', function () {
-					describe('Value compares', function () {
-						it('works over singleton sequences', function () {
-							var selector = parseSelector('true() eq true()');
-							chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
-						});
-
-						it('does not work over non-singleton sequences', function () {
-							var selector = parseSelector('(1, 2) eq true()');
-							chai.expect(function () {
-								evaluateXPath(selector, documentNode, blueprint);
-							}).to.throw(/ERRXPTY0004/);
-						});
-
-						describe('eq', function () {
-							it('returns true if the first operand is equal to the second', function () {
-								var selector = parseSelector('1 eq 1');
+					describe('compares', function () {
+						describe('Value compares', function () {
+							it('works over singleton sequences', function () {
+								var selector = parseSelector('true() eq true()');
 								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
 							});
 
-							it('returns false if the first operand is not equal to the second', function () {
-								var selector = parseSelector('1 eq 2');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+							it('does not work over non-singleton sequences', function () {
+								var selector = parseSelector('(1, 2) eq true()');
+								chai.expect(function () {
+									evaluateXPath(selector, documentNode, blueprint);
+								}).to.throw(/ERRXPTY0004/);
+							});
+
+							it('Does work with typing: decimal to int', function () {
+								var selector = parseSelector('1 eq 1.0');
+								chai.expect(
+									evaluateXPath(selector, documentNode, blueprint)
+								).to.equal(true);
+							});
+
+							it('Does work with typing: double to int', function () {
+								var selector = parseSelector('100 eq 1.0e2');
+								chai.expect(
+									evaluateXPath(selector, documentNode, blueprint)
+								).to.equal(true);
+							});
+
+							it('atomizes attributes', function () {
+								jsonMLMapper.parse([
+									'someNode',
+									{
+										a: 'value',
+										b: 'value'
+									}
+								], documentNode);
+								var selector = parseSelector('@a eq "value"');
+								chai.expect(
+									evaluateXPath(selector, documentNode.documentElement, blueprint)
+								).to.deep.equal(true);
+							});
+
+							it('(does not) work with typing: untyped attributes', function () {
+								jsonMLMapper.parse([
+									'someNode',
+									{
+										a: 'value'
+									}
+								], documentNode);
+								var selector = parseSelector('@a eq 1');
+								chai.expect(function () {
+									evaluateXPath(selector, documentNode.documentElement, blueprint);
+								}).to.throw(/ERRXPTY0004/);
+							});
+
+							it('(does not) work with typing: int to string', function () {
+								var selector = parseSelector('1 eq "1"');
+								chai.expect(function () {
+									evaluateXPath(selector, documentNode, blueprint);
+								}).to.throw(/ERRXPTY0004/);
+							});
+
+							it('(does not) work with typing: boolean to string', function () {
+								var selector = parseSelector('true() eq "true"');
+								chai.expect(function () {
+									evaluateXPath(selector, documentNode, blueprint);
+								}).to.throw(/ERRXPTY0004/);
+							});
+
+							describe('eq', function () {
+								it('returns true if the first operand is equal to the second', function () {
+									var selector = parseSelector('1 eq 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('+0 eq -0', function () {
+									var selector = parseSelector('+0 eq -0');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('returns false if the first operand is not equal to the second', function () {
+									var selector = parseSelector('1 eq 2');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+								});
+							});
+
+							describe('ne', function () {
+								it('returns true if the first operand is not equal to the second', function () {
+									var selector = parseSelector('1 ne 2');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('returns false if the first operand is equal to the second', function () {
+									var selector = parseSelector('1 ne 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+								});
+							});
+
+							describe('gt', function () {
+								it('returns true if the first operand is greater than the second', function () {
+									var selector = parseSelector('2 gt 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('returns false if the first operand is equal to the second', function () {
+									var selector = parseSelector('1 gt 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+								});
+
+								it('returns false if the first operand is less than the second', function () {
+									var selector = parseSelector('1 gt 2');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+								});
+							});
+
+							describe('lt', function () {
+								it('returns true if the first operand is less than the second', function () {
+									var selector = parseSelector('1 lt 2');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('returns false if the first operand is equal to the second', function () {
+									var selector = parseSelector('1 lt 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+								});
+
+								it('returns false if the first operand is less than the second', function () {
+									var selector = parseSelector('2 lt 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+								});
+							});
+
+							describe('ge', function () {
+								it('returns true if the first operand is greater than the second', function () {
+									var selector = parseSelector('2 ge 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('returns true if the first operand is equal to the second', function () {
+									var selector = parseSelector('1 ge 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('returns false if the first operand is less than the second', function () {
+									var selector = parseSelector('1 ge 2');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+								});
+							});
+
+							describe('le', function () {
+								it('returns true if the first operand is less than the second', function () {
+									var selector = parseSelector('1 le 2');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('returns true if the first operand is equal to the second', function () {
+									var selector = parseSelector('1 le 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+								});
+
+								it('returns false if the first operand is greater than the second', function () {
+									var selector = parseSelector('2 le 1');
+									chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+								});
 							});
 						});
 
-						describe('ne', function () {
-							it('returns true if the first operand is not equal to the second', function () {
-								var selector = parseSelector('1 ne 2');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+						describe('General compares', function () {
+							it('Compares over sets', function () {
+								var selector = parseSelector('(1, 2, 3) = 3');
+								chai.expect(
+									evaluateXPath(selector, documentNode, blueprint)
+								).to.equal(true);
 							});
-
-							it('returns false if the first operand is equal to the second', function () {
-								var selector = parseSelector('1 ne 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
-							});
-						});
-
-						describe('gt', function () {
-							it('returns true if the first operand is greater than the second', function () {
-								var selector = parseSelector('2 gt 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
-							});
-
-							it('returns false if the first operand is equal to the second', function () {
-								var selector = parseSelector('1 gt 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
-							});
-
-							it('returns false if the first operand is less than the second', function () {
-								var selector = parseSelector('1 gt 2');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
-							});
-						});
-
-						describe('lt', function () {
-							it('returns true if the first operand is less than the second', function () {
-								var selector = parseSelector('1 lt 2');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
-							});
-
-							it('returns false if the first operand is equal to the second', function () {
-								var selector = parseSelector('1 lt 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
-							});
-
-							it('returns false if the first operand is less than the second', function () {
-								var selector = parseSelector('2 lt 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
-							});
-						});
-
-						describe('ge', function () {
-							it('returns true if the first operand is greater than the second', function () {
-								var selector = parseSelector('2 ge 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
-							});
-
-							it('returns true if the first operand is equal to the second', function () {
-								var selector = parseSelector('1 ge 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
-							});
-
-							it('returns false if the first operand is less than the second', function () {
-								var selector = parseSelector('1 ge 2');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
-							});
-						});
-
-						describe('le', function () {
-							it('returns true if the first operand is less than the second', function () {
-								var selector = parseSelector('1 le 2');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
-							});
-
-							it('returns true if the first operand is equal to the second', function () {
-								var selector = parseSelector('1 le 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
-							});
-
-							it('returns false if the first operand is greater than the second', function () {
-								var selector = parseSelector('2 le 1');
-								chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
-							});
-						});
-					});
-
-					describe('General compares', function () {
-						it('1 = 1', function () {
-							var selector = parseSelector('1 = 1');
-							chai.expect(
-								evaluateXPath(selector, documentNode, blueprint)
-							).to.deep.equal(true);
-						});
-
-						it('@a = @b', function () {
-							jsonMLMapper.parse([
-								'someNode',
-								{
-									a: 'value',
-									b: 'value'
-								}
-							], documentNode);
-							var selector = parseSelector('@a = @b');
-							chai.expect(
-								evaluateXPath(selector, documentNode.documentElement, blueprint)
-							).to.deep.equal(true);
-						});
-
-						it('(does not) work with typing: untyped attributes', function () {
-							jsonMLMapper.parse([
-								'someNode',
-								{
-									a: 'value'
-								}
-							], documentNode);
-							var selector = parseSelector('@a = 1');
-							chai.expect(function () {
-								evaluateXPath(selector, documentNode.documentElement, blueprint);
-							}).to.throw(/ERRXPTY0004/);
-						});
-
-						it('(does not) work with typing: int to string', function () {
-							var selector = parseSelector('1 = "1"');
-							chai.expect(function () {
-								evaluateXPath(selector, documentNode, blueprint);
-							}).to.throw(/ERRXPTY0004/);
-						});
-
-						it('(does not) work with typing: boolean to string', function () {
-							var selector = parseSelector('true() = "true"');
-							chai.expect(function () {
-								evaluateXPath(selector, documentNode, blueprint);
-							}).to.throw(/ERRXPTY0004/);
-						});
-
-						it('Compares over sets', function () {
-							var selector = parseSelector('(1, 2, 3) = 3');
-							chai.expect(
-								evaluateXPath(selector, documentNode, blueprint)
-							).to.equal(true);
-						});
-
-						it('Does work with typing: decimal to int', function () {
-							var selector = parseSelector('1 = 1.0');
-							chai.expect(
-								evaluateXPath(selector, documentNode, blueprint)
-							).to.equal(true);
-						});
-
-						it('Does work with typing: double to int', function () {
-							var selector = parseSelector('100 = 1.0e2');
-							chai.expect(
-								evaluateXPath(selector, documentNode, blueprint)
-							).to.equal(true);
 						});
 					});
 				});
@@ -902,6 +911,38 @@ define([
 					});
 				});
 
+				describe('sequence', function () {
+					it('creates a sequence', function () {
+						var selector = parseSelector('(1,2,3)');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint)
+						).to.deep.equal([1,2,3]);
+					});
+
+					it('creates an empty sequence', function () {
+						var selector = parseSelector('()');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint)
+						).to.deep.equal([]);
+					});
+
+					it('normalizes sequences', function () {
+						var selector = parseSelector('(1,2,(3,4))');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint)
+						).to.deep.equal([1,2,3,4]);
+					});
+				});
+
+				describe('range', function () {
+					it('creates a sequence', function () {
+						var selector = parseSelector('1 to 10');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint)
+						).to.deep.equal([1,2,3,4,5,6,7,8,9,10]);
+					});
+				});
+
 				describe('functions', function () {
 					describe('last()', function () {
 						it('returns the length of the dynamic context size', function () {
@@ -919,10 +960,24 @@ define([
 					});
 					describe('count()', function () {
 						it('returns the length of the sequence', function () {
-							var selector = parseSelector('count((1,2,3))');
+							var selector = parseSelector('count((1 to 1000))');
 							chai.expect(
 								evaluateXPath(selector, documentNode, blueprint)
-							).to.equal(3);
+							).to.equal(1000);
+						});
+
+						it('returns the length of the empty sequence', function () {
+							var selector = parseSelector('count(())');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.equal(0);
+						});
+
+						it('returns the length of a singleton sequence', function () {
+							var selector = parseSelector('count((1))');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.equal(1);
 						});
 					});
 				});

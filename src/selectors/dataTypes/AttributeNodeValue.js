@@ -116,8 +116,6 @@ define([
 		return null;
 	};
 
-	// TODO: Dep tracking + findDescendants etc
-
 	AttributeNodeValue.prototype.atomize = function () {
 		// TODO: Mix in types
 		return new UntypedAtomicValue(this.value);

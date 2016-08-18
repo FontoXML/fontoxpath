@@ -1,10 +1,7 @@
 define([
 	'../../dataTypes/Sequence',
 	'../../dataTypes/DoubleValue',
-	'../../dataTypes/IntegerValue',
-	'../../dataTypes/DoubleValue',
-	'../../Selector',
-
+	'../../Selector'
 ], function (
 	Sequence,
 	DoubleValue,

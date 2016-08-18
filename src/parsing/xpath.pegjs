@@ -55,13 +55,14 @@ ComparisonExpr
 
 // 19
 StringConcatExpr
-// = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})+ _ {return appendRest(['stringConcat', first], rest)}
- = RangeExpr
+ = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* _ {
+     if (!rest.length) return first;
+     return appendRest(['functionCall', 'concat', first].concat(rest))
+   }
 
 // 20
 RangeExpr
-// = lhs:AdditiveExpr " to " rhs:RangeExpr {return ["range", lhs, rhs]}
- = AdditiveExpr
+ = lhs:AdditiveExpr rhs:( _ "to" _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", "range", lhs, rhs]}
 
 // 21
 AdditiveExpr
@@ -242,7 +243,7 @@ VarName
 // 61
 ParenthesizedExpr
  = "(" _ expr:Expr _ ")" {return expr}
- / "(" _ ")" {return null}
+ / "(" _ ")" {return ["sequence"]}
 
 // 62
 // Do not match '..'
