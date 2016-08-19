@@ -1,6 +1,12 @@
 define([
+	'./DynamicContext',
+	'./dataTypes/Sequence',
+	'./dataTypes/NodeValue'
 ], function (
-	) {
+	DynamicContext,
+	Sequence,
+	NodeValue
+) {
 	'use strict';
 
 	/**
@@ -12,6 +18,25 @@ define([
 		 */
 		this.specificity = specificity;
 	}
+
+	/**
+	 * @deprecated
+	 */
+	var hasWarned = false;
+	Selector.prototype.matches = function (node, blueprint) {
+		if (!hasWarned) {
+			console.warn('Selector#matches is deprecated, please use Selector#evaluate instead');
+			hasWarned = true;
+		}
+		var result = this.evaluate(new DynamicContext({
+				contextItem: Sequence.singleton(new NodeValue(node, blueprint)),
+				contextSequence: null,
+				blueprint: blueprint,
+				variables: {}
+			}));
+
+		return result.getEffectiveBooleanValue();
+	};
 
 	/**
 	 * Compare this selector to the other selector, checking equivalence

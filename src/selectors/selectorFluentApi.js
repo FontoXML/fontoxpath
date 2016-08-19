@@ -38,9 +38,9 @@ define([
 	 * @param  {Selector|NodeSpec}  ancestorSelector
 	 */
 	Selector.prototype.requireAncestor = function (ancestorSelector) {
-		return new AndOperator(
+		return new AndOperator([
 			this,
-			new AncestorAxis(adaptNodeSpecToSelector(ancestorSelector)));
+			new AncestorAxis(adaptNodeSpecToSelector(ancestorSelector))]);
 	};
 
 	/**
@@ -52,60 +52,60 @@ define([
 			attributeValues = [attributeValues];
 		}
 
-		return new AndOperator(this, new AttributeSelector(attributeName, attributeValues));
+		return new AndOperator([this, new AttributeSelector(attributeName, attributeValues)]);
 	};
 	/**
 	 * @param  {Selector|NodeSpec}  childSelector
 	 */
 	Selector.prototype.requireChild = function (childSelector) {
-		return new AndOperator(
+		return new AndOperator([
 			this,
-			new ChildAxis(adaptNodeSpecToSelector(childSelector)));
+			new ChildAxis(adaptNodeSpecToSelector(childSelector))]);
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  descendantSelector
 	 */
 	Selector.prototype.requireDescendant = function (descendantSelector) {
-		return new AndOperator(
+		return new AndOperator([
 			this,
-			new DescendantAxis(adaptNodeSpecToSelector(descendantSelector)));
+			new DescendantAxis(adaptNodeSpecToSelector(descendantSelector))]);
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  parentSelector
 	 */
 	Selector.prototype.requireParent = function (parentSelector) {
-		return new AndOperator(
+		return new AndOperator([
 			this,
-			new ParentAxis(adaptNodeSpecToSelector(parentSelector)));
+			new ParentAxis(adaptNodeSpecToSelector(parentSelector))]);
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  selectorToInvert
 	 */
 	Selector.prototype.requireNot = function (selectorToInvert) {
-		return new AndOperator(
+		return new AndOperator([
 			this,
-			new NotOperator(adaptNodeSpecToSelector(selectorToInvert)));
+			new NotOperator(adaptNodeSpecToSelector(selectorToInvert))]);
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  siblingSelector
 	 */
 	Selector.prototype.requireFollowingSibling = function (siblingSelector) {
-		return new AndOperator(
+		return new AndOperator([
 			this,
-			new FollowingSiblingAxis(adaptNodeSpecToSelector(siblingSelector)));
+			new FollowingSiblingAxis(adaptNodeSpecToSelector(siblingSelector))]);
 	};
 
 	/**
 	 * @param  {Selector|NodeSpec}  siblingSelector
 	 */
 	Selector.prototype.requirePrecedingSibling = function (siblingSelector) {
-		return new AndOperator(
+		return new AndOperator([
 			this,
-			new PrecedingSiblingAxis(adaptNodeSpecToSelector(siblingSelector)));
+			new PrecedingSiblingAxis(adaptNodeSpecToSelector(siblingSelector))]);
 	};
 
 	/**
@@ -121,6 +121,6 @@ define([
 	 * @param  {Function}  isMatchingNode
 	 */
 	Selector.prototype.requireNodePredicate = function (isMatchingNode) {
-		return new AndOperator(this, new NodePredicateSelector(isMatchingNode));
+		return new AndOperator([this, new NodePredicateSelector(isMatchingNode)]);
 	};
 });

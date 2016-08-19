@@ -2,8 +2,6 @@ define([
 	'fontoxml-blueprints',
 	'fontoxml-dom-utils',
 
-	'./WrappingSelector',
-
 	'../selectors/PathSelector',
 	'../selectors/AbsolutePathSelector',
 	'../selectors/Filter',
@@ -40,7 +38,6 @@ define([
 	blueprints,
 	domUtils,
 
-	WrappingSelector,
 	PathSelector,
 	AbsolutePathSelector,
 	Filter,
@@ -317,6 +314,6 @@ define([
 			var ast = xPathParser.parse(xPathString);
 			selectorCache[xPathString] = compile(ast);
 		}
-		return new WrappingSelector(selectorCache[xPathString]);
+		return selectorCache[xPathString];
 	};
 });
