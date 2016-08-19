@@ -36,7 +36,7 @@ define([
 	};
 
 	ProcessingInstructionTargetSelector.prototype.evaluate = function (dynamicContext) {
-		var sequence = dynamicContext.contextItem
+		var sequence = dynamicContext.contextItem;
 		// Assume singleton
 		var node = sequence.value[0];
 		var isMatchingProcessingInstruction = domInfo.isProcessingInstruction(node) && node.target === this._target;

@@ -943,6 +943,29 @@ define([
 					});
 				});
 
+				describe('let', function () {
+					it('creates a variable reference', function () {
+						var selector = parseSelector('let $x := 1 return $x');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint)
+						).to.deep.equal(1);
+					});
+
+					it('can be chained', function () {
+						var selector = parseSelector('let $x := 1, $y := 2 return $x * $y');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint)
+						).to.deep.equal(2);
+					});
+
+					it('chains in the correct order', function () {
+						var selector = parseSelector('let $a := 1, $y := 2, $x := 3 return $x (: If the order would be inverse, $x would stil be 1 :)');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint)
+						).to.deep.equal(3);
+					});
+				});
+
 				describe('functions', function () {
 					describe('last()', function () {
 						it('returns the length of the dynamic context size', function () {

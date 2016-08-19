@@ -62,19 +62,17 @@ define([
 	};
 
 	PathSelector.prototype.evaluate = function (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+		var nodeSequence = dynamicContext.contextItem;
 
 		var intermediateResults = nodeSequence,
 			newResults = new Sequence();
 		for (var i = 0, l = this._stepSelectors.length; i < l; ++i) {
 			var selector = this._stepSelectors[i];
 
-			newResults = selector.evaluate({
-				blueprint: blueprint,
+			newResults = selector.evaluate(dynamicContext.createScopedContext({
 				contextItem: intermediateResults,
 				contextSequence: null
-			});
+			}));
 
 			if (newResults.isEmpty()) {
 				return newResults;

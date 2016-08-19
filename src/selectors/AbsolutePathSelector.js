@@ -32,11 +32,11 @@ define([
 		var nodeSequence = dynamicContext.contextItem,
 			blueprint = dynamicContext.blueprint;
 		// Assume this is the start, so only one node
-		return this._relativePathSelector.evaluate({
-			contextItem: Sequence.singleton(blueprintQuery.getDocumentNode(blueprint, nodeSequence.value[0])),
-			contextSequence: null,
-			blueprint
-		});
+		return this._relativePathSelector.evaluate(
+			dynamicContext.createScopedContext({
+				contextItem: Sequence.singleton(blueprintQuery.getDocumentNode(blueprint, nodeSequence.value[0])),
+				contextSequence: null
+			}));
 	};
 
 	return AbsolutePathSelector;

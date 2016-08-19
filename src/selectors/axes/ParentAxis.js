@@ -36,11 +36,10 @@ define([
 			nodeSequence.value
 				.map(blueprint.getParentNode.bind(blueprint))
 				.filter(function (node) {
-					var result = this._parentSelector.evaluate({
-							blueprint: blueprint,
+					var result = this._parentSelector.evaluate(dynamicContext.createScopedContext({
 							contextItem: Sequence.singleton(node),
 							contextSequence: null
-						});
+						}));
 					return result.getEffectiveBooleanValue();
 				}.bind(this)));
 	};

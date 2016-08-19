@@ -9,11 +9,11 @@
 
 // 1
 XPath
- = Expr
+ = _ expr:Expr _ {return expr}
 
 // 2
 ParamList
- = start:Param rest:( _ "," _ param:Param {return param} ) _ {return appendRest(["param", start], rest)}
+ = start:Param rest:( _ "," _ param:Param {return param} ) {return appendRest(["param", start], rest)}
 
 // 3
 Param
@@ -29,23 +29,40 @@ EnclosedExpr
 
 // 6
 Expr
- = first:ExprSingle rest:( _ "," _ expr:ExprSingle {return expr})* _ {return rest.length ? appendRest(["sequence", first], rest) : first}
+ = first:ExprSingle rest:( _ "," _ expr:ExprSingle {return expr})* {return rest.length ? appendRest(["sequence", first], rest) : first}
 
 // 7
 ExprSingle
- = OrExpr
+ = LetExpr
 // / ForExpr
-// / LetExpr
+ / OrExpr
 // / QuantifiedExpr
 // / IfExpr
 
+// 11
+LetExpr
+= bindings:SimpleLetClause S "return" S returnExpr:ExprSingle {
+    // The bindings part consists of the rangeVariable and the bindingSequence.
+	// Multiple bindings are syntactic sugar for 'let $x := 1 return let $y := $x * 2'
+    if (bindings.length === 1) return ["let"].concat(bindings[0], [returnExpr]);
+    return bindings.reduceRight(function (expression, binding) {
+	    return ["let"].concat(binding, [expression]);
+	  }, returnExpr)
+  }
+
+// 12
+SimpleLetClause = "let" S first:SimpleLetBinding rest:(", " binding:SimpleLetBinding {return binding})* {return appendRest([first], rest)}
+
+// 13
+SimpleLetBinding = "$" rangeVariable:VarName _ ":=" _ bindingSequence:ExprSingle {return [rangeVariable, bindingSequence]}
+
 // 16
 OrExpr
- = first:AndExpr rest:( _ "or" _  expr:AndExpr {return expr})* {return rest.length ? appendRest(['or', first], rest) : first}
+ = first:AndExpr rest:( S "or" S  expr:AndExpr {return expr})* {return rest.length ? appendRest(['or', first], rest) : first}
 
 // 17
 AndExpr
- = first:ComparisonExpr rest:( _ "and" _ expr:ComparisonExpr {return expr})* {return rest.length ? appendRest(["and", first], rest) : first}
+ = first:ComparisonExpr rest:( S "and" S expr:ComparisonExpr {return expr})* {return rest.length ? appendRest(["and", first], rest) : first}
 
 // 18
 ComparisonExpr
@@ -55,14 +72,14 @@ ComparisonExpr
 
 // 19
 StringConcatExpr
- = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* _ {
+ = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* {
      if (!rest.length) return first;
      return appendRest(['functionCall', 'concat', first].concat(rest))
    }
 
 // 20
 RangeExpr
- = lhs:AdditiveExpr rhs:( _ "to" _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", "range", lhs, rhs]}
+ = lhs:AdditiveExpr rhs:( S "to" S rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", "range", lhs, rhs]}
 
 // 21
 AdditiveExpr
@@ -71,41 +88,41 @@ AdditiveExpr
 
 // 22
 MultiplicativeExpr
- = lhs:UnionExpr " " op:("*"/"div"/"idiv"/"mod") " " rhs:MultiplicativeExpr {return ["binaryOperator", op, lhs, rhs]}
+ = lhs:UnionExpr S op:("*"/"div"/"idiv"/"mod") S rhs:MultiplicativeExpr {return ["binaryOperator", op, lhs, rhs]}
  / UnionExpr
 
 // 23
 UnionExpr
- = first:IntersectExpr rest:( _ ("|"/"union") _ expr:IntersectExpr {return expr})+ {return appendRest(["union", first], rest)}
+ = first:IntersectExpr rest:( S ("|"/"union") S expr:IntersectExpr {return expr})+ {return appendRest(["union", first], rest)}
  / IntersectExpr
 
 // 24
 IntersectExpr
-// = lhs:InstanceofExpr _ "intersect" _ rhs:IntersectExpr {return ["intersect", lhs, rhs]}
-// / lhs:InstanceofExpr _ "except" _ rhs:IntersectExpr {return ["except", lhs, rhs]}
+// = lhs:InstanceofExpr S "intersect" S rhs:IntersectExpr {return ["intersect", lhs, rhs]}
+// / lhs:InstanceofExpr S "except" S rhs:IntersectExpr {return ["except", lhs, rhs]}
  = InstanceofExpr
 
 // 25
 InstanceofExpr
-// = lhs:TreatExpr _ "instance of" _ rhs:SequenceType {return ["instance of", lhs, rhs]}
+// = lhs:TreatExpr S "instance" S "of" S rhs:SequenceType {return ["instance of", lhs, rhs]}
  = TreatExpr
 
 // 26
 TreatExpr
-// = lhs:CastableExpr _ "treat as" _ rhs:SequenceType {return ["treat as", lhs, rhs]}
+// = lhs:CastableExpr S "treat" S "as" S rhs:SequenceType {return ["treat as", lhs, rhs]}
  = CastableExpr
 
 // 27
 CastableExpr
- = lhs:CastExpr rhs:(_ "castable as" _ rhs:SingleType {return rhs})? {return rhs ? ["castable as", lhs, rhs] : lhs}
+ = lhs:CastExpr rhs:(S "castable" S "as" S rhs:SingleType {return rhs})? {return rhs ? ["castable as", lhs, rhs] : lhs}
 
 // 28
 CastExpr
- = lhs:ArrowExpr rhs:(_ "cast as" _ rhs:SingleType {return rhs})? {return rhs ? ["cast as", lhs, rhs] : lhs}
+ = lhs:ArrowExpr rhs:(S "cast" S "as" S rhs:SingleType {return rhs})? {return rhs ? ["cast as", lhs, rhs] : lhs}
 
 // 29
 ArrowExpr
- = lhs:UnaryExpr functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier argumentList:ArgumentList _ { return [functionName, argumentList]})* {
+ = lhs:UnaryExpr functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier _ argumentList:ArgumentList _ { return [functionName, argumentList]})* {
      if (!functionParts.length) return lhs;
      return functionParts.reduce(function (previousFunction, functionPart) {
        return ["functionCall", functionPart[0], previousFunction].concat(functionPart[1]);
@@ -234,7 +251,7 @@ NumericLiteral = DoubleLiteral / DecimalLiteral / IntegerLiteral
 
 // 59
 VarRef
- = "$" varName:VarName {return ["varName", varName]}
+ = "$" varName:VarName {return ["varRef", varName]}
 
 // 60
 VarName
@@ -275,7 +292,7 @@ NamedFunctionRef
 // 68
 InlineFunctionRef
  = "function" _ "(" _ params:ParamList _ ")" _ body:FunctionBody {return ["inlineFunction", params, [], body]}
- / "function" _ "(" _ params:ParamList _ ") as " type:SequenceType  _ body:FunctionBody {return ["inlineFunction", params, type, body]}
+ / "function" _ "(" _ params:ParamList _ ")" _ "as" S type:SequenceType  _ body:FunctionBody {return ["inlineFunction", params, type, body]}
 
 // Note: 69 - 77 are not implemented, they are the map / array constructors and operators
 
@@ -402,7 +419,7 @@ AnyFunctionTest = "function (*)"
 
 // 104
 TypedFunctionTest
- = "function (" _ (SequenceType ("," _ SequenceType)*)? _ ") as " SequenceType
+ = "function" _ "(" _ (SequenceType ("," _ SequenceType)*)? _ ")" S "as" S SequenceType
 
 // 105
 MapTest = AnyMapTest / TypedMapTest
@@ -496,6 +513,9 @@ NCNameChar = NCNameStartChar / [-.0-9]
 // Whitespace Note: https://www.w3.org/TR/REC-xml/#NT-S
 _
  = WhitespaceCharacter*
+
+S
+ = WhitespaceCharacter+
 
 WhitespaceCharacter
  = "\u0020" / "\u0009" / "\u000D" / "\u000A"

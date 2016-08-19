@@ -37,15 +37,14 @@ define([
 	};
 
 	Filter.prototype.evaluate = function (dynamicContext) {
-		var	blueprint = dynamicContext.blueprint;
 		var valueSequence = this._valueSelector.evaluate(dynamicContext);
 		var filteredValues = this._filterSelectors.reduce(function (intermediateResult, selector) {
 				return intermediateResult.filter(function (value, i) {
-					var result = selector.evaluate({
-							contextItem: Sequence.singleton(value),
-							blueprint: blueprint,
-							contextSequence: valueSequence
-						});
+					var result = selector.evaluate(
+							dynamicContext.createScopedContext({
+								contextItem: Sequence.singleton(value),
+								contextSequence: valueSequence
+							}));
 
 					// The result should be a singleton sequence
 					var resultValue = result.value[0];

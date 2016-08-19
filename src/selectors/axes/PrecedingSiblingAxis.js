@@ -53,11 +53,10 @@ define([
 			blueprint = dynamicContext.blueprint;
 
 		function isMatchingSibling (selector, node) {
-			return selector.evaluate({
+			return selector.evaluate(dynamicContext.createScopedContext({
 				contextItem: Sequence.singleton(node),
-				blueprint: blueprint,
 				contextSequence: null
-			}).getEffectiveBooleanValue();
+			})).getEffectiveBooleanValue();
 		}
 
 		return sequence.value.reduce(function (resultingSequence, node) {

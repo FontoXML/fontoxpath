@@ -21,7 +21,7 @@ define([
 	 * @param  {Selector}  firstValueExpr   The selector evaluating to the first value to process
 	 * @param  {Selector}  secondValueExpr  The selector evaluating to the second value to process
 	 */
-	function Unary (kind, firstValueExpr, secondValueExpr) {
+	function BinaryNumericOperator (kind, firstValueExpr, secondValueExpr) {
 		Selector.call(this, firstValueExpr.specificity.add(secondValueExpr.specificity));
 		this._firstValueExpr = firstValueExpr;
 		this._secondValueExpr = secondValueExpr;
@@ -29,8 +29,8 @@ define([
 		this._kind = kind;
 	}
 
-	Unary.prototype = Object.create(Selector.prototype);
-	Unary.prototype.constructor = Unary;
+	BinaryNumericOperator.prototype = Object.create(Selector.prototype);
+	BinaryNumericOperator.prototype.constructor = BinaryNumericOperator;
 
 	function executeOperator (kind, a, b) {
 		switch (kind) {
@@ -49,7 +49,7 @@ define([
 		}
 	}
 
-	Unary.prototype.evaluate = function (dynamicContext) {
+	BinaryNumericOperator.prototype.evaluate = function (dynamicContext) {
 		var firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize();
 		if (firstValueSequence.isEmpty()) {
 			// Shortcut, if the first part is empty, we can return empty.
@@ -62,7 +62,7 @@ define([
 		}
 
 		if (!firstValueSequence.isSingleton() || !secondValueSequence.isSingleton()) {
-			throw new Error('XPTY0004');
+			throw new Error('ERR:XPTY0004');
 		}
 
 		// Cast both to doubles, if they are xs:untypedAtomic
@@ -91,5 +91,5 @@ define([
 		return Sequence.singleton(typedResult);
 	};
 
-	return Unary;
+	return BinaryNumericOperator;
 });

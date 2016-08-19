@@ -1,7 +1,11 @@
 define([
+	'./adaptJavaScriptValueToXPathValue',
+	'./selectors/DynamicContext',
 	'./selectors/dataTypes/Sequence',
 	'./selectors/dataTypes/NodeValue'
 ], function (
+	adaptJavaScriptValueToXPathValue,
+	DynamicContext,
 	Sequence,
 	NodeValue
 ) {
@@ -23,10 +27,13 @@ define([
 	 */
 	function evaluateXPath (xPathSelector, contextNode, blueprint, resultType) {
 		var contextSequence = Sequence.singleton(new NodeValue(contextNode, blueprint));
-		var rawResults = xPathSelector.evaluate({
+		var rawResults = xPathSelector.evaluate(new DynamicContext({
 				contextItem: contextSequence,
-				blueprint: blueprint
-			});
+				blueprint: blueprint,
+				variables: {
+					'$theBest': adaptJavaScriptValueToXPathValue('FontoXML is the best!')
+				}
+			}));
 
 		if (rawResults.isEmpty()) {
 			return [];

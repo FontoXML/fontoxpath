@@ -32,6 +32,8 @@ define([
 	'../selectors/operators/compares/Compare',
 
 	'../selectors/literals/Literal',
+	'../selectors/LetExpression',
+	'../selectors/VarRef',
 
 	'./xPathParser'
 ], function (
@@ -67,6 +69,8 @@ define([
 	Compare,
 
 	Literal,
+	LetExpression,
+	VarRef,
 
 	xPathParser
 ) {
@@ -145,6 +149,11 @@ define([
 			case 'literal':
 				return literal(args);
 
+			case 'let':
+				return letExpression(args);
+			case 'varRef':
+				return varRef(args);
+
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
 		}
@@ -219,6 +228,14 @@ define([
 		return new FunctionCall(functionName, args.map(compile));
 	}
 
+	function letExpression (args) {
+		var rangeVariable = args[0];
+		var bindingSequence = compile(args[1]);
+		var returnExpression = compile(args[2]);
+
+		return new LetExpression(rangeVariable, bindingSequence, returnExpression);
+	}
+
 	function literal (args) {
 		return new Literal(args[0], args[1]);
 	}
@@ -280,6 +297,10 @@ define([
 
 	function union (args) {
 		return new Union(args.map(compile));
+	}
+
+	function varRef (args) {
+		return new VarRef(args[0]);
 	}
 
 	// Hold a cache containing earlier created selectors, to prevent recompiling

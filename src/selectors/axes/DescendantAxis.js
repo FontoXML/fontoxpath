@@ -46,11 +46,11 @@ define([
 		return nodeSequence.value.reduce(function (resultingSequence, node) {
 			return resultingSequence.merge(
 				new Sequence(blueprintQuery.findDescendants(blueprint, node, function (descendantNode) {
-					return new BooleanValue(this._descendantSelector.evaluate({
-						blueprint: blueprint,
+					var scopedContext = dynamicContext.createScopedContext({
 						contextItem: Sequence.singleton(descendantNode),
 						contextSequence: null
-					}).getEffectiveBooleanValue());
+						});
+					return new BooleanValue(this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue());
 				}.bind(this))));
 		}.bind(this), new Sequence());
 	};

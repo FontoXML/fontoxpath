@@ -1,8 +1,10 @@
 define([
+	'../selectors/DynamicContext',
 	'../selectors/Selector',
 	'../selectors/dataTypes/Sequence',
 	'../selectors/dataTypes/NodeValue'
 ], function (
+	DynamicContext,
 	Selector,
 	Sequence,
 	NodeValue
@@ -15,11 +17,12 @@ define([
 	WrappingSelector.prototype = Object.create(Selector.prototype);
 	WrappingSelector.prototype.constructor = WrappingSelector;
 	WrappingSelector.prototype.matches = function (node, blueprint) {
-		var result = this._selectorToWrap.evaluate({
+		var result = this._selectorToWrap.evaluate(new DynamicContext({
 				contextItem: Sequence.singleton(new NodeValue(node, blueprint)),
 				contextSequence: null,
-				blueprint: blueprint
-			});
+				blueprint: blueprint,
+				variables: {}
+			}));
 
 		return result.getEffectiveBooleanValue();
 	};

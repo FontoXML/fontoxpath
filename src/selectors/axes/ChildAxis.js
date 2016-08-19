@@ -50,11 +50,11 @@ define([
 		return nodeSequence.value.reduce(function (resultingSequence, node) {
 			return resultingSequence.merge(new Sequence(
 				blueprintQuery.findChildren(blueprint, node, function (node) {
-					return this._childSelector.evaluate({
-						blueprint: blueprint,
-						contextItem: Sequence.singleton(node),
-						contextSequence: null
-					}).getEffectiveBooleanValue();
+					return this._childSelector.evaluate(
+						dynamicContext.createScopedContext({
+							contextItem: Sequence.singleton(node),
+							contextSequence: null
+						})).getEffectiveBooleanValue();
 				}.bind(this))));
 		}.bind(this), new Sequence());
 	};

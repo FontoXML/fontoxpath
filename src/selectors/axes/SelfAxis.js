@@ -41,11 +41,10 @@ define([
 			blueprint = dynamicContext.blueprint;
 
 		return new Sequence(nodeSequence.value.filter(function (node) {
-			return this._selector.evaluate({
-				blueprint: blueprint,
+			return this._selector.evaluate(dynamicContext.createScopedContext({
 				contextItem: Sequence.singleton(node),
 				contextSequence: nodeSequence
-			}, blueprint).getEffectiveBooleanValue();
+			})).getEffectiveBooleanValue();
 		}.bind(this)));
 	};
 
