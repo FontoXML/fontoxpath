@@ -6,7 +6,7 @@ define([
 	'use strict';
 
 	function UntypedAtomicValue (value) {
-		AnyAtomicValue.call(this, value, 'xs:untypedAtomic');
+		AnyAtomicValue.call(this, value);
 	}
 
 	UntypedAtomicValue.prototype = Object.create(AnyAtomicValue.prototype);
@@ -18,6 +18,13 @@ define([
 
 	UntypedAtomicValue.prototype.getEffectiveBooleanValue = function () {
 		return this.value.length > 0;
+	};
+
+	UntypedAtomicValue.primitiveTypeName = UntypedAtomicValue.prototype.primitiveTypeName = 'xs:untypedAtomic';
+
+	UntypedAtomicValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === 'xs:untypedAtomic' ||
+			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
 	};
 
 	return UntypedAtomicValue;

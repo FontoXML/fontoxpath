@@ -23,5 +23,10 @@ define([
 		return new IntegerValue(integerValue);
 	};
 
+	IntegerValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === 'xs:integer' ||
+			DecimalValue.prototype.instanceOfType(simpleTypeName);
+	};
+
 	return IntegerValue;
 });

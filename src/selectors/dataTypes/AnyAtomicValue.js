@@ -5,9 +5,8 @@ define([
 ) {
 	'use strict';
 
-	function AnyAtomicValue (value, primitiveType) {
+	function AnyAtomicValue (value) {
 		Value.call(this, value);
-		this.primitiveType = primitiveType;
 	}
 
 	AnyAtomicValue.prototype = Object.create(Value.prototype);
@@ -19,6 +18,13 @@ define([
 
 	AnyAtomicValue.prototype.atomize = function () {
 		return this;
+	};
+
+	AnyAtomicValue.primitiveTypeName = AnyAtomicValue.prototype.primitiveTypeName = 'xs:anyAtomicType';
+
+	AnyAtomicValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === this.primitiveTypeName ||
+			Value.prototype.instanceOfType(simpleTypeName);
 	};
 
 	return AnyAtomicValue;

@@ -202,6 +202,11 @@ define([
 		return this._node.getUserData(key);
 	};
 
+	NodeValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === 'node()' ||
+			Value.prototype.instanceOfType(simpleTypeName);
+	};
+
 	// TODO: Dep tracking + findDescendants etc
 
 	NodeValue.prototype.atomize = function () {

@@ -4,7 +4,7 @@ define([
 	AnyAtomicValue
 ) {
 	function BooleanValue (initialValue) {
-		AnyAtomicValue.call(this, initialValue, 'xs:boolean');
+		AnyAtomicValue.call(this, initialValue);
 	}
 
 	BooleanValue.prototype = Object.create(AnyAtomicValue.prototype);
@@ -42,6 +42,14 @@ define([
 	BooleanValue.prototype.getEffectiveBooleanValue = function () {
 		return this.value;
 	};
+
+	BooleanValue.primitiveTypeName = BooleanValue.prototype.primitiveTypeName = 'xs:boolean';
+
+	BooleanValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === this.primitiveTypeName ||
+			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
+	};
+
 
 	return BooleanValue;
 });

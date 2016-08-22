@@ -40,7 +40,7 @@ define([
 
 		return argument.value.every(function (argumentItem) {
 			// Item is a special case which matches anything
-			return type === 'item()' || argumentItem.simpleType === type;
+			return type === 'item()' || argumentItem.instanceOfType(type);
 		});
 	}
 

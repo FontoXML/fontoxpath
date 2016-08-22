@@ -6,8 +6,8 @@ define([
 	/**
 	 * Abstract Numeric class, primary type for everything which is numeric: decimal, double and float
 	 */
-	function NumericValue (initialValue, simpleType) {
-		AnyAtomicValue.call(this, initialValue, simpleType);
+	function NumericValue (initialValue, simpleTypes) {
+		AnyAtomicValue.call(this, initialValue, simpleTypes);
 	}
 
 	NumericValue.prototype = Object.create(AnyAtomicValue.prototype);
@@ -23,6 +23,12 @@ define([
 	NumericValue.prototype.getEffectiveBooleanValue = function () {
 		return this.value !== 0 && !Number.isNaN(this.value);
 	};
+
+	NumericValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === 'xs:numeric' ||
+			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
+	};
+
 
 	return NumericValue;
 });

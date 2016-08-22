@@ -4,7 +4,7 @@ define([
 	NumericValue
 ) {
 	function DecimalValue (initialValue) {
-		NumericValue.call(this, initialValue, 'xs:decimal');
+		NumericValue.call(this, initialValue);
 	}
 
 	DecimalValue.prototype = Object.create(NumericValue.prototype);
@@ -21,6 +21,13 @@ define([
 
 	DecimalValue.prototype.getEffectiveBooleanValue = function () {
 		return this.value !== 0 && !Number.isNaN(this.value);
+	};
+
+	DecimalValue.primitiveTypeName = DecimalValue.prototype.primitiveTypeName = 'xs:decimal';
+
+	DecimalValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === this.primitiveTypeName ||
+			NumericValue.prototype.instanceOfType(simpleTypeName);
 	};
 
 	return DecimalValue;

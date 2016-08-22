@@ -6,7 +6,7 @@ define([
 	'use strict';
 
 	function StringValue (value) {
-		AnyAtomicValue.call(this, value, 'xs:string');
+		AnyAtomicValue.call(this, value);
 	}
 
 	StringValue.prototype = Object.create(AnyAtomicValue.prototype);
@@ -19,6 +19,14 @@ define([
 	StringValue.prototype.getEffectiveBooleanValue = function () {
 		return this.value.length > 0;
 	};
+
+	StringValue.primitiveTypeName = StringValue.prototype.primitiveTypeName = 'xs:string';
+
+	StringValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === this.primitiveTypeName ||
+			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
+	};
+
 
 	return StringValue;
 });

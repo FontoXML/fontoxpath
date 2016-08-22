@@ -33,19 +33,19 @@ define([
 			secondValue = StringValue.cast(secondValue);
 		}
 
-		if (firstValue.primitiveType !== secondValue.primitiveType) {
-			if ((firstValue.primitiveType === 'xs:string' || firstValue.primitiveType === 'xs:anyURI') &&
-				(secondValue.primitiveType === 'xs:string' || secondValue.primitiveType === 'xs:anyURI')) {
+		if (firstValue.primitiveTypeName !== secondValue.primitiveTypeName) {
+			if ((firstValue.instanceOfType('xs:string') || firstValue.instanceOfType('xs:anyURI')) &&
+				(secondValue.instanceOfType('xs:string') || secondValue.instanceOfType('xs:anyURI'))) {
 				firstValue = StringValue.cast(firstValue);
 				secondValue = StringValue.cast(secondValue);
 			}
-			else if ((firstValue.primitiveType === 'xs:decimal' || firstValue.primitiveType === 'xs:float') &&
-					(secondValue.primitiveType === 'xs:decimal' || secondValue.primitiveType === 'xs:float')) {
+			else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float')) &&
+					(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float'))) {
 				firstValue = FloatValue.cast(firstValue);
 				secondValue = FloatValue.cast(secondValue);
 			}
-			else if ((firstValue.primitiveType === 'xs:decimal' || firstValue.primitiveType === 'xs:float' || firstValue.primitiveType === 'xs:double') &&
-					(secondValue.primitiveType === 'xs:decimal' || secondValue.primitiveType === 'xs:float' || secondValue.primitiveType === 'xs:double')) {
+			else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float') || firstValue.instanceOfType('xs:double')) &&
+					(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float') || secondValue.instanceOfType('xs:double'))) {
 				firstValue = DoubleValue.cast(firstValue);
 				secondValue = DoubleValue.cast(secondValue);
 			}

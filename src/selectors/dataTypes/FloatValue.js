@@ -4,7 +4,7 @@ define([
 	AnyAtomicValue
 ) {
 	function FloatValue (initialValue) {
-		AnyAtomicValue.call(this, initialValue, 'xs:float');
+		AnyAtomicValue.call(this, initialValue);
 	}
 
 	FloatValue.prototype = Object.create(AnyAtomicValue.prototype);
@@ -19,6 +19,14 @@ define([
 		var decimalValue = AnyAtomicValue.cast(value);
 		return new FloatValue(parseFloat(decimalValue.value, 10));
 	};
+
+	FloatValue.primitiveTypeName = FloatValue.prototype.primitiveTypeName = 'xs:float';
+
+	FloatValue.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === this.primitiveTypeName ||
+			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
+	};
+
 
 	return FloatValue;
 });

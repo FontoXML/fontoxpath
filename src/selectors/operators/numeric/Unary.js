@@ -31,10 +31,10 @@ define([
 		}
 
 		var value = valueSequence.value[0].atomize();
-		if (value.primitiveType === 'xs:integer' ||
-			value.primitiveType === 'xs:decimal' ||
-			value.primitiveType === 'xs:double' ||
-			value.primitiveType === 'xs:float') {
+		if (value.instanceOfType('xs:integer') ||
+			value.instanceOfType('xs:decimal') ||
+			value.instanceOfType('xs:double') ||
+			value.instanceOfType('xs:float')) {
 
 			if (this._kind === '-') {
 				// TODO: clone

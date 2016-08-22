@@ -12,5 +12,9 @@ define([
 		throw new Error('Not implemented');
 	};
 
+	Value.prototype.instanceOfType = function (simpleTypeName) {
+		return simpleTypeName === 'item()';
+	};
+
 	return Value;
 });
