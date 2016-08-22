@@ -195,7 +195,7 @@ define([
 	};
 
 	NodeValue.prototype.hasAttribute = function (attributeName) {
-		return this._blueprint.gasAttribute(this._node, attributeName) !== null;
+		return this._blueprint.getAttribute(this._node, attributeName) !== null;
 	};
 
 	NodeValue.prototype.getUserData = function (key) {

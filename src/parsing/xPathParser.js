@@ -185,7 +185,7 @@ define([], function() {
         peg$c34 = peg$literalExpectation("||", false),
         peg$c35 = function(first, rest) {
              if (!rest.length) return first;
-             return appendRest(['functionCall', 'concat', first].concat(rest))
+             return appendRest(["functionCall", "concat", first].concat(rest))
            },
         peg$c36 = "to",
         peg$c37 = peg$literalExpectation("to", false),

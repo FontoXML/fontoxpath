@@ -74,7 +74,7 @@ ComparisonExpr
 StringConcatExpr
  = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* {
      if (!rest.length) return first;
-     return appendRest(['functionCall', 'concat', first].concat(rest))
+     return appendRest(["functionCall", "concat", first].concat(rest))
    }
 
 // 20
@@ -265,7 +265,7 @@ ParenthesizedExpr
 // 62
 // Do not match '..'
 ContextItemExpr
- = "." !"." { return ["self", ["kindTest", "node"]] }
+ = "." !"." { return ["self", ["kindTest", "item"]] }
 
 // 63
 FunctionCall

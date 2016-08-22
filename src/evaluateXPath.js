@@ -22,17 +22,26 @@ define([
 	 * @param  {Selector}   XPathSelector
 	 * @param  {Node}       contextNode
 	 * @param  {Blueprint}  blueprint
+	 * @param  {[Object]}   variables
 	 *
 	 *@return  {Node[]|Node|Any[]|Any}
 	 */
-	function evaluateXPath (xPathSelector, contextNode, blueprint, resultType) {
+	function evaluateXPath (xPathSelector, contextNode, blueprint, variables, returnType) {
 		var contextSequence = Sequence.singleton(new NodeValue(contextNode, blueprint));
+		var untypedVariables = Object.assign(
+				{
+					'theBest': 'FontoXML is the best!'
+				},
+				variables || {});
+		var typedVariables = Object.keys(untypedVariables).reduce(function (typedVariables, variableName) {
+				typedVariables[variableName] = adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
+				return typedVariables;
+			}, Object.create(null));
+
 		var rawResults = xPathSelector.evaluate(new DynamicContext({
 				contextItem: contextSequence,
 				blueprint: blueprint,
-				variables: {
-					'$theBest': adaptJavaScriptValueToXPathValue('FontoXML is the best!')
-				}
+				variables: typedVariables
 			}));
 
 		if (rawResults.isEmpty()) {
@@ -44,7 +53,7 @@ define([
 		}
 
 		var allValuesAreNodes = rawResults.value.every(function (value) {
-			return value instanceof NodeValue;
+				return value instanceof NodeValue;
 			});
 
 		if (allValuesAreNodes) {
@@ -61,7 +70,8 @@ define([
 	evaluateXPath.BOOLEAN_TYPE = {};
 	evaluateXPath.ANY_TYPE = {};
 	evaluateXPath.NUMBER_TYPE = {};
-	evaluateXPath.BOOLEAN_TYPE = {};
+	evaluateXPath.NODE_TYPE = {};
+	evaluateXPath.NODES_TYPE = {};
 
 	return evaluateXPath;
 });

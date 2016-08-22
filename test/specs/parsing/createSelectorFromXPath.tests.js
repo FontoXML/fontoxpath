@@ -959,12 +959,29 @@ define([
 					});
 
 					it('chains in the correct order', function () {
-						var selector = parseSelector('let $a := 1, $y := 2, $x := 3 return $x (: If the order would be inverse, $x would stil be 1 :)');
+						var selector = parseSelector('let $x := 1, $y := 2, $x := 3 return $x (: If the order would be inverse, $x would still be 1 :)');
 						chai.expect(
 							evaluateXPath(selector, documentNode, blueprint)
 						).to.deep.equal(3);
 					});
 				});
+
+				describe('varRef', function () {
+					it('can reference variables', function () {
+						var selector = parseSelector('$x');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint, {'x': 42})
+						).to.deep.equal(42);
+					});
+
+					it('can reference built-in variables', function () {
+						var selector = parseSelector('$theBest');
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint)
+						).to.deep.equal('FontoXML is the best!');
+					});
+				});
+
 
 				describe('functions', function () {
 					describe('last()', function () {
