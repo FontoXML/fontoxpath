@@ -51,10 +51,9 @@ define([
 		});
 	}
 
-	// The fn: namespace is considered the global namespace.
 	return {
 		'not': function (dynamicContext, sequence) {
-			if (isValidArgumentList(['item()*'], [sequence])) {
+			if (!isValidArgumentList(['item()*'], [sequence])) {
 				throw new Error('No such function not(???). Did you mean not($a as item()*)?');
 			}
 			return Sequence.singleton(new BooleanValue(!sequence.getEffectiveBooleanValue()));
@@ -66,8 +65,8 @@ define([
 			return Sequence.singleton(new BooleanValue(false));
 		},
 		'count': function (dynamicContext, sequence) {
-			if (isValidArgumentList(['xs:item()*'], [sequence])) {
-				throw new Error('No such function not(???). Did you mean not($a as xs:item()*)?');
+			if (!isValidArgumentList(['item()*'], [sequence])) {
+				throw new Error('No such function count(???). Did you mean not($a as xs:item()*)?');
 			}
 			return Sequence.singleton(new IntegerValue(sequence.value.length));
 		},
