@@ -255,6 +255,8 @@ define([
 				return new NodeTypeSelector(7);
 			case 'text':
 				return new NodeTypeSelector(3);
+			case 'item':
+				return new UniversalSelector();
 			default:
 				throw new Error('Unrecognized nodeType: ' + args[0]);
 		}

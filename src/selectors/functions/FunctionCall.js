@@ -55,7 +55,7 @@ define([
 		var registeredFunction = functionsByName[this._functionName];
 		return registeredFunction.apply(
 			undefined,
-			[blueprint, contextSequence, contextItem].concat(evaluatedArguments));
+			[dynamicContext].concat(evaluatedArguments));
 	};
 
 	FunctionCall.prototype.equals = function (otherSelector) {

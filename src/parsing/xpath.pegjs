@@ -79,7 +79,7 @@ StringConcatExpr
 
 // 20
 RangeExpr
- = lhs:AdditiveExpr rhs:( S "to" S rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", "range", lhs, rhs]}
+ = lhs:AdditiveExpr rhs:( S "to" S rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", "op:to", lhs, rhs]}
 
 // 21
 AdditiveExpr
