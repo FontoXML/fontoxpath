@@ -616,6 +616,66 @@ define([
 				});
 			});
 
+			describe('boolean', function () {
+				it('If $arg is the empty sequence, fn:boolean returns false.', function () {
+					var selector = parseSelector('boolean(())');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.equal(false);
+				});
+
+				it('If $arg is a sequence whose first item is a node, fn:boolean returns true.', function () {
+					var selector = parseSelector('boolean(.)');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.equal(true);
+				});
+
+				it('If $arg is a singleton value of type xs:boolean or a derived from xs:boolean, fn:boolean returns $arg.', function () {
+					var selector1 = parseSelector('boolean(true())'),
+						selector2 = parseSelector('boolean(false())');
+					chai.expect(
+						evaluateXPath(selector1, documentNode, blueprint)
+					).to.equal(true);
+					chai.expect(
+						evaluateXPath(selector2, documentNode, blueprint)
+					).to.equal(false);
+				});
+
+				it('If $arg is a singleton value of type xs:string or a type derived from xs:string, xs:anyURI or a type derived from xs:anyURI or xs:untypedAtomic, fn:boolean returns false if the operand value has zero length; otherwise it returns true.', function () {
+					var selector1 = parseSelector('boolean("test")'),
+						selector2 = parseSelector('boolean("")');
+					chai.expect(
+						evaluateXPath(selector1, documentNode, blueprint)
+					).to.equal(true);
+					chai.expect(
+						evaluateXPath(selector2, documentNode, blueprint)
+					).to.equal(false);
+				});
+
+				it('If $arg is a singleton value of any numeric type or a type derived from a numeric type, fn:boolean returns false if the operand value is NaN or is numerically equal to zero; otherwise it returns true.', function () {
+					var selector1 = parseSelector('boolean(1)'),
+						selector2 = parseSelector('boolean(0)'),
+						selector3 = parseSelector('boolean(+("not a number" (: string coerce to double will be NaN :)))');
+					chai.expect(
+						evaluateXPath(selector1, documentNode, blueprint)
+					).to.equal(true, '1');
+					chai.expect(
+						evaluateXPath(selector2, documentNode, blueprint)
+					).to.equal(false, '0');
+					chai.expect(
+						evaluateXPath(selector3, documentNode, blueprint)
+					).to.equal(false, 'NaN');
+				});
+
+				it('In all other cases, fn:boolean raises a type error [err:FORG0006].', function () {
+					var selector = parseSelector('boolean(("a", "b", "c"))');
+					chai.expect(function () {
+						evaluateXPath(selector, documentNode, blueprint);
+					}).to.throw(/FORG0006/);
+				});
+			});
+
 			describe('operators', function () {
 				describe('boolan operators', function () {
 					describe('compares', function () {

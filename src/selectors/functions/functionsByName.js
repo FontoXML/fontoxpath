@@ -14,8 +14,8 @@ define([
 	function isValidArgument (typeDescription, argument) {
 		// typeDescription is something like 'xs:string?'
 		var parts = typeDescription.match(/^([^+?*]*)([\+\*\?])?$/);
-		var type = parts[0],
-			multiplicity = parts[1];
+		var type = parts[1],
+			multiplicity = parts[2];
 		switch (multiplicity) {
 			case '?':
 				if (!argument.isEmpty() && !argument.isSingleton()) {
@@ -106,6 +106,13 @@ define([
 
 			// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
 			return Sequence.singleton(new StringValue(strings.join('')));
+		},
+		'boolean': function (dynamicContext, sequence) {
+			if (!isValidArgumentList(['item()*'], [sequence])) {
+				throw new Error('No such function boolean(). Did your mean boolean($arg as item()*)?');
+			}
+
+			return Sequence.singleton(new BooleanValue(sequence.getEffectiveBooleanValue()));
 		}
 	};
 });
