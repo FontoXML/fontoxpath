@@ -13,7 +13,7 @@ define([
 
 	function isValidArgument (typeDescription, argument) {
 		// typeDescription is something like 'xs:string?'
-		var parts = typeDescription.match(/^(.*)([\+\*\?])?$/);
+		var parts = typeDescription.match(/^([^+?*]*)([\+\*\?])?$/);
 		var type = parts[0],
 			multiplicity = parts[1];
 		switch (multiplicity) {
@@ -54,8 +54,8 @@ define([
 	// The fn: namespace is considered the global namespace.
 	return {
 		'not': function (dynamicContext, sequence) {
-			if (isValidArgumentList(['xs:item()*'], [sequence])) {
-				throw new Error('No such function not(???). Did you mean not($a as xs:sequence)?');
+			if (isValidArgumentList(['item()*'], [sequence])) {
+				throw new Error('No such function not(???). Did you mean not($a as item()*)?');
 			}
 			return Sequence.singleton(new BooleanValue(!sequence.getEffectiveBooleanValue()));
 		},
@@ -67,7 +67,7 @@ define([
 		},
 		'count': function (dynamicContext, sequence) {
 			if (isValidArgumentList(['xs:item()*'], [sequence])) {
-				throw new Error('No such function not(???). Did you mean not($a as xs:sequence)?');
+				throw new Error('No such function not(???). Did you mean not($a as xs:item()*)?');
 			}
 			return Sequence.singleton(new IntegerValue(sequence.value.length));
 		},
