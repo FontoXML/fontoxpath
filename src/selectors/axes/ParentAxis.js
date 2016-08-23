@@ -30,11 +30,11 @@ define([
 
 	ParentAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.domFacade;
+			domFacade = dynamicContext.domFacade;
 
 		var nodeValues = nodeSequence.value
 			.map(function (nodeValue) {
-				return blueprint.getParentNode(nodeValue);
+				return domFacade.getParentNode(nodeValue);
 			})
 			.filter(function (node) {
 				var result = this._parentSelector.evaluate(dynamicContext.createScopedContext({

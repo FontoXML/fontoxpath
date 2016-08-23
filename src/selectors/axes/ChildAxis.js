@@ -46,9 +46,9 @@ define([
 
 	ChildAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.domFacade;
+			domFacade = dynamicContext.domFacade;
 		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
-			var nodeValues = blueprintQuery.findChildren(blueprint, nodeValue, function (node) {
+			var nodeValues = blueprintQuery.findChildren(domFacade, nodeValue, function (node) {
 					return this._childSelector.evaluate(
 						dynamicContext.createScopedContext({
 							contextItem: Sequence.singleton(node),

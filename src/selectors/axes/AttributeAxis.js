@@ -65,10 +65,10 @@ define([
 
 	AttributeAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.domFacade;
+			domFacade = dynamicContext.domFacade;
 
 		return new Sequence(nodeSequence.value.reduce(function (values, nodeValue) {
-			var attributeValue = blueprint.getAttribute(nodeValue, this._attributeName);
+			var attributeValue = domFacade.getAttribute(nodeValue, this._attributeName);
 			if (attributeValue) {
 				values.push(attributeValue);
 			}

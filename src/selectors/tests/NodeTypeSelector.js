@@ -33,8 +33,8 @@ define([
 
 	NodeTypeSelector.prototype.evaluate = function (dynamicContext) {
 		var sequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.domFacade;
-		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0].value, blueprint)));
+			domFacade = dynamicContext.domFacade;
+		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0].value, domFacade)));
 	};
 
 	NodeTypeSelector.prototype.equals = function (otherSelector) {

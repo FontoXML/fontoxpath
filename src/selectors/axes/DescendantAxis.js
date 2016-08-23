@@ -40,7 +40,7 @@ define([
 
 	DescendantAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.domFacade;
+			domFacade = dynamicContext.domFacade;
 
 		var isMatchingDescendant = function (descendantNode) {
 				var scopedContext = dynamicContext.createScopedContext({
@@ -51,7 +51,7 @@ define([
 			}.bind(this);
 		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
 			var nodeValues = blueprintQuery.findDescendants(
-					blueprint,
+					domFacade,
 					nodeValue,
 					isMatchingDescendant,
 					true);
