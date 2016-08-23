@@ -37,6 +37,15 @@ define([
 	Compare.prototype = Object.create(Selector.prototype);
 	Compare.prototype.constructor = Compare;
 
+	Compare.prototype.equals = function (otherSelector) {
+		if (otherSelector === this) {
+			return true;
+		}
+		return otherSelector instanceof Compare &&
+			this._firstSelector.equals(otherSelector._firstSelector) &&
+			this._firstSelector.equals(otherSelector._firstSelector);
+	};
+
 	Compare.prototype.evaluate = function (dynamicContext) {
 		var firstSequence = this._firstSelector.evaluate(dynamicContext),
 			secondSequence = this._secondSelector.evaluate(dynamicContext);
