@@ -1,9 +1,11 @@
 define([
+	'./parsing/createSelectorFromXPath',
 	'./adaptJavaScriptValueToXPathValue',
 	'./selectors/DynamicContext',
 	'./selectors/dataTypes/Sequence',
 	'./selectors/dataTypes/NodeValue'
 ], function (
+	createSelectorFromXPath,
 	adaptJavaScriptValueToXPathValue,
 	DynamicContext,
 	Sequence,
@@ -19,14 +21,17 @@ define([
 	 *  * If the XPath evaluates to a singleton value, that value is atomized and returned.
 	 *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
 	 *  * Else, the sequence is atomized and returned.
-	 * @param  {Selector}   XPathSelector
-	 * @param  {Node}       contextNode
-	 * @param  {Blueprint}  blueprint
-	 * @param  {[Object]}   variables
+	 * @param  {Selector|String}   XPathSelector
+	 * @param  {Node}              contextNode
+	 * @param  {Blueprint}         blueprint
+	 * @param  {[Object]}          variables
 	 *
 	 *@return  {Node[]|Node|Any[]|Any}
 	 */
 	function evaluateXPath (xPathSelector, contextNode, blueprint, variables, returnType) {
+		if (typeof xPathSelector === 'string') {
+			xPathSelector = createSelectorFromXPath(xPathSelector);
+		}
 		var contextSequence = Sequence.singleton(new NodeValue(contextNode, blueprint));
 		var untypedVariables = Object.assign(
 				{

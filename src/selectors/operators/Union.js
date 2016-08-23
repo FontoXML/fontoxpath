@@ -1,7 +1,9 @@
 define([
+	'../Specificity',
 	'../Selector',
 	'../dataTypes/Sequence'
 ], function (
+	Specificity,
 	Selector,
 	Sequence
 ) {
@@ -10,29 +12,14 @@ define([
 	/**
 	 * The 'union' combining selector, or when matching, concats otherwise.
 	 * order is undefined.
-	 * @param  {Selector}  firstSelector
-	 * @param  {Selector}  secondSelector
+	 * @param  {Selector[]}  selectors
 	 */
-	function Union (firstSelector, secondSelector) {
-		Selector.call(this, firstSelector.specificity.add(secondSelector.specificity));
+	function Union (selectors) {
+		Selector.call(this, selectors.reduce(function (specificity, selector) {
+			return specificity.add(selector.specificity);
+		}, new Specificity({})));
 
-		// If both subSelectors define the same bucket: use that one, else, use no bucket.
-		var firstBucket = firstSelector.getBucket(),
-			secondBucket = secondSelector.getBucket();
-
-		this._bucket = firstBucket === secondBucket ? firstBucket : null;
-
-		this._subSelectors = [];
-		if (firstSelector instanceof Union) {
-			this._subSelectors = firstSelector._subSelectors.concat();
-		} else {
-			this._subSelectors.push(firstSelector);
-		}
-		if (secondSelector instanceof Union) {
-			this._subSelectors = this._subSelectors.concat(secondSelector._subSelectors);
-		} else {
-			this._subSelectors.push(secondSelector);
-		}
+		this._subSelectors = selectors;
 	}
 
 	Union.prototype = Object.create(Selector.prototype);
@@ -82,15 +69,24 @@ define([
 	};
 
 	Union.prototype.evaluate = function (dynamicContext) {
-		return this._subSelectors.reduce(function (accum, selector) {
-			// TODO: Dedupe
-			return accum.merge(selector.evaluate(dynamicContext));
-		}, new Sequence());
-	};
+		var nodeById = this._subSelectors.reduce(function (resultingNodeById, selector) {
+				var results = selector.evaluate(dynamicContext);
+				var allItemsAreNode = results.value.every(function (valueItem) {
+						return valueItem.instanceOfType('node()');
+					});
 
-	Union.prototype.getBucket = function () {
-		return this._bucket;
-	};
+				if (!allItemsAreNode) {
+					throw new Error('ERRXPTY0004: The sequences to union are not of type node()*');
+				}
+				results.value.forEach(function (value) {
+					resultingNodeById[value.nodeId] = value;
+				});
+				return resultingNodeById;
+			}, Object.create(null));
 
+		return new Sequence(Object.keys(nodeById).map(function (nodeId) {
+			return nodeById[nodeId];
+		}));
+	};
 	return Union;
 });
