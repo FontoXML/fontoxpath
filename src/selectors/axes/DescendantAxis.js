@@ -41,16 +41,22 @@ define([
 	DescendantAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
 			blueprint = dynamicContext.domFacade;
+
+		var isMatchingDescendant = function (descendantNode) {
+				var scopedContext = dynamicContext.createScopedContext({
+						contextItem: Sequence.singleton(descendantNode),
+						contextSequence: null
+					});
+				return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+			}.bind(this);
 		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
-			var nodeValues = blueprintQuery.findDescendants(blueprint, nodeValue, function (descendantNode) {
-					var scopedContext = dynamicContext.createScopedContext({
-							contextItem: Sequence.singleton(descendantNode),
-							contextSequence: null
-						});
-					return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
-				}.bind(this));
+			var nodeValues = blueprintQuery.findDescendants(
+					blueprint,
+					nodeValue,
+					isMatchingDescendant,
+					true);
 			return resultingSequence.merge(new Sequence(nodeValues));
-		}.bind(this), new Sequence());
+		}, new Sequence());
 	};
 
 
