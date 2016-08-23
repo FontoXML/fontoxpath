@@ -1,13 +1,11 @@
 define([
 	'fontoxml-blueprints',
 	'../Selector',
-	'../dataTypes/Sequence',
-	'../dataTypes/BooleanValue'
+	'../dataTypes/Sequence'
 ], function (
 	blueprints,
 	Selector,
-	Sequence,
-	BooleanValue
+	Sequence
 ) {
 	'use strict';
 
@@ -42,16 +40,16 @@ define([
 
 	DescendantAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
-		return nodeSequence.value.reduce(function (resultingSequence, node) {
-			return resultingSequence.merge(
-				new Sequence(blueprintQuery.findDescendants(blueprint, node, function (descendantNode) {
+			blueprint = dynamicContext.domFacade;
+		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
+			var nodeValues = blueprintQuery.findDescendants(blueprint, nodeValue, function (descendantNode) {
 					var scopedContext = dynamicContext.createScopedContext({
-						contextItem: Sequence.singleton(descendantNode),
-						contextSequence: null
+							contextItem: Sequence.singleton(descendantNode),
+							contextSequence: null
 						});
-					return new BooleanValue(this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue());
-				}.bind(this))));
+					return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+				}.bind(this));
+			return resultingSequence.merge(new Sequence(nodeValues));
 		}.bind(this), new Sequence());
 	};
 

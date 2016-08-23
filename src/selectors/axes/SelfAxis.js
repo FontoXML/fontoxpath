@@ -37,8 +37,7 @@ define([
 	};
 
 	SelfAxis.prototype.evaluate = function (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+		var nodeSequence = dynamicContext.contextItem;
 
 		return new Sequence(nodeSequence.value.filter(function (node) {
 			return this._selector.evaluate(dynamicContext.createScopedContext({

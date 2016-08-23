@@ -1,8 +1,10 @@
 define([
+	'fontoxml-dom-identification/getNodeId',
 	'../Specificity',
 	'../Selector',
 	'../dataTypes/Sequence'
 ], function (
+	getNodeId,
 	Specificity,
 	Selector,
 	Sequence
@@ -78,8 +80,8 @@ define([
 				if (!allItemsAreNode) {
 					throw new Error('ERRXPTY0004: The sequences to union are not of type node()*');
 				}
-				results.value.forEach(function (value) {
-					resultingNodeById[value.nodeId] = value;
+				results.value.forEach(function (nodeValue) {
+					resultingNodeById[getNodeId(nodeValue.value)] = nodeValue;
 				});
 				return resultingNodeById;
 			}, Object.create(null));

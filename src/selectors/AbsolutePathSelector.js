@@ -1,11 +1,13 @@
 define([
 	'fontoxml-blueprints',
 	'./Selector',
-	'./dataTypes/Sequence'
+	'./dataTypes/Sequence',
+	'./dataTypes/NodeValue'
 ], function (
 	blueprints,
 	Selector,
-	Sequence
+	Sequence,
+	NodeValue
 ) {
 	'use strict';
 
@@ -30,11 +32,12 @@ define([
 
 	AbsolutePathSelector.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+			domFacade = dynamicContext.domFacade;
 		// Assume this is the start, so only one node
 		return this._relativePathSelector.evaluate(
 			dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(blueprintQuery.getDocumentNode(blueprint, nodeSequence.value[0])),
+				contextItem: Sequence.singleton(
+					new NodeValue(domFacade, blueprintQuery.getDocumentNode(domFacade, nodeSequence.value[0].value))),
 				contextSequence: null
 			}));
 	};

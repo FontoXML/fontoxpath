@@ -30,18 +30,21 @@ define([
 
 	ParentAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+			blueprint = dynamicContext.domFacade;
 
-		return new Sequence(
-			nodeSequence.value
-				.map(blueprint.getParentNode.bind(blueprint))
-				.filter(function (node) {
-					var result = this._parentSelector.evaluate(dynamicContext.createScopedContext({
-							contextItem: Sequence.singleton(node),
-							contextSequence: null
-						}));
-					return result.getEffectiveBooleanValue();
-				}.bind(this)));
+		var nodeValues = nodeSequence.value
+			.map(function (nodeValue) {
+				return blueprint.getParentNode(nodeValue);
+			})
+			.filter(function (node) {
+				var result = this._parentSelector.evaluate(dynamicContext.createScopedContext({
+						contextItem: Sequence.singleton(node),
+						contextSequence: null
+					}));
+				return result.getEffectiveBooleanValue();
+			}.bind(this));
+
+		return new Sequence(nodeValues);
 	};
 
 	return ParentAxis;

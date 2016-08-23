@@ -34,7 +34,7 @@ define([
 	FunctionCall.prototype.evaluate = function (dynamicContext) {
 		var contextSequence = dynamicContext.contextSequence,
 			contextItem = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+			blueprint = dynamicContext.domFacade;
 		var evaluatedArguments = this._args.map(function (argument) {
 				return argument.evaluate(dynamicContext);
 			});
@@ -48,7 +48,7 @@ define([
 			var result = customFunction.bind.apply(
 					customFunction,
 					[undefined].concat(simplifiedArguments))
-				.call(undefined, contextItem.value[0], blueprint);
+				.call(undefined, contextItem.value[0].value, blueprint);
 			return Sequence.singleton(new BooleanValue(!!result));
 		}
 

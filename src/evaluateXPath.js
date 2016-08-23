@@ -3,13 +3,15 @@ define([
 	'./adaptJavaScriptValueToXPathValue',
 	'./selectors/DynamicContext',
 	'./selectors/dataTypes/Sequence',
-	'./selectors/dataTypes/NodeValue'
+	'./selectors/dataTypes/NodeValue',
+	'./selectors/DomFacade'
 ], function (
 	createSelectorFromXPath,
 	adaptJavaScriptValueToXPathValue,
 	DynamicContext,
 	Sequence,
-	NodeValue
+	NodeValue,
+	DomFacade
 ) {
 	'use strict';
 
@@ -32,7 +34,7 @@ define([
 		if (typeof xPathSelector === 'string') {
 			xPathSelector = createSelectorFromXPath(xPathSelector);
 		}
-		var contextSequence = Sequence.singleton(new NodeValue(contextNode, blueprint));
+		var contextSequence = Sequence.singleton(new NodeValue(blueprint, contextNode));
 		var untypedVariables = Object.assign(
 				{
 					'theBest': 'FontoXML is the best!'
@@ -45,7 +47,7 @@ define([
 
 		var rawResults = xPathSelector.evaluate(new DynamicContext({
 				contextItem: contextSequence,
-				blueprint: blueprint,
+				domFacade: new DomFacade(blueprint),
 				variables: typedVariables
 			}));
 

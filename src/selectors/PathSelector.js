@@ -39,7 +39,7 @@ define([
 			for (var j = 0, k = intermediateResults.length; j < k; ++j) {
 				Array.prototype.push.apply(newResults, selector.evaluate({
 					contextItem: intermediateResults[j],
-					blueprint: blueprint
+					domFacade: blueprint
 				}));
 			}
 

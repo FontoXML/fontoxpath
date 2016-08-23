@@ -46,16 +46,17 @@ define([
 
 	ChildAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
-		return nodeSequence.value.reduce(function (resultingSequence, node) {
-			return resultingSequence.merge(new Sequence(
-				blueprintQuery.findChildren(blueprint, node, function (node) {
+			blueprint = dynamicContext.domFacade;
+		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
+			var nodeValues = blueprintQuery.findChildren(blueprint, nodeValue, function (node) {
 					return this._childSelector.evaluate(
 						dynamicContext.createScopedContext({
 							contextItem: Sequence.singleton(node),
 							contextSequence: null
 						})).getEffectiveBooleanValue();
-				}.bind(this))));
+				}.bind(this));
+
+			return resultingSequence.merge(new Sequence(nodeValues));
 		}.bind(this), new Sequence());
 	};
 

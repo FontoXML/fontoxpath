@@ -1,8 +1,10 @@
 define([
+	'./DomFacade',
 	'./DynamicContext',
 	'./dataTypes/Sequence',
 	'./dataTypes/NodeValue'
 ], function (
+	DomFacade,
 	DynamicContext,
 	Sequence,
 	NodeValue
@@ -29,9 +31,9 @@ define([
 			hasWarned = true;
 		}
 		var result = this.evaluate(new DynamicContext({
-				contextItem: Sequence.singleton(new NodeValue(node, blueprint)),
+				contextItem: Sequence.singleton(new NodeValue(blueprint, node)),
 				contextSequence: null,
-				blueprint: blueprint,
+				domFacade: new DomFacade(blueprint),
 				variables: {}
 			}));
 

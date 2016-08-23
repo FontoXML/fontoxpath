@@ -33,9 +33,9 @@ define([
 
 	NodePredicateSelector.prototype.evaluate = function (dynamicContext) {
 		var sequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+			blueprint = dynamicContext.domFacade;
 		// TODO: non-singleton nodeTests
-		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0], blueprint)));
+		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0].value, blueprint)));
 	};
 
 	NodePredicateSelector.prototype.equals = function (otherSelector) {

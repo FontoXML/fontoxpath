@@ -59,8 +59,8 @@ define([
 
 	NodeNameSelector.prototype.evaluate = function (dynamicContext) {
 		var sequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
-		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0], blueprint)));
+			blueprint = dynamicContext.domFacade;
+		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0].value, blueprint)));
 	};
 
 	NodeNameSelector.prototype.getBucket = function () {

@@ -1,5 +1,6 @@
 define([
 	'fontoxml-dom-utils/domInfo',
+
 	'../Selector',
 	'../Specificity',
 	'../isSameArray',
@@ -7,6 +8,7 @@ define([
 	'../dataTypes/AttributeNodeValue'
 ], function (
 	domInfo,
+
 	Selector,
 	Specificity,
 	isSameArray,
@@ -63,12 +65,12 @@ define([
 
 	AttributeAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+			blueprint = dynamicContext.domFacade;
 
 		return new Sequence(nodeSequence.value.reduce(function (values, nodeValue) {
 			var attributeValue = blueprint.getAttribute(nodeValue, this._attributeName);
 			if (attributeValue) {
-				values.push(new AttributeNodeValue(blueprint, nodeValue, this._attributeName, attributeValue));
+				values.push(attributeValue);
 			}
 			return values;
 		}.bind(this), []));

@@ -49,7 +49,7 @@ define([
 
 	FollowingSiblingAxis.prototype.evaluate = function (dynamicContext) {
 		var sequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+			blueprint = dynamicContext.domFacade;
 
 		function isMatchingSibling (selector, node) {
 			return selector.evaluate(dynamicContext.createScopedContext({

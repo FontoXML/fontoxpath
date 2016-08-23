@@ -52,18 +52,18 @@ define([
 
 	AncestorAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
-			blueprint = dynamicContext.blueprint;
+			domFacade = dynamicContext.domFacade;
 
-		return nodeSequence.value.reduce(function (resultingSequence, node) {
-			return resultingSequence.merge(new Sequence(
-				blueprintQuery.findAllAncestors(blueprint, node, false)
+		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
+			var ancestorNodeValues = blueprintQuery.findAllAncestors(domFacade, nodeValue, false)
 					.filter(function (node) {
 						return this._ancestorSelector.evaluate({
 							contextItem: Sequence.singleton(node),
 							contextSequence: null,
-							blueprint: blueprint
+							domFacade: domFacade
 						}).getEffectiveBooleanValue();
-					}.bind(this))));
+					}.bind(this));
+			return resultingSequence.merge(new Sequence(ancestorNodeValues));
 			}.bind(this), new Sequence());
 	};
 
