@@ -41,6 +41,11 @@ define([
 					element.setAttribute('someAttribute', 'someValue');
 					chai.expect(selector.matches(element, blueprint)).to.equal(true);
 				});
+				it('resolves to false if attribute is absent', function () {
+					var selector = parseSelector('@someAttribute');
+					var element = documentNode.createElement('someElement');
+					chai.expect(selector.matches(element, blueprint)).to.equal(false);
+				});
 				it('allows namespaces', function () {
 					var selector = parseSelector('attribute::someNamespace:someAttribute');
 					var element = documentNode.createElement('someElement');
@@ -270,6 +275,7 @@ define([
 			it('can parse a simple nodeName + attribute selector', function () {
 				var selector = parseSelector('self::someElement[@someAttribute=\'someValue\']');
 				var element = documentNode.createElement('someElement');
+				chai.expect(selector.matches(element, blueprint)).to.equal(false);
 				element.setAttribute('someAttribute', 'someValue');
 				chai.expect(selector.matches(element, blueprint)).to.equal(true);
 			});

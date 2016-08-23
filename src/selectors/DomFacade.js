@@ -55,7 +55,11 @@ define([
 	};
 
 	DomFacade.prototype.getAttribute = function (node, attributeName) {
-		return new AttributeNodeValue(this, node.value, attributeName, this._blueprint.getAttribute(node.value, attributeName));
+		var value = this._blueprint.getAttribute(node.value, attributeName);
+		if (!value) {
+			return null;
+		}
+		return new AttributeNodeValue(this, node.value, attributeName, value);
 	};
 
 	DomFacade.prototype.getAllAttributes = function (node) {
