@@ -1,15 +1,23 @@
 define([
+	'fontoxml-dom-utils',
+
 	'../dataTypes/Sequence',
 	'../dataTypes/BooleanValue',
 	'../dataTypes/StringValue',
-	'../dataTypes/IntegerValue'
+	'../dataTypes/IntegerValue',
+	'../dataTypes/DoubleValue'
 ], function (
+	domUtils,
+
 	Sequence,
 	BooleanValue,
 	StringValue,
-	IntegerValue
+	IntegerValue,
+	DoubleValue
 ) {
 	'use strict';
+
+	var domQuery = domUtils.domQuery;
 
 	function isValidArgument (typeDescription, argument) {
 		// typeDescription is something like 'xs:string?'
@@ -116,6 +124,36 @@ define([
 			}
 
 			return Sequence.singleton(new BooleanValue(sequence.getEffectiveBooleanValue()));
+		},
+		'string': function (dynamicContext, sequence) {
+			if (!sequence) {
+				sequence = dynamicContext.contextItem;
+			}
+
+			if (!isValidArgumentList(['item()?'], [sequence])) {
+				throw new Error('FOTY0014: The argument to fn:string() is a function item.');
+			}
+
+			if (sequence.isEmpty()) {
+				return Sequence.singleton(new StringValue(''));
+			}
+
+			if (sequence.value[0].instanceOfType('node()')) {
+				return Sequence.singleton(new StringValue(domQuery.getTextContent(sequence.value[0])));
+			}
+
+			return Sequence.singleton(StringValue.cast(sequence.value[0]));
+		},
+		'number': function (dynamicContext, sequence) {
+			if (!sequence) {
+				sequence = dynamicContext.contextItem;
+			}
+
+			if (sequence.isEmpty()) {
+				return Sequence.singleton(new DoubleValue('NaN'));
+			}
+
+			return Sequence.singleton(DoubleValue.cast(sequence.value[0]));
 		}
 	};
 });

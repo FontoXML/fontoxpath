@@ -733,6 +733,109 @@ define([
 				});
 			});
 
+			describe('string', function () {
+				it('In the zero-argument version of the function, $arg defaults to the context item. That is, calling fn:string() is equivalent to calling fn:string(.).', function () {
+					var selector = parseSelector('string()');
+					jsonMLMapper.parse('Some text.', documentNode);
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.equal('Some text.');
+				});
+
+				it('If $arg is the empty sequence, the function returns the zero-length string.', function () {
+					var selector = parseSelector('string(())');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.equal('');
+				});
+
+				it('If $arg is a node, the function returns string value of the node, as obtained using the dm:string-value accessor defined in [XQuery and XPath Data Model (XDM) 3.0] (see Section 5.13 string-value Accessor).', function () {
+					var selector = parseSelector('string(.)');
+					jsonMLMapper.parse('Some text.', documentNode);
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.equal('Some text.');
+				});
+
+				it('If $arg is an atomic value, the function returns the result of the expression $arg cast as xs:string (see 19 Casting).', function () {
+					var selector1 = parseSelector('string(12)'),
+						selector2 = parseSelector('string("13")'),
+						selector3 = parseSelector('string(true())'),
+						selector4 = parseSelector('string(false())');
+					chai.expect(
+						evaluateXPath(selector1, documentNode, blueprint)
+					).to.equal('12');
+					chai.expect(
+						evaluateXPath(selector2, documentNode, blueprint)
+					).to.equal('13');
+					chai.expect(
+						evaluateXPath(selector3, documentNode, blueprint)
+					).to.equal('true');
+					chai.expect(
+						evaluateXPath(selector4, documentNode, blueprint)
+					).to.equal('false');
+				});
+
+				it.skip('A dynamic error is raised [err:XPDY0002] by the zero-argument version of the function if the context item is absent.', function () {
+					var selector = parseSelector('string()');
+					chai.expect(function () {
+						evaluateXPath(selector, documentNode, blueprint);
+					}).to.throw(/XPDY0002/);
+				});
+
+				it('A type error is raised [err:FOTY0014] if $arg is a function item (this includes maps and arrays).', function () {
+					var selector = parseSelector('string(("a", "b", "c"))');
+					chai.expect(function () {
+						evaluateXPath(selector, documentNode, blueprint);
+					}).to.throw(/FOTY0014/);
+				});
+			});
+
+			describe('number', function () {
+				it('Calling the zero-argument version of the function is defined to give the same result as calling the single-argument version with the context item (.). That is, fn:number() is equivalent to fn:number(.), as defined by the rules that follow.', function () {
+					var selector = parseSelector('number()');
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.be.NaN;
+				});
+
+				it('If $arg is the empty sequence or if $arg cannot be converted to an xs:double, the xs:double value NaN is returned.', function () {
+					var selector1 = parseSelector('number(())'),
+						selector2 = parseSelector('number()');
+					chai.expect(
+						evaluateXPath(selector1, documentNode, blueprint)
+					).to.be.NaN;
+					chai.expect(
+						evaluateXPath(selector2, documentNode, blueprint)
+					).to.be.NaN;
+				});
+
+				it('Otherwise, $arg is converted to an xs:double following the rules of 19.1.2.2 Casting to xs:double. If the conversion to xs:double fails, the xs:double value NaN is returned.', function () {
+					var selector1 = parseSelector('number(123)'),
+						selector2 = parseSelector('number(12.3)');
+					chai.expect(
+						evaluateXPath(selector1, documentNode, blueprint)
+					).to.equal(123);
+					chai.expect(
+						evaluateXPath(selector2, documentNode, blueprint)
+					).to.equal(12);
+				});
+
+				it.skip('A dynamic error is raised [err:XPDY0002] if $arg is omitted and the context item is absent.', function () {
+					var selector = parseSelector('number()');
+					chai.expect(function () {
+						evaluateXPath(selector, documentNode, blueprint);
+					}).to.throw(/XPDY0002/);
+				});
+
+				it.skip('As a consequence of the rules given above, a type error occurs if the context item cannot be atomized, or if the result of atomizing the context item is a sequence containing more than one atomic value.', function () {
+					var selector = parseSelector('number()');
+					chai.expect(function () {
+						evaluateXPath(selector, documentNode, blueprint);
+					}).to.throw();
+				});
+			});
+
 			describe('operators', function () {
 				describe('boolan operators', function () {
 					describe('compares', function () {
