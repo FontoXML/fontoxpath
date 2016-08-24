@@ -17,8 +17,11 @@ define([
 	 * @param  {Selector[]}  selectors
 	 */
 	function Union (selectors) {
-		Selector.call(this, selectors.reduce(function (specificity, selector) {
-			return specificity.add(selector.specificity);
+		Selector.call(this, selectors.reduce(function (maxSpecificity, selector) {
+			if (maxSpecificity.compareTo(selector.specificity) > 0) {
+				return maxSpecificity;
+			}
+			return selector.specificity;
 		}, new Specificity({})));
 
 		this._subSelectors = selectors;
