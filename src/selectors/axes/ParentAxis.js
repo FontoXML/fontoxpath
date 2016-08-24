@@ -37,6 +37,9 @@ define([
 				return domFacade.getParentNode(nodeValue);
 			})
 			.filter(function (node) {
+				if (!node) {
+					return false;
+				}
 				var result = this._parentSelector.evaluate(dynamicContext.createScopedContext({
 						contextItem: Sequence.singleton(node),
 						contextSequence: null
