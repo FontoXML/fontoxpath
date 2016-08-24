@@ -1208,8 +1208,42 @@ define([
 					});
 				});
 
-
 				describe('functions', function () {
+					describe('tokenize', function () {
+						it('If $input is the empty sequence, or if $input is the zero-length string, the function returns the empty sequence.', function () {
+							var selector = parseSelector('tokenize(())');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.deep.equal([]);
+							selector = parseSelector('tokenize("")');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.deep.equal([]);
+						});
+						it('The function returns a sequence of strings formed by breaking the $input string into a sequence of strings, treating any substring that matches $pattern as a separator. The separators themselves are not returned.', function () {
+							var selector = parseSelector('tokenize("A piece of text")');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.deep.equal(['A', 'piece', 'of', 'text']);
+							selector = parseSelector('tokenize("A,piece,of,text", ",")');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.deep.equal(['A', 'piece', 'of', 'text']);
+						});
+						it('Except with the one-argument form of the function, if a separator occurs at the start of the $input string, the result sequence will start with a zero-length string. Similarly, zero-length strings will also occur in the result sequence if a separator occurs at the end of the $input string, or if two adjacent substrings match the supplied $pattern.', function () {
+							var selector = parseSelector('tokenize(",A,piece,of,text", ",")');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.deep.equal(['', 'A', 'piece', 'of', 'text']);
+						});
+						// Javascript regexes don't work this way
+						it.skip('If two alternatives within the supplied $pattern both match at the same position in the $input string, then the match that is chosen is the first.', function () {
+							var selector = parseSelector('tokenize("abracadabra", "(ab)|(a)")');
+							chai.expect(
+								evaluateXPath(selector, documentNode, blueprint)
+							).to.deep.equal(['', 'r', 'c', 'd', 'r', '']);
+						});
+					});
 					describe('last()', function () {
 						it('returns the length of the dynamic context size', function () {
 							var selector = parseSelector('(1,2,3)[last()]');
