@@ -154,6 +154,19 @@ define([
 			}
 
 			return Sequence.singleton(DoubleValue.cast(sequence.value[0]));
+		},
+		'fonto:markupLabel': function (dynamicContext, sequence) {
+			if (sequence.isEmpty()) {
+				return sequence;
+			}
+			return Sequence.singleton(new StringValue(sequence.value[0].value.nodeName));
+		},
+		'fonto:word-count': function (dynamicContext, sequence) {
+			if (!isValidArgumentList(['item()'], [sequence])) {
+				throw new Error('No such function fonto:word-count(). Did your mean font:word-count($a as node())?');
+			}
+			var length = domQuery.getTextContent(sequence.value[0].value).split(' ').length;
+			return Sequence.singleton(new IntegerValue(length));
 		}
 	};
 });
