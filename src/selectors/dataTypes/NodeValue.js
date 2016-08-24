@@ -19,6 +19,9 @@ define([
 		Value.call(this, node);
 		this._node = node;
 		this._blueprint = blueprint;
+		this.nodeType = node.nodeType;
+		this.nodeName = node.nodeName;
+		this.target = node.target;
 	}
 
 	NodeValue.prototype = Object.create(Value.prototype);

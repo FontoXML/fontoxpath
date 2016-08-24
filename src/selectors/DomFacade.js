@@ -69,7 +69,7 @@ define([
 	};
 
 	DomFacade.prototype.getData = function (node) {
-		return new NodeValue(this, this._blueprint.getData(node.value) || '');
+		return this._blueprint.getData(node.value) || '';
 	};
 
 	return DomFacade;

@@ -1,5 +1,5 @@
 define([
-	'fontoxml-dom-utils',
+	'fontoxml-blueprints',
 
 	'../dataTypes/Sequence',
 	'../dataTypes/BooleanValue',
@@ -7,7 +7,7 @@ define([
 	'../dataTypes/IntegerValue',
 	'../dataTypes/DoubleValue'
 ], function (
-	domUtils,
+	blueprints,
 
 	Sequence,
 	BooleanValue,
@@ -17,7 +17,7 @@ define([
 ) {
 	'use strict';
 
-	var domQuery = domUtils.domQuery;
+	var blueprintQuery = blueprints.blueprintQuery;
 
 	function isValidArgument (typeDescription, argument) {
 		// typeDescription is something like 'xs:string?'
@@ -139,7 +139,7 @@ define([
 			}
 
 			if (sequence.value[0].instanceOfType('node()')) {
-				return Sequence.singleton(new StringValue(domQuery.getTextContent(sequence.value[0])));
+				return Sequence.singleton(new StringValue(blueprintQuery.getTextContent(dynamicContext.domFacade, sequence.value[0])));
 			}
 
 			return Sequence.singleton(StringValue.cast(sequence.value[0]));
