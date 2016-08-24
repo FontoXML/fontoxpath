@@ -41,10 +41,12 @@ define([
 
 		var indices = new Array(evaluatedInClauses.length).fill(0);
 		indices[0] = -1;
-		outer:
-		while (indices[indices.length - 1] < evaluatedInClauses[evaluatedInClauses.length - 1].valueSequence.value.length) {
+
+		var hasOverflowed = true;
+		while (hasOverflowed) {
+			hasOverflowed = false;
 			for (var i in indices) {
-				if (++indices[i] > evaluatedInClauses[i].length - 1) {
+				if (++indices[i] > evaluatedInClauses[i].valueSequence.value.length - 1) {
 					indices[i] = 0;
 					continue;
 				}
@@ -52,7 +54,8 @@ define([
 				var variables = Object.create(null);
 
 				for (var y = 0; y < indices.length; y++) {
-					variables[evaluatedInClauses[y].name] = Sequence.singleton(evaluatedInClauses[y].valueSequence.value[indices[y]]);
+					var value = evaluatedInClauses[y].valueSequence.value[indices[y]];
+					variables[evaluatedInClauses[y].name] = Sequence.singleton(value);
 				}
 
 				var context = dynamicContext.createScopedContext({
@@ -67,10 +70,9 @@ define([
 				else if (!result.getEffectiveBooleanValue() && this._quantifier === 'every') {
 					return Sequence.singleton(new BooleanValue(false));
 				}
-
-				continue outer;
+				hasOverflowed = true;
+				break;
 			}
-			break;
 		}
 
 		return Sequence.singleton(new BooleanValue(this._quantifier !== 'some'));
