@@ -28,6 +28,7 @@ define([
 	'../selectors/operators/numeric/Unary',
 	'../selectors/operators/numeric/BinaryNumericOperator',
 	'../selectors/operators/compares/Compare',
+	'../selectors/quantified/QuantifiedExpression',
 
 	'../selectors/literals/Literal',
 	'../selectors/LetExpression',
@@ -64,6 +65,7 @@ define([
 	Unary,
 	BinaryNumericOperator,
 	Compare,
+	QuantifiedExpression,
 
 	Literal,
 	LetExpression,
@@ -150,6 +152,10 @@ define([
 				return letExpression(args);
 			case 'varRef':
 				return varRef(args);
+
+			// Quantified
+			case 'quantified':
+				return quantified(args);
 
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
@@ -276,6 +282,13 @@ define([
 
 	function precedingSibling (args) {
 		return new PrecedingSiblingAxis(compile(args[0]));
+	}
+
+	function quantified (args) {
+		var inClauses = args[1].map(function (inClause) {
+			return [inClause[0], compile(inClause[1])];
+		});
+		return new QuantifiedExpression(args[0], inClauses, compile(args[2]));
 	}
 
 	function self (args) {

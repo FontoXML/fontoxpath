@@ -817,14 +817,14 @@ define([
 				});
 
 				it('Otherwise, $arg is converted to an xs:double following the rules of 19.1.2.2 Casting to xs:double. If the conversion to xs:double fails, the xs:double value NaN is returned.', function () {
-					var selector1 = parseSelector('number(123)'),
-						selector2 = parseSelector('number(12.3)');
+					var selector1 = parseSelector('number("123")'),
+						selector2 = parseSelector('number("12.3")');
 					chai.expect(
 						evaluateXPath(selector1, documentNode, blueprint)
 					).to.equal(123);
 					chai.expect(
 						evaluateXPath(selector2, documentNode, blueprint)
-					).to.equal(12);
+					).to.equal(12.3);
 				});
 
 				it.skip('A dynamic error is raised [err:XPDY0002] if $arg is omitted and the context item is absent.', function () {
@@ -839,6 +839,15 @@ define([
 					chai.expect(function () {
 						evaluateXPath(selector, documentNode, blueprint);
 					}).to.throw();
+				});
+			});
+
+			describe('quantified expressions', function () {
+				describe('some', function () {
+					it('can be parsed', function () {
+						var selector = parseSelector('some $x in (1, 2, 3) satisfies $x > 1');
+						chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+					});
 				});
 			});
 

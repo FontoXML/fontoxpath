@@ -34,9 +34,9 @@ Expr
 // 7
 ExprSingle
  = LetExpr
+ / QuantifiedExpr
 // / ForExpr
  / OrExpr
-// / QuantifiedExpr
 // / IfExpr
 
 // 11
@@ -55,6 +55,10 @@ SimpleLetClause = "let" S first:SimpleLetBinding rest:(", " binding:SimpleLetBin
 
 // 13
 SimpleLetBinding = "$" rangeVariable:VarName _ ":=" _ bindingSequence:ExprSingle {return [rangeVariable, bindingSequence]}
+
+// 14
+QuantifiedExpr
+ = kind:("some" / "every") S "$" varName:VarName S "in" S exprSingle:ExprSingle restExpr:("," _ "$" name:VarName S "in" S expr:ExprSingle {return [name, expr]})* S "satisfies" S satisfiesExpr:ExprSingle {return ["quantified", kind, [[varName, exprSingle]].concat(restExpr), satisfiesExpr]}
 
 // 16
 OrExpr
@@ -450,8 +454,8 @@ IntegerLiteral = digits:Digits {return ["literal", digits, "xs:integer"]}
 
 // 114
 DecimalLiteral
- = "." digits:Digits {return ["literal", parseInt("." + digits, 10), "xs:decimal"]}
- / decimal:$(Digits "." Digits?) {return ["literal", parseInt(decimal, 10), "xs:decimal"]}
+ = "." digits:Digits {return ["literal", parseFloat("." + digits, 10), "xs:decimal"]}
+ / decimal:$(Digits "." Digits?) {return ["literal", parseFloat(decimal, 10), "xs:decimal"]}
 
 // 115
 DoubleLiteral
