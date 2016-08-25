@@ -90,6 +90,11 @@ define([
 					chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
 				});
 
+				it('works over empty sequences', function () {
+					var selector = parseSelector('() eq ()');
+					chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([]);
+				});
+
 				it('does not work over non-singleton sequences', function () {
 					var selector = parseSelector('(1, 2) eq true()');
 					chai.expect(function () {

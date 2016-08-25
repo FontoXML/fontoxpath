@@ -15,9 +15,6 @@ define([
 
 	return function valueCompare (operator, firstSequence, secondSequence) {
 		// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
-		if (firstSequence.isEmpty() || secondSequence.isEmpty()) {
-			return Sequence.emptySequence();
-		}
 		if (!firstSequence.isSingleton() || !secondSequence.isSingleton()) {
 			throw new Error('ERRXPTY0004: Sequences to compare are not singleton');
 		}

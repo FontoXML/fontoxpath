@@ -15,7 +15,7 @@ define([
 		return new Sequence([value]);
 	};
 
-	Sequence.empty = function (value) {
+	Sequence.empty = function () {
 		return new Sequence([]);
 	};
 

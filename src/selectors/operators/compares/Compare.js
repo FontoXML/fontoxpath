@@ -20,6 +20,7 @@ define([
 		this._firstSelector = firstSelector;
 		this._secondSelector = secondSelector;
 
+		this._compare = kind[0];
 		this._operator = kind[1];
 
 		switch (kind[0]) {
@@ -49,6 +50,10 @@ define([
 	Compare.prototype.evaluate = function (dynamicContext) {
 		var firstSequence = this._firstSelector.evaluate(dynamicContext),
 			secondSequence = this._secondSelector.evaluate(dynamicContext);
+
+		if (this._compare === 'valueCompare' && firstSequence.isEmpty() && secondSequence.isEmpty()) {
+			return Sequence.empty();
+		}
 
 		// Atomize both sequences
 		var firstAtomizedSequence = firstSequence.atomize();
