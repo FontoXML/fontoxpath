@@ -51,7 +51,7 @@ define([
 		var firstSequence = this._firstSelector.evaluate(dynamicContext),
 			secondSequence = this._secondSelector.evaluate(dynamicContext);
 
-		if (this._compare === 'valueCompare' && firstSequence.isEmpty() && secondSequence.isEmpty()) {
+		if (this._compare === 'valueCompare' && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
 			return Sequence.empty();
 		}
 

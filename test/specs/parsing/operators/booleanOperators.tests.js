@@ -95,6 +95,11 @@ define([
 					chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([]);
 				});
 
+				it('works over one empty sequence and a filled one', function () {
+					var selector = parseSelector('() eq (true())');
+					chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([]);
+				});
+
 				it('does not work over non-singleton sequences', function () {
 					var selector = parseSelector('(1, 2) eq true()');
 					chai.expect(function () {
