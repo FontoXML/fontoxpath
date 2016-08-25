@@ -1,12 +1,12 @@
 define([
-	'./functionsByName',
+	'./FunctionRegistry',
 	'../../parsing/customTestsByName',
 	'../dataTypes/Sequence',
 	'../dataTypes/BooleanValue',
 	'../Selector',
 	'../Specificity'
 ], function (
-	functionsByName,
+	FunctionRegistry,
 	customTestsByName,
 	Sequence,
 	BooleanValue,
@@ -38,24 +38,21 @@ define([
 				return argument.evaluate(dynamicContext);
 			});
 
-		var registeredFunction = functionsByName[this._functionName];
-		if (!registeredFunction) {
-			// Important to know: all functions having the fonto: syntax are simplified tests which should directly be called with JavaScript simple types. One pro: they always resolve to a boolean
-			if (this._functionName.startsWith('fonto:')) {
-				var customFunction = customTestsByName[this._functionName];
-				var simplifiedArguments = evaluatedArguments.map(function (arg) {
-						return arg.value[0].value;
-					});
-				var result = customFunction.bind.apply(
-						customFunction,
-						[undefined].concat(simplifiedArguments))
-				// TODO: Fix this when doing dep tracking
-					.call(undefined, contextItem.value[0].value, domFacade._blueprint);
-				return Sequence.singleton(new BooleanValue(!!result));
-			}
-
-			throw new Error('ERRXPST0017: No such function ' + this._functionName);
+		// Important to know: all functions having the fonto: syntax are simplified tests which should directly be called with JavaScript simple types. One pro: they always resolve to a boolean
+		if (this._functionName.startsWith('fonto:')) {
+			var customFunction = customTestsByName[this._functionName];
+			var simplifiedArguments = evaluatedArguments.map(function (arg) {
+					return arg.value[0].value;
+				});
+			var result = customFunction.bind.apply(
+					customFunction,
+					[undefined].concat(simplifiedArguments))
+			// TODO: Fix this when doing dep tracking
+				.call(undefined, contextItem.value[0].value, domFacade._blueprint);
+			return Sequence.singleton(new BooleanValue(!!result));
 		}
+
+		var registeredFunction = FunctionRegistry.getFunction(this._functionName, evaluatedArguments);
 		return registeredFunction.apply(
 			undefined,
 			[dynamicContext].concat(evaluatedArguments));

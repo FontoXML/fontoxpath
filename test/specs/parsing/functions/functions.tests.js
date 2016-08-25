@@ -261,13 +261,6 @@ define([
 					evaluateXPath(selector, documentNode, blueprint);
 				}).to.throw(/XPDY0002/);
 			});
-
-			it('A type error is raised [err:FOTY0014] if $arg is a function item (this includes maps and arrays).', function () {
-				var selector = parseSelector('string(("a", "b", "c"))');
-				chai.expect(function () {
-					evaluateXPath(selector, documentNode, blueprint);
-				}).to.throw(/FOTY0014/);
-			});
 		});
 
 		describe('Arrow functions', function () {
@@ -279,7 +272,7 @@ define([
 			});
 
 			it('can be chained', function () {
-				var selector = parseSelector('(1,2,3) => true() => count()');
+				var selector = parseSelector('(1,2,3) => count() => count()');
 				chai.expect(
 					evaluateXPath(selector, documentNode, blueprint)
 				).to.deep.equal(1);
