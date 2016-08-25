@@ -326,8 +326,15 @@ define([
 	 */
 	return function parseSelector (xPathString) {
 		if (!selectorCache[xPathString]) {
+			try {
 			var ast = xPathParser.parse(xPathString);
-			selectorCache[xPathString] = compile(ast);
+				selectorCache[xPathString] = compile(ast);
+			} catch (error) {
+				if (error instanceof xPathParser.SyntaxError) {
+					throw new Error('Unable to parse XPath: ' + xPathString + '.', error);
+				}
+				throw error;
+			}
 		}
 		return selectorCache[xPathString];
 	};
