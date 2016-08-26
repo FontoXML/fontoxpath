@@ -49,6 +49,17 @@ define([
 		}
 	}
 
+	BinaryNumericOperator.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof BinaryNumericOperator &&
+			this._kind === otherSelector._kind &&
+			this._firstValueExpr.equals(otherSelector._firstValueExpr),
+			this._secondValueExpr.equals(otherSelector._secondValueExpr);
+	};
+
 	BinaryNumericOperator.prototype.evaluate = function (dynamicContext) {
 		var firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize();
 		if (firstValueSequence.isEmpty()) {

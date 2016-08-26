@@ -4,6 +4,11 @@ define([
 	'slimdom',
 
 	'fontoxml-selectors/parsing/createSelectorFromXPath',
+	'fontoxml-selectors/selectors/Specificity',
+	'fontoxml-selectors/selectors/operators/boolean/AndOperator',
+	'fontoxml-selectors/selectors/operators/boolean/NotOperator',
+	'fontoxml-selectors/selectors/operators/boolean/OrOperator',
+	'fontoxml-selectors/selectors/operators/compares/Compare',
 	'fontoxml-selectors/evaluateXPath'
 ], function (
 	blueprint,
@@ -11,6 +16,11 @@ define([
 	slimdom,
 
 	parseSelector,
+	Specificity,
+	AndOperator,
+	NotOperator,
+	OrOperator,
+	Compare,
 	evaluateXPath
 ) {
 	'use strict';
@@ -30,6 +40,93 @@ define([
 				it('can parse a concatenation of ands', function () {
 					var selector = parseSelector('true() and true() and true() and false()');
 					chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+				});
+
+				it('returns true if compared with itself', function () {
+					var and1 = new AndOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true)
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true)
+							}
+						]),
+						and2 = and1;
+
+					chai.expect(and1.equals(and2)).to.equal(true);
+				});
+
+				it('returns true if compared with an equal other AndOperator', function () {
+					var and1 = new AndOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true)
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true)
+							}
+						]),
+						and2 = new AndOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true)
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true)
+							}
+						]);
+					chai.expect(and1.equals(and2)).to.equal(true);
+				});
+
+				it('returns false if compared with an unequal other AndOperator', function () {
+					var and1 = new AndOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(false)
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(false)
+							}
+						]),
+						and2 = new AndOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(false)
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(false)
+							}
+						]);
+					chai.expect(and1.equals(and2)).to.equal(false);
+				});
+			});
+			describe('not', function () {
+				it('is equal if compared with itself', function () {
+					var not1 = new NotOperator({
+							specificity: new Specificity({}),
+							equals: sinon.stub().returns(true)
+						}),
+						not2 = not1;
+
+					chai.expect(not1.equals(not2)).to.equal(true);
+				});
+
+				it('is equal if compared with an equal other NotOperator', function () {
+					var not1 = new NotOperator({
+							specificity: new Specificity({}),
+							equals: sinon.stub().returns(true)
+						}),
+						not2 = new NotOperator({
+							specificity: new Specificity({}),
+							equals: sinon.stub().returns(true)
+						});
+					chai.expect(not1.equals(not2)).to.equal(true);
 				});
 			});
 			describe('or', function () {
@@ -60,6 +157,80 @@ define([
 						['someOtherChildElement']
 					], documentNode);
 					chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.equal(true);
+				});
+
+				it('returns true if compared with itself', function () {
+					var or1 = new OrOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true),
+								getBucket: function () { return null; }
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true),
+								getBucket: function () { return null; }
+							}
+						]),
+						or2 = or1;
+
+					chai.expect(or1.equals(or2)).to.equal(true);
+				});
+
+				it('it returns true if compared with an equal other OrOperator', function () {
+					var or1 = new OrOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true),
+								getBucket: function () { return null; }
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true),
+								getBucket: function () { return null; }
+							}
+						]),
+						or2 = new OrOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true),
+								getBucket: function () { return null; }
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true),
+								getBucket: function () { return null; }
+							}
+						]);
+					chai.expect(or1.equals(or2)).to.equal(true);
+				});
+
+				it('it returns false if compared with an unequal other OrOperator', function () {
+					var or1 = new OrOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(false),
+								getBucket: function () { return null; }
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(false),
+								getBucket: function () { return null; }
+							}
+						]),
+						or2 = new OrOperator([
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(false),
+								getBucket: function () { return null; }
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(false),
+								getBucket: function () { return null; }
+							}
+						]);
+					chai.expect(or1.equals(or2)).to.equal(false);
 				});
 			});
 		});
@@ -256,6 +427,72 @@ define([
 					it('returns false if the first operand is greater than the second', function () {
 						var selector = parseSelector('2 le 1');
 						chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+					});
+				});
+
+				describe('equals', function () {
+					it('returns true if compared with itself', function () {
+						var or1 = new Compare(
+							['generalCompare', 'eq'],
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true)
+							},
+							{
+								specificity: new Specificity({}),
+								equals: sinon.stub().returns(true)
+							}),
+							or2 = or1;
+
+						chai.expect(or1.equals(or2)).to.equal(true);
+					});
+
+					it('it returns true if compared with an equal other Compare', function () {
+						var or1 = new Compare(
+								['generalCompare', 'eq'],
+								{
+									specificity: new Specificity({}),
+									equals: sinon.stub().returns(true)
+								},
+								{
+									specificity: new Specificity({}),
+									equals: sinon.stub().returns(true)
+								}),
+							or2 = new Compare(
+								['generalCompare', 'eq'],
+								{
+									specificity: new Specificity({}),
+									equals: sinon.stub().returns(true)
+								},
+								{
+									specificity: new Specificity({}),
+									equals: sinon.stub().returns(true)
+								});
+						chai.expect(or1.equals(or2)).to.equal(true);
+					});
+
+					it('it returns false if compared with an unequal other Compare', function () {
+						var or1 = new Compare(
+								['generalCompare', 'eq'],
+								{
+									specificity: new Specificity({}),
+									equals: sinon.stub().returns(false)
+								},
+								{
+									specificity: new Specificity({}),
+									equals: sinon.stub().returns(false)
+								}),
+							or2 = new Compare(
+								['generalCompare', 'eq'],
+								{
+									specificity: new Specificity({}),
+									equals: sinon.stub().returns(false)
+								},
+								{
+									specificity: new Specificity({}),
+									equals: sinon.stub().returns(false)
+								});
+						chai.expect(or1.equals(or2)).to.equal(false);
 					});
 				});
 			});
