@@ -14,6 +14,8 @@ define([
 	'use strict';
 
 	/**
+	 * Deprecated and only used for 'old' fluent syntax
+	 * For selectors, the function not($arg as item()*) is used
 	 * @param  {Selector}  selectorToInvert
 	 */
 	function NotOperator (selectorToInvert) {
