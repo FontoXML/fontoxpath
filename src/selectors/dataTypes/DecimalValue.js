@@ -19,10 +19,6 @@ define([
 		return new DecimalValue(numericValue.value);
 	};
 
-	DecimalValue.prototype.getEffectiveBooleanValue = function () {
-		return this.value !== 0 && !Number.isNaN(this.value);
-	};
-
 	DecimalValue.primitiveTypeName = DecimalValue.prototype.primitiveTypeName = 'xs:decimal';
 
 	DecimalValue.prototype.instanceOfType = function (simpleTypeName) {
