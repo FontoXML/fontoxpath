@@ -24,6 +24,16 @@ define([
 	Unary.prototype = Object.create(Selector.prototype);
 	Unary.prototype.constructor = Unary;
 
+	Unary.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof Unary &&
+			this._kind === otherSelector._kind &&
+			this._valueExpr.equals(otherSelector._valueExpr);
+	};
+
 	Unary.prototype.evaluate = function (dynamicContext) {
 		var valueSequence = this._valueExpr.evaluate(dynamicContext);
 		if (valueSequence.isEmpty()) {
