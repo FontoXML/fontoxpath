@@ -52,6 +52,16 @@ define([
 	Literal.prototype = Object.create(Selector.prototype);
 	Literal.prototype.constructor = Literal;
 
+	Literal.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof Literal &&
+			this._type === otherSelector._type &&
+			this._value.value[0].value === otherSelector._value.value[0].value;
+	};
+
 	Literal.prototype.evaluate = function (dynamicContext) {
 		return this._value;
 	};
