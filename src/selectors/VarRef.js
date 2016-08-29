@@ -21,7 +21,7 @@ define([
 
 	VarRef.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof VarRef &&
-			this._variableName === otherSelector.variableName;
+			this._variableName === otherSelector._variableName;
 	};
 
 	VarRef.prototype.evaluate = function (dynamicContext) {
