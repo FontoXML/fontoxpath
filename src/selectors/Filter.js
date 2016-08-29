@@ -19,7 +19,7 @@ define([
 		Selector.call(this, filterSelectors.reduce(function (specificity, selector) {
 			// Implicit AND, so sum
 			return specificity.add(selector.specificity);
-		}, new Specificity({})));
+		}, new Specificity({})), valueSelector.expectedResultOrder);
 
 		this._valueSelector = valueSelector;
 		this._filterSelectors = filterSelectors;

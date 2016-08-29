@@ -15,7 +15,9 @@ define([
 	 * @param  {Selector}  returnExpression
 	 */
 	function LetExpression (rangeVariable, bindingSequence, returnExpression) {
-		Selector.call(this, bindingSequence.specificity.add(returnExpression.specificity));
+		Selector.call(
+			this, bindingSequence.specificity.add(returnExpression.specificity),
+			returnExpression.expectedResultOrder);
 
 		this._rangeVariable = rangeVariable;
 		this._bindingSequence = bindingSequence;

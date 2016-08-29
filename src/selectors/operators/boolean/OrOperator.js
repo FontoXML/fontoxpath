@@ -16,12 +16,15 @@ define([
 	 * @param  {Selector[]}  selectors
 	 */
 	function OrOperator (selectors) {
-		Selector.call(this, selectors.reduce(function (maxSpecificity, selector) {
-			if (maxSpecificity.compareTo(selector.specificity) > 0) {
-				return maxSpecificity;
-			}
-			return selector.specificity;
-		}, new Specificity({})));
+		Selector.call(
+			this,
+			selectors.reduce(function (maxSpecificity, selector) {
+				if (maxSpecificity.compareTo(selector.specificity) > 0) {
+					return maxSpecificity;
+				}
+				return selector.specificity;
+			}, new Specificity({})),
+			Selector.RESULT_ORDER_SORTED);
 
 		// If all subSelectors define the same bucket: use that one, else, use no bucket.
 		this._bucket = selectors.reduce(function (bucket, selector) {

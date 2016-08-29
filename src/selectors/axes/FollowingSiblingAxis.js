@@ -17,7 +17,7 @@ define([
 	 * @param  {Selector}  siblingSelector
 	 */
 	function FollowingSiblingAxis (siblingSelector) {
-		Selector.call(this, siblingSelector.specificity);
+		Selector.call(this, siblingSelector.specificity, Selector.RESULT_ORDER_SORTED);
 
 		this._siblingSelector = siblingSelector;
 	}

@@ -19,7 +19,7 @@ define([
 	 * @param  {Selector}  selectorToInvert
 	 */
 	function NotOperator (selectorToInvert) {
-		Selector.call(this, selectorToInvert.specificity);
+		Selector.call(this, selectorToInvert.specificity, Selector.RESULT_ORDER_SORTED);
 
 		this._selectorToInvert = selectorToInvert;
 	}

@@ -22,7 +22,7 @@ define([
 	'use strict';
 
 	function Literal (value, type) {
-		Selector.call(this, new Specificity({}));
+		Selector.call(this, new Specificity({}), Selector.RESULT_ORDER_UNSORTED);
 		this._type = type;
 
 		var typedValue;

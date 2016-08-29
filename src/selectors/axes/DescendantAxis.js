@@ -15,7 +15,7 @@ define([
 	 * @param  {Selector}  descendantSelector
 	 */
 	function DescendantAxis (descendantSelector) {
-		Selector.call(this, descendantSelector.specificity);
+		Selector.call(this, descendantSelector.specificity, Selector.RESULT_ORDER_SORTED);
 
 		this._descendantSelector = descendantSelector;
 	}
@@ -39,9 +39,10 @@ define([
 	};
 
 	DescendantAxis.prototype.evaluate = function (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
+		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
+		// Assume singleton, since axes are only valid in paths
 		var isMatchingDescendant = function (descendantNode) {
 				var scopedContext = dynamicContext.createScopedContext({
 						contextItem: Sequence.singleton(descendantNode),
@@ -49,14 +50,11 @@ define([
 					});
 				return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
 			}.bind(this);
-		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
-			var nodeValues = blueprintQuery.findDescendants(
-					domFacade,
-					nodeValue,
-					isMatchingDescendant,
-					true);
-			return resultingSequence.merge(new Sequence(nodeValues));
-		}, new Sequence());
+		return new Sequence(blueprintQuery.findDescendants(
+			domFacade,
+			contextItem.value[0],
+			isMatchingDescendant,
+			true));
 	};
 
 

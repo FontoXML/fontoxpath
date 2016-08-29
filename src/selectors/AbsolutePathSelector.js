@@ -17,7 +17,7 @@ define([
 	 * @param  {Selector}  relativePathSelector
 	 */
 	function AbsolutePathSelector (relativePathSelector) {
-		Selector.call(this, relativePathSelector.specificity);
+		Selector.call(this, relativePathSelector.specificity, Selector.RESULT_ORDER_SORTED);
 
 		this._relativePathSelector = relativePathSelector;
 	}

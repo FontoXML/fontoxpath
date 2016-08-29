@@ -1,13 +1,17 @@
 define([
+	'slimdom',
 	'fontoxml-selectors/selectors/dataTypes/BooleanValue',
 	'fontoxml-selectors/selectors/dataTypes/NodeValue',
 	'fontoxml-selectors/selectors/dataTypes/Sequence'
 ], function (
+	slimdom,
 	BooleanValue,
 	NodeValue,
 	Sequence
 	) {
 	'use strict';
+
+	var SlimdomDocument = slimdom.Document;
 
 	describe('Sequence.getEffectiveBooleanValue()', function () {
 		it('returns false if the sequence is empty', function () {
@@ -19,12 +23,10 @@ define([
 		});
 
 		it('returns true if the first item in the sequence is a NodeValue', function () {
+			var doc = new SlimdomDocument();
+			var element = doc.createElement('element');
 			var sequence = new Sequence([
-					new NodeValue({}, {
-						nodeType: 0,
-						nodeName: 'name',
-						target: 'target'
-					})
+					new NodeValue({}, element)
 				]);
 
 			var result = sequence.getEffectiveBooleanValue();

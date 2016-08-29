@@ -15,7 +15,7 @@ define([
 	 * @param  {Number}  nodeType
 	 */
 	function NodeTypeSelector (nodeType) {
-		Selector.call(this, new Specificity({nodeType: 1}));
+		Selector.call(this, new Specificity({nodeType: 1}), Selector.RESULT_ORDER_SORTED);
 
 		this._nodeType = nodeType;
 	}

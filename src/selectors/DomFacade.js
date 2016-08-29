@@ -1,7 +1,9 @@
 define([
+	'fontoxml-dom-identification/getNodeId',
 	'./dataTypes/AttributeNodeValue',
 	'./dataTypes/NodeValue'
 ], function (
+	getNodeId,
 	AttributeNodeValue,
 	NodeValue
 ) {
@@ -12,6 +14,17 @@ define([
 	 */
 	function DomFacade (blueprint) {
 		this._blueprint = blueprint;
+
+		this._createdNodeValuesByNodeId = Object.create(null);
+	}
+
+	function createNodeValue (domFacade, node) {
+		var nodeId = getNodeId(node);
+		var nodeValue = domFacade._createdNodeValuesByNodeId[nodeId];
+		if (!nodeValue) {
+			nodeValue = domFacade._createdNodeValuesByNodeId[nodeId] = new NodeValue(domFacade, node);
+		}
+		return nodeValue;
 	}
 
 	/**
@@ -19,29 +32,29 @@ define([
 	 */
 	DomFacade.prototype.getParentNode = function (node) {
 		if (node instanceof AttributeNodeValue) {
-			return new NodeValue(this, node.getParentNode());
+			return createNodeValue(this, node.getParentNode());
 		}
 		return this._blueprint.getParentNode(node.value) &&
-			new NodeValue(this, this._blueprint.getParentNode(node.value));
+			createNodeValue(this, this._blueprint.getParentNode(node.value));
 	};
 	DomFacade.prototype.getFirstChild = function (node) {
 		return this._blueprint.getFirstChild(node.value) &&
-			new NodeValue(this, this._blueprint.getFirstChild(node.value));
+			createNodeValue(this, this._blueprint.getFirstChild(node.value));
 	};
 
 	DomFacade.prototype.getLastChild = function (node) {
 		return this._blueprint.getLastChild(node.value) &&
-			new NodeValue(this, this._blueprint.getLastChild(node.value));
+			createNodeValue(this, this._blueprint.getLastChild(node.value));
 	};
 
 	DomFacade.prototype.getNextSibling = function (node) {
 		return this._blueprint.getNextSibling(node.value) &&
-			new NodeValue(this, this._blueprint.getNextSibling(node.value));
+			createNodeValue(this, this._blueprint.getNextSibling(node.value));
 	};
 
 	DomFacade.prototype.getPreviousSibling = function (node) {
 		return this._blueprint.getPreviousSibling(node.value) &&
-			new NodeValue(this, this._blueprint.getPreviousSibling(node.value));
+			createNodeValue(this, this._blueprint.getPreviousSibling(node.value));
 	};
 
 	DomFacade.prototype.getChildNodes = function (node) {

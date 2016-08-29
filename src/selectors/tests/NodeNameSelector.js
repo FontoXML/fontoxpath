@@ -21,7 +21,7 @@ define([
 	 * @param  {String|String[]}  nodeName
 	 */
 	function NodeNameSelector (nodeName) {
-		Selector.call(this, new Specificity({nodeName: 1}));
+		Selector.call(this, new Specificity({nodeName: 1}), Selector.RESULT_ORDER_SORTED);
 
 		// Do not coerce the string/string[] to string[] because this costs performance in domInfo.isElement
 		this._nodeName = nodeName;

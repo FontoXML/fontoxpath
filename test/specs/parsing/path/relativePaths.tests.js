@@ -31,7 +31,6 @@ define([
 			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
 
-
 		it('supports addressing the parent axis with ..', function () {
 			jsonMLMapper.parse([
 				'someNode',
@@ -46,6 +45,40 @@ define([
 			]);
 		});
 
+		it('returns its results sorted on document order', function () {
+			jsonMLMapper.parse([
+				'someNode',
+				[
+					'firstNode'
+				],
+				[
+					'secondNode'
+				]
+			], documentNode);
+			var selector = parseSelector('(//secondNode, //firstNode)/self::node()');
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([
+				documentNode.documentElement.firstChild,
+				documentNode.documentElement.lastChild
+			]);
+		});
+
+		it('supports postfix expressions as sequences', function () {
+			jsonMLMapper.parse([
+				'someNode',
+				[
+					'firstNode'
+				],
+				[
+					'secondNode'
+				]
+			], documentNode);
+			var selector = parseSelector('/someNode/(secondNode, firstNode)/self::node()');
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([
+				documentNode.documentElement.firstChild,
+				documentNode.documentElement.lastChild
+			]);
+		});
+
 		it('supports walking from attribute nodes', function () {
 			jsonMLMapper.parse([
 				'someNode',
@@ -54,6 +87,30 @@ define([
 			], documentNode);
 			var selector = parseSelector('@someAttribute/..');
 			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement]);
+		});
+
+		it('sorts attribute nodes after their element', function () {
+			jsonMLMapper.parse([
+				'someNode',
+				{ someAttribute: 'someValue' },
+				['someChildNode']
+			], documentNode);
+			var selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[1]');
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement]);
+			selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[2]');
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal(['someValue']);
+			selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[3]');
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+		});
+
+		it('sorts attribute nodes alphabetically', function () {
+			jsonMLMapper.parse([
+				'someNode',
+				{ AsomeAttribute: 'someValue', BsomeOtherAttribute: 'someOtherValue' },
+				['someChildNode']
+			], documentNode);
+			var selector = parseSelector('(@BsomeOtherAttribute, @AsomeAttribute)/.');
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal(['someValue', 'someOtherValue']);
 		});
 
 		it('supports addressing the contextNode with .', function () {

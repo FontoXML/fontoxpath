@@ -22,7 +22,7 @@ define([
 	 * @param  {String[]}  [attributeValues]  if omitted, the selector matches if the attribute is present
 	 */
 	function AttributeAxis (attributeName, attributeValues) {
-		Selector.call(this, new Specificity({attribute: 1}));
+		Selector.call(this, new Specificity({attribute: 1}), Selector.RESULT_ORDER_UNSORTED);
 
 		this._attributeName = attributeName;
 		this._attributeValues = attributeValues && attributeValues.concat().sort();

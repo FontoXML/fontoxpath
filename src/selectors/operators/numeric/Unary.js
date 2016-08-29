@@ -15,7 +15,7 @@ define([
 	 * @param  {Selector}  valueExpr  The selector evaluating to the value to process
 	 */
 	function Unary (kind, valueExpr) {
-		Selector.call(this, valueExpr.specificity);
+		Selector.call(this, valueExpr.specificity, Selector.RESULT_ORDER_SORTED);
 		this._valueExpr = valueExpr;
 
 		this._kind = kind;

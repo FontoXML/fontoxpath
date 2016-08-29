@@ -17,7 +17,7 @@ define([
 	 * @param  {Selector}  childSelector
 	 */
 	function ChildAxis (childSelector) {
-		Selector.call(this, childSelector.specificity);
+		Selector.call(this, childSelector.specificity, Selector.RESULT_ORDER_SORTED);
 
 		this._childSelector = childSelector;
 	}

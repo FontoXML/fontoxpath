@@ -20,6 +20,9 @@ define([
 		this._node = node;
 		this._blueprint = blueprint;
 		this.nodeType = node.nodeType;
+		if (typeof node !== 'string') {
+			this.nodeId = getNodeId(node);
+		}
 		this.nodeName = node.nodeName;
 		this.target = node.target;
 	}

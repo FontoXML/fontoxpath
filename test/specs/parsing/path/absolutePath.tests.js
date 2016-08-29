@@ -47,7 +47,6 @@ define([
 			var selector = parseSelector('//someChildNode');
 			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
-
 		it('targets descendants with //', function () {
 			jsonMLMapper.parse([
 				'someNode',

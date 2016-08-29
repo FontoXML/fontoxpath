@@ -10,10 +10,11 @@ define([
 	'use strict';
 
 	function QuantifiedExpression (quantifier, inClauses, satisfiesExpr) {
-		var specificity = inClauses.reduce(function (specificity, inClause) {
-			return specificity.add(inClause[1].specificity);
-		}, satisfiesExpr.specificity);
-		Selector.call(this, specificity);
+		var specificity = inClauses.reduce(
+				function (specificity, inClause) {
+					return specificity.add(inClause[1].specificity);
+				}, satisfiesExpr.specificity);
+		Selector.call(this, specificity, Selector.RESULT_ORDER_SORTED);
 
 		this._quantifier = quantifier;
 		this._inClauses = inClauses;

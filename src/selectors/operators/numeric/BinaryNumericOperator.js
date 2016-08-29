@@ -22,7 +22,10 @@ define([
 	 * @param  {Selector}  secondValueExpr  The selector evaluating to the second value to process
 	 */
 	function BinaryNumericOperator (kind, firstValueExpr, secondValueExpr) {
-		Selector.call(this, firstValueExpr.specificity.add(secondValueExpr.specificity));
+		Selector.call(
+			this,
+			firstValueExpr.specificity.add(secondValueExpr.specificity),
+			Selector.RESULT_ORDER_SORTED);
 		this._firstValueExpr = firstValueExpr;
 		this._secondValueExpr = secondValueExpr;
 

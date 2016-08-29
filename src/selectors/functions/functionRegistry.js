@@ -1,15 +1,9 @@
 define([
-	'fontoxml-blueprints',
-
 	'./builtInFunctions'
 ], function (
-	blueprints,
-
 	builtInFunctions
 ) {
 	'use strict';
-
-	var blueprintQuery = blueprints.blueprintQuery;
 
 	function isValidArgument (typeDescription, argument) {
 		// typeDescription is something like 'xs:string?'

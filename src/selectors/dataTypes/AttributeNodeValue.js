@@ -19,6 +19,7 @@ define([
 		NodeValue.call(this, blueprint, attributeValue);
 
 		this.name = attributeName;
+		this.nodeId = getNodeId(element) + '@' + this.name;
 		this._element = element;
 	}
 

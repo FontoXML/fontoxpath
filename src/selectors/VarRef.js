@@ -11,7 +11,7 @@ define([
 	 * @param  {String}  variableName
 	 */
 	function VarRef (variableName) {
-		Selector.call(this, new Specificity({}));
+		Selector.call(this, new Specificity({}), Selector.RESULT_ORDER_UNSORTED);
 
 		this._variableName = variableName;
 	}

@@ -11,7 +11,7 @@ define([
 	 * @param  {Selector}  childSelector
 	 */
 	function SelfAxis (selector) {
-		Selector.call(this, selector.specificity);
+		Selector.call(this, selector.specificity, Selector.RESULT_ORDER_SORTED);
 
 		this._selector = selector;
 	}

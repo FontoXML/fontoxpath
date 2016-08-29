@@ -17,7 +17,7 @@ define([
 	 * @param  {Selector}  ancestorSelector
 	 */
 	function AncestorAxis (ancestorSelector) {
-		Selector.call(this, ancestorSelector.specificity);
+		Selector.call(this, ancestorSelector.specificity, Selector.RESULT_ORDER_REVERSE_SORTED);
 
 		this._ancestorSelector = ancestorSelector;
 	}

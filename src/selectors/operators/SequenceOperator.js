@@ -15,9 +15,12 @@ define([
 	 * @param  {Selector[]}  selectors
 	 */
 	function SequenceOperator (selectors) {
-		Selector.call(this, selectors.reduce(function (specificity, selector) {
-			return specificity.add(selector.specificity);
-		}, new Specificity({})));
+		Selector.call(
+			this,
+			selectors.reduce(function (specificity, selector) {
+				return specificity.add(selector.specificity);
+			}, new Specificity({})),
+			Selector.RESULT_ORDER_UNSORTED);
 		this._selectors = selectors;
 	}
 

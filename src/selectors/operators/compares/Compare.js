@@ -16,7 +16,10 @@ define([
 	'use strict';
 
 	function Compare (kind, firstSelector, secondSelector) {
-		Selector.call(this, firstSelector.specificity.add(secondSelector.specificity));
+		Selector.call(
+			this,
+			firstSelector.specificity.add(secondSelector.specificity),
+			Selector.RESULT_ORDER_SORTED);
 		this._firstSelector = firstSelector;
 		this._secondSelector = secondSelector;
 

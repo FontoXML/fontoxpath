@@ -16,9 +16,12 @@ define([
 	 * @param  {Selector[]}  selectors
 	 */
 	function AndOperator (selectors) {
-		Selector.call(this, selectors.reduce(function (specificity, selector) {
-			return specificity.add(selector.specificity);
-		}, new Specificity({})));
+		Selector.call(
+			this,
+			selectors.reduce(function (specificity, selector) {
+				return specificity.add(selector.specificity);
+			}, new Specificity({})),
+			Selector.RESULT_ORDER_SORTED);
 		this._subSelectors = selectors;
 	}
 

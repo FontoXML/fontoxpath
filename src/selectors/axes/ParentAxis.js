@@ -11,7 +11,7 @@ define([
 	 * @param  {Selector}  parentSelector
 	 */
 	function ParentAxis (parentSelector) {
-		Selector.call(this, parentSelector.specificity);
+		Selector.call(this, parentSelector.specificity, Selector.RESULT_ORDER_REVERSE_SORTED);
 
 		this._parentSelector = parentSelector;
 	}

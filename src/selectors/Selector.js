@@ -13,13 +13,21 @@ define([
 
 	/**
 	 * @param  {Specificity}  specificity
+	 * @param  {string}       expectedResultOrder  Describe what the expected sorting order is, will be used to shortcut sorting at various places.
+	 *                                               Either 'sorted', 'reverse-sorted' or 'unsorted'. Sorted sequences are expected to be deduplicated.
 	 */
-	function Selector (specificity) {
+	function Selector (specificity, expectedResultOrder) {
 		/**
 		 * @type  {Specificity}
 		 */
 		this.specificity = specificity;
+
+		this.expectedResultOrder = expectedResultOrder;
 	}
+
+	Selector.RESULT_ORDER_SORTED = Selector.prototype.RESULT_ORDER_SORTED = 'sorted';
+	Selector.RESULT_ORDER_REVERSE_SORTED = Selector.prototype.RESULT_ORDER_REVERSE_SORTED = 'reverse-sorted';
+	Selector.RESULT_ORDER_UNSORTED = Selector.prototype.RESULT_ORDER_UNSORTED = 'unsorted';
 
 	/**
 	 * @deprecated

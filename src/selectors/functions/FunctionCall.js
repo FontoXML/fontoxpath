@@ -1,12 +1,12 @@
 define([
-	'./FunctionRegistry',
+	'./functionRegistry',
 	'../../parsing/customTestsByName',
 	'../dataTypes/Sequence',
 	'../dataTypes/BooleanValue',
 	'../Selector',
 	'../Specificity'
 ], function (
-	FunctionRegistry,
+	functionRegistry,
 	customTestsByName,
 	Sequence,
 	BooleanValue,
@@ -20,7 +20,7 @@ define([
 	 * @param  {Selector[]}  args          The arguments for the function. Evaluated and passed to the function
 	 */
 	function FunctionCall (functionName, args) {
-		Selector.call(this, new Specificity({external: 1}));
+		Selector.call(this, new Specificity({external: 1}), Selector.RESULT_ORDER_UNSORTED);
 
 		// TODO: fonto(-|:).* syntax
 
@@ -52,7 +52,7 @@ define([
 			return Sequence.singleton(new BooleanValue(!!result));
 		}
 
-		var registeredFunction = FunctionRegistry.getFunction(this._functionName, evaluatedArguments);
+		var registeredFunction = functionRegistry.getFunction(this._functionName, evaluatedArguments);
 		return registeredFunction.apply(
 			undefined,
 			[dynamicContext].concat(evaluatedArguments));
