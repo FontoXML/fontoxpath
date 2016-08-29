@@ -25,11 +25,22 @@ define([
 	QuantifiedExpression.prototype.constructor = QuantifiedExpression;
 
 	QuantifiedExpression.prototype.equals = function (otherSelector) {
-		// if (otherSelector === this) {
-		// 	return true;
-		// }
+		if (otherSelector === this) {
+			return true;
+		}
 
-		return otherSelector === this;
+		if (this._inClauses.length !== otherSelector._inClauses.length) {
+			return false;
+		}
+
+		return otherSelector instanceof QuantifiedExpression &&
+			this._quantifier === otherSelector._quantifier &&
+			this._satisfiesExpr.equals(otherSelector._satisfiesExpr) &&
+			this._inClauses.every(function (inClause, index) {
+				return inClause[0] === otherSelector._inClauses[index][0] &&
+					inClause[1].equals(otherSelector._inClauses[index][1]);
+			});
+
 	};
 
 	QuantifiedExpression.prototype.evaluate = function (dynamicContext) {

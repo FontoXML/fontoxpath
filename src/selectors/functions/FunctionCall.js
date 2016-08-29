@@ -68,9 +68,9 @@ define([
 		}
 
 		return this._functionName === otherSelector._functionName &&
-			this._args.length === otherSelector.args.length &&
+			this._args.length === otherSelector._args.length &&
 			this._args.every(function (arg, i) {
-				return arg.equals(otherSelector.args[i]);
+				return arg.equals(otherSelector._args[i]);
 			});
 	};
 
