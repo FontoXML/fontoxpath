@@ -263,6 +263,22 @@ define([
 			});
 		});
 
+		describe('string-join()', function () {
+			it('The function returns an xs:string created by concatenating the items in the sequence $arg1, in order, using the value of $arg2 as a separator between adjacent items.', function () {
+				chai.expect(evaluateXPath('string-join(("a", "b", "c"), "X")', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('aXbXc');
+			});
+			it('If the value of $arg2 is the zero-length string, then the members of $arg1 are concatenated without a separator.', function () {
+				chai.expect(evaluateXPath('string-join(("a", "b", "c"))', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('abc');
+			});
+
+			it('If the value of $arg2 is the zero-length string, then the members of $arg1 are concatenated without a separator.', function () {
+				chai.expect(evaluateXPath('string-join(("a", "b", "c"), "")', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('abc');
+			});
+			it('returns the empty string when joining the empty sequence', function () {
+				chai.expect(evaluateXPath('string-join((), "X")', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('');
+			});
+		});
+
 		describe('Arrow functions', function () {
 			it('pipes the result to the next function', function () {
 				var selector = parseSelector('true() => not()');
