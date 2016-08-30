@@ -76,7 +76,7 @@ define([
 		}
 
 		if (!firstValueSequence.isSingleton() || !secondValueSequence.isSingleton()) {
-			throw new Error('ERR:XPTY0004');
+			throw new Error('XPTY0004: the operands of the "' + this._kind + '" operator should be of type xs:numeric?.');
 		}
 
 		// Cast both to doubles, if they are xs:untypedAtomic

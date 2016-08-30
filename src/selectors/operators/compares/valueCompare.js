@@ -16,7 +16,7 @@ define([
 	return function valueCompare (operator, firstSequence, secondSequence) {
 		// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
 		if (!firstSequence.isSingleton() || !secondSequence.isSingleton()) {
-			throw new Error('ERRXPTY0004: Sequences to compare are not singleton');
+			throw new Error('XPTY0004: Sequences to compare are not singleton');
 		}
 
 		var firstValue = firstSequence.value[0],
@@ -47,7 +47,7 @@ define([
 				secondValue = DoubleValue.cast(secondValue);
 			}
 			else {
-				throw new Error('ERRXPTY0004: Values to compare are not of the same type');
+				throw new Error('XPTY0004: Values to compare are not of the same type');
 			}
 		}
 

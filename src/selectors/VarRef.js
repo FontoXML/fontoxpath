@@ -27,7 +27,7 @@ define([
 	VarRef.prototype.evaluate = function (dynamicContext) {
 		var value = dynamicContext.variables[this._variableName];
 		if (!value) {
-			throw new Error('ERR:XPST0008, The variable ' + this._variableName + ' is not in scope.');
+			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
 		}
 
 		return value;

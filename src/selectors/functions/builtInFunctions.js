@@ -64,10 +64,6 @@ define([
 
 	function fnConcat (dynamicContext) {
 		var stringSequences = Array.from(arguments).slice(1);
-		if (!stringSequences.length) {
-			throw new Error('No such function fn:concat(). Did your mean concat($a as xs:anyAtomicValue, $a as xs:anyAtomicValue, ...)?');
-		}
-
 		stringSequences = stringSequences.map(function (sequence) { return sequence.atomize(); });
 		var strings = stringSequences.map(function (sequence) {
 				return sequence.value[0].value;
@@ -250,7 +246,7 @@ define([
 			name: 'tokenize',
 			typeDescription: ['xs:string?', 'xs:string', 'xs:string'],
 			callFunction: function (dynamicContext, input, pattern, flags) {
-				throw new Error('Using flags in tokenize is not supported');
+				throw new Error('Not implemented: Using flags in tokenize is not supported');
 			}
 		},
 		{

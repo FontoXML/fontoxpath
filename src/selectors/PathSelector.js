@@ -85,7 +85,7 @@ define([
 			}
 		});
 		if (resultContainsNonNodes && resultContainsNodes) {
-			throw new Error('XPTY0018: The path operator should either return nodes or non-nodes.');
+			throw new Error('XPTY0018: The path operator should either return nodes or non-nodes. Mixed sequences are not allowed.');
 		}
 
 		if (resultContainsNodes) {

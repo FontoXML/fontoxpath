@@ -33,7 +33,7 @@ define([
 				value = true;
 				break;
 			default:
-				throw new Error('ERRXPTY0004: can not cast ' + value + ' to xs:boolean');
+				throw new Error('XPTY0004: can not cast ' + value + ' to xs:boolean');
 		}
 
 		return new BooleanValue(booleanValue);

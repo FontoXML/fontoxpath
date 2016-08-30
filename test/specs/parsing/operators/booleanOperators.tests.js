@@ -275,7 +275,7 @@ define([
 					var selector = parseSelector('(1, 2) eq true()');
 					chai.expect(function () {
 						evaluateXPath(selector, documentNode, blueprint);
-					}).to.throw(/ERRXPTY0004/);
+					}).to.throw(/XPTY0004/);
 				});
 
 				it('Does work with typing: decimal to int', function () {
@@ -316,21 +316,21 @@ define([
 					var selector = parseSelector('@a eq 1');
 					chai.expect(function () {
 						evaluateXPath(selector, documentNode.documentElement, blueprint);
-					}).to.throw(/ERRXPTY0004/);
+					}).to.throw(/XPTY0004/);
 				});
 
 				it('(does not) work with typing: int to string', function () {
 					var selector = parseSelector('1 eq "1"');
 					chai.expect(function () {
 						evaluateXPath(selector, documentNode, blueprint);
-					}).to.throw(/ERRXPTY0004/);
+					}).to.throw(/XPTY0004/);
 				});
 
 				it('(does not) work with typing: boolean to string', function () {
 					var selector = parseSelector('true() eq "true"');
 					chai.expect(function () {
 						evaluateXPath(selector, documentNode, blueprint);
-					}).to.throw(/ERRXPTY0004/);
+					}).to.throw(/XPTY0004/);
 				});
 
 				describe('eq', function () {
