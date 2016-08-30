@@ -273,7 +273,7 @@ ContextItemExpr
 
 // 63
 FunctionCall
- = !ReservedFunctionNames name:EQName _ args:ArgumentList {return ["functionCall", name].concat(args)}
+ = !(ReservedFunctionNames _ "(" _ ")") name:EQName _ args:ArgumentList {return ["functionCall", name].concat(args)}
 
 // 64
 Argument

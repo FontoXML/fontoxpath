@@ -279,5 +279,74 @@ define([
 			});
 		});
 
+		describe('node-name()', function () {
+			it('returns an empty sequence if $arg is an empty sequence', function () {
+				var selector = parseSelector('node-name(())');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint)
+				).to.deep.equal([]);
+			});
+
+			it('it defaults to the context item when the argument is omitted', function () {
+				var selector = parseSelector('node-name()');
+				jsonMLMapper.parse([
+					'someElement',
+					[
+						'Some text.'
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode.firstChild, blueprint)
+				).to.equal('someElement');
+			});
+
+			it('it returns the node name of the given context', function () {
+				var selector = parseSelector('node-name(.)');
+				jsonMLMapper.parse([
+					'someElement',
+					[
+						'Some text.'
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode.firstChild, blueprint)
+				).to.equal('someElement');
+			});
+		});
+
+		describe('name()', function () {
+			it('returns an empty sequence if $arg is an empty sequence', function () {
+				var selector = parseSelector('name(())');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint)
+				).to.deep.equal([]);
+			});
+
+			it('it defaults to the context item when the argument is omitted', function () {
+				var selector = parseSelector('name()');
+				jsonMLMapper.parse([
+					'someElement',
+					[
+						'Some text.'
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode.firstChild, blueprint)
+				).to.equal('someElement');
+			});
+
+			it('it returns the node name of the given context', function () {
+				var selector = parseSelector('name(.)');
+				jsonMLMapper.parse([
+					'someElement',
+					[
+						'Some text.'
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode.firstChild, blueprint)
+				).to.equal('someElement');
+			});
+		});
 	});
 });

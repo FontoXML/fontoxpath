@@ -5,7 +5,8 @@ define([
 	'../dataTypes/BooleanValue',
 	'../dataTypes/StringValue',
 	'../dataTypes/IntegerValue',
-	'../dataTypes/DoubleValue'
+	'../dataTypes/DoubleValue',
+	'../dataTypes/QNameValue'
 ], function (
 	blueprints,
 
@@ -13,7 +14,8 @@ define([
 	BooleanValue,
 	StringValue,
 	IntegerValue,
-	DoubleValue
+	DoubleValue,
+	QNameValue
 ) {
 	'use strict';
 
@@ -140,6 +142,22 @@ define([
 		return fn(dynamicContext, dynamicContext.contextItem);
 	}
 
+	function fnNodeName (dynamicContext, sequence) {
+		if (sequence.isEmpty()) {
+			return sequence;
+		}
+
+		return Sequence.singleton(new QNameValue(sequence.value[0].nodeName));
+	}
+
+	function fnName (dynamicContext, sequence) {
+		if (sequence.isEmpty()) {
+			return sequence;
+		}
+
+		return fnString(dynamicContext, fnNodeName(dynamicContext, sequence));
+	}
+
 	return [
 		{
 			name: 'not',
@@ -246,6 +264,26 @@ define([
 			name: 'number',
 			typeDescription: ['xs:anyAtomicType?'],
 			callFunction: fnNumber
+		},
+		{
+			name: 'node-name',
+			typeDescription: [],
+			callFunction: contextItemAsFirstArgument.bind(undefined, fnNodeName)
+		},
+		{
+			name: 'node-name',
+			typeDescription: ['node()?'],
+			callFunction: fnNodeName
+		},
+		{
+			name: 'name',
+			typeDescription: [],
+			callFunction: contextItemAsFirstArgument.bind(undefined, fnName)
+		},
+		{
+			name: 'name',
+			typeDescription: ['node()?'],
+			callFunction: fnName
 		},
 		{
 			name: 'fonto:markupLabel',
