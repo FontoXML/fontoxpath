@@ -1,21 +1,19 @@
 define([
-	'fontoxml-blueprints',
 	'fontoxml-dom-identification/getNodeId',
 	'../Selector',
 	'../Specificity',
 	'../dataTypes/Sequence',
+	'../dataTypes/sortNodeValues',
 	'../dataTypes/NodeValue'
 ], function (
-	blueprints,
 	getNodeId,
 	Selector,
 	Specificity,
 	Sequence,
+	sortNodeValues,
 	NodeValue
 ) {
 	'use strict';
-
-	var blueprintQuery = blueprints.blueprintQuery;
 
 	/**
 	 * @param  {Selector[]}  stepSelectors
@@ -87,42 +85,7 @@ define([
 		}
 
 		if (resultContainsNodes) {
-			result.sort(function (nodeValueA, nodeValueB) {
-				var valueA, valueB;
-				if (nodeValueA.instanceOfType('attribute()') && !nodeValueB.instanceOfType('attribute()')) {
-					valueA = domFacade.getParentNode(nodeValueA.value);
-					valueB = nodeValueB.value;
-					if (valueA === valueB) {
-						// Same element, so A
-						return 1;
-					}
-				} else if (nodeValueB.instanceOfType('attribute()') && !nodeValueA.instanceOfType('attribute()')) {
-					valueA = nodeValueA.value;
-					valueB = domFacade.getParentNode(valueB.value);
-					if (valueB === valueA) {
-						// Same element, so B before A
-						return -1;
-					}
-				} else if (nodeValueA.instanceOfType('attribute()') && nodeValueB.instanceOfType('attribute()')) {
-					if (domFacade.getParentNode(nodeValueB.value) === domFacade.getParentNode(nodeValueA.value)) {
-						// Sort on attributes name
-						return nodeValueA.value.name > nodeValueB.value.name ? 1 : -1;
-					}
-					valueA = domFacade.getParentNode(nodeValueA.value);
-					valueB = domFacade.getParentNode(nodeValueB.value);
-				} else {
-					valueA = nodeValueA.value;
-					valueB = nodeValueB.value;
-				}
-				return blueprintQuery.compareNodePositions(domFacade, valueA, valueB);
-			})
-				.filter(function (nodeValue, i, sortedNodes) {
-					if (i === 0) {
-						return true;
-					}
-					return nodeValue.nodeId !== sortedNodes[i - 1].nodeId;
-				});
-
+			return sortNodeValues(domFacade, result);
 		}
 		return result;
 	}

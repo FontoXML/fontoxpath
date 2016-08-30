@@ -86,7 +86,7 @@ define([
 			}).to.throw(/ERRXPTY0004/);
 		});
 
-		it.skip('sorts nodes', function () {
+		it('sorts nodes', function () {
 			// Not implemented yet: performance reasons
 			var selector = parseSelector('(//C | //B | //A)');
 			jsonMLMapper.parse([

@@ -2,12 +2,14 @@ define([
 	'fontoxml-dom-identification/getNodeId',
 	'../Specificity',
 	'../Selector',
-	'../dataTypes/Sequence'
+	'../dataTypes/Sequence',
+	'../dataTypes/sortNodeValues'
 ], function (
 	getNodeId,
 	Specificity,
 	Selector,
-	Sequence
+	Sequence,
+	sortNodeValues
 ) {
 	'use strict';
 
@@ -77,7 +79,7 @@ define([
 	};
 
 	Union.prototype.evaluate = function (dynamicContext) {
-		var nodeById = this._subSelectors.reduce(function (resultingNodeById, selector) {
+		var nodeValueById = this._subSelectors.reduce(function (resultingNodeById, selector) {
 				var results = selector.evaluate(dynamicContext);
 				var allItemsAreNode = results.value.every(function (valueItem) {
 						return valueItem.instanceOfType('node()');
@@ -92,9 +94,10 @@ define([
 				return resultingNodeById;
 			}, Object.create(null));
 
-		return new Sequence(Object.keys(nodeById).map(function (nodeId) {
-			return nodeById[nodeId];
-		}));
+		var sortedValues = sortNodeValues(dynamicContext.domFacade, Object.keys(nodeValueById).map(function (nodeId) {
+				return nodeValueById[nodeId];
+			}));
+		return new Sequence(sortedValues);
 	};
 	return Union;
 });
