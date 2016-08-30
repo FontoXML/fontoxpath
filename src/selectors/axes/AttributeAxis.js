@@ -5,7 +5,7 @@ define([
 	'../Specificity',
 	'../isSameArray',
 	'../dataTypes/Sequence',
-	'../dataTypes/AttributeNodeValue'
+	'../dataTypes/NodeValue'
 ], function (
 	domInfo,
 
@@ -13,13 +13,13 @@ define([
 	Specificity,
 	isSameArray,
 	Sequence,
-	AttributeNodeValue
+	NodeValue
 ) {
 	'use strict';
 
 	/**
 	 * @param  {String}    attributeName
-	 * @param  {String[]}  [attributeValues]  if omitted, the selector matches if the attribute is present
+	 * @param  {String[]}  [attributeValues]  if omitted, the selector matches if the attribute is present. Deprecated
 	 */
 	function AttributeAxis (attributeName, attributeValues) {
 		Selector.call(this, new Specificity({attribute: 1}), Selector.RESULT_ORDER_UNSORTED);
@@ -64,16 +64,14 @@ define([
 	};
 
 	AttributeAxis.prototype.evaluate = function (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
+		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
-		return new Sequence(nodeSequence.value.reduce(function (values, nodeValue) {
-			var attributeValue = domFacade.getAttribute(nodeValue, this._attributeName);
-			if (attributeValue) {
-				values.push(attributeValue);
-			}
-			return values;
-		}.bind(this), []));
+		var attributeNode = domFacade.getAttribute(contextItem.value[0].value, this._attributeName);
+		if (!attributeNode) {
+			return Sequence.empty();
+		}
+		return Sequence.singleton(new NodeValue(domFacade, attributeNode));
 	};
 
 	return AttributeAxis;

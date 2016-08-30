@@ -1,9 +1,11 @@
 define([
 	'../Selector',
-	'../dataTypes/Sequence'
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	Selector,
-	Sequence
+	Sequence,
+	NodeValue
 ) {
 	'use strict';
 
@@ -34,14 +36,14 @@ define([
 
 		var nodeValues = nodeSequence.value
 			.map(function (nodeValue) {
-				return domFacade.getParentNode(nodeValue);
+				return new NodeValue(dynamicContext.domFacade, domFacade.getParentNode(nodeValue.value));
 			})
-			.filter(function (node) {
-				if (!node) {
+			.filter(function (nodeValue) {
+				if (!nodeValue) {
 					return false;
 				}
 				var result = this._parentSelector.evaluate(dynamicContext.createScopedContext({
-						contextItem: Sequence.singleton(node),
+						contextItem: Sequence.singleton(nodeValue),
 						contextSequence: null
 					}));
 				return result.getEffectiveBooleanValue();

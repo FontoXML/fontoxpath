@@ -1,11 +1,9 @@
 define([
 	'fontoxml-dom-identification/getNodeId',
-	'./dataTypes/AttributeNodeValue',
-	'./dataTypes/NodeValue'
+	'./dataTypes/AttributeNode'
 ], function (
 	getNodeId,
-	AttributeNodeValue,
-	NodeValue
+	AttributeNode
 ) {
 	'use strict';
 
@@ -18,50 +16,52 @@ define([
 		this._createdNodeValuesByNodeId = Object.create(null);
 	}
 
-	function createNodeValue (domFacade, node) {
-		var nodeId = getNodeId(node);
-		var nodeValue = domFacade._createdNodeValuesByNodeId[nodeId];
-		if (!nodeValue) {
-			nodeValue = domFacade._createdNodeValuesByNodeId[nodeId] = new NodeValue(domFacade, node);
-		}
-		return nodeValue;
-	}
-
-	DomFacade.prototype.importNode = function (node) {
-		return createNodeValue(this, node);
-	};
-
 	/**
 	 * TODO: depTracking will be here
 	 */
 	DomFacade.prototype.getParentNode = function (node) {
-		if (node instanceof AttributeNodeValue) {
-			return createNodeValue(this, node.getParentNode());
+		if (node instanceof AttributeNode) {
+			return node.getParentNode();
 		}
-		return this._blueprint.getParentNode(node.value) &&
-			createNodeValue(this, this._blueprint.getParentNode(node.value));
+		return this._blueprint.getParentNode(node);
 	};
+
 	DomFacade.prototype.getFirstChild = function (node) {
-		return this._blueprint.getFirstChild(node.value) &&
-			createNodeValue(this, this._blueprint.getFirstChild(node.value));
+		if (node instanceof AttributeNode) {
+			return null;
+		}
+		return this._blueprint.getFirstChild(node);
 	};
 
 	DomFacade.prototype.getLastChild = function (node) {
-		return this._blueprint.getLastChild(node.value) &&
-			createNodeValue(this, this._blueprint.getLastChild(node.value));
+		if (node instanceof AttributeNode) {
+			return null;
+		}
+
+		return this._blueprint.getLastChild(node);
 	};
 
 	DomFacade.prototype.getNextSibling = function (node) {
-		return this._blueprint.getNextSibling(node.value) &&
-			createNodeValue(this, this._blueprint.getNextSibling(node.value));
+		if (node instanceof AttributeNode) {
+			return null;
+		}
+
+		return this._blueprint.getNextSibling(node);
 	};
 
 	DomFacade.prototype.getPreviousSibling = function (node) {
-		return this._blueprint.getPreviousSibling(node.value) &&
-			createNodeValue(this, this._blueprint.getPreviousSibling(node.value));
+		if (node instanceof AttributeNode) {
+			return null;
+		}
+
+		return this._blueprint.getPreviousSibling(node);
 	};
 
 	DomFacade.prototype.getChildNodes = function (node) {
+		if (node instanceof AttributeNode) {
+			return [];
+		}
+
 		var childNodes = [];
 
 		for (var childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
@@ -72,21 +72,33 @@ define([
 	};
 
 	DomFacade.prototype.getAttribute = function (node, attributeName) {
-		var value = this._blueprint.getAttribute(node.value, attributeName);
+		if (node instanceof AttributeNode) {
+			return null;
+		}
+
+		var value = this._blueprint.getAttribute(node, attributeName);
 		if (!value) {
 			return null;
 		}
-		return new AttributeNodeValue(this, node.value, attributeName, value);
+		return new AttributeNode(node, attributeName, value);
 	};
 
 	DomFacade.prototype.getAllAttributes = function (node) {
-		return this._blueprint.getAllAttributes(node.value).map(function (attribute) {
-			return new AttributeNodeValue(this, node.value, attribute.name, attribute.value);
+		if (node instanceof AttributeNode) {
+			return [];
+		}
+
+		return this._blueprint.getAllAttributes(node).map(function (attribute) {
+			return new AttributeNode(node, attribute.name, attribute.value);
 		});
 	};
 
 	DomFacade.prototype.getData = function (node) {
-		return this._blueprint.getData(node.value) || '';
+		if (node instanceof AttributeNode) {
+			return node.value;
+		}
+
+		return this._blueprint.getData(node) || '';
 	};
 
 	return DomFacade;

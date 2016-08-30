@@ -2,12 +2,14 @@ define([
 	'fontoxml-blueprints',
 
 	'../Selector',
-	'../dataTypes/Sequence'
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	blueprints,
 
 	Selector,
-	Sequence
+	Sequence,
+	NodeValue
 ) {
 	'use strict';
 
@@ -48,28 +50,26 @@ define([
 	};
 
 	FollowingSiblingAxis.prototype.evaluate = function (dynamicContext) {
-		var sequence = dynamicContext.contextItem,
+		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
 		function isMatchingSibling (selector, node) {
 			return selector.evaluate(dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(node),
+				contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
 				contextSequence: null
 			})).getEffectiveBooleanValue();
 		}
-		return sequence.value.reduce(function (resultingSequence, node) {
-			var sibling = node;
-			var nodes = [];
-			while ((sibling = blueprintQuery.findNextSibling(
-				domFacade,
-				sibling,
-				isMatchingSibling.bind(undefined, this._siblingSelector)))) {
 
-				nodes.push(sibling);
-			}
-			resultingSequence.merge(new Sequence(nodes));
-			return resultingSequence;
-		}.bind(this), new Sequence());
+		var sibling = contextItem.value[0].value;
+		var nodes = [];
+		while ((sibling = blueprintQuery.findNextSibling(
+			domFacade,
+			sibling,
+			isMatchingSibling.bind(undefined, this._siblingSelector)))) {
+
+			nodes.push(new NodeValue(dynamicContext.domFacade, sibling));
+		}
+		return new Sequence(nodes);
 	};
 
 	return FollowingSiblingAxis;

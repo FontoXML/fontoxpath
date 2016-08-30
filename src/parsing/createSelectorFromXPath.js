@@ -2,8 +2,8 @@ define([
 	'fontoxml-blueprints',
 	'fontoxml-dom-utils',
 
-	'../selectors/PathSelector',
-	'../selectors/AbsolutePathSelector',
+	'../selectors/pathExpression/PathSelector',
+	'../selectors/pathExpression/AbsolutePathSelector',
 	'../selectors/Filter',
 	'../selectors/axes/AttributeAxis',
 	'../selectors/axes/AncestorAxis',

@@ -2,12 +2,14 @@ define([
 	'fontoxml-blueprints',
 
 	'../Selector',
-	'../dataTypes/Sequence'
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	blueprints,
 
 	Selector,
-	Sequence
+	Sequence,
+	NodeValue
 ) {
 	'use strict';
 
@@ -54,24 +56,21 @@ define([
 
 		function isMatchingSibling (selector, node) {
 			return selector.evaluate(dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(node),
+				contextItem: Sequence.singleton(new NodeValue(domFacade, node)),
 				contextSequence: null
 			})).getEffectiveBooleanValue();
 		}
 
-		return sequence.value.reduce(function (resultingSequence, node) {
-			var sibling = node;
-			var nodes = [];
-			while ((sibling = blueprintQuery.findPreviousSibling(
-				domFacade,
-				sibling,
-				isMatchingSibling.bind(undefined, this._siblingSelector)))) {
+		var siblingNode = sequence.value[0].value,
+			nodes = [];
+		while ((siblingNode = blueprintQuery.findPreviousSibling(
+			domFacade,
+			siblingNode,
+			isMatchingSibling.bind(undefined, this._siblingSelector)))) {
 
-				nodes.push(sibling);
-			}
-			resultingSequence.merge(new Sequence(nodes));
-			return resultingSequence;
-		}.bind(this), new Sequence());
+			nodes.push(new NodeValue(dynamicContext.domFacade, siblingNode));
+		}
+		return new Sequence(nodes);
 	};
 
 

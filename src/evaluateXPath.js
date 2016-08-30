@@ -5,7 +5,6 @@ define([
 	'./selectors/dataTypes/Sequence',
 	'./selectors/dataTypes/NodeValue',
 	'./selectors/dataTypes/NumericValue',
-	'./selectors/dataTypes/AttributeNodeValue',
 	'./selectors/DomFacade'
 ], function (
 	createSelectorFromXPath,
@@ -14,7 +13,6 @@ define([
 	Sequence,
 	NodeValue,
 	NumericValue,
-	AttributeNodeValue,
 	DomFacade
 ) {
 	'use strict';
@@ -40,7 +38,7 @@ define([
 			xPathSelector = createSelectorFromXPath(xPathSelector);
 		}
 		var domFacade = new DomFacade(blueprint),
-			contextSequence = Sequence.singleton(domFacade.importNode(contextNode)),
+			contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode)),
 			untypedVariables = Object.assign(
 				{
 					'theBest': 'FontoXML is the best!'
@@ -80,10 +78,10 @@ define([
 				if (rawResults.isEmpty()) {
 					return null;
 				}
-				if (!(rawResults.value[0] instanceof NodeValue)) {
+				if (!(rawResults.value[0].instanceOfType('node()'))) {
 					throw new Error('Expected XPath ' + xPathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
 				}
-				if (rawResults.value[0] instanceof AttributeNodeValue) {
+				if (rawResults.value[0].instanceOfType('attribute()')) {
 					throw new Error('XPath can not resolve to attribute nodes');
 				}
 				return rawResults.value[0].value;
@@ -91,17 +89,17 @@ define([
 				if (rawResults.isEmpty()) {
 					return [];
 				}
-				if (!(rawResults.value.every(function (value) {return value instanceof NodeValue;}))) {
+				if (!(rawResults.value.every(function (value) {return value.instanceOfType('node()');}))) {
 					throw new Error('Expected XPath ' + xPathSelector + ' to resolve to a sequence of Nodes.');
 				}
-				if (rawResults.value.some(function (value) {return value instanceof AttributeNodeValue;})) {
+				if (rawResults.value.some(function (value) {return value.instanceOfType('attribute()');})) {
 					throw new Error('XPath ' + xPathSelector + ' should not resolve to attribute nodes');
 				}
 				return rawResults.value.map(function (nodeValue) { return nodeValue.value;});
 			default:
 				var allValuesAreNodes = rawResults.value.every(function (value) {
-						return value instanceof NodeValue &&
-							!(value instanceof AttributeNodeValue);
+						return value.instanceOfType('node()') &&
+							!(value.instanceOfType('attribute()'));
 					});
 				if (allValuesAreNodes) {
 					if (rawResults.isSingleton()) {

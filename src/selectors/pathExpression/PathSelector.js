@@ -1,19 +1,17 @@
 define([
 	'fontoxml-blueprints',
 	'fontoxml-dom-identification/getNodeId',
-	'./Selector',
-	'./Specificity',
-	'./dataTypes/Sequence',
-	'./dataTypes/NodeValue',
-	'./dataTypes/AttributeNodeValue'
+	'../Selector',
+	'../Specificity',
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	blueprints,
 	getNodeId,
 	Selector,
 	Specificity,
 	Sequence,
-	NodeValue,
-	AttributeNodeValue
+	NodeValue
 ) {
 	'use strict';
 
@@ -89,28 +87,33 @@ define([
 		}
 
 		if (resultContainsNodes) {
-			result.sort(function (valueA, valueB) {
-				if (valueA instanceof AttributeNodeValue && !(valueB instanceof AttributeNodeValue)) {
-					if (domFacade.getParentNode(valueA) === valueB) {
+			result.sort(function (nodeValueA, nodeValueB) {
+				var valueA, valueB;
+				if (nodeValueA.instanceOfType('attribute()') && !nodeValueB.instanceOfType('attribute()')) {
+					valueA = domFacade.getParentNode(nodeValueA.value);
+					valueB = nodeValueB.value;
+					if (valueA === valueB) {
 						// Same element, so A
 						return 1;
 					}
-					valueA = domFacade.getParentNode(valueA);
-				} else if (valueB instanceof AttributeNodeValue && !(valueA instanceof AttributeNodeValue)) {
-					if (domFacade.getParentNode(valueB) === valueA) {
+				} else if (nodeValueB.instanceOfType('attribute()') && !nodeValueA.instanceOfType('attribute()')) {
+					valueA = nodeValueA.value;
+					valueB = domFacade.getParentNode(valueB.value);
+					if (valueB === valueA) {
 						// Same element, so B before A
 						return -1;
 					}
-					valueB = domFacade.getParentNode(valueB);
-				} else if (valueA instanceof AttributeNodeValue && valueA instanceof AttributeNodeValue) {
-					if (domFacade.getParentNode(valueA) === domFacade.getParentNode(valueB)) {
+				} else if (nodeValueA.instanceOfType('attribute()') && nodeValueB.instanceOfType('attribute()')) {
+					if (domFacade.getParentNode(nodeValueB.value) === domFacade.getParentNode(nodeValueA.value)) {
 						// Sort on attributes name
-						return valueA.name > valueB.name ? 1 : -1;
+						return nodeValueA.value.name > nodeValueB.value.name ? 1 : -1;
 					}
-					valueA = domFacade.getParentNode(valueA);
-					valueB = domFacade.getParentNode(valueB);
+					valueA = domFacade.getParentNode(nodeValueA.value);
+					valueB = domFacade.getParentNode(nodeValueB.value);
+				} else {
+					valueA = nodeValueA.value;
+					valueB = nodeValueB.value;
 				}
-
 				return blueprintQuery.compareNodePositions(domFacade, valueA, valueB);
 			})
 				.filter(function (nodeValue, i, sortedNodes) {

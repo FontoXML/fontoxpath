@@ -2,12 +2,14 @@ define([
 	'fontoxml-blueprints',
 
 	'../Selector',
-	'../dataTypes/Sequence'
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	blueprints,
 
 	Selector,
-	Sequence
+	Sequence,
+	NodeValue
 ) {
 	'use strict';
 
@@ -51,20 +53,23 @@ define([
 	};
 
 	AncestorAxis.prototype.evaluate = function (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
+		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
-		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
-			var ancestorNodeValues = blueprintQuery.findAllAncestors(domFacade, nodeValue, false)
+		// Assume singleton, since axes are only valid in paths
+		var nodeValues = blueprintQuery.findAllAncestors(domFacade, contextItem.value[0].value, false)
 					.filter(function (node) {
 						return this._ancestorSelector.evaluate({
-							contextItem: Sequence.singleton(node),
+							contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
 							contextSequence: null,
 							domFacade: domFacade
 						}).getEffectiveBooleanValue();
-					}.bind(this));
-			return resultingSequence.merge(new Sequence(ancestorNodeValues));
-			}.bind(this), new Sequence());
+					}.bind(this))
+			.map(function (node) {
+				return new NodeValue(dynamicContext.domFacade, node);
+			});
+
+		return new Sequence(nodeValues);
 	};
 
 	return AncestorAxis;

@@ -1,8 +1,8 @@
 define([
 	'fontoxml-blueprints',
-	'./Selector',
-	'./dataTypes/Sequence',
-	'./dataTypes/NodeValue'
+	'../Selector',
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	blueprints,
 	Selector,

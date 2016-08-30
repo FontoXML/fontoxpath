@@ -2,12 +2,14 @@ define([
 	'fontoxml-blueprints',
 
 	'../Selector',
-	'../dataTypes/Sequence'
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	blueprints,
 
 	Selector,
-	Sequence
+	Sequence,
+	NodeValue
 ) {
 	'use strict';
 
@@ -45,19 +47,19 @@ define([
 	};
 
 	ChildAxis.prototype.evaluate = function (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
+		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
-		return nodeSequence.value.reduce(function (resultingSequence, nodeValue) {
-			var nodeValues = blueprintQuery.findChildren(domFacade, nodeValue, function (node) {
-					return this._childSelector.evaluate(
-						dynamicContext.createScopedContext({
-							contextItem: Sequence.singleton(node),
-							contextSequence: null
-						})).getEffectiveBooleanValue();
-				}.bind(this));
+		var nodeValues = blueprintQuery.findChildren(domFacade, contextItem.value[0].value, function (node) {
+				return this._childSelector.evaluate(
+					dynamicContext.createScopedContext({
+						contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
+						contextSequence: null
+					})).getEffectiveBooleanValue();
+			}.bind(this)).map(function (node) {
+				return new NodeValue(dynamicContext.domFacade, node);
+			});
 
-			return resultingSequence.merge(new Sequence(nodeValues));
-		}.bind(this), new Sequence());
+		return new Sequence(nodeValues);
 	};
 
 	return ChildAxis;

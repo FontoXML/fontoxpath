@@ -1,9 +1,11 @@
 define([
 	'../Selector',
-	'../dataTypes/Sequence'
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	Selector,
-	Sequence
+	Sequence,
+	NodeValue
 ) {
 	'use strict';
 
@@ -39,9 +41,9 @@ define([
 	SelfAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem;
 
-		return new Sequence(nodeSequence.value.filter(function (node) {
+		return new Sequence(nodeSequence.value.filter(function (nodeValue) {
 			return this._selector.evaluate(dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(node),
+				contextItem: Sequence.singleton(nodeValue),
 				contextSequence: nodeSequence
 			})).getEffectiveBooleanValue();
 		}.bind(this)));

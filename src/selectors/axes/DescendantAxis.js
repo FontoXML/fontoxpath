@@ -1,11 +1,13 @@
 define([
 	'fontoxml-blueprints',
 	'../Selector',
-	'../dataTypes/Sequence'
+	'../dataTypes/Sequence',
+	'../dataTypes/NodeValue'
 ], function (
 	blueprints,
 	Selector,
-	Sequence
+	Sequence,
+	NodeValue
 ) {
 	'use strict';
 
@@ -45,16 +47,20 @@ define([
 		// Assume singleton, since axes are only valid in paths
 		var isMatchingDescendant = function (descendantNode) {
 				var scopedContext = dynamicContext.createScopedContext({
-						contextItem: Sequence.singleton(descendantNode),
+						contextItem: Sequence.singleton(new NodeValue(domFacade, descendantNode)),
 						contextSequence: null
 					});
 				return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
 			}.bind(this);
-		return new Sequence(blueprintQuery.findDescendants(
-			domFacade,
-			contextItem.value[0],
-			isMatchingDescendant,
-			true));
+		var nodeValues = blueprintQuery.findDescendants(
+				domFacade,
+				contextItem.value[0].value,
+				isMatchingDescendant,
+				true)
+			.map(function (node) {
+				return new NodeValue(domFacade, node);
+			});
+		return new Sequence(nodeValues);
 	};
 
 
