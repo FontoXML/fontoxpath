@@ -279,6 +279,16 @@ define([
 			});
 		});
 
+		describe('reverse()', function () {
+			it('Returns the empty sequence when reversing the empty sequence', function () {
+				chai.expect(evaluateXPath('reverse(())', documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([]);
+			});
+
+			it('Returns a sequence containing the items in $arg in reverse order.', function () {
+				chai.expect(evaluateXPath('reverse(("1","2","3")) => string-join(",")', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('3,2,1');
+			});
+		});
+
 		describe('Arrow functions', function () {
 			it('pipes the result to the next function', function () {
 				var selector = parseSelector('true() => not()');

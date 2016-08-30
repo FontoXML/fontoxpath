@@ -162,6 +162,10 @@ define([
 		return fnString(dynamicContext, fnNodeName(dynamicContext, sequence));
 	}
 
+	function fnReverse (dynamicContext, sequence) {
+		return new Sequence(sequence.value.reverse());
+	}
+
 	return [
 		{
 			name: 'not',
@@ -288,6 +292,11 @@ define([
 			name: 'name',
 			typeDescription: ['node()?'],
 			callFunction: fnName
+		},
+		{
+			name: 'reverse',
+			typeDescription: ['item()*'],
+			callFunction: fnReverse
 		},
 		{
 			name: 'string-join',
