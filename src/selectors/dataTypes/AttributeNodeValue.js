@@ -2,12 +2,14 @@ define([
 	'fontoxml-dom-identification/getNodeId',
 	'fontoxml-dom-utils/domInfo',
 	'./NodeValue',
-	'./UntypedAtomicValue'
+	'./UntypedAtomicValue',
+	'./StringValue'
 ], function (
 	getNodeId,
 	domInfo,
 	NodeValue,
-	UntypedAtomicValue
+	UntypedAtomicValue,
+	StringValue
 ) {
 	'use strict';
 
@@ -39,6 +41,10 @@ define([
 	AttributeNodeValue.prototype.atomize = function () {
 		// TODO: Mix in types
 		return new UntypedAtomicValue(this.value);
+	};
+
+	AttributeNodeValue.prototype.getStringValue = function () {
+		return new StringValue(this.value);
 	};
 
 	return AttributeNodeValue;

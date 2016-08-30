@@ -31,7 +31,7 @@ define([
 				['eel'],
 				['eel']
 			], documentNode);
-			chai.expect(evaluateXPath('self::hovercraft[eel and not(*[not(self::eel)])]', documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement]);
+			chai.expect(evaluateXPath('self::hovercraft[eel and not(*[not(self::eel)])]', documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
 		});
 	});
 });

@@ -28,7 +28,7 @@ define([
 			var element = documentNode.createElement('someElement');
 			chai.expect(evaluateXPath(selector, element, blueprint)).to.deep.equal([]);
 			element.setAttribute('someAttribute', 'someValue');
-			chai.expect(evaluateXPath(selector, element, blueprint)).to.deep.equal([element]);
+			chai.expect(evaluateXPath(selector, element, blueprint)).to.deep.equal(element);
 		});
 
 		it('uses correct contexts in predicates', function () {
@@ -40,14 +40,14 @@ define([
 					['someChildelement']
 				]
 			], documentNode);
-			chai.expect(evaluateXPath(selector, documentNode.documentElement.firstChild.firstChild, blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+			chai.expect(evaluateXPath(selector, documentNode.documentElement.firstChild.firstChild, blueprint)).to.deep.equal(documentNode.documentElement.firstChild);
 		});
 
 		it('can parse a simple any element + attribute selector', function () {
 			var selector = parseSelector('self::*[@someAttribute=\'someValue\']');
 			var element = documentNode.createElement('someElement');
 			element.setAttribute('someAttribute', 'someValue');
-			chai.expect(evaluateXPath(selector, element, blueprint)).to.deep.equal([element]);
+			chai.expect(evaluateXPath(selector, element, blueprint)).to.deep.equal(element);
 			var comment = documentNode.createComment('someComment');
 			chai.expect(evaluateXPath(selector, comment, blueprint)).to.deep.equal([]);
 		});
@@ -67,7 +67,7 @@ define([
 				'someParentElement',
 				['someChildElement']
 			], documentNode);
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement]);
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal(documentNode.documentElement);
 		});
 
 		it('can parse multiple chained predicates, resulting in a false', function () {

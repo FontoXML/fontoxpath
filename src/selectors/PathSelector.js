@@ -74,54 +74,21 @@ define([
 			});
 	};
 
-	PathSelector.prototype.evaluate = function (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
-			sequenceIsSorted = true;
+	function sortResults (domFacade, result) {
+		var resultContainsNodes = false,
+			resultContainsNonNodes = false;
+		result.forEach(function (resultValue) {
+			if (resultValue instanceof NodeValue) {
+				resultContainsNodes = true;
+			} else {
+				resultContainsNonNodes = true;
+			}
+		});
+		if (resultContainsNonNodes && resultContainsNodes) {
+			throw new Error('XPTY0018: The path operator should either return nodes or non-nodes.');
+		}
 
-		var result = this._stepSelectors.reduce(function (intermediateResultNodes, selector) {
-				var resultValues = [];
-				var hasResultValuesByNodeId = Object.create(null);
-				intermediateResultNodes.forEach(function (nodeValue) {
-					var newResults = selector.evaluate(dynamicContext.createScopedContext({
-							contextItem: Sequence.singleton(nodeValue),
-							contextSequence: null
-						}));
-
-					if (newResults.isEmpty()) {
-						return;
-					}
-
-					var sortedResultNodes;
-					switch (selector.expectedResultOrder) {
-						case Selector.RESULT_ORDER_SORTED:
-							sortedResultNodes = newResults.value;
-							break;
-						case Selector.RESULT_ORDER_REVERSE_SORTED:
-							sortedResultNodes = newResults.value.reverse();
-							break;
-						case Selector.RESULT_ORDER_UNSORTED:
-							sequenceIsSorted = false;
-							sortedResultNodes = newResults.value;
-					}
-
-					sortedResultNodes.forEach(function (newResult) {
-						if (!(newResult instanceof NodeValue)) {
-							throw new Error('err:XPTY0019: The / operator can only be applied to xml/json nodes.');
-						}
-						if (hasResultValuesByNodeId[newResult.nodeId]) {
-							return;
-						}
-						// Because the intermediateResults are ordered, and these results are ordered too, we should be able to dedupe and concat these results
-						hasResultValuesByNodeId[newResult.nodeId] = true;
-						resultValues.push(newResult);
-					});
-				}, []);
-
-				return resultValues;
-			}, nodeSequence.value);
-
-		var domFacade = dynamicContext.domFacade;
-		if (!sequenceIsSorted) {
+		if (resultContainsNodes) {
 			result.sort(function (valueA, valueB) {
 				if (valueA instanceof AttributeNodeValue && !(valueB instanceof AttributeNodeValue)) {
 					if (domFacade.getParentNode(valueA) === valueB) {
@@ -144,7 +111,7 @@ define([
 					valueB = domFacade.getParentNode(valueB);
 				}
 
-				return blueprintQuery.compareNodePositions(dynamicContext.domFacade, valueA, valueB);
+				return blueprintQuery.compareNodePositions(domFacade, valueA, valueB);
 			})
 				.filter(function (nodeValue, i, sortedNodes) {
 					if (i === 0) {
@@ -154,6 +121,58 @@ define([
 				});
 
 		}
+		return result;
+	}
+
+	PathSelector.prototype.evaluate = function (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem;
+
+		var result = this._stepSelectors.reduce(function (intermediateResultNodes, selector) {
+				// All but the last step should return nodes. The last step may return whatever, as long as it is not mixed
+				intermediateResultNodes.forEach(function (intermediateResultNode) {
+					if (!(intermediateResultNode instanceof NodeValue)) {
+						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
+					}
+				});
+
+				var resultValues = [];
+				var hasResultValuesByNodeId = Object.create(null);
+				intermediateResultNodes.forEach(function (nodeValue) {
+					var newResults = selector.evaluate(dynamicContext.createScopedContext({
+							contextItem: Sequence.singleton(nodeValue),
+							contextSequence: null
+						}));
+
+					if (newResults.isEmpty()) {
+						return;
+					}
+
+					var sortedResultNodes;
+					if (selector.expectedResultOrder === Selector.RESULT_ORDER_REVERSE_SORTED) {
+						sortedResultNodes = newResults.value.reverse();
+					} else {
+						sortedResultNodes = newResults.value;
+					}
+
+					sortedResultNodes.forEach(function (newResult) {
+						if (newResult instanceof NodeValue) {
+							if (hasResultValuesByNodeId[newResult.nodeId]) {
+								return;
+							}
+							// Because the intermediateResults are ordered, and these results are ordered too, we should be able to dedupe and concat these results
+							hasResultValuesByNodeId[newResult.nodeId] = true;
+						}
+						resultValues.push(newResult);
+					});
+				}, []);
+
+				if (selector.expectedResultOrder === selector.RESULT_ORDER_UNSORTED) {
+					// The result should be sorted before we can continue
+					resultValues = sortResults(dynamicContext.domFacade, resultValues);
+				}
+
+				return resultValues;
+			}, nodeSequence.value);
 
 		return new Sequence(result);
 	};

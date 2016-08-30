@@ -22,7 +22,7 @@ define([
 	describe('nameTests', function () {
 		it('allows nodeNames containing namespaces', function () {
 			var element = documentNode.createElement('someNamespace:someElement');
-			chai.expect(evaluateXPath('self::someNamespace:someElement', element, blueprint)).to.deep.equal([element]);
+			chai.expect(evaluateXPath('self::someNamespace:someElement', element, blueprint)).to.deep.equal(element);
 		});
 	});
 });

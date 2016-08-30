@@ -87,7 +87,7 @@ define([
 		}
 
 		if (sequence.value[0].instanceOfType('node()')) {
-			return Sequence.singleton(new StringValue(blueprintQuery.getTextContent(dynamicContext.domFacade, sequence.value[0])));
+			return Sequence.singleton(sequence.value[0].getStringValue());
 		}
 
 		return Sequence.singleton(StringValue.cast(sequence.value[0]));
@@ -129,6 +129,14 @@ define([
 		}
 
 		return Sequence.singleton(DoubleValue.cast(sequence.value[0]));
+	}
+
+	function fnStringJoin (dynamicContext, sequence, separator) {
+		var separatorString = separator.value[0].value,
+			joinedString = sequence.value.map(function (stringValue) {
+					return stringValue.value;
+			}).join(separatorString);
+		return Sequence.singleton(new StringValue(joinedString));
 	}
 
 	function fontoMarkupLabel (dynamicContext, sequence) {
@@ -218,7 +226,7 @@ define([
 			name: 'normalize-space',
 			typeDescription: [],
 			callFunction: function (dynamicContext) {
-				return fnNormalizeSpace(dynamicContext, fnString(dynamicContext, dyanmicContext.contextItem));
+				return fnNormalizeSpace(dynamicContext, fnString(dynamicContext, dynamicContext.contextItem));
 			}
 		},
 		{
@@ -284,6 +292,18 @@ define([
 			name: 'name',
 			typeDescription: ['node()?'],
 			callFunction: fnName
+		},
+		{
+			name: 'string-join',
+			typeDescription: ['xs:string*', 'xs:string'],
+			callFunction: fnStringJoin
+		},
+		{
+			name: 'string-join',
+			typeDescription: ['xs:string*'],
+			callFunction: function (dynamicContext, arg1) {
+				return fnStringJoin(dynamicContext, arg1, Sequence.singleton(new StringValue('')));
+			}
 		},
 		{
 			name: 'fonto:markupLabel',

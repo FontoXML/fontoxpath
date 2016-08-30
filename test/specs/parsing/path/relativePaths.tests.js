@@ -28,7 +28,7 @@ define([
 				['someChildNode']
 			], documentNode);
 			var selector = parseSelector('someChildNode');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
 
 		it('supports addressing the parent axis with ..', function () {
@@ -40,7 +40,7 @@ define([
 				]
 			], documentNode);
 			var selector = parseSelector('../child::someNode');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([
 				documentNode.documentElement
 			]);
 		});
@@ -56,7 +56,7 @@ define([
 				]
 			], documentNode);
 			var selector = parseSelector('(//secondNode, //firstNode)/self::node()');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([
 				documentNode.documentElement.firstChild,
 				documentNode.documentElement.lastChild
 			]);
@@ -73,7 +73,7 @@ define([
 				]
 			], documentNode);
 			var selector = parseSelector('/someNode/(secondNode, firstNode)/self::node()');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([
 				documentNode.documentElement.firstChild,
 				documentNode.documentElement.lastChild
 			]);
@@ -86,7 +86,11 @@ define([
 				['someChildNode']
 			], documentNode);
 			var selector = parseSelector('@someAttribute/..');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement]);
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
+		});
+
+		it('allows returning other things then nodes at the last step of the path', function () {
+			chai.expect(evaluateXPath('./42', documentNode, blueprint, {}, evaluateXPath.NUMBER_TYPE)).to.equal(42);
 		});
 
 		it('sorts attribute nodes after their element', function () {
@@ -96,11 +100,11 @@ define([
 				['someChildNode']
 			], documentNode);
 			var selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[1]');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement]);
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
 			selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[2]');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal(['someValue']);
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('someValue');
 			selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[3]');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
 
 		it('sorts attribute nodes alphabetically', function () {
@@ -109,8 +113,9 @@ define([
 				{ AsomeAttribute: 'someValue', BsomeOtherAttribute: 'someOtherValue' },
 				['someChildNode']
 			], documentNode);
-			var selector = parseSelector('(@BsomeOtherAttribute, @AsomeAttribute)/.');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal(['someValue', 'someOtherValue']);
+			// We need to convert to string becase string-join expects strings and function conversion is not in yet
+			var selector = parseSelector('(@BsomeOtherAttribute, @AsomeAttribute)/string() => string-join(", ")');
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('someValue, someOtherValue');
 		});
 
 		it('supports addressing the contextNode with .', function () {
@@ -122,7 +127,7 @@ define([
 				]
 			], documentNode);
 			var selector = parseSelector('.//*');
-			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint)).to.deep.equal([
+			chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([
 				documentNode.documentElement.firstChild,
 				documentNode.documentElement.firstChild.firstChild
 			]);

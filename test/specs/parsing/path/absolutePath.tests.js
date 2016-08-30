@@ -29,7 +29,7 @@ define([
 				'someNode'
 			], documentNode);
 			var selector = parseSelector('/someNode');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([documentNode.documentElement]);
+			chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
 		});
 		it('supports chaining from absolute paths', function () {
 			jsonMLMapper.parse([
@@ -37,7 +37,7 @@ define([
 				['someChildNode']
 			], documentNode);
 			var selector = parseSelector('/someNode/someChildNode');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+			chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
 		it('allows // as root', function () {
 			jsonMLMapper.parse([
@@ -45,7 +45,7 @@ define([
 				['someChildNode']
 			], documentNode);
 			var selector = parseSelector('//someChildNode');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([documentNode.documentElement.firstChild]);
+			chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
 		it('targets descendants with //', function () {
 			jsonMLMapper.parse([
@@ -53,7 +53,7 @@ define([
 				['someChildNode', ['someDescendantNode']]
 			], documentNode);
 			var selector = parseSelector('//someDescendantNode');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([documentNode.documentElement.firstChild.firstChild]);
+			chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild.firstChild]);
 		});
 	});
 });

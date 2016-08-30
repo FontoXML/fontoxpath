@@ -78,15 +78,18 @@ define([
 
 		if (!matchingFunction) {
 			var argumentString = argumentList.map(function (argument) {
-						if (argument.isEmpty()) {
-							return 'item()?';
-						}
+					if (argument.isEmpty()) {
+						return 'item()?';
+					}
 
-						return argument.value[0].primitiveTypeName + '+';
-					}).join(', '),
-				alternatives = functions[functionName].map(function (functionDeclaration) {
-						return functionName + '(' + functionDeclaration.typeDescription.join(', ') + ')';
-					});
+					if (argument.isSingleton()) {
+						return argument.value[0].primitiveTypeName;
+					}
+					return argument.value[0].primitiveTypeName + '+';
+				}).join(', ');
+			var alternatives = functions[functionName].map(function (functionDeclaration) {
+					return functionName + '(' + functionDeclaration.typeDescription.join(', ') + ')';
+				});
 			throw new Error('XPST0017: No such function ' + functionName + '(' + argumentString + ') \n Did you mean ' + alternatives);
 		}
 

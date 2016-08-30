@@ -15,10 +15,9 @@ define([
 
 	var blueprintQuery = blueprints.blueprintQuery;
 
-	function NodeValue (blueprint, node) {
+	function NodeValue (domFacade, node) {
 		Value.call(this, node);
-		this._node = node;
-		this._blueprint = blueprint;
+		this._domFacade = domFacade;
 		this.nodeType = node.nodeType;
 		if (typeof node !== 'string') {
 			this.nodeId = getNodeId(node);
@@ -38,7 +37,11 @@ define([
 
 	NodeValue.prototype.atomize = function () {
 		// TODO: Mix in types, by default get string value
-		return new StringValue(blueprintQuery.getTextContent(this._blueprint, this._node));
+		return new StringValue(blueprintQuery.getTextContent(this._domFacade, this));
+	};
+
+	NodeValue.prototype.getStringValue = function () {
+		return this.atomize();
 	};
 
 	return NodeValue;

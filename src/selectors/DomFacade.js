@@ -27,6 +27,10 @@ define([
 		return nodeValue;
 	}
 
+	DomFacade.prototype.importNode = function (node) {
+		return createNodeValue(this, node);
+	};
+
 	/**
 	 * TODO: depTracking will be here
 	 */
