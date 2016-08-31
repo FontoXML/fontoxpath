@@ -38,20 +38,24 @@ define([
 				return argument.evaluate(dynamicContext);
 			});
 
-		// Important to know: all functions having the fonto: syntax are simplified tests which should directly be called with JavaScript simple types. One pro: they always resolve to a boolean
-		if (this._functionName.startsWith('fonto:')) {
-			var customFunction = customTestsByName[this._functionName];
-			var simplifiedArguments = evaluatedArguments.map(function (arg) {
-					return arg.value[0].value;
-				});
-			var result = customFunction.bind.apply(
-					customFunction,
-					[undefined].concat(simplifiedArguments))
-			// TODO: Fix this when doing dep tracking
-				.call(undefined, contextItem.value[0].value, domFacade._blueprint);
-			return Sequence.singleton(new BooleanValue(!!result));
+		if (!functionRegistry.hasFunction(this._functionName, evaluatedArguments.length)) {
+			// Important to know: all functions having the fonto: syntax could be simplified tests which should directly be called with JavaScript simple types. One pro: they always resolve to a boolean
+			if (this._functionName.startsWith('fonto:')) {
+				var customFunction = customTestsByName[this._functionName];
+				var simplifiedArguments = evaluatedArguments.map(function (arg) {
+						return arg.value[0].value;
+					});
+				if (!customFunction) {
+					throw new Error('XPST0017: function ' + this._functionName + ' not registered');
+				}
+				var result = customFunction.bind.apply(
+						customFunction,
+						[undefined].concat(simplifiedArguments))
+				// TODO: Fix this when doing dep tracking
+					.call(undefined, contextItem.value[0].value, domFacade._blueprint);
+				return Sequence.singleton(new BooleanValue(!!result));
+			}
 		}
-
 		var registeredFunction = functionRegistry.getFunction(this._functionName, evaluatedArguments);
 		return registeredFunction.apply(
 			undefined,

@@ -29,6 +29,13 @@ define([
 			).to.deep.equal(1);
 		});
 
+		it('can be used in a function', function () {
+			var selector = parseSelector('boolean(let $x := 1 return $x)');
+			chai.expect(
+				evaluateXPath(selector, documentNode, blueprint)
+			).to.deep.equal(true);
+		});
+
 		it('can be chained', function () {
 			var selector = parseSelector('let $x := 1, $y := 2 return $x * $y');
 			chai.expect(

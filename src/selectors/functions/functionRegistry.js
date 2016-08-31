@@ -39,9 +39,12 @@ define([
 	}
 
 	function isValidArgumentList (typeDeclarations, argumentList) {
-		if (typeDeclarations[typeDeclarations.length - 1] === '...') {
-			typeDeclarations.splice(-1, 1);
-			typeDeclarations = typeDeclarations.concat(new Array(argumentList.length - typeDeclarations.length).fill(typeDeclarations[typeDeclarations.length - 1]));
+		var indexOfSpread = typeDeclarations.indexOf('...');
+		if (indexOfSpread > -1) {
+			var replacePart = new Array(argumentList.length - (typeDeclarations.length - 1))
+				.fill(typeDeclarations[indexOfSpread - 1]);
+			typeDeclarations = typeDeclarations.slice(0, indexOfSpread)
+				.concat(replacePart, typeDeclarations.slice(indexOfSpread + 1));
 		}
 
 		return argumentList.length === typeDeclarations.length &&
@@ -60,7 +63,14 @@ define([
 	}
 
 	function hasFunction (name, arity) {
-		return functions[name].some(function (functionDeclaration) {
+		var matchingFunctions = functions[name];
+		if (!matchingFunctions) {
+			return false;
+		}
+		return matchingFunctions.some(function (functionDeclaration) {
+			if (functionDeclaration.typeDescription.indexOf('...') > -1) {
+				return functionDeclaration.typeDescription.length >= arity;
+			}
 			return functionDeclaration.typeDescription.length === arity;
 		});
 	}

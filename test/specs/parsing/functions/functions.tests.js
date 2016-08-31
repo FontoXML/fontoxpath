@@ -263,6 +263,17 @@ define([
 			});
 		});
 
+		describe('concat', function () {
+			it('concats two strings', function () {
+				chai.expect(evaluateXPath('concat("a","b")', documentNode, blueprint)).to.equal('ab');
+			});
+
+			it('concats multiple strings', function () {
+				chai.expect(evaluateXPath('concat("a","b","c","d","e")', documentNode, blueprint)).to.equal('abcde');
+			});
+
+		});
+
 		describe('string-join()', function () {
 			it('The function returns an xs:string created by concatenating the items in the sequence $arg1, in order, using the value of $arg2 as a separator between adjacent items.', function () {
 				chai.expect(evaluateXPath('string-join(("a", "b", "c"), "X")', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('aXbXc');

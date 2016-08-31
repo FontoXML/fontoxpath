@@ -312,7 +312,7 @@ define([
 		},
 		{
 			name: 'fonto:markupLabel',
-			typeDescription: [],
+			typeDescription: ['node()'],
 			callFunction: fontoMarkupLabel
 		}
 	];
