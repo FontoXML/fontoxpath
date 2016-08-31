@@ -99,7 +99,7 @@ define([
 
 	function fnTokenize (dynamicContext, input, pattern, flags) {
 		if (input.isEmpty() || input.value[0].value.length === 0) {
-			return new Sequence([]);
+			return Sequence.empty();
 		}
 
 		var string = input.value[0].value,
@@ -111,7 +111,7 @@ define([
 	}
 
 	function fnStringLength (dynamicContext, sequence) {
-		if (sequence.isSingleton()) {
+		if (sequence.isEmpty()) {
 			return Sequence.singleton(new IntegerValue(0));
 		}
 
@@ -256,11 +256,13 @@ define([
 		{
 			name: 'string-length',
 			typeDescription: [],
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnStringLength)
+			callFunction: function (dynamicContext) {
+				return fnStringLength(dynamicContext, fnString(dynamicContext, dynamicContext.contextItem));
+			}
 		},
 		{
 			name: 'string-length',
-			typeDescription: ['string()?'],
+			typeDescription: ['xs:string?'],
 			callFunction: fnStringLength
 		},
 		{

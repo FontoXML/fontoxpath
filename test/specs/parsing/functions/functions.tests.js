@@ -271,7 +271,23 @@ define([
 			it('concats multiple strings', function () {
 				chai.expect(evaluateXPath('concat("a","b","c","d","e")', documentNode, blueprint)).to.equal('abcde');
 			});
+		});
 
+		describe('string-length', function () {
+			it('returns 0 for the empty string', function () {
+				chai.expect(evaluateXPath('string-length(())', documentNode, blueprint)).to.equal(0);
+			});
+			it('returns the string length', function () {
+				chai.expect(evaluateXPath('string-length("fortytwo")', documentNode, blueprint)).to.equal(8);
+			});
+			it('uses the context node when no arguments were passed', function () {
+				jsonMLMapper.parse(['someElement', 'A piece of text'], documentNode);
+				chai.expect(evaluateXPath('/someElement/string-length()', documentNode, blueprint)).to.equal(15);
+			});
+			it('counts codepoints.not characters', function () {
+				// '💩'.length === 2
+				chai.expect(evaluateXPath('string-length("💩")', documentNode, blueprint)).to.equal(1);
+			});
 		});
 
 		describe('string-join()', function () {
