@@ -135,13 +135,6 @@ define([
 		return Sequence.singleton(new StringValue(joinedString));
 	}
 
-	function fontoMarkupLabel (dynamicContext, sequence) {
-		if (sequence.isEmpty()) {
-			return sequence;
-		}
-		return Sequence.singleton(new StringValue(sequence.value[0].value.nodeName));
-	}
-
 	function contextItemAsFirstArgument (fn, dynamicContext) {
 		return fn(dynamicContext, dynamicContext.contextItem);
 	}
@@ -311,11 +304,6 @@ define([
 			callFunction: function (dynamicContext, arg1) {
 				return fnStringJoin(dynamicContext, arg1, Sequence.singleton(new StringValue('')));
 			}
-		},
-		{
-			name: 'fonto:markupLabel',
-			typeDescription: ['node()'],
-			callFunction: fontoMarkupLabel
 		}
 	];
 });
