@@ -46,7 +46,7 @@ define([
 				throw new TypeError('Type ' + type + ' not expected in a literal');
 		}
 
-		this._value = Sequence.singleton(typedValue);
+		this._valueSequence = Sequence.singleton(typedValue);
 	}
 
 	Literal.prototype = Object.create(Selector.prototype);
@@ -59,16 +59,22 @@ define([
 
 		return otherSelector instanceof Literal &&
 			this._type === otherSelector._type &&
-			this._value.value[0].value === otherSelector._value.value[0].value;
+			this._valueSequence.length === otherSelector._valueSequence.length &&
+			this._valueSequence.value.every(function (xPathValue, i) {
+				return otherSelector._valueSequence.value[i].primitiveTypeName === xPathValue.primitiveTypeName &&
+					otherSelector._valueSequence.value[i].value === xPathValue.value;
+			});
 	};
 
 	Literal.prototype.evaluate = function (dynamicContext) {
-		return this._value;
+		return this._valueSequence;
 	};
 
 	Literal.prototype.matches = function (node, blueprint) {
-		return !!this._value;
+		return !!this._valueSequence;
 	};
 
 	return Literal;
-});
+})
+
+;

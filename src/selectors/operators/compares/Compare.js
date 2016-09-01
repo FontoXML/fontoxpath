@@ -47,7 +47,7 @@ define([
 		}
 		return otherSelector instanceof Compare &&
 			this._firstSelector.equals(otherSelector._firstSelector) &&
-			this._firstSelector.equals(otherSelector._firstSelector);
+			this._secondSelector.equals(otherSelector._secondSelector);
 	};
 
 	Compare.prototype.evaluate = function (dynamicContext) {

@@ -31,6 +31,7 @@ define([
 
 	Filter.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof Filter &&
+			this._valueSelector.equals(otherSelector._valueSelector) &&
 			this._filterSelectors.length === otherSelector._filterSelectors.length &&
 			this._filterSelectors.every(function (selector, i) {
 				return otherSelector._filterSelectors[i].equals(selector);
