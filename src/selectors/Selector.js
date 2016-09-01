@@ -1,5 +1,5 @@
 define([
-	'./DomFacade',
+	'../DomFacade',
 	'./DynamicContext',
 	'./dataTypes/Sequence',
 	'./dataTypes/NodeValue'

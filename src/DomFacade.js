@@ -1,6 +1,6 @@
 define([
 	'fontoxml-dom-identification/getNodeId',
-	'./dataTypes/AttributeNode'
+	'./selectors/dataTypes/AttributeNode'
 ], function (
 	getNodeId,
 	AttributeNode
@@ -16,25 +16,29 @@ define([
 		this._createdNodeValuesByNodeId = Object.create(null);
 	}
 
+	DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node) {
+		return node instanceof AttributeNode;
+	};
+
 	/**
 	 * TODO: depTracking will be here
 	 */
 	DomFacade.prototype.getParentNode = function (node) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return node.getParentNode();
 		}
 		return this._blueprint.getParentNode(node);
 	};
 
 	DomFacade.prototype.getFirstChild = function (node) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return null;
 		}
 		return this._blueprint.getFirstChild(node);
 	};
 
 	DomFacade.prototype.getLastChild = function (node) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return null;
 		}
 
@@ -42,7 +46,7 @@ define([
 	};
 
 	DomFacade.prototype.getNextSibling = function (node) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return null;
 		}
 
@@ -50,7 +54,7 @@ define([
 	};
 
 	DomFacade.prototype.getPreviousSibling = function (node) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return null;
 		}
 
@@ -58,7 +62,7 @@ define([
 	};
 
 	DomFacade.prototype.getChildNodes = function (node) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return [];
 		}
 
@@ -72,7 +76,7 @@ define([
 	};
 
 	DomFacade.prototype.getAttribute = function (node, attributeName) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return null;
 		}
 
@@ -84,7 +88,7 @@ define([
 	};
 
 	DomFacade.prototype.getAllAttributes = function (node) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return [];
 		}
 
@@ -94,11 +98,16 @@ define([
 	};
 
 	DomFacade.prototype.getData = function (node) {
-		if (node instanceof AttributeNode) {
+		if (this.isAttributeNode(node)) {
 			return node.value;
 		}
 
 		return this._blueprint.getData(node) || '';
+	};
+
+	// Can be used to create an extra frame when tracking dependencies
+	DomFacade.prototype.getRelatedNodes = function (node, callback) {
+		return callback();
 	};
 
 	return DomFacade;

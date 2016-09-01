@@ -5,7 +5,7 @@ define([
 	'./selectors/dataTypes/Sequence',
 	'./selectors/dataTypes/NodeValue',
 	'./selectors/dataTypes/NumericValue',
-	'./selectors/DomFacade'
+	'./DomFacade'
 ], function (
 	createSelectorFromXPath,
 	adaptJavaScriptValueToXPathValue,
