@@ -36,7 +36,11 @@ define([
 
 		var nodeValues = nodeSequence.value
 			.map(function (nodeValue) {
-				return new NodeValue(dynamicContext.domFacade, domFacade.getParentNode(nodeValue.value));
+				var parentNode = domFacade.getParentNode(nodeValue.value);
+				if (!parentNode) {
+					return null;
+				}
+				return new NodeValue(dynamicContext.domFacade, parentNode);
 			})
 			.filter(function (nodeValue) {
 				if (!nodeValue) {
