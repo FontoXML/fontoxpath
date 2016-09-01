@@ -16,10 +16,11 @@ define([
 	 * @param  {Selector[]}  filterSelectors
 	 */
 	function Filter (valueSelector, filterSelectors) {
-		Selector.call(this, filterSelectors.reduce(function (specificity, selector) {
-			// Implicit AND, so sum
-			return specificity.add(selector.specificity);
-		}, new Specificity({})), valueSelector.expectedResultOrder);
+		var summedSpecificity = filterSelectors.reduce(function (specificity, selector) {
+				// Implicit AND, so sum
+				return specificity.add(selector.specificity);
+			}, valueSelector.specificity);
+		Selector.call(this, summedSpecificity, valueSelector.expectedResultOrder);
 
 		this._valueSelector = valueSelector;
 		this._filterSelectors = filterSelectors;
@@ -34,6 +35,10 @@ define([
 			this._filterSelectors.every(function (selector, i) {
 				return otherSelector._filterSelectors[i].equals(selector);
 			});
+	};
+
+	Filter.prototype.getBucket = function () {
+		return this._valueSelector.getBucket();
 	};
 
 	Filter.prototype.evaluate = function (dynamicContext) {
