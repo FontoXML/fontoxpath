@@ -17,6 +17,7 @@ define([
 	'../selectors/tests/NodePredicateSelector',
 	'../selectors/tests/NodeTypeSelector',
 	'../selectors/tests/ProcessingInstructionTargetSelector',
+	'../selectors/tests/TypeTest',
 
 	'../selectors/functions/FunctionCall',
 	'../selectors/operators/boolean/AndOperator',
@@ -28,6 +29,7 @@ define([
 	'../selectors/operators/numeric/Unary',
 	'../selectors/operators/numeric/BinaryNumericOperator',
 	'../selectors/operators/compares/Compare',
+	'../selectors/operators/types/InstanceOfOperator',
 	'../selectors/quantified/QuantifiedExpression',
 
 	'../selectors/literals/Literal',
@@ -54,6 +56,7 @@ define([
 	NodePredicateSelector,
 	NodeTypeSelector,
 	ProcessingInstructionTargetSelector,
+	TypeTest,
 
 	FunctionCall,
 	AndOperator,
@@ -65,6 +68,7 @@ define([
 	Unary,
 	BinaryNumericOperator,
 	Compare,
+	InstanceOfOperator,
 	QuantifiedExpression,
 
 	Literal,
@@ -110,9 +114,11 @@ define([
 			case 'nameTest':
 				return nameTest(args);
 			case 'kindTest':
-				return nodeType(args);
+				return kindTest(args);
 			case 'functionCall':
 				return functionCall(args);
+			case 'typeTest':
+				return typeTest(args);
 
 			// Axes
 			case 'ancestor':
@@ -156,6 +162,10 @@ define([
 			// Quantified
 			case 'quantified':
 				return quantified(args);
+
+
+			case 'instance of':
+				return instanceOf(args);
 
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
@@ -227,6 +237,13 @@ define([
 		return new FunctionCall(functionName, args.map(compile));
 	}
 
+	function instanceOf (args) {
+		var expression = compile(args[0]);
+		var sequenceType = args[1];
+
+		return new InstanceOfOperator(expression, compile(sequenceType[0]), sequenceType[1] || '');
+	}
+
 	function letExpression (args) {
 		var rangeVariable = args[0];
 		var bindingSequence = compile(args[1]);
@@ -244,20 +261,20 @@ define([
 		return nodeName === '*' ? new NodeTypeSelector(1) : new NodeNameSelector(nodeName);
 	}
 
-	function nodeType (args) {
+	function kindTest (args) {
 		switch (args[0]) {
-			case 'node':
+			case 'node()':
 				return new UniversalSelector();
-			case 'comment':
+			case 'comment()':
 				return new NodeTypeSelector(8);
-			case 'processing-instruction':
+			case 'processing-instruction()':
 				if (args.length > 1) {
 					return new ProcessingInstructionTargetSelector(args[1]);
 				}
 				return new NodeTypeSelector(7);
-			case 'text':
+			case 'text()':
 				return new NodeTypeSelector(3);
-			case 'item':
+			case 'item()':
 				return new UniversalSelector();
 			default:
 				throw new Error('Unrecognized nodeType: ' + args[0]);
@@ -293,6 +310,10 @@ define([
 
 	function sequence (args) {
 		return new SequenceOperator(args.map(compile));
+	}
+
+	function typeTest (args) {
+		return new TypeTest(args[0]);
 	}
 
 	function unaryPlus (args) {

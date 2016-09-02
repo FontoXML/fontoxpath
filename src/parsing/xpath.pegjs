@@ -108,8 +108,8 @@ IntersectExpr
 
 // 25
 InstanceofExpr
-// = lhs:TreatExpr S "instance" S "of" S rhs:SequenceType {return ["instance of", lhs, rhs]}
- = TreatExpr
+ = lhs:TreatExpr S "instance" S "of" S rhs:SequenceType {return ["instance of", lhs, rhs]}
+ / TreatExpr
 
 // 26
 TreatExpr
@@ -175,7 +175,7 @@ AbsoluteLocationPath
  / abbrev:LocationPathAbbreviation path: RelativeLocationPath { return ["absolutePath", ["path", abbrev, path]] }
 
 LocationPathAbbreviation
- = "//" {return ["descendant-or-self", ["kindTest", "node"]]}
+ = "//" {return ["descendant-or-self", ["kindTest", "node()"]]}
 
 AxisStep
  = axis:Axis test:NodeTest predicates:Predicate* {
@@ -206,7 +206,7 @@ AxisName
  / "self"
 
 AbbreviatedStep
- = ".." { return ["parent", ["kindTest", "node"]] }
+ = ".." { return ["parent", ["kindTest", "node()"]] }
 
 // 46
 NodeTest = KindTest / nameTest:NameTest {return ["nameTest", nameTest]}
@@ -269,7 +269,7 @@ ParenthesizedExpr
 // 62
 // Do not match '..'
 ContextItemExpr
- = "." !"." { return ["self", ["kindTest", "item"]] }
+ = "." !"." { return ["self", ["kindTest", "item()"]] }
 
 // 63
 FunctionCall
@@ -311,7 +311,7 @@ TypeDeclaration
 // 79
 SequenceType
  = "empty-sequence()"
- / ItemType  _ OccurenceIndicator
+ / type:ItemType _ occurence:OccurenceIndicator? { return [type, occurence] }
 
 // 80
 OccurenceIndicator = "?" / "*" / "+"
@@ -319,15 +319,15 @@ OccurenceIndicator = "?" / "*" / "+"
 // 81
 ItemType
  = KindTest
-// / "item()" { return "unsupported"}
+ / "item()"
 // / FunctionTest { return "unsupported"}
 // / MapTest { return "unsupported"}
 // / ArrayTest { return "unsupported"}
-// / AtomicOrUnionType
+ / AtomicOrUnionType
  / ParenthesizedItemType
 
 //82
-AtomicOrUnionType = EQName
+AtomicOrUnionType = typeName:EQName { return ["typeTest", typeName] }
 
 // 83
 KindTest
@@ -346,53 +346,53 @@ KindTest
 
 // 84
 AnyKindTest
- = "node()" {return ["kindTest", "node"]}
+ = "node()" {return ["kindTest", "node()"]}
 
 // 85
 DocumentTest
- = "document(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["kindTest", "document", innerTest]}
- / "document()" {return ["kindTest", "document"]}
+ = "document(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["kindTest", "document()", innerTest]}
+ / "document()" {return ["kindTest", "document()"]}
 
 // 86
 TextTest
- = "text()" {return ["kindTest", "text"]}
+ = "text()" {return ["kindTest", "text()"]}
 
 // 87
 CommentTest
- = "comment()" {return ["kindTest", "comment"]}
+ = "comment()" {return ["kindTest", "comment()"]}
 
 // 88
 NamespaceNodeTest
- = "namespace-node()" {return ["kindTest", "namespace-node"]}
+ = "namespace-node()" {return ["kindTest", "namespace-node()"]}
 
 // 89
 // Let's keep it simple: only accept NCNames, optionally quoted, since quoted non-ncnames should throw a typeError later anyway
 PITest
- = "processing-instruction(" _ target:NCName _ ")" {return ["kindTest", "processing-instruction", target]}
- / "processing-instruction(" _ literal:StringLiteral _ ")" {return ["kindTest", "processing-instruction", literal[1]]}
- / "processing-instruction()" {return ["kindTest", "processing-instruction"]}
+ = "processing-instruction(" _ target:NCName _ ")" {return ["kindTest", "processing-instruction()", target]}
+ / "processing-instruction(" _ literal:StringLiteral _ ")" {return ["kindTest", "processing-instruction()", literal[1]]}
+ / "processing-instruction()" {return ["kindTest", "processing-instruction()"]}
 
 // 90
 AttributeTest
- = "attribute(" _ name:AttribNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "attribute", name, type]}
- / "attribute(" _ name:AttribNameOrWildCard _ ")" {return ["kindTest", "attribute", name]}
- / "attribute()" {return ["kindTest", "attribute"]}
+ = "attribute(" _ name:AttribNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "attribute()", name, type]}
+ / "attribute(" _ name:AttribNameOrWildCard _ ")" {return ["kindTest", "attribute()", name]}
+ / "attribute()" {return ["kindTest", "attribute()"]}
 
 // 91
 AttribNameOrWildCard = AttributeName / "*"
 
 // 92
 SchemaAttributeTest
- = "schema-attribute(" _ decl:AttributeDeclaration _ ")" {return ["kindTest", "schema-attribute", decl]}
+ = "schema-attribute(" _ decl:AttributeDeclaration _ ")" {return ["kindTest", "schema-attribute()", decl]}
 
 // 93
 AttributeDeclaration = AttributeName
 
 // 94
 ElementTest
- = "element(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "element", name, type]}
- / "element(" _ name:ElementNameOrWildCard _ ")" {return ["kindTest", "element", name]}
- / "element()" {return ["kindTest", "element"]}
+ = "element(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "element()", name, type]}
+ / "element(" _ name:ElementNameOrWildCard _ ")" {return ["kindTest", "element()", name]}
+ / "element()" {return ["kindTest", "element()"]}
 
 // 95
 ElementNameOrWildCard = ElementName / "*"

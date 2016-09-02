@@ -4,7 +4,6 @@ define([
 	'slimdom',
 
 	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/addXPathCustomTest',
 	'fontoxml-selectors/evaluateXPath'
 ], function (
 	blueprint,
@@ -12,7 +11,6 @@ define([
 	slimdom,
 
 	parseSelector,
-	addXPathCustomTest,
 	evaluateXPath
 ) {
 	'use strict';

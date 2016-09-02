@@ -33,7 +33,10 @@ define([
 			return true;
 		}
 
-		return true;
+		return otherSelector instanceof InstanceOfOperator &&
+			this._multiplicity === otherSelector._multiplicity &&
+			this._expression.equals(otherSelector._expression) &&
+			this._typeTest.equals(otherSelector._typeTest);
 	};
 
 	InstanceOfOperator.prototype.evaluate = function (dynamicContext) {

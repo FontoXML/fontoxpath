@@ -18,7 +18,7 @@ define([
 				break;
 
 			case '+':
-				if (!argument.isEmpty()) {
+				if (argument.isEmpty()) {
 					return false;
 				}
 				break;
@@ -33,8 +33,7 @@ define([
 		}
 
 		return argument.value.every(function (argumentItem) {
-			// Item is a special case which matches anything
-			return type === 'item()' || argumentItem.instanceOfType(type);
+			return argumentItem.instanceOfType(type);
 		});
 	};
 });
