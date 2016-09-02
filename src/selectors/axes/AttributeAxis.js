@@ -67,6 +67,11 @@ define([
 		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
+		if (!contextItem.value[0].instanceOfType('element()')) {
+			// Only elements can have attributes
+			return Sequence.empty();
+		}
+
 		var attributeNode = domFacade.getAttribute(contextItem.value[0].value, this._attributeName);
 		if (!attributeNode) {
 			return Sequence.empty();

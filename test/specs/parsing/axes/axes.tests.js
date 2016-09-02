@@ -38,6 +38,11 @@ define([
 				element.setAttribute('someAttribute', 'someValue');
 				chai.expect(evaluateXPath(selector, element, blueprint)).to.deep.equal('someValue');
 			});
+			it('returns no attributes for documents', function () {
+				var selector = parseSelector('attribute::someAttribute');
+				chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('');
+			});
+
 			it('resolves to false if attribute is absent', function () {
 				var selector = parseSelector('@someAttribute');
 				var element = documentNode.createElement('someElement');
