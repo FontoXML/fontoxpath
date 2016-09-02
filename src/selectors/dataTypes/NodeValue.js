@@ -33,9 +33,24 @@ define([
 	NodeValue.prototype = Object.create(Value.prototype);
 
 	NodeValue.prototype.instanceOfType = function (simpleTypeName) {
-		return simpleTypeName === 'node()' ||
-			this.value instanceof AttributeNode && simpleTypeName === 'attribute()' ||
-			Value.prototype.instanceOfType(simpleTypeName);
+		switch(simpleTypeName) {
+			case 'node()':
+				return true;
+			case 'element()':
+				return domInfo.isElement(this.value);
+			case 'attribute()':
+				return this.value instanceof AttributeNode;
+			case 'document()':
+				return domInfo.isDocument(this.value);
+			case 'comment()':
+				return domInfo.isComment(this.value);
+			case 'processing-instruction()':
+				return domInfo.isProcessingInstruction(this.value);
+			case 'text()':
+				return domInfo.isTextNode(this.value);
+			default:
+				return Value.prototype.instanceOfType(simpleTypeName);
+		}
 	};
 
 	// TODO: Dep tracking + findDescendants etc
