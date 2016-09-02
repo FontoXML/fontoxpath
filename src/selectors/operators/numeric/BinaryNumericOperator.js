@@ -59,7 +59,7 @@ define([
 
 		return otherSelector instanceof BinaryNumericOperator &&
 			this._kind === otherSelector._kind &&
-			this._firstValueExpr.equals(otherSelector._firstValueExpr),
+			this._firstValueExpr.equals(otherSelector._firstValueExpr) &&
 			this._secondValueExpr.equals(otherSelector._secondValueExpr);
 	};
 

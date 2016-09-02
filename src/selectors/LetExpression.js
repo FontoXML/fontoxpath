@@ -28,9 +28,14 @@ define([
 	LetExpression.prototype.constructor = LetExpression;
 
 	LetExpression.prototype.equals = function (otherSelector) {
+		if (otherSelector === this) {
+			return true;
+		}
+
 		return otherSelector instanceof LetExpression &&
-			this._bindingSequence.equals(otherSelector.bindingSequence) &&
-			this._returnExpression.equals(otherSelector.returnExpression);
+			this._rangeVariable === otherSelector._rangeVariable &&
+			this._bindingSequence.equals(otherSelector._bindingSequence) &&
+			this._returnExpression.equals(otherSelector._returnExpression);
 	};
 
 	LetExpression.prototype.evaluate = function (dynamicContext) {

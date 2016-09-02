@@ -45,11 +45,11 @@ define([
 
 	QuantifiedExpression.prototype.evaluate = function (dynamicContext) {
 		var evaluatedInClauses = this._inClauses.map(function (inClause) {
-			return {
-				name: inClause[0],
-				valueSequence: inClause[1].evaluate(dynamicContext)
-			};
-		});
+				return {
+					name: inClause[0],
+					valueSequence: inClause[1].evaluate(dynamicContext)
+				};
+			});
 
 		var indices = new Array(evaluatedInClauses.length).fill(0);
 		indices[0] = -1;
@@ -71,8 +71,8 @@ define([
 				}
 
 				var context = dynamicContext.createScopedContext({
-					variables: variables
-				});
+						variables: variables
+					});
 
 				var result = this._satisfiesExpr.evaluate(context);
 

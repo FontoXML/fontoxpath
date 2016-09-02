@@ -11,22 +11,25 @@ define([
 ) {
 	'use strict';
 
+	var equalSelector = {
+			specificity: new Specificity({}),
+			equals: sinon.stub().returns(true),
+			getBucket: sinon.stub().returns(null)
+		},
+		unequalSelector = {
+			specificity: new Specificity({}),
+			equals: sinon.stub().returns(false),
+			getBucket: sinon.stub().returns(null)
+		};
 	describe('AndOperator.equals()', function () {
 		it('returns true if compared with itself', function () {
 			var and1 = new AndOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true)
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true)
-					}
+					equalSelector
 				]),
 				and2 = and1;
 
 			var result1 = and1.equals(and2),
-				result2 = and2.equals(and1);
+			result2 = and2.equals(and1);
 
 			chai.expect(result1).to.equal(true);
 			chai.expect(result2).to.equal(true);
@@ -34,90 +37,75 @@ define([
 
 		it('returns true if compared with an equal other AndOperator', function () {
 			var and1 = new AndOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true)
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true)
-					}
+					equalSelector,
+					equalSelector
 				]),
-				and2 = new AndOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true)
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true)
-					}
-				]);
+			and2 = new AndOperator([
+				equalSelector,
+				equalSelector
+			]);
 
 			var result1 = and1.equals(and2),
-				result2 = and2.equals(and1);
+			result2 = and2.equals(and1);
 
 			chai.expect(result1).to.equal(true);
 			chai.expect(result2).to.equal(true);
 		});
 
-		it('returns false if compared with an unequal other AndOperator', function () {
+		it('returns false if compared with an AndOperator unequal on the first selector', function () {
 			var and1 = new AndOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(false)
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(false)
-					}
+					unequalSelector,
+					equalSelector
 				]),
-				and2 = new AndOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(false)
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(false)
-					}
-				]);
+			and2 = new AndOperator([
+				unequalSelector,
+				equalSelector
+			]);
 
 			var result1 = and1.equals(and2),
-				result2 = and2.equals(and1);
+			result2 = and2.equals(and1);
 
 			chai.expect(result1).to.equal(false);
 			chai.expect(result2).to.equal(false);
 		});
+
+		it('returns false if compared with an AndOperator unequal on the second selector', function () {
+			var and1 = new AndOperator([
+					equalSelector,
+					unequalSelector
+				]),
+			and2 = new AndOperator([
+				equalSelector,
+				unequalSelector
+			]);
+
+			var result1 = and1.equals(and2),
+			result2 = and2.equals(and1);
+
+			chai.expect(result1).to.equal(false);
+			chai.expect(result2).to.equal(false);
+		});
+
 	});
 
 	describe('NotOperator.equals()', function () {
 		it('is equal if compared with itself', function () {
-			var not1 = new NotOperator({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				}),
-				not2 = not1;
+			var not1 = new NotOperator(equalSelector),
+			not2 = not1;
 
 			var result1 = not1.equals(not2),
-				result2 = not2.equals(not1);
+			result2 = not2.equals(not1);
 
 			chai.expect(result1).to.equal(true);
 			chai.expect(result2).to.equal(true);
 		});
 
 		it('is equal if compared with an equal other NotOperator', function () {
-			var not1 = new NotOperator({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				}),
-				not2 = new NotOperator({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				});
+			var not1 = new NotOperator(equalSelector),
+			not2 = new NotOperator(equalSelector);
 
 			var result1 = not1.equals(not2),
-				result2 = not2.equals(not1);
+			result2 = not2.equals(not1);
 
 			chai.expect(result1).to.equal(true);
 			chai.expect(result2).to.equal(true);
@@ -127,21 +115,13 @@ define([
 	describe('OrOperator.equals()', function () {
 		it('returns true if compared with itself', function () {
 			var or1 = new OrOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true),
-						getBucket: function () { return null; }
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true),
-						getBucket: function () { return null; }
-					}
+					equalSelector,
+					equalSelector
 				]),
-				or2 = or1;
+			or2 = or1;
 
 			var result1 = or1.equals(or2),
-				result2 = or2.equals(or1);
+			result2 = or2.equals(or1);
 
 			chai.expect(result1).to.equal(true);
 			chai.expect(result2).to.equal(true);
@@ -149,32 +129,16 @@ define([
 
 		it('it returns true if compared with an equal other OrOperator', function () {
 			var or1 = new OrOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true),
-						getBucket: function () { return null; }
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true),
-						getBucket: function () { return null; }
-					}
+					equalSelector,
+					equalSelector
 				]),
-				or2 = new OrOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true),
-						getBucket: function () { return null; }
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(true),
-						getBucket: function () { return null; }
-					}
-				]);
+			or2 = new OrOperator([
+				equalSelector,
+				equalSelector
+			]);
 
 			var result1 = or1.equals(or2),
-				result2 = or2.equals(or1);
+			result2 = or2.equals(or1);
 
 			chai.expect(result1).to.equal(true);
 			chai.expect(result2).to.equal(true);
@@ -182,32 +146,16 @@ define([
 
 		it('it returns false if compared with an unequal other OrOperator', function () {
 			var or1 = new OrOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(false),
-						getBucket: function () { return null; }
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(false),
-						getBucket: function () { return null; }
-					}
+					equalSelector,
+					unequalSelector
 				]),
-				or2 = new OrOperator([
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(false),
-						getBucket: function () { return null; }
-					},
-					{
-						specificity: new Specificity({}),
-						equals: sinon.stub().returns(false),
-						getBucket: function () { return null; }
-					}
-				]);
+			or2 = new OrOperator([
+				unequalSelector,
+				equalSelector
+			]);
 
 			var result1 = or1.equals(or2),
-				result2 = or2.equals(or1);
+			result2 = or2.equals(or1);
 
 			chai.expect(result1).to.equal(false);
 			chai.expect(result2).to.equal(false);
