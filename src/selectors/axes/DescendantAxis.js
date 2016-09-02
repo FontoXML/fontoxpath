@@ -16,10 +16,12 @@ define([
 	/**
 	 * @param  {Selector}  descendantSelector
 	 */
-	function DescendantAxis (descendantSelector) {
+	function DescendantAxis (descendantSelector, options) {
+		options = options || {};
 		Selector.call(this, descendantSelector.specificity, Selector.RESULT_ORDER_SORTED);
 
 		this._descendantSelector = descendantSelector;
+		this._isInclusive = !!options.inclusive;
 	}
 
 	DescendantAxis.prototype = Object.create(Selector.prototype);
@@ -30,6 +32,9 @@ define([
 	 * @param  {Blueprint}  blueprint
 	 */
 	DescendantAxis.prototype.matches = function (node, blueprint) {
+		if (this._isInclusive && this._descendantSelector.matches(node, blueprint)) {
+			return true;
+		}
 		return blueprintQuery.findDescendants(blueprint, node, function (descendantNode) {
 			return this._descendantSelector.matches(descendantNode, blueprint);
 		}.bind(this)).length > 0;
@@ -37,6 +42,7 @@ define([
 
 	DescendantAxis.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof DescendantAxis &&
+			this._isInclusive === otherSelector._isInclusive &&
 			this._descendantSelector.equals(otherSelector._descendantSelector);
 	};
 
@@ -60,6 +66,10 @@ define([
 			.map(function (node) {
 				return new NodeValue(domFacade, node);
 			});
+
+		if (this._isInclusive && this._descendantSelector.evaluate(dynamicContext).getEffectiveBooleanValue()) {
+			nodeValues.unshift(contextItem.value[0]);
+		}
 		return new Sequence(nodeValues);
 	};
 

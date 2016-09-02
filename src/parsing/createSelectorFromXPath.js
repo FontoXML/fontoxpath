@@ -172,9 +172,7 @@ define([
 
 	function ancestorOrSelf (args) {
 		var subSelector = compile(args[0]);
-		return new Union([
-			new SelfSelector(subSelector),
-			new AncestorAxis(subSelector)]);
+		return new AncestorAxis(subSelector, {inclusive: true});
 	}
 
 	function and (args) {
@@ -206,9 +204,7 @@ define([
 
 	function descendantOrSelf (args) {
 		var subSelector = compile(args[0]);
-		return new Union([
-			new SelfSelector(subSelector),
-			new DescendantAxis(subSelector)]);
+		return new DescendantAxis(subSelector, {inclusive: true});
 	}
 
 	// Binary compare (=, !=, le, is, etc)

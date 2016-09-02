@@ -18,10 +18,12 @@ define([
 	/**
 	 * @param  {Selector}  ancestorSelector
 	 */
-	function AncestorAxis (ancestorSelector) {
+	function AncestorAxis (ancestorSelector, options) {
+		options = options || {};
 		Selector.call(this, ancestorSelector.specificity, Selector.RESULT_ORDER_REVERSE_SORTED);
 
 		this._ancestorSelector = ancestorSelector;
+		this._isInclusive = !!options.inclusive;
 	}
 
 	AncestorAxis.prototype = Object.create(Selector.prototype);
@@ -38,6 +40,10 @@ define([
 			return false;
 		}
 
+		if (this._isInclusive && this._ancestorSelector.mathces(node, blueprint)) {
+			return true;
+		}
+
 		return !!blueprintQuery.findClosestAncestor(blueprint, parentNode, function (ancestorNode) {
 			return this._ancestorSelector.matches(ancestorNode, blueprint);
 		}.bind(this));
@@ -49,6 +55,7 @@ define([
 		}
 
 		return otherSelector instanceof AncestorAxis &&
+			this._isInclusive === otherSelector._isInclusive &&
 			this._ancestorSelector.equals(otherSelector._ancestorSelector);
 	};
 
@@ -57,17 +64,21 @@ define([
 			domFacade = dynamicContext.domFacade;
 
 		// Assume singleton, since axes are only valid in paths
-		var nodeValues = blueprintQuery.findAllAncestors(domFacade, contextItem.value[0].value, false)
-					.filter(function (node) {
-						return this._ancestorSelector.evaluate({
-							contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
-							contextSequence: null,
-							domFacade: domFacade
-						}).getEffectiveBooleanValue();
-					}.bind(this))
+		var nodeValues =  blueprintQuery.findAllAncestors(domFacade, contextItem.value[0].value, false)
+			.filter(function (node) {
+				return this._ancestorSelector.evaluate({
+					contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
+					contextSequence: null,
+					domFacade: domFacade
+				}).getEffectiveBooleanValue();
+			}.bind(this))
 			.map(function (node) {
 				return new NodeValue(dynamicContext.domFacade, node);
 			});
+
+		if (this._isInclusive && this._ancestorSelector.evaluate(dynamicContext).getEffectiveBooleanValue()) {
+			nodeValues.unshift(dynamicContext.contextItem.value[0]);
+		}
 
 		return new Sequence(nodeValues);
 	};
