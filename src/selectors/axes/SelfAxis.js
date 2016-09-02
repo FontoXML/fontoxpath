@@ -38,6 +38,10 @@ define([
 			this._selector.equals(otherSelector._selector);
 	};
 
+	SelfAxis.prototype.getBucket = function () {
+		return this._selector.getBucket();
+	};
+
 	SelfAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem;
 
