@@ -1,13 +1,11 @@
 define([
 	'./Selector',
 	'./Specificity',
-	'./dataTypes/Sequence',
-	'./dataTypes/NumericValue'
+	'./dataTypes/Sequence'
 ], function (
 	Selector,
 	Specificity,
-	Sequence,
-	NumericValue
+	Sequence
 ) {
 	'use strict';
 
@@ -52,9 +50,13 @@ define([
 								contextSequence: valueSequence
 							}));
 
+					if (result.isEmpty()) {
+						return false;
+					}
+
 					// The result should be a singleton sequence
 					var resultValue = result.value[0];
-					if (resultValue instanceof NumericValue) {
+					if (resultValue.instanceOfType('xs:numeric')) {
 						// Remember: XPath is one-based
 						return resultValue.value === i + 1;
 					}
