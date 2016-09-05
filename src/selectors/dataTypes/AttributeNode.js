@@ -19,6 +19,8 @@ define([
 		this._element = element;
 	}
 
+	AttributeNode.prototype.IS_ATTRIBUTE_NODE = true;
+
 	AttributeNode.prototype.getParentNode = function () {
 		return this._element;
 	};

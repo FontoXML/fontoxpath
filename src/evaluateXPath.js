@@ -1,6 +1,6 @@
 define([
 	'./parsing/createSelectorFromXPath',
-	'./adaptJavaScriptValueToXPathValue',
+	'./selectors/adaptJavaScriptValueToXPathValue',
 	'./selectors/DynamicContext',
 	'./selectors/dataTypes/Sequence',
 	'./selectors/dataTypes/NodeValue',
@@ -25,12 +25,14 @@ define([
 	 *  * If the XPath evaluates to a singleton value, that value is atomized and returned.
 	 *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
 	 *  * Else, the sequence is atomized and returned.
-	 * @param  {Selector|String}   XPathSelector
-	 * @param  {Node}              contextNode
-	 * @param  {Blueprint}         blueprint
-	 * @param  {[Object]}          variables
 	 *
-	 *@return  {Node[]|Node|Any[]|Any}
+	 * @param  {Selector|String}   XPathSelector  The selector to execute. Supports XPath 3.1.
+	 * @param  {Node}              contextNode    The node from which to run the XPath.
+	 * @param  {Blueprint}         blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
+	 * @param  {[Object]}          variables      Extra variables (name=>value). Values can be number / string or boolean.
+	 * @param  {[Number]}          returnType     One of the return types, indicates the expected type of the XPath query.
+	 *
+	 * @return  {Node[]|Node|Any[]|Any}
 	 */
 	function evaluateXPath (xPathSelector, contextNode, blueprint, variables, returnType) {
 		returnType = returnType || evaluateXPath.ANY_TYPE;
@@ -118,11 +120,34 @@ define([
 		}
 	}
 
+	/**
+	 * Returns the result of the query, can be anything depending on the query
+	 */
 	evaluateXPath.ANY_TYPE = 0;
+
+	/**
+	 * Resolve to a number, like count((1,2,3)) resolves to 3.
+	 */
 	evaluateXPath.NUMBER_TYPE = 1;
+
+	/**
+	 * Resolve to a string, like //someElement[1] resolves to the text content of the first someElement
+	 */
 	evaluateXPath.STRING_TYPE = 2;
+
+	/**
+	 * Resolves to true or false, uses the effective boolean value to determin result. count(1) resolves to true, count(()) resolves to false
+	 */
 	evaluateXPath.BOOLEAN_TYPE = 3;
+
+	/**
+	 * Resolve to all nodes the XPath resolves to. Returns nodes in the order the XPath would. Meaning (//a, //b) resolves to all A nodes, followed by all B nodes. //*[self::a or self::b] resolves to A and B nodes in document order.
+	 */
 	evaluateXPath.NODES_TYPE = 7;
+
+	/**
+	 * Resolves to the first node NODES_TYPE would have resolved to.
+	 */
 	evaluateXPath.FIRST_NODE_TYPE = 9;
 
 	return evaluateXPath;

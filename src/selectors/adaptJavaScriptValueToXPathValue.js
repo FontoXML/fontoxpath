@@ -1,8 +1,8 @@
 define([
-	'./selectors/dataTypes/Sequence',
-	'./selectors/dataTypes/BooleanValue',
-	'./selectors/dataTypes/StringValue',
-	'./selectors/dataTypes/DecimalValue'
+	'./dataTypes/Sequence',
+	'./dataTypes/BooleanValue',
+	'./dataTypes/StringValue',
+	'./dataTypes/DecimalValue'
 ], function (
 	Sequence,
 	BooleanValue,

@@ -1,12 +1,12 @@
 define([
-	'./adaptJavaScriptValueToXPathValue',
+	'./selectors/adaptJavaScriptValueToXPathValue',
 	'./selectors/functions/functionRegistry',
 	'./selectors/functions/isValidArgument'
 ], function (
 	adaptJavaScriptValueToXPathValue,
 	functionRegistry,
 	isValidArgument
-	) {
+) {
 	'use strict';
 
 	function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
@@ -42,24 +42,24 @@ define([
 	 */
 	return function registerCustomXPathFunction (name, signature, returnType, callback) {
 		var callFunction = function (dynamicContext) {
-			// Make arguments a read array instead of a array-like object
-			var args = Array.from(arguments);
+				// Make arguments a read array instead of a array-like object
+				var args = Array.from(arguments);
 
-			args.splice(0, 1);
+				args.splice(0, 1);
 
-			var newArguments = args.map(function (argument, index) {
-				return adaptXPathValueToJavascriptValue(argument, signature[index]);
-			});
+				var newArguments = args.map(function (argument, index) {
+						return adaptXPathValueToJavascriptValue(argument, signature[index]);
+					});
 
-			var result = callback.apply(undefined, [dynamicContext].concat(newArguments));
-			result = adaptJavaScriptValueToXPathValue(result, returnType);
+				var result = callback.apply(undefined, [dynamicContext].concat(newArguments));
+				result = adaptJavaScriptValueToXPathValue(result, returnType);
 
-			if (!isValidArgument(returnType, result)) {
-				throw new Error('XPTY0004: Custom function (' + name + ') should return ' + returnType);
-			}
+				if (!isValidArgument(returnType, result)) {
+					throw new Error('XPTY0004: Custom function (' + name + ') should return ' + returnType);
+				}
 
-			return result;
-		};
+				return result;
+			};
 
 		functionRegistry.registerFunction(name, signature, callFunction);
 	};

@@ -17,7 +17,7 @@ define([
 	}
 
 	DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node) {
-		return node instanceof AttributeNode;
+		return !!node.IS_ATTRIBUTE_NODE;
 	};
 
 	/**

@@ -5,7 +5,17 @@ define([
 ) {
 	'use strict';
 
-	return function evaluateXPathToBoolean (selector, contextNode, blueprint, variables) {
+	/**
+	 * Evaluates an XPath on the given contextNode. Returns the string result as if the XPath is wrapped in string(...).
+	 *
+	 * @param  {Selector|String}   XPathSelector  The selector to execute. Supports XPath 3.1.
+	 * @param  {Node}              contextNode    The node from which to run the XPath.
+	 * @param  {Blueprint}         blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
+	 * @param  {[Object]}          variables      Extra variables (name=>value). Values can be number / string or boolean.
+	 *
+	 * @return  {Node}             The string result.
+	 */
+	return function evaluateXPathToString (selector, contextNode, blueprint, variables) {
 		return evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.STRING_TYPE);
 	};
 });
