@@ -1,5 +1,9 @@
 # Release notes for fontoxml-selectors
 
+## next (1.6.0)
+
+Implement XPath 3.1.
+
 ## 1.5.3
 
 Fix equals function and add tests for it.
