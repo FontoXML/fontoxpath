@@ -1,13 +1,21 @@
 define([
 	'./dataTypes/Sequence',
+
 	'./dataTypes/BooleanValue',
+	'./dataTypes/DecimalValue',
 	'./dataTypes/StringValue',
-	'./dataTypes/DecimalValue'
+	'./datatypes/DoubleValue',
+	'./datatypes/FloatValue',
+	'./datatypes/IntegerValue'
 ], function (
 	Sequence,
+
 	BooleanValue,
-	StringValue,
-	DecimalValue
+	DecimalValue,
+	DoubleValue,
+	FloatValue,
+	IntegerValue,
+	StringValue
 ) {
 	function adaptItemToXPathValue (value) {
 		switch(typeof value) {
@@ -33,7 +41,7 @@ define([
 				return new DoubleValue(+value);
 			case 'xs:decimal':
 				return new DecimalValue(+value);
-			case 'xs:interger':
+			case 'xs:integer':
 				return new IntegerValue(value | 0);
 			case 'xs:float':
 				return new FloatValue(+value);
