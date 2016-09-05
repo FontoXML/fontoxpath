@@ -263,19 +263,29 @@ define([
 
 	function kindTest (args) {
 		switch (args[0]) {
+			case 'item()':
+				return new UniversalSelector();
 			case 'node()':
 				return new UniversalSelector();
-			case 'comment()':
-				return new NodeTypeSelector(8);
+			case 'element()':
+				if (args.length == 2) {
+					return new NodeNameSelector(args[1]);
+				}
+
+				if (args.length > 2) {
+					throw new Error('element() with more than 1 argument is not supported.');
+				}
+
+				return new NodeTypeSelector(1);
+			case 'text()':
+				return new NodeTypeSelector(3);
 			case 'processing-instruction()':
 				if (args.length > 1) {
 					return new ProcessingInstructionTargetSelector(args[1]);
 				}
 				return new NodeTypeSelector(7);
-			case 'text()':
-				return new NodeTypeSelector(3);
-			case 'item()':
-				return new UniversalSelector();
+			case 'comment()':
+				return new NodeTypeSelector(8);
 			default:
 				throw new Error('Unrecognized nodeType: ' + args[0]);
 		}

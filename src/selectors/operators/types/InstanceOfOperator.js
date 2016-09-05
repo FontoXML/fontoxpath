@@ -65,7 +65,8 @@ define([
 		}
 
 		var isInstanceOf = evaluatedExpression.value.every(function (argumentItem) {
-			return this._typeTest.evaluate(dynamicContext.createScopedContext({ contextItem: argumentItem })).getEffectiveBooleanValue();
+			var scopedContext = dynamicContext.createScopedContext({ contextItem: Sequence.singleton(argumentItem) });
+			return this._typeTest.evaluate(scopedContext).getEffectiveBooleanValue();
 		}.bind(this));
 
 		return Sequence.singleton(new BooleanValue(isInstanceOf));
