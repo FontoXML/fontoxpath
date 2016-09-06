@@ -14,8 +14,8 @@ define([
 
 	function AttributeNode (element, attributeName, attributeValue) {
 		this.value = attributeValue;
-		this.name = attributeName;
-		this.nodeId = getNodeId(element) + '@' + this.name;
+		this.nodeName = attributeName;
+		this.nodeId = getNodeId(element) + '@' + this.nodeName;
 		this._element = element;
 	}
 

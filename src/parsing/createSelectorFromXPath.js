@@ -44,7 +44,7 @@ define([
 	PathSelector,
 	AbsolutePathSelector,
 	Filter,
-	AttributeSelector,
+	AttributeAxis,
 	AncestorAxis,
 	ChildAxis,
 	DescendantAxis,
@@ -190,10 +190,7 @@ define([
 	}
 
 	function attribute (args) {
-		// Assume this is a nameTest: ['nameTest', name(, value?)]
-		// Since we cannot express most compare operators.
-		var value = args[0][2];
-		return new AttributeSelector(args[0][1], value && [value]);
+		return new AttributeAxis(compile(args[0]));
 	}
 
 	function binaryOperator (args) {
@@ -258,7 +255,7 @@ define([
 
 	function nameTest (args) {
 		var nodeName = args[0];
-		return nodeName === '*' ? new NodeTypeSelector(1) : new NodeNameSelector(nodeName);
+		return new NodeNameSelector(nodeName);
 	}
 
 	function kindTest (args) {

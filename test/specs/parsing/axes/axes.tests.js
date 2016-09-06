@@ -38,9 +38,20 @@ define([
 				element.setAttribute('someAttribute', 'someValue');
 				chai.expect(evaluateXPath(selector, element, blueprint)).to.deep.equal('someValue');
 			});
+
 			it('returns no attributes for documents', function () {
 				var selector = parseSelector('attribute::someAttribute');
 				chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('');
+			});
+
+			it('returns no attributes for comments', function () {
+				var selector = parseSelector('attribute::someAttribute');
+				chai.expect(evaluateXPath(selector, documentNode.createComment('some comment'), blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('');
+			});
+
+			it('returns no attributes for processing instructions', function () {
+				var selector = parseSelector('attribute::someAttribute');
+				chai.expect(evaluateXPath(selector, documentNode.createProcessingInstruction('someTarget', 'some data'), blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('');
 			});
 
 			it('resolves to false if attribute is absent', function () {
@@ -71,6 +82,24 @@ define([
 				var element = documentNode.createElement('someElement');
 				element.setAttribute('someNamespace:someAttribute', 'someValue');
 				chai.expect(evaluateXPath(selector, element, blueprint)).to.deep.equal(true);
+			});
+
+			it('allows a wildcard as attribute name', function () {
+				var selector = parseSelector('string-join(@*/name(), ",")');
+				var element = documentNode.createElement('someElement');
+				element.setAttribute('someAttribute1', 'someValue1');
+				element.setAttribute('someAttribute2', 'someValue2');
+				element.setAttribute('someAttribute3', 'someValue3');
+				chai.expect(evaluateXPath(selector, element, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('someAttribute1,someAttribute2,someAttribute3');
+			});
+
+			it('allows a kindTest as attribute test', function () {
+				var selector = parseSelector('string-join(@node()/name(), ",")');
+				var element = documentNode.createElement('someElement');
+				element.setAttribute('someAttribute1', 'someValue1');
+				element.setAttribute('someAttribute2', 'someValue2');
+				element.setAttribute('someAttribute3', 'someValue3');
+				chai.expect(evaluateXPath(selector, element, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('someAttribute1,someAttribute2,someAttribute3');
 			});
 		});
 

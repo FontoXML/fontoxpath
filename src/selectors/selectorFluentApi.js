@@ -9,30 +9,35 @@ define([
 	'./axes/FollowingSiblingAxis',
 	'./axes/ParentAxis',
 	'./axes/PrecedingSiblingAxis',
+	'./literals/Literal',
+	'./operators/SequenceOperator',
 	'./operators/boolean/AndOperator',
 	'./operators/boolean/NotOperator',
 	'./operators/boolean/OrOperator',
+	'./operators/compares/Compare',
 	'./tests/NodeNameSelector',
 	'./tests/NodePredicateSelector'
 ], function (
 	Selector,
 	adaptNodeSpecToSelector,
-	AttributeSelector,
 
+	AttributeAxis,
 	AncestorAxis,
 	ChildAxis,
 	DescendantAxis,
 	FollowingSiblingAxis,
 	ParentAxis,
 	PrecedingSiblingAxis,
+	Literal,
+	SequenceOperator,
 	AndOperator,
 	NotOperator,
+	OrOperator,
+	Compare,
 	NodeNameSelector,
-	NodePredicateSelector,
-	OrOperator
+	NodePredicateSelector
 ) {
 	'use strict';
-
 
 	/**
 	 * @param  {Selector|NodeSpec}  ancestorSelector
@@ -48,12 +53,30 @@ define([
 	 * @param  {String|String[]}  [attributeValues]  if omitted, the selector matches if the attribute is present
 	 */
 	Selector.prototype.requireAttribute = function (attributeName, attributeValues) {
-		if (attributeValues !== undefined && !Array.isArray(attributeValues)) {
-			attributeValues = [attributeValues];
+		if (attributeValues !== undefined) {
+			if (!Array.isArray(attributeValues)) {
+				attributeValues = [attributeValues];
+			}
+
+			var attributeValuesAsLiterals = attributeValues.map(function (attributeValue) {
+				return new Literal(attributeValue, 'xs:string');
+			});
+
+			return new AndOperator([
+					this,
+					new Compare(
+						['generalCompare', '='],
+						new AttributeAxis(new NodeNameSelector(attributeName)),
+						new SequenceOperator(attributeValuesAsLiterals)
+					)
+				]);
 		}
 
-		return new AndOperator([this, new AttributeSelector(attributeName, attributeValues)]);
+		return new AndOperator([
+			this,
+			new AttributeAxis(new NodeNameSelector(attributeName))]);
 	};
+
 	/**
 	 * @param  {Selector|NodeSpec}  childSelector
 	 */

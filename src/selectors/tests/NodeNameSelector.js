@@ -59,8 +59,15 @@ define([
 
 	NodeNameSelector.prototype.evaluate = function (dynamicContext) {
 		var sequence = dynamicContext.contextItem,
-			domFacade = dynamicContext.domFacade;
-		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0].value, domFacade)));
+			node = sequence.value[0];
+
+		if (!node.instanceOfType('element()') && !node.instanceOfType('attribute()')) {
+			return Sequence.singleton(new BooleanValue(false));
+		}
+
+		var returnValue = this._nodeName === '*' || node.nodeName === this._nodeName;
+
+		return Sequence.singleton(new BooleanValue(returnValue));
 	};
 
 	NodeNameSelector.prototype.getBucket = function () {

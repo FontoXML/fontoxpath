@@ -28,7 +28,7 @@ define([
 				} else if (nodeValueA.instanceOfType('attribute()') && nodeValueB.instanceOfType('attribute()')) {
 					if (domFacade.getParentNode(nodeValueB.value) === domFacade.getParentNode(nodeValueA.value)) {
 						// Sort on attributes name
-						return nodeValueA.value.name > nodeValueB.value.name ? 1 : -1;
+						return nodeValueA.value.nodeName > nodeValueB.value.nodeName ? 1 : -1;
 					}
 					valueA = domFacade.getParentNode(nodeValueA.value);
 					valueB = domFacade.getParentNode(nodeValueB.value);
