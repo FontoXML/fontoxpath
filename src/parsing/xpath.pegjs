@@ -143,7 +143,7 @@ UnaryExpr
 ValueExpr = SimpleMapExpr
 
 // 32
-GeneralComp = op:("=" / "!=" / "<"  / "<=" / ">" / ">=") {return ["generalCompare", op]}
+GeneralComp = op:("=" / "!=" / "<=" / "<" / ">=" / ">") {return ["generalCompare", op]}
 
 // 33
 ValueComp = op:("eq" / "ne" / "lt" / "le" / "gt" / "ge") {return ["valueCompare", op]}
