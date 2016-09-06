@@ -3,10 +3,10 @@ define([
 
 	'./dataTypes/BooleanValue',
 	'./dataTypes/DecimalValue',
-	'./dataTypes/StringValue',
-	'./datatypes/DoubleValue',
-	'./datatypes/FloatValue',
-	'./datatypes/IntegerValue'
+	'./dataTypes/DoubleValue',
+	'./dataTypes/FloatValue',
+	'./dataTypes/IntegerValue',
+	'./dataTypes/StringValue'
 ], function (
 	Sequence,
 
