@@ -40,7 +40,7 @@ define([
 			return false;
 		}
 
-		if (this._isInclusive && this._ancestorSelector.mathces(node, blueprint)) {
+		if (this._isInclusive && this._ancestorSelector.matches(node, blueprint)) {
 			return true;
 		}
 
