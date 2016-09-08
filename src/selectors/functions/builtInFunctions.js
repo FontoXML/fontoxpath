@@ -1,22 +1,31 @@
 define([
+	'fontoxml-blueprints',
+	'fontoxml-dom-utils/domInfo',
+
 	'../dataTypes/BooleanValue',
 	'../dataTypes/DoubleValue',
 	'../dataTypes/IntegerValue',
+	'../dataTypes/NodeValue',
 	'../dataTypes/QNameValue',
 	'../dataTypes/Sequence',
 	'../dataTypes/StringValue',
 	'../dataTypes/sortNodeValues'
-
 ], function (
+	blueprints,
+	domInfo,
+
 	BooleanValue,
 	DoubleValue,
 	IntegerValue,
+	NodeValue,
 	QNameValue,
 	Sequence,
 	StringValue,
 	sortNodeValues
 ) {
 	'use strict';
+
+	var blueprintQuery = blueprints.blueprintQuery;
 
 	function contextItemAsFirstArgument (fn, dynamicContext) {
 		return fn(dynamicContext, dynamicContext.contextItem);
@@ -42,6 +51,76 @@ define([
 
 	function fnFalse () {
 		return Sequence.singleton(new BooleanValue(false));
+	}
+
+	function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
+		var targetNodeValue = targetNodeSequence.value[0];
+		if (!targetNodeValue.instanceOfType('node()')) {
+			return Sequence.empty();
+		}
+		var domFacade = dynamicContext.domFacade;
+		// TODO: Index ids to optimize this lookup
+		var isMatchingIdById = idrefSequence.value.reduce(function (byId, idrefValue) {
+				idrefValue.value.split(/\s+/).forEach(function (id) {
+					byId[id] = true;
+				});
+				return byId;
+			}, Object.create(null));
+		var matchingNodes = blueprintQuery.findDescendants(
+			domFacade,
+			blueprintQuery.getDocumentNode(domFacade, targetNodeValue.value),
+			function (node) {
+				// TODO: use the is-id property of attributes / elements
+				if (!domInfo.isElement(node)) {
+					return false;
+				}
+				var idAttribute = domFacade.getAttribute(node, 'id');
+				if (!idAttribute) {
+					return false;
+				}
+				if (!isMatchingIdById[idAttribute.value]) {
+					return false;
+				}
+				// Only return the first match, per id
+				isMatchingIdById[idAttribute.value] = false;
+				return true;
+			}, true);
+		return new Sequence(matchingNodes.map(function (node) {
+			return new NodeValue(domFacade, node);
+		}));
+	}
+
+	function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
+		var targetNodeValue = targetNodeSequence.value[0];
+		if (!targetNodeValue.instanceOfType('node()')) {
+			return Sequence.empty();
+		}
+		var domFacade = dynamicContext.domFacade;
+		var isMatchingIdRefById = idSequence.value.reduce(function (byId, idValue) {
+				byId[idValue.value] = true;
+				return byId;
+			}, Object.create(null));
+		// TODO: Index idrefs to optimize this lookup
+		var matchingNodes = blueprintQuery.findDescendants(
+			domFacade,
+			blueprintQuery.getDocumentNode(domFacade, targetNodeValue.value),
+			function (node) {
+				// TODO: use the is-idrefs property of attributes / elements
+				if (!domInfo.isElement(node)) {
+					return false;
+				}
+				var idAttribute = domFacade.getAttribute(node, 'idref');
+				if (!idAttribute) {
+					return false;
+				}
+				var idRefs = idAttribute.value.split(/\s+/);
+				return idRefs.some(function (idRef) {
+						return isMatchingIdRefById[idRef];
+					});
+			}, true);
+		return new Sequence(matchingNodes.map(function (node) {
+			return new NodeValue(domFacade, node);
+		}));
 	}
 
 	function fnLast (dynamicContext) {
@@ -186,6 +265,34 @@ define([
 			name: 'false',
 			typeDescription: [],
 			callFunction: fnFalse
+		},
+
+		{
+			name: 'id',
+			typeDescription: ['xs:string*', 'node()'],
+			callFunction: fnId
+		},
+
+		{
+			name: 'id',
+			typeDescription: ['xs:string*'],
+			callFunction: function (dynamicContext, strings) {
+				return fnId(dynamicContext, strings, dynamicContext.contextItem);
+			}
+		},
+
+		{
+			name: 'idref',
+			typeDescription: ['xs:string*', 'node()'],
+			callFunction: fnIdref
+		},
+
+		{
+			name: 'idref',
+			typeDescription: ['xs:string*'],
+			callFunction: function (dynamicContext, strings) {
+				return fnIdref(dynamicContext, strings, dynamicContext.contextItem);
+			}
 		},
 
 		{

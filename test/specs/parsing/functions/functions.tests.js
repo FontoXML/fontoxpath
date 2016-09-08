@@ -402,6 +402,207 @@ define([
 			});
 		});
 
+		describe('id()', function () {
+			it('returns nothing if nothing matches', function () {
+				var selector = parseSelector('id("some-id")');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([]);
+			});
+
+			it('returns an element with the given id', function () {
+				var selector = parseSelector('id("some-id", .)');
+				jsonMLMapper.parse([
+					'someElement',
+					{
+						id: 'some-id'
+					}
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement]);
+			});
+
+			it('returns the first element with the given id', function () {
+				var selector = parseSelector('id("some-id", .)');
+				jsonMLMapper.parse([
+					'someParentElement',
+					[
+						'someElement',
+						{
+							id: 'some-id'
+						}
+					],
+					[
+						'someElement',
+						{
+							id: 'some-id'
+						}
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.firstChild]);
+			});
+
+			it('it defaults to the context item when the $node argument is omitted', function () {
+				var selector = parseSelector('id("some-id")');
+				jsonMLMapper.parse([
+					'someParentElement',
+					[
+						'someElement',
+						{
+							id: 'some-id'
+						}
+					],
+					[
+						'someElement',
+						{
+							id: 'some-id'
+						}
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.firstChild]);
+			});
+
+			it('it returns the first matching element, per given idref, separated by spaces', function () {
+				var selector = parseSelector('id("some-id some-other-id")');
+				jsonMLMapper.parse([
+					'someParentElement',
+					[
+						'someElement',
+						{
+							id: 'some-id'
+						}
+					],
+					[
+						'someElement',
+						{
+							id: 'some-other-id'
+						}
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]);
+			});
+
+			it('it returns the first matching element, per given idref, as separate strings', function () {
+				var selector = parseSelector('id(("some-id", "some-other-id"))');
+				jsonMLMapper.parse([
+					'someParentElement',
+					[
+						'someElement',
+						{
+							id: 'some-id'
+						}
+					],
+					[
+						'someElement',
+						{
+							id: 'some-other-id'
+						}
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]);
+			});
+
+			it('it returns the matching elements in document order', function () {
+				var selector = parseSelector('id(("some-other-id", "some-id"))');
+				jsonMLMapper.parse([
+					'someParentElement',
+					{
+						id: 'some-id'
+					},
+					[
+						'someElement',
+						{
+							id: 'some-other-id'
+						}
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement, documentNode.documentElement.firstChild]);
+			});
+		});
+
+		describe('idref', function () {
+			it('returns an element with the given idref', function () {
+				var selector = parseSelector('idref("some-id", .)');
+				jsonMLMapper.parse([
+					'someElement',
+					{
+						idref: 'some-id'
+					}
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement]);
+			});
+
+			it('returns an element with multiple idrefs, containing the given idref', function () {
+				var selector = parseSelector('idref("some-id", .)');
+				jsonMLMapper.parse([
+					'someElement',
+					{
+						idref: 'some-other-id some-id yet-some-other-id'
+					}
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement]);
+			});
+
+			it('searches for multiple id refs', function () {
+				var selector = parseSelector('idref(("some-id", "some-other-id"), .)');
+				jsonMLMapper.parse([
+					'someElement',
+					[
+						'someElement',
+						{
+							idref: 'some-id yet-some-other-id'
+						}
+					],
+					[
+						'someElement',
+						{
+							idref: 'some-other-id'
+						}
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]);
+			});
+
+			it('uses the context item is the $node argument is missing', function () {
+				var selector = parseSelector('idref(("some-id", "some-other-id"))');
+				jsonMLMapper.parse([
+					'someElement',
+					[
+						'someElement',
+						{
+							idref: 'some-id yet-some-other-id'
+						}
+					],
+					[
+						'someElement',
+						{
+							idref: 'some-other-id'
+						}
+					]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]);
+			});
+		});
+
 		describe('op:intersect()', function () {
 			it('returns an empty sequence if both args are an empty sequences', function () {
 				var selector = parseSelector('op:intersect((), ())');
