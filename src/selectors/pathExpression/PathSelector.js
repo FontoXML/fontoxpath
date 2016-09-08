@@ -33,35 +33,6 @@ define([
 	PathSelector.prototype = Object.create(Selector.prototype);
 	PathSelector.prototype.constructor = PathSelector;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	PathSelector.prototype.matches = function (node, blueprint) {
-		// TODO: optimize by doing a depth first search instead of a full one
-		// On the other hand, rewrite it using predicates, you lazy son of a hamster
-		var intermediateResults = [node],
-			newResults = [];
-		for (var i = 0, l = this._stepSelectors.length; i < l; ++i) {
-			var selector = this._stepSelectors[i];
-
-			for (var j = 0, k = intermediateResults.length; j < k; ++j) {
-				Array.prototype.push.apply(newResults, selector.evaluate({
-					contextItem: intermediateResults[j],
-					domFacade: blueprint
-				}));
-			}
-
-			if (!newResults.length) {
-				return false;
-			}
-			intermediateResults = newResults;
-			newResults = [];
-		}
-
-		return !!intermediateResults.length;
-	};
-
 	PathSelector.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof PathSelector &&
 			this._stepSelectors.length === otherSelector._stepSelectors.length &&
