@@ -4,14 +4,17 @@ define([
 	'../dataTypes/IntegerValue',
 	'../dataTypes/QNameValue',
 	'../dataTypes/Sequence',
-	'../dataTypes/StringValue'
+	'../dataTypes/StringValue',
+	'../dataTypes/sortNodeValues'
+
 ], function (
 	BooleanValue,
 	DoubleValue,
 	IntegerValue,
 	QNameValue,
 	Sequence,
-	StringValue
+	StringValue,
+	sortNodeValues
 ) {
 	'use strict';
 
@@ -96,7 +99,7 @@ define([
 	function fnStringJoin (dynamicContext, sequence, separator) {
 		var separatorString = separator.value[0].value,
 			joinedString = sequence.value.map(function (stringValue) {
-					return stringValue.value;
+				return stringValue.value;
 			}).join(separatorString);
 		return Sequence.singleton(new StringValue(joinedString));
 	}
@@ -114,7 +117,7 @@ define([
 			return Sequence.empty();
 		}
 		var string = input.value[0].value,
-			patternString = pattern.value[0].value;
+		patternString = pattern.value[0].value;
 		return new Sequence(
 			string.split(new RegExp(patternString))
 				.map(function (token) {return new StringValue(token);}));
@@ -136,6 +139,24 @@ define([
 				.map(function (_, i) {
 					return new IntegerValue(from+i);
 				}));
+	}
+
+	function opExcept (dynamicContext, firstNodes, secondNodes) {
+		var allNodes = firstNodes.value.filter(function (nodeA) {
+				return secondNodes.value.every(function (nodeB) {
+					return nodeA.nodeId !== nodeB.nodeId;
+				});
+			});
+		return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
+	}
+
+	function opIntersect (dynamicContext, firstNodes, secondNodes) {
+		var allNodes = firstNodes.value.filter(function (nodeA) {
+				return secondNodes.value.some(function (nodeB) {
+					return nodeA.nodeId === nodeB.nodeId;
+				});
+			});
+		return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
 	}
 
 	function fnNot (dynamicContext, sequence) {
@@ -227,6 +248,18 @@ define([
 			name: 'op:to',
 			typeDescription: ['xs:integer', 'xs:integer'],
 			callFunction: opTo
+		},
+
+		{
+			name: 'op:intersect',
+			typeDescription: ['node()*', 'node()*'],
+			callFunction: opIntersect
+		},
+
+		{
+			name: 'op:except',
+			typeDescription: ['node()*', 'node()*'],
+			callFunction: opExcept
 		},
 
 		{

@@ -401,5 +401,96 @@ define([
 				).to.equal('someElement');
 			});
 		});
+
+		describe('op:intersect()', function () {
+			it('returns an empty sequence if both args are an empty sequences', function () {
+				var selector = parseSelector('op:intersect((), ())');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([]);
+			});
+
+			it('returns an empty sequence if one of the operands is the empty sequence', function () {
+				var selector = parseSelector('op:intersect(., ())');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([]);
+				selector = parseSelector('op:intersect((), .)');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([]);
+			});
+
+			it('returns the intersect between two node sequences', function () {
+				var selector = parseSelector('op:intersect(//*[@someAttribute], //b)');
+				jsonMLMapper.parse([
+					'someNode',
+					['a', {someAttribute: 'someValue'}],
+					['b', {someAttribute: 'someOtherValue'}]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.lastChild]);
+			});
+
+			it('is bound to the intersect operator', function () {
+				var selector = parseSelector('//*[@someAttribute] intersect //b');
+				jsonMLMapper.parse([
+					'someNode',
+					['a', {someAttribute: 'someValue'}],
+					['b', {someAttribute: 'someOtherValue'}]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.lastChild]);
+			});
+		});
+
+		describe('op:except()', function () {
+			it('returns an empty sequence if both args are an empty sequences', function () {
+				var selector = parseSelector('op:except((), ())');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([]);
+			});
+
+			it('returns the filled sequence if the first operand is the empty sequence', function () {
+				var selector = parseSelector('op:except(., ())');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode]);
+			});
+
+			it('returns the empty sequence if the second operand is empty', function () {
+				var selector = parseSelector('op:except((), .)');
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([]);
+			});
+
+			it('returns the first node sequence, except nodes from the second sequence', function () {
+				var selector = parseSelector('op:except(//*[@someAttribute], //b)');
+				jsonMLMapper.parse([
+					'someNode',
+					['a', {someAttribute: 'someValue'}],
+					['b', {someAttribute: 'someOtherValue'}]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.firstChild]);
+			});
+
+			it('is bound to the except operator', function () {
+				var selector = parseSelector('//*[@someAttribute] except //b');
+				jsonMLMapper.parse([
+					'someNode',
+					['a', {someAttribute: 'someValue'}],
+					['b', {someAttribute: 'someOtherValue'}]
+				], documentNode);
+				chai.expect(
+					evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
+				).to.deep.equal([documentNode.documentElement.firstChild]);
+			});
+		});
 	});
 });

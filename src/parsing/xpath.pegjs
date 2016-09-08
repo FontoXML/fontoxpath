@@ -100,15 +100,15 @@ UnionExpr
  = first:IntersectExpr rest:( S ("|"/"union") S expr:IntersectExpr {return expr})+ {return appendRest(["union", first], rest)}
  / IntersectExpr
 
-// 24
+// 24. Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
-// = lhs:InstanceofExpr S "intersect" S rhs:IntersectExpr {return ["intersect", lhs, rhs]}
-// / lhs:InstanceofExpr S "except" S rhs:IntersectExpr {return ["except", lhs, rhs]}
- = InstanceofExpr
+ = lhs:InstanceofExpr rhs:(S type:("intersect" / "except") S rhs:IntersectExpr {return ["op:"+type, rhs] })? {
+     return rhs === null ? lhs : ["functionCall", rhs[0], lhs, rhs[1]]
+   }
 
 // 25
 InstanceofExpr
- = lhs:TreatExpr S "instance" S "of" S rhs:SequenceType {return ["instance of", lhs, rhs]}
+ = lhs:TreatExpr rhs:(S "instance" S "of" S rhs:SequenceType {return rhs})? {return rhs ? ["instance of", lhs, rhs] : lhs}
  / TreatExpr
 
 // 26
