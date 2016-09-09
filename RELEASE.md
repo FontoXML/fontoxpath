@@ -3,6 +3,7 @@
 ## next (1.6.0)
 
 Implement XPath 3.1.
+Add XPath precompiling.
 
 ## 1.5.3
 
