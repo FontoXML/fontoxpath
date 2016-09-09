@@ -41,6 +41,10 @@ define([
 			});
 	};
 
+	PathSelector.prototype.getBucket = function () {
+		return this._stepSelectors[0].getBucket();
+	};
+
 	function sortResults (domFacade, result) {
 		var resultContainsNodes = false,
 			resultContainsNonNodes = false;
