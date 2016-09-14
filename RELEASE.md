@@ -4,6 +4,7 @@
 
 Implement XPath 3.1.
 Add XPath precompiling.
+Add a persistent cache for compiled XPaths.
 
 ## 1.5.3
 
