@@ -1,0 +1,7 @@
+image: liones/fontoxml-docker-pipelines-test
+
+pipelines:
+  default:
+    - step:
+        script:
+          - sh /usr/bin/run-unit-tests
