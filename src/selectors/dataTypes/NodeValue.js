@@ -61,7 +61,10 @@ define([
 			return this.value.atomize();
 		}
 
-		return new StringValue(blueprintQuery.getTextContent(this._domFacade, this.value));
+		var allTextNodes = blueprintQuery.findDescendants(this._domFacade, this.value, domInfo.isTextNode);
+		return new StringValue(allTextNodes.map(function (textNode) {
+				return this._domFacade.getData(textNode);
+		}.bind(this)).join(''));
 	};
 
 	NodeValue.prototype.getStringValue = function () {

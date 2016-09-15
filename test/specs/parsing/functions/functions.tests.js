@@ -127,7 +127,7 @@ define([
 
 			it('Otherwise, $arg is converted to an xs:double following the rules of 19.1.2.2 Casting to xs:double. If the conversion to xs:double fails, the xs:double value NaN is returned.', function () {
 				var selector1 = parseSelector('number("123")'),
-				selector2 = parseSelector('number("12.3")');
+					selector2 = parseSelector('number("12.3")');
 				chai.expect(
 					evaluateXPath(selector1, documentNode, blueprint)
 				).to.equal(123);
@@ -180,7 +180,7 @@ define([
 
 			it('If $arg is a singleton value of type xs:string or a type derived from xs:string, xs:anyURI or a type derived from xs:anyURI or xs:untypedAtomic, fn:boolean returns false if the operand value has zero length; otherwise it returns true.', function () {
 				var selector1 = parseSelector('boolean("test")'),
-					selector2 = parseSelector('boolean("")');
+				selector2 = parseSelector('boolean("")');
 				chai.expect(
 					evaluateXPath(selector1, documentNode, blueprint)
 				).to.equal(true);
@@ -191,8 +191,8 @@ define([
 
 			it('If $arg is a singleton value of any numeric type or a type derived from a numeric type, fn:boolean returns false if the operand value is NaN or is numerically equal to zero; otherwise it returns true.', function () {
 				var selector1 = parseSelector('boolean(1)'),
-				selector2 = parseSelector('boolean(0)'),
-				selector3 = parseSelector('boolean(+("not a number" (: string coerce to double will be NaN :)))');
+					selector2 = parseSelector('boolean(0)'),
+					selector3 = parseSelector('boolean(+("not a number" (: string coerce to double will be NaN :)))');
 				chai.expect(
 					evaluateXPath(selector1, documentNode, blueprint)
 				).to.equal(true, '1');
@@ -228,12 +228,37 @@ define([
 				).to.equal('');
 			});
 
-			it('If $arg is a node, the function returns string value of the node, as obtained using the dm:string-value accessor defined in [XQuery and XPath Data Model (XDM) 3.0] (see Section 5.13 string-value Accessor).', function () {
-				var selector = parseSelector('string(.)');
-				jsonMLMapper.parse('Some text.', documentNode);
-				chai.expect(
-					evaluateXPath(selector, documentNode, blueprint)
-				).to.equal('Some text.');
+			describe('If $arg is a node, the function returns string value of the node, as obtained using the dm:string-value accessor defined in [XQuery and XPath Data Model (XDM) 3.0] (see Section 5.13 string-value Accessor).', function () {
+				it('works directly on a textNode', function () {
+					var selector = parseSelector('string(.)');
+					jsonMLMapper.parse('Some text.', documentNode);
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.equal('Some text.');
+				});
+
+				it('works on descendants', function () {
+					var selector = parseSelector('string(.)');
+					jsonMLMapper.parse([
+						'someElement',
+						'Some text.'
+					], documentNode);
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.equal('Some text.');
+				});
+
+				it('concatenates textNodes', function () {
+					var selector = parseSelector('string(.)');
+					jsonMLMapper.parse([
+						'someElement',
+						'Some text, and ',
+						'some other text node'
+					], documentNode);
+					chai.expect(
+						evaluateXPath(selector, documentNode, blueprint)
+					).to.equal('Some text, and some other text node');
+				});
 			});
 
 			it('If $arg is an atomic value, the function returns the result of the expression $arg cast as xs:string (see 19 Casting).', function () {
