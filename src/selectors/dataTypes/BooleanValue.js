@@ -21,16 +21,16 @@ define([
 
 		switch (anyAtomicValue.value) {
 			case 'true':
-				value = true;
+				booleanValue = true;
 				break;
 			case 'false':
-				value = false;
+				booleanValue = false;
 				break;
 			case '0':
-				value = false;
+				booleanValue = false;
 				break;
 			case '1':
-				value = true;
+				booleanValue = true;
 				break;
 			default:
 				throw new Error('XPTY0004: can not cast ' + value + ' to xs:boolean');
