@@ -56,5 +56,10 @@ define([
 			var nodeNameSelector = new NodeNameSelector('*');
 			chai.expect(nodeNameSelector.matches(document.createElement('someElement'), blueprint)).to.equal(true);
 		});
+
+		it('returns true if it uses an array of nodeNames', function () {
+			var nodeNameSelector = new NodeNameSelector(['someOtherElement', 'someElement']);
+			chai.expect(nodeNameSelector.matches(document.createElement('someElement'), blueprint)).to.equal(true);
+		});
 	});
 });

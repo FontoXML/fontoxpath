@@ -57,7 +57,18 @@ define([
 			return Sequence.singleton(new BooleanValue(false));
 		}
 
-		var returnValue = this._nodeName === '*' || node.nodeName === this._nodeName;
+		var returnValue;
+		if (!node.instanceOfType('attribute()') && !node.instanceOfType('element()')) {
+			returnValue = false;
+		}
+		else if (this._nodeName === '*') {
+			returnValue = true;
+		}
+		else {
+			returnValue = Array.isArray(this._nodeName) ?
+				this._nodeName.indexOf(node.nodeName) > -1 :
+				this._nodeName === node.nodeName;
+		}
 
 		return Sequence.singleton(new BooleanValue(returnValue));
 	};
