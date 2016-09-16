@@ -34,14 +34,6 @@ define([
 	NodeNameSelector.prototype = Object.create(Selector.prototype);
 	NodeNameSelector.prototype.constructor = NodeNameSelector;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	NodeNameSelector.prototype.matches = function (node, blueprint) {
-		return domInfo.isElement(node, this._nodeName);
-	};
-
 	NodeNameSelector.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;

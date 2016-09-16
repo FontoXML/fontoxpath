@@ -1,8 +1,12 @@
 define([
+	'slimdom',
+	'fontoxml-blueprints/readOnlyBlueprint',
 	'fontoxml-selectors/selectors/tests/NodeNameSelector'
 ], function (
+	slimdom,
+	blueprint,
 	NodeNameSelector
-	) {
+) {
 	'use strict';
 
 	describe('NodeNameSelector.equals()', function () {
@@ -40,4 +44,17 @@ define([
 		});
 	});
 
+	describe('NodeNameSelector.matches()', function () {
+		var document;
+
+		beforeEach(function () {
+			document = slimdom.createDocument();
+		});
+
+
+		it('returns true if it uses wildcards', function () {
+			var nodeNameSelector = new NodeNameSelector('*');
+			chai.expect(nodeNameSelector.matches(document.createElement('someElement'), blueprint)).to.equal(true);
+		});
+	});
 });
