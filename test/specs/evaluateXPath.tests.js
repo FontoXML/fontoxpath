@@ -5,6 +5,7 @@ define([
 
 	'fontoxml-selectors/evaluateXPathToBoolean',
 	'fontoxml-selectors/evaluateXPathToString',
+	'fontoxml-selectors/evaluateXPathToStrings',
 	'fontoxml-selectors/evaluateXPathToNumber',
 	'fontoxml-selectors/evaluateXPathToFirstNode',
 	'fontoxml-selectors/evaluateXPathToNodes'
@@ -14,6 +15,7 @@ define([
 	slimdom,
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
+	evaluateXPathToStrings,
 	evaluateXPathToNumber,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes
@@ -63,6 +65,13 @@ define([
 				chai.expect(evaluateXPathToString('()', documentNode, blueprint)).to.equal('');
 			});
 		});
+
+		describe('toStrings', function () {
+			it('Keeps string values strings', function () {
+				chai.expect(evaluateXPathToStrings('("A piece of text", "another piece of text")', documentNode, blueprint)).to.deep.equal(['A piece of text', 'another piece of text']);
+			});
+		});
+
 
 		describe('toFirstNode', function () {
 			it('Keeps nodes nodes', function () {

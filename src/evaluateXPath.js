@@ -62,12 +62,22 @@ define([
 		switch (returnType) {
 			case evaluateXPath.BOOLEAN_TYPE:
 				return rawResults.getEffectiveBooleanValue();
+
 			case evaluateXPath.STRING_TYPE:
 				if (rawResults.isEmpty()) {
 					return '';
 				}
 				// Atomize to convert (attribute)nodes to be strings
 				return rawResults.value[0].atomize().value;
+
+			case evaluateXPath.STRINGS_TYPE:
+				if (rawResults.isEmpty()) {
+					return [];
+				}
+
+				// Atomize all parts
+				return rawResults.value.map(function (value) { return value.atomize().value; });
+
 			case evaluateXPath.NUMBER_TYPE:
 				if (!rawResults.isSingleton()) {
 					return NaN;
@@ -76,6 +86,7 @@ define([
 					return NaN;
 				}
 				return rawResults.value[0].value;
+
 			case evaluateXPath.FIRST_NODE_TYPE:
 				if (rawResults.isEmpty()) {
 					return null;
@@ -87,6 +98,7 @@ define([
 					throw new Error('XPath can not resolve to attribute nodes');
 				}
 				return rawResults.value[0].value;
+
 			case evaluateXPath.NODES_TYPE:
 				if (rawResults.isEmpty()) {
 					return [];
@@ -98,6 +110,7 @@ define([
 					throw new Error('XPath ' + xPathSelector + ' should not resolve to attribute nodes');
 				}
 				return rawResults.value.map(function (nodeValue) { return nodeValue.value;});
+
 			default:
 				var allValuesAreNodes = rawResults.value.every(function (value) {
 						return value.instanceOfType('node()') &&
@@ -149,6 +162,11 @@ define([
 	 * Resolves to the first node NODES_TYPE would have resolved to.
 	 */
 	evaluateXPath.FIRST_NODE_TYPE = 9;
+
+	/**
+	 * Resolve to an array of strings
+	 */
+	evaluateXPath.STRINGS_TYPE = 10;
 
 	return evaluateXPath;
 });
