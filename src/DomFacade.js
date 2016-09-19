@@ -84,7 +84,7 @@ define([
 		if (!value) {
 			return null;
 		}
-		return new AttributeNode(node, attributeName, value);
+		return value;
 	};
 
 	DomFacade.prototype.getAllAttributes = function (node) {
@@ -92,9 +92,7 @@ define([
 			return [];
 		}
 
-		return this._blueprint.getAllAttributes(node).map(function (attribute) {
-			return new AttributeNode(node, attribute.name, attribute.value);
-		});
+		return this._blueprint.getAllAttributes(node);
 	};
 
 	DomFacade.prototype.getData = function (node) {

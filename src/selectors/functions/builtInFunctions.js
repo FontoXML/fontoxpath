@@ -78,11 +78,11 @@ define([
 				if (!idAttribute) {
 					return false;
 				}
-				if (!isMatchingIdById[idAttribute.value]) {
+				if (!isMatchingIdById[idAttribute]) {
 					return false;
 				}
 				// Only return the first match, per id
-				isMatchingIdById[idAttribute.value] = false;
+				isMatchingIdById[idAttribute] = false;
 				return true;
 			}, true);
 		return new Sequence(matchingNodes.map(function (node) {
@@ -113,7 +113,7 @@ define([
 				if (!idAttribute) {
 					return false;
 				}
-				var idRefs = idAttribute.value.split(/\s+/);
+				var idRefs = idAttribute.split(/\s+/);
 				return idRefs.some(function (idRef) {
 						return isMatchingIdRefById[idRef];
 					});

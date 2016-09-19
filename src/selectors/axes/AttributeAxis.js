@@ -5,7 +5,8 @@ define([
 	'../Specificity',
 	'../isSameArray',
 	'../dataTypes/Sequence',
-	'../dataTypes/NodeValue'
+	'../dataTypes/NodeValue',
+	'../dataTypes/AttributeNode'
 ], function (
 	domInfo,
 
@@ -13,7 +14,8 @@ define([
 	Specificity,
 	isSameArray,
 	Sequence,
-	NodeValue
+	NodeValue,
+	AttributeNode
 ) {
 	'use strict';
 
@@ -49,7 +51,11 @@ define([
 		var attributes = domFacade
 			.getAllAttributes(contextItem.value[0].value)
 			.map(function (attribute) {
-				return new NodeValue(domFacade, attribute);
+				return new NodeValue(domFacade, new AttributeNode(
+					contextItem.value[0].value,
+					attribute.name,
+					attribute.value
+				));
 			}).filter(function (attributeNodeValue) {
 				var scopedContext = dynamicContext.createScopedContext({ contextItem: Sequence.singleton(attributeNodeValue) });
 				return this._attributeTestSelector.evaluate(scopedContext).getEffectiveBooleanValue();
