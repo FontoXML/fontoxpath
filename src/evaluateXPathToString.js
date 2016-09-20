@@ -13,7 +13,7 @@ define([
 	 * @param  {Blueprint}         blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
 	 * @param  {[Object]}          variables      Extra variables (name=>value). Values can be number / string or boolean.
 	 *
-	 * @return  {Node}             The string result.
+	 * @return  {String}           The string result.
 	 */
 	return function evaluateXPathToString (selector, contextNode, blueprint, variables) {
 		return evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.STRING_TYPE);
