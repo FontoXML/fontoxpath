@@ -145,8 +145,8 @@ define([
 		if (arg.isEmpty()) {
 			return Sequence.singleton(new StringValue(''));
 		}
-		var string = arg.value[0].value;
-		return Sequence.singleton(new StringValue(string.replace(/\s\s/g, ' ')));
+		var string = arg.value[0].value.trim();
+		return Sequence.singleton(new StringValue(string.replace(/\s+/g, ' ')));
 	}
 
 	function fnNumber (dynamicContext, sequence) {

@@ -59,6 +59,21 @@ define([
 			});
 		});
 
+		describe('normalize-space()', function () {
+			it('Returns the value of $arg with whitespace normalized by stripping leading and trailing whitespace and replacing sequences of one or more than one whitespace character with a single space, #x20.', function () {
+				chai.expect(evaluateXPath('normalize-space("  something with a lot of          spaces       ")', documentNode, blueprint)).to.equal('something with a lot of spaces');
+			});
+
+			it('If the value of $arg is the empty sequence, returns the zero-length string.', function () {
+				chai.expect(evaluateXPath('normalize-space(())', documentNode, blueprint)).to.equal('');
+			});
+
+			it('If no argument is supplied, then $arg defaults to the string value (calculated using fn:string()) of the context item (.)', function () {
+				documentNode.appendChild(documentNode.createTextNode('   A piece    of text  '));
+				chai.expect(evaluateXPath('./normalize-space()', documentNode, blueprint)).to.equal('A piece of text');
+			});
+		});
+
 		describe('last()', function () {
 			it('returns the length of the dynamic context size', function () {
 				var selector = parseSelector('(1,2,3)[last()]');
