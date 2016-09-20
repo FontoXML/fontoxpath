@@ -31,13 +31,13 @@ EnclosedExpr
 Expr
  = first:ExprSingle rest:( _ "," _ expr:ExprSingle {return expr})* {return rest.length ? appendRest(["sequence", first], rest) : first}
 
-// 7
+// 7 (Note: ordering changed because of greediness)
 ExprSingle
  = LetExpr
  / QuantifiedExpr
+ / IfExpr
 // / ForExpr
  / OrExpr
-// / IfExpr
 
 // 11
 LetExpr
@@ -59,6 +59,10 @@ SimpleLetBinding = "$" rangeVariable:VarName _ ":=" _ bindingSequence:ExprSingle
 // 14
 QuantifiedExpr
  = kind:("some" / "every") S "$" varName:VarName S "in" S exprSingle:ExprSingle restExpr:("," _ "$" name:VarName S "in" S expr:ExprSingle {return [name, expr]})* S "satisfies" S satisfiesExpr:ExprSingle {return ["quantified", kind, [[varName, exprSingle]].concat(restExpr), satisfiesExpr]}
+
+// 15
+IfExpr
+ = "if" _ "(" _ testExpr:Expr _ ")" _ "then" _ thenExpr:ExprSingle _ "else" _ elseExpr:ExprSingle {return ["conditional", testExpr, thenExpr, elseExpr]}
 
 // 16
 OrExpr

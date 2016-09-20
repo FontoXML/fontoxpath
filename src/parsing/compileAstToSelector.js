@@ -31,6 +31,7 @@ define([
 	'../selectors/operators/compares/Compare',
 	'../selectors/operators/types/InstanceOfOperator',
 	'../selectors/quantified/QuantifiedExpression',
+	'../selectors/conditional/IfExpression',
 
 	'../selectors/literals/Literal',
 	'../selectors/LetExpression',
@@ -70,6 +71,7 @@ define([
 	Compare,
 	InstanceOfOperator,
 	QuantifiedExpression,
+	IfExpression,
 
 	Literal,
 	LetExpression,
@@ -163,6 +165,9 @@ define([
 			case 'quantified':
 				return quantified(args);
 
+			// Conditional
+			case 'conditional':
+				return conditional(args);
 
 			case 'instance of':
 				return instanceOf(args);
@@ -217,6 +222,10 @@ define([
 	// Binary compare (=, !=, le, is, etc)
 	function compare (args) {
 		return new Compare(args[0], compile(args[1]), compile(args[2]));
+	}
+
+	function conditional (args) {
+		return new IfExpression(compile(args[0]), compile(args[1]), compile(args[2]));
 	}
 
 	function filter (args) {
