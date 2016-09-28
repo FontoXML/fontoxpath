@@ -44,6 +44,16 @@ define([
 		});
 	});
 
+	describe('NodeNameSelector#getBucket()', function () {
+		it('returns name-{{name}} when passed a nodeName', function () {
+			chai.expect(new NodeNameSelector('someNode').getBucket()).to.equal('name-someNode');
+		});
+
+		it('returns type-1 when passed *', function () {
+			chai.expect(new NodeNameSelector('*').getBucket()).to.equal('type-1');
+		});
+	});
+
 	describe('NodeNameSelector.matches()', function () {
 		var document;
 

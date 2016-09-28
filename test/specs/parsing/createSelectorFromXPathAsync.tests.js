@@ -24,19 +24,25 @@ define([
 		});
 
 		it('can compile a selector asynchronously', function () {
+			// When running tests in a CI, setting up the indexedDB can take some time.
+			this.timeout(5000);
 			return createSelectorFromXPathAsync('1 + 1')
-				.then(function (selector) {
-					// Assume selector to be ok
-					chai.expect(
-						evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NUMBER_TYPE)
-					).to.equal(2);
-				});
+				.then(
+					function (selector) {
+						// Assume selector to be ok
+						chai.expect(
+							evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NUMBER_TYPE)
+						).to.equal(2);
+					},
+					function () {
+						chai.expect.fail();
+					});
 		});
 
 		it('throws when compilation fails', function () {
 			return createSelectorFromXPathAsync(']] Not valid at all! [[')
 				.then(function (selector) {
-					chai.fail();
+					chai.expect.fail();
 				}, function (error) {
 					chai.expect(error).to.be.instanceOf(Error);
 				});

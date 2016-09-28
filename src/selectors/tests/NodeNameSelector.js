@@ -21,7 +21,11 @@ define([
 	 * @param  {String|String[]}  nodeName
 	 */
 	function NodeNameSelector (nodeName) {
-		Selector.call(this, new Specificity({nodeName: 1}), Selector.RESULT_ORDER_SORTED);
+		var specificity = {nodeName: 1};
+		if (nodeName === '*') {
+			specificity = {nodeType: 1};
+		}
+		Selector.call(this, new Specificity(specificity), Selector.RESULT_ORDER_SORTED);
 
 		// Do not coerce the string/string[] to string[] because this costs performance in domInfo.isElement
 		this._nodeName = nodeName;
@@ -74,6 +78,10 @@ define([
 	};
 
 	NodeNameSelector.prototype.getBucket = function () {
+		if (this._nodeName === '*') {
+			// While * is a test matching attributes or elements, buckets are never used to match nodes.
+			return 'type-1';
+		}
 		return 'name-' + this._nodeName;
 	};
 	return NodeNameSelector;
