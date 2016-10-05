@@ -1,5 +1,9 @@
 # Release notes for fontoxml-selectors
 
+## next (1.6.1)
+
+Fix fn:concat not accepting empty sequences.
+
 ## 1.6.0
 
 Implement XPath 3.1.

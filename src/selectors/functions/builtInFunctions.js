@@ -39,9 +39,11 @@ define([
 		var stringSequences = Array.from(arguments).slice(1);
 		stringSequences = stringSequences.map(function (sequence) { return sequence.atomize(); });
 		var strings = stringSequences.map(function (sequence) {
+				if (sequence.isEmpty()) {
+					return '';
+				}
 				return sequence.value[0].value;
 			});
-		// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
 		return Sequence.singleton(new StringValue(strings.join('')));
 	}
 

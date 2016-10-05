@@ -29,6 +29,12 @@ define([
 				evaluateXPath(selector, documentNode, blueprint)
 			).to.deep.equal('concatenate');
 		});
-	});
 
+		it('can concatenate empty sequences', function () {
+			var selector = parseSelector('() || "con" || () || "cat" || () || "enate" || ()');
+			chai.expect(
+				evaluateXPath(selector, documentNode, blueprint)
+			).to.deep.equal('concatenate');
+		});
+	});
 });
