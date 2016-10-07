@@ -1,6 +1,6 @@
 # Release notes for fontoxml-selectors
 
-## next (1.6.1)
+## 1.6.1
 
 Fix fn:concat not accepting empty sequences.
 
