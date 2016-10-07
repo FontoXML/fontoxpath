@@ -1,4 +1,4 @@
-image: liones/fontoxml-docker-pipelines-test
+image: liones/fontoxml-docker-pipelines-test:stable
 
 pipelines:
   default:
