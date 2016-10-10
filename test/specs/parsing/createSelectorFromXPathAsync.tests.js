@@ -25,7 +25,7 @@ define([
 
 		it('can compile a selector asynchronously', function () {
 			// When running tests in a CI, setting up the indexedDB can take some time.
-			this.timeout(5000);
+			this.timeout(10000);
 			return createSelectorFromXPathAsync('1 + 1')
 				.then(
 					function (selector) {
