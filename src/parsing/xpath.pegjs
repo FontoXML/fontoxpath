@@ -157,8 +157,12 @@ NodeComp = op:("is" / "<<" / ">>") {return ["nodeCompare", op]}
 
 // 35
 SimpleMapExpr
-// = lhs:PathExpr _ '!' _ rhs:SimpleMapExpr {return "unsupported"}
- = PathExpr
+ = lhs:PathExpr parts:( _ "!" _ expr:PathExpr { return expr })* {
+     if (!parts.length) return lhs;
+     return parts.reduce(function (previousMap, expression) {
+         return ["simpleMap", previousMap, expression]
+     }, lhs);
+   }
 
 // 36-45 (simplified)
 PathExpr
@@ -246,8 +250,8 @@ PrimaryExpr
  / ParenthesizedExpr
  / ContextItemExpr
  / FunctionCall
-// / FunctionItemExpr
 // / MapConstructor
+// / FunctionItemExpr
 // / ArrayConstructor
 // / UnaryLookup
 

@@ -26,6 +26,7 @@ define([
 	'../selectors/operators/boolean/NotOperator',
 	'../selectors/operators/Union',
 	'../selectors/operators/SequenceOperator',
+	'../selectors/operators/SimpleMapOperator',
 	'../selectors/operators/numeric/Unary',
 	'../selectors/operators/numeric/BinaryNumericOperator',
 	'../selectors/operators/compares/Compare',
@@ -66,6 +67,7 @@ define([
 	NotOperator,
 	Union,
 	SequenceOperator,
+	SimpleMapOperator,
 	Unary,
 	BinaryNumericOperator,
 	Compare,
@@ -171,6 +173,9 @@ define([
 
 			case 'instance of':
 				return instanceOf(args);
+
+			case 'simpleMap':
+				return simpleMap(args);
 
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
@@ -326,6 +331,10 @@ define([
 
 	function sequence (args) {
 		return new SequenceOperator(args.map(compile));
+	}
+
+	function simpleMap (args) {
+		return new SimpleMapOperator(compile(args[0]), compile(args[1]));
 	}
 
 	function typeTest (args) {
