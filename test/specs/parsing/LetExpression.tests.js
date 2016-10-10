@@ -1,18 +1,14 @@
 define([
 	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-dom-utils/jsonMLMapper',
 	'slimdom',
 
 	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/addXPathCustomTest',
 	'fontoxml-selectors/evaluateXPath'
 ], function (
 	blueprint,
-	jsonMLMapper,
 	slimdom,
 
 	parseSelector,
-	addXPathCustomTest,
 	evaluateXPath
 ) {
 	'use strict';
@@ -21,6 +17,7 @@ define([
 	beforeEach(function () {
 		documentNode = slimdom.createDocument();
 	});
+
 	describe('let', function () {
 		it('creates a variable reference', function () {
 			var selector = parseSelector('let $x := 1 return $x');
@@ -48,22 +45,6 @@ define([
 			chai.expect(
 				evaluateXPath(selector, documentNode, blueprint)
 			).to.deep.equal(3);
-		});
-	});
-
-	describe('varRef', function () {
-		it('can reference variables', function () {
-			var selector = parseSelector('$x');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint, {'x': 42})
-			).to.deep.equal(42);
-		});
-
-		it('can reference built-in variables', function () {
-			var selector = parseSelector('$theBest');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.deep.equal('FontoXML is the best!');
 		});
 	});
 });

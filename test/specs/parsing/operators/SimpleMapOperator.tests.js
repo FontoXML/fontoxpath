@@ -10,7 +10,7 @@ define([
 
 	parseSelector,
 	evaluateXPath
-	) {
+) {
 	'use strict';
 
 	var documentNode;

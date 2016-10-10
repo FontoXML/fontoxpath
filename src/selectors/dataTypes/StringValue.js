@@ -27,6 +27,5 @@ define([
 			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
 	};
 
-
 	return StringValue;
 });

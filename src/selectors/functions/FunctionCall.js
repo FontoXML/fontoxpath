@@ -12,7 +12,7 @@ define([
 	BooleanValue,
 	Selector,
 	Specificity
-	) {
+) {
 	'use strict';
 
 	/**

@@ -1,16 +1,12 @@
 define([
-	'../../functions/isValidArgument',
-	'../../Specificity',
 	'../../dataTypes/Sequence',
 	'../../dataTypes/BooleanValue',
 	'../../Selector'
 ], function (
-	isValidArgument,
-	Specificity,
 	Sequence,
 	BooleanValue,
 	Selector
-	) {
+) {
 	'use strict';
 
 	function InstanceOfOperator (expression, typeTest, multiplicity) {

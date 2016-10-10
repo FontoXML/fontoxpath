@@ -27,7 +27,7 @@ define([
 
 	AbsolutePathSelector.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof AbsolutePathSelector &&
-			this._relativePathSelector.equals(otherSelector.relativePathSelector);
+			this._relativePathSelector.equals(otherSelector._relativePathSelector);
 	};
 
 	AbsolutePathSelector.prototype.evaluate = function (dynamicContext) {

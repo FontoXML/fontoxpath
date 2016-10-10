@@ -1,10 +1,12 @@
 define([
 	'fontoxml-blueprints',
+
 	'../Selector',
 	'../dataTypes/Sequence',
 	'../dataTypes/NodeValue'
 ], function (
 	blueprints,
+
 	Selector,
 	Sequence,
 	NodeValue
@@ -72,7 +74,6 @@ define([
 		}
 		return new Sequence(nodeValues);
 	};
-
 
 	return DescendantAxis;
 });

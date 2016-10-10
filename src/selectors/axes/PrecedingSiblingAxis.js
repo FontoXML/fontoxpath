@@ -49,7 +49,6 @@ define([
 			this._siblingSelector.equals(otherSelector._siblingSelector);
 	};
 
-
 	PrecedingSiblingAxis.prototype.evaluate = function (dynamicContext) {
 		var sequence = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
@@ -72,7 +71,6 @@ define([
 		}
 		return new Sequence(nodes);
 	};
-
 
 	return PrecedingSiblingAxis;
 });

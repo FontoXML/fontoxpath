@@ -1,8 +1,10 @@
 define([
+	'../isSameSetOfSelectors',
 	'../Selector',
 	'../Specificity',
 	'../dataTypes/Sequence'
 ], function (
+	isSameSetOfSelectors,
 	Selector,
 	Specificity,
 	Sequence
@@ -25,7 +27,16 @@ define([
 	}
 
 	SequenceOperator.prototype = Object.create(Selector.prototype);
-	SequenceOperator.prototype.constructor =SequenceOperator;
+	SequenceOperator.prototype.constructor = SequenceOperator;
+
+	SequenceOperator.prototype.equals = function (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof SequenceOperator &&
+			isSameSetOfSelectors(this._selectors, otherSelector._selectors);
+	};
 
 	SequenceOperator.prototype.evaluate = function (dynamicContext) {
 		return this._selectors.reduce(function (accum, selector) {

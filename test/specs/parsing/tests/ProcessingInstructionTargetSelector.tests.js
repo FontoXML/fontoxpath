@@ -3,17 +3,13 @@ define([
 	'fontoxml-dom-utils/jsonMLMapper',
 	'slimdom',
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/addXPathCustomTest',
-	'fontoxml-selectors/evaluateXPath'
+	'fontoxml-selectors/parsing/createSelectorFromXPath'
 ], function (
 	blueprint,
 	jsonMLMapper,
 	slimdom,
 
-	parseSelector,
-	addXPathCustomTest,
-	evaluateXPath
+	parseSelector
 ) {
 	'use strict';
 
@@ -21,6 +17,7 @@ define([
 	beforeEach(function () {
 		documentNode = slimdom.createDocument();
 	});
+
 	describe('processing-instruction()', function () {
 		it('allows processing instruction targets as literals', function () {
 			var selector = parseSelector('self::processing-instruction("someTarget")');

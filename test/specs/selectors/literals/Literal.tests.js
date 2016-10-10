@@ -2,7 +2,7 @@ define([
 	'fontoxml-selectors/selectors/literals/Literal'
 ], function (
 	Literal
-	) {
+) {
 	'use strict';
 
 	describe('Literal.equals()', function () {

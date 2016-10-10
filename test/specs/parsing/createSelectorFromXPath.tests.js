@@ -1,23 +1,17 @@
 define([
-	'fontoxml-blueprints',
+	'fontoxml-blueprints/readOnlyBlueprint',
 	'fontoxml-dom-utils/jsonMLMapper',
 	'slimdom',
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/addXPathCustomTest',
 	'fontoxml-selectors/evaluateXPath'
 ], function (
-	blueprints,
+	blueprint,
 	jsonMLMapper,
 	slimdom,
 
-	parseSelector,
-	addXPathCustomTest,
 	evaluateXPath
 ) {
 	'use strict';
-
-	var blueprint = new blueprints.ReadOnlyBlueprint();
 
 	describe('createSelectorFromXPath', function () {
 		var documentNode;

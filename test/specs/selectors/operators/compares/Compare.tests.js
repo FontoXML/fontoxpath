@@ -18,86 +18,38 @@ define([
 
 	describe('Compare.equals()', function () {
 		it('returns true if compared with itself', function () {
-			var comp1 = new Compare(
-					['generalCompare', 'eq'],
-					equalSelector,
-					equalSelector),
-				comp2 = comp1;
-
-			var result1 = comp1.equals(comp2),
-				result2 = comp2.equals(comp1);
-
-			chai.expect(result1).to.equal(true);
-			chai.expect(result2).to.equal(true);
+			var compare1 = new Compare(['generalCompare', 'eq'], equalSelector, equalSelector),
+				compare2 = compare1;
+			chai.expect(compare1.equals(compare2)).to.equal(true);
+			chai.expect(compare2.equals(compare1)).to.equal(true);
 		});
 
 		it('it returns true if compared with an equal other Compare', function () {
-			var comp1 = new Compare(
-					['generalCompare', 'eq'],
-					equalSelector,
-					equalSelector),
-				comp2 = new Compare(
-					['generalCompare', 'eq'],
-					equalSelector,
-					equalSelector);
-
-			var result1 = comp1.equals(comp2),
-			result2 = comp2.equals(comp1);
-
-			chai.expect(result1).to.equal(true);
-			chai.expect(result2).to.equal(true);
+			var compare1 = new Compare(['generalCompare', 'eq'], equalSelector, equalSelector),
+				compare2 = new Compare(['generalCompare', 'eq'], equalSelector, equalSelector);
+			chai.expect(compare1.equals(compare2)).to.equal(true);
+			chai.expect(compare2.equals(compare1)).to.equal(true);
 		});
 
 		it('it returns false if compared with a Compare unequal on the first part', function () {
-			var comp1 = new Compare(
-					['generalCompare', 'eq'],
-					unequalSelector,
-					equalSelector),
-			comp2 = new Compare(
-				['generalCompare', 'eq'],
-				unequalSelector,
-				equalSelector);
-
-			var result1 = comp1.equals(comp2),
-			result2 = comp2.equals(comp1);
-
-			chai.expect(result1).to.equal(false);
-			chai.expect(result2).to.equal(false);
+			var compare1 = new Compare(['generalCompare', 'eq'], unequalSelector, equalSelector),
+				compare2 = new Compare(['generalCompare', 'eq'], unequalSelector, equalSelector);
+			chai.expect(compare1.equals(compare2)).to.equal(false);
+			chai.expect(compare2.equals(compare1)).to.equal(false);
 		});
 
 		it('it returns false if compared with a Compare unequal on the second part', function () {
-			var comp1 = new Compare(
-					['generalCompare', 'eq'],
-					equalSelector,
-					unequalSelector),
-			comp2 = new Compare(
-				['generalCompare', 'eq'],
-				equalSelector,
-				unequalSelector);
-
-			var result1 = comp1.equals(comp2),
-			result2 = comp2.equals(comp1);
-
-			chai.expect(result1).to.equal(false);
-			chai.expect(result2).to.equal(false);
+			var compare1 = new Compare(['generalCompare', 'eq'], equalSelector, unequalSelector),
+				compare2 = new Compare(['generalCompare', 'eq'], equalSelector, unequalSelector);
+			chai.expect(compare1.equals(compare2)).to.equal(false);
+			chai.expect(compare2.equals(compare1)).to.equal(false);
 		});
 
-
 		it('it returns false if compared with an unequal other Compare', function () {
-			var comp1 = new Compare(
-					['generalCompare', 'eq'],
-					unequalSelector,
-					unequalSelector),
-			comp2 = new Compare(
-				['generalCompare', 'eq'],
-				unequalSelector,
-				unequalSelector);
-
-			var result1 = comp1.equals(comp2),
-			result2 = comp2.equals(comp1);
-
-			chai.expect(result1).to.equal(false);
-			chai.expect(result2).to.equal(false);
+			var compare1 = new Compare(['generalCompare', 'eq'], unequalSelector, unequalSelector),
+				compare2 = new Compare(['generalCompare', 'eq'], unequalSelector, unequalSelector);
+			chai.expect(compare1.equals(compare2)).to.equal(false);
+			chai.expect(compare2.equals(compare1)).to.equal(false);
 		});
 	});
 });

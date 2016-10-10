@@ -1,12 +1,10 @@
 define([
-	'fontoxml-dom-identification/getNodeId',
 	'../Selector',
 	'../Specificity',
 	'../dataTypes/Sequence',
 	'../dataTypes/sortNodeValues',
 	'../dataTypes/NodeValue'
 ], function (
-	getNodeId,
 	Selector,
 	Specificity,
 	Sequence,
@@ -117,7 +115,6 @@ define([
 
 		return new Sequence(result);
 	};
-
 
 	return PathSelector;
 });

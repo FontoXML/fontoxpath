@@ -4,7 +4,6 @@ define([
 	'slimdom',
 
 	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/addXPathCustomTest',
 	'fontoxml-selectors/evaluateXPath'
 ], function (
 	blueprint,
@@ -12,7 +11,6 @@ define([
 	slimdom,
 
 	parseSelector,
-	addXPathCustomTest,
 	evaluateXPath
 ) {
 	'use strict';
@@ -22,7 +20,6 @@ define([
 		documentNode = slimdom.createDocument();
 	});
 
-
 	describe('absolute paths', function () {
 		it('supports absolute paths', function () {
 			jsonMLMapper.parse([
@@ -31,6 +28,7 @@ define([
 			var selector = parseSelector('/someNode');
 			chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
 		});
+
 		it('supports chaining from absolute paths', function () {
 			jsonMLMapper.parse([
 				'someNode',
@@ -39,6 +37,7 @@ define([
 			var selector = parseSelector('/someNode/someChildNode');
 			chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
+
 		it('allows // as root', function () {
 			jsonMLMapper.parse([
 				'someNode',
@@ -47,6 +46,7 @@ define([
 			var selector = parseSelector('//someChildNode');
 			chai.expect(evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
+
 		it('targets descendants with //', function () {
 			jsonMLMapper.parse([
 				'someNode',

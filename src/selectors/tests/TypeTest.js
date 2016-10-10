@@ -8,7 +8,7 @@ define([
 	Sequence,
 	BooleanValue,
 	Specificity
-	) {
+) {
 	'use strict';
 
 	/**
@@ -23,18 +23,18 @@ define([
 	TypeTest.prototype = Object.create(Selector.prototype);
 	TypeTest.prototype.constructor = TypeTest;
 
-	TypeTest.prototype.evaluate = function (dynamicContext) {
-		var booleanValue = dynamicContext.contextItem.value[0].instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
-		return Sequence.singleton(booleanValue);
-	};
-
 	TypeTest.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
 		}
 
 		return otherSelector instanceof TypeTest &&
-			this._type === otherSelector._type;
+		this._type === otherSelector._type;
+	};
+
+	TypeTest.prototype.evaluate = function (dynamicContext) {
+		var booleanValue = dynamicContext.contextItem.value[0].instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		return Sequence.singleton(booleanValue);
 	};
 
 	return TypeTest;

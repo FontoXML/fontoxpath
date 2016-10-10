@@ -1,9 +1,6 @@
 define([
-	'fontoxml-blueprints',
-	'fontoxml-dom-utils',
-
-	'../selectors/pathExpression/PathSelector',
-	'../selectors/pathExpression/AbsolutePathSelector',
+	'../selectors/path/PathSelector',
+	'../selectors/path/AbsolutePathSelector',
 	'../selectors/Filter',
 	'../selectors/axes/AttributeAxis',
 	'../selectors/axes/AncestorAxis',
@@ -14,7 +11,6 @@ define([
 	'../selectors/axes/PrecedingSiblingAxis',
 	'../selectors/axes/SelfAxis',
 	'../selectors/tests/NodeNameSelector',
-	'../selectors/tests/NodePredicateSelector',
 	'../selectors/tests/NodeTypeSelector',
 	'../selectors/tests/ProcessingInstructionTargetSelector',
 	'../selectors/tests/TypeTest',
@@ -23,7 +19,6 @@ define([
 	'../selectors/operators/boolean/AndOperator',
 	'../selectors/operators/boolean/OrOperator',
 	'../selectors/operators/UniversalSelector',
-	'../selectors/operators/boolean/NotOperator',
 	'../selectors/operators/Union',
 	'../selectors/operators/SequenceOperator',
 	'../selectors/operators/SimpleMapOperator',
@@ -36,13 +31,8 @@ define([
 
 	'../selectors/literals/Literal',
 	'../selectors/LetExpression',
-	'../selectors/VarRef',
-
-	'./xPathParser'
+	'../selectors/VarRef'
 ], function (
-	blueprints,
-	domUtils,
-
 	PathSelector,
 	AbsolutePathSelector,
 	Filter,
@@ -55,7 +45,6 @@ define([
 	PrecedingSiblingAxis,
 	SelfSelector,
 	NodeNameSelector,
-	NodePredicateSelector,
 	NodeTypeSelector,
 	ProcessingInstructionTargetSelector,
 	TypeTest,
@@ -64,7 +53,6 @@ define([
 	AndOperator,
 	OrOperator,
 	UniversalSelector,
-	NotOperator,
 	Union,
 	SequenceOperator,
 	SimpleMapOperator,
@@ -77,9 +65,7 @@ define([
 
 	Literal,
 	LetExpression,
-	VarRef,
-
-	xPathParser
+	VarRef
 ) {
 	'use strict';
 

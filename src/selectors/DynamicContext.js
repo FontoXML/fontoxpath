@@ -1,6 +1,7 @@
 define([
 ], function (
 ) {
+	'use strict';
 
 	function DynamicContext (context) {
 		this.contextItem = context.contextItem;

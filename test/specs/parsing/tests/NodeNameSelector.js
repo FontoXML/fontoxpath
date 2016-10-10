@@ -1,17 +1,13 @@
 define([
 	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-dom-utils/jsonMLMapper',
 	'slimdom',
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
 	'fontoxml-selectors/evaluateXPath',
 	'fontoxml-selectors/evaluateXPathToBoolean'
 ], function (
 	blueprint,
-	jsonMLMapper,
 	slimdom,
 
-	parseSelector,
 	evaluateXPath,
 	evaluateXPathToBoolean
 ) {
@@ -21,6 +17,7 @@ define([
 	beforeEach(function () {
 		documentNode = slimdom.createDocument();
 	});
+
 	describe('nameTests', function () {
 		it('allows wildcards', function () {
 			var element = documentNode.createElement('someElement');

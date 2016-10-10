@@ -5,7 +5,7 @@ define([
 	'./selectors/selectorFluentApi'
 ], function (
 	UniversalSelector
-	) {
+) {
 	'use strict';
 
 	return function matchAnything () {

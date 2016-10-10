@@ -1,10 +1,8 @@
 define([
 	'./Selector',
-	'./Specificity',
 	'./dataTypes/Sequence'
 ], function (
 	Selector,
-	Specificity,
 	Sequence
 ) {
 	'use strict';

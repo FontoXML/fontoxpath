@@ -3,11 +3,13 @@ define([
 ], function (
 	AnyAtomicValue
 ) {
+	'use strict';
+
 	/**
 	 * Abstract Numeric class, primary type for everything which is numeric: decimal, double and float
 	 */
-	function NumericValue (initialValue, simpleTypes) {
-		AnyAtomicValue.call(this, initialValue, simpleTypes);
+	function NumericValue (initialValue) {
+		AnyAtomicValue.call(this, initialValue);
 	}
 
 	NumericValue.prototype = Object.create(AnyAtomicValue.prototype);
@@ -28,7 +30,6 @@ define([
 		return simpleTypeName === 'xs:numeric' ||
 			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
 	};
-
 
 	return NumericValue;
 });

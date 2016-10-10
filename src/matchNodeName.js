@@ -5,7 +5,7 @@ define([
 	'./selectors/selectorFluentApi'
 ], function (
 	NodeNameSelector
-	) {
+) {
 	'use strict';
 
 	/**

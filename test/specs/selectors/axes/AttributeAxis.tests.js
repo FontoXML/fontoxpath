@@ -1,15 +1,20 @@
 define([
-	'fontoxml-selectors/selectors/Specificity',
 	'fontoxml-selectors/selectors/axes/AttributeAxis'
 ], function (
-	Specificity,
 	AttributeAxis
 ) {
 	'use strict';
 
+	var equalSelector = {
+			equals: sinon.stub().returns(true)
+		},
+		unequalSelector = {
+			equals: sinon.stub().returns(false)
+		};
+
 	describe('AttributeAxis.equals()', function () {
 		it('returns true if compared with itself', function () {
-			var attribute1 = new AttributeAxis({ equals: sinon.stub().returns(true) }),
+			var attribute1 = new AttributeAxis(equalSelector),
 				attribute2 = attribute1;
 
 			var result1 = attribute1.equals(attribute2),
@@ -20,8 +25,8 @@ define([
 		});
 
 		it('returns true if compared with an equal other AttributeAxis', function () {
-			var attribute1 = new AttributeAxis({ equals: sinon.stub().returns(true) }),
-				attribute2 = new AttributeAxis({ equals: sinon.stub().returns(true) });
+			var attribute1 = new AttributeAxis(equalSelector),
+				attribute2 = new AttributeAxis(equalSelector);
 
 			var result1 = attribute1.equals(attribute2),
 				result2 = attribute2.equals(attribute1);
@@ -31,8 +36,8 @@ define([
 		});
 
 		it('returns false if compared with an unequal other AttributeAxis', function () {
-			var attribute1 = new AttributeAxis({ equals: sinon.stub().returns(false) }),
-				attribute2 = new AttributeAxis({ equals: sinon.stub().returns(false) });
+			var attribute1 = new AttributeAxis(unequalSelector),
+				attribute2 = new AttributeAxis(unequalSelector);
 
 			var result1 = attribute1.equals(attribute2),
 				result2 = attribute2.equals(attribute1);

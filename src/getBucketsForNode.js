@@ -2,7 +2,7 @@ define([
 	'fontoxml-dom-utils/domInfo'
 ], function (
 	domInfo
-	) {
+) {
 	'use strict';
 
 	return function getBucketsForNode (node) {

@@ -75,6 +75,4 @@ define([
 	};
 
 	return Literal;
-})
-
-;
+});

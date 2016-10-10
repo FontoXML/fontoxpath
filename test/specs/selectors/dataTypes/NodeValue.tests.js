@@ -1,18 +1,21 @@
 define([
-	'fontoxml-selectors/selectors/dataTypes/NodeValue',
 	'fontoxml-selectors/selectors/dataTypes/AttributeNode',
+	'fontoxml-selectors/selectors/dataTypes/NodeValue',
+	'fontoxml-selectors/selectors/dataTypes/StringValue',
 	'fontoxml-blueprints/readOnlyBlueprint',
 	'slimdom'
 ], function (
-	NodeValue,
 	AttributeNode,
+	NodeValue,
+	StringValue,
 	readOnlyBlueprint,
 	slimdom
 ) {
 	'use strict';
 
+	var documentNode;
+
 	describe('NodeValue.instanceOfType()', function () {
-		var documentNode;
 		beforeEach(function () {
 			documentNode = new slimdom.Document();
 		});
@@ -147,6 +150,24 @@ define([
 				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
 				chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
 			});
+		});
+	});
+
+	var someNode,
+		someTextNode;
+
+	describe('NodeValue.atomize()', function () {
+		beforeEach(function () {
+			documentNode = new slimdom.Document();
+			someNode = documentNode.createElement('someElement');
+			someTextNode = documentNode.createTextNode('A piece of text');
+			someNode.appendChild(someTextNode);
+		});
+
+		it('returns an atomized value', function () {
+			var nodeValue = new NodeValue(readOnlyBlueprint, someNode),
+				atomizedValue = nodeValue.atomize();
+			chai.expect(atomizedValue).to.deep.equal(new StringValue('A piece of text'));
 		});
 	});
 });

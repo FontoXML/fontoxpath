@@ -15,6 +15,7 @@ define([
 			specificity: new Specificity({}),
 			equals: sinon.stub().returns(false)
 		};
+
 	describe('DescendantAxis.equals()', function () {
 		it('returns true if compared with itself', function () {
 			var descendant1 = new DescendantAxis(equalSelector),
@@ -49,7 +50,7 @@ define([
 			chai.expect(result2).to.equal(false);
 		});
 
-		it('returns false if compared with a DescendantAxis with a different subselector', function () {
+		it('returns false if compared with a DescendantAxis with a different inclusiveness', function () {
 			var descendant1 = new DescendantAxis(equalSelector, {inclusive: true}),
 				descendant2 = new DescendantAxis(equalSelector, {inclusive: false});
 

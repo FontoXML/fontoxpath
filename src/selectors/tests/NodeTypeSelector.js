@@ -8,7 +8,7 @@ define([
 	Sequence,
 	BooleanValue,
 	Specificity
-	) {
+) {
 	'use strict';
 
 	/**

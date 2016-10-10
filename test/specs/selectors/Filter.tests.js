@@ -7,7 +7,6 @@ define([
 ) {
 	'use strict';
 
-
 	var equalSelector = {
 			specificity: new Specificity({}),
 			equals: sinon.stub().returns(true)
@@ -19,91 +18,45 @@ define([
 
 	describe('Filter.equals()', function () {
 		it('returns true if compared with itself', function () {
-			var filter1 = new Filter(
-					equalSelector,
-					[equalSelector]);
-			var filter2 = filter1;
-
-			var result1 = filter1.equals(filter2),
-				result2 = filter2.equals(filter1);
-
-			chai.expect(result1).to.equal(true);
-			chai.expect(result2).to.equal(true);
+			var filter1 = new Filter(equalSelector, [equalSelector]),
+				filter2 = filter1;
+			chai.expect(filter1.equals(filter2)).to.equal(true);
+			chai.expect(filter2.equals(filter1)).to.equal(true);
 		});
 
 		it('it returns true if compared with an equal other Filter', function () {
-			var filter1 = new Filter(
-					equalSelector,
-					[equalSelector]);
-			var filter2 = new Filter(
-					equalSelector,
-					[equalSelector]);
-
-			var result1 = filter1.equals(filter2),
-				result2 = filter2.equals(filter1);
-
-			chai.expect(result1).to.equal(true);
-			chai.expect(result2).to.equal(true);
+			var filter1 = new Filter(equalSelector, [equalSelector]),
+				filter2 = new Filter(equalSelector, [equalSelector]);
+			chai.expect(filter1.equals(filter2)).to.equal(true);
+			chai.expect(filter2.equals(filter1)).to.equal(true);
 		});
 
 		it('it returns false if compared with a Filter unequal for the first subSelector', function () {
-			var filter1 = new Filter(
-					unequalSelector,
-					[equalSelector]);
-			var filter2 = new Filter(
-					unequalSelector,
-					[equalSelector]);
-
-			var result1 = filter1.equals(filter2),
-				result2 = filter2.equals(filter1);
-
-			chai.expect(result1).to.equal(false);
-			chai.expect(result2).to.equal(false);
+			var filter1 = new Filter(unequalSelector, [equalSelector]),
+				filter2 = new Filter(unequalSelector, [equalSelector]);
+			chai.expect(filter1.equals(filter2)).to.equal(false);
+			chai.expect(filter2.equals(filter1)).to.equal(false);
 		});
 
 		it('it returns false if compared with a Filter unequal for the one of the filter subselectors', function () {
-			var filter1 = new Filter(
-					equalSelector,
-					[unequalSelector]);
-			var filter2 = new Filter(
-					equalSelector,
-					[unequalSelector]);
-
-			var result1 = filter1.equals(filter2),
-				result2 = filter2.equals(filter1);
-
-			chai.expect(result1).to.equal(false);
-			chai.expect(result2).to.equal(false);
+			var filter1 = new Filter(equalSelector, [unequalSelector]),
+				filter2 = new Filter(equalSelector, [unequalSelector]);
+			chai.expect(filter1.equals(filter2)).to.equal(false);
+			chai.expect(filter2.equals(filter1)).to.equal(false);
 		});
 
 		it('it returns false if compared with a Filter unequal for the second of the filter subselectors', function () {
-			var filter1 = new Filter(
-					equalSelector,
-					[equalSelector, unequalSelector]);
-			var filter2 = new Filter(
-					equalSelector,
-					[equalSelector, unequalSelector]);
-
-			var result1 = filter1.equals(filter2),
-				result2 = filter2.equals(filter1);
-
-			chai.expect(result1).to.equal(false);
-			chai.expect(result2).to.equal(false);
+			var filter1 = new Filter(equalSelector, [equalSelector, unequalSelector]),
+				filter2 = new Filter(equalSelector, [equalSelector, unequalSelector]);
+			chai.expect(filter1.equals(filter2)).to.equal(false);
+			chai.expect(filter2.equals(filter1)).to.equal(false);
 		});
 
 		it('it returns false if compared with an unequal other Filter', function () {
-			var filter1 = new Filter(
-					unequalSelector,
-					[unequalSelector]);
-			var filter2 = new Filter(
-					unequalSelector,
-					[unequalSelector]);
-
-			var result1 = filter1.equals(filter2),
-				result2 = filter2.equals(filter1);
-
-			chai.expect(result1).to.equal(false);
-			chai.expect(result2).to.equal(false);
+			var filter1 = new Filter(unequalSelector, [unequalSelector]),
+				filter2 = new Filter(unequalSelector, [unequalSelector]);
+			chai.expect(filter1.equals(filter2)).to.equal(false);
+			chai.expect(filter2.equals(filter1)).to.equal(false);
 		});
 	});
 });

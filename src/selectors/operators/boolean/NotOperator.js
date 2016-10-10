@@ -1,12 +1,8 @@
 define([
-	'fontoxml-blueprints',
-
 	'../../Selector',
 	'../../dataTypes/Sequence',
 	'../../dataTypes/BooleanValue'
 ], function (
-	blueprints,
-
 	Selector,
 	Sequence,
 	BooleanValue

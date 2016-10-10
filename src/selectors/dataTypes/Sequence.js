@@ -5,6 +5,8 @@ define([
 	Value,
 	NodeValue
 ) {
+	'use strict';
+
 	function Sequence (initialValues) {
 		Value.call(this, initialValues || []);
 	}

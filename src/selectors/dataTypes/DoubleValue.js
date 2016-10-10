@@ -3,6 +3,8 @@ define([
 ], function (
 	NumericValue
 ) {
+	'use strict';
+
 	function DoubleValue (initialValue) {
 		NumericValue.call(this, initialValue);
 	}

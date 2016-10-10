@@ -1,6 +1,6 @@
 define([
 ], function (
-	) {
+) {
 	'use strict';
 
 	return function isSameAttributeValues (values1, values2) {

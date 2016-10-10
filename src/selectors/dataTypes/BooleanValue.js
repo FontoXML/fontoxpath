@@ -3,6 +3,8 @@ define([
 ], function (
 	AnyAtomicValue
 ) {
+	'use strict';
+
 	function BooleanValue (initialValue) {
 		AnyAtomicValue.call(this, initialValue);
 	}
@@ -22,13 +24,12 @@ define([
 
 		switch (anyAtomicValue.value) {
 			case 'true':
-				return BooleanValue.TRUE;
-			case 'false':
-				return BooleanValue.FALSE;
-			case '0':
-				return BooleanValue.FALSE;
 			case '1':
 				return BooleanValue.TRUE;
+			case 'false':
+			case '0':
+				return BooleanValue.FALSE;
+
 			default:
 				throw new Error('XPTY0004: can not cast ' + value + ' to xs:boolean');
 		}
@@ -44,7 +45,6 @@ define([
 		return simpleTypeName === this.primitiveTypeName ||
 			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
 	};
-
 
 	return BooleanValue;
 });

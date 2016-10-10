@@ -12,7 +12,7 @@ define([
 	Sequence,
 	Selector,
 	Specificity
-	) {
+) {
 	'use strict';
 
 	/**

@@ -1,9 +1,5 @@
 define([
-	'fontoxml-dom-identification/getNodeId',
-	'./selectors/dataTypes/AttributeNode'
 ], function (
-	getNodeId,
-	AttributeNode
 ) {
 	'use strict';
 

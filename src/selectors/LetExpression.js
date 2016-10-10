@@ -1,11 +1,7 @@
 define([
-	'./Selector',
-	'./Specificity',
-	'./dataTypes/Sequence'
+	'./Selector'
 ], function (
-	Selector,
-	Specificity,
-	Sequence
+	Selector
 ) {
 	'use strict';
 
@@ -46,7 +42,6 @@ define([
 				variables: newVariables
 			}));
 	};
-
 
 	return LetExpression;
 });

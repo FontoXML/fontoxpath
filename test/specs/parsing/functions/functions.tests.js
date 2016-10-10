@@ -4,7 +4,6 @@ define([
 	'slimdom',
 
 	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/addXPathCustomTest',
 	'fontoxml-selectors/evaluateXPath'
 ], function (
 	blueprint,
@@ -12,7 +11,6 @@ define([
 	slimdom,
 
 	parseSelector,
-	addXPathCustomTest,
 	evaluateXPath
 ) {
 	'use strict';
@@ -34,6 +32,7 @@ define([
 					evaluateXPath(selector, documentNode, blueprint)
 				).to.deep.equal([]);
 			});
+
 			it('The function returns a sequence of strings formed by breaking the $input string into a sequence of strings, treating any substring that matches $pattern as a separator. The separators themselves are not returned.', function () {
 				var selector = parseSelector('tokenize("A piece of text")');
 				chai.expect(
@@ -44,12 +43,14 @@ define([
 					evaluateXPath(selector, documentNode, blueprint)
 				).to.deep.equal(['A', 'piece', 'of', 'text']);
 			});
+
 			it('Except with the one-argument form of the function, if a separator occurs at the start of the $input string, the result sequence will start with a zero-length string. Similarly, zero-length strings will also occur in the result sequence if a separator occurs at the end of the $input string, or if two adjacent substrings match the supplied $pattern.', function () {
 				var selector = parseSelector('tokenize(",A,piece,of,text", ",")');
 				chai.expect(
 					evaluateXPath(selector, documentNode, blueprint)
 				).to.deep.equal(['', 'A', 'piece', 'of', 'text']);
 			});
+
 			// Javascript regexes don't work this way
 			it.skip('If two alternatives within the supplied $pattern both match at the same position in the $input string, then the match that is chosen is the first.', function () {
 				var selector = parseSelector('tokenize("abracadabra", "(ab)|(a)")');
@@ -81,6 +82,7 @@ define([
 					evaluateXPath(selector, documentNode, blueprint)
 				).to.equal(3);
 			});
+
 			it('can target the second to last item', function () {
 				var selector = parseSelector('(1,2,3)[last() - 1]');
 				chai.expect(
@@ -317,13 +319,16 @@ define([
 			it('returns 0 for the empty string', function () {
 				chai.expect(evaluateXPath('string-length(())', documentNode, blueprint)).to.equal(0);
 			});
+
 			it('returns the string length', function () {
 				chai.expect(evaluateXPath('string-length("fortytwo")', documentNode, blueprint)).to.equal(8);
 			});
+
 			it('uses the context node when no arguments were passed', function () {
 				jsonMLMapper.parse(['someElement', 'A piece of text'], documentNode);
 				chai.expect(evaluateXPath('/someElement/string-length()', documentNode, blueprint)).to.equal(15);
 			});
+
 			it('counts codepoints.not characters', function () {
 				// '💩'.length === 2
 				chai.expect(evaluateXPath('string-length("💩")', documentNode, blueprint)).to.equal(1);
@@ -334,6 +339,7 @@ define([
 			it('The function returns an xs:string created by concatenating the items in the sequence $arg1, in order, using the value of $arg2 as a separator between adjacent items.', function () {
 				chai.expect(evaluateXPath('string-join(("a", "b", "c"), "X")', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('aXbXc');
 			});
+
 			it('If the value of $arg2 is the zero-length string, then the members of $arg1 are concatenated without a separator.', function () {
 				chai.expect(evaluateXPath('string-join(("a", "b", "c"))', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('abc');
 			});
@@ -341,6 +347,7 @@ define([
 			it('If the value of $arg2 is the zero-length string, then the members of $arg1 are concatenated without a separator.', function () {
 				chai.expect(evaluateXPath('string-join(("a", "b", "c"), "")', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('abc');
 			});
+			
 			it('returns the empty string when joining the empty sequence', function () {
 				chai.expect(evaluateXPath('string-join((), "X")', documentNode, blueprint, {}, evaluateXPath.STRING_TYPE)).to.equal('');
 			});

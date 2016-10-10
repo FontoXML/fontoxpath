@@ -1,16 +1,14 @@
 define([
 	'../Selector',
-	'../dataTypes/Sequence',
-	'../dataTypes/NodeValue'
+	'../dataTypes/Sequence'
 ], function (
 	Selector,
-	Sequence,
-	NodeValue
+	Sequence
 ) {
 	'use strict';
 
 	/**
-	 * @param  {Selector}  childSelector
+	 * @param  {Selector}  selector
 	 */
 	function SelfAxis (selector) {
 		Selector.call(this, selector.specificity, Selector.RESULT_ORDER_SORTED);
@@ -38,10 +36,6 @@ define([
 			this._selector.equals(otherSelector._selector);
 	};
 
-	SelfAxis.prototype.getBucket = function () {
-		return this._selector.getBucket();
-	};
-
 	SelfAxis.prototype.evaluate = function (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem;
 
@@ -51,6 +45,10 @@ define([
 				contextSequence: nodeSequence
 			})).getEffectiveBooleanValue();
 		}.bind(this)));
+	};
+
+	SelfAxis.prototype.getBucket = function () {
+		return this._selector.getBucket();
 	};
 
 	return SelfAxis;

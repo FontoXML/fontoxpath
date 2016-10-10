@@ -1,10 +1,8 @@
 define([
 	'fontoxml-selectors/selectors/Specificity',
-	'fontoxml-selectors/selectors/functions/FunctionCall',
 	'fontoxml-selectors/selectors/conditional/IfExpression'
 ], function (
 	Specificity,
-	FunctionCall,
 	IfExpression
 ) {
 	'use strict';

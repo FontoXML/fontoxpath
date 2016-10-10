@@ -7,12 +7,18 @@ define([
 ) {
 	'use strict';
 
+	var equalSelector = {
+			specificity: new Specificity({}),
+			equals: sinon.stub().returns(true)
+		},
+		unequalSelector = {
+			specificity: new Specificity({}),
+			equals: sinon.stub().returns(false)
+		};
+
 	describe('ParentAxis.equals()', function () {
 		it('returns true if compared with itself', function () {
-			var parent1 = new ParentAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				}),
+			var parent1 = new ParentAxis(equalSelector),
 				parent2 = parent1;
 
 			var result1 = parent1.equals(parent2),
@@ -23,14 +29,8 @@ define([
 		});
 
 		it('returns true if compared with an equal other ParentAxis', function () {
-			var parent1 = new ParentAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				}),
-				parent2 = new ParentAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				});
+			var parent1 = new ParentAxis(equalSelector),
+				parent2 = new ParentAxis(equalSelector);
 
 			var result1 = parent1.equals(parent2),
 				result2 = parent2.equals(parent1);
@@ -40,14 +40,8 @@ define([
 		});
 
 		it('returns false if compared with an unequal other ParentAxis', function () {
-			var parent1 = new ParentAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(false)
-				}),
-				parent2 = new ParentAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(false)
-				});
+			var parent1 = new ParentAxis(unequalSelector),
+				parent2 = new ParentAxis(unequalSelector);
 
 			var result1 = parent1.equals(parent2),
 				result2 = parent2.equals(parent1);

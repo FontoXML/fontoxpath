@@ -8,7 +8,7 @@ define([
 	BooleanValue,
 	Selector,
 	Specificity
-	) {
+) {
 	'use strict';
 
 	/**
@@ -31,22 +31,22 @@ define([
 		return this._isMatchingNode.call(undefined, node, blueprint);
 	};
 
-	NodePredicateSelector.prototype.evaluate = function (dynamicContext) {
-		var sequence = dynamicContext.contextItem,
-			domFacade = dynamicContext.domFacade;
-		// TODO: non-singleton nodeTests
-		var booleanValue = this.matches(sequence.value[0].value, domFacade) ? BooleanValue.TRUE : BooleanValue.FALSE;
-		return Sequence.singleton(booleanValue);
-	};
-
 	NodePredicateSelector.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
 		}
 
 		return otherSelector instanceof NodePredicateSelector &&
-			// Not perfect, but function logically compare cannot be done
-			this._isMatchingNode === otherSelector.isMatchingNode;
+		// Not perfect, but function logically compare cannot be done
+		this._isMatchingNode === otherSelector.isMatchingNode;
+	};
+
+	NodePredicateSelector.prototype.evaluate = function (dynamicContext) {
+		var sequence = dynamicContext.contextItem,
+			domFacade = dynamicContext.domFacade;
+		// TODO: non-singleton nodeTests
+		var booleanValue = this.matches(sequence.value[0].value, domFacade) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		return Sequence.singleton(booleanValue);
 	};
 
 	return NodePredicateSelector;

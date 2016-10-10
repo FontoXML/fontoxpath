@@ -10,6 +10,7 @@ define([
 	compileAstToSelector
 ) {
 	'use strict';
+
 	var indexedDB = window.indexedDB,
 		Blob = window.Blob,
 		Worker = window.Worker,

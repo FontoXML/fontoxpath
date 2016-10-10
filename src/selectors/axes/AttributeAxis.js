@@ -1,18 +1,12 @@
 define([
-	'fontoxml-dom-utils/domInfo',
-
 	'../Selector',
 	'../Specificity',
-	'../isSameArray',
 	'../dataTypes/Sequence',
 	'../dataTypes/NodeValue',
 	'../dataTypes/AttributeNode'
 ], function (
-	domInfo,
-
 	Selector,
 	Specificity,
-	isSameArray,
 	Sequence,
 	NodeValue,
 	AttributeNode

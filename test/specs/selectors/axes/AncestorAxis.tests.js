@@ -7,12 +7,18 @@ define([
 ) {
 	'use strict';
 
+	var equalSelector = {
+			specificity: new Specificity({}),
+			equals: sinon.stub().returns(true)
+		},
+		unequalSelector = {
+			specificity: new Specificity({}),
+			equals: sinon.stub().returns(false)
+		};
+
 	describe('AncestorAxis.equals()', function () {
 		it('returns true if compared with itself', function () {
-			var ancestor1 = new AncestorAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				}),
+			var ancestor1 = new AncestorAxis(equalSelector),
 				ancestor2 = ancestor1;
 
 			var result1 = ancestor1.equals(ancestor2),
@@ -23,14 +29,8 @@ define([
 		});
 
 		it('returns true if compared with an equal other AncestorAxis', function () {
-			var ancestor1 = new AncestorAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				}),
-				ancestor2 = new AncestorAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				});
+			var ancestor1 = new AncestorAxis(equalSelector),
+				ancestor2 = new AncestorAxis(equalSelector);
 
 			var result1 = ancestor1.equals(ancestor2),
 				result2 = ancestor2.equals(ancestor1);
@@ -39,15 +39,9 @@ define([
 			chai.expect(result2).to.equal(true);
 		});
 
-		it('returns false if compared with an AncestorAxis unequal on selector', function () {
-			var ancestor1 = new AncestorAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(false)
-				}),
-				ancestor2 = new AncestorAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(false)
-				});
+		it('returns false if compared with an unequal other AncestorAxis', function () {
+			var ancestor1 = new AncestorAxis(unequalSelector),
+				ancestor2 = new AncestorAxis(unequalSelector);
 
 			var result1 = ancestor1.equals(ancestor2),
 				result2 = ancestor2.equals(ancestor1);
@@ -57,14 +51,8 @@ define([
 		});
 
 		it('returns false if compared with an AncestorAxis unequal on inclusiveness', function () {
-			var ancestor1 = new AncestorAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				}, {inclusive: false}),
-				ancestor2 = new AncestorAxis({
-					specificity: new Specificity({}),
-					equals: sinon.stub().returns(true)
-				}, {inclusive: true});
+			var ancestor1 = new AncestorAxis(equalSelector, {inclusive: false}),
+				ancestor2 = new AncestorAxis(equalSelector, {inclusive: true});
 
 			var result1 = ancestor1.equals(ancestor2),
 				result2 = ancestor2.equals(ancestor1);

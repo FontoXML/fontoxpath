@@ -14,7 +14,7 @@ define([
 	parseSelector,
 	functionRegistry,
 	evaluateXPath
-	) {
+) {
 	'use strict';
 
 	describe('registerCustomXPathFunction()', function () {

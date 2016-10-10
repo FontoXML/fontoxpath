@@ -1,18 +1,14 @@
 define([
 	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-dom-utils/jsonMLMapper',
 	'slimdom',
 
 	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/addXPathCustomTest',
 	'fontoxml-selectors/evaluateXPath'
 ], function (
 	blueprint,
-	jsonMLMapper,
 	slimdom,
 
 	parseSelector,
-	addXPathCustomTest,
 	evaluateXPath
 ) {
 	'use strict';
@@ -37,5 +33,4 @@ define([
 			).to.deep.equal(true);
 		});
 	});
-
 });

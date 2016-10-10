@@ -5,7 +5,6 @@ define([
 	'../../dataTypes/IntegerValue',
 	'../../dataTypes/UntypedAtomicValue',
 	'../../Selector',
-
 ], function (
 	Sequence,
 	DoubleValue,

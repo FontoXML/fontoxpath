@@ -1,16 +1,13 @@
 define([
 	'fontoxml-dom-identification/getNodeId',
-	'fontoxml-dom-utils/domInfo',
 	'./UntypedAtomicValue',
 	'./StringValue'
 ], function (
 	getNodeId,
-	domInfo,
 	UntypedAtomicValue,
 	StringValue
 ) {
 	'use strict';
-
 
 	function AttributeNode (element, attributeName, attributeValue) {
 		this.value = attributeValue;

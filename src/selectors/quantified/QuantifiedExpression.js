@@ -40,7 +40,6 @@ define([
 				return inClause[0] === otherSelector._inClauses[index][0] &&
 					inClause[1].equals(otherSelector._inClauses[index][1]);
 			});
-
 	};
 
 	QuantifiedExpression.prototype.evaluate = function (dynamicContext) {

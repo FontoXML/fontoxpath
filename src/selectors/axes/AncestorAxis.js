@@ -17,6 +17,7 @@ define([
 
 	/**
 	 * @param  {Selector}  ancestorSelector
+	 * @param  {Object}    options
 	 */
 	function AncestorAxis (ancestorSelector, options) {
 		options = options || {};

@@ -4,7 +4,7 @@ define([
 ], function (
 	SimpleMapOperator,
 	Specificity
-	) {
+) {
 	'use strict';
 
 	var equalSelector = {

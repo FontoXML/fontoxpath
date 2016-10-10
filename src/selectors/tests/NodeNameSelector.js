@@ -1,14 +1,10 @@
 define([
-	'fontoxml-dom-utils/domInfo',
-
 	'../dataTypes/BooleanValue',
 	'../dataTypes/Sequence',
 	'../Selector',
 	'../Specificity',
 	'../isSameArray'
 ], function (
-	domInfo,
-
 	BooleanValue,
 	Sequence,
 	Selector,
@@ -84,5 +80,6 @@ define([
 		}
 		return 'name-' + this._nodeName;
 	};
+
 	return NodeNameSelector;
 });
