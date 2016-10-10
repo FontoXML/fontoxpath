@@ -61,8 +61,10 @@ define([
 		// Atomize both sequences
 		var firstAtomizedSequence = firstSequence.atomize();
 		var secondAtomizedSequence = secondSequence.atomize();
-		return Sequence.singleton(
-			new BooleanValue(this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence)));
+		var booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ?
+			BooleanValue.TRUE :
+			BooleanValue.FALSE;
+		return Sequence.singleton(booleanValue);
 	};
 
 	return Compare;

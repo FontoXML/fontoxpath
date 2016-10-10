@@ -41,7 +41,7 @@ define([
 	};
 
 	UniversalSelector.prototype.evaluate = function () {
-		return Sequence.singleton(new BooleanValue(true));
+		return Sequence.singleton(BooleanValue.TRUE);
 	};
 
 	return UniversalSelector;

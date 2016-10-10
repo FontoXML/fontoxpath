@@ -40,7 +40,7 @@ define([
 		// Assume singleton
 		var node = sequence.value[0].value;
 		var isMatchingProcessingInstruction = domInfo.isProcessingInstruction(node) && node.target === this._target;
-		return Sequence.singleton(new BooleanValue(isMatchingProcessingInstruction));
+		return Sequence.singleton(isMatchingProcessingInstruction ? BooleanValue.TRUE : BooleanValue.FALSE);
 	};
 
 	ProcessingInstructionTargetSelector.prototype.equals = function (otherSelector) {

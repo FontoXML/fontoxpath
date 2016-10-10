@@ -53,7 +53,7 @@ define([
 						[undefined].concat(simplifiedArguments))
 				// TODO: Fix this when doing dep tracking
 					.call(undefined, contextItem.value[0].value, domFacade._blueprint);
-				return Sequence.singleton(new BooleanValue(!!result));
+				return Sequence.singleton(result ? BooleanValue.TRUE : BooleanValue.FALSE);
 			}
 		}
 		var registeredFunction = functionRegistry.getFunction(this._functionName, evaluatedArguments);

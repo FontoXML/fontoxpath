@@ -32,7 +32,7 @@ define([
 	}
 
 	function fnBoolean (dynamicContext, sequence) {
-		return Sequence.singleton(new BooleanValue(sequence.getEffectiveBooleanValue()));
+		return Sequence.singleton(sequence.getEffectiveBooleanValue() ? BooleanValue.TRUE : BooleanValue.FALSE);
 	}
 
 	function fnConcat (dynamicContext) {
@@ -52,7 +52,7 @@ define([
 	}
 
 	function fnFalse () {
-		return Sequence.singleton(new BooleanValue(false));
+		return Sequence.singleton(BooleanValue.FALSE);
 	}
 
 	function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
@@ -205,7 +205,7 @@ define([
 	}
 
 	function fnTrue () {
-		return Sequence.singleton(new BooleanValue(true));
+		return Sequence.singleton(BooleanValue.TRUE);
 	}
 
 	function opTo (dynamicContext, fromValue, toValue) {
@@ -241,7 +241,7 @@ define([
 	}
 
 	function fnNot (dynamicContext, sequence) {
-		return Sequence.singleton(new BooleanValue(!sequence.getEffectiveBooleanValue()));
+		return Sequence.singleton(sequence.getEffectiveBooleanValue() ? BooleanValue.FALSE : BooleanValue.TRUE);
 	}
 
 	return [

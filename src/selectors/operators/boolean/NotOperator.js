@@ -37,7 +37,7 @@ define([
 
 	NotOperator.prototype.evaluate = function (dynamicContext) {
 		var result = this._selectorToInvert.evaluate(dynamicContext);
-		return Sequence.singleton(new BooleanValue(!result.getEffectiveBooleanValue()));
+		return Sequence.singleton((!result.getEffectiveBooleanValue()) ? BooleanValue.TRUE : BooleanValue.FALSE);
 	};
 
 	NotOperator.prototype.equals = function (otherSelector) {

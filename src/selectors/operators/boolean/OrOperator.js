@@ -96,7 +96,7 @@ define([
 				return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
 			});
 
-		return Sequence.singleton(new BooleanValue(result));
+		return Sequence.singleton(result ? BooleanValue.TRUE : BooleanValue.FALSE);
 	};
 
 	OrOperator.prototype.getBucket = function () {

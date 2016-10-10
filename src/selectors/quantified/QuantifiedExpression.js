@@ -77,17 +77,18 @@ define([
 				var result = this._satisfiesExpr.evaluate(context);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
-					return Sequence.singleton(new BooleanValue(true));
+					return Sequence.singleton(BooleanValue.TRUE);
 				}
 				else if (!result.getEffectiveBooleanValue() && this._quantifier === 'every') {
-					return Sequence.singleton(new BooleanValue(false));
+					return Sequence.singleton(BooleanValue.FALSE);
 				}
 				hasOverflowed = true;
 				break;
 			}
 		}
 
-		return Sequence.singleton(new BooleanValue(this._quantifier !== 'some'));
+		// An every quantifier is true if all items match, a some is false if none of the items match
+		return Sequence.singleton(this._quantifier === 'every' ? BooleanValue.TRUE : BooleanValue.FALSE);
 	};
 
 	return QuantifiedExpression;

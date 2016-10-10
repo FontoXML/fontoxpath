@@ -58,7 +58,7 @@ define([
 			node = sequence.value[0];
 
 		if (!node.instanceOfType('element()') && !node.instanceOfType('attribute()')) {
-			return Sequence.singleton(new BooleanValue(false));
+			return Sequence.singleton(BooleanValue.FALSE);
 		}
 
 		var returnValue;
@@ -74,7 +74,7 @@ define([
 				this._nodeName === node.nodeName;
 		}
 
-		return Sequence.singleton(new BooleanValue(returnValue));
+		return Sequence.singleton(returnValue ? BooleanValue.TRUE : BooleanValue.FALSE);
 	};
 
 	NodeNameSelector.prototype.getBucket = function () {

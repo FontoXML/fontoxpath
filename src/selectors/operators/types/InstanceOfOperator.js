@@ -45,13 +45,13 @@ define([
 		switch (this._multiplicity) {
 			case '?':
 				if (!evaluatedExpression.isEmpty() && !evaluatedExpression.isSingleton()) {
-					return Sequence.singleton(new BooleanValue(false));
+					return Sequence.singleton(BooleanValue.FALSE);
 				}
 				break;
 
 			case '+':
 				if (evaluatedExpression.isEmpty()) {
-					return Sequence.singleton(new BooleanValue(false));
+					return Sequence.singleton(BooleanValue.FALSE);
 				}
 				break;
 
@@ -60,7 +60,7 @@ define([
 
 			default:
 				if (!evaluatedExpression.isSingleton()) {
-					return Sequence.singleton(new BooleanValue(false));
+					return Sequence.singleton(BooleanValue.FALSE);
 				}
 		}
 
@@ -69,7 +69,7 @@ define([
 			return this._typeTest.evaluate(scopedContext).getEffectiveBooleanValue();
 		}.bind(this));
 
-		return Sequence.singleton(new BooleanValue(isInstanceOf));
+		return Sequence.singleton(isInstanceOf ? BooleanValue.TRUE : BooleanValue.FALSE);
 	};
 
 	return InstanceOfOperator;

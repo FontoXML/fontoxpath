@@ -20,7 +20,7 @@ define([
 	function adaptItemToXPathValue (value) {
 		switch(typeof value) {
 			case 'boolean':
-				return new BooleanValue(value);
+				return value ? BooleanValue.TRUE : BooleanValue.FALSE;
 			case 'number':
 				return new DecimalValue(value);
 			case 'string':
@@ -33,7 +33,7 @@ define([
 	function adaptJavaScriptValueToXPathValue (type, value) {
 		switch (type) {
 			case 'xs:boolean':
-				return new BooleanValue(!!value);
+				return value ? BooleanValue.TRUE : BooleanValue.FALSE;
 			case 'xs:string':
 				return new StringValue(value + '');
 			case 'xs:double':

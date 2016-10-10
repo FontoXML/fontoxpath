@@ -10,6 +10,9 @@ define([
 	BooleanValue.prototype = Object.create(AnyAtomicValue.prototype);
 	BooleanValue.prototype.constructor = BooleanValue;
 
+	BooleanValue.TRUE = BooleanValue.prototype.TRUE = new BooleanValue(true);
+	BooleanValue.FALSE = BooleanValue.prototype.FALSE = new BooleanValue(false);
+
 	BooleanValue.cast = function (value) {
 		if (value instanceof BooleanValue) {
 			return new BooleanValue(value.value);
@@ -17,26 +20,18 @@ define([
 
 		var anyAtomicValue = AnyAtomicValue.cast(value);
 
-		var booleanValue;
-
 		switch (anyAtomicValue.value) {
 			case 'true':
-				booleanValue = true;
-				break;
+				return BooleanValue.TRUE;
 			case 'false':
-				booleanValue = false;
-				break;
+				return BooleanValue.FALSE;
 			case '0':
-				booleanValue = false;
-				break;
+				return BooleanValue.FALSE;
 			case '1':
-				booleanValue = true;
-				break;
+				return BooleanValue.TRUE;
 			default:
 				throw new Error('XPTY0004: can not cast ' + value + ' to xs:boolean');
 		}
-
-		return new BooleanValue(booleanValue);
 	};
 
 	BooleanValue.prototype.getEffectiveBooleanValue = function () {

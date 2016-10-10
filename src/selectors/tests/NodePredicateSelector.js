@@ -35,7 +35,8 @@ define([
 		var sequence = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 		// TODO: non-singleton nodeTests
-		return Sequence.singleton(new BooleanValue(this.matches(sequence.value[0].value, domFacade)));
+		var booleanValue = this.matches(sequence.value[0].value, domFacade) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		return Sequence.singleton(booleanValue);
 	};
 
 	NodePredicateSelector.prototype.equals = function (otherSelector) {

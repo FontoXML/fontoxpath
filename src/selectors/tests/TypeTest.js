@@ -24,7 +24,8 @@ define([
 	TypeTest.prototype.constructor = TypeTest;
 
 	TypeTest.prototype.evaluate = function (dynamicContext) {
-		return Sequence.singleton(new BooleanValue(dynamicContext.contextItem.value[0].instanceOfType(this._type)));
+		var booleanValue = dynamicContext.contextItem.value[0].instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		return Sequence.singleton(booleanValue);
 	};
 
 	TypeTest.prototype.equals = function (otherSelector) {

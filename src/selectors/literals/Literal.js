@@ -40,7 +40,7 @@ define([
 				typedValue = new DoubleValue(value);
 				break;
 			case 'xs:boolean':
-				typedValue = new BooleanValue(value);
+				typedValue = value ? BooleanValue.TRUE : BooleanValue.FALSE;
 				break;
 			default:
 				throw new TypeError('Type ' + type + ' not expected in a literal');
