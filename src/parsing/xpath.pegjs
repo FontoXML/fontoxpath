@@ -281,7 +281,9 @@ ContextItemExpr
 
 // 63
 FunctionCall
- = !(ReservedFunctionNames _ "(" _ ")") name:EQName _ args:ArgumentList {return ["functionCall", name].concat(args)}
+// Do not match reserved function names as function names, they should be tests or other built-ins.
+// Match the '(' becase 'elementWhatever' IS a valid function name
+ = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {return ["functionCall", name].concat(args)}
 
 // 64
 Argument
