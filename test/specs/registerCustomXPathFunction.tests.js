@@ -48,13 +48,6 @@ describe('registerCustomXPath() =>', () => {
 			});
 	});
 
-	it('registers a given custom function', () => {
-		chai.assert(functionRegistry.hasFunction('fonto:custom-test1', 1));
-		chai.assert(functionRegistry.hasFunction('fonto:custom-test2', 2));
-		chai.assert(functionRegistry.hasFunction('fonto:custom-test3', 1));
-		chai.assert(functionRegistry.hasFunction('fonto:custom-test4', 1));
-	});
-
 	it('the registered function can be used in a xPath selector with return value boolean', () => {
 		chai.assert(evaluateXPath('fonto:custom-test1("test")', documentNode, blueprint) === true);
 		chai.assert(evaluateXPath('fonto:custom-test1("bla")', documentNode, blueprint) === false);

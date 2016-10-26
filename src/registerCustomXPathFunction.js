@@ -61,6 +61,6 @@ define([
 				return result;
 			};
 
-		functionRegistry.registerFunction(name, signature, callFunction);
+		functionRegistry.registerFunction(name, signature, returnType, callFunction);
 	};
 });

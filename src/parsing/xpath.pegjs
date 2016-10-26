@@ -1,7 +1,7 @@
 {
 	function appendRest (arr, optionalArr) {
 		if (!optionalArr) {
-	   	 	return arr;
+			return arr;
 		}
 		return arr.concat(optionalArr);
 	}
@@ -42,10 +42,10 @@ ExprSingle
 // 11
 LetExpr
 = bindings:SimpleLetClause _ "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
-    // The bindings part consists of the rangeVariable and the bindingSequence.
+	// The bindings part consists of the rangeVariable and the bindingSequence.
 	// Multiple bindings are syntactic sugar for 'let $x := 1 return let $y := $x * 2'
-    if (bindings.length === 1) return ["let"].concat(bindings[0], [returnExpr]);
-    return bindings.reduceRight(function (expression, binding) {
+	if (bindings.length === 1) return ["let"].concat(bindings[0], [returnExpr]);
+	return bindings.reduceRight(function (expression, binding) {
 	    return ["let"].concat(binding, [expression]);
 	  }, returnExpr)
   }
@@ -82,12 +82,13 @@ ComparisonExpr
 StringConcatExpr
  = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* {
      if (!rest.length) return first;
-     return appendRest(["functionCall", "concat", first].concat(rest))
+	 var args = [first].concat(rest);
+     return appendRest(["functionCall", ["namedFunctionRef", "concat", args.length], args])
    }
 
 // 20
 RangeExpr
- = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", "op:to", lhs, rhs]}
+ = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", "op:to", 2], [lhs, rhs]]}
 
 // 21
 AdditiveExpr
@@ -107,7 +108,7 @@ UnionExpr
 // 24. Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
  = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return ["op:"+type, rhs] })? {
-     return rhs === null ? lhs : ["functionCall", rhs[0], lhs, rhs[1]]
+     return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", rhs[0], 2], [lhs, rhs[1]]]
    }
 
 // 25
@@ -133,7 +134,8 @@ ArrowExpr
  = lhs:UnaryExpr functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier _ argumentList:ArgumentList _ { return [functionName, argumentList]})* {
      if (!functionParts.length) return lhs;
      return functionParts.reduce(function (previousFunction, functionPart) {
-       return ["functionCall", functionPart[0], previousFunction].concat(functionPart[1]);
+       var args = [previousFunction].concat(functionPart[1]);
+       return ["functionCall", ["namedFunctionRef", functionPart[0], args.length], args];
      }, lhs);
    }
 
@@ -187,11 +189,12 @@ LocationPathAbbreviation
 
 AxisStep
  = axis:Axis test:NodeTest predicates:Predicate* {
-   	  if (!predicates.length) {
-     	return [axis, test];
-  	   }
-       return ["filter", [axis, test], predicates]
-  	}
+     if (!predicates.length) {
+       return [axis, test];
+     }
+     return predicates.reduce(function (accumulator, current) { return ["filter", accumulator, current] }, [axis, test])
+//     return ["postfix", [axis, test], predicates]
+   }
  / AbbreviatedStep
 
 Axis
@@ -224,7 +227,11 @@ NameTest = EQName / "*"
 
 // 49
 PostfixExpr
- = expr:PrimaryExpr filters:(Predicate / ArgumentList / Lookup)* {return filters.length ? ["filter", expr, filters] : expr}
+ = expr:PrimaryExpr postfixExpr:(
+     filter:Predicate {return ["filter", filter]} /
+     argList:ArgumentList {return ["functionCall", argList]} /
+     lookup:Lookup {return ["lookup", lookup]}
+   )* {return postfixExpr.length ? postfixExpr.reduce(function (accumulator, currentExpr) { currentExpr.splice(1, 0, accumulator); return currentExpr; }, expr) : expr}
 
 // 50
 ArgumentList
@@ -235,7 +242,7 @@ Predicate
  = "[" e:Expr "]" {return e};
 
 // 53
-Lookup = "?" KeySpecifier
+Lookup = "?" key:KeySpecifier {return key}
 
 // 54
 KeySpecifier = NCName / VarRef / ParenthesizedExpr / "*"
@@ -250,8 +257,8 @@ PrimaryExpr
  / ParenthesizedExpr
  / ContextItemExpr
  / FunctionCall
+ / FunctionItemExpr
 // / MapConstructor
-// / FunctionItemExpr
 // / ArrayConstructor
 // / UnaryLookup
 
@@ -283,25 +290,25 @@ ContextItemExpr
 FunctionCall
 // Do not match reserved function names as function names, they should be tests or other built-ins.
 // Match the '(' becase 'elementWhatever' IS a valid function name
- = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {return ["functionCall", name].concat(args)}
+ = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {return ["functionCall", ["namedFunctionRef", name, args.length], args]}
 
 // 64
 Argument
- = ExprSingle
- / ArgumentPlaceholder
+ = ArgumentPlaceholder
+ / ExprSingle
 
 // 65
 ArgumentPlaceholder
- = "?" {return "placeholder"}
+ = "?" {return "argumentPlaceholder"}
 
 // 66
 FunctionItemExpr
  = NamedFunctionRef
- / InlineFunctionRef
+// / InlineFunctionRef
 
 // 67
 NamedFunctionRef
- = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", name, integer]}
+ = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", name, integer[1]]}
 
 // 68
 InlineFunctionRef

@@ -4,21 +4,21 @@ define([
 	'fontoxml-dom-utils/domInfo',
 	'./StringValue',
 	'./AttributeNode',
-	'./Value'
+	'./Item'
 ], function (
 	blueprints,
 	getNodeId,
 	domInfo,
 	StringValue,
 	AttributeNode,
-	Value
+	Item
 ) {
 	'use strict';
 
 	var blueprintQuery = blueprints.blueprintQuery;
 
 	function NodeValue (domFacade, node) {
-		Value.call(this, node);
+		Item.call(this, node);
 		this._domFacade = domFacade;
 		this.nodeType = node.nodeType;
 		if (node instanceof AttributeNode) {
@@ -48,7 +48,7 @@ define([
 		this.target = node.target;
 	}
 
-	NodeValue.prototype = Object.create(Value.prototype);
+	NodeValue.prototype = Object.create(Item.prototype);
 
 	NodeValue.prototype.instanceOfType = function (simpleTypeName) {
 		switch(simpleTypeName) {
@@ -67,7 +67,7 @@ define([
 			case 'text()':
 				return domInfo.isTextNode(this.value);
 			default:
-				return Value.prototype.instanceOfType(simpleTypeName);
+				return Item.prototype.instanceOfType.call(this, simpleTypeName);
 		}
 	};
 

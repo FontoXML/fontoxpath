@@ -5,51 +5,51 @@ import isValidArgument from 'fontoxml-selectors/selectors/functions/isValidArgum
 describe('isValidArgument()', () => {
 	it('return true for a valid argument (xs:boolean)', () => {
 		const argumentSequence = new Sequence([new BooleanValue(true)]);
-		chai.expect(isValidArgument('xs:boolean', argumentSequence)).to.equal(true);
+		chai.assert.isTrue(isValidArgument('xs:boolean', argumentSequence));
 	});
 
 	it('return true for a valid argument (xs:boolean?)', () => {
 		const argumentSequence1 = new Sequence([new BooleanValue(true)]),
 			argumentSequence2 = new Sequence([]);
-		chai.expect(isValidArgument('xs:boolean?', argumentSequence1)).to.equal(true);
-		chai.expect(isValidArgument('xs:boolean?', argumentSequence2)).to.equal(true);
+		chai.assert.isTrue(isValidArgument('xs:boolean?', argumentSequence1));
+		chai.assert.isTrue(isValidArgument('xs:boolean?', argumentSequence2));
 	});
 
 	it('return true for a valid argument (xs:boolean+)', () => {
 		const argumentSequence1 = new Sequence([new BooleanValue(true)]),
-		argumentSequence2 = new Sequence([new BooleanValue(true), new BooleanValue(true)]);
-		chai.expect(isValidArgument('xs:boolean+', argumentSequence1)).to.equal(true);
-		chai.expect(isValidArgument('xs:boolean+', argumentSequence2)).to.equal(true);
+			argumentSequence2 = new Sequence([new BooleanValue(true), new BooleanValue(true)]);
+		chai.assert.isTrue(isValidArgument('xs:boolean+', argumentSequence1));
+		chai.assert.isTrue(isValidArgument('xs:boolean+', argumentSequence2));
 	});
 
 	it('return true for a valid argument (xs:boolean*)', () => {
 		const argumentSequence1 = new Sequence([]),
-		argumentSequence2 = new Sequence([new BooleanValue(true)]),
-		argumentSequence3 = new Sequence([new BooleanValue(true), new BooleanValue(true)]);
-		chai.expect(isValidArgument('xs:boolean*', argumentSequence1)).to.equal(true);
-		chai.expect(isValidArgument('xs:boolean*', argumentSequence2)).to.equal(true);
-		chai.expect(isValidArgument('xs:boolean*', argumentSequence3)).to.equal(true);
+			argumentSequence2 = new Sequence([new BooleanValue(true)]),
+			argumentSequence3 = new Sequence([new BooleanValue(true), new BooleanValue(true)]);
+		chai.assert.isTrue(isValidArgument('xs:boolean*', argumentSequence1));
+		chai.assert.isTrue(isValidArgument('xs:boolean*', argumentSequence2));
+		chai.assert.isTrue(isValidArgument('xs:boolean*', argumentSequence3));
 	});
 
 	it('return false for an invalid argument (xs:boolean)', () => {
 		const argumentSequence1 = new Sequence([]),
-		argumentSequence2 = new Sequence([new BooleanValue(true), new BooleanValue(true)]);
-		chai.expect(isValidArgument('xs:boolean', argumentSequence1)).to.equal(false);
-		chai.expect(isValidArgument('xs:boolean', argumentSequence2)).to.equal(false);
+			argumentSequence2 = new Sequence([new BooleanValue(true), new BooleanValue(true)]);
+		chai.assert.isFalse(isValidArgument('xs:boolean', argumentSequence1));
+		chai.assert.isFalse(isValidArgument('xs:boolean', argumentSequence2));
 	});
 
 	it('return false for an invalid argument (xs:boolean?)', () => {
 		const argumentSequence = new Sequence([new BooleanValue(true), new BooleanValue(true)]);
-		chai.expect(isValidArgument('xs:boolean?', argumentSequence)).to.equal(false);
+		chai.assert.isFalse(isValidArgument('xs:boolean?', argumentSequence));
 	});
 
 	it('return false for an invalid argument (xs:boolean+)', () => {
 		const argumentSequence = new Sequence([]);
-		chai.expect(isValidArgument('xs:boolean+', argumentSequence)).to.equal(false);
+		chai.assert.isFalse(isValidArgument('xs:boolean+', argumentSequence));
 	});
 
 	it('return false for an invalid argument (wrong type)', () => {
 		const argumentSequence = new Sequence([new BooleanValue(true)]);
-		chai.expect(isValidArgument('xs:string', argumentSequence)).to.equal(false);
+		chai.assert.isFalse(isValidArgument('xs:string', argumentSequence));
 	});
 });

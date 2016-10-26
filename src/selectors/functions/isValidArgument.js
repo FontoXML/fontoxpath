@@ -3,9 +3,9 @@ define([
 ) {
 	'use strict';
 
-	return function isValidArgument (typeDescription, argument) {
-		// typeDescription is something like 'xs:string?'
-		var parts = typeDescription.match(/^([^+?*]*)([\+\*\?])?$/);
+	return function isValidArgument (argumentTypes, argument) {
+		// argumentTypes is something like 'xs:string?'
+		var parts = argumentTypes.match(/^([^+?*]*)([\+\*\?])?$/);
 		var type = parts[1],
 			multiplicity = parts[2];
 		switch (multiplicity) {

@@ -1,15 +1,15 @@
 define([
-	'./AnyAtomicValue'
+	'./AnyAtomicTypeValue'
 ], function (
-	AnyAtomicValue
+	AnyAtomicTypeValue
 ) {
 	'use strict';
 
 	function BooleanValue (initialValue) {
-		AnyAtomicValue.call(this, initialValue);
+		AnyAtomicTypeValue.call(this, initialValue);
 	}
 
-	BooleanValue.prototype = Object.create(AnyAtomicValue.prototype);
+	BooleanValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
 	BooleanValue.prototype.constructor = BooleanValue;
 
 	BooleanValue.TRUE = BooleanValue.prototype.TRUE = new BooleanValue(true);
@@ -20,9 +20,9 @@ define([
 			return new BooleanValue(value.value);
 		}
 
-		var anyAtomicValue = AnyAtomicValue.cast(value);
+		var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
 
-		switch (anyAtomicValue.value) {
+		switch (anyAtomicTypeValue.value) {
 			case 'true':
 			case '1':
 				return BooleanValue.TRUE;
@@ -43,7 +43,7 @@ define([
 
 	BooleanValue.prototype.instanceOfType = function (simpleTypeName) {
 		return simpleTypeName === this.primitiveTypeName ||
-			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
+			AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
 	};
 
 	return BooleanValue;

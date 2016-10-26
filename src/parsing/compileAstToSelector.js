@@ -1,7 +1,7 @@
 define([
 	'../selectors/path/PathSelector',
 	'../selectors/path/AbsolutePathSelector',
-	'../selectors/Filter',
+	'../selectors/postfix/Filter',
 	'../selectors/axes/AttributeAxis',
 	'../selectors/axes/AncestorAxis',
 	'../selectors/axes/ChildAxis',
@@ -31,6 +31,7 @@ define([
 
 	'../selectors/literals/Literal',
 	'../selectors/LetExpression',
+	'../selectors/NamedFunctionRef',
 	'../selectors/VarRef'
 ], function (
 	PathSelector,
@@ -65,6 +66,7 @@ define([
 
 	Literal,
 	LetExpression,
+	NamedFunctionRef,
 	VarRef
 ) {
 	'use strict';
@@ -105,8 +107,6 @@ define([
 				return nameTest(args);
 			case 'kindTest':
 				return kindTest(args);
-			case 'functionCall':
-				return functionCall(args);
 			case 'typeTest':
 				return typeTest(args);
 
@@ -138,16 +138,24 @@ define([
 			case 'path':
 				return path(args);
 
+			// Postfix operators
 			case 'filter':
 				return filter(args);
+
+			// Functions
+			case 'functionCall':
+				return functionCall(args);
 
 			case 'literal':
 				return literal(args);
 
+			// Variables
 			case 'let':
 				return letExpression(args);
 			case 'varRef':
 				return varRef(args);
+			case 'namedFunctionRef':
+				return namedFunctionRef(args);
 
 			// Quantified
 			case 'quantified':
@@ -220,7 +228,7 @@ define([
 	}
 
 	function filter (args) {
-		return new Filter(compile(args[0]), args[1].map(compile));
+		return new Filter(compile(args[0]), compile(args[1]));
 	}
 
 	function followingSibling (args) {
@@ -228,10 +236,7 @@ define([
 	}
 
 	function functionCall (args) {
-		var functionName = args.shift();
-		// Note: due to deprecation, we need to switcharoo fonto- to fonto:
-		functionName = functionName.replace('fonto-', 'fonto:');
-		return new FunctionCall(functionName, args.map(compile));
+		return new FunctionCall(compile(args[0]), args[1].map(compile));
 	}
 
 	function instanceOf (args) {
@@ -251,6 +256,13 @@ define([
 
 	function literal (args) {
 		return new Literal(args[0], args[1]);
+	}
+
+	function namedFunctionRef (args) {
+		var functionName = args.shift();
+		// Note: due to deprecation, we need to switcharoo fonto- to fonto:
+		functionName = functionName.replace('fonto-', 'fonto:');
+		return new NamedFunctionRef(functionName, args[0]);
 	}
 
 	function nameTest (args) {

@@ -1,87 +1,111 @@
 define([
 	'./builtInFunctions',
-	'./isValidArgument'
+
+	'../dataTypes/BooleanValue',
+	'../dataTypes/Sequence',
+
+	'../../parsing/customTestsByName'
 ], function (
 	builtInFunctions,
-	isValidArgument
+
+	BooleanValue,
+	Sequence,
+
+	customTestsByName
 ) {
 	'use strict';
 
-	function isValidArgumentList (typeDeclarations, argumentList) {
-		var indexOfSpread = typeDeclarations.indexOf('...');
-		if (indexOfSpread > -1) {
-			var replacePart = new Array(argumentList.length - (typeDeclarations.length - 1))
-				.fill(typeDeclarations[indexOfSpread - 1]);
-			typeDeclarations = typeDeclarations.slice(0, indexOfSpread)
-				.concat(replacePart, typeDeclarations.slice(indexOfSpread + 1));
-		}
-
-		return argumentList.length === typeDeclarations.length &&
-			argumentList.every(function (argument, i) {
-				return isValidArgument(typeDeclarations[i], argument);
-			});
-	}
-
 	var functions = Object.create(null);
 
-	function registerFunction (name, typeDescription, callFunction) {
-		if (!functions[name]) {
-			functions[name] = [];
-		}
-		functions[name].push({typeDescription: typeDescription, callFunction: callFunction});
-	}
-
-	function hasFunction (name, arity) {
-		var matchingFunctions = functions[name];
-		if (!matchingFunctions) {
-			return false;
-		}
-		return matchingFunctions.some(function (functionDeclaration) {
-			if (functionDeclaration.typeDescription.indexOf('...') > -1) {
-				return functionDeclaration.typeDescription.length >= arity;
-			}
-			return functionDeclaration.typeDescription.length === arity;
+	function getAlternativesAsStringFor (functionName) {
+		return functions[functionName].map(function (functionDeclaration) {
+			return functionName + '(' + functionDeclaration.argumentTypes.join(', ') + ')';
+		}).reduce(function (accumulator, functionName, index, array) {
+			return accumulator += (index !== array.length - 1) ? ', ' : ' or '  + functionName;
 		});
 	}
 
-	function getFunction (functionName, argumentList) {
+	// Deprecated
+	function getCustomTestByArity (functionName, arity) {
+		var customFunctionViaCustomTestsByName = customTestsByName[functionName];
+
+		if (customFunctionViaCustomTestsByName) {
+			var callFunction = function () {
+				var args = Array.from(arguments),
+					dynamicContext = args.shift(),
+					result = customFunctionViaCustomTestsByName.apply(
+						undefined,
+						args.map(function (arg) { return arg.value[0].value; }).concat(
+							[dynamicContext.contextItem.value[0].value,
+							dynamicContext.domFacade]));
+
+				return Sequence.singleton(result ? BooleanValue.TRUE : BooleanValue.FALSE);
+			};
+
+			return {
+					callFunction: callFunction,
+					argumentTypes: new Array(arity).fill('xs:string'),
+					returnType: 'xs:boolean'
+				};
+		}
+
+		return null;
+	}
+
+	function getBuiltinOrCustomFunctionByArity (functionName, arity) {
 		var matchingFunctions = functions[functionName];
 
 		if (!matchingFunctions) {
-			throw new Error('XPST0017: No such function ' + functionName);
+			return null;
 		}
 
 		var matchingFunction = matchingFunctions.find(function (functionDeclaration) {
-			return isValidArgumentList(functionDeclaration.typeDescription, argumentList);
+			var indexOfRest = functionDeclaration.argumentTypes.indexOf('...');
+			if (indexOfRest > -1) {
+				return indexOfRest <= arity;
+			}
+			return functionDeclaration.argumentTypes.length === arity;
 		});
 
 		if (!matchingFunction) {
-			var argumentString = argumentList.map(function (argument) {
-					if (argument.isEmpty()) {
-						return 'item()?';
-					}
-
-					if (argument.isSingleton()) {
-						return argument.value[0].primitiveTypeName;
-					}
-					return argument.value[0].primitiveTypeName + '+';
-				}).join(', ');
-			var alternatives = functions[functionName].map(function (functionDeclaration) {
-					return functionName + '(' + functionDeclaration.typeDescription.join(', ') + ')';
-				});
-			throw new Error('XPST0017: No such function ' + functionName + '(' + argumentString + ') \n Did you mean ' + alternatives);
+			return null;
 		}
 
-		return matchingFunction.callFunction;
+		return {
+				callFunction: matchingFunction.callFunction,
+				argumentTypes: matchingFunction.argumentTypes,
+				returnType: matchingFunction.returnType
+			};
+	}
+
+	function getFunctionByArity (functionName, arity) {
+		var fn = getBuiltinOrCustomFunctionByArity(functionName, arity);
+
+		// Deprecated
+		if (!fn && functionName.startsWith('fonto:')) {
+			var test = getCustomTestByArity(functionName, arity);
+			if (test) {
+				return test;
+			}
+		}
+
+		return fn;
+	}
+
+	function registerFunction (name, argumentTypes, returnType, callFunction) {
+		if (!functions[name]) {
+			functions[name] = [];
+		}
+		functions[name].push({argumentTypes: argumentTypes, returnType: returnType, callFunction: callFunction});
 	}
 
 	builtInFunctions.forEach(function (builtInFunction) {
-		registerFunction(builtInFunction.name, builtInFunction.typeDescription, builtInFunction.callFunction);
+		registerFunction(builtInFunction.name, builtInFunction.argumentTypes, builtInFunction.returnType, builtInFunction.callFunction);
 	});
 
 	return {
-		registerFunction: registerFunction,
-		hasFunction: hasFunction,
-		getFunction: getFunction
+		getAlternativesAsStringFor: getAlternativesAsStringFor,
+		getFunctionByArity: getFunctionByArity,
+		registerFunction: registerFunction
 	};
 });

@@ -1,19 +1,19 @@
 define([
-	'./AnyAtomicValue'
+	'./AnyAtomicTypeValue'
 ], function (
-	AnyAtomicValue
+	AnyAtomicTypeValue
 ) {
 	'use strict';
 
 	function StringValue (value) {
-		AnyAtomicValue.call(this, value);
+		AnyAtomicTypeValue.call(this, value);
 	}
 
-	StringValue.prototype = Object.create(AnyAtomicValue.prototype);
+	StringValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
 	StringValue.prototype.constructor = StringValue;
 
 	StringValue.cast = function (value) {
-		return new StringValue(AnyAtomicValue.cast(value).value);
+		return new StringValue(AnyAtomicTypeValue.cast(value).value);
 	};
 
 	StringValue.prototype.getEffectiveBooleanValue = function () {
@@ -24,7 +24,7 @@ define([
 
 	StringValue.prototype.instanceOfType = function (simpleTypeName) {
 		return simpleTypeName === this.primitiveTypeName ||
-			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
+			AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
 	};
 
 	return StringValue;

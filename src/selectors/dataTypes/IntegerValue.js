@@ -27,7 +27,7 @@ define([
 
 	IntegerValue.prototype.instanceOfType = function (simpleTypeName) {
 		return simpleTypeName === 'xs:integer' ||
-			DecimalValue.prototype.instanceOfType(simpleTypeName);
+			DecimalValue.prototype.instanceOfType.call(this, simpleTypeName);
 	};
 
 	return IntegerValue;

@@ -1,19 +1,19 @@
 define([
-	'./AnyAtomicValue'
+	'./AnyAtomicTypeValue'
 ], function (
-	AnyAtomicValue
+	AnyAtomicTypeValue
 ) {
 	'use strict';
 
 	function QNameValue (value) {
-		AnyAtomicValue.call(this, value);
+		AnyAtomicTypeValue.call(this, value);
 	}
 
-	QNameValue.prototype = Object.create(AnyAtomicValue.prototype);
+	QNameValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
 	QNameValue.prototype.constructor = QNameValue;
 
 	QNameValue.cast = function (value) {
-		return new QNameValue(AnyAtomicValue.cast(value).value);
+		return new QNameValue(AnyAtomicTypeValue.cast(value).value);
 	};
 
 	QNameValue.prototype.getEffectiveBooleanValue = function () {
@@ -24,7 +24,7 @@ define([
 
 	QNameValue.prototype.instanceOfType = function (simpleTypeName) {
 		return simpleTypeName === this.primitiveTypeName ||
-			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
+			AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
 	};
 
 	return QNameValue;

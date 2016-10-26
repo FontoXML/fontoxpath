@@ -285,25 +285,29 @@ define([
 	return [
 		{
 			name: 'boolean',
-			typeDescription: ['item()*'],
+			argumentTypes: ['item()*'],
+			returnType: 'xs:boolean',
 			callFunction: fnBoolean
 		},
 
 		{
 			name: 'concat',
-			typeDescription: ['xs:anyAtomicType?', 'xs:anyAtomicType?', '...'],
+			argumentTypes: ['xs:anyAtomicType?', 'xs:anyAtomicType?', '...'],
+			returnType: 'xs:string',
 			callFunction: fnConcat
 		},
 
 		{
 			name: 'ends-with',
-			typeDescription: ['xs:string?', 'xs:string?'],
+			argumentTypes: ['xs:string?', 'xs:string?'],
+			returnType: 'xs:boolean',
 			callFunction: fnEndsWith
 		},
 
 		{
 			name: 'ends-with',
-			typeDescription: ['xs:string?', 'xs:string?', 'xs:string'],
+			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
+			returnType: 'xs:boolean',
 			callFunction: function () {
 				throw new Error('Not implemented: Specifying a collation is not supported');
 			}
@@ -311,19 +315,22 @@ define([
 
 		{
 			name: 'false',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:boolean',
 			callFunction: fnFalse
 		},
 
 		{
 			name: 'id',
-			typeDescription: ['xs:string*', 'node()'],
+			argumentTypes: ['xs:string*', 'node()'],
+			returnType: 'element()*',
 			callFunction: fnId
 		},
 
 		{
 			name: 'id',
-			typeDescription: ['xs:string*'],
+			argumentTypes: ['xs:string*'],
+			returnType: 'element()*',
 			callFunction: function (dynamicContext, strings) {
 				return fnId(dynamicContext, strings, dynamicContext.contextItem);
 			}
@@ -331,13 +338,15 @@ define([
 
 		{
 			name: 'idref',
-			typeDescription: ['xs:string*', 'node()'],
+			argumentTypes: ['xs:string*', 'node()'],
+			returnType: 'node()*',
 			callFunction: fnIdref
 		},
 
 		{
 			name: 'idref',
-			typeDescription: ['xs:string*'],
+			argumentTypes: ['xs:string*'],
+			returnType: 'node()*',
 			callFunction: function (dynamicContext, strings) {
 				return fnIdref(dynamicContext, strings, dynamicContext.contextItem);
 			}
@@ -345,43 +354,50 @@ define([
 
 		{
 			name: 'last',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:integer',
 			callFunction: fnLast
 		},
 
 		{
 			name: 'name',
-			typeDescription: ['node()?'],
+			argumentTypes: ['node()?'],
+			returnType: 'xs:string',
 			callFunction: fnName
 		},
 
 		{
 			name: 'name',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(undefined, fnName)
 		},
 
 		{
 			name: 'node-name',
-			typeDescription: ['node()?'],
+			argumentTypes: ['node()?'],
+			returnType: 'xs:QName?',
 			callFunction: fnNodeName
 		},
 
 		{
 			name: 'node-name',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:QName?',
 			callFunction: contextItemAsFirstArgument.bind(undefined, fnNodeName)
 		},
 
 		{
 			name: 'normalize-space',
-			typeDescription: ['xs:string?'],
+			argumentTypes: ['xs:string?'],
+			returnType: 'xs:string',
 			callFunction: fnNormalizeSpace
 		},
 
 		{
 			name: 'normalize-space',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:string',
 			callFunction: function (dynamicContext) {
 				return fnNormalizeSpace(dynamicContext, fnString(dynamicContext, dynamicContext.contextItem));
 			}
@@ -389,61 +405,71 @@ define([
 
 		{
 			name: 'not',
-			typeDescription: ['item()*'],
+			argumentTypes: ['item()*'],
+			returnType: 'xs:boolean',
 			callFunction: fnNot
 		},
 
 		{
 			name: 'number',
-			typeDescription: ['xs:anyAtomicType?'],
+			argumentTypes: ['xs:anyAtomicType?'],
+			returnType: 'xs:double',
 			callFunction: fnNumber
 		},
 
 		{
 			name: 'number',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:double',
 			callFunction: contextItemAsFirstArgument.bind(undefined, fnNumber)
 		},
 
 		{
 			name: 'op:except',
-			typeDescription: ['node()*', 'node()*'],
+			argumentTypes: ['node()*', 'node()*'],
+			returnType: 'node()*',
 			callFunction: opExcept
 		},
 
 		{
 			name: 'op:intersect',
-			typeDescription: ['node()*', 'node()*'],
+			argumentTypes: ['node()*', 'node()*'],
+			returnType: 'node()*',
 			callFunction: opIntersect
 		},
 
 		{
 			name: 'op:to',
-			typeDescription: ['xs:integer', 'xs:integer'],
+			argumentTypes: ['xs:integer', 'xs:integer'],
+			returnType: 'xs:integer*',
 			callFunction: opTo
 		},
 
 		{
 			name: 'position',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:integer',
 			callFunction: fnPosition
 		},
 
 		{
 			name: 'reverse',
-			typeDescription: ['item()*'],
+			argumentTypes: ['item()*'],
+			returnType: 'item()*',
 			callFunction: fnReverse
 		},
 
 		{
 			name: 'starts-with',
-			typeDescription: ['xs:string?', 'xs:string?'],
+			argumentTypes: ['xs:string?', 'xs:string?'],
+			returnType: 'xs:boolean',
 			callFunction: fnStartsWith
 		},
 
 		{
 			name: 'starts-with',
-			typeDescription: ['xs:string?', 'xs:string?', 'xs:string'],
+			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
+			returnType: 'xs:boolean',
 			callFunction: function () {
 				throw new Error('Not implemented: Specifying a collation is not supported');
 			}
@@ -451,25 +477,29 @@ define([
 
 		{
 			name: 'string',
-			typeDescription: ['item()?'],
+			argumentTypes: ['item()?'],
+			returnType: 'xs:string',
 			callFunction: fnString
 		},
 
 		{
 			name: 'string',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(undefined, fnString)
 		},
 
 		{
 			name: 'string-join',
-			typeDescription: ['xs:string*', 'xs:string'],
+			argumentTypes: ['xs:string*', 'xs:string'],
+			returnType: 'xs:string',
 			callFunction: fnStringJoin
 		},
 
 		{
 			name: 'string-join',
-			typeDescription: ['xs:string*'],
+			argumentTypes: ['xs:string*'],
+			returnType: 'xs:string',
 			callFunction: function (dynamicContext, arg1) {
 				return fnStringJoin(dynamicContext, arg1, Sequence.singleton(new StringValue('')));
 			}
@@ -477,13 +507,15 @@ define([
 
 		{
 			name: 'string-length',
-			typeDescription: ['xs:string?'],
+			argumentTypes: ['xs:string?'],
+			returnType: 'xs:integer',
 			callFunction: fnStringLength
 		},
 
 		{
 			name: 'string-length',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:integer',
 			callFunction: function (dynamicContext) {
 				return fnStringLength(dynamicContext, fnString(dynamicContext, dynamicContext.contextItem));
 			}
@@ -491,7 +523,8 @@ define([
 
 		{
 			name: 'tokenize',
-			typeDescription: ['xs:string?', 'xs:string', 'xs:string'],
+			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
+			returnType: 'xs:string*',
 			callFunction: function (dynamicContext, input, pattern, flags) {
 				throw new Error('Not implemented: Using flags in tokenize is not supported');
 			}
@@ -499,13 +532,15 @@ define([
 
 		{
 			name: 'tokenize',
-			typeDescription: ['xs:string?', 'xs:string'],
+			argumentTypes: ['xs:string?', 'xs:string'],
+			returnType: 'xs:string*',
 			callFunction: fnTokenize
 		},
 
 		{
 			name: 'tokenize',
-			typeDescription: ['xs:string?'],
+			argumentTypes: ['xs:string?'],
+			returnType: 'xs:string*',
 			callFunction: function (dynamicContext, input) {
 				return fnTokenize(dynamicContext, fnNormalizeSpace(dynamicContext, input), Sequence.singleton(new StringValue(' ')));
 			}
@@ -513,7 +548,8 @@ define([
 
 		{
 			name: 'true',
-			typeDescription: [],
+			argumentTypes: [],
+			returnType: 'xs:boolean',
 			callFunction: fnTrue
 		}
 	].concat(aggregateBuiltinFunctions);

@@ -26,7 +26,7 @@ define([
 
 	FloatValue.prototype.instanceOfType = function (simpleTypeName) {
 		return simpleTypeName === this.primitiveTypeName ||
-			NumericValue.prototype.instanceOfType(simpleTypeName);
+			NumericValue.prototype.instanceOfType.call(this, simpleTypeName);
 	};
 
 

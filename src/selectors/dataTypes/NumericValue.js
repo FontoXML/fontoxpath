@@ -1,7 +1,7 @@
 define([
-	'./AnyAtomicValue'
+	'./AnyAtomicTypeValue'
 ], function (
-	AnyAtomicValue
+	AnyAtomicTypeValue
 ) {
 	'use strict';
 
@@ -9,15 +9,15 @@ define([
 	 * Abstract Numeric class, primary type for everything which is numeric: decimal, double and float
 	 */
 	function NumericValue (initialValue) {
-		AnyAtomicValue.call(this, initialValue);
+		AnyAtomicTypeValue.call(this, initialValue);
 	}
 
-	NumericValue.prototype = Object.create(AnyAtomicValue.prototype);
+	NumericValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
 	NumericValue.prototype.constructor = NumericValue;
 
 	NumericValue.cast = function (value) {
-		var anyAtomicValue = AnyAtomicValue.cast(value);
-		var floatValue = parseFloat(anyAtomicValue.value, 10);
+		var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
+		var floatValue = parseFloat(anyAtomicTypeValue.value, 10);
 
 		return new NumericValue(floatValue);
 	};
@@ -28,7 +28,7 @@ define([
 
 	NumericValue.prototype.instanceOfType = function (simpleTypeName) {
 		return simpleTypeName === 'xs:numeric' ||
-			AnyAtomicValue.prototype.instanceOfType(simpleTypeName);
+			AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
 	};
 
 	return NumericValue;

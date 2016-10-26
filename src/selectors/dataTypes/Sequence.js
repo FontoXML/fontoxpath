@@ -1,17 +1,17 @@
 define([
-	'./Value',
+	'./Item',
 	'./NodeValue'
 ], function (
-	Value,
+	Item,
 	NodeValue
 ) {
 	'use strict';
 
 	function Sequence (initialValues) {
-		Value.call(this, initialValues || []);
+		Item.call(this, initialValues || []);
 	}
 
-	Sequence.prototype = Object.create(Value.prototype);
+	Sequence.prototype = Object.create(Item.prototype);
 
 	Sequence.singleton = function (value) {
 		return new Sequence([value]);
