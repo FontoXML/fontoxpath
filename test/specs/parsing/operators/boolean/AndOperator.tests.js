@@ -1,32 +1,22 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/evaluateXPath'
-], function (
-	blueprint,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
-	parseSelector,
-	evaluateXPath
-) {
-	'use strict';
+let documentNode;
+beforeEach(() => {
+	documentNode = slimdom.createDocument();
+});
 
-	var documentNode;
-	beforeEach(function () {
-		documentNode = slimdom.createDocument();
+describe('and operator', () => {
+	it('can parse an "and" selector', () => {
+		const selector = parseSelector('true() and true()');
+		chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
 	});
 
-	describe('and operator', function () {
-		it('can parse an "and" selector', function () {
-			var selector = parseSelector('true() and true()');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
-		});
-
-		it('can parse a concatenation of ands', function () {
-			var selector = parseSelector('true() and true() and true() and false()');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
-		});
+	it('can parse a concatenation of ands', () => {
+		const selector = parseSelector('true() and true() and true() and false()');
+		chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
 	});
 });

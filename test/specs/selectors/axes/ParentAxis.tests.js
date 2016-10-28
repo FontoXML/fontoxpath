@@ -1,53 +1,46 @@
-define([
-	'fontoxml-selectors/selectors/Specificity',
-	'fontoxml-selectors/selectors/axes/ParentAxis'
-], function (
-	Specificity,
-	ParentAxis
-) {
-	'use strict';
+import ParentAxis from 'fontoxml-selectors/selectors/axes/ParentAxis';
+import Specificity from 'fontoxml-selectors/selectors/Specificity';
 
-	var equalSelector = {
-			specificity: new Specificity({}),
-			equals: sinon.stub().returns(true)
-		},
-		unequalSelector = {
-			specificity: new Specificity({}),
-			equals: sinon.stub().returns(false)
-		};
+const equalSelector = {
+		specificity: new Specificity({}),
+		equals: sinon.stub().returns(true)
+	},
+	unequalSelector = {
+		specificity: new Specificity({}),
+		equals: sinon.stub().returns(false)
+	};
 
-	describe('ParentAxis.equals()', function () {
-		it('returns true if compared with itself', function () {
-			var parent1 = new ParentAxis(equalSelector),
-				parent2 = parent1;
+describe('ParentAxis.equals()', () => {
+	it('returns true if compared with itself', () => {
+		const parent1 = new ParentAxis(equalSelector),
+			parent2 = parent1;
 
-			var result1 = parent1.equals(parent2),
-				result2 = parent2.equals(parent1);
+		const result1 = parent1.equals(parent2),
+			result2 = parent2.equals(parent1);
 
-			chai.expect(result1).to.equal(true);
-			chai.expect(result2).to.equal(true);
-		});
+		chai.expect(result1).to.equal(true);
+		chai.expect(result2).to.equal(true);
+	});
 
-		it('returns true if compared with an equal other ParentAxis', function () {
-			var parent1 = new ParentAxis(equalSelector),
-				parent2 = new ParentAxis(equalSelector);
+	it('returns true if compared with an equal other ParentAxis', () => {
+		const parent1 = new ParentAxis(equalSelector),
+			parent2 = new ParentAxis(equalSelector);
 
-			var result1 = parent1.equals(parent2),
-				result2 = parent2.equals(parent1);
+		const result1 = parent1.equals(parent2),
+			result2 = parent2.equals(parent1);
 
-			chai.expect(result1).to.equal(true);
-			chai.expect(result2).to.equal(true);
-		});
+		chai.expect(result1).to.equal(true);
+		chai.expect(result2).to.equal(true);
+	});
 
-		it('returns false if compared with an unequal other ParentAxis', function () {
-			var parent1 = new ParentAxis(unequalSelector),
-				parent2 = new ParentAxis(unequalSelector);
+	it('returns false if compared with an unequal other ParentAxis', () => {
+		const parent1 = new ParentAxis(unequalSelector),
+			parent2 = new ParentAxis(unequalSelector);
 
-			var result1 = parent1.equals(parent2),
-				result2 = parent2.equals(parent1);
+		const result1 = parent1.equals(parent2),
+			result2 = parent2.equals(parent1);
 
-			chai.expect(result1).to.equal(false);
-			chai.expect(result2).to.equal(false);
-		});
+		chai.expect(result1).to.equal(false);
+		chai.expect(result2).to.equal(false);
 	});
 });

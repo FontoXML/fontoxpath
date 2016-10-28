@@ -1,31 +1,25 @@
-define([
-	'fontoxml-selectors/selectors/Selector'
-], function (
-	Selector
-) {
-	'use strict';
+import Selector from 'fontoxml-selectors/selectors/Selector';
 
-	describe('Selector.equals()', function () {
-		it('throws when called', function () {
-			var selector = new Selector({}, '');
+describe('Selector.equals()', () => {
+	it('throws when called', () => {
+		const selector = new Selector({}, '');
 
-			chai.expect(selector.equals).to.throw();
-		});
+		chai.expect(selector.equals).to.throw();
 	});
+});
 
-	describe('Selector.getBucket()', function () {
-		it('throws when called', function () {
-			var selector = new Selector({}, '');
+describe('Selector.getBucket()', () => {
+	it('throws when called', () => {
+		const selector = new Selector({}, '');
 
-			chai.expect(selector.getBucket()).to.equal(null);
-		});
+		chai.expect(selector.getBucket()).to.equal(null);
 	});
+});
 
-	describe('Selector.evaluate()', function () {
-		it('throws when called', function () {
-			var selector = new Selector({}, '');
+describe('Selector.evaluate()', () => {
+	it('throws when called', () => {
+		const selector = new Selector({}, '');
 
-			chai.expect(selector.evaluate).to.throw();
-		});
+		chai.expect(selector.evaluate).to.throw();
 	});
 });

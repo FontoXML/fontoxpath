@@ -1,36 +1,26 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/evaluateXPath'
-], function (
-	blueprint,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
-	parseSelector,
-	evaluateXPath
-) {
-	'use strict';
+let documentNode;
+beforeEach(() => {
+	documentNode = slimdom.createDocument();
+});
 
-	var documentNode;
-	beforeEach(function () {
-		documentNode = slimdom.createDocument();
+describe('comments', () => {
+	it('can parse comments', () => {
+		const selector = parseSelector('true() (: and false() :) or true()');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.deep.equal(true);
 	});
 
-	describe('comments', function () {
-		it('can parse comments', function () {
-			var selector = parseSelector('true() (: and false() :) or true()');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.deep.equal(true);
-		});
-
-		it('can parse nested comments', function () {
-			var selector = parseSelector('true() (: and false() (:and true():) :) or false');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.deep.equal(true);
-		});
+	it('can parse nested comments', () => {
+		const selector = parseSelector('true() (: and false() (:and true():) :) or false');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.deep.equal(true);
 	});
 });

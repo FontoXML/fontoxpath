@@ -1,30 +1,20 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/evaluateXPath'
-], function (
-	blueprint,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
-	parseSelector,
-	evaluateXPath
-) {
-	'use strict';
+let documentNode;
+beforeEach(() => {
+	documentNode = slimdom.createDocument();
+});
 
-	var documentNode;
-	beforeEach(function () {
-		documentNode = slimdom.createDocument();
-	});
-
-	describe('self', function () {
-		it('parses self::', function () {
-			var selector = parseSelector('self::someElement'),
-				element = documentNode.createElement('someElement');
-			chai.expect(
-				evaluateXPath(selector, element, blueprint))
+describe('self', () => {
+	it('parses self::', () => {
+		const selector = parseSelector('self::someElement'),
+		element = documentNode.createElement('someElement');
+		chai.expect(
+			evaluateXPath(selector, element, blueprint))
 			.to.deep.equal(element);
-		});
 	});
 });

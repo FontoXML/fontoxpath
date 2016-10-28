@@ -1,31 +1,21 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-dom-utils/jsonMLMapper',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/evaluateXPath'
-], function (
-	blueprint,
-	jsonMLMapper,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
 
-	evaluateXPath
-) {
-	'use strict';
+describe('createSelectorFromXPath', () => {
+	let documentNode;
+	beforeEach(() => {
+		documentNode = slimdom.createDocument();
+	});
 
-	describe('createSelectorFromXPath', function () {
-		var documentNode;
-		beforeEach(function () {
-			documentNode = slimdom.createDocument();
-		});
-
-		it('matches hovercrafts full of eels', function () {
-			jsonMLMapper.parse([
-				'hovercraft',
-				['eel'],
-				['eel']
-			], documentNode);
-			chai.expect(evaluateXPath('self::hovercraft[eel and not(*[not(self::eel)])]', documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
-		});
+	it('matches hovercrafts full of eels', () => {
+		jsonMLMapper.parse([
+			'hovercraft',
+			['eel'],
+			['eel']
+		], documentNode);
+		chai.expect(evaluateXPath('self::hovercraft[eel and not(*[not(self::eel)])]', documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
 	});
 });

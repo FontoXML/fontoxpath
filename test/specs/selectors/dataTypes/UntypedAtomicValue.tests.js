@@ -1,42 +1,34 @@
-define([
-	'fontoxml-selectors/selectors/dataTypes/UntypedAtomicValue',
-	'fontoxml-selectors/selectors/dataTypes/StringValue',
-], function (
-	UntypedAtomicValue,
-	StringValue
-) {
-	'use strict';
+import UntypedAtomicValue from 'fontoxml-selectors/selectors/dataTypes/UntypedAtomicValue';
 
-	describe('UntypedAtomicValue.cast', function () {
-		it('throws when called', function () {
-			var untypedAtomicValue = new UntypedAtomicValue('123');
-			chai.expect(UntypedAtomicValue.cast).to.throw();
-		});
+describe('UntypedAtomicValue.cast', () => {
+	it('throws when called', () => {
+		const untypedAtomicValue = new UntypedAtomicValue('123');
+		chai.expect(UntypedAtomicValue.cast).to.throw();
+	});
+});
+
+describe('UntypedAtomicValue.getEffectiveBooleanValue', () => {
+	it('returns true when it has a value', () => {
+		const untypedAtomicValue = new UntypedAtomicValue(['123']);
+		chai.expect(untypedAtomicValue.getEffectiveBooleanValue()).to.equal(true);
 	});
 
-	describe('UntypedAtomicValue.getEffectiveBooleanValue', function () {
-		it('returns true when it has a value', function () {
-			var untypedAtomicValue = new UntypedAtomicValue(['123']);
-			chai.expect(untypedAtomicValue.getEffectiveBooleanValue()).to.equal(true);
-		});
-
-		it('returns false when it has no value', function () {
-			var untypedAtomicValue = new UntypedAtomicValue([]);
-			chai.expect(untypedAtomicValue.getEffectiveBooleanValue()).to.equal(false);
-		});
+	it('returns false when it has no value', () => {
+		const untypedAtomicValue = new UntypedAtomicValue([]);
+		chai.expect(untypedAtomicValue.getEffectiveBooleanValue()).to.equal(false);
 	});
+});
 
-	describe('UntypedAtomicValue.atomize', function () {
-		it('returns itself', function () {
-			var untypedAtomicValue = new UntypedAtomicValue();
-			chai.expect(untypedAtomicValue.atomize()).to.equal(untypedAtomicValue);
-		});
+describe('UntypedAtomicValue.atomize', () => {
+	it('returns itself', () => {
+		const untypedAtomicValue = new UntypedAtomicValue();
+		chai.expect(untypedAtomicValue.atomize()).to.equal(untypedAtomicValue);
 	});
+});
 
-	describe('UntypedAtomicValue.instanceOfType', function () {
-		it('returns true for xs:untypedAtomicValue', function () {
-			var untypedAtomicValue = new UntypedAtomicValue();
-			chai.expect(untypedAtomicValue.instanceOfType('xs:untypedAtomic')).to.equal(true);
-		});
+describe('UntypedAtomicValue.instanceOfType', () => {
+	it('returns true for xs:untypedAtomicValue', () => {
+		const untypedAtomicValue = new UntypedAtomicValue();
+		chai.expect(untypedAtomicValue.instanceOfType('xs:untypedAtomic')).to.equal(true);
 	});
 });

@@ -1,26 +1,20 @@
-define([
-	'fontoxml-selectors/selectors/dataTypes/Value'
-], function (
-	Value
-) {
-	'use strict';
+import Value from 'fontoxml-selectors/selectors/dataTypes/Value';
 
-	describe('Value.getEffectiveBooleanValue()', function () {
-		it('throws when getEffectiveBooleanValue is called', function () {
-			var value = new Value();
-			chai.expect(value.getEffectiveBooleanValue).to.throw();
-		});
+describe('Value.getEffectiveBooleanValue()', () => {
+	it('throws when getEffectiveBooleanValue is called', () => {
+		const value = new Value();
+		chai.expect(value.getEffectiveBooleanValue).to.throw();
+	});
+});
+
+describe('Value.instanceOfType()', () => {
+	it('returns true for "item()"', () => {
+		const value = new Value();
+		chai.expect(value.instanceOfType('item()')).to.equal(true);
 	});
 
-	describe('Value.instanceOfType()', function () {
-		it('returns true for "item()"', function () {
-			var value = new Value();
-			chai.expect(value.instanceOfType('item()')).to.equal(true);
-		});
-
-		it('returns false for any other value', function () {
-			var value = new Value();
-			chai.expect(value.instanceOfType('any other value')).to.equal(false);
-		});
+	it('returns false for any other value', () => {
+		const value = new Value();
+		chai.expect(value.instanceOfType('any other value')).to.equal(false);
 	});
 });

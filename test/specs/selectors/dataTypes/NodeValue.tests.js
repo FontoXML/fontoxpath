@@ -1,173 +1,164 @@
-define([
-	'fontoxml-selectors/selectors/dataTypes/AttributeNode',
-	'fontoxml-selectors/selectors/dataTypes/NodeValue',
-	'fontoxml-selectors/selectors/dataTypes/StringValue',
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'slimdom'
-], function (
-	AttributeNode,
-	NodeValue,
-	StringValue,
-	readOnlyBlueprint,
-	slimdom
-) {
-	'use strict';
+import slimdom from 'slimdom';
 
-	var documentNode;
+import AttributeNode from 'fontoxml-selectors/selectors/dataTypes/AttributeNode';
+import NodeValue from 'fontoxml-selectors/selectors/dataTypes/NodeValue';
+import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import readOnlyBlueprint from 'fontoxml-blueprints/readOnlyBlueprint';
 
-	describe('NodeValue.instanceOfType()', function () {
-		beforeEach(function () {
-			documentNode = new slimdom.Document();
+let documentNode;
+
+describe('NodeValue.instanceOfType()', () => {
+	beforeEach(() => {
+		documentNode = new slimdom.Document();
+	});
+
+	describe('element', () => {
+		it('element is node()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createElement('someElement'));
+			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
 		});
 
-		describe('element', function () {
-			it('element is node()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createElement('someElement'));
-				chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
-			});
-
-			it('element is item()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createElement('someElement'));
-				chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
-			});
-
-			it('element is element()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createElement('someElement'));
-				chai.expect(nodeValue.instanceOfType('element()')).to.equal(true);
-			});
-
-			it('element is not comment()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createElement('someElement'));
-				chai.expect(nodeValue.instanceOfType('comment()')).to.equal(false);
-			});
+		it('element is item()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createElement('someElement'));
+			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
 		});
 
-		describe('comment', function () {
-			it('comment is node()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createComment('A piece of comment'));
-				chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
-			});
-
-			it('comment is item()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createComment('A piece of comment'));
-				chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
-			});
-
-			it('comment is comment()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createComment('A piece of comment'));
-				chai.expect(nodeValue.instanceOfType('comment()')).to.equal(true);
-			});
-
-			it('comment is not element()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createComment('A piece of comment'));
-				chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
-			});
+		it('element is element()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createElement('someElement'));
+			chai.expect(nodeValue.instanceOfType('element()')).to.equal(true);
 		});
 
-		describe('processing-instruction', function () {
-			it('processing-instruction is node()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
-				chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
-			});
-
-			it('processing-instruction is item()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
-				chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
-			});
-
-			it('processing-instruction is processing-instruction()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
-				chai.expect(nodeValue.instanceOfType('processing-instruction()')).to.equal(true);
-			});
-
-			it('processing-instruction is not element()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
-				chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
-			});
-		});
-
-		describe('document', function () {
-			it('document is node()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode);
-				chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
-			});
-
-			it('document is item()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode);
-				chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
-			});
-
-			it('document is document()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode);
-				chai.expect(nodeValue.instanceOfType('document()')).to.equal(true);
-			});
-
-			it('document is not element()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode);
-				chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
-			});
-		});
-
-		describe('attribute', function () {
-			it('attribute is node()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
-				chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
-			});
-
-			it('attribute is item()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
-				chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
-			});
-
-			it('attribute is attribute()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
-				chai.expect(nodeValue.instanceOfType('attribute()')).to.equal(true);
-			});
-
-			it('attribute is not element()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
-				chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
-			});
-		});
-
-		describe('text', function () {
-			it('text is node()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
-				chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
-			});
-
-			it('text is item()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
-				chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
-			});
-
-			it('text is text()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
-				chai.expect(nodeValue.instanceOfType('text()')).to.equal(true);
-			});
-
-			it('text is not element()', function () {
-				var nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
-				chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
-			});
+		it('element is not comment()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createElement('someElement'));
+			chai.expect(nodeValue.instanceOfType('comment()')).to.equal(false);
 		});
 	});
 
-	var someNode,
-		someTextNode;
-
-	describe('NodeValue.atomize()', function () {
-		beforeEach(function () {
-			documentNode = new slimdom.Document();
-			someNode = documentNode.createElement('someElement');
-			someTextNode = documentNode.createTextNode('A piece of text');
-			someNode.appendChild(someTextNode);
+	describe('comment', () => {
+		it('comment is node()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createComment('A piece of comment'));
+			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
 		});
 
-		it('returns an atomized value', function () {
-			var nodeValue = new NodeValue(readOnlyBlueprint, someNode),
-				atomizedValue = nodeValue.atomize();
-			chai.expect(atomizedValue).to.deep.equal(new StringValue('A piece of text'));
+		it('comment is item()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createComment('A piece of comment'));
+			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
 		});
+
+		it('comment is comment()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createComment('A piece of comment'));
+			chai.expect(nodeValue.instanceOfType('comment()')).to.equal(true);
+		});
+
+		it('comment is not element()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createComment('A piece of comment'));
+			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+		});
+	});
+
+	describe('processing-instruction', () => {
+		it('processing-instruction is node()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
+			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+		});
+
+		it('processing-instruction is item()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
+			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+		});
+
+		it('processing-instruction is processing-instruction()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
+			chai.expect(nodeValue.instanceOfType('processing-instruction()')).to.equal(true);
+		});
+
+		it('processing-instruction is not element()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
+			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+		});
+	});
+
+	describe('document', () => {
+		it('document is node()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode);
+			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+		});
+
+		it('document is item()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode);
+			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+		});
+
+		it('document is document()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode);
+			chai.expect(nodeValue.instanceOfType('document()')).to.equal(true);
+		});
+
+		it('document is not element()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode);
+			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+		});
+	});
+
+	describe('attribute', () => {
+		it('attribute is node()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
+			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+		});
+
+		it('attribute is item()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
+			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+		});
+
+		it('attribute is attribute()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
+			chai.expect(nodeValue.instanceOfType('attribute()')).to.equal(true);
+		});
+
+		it('attribute is not element()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
+			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+		});
+	});
+
+	describe('text', () => {
+		it('text is node()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
+			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+		});
+
+		it('text is item()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
+			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+		});
+
+		it('text is text()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
+			chai.expect(nodeValue.instanceOfType('text()')).to.equal(true);
+		});
+
+		it('text is not element()', () => {
+			const nodeValue = new NodeValue(readOnlyBlueprint, documentNode.createTextNode('A piece of text'));
+			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+		});
+	});
+});
+
+let someNode,
+	someTextNode;
+
+describe('NodeValue.atomize()', () => {
+	beforeEach(() => {
+		documentNode = new slimdom.Document();
+		someNode = documentNode.createElement('someElement');
+		someTextNode = documentNode.createTextNode('A piece of text');
+		someNode.appendChild(someTextNode);
+	});
+
+	it('returns an atomized value', () => {
+		const nodeValue = new NodeValue(readOnlyBlueprint, someNode),
+			atomizedValue = nodeValue.atomize();
+		chai.expect(atomizedValue).to.deep.equal(new StringValue('A piece of text'));
 	});
 });

@@ -1,43 +1,36 @@
-define([
-	'fontoxml-selectors/selectors/Specificity',
-	'fontoxml-selectors/selectors/operators/boolean/OrOperator'
-], function (
-	Specificity,
-	OrOperator
-) {
-	'use strict';
+import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import OrOperator from 'fontoxml-selectors/selectors/operators/boolean/OrOperator';
 
-	var equalSelector = {
-			specificity: new Specificity({}),
-			equals: sinon.stub().returns(true),
-			getBucket: sinon.stub().returns(null)
-		},
-		unequalSelector = {
-			specificity: new Specificity({}),
-			equals: sinon.stub().returns(false),
-			getBucket: sinon.stub().returns(null)
-		};
+const equalSelector = {
+		specificity: new Specificity({}),
+		equals: sinon.stub().returns(true),
+		getBucket: sinon.stub().returns(null)
+	},
+	unequalSelector = {
+		specificity: new Specificity({}),
+		equals: sinon.stub().returns(false),
+		getBucket: sinon.stub().returns(null)
+	};
 
-	describe('OrOperator.equals()', function () {
-		it('returns true if compared with itself', function () {
-			var or1 = new OrOperator([equalSelector, equalSelector]),
-				or2 = or1;
-			chai.expect(or1.equals(or2)).to.equal(true);
-			chai.expect(or2.equals(or1)).to.equal(true);
-		});
+describe('OrOperator.equals()', () => {
+	it('returns true if compared with itself', () => {
+		const or1 = new OrOperator([equalSelector, equalSelector]),
+			or2 = or1;
+		chai.expect(or1.equals(or2)).to.equal(true);
+		chai.expect(or2.equals(or1)).to.equal(true);
+	});
 
-		it('it returns true if compared with an equal other OrOperator', function () {
-			var or1 = new OrOperator([equalSelector, equalSelector]),
-				or2 = new OrOperator([equalSelector, equalSelector]);
-			chai.expect(or1.equals(or2)).to.equal(true);
-			chai.expect(or2.equals(or1)).to.equal(true);
-		});
+	it('it returns true if compared with an equal other OrOperator', () => {
+		const or1 = new OrOperator([equalSelector, equalSelector]),
+			or2 = new OrOperator([equalSelector, equalSelector]);
+		chai.expect(or1.equals(or2)).to.equal(true);
+		chai.expect(or2.equals(or1)).to.equal(true);
+	});
 
-		it('it returns false if compared with an unequal other OrOperator', function () {
-			var or1 = new OrOperator([equalSelector, unequalSelector]),
-				or2 = new OrOperator([unequalSelector, equalSelector]);
-			chai.expect(or1.equals(or2)).to.equal(false);
-			chai.expect(or2.equals(or1)).to.equal(false);
-		});
+	it('it returns false if compared with an unequal other OrOperator', () => {
+		const or1 = new OrOperator([equalSelector, unequalSelector]),
+			or2 = new OrOperator([unequalSelector, equalSelector]);
+		chai.expect(or1.equals(or2)).to.equal(false);
+		chai.expect(or2.equals(or1)).to.equal(false);
 	});
 });

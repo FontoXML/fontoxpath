@@ -1,40 +1,30 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-dom-utils/jsonMLMapper',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath'
-], function (
-	blueprint,
-	jsonMLMapper,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
+import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
-	parseSelector
-) {
-	'use strict';
+let documentNode;
+beforeEach(() => {
+	documentNode = slimdom.createDocument();
+});
 
-	var documentNode;
-	beforeEach(function () {
-		documentNode = slimdom.createDocument();
+describe('processing-instruction()', () => {
+	it('allows processing instruction targets as literals', () => {
+		const selector = parseSelector('self::processing-instruction("someTarget")');
+		jsonMLMapper.parse([
+			'someOtherParentElement',
+			['?someTarget', 'someData']
+		], documentNode);
+		chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 	});
 
-	describe('processing-instruction()', function () {
-		it('allows processing instruction targets as literals', function () {
-			var selector = parseSelector('self::processing-instruction("someTarget")');
-			jsonMLMapper.parse([
-				'someOtherParentElement',
-				['?someTarget', 'someData']
-			], documentNode);
-			chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
-		});
-
-		it('allows processing instruction targets as NCNames', function () {
-			var selector = parseSelector('self::processing-instruction(someTarget)');
-			jsonMLMapper.parse([
-				'someOtherParentElement',
-				['?someTarget', 'someData']
-			], documentNode);
-			chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
-		});
+	it('allows processing instruction targets as NCNames', () => {
+		const selector = parseSelector('self::processing-instruction(someTarget)');
+		jsonMLMapper.parse([
+			'someOtherParentElement',
+			['?someTarget', 'someData']
+		], documentNode);
+		chai.expect(selector.matches(documentNode.documentElement.firstChild, blueprint)).to.equal(true);
 	});
 });

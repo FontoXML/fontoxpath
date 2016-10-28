@@ -1,36 +1,25 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-dom-utils/jsonMLMapper',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/evaluateXPath'
-], function (
-	blueprint,
-	jsonMLMapper,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
+import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
-	parseSelector,
-	evaluateXPath
-) {
-	'use strict';
+let documentNode;
+beforeEach(() => {
+	documentNode = slimdom.createDocument();
+});
 
-	var documentNode;
-	beforeEach(function () {
-		documentNode = slimdom.createDocument();
-	});
-
-	describe('preceding-sibling', function () {
-		it('parses preceding-sibling::', function () {
-			var selector = parseSelector('preceding-sibling::someSiblingElement');
-			jsonMLMapper.parse([
-				'someParentElement',
-				['someSiblingElement'],
-				['someElement']
-			], documentNode);
-			chai.expect(
-				evaluateXPath(selector, documentNode.documentElement.lastChild, blueprint, {}, evaluateXPath.NODES_TYPE))
+describe('preceding-sibling', () => {
+	it('parses preceding-sibling::', () => {
+		const selector = parseSelector('preceding-sibling::someSiblingElement');
+		jsonMLMapper.parse([
+			'someParentElement',
+			['someSiblingElement'],
+			['someElement']
+		], documentNode);
+		chai.expect(
+			evaluateXPath(selector, documentNode.documentElement.lastChild, blueprint, {}, evaluateXPath.NODES_TYPE))
 			.to.deep.equal([documentNode.documentElement.firstChild]);
-		});
 	});
 });

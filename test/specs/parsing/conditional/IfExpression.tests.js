@@ -1,32 +1,25 @@
-define([
-	'slimdom',
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-selectors/evaluateXPathToBoolean'
-], function (
-	slimdom,
-	readOnlyBlueprint,
-	evaluateXPathToBoolean
-) {
-	'use strict';
+import slimdom from 'slimdom';
 
-	describe('IfExpression', function () {
-		var documentNode;
-		beforeEach(function () {
-			documentNode = slimdom.createDocument();
-		});
+import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
+import readOnlyBlueprint from 'fontoxml-blueprints/readOnlyBlueprint';
 
-		it('returns the value of the then expression if the test resolves to true', function () {
-			chai.assert(evaluateXPathToBoolean(
-				'(if (true()) then "then expression" else "else expression") eq "then expression"',
-				documentNode,
-				readOnlyBlueprint));
-		});
+describe('IfExpression', () => {
+	let documentNode;
+	beforeEach(() => {
+		documentNode = slimdom.createDocument();
+	});
 
-		it('returns the value of the then expression if the test resolves to false', function () {
-			chai.assert(evaluateXPathToBoolean(
-				'(if (false()) then "then expression" else "else expression") eq "else expression"',
-				documentNode,
-				readOnlyBlueprint));
-		});
+	it('returns the value of the then expression if the test resolves to true', () => {
+		chai.assert(evaluateXPathToBoolean(
+			'(if (true()) then "then expression" else "else expression") eq "then expression"',
+			documentNode,
+			readOnlyBlueprint));
+	});
+
+	it('returns the value of the then expression if the test resolves to false', () => {
+		chai.assert(evaluateXPathToBoolean(
+			'(if (false()) then "then expression" else "else expression") eq "else expression"',
+			documentNode,
+			readOnlyBlueprint));
 	});
 });

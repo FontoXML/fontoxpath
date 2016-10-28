@@ -1,94 +1,82 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-dom-utils/jsonMLMapper',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/evaluateXPath'
-], function (
-	blueprint,
-	jsonMLMapper,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
-	parseSelector,
-	evaluateXPath
-) {
-	'use strict';
+let documentNode;
+beforeEach(() => {
+	documentNode = slimdom.createDocument();
+});
 
-	var documentNode;
-	beforeEach(function () {
-		documentNode = slimdom.createDocument();
+describe('unary operators', () => {
+	it('accepts + when passed an integer', () => {
+		const selector = parseSelector('+1');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.equal(1);
 	});
 
-	describe('unary operators', function () {
-		it('accepts + when passed an integer', function () {
-			var selector = parseSelector('+1');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(1);
-		});
+	it('negates a - when passed an integer', () => {
+		const selector = parseSelector('-1');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.equal(-1);
+	});
 
-		it('negates a - when passed an integer', function () {
-			var selector = parseSelector('-1');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(-1);
-		});
+	it('accepts + when passed 0', () => {
+		const selector = parseSelector('+0');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.equal(0);
+	});
 
-		it('accepts + when passed 0', function () {
-			var selector = parseSelector('+0');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(0);
-		});
+	it('accepts - when passed 0', () => {
+		const selector = parseSelector('-0');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.equal(0);
+	});
 
-		it('accepts - when passed 0', function () {
-			var selector = parseSelector('-0');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(0);
-		});
+	it('accepts chaining +', () => {
+		const selector = parseSelector('++++1');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.equal(1);
+	});
 
-		it('accepts chaining +', function () {
-			var selector = parseSelector('++++1');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(1);
-		});
+	it('accepts chaining -', () => {
+		const selector = parseSelector('----1');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.equal(1);
+	});
 
-		it('accepts chaining -', function () {
-			var selector = parseSelector('----1');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(1);
-		});
+	it('accepts chaining - and + intermittently', () => {
+		const selector = parseSelector('+-+-1');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.equal(1);
+	});
 
-		it('accepts chaining - and + intermittently', function () {
-			var selector = parseSelector('+-+-1');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(1);
-		});
+	it('resolves to NaN passed a string', () => {
+		const selector = parseSelector('+"something"');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.be.NaN;
+	});
 
-		it('resolves to NaN passed a string', function () {
-			var selector = parseSelector('+"something"');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.be.NaN;
-		});
+	it('resolves to NaN passed a boolean', () => {
+		const selector = parseSelector('+true()');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.be.NaN;
+	});
 
-		it('resolves to NaN passed a boolean', function () {
-			var selector = parseSelector('+true()');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.be.NaN;
-		});
-
-		it('resolves to NaN passed a node', function () {
-			var selector = parseSelector('+.');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.be.NaN;
-		});
+	it('resolves to NaN passed a node', () => {
+		const selector = parseSelector('+.');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.be.NaN;
 	});
 });

@@ -1,40 +1,26 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'fontoxml-dom-utils/jsonMLMapper',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/parsing/createSelectorFromXPath',
-	'fontoxml-selectors/addXPathCustomTest',
-	'fontoxml-selectors/evaluateXPath'
-], function (
-	blueprint,
-	jsonMLMapper,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
-	parseSelector,
-	addXPathCustomTest,
-	evaluateXPath
-) {
-	'use strict';
+let documentNode;
+beforeEach(() => {
+	documentNode = slimdom.createDocument();
+});
 
-	var documentNode;
-	beforeEach(function () {
-		documentNode = slimdom.createDocument();
+describe('stringConcat', () => {
+	it('can concatenate strings', () => {
+		const selector = parseSelector('"con" || "cat" || "enate"');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.deep.equal('concatenate');
 	});
 
-	describe('stringConcat', function () {
-		it('can concatenate strings', function () {
-			var selector = parseSelector('"con" || "cat" || "enate"');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.deep.equal('concatenate');
-		});
-
-		it('can concatenate empty sequences', function () {
-			var selector = parseSelector('() || "con" || () || "cat" || () || "enate" || ()');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.deep.equal('concatenate');
-		});
+	it('can concatenate empty sequences', () => {
+		const selector = parseSelector('() || "con" || () || "cat" || () || "enate" || ()');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.deep.equal('concatenate');
 	});
 });

@@ -1,35 +1,28 @@
-define([
-	'fontoxml-selectors/selectors/dataTypes/StringValue',
-	'fontoxml-selectors/selectors/dataTypes/StringValue'
-], function (
-	BooleanValue,
-	StringValue
-) {
-	'use strict';
+import BooleanValue from 'fontoxml-selectors/selectors/dataTypes/BooleanValue';
+import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
 
-	describe('StringValue.cast()', function () {
-		it('casts the given value to a StringValue', function () {
-			var stringValue = new StringValue('true');
-			chai.expect(StringValue.cast(new BooleanValue(true))).to.deep.equal(stringValue);
-		});
+describe('StringValue.cast()', () => {
+	it('casts the given value to a StringValue', () => {
+		const stringValue = new StringValue('true');
+		chai.expect(StringValue.cast(new BooleanValue(true))).to.deep.equal(stringValue);
+	});
+});
+
+describe('StringValue.getEffectiveBooleanValue()', () => {
+	it('returns true when the value is the string "Text"', () => {
+		const string = new StringValue('Text');
+		chai.expect(string.getEffectiveBooleanValue()).to.equal(true);
 	});
 
-	describe('StringValue.getEffectiveBooleanValue()', function () {
-		it('returns true when the value is the string "Text"', function () {
-			var string = new StringValue('Text');
-			chai.expect(string.getEffectiveBooleanValue()).to.equal(true);
-		});
-
-		it('returns false when the value is an empty string', function () {
-			var string = new StringValue('');
-			chai.expect(string.getEffectiveBooleanValue()).to.equal(false);
-		});
+	it('returns false when the value is an empty string', () => {
+		const string = new StringValue('');
+		chai.expect(string.getEffectiveBooleanValue()).to.equal(false);
 	});
+});
 
-	describe('StringValue.instanceOfType', function () {
-		it('returns true for xs:string', function () {
-			var stringValue = new StringValue('');
-			chai.expect(stringValue.instanceOfType('xs:string')).to.equal(true);
-		});
+describe('StringValue.instanceOfType', () => {
+	it('returns true for xs:string', () => {
+		const stringValue = new StringValue('');
+		chai.expect(stringValue.instanceOfType('xs:string')).to.equal(true);
 	});
 });

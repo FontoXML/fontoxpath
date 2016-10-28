@@ -1,32 +1,22 @@
-define([
-	'fontoxml-blueprints/readOnlyBlueprint',
-	'slimdom',
+import slimdom from 'slimdom';
 
-	'fontoxml-selectors/evaluateXPath',
-	'fontoxml-selectors/evaluateXPathToBoolean'
-], function (
-	blueprint,
-	slimdom,
+import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
 
-	evaluateXPath,
-	evaluateXPathToBoolean
-) {
-	'use strict';
+let documentNode;
+beforeEach(() => {
+	documentNode = slimdom.createDocument();
+});
 
-	var documentNode;
-	beforeEach(function () {
-		documentNode = slimdom.createDocument();
+describe('nameTests', () => {
+	it('allows wildcards', () => {
+		const element = documentNode.createElement('someElement');
+		chai.expect(evaluateXPathToBoolean('self::*', element, blueprint)).to.equal(true);
 	});
 
-	describe('nameTests', function () {
-		it('allows wildcards', function () {
-			var element = documentNode.createElement('someElement');
-			chai.expect(evaluateXPathToBoolean('self::*', element, blueprint)).to.equal(true);
-		});
-
-		it('allows nodeNames containing namespaces', function () {
-			var element = documentNode.createElement('someNamespace:someElement');
-			chai.expect(evaluateXPath('self::someNamespace:someElement', element, blueprint)).to.deep.equal(element);
-		});
+	it('allows nodeNames containing namespaces', () => {
+		const element = documentNode.createElement('someNamespace:someElement');
+		chai.expect(evaluateXPath('self::someNamespace:someElement', element, blueprint)).to.deep.equal(element);
 	});
 });
