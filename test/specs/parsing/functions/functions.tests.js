@@ -90,29 +90,6 @@ describe('functions', () => {
 		});
 	});
 
-	describe('count()', () => {
-		it('returns the length of the sequence', () => {
-			const selector = parseSelector('count((1 to 1000))');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(1000);
-		});
-
-		it('returns the length of the empty sequence', () => {
-			const selector = parseSelector('count(())');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(0);
-		});
-
-		it('returns the length of a singleton sequence', () => {
-			const selector = parseSelector('count((1))');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(1);
-		});
-	});
-
 	describe('number', () => {
 		it('Calling the zero-argument version of the function is defined to give the same result as calling the single-argument version with the context item (.). That is, fn:number() is equivalent to fn:number(.), as defined by the rules that follow.', () => {
 			const selector = parseSelector('number()');
@@ -122,14 +99,9 @@ describe('functions', () => {
 		});
 
 		it('If $arg is the empty sequence or if $arg cannot be converted to an xs:double, the xs:double value NaN is returned.', () => {
-			const selector1 = parseSelector('number(())'),
-			selector2 = parseSelector('number()');
-			chai.expect(
-				evaluateXPath(selector1, documentNode, blueprint)
-			).to.be.NaN;
-			chai.expect(
-				evaluateXPath(selector2, documentNode, blueprint)
-			).to.be.NaN;
+			chai.expect(evaluateXPath('number()', documentNode, blueprint)).to.be.NaN;
+			chai.expect(evaluateXPath('number(())', documentNode, blueprint)).to.be.NaN;
+			chai.expect(evaluateXPath('number("zero")', documentNode, blueprint)).to.be.NaN;
 		});
 
 		it('Otherwise, $arg is converted to an xs:double following the rules of 19.1.2.2 Casting to xs:double. If the conversion to xs:double fails, the xs:double value NaN is returned.', () => {
@@ -228,12 +200,9 @@ describe('functions', () => {
 			).to.equal('Some text.');
 		});
 
-		it('returns the data of a textnode.', () => {
-			const selector = parseSelector('string(/text()[1])');
+		it('returns the string value of the passed node: text nodes.', () => {
 			jsonMLMapper.parse('Some text.', documentNode);
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal('Some text.');
+			chai.expect(evaluateXPath('string()', documentNode.firstChild, blueprint)).to.equal('Some text.');
 		});
 
 		it('If $arg is the empty sequence, the function returns the zero-length string.', () => {
@@ -448,11 +417,18 @@ describe('functions', () => {
 	});
 
 	describe('id()', () => {
-		it('returns nothing if nothing matches', () => {
-			const selector = parseSelector('id("some-id")');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE)
-			).to.deep.equal([]);
+		it('returns nothing if nothing matches',
+		   () => chai.expect(evaluateXPath('id("some-id")', documentNode, blueprint)).to.deep.equal([]));
+
+		it('returns nothing if the second parameter is not a node', () => {
+			jsonMLMapper.parse([
+				'someElement',
+				{
+					id: 'some-id'
+				}
+			], documentNode);
+
+			chai.expect(evaluateXPath('(1)!id("some-id")', documentNode, blueprint)).to.deep.equal([]);
 		});
 
 		it('returns an element with the given id', () => {

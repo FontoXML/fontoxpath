@@ -22,8 +22,6 @@ define([
 	function FunctionCall (functionName, args) {
 		Selector.call(this, new Specificity({external: 1}), Selector.RESULT_ORDER_UNSORTED);
 
-		// TODO: fonto(-|:).* syntax
-
 		this._args = args;
 		this._functionName = functionName;
 	}

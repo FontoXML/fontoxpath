@@ -2,8 +2,11 @@ define([
 	'fontoxml-blueprints',
 	'fontoxml-dom-utils/domInfo',
 
+	'./builtInFunctions.aggregate',
+
 	'../dataTypes/BooleanValue',
 	'../dataTypes/DoubleValue',
+	'../dataTypes/FloatValue',
 	'../dataTypes/IntegerValue',
 	'../dataTypes/NodeValue',
 	'../dataTypes/QNameValue',
@@ -14,8 +17,11 @@ define([
 	blueprints,
 	domInfo,
 
+	aggregateBuiltinFunctions,
+
 	BooleanValue,
 	DoubleValue,
+	FloatValue,
 	IntegerValue,
 	NodeValue,
 	QNameValue,
@@ -45,10 +51,6 @@ define([
 				return sequence.value[0].value;
 			});
 		return Sequence.singleton(new StringValue(strings.join('')));
-	}
-
-	function fnCount (dynamicContext, sequence) {
-		return Sequence.singleton(new IntegerValue(sequence.value.length));
 	}
 
 	function fnFalse () {
@@ -258,12 +260,6 @@ define([
 		},
 
 		{
-			name: 'count',
-			typeDescription: ['item()*'],
-			callFunction: fnCount
-		},
-
-		{
 			name: 'false',
 			typeDescription: [],
 			callFunction: fnFalse
@@ -455,5 +451,5 @@ define([
 			typeDescription: [],
 			callFunction: fnTrue
 		}
-	];
+	].concat(aggregateBuiltinFunctions);
 });

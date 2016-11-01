@@ -6,7 +6,7 @@ define([
 	'use strict';
 
 	function IntegerValue (initialValue) {
-		DecimalValue.call(this, initialValue);
+		DecimalValue.call(this, Math.abs(initialValue));
 	}
 
 	IntegerValue.prototype = Object.create(DecimalValue.prototype);
