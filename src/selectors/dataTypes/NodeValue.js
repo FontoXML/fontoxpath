@@ -61,6 +61,10 @@ define([
 			return this.value.atomize();
 		}
 
+		if (this.instanceOfType('text()')) {
+			return new StringValue(this._domFacade.getData(this.value));
+		}
+
 		var allTextNodes = blueprintQuery.findDescendants(this._domFacade, this.value, domInfo.isTextNode);
 		return new StringValue(allTextNodes.map(function (textNode) {
 				return this._domFacade.getData(textNode);

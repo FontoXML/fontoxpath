@@ -39,4 +39,11 @@ describe('range', () => {
 			evaluateXPath(selector, documentNode, blueprint)
 		).to.deep.equal([1,2,3,4,5,6,7,8,9,10]);
 	});
+
+	it('creates an empty sequence when passed a > b', () => {
+		const selector = parseSelector('10 to 1');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.deep.equal([]);
+	});
 });

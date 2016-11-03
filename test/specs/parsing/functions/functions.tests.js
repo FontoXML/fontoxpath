@@ -228,6 +228,14 @@ describe('functions', () => {
 			).to.equal('Some text.');
 		});
 
+		it('returns the data of a textnode.', () => {
+			const selector = parseSelector('string(/text()[1])');
+			jsonMLMapper.parse('Some text.', documentNode);
+			chai.expect(
+				evaluateXPath(selector, documentNode, blueprint)
+			).to.equal('Some text.');
+		});
+
 		it('If $arg is the empty sequence, the function returns the zero-length string.', () => {
 			const selector = parseSelector('string(())');
 			chai.expect(
