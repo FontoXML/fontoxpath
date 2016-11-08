@@ -2,6 +2,7 @@ import slimdom from 'slimdom';
 
 import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
 import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import evaluateXPathToFirstNode from 'fontoxml-selectors/evaluateXPathToFirstNode';
 import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
 import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
@@ -105,6 +106,18 @@ describe('relative paths', () => {
 		// We need to convert to string becase string-join expects strings and function conversion is not in yet
 		const selector = parseSelector('(@BsomeOtherAttribute, @AsomeAttribute)/string() => string-join(", ")');
 		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('someValue, someOtherValue');
+	});
+
+	it('allows mixed pathseparators and abbreviated steps', function () {
+		jsonMLMapper.parse([
+			'someNode',
+			[
+				'someChildNode',
+				['someGrandChild']
+			]
+		], documentNode);
+
+		chai.assert.equal(evaluateXPathToFirstNode('/someNode/someChildNode//someGrandChild/../..//someGrandChild', documentNode.documentElement, blueprint), documentNode.documentElement.firstChild.firstChild);
 	});
 
 	it('supports addressing the contextNode with .', () => {

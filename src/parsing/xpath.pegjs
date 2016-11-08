@@ -171,7 +171,7 @@ PathExpr
 
 RelativeLocationPath
  = lhs:StepExpr abbrev:LocationPathAbbreviation rhs:RelativeLocationPath {return ["path",  lhs, ["path", abbrev, rhs]]}
- / first:StepExpr rest:("/" step:StepExpr {return step})+ {return (rest && rest.length) ? appendRest(["path", first], rest) : first}
+ / lhs:StepExpr "/" rhs:RelativeLocationPath {return ["path", lhs, rhs]}
  / StepExpr
 
 StepExpr

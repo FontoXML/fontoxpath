@@ -16,89 +16,76 @@ describe('evaluateXPath', () => {
 	});
 
 	describe('toBoolean', () => {
-		it('Keeps booleans booleans', () => chai.expect(evaluateXPathToBoolean('true()', documentNode, blueprint)).to.equal(true));
+		it('Keeps booleans booleans',
+		   () => chai.assert.equal(evaluateXPathToBoolean('true()', documentNode, blueprint), true));
 
-		it('Converts the result to a boolean', () => {
-			chai.expect(evaluateXPathToBoolean('()', documentNode, blueprint)).to.equal(false);
-		});
+		it('Converts the result to a boolean',
+		   () => chai.assert.equal(evaluateXPathToBoolean('()', documentNode, blueprint), false));
 
-		it('Throws when unable to convert the result to a number', () => {
-			chai.expect(() => {
-				evaluateXPathToBoolean('(1,2,3)', documentNode, blueprint);
-			}).to.throw();
-		});
+		it('Throws when unable to convert the result to a number',
+		   () => chai.assert.throws(() =>  evaluateXPathToBoolean('(1,2,3)', documentNode, blueprint)));
 	});
 
 	describe('toNumber', () => {
-		it('Keeps numeric values numbers', () => {
-			chai.expect(evaluateXPathToNumber('42', documentNode, blueprint)).to.equal(42);
-		});
+		it('Keeps numeric values numbers',
+		   () => chai.assert.equal(evaluateXPathToNumber('42', documentNode, blueprint), 42));
 
-		it('Returns NaN when unable to convert the result to a number', () => {
-			chai.expect(evaluateXPathToNumber('"fortytwo"', documentNode, blueprint)).to.be.NaN;
-		});
+		it('returns NaN when not resolving to a singleton',
+		   () => chai.assert.isNaN(evaluateXPathToNumber('()', documentNode, blueprint)));
+
+		it('Returns NaN when unable to convert the result to a number',
+		   () => chai.assert.isNaN(evaluateXPathToNumber('"fortytwo"', documentNode, blueprint)));
 	});
 
 	describe('toString', () => {
-		it('Keeps string values strings', () => {
-			chai.expect(evaluateXPathToString('"A piece of text"', documentNode, blueprint)).to.equal('A piece of text');
-		});
+		it('Keeps string values strings',
+		   () => chai.assert.equal(evaluateXPathToString('"A piece of text"', documentNode, blueprint), 'A piece of text'));
 
-		it('Returns the empty string when resolving to the empty sequence', () => {
-			chai.expect(evaluateXPathToString('()', documentNode, blueprint)).to.equal('');
-		});
+		it('Returns the empty string when resolving to the empty sequence',
+		   () => chai.assert.equal(evaluateXPathToString('()', documentNode, blueprint), ''));
 	});
 
 	describe('toStrings', () => {
-		it('Keeps string values strings', () => {
-			chai.expect(evaluateXPathToStrings('("A piece of text", "another piece of text")', documentNode, blueprint)).to.deep.equal(['A piece of text', 'another piece of text']);
-		});
+		it('Keeps string values strings',
+		   () => chai.assert.deepEqual(evaluateXPathToStrings('("A piece of text", "another piece of text")', documentNode, blueprint), ['A piece of text', 'another piece of text']));
+
+		it('returns an empty array when it resolves to the empty sequence',
+		   () => chai.assert.deepEqual(evaluateXPathToStrings('()', documentNode, blueprint), []));
 	});
 
-
 	describe('toFirstNode', () => {
-		it('Keeps nodes nodes', () => {
-			chai.expect(evaluateXPathToFirstNode('.', documentNode, blueprint)).to.equal(documentNode);
-		});
+		it('Keeps nodes nodes',
+		   () => chai.assert.equal(evaluateXPathToFirstNode('.', documentNode, blueprint), documentNode));
 
-		it('Only returns the first node', () => {
-			chai.expect(evaluateXPathToFirstNode('(., ., .)', documentNode, blueprint)).to.equal(documentNode);
-		});
+		it('Only returns the first node',
+		   () => chai.assert.equal(evaluateXPathToFirstNode('(., ., .)', documentNode, blueprint), documentNode));
 
-		it('Returns null when the xpath resolves to the empty sequence', () => {
-			chai.expect(evaluateXPathToFirstNode('()', documentNode, blueprint)).to.equal(null);
-		});
+		it('Returns null when the xpath resolves to the empty sequence',
+		   () => chai.assert.equal(evaluateXPathToFirstNode('()', documentNode, blueprint), null));
 
 		it('Throws when the xpath resolves to an attribute', () => {
 			jsonMLMapper.parse(['someElement', {
 				someAttribute: 'someValue'
 			}], documentNode);
-			chai.expect(() => {
-				evaluateXPathToFirstNode('//@someAttribute', documentNode, blueprint);
-			}).to.throw();
+			chai.assert.throws(() => evaluateXPathToFirstNode('//@someAttribute', documentNode, blueprint));
 		});
 	});
 
 	describe('toNodes', () => {
-		it('Keeps nodes nodes', () => {
-			chai.expect(evaluateXPathToNodes('.', documentNode, blueprint)).to.deep.equal([documentNode]);
-		});
+		it('Keeps nodes nodes',
+		   () => chai.assert.deepEqual(evaluateXPathToNodes('.', documentNode, blueprint), [documentNode]));
 
-		it('Returns all nodes', () => {
-			chai.expect(evaluateXPathToNodes('(., ., .)', documentNode, blueprint)).to.deep.equal([documentNode, documentNode, documentNode]);
-		});
+		it('Returns all nodes',
+		   () => chai.assert.deepEqual(evaluateXPathToNodes('(., ., .)', documentNode, blueprint), [documentNode, documentNode, documentNode]));
 
-		it('Returns null when the xpath resolves to the empty sequence', () => {
-			chai.expect(evaluateXPathToNodes('()', documentNode, blueprint)).to.deep.equal([]);
-		});
+		it('Returns null when the xpath resolves to the empty sequence',
+		   () => chai.assert.deepEqual(evaluateXPathToNodes('()', documentNode, blueprint), []));
 
 		it('Throws when the xpath resolves to an attribute', () => {
 			jsonMLMapper.parse(['someElement', {
 				someAttribute: 'someValue'
 			}], documentNode);
-			chai.expect(() => {
-				evaluateXPathToNodes('//@someAttribute', documentNode, blueprint);
-			}).to.throw();
+			chai.assert.throws(() => evaluateXPathToNodes('//@someAttribute', documentNode, blueprint));
 		});
 	});
 });

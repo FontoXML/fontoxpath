@@ -1,9 +1,9 @@
 import slimdom from 'slimdom';
 
 import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
 import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
 import functionRegistry from 'fontoxml-selectors/selectors/functions/functionRegistry';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 import registerCustomXPathFunction from 'fontoxml-selectors/registerCustomXPathFunction';
 
 describe('registerCustomXPath() =>', () => {
@@ -15,10 +15,10 @@ describe('registerCustomXPath() =>', () => {
 	before(() => {
 		registerCustomXPathFunction(
 			'fonto:custom-test1',
-			['xs:string'],
+			['xs:string?'],
 			'xs:boolean',
 			function (dynamicContext, string) {
-				return string === 'test';
+				return string === null || string === 'test';
 			});
 
 		registerCustomXPathFunction(
@@ -31,8 +31,8 @@ describe('registerCustomXPath() =>', () => {
 
 		registerCustomXPathFunction(
 			'fonto:custom-test3',
-			['xs:string'],
-			'xs:string',
+			['item()?'],
+			'item()',
 			function (dynamicContext, string) {
 				return string;
 			});
@@ -49,45 +49,32 @@ describe('registerCustomXPath() =>', () => {
 	});
 
 	it('registers a given custom function', () => {
-		const result1 = functionRegistry.hasFunction('fonto:custom-test1', 1);
-		const result2 = functionRegistry.hasFunction('fonto:custom-test2', 2);
-		const result3 = functionRegistry.hasFunction('fonto:custom-test3', 1);
-		const result4 = functionRegistry.hasFunction('fonto:custom-test4', 1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
-		chai.expect(result3).to.equal(true);
-		chai.expect(result4).to.equal(true);
+		chai.assert(functionRegistry.hasFunction('fonto:custom-test1', 1));
+		chai.assert(functionRegistry.hasFunction('fonto:custom-test2', 2));
+		chai.assert(functionRegistry.hasFunction('fonto:custom-test3', 1));
+		chai.assert(functionRegistry.hasFunction('fonto:custom-test4', 1));
 	});
 
 	it('the registered function can be used in a xPath selector with return value boolean', () => {
-		const selector1 = parseSelector('fonto:custom-test1("test")'),
-			selector2 = parseSelector('fonto:custom-test1("bla")');
-		chai.expect(evaluateXPath(selector1, documentNode, blueprint)).to.equal(true);
-		chai.expect(evaluateXPath(selector2, documentNode, blueprint)).to.equal(false);
+		chai.assert(evaluateXPath('fonto:custom-test1("test")', documentNode, blueprint) === true);
+		chai.assert(evaluateXPath('fonto:custom-test1("bla")', documentNode, blueprint) === false);
+		chai.assert(evaluateXPath('fonto:custom-test1(())', documentNode, blueprint) === true);
 	});
 
 	it('the registered function can be used in a xPath selector with 2 arguments', () => {
-		const selector1 = parseSelector('fonto:custom-test2("test", true())'),
-			selector2 = parseSelector('fonto:custom-test2("test", false())');
-		chai.expect(evaluateXPath(selector1, documentNode, blueprint)).to.equal(true);
-		chai.expect(evaluateXPath(selector2, documentNode, blueprint)).to.equal(false);
+		chai.assert(evaluateXPath('fonto:custom-test2("test", true())', documentNode, blueprint) === true);
+		chai.assert(evaluateXPath('fonto:custom-test2("test", false())', documentNode, blueprint) === false);
 	});
 
 	it('the registered function can be used in a xPath selector with return value string', () => {
-		const selector1 = parseSelector('fonto:custom-test3("test")'),
-			selector2 = parseSelector('fonto:custom-test3("test")');
-		chai.expect(evaluateXPath(selector1, documentNode, blueprint)).to.equal('test');
-		chai.expect(evaluateXPath(selector2, documentNode, blueprint)).to.equal('test');
+		chai.assert(evaluateXPath('fonto:custom-test3("test")', documentNode, blueprint) === 'test');
+		chai.assert(evaluateXPath('fonto:custom-test3("test")', documentNode, blueprint) === 'test');
 	});
 
 	it('the registered function can be used in a xPath selector with return value array', () => {
-		const selector1 = parseSelector('fonto:custom-test4(("abc", "123", "XYZ"))'),
-			selector2 = parseSelector('fonto:custom-test4(("abc"))'),
-			selector3 = parseSelector('fonto:custom-test4(())');
-		chai.expect(evaluateXPath(selector1, documentNode, blueprint)).to.deep.equal(['abc-test', '123-test', 'XYZ-test']);
+		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(("abc", "123", "XYZ"))', documentNode, blueprint), ['abc-test', '123-test', 'XYZ-test']);
 		// Returns ['abc-test'], but does get atomized by the evaluateXPath function
-		chai.expect(evaluateXPath(selector2, documentNode, blueprint)).to.deep.equal('abc-test');
-		chai.expect(evaluateXPath(selector3, documentNode, blueprint)).to.deep.equal([]);
+		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(("abc"))', documentNode, blueprint), 'abc-test');
+		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(())', documentNode, blueprint), []);
 	});
 });

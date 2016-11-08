@@ -10,19 +10,12 @@ beforeEach(() => {
 });
 
 describe('let', () => {
-	it('creates a variable reference', () => {
-		const selector = parseSelector('let $x := 1 return $x');
-		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
-		).to.deep.equal(1);
-	});
-
-	it('can be used in a function', () => {
-		const selector = parseSelector('boolean(let $x := 1 return $x)');
-		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
-		).to.deep.equal(true);
-	});
+	it('creates a variable reference',
+	   () => chai.assert.equal(evaluateXPath('let $x := 1 return $x', documentNode, blueprint), 1));
+	it('can be used in a function',
+	   () => chai.assert.equal(evaluateXPath('boolean(let $x := 1 return $x)', documentNode, blueprint), true));
+	it('allows node/node//node in it',
+	   () => chai.assert.deepEqual(evaluateXPath('let $x := node/node//node return $x', documentNode, blueprint), []));
 
 	it('can be chained', () => {
 		const selector = parseSelector('let $x := 1, $y := 2 return $x * $y');
