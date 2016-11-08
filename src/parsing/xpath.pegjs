@@ -41,7 +41,7 @@ ExprSingle
 
 // 11
 LetExpr
-= bindings:SimpleLetClause S "return" S returnExpr:ExprSingle {
+= bindings:SimpleLetClause _ "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
     // The bindings part consists of the rangeVariable and the bindingSequence.
 	// Multiple bindings are syntactic sugar for 'let $x := 1 return let $y := $x * 2'
     if (bindings.length === 1) return ["let"].concat(bindings[0], [returnExpr]);
@@ -51,7 +51,7 @@ LetExpr
   }
 
 // 12
-SimpleLetClause = "let" S first:SimpleLetBinding rest:(", " binding:SimpleLetBinding {return binding})* {return appendRest([first], rest)}
+SimpleLetClause = "let" _ first:SimpleLetBinding rest:(", " binding:SimpleLetBinding {return binding})* {return appendRest([first], rest)}
 
 // 13
 SimpleLetBinding = "$" rangeVariable:VarName _ ":=" _ bindingSequence:ExprSingle {return [rangeVariable, bindingSequence]}
@@ -62,15 +62,15 @@ QuantifiedExpr
 
 // 15
 IfExpr
- = "if" _ "(" _ testExpr:Expr _ ")" _ "then" _ thenExpr:ExprSingle _ "else" _ elseExpr:ExprSingle {return ["conditional", testExpr, thenExpr, elseExpr]}
+ = "if" _ "(" _ testExpr:Expr _ ")" _ "then" AssertAdjacentOpeningTerminal _ thenExpr:ExprSingle _ "else" AssertAdjacentOpeningTerminal _ elseExpr:ExprSingle {return ["conditional", testExpr, thenExpr, elseExpr]}
 
 // 16
 OrExpr
- = first:AndExpr rest:( S "or" S  expr:AndExpr {return expr})* {return rest.length ? appendRest(['or', first], rest) : first}
+ = first:AndExpr rest:( _ "or" AssertAdjacentOpeningTerminal _ expr:AndExpr {return expr})* {return rest.length ? appendRest(['or', first], rest) : first}
 
 // 17
 AndExpr
- = first:ComparisonExpr rest:( S "and" S expr:ComparisonExpr {return expr})* {return rest.length ? appendRest(["and", first], rest) : first}
+ = first:ComparisonExpr rest:( _ "and" AssertAdjacentOpeningTerminal _ expr:ComparisonExpr {return expr})* {return rest.length ? appendRest(["and", first], rest) : first}
 
 // 18
 ComparisonExpr
@@ -87,7 +87,7 @@ StringConcatExpr
 
 // 20
 RangeExpr
- = lhs:AdditiveExpr rhs:( S "to" S rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", "op:to", lhs, rhs]}
+ = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", "op:to", lhs, rhs]}
 
 // 21
 AdditiveExpr
@@ -96,37 +96,37 @@ AdditiveExpr
 
 // 22
 MultiplicativeExpr
- = lhs:UnionExpr S op:("*"/"div"/"idiv"/"mod") S rhs:MultiplicativeExpr {return ["binaryOperator", op, lhs, rhs]}
+ = lhs:UnionExpr _ op:("*" / ( op:("div" / "idiv" / "mod") AssertAdjacentOpeningTerminal {return op})) _ rhs:MultiplicativeExpr {return ["binaryOperator", op, lhs, rhs]}
  / UnionExpr
 
 // 23
 UnionExpr
- = first:IntersectExpr rest:( S ("|"/"union") S expr:IntersectExpr {return expr})+ {return appendRest(["union", first], rest)}
+ = first:IntersectExpr rest:( _ ("|"/("union" AssertAdjacentOpeningTerminal)) _ expr:IntersectExpr {return expr})+ {return appendRest(["union", first], rest)}
  / IntersectExpr
 
 // 24. Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
- = lhs:InstanceofExpr rhs:(S type:("intersect" / "except") S rhs:IntersectExpr {return ["op:"+type, rhs] })? {
+ = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return ["op:"+type, rhs] })? {
      return rhs === null ? lhs : ["functionCall", rhs[0], lhs, rhs[1]]
    }
 
 // 25
 InstanceofExpr
- = lhs:TreatExpr rhs:(S "instance" S "of" S rhs:SequenceType {return rhs})? {return rhs ? ["instance of", lhs, rhs] : lhs}
+ = lhs:TreatExpr rhs:(_ "instance" S "of" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["instance of", lhs, rhs] : lhs}
  / TreatExpr
 
 // 26
 TreatExpr
-// = lhs:CastableExpr S "treat" S "as" S rhs:SequenceType {return ["treat as", lhs, rhs]}
+// = lhs:CastableExpr _ "treat" S "as" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return ["treat as", lhs, rhs]}
  = CastableExpr
 
 // 27
 CastableExpr
- = lhs:CastExpr rhs:(S "castable" S "as" S rhs:SingleType {return rhs})? {return rhs ? ["castable as", lhs, rhs] : lhs}
+ = lhs:CastExpr rhs:(_ "castable" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castable as", lhs, rhs] : lhs}
 
 // 28
 CastExpr
- = lhs:ArrowExpr rhs:(S "cast" S "as" S rhs:SingleType {return rhs})? {return rhs ? ["cast as", lhs, rhs] : lhs}
+ = lhs:ArrowExpr rhs:(_ "cast" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["cast as", lhs, rhs] : lhs}
 
 // 29
 ArrowExpr
@@ -150,10 +150,10 @@ ValueExpr = SimpleMapExpr
 GeneralComp = op:("=" / "!=" / "<=" / "<" / ">=" / ">") {return ["generalCompare", op]}
 
 // 33
-ValueComp = op:("eq" / "ne" / "lt" / "le" / "gt" / "ge") {return ["valueCompare", op]}
+ValueComp = op:("eq" / "ne" / "lt" / "le" / "gt" / "ge") AssertAdjacentOpeningTerminal {return ["valueCompare", op]}
 
 // 34
-NodeComp = op:("is" / "<<" / ">>") {return ["nodeCompare", op]}
+NodeComp = op:((op:"is" AssertAdjacentOpeningTerminal {return op}) / "<<" / ">>") {return ["nodeCompare", op]}
 
 // 35
 SimpleMapExpr
@@ -259,7 +259,7 @@ PrimaryExpr
 Literal = NumericLiteral / StringLiteral
 
 // 58 Note: changes because double accepts less than decimal, accepts less than integer
-NumericLiteral = DoubleLiteral / DecimalLiteral / IntegerLiteral
+NumericLiteral = literal:(DoubleLiteral / DecimalLiteral / IntegerLiteral) ![a-zA-Z] {return literal}
 
 // 59
 VarRef
@@ -554,3 +554,6 @@ ReservedFunctionNames
  / "switch"
  / "text"
  / "typeswitch"
+
+AssertAdjacentOpeningTerminal
+ = &("(" / '"' / "'" / WhitespaceCharacter)

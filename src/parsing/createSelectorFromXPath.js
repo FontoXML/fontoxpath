@@ -21,7 +21,7 @@ define([
 				compiledSelectorCache[xPathString] = compileAstToSelector(ast);
 			} catch (error) {
 				if (error instanceof xPathParser.SyntaxError) {
-					throw new Error('Unable to parse XPath: ' + xPathString + '.', error);
+					throw new Error('XPST0003: Unable to parse XPath: ' + xPathString + '. ' + error);
 				}
 				throw error;
 			}

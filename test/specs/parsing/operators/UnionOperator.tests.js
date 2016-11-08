@@ -23,6 +23,22 @@ describe('union', () => {
 		).to.deep.equal([documentNode.firstChild, documentNode.firstChild.firstChild]);
 	});
 
+	it('allows union (|) without spaces', () => {
+		jsonMLMapper.parse([
+			'someNode',
+			['someChildNode']
+		], documentNode);
+		chai.assert.deepEqual(evaluateXPath('(//someNode|//someChildNode)', documentNode, blueprint), [documentNode.firstChild, documentNode.firstChild.firstChild]);
+	});
+
+	it('allows union (written out) without spaces', () => {
+		jsonMLMapper.parse([
+			'someNode',
+			['someChildNode']
+		], documentNode);
+		chai.assert.deepEqual(evaluateXPath('((//someNode)union(//someChildNode))', documentNode, blueprint), [documentNode.firstChild, documentNode.firstChild.firstChild]);
+	});
+
 	it('dedupes nodes', () => {
 		const selector = parseSelector('(//* | //*)');
 		jsonMLMapper.parse([
