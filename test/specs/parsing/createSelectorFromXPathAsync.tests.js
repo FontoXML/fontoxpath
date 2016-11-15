@@ -22,7 +22,7 @@ describe('createSelectorFromXPathAsync', () => {
 				() => {
 					chai.expect.fail();
 				});
-	}).timeout(5000);
+	}).timeout(10000);
 
 	it('throws when compilation fails', () => {
 		return createSelectorFromXPathAsync(']] Not valid at all! [[')
@@ -31,5 +31,5 @@ describe('createSelectorFromXPathAsync', () => {
 			}, function (error) {
 				chai.expect(error).to.be.instanceOf(Error);
 			});
-	});
+	}).timeout(10000);
 });
