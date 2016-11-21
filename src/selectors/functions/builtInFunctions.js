@@ -169,6 +169,38 @@ define([
 		return new Sequence(sequence.value.reverse());
 	}
 
+	function fnStartsWith (dynamicContext, arg1, arg2) {
+		var startsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
+		if (startsWith.length === 0) {
+			return BooleanValue.TRUE;
+		}
+		var stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
+		if (stringToTest.length === 0) {
+			return BooleanValue.FALSE;
+		}
+		// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
+		if (stringToTest.startsWith(startsWith)) {
+			return BooleanValue.TRUE;
+		}
+		return BooleanValue.FALSE;
+	}
+
+	function fnEndsWith (dynamicContext, arg1, arg2) {
+		var endsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
+		if (endsWith.length === 0) {
+			return BooleanValue.TRUE;
+		}
+		var stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
+		if (stringToTest.length === 0) {
+			return BooleanValue.FALSE;
+		}
+		// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
+		if (stringToTest.endsWith(endsWith)) {
+			return BooleanValue.TRUE;
+		}
+		return BooleanValue.FALSE;
+	}
+
 	function fnString (dynamicContext, sequence) {
 		if (sequence.isEmpty()) {
 			return Sequence.singleton(new StringValue(''));
@@ -257,6 +289,20 @@ define([
 			name: 'concat',
 			typeDescription: ['xs:anyAtomicType?', 'xs:anyAtomicType?', '...'],
 			callFunction: fnConcat
+		},
+
+		{
+			name: 'ends-with',
+			typeDescription: ['xs:string?', 'xs:string?'],
+			callFunction: fnEndsWith
+		},
+
+		{
+			name: 'ends-with',
+			typeDescription: ['xs:string?', 'xs:string?', 'xs:string'],
+			callFunction: function () {
+				throw new Error('Not implemented: Specifying a collation is not supported');
+			}
 		},
 
 		{
@@ -350,9 +396,15 @@ define([
 		},
 
 		{
-			name: 'op:to',
-			typeDescription: ['xs:integer', 'xs:integer'],
-			callFunction: opTo
+			name: 'number',
+			typeDescription: [],
+			callFunction: contextItemAsFirstArgument.bind(undefined, fnNumber)
+		},
+
+		{
+			name: 'op:except',
+			typeDescription: ['node()*', 'node()*'],
+			callFunction: opExcept
 		},
 
 		{
@@ -362,9 +414,9 @@ define([
 		},
 
 		{
-			name: 'op:except',
-			typeDescription: ['node()*', 'node()*'],
-			callFunction: opExcept
+			name: 'op:to',
+			typeDescription: ['xs:integer', 'xs:integer'],
+			callFunction: opTo
 		},
 
 		{
@@ -377,6 +429,20 @@ define([
 			name: 'reverse',
 			typeDescription: ['item()*'],
 			callFunction: fnReverse
+		},
+
+		{
+			name: 'starts-with',
+			typeDescription: ['xs:string?', 'xs:string?'],
+			callFunction: fnStartsWith
+		},
+
+		{
+			name: 'starts-with',
+			typeDescription: ['xs:string?', 'xs:string?', 'xs:string'],
+			callFunction: function () {
+				throw new Error('Not implemented: Specifying a collation is not supported');
+			}
 		},
 
 		{
@@ -409,11 +475,6 @@ define([
 			name: 'string-length',
 			typeDescription: ['xs:string?'],
 			callFunction: fnStringLength
-		},
-		{
-			name: 'number',
-			typeDescription: [],
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnNumber)
 		},
 
 		{

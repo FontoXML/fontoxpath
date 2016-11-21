@@ -2,6 +2,7 @@ import slimdom from 'slimdom';
 
 import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
 import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
 import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
 import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
@@ -63,6 +64,40 @@ describe('functions', () => {
 			documentNode.appendChild(documentNode.createTextNode('   A piece	of text  '));
 			chai.expect(evaluateXPath('./normalize-space()', documentNode, blueprint)).to.equal('A piece of text');
 		});
+	});
+
+	describe('starts-with()', () => {
+		it('returns true for tattoo starts with tat',
+		   () => chai.assert.isTrue(evaluateXPathToBoolean('starts-with("tattoo", "tat")', documentNode, blueprint)));
+		it('returns true if arg2 is the empty string',
+		   () => chai.assert.isTrue(evaluateXPathToBoolean('starts-with("abc", "")', documentNode, blueprint)));
+		it('returns true if arg2 is the empty sequence (coerces to empty string)',
+		   () => chai.assert.isTrue(evaluateXPathToBoolean('starts-with("abc", ())', documentNode, blueprint)));
+		it('returns false if arg1 is the empty string',
+		   () => chai.assert.isFalse(evaluateXPathToBoolean('starts-with("", "abc")', documentNode, blueprint)));
+		it('returns false if arg1 is the empty sequence (coerces to empty string)',
+		   () => chai.assert.isFalse(evaluateXPathToBoolean('starts-with((), "abc")', documentNode, blueprint)));
+		it('returns true if arg1 and arg2 are empty strings',
+		   () => chai.assert.isTrue(evaluateXPathToBoolean('starts-with("", "")', documentNode, blueprint)));
+		it('returns false if arg1 does not start with arg2',
+		   () => chai.assert.isFalse(evaluateXPathToBoolean('starts-with("tattoo", "abc")', documentNode, blueprint)));
+	});
+
+	describe('ends-with()', () => {
+		it('returns true for tattoo ends with too',
+		   () => chai.assert.isTrue(evaluateXPathToBoolean('ends-with("tattoo", "too")', documentNode, blueprint)));
+		it('returns true if arg2 is the empty string',
+		   () => chai.assert.isTrue(evaluateXPathToBoolean('ends-with("abc", "")', documentNode, blueprint)));
+		it('returns true if arg2 is the empty sequence (coerces to empty string)',
+		   () => chai.assert.isTrue(evaluateXPathToBoolean('ends-with("abc", ())', documentNode, blueprint)));
+		it('returns false if arg1 is the empty string',
+		   () => chai.assert.isFalse(evaluateXPathToBoolean('ends-with("", "abc")', documentNode, blueprint)));
+		it('returns false if arg1 is the empty sequence (coerces to empty string)',
+		   () => chai.assert.isFalse(evaluateXPathToBoolean('ends-with((), "abc")', documentNode, blueprint)));
+		it('returns true if arg1 and arg2 are empty strings',
+		   () => chai.assert.isTrue(evaluateXPathToBoolean('ends-with("", "")', documentNode, blueprint)));
+		it('returns false if arg1 does not start with arg2',
+		   () => chai.assert.isFalse(evaluateXPathToBoolean('ends-with("tattoo", "abc")', documentNode, blueprint)));
 	});
 
 	describe('last()', () => {
