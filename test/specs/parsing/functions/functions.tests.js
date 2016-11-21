@@ -3,6 +3,7 @@ import slimdom from 'slimdom';
 import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
 import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
 import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
+import evaluateXPathToNumber from 'fontoxml-selectors/evaluateXPathToNumber';
 import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
 import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
@@ -101,19 +102,12 @@ describe('functions', () => {
 	});
 
 	describe('last()', () => {
-		it('returns the length of the dynamic context size', () => {
-			const selector = parseSelector('(1,2,3)[last()]');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(3);
-		});
-
-		it('can target the second to last item', () => {
-			const selector = parseSelector('(1,2,3)[last() - 1]');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.equal(2);
-		});
+		it('returns the length of the dynamic context size',
+		   () => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[last()]', documentNode, blueprint), 3));
+		it('uses the size of the current dynamic context',
+		   () => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[. > 2][last()]', documentNode, blueprint), 3));
+		it('can target the second to last item',
+		   () => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[last() - 1]', documentNode, blueprint), 2));
 	});
 
 	describe('position()', () => {

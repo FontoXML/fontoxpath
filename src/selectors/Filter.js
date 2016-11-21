@@ -41,11 +41,12 @@ define([
 	Filter.prototype.evaluate = function (dynamicContext) {
 		var valueSequence = this._valueSelector.evaluate(dynamicContext);
 		var filteredValues = this._filterSelectors.reduce(function (intermediateResult, selector) {
+				var intermediateResultSequence = new Sequence(intermediateResult);
 				return intermediateResult.filter(function (value, i) {
 					var result = selector.evaluate(
 							dynamicContext.createScopedContext({
 								contextItem: Sequence.singleton(value),
-								contextSequence: valueSequence
+								contextSequence: intermediateResultSequence
 							}));
 
 					if (result.isEmpty()) {
