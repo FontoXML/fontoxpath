@@ -71,24 +71,24 @@ define([
 				return byId;
 			}, Object.create(null));
 		var matchingNodes = blueprintQuery.findDescendants(
-			domFacade,
-			blueprintQuery.getDocumentNode(domFacade, targetNodeValue.value),
-			function (node) {
-				// TODO: use the is-id property of attributes / elements
-				if (!domInfo.isElement(node)) {
-					return false;
-				}
-				var idAttribute = domFacade.getAttribute(node, 'id');
-				if (!idAttribute) {
-					return false;
-				}
-				if (!isMatchingIdById[idAttribute]) {
-					return false;
-				}
-				// Only return the first match, per id
-				isMatchingIdById[idAttribute] = false;
-				return true;
-			}, true);
+				domFacade,
+				blueprintQuery.getDocumentNode(domFacade, targetNodeValue.value),
+				function (node) {
+					// TODO: use the is-id property of attributes / elements
+					if (!domInfo.isElement(node)) {
+						return false;
+					}
+					var idAttribute = domFacade.getAttribute(node, 'id');
+					if (!idAttribute) {
+						return false;
+					}
+					if (!isMatchingIdById[idAttribute]) {
+						return false;
+					}
+					// Only return the first match, per id
+					isMatchingIdById[idAttribute] = false;
+					return true;
+				}, true);
 		return new Sequence(matchingNodes.map(function (node) {
 			return new NodeValue(domFacade, node);
 		}));
@@ -106,22 +106,22 @@ define([
 			}, Object.create(null));
 		// TODO: Index idrefs to optimize this lookup
 		var matchingNodes = blueprintQuery.findDescendants(
-			domFacade,
-			blueprintQuery.getDocumentNode(domFacade, targetNodeValue.value),
-			function (node) {
-				// TODO: use the is-idrefs property of attributes / elements
-				if (!domInfo.isElement(node)) {
-					return false;
-				}
-				var idAttribute = domFacade.getAttribute(node, 'idref');
-				if (!idAttribute) {
-					return false;
-				}
-				var idRefs = idAttribute.split(/\s+/);
-				return idRefs.some(function (idRef) {
+				domFacade,
+				blueprintQuery.getDocumentNode(domFacade, targetNodeValue.value),
+				function (node) {
+					// TODO: use the is-idrefs property of attributes / elements
+					if (!domInfo.isElement(node)) {
+						return false;
+					}
+					var idAttribute = domFacade.getAttribute(node, 'idref');
+					if (!idAttribute) {
+						return false;
+					}
+					var idRefs = idAttribute.split(/\s+/);
+					return idRefs.some(function (idRef) {
 						return isMatchingIdRefById[idRef];
 					});
-			}, true);
+				}, true);
 		return new Sequence(matchingNodes.map(function (node) {
 			return new NodeValue(domFacade, node);
 		}));
@@ -172,33 +172,33 @@ define([
 	function fnStartsWith (dynamicContext, arg1, arg2) {
 		var startsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
 		if (startsWith.length === 0) {
-			return BooleanValue.TRUE;
+			return Sequence.singleton(BooleanValue.TRUE);
 		}
 		var stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
 		if (stringToTest.length === 0) {
-			return BooleanValue.FALSE;
+			return Sequence.singleton(BooleanValue.FALSE);
 		}
 		// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
 		if (stringToTest.startsWith(startsWith)) {
-			return BooleanValue.TRUE;
+			return Sequence.singleton(BooleanValue.TRUE);
 		}
-		return BooleanValue.FALSE;
+		return Sequence.singleton(BooleanValue.FALSE);
 	}
 
 	function fnEndsWith (dynamicContext, arg1, arg2) {
 		var endsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
 		if (endsWith.length === 0) {
-			return BooleanValue.TRUE;
+			return Sequence.singleton(BooleanValue.TRUE);
 		}
 		var stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
 		if (stringToTest.length === 0) {
-			return BooleanValue.FALSE;
+			return Sequence.singleton(BooleanValue.FALSE);
 		}
 		// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
 		if (stringToTest.endsWith(endsWith)) {
-			return BooleanValue.TRUE;
+			return Sequence.singleton(BooleanValue.TRUE);
 		}
-		return BooleanValue.FALSE;
+		return Sequence.singleton(BooleanValue.FALSE);
 	}
 
 	function fnString (dynamicContext, sequence) {
@@ -232,7 +232,7 @@ define([
 			return Sequence.empty();
 		}
 		var string = input.value[0].value,
-		patternString = pattern.value[0].value;
+			patternString = pattern.value[0].value;
 		return new Sequence(
 			string.split(new RegExp(patternString))
 				.map(function (token) {return new StringValue(token);}));
@@ -244,7 +244,7 @@ define([
 
 	function opTo (dynamicContext, fromValue, toValue) {
 		var from = fromValue.value[0].value,
-		to = toValue.value[0].value;
+			to = toValue.value[0].value;
 		if (from > to) {
 			return Sequence.empty();
 		}
