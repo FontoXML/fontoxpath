@@ -3,6 +3,8 @@ import slimdom from 'slimdom';
 import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
 import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
 import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
+import evaluateXPathToString from 'fontoxml-selectors/evaluateXPathToString';
+import evaluateXPathToStrings from 'fontoxml-selectors/evaluateXPathToStrings';
 import evaluateXPathToNumber from 'fontoxml-selectors/evaluateXPathToNumber';
 import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
 import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
@@ -411,37 +413,36 @@ describe('functions', () => {
 	});
 
 	describe('name()', () => {
-		it('returns an empty sequence if $arg is an empty sequence', () => {
-			const selector = parseSelector('name(())');
-			chai.expect(
-				evaluateXPath(selector, documentNode, blueprint)
-			).to.deep.equal([]);
-		});
+		it('returns an empty sequence if $arg is an empty sequence',
+		   () => chai.assert.deepEqual(evaluateXPathToStrings('name(())', documentNode, blueprint), []));
 
 		it('it defaults to the context item when the argument is omitted', () => {
-			const selector = parseSelector('name()');
-			jsonMLMapper.parse([
-				'someElement',
-				[
-					'Some text.'
-				]
-			], documentNode);
-			chai.expect(
-				evaluateXPath(selector, documentNode.firstChild, blueprint)
-			).to.equal('someElement');
+			jsonMLMapper.parse(['someElement'], documentNode);
+			chai.assert.equal(evaluateXPathToString('name()', documentNode.firstChild, blueprint), 'someElement');
 		});
 
 		it('it returns the node name of the given context', () => {
-			const selector = parseSelector('name(.)');
-			jsonMLMapper.parse([
-				'someElement',
-				[
-					'Some text.'
-				]
-			], documentNode);
-			chai.expect(
-				evaluateXPath(selector, documentNode.firstChild, blueprint)
-			).to.equal('someElement');
+			jsonMLMapper.parse(['someElement'], documentNode);
+			chai.assert.equal(evaluateXPathToString('name(.)', documentNode.firstChild, blueprint), 'someElement');
+		});
+
+		it('it returns the target of a processing instruction', () => {
+			jsonMLMapper.parse(['?some-pi', 'some data'], documentNode);
+			chai.assert.equal(evaluateXPathToString('name(.)', documentNode.firstChild, blueprint), 'some-pi');
+		});
+
+		it('it returns the name of an attribute', () => {
+			jsonMLMapper.parse(['someElement', {someAttribute: 'someValue'}], documentNode);
+			chai.assert.equal(evaluateXPathToString('name(@someAttribute)', documentNode.firstChild, blueprint), 'someAttribute');
+		});
+
+		it('it returns the empty string for comments', () => {
+			jsonMLMapper.parse(['!', 'some comment'], documentNode);
+			chai.assert.equal(evaluateXPathToStrings('name(.)', documentNode.firstChild, blueprint), '');
+		});
+
+		it('it returns the empty string for documents', () => {
+			chai.assert.equal(evaluateXPathToStrings('name(.)', documentNode, blueprint), '');
 		});
 	});
 

@@ -26,7 +26,25 @@ define([
 		} else {
 			this.nodeId = getNodeId(node);
 		}
-		this.nodeName = node.nodeName;
+
+		if (this.value instanceof AttributeNode) {
+			this.nodeName = this.value.nodeName;
+		}
+		else {
+			switch (node.nodeType) {
+				case 1:
+					// element
+					this.nodeName = this.value.nodeName;
+					break;
+				case 7:
+					// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
+					this.nodeName = this.value.target;
+					break;
+				default:
+					// All other nodes have no name
+					this.nodeName = null;
+			}
+		}
 		this.target = node.target;
 	}
 

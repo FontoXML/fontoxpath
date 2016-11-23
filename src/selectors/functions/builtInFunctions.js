@@ -142,7 +142,11 @@ define([
 		if (sequence.isEmpty()) {
 			return sequence;
 		}
-		return Sequence.singleton(new QNameValue(sequence.value[0].nodeName));
+		var nodeName = sequence.value[0].nodeName;
+		if (nodeName === null) {
+			return Sequence.empty();
+		}
+		return Sequence.singleton(new QNameValue(nodeName));
 	}
 
 	function fnNormalizeSpace (dynamicContext, arg) {
