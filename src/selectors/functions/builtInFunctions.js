@@ -263,7 +263,7 @@ define([
 	function opExcept (dynamicContext, firstNodes, secondNodes) {
 		var allNodes = firstNodes.value.filter(function (nodeA) {
 				return secondNodes.value.every(function (nodeB) {
-					return nodeA.nodeId !== nodeB.nodeId;
+					return nodeA !== nodeB;
 				});
 			});
 		return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
@@ -272,7 +272,7 @@ define([
 	function opIntersect (dynamicContext, firstNodes, secondNodes) {
 		var allNodes = firstNodes.value.filter(function (nodeA) {
 				return secondNodes.value.some(function (nodeB) {
-					return nodeA.nodeId === nodeB.nodeId;
+					return nodeA === nodeB;
 				});
 			});
 		return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));

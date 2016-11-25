@@ -74,8 +74,8 @@ define([
 					}
 				});
 
-				var resultValues = [];
-				var hasResultValuesByNodeId = Object.create(null);
+				var resultValuesInOrderOfEvaluation = [];
+				var resultSet = new Set();
 				intermediateResultNodes.forEach(function (nodeValue) {
 					var newResults = selector.evaluate(dynamicContext.createScopedContext({
 							contextItem: Sequence.singleton(nodeValue),
@@ -95,22 +95,19 @@ define([
 
 					sortedResultNodes.forEach(function (newResult) {
 						if (newResult instanceof NodeValue) {
-							if (hasResultValuesByNodeId[newResult.nodeId]) {
-								return;
-							}
 							// Because the intermediateResults are ordered, and these results are ordered too, we should be able to dedupe and concat these results
-							hasResultValuesByNodeId[newResult.nodeId] = true;
+							resultSet.add(newResult);
 						}
-						resultValues.push(newResult);
+						resultValuesInOrderOfEvaluation.push(newResult);
 					});
 				}, []);
 
 				if (selector.expectedResultOrder === selector.RESULT_ORDER_UNSORTED) {
 					// The result should be sorted before we can continue
-					resultValues = sortResults(dynamicContext.domFacade, resultValues);
+					resultValuesInOrderOfEvaluation = sortResults(dynamicContext.domFacade, resultValuesInOrderOfEvaluation);
 				}
 
-				return resultValues;
+				return resultValuesInOrderOfEvaluation;
 			}, nodeSequence.value);
 
 		return new Sequence(result);

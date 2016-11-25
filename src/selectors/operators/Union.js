@@ -1,14 +1,10 @@
 define([
-	'fontoxml-dom-identification/getNodeId',
-
 	'../isSameSetOfSelectors',
 	'../Specificity',
 	'../Selector',
 	'../dataTypes/Sequence',
 	'../dataTypes/sortNodeValues'
 ], function (
-	getNodeId,
-
 	isSameSetOfSelectors,
 	Specificity,
 	Selector,
@@ -59,7 +55,7 @@ define([
 	};
 
 	Union.prototype.evaluate = function (dynamicContext) {
-		var nodeValueById = this._subSelectors.reduce(function (resultingNodeById, selector) {
+		var nodeSet = this._subSelectors.reduce(function (resultingNodeSet, selector) {
 				var results = selector.evaluate(dynamicContext);
 				var allItemsAreNode = results.value.every(function (valueItem) {
 						return valueItem.instanceOfType('node()');
@@ -69,14 +65,12 @@ define([
 					throw new Error('ERRXPTY0004: The sequences to union are not of type node()*');
 				}
 				results.value.forEach(function (nodeValue) {
-					resultingNodeById[getNodeId(nodeValue.value)] = nodeValue;
+					resultingNodeSet.add(nodeValue);
 				});
-				return resultingNodeById;
-			}, Object.create(null));
+				return resultingNodeSet;
+			}, new Set());
 
-		var sortedValues = sortNodeValues(dynamicContext.domFacade, Object.keys(nodeValueById).map(function (nodeId) {
-				return nodeValueById[nodeId];
-			}));
+		var sortedValues = sortNodeValues(dynamicContext.domFacade, Array.from(nodeSet.values()));
 		return new Sequence(sortedValues);
 	};
 	return Union;

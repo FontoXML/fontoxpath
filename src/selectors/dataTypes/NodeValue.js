@@ -1,13 +1,11 @@
 define([
 	'fontoxml-blueprints',
-	'fontoxml-dom-identification/getNodeId',
 	'fontoxml-dom-utils/domInfo',
 	'./StringValue',
 	'./AttributeNode',
 	'./Item'
 ], function (
 	blueprints,
-	getNodeId,
 	domInfo,
 	StringValue,
 	AttributeNode,
@@ -17,15 +15,18 @@ define([
 
 	var blueprintQuery = blueprints.blueprintQuery;
 
+	var nodeValueByNode = new WeakMap();
+
 	function NodeValue (domFacade, node) {
+		if (nodeValueByNode.has(node)) {
+			return nodeValueByNode.get(node);
+		}
+		nodeValueByNode.set(node, this);
+
 		Item.call(this, node);
+
 		this._domFacade = domFacade;
 		this.nodeType = node.nodeType;
-		if (node instanceof AttributeNode) {
-			this.nodeId = node.nodeId;
-		} else {
-			this.nodeId = getNodeId(node);
-		}
 
 		if (this.value instanceof AttributeNode) {
 			this.nodeName = this.value.nodeName;
@@ -46,6 +47,7 @@ define([
 			}
 		}
 		this.target = node.target;
+		return this;
 	}
 
 	NodeValue.prototype = Object.create(Item.prototype);

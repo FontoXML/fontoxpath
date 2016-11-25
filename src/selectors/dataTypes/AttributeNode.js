@@ -12,7 +12,6 @@ define([
 	function AttributeNode (element, attributeName, attributeValue) {
 		this.value = attributeValue;
 		this.nodeName = attributeName;
-		this.nodeId = getNodeId(element) + '@' + this.nodeName;
 		this._element = element;
 	}
 

@@ -42,7 +42,7 @@ define([
 				if (i === 0) {
 					return true;
 				}
-				return nodeValue.nodeId !== sortedNodes[i - 1].nodeId;
+				return nodeValue !== sortedNodes[i - 1];
 			});
 	};
 });
