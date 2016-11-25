@@ -1,11 +1,9 @@
 define([
-	'fontoxml-utils/environmentDetector',
 	'../DomFacade',
 	'./DynamicContext',
 	'./dataTypes/Sequence',
 	'./dataTypes/NodeValue'
 ], function (
-	environmentDetector,
 	DomFacade,
 	DynamicContext,
 	Sequence,
@@ -34,14 +32,7 @@ define([
 	/**
 	 * @deprecated
 	 */
-	var hasWarned = false;
 	Selector.prototype.matches = function (node, blueprint) {
-		if (!hasWarned) {
-			hasWarned = true;
-			if (environmentDetector.isDevelopmentServer()) {
-				console.warn('Selector#matches is deprecated, please use Selector#evaluate instead');
-			}
-		}
 		var result = this.evaluate(new DynamicContext({
 				contextItem: Sequence.singleton(new NodeValue(blueprint, node)),
 				contextSequence: null,

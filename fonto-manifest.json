@@ -2,7 +2,6 @@
 	"dependencies": {
 		"fontoxml-blueprints": "^1.0.0",
 		"fontoxml-dom-utils": "^1.0.0",
-		"fontoxml-utils": "^1.1.1",
 		"fontoxml-vendor-requirejs-text": "^2.0.15"
 	},
 	"devDependencies": {
