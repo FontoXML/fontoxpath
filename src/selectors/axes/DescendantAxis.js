@@ -1,19 +1,13 @@
 define([
-	'fontoxml-blueprints',
-
 	'../Selector',
 	'../dataTypes/Sequence',
 	'../dataTypes/NodeValue'
 ], function (
-	blueprints,
-
 	Selector,
 	Sequence,
 	NodeValue
 ) {
 	'use strict';
-
-	var blueprintQuery = blueprints.blueprintQuery;
 
 	/**
 	 * @param  {Selector}  descendantSelector
@@ -28,19 +22,6 @@ define([
 
 	DescendantAxis.prototype = Object.create(Selector.prototype);
 	DescendantAxis.prototype.constructor = DescendantAxis;
-
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	DescendantAxis.prototype.matches = function (node, blueprint) {
-		if (this._isInclusive && this._descendantSelector.matches(node, blueprint)) {
-			return true;
-		}
-		return blueprintQuery.findDescendants(blueprint, node, function (descendantNode) {
-			return this._descendantSelector.matches(descendantNode, blueprint);
-		}.bind(this)).length > 0;
-	};
 
 	DescendantAxis.prototype.equals = function (otherSelector) {
 		return otherSelector instanceof DescendantAxis &&
@@ -60,18 +41,25 @@ define([
 					});
 				return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
 			}.bind(this);
-		var nodeValues = blueprintQuery.findDescendants(
-				domFacade,
-				contextItem.value[0].value,
-				isMatchingDescendant,
-				true)
-			.map(function (node) {
-				return new NodeValue(domFacade, node);
-			});
-
-		if (this._isInclusive && this._descendantSelector.evaluate(dynamicContext).getEffectiveBooleanValue()) {
-			nodeValues.unshift(contextItem.value[0]);
+		var nodeValues = [];
+		function findDescendants (matchingDescendants, node) {
+				if (isMatchingDescendant(node)) {
+					matchingDescendants.push(new NodeValue(domFacade, node));
+				}
+				domFacade.getChildNodes(node)
+					.forEach(function (childNode) {
+						findDescendants(matchingDescendants, childNode);
+					});
 		}
+
+		if (this._isInclusive) {
+			findDescendants(nodeValues, contextItem.value[0].value);
+		} else {
+			domFacade.getChildNodes(contextItem.value[0].value).forEach(function (childNode) {
+				findDescendants(nodeValues, childNode);
+			});
+		}
+
 		return new Sequence(nodeValues);
 	};
 

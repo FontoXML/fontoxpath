@@ -13,7 +13,7 @@ define([
 	}
 
 	DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node) {
-		return !!node.IS_ATTRIBUTE_NODE;
+		return node.nodeType === node.ATTRIBUTE_NODE;
 	};
 
 	/**

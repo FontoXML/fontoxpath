@@ -1,7 +1,4 @@
 define([
-	'fontoxml-blueprints',
-	'fontoxml-dom-utils/domInfo',
-
 	'./builtInFunctions.aggregate',
 
 	'../dataTypes/BooleanValue',
@@ -14,9 +11,6 @@ define([
 	'../dataTypes/StringValue',
 	'../dataTypes/sortNodeValues'
 ], function (
-	blueprints,
-	domInfo,
-
 	aggregateBuiltinFunctions,
 
 	BooleanValue,
@@ -30,8 +24,6 @@ define([
 	sortNodeValues
 ) {
 	'use strict';
-
-	var blueprintQuery = blueprints.blueprintQuery;
 
 	function contextItemAsFirstArgument (fn, dynamicContext) {
 		return fn(dynamicContext, dynamicContext.contextItem);
@@ -57,6 +49,18 @@ define([
 		return Sequence.singleton(BooleanValue.FALSE);
 	}
 
+	function findDescendants (domFacade, node, isMatch) {
+		var results = domFacade.getChildNodes(node)
+			.reduce(function (matchingNodes, childNode) {
+				Array.prototype.push.apply(matchingNodes, findDescendants(domFacade, childNode, isMatch));
+				return matchingNodes;
+			}, []);
+		if (isMatch(node)) {
+			results.unshift(node);
+		}
+		return results;
+	}
+
 	function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 		var targetNodeValue = targetNodeSequence.value[0];
 		if (!targetNodeValue.instanceOfType('node()')) {
@@ -70,12 +74,15 @@ define([
 				});
 				return byId;
 			}, Object.create(null));
-		var matchingNodes = blueprintQuery.findDescendants(
+		var documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
+			targetNodeValue.value : targetNodeValue.value.ownerDocument;
+
+		var matchingNodes = findDescendants(
 				domFacade,
-				blueprintQuery.getDocumentNode(domFacade, targetNodeValue.value),
+				documentNode,
 				function (node) {
 					// TODO: use the is-id property of attributes / elements
-					if (!domInfo.isElement(node)) {
+					if (node.nodeType !== node.ELEMENT_NODE) {
 						return false;
 					}
 					var idAttribute = domFacade.getAttribute(node, 'id');
@@ -104,13 +111,15 @@ define([
 				byId[idValue.value] = true;
 				return byId;
 			}, Object.create(null));
+		var documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
+			targetNodeValue.value : targetNodeValue.value.ownerDocument;
 		// TODO: Index idrefs to optimize this lookup
-		var matchingNodes = blueprintQuery.findDescendants(
+		var matchingNodes = findDescendants(
 				domFacade,
-				blueprintQuery.getDocumentNode(domFacade, targetNodeValue.value),
+				documentNode,
 				function (node) {
 					// TODO: use the is-idrefs property of attributes / elements
-					if (!domInfo.isElement(node)) {
+					if (node.nodeType !== node.ELEMENT_NODE) {
 						return false;
 					}
 					var idAttribute = domFacade.getAttribute(node, 'idref');

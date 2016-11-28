@@ -11,15 +11,25 @@ beforeEach(() => {
 });
 
 describe('preceding-sibling', () => {
-	it('parses preceding-sibling::', () => {
-		const selector = parseSelector('preceding-sibling::someSiblingElement');
+	it('returns the previous sibling', () => {
 		jsonMLMapper.parse([
 			'someParentElement',
 			['someSiblingElement'],
 			['someElement']
 		], documentNode);
-		chai.expect(
-			evaluateXPath(selector, documentNode.documentElement.lastChild, blueprint, {}, evaluateXPath.NODES_TYPE))
-			.to.deep.equal([documentNode.documentElement.firstChild]);
+		chai.assert.deepEqual(
+			evaluateXPath('preceding-sibling::someSiblingElement', documentNode.documentElement.lastChild, blueprint, {}, evaluateXPath.NODES_TYPE),
+		[documentNode.documentElement.firstChild]);
+	});
+
+	it('does not return non-matching siblings', () => {
+		jsonMLMapper.parse([
+			'someParentElement',
+			['someNonMatchingElement'],
+			['someElement']
+		], documentNode);
+		chai.assert.deepEqual(
+			evaluateXPath('preceding-sibling::someSiblingElement', documentNode.documentElement.lastChild, blueprint, {}, evaluateXPath.NODES_TYPE),
+			[]);
 	});
 });

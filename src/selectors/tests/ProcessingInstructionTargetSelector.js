@@ -1,13 +1,9 @@
 define([
-	'fontoxml-dom-utils/domInfo',
-
 	'../dataTypes/BooleanValue',
 	'../dataTypes/Sequence',
 	'../Selector',
 	'../Specificity'
 ], function (
-	domInfo,
-
 	BooleanValue,
 	Sequence,
 	Selector,
@@ -27,19 +23,12 @@ define([
 	ProcessingInstructionTargetSelector.prototype = Object.create(Selector.prototype);
 	ProcessingInstructionTargetSelector.prototype.constructor = ProcessingInstructionTargetSelector;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	ProcessingInstructionTargetSelector.prototype.matches = function (node, blueprint) {
-		return domInfo.isProcessingInstruction(node) && node.target === this._target;
-	};
-
 	ProcessingInstructionTargetSelector.prototype.evaluate = function (dynamicContext) {
 		var sequence = dynamicContext.contextItem;
 		// Assume singleton
-		var node = sequence.value[0].value;
-		var isMatchingProcessingInstruction = domInfo.isProcessingInstruction(node) && node.target === this._target;
+		var nodeValue = sequence.value[0];
+		var isMatchingProcessingInstruction = nodeValue.instanceOfType('processing-instruction()') &&
+			nodeValue.value.target === this._target;
 		return Sequence.singleton(isMatchingProcessingInstruction ? BooleanValue.TRUE : BooleanValue.FALSE);
 	};
 

@@ -1,19 +1,13 @@
 define([
-	'fontoxml-blueprints',
-
 	'../Selector',
 	'../dataTypes/Sequence',
 	'../dataTypes/NodeValue'
 ], function (
-	blueprints,
-
 	Selector,
 	Sequence,
 	NodeValue
 ) {
 	'use strict';
-
-	var blueprintQuery = blueprints.blueprintQuery;
 
 	/**
 	 * @param  {Selector}  siblingSelector
@@ -26,16 +20,6 @@ define([
 
 	FollowingSiblingAxis.prototype = Object.create(Selector.prototype);
 	FollowingSiblingAxis.prototype.constructor = FollowingSiblingAxis;
-
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	FollowingSiblingAxis.prototype.matches = function (node, blueprint) {
-		return !!blueprintQuery.findNextSibling(blueprint, node, function (childNode) {
-			return this._siblingSelector.matches(childNode, blueprint);
-		}.bind(this));
-	};
 
 	/**
 	 * @param  {Selector}  otherSelector
@@ -62,11 +46,10 @@ define([
 
 		var sibling = contextItem.value[0].value;
 		var nodes = [];
-		while ((sibling = blueprintQuery.findNextSibling(
-			domFacade,
-			sibling,
-			isMatchingSibling.bind(undefined, this._siblingSelector)))) {
-
+		while ((sibling = domFacade.getNextSibling(sibling))) {
+			if (!isMatchingSibling(this._siblingSelector, sibling)) {
+				continue;
+			}
 			nodes.push(new NodeValue(dynamicContext.domFacade, sibling));
 		}
 		return new Sequence(nodes);

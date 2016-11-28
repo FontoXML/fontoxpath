@@ -1,19 +1,13 @@
 define([
-	'fontoxml-blueprints',
-
 	'../Selector',
 	'../dataTypes/Sequence',
 	'../dataTypes/NodeValue'
 ], function (
-	blueprints,
-
 	Selector,
 	Sequence,
 	NodeValue
 ) {
 	'use strict';
-
-	var blueprintQuery = blueprints.blueprintQuery;
 
 	/**
 	 * @param  {Selector}  siblingSelector
@@ -28,16 +22,6 @@ define([
 	PrecedingSiblingAxis.prototype.constructor = PrecedingSiblingAxis;
 
 	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	PrecedingSiblingAxis.prototype.matches = function (node, blueprint) {
-		return !!blueprintQuery.findPreviousSibling(blueprint, node, function (childNode) {
-			return this._siblingSelector.matches(childNode, blueprint);
-		}.bind(this));
-	};
-
-	/**
 	 * @param  {Selector}  otherSelector
 	 */
 	PrecedingSiblingAxis.prototype.equals = function (otherSelector) {
@@ -50,24 +34,23 @@ define([
 	};
 
 	PrecedingSiblingAxis.prototype.evaluate = function (dynamicContext) {
-		var sequence = dynamicContext.contextItem,
+		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
 		function isMatchingSibling (selector, node) {
 			return selector.evaluate(dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(new NodeValue(domFacade, node)),
+				contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
 				contextSequence: null
 			})).getEffectiveBooleanValue();
 		}
 
-		var siblingNode = sequence.value[0].value,
-			nodes = [];
-		while ((siblingNode = blueprintQuery.findPreviousSibling(
-			domFacade,
-			siblingNode,
-			isMatchingSibling.bind(undefined, this._siblingSelector)))) {
-
-			nodes.push(new NodeValue(dynamicContext.domFacade, siblingNode));
+		var sibling = contextItem.value[0].value;
+		var nodes = [];
+		while ((sibling = domFacade.getPreviousSibling(sibling))) {
+			if (!isMatchingSibling(this._siblingSelector, sibling)) {
+				continue;
+			}
+			nodes.push(new NodeValue(dynamicContext.domFacade, sibling));
 		}
 		return new Sequence(nodes);
 	};

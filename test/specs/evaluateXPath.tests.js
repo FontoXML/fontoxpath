@@ -88,4 +88,10 @@ describe('evaluateXPath', () => {
 			chai.assert.throws(() => evaluateXPathToNodes('//@someAttribute', documentNode, blueprint));
 		});
 	});
+
+	describe('using the actual browser HTML DOM', () => {
+		it('will find an HTML node', ()=> {
+			chai.assert.isTrue(evaluateXPathToBoolean('//HTML', window.document, blueprint));
+		});
+	});
 });

@@ -1,7 +1,5 @@
 define([
-	'fontoxml-dom-utils/domInfo'
 ], function (
-	domInfo
 ) {
 	'use strict';
 
@@ -10,7 +8,7 @@ define([
 
 		buckets.push('type-' + node.nodeType);
 
-		if (domInfo.isElement(node)) {
+		if (node.nodeType === node.ELEMENT_NODE) {
 			buckets.push('name-' + node.nodeName);
 		}
 

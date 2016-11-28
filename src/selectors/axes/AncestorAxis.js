@@ -1,19 +1,13 @@
 define([
-	'fontoxml-blueprints',
-
 	'../Selector',
 	'../dataTypes/Sequence',
 	'../dataTypes/NodeValue'
 ], function (
-	blueprints,
-
 	Selector,
 	Sequence,
 	NodeValue
 ) {
 	'use strict';
-
-	var blueprintQuery = blueprints.blueprintQuery;
 
 	/**
 	 * @param  {Selector}  ancestorSelector
@@ -30,26 +24,6 @@ define([
 	AncestorAxis.prototype = Object.create(Selector.prototype);
 	AncestorAxis.prototype.constructor = AncestorAxis;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	AncestorAxis.prototype.matches = function (node, blueprint) {
-		var parentNode = blueprint.getParentNode(node);
-		if (!parentNode) {
-			// Out of document, fail
-			return false;
-		}
-
-		if (this._isInclusive && this._ancestorSelector.matches(node, blueprint)) {
-			return true;
-		}
-
-		return !!blueprintQuery.findClosestAncestor(blueprint, parentNode, function (ancestorNode) {
-			return this._ancestorSelector.matches(ancestorNode, blueprint);
-		}.bind(this));
-	};
-
 	AncestorAxis.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
@@ -65,23 +39,24 @@ define([
 			domFacade = dynamicContext.domFacade;
 
 		// Assume singleton, since axes are only valid in paths
-		var nodeValues =  blueprintQuery.findAllAncestors(domFacade, contextItem.value[0].value, false)
-			.filter(function (node) {
-				return this._ancestorSelector.evaluate({
-					contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
+		var contextNode = contextItem.value[0].value;
+		var ancestors = [];
+		for (var ancestorNode = this._isInclusive ? contextNode : domFacade.getParentNode(contextNode);
+			ancestorNode;
+			ancestorNode = domFacade.getParentNode(ancestorNode)) {
+			var isMatchingAncestor = this._ancestorSelector.evaluate({
+					contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, ancestorNode)),
 					contextSequence: null,
 					domFacade: domFacade
 				}).getEffectiveBooleanValue();
-			}.bind(this))
-			.map(function (node) {
-				return new NodeValue(dynamicContext.domFacade, node);
-			});
 
-		if (this._isInclusive && this._ancestorSelector.evaluate(dynamicContext).getEffectiveBooleanValue()) {
-			nodeValues.unshift(dynamicContext.contextItem.value[0]);
+			if (isMatchingAncestor) {
+				ancestors.push(ancestorNode);
+			}
 		}
-
-		return new Sequence(nodeValues);
+		return new Sequence(ancestors.map(function (node) {
+			return new NodeValue(dynamicContext.domFacade, node);
+		}));
 	};
 
 	return AncestorAxis;

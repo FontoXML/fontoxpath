@@ -1,20 +1,17 @@
 define([
-	'fontoxml-blueprints',
-	'fontoxml-dom-utils/domInfo',
 	'./StringValue',
 	'./AttributeNode',
 	'./Item'
 ], function (
-	blueprints,
-	domInfo,
 	StringValue,
 	AttributeNode,
 	Item
 ) {
 	'use strict';
 
-	var blueprintQuery = blueprints.blueprintQuery;
-
+	// This should work for maximal reuse of instances:
+	// NodeValue has a strong ref to a Node, but when it's only referenced by this weakmap, it should be eligible for GC
+	// When it is collected, the Node may be collected too
 	var nodeValueByNode = new WeakMap();
 
 	function NodeValue (domFacade, node) {
@@ -27,24 +24,21 @@ define([
 
 		this._domFacade = domFacade;
 		this.nodeType = node.nodeType;
-
-		if (this.value instanceof AttributeNode) {
-			this.nodeName = this.value.nodeName;
-		}
-		else {
-			switch (node.nodeType) {
-				case 1:
-					// element
-					this.nodeName = this.value.nodeName;
-					break;
-				case 7:
-					// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
-					this.nodeName = this.value.target;
-					break;
-				default:
-					// All other nodes have no name
-					this.nodeName = null;
-			}
+		switch (node.nodeType) {
+			case this.value.ATTRIBUTE_NODE:
+				this.nodeName = this.value.nodeName;
+				break;
+			case this.value.ELEMENT_NODE:
+				// element
+				this.nodeName = this.value.nodeName;
+				break;
+			case this.value.PROCESSING_INSTRUCTION_NODE:
+				// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
+				this.nodeName = this.value.target;
+				break;
+			default:
+				// All other nodes have no name
+				this.nodeName = null;
 		}
 		this.target = node.target;
 		return this;
@@ -56,24 +50,23 @@ define([
 		switch(simpleTypeName) {
 			case 'node()':
 				return true;
-			case 'element()':
-				return domInfo.isElement(this.value);
 			case 'attribute()':
-				return this.value instanceof AttributeNode;
-			case 'document()':
-				return domInfo.isDocument(this.value);
-			case 'comment()':
-				return domInfo.isComment(this.value);
-			case 'processing-instruction()':
-				return domInfo.isProcessingInstruction(this.value);
+				return this.value.nodeType === this.value.ATTRIBUTE_NODE;
+			case 'element()':
+				return this.value.nodeType === this.value.ELEMENT_NODE;
 			case 'text()':
-				return domInfo.isTextNode(this.value);
+				return this.value.nodeType === this.value.TEXT_NODE;
+			case 'processing-instruction()':
+				return this.value.nodeType === this.value.PROCESSING_INSTRUCTION_NODE;
+			case 'comment()':
+				return this.value.nodeType === this.value.COMMENT_NODE;
+			case 'document()':
+				return this.value.nodeType === this.value.DOCUMENT_NODE;
+
 			default:
 				return Item.prototype.instanceOfType.call(this, simpleTypeName);
 		}
 	};
-
-	// TODO: Dep tracking + findDescendants etc
 
 	NodeValue.prototype.atomize = function () {
 		// TODO: Mix in types, by default get string value
@@ -84,8 +77,18 @@ define([
 		if (this.instanceOfType('text()')) {
 			return new StringValue(this._domFacade.getData(this.value));
 		}
+		var domFacade = this._domFacade;
+		var allTextNodes = (function getTextNodes (node) {
+				if (node.nodeType === node.TEXT_NODE) {
+					return [node];
+				}
+				return domFacade.getChildNodes(node)
+					.reduce(function (textNodes, childNode) {
+						Array.prototype.push.apply(textNodes, getTextNodes(childNode));
+						return textNodes;
+					}, []);
+			})(this.value);
 
-		var allTextNodes = blueprintQuery.findDescendants(this._domFacade, this.value, domInfo.isTextNode);
 		return new StringValue(allTextNodes.map(function (textNode) {
 				return this._domFacade.getData(textNode);
 		}.bind(this)).join(''));
