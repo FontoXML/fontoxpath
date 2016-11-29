@@ -30,16 +30,6 @@ define([
 	AndOperator.prototype = Object.create(Selector.prototype);
 	AndOperator.prototype.constructor = AndOperator;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	AndOperator.prototype.matches = function (node, blueprint) {
-		return this._subSelectors.every(function (subSelector) {
-			return subSelector.matches(node, blueprint);
-		});
-	};
-
 	AndOperator.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;

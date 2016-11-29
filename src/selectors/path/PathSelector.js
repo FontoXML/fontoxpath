@@ -96,6 +96,9 @@ define([
 					sortedResultNodes.forEach(function (newResult) {
 						if (newResult instanceof NodeValue) {
 							// Because the intermediateResults are ordered, and these results are ordered too, we should be able to dedupe and concat these results
+							if (resultSet.has(newResult)) {
+								return;
+							}
 							resultSet.add(newResult);
 						}
 						resultValuesInOrderOfEvaluation.push(newResult);

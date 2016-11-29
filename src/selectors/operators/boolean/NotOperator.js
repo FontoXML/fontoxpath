@@ -23,14 +23,6 @@ define([
 	NotOperator.prototype = Object.create(Selector.prototype);
 	NotOperator.prototype.constructor = NotOperator;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	NotOperator.prototype.matches = function (node, blueprint) {
-		return !this._selectorToInvert.matches(node, blueprint);
-	};
-
 	NotOperator.prototype.evaluate = function (dynamicContext) {
 		var result = this._selectorToInvert.evaluate(dynamicContext);
 		return Sequence.singleton((!result.getEffectiveBooleanValue()) ? BooleanValue.TRUE : BooleanValue.FALSE);

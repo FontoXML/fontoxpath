@@ -19,14 +19,6 @@ define([
 	SelfAxis.prototype = Object.create(Selector.prototype);
 	SelfAxis.prototype.constructor = SelfAxis;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	SelfAxis.prototype.matches = function (node, blueprint) {
-		return this._selector.matches(node, blueprint);
-	};
-
 	SelfAxis.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;

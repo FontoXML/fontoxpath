@@ -23,14 +23,6 @@ define([
 	NodePredicateSelector.prototype = Object.create(Selector.prototype);
 	NodePredicateSelector.prototype.constructor = NodePredicateSelector;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	NodePredicateSelector.prototype.matches = function (node, blueprint) {
-		return this._isMatchingNode.call(undefined, node, blueprint);
-	};
-
 	NodePredicateSelector.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;
@@ -45,7 +37,9 @@ define([
 		var sequence = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 		// TODO: non-singleton nodeTests
-		var booleanValue = this.matches(sequence.value[0].value, domFacade) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		var booleanValue = this._isMatchingNode.call(undefined, sequence.value[0].value, domFacade) ?
+				BooleanValue.TRUE :
+				BooleanValue.FALSE;
 		return Sequence.singleton(booleanValue);
 	};
 

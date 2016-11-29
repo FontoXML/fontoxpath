@@ -23,18 +23,9 @@ define([
 	NodeTypeSelector.prototype = Object.create(Selector.prototype);
 	NodeTypeSelector.prototype.constructor = NodeTypeSelector;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	NodeTypeSelector.prototype.matches = function (node, blueprint) {
-		return node.nodeType === this._nodeType;
-	};
-
 	NodeTypeSelector.prototype.evaluate = function (dynamicContext) {
-		var sequence = dynamicContext.contextItem,
-			domFacade = dynamicContext.domFacade;
-		var booleanValue = this.matches(sequence.value[0].value, domFacade) ?
+		var sequence = dynamicContext.contextItem;
+		var booleanValue = this._nodeType === sequence.value[0].value.nodeType ?
 			BooleanValue.TRUE :
 			BooleanValue.FALSE;
 		return Sequence.singleton(booleanValue);

@@ -50,16 +50,6 @@ define([
 	OrOperator.prototype = Object.create(Selector.prototype);
 	OrOperator.prototype.constructor = OrOperator;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	OrOperator.prototype.matches = function (node, blueprint) {
-		return this._subSelectors.some(function (subSelector) {
-			return subSelector.matches(node, blueprint);
-		});
-	};
-
 	OrOperator.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;

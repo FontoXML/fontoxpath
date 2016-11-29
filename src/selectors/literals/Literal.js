@@ -39,9 +39,6 @@ define([
 			case 'xs:double':
 				typedValue = new DoubleValue(value);
 				break;
-			case 'xs:boolean':
-				typedValue = value ? BooleanValue.TRUE : BooleanValue.FALSE;
-				break;
 			default:
 				throw new TypeError('Type ' + type + ' not expected in a literal');
 		}
@@ -68,10 +65,6 @@ define([
 
 	Literal.prototype.evaluate = function (dynamicContext) {
 		return this._valueSequence;
-	};
-
-	Literal.prototype.matches = function (node, blueprint) {
-		return !!this._valueSequence;
 	};
 
 	return Literal;

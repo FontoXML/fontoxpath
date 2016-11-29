@@ -1,9 +1,8 @@
 import slimdom from 'slimdom';
 
 import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import evaluateXPathToNodes from 'fontoxml-selectors/evaluateXPathToNodes';
 import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
 let documentNode;
 beforeEach(() => {
@@ -11,14 +10,21 @@ beforeEach(() => {
 });
 
 describe('parent', () => {
-	it('parses parent::', () => {
-		const selector = parseSelector('parent::someParentElement');
+	it('returns the parentNode', () => {
 		jsonMLMapper.parse([
 			'someParentElement',
 			['someElement', { 'someAttribute': 'someValue' }]
 		], documentNode);
-		chai.expect(
-			evaluateXPath(selector, documentNode.documentElement.firstChild, blueprint, {}, evaluateXPath.NODES_TYPE))
-			.to.deep.equal([documentNode.documentElement]);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes('parent::someParentElement', documentNode.documentElement.firstChild, blueprint), [documentNode.documentElement]);
+	});
+
+	it('returns nothing for root nodes', () => {
+		jsonMLMapper.parse([
+			'someParentElement',
+			['someElement', { 'someAttribute': 'someValue' }]
+		], documentNode);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes('parent::node()', documentNode, blueprint), []);
 	});
 });

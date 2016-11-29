@@ -1,5 +1,2 @@
-.DS_Store
-.idea
-*.sublime-workspace
-node_modules
 platform
+coverage

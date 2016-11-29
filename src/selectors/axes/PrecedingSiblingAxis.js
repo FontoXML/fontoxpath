@@ -34,8 +34,7 @@ define([
 	};
 
 	PrecedingSiblingAxis.prototype.evaluate = function (dynamicContext) {
-		var contextItem = dynamicContext.contextItem,
-			domFacade = dynamicContext.domFacade;
+		var contextItem = dynamicContext.contextItem;
 
 		function isMatchingSibling (selector, node) {
 			return selector.evaluate(dynamicContext.createScopedContext({
@@ -46,7 +45,7 @@ define([
 
 		var sibling = contextItem.value[0].value;
 		var nodes = [];
-		while ((sibling = domFacade.getPreviousSibling(sibling))) {
+		while ((sibling = dynamicContext.domFacade.getPreviousSibling(sibling))) {
 			if (!isMatchingSibling(this._siblingSelector, sibling)) {
 				continue;
 			}

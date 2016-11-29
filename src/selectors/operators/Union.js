@@ -35,16 +35,6 @@ define([
 	Union.prototype = Object.create(Selector.prototype);
 	Union.prototype.constructor = Union;
 
-	/**
-	 * @param  {Node}       node
-	 * @param  {Blueprint}  blueprint
-	 */
-	Union.prototype.matches = function (node, blueprint) {
-		return this._subSelectors.some(function (subSelector) {
-			return subSelector.matches(node, blueprint);
-		});
-	};
-
 	Union.prototype.equals = function (otherSelector) {
 		if (this === otherSelector) {
 			return true;

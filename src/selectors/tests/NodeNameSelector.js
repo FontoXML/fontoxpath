@@ -57,19 +57,12 @@ define([
 			return Sequence.singleton(BooleanValue.FALSE);
 		}
 
-		var returnValue;
-		if (!node.instanceOfType('attribute()') && !node.instanceOfType('element()')) {
-			returnValue = false;
+		if (this._nodeName === '*') {
+			return Sequence.singleton(BooleanValue.TRUE);
 		}
-		else if (this._nodeName === '*') {
-			returnValue = true;
-		}
-		else {
-			returnValue = Array.isArray(this._nodeName) ?
-				this._nodeName.indexOf(node.nodeName) > -1 :
-				this._nodeName === node.nodeName;
-		}
-
+		var returnValue = Array.isArray(this._nodeName) ?
+			this._nodeName.indexOf(node.nodeName) > -1 :
+			this._nodeName === node.nodeName;
 		return Sequence.singleton(returnValue ? BooleanValue.TRUE : BooleanValue.FALSE);
 	};
 

@@ -3,7 +3,6 @@ import slimdom from 'slimdom';
 import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
 import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
 import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
 let documentNode;
 beforeEach(() => {
@@ -19,7 +18,7 @@ describe('following-sibling', () => {
 		], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPath('following-sibling::someSiblingElement', documentNode.documentElement.firstChild, blueprint, {}, evaluateXPath.NODES_TYPE),
-		[documentNode.documentElement.lastChild]);
+			[documentNode.documentElement.lastChild]);
 	});
 
 	it('does not return non-matching siblings', () => {
