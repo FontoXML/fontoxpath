@@ -63,6 +63,9 @@ define([
 
 		switch (multiplicity) {
 			case '?':
+				if (value === null) {
+					return Sequence.empty();
+				}
 				return Sequence.singleton(adaptJavaScriptValueToXPathValue(type, value));
 
 			case '+':
