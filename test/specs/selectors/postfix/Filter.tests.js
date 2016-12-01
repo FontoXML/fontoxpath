@@ -42,7 +42,14 @@ describe('Filter.equals()', () => {
 
 describe('Filter.getBucket()', () => {
 	it('returns the bucket of its selector', () => {
-		var filter = new Filter({ getBucket: () => { return 'bucket'; }});
+		var filter = new Filter({ getBucket: () => { return 'bucket'; }, specificity: new Specificity({})}, equalSelector);
 		chai.assert.equal(filter.getBucket(), 'bucket');
+	});
+});
+
+describe('Filter.specificity',() => {
+	it('returns the specificity of the selector plus the other part', () => {
+		let filter = new Filter({specificity: new Specificity({external: 1})}, {specificity: new Specificity({external: 1})});
+		chai.assert.equal(filter.specificity.compareTo(new Specificity({external: 2})), 0, 'should be of equal specificity');
 	});
 });

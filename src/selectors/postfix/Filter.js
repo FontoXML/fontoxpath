@@ -12,7 +12,7 @@ define([
 	 * @param  {Selector}    filterSelector
 	 */
 	function Filter (selector, filterSelector) {
-		Selector.call(this, selector.specificity, selector.expectedResultOrder);
+		Selector.call(this, selector.specificity.add(filterSelector.specificity), selector.expectedResultOrder);
 
 		this._selector = selector;
 		this._filterSelector = filterSelector;
