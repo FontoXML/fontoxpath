@@ -51,6 +51,12 @@ describe('Dynamic function call', () => {
 			'XPTY0004');
 	});
 
+	it('throws when the base expression evaluates to a non-singleton sequence of functions', () => {
+		chai.assert.throws(
+			evaluateXPath.bind(undefined, '(false#0, false#0)()', documentNode, blueprint, {}),
+			'XPTY0004');
+	});
+
 	it('throws when a function is called with the wrong type of arguments', () => {
 		chai.assert.throws(
 			evaluateXPath.bind(undefined, 'let $fn := ends-with#2 return $fn(0, 0)', documentNode, blueprint, {}),

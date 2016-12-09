@@ -22,7 +22,7 @@ define([
 		var functionProperties = functionRegistry.getFunctionByArity(this._functionName, this._arity);
 
 		if (!functionProperties) {
-			throw new Error('XPST0017: Function ' + functionName + ' with arity of ' + arity + ' not registered. Did you mean ' + functionRegistry.getAlternativesAsStringFor(functionName) + '?');
+			throw new Error('XPST0017: Function ' + functionName + ' with arity of ' + arity + ' not registered. ' + functionRegistry.getAlternativesAsStringFor(functionName));
 		}
 
 		this._functionItem = new FunctionItem(

@@ -358,7 +358,7 @@ KindTest
  / TextTest
  / NamespaceNodeTest { return "unsupported"}
  / AnyKindTest
- / FunctionCall // Because of legacy reasons
+ / call:FunctionCall { return ["deprecationWarning", call] } // Because of legacy reasons
 
 
 // 84
@@ -367,8 +367,8 @@ AnyKindTest
 
 // 85
 DocumentTest
- = "document(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["kindTest", "document()", innerTest]}
- / "document()" {return ["kindTest", "document()"]}
+ = "document-node(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["kindTest", "document-node()", innerTest]}
+ / "document-node()" {return ["kindTest", "document-node()"]}
 
 // 86
 TextTest

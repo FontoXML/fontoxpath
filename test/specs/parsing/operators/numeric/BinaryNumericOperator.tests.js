@@ -40,10 +40,14 @@ describe('mathematical operators', () => {
 	});
 
 	it('can evaluate 1 idiv 2 to 1', () => {
-		const selector = parseSelector('1 div 2');
+		const selector = parseSelector('1 idiv 2');
 		chai.expect(
 			evaluateXPath(selector, documentNode, blueprint)
 		).to.equal(0.5);
+	});
+
+	it('returns the empty sequence if one of the operands is the empty sequence', () => {
+		chai.assert.deepEqual(evaluateXPath('() + 1', documentNode, blueprint), []);
 	});
 
 	it('can evaluate 5 mod 3 to 2', () => {

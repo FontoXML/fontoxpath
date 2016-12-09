@@ -744,4 +744,11 @@ describe('functions', () => {
 			).to.deep.equal([documentNode.documentElement.firstChild]);
 		});
 	});
+
+	describe('unknown functions', () => {
+		it('throws when trying to execute an unknown function',
+		   () => chai.assert.throws(() => evaluateXPath('blerp()', documentNode, blueprint), 'XPST0017'));
+		it('computes which function the dev might mean',
+		   () => chai.assert.throws(() => evaluateXPath('sterts-with()', documentNode, blueprint), 'starts-with'));
+	});
 });

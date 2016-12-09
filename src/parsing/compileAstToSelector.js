@@ -71,6 +71,8 @@ define([
 ) {
 	'use strict';
 
+	var hasDeprecationWarnings = false;
+
 	// Basic and incomplete implementation of single steps as defined in XPATH 1.0 (http://www.w3.org/TR/xpath/)
 	// Only single steps are allowed, because that's what selectors offer. Anyway: all paths have synonyms as (nested) predicates.
 	// Missing:
@@ -170,6 +172,10 @@ define([
 
 			case 'simpleMap':
 				return simpleMap(args);
+
+			case 'deprecationWarning':
+				hasDeprecationWarnings = true;
+				return compile(args[0]);
 
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
@@ -295,6 +301,9 @@ define([
 				return new NodeTypeSelector(7);
 			case 'comment()':
 				return new NodeTypeSelector(8);
+			case 'document-node()':
+				return new NodeTypeSelector(9);
+
 			default:
 				throw new Error('Unrecognized nodeType: ' + args[0]);
 		}
@@ -356,6 +365,12 @@ define([
 	}
 
 	return function parseSelector (xPathAst) {
-		return compile(xPathAst);
+		var result = {
+				result: compile(xPathAst),
+				hasDeprecationWarnings: hasDeprecationWarnings
+			};
+		hasDeprecationWarnings = false;
+
+		return result;
 	};
 });

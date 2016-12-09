@@ -15,14 +15,84 @@ define([
 ) {
 	'use strict';
 
-	var functions = Object.create(null);
+	var registeredFunctionsByName = Object.create(null);
+
+	function computeLevenshteinDistance (a, b) {
+		var computedDistances = [];
+		for (var i = 0; i < a.length + 1; ++i) {
+			computedDistances[i] = [];
+		}
+		return (function computeStep (aLen, bLen) {
+			if (aLen === 0) {
+				// At the end of the a string, need to add / delete b characters
+				return bLen;
+			}
+			if (bLen === 0) {
+				// At the end of the b string, need to add / delete bLen characters
+				return aLen;
+			}
+
+			if (computedDistances[aLen][bLen] !== undefined) {
+				return computedDistances[aLen][bLen];
+			}
+
+			var cost = 0;
+			if (a[aLen - 1] !== b[bLen - 1]) {
+				// need to change this character
+				cost = 1;
+			}
+
+			// Return the minimum of deleting from a, deleting from b or deleting from both
+			var distance = Math.min(
+					computeStep(aLen - 1, bLen) + 1,
+					computeStep(aLen, bLen - 1) + 1,
+					computeStep(aLen - 1, bLen - 1) + cost);
+
+			computedDistances[aLen][bLen] = distance;
+			return distance;
+		})(a.length, b.length);
+	}
 
 	function getAlternativesAsStringFor (functionName) {
-		return functions[functionName].map(function (functionDeclaration) {
-			return functionName + '(' + functionDeclaration.argumentTypes.join(', ') + ')';
+		var alternativeFunctions;
+		if (!registeredFunctionsByName[functionName]) {
+			// Get closest functions by levenstein distance
+			alternativeFunctions = Object.keys(registeredFunctionsByName)
+				.map(function (alternativeName) {
+					return {
+						name: alternativeName,
+						distance: computeLevenshteinDistance(functionName, alternativeName)
+					};
+				})
+				.sort(function (a, b) {
+					return a.distance - b.distance;
+				})
+				.slice(0, 5)
+				.filter(function (alternativeNameWithScore) {
+					// If we need to change more than half the string, it cannot be a match
+					return alternativeNameWithScore.distance < functionName.length / 2;
+				})
+				.reduce(function (alternatives, alternativeNameWithScore) {
+					return alternatives.concat(registeredFunctionsByName[alternativeNameWithScore.name]);
+				}, [])
+				.slice(0, 5);
+		}
+		else {
+			alternativeFunctions = registeredFunctionsByName[functionName];
+		}
+
+		if (!alternativeFunctions.length) {
+			return 'No similar functions found.';
+		}
+
+		return alternativeFunctions.map(function (functionDeclaration) {
+			return '"' + functionDeclaration.name + '(' + functionDeclaration.argumentTypes.join(', ') + ')"';
 		}).reduce(function (accumulator, functionName, index, array) {
-			return accumulator += (index !== array.length - 1) ? ', ' : ' or '  + functionName;
-		});
+			if (index === 0) {
+				return accumulator + functionName;
+			}
+			return accumulator += ((index !== array.length - 1) ? ', ' : ' or ')  + functionName;
+		}, 'Did you mean ') + '?';
 	}
 
 	// Deprecated
@@ -53,7 +123,7 @@ define([
 	}
 
 	function getBuiltinOrCustomFunctionByArity (functionName, arity) {
-		var matchingFunctions = functions[functionName];
+		var matchingFunctions = registeredFunctionsByName[functionName];
 
 		if (!matchingFunctions) {
 			return null;
@@ -93,12 +163,13 @@ define([
 	}
 
 	function registerFunction (name, argumentTypes, returnType, callFunction) {
-		if (!functions[name]) {
-			functions[name] = [];
+		if (!registeredFunctionsByName[name]) {
+			registeredFunctionsByName[name] = [];
 		}
-		functions[name].push({argumentTypes: argumentTypes, returnType: returnType, callFunction: callFunction});
+		registeredFunctionsByName[name].push({name: name, argumentTypes: argumentTypes, returnType: returnType, callFunction: callFunction});
 	}
 
+	// bootstrap builtin functions
 	builtInFunctions.forEach(function (builtInFunction) {
 		registerFunction(builtInFunction.name, builtInFunction.argumentTypes, builtInFunction.returnType, builtInFunction.callFunction);
 	});

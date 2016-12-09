@@ -1,9 +1,11 @@
 define([
+	'../deprecation/warnForUsingDeprecatedFeature',
 	'./XPATHPARSER_VERSION',
 	'text!./xPathParser.raw.js',
 
 	'./compileAstToSelector'
 ], function (
+	warnForUsingDeprecatedFeature,
 	XPATHPARSER_VERSION,
 
 	xPathParserRaw,
@@ -192,6 +194,12 @@ define([
 							compileXPathAsync.then(resolve, reject);
 						};
 					});
+			})
+			.then(function (compilerResult) {
+				if (compilerResult.hasDeprecationWarnings) {
+					warnForUsingDeprecatedFeature('Functions as tests (like self::XXX()) are not correct XPath. They will be removed next release. Please refactor the selector "' + xPathString + '"');
+				}
+				return compilerResult.result;
 			});
 
 		return compileDonePromiseByXPathString[xPathString];
