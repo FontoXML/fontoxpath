@@ -44,5 +44,5 @@ describe('String literal', () => {
 	it('allows directly adjacent operators',
 	   () => chai.assert.equal(evaluateXPathToBoolean('"some"instance of xs:string', documentNode, readOnlyBlueprint), true));
 	it('allows directly adjacent compares operators',
-	   () => chai.assert.throws(() => evaluateXPathToBoolean('"s"is"s"', documentNode, readOnlyBlueprint), 'NodeCompare is not implemented'));
+	   () => chai.assert.throws(() => evaluateXPathToBoolean('"s"is"s"', documentNode, readOnlyBlueprint), 'XPTY0004'));
 });

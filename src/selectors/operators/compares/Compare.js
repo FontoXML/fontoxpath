@@ -4,6 +4,7 @@ define([
 	'../../Selector',
 
 	'./generalCompare',
+	'./nodeCompare',
 	'./valueCompare'
 ], function (
 	Sequence,
@@ -11,6 +12,7 @@ define([
 	Selector,
 
 	generalCompare,
+	nodeCompare,
 	valueCompare
 ) {
 	'use strict';
@@ -34,7 +36,8 @@ define([
 				this._comparator = valueCompare;
 				break;
 			case 'nodeCompare':
-				throw new Error('NodeCompare is not implemented');
+				this._comparator = nodeCompare;
+				break;
 		}
 	}
 
@@ -54,8 +57,15 @@ define([
 		var firstSequence = this._firstSelector.evaluate(dynamicContext),
 			secondSequence = this._secondSelector.evaluate(dynamicContext);
 
-		if (this._compare === 'valueCompare' && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
+		if ((this._compare === 'valueCompare' || this._compare === 'nodeCompare') && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
 			return Sequence.empty();
+		}
+
+		if (this._compare === 'nodeCompare') {
+			var nodeCompareResult = this._comparator(this._operator, firstSequence, secondSequence) ?
+				BooleanValue.TRUE :
+				BooleanValue.FALSE;
+			return Sequence.singleton(nodeCompareResult);
 		}
 
 		// Atomize both sequences

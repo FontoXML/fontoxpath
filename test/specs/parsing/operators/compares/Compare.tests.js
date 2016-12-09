@@ -2,6 +2,8 @@ import slimdom from 'slimdom';
 
 import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
 import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
+import evaluateXPathToNumber from 'fontoxml-selectors/evaluateXPathToNumber';
 import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
 import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
 
@@ -192,5 +194,26 @@ describe('General compares', () => {
 		chai.expect(
 			evaluateXPath(selector, documentNode, blueprint)
 		).to.equal(true);
+	});
+});
+
+describe('Node compares', () => {
+	beforeEach(() => {
+		documentNode.appendChild(documentNode.createElement('someElement'));
+	});
+	describe('is', () => {
+		it('returns true for the same node', () => chai.assert.isTrue(evaluateXPathToBoolean('. is .', documentNode, blueprint)));
+		it('returns false for another node', () => chai.assert.isFalse(evaluateXPathToBoolean('. is child::*[1]', documentNode, blueprint)));
+		it('works with variables', () => chai.assert.isTrue(evaluateXPathToBoolean('let $x := . return . is $x', documentNode, blueprint)));
+		it(
+			'returns the empty sequence if either operand is the empty sequence',
+			() => chai.assert.equal(evaluateXPathToNumber('count(() is ())', documentNode, blueprint), 0)
+		);
+		it(
+			'throws an error when passed a non-node',
+			() => chai.assert.throws(() => evaluateXPathToBoolean('1 is 1', documentNode, blueprint), 'XPTY0004'));
+		it(
+			'throws an error when passed a non-singleton sequence',
+			() => chai.assert.throws(() => evaluateXPathToBoolean('. is (., .)', documentNode, blueprint), 'XPTY0004'));
 	});
 });
