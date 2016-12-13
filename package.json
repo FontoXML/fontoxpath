@@ -1,0 +1,24 @@
+{
+	"name": "fontoxml-selectors",
+	"version": "1.7.0",
+	"description": "An XPath 3.1 engine in JavaScript",
+	"main": "dist/selectors.js",
+	"directories": {
+		"test": "test"
+	},
+	"scripts": {
+		"test": "fontoxml-unit-test-runner --packageName fontoxml-selectors",
+		"build": "webpack"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://bitbucket.org/liones/fontoxml-selectors.git"
+	},
+	"keywords": [
+		"XPath",
+		"3.1"
+	],
+	"author": "The FontoXML team",
+	"license": "UNLICENSED",
+	"homepage": "https://bitbucket.org/liones/fontoxml-selectors#readme"
+}

@@ -17,3 +17,5 @@ sed -i '1s;^;/* istanbul ignore next */\n;' ./src/parsing/xPathParser.raw.js
 # Update parser version
 sed -r 's/(.*)([0-9]+)(.*)/echo "\1$((\2+1))\3"/ge' src/parsing/XPATHPARSER_VERSION.js -i
 ```
+
+To build the package, run `npm run build` in the root folder.
