@@ -51,7 +51,7 @@ LetExpr
   }
 
 // 12
-SimpleLetClause = "let" _ first:SimpleLetBinding rest:(", " binding:SimpleLetBinding {return binding})* {return appendRest([first], rest)}
+SimpleLetClause = "let" _ first:SimpleLetBinding rest:( _ "," _ binding:SimpleLetBinding {return binding})* {return appendRest([first], rest)}
 
 // 13
 SimpleLetBinding = "$" rangeVariable:VarName _ ":=" _ bindingSequence:ExprSingle {return [rangeVariable, bindingSequence]}

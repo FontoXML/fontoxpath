@@ -24,6 +24,13 @@ describe('let', () => {
 		).to.deep.equal(2);
 	});
 
+	it('can be chained with spaces everywhere', () => {
+		const selector = parseSelector('let $x := 1 , $y := 2 return $x * $y');
+		chai.expect(
+			evaluateXPath(selector, documentNode, blueprint)
+		).to.deep.equal(2);
+	});
+
 	it('chains in the correct order', () => {
 		const selector = parseSelector('let $x := 1, $y := 2, $x := 3 return $x (: If the order would be inverse, $x would still be 1 :)');
 		chai.expect(
