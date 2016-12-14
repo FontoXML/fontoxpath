@@ -2,16 +2,12 @@ define([
 	'./builtInFunctions',
 
 	'../dataTypes/BooleanValue',
-	'../dataTypes/Sequence',
-
-	'../../parsing/customTestsByName'
+	'../dataTypes/Sequence'
 ], function (
 	builtInFunctions,
 
 	BooleanValue,
-	Sequence,
-
-	customTestsByName
+	Sequence
 ) {
 	'use strict';
 
@@ -122,7 +118,7 @@ define([
 		return null;
 	}
 
-	function getBuiltinOrCustomFunctionByArity (functionName, arity) {
+	function getFunctionByArity (functionName, arity) {
 		var matchingFunctions = registeredFunctionsByName[functionName];
 
 		if (!matchingFunctions) {
@@ -146,20 +142,6 @@ define([
 				argumentTypes: matchingFunction.argumentTypes,
 				returnType: matchingFunction.returnType
 			};
-	}
-
-	function getFunctionByArity (functionName, arity) {
-		var fn = getBuiltinOrCustomFunctionByArity(functionName, arity);
-
-		// Deprecated
-		if (!fn && functionName.startsWith('fonto:')) {
-			var test = getCustomTestByArity(functionName, arity);
-			if (test) {
-				return test;
-			}
-		}
-
-		return fn;
 	}
 
 	function registerFunction (name, argumentTypes, returnType, callFunction) {

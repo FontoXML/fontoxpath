@@ -59,7 +59,7 @@ describe('predicates', () => {
 	});
 
 	it('can parse multiple chained predicates, resulting in a false', () => {
-		const selector = parseSelector('self::node()[self::*][child::someChildElement][self::false()]');
+		const selector = parseSelector('self::node()[self::*][child::someChildElement][false()]');
 		jsonMLMapper.parse([
 			'someParentElement',
 			['someChildElement']

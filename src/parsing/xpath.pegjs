@@ -358,8 +358,6 @@ KindTest
  / TextTest
  / NamespaceNodeTest { return "unsupported"}
  / AnyKindTest
- / call:FunctionCall { return ["deprecationWarning", call] } // Because of legacy reasons
-
 
 // 84
 AnyKindTest
