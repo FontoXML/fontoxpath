@@ -183,7 +183,8 @@ define([
 		return Sequence.singleton(new IntegerValue(sequence.value.length));
 	}
 
-	return [
+	return {
+		declarations: [
 		{
 			name: 'avg',
 			argumentTypes: ['xs:anyAtomicType*'],
@@ -245,5 +246,13 @@ define([
 			returnType: 'xs:anyAtomicType?',
 			callFunction: fnSum
 		}
-	];
+		],
+		functions: {
+			avg: fnAvg,
+			count: fnCount,
+			max: fnMax,
+			min: fnMin,
+			sum: fnSum
+		}
+	};
 });

@@ -29,9 +29,6 @@ define([
 		return fn(dynamicContext, dynamicContext.contextItem);
 	}
 
-	function fnBoolean (dynamicContext, sequence) {
-		return Sequence.singleton(sequence.getEffectiveBooleanValue() ? BooleanValue.TRUE : BooleanValue.FALSE);
-	}
 
 	function fnConcat (dynamicContext) {
 		var stringSequences = Array.from(arguments).slice(1);
@@ -45,9 +42,6 @@ define([
 		return Sequence.singleton(new StringValue(strings.join('')));
 	}
 
-	function fnFalse () {
-		return Sequence.singleton(BooleanValue.FALSE);
-	}
 
 	function findDescendants (domFacade, node, isMatch) {
 		var results = domFacade.getChildNodes(node)
@@ -166,12 +160,6 @@ define([
 		return Sequence.singleton(new StringValue(string.replace(/\s+/g, ' ')));
 	}
 
-	function fnNumber (dynamicContext, sequence) {
-		if (sequence.isEmpty()) {
-			return Sequence.singleton(new DoubleValue(NaN));
-		}
-		return Sequence.singleton(DoubleValue.cast(sequence.value[0]));
-	}
 
 	function fnPosition (dynamicContext) {
 		// Note: +1 because XPath is one-based
@@ -251,9 +239,6 @@ define([
 				.map(function (token) {return new StringValue(token);}));
 	}
 
-	function fnTrue () {
-		return Sequence.singleton(BooleanValue.TRUE);
-	}
 
 	function opTo (dynamicContext, fromValue, toValue) {
 		var from = fromValue.value[0].value,
@@ -287,17 +272,7 @@ define([
 		return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
 	}
 
-	function fnNot (dynamicContext, sequence) {
-		return Sequence.singleton(sequence.getEffectiveBooleanValue() ? BooleanValue.FALSE : BooleanValue.TRUE);
-	}
-
 	return [
-		{
-			name: 'boolean',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:boolean',
-			callFunction: fnBoolean
-		},
 
 		{
 			name: 'concat',
@@ -322,12 +297,6 @@ define([
 			}
 		},
 
-		{
-			name: 'false',
-			argumentTypes: [],
-			returnType: 'xs:boolean',
-			callFunction: fnFalse
-		},
 
 		{
 			name: 'id',
@@ -410,27 +379,6 @@ define([
 			callFunction: function (dynamicContext) {
 				return fnNormalizeSpace(dynamicContext, fnString(dynamicContext, dynamicContext.contextItem));
 			}
-		},
-
-		{
-			name: 'not',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:boolean',
-			callFunction: fnNot
-		},
-
-		{
-			name: 'number',
-			argumentTypes: ['xs:anyAtomicType?'],
-			returnType: 'xs:double',
-			callFunction: fnNumber
-		},
-
-		{
-			name: 'number',
-			argumentTypes: [],
-			returnType: 'xs:double',
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnNumber)
 		},
 
 		{
@@ -553,13 +501,7 @@ define([
 			callFunction: function (dynamicContext, input) {
 				return fnTokenize(dynamicContext, fnNormalizeSpace(dynamicContext, input), Sequence.singleton(new StringValue(' ')));
 			}
-		},
-
-		{
-			name: 'true',
-			argumentTypes: [],
-			returnType: 'xs:boolean',
-			callFunction: fnTrue
 		}
-	].concat(aggregateBuiltinFunctions);
+
+	].concat(aggregateBuiltinFunctions.declarations);
 });

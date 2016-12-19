@@ -193,7 +193,6 @@ AxisStep
        return [axis, test];
      }
      return predicates.reduce(function (accumulator, current) { return ["filter", accumulator, current] }, [axis, test])
-//     return ["postfix", [axis, test], predicates]
    }
  / AbbreviatedStep
 
@@ -258,9 +257,9 @@ PrimaryExpr
  / ContextItemExpr
  / FunctionCall
  / FunctionItemExpr
-// / MapConstructor
-// / ArrayConstructor
-// / UnaryLookup
+ / MapConstructor
+ / ArrayConstructor
+ / UnaryLookup
 
 // 57
 Literal = NumericLiteral / StringLiteral
@@ -315,7 +314,18 @@ InlineFunctionRef
  = "function" _ "(" _ params:ParamList _ ")" _ body:FunctionBody {return ["inlineFunction", params, [], body]}
  / "function" _ "(" _ params:ParamList _ ")" _ "as" S type:SequenceType  _ body:FunctionBody {return ["inlineFunction", params, type, body]}
 
-// Note: 69 - 77 are not implemented, they are the map / array constructors and operators
+// 69
+MapConstructor
+ = "map" _ "{" _ entries:(first:MapConstructorEntry rest:(_ "," _ e:MapConstructorEntry {return e})*{return appendRest([first], rest)})? _ "}" {return appendRest(["mapConstructor"], entries)}
+
+MapConstructorEntry
+ = k:MapKeyEpr _ ":" _ v:MapValueExpr {return [k, v]}
+
+MapKeyExpr
+ = ExprSingle
+
+MapValueExpr
+ = ExprSingle
 
 // 77
 SingleType
@@ -338,8 +348,8 @@ ItemType
  = KindTest
  / "item()"
 // / FunctionTest { return "unsupported"}
-// / MapTest { return "unsupported"}
-// / ArrayTest { return "unsupported"}
+ / MapTest
+ / ArrayTest
  / AtomicOrUnionType
  / ParenthesizedItemType
 
@@ -405,9 +415,9 @@ AttributeDeclaration = AttributeName
 
 // 94
 ElementTest
- = "element(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "element()", name, type]}
- / "element(" _ name:ElementNameOrWildCard _ ")" {return ["kindTest", "element()", name]}
- / "element()" {return ["kindTest", "element()"]}
+ = "element" _ "(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "element()", name, type]}
+ / "element" _ "(" _ name:ElementNameOrWildCard _ ")" {return ["kindTest", "element()", name]}
+ / "element" _ "(" _ ")" {return ["kindTest", "element()"]}
 
 // 95
 ElementNameOrWildCard = ElementName / "*"
@@ -444,19 +454,19 @@ TypedFunctionTest
 MapTest = AnyMapTest / TypedMapTest
 
 // 106
-AnyMapTest = "map(*)"
+AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["anyMapTest"]}
 
 // 107
-TypedMapTest = "map("_ (SequenceType ( _ "," _ SequenceType)*)? _ ")"
+TypedMapTest = "map" _ "(" _ keyType:AtomicOrUnionType _ "," _ valueType:SequenceType _ ")" {return ["typedMapTest", keyType, valueType]}
 
 // 108
 ArrayTest = AnyArrayTest / TypedArrayTest
 
 // 109
-AnyArrayTest = "array(*)"
+AnyArrayTest = "array" _ "(" _ "*" _ ")" {return ["anyArrayTest"]}
 
 // 110
-TypedArrayTest = "array(" _ SequenceType _ ")"
+TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", type]}
 
 // 111
 ParenthesizedItemType = "(" _ ItemType _ ")"
