@@ -1,11 +1,7 @@
 define([
-	'./builtInFunctions.aggregate',
-
 	'../dataTypes/DoubleValue',
 	'../dataTypes/Sequence'
 ], function (
-	aggregateBuiltinFunctions,
-
 	DoubleValue,
 	Sequence
 ) {

@@ -70,11 +70,11 @@ define([
 
 	function castUntypedItemsToDouble (items) {
 		return items.map(function (item) {
-				if (item.instanceOfType('xs:untypedAtomic')) {
-					return DoubleValue.cast(item);
-				}
-				return item;
-			});
+			if (item.instanceOfType('xs:untypedAtomic')) {
+				return DoubleValue.cast(item);
+			}
+			return item;
+		});
 	}
 
 	function castItemsForMinMax (items) {
@@ -183,75 +183,90 @@ define([
 		return Sequence.singleton(new IntegerValue(sequence.value.length));
 	}
 
+
+	function fnReverse (dynamicContext, sequence) {
+		return new Sequence(sequence.value.reverse());
+	}
+
 	return {
 		declarations: [
-		{
-			name: 'avg',
-			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnAvg
-		},
+			{
+				name: 'avg',
+				argumentTypes: ['xs:anyAtomicType*'],
+				returnType: 'xs:anyAtomicType?',
+				callFunction: fnAvg
+			},
 
-		{
-			name: 'count',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:integer',
-			callFunction: fnCount
-		},
+			{
+				name: 'count',
+				argumentTypes: ['item()*'],
+				returnType: 'xs:integer',
+				callFunction: fnCount
+			},
 
-		{
-			name: 'max',
-			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnMax
-		},
+			{
+				name: 'max',
+				argumentTypes: ['xs:anyAtomicType*'],
+				returnType: 'xs:anyAtomicType?',
+				callFunction: fnMax
+			},
 
-		{
-			name: 'max',
-			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: function () {
-				throw new Error('Calling the max function with a non-default collation is not supported at this moment');
-			}
-		},
+			{
+				name: 'max',
+				argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
+				returnType: 'xs:anyAtomicType?',
+				callFunction: function () {
+					throw new Error('Calling the max function with a non-default collation is not supported at this moment');
+				}
+			},
 
-		{
-			name: 'min',
-			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnMin
-		},
+			{
+				name: 'min',
+				argumentTypes: ['xs:anyAtomicType*'],
+				returnType: 'xs:anyAtomicType?',
+				callFunction: fnMin
+			},
 
-		{
-			name: 'min',
-			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: function () {
-				throw new Error('Calling the min function with a non-default collation is not supported at this moment');
-			}
-		},
+			{
+				name: 'min',
+				argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
+				returnType: 'xs:anyAtomicType?',
+				callFunction: function () {
+					throw new Error('Calling the min function with a non-default collation is not supported at this moment');
+				}
+			},
 
-		{
-			name: 'sum',
-			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType',
-			callFunction: function (dynamicContext, sequence) {
-				return fnSum(dynamicContext, sequence, Sequence.singleton(new IntegerValue(0)));
-			}
-		},
+			{
+				name: 'sum',
+				argumentTypes: ['xs:anyAtomicType*'],
+				returnType: 'xs:anyAtomicType',
+				callFunction: function (dynamicContext, sequence) {
+					return fnSum(dynamicContext, sequence, Sequence.singleton(new IntegerValue(0)));
+				}
+			},
 
-		{
-			name: 'sum',
-			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType?'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnSum
-		}
+			{
+				name: 'sum',
+				argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType?'],
+				returnType: 'xs:anyAtomicType?',
+				callFunction: fnSum
+			},
+
+			{
+				name: 'reverse',
+				argumentTypes: ['item()*'],
+				returnType: 'item()*',
+				callFunction: fnReverse
+			},
+
+
 		],
 		functions: {
 			avg: fnAvg,
 			count: fnCount,
 			max: fnMax,
 			min: fnMin,
+			reverse: fnReverse,
 			sum: fnSum
 		}
 	};
