@@ -26,24 +26,23 @@ define([
 	 *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
 	 *  * Else, the sequence is atomized and returned.
 	 *
-	 * @param  {Selector|String}   XPathSelector  The selector to execute. Supports XPath 3.1.
+	 * @param  {Selector|string}   xPathSelector  The selector to execute. Supports XPath 3.1.
 	 * @param  {Node}              contextNode    The node from which to run the XPath.
 	 * @param  {Blueprint}         blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
 	 * @param  {[Object]}          variables      Extra variables (name=>value). Values can be number / string or boolean.
-	 * @param  {[Number]}          returnType     One of the return types, indicates the expected type of the XPath query.
+	 * @param  {[number]}          returnType     One of the return types, indicates the expected type of the XPath query.
 	 *
 	 * @return  {Node[]|Node|Any[]|Any}
 	 */
 	function evaluateXPath (xPathSelector, contextNode, blueprint, variables, returnType) {
 		returnType = returnType || evaluateXPath.ANY_TYPE;
-		if (typeof xPathSelector === 'string') {
-			xPathSelector = createSelectorFromXPath(xPathSelector);
-		}
+		var selector = typeof xPathSelector === 'string' ? createSelectorFromXPath(xPathSelector) : xPathSelector;
+
 		var domFacade = new DomFacade(blueprint),
 			contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode)),
 			untypedVariables = Object.assign(
 				{
-					'theBest': 'FontoXML is the best!'
+					theBest: 'FontoXML is the best!'
 				},
 				variables || {});
 		var typedVariables = Object.keys(untypedVariables).reduce(function (typedVariables, variableName) {
@@ -57,7 +56,7 @@ define([
 				variables: typedVariables
 			});
 
-		var rawResults = xPathSelector.evaluate(dynamicContext);
+		var rawResults = selector.evaluate(dynamicContext);
 
 		switch (returnType) {
 			case evaluateXPath.BOOLEAN_TYPE:
@@ -76,7 +75,9 @@ define([
 				}
 
 				// Atomize all parts
-				return rawResults.value.map(function (value) { return value.atomize().value; });
+				return rawResults.value.map(function (value) {
+					return value.atomize().value;
+				});
 
 			case evaluateXPath.NUMBER_TYPE:
 				if (!rawResults.isSingleton()) {
@@ -103,13 +104,44 @@ define([
 				if (rawResults.isEmpty()) {
 					return [];
 				}
-				if (!(rawResults.value.every(function (value) {return value.instanceOfType('node()');}))) {
+				if (!(rawResults.value.every(function (value) {
+					return value.instanceOfType('node()');
+				}))) {
 					throw new Error('Expected XPath ' + xPathSelector + ' to resolve to a sequence of Nodes.');
 				}
-				if (rawResults.value.some(function (value) {return value.instanceOfType('attribute()');})) {
+				if (rawResults.value.some(function (value) {
+					return value.instanceOfType('attribute()');
+				})) {
 					throw new Error('XPath ' + xPathSelector + ' should not resolve to attribute nodes');
 				}
-				return rawResults.value.map(function (nodeValue) { return nodeValue.value;});
+				return rawResults.value.map(function (nodeValue) {
+					return nodeValue.value;
+				});
+
+			case evaluateXPath.MAP_TYPE:
+				if (rawResults.isEmpty()) {
+					return {};
+				}
+				if (!rawResults.isSingleton()) {
+					throw new Error('Expected XPath ' + xPathSelector + ' to resolve to a single map.');
+				}
+				if (!(rawResults.value[0].instanceOfType('map(*)'))) {
+					throw new Error('Expected XPath ' + xPathSelector + ' to resolve to a map');
+				}
+				return rawResults.value[0].keyValuePairs.reduce(function (mapObject, keyValuePair) {
+					var key = keyValuePair.key.value;
+					var value;
+					if (keyValuePair.value.isSingleton()) {
+						value = keyValuePair.value.value[0].atomize().value;
+					}
+					else {
+						value = keyValuePair.value.atomize().value.map(function (atomizedValue) {
+							return atomizedValue.value;
+						});
+					}
+					mapObject[key] = value;
+					return mapObject;
+				}, {});
 
 			default:
 				var allValuesAreNodes = rawResults.value.every(function (value) {
@@ -167,6 +199,11 @@ define([
 	 * Resolve to an array of strings
 	 */
 	evaluateXPath.STRINGS_TYPE = 10;
+
+	/**
+	 * Resolve to an object, as a map
+	 */
+	evaluateXPath.MAP_TYPE = 11;
 
 	return evaluateXPath;
 });

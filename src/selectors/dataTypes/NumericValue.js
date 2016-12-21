@@ -31,5 +31,10 @@ define([
 			AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
 	};
 
+
+	NumericValue.prototype.isNaN = function () {
+		return isNaN(this.value);
+	};
+
 	return NumericValue;
 });

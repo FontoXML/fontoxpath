@@ -5,6 +5,7 @@ define([
 
 	/**
 	 * Facade for dom interface things, compatible with blueprintQuery. Pass a readonlyBlueprint to use the live DOM
+	 * @param   {Blueprint}  blueprint
 	 */
 	function DomFacade (blueprint) {
 		this._blueprint = blueprint;
@@ -16,9 +17,6 @@ define([
 		return node.nodeType === node.ATTRIBUTE_NODE;
 	};
 
-	/**
-	 * TODO: depTracking will be here
-	 */
 	DomFacade.prototype.getParentNode = function (node) {
 		if (this.isAttributeNode(node)) {
 			return node.getParentNode();
@@ -100,7 +98,7 @@ define([
 	};
 
 	// Can be used to create an extra frame when tracking dependencies
-	DomFacade.prototype.getRelatedNodes = function (node, callback) {
+	DomFacade.prototype.getRelatedNodes = function (_node, callback) {
 		return callback();
 	};
 

@@ -1,9 +1,13 @@
 define([
 	'../Selector',
-	'../Specificity'
+	'../Specificity',
+	'../dataTypes/MapValue',
+	'../dataTypes/Sequence'
 ], function (
 	Selector,
-	Specificity
+	Specificity,
+	MapValue,
+	Sequence
 ) {
 	'use strict';
 
@@ -11,7 +15,7 @@ define([
 	 * @param  {Object[]}    entries  key-value tuples of selectors which will evaluate to key / value pairs
 	 */
 	function MapConstructor (entries) {
-		Selector.call(this, new Specificity({external: 1}), Selector.RESULT_ORDER_UNSORTED);
+		Selector.call(this, new Specificity({ external: 1 }), Selector.RESULT_ORDER_UNSORTED);
 		this._entries = entries;
 	}
 
@@ -24,12 +28,26 @@ define([
 		}
 
 		return otherSelector instanceof MapConstructor &&
-			this._entries.length === otherSelector._entries &&
-			this._entries.every(function (entry, i) { return otherSelector._entries[i].equals(entry);});
+			this._entries.length === otherSelector._entries.length &&
+			this._entries.every(function (keyValuePair, i) {
+				return otherSelector._entries[i].key.equals(keyValuePair.key) &&
+					otherSelector._entries[i].value.equals(keyValuePair.value);
+			});
 	};
 
 	MapConstructor.prototype.evaluate = function (dynamicContext) {
-		var map = this._entries.
+		var keyValuePairs = this._entries.map(function (keyValuePair) {
+				var keySequence = keyValuePair.key.evaluate(dynamicContext).atomize();
+				if (!keySequence.isSingleton()) {
+					throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
+				}
+				return {
+					key: keySequence.value[0],
+					value: keyValuePair.value.evaluate(dynamicContext)
+				};
+			});
+
+		return Sequence.singleton(new MapValue(keyValuePairs));
 	};
 
 	return MapConstructor;

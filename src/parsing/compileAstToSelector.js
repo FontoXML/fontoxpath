@@ -28,6 +28,7 @@ define([
 	'../selectors/operators/types/InstanceOfOperator',
 	'../selectors/quantified/QuantifiedExpression',
 	'../selectors/conditional/IfExpression',
+	'../selectors/maps/MapConstructor',
 
 	'../selectors/literals/Literal',
 	'../selectors/LetExpression',
@@ -63,6 +64,8 @@ define([
 	InstanceOfOperator,
 	QuantifiedExpression,
 	IfExpression,
+
+	MapConstructor,
 
 	Literal,
 	LetExpression,
@@ -170,6 +173,9 @@ define([
 
 			case 'simpleMap':
 				return simpleMap(args);
+
+			case 'mapConstructor':
+				return mapConstructor(args);
 
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
@@ -299,6 +305,15 @@ define([
 			default:
 				throw new Error('Unrecognized nodeType: ' + args[0]);
 		}
+	}
+
+	function mapConstructor (args) {
+		return new MapConstructor(args.map(function (keyValuePair) {
+			return {
+				key: compile(keyValuePair[0]),
+				value: compile(keyValuePair[1])
+			};
+		}));
 	}
 
 	function or (args) {

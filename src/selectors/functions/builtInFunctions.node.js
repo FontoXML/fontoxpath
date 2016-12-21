@@ -14,7 +14,7 @@ define([
 		return fn(dynamicContext, dynamicContext.contextItem);
 	}
 
-		function fnName (dynamicContext, sequence) {
+	function fnName (dynamicContext, sequence) {
 		if (sequence.isEmpty()) {
 			return sequence;
 		}
@@ -34,33 +34,33 @@ define([
 
 	return {
 		declarations: [
-		{
-			name: 'name',
-			argumentTypes: ['node()?'],
-			returnType: 'xs:string',
-			callFunction: fnName
-		},
+			{
+				name: 'name',
+				argumentTypes: ['node()?'],
+				returnType: 'xs:string',
+				callFunction: fnName
+			},
 
-		{
-			name: 'name',
-			argumentTypes: [],
-			returnType: 'xs:string',
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnName)
-		},
+			{
+				name: 'name',
+				argumentTypes: [],
+				returnType: 'xs:string',
+				callFunction: contextItemAsFirstArgument.bind(undefined, fnName)
+			},
 
-		{
-			name: 'node-name',
-			argumentTypes: ['node()?'],
-			returnType: 'xs:QName?',
-			callFunction: fnNodeName
-		},
+			{
+				name: 'node-name',
+				argumentTypes: ['node()?'],
+				returnType: 'xs:QName?',
+				callFunction: fnNodeName
+			},
 
-		{
-			name: 'node-name',
-			argumentTypes: [],
-			returnType: 'xs:QName?',
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnNodeName)
-		},
+			{
+				name: 'node-name',
+				argumentTypes: [],
+				returnType: 'xs:QName?',
+				callFunction: contextItemAsFirstArgument.bind(undefined, fnNodeName)
+			},
 		],
 		functions: {
 			name: fnName,

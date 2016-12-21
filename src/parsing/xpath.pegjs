@@ -258,8 +258,8 @@ PrimaryExpr
  / FunctionCall
  / FunctionItemExpr
  / MapConstructor
- / ArrayConstructor
- / UnaryLookup
+// / ArrayConstructor
+// / UnaryLookup
 
 // 57
 Literal = NumericLiteral / StringLiteral
@@ -318,14 +318,19 @@ InlineFunctionRef
 MapConstructor
  = "map" _ "{" _ entries:(first:MapConstructorEntry rest:(_ "," _ e:MapConstructorEntry {return e})*{return appendRest([first], rest)})? _ "}" {return appendRest(["mapConstructor"], entries)}
 
+// 70
 MapConstructorEntry
- = k:MapKeyEpr _ ":" _ v:MapValueExpr {return [k, v]}
+ = k:MapKeyExpr _ ":" _ v:MapValueExpr {return [k, v]}
 
+// 71
 MapKeyExpr
  = ExprSingle
 
+// 72
 MapValueExpr
  = ExprSingle
+
+// TODO: 73-76: Arrays
 
 // 77
 SingleType

@@ -10,7 +10,7 @@ define([
 	'use strict';
 
 
-	function opTo (dynamicContext, fromValue, toValue) {
+	function opTo (_dynamicContext, fromValue, toValue) {
 		var from = fromValue.value[0].value,
 			to = toValue.value[0].value;
 		if (from > to) {
@@ -45,26 +45,26 @@ define([
 
 	return {
 		declarations: [
-		{
-			name: 'op:except',
-			argumentTypes: ['node()*', 'node()*'],
-			returnType: 'node()*',
-			callFunction: opExcept
-		},
+			{
+				name: 'op:except',
+				argumentTypes: ['node()*', 'node()*'],
+				returnType: 'node()*',
+				callFunction: opExcept
+			},
 
-		{
-			name: 'op:intersect',
-			argumentTypes: ['node()*', 'node()*'],
-			returnType: 'node()*',
-			callFunction: opIntersect
-		},
+			{
+				name: 'op:intersect',
+				argumentTypes: ['node()*', 'node()*'],
+				returnType: 'node()*',
+				callFunction: opIntersect
+			},
 
-		{
-			name: 'op:to',
-			argumentTypes: ['xs:integer', 'xs:integer'],
-			returnType: 'xs:integer*',
-			callFunction: opTo
-		},
+			{
+				name: 'op:to',
+				argumentTypes: ['xs:integer', 'xs:integer'],
+				returnType: 'xs:integer*',
+				callFunction: opTo
+			},
 		],
 		functions: {
 			except: opExcept,

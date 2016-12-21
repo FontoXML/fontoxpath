@@ -15,7 +15,7 @@ define([
 	 *
 	 * @return  {String[]}         The string result.
 	 */
-	return function evaluateXPathToString (selector, contextNode, blueprint, variables) {
+	return function evaluateXPathToStrings (selector, contextNode, blueprint, variables) {
 		return evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.STRINGS_TYPE);
 	};
 });
