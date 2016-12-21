@@ -11,7 +11,7 @@ define([
 		return fn(dynamicContext, dynamicContext.contextItem);
 	}
 
-	function fnNumber (dynamicContext, sequence) {
+	function fnNumber (_dynamicContext, sequence) {
 		if (sequence.isEmpty()) {
 			return Sequence.singleton(new DoubleValue(NaN));
 		}

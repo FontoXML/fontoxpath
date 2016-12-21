@@ -1,4 +1,5 @@
 define([
+	'./builtInFunctions.arrays',
 	'./builtInFunctions.boolean',
 	'./builtInFunctions.context',
 	'./builtInFunctions.identifiers',
@@ -9,7 +10,8 @@ define([
 	'./builtInFunctions.maps',
 	'./builtInFunctions.string'
 ], function (
-	builtInBooleanunctions,
+	builtInArrayFunctions,
+	builtInBooleanFunctions,
 	builtInContextFunctions,
 	builtInIdentifierFunctions,
 	builtInNodeFunctions,
@@ -22,8 +24,9 @@ define([
 	'use strict';
 
 	return builtInContextFunctions.declarations
+		.concat(builtInArrayFunctions.declarations)
 		.concat(builtInIdentifierFunctions.declarations)
-		.concat(builtInBooleanunctions.declarations)
+		.concat(builtInBooleanFunctions.declarations)
 		.concat(builtInNodeFunctions.declarations)
 		.concat(builtInNumericFunctions.declarations)
 		.concat(builtInOperatorFunctions.declarations)

@@ -143,6 +143,22 @@ define([
 					return mapObject;
 				}, {});
 
+			case evaluateXPath.ARRAY_TYPE:
+				if (rawResults.isEmpty()) {
+					return {};
+				}
+				if (!rawResults.isSingleton()) {
+					throw new Error('Expected XPath ' + xPathSelector + ' to resolve to a single array.');
+				}
+				if (!(rawResults.value[0].instanceOfType('array(*)'))) {
+					throw new Error('Expected XPath ' + xPathSelector + ' to resolve to an array');
+				}
+				return rawResults.value[0].members.map(function (entry) {
+					return entry.atomize().value.map(function (atomizedValue) {
+						return atomizedValue.value;
+					});
+				});
+
 			default:
 				var allValuesAreNodes = rawResults.value.every(function (value) {
 						return value.instanceOfType('node()') &&
@@ -204,6 +220,11 @@ define([
 	 * Resolve to an object, as a map
 	 */
 	evaluateXPath.MAP_TYPE = 11;
+
+	/**
+	 * Resolve to an array
+	 */
+	evaluateXPath.ARRAY_TYPE = 12;
 
 	return evaluateXPath;
 });

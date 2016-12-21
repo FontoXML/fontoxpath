@@ -29,6 +29,7 @@ define([
 	'../selectors/quantified/QuantifiedExpression',
 	'../selectors/conditional/IfExpression',
 	'../selectors/maps/MapConstructor',
+	'../selectors/arrays/ArrayConstructor',
 
 	'../selectors/literals/Literal',
 	'../selectors/LetExpression',
@@ -66,6 +67,7 @@ define([
 	IfExpression,
 
 	MapConstructor,
+	ArrayConstructor,
 
 	Literal,
 	LetExpression,
@@ -177,6 +179,9 @@ define([
 			case 'mapConstructor':
 				return mapConstructor(args);
 
+			case 'arrayConstructor':
+				return arrayConstructor(args);
+
 			default:
 				throw new Error('No selector counterpart for: ' + ast[0] + '.');
 		}
@@ -192,11 +197,15 @@ define([
 
 	function ancestorOrSelf (args) {
 		var subSelector = compile(args[0]);
-		return new AncestorAxis(subSelector, {inclusive: true});
+		return new AncestorAxis(subSelector, { inclusive: true });
 	}
 
 	function and (args) {
 		return new AndOperator(args.map(compile));
+	}
+
+	function arrayConstructor (args) {
+		return new ArrayConstructor(args[0], args.slice(1).map(compile));
 	}
 
 	function attribute (args) {
@@ -221,7 +230,7 @@ define([
 
 	function descendantOrSelf (args) {
 		var subSelector = compile(args[0]);
-		return new DescendantAxis(subSelector, {inclusive: true});
+		return new DescendantAxis(subSelector, { inclusive: true });
 	}
 
 	// Binary compare (=, !=, le, is, etc)

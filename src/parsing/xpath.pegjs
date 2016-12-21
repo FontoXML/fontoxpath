@@ -25,7 +25,7 @@ FunctionBody
 
 // 5
 EnclosedExpr
- = "{" _ Expr _ "}"
+ = "{" _ e:Expr _ "}" { return e }
 
 // 6
 Expr
@@ -76,7 +76,6 @@ AndExpr
 ComparisonExpr
  = lhs:StringConcatExpr _ op:(ValueComp / GeneralComp / NodeComp) _ rhs:StringConcatExpr {return ["compare", op, lhs, rhs]} // Note: the whole 1<2<3 shenanigan is removed from 3.1
  / StringConcatExpr
-
 
 // 19
 StringConcatExpr
@@ -258,7 +257,7 @@ PrimaryExpr
  / FunctionCall
  / FunctionItemExpr
  / MapConstructor
-// / ArrayConstructor
+ / ArrayConstructor
 // / UnaryLookup
 
 // 57
@@ -330,7 +329,18 @@ MapKeyExpr
 MapValueExpr
  = ExprSingle
 
-// TODO: 73-76: Arrays
+// 73
+ArrayConstructor
+ = SquareArrayConstructor
+ / CurlyArrayConstructor
+
+// 74
+SquareArrayConstructor
+ = "[" _ entries:(first:ExprSingle _ rest:("," _ e:ExprSingle _ { return e })* { return appendRest([first], rest) })? "]" { return ["arrayConstructor", "square"].concat(entries || []) }
+
+// 75
+CurlyArrayConstructor
+ = "array" _ e:EnclosedExpr { return ['arrayConstructor', "curly", e] }
 
 // 77
 SingleType
