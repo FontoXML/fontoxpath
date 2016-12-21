@@ -1,13 +1,7 @@
 define([
-	'./builtInFunctions',
-
-	'../dataTypes/BooleanValue',
-	'../dataTypes/Sequence'
+	'./builtInFunctions'
 ], function (
-	builtInFunctions,
-
-	BooleanValue,
-	Sequence
+	builtInFunctions
 ) {
 	'use strict';
 
@@ -87,35 +81,8 @@ define([
 			if (index === 0) {
 				return accumulator + functionName;
 			}
-			return accumulator += ((index !== array.length - 1) ? ', ' : ' or ')  + functionName;
+			return accumulator += ((index !== array.length - 1) ? ', ' : ' or ') + functionName;
 		}, 'Did you mean ') + '?';
-	}
-
-	// Deprecated
-	function getCustomTestByArity (functionName, arity) {
-		var customFunctionViaCustomTestsByName = customTestsByName[functionName];
-
-		if (customFunctionViaCustomTestsByName) {
-			var callFunction = function () {
-				var args = Array.from(arguments),
-					dynamicContext = args.shift(),
-					result = customFunctionViaCustomTestsByName.apply(
-						undefined,
-						args.map(function (arg) { return arg.value[0].value; }).concat(
-							[dynamicContext.contextItem.value[0].value,
-							dynamicContext.domFacade]));
-
-				return Sequence.singleton(result ? BooleanValue.TRUE : BooleanValue.FALSE);
-			};
-
-			return {
-					callFunction: callFunction,
-					argumentTypes: new Array(arity).fill('xs:string'),
-					returnType: 'xs:boolean'
-				};
-		}
-
-		return null;
 	}
 
 	function getFunctionByArity (functionName, arity) {
@@ -148,7 +115,7 @@ define([
 		if (!registeredFunctionsByName[name]) {
 			registeredFunctionsByName[name] = [];
 		}
-		registeredFunctionsByName[name].push({name: name, argumentTypes: argumentTypes, returnType: returnType, callFunction: callFunction});
+		registeredFunctionsByName[name].push({ name: name, argumentTypes: argumentTypes, returnType: returnType, callFunction: callFunction });
 	}
 
 	// bootstrap builtin functions
