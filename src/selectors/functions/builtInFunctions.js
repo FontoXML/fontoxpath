@@ -3,6 +3,7 @@ define([
 	'./builtInFunctions.boolean',
 	'./builtInFunctions.context',
 	'./builtInFunctions.identifiers',
+	'./builtInFunctions.json',
 	'./builtInFunctions.node',
 	'./builtInFunctions.numeric',
 	'./builtInFunctions.operators',
@@ -14,6 +15,7 @@ define([
 	builtInBooleanFunctions,
 	builtInContextFunctions,
 	builtInIdentifierFunctions,
+	builtInJsonFunctions,
 	builtInNodeFunctions,
 	builtInNumericFunctions,
 	builtInOperatorFunctions,
@@ -26,6 +28,7 @@ define([
 	return builtInContextFunctions.declarations
 		.concat(builtInArrayFunctions.declarations)
 		.concat(builtInIdentifierFunctions.declarations)
+		.concat(builtInJsonFunctions.declarations)
 		.concat(builtInBooleanFunctions.declarations)
 		.concat(builtInNodeFunctions.declarations)
 		.concat(builtInNumericFunctions.declarations)
