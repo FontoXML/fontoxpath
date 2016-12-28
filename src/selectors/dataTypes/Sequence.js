@@ -1,60 +1,67 @@
-define([
-	'./Item',
-	'./NodeValue'
-], function (
-	Item,
-	NodeValue
-) {
-	'use strict';
+import Item from './Item';
+import NodeValue from './NodeValue';
 
-	function Sequence (initialValues) {
-		Item.call(this, initialValues || []);
-	}
+/**
+ * @constructor
+ * @extends {Item<Array<Item>>}
+ * @param  {?Array<*>=}  initialValues
+ */
+function Sequence (initialValues) {
+    Item.call(this, initialValues || []);
+}
 
-	Sequence.prototype = Object.create(Item.prototype);
+Sequence.prototype = Object.create(Item.prototype);
 
-	Sequence.singleton = function (value) {
-		return new Sequence([value]);
-	};
+Sequence.singleton = function (value) {
+    return new Sequence([value]);
+};
 
-	Sequence.empty = function () {
-		return new Sequence([]);
-	};
+Sequence.empty = function () {
+    return new Sequence([]);
+};
 
-	Sequence.prototype.atomize = function () {
-		return new Sequence(this.value.map(function (value) {
-			return value.atomize();
-		}));
-	};
+/**
+ * @return {!Sequence}
+ */
+Sequence.prototype.atomize = function () {
+    return new Sequence(this.value.map(function (value) {
+        return value.atomize();
+    }));
+};
 
-	Sequence.prototype.isEmpty = function () {
-		return this.value.length === 0;
-	};
+Sequence.prototype.isEmpty = function () {
+    return this.value.length === 0;
+};
 
-	Sequence.prototype.isSingleton = function () {
-		return this.value.length === 1;
-	};
+Sequence.prototype.isSingleton = function () {
+    return this.value.length === 1;
+};
 
-	Sequence.prototype.getEffectiveBooleanValue = function () {
-		if (this.isEmpty()) {
-			return false;
-		}
+Sequence.prototype.instanceOfType = function (type) {
+	return this.value.every(function (valueItem) {
+		return valueItem.instanceOfType(type);
+	});
+};
 
-		if (this.value[0] instanceof NodeValue) {
-			return true;
-		}
+Sequence.prototype.getEffectiveBooleanValue = function () {
+    if (this.isEmpty()) {
+        return false;
+    }
 
-		if (this.isSingleton()) {
-			return this.value[0].getEffectiveBooleanValue();
-		}
+    if (this.value[0] instanceof NodeValue) {
+        return true;
+    }
 
-		throw new Error('FORG0006: A wrong argument type was specified in a function call.');
-	};
+    if (this.isSingleton()) {
+        return this.value[0].getEffectiveBooleanValue();
+    }
 
-	Sequence.prototype.merge = function (otherSequence) {
-		this.value = this.value.concat(otherSequence.value);
-		return this;
-	};
+    throw new Error('FORG0006: A wrong argument type was specified in a function call.');
+};
 
-	return Sequence;
-});
+Sequence.prototype.merge = function (otherSequence) {
+    this.value = this.value.concat(otherSequence.value);
+    return this;
+};
+
+export default Sequence;

@@ -1,21 +1,18 @@
-define([
-	'./evaluateXPath'
-], function (
-	evaluateXPath
-) {
-	'use strict';
+import evaluateXPath from './evaluateXPath';
+import DomFacade from './DomFacade';
+import Selector from './selectors/Selector';
 
-	/**
-	 * Evaluates an XPath on the given contextNode. Returns the string result as if the XPath is wrapped in string(...).
-	 *
-	 * @param  {Selector|String}   XPathSelector  The selector to execute. Supports XPath 3.1.
-	 * @param  {Node}              contextNode    The node from which to run the XPath.
-	 * @param  {Blueprint}         blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
-	 * @param  {[Object]}          variables      Extra variables (name=>value). Values can be number / string or boolean.
-	 *
-	 * @return  {String}           The string result.
-	 */
-	return function evaluateXPathToString (selector, contextNode, blueprint, variables) {
-		return evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.STRING_TYPE);
-	};
-});
+/**
+ * Evaluates an XPath on the given contextNode. Returns the string result as if the XPath is wrapped in string(...).
+ *
+ * @param  {!Selector|string}   selector       The selector to execute. Supports XPath 3.1.
+ * @param  {!Node}              contextNode    The node from which to run the XPath.
+ * @param  {!DomFacade}         domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?Object=}          variables      Extra variables (name=>value). Values can be number / string or boolean.
+ *
+ * @export
+ * @return  {!string}           The string result.
+ */
+export default function evaluateXPathToString (selector, contextNode, domFacade, variables) {
+    return /** @type {!string} */(evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.STRING_TYPE));
+}

@@ -1,11 +1,12 @@
-define([
-	'text!./xPathParser.raw.js'
-], function(
-	xPathParserRaw
-) {
-	'use strict';
+import xPathParserRaw from './xPathParser.raw.js';
+var module = {
+	};
+new Function(xPathParserRaw).call(module);
 
-	var module = {};
-	new Function(xPathParserRaw).call(module);
-	return module.xPathParser;
-});
+/**
+ * @type {({xPathParser: {parse:function(!string):!Array<*>}, SyntaxError:Error})}
+ */
+export default {
+	parse: module['xPathParser']['parse'],
+	SyntaxError: module['xPathParser']['SyntaxError']
+};

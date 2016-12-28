@@ -1,17 +1,11 @@
-define([
-], function (
-) {
-	'use strict';
+export default function getBucketsForNode (node) {
+    var buckets = [];
 
-	return function getBucketsForNode (node) {
-		var buckets = [];
+    buckets.push('type-' + node.nodeType);
 
-		buckets.push('type-' + node.nodeType);
+    if (node.nodeType === node.ELEMENT_NODE) {
+        buckets.push('name-' + node.nodeName);
+    }
 
-		if (node.nodeType === node.ELEMENT_NODE) {
-			buckets.push('name-' + node.nodeName);
-		}
-
-		return buckets;
-	};
-});
+    return buckets;
+}

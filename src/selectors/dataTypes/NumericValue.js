@@ -1,40 +1,30 @@
-define([
-	'./AnyAtomicTypeValue'
-], function (
-	AnyAtomicTypeValue
-) {
-	'use strict';
+import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 
-	/**
-	 * Abstract Numeric class, primary type for everything which is numeric: decimal, double and float
-	 */
-	function NumericValue (initialValue) {
-		AnyAtomicTypeValue.call(this, initialValue);
-	}
+/**
+ * Abstract Numeric class, primary type for everything which is numeric: decimal, double and float
+ * @constructor
+ * @abstract
+ * @extends {AnyAtomicTypeValue<number>}
+ * @param  {number}  initialValue
+ */
+function NumericValue (initialValue) {
+    AnyAtomicTypeValue.call(this, initialValue);
+}
 
-	NumericValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
-	NumericValue.prototype.constructor = NumericValue;
+NumericValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
+NumericValue.prototype.constructor = NumericValue;
 
-	NumericValue.cast = function (value) {
-		var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
-		var floatValue = parseFloat(anyAtomicTypeValue.value, 10);
+NumericValue.prototype.getEffectiveBooleanValue = function () {
+    return this.value !== 0 && !Number.isNaN(this.value);
+};
 
-		return new NumericValue(floatValue);
-	};
+NumericValue.prototype.instanceOfType = function (simpleTypeName) {
+    return simpleTypeName === 'xs:numeric' ||
+        AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
+};
 
-	NumericValue.prototype.getEffectiveBooleanValue = function () {
-		return this.value !== 0 && !Number.isNaN(this.value);
-	};
+NumericValue.prototype.isNaN = function () {
+	return isNaN(this.value);
+};
 
-	NumericValue.prototype.instanceOfType = function (simpleTypeName) {
-		return simpleTypeName === 'xs:numeric' ||
-			AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
-	};
-
-
-	NumericValue.prototype.isNaN = function () {
-		return isNaN(this.value);
-	};
-
-	return NumericValue;
-});
+export default NumericValue;

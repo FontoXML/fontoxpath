@@ -1,21 +1,29 @@
-define([
-], function (
-) {
-	'use strict';
+/**
+ * @abstract
+ * @constructor
+ * @template T
+ * @param  {T}  value
+ */
+function Item (value) {
+    this.value = value;
+}
 
-	function Item (value) {
-		this.value = value;
-	}
+/**
+ * @abstract
+ * @return  {!Item} Note: circular
+ */
+Item.prototype.atomize = function () {};
 
-	Item.prototype.atomize = function () {};
+Item.prototype.getEffectiveBooleanValue = function () {
+    throw new Error('Not implemented');
+};
 
-	Item.prototype.getEffectiveBooleanValue = function () {
-		throw new Error('Not implemented');
-	};
+/**
+ * @param   {string}  simpleTypeName
+ * @return  {boolean}
+ */
+Item.prototype.instanceOfType = function (simpleTypeName) {
+    return simpleTypeName === 'item()';
+};
 
-	Item.prototype.instanceOfType = function (simpleTypeName) {
-		return simpleTypeName === 'item()';
-	};
-
-	return Item;
-});
+export default Item;

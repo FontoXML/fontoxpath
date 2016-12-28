@@ -1,47 +1,44 @@
-define([
-	'../dataTypes/Sequence',
-	'../dataTypes/BooleanValue',
-	'../Selector',
-	'../Specificity'
-], function (
-	Sequence,
-	BooleanValue,
-	Selector,
-	Specificity
-) {
-	'use strict';
+import Sequence from '../dataTypes/Sequence';
+import BooleanValue from '../dataTypes/BooleanValue';
+import Selector from '../Selector';
+import Specificity from '../Specificity';
 
-	/**
-	 * @param  {Function}  isMatchingNode  called with node and blueprint
-	 */
-	function NodePredicateSelector (isMatchingNode) {
-		Selector.call(this, new Specificity({external: 1}), Selector.RESULT_ORDER_SORTED);
+import DomFacade from '../../DomFacade';
 
-		this._isMatchingNode = isMatchingNode;
-	}
+/**
+ * @constructor
+ * @extends Selector
+ * @param  {function(Node, DomFacade): boolean}  isMatchingNode  called with node and blueprint
+ */
+function NodePredicateSelector (isMatchingNode) {
+    Selector.call(this, new Specificity({
+        external: 1
+    }), Selector.RESULT_ORDER_SORTED);
 
-	NodePredicateSelector.prototype = Object.create(Selector.prototype);
-	NodePredicateSelector.prototype.constructor = NodePredicateSelector;
+    this._isMatchingNode = isMatchingNode;
+}
 
-	NodePredicateSelector.prototype.equals = function (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
+NodePredicateSelector.prototype = Object.create(Selector.prototype);
+NodePredicateSelector.prototype.constructor = NodePredicateSelector;
 
-		return otherSelector instanceof NodePredicateSelector &&
-		// Not perfect, but function logically compare cannot be done
-		this._isMatchingNode === otherSelector.isMatchingNode;
-	};
+NodePredicateSelector.prototype.equals = function (otherSelector) {
+    if (this === otherSelector) {
+        return true;
+    }
 
-	NodePredicateSelector.prototype.evaluate = function (dynamicContext) {
-		var sequence = dynamicContext.contextItem,
-			domFacade = dynamicContext.domFacade;
-		// TODO: non-singleton nodeTests
-		var booleanValue = this._isMatchingNode.call(undefined, sequence.value[0].value, domFacade) ?
-				BooleanValue.TRUE :
-				BooleanValue.FALSE;
-		return Sequence.singleton(booleanValue);
-	};
+    return otherSelector instanceof NodePredicateSelector &&
+        // Not perfect, but function logically compare cannot be done
+        this._isMatchingNode === otherSelector._isMatchingNode;
+};
 
-	return NodePredicateSelector;
-});
+NodePredicateSelector.prototype.evaluate = function (dynamicContext) {
+    var sequence = dynamicContext.contextItem,
+        domFacade = dynamicContext.domFacade;
+    // TODO: non-singleton nodeTests
+    var booleanValue = this._isMatchingNode.call(undefined, sequence.value[0].value, domFacade) ?
+        BooleanValue.TRUE :
+        BooleanValue.FALSE;
+    return Sequence.singleton(booleanValue);
+};
+
+export default NodePredicateSelector;

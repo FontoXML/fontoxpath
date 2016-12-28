@@ -1,31 +1,30 @@
-define([
-	'./AnyAtomicTypeValue'
-], function (
-	AnyAtomicTypeValue
-) {
-	'use strict';
+import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 
-	function StringValue (value) {
-		AnyAtomicTypeValue.call(this, value);
-	}
+/**
+ * @constructor
+ * @extends {AnyAtomicTypeValue<string>}
+ * @param  {!string}  value
+ */
+function StringValue (value) {
+    AnyAtomicTypeValue.call(this, value);
+}
 
-	StringValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
-	StringValue.prototype.constructor = StringValue;
+StringValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
+StringValue.prototype.constructor = StringValue;
 
-	StringValue.cast = function (value) {
-		return new StringValue(AnyAtomicTypeValue.cast(value).value);
-	};
+StringValue.cast = function (value) {
+    return new StringValue(AnyAtomicTypeValue.cast(value).value);
+};
 
-	StringValue.prototype.getEffectiveBooleanValue = function () {
-		return this.value.length > 0;
-	};
+StringValue.prototype.getEffectiveBooleanValue = function () {
+    return this.value.length > 0;
+};
 
-	StringValue.primitiveTypeName = StringValue.prototype.primitiveTypeName = 'xs:string';
+StringValue.primitiveTypeName = StringValue.prototype.primitiveTypeName = 'xs:string';
 
-	StringValue.prototype.instanceOfType = function (simpleTypeName) {
-		return simpleTypeName === this.primitiveTypeName ||
-			AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
-	};
+StringValue.prototype.instanceOfType = function (simpleTypeName) {
+    return simpleTypeName === this.primitiveTypeName ||
+        AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
+};
 
-	return StringValue;
-});
+export default StringValue;

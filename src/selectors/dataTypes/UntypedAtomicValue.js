@@ -1,31 +1,30 @@
-define([
-	'./AnyAtomicTypeValue'
-], function (
-	AnyAtomicTypeValue
-) {
-	'use strict';
+import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 
-	function UntypedAtomicValue (value) {
-		AnyAtomicTypeValue.call(this, value);
-	}
+/**
+ * @constructor
+ * @extends {AnyAtomicTypeValue<string>}
+ * @param  {!*}  value
+ */
+function UntypedAtomicValue (value) {
+    AnyAtomicTypeValue.call(this, value + '');
+}
 
-	UntypedAtomicValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
-	UntypedAtomicValue.prototype.constructor = UntypedAtomicValue;
+UntypedAtomicValue.prototype = Object.create(AnyAtomicTypeValue.prototype);
+UntypedAtomicValue.prototype.constructor = UntypedAtomicValue;
 
-	UntypedAtomicValue.cast = function (value) {
-		throw new Error('Not implemented');
-	};
+UntypedAtomicValue.cast = function (value) {
+    throw new Error('Not implemented');
+};
 
-	UntypedAtomicValue.prototype.getEffectiveBooleanValue = function () {
-		return this.value.length > 0;
-	};
+UntypedAtomicValue.prototype.getEffectiveBooleanValue = function () {
+    return this.value.length > 0;
+};
 
-	UntypedAtomicValue.primitiveTypeName = UntypedAtomicValue.prototype.primitiveTypeName = 'xs:untypedAtomic';
+UntypedAtomicValue.primitiveTypeName = UntypedAtomicValue.prototype.primitiveTypeName = 'xs:untypedAtomic';
 
-	UntypedAtomicValue.prototype.instanceOfType = function (simpleTypeName) {
-		return simpleTypeName === 'xs:untypedAtomic' ||
-			AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
-	};
+UntypedAtomicValue.prototype.instanceOfType = function (simpleTypeName) {
+    return simpleTypeName === 'xs:untypedAtomic' ||
+        AnyAtomicTypeValue.prototype.instanceOfType.call(this, simpleTypeName);
+};
 
-	return UntypedAtomicValue;
-});
+export default UntypedAtomicValue;

@@ -1,34 +1,33 @@
-define([
-	'./DecimalValue'
-], function (
-	DecimalValue
-) {
-	'use strict';
+import DecimalValue from './DecimalValue';
 
-	function IntegerValue (initialValue) {
-		DecimalValue.call(this, Math.abs(initialValue));
-	}
+/**
+ * @constructor
+ * @extends {DecimalValue}
+ * @param  {!number}  initialValue
+ */
+function IntegerValue (initialValue) {
+    DecimalValue.call(this, Math.abs(initialValue));
+}
 
-	IntegerValue.prototype = Object.create(DecimalValue.prototype);
-	IntegerValue.prototype.constructor = IntegerValue;
+IntegerValue.prototype = Object.create(DecimalValue.prototype);
+IntegerValue.prototype.constructor = IntegerValue;
 
-	IntegerValue.cast = function (value) {
-		if (value instanceof IntegerValue) {
-			return new IntegerValue(value.value);
-		}
+IntegerValue.cast = function (value) {
+    if (value instanceof IntegerValue) {
+        return new IntegerValue(/** @type {!number} */ (value.value));
+    }
 
-		var decimalValue = DecimalValue.cast(value);
+    var decimalValue = DecimalValue.cast(value);
 
-		// Strip off any decimals
-		var integerValue = Math.abs(decimalValue.value);
+    // Strip off any decimals
+    var integerValue = Math.abs(decimalValue.value);
 
-		return new IntegerValue(integerValue);
-	};
+    return new IntegerValue(integerValue);
+};
 
-	IntegerValue.prototype.instanceOfType = function (simpleTypeName) {
-		return simpleTypeName === 'xs:integer' ||
-			DecimalValue.prototype.instanceOfType.call(this, simpleTypeName);
-	};
+IntegerValue.prototype.instanceOfType = function (simpleTypeName) {
+    return simpleTypeName === 'xs:integer' ||
+        DecimalValue.prototype.instanceOfType.call(this, simpleTypeName);
+};
 
-	return IntegerValue;
-});
+export default IntegerValue;

@@ -1,81 +1,66 @@
-define([
-	'../../dataTypes/Sequence',
-	'../../dataTypes/BooleanValue',
-	'../../Selector',
+import Sequence from '../../dataTypes/Sequence';
+import BooleanValue from '../../dataTypes/BooleanValue';
+import Selector from '../../Selector';
+import generalCompare from './generalCompare';
+import valueCompare from './valueCompare';
 
-	'./generalCompare',
-	'./nodeCompare',
-	'./valueCompare'
-], function (
-	Sequence,
-	BooleanValue,
-	Selector,
+/**
+ * @constructor
+ * @extends Selector
+ * @param  {Array<string>}    kind
+ * @param  {Selector}  firstSelector
+ * @param  {Selector}  secondSelector
+ */
+function Compare (kind, firstSelector, secondSelector) {
+    Selector.call(
+        this,
+        firstSelector.specificity.add(secondSelector.specificity),
+        Selector.RESULT_ORDER_SORTED);
+    this._firstSelector = firstSelector;
+    this._secondSelector = secondSelector;
 
-	generalCompare,
-	nodeCompare,
-	valueCompare
-) {
-	'use strict';
+    this._compare = kind[0];
+    this._operator = kind[1];
 
-	function Compare (kind, firstSelector, secondSelector) {
-		Selector.call(
-			this,
-			firstSelector.specificity.add(secondSelector.specificity),
-			Selector.RESULT_ORDER_SORTED);
-		this._firstSelector = firstSelector;
-		this._secondSelector = secondSelector;
+    switch (kind[0]) {
+        case 'generalCompare':
+            this._comparator = generalCompare;
+            break;
+        case 'valueCompare':
+            this._comparator = valueCompare;
+            break;
+        case 'nodeCompare':
+            throw new Error('NodeCompare is not implemented');
+    }
+}
 
-		this._compare = kind[0];
-		this._operator = kind[1];
+Compare.prototype = Object.create(Selector.prototype);
+Compare.prototype.constructor = Compare;
 
-		switch (kind[0]) {
-			case 'generalCompare':
-				this._comparator = generalCompare;
-				break;
-			case 'valueCompare':
-				this._comparator = valueCompare;
-				break;
-			case 'nodeCompare':
-				this._comparator = nodeCompare;
-				break;
-		}
-	}
+Compare.prototype.equals = function (otherSelector) {
+    if (otherSelector === this) {
+        return true;
+    }
+    return otherSelector instanceof Compare &&
+        this._firstSelector.equals(otherSelector._firstSelector) &&
+        this._secondSelector.equals(otherSelector._secondSelector);
+};
 
-	Compare.prototype = Object.create(Selector.prototype);
-	Compare.prototype.constructor = Compare;
+Compare.prototype.evaluate = function (dynamicContext) {
+    var firstSequence = this._firstSelector.evaluate(dynamicContext),
+        secondSequence = this._secondSelector.evaluate(dynamicContext);
 
-	Compare.prototype.equals = function (otherSelector) {
-		if (otherSelector === this) {
-			return true;
-		}
-		return otherSelector instanceof Compare &&
-			this._firstSelector.equals(otherSelector._firstSelector) &&
-			this._secondSelector.equals(otherSelector._secondSelector);
-	};
+    if (this._compare === 'valueCompare' && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
+        return Sequence.empty();
+    }
 
-	Compare.prototype.evaluate = function (dynamicContext) {
-		var firstSequence = this._firstSelector.evaluate(dynamicContext),
-			secondSequence = this._secondSelector.evaluate(dynamicContext);
+    // Atomize both sequences
+    var firstAtomizedSequence = firstSequence.atomize();
+    var secondAtomizedSequence = secondSequence.atomize();
+    var booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ?
+        BooleanValue.TRUE :
+        BooleanValue.FALSE;
+    return Sequence.singleton(booleanValue);
+};
 
-		if ((this._compare === 'valueCompare' || this._compare === 'nodeCompare') && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
-			return Sequence.empty();
-		}
-
-		if (this._compare === 'nodeCompare') {
-			var nodeCompareResult = this._comparator(this._operator, firstSequence, secondSequence) ?
-				BooleanValue.TRUE :
-				BooleanValue.FALSE;
-			return Sequence.singleton(nodeCompareResult);
-		}
-
-		// Atomize both sequences
-		var firstAtomizedSequence = firstSequence.atomize();
-		var secondAtomizedSequence = secondSequence.atomize();
-		var booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ?
-			BooleanValue.TRUE :
-			BooleanValue.FALSE;
-		return Sequence.singleton(booleanValue);
-	};
-
-	return Compare;
-});
+export default Compare;

@@ -1,2 +1,4 @@
 platform
 coverage
+node_modules
+dist

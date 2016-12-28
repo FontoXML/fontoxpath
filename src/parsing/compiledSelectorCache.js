@@ -1,7 +1,1 @@
-define([
-], function (
-) {
-	'use strict';
-
-	return Object.create(null);
-});
+export default Object.create(null);
