@@ -19,7 +19,7 @@ DoubleValue.cast = function (value) {
     }
 
     var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
-	var floatValue = parseFloat(anyAtomicTypeValue.value, 10);
+	var floatValue = parseFloat(anyAtomicTypeValue.value);
 
     return new DoubleValue(floatValue);
 };

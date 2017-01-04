@@ -1,23 +1,17 @@
-define([
-	'../dataTypes/IntegerValue',
-	'../dataTypes/Sequence'
-], function (
-	IntegerValue,
-	Sequence
-) {
-	'use strict';
+import IntegerValue from '../dataTypes/IntegerValue';
+import Sequence from '../dataTypes/Sequence';
 
-	function fnLast (dynamicContext) {
-		return Sequence.singleton(new IntegerValue(dynamicContext.contextSequence.value.length));
-	}
+function fnLast (dynamicContext) {
+	return Sequence.singleton(new IntegerValue(dynamicContext.contextSequence.value.length));
+}
 
-	function fnPosition (dynamicContext) {
-		// Note: +1 because XPath is one-based
-		return Sequence.singleton(new IntegerValue(dynamicContext.contextSequence.value.indexOf(dynamicContext.contextItem.value[0]) + 1));
-	}
+function fnPosition (dynamicContext) {
+	// Note: +1 because XPath is one-based
+	return Sequence.singleton(new IntegerValue(dynamicContext.contextSequence.value.indexOf(dynamicContext.contextItem.value[0]) + 1));
+}
 
-	return {
-		declarations: [
+export default {
+	declarations: [
 		{
 			name: 'last',
 			argumentTypes: [],
@@ -30,12 +24,10 @@ define([
 			argumentTypes: [],
 			returnType: 'xs:integer',
 			callFunction: fnPosition
-		},
-
-		],
-		functions: {
-			last: fnLast,
-			position: fnPosition
 		}
-	};
-});
+	],
+	functions: {
+		last: fnLast,
+		position: fnPosition
+	}
+};

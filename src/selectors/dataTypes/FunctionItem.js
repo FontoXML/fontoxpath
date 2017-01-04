@@ -1,12 +1,14 @@
 import Item from './Item';
+import Sequence from './Sequence';
+import DynamicContext from '../DynamicContext';
 
 /**
  * @constructor
  * @extends {Item}
- * @param  {!function(*)}       value
- * @param  {!Array<string>}  argumentTypes
- * @param  {!number}         arity
- * @param  {!string}         returnType
+ * @param  {!function(!DynamicContext, !Sequence): !Sequence}  value
+ * @param  {!Array<string>}                                     argumentTypes
+ * @param  {!number}                                            arity
+ * @param  {!string}                                            returnType
  */
 function FunctionItem (value, argumentTypes, arity, returnType) {
     Item.call(this, value);

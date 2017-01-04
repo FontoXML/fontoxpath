@@ -495,11 +495,11 @@ IntegerLiteral = digits:Digits {return ["literal", digits, "xs:integer"]}
 // 114
 DecimalLiteral
  = "." digits:Digits {return ["literal", parseFloat("." + digits, 10), "xs:decimal"]}
- / decimal:$(Digits "." Digits?) {return ["literal", parseFloat(decimal, 10), "xs:decimal"]}
+ / decimal:$(Digits "." Digits?) {return ["literal", parseFloat(decimal), "xs:decimal"]}
 
 // 115
 DoubleLiteral
- = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["literal", parseFloat(double, 10), "xs:double"]}
+ = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["literal", parseFloat(double), "xs:double"]}
 
 // 116
 StringLiteral

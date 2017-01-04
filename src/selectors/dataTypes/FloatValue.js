@@ -20,7 +20,7 @@ FloatValue.cast = function (value) {
 
     // In JavaScript, doubles are the same as decimals
     var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
-	var floatValue = parseFloat(anyAtomicTypeValue.value, 10);
+	var floatValue = parseFloat(anyAtomicTypeValue.value);
 
 	return new FloatValue(floatValue);
 };

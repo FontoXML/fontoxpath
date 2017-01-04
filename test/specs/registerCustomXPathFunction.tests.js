@@ -1,9 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
+import { domFacade } from 'fontoxml-selectors';
 import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import functionRegistry from 'fontoxml-selectors/selectors/functions/functionRegistry';
 import registerCustomXPathFunction from 'fontoxml-selectors/registerCustomXPathFunction';
 
 describe('registerCustomXPath() =>', () => {
@@ -17,7 +15,7 @@ describe('registerCustomXPath() =>', () => {
 			'fonto:custom-test1',
 			['xs:string?'],
 			'xs:boolean',
-			function (dynamicContext, string) {
+			function (_dynamicContext, string) {
 				return string === null || string === 'test';
 			});
 
@@ -25,7 +23,7 @@ describe('registerCustomXPath() =>', () => {
 			'fonto:custom-test2',
 			['xs:string', 'xs:boolean'],
 			'xs:boolean',
-			function (dynamicContext, string, boolean) {
+			function (_dynamicContext, string, boolean) {
 				return string === 'test' && boolean;
 			});
 
@@ -33,7 +31,7 @@ describe('registerCustomXPath() =>', () => {
 			'fonto:custom-test3',
 			['item()?'],
 			'item()',
-			function (dynamicContext, string) {
+			function (_dynamicContext, string) {
 				return string;
 			});
 
@@ -41,7 +39,7 @@ describe('registerCustomXPath() =>', () => {
 			'fonto:custom-test4',
 			['xs:string*'],
 			'xs:string*',
-			function (dynamicContext, stringArray) {
+			function (_dynamicContext, stringArray) {
 				return stringArray.map(function (string) {
 					return string + '-test';
 				});
@@ -49,25 +47,25 @@ describe('registerCustomXPath() =>', () => {
 	});
 
 	it('the registered function can be used in a xPath selector with return value boolean', () => {
-		chai.assert(evaluateXPath('fonto:custom-test1("test")', documentNode, blueprint) === true);
-		chai.assert(evaluateXPath('fonto:custom-test1("bla")', documentNode, blueprint) === false);
-		chai.assert(evaluateXPath('fonto:custom-test1(())', documentNode, blueprint) === true);
+		chai.assert(evaluateXPath('fonto:custom-test1("test")', documentNode, domFacade) === true);
+		chai.assert(evaluateXPath('fonto:custom-test1("bla")', documentNode, domFacade) === false);
+		chai.assert(evaluateXPath('fonto:custom-test1(())', documentNode, domFacade) === true);
 	});
 
 	it('the registered function can be used in a xPath selector with 2 arguments', () => {
-		chai.assert(evaluateXPath('fonto:custom-test2("test", true())', documentNode, blueprint) === true);
-		chai.assert(evaluateXPath('fonto:custom-test2("test", false())', documentNode, blueprint) === false);
+		chai.assert(evaluateXPath('fonto:custom-test2("test", true())', documentNode, domFacade) === true);
+		chai.assert(evaluateXPath('fonto:custom-test2("test", false())', documentNode, domFacade) === false);
 	});
 
 	it('the registered function can be used in a xPath selector with return value string', () => {
-		chai.assert(evaluateXPath('fonto:custom-test3("test")', documentNode, blueprint) === 'test');
-		chai.assert(evaluateXPath('fonto:custom-test3("test")', documentNode, blueprint) === 'test');
+		chai.assert(evaluateXPath('fonto:custom-test3("test")', documentNode, domFacade) === 'test');
+		chai.assert(evaluateXPath('fonto:custom-test3("test")', documentNode, domFacade) === 'test');
 	});
 
 	it('the registered function can be used in a xPath selector with return value array', () => {
-		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(("abc", "123", "XYZ"))', documentNode, blueprint), ['abc-test', '123-test', 'XYZ-test']);
+		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(("abc", "123", "XYZ"))', documentNode, domFacade), ['abc-test', '123-test', 'XYZ-test']);
 		// Returns ['abc-test'], but does get atomized by the evaluateXPath function
-		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(("abc"))', documentNode, blueprint), 'abc-test');
-		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(())', documentNode, blueprint), []);
+		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(("abc"))', documentNode, domFacade), 'abc-test');
+		chai.assert.deepEqual(evaluateXPath('fonto:custom-test4(())', documentNode, domFacade), []);
 	});
 });

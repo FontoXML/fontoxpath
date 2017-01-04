@@ -1,8 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToBoolean, evaluateXPathToFirstNode } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -12,11 +11,11 @@ beforeEach(() => {
 describe('nameTests', () => {
 	it('allows wildcards', () => {
 		const element = documentNode.createElement('someElement');
-		chai.expect(evaluateXPathToBoolean('self::*', element, blueprint)).to.equal(true);
+		chai.expect(evaluateXPathToBoolean('self::*', element, domFacade)).to.equal(true);
 	});
 
 	it('allows nodeNames containing namespaces', () => {
 		const element = documentNode.createElement('someNamespace:someElement');
-		chai.expect(evaluateXPath('self::someNamespace:someElement', element, blueprint)).to.deep.equal(element);
+		chai.expect(evaluateXPathToFirstNode('self::someNamespace:someElement', element, domFacade)).to.deep.equal(element);
 	});
 });

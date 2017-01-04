@@ -1,8 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToNumbers } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -11,39 +10,34 @@ beforeEach(() => {
 
 describe('sequence', () => {
 	it('creates a sequence', () => {
-		const selector = parseSelector('(1,2,3)');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToNumbers('(1,2,3)', documentNode, domFacade)
 		).to.deep.equal([1,2,3]);
 	});
 
 	it('creates an empty sequence', () => {
-		const selector = parseSelector('()');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToNumbers('()', documentNode, domFacade)
 		).to.deep.equal([]);
 	});
 
 	it('normalizes sequences', () => {
-		const selector = parseSelector('(1,2,(3,4))');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToNumbers('(1,2,(3,4))', documentNode, domFacade)
 		).to.deep.equal([1,2,3,4]);
 	});
 });
 
 describe('range', () => {
 	it('creates a sequence', () => {
-		const selector = parseSelector('1 to 10');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToNumbers('1 to 10', documentNode, domFacade)
 		).to.deep.equal([1,2,3,4,5,6,7,8,9,10]);
 	});
 
 	it('creates an empty sequence when passed a > b', () => {
-		const selector = parseSelector('10 to 1');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToNumbers('10 to 1', documentNode, domFacade)
 		).to.deep.equal([]);
 	});
 });

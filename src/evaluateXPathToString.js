@@ -1,5 +1,4 @@
 import evaluateXPath from './evaluateXPath';
-import DomFacade from './DomFacade';
 import Selector from './selectors/Selector';
 
 /**
@@ -7,8 +6,8 @@ import Selector from './selectors/Selector';
  *
  * @param  {!Selector|string}   selector       The selector to execute. Supports XPath 3.1.
  * @param  {!Node}              contextNode    The node from which to run the XPath.
- * @param  {!DomFacade}         domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  {?Object=}          variables      Extra variables (name=>value). Values can be number / string or boolean.
+ * @param  {!IDomFacade}        domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?Object=}           variables      Extra variables (name=>value). Values can be number / string or boolean.
  *
  * @export
  * @return  {!string}           The string result.

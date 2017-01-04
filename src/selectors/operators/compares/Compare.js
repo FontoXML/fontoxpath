@@ -2,6 +2,7 @@ import Sequence from '../../dataTypes/Sequence';
 import BooleanValue from '../../dataTypes/BooleanValue';
 import Selector from '../../Selector';
 import generalCompare from './generalCompare';
+import nodeCompare from './nodeCompare';
 import valueCompare from './valueCompare';
 
 /**
@@ -30,7 +31,8 @@ function Compare (kind, firstSelector, secondSelector) {
             this._comparator = valueCompare;
             break;
         case 'nodeCompare':
-            throw new Error('NodeCompare is not implemented');
+			this._comparator = nodeCompare;
+			break;
     }
 }
 
@@ -50,9 +52,16 @@ Compare.prototype.evaluate = function (dynamicContext) {
     var firstSequence = this._firstSelector.evaluate(dynamicContext),
         secondSequence = this._secondSelector.evaluate(dynamicContext);
 
-    if (this._compare === 'valueCompare' && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
-        return Sequence.empty();
-    }
+	if ((this._compare === 'valueCompare' || this._compare === 'nodeCompare') && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
+		return Sequence.empty();
+	}
+
+	if (this._compare === 'nodeCompare') {
+		var nodeCompareResult = this._comparator(this._operator, firstSequence, secondSequence) ?
+			BooleanValue.TRUE :
+			BooleanValue.FALSE;
+		return Sequence.singleton(nodeCompareResult);
+	}
 
     // Atomize both sequences
     var firstAtomizedSequence = firstSequence.atomize();

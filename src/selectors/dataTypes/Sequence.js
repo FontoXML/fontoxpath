@@ -38,7 +38,7 @@ Sequence.prototype.isSingleton = function () {
 };
 
 Sequence.prototype.instanceOfType = function (type) {
-	return this.value.every(function (valueItem) {
+	return !!this.value.length && this.value.every(function (valueItem) {
 		return valueItem.instanceOfType(type);
 	});
 };

@@ -1,8 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToString, evaluateXPathToNumber } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -11,16 +10,14 @@ beforeEach(() => {
 
 describe('varRef', () => {
 	it('can reference variables', () => {
-		const selector = parseSelector('$x');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint, {'x': 42})
+			evaluateXPathToNumber('$x', documentNode, domFacade, {'x': 42})
 		).to.deep.equal(42);
 	});
 
 	it('can reference built-in variables', () => {
-		const selector = parseSelector('$theBest');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToString('$theBest', documentNode, domFacade)
 		).to.deep.equal('FontoXML is the best!');
 	});
 });

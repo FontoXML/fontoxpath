@@ -1,11 +1,8 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
-import evaluateXPathToNumber from 'fontoxml-selectors/evaluateXPathToNumber';
-import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToNodes, evaluateXPathToNumber, evaluateXPathToBoolean } from 'fontoxml-selectors';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
@@ -14,185 +11,185 @@ beforeEach(() => {
 
 describe('Value compares', () => {
 	it('works over singleton sequences', () => {
-		const selector = parseSelector('true() eq true()');
-		chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+		const selector = ('true() eq true()');
+		chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 	});
 
 	it('works over empty sequences', () => {
-		const selector = parseSelector('() eq ()');
-		chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([]);
+		const selector = ('() eq ()');
+		chai.expect(evaluateXPathToNodes(selector, documentNode, domFacade)).to.deep.equal([]);
 	});
 
 	it('works over one empty sequence and a filled one', () => {
-		const selector = parseSelector('() eq (true())');
-		chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.deep.equal([]);
+		const selector = ('() eq (true())');
+		chai.expect(evaluateXPathToNodes(selector, documentNode, domFacade)).to.deep.equal([]);
 	});
 
 	it('does not work over non-singleton sequences', () => {
-		const selector = parseSelector('(1, 2) eq true()');
+		const selector = ('(1, 2) eq true()');
 		chai.expect(() => {
-			evaluateXPath(selector, documentNode, blueprint);
+			evaluateXPathToNodes(selector, documentNode, domFacade);
 		}).to.throw(/XPTY0004/);
 	});
 
 	it('Does work with typing: decimal to int', () => {
-		const selector = parseSelector('1 eq 1.0');
+		const selector = ('1 eq 1.0');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToBoolean(selector, documentNode, domFacade)
 		).to.equal(true);
 	});
 
 	it('Does work with typing: double to int', () => {
-		const selector = parseSelector('100 eq 1.0e2');
+		const selector = ('100 eq 1.0e2');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToBoolean(selector, documentNode, domFacade)
 		).to.equal(true);
 	});
 
 	it('atomizes attributes', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			{
 				a: 'value',
 				b: 'value'
 			}
 		], documentNode);
-		const selector = parseSelector('@a eq "value"');
+		const selector = ('@a eq "value"');
 		chai.expect(
-			evaluateXPath(selector, documentNode.documentElement, blueprint)
+			evaluateXPathToBoolean(selector, documentNode.documentElement, domFacade)
 		).to.deep.equal(true);
 	});
 
 	it('(does not) work with typing: untyped attributes', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			{
 				a: 'value'
 			}
 		], documentNode);
-		const selector = parseSelector('@a eq 1');
+		const selector = ('@a eq 1');
 		chai.expect(() => {
-			evaluateXPath(selector, documentNode.documentElement, blueprint);
+			evaluateXPathToBoolean(selector, documentNode.documentElement, domFacade);
 		}).to.throw(/XPTY0004/);
 	});
 
 	it('(does not) work with typing: int to string', () => {
-		const selector = parseSelector('1 eq "1"');
+		const selector = ('1 eq "1"');
 		chai.expect(() => {
-			evaluateXPath(selector, documentNode, blueprint);
+			evaluateXPathToBoolean(selector, documentNode, domFacade);
 		}).to.throw(/XPTY0004/);
 	});
 
 	it('(does not) work with typing: boolean to string', () => {
-		const selector = parseSelector('true() eq "true"');
+		const selector = ('true() eq "true"');
 		chai.expect(() => {
-			evaluateXPath(selector, documentNode, blueprint);
+			evaluateXPathToBoolean(selector, documentNode, domFacade);
 		}).to.throw(/XPTY0004/);
 	});
 
 	describe('eq', () => {
 		it('returns true if the first operand is equal to the second', () => {
-			const selector = parseSelector('1 eq 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('1 eq 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('+0 eq -0', () => {
-			const selector = parseSelector('+0 eq -0');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('+0 eq -0');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('returns false if the first operand is not equal to the second', () => {
-			const selector = parseSelector('1 eq 2');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+			const selector = ('1 eq 2');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 		});
 	});
 
 	describe('ne', () => {
 		it('returns true if the first operand is not equal to the second', () => {
-			const selector = parseSelector('1 ne 2');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('1 ne 2');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('returns false if the first operand is equal to the second', () => {
-			const selector = parseSelector('1 ne 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+			const selector = ('1 ne 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 		});
 	});
 
 	describe('gt', () => {
 		it('returns true if the first operand is greater than the second', () => {
-			const selector = parseSelector('2 gt 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('2 gt 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('returns false if the first operand is equal to the second', () => {
-			const selector = parseSelector('1 gt 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+			const selector = ('1 gt 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 		});
 
 		it('returns false if the first operand is less than the second', () => {
-			const selector = parseSelector('1 gt 2');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+			const selector = ('1 gt 2');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 		});
 	});
 
 	describe('lt', () => {
 		it('returns true if the first operand is less than the second', () => {
-			const selector = parseSelector('1 lt 2');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('1 lt 2');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('returns false if the first operand is equal to the second', () => {
-			const selector = parseSelector('1 lt 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+			const selector = ('1 lt 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 		});
 
 		it('returns false if the first operand is less than the second', () => {
-			const selector = parseSelector('2 lt 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+			const selector = ('2 lt 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 		});
 	});
 
 	describe('ge', () => {
 		it('returns true if the first operand is greater than the second', () => {
-			const selector = parseSelector('2 ge 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('2 ge 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('returns true if the first operand is equal to the second', () => {
-			const selector = parseSelector('1 ge 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('1 ge 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('returns false if the first operand is less than the second', () => {
-			const selector = parseSelector('1 ge 2');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+			const selector = ('1 ge 2');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 		});
 	});
 
 	describe('le', () => {
 		it('returns true if the first operand is less than the second', () => {
-			const selector = parseSelector('1 le 2');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('1 le 2');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('returns true if the first operand is equal to the second', () => {
-			const selector = parseSelector('1 le 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+			const selector = ('1 le 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 		});
 
 		it('returns false if the first operand is greater than the second', () => {
-			const selector = parseSelector('2 le 1');
-			chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+			const selector = ('2 le 1');
+			chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 		});
 	});
 });
 
 describe('General compares', () => {
 	it('Compares over sets', () => {
-		const selector = parseSelector('(1, 2, 3) = 3');
+		const selector = ('(1, 2, 3) = 3');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToBoolean(selector, documentNode, domFacade)
 		).to.equal(true);
 	});
 });
@@ -202,18 +199,18 @@ describe('Node compares', () => {
 		documentNode.appendChild(documentNode.createElement('someElement'));
 	});
 	describe('is', () => {
-		it('returns true for the same node', () => chai.assert.isTrue(evaluateXPathToBoolean('. is .', documentNode, blueprint)));
-		it('returns false for another node', () => chai.assert.isFalse(evaluateXPathToBoolean('. is child::*[1]', documentNode, blueprint)));
-		it('works with variables', () => chai.assert.isTrue(evaluateXPathToBoolean('let $x := . return . is $x', documentNode, blueprint)));
+		it('returns true for the same node', () => chai.assert.isTrue(evaluateXPathToBoolean('. is .', documentNode, domFacade)));
+		it('returns false for another node', () => chai.assert.isFalse(evaluateXPathToBoolean('. is child::*[1]', documentNode, domFacade)));
+		it('works with variables', () => chai.assert.isTrue(evaluateXPathToBoolean('let $x := . return . is $x', documentNode, domFacade)));
 		it(
 			'returns the empty sequence if either operand is the empty sequence',
-			() => chai.assert.equal(evaluateXPathToNumber('count(() is ())', documentNode, blueprint), 0)
+			() => chai.assert.equal(evaluateXPathToNumber('count(() is ())', documentNode, domFacade), 0)
 		);
 		it(
 			'throws an error when passed a non-node',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('1 is 1', documentNode, blueprint), 'XPTY0004'));
+			() => chai.assert.throws(() => evaluateXPathToBoolean('1 is 1', documentNode, domFacade), 'XPTY0004'));
 		it(
 			'throws an error when passed a non-singleton sequence',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('. is (., .)', documentNode, blueprint), 'XPTY0004'));
+			() => chai.assert.throws(() => evaluateXPathToBoolean('. is (., .)', documentNode, domFacade), 'XPTY0004'));
 	});
 });

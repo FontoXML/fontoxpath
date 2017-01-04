@@ -1,10 +1,5 @@
 {
-	"dependencies": {
-		"fontoxml-vendor-requirejs-text": "^2.0.15"
-	},
 	"devDependencies": {
-		"fontoxml-dom-utils": "^1.0.0",
-		"fontoxml-blueprints": "^1.0.0",
 		"fontoxml-vendor-slimdom": "^0.5.3"
 	}
 }

@@ -1,8 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToString } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -11,16 +10,14 @@ beforeEach(() => {
 
 describe('stringConcat', () => {
 	it('can concatenate strings', () => {
-		const selector = parseSelector('"con" || "cat" || "enate"');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToString('"con" || "cat" || "enate"', documentNode, domFacade)
 		).to.deep.equal('concatenate');
 	});
 
 	it('can concatenate empty sequences', () => {
-		const selector = parseSelector('() || "con" || () || "cat" || () || "enate" || ()');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToString('() || "con" || () || "cat" || () || "enate" || ()', documentNode, domFacade)
 		).to.deep.equal('concatenate');
 	});
 });

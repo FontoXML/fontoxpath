@@ -1,8 +1,8 @@
 import slimdom from 'slimdom';
 
 import DomFacade from 'fontoxml-selectors/DomFacade';
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
+import { domFacade as adaptingDomFacade } from 'fontoxml-selectors';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import AttributeNode from 'fontoxml-selectors/selectors/dataTypes/AttributeNode';
 
@@ -13,7 +13,7 @@ describe('DomFacade', () => {
 
 	beforeEach(() => {
 		documentNode = slimdom.createDocument();
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someElement',
 			{
 				someAttribute: 'someValue'
@@ -26,7 +26,7 @@ describe('DomFacade', () => {
 			documentNode.documentElement,
 			'someAttribute',
 			'someValue');
-		domFacade = new DomFacade(blueprint);
+		domFacade = new DomFacade(adaptingDomFacade);
 	});
 
 	describe('getFirstChild()', () => {

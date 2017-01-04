@@ -1,7 +1,7 @@
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import { domFacade } from 'fontoxml-selectors';
 import slimdom from 'slimdom';
 
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import { evaluateXPathToNumber } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -10,6 +10,6 @@ beforeEach(() => {
 
 describe('Filter (predicate)', () => {
 	it('parses', () => {
-		chai.assert.equal(evaluateXPath('(1,2,3)[. = 2]', documentNode, blueprint, {}), 2);
+		chai.assert.equal(evaluateXPathToNumber('(1,2,3)[. = 2]', documentNode, domFacade, {}), 2);
 	});
 });

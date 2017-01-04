@@ -1,8 +1,8 @@
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
+import { domFacade } from 'fontoxml-selectors';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import slimdom from 'slimdom';
 
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import { evaluateXPathToString } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -12,22 +12,22 @@ beforeEach(() => {
 describe('Dynamic function call', () => {
 	it('parses with a function with any number of arguments', () => {
 		chai.assert.equal(
-			evaluateXPath('let $fn := concat#3 return $fn("abc", "def", "ghi")', documentNode, blueprint, {}),
+			evaluateXPathToString('let $fn := concat#3 return $fn("abc", "def", "ghi")', documentNode, domFacade, {}),
 			'abcdefghi');
 	});
 
 	it('parses a function with a function to be executed as one of its arguments', () => {
 		chai.assert.equal(
-			evaluateXPath('let $fn := concat#2 return $fn(avg((10, 20)), max((2, 50)))', documentNode, blueprint, {}),
+			evaluateXPathToString('let $fn := concat#2 return $fn(avg((10, 20)), max((2, 50)))', documentNode, domFacade, {}),
 			'1550');
 	});
 
 	it('parses a function with a fixed number of arguments', () => {
-		chai.assert.isFalse(evaluateXPath('let $fn := not#1 return $fn(true())', documentNode, blueprint, {}));
+		chai.assert.isFalse(evaluateXPathToString('let $fn := not#1 return $fn(true())', documentNode, domFacade, {}));
 	});
 
 	it('parses a function with a node lookup', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 				'someElement',
 				{
 					someAttribute1: 'someValue1',
@@ -37,41 +37,41 @@ describe('Dynamic function call', () => {
 			], documentNode);
 
 		chai.assert.equal(
-			evaluateXPath('let $fn := string-join#2 return $fn(@node()/name(), ",")', documentNode.firstChild, blueprint, {}, evaluateXPath.STRING_TYPE),
+			evaluateXPathToString('let $fn := string-join#2 return $fn(@node()/name(), ",")', documentNode.firstChild, domFacade),
 			'someAttribute1,someAttribute2,someAttribute3');
 	});
 
 	it('parses a function with a no arguments', () => {
-		chai.assert.isFalse(evaluateXPath('let $fn := false#0 return $fn()', documentNode, blueprint, {}));
+		chai.assert.isFalse(evaluateXPathToString('let $fn := false#0 return $fn()', documentNode, domFacade, {}));
 	});
 
 	it('throws when the base expression does not evaluate to a function', () => {
 		chai.assert.throws(
-			evaluateXPath.bind(undefined, 'let $notfn := 123 return $notfn("someArgument")', documentNode, blueprint, {}),
+			() => evaluateXPathToString('let $notfn := 123 return $notfn("someArgument")', documentNode, domFacade, {}),
 			'XPTY0004');
 	});
 
 	it('throws when the base expression evaluates to a non-singleton sequence of functions', () => {
 		chai.assert.throws(
-			evaluateXPath.bind(undefined, '(false#0, false#0)()', documentNode, blueprint, {}),
+			() => evaluateXPathToString('(false#0, false#0)()', documentNode, domFacade, {}),
 			'XPTY0004');
 	});
 
 	it('throws when a function is called with the wrong type of arguments', () => {
 		chai.assert.throws(
-			evaluateXPath.bind(undefined, 'let $fn := ends-with#2 return $fn(0, 0)', documentNode, blueprint, {}),
+			() => evaluateXPathToString('let $fn := ends-with#2 return $fn(0, 0)', documentNode, domFacade, {}),
 			'XPTY0004');
 	});
 
 	it('throws when a function is called with the wrong number of arguments', () => {
 		chai.assert.throws(
-			evaluateXPath.bind(undefined, 'let $fn := false#0 return $fn(1, 2)', documentNode, blueprint, {}),
+			() => evaluateXPathToString('let $fn := false#0 return $fn(1, 2)', documentNode, domFacade, {}),
 			'XPTY0004');
 	});
 
 	it('throws when a function with the wrong arity cannot be found', () => {
 		chai.assert.throws(
-			evaluateXPath.bind(undefined, 'let $fn := false#2 return $fn(1, 2)', documentNode, blueprint, {}),
+			() => evaluateXPathToString('let $fn := false#2 return $fn(1, 2)', documentNode, domFacade, {}),
 			'XPST0017');
 	});
 });

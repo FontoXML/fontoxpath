@@ -1,7 +1,6 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
+import { domFacade, evaluateXPathToBoolean } from 'fontoxml-selectors';
 
 describe('Deprecated features', () => {
 	let documentNode;
@@ -10,6 +9,6 @@ describe('Deprecated features', () => {
 	});
 
 	it('Does not accept functions as tests anymore', () => {
-		chai.assert.throws(() => evaluateXPath('self::false()', documentNode.documentElement, blueprint), 'XPST0003');
+		chai.assert.throws(() => evaluateXPathToBoolean('self::false()', documentNode.documentElement, domFacade), 'XPST0003');
 	});
 });

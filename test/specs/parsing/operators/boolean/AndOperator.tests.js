@@ -1,8 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToBoolean } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -11,12 +10,12 @@ beforeEach(() => {
 
 describe('and operator', () => {
 	it('can parse an "and" selector', () => {
-		const selector = parseSelector('true() and true()');
-		chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(true);
+		const selector = ('true() and true()');
+		chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
 	});
 
 	it('can parse a concatenation of ands', () => {
-		const selector = parseSelector('true() and true() and true() and false()');
-		chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+		const selector = ('true() and true() and true() and false()');
+		chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 	});
 });

@@ -1,7 +1,7 @@
 import slimdom from 'slimdom';
 
 import NodeNameSelector from 'fontoxml-selectors/selectors/tests/NodeNameSelector';
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import { domFacade } from 'fontoxml-selectors';
 
 describe('NodeNameSelector.equals()', () => {
 	it('returns true if compared with itself', () => {
@@ -44,11 +44,11 @@ describe('NodeNameSelector.matches()', () => {
 
 	it('returns true if it uses wildcards', () => {
 		const nodeNameSelector = new NodeNameSelector('*');
-		chai.expect(nodeNameSelector.matches(document.createElement('someElement'), blueprint)).to.equal(true);
+		chai.expect(nodeNameSelector.matches(document.createElement('someElement'), domFacade)).to.equal(true);
 	});
 
 	it('returns true if it uses an array of nodeNames', () => {
 		const nodeNameSelector = new NodeNameSelector(['someOtherElement', 'someElement']);
-		chai.expect(nodeNameSelector.matches(document.createElement('someElement'), blueprint)).to.equal(true);
+		chai.expect(nodeNameSelector.matches(document.createElement('someElement'), domFacade)).to.equal(true);
 	});
 });

@@ -1,8 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToBoolean } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -11,16 +10,16 @@ beforeEach(() => {
 
 describe('comments', () => {
 	it('can parse comments', () => {
-		const selector = parseSelector('true() (: and false() :) or true()');
+		const selector = ('true() (: and false() :) or true()');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToBoolean(selector, documentNode, domFacade)
 		).to.deep.equal(true);
 	});
 
 	it('can parse nested comments', () => {
-		const selector = parseSelector('true() (: and false() (:and true():) :) or false');
+		const selector = ('true() (: and false() (:and true():) :) or false');
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint)
+			evaluateXPathToBoolean(selector, documentNode, domFacade)
 		).to.deep.equal(true);
 	});
 });

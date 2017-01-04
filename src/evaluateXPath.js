@@ -18,7 +18,7 @@ import Selector from './selectors/Selector';
  *
  * @param  {!Selector|string}  xPathSelector  The selector to execute. Supports XPath 3.1.
  * @param  {!Node}             contextNode    The node from which to run the XPath.
- * @param  {!DomFacade}        blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
+ * @param  {!IDomFacade}       blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}          variables      Extra variables (name=>value). Values can be number / string or boolean.
  * @param  {?number=}          returnType     One of the return types, indicates the expected type of the XPath query.
  *
@@ -29,24 +29,22 @@ function evaluateXPath (xPathSelector, contextNode, blueprint, variables, return
     if (typeof xPathSelector === 'string') {
         xPathSelector = createSelectorFromXPath(xPathSelector);
     }
-    var domFacade = new DomFacade(blueprint),
-        contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode)),
-        untypedVariables = Object.assign({
-                theBest: 'FontoXML is the best!'
-            },
-            variables || {});
-    var typedVariables = Object.keys(untypedVariables).reduce(function (typedVariables, variableName) {
-        typedVariables[variableName] = adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
-        return typedVariables;
-    }, Object.create(null));
+    const domFacade = new DomFacade(blueprint);
+    const contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode));
+    const untypedVariables = Object.assign(variables || {});
+	untypedVariables['theBest'] = 'FontoXML is the best!';
+    const typedVariables = Object.keys(untypedVariables).reduce(function (typedVariables, variableName) {
+			typedVariables[variableName] = adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
+			return typedVariables;
+		}, Object.create(null));
 
-    var dynamicContext = new DynamicContext({
-        contextItem: contextSequence,
-        domFacade: domFacade,
-        variables: typedVariables
-    });
+    const dynamicContext = new DynamicContext({
+			contextItem: contextSequence,
+			domFacade: domFacade,
+			variables: typedVariables
+		});
 
-    var rawResults = xPathSelector.evaluate(dynamicContext);
+    const rawResults = xPathSelector.evaluate(dynamicContext);
 
     switch (returnType) {
         case evaluateXPath.BOOLEAN_TYPE:
@@ -95,13 +93,13 @@ function evaluateXPath (xPathSelector, contextNode, blueprint, variables, return
                 return [];
             }
             if (!(rawResults.value.every(function (value) {
-                    return value.instanceOfType('node()');
-                }))) {
+                return value.instanceOfType('node()');
+            }))) {
                 throw new Error('Expected XPath ' + xPathSelector + ' to resolve to a sequence of Nodes.');
             }
             if (rawResults.value.some(function (value) {
-                    return value.instanceOfType('attribute()');
-                })) {
+                return value.instanceOfType('attribute()');
+            })) {
                 throw new Error('XPath ' + xPathSelector + ' should not resolve to attribute nodes');
             }
             return rawResults.value.map(function (nodeValue) {
@@ -149,60 +147,78 @@ function evaluateXPath (xPathSelector, contextNode, blueprint, variables, return
 				});
 			});
 
-        default:
-            var allValuesAreNodes = rawResults.value.every(function (value) {
-                return value.instanceOfType('node()') &&
-                    !(value.instanceOfType('attribute()'));
-            });
-            if (allValuesAreNodes) {
-                if (rawResults.isSingleton()) {
-                    return rawResults.value[0].value;
-                }
-                return rawResults.value.map(function (nodeValue) {
-                    return nodeValue.value;
-                });
-            }
-            if (rawResults.isSingleton()) {
-                return rawResults.value[0].atomize().value;
-            }
-            return rawResults.atomize().value.map(function (atomizedValue) {
-                return atomizedValue.value;
-            });
-    }
+		case evaluateXPath.NUMBERS_TYPE:
+			if (rawResults.isEmpty()) {
+				return [];
+			}
+			return rawResults.value.map(function (value) {
+				if (!(value instanceof NumericValue)) {
+					throw new Error('Expected XPath ' + xPathSelector + ' to resolve to numbers');
+				}
+				return value.value;
+			});
+
+		default:
+			var allValuesAreNodes = rawResults.value.every(function (value) {
+					return value.instanceOfType('node()') &&
+						!(value.instanceOfType('attribute()'));
+				});
+			if (allValuesAreNodes) {
+				if (rawResults.isSingleton()) {
+					return rawResults.value[0].value;
+				}
+				return rawResults.value.map(function (nodeValue) {
+					return nodeValue.value;
+				});
+			}
+			if (rawResults.isSingleton()) {
+				return rawResults.value[0].atomize().value;
+			}
+			return rawResults.atomize().value.map(function (atomizedValue) {
+				return atomizedValue.value;
+			});
+	}
 }
 
 /**
  * Returns the result of the query, can be anything depending on the query
+ * @const
  */
 evaluateXPath.ANY_TYPE = 0;
 
 /**
  * Resolve to a number, like count((1,2,3)) resolves to 3.
+ * @const
  */
 evaluateXPath.NUMBER_TYPE = 1;
 
 /**
  * Resolve to a string, like //someElement[1] resolves to the text content of the first someElement
+ * @const
  */
 evaluateXPath.STRING_TYPE = 2;
 
 /**
  * Resolves to true or false, uses the effective boolean value to determin result. count(1) resolves to true, count(()) resolves to false
+ * @const
  */
 evaluateXPath.BOOLEAN_TYPE = 3;
 
 /**
  * Resolve to all nodes the XPath resolves to. Returns nodes in the order the XPath would. Meaning (//a, //b) resolves to all A nodes, followed by all B nodes. //*[self::a or self::b] resolves to A and B nodes in document order.
+ * @const
  */
 evaluateXPath.NODES_TYPE = 7;
 
 /**
  * Resolves to the first node NODES_TYPE would have resolved to.
+ * @const
  */
 evaluateXPath.FIRST_NODE_TYPE = 9;
 
 /**
  * Resolve to an array of strings
+ * @const
  */
 evaluateXPath.STRINGS_TYPE = 10;
 
@@ -215,5 +231,11 @@ evaluateXPath.MAP_TYPE = 11;
  * Resolve to an array
  */
 evaluateXPath.ARRAY_TYPE = 12;
+
+/**
+ * Resolve to an array of numbers
+ * @const
+ */
+evaluateXPath.NUMBERS_TYPE = 13;
 
 export default evaluateXPath;

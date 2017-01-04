@@ -1,10 +1,8 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import evaluateXPathToFirstNode from 'fontoxml-selectors/evaluateXPathToFirstNode';
-import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToFirstNode, evaluateXPathToNodes, evaluateXPathToNumber, evaluateXPathToString } from 'fontoxml-selectors';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
@@ -13,30 +11,30 @@ beforeEach(() => {
 
 describe('relative paths', () => {
 	it('supports relative paths', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			['someChildNode']
 		], documentNode);
-		const selector = parseSelector('someChildNode');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
+		const selector = ('someChildNode');
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement.firstChild]);
 	});
 
 	it('supports addressing the parent axis with ..', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			[
 				'someChildNode',
 				['someGrandChild']
 			]
 		], documentNode);
-		const selector = parseSelector('../child::someNode');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([
+		const selector = ('../child::someNode');
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
 			documentNode.documentElement
 		]);
 	});
 
 	it('returns its results sorted on document order', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			[
 				'firstNode'
@@ -45,15 +43,15 @@ describe('relative paths', () => {
 				'secondNode'
 			]
 		], documentNode);
-		const selector = parseSelector('(//secondNode, //firstNode)/self::node()');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([
+		const selector = ('(//secondNode, //firstNode)/self::node()');
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
 			documentNode.documentElement.firstChild,
 			documentNode.documentElement.lastChild
 		]);
 	});
 
 	it('supports postfix expressions as sequences', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			[
 				'firstNode'
@@ -62,54 +60,54 @@ describe('relative paths', () => {
 				'secondNode'
 			]
 		], documentNode);
-		const selector = parseSelector('/someNode/(secondNode, firstNode)/self::node()');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([
+		const selector = ('/someNode/(secondNode, firstNode)/self::node()');
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
 			documentNode.documentElement.firstChild,
 			documentNode.documentElement.lastChild
 		]);
 	});
 
 	it('supports walking from attribute nodes', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			{ someAttribute: 'someValue' },
 			['someChildNode']
 		], documentNode);
-		const selector = parseSelector('@someAttribute/..');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
+		const selector = ('@someAttribute/..');
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement]);
 	});
 
 	it('allows returning other things then nodes at the last step of the path', () => {
-		chai.expect(evaluateXPath('./42', documentNode, blueprint, {}, evaluateXPath.NUMBER_TYPE)).to.equal(42);
+		chai.expect(evaluateXPathToNumber('./42', documentNode, domFacade)).to.equal(42);
 	});
 
 	it('sorts attribute nodes after their element', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			{ someAttribute: 'someValue' },
 			['someChildNode']
 		], documentNode);
-		let selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[1]');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
-		selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[2]');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('someValue');
-		selector = parseSelector('((@someAttribute, /someNode, //someChildNode)/.)[3]');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
+		let selector = ('((@someAttribute, /someNode, //someChildNode)/.)[1]');
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement]);
+		selector = ('((@someAttribute, /someNode, //someChildNode)/.)[2]');
+		chai.expect(evaluateXPathToString(selector, documentNode.documentElement, domFacade)).to.deep.equal('someValue');
+		selector = ('((@someAttribute, /someNode, //someChildNode)/.)[3]');
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement.firstChild]);
 	});
 
 	it('sorts attribute nodes alphabetically', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			{ AsomeAttribute: 'someValue', BsomeOtherAttribute: 'someOtherValue' },
 			['someChildNode']
 		], documentNode);
 		// We need to convert to string becase string-join expects strings and function conversion is not in yet
-		const selector = parseSelector('(@BsomeOtherAttribute, @AsomeAttribute)/string() => string-join(", ")');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.STRING_TYPE)).to.deep.equal('someValue, someOtherValue');
+		const selector = ('(@BsomeOtherAttribute, @AsomeAttribute)/string() => string-join(", ")');
+		chai.expect(evaluateXPathToString(selector, documentNode.documentElement, domFacade, {})).to.deep.equal('someValue, someOtherValue');
 	});
 
 	it('allows mixed pathseparators and abbreviated steps', function () {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			[
 				'someChildNode',
@@ -117,19 +115,19 @@ describe('relative paths', () => {
 			]
 		], documentNode);
 
-		chai.assert.equal(evaluateXPathToFirstNode('/someNode/someChildNode//someGrandChild/../..//someGrandChild', documentNode.documentElement, blueprint), documentNode.documentElement.firstChild.firstChild);
+		chai.assert.equal(evaluateXPathToFirstNode('/someNode/someChildNode//someGrandChild/../..//someGrandChild', documentNode.documentElement, domFacade), documentNode.documentElement.firstChild.firstChild);
 	});
 
 	it('supports addressing the contextNode with .', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someNode',
 			[
 				'someChildNode',
 				['someGrandChild']
 			]
 		], documentNode);
-		const selector = parseSelector('.//*');
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([
+		const selector = ('.//*');
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
 			documentNode.documentElement.firstChild,
 			documentNode.documentElement.firstChild.firstChild
 		]);

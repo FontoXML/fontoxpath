@@ -1,8 +1,8 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToNodes } from 'fontoxml-selectors';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
@@ -11,24 +11,24 @@ beforeEach(() => {
 
 describe('preceding-sibling', () => {
 	it('returns the previous sibling', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someParentElement',
 			['someSiblingElement'],
 			['someElement']
 		], documentNode);
 		chai.assert.deepEqual(
-			evaluateXPath('preceding-sibling::someSiblingElement', documentNode.documentElement.lastChild, blueprint, {}, evaluateXPath.NODES_TYPE),
+			evaluateXPathToNodes('preceding-sibling::someSiblingElement', documentNode.documentElement.lastChild, domFacade),
 			[documentNode.documentElement.firstChild]);
 	});
 
 	it('does not return non-matching siblings', () => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someParentElement',
 			['someNonMatchingElement'],
 			['someElement']
 		], documentNode);
 		chai.assert.deepEqual(
-			evaluateXPath('preceding-sibling::someSiblingElement', documentNode.documentElement.lastChild, blueprint, {}, evaluateXPath.NODES_TYPE),
+			evaluateXPathToNodes('preceding-sibling::someSiblingElement', documentNode.documentElement.lastChild, domFacade),
 			[]);
 	});
 });

@@ -11,6 +11,6 @@ import Selector from './selectors/Selector';
  *
  * @return  {Array<string>}         The string result.
  */
-export default function evaluateXPathToStrings (selector, contextNode, blueprint, variables) {
-    return /** @type {!Array<string>} */ (evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.STRINGS_TYPE));
+export default function evaluateXPathToStrings (selector, contextNode, domFacade, variables) {
+    return /** @type {!Array<string>} */ (evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.STRINGS_TYPE));
 }

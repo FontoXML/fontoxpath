@@ -1,8 +1,7 @@
-var webpack = require('webpack');
-var path = require('path');
-// Karma configuration
-// Generated on Tue Jan 03 2017 15:05:21 GMT+0100 (CET)
-
+const webpack = require('webpack');
+const path = require('path');
+const runIntegrationTests = process.env.npm_config_integration_tests;
+const ciMode = process.env.npm_config_ci_mode;
 module.exports = config => {
 	config.set({
 
@@ -17,7 +16,7 @@ module.exports = config => {
 
 		// list of files / patterns to load in the browser
 		files: [
-			'test/**/*.tests.js'
+			runIntegrationTests ? 'test/specs/parsing/**/*.tests.js' : 'test/specs/**/*.tests.js'
 		],
 
 
@@ -28,7 +27,9 @@ module.exports = config => {
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-		preprocessors: {
+		preprocessors: runIntegrationTests ? {
+			'test/**/*.tests.js': ['webpack']
+		} :	{
 			'test/**/*.tests.js': ['webpack'],
 			'src/**/*.js': ['webpack']
 		},
@@ -59,12 +60,19 @@ module.exports = config => {
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-		browsers: [],//['Chrome', 'Firefox'],
+		browsers: ciMode ? ['ChromiumNoSandbox', 'Firefox'] : [],
 
+		// https://github.com/karma-runner/karma-chrome-launcher/issues/73#issuecomment-236597429
+		customLaunchers: {
+			ChromiumNoSandbox: {
+				base: 'Chromium',
+				flags: ['--no-sandbox']
+			}
+		},
 
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
-		singleRun: false,
+		singleRun: ciMode,
 
 		// Concurrency level
 		// how many browser should be started simultaneous
@@ -72,12 +80,13 @@ module.exports = config => {
 
 		webpack: {
 			resolve: {
-				root: ['platform', '.'],
+				root: ['.'],
 				alias: {
-					'fontoxml-selectors': path.resolve('./src'),
-					'slimdom': 'fontoxml-vendor-slimdom/src/main.js',
-					'fontoxml-blueprints': 'fontoxml-blueprints/src',
-					'fontoxml-dom-utils': 'fontoxml-dom-utils/src'
+					'fontoxml-selectors': runIntegrationTests ?
+						path.resolve('./dist/selectors.js') :
+						path.resolve('./src'),
+					'test-helpers': path.resolve('test/helpers/'),
+					'slimdom': path.resolve('./node_modules/slimdom/src/main.js')
 				}
 			},
 			module: {
@@ -85,7 +94,9 @@ module.exports = config => {
 					{
 						loader: 'babel-loader',
 						test: /.js$/,
-						include: [path.resolve('src'), path.resolve('test')],
+						include: runIntegrationTests ?
+							[path.resolve('test')] :
+							[path.resolve('src'), path.resolve('test')],
 						query: {
 							presets: [
 								'babel-preset-es2015'

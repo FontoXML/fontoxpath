@@ -1,11 +1,11 @@
 /**
- * Facade for dom interface things, compatible with blueprintQuery. Pass a readonlyDomFacade to use the live DOM
+ * Adapter for the DOM, can be used to use a different DOM implementation
  * @constructor
- * @param  {!DomFacade}  blueprint
+ * @implements {IDomFacade}
+ * @param  {!IDomFacade}  domFacade
  */
-function DomFacade (blueprint) {
-    this._blueprint = blueprint;
-
+function DomFacade (domFacade) {
+    this._domFacade = domFacade;
     this._createdNodeValuesByNodeId = Object.create(null);
 }
 
@@ -25,7 +25,7 @@ DomFacade.prototype.getParentNode = function (node) {
     if (this.isAttributeNode(node)) {
         return node.getParentNode();
     }
-    return this._blueprint.getParentNode(node);
+    return this._domFacade.getParentNode(node);
 };
 
 /**
@@ -36,7 +36,7 @@ DomFacade.prototype.getFirstChild = function (node) {
     if (this.isAttributeNode(node)) {
         return null;
     }
-    return this._blueprint.getFirstChild(node);
+    return this._domFacade.getFirstChild(node);
 };
 
 /**
@@ -48,7 +48,7 @@ DomFacade.prototype.getLastChild = function (node) {
         return null;
     }
 
-    return this._blueprint.getLastChild(node);
+    return this._domFacade.getLastChild(node);
 };
 
 /**
@@ -60,7 +60,7 @@ DomFacade.prototype.getNextSibling = function (node) {
         return null;
     }
 
-    return this._blueprint.getNextSibling(node);
+    return this._domFacade.getNextSibling(node);
 };
 
 /**
@@ -72,7 +72,7 @@ DomFacade.prototype.getPreviousSibling = function (node) {
         return null;
     }
 
-    return this._blueprint.getPreviousSibling(node);
+    return this._domFacade.getPreviousSibling(node);
 };
 
 /**
@@ -98,7 +98,7 @@ DomFacade.prototype.getAttribute = function (node, attributeName) {
         return null;
     }
 
-    var value = this._blueprint.getAttribute(node, attributeName);
+    var value = this._domFacade.getAttribute(node, attributeName);
     if (!value) {
         return null;
     }
@@ -110,7 +110,7 @@ DomFacade.prototype.getAllAttributes = function (node) {
         return [];
     }
 
-    return this._blueprint.getAllAttributes(node);
+    return this._domFacade.getAllAttributes(node);
 };
 
 DomFacade.prototype.getData = function (node) {
@@ -118,12 +118,12 @@ DomFacade.prototype.getData = function (node) {
         return node.value;
     }
 
-    return this._blueprint.getData(node) || '';
+    return this._domFacade.getData(node) || '';
 };
 
 // Can be used to create an extra frame when tracking dependencies
 DomFacade.prototype.getRelatedNodes = function (node, callback) {
-    return callback();
+    return callback(node, this);
 };
 
 export default DomFacade;

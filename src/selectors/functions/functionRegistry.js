@@ -91,40 +91,10 @@ function getAlternativesAsStringFor (functionName) {
     }, 'Did you mean ') + '?';
 }
 
-// Deprecated
-function getCustomTestByArity (functionName, arity) {
-    var customFunctionViaCustomTestsByName = customTestsByName[functionName];
-
-    if (customFunctionViaCustomTestsByName) {
-        var callFunction = function () {
-				var args = Array.from(arguments),
-					dynamicContext = args.shift(),
-					result = customFunctionViaCustomTestsByName.apply(
-						undefined,
-						args.map(function (arg) {
-							return arg.value[0].value;
-						}).concat(
-							[dynamicContext.contextItem.value[0].value,
-                             dynamicContext.domFacade
-							]));
-
-				return Sequence.singleton(result ? BooleanValue.TRUE : BooleanValue.FALSE);
-			};
-
-        return {
-            callFunction: callFunction,
-            argumentTypes: new Array(arity).fill('xs:string'),
-					returnType: 'xs:boolean'
-        };
-    }
-
-    return null;
-}
-
 /**
  * @param   {!string}  functionName
  * @param   {!number}  arity
- * @return  {FunctionProperties}
+ * @return  {?FunctionProperties}
  */
 function getFunctionByArity (functionName, arity) {
     var matchingFunctions = registeredFunctionsByName[functionName];
@@ -146,6 +116,7 @@ function getFunctionByArity (functionName, arity) {
     }
 
     return {
+		name: functionName,
         callFunction: matchingFunction.callFunction,
         argumentTypes: matchingFunction.argumentTypes,
         returnType: matchingFunction.returnType

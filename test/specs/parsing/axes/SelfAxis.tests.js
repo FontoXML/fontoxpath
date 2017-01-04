@@ -1,8 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToFirstNode } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -11,10 +10,10 @@ beforeEach(() => {
 
 describe('self', () => {
 	it('parses self::', () => {
-		const selector = parseSelector('self::someElement'),
+		const selector = ('self::someElement'),
 		element = documentNode.createElement('someElement');
 		chai.expect(
-			evaluateXPath(selector, element, blueprint))
+			evaluateXPathToFirstNode(selector, element, domFacade))
 			.to.deep.equal(element);
 	});
 });

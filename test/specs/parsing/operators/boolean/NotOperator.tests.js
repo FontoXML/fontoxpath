@@ -1,8 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToBoolean } from 'fontoxml-selectors';
 
 let documentNode;
 beforeEach(() => {
@@ -11,7 +10,7 @@ beforeEach(() => {
 
 describe('not', () => {
 	it('can parse an "not" selector', () => {
-		const selector = parseSelector('not(true())');
-		chai.expect(evaluateXPath(selector, documentNode, blueprint)).to.equal(false);
+		const selector = ('not(true())');
+		chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
 	});
 });

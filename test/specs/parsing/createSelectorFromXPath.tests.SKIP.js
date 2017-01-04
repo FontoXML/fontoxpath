@@ -1,6 +1,6 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
+import { domFacade } from 'fontoxml-selectors';
 import createSelectorFromXPathAsync from 'fontoxml-selectors/parsing/createSelectorFromXPathAsync';
 import evaluateXPathToNumber from 'fontoxml-selectors/evaluateXPathToNumber';
 
@@ -15,7 +15,7 @@ describe('createSelectorFromXPathAsync', () => {
 			.then(function (selector) {
 				// Assume selector to be ok
 				chai.expect(
-					evaluateXPathToNumber(selector, documentNode, blueprint, {}, evaluateXPathToNumber.NUMBER_TYPE)
+					evaluateXPathToNumber(selector, documentNode, domFacade, {}, evaluateXPathToNumber.NUMBER_TYPE)
 				).to.equal(2);
 			});
 	}).timeout(10000);
@@ -25,7 +25,7 @@ describe('createSelectorFromXPathAsync', () => {
 		return createSelectorFromXPathAsync(`1 + ${now}`)
 			.then(function (selector) {
 				// Assume selector to be ok
-				chai.assert.equal(evaluateXPathToNumber(selector, documentNode, blueprint), now + 1);
+				chai.assert.equal(evaluateXPathToNumber(selector, documentNode, domFacade), now + 1);
 			});
 	}).timeout(10000);
 

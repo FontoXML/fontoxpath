@@ -1,9 +1,8 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPath from 'fontoxml-selectors/evaluateXPath';
-import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
+import { domFacade } from 'fontoxml-selectors';
+import { evaluateXPathToNodes } from 'fontoxml-selectors';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
@@ -12,40 +11,40 @@ beforeEach(() => {
 
 describe('descendant', () => {
 	it('parses descendant::', () => {
-		const selector = parseSelector('descendant::someElement');
-		jsonMLMapper.parse([
+		const selector = ('descendant::someElement');
+		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
 		chai.expect(
-			evaluateXPath(selector, documentNode, blueprint, {}, evaluateXPath.NODES_TYPE))
+			evaluateXPathToNodes(selector, documentNode, domFacade))
 			.to.deep.equal([documentNode.firstChild.firstChild]);
 	});
 });
 
 describe('descendant-or-self', () => {
 	it('descendant part', () => {
-		const selector = parseSelector('descendant-or-self::someElement');
-		jsonMLMapper.parse([
+		const selector = ('descendant-or-self::someElement');
+		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement.firstChild]);
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement.firstChild]);
 	});
 	it('self part', () => {
-		const selector = parseSelector('descendant-or-self::someParentElement');
-		jsonMLMapper.parse([
+		const selector = ('descendant-or-self::someParentElement');
+		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement]);
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement]);
 	});
 	it('ordering', () => {
-		const selector = parseSelector('descendant-or-self::*');
-		jsonMLMapper.parse([
+		const selector = ('descendant-or-self::*');
+		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.expect(evaluateXPath(selector, documentNode.documentElement, blueprint, {}, evaluateXPath.NODES_TYPE)).to.deep.equal([documentNode.documentElement, documentNode.documentElement.firstChild]);
+		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement, documentNode.documentElement.firstChild]);
 	});
 });

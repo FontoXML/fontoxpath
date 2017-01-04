@@ -1,7 +1,14 @@
 image: liones/fontoxml-docker-pipelines-test:stable
 
+clone:
+    depth: 1
+
 pipelines:
   default:
     - step:
         script:
-          - sh /usr/bin/run-unit-tests
+            - npm set progress=false;
+            - npm set depth=0;
+            - npm install
+            - timeout 10m xvfb-run npm run test --ci_mode
+            - timeout 10m xvfb-run npm run test --integration_tests --ci_mode
