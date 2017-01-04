@@ -1,4 +1,5 @@
 import NumericValue from './NumericValue';
+import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 
 /**
  * @constructor
@@ -18,8 +19,10 @@ FloatValue.cast = function (value) {
     }
 
     // In JavaScript, doubles are the same as decimals
-    var decimalValue = NumericValue.cast(value);
-    return new FloatValue(parseFloat(decimalValue.value));
+    var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
+	var floatValue = parseFloat(anyAtomicTypeValue.value, 10);
+
+	return new FloatValue(floatValue);
 };
 
 FloatValue.primitiveTypeName = FloatValue.prototype.primitiveTypeName = 'xs:float';

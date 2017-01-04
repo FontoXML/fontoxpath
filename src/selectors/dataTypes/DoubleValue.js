@@ -1,4 +1,5 @@
 import NumericValue from './NumericValue';
+import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 
 /**
  * @constructor
@@ -17,8 +18,10 @@ DoubleValue.cast = function (value) {
         return new DoubleValue(value.value);
     }
 
-    var numericValue = NumericValue.cast(value);
-    return new DoubleValue(numericValue.value);
+    var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
+	var floatValue = parseFloat(anyAtomicTypeValue.value, 10);
+
+    return new DoubleValue(floatValue);
 };
 
 DoubleValue.primitiveTypeName = DoubleValue.prototype.primitiveTypeName = 'xs:double';

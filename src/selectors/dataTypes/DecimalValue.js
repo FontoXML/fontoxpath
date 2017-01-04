@@ -1,5 +1,5 @@
 import NumericValue from './NumericValue';
-
+import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 /**
  * @constructor
  * @extends {NumericValue}
@@ -17,8 +17,10 @@ DecimalValue.cast = function (value) {
         return new DecimalValue(value.value);
     }
 
-    var numericValue = NumericValue.cast(value);
-    return new DecimalValue(numericValue.value);
+    var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
+	var floatValue = parseFloat(anyAtomicTypeValue.value, 10);
+
+	return new DecimalValue(floatValue);
 };
 
 DecimalValue.primitiveTypeName = DecimalValue.prototype.primitiveTypeName = 'xs:decimal';

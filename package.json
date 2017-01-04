@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "fontoxml-unit-test-runner --packageName fontoxml-selectors",
+    "test": "karma start",
     "build": "node ./build.js"
   },
   "repository": {
@@ -22,12 +22,28 @@
   "license": "UNLICENSED",
   "homepage": "https://bitbucket.org/liones/fontoxml-selectors#readme",
   "devDependencies": {
+    "babel": "^6.5.2",
     "babel-core": "^6.21.0",
     "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.18.0",
+    "chai": "^3.5.0",
     "fontoxml-node-promise-utils": "git+ssh://git@bitbucket.org/liones/fontoxml-node-promise-utils.git#1.1.0",
     "glob": "^7.1.1",
     "google-closure-compiler": "^20161201.0.0",
+    "istanbul": "^0.4.5",
+    "istanbul-instrumenter-loader": "^1.2.0",
+    "karma": "^1.3.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-coverage": "^1.1.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-mocha": "^1.3.0",
+    "karma-sinon-chai": "^1.2.4",
+    "karma-spec-reporter": "0.0.26",
+    "karma-webpack": "^1.8.1",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.7",
+    "sinon-chai": "^2.8.0",
     "uglify-js": "^2.7.5",
-    "webpack": "^2.2.0-rc.2"
+    "webpack": "^1.4.12"
   }
 }
