@@ -1,9 +1,7 @@
 import slimdom from 'slimdom';
 
-import blueprint from 'fontoxml-blueprints/readOnlyBlueprint';
-import evaluateXPathToArray from 'fontoxml-selectors/evaluateXPathToArray';
-import parseSelector from 'fontoxml-selectors/parsing/createSelectorFromXPath';
-import jsonMLMapper from 'fontoxml-dom-utils/jsonMLMapper';
+import { domFacade, evaluateXPathToArray } from 'fontoxml-selectors';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
@@ -12,7 +10,7 @@ beforeEach(() => {
 
 describe('array constructor', () => {
 	beforeEach(() => {
-		jsonMLMapper.parse([
+		jsonMlMapper.parse([
 			'someElement',
 			{ someAttribute: 'someValue' },
 			'A piece of text'
@@ -22,21 +20,21 @@ describe('array constructor', () => {
 	describe('curly', () => {
 		it(
 			'can be parsed',
-			() => chai.assert.isOk(parseSelector('array {1, 2}')), 'It should be able to be parsed');
+			() => chai.assert.isOk(evaluateXPathToArray('array {1, 2}', documentNode, domFacade)), 'It should be able to be parsed');
 
 		it(
 			'unfolds passed sequences',
-			() => chai.assert.deepEqual(evaluateXPathToArray('array {("a", "b"), "c"}', documentNode, blueprint), [['a'], ['b'], ['c']]));
+			() => chai.assert.deepEqual(evaluateXPathToArray('array {("a", "b"), "c"}', documentNode, domFacade), [['a'], ['b'], ['c']]));
 	});
 
 	describe('square', () => {
 		it(
 			'can be parsed',
-			() => chai.assert.isOk(parseSelector('[1, 2]')), 'It should be able to be parsed');
+			() => chai.assert.isOk(evaluateXPathToArray('[1, 2]', documentNode, domFacade)), 'It should be able to be parsed');
 
 		it(
 			'does not unfold passed sequences',
-			() => chai.assert.deepEqual(evaluateXPathToArray('[("a", "b"), "c"]', documentNode, blueprint), [['a', 'b'], ['c']]));
+			() => chai.assert.deepEqual(evaluateXPathToArray('[("a", "b"), "c"]', documentNode, domFacade), [['a', 'b'], ['c']]));
 
 	});
 });

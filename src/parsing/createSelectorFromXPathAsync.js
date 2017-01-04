@@ -17,6 +17,7 @@ if (typeof window === 'undefined') {
 else {
 	global = window;
 }
+
 var indexedDB = global.indexedDB,
     Blob = global.Blob,
     Worker = global.Worker,
@@ -55,6 +56,9 @@ var compileFunction = [
 var blob = new Blob([compileFunction]),
     worker = new Worker(URL.createObjectURL(blob));
 
+/**
+ * @type {Object<string, function({success:boolean, ast:?Array<*>, error:Error})>}
+ */
 var waitingTaskCallbackByTaskKey = Object.create(null);
 
 worker.onmessage = function (event) {

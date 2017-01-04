@@ -7,8 +7,8 @@ pipelines:
   default:
     - step:
         script:
-            - npm set progress=false;
-            - npm set depth=0;
+            - npm set progress=false
+            - npm set depth=0
             - npm install
             - timeout 10m xvfb-run npm run test --ci_mode
             - timeout 10m xvfb-run npm run test --integration_tests --ci_mode

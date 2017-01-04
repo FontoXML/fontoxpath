@@ -2,6 +2,14 @@ const webpack = require('webpack');
 const path = require('path');
 const runIntegrationTests = process.env.npm_config_integration_tests;
 const ciMode = process.env.npm_config_ci_mode;
+const coverageMode = process.env.npm_config_coverage;
+
+if (runIntegrationTests && coverageMode) {
+	throw new Error('No coverage possible for integration tests.');
+}
+
+const bootstrapFile = runIntegrationTests ? require.resolve('./test/integrationtests.js') : require.resolve('./test/alltests.js');
+
 module.exports = config => {
 	config.set({
 
@@ -16,7 +24,7 @@ module.exports = config => {
 
 		// list of files / patterns to load in the browser
 		files: [
-			runIntegrationTests ? 'test/specs/parsing/**/*.tests.js' : 'test/specs/**/*.tests.js'
+			bootstrapFile
 		],
 
 
@@ -27,18 +35,20 @@ module.exports = config => {
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-		preprocessors: runIntegrationTests ? {
-			'test/**/*.tests.js': ['webpack']
-		} :	{
-			'test/**/*.tests.js': ['webpack'],
-			'src/**/*.js': ['webpack']
+		preprocessors: {
+			[bootstrapFile]: ['webpack']
 		},
 
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ['spec'],
+		reporters: coverageMode ? ['dots', 'coverage'] : ['spec'],
+
+
+		coverageReporter: coverageMode ? {
+			reporters: ciMode ? [{ type: 'text-summary' }] : [{ type: 'html' }, { type: 'text' }]
+		} : [],
 
 
 		// web server port
@@ -80,7 +90,6 @@ module.exports = config => {
 
 		webpack: {
 			resolve: {
-				root: ['.'],
 				alias: {
 					'fontoxml-selectors': runIntegrationTests ?
 						path.resolve('./dist/selectors.js') :
@@ -90,22 +99,42 @@ module.exports = config => {
 				}
 			},
 			module: {
-				loaders: [
+				preLoaders: coverageMode ? [
 					{
-						loader: 'babel-loader',
-						test: /.js$/,
-						include: runIntegrationTests ?
-							[path.resolve('test')] :
-							[path.resolve('src'), path.resolve('test')],
+						loader: 'istanbul-instrumenter',
+						test: /\.js$/,
+						include: path.resolve('src'),
 						query: {
-							presets: [
-								'babel-preset-es2015'
-							]
+							esModules: true
 						}
 					}
-				]
+				] : [],
+
+				loaders: [{
+					loader: 'babel-loader',
+					test: /\.js$/,
+					include: runIntegrationTests ?
+						[path.resolve('test')] :
+						[path.resolve('src'), path.resolve('test')],
+					query: {
+						presets: [
+							'babel-preset-es2015'
+						]
+					}
+				}]
+			},
+			devtool: 'eval'
+		},
+
+
+		webpackMiddleware: {
+			stats: {
+				assets: false,
+				children: false,
+				chunks: false
 			}
 		},
+
 
 		plugins: [
 			webpack,

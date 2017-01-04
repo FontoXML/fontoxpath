@@ -45,6 +45,6 @@
     "sinon-chai": "^2.8.0",
     "slimdom": "github:bwrrp/slimdom.js#0.6.0",
     "uglify-js": "^2.7.5",
-    "webpack": "^1.4.12"
+    "webpack": "^1.14.0"
   }
 }

@@ -1,7 +1,7 @@
 export default function isValidArgument (argumentTypes, argument) {
-    // argumentTypes is something like 'xs:string?'
-    var parts = argumentTypes.match(/^([^+?*]*)([\+\*\?])?$/);
-    var type = parts[1],
+	// argumentTypes is something like 'xs:string?' or 'map(*)'
+	var parts = argumentTypes.match(/^(.*[^+?*])([\+\*\?])?$/);
+	var type = parts[1],
         multiplicity = parts[2];
     switch (multiplicity) {
         case '?':

@@ -1,21 +1,21 @@
 # fontoxml-selectors
 
-A selector engine for (XML) nodes.
+An XPath 3.1 selector engine for (XML) nodes.
 
 To recompile the parser, run the following
 
 ```
-npm i -g pegjs
-npm i -g uglify
-
-# Generate parser
-pegjs --cache --export-var xPathParser --format globals -o src/parsing/xPathParser.raw.js src/parsing/xpath.pegjs
-# Uglify parser by hand
-uglify -s ./src/parsing/xPathParser.raw.js -o ./src/parsing/xPathParser.raw.js
-# Add istanbul ignore
-sed -i '1s;^;/* istanbul ignore next */\n;' ./src/parsing/xPathParser.raw.js
-# Update parser version
-sed -r 's/(.*)([0-9]+)(.*)/echo "\1$((\2+1))\3"/ge' src/parsing/XPATHPARSER_VERSION.js -i
+npm install
+npm run build [--skip_parser] [--skip_closure]
 ```
 
-To build the package, run `npm run build` in the root folder.
+Note: Rebuilding the closure build depends on Java.
+
+To run the tests, run
+
+```
+npm run test [--ci_mode] [--integration_tests]
+>>>>>>> Add istanbul build.
+```
+
+The integration tests run all tests only using the externally public API, using the clusore build.

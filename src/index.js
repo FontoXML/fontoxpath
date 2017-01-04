@@ -1,7 +1,9 @@
+import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
 import evaluateXPathToFirstNode from './evaluateXPathToFirstNode';
 import evaluateXPathToNodes from './evaluateXPathToNodes';
 import evaluateXPathToNumber from './evaluateXPathToNumber';
+import evaluateXPathToMap from './evaluateXPathToMap';
 import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
@@ -66,8 +68,10 @@ const domFacade = new ReadOnlyDomFacade();
 (function () {
 	if (typeof workspace !== 'undefined') {
 		workspace['domFacade'] = domFacade,
+		workspace['evaluateXPathToArray'] = evaluateXPathToArray;
 		workspace['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
 		workspace['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
+		workspace['evaluateXPathToMap'] = evaluateXPathToMap;
 		workspace['evaluateXPathToNodes'] = evaluateXPathToNodes;
 		workspace['evaluateXPathToNumber'] = evaluateXPathToNumber;
 		workspace['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
@@ -75,10 +79,13 @@ const domFacade = new ReadOnlyDomFacade();
 		workspace['evaluateXPathToString'] = evaluateXPathToString;
 	}
 })();
+
 export {
 	domFacade,
+	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
+	evaluateXPathToMap,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
