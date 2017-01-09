@@ -36,24 +36,29 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
  */
 export default function registerCustomXPathFunction (name, signature, returnType, callback) {
     var callFunction = function (dynamicContext) {
-        // Make arguments a read array instead of a array-like object
-        var args = Array.from(arguments);
+			// Make arguments a read array instead of a array-like object
+			var args = Array.from(arguments);
 
-        args.splice(0, 1);
+			args.splice(0, 1);
 
-        var newArguments = args.map(function (argument, index) {
-            return adaptXPathValueToJavascriptValue(argument, signature[index]);
-        });
+			var newArguments = args.map(function (argument, index) {
+					return adaptXPathValueToJavascriptValue(argument, signature[index]);
+				});
 
-        var result = callback.apply(undefined, [dynamicContext].concat(newArguments));
-        result = adaptJavaScriptValueToXPathValue(result, returnType);
+			// Adapt the domFacade into another object to prevent passing everything. The closure compiler might rename some variables otherwise.
+			// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
+			var dynamicContextAdapter = {};
+			dynamicContextAdapter['domFacade'] = dynamicContext.domFacade;
 
-        if (!isValidArgument(returnType, result)) {
-            throw new Error('XPTY0004: Custom function (' + name + ') should return ' + returnType);
-        }
+			var result = callback.apply(undefined, [dynamicContextAdapter].concat(newArguments));
+			result = adaptJavaScriptValueToXPathValue(result, returnType);
 
-        return result;
-    };
+			if (!isValidArgument(returnType, result)) {
+				throw new Error('XPTY0004: Custom function (' + name + ') should return ' + returnType);
+			}
+
+			return result;
+		};
 
     functionRegistry.registerFunction(name, signature, returnType, callFunction);
 }

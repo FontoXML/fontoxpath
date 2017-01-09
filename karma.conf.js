@@ -92,7 +92,7 @@ module.exports = config => {
 			resolve: {
 				alias: {
 					'fontoxml-selectors': runIntegrationTests ?
-						path.resolve('./dist/selectors.js') :
+						path.resolve('./dist/fontoxpath.js') :
 						path.resolve('./src'),
 					'test-helpers': path.resolve('test/helpers/'),
 					'slimdom': path.resolve('./node_modules/slimdom/src/main.js')
