@@ -1,12 +1,13 @@
 import xPathParser from './xPathParser';
+import Selector from '../selectors/Selector';
 import compileAstToSelector from './compileAstToSelector';
 import compiledSelectorCache from './compiledSelectorCache';
-
 
 /**
  * Parse an XPath string to a selector.
  *
  * @param  {string}  xPathString      The string to parse
+ * @return {!Selector}
  */
 export default function parseSelector (xPathString) {
 	if (!compiledSelectorCache[xPathString]) {

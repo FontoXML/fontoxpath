@@ -1,8 +1,6 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxml-selectors';
-import createSelectorFromXPathAsync from 'fontoxml-selectors/parsing/createSelectorFromXPathAsync';
-import evaluateXPathToNumber from 'fontoxml-selectors/evaluateXPathToNumber';
+import { domFacade, precompileXPath, evaluateXPathToNumber } from 'fontoxml-selectors';
 
 describe('createSelectorFromXPathAsync', () => {
 	let documentNode;
@@ -11,7 +9,7 @@ describe('createSelectorFromXPathAsync', () => {
 	});
 
 	it('can compile a selector asynchronously', () => {
-		return createSelectorFromXPathAsync('1 + 1')
+		return precompileXPath('1 + 1')
 			.then(function (selector) {
 				// Assume selector to be ok
 				chai.expect(
@@ -22,24 +20,15 @@ describe('createSelectorFromXPathAsync', () => {
 
 	it('can compile a new, unique selector asynchronously', () => {
 		const now = Date.now();
-		return createSelectorFromXPathAsync(`1 + ${now}`)
+		return precompileXPath(`1 + ${now}`)
 			.then(function (selector) {
 				// Assume selector to be ok
 				chai.assert.equal(evaluateXPathToNumber(selector, documentNode, domFacade), now + 1);
 			});
 	}).timeout(10000);
 
-	it('can deduplicate async compilation', () => {
-		const selectorString = `12345 + ${Date.now()}`;
-		const promiseA = createSelectorFromXPathAsync(selectorString);
-		const promiseB = createSelectorFromXPathAsync(selectorString);
-
-		chai.assert.equal(promiseA, promiseB);
-	});
-
-
 	it('throws when compilation fails', () => {
-		return createSelectorFromXPathAsync(']] Not valid at all! [[')
+		return precompileXPath(']] Not valid at all! [[')
 			.then(function (selector) {
 				chai.expect.fail();
 			}, function (error) {

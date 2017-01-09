@@ -1,4 +1,4 @@
-# fontoxml-selectors
+# fontoxpath
 
 An XPath 3.1 selector engine for (XML) nodes.
 
@@ -15,7 +15,6 @@ To run the tests, run
 
 ```
 npm run test [--ci_mode] [--integration_tests]
->>>>>>> Add istanbul build.
 ```
 
-The integration tests run all tests only using the externally public API, using the clusore build.
+The integration tests run all tests only using the externally public API, using the closure build.

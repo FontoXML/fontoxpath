@@ -27,7 +27,7 @@ function doSelectorsBuild () {
 			assume_function_wrapper: true,
 			language_in: 'ES6',
 			language_out: 'ES5',
-			create_source_map: './dist/selectors.js.map',
+			create_source_map: './dist/fontoxpath.js.map',
 			jscomp_warning: [
 				'accessControls',
 				'checkDebuggerStatement',
@@ -60,15 +60,15 @@ function doSelectorsBuild () {
         module.exports = factory();
     } else {
         // Browser globals (root is window)
-        root.selectors = factory();
+        root.fontoxpath = factory();
     }
 })(this, function () {
-	var workspace = {};
+	var exports = {};
 	%output%
-	return workspace;
+	return exports;
 });
-//# sourceMappingURL=./selectors.js.map`,
-			js_output_file: './dist/selectors.js',
+//# sourceMappingURL=./fontoxpath.js.map`,
+			js_output_file: './dist/fontoxpath.js',
 			js: './src/**.js'
 		})
 			.run((exitCode, stdOut, stdErr) => {
@@ -76,11 +76,11 @@ function doSelectorsBuild () {
 					reject(stdErr);
 					return;
 				}
-				resolve(stdOut + stdOut);
+				resolve(stdOut + stdErr);
 			});
 	})
 		.then((stdOut) => {
-			console.log(stdOut);
+			console.info(stdOut);
 		});
 }
 

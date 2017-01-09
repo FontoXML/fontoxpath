@@ -8,12 +8,12 @@ import compiledSelectorCache from './parsing/compiledSelectorCache';
  *
  * @param   {string}    xPathString  The xPath which should be pre-compiled
  *
- * @return  {Promise}   A promise which is resolved with the selector after compilation
+ * @return  {Promise}   A promise which is resolved with the xpath string after compilation.
  */
 export default function precompileXPath (xPathString) {
     return createSelectorFromXPathAsync(xPathString)
         .then(function (selector) {
             compiledSelectorCache[xPathString] = selector;
-            return selector;
+            return xPathString;
         });
 }

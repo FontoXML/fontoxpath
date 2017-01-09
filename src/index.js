@@ -7,6 +7,10 @@ import evaluateXPathToMap from './evaluateXPathToMap';
 import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
+import precompileXPath from './precompileXPath';
+import getBucketsForNode from './getBucketsForNode';
+import registerCustomXPathFunction from './registerCustomXPathFunction';
+import createSelectorFromXPath from './parsing/createSelectorFromXPath';
 
 /**
  * @constructor
@@ -62,21 +66,34 @@ ReadOnlyDomFacade.prototype.getRelatedNodes = function (node, callback) {
 
 const domFacade = new ReadOnlyDomFacade();
 
+function getBucketForSelector (xpathString) {
+	createSelectorFromXPath(xpathString).getBucket();
+}
+
+function compareSpecificity (xpathStringA, xpathStringB) {
+	createSelectorFromXPath(xpathStringA).specificity.compareTo(createSelectorFromXPath(xpathStringB).specificity);
+}
+
 /**
 * @suppress {undefinedVars}
 */
 (function () {
-	if (typeof workspace !== 'undefined') {
-		workspace['domFacade'] = domFacade,
-		workspace['evaluateXPathToArray'] = evaluateXPathToArray;
-		workspace['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
-		workspace['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
-		workspace['evaluateXPathToMap'] = evaluateXPathToMap;
-		workspace['evaluateXPathToNodes'] = evaluateXPathToNodes;
-		workspace['evaluateXPathToNumber'] = evaluateXPathToNumber;
-		workspace['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
-		workspace['evaluateXPathToStrings'] = evaluateXPathToStrings;
-		workspace['evaluateXPathToString'] = evaluateXPathToString;
+	if (typeof exports !== 'undefined') {
+		exports['domFacade'] = domFacade,
+		exports['evaluateXPathToArray'] = evaluateXPathToArray;
+		exports['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
+		exports['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
+		exports['evaluateXPathToMap'] = evaluateXPathToMap;
+		exports['evaluateXPathToNodes'] = evaluateXPathToNodes;
+		exports['evaluateXPathToNumber'] = evaluateXPathToNumber;
+		exports['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
+		exports['evaluateXPathToStrings'] = evaluateXPathToStrings;
+		exports['evaluateXPathToString'] = evaluateXPathToString;
+		exports['precompileXPath'] = precompileXPath;
+		exports['registerCustomXPathFunction'] = registerCustomXPathFunction;
+		exports['getBucketsForNode'] = getBucketsForNode;
+		exports['getBucketForSelector'] = getBucketForSelector;
+		exports['compareSpecificity'] = compareSpecificity;
 	}
 })();
 
@@ -90,5 +107,10 @@ export {
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
 	evaluateXPathToStrings,
-	evaluateXPathToString
+	precompileXPath,
+	evaluateXPathToString,
+	registerCustomXPathFunction,
+	getBucketsForNode,
+	getBucketForSelector,
+	compareSpecificity
 };

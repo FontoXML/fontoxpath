@@ -1,22 +1,7 @@
 import XPATHPARSER_VERSION from './XPATHPARSER_VERSION';
 import xPathParserRaw from './xPathParser.raw.js';
 import compileAstToSelector from './compileAstToSelector';
-var global;
-if (typeof window === 'undefined') {
-	global = {
-		Blob: () => {
-			return {
-				createObjectURL: () => {}
-			};
-		},
-		Worker: () => {},
-		URL: () => {},
-		indexedDB: () => {}
-	};
-}
-else {
-	global = window;
-}
+const global = window;
 
 var indexedDB = global.indexedDB,
     Blob = global.Blob,
@@ -39,7 +24,7 @@ var compileFunction = [
     '		self.postMessage({',
     '			success: false,',
     '			key: event.data.key,',
-    '			error: error',
+    '			error: error.message',
     '		});',
     '		return;',
     '	}',
@@ -62,7 +47,7 @@ var blob = new Blob([compileFunction]),
 var waitingTaskCallbackByTaskKey = Object.create(null);
 
 worker.onmessage = function (event) {
-    waitingTaskCallbackByTaskKey[event.data.key](event.data);
+    waitingTaskCallbackByTaskKey[event.data['key']](event.data);
 };
 
 worker.onerror = function (event) {
@@ -135,9 +120,10 @@ function queueSave (db, xPathString, ast) {
 
     return new Promise(function (resolve, reject) {
         pendingSaves.push(function (objectStore) {
+			// The keys of the items in the object store must be retained
             var request = objectStore.add({
-                xPath: xPathString,
-                ast: ast
+                'xPath': xPathString,
+                'ast': ast
             });
             request.onsuccess = function () {
                 resolve();
@@ -155,24 +141,25 @@ function queueSave (db, xPathString, ast) {
 function compileXPathAsync (db, xPathString) {
     return new Promise(function (resolve, reject) {
         waitingTaskCallbackByTaskKey[xPathString] = function (result) {
+			// The result came from the worker, outside of the closure compiler
             delete waitingTaskCallbackByTaskKey[xPathString];
 
-            if (!result.success) {
-                reject(new Error('Unable to parse XPath: ' + xPathString + '.\n' + result.error));
+            if (!result['success']) {
+                reject(new Error('Unable to parse XPath: ' + xPathString + '.\n' + result['error']));
                 return;
             }
-            queueSave(db, xPathString, result.ast).catch(function (error) {
+            queueSave(db, xPathString, result['ast']).catch(function (error) {
                 // Swallow errors, we have an AST, so not being able to save it should only cost us some load time performance for any next loads.
                 console.warn(error);
             }).then(function () {
-                var selector = compileAstToSelector(result.ast);
+                var selector = compileAstToSelector(result['ast']);
                 resolve(selector);
             });
         };
 
         worker.postMessage({
-            key: xPathString,
-            xPath: xPathString
+            'key': xPathString,
+            'xPath': xPathString
         });
     });
 }
@@ -202,7 +189,7 @@ export default function createSelectorFromXPathAsync (xPathString) {
                                 compileXPathAsync(db, xPathString).then(resolve, reject);
                                 return;
                             }
-                            resolve(compileAstToSelector(xPathAndAst.ast));
+                            resolve(compileAstToSelector(xPathAndAst['ast']));
                         };
 
                         request.onerror = function event (evt) {
