@@ -1,8 +1,8 @@
 import slimdom from 'slimdom';
 
-import BooleanValue from 'fontoxml-selectors/selectors/dataTypes/BooleanValue';
-import NodeValue from 'fontoxml-selectors/selectors/dataTypes/NodeValue';
-import Sequence from 'fontoxml-selectors/selectors/dataTypes/Sequence';
+import BooleanValue from 'fontoxpath/selectors/dataTypes/BooleanValue';
+import NodeValue from 'fontoxpath/selectors/dataTypes/NodeValue';
+import Sequence from 'fontoxpath/selectors/dataTypes/Sequence';
 
 let documentNode = new slimdom.Document();
 

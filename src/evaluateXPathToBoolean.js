@@ -12,5 +12,5 @@ import Selector from './selectors/Selector';
  * @return  {boolean}
  */
 export default function evaluateXPathToBoolean (selector, contextNode, domFacade, variables) {
-    return /** @type {boolean} */(evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.BOOLEAN_TYPE));
+	return /** @type {boolean} */(evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.BOOLEAN_TYPE));
 }

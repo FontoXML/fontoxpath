@@ -1,5 +1,5 @@
-import Unary from 'fontoxml-selectors/selectors/operators/numeric/Unary';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import Unary from 'fontoxpath/selectors/operators/numeric/Unary';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 		specificity: new Specificity({}),

@@ -1,4 +1,4 @@
-import adaptJavaScriptValueToXPathValue from 'fontoxml-selectors/selectors/adaptJavaScriptValueToXPathValue';
+import adaptJavaScriptValueToXPathValue from 'fontoxpath/selectors/adaptJavaScriptValueToXPathValue';
 
 describe('adaptJavaScriptValueToXPathValue', () => {
 	it('turns numbers into integers', () => {

@@ -1,5 +1,5 @@
-import FunctionCall from 'fontoxml-selectors/selectors/functions/FunctionCall';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import FunctionCall from 'fontoxpath/selectors/functions/FunctionCall';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 			specificity: new Specificity({}),

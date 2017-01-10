@@ -1,5 +1,5 @@
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
-import Union from 'fontoxml-selectors/selectors/operators/Union';
+import Specificity from 'fontoxpath/selectors/Specificity';
+import Union from 'fontoxpath/selectors/operators/Union';
 
 const equalSelector = {
 		specificity: new Specificity({}),

@@ -1,7 +1,7 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxml-selectors';
-import { evaluateXPathToBoolean } from 'fontoxml-selectors';
+import { domFacade } from 'fontoxpath';
+import { evaluateXPathToBoolean } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {

@@ -1,11 +1,11 @@
 export default function getBucketsForNode (node) {
-    var buckets = [];
+	var buckets = [];
 
-    buckets.push('type-' + node.nodeType);
+	buckets.push('type-' + node.nodeType);
 
-    if (node.nodeType === node.ELEMENT_NODE) {
-        buckets.push('name-' + node.nodeName);
-    }
+	if (node.nodeType === node.ELEMENT_NODE) {
+		buckets.push('name-' + node.nodeName);
+	}
 
-    return buckets;
+	return buckets;
 }

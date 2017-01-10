@@ -1,5 +1,5 @@
-import AnyAtomicTypeValue from 'fontoxml-selectors/selectors/dataTypes/AnyAtomicTypeValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import AnyAtomicTypeValue from 'fontoxpath/selectors/dataTypes/AnyAtomicTypeValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('AnyAtomicTypeValue.cast()', () => {
 	it('casts the given value to AnyAtomicTypeValue', () => {

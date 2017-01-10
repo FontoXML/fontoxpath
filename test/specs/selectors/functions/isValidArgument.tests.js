@@ -1,6 +1,6 @@
-import BooleanValue from 'fontoxml-selectors/selectors/dataTypes/BooleanValue';
-import Sequence from 'fontoxml-selectors/selectors/dataTypes/Sequence';
-import isValidArgument from 'fontoxml-selectors/selectors/functions/isValidArgument';
+import BooleanValue from 'fontoxpath/selectors/dataTypes/BooleanValue';
+import Sequence from 'fontoxpath/selectors/dataTypes/Sequence';
+import isValidArgument from 'fontoxpath/selectors/functions/isValidArgument';
 
 describe('isValidArgument()', () => {
 	it('return true for a valid argument (xs:boolean)', () => {

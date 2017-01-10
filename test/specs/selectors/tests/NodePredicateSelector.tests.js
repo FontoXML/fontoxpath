@@ -1,4 +1,4 @@
-import NodePredicateSelector from 'fontoxml-selectors/selectors/tests/NodePredicateSelector';
+import NodePredicateSelector from 'fontoxpath/selectors/tests/NodePredicateSelector';
 
 describe('NodePredicateSelector.equals()', () => {
 	it('returns true if compared with itself', () => {

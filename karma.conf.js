@@ -91,7 +91,7 @@ module.exports = config => {
 		webpack: {
 			resolve: {
 				alias: {
-					'fontoxml-selectors': runIntegrationTests ?
+					'fontoxpath': runIntegrationTests ?
 						path.resolve('./dist/fontoxpath.js') :
 						path.resolve('./src'),
 					'test-helpers': path.resolve('test/helpers/'),

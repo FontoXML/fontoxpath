@@ -15,5 +15,5 @@ import Selector from './selectors/Selector';
  * @return  {Array<Node>}      All matching Nodes, in the order defined by the XPath
  */
 export default function evaluateXPathToNodes (selector, contextNode, blueprint, variables) {
-    return /** @type {Array<Node>} */(evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.NODES_TYPE));
+	return /** @type {Array<Node>} */(evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.NODES_TYPE));
 }

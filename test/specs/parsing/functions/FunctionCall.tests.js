@@ -1,8 +1,8 @@
-import { domFacade } from 'fontoxml-selectors';
+import { domFacade } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import slimdom from 'slimdom';
 
-import { evaluateXPathToString } from 'fontoxml-selectors';
+import { evaluateXPathToString } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {

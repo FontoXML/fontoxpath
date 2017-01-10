@@ -6,7 +6,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
 	evaluateXPathToStrings
-} from 'fontoxml-selectors';
+} from 'fontoxpath';
 
 describe('registerCustomXPath() =>', () => {
 	let documentNode;

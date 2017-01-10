@@ -1,4 +1,4 @@
-import { compareSpecificity } from 'fontoxml-selectors';
+import { compareSpecificity } from 'fontoxpath';
 
 describe('compareSpecificity', () => {
 	it('returns 0 for the same xpath', () => chai.assert.equal(compareSpecificity('self::*', 'self::*'), 0));

@@ -1,7 +1,7 @@
-import FunctionCall from 'fontoxml-selectors/selectors/functions/FunctionCall';
-import NamedFunctionRef from 'fontoxml-selectors/selectors/NamedFunctionRef';
-import QuantifiedExpression from 'fontoxml-selectors/selectors/quantified/QuantifiedExpression';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import FunctionCall from 'fontoxpath/selectors/functions/FunctionCall';
+import NamedFunctionRef from 'fontoxpath/selectors/NamedFunctionRef';
+import QuantifiedExpression from 'fontoxpath/selectors/quantified/QuantifiedExpression';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 		specificity: new Specificity({}),

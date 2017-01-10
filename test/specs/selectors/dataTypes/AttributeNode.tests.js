@@ -1,6 +1,6 @@
-import AttributeNode from 'fontoxml-selectors/selectors/dataTypes/AttributeNode';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
-import UntypedAtomicValue from 'fontoxml-selectors/selectors/dataTypes/UntypedAtomicValue';
+import AttributeNode from 'fontoxpath/selectors/dataTypes/AttributeNode';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
+import UntypedAtomicValue from 'fontoxpath/selectors/dataTypes/UntypedAtomicValue';
 import slimdom from 'slimdom';
 
 let documentNode = new slimdom.Document(),

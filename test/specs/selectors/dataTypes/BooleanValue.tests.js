@@ -1,5 +1,5 @@
-import BooleanValue from 'fontoxml-selectors/selectors/dataTypes/BooleanValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import BooleanValue from 'fontoxpath/selectors/dataTypes/BooleanValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('BooleanValue.cast()', () => {
 	it('casts "true" to true', () => {

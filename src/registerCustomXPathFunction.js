@@ -3,26 +3,26 @@ import functionRegistry from './selectors/functions/functionRegistry';
 import isValidArgument from './selectors/functions/isValidArgument';
 
 function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
-    if (valueSequence.instanceOfType('attribute()')) {
-        throw new Error('Cannot pass attribute nodes to custom functions');
-    }
+	if (valueSequence.instanceOfType('attribute()')) {
+		throw new Error('Cannot pass attribute nodes to custom functions');
+	}
 
-    switch (sequenceType[sequenceType.length - 1]) {
-        case '?':
-            if (valueSequence.isEmpty()) {
-                return null;
-            }
-            return valueSequence.value[0].value;
+	switch (sequenceType[sequenceType.length - 1]) {
+		case '?':
+			if (valueSequence.isEmpty()) {
+				return null;
+			}
+			return valueSequence.value[0].value;
 
-        case '*':
-        case '+':
-            return valueSequence.value.map(function (value) {
-                return value.value;
-            });
+		case '*':
+		case '+':
+			return valueSequence.value.map(function (value) {
+				return value.value;
+			});
 
-        default:
-            return valueSequence.value[0].value;
-    }
+		default:
+			return valueSequence.value[0].value;
+	}
 }
 
 /**
@@ -35,7 +35,7 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
  * @return {undefined}
  */
 export default function registerCustomXPathFunction (name, signature, returnType, callback) {
-    var callFunction = function (dynamicContext) {
+	var callFunction = function (dynamicContext) {
 			// Make arguments a read array instead of a array-like object
 			var args = Array.from(arguments);
 
@@ -60,5 +60,5 @@ export default function registerCustomXPathFunction (name, signature, returnType
 			return result;
 		};
 
-    functionRegistry.registerFunction(name, signature, returnType, callFunction);
+	functionRegistry.registerFunction(name, signature, returnType, callFunction);
 }

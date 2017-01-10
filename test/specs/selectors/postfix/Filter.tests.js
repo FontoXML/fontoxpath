@@ -1,5 +1,5 @@
-import Filter from 'fontoxml-selectors/selectors/postfix/Filter';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import Filter from 'fontoxpath/selectors/postfix/Filter';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 			specificity: new Specificity({}),

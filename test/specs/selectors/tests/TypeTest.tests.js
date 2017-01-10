@@ -1,4 +1,4 @@
-import TypeTest from 'fontoxml-selectors/selectors/tests/TypeTest';
+import TypeTest from 'fontoxpath/selectors/tests/TypeTest';
 
 describe('TypeTest.equals()', () => {
 	it('returns true if compared with itself', () => {

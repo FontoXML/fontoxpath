@@ -1,4 +1,4 @@
-import VarRef from 'fontoxml-selectors/selectors/VarRef';
+import VarRef from 'fontoxpath/selectors/VarRef';
 
 describe('VarRef.equals()', () => {
 	it('returns true if compared with itself', () => {

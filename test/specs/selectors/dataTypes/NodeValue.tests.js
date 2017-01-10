@@ -1,9 +1,9 @@
 import slimdom from 'slimdom';
 
-import AttributeNode from 'fontoxml-selectors/selectors/dataTypes/AttributeNode';
-import NodeValue from 'fontoxml-selectors/selectors/dataTypes/NodeValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
-import { domFacade } from 'fontoxml-selectors';
+import AttributeNode from 'fontoxpath/selectors/dataTypes/AttributeNode';
+import NodeValue from 'fontoxpath/selectors/dataTypes/NodeValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
+import { domFacade } from 'fontoxpath';
 
 let documentNode;
 

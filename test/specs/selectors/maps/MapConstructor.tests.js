@@ -1,5 +1,5 @@
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
-import MapConstructor from 'fontoxml-selectors/selectors/maps/MapConstructor';
+import Specificity from 'fontoxpath/selectors/Specificity';
+import MapConstructor from 'fontoxpath/selectors/maps/MapConstructor';
 
 const equalSelector = {
 		specificity: new Specificity({}),

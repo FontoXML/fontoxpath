@@ -12,5 +12,5 @@ import Selector from './selectors/Selector';
  * @return  {number}             The numerical result.
  */
 export default function evaluateXPathToNumber (selector, contextNode, blueprint, variables) {
-    return /** @type {!number} */ (evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.NUMBER_TYPE));
+	return /** @type {!number} */ (evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.NUMBER_TYPE));
 }

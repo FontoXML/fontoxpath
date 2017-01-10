@@ -1,7 +1,7 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxml-selectors';
-import { evaluateXPathToString, evaluateXPathToBoolean } from 'fontoxml-selectors';
+import { domFacade } from 'fontoxpath';
+import { evaluateXPathToString, evaluateXPathToBoolean } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => documentNode = slimdom.createDocument());

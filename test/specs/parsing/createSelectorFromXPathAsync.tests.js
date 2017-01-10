@@ -1,6 +1,6 @@
 import slimdom from 'slimdom';
 
-import { domFacade, precompileXPath, evaluateXPathToNumber } from 'fontoxml-selectors';
+import { domFacade, precompileXPath, evaluateXPathToNumber } from 'fontoxpath';
 
 describe('createSelectorFromXPathAsync', () => {
 	let documentNode;

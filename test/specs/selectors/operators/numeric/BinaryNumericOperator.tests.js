@@ -1,5 +1,5 @@
-import BinaryNumericOperator from 'fontoxml-selectors/selectors/operators/numeric/BinaryNumericOperator';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import BinaryNumericOperator from 'fontoxpath/selectors/operators/numeric/BinaryNumericOperator';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 		specificity: new Specificity({}),

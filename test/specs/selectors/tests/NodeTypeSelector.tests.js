@@ -1,4 +1,4 @@
-import NodeTypeSelector from 'fontoxml-selectors/selectors/tests/NodeTypeSelector';
+import NodeTypeSelector from 'fontoxpath/selectors/tests/NodeTypeSelector';
 
 describe('NodeTypeSelector.equals()', () => {
 	it('returns true if compared with itself', () => {

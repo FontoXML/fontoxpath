@@ -12,5 +12,5 @@ import Selector from './selectors/Selector';
  * @return  {Array<string>}         The string result.
  */
 export default function evaluateXPathToStrings (selector, contextNode, domFacade, variables) {
-    return /** @type {!Array<string>} */ (evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.STRINGS_TYPE));
+	return /** @type {!Array<string>} */ (evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.STRINGS_TYPE));
 }

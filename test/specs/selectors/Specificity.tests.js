@@ -1,4 +1,4 @@
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 describe('Specificity.compareTo()', () => {
 	it('returns -1 if the specificity is less than the other specificity, based on selector value', () => {

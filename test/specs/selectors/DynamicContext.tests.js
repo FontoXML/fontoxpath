@@ -1,4 +1,4 @@
-import DynamicContext from 'fontoxml-selectors/selectors/DynamicContext';
+import DynamicContext from 'fontoxpath/selectors/DynamicContext';
 
 describe('DynamicContext.createScopedContext()', () => {
 	it('copies the exising context', () => {

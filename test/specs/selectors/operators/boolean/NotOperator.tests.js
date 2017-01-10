@@ -1,5 +1,5 @@
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
-import NotOperator from 'fontoxml-selectors/selectors/operators/boolean/NotOperator';
+import Specificity from 'fontoxpath/selectors/Specificity';
+import NotOperator from 'fontoxpath/selectors/operators/boolean/NotOperator';
 
 const equalSelector = {
 		specificity: new Specificity({}),

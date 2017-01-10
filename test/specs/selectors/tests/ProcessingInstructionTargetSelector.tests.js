@@ -1,4 +1,4 @@
-import ProcessingInstructionTargetSelector from 'fontoxml-selectors/selectors/tests/ProcessingInstructionTargetSelector';
+import ProcessingInstructionTargetSelector from 'fontoxpath/selectors/tests/ProcessingInstructionTargetSelector';
 
 describe('ProcessingInstructionTargetSelector.equals()', () => {
 	it('returns true if compared with itself', () => {

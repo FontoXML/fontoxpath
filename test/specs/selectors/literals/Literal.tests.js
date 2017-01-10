@@ -1,4 +1,4 @@
-import Literal from 'fontoxml-selectors/selectors/literals/Literal';
+import Literal from 'fontoxpath/selectors/literals/Literal';
 
 describe('Literal.equals()', () => {
 	it('returns true if compared with itself', () => {

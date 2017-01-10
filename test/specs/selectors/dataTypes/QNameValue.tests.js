@@ -1,5 +1,5 @@
-import QNameValue from 'fontoxml-selectors/selectors/dataTypes/QNameValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import QNameValue from 'fontoxpath/selectors/dataTypes/QNameValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('QNameValue.cast', () => {
 	it('casts the given value to QNameValue', () => {

@@ -1,5 +1,5 @@
-import IfExpression from 'fontoxml-selectors/selectors/conditional/IfExpression';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import IfExpression from 'fontoxpath/selectors/conditional/IfExpression';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 		specificity: new Specificity({}),

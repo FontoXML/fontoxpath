@@ -1,4 +1,4 @@
-import InstanceOfOperator from 'fontoxml-selectors/selectors/operators/types/InstanceOfOperator';
+import InstanceOfOperator from 'fontoxpath/selectors/operators/types/InstanceOfOperator';
 
 const equalSelector = {
 		equals: sinon.stub().returns(true)

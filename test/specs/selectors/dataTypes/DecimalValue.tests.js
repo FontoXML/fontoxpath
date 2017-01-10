@@ -1,5 +1,5 @@
-import DecimalValue from 'fontoxml-selectors/selectors/dataTypes/DecimalValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import DecimalValue from 'fontoxpath/selectors/dataTypes/DecimalValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('DecimalValue.cast()', () => {
 	it('casts the given value to DecimalValue', () => {

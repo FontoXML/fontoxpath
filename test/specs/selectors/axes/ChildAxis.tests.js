@@ -1,5 +1,5 @@
-import ChildAxis from 'fontoxml-selectors/selectors/axes/ChildAxis';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import ChildAxis from 'fontoxpath/selectors/axes/ChildAxis';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 		specificity: new Specificity({}),

@@ -1,10 +1,10 @@
 import slimdom from 'slimdom';
 
-import DomFacade from 'fontoxml-selectors/DomFacade';
-import { domFacade as adaptingDomFacade } from 'fontoxml-selectors';
+import DomFacade from 'fontoxpath/DomFacade';
+import { domFacade as adaptingDomFacade } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import AttributeNode from 'fontoxml-selectors/selectors/dataTypes/AttributeNode';
+import AttributeNode from 'fontoxpath/selectors/dataTypes/AttributeNode';
 
 describe('DomFacade', () => {
 	let documentNode;

@@ -1,6 +1,6 @@
 import slimdom from 'slimdom';
 
-import { domFacade, evaluateXPathToBoolean } from 'fontoxml-selectors';
+import { domFacade, evaluateXPathToBoolean } from 'fontoxpath';
 
 describe('Deprecated features', () => {
 	let documentNode;

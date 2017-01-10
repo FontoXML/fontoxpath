@@ -1,5 +1,5 @@
-import AbsolutePathSelector from 'fontoxml-selectors/selectors/path/AbsolutePathSelector';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import AbsolutePathSelector from 'fontoxpath/selectors/path/AbsolutePathSelector';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 		specificity: new Specificity({}),

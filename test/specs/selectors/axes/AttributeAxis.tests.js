@@ -1,4 +1,4 @@
-import AttributeAxis from 'fontoxml-selectors/selectors/axes/AttributeAxis';
+import AttributeAxis from 'fontoxpath/selectors/axes/AttributeAxis';
 
 const equalSelector = {
 		equals: sinon.stub().returns(true)

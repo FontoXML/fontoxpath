@@ -1,5 +1,5 @@
-import BooleanValue from 'fontoxml-selectors/selectors/dataTypes/BooleanValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import BooleanValue from 'fontoxpath/selectors/dataTypes/BooleanValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('StringValue.cast()', () => {
 	it('casts the given value to a StringValue', () => {

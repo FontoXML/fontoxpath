@@ -6,7 +6,7 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPathToBoolean,
 	evaluateXPathToStrings
-} from 'fontoxml-selectors';
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {

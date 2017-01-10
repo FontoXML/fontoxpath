@@ -19,45 +19,45 @@ import createSelectorFromXPath from './parsing/createSelectorFromXPath';
 function ReadOnlyDomFacade () {}
 
 ReadOnlyDomFacade.prototype.getParentNode = (node) => {
-    return node.parentNode;
+	return node.parentNode;
 };
 
 ReadOnlyDomFacade.prototype.getFirstChild = function (node) {
-    return node.firstChild;
+	return node.firstChild;
 };
 
 ReadOnlyDomFacade.prototype.getLastChild = function (node) {
-    return node.lastChild;
+	return node.lastChild;
 };
 
 ReadOnlyDomFacade.prototype.getNextSibling = function (node) {
-    return node.nextSibling;
+	return node.nextSibling;
 };
 
 ReadOnlyDomFacade.prototype.getPreviousSibling = function (node) {
-    return node.previousSibling;
+	return node.previousSibling;
 };
 
 ReadOnlyDomFacade.prototype.getChildNodes = function (node) {
-    var childNodes = [];
+	var childNodes = [];
 
-    for (var childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
-        childNodes.push(childNode);
-    }
+	for (var childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
+		childNodes.push(childNode);
+	}
 
-    return childNodes;
+	return childNodes;
 };
 
 ReadOnlyDomFacade.prototype.getAttribute = function (node, attributeName) {
-    return node.getAttribute(attributeName);
+	return node.getAttribute(attributeName);
 };
 
 ReadOnlyDomFacade.prototype.getAllAttributes = function (node) {
-    return Array.from(/** @type {!Iterable<Attr>} */ (node.attributes));
+	return Array.from(/** @type {!Iterable<Attr>} */ (node.attributes));
 };
 
 ReadOnlyDomFacade.prototype.getData = function (node) {
-    return node.data || '';
+	return node.data || '';
 };
 
 ReadOnlyDomFacade.prototype.getRelatedNodes = function (node, callback) {

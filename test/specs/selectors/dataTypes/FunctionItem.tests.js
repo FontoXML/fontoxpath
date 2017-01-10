@@ -1,4 +1,4 @@
-import FunctionItem from 'fontoxml-selectors/selectors/dataTypes/FunctionItem';
+import FunctionItem from 'fontoxpath/selectors/dataTypes/FunctionItem';
 
 describe('FunctionItem.getEffectiveBooleanValue()', () => {
 	it('throws when getEffectiveBooleanValue is called', () => {

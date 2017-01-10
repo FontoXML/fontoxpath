@@ -1,4 +1,4 @@
-import isSameArray from 'fontoxml-selectors/selectors/isSameArray';
+import isSameArray from 'fontoxpath/selectors/isSameArray';
 
 describe('isSameArray()', () => {
 	it('returns true for same arrays', () => {

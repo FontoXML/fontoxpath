@@ -52,16 +52,16 @@ function doSelectorsBuild () {
 			externs: path.resolve('./externs/IDomFacade.js'),
 			output_wrapper: `
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD
-        define([], factory);
-    } else if (typeof exports === 'object') {
-        // Node, CommonJS-like
-        module.exports = factory();
-    } else {
-        // Browser globals (root is window)
-        root.fontoxpath = factory();
-    }
+	if (typeof define === 'function' && define.amd) {
+		// AMD
+		define([], factory);
+	} else if (typeof exports === 'object') {
+		// Node, CommonJS-like
+		module.exports = factory();
+	} else {
+		// Browser globals (root is window)
+		root.fontoxpath = factory();
+	}
 })(this, function () {
 	var exports = {};
 	%output%

@@ -5,8 +5,8 @@
  * @param  {!IDomFacade}  domFacade
  */
 function DomFacade (domFacade) {
-    this._domFacade = domFacade;
-    this._createdNodeValuesByNodeId = Object.create(null);
+	this._domFacade = domFacade;
+	this._createdNodeValuesByNodeId = Object.create(null);
 }
 
 /**
@@ -14,7 +14,7 @@ function DomFacade (domFacade) {
  * @return  {boolean}
  */
 DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node) {
-    return node.nodeType === node.ATTRIBUTE_NODE;
+	return node.nodeType === node.ATTRIBUTE_NODE;
 };
 
 /**
@@ -22,10 +22,10 @@ DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node
  * @return  {?Node}
  */
 DomFacade.prototype.getParentNode = function (node) {
-    if (this.isAttributeNode(node)) {
-        return node.getParentNode();
-    }
-    return this._domFacade.getParentNode(node);
+	if (this.isAttributeNode(node)) {
+		return node.getParentNode();
+	}
+	return this._domFacade.getParentNode(node);
 };
 
 /**
@@ -33,10 +33,10 @@ DomFacade.prototype.getParentNode = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getFirstChild = function (node) {
-    if (this.isAttributeNode(node)) {
-        return null;
-    }
-    return this._domFacade.getFirstChild(node);
+	if (this.isAttributeNode(node)) {
+		return null;
+	}
+	return this._domFacade.getFirstChild(node);
 };
 
 /**
@@ -44,11 +44,11 @@ DomFacade.prototype.getFirstChild = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getLastChild = function (node) {
-    if (this.isAttributeNode(node)) {
-        return null;
-    }
+	if (this.isAttributeNode(node)) {
+		return null;
+	}
 
-    return this._domFacade.getLastChild(node);
+	return this._domFacade.getLastChild(node);
 };
 
 /**
@@ -56,11 +56,11 @@ DomFacade.prototype.getLastChild = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getNextSibling = function (node) {
-    if (this.isAttributeNode(node)) {
-        return null;
-    }
+	if (this.isAttributeNode(node)) {
+		return null;
+	}
 
-    return this._domFacade.getNextSibling(node);
+	return this._domFacade.getNextSibling(node);
 };
 
 /**
@@ -68,11 +68,11 @@ DomFacade.prototype.getNextSibling = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getPreviousSibling = function (node) {
-    if (this.isAttributeNode(node)) {
-        return null;
-    }
+	if (this.isAttributeNode(node)) {
+		return null;
+	}
 
-    return this._domFacade.getPreviousSibling(node);
+	return this._domFacade.getPreviousSibling(node);
 };
 
 /**
@@ -80,50 +80,50 @@ DomFacade.prototype.getPreviousSibling = function (node) {
  * @return  {!Array<!Node>}
  */
 DomFacade.prototype.getChildNodes = function (node) {
-    if (this.isAttributeNode(node)) {
-        return [];
-    }
+	if (this.isAttributeNode(node)) {
+		return [];
+	}
 
-    var childNodes = [];
+	var childNodes = [];
 
-    for (var childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
-        childNodes.push(childNode);
-    }
+	for (var childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
+		childNodes.push(childNode);
+	}
 
-    return childNodes;
+	return childNodes;
 };
 
 DomFacade.prototype.getAttribute = function (node, attributeName) {
-    if (this.isAttributeNode(node)) {
-        return null;
-    }
+	if (this.isAttributeNode(node)) {
+		return null;
+	}
 
-    var value = this._domFacade.getAttribute(node, attributeName);
-    if (!value) {
-        return null;
-    }
-    return value;
+	var value = this._domFacade.getAttribute(node, attributeName);
+	if (!value) {
+		return null;
+	}
+	return value;
 };
 
 DomFacade.prototype.getAllAttributes = function (node) {
-    if (this.isAttributeNode(node)) {
-        return [];
-    }
+	if (this.isAttributeNode(node)) {
+		return [];
+	}
 
-    return this._domFacade.getAllAttributes(node);
+	return this._domFacade.getAllAttributes(node);
 };
 
 DomFacade.prototype.getData = function (node) {
-    if (this.isAttributeNode(node)) {
-        return node.value;
-    }
+	if (this.isAttributeNode(node)) {
+		return node.value;
+	}
 
-    return this._domFacade.getData(node) || '';
+	return this._domFacade.getData(node) || '';
 };
 
 // Can be used to create an extra frame when tracking dependencies
 DomFacade.prototype.getRelatedNodes = function (node, callback) {
-    return callback(node, this);
+	return callback(node, this);
 };
 
 export default DomFacade;

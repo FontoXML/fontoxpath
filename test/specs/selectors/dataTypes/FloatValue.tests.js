@@ -1,5 +1,5 @@
-import FloatValue from 'fontoxml-selectors/selectors/dataTypes/FloatValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import FloatValue from 'fontoxpath/selectors/dataTypes/FloatValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('FloatValue.cast()', () => {
 	it('casts the given value to FloatValue', () => {

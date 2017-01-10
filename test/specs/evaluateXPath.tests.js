@@ -1,12 +1,12 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxml-selectors';
-import evaluateXPathToBoolean from 'fontoxml-selectors/evaluateXPathToBoolean';
-import evaluateXPathToFirstNode from 'fontoxml-selectors/evaluateXPathToFirstNode';
-import evaluateXPathToNodes from 'fontoxml-selectors/evaluateXPathToNodes';
-import evaluateXPathToNumber from 'fontoxml-selectors/evaluateXPathToNumber';
-import evaluateXPathToString from 'fontoxml-selectors/evaluateXPathToString';
-import evaluateXPathToStrings from 'fontoxml-selectors/evaluateXPathToStrings';
+import { domFacade } from 'fontoxpath';
+import evaluateXPathToBoolean from 'fontoxpath/evaluateXPathToBoolean';
+import evaluateXPathToFirstNode from 'fontoxpath/evaluateXPathToFirstNode';
+import evaluateXPathToNodes from 'fontoxpath/evaluateXPathToNodes';
+import evaluateXPathToNumber from 'fontoxpath/evaluateXPathToNumber';
+import evaluateXPathToString from 'fontoxpath/evaluateXPathToString';
+import evaluateXPathToStrings from 'fontoxpath/evaluateXPathToStrings';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 describe('evaluateXPath', () => {

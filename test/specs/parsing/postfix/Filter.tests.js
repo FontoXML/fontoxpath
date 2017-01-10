@@ -1,7 +1,7 @@
-import { domFacade } from 'fontoxml-selectors';
+import { domFacade } from 'fontoxpath';
 import slimdom from 'slimdom';
 
-import { evaluateXPathToNumber } from 'fontoxml-selectors';
+import { evaluateXPathToNumber } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {

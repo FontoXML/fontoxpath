@@ -1,6 +1,6 @@
 import slimdom from 'slimdom';
 
-import { domFacade, evaluateXPathToMap } from 'fontoxml-selectors';
+import { domFacade, evaluateXPathToMap } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;

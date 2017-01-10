@@ -1,5 +1,5 @@
-import IntegerValue from 'fontoxml-selectors/selectors/dataTypes/IntegerValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import IntegerValue from 'fontoxpath/selectors/dataTypes/IntegerValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('IntegerValue.cast()', () => {
 	it('casts the given value to IntegerValue', () => {

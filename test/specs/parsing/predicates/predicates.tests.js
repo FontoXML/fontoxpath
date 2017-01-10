@@ -7,7 +7,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers
-} from 'fontoxml-selectors';
+} from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;

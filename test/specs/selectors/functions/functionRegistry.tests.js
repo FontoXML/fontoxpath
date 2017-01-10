@@ -1,5 +1,5 @@
-import registerCustomXPathFunction from 'fontoxml-selectors/registerCustomXPathFunction';
-import functionRegistry from 'fontoxml-selectors/selectors/functions/functionRegistry';
+import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
+import functionRegistry from 'fontoxpath/selectors/functions/functionRegistry';
 
 describe('functionRegistry.getFunctionByArity', () => {
 	before(() => {

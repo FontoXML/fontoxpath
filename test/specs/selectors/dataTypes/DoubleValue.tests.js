@@ -1,5 +1,5 @@
-import DoubleValue from 'fontoxml-selectors/selectors/dataTypes/DoubleValue';
-import StringValue from 'fontoxml-selectors/selectors/dataTypes/StringValue';
+import DoubleValue from 'fontoxpath/selectors/dataTypes/DoubleValue';
+import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('DoubleValue.cast()', () => {
 	it('casts the given value to DoubleValue', () => {

@@ -1,4 +1,4 @@
-import UntypedAtomicValue from 'fontoxml-selectors/selectors/dataTypes/UntypedAtomicValue';
+import UntypedAtomicValue from 'fontoxpath/selectors/dataTypes/UntypedAtomicValue';
 
 describe('UntypedAtomicValue.cast', () => {
 	it('throws when called', () => {

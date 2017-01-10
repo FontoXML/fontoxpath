@@ -1,5 +1,5 @@
-import LetExpression from 'fontoxml-selectors/selectors/LetExpression';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import LetExpression from 'fontoxpath/selectors/LetExpression';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 		specificity: new Specificity({}),

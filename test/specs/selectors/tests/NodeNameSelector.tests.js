@@ -1,7 +1,7 @@
 import slimdom from 'slimdom';
 
-import NodeNameSelector from 'fontoxml-selectors/selectors/tests/NodeNameSelector';
-import { domFacade } from 'fontoxml-selectors';
+import NodeNameSelector from 'fontoxpath/selectors/tests/NodeNameSelector';
+import { domFacade } from 'fontoxpath';
 
 describe('NodeNameSelector.equals()', () => {
 	it('returns true if compared with itself', () => {

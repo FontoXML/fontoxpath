@@ -1,5 +1,5 @@
-import SimpleMapOperator from 'fontoxml-selectors/selectors/operators/SimpleMapOperator';
-import Specificity from 'fontoxml-selectors/selectors/Specificity';
+import SimpleMapOperator from 'fontoxpath/selectors/operators/SimpleMapOperator';
+import Specificity from 'fontoxpath/selectors/Specificity';
 
 const equalSelector = {
 		equals: sinon.stub().returns(true),

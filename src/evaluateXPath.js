@@ -25,86 +25,86 @@ import Selector from './selectors/Selector';
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
 function evaluateXPath (xPathSelector, contextNode, blueprint, variables, returnType) {
-    returnType = returnType || evaluateXPath.ANY_TYPE;
-    if (typeof xPathSelector === 'string') {
-        xPathSelector = createSelectorFromXPath(xPathSelector);
-    }
-    const domFacade = new DomFacade(blueprint);
-    const contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode));
-    const untypedVariables = Object.assign(variables || {});
+	returnType = returnType || evaluateXPath.ANY_TYPE;
+	if (typeof xPathSelector === 'string') {
+		xPathSelector = createSelectorFromXPath(xPathSelector);
+	}
+	const domFacade = new DomFacade(blueprint);
+	const contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode));
+	const untypedVariables = Object.assign(variables || {});
 	untypedVariables['theBest'] = 'FontoXML is the best!';
-    const typedVariables = Object.keys(untypedVariables).reduce(function (typedVariables, variableName) {
+	const typedVariables = Object.keys(untypedVariables).reduce(function (typedVariables, variableName) {
 			typedVariables[variableName] = adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
 			return typedVariables;
 		}, Object.create(null));
 
-    const dynamicContext = new DynamicContext({
+	const dynamicContext = new DynamicContext({
 			contextItem: contextSequence,
 			domFacade: domFacade,
 			variables: typedVariables
 		});
 
-    const rawResults = xPathSelector.evaluate(dynamicContext);
+	const rawResults = xPathSelector.evaluate(dynamicContext);
 
-    switch (returnType) {
-        case evaluateXPath.BOOLEAN_TYPE:
-            return rawResults.getEffectiveBooleanValue();
+	switch (returnType) {
+		case evaluateXPath.BOOLEAN_TYPE:
+			return rawResults.getEffectiveBooleanValue();
 
-        case evaluateXPath.STRING_TYPE:
-            if (rawResults.isEmpty()) {
-                return '';
-            }
-            // Atomize to convert (attribute)nodes to be strings
-            return rawResults.value[0].atomize().value;
+		case evaluateXPath.STRING_TYPE:
+			if (rawResults.isEmpty()) {
+				return '';
+			}
+			// Atomize to convert (attribute)nodes to be strings
+			return rawResults.value[0].atomize().value;
 
-        case evaluateXPath.STRINGS_TYPE:
-            if (rawResults.isEmpty()) {
-                return [];
-            }
+		case evaluateXPath.STRINGS_TYPE:
+			if (rawResults.isEmpty()) {
+				return [];
+			}
 
-            // Atomize all parts
-            return rawResults.value.map(function (value) {
-                return value.atomize().value;
-            });
+			// Atomize all parts
+			return rawResults.value.map(function (value) {
+				return value.atomize().value;
+			});
 
-        case evaluateXPath.NUMBER_TYPE:
-            if (!rawResults.isSingleton()) {
-                return NaN;
-            }
-            if (!(rawResults.value[0] instanceof NumericValue)) {
-                return NaN;
-            }
-            return rawResults.value[0].value;
+		case evaluateXPath.NUMBER_TYPE:
+			if (!rawResults.isSingleton()) {
+				return NaN;
+			}
+			if (!(rawResults.value[0] instanceof NumericValue)) {
+				return NaN;
+			}
+			return rawResults.value[0].value;
 
-        case evaluateXPath.FIRST_NODE_TYPE:
-            if (rawResults.isEmpty()) {
-                return null;
-            }
-            if (!(rawResults.value[0].instanceOfType('node()'))) {
-                throw new Error('Expected XPath ' + xPathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
-            }
-            if (rawResults.value[0].instanceOfType('attribute()')) {
-                throw new Error('XPath can not resolve to attribute nodes');
-            }
-            return rawResults.value[0].value;
+		case evaluateXPath.FIRST_NODE_TYPE:
+			if (rawResults.isEmpty()) {
+				return null;
+			}
+			if (!(rawResults.value[0].instanceOfType('node()'))) {
+				throw new Error('Expected XPath ' + xPathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
+			}
+			if (rawResults.value[0].instanceOfType('attribute()')) {
+				throw new Error('XPath can not resolve to attribute nodes');
+			}
+			return rawResults.value[0].value;
 
-        case evaluateXPath.NODES_TYPE:
-            if (rawResults.isEmpty()) {
-                return [];
-            }
-            if (!(rawResults.value.every(function (value) {
-                return value.instanceOfType('node()');
-            }))) {
-                throw new Error('Expected XPath ' + xPathSelector + ' to resolve to a sequence of Nodes.');
-            }
-            if (rawResults.value.some(function (value) {
-                return value.instanceOfType('attribute()');
-            })) {
-                throw new Error('XPath ' + xPathSelector + ' should not resolve to attribute nodes');
-            }
-            return rawResults.value.map(function (nodeValue) {
-                return nodeValue.value;
-            });
+		case evaluateXPath.NODES_TYPE:
+			if (rawResults.isEmpty()) {
+				return [];
+			}
+			if (!(rawResults.value.every(function (value) {
+				return value.instanceOfType('node()');
+			}))) {
+				throw new Error('Expected XPath ' + xPathSelector + ' to resolve to a sequence of Nodes.');
+			}
+			if (rawResults.value.some(function (value) {
+				return value.instanceOfType('attribute()');
+			})) {
+				throw new Error('XPath ' + xPathSelector + ' should not resolve to attribute nodes');
+			}
+			return rawResults.value.map(function (nodeValue) {
+				return nodeValue.value;
+			});
 
 		case evaluateXPath.MAP_TYPE:
 			if (rawResults.isEmpty()) {

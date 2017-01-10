@@ -9,8 +9,8 @@ import Selector from './selectors/Selector';
  * @param  {!IDomFacade}       blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}          variables      Extra variables (name=>value). Values can be number / string or boolean.
  *
- * @return  {!Node}               The first matching node, in the order defined by the XPath
+ * @return  {!Node}            The first matching node, in the order defined by the XPath
  */
 export default function evaluateXPathToFirstNode (selector, contextNode, blueprint, variables) {
-    return /** @type {!Node} */ (evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.FIRST_NODE_TYPE));
+	return /** @type {!Node} */ (evaluateXPath(selector, contextNode, blueprint, variables, evaluateXPath.FIRST_NODE_TYPE));
 }
