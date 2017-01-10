@@ -4,22 +4,13 @@ import Selector from '../Selector';
 import Specificity from '../Specificity';
 
 function isValidArgumentList (argumentTypes, argumentList) {
-	var indexOfRest = argumentTypes.indexOf('...');
-	if (indexOfRest > -1) {
-		var replacePart = new Array(argumentList.length - (argumentTypes.length - 1))
-			.fill(argumentTypes[indexOfRest - 1]);
-		argumentTypes = argumentTypes.slice(0, indexOfRest)
-			.concat(replacePart, argumentTypes.slice(indexOfRest + 1));
-	}
-
-	return argumentList.length === argumentTypes.length &&
-		argumentList.every(function (argument, i) {
-			return isValidArgument(argumentTypes[i], argument);
-		});
+    return argumentList.length === argumentTypes.length &&
+        argumentList.every(function (argument, i) {
+            return isValidArgument(argumentTypes[i], argument);
+        });
 }
-
 /**
- * @extends {Selector}
+ * @extends Selector
  */
 class FunctionCall extends Selector {
 	/**
@@ -53,16 +44,12 @@ class FunctionCall extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var sequence = this._functionReference.evaluate(dynamicContext);
+		var sequence = this._functionReference.evaluate(dynamicContext),
+		functionItem = sequence.value[0];
 
 		if (!sequence.isSingleton()) {
 			throw new Error('XPTY0004: expected base expression to evaluate to a sequence with a single item');
 		}
-
-		var evaluatedArgs = this._args.map(function (argument) {
-				return argument.evaluate(dynamicContext);
-			}),
-			functionItem = sequence.value[0];
 
 		if (!functionItem.instanceOfType('function(*)')) {
 			throw new Error('XPTY0004: expected base expression to evaluate to a function item');
@@ -72,9 +59,21 @@ class FunctionCall extends Selector {
 			throw new Error('XPTY0004: expected arity of dynamic function to be ' + this._args.length + ', got function with arity of ' + functionItem.getArity());
 		}
 
+		var evaluatedArgs = this._args.map(function (argument) {
+				if (argument === null) {
+					return null;
+				}
+				return argument.evaluate(dynamicContext);
+			});
+
 		if (!isValidArgumentList(functionItem.getArgumentTypes(), evaluatedArgs)) {
 			throw new Error('XPTY0004: expected argument list of dynamic function to be [' + argumentListToString(evaluatedArgs) + '], got function with argument list [' + functionItem.getArgumentTypes().join(', ') + '].');
 		}
+
+		if (evaluatedArgs.indexOf(null) >= 0) {
+			return functionItem.applyArguments(evaluatedArgs);
+		}
+
 
 		return functionItem.value.apply(undefined, [dynamicContext].concat(evaluatedArgs));
 	}

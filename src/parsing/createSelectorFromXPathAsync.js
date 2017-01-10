@@ -8,8 +8,8 @@ var indexedDB = global.indexedDB,
     Worker = global.Worker,
     URL = global.URL;
 
-var SELECTOR_STORE_NAME = 'selectors',
-    SELECTOR_INDEXED_DB_NAME = 'fontoxml-selectors-cache';
+var SELECTOR_STORE_NAME = 'fontoxpath',
+    SELECTOR_INDEXED_DB_NAME = 'fontoxpath-cache';
 
 
 // Webworkers need a function string

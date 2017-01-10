@@ -9,7 +9,6 @@ import Selector from './selectors/Selector';
  * @param  {!IDomFacade}        domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}           variables      Extra variables (name=>value). Values can be number / string or boolean.
  *
- * @export
  * @return  {!string}           The string result.
  */
 export default function evaluateXPathToString (selector, contextNode, domFacade, variables) {

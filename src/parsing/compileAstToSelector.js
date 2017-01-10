@@ -223,7 +223,7 @@ function followingSibling (args) {
 }
 
 function functionCall (args) {
-	return new FunctionCall(compile(args[0]), args[1].map(compile));
+	return new FunctionCall(compile(args[0]), args[1].map(arg => arg === 'argumentPlaceholder' ? null : compile(arg)));
 }
 
 function instanceOf (args) {

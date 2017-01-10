@@ -39,6 +39,15 @@ ExprSingle
 // / ForExpr
  / OrExpr
 
+// 8 (Not implemented)
+// ForExpr ::= SimpleForClause "return" ExprSingle
+
+// 9 (Not implemented)
+// SimpleForClause ::= "for" SimpleForBinding ("," SimpleForBinding)*
+
+// 10 (Not implemented)
+// SimpleForBinding ::= "$" VarName "in" ExprSingle
+
 // 11
 LetExpr
 = bindings:SimpleLetClause _ "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
@@ -104,7 +113,7 @@ UnionExpr
  = first:IntersectExpr rest:( _ ("|"/("union" AssertAdjacentOpeningTerminal)) _ expr:IntersectExpr {return expr})+ {return appendRest(["union", first], rest)}
  / IntersectExpr
 
-// 24. Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
+// 24 Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
  = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return ["op:"+type, rhs] })? {
      return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", rhs[0], 2], [lhs, rhs[1]]]
@@ -165,27 +174,30 @@ SimpleMapExpr
      }, lhs);
    }
 
-// 36-45 (simplified)
+// 36-46 (simplified)
 PathExpr
- = RelativeLocationPath
+ = RelativePathExpr
  / AbsoluteLocationPath
 
-RelativeLocationPath
- = lhs:StepExpr abbrev:LocationPathAbbreviation rhs:RelativeLocationPath {return ["path",  lhs, ["path", abbrev, rhs]]}
- / lhs:StepExpr "/" rhs:RelativeLocationPath {return ["path", lhs, rhs]}
+// 37
+RelativePathExpr
+ = lhs:StepExpr abbrev:LocationPathAbbreviation rhs:RelativePathExpr {return ["path",  lhs, ["path", abbrev, rhs]]}
+ / lhs:StepExpr "/" rhs:RelativePathExpr {return ["path", lhs, rhs]}
  / StepExpr
 
+// 38
 StepExpr
  = PostfixExpr
  / AxisStep
 
 AbsoluteLocationPath
- = "/" path:RelativeLocationPath { return ["absolutePath", path] }
- / abbrev:LocationPathAbbreviation path: RelativeLocationPath { return ["absolutePath", ["path", abbrev, path]] }
+ = "/" path:RelativePathExpr { return ["absolutePath", path] }
+ / abbrev:LocationPathAbbreviation path: RelativePathExpr { return ["absolutePath", ["path", abbrev, path]] }
 
 LocationPathAbbreviation
  = "//" {return ["descendant-or-self", ["kindTest", "node()"]]}
 
+// 39
 AxisStep
  = axis:Axis test:NodeTest predicates:Predicate* {
      if (!predicates.length) {
@@ -234,6 +246,9 @@ PostfixExpr
 // 50
 ArgumentList
  = "(" args:(first:Argument rest:( _ "," _ arg:Argument {return arg})* {return appendRest([first], rest)})? ")" {return args||[]}
+
+// 51 (Not implemented)
+// PredicateList ::= Predicate*
 
 // 52
 Predicate
@@ -302,14 +317,14 @@ ArgumentPlaceholder
 // 66
 FunctionItemExpr
  = NamedFunctionRef
-// / InlineFunctionRef
+// / InlineFunctionExpr
 
 // 67
 NamedFunctionRef
  = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", name, integer[1]]}
 
 // 68
-InlineFunctionRef
+InlineFunctionExpr
  = "function" _ "(" _ params:ParamList _ ")" _ body:FunctionBody {return ["inlineFunction", params, [], body]}
  / "function" _ "(" _ params:ParamList _ ")" _ "as" S type:SequenceType  _ body:FunctionBody {return ["inlineFunction", params, type, body]}
 
@@ -342,6 +357,9 @@ SquareArrayConstructor
 CurlyArrayConstructor
  = "array" _ e:EnclosedExpr { return ['arrayConstructor', "curly", e] }
 
+// 76 (Not implemented)
+// UnaryLookup ::= "?" KeySpecifier
+
 // 77
 SingleType
  = typeName:SimpleTypeName multiplicity:"?"? {return ["type", typeName, !!multiplicity]}
@@ -368,7 +386,7 @@ ItemType
  / AtomicOrUnionType
  / ParenthesizedItemType
 
-//82
+// 82
 AtomicOrUnionType = typeName:EQName { return ["typeTest", typeName] }
 
 // 83
@@ -469,7 +487,7 @@ TypedFunctionTest
 MapTest = AnyMapTest / TypedMapTest
 
 // 106
-AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["anyMapTest"]}
+AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["typeTest", "map(*)"]}
 
 // 107
 TypedMapTest = "map" _ "(" _ keyType:AtomicOrUnionType _ "," _ valueType:SequenceType _ ")" {return ["typedMapTest", keyType, valueType]}
@@ -495,11 +513,11 @@ IntegerLiteral = digits:Digits {return ["literal", digits, "xs:integer"]}
 // 114
 DecimalLiteral
  = "." digits:Digits {return ["literal", parseFloat("." + digits, 10), "xs:decimal"]}
- / decimal:$(Digits "." Digits?) {return ["literal", parseFloat(decimal), "xs:decimal"]}
+ / decimal:$(Digits "." Digits?) {return ["literal", parseFloat(decimal, 10), "xs:decimal"]}
 
 // 115
 DoubleLiteral
- = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["literal", parseFloat(double), "xs:double"]}
+ = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["literal", parseFloat(double, 10), "xs:double"]}
 
 // 116
 StringLiteral

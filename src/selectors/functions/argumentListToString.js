@@ -1,5 +1,8 @@
 export default function argumentListToString (argumentList) {
     return argumentList.map(function (argument) {
+		if (argument === null) {
+			return 'placeholder';
+		}
         if (argument.isEmpty()) {
             return 'item()?';
         }
