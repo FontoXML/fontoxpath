@@ -11,7 +11,7 @@ function UniversalSelector () {
     Selector.call(
         this,
         new Specificity({
-            universal: 1
+            [Specificity.UNIVERSAL_KIND]: 1
         }),
         Selector.RESULT_ORDER_SORTED);
 }

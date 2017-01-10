@@ -11,7 +11,7 @@ import AttributeNode from '../dataTypes/AttributeNode';
  */
 function AttributeAxis (attributeTestSelector) {
     Selector.call(this, new Specificity({
-        attribute: 1
+        [Specificity.ATTRIBUTE_KIND]: 1
     }), Selector.RESULT_ORDER_UNSORTED);
 
     this._attributeTestSelector = attributeTestSelector;

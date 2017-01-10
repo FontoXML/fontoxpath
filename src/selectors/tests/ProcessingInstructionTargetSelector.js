@@ -10,7 +10,7 @@ import Specificity from '../Specificity';
  */
 function ProcessingInstructionTargetSelector (target) {
     Selector.call(this, new Specificity({
-        nodeName: 1
+        [Specificity.NODENAME_KIND]: 1
     }), Selector.RESULT_ORDER_SORTED);
 
     this._target = target;

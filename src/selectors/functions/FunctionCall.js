@@ -11,7 +11,7 @@ import Specificity from '../Specificity';
  */
 function FunctionCall (functionReference, args) {
     Selector.call(this, new Specificity({
-        external: 1
+		[Specificity.EXTERNAL_KIND]: 1
     }), Selector.RESULT_ORDER_UNSORTED);
 
     this._args = args;

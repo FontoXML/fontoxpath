@@ -1,6 +1,6 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxml-selectors';
+import { domFacade, evaluateXPathToBoolean } from 'fontoxml-selectors';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
@@ -8,14 +8,14 @@ beforeEach(() => {
 	documentNode = slimdom.createDocument();
 });
 
-describe.skip('NodeTypeSelector', () => {
+describe('NodeTypeSelector', () => {
 	it('can select any element -> element()', () => {
 		const selector = ('self::element()');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['someElement']
 		], documentNode);
-		chai.expect(selector.matches(documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
 	});
 
 	it('can select any text node -> text()', () => {
@@ -24,7 +24,7 @@ describe.skip('NodeTypeSelector', () => {
 			'someOtherParentElement',
 			'Some text'
 		], documentNode);
-		chai.expect(selector.matches(documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
 	});
 
 	it('can select any PI -> processing-instruction()', () => {
@@ -33,7 +33,7 @@ describe.skip('NodeTypeSelector', () => {
 			'someOtherParentElement',
 			['?someElement']
 		], documentNode);
-		chai.expect(selector.matches(documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
 	});
 
 	it('can select any comment -> comment()', () => {
@@ -42,6 +42,6 @@ describe.skip('NodeTypeSelector', () => {
 			'someOtherParentElement',
 			['!', 'some comment']
 		], documentNode);
-		chai.expect(selector.matches(documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
 	});
 });

@@ -67,11 +67,11 @@ ReadOnlyDomFacade.prototype.getRelatedNodes = function (node, callback) {
 const domFacade = new ReadOnlyDomFacade();
 
 function getBucketForSelector (xpathString) {
-	createSelectorFromXPath(xpathString).getBucket();
+	return createSelectorFromXPath(xpathString).getBucket();
 }
 
 function compareSpecificity (xpathStringA, xpathStringB) {
-	createSelectorFromXPath(xpathStringA).specificity.compareTo(createSelectorFromXPath(xpathStringB).specificity);
+	return createSelectorFromXPath(xpathStringA).specificity.compareTo(createSelectorFromXPath(xpathStringB).specificity);
 }
 
 /**

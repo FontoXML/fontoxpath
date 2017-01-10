@@ -12,7 +12,7 @@ import DomFacade from '../../DomFacade';
  */
 function NodePredicateSelector (isMatchingNode) {
     Selector.call(this, new Specificity({
-        external: 1
+        [Specificity.EXTERNAL_KIND]: 1
     }), Selector.RESULT_ORDER_SORTED);
 
     this._isMatchingNode = isMatchingNode;

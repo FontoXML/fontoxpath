@@ -10,7 +10,7 @@ import Specificity from '../Specificity';
  */
 function NodeTypeSelector (nodeType) {
     Selector.call(this, new Specificity({
-        nodeType: 1
+        [Specificity.NODETYPE_KIND]: 1
     }), Selector.RESULT_ORDER_SORTED);
 
     this._nodeType = nodeType;

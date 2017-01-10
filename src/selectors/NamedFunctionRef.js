@@ -12,7 +12,7 @@ import functionRegistry from './functions/functionRegistry';
  */
 function NamedFunctionRef (functionName, arity) {
     Selector.call(this, new Specificity({
-        external: 1
+		[Specificity.EXTERNAL_KIND]: 1
     }), Selector.RESULT_ORDER_UNSORTED);
 
     this._functionName = functionName;

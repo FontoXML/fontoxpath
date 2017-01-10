@@ -11,11 +11,11 @@ import isSameArray from '../isSameArray';
  */
 function NodeNameSelector (nodeName) {
     var specificity = {
-        nodeName: 1
+            [Specificity.NODENAME_KIND]: 1
     };
     if (nodeName === '*') {
         specificity = {
-            nodeType: 1
+            [Specificity.NODETYPE_KIND]: 1
         };
     }
     Selector.call(this, new Specificity(specificity), Selector.RESULT_ORDER_SORTED);

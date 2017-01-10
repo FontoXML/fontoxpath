@@ -9,13 +9,42 @@ var SPECIFICITY_DIMENSIONS = [
 
 /**
  * @constructor
- * @param  {Object}  countsByKind  simple selector counts indexed by specificity dimension
+ * @param  {!Object}  countsByKind  simple selector counts indexed by specificity dimension
  */
 function Specificity (countsByKind) {
     this._counts = SPECIFICITY_DIMENSIONS.map(function (specificityKind) {
         return countsByKind[specificityKind] || 0;
     });
+
+	if (Object.keys(countsByKind).some((kind => !SPECIFICITY_DIMENSIONS.includes(kind)))) {
+		throw new Error('Invalid specificity kind passed');
+	}
 }
+
+/**
+ * @const
+ */
+Specificity.EXTERNAL_KIND = 'external';
+
+/**
+ * @const
+ */
+Specificity.ATTRIBUTE_KIND = 'attribute';
+
+/**
+ * @const
+ */
+Specificity.NODENAME_KIND = 'nodeName';
+
+/**
+ * @const
+ */
+Specificity.NODETYPE_KIND = 'nodeType';
+
+/**
+ * @const
+ */
+Specificity.UNIVERSAL_KIND = 'universal';
 
 /**
  * @param  {!Specificity}  otherSpecificity
