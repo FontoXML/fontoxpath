@@ -47,7 +47,6 @@ function doSelectorsBuild () {
 				'undefinedVars'
 			],
 			warning_level: 'VERBOSE',
-			debug: true,
 			compilation_level: 'ADVANCED',
 			externs: path.resolve('./externs/IDomFacade.js'),
 			output_wrapper: `
