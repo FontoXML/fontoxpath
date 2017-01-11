@@ -6,6 +6,7 @@ import DoubleValue from '../dataTypes/DoubleValue';
 import Sequence from '../dataTypes/Sequence';
 
 function fnParseJson (_dynamicContext, jsonString) {
+	/** @type {?} */
 	var jsObject;
 	try {
 		jsObject = JSON.parse(jsonString.value[0].value);
@@ -18,7 +19,7 @@ function fnParseJson (_dynamicContext, jsonString) {
 		switch (typeof obj) {
 			case 'object':
 				if (Array.isArray(obj)) {
-					return Sequence.singleton(new ArrayValue(obj.map(convert)));
+					return Sequence.singleton(new ArrayValue(obj.map(subObject => convert(subObject))));
 				}
 				if (obj === null) {
 					return Sequence.empty();

@@ -35,20 +35,3 @@ describe('NodeNameSelector.getBucket()', () => {
 		chai.expect(new NodeNameSelector('*').getBucket()).to.equal('type-1');
 	});
 });
-
-describe('NodeNameSelector.matches()', () => {
-	let document;
-	beforeEach(() => {
-		document = slimdom.createDocument();
-	});
-
-	it('returns true if it uses wildcards', () => {
-		const nodeNameSelector = new NodeNameSelector('*');
-		chai.expect(nodeNameSelector.matches(document.createElement('someElement'), domFacade)).to.equal(true);
-	});
-
-	it('returns true if it uses an array of nodeNames', () => {
-		const nodeNameSelector = new NodeNameSelector(['someOtherElement', 'someElement']);
-		chai.expect(nodeNameSelector.matches(document.createElement('someElement'), domFacade)).to.equal(true);
-	});
-});

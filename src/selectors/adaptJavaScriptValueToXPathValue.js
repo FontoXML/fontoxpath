@@ -44,7 +44,7 @@ function adaptJavaScriptValueToXPathValue (type, value) {
 }
 
 /**
- * @param  {*}  value
+ * @param  {?}        value
  * @param  {string=}  expectedType
  */
 export default function adaptJavaScriptValueToXPath (value, expectedType) {
@@ -63,7 +63,7 @@ export default function adaptJavaScriptValueToXPath (value, expectedType) {
 
         case '+':
         case '*':
-            return new Sequence(value.map(adaptJavaScriptValueToXPathValue.bind(undefined, type)));
+            return new Sequence(value.map(adaptJavaScriptValueToXPathValue.bind(null, type)));
 
         default:
             return Sequence.singleton(adaptJavaScriptValueToXPathValue(type, value));

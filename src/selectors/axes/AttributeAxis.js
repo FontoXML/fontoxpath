@@ -5,54 +5,53 @@ import NodeValue from '../dataTypes/NodeValue';
 import AttributeNode from '../dataTypes/AttributeNode';
 
 /**
- * @constructor
  * @extends {Selector}
- * @param  {!Selector}    attributeTestSelector
  */
-function AttributeAxis (attributeTestSelector) {
-    Selector.call(this, new Specificity({
-        [Specificity.ATTRIBUTE_KIND]: 1
-    }), Selector.RESULT_ORDER_UNSORTED);
+class AttributeAxis extends Selector {
+	/**
+	 * @param  {!Selector}    attributeTestSelector
+	 */
+	constructor (attributeTestSelector) {
+		super(new Specificity({
+			[Specificity.ATTRIBUTE_KIND]: 1
+		}), Selector.RESULT_ORDERINGS.UNSORTED);
 
-    this._attributeTestSelector = attributeTestSelector;
-}
+		this._attributeTestSelector = attributeTestSelector;
+	}
 
-AttributeAxis.prototype = Object.create(Selector.prototype);
-AttributeAxis.prototype.constructor = AttributeAxis;
+	equals (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
 
-AttributeAxis.prototype.equals = function (otherSelector) {
-    if (this === otherSelector) {
-        return true;
-    }
+		return otherSelector instanceof AttributeAxis &&
+			this._attributeTestSelector.equals(otherSelector._attributeTestSelector);
+	}
 
-    return otherSelector instanceof AttributeAxis &&
-        this._attributeTestSelector.equals(otherSelector._attributeTestSelector);
-};
-
-AttributeAxis.prototype.evaluate = function (dynamicContext) {
-    var contextItem = dynamicContext.contextItem,
+	evaluate (dynamicContext) {
+		var contextItem = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;
 
-    if (!contextItem.value[0].instanceOfType('element()')) {
-        return Sequence.empty();
-    }
+		if (!contextItem.value[0].instanceOfType('element()')) {
+			return Sequence.empty();
+		}
 
-    var attributes = domFacade
-        .getAllAttributes(contextItem.value[0].value)
-        .map(function (attribute) {
-            return new NodeValue(domFacade, new AttributeNode(
-                contextItem.value[0].value,
-                attribute.name,
-                attribute.value
-            ));
-        }).filter(function (attributeNodeValue) {
-            var scopedContext = dynamicContext.createScopedContext({
-                contextItem: Sequence.singleton(attributeNodeValue)
-            });
-            return this._attributeTestSelector.evaluate(scopedContext).getEffectiveBooleanValue();
-        }.bind(this));
+		var attributes = domFacade
+			.getAllAttributes(contextItem.value[0].value)
+			.map(function (attribute) {
+				return new NodeValue(domFacade, new AttributeNode(
+					contextItem.value[0].value,
+					attribute.name,
+					attribute.value
+				));
+			}).filter(function (attributeNodeValue) {
+				var scopedContext = dynamicContext.createScopedContext({
+						contextItem: Sequence.singleton(attributeNodeValue)
+					});
+				return this._attributeTestSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+			}.bind(this));
 
-    return new Sequence(attributes);
-};
-
+		return new Sequence(attributes);
+	}
+}
 export default AttributeAxis;

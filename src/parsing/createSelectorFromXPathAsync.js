@@ -46,11 +46,11 @@ var blob = new Blob([compileFunction]),
  */
 var waitingTaskCallbackByTaskKey = Object.create(null);
 
-worker.onmessage = function (event) {
+worker.onmessage = function (/** @type {MessageEvent} */ event) {
     waitingTaskCallbackByTaskKey[event.data['key']](event.data);
 };
 
-worker.onerror = function (event) {
+worker.onerror = function (/** @type {Event} */ event) {
     console.error(event);
 };
 
@@ -68,38 +68,38 @@ function recreateDatabase (database) {
 var databaseLoadingDone = () => new Promise(function (resolve, reject) {
     var databaseCreateRequest = indexedDB.open(SELECTOR_INDEXED_DB_NAME, XPATHPARSER_VERSION);
     databaseCreateRequest.onsuccess = function () {
-        var db = this.result;
+        var db = databaseCreateRequest.result;
         resolve(db);
     };
 
     databaseCreateRequest.onerror = function (evt) {
         // event.error can not be used, as well as error.code.
-        if (this.error.name === 'VersionError') {
+        if (databaseCreateRequest.error.name === 'VersionError') {
             evt.preventDefault();
-            console.warn('Selector persisting cache downgrade needed. Recreating database.', this.error);
+            console.warn('Selector persisting cache downgrade needed. Recreating database.', databaseCreateRequest.error);
             var deleteDatabaseRequest = indexedDB.deleteDatabase(SELECTOR_INDEXED_DB_NAME);
             deleteDatabaseRequest.onsuccess = function () {
                 // Re-open database, do not retry if errors
                 var secondAttemptCreateRequest = indexedDB.open(SELECTOR_INDEXED_DB_NAME, XPATHPARSER_VERSION);
                 secondAttemptCreateRequest.onsuccess = function () {
-                    var db = this.result;
+                    var db = secondAttemptCreateRequest.result;
                     resolve(db);
                 };
                 secondAttemptCreateRequest.onupgradeneeded = function () {
-                    return recreateDatabase(this.result);
+                    return recreateDatabase(secondAttemptCreateRequest.result);
                 };
             };
             deleteDatabaseRequest.onerror = function () {
-                reject(this.error);
+                reject(deleteDatabaseRequest.error);
             };
             return;
         }
 
-        reject(this.error);
+        reject(databaseCreateRequest.error);
     };
 
     databaseCreateRequest.onupgradeneeded = function () {
-        return recreateDatabase(this.result);
+        return recreateDatabase(databaseCreateRequest.result);
     };
 });
 
@@ -183,7 +183,7 @@ export default function createSelectorFromXPathAsync (xPathString) {
                         var objectStore = db.transaction(SELECTOR_STORE_NAME, 'readonly').objectStore(SELECTOR_STORE_NAME);
                         var request = objectStore.get(xPathString);
                         request.onsuccess = function (event) {
-                            var xPathAndAst = this.result;
+                            var xPathAndAst = request.result;
                             if (!xPathAndAst) {
                                 // Not found, compile it.
                                 compileXPathAsync(db, xPathString).then(resolve, reject);

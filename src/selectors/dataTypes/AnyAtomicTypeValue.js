@@ -2,7 +2,8 @@ import Item from './Item';
 
 /**
  * @constructor
- * @extends {Item}
+ * @extends {Item<T>}
+ * @template T
  * @param  {!(string|number|boolean)}  value
  */
 function AnyAtomicTypeValue (value) {

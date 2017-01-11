@@ -3,7 +3,7 @@ import NodeValue from './NodeValue';
 
 /**
  * @constructor
- * @extends {Item<Array<Item>>}
+ * @extends {Item<Array<Item<?>>>}
  * @param  {?Array<*>=}  initialValues
  */
 function Sequence (initialValues) {
@@ -12,10 +12,17 @@ function Sequence (initialValues) {
 
 Sequence.prototype = Object.create(Item.prototype);
 
+/**
+ * @param   {!Item}  value
+ * @return  {!Sequence}
+ */
 Sequence.singleton = function (value) {
     return new Sequence([value]);
 };
 
+/**
+ * @return  {!Sequence}
+ */
 Sequence.empty = function () {
     return new Sequence([]);
 };

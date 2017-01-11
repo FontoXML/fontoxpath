@@ -7,6 +7,9 @@ import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 // This should work for maximal reuse of instances:
 // NodeValue has a strong ref to a Node, but when it's only referenced by this weakmap, it should be eligible for GC
 // When it is collected, the Node may be collected too
+/**
+ * @type {WeakMap<!Node, !NodeValue>}
+ */
 const nodeValueByNode = new WeakMap();
 
 /**
@@ -25,6 +28,8 @@ function NodeValue (domFacade, node) {
 
     this._domFacade = domFacade;
     this.nodeType = node.nodeType;
+	this.target = null;
+
     switch (node.nodeType) {
         case this.value.ATTRIBUTE_NODE:
             this.nodeName = this.value.nodeName;
@@ -36,12 +41,13 @@ function NodeValue (domFacade, node) {
         case this.value.PROCESSING_INSTRUCTION_NODE:
             // A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
             this.nodeName = this.value.target;
+			this.target = node.target;
+
             break;
         default:
             // All other nodes have no name
             this.nodeName = null;
     }
-    this.target = node.target;
     return this;
 }
 

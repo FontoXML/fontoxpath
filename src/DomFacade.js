@@ -14,7 +14,7 @@ function DomFacade (domFacade) {
  * @return  {boolean}
  */
 DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node) {
-	return node.nodeType === node.ATTRIBUTE_NODE;
+	return node.nodeType === 2;
 };
 
 /**
@@ -23,7 +23,7 @@ DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node
  */
 DomFacade.prototype.getParentNode = function (node) {
 	if (this.isAttributeNode(node)) {
-		return node.getParentNode();
+		return node.parentNode;
 	}
 	return this._domFacade.getParentNode(node);
 };

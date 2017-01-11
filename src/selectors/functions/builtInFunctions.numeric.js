@@ -25,7 +25,7 @@ export default {
 			name: 'number',
 			argumentTypes: [],
 			returnType: 'xs:double',
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnNumber)
+			callFunction: contextItemAsFirstArgument.bind(null, fnNumber)
 		}
 	],
 	functions: {

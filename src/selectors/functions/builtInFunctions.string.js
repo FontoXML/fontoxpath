@@ -164,7 +164,7 @@ export default {
 			name: 'string',
 			argumentTypes: [],
 			returnType: 'xs:string',
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnString)
+			callFunction: contextItemAsFirstArgument.bind(null, fnString)
 		},
 
 		{

@@ -4,46 +4,51 @@ import MapValue from '../dataTypes/MapValue';
 import Sequence from '../dataTypes/Sequence';
 
 /**
- * @constructor
  * @extends {Selector}
- * @param  {Array<Selector>}  entries  key-value tuples of selectors which will evaluate to key / value pairs
  */
-function MapConstructor (entries) {
-	Selector.call(this, new Specificity({
-		[Specificity.EXTERNAL_KIND]: 1
-	}), Selector.RESULT_ORDER_UNSORTED);
-	this._entries = entries;
-}
-
-MapConstructor.prototype = Object.create(Selector.prototype);
-MapConstructor.prototype.constructor = MapConstructor;
-
-MapConstructor.prototype.equals = function (otherSelector) {
-	if (this === otherSelector) {
-		return true;
+class MapConstructor extends Selector {
+	/**
+	 * @param  {Array<{key: !Selector, value:! Selector}>}  entries  key-value tuples of selectors which will evaluate to key / value pairs
+	 */
+	constructor (entries) {
+		super(new Specificity({
+			[Specificity.EXTERNAL_KIND]: 1
+		}), Selector.RESULT_ORDERINGS.UNSORTED);
+		this._entries = entries;
 	}
 
-	return otherSelector instanceof MapConstructor &&
-		this._entries.length === otherSelector._entries.length &&
-		this._entries.every(function (keyValuePair, i) {
-			return otherSelector._entries[i].key.equals(keyValuePair.key) &&
-				otherSelector._entries[i].value.equals(keyValuePair.value);
-		});
-};
-
-MapConstructor.prototype.evaluate = function (dynamicContext) {
-	var keyValuePairs = this._entries.map(function (keyValuePair) {
-		var keySequence = keyValuePair.key.evaluate(dynamicContext).atomize();
-		if (!keySequence.isSingleton()) {
-			throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
+	equals (otherSelector) {
+		if (this === otherSelector) {
+			return true;
 		}
-		return {
-			key: keySequence.value[0],
-			value: keyValuePair.value.evaluate(dynamicContext)
-		};
-	});
 
-	return Sequence.singleton(new MapValue(keyValuePairs));
-};
+		if (!(otherSelector instanceof MapConstructor)) {
+			return false;
+		}
+
+		const otherMapConstructor = /** @type {MapConstructor} */ (otherSelector);
+
+		return this._entries.length === otherMapConstructor._entries.length &&
+			this._entries.every(function (keyValuePair, i) {
+				return otherMapConstructor._entries[i].key.equals(keyValuePair.key) &&
+					otherMapConstructor._entries[i].value.equals(keyValuePair.value);
+			});
+	}
+
+	evaluate (dynamicContext) {
+		var keyValuePairs = this._entries.map(function (keyValuePair) {
+				var keySequence = keyValuePair.key.evaluate(dynamicContext).atomize();
+				if (!keySequence.isSingleton()) {
+					throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
+				}
+				return {
+					key: keySequence.value[0],
+					value: keyValuePair.value.evaluate(dynamicContext)
+				};
+			});
+
+		return Sequence.singleton(new MapValue(keyValuePairs));
+	}
+}
 
 export default MapConstructor;

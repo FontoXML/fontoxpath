@@ -5,37 +5,36 @@ import Sequence from '../dataTypes/Sequence';
 
 /**
  * The Sequence selector evaluates its operands and returns them as a single sequence
- * @constructor
- * @extends Selector
  *
- * @param  {Array<Selector>}  selectors
+ * @extends {Selector}
  */
-function SequenceOperator (selectors) {
-    Selector.call(
-        this,
-        selectors.reduce(function (specificity, selector) {
-            return specificity.add(selector.specificity);
-        }, new Specificity({})),
-        Selector.RESULT_ORDER_UNSORTED);
-    this._selectors = selectors;
+class SequenceOperator extends Selector {
+	/**
+	 * @param  {!Array<!Selector>}  selectors
+	 */
+	constructor (selectors) {
+		super(
+			selectors.reduce(function (specificity, selector) {
+				return specificity.add(selector.specificity);
+			}, new Specificity({})),
+			Selector.RESULT_ORDERINGS.UNSORTED);
+		this._selectors = selectors;
+	}
+
+	equals (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof SequenceOperator &&
+			isSameSetOfSelectors(this._selectors, otherSelector._selectors);
+	}
+
+	evaluate (dynamicContext) {
+		return this._selectors.reduce(function (accum, selector) {
+			return accum.merge(selector.evaluate(dynamicContext));
+		}, new Sequence());
+	}
 }
-
-SequenceOperator.prototype = Object.create(Selector.prototype);
-SequenceOperator.prototype.constructor = SequenceOperator;
-
-SequenceOperator.prototype.equals = function (otherSelector) {
-    if (this === otherSelector) {
-        return true;
-    }
-
-    return otherSelector instanceof SequenceOperator &&
-        isSameSetOfSelectors(this._selectors, otherSelector._selectors);
-};
-
-SequenceOperator.prototype.evaluate = function (dynamicContext) {
-    return this._selectors.reduce(function (accum, selector) {
-        return accum.merge(selector.evaluate(dynamicContext));
-    }, new Sequence());
-};
 
 export default SequenceOperator;

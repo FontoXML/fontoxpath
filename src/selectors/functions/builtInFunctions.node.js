@@ -38,7 +38,7 @@ export default {
 			name: 'name',
 			argumentTypes: [],
 			returnType: 'xs:string',
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnName)
+			callFunction: contextItemAsFirstArgument.bind(null, fnName)
 		},
 
 		{
@@ -52,7 +52,7 @@ export default {
 			name: 'node-name',
 			argumentTypes: [],
 			returnType: 'xs:QName?',
-			callFunction: contextItemAsFirstArgument.bind(undefined, fnNodeName)
+			callFunction: contextItemAsFirstArgument.bind(null, fnNodeName)
 		},
 	],
 	functions: {

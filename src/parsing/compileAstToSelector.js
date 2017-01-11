@@ -45,6 +45,10 @@ import Selector from '../selectors/Selector';
 //    * name()
 //  * operators, such as >, <, *, +, | and =, unless in the context of attributes
 //  * variables
+/**
+ * @param  {!Array<?>}  ast
+ * @return {!Selector}
+ */
 function compile (ast) {
 	var args = ast.slice(1);
 	switch (ast[0]) {
@@ -340,8 +344,8 @@ function varRef (args) {
 }
 
 /**
- * @param   {Array<*>}  xPathAst
- * @return  {Selector}
+ * @param   {!Array<?>}  xPathAst
+ * @return  {!Selector}
  */
 export default function parseSelectorAsync (xPathAst) {
     return compile(xPathAst);

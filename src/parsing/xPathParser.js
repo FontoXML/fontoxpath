@@ -1,8 +1,6 @@
 import xPathParserRaw from './xPathParser.raw.js';
-var module = /** @type {({xPathParser: {parse:function(!string):!Array<*>}, SyntaxError:Error})} */ ({});
+var module = /** @type {({xPathParser: {parse:function(!string):?}, SyntaxError:?})} */ ({});
 new Function(xPathParserRaw).call(module);
 
-export default {
-	parse: module['xPathParser']['parse'],
-	SyntaxError: module['xPathParser']['SyntaxError']
-};
+export const parse = module['xPathParser']['parse'];
+export const SyntaxError = module['xPathParser']['SyntaxError'];

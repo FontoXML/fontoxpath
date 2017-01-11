@@ -2,73 +2,61 @@ import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
-import isSameArray from '../isSameArray';
 
 /**
- * @constructor
- * @extends Selector
- * @param  {string|Array<string>}  nodeName
+ * @extends {Selector}
  */
-function NodeNameSelector (nodeName) {
-    var specificity = {
-            [Specificity.NODENAME_KIND]: 1
-    };
-    if (nodeName === '*') {
-        specificity = {
-            [Specificity.NODETYPE_KIND]: 1
-        };
-    }
-    Selector.call(this, new Specificity(specificity), Selector.RESULT_ORDER_SORTED);
+class NodeNameSelector extends Selector {
+	/**
+	 * @param  {string}  nodeName
+	 */
+	constructor (nodeName) {
+		var specificity = {
+				[Specificity.NODENAME_KIND]: 1
+			};
+		if (nodeName === '*') {
+			specificity = {
+				[Specificity.NODETYPE_KIND]: 1
+			};
+		}
+		super(new Specificity(specificity), Selector.RESULT_ORDERINGS.SORTED);
 
-    // Do not coerce the string/string[] to string[] because this costs performance in domInfo.isElement
-    this._nodeName = nodeName;
+		this._nodeName = nodeName;
+	}
 
-    if (Array.isArray(this._nodeName)) {
-        this._nodeName = this._nodeName.concat().sort();
-    }
+	equals (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		if (!(otherSelector instanceof NodeNameSelector)) {
+			return false;
+		}
+		return otherSelector._nodeName === this._nodeName;
+	}
+
+	evaluate (dynamicContext) {
+		var sequence = dynamicContext.contextItem,
+			node = sequence.value[0];
+
+		if (!node.instanceOfType('element()') && !node.instanceOfType('attribute()')) {
+			return Sequence.singleton(BooleanValue.FALSE);
+		}
+
+		if (this._nodeName === '*') {
+			return Sequence.singleton(BooleanValue.TRUE);
+		}
+		var returnValue = this._nodeName === node.nodeName;
+		return Sequence.singleton(returnValue ? BooleanValue.TRUE : BooleanValue.FALSE);
+	}
+
+	getBucket () {
+		if (this._nodeName === '*') {
+			// While * is a test matching attributes or elements, buckets are never used to match nodes.
+			return 'type-1';
+		}
+		return 'name-' + this._nodeName;
+	}
 }
-
-NodeNameSelector.prototype = Object.create(Selector.prototype);
-NodeNameSelector.prototype.constructor = NodeNameSelector;
-
-NodeNameSelector.prototype.equals = function (otherSelector) {
-    if (this === otherSelector) {
-        return true;
-    }
-
-    if (!(otherSelector instanceof NodeNameSelector)) {
-        return false;
-    }
-
-    var nodeNames = Array.isArray(this._nodeName) ? this._nodeName : [this._nodeName],
-        otherNodeNames = Array.isArray(otherSelector._nodeName) ? otherSelector._nodeName : [otherSelector._nodeName];
-
-    return isSameArray(nodeNames, otherNodeNames);
-};
-
-NodeNameSelector.prototype.evaluate = function (dynamicContext) {
-    var sequence = dynamicContext.contextItem,
-        node = sequence.value[0];
-
-    if (!node.instanceOfType('element()') && !node.instanceOfType('attribute()')) {
-        return Sequence.singleton(BooleanValue.FALSE);
-    }
-
-    if (this._nodeName === '*') {
-        return Sequence.singleton(BooleanValue.TRUE);
-    }
-    var returnValue = Array.isArray(this._nodeName) ?
-        this._nodeName.indexOf(node.nodeName) > -1 :
-        this._nodeName === node.nodeName;
-    return Sequence.singleton(returnValue ? BooleanValue.TRUE : BooleanValue.FALSE);
-};
-
-NodeNameSelector.prototype.getBucket = function () {
-    if (this._nodeName === '*') {
-        // While * is a test matching attributes or elements, buckets are never used to match nodes.
-        return 'type-1';
-    }
-    return 'name-' + this._nodeName;
-};
 
 export default NodeNameSelector;

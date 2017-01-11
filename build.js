@@ -25,6 +25,7 @@ function doSelectorsBuild () {
 	return new Promise((resolve, reject) => {
 		new Compiler({
 			assume_function_wrapper: true,
+//			new_type_inf: true,
 			language_in: 'ES6',
 			language_out: 'ES5',
 			create_source_map: './dist/fontoxpath.js.map',

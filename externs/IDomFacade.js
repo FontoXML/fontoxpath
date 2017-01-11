@@ -59,7 +59,7 @@ IDomFacade.prototype.getChildNodes = function (_node) {
 
 /**
  * @export
- * @param   {!Node}    _node
+ * @param   {!Element}    _node
  * @param   {string}   _attributeName
  * @return  {?string}
  */

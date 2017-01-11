@@ -1,6 +1,7 @@
+import Selector from './Selector';
 /**
- * @param   {!Object}  selectors1
- * @param   {!Object}  selectors2
+ * @param   {!Array<!Selector>}  selectors1
+ * @param   {!Array<!Selector>}  selectors2
  * @return  {!boolean}
  */
 export default function isSameSetOfSelectors (selectors1, selectors2) {

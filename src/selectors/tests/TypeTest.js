@@ -4,31 +4,30 @@ import BooleanValue from '../dataTypes/BooleanValue';
 import Specificity from '../Specificity';
 
 /**
- * @constructor
- * @extends Selector
- * @param  {string}  type
+ * @extends {Selector}
  */
-function TypeTest (type) {
-    Selector.call(this, new Specificity({}), Selector.RESULT_ORDER_SORTED);
+class TypeTest extends Selector {
+	/**
+	 * @param  {string}  type
+	 */
+	constructor (type) {
+		super(new Specificity({}), Selector.RESULT_ORDERINGS.SORTED);
 
-    this._type = type;
+		this._type = type;
+	}
+
+	equals (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof TypeTest &&
+			this._type === otherSelector._type;
+	}
+
+	evaluate (dynamicContext) {
+		var booleanValue = dynamicContext.contextItem.value[0].instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		return Sequence.singleton(booleanValue);
+	}
 }
-
-TypeTest.prototype = Object.create(Selector.prototype);
-TypeTest.prototype.constructor = TypeTest;
-
-TypeTest.prototype.equals = function (otherSelector) {
-    if (this === otherSelector) {
-        return true;
-    }
-
-    return otherSelector instanceof TypeTest &&
-        this._type === otherSelector._type;
-};
-
-TypeTest.prototype.evaluate = function (dynamicContext) {
-    var booleanValue = dynamicContext.contextItem.value[0].instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
-    return Sequence.singleton(booleanValue);
-};
-
 export default TypeTest;

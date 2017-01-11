@@ -4,40 +4,39 @@ import BooleanValue from '../dataTypes/BooleanValue';
 import Specificity from '../Specificity';
 
 /**
- * @constructor
- * @extends Selector
- * @param  {number}  nodeType
+ * @extends {Selector}
  */
-function NodeTypeSelector (nodeType) {
-    Selector.call(this, new Specificity({
-        [Specificity.NODETYPE_KIND]: 1
-    }), Selector.RESULT_ORDER_SORTED);
+class NodeTypeSelector extends Selector {
+	/**
+	 * @param  {number}  nodeType
+	 */
+	constructor (nodeType) {
+		super(new Specificity({
+			[Specificity.NODETYPE_KIND]: 1
+		}), Selector.RESULT_ORDERINGS.SORTED);
 
-    this._nodeType = nodeType;
+		this._nodeType = nodeType;
+	}
+
+	evaluate (dynamicContext) {
+		var sequence = dynamicContext.contextItem;
+		var booleanValue = this._nodeType === sequence.value[0].value.nodeType ?
+			BooleanValue.TRUE :
+			BooleanValue.FALSE;
+		return Sequence.singleton(booleanValue);
+	}
+
+	equals (otherSelector) {
+		if (this === otherSelector) {
+			return true;
+		}
+
+		return otherSelector instanceof NodeTypeSelector &&
+			this._nodeType === otherSelector._nodeType;
+	}
+
+	getBucket () {
+		return 'type-' + this._nodeType;
+	}
 }
-
-NodeTypeSelector.prototype = Object.create(Selector.prototype);
-NodeTypeSelector.prototype.constructor = NodeTypeSelector;
-
-NodeTypeSelector.prototype.evaluate = function (dynamicContext) {
-    var sequence = dynamicContext.contextItem;
-    var booleanValue = this._nodeType === sequence.value[0].value.nodeType ?
-        BooleanValue.TRUE :
-        BooleanValue.FALSE;
-    return Sequence.singleton(booleanValue);
-};
-
-NodeTypeSelector.prototype.equals = function (otherSelector) {
-    if (this === otherSelector) {
-        return true;
-    }
-
-    return otherSelector instanceof NodeTypeSelector &&
-        this._nodeType === otherSelector._nodeType;
-};
-
-NodeTypeSelector.prototype.getBucket = function () {
-    return 'type-' + this._nodeType;
-};
-
 export default NodeTypeSelector;

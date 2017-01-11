@@ -9,11 +9,11 @@ function opTo (_dynamicContext, fromValue, toValue) {
 		return Sequence.empty();
 	}
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
-	return new Sequence(
-		Array.apply(null, { length: to - from + 1 })
-			.map(function (_, i) {
-				return new IntegerValue(from + i);
-			}));
+	var arr = [];
+	for (var i = 0; i < to - from + 1; i++) {
+		arr[i] = new IntegerValue(from + i);
+	}
+	return new Sequence(arr);
 }
 
 function opExcept (dynamicContext, firstNodes, secondNodes) {

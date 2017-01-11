@@ -33,13 +33,18 @@ function evaluateXPath (xPathSelector, contextNode, blueprint, variables, return
 	const contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode));
 	const untypedVariables = Object.assign(variables || {});
 	untypedVariables['theBest'] = 'FontoXML is the best!';
-	const typedVariables = Object.keys(untypedVariables).reduce(function (typedVariables, variableName) {
+	/**
+	 * @type {!Object}
+	 */
+	const typedVariables = Object.keys(untypedVariables)
+		.reduce(function (typedVariables, variableName) {
 			typedVariables[variableName] = adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
 			return typedVariables;
 		}, Object.create(null));
 
 	const dynamicContext = new DynamicContext({
 			contextItem: contextSequence,
+			contextSequence: null,
 			domFacade: domFacade,
 			variables: typedVariables
 		});

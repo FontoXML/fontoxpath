@@ -4,38 +4,6 @@ import Sequence from '../dataTypes/Sequence';
 import sortNodeValues from '../dataTypes/sortNodeValues';
 import NodeValue from '../dataTypes/NodeValue';
 
-/**
- * @constructor
- * @extends Selector
- * @param  {Array<Selector>}  stepSelectors
- */
-function PathSelector (stepSelectors) {
-    Selector.call(
-        this,
-        stepSelectors.reduce(function (specificity, selector) {
-            // Implicit AND, so sum
-            return specificity.add(selector.specificity);
-        }, new Specificity({})),
-        Selector.RESULT_ORDER_SORTED);
-
-    this._stepSelectors = stepSelectors;
-}
-
-PathSelector.prototype = Object.create(Selector.prototype);
-PathSelector.prototype.constructor = PathSelector;
-
-PathSelector.prototype.equals = function (otherSelector) {
-    return otherSelector instanceof PathSelector &&
-        this._stepSelectors.length === otherSelector._stepSelectors.length &&
-        this._stepSelectors.every(function (selector, i) {
-            return otherSelector._stepSelectors[i].equals(selector);
-        });
-};
-
-PathSelector.prototype.getBucket = function () {
-    return this._stepSelectors[0].getBucket();
-};
-
 function sortResults (domFacade, result) {
     var resultContainsNodes = false,
         resultContainsNonNodes = false;
@@ -43,7 +11,7 @@ function sortResults (domFacade, result) {
         if (resultValue instanceof NodeValue) {
             resultContainsNodes = true;
         }
- else {
+		else {
             resultContainsNonNodes = true;
         }
     });
@@ -57,58 +25,97 @@ function sortResults (domFacade, result) {
     return result;
 }
 
-PathSelector.prototype.evaluate = function (dynamicContext) {
-    var nodeSequence = dynamicContext.contextItem;
+/**
+ * @extends {Selector}
+ */
+class PathSelector extends Selector {
+	/**
+	 * @param  {!Array<!Selector>}  stepSelectors
+	 */
+	constructor (stepSelectors) {
+		super(
+			stepSelectors.reduce(function (specificity, selector) {
+				// Implicit AND, so sum
+				return specificity.add(selector.specificity);
+			}, new Specificity({})),
+			Selector.RESULT_ORDERINGS.SORTED);
 
-    var result = this._stepSelectors.reduce(function (intermediateResultNodes, selector) {
-        // All but the last step should return nodes. The last step may return whatever, as long as it is not mixed
-        intermediateResultNodes.forEach(function (intermediateResultNode) {
-            if (!(intermediateResultNode instanceof NodeValue)) {
-                throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
-            }
-        });
+		this._stepSelectors = stepSelectors;
+	}
 
-        var resultValuesInOrderOfEvaluation = [];
-        var resultSet = new Set();
-        intermediateResultNodes.forEach(function (nodeValue) {
-            var newResults = selector.evaluate(dynamicContext.createScopedContext({
-                contextItem: Sequence.singleton(nodeValue),
-                contextSequence: null
-            }));
+	equals (otherSelector) {
+		if (otherSelector === this) {
+			return true;
+		}
+		if (!(otherSelector instanceof PathSelector)) {
+			return false;
+		}
 
-            if (newResults.isEmpty()) {
-                return;
-            }
+		const otherPathSelector = /** @type {PathSelector} */ (otherSelector);
 
-            var sortedResultNodes;
-            if (selector.expectedResultOrder === Selector.RESULT_ORDER_REVERSE_SORTED) {
-                sortedResultNodes = newResults.value.reverse();
-            }
- else {
-                sortedResultNodes = newResults.value;
-            }
+		return this._stepSelectors.length === otherPathSelector._stepSelectors.length &&
+			this._stepSelectors.every(function (selector, i) {
+				return otherPathSelector._stepSelectors[i].equals(selector);
+			});
+	}
 
-            sortedResultNodes.forEach(function (newResult) {
-                if (newResult instanceof NodeValue) {
-                    // Because the intermediateResults are ordered, and these results are ordered too, we should be able to dedupe and concat these results
-                    if (resultSet.has(newResult)) {
-                        return;
-                    }
-                    resultSet.add(newResult);
-                }
-                resultValuesInOrderOfEvaluation.push(newResult);
-            });
-        }, []);
+	getBucket () {
+		return this._stepSelectors[0].getBucket();
+	}
 
-        if (selector.expectedResultOrder === selector.RESULT_ORDER_UNSORTED) {
-            // The result should be sorted before we can continue
-            resultValuesInOrderOfEvaluation = sortResults(dynamicContext.domFacade, resultValuesInOrderOfEvaluation);
-        }
+	evaluate (dynamicContext) {
+		var nodeSequence = dynamicContext.contextItem;
 
-        return resultValuesInOrderOfEvaluation;
-    }, nodeSequence.value);
+		var result = this._stepSelectors.reduce(function (intermediateResultNodes, selector) {
+				// All but the last step should return nodes. The last step may return whatever, as long as it is not mixed
+				intermediateResultNodes.forEach(function (intermediateResultNode) {
+					if (!(intermediateResultNode instanceof NodeValue)) {
+						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
+					}
+				});
 
-    return new Sequence(result);
-};
+				var resultValuesInOrderOfEvaluation = [];
+				var resultSet = new Set();
+				intermediateResultNodes.forEach(function (nodeValue) {
+					var newResults = selector.evaluate(dynamicContext.createScopedContext({
+							contextItem: Sequence.singleton(nodeValue),
+							contextSequence: null
+						}));
+
+					if (newResults.isEmpty()) {
+						return;
+					}
+
+					var sortedResultNodes;
+					if (selector.expectedResultOrder === Selector.RESULT_ORDERINGS.REVERSE_SORTED) {
+						sortedResultNodes = newResults.value.reverse();
+					}
+					else {
+						sortedResultNodes = newResults.value;
+					}
+
+					sortedResultNodes.forEach(function (newResult) {
+						if (newResult instanceof NodeValue) {
+							// Because the intermediateResults are ordered, and these results are ordered too, we should be able to dedupe and concat these results
+							if (resultSet.has(newResult)) {
+								return;
+							}
+							resultSet.add(newResult);
+						}
+						resultValuesInOrderOfEvaluation.push(newResult);
+					});
+				}, []);
+
+				if (selector.expectedResultOrder === selector.RESULT_ORDERINGS.UNSORTED) {
+					// The result should be sorted before we can continue
+					resultValuesInOrderOfEvaluation = sortResults(dynamicContext.domFacade, resultValuesInOrderOfEvaluation);
+				}
+
+				return resultValuesInOrderOfEvaluation;
+			}, nodeSequence.value);
+
+		return new Sequence(result);
+	}
+}
 
 export default PathSelector;

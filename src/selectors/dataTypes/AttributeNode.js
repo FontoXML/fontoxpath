@@ -11,7 +11,7 @@ import StringValue from './StringValue';
 function AttributeNode (element, attributeName, attributeValue) {
     this.value = attributeValue;
     this.nodeName = attributeName;
-    this._element = element;
+    this.parentNode = element;
 
     this.nodeType = this.ATTRIBUTE_NODE;
 }
@@ -75,10 +75,6 @@ AttributeNode.prototype.DOCUMENT_FRAGMENT_NODE = AttributeNode.DOCUMENT_FRAGMENT
  * @const
  */
 AttributeNode.prototype.NOTATION_NODE = AttributeNode.NOTATION_NODE = 12;
-
-AttributeNode.prototype.getParentNode = function () {
-    return this._element;
-};
 
 AttributeNode.prototype.atomize = function () {
     // TODO: Mix in types
