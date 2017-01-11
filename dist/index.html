@@ -1,14 +1,84 @@
 <html>
-  <head>
-	<script src="./fontoxpath.js" type="application/javascript">
-	</script>
-  </head>
-  <body>
-	<div>
-	  <p>TEST</p>
-	</div>
-  </body>
-  <script type="application/javascript">
+	<head>
+		<script src="./fontoxpath.js" type="application/javascript">
+		</script>
+		<style>
+		 #xmlFile * {
+			 all: initial;
+			 display: block;
+			 margin: 5px 5px 5px 5px;
+			 border: 1px solid black;
+			 min-height: 5px;
+		 }
+		</style>
+	</head>
+	<body>
+		<div>
+			<h4>Edit the XML here</h4>
+			<pre id="xmlSource" contentEditable="true"> </pre>
+			<h4>Edit the XPath here:</h4>
+			<input type="text" id="xpathField" value="//*"></input>
+		</div>
+		<hr>
+		<div>
+			<p id="log" />
+			<h4>Preview</h4>
+			<p id="xmlFile"/>
+			<h4>Result, as text</h4>
+			<pre id="resultText"></pre>
+		</div>
+	</body>
+	<script type="application/javascript">
+	 	(function () {
+			console.log('wecolme!');
+			window.xmlSource.innerText =`<xml>
+	<herp>Herp</herp>
+	<derp id="durp">derp</derp>
+	<hurr durr="durrdurrdurr">durrrrrr</hurr>
+</xml>
+`;
 
-  </script>
+			const domParser = new DOMParser();
+			let xmlDoc = domParser.parseFromString(window.xmlSource.innerText, 'text/xml');
+			window.xmlFile.innerHTML = window.xmlSource.innerText;
+
+			function rerunXPath () {
+				let resultNodes;
+				try {
+					resultNodes = fontoxpath.evaluateXPathToNodes(window.xpathField.value, xmlDoc, fontoxpath.domFacade);
+				} catch (err) {
+					log.innerText = 'Error: ' + err.message;
+					return;
+				}
+				log.innerText = '';;
+				const text = resultNodes.map(node => node.nodeType === node.TEXT_NODE ? node.textContent : node.outerHTML).join('\n');
+				window.resultText.innerText = text;
+				const paths = resultNodes.map(
+					node => fontoxpath.evaluateXPathToString(
+						'if (not(self::element())) then "false" else ancestor-or-self::*!("child::*[" || count(preceding-sibling::*) + 1 || "]") => reverse() => string-join("/")',
+						node,
+						fontoxpath.domFacade));
+				const htmlNodes = paths
+					.map(path => fontoxpath.evaluateXPathToFirstNode(path, window.xmlFile, fontoxpath.domFacade))
+					.filter(n => !!n);
+				htmlNodes.forEach(node => node.setAttribute('style', 'border: 1px solid red'));
+			}
+			window.xmlSource.oninput = xpathField.oninput = evt => {
+				try {
+					xmlDoc = domParser.parseFromString(window.xmlSource.innerText, 'text/xml');
+					window.xmlFile.innerHTML = xmlDoc.documentElement.outerHTML;
+
+					if (fontoxpath.evaluateXPathToBoolean('//parseerror', xmlDoc, fontoxpath.domFacade)) {
+						log.innerText = 'Error: invalid XML';
+						return;
+					}
+					rerunXPath();
+				} catch (e)
+				{
+				}
+			};
+
+			rerunXPath();
+		}());
+	</script>
 </html>
