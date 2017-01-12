@@ -53,15 +53,15 @@
 				log.innerText = '';;
 				const text = resultNodes.map(node => node.nodeType === node.TEXT_NODE ? node.textContent : node.outerHTML).join('\n');
 				window.resultText.innerText = text;
-				const pointers = resultNodes.map(
-					node => fontoxpath.evaluateXPathToString(
-						'if (not(self::element())) then "false()" else ancestor-or-self::*!count(preceding-sibling::*) + 1 => reverse() => string-join("/")',
-						node,
-						fontoxpath.domFacade));
-				const htmlNodes = pointers
-					.map(pointer => fontoxpath.evaluateXPathToFirstNode('array{$pointer} => array:fold-left(., )', window.xmlFile, fontoxpath.domFacade))
-					.filter(n => !!n);
-				htmlNodes.forEach(node => node.setAttribute('style', 'border: 1px solid red'));
+ 				window.resultText.innerText = text;
+				const paths = resultNodes.map(
+ 					node => fontoxpath.evaluateXPathToString(
+	 					'if (not(self::element())) then "false" else ancestor-or-self::*!("child::*[" || count(preceding-sibling::*) + 1 || "]") => reverse() => string-join("/")',
+ 						node,
+ 						fontoxpath.domFacade));
+				const htmlNodes = paths
+					.map(path => fontoxpath.evaluateXPathToFirstNode(path, window.xmlFile, fontoxpath.domFacade))
+ 					.filter(n => !!n);
 			}
 			window.xmlSource.oninput = xpathField.oninput = evt => {
 				try {

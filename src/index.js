@@ -1,3 +1,4 @@
+import evaluateXPath from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
 import evaluateXPathToFirstNode from './evaluateXPathToFirstNode';
@@ -79,7 +80,9 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 */
 (function () {
 	if (typeof exports !== 'undefined') {
-		exports['domFacade'] = domFacade,
+		exports['compareSpecificity'] = compareSpecificity;
+		exports['domFacade'] = domFacade;
+		exports['evaluateXPath'] = evaluateXPath;
 		exports['evaluateXPathToArray'] = evaluateXPathToArray;
 		exports['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
 		exports['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
@@ -87,18 +90,18 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 		exports['evaluateXPathToNodes'] = evaluateXPathToNodes;
 		exports['evaluateXPathToNumber'] = evaluateXPathToNumber;
 		exports['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
-		exports['evaluateXPathToStrings'] = evaluateXPathToStrings;
 		exports['evaluateXPathToString'] = evaluateXPathToString;
+		exports['evaluateXPathToStrings'] = evaluateXPathToStrings;
+		exports['getBucketForSelector'] = getBucketForSelector;
+		exports['getBucketsForNode'] = getBucketsForNode;
 		exports['precompileXPath'] = precompileXPath;
 		exports['registerCustomXPathFunction'] = registerCustomXPathFunction;
-		exports['getBucketsForNode'] = getBucketsForNode;
-		exports['getBucketForSelector'] = getBucketForSelector;
-		exports['compareSpecificity'] = compareSpecificity;
 	}
 })();
 
 export {
 	domFacade,
+	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,

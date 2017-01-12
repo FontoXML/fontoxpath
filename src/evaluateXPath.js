@@ -189,58 +189,59 @@ function evaluateXPath (xPathSelector, contextNode, blueprint, variables, return
  * Returns the result of the query, can be anything depending on the query
  * @const
  */
-evaluateXPath.ANY_TYPE = 0;
+evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = 0;
 
 /**
  * Resolve to a number, like count((1,2,3)) resolves to 3.
  * @const
  */
-evaluateXPath.NUMBER_TYPE = 1;
+evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = 1;
 
 /**
  * Resolve to a string, like //someElement[1] resolves to the text content of the first someElement
  * @const
  */
-evaluateXPath.STRING_TYPE = 2;
+evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = 2;
 
 /**
  * Resolves to true or false, uses the effective boolean value to determin result. count(1) resolves to true, count(()) resolves to false
  * @const
  */
-evaluateXPath.BOOLEAN_TYPE = 3;
+evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = 3;
 
 /**
  * Resolve to all nodes the XPath resolves to. Returns nodes in the order the XPath would. Meaning (//a, //b) resolves to all A nodes, followed by all B nodes. //*[self::a or self::b] resolves to A and B nodes in document order.
  * @const
  */
-evaluateXPath.NODES_TYPE = 7;
+evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = 7;
 
 /**
- * Resolves to the first node NODES_TYPE would have resolved to.
+ * Resolves to the first node.NODES_TYPE would have resolved to.
  * @const
  */
-evaluateXPath.FIRST_NODE_TYPE = 9;
+evaluateXPath['FIRST_NODE_TYPE'] = evaluateXPath.FIRST_NODE_TYPE = 9;
 
 /**
  * Resolve to an array of strings
  * @const
  */
-evaluateXPath.STRINGS_TYPE = 10;
+evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = 10;
 
 /**
  * Resolve to an object, as a map
  */
-evaluateXPath.MAP_TYPE = 11;
+evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = 11;
 
 /**
  * Resolve to an array
+ * @const
  */
-evaluateXPath.ARRAY_TYPE = 12;
+evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = 12;
 
 /**
  * Resolve to an array of numbers
  * @const
  */
-evaluateXPath.NUMBERS_TYPE = 13;
+evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = 13;
 
 export default evaluateXPath;
