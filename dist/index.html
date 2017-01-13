@@ -1,15 +1,16 @@
 <html>
 	<head>
+		<title>fontoxpath</title>
 		<script src="./fontoxpath.js" type="application/javascript">
 		</script>
 		<style>
-		 #xmlFile * {
-			 all: initial;
-			 display: block;
-			 margin: 5px 5px 5px 5px;
-			 border: 1px solid black;
-			 min-height: 5px;
-		 }
+			#xmlFile * {
+				all: initial;
+				display: block;
+				margin: 5px 5px 5px 5px;
+				border: 1px solid black;
+				min-height: 5px;
+			}
 		</style>
 	</head>
 	<body>
@@ -30,7 +31,6 @@
 	</body>
 	<script type="application/javascript">
 	 	(function () {
-			console.log('wecolme!');
 			window.xmlSource.innerText =`<xml>
 	<herp>Herp</herp>
 	<derp id="durp">derp</derp>
@@ -52,16 +52,17 @@
 				}
 				log.innerText = '';;
 				const text = resultNodes.map(node => node.nodeType === node.TEXT_NODE ? node.textContent : node.outerHTML).join('\n');
-				window.resultText.innerText = text;
  				window.resultText.innerText = text;
 				const paths = resultNodes.map(
  					node => fontoxpath.evaluateXPathToString(
-	 					'if (not(self::element())) then "false" else ancestor-or-self::*!("child::*[" || count(preceding-sibling::*) + 1 || "]") => reverse() => string-join("/")',
+	 					'if (not(self::element())) then "false()" else ancestor-or-self::*!("child::*[" || count(preceding-sibling::*) + 1 || "]") => reverse() => string-join("/")',
  						node,
  						fontoxpath.domFacade));
 				const htmlNodes = paths
 					.map(path => fontoxpath.evaluateXPathToFirstNode(path, window.xmlFile, fontoxpath.domFacade))
  					.filter(n => !!n);
+
+				htmlNodes.forEach(node => node.setAttribute('style', 'border: 1px solid red'));
 			}
 			window.xmlSource.oninput = xpathField.oninput = evt => {
 				try {
