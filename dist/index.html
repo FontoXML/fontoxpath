@@ -48,6 +48,7 @@
 					resultNodes = fontoxpath.evaluateXPathToNodes(window.xpathField.value, xmlDoc, fontoxpath.domFacade);
 				} catch (err) {
 					log.innerText = 'Error: ' + err.message;
+					window.resultText.innerText = fontoxpath.evaluateXPath(window.xpathField.value, xmlDoc, fontoxpath.domFacade) + '';
 					return;
 				}
 				log.innerText = '';;
