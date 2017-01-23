@@ -26,8 +26,9 @@ import Selector from './selectors/Selector';
  */
 function evaluateXPath (xPathSelector, contextNode, blueprint, variables, returnType) {
 	returnType = returnType || evaluateXPath.ANY_TYPE;
+	let compiledSelector = xPathSelector;
 	if (typeof xPathSelector === 'string') {
-		xPathSelector = createSelectorFromXPath(xPathSelector);
+		compiledSelector = createSelectorFromXPath(xPathSelector);
 	}
 	const domFacade = new DomFacade(blueprint);
 	const contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode));
@@ -49,7 +50,7 @@ function evaluateXPath (xPathSelector, contextNode, blueprint, variables, return
 			variables: typedVariables
 		});
 
-	const rawResults = xPathSelector.evaluate(dynamicContext);
+	const rawResults = compiledSelector.evaluate(dynamicContext);
 
 	switch (returnType) {
 		case evaluateXPath.BOOLEAN_TYPE:
