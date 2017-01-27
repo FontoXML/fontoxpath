@@ -7,10 +7,12 @@ import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 // This should work for maximal reuse of instances:
 // NodeValue has a strong ref to a Node, but when it's only referenced by this weakmap, it should be eligible for GC
 // When it is collected, the Node may be collected too
+// We can not use it for the same domFacade though, since that is external and may have state, therefore we should keep re-use local to the domFacade.
+// TODO: This must work for all values, and be in a 'static context' of some sort
 /**
- * @type {WeakMap<!Node, !NodeValue>}
+ * @const {WeakMap<!IDomFacade, !WeakMap<!Node, !NodeValue>>}
  */
-const nodeValueByNode = new WeakMap();
+const nodeValueByDomFacadeByNode = new WeakMap();
 
 /**
  * @constructor
@@ -19,9 +21,18 @@ const nodeValueByNode = new WeakMap();
  * @param  {!Node}       node
  */
 function NodeValue (domFacade, node) {
-    if (nodeValueByNode.has(node)) {
-        return nodeValueByNode.get(node);
+	let nodeValueByNode;
+    if (nodeValueByDomFacadeByNode.has(domFacade)) {
+		nodeValueByNode = nodeValueByDomFacadeByNode.get(domFacade);
     }
+	else {
+		nodeValueByNode = new WeakMap();
+		nodeValueByDomFacadeByNode.set(domFacade, nodeValueByNode);
+	}
+	if (nodeValueByNode.has(node)) {
+		return nodeValueByNode.get(node);
+	}
+
     nodeValueByNode.set(node, this);
 
     Item.call(this, node);
@@ -89,15 +100,15 @@ NodeValue.prototype.atomize = function () {
     }
     var domFacade = this._domFacade;
     var allTextNodes = (function getTextNodes (node) {
-        if (node.nodeType === node.TEXT_NODE) {
-            return [node];
-        }
-        return domFacade.getChildNodes(node)
-            .reduce(function (textNodes, childNode) {
-                Array.prototype.push.apply(textNodes, getTextNodes(childNode));
-                return textNodes;
-            }, []);
-    })(this.value);
+			if (node.nodeType === node.TEXT_NODE) {
+				return [node];
+			}
+			return domFacade.getChildNodes(node)
+				.reduce(function (textNodes, childNode) {
+					Array.prototype.push.apply(textNodes, getTextNodes(childNode));
+					return textNodes;
+				}, []);
+		})(this.value);
 
     return new StringValue(allTextNodes.map(function (textNode) {
         return this._domFacade.getData(textNode);

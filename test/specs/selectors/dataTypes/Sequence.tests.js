@@ -3,6 +3,7 @@ import slimdom from 'slimdom';
 import BooleanValue from 'fontoxpath/selectors/dataTypes/BooleanValue';
 import NodeValue from 'fontoxpath/selectors/dataTypes/NodeValue';
 import Sequence from 'fontoxpath/selectors/dataTypes/Sequence';
+import { domFacade } from 'fontoxpath';
 
 let documentNode = new slimdom.Document();
 
@@ -42,7 +43,7 @@ describe('Sequence.getEffectiveBooleanValue()', () => {
 	});
 
 	it('returns true if the first item in the sequence is a NodeValue', () => {
-		const sequence = new Sequence([new NodeValue({}, documentNode.createElement('someElement'))]);
+		const sequence = new Sequence([new NodeValue(domFacade, documentNode.createElement('someElement'))]);
 		chai.expect(sequence.getEffectiveBooleanValue()).to.equal(true);
 	});
 

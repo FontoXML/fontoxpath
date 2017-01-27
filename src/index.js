@@ -17,7 +17,8 @@ import createSelectorFromXPath from './parsing/createSelectorFromXPath';
  * @constructor
  * @implements {IDomFacade}
  */
-function ReadOnlyDomFacade () {}
+function ReadOnlyDomFacade () {
+}
 
 ReadOnlyDomFacade.prototype.getParentNode = (node) => {
 	return node.parentNode;

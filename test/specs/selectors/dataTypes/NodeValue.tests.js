@@ -4,12 +4,36 @@ import AttributeNode from 'fontoxpath/selectors/dataTypes/AttributeNode';
 import NodeValue from 'fontoxpath/selectors/dataTypes/NodeValue';
 import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 import { domFacade } from 'fontoxpath';
+import DomFacade from 'fontoxpath/DomFacade';
 
 let documentNode;
 
 describe('NodeValue.instanceOfType()', () => {
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
+	});
+
+	describe('instance reuse', () => {
+		it('can reuse a nodeValue instance for the same node', () => {
+			const element = documentNode.createElement('someElement');
+			const nodeValue1 = new NodeValue(domFacade, element);
+			const nodeValue2 = new NodeValue(domFacade, element);
+			chai.assert.equal(nodeValue1, nodeValue2);
+		});
+
+		it('does not reuse a nodeValue instance for another node', () => {
+			const nodeValue1 = new NodeValue(domFacade, documentNode.createElement('someElement'));
+			const nodeValue2 = new NodeValue(domFacade, documentNode.createElement('someElement'));
+			chai.assert.notEqual(nodeValue1, nodeValue2);
+		});
+
+
+		it('does not reuse a nodeValue instance for another domFacade', () => {
+			const element = documentNode.createElement('someElement');
+			const nodeValue1 = new NodeValue(new DomFacade(domFacade), element);
+			const nodeValue2 = new NodeValue(new DomFacade(domFacade), element);
+			chai.assert.notEqual(nodeValue1, nodeValue2);
+		});
 	});
 
 	describe('element', () => {
