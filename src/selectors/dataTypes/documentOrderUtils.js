@@ -74,8 +74,8 @@ function comparePositions (domFacade, parentNode1, referenceNode1, parentNode2, 
             i, l;
         for (i = 0, l = Math.min(ancestors1.length, ancestors2.length); i < l; ++i) {
             if (ancestors1[i] !== ancestors2[i]) {
-break;
-}
+				break;
+			}
 
             commonAncestor = ancestors1[i];
         }
@@ -99,12 +99,42 @@ break;
     return compareSiblingPositions(domFacade, referenceNode1, referenceNode2) || bias;
 }
 
-function compareNodePositions (domFacade, node1, node2) {
+export const compareNodePositions = function compareNodePositions (domFacade, node1, node2) {
+	var value1, value2;
+    if (node1.instanceOfType('attribute()') && !node2.instanceOfType('attribute()')) {
+        value1 = domFacade.getParentNode(node1.value);
+        value2 = node2.value;
+        if (node1 === value2) {
+            // Same element, so A
+            return 1;
+        }
+    }
+	else if (node2.instanceOfType('attribute()') && !node1.instanceOfType('attribute()')) {
+        value1 = node1.value;
+        value2 = domFacade.getParentNode(node2.value);
+        if (value1 === value2) {
+            // Same element, so B before A
+            return -1;
+        }
+    }
+	else if (node1.instanceOfType('attribute()') && node2.instanceOfType('attribute()')) {
+        if (domFacade.getParentNode(node2.value) === domFacade.getParentNode(node1.value)) {
+            // Sort on attributes name
+            return node1.value.nodeName > node2.value.nodeName ? 1 : -1;
+        }
+        value1 = domFacade.getParentNode(node1.value);
+        value2 = domFacade.getParentNode(node2.value);
+    }
+	else {
+        value1 = node1.value;
+        value2 = node2.value;
+    }
+
     return comparePositions(
         domFacade,
-        node1, domFacade.getFirstChild(node1),
-        node2, domFacade.getFirstChild(node2));
-}
+        value1, domFacade.getFirstChild(value1),
+        value2, domFacade.getFirstChild(value2));
+};
 
 /**
  * Sort (and deduplicate) the nodeValues in DOM order
@@ -116,39 +146,10 @@ function compareNodePositions (domFacade, node1, node2) {
  *
  * @return   {!Array<NodeValue>}  The sorted nodes
  */
-export default function sortNodeValues (domFacade, nodeValues) {
+export const sortNodeValues = function sortNodeValues (domFacade, nodeValues) {
     return nodeValues
-        .sort(function (nodeValueA, nodeValueB) {
-            var valueA, valueB;
-            if (nodeValueA.instanceOfType('attribute()') && !nodeValueB.instanceOfType('attribute()')) {
-                valueA = domFacade.getParentNode(nodeValueA.value);
-                valueB = nodeValueB.value;
-                if (valueA === valueB) {
-                    // Same element, so A
-                    return 1;
-                }
-            }
-			else if (nodeValueB.instanceOfType('attribute()') && !nodeValueA.instanceOfType('attribute()')) {
-                valueA = nodeValueA.value;
-                valueB = domFacade.getParentNode(nodeValueB.value);
-                if (valueB === valueA) {
-                    // Same element, so B before A
-                    return -1;
-                }
-            }
-			else if (nodeValueA.instanceOfType('attribute()') && nodeValueB.instanceOfType('attribute()')) {
-                if (domFacade.getParentNode(nodeValueB.value) === domFacade.getParentNode(nodeValueA.value)) {
-                    // Sort on attributes name
-                    return nodeValueA.value.nodeName > nodeValueB.value.nodeName ? 1 : -1;
-                }
-                valueA = domFacade.getParentNode(nodeValueA.value);
-                valueB = domFacade.getParentNode(nodeValueB.value);
-            }
-			else {
-                valueA = nodeValueA.value;
-                valueB = nodeValueB.value;
-            }
-            return compareNodePositions(domFacade, valueA, valueB);
+        .sort(function (node1, node2) {
+			return compareNodePositions(domFacade, node1, node2);
         })
         .filter(function (nodeValue, i, sortedNodes) {
             if (i === 0) {
@@ -156,4 +157,4 @@ export default function sortNodeValues (domFacade, nodeValues) {
             }
             return nodeValue !== sortedNodes[i - 1];
         });
-}
+};

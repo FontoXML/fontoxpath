@@ -1,6 +1,6 @@
 import IntegerValue from '../dataTypes/IntegerValue';
 import Sequence from '../dataTypes/Sequence';
-import sortNodeValues from '../dataTypes/sortNodeValues';
+import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 
 function opTo (_dynamicContext, fromValue, toValue) {
 	var from = fromValue.value[0].value,

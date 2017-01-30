@@ -1,7 +1,10 @@
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
-import sortNodeValues from '../dataTypes/sortNodeValues';
+import {
+	sortNodeValues,
+	compareNodePositions
+} from '../dataTypes/documentOrderUtils';
 import NodeValue from '../dataTypes/NodeValue';
 
 function sortResults (domFacade, result) {
@@ -94,6 +97,8 @@ class PathSelector extends Selector {
 						sortedResultNodes = newResults.value;
 					}
 
+					// We can assume that, if this subresult is sorted, node[n] will be AFTER node[n-1]. We should not have to reset low to 0.
+					let low = 0;
 					sortedResultNodes.forEach(function (newResult) {
 						if (newResult instanceof NodeValue) {
 							// Because the intermediateResults are ordered, and these results are ordered too, we should be able to dedupe and concat these results
@@ -101,6 +106,24 @@ class PathSelector extends Selector {
 								return;
 							}
 							resultSet.add(newResult);
+						}
+
+						// Because the previous set is sorted, and the transformation outputs sorted items, we can merge-sort them into the output
+						if (selector.expectedResultOrder !== Selector.RESULT_ORDERINGS.UNSORTED) {
+							let high = resultValuesInOrderOfEvaluation.length - 1;
+							var mid = 0;
+							while (low <= high) {
+								mid = Math.floor((low + high) / 2);
+								var otherNode = resultValuesInOrderOfEvaluation[mid];
+								if (compareNodePositions(dynamicContext.domFacade, newResult, otherNode) > 0) {
+									// After:
+									low = mid + 1;
+									continue;
+								}
+								high = mid - 1;
+							}
+							resultValuesInOrderOfEvaluation.splice(low, 0, newResult);
+							return;
 						}
 						resultValuesInOrderOfEvaluation.push(newResult);
 					});

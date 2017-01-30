@@ -2,7 +2,7 @@ import isSameSetOfSelectors from '../isSameSetOfSelectors';
 import Specificity from '../Specificity';
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
-import sortNodeValues from '../dataTypes/sortNodeValues';
+import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 
 /**
  * The 'union' combining selector, or when matching, concats otherwise.
