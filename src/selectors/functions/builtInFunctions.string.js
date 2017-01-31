@@ -18,6 +18,25 @@ function fnConcat (_dynamicContext) {
 		});
 	return Sequence.singleton(new StringValue(strings.join('')));
 }
+
+function fnContains (_dynamicContext, arg1, arg2) {
+	var stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
+	var contains = !arg2.isEmpty() ? arg2.value[0].value : '';
+	if (contains.length === 0) {
+		return Sequence.singleton(BooleanValue.TRUE);
+	}
+
+	if (stringToTest.length === 0) {
+		return Sequence.singleton(BooleanValue.FALSE);
+	}
+
+	// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
+	if (stringToTest.includes(contains)) {
+		return Sequence.singleton(BooleanValue.TRUE);
+	}
+	return Sequence.singleton(BooleanValue.FALSE);
+}
+
 function fnStartsWith (_dynamicContext, arg1, arg2) {
 	var startsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
 	if (startsWith.length === 0) {
@@ -105,6 +124,22 @@ export default {
 		},
 
 		{
+			name: 'contains',
+			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string?'],
+			returnType: 'xs:boolean',
+			callFunction: function () {
+				throw new Error('Not implemented: Specifying a collation is not supported');
+			}
+		},
+
+		{
+			name: 'contains',
+			argumentTypes: ['xs:string?', 'xs:string?'],
+			returnType: 'xs:boolean',
+			callFunction: fnContains
+		},
+
+		{
 			name: 'ends-with',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
@@ -119,7 +154,6 @@ export default {
 				throw new Error('Not implemented: Specifying a collation is not supported');
 			}
 		},
-
 
 		{
 			name: 'normalize-space',
