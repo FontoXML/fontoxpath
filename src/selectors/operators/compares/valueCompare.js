@@ -1,4 +1,3 @@
-import Sequence from '../../dataTypes/Sequence';
 import UntypedAtomicValue from '../../dataTypes/UntypedAtomicValue';
 import StringValue from '../../dataTypes/StringValue';
 import FloatValue from '../../dataTypes/FloatValue';
@@ -28,17 +27,17 @@ export default function valueCompare (operator, firstSequence, secondSequence) {
             firstValue = StringValue.cast(firstValue);
             secondValue = StringValue.cast(secondValue);
         }
- else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float')) &&
-            (secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float'))) {
+		else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float')) &&
+				(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float'))) {
             firstValue = FloatValue.cast(firstValue);
             secondValue = FloatValue.cast(secondValue);
         }
- else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float') || firstValue.instanceOfType('xs:double')) &&
-            (secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float') || secondValue.instanceOfType('xs:double'))) {
+		else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float') || firstValue.instanceOfType('xs:double')) &&
+				(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float') || secondValue.instanceOfType('xs:double'))) {
             firstValue = DoubleValue.cast(firstValue);
             secondValue = DoubleValue.cast(secondValue);
         }
- else {
+		else {
             throw new Error('XPTY0004: Values to compare are not of the same type');
         }
     }

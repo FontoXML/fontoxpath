@@ -70,7 +70,7 @@ class BinaryNumericOperator extends Selector {
 
 		// Cast both to doubles, if they are xs:untypedAtomic
 		var firstValue = firstValueSequence.value[0],
-        secondValue = secondValueSequence.value[0];
+			secondValue = secondValueSequence.value[0];
 
 		if (firstValue instanceof UntypedAtomicValue) {
 			firstValue = DoubleValue.cast(firstValue);

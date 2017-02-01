@@ -19,7 +19,9 @@ DecimalValue.cast = function (value) {
 
     var anyAtomicTypeValue = AnyAtomicTypeValue.cast(value);
 	var floatValue = parseFloat(anyAtomicTypeValue.value);
-
+	if (Number.isNaN(floatValue)) {
+        throw new Error('XPTY0004: can not cast ' + value + ' to xs:boolean');
+	}
 	return new DecimalValue(floatValue);
 };
 

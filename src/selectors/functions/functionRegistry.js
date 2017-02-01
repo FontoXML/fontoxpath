@@ -120,13 +120,14 @@ function getFunctionByArity (functionName, arity) {
         callFunction: matchingFunction.callFunction,
         argumentTypes: matchingFunction.argumentTypes,
         returnType: matchingFunction.returnType
-    };
+	};
 }
 
 function registerFunction (name, argumentTypes, returnType, callFunction) {
     if (!registeredFunctionsByName[name]) {
         registeredFunctionsByName[name] = [];
     }
+
     registeredFunctionsByName[name].push({
         name: name,
         argumentTypes: argumentTypes,
@@ -137,7 +138,11 @@ function registerFunction (name, argumentTypes, returnType, callFunction) {
 
 // bootstrap builtin functions
 builtInFunctions.forEach(function (builtInFunction) {
-    registerFunction(builtInFunction.name, builtInFunction.argumentTypes, builtInFunction.returnType, builtInFunction.callFunction);
+    registerFunction(
+		builtInFunction.name,
+		builtInFunction.argumentTypes,
+		builtInFunction.returnType,
+		builtInFunction.callFunction);
 });
 
 export default {

@@ -1,14 +1,28 @@
 import argumentListToString from './argumentListToString';
-import isValidArgument from './isValidArgument';
+import { transformArgument } from './argumentHelper';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 
-function isValidArgumentList (argumentTypes, argumentList) {
-    return argumentList.length === argumentTypes.length &&
-        argumentList.every(function (argument, i) {
-            return isValidArgument(argumentTypes[i], argument);
-        });
+function transformArgumentList (argumentTypes, argumentList) {
+	if (argumentList.length !== argumentTypes.length) {
+		return null;
+	}
+	var transformedArguments = [];
+	for (let i = 0; i < argumentList.length; ++i) {
+		if (argumentList[i] === null) {
+			// This is the result of partial application, it will be inserted later
+			transformedArguments.push(null);
+			continue;
+		}
+		const transformedArgument = transformArgument(argumentTypes[i], argumentList[i]);
+		if (transformedArgument === null) {
+			return null;
+		}
+		transformedArguments.push(transformedArgument);
+	}
+	return transformedArguments;
 }
+
 /**
  * @extends Selector
  */
@@ -66,16 +80,17 @@ class FunctionCall extends Selector {
 				return argument.evaluate(dynamicContext);
 			});
 
-		if (!isValidArgumentList(functionItem.getArgumentTypes(), evaluatedArgs)) {
+		// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
+		var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs);
+		if (transformedArguments === null) {
 			throw new Error('XPTY0004: expected argument list of dynamic function to be [' + argumentListToString(evaluatedArgs) + '], got function with argument list [' + functionItem.getArgumentTypes().join(', ') + '].');
 		}
 
-		if (evaluatedArgs.indexOf(null) >= 0) {
-			return functionItem.applyArguments(evaluatedArgs);
+		if (transformedArguments.indexOf(null) >= 0) {
+			return functionItem.applyArguments(transformedArguments);
 		}
 
-
-		return functionItem.value.apply(undefined, [dynamicContext].concat(evaluatedArgs));
+		return functionItem.value.apply(undefined, [dynamicContext].concat(transformedArguments));
 	}
 }
 

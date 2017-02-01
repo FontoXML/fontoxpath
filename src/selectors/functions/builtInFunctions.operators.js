@@ -4,7 +4,7 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 
 function opTo (_dynamicContext, fromValue, toValue) {
 	var from = fromValue.value[0].value,
-	to = toValue.value[0].value;
+		to = toValue.value[0].value;
 	if (from > to) {
 		return Sequence.empty();
 	}

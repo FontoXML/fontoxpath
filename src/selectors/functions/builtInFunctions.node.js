@@ -129,7 +129,7 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:QName?',
 			callFunction: contextItemAsFirstArgument.bind(null, fnNodeName)
-		},
+		}
 	],
 	functions: {
 		name: fnName,

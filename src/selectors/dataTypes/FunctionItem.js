@@ -57,10 +57,10 @@ FunctionItem.prototype.applyArguments = function (appliedArguments) {
 		}.bind(this), []);
 
 	var functionItem = new FunctionItem(
-			curriedFunction,
-			argumentTypes,
-			argumentTypes.length,
-			this._returnType);
+		curriedFunction,
+		argumentTypes,
+		argumentTypes.length,
+		this._returnType);
 
 	return Sequence.singleton(functionItem);
 };

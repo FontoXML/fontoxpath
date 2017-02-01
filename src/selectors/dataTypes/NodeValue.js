@@ -123,4 +123,9 @@ NodeValue.prototype.getStringValue = function () {
     return this.atomize();
 };
 
+NodeValue.prototype.atomizesTo = function (typeName) {
+	// TODO: Use schema and see if we can properly do this
+	return typeName === 'xs:untypedAtomic';
+};
+
 export default NodeValue;

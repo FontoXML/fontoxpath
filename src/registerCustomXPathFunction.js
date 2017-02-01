@@ -1,6 +1,5 @@
 import adaptJavaScriptValueToXPathValue from './selectors/adaptJavaScriptValueToXPathValue';
 import functionRegistry from './selectors/functions/functionRegistry';
-import isValidArgument from './selectors/functions/isValidArgument';
 
 function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 	if (valueSequence.instanceOfType('attribute()')) {
@@ -35,29 +34,25 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
  * @return {undefined}
  */
 export default function registerCustomXPathFunction (name, signature, returnType, callback) {
-	var callFunction = function (dynamicContext) {
+	const callFunction = function (dynamicContext) {
 			// Make arguments a read array instead of a array-like object
-			var args = Array.from(arguments);
+			const args = Array.from(arguments);
 
 			args.splice(0, 1);
 
-			var newArguments = args.map(function (argument, index) {
+			const newArguments = args.map(function (argument, index) {
 					return adaptXPathValueToJavascriptValue(argument, signature[index]);
 				});
 
 			// Adapt the domFacade into another object to prevent passing everything. The closure compiler might rename some variables otherwise.
 			// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
-			var dynamicContextAdapter = {};
+			const dynamicContextAdapter = {};
 			dynamicContextAdapter['domFacade'] = dynamicContext.domFacade;
 
-			var result = callback.apply(undefined, [dynamicContextAdapter].concat(newArguments));
-			result = adaptJavaScriptValueToXPathValue(result, returnType);
+			const jsResult = callback.apply(undefined, [dynamicContextAdapter].concat(newArguments));
+			const xpathResult = adaptJavaScriptValueToXPathValue(jsResult, returnType);
 
-			if (!isValidArgument(returnType, result)) {
-				throw new Error('XPTY0004: Custom function (' + name + ') should return ' + returnType);
-			}
-
-			return result;
+			return xpathResult;
 		};
 
 	functionRegistry.registerFunction(name, signature, returnType, callFunction);

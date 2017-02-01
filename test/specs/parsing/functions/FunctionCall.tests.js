@@ -2,7 +2,7 @@ import { domFacade } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import slimdom from 'slimdom';
 
-import { evaluateXPathToString, evaluateXPathToBoolean } from 'fontoxpath';
+import { evaluateXPathToString, evaluateXPathToStrings, evaluateXPathToNumbers } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -77,5 +77,40 @@ describe('Dynamic function call', () => {
 
 	it('allows a spaces around the arguments', () => {
 		chai.assert.equal(evaluateXPathToString('concat( (), () )', documentNode), '');
+	});
+});
+
+describe('function argument transformation', () => {
+	it('atomizes attributes to anyUntypedAtomic, then transforming it to a string', () => {
+		jsonMlMapper.parse([
+			'someElement',
+			{
+				attr: 'a b c'
+			}
+		], documentNode);
+
+		chai.assert.deepEqual(evaluateXPathToStrings('@attr => tokenize()', documentNode.firstChild, domFacade), ['a', 'b', 'c']);
+	});
+
+	it('atomizes attributes to anyUntypedAtomic, then transforming it to a numerical value', () => {
+		jsonMlMapper.parse([
+			'someElement',
+			{
+				attr: '1'
+			}
+		], documentNode);
+
+		chai.assert.deepEqual(evaluateXPathToNumbers('@attr to 2', documentNode.firstChild, domFacade), [1, 2]);
+	});
+
+	it('fails if an argument is not convertable', () => {
+		jsonMlMapper.parse([
+			'someElement',
+			{
+				attr: 'not something numerical'
+			}
+		], documentNode);
+
+		chai.assert.throws(() => evaluateXPathToNumbers('@attr to 2', documentNode.firstChild, domFacade), 'XPTY0004');
 	});
 });
