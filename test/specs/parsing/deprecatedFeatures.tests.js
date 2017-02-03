@@ -9,6 +9,6 @@ describe('Deprecated features', () => {
 	});
 
 	it('Does not accept functions as tests anymore', () => {
-		chai.assert.throws(() => evaluateXPathToBoolean('self::false()', documentNode.documentElement, domFacade), 'XPST0003');
+		chai.assert.throws(() => evaluateXPathToBoolean('self::false()', documentNode, domFacade), 'XPST0003');
 	});
 });

@@ -5,7 +5,6 @@ import Sequence from './selectors/dataTypes/Sequence';
 import NodeValue from './selectors/dataTypes/NodeValue';
 import NumericValue from './selectors/dataTypes/NumericValue';
 import DomFacade from './DomFacade';
-import Selector from './selectors/Selector';
 
 /**
  * Evaluates an XPath on the given contextNode.
@@ -16,22 +15,31 @@ import Selector from './selectors/Selector';
  *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
  *  * Else, the sequence is atomized and returned.
  *
- * @param  {!Selector|string}  xPathSelector  The selector to execute. Supports XPath 3.1.
- * @param  {!Node}             contextNode    The node from which to run the XPath.
- * @param  {!IDomFacade}       blueprint      The blueprint (or DomFacade like interface) for retrieving relations.
- * @param  {?Object=}          variables      Extra variables (name=>value). Values can be number / string or boolean.
- * @param  {?number=}          returnType     One of the return types, indicates the expected type of the XPath query.
+ * @param  {!string}      xPathSelector  The selector to execute. Supports XPath 3.1.
+ * @param  {!Node}        contextNode    The node from which to run the XPath.
+ * @param  {!IDomFacade}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?Object=}     variables      Extra variables (name=>value). Values can be number / string or boolean.
+ * @param  {?number=}     returnType     One of the return types, indicates the expected type of the XPath query.
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
-function evaluateXPath (xPathSelector, contextNode, blueprint, variables, returnType) {
-	returnType = returnType || evaluateXPath.ANY_TYPE;
+function evaluateXPath (xPathSelector, contextNode, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE) {
+	if (!xPathSelector || typeof xPathSelector !== 'string' ) {
+		throw new TypeError('Failed to execute \'evaluateXPath\': xPathSelector must be a string.');
+	}
+	if (!contextNode) {
+		throw new TypeError('Failed to execute \'evaluateXPath\': contextNode must be a node.');
+	}
+	if (!domFacade) {
+		throw new TypeError('Failed to execute \'evaluateXPath\': domFacade must be a DomFacade, or something implementing IDomFacade.');
+	}
+
 	let compiledSelector = xPathSelector;
 	if (typeof xPathSelector === 'string') {
 		compiledSelector = createSelectorFromXPath(xPathSelector);
 	}
-	const domFacade = new DomFacade(blueprint);
-	const contextSequence = Sequence.singleton(new NodeValue(domFacade, contextNode));
+	const nestedDomFacade = new DomFacade(domFacade);
+	const contextSequence = Sequence.singleton(new NodeValue(nestedDomFacade, contextNode));
 	const untypedVariables = Object.assign(variables || {});
 	untypedVariables['theBest'] = 'FontoXML is the best!';
 	/**
@@ -46,7 +54,7 @@ function evaluateXPath (xPathSelector, contextNode, blueprint, variables, return
 	const dynamicContext = new DynamicContext({
 			contextItem: contextSequence,
 			contextSequence: null,
-			domFacade: domFacade,
+			domFacade: nestedDomFacade,
 			variables: typedVariables
 		});
 

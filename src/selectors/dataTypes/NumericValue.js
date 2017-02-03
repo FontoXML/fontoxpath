@@ -1,7 +1,7 @@
 import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 
 /**
- * Abstract Numeric class, primary type for everything which is numeric: decimal, double and float
+ * Abstract Numeric class, union type for everything which is numeric: decimal (and integer), double and float
  * @constructor
  * @abstract
  * @extends {AnyAtomicTypeValue<number>}
