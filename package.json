@@ -1,6 +1,6 @@
 {
   "name": "fontoxpath",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "An XPath 3.1 engine in JavaScript",
   "main": "dist/fontoxpath.js",
   "directories": {
