@@ -1,7 +1,7 @@
 {
   "name": "fontoxpath",
-  "version": "2.0.0",
-  "description": "An XPath 3.1 engine in JavaScript",
+  "version": "2.0.1",
+  "description": "A minimalistic XPath 3.1 engine in JavaScript",
   "main": "dist/fontoxpath.js",
   "directories": {
     "test": "test"
@@ -15,12 +15,14 @@
     "url": "git+https://bitbucket.org/liones/fontoxpath.git"
   },
   "keywords": [
+    "XPath3.1",
     "XPath",
-    "3.1"
+    "3.1",
+    "FontoXML"
   ],
   "author": "The FontoXML team",
-  "license": "UNLICENSED",
-  "homepage": "https://bitbucket.org/liones/fontoxpath#readme",
+  "license": "MIT",
+  "homepage": "https://github.com/FontoXML/fontoxpath",
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.21.0",
