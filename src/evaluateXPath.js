@@ -5,6 +5,7 @@ import Sequence from './selectors/dataTypes/Sequence';
 import NodeValue from './selectors/dataTypes/NodeValue';
 import NumericValue from './selectors/dataTypes/NumericValue';
 import DomFacade from './DomFacade';
+import domBackedDomFacade from './domBackedDomFacade';
 
 /**
  * Evaluates an XPath on the given contextNode.
@@ -15,11 +16,11 @@ import DomFacade from './DomFacade';
  *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
  *  * Else, the sequence is atomized and returned.
  *
- * @param  {!string}      xPathSelector  The selector to execute. Supports XPath 3.1.
- * @param  {!Node}        contextNode    The node from which to run the XPath.
- * @param  {!IDomFacade}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  {?Object=}     variables      Extra variables (name=>value). Values can be number / string or boolean.
- * @param  {?number=}     returnType     One of the return types, indicates the expected type of the XPath query.
+ * @param  {!string}       xPathSelector  The selector to execute. Supports XPath 3.1.
+ * @param  {!Node}         contextNode    The node from which to run the XPath.
+ * @param  {?IDomFacade=}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number / string or boolean.
+ * @param  {?number=}      returnType     One of the return types, indicates the expected type of the XPath query.
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
@@ -31,7 +32,7 @@ function evaluateXPath (xPathSelector, contextNode, domFacade, variables = {}, r
 		throw new TypeError('Failed to execute \'evaluateXPath\': contextNode must be a node.');
 	}
 	if (!domFacade) {
-		throw new TypeError('Failed to execute \'evaluateXPath\': domFacade must be a DomFacade, or something implementing IDomFacade.');
+		domFacade = domBackedDomFacade;
 	}
 
 	let compiledSelector = xPathSelector;

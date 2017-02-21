@@ -16,12 +16,12 @@ FontoXPath supplies a number of API functions:
 
 * domFacade: A wrapper to the DOM. All DOM accesses should go through here
 * A number of evaluateXPath.* functions:
-  * `evaluateXPath(xpath: string, contextNode: Node, domFacade: DomFacade, variables: Object={}, returnType: number) => *`
-  * `evaluateXPathToNodes(xpath: string, contextNode: Node, domFacade: DomFacade, variables: Object={}) => Node[]`
-  * `evaluateXPathToFirstNode(xpath: string, contextNode: Node, domFacade: DomFacade, variables: Object={}) => Node`
-  * `evaluateXPathToBoolean(xpath: string, contextNode: Node, domFacade: DomFacade, variables: Object={}) => boolean`
-  * `evaluateXPathToNumber(xpath: string, contextNode: Node, domFacade: DomFacade, variables: Object={}) => number`
-  * `evaluateXPathToNumbers(xpath: string, contextNode: Node, domFacade: DomFacade, variables: Object={}) => number[]`
+  * `evaluateXPath(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}, returnType: number) => *`
+  * `evaluateXPathToNodes(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => Node[]`
+  * `evaluateXPathToFirstNode(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => Node`
+  * `evaluateXPathToBoolean(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => boolean`
+  * `evaluateXPathToNumber(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => number`
+  * `evaluateXPathToNumbers(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => number[]`
 * `precompileXPath(xpath: string) => Promise<string>`
   * A no-op on systems without indexedDB
 * `registerCustomXPathFunction(name: string, signature: string[], returnType: string, callback: function)`
@@ -29,11 +29,11 @@ FontoXPath supplies a number of API functions:
 
 ## Features
 
-Not that this engine assumes [XPath 1.0 compatibility mode](https://www.w3.org/TR/xpath-31/#id-backwards-compatibility) turned off.
+Note that this engine assumes [XPath 1.0 compatibility mode](https://www.w3.org/TR/xpath-31/#id-backwards-compatibility) turned off.
 
-Not all [XPath 3.1 functions](https://www.w3.org/TR/xpath-functions-31/) are implemented yet. We accept pull requests for missing functions.
+Not all [XPath 3.1 functions](https://www.w3.org/TR/xpath-functions-31/) are implemented yet. We accept pull requests for missing features.
 
-The following features are unavailable, but will be implemented at some point in time:
+The following features are unavailable, but will be implemented at some point in time (and even sooner if you can help!):
 
 * The math namespace (`math:pi()`, `math:exp()`, etc)
 * DateTime related functions, and the datetime type in general

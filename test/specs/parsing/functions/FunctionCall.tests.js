@@ -74,4 +74,8 @@ describe('Dynamic function call', () => {
 			() => evaluateXPathToString('let $fn := false#2 return $fn(1, 2)', documentNode, domFacade, {}),
 			'XPST0017');
 	});
+
+	it('allows a spaces around the arguments', () => {
+		chai.assert.equal(evaluateXPathToString('concat( (), () )', documentNode), '');
+	});
 });

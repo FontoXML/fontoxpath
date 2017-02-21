@@ -5,7 +5,7 @@ import evaluateXPath from './evaluateXPath';
  *
  * @param   {!string}           selector     The selector to execute. Supports XPath 3.1.
  * @param   {!Node}             contextNode    The node from which to run the XPath.
- * @param   {!IDomFacade}       domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param   {?IDomFacade=}      domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param   {?Object=}          variables      Extra variables (name=>value). Values can be number / string or boolean.
  *
  * @return  {!Object}           The map result, as an object. Because of JavaScript constraints, key 1 and '1' are the same. The values in this map are the JavaScript simple types. See evaluateXPath for more details in mapping types.

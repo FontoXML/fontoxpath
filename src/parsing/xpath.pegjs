@@ -245,7 +245,7 @@ PostfixExpr
 
 // 50
 ArgumentList
- = "(" args:(first:Argument rest:( _ "," _ arg:Argument {return arg})* {return appendRest([first], rest)})? ")" {return args||[]}
+ = "(" _ args:(first:Argument rest:( _ "," _ arg:Argument {return arg})* {return appendRest([first], rest)})? _ ")" {return args||[]}
 
 // 51 (Not implemented)
 // PredicateList ::= Predicate*
