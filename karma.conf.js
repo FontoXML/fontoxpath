@@ -3,12 +3,13 @@ const path = require('path');
 const runIntegrationTests = process.env.npm_config_integration_tests;
 const ciMode = process.env.npm_config_ci_mode;
 const coverageMode = process.env.npm_config_coverage;
+const runQt3Tests = process.env.npm_config_qt3;
 
 if (runIntegrationTests && coverageMode) {
 	throw new Error('No coverage possible for integration tests.');
 }
 
-const bootstrapFile = runIntegrationTests ? require.resolve('./test/integrationtests.js') : require.resolve('./test/alltests.js');
+const bootstrapFile = runQt3Tests ? require.resolve('./test/qt3tests.js') : runIntegrationTests ? require.resolve('./test/integrationtests.js') : require.resolve('./test/alltests.js');
 
 module.exports = config => {
 	config.set({
@@ -95,6 +96,7 @@ module.exports = config => {
 						path.resolve('./dist/fontoxpath.js') :
 						path.resolve('./src'),
 					'test-helpers': path.resolve('test/helpers/'),
+					'assets': path.resolve('test/assets'),
 					'slimdom': path.resolve('./node_modules/slimdom/src/main.js')
 				}
 			},
@@ -113,7 +115,8 @@ module.exports = config => {
 				loaders: [{
 					loader: 'babel-loader',
 					test: /\.js$/,
-					include: runIntegrationTests ?
+					include: runQt3Tests ? [] :
+						runIntegrationTests ?
 						[path.resolve('test')] :
 						[path.resolve('src'), path.resolve('test')],
 					query: {

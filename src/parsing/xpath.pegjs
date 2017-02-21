@@ -252,7 +252,7 @@ ArgumentList
 
 // 52
 Predicate
- = "[" e:Expr "]" {return e};
+ = "[" _ e:Expr _ "]" {return e};
 
 // 53
 Lookup = "?" key:KeySpecifier {return key}
