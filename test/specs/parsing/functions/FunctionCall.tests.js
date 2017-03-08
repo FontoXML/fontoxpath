@@ -2,7 +2,7 @@ import { domFacade } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import slimdom from 'slimdom';
 
-import { evaluateXPathToString } from 'fontoxpath';
+import { evaluateXPathToString, evaluateXPathToBoolean } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -23,7 +23,7 @@ describe('Dynamic function call', () => {
 	});
 
 	it('parses a function with a fixed number of arguments', () => {
-		chai.assert.isFalse(evaluateXPathToString('let $fn := not#1 return $fn(true())', documentNode, domFacade, {}));
+		chai.assert.isFalse(evaluateXPathToBoolean('let $fn := not#1 return $fn(true())', documentNode, domFacade, {}));
 	});
 
 	it('parses a function with a node lookup', () => {
@@ -42,7 +42,7 @@ describe('Dynamic function call', () => {
 	});
 
 	it('parses a function with a no arguments', () => {
-		chai.assert.isFalse(evaluateXPathToString('let $fn := false#0 return $fn()', documentNode, domFacade, {}));
+		chai.assert.isFalse(evaluateXPathToBoolean('let $fn := false#0 return $fn()', documentNode, domFacade, {}));
 	});
 
 	it('throws when the base expression does not evaluate to a function', () => {

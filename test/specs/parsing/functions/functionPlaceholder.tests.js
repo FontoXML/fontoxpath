@@ -58,6 +58,6 @@ describe('Function placeholders', () => {
 
 	it('does not mutate existing function items', () => {
 		chai.assert.isTrue(
-			evaluateXPathToString('let $x := concat#2, $x1 := $x("a", ?), $x2 := $x("b", ?) return $x1("b") = "ab" and $x2("c") = "bc"', documentNode, domFacade, {}));
+			evaluateXPathToBoolean('let $x := concat#2, $x1 := $x("a", ?), $x2 := $x("b", ?) return $x1("b") = "ab" and $x2("c") = "bc"', documentNode, domFacade, {}));
 	});
 });

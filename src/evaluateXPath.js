@@ -70,7 +70,7 @@ function evaluateXPath (xPathSelector, contextNode, domFacade, variables = {}, r
 				return '';
 			}
 			// Atomize to convert (attribute)nodes to be strings
-			return rawResults.value[0].atomize().value;
+			return rawResults.value[0].atomize().value + '';
 
 		case evaluateXPath.STRINGS_TYPE:
 			if (rawResults.isEmpty()) {
@@ -79,7 +79,7 @@ function evaluateXPath (xPathSelector, contextNode, domFacade, variables = {}, r
 
 			// Atomize all parts
 			return rawResults.value.map(function (value) {
-				return value.atomize().value;
+				return value.atomize().value + '';
 			});
 
 		case evaluateXPath.NUMBER_TYPE:

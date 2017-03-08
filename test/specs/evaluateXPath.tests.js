@@ -41,6 +41,9 @@ describe('evaluateXPath', () => {
 		it('Keeps string values strings',
 		   () => chai.assert.equal(evaluateXPathToString('"A piece of text"', documentNode, domFacade), 'A piece of text'));
 
+		it('Stringifies numeric types',
+		   () => chai.assert.equal(evaluateXPathToString('42', documentNode, domFacade), '42'));
+
 		it('Returns the empty string when resolving to the empty sequence',
 		   () => chai.assert.equal(evaluateXPathToString('()', documentNode, domFacade), ''));
 	});
@@ -48,6 +51,9 @@ describe('evaluateXPath', () => {
 	describe('toStrings', () => {
 		it('Keeps string values strings',
 		   () => chai.assert.deepEqual(evaluateXPathToStrings('("A piece of text", "another piece of text")', documentNode, domFacade), ['A piece of text', 'another piece of text']));
+
+		it('Stringifies numeric types',
+		   () => chai.assert.deepEqual(evaluateXPathToStrings('(42, 42)', documentNode, domFacade), ['42', '42']));
 
 		it('returns an empty array when it resolves to the empty sequence',
 		   () => chai.assert.deepEqual(evaluateXPathToStrings('()', documentNode, domFacade), []));
