@@ -1,6 +1,6 @@
 {
   "name": "fontoxpath",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A minimalistic XPath 3.1 engine in JavaScript",
   "main": "dist/fontoxpath.js",
   "directories": {
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/liones/fontoxpath.git"
+    "url": "git@github.com:FontoXML/fontoxpath.git"
   },
   "keywords": [
     "XPath3.1",
