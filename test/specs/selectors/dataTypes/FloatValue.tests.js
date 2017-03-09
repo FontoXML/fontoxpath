@@ -1,13 +1,6 @@
 import FloatValue from 'fontoxpath/selectors/dataTypes/FloatValue';
 import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
-describe('FloatValue.cast()', () => {
-	it('casts the given value to FloatValue', () => {
-		const floatValue = new FloatValue(123);
-		chai.expect(FloatValue.cast(new StringValue('123'))).to.deep.equal(floatValue);
-	});
-});
-
 describe('FloatValue.getEffectiveBooleanValue()', () => {
 	it('returns true when the value is a positive number', () => {
 		const floatValue = new FloatValue(10.12);

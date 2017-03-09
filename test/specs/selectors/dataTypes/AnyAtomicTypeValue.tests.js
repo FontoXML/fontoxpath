@@ -1,13 +1,6 @@
 import AnyAtomicTypeValue from 'fontoxpath/selectors/dataTypes/AnyAtomicTypeValue';
 import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
-describe('AnyAtomicTypeValue.cast()', () => {
-	it('casts the given value to AnyAtomicTypeValue', () => {
-		const anyAtomicTypeValue = new AnyAtomicTypeValue('123');
-		chai.assert.deepEqual(AnyAtomicTypeValue.cast(new StringValue('123')), anyAtomicTypeValue);
-	});
-});
-
 describe('AnyAtomicTypeValue.atomize()', () => {
 	it('returns itself', () => {
 		const anyAtomicTypeValue = new AnyAtomicTypeValue();

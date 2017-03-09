@@ -1,13 +1,6 @@
 import DoubleValue from 'fontoxpath/selectors/dataTypes/DoubleValue';
 import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
-describe('DoubleValue.cast()', () => {
-	it('casts the given value to DoubleValue', () => {
-		const doubleValue = new DoubleValue(123);
-		chai.expect(DoubleValue.cast(new StringValue('123'))).to.deep.equal(doubleValue);
-	});
-});
-
 describe('DoubleValue.getEffectiveBooleanValue()', () => {
 	it('returns true when the value is a positive number', () => {
 		const doubleValue = new DoubleValue(10.12);

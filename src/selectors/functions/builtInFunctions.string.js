@@ -76,7 +76,7 @@ function fnString (_dynamicContext, sequence) {
 	if (sequence.value[0].instanceOfType('node()')) {
 		return Sequence.singleton(sequence.value[0].getStringValue());
 	}
-	return Sequence.singleton(StringValue.cast(sequence.value[0]));
+	return Sequence.singleton(new StringValue(sequence.value[0].value + ''));
 }
 
 function fnStringJoin (_dynamicContext, sequence, separator) {

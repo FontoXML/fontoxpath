@@ -3,7 +3,7 @@ import DoubleValue from '../dataTypes/DoubleValue';
 import FloatValue from '../dataTypes/FloatValue';
 import IntegerValue from '../dataTypes/IntegerValue';
 import Sequence from '../dataTypes/Sequence';
-import StringValue from '../dataTypes/StringValue';
+import { castToType } from '../dataTypes/conversionHelper';
 
 /**
  * Promote all given (numeric) items to single common type
@@ -33,7 +33,7 @@ function convertItemsToCommonType (items) {
 		return item.instanceOfType('xs:string') ||
 			item.instanceOfType('xs:anyURI');
 	})) {
-		return items.map(StringValue.cast);
+		return items.map((item) => castToType(item, 'xs:string'));
 	}
 
 	// If each value is an instance of one of the types xs:decimal or xs:float, then all the values are cast to type xs:float.
@@ -41,7 +41,7 @@ function convertItemsToCommonType (items) {
 		return item.instanceOfType('xs:decimal') ||
 			item.instanceOfType('xs:float');
 	})) {
-		return items.map(FloatValue.cast);
+		return items.map((item) => castToType(item, 'xs:float'));
 	}
 	// If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all the values are cast to type xs:double.
 	if (items.every(function (item) {
@@ -49,7 +49,7 @@ function convertItemsToCommonType (items) {
 			item.instanceOfType('xs:float') ||
 			item.instanceOfType('xs:double');
 	})) {
-		return items.map(DoubleValue.cast);
+		return items.map((item) => castToType(item, 'xs:double'));
 	}
 
 	// Otherwise, a type error is raised [err:FORG0006].

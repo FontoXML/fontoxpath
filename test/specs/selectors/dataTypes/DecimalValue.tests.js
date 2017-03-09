@@ -1,12 +1,4 @@
 import DecimalValue from 'fontoxpath/selectors/dataTypes/DecimalValue';
-import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
-
-describe('DecimalValue.cast()', () => {
-	it('casts the given value to DecimalValue', () => {
-		const numericValue = new DecimalValue(123);
-		chai.expect(DecimalValue.cast(new StringValue('123'))).to.deep.equal(numericValue);
-	});
-});
 
 describe('DecimalValue.getEffectiveBooleanValue()', () => {
 	it('returns true when the value is a positive number', () => {

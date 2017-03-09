@@ -1,13 +1,6 @@
 import BooleanValue from 'fontoxpath/selectors/dataTypes/BooleanValue';
 import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
-describe('StringValue.cast()', () => {
-	it('casts the given value to a StringValue', () => {
-		const stringValue = new StringValue('true');
-		chai.expect(StringValue.cast(new BooleanValue(true))).to.deep.equal(stringValue);
-	});
-});
-
 describe('StringValue.getEffectiveBooleanValue()', () => {
 	it('returns true when the value is the string "Text"', () => {
 		const string = new StringValue('Text');

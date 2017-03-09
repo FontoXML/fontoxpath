@@ -1,13 +1,6 @@
 import QNameValue from 'fontoxpath/selectors/dataTypes/QNameValue';
 import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
-describe('QNameValue.cast', () => {
-	it('casts the given value to QNameValue', () => {
-		const qNameValue = new QNameValue('123');
-		chai.expect(QNameValue.cast(new StringValue('123'))).to.deep.equal(qNameValue);
-	});
-});
-
 describe('QNameValue.getEffectiveBooleanValue()', () => {
 	it('Returns true if there is a value', () => {
 		const qNameValue = new QNameValue('bla');

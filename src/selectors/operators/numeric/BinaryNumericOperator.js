@@ -1,8 +1,7 @@
 import Sequence from '../../dataTypes/Sequence';
-import DoubleValue from '../../dataTypes/DoubleValue';
 import DecimalValue from '../../dataTypes/DecimalValue';
 import IntegerValue from '../../dataTypes/IntegerValue';
-import UntypedAtomicValue from '../../dataTypes/UntypedAtomicValue';
+import { castToType } from '../../dataTypes/conversionHelper';
 import Selector from '../../Selector';
 
 function executeOperator (kind, a, b) {
@@ -72,12 +71,12 @@ class BinaryNumericOperator extends Selector {
 		var firstValue = firstValueSequence.value[0],
 			secondValue = secondValueSequence.value[0];
 
-		if (firstValue instanceof UntypedAtomicValue) {
-			firstValue = DoubleValue.cast(firstValue);
+		if (firstValue.instanceOfType('xs:untypedAtomic')) {
+			firstValue = castToType(firstValue, 'xs:double');
 		}
 
-		if (secondValue instanceof UntypedAtomicValue) {
-			secondValue = DoubleValue.cast(secondValue);
+		if (secondValue.instanceOfType('xs:untypedAtomic')) {
+			secondValue = castToType(secondValue, 'xs:double');
 		}
 
 		var result = executeOperator(this._kind, firstValue.value, secondValue.value),

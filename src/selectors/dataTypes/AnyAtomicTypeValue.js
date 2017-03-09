@@ -13,10 +13,6 @@ function AnyAtomicTypeValue (value) {
 AnyAtomicTypeValue.prototype = Object.create(Item.prototype);
 AnyAtomicTypeValue.prototype.constructor = AnyAtomicTypeValue;
 
-AnyAtomicTypeValue.cast = function (value) {
-    return new AnyAtomicTypeValue(value.value + '');
-};
-
 AnyAtomicTypeValue.prototype.atomize = function () {
     return this;
 };

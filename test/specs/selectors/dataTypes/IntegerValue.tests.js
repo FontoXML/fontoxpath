@@ -1,13 +1,6 @@
 import IntegerValue from 'fontoxpath/selectors/dataTypes/IntegerValue';
 import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
-describe('IntegerValue.cast()', () => {
-	it('casts the given value to IntegerValue', () => {
-		const integerValue = new IntegerValue(123);
-		chai.expect(IntegerValue.cast(new StringValue('123'))).to.deep.equal(integerValue);
-	});
-});
-
 describe('IntegerValue.getEffectiveBooleanValue()', () => {
 	it('returns true when the value is a positive number', () => {
 		const integerValue = new IntegerValue(10);

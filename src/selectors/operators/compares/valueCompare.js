@@ -1,8 +1,4 @@
-import UntypedAtomicValue from '../../dataTypes/UntypedAtomicValue';
-import StringValue from '../../dataTypes/StringValue';
-import FloatValue from '../../dataTypes/FloatValue';
-import DoubleValue from '../../dataTypes/DoubleValue';
-
+import { castToType } from '../../dataTypes/conversionHelper';
 
 export default function valueCompare (operator, firstSequence, secondSequence) {
     // https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
@@ -13,29 +9,29 @@ export default function valueCompare (operator, firstSequence, secondSequence) {
     var firstValue = firstSequence.value[0],
         secondValue = secondSequence.value[0];
 
-    if (firstValue instanceof UntypedAtomicValue) {
-        firstValue = StringValue.cast(firstValue);
+    if (firstValue.instanceOfType('xs:untypedAtomic')) {
+        firstValue = castToType(firstValue, 'xs:string');
     }
 
-    if (secondValue instanceof UntypedAtomicValue) {
-        secondValue = StringValue.cast(secondValue);
+    if (secondValue.instanceOfType('xs:untypedAtomic')) {
+        secondValue = castToType(secondValue, 'xs:string');
     }
 
     if (firstValue.primitiveTypeName !== secondValue.primitiveTypeName) {
         if ((firstValue.instanceOfType('xs:string') || firstValue.instanceOfType('xs:anyURI')) &&
             (secondValue.instanceOfType('xs:string') || secondValue.instanceOfType('xs:anyURI'))) {
-            firstValue = StringValue.cast(firstValue);
-            secondValue = StringValue.cast(secondValue);
+			firstValue = castToType(firstValue, 'xs:string');
+			firstValue = castToType(secondValue, 'xs:string');
         }
 		else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float')) &&
 				(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float'))) {
-            firstValue = FloatValue.cast(firstValue);
-            secondValue = FloatValue.cast(secondValue);
+			firstValue = castToType('xs:string', firstValue);
+			secondValue = castToType('xs:string', secondValue);
         }
 		else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float') || firstValue.instanceOfType('xs:double')) &&
-				(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float') || secondValue.instanceOfType('xs:double'))) {
-            firstValue = DoubleValue.cast(firstValue);
-            secondValue = DoubleValue.cast(secondValue);
+			(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float') || secondValue.instanceOfType('xs:double'))) {
+			firstValue = castToType(firstValue, 'xs:double');
+			secondValue = castToType(secondValue, 'xs:double');
         }
 		else {
             throw new Error('XPTY0004: Values to compare are not of the same type');
