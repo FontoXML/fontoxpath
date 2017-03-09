@@ -82,4 +82,13 @@ describe('attribute', () => {
 		element.setAttribute('someAttribute3', 'someValue3');
 		chai.assert.equal(evaluateXPathToString(selector, element, domFacade), 'someAttribute1,someAttribute2,someAttribute3');
 	});
+
+	it('sets the context sequence', () => {
+		const selector = ('@*[last()]/name()'),
+		element = documentNode.createElement('someElement');
+		element.setAttribute('b', 'b');
+		element.setAttribute('c', 'c');
+		element.setAttribute('a', 'a');
+		chai.assert.oneOf(evaluateXPathToString(selector, element, domFacade), ['a', 'b', 'c']);
+	});
 });

@@ -32,22 +32,22 @@ class FollowingSiblingAxis extends Selector {
 		var contextItem = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;
 
-		function isMatchingFollowingSibling (selector, node) {
-			return selector.evaluate(dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
-				contextSequence: null
-			})).getEffectiveBooleanValue();
-		}
-
 		var sibling = contextItem.value[0].value;
-		var nodes = [];
+		var siblings = [];
 		while ((sibling = domFacade.getNextSibling(sibling))) {
-			if (!isMatchingFollowingSibling(this._siblingSelector, sibling)) {
-				continue;
-			}
-			nodes.push(new NodeValue(dynamicContext.domFacade, sibling));
+			siblings.push(new NodeValue(domFacade, sibling));
 		}
-		return new Sequence(nodes);
+		var matchingSiblings = siblings
+			.filter((siblingNode) => {
+				var contextItem = Sequence.singleton(siblingNode);
+				var scopedContext = dynamicContext.createScopedContext({
+					contextItem: contextItem,
+					contextSequence: contextItem
+				});
+				return this._siblingSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+			});
+
+		return new Sequence(matchingSiblings);
 	}
 }
 

@@ -1,7 +1,7 @@
 import slimdom from 'slimdom';
 
 import { domFacade } from 'fontoxpath';
-import { evaluateXPathToFirstNode, evaluateXPathToNodes, evaluateXPathToNumber, evaluateXPathToString } from 'fontoxpath';
+import { evaluateXPathToFirstNode, evaluateXPathToNodes, evaluateXPathToNumber, evaluateXPathToNumbers, evaluateXPathToString } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
@@ -31,6 +31,18 @@ describe('relative paths', () => {
 		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
 			documentNode.documentElement
 		]);
+	});
+
+	it('sets the contextSequence', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			[
+				'someChildNode',
+				['someGrandChild']
+			]
+		], documentNode);
+		const selector = ('//*/position()');
+		chai.assert.deepEqual(evaluateXPathToNumbers(selector, documentNode.documentElement, domFacade), [1, 1, 1]);
 	});
 
 	it('returns its results sorted on document order', () => {

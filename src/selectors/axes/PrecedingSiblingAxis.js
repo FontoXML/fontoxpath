@@ -28,24 +28,25 @@ class PrecedingSiblingAxis extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var contextItem = dynamicContext.contextItem;
-
-		function isMatchingPrecedingSibling (selector, node) {
-			return selector.evaluate(dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
-				contextSequence: null
-			})).getEffectiveBooleanValue();
-		}
+		var contextItem = dynamicContext.contextItem,
+        domFacade = dynamicContext.domFacade;
 
 		var sibling = contextItem.value[0].value;
-		var nodes = [];
-		while ((sibling = dynamicContext.domFacade.getPreviousSibling(sibling))) {
-			if (!isMatchingPrecedingSibling(this._siblingSelector, sibling)) {
-				continue;
-			}
-			nodes.push(new NodeValue(dynamicContext.domFacade, sibling));
+		var siblings = [];
+		while ((sibling = domFacade.getPreviousSibling(sibling))) {
+			siblings.push(new NodeValue(domFacade, sibling));
 		}
-		return new Sequence(nodes);
+		var matchingSiblings = siblings
+			.filter((siblingNode) => {
+				var contextItem = Sequence.singleton(siblingNode);
+				var scopedContext = dynamicContext.createScopedContext({
+					contextItem: contextItem,
+					contextSequence: contextItem
+				});
+				return this._siblingSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+			});
+
+		return new Sequence(matchingSiblings);
 	}
 }
 

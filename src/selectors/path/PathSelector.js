@@ -81,9 +81,9 @@ class PathSelector extends Selector {
 				var resultSet = new Set();
 				intermediateResultNodes.forEach(function (nodeValue) {
 					var newResults = selector.evaluate(dynamicContext.createScopedContext({
-							contextItem: Sequence.singleton(nodeValue),
-							contextSequence: null
-						}));
+						contextItem: Sequence.singleton(nodeValue),
+						contextSequence: new Sequence(intermediateResultNodes)
+					}));
 
 					if (newResults.isEmpty()) {
 						return;

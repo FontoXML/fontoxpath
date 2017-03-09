@@ -4,7 +4,7 @@ import Sequence from './dataTypes/Sequence';
 
 /**
  * All possible permutations
- * @typedef {DynamicContext|{contextItem:Sequence, contextSequence: Sequence}|{contextItem:Sequence}|{contextSequence:Sequence}|{domFacade:!DomFacade}|{variables:Object}}|{contextItem: Sequence, contextSequence: Sequence, domFacade: !DomFacade, variables: Object}|{contextItem: !Sequence, domFacade: !DomFacade, variables: !Object}}
+ * @typedef {!DynamicContext|{contextItem:!Sequence, contextSequence: !Sequence}|{domFacade:!DomFacade}|{variables:Object}}|{contextItem: !Sequence, contextSequence: !Sequence, domFacade: !DomFacade, variables: !Object}}
  */
 var ScopingType;
 

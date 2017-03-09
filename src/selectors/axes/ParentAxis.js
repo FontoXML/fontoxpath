@@ -29,23 +29,24 @@ class ParentAxis extends Selector {
         domFacade = dynamicContext.domFacade;
 
 		var nodeValues = nodeSequence.value
-			.map(function (nodeValue) {
+			.map(nodeValue => {
 				var parentNode = domFacade.getParentNode(nodeValue.value);
 				if (!parentNode) {
 					return null;
 				}
 				return new NodeValue(dynamicContext.domFacade, parentNode);
 			})
-			.filter(function (nodeValue) {
+			.filter(nodeValue => {
 				if (!nodeValue) {
 					return false;
 				}
-				var result = this._parentSelector.evaluate(dynamicContext.createScopedContext({
-						contextItem: Sequence.singleton(nodeValue),
-						contextSequence: null
-					}));
-				return result.getEffectiveBooleanValue();
-			}.bind(this));
+				var contextItem = Sequence.singleton(nodeValue);
+				var scopedContext = dynamicContext.createScopedContext({
+					contextItem: contextItem,
+					contextSequence: contextItem
+				});
+				return this._parentSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+			});
 
 		return new Sequence(nodeValues);
 	}

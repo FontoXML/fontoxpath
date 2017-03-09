@@ -45,9 +45,11 @@ class AttributeAxis extends Selector {
 					attribute.value
 				));
 			}).filter(function (attributeNodeValue) {
+				var contextItem = Sequence.singleton(attributeNodeValue);
 				var scopedContext = dynamicContext.createScopedContext({
-						contextItem: Sequence.singleton(attributeNodeValue)
-					});
+					contextItem: contextItem,
+					contextSequence: contextItem
+				});
 				return this._attributeTestSelector.evaluate(scopedContext).getEffectiveBooleanValue();
 			}.bind(this));
 

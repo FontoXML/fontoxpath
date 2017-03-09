@@ -44,4 +44,8 @@ describe('Simple map operator', () => {
 			evaluateXPathToStrings('. ! (@first, @second, @last) ! string(.)', element, domFacade)
 		).to.deep.equal(['a', 'b', 'z']);
 	});
+
+	it('sets the context sequence', () => {
+		chai.assert.deepEqual(evaluateXPathToStrings('("a", "b", "c")!position()!string()', documentNode, domFacade), ['1', '2', '3']);
+	});
 });

@@ -53,11 +53,11 @@ function evaluateXPath (xPathSelector, contextNode, domFacade, variables = {}, r
 		}, Object.create(null));
 
 	const dynamicContext = new DynamicContext({
-			contextItem: contextSequence,
-			contextSequence: null,
-			domFacade: nestedDomFacade,
-			variables: typedVariables
-		});
+		contextItem: contextSequence,
+		contextSequence: contextSequence,
+		domFacade: nestedDomFacade,
+		variables: typedVariables
+	});
 
 	const rawResults = compiledSelector.evaluate(dynamicContext);
 

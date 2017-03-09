@@ -36,17 +36,15 @@ class AncestorAxis extends Selector {
 		var contextNode = contextItem.value[0].value;
 		var ancestors = [];
 		for (var ancestorNode = this._isInclusive ? contextNode : domFacade.getParentNode(contextNode); ancestorNode; ancestorNode = domFacade.getParentNode(ancestorNode)) {
-			var isMatchingAncestor = this._ancestorSelector.evaluate(dynamicContext.createScopedContext({
-					contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, ancestorNode)),
-					contextSequence: null
-				})).getEffectiveBooleanValue();
-
-			if (isMatchingAncestor) {
-				ancestors.push(ancestorNode);
-			}
+			ancestors.push(new NodeValue(dynamicContext.domFacade, ancestorNode));
 		}
-		return new Sequence(ancestors.map(function (node) {
-			return new NodeValue(dynamicContext.domFacade, node);
+		return new Sequence(ancestors.filter(ancestor => {
+			var contextItem = Sequence.singleton(ancestor);
+			var scopedContext = dynamicContext.createScopedContext({
+				contextItem: contextItem,
+				contextSequence: contextItem
+			});
+			return this._ancestorSelector.evaluate(scopedContext).getEffectiveBooleanValue();
 		}));
 	}
 }

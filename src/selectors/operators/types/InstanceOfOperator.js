@@ -34,7 +34,7 @@ class InstanceOfOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var evaluatedExpression = this._expression.evaluate(dynamicContext);
+		const evaluatedExpression = this._expression.evaluate(dynamicContext);
 
 		switch (this._multiplicity) {
 			case '?':
@@ -58,12 +58,14 @@ class InstanceOfOperator extends Selector {
 				}
 		}
 
-		var isInstanceOf = evaluatedExpression.value.every(function (argumentItem) {
-				var scopedContext = dynamicContext.createScopedContext({
-						contextItem: Sequence.singleton(argumentItem)
-					});
-				return this._typeTest.evaluate(scopedContext).getEffectiveBooleanValue();
-			}.bind(this));
+		const isInstanceOf = evaluatedExpression.value.every(argumentItem => {
+			const contextItem = Sequence.singleton(argumentItem);
+			const scopedContext = dynamicContext.createScopedContext({
+				contextItem: contextItem,
+				contextSequence: contextItem
+			});
+			return this._typeTest.evaluate(scopedContext).getEffectiveBooleanValue();
+		});
 
 		return Sequence.singleton(isInstanceOf ? BooleanValue.TRUE : BooleanValue.FALSE);
 	}

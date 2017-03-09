@@ -26,12 +26,14 @@ class SelfAxis extends Selector {
 	evaluate (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem;
 
-		return new Sequence(nodeSequence.value.filter(function (nodeValue) {
+		return new Sequence(nodeSequence.value.filter(nodeValue => {
+			var contextItem = Sequence.singleton(nodeValue);
+
 			return this._selector.evaluate(dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(nodeValue),
-				contextSequence: nodeSequence
+				contextItem: contextItem,
+				contextSequence: contextItem
 			})).getEffectiveBooleanValue();
-		}.bind(this)));
+		}));
 	}
 
 	getBucket () {

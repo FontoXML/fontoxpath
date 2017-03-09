@@ -25,15 +25,14 @@ class ChildAxis extends Selector {
 		var contextItem = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;
 		var nodeValues = domFacade.getChildNodes(contextItem.value[0].value)
-			.filter(function (node) {
-				return this._childSelector.evaluate(
-					dynamicContext.createScopedContext({
-						contextItem: Sequence.singleton(new NodeValue(dynamicContext.domFacade, node)),
-						contextSequence: null
-					})).getEffectiveBooleanValue();
-			}.bind(this))
-			.map(function (node) {
-				return new NodeValue(dynamicContext.domFacade, node);
+			.map((node) => new NodeValue(dynamicContext.domFacade, node))
+			.filter((node) => {
+				var contextItem = Sequence.singleton(node);
+				var scopedContext = dynamicContext.createScopedContext({
+					contextItem: contextItem,
+					contextSequence: contextItem
+				});
+				return this._childSelector.evaluate(scopedContext).getEffectiveBooleanValue();
 			});
 
 		return new Sequence(nodeValues);

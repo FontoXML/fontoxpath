@@ -28,36 +28,29 @@ class DescendantAxis extends Selector {
 		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
-		// Assume singleton, since axes are only valid in paths
-		var isMatchingDescendant = function (descendantNode) {
-				var scopedContext = dynamicContext.createScopedContext({
-						contextItem: Sequence.singleton(new NodeValue(domFacade, descendantNode)),
-						contextSequence: null
-					});
-				return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
-			}.bind(this);
-		var nodeValues = [];
-
-		function findMatchingDescendants (matchingDescendants, node) {
-			if (isMatchingDescendant(node)) {
-				matchingDescendants.push(new NodeValue(domFacade, node));
-			}
-			domFacade.getChildNodes(node)
-				.forEach(function (childNode) {
-					findMatchingDescendants(matchingDescendants, childNode);
-				});
+		var descendants = [];
+		function collectDescendants (node) {
+			descendants.push(new NodeValue(domFacade, node));
+			domFacade.getChildNodes(node).forEach(collectDescendants);
 		}
 
 		if (this._isInclusive) {
-			findMatchingDescendants(nodeValues, contextItem.value[0].value);
+			collectDescendants(contextItem.value[0].value);
 		}
 		else {
-			domFacade.getChildNodes(contextItem.value[0].value).forEach(function (childNode) {
-				findMatchingDescendants(nodeValues, childNode);
-			});
+			domFacade.getChildNodes(contextItem.value[0].value).forEach(collectDescendants);
 		}
 
-		return new Sequence(nodeValues);
+		var matchingDescendants = descendants
+			.filter(descendant => {
+				var contextItem = Sequence.singleton(descendant);
+				var scopedContext = dynamicContext.createScopedContext({
+					contextItem: contextItem,
+					contextSequence: contextItem
+				});
+				return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+			});
+		return new Sequence(matchingDescendants);
 	}
 }
 export default DescendantAxis;
