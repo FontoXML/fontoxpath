@@ -362,7 +362,7 @@ CurlyArrayConstructor
 
 // 77
 SingleType
- = typeName:SimpleTypeName multiplicity:"?"? {return ["type", typeName, !!multiplicity]}
+ = typeName:SimpleTypeName multiplicity:"?"? {return [typeName, !!multiplicity]}
 
 // 78
 TypeDeclaration

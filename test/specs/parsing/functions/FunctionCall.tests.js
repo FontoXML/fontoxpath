@@ -2,7 +2,7 @@ import { domFacade } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import slimdom from 'slimdom';
 
-import { evaluateXPathToString, evaluateXPathToStrings, evaluateXPathToNumbers } from 'fontoxpath';
+import { evaluateXPathToBoolean, evaluateXPathToString, evaluateXPathToStrings, evaluateXPathToNumbers } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {

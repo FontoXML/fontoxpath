@@ -26,6 +26,7 @@ import Unary from '../selectors/operators/numeric/Unary';
 import BinaryNumericOperator from '../selectors/operators/numeric/BinaryNumericOperator';
 import Compare from '../selectors/operators/compares/Compare';
 import InstanceOfOperator from '../selectors/operators/types/InstanceOfOperator';
+import CastAsOperator from '../selectors/operators/types/CastAsOperator';
 import QuantifiedExpression from '../selectors/quantified/QuantifiedExpression';
 import IfExpression from '../selectors/conditional/IfExpression';
 import Literal from '../selectors/literals/Literal';
@@ -135,6 +136,8 @@ function compile (ast) {
 
 		case 'instance of':
 			return instanceOf(args);
+		case 'cast as':
+			return castAs(args);
 
 		case 'simpleMap':
 			return simpleMap(args);
@@ -203,6 +206,13 @@ function descendant (args) {
 function descendantOrSelf (args) {
 	var subSelector = compile(args[0]);
 	return new DescendantAxis(subSelector, { inclusive: true });
+}
+
+function castAs (args) {
+	var expression = compile(args[0]);
+	var sequenceType = args[1];
+
+	return new CastAsOperator(expression, sequenceType[0], sequenceType[1]);
 }
 
 // Binary compare (=, !=, le, is, etc)

@@ -25,8 +25,8 @@ export default function valueCompare (operator, firstSequence, secondSequence) {
         }
 		else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float')) &&
 				(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float'))) {
-			firstValue = castToType('xs:string', firstValue);
-			secondValue = castToType('xs:string', secondValue);
+			firstValue = castToType(firstValue, 'xs:string');
+			secondValue = castToType(secondValue, 'xs:string');
         }
 		else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float') || firstValue.instanceOfType('xs:double')) &&
 			(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float') || secondValue.instanceOfType('xs:double'))) {

@@ -15,33 +15,51 @@ import Sequence from './Sequence';
 import StringValue from './StringValue';
 import UntypedAtomicValue from './UntypedAtomicValue';
 
-export const castToType = (value, type) => {
+/**
+ * @param   {!Item}   value
+ * @param   {string} type
+ * @return  {!Item}
+ */
+export const castToType = function castToType (value, type) {
 	switch (type) {
-		case 'xs:anyAtomicType':
+		case 'xs:untypedAtomic':
 		case 'xs:string':
 			let convertedValue;
-			if (value.instanceOfType('xs:string')) {
-				return value;
+			if (value.instanceOfType('xs:string') || 'xs:untypedAtomic') {
+				convertedValue = value.value;
 			}
 			if (value.instanceOfType('xs:anyURI')) {
 				convertedValue = value.value;
 			}
-			if (value.instanceOfType('xs:QName') || value.instanceOfType('xs:NOTATION')) {
+			else if (value.instanceOfType('xs:QName') || value.instanceOfType('xs:NOTATION')) {
 				convertedValue = value.value;
-				break;
 			}
-			if (value.instanceOfType('xs:numeric')) {
-				if (value.instanceOf('xs:integer') || value.instanceOf('xs:decimal')) {
+			else if (value.instanceOfType('xs:numeric')) {
+				if (value.instanceOfType('xs:integer') || value.instanceOfType('xs:decimal')) {
 					convertedValue = value.value + '';
 				}
+				else if (value.instanceOfType('xs:float') || value.instanceOfType('xs:double')) {
+					if (Math.abs(value.value) === Infinity) {
+						convertedValue = `${value.value < 0 ? '-' : ''}INF`;
+					}
+					else {
+						convertedValue = (value.value + '').replace('e', 'E');
+					}
+				}
+				// TODO: dateTime
 			}
-			if (type === 'xs:anyAtomicType') {
-				return new AnyAtomicTypeValue(convertedValue);
+
+			if (type === 'xs:untypedAtomic') {
+				return new UntypedAtomicValue(convertedValue);
 			}
 			return new StringValue(convertedValue);
 
 		case 'xs:boolean':
-			switch (value.value) {
+			if (value.instanceOfType('xs:numeric')) {
+				return value.value === 0 || value.isNaN() ? BooleanValue.FALSE : BooleanValue.TRUE;
+			}
+			if (value.instanceOfType('xs:string') || value.instanceOfType('xs:untypedAtomic')) {
+				switch (value.value) {
 					case 'true':
 					case '1':
 						return BooleanValue.TRUE;
@@ -51,28 +69,62 @@ export const castToType = (value, type) => {
 
 					default:
 						throw new Error(`XPTY0004: can not cast ${value.value} to xs:boolean`);
+				}
 			}
 
 		case 'xs:decimal':
-			const decimalValue = parseFloat(value.value);
-			if (Number.isNaN(decimalValue)) {
-				throw new Error(`XPTY0004: can not cast ${value.value} to xs:decimal`);
+			let decimalValue;
+			if (value.instanceOfType('xs:decimal') || value.instanceOfType('xs:integer')) {
+				decimalValue = value.value;
+			}
+			if (value.instanceOfType('xs:float') || value.instanceOfType('xs:double')) {
+				decimalValue = value.value;
+				if (Number.isNaN(decimalValue)) {
+					throw new Error(`FOCA0002: can not cast ${value.value} to xs:decimal`);
+				}
+			}
+			if (value.instanceOfType('xs:boolean')) {
+				decimalValue = value === BooleanValue.TRUE ? 1 : 0;
+			}
+			else if (value.instanceOfType('xs:string') || value.instanceOfType('xs:untypedAtomic')) {
+				decimalValue = parseFloat(value.value);
+				if (Number.isNaN(decimalValue)) {
+					throw new Error(`XPTY0004: can not cast ${value.value} to xs:decimal`);
+				}
 			}
 			return new DecimalValue(decimalValue);
 
 		case 'xs:double':
-			const doubleValue = parseFloat(value.value);
-			return new DoubleValue(doubleValue);
-
 		case 'xs:float':
-			const floatValue = parseFloat(value.value);
-			return new FloatValue(floatValue);
+			let floatValue;
+			if (value.instanceOfType('xs:numeric')) {
+				floatValue = value.value;
+			}
+			if (value.instanceOfType('xs:boolean')) {
+				floatValue = value === BooleanValue.TRUE ? 1 : 0;
+			}
+			else if (value.instanceOfType('xs:string') || value.instanceOfType('xs:untypedAtomic')) {
+				if (value.value === 'NaN') {
+					floatValue = NaN;
+				}
+				else {
+					floatValue = parseFloat(value.value.replace('E', 'e'));
+				}
+			}
+
+			return type === 'xs:double' ? new DoubleValue(floatValue) : new FloatValue(floatValue);
 
 		case 'xs:integer':
-			// Strip off any decimals
-			var integerValue = Math.abs(parseFloat(value.value));
-			if (Number.isNaN(integerValue)) {
-				throw new Error(`XPTY0004: can not cast ${value.value} to xs:integer`);
+			let integerValue;
+			if (value.instanceOfType('xs:boolean')) {
+				integerValue = value === BooleanValue.TRUE ? 1 : 0;
+			}
+			else {
+				// Strip off any decimals
+				integerValue = Math.floor(parseFloat(value.value));
+				if (Number.isNaN(integerValue)) {
+					throw new Error(`XPTY0004: can not cast ${value.value} to xs:integer`);
+				}
 			}
 			return new IntegerValue(integerValue);
 

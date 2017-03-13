@@ -9,18 +9,6 @@ import FloatValue from 'fontoxpath/selectors/dataTypes/FloatValue';
 import QNameValue from 'fontoxpath/selectors/dataTypes/QNameValue';
 
 describe('casting', () => {
-	describe('xs:anyAtomicType', () => {
-		it('casts strings to AnyAtomicTypeValue', () => {
-			const anyAtomicTypeValue = new AnyAtomicTypeValue('123');
-			chai.assert.deepEqual(castToType(new StringValue('123'), 'xs:anyAtomicType'), anyAtomicTypeValue);
-		});
-
-		it('casts integers to AnyAtomicTypeValue', () => {
-			const anyAtomicTypeValue = new AnyAtomicTypeValue('123');
-			chai.assert.deepEqual(castToType(new IntegerValue('123'), 'xs:anyAtomicType'), anyAtomicTypeValue);
-		});
-	});
-
 	describe('xs:boolean', () => {
 		it('casts "true" to true', () => {
 			const booleanValue = castToType(new StringValue('true'), 'xs:boolean');
@@ -73,18 +61,6 @@ describe('casting', () => {
 		it('casts the given string to a IntegerValue', () => {
 			const numericValue = new IntegerValue(123);
 			chai.assert.deepEqual(castToType(new StringValue('123'), 'xs:integer'), numericValue);
-		});
-	});
-
-	describe('xs:qname', () => {
-		it('casts the given string to a QNameValue', () => {
-			const numericValue = new QNameValue(123);
-			chai.assert.deepEqual(castToType(new StringValue('123'), 'xs:qname'), numericValue);
-		});
-
-		it('casts the given anyatomic to a QNameValue', () => {
-			const numericValue = new QNameValue(123);
-			chai.assert.deepEqual(castToType(new StringValue('123'), 'xs:qname'), numericValue);
 		});
 	});
 
