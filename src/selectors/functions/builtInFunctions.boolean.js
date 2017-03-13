@@ -1,5 +1,6 @@
 import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
+import { castToType } from '../dataTypes/conversionHelper';
 
 function fnNot (_dynamicContext, sequence) {
 	return Sequence.singleton(sequence.getEffectiveBooleanValue() ? BooleanValue.FALSE : BooleanValue.TRUE);
@@ -7,6 +8,12 @@ function fnNot (_dynamicContext, sequence) {
 
 function fnBoolean (_dynamicContext, sequence) {
 	return Sequence.singleton(sequence.getEffectiveBooleanValue() ? BooleanValue.TRUE : BooleanValue.FALSE);
+}
+function xsBoolean (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+	return Sequence.singleton(castToType(sequence.value[0], 'xs:boolean'));
 }
 
 function fnTrue () {
@@ -24,6 +31,13 @@ export default {
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnBoolean
+		},
+
+		{
+			name: 'xs:boolean',
+			argumentTypes: ['xs:anyAtomicType?'],
+			returnType: 'xs:boolean?',
+			callFunction: xsBoolean
 		},
 
 		{

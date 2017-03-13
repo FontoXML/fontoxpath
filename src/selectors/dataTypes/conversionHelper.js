@@ -107,6 +107,12 @@ export const castToType = function castToType (value, type) {
 				if (value.value === 'NaN') {
 					floatValue = NaN;
 				}
+				else if (value.value === 'INF' || value.value === '+INF') {
+					floatValue = Infinity;
+				}
+				else if (value.value === '-INF') {
+					floatValue = -Infinity;
+				}
 				else {
 					floatValue = parseFloat(value.value.replace('E', 'e'));
 				}
