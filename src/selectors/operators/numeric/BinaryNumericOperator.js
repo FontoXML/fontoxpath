@@ -52,13 +52,13 @@ class BinaryNumericOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize();
+		const firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize();
 		if (firstValueSequence.isEmpty()) {
 			// Shortcut, if the first part is empty, we can return empty.
 			// As per spec, we do not have to evaluate the second part, though we could.
 			return firstValueSequence;
 		}
-		var secondValueSequence = this._secondValueExpr.evaluate(dynamicContext);
+		const secondValueSequence = this._secondValueExpr.evaluate(dynamicContext).atomize();
 		if (secondValueSequence.isEmpty()) {
 			return secondValueSequence;
 		}
@@ -68,7 +68,7 @@ class BinaryNumericOperator extends Selector {
 		}
 
 		// Cast both to doubles, if they are xs:untypedAtomic
-		var firstValue = firstValueSequence.value[0],
+		let firstValue = firstValueSequence.value[0],
 			secondValue = secondValueSequence.value[0];
 
 		if (firstValue.instanceOfType('xs:untypedAtomic')) {
@@ -79,8 +79,8 @@ class BinaryNumericOperator extends Selector {
 			secondValue = castToType(secondValue, 'xs:double');
 		}
 
-		var result = executeOperator(this._kind, firstValue.value, secondValue.value),
-			typedResult;
+		const result = executeOperator(this._kind, firstValue.value, secondValue.value);
+		let typedResult;
 		// Override for types
 		if (this._kind === 'div') {
 			typedResult = new DecimalValue(result);

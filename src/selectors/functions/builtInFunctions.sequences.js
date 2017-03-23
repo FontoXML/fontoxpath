@@ -1,3 +1,4 @@
+import BooleanValue from '../dataTypes/BooleanValue';
 import DecimalValue from '../dataTypes/DecimalValue';
 import DoubleValue from '../dataTypes/DoubleValue';
 import FloatValue from '../dataTypes/FloatValue';
@@ -59,7 +60,7 @@ function convertItemsToCommonType (items) {
 function castUntypedItemsToDouble (items) {
 	return items.map(function (item) {
 		if (item.instanceOfType('xs:untypedAtomic')) {
-			return DoubleValue.cast(item);
+			return castToType(item, 'xs:double');
 		}
 		return item;
 	});
@@ -78,7 +79,7 @@ function castItemsForMinMax (items) {
 	return convertItemsToCommonType(items);
 }
 
-function fnMax (dynamicContext, sequence) {
+function fnMax (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -92,7 +93,7 @@ function fnMax (dynamicContext, sequence) {
 		}));
 }
 
-function fnMin (dynamicContext, sequence) {
+function fnMin (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -106,7 +107,7 @@ function fnMin (dynamicContext, sequence) {
 		}));
 }
 
-function fnAvg (dynamicContext, sequence) {
+function fnAvg (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -114,6 +115,9 @@ function fnAvg (dynamicContext, sequence) {
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	var items = castUntypedItemsToDouble(sequence.value);
 	items = convertItemsToCommonType(items);
+	if (!items.every(item => item.instanceOfType('xs:numeric'))) {
+		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
+	}
 
 	var resultValue = items.reduce(function (sum, item) {
 			return sum + item.value;
@@ -134,7 +138,7 @@ function fnAvg (dynamicContext, sequence) {
 	return Sequence.singleton(new FloatValue(resultValue));
 }
 
-function fnSum (dynamicContext, sequence, zero) {
+function fnSum (_dynamicContext, sequence, zero) {
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	if (sequence.isEmpty()) {
 		return zero;
@@ -142,6 +146,10 @@ function fnSum (dynamicContext, sequence, zero) {
 
 	var items = castUntypedItemsToDouble(sequence.value);
 	items = convertItemsToCommonType(items);
+	if (!items.every(item => item.instanceOfType('xs:numeric'))) {
+		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
+	}
+
 	var resultValue = items.reduce(function (sum, item) {
 			return sum + item.value;
 		}, 0);
@@ -167,13 +175,21 @@ function fnSum (dynamicContext, sequence, zero) {
 	return Sequence.singleton(new FloatValue(resultValue));
 }
 
-function fnCount (dynamicContext, sequence) {
+function fnCount (_dynamicContext, sequence) {
 	return Sequence.singleton(new IntegerValue(sequence.value.length));
 }
 
 
-function fnReverse (dynamicContext, sequence) {
+function fnReverse (_dynamicContext, sequence) {
 	return new Sequence(sequence.value.reverse());
+}
+
+function fnEmpty (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return Sequence.singleton(BooleanValue.TRUE);
+	}
+
+	return Sequence.singleton(BooleanValue.FALSE);
 }
 
 export default {
@@ -190,6 +206,13 @@ export default {
 			argumentTypes: ['item()*'],
 			returnType: 'xs:integer',
 			callFunction: fnCount
+		},
+
+		{
+			name: 'empty',
+			argumentTypes: ['item()*'],
+			returnType: 'xs:boolean',
+			callFunction: fnEmpty
 		},
 
 		{

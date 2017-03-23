@@ -25,10 +25,10 @@ export const castToType = function castToType (value, type) {
 		case 'xs:untypedAtomic':
 		case 'xs:string':
 			let convertedValue;
-			if (value.instanceOfType('xs:string') || 'xs:untypedAtomic') {
+			if (value.instanceOfType('xs:string') || value.instanceOfType('xs:untypedAtomic')) {
 				convertedValue = value.value;
 			}
-			if (value.instanceOfType('xs:anyURI')) {
+			else if (value.instanceOfType('xs:anyURI')) {
 				convertedValue = value.value;
 			}
 			else if (value.instanceOfType('xs:QName') || value.instanceOfType('xs:NOTATION')) {
@@ -43,10 +43,15 @@ export const castToType = function castToType (value, type) {
 						convertedValue = `${value.value < 0 ? '-' : ''}INF`;
 					}
 					else {
-						convertedValue = (value.value + '').replace('e', 'E');
+						// USe Javascript's built in number formatting. This outputs like 1e+100. The valid XPath version is 1E100: without the +, and with the exponent in capitals
+						convertedValue = (value.value + '').replace('e', 'E').replace('E+', 'E');
 					}
 				}
 				// TODO: dateTime
+			}
+			else {
+				// The value should be 'the canonical representation' of this value
+				convertedValue = value.value + '';
 			}
 
 			if (type === 'xs:untypedAtomic') {

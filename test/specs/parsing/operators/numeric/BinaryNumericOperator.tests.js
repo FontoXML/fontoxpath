@@ -42,7 +42,7 @@ describe('mathematical operators', () => {
 		const selector = ('1 idiv 2');
 		chai.expect(
 			evaluateXPathToNumber(selector, documentNode, domFacade)
-		).to.equal(0.5);
+		).to.equal(0);
 	});
 
 	it('returns the empty sequence if one of the operands is the empty sequence', () => {

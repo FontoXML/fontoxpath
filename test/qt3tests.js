@@ -41,6 +41,10 @@ function getAsserterForTest (testCase) {
 context.keys().forEach((item) => {
 	// Load the XML
 	const doc = parser.parseFromString(context(item), 'text/xml');
+	if (evaluateXPathToBoolean('/test-set/@name = "fn-matches" or /test-set/@name => contains("date") or /test-set/@name => contains("time") or /test-set/@name => contains("collation") or /test-set/@name => contains("duration")', doc)) {
+		return;
+	}
+
 	// Find all the tests we can run
 	const testCases = evaluateXPathToNodes(`
 /test-set[not(./dependency[@value eq "XQ10+" or @value eq "XQ30+"])]/test-case[
@@ -59,9 +63,9 @@ context.keys().forEach((item) => {
 			const testQuery = evaluateXPathToString('./test', testCase);
 			const description = evaluateXPathToString('if (description/text()) then description else test', testCase);
 			const asserter = getAsserterForTest(testCase);
-			it(description, () => {
-				asserter(testQuery, doc);
-			});
+			const assertFn = () => asserter(testQuery, doc);
+			assertFn.toString = () => testCase.outerHTML;
+			it(description, assertFn);
 		}
 	});
 });

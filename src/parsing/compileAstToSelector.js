@@ -270,7 +270,7 @@ function kindTest (args) {
 		case 'item()':
 			return new UniversalSelector();
 		case 'node()':
-			return new UniversalSelector();
+			return new TypeTest('node()');
 		case 'element()':
 			if (args.length === 2) {
 				return new NodeNameSelector(args[1]);

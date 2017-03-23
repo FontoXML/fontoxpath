@@ -40,4 +40,8 @@ describe('instance of operator', () => {
 	it('returns false for an invalid instance of xs:boolean+', () => {
 		chai.expect(evaluateXPathToBoolean('() instance of xs:boolean+', documentNode, domFacade)).to.equal(false);
 	});
+
+	it('returns false for an invalid instance of node()', () => {
+		chai.expect(evaluateXPathToBoolean('1 instance of node()', documentNode, domFacade)).to.equal(false);
+	});
 });

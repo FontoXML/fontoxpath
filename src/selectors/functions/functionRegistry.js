@@ -99,6 +99,10 @@ function getAlternativesAsStringFor (functionName) {
 function getFunctionByArity (functionName, arity) {
     var matchingFunctions = registeredFunctionsByName[functionName];
 
+	if (!matchingFunctions && functionName.startsWith('fn:')) {
+		matchingFunctions = registeredFunctionsByName[functionName.substr(3)];
+	}
+
     if (!matchingFunctions) {
         return null;
     }

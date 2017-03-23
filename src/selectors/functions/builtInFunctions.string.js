@@ -2,6 +2,7 @@ import IntegerValue from '../dataTypes/IntegerValue';
 import StringValue from '../dataTypes/StringValue';
 import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
+import { castToType } from '../dataTypes/conversionHelper';
 
 function contextItemAsFirstArgument (fn, dynamicContext) {
 	return fn(dynamicContext, dynamicContext.contextItem);
@@ -76,7 +77,15 @@ function fnString (_dynamicContext, sequence) {
 	if (sequence.value[0].instanceOfType('node()')) {
 		return Sequence.singleton(sequence.value[0].getStringValue());
 	}
-	return Sequence.singleton(new StringValue(sequence.value[0].value + ''));
+	return Sequence.singleton(castToType(sequence.value[0], 'xs:string'));
+}
+
+// Note: looks like fn:string, but that one can return string values, instead of formally casting the node. This will make a difference when schema-aware (node with type xs:boolean, with value 1)
+function xsString (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+	return Sequence.singleton(castToType(sequence.value[0], 'xs:string'));
 }
 
 function fnStringJoin (_dynamicContext, sequence, separator) {
@@ -104,6 +113,13 @@ function fnTokenize (_dynamicContext, input, pattern) {
 	return new Sequence(
 		string.split(new RegExp(patternString))
 			.map(function (token) {return new StringValue(token);}));
+}
+
+function xsUntypedAtomic (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return Sequence.empty();
+	}
+	return Sequence.singleton(castToType(sequence.value[0], 'xs:untypedAtomic'));
 }
 
 function fnNormalizeSpace (_dynamicContext, arg) {
@@ -199,6 +215,20 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(null, fnString)
+		},
+
+		{
+			name: 'xs:string',
+			argumentTypes: ['xs:anyAtomicType?'],
+			returnType: 'xs:string?',
+			callFunction: xsString
+		},
+
+		{
+			name: 'xs:untypedAtomic',
+			argumentTypes: ['xs:anyAtomicType?'],
+			returnType: 'xs:untypedAtomic?',
+			callFunction: xsUntypedAtomic
 		},
 
 		{
