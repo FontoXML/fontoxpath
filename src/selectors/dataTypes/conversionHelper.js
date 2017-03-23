@@ -1,17 +1,9 @@
-import AnyAtomicTypeValue from './AnyAtomicTypeValue';
-import ArrayValue from './ArrayValue';
 import BooleanValue from './BooleanValue';
 import DecimalValue from './DecimalValue';
 import DoubleValue from './DoubleValue';
 import FloatValue from './FloatValue';
-import FunctionItem from './FunctionItem';
 import IntegerValue from './IntegerValue';
 import Item from './Item';
-import MapValue from './MapValue';
-import NodeValue from './NodeValue';
-import NumericValue from './NumericValue';
-import QNameValue from './QNameValue';
-import Sequence from './Sequence';
 import StringValue from './StringValue';
 import UntypedAtomicValue from './UntypedAtomicValue';
 
@@ -76,6 +68,7 @@ export const castToType = function castToType (value, type) {
 						throw new Error(`XPTY0004: can not cast ${value.value} to xs:boolean`);
 				}
 			}
+			throw new Error(`Not implemented: Casting from xs:boolean to ${value.simpleTypeName} is not supported yet`);
 
 		case 'xs:decimal':
 			let decimalValue;

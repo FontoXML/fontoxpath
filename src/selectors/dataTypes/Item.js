@@ -8,6 +8,8 @@ function Item (value) {
     this.value = value;
 }
 
+Item.prototype.simpleTypeName = 'item()';
+
 /**
  * @abstract
  * @return  {!Item} Note: circular
