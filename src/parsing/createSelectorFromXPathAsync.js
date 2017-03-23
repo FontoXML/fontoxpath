@@ -11,7 +11,7 @@ function supportsAsyncCompilation () {
 	// For async compilation, we'll need at least webworkers, Blop and URL.
 	// For the extra storage, we'll need indexedDB. These are all not available on Node.JS, and on some older browsers
 	return window.indexedDB !== undefined &&
-		window.Blop !== undefined &&
+		window.Blob !== undefined &&
 		window.Worker !== undefined &&
 		window.URL !== undefined;
 }
