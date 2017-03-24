@@ -8,7 +8,7 @@ function Item (value) {
     this.value = value;
 }
 
-Item.prototype.simpleTypeName = 'item()';
+Item.primitiveTypeName = Item.prototype.primitiveTypeName = 'item()';
 
 /**
  * @abstract

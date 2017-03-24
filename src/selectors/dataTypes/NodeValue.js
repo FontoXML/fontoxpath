@@ -3,6 +3,7 @@ import AttributeNode from './AttributeNode';
 import Item from './Item';
 import DomFacade from '../../DomFacade';
 import AnyAtomicTypeValue from './AnyAtomicTypeValue';
+import UntypedAtomicValue from './UntypedAtomicValue';
 
 // This should work for maximal reuse of instances:
 // NodeValue has a strong ref to a Node, but when it's only referenced by this weakmap, it should be eligible for GC
@@ -64,6 +65,8 @@ function NodeValue (domFacade, node) {
 
 NodeValue.prototype = Object.create(Item.prototype);
 
+NodeValue.primitiveTypeName = NodeValue.prototype.primitiveTypeName = 'node()';
+
 NodeValue.prototype.instanceOfType = function (simpleTypeName) {
     switch (simpleTypeName) {
         case 'node()':
@@ -96,7 +99,7 @@ NodeValue.prototype.atomize = function () {
     }
 
     if (this.instanceOfType('text()')) {
-        return new StringValue(this._domFacade.getData(this.value));
+        return new UntypedAtomicValue(this._domFacade.getData(this.value));
     }
     var domFacade = this._domFacade;
     var allTextNodes = (function getTextNodes (node) {
@@ -110,7 +113,7 @@ NodeValue.prototype.atomize = function () {
 				}, []);
 		})(this.value);
 
-    return new StringValue(allTextNodes.map(function (textNode) {
+    return new UntypedAtomicValue(allTextNodes.map(function (textNode) {
         return this._domFacade.getData(textNode);
     }.bind(this)).join(''));
 };

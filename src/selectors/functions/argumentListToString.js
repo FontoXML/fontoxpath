@@ -1,3 +1,7 @@
+import Sequence from '../dataTypes/Sequence';
+/**
+ * @param  {!Array<!Sequence>}  argumentList
+ */
 export default function argumentListToString (argumentList) {
     return argumentList.map(function (argument) {
 		if (argument === null) {
@@ -8,7 +12,7 @@ export default function argumentListToString (argumentList) {
         }
 
         if (argument.isSingleton()) {
-            return argument.value[0].primitiveTypeName;
+            return argument.value[0].primitiveTypeName || 'item()';
         }
         return argument.value[0].primitiveTypeName + '+';
     }).join(', ');

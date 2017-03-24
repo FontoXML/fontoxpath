@@ -17,7 +17,7 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 /**
  * @constructor
  * @extends {Item}
- * @param  {!function(!DynamicContext, !Sequence): !Sequence}  value
+ * @param  {!function(!DynamicContext, !Sequence): !Sequence}   value
  * @param  {!Array<string>}                                     argumentTypes
  * @param  {!number}                                            arity
  * @param  {!string}                                            returnType

@@ -68,7 +68,7 @@ export const castToType = function castToType (value, type) {
 						throw new Error(`XPTY0004: can not cast ${value.value} to xs:boolean`);
 				}
 			}
-			throw new Error(`Not implemented: Casting from xs:boolean to ${value.simpleTypeName} is not supported yet`);
+			throw new Error(`Not implemented: Casting from xs:boolean to ${value.primitiveTypeName} is not supported yet`);
 
 		case 'xs:decimal':
 			let decimalValue;
@@ -102,17 +102,21 @@ export const castToType = function castToType (value, type) {
 				floatValue = value === BooleanValue.TRUE ? 1 : 0;
 			}
 			else if (value.instanceOfType('xs:string') || value.instanceOfType('xs:untypedAtomic')) {
-				if (value.value === 'NaN') {
+				const strValue = value.value.trim();
+				if (strValue === 'NaN') {
 					floatValue = NaN;
 				}
-				else if (value.value === 'INF' || value.value === '+INF') {
+				else if (strValue === 'INF' || strValue === '+INF') {
 					floatValue = Infinity;
 				}
-				else if (value.value === '-INF') {
+				else if (strValue === '-INF') {
 					floatValue = -Infinity;
 				}
 				else {
-					floatValue = parseFloat(value.value.replace('E', 'e'));
+					floatValue = parseFloat(strValue.replace('E', 'e'));
+					if (isNaN(floatValue)) {
+						throw new Error(`FORG0001: Can not cast "${strValue}" to ${type}.`);
+					}
 				}
 			}
 
