@@ -14,42 +14,42 @@ describe('BinaryNumericOperator.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const binaryNumericOperator1 = new BinaryNumericOperator('+', equalSelector, equalSelector),
 			binaryNumericOperator2 = binaryNumericOperator1;
-		chai.expect(binaryNumericOperator1.equals(binaryNumericOperator2)).to.equal(true);
-		chai.expect(binaryNumericOperator2.equals(binaryNumericOperator1)).to.equal(true);
+		chai.assert.isTrue(binaryNumericOperator1.equals(binaryNumericOperator2));
+		chai.assert.isTrue(binaryNumericOperator2.equals(binaryNumericOperator1));
 	});
 
 	it('it returns true if compared with an equal other BinaryNumericOperator', () => {
 		const binaryNumericOperator1 = new BinaryNumericOperator('+', equalSelector, equalSelector),
 			binaryNumericOperator2 = new BinaryNumericOperator('+', equalSelector, equalSelector);
-		chai.expect(binaryNumericOperator1.equals(binaryNumericOperator2)).to.equal(true);
-		chai.expect(binaryNumericOperator2.equals(binaryNumericOperator1)).to.equal(true);
+		chai.assert.isTrue(binaryNumericOperator1.equals(binaryNumericOperator2));
+		chai.assert.isTrue(binaryNumericOperator2.equals(binaryNumericOperator1));
 	});
 
 	it('it returns false if compared with a BinaryNumericOperator unequal on the first subselector', () => {
 		const binaryNumericOperator1 = new BinaryNumericOperator('+', unequalSelector, equalSelector),
 			binaryNumericOperator2 = new BinaryNumericOperator('+', unequalSelector, equalSelector);
-		chai.expect(binaryNumericOperator1.equals(binaryNumericOperator2)).to.equal(false);
-		chai.expect(binaryNumericOperator2.equals(binaryNumericOperator1)).to.equal(false);
+		chai.assert.isFalse(binaryNumericOperator1.equals(binaryNumericOperator2));
+		chai.assert.isFalse(binaryNumericOperator2.equals(binaryNumericOperator1));
 	});
 
 	it('it returns false if compared with a BinaryNumericOperator unequal on the operator kind', () => {
 		const binaryNumericOperator1 = new BinaryNumericOperator('+', equalSelector, equalSelector),
 			binaryNumericOperator2 = new BinaryNumericOperator('-', equalSelector, equalSelector);
-		chai.expect(binaryNumericOperator1.equals(binaryNumericOperator2)).to.equal(false);
-		chai.expect(binaryNumericOperator2.equals(binaryNumericOperator1)).to.equal(false);
+		chai.assert.isFalse(binaryNumericOperator1.equals(binaryNumericOperator2));
+		chai.assert.isFalse(binaryNumericOperator2.equals(binaryNumericOperator1));
 	});
 
 	it('it returns false if compared with a BinaryNumericOperator unequal on the second subselector', () => {
 		const binaryNumericOperator1 = new BinaryNumericOperator('+', equalSelector, unequalSelector),
 			binaryNumericOperator2 = new BinaryNumericOperator('+', equalSelector, unequalSelector);
-		chai.expect(binaryNumericOperator1.equals(binaryNumericOperator2)).to.equal(false);
-		chai.expect(binaryNumericOperator2.equals(binaryNumericOperator1)).to.equal(false);
+		chai.assert.isFalse(binaryNumericOperator1.equals(binaryNumericOperator2));
+		chai.assert.isFalse(binaryNumericOperator2.equals(binaryNumericOperator1));
 	});
 
 	it('it returns false if compared with an unequal other BinaryNumericOperator', () => {
 		const binaryNumericOperator1 = new BinaryNumericOperator('+', unequalSelector, unequalSelector),
 			binaryNumericOperator2 = new BinaryNumericOperator('-', unequalSelector, unequalSelector);
-		chai.expect(binaryNumericOperator1.equals(binaryNumericOperator2)).to.equal(false);
-		chai.expect(binaryNumericOperator2.equals(binaryNumericOperator1)).to.equal(false);
+		chai.assert.isFalse(binaryNumericOperator1.equals(binaryNumericOperator2));
+		chai.assert.isFalse(binaryNumericOperator2.equals(binaryNumericOperator1));
 	});
 });

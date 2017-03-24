@@ -12,8 +12,8 @@ describe('DynamicContext.createScopedContext()', () => {
 			}),
 			scopedContext = dynamicContext.createScopedContext({});
 
-		chai.expect(scopedContext).to.deep.equal(scopedContext);
-		chai.expect(dynamicContext === scopedContext).to.equal(false);
+		chai.assert.deepEqual(scopedContext, scopedContext);
+		chai.assert.isFalse(dynamicContext === scopedContext);
 	});
 
 	it('copies the exising context and replaces the given values', () => {
@@ -44,7 +44,7 @@ describe('DynamicContext.createScopedContext()', () => {
 				}
 			});
 
-		chai.expect(scopedContext).to.deep.equal(expectedContext);
-		chai.expect(dynamicContext === scopedContext).to.equal(false);
+		chai.assert.deepEqual(scopedContext, expectedContext);
+		chai.assert.isFalse(dynamicContext === scopedContext);
 	});
 });

@@ -1,7 +1,9 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToBoolean, evaluateXPathToFirstNode } from 'fontoxpath';
+import {
+	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -11,11 +13,11 @@ beforeEach(() => {
 describe('nameTests', () => {
 	it('allows wildcards', () => {
 		const element = documentNode.createElement('someElement');
-		chai.expect(evaluateXPathToBoolean('self::*', element, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::*', element));
 	});
 
 	it('allows nodeNames containing namespaces', () => {
 		const element = documentNode.createElement('someNamespace:someElement');
-		chai.expect(evaluateXPathToFirstNode('self::someNamespace:someElement', element, domFacade)).to.deep.equal(element);
+		chai.assert.deepEqual(evaluateXPathToFirstNode('self::someNamespace:someElement', element), element);
 	});
 });

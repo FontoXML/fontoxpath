@@ -14,33 +14,21 @@ describe('FollowingSiblingAxis.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const followSibling1 = new FollowingSiblingAxis(equalSelector),
 			followSibling2 = followSibling1;
-
-		const result1 = followSibling1.equals(followSibling2),
-			result2 = followSibling2.equals(followSibling1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
+		chai.assert.isTrue(followSibling1.equals(followSibling2));
+		chai.assert.isTrue(followSibling2.equals(followSibling1));
 	});
 
 	it('returns true if compared with an equal other FollowingSiblingAxis', () => {
 		const followSibling1 = new FollowingSiblingAxis(equalSelector),
 			followSibling2 = new FollowingSiblingAxis(equalSelector);
-
-		const result1 = followSibling1.equals(followSibling2),
-			result2 = followSibling2.equals(followSibling1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
+		chai.assert.isTrue(followSibling1.equals(followSibling2));
+		chai.assert.isTrue(followSibling2.equals(followSibling1));
 	});
 
 	it('returns false if compared with an unequal other FollowingSiblingAxis', () => {
 		const followSibling1 = new FollowingSiblingAxis(unequalSelector),
 			followSibling2 = new FollowingSiblingAxis(unequalSelector);
-
-		const result1 = followSibling1.equals(followSibling2),
-			result2 = followSibling2.equals(followSibling1);
-
-		chai.expect(result1).to.equal(false);
-		chai.expect(result2).to.equal(false);
+		chai.assert.isFalse(followSibling1.equals(followSibling2));
+		chai.assert.isFalse(followSibling2.equals(followSibling1));
 	});
 });

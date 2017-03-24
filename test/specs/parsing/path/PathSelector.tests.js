@@ -1,8 +1,13 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToFirstNode, evaluateXPathToNodes, evaluateXPathToNumber, evaluateXPathToNumbers, evaluateXPathToString } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToFirstNode,
+	evaluateXPathToNodes,
+	evaluateXPathToNumber,
+	evaluateXPathToNumbers,
+	evaluateXPathToString
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -15,8 +20,7 @@ describe('relative paths', () => {
 			'someNode',
 			['someChildNode']
 		], documentNode);
-		const selector = ('someChildNode');
-		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('someChildNode', documentNode.documentElement), [documentNode.documentElement.firstChild]);
 	});
 
 	it('supports addressing the parent axis with ..', () => {
@@ -27,10 +31,7 @@ describe('relative paths', () => {
 				['someGrandChild']
 			]
 		], documentNode);
-		const selector = ('../child::someNode');
-		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
-			documentNode.documentElement
-		]);
+		chai.assert.deepEqual(evaluateXPathToNodes('../child::someNode', documentNode.documentElement), [documentNode.documentElement]);
 	});
 
 	it('sets the contextSequence', () => {
@@ -41,8 +42,7 @@ describe('relative paths', () => {
 				['someGrandChild']
 			]
 		], documentNode);
-		const selector = ('//*/position()');
-		chai.assert.deepEqual(evaluateXPathToNumbers(selector, documentNode.documentElement, domFacade), [1, 1, 1]);
+		chai.assert.deepEqual(evaluateXPathToNumbers('//*/position()', documentNode.documentElement), [1, 1, 1]);
 	});
 
 	it('returns its results sorted on document order', () => {
@@ -55,11 +55,7 @@ describe('relative paths', () => {
 				'secondNode'
 			]
 		], documentNode);
-		const selector = ('(//secondNode, //firstNode)/self::node()');
-		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
-			documentNode.documentElement.firstChild,
-			documentNode.documentElement.lastChild
-		]);
+		chai.assert.deepEqual(evaluateXPathToNodes('(//secondNode, //firstNode)/self::node()', documentNode.documentElement), [documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]);
 	});
 
 	it('supports postfix expressions as sequences', () => {
@@ -72,11 +68,7 @@ describe('relative paths', () => {
 				'secondNode'
 			]
 		], documentNode);
-		const selector = ('/someNode/(secondNode, firstNode)/self::node()');
-		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
-			documentNode.documentElement.firstChild,
-			documentNode.documentElement.lastChild
-		]);
+		chai.assert.deepEqual(evaluateXPathToNodes('/someNode/(secondNode, firstNode)/self::node()', documentNode.documentElement), [documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]);
 	});
 
 	it('supports walking from attribute nodes', () => {
@@ -85,13 +77,11 @@ describe('relative paths', () => {
 			{ someAttribute: 'someValue' },
 			['someChildNode']
 		], documentNode);
-		const selector = ('@someAttribute/..');
-		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement]);
+		chai.assert.deepEqual(evaluateXPathToNodes('@someAttribute/..', documentNode.documentElement), [documentNode.documentElement]);
 	});
 
-	it('allows returning other things then nodes at the last step of the path', () => {
-		chai.expect(evaluateXPathToNumber('./42', documentNode, domFacade)).to.equal(42);
-	});
+	it('allows returning other things then nodes at the last step of the path',
+		() => chai.assert.equal(evaluateXPathToNumber('./42', documentNode), 42));
 
 	it('sorts attribute nodes after their element', () => {
 		jsonMlMapper.parse([
@@ -99,12 +89,9 @@ describe('relative paths', () => {
 			{ someAttribute: 'someValue' },
 			['someChildNode']
 		], documentNode);
-		let selector = ('((@someAttribute, /someNode, //someChildNode)/.)[1]');
-		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement]);
-		selector = ('((@someAttribute, /someNode, //someChildNode)/.)[2]');
-		chai.expect(evaluateXPathToString(selector, documentNode.documentElement, domFacade)).to.deep.equal('someValue');
-		selector = ('((@someAttribute, /someNode, //someChildNode)/.)[3]');
-		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('((@someAttribute, /someNode, //someChildNode)/.)[1]', documentNode.documentElement), [documentNode.documentElement]);
+		chai.assert.deepEqual(evaluateXPathToString('((@someAttribute, /someNode, //someChildNode)/.)[2]', documentNode.documentElement), 'someValue');
+		chai.assert.deepEqual(evaluateXPathToNodes('((@someAttribute, /someNode, //someChildNode)/.)[3]', documentNode.documentElement), [documentNode.documentElement.firstChild]);
 	});
 
 	it('sorts attribute nodes alphabetically', () => {
@@ -114,8 +101,7 @@ describe('relative paths', () => {
 			['someChildNode']
 		], documentNode);
 		// We need to convert to string becase string-join expects strings and function conversion is not in yet
-		const selector = ('(@BsomeOtherAttribute, @AsomeAttribute)/string() => string-join(", ")');
-		chai.expect(evaluateXPathToString(selector, documentNode.documentElement, domFacade, {})).to.deep.equal('someValue, someOtherValue');
+		chai.assert.equal(evaluateXPathToString('(@BsomeOtherAttribute, @AsomeAttribute)/string() => string-join(", ")', documentNode.documentElement), 'someValue, someOtherValue');
 	});
 
 	it('allows mixed pathseparators and abbreviated steps', function () {
@@ -126,8 +112,7 @@ describe('relative paths', () => {
 				['someGrandChild']
 			]
 		], documentNode);
-
-		chai.assert.equal(evaluateXPathToFirstNode('/someNode/someChildNode//someGrandChild/../..//someGrandChild', documentNode.documentElement, domFacade), documentNode.documentElement.firstChild.firstChild);
+		chai.assert.deepEqual(evaluateXPathToFirstNode('/someNode/someChildNode//someGrandChild/../..//someGrandChild', documentNode.documentElement), documentNode.documentElement.firstChild.firstChild);
 	});
 
 	it('supports addressing the contextNode with .', () => {
@@ -138,10 +123,6 @@ describe('relative paths', () => {
 				['someGrandChild']
 			]
 		], documentNode);
-		const selector = ('.//*');
-		chai.expect(evaluateXPathToNodes(selector, documentNode.documentElement, domFacade)).to.deep.equal([
-			documentNode.documentElement.firstChild,
-			documentNode.documentElement.firstChild.firstChild
-		]);
+		chai.assert.deepEqual(evaluateXPathToNodes('.//*', documentNode.documentElement), [documentNode.documentElement.firstChild, documentNode.documentElement.firstChild.firstChild]);
 	});
 });

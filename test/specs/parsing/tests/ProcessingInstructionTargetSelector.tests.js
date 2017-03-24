@@ -1,7 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade, evaluateXPathToBoolean } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToBoolean
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -10,56 +12,50 @@ beforeEach(() => {
 
 describe('processing-instruction()', () => {
 	it('allows processing instruction targets as literals', () => {
-		const selector = ('self::processing-instruction("someTarget")');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['?someTarget', 'someData']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::processing-instruction("someTarget")', documentNode.documentElement.firstChild));
 	});
 
 	it('allows processing instruction tests without a target', () => {
-		const selector = ('self::processing-instruction()');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['?someTarget', 'someData']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::processing-instruction()', documentNode.documentElement.firstChild));
 	});
 
 	it('allows processing instruction targets as NCNames', () => {
-		const selector = ('self::processing-instruction(someTarget)');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['?someTarget', 'someData']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::processing-instruction(someTarget)', documentNode.documentElement.firstChild));
 	});
 
 	it('allows processing instruction tests without an axis, without a target', () => {
-		const selector = ('processing-instruction()');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['?someTarget', 'someData']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('processing-instruction()', documentNode.documentElement));
 	});
 
 	it('allows processing instruction tests without an axis, with a target NCName', () => {
-		const selector = ('processing-instruction(someTarget)');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['?someTarget', 'someData']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('processing-instruction(someTarget)', documentNode.documentElement));
 	});
 
 	it('allows processing instruction tests without an axis, with a target literal string', () => {
-		const selector = ('processing-instruction("someTarget")');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['?someTarget', 'someData']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('processing-instruction("someTarget")', documentNode.documentElement));
 	});
 });

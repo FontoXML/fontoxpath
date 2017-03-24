@@ -1,10 +1,9 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxpath';
 import {
+	domFacade,
 	evaluateXPathToBoolean
 } from 'fontoxpath';
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
@@ -13,8 +12,7 @@ beforeEach(() => {
 
 describe('boolean functions', () => {
 	describe('xs:boolean()', () => {
-		it('accepts "true"', () => {
-			chai.assert.equal(evaluateXPathToBoolean('xs:boolean("true")', documentNode, domFacade), true);
-		});
+		it('accepts "true"',
+			() => chai.assert.equal(evaluateXPathToBoolean('xs:boolean("true")', documentNode, domFacade), true));
 	});
 });

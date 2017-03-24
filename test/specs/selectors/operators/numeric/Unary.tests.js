@@ -14,21 +14,21 @@ describe('Unary.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const unary1 = new Unary('+', equalSelector),
 			unary2 = unary1;
-		chai.expect(unary1.equals(unary2)).to.equal(true);
-		chai.expect(unary2.equals(unary1)).to.equal(true);
+		chai.assert.isTrue(unary1.equals(unary2));
+		chai.assert.isTrue(unary2.equals(unary1));
 	});
 
 	it('it returns true if compared with an equal other Unary', () => {
 		const unary1 = new Unary('+', equalSelector),
 			unary2 = new Unary('+', equalSelector);
-		chai.expect(unary1.equals(unary2)).to.equal(true);
-		chai.expect(unary2.equals(unary1)).to.equal(true);
+		chai.assert.isTrue(unary1.equals(unary2));
+		chai.assert.isTrue(unary2.equals(unary1));
 	});
 
 	it('it returns false if compared with an unequal other Unary', () => {
 		const unary1 = new Unary('+', unequalSelector),
 			unary2 = new Unary('-', unequalSelector);
-		chai.expect(unary1.equals(unary2)).to.equal(false);
-		chai.expect(unary2.equals(unary1)).to.equal(false);
+		chai.assert.isFalse(unary1.equals(unary2));
+		chai.assert.isFalse(unary2.equals(unary1));
 	});
 });

@@ -3,18 +3,18 @@ import Item from 'fontoxpath/selectors/dataTypes/Item';
 describe('Item.getEffectiveBooleanValue()', () => {
 	it('throws when getEffectiveBooleanValue is called', () => {
 		const item = new Item();
-		chai.expect(item.getEffectiveBooleanValue).to.throw();
+		chai.assert.throw(item.getEffectiveBooleanValue);
 	});
 });
 
 describe('Item.instanceOfType()', () => {
 	it('returns true for "item()"', () => {
 		const item = new Item();
-		chai.expect(item.instanceOfType('item()')).to.equal(true);
+		chai.assert.isTrue(item.instanceOfType('item()'));
 	});
 
 	it('returns false for any other value', () => {
 		const item = new Item();
-		chai.expect(item.instanceOfType('any other value')).to.equal(false);
+		chai.assert.isFalse(item.instanceOfType('any other value'));
 	});
 });

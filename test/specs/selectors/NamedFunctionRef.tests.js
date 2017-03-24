@@ -1,5 +1,4 @@
 import NamedFunctionRef from 'fontoxpath/selectors/NamedFunctionRef';
-import Specificity from 'fontoxpath/selectors/Specificity';
 
 describe('NamedFunctionRef.equals()', () => {
 	it('returns true if compared with itself', () => {

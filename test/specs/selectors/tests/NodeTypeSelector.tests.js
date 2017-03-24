@@ -4,21 +4,21 @@ describe('NodeTypeSelector.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const nodeTypeSelector1 = new NodeTypeSelector(1),
 			nodeTypeSelector2 = nodeTypeSelector1;
-		chai.expect(nodeTypeSelector1.equals(nodeTypeSelector2)).to.equal(true);
-		chai.expect(nodeTypeSelector2.equals(nodeTypeSelector1)).to.equal(true);
+		chai.assert.isTrue(nodeTypeSelector1.equals(nodeTypeSelector2));
+		chai.assert.isTrue(nodeTypeSelector2.equals(nodeTypeSelector1));
 	});
 
 	it('it returns true if compared with an equal other NodeTypeSelector', () => {
 		const nodeTypeSelector1 = new NodeTypeSelector(1),
 			nodeTypeSelector2 = new NodeTypeSelector(1);
-		chai.expect(nodeTypeSelector1.equals(nodeTypeSelector2)).to.equal(true);
-		chai.expect(nodeTypeSelector2.equals(nodeTypeSelector1)).to.equal(true);
+		chai.assert.isTrue(nodeTypeSelector1.equals(nodeTypeSelector2));
+		chai.assert.isTrue(nodeTypeSelector2.equals(nodeTypeSelector1));
 	});
 
 	it('it returns false if compared with an unequal other NodeTypeSelector', () => {
 		const nodeTypeSelector1 = new NodeTypeSelector(1),
 			nodeTypeSelector2 = new NodeTypeSelector(2);
-		chai.expect(nodeTypeSelector1.equals(nodeTypeSelector2)).to.equal(false);
-		chai.expect(nodeTypeSelector2.equals(nodeTypeSelector1)).to.equal(false);
+		chai.assert.isFalse(nodeTypeSelector1.equals(nodeTypeSelector2));
+		chai.assert.isFalse(nodeTypeSelector2.equals(nodeTypeSelector1));
 	});
 });

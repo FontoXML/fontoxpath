@@ -1,8 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToBoolean } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToBoolean
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -11,30 +12,25 @@ beforeEach(() => {
 
 describe('or operator', () => {
 	it('can parse an "or" selector', () => {
-		const selector = ('false() or true()');
-		chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('false() or true()', documentNode));
 	});
 
 	it('can parse an "or" selector with different buckets', () => {
-		const selector = ('self::someElement or self::processing-instruction()');
 		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::someElement or self::processing-instruction()', documentNode.documentElement.firstChild));
 	});
 
-	it('can parse a concatenation of ors', () => {
-		const selector = ('false() or false() or false() or (: Note: the last true() will make te result true:) true()');
-		chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
-	});
+	it('can parse a concatenation of ors',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('false() or false() or false() or (: Note: the last true() will make te result true:) true()', documentNode)));
 
 	it('allows not in combination with or', () => {
-		const selector = ('someChildElement or not(someOtherChild)');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['someOtherChildElement']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('someChildElement or not(someOtherChild)', documentNode.documentElement));
 	});
 });

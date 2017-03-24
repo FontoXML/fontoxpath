@@ -1,7 +1,8 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToBoolean } from 'fontoxpath';
+import {
+	evaluateXPathToBoolean
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -9,13 +10,9 @@ beforeEach(() => {
 });
 
 describe('and operator', () => {
-	it('can parse an "and" selector', () => {
-		const selector = ('true() and true()');
-		chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(true);
-	});
+	it('can parse an "and" selector',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('true() and true()', documentNode)));
 
-	it('can parse a concatenation of ands', () => {
-		const selector = ('true() and true() and true() and false()');
-		chai.expect(evaluateXPathToBoolean(selector, documentNode, domFacade)).to.equal(false);
-	});
+	it('can parse a concatenation of ands',
+		() => chai.assert.isFalse(evaluateXPathToBoolean('true() and true() and true() and false()', documentNode)));
 });

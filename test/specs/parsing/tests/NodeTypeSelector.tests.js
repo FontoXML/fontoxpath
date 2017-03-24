@@ -1,7 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade, evaluateXPathToBoolean } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToBoolean
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -10,38 +12,34 @@ beforeEach(() => {
 
 describe('NodeTypeSelector', () => {
 	it('can select any element -> element()', () => {
-		const selector = ('self::element()');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['someElement']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::element()', documentNode.documentElement.firstChild));
 	});
 
 	it('can select any text node -> text()', () => {
-		const selector = ('self::text()');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			'Some text'
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::text()', documentNode.documentElement.firstChild));
 	});
 
 	it('can select any PI -> processing-instruction()', () => {
-		const selector = ('self::processing-instruction()');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['?someElement']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::processing-instruction()', documentNode.documentElement.firstChild));
 	});
 
 	it('can select any comment -> comment()', () => {
-		const selector = ('self::comment()');
 		jsonMlMapper.parse([
 			'someOtherParentElement',
 			['!', 'some comment']
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('self::comment()', documentNode.documentElement.firstChild));
 	});
 });

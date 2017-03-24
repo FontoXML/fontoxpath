@@ -1,8 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToBoolean } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToBoolean
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -11,21 +12,18 @@ beforeEach(() => {
 
 describe('operators', () => {
 	it('uses correct operator precedence', () => {
-		let selector = ('(child::someElement and ancestor::someParentElement) or @someAttribute=\'someValue\'');
 		jsonMlMapper.parse([
 			'someParentElement',
 			[
 				'someMiddleElement',
-				{ 'someAttribute': 'someValue' },
+				{ someAttribute: 'someValue' },
 				['someOtherElement']
 			]
 		], documentNode);
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('(child::someElement and ancestor::someParentElement) or @someAttribute=\'someValue\'', documentNode.documentElement.firstChild));
 		// The other way around
-		selector = ('(child::someOtherElement and ancestor::someParentElement) or @someAttribute=\'someOtherValue\'');
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(true);
+		chai.assert.isTrue(evaluateXPathToBoolean('(child::someOtherElement and ancestor::someParentElement) or @someAttribute=\'someOtherValue\'', documentNode.documentElement.firstChild));
 		// Changes to testcase A: Operator order changed because of parentheses
-		selector = ('child::someElement and (ancestor::someParentElement or @someAttribute="someValue")');
-		chai.expect(evaluateXPathToBoolean(selector, documentNode.documentElement.firstChild, domFacade)).to.equal(false);
+		chai.assert.isFalse(evaluateXPathToBoolean('child::someElement and (ancestor::someParentElement or @someAttribute="someValue")', documentNode.documentElement.firstChild));
 	});
 });

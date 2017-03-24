@@ -14,48 +14,28 @@ describe('DescendantAxis.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const descendant1 = new DescendantAxis(equalSelector),
 			descendant2 = descendant1;
-
-		const result1 = descendant1.equals(descendant2),
-			result2 = descendant2.equals(descendant1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
+		chai.assert.isTrue(descendant1.equals(descendant2));
+		chai.assert.isTrue(descendant2.equals(descendant1));
 	});
 
 	it('returns true if compared with an equal other DescendantAxis', () => {
 		const descendant1 = new DescendantAxis(equalSelector),
 			descendant2 = new DescendantAxis(equalSelector);
-
-		const result1 = descendant1.equals(descendant2),
-			result2 = descendant2.equals(descendant1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
+		chai.assert.isTrue(descendant1.equals(descendant2));
+		chai.assert.isTrue(descendant2.equals(descendant1));
 	});
 
 	it('returns false if compared with a DescendantAxis with a different subselector', () => {
 		const descendant1 = new DescendantAxis(unequalSelector),
 			descendant2 = new DescendantAxis(unequalSelector);
-
-		const result1 = descendant1.equals(descendant2),
-			result2 = descendant2.equals(descendant1);
-
-		chai.expect(result1).to.equal(false);
-		chai.expect(result2).to.equal(false);
+		chai.assert.isFalse(descendant1.equals(descendant2));
+		chai.assert.isFalse(descendant2.equals(descendant1));
 	});
 
 	it('returns false if compared with a DescendantAxis with a different inclusiveness', () => {
-		const descendant1 = new DescendantAxis(equalSelector, {
-				inclusive: true
-			}),
-			descendant2 = new DescendantAxis(equalSelector, {
-				inclusive: false
-			});
-
-		const result1 = descendant1.equals(descendant2),
-			result2 = descendant2.equals(descendant1);
-
-		chai.expect(result1).to.equal(false);
-		chai.expect(result2).to.equal(false);
+		const descendant1 = new DescendantAxis(equalSelector, { inclusive: true }),
+			descendant2 = new DescendantAxis(equalSelector, { inclusive: false });
+		chai.assert.isFalse(descendant1.equals(descendant2));
+		chai.assert.isFalse(descendant2.equals(descendant1));
 	});
 });

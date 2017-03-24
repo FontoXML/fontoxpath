@@ -1,8 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToNodes } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToNodes
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -16,9 +17,7 @@ describe('following-sibling', () => {
 			['someElement'],
 			['someSiblingElement']
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes('following-sibling::someSiblingElement', documentNode.documentElement.firstChild, domFacade),
-			[documentNode.documentElement.lastChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('following-sibling::someSiblingElement', documentNode.documentElement.firstChild), [documentNode.documentElement.lastChild]);
 	});
 
 	it('does not return non-matching siblings', () => {
@@ -27,8 +26,6 @@ describe('following-sibling', () => {
 			['someElement'],
 			['someNonMatchingElement']
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes('following-sibling::someSiblingElement', documentNode.documentElement.firstChild, domFacade),
-			[]);
+		chai.assert.deepEqual(evaluateXPathToNodes('following-sibling::someSiblingElement', documentNode.documentElement.firstChild), []);
 	});
 });

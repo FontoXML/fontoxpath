@@ -1,8 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToNodes } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToNodes
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -14,7 +15,7 @@ describe('absolute paths', () => {
 		jsonMlMapper.parse([
 			'someNode'
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('/someNode', documentNode, domFacade), [documentNode.documentElement]);
+		chai.assert.deepEqual(evaluateXPathToNodes('/someNode', documentNode), [documentNode.documentElement]);
 	});
 
 	it('supports chaining from absolute paths', () => {
@@ -22,7 +23,7 @@ describe('absolute paths', () => {
 			'someNode',
 			['someChildNode']
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('/someNode/someChildNode', documentNode, domFacade), [documentNode.documentElement.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('/someNode/someChildNode', documentNode), [documentNode.documentElement.firstChild]);
 	});
 
 	it('allows // as root', () => {
@@ -30,7 +31,7 @@ describe('absolute paths', () => {
 			'someNode',
 			['someChildNode']
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('//someChildNode', documentNode, domFacade), [documentNode.documentElement.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('//someChildNode', documentNode), [documentNode.documentElement.firstChild]);
 	});
 
 	it('targets descendants with //', () => {
@@ -38,6 +39,6 @@ describe('absolute paths', () => {
 			'someNode',
 			['someChildNode', ['someDescendantNode']]
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('//someDescendantNode', documentNode, domFacade), [documentNode.documentElement.firstChild.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('//someDescendantNode', documentNode), [documentNode.documentElement.firstChild.firstChild]);
 	});
 });

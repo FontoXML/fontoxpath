@@ -9,20 +9,20 @@ const element = documentNode.createElement('someElement');
 describe('AttributeNode.parentNode', () => {
 	it('returns the parent node', () => {
 		const attributeNode = new AttributeNode(element, 'someAttribute', 'someAttributeValue');
-		chai.expect(attributeNode.parentNode).to.equal(element);
+		chai.assert.equal(attributeNode.parentNode, element);
 	});
 });
 
 describe('AttributeNode.atomize()', () => {
 	it('returns the atomized value', () => {
 		const attributeNode = new AttributeNode(element, 'someAttribute', 'someAttributeValue');
-		chai.expect(attributeNode.atomize()).to.deep.equal(new UntypedAtomicValue('someAttributeValue'));
+		chai.assert.deepEqual(attributeNode.atomize(), new UntypedAtomicValue('someAttributeValue'));
 	});
 });
 
 describe('AttributeNode.getStringValue()', () => {
 	it('returns the string representation', () => {
 		const attributeNode = new AttributeNode(element, 'someAttribute', 'someAttributeValue');
-		chai.expect(attributeNode.getStringValue()).to.deep.equal(new StringValue('someAttributeValue'));
+		chai.assert.deepEqual(attributeNode.getStringValue(), new StringValue('someAttributeValue'));
 	});
 });

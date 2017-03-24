@@ -1,7 +1,8 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToNumbers } from 'fontoxpath';
+import {
+	evaluateXPathToNumbers
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -9,35 +10,20 @@ beforeEach(() => {
 });
 
 describe('sequence', () => {
-	it('creates a sequence', () => {
-		chai.expect(
-			evaluateXPathToNumbers('(1,2,3)', documentNode, domFacade)
-		).to.deep.equal([1,2,3]);
-	});
+	it('creates a sequence',
+		() => chai.assert.deepEqual(evaluateXPathToNumbers('(1,2,3)', documentNode), [1, 2, 3]));
 
-	it('creates an empty sequence', () => {
-		chai.expect(
-			evaluateXPathToNumbers('()', documentNode, domFacade)
-		).to.deep.equal([]);
-	});
+	it('creates an empty sequence',
+		() => chai.assert.deepEqual(evaluateXPathToNumbers('()', documentNode), []));
 
-	it('normalizes sequences', () => {
-		chai.expect(
-			evaluateXPathToNumbers('(1,2,(3,4))', documentNode, domFacade)
-		).to.deep.equal([1,2,3,4]);
-	});
+	it('normalizes sequences',
+		() => chai.assert.deepEqual(evaluateXPathToNumbers('(1,2,(3,4))', documentNode), [1, 2, 3, 4]));
 });
 
 describe('range', () => {
-	it('creates a sequence', () => {
-		chai.expect(
-			evaluateXPathToNumbers('1 to 10', documentNode, domFacade)
-		).to.deep.equal([1,2,3,4,5,6,7,8,9,10]);
-	});
+	it('creates a sequence',
+		() => chai.assert.deepEqual(evaluateXPathToNumbers('1 to 10', documentNode), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
 
-	it('creates an empty sequence when passed a > b', () => {
-		chai.expect(
-			evaluateXPathToNumbers('10 to 1', documentNode, domFacade)
-		).to.deep.equal([]);
-	});
+	it('creates an empty sequence when passed a > b',
+		() => chai.assert.deepEqual(evaluateXPathToNumbers('10 to 1', documentNode), []));
 });

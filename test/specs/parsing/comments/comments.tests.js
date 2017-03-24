@@ -1,7 +1,8 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToBoolean } from 'fontoxpath';
+import {
+	evaluateXPathToBoolean
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -9,17 +10,9 @@ beforeEach(() => {
 });
 
 describe('comments', () => {
-	it('can parse comments', () => {
-		const selector = ('true() (: and false() :) or true()');
-		chai.expect(
-			evaluateXPathToBoolean(selector, documentNode, domFacade)
-		).to.deep.equal(true);
-	});
+	it('can parse comments',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('true() (: and false() :) or true()', documentNode)));
 
-	it('can parse nested comments', () => {
-		const selector = ('true() (: and false() (:and true():) :) or false');
-		chai.expect(
-			evaluateXPathToBoolean(selector, documentNode, domFacade)
-		).to.deep.equal(true);
-	});
+	it('can parse nested comments',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('true() (: and false() (:and true():) :) or false', documentNode)));
 });

@@ -1,7 +1,8 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToFirstNode } from 'fontoxpath';
+import {
+	evaluateXPathToFirstNode
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -10,10 +11,7 @@ beforeEach(() => {
 
 describe('self', () => {
 	it('parses self::', () => {
-		const selector = ('self::someElement'),
-		element = documentNode.createElement('someElement');
-		chai.expect(
-			evaluateXPathToFirstNode(selector, element, domFacade))
-			.to.deep.equal(element);
+		const element = documentNode.createElement('someElement');
+		chai.assert.deepEqual(evaluateXPathToFirstNode('self::someElement', element), element);
 	});
 });

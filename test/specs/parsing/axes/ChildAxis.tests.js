@@ -1,8 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToFirstNode } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToFirstNode
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -15,7 +16,7 @@ describe('child', () => {
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.assert(evaluateXPathToFirstNode('child::someElement', documentNode.documentElement, domFacade) === documentNode.documentElement.firstChild);
+		chai.assert(evaluateXPathToFirstNode('child::someElement', documentNode.documentElement) === documentNode.documentElement.firstChild);
 	});
 
 	it('is added implicitly', () =>{
@@ -23,7 +24,7 @@ describe('child', () => {
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.assert(evaluateXPathToFirstNode('someElement', documentNode.documentElement, domFacade) === documentNode.documentElement.firstChild);
+		chai.assert(evaluateXPathToFirstNode('someElement', documentNode.documentElement) === documentNode.documentElement.firstChild);
 	});
 
 	it('An attribute has no children', () => {
@@ -34,7 +35,7 @@ describe('child', () => {
 			},
 			['someElement']
 		], documentNode);
-		chai.assert(evaluateXPathToFirstNode('/attribute::someAttribute/child::node()', documentNode, domFacade) === null);
+		chai.assert(evaluateXPathToFirstNode('/attribute::someAttribute/child::node()', documentNode) === null);
 	});
 
 	it('sets the context sequence', () => {
@@ -43,6 +44,6 @@ describe('child', () => {
 			['someElement'],
 			['someOtherElement']
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToFirstNode('someParentElement/child::*[last()]', documentNode, domFacade), documentNode.documentElement.lastChild);
+		chai.assert.deepEqual(evaluateXPathToFirstNode('someParentElement/child::*[last()]', documentNode), documentNode.documentElement.lastChild);
 	});
 });

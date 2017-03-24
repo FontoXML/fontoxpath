@@ -1,5 +1,4 @@
 import AnyAtomicTypeValue from 'fontoxpath/selectors/dataTypes/AnyAtomicTypeValue';
-import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 
 describe('AnyAtomicTypeValue.atomize()', () => {
 	it('returns itself', () => {

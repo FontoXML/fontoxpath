@@ -39,132 +39,132 @@ describe('NodeValue.instanceOfType()', () => {
 	describe('element', () => {
 		it('element is node()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createElement('someElement'));
-			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('node()'));
 		});
 
 		it('element is item()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createElement('someElement'));
-			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('item()'));
 		});
 
 		it('element is element()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createElement('someElement'));
-			chai.expect(nodeValue.instanceOfType('element()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('element()'));
 		});
 
 		it('element is not comment()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createElement('someElement'));
-			chai.expect(nodeValue.instanceOfType('comment()')).to.equal(false);
+			chai.assert.isFalse(nodeValue.instanceOfType('comment()'));
 		});
 	});
 
 	describe('comment', () => {
 		it('comment is node()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createComment('A piece of comment'));
-			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('node()'));
 		});
 
 		it('comment is item()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createComment('A piece of comment'));
-			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('item()'));
 		});
 
 		it('comment is comment()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createComment('A piece of comment'));
-			chai.expect(nodeValue.instanceOfType('comment()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('comment()'));
 		});
 
 		it('comment is not element()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createComment('A piece of comment'));
-			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+			chai.assert.isFalse(nodeValue.instanceOfType('element()'));
 		});
 	});
 
 	describe('processing-instruction', () => {
 		it('processing-instruction is node()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
-			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('node()'));
 		});
 
 		it('processing-instruction is item()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
-			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('item()'));
 		});
 
 		it('processing-instruction is processing-instruction()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
-			chai.expect(nodeValue.instanceOfType('processing-instruction()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('processing-instruction()'));
 		});
 
 		it('processing-instruction is not element()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createProcessingInstruction('someTarget', 'A piece of processing-instruction'));
-			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+			chai.assert.isFalse(nodeValue.instanceOfType('element()'));
 		});
 	});
 
 	describe('document', () => {
 		it('document is node()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode);
-			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('node()'));
 		});
 
 		it('document is item()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode);
-			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('item()'));
 		});
 
 		it('document is document()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode);
-			chai.expect(nodeValue.instanceOfType('document()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('document()'));
 		});
 
 		it('document is not element()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode);
-			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+			chai.assert.isFalse(nodeValue.instanceOfType('element()'));
 		});
 	});
 
 	describe('attribute', () => {
 		it('attribute is node()', () => {
 			const nodeValue = new NodeValue(domFacade, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
-			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('node()'));
 		});
 
 		it('attribute is item()', () => {
 			const nodeValue = new NodeValue(domFacade, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
-			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('item()'));
 		});
 
 		it('attribute is attribute()', () => {
 			const nodeValue = new NodeValue(domFacade, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
-			chai.expect(nodeValue.instanceOfType('attribute()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('attribute()'));
 		});
 
 		it('attribute is not element()', () => {
 			const nodeValue = new NodeValue(domFacade, new AttributeNode(documentNode.createElement('someElement'), 'someAttributeName', 'someAttributeValue'));
-			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+			chai.assert.isFalse(nodeValue.instanceOfType('element()'));
 		});
 	});
 
 	describe('text', () => {
 		it('text is node()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createTextNode('A piece of text'));
-			chai.expect(nodeValue.instanceOfType('node()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('node()'));
 		});
 
 		it('text is item()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createTextNode('A piece of text'));
-			chai.expect(nodeValue.instanceOfType('item()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('item()'));
 		});
 
 		it('text is text()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createTextNode('A piece of text'));
-			chai.expect(nodeValue.instanceOfType('text()')).to.equal(true);
+			chai.assert.isTrue(nodeValue.instanceOfType('text()'));
 		});
 
 		it('text is not element()', () => {
 			const nodeValue = new NodeValue(domFacade, documentNode.createTextNode('A piece of text'));
-			chai.expect(nodeValue.instanceOfType('element()')).to.equal(false);
+			chai.assert.isFalse(nodeValue.instanceOfType('element()'));
 		});
 	});
 });
@@ -183,6 +183,6 @@ describe('NodeValue.atomize()', () => {
 	it('returns an atomized value', () => {
 		const nodeValue = new NodeValue(domFacade, someNode),
 			atomizedValue = nodeValue.atomize();
-		chai.expect(atomizedValue).to.deep.equal(new UntypedAtomicValue('A piece of text'));
+		chai.assert.deepEqual(atomizedValue, new UntypedAtomicValue('A piece of text'));
 	});
 });

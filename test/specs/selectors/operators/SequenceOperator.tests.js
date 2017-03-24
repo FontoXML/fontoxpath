@@ -14,28 +14,28 @@ describe('SequenceOperator.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const sequenceOperator1 = new SequenceOperator([equalSelector]),
 			sequenceOperator2 = sequenceOperator1;
-		chai.expect(sequenceOperator1.equals(sequenceOperator2)).to.equal(true);
-		chai.expect(sequenceOperator2.equals(sequenceOperator1)).to.equal(true);
+		chai.assert.isTrue(sequenceOperator1.equals(sequenceOperator2));
+		chai.assert.isTrue(sequenceOperator2.equals(sequenceOperator1));
 	});
 
 	it('returns true if compared with an equal other SequenceOperator', () => {
 		const sequenceOperator1 = new SequenceOperator([equalSelector, equalSelector]),
 			sequenceOperator2 = new SequenceOperator([equalSelector, equalSelector]);
-		chai.expect(sequenceOperator1.equals(sequenceOperator2)).to.equal(true);
-		chai.expect(sequenceOperator2.equals(sequenceOperator1)).to.equal(true);
+		chai.assert.isTrue(sequenceOperator1.equals(sequenceOperator2));
+		chai.assert.isTrue(sequenceOperator2.equals(sequenceOperator1));
 	});
 
 	it('returns false if compared with an SequenceOperator unequal on the first selector', () => {
 		const sequenceOperator1 = new SequenceOperator([unequalSelector, equalSelector]),
 			sequenceOperator2 = new SequenceOperator([unequalSelector, equalSelector]);
-		chai.expect(sequenceOperator1.equals(sequenceOperator2)).to.equal(false);
-		chai.expect(sequenceOperator2.equals(sequenceOperator1)).to.equal(false);
+		chai.assert.isFalse(sequenceOperator1.equals(sequenceOperator2));
+		chai.assert.isFalse(sequenceOperator2.equals(sequenceOperator1));
 	});
 
 	it('returns false if compared with an SequenceOperator unequal on the second selector', () => {
 		const sequenceOperator1 = new SequenceOperator([equalSelector, unequalSelector]),
 			sequenceOperator2 = new SequenceOperator([equalSelector, unequalSelector]);
-		chai.expect(sequenceOperator1.equals(sequenceOperator2)).to.equal(false);
-		chai.expect(sequenceOperator2.equals(sequenceOperator1)).to.equal(false);
+		chai.assert.isFalse(sequenceOperator1.equals(sequenceOperator2));
+		chai.assert.isFalse(sequenceOperator2.equals(sequenceOperator1));
 	});
 });

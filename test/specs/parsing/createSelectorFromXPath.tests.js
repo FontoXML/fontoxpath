@@ -1,8 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToNodes } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToNodes
+} from 'fontoxpath';
 
 describe('createSelectorFromXPath', () => {
 	let documentNode;
@@ -16,6 +17,6 @@ describe('createSelectorFromXPath', () => {
 			['eel'],
 			['eel']
 		], documentNode);
-		chai.expect(evaluateXPathToNodes('self::hovercraft[eel and not(*[not(self::eel)])]', documentNode.documentElement, domFacade)).to.deep.equal([documentNode.documentElement]);
+		chai.assert.deepEqual(evaluateXPathToNodes('self::hovercraft[eel and not(*[not(self::eel)])]', documentNode.documentElement), [documentNode.documentElement]);
 	});
 });

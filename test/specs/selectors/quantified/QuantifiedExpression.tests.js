@@ -18,8 +18,8 @@ describe('QuantifiedExpression.equals()', () => {
 				['x', new FunctionCall(new NamedFunctionRef('true', 0), [])]
 			], equalSelector),
 			quantifiedExpr2 = quantifiedExpr1;
-		chai.expect(quantifiedExpr1.equals(quantifiedExpr2)).to.equal(true);
-		chai.expect(quantifiedExpr2.equals(quantifiedExpr1)).to.equal(true);
+		chai.assert.isTrue(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isTrue(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns true if compared with an equal other QuantifiedExpression', () => {
@@ -29,8 +29,8 @@ describe('QuantifiedExpression.equals()', () => {
 			quantifiedExpr2 = new QuantifiedExpression('every', [
 				['x', new FunctionCall(new NamedFunctionRef('true', 0), [])]
 			], equalSelector);
-		chai.expect(quantifiedExpr1.equals(quantifiedExpr2)).to.equal(true);
-		chai.expect(quantifiedExpr2.equals(quantifiedExpr1)).to.equal(true);
+		chai.assert.isTrue(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isTrue(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns false if compared with a QuantifiedExpression unequal on kind', () => {
@@ -40,8 +40,8 @@ describe('QuantifiedExpression.equals()', () => {
 			quantifiedExpr2 = new QuantifiedExpression('some', [
 				['x', new FunctionCall(new NamedFunctionRef('true', 0), [])]
 			], equalSelector);
-		chai.expect(quantifiedExpr1.equals(quantifiedExpr2)).to.equal(false);
-		chai.expect(quantifiedExpr2.equals(quantifiedExpr1)).to.equal(false);
+		chai.assert.isFalse(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isFalse(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns false if compared with a QuantifiedExpression unequal on variable name', () => {
@@ -51,8 +51,8 @@ describe('QuantifiedExpression.equals()', () => {
 			quantifiedExpr2 = new QuantifiedExpression('every', [
 				['x', new FunctionCall(new NamedFunctionRef('true', 0), [])]
 			], equalSelector);
-		chai.expect(quantifiedExpr1.equals(quantifiedExpr2)).to.equal(false);
-		chai.expect(quantifiedExpr2.equals(quantifiedExpr1)).to.equal(false);
+		chai.assert.isFalse(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isFalse(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns false if compared with a QuantifiedExpression unequal on variable value', () => {
@@ -62,8 +62,8 @@ describe('QuantifiedExpression.equals()', () => {
 			quantifiedExpr2 = new QuantifiedExpression('every', [
 				['x', new FunctionCall(new NamedFunctionRef('true', 0), [])]
 			], equalSelector);
-		chai.expect(quantifiedExpr1.equals(quantifiedExpr2)).to.equal(false);
-		chai.expect(quantifiedExpr2.equals(quantifiedExpr1)).to.equal(false);
+		chai.assert.isFalse(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isFalse(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns false if compared with a QuantifiedExpression unequal on return expression', () => {
@@ -73,7 +73,7 @@ describe('QuantifiedExpression.equals()', () => {
 			quantifiedExpr2 = new QuantifiedExpression('every', [
 				['x', new FunctionCall(new NamedFunctionRef('false', 0), [])]
 			], unequalSelector);
-		chai.expect(quantifiedExpr1.equals(quantifiedExpr2)).to.equal(false);
-		chai.expect(quantifiedExpr2.equals(quantifiedExpr1)).to.equal(false);
+		chai.assert.isFalse(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isFalse(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 });

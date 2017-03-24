@@ -14,28 +14,28 @@ describe('AndOperator.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const and1 = new AndOperator([equalSelector]),
 			and2 = and1;
-		chai.expect(and1.equals(and2)).to.equal(true);
-		chai.expect(and2.equals(and1)).to.equal(true);
+		chai.assert.isTrue(and1.equals(and2));
+		chai.assert.isTrue(and2.equals(and1));
 	});
 
 	it('returns true if compared with an equal other AndOperator', () => {
 		const and1 = new AndOperator([equalSelector, equalSelector]),
 			and2 = new AndOperator([equalSelector, equalSelector]);
-		chai.expect(and1.equals(and2)).to.equal(true);
-		chai.expect(and2.equals(and1)).to.equal(true);
+		chai.assert.isTrue(and1.equals(and2));
+		chai.assert.isTrue(and2.equals(and1));
 	});
 
 	it('returns false if compared with an AndOperator unequal on the first selector', () => {
 		const and1 = new AndOperator([unequalSelector, equalSelector]),
 			and2 = new AndOperator([unequalSelector, equalSelector]);
-		chai.expect(and1.equals(and2)).to.equal(false);
-		chai.expect(and2.equals(and1)).to.equal(false);
+		chai.assert.isFalse(and1.equals(and2));
+		chai.assert.isFalse(and2.equals(and1));
 	});
 
 	it('returns false if compared with an AndOperator unequal on the second selector', () => {
 		const and1 = new AndOperator([equalSelector, unequalSelector]),
 			and2 = new AndOperator([equalSelector, unequalSelector]);
-		chai.expect(and1.equals(and2)).to.equal(false);
-		chai.expect(and2.equals(and1)).to.equal(false);
+		chai.assert.isFalse(and1.equals(and2));
+		chai.assert.isFalse(and2.equals(and1));
 	});
 });

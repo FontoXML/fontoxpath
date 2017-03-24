@@ -17,12 +17,8 @@ describe('IfExpression.equals()', () => {
 				equalSelector,
 				equalSelector),
 			quantifiedExpr2 = quantifiedExpr1;
-
-		const result1 = quantifiedExpr1.equals(quantifiedExpr2),
-			result2 = quantifiedExpr2.equals(quantifiedExpr1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
+		chai.assert.isTrue(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isTrue(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns true if compared with an equal other IfExpression', () => {
@@ -34,12 +30,8 @@ describe('IfExpression.equals()', () => {
 				equalSelector,
 				equalSelector,
 				equalSelector);
-
-		const result1 = quantifiedExpr1.equals(quantifiedExpr2),
-			result2 = quantifiedExpr2.equals(quantifiedExpr1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
+		chai.assert.isTrue(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isTrue(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns false if compared with a IfExpression unequal on test', () => {
@@ -51,12 +43,8 @@ describe('IfExpression.equals()', () => {
 				unequalSelector,
 				equalSelector,
 				equalSelector);
-
-		const result1 = quantifiedExpr1.equals(quantifiedExpr2),
-			result2 = quantifiedExpr2.equals(quantifiedExpr1);
-
-		chai.expect(result1).to.equal(false);
-		chai.expect(result2).to.equal(false);
+		chai.assert.isFalse(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isFalse(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns false if compared with a IfExpression unequal on then', () => {
@@ -68,12 +56,8 @@ describe('IfExpression.equals()', () => {
 				equalSelector,
 				unequalSelector,
 				equalSelector);
-
-		const result1 = quantifiedExpr1.equals(quantifiedExpr2),
-			result2 = quantifiedExpr2.equals(quantifiedExpr1);
-
-		chai.expect(result1).to.equal(false);
-		chai.expect(result2).to.equal(false);
+		chai.assert.isFalse(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isFalse(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 
 	it('it returns false if compared with a IfExpression unequal on else', () => {
@@ -85,11 +69,7 @@ describe('IfExpression.equals()', () => {
 				equalSelector,
 				equalSelector,
 				unequalSelector);
-
-		const result1 = quantifiedExpr1.equals(quantifiedExpr2),
-			result2 = quantifiedExpr2.equals(quantifiedExpr1);
-
-		chai.expect(result1).to.equal(false);
-		chai.expect(result2).to.equal(false);
+		chai.assert.isFalse(quantifiedExpr1.equals(quantifiedExpr2));
+		chai.assert.isFalse(quantifiedExpr2.equals(quantifiedExpr1));
 	});
 });

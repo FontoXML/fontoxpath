@@ -1,8 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToNodes } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToNodes
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -13,18 +14,16 @@ describe('parent', () => {
 	it('returns the parentNode', () => {
 		jsonMlMapper.parse([
 			'someParentElement',
-			['someElement', { 'someAttribute': 'someValue' }]
+			['someElement', { someAttribute: 'someValue' }]
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes('parent::someParentElement', documentNode.documentElement.firstChild, domFacade), [documentNode.documentElement]);
+		chai.assert.deepEqual(evaluateXPathToNodes('parent::someParentElement', documentNode.documentElement.firstChild), [documentNode.documentElement]);
 	});
 
 	it('returns nothing for root nodes', () => {
 		jsonMlMapper.parse([
 			'someParentElement',
-			['someElement', { 'someAttribute': 'someValue' }]
+			['someElement', { someAttribute: 'someValue' }]
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes('parent::node()', documentNode, domFacade), []);
+		chai.assert.deepEqual(evaluateXPathToNodes('parent::node()', documentNode), []);
 	});
 });

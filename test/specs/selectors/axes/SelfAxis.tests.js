@@ -14,33 +14,21 @@ describe('SelfAxis.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const self1 = new SelfAxis(equalSelector),
 			self2 = self1;
-
-		const result1 = self1.equals(self2),
-			result2 = self2.equals(self1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
+		chai.assert.isTrue(self1.equals(self2));
+		chai.assert.isTrue(self2.equals(self1));
 	});
 
 	it('returns true if compared with an equal other SelfAxis', () => {
 		const self1 = new SelfAxis(equalSelector),
 			self2 = new SelfAxis(equalSelector);
-
-		const result1 = self1.equals(self2),
-			result2 = self2.equals(self1);
-
-		chai.expect(result1).to.equal(true);
-		chai.expect(result2).to.equal(true);
+		chai.assert.isTrue(self1.equals(self2));
+		chai.assert.isTrue(self2.equals(self1));
 	});
 
 	it('returns false if compared with an unequal other SelfAxis', () => {
 		const self1 = new SelfAxis(unequalSelector),
 			self2 = new SelfAxis(unequalSelector);
-
-		const result1 = self1.equals(self2),
-			result2 = self2.equals(self1);
-
-		chai.expect(result1).to.equal(false);
-		chai.expect(result2).to.equal(false);
+		chai.assert.isFalse(self1.equals(self2));
+		chai.assert.isFalse(self2.equals(self1));
 	});
 });

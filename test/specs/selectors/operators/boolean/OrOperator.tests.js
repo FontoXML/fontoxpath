@@ -16,21 +16,21 @@ describe('OrOperator.equals()', () => {
 	it('returns true if compared with itself', () => {
 		const or1 = new OrOperator([equalSelector, equalSelector]),
 			or2 = or1;
-		chai.expect(or1.equals(or2)).to.equal(true);
-		chai.expect(or2.equals(or1)).to.equal(true);
+		chai.assert.isTrue(or1.equals(or2));
+		chai.assert.isTrue(or2.equals(or1));
 	});
 
 	it('it returns true if compared with an equal other OrOperator', () => {
 		const or1 = new OrOperator([equalSelector, equalSelector]),
 			or2 = new OrOperator([equalSelector, equalSelector]);
-		chai.expect(or1.equals(or2)).to.equal(true);
-		chai.expect(or2.equals(or1)).to.equal(true);
+		chai.assert.isTrue(or1.equals(or2));
+		chai.assert.isTrue(or2.equals(or1));
 	});
 
 	it('it returns false if compared with an unequal other OrOperator', () => {
 		const or1 = new OrOperator([equalSelector, unequalSelector]),
 			or2 = new OrOperator([unequalSelector, equalSelector]);
-		chai.expect(or1.equals(or2)).to.equal(false);
-		chai.expect(or2.equals(or1)).to.equal(false);
+		chai.assert.isFalse(or1.equals(or2));
+		chai.assert.isFalse(or2.equals(or1));
 	});
 });

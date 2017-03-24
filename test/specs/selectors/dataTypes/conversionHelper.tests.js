@@ -1,12 +1,9 @@
-import { castToType, promoteToType } from 'fontoxpath/selectors/dataTypes/conversionHelper';
-import AnyAtomicTypeValue from 'fontoxpath/selectors/dataTypes/AnyAtomicTypeValue';
+import { castToType } from 'fontoxpath/selectors/dataTypes/conversionHelper';
 import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
 import IntegerValue from 'fontoxpath/selectors/dataTypes/IntegerValue';
-import BooleanValue from 'fontoxpath/selectors/dataTypes/BooleanValue';
 import DecimalValue from 'fontoxpath/selectors/dataTypes/DecimalValue';
 import DoubleValue from 'fontoxpath/selectors/dataTypes/DoubleValue';
 import FloatValue from 'fontoxpath/selectors/dataTypes/FloatValue';
-import QNameValue from 'fontoxpath/selectors/dataTypes/QNameValue';
 
 describe('casting', () => {
 	describe('xs:boolean', () => {

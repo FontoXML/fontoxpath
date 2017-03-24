@@ -2,14 +2,14 @@ import isSameArray from 'fontoxpath/selectors/isSameArray';
 
 describe('isSameArray()', () => {
 	it('returns true for same arrays', () => {
-		chai.expect(isSameArray([], [])).to.equal(true);
-		chai.expect(isSameArray([1], [1])).to.equal(true);
-		chai.expect(isSameArray([1, 2], [1, 2])).to.equal(true);
+		chai.assert.isTrue(isSameArray([], []));
+		chai.assert.isTrue(isSameArray([1], [1]));
+		chai.assert.isTrue(isSameArray([1, 2], [1, 2]));
 	});
 
 	it('returns false for different arrays', () => {
-		chai.expect(isSameArray([], [1])).to.equal(false);
-		chai.expect(isSameArray([1], [1, 2])).to.equal(false);
-		chai.expect(isSameArray([1, 2], [2, 3])).to.equal(false);
+		chai.assert.isFalse(isSameArray([], [1]));
+		chai.assert.isFalse(isSameArray([1], [1, 2]));
+		chai.assert.isFalse(isSameArray([1, 2], [2, 3]));
 	});
 });

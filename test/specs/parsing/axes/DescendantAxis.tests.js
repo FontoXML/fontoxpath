@@ -1,8 +1,9 @@
 import slimdom from 'slimdom';
-
-import { domFacade } from 'fontoxpath';
-import { evaluateXPathToNodes } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
+import {
+	evaluateXPathToNodes
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -11,61 +12,45 @@ beforeEach(() => {
 
 describe('descendant', () => {
 	it('parses descendant::', () => {
-		const selector = ('descendant::someElement');
 		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes(selector, documentNode, domFacade),
-			[documentNode.firstChild.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('descendant::someElement', documentNode), [documentNode.firstChild.firstChild]);
 	});
 });
 
 describe('descendant-or-self', () => {
 	it('descendant part', () => {
-		const selector = ('descendant-or-self::someElement');
 		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes(selector, documentNode.documentElement, domFacade),
-			[documentNode.documentElement.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('descendant-or-self::someElement', documentNode.documentElement), [documentNode.documentElement.firstChild]);
 	});
 
 	it('self part', () => {
-		const selector = ('descendant-or-self::someParentElement');
 		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes(selector, documentNode.documentElement, domFacade),
-			[documentNode.documentElement]);
+		chai.assert.deepEqual(evaluateXPathToNodes('descendant-or-self::someParentElement', documentNode.documentElement), [documentNode.documentElement]);
 	});
 
 	it('ordering of siblings', () => {
-		const selector = ('descendant-or-self::*');
 		jsonMlMapper.parse([
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes(selector, documentNode.documentElement, domFacade),
-			[documentNode.documentElement, documentNode.documentElement.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('descendant-or-self::*', documentNode.documentElement), [documentNode.documentElement, documentNode.documentElement.firstChild]);
 	});
 
 	it('ordering of descendants with complex-ish queries', () => {
-		const selector = ('//*[name() = "root" or name() => starts-with("a") or name() => starts-with("b")]');
 		jsonMlMapper.parse([
 			'root',
 			['a', ['a-a'], ['a-b']],
 			['b', ['b-a'], ['b-b']]
 		], documentNode);
-		chai.assert.deepEqual(
-			evaluateXPathToNodes(selector, documentNode, domFacade).map(node => node.nodeName),
-			['root', 'a', 'a-a', 'a-b', 'b', 'b-a', 'b-b']);
+		chai.assert.deepEqual(evaluateXPathToNodes('//*[name() = "root" or name() => starts-with("a") or name() => starts-with("b")]', documentNode).map(node => node.nodeName), ['root', 'a', 'a-a', 'a-b', 'b', 'b-a', 'b-b']);
 	});
-
 });
