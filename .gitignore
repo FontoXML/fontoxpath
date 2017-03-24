@@ -1,3 +1,4 @@
 platform
 coverage
 node_modules
+test/assets
