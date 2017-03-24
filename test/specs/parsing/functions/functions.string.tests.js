@@ -15,6 +15,39 @@ beforeEach(() => {
 });
 
 describe('functions over strings', () => {
+	describe('compare()', () => {
+		it('Returns an empty sequence when one of the inputs is an empty sequence', () => {
+			chai.assert.deepEqual(evaluateXPathToStrings('compare("a", ())', documentNode), []);
+			chai.assert.deepEqual(evaluateXPathToStrings('compare((), "a")', documentNode), []);
+		});
+
+		it('Returns 0 if both inputs are equal', () => {
+			chai.assert.equal(evaluateXPathToNumber('compare("a", "a")', documentNode), 0);
+			chai.assert.equal(evaluateXPathToNumber('compare("abc", "abc")', documentNode), 0);
+			chai.assert.equal(evaluateXPathToNumber('compare("123", "123")', documentNode), 0);
+		});
+
+		it('Returns 1 if the first argument is greater than the second argument', () => {
+			chai.assert.equal(evaluateXPathToNumber('compare("b", "a")', documentNode), 1);
+			chai.assert.equal(evaluateXPathToNumber('compare("x", "a")', documentNode), 1);
+			chai.assert.equal(evaluateXPathToNumber('compare("text", "test")', documentNode), 1);
+			chai.assert.equal(evaluateXPathToNumber('compare("1", "0")', documentNode), 1);
+			chai.assert.equal(evaluateXPathToNumber('compare("5", "10000")', documentNode), 1);
+		});
+
+		it('Returns -1 if the first argument is greater than the second argument', () => {
+			chai.assert.equal(evaluateXPathToNumber('compare("a", "b")', documentNode), -1);
+			chai.assert.equal(evaluateXPathToNumber('compare("a", "x")', documentNode), -1);
+			chai.assert.equal(evaluateXPathToNumber('compare("test", "text")', documentNode), -1);
+			chai.assert.equal(evaluateXPathToNumber('compare("0", "1")', documentNode), -1);
+			chai.assert.equal(evaluateXPathToNumber('compare("10000", "5")', documentNode), -1);
+		});
+
+		it('Throws when a collation is used (as third argument)', () => {
+			chai.assert.throw(() => evaluateXPathToNumber('compare("a", "a", "collation")', documentNode));
+		});
+	});
+
 	describe('tokenize', () => {
 		it('If $input is the empty sequence, or if $input is the zero-length string, the function returns the empty sequence.', () => {
 			let selector = ('tokenize(())');

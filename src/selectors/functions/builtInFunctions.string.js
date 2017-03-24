@@ -4,8 +4,31 @@ import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
 import { castToType } from '../dataTypes/conversionHelper';
 
+function collationError () {
+	throw new Error('Not implemented: Specifying a collation is not supported');
+}
+
 function contextItemAsFirstArgument (fn, dynamicContext) {
 	return fn(dynamicContext, dynamicContext.contextItem);
+}
+
+function fnCompare (_dynamicContext, arg1, arg2) {
+	if (arg1.isEmpty() || arg2.isEmpty()) {
+		return Sequence.empty();
+	}
+
+	const arg1Value = arg1.value[0].value,
+		arg2Value = arg2.value[0].value;
+
+	if (arg1Value > arg2Value) {
+		return Sequence.singleton(new IntegerValue(1));
+	}
+
+	if (arg1Value < arg2Value) {
+		return Sequence.singleton(new IntegerValue(-1));
+	}
+
+	return Sequence.singleton(new IntegerValue(0));
 }
 
 function fnConcat (_dynamicContext) {
@@ -133,6 +156,20 @@ function fnNormalizeSpace (_dynamicContext, arg) {
 export default {
 	declarations: [
 		{
+			name: 'compare',
+			argumentTypes: ['xs:string?', 'xs:string?'],
+			returnType: 'xs:integer?',
+			callFunction: fnCompare
+		},
+
+		{
+			name: 'compare',
+			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
+			returnType: 'xs:integer?',
+			callFunction: collationError
+		},
+
+		{
 			name: 'concat',
 			argumentTypes: ['xs:anyAtomicType?', 'xs:anyAtomicType?', '...'],
 			returnType: 'xs:string',
@@ -143,9 +180,7 @@ export default {
 			name: 'contains',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
-			callFunction: function () {
-				throw new Error('Not implemented: Specifying a collation is not supported');
-			}
+			callFunction: collationError
 		},
 
 		{
@@ -166,9 +201,7 @@ export default {
 			name: 'ends-with',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
 			returnType: 'xs:boolean',
-			callFunction: function () {
-				throw new Error('Not implemented: Specifying a collation is not supported');
-			}
+			callFunction: collationError
 		},
 
 		{
@@ -198,9 +231,7 @@ export default {
 			name: 'starts-with',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
 			returnType: 'xs:boolean',
-			callFunction: function () {
-				throw new Error('Not implemented: Specifying a collation is not supported');
-			}
+			callFunction: collationError
 		},
 
 		{
