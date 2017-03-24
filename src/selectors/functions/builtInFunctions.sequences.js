@@ -192,6 +192,14 @@ function fnEmpty (_dynamicContext, sequence) {
 	return Sequence.singleton(BooleanValue.FALSE);
 }
 
+function fnExists (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return Sequence.singleton(BooleanValue.FALSE);
+	}
+
+	return Sequence.singleton(BooleanValue.TRUE);
+}
+
 export default {
 	declarations: [
 		{
@@ -213,6 +221,13 @@ export default {
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnEmpty
+		},
+
+		{
+			name: 'exists',
+			argumentTypes: ['item()*'],
+			returnType: 'xs:boolean',
+			callFunction: fnExists
 		},
 
 		{
