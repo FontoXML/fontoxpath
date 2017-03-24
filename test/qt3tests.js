@@ -9,33 +9,45 @@ const {
 const context = require.context('text!assets', true, /\.xml$/);
 const parser = new DOMParser();
 
-function getAsserterForTest (testCase) {
-	const expectedResultNode = evaluateXPathToFirstNode('./result/*', testCase);
-	switch (expectedResultNode.localName) {
+function createAsserter (assertNode) {
+	switch (assertNode.localName) {
+		case 'all-of':
+			const asserts = evaluateXPathToNodes('*', assertNode).map(createAsserter);
+			return (xpath, contextNode) =>
+				asserts.forEach(a => a(xpath, contextNode));
 		case 'error':
-			const errorCode = evaluateXPathToString('@code', expectedResultNode);
+			const errorCode = evaluateXPathToString('@code', assertNode);
 			return (xpath, contextNode) =>
 				chai.assert.throws(() => evaluateXPathToString(xpath, contextNode), errorCode, xpath);
 		case 'assert':
+			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(`let $result := (${xpath}) return ${evaluateXPathToString('.', assertNode)}`, contextNode), xpath);
 		case 'assert-true':
 			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(xpath, contextNode), xpath);
 		case 'assert-eq':
-			const equalWith = evaluateXPathToString('.', expectedResultNode);
+			const equalWith = evaluateXPathToString('.', assertNode);
 			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) = (${equalWith})`, contextNode), xpath);
+		case 'assert-empty':
+			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) => empty()`, contextNode), xpath);
 		case 'assert-false':
 			return (xpath, contextNode) => chai.assert.isFalse(evaluateXPathToBoolean(xpath, contextNode), xpath);
 		case 'assert-count':
-			const expectedCount = evaluateXPathToNumber('.', expectedResultNode);
+			const expectedCount = evaluateXPathToNumber('number(.)', assertNode);
 			return (xpath, contextNode) => chai.assert.equal(evaluateXPathToNumber(`(${xpath}) => count()`, contextNode), expectedCount, xpath);
+		case 'assert-type':
+			const expectedType = evaluateXPathToString('.', assertNode);
+			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) instance of ${expectedType}`, contextNode), xpath);
 		case 'assert-string-value':
-			const expectedString = evaluateXPathToString('.', expectedResultNode);
+			const expectedString = evaluateXPathToString('.', assertNode);
 			return (xpath, contextNode) => chai.assert.equal(evaluateXPathToString(`(${xpath})!string() => string-join(" ")`, contextNode), expectedString, xpath);
 		default:
 			return () => {
-				chai.assert.fail(null, null, `Skipped test, it was a ${expectedResultNode.localName}`);
+				chai.assert.fail(null, null, `Skipped test, it was a ${assertNode.localName}`);
 			};
 	}
 
+}
+function getAsserterForTest (testCase) {
+	return createAsserter(evaluateXPathToFirstNode('./result/*', testCase));
 }
 
 context.keys().forEach((item) => {
@@ -54,6 +66,22 @@ context.keys().forEach((item) => {
   not(./dependency[@type eq "xsd-version" and @value eq "1.1"]) and
   not(./dependency[@value eq "moduleImport"]) and
   not(./dependency[@value eq "schemaAware"]) and
+  not(./test => contains("date")) and
+  not(./test => contains("castable as")) and
+  not(./test => contains("treat as")) and
+  not(./test => contains("xs:long")) and
+  not(./test => contains("xs:unsignedLong")) and
+  not(./test => contains("xs:short")) and
+  not(./test => contains("Integer")) and
+  not(./test => contains("day")) and
+  not(./test => contains("uration")) and
+  not(./test => contains("month")) and
+  not(./test => contains("Month")) and
+  not(./test => contains("year")) and
+  not(./test => contains("Year")) and
+  not(./test => contains("time")) and
+  not(./test => contains("matches")) and
+  not(./test => contains("replace")) and
   not(./dependency[@value eq "XQ30+"])]`, doc);
 	if (!testCases.length) {
 		return;
