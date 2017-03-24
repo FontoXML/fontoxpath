@@ -2,7 +2,7 @@ import slimdom from 'slimdom';
 
 import AttributeNode from 'fontoxpath/selectors/dataTypes/AttributeNode';
 import NodeValue from 'fontoxpath/selectors/dataTypes/NodeValue';
-import StringValue from 'fontoxpath/selectors/dataTypes/StringValue';
+import UntypedAtomicValue from 'fontoxpath/selectors/dataTypes/UntypedAtomicValue';
 import { domFacade } from 'fontoxpath';
 import DomFacade from 'fontoxpath/DomFacade';
 
@@ -183,6 +183,6 @@ describe('NodeValue.atomize()', () => {
 	it('returns an atomized value', () => {
 		const nodeValue = new NodeValue(domFacade, someNode),
 			atomizedValue = nodeValue.atomize();
-		chai.expect(atomizedValue).to.deep.equal(new StringValue('A piece of text'));
+		chai.expect(atomizedValue).to.deep.equal(new UntypedAtomicValue('A piece of text'));
 	});
 });

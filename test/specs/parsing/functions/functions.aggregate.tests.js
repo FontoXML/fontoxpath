@@ -57,7 +57,7 @@ describe('aggregate functions', () => {
 		it('throws a type error if the values are not of the same type',
 		   () => chai.assert.throws(() => evaluateXPathToNumber('max((1, "zero"))', documentNode, domFacade), 'FORG0006'));
 		it('returns NaN if one of the values is NaN',
-		   () => chai.assert.isNaN(evaluateXPathToNumber('max((1, number("zero")))', documentNode, domFacade)));
+		   () => chai.assert.isNaN(evaluateXPathToNumber('max((1, number(xs:double("NaN"))))', documentNode, domFacade)));
 		it('returns the empty sequence when passed the empty sequence',
 		   () => chai.assert.deepEqual(evaluateXPathToStrings('max(())', documentNode, domFacade), []));
 		// TODO: when we have support for creating untypedAtomicValue items, when we have implemented the function conversion
@@ -79,7 +79,7 @@ describe('aggregate functions', () => {
 		it('throws a type error if the values are not of the same type',
 		   () => chai.assert.throws(() => evaluateXPathToNumber('min((1, "zero"))', documentNode, domFacade), 'FORG0006'));
 		it('returns NaN if one of the values is NaN',
-		   () => chai.assert.isNaN(evaluateXPathToNumber('min((1, number("zero")))', documentNode, domFacade)));
+		   () => chai.assert.isNaN(evaluateXPathToNumber('min((1, number(xs:double("NaN"))))', documentNode, domFacade)));
 		it('returns the empty sequence when passed the empty sequence',
 		   () => chai.assert.deepEqual(evaluateXPathToStrings('min(())', documentNode, domFacade), []));
 		// TODO: when we have support for creating untypedAtomicValue items, when we have implemented the function conversion

@@ -49,7 +49,14 @@ function fnNumber (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(new DoubleValue(NaN));
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:double'));
+	try {
+		return Sequence.singleton(castToType(sequence.value[0], 'xs:double'));
+	} catch (error) {
+		if (error.message.includes('FORG0001')) {
+			return Sequence.singleton(new DoubleValue(NaN));
+		}
+		throw error;
+	}
 }
 
 function xsFloat (_dynamicContext, sequence) {
