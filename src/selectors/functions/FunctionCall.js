@@ -70,7 +70,7 @@ class FunctionCall extends Selector {
 		}
 
 		if (functionItem.getArity() !== this._args.length) {
-			throw new Error('XPTY0004: expected arity of dynamic function to be ' + this._args.length + ', got function with arity of ' + functionItem.getArity());
+			throw new Error(`XPTY0004: expected arity of function ${functionItem.getName()} to be ${this._args.length}, got function with arity of ${functionItem.getArity()}`);
 		}
 
 		var evaluatedArgs = this._args.map(function (argument) {
@@ -83,7 +83,7 @@ class FunctionCall extends Selector {
 		// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
 		var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs);
 		if (transformedArguments === null) {
-			throw new Error(`XPTY0004: expected argument list of function to be [${argumentListToString(evaluatedArgs)}], got function with argument list [${functionItem.getArgumentTypes().join(', ')}].`);
+			throw new Error(`XPTY0004: expected argument list of function ${functionItem.getName()} to be [${argumentListToString(evaluatedArgs)}], got function with argument list [${functionItem.getArgumentTypes().join(', ')}].`);
 		}
 
 		if (transformedArguments.indexOf(null) >= 0) {

@@ -98,20 +98,28 @@ NodeValue.prototype.atomize = function () {
         return this.value.atomize();
     }
 
+	// Text nodes and documents should return their text, as untyped atomic
     if (this.instanceOfType('text()')) {
         return new UntypedAtomicValue(this._domFacade.getData(this.value));
     }
+	// comments and PIs are string
+	if (this.instanceOfType('comment()') || this.instanceOfType('processing-instruction()')) {
+		return new StringValue(this._domFacade.getData(this.value));
+	}
+
+	// This is an element or a document node. Because we do not know the specific type of this element.
+	// Documents should always be an untypedAtomic, of elements, we do not know the type, so they are untypedAtomic too
     var domFacade = this._domFacade;
     var allTextNodes = (function getTextNodes (node) {
-			if (node.nodeType === node.TEXT_NODE) {
-				return [node];
-			}
-			return domFacade.getChildNodes(node)
-				.reduce(function (textNodes, childNode) {
-					Array.prototype.push.apply(textNodes, getTextNodes(childNode));
-					return textNodes;
-				}, []);
-		})(this.value);
+		if (node.nodeType === node.TEXT_NODE) {
+			return [node];
+		}
+		return domFacade.getChildNodes(node)
+			.reduce(function (textNodes, childNode) {
+				Array.prototype.push.apply(textNodes, getTextNodes(childNode));
+				return textNodes;
+			}, []);
+	})(this.value);
 
     return new UntypedAtomicValue(allTextNodes.map(function (textNode) {
         return this._domFacade.getData(textNode);

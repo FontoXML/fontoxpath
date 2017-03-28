@@ -10,7 +10,7 @@ import FunctionItem from './FunctionItem';
 function ArrayValue (members) {
 	FunctionItem.call(this, function (dynamicContext, key) {
 		return arrayGet(dynamicContext, Sequence.singleton(this), key);
-	}.bind(this), ['xs:integer'], 1, 'item()*');
+	}.bind(this), 'array', ['xs:integer'], 1, 'item()*');
 	this.members = members;
 }
 

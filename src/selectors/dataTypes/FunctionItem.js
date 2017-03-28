@@ -18,14 +18,16 @@ function expandRestArgumentToArity (argumentTypes, arity) {
  * @constructor
  * @extends {Item}
  * @param  {!function(!DynamicContext, !Sequence): !Sequence}   value
+ * @param  {!string}                                            name
  * @param  {!Array<string>}                                     argumentTypes
  * @param  {!number}                                            arity
  * @param  {!string}                                            returnType
  */
-function FunctionItem (value, argumentTypes, arity, returnType) {
+function FunctionItem (value, name, argumentTypes, arity, returnType) {
     Item.call(this, value);
 
 	this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
+	this._name = name;
     this._arity = arity;
     this._returnType = returnType;
 }
@@ -58,6 +60,7 @@ FunctionItem.prototype.applyArguments = function (appliedArguments) {
 
 	var functionItem = new FunctionItem(
 		curriedFunction,
+		'bound function',
 		argumentTypes,
 		argumentTypes.length,
 		this._returnType);
@@ -88,6 +91,10 @@ FunctionItem.prototype.getReturnType = function () {
 
 FunctionItem.prototype.getArity = function () {
     return this._arity;
+};
+
+FunctionItem.prototype.getName = function () {
+    return this._name;
 };
 
 export default FunctionItem;

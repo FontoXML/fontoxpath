@@ -6,6 +6,7 @@ import IntegerValue from './IntegerValue';
 import Item from './Item';
 import StringValue from './StringValue';
 import UntypedAtomicValue from './UntypedAtomicValue';
+import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 
 /**
  * @param   {!Item}   value
@@ -136,6 +137,10 @@ export const castToType = function castToType (value, type) {
 			}
 			return new IntegerValue(integerValue);
 
+		case 'xs:anyAtomicType':
+		case 'xs:NOTATION':
+		case 'xs:anySimpleType':
+			throw new Error('XPST0080: Can not cast to xs:anyAtomicType, xs:NOTATION, or xs:xs:anySimpleType.');
 		case 'array()':
 		case 'function()':
 		case 'map()':

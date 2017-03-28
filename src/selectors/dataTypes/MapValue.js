@@ -11,7 +11,7 @@ import FunctionItem from './FunctionItem';
 function MapValue (keyValuePairs) {
 	FunctionItem.call(this, /** @type {function(!DynamicContext, !Sequence):!Sequence} */ (function (dynamicContext, key) {
 		return mapGet(dynamicContext, Sequence.singleton(this), key);
-	}.bind(this)), ['xs:anyAtomicType'], 1, 'item()*');
+	}.bind(this)), 'map', ['xs:anyAtomicType'], 1, 'item()*');
 	this.keyValuePairs = keyValuePairs;
 }
 

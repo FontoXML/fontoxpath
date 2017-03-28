@@ -51,7 +51,11 @@ export const transformArgument = (argumentType, argument) => {
 		if (argumentItem.instanceOfType('node()')) {
 			argumentItem = argumentItem.atomize();
 		}
-
+		// Everything is an anyAtomicType, so no casting necessary.
+		if (type === 'xs:anyAtomicType') {
+			transformedValues.push(argumentItem);
+			continue;
+		}
 		if (argumentItem.instanceOfType('xs:untypedAtomic')) {
 			// We might be able to cast this to the wished type
 			const item = castToType(argumentItem, type);
