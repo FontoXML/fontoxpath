@@ -32,7 +32,7 @@ describe('casting', () => {
 
 		it('throws when given an invalid value', () => {
 			const stringValue = new StringValue('invalid');
-			chai.assert.throws(() => castToType(stringValue, 'xs:boolean'), 'XPTY0004');
+			chai.assert.throws(() => castToType(stringValue, 'xs:boolean'), 'FORG0001');
 		});
 	});
 

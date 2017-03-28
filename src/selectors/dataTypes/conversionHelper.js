@@ -32,8 +32,14 @@ export const castToType = function castToType (value, type) {
 					convertedValue = value.value + '';
 				}
 				else if (value.instanceOfType('xs:float') || value.instanceOfType('xs:double')) {
-					if (Math.abs(value.value) === Infinity) {
+					if (isNaN(value.value)) {
+						convertedValue = 'NaN';
+					}
+					else if (!isFinite(value.value)) {
 						convertedValue = `${value.value < 0 ? '-' : ''}INF`;
+					}
+					else if (Object.is(value.value, -0)) {
+						convertedValue = '-0';
 					}
 					else {
 						// USe Javascript's built in number formatting. This outputs like 1e+100. The valid XPath version is 1E100: without the +, and with the exponent in capitals
@@ -53,11 +59,16 @@ export const castToType = function castToType (value, type) {
 			return new StringValue(convertedValue);
 
 		case 'xs:boolean':
+			if (value.instanceOfType('xs:boolean')) {
+				return value;
+			}
 			if (value.instanceOfType('xs:numeric')) {
 				return value.value === 0 || value.isNaN() ? BooleanValue.FALSE : BooleanValue.TRUE;
 			}
 			if (value.instanceOfType('xs:string') || value.instanceOfType('xs:untypedAtomic')) {
-				switch (value.value) {
+				const strValue = value.value.trim();
+
+				switch (strValue) {
 					case 'true':
 					case '1':
 						return BooleanValue.TRUE;
@@ -66,7 +77,7 @@ export const castToType = function castToType (value, type) {
 						return BooleanValue.FALSE;
 
 					default:
-						throw new Error(`XPTY0004: can not cast ${value.value} to xs:boolean`);
+						throw new Error(`FORG0001: can not cast ${strValue} to xs:boolean`);
 				}
 			}
 			throw new Error(`Not implemented: Casting from xs:boolean to ${value.primitiveTypeName} is not supported yet`);
@@ -78,7 +89,7 @@ export const castToType = function castToType (value, type) {
 			}
 			if (value.instanceOfType('xs:float') || value.instanceOfType('xs:double')) {
 				decimalValue = value.value;
-				if (Number.isNaN(decimalValue)) {
+				if (isNaN(decimalValue) || !isFinite(decimalValue)) {
 					throw new Error(`FOCA0002: can not cast ${value.value} to xs:decimal`);
 				}
 			}
@@ -86,9 +97,13 @@ export const castToType = function castToType (value, type) {
 				decimalValue = value === BooleanValue.TRUE ? 1 : 0;
 			}
 			else if (value.instanceOfType('xs:string') || value.instanceOfType('xs:untypedAtomic')) {
-				decimalValue = parseFloat(value.value);
-				if (Number.isNaN(decimalValue)) {
-					throw new Error(`XPTY0004: can not cast ${value.value} to xs:decimal`);
+				const strValue = value.value.trim();
+				if (!/^[+\-]?((\d+(\.\d*)?)|(\.\d+))?$/.test(strValue)) {
+					throw new Error(`FORG0001: can not cast ${strValue} to xs:decimal`);
+				}
+				decimalValue = parseFloat(strValue);
+				if (isNaN(decimalValue) || !isFinite(decimalValue)) {
+					throw new Error(`FORG0001: can not cast ${value.value} to xs:decimal`);
 				}
 			}
 			return new DecimalValue(decimalValue);
@@ -114,6 +129,9 @@ export const castToType = function castToType (value, type) {
 					floatValue = -Infinity;
 				}
 				else {
+					if (!/^([+\-]?((\d+(\.\d*)?)|(\.\d+))([eE][+\-]?\d+)?|(-?INF)|NaN)$/.test(strValue)) {
+						throw new Error(`FORG0001: can not cast ${strValue} to xs:float or xs:double`);
+					}
 					floatValue = parseFloat(strValue.replace('E', 'e'));
 					if (isNaN(floatValue)) {
 						throw new Error(`FORG0001: Can not cast "${strValue}" to ${type}.`);
@@ -128,12 +146,20 @@ export const castToType = function castToType (value, type) {
 			if (value.instanceOfType('xs:boolean')) {
 				integerValue = value === BooleanValue.TRUE ? 1 : 0;
 			}
-			else {
-				// Strip off any decimals
-				integerValue = Math.floor(parseFloat(value.value));
-				if (Number.isNaN(integerValue)) {
-					throw new Error(`XPTY0004: can not cast ${value.value} to xs:integer`);
+			else if (value.instanceOfType('xs:numeric')) {
+				integerValue = value.value > 0 ? Math.floor(value.value) : Math.ceil(value.value);
+				if (!isFinite(integerValue) || isNaN(integerValue)) {
+					throw new Error(`FOCA0002: can not cast ${value.value} to xs:integer`);
 				}
+			}
+			else {
+				const strValue = value.value.trim();
+
+				if (!/^[+\-]?\d+$/.test(strValue)) {
+					throw new Error(`FORG0001: can not cast ${strValue} to xs:integer`);
+				}
+				// Strip off any decimals
+				integerValue = parseInt(strValue, 10);
 			}
 			return new IntegerValue(integerValue);
 

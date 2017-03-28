@@ -111,6 +111,6 @@ describe('function argument transformation', () => {
 			}
 		], documentNode);
 
-		chai.assert.throws(() => evaluateXPathToNumbers('@attr to 2', documentNode.firstChild, domFacade), 'XPTY0004');
+		chai.assert.throws(() => evaluateXPathToNumbers('@attr to 2', documentNode.firstChild, domFacade), 'FORG0001');
 	});
 });

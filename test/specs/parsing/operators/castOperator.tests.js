@@ -34,7 +34,8 @@ describe('cast as', () => {
 		it(
 			'casts xs:untypedAtomic to false',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:untypedAtomic("0") cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode, domFacade)));
-		it('throws when given an invalid value', () => chai.assert.throws(() => evaluateXPathToBoolean('let $r := "wat" cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode, domFacade)), 'XPTY0004');
+
+		it('throws when given an invalid value', () => chai.assert.throws(() => evaluateXPathToBoolean('let $r := "wat" cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode, domFacade)), 'FORG0001');
 		it(
 			'can cast integers to booleans: true',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := 25 cast as xs:boolean return $r instance of xs:boolean and $r = true()', documentNode, domFacade)));
@@ -146,7 +147,7 @@ describe('cast as', () => {
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:float("0") cast as xs:string return $r instance of xs:string and $r = "0"', documentNode, domFacade)));
 		it(
 			'can cast floats to strings: -0',
-			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:float("-0") cast as xs:string return $r instance of xs:string and $r = "0"', documentNode, domFacade)));
+			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:float("-0") cast as xs:string return $r instance of xs:string and $r = "-0"', documentNode, domFacade)));
 		it(
 			'can cast floats to strings: INF',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:float("INF") cast as xs:string return $r instance of xs:string and $r = "INF"', documentNode, domFacade)));
@@ -170,7 +171,7 @@ describe('cast as', () => {
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:double("0") cast as xs:string return $r instance of xs:string and $r = "0"', documentNode, domFacade)));
 		it(
 			'can cast doubles to strings: -0',
-			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:double("-0") cast as xs:string return $r instance of xs:string and $r = "0"', documentNode, domFacade)));
+			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:double("-0") cast as xs:string return $r instance of xs:string and $r = "-0"', documentNode, domFacade)));
 		it(
 			'can cast doubles to strings: INF',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:double("INF") cast as xs:string return $r instance of xs:string and $r = "INF"', documentNode, domFacade)));
