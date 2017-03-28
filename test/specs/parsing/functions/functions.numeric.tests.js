@@ -1,7 +1,8 @@
 import slimdom from 'slimdom';
 
 import {
-	evaluateXPathToNumber
+	evaluateXPathToNumber,
+	evaluateXPathToNumbers
 } from 'fontoxpath';
 
 let documentNode;
@@ -45,5 +46,48 @@ describe('numeric functions', () => {
 
 		it('accepts the empty sequence',
 			() => chai.assert.equal(evaluateXPathToNumber('xs:integer(()) => count()', documentNode), 0));
+	});
+
+	describe('fn:round()', () => {
+		it('returns an empty sequence when given an empty sequence', () => {
+			chai.assert.deepEqual(evaluateXPathToNumbers('round(())', documentNode), []);
+		});
+
+		it('returns NaN when given NaN', () => {
+			chai.assert.isNaN(evaluateXPathToNumber('round(NaN)', documentNode));
+		});
+
+		it('returns -0 when given -0', () => {
+			chai.assert.equal(evaluateXPathToNumber('round(-0)', documentNode), -0);
+		});
+
+		it('returns +0 when given +0', () => {
+			chai.assert.equal(evaluateXPathToNumber('round(+0)', documentNode), +0);
+		});
+
+		it('returns -INF when given -INF', () => {
+			chai.assert.equal(evaluateXPathToNumber('round(xs:double("-INF"))', documentNode), -Infinity);
+		});
+
+		it('returns +INF when given +INF', () => {
+			chai.assert.equal(evaluateXPathToNumber('round(xs:double("+INF"))', documentNode), +Infinity);
+		});
+
+		it('returns 25 for 24.5', () => {
+			chai.assert.equal(evaluateXPathToNumber('round(24.5)', documentNode), 25);
+		});
+
+		it('returns 1 for 1, precision 2', () => {
+			chai.assert.equal(evaluateXPathToNumber('round(1, 2)', documentNode), 1);
+		});
+
+		// Fails due to javascript float inprecision
+		it.skip('returns 35.43 for 35.425, precision 2', () => {
+			chai.assert.equal(evaluateXPathToNumber('round(35.425, 2)', documentNode), 35.43);
+		});
+
+		it('returns -1.7976931348623157E308 for -1.7976931348623157E308', () => {
+			chai.assert.equal(evaluateXPathToNumber('fn:round(xs:double("-1.7976931348623157E308"))', documentNode), -1.7976931348623157E308);
+		});
 	});
 });

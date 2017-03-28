@@ -21,7 +21,6 @@ function createValidNumericType (typedValue, transformedValue) {
 	}
 	// It must be a decimal, only four numeric types
 	return Sequence.singleton(new DecimalValue(transformedValue));
-
 }
 
 function fnAbs (_dynamicContext, sequence) {
@@ -45,13 +44,52 @@ function fnFloor (_dynamicContext, sequence) {
 	return createValidNumericType(sequence.value[0], Math.floor(sequence.value[0].value));
 }
 
+function fnRound (_dynamicContext, sequence, precision) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	var item = sequence.value[0],
+		value = item.value;
+
+	if ((item.instanceOfType('xs:float') || item.instanceOfType('xs:double')) && (
+		value === 0 ||
+		isNaN(value) ||
+		value === +Infinity ||
+		value === -Infinity)) {
+		return Sequence.singleton(item);
+	}
+
+	var originalType = ['xs:float', 'xs:double', 'xs:decimal'].find(function (type) {
+				return item.instanceOfType(type);
+			}),
+		itemAsDecimal = castToType(item, 'xs:decimal'),
+		scalingPrecision = precision ? precision.value[0].value : 0,
+		scaling = Math.pow(10, scalingPrecision),
+		roundedNumber = Math.round(itemAsDecimal.value * scaling) / scaling;
+
+	switch (originalType) {
+		case 'xs:float':
+			return Sequence.singleton(new FloatValue(roundedNumber));
+
+		case 'xs:double':
+			return Sequence.singleton(new DoubleValue(roundedNumber));
+
+		case 'xs:decimal':
+			return Sequence.singleton(new DecimalValue(roundedNumber));
+	}
+}
+
+
+
 function fnNumber (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(new DoubleValue(NaN));
 	}
 	try {
 		return Sequence.singleton(castToType(sequence.value[0], 'xs:double'));
-	} catch (error) {
+	}
+	catch (error) {
 		if (error.message.includes('FORG0001')) {
 			return Sequence.singleton(new DoubleValue(NaN));
 		}
@@ -109,6 +147,20 @@ export default {
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
 			callFunction: fnFloor
+		},
+
+		{
+			name: 'round',
+			argumentTypes: ['xs:numeric?'],
+			returnType: 'xs:numeric',
+			callFunction: fnRound
+		},
+
+		{
+			name: 'round',
+			argumentTypes: ['xs:numeric?', 'xs:integer'],
+			returnType: 'xs:numeric',
+			callFunction: fnRound
 		},
 
 		{

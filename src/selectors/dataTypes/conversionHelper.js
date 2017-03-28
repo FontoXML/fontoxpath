@@ -29,7 +29,7 @@ export const castToType = function castToType (value, type) {
 			}
 			else if (value.instanceOfType('xs:numeric')) {
 				if (value.instanceOfType('xs:integer') || value.instanceOfType('xs:decimal')) {
-					convertedValue = value.value + '';
+					convertedValue = Object.is(-0, value.value) ? '-0' : value.value + '';
 				}
 				else if (value.instanceOfType('xs:float') || value.instanceOfType('xs:double')) {
 					if (isNaN(value.value)) {
@@ -43,7 +43,7 @@ export const castToType = function castToType (value, type) {
 					}
 					else {
 						// USe Javascript's built in number formatting. This outputs like 1e+100. The valid XPath version is 1E100: without the +, and with the exponent in capitals
-						convertedValue = (value.value + '').replace('e', 'E').replace('E+', 'E');
+						convertedValue = (Object.is(-0, value.value) ? '-0' : value.value + '').replace('e', 'E').replace('E+', 'E');
 					}
 				}
 				// TODO: dateTime
