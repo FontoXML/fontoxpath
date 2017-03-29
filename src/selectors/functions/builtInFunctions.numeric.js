@@ -47,7 +47,29 @@ function fnFloor (_dynamicContext, sequence) {
 	return createValidNumericType(sequence.value[0], Math.floor(sequence.value[0].value));
 }
 
-function fnRound (_dynamicContext, sequence, precision) {
+function isHalf (value, scaling) {
+	return value * scaling % 1 % .5 === 0;
+}
+
+function getNumberOfDecimalDigits (value) {
+	if (Math.floor(value) === value || isNaN(value)) {
+		return 0;
+	}
+
+	var result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(value + ''),
+		decimals = result[1] ? result[1].length : 0;
+
+	if (result[3]) {
+		if (result[2]) {
+			return decimals + parseInt(result[3], 10);
+		}
+		var returnVal = decimals - parseInt(result[3], 10);
+		return returnVal < 0 ? 0 : returnVal;
+	}
+	return decimals;
+}
+
+function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -63,23 +85,39 @@ function fnRound (_dynamicContext, sequence, precision) {
 		return Sequence.singleton(item);
 	}
 
-	var originalType = ['xs:float', 'xs:double', 'xs:decimal'].find(function (type) {
+	var scalingPrecision = precision ? precision.value[0].value : 0;
+	if (getNumberOfDecimalDigits(value) < scalingPrecision) {
+		return sequence;
+	}
+
+	var originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(function (type) {
 				return item.instanceOfType(type);
 			}),
 		itemAsDecimal = castToType(item, 'xs:decimal'),
-		scalingPrecision = precision ? precision.value[0].value : 0,
 		scaling = Math.pow(10, scalingPrecision),
+		roundedNumber = 0;
+
+	if (halfToEven && isHalf(itemAsDecimal.value, scaling)) {
+		if (Math.floor(itemAsDecimal.value * scaling) % 2 === 0) {
+			roundedNumber = Math.floor(itemAsDecimal.value * scaling) / scaling;
+		}
+		else {
+			roundedNumber = Math.ceil(itemAsDecimal.value * scaling) / scaling;
+		}
+	}
+	else {
 		roundedNumber = Math.round(itemAsDecimal.value * scaling) / scaling;
+	}
 
 	switch (originalType) {
-		case 'xs:float':
-			return Sequence.singleton(new FloatValue(roundedNumber));
-
-		case 'xs:double':
-			return Sequence.singleton(new DoubleValue(roundedNumber));
-
 		case 'xs:decimal':
 			return Sequence.singleton(new DecimalValue(roundedNumber));
+		case 'xs:double':
+			return Sequence.singleton(new DoubleValue(roundedNumber));
+		case 'xs:float':
+			return Sequence.singleton(new FloatValue(roundedNumber));
+		case 'xs:integer':
+			return Sequence.singleton(new IntegerValue(roundedNumber));
 	}
 }
 
@@ -181,14 +219,28 @@ export default {
 			name: 'round',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric',
-			callFunction: fnRound
+			callFunction: fnRound.bind(null, false)
 		},
 
 		{
 			name: 'round',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric',
-			callFunction: fnRound
+			callFunction: fnRound.bind(null, false)
+		},
+
+		{
+			name: 'round-half-to-even',
+			argumentTypes: ['xs:numeric?'],
+			returnType: 'xs:numeric',
+			callFunction: fnRound.bind(null, true)
+		},
+
+		{
+			name: 'round-half-to-even',
+			argumentTypes: ['xs:numeric?', 'xs:integer'],
+			returnType: 'xs:numeric',
+			callFunction: fnRound.bind(null, true)
 		},
 
 		{

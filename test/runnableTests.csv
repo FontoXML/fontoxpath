@@ -107,8 +107,8 @@ fn-resolve-QName,true
 fn-resolve-uri,false
 fn-reverse,true
 fn-root,false
-fn-round,false
-fn-round-half-to-even,false
+fn-round,true
+fn-round-half-to-even,true
 fn-seconds-from-dateTime,false
 fn-seconds-from-duration,false
 fn-seconds-from-time,false
