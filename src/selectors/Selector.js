@@ -35,18 +35,6 @@ class Selector {
 	}
 
 	/**
-	 * Compare this selector to the other selector, checking equivalence
-	 *
-	 * @abstract
-	 *
-	 * @param   {!Selector}  _otherSelector
-	 * @return  {boolean}    Whether this selector is equivalent to the other
-	 */
-	equals (_otherSelector) {
-		//    throw new Error('Not Implemented');
-	}
-
-	/**
 	 * Retrieve the bucket name, if any, in which this selector can be presorted.
 	 *
 	 * Buckets can be used for quickly filtering a set of selectors to only those potentially applicable to a givne

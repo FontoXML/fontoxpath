@@ -22,16 +22,6 @@ class castAsOperator extends Selector {
 		this._allowsEmptySequence = allowsEmptySequence;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof castAsOperator &&
-			this._expression.equals(otherSelector._expression) &&
-			this._allowsEmptySequence === otherSelector._allowsEmptySequence;
-	}
-
 	evaluate (dynamicContext) {
 		var evaluatedExpression = this._expression.evaluate(dynamicContext).atomize();
 		if (evaluatedExpression.value.length > 1) {

@@ -17,24 +17,6 @@ class MapConstructor extends Selector {
 		this._entries = entries;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		if (!(otherSelector instanceof MapConstructor)) {
-			return false;
-		}
-
-		const otherMapConstructor = /** @type {MapConstructor} */ (otherSelector);
-
-		return this._entries.length === otherMapConstructor._entries.length &&
-			this._entries.every(function (keyValuePair, i) {
-				return otherMapConstructor._entries[i].key.equals(keyValuePair.key) &&
-					otherMapConstructor._entries[i].value.equals(keyValuePair.value);
-			});
-	}
-
 	evaluate (dynamicContext) {
 		var keyValuePairs = this._entries.map(function (keyValuePair) {
 				var keySequence = keyValuePair.key.evaluate(dynamicContext).atomize();

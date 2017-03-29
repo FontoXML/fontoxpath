@@ -24,17 +24,6 @@ class NodeNameSelector extends Selector {
 		this._nodeName = nodeName;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		if (!(otherSelector instanceof NodeNameSelector)) {
-			return false;
-		}
-		return otherSelector._nodeName === this._nodeName;
-	}
-
 	evaluate (dynamicContext) {
 		var sequence = dynamicContext.contextItem,
 			node = sequence.value[0];

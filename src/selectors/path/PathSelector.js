@@ -46,22 +46,6 @@ class PathSelector extends Selector {
 		this._stepSelectors = stepSelectors;
 	}
 
-	equals (otherSelector) {
-		if (otherSelector === this) {
-			return true;
-		}
-		if (!(otherSelector instanceof PathSelector)) {
-			return false;
-		}
-
-		const otherPathSelector = /** @type {PathSelector} */ (otherSelector);
-
-		return this._stepSelectors.length === otherPathSelector._stepSelectors.length &&
-			this._stepSelectors.every(function (selector, i) {
-				return otherPathSelector._stepSelectors[i].equals(selector);
-			});
-	}
-
 	getBucket () {
 		return this._stepSelectors[0].getBucket();
 	}

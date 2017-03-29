@@ -21,22 +21,6 @@ class ArrayConstructor extends Selector {
 		this._members = members;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		if (!(otherSelector instanceof ArrayConstructor)) {
-			return false;
-		}
-		const otherArrayConstructor = /** @type ArrayConstructor */ (otherSelector);
-		return this._curlyness === otherArrayConstructor._curlyness &&
-			this._members.length === otherArrayConstructor._members.length &&
-			this._members.every(function (entry, i) {
-				return otherArrayConstructor._members[i].equals(entry);
-			});
-	}
-
 	evaluate (dynamicContext) {
 		if (this._curlyness === 'curly') {
 			return Sequence.singleton(new ArrayValue(this._members[0].evaluate(dynamicContext).value.map(Sequence.singleton)));

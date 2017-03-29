@@ -34,16 +34,6 @@ class NamedFunctionRef extends Selector {
 			functionProperties.returnType);
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof NamedFunctionRef &&
-			this._functionName === otherSelector._functionName &&
-			this._arity === otherSelector._arity;
-	}
-
 	evaluate (_dynamicContext) {
 		return Sequence.singleton(this._functionItem);
 	}

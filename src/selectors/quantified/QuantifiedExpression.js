@@ -23,29 +23,6 @@ class QuantifiedExpression extends Selector {
 		this._satisfiesExpr = satisfiesExpr;
 	}
 
-	equals (otherSelector) {
-		if (otherSelector === this) {
-			return true;
-		}
-
-		if (!(otherSelector instanceof QuantifiedExpression)) {
-			return false;
-		}
-
-		if (this._inClauses.length !== otherSelector._inClauses.length) {
-			return false;
-		}
-
-		const otherQuantifiedExpression = /** @type {QuantifiedExpression} */ (otherSelector);
-
-		return this._quantifier === otherQuantifiedExpression._quantifier &&
-			this._satisfiesExpr.equals(otherQuantifiedExpression._satisfiesExpr) &&
-			this._inClauses.every(function (inClause, index) {
-				return inClause[0] === otherQuantifiedExpression._inClauses[index][0] &&
-					inClause[1].equals(otherQuantifiedExpression._inClauses[index][1]);
-			});
-	}
-
 	evaluate (dynamicContext) {
 		var evaluatedInClauses = this._inClauses.map(function (inClause) {
 				return {

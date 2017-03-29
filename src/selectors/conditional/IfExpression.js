@@ -23,17 +23,6 @@ class IfExpression extends Selector {
 		this._elseExpression = elseExpression;
 	}
 
-	equals (otherSelector) {
-		if (otherSelector === this) {
-			return true;
-		}
-
-		return otherSelector instanceof IfExpression &&
-			this._testExpression.equals(otherSelector._testExpression) &&
-			this._thenExpression.equals(otherSelector._thenExpression) &&
-			this._elseExpression.equals(otherSelector._elseExpression);
-	}
-
 	evaluate (dynamicContext) {
 		if (this._testExpression.evaluate(dynamicContext).getEffectiveBooleanValue()) {
 			return this._thenExpression.evaluate(dynamicContext);

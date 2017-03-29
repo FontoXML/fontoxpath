@@ -19,15 +19,6 @@ class AttributeAxis extends Selector {
 		this._attributeTestSelector = attributeTestSelector;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof AttributeAxis &&
-			this._attributeTestSelector.equals(otherSelector._attributeTestSelector);
-	}
-
 	evaluate (dynamicContext) {
 		var contextItem = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;

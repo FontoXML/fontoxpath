@@ -1,4 +1,3 @@
-import isSameSetOfSelectors from '../../isSameSetOfSelectors';
 import Selector from '../../Selector';
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
@@ -38,15 +37,6 @@ class OrOperator extends Selector {
 		}, undefined);
 
 		this._subSelectors = selectors;
-	}
-
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof OrOperator &&
-			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	}
 
 	evaluate (dynamicContext) {

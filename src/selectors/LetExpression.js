@@ -18,17 +18,6 @@ class LetExpression extends Selector {
 		this._returnExpression = returnExpression;
 	}
 
-	equals (otherSelector) {
-		if (otherSelector === this) {
-			return true;
-		}
-
-		return otherSelector instanceof LetExpression &&
-			this._rangeVariable === otherSelector._rangeVariable &&
-			this._bindingSequence.equals(otherSelector._bindingSequence) &&
-			this._returnExpression.equals(otherSelector._returnExpression);
-	}
-
 	evaluate (dynamicContext) {
 		var newVariables = Object.create(null);
 		newVariables[this._rangeVariable] = this._bindingSequence.evaluate(dynamicContext);

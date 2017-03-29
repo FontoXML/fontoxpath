@@ -26,15 +26,6 @@ class NodeTypeSelector extends Selector {
 		return Sequence.singleton(booleanValue);
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof NodeTypeSelector &&
-			this._nodeType === otherSelector._nodeType;
-	}
-
 	getBucket () {
 		return 'type-' + this._nodeType;
 	}

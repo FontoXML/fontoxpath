@@ -27,15 +27,6 @@ class ProcessingInstructionTargetSelector extends Selector {
 		return Sequence.singleton(isMatchingProcessingInstruction ? BooleanValue.TRUE : BooleanValue.FALSE);
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof ProcessingInstructionTargetSelector &&
-			this._target === otherSelector._target;
-	}
-
 	getBucket () {
 		return 'type-7';
 	}

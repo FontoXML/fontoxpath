@@ -1,4 +1,3 @@
-import isSameSetOfSelectors from '../../isSameSetOfSelectors';
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
 import BooleanValue from '../../dataTypes/BooleanValue';
@@ -18,15 +17,6 @@ class AndOperator extends Selector {
 			}, new Specificity({})),
 			Selector.RESULT_ORDERINGS.SORTED);
 		this._subSelectors = selectors;
-	}
-
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof AndOperator &&
-			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	}
 
 	evaluate (dynamicContext) {

@@ -34,16 +34,6 @@ class SimpleMapOperator extends Selector {
 			return sequenceToReturn.merge(this._expression2.evaluate(context));
 		}.bind(this), Sequence.empty());
 	}
-
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof SimpleMapOperator &&
-			this._expression1.equals(otherSelector._expression1) &&
-			this._expression2.equals(otherSelector._expression2);
-	}
 }
 
 export default SimpleMapOperator;

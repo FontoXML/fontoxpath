@@ -12,15 +12,6 @@ class ChildAxis extends Selector {
 		this._childSelector = childSelector;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof ChildAxis &&
-			this._childSelector.equals(otherSelector._childSelector);
-	}
-
 	evaluate (dynamicContext) {
 		var contextItem = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;

@@ -40,23 +40,6 @@ class FunctionCall extends Selector {
 		this._functionReference = functionReference;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		if (!(otherSelector instanceof FunctionCall)) {
-			return false;
-		}
-		const otherFunctionCall = /** @type {FunctionCall} */ (otherSelector);
-
-		return this._functionReference.equals(otherFunctionCall._functionReference) &&
-			this._args.length === otherFunctionCall._args.length &&
-			this._args.every(function (arg, i) {
-				return arg.equals(otherFunctionCall._args[i]);
-			});
-	}
-
 	evaluate (dynamicContext) {
 		var sequence = this._functionReference.evaluate(dynamicContext),
 		functionItem = sequence.value[0];

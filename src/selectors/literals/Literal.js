@@ -43,25 +43,6 @@ class Literal extends Selector {
 		this._valueSequence = Sequence.singleton(typedValue);
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		if (!(otherSelector instanceof Literal)) {
-			return false;
-		}
-
-		const otherLiteral = /** @type {Literal} */ (otherSelector);
-
-		return this._type === otherLiteral._type &&
-			this._valueSequence.value.length === otherLiteral._valueSequence.value.length &&
-			this._valueSequence.value.every(function (xPathValue, i) {
-				return otherLiteral._valueSequence.value[i].primitiveTypeName === xPathValue.primitiveTypeName &&
-					otherLiteral._valueSequence.value[i].value === xPathValue.value;
-			});
-	}
-
 	evaluate (_dynamicContext) {
 		return this._valueSequence;
 	}

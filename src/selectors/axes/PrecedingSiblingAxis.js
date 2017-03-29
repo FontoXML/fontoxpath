@@ -15,18 +15,6 @@ class PrecedingSiblingAxis extends Selector {
 		this._siblingSelector = siblingSelector;
 	}
 
-	/**
-	 * @param  {Selector}  otherSelector
-	 */
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof PrecedingSiblingAxis &&
-			this._siblingSelector.equals(otherSelector._siblingSelector);
-	}
-
 	evaluate (dynamicContext) {
 		var contextItem = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;

@@ -18,16 +18,6 @@ class Unary extends Selector {
 		this._kind = kind;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof Unary &&
-			this._kind === otherSelector._kind &&
-			this._valueExpr.equals(otherSelector._valueExpr);
-	}
-
 	evaluate (dynamicContext) {
 		var valueSequence = this._valueExpr.evaluate(dynamicContext);
 		if (valueSequence.isEmpty()) {

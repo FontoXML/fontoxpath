@@ -22,17 +22,6 @@ class InstanceOfOperator extends Selector {
 		this._multiplicity = multiplicity;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof InstanceOfOperator &&
-			this._multiplicity === otherSelector._multiplicity &&
-			this._expression.equals(otherSelector._expression) &&
-			this._typeTest.equals(otherSelector._typeTest);
-	}
-
 	evaluate (dynamicContext) {
 		const evaluatedExpression = this._expression.evaluate(dynamicContext);
 

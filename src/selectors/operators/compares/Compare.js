@@ -37,15 +37,6 @@ class Compare extends Selector {
 		}
 	}
 
-	equals (otherSelector) {
-		if (otherSelector === this) {
-			return true;
-		}
-		return otherSelector instanceof Compare &&
-			this._firstSelector.equals(otherSelector._firstSelector) &&
-			this._secondSelector.equals(otherSelector._secondSelector);
-	}
-
 	evaluate (dynamicContext) {
 		var firstSequence = this._firstSelector.evaluate(dynamicContext),
         secondSequence = this._secondSelector.evaluate(dynamicContext);

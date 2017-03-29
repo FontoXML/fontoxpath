@@ -18,12 +18,6 @@ class DescendantAxis extends Selector {
 		this._isInclusive = !!options.inclusive;
 	}
 
-	equals (otherSelector) {
-		return otherSelector instanceof DescendantAxis &&
-			this._isInclusive === otherSelector._isInclusive &&
-			this._descendantSelector.equals(otherSelector._descendantSelector);
-	}
-
 	evaluate (dynamicContext) {
 		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;

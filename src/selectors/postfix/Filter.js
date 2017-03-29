@@ -16,16 +16,6 @@ class Filter extends Selector {
 		this._filterSelector = filterSelector;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof Filter &&
-			this._selector.equals(otherSelector._selector) &&
-			this._filterSelector.equals(otherSelector._filterSelector);
-	}
-
 	getBucket () {
 		return this._selector.getBucket();
 	}

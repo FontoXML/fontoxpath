@@ -14,11 +14,6 @@ class VarRef extends Selector {
 		this._variableName = variableName;
 	}
 
-	equals (otherSelector) {
-		return otherSelector instanceof VarRef &&
-			this._variableName === otherSelector._variableName;
-	}
-
 	evaluate (dynamicContext) {
 		var value = dynamicContext.variables[this._variableName];
 		if (!value) {

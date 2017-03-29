@@ -16,15 +16,6 @@ class TypeTest extends Selector {
 		this._type = type;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof TypeTest &&
-			this._type === otherSelector._type;
-	}
-
 	evaluate (dynamicContext) {
 		var booleanValue = dynamicContext.contextItem.value[0].instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
 		return Sequence.singleton(booleanValue);

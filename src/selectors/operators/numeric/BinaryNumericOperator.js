@@ -40,17 +40,6 @@ class BinaryNumericOperator extends Selector {
 		this._kind = kind;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof BinaryNumericOperator &&
-			this._kind === otherSelector._kind &&
-			this._firstValueExpr.equals(otherSelector._firstValueExpr) &&
-			this._secondValueExpr.equals(otherSelector._secondValueExpr);
-	}
-
 	evaluate (dynamicContext) {
 		const firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize();
 		if (firstValueSequence.isEmpty()) {

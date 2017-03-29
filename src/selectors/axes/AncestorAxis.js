@@ -18,16 +18,6 @@ class AncestorAxis extends Selector {
 		this._isInclusive = !!options.inclusive;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof AncestorAxis &&
-			this._isInclusive === otherSelector._isInclusive &&
-			this._ancestorSelector.equals(otherSelector._ancestorSelector);
-	}
-
 	evaluate (dynamicContext) {
 		var contextItem = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;

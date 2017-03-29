@@ -15,15 +15,6 @@ class ParentAxis extends Selector {
 		this._parentSelector = parentSelector;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof ParentAxis &&
-			this._parentSelector.equals(otherSelector._parentSelector);
-	}
-
 	evaluate (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;

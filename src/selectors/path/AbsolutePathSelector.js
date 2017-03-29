@@ -15,11 +15,6 @@ class AbsolutePathSelector extends Selector {
 		this._relativePathSelector = relativePathSelector;
 	}
 
-	equals (otherSelector) {
-		return otherSelector instanceof AbsolutePathSelector &&
-			this._relativePathSelector.equals(otherSelector._relativePathSelector);
-	}
-
 	evaluate (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;

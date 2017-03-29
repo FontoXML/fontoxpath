@@ -1,4 +1,3 @@
-import isSameSetOfSelectors from '../isSameSetOfSelectors';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
@@ -19,15 +18,6 @@ class SequenceOperator extends Selector {
 			}, new Specificity({})),
 			Selector.RESULT_ORDERINGS.UNSORTED);
 		this._selectors = selectors;
-	}
-
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof SequenceOperator &&
-			isSameSetOfSelectors(this._selectors, otherSelector._selectors);
 	}
 
 	evaluate (dynamicContext) {

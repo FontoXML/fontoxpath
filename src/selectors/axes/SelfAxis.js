@@ -14,15 +14,6 @@ class SelfAxis extends Selector {
 		this._selector = selector;
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof SelfAxis &&
-			this._selector.equals(otherSelector._selector);
-	}
-
 	evaluate (dynamicContext) {
 		var nodeSequence = dynamicContext.contextItem;
 

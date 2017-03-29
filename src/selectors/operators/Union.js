@@ -1,4 +1,3 @@
-import isSameSetOfSelectors from '../isSameSetOfSelectors';
 import Specificity from '../Specificity';
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
@@ -24,15 +23,6 @@ class Union extends Selector {
 			Selector.RESULT_ORDERINGS.UNSORTED);
 
 		this._subSelectors = selectors;
-	}
-
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof Union &&
-			isSameSetOfSelectors(this._subSelectors, otherSelector._subSelectors);
 	}
 
 	evaluate (dynamicContext) {

@@ -15,14 +15,6 @@ class UniversalSelector extends Selector {
 			Selector.RESULT_ORDERINGS.SORTED);
 	}
 
-	equals (otherSelector) {
-		if (this === otherSelector) {
-			return true;
-		}
-
-		return otherSelector instanceof UniversalSelector;
-	}
-
 	evaluate () {
 		return Sequence.singleton(BooleanValue.TRUE);
 	}
