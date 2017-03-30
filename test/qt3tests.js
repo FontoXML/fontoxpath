@@ -11,34 +11,59 @@ const parser = new DOMParser();
 
 function createAsserter (assertNode) {
 	switch (assertNode.localName) {
-		case 'all-of':
+		case 'all-of': {
 			const asserts = evaluateXPathToNodes('*', assertNode).map(createAsserter);
 			return (xpath, contextNode) =>
 				asserts.forEach(a => a(xpath, contextNode));
-		case 'error':
+		}
+		case 'any-of': {
+			const asserts = evaluateXPathToNodes('*', assertNode).map(createAsserter);
+			return (xpath, contextNode) => {
+				const errors = [];
+				chai.assert(asserts.some((a => {
+					try {
+						a(xpath, contextNode);
+					}
+					catch (error) {
+						// if (error.name !== 'AssertionError') {
+						// 	throw error;
+						// }
+						errors.push(error);
+						return false;
+					}
+					return true;
+				})), `Expected executing the XPath "${xpath}" to resolve to one of the expected results, but got ${errors.join(', ')}.`);
+			};
+		}
+		case 'error': {
 			const errorCode = evaluateXPathToString('@code', assertNode);
 			return (xpath, contextNode) =>
 				chai.assert.throws(() => evaluateXPathToString(xpath, contextNode), errorCode, xpath);
+		}
 		case 'assert':
 			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(`let $result := (${xpath}) return ${evaluateXPathToString('.', assertNode)}`, contextNode), xpath);
 		case 'assert-true':
 			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(xpath, contextNode), xpath);
-		case 'assert-eq':
+		case 'assert-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode);
 			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) = (${equalWith})`, contextNode), xpath);
+		}
 		case 'assert-empty':
 			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) => empty()`, contextNode), xpath);
 		case 'assert-false':
 			return (xpath, contextNode) => chai.assert.isFalse(evaluateXPathToBoolean(xpath, contextNode), xpath);
-		case 'assert-count':
+		case 'assert-count': {
 			const expectedCount = evaluateXPathToNumber('number(.)', assertNode);
 			return (xpath, contextNode) => chai.assert.equal(evaluateXPathToNumber(`(${xpath}) => count()`, contextNode), expectedCount, xpath);
-		case 'assert-type':
+		}
+		case 'assert-type': {
 			const expectedType = evaluateXPathToString('.', assertNode);
 			return (xpath, contextNode) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) instance of ${expectedType}`, contextNode), xpath);
-		case 'assert-string-value':
+		}
+		case 'assert-string-value': {
 			const expectedString = evaluateXPathToString('.', assertNode);
 			return (xpath, contextNode) => chai.assert.equal(evaluateXPathToString(`(${xpath})!string() => string-join(" ")`, contextNode), expectedString, xpath);
+		}
 		default:
 			return () => {
 				chai.assert.fail(null, null, `Skipped test, it was a ${assertNode.localName}`);
@@ -62,6 +87,7 @@ context.keys().forEach((item) => {
 /test-set[not(./dependency[@value eq "XQ10+" or @value eq "XQ30+"])]/test-case[
   not(./environment) and
   not(./dependency[@value eq "XQ10+"]) and
+  not(./dependency[@value eq "XQ10"]) and
   not(./dependency[@value eq "schemaImport"]) and
   not(./dependency[@type eq "xsd-version" and @value eq "1.1"]) and
   not(./dependency[@value eq "moduleImport"]) and
@@ -92,6 +118,8 @@ context.keys().forEach((item) => {
   not(./test => contains("xs:anyURI")) and
   not(./test => contains("xs:short")) and
   not(./test => contains("function-lookup")) and
+  not(./test => contains("error(")) and
+  not(./test => contains("QName(")) and
   not(./test => contains("codepoints-to-string")) and
   not(./test => contains("codepoint-equal")) and
   not(./test => contains("deep-equal")) and
@@ -99,6 +127,11 @@ context.keys().forEach((item) => {
   not(./test => contains("namespace-uri-from-QName")) and
   not(./test => contains("unparsed-text")) and
   not(./test => contains("upper-case")) and
+  not(./test => contains("translate")) and
+  not(./test => contains("subsequence")) and
+  not(./test => contains("substring")) and
+  not(./test => contains("string-to-codepoints")) and
+  not(./test => contains("zero-or-one")) and
   not(./test => contains("lower-case")) and
   not(./test => contains("default-collation")) and
   not(./test => contains("encode-for-uri")) and
