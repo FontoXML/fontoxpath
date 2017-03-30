@@ -9,13 +9,18 @@ export default function valueCompare (operator, firstSequence, secondSequence) {
     var firstValue = firstSequence.value[0],
         secondValue = secondSequence.value[0];
 
-    if (firstValue.instanceOfType('xs:untypedAtomic')) {
+    if (firstValue.instanceOfType('xs:untypedAtomic') && secondValue.instanceOfType('xs:untypedAtomic')) {
         firstValue = castToType(firstValue, 'xs:string');
-    }
-
-    if (secondValue.instanceOfType('xs:untypedAtomic')) {
         secondValue = castToType(secondValue, 'xs:string');
     }
+
+	if (firstValue.instanceOfType('xs:untypedAtomic')) {
+		firstValue = castToType(firstValue, secondValue.primitiveTypeName);
+	}
+
+	if (secondValue.instanceOfType('xs:untypedAtomic')) {
+		secondValue = castToType(secondValue, firstValue.primitiveTypeName);
+	}
 
     if (firstValue.primitiveTypeName !== secondValue.primitiveTypeName) {
         if ((firstValue.instanceOfType('xs:string') || firstValue.instanceOfType('xs:anyURI')) &&

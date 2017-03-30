@@ -39,14 +39,14 @@ describe('Value compares', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('@a eq "value"', documentNode.documentElement));
 	});
 
-	it('(does not) work with typing: untyped attributes', () => {
+	it('works with typing: untyped attributes', () => {
 		jsonMlMapper.parse([
 			'someNode',
 			{
 				a: 'value'
 			}
 		], documentNode);
-		chai.assert.throw(() => evaluateXPathToBoolean('@a eq 1', documentNode.documentElement), /XPTY0004/);
+		chai.assert.throw(() => evaluateXPathToBoolean('@a eq 1', documentNode.documentElement), /FORG0001/);
 	});
 
 	it('(does not) work with typing: int to string',
