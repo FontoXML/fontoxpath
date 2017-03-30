@@ -19,8 +19,12 @@ class NodeTypeSelector extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var sequence = dynamicContext.contextItem;
-		var booleanValue = this._nodeType === sequence.value[0].value.nodeType ?
+		const sequence = dynamicContext.contextItem;
+		if (this._nodeType === 3 && sequence.value[0].value.nodeType === 4) {
+			// CDATA_SECTION_NODES should be regarded as text nodes, and CDATA does not exist in the XPath Data Model
+			return Sequence.singleton(BooleanValue.TRUE);
+		}
+		const booleanValue = this._nodeType === sequence.value[0].value.nodeType ?
 			BooleanValue.TRUE :
 			BooleanValue.FALSE;
 		return Sequence.singleton(booleanValue);

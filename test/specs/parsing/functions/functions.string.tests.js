@@ -145,6 +145,16 @@ describe('functions over strings', () => {
 			chai.assert.equal(evaluateXPathToString('string()', documentNode.firstChild), 'Some text.');
 		});
 
+		it('regards CDATA nodes as text nodes', () => {
+			const browserDocument = new DOMParser().parseFromString('<xml><![CDATA[Some <CDATA>]]></xml>', 'text/xml');
+			chai.assert.equal(evaluateXPathToString('string()', browserDocument.documentElement.firstChild), 'Some <CDATA>');
+		});
+
+		it('regards CDATA childnodes as text nodes', () => {
+			const browserDocument = new DOMParser().parseFromString('<xml><![CDATA[Some <CDATA>]]></xml>', 'text/xml');
+			chai.assert.equal(evaluateXPathToString('string()', browserDocument.documentElement), 'Some <CDATA>');
+		});
+
 		it('If $arg is the empty sequence, the function returns the zero-length string.',
 			() => chai.assert.equal(evaluateXPathToString('string(())', documentNode), ''));
 

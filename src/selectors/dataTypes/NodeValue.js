@@ -76,7 +76,8 @@ NodeValue.prototype.instanceOfType = function (simpleTypeName) {
         case 'element()':
             return this.value.nodeType === this.value.ELEMENT_NODE;
         case 'text()':
-            return this.value.nodeType === this.value.TEXT_NODE;
+            return this.value.nodeType === this.value.TEXT_NODE ||
+				this.value.nodeType === 4; // CDATA nodes are text too
         case 'processing-instruction()':
             return this.value.nodeType === this.value.PROCESSING_INSTRUCTION_NODE;
         case 'comment()':
@@ -111,7 +112,7 @@ NodeValue.prototype.atomize = function () {
 	// Documents should always be an untypedAtomic, of elements, we do not know the type, so they are untypedAtomic too
     var domFacade = this._domFacade;
     var allTextNodes = (function getTextNodes (node) {
-		if (node.nodeType === node.TEXT_NODE) {
+		if (node.nodeType === node.TEXT_NODE || node.nodeType === 4) {
 			return [node];
 		}
 		return domFacade.getChildNodes(node)

@@ -27,6 +27,11 @@ describe('NodeTypeSelector', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('self::text()', documentNode.documentElement.firstChild));
 	});
 
+	it('regards CDATA nodes as text nodes', () => {
+		const browserDocument = new DOMParser().parseFromString('<xml><![CDATA[Some CData]]></xml>', 'text/xml');
+		chai.assert.isTrue(evaluateXPathToBoolean('child::text()', browserDocument.documentElement));
+	});
+
 	it('can select any PI -> processing-instruction()', () => {
 		jsonMlMapper.parse([
 			'someOtherParentElement',
