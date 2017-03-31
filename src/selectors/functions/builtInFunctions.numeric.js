@@ -1,8 +1,11 @@
+import DecimalValue from '../dataTypes/DecimalValue';
 import DoubleValue from '../dataTypes/DoubleValue';
 import FloatValue from '../dataTypes/FloatValue';
-import DecimalValue from '../dataTypes/DecimalValue';
+import FunctionItem from '../dataTypes/FunctionItem';
 import IntegerValue from '../dataTypes/IntegerValue';
+import MapValue from '../dataTypes/MapValue';
 import Sequence from '../dataTypes/Sequence';
+import StringValue from '../dataTypes/StringValue';
 import { castToType } from '../dataTypes/conversionHelper';
 
 function contextItemAsFirstArgument (fn, dynamicContext) {
@@ -80,8 +83,6 @@ function fnRound (_dynamicContext, sequence, precision) {
 	}
 }
 
-
-
 function fnNumber (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(new DoubleValue(NaN));
@@ -95,6 +96,33 @@ function fnNumber (_dynamicContext, sequence) {
 		}
 		throw error;
 	}
+}
+
+function returnRandomItemFromSequence (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	var index = Math.floor(Math.random() * sequence.value.length);
+	return Sequence.singleton(sequence.value[index]);
+}
+
+function fnRandomNumberGenerator (_dynamicContext, _sequence) {
+	// Ignore the optional seed, as Math.random does not support a seed
+	return Sequence.singleton(new MapValue([
+		{
+			key: new StringValue('number'),
+			value: Sequence.singleton(new DoubleValue(Math.random()))
+		},
+		{
+			key: new StringValue('next'),
+			value: Sequence.singleton(new FunctionItem(fnRandomNumberGenerator, '', [], 0, 'map(*)'))
+		},
+		{
+			key: new StringValue('permute'),
+			value: Sequence.singleton(new FunctionItem(returnRandomItemFromSequence, '', ['item()*'], 1, 'item()*'))
+		}
+	]));
 }
 
 function xsFloat (_dynamicContext, sequence) {
@@ -175,6 +203,22 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:double',
 			callFunction: contextItemAsFirstArgument.bind(null, fnNumber)
+		},
+
+		{
+			name: 'random-number-generator',
+			argumentTypes: [],
+			returnType: 'map(*)',
+			callFunction: fnRandomNumberGenerator
+		},
+
+		{
+			name: 'random-number-generator',
+			argumentTypes: ['xs:anyAtomicType?'],
+			returnType: 'map(*)',
+			callFunction: () => {
+				throw new Error('Not implemented: Specifying a seed is not supported');
+			}
 		},
 
 		{
