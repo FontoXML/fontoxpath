@@ -19,6 +19,12 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 		chai.assert.equal(xPathSequence.value[0].value, 1.0, 'is 1.0');
 	});
 
+	it('turns nodes into nodes', () => {
+		const xPathSequence = adaptJavaScriptValueToXPathValue(window.document);
+		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xPathSequence.value[0].instanceOfType('node()'), 'is a node');
+	});
+
 	it('turns numbers into decimals', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(1.0, 'xs:decimal');
 		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');

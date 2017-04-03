@@ -181,8 +181,8 @@ PathExpr
 
 // 37
 RelativePathExpr
- = lhs:StepExpr abbrev:LocationPathAbbreviation rhs:RelativePathExpr {return ["path",  lhs, ["path", abbrev, rhs]]}
- / lhs:StepExpr "/" rhs:RelativePathExpr {return ["path", lhs, rhs]}
+ = lhs:StepExpr _ abbrev:LocationPathAbbreviation rhs:RelativePathExpr {return ["path",  lhs, ["path", abbrev, rhs]]}
+ / lhs:StepExpr _ "/" _ rhs:RelativePathExpr {return ["path", lhs, rhs]}
  / StepExpr
 
 // 38
@@ -191,8 +191,9 @@ StepExpr
  / AxisStep
 
 AbsoluteLocationPath
- = "/" path:RelativePathExpr { return ["absolutePath", path] }
- / abbrev:LocationPathAbbreviation path: RelativePathExpr { return ["absolutePath", ["path", abbrev, path]] }
+ = "/" _ path:RelativePathExpr { return ["absolutePath", path] }
+ / abbrev:LocationPathAbbreviation _ path: RelativePathExpr { return ["absolutePath", ["path", abbrev, path]] }
+ / "/" { return ["absolutePath", ["path", ["self", ["kindTest", "document-node()"]]]] }
 
 LocationPathAbbreviation
  = "//" {return ["descendant-or-self", ["kindTest", "node()"]]}

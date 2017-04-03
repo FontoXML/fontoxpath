@@ -8,10 +8,10 @@ import NodeValue from './dataTypes/NodeValue';
  * @enum {string}
  */
 const RESULT_ORDERINGS = {
-		SORTED: 'sorted',
-		REVERSE_SORTED: 'reverse-sorted',
-		UNSORTED: 'unsorted'
-	};
+	SORTED: 'sorted',
+	REVERSE_SORTED: 'reverse-sorted',
+	UNSORTED: 'unsorted'
+};
 
 /**
  * @abstract

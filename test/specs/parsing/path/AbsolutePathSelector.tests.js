@@ -26,6 +26,37 @@ describe('absolute paths', () => {
 		chai.assert.deepEqual(evaluateXPathToNodes('/someNode/someChildNode', documentNode), [documentNode.documentElement.firstChild]);
 	});
 
+	it('allows (/)', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNode']
+		], documentNode);
+		chai.assert.deepEqual(evaluateXPathToNodes('(/)', documentNode), [documentNode]);
+	});
+
+	it('disallows / * 5', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNode']
+		], documentNode);
+		chai.assert.throws(() => evaluateXPathToNodes('/ * 5', documentNode), 'XPST0003');
+	});
+
+	it('disallows / union /', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNode']
+		], documentNode);
+		chai.assert.throws(() => evaluateXPathToNodes('/ union /', documentNode), 'XPST0003');
+	});
+
+	it('allows / union', () => {
+		jsonMlMapper.parse([
+			'union'
+		], documentNode);
+		chai.assert.deepEqual(evaluateXPathToNodes('/ union', documentNode), [documentNode.documentElement]);
+	});
+
 	it('allows // as root', () => {
 		jsonMlMapper.parse([
 			'someNode',
