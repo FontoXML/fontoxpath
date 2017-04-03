@@ -79,32 +79,28 @@ function castItemsForMinMax (items) {
 	return convertItemsToCommonType(items);
 }
 
-function fnMax (_dynamicContext, sequence) {
+function fnEmpty (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
-		return sequence;
+		return Sequence.singleton(BooleanValue.TRUE);
 	}
 
-	var items = castItemsForMinMax(sequence.value);
-
-	// Use first element in array as initial value
-	return Sequence.singleton(
-		items.reduce(function (max, item) {
-			return max.value < item.value ? item : max;
-		}));
+	return Sequence.singleton(BooleanValue.FALSE);
 }
 
-function fnMin (_dynamicContext, sequence) {
+function fnExists (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
-		return sequence;
+		return Sequence.singleton(BooleanValue.FALSE);
 	}
 
-	var items = castItemsForMinMax(sequence.value);
+	return Sequence.singleton(BooleanValue.TRUE);
+}
 
-	// Use first element in array as initial value
-	return Sequence.singleton(
-		items.reduce(function (min, item) {
-			return min.value > item.value ? item: min;
-		}));
+function fnReverse (_dynamicContext, sequence) {
+	return new Sequence(sequence.value.reverse());
+}
+
+function fnCount (_dynamicContext, sequence) {
+	return Sequence.singleton(new IntegerValue(sequence.value.length));
 }
 
 function fnAvg (_dynamicContext, sequence) {
@@ -136,6 +132,34 @@ function fnAvg (_dynamicContext, sequence) {
 	}
 
 	return Sequence.singleton(new FloatValue(resultValue));
+}
+
+function fnMax (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	var items = castItemsForMinMax(sequence.value);
+
+	// Use first element in array as initial value
+	return Sequence.singleton(
+		items.reduce(function (max, item) {
+			return max.value < item.value ? item : max;
+		}));
+}
+
+function fnMin (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	var items = castItemsForMinMax(sequence.value);
+
+	// Use first element in array as initial value
+	return Sequence.singleton(
+		items.reduce(function (min, item) {
+			return min.value > item.value ? item: min;
+		}));
 }
 
 function fnSum (_dynamicContext, sequence, zero) {
@@ -175,47 +199,8 @@ function fnSum (_dynamicContext, sequence, zero) {
 	return Sequence.singleton(new FloatValue(resultValue));
 }
 
-function fnCount (_dynamicContext, sequence) {
-	return Sequence.singleton(new IntegerValue(sequence.value.length));
-}
-
-
-function fnReverse (_dynamicContext, sequence) {
-	return new Sequence(sequence.value.reverse());
-}
-
-function fnEmpty (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return Sequence.singleton(BooleanValue.TRUE);
-	}
-
-	return Sequence.singleton(BooleanValue.FALSE);
-}
-
-function fnExists (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return Sequence.singleton(BooleanValue.FALSE);
-	}
-
-	return Sequence.singleton(BooleanValue.TRUE);
-}
-
 export default {
 	declarations: [
-		{
-			name: 'avg',
-			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnAvg
-		},
-
-		{
-			name: 'count',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:integer',
-			callFunction: fnCount
-		},
-
 		{
 			name: 'empty',
 			argumentTypes: ['item()*'],
@@ -228,6 +213,27 @@ export default {
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnExists
+		},
+
+		{
+			name: 'reverse',
+			argumentTypes: ['item()*'],
+			returnType: 'item()*',
+			callFunction: fnReverse
+		},
+
+		{
+			name: 'count',
+			argumentTypes: ['item()*'],
+			returnType: 'xs:integer',
+			callFunction: fnCount
+		},
+
+		{
+			name: 'avg',
+			argumentTypes: ['xs:anyAtomicType*'],
+			returnType: 'xs:anyAtomicType?',
+			callFunction: fnAvg
 		},
 
 		{
@@ -276,16 +282,7 @@ export default {
 			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType?'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: fnSum
-		},
-
-		{
-			name: 'reverse',
-			argumentTypes: ['item()*'],
-			returnType: 'item()*',
-			callFunction: fnReverse
-		},
-
-
+		}
 	],
 	functions: {
 		avg: fnAvg,
