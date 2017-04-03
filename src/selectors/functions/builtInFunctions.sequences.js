@@ -95,8 +95,68 @@ function fnExists (_dynamicContext, sequence) {
 	return Sequence.singleton(BooleanValue.TRUE);
 }
 
+function fnHead (_dynamicContext, sequence) {
+	if (sequence.isEmpty(sequence)) {
+		return sequence;
+	}
+
+	return Sequence.singleton(sequence.value[0]);
+}
+
+function fnTail (_dynamicContext, sequence) {
+	if (sequence.isEmpty(sequence) || sequence.isSingleton()) {
+		return Sequence.empty();
+	}
+
+	return Sequence.singleton(sequence.value[sequence.value.length - 1]);
+}
+
+function fnInsertBefore (_dynamicContext, sequence, position, inserts) {
+	if (sequence.isEmpty()) {
+		return inserts;
+	}
+
+	if (inserts.isEmpty()) {
+		return sequence;
+	}
+
+	let effectivePosition = position.value[0].value;
+	if (effectivePosition < 1) {
+		effectivePosition = 1;
+	}
+	else if (effectivePosition > sequence.value.length) {
+		effectivePosition = sequence.value.length + 1;
+	}
+
+	sequence.value.splice.apply(sequence.value, [effectivePosition - 1, 0].concat(inserts.value));
+	return sequence;
+}
+
+function fnRemove (_dynamicContext, sequence, position) {
+	const effectivePosition = position.value[0].value;
+	if (!(sequence.isEmpty() || effectivePosition < 1 || effectivePosition > sequence.value.length)) {
+		sequence.value.splice(effectivePosition - 1, 1);
+	}
+
+	return sequence;
+}
+
 function fnReverse (_dynamicContext, sequence) {
 	return new Sequence(sequence.value.reverse());
+}
+
+function fnSubsequence (_dynamicContext, sequence, startingLoc, length) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	var startingLocValue = Math.round(startingLoc.value[0].value),
+		effectiveLength = length ? startingLocValue + Math.round(length.value[0].value) - 1 : sequence.value.length;
+	return new Sequence(sequence.value.slice(startingLocValue - 1, effectiveLength));
+}
+
+function fnUnordered (_dynamicContext, sequence) {
+	return sequence;
 }
 
 function fnCount (_dynamicContext, sequence) {
@@ -216,10 +276,59 @@ export default {
 		},
 
 		{
+			name: 'head',
+			argumentTypes: ['item()*'],
+			returnType: 'item()?',
+			callFunction: fnHead
+		},
+
+		{
+			name: 'tail',
+			argumentTypes: ['item()*'],
+			returnType: 'item()*',
+			callFunction: fnTail
+		},
+
+		{
+			name: 'insert-before',
+			argumentTypes: ['item()*', 'xs:integer', 'item()*'],
+			returnType: 'item()*',
+			callFunction: fnInsertBefore
+		},
+
+		{
+			name: 'remove',
+			argumentTypes: ['item()*', 'xs:integer'],
+			returnType: 'item()*',
+			callFunction: fnRemove
+		},
+
+		{
 			name: 'reverse',
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fnReverse
+		},
+
+		{
+			name: 'subsequence',
+			argumentTypes: ['item()*', 'xs:double'],
+			returnType: 'item()*',
+			callFunction: fnSubsequence
+		},
+
+		{
+			name: 'subsequence',
+			argumentTypes: ['item()*', 'xs:double', 'xs:double'],
+			returnType: 'item()*',
+			callFunction: fnSubsequence
+		},
+
+		{
+			name: 'unordered',
+			argumentTypes: ['item()*'],
+			returnType: 'item()*',
+			callFunction: fnUnordered
 		},
 
 		{
