@@ -22,7 +22,7 @@ class FollowingSiblingAxis extends Selector {
 		var sibling = contextItem.value[0].value;
 		var siblings = [];
 		while ((sibling = domFacade.getNextSibling(sibling))) {
-			siblings.push(new NodeValue(domFacade, sibling));
+			siblings.push(new NodeValue(sibling));
 		}
 		var matchingSiblings = siblings
 			.filter((siblingNode) => {

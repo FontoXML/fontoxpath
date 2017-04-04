@@ -19,7 +19,7 @@ class MapConstructor extends Selector {
 
 	evaluate (dynamicContext) {
 		var keyValuePairs = this._entries.map(function (keyValuePair) {
-				var keySequence = keyValuePair.key.evaluate(dynamicContext).atomize();
+				var keySequence = keyValuePair.key.evaluate(dynamicContext).atomize(dynamicContext);
 				if (!keySequence.isSingleton()) {
 					throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
 				}

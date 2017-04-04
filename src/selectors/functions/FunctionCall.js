@@ -3,7 +3,7 @@ import { transformArgument } from './argumentHelper';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 
-function transformArgumentList (argumentTypes, argumentList) {
+function transformArgumentList (argumentTypes, argumentList, dynamicContext) {
 	if (argumentList.length !== argumentTypes.length) {
 		return null;
 	}
@@ -14,7 +14,7 @@ function transformArgumentList (argumentTypes, argumentList) {
 			transformedArguments.push(null);
 			continue;
 		}
-		const transformedArgument = transformArgument(argumentTypes[i], argumentList[i]);
+		const transformedArgument = transformArgument(argumentTypes[i], argumentList[i], dynamicContext);
 		if (transformedArgument === null) {
 			return null;
 		}
@@ -64,7 +64,7 @@ class FunctionCall extends Selector {
 			});
 
 		// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
-		var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs);
+		var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, dynamicContext);
 		if (transformedArguments === null) {
 			throw new Error(`XPTY0004: expected argument list of function ${functionItem.getName()} to be [${argumentListToString(evaluatedArgs)}], got function with argument list [${functionItem.getArgumentTypes().join(', ')}].`);
 		}

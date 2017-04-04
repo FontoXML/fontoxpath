@@ -13,7 +13,7 @@ function AnyAtomicTypeValue (value) {
 AnyAtomicTypeValue.prototype = Object.create(Item.prototype);
 AnyAtomicTypeValue.prototype.constructor = AnyAtomicTypeValue;
 
-AnyAtomicTypeValue.prototype.atomize = function () {
+AnyAtomicTypeValue.prototype.atomize = function (_dynamicContext) {
     return this;
 };
 

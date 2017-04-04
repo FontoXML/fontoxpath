@@ -1,7 +1,10 @@
 import NodeValue from '../dataTypes/NodeValue';
 import Sequence from '../dataTypes/Sequence';
 import { castToType } from '../dataTypes/conversionHelper';
-import builtInFunctionsNode from './builtInFunctions.node.js';
+import builtInFunctionsNode from './builtInFunctions.node';
+/**
+ * @type {function(../DynamicContext, ../dataTypes/Sequence):../dataTypes/Sequence}
+ */
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
 function filterElementAndTextNodes (node) {

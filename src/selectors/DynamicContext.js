@@ -1,16 +1,17 @@
-import DomFacade from '../DomFacade';
-import Item from './dataTypes/Item';
-import Sequence from './dataTypes/Sequence';
+/**
+ * @typedef {./dataTypes/Sequence}
+ */
+let Sequence;
 
 /**
  * All possible permutations
- * @typedef {!DynamicContext|{contextItem:!Sequence, contextSequence: !Sequence}|{domFacade:!DomFacade}|{variables:Object}}|{contextItem: !Sequence, contextSequence: !Sequence, domFacade: !DomFacade, variables: !Object}}
+ * @typedef {!DynamicContext|{contextItem:!Sequence, contextSequence: !Sequence}|{domFacade:!IDomFacade}|{variables:Object}}|{contextItem: !Sequence, contextSequence: !Sequence, domFacade: !IDomFacade, variables: !Object}}
  */
-var ScopingType;
+let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {DynamicContext|{contextItem: ?Sequence, contextSequence: ?Sequence, domFacade: !DomFacade, variables: !Object}}  context  The context to overlay
+	 * @param  {DynamicContext|{contextItem: ?Sequence, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -22,7 +23,7 @@ class DynamicContext {
 		 */
 		this.contextSequence = context.contextSequence;
 		/**
-		 * @type {!DomFacade}
+		 * @type {!IDomFacade}
 		 */
 		this.domFacade = context.domFacade;
 

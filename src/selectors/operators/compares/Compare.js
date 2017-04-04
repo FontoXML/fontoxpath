@@ -53,8 +53,8 @@ class Compare extends Selector {
 		}
 
 		// Atomize both sequences
-		var firstAtomizedSequence = firstSequence.atomize();
-		var secondAtomizedSequence = secondSequence.atomize();
+		var firstAtomizedSequence = firstSequence.atomize(dynamicContext);
+		var secondAtomizedSequence = secondSequence.atomize(dynamicContext);
 		var booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ?
 			BooleanValue.TRUE :
 			BooleanValue.FALSE;

@@ -22,7 +22,7 @@ if (supportsAsyncCompilation()) {
 	// We can compile asynchronously, set up a connection to the database as eager as possible
 	const global = window;
 
-	const indexedDB = global.indexedDB;
+	const indexedDB = /** @type {!IDBFactory} */ (global.indexedDB);
 	const Blob = global.Blob;
 	const Worker = global.Worker;
 	const URL = global.URL;

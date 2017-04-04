@@ -139,10 +139,10 @@ function arrayForEachPair (dynamicContext, arraySequenceA, arraySequenceB, funct
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
-function arraySort (_dynamicContext, arraySequence) {
+function arraySort (dynamicContext, arraySequence) {
 	var array = arraySequence.value[0];
 	var newMembers = array.members.concat().sort(function (memberA, memberB) {
-			return memberA.atomize().value[0].value > memberB.atomize().value[0].value ? 1 : -1;
+			return memberA.atomize(dynamicContext).value[0].value > memberB.atomize(dynamicContext).value[0].value ? 1 : -1;
 		});
 
 	return Sequence.singleton(new ArrayValue(newMembers));

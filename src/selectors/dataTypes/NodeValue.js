@@ -1,7 +1,6 @@
 import StringValue from './StringValue';
 import AttributeNode from './AttributeNode';
 import Item from './Item';
-import DomFacade from '../../DomFacade';
 import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 import UntypedAtomicValue from './UntypedAtomicValue';
 
@@ -11,25 +10,16 @@ import UntypedAtomicValue from './UntypedAtomicValue';
 // We can not use it for the same domFacade though, since that is external and may have state, therefore we should keep re-use local to the domFacade.
 // TODO: This must work for all values, and be in a 'static context' of some sort
 /**
- * @const {WeakMap<!IDomFacade, !WeakMap<!Node, !NodeValue>>}
+ * @const {!WeakMap<!Node, !NodeValue>}
  */
-const nodeValueByDomFacadeByNode = new WeakMap();
+const nodeValueByNode = new WeakMap();
 
 /**
  * @constructor
  * @extends {Item}
- * @param  {!DomFacade}  domFacade
  * @param  {!Node}       node
  */
-function NodeValue (domFacade, node) {
-	let nodeValueByNode;
-    if (nodeValueByDomFacadeByNode.has(domFacade)) {
-		nodeValueByNode = nodeValueByDomFacadeByNode.get(domFacade);
-    }
-	else {
-		nodeValueByNode = new WeakMap();
-		nodeValueByDomFacadeByNode.set(domFacade, nodeValueByNode);
-	}
+function NodeValue (node) {
 	if (nodeValueByNode.has(node)) {
 		return nodeValueByNode.get(node);
 	}
@@ -38,7 +28,6 @@ function NodeValue (domFacade, node) {
 
     Item.call(this, node);
 
-    this._domFacade = domFacade;
     this.nodeType = node.nodeType;
 	this.target = null;
 
@@ -52,8 +41,8 @@ function NodeValue (domFacade, node) {
             break;
         case this.value.PROCESSING_INSTRUCTION_NODE:
             // A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
-            this.nodeName = this.value.target;
-			this.target = node.target;
+            this.nodeName = (/** @type {ProcessingInstruction} */(this.value)).target;
+			this.target = this.nodeName;
 
             break;
         default:
@@ -93,29 +82,28 @@ NodeValue.prototype.instanceOfType = function (simpleTypeName) {
 /**
  * @return {!AnyAtomicTypeValue}
  */
-NodeValue.prototype.atomize = function () {
+NodeValue.prototype.atomize = function (dynamicContext) {
     // TODO: Mix in types, by default get string value
     if (this.value instanceof AttributeNode) {
-        return this.value.atomize();
+        return this.value.atomize(dynamicContext);
     }
 
 	// Text nodes and documents should return their text, as untyped atomic
     if (this.instanceOfType('text()')) {
-        return new UntypedAtomicValue(this._domFacade.getData(this.value));
+        return new UntypedAtomicValue(dynamicContext.domFacade.getData(this.value));
     }
 	// comments and PIs are string
 	if (this.instanceOfType('comment()') || this.instanceOfType('processing-instruction()')) {
-		return new StringValue(this._domFacade.getData(this.value));
+		return new StringValue(dynamicContext.domFacade.getData(this.value));
 	}
 
 	// This is an element or a document node. Because we do not know the specific type of this element.
 	// Documents should always be an untypedAtomic, of elements, we do not know the type, so they are untypedAtomic too
-    var domFacade = this._domFacade;
     var allTextNodes = (function getTextNodes (node) {
 		if (node.nodeType === node.TEXT_NODE || node.nodeType === 4) {
 			return [node];
 		}
-		return domFacade.getChildNodes(node)
+		return dynamicContext.domFacade.getChildNodes(node)
 			.reduce(function (textNodes, childNode) {
 				Array.prototype.push.apply(textNodes, getTextNodes(childNode));
 				return textNodes;
@@ -123,16 +111,16 @@ NodeValue.prototype.atomize = function () {
 	})(this.value);
 
     return new UntypedAtomicValue(allTextNodes.map(function (textNode) {
-        return this._domFacade.getData(textNode);
+        return dynamicContext.domFacade.getData(textNode);
     }.bind(this)).join(''));
 };
 
-NodeValue.prototype.getStringValue = function () {
+NodeValue.prototype.getStringValue = function (dynamicContext) {
     if (this.value instanceof AttributeNode) {
-        return this.value.getStringValue();
+        return this.value.getStringValue(dynamicContext);
     }
 
-    return this.atomize();
+    return this.atomize(dynamicContext);
 };
 
 export default NodeValue;

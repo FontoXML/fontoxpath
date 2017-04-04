@@ -8,17 +8,17 @@ import BooleanValue from '../../dataTypes/BooleanValue';
  */
 class OrOperator extends Selector {
 	/**
-	 * @param  {Array<Selector>}  selectors
+	 * @param  {!Array<!Selector>}  selectors
 	 */
 	constructor (selectors) {
-		super(
-			selectors.reduce(function (maxSpecificity, selector) {
-				if (maxSpecificity.compareTo(selector.specificity) > 0) {
-					return maxSpecificity;
-				}
-				return selector.specificity;
-			}, new Specificity({})),
-			Selector.RESULT_ORDERINGS.SORTED);
+		const maxSpecificity = selectors.reduce((maxSpecificity, selector) => {
+			if (maxSpecificity.compareTo(selector.specificity) > 0) {
+				return maxSpecificity;
+			}
+			return selector.specificity;
+		}, new Specificity({}));
+
+		super(maxSpecificity, Selector.RESULT_ORDERINGS.SORTED);
 
 		// If all subSelectors define the same bucket: use that one, else, use no bucket.
 		this._bucket = selectors.reduce(function (bucket, selector) {

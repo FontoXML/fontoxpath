@@ -76,12 +76,12 @@ AttributeNode.prototype.DOCUMENT_FRAGMENT_NODE = AttributeNode.DOCUMENT_FRAGMENT
  */
 AttributeNode.prototype.NOTATION_NODE = AttributeNode.NOTATION_NODE = 12;
 
-AttributeNode.prototype.atomize = function () {
+AttributeNode.prototype.atomize = function (_dynamicContext) {
     // TODO: Mix in types
     return new UntypedAtomicValue(this.value);
 };
 
-AttributeNode.prototype.getStringValue = function () {
+AttributeNode.prototype.getStringValue = function (_dynamicContext) {
     return new StringValue(this.value);
 };
 

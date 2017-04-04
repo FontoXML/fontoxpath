@@ -10,17 +10,16 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
  */
 class Union extends Selector {
 	/**
-	 * @param  {Array<Selector>}  selectors
+	 * @param  {!Array<!Selector>}  selectors
 	 */
 	constructor (selectors) {
-		super(
-			selectors.reduce(function (maxSpecificity, selector) {
-				if (maxSpecificity.compareTo(selector.specificity) > 0) {
-					return maxSpecificity;
-				}
-				return selector.specificity;
-			}, new Specificity({})),
-			Selector.RESULT_ORDERINGS.UNSORTED);
+		const maxSpecificity = selectors.reduce((maxSpecificity, selector) => {
+			if (maxSpecificity.compareTo(selector.specificity) > 0) {
+				return maxSpecificity;
+			}
+			return selector.specificity;
+		}, new Specificity({}));
+		super(maxSpecificity, Selector.RESULT_ORDERINGS.UNSORTED);
 
 		this._subSelectors = selectors;
 	}

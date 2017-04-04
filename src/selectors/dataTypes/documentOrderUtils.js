@@ -1,9 +1,9 @@
 import NodeValue from './NodeValue';
-import DomFacade from '../../DomFacade';
+
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent
  *
- * @param {!DomFacade} domFacade The domFacade in which to consider the nodes
+ * @param {!IDomFacade} domFacade The domFacade in which to consider the nodes
  * @param {?Node}      node1     The first node
  * @param {?Node}      node2     The second node
  *
@@ -39,7 +39,7 @@ function compareSiblingPositions (domFacade, node1, node2) {
 /**
  * Find all ancestors of the given node
  *
- * @param   {!DomFacade}  domFacade  The domFacade to consider relations in
+ * @param   {!IDomFacade}  domFacade  The domFacade to consider relations in
  * @param   {!Node}       node       The node to find all ancestors of
  * @return  {!Array<Node>}     All of the ancestors of the given node
  */
@@ -55,7 +55,7 @@ function findAllAncestors (domFacade, node) {
 /**
  * Compares the given positions w.r.t. document order in this state
  *
- * @param {!DomFacade} domFacade      The domFacade in which to consider the nodes
+ * @param {!IDomFacade} domFacade      The domFacade in which to consider the nodes
  * @param {!Node}      parentNode1    The parent of the first position
  * @param {?Node}      referenceNode1 The next sibling of the first position
  * @param {!Node}      parentNode2    The parent of the second position
@@ -141,10 +141,10 @@ export const compareNodePositions = function compareNodePositions (domFacade, no
  * Attributes are placed after their elements, before childnodes.
  * Attributes are sorted alphabetically by their names
  *
- * @param   {!DomFacade}         domFacade
- * @param   {!Array<NodeValue>}  nodeValues
+ * @param   {!IDomFacade}         domFacade
+ * @param   {!Array<!NodeValue>}  nodeValues
  *
- * @return   {!Array<NodeValue>}  The sorted nodes
+ * @return   {!Array<!NodeValue>}  The sorted nodes
  */
 export const sortNodeValues = function sortNodeValues (domFacade, nodeValues) {
     return nodeValues

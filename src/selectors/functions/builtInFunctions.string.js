@@ -31,10 +31,12 @@ function fnCompare (_dynamicContext, arg1, arg2) {
 	return Sequence.singleton(new IntegerValue(0));
 }
 
-function fnConcat (_dynamicContext) {
-	var stringSequences = Array.from(arguments).slice(1);
-	stringSequences = stringSequences.map(function (sequence) { return sequence.atomize(); });
-	var strings = stringSequences.map(function (sequence) {
+function fnConcat (dynamicContext) {
+	let stringSequences = Array.from(arguments).slice(1);
+	stringSequences = stringSequences.map(function (sequence) {
+		return sequence.atomize(dynamicContext);
+	});
+	const strings = stringSequences.map(function (sequence) {
 			if (sequence.isEmpty()) {
 				return '';
 			}
@@ -44,8 +46,8 @@ function fnConcat (_dynamicContext) {
 }
 
 function fnContains (_dynamicContext, arg1, arg2) {
-	var stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
-	var contains = !arg2.isEmpty() ? arg2.value[0].value : '';
+	const stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
+	const contains = !arg2.isEmpty() ? arg2.value[0].value : '';
 	if (contains.length === 0) {
 		return Sequence.singleton(BooleanValue.TRUE);
 	}
@@ -62,11 +64,11 @@ function fnContains (_dynamicContext, arg1, arg2) {
 }
 
 function fnStartsWith (_dynamicContext, arg1, arg2) {
-	var startsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
+	const startsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
 	if (startsWith.length === 0) {
 		return Sequence.singleton(BooleanValue.TRUE);
 	}
-	var stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
+	const stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
 	if (stringToTest.length === 0) {
 		return Sequence.singleton(BooleanValue.FALSE);
 	}
@@ -78,11 +80,11 @@ function fnStartsWith (_dynamicContext, arg1, arg2) {
 }
 
 function fnEndsWith (_dynamicContext, arg1, arg2) {
-	var endsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
+	const endsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
 	if (endsWith.length === 0) {
 		return Sequence.singleton(BooleanValue.TRUE);
 	}
-	var stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
+	const stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
 	if (stringToTest.length === 0) {
 		return Sequence.singleton(BooleanValue.FALSE);
 	}
@@ -93,12 +95,12 @@ function fnEndsWith (_dynamicContext, arg1, arg2) {
 	return Sequence.singleton(BooleanValue.FALSE);
 }
 
-function fnString (_dynamicContext, sequence) {
+function fnString (dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(new StringValue(''));
 	}
 	if (sequence.value[0].instanceOfType('node()')) {
-		return Sequence.singleton(sequence.value[0].getStringValue());
+		return Sequence.singleton(sequence.value[0].getStringValue(dynamicContext));
 	}
 	return Sequence.singleton(castToType(sequence.value[0], 'xs:string'));
 }
@@ -112,7 +114,7 @@ function xsString (_dynamicContext, sequence) {
 }
 
 function fnStringJoin (_dynamicContext, sequence, separator) {
-	var separatorString = separator.value[0].value,
+	const separatorString = separator.value[0].value,
 	joinedString = sequence.value.map(function (stringValue) {
 		return stringValue.value;
 	}).join(separatorString);
@@ -131,11 +133,13 @@ function fnTokenize (_dynamicContext, input, pattern) {
 	if (input.isEmpty() || input.value[0].value.length === 0) {
 		return Sequence.empty();
 	}
-	var string = input.value[0].value,
+	const string = input.value[0].value,
 		patternString = pattern.value[0].value;
 	return new Sequence(
 		string.split(new RegExp(patternString))
-			.map(function (token) {return new StringValue(token);}));
+			.map(function (token) {
+				return new StringValue(token);
+			}));
 }
 
 function xsUntypedAtomic (_dynamicContext, sequence) {
@@ -149,7 +153,7 @@ function fnNormalizeSpace (_dynamicContext, arg) {
 	if (arg.isEmpty()) {
 		return Sequence.singleton(new StringValue(''));
 	}
-	var string = arg.value[0].value.trim();
+	const string = arg.value[0].value.trim();
 	return Sequence.singleton(new StringValue(string.replace(/\s+/g, ' ')));
 }
 

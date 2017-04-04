@@ -11,11 +11,12 @@ function splitType (type) {
 }
 /**
  * Test whether the provided argument is valid to be used as an function argument of the given type
- * @param   {string}     argumentType
- * @param   {!Sequence}  argument
+ * @param   {string}           argumentType
+ * @param   {!Sequence}        argument
+ * @param   {!../DynamicContext.default}  dynamicContext
  * @return  {?Sequence}
  */
-export const transformArgument = (argumentType, argument) => {
+export const transformArgument = (argumentType, argument, dynamicContext) => {
 	const { type, multiplicity } = splitType(argumentType);
 
 	switch (multiplicity) {
@@ -49,7 +50,7 @@ export const transformArgument = (argumentType, argument) => {
 		}
 
 		if (argumentItem.instanceOfType('node()')) {
-			argumentItem = argumentItem.atomize();
+			argumentItem = argumentItem.atomize(dynamicContext);
 		}
 		// Everything is an anyAtomicType, so no casting necessary.
 		if (type === 'xs:anyAtomicType') {

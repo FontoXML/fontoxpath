@@ -30,7 +30,7 @@ class AttributeAxis extends Selector {
 		var attributes = domFacade
 			.getAllAttributes(contextItem.value[0].value)
 			.map(function (attribute) {
-				return new NodeValue(domFacade, new AttributeNode(
+				return new NodeValue(new AttributeNode(
 					contextItem.value[0].value,
 					attribute.name,
 					attribute.value

@@ -41,13 +41,13 @@ class BinaryNumericOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		const firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize();
+		const firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize(dynamicContext);
 		if (firstValueSequence.isEmpty()) {
 			// Shortcut, if the first part is empty, we can return empty.
 			// As per spec, we do not have to evaluate the second part, though we could.
 			return firstValueSequence;
 		}
-		const secondValueSequence = this._secondValueExpr.evaluate(dynamicContext).atomize();
+		const secondValueSequence = this._secondValueExpr.evaluate(dynamicContext).atomize(dynamicContext);
 		if (secondValueSequence.isEmpty()) {
 			return secondValueSequence;
 		}

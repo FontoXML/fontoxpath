@@ -115,7 +115,7 @@ DomFacade.prototype.getAllAttributes = function (node) {
 
 DomFacade.prototype.getData = function (node) {
 	if (this.isAttributeNode(node)) {
-		return node.value;
+		return /** @type {!./selectors/dataTypes/AttributeNode.default} */(node).value;
 	}
 
 	return this._domFacade.getData(node) || '';

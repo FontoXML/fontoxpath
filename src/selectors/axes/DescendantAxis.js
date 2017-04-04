@@ -24,7 +24,7 @@ class DescendantAxis extends Selector {
 
 		var descendants = [];
 		function collectDescendants (node) {
-			descendants.push(new NodeValue(domFacade, node));
+			descendants.push(new NodeValue(node));
 			domFacade.getChildNodes(node).forEach(collectDescendants);
 		}
 

@@ -25,7 +25,7 @@ class ParentAxis extends Selector {
 				if (!parentNode) {
 					return null;
 				}
-				return new NodeValue(dynamicContext.domFacade, parentNode);
+				return new NodeValue(parentNode);
 			})
 			.filter(nodeValue => {
 				if (!nodeValue) {

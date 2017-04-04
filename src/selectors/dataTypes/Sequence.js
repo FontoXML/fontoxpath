@@ -28,11 +28,12 @@ Sequence.empty = function () {
 };
 
 /**
+ * @param  {!../DynamicContext.default} dynamicContext
  * @return {!Sequence}
  */
-Sequence.prototype.atomize = function () {
+Sequence.prototype.atomize = function (dynamicContext) {
     return new Sequence(this.value.map(function (value) {
-        return value.atomize();
+        return value.atomize(dynamicContext);
     }));
 };
 

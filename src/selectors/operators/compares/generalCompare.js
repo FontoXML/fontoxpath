@@ -1,4 +1,5 @@
 import Sequence from '../../dataTypes/Sequence';
+import DynamicContext from '../../DynamicContext';
 import valueCompare from './valueCompare';
 
 
@@ -11,10 +12,17 @@ var OPERATOR_TRANSLATION = {
     '>=': 'ge'
 };
 
-export default function generalCompare (operator, firstSequence, secondSequence) {
+/**
+ * @param   {!string}          operator
+ * @param   {!Sequence}        firstSequence
+ * @param   {!Sequence}        secondSequence
+ * @param   {!DynamicContext}  dynamicContext
+ * @return  {!boolean}
+*/
+export default function generalCompare (operator, firstSequence, secondSequence, dynamicContext) {
     // Atomize both sequences
-    var firstAtomizedSequence = firstSequence.atomize();
-    var secondAtomizedSequence = secondSequence.atomize();
+    var firstAtomizedSequence = firstSequence.atomize(dynamicContext);
+    var secondAtomizedSequence = secondSequence.atomize(dynamicContext);
 
     // Change operator to equivalent valueCompare operator
     operator = OPERATOR_TRANSLATION[operator];

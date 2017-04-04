@@ -63,7 +63,7 @@ export const castToType = function castToType (value, type) {
 				return value;
 			}
 			if (value.instanceOfType('xs:numeric')) {
-				return value.value === 0 || value.isNaN() ? BooleanValue.FALSE : BooleanValue.TRUE;
+				return value.value === 0 || isNaN(value.value) ? BooleanValue.FALSE : BooleanValue.TRUE;
 			}
 			if (value.instanceOfType('xs:string') || value.instanceOfType('xs:untypedAtomic')) {
 				const strValue = value.value.trim();

@@ -26,7 +26,7 @@ class AncestorAxis extends Selector {
 		var contextNode = contextItem.value[0].value;
 		var ancestors = [];
 		for (var ancestorNode = this._isInclusive ? contextNode : domFacade.getParentNode(contextNode); ancestorNode; ancestorNode = domFacade.getParentNode(ancestorNode)) {
-			ancestors.push(new NodeValue(dynamicContext.domFacade, ancestorNode));
+			ancestors.push(new NodeValue(ancestorNode));
 		}
 		return new Sequence(ancestors.filter(ancestor => {
 			var contextItem = Sequence.singleton(ancestor);

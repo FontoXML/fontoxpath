@@ -49,7 +49,7 @@ function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 				return true;
 			});
 	return new Sequence(matchingNodes.map(function (node) {
-		return new NodeValue(domFacade, node);
+		return new NodeValue(node);
 	}));
 }
 
@@ -84,7 +84,7 @@ function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
 				});
 			});
 	return new Sequence(matchingNodes.map(function (node) {
-		return new NodeValue(domFacade, node);
+		return new NodeValue(node);
 	}));
 }
 

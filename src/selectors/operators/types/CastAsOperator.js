@@ -23,7 +23,7 @@ class castAsOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var evaluatedExpression = this._expression.evaluate(dynamicContext).atomize();
+		var evaluatedExpression = this._expression.evaluate(dynamicContext).atomize(dynamicContext);
 		if (evaluatedExpression.value.length > 1) {
 			throw new Error('XPTY0004: Sequence to cast is not singleton or empty.');
 		}

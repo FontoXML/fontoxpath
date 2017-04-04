@@ -1,7 +1,11 @@
 import Item from './Item';
 import Sequence from './Sequence';
-import DynamicContext from '../DynamicContext';
 
+/**
+ * @param  {!Array<!string>}  argumentTypes
+ * @param  {!number}  arity
+ * @return {!Array<!string>}
+ */
 function expandRestArgumentToArity (argumentTypes, arity) {
 	var indexOfRest = argumentTypes.indexOf('...');
 	if (indexOfRest > -1) {
@@ -17,7 +21,7 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 /**
  * @constructor
  * @extends {Item}
- * @param  {!function(!DynamicContext, !Sequence): !Sequence}   value
+ * @param  {!function(!../DynamicContext.default, !Sequence): !Sequence}   value
  * @param  {!string}                                            name
  * @param  {!Array<string>}                                     argumentTypes
  * @param  {!number}                                            arity
@@ -68,8 +72,8 @@ FunctionItem.prototype.applyArguments = function (appliedArguments) {
 	return Sequence.singleton(functionItem);
 };
 
-FunctionItem.prototype.atomize = function () {
-    throw new Error('FOTY0013: Not supported on this type');
+FunctionItem.prototype.atomize = function (_dynamicContext) {
+    throw new Error('FOTY0013: Atomization is not supported on this type');
 };
 
 FunctionItem.prototype.getEffectiveBooleanValue = function () {
