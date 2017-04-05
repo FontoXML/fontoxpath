@@ -6,6 +6,8 @@ import IntegerValue from '../dataTypes/IntegerValue';
 import Sequence from '../dataTypes/Sequence';
 import { castToType } from '../dataTypes/conversionHelper';
 
+import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
+
 /**
  * Promote all given (numeric) items to single common type
  * https://www.w3.org/TR/xpath-31/#promotion
@@ -159,6 +161,13 @@ function fnUnordered (_dynamicContext, sequence) {
 	return sequence;
 }
 
+function fnDeepEqual (dynamicContext, parameter1, parameter2) {
+	return Sequence.singleton(
+		sequenceDeepEqual(dynamicContext, parameter1, parameter2) ?
+			BooleanValue.TRUE :
+			BooleanValue.FALSE);
+}
+
 function fnCount (_dynamicContext, sequence) {
 	return Sequence.singleton(new IntegerValue(sequence.value.length));
 }
@@ -218,7 +227,7 @@ function fnMin (_dynamicContext, sequence) {
 	// Use first element in array as initial value
 	return Sequence.singleton(
 		items.reduce(function (min, item) {
-			return min.value > item.value ? item: min;
+			return min.value > item.value ? item : min;
 		}));
 }
 
@@ -329,6 +338,22 @@ export default {
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fnUnordered
+		},
+
+		{
+			name: 'deep-equal',
+			argumentTypes: ['item()*', 'item()*'],
+			returnType: 'xs:boolean',
+			callFunction: fnDeepEqual
+		},
+
+		{
+			name: 'deep-equal',
+			argumentTypes: ['item()*', 'item()*', 'xs:string'],
+			returnType: 'xs:boolean',
+			callFunction: function () {
+				throw new Error('Calling the deep-equal function with a non-default collation is not supported at this moment');
+			}
 		},
 
 		{

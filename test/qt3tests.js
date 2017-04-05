@@ -48,6 +48,10 @@ function createAsserter (assertNode) {
 			const equalWith = evaluateXPathToString('.', assertNode);
 			return (xpath, contextNode, variablesInScope) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) = (${equalWith})`, contextNode, null, variablesInScope), `Expected XPath ${xpath} to resolve to ${equalWith}`);
 		}
+		case 'assert-deep-eq': {
+			const equalWith = evaluateXPathToString('.', assertNode);
+			return (xpath, contextNode, variablesInScope) => chai.assert.isTrue(evaluateXPathToBoolean(`deep-equal(${xpath}, ${equalWith})`, contextNode, null, variablesInScope), `Expected XPath ${xpath} to (deep equally) resolve to ${equalWith}`);
+		}
 		case 'assert-empty':
 			return (xpath, contextNode, variablesInScope) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) => empty()`, contextNode, null, variablesInScope), `Expected XPath ${xpath} to resolve to the empty sequence`);
 		case 'assert-false':
@@ -175,7 +179,6 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
   not(./test => contains("QName(")) and
   not(./test => contains("codepoints-to-string")) and
   not(./test => contains("codepoint-equal")) and
-  not(./test => contains("deep-equal")) and
   not(./test => contains("format-integer")) and
   not(./test => contains("namespace-uri-from-QName")) and
   not(./test => contains("unparsed-text")) and

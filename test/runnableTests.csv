@@ -23,7 +23,7 @@ fn-dateTime,false
 fn-day-from-date,false
 fn-day-from-dateTime,false
 fn-days-from-duration,false
-fn-deep-equal,false
+fn-deep-equal,true
 fn-default-collation,false
 fn-distinct-values,false
 fn-doc,false
