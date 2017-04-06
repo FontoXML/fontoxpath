@@ -18,6 +18,13 @@ describe('ancestor', () => {
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('ancestor::someParentElement', documentNode.documentElement.firstChild), [documentNode.documentElement]);
 	});
+
+	it('correctly sets contextSequence', () => {
+		jsonMlMapper.parse([
+			'someParentElement',
+			['someElement', { someAttribute: 'someValue' }]
+		], documentNode);
+		chai.assert.deepEqual(evaluateXPathToStrings('ancestor::*/position()', documentNode.documentElement.firstChild), [documentNode.documentElement]);
 });
 
 describe('ancestor-or-self', () => {

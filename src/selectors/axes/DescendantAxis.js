@@ -18,6 +18,10 @@ class DescendantAxis extends Selector {
 		this._isInclusive = !!options.inclusive;
 	}
 
+	/**
+	 * @param   {../DynamicContext}  dynamicContext
+	 * @return  {Sequence}
+	 */
 	evaluate (dynamicContext) {
 		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
@@ -29,22 +33,27 @@ class DescendantAxis extends Selector {
 		}
 
 		if (this._isInclusive) {
-			collectDescendants(contextItem.value[0].value);
+			collectDescendants(contextItem.value);
 		}
 		else {
-			domFacade.getChildNodes(contextItem.value[0].value).forEach(collectDescendants);
+			domFacade.getChildNodes(contextItem.value).forEach(collectDescendants);
 		}
 
-		var matchingDescendants = descendants
-			.filter(descendant => {
-				var contextItem = Sequence.singleton(descendant);
-				var scopedContext = dynamicContext.createScopedContext({
-					contextItem: contextItem,
-					contextSequence: contextItem
-				});
-				return this._descendantSelector.evaluate(scopedContext).getEffectiveBooleanValue();
-			});
-		return new Sequence(matchingDescendants);
+		const filteredNodeValues = [];
+		const scopedContext = dynamicContext.createScopedContext({
+			contextItemIndex: 0,
+			contextSequence: new Sequence(descendants)
+		});
+
+		for (let i = 0, l = descendants.length; i < l; ++i) {
+			const nodeIsMatch = this._descendantSelector.evaluate(
+				scopedContext.createScopedContext({ contextItemIndex: i }))
+					.getEffectiveBooleanValue();
+			if (nodeIsMatch) {
+				filteredNodeValues.push(descendants[i]);
+			}
+		}
+		return new Sequence(filteredNodeValues);
 	}
 }
 export default DescendantAxis;

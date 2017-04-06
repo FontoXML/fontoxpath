@@ -15,31 +15,28 @@ class ParentAxis extends Selector {
 		this._parentSelector = parentSelector;
 	}
 
+	/**
+	 * @param   {../DynamicContext}  dynamicContext
+	 * @return  {Sequence}
+	 */
 	evaluate (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
-        domFacade = dynamicContext.domFacade;
+		const domFacade = dynamicContext.domFacade;
 
-		var nodeValues = nodeSequence.value
-			.map(nodeValue => {
-				var parentNode = domFacade.getParentNode(nodeValue.value);
-				if (!parentNode) {
-					return null;
-				}
-				return new NodeValue(parentNode);
-			})
-			.filter(nodeValue => {
-				if (!nodeValue) {
-					return false;
-				}
-				var contextItem = Sequence.singleton(nodeValue);
-				var scopedContext = dynamicContext.createScopedContext({
-					contextItem: contextItem,
-					contextSequence: contextItem
-				});
-				return this._parentSelector.evaluate(scopedContext).getEffectiveBooleanValue();
-			});
+		const parentNode = domFacade.getParentNode(dynamicContext.contextItem.value);
+		if (!parentNode) {
+			return Sequence.empty();
+		}
+		const parentSequence = Sequence.singleton(new NodeValue(parentNode));
+		const scopedContext = dynamicContext.createScopedContext({
+			contextItemIndex: 0,
+			contextSequence: parentSequence
+		});
 
-		return new Sequence(nodeValues);
+		const nodeIsMatch = this._parentSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+		if (!nodeIsMatch) {
+			return Sequence.empty();
+		}
+		return parentSequence;
 	}
 }
 

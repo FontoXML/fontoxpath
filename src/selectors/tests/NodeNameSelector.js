@@ -25,8 +25,7 @@ class NodeNameSelector extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var sequence = dynamicContext.contextItem,
-			node = sequence.value[0];
+		var node = dynamicContext.contextItem;
 
 		if (!node.instanceOfType('element()') && !node.instanceOfType('attribute()')) {
 			return Sequence.singleton(BooleanValue.FALSE);

@@ -181,8 +181,8 @@ PathExpr
 
 // 37
 RelativePathExpr
- = lhs:StepExpr _ abbrev:LocationPathAbbreviation rhs:RelativePathExpr {return ["path",  lhs, ["path", abbrev, rhs]]}
- / lhs:StepExpr _ "/" _ rhs:RelativePathExpr {return ["path", lhs, rhs]}
+ = lhs:StepExpr _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExpr {return ["path", lhs, abbrev].concat(rhs[0] === "path" ? rhs.slice(1) : [rhs])}
+ / lhs:StepExpr _ "/" _ rhs:RelativePathExpr {return ["path", lhs].concat(rhs[0] === "path" ? rhs.slice(1) : [rhs])}
  / StepExpr
 
 // 38
@@ -192,7 +192,7 @@ StepExpr
 
 AbsoluteLocationPath
  = "/" _ path:RelativePathExpr { return ["absolutePath", path] }
- / abbrev:LocationPathAbbreviation _ path: RelativePathExpr { return ["absolutePath", ["path", abbrev, path]] }
+ / abbrev:LocationPathAbbreviation _ path: RelativePathExpr { return ["absolutePath", ["path", abbrev].concat(path[0] === "path" ? path.slice(1) : [path])] }
  / "/" { return ["absolutePath", ["path", ["self", ["kindTest", "document-node()"]]]] }
 
 LocationPathAbbreviation

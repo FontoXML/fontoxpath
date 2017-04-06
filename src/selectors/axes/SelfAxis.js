@@ -14,17 +14,13 @@ class SelfAxis extends Selector {
 		this._selector = selector;
 	}
 
+	/**
+	 * @param   {../DynamicContext}  dynamicContext
+	 * @return  {Sequence}
+	 */
 	evaluate (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem;
-
-		return new Sequence(nodeSequence.value.filter(nodeValue => {
-			var contextItem = Sequence.singleton(nodeValue);
-
-			return this._selector.evaluate(dynamicContext.createScopedContext({
-				contextItem: contextItem,
-				contextSequence: contextItem
-			})).getEffectiveBooleanValue();
-		}));
+		var isMatch = this._selector.evaluate(dynamicContext).getEffectiveBooleanValue();
+		return isMatch ? Sequence.singleton(dynamicContext.contextItem) : Sequence.empty();
 	}
 
 	getBucket () {

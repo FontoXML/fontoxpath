@@ -1,10 +1,11 @@
 import DynamicContext from 'fontoxpath/selectors/DynamicContext';
+import Sequence from 'fontoxpath/selectors/dataTypes/Sequence';
 
 describe('DynamicContext.createScopedContext()', () => {
 	it('copies the exising context', () => {
 		const dynamicContext = new DynamicContext({
-				contextItem: 'contextItemValue1',
-				contextSequence: 'contextSequence1',
+				contextItemIndex: 0,
+			contextSequence: Sequence.singleton('contextSequence1'),
 				domFacade: 'domFacade1',
 				variables: {
 					variable: 'variables1'
@@ -18,16 +19,16 @@ describe('DynamicContext.createScopedContext()', () => {
 
 	it('copies the exising context and replaces the given values', () => {
 		const dynamicContext = new DynamicContext({
-				contextItem: 'contextItemValue1',
-				contextSequence: 'contextSequence1',
+				contextItemIndex: 0,
+			contextSequence: Sequence.singleton('contextSequence1'),
 				domFacade: 'domFacade1',
 				variables: {
 					variable: 'variables1'
 				}
 			}),
 			scopedContext = dynamicContext.createScopedContext({
-				contextItem: 'contextItemValue2',
-				contextSequence: 'contextSequence2',
+				contextItemIndex: 1,
+				contextSequence: Sequence.singleton('contextSequence2'),
 				domFacade: 'domFacade2',
 				variables: {
 					variable: 'variables2',
@@ -35,8 +36,8 @@ describe('DynamicContext.createScopedContext()', () => {
 				}
 			}),
 			expectedContext = new DynamicContext({
-				contextItem: 'contextItemValue2',
-				contextSequence: 'contextSequence2',
+				contextItemIndex: 1,
+				contextSequence: Sequence.singleton('contextSequence2'),
 				domFacade: 'domFacade2',
 				variables: {
 					variable: 'variables2',

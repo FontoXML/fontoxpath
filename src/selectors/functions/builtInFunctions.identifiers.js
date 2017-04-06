@@ -103,7 +103,7 @@ export default {
 			argumentTypes: ['xs:string*'],
 			returnType: 'element()*',
 			callFunction: function (dynamicContext, strings) {
-				return fnId(dynamicContext, strings, dynamicContext.contextItem);
+				return fnId(dynamicContext, strings, Sequence.singleton(dynamicContext.contextItem));
 			}
 		},
 
@@ -119,7 +119,7 @@ export default {
 			argumentTypes: ['xs:string*'],
 			returnType: 'node()*',
 			callFunction: function (dynamicContext, strings) {
-				return fnIdref(dynamicContext, strings, dynamicContext.contextItem);
+				return fnIdref(dynamicContext, strings, Sequence.singleton(dynamicContext.contextItem));
 			}
 		}
 	],

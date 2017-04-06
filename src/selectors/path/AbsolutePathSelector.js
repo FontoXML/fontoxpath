@@ -16,16 +16,14 @@ class AbsolutePathSelector extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var nodeSequence = dynamicContext.contextItem,
-			domFacade = dynamicContext.domFacade;
-		var node = nodeSequence.value[0].value;
+		var node = dynamicContext.contextItem.value;
 		var documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;
 		// Assume this is the start, so only one node
 		var contextSequence = Sequence.singleton(
 			new NodeValue(documentNode));
 		return this._relativePathSelector.evaluate(
 			dynamicContext.createScopedContext({
-				contextItem: contextSequence,
+				contextItemIndex: 0,
 				contextSequence: contextSequence
 			}));
 	}

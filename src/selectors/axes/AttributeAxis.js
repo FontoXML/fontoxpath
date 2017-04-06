@@ -19,32 +19,43 @@ class AttributeAxis extends Selector {
 		this._attributeTestSelector = attributeTestSelector;
 	}
 
+	/**
+	 * @param   {../DynamicContext}  dynamicContext
+	 * @return  {Sequence}
+	 */
 	evaluate (dynamicContext) {
 		var contextItem = dynamicContext.contextItem,
-        domFacade = dynamicContext.domFacade;
+			domFacade = dynamicContext.domFacade;
 
-		if (!contextItem.value[0].instanceOfType('element()')) {
+		if (!contextItem.instanceOfType('element()')) {
 			return Sequence.empty();
 		}
 
 		var attributes = domFacade
-			.getAllAttributes(contextItem.value[0].value)
+			.getAllAttributes(contextItem.value)
 			.map(function (attribute) {
 				return new NodeValue(new AttributeNode(
-					contextItem.value[0].value,
+					contextItem.value,
 					attribute.name,
 					attribute.value
 				));
-			}).filter(function (attributeNodeValue) {
-				var contextItem = Sequence.singleton(attributeNodeValue);
-				var scopedContext = dynamicContext.createScopedContext({
-					contextItem: contextItem,
-					contextSequence: contextItem
-				});
-				return this._attributeTestSelector.evaluate(scopedContext).getEffectiveBooleanValue();
-			}.bind(this));
+			});
 
-		return new Sequence(attributes);
+		const filteredNodeValues = [];
+		const scopedContext = dynamicContext.createScopedContext({
+			contextItemIndex: 0,
+			contextSequence: new Sequence(attributes)
+		});
+
+		for (let i = 0, l = attributes.length; i < l; ++i) {
+			const nodeIsMatch = this._attributeTestSelector.evaluate(
+				scopedContext.createScopedContext({ contextItemIndex: i }))
+					.getEffectiveBooleanValue();
+			if (nodeIsMatch) {
+				filteredNodeValues.push(attributes[i]);
+			}
+		}
+		return new Sequence(filteredNodeValues);
 	}
 }
 export default AttributeAxis;

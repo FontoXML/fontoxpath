@@ -42,7 +42,7 @@ describe('relative paths', () => {
 				['someGrandChild']
 			]
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNumbers('//*/position()', documentNode.documentElement), [1, 1, 1]);
+		chai.assert.deepEqual(evaluateXPathToNumbers('//*/position()', documentNode.documentElement), [1, 2, 3]);
 	});
 
 	it('returns its results sorted on document order', () => {

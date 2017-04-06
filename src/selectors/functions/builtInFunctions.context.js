@@ -7,7 +7,7 @@ function fnLast (dynamicContext) {
 
 function fnPosition (dynamicContext) {
 	// Note: +1 because XPath is one-based
-	return Sequence.singleton(new IntegerValue(dynamicContext.contextSequence.value.indexOf(dynamicContext.contextItem.value[0]) + 1));
+	return Sequence.singleton(new IntegerValue(dynamicContext.contextItemIndex + 1));
 }
 
 export default {

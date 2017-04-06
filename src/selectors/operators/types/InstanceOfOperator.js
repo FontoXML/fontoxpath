@@ -50,7 +50,7 @@ class InstanceOfOperator extends Selector {
 		const isInstanceOf = evaluatedExpression.value.every(argumentItem => {
 			const contextItem = Sequence.singleton(argumentItem);
 			const scopedContext = dynamicContext.createScopedContext({
-				contextItem: contextItem,
+				contextItemIndex: 0,
 				contextSequence: contextItem
 			});
 			return this._typeTest.evaluate(scopedContext).getEffectiveBooleanValue();

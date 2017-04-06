@@ -23,10 +23,10 @@ class Filter extends Selector {
 	evaluate (dynamicContext) {
 		var valuesToFilter = this._selector.evaluate(dynamicContext);
 
-		var filteredValues = valuesToFilter.value.filter(function (value, index) {
+		var filteredValues = valuesToFilter.value.filter(function (_, index) {
 				var result = this._filterSelector.evaluate(
 						dynamicContext.createScopedContext({
-							contextItem: Sequence.singleton(value),
+							contextItemIndex: index,
 							contextSequence: valuesToFilter
 						}));
 

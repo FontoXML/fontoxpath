@@ -18,24 +18,35 @@ class AncestorAxis extends Selector {
 		this._isInclusive = !!options.inclusive;
 	}
 
+	/**
+	 * @param   {../DynamicContext}  dynamicContext
+	 * @return  {Sequence}
+	 */
 	evaluate (dynamicContext) {
-		var contextItem = dynamicContext.contextItem,
-        domFacade = dynamicContext.domFacade;
+		const contextItem = dynamicContext.contextItem;
+		const domFacade = dynamicContext.domFacade;
 
-		// Assume singleton, since axes are only valid in paths
-		var contextNode = contextItem.value[0].value;
-		var ancestors = [];
-		for (var ancestorNode = this._isInclusive ? contextNode : domFacade.getParentNode(contextNode); ancestorNode; ancestorNode = domFacade.getParentNode(ancestorNode)) {
+		const contextNode = contextItem.value;
+		const ancestors = [];
+		for (let ancestorNode = this._isInclusive ? contextNode : domFacade.getParentNode(contextNode); ancestorNode; ancestorNode = domFacade.getParentNode(ancestorNode)) {
 			ancestors.push(new NodeValue(ancestorNode));
 		}
-		return new Sequence(ancestors.filter(ancestor => {
-			var contextItem = Sequence.singleton(ancestor);
-			var scopedContext = dynamicContext.createScopedContext({
-				contextItem: contextItem,
-				contextSequence: contextItem
-			});
-			return this._ancestorSelector.evaluate(scopedContext).getEffectiveBooleanValue();
-		}));
+
+		const filteredNodeValues = [];
+		const scopedContext = dynamicContext.createScopedContext({
+			contextItemIndex: 0,
+			contextSequence: new Sequence(ancestors)
+		});
+
+		for (let i = 0, l = ancestors.length; i < l; ++i) {
+			const nodeIsMatch = this._ancestorSelector.evaluate(
+				scopedContext.createScopedContext({ contextItemIndex: i }))
+					.getEffectiveBooleanValue();
+			if (nodeIsMatch) {
+				filteredNodeValues.push(ancestors[i]);
+			}
+		}
+		return new Sequence(filteredNodeValues);
 	}
 }
 

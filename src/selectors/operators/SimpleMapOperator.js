@@ -25,14 +25,16 @@ class SimpleMapOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var sequence = this._expression1.evaluate(dynamicContext);
-		return sequence.value.reduce(function (sequenceToReturn, currentValue) {
-			var context = dynamicContext.createScopedContext({
-				contextItem: Sequence.singleton(currentValue),
-				contextSequence: sequence
-			});
-			return sequenceToReturn.merge(this._expression2.evaluate(context));
-		}.bind(this), Sequence.empty());
+		const sequence = this._expression1.evaluate(dynamicContext);
+		const resultingSequence = Sequence.empty();
+		const context = dynamicContext.createScopedContext({
+			contextItemIndex: 0,
+			contextSequence: sequence
+		});
+		for (let i = 0, l = sequence.value.length; i < l; ++i) {
+			resultingSequence.merge(this._expression2.evaluate(context.createScopedContext({ contextItemIndex: i })));
+		}
+		return resultingSequence;
 	}
 }
 

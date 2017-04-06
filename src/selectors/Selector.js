@@ -1,9 +1,3 @@
-import DomFacade from '../DomFacade';
-import DynamicContext from './DynamicContext';
-import Specificity from './Specificity';
-import Sequence from './dataTypes/Sequence';
-import NodeValue from './dataTypes/NodeValue';
-
 /**
  * @enum {string}
  */
@@ -18,7 +12,7 @@ const RESULT_ORDERINGS = {
  */
 class Selector {
 	/**
-	 * @param  {!Specificity}  specificity
+	 * @param  {!./Specificity}  specificity
 	 * @param  {!RESULT_ORDERINGS}       expectedResultOrder  Describe what the expected sorting order is, will be used to shortcut sorting at various places.
 	 *                                               Either 'sorted', 'reverse-sorted' or 'unsorted'. Sorted sequences are expected to be deduplicated.
 	 */
@@ -48,8 +42,8 @@ class Selector {
 
 	/**
 	 * @abstract
-	 * @param   {!DynamicContext}  _dynamicContext
-	 * @return  {!Sequence}
+	 * @param   {!./DynamicContext}  _dynamicContext
+	 * @return  {!./dataTypes/Sequence}
 	 */
 	evaluate (_dynamicContext) {
 		//    throw new Error('Not Implemented');

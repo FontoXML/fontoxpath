@@ -5,7 +5,7 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 
 var stringFunctions = builtinStringFunctions.functions;
 function contextItemAsFirstArgument (fn, dynamicContext) {
-	return fn(dynamicContext, dynamicContext.contextItem);
+	return fn(dynamicContext, Sequence.singleton(dynamicContext.contextItem));
 }
 
 function fnName (dynamicContext, sequence) {

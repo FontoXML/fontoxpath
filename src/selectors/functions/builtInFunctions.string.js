@@ -9,7 +9,7 @@ function collationError () {
 }
 
 function contextItemAsFirstArgument (fn, dynamicContext) {
-	return fn(dynamicContext, dynamicContext.contextItem);
+	return fn(dynamicContext, Sequence.singleton(dynamicContext.contextItem));
 }
 
 function fnCompare (_dynamicContext, arg1, arg2) {
@@ -220,7 +220,7 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:string',
 			callFunction: function (dynamicContext) {
-				return fnNormalizeSpace(dynamicContext, fnString(dynamicContext, dynamicContext.contextItem));
+				return fnNormalizeSpace(dynamicContext, fnString(dynamicContext, Sequence.singleton(dynamicContext.contextItem)));
 			}
 		},
 
@@ -294,7 +294,7 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:integer',
 			callFunction: function (dynamicContext) {
-				return fnStringLength(dynamicContext, fnString(dynamicContext, dynamicContext.contextItem));
+				return fnStringLength(dynamicContext, fnString(dynamicContext, Sequence.singleton(dynamicContext.contextItem)));
 			}
 		},
 

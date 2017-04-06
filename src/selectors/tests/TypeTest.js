@@ -17,7 +17,7 @@ class TypeTest extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var booleanValue = dynamicContext.contextItem.value[0].instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		var booleanValue = dynamicContext.contextItem.instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
 		return Sequence.singleton(booleanValue);
 	}
 }

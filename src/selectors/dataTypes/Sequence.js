@@ -28,7 +28,7 @@ Sequence.empty = function () {
 };
 
 /**
- * @param  {!../DynamicContext.default} dynamicContext
+ * @param  {!../DynamicContext} dynamicContext
  * @return {!Sequence}
  */
 Sequence.prototype.atomize = function (dynamicContext) {

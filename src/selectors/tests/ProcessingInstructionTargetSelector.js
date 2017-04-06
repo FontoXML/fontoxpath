@@ -19,9 +19,8 @@ class ProcessingInstructionTargetSelector extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var sequence = dynamicContext.contextItem;
 		// Assume singleton
-		var nodeValue = sequence.value[0];
+		var nodeValue = dynamicContext.contextItem;
 		var isMatchingProcessingInstruction = nodeValue.instanceOfType('processing-instruction()') &&
 			nodeValue.value.target === this._target;
 		return Sequence.singleton(isMatchingProcessingInstruction ? BooleanValue.TRUE : BooleanValue.FALSE);

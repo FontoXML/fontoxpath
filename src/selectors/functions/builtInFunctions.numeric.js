@@ -9,7 +9,7 @@ import StringValue from '../dataTypes/StringValue';
 import { castToType } from '../dataTypes/conversionHelper';
 
 function contextItemAsFirstArgument (fn, dynamicContext) {
-	return fn(dynamicContext, dynamicContext.contextItem);
+	return fn(dynamicContext, Sequence.singleton(dynamicContext.contextItem));
 }
 
 function createValidNumericType (typedValue, transformedValue) {

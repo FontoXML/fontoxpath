@@ -12,21 +12,29 @@ class ChildAxis extends Selector {
 		this._childSelector = childSelector;
 	}
 
+	/**
+	 * @param   {../DynamicContext}  dynamicContext
+	 * @return  {Sequence}
+	 */
 	evaluate (dynamicContext) {
-		var contextItem = dynamicContext.contextItem,
-        domFacade = dynamicContext.domFacade;
-		var nodeValues = domFacade.getChildNodes(contextItem.value[0].value)
-			.map((node) => new NodeValue(node))
-			.filter((node) => {
-				var contextItem = Sequence.singleton(node);
-				var scopedContext = dynamicContext.createScopedContext({
-					contextItem: contextItem,
-					contextSequence: contextItem
-				});
-				return this._childSelector.evaluate(scopedContext).getEffectiveBooleanValue();
-			});
-
-		return new Sequence(nodeValues);
+		const contextItem = dynamicContext.contextItem;
+		const domFacade = dynamicContext.domFacade;
+		const nodeValues = domFacade.getChildNodes(contextItem.value).map((node) => new NodeValue(node));
+		const childContextSequence = new Sequence(nodeValues);
+		const filteredNodeValues = [];
+		const scopedContext = dynamicContext.createScopedContext({
+			contextItemIndex: 0,
+			contextSequence: childContextSequence
+		});
+		for (let i = 0, l = nodeValues.length; i < l; ++i) {
+			const nodeIsMatch = this._childSelector.evaluate(
+				scopedContext.createScopedContext({ contextItemIndex: i }))
+					.getEffectiveBooleanValue();
+			if (nodeIsMatch) {
+				filteredNodeValues.push(nodeValues[i]);
+			}
+		}
+		return new Sequence(filteredNodeValues);
 	}
 }
 export default ChildAxis;

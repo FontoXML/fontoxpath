@@ -12,7 +12,7 @@ Item.primitiveTypeName = Item.prototype.primitiveTypeName = 'item()';
 
 /**
  * @abstract
- * @param   {../DynamicContext.default}  _dynamicContext  Needed for atomizing some properties
+ * @param   {../DynamicContext}  _dynamicContext  Needed for atomizing some properties
  * @return  {!Item} Note: circular
  */
 Item.prototype.atomize = function (_dynamicContext) {};
