@@ -1,5 +1,8 @@
 import Sequence from '../../dataTypes/Sequence';
+import DecimalValue from '../../dataTypes/DecimalValue';
 import DoubleValue from '../../dataTypes/DoubleValue';
+import FloatValue from '../../dataTypes/FloatValue';
+import IntegerValue from '../../dataTypes/IntegerValue';
 import Selector from '../../Selector';
 
 /**
@@ -25,16 +28,28 @@ class Unary extends Selector {
 		}
 
 		var value = valueSequence.value[0].atomize();
-		if (value.instanceOfType('xs:integer') ||
-			value.instanceOfType('xs:decimal') ||
-			value.instanceOfType('xs:double') ||
-			value.instanceOfType('xs:float')) {
-
-			if (this._kind === '-') {
-				// TODO: clone
-				value.value = -value.value;
+		if (this._kind === '+') {
+			if (value.instanceOfType('xs:decimal') ||
+					value.instanceOfType('xs:double') ||
+					value.instanceOfType('xs:float') ||
+					value.instanceOfType('xs:integer')) {
+				return valueSequence;
 			}
-			return Sequence.singleton(value);
+
+			return Sequence.singleton(new DoubleValue(Number.NaN));
+		}
+
+		if (value.instanceOfType('xs:integer')) {
+			return Sequence.singleton(new IntegerValue(-value.value));
+		}
+		if (value.instanceOfType('xs:decimal')) {
+			return Sequence.singleton(new DecimalValue(-value.value));
+		}
+		if (value.instanceOfType('xs:double')) {
+			return Sequence.singleton(new DoubleValue(-value.value));
+		}
+		if (value.instanceOfType('xs:float')) {
+			return Sequence.singleton(new FloatValue(-value.value));
 		}
 
 		return Sequence.singleton(new DoubleValue(Number.NaN));
