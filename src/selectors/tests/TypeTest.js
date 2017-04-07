@@ -16,6 +16,14 @@ class TypeTest extends Selector {
 		this._type = type;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(type-test ${this._type})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		var booleanValue = dynamicContext.contextItem.instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
 		return Sequence.singleton(booleanValue);

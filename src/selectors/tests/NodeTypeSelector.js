@@ -18,6 +18,13 @@ class NodeTypeSelector extends Selector {
 		this._nodeType = nodeType;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(node_type ${this._nodeType})`;
+		}
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		if (this._nodeType === 3 && dynamicContext.contextItem.value.nodeType === 4) {
 			// CDATA_SECTION_NODES should be regarded as text nodes, and CDATA does not exist in the XPath Data Model

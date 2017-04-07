@@ -16,6 +16,10 @@ class Filter extends Selector {
 		this._filterSelector = filterSelector;
 	}
 
+	toString () {
+		return `(filter ${this._selector} ${this._filterSelector})`;
+	}
+
 	getBucket () {
 		return this._selector.getBucket();
 	}

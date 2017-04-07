@@ -19,6 +19,10 @@ class AttributeAxis extends Selector {
 		this._attributeTestSelector = attributeTestSelector;
 	}
 
+	toString () {
+		return `(attribute ${this._attributeTestSelector.toString()})`;
+	}
+
 	/**
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}

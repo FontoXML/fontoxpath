@@ -24,6 +24,13 @@ class NodeNameSelector extends Selector {
 		this._nodeName = nodeName;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(node-name ${this._nodeName})`;
+		}
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		var node = dynamicContext.contextItem;
 

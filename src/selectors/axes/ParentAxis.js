@@ -15,6 +15,10 @@ class ParentAxis extends Selector {
 		this._parentSelector = parentSelector;
 	}
 
+	toString () {
+		return `(parent ${this._parentSelector.toString()})`;
+	}
+
 	/**
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}

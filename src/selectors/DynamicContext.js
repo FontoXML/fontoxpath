@@ -9,6 +9,26 @@ let Sequence;
  */
 let ScopingType;
 
+class Cache {
+	constructor () {
+		this._cache = Object.create(null);
+	}
+	withCache (dynamicContext, selectorString, computeFn) {
+		const key = dynamicContext + '~' + selectorString;
+		let entry = this._cache[key];
+		if (!entry) {
+			console.log('cache miss', this._cache);
+			entry = this._cache[key] = computeFn();
+
+		} else {
+			console.log('cache hit');
+		}
+		return entry;
+	}
+}
+
+const cache = new Cache();
+
 class DynamicContext {
 	/**
 	 * @param  {{contextItemIndex: ?number, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object}}  context  The context to overlay
@@ -43,6 +63,13 @@ class DynamicContext {
 		 * @const
 		 */
 		this.variables = context.variables;
+
+		this.cache = cache;
+	}
+
+	toString () {
+		const variables = `(variables ${Object.keys(this.variables).map(varKey => `(var ${varKey} ${this.variables[varKey].toString()})`)})`;
+		return `(dynamicContext ${this.contextSequence.toString()} ${this.contextItemIndex} ${variables})`;
 	}
 
 	/**

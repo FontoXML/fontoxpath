@@ -15,6 +15,13 @@ class AbsolutePathSelector extends Selector {
 		this._relativePathSelector = relativePathSelector;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(absolute-path ${this._relativePathSelector})`;
+		}
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		var node = dynamicContext.contextItem.value;
 		var documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;

@@ -18,6 +18,10 @@ class LetExpression extends Selector {
 		this._returnExpression = returnExpression;
 	}
 
+	toString () {
+		return `(let ${this._rangeVariable} ${this._bindingSequence.toString()} ${this._returnExpression.toString()})`;
+	}
+
 	evaluate (dynamicContext) {
 		var newVariables = Object.create(null);
 		newVariables[this._rangeVariable] = this._bindingSequence.evaluate(dynamicContext);

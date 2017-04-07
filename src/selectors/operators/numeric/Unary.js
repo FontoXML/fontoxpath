@@ -21,6 +21,14 @@ class Unary extends Selector {
 		this._kind = kind;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(${this._kind} ${this._valueExpr.toString()}})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		var valueSequence = this._valueExpr.evaluate(dynamicContext);
 		if (valueSequence.isEmpty()) {

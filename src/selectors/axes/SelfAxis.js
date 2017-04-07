@@ -14,6 +14,14 @@ class SelfAxis extends Selector {
 		this._selector = selector;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(self ${this._selector.toString()})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	/**
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}

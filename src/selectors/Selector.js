@@ -19,6 +19,10 @@ class Selector {
 	constructor (specificity, expectedResultOrder) {
 		this.specificity = specificity;
 		this.expectedResultOrder = expectedResultOrder;
+		/**
+		 * @type {?string}
+		 */
+		this._stringifiedValue = null;
 	}
 
 	static get RESULT_ORDERINGS () {
@@ -38,6 +42,13 @@ class Selector {
 	 */
 	getBucket () {
 		return null;
+	}
+
+	/**
+	 * @abstract
+	 * @return  {string}
+	 */
+	toString () {
 	}
 
 	/**

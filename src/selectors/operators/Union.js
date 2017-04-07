@@ -24,6 +24,14 @@ class Union extends Selector {
 		this._subSelectors = selectors;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(union ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		var nodeSet = this._subSelectors.reduce(function (resultingNodeSet, selector) {
 				var results = selector.evaluate(dynamicContext);

@@ -17,6 +17,13 @@ class MapConstructor extends Selector {
 		this._entries = entries;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(map ${this._entries.map(({ key, value }) => `(entry ${key.toString()} ${value.toString()})`).join(' ')})`;
+		}
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		var keyValuePairs = this._entries.map(function (keyValuePair) {
 				var keySequence = keyValuePair.key.evaluate(dynamicContext).atomize(dynamicContext);

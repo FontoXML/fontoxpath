@@ -34,6 +34,10 @@ class NamedFunctionRef extends Selector {
 			functionProperties.returnType);
 	}
 
+	toString () {
+		return `(function-ref ${this._functionName} ${this._arity})`;
+	}
+
 	evaluate (_dynamicContext) {
 		return Sequence.singleton(this._functionItem);
 	}

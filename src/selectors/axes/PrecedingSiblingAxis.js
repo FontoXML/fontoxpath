@@ -15,6 +15,14 @@ class PrecedingSiblingAxis extends Selector {
 		this._siblingSelector = siblingSelector;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(preceding-sibling ${this._siblingSelector.toString()})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	/**
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}

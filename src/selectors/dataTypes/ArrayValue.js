@@ -17,6 +17,13 @@ function ArrayValue (members) {
 ArrayValue.prototype = Object.create(FunctionItem.prototype);
 ArrayValue.prototype.constructor = ArrayValue;
 
+/**
+* @return {string}
+*/
+ArrayValue.prototype.toString = function () {
+	return `(item fn:array ${this.members.map(member => member.toString())})`;
+};
+
 ArrayValue.prototype.instanceOfType = function (simpleTypeName) {
 	return simpleTypeName === 'array(*)' ||
 		FunctionItem.prototype.instanceOfType.call(this, simpleTypeName);

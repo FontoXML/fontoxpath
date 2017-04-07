@@ -18,6 +18,13 @@ class ProcessingInstructionTargetSelector extends Selector {
 		this._target = target;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(processing-instruction ${this._target || ''})`;
+		}
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		// Assume singleton
 		var nodeValue = dynamicContext.contextItem;

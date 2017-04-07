@@ -12,6 +12,10 @@ class ChildAxis extends Selector {
 		this._childSelector = childSelector;
 	}
 
+	toString () {
+		return `(child ${this._childSelector.toString()})`;
+	}
+
 	/**
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}

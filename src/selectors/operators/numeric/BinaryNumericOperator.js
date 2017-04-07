@@ -40,6 +40,14 @@ class BinaryNumericOperator extends Selector {
 		this._kind = kind;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(${this._kind} ${this._firstValueExpr.toString()} ${this._secondValueExpr.toString()}})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		const firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize(dynamicContext);
 		if (firstValueSequence.isEmpty()) {

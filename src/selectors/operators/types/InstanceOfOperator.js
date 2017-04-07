@@ -22,6 +22,15 @@ class InstanceOfOperator extends Selector {
 		this._multiplicity = multiplicity;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(instance-of ${this._expression.toString()} ${this._typeTest.toString()} ${this._multiplicity})`;
+		}
+
+		return this._stringifiedValue;
+
+	}
+
 	evaluate (dynamicContext) {
 		const evaluatedExpression = this._expression.evaluate(dynamicContext);
 

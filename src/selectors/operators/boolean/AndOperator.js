@@ -19,6 +19,15 @@ class AndOperator extends Selector {
 		this._subSelectors = selectors;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(and ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
+		}
+
+		return this._stringifiedValue;
+
+	}
+
 	evaluate (dynamicContext) {
 		var result = this._subSelectors.every(function (subSelector) {
 				return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();

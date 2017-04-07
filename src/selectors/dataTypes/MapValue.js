@@ -6,7 +6,7 @@ import FunctionItem from './FunctionItem';
 /**
  * @constructor
  * @extends {FunctionItem}
- * @param   {!Array<!Object<Sequence>>}  keyValuePairs
+ * @param   {!Array<!{key: !Sequence, value: !Sequence}>}  keyValuePairs
  */
 function MapValue (keyValuePairs) {
 	FunctionItem.call(this, /** @type {function(!DynamicContext, !Sequence):!Sequence} */ (function (dynamicContext, key) {
@@ -17,6 +17,14 @@ function MapValue (keyValuePairs) {
 
 MapValue.prototype = Object.create(FunctionItem.prototype);
 MapValue.prototype.constructor = MapValue;
+
+/**
+* @return {string}
+*/
+MapValue.prototype.toString = function () {
+	return `(item fn:map ${this.keyValuePairs.map(({ key, value }) => `(${key.toString()} ${value.toString()})`)})`;
+};
+
 MapValue.prototype.instanceOfType = function (simpleTypeName) {
 	return simpleTypeName === 'map(*)' ||
 		FunctionItem.prototype.instanceOfType.call(this, simpleTypeName);

@@ -18,39 +18,66 @@ class DescendantAxis extends Selector {
 		this._isInclusive = !!options.inclusive;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(descendant ${this._isInclusive} ${this._descendantSelector.toString()})`;
+		}
+		return this._stringifiedValue;
+	}
+
 	/**
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}
 	 */
 	evaluate (dynamicContext) {
-		var contextItem = dynamicContext.contextItem,
-			domFacade = dynamicContext.domFacade;
+		const contextItem = dynamicContext.contextItem;
+		/**
+		 * @type {IDomFacade}
+		 */
+		const domFacade = dynamicContext.domFacade;
 
-		var descendants = [];
 		function collectDescendants (node) {
-			descendants.push(new NodeValue(node));
-			domFacade.getChildNodes(node).forEach(collectDescendants);
+			/**
+			 * @type {../DynamicContext}
+			 */
+			const childScopedContext = dynamicContext.createScopedContext({
+				contextItemIndex: 0,
+				contextSequence: Sequence.singleton(new NodeValue(node))
+			});
+
+			return dynamicContext.cache.withCache(childScopedContext, '(descendant true node())', function () {
+				return domFacade.getChildNodes(childScopedContext.contextItem.value)
+					.map(childNode => collectDescendants(childNode))
+					.reduce(
+						(descendants, childDescendants) => descendants.merge(childDescendants),
+						childScopedContext.contextSequence);
+			});
 		}
 
+		let collectedDescendants;
 		if (this._isInclusive) {
-			collectDescendants(contextItem.value);
+			collectedDescendants = collectDescendants(contextItem.value);
 		}
 		else {
-			domFacade.getChildNodes(contextItem.value).forEach(collectDescendants);
+			collectedDescendants = domFacade.getChildNodes(contextItem.value)
+				.map(childNode => collectDescendants(childNode))
+				.reduce(
+					(descendants, childDescendants) => descendants.merge(childDescendants),
+					Sequence.empty());
 		}
 
 		const filteredNodeValues = [];
 		const scopedContext = dynamicContext.createScopedContext({
 			contextItemIndex: 0,
-			contextSequence: new Sequence(descendants)
+			contextSequence: collectedDescendants
 		});
 
-		for (let i = 0, l = descendants.length; i < l; ++i) {
+		for (let i = 0, l = collectedDescendants.value.length; i < l; ++i) {
 			const nodeIsMatch = this._descendantSelector.evaluate(
 				scopedContext.createScopedContext({ contextItemIndex: i }))
 					.getEffectiveBooleanValue();
 			if (nodeIsMatch) {
-				filteredNodeValues.push(descendants[i]);
+				filteredNodeValues.push(collectedDescendants.value[i]);
 			}
 		}
 		return new Sequence(filteredNodeValues);

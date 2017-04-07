@@ -11,6 +11,13 @@ function Item (value) {
 Item.primitiveTypeName = Item.prototype.primitiveTypeName = 'item()';
 
 /**
+* @return {string}
+*/
+Item.prototype.toString = function () {
+	return `(item ${this.primitiveTypeName} ${this.value})`;
+};
+
+/**
  * @abstract
  * @param   {../DynamicContext}  _dynamicContext  Needed for atomizing some properties
  * @return  {!Item} Note: circular

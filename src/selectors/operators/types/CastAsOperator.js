@@ -22,6 +22,14 @@ class castAsOperator extends Selector {
 		this._allowsEmptySequence = allowsEmptySequence;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(cast-as ${this._expression} ${this._targetType} ${this._allowsEmptySequence})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		var evaluatedExpression = this._expression.evaluate(dynamicContext).atomize(dynamicContext);
 		if (evaluatedExpression.value.length > 1) {

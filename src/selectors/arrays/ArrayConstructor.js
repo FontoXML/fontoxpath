@@ -21,6 +21,10 @@ class ArrayConstructor extends Selector {
 		this._members = members;
 	}
 
+	toString () {
+		return `(array ${this._curlyness} ${this._members.map(member => member.toString()).join(' ')})`;
+	}
+
 	evaluate (dynamicContext) {
 		if (this._curlyness === 'curly') {
 			return Sequence.singleton(new ArrayValue(this._members[0].evaluate(dynamicContext).value.map(Sequence.singleton)));

@@ -23,7 +23,6 @@ class Compare extends Selector {
 
 		this._compare = kind[0];
 		this._operator = kind[1];
-
 		switch (kind[0]) {
 			case 'generalCompare':
 				this._comparator = generalCompare;
@@ -35,6 +34,14 @@ class Compare extends Selector {
 				this._comparator = nodeCompare;
 				break;
 		}
+	}
+
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(${this._compare} ${this._operator} ${this._firstSelector.toString()} ${this._secondSelector.toString()}})`;
+		}
+
+		return this._stringifiedValue;
 	}
 
 	evaluate (dynamicContext) {

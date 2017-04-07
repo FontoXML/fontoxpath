@@ -39,6 +39,15 @@ class OrOperator extends Selector {
 		this._subSelectors = selectors;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(or ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
+		}
+
+		return this._stringifiedValue;
+
+	}
+
 	evaluate (dynamicContext) {
 		var result = this._subSelectors.some(function (subSelector) {
 				return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();

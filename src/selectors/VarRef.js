@@ -14,6 +14,10 @@ class VarRef extends Selector {
 		this._variableName = variableName;
 	}
 
+	toString () {
+		return `(var-ref ${this._variableName})`;
+	}
+
 	evaluate (dynamicContext) {
 		var value = dynamicContext.variables[this._variableName];
 		if (!value) {

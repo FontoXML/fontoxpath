@@ -18,6 +18,10 @@ class AncestorAxis extends Selector {
 		this._isInclusive = !!options.inclusive;
 	}
 
+	toString () {
+		return `(ancestor ${this._isInclusive} ${this._ancestorSelector.toString()})`;
+	}
+
 	/**
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}

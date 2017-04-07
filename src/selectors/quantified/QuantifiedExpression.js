@@ -23,6 +23,10 @@ class QuantifiedExpression extends Selector {
 		this._satisfiesExpr = satisfiesExpr;
 	}
 
+	toString () {
+		return `(quantified ${this._quantifier} ${this._inClauses.map(selector => selector.toString()).join(' ')} ${this._satisfiesExpr})`;
+	}
+
 	evaluate (dynamicContext) {
 		var evaluatedInClauses = this._inClauses.map(function (inClause) {
 				return {

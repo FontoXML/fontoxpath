@@ -20,6 +20,14 @@ class SequenceOperator extends Selector {
 		this._selectors = selectors;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(sequence ${this._selectors.map(selector => selector.toString()).join(' ')})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		return this._selectors.reduce(function (accum, selector) {
 			return accum.merge(selector.evaluate(dynamicContext));

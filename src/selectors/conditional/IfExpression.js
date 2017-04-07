@@ -23,6 +23,14 @@ class IfExpression extends Selector {
 		this._elseExpression = elseExpression;
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(if ${this._testExpression.toString()} ${this._thenExpression} ${this._elseExpression})`;
+		}
+
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		if (this._testExpression.evaluate(dynamicContext).getEffectiveBooleanValue()) {
 			return this._thenExpression.evaluate(dynamicContext);

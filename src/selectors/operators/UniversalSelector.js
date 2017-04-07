@@ -15,6 +15,14 @@ class UniversalSelector extends Selector {
 			Selector.RESULT_ORDERINGS.SORTED);
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = '(universal)';
+		}
+
+		return this._stringifiedValue;
+	}
+
 	evaluate () {
 		return Sequence.singleton(BooleanValue.TRUE);
 	}

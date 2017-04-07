@@ -7,13 +7,13 @@ import UntypedAtomicValue from './UntypedAtomicValue';
 // This should work for maximal reuse of instances:
 // NodeValue has a strong ref to a Node, but when it's only referenced by this weakmap, it should be eligible for GC
 // When it is collected, the Node may be collected too
-// We can not use it for the same domFacade though, since that is external and may have state, therefore we should keep re-use local to the domFacade.
 // TODO: This must work for all values, and be in a 'static context' of some sort
 /**
  * @const {!WeakMap<!Node, !NodeValue>}
  */
 const nodeValueByNode = new WeakMap();
 
+let currentNodeId = 1;
 /**
  * @constructor
  * @extends {Item}
@@ -25,8 +25,9 @@ function NodeValue (node) {
 	}
 
     nodeValueByNode.set(node, this);
-
     Item.call(this, node);
+
+	this._id = (currentNodeId++) + '';
 
     this.nodeType = node.nodeType;
 	this.target = null;
@@ -78,6 +79,14 @@ NodeValue.prototype.instanceOfType = function (simpleTypeName) {
             return Item.prototype.instanceOfType.call(this, simpleTypeName);
     }
 };
+
+/**
+* @return {string}
+*/
+NodeValue.prototype.toString = function () {
+	return `(node ${this._id})`;
+};
+
 
 /**
  * @return {!AnyAtomicTypeValue}

@@ -50,6 +50,13 @@ class PathSelector extends Selector {
 		return this._stepSelectors[0].getBucket();
 	}
 
+	toString () {
+		if (!this._stringifiedValue) {
+			this._stringifiedValue = `(relative-path ${this._stepSelectors.map(selector => selector.toString()).join(' ')})`;
+		}
+		return this._stringifiedValue;
+	}
+
 	evaluate (dynamicContext) {
 		const nodeSequence = dynamicContext.contextSequence;
 
