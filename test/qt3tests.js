@@ -126,10 +126,10 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment[source]', 
 		}
 	});
 
-const shouldRunTestByName = require('text!./runnableTests.csv')
-	  .split('\n')
-	  .map(line=>line.split(','))
-	  .reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
+const shouldRunTestByName = require('text!./runnableTestSets.csv')
+		.split('\n')
+		.map(line=>line.split(','))
+		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 
 evaluateXPathToNodes('/catalog/test-set', catalog)
 	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
@@ -187,7 +187,6 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
   not(./test => contains("distinct-values")) and
   not(./test => contains("normalize-unicode")) and
   not(./test => contains("translate")) and
-  not(./test => contains("subsequence")) and
   not(./test => contains("substring")) and
   not(./test => contains("string-to-codepoints")) and
   not(./test => contains("zero-or-one")) and
@@ -213,8 +212,18 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 			return;
 		}
 
+		const shouldRunTestCaseByName = require('text!./unrunnableTestCases.csv')
+				.split('\n')
+				.map(line => line.split(','))
+				.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
+
 		describe(evaluateXPathToString('/test-set/description', testSet), () => {
 			for (const testCase of testCases) {
+				const testName = evaluateXPathToString('./@name', testCase);
+				if (shouldRunTestCaseByName[testName] === false) {
+					continue;
+				}
+
 				const testQuery = evaluateXPathToString('./test', testCase);
 				const description = evaluateXPathToString('if (description/text()) then description else test', testCase);
 				const asserter = getAsserterForTest(testCase);

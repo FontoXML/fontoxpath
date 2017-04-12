@@ -62,7 +62,7 @@ fn-idref,true
 fn-implicit-timezone,false
 fn-innermost,true
 fn-index-of,false
-fn-insert-before,false
+fn-insert-before,true
 fn-in-scope-prefixes,true
 fn-iri-to-uri,false
 fn-lang,false
@@ -101,7 +101,7 @@ fn-path,false
 fn-position,true
 fn-prefix-from-QName,false
 fn-QName,true
-fn-remove,false
+fn-remove,true
 fn-replace,true
 fn-resolve-QName,true
 fn-resolve-uri,false
@@ -120,7 +120,7 @@ fn-string,true
 fn-string-join,true
 fn-string-length,true
 fn-string-to-codepoints,false
-fn-subsequence,false
+fn-subsequence,true
 fn-substring,false
 fn-substring-after,true
 fn-substring-before,true
@@ -133,7 +133,7 @@ fn-tokenize,false
 fn-trace,false
 fn-translate,false
 fn-true,true
-fn-unordered,false
+fn-unordered,true
 fn-unparsed-text,false
 fn-unparsed-text-available,false
 fn-unparsed-text-lines,false
