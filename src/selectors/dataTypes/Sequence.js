@@ -12,6 +12,10 @@ function Sequence (initialValues) {
 
 Sequence.prototype = Object.create(Item.prototype);
 
+Sequence.prototype.toString = function () {
+	return this.value.map(v=>v.toString()).join(' ');
+};
+
 /**
  * @param   {!Item}  value
  * @return  {!Sequence}

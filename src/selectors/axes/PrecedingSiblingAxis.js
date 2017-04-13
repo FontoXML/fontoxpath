@@ -13,14 +13,7 @@ class PrecedingSiblingAxis extends Selector {
 		super(siblingSelector.specificity, Selector.RESULT_ORDERINGS.REVERSE_SORTED);
 
 		this._siblingSelector = siblingSelector;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(preceding-sibling ${this._siblingSelector.toString()})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(preceding-sibling ${this._siblingSelector.toString()})`;
 	}
 
 	/**

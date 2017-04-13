@@ -37,15 +37,7 @@ class OrOperator extends Selector {
 		}, undefined);
 
 		this._subSelectors = selectors;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(or ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
-		}
-
-		return this._stringifiedValue;
-
+		this._getStringifiedValue = () => `(or ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
 	}
 
 	evaluate (dynamicContext) {

@@ -18,14 +18,7 @@ class SequenceOperator extends Selector {
 			}, new Specificity({})),
 			Selector.RESULT_ORDERINGS.UNSORTED);
 		this._selectors = selectors;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(sequence ${this._selectors.map(selector => selector.toString()).join(' ')})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(sequence ${this._selectors.map(selector => selector.toString()).join(' ')})`;
 	}
 
 	evaluate (dynamicContext) {

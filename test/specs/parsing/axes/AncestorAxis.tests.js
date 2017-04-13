@@ -2,7 +2,8 @@ import slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToNodes
+	evaluateXPathToNodes,
+	evaluateXPathToStrings,
 } from 'fontoxpath';
 
 let documentNode;
@@ -24,7 +25,8 @@ describe('ancestor', () => {
 			'someParentElement',
 			['someElement', { someAttribute: 'someValue' }]
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToStrings('ancestor::*/position()', documentNode.documentElement.firstChild), [documentNode.documentElement]);
+		chai.assert.deepEqual(evaluateXPathToStrings('ancestor-or-self::*/position()', documentNode.documentElement.firstChild), ['1', '2']);
+	});
 });
 
 describe('ancestor-or-self', () => {

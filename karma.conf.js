@@ -122,13 +122,16 @@ module.exports = config => {
 				loaders: [{
 					loader: 'babel-loader',
 					test: /\.js$/,
-					include: runQt3Tests ? [] :
+					include: runQt3Tests ? [path.resolve('src')] :
 						runIntegrationTests ?
 						[path.resolve('test')] :
 						[path.resolve('src'), path.resolve('test')],
 					query: {
 						presets: [
 							'babel-preset-es2015'
+						],
+						plugins: [
+							'transform-runtime'
 						]
 					}
 				}]

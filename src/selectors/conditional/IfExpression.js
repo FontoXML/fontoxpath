@@ -21,14 +21,8 @@ class IfExpression extends Selector {
 		this._testExpression = testExpression;
 		this._thenExpression = thenExpression;
 		this._elseExpression = elseExpression;
-	}
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(if ${this._testExpression.toString()} ${this._thenExpression} ${this._elseExpression})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(if ${this._testExpression.toString()} ${this._thenExpression} ${this._elseExpression})`;
 	}
 
 	evaluate (dynamicContext) {

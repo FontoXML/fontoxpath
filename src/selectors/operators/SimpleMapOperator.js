@@ -22,13 +22,8 @@ class SimpleMapOperator extends Selector {
 
 		this._expression1 = expression1;
 		this._expression2 = expression2;
-	}
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(simple-map ${this._expression1} ${this._expression2})`;
-		}
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(simple-map ${this._expression1} ${this._expression2})`;
 	}
 
 	evaluate (dynamicContext) {

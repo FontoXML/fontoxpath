@@ -13,10 +13,7 @@ class ParentAxis extends Selector {
 		super(parentSelector.specificity, Selector.RESULT_ORDERINGS.REVERSE_SORTED);
 
 		this._parentSelector = parentSelector;
-	}
-
-	toString () {
-		return `(parent ${this._parentSelector.toString()})`;
+		this._getStringifiedValue = () => `(parent ${this._parentSelector.toString()})`;;
 	}
 
 	/**

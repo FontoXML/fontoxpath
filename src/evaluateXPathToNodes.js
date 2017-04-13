@@ -10,9 +10,10 @@ import evaluateXPath from './evaluateXPath';
  * @param  {!Node}             contextNode    The node from which to run the XPath.
  * @param  {?IDomFacade=}      domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}          variables      Extra variables (name=>value). Values can be number / string or boolean.
+ * @param  {?Object=}           options      Extra options for evaluating this XPath
  *
  * @return  {Array<Node>}      All matching Nodes, in the order defined by the XPath
  */
-export default function evaluateXPathToNodes (selector, contextNode, domFacade, variables) {
-	return /** @type {Array<Node>} */(evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.NODES_TYPE));
+export default function evaluateXPathToNodes (selector, contextNode, domFacade, variables, options) {
+	return /** @type {Array<Node>} */(evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.NODES_TYPE, options));
 }

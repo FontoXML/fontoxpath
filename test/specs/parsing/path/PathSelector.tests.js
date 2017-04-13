@@ -2,6 +2,7 @@ import slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
+	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
@@ -43,6 +44,17 @@ describe('relative paths', () => {
 			]
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNumbers('//*/position()', documentNode.documentElement), [1, 2, 3]);
+	});
+
+	it('Starts from a contextItem, not the contextSequence', () => {
+		jsonMlMapper.parse([
+			'someElement',
+			['someChildElement', 'A piece of text'],
+			['someChildElement', 'A piece of text'],
+			['someChildElement', 'A piece of text'],
+			['someChildElement', 'A piece of text']
+		], documentNode);
+		chai.assert.isTrue(evaluateXPathToBoolean('/*/*[./text() => contains("piece of")]', documentNode.firstChild));
 	});
 
 	it('returns its results sorted on document order', () => {

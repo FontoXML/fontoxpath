@@ -13,16 +13,12 @@ class AbsolutePathSelector extends Selector {
 		super(relativePathSelector.specificity, Selector.RESULT_ORDERINGS.SORTED);
 
 		this._relativePathSelector = relativePathSelector;
-	}
+		this._getStringifiedValue = () => `(absolute-path ${this._relativePathSelector})`;
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(absolute-path ${this._relativePathSelector})`;
-		}
-		return this._stringifiedValue;
 	}
 
 	evaluate (dynamicContext) {
+		console.log(this.toString());
 		var node = dynamicContext.contextItem.value;
 		var documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;
 		// Assume this is the start, so only one node

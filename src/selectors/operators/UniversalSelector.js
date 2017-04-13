@@ -13,14 +13,7 @@ class UniversalSelector extends Selector {
 				[Specificity.UNIVERSAL_KIND]: 1
 			}),
 			Selector.RESULT_ORDERINGS.SORTED);
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = '(universal)';
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => '(universal)';
 	}
 
 	evaluate () {

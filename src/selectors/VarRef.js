@@ -12,10 +12,7 @@ class VarRef extends Selector {
 		super(new Specificity({}), Selector.RESULT_ORDERINGS.UNSORTED);
 
 		this._variableName = variableName;
-	}
-
-	toString () {
-		return `(var-ref ${this._variableName})`;
+		this._getStringifiedValue = () => `(var-ref ${this._variableName})`;
 	}
 
 	evaluate (dynamicContext) {

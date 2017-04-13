@@ -27,7 +27,7 @@ function fnNodeName (_dynamicContext, sequence) {
 }
 
 function contains (domFacade, ancestor, descendant) {
-	if (domFacade.isAttributeNode(ancestor)) {
+	if (ancestor.nodeType === 2) {
 		return ancestor === descendant;
 	}
 	while (descendant) {

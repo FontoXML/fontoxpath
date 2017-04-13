@@ -14,14 +14,7 @@ class TypeTest extends Selector {
 		super(new Specificity({}), Selector.RESULT_ORDERINGS.SORTED);
 
 		this._type = type;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(type-test ${this._type})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(type-test ${this._type})`;
 	}
 
 	evaluate (dynamicContext) {

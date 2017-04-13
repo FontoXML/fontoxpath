@@ -6,14 +6,13 @@
  */
 function DomFacade (domFacade) {
 	this._domFacade = domFacade;
-	this._createdNodeValuesByNodeId = Object.create(null);
 }
 
 /**
  * @param  {!Node}  node
  * @return  {boolean}
  */
-DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node) {
+function isAttributeNode (node) {
 	return node.nodeType === 2;
 };
 
@@ -22,7 +21,7 @@ DomFacade.prototype.isAttributeNode = DomFacade.isAttributeNode = function (node
  * @return  {?Node}
  */
 DomFacade.prototype.getParentNode = function (node) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return node.parentNode;
 	}
 	return this._domFacade.getParentNode(node);
@@ -33,7 +32,7 @@ DomFacade.prototype.getParentNode = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getFirstChild = function (node) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return null;
 	}
 	return this._domFacade.getFirstChild(node);
@@ -44,7 +43,7 @@ DomFacade.prototype.getFirstChild = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getLastChild = function (node) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return null;
 	}
 
@@ -56,7 +55,7 @@ DomFacade.prototype.getLastChild = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getNextSibling = function (node) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return null;
 	}
 
@@ -68,7 +67,7 @@ DomFacade.prototype.getNextSibling = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getPreviousSibling = function (node) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return null;
 	}
 
@@ -80,7 +79,7 @@ DomFacade.prototype.getPreviousSibling = function (node) {
  * @return  {!Array<!Node>}
  */
 DomFacade.prototype.getChildNodes = function (node) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return [];
 	}
 
@@ -94,7 +93,7 @@ DomFacade.prototype.getChildNodes = function (node) {
 };
 
 DomFacade.prototype.getAttribute = function (node, attributeName) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return null;
 	}
 
@@ -106,7 +105,7 @@ DomFacade.prototype.getAttribute = function (node, attributeName) {
 };
 
 DomFacade.prototype.getAllAttributes = function (node) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return [];
 	}
 
@@ -114,7 +113,7 @@ DomFacade.prototype.getAllAttributes = function (node) {
 };
 
 DomFacade.prototype.getData = function (node) {
-	if (this.isAttributeNode(node)) {
+	if (isAttributeNode(node)) {
 		return /** @type {!./selectors/dataTypes/AttributeNode.default} */(node).value;
 	}
 

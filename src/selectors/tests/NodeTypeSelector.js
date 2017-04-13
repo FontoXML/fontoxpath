@@ -16,13 +16,7 @@ class NodeTypeSelector extends Selector {
 		}), Selector.RESULT_ORDERINGS.SORTED);
 
 		this._nodeType = nodeType;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(node_type ${this._nodeType})`;
-		}
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(node_type ${this._nodeType})`;
 	}
 
 	evaluate (dynamicContext) {

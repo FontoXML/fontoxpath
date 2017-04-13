@@ -16,7 +16,10 @@ export default {
 			name: 'last',
 			argumentTypes: [],
 			returnType: 'xs:integer',
-			callFunction: fnLast
+			callFunction: fnLast,
+			optimizationOptions: {
+				usesContextLength: true
+			}
 		},
 
 		{

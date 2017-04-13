@@ -131,7 +131,7 @@ const shouldRunTestByName = require('text!./runnableTestSets.csv')
 	.map(line=>line.split(','))
 	.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 
-return function qt3tests (generateCsv) {
+export default function qt3tests (generateCsv) {
 	evaluateXPathToNodes('/catalog/test-set', catalog)
 		.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
 		.map(testSetNode => evaluateXPathToString('@file', testSetNode))
@@ -206,4 +206,4 @@ return function qt3tests (generateCsv) {
 				}
 			});
 		});
-};
+}

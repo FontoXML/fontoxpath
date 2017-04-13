@@ -9,8 +9,9 @@ function opTo (_dynamicContext, fromValue, toValue) {
 		return Sequence.empty();
 	}
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
-	var arr = [];
-	for (var i = 0; i < to - from + 1; i++) {
+	const arr = [];
+	arr.length = to - from;
+	for (let i = 0; i < to - from + 1; i++) {
 		arr[i] = new IntegerValue(from + i);
 	}
 	return new Sequence(arr);

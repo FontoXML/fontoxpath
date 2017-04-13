@@ -16,10 +16,7 @@ class AncestorAxis extends Selector {
 
 		this._ancestorSelector = ancestorSelector;
 		this._isInclusive = !!options.inclusive;
-	}
-
-	toString () {
-		return `(ancestor ${this._isInclusive} ${this._ancestorSelector.toString()})`;
+		this._getStringifiedValue = () => `(ancestor ${this._isInclusive} ${this._ancestorSelector.toString()})`;
 	}
 
 	/**

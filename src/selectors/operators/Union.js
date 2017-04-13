@@ -22,14 +22,7 @@ class Union extends Selector {
 		super(maxSpecificity, Selector.RESULT_ORDERINGS.UNSORTED);
 
 		this._subSelectors = selectors;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(union ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(union ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
 	}
 
 	evaluate (dynamicContext) {

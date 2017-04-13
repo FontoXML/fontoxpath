@@ -38,14 +38,8 @@ class BinaryNumericOperator extends Selector {
 		this._secondValueExpr = secondValueExpr;
 
 		this._kind = kind;
-	}
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(${this._kind} ${this._firstValueExpr.toString()} ${this._secondValueExpr.toString()}})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(${this._kind} ${this._firstValueExpr.toString()} ${this._secondValueExpr.toString()}})`;
 	}
 
 	evaluate (dynamicContext) {

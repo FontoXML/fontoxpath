@@ -21,10 +21,8 @@ class QuantifiedExpression extends Selector {
 		this._quantifier = quantifier;
 		this._inClauses = inClauses;
 		this._satisfiesExpr = satisfiesExpr;
-	}
 
-	toString () {
-		return `(quantified ${this._quantifier} ${this._inClauses.map(selector => selector.toString()).join(' ')} ${this._satisfiesExpr})`;
+		this._getStringifiedValue = () => `(quantified ${this._quantifier} ${this._inClauses.map(([name, selector]) => `(in-clause ${name} ${selector.toString()})`).join(' ')} ${this._satisfiesExpr.toString()})`;
 	}
 
 	evaluate (dynamicContext) {

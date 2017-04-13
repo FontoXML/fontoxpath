@@ -1,3 +1,4 @@
+import Cache from '../caching/Cache';
 /**
  * @typedef {./dataTypes/Sequence}
  */
@@ -9,29 +10,9 @@ let Sequence;
  */
 let ScopingType;
 
-class Cache {
-	constructor () {
-		this._cache = Object.create(null);
-	}
-	withCache (dynamicContext, selectorString, computeFn) {
-		const key = dynamicContext + '~' + selectorString;
-		let entry = this._cache[key];
-		if (!entry) {
-			console.log('cache miss', this._cache);
-			entry = this._cache[key] = computeFn();
-
-		} else {
-			console.log('cache hit');
-		}
-		return entry;
-	}
-}
-
-const cache = new Cache();
-
 class DynamicContext {
 	/**
-	 * @param  {{contextItemIndex: ?number, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object}}  context  The context to overlay
+	 * @param  {{contextItemIndex: ?number, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object, cache: Cache}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -64,12 +45,12 @@ class DynamicContext {
 		 */
 		this.variables = context.variables;
 
-		this.cache = cache;
+		this.cache = context.cache;
 	}
 
 	toString () {
 		const variables = `(variables ${Object.keys(this.variables).map(varKey => `(var ${varKey} ${this.variables[varKey].toString()})`)})`;
-		return `(dynamicContext ${this.contextSequence.toString()} ${this.contextItemIndex} ${variables})`;
+		return `(dynamicContext ${this.contextSequence.value.length} ${this.contextItemIndex} ${this.contextItem.toString()} ${variables})`;
 	}
 
 	/**
@@ -81,8 +62,18 @@ class DynamicContext {
 			contextItemIndex: overlayContext.contextItemIndex !== undefined ? overlayContext.contextItemIndex : this.contextItemIndex,
 			contextSequence: overlayContext.contextSequence ? overlayContext.contextSequence : this.contextSequence,
 			domFacade: overlayContext.domFacade ? overlayContext.domFacade : this.domFacade,
-			variables: overlayContext.variables ? Object.assign({}, this.variables, overlayContext.variables) : this.variables
+			variables: overlayContext.variables ? Object.assign({}, this.variables, overlayContext.variables) : this.variables,
+			cache: this.cache
 		});
+	}
+
+	* createSequenceIterator (contextSequence) {
+		const innerContext = this.createScopedContext({ contextSequence, contextItemIndex: 0 });
+		for (let i = 0, l = contextSequence.value.length; i < l; ++i) {
+			innerContext.contextItemIndex = i;
+			innerContext.contextItem = innerContext.contextSequence.value[innerContext.contextItemIndex];
+			yield innerContext;
+		}
 	}
 }
 

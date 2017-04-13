@@ -10,10 +10,7 @@ class ChildAxis extends Selector {
 		super(childSelector.specificity, Selector.RESULT_ORDERINGS.SORTED);
 
 		this._childSelector = childSelector;
-	}
-
-	toString () {
-		return `(child ${this._childSelector.toString()})`;
+		this._getStringifiedValue = () => `(child ${this._childSelector.toString()})`;
 	}
 
 	/**

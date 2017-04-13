@@ -18,7 +18,7 @@ function adaptItemToXPathValue (value) {
 		case 'object':
 			// Test if it is a node
 			if (value && value.nodeType) {
-				return new NodeValue({}, value);
+				return new NodeValue(value);
 			}
 		default:
 			throw new Error('Value ' + value + ' of type ' + typeof value + ' is not adaptable to an XPath value.');

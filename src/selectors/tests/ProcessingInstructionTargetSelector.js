@@ -16,13 +16,7 @@ class ProcessingInstructionTargetSelector extends Selector {
 		}), Selector.RESULT_ORDERINGS.SORTED);
 
 		this._target = target;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(processing-instruction ${this._target || ''})`;
-		}
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(processing-instruction ${this._target || ''})`;
 	}
 
 	evaluate (dynamicContext) {

@@ -19,14 +19,8 @@ class Unary extends Selector {
 		this._valueExpr = valueExpr;
 
 		this._kind = kind;
-	}
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(${this._kind} ${this._valueExpr.toString()}})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(${this._kind} ${this._valueExpr.toString()}})`;
 	}
 
 	evaluate (dynamicContext) {

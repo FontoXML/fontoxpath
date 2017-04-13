@@ -19,10 +19,8 @@ class ArrayConstructor extends Selector {
 			}), Selector.RESULT_ORDERINGS.UNSORTED);
 		this._curlyness = curlyness;
 		this._members = members;
-	}
+		this._getStringifiedValue = () => `(array ${this._curlyness} ${this._members.map(member => member.toString()).join(' ')})`;
 
-	toString () {
-		return `(array ${this._curlyness} ${this._members.map(member => member.toString()).join(' ')})`;
 	}
 
 	evaluate (dynamicContext) {

@@ -17,10 +17,7 @@ class AttributeAxis extends Selector {
 		}), Selector.RESULT_ORDERINGS.UNSORTED);
 
 		this._attributeTestSelector = attributeTestSelector;
-	}
-
-	toString () {
-		return `(attribute ${this._attributeTestSelector.toString()})`;
+		this._getStringifiedValue = () => `(attribute ${this._attributeTestSelector.toString()})`;
 	}
 
 	/**

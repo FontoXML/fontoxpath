@@ -15,13 +15,8 @@ class MapConstructor extends Selector {
 			[Specificity.EXTERNAL_KIND]: 1
 		}), Selector.RESULT_ORDERINGS.UNSORTED);
 		this._entries = entries;
-	}
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(map ${this._entries.map(({ key, value }) => `(entry ${key.toString()} ${value.toString()})`).join(' ')})`;
-		}
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(map ${this._entries.map(({ key, value }) => `(entry ${key.toString()} ${value.toString()})`).join(' ')})`;
 	}
 
 	evaluate (dynamicContext) {

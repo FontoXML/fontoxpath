@@ -16,10 +16,7 @@ class LetExpression extends Selector {
 		this._rangeVariable = rangeVariable;
 		this._bindingSequence = bindingSequence;
 		this._returnExpression = returnExpression;
-	}
-
-	toString () {
-		return `(let ${this._rangeVariable} ${this._bindingSequence.toString()} ${this._returnExpression.toString()})`;
+		this._getStringifiedValue = () => `(let ${this._rangeVariable} ${this._bindingSequence.toString()} ${this._returnExpression.toString()})`;
 	}
 
 	evaluate (dynamicContext) {

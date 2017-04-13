@@ -34,18 +34,16 @@ class FunctionCall extends Selector {
 	constructor (functionReference, args) {
 		super(new Specificity({
 			[Specificity.EXTERNAL_KIND]: 1
-		}), Selector.RESULT_ORDERINGS.UNSORTED);
+		}), Selector.RESULT_ORDERINGS.UNSORTED, functionReference._optimizationOptions);
 
 		this._args = args;
 		this._functionReference = functionReference;
-	}
 
-	toString () {
-		return `(function-call ${this._functionReference.toString()} ${this._args.map(arg => arg === null ? '(argument-placeholder)' : arg.toString()).join(' ')})`;
+		this._getStringifiedValue = () => `(function-call ${this._functionReference.toString()} ${this._args.map(arg => arg === null ? '(argument-placeholder)' : arg.toString()).join(' ')})`;
 	}
 
 	evaluate (dynamicContext) {
-		return dynamicContext.cache.withCache(this, dynamicContext, () => {
+		return dynamicContext.cache.withCache(this.toString(), dynamicContext, () => {
 			var sequence = this._functionReference.evaluate(dynamicContext),
 			functionItem = sequence.value[0];
 

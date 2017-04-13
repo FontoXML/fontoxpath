@@ -32,10 +32,8 @@ class NamedFunctionRef extends Selector {
 			functionProperties.argumentTypes,
 			arity,
 			functionProperties.returnType);
-	}
 
-	toString () {
-		return `(function-ref ${this._functionName} ${this._arity})`;
+		this._getStringifiedValue = () => `(function-ref ${this._functionName} ${this._arity})`;
 	}
 
 	evaluate (_dynamicContext) {

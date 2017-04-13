@@ -13,14 +13,7 @@ class FollowingSiblingAxis extends Selector {
 		super(siblingSelector.specificity, Selector.RESULT_ORDERINGS.SORTED);
 
 		this._siblingSelector = siblingSelector;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(following-sibling ${this._siblingSelector.toString()})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(following-sibling ${this._siblingSelector.toString()})`;
 	}
 
 	/**

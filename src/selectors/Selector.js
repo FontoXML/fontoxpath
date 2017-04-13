@@ -15,14 +15,18 @@ class Selector {
 	 * @param  {!./Specificity}  specificity
 	 * @param  {!RESULT_ORDERINGS}       expectedResultOrder  Describe what the expected sorting order is, will be used to shortcut sorting at various places.
 	 *                                               Either 'sorted', 'reverse-sorted' or 'unsorted'. Sorted sequences are expected to be deduplicated.
+	 * @param  {Object=}          optimizationOptions
 	 */
-	constructor (specificity, expectedResultOrder) {
+	constructor (specificity, expectedResultOrder, optimizationOptions = {}) {
 		this.specificity = specificity;
 		this.expectedResultOrder = expectedResultOrder;
 		/**
+		 * @abstract
 		 * @type {?string}
 		 */
-		this._stringifiedValue = null;
+		this._getStringifiedValue = () => null;
+
+		this._optimizationOptions = optimizationOptions;
 	}
 
 	static get RESULT_ORDERINGS () {
@@ -45,10 +49,11 @@ class Selector {
 	}
 
 	/**
-	 * @abstract
+	 * @final
 	 * @return  {string}
 	 */
 	toString () {
+		return this._getStringifiedValue();
 	}
 
 	/**

@@ -17,15 +17,8 @@ class AndOperator extends Selector {
 			}, new Specificity({})),
 			Selector.RESULT_ORDERINGS.SORTED);
 		this._subSelectors = selectors;
-	}
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(and ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
-		}
-
-		return this._stringifiedValue;
-
+		this._getStringifiedValue = () => `(and ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
 	}
 
 	evaluate (dynamicContext) {

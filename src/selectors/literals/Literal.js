@@ -41,10 +41,8 @@ class Literal extends Selector {
 		}
 
 		this._valueSequence = Sequence.singleton(typedValue);
-	}
 
-	toString () {
-		return `(literal ${this._type} ${this._valueSequence.value[0].value})`;
+		this._getStringifiedValue = () => `(literal ${this._type} ${this._valueSequence.value[0].value})`;
 	}
 
 	evaluate (_dynamicContext) {

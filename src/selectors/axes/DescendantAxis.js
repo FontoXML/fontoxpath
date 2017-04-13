@@ -16,19 +16,9 @@ class DescendantAxis extends Selector {
 
 		this._descendantSelector = descendantSelector;
 		this._isInclusive = !!options.inclusive;
+		this._getStringifiedValue = () => `(descendant ${this._isInclusive} ${this._descendantSelector.toString()})`;
 	}
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(descendant ${this._isInclusive} ${this._descendantSelector.toString()})`;
-		}
-		return this._stringifiedValue;
-	}
-
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluate (dynamicContext) {
 		const contextItem = dynamicContext.contextItem;
 		/**
@@ -44,14 +34,14 @@ class DescendantAxis extends Selector {
 				contextItemIndex: 0,
 				contextSequence: Sequence.singleton(new NodeValue(node))
 			});
-
-			return dynamicContext.cache.withCache(childScopedContext, '(descendant true node())', function () {
+			function collectChildDescendants () {
 				return domFacade.getChildNodes(childScopedContext.contextItem.value)
 					.map(childNode => collectDescendants(childNode))
 					.reduce(
 						(descendants, childDescendants) => descendants.merge(childDescendants),
 						childScopedContext.contextSequence);
-			});
+			}
+			return collectChildDescendants();
 		}
 
 		let collectedDescendants;

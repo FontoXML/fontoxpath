@@ -12,14 +12,7 @@ class SelfAxis extends Selector {
 		super(selector.specificity, Selector.RESULT_ORDERINGS.SORTED);
 
 		this._selector = selector;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(self ${this._selector.toString()})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(self ${this._selector.toString()})`;
 	}
 
 	/**

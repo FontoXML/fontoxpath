@@ -34,37 +34,31 @@ class Compare extends Selector {
 				this._comparator = nodeCompare;
 				break;
 		}
-	}
 
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(${this._compare} ${this._operator} ${this._firstSelector.toString()} ${this._secondSelector.toString()}})`;
-		}
-
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(${this._compare} ${this._operator} ${this._firstSelector.toString()} ${this._secondSelector.toString()}})`;
 	}
 
 	evaluate (dynamicContext) {
-		var firstSequence = this._firstSelector.evaluate(dynamicContext),
-        secondSequence = this._secondSelector.evaluate(dynamicContext);
+		const firstSequence = this._firstSelector.evaluate(dynamicContext),
+			  secondSequence = this._secondSelector.evaluate(dynamicContext);
 
 		if ((this._compare === 'valueCompare' || this._compare === 'nodeCompare') && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
 			return Sequence.empty();
 		}
 
 		if (this._compare === 'nodeCompare') {
-			var nodeCompareResult = this._comparator(this._operator, firstSequence, secondSequence) ?
+			const nodeCompareResult = this._comparator(this._operator, firstSequence, secondSequence) ?
 				BooleanValue.TRUE :
 				BooleanValue.FALSE;
 			return Sequence.singleton(nodeCompareResult);
 		}
 
 		// Atomize both sequences
-		var firstAtomizedSequence = firstSequence.atomize(dynamicContext);
-		var secondAtomizedSequence = secondSequence.atomize(dynamicContext);
-		var booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ?
-			BooleanValue.TRUE :
-			BooleanValue.FALSE;
+		const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
+		const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
+		const booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ?
+			  BooleanValue.TRUE :
+			  BooleanValue.FALSE;
 		return Sequence.singleton(booleanValue);
 	}
 }

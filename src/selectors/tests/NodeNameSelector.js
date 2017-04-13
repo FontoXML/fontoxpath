@@ -22,13 +22,7 @@ class NodeNameSelector extends Selector {
 		super(new Specificity(specificity), Selector.RESULT_ORDERINGS.SORTED);
 
 		this._nodeName = nodeName;
-	}
-
-	toString () {
-		if (!this._stringifiedValue) {
-			this._stringifiedValue = `(node-name ${this._nodeName})`;
-		}
-		return this._stringifiedValue;
+		this._getStringifiedValue = () => `(node-name ${this._nodeName})`;
 	}
 
 	evaluate (dynamicContext) {

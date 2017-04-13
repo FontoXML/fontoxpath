@@ -14,10 +14,8 @@ class Filter extends Selector {
 
 		this._selector = selector;
 		this._filterSelector = filterSelector;
-	}
 
-	toString () {
-		return `(filter ${this._selector} ${this._filterSelector})`;
+		this._getStringifiedValue = () => `(filter ${this._selector} ${this._filterSelector})`;
 	}
 
 	getBucket () {
@@ -25,27 +23,29 @@ class Filter extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var valuesToFilter = this._selector.evaluate(dynamicContext);
+		const valuesToFilter = this._selector.evaluate(dynamicContext);
 
-		var filteredValues = valuesToFilter.value.filter(function (_, index) {
-				var result = this._filterSelector.evaluate(
-						dynamicContext.createScopedContext({
-							contextItemIndex: index,
-							contextSequence: valuesToFilter
-						}));
+		const filteredValues = [];
+		for (const innerContext of dynamicContext.createSequenceIterator(valuesToFilter)) {
+			const result = this._filterSelector.evaluate(innerContext);
 
-				if (result.isEmpty()) {
-					return false;
+			if (result.isEmpty()) {
+				continue;
+			}
+
+			const resultValue = result.value[0];
+			if (resultValue.instanceOfType('xs:numeric')) {
+				// Remember: XPath is one-based
+				if (resultValue.value === innerContext.contextItemIndex + 1) {
+					filteredValues.push(innerContext.contextItem);
 				}
+				continue;
+			}
 
-				var resultValue = result.value[0];
-				if (resultValue.instanceOfType('xs:numeric')) {
-					// Remember: XPath is one-based
-					return resultValue.value === index + 1;
-				}
-
-				return result.getEffectiveBooleanValue();
-			}.bind(this));
+			if (result.getEffectiveBooleanValue()) {
+				filteredValues.push(innerContext.contextItem);
+			}
+		}
 
 		return new Sequence(filteredValues);
 	}
