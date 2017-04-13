@@ -4,12 +4,19 @@ const runIntegrationTests = process.env.npm_config_integration_tests;
 const ciMode = process.env.npm_config_ci_mode;
 const coverageMode = process.env.npm_config_coverage;
 const runQt3Tests = process.env.npm_config_qt3;
+const generateCsv = process.env.npm_config_generate_csv;
 
 if (runIntegrationTests && coverageMode) {
 	throw new Error('No coverage possible for integration tests.');
 }
 
-const bootstrapFile = runQt3Tests ? require.resolve('./test/qt3tests.js') : runIntegrationTests ? require.resolve('./test/integrationtests.js') : require.resolve('./test/alltests.js');
+const bootstrapFile = runQt3Tests ?
+		generateCsv ?
+			require.resolve('./test/generateQt3Csv.js') :
+			require.resolve('./test/runQt3Tests.js') :
+		runIntegrationTests ?
+			require.resolve('./test/integrationtests.js') :
+			require.resolve('./test/alltests.js');
 
 module.exports = config => {
 	config.set({
