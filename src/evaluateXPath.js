@@ -6,8 +6,6 @@ import NodeValue from './selectors/dataTypes/NodeValue';
 import NumericValue from './selectors/dataTypes/NumericValue';
 import DomFacade from './DomFacade';
 import domBackedDomFacade from './domBackedDomFacade';
-import cachePool from './caching/cachePool';
-import CachingDomFacade from './caching/CachingDomFacade';
 
 /**
  * Evaluates an XPath on the given contextNode.
@@ -41,8 +39,6 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 	}
 
 	const compiledSelector = createSelectorFromXPath(xpathSelector);
-	const cache = cachePool.getCacheForId(options['cacheId']);
-//	const dependencyTrackingDomFacade = new CachingDomFacade(domFacade);
 
 	const contextSequence = Sequence.singleton(new NodeValue(contextNode));
 	const untypedVariables = Object.assign(variables || {});
@@ -62,15 +58,12 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 	const dynamicContext = new DynamicContext({
 		contextItemIndex: 0,
 		contextSequence: contextSequence,
+		contextItem: new NodeValue(contextNode),
 		domFacade,
-		variables: typedVariables,
-		cache: cache
+		variables: typedVariables
 	});
 
-	const rawResults = cache.withCache(
-		compiledSelector.toString(),
-		dynamicContext,
-		() => compiledSelector.evaluate(dynamicContext));
+	const rawResults = compiledSelector.evaluate(dynamicContext);
 
 	switch (returnType) {
 		case evaluateXPath.BOOLEAN_TYPE:
@@ -81,7 +74,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				return '';
 			}
 			// Atomize to convert (attribute)nodes to be strings
-			return rawResults.value[0].atomize(dynamicContext).value + '';
+			return rawResults.first().atomize(dynamicContext).value + '';
 
 		case evaluateXPath.STRINGS_TYPE:
 			if (rawResults.isEmpty()) {
@@ -89,64 +82,71 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			}
 
 			// Atomize all parts
-			return rawResults.value.map(function (value) {
+			return Array.from(rawResults.value()).map(function (value) {
 				return value.atomize(dynamicContext).value + '';
 			});
 
-		case evaluateXPath.NUMBER_TYPE:
+		case evaluateXPath.NUMBER_TYPE: {
 			if (!rawResults.isSingleton()) {
 				return NaN;
 			}
-			if (!(rawResults.value[0] instanceof NumericValue)) {
+			const first = rawResults.first();
+			if (!(first instanceof NumericValue)) {
 				return NaN;
 			}
-			return rawResults.value[0].value;
+			return first.value;
+		}
 
-		case evaluateXPath.FIRST_NODE_TYPE:
+		case evaluateXPath.FIRST_NODE_TYPE: {
 			if (rawResults.isEmpty()) {
 				return null;
 			}
-			if (!(rawResults.value[0].instanceOfType('node()'))) {
+			const first = rawResults.first();
+			if (!(first.instanceOfType('node()'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
 			}
-			if (rawResults.value[0].instanceOfType('attribute()')) {
+			if (first.instanceOfType('attribute()')) {
 				throw new Error('XPath can not resolve to attribute nodes');
 			}
-			return rawResults.value[0].value;
+			return first.value;
+		}
 
-		case evaluateXPath.NODES_TYPE:
+		case evaluateXPath.NODES_TYPE: {
 			if (rawResults.isEmpty()) {
 				return [];
 			}
-			if (!(rawResults.value.every(function (value) {
+			const resultArray = Array.from(rawResults.value());
+			if (!resultArray.every(function (value) {
 				return value.instanceOfType('node()');
-			}))) {
+			})) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a sequence of Nodes.');
 			}
-			if (rawResults.value.some(function (value) {
+			if (resultArray.some(function (value) {
 				return value.instanceOfType('attribute()');
 			})) {
 				throw new Error('XPath ' + xpathSelector + ' should not resolve to attribute nodes');
 			}
-			return rawResults.value.map(function (nodeValue) {
+			return resultArray.map(function (nodeValue) {
 				return nodeValue.value;
 			});
+		}
 
-		case evaluateXPath.MAP_TYPE:
+		case evaluateXPath.MAP_TYPE: {
 			if (rawResults.isEmpty()) {
 				return {};
 			}
 			if (!rawResults.isSingleton()) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single map.');
 			}
-			if (!(rawResults.value[0].instanceOfType('map(*)'))) {
+			const first = rawResults.first();
+			if (!(first.instanceOfType('map(*)'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a map');
 			}
-			return rawResults.value[0].keyValuePairs.reduce(function (mapObject, keyValuePair) {
+			return first.keyValuePairs.reduce(function (mapObject, keyValuePair) {
 				var key = keyValuePair.key.value;
 				var value;
 				if (keyValuePair.value.isSingleton()) {
-					value = keyValuePair.value.value[0].atomize(dynamicContext).value;
+					value = keyValuePair.value.first().atomize(dynamicContext).value;
 				}
 				else {
 					value = keyValuePair.value.atomize(dynamicContext).value.map(function (atomizedValue) {
@@ -156,6 +156,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				mapObject[key] = value;
 				return mapObject;
 			}, {});
+		}
 
 		case evaluateXPath.ARRAY_TYPE:
 			if (rawResults.isEmpty()) {
@@ -164,11 +165,11 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			if (!rawResults.isSingleton()) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single array.');
 			}
-			if (!(rawResults.value[0].instanceOfType('array(*)'))) {
+			if (!(rawResults.first().instanceOfType('array(*)'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to an array');
 			}
-			return rawResults.value[0].members.map(function (entry) {
-				return entry.atomize(dynamicContext).value.map(function (atomizedValue) {
+			return rawResults.first().members.map(function (entry) {
+				return Array.from(entry.atomize(dynamicContext).value()).map(function (atomizedValue) {
 					return atomizedValue.value;
 				});
 			});
@@ -177,7 +178,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			if (rawResults.isEmpty()) {
 				return [];
 			}
-			return rawResults.value.map(function (value) {
+			return Array.from(rawResults.value()).map(function (value) {
 				if (!(value instanceof NumericValue)) {
 					throw new Error('Expected XPath ' + xpathSelector + ' to resolve to numbers');
 				}
@@ -185,20 +186,20 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			});
 
 		default:
-			var allValuesAreNodes = rawResults.value.every(function (value) {
+var allValuesAreNodes = Array.from(rawResults.value()).every(function (value) {
 					return value.instanceOfType('node()') &&
 						!(value.instanceOfType('attribute()'));
 				});
 			if (allValuesAreNodes) {
 				if (rawResults.isSingleton()) {
-					return rawResults.value[0].value;
+					return rawResults.first().value;
 				}
-				return rawResults.value.map(function (nodeValue) {
+				return Array.from(rawResults).map(function (nodeValue) {
 					return nodeValue.value;
 				});
 			}
 			if (rawResults.isSingleton()) {
-				return rawResults.value[0].atomize(dynamicContext).value;
+				return rawResults.first().atomize(dynamicContext).value;
 			}
 			return rawResults.atomize(dynamicContext).value.map(function (atomizedValue) {
 				return atomizedValue.value;

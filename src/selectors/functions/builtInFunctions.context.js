@@ -2,7 +2,7 @@ import IntegerValue from '../dataTypes/IntegerValue';
 import Sequence from '../dataTypes/Sequence';
 
 function fnLast (dynamicContext) {
-	return Sequence.singleton(new IntegerValue(dynamicContext.contextSequence.value.length));
+	return Sequence.singleton(new IntegerValue(dynamicContext.contextSequence.getLength()));
 }
 
 function fnPosition (dynamicContext) {

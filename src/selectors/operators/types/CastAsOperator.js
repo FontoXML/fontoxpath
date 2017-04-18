@@ -35,7 +35,7 @@ class castAsOperator extends Selector {
 			return evaluatedExpression;
 		}
 
-		return Sequence.singleton(castToType(evaluatedExpression.value[0], this._targetType));
+		return Sequence.singleton(castToType(evaluatedExpression.first(), this._targetType));
 	}
 }
 

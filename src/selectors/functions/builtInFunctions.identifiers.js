@@ -14,13 +14,13 @@ function findDescendants (domFacade, node, isMatch) {
 }
 
 function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
-	var targetNodeValue = targetNodeSequence.value[0];
+	var targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue.instanceOfType('node()')) {
 		return Sequence.empty();
 	}
 	var domFacade = dynamicContext.domFacade;
 	// TODO: Index ids to optimize this lookup
-	var isMatchingIdById = idrefSequence.value.reduce(function (byId, idrefValue) {
+	var isMatchingIdById = Array.from(idrefSequence.value()).reduce(function (byId, idrefValue) {
 			idrefValue.value.split(/\s+/).forEach(function (id) {
 				byId[id] = true;
 			});
@@ -54,12 +54,12 @@ function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 }
 
 function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
-	var targetNodeValue = targetNodeSequence.value[0];
+	var targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue.instanceOfType('node()')) {
 		return Sequence.empty();
 	}
 	var domFacade = dynamicContext.domFacade;
-	var isMatchingIdRefById = idSequence.value.reduce(function (byId, idValue) {
+	var isMatchingIdRefById = Array.from(idSequence.value()).reduce(function (byId, idValue) {
 			byId[idValue.value] = true;
 			return byId;
 		}, Object.create(null));

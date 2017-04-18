@@ -40,7 +40,7 @@ function fnParseJson (_dynamicContext, jsonString) {
 	/** @type {?} */
 	let jsObject;
 	try {
-		jsObject = JSON.parse(jsonString.value[0].value);
+		jsObject = JSON.parse(jsonString.first().value);
 	}
 	catch (_e) {
 		throw new Error('FOJS0001: parsed JSON string contains illegal JSON.');

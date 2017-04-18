@@ -41,12 +41,9 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 			}
 	}
 
-	const transformedValues = [];
-	for (let i = 0, l = argument.value.length; i < l; ++i) {
-		let argumentItem = argument.value[i];
+	return argument.map(argumentItem => {
 		if (argumentItem.instanceOfType(type)) {
-			transformedValues.push(argumentItem);
-			continue;
+			return argumentItem;
 		}
 
 		if (argumentItem.instanceOfType('node()')) {
@@ -54,25 +51,22 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 		}
 		// Everything is an anyAtomicType, so no casting necessary.
 		if (type === 'xs:anyAtomicType') {
-			transformedValues.push(argumentItem);
-			continue;
+			return argumentItem;
 		}
 		if (argumentItem.instanceOfType('xs:untypedAtomic')) {
 			// We might be able to cast this to the wished type
 			const item = castToType(argumentItem, type);
 			if (!item) {
-				return null;
+				throw new Error('Unable to convert to type');
 			}
-			transformedValues.push(item);
-			continue;
+			return item;
 		}
 
 		// We need to promote this
 		const item = promoteToType(argumentItem, type);
 		if (!item) {
-			return null;
+			throw new Error('Unable to convert to type');
 		}
-		transformedValues.push(item);
-	}
-	return new Sequence(transformedValues);
+		return item;
+	});
 };

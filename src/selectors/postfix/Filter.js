@@ -1,5 +1,4 @@
 import Selector from '../Selector';
-import Sequence from '../dataTypes/Sequence';
 
 /**
  * @extends {Selector}
@@ -24,30 +23,26 @@ class Filter extends Selector {
 
 	evaluate (dynamicContext) {
 		const valuesToFilter = this._selector.evaluate(dynamicContext);
-
-		const filteredValues = [];
-		for (const innerContext of dynamicContext.createSequenceIterator(valuesToFilter)) {
-			const result = this._filterSelector.evaluate(innerContext);
+		const filterSelector = this._filterSelector;
+		return valuesToFilter.filter((item, i) => {
+			const result = filterSelector.evaluate(dynamicContext._createScopedContext({
+				contextSequence: valuesToFilter,
+				contextItemIndex: i,
+				contextItem: item
+			}));
 
 			if (result.isEmpty()) {
-				continue;
+				return false;
 			}
 
-			const resultValue = result.value[0];
+			const resultValue = result.first();
 			if (resultValue.instanceOfType('xs:numeric')) {
 				// Remember: XPath is one-based
-				if (resultValue.value === innerContext.contextItemIndex + 1) {
-					filteredValues.push(innerContext.contextItem);
-				}
-				continue;
+				return resultValue.value === i + 1;
 			}
 
-			if (result.getEffectiveBooleanValue()) {
-				filteredValues.push(innerContext.contextItem);
-			}
-		}
-
-		return new Sequence(filteredValues);
+			return result.getEffectiveBooleanValue();
+		});
 	}
 }
 

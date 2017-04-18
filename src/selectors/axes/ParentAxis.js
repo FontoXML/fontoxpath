@@ -28,8 +28,9 @@ class ParentAxis extends Selector {
 			return Sequence.empty();
 		}
 		const parentSequence = Sequence.singleton(new NodeValue(parentNode));
-		const scopedContext = dynamicContext.createScopedContext({
+		const scopedContext = dynamicContext._createScopedContext({
 			contextItemIndex: 0,
+			contextItem: new NodeValue(parentNode),
 			contextSequence: parentSequence
 		});
 

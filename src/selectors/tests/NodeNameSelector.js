@@ -31,7 +31,6 @@ class NodeNameSelector extends Selector {
 		if (!node.instanceOfType('element()') && !node.instanceOfType('attribute()')) {
 			return Sequence.singleton(BooleanValue.FALSE);
 		}
-
 		if (this._nodeName === '*') {
 			return Sequence.singleton(BooleanValue.TRUE);
 		}

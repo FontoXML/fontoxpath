@@ -27,9 +27,9 @@ export default function generalCompare (operator, firstSequence, secondSequence,
     // Change operator to equivalent valueCompare operator
     operator = OPERATOR_TRANSLATION[operator];
 
-    return firstAtomizedSequence.value.some(function (firstValue) {
+    return Array.from(firstAtomizedSequence.value()).some(function (firstValue) {
         var firstSingletonSequence = Sequence.singleton(firstValue);
-        return secondAtomizedSequence.value.some(function (secondValue) {
+        return Array.from(secondAtomizedSequence.value()).some(function (secondValue) {
             return valueCompare(operator, firstSingletonSequence, Sequence.singleton(secondValue));
         });
     });

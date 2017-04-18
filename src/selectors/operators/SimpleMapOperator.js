@@ -28,15 +28,12 @@ class SimpleMapOperator extends Selector {
 
 	evaluate (dynamicContext) {
 		const sequence = this._expression1.evaluate(dynamicContext);
-		const resultingSequence = Sequence.empty();
-		const context = dynamicContext.createScopedContext({
-			contextItemIndex: 0,
-			contextSequence: sequence
+		const expression2 = this._expression2;
+		return new Sequence(function* () {
+			for (const childContext of dynamicContext.createSequenceIterator(sequence)) {
+				yield* expression2.evaluate(childContext).value();
+			}
 		});
-		for (let i = 0, l = sequence.value.length; i < l; ++i) {
-			resultingSequence.merge(this._expression2.evaluate(context.createScopedContext({ contextItemIndex: i })));
-		}
-		return resultingSequence;
 	}
 }
 

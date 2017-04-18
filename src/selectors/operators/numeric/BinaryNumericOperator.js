@@ -59,8 +59,8 @@ class BinaryNumericOperator extends Selector {
 		}
 
 		// Cast both to doubles, if they are xs:untypedAtomic
-		let firstValue = firstValueSequence.value[0],
-			secondValue = secondValueSequence.value[0];
+		let firstValue = firstValueSequence.first(),
+			secondValue = secondValueSequence.first();
 
 		if (firstValue.instanceOfType('xs:untypedAtomic')) {
 			firstValue = castToType(firstValue, 'xs:double');

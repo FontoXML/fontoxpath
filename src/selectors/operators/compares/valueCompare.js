@@ -6,8 +6,8 @@ export default function valueCompare (operator, firstSequence, secondSequence) {
         throw new Error('XPTY0004: Sequences to compare are not singleton');
     }
 
-    var firstValue = firstSequence.value[0],
-        secondValue = secondSequence.value[0];
+    var firstValue = firstSequence.first(),
+        secondValue = secondSequence.first();
 
     if (firstValue.instanceOfType('xs:untypedAtomic') && secondValue.instanceOfType('xs:untypedAtomic')) {
         firstValue = castToType(firstValue, 'xs:string');

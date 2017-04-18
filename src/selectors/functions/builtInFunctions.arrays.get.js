@@ -7,8 +7,8 @@ import Sequence from '../dataTypes/Sequence';
  * @return {!Sequence}
  */
 export default function arrayGet (_dynamicContext, arraySequence, positionSequence) {
-	var position = positionSequence.value[0].value,
-	array = arraySequence.value[0];
+	var position = positionSequence.first().value,
+	array = arraySequence.first();
 	if (position <= 0 || position > array.members.length) {
 		throw new Error('FOAY0001: array position out of bounds.');
 	}

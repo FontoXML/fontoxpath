@@ -13,7 +13,7 @@ function xsBoolean (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:boolean'));
+	return Sequence.singleton(castToType(sequence.first(), 'xs:boolean'));
 }
 
 function fnTrue () {

@@ -1,4 +1,3 @@
-import Cache from '../caching/Cache';
 /**
  * @typedef {./dataTypes/Sequence}
  */
@@ -12,7 +11,7 @@ let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItemIndex: ?number, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object, cache: Cache}}  context  The context to overlay
+	 * @param  {{contextItem: ./dataTypes/Item, contextItemIndex: ?number, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object, cache: Cache}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -31,7 +30,7 @@ class DynamicContext {
 		 * @type {?./dataTypes/Item}
 		 * @const
 		 */
-		this.contextItem = this.contextSequence && this.contextSequence.value[this.contextItemIndex] || null;
+		this.contextItem = context.contextItem;
 
 		/**
 		 * @type {!IDomFacade}
@@ -44,8 +43,6 @@ class DynamicContext {
 		 * @const
 		 */
 		this.variables = context.variables;
-
-		this.cache = context.cache;
 	}
 
 	toString () {
@@ -57,22 +54,24 @@ class DynamicContext {
 	 * @param   {!ScopingType}    overlayContext
 	 * @return  {!DynamicContext}
 	 */
-	createScopedContext (overlayContext) {
+	_createScopedContext (overlayContext) {
 		return new DynamicContext({
 			contextItemIndex: overlayContext.contextItemIndex !== undefined ? overlayContext.contextItemIndex : this.contextItemIndex,
 			contextSequence: overlayContext.contextSequence ? overlayContext.contextSequence : this.contextSequence,
 			domFacade: overlayContext.domFacade ? overlayContext.domFacade : this.domFacade,
 			variables: overlayContext.variables ? Object.assign({}, this.variables, overlayContext.variables) : this.variables,
-			cache: this.cache
+			contextItem: overlayContext.contextItem ? overlayContext.contextItem : this.contextItem
 		});
 	}
 
 	* createSequenceIterator (contextSequence) {
-		const innerContext = this.createScopedContext({ contextSequence, contextItemIndex: 0 });
-		for (let i = 0, l = contextSequence.value.length; i < l; ++i) {
-			innerContext.contextItemIndex = i;
-			innerContext.contextItem = innerContext.contextSequence.value[innerContext.contextItemIndex];
-			yield innerContext;
+		const innerContext = this._createScopedContext({ contextSequence, contextItemIndex: 0 });
+		let i = 0;
+		for (const value of contextSequence.value()) {
+			yield innerContext._createScopedContext({
+				contextItemIndex: i++,
+				contextItem: value
+			});
 		}
 	}
 }

@@ -26,22 +26,22 @@ class Union extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var nodeSet = this._subSelectors.reduce(function (resultingNodeSet, selector) {
-				var results = selector.evaluate(dynamicContext);
-				var allItemsAreNode = results.value.every(function (valueItem) {
-						return valueItem.instanceOfType('node()');
-					});
+		const nodeSet = this._subSelectors.reduce(function (resultingNodeSet, selector) {
+			const results = selector.evaluate(dynamicContext);
+			const allItemsAreNode = Array.from(results.value()).every(function (valueItem) {
+				return valueItem.instanceOfType('node()');
+			});
 
-				if (!allItemsAreNode) {
-					throw new Error('ERRXPTY0004: The sequences to union are not of type node()*');
-				}
-				results.value.forEach(function (nodeValue) {
-					resultingNodeSet.add(nodeValue);
-				});
-				return resultingNodeSet;
-			}, new Set());
+			if (!allItemsAreNode) {
+				throw new Error('XPTY0004: The sequences to union are not of type node()*');
+			}
+			for (const nodeValue of results.value()) {
+				resultingNodeSet.add(nodeValue);
+			}
+			return resultingNodeSet;
+		}, new Set());
 
-		var sortedValues = sortNodeValues(dynamicContext.domFacade, Array.from(nodeSet.values()));
+		const sortedValues = sortNodeValues(dynamicContext.domFacade, Array.from(nodeSet.values()));
 		return new Sequence(sortedValues);
 	}
 }

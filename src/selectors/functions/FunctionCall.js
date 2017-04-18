@@ -43,41 +43,40 @@ class FunctionCall extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		return dynamicContext.cache.withCache(this.toString(), dynamicContext, () => {
-			var sequence = this._functionReference.evaluate(dynamicContext),
-			functionItem = sequence.value[0];
+		var sequence = this._functionReference.evaluate(dynamicContext);
 
-			if (!sequence.isSingleton()) {
-				throw new Error('XPTY0004: expected base expression to evaluate to a sequence with a single item');
+		if (!sequence.isSingleton()) {
+			throw new Error('XPTY0004: expected base expression to evaluate to a sequence with a single item');
+		}
+
+		const functionItem = sequence.first();
+
+		if (!functionItem.instanceOfType('function(*)')) {
+			throw new Error('XPTY0004: expected base expression to evaluate to a function item');
+		}
+
+		if (functionItem.getArity() !== this._args.length) {
+			throw new Error(`XPTY0004: expected arity of function ${functionItem.getName()} to be ${this._args.length}, got function with arity of ${functionItem.getArity()}`);
+		}
+
+		var evaluatedArgs = this._args.map(function (argument) {
+			if (argument === null) {
+				return null;
 			}
-
-			if (!functionItem.instanceOfType('function(*)')) {
-				throw new Error('XPTY0004: expected base expression to evaluate to a function item');
-			}
-
-			if (functionItem.getArity() !== this._args.length) {
-				throw new Error(`XPTY0004: expected arity of function ${functionItem.getName()} to be ${this._args.length}, got function with arity of ${functionItem.getArity()}`);
-			}
-
-			var evaluatedArgs = this._args.map(function (argument) {
-				if (argument === null) {
-					return null;
-				}
-				return argument.evaluate(dynamicContext);
-			});
-
-			// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
-			var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, dynamicContext);
-			if (transformedArguments === null) {
-				throw new Error(`XPTY0004: expected argument list of function ${functionItem.getName()} to be [${argumentListToString(evaluatedArgs)}], got function with argument list [${functionItem.getArgumentTypes().join(', ')}].`);
-			}
-
-			if (transformedArguments.indexOf(null) >= 0) {
-				return functionItem.applyArguments(transformedArguments);
-			}
-
-			return functionItem.value.apply(undefined, [dynamicContext].concat(transformedArguments));
+			return argument.evaluate(dynamicContext);
 		});
+
+		// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
+		var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, dynamicContext);
+		if (transformedArguments === null) {
+			throw new Error(`XPTY0004: expected argument list of function ${functionItem.getName()} to be [${argumentListToString(evaluatedArgs)}], got function with argument list [${functionItem.getArgumentTypes().join(', ')}].`);
+		}
+
+		if (transformedArguments.indexOf(null) >= 0) {
+			return functionItem.applyArguments(transformedArguments);
+		}
+
+		return functionItem.value.apply(undefined, [dynamicContext].concat(transformedArguments));
 	}
 }
 

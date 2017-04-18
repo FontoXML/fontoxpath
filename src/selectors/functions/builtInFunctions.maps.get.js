@@ -9,9 +9,9 @@ import DynamicContext from '../DynamicContext';
  * @return  {!Sequence}
  */
 export default function mapGet (_dynamicContext, mapSequence, key) {
-	var map = mapSequence.value[0];
+	var map = mapSequence.first();
 	var matchingPair = map.keyValuePairs.find(function (keyValuePair) {
-			return isSameMapKey(keyValuePair.key, key.value[0]);
+			return isSameMapKey(keyValuePair.key, key.first());
 		});
 
 	if (!matchingPair) {

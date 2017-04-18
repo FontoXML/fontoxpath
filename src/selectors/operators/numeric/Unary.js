@@ -29,7 +29,7 @@ class Unary extends Selector {
 			return Sequence.singleton(new DoubleValue(Number.NaN));
 		}
 
-		var value = valueSequence.value[0].atomize();
+		var value = valueSequence.first().atomize(dynamicContext);
 		if (this._kind === '+') {
 			if (value.instanceOfType('xs:decimal') ||
 					value.instanceOfType('xs:double') ||
@@ -37,7 +37,6 @@ class Unary extends Selector {
 					value.instanceOfType('xs:integer')) {
 				return valueSequence;
 			}
-
 			return Sequence.singleton(new DoubleValue(Number.NaN));
 		}
 

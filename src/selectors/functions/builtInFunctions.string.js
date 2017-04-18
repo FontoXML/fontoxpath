@@ -17,8 +17,8 @@ function fnCompare (_dynamicContext, arg1, arg2) {
 		return Sequence.empty();
 	}
 
-	const arg1Value = arg1.value[0].value,
-		arg2Value = arg2.value[0].value;
+	const arg1Value = arg1.first().value,
+		arg2Value = arg2.first().value;
 
 	if (arg1Value > arg2Value) {
 		return Sequence.singleton(new IntegerValue(1));
@@ -40,14 +40,14 @@ function fnConcat (dynamicContext) {
 			if (sequence.isEmpty()) {
 				return '';
 			}
-			return sequence.value[0].value;
+			return sequence.first().value;
 		});
 	return Sequence.singleton(new StringValue(strings.join('')));
 }
 
 function fnContains (_dynamicContext, arg1, arg2) {
-	const stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
-	const contains = !arg2.isEmpty() ? arg2.value[0].value : '';
+	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
+	const contains = !arg2.isEmpty() ? arg2.first().value : '';
 	if (contains.length === 0) {
 		return Sequence.singleton(BooleanValue.TRUE);
 	}
@@ -64,11 +64,11 @@ function fnContains (_dynamicContext, arg1, arg2) {
 }
 
 function fnStartsWith (_dynamicContext, arg1, arg2) {
-	const startsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
+	const startsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (startsWith.length === 0) {
 		return Sequence.singleton(BooleanValue.TRUE);
 	}
-	const stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
+	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	if (stringToTest.length === 0) {
 		return Sequence.singleton(BooleanValue.FALSE);
 	}
@@ -80,11 +80,11 @@ function fnStartsWith (_dynamicContext, arg1, arg2) {
 }
 
 function fnEndsWith (_dynamicContext, arg1, arg2) {
-	const endsWith = !arg2.isEmpty() ? arg2.value[0].value : '';
+	const endsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (endsWith.length === 0) {
 		return Sequence.singleton(BooleanValue.TRUE);
 	}
-	const stringToTest = !arg1.isEmpty() ? arg1.value[0].value : '';
+	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	if (stringToTest.length === 0) {
 		return Sequence.singleton(BooleanValue.FALSE);
 	}
@@ -99,10 +99,10 @@ function fnString (dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(new StringValue(''));
 	}
-	if (sequence.value[0].instanceOfType('node()')) {
-		return Sequence.singleton(sequence.value[0].getStringValue(dynamicContext));
+	if (sequence.first().instanceOfType('node()')) {
+		return Sequence.singleton(sequence.first().getStringValue(dynamicContext));
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:string'));
+	return Sequence.singleton(castToType(sequence.first(), 'xs:string'));
 }
 
 // Note: looks like fn:string, but that one can return string values, instead of formally casting the node. This will make a difference when schema-aware (node with type xs:boolean, with value 1)
@@ -110,12 +110,12 @@ function xsString (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:string'));
+	return Sequence.singleton(castToType(sequence.first(), 'xs:string'));
 }
 
 function fnStringJoin (_dynamicContext, sequence, separator) {
-	const separatorString = separator.value[0].value,
-	joinedString = sequence.value.map(function (stringValue) {
+	const separatorString = separator.first().value;
+	const joinedString = Array.from(sequence.value()).map(function (stringValue) {
 		return stringValue.value;
 	}).join(separatorString);
 	return Sequence.singleton(new StringValue(joinedString));
@@ -126,15 +126,15 @@ function fnStringLength (_dynamicContext, sequence) {
 		return Sequence.singleton(new IntegerValue(0));
 	}
 	// In ES6, Array.from(💩).length === 1
-	return Sequence.singleton(new IntegerValue(Array.from(sequence.value[0].value).length));
+	return Sequence.singleton(new IntegerValue(Array.from(sequence.first().value).length));
 }
 
 function fnTokenize (_dynamicContext, input, pattern) {
-	if (input.isEmpty() || input.value[0].value.length === 0) {
+	if (input.isEmpty() || input.first().value.length === 0) {
 		return Sequence.empty();
 	}
-	const string = input.value[0].value,
-		patternString = pattern.value[0].value;
+	const string = input.first().value,
+		patternString = pattern.first().value;
 	return new Sequence(
 		string.split(new RegExp(patternString))
 			.map(function (token) {
@@ -146,14 +146,14 @@ function xsUntypedAtomic (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.empty();
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:untypedAtomic'));
+	return Sequence.singleton(castToType(sequence.first(), 'xs:untypedAtomic'));
 }
 
 function fnNormalizeSpace (_dynamicContext, arg) {
 	if (arg.isEmpty()) {
 		return Sequence.singleton(new StringValue(''));
 	}
-	const string = arg.value[0].value.trim();
+	const string = arg.first().value.trim();
 	return Sequence.singleton(new StringValue(string.replace(/\s+/g, ' ')));
 }
 

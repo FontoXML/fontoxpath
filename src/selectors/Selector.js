@@ -20,13 +20,9 @@ class Selector {
 	constructor (specificity, expectedResultOrder, optimizationOptions = {}) {
 		this.specificity = specificity;
 		this.expectedResultOrder = expectedResultOrder;
-		/**
-		 * @abstract
-		 * @type {?string}
-		 */
-		this._getStringifiedValue = () => null;
 
 		this._optimizationOptions = optimizationOptions;
+		this._getStringifiedValue = () => null;
 	}
 
 	static get RESULT_ORDERINGS () {
@@ -48,10 +44,6 @@ class Selector {
 		return null;
 	}
 
-	/**
-	 * @final
-	 * @return  {string}
-	 */
 	toString () {
 		return this._getStringifiedValue();
 	}

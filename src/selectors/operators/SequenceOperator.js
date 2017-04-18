@@ -22,9 +22,13 @@ class SequenceOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		return this._selectors.reduce(function (accum, selector) {
-			return accum.merge(selector.evaluate(dynamicContext));
-		}, new Sequence());
+		return new Sequence(function* () {
+			for (let i = 0, l = this._selectors.length; i < l; ++i) {
+				for (const value of this._selectors[i].evaluate(dynamicContext).value()) {
+					yield value;
+				}
+			}
+		}.bind(this));
 	}
 }
 

@@ -97,7 +97,7 @@ describe('evaluateXPath', () => {
 
 	describe('using the actual browser HTML DOM', () => {
 		it('will find an HTML node', ()=> {
-			chai.assert.isTrue(evaluateXPathToBoolean('//HTML', window.document, domFacade));
+			chai.assert.isTrue(evaluateXPathToBoolean('/descendant::HTML', window.document, domFacade));
 		});
 	});
 });

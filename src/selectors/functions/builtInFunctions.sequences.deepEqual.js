@@ -32,19 +32,20 @@ function sequenceDeepEqual (dynamicContext, sequence1, sequence2) {
 		return true;
 	}
 
-	if (sequence1.value.length !== sequence2.value.length) {
-		return false;
-	}
+	const iterator1 = sequence1.value();
+	const iterator2 = sequence2.value();
 
-	const length = sequence1.value.length;
-	for (let i = 0; i < length; i++) {
-		if (itemDeepEqual(dynamicContext, sequence1.value[i], sequence2.value[i])) {
-			continue;
+	let value1 = iterator1.next();
+	let value2 = iterator2.next();
+	while (!value1.done && !value2.done) {
+		if (!itemDeepEqual(dynamicContext, value1.value, value2.value)) {
+			return false;
 		}
-		return false;
+		value1 = iterator1.next();
+		value2 = iterator2.next();
 	}
 
-	return true;
+	return value1.done && value2.done;
 }
 
 function mapTypeDeepEqual (dynamicContext, item1, item2) {
@@ -95,7 +96,7 @@ function elementNodeDeepEqual (dynamicContext, item1, item2) {
 // Nodes which contain an atomic type (text -> string, processing-instruction -> string, attribute -> any atomic type)
 function atomicTypeNodeDeepEqual (dynamicContext, item1, item2) {
 	return sequenceDeepEqual(dynamicContext, nodeName(dynamicContext, Sequence.singleton(item1)), nodeName(dynamicContext, Sequence.singleton(item2))) &&
-		anyAtomicTypeDeepEqual(dynamicContext, item1.atomize(), item2.atomize());
+		anyAtomicTypeDeepEqual(dynamicContext, item1.atomize(dynamicContext), item2.atomize(dynamicContext));
 }
 
 function itemDeepEqual (dynamicContext, item1, item2) {

@@ -26,7 +26,7 @@ class MapConstructor extends Selector {
 					throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
 				}
 				return {
-					key: keySequence.value[0],
+					key: keySequence.first(),
 					value: keyValuePair.value.evaluate(dynamicContext)
 				};
 			});

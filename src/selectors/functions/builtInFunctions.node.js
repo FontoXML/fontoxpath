@@ -19,7 +19,7 @@ function fnNodeName (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	var nodeName = sequence.value[0].nodeName;
+	var nodeName = sequence.first().nodeName;
 	if (nodeName === null) {
 		return Sequence.empty();
 	}
@@ -44,7 +44,7 @@ function fnOutermost (dynamicContext, nodeSequence) {
 		return nodeSequence;
 	}
 
-	var resultNodes = sortNodeValues(dynamicContext.domFacade, nodeSequence.value)
+	var resultNodes = sortNodeValues(dynamicContext.domFacade, Array.from(nodeSequence.value()))
 		.reduce(function (previousNodes, node, i) {
 			if (i === 0) {
 				previousNodes.push(node);
@@ -68,7 +68,7 @@ function fnInnermost (dynamicContext, nodeSequence) {
 		return nodeSequence;
 	}
 
-	var resultNodes = sortNodeValues(dynamicContext.domFacade, nodeSequence.value)
+	var resultNodes = sortNodeValues(dynamicContext.domFacade, Array.from(nodeSequence.value()))
 		.reduceRight(function (followingNodes, node, i, allNodes) {
 			if (i === allNodes.length - 1) {
 				followingNodes.push(node);

@@ -9,8 +9,8 @@ import IntegerValue from '../dataTypes/IntegerValue';
 function mapMerge (dynamicContext, mapSequence, optionMap) {
 	var duplicateKey = Sequence.singleton(new StringValue('duplicates'));
 	var duplicationHandlingValueSequence = mapGet(dynamicContext, optionMap, duplicateKey);
-	var duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.value[0].value;
-	var result = mapSequence.value.reduce(function (resultingKeyValuePairs, map) {
+	var duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.first().value;
+	var result = Array.from(mapSequence.value()).reduce(function (resultingKeyValuePairs, map) {
 			map.keyValuePairs.forEach(function (keyValuePair) {
 				var existingPairIndex = resultingKeyValuePairs.findIndex(function (existingPair) {
 						return isSameMapKey(existingPair.key, keyValuePair.key);
@@ -31,7 +31,8 @@ function mapMerge (dynamicContext, mapSequence, optionMap) {
 								1,
 								{
 									key: keyValuePair.key,
-									value: new Sequence(resultingKeyValuePairs[existingPairIndex].value.value.concat(keyValuePair.value.value))
+									value: new Sequence(
+										Array.from(resultingKeyValuePairs[existingPairIndex].value.value()).concat(keyValuePair.value.value()))
 								});
 							return;
 						case 'use-any':
@@ -49,9 +50,9 @@ function mapMerge (dynamicContext, mapSequence, optionMap) {
 }
 
 function mapPut (_dynamicContext, mapSequence, keySequence, value) {
-	var resultingKeyValuePairs = mapSequence.value[0].keyValuePairs.concat();
+	var resultingKeyValuePairs = mapSequence.first().keyValuePairs.concat();
 	var indexOfExistingPair = resultingKeyValuePairs.findIndex(function (existingPair) {
-			return isSameMapKey(existingPair.key, keySequence.value[0]);
+			return isSameMapKey(existingPair.key, keySequence.first());
 		});
 	if (indexOfExistingPair >= 0) {
 		// Duplicate keys, use options to determine what to do
@@ -59,13 +60,13 @@ function mapPut (_dynamicContext, mapSequence, keySequence, value) {
 			indexOfExistingPair,
 			1,
 			{
-				key: keySequence.value[0],
+				key: keySequence.first(),
 				value: value
 			});
 	}
 	else {
 		resultingKeyValuePairs.push({
-			key: keySequence.value[0],
+			key: keySequence.first(),
 			value: value
 		});
 	}
@@ -73,15 +74,15 @@ function mapPut (_dynamicContext, mapSequence, keySequence, value) {
 }
 
 function mapEntry (_dynamicContext, keySequence, value) {
-	return Sequence.singleton(new MapValue([{ key: keySequence.value[0], value: value }]));
+	return Sequence.singleton(new MapValue([{ key: keySequence.first(), value: value }]));
 }
 
 function mapSize (_dynamicContext, mapSequence) {
-	return Sequence.singleton(new IntegerValue(mapSequence.value[0].keyValuePairs.length));
+	return Sequence.singleton(new IntegerValue(mapSequence.first().keyValuePairs.length));
 }
 
 function mapKeys (_dynamicContext, mapSequence) {
-	var keys = mapSequence.value[0].keyValuePairs.map(
+	var keys = mapSequence.first().keyValuePairs.map(
 			function (pair) {
 				return pair.key;
 			});
@@ -89,16 +90,16 @@ function mapKeys (_dynamicContext, mapSequence) {
 }
 
 function mapContains (_dynamicContext, mapSequence, keySequence) {
-	var doesContain = mapSequence.value[0].keyValuePairs.some(
+	var doesContain = mapSequence.first().keyValuePairs.some(
 			function (pair) {
-				return isSameMapKey(pair.key, keySequence.value[0]);
+				return isSameMapKey(pair.key, keySequence.first());
 			});
 	return Sequence.singleton(doesContain ? BooleanValue.TRUE : BooleanValue.FALSE);
 }
 
 function mapRemove (_dynamicContext, mapSequence, keySequence) {
-	var resultingKeyValuePairs = mapSequence.value[0].keyValuePairs.concat();
-	keySequence.value.forEach(function (key) {
+	var resultingKeyValuePairs = mapSequence.first().keyValuePairs.concat();
+	Array.from(keySequence.value).forEach(function (key) {
 		var indexOfExistingPair = resultingKeyValuePairs.findIndex(function (existingPair) {
 				return isSameMapKey(existingPair.key, key);
 			});
@@ -112,8 +113,8 @@ function mapRemove (_dynamicContext, mapSequence, keySequence) {
 }
 
 function mapForEach (dynamicContext, mapSequence, functionItemSequence) {
-	var resultingKeyValuePairs = mapSequence.value[0].keyValuePairs.map(function (keyValuePair) {
-			var newValue = functionItemSequence.value[0].value
+	var resultingKeyValuePairs = mapSequence.first().keyValuePairs.map(function (keyValuePair) {
+			var newValue = functionItemSequence.first().value
 				.call(undefined, dynamicContext, Sequence.singleton(keyValuePair.key), keyValuePair.value);
 			return {
 				key: keyValuePair.key,

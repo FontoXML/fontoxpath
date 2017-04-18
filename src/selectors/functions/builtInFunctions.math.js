@@ -10,7 +10,7 @@ function mathExp (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.pow(Math.E, sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.pow(Math.E, sequence.first().value)));
 }
 
 function mathExp10 (_dynamicContext, sequence) {
@@ -18,7 +18,7 @@ function mathExp10 (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.pow(10, sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.pow(10, sequence.first().value)));
 }
 
 function mathLog (_dynamicContext, sequence) {
@@ -26,7 +26,7 @@ function mathLog (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.log(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.log(sequence.first().value)));
 }
 
 function mathLog10 (_dynamicContext, sequence) {
@@ -34,7 +34,7 @@ function mathLog10 (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.log10(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.log10(sequence.first().value)));
 }
 
 function mathPow (_dynamicContext, sequence, y) {
@@ -42,13 +42,13 @@ function mathPow (_dynamicContext, sequence, y) {
 		return sequence;
 	}
 
-	var valueX = sequence.value[0].value,
-		valueY = y.value[0].value;
+	var valueX = sequence.first().value,
+		valueY = y.first().value;
 	if ((valueX === 1 || valueX === -1) && (valueY === Infinity || valueY === -Infinity || isNaN(valueY))) {
 		return Sequence.singleton(new DoubleValue(1));
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.pow(sequence.value[0].value, y.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.pow(sequence.first().value, y.first().value)));
 }
 
 function mathSqrt (_dynamicContext, sequence) {
@@ -56,7 +56,7 @@ function mathSqrt (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.sqrt(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.sqrt(sequence.first().value)));
 }
 
 function mathSin (_dynamicContext, sequence) {
@@ -64,7 +64,7 @@ function mathSin (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.sin(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.sin(sequence.first().value)));
 }
 
 function mathCos (_dynamicContext, sequence) {
@@ -72,7 +72,7 @@ function mathCos (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.cos(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.cos(sequence.first().value)));
 }
 
 function mathTan (_dynamicContext, sequence) {
@@ -80,7 +80,7 @@ function mathTan (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.tan(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.tan(sequence.first().value)));
 }
 
 function mathAsin (_dynamicContext, sequence) {
@@ -88,7 +88,7 @@ function mathAsin (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.asin(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.asin(sequence.first().value)));
 }
 
 function mathAcos (_dynamicContext, sequence) {
@@ -96,7 +96,7 @@ function mathAcos (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.acos(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.acos(sequence.first().value)));
 }
 
 function mathAtan (_dynamicContext, sequence) {
@@ -104,7 +104,7 @@ function mathAtan (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.atan(sequence.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.atan(sequence.first().value)));
 }
 
 function mathAtan2 (_dynamicContext, sequence, x) {
@@ -112,7 +112,7 @@ function mathAtan2 (_dynamicContext, sequence, x) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.atan2(sequence.value[0].value, x.value[0].value)));
+	return Sequence.singleton(new DoubleValue(Math.atan2(sequence.first().value, x.first().value)));
 }
 
 export default {

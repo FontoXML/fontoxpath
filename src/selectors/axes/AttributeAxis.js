@@ -41,22 +41,15 @@ class AttributeAxis extends Selector {
 					attribute.value
 				));
 			});
-
-		const filteredNodeValues = [];
-		const scopedContext = dynamicContext.createScopedContext({
-			contextItemIndex: 0,
-			contextSequence: new Sequence(attributes)
-		});
-
-		for (let i = 0, l = attributes.length; i < l; ++i) {
-			const nodeIsMatch = this._attributeTestSelector.evaluate(
-				scopedContext.createScopedContext({ contextItemIndex: i }))
-					.getEffectiveBooleanValue();
-			if (nodeIsMatch) {
-				filteredNodeValues.push(attributes[i]);
+		const attributeTestSelector = this._attributeTestSelector;
+		return new Sequence(function* () {
+			for (const childContext of dynamicContext.createSequenceIterator(new Sequence(attributes))) {
+				const nodeIsMatch = attributeTestSelector.evaluate(childContext).getEffectiveBooleanValue();
+				if (nodeIsMatch) {
+					yield childContext.contextItem;
+				}
 			}
-		}
-		return new Sequence(filteredNodeValues);
+		});
 	}
 }
 export default AttributeAxis;

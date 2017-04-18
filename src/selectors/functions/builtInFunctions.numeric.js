@@ -30,21 +30,21 @@ function fnAbs (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return createValidNumericType(sequence.value[0], Math.abs(sequence.value[0].value));
+	return createValidNumericType(sequence.first(), Math.abs(sequence.first().value));
 }
 
 function fnCeiling (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return createValidNumericType(sequence.value[0], Math.ceil(sequence.value[0].value));
+	return createValidNumericType(sequence.first(), Math.ceil(sequence.first().value));
 }
 
 function fnFloor (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return createValidNumericType(sequence.value[0], Math.floor(sequence.value[0].value));
+	return createValidNumericType(sequence.first(), Math.floor(sequence.first().value));
 }
 
 function isHalf (value, scaling) {
@@ -74,7 +74,7 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 		return sequence;
 	}
 
-	var item = sequence.value[0],
+	var item = sequence.first(),
 		value = item.value;
 
 	if ((item.instanceOfType('xs:float') || item.instanceOfType('xs:double')) && (
@@ -85,7 +85,7 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 		return Sequence.singleton(item);
 	}
 
-	var scalingPrecision = precision ? precision.value[0].value : 0;
+	var scalingPrecision = precision ? precision.first().value : 0;
 	if (getNumberOfDecimalDigits(value) < scalingPrecision) {
 		return sequence;
 	}
@@ -126,7 +126,7 @@ function fnNumber (_dynamicContext, sequence) {
 		return Sequence.singleton(new DoubleValue(NaN));
 	}
 	try {
-		return Sequence.singleton(castToType(sequence.value[0], 'xs:double'));
+		return Sequence.singleton(castToType(sequence.first(), 'xs:double'));
 	}
 	catch (error) {
 		if (error.message.includes('FORG0001')) {
@@ -141,8 +141,9 @@ function returnRandomItemFromSequence (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	var index = Math.floor(Math.random() * sequence.value.length);
-	return Sequence.singleton(sequence.value[index]);
+	const sequenceValue = Array.from(sequence.value());
+	const index = Math.floor(Math.random() * sequenceValue.length);
+	return Sequence.singleton(sequenceValue[index]);
 }
 
 function fnRandomNumberGenerator (_dynamicContext, _sequence) {
@@ -167,21 +168,21 @@ function xsFloat (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:float'));
+	return Sequence.singleton(castToType(sequence.first(), 'xs:float'));
 }
 
 function xsInteger (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:integer'));
+	return Sequence.singleton(castToType(sequence.first(), 'xs:integer'));
 }
 
 function xsDecimal (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:decimal'));
+	return Sequence.singleton(castToType(sequence.first(), 'xs:decimal'));
 }
 
 
@@ -189,7 +190,7 @@ function xsDouble (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(castToType(sequence.value[0], 'xs:double'));
+	return Sequence.singleton(castToType(sequence.first(), 'xs:double'));
 }
 
 export default {

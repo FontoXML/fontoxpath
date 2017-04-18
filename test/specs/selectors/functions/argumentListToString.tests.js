@@ -3,7 +3,7 @@ import Sequence from 'fontoxpath/selectors/dataTypes/Sequence';
 
 describe('argumentListToString()', () => {
 	it('returns item()? when given an empty Sequence', () => {
-		var argumentList = [new Sequence()];
+		var argumentList = [new Sequence([])];
 		chai.assert.equal(argumentListToString(argumentList), 'item()?');
 	});
 
@@ -19,7 +19,7 @@ describe('argumentListToString()', () => {
 
 	it('returns a type list when given multiple Sequences', () => {
 		var argumentList = [
-			new Sequence(),
+			new Sequence([]),
 			new Sequence([{ primitiveTypeName: 'type' }]),
 			new Sequence([{ primitiveTypeName: 'type' }, { primitiveTypeName: 'type' }])];
 		chai.assert.equal(argumentListToString(argumentList), 'item()?, type, type+');

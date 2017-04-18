@@ -4,30 +4,30 @@ import ArrayValue from '../dataTypes/ArrayValue';
 import IntegerValue from '../dataTypes/IntegerValue';
 
 function arraySize (_dynamicContext, arraySequence) {
-	return Sequence.singleton(new IntegerValue(arraySequence.value[0].members.length));
+	return Sequence.singleton(new IntegerValue(arraySequence.first().members.length));
 }
 
 function arrayPut (_dynamicContext, arraySequence, positionSequence, itemSequence) {
-	var position = positionSequence.value[0].value,
-	array = arraySequence.value[0];
+	const position = positionSequence.first().value,
+	array = arraySequence.first();
 	if (position <= 0 || position > array.members.length) {
 		throw new Error('FOAY0001: array position out of bounds.');
 	}
-	var newMembers = array.members.concat();
+	const newMembers = array.members.concat();
 	newMembers.splice(position - 1, 1, itemSequence);
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayAppend (_dynamicContext, arraySequence, itemSequence) {
-	var array = arraySequence.value[0];
-	var newMembers = array.members.concat([itemSequence]);
+	const array = arraySequence.first();
+	const newMembers = array.members.concat([itemSequence]);
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arraySubarray (_dynamicContext, arraySequence, startSequence, lengthSequence) {
-	var array = arraySequence.value[0];
-	var start = startSequence.value[0].value;
-	var length = lengthSequence.value[0].value;
+	const array = arraySequence.first();
+	const start = startSequence.first().value;
+	const length = lengthSequence.first().value;
 
 	if (start > array.members.length || start <= 0) {
 		throw new Error('FOAY0001: subarray start out of bounds.');
@@ -41,26 +41,26 @@ function arraySubarray (_dynamicContext, arraySequence, startSequence, lengthSeq
 		throw new Error('FOAY0001: subarray start + length out of bounds.');
 	}
 
-	var newMembers = array.members.slice(start - 1, length - start + 1);
+	const newMembers = array.members.slice(start - 1, length - start + 1);
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayRemove (_dynamicContext, arraySequence, positionSequence) {
-	var array = arraySequence.value[0];
-	var indicesToRemove = positionSequence.value.map(function (value) {
+	const array = arraySequence.first();
+	const indicesToRemove = Array.from(positionSequence.value()).map(function (value) {
 			return value.value;
 		})
 		.sort(function (a, b) {
 			// Sort them in reverse order, to keep them stable
-			return a < b;
+			return b - a;
 		})
 		.filter(function (item, i, all) {
 			return all[i - 1] !== item;
 		});
 
-	var newMembers = array.members.concat();
-	for (var i = 0, l = indicesToRemove.length; i < l; ++i) {
-		var position = indicesToRemove[i];
+	const newMembers = array.members.concat();
+	for (let i = 0, l = indicesToRemove.length; i < l; ++i) {
+		const position = indicesToRemove[i];
 		if (position > array.members.length || position <= 0) {
 			throw new Error('FOAY0001: subarray position out of bounds.');
 		}
@@ -71,68 +71,68 @@ function arrayRemove (_dynamicContext, arraySequence, positionSequence) {
 }
 
 function arrayInsertBefore (_dynamicContext, arraySequence, positionSequence, itemSequence) {
-	var array = arraySequence.value[0];
-	var position = positionSequence.value[0].value;
+	const array = arraySequence.first();
+	const position = positionSequence.first().value;
 
 	if (position > array.members.length + 1 || position <= 0) {
 		throw new Error('FOAY0001: subarray position out of bounds.');
 	}
 
-	var newMembers = array.members.concat();
+	const newMembers = array.members.concat();
 	newMembers.splice(position - 1, 0, itemSequence);
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayReverse (_dynamicContext, arraySequence) {
-	var array = arraySequence.value[0];
-	var newMembers = array.members.concat();
+	const array = arraySequence.first();
+	const newMembers = array.members.concat();
 	newMembers.reverse();
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayJoin (_dynamicContext, arraySequence) {
-	var newMembers = arraySequence.value.reduce(function (joinedMembers, array) {
+	const newMembers = Array.from(arraySequence.value()).reduce(function (joinedMembers, array) {
 			return joinedMembers.concat(array.members);
 		}, []);
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayForEach (dynamicContext, arraySequence, functionItemSequence) {
-	var cb = functionItemSequence.value[0].value;
-	var newMembers = arraySequence.value[0].members.map(function (member) {
+	const cb = functionItemSequence.first().value;
+	const newMembers = arraySequence.first().members.map(function (member) {
 			return cb.call(undefined, dynamicContext, member);
 		});
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
-	var cb = functionItemSequence.value[0].value;
-	var newMembers = arraySequence.value[0].members.filter(function (member) {
+	const cb = functionItemSequence.first().value;
+	const newMembers = arraySequence.first().members.filter(function (member) {
 			return cb.call(undefined, dynamicContext, member).getEffectiveBooleanValue();
 		});
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayFoldLeft (dynamicContext, arraySequence, startSequence, functionItemSequence) {
-	var cb = functionItemSequence.value[0].value;
-	return arraySequence.value[0].members.reduce(function (accum, member) {
+	const cb = functionItemSequence.first().value;
+	return arraySequence.first().members.reduce(function (accum, member) {
 		return cb.call(undefined, dynamicContext, accum, member);
 	}, startSequence);
 }
 
 function arrayFoldRight (dynamicContext, arraySequence, startSequence, functionItemSequence) {
-	var cb = functionItemSequence.value[0].value;
-	return arraySequence.value[0].members.reduceRight(function (accum, member) {
+	const cb = functionItemSequence.first().value;
+	return arraySequence.first().members.reduceRight(function (accum, member) {
 		return cb.call(undefined, dynamicContext, accum, member);
 	}, startSequence);
 }
 
 function arrayForEachPair (dynamicContext, arraySequenceA, arraySequenceB, functionItemSequence) {
-	var cb = functionItemSequence.value[0].value,
-		arrayA = arraySequenceA.value[0],
-		arrayB = arraySequenceB.value[0];
-	var newMembers = [];
-	for (var i = 0, l = Math.min(arrayA.members.length, arrayB.members.length); i < l; ++i) {
+	const cb = functionItemSequence.first().value,
+		arrayA = arraySequenceA.first(),
+		arrayB = arraySequenceB.first();
+	const newMembers = [];
+	for (let i = 0, l = Math.min(arrayA.members.length, arrayB.members.length); i < l; ++i) {
 		newMembers[i] = cb.call(undefined, dynamicContext, arrayA.members[i], arrayB.members[i]);
 	}
 
@@ -140,9 +140,9 @@ function arrayForEachPair (dynamicContext, arraySequenceA, arraySequenceB, funct
 }
 
 function arraySort (dynamicContext, arraySequence) {
-	var array = arraySequence.value[0];
-	var newMembers = array.members.concat().sort(function (memberA, memberB) {
-			return memberA.atomize(dynamicContext).value[0].value > memberB.atomize(dynamicContext).value[0].value ? 1 : -1;
+	const array = arraySequence.first();
+	const newMembers = array.members.concat().sort(function (memberA, memberB) {
+			return memberA.atomize(dynamicContext).first().value > memberB.atomize(dynamicContext).first().value ? 1 : -1;
 		});
 
 	return Sequence.singleton(new ArrayValue(newMembers));
@@ -150,11 +150,11 @@ function arraySort (dynamicContext, arraySequence) {
 
 
 function arrayFlatten (dynamicContext, itemSequence) {
-	var resultSequenceItems = [];
-	itemSequence.value.forEach(function (item) {
+	let resultSequenceItems = [];
+	Array.from(itemSequence.value()).forEach(function (item) {
 		if (item.instanceOfType('array(*)')) {
 			item.members.forEach(function (member) {
-				var flattenedSequence = arrayFlatten(dynamicContext, member);
+				const flattenedSequence = arrayFlatten(dynamicContext, member);
 				resultSequenceItems = resultSequenceItems.concat(flattenedSequence.value);
 			});
 			return;
@@ -207,8 +207,8 @@ export default {
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'array(*)',
 			callFunction: function (dynamicContext, arraySequence, startSequence) {
-				var lengthSequence = Sequence.singleton(new IntegerValue(
-						arraySequence.value[0].members.length - startSequence.value[0].value + 1));
+				const lengthSequence = Sequence.singleton(new IntegerValue(
+						arraySequence.first().members.length - startSequence.first().value + 1));
 				return arraySubarray(
 					dynamicContext,
 					arraySequence,

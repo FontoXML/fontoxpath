@@ -21,10 +21,10 @@ function convertItemsToCommonType (items) {
 		return items;
 	}
 	var commonTypeName = items.map(function (item) {
-			return item.primitiveTypeName;
-		}).reduce(function (commonTypeName, itemType) {
-			return itemType === commonTypeName ? commonTypeName : null;
-		});
+		return item.primitiveTypeName;
+	}).reduce(function (commonTypeName, itemType) {
+		return itemType === commonTypeName ? commonTypeName : null;
+	});
 
 	if (commonTypeName !== null) {
 		// All items are already of the same type
@@ -102,7 +102,7 @@ function fnHead (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(sequence.value[0]);
+	return Sequence.singleton(sequence.first());
 }
 
 function fnTail (_dynamicContext, sequence) {
@@ -110,7 +110,8 @@ function fnTail (_dynamicContext, sequence) {
 		return Sequence.empty();
 	}
 
-	return Sequence.singleton(sequence.value[sequence.value.length - 1]);
+	const allItems = Array.from(sequence.value());
+	return Sequence.singleton(allItems[allItems.length - 1]);
 }
 
 function fnInsertBefore (_dynamicContext, sequence, position, inserts) {
@@ -121,30 +122,32 @@ function fnInsertBefore (_dynamicContext, sequence, position, inserts) {
 	if (inserts.isEmpty()) {
 		return sequence;
 	}
+	const sequenceValue = Array.from(sequence.value());
 
-	let effectivePosition = position.value[0].value;
+	let effectivePosition = position.first().value;
 	if (effectivePosition < 1) {
 		effectivePosition = 1;
 	}
-	else if (effectivePosition > sequence.value.length) {
-		effectivePosition = sequence.value.length + 1;
+	else if (effectivePosition > sequenceValue.length) {
+		effectivePosition = sequenceValue.length + 1;
 	}
 
-	sequence.value.splice.apply(sequence.value, [effectivePosition - 1, 0].concat(inserts.value));
-	return sequence;
+	sequenceValue.splice.apply(sequenceValue, [effectivePosition - 1, 0].concat(Array.from(inserts.value())));
+	return new Sequence(sequenceValue);
 }
 
 function fnRemove (_dynamicContext, sequence, position) {
-	const effectivePosition = position.value[0].value;
-	if (!(sequence.isEmpty() || effectivePosition < 1 || effectivePosition > sequence.value.length)) {
-		sequence.value.splice(effectivePosition - 1, 1);
+	const effectivePosition = position.first().value;
+	const sequenceValue = Array.from(sequence.value());
+	if (!sequenceValue.length || effectivePosition < 1 || effectivePosition > sequenceValue.length) {
+		return new Sequence(sequenceValue);
 	}
-
-	return sequence;
+	sequenceValue.splice(effectivePosition - 1, 1);
+	return new Sequence(sequenceValue);
 }
 
 function fnReverse (_dynamicContext, sequence) {
-	return new Sequence(sequence.value.reverse());
+	return new Sequence(Array.from(sequence.value()).reverse());
 }
 
 function fnSubsequence (_dynamicContext, sequence, startingLoc, length) {
@@ -152,9 +155,10 @@ function fnSubsequence (_dynamicContext, sequence, startingLoc, length) {
 		return sequence;
 	}
 
-	var startingLocValue = Math.round(startingLoc.value[0].value),
-		effectiveLength = length ? startingLocValue + Math.round(length.value[0].value) - 1 : sequence.value.length;
-	return new Sequence(sequence.value.slice(startingLocValue - 1, effectiveLength));
+	const sequenceValue = Array.from(sequence.value());
+	const startingLocValue = Math.round(startingLoc.first().value);
+	const effectiveLength = length ? startingLocValue + Math.round(length.first().value) - 1 : sequence.length;
+	return new Sequence(sequenceValue.slice(startingLocValue - 1, effectiveLength));
 }
 
 function fnUnordered (_dynamicContext, sequence) {
@@ -169,7 +173,7 @@ function fnDeepEqual (dynamicContext, parameter1, parameter2) {
 }
 
 function fnCount (_dynamicContext, sequence) {
-	return Sequence.singleton(new IntegerValue(sequence.value.length));
+	return Sequence.singleton(new IntegerValue(sequence.getLength()));
 }
 
 function fnAvg (_dynamicContext, sequence) {
@@ -178,15 +182,15 @@ function fnAvg (_dynamicContext, sequence) {
 	}
 
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
-	var items = castUntypedItemsToDouble(sequence.value);
+	var items = castUntypedItemsToDouble(Array.from(sequence.value()));
 	items = convertItemsToCommonType(items);
 	if (!items.every(item => item.instanceOfType('xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
 	var resultValue = items.reduce(function (sum, item) {
-			return sum + item.value;
-		}, 0) / sequence.value.length;
+		return sum + item.value;
+	}, 0) / items.length;
 
 	if (items.every(function (item) {
 		return item.instanceOfType('xs:integer') || item.instanceOfType('xs:double');
@@ -208,7 +212,7 @@ function fnMax (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	var items = castItemsForMinMax(sequence.value);
+	var items = castItemsForMinMax(Array.from(sequence.value()));
 
 	// Use first element in array as initial value
 	return Sequence.singleton(
@@ -222,7 +226,7 @@ function fnMin (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	var items = castItemsForMinMax(sequence.value);
+	var items = castItemsForMinMax(Array.from(sequence.value()));
 
 	// Use first element in array as initial value
 	return Sequence.singleton(
@@ -237,15 +241,15 @@ function fnSum (_dynamicContext, sequence, zero) {
 		return zero;
 	}
 
-	var items = castUntypedItemsToDouble(sequence.value);
+	var items = castUntypedItemsToDouble(Array.from(sequence.value()));
 	items = convertItemsToCommonType(items);
 	if (!items.every(item => item.instanceOfType('xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
 	var resultValue = items.reduce(function (sum, item) {
-			return sum + item.value;
-		}, 0);
+		return sum + item.value;
+	}, 0);
 
 	if (items.every(function (item) {
 		return item.instanceOfType('xs:integer');

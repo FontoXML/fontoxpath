@@ -26,51 +26,26 @@ class DescendantAxis extends Selector {
 		 */
 		const domFacade = dynamicContext.domFacade;
 
-		function collectDescendants (node) {
-			/**
-			 * @type {../DynamicContext}
-			 */
-			const childScopedContext = dynamicContext.createScopedContext({
-				contextItemIndex: 0,
-				contextSequence: Sequence.singleton(new NodeValue(node))
-			});
-			function collectChildDescendants () {
-				return domFacade.getChildNodes(childScopedContext.contextItem.value)
-					.map(childNode => collectDescendants(childNode))
-					.reduce(
-						(descendants, childDescendants) => descendants.merge(childDescendants),
-						childScopedContext.contextSequence);
+		function* collectDescendants (node, inclusive) {
+			if (inclusive) {
+				yield new NodeValue(node);
 			}
-			return collectChildDescendants();
+			for (const child of domFacade.getChildNodes(node)) {
+				yield* collectDescendants(child, true);
+			}
 		}
 
-		let collectedDescendants;
-		if (this._isInclusive) {
-			collectedDescendants = collectDescendants(contextItem.value);
-		}
-		else {
-			collectedDescendants = domFacade.getChildNodes(contextItem.value)
-				.map(childNode => collectDescendants(childNode))
-				.reduce(
-					(descendants, childDescendants) => descendants.merge(childDescendants),
-					Sequence.empty());
-		}
-
-		const filteredNodeValues = [];
-		const scopedContext = dynamicContext.createScopedContext({
-			contextItemIndex: 0,
-			contextSequence: collectedDescendants
+		const inclusive = this._isInclusive;
+		const descendantSelector = this._descendantSelector;
+		return new Sequence(function* () {
+			const descendantSequence = new Sequence(() => collectDescendants(contextItem.value, inclusive));
+			for (const childContext of dynamicContext.createSequenceIterator(descendantSequence)) {
+				const nodeIsMatch = descendantSelector.evaluate(childContext).getEffectiveBooleanValue();
+				if (nodeIsMatch) {
+					yield childContext.contextItem;
+				}
+			}
 		});
-
-		for (let i = 0, l = collectedDescendants.value.length; i < l; ++i) {
-			const nodeIsMatch = this._descendantSelector.evaluate(
-				scopedContext.createScopedContext({ contextItemIndex: i }))
-					.getEffectiveBooleanValue();
-			if (nodeIsMatch) {
-				filteredNodeValues.push(collectedDescendants.value[i]);
-			}
-		}
-		return new Sequence(filteredNodeValues);
 	}
 }
 export default DescendantAxis;

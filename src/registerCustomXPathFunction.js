@@ -11,16 +11,16 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 			if (valueSequence.isEmpty()) {
 				return null;
 			}
-			return valueSequence.value[0].value;
+			return valueSequence.first().value;
 
 		case '*':
 		case '+':
-			return valueSequence.value.map(function (value) {
+			return Array.from(valueSequence.value()).map(function (value) {
 				return value.value;
 			});
 
 		default:
-			return valueSequence.value[0].value;
+			return valueSequence.first().value;
 	}
 }
 

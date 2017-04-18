@@ -128,10 +128,14 @@ module.exports = config => {
 						[path.resolve('src'), path.resolve('test')],
 					query: {
 						presets: [
-							'babel-preset-es2015'
-						],
-						plugins: [
-							'transform-runtime'
+							[
+								'env',
+								{
+									'targets': {
+										'chrome': 59
+									}
+								}
+							]
 						]
 					}
 				}]

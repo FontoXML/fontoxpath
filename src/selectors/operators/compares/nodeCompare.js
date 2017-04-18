@@ -11,13 +11,13 @@ export default function nodeCompare (operator, firstSequence, secondSequence) {
 		throw new Error('XPTY0004: Sequences to compare are not singleton');
 	}
 
-	if (!firstSequence.value[0].instanceOfType('node()') || !secondSequence.value[0].instanceOfType('node()')) {
+	if (!firstSequence.first().instanceOfType('node()') || !secondSequence.first().instanceOfType('node()')) {
 		throw new Error('XPTY0004: Sequences to compare are not nodes');
 	}
 
 	switch (operator) {
 		case 'is':
-			return firstSequence.value[0] === secondSequence.value[0];
+			return firstSequence.first() === secondSequence.first();
 		case '<<':
 		case '>>':
 			throw new Error('Node ordering comparisons are not implemented.');

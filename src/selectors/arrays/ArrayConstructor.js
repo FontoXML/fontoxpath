@@ -25,13 +25,13 @@ class ArrayConstructor extends Selector {
 
 	evaluate (dynamicContext) {
 		if (this._curlyness === 'curly') {
-			return Sequence.singleton(new ArrayValue(this._members[0].evaluate(dynamicContext).value.map(Sequence.singleton)));
+			return Sequence.singleton(new ArrayValue(
+				Array.from(this._members[0].evaluate(dynamicContext).value()).map(Sequence.singleton)));
 		}
 
-		return Sequence.singleton(new ArrayValue(this._members.map(
-			function (entry) {
-				return entry.evaluate(dynamicContext);
-			})));
+		return Sequence.singleton(
+			new ArrayValue(
+				this._members.map(entry => entry.evaluate(dynamicContext))));
 	}
 }
 export default ArrayConstructor;

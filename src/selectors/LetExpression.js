@@ -23,7 +23,7 @@ class LetExpression extends Selector {
 		var newVariables = Object.create(null);
 		newVariables[this._rangeVariable] = this._bindingSequence.evaluate(dynamicContext);
 		return this._returnExpression.evaluate(
-			dynamicContext.createScopedContext({
+			dynamicContext._createScopedContext({
 				variables: newVariables
 			}));
 	}

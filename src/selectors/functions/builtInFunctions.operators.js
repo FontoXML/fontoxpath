@@ -3,23 +3,22 @@ import Sequence from '../dataTypes/Sequence';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 
 function opTo (_dynamicContext, fromValue, toValue) {
-	var from = fromValue.value[0].value,
-		to = toValue.value[0].value;
+	var from = fromValue.first().value,
+		to = toValue.first().value;
 	if (from > to) {
 		return Sequence.empty();
 	}
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
-	const arr = [];
-	arr.length = to - from;
-	for (let i = 0; i < to - from + 1; i++) {
-		arr[i] = new IntegerValue(from + i);
-	}
-	return new Sequence(arr);
+	return new Sequence(function* () {
+		for (let i = 0; i < to - from + 1; i++) {
+			yield new IntegerValue(from + i);
+		}
+	}, to - from + 1);
 }
 
 function opExcept (dynamicContext, firstNodes, secondNodes) {
-	var allNodes = firstNodes.value.filter(function (nodeA) {
-			return secondNodes.value.every(function (nodeB) {
+	var allNodes = Array.from(firstNodes.value()).filter(function (nodeA) {
+		return Array.from(secondNodes.value()).every(function (nodeB) {
 				return nodeA !== nodeB;
 			});
 		});
@@ -27,8 +26,8 @@ function opExcept (dynamicContext, firstNodes, secondNodes) {
 }
 
 function opIntersect (dynamicContext, firstNodes, secondNodes) {
-	var allNodes = firstNodes.value.filter(function (nodeA) {
-			return secondNodes.value.some(function (nodeB) {
+	var allNodes = Array.from(firstNodes.value()).filter(function (nodeA) {
+		return Array.from(secondNodes.value()).some(function (nodeB) {
 				return nodeA === nodeB;
 			});
 		});

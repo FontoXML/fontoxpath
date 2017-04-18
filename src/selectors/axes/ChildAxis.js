@@ -22,20 +22,14 @@ class ChildAxis extends Selector {
 		const domFacade = dynamicContext.domFacade;
 		const nodeValues = domFacade.getChildNodes(contextItem.value).map((node) => new NodeValue(node));
 		const childContextSequence = new Sequence(nodeValues);
-		const filteredNodeValues = [];
-		const scopedContext = dynamicContext.createScopedContext({
-			contextItemIndex: 0,
-			contextSequence: childContextSequence
-		});
-		for (let i = 0, l = nodeValues.length; i < l; ++i) {
-			const nodeIsMatch = this._childSelector.evaluate(
-				scopedContext.createScopedContext({ contextItemIndex: i }))
-					.getEffectiveBooleanValue();
-			if (nodeIsMatch) {
-				filteredNodeValues.push(nodeValues[i]);
+		return new Sequence(function* () {
+			for (const childContext of dynamicContext.createSequenceIterator(childContextSequence)) {
+				const nodeIsMatch = this._childSelector.evaluate(childContext).getEffectiveBooleanValue();
+				if (nodeIsMatch) {
+					yield childContext.contextItem;
+				}
 			}
-		}
-		return new Sequence(filteredNodeValues);
+		}.bind(this));
 	}
 }
 export default ChildAxis;

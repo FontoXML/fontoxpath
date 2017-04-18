@@ -29,7 +29,7 @@ class QuantifiedExpression extends Selector {
 		var evaluatedInClauses = this._inClauses.map(function (inClause) {
 				return {
 					name: inClause[0],
-					valueSequence: inClause[1].evaluate(dynamicContext)
+					valueArray: Array.from(inClause[1].evaluate(dynamicContext).value())
 				};
 			});
 
@@ -40,7 +40,8 @@ class QuantifiedExpression extends Selector {
 		while (hasOverflowed) {
 			hasOverflowed = false;
 			for (let i = 0, l = indices.length; i < l; ++i) {
-				if (++indices[i] > evaluatedInClauses[i].valueSequence.value.length - 1) {
+				const valueArray = evaluatedInClauses[i].valueArray;
+				if (++indices[i] > valueArray.length - 1) {
 					indices[i] = 0;
 					continue;
 				}
@@ -48,11 +49,11 @@ class QuantifiedExpression extends Selector {
 				var variables = Object.create(null);
 
 				for (var y = 0; y < indices.length; y++) {
-					var value = evaluatedInClauses[y].valueSequence.value[indices[y]];
+					var value = evaluatedInClauses[y].valueArray[indices[y]];
 					variables[evaluatedInClauses[y].name] = Sequence.singleton(value);
 				}
 
-				var context = dynamicContext.createScopedContext({
+				var context = dynamicContext._createScopedContext({
 						variables: variables
 					});
 

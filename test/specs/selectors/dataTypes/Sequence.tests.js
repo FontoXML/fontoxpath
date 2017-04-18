@@ -9,7 +9,7 @@ const documentNode = new slimdom.Document();
 
 describe('Sequence.isEmpty()', () => {
 	it('returns true if the sequence is empty', () => {
-		const sequence = new Sequence();
+		const sequence = new Sequence([]);
 		chai.assert.isTrue(sequence.isEmpty());
 	});
 
@@ -26,7 +26,7 @@ describe('Sequence.isSingleton()', () => {
 	});
 
 	it('returns false if the sequence is empty', () => {
-		const sequence = new Sequence();
+		const sequence = new Sequence([]);
 		chai.assert.isFalse(sequence.isSingleton());
 	});
 
@@ -38,7 +38,7 @@ describe('Sequence.isSingleton()', () => {
 
 describe('Sequence.getEffectiveBooleanValue()', () => {
 	it('returns false if the sequence is empty', () => {
-		const sequence = new Sequence();
+		const sequence = new Sequence([]);
 		chai.assert.isFalse(sequence.getEffectiveBooleanValue());
 	});
 
