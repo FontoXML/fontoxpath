@@ -2,6 +2,55 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import NodeValue from '../dataTypes/NodeValue';
 
+function createChildGenerator (domFacade, node) {
+	const childNodes = domFacade.getChildNodes(node);
+	let i = 0;
+	const l = childNodes.length;
+	return {
+		next () {
+			if (i >= l) {
+				return { done: true };
+			}
+			return {
+				done: false,
+				value: childNodes[i++]
+			};
+		}
+	};
+}
+
+function createDescendantGenerator (domFacade, node, inclusive) {
+	const descendantIteratorQueue = [createChildGenerator(domFacade, node, inclusive)];
+	return {
+		next: () => {
+			if (inclusive) {
+				inclusive = false;
+				return {
+					done: false,
+					value: new NodeValue(node)
+				};
+			}
+			if (!descendantIteratorQueue.length) {
+				return { done: true };
+			}
+			let value = descendantIteratorQueue[0].next();
+			while (value.done) {
+				descendantIteratorQueue.shift();
+				if (!descendantIteratorQueue.length) {
+					return { done: true };
+				}
+				value = descendantIteratorQueue[0].next();
+			}
+			// Iterator over these children next
+			descendantIteratorQueue.unshift(createChildGenerator(domFacade, value.value));
+			return {
+				done: false,
+				value: new NodeValue(value.value)
+			};
+		}
+	};
+}
+
 /**
  * @extends {Selector}
  */
@@ -20,31 +69,20 @@ class DescendantAxis extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		const contextItem = dynamicContext.contextItem;
-		/**
-		 * @type {IDomFacade}
-		 */
-		const domFacade = dynamicContext.domFacade;
-
-		function* collectDescendants (node, inclusive) {
-			if (inclusive) {
-				yield new NodeValue(node);
-			}
-			for (const child of domFacade.getChildNodes(node)) {
-				yield* collectDescendants(child, true);
-			}
-		}
-
 		const inclusive = this._isInclusive;
 		const descendantSelector = this._descendantSelector;
-		return new Sequence(function* () {
-			const descendantSequence = new Sequence(() => collectDescendants(contextItem.value, inclusive));
-			for (const childContext of dynamicContext.createSequenceIterator(descendantSequence)) {
-				const nodeIsMatch = descendantSelector.evaluate(childContext).getEffectiveBooleanValue();
-				if (nodeIsMatch) {
-					yield childContext.contextItem;
-				}
-			}
+		const descendantSequence = new Sequence(() => createDescendantGenerator(
+			dynamicContext.domFacade,
+			dynamicContext.contextItem.value,
+			inclusive));
+		return descendantSequence.filter((item, i) => {
+			const result = descendantSelector.evaluate(dynamicContext._createScopedContext({
+				contextSequence: descendantSequence,
+				contextItemIndex: i,
+				contextItem: item
+			}));
+
+			return result.getEffectiveBooleanValue();
 		});
 	}
 }

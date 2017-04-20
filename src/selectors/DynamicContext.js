@@ -64,15 +64,28 @@ class DynamicContext {
 		});
 	}
 
-	* createSequenceIterator (contextSequence) {
+	createSequenceIterator (contextSequence) {
 		const innerContext = this._createScopedContext({ contextSequence, contextItemIndex: 0 });
 		let i = 0;
-		for (const value of contextSequence.value()) {
-			yield innerContext._createScopedContext({
-				contextItemIndex: i++,
-				contextItem: value
-			});
-		}
+		const iterator = contextSequence.value();
+		return {
+			[Symbol.iterator]: function () {
+				return this;
+			},
+			next: () => {
+				const value = iterator.next();
+				if (value.done) {
+					return value;
+				}
+				return {
+					done: false,
+					value: innerContext._createScopedContext({
+						contextItemIndex: i++,
+						contextItem: value.value
+					})
+				};
+			}
+		};
 	}
 }
 

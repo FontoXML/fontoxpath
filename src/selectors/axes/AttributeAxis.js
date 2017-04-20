@@ -32,23 +32,24 @@ class AttributeAxis extends Selector {
 			return Sequence.empty();
 		}
 
-		var attributes = domFacade
-			.getAllAttributes(contextItem.value)
-			.map(function (attribute) {
-				return new NodeValue(new AttributeNode(
-					contextItem.value,
-					attribute.name,
-					attribute.value
-				));
-			});
+		var attributesSequence = new Sequence(
+			domFacade
+				.getAllAttributes(contextItem.value)
+				.map(function (attribute) {
+					return new NodeValue(new AttributeNode(
+						contextItem.value,
+						attribute.name,
+						attribute.value
+					));
+				}));
 		const attributeTestSelector = this._attributeTestSelector;
-		return new Sequence(function* () {
-			for (const childContext of dynamicContext.createSequenceIterator(new Sequence(attributes))) {
-				const nodeIsMatch = attributeTestSelector.evaluate(childContext).getEffectiveBooleanValue();
-				if (nodeIsMatch) {
-					yield childContext.contextItem;
-				}
-			}
+		return attributesSequence.filter((item, i) => {
+			const result = attributeTestSelector.evaluate(dynamicContext._createScopedContext({
+				contextSequence: attributesSequence,
+				contextItemIndex: i,
+				contextItem: item
+			}));
+			return result.getEffectiveBooleanValue();
 		});
 	}
 }

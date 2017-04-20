@@ -9,11 +9,26 @@ import NodeValue from './NodeValue';
  */
 function Sequence (initialValues, predictedLength = null) {
 	if (Array.isArray(initialValues)) {
+		predictedLength = initialValues.length;
 		const _initialValues = initialValues;
-		initialValues = function* () {
-			for (let i = 0, l = _initialValues.length; i < l; ++i) {
-				yield _initialValues[i];
-			}
+		initialValues = () => {
+			let i = -1;
+			return {
+				[Symbol.iterator]: function () {
+					return this;
+				},
+				next: () => {
+					i++;
+					if (i >= predictedLength) {
+						return { done: true };
+					}
+
+					return {
+						done: false,
+						value: _initialValues[i]
+					};
+				}
+			};
 		};
 	}
 	else {
@@ -23,94 +38,76 @@ function Sequence (initialValues, predictedLength = null) {
 				throw new Error('Double iteration');
 			}
 			this._valueIterator = this._valueIterator || _initialValues();
-			let hasPassedFirst = false;
-			let hasPassedSecond = false;
+			let i = -1;
 			return {
-				[Symbol.iterator]: function () { return this; },
+				[Symbol.iterator]: function () {
+					return this;
+				},
 				next: () => {
-					if (!hasPassedFirst) {
-						hasPassedFirst = true;
-						if (!this._first) {
-							const first = this._valueIterator.next();
-							if (first.done) {
-								this._first = null;
-								return { done: true };
-							}
-							this._first = first.value;
-						}
-
+					i++;
+					if (this._length !== null && i >= this._length) {
+						return { done: true };
+					}
+					if (this._cachedValues[i]) {
 						return {
 							done: false,
-							value: this._first
+							value: this._cachedValues[i]
 						};
 					}
 
-					if (!hasPassedSecond) {
-						hasPassedSecond = true;
-						if (!this._second) {
-							const second = this._valueIterator.next();
-							if (second.done) {
-								this._second = null;
-								return { done: true };
-							}
-							this._second = second.value;
+					if (i === 0) {
+						const first = this._valueIterator.next();
+						if (first.done) {
+							this._length = 0;
+							return first;
 						}
-						return {
-							done: false,
-							value: this._second
-						};
+						this._cachedValues[0] = first.value;
+						return first;
+					}
+					if (i === 1) {
+						const second = this._valueIterator.next();
+						if (second.done) {
+							this._length = 1;
+							return second;
+						}
+						this._cachedValues[1] = second.value;
+						return second;
 					}
 
 					this._iteratorHasProgressed = true;
-					return this._valueIterator.next();
+					const value = this._valueIterator.next();
+					if (value.done) {
+						this._length = i;
+					}
+					return value;
 				}
 			};
 		};
 	}
     Item.call(this, initialValues || []);
 
-	this._isEmpty = null;
-	this._isSingleton = null;
 	this._length = predictedLength;
 
-			this._first = undefined;
-	this._second = undefined;
-	this._valueIterator = null;
 	this._iteratorHasProgressed = false;
+
+	this._cachedValues = [];
 }
 
 Sequence.prototype = Object.create(Item.prototype);
 
-/**
- * @param   {!Item}  value
- * @return  {!Sequence}
- */
-Sequence.singleton = function (value) {
-    return new Sequence([value], 1);
-};
-
-/**
- * @return  {!Sequence}
- */
-Sequence.empty = function () {
-	return new Sequence([], 0);
-};
-
 Sequence.prototype.first = function () {
-	if (this._first !== undefined) {
-		return this._first;
-	}
 	const iterator = this.value()[Symbol.iterator]();
 	const value = iterator.next();
-	this._first = value.done ? null : value.value;
-	return this._first;
+	return value.done ? null : value.value;
 };
 
 Sequence.prototype.map = function (callback) {
 	const iterator = this.value()[Symbol.iterator]();
 	return new Sequence(
 		() => ({
-			[Symbol.iterator]: function () { return this; },
+			[Symbol.iterator]: function () {
+				return this;
+			},
 			next: () => {
 				const value = iterator.next();
 				if (value.done) {
@@ -127,25 +124,26 @@ Sequence.prototype.map = function (callback) {
 };
 
 Sequence.prototype.filter = function (callback) {
-	const iterator = this.value()[Symbol.iterator]();
-	let i = 0;
 	return new Sequence(
-		() => ({
-			[Symbol.iterator]: function () { return this; },
-			next: () => {
-				let value = iterator.next();
-				while (!value.done) {
-					if (callback(value.value, i)) {
-						i++;
-						return value;
-					}
-					value = iterator.next();
+		() => {
+			let i = -1;
+			const iterator = this.value()[Symbol.iterator]();
+
+			return {
+				[Symbol.iterator]: function () {
+					return this;
+				},
+				next: () => {
 					i++;
+					let value = iterator.next();
+					while (!value.done && !callback(value.value, i, this)) {
+						i++;
+						value = iterator.next();
+					}
+					return value;
 				}
-				return value;
-			}
-		})
-	);
+			};
+		});
 };
 
 /**
@@ -153,7 +151,7 @@ Sequence.prototype.filter = function (callback) {
  * @return {!Sequence}
  */
 Sequence.prototype.atomize = function (dynamicContext) {
-    return new Sequence(Array.from(this.value()).map(value => value.atomize(dynamicContext)));
+    return this.map(value => value.atomize(dynamicContext));
 };
 
 Sequence.prototype.isEmpty = function () {
@@ -176,12 +174,17 @@ Sequence.prototype.getLength = function () {
 	if (this._length !== null) {
 		return this._length;
 	}
-	this._length = 0;
-	for (const _value of this.value()) {
-		this._length++;
+	let length = 0;
+	const iterator = this.value();
+	let item = iterator.next();
+	while (!item.done) {
+		this._cachedValues[length] = item.value;
+		length++;
+		item = iterator.next();
 	}
-	return this._length;
+	return length;
 };
+
 
 Sequence.prototype.instanceOfType = function (type) {
 	let isEmpty = true;
@@ -195,10 +198,6 @@ Sequence.prototype.instanceOfType = function (type) {
 };
 
 Sequence.prototype.getEffectiveBooleanValue = function () {
-	if (this._isEmpty === true) {
-		return false;
-	}
-
 	const iterator = this.value();
 	const firstValue = iterator.next();
 	if (firstValue.done) {
@@ -213,5 +212,82 @@ Sequence.prototype.getEffectiveBooleanValue = function () {
 	}
 	return firstValue.value.getEffectiveBooleanValue();
 };
+
+/**
+ * @extends Sequence
+ */
+function EmptySequence () {
+	Item.call(this, () => ({
+		next: () => ({ done: true })
+	}));
+}
+EmptySequence.prototype.getEffectiveBooleanValue = () => false;
+EmptySequence.prototype.instanceOfType = () => false;
+EmptySequence.prototype.first = () => null;
+EmptySequence.prototype.isEmpty = () => true;
+EmptySequence.prototype.getLength = () => 0;
+EmptySequence.prototype.isSingleton = () => false;
+EmptySequence.prototype.atomize = EmptySequence.prototype.filter = EmptySequence.prototype.map = () => emptySequence;
+const emptySequence = new EmptySequence();
+
+/**
+ * @extends Sequence
+ */
+function SingletonSequence (onlyValue) {
+	Item.call(this, () => {
+		let hasPassed = false;
+		return {
+			[Symbol.iterator]: function () { return this; },
+			next: () => {
+				if (hasPassed) {
+					return { done: true };
+				}
+				hasPassed = true;
+				return { done: false, value: onlyValue };
+			}
+		};
+	});
+	this._onlyValue = onlyValue;
+}
+SingletonSequence.prototype.getEffectiveBooleanValue = function () {
+	return this._onlyValue.getEffectiveBooleanValue();
+};
+SingletonSequence.prototype.instanceOfType = function (type) {
+	return this._onlyValue.instanceOfType(type);
+};
+SingletonSequence.prototype.first = function () {
+	return this._onlyValue;
+};
+SingletonSequence.prototype.isEmpty = () => false;
+SingletonSequence.prototype.getLength = () => 1;
+SingletonSequence.prototype.isSingleton = () => true;
+SingletonSequence.prototype.atomize = function (dynamicContext) {
+	return new SingletonSequence(this._onlyValue.atomize(dynamicContext));
+};
+SingletonSequence.prototype.filter = function (cb) {
+	if (cb(this._onlyValue, 0, this)) {
+		return this;
+	}
+	return emptySequence;
+};
+SingletonSequence.prototype.map = function (cb) {
+	return new SingletonSequence(cb(this._onlyValue, 0, this));
+};
+
+/**
+ * @param   {!Item}  value
+ * @return  {!Sequence}
+ */
+Sequence.singleton = function (value) {
+    return new SingletonSequence(value);
+};
+
+/**
+ * @return  {!Sequence}
+ */
+Sequence.empty = function () {
+	return emptySequence;
+};
+
 
 export default Sequence;

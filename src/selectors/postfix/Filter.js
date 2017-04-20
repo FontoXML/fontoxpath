@@ -22,11 +22,13 @@ class Filter extends Selector {
 	}
 
 	evaluate (dynamicContext) {
+		/**
+		 * @type {Sequence}
+		 */
 		const valuesToFilter = this._selector.evaluate(dynamicContext);
-		const filterSelector = this._filterSelector;
-		return valuesToFilter.filter((item, i) => {
-			const result = filterSelector.evaluate(dynamicContext._createScopedContext({
-				contextSequence: valuesToFilter,
+		return valuesToFilter.filter((item, i, sequence) => {
+			const result = this._filterSelector.evaluate(dynamicContext._createScopedContext({
+				contextSequence: sequence,
 				contextItemIndex: i,
 				contextItem: item
 			}));

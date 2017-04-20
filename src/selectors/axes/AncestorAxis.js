@@ -2,10 +2,22 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import NodeValue from '../dataTypes/NodeValue';
 
-function* generateAncestors (domFacade, contextNode) {
-	for (let ancestorNode = contextNode; ancestorNode; ancestorNode = domFacade.getParentNode(ancestorNode)) {
-		yield new NodeValue(ancestorNode);
-	}
+function generateAncestors (domFacade, contextNode) {
+	let ancestor = contextNode;
+	return {
+		next: () => {
+			if (!ancestor) {
+				return { done: true };
+			}
+			const previousAncestor = ancestor;
+			ancestor = previousAncestor && domFacade.getParentNode(previousAncestor);
+
+			return {
+				done: false,
+				value: new NodeValue(previousAncestor)
+			};
+		}
+	};
 }
 
 /**
@@ -34,17 +46,15 @@ class AncestorAxis extends Selector {
 		const domFacade = dynamicContext.domFacade;
 
 		const contextNode = contextItem.value;
-		const ancestorSelector = this._ancestorSelector;
-		const isInclusive = this._isInclusive;
-		return new Sequence(function* () {
-			const ancestorSequence = new Sequence(
-				() =>generateAncestors(domFacade, isInclusive ? contextNode : domFacade.getParentNode(contextNode)));
-			for (const childContext of dynamicContext.createSequenceIterator(ancestorSequence)) {
-				const nodeIsMatch = ancestorSelector.evaluate(childContext).getEffectiveBooleanValue();
-				if (nodeIsMatch) {
-					yield childContext.contextItem;
-				}
-			}
+		return new Sequence(
+			() => generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode))
+		).filter((item, i, sequence) => {
+			const ancestorContext = dynamicContext._createScopedContext({
+				contextItem: item,
+				contextItemIndex: i,
+				contextSequence: sequence
+			});
+			return this._ancestorSelector.evaluate(ancestorContext).getEffectiveBooleanValue();
 		});
 	}
 }

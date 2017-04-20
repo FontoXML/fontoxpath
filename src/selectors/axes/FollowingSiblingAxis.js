@@ -2,6 +2,22 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import NodeValue from '../dataTypes/NodeValue';
 
+function createSiblingGenerator (domFacade, node) {
+	return {
+		next: () => {
+			node = node && domFacade.getNextSibling(node);
+			if (!node) {
+				return { done: true };
+			}
+
+			return {
+				value: new NodeValue(node),
+				done: false
+			};
+		}
+	};
+}
+
 /**
  * @extends {Selector}
  */
@@ -25,20 +41,14 @@ class FollowingSiblingAxis extends Selector {
         domFacade = dynamicContext.domFacade;
 
 		const siblingSelector = this._siblingSelector;
-		return new Sequence(function* () {
-			const siblingSequence = new Sequence(function* () {
-				var sibling = contextItem.value;
-				while ((sibling = domFacade.getNextSibling(sibling))) {
-					yield new NodeValue(sibling);
-				}
-			});
+		return new Sequence(() => createSiblingGenerator(domFacade, contextItem.value)).filter((item, i, sequence) => {
+			const result = siblingSelector.evaluate(dynamicContext._createScopedContext({
+				contextSequence: sequence,
+				contextItemIndex: i,
+				contextItem: item
+			}));
 
-			for (const childContext of dynamicContext.createSequenceIterator(siblingSequence)) {
-				const nodeIsMatch = siblingSelector.evaluate(childContext).getEffectiveBooleanValue();
-				if (nodeIsMatch) {
-					yield childContext.contextItem;
-				}
-			}
+			return result.getEffectiveBooleanValue();
 		});
 	}
 }

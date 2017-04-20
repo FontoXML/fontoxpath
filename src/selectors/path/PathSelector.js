@@ -62,8 +62,9 @@ class PathSelector extends Selector {
 
 			let resultValuesInOrderOfEvaluation = [];
 			const resultSet = new Set();
-			for (const childContext of dynamicContext.createSequenceIterator(new Sequence(intermediateResultNodes))) {
-				const newResults = selector.evaluate(childContext);
+			const childContextIterator = dynamicContext.createSequenceIterator(new Sequence(intermediateResultNodes));
+			for (let childContext = childContextIterator.next(); !childContext.done; childContext = childContextIterator.next()) {
+				const newResults = selector.evaluate(childContext.value);
 
 				if (newResults.isEmpty()) {
 					continue;

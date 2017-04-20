@@ -1,5 +1,10 @@
 import evaluateXPath from './evaluateXPath';
 
+
+const cache = Object.create(null);
+
+window['cache'] = cache;
+
 /**
  * Evaluates an XPath on the given contextNode.
  *
@@ -12,5 +17,21 @@ import evaluateXPath from './evaluateXPath';
  * @return  {boolean}
  */
 export default function evaluateXPathToBoolean (selector, contextNode, domFacade, variables, options) {
-	return /** @type {boolean} */(evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.BOOLEAN_TYPE, options));
+	let cacheForSelector = cache[selector];
+	if (!cacheForSelector) {
+		cacheForSelector = cache[selector] = new Map();
+	}
+	if (cacheForSelector.has(contextNode)) {
+		const cachedValue = cacheForSelector.get(contextNode);
+		cachedValue.uses++;
+		return cachedValue.value;
+	}
+
+	const value = /** @type {boolean} */(evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.BOOLEAN_TYPE, options));
+	cacheForSelector.set(contextNode, {
+		value,
+		uses: 1
+	});
+
+	return value;
 }

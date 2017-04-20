@@ -44,10 +44,6 @@ class Selector {
 		return null;
 	}
 
-	toString () {
-		return this._getStringifiedValue();
-	}
-
 	/**
 	 * @abstract
 	 * @param   {!./DynamicContext}  _dynamicContext

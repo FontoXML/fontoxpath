@@ -4,14 +4,7 @@ import Item from './Item';
 import AnyAtomicTypeValue from './AnyAtomicTypeValue';
 import UntypedAtomicValue from './UntypedAtomicValue';
 
-// This should work for maximal reuse of instances:
-// NodeValue has a strong ref to a Node, but when it's only referenced by this weakmap, it should be eligible for GC
-// When it is collected, the Node may be collected too
-// TODO: This must work for all values, and be in a 'static context' of some sort
-/**
- * @const {!WeakMap<!Node, !NodeValue>}
- */
-const nodeValueByNode = new WeakMap();
+import nodeValueCache from './nodeValueCache';
 
 let currentNodeId = 1;
 /**
@@ -20,11 +13,11 @@ let currentNodeId = 1;
  * @param  {!Node}       node
  */
 function NodeValue (node) {
-	if (nodeValueByNode.has(node)) {
-		return nodeValueByNode.get(node);
+	if (nodeValueCache.has(node)) {
+		return nodeValueCache.get(node);
 	}
+    nodeValueCache.set(node, this);
 
-    nodeValueByNode.set(node, this);
     Item.call(this, node);
 
 	this._id = (currentNodeId++) + '';
@@ -132,4 +125,5 @@ NodeValue.prototype.getStringValue = function (dynamicContext) {
     return this.atomize(dynamicContext);
 };
 
+NodeValue.prototype.getEffectiveBooleanValue = () => true;
 export default NodeValue;
