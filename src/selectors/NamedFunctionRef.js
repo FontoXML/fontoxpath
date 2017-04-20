@@ -1,8 +1,8 @@
 import Selector from './Selector';
 import Specificity from './Specificity';
 import Sequence from './dataTypes/Sequence';
-import FunctionItem from './dataTypes/FunctionItem';
 import functionRegistry from './functions/functionRegistry';
+import FunctionValue from './dataTypes/FunctionValue';
 
 /**
  * @extends {Selector}
@@ -26,14 +26,13 @@ class NamedFunctionRef extends Selector {
 			throw new Error(`XPST0017: Function ${functionName} with arity of ${arity} not registered. ${functionRegistry.getAlternativesAsStringFor(functionName)}`);
 		}
 
-		this._functionItem = new FunctionItem(
-			functionProperties.callFunction,
-			functionName,
-			functionProperties.argumentTypes,
-			arity,
-			functionProperties.returnType);
-
-
+		this._functionItem = new FunctionValue({
+			value: functionProperties.callFunction,
+			name: functionName,
+			argumentTypes: functionProperties.argumentTypes,
+			arity: arity,
+			returnType: functionProperties.returnType
+		});
 	}
 
 	evaluate (_dynamicContext) {

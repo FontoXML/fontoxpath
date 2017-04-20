@@ -1,8 +1,7 @@
 import Selector from '../Selector';
 import Specificity from '../Specificity';
-import MapValue from '../dataTypes/MapValue';
 import Sequence from '../dataTypes/Sequence';
-
+import MapValue from '../dataTypes/MapValue';
 /**
  * @extends {Selector}
  */
@@ -15,8 +14,6 @@ class MapConstructor extends Selector {
 			[Specificity.EXTERNAL_KIND]: 1
 		}));
 		this._entries = entries;
-
-
 	}
 
 	evaluate (dynamicContext) {

@@ -1,27 +1,20 @@
-import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
-import { castToType } from '../dataTypes/conversionHelper';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 
 function fnNot (_dynamicContext, sequence) {
-	return Sequence.singleton(sequence.getEffectiveBooleanValue() ? BooleanValue.FALSE : BooleanValue.TRUE);
+	return Sequence.singleton(createAtomicValue(!sequence.getEffectiveBooleanValue(), 'xs:boolean'));
 }
 
 function fnBoolean (_dynamicContext, sequence) {
-	return Sequence.singleton(sequence.getEffectiveBooleanValue() ? BooleanValue.TRUE : BooleanValue.FALSE);
-}
-function xsBoolean (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-	return Sequence.singleton(castToType(sequence.first(), 'xs:boolean'));
+	return Sequence.singleton(createAtomicValue(sequence.getEffectiveBooleanValue(), 'xs:boolean'));
 }
 
 function fnTrue () {
-	return Sequence.singleton(BooleanValue.TRUE);
+	return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
 }
 
 function fnFalse () {
-	return Sequence.singleton(BooleanValue.FALSE);
+	return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 }
 
 export default {
@@ -31,13 +24,6 @@ export default {
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnBoolean
-		},
-
-		{
-			name: 'xs:boolean',
-			argumentTypes: ['xs:anyAtomicType?'],
-			returnType: 'xs:boolean?',
-			callFunction: xsBoolean
 		},
 
 		{

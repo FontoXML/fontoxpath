@@ -1,5 +1,4 @@
 import builtInFunctions from './builtInFunctions';
-import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
 
 /**

@@ -1,7 +1,8 @@
 import Selector from '../../Selector';
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
-import BooleanValue from '../../dataTypes/BooleanValue';
+import createAtomicValue from '../../dataTypes/createAtomicValue';
+import getEffectiveBooleanValue from '../../dataTypes/getEffectiveBooleanValue';
 
 /**
  * @extends {Selector}
@@ -42,10 +43,10 @@ class OrOperator extends Selector {
 
 	evaluate (dynamicContext) {
 		var result = this._subSelectors.some(function (subSelector) {
-				return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
+			return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
 			});
 
-		return Sequence.singleton(result ? BooleanValue.TRUE : BooleanValue.FALSE);
+		return Sequence.singleton(createAtomicValue(result, 'xs:boolean'));
 	}
 
 	getBucket () {

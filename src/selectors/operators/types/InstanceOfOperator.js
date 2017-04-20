@@ -1,6 +1,6 @@
 import Sequence from '../../dataTypes/Sequence';
-import BooleanValue from '../../dataTypes/BooleanValue';
 import Selector from '../../Selector';
+import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -17,8 +17,6 @@ class InstanceOfOperator extends Selector {
 		this._expression = expression;
 		this._typeTest = typeTest;
 		this._multiplicity = multiplicity;
-
-
 	}
 
 	evaluate (dynamicContext) {
@@ -27,13 +25,13 @@ class InstanceOfOperator extends Selector {
 		switch (this._multiplicity) {
 			case '?':
 				if (!evaluatedExpression.isEmpty() && !evaluatedExpression.isSingleton()) {
-					return Sequence.singleton(BooleanValue.FALSE);
+					return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 				}
 				break;
 
 			case '+':
 				if (evaluatedExpression.isEmpty()) {
-					return Sequence.singleton(BooleanValue.FALSE);
+					return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 				}
 				break;
 
@@ -42,11 +40,12 @@ class InstanceOfOperator extends Selector {
 
 			default:
 				if (!evaluatedExpression.isSingleton()) {
-					return Sequence.singleton(BooleanValue.FALSE);
+					return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 				}
 		}
 
-		const isInstanceOf = Array.from(evaluatedExpression.value()).every(argumentItem => {
+		const isInstanceOf = evaluatedExpression.getAllValues().every(argumentItem => {
+		// const isInstanceOf = Array.from(evaluatedExpression.value()).every(argumentItem => {
 			const contextItem = Sequence.singleton(argumentItem);
 			const scopedContext = dynamicContext.createScopedContext({
 				contextItemIndex: 0,
@@ -56,7 +55,7 @@ class InstanceOfOperator extends Selector {
 			return this._typeTest.evaluate(scopedContext).getEffectiveBooleanValue();
 		});
 
-		return Sequence.singleton(isInstanceOf ? BooleanValue.TRUE : BooleanValue.FALSE);
+		return Sequence.singleton(createAtomicValue(isInstanceOf, 'xs:boolean'));
 	}
 }
 

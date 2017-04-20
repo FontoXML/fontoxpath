@@ -16,7 +16,6 @@ class SelfAxis extends Selector {
 		});
 
 		this._selector = selector;
-
 	}
 
 	/**

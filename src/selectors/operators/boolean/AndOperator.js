@@ -1,7 +1,7 @@
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
-import BooleanValue from '../../dataTypes/BooleanValue';
 import Selector from '../../Selector';
+import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -21,10 +21,10 @@ class AndOperator extends Selector {
 
 	evaluate (dynamicContext) {
 		var result = this._subSelectors.every(function (subSelector) {
-				return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
+			return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
 			});
 
-		return Sequence.singleton(result ? BooleanValue.TRUE : BooleanValue.FALSE);
+		return Sequence.singleton(createAtomicValue(result, 'xs:boolean'));
 	}
 
 	getBucket () {

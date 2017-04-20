@@ -1,8 +1,15 @@
-import IntegerValue from '../dataTypes/IntegerValue';
 import Sequence from '../dataTypes/Sequence';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+
 
 function opTo (_dynamicContext, fromValue, toValue) {
+	if (toValue.isEmpty()) {
+		return toValue;
+	}
+	if (fromValue.isEmpty()) {
+		return fromValue;
+	}
 	var from = fromValue.first().value,
 		to = toValue.first().value;
 	if (from > to) {
@@ -14,20 +21,20 @@ function opTo (_dynamicContext, fromValue, toValue) {
 			if (from > to) {
 				return { done: true };
 			}
-			return { done: false, value: new IntegerValue(from++) };
+			return { done: false, value: createAtomicValue(from++, 'xs:integer') };
 		}
 	}, to - from + 1);
 }
 
 /**
  * @param   {../DynamicContext}  dynamicContext
- * @param   {!Sequence<!../dataTypes/NodeValue>}  firstNodes
- * @param   {!Sequence<!../dataTypes/NodeValue>}  secondNodes
- * @return  {!Sequence<!../dataTypes/NodeValue>}
+ * @param   {!Sequence<!../dataTypes/Value>}  firstNodes
+ * @param   {!Sequence<!../dataTypes/Value>}  secondNodes
+ * @return  {!Sequence<!../dataTypes/Value>}
  */
 function opExcept (dynamicContext, firstNodes, secondNodes) {
 	/**
-	 * @type {!Array<!../dataTypes/NodeValue>}
+	 * @type {!Array<!../dataTypes/Value>}
 	 */
 	const allSecondNodes = secondNodes.getAllValues();
 
@@ -42,13 +49,13 @@ function opExcept (dynamicContext, firstNodes, secondNodes) {
 
 /**
  * @param   {../DynamicContext}  dynamicContext
- * @param   {!Sequence<!../dataTypes/NodeValue>}  firstNodes
- * @param   {!Sequence<!../dataTypes/NodeValue>}  secondNodes
- * @return  {!Sequence<!../dataTypes/NodeValue>}
+ * @param   {!Sequence<!../dataTypes/Value>}  firstNodes
+ * @param   {!Sequence<!../dataTypes/Value>}  secondNodes
+ * @return  {!Sequence<!../dataTypes/Value>}
  */
 function opIntersect (dynamicContext, firstNodes, secondNodes) {
 	/**
-	 * @type {!Array<!../dataTypes/NodeValue>}
+	 * @type {!Array<!../dataTypes/Value>}
 	 */
 	const allSecondNodes = secondNodes.getAllValues();
 
@@ -79,7 +86,7 @@ export default {
 
 		{
 			name: 'op:to',
-			argumentTypes: ['xs:integer', 'xs:integer'],
+			argumentTypes: ['xs:integer?', 'xs:integer?'],
 			returnType: 'xs:integer*',
 			callFunction: opTo
 		},

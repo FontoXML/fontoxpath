@@ -1,9 +1,8 @@
+import isInstanceOfType from '../../dataTypes/isInstanceOfType';
 import Sequence from '../../dataTypes/Sequence';
-import DecimalValue from '../../dataTypes/DecimalValue';
-import DoubleValue from '../../dataTypes/DoubleValue';
-import FloatValue from '../../dataTypes/FloatValue';
-import IntegerValue from '../../dataTypes/IntegerValue';
 import Selector from '../../Selector';
+import createAtomicValue from '../../dataTypes/createAtomicValue';
+import atomize from '../../dataTypes/atomize';
 
 /**
  * @extends {Selector}
@@ -19,41 +18,39 @@ class Unary extends Selector {
 		this._valueExpr = valueExpr;
 
 		this._kind = kind;
-
-
 	}
 
 	evaluate (dynamicContext) {
 		var valueSequence = this._valueExpr.evaluate(dynamicContext);
 		if (valueSequence.isEmpty()) {
-			return Sequence.singleton(new DoubleValue(Number.NaN));
+			return Sequence.singleton(createAtomicValue(Number.NaN, 'xs:double'));
 		}
 
-		var value = valueSequence.first().atomize(dynamicContext);
+		var value = atomize(valueSequence.first(), dynamicContext);
 		if (this._kind === '+') {
-			if (value.instanceOfType('xs:decimal') ||
-					value.instanceOfType('xs:double') ||
-					value.instanceOfType('xs:float') ||
-					value.instanceOfType('xs:integer')) {
+			if (isInstanceOfType(value, 'xs:decimal') ||
+					isInstanceOfType(value, 'xs:double') ||
+					isInstanceOfType(value, 'xs:float') ||
+					isInstanceOfType(value, 'xs:integer')) {
 				return valueSequence;
 			}
-			return Sequence.singleton(new DoubleValue(Number.NaN));
+			return Sequence.singleton(createAtomicValue(Number.NaN, 'xs:double'));
 		}
 
-		if (value.instanceOfType('xs:integer')) {
-			return Sequence.singleton(new IntegerValue(-value.value));
+		if (isInstanceOfType(value, 'xs:integer')) {
+			return Sequence.singleton(createAtomicValue(-value.value, 'xs:integer'));
 		}
-		if (value.instanceOfType('xs:decimal')) {
-			return Sequence.singleton(new DecimalValue(-value.value));
+		if (isInstanceOfType(value, 'xs:decimal')) {
+			return Sequence.singleton(createAtomicValue(-value.value, 'xs:decimal'));
 		}
-		if (value.instanceOfType('xs:double')) {
-			return Sequence.singleton(new DoubleValue(-value.value));
+		if (isInstanceOfType(value, 'xs:double')) {
+			return Sequence.singleton(createAtomicValue(-value.value, 'xs:double'));
 		}
-		if (value.instanceOfType('xs:float')) {
-			return Sequence.singleton(new FloatValue(-value.value));
+		if (isInstanceOfType(value, 'xs:float')) {
+			return Sequence.singleton(createAtomicValue(-value.value, 'xs:float'));
 		}
 
-		return Sequence.singleton(new DoubleValue(Number.NaN));
+		return Sequence.singleton(createAtomicValue(Number.NaN, 'xs:double'));
 	}
 }
 

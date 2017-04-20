@@ -1,6 +1,9 @@
-import NodeValue from '../dataTypes/NodeValue';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 import Sequence from '../dataTypes/Sequence';
-import { castToType } from '../dataTypes/conversionHelper';
+import NodeValue from '../dataTypes/NodeValue';
+import atomize from '../dataTypes/atomize';
+import castToType from '../dataTypes/castToType';
 import builtInFunctionsNode from './builtInFunctions.node';
 /**
  * @type {function(../DynamicContext, ../dataTypes/Sequence):../dataTypes/Sequence}
@@ -12,16 +15,17 @@ function filterElementAndTextNodes (node) {
 }
 
 function anyAtomicTypeDeepEqual (_dynamicContext, item1, item2) {
-	if ((item1.instanceOfType('xs:decimal') || item1.instanceOfType('xs:float')) &&
-			(item2.instanceOfType('xs:decimal') || item2.instanceOfType('xs:float'))) {
-		const temp1 = castToType(item1, 'xs:float'),
-			temp2 = castToType(item2, 'xs:float');
+	if ((isInstanceOfType(item1, 'xs:decimal') || isInstanceOfType(item1, 'xs:float')) &&
+		(isInstanceOfType(item2, 'xs:decimal') || isInstanceOfType(item2, 'xs:float'))) {
+		const temp1 = castToType(item1, 'xs:float');
+		const temp2 = castToType(item2, 'xs:float');
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
-	else if ((item1.instanceOfType('xs:decimal') || item1.instanceOfType('xs:float') || item1.instanceOfType('xs:double')) &&
-			(item2.instanceOfType('xs:decimal') || item2.instanceOfType('xs:float') || item2.instanceOfType('xs:double'))) {
+	else if (
+		(isInstanceOfType(item1, 'xs:decimal') || isInstanceOfType(item1, 'xs:float') || isInstanceOfType(item1, 'xs:double')) &&
+			(isInstanceOfType(item2, 'xs:decimal') || isInstanceOfType(item2, 'xs:float') || isInstanceOfType(item2, 'xs:double'))) {
 		const temp1 = castToType(item1, 'xs:double'),
-			temp2 = castToType(item2, 'xs:double');
+		temp2 = castToType(item2, 'xs:double');
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 	return item1.value === item2.value;
@@ -77,13 +81,13 @@ function arrayTypeDeepEqual (dynamicContext, item1, item2) {
 
 function nodeDeepEqual (dynamicContext, item1, item2) {
 	let item1Nodes = dynamicContext.domFacade.getChildNodes(item1.value),
-		item2Nodes = dynamicContext.domFacade.getChildNodes(item2.value);
+	item2Nodes = dynamicContext.domFacade.getChildNodes(item2.value);
 
 	item1Nodes = item1Nodes.filter(filterElementAndTextNodes);
 	item2Nodes = item2Nodes.filter(filterElementAndTextNodes);
 
-	item1Nodes = new Sequence(item1Nodes.map((node) => new NodeValue(node)));
-	item2Nodes = new Sequence(item2Nodes.map((node) => new NodeValue(node)));
+	item1Nodes = new Sequence(item1Nodes.map(NodeValue.createFromNode));
+	item2Nodes = new Sequence(item2Nodes.map(NodeValue.createFromNode));
 
 	return sequenceDeepEqual(dynamicContext, item1Nodes, item2Nodes);
 }
@@ -96,54 +100,54 @@ function elementNodeDeepEqual (dynamicContext, item1, item2) {
 // Nodes which contain an atomic type (text -> string, processing-instruction -> string, attribute -> any atomic type)
 function atomicTypeNodeDeepEqual (dynamicContext, item1, item2) {
 	return sequenceDeepEqual(dynamicContext, nodeName(dynamicContext, Sequence.singleton(item1)), nodeName(dynamicContext, Sequence.singleton(item2))) &&
-		anyAtomicTypeDeepEqual(dynamicContext, item1.atomize(dynamicContext), item2.atomize(dynamicContext));
+		anyAtomicTypeDeepEqual(dynamicContext, atomize(item1, dynamicContext), atomize(item2, dynamicContext));
 }
 
 function itemDeepEqual (dynamicContext, item1, item2) {
 	// All atomic types
-	if (item1.instanceOfType('xs:anyAtomicType') && item2.instanceOfType('xs:anyAtomicType')) {
+	if (isInstanceOfType(item1, 'xs:anyAtomicType') && isInstanceOfType(item2, 'xs:anyAtomicType')) {
 		return anyAtomicTypeDeepEqual(dynamicContext, item1, item2);
 	}
 
 	// Maps
-	if (item1.instanceOfType('map(*)') && item2.instanceOfType('map(*)')) {
+	if (isInstanceOfType(item1, 'map(*)') && isInstanceOfType(item2, 'map(*)')) {
 		return mapTypeDeepEqual(dynamicContext, item1, item2);
 	}
 
 	// Arrays
-	if (item1.instanceOfType('array(*)') && item2.instanceOfType('array(*)')) {
+	if (isInstanceOfType(item1, 'array(*)') && isInstanceOfType(item2, 'array(*)')) {
 		return arrayTypeDeepEqual(dynamicContext, item1, item2);
 	}
 
 	// Nodes
-	if (item1.instanceOfType('node()') && item2.instanceOfType('node()')) {
+	if (isInstanceOfType(item1, 'node()') && isInstanceOfType(item2, 'node()')) {
 		// Document nodes
-		if (item1.instanceOfType('document()') && item2.instanceOfType('document()')) {
-			return nodeDeepEqual(dynamicContext, item1, item2);
-		}
-
-		// Element nodes, cannot be compared due to missing schema information
-		if (item1.instanceOfType('element()') && item2.instanceOfType('element()')) {
-			return elementNodeDeepEqual(dynamicContext, item1, item2);
-		}
-
-		// Attribute nodes
-		if (item1.instanceOfType('attribute()') && item2.instanceOfType('attribute()')) {
-			return atomicTypeNodeDeepEqual(dynamicContext, item1, item2);
-		}
-
-		// Processing instruction node
-		if (item1.instanceOfType('processing-instruction()') && item2.instanceOfType('processing-instruction()')) {
-			return atomicTypeNodeDeepEqual(dynamicContext, item1, item2);
-		}
-
-		// Text nodes
-		if (item1.instanceOfType('text()') && item2.instanceOfType('text()')) {
-			return atomicTypeNodeDeepEqual(dynamicContext, item1, item2);
-		}
+		if (isInstanceOfType(item1, 'document()') && isInstanceOfType(item2, 'document()')) {
+		return nodeDeepEqual(dynamicContext, item1, item2);
 	}
 
-	return false;
+	// Element nodes, cannot be compared due to missing schema information
+	if (isInstanceOfType(item1, 'element()') && isInstanceOfType(item2, 'element()')) {
+		return elementNodeDeepEqual(dynamicContext, item1, item2);
+	}
+
+	// Attribute nodes
+	if (isInstanceOfType(item1, 'attribute()') && isInstanceOfType(item2, 'attribute()')) {
+		return atomicTypeNodeDeepEqual(dynamicContext, item1, item2);
+	}
+
+	// Processing instruction node
+	if (isInstanceOfType(item1, 'processing-instruction()') && isInstanceOfType(item2, 'processing-instruction()')) {
+		return atomicTypeNodeDeepEqual(dynamicContext, item1, item2);
+	}
+
+	// Text nodes
+	if (isInstanceOfType(item1, 'text()') && isInstanceOfType(item2, 'text()')) {
+		return atomicTypeNodeDeepEqual(dynamicContext, item1, item2);
+	}
+}
+
+return false;
 }
 
 export default sequenceDeepEqual;

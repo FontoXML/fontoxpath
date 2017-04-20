@@ -2,6 +2,7 @@ import argumentListToString from './argumentListToString';
 import { transformArgument } from './argumentHelper';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 
 function transformArgumentList (argumentTypes, argumentList, dynamicContext) {
 	if (argumentList.length !== argumentTypes.length) {
@@ -42,8 +43,6 @@ class FunctionCall extends Selector {
 
 		this._args = args;
 		this._functionReference = functionReference;
-
-
 	}
 
 	evaluate (dynamicContext) {
@@ -55,7 +54,7 @@ class FunctionCall extends Selector {
 
 		const functionItem = sequence.first();
 
-		if (!functionItem.instanceOfType('function(*)')) {
+		if (!isInstanceOfType(sequence.first(), 'function(*)')) {
 			throw new Error('XPTY0004: expected base expression to evaluate to a function item');
 		}
 

@@ -17,7 +17,6 @@ class ParentAxis extends Selector {
 		});
 
 		this._parentSelector = parentSelector;
-
 	}
 
 	/**
@@ -31,10 +30,10 @@ class ParentAxis extends Selector {
 		if (!parentNode) {
 			return Sequence.empty();
 		}
-		const parentSequence = Sequence.singleton(new NodeValue(parentNode));
+		const parentSequence = Sequence.singleton(NodeValue.createFromNode(parentNode));
 		const scopedContext = dynamicContext.createScopedContext({
 			contextItemIndex: 0,
-			contextItem: new NodeValue(parentNode),
+			contextItem: NodeValue.createFromNode(parentNode),
 			contextSequence: parentSequence
 		});
 

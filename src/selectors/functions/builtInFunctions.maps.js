@@ -1,13 +1,11 @@
 import isSameMapKey from './isSameMapKey';
 import mapGet from './builtInFunctions.maps.get';
 import Sequence from '../dataTypes/Sequence';
-import BooleanValue from '../dataTypes/BooleanValue';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
-import StringValue from '../dataTypes/StringValue';
-import IntegerValue from '../dataTypes/IntegerValue';
 
 function mapMerge (dynamicContext, mapSequence, optionMap) {
-	var duplicateKey = Sequence.singleton(new StringValue('duplicates'));
+	var duplicateKey = Sequence.singleton(createAtomicValue('duplicates', 'xs:string'));
 	var duplicationHandlingValueSequence = mapGet(dynamicContext, optionMap, duplicateKey);
 	var duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.first().value;
 	var result = mapSequence.getAllValues().reduce(function (resultingKeyValuePairs, map) {
@@ -79,7 +77,7 @@ function mapEntry (_dynamicContext, keySequence, value) {
 }
 
 function mapSize (_dynamicContext, mapSequence) {
-	return Sequence.singleton(new IntegerValue(mapSequence.first().keyValuePairs.length));
+	return Sequence.singleton(createAtomicValue(mapSequence.first().keyValuePairs.length, 'xs:integer'));
 }
 
 function mapKeys (_dynamicContext, mapSequence) {
@@ -95,7 +93,7 @@ function mapContains (_dynamicContext, mapSequence, keySequence) {
 			function (pair) {
 				return isSameMapKey(pair.key, keySequence.first());
 			});
-	return Sequence.singleton(doesContain ? BooleanValue.TRUE : BooleanValue.FALSE);
+	return Sequence.singleton(createAtomicValue(doesContain, 'xs:boolean'));
 }
 
 function mapRemove (_dynamicContext, mapSequence, keySequence) {
@@ -176,9 +174,13 @@ export default {
 			argumentTypes: ['map(*)*'],
 			returnType: 'map(*)',
 			callFunction: function (dynamicContext, maps) {
-				return mapMerge(dynamicContext, maps, Sequence.singleton(new MapValue([{
-					key: new StringValue('duplicates'), value: Sequence.singleton(new StringValue('use-first'))
-				}])));
+				return mapMerge(
+					dynamicContext,
+					maps,
+					Sequence.singleton(new MapValue([{
+						key: createAtomicValue('duplicates', 'xs:string'),
+						value: Sequence.singleton(createAtomicValue('use-first', 'xs:string'))
+					}])));
 			}
 		},
 

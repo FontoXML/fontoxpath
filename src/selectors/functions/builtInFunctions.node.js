@@ -1,8 +1,7 @@
 import builtinStringFunctions from './builtInFunctions.string';
-import QNameValue from '../dataTypes/QNameValue';
 import Sequence from '../dataTypes/Sequence';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
-
+import createAtomicValue from '../dataTypes/createAtomicValue';
 var stringFunctions = builtinStringFunctions.functions;
 function contextItemAsFirstArgument (fn, dynamicContext) {
 	return fn(dynamicContext, Sequence.singleton(dynamicContext.contextItem));
@@ -23,7 +22,7 @@ function fnNodeName (_dynamicContext, sequence) {
 	if (nodeName === null) {
 		return Sequence.empty();
 	}
-	return Sequence.singleton(new QNameValue(nodeName));
+	return Sequence.singleton(createAtomicValue(nodeName, 'xs:QName'));
 }
 
 function contains (domFacade, ancestor, descendant) {
@@ -44,7 +43,7 @@ function fnOutermost (dynamicContext, nodeSequence) {
 		return nodeSequence;
 	}
 
-	var resultNodes = sortNodeValues(dynamicContext.domFacade, Array.from(nodeSequence.value()))
+	var resultNodes = sortNodeValues(dynamicContext.domFacade, nodeSequence.getAllValues())
 		.reduce(function (previousNodes, node, i) {
 			if (i === 0) {
 				previousNodes.push(node);
@@ -68,7 +67,7 @@ function fnInnermost (dynamicContext, nodeSequence) {
 		return nodeSequence;
 	}
 
-	var resultNodes = sortNodeValues(dynamicContext.domFacade, Array.from(nodeSequence.value()))
+	var resultNodes = sortNodeValues(dynamicContext.domFacade, nodeSequence.getAllValues())
 		.reduceRight(function (followingNodes, node, i, allNodes) {
 			if (i === allNodes.length - 1) {
 				followingNodes.push(node);

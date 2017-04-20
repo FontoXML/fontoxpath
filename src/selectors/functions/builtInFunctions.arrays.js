@@ -1,10 +1,11 @@
 import arrayGet from './builtInFunctions.arrays.get';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 import Sequence from '../dataTypes/Sequence';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 import ArrayValue from '../dataTypes/ArrayValue';
-import IntegerValue from '../dataTypes/IntegerValue';
 
 function arraySize (_dynamicContext, arraySequence) {
-	return Sequence.singleton(new IntegerValue(arraySequence.first().members.length));
+	return Sequence.singleton(createAtomicValue(arraySequence.first().members.length, 'xs:integer'));
 }
 
 function arrayPut (_dynamicContext, arraySequence, positionSequence, itemSequence) {
@@ -94,7 +95,7 @@ function arrayJoin (_dynamicContext, arraySequence) {
 
 function arrayForEach (dynamicContext, arraySequence, functionItemSequence) {
 	/**
-	 * @type {../dataTypes/FunctionItem}
+	 * @type {../dataTypes/FunctionValue}
 	 */
 	const cb = functionItemSequence.first();
 	const newMembers = arraySequence.first().members.map(function (member) {
@@ -105,7 +106,7 @@ function arrayForEach (dynamicContext, arraySequence, functionItemSequence) {
 
 function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
 	/**
-	 * @type {../dataTypes/FunctionItem}
+	 * @type {../dataTypes/FunctionValue}
 	 */
 	const cb = functionItemSequence.first();
 	const newMembers = arraySequence.first().members.filter(function (member) {
@@ -116,7 +117,7 @@ function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
 
 function arrayFoldLeft (dynamicContext, arraySequence, startSequence, functionItemSequence) {
 	/**
-	 * @type {../dataTypes/FunctionItem}
+	 * @type {../dataTypes/FunctionValue}
 	 */
 	const cb = functionItemSequence.first();
 	return arraySequence.first().members.reduce(function (accum, member) {
@@ -126,7 +127,7 @@ function arrayFoldLeft (dynamicContext, arraySequence, startSequence, functionIt
 
 function arrayFoldRight (dynamicContext, arraySequence, startSequence, functionItemSequence) {
 	/**
-	 * @type {../dataTypes/FunctionItem}
+	 * @type {../dataTypes/FunctionValue}
 	 */
 	const cb = functionItemSequence.first();
 	return arraySequence.first().members.reduceRight(function (accum, member) {
@@ -136,7 +137,7 @@ function arrayFoldRight (dynamicContext, arraySequence, startSequence, functionI
 
 function arrayForEachPair (dynamicContext, arraySequenceA, arraySequenceB, functionItemSequence) {
 	/**
-	 * @type {../dataTypes/FunctionItem}
+	 * @type {../dataTypes/FunctionValue}
 	 */
 	const cb = functionItemSequence.first();
 	const arrayA = arraySequenceA.first();
@@ -163,7 +164,7 @@ function arrayFlatten (dynamicContext, itemSequence) {
 	let resultSequenceItems = [];
 
 	itemSequence.getAllValues().forEach(function (item) {
-		if (item.instanceOfType('array(*)')) {
+		if (isInstanceOfType(item, 'array(*)')) {
 			item.members.forEach(function (member) {
 				const flattenedSequence = arrayFlatten(dynamicContext, member);
 				resultSequenceItems = resultSequenceItems.concat(flattenedSequence.getAllValues());
@@ -218,8 +219,9 @@ export default {
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'array(*)',
 			callFunction: function (dynamicContext, arraySequence, startSequence) {
-				const lengthSequence = Sequence.singleton(new IntegerValue(
-					arraySequence.first().members.length - startSequence.first().value + 1));
+				const lengthSequence = Sequence.singleton(createAtomicValue(
+					arraySequence.first().members.length - startSequence.first().value + 1,
+					'xs:integer'));
 				return arraySubarray(
 					dynamicContext,
 					arraySequence,
@@ -247,7 +249,7 @@ export default {
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
 			callFunction: function (dynamicContext, arraySequence) {
-				return arrayGet(dynamicContext, arraySequence, Sequence.singleton(new IntegerValue(1)));
+				return arrayGet(dynamicContext, arraySequence, Sequence.singleton(createAtomicValue(1, 'xs:integer')));
 			}
 		},
 
@@ -256,7 +258,7 @@ export default {
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
 			callFunction: function (dynamicContext, arraySequence) {
-				return arrayRemove(dynamicContext, arraySequence, Sequence.singleton(new IntegerValue(1)));
+				return arrayRemove(dynamicContext, arraySequence, Sequence.singleton(createAtomicValue(1, 'xs:integer')));
 			}
 		},
 

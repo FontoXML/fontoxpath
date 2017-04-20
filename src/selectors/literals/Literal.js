@@ -1,48 +1,43 @@
-import Item from '../dataTypes/Item';
-import DecimalValue from '../dataTypes/DecimalValue';
-import DoubleValue from '../dataTypes/DoubleValue';
-import IntegerValue from '../dataTypes/IntegerValue';
-import StringValue from '../dataTypes/StringValue';
 import Specificity from '../Specificity';
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
+
+import createAtomicValue from '../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
  */
 class Literal extends Selector {
 	/**
-	 * @param  {!(number|string)}  value
+	 * @param  {!(number|string)}  jsValue
 	 * @param  {!string}           type
 	 */
-	constructor (value, type) {
+	constructor (jsValue, type) {
 		super(new Specificity({}));
 		this._type = type;
 
 		/**
-		 * @type {Item}
+		 * @type {../dataTypes/Value}
 		 */
-		var typedValue;
+		let value;
 		switch (type) {
 			case 'xs:integer':
-				typedValue = new IntegerValue(parseInt(value, 10));
+				value = createAtomicValue(parseInt(jsValue, 10), type);
 				break;
 			case 'xs:string':
-				typedValue = new StringValue(value + '');
+				value = createAtomicValue(jsValue + '', type);
 				break;
 			case 'xs:decimal':
-				typedValue = new DecimalValue(parseFloat(value));
+				value = createAtomicValue(parseFloat(jsValue), type);
 				break;
 			case 'xs:double':
-				typedValue = new DoubleValue(parseFloat(value));
+				value = createAtomicValue(parseFloat(jsValue), type);
 				break;
 			default:
 				throw new TypeError('Type ' + type + ' not expected in a literal');
 		}
 
-		this._valueSequence = Sequence.singleton(typedValue);
-
-
+		this._valueSequence = Sequence.singleton(value);
 	}
 
 	evaluate (_dynamicContext) {

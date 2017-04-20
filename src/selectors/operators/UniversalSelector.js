@@ -1,7 +1,7 @@
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
-import BooleanValue from '../dataTypes/BooleanValue';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -15,7 +15,7 @@ class UniversalSelector extends Selector {
 	}
 
 	evaluate () {
-		return Sequence.singleton(BooleanValue.TRUE);
+		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
 	}
 }
 export default UniversalSelector;

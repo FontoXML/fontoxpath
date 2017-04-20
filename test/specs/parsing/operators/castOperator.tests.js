@@ -1,7 +1,9 @@
 import slimdom from 'slimdom';
 
 import {
-	evaluateXPathToBoolean
+	evaluateXPathToBoolean,
+	evaluateXPathToString,
+	evaluateXPathToNumber
 } from 'fontoxpath';
 
 let documentNode;
@@ -144,5 +146,84 @@ describe('cast as', () => {
 	describe('to xs:untypedAtomic', () => {
 		it('can cast strings to untypedAtomics',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:untypedAtomic("1E100") cast as xs:untypedAtomic return $r instance of xs:untypedAtomic and $r = "1E100"', documentNode)));
+	});
+
+	describe('to xs:anyURI', () => {
+		it('can cast strings to anyURI',
+			() => chai.assert.equal(evaluateXPathToString('xs:anyURI("a string")', documentNode), 'a string'));
+	});
+
+	describe('to xs:hexBinary', () => {
+		it('can cast the empty string to hexBinary',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('exists(xs:hexBinary(""))', documentNode)));
+	});
+
+	describe('to xs:base64Binary', () => {
+		it('can cast the empty string to base64Binary',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('exists(xs:base64Binary(""))', documentNode)));
+	});
+
+	describe('to xs:date', () => {
+		it.skip('can cast a string to date: upper bounds. This will not work because JavaScript Dates do not allow setting the year that far back',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('exists(xs:date("25252734927766555-06-07+02:00"))', documentNode)));
+		it.skip('can cast a string to date: lower bounds. This will not work because JavaScript Dates do not allow setting the year that far back',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('exists(xs:date("-25252734927766555-06-07+02:00"))', documentNode)));
+	});
+
+	describe('to xs:gMonthDay', () => {
+		it('can cast a string to gMonthDay: lower bounds',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('exists(xs:gMonthDay("--01-01Z"))', documentNode)));
+		it('can cast a string to gMonthDay: upper bounds',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('exists(xs:gMonthDay("--12-31Z"))', documentNode)));
+
+	});
+
+	describe('to xs:long', () => {
+		it('can cast strings to xs:long: max bounds. This will not work because of JavaScript numbers not having the same ranges',
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:long("9223372036854775808")', documentNode), 9223372036854775808), 'FOAR0002');
+		it('can cast strings to xs:long: middle bounds',
+			() => chai.assert.equal(evaluateXPathToNumber('xs:long("922337203685458")', documentNode), 922337203685458));
+	});
+
+	describe('to xs:int', () => {
+		it('can cast strings to xs:int',
+			() => chai.assert.equal(evaluateXPathToNumber('xs:int("1234")', documentNode), 1234));
+		it('xs:int can not be written in hexadecimal',
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:int("0x1234")', documentNode)), 'FORG0001');
+		it('xs:int can not be written with fractions',
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:int("1.0")', documentNode)), 'FORG0001');
+	});
+
+
+	describe('to xs:normalizedString', () => {
+		it('can cast integers to xs:normalizedString',
+			() => chai.assert.equal(evaluateXPathToString('xs:normalizedString(1234)', documentNode), '1234'));
+	});
+
+	describe('to xs:ENTITY', () => {
+		it('can cast strings to xs:ENTITY',
+			() => chai.assert.equal(evaluateXPathToString('xs:ENTITY("someString")', documentNode), 'someString'));
+		it('disallows empty strings',
+			() => chai.assert.throws(() => evaluateXPathToString('xs:ENTITY("")', documentNode), 'FORG0001'));
+
+	});
+
+	describe('to xs:language', () => {
+		it('can cast strings to xs:language',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('exists(xs:language("qya"))', documentNode)));
+		it('disallows integers at the start',
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:language("1234")', documentNode)), 'FORG0001');
+		it('disallows integers as a type',
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:language(xs:int("1234"))', documentNode)), 'FORG0001');
+	});
+
+	describe('to xs:error', () => {
+		it('can not cast anything to xs:error',
+			() => chai.assert.throws(() => evaluateXPathToNumber('1 cast as xs:error', documentNode)), 'FORG0001');
+	});
+
+	describe('to xs:dayTimeDuration', () => {
+		it('from xs:yearMonthDuration',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:string(xs:dayTimeDuration(xs:yearMonthDuration("-P543Y456M"))) eq "PT0S"', documentNode)));
 	});
 });

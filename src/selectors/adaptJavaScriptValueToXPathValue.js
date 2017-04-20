@@ -1,45 +1,39 @@
 import Sequence from './dataTypes/Sequence';
-import BooleanValue from './dataTypes/BooleanValue';
-import DecimalValue from './dataTypes/DecimalValue';
-import DoubleValue from './dataTypes/DoubleValue';
-import FloatValue from './dataTypes/FloatValue';
-import IntegerValue from './dataTypes/IntegerValue';
+import createAtomicValue from './dataTypes/createAtomicValue';
 import NodeValue from './dataTypes/NodeValue';
-import StringValue from './dataTypes/StringValue';
 
 function adaptItemToXPathValue (value) {
 	switch (typeof value) {
 		case 'boolean':
-			return value ? BooleanValue.TRUE : BooleanValue.FALSE;
+			return createAtomicValue(value, 'xs:boolean');
 		case 'number':
-			return new DecimalValue(value);
+			return createAtomicValue(value, 'xs:decimal');
 		case 'string':
-			return new StringValue(value);
+			return createAtomicValue(value, 'xs:string');
 		case 'object':
 			// Test if it is a node
 			if (value && value.nodeType) {
-				return new NodeValue(value);
+				return NodeValue.createFromNode(value);
 			}
-		default:
-			throw new Error('Value ' + value + ' of type ' + typeof value + ' is not adaptable to an XPath value.');
 	}
+	throw new Error('Value ' + value + ' of type ' + typeof value + ' is not adaptable to an XPath value.');
 }
 
 function adaptJavaScriptValueToXPathValue (type, value) {
 	switch (type) {
 		case 'xs:boolean':
-			return value ? BooleanValue.TRUE : BooleanValue.FALSE;
+			return createAtomicValue(!!value, 'xs:boolean');
 		case 'xs:string':
-			return new StringValue(value + '');
+			return createAtomicValue(value + '', 'xs:string');
 		case 'xs:double':
 		case 'xs:numeric':
-			return new DoubleValue(+value);
+			return createAtomicValue(+value, 'xs:double');
 		case 'xs:decimal':
-			return new DecimalValue(+value);
+			return createAtomicValue(+value, 'xs:decimal');
 		case 'xs:integer':
-			return new IntegerValue(value | 0);
+			return createAtomicValue(value | 0, 'xs:integer');
 		case 'xs:float':
-			return new FloatValue(+value);
+			return createAtomicValue(+value, 'xs:float');
 		case 'node()':
 			throw new Error('XPath custom functions should not return a node, use traversals instead.');
 		case 'item()':

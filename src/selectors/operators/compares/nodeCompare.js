@@ -1,8 +1,8 @@
-import Sequence from '../../dataTypes/Sequence';
+import isInstanceOfType from '../../dataTypes/isInstanceOfType';
 /**
  * @param   {string}     operator
- * @param   {!Sequence}  firstSequence
- * @param   {!Sequence}  secondSequence
+ * @param   {!../../dataTypes/Sequence}  firstSequence
+ * @param   {!../../dataTypes/Sequence}  secondSequence
  * @return  {boolean}
  */
 export default function nodeCompare (operator, firstSequence, secondSequence) {
@@ -11,7 +11,7 @@ export default function nodeCompare (operator, firstSequence, secondSequence) {
 		throw new Error('XPTY0004: Sequences to compare are not singleton');
 	}
 
-	if (!firstSequence.first().instanceOfType('node()') || !secondSequence.first().instanceOfType('node()')) {
+	if (!isInstanceOfType(firstSequence.first(), 'node()') || !isInstanceOfType(secondSequence.first(), 'node()')) {
 		throw new Error('XPTY0004: Sequences to compare are not nodes');
 	}
 

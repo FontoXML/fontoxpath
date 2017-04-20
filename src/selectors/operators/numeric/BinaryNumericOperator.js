@@ -1,8 +1,8 @@
+import isInstanceOfType from '../../dataTypes/isInstanceOfType';
+import castToType from '../../dataTypes/castToType';
 import Sequence from '../../dataTypes/Sequence';
-import DecimalValue from '../../dataTypes/DecimalValue';
-import IntegerValue from '../../dataTypes/IntegerValue';
-import { castToType } from '../../dataTypes/conversionHelper';
 import Selector from '../../Selector';
+import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 function executeOperator (kind, a, b) {
     switch (kind) {
@@ -15,7 +15,7 @@ function executeOperator (kind, a, b) {
         case 'div':
             return a / b;
         case 'idiv':
-            return Math.abs(a / b);
+            return Math.trunc(a / b);
         case 'mod':
             return a % b;
     }
@@ -36,8 +36,6 @@ class BinaryNumericOperator extends Selector {
 		this._secondValueExpr = secondValueExpr;
 
 		this._kind = kind;
-
-
 	}
 
 	evaluate (dynamicContext) {
@@ -60,11 +58,11 @@ class BinaryNumericOperator extends Selector {
 		let firstValue = firstValueSequence.first(),
 			secondValue = secondValueSequence.first();
 
-		if (firstValue.instanceOfType('xs:untypedAtomic')) {
+		if (isInstanceOfType(firstValue, 'xs:untypedAtomic')) {
 			firstValue = castToType(firstValue, 'xs:double');
 		}
 
-		if (secondValue.instanceOfType('xs:untypedAtomic')) {
+		if (isInstanceOfType(secondValue, 'xs:untypedAtomic')) {
 			secondValue = castToType(secondValue, 'xs:double');
 		}
 
@@ -72,14 +70,14 @@ class BinaryNumericOperator extends Selector {
 		let typedResult;
 		// Override for types
 		if (this._kind === 'div') {
-			typedResult = new DecimalValue(result);
+			typedResult = createAtomicValue(result, 'xs:decimal');
 		}
 		else if (this._kind === 'idiv') {
-			typedResult = new IntegerValue(result);
+			typedResult = createAtomicValue(result, 'xs:integer');
 		}
 		else {
 			// For now, always return a decimal, it's all the same in JavaScript
-			typedResult = new DecimalValue(result);
+			typedResult = createAtomicValue(result, 'xs:decimal');
 		}
 		return Sequence.singleton(typedResult);
 	}

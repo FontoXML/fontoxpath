@@ -33,7 +33,7 @@
     "babel-preset-es2015": "^6.24.1",
     "chai": "^3.5.0",
     "glob": "^7.1.1",
-    "google-closure-compiler": "^20170423.0.0",
+    "google-closure-compiler": "^20170521.0.0",
     "istanbul": "^0.4.5",
     "istanbul-instrumenter-loader": "^2.0.0",
     "karma": "^1.7.0",
@@ -49,7 +49,7 @@
     "pegjs": "^0.10.0",
     "sinon": "^2.2.0",
     "sinon-chai": "^2.10.0",
-    "slimdom": "github:bwrrp/slimdom.js#0.6.0",
+    "slimdom": "^1.0.0",
     "text-loader": "0.0.1",
     "uglify-js": "^3.0.4",
     "webpack": "^2.5.1"

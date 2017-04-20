@@ -49,6 +49,14 @@ describe('numeric functions', () => {
 			() => chai.assert.equal(evaluateXPathToNumber('xs:integer(()) => count()', documentNode), 0));
 	});
 
+	describe('fn:abs()', () => {
+		it('accepts 42',
+			() => chai.assert.equal(evaluateXPathToNumber('abs(xs:integer("42"))', documentNode), 42));
+
+		it('returns the absolute value',
+			() => chai.assert.equal(evaluateXPathToNumber('abs(xs:int("-2147483648"))', documentNode), 2147483648));
+	});
+
 	describe('fn:round', () => {
 		it('returns an empty sequence when given an empty sequence',
 			() => chai.assert.deepEqual(evaluateXPathToNumbers('round(())', documentNode), []));

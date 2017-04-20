@@ -1,6 +1,6 @@
 import Selector from '../Selector';
-import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -60,10 +60,10 @@ class QuantifiedExpression extends Selector {
 				var result = this._satisfiesExpr.evaluate(context);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
-					return Sequence.singleton(BooleanValue.TRUE);
+					return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
 				}
 				else if (!result.getEffectiveBooleanValue() && this._quantifier === 'every') {
-					return Sequence.singleton(BooleanValue.FALSE);
+					return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 				}
 				hasOverflowed = true;
 				break;
@@ -71,7 +71,7 @@ class QuantifiedExpression extends Selector {
 		}
 
 		// An every quantifier is true if all items match, a some is false if none of the items match
-		return Sequence.singleton(this._quantifier === 'every' ? BooleanValue.TRUE : BooleanValue.FALSE);
+		return Sequence.singleton(createAtomicValue(this._quantifier === 'every', 'xs:boolean'));
 	}
 }
-	export default QuantifiedExpression;
+export default QuantifiedExpression;

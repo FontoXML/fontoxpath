@@ -1,10 +1,8 @@
-import BooleanValue from '../dataTypes/BooleanValue';
-import DecimalValue from '../dataTypes/DecimalValue';
-import DoubleValue from '../dataTypes/DoubleValue';
-import FloatValue from '../dataTypes/FloatValue';
-import IntegerValue from '../dataTypes/IntegerValue';
 import Sequence from '../dataTypes/Sequence';
-import { castToType } from '../dataTypes/conversionHelper';
+import castToType from '../dataTypes/castToType';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 
 import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 
@@ -15,14 +13,12 @@ import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 function convertItemsToCommonType (items) {
 	if (items.every(function (item) {
 		// xs:integer is the only numeric type with inherits from another numeric type
-		return item.instanceOfType('xs:integer');
+		return isInstanceOfType(item, 'xs:integer') || isInstanceOfType(item, 'xs:decimal');
 	})) {
 		// They are all integers, we do not have to convert them to decimals
 		return items;
 	}
-	var commonTypeName = items.map(function (item) {
-		return item.primitiveTypeName;
-	}).reduce(function (commonTypeName, itemType) {
+	var commonTypeName = items.map(item => getPrimitiveTypeName(item.type)).reduce((commonTypeName, itemType) => {
 		return itemType === commonTypeName ? commonTypeName : null;
 	});
 
@@ -33,24 +29,24 @@ function convertItemsToCommonType (items) {
 
 	// If each value is an instance of one of the types xs:string or xs:anyURI, then all the values are cast to type xs:string
 	if (items.every(function (item) {
-		return item.instanceOfType('xs:string') ||
-			item.instanceOfType('xs:anyURI');
+		return isInstanceOfType(item, 'xs:string') ||
+			isInstanceOfType(item, 'xs:anyURI');
 	})) {
 		return items.map((item) => castToType(item, 'xs:string'));
 	}
 
 	// If each value is an instance of one of the types xs:decimal or xs:float, then all the values are cast to type xs:float.
 	if (items.every(function (item) {
-		return item.instanceOfType('xs:decimal') ||
-			item.instanceOfType('xs:float');
+		return isInstanceOfType(item, 'xs:decimal') ||
+			isInstanceOfType(item, 'xs:float');
 	})) {
 		return items.map((item) => castToType(item, 'xs:float'));
 	}
 	// If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all the values are cast to type xs:double.
 	if (items.every(function (item) {
-		return item.instanceOfType('xs:decimal') ||
-			item.instanceOfType('xs:float') ||
-			item.instanceOfType('xs:double');
+		return isInstanceOfType(item, 'xs:decimal') ||
+			isInstanceOfType(item, 'xs:float') ||
+			isInstanceOfType(item, 'xs:double');
 	})) {
 		return items.map((item) => castToType(item, 'xs:double'));
 	}
@@ -61,7 +57,7 @@ function convertItemsToCommonType (items) {
 
 function castUntypedItemsToDouble (items) {
 	return items.map(function (item) {
-		if (item.instanceOfType('xs:untypedAtomic')) {
+		if (isInstanceOfType(item, 'xs:untypedAtomic')) {
 			return castToType(item, 'xs:double');
 		}
 		return item;
@@ -75,7 +71,7 @@ function castItemsForMinMax (items) {
 	if (items.some(function (item) {
 		return Number.isNaN(item.value);
 	})) {
-		return [new DoubleValue(NaN)];
+		return [createAtomicValue(NaN, 'xs:double')];
 	}
 
 	return convertItemsToCommonType(items);
@@ -83,18 +79,18 @@ function castItemsForMinMax (items) {
 
 function fnEmpty (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
-		return Sequence.singleton(BooleanValue.TRUE);
+		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
 	}
 
-	return Sequence.singleton(BooleanValue.FALSE);
+	return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 }
 
 function fnExists (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
-		return Sequence.singleton(BooleanValue.FALSE);
+		return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 	}
 
-	return Sequence.singleton(BooleanValue.TRUE);
+		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
 }
 
 function fnHead (_dynamicContext, sequence) {
@@ -172,7 +168,7 @@ function fnSubsequence (_dynamicContext, sequence, startingLoc, lengthSequence) 
 	// XPath starts from 1
 	let i = 1;
 	/**
-	 * @type {!Iterator<!../dataTypes/Item>}
+	 * @type {!Iterator<!../dataTypes/Value>}
 	 */
 	const iterator = sequence.value();
 	return new Sequence({
@@ -198,12 +194,12 @@ function fnUnordered (_dynamicContext, sequence) {
 function fnDeepEqual (dynamicContext, parameter1, parameter2) {
 	return Sequence.singleton(
 		sequenceDeepEqual(dynamicContext, parameter1, parameter2) ?
-			BooleanValue.TRUE :
-			BooleanValue.FALSE);
+			createAtomicValue(true, 'xs:boolean') :
+			createAtomicValue(false, 'xs:boolean'));
 }
 
 function fnCount (_dynamicContext, sequence) {
-	return Sequence.singleton(new IntegerValue(sequence.getLength(false)));
+	return Sequence.singleton(createAtomicValue(sequence.getLength(false), 'xs:integer'));
 }
 
 function fnAvg (_dynamicContext, sequence) {
@@ -214,7 +210,7 @@ function fnAvg (_dynamicContext, sequence) {
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	var items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
-	if (!items.every(item => item.instanceOfType('xs:numeric'))) {
+	if (!items.every(item => isInstanceOfType(item, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
@@ -223,18 +219,18 @@ function fnAvg (_dynamicContext, sequence) {
 	}, 0) / items.length;
 
 	if (items.every(function (item) {
-		return item.instanceOfType('xs:integer') || item.instanceOfType('xs:double');
+		return isInstanceOfType(item, 'xs:integer') || isInstanceOfType(item, 'xs:double');
 	})) {
-		return Sequence.singleton(new DoubleValue(resultValue));
+		return Sequence.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
 	if (items.every(function (item) {
-		return item.instanceOfType('xs:decimal');
+		return isInstanceOfType(item, 'xs:decimal');
 	})) {
-		return Sequence.singleton(new DecimalValue(resultValue));
+		return Sequence.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
 
-	return Sequence.singleton(new FloatValue(resultValue));
+	return Sequence.singleton(createAtomicValue(resultValue, 'xs:float'));
 }
 
 function fnMax (_dynamicContext, sequence) {
@@ -273,7 +269,7 @@ function fnSum (_dynamicContext, sequence, zero) {
 
 	var items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
-	if (!items.every(item => item.instanceOfType('xs:numeric'))) {
+	if (!items.every(item => isInstanceOfType(item, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
@@ -282,24 +278,24 @@ function fnSum (_dynamicContext, sequence, zero) {
 	}, 0);
 
 	if (items.every(function (item) {
-		return item.instanceOfType('xs:integer');
+		return isInstanceOfType(item, 'xs:integer');
 	})) {
-		return Sequence.singleton(new IntegerValue(resultValue));
+		return Sequence.singleton(createAtomicValue(resultValue, 'xs:integer'));
 	}
 
 	if (items.every(function (item) {
-		return item.instanceOfType('xs:double');
+		return isInstanceOfType(item, 'xs:double');
 	})) {
-		return Sequence.singleton(new DoubleValue(resultValue));
+		return Sequence.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
 	if (items.every(function (item) {
-		return item.instanceOfType('xs:decimal');
+		return isInstanceOfType(item, 'xs:decimal');
 	})) {
-		return Sequence.singleton(new DecimalValue(resultValue));
+		return Sequence.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
 
-	return Sequence.singleton(new FloatValue(resultValue));
+	return Sequence.singleton(createAtomicValue(resultValue, 'xs:float'));
 }
 
 function fnZeroOrOne (_dynamicContext, arg) {
@@ -462,7 +458,7 @@ export default {
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType',
 			callFunction: function (dynamicContext, sequence) {
-				return fnSum(dynamicContext, sequence, Sequence.singleton(new IntegerValue(0)));
+				return fnSum(dynamicContext, sequence, Sequence.singleton(createAtomicValue(0, 'xs:integer')));
 			}
 		},
 

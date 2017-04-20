@@ -117,6 +117,8 @@ describe('Functions and operators on sequences', () => {
 				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:float("NaN")), (xs:float("NaN")))', documentNode)));
 			it('returns true if both sequences contain an equal number (double 1 vs 1)',
 				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("1")), (1))', documentNode)));
+			it('returns true if both sequences contain an equal number (xs:int and xs:int)',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:int("-2147483648")),(xs:int("-2147483648")))', documentNode)));
 			it('returns true if both sequences contain an equal number (double 1 vs float 1)',
 				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("1")), (xs:float("1")))', documentNode)));
 			it('returns true if both sequences contain an equal number (double 1 vs double 1)',

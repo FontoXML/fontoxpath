@@ -1,13 +1,13 @@
-import IntegerValue from '../dataTypes/IntegerValue';
 import Sequence from '../dataTypes/Sequence';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 
 function fnLast (dynamicContext) {
-	return Sequence.singleton(new IntegerValue(dynamicContext.contextSequence.getLength()));
+	return Sequence.singleton(createAtomicValue(dynamicContext.contextSequence.getLength(), 'xs:integer'));
 }
 
 function fnPosition (dynamicContext) {
 	// Note: +1 because XPath is one-based
-	return Sequence.singleton(new IntegerValue(dynamicContext.contextItemIndex + 1));
+	return Sequence.singleton(createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer'));
 }
 
 export default {

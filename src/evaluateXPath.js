@@ -2,10 +2,12 @@ import createSelectorFromXPath from './parsing/createSelectorFromXPath';
 import adaptJavaScriptValueToXPathValue from './selectors/adaptJavaScriptValueToXPathValue';
 import DynamicContext from './selectors/DynamicContext';
 import Sequence from './selectors/dataTypes/Sequence';
-import NodeValue from './selectors/dataTypes/NodeValue';
-import NumericValue from './selectors/dataTypes/NumericValue';
 import DomFacade from './DomFacade';
 import domBackedDomFacade from './domBackedDomFacade';
+
+import atomize from './selectors/dataTypes/atomize';
+import NodeValue from './selectors/dataTypes/NodeValue';
+import isInstanceOfType from './selectors/dataTypes/isInstanceOfType';
 
 /**
  * Evaluates an XPath on the given contextNode.
@@ -40,7 +42,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 
 	const compiledSelector = createSelectorFromXPath(xpathSelector);
 
-	const contextSequence = Sequence.singleton(new NodeValue(contextNode));
+	const contextSequence = Sequence.singleton(NodeValue.createFromNode(contextNode, 'node()'));
 	const untypedVariables = Object.assign(variables || {});
 	untypedVariables['theBest'] = 'FontoXML is the best!';
 	/**
@@ -58,7 +60,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 	const dynamicContext = new DynamicContext({
 		contextItemIndex: 0,
 		contextSequence: contextSequence,
-		contextItem: new NodeValue(contextNode),
+		contextItem: NodeValue.createFromNode(contextNode, 'node()'),
 		domFacade,
 		variables: typedVariables
 	});
@@ -74,7 +76,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				return '';
 			}
 			// Atomize to convert (attribute)nodes to be strings
-			return rawResults.getAllValues().map(value => value.atomize(dynamicContext).value).join(' ');
+			return rawResults.getAllValues().map(value => atomize(value, dynamicContext).value).join(' ');
 
 		case evaluateXPath.STRINGS_TYPE:
 			if (rawResults.isEmpty()) {
@@ -83,7 +85,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 
 			// Atomize all parts
 			return rawResults.getAllValues().map(function (value) {
-				return value.atomize(dynamicContext).value + '';
+				return atomize(value, dynamicContext).value + '';
 			});
 
 		case evaluateXPath.NUMBER_TYPE: {
@@ -91,7 +93,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				return NaN;
 			}
 			const first = rawResults.first();
-			if (!(first instanceof NumericValue)) {
+			if (!isInstanceOfType(first, 'xs:numeric')) {
 				return NaN;
 			}
 			return first.value;
@@ -102,10 +104,10 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				return null;
 			}
 			const first = rawResults.first();
-			if (!(first.instanceOfType('node()'))) {
+			if (!(isInstanceOfType(first, 'node()'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
 			}
-			if (first.instanceOfType('attribute()')) {
+			if (isInstanceOfType(first, 'attribute()')) {
 				throw new Error('XPath can not resolve to attribute nodes');
 			}
 			return first.value;
@@ -117,12 +119,12 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			}
 			const resultArray = rawResults.getAllValues();
 			if (!resultArray.every(function (value) {
-				return value.instanceOfType('node()');
+				return isInstanceOfType(value, 'node()');
 			})) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a sequence of Nodes.');
 			}
 			if (resultArray.some(function (value) {
-				return value.instanceOfType('attribute()');
+				return isInstanceOfType(value, 'attribute()');
 			})) {
 				throw new Error('XPath ' + xpathSelector + ' should not resolve to attribute nodes');
 			}
@@ -139,14 +141,14 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single map.');
 			}
 			const first = rawResults.first();
-			if (!(first.instanceOfType('map(*)'))) {
+			if (!(isInstanceOfType(first, 'map(*)'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a map');
 			}
 			return first.keyValuePairs.reduce(function (mapObject, keyValuePair) {
 				var key = keyValuePair.key.value;
 				var value;
 				if (keyValuePair.value.isSingleton()) {
-					value = keyValuePair.value.first().atomize(dynamicContext).value;
+					value = atomize(keyValuePair.value.first(), dynamicContext).value;
 				}
 				else {
 					value = keyValuePair.value.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
@@ -165,7 +167,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			if (!rawResults.isSingleton()) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single array.');
 			}
-			if (!(rawResults.first().instanceOfType('array(*)'))) {
+			if (!isInstanceOfType(rawResults.first(), 'array(*)')) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to an array');
 			}
 			return rawResults.first().members.map(function (entry) {
@@ -179,7 +181,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				return [];
 			}
 			return rawResults.getAllValues().map(function (value) {
-				if (!(value instanceof NumericValue)) {
+				if (!isInstanceOfType(value, 'xs:numeric')) {
 					throw new Error('Expected XPath ' + xpathSelector + ' to resolve to numbers');
 				}
 				return value.value;
@@ -187,8 +189,8 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 
 		default:
 			var allValuesAreNodes = rawResults.getAllValues().every(function (value) {
-					return value.instanceOfType('node()') &&
-						!(value.instanceOfType('attribute()'));
+				return isInstanceOfType(value, 'node()') &&
+					!(isInstanceOfType(value, 'attribute()'));
 				});
 			if (allValuesAreNodes) {
 				if (rawResults.isSingleton()) {

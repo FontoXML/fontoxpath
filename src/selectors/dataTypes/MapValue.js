@@ -1,33 +1,25 @@
-import mapGet from '../functions/builtInFunctions.maps.get';
+import FunctionValue from './FunctionValue';
 import Sequence from './Sequence';
-import DynamicContext from '../DynamicContext';
-import FunctionItem from './FunctionItem';
+import mapGet from '../functions/builtInFunctions.maps.get';
 
 /**
- * @constructor
- * @extends {FunctionItem}
- * @param   {!Array<!{key: !Sequence, value: !Sequence}>}  keyValuePairs
+ * @extends {./FunctionValue}
  */
-function MapValue (keyValuePairs) {
-	FunctionItem.call(this, /** @type {function(!DynamicContext, !Sequence):!Sequence} */ (function (dynamicContext, key) {
-		return mapGet(dynamicContext, Sequence.singleton(this), key);
-	}.bind(this)), 'map', ['xs:anyAtomicType'], 1, 'item()*');
-	this.keyValuePairs = keyValuePairs;
+class MapValue extends FunctionValue {
+	/**
+	 * @param  {Array<{key: !./Value, value: ./Sequence}>}  keyValuePairs
+	 */
+	constructor (keyValuePairs) {
+		super({
+			value: (dynamicContext, key) => mapGet(dynamicContext, Sequence.singleton(this), key),
+			name: 'map:get',
+			argumentTypes: ['item()'],
+			arity: 1,
+			returnType: 'item()*'
+		});
+		this.type = 'map(*)';
+		this.keyValuePairs = keyValuePairs;
+	}
 }
-
-MapValue.prototype = Object.create(FunctionItem.prototype);
-MapValue.prototype.constructor = MapValue;
-
-/**
-* @return {string}
-*/
-MapValue.prototype.toString = function () {
-	return `(item fn:map ${this.keyValuePairs.map(({ key, value }) => `(${key.toString()} ${value.toString()})`)})`;
-};
-
-MapValue.prototype.instanceOfType = function (simpleTypeName) {
-	return simpleTypeName === 'map(*)' ||
-		FunctionItem.prototype.instanceOfType.call(this, simpleTypeName);
-};
 
 export default MapValue;

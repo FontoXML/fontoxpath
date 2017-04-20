@@ -1,6 +1,4 @@
-import UntypedAtomicValue from './UntypedAtomicValue';
-import StringValue from './StringValue';
-
+import createAtomicValue from './createAtomicValue';
 /**
  * @constructor
  * @extends {Node}
@@ -78,11 +76,11 @@ AttributeNode.prototype.NOTATION_NODE = AttributeNode.NOTATION_NODE = 12;
 
 AttributeNode.prototype.atomize = function (_dynamicContext) {
     // TODO: Mix in types
-    return new UntypedAtomicValue(this.value);
+    return createAtomicValue(this.value, 'xs:untypedAtomic');
 };
 
 AttributeNode.prototype.getStringValue = function (_dynamicContext) {
-    return new StringValue(this.value);
+    return createAtomicValue(this.value, 'xs:string');
 };
 
 export default AttributeNode;
