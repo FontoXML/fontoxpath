@@ -24,6 +24,7 @@ FunctionBody
  = EnclosedExpr
 
 // 5
+
 EnclosedExpr
  = "{" _ e:Expr _ "}" { return e }
 
@@ -36,17 +37,17 @@ ExprSingle
  = LetExpr
  / QuantifiedExpr
  / IfExpr
-// / ForExpr
+ / ForExpr
  / OrExpr
 
-// 8 (Not implemented)
-// ForExpr ::= SimpleForClause "return" ExprSingle
+// 8
+ForExpr = clause:SimpleForClause S "return" S expr:ExprSingle {return ["forExpression", clause, expr]}
 
 // 9 (Not implemented)
-// SimpleForClause ::= "for" SimpleForBinding ("," SimpleForBinding)*
+SimpleForClause = "for" S first:SimpleForBinding rest:( _ "," _ b:SimpleForBinding {return b})* {return [first].concat(rest)}
 
 // 10 (Not implemented)
-// SimpleForBinding ::= "$" VarName "in" ExprSingle
+SimpleForBinding = "$" varName:VarName S "in" S expr:ExprSingle {return [varName, expr]}
 
 // 11
 LetExpr
@@ -303,7 +304,7 @@ ContextItemExpr
 // 63
 FunctionCall
 // Do not match reserved function names as function names, they should be tests or other built-ins.
-// Match the '(' becase 'elementWhatever' IS a valid function name
+// Match the '(' because 'elementWhatever' IS a valid function name
  = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {return ["functionCall", ["namedFunctionRef", name, args.length], args]}
 
 // 64
@@ -550,7 +551,7 @@ QName = PrefixedName / UnprefixedName
 NCName = start:NCNameStartChar rest:(NCNameChar*) {return start+rest.join('')}
 
 // 124 Note: https://www.w3.org/TR/REC-xml/#NT-Char
-Char = "\u0009" / "\u000A" / "\u000D" / [\u0020-\uD7FF] / [\uE000-\uFFFD] / [\u10000-\u10FFFF]	/* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
+Char = [\t\n\r -\uD7FF\uE000\uFFFD] / [\uD800-\uDBFF][\uDC00-\uDFFF]	/* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
 
 // 125
 Digits
@@ -569,9 +570,9 @@ LocalPart = NCName
 
 Prefix = NCName
 
-NCNameStartChar = [A-Z] / "_" / [a-z]
+NCNameStartChar = [A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD] / [\uD800-\uDB7F][\uDC00-\uDFFF]
 
-NCNameChar = NCNameStartChar / [-.0-9]
+NCNameChar = NCNameStartChar / [\-\.0-9\xB7\u0300-\u036F\u203F\u2040]
 
 // Whitespace Note: https://www.w3.org/TR/REC-xml/#NT-S
 _

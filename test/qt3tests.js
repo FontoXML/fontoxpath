@@ -6,7 +6,7 @@ const {
 	evaluateXPathToFirstNode
 } = require('fontoxpath');
 
-const context = require.context('text!assets', true, /\.xml$/);
+const context = require.context('text-loader!assets', true, /\.xml$/);
 const parser = new DOMParser();
 
 function createAsserter (assertNode) {
@@ -95,7 +95,7 @@ function getFile (fileName) {
 	}
 
 	return instantiatedDocumentByAbsolutePath[fileName] =
-		parser.parseFromString(context(`./fontoxpath-qt3-test-set/${fileName}`), 'text/xml');
+		parser.parseFromString(context(`./QT3TS-master/${fileName}`), 'text/xml');
 }
 
 const catalog = getFile('catalog.xml');
@@ -106,8 +106,8 @@ function createEnvironment (cwd, environmentNode) {
 	const variables = evaluateXPathToNodes('source[@role!="."]', environmentNode)
 		  .reduce((varsByName, variable) => Object.assign(
 			  varsByName,
-			  { [evaluateXPathToString('@role', variable).substr(1)]: getFile((cwd ? cwd + '/' : '') + evaluateXPathToString('@file', variable)) }
-		  ), {});
+			  { [evaluateXPathToString('@role', variable).substr(1)]: getFile((cwd ? cwd + '/' : '') + evaluateXPathToString('@file', variable)) }), {});
+
 	return {
 		contextNode: fileName ? getFile((cwd ? cwd + '/' : '') + fileName) : emptyDoc,
 		variables
@@ -115,31 +115,36 @@ function createEnvironment (cwd, environmentNode) {
 }
 
 const environmentsByName = evaluateXPathToNodes('/catalog/environment[source]', catalog)
-	.reduce((envByName, environmentNode) =>	{
-		return Object.assign(
-			envByName,
-			{ [evaluateXPathToString('@name', environmentNode)]: createEnvironment('', environmentNode)
-			});
-	}, {
-		empty: {
-			contextNode: emptyDoc
-		}
-	});
+	  .reduce((envByName, environmentNode) =>	{
+		  return Object.assign(
+			  envByName,
+			  { [evaluateXPathToString('@name', environmentNode)]: createEnvironment('', environmentNode)
+			  });
+	  }, {
+		  empty: {
+			  contextNode: emptyDoc
+		  }
+	  });
 
-const shouldRunTestByName = require('text!./runnableTestSets.csv')
+const shouldRunTestByName = require('text-loader!./runnableTestSets.csv')
 	.split('\n')
-	.map(line=>line.split(','))
-	.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
+	  .map(line=>line.split(','))
+	  .reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 
-module.exports = function qt3tests (generateCsv) {
-	evaluateXPathToNodes('/catalog/test-set', catalog)
-		.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
-		.map(testSetNode => evaluateXPathToString('@file', testSetNode))
-		.forEach(testSetFileName => {
-			const testSet = getFile(testSetFileName);
+console.log('starting');
+const unrunnableTestCasesByName = require('text-loader!./unrunnableTestCases.csv')
+	  .split('\n')
+	  .map(line => line.split(','))
+	  .reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join('.') }), Object.create(null));
 
-			// Find all the tests we can run
-			const testCases = evaluateXPathToNodes(`
+evaluateXPathToNodes('/catalog/test-set', catalog)
+	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
+	.map(testSetNode => evaluateXPathToString('@file', testSetNode))
+	.forEach(testSetFileName => {
+		const testSet = getFile(testSetFileName);
+
+		// Find all the tests we can run
+		const testCases = evaluateXPathToNodes(`
 /test-set[not(./dependency[@value eq "XQ10+" or @value eq "XQ30+"])]/test-case[
   not(./dependency[@value eq "XQ10"] or ./dependency[@value eq "XQ10+"]) and
   not(./dependency[@value eq "schemaImport"]) and
@@ -147,63 +152,53 @@ module.exports = function qt3tests (generateCsv) {
   not(./dependency[@value eq "moduleImport"]) and
   not(./dependency[@value eq "schemaAware"]) and
   not(./dependency[@value eq "XQ30+"] or ./dependency[@value eq "XQ31+"])]`, testSet);
-			if (!testCases.length) {
-				return;
-			}
+		if (!testCases.length) {
+			return;
+		}
 
-			const unrunnableTestCasesByName = require('text!./unrunnableTestCases.csv')
-				.split('\n')
-				.map(line => line.split(','))
-				.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run }), Object.create(null));
+		window.log = '';
+		describe(evaluateXPathToString('/test-set/description', testSet), () => {
+			for (const testCase of testCases) {
+				const testName = evaluateXPathToString('./@name', testCase);
+				const description = evaluateXPathToString('if (description/text()) then description else test', testCase);
+				if (unrunnableTestCasesByName[testName]) {
+					it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
+					continue;
+				}
 
-			window.log = '';
-			describe(evaluateXPathToString('/test-set/description', testSet), () => {
-				for (const testCase of testCases) {
-					const testName = evaluateXPathToString('./@name', testCase);
-					const description = evaluateXPathToString('if (description/text()) then description else test', testCase);
-					if (unrunnableTestCasesByName[testName]) {
-						it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
-						continue;
-					}
+				const testQuery = evaluateXPathToString('./test', testCase);
+				const asserter = getAsserterForTest(testCase);
 
-					const testQuery = evaluateXPathToString('./test', testCase);
-					const asserter = getAsserterForTest(testCase);
-
-					const environmentName = evaluateXPathToString('./environment/@ref', testCase);
-					let contextNode;
-					let variablesInScope;
-					if (environmentName) {
-						const environmentNode = evaluateXPathToFirstNode('/test-set/environment[@name = $envName]', testCase, null, { envName: environmentName });
-						let env;
-						if (environmentNode) {
-							env = createEnvironment(testSetFileName.substr(0, testSetFileName.lastIndexOf('/')), environmentNode);
-						}
-						else {
-							env = environmentsByName[environmentName] || { contextNode: environmentsByName['empty'] };
-						}
-						contextNode = env.contextNode;
-						variablesInScope = env.variables;
+				const environmentName = evaluateXPathToString('./environment/@ref', testCase);
+				let contextNode;
+				let variablesInScope = undefined;
+				if (environmentName) {
+					const environmentNode = evaluateXPathToFirstNode('/test-set/environment[@name = $envName]', testCase, null, { envName: environmentName });
+					let env;
+					if (environmentNode) {
+						env = createEnvironment(testSetFileName.substr(0, testSetFileName.lastIndexOf('/')), environmentNode);
 					}
 					else {
-						contextNode = environmentsByName['empty'];
+						env = environmentsByName[environmentName] || environmentsByName['empty'];
 					}
-					chai.assert(contextNode);
-					const assertFn = () => {
-						if (generateCsv) {
-							try {
-								asserter(testQuery, contextNode, variablesInScope);
-							}
-							catch (e) {
-								window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
-							}
-						}
-						else {
-							asserter(testQuery, contextNode, variablesInScope);
-						}
-					};
-					assertFn.toString = () => testCase.outerHTML;
-					it(description, assertFn);
+					contextNode = env.contextNode;
+					variablesInScope = env.variables;
 				}
-			});
+				else {
+					contextNode = environmentsByName['empty'].contextNode;
+				}
+				chai.assert(contextNode && contextNode.nodeType);
+				const assertFn = () => {
+					try {
+						asserter(testQuery, contextNode, variablesInScope);
+					}
+					catch (e) {
+						window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
+						throw e;
+					}
+				};
+				assertFn.toString = () => testCase.outerHTML;
+				it(description, assertFn);
+			}
 		});
-}
+	});

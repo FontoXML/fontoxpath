@@ -1,29 +1,23 @@
-import DecimalValue from '../dataTypes/DecimalValue';
-import DoubleValue from '../dataTypes/DoubleValue';
-import FloatValue from '../dataTypes/FloatValue';
-import FunctionItem from '../dataTypes/FunctionItem';
-import IntegerValue from '../dataTypes/IntegerValue';
-import MapValue from '../dataTypes/MapValue';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import castToType from '../dataTypes/castToType';
 import Sequence from '../dataTypes/Sequence';
-import StringValue from '../dataTypes/StringValue';
-import { castToType } from '../dataTypes/conversionHelper';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import FunctionValue from '../dataTypes/FunctionValue';
+import MapValue from '../dataTypes/MapValue';
+import { transformArgument } from './argumentHelper';
 
-function contextItemAsFirstArgument (fn, dynamicContext) {
-	return fn(dynamicContext, Sequence.singleton(dynamicContext.contextItem));
-}
-
-function createValidNumericType (typedValue, transformedValue) {
-	if (typedValue.instanceOfType('xs:integer')) {
-		return Sequence.singleton(new IntegerValue(transformedValue));
+function createValidNumericType (value, transformedValue) {
+	if (isInstanceOfType(value, 'xs:integer')) {
+		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:integer'));
 	}
-	if (typedValue.instanceOfType('xs:float')) {
-		return Sequence.singleton(new FloatValue(transformedValue));
+	if (isInstanceOfType(value, 'xs:float')) {
+		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:float'));
 	}
-	if (typedValue.instanceOfType('xs:double')) {
-		return Sequence.singleton(new DoubleValue(transformedValue));
+	if (isInstanceOfType(value, 'xs:double')) {
+		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:double'));
 	}
 	// It must be a decimal, only four numeric types
-	return Sequence.singleton(new DecimalValue(transformedValue));
+	return Sequence.singleton(createAtomicValue(transformedValue, 'xs:decimal'));
 }
 
 function fnAbs (_dynamicContext, sequence) {
@@ -77,7 +71,7 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 	var item = sequence.first(),
 		value = item.value;
 
-	if ((item.instanceOfType('xs:float') || item.instanceOfType('xs:double')) && (
+	if ((isInstanceOfType(item, 'xs:float') || isInstanceOfType(item, 'xs:double')) && (
 		value === 0 ||
 		isNaN(value) ||
 		value === +Infinity ||
@@ -91,7 +85,7 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 	}
 
 	var originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(function (type) {
-				return item.instanceOfType(type);
+				return isInstanceOfType(item, type);
 			}),
 		itemAsDecimal = castToType(item, 'xs:decimal'),
 		scaling = Math.pow(10, scalingPrecision),
@@ -111,26 +105,26 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 
 	switch (originalType) {
 		case 'xs:decimal':
-			return Sequence.singleton(new DecimalValue(roundedNumber));
+			return Sequence.singleton(createAtomicValue(roundedNumber, 'xs:decimal'));
 		case 'xs:double':
-			return Sequence.singleton(new DoubleValue(roundedNumber));
+			return Sequence.singleton(createAtomicValue(roundedNumber, 'xs:double'));
 		case 'xs:float':
-			return Sequence.singleton(new FloatValue(roundedNumber));
+			return Sequence.singleton(createAtomicValue(roundedNumber, 'xs:float'));
 		case 'xs:integer':
-			return Sequence.singleton(new IntegerValue(roundedNumber));
+			return Sequence.singleton(createAtomicValue(roundedNumber, 'xs:integer'));
 	}
 }
 
 function fnNumber (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
-		return Sequence.singleton(new DoubleValue(NaN));
+		return Sequence.singleton(createAtomicValue(NaN, 'xs:double'));
 	}
 	try {
 		return Sequence.singleton(castToType(sequence.first(), 'xs:double'));
 	}
 	catch (error) {
 		if (error.message.includes('FORG0001')) {
-			return Sequence.singleton(new DoubleValue(NaN));
+			return Sequence.singleton(createAtomicValue(NaN, 'xs:double'));
 		}
 		throw error;
 	}
@@ -150,47 +144,30 @@ function fnRandomNumberGenerator (_dynamicContext, _sequence) {
 	// Ignore the optional seed, as Math.random does not support a seed
 	return Sequence.singleton(new MapValue([
 		{
-			key: new StringValue('number'),
-			value: Sequence.singleton(new DoubleValue(Math.random()))
+			key: createAtomicValue('number', 'xs:string'),
+			value: Sequence.singleton(createAtomicValue(Math.random(), 'xs:double'))
 		},
 		{
-			key: new StringValue('next'),
-			value: Sequence.singleton(new FunctionItem(fnRandomNumberGenerator, '', [], 0, 'map(*)'))
+			key: createAtomicValue('next', 'xs:string'),
+			value: Sequence.singleton(new FunctionValue({
+				value: fnRandomNumberGenerator,
+				name: '',
+				argumentTypes: [],
+				arity: 0,
+				returnType: 'map(*)'
+			}))
 		},
 		{
-			key: new StringValue('permute'),
-			value: Sequence.singleton(new FunctionItem(returnRandomItemFromSequence, '', ['item()*'], 1, 'item()*'))
+			key: createAtomicValue('permute', 'xs:string'),
+			value: Sequence.singleton(new FunctionValue({
+				value: returnRandomItemFromSequence,
+				name: '',
+				argumentTypes: ['item()*'],
+				arity: 1,
+				returnType: 'item()*'
+			}))
 		}
 	]));
-}
-
-function xsFloat (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-	return Sequence.singleton(castToType(sequence.first(), 'xs:float'));
-}
-
-function xsInteger (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-	return Sequence.singleton(castToType(sequence.first(), 'xs:integer'));
-}
-
-function xsDecimal (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-	return Sequence.singleton(castToType(sequence.first(), 'xs:decimal'));
-}
-
-
-function xsDouble (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-	return Sequence.singleton(castToType(sequence.first(), 'xs:double'));
 }
 
 export default {
@@ -255,7 +232,13 @@ export default {
 			name: 'number',
 			argumentTypes: [],
 			returnType: 'xs:double',
-			callFunction: contextItemAsFirstArgument.bind(null, fnNumber)
+			callFunction: (dynamicContext) => {
+				const atomizedContextItem = transformArgument('xs:anyAtomicType?', Sequence.singleton(dynamicContext.contextItem), dynamicContext);
+				if (!atomizedContextItem) {
+					throw new Error('XPDY0002: fn:number needs an atomizable context item.');
+				}
+				return fnNumber(dynamicContext, atomizedContextItem);
+			}
 		},
 
 		{
@@ -272,34 +255,6 @@ export default {
 			callFunction: () => {
 				throw new Error('Not implemented: Specifying a seed is not supported');
 			}
-		},
-
-		{
-			name: 'xs:float',
-			argumentTypes: ['xs:anyAtomicType?'],
-			returnType: 'xs:float?',
-			callFunction: xsFloat
-		},
-
-		{
-			name: 'xs:integer',
-			argumentTypes: ['xs:anyAtomicType?'],
-			returnType: 'xs:integer?',
-			callFunction: xsInteger
-		},
-
-		{
-			name: 'xs:decimal',
-			argumentTypes: ['xs:anyAtomicType?'],
-			returnType: 'xs:decimal?',
-			callFunction: xsDecimal
-		},
-
-		{
-			name: 'xs:double',
-			argumentTypes: ['xs:anyAtomicType?'],
-			returnType: 'xs:double?',
-			callFunction: xsDouble
 		}
 	],
 	functions: {

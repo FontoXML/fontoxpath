@@ -1,4 +1,5 @@
-import { castToType } from '../../dataTypes/conversionHelper';
+import castToType from '../../dataTypes/castToType';
+import isInstanceOfType from '../../dataTypes/isInstanceOfType';
 
 /**
  * @param  {string}    operator
@@ -14,32 +15,32 @@ export default function valueCompare (operator, firstSequence, secondSequence) {
     var firstValue = firstSequence.first(),
         secondValue = secondSequence.first();
 
-    if (firstValue.instanceOfType('xs:untypedAtomic') && secondValue.instanceOfType('xs:untypedAtomic')) {
+    if (isInstanceOfType(firstValue, 'xs:untypedAtomic') && isInstanceOfType(secondValue, 'xs:untypedAtomic')) {
         firstValue = castToType(firstValue, 'xs:string');
         secondValue = castToType(secondValue, 'xs:string');
     }
 
-	if (firstValue.instanceOfType('xs:untypedAtomic')) {
-		firstValue = castToType(firstValue, secondValue.primitiveTypeName);
+	if (isInstanceOfType(firstValue, 'xs:untypedAtomic')) {
+		firstValue = castToType(firstValue, secondValue.type);
 	}
 
-	if (secondValue.instanceOfType('xs:untypedAtomic')) {
-		secondValue = castToType(secondValue, firstValue.primitiveTypeName);
+	if (isInstanceOfType(secondValue, 'xs:untypedAtomic')) {
+		secondValue = castToType(secondValue, firstValue.type);
 	}
 
-    if (firstValue.primitiveTypeName !== secondValue.primitiveTypeName) {
-        if ((firstValue.instanceOfType('xs:string') || firstValue.instanceOfType('xs:anyURI')) &&
-            (secondValue.instanceOfType('xs:string') || secondValue.instanceOfType('xs:anyURI'))) {
+    if (firstValue.type !== secondValue.type) {
+        if ((isInstanceOfType(firstValue, 'xs:string') || isInstanceOfType(firstValue, 'xs:anyURI')) &&
+			(isInstanceOfType(secondValue, 'xs:string') || isInstanceOfType(secondValue, 'xs:anyURI'))) {
 			firstValue = castToType(firstValue, 'xs:string');
-			firstValue = castToType(secondValue, 'xs:string');
+			secondValue = castToType(secondValue, 'xs:string');
         }
-		else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float')) &&
-				(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float'))) {
+		else if ((isInstanceOfType(firstValue, 'xs:decimal') || isInstanceOfType(firstValue, 'xs:float')) &&
+				 (isInstanceOfType(secondValue, 'xs:decimal') || isInstanceOfType(secondValue, 'xs:float'))) {
 			firstValue = castToType(firstValue, 'xs:float');
 			secondValue = castToType(secondValue, 'xs:float');
         }
-		else if ((firstValue.instanceOfType('xs:decimal') || firstValue.instanceOfType('xs:float') || firstValue.instanceOfType('xs:double')) &&
-			(secondValue.instanceOfType('xs:decimal') || secondValue.instanceOfType('xs:float') || secondValue.instanceOfType('xs:double'))) {
+		else if ((isInstanceOfType(firstValue, 'xs:decimal') || isInstanceOfType(firstValue, 'xs:float') || isInstanceOfType(firstValue, 'xs:double')) &&
+				 (isInstanceOfType(secondValue, 'xs:decimal') || isInstanceOfType(secondValue, 'xs:float') || isInstanceOfType(secondValue, 'xs:double'))) {
 			firstValue = castToType(firstValue, 'xs:double');
 			secondValue = castToType(secondValue, 'xs:double');
         }

@@ -1,5 +1,4 @@
 import Selector from '../Selector';
-
 /**
  * @extends {Selector}
  */

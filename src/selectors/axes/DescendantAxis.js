@@ -32,7 +32,7 @@ function createDescendantGenerator (domFacade, node, inclusive) {
 				inclusive = false;
 				return {
 					done: false,
-					value: new NodeValue(node)
+					value: NodeValue.createFromNode(node)
 				};
 			}
 			if (!descendantIteratorQueue.length) {
@@ -50,7 +50,7 @@ function createDescendantGenerator (domFacade, node, inclusive) {
 			descendantIteratorQueue.unshift(createChildGenerator(domFacade, value.value));
 			return {
 				done: false,
-				value: new NodeValue(value.value)
+				value: NodeValue.createFromNode(value.value)
 			};
 		}
 	};

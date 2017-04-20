@@ -14,7 +14,7 @@ function generateAncestors (domFacade, contextNode) {
 
 			return {
 				done: false,
-				value: new NodeValue(previousAncestor)
+				value: NodeValue.createFromNode(previousAncestor)
 			};
 		}
 	};
@@ -38,7 +38,6 @@ class AncestorAxis extends Selector {
 
 		this._ancestorSelector = ancestorSelector;
 		this._isInclusive = !!options.inclusive;
-
 	}
 
 	/**

@@ -1,3 +1,5 @@
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 import NodeValue from '../dataTypes/NodeValue';
 import Sequence from '../dataTypes/Sequence';
 
@@ -15,18 +17,18 @@ function findDescendants (domFacade, node, isMatch) {
 
 function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 	var targetNodeValue = targetNodeSequence.first();
-	if (!targetNodeValue.instanceOfType('node()')) {
+	if (!isInstanceOfType(targetNodeValue, 'node()')) {
 		return Sequence.empty();
 	}
 	var domFacade = dynamicContext.domFacade;
 	// TODO: Index ids to optimize this lookup
-	var isMatchingIdById = Array.from(idrefSequence.value()).reduce(function (byId, idrefValue) {
+	var isMatchingIdById = idrefSequence.getAllValues().reduce(function (byId, idrefValue) {
 			idrefValue.value.split(/\s+/).forEach(function (id) {
 				byId[id] = true;
 			});
 			return byId;
 		}, Object.create(null));
-	var documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
+	var documentNode = targetNodeValue.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
 		targetNodeValue.value : targetNodeValue.value.ownerDocument;
 
 	var matchingNodes = findDescendants(
@@ -48,22 +50,20 @@ function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 				isMatchingIdById[idAttribute] = false;
 				return true;
 			});
-	return new Sequence(matchingNodes.map(function (node) {
-		return new NodeValue(node);
-	}));
+	return new Sequence(matchingNodes.map(NodeValue.createFromNode));
 }
 
 function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
 	var targetNodeValue = targetNodeSequence.first();
-	if (!targetNodeValue.instanceOfType('node()')) {
+	if (!isInstanceOfType(targetNodeValue, 'node()')) {
 		return Sequence.empty();
 	}
 	var domFacade = dynamicContext.domFacade;
-	var isMatchingIdRefById = Array.from(idSequence.value()).reduce(function (byId, idValue) {
+	var isMatchingIdRefById = idSequence.getAllValues().reduce(function (byId, idValue) {
 			byId[idValue.value] = true;
 			return byId;
 		}, Object.create(null));
-	var documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
+	var documentNode = targetNodeValue.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
 		targetNodeValue.value : targetNodeValue.value.ownerDocument;
 	// TODO: Index idrefs to optimize this lookup
 	var matchingNodes = findDescendants(
@@ -83,9 +83,7 @@ function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
 					return isMatchingIdRefById[idRef];
 				});
 			});
-	return new Sequence(matchingNodes.map(function (node) {
-		return new NodeValue(node);
-	}));
+	return new Sequence(matchingNodes.map(NodeValue.createFromNode));
 }
 
 export default {

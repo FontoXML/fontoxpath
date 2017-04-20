@@ -1,4 +1,5 @@
 import PathSelector from '../selectors/path/PathSelector';
+import ForExpression from '../selectors/ForExpression';
 import MapConstructor from '../selectors/maps/MapConstructor';
 import ArrayConstructor from '../selectors/arrays/ArrayConstructor';
 import AbsolutePathSelector from '../selectors/path/AbsolutePathSelector';
@@ -27,6 +28,7 @@ import BinaryNumericOperator from '../selectors/operators/numeric/BinaryNumericO
 import Compare from '../selectors/operators/compares/Compare';
 import InstanceOfOperator from '../selectors/operators/types/InstanceOfOperator';
 import CastAsOperator from '../selectors/operators/types/CastAsOperator';
+import CastableAsOperator from '../selectors/operators/types/CastableAsOperator';
 import QuantifiedExpression from '../selectors/quantified/QuantifiedExpression';
 import IfExpression from '../selectors/conditional/IfExpression';
 import Literal from '../selectors/literals/Literal';
@@ -125,6 +127,8 @@ function compile (ast) {
 			return varRef(args);
 		case 'namedFunctionRef':
 			return namedFunctionRef(args);
+		case 'forExpression':
+			return forExpression(args);
 
 			// Quantified
 		case 'quantified':
@@ -138,6 +142,8 @@ function compile (ast) {
 			return instanceOf(args);
 		case 'cast as':
 			return castAs(args);
+		case 'castable as':
+			return castableAs(args);
 
 		case 'simpleMap':
 			return simpleMap(args);
@@ -215,6 +221,13 @@ function castAs (args) {
 	return new CastAsOperator(expression, sequenceType[0], sequenceType[1]);
 }
 
+function castableAs (args) {
+	var expression = compile(args[0]);
+	var sequenceType = args[1];
+
+	return new CastableAsOperator(expression, sequenceType[0], sequenceType[1]);
+}
+
 // Binary compare (=, !=, le, is, etc)
 function compare (args) {
 	return new Compare(args[0], compile(args[1]), compile(args[2]));
@@ -230,6 +243,12 @@ function filter (args) {
 
 function followingSibling (args) {
 	return new FollowingSiblingAxis(compile(args[0]));
+}
+
+function forExpression ([clauses, returnExpression]) {
+	return new ForExpression(
+		clauses.map(([varName, expression]) => ({ varName, expression: compile(expression) })),
+		compile(returnExpression));
 }
 
 function functionCall (args) {

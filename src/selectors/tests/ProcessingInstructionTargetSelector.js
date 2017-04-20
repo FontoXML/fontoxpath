@@ -1,7 +1,8 @@
-import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 
 /**
  * @extends {Selector}
@@ -22,9 +23,9 @@ class ProcessingInstructionTargetSelector extends Selector {
 	evaluate (dynamicContext) {
 		// Assume singleton
 		var nodeValue = dynamicContext.contextItem;
-		var isMatchingProcessingInstruction = nodeValue.instanceOfType('processing-instruction()') &&
+		var isMatchingProcessingInstruction = isInstanceOfType(nodeValue, 'processing-instruction()') &&
 			nodeValue.value.target === this._target;
-		return Sequence.singleton(isMatchingProcessingInstruction ? BooleanValue.TRUE : BooleanValue.FALSE);
+		return Sequence.singleton(createAtomicValue(isMatchingProcessingInstruction, 'xs:boolean'));
 	}
 
 	getBucket () {

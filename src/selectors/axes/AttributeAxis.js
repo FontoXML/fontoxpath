@@ -3,6 +3,7 @@ import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import NodeValue from '../dataTypes/NodeValue';
 import AttributeNode from '../dataTypes/AttributeNode';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 
 /**
  * @extends {Selector}
@@ -32,17 +33,15 @@ class AttributeAxis extends Selector {
 		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
-		if (!contextItem.instanceOfType('element()')) {
+		if (!isInstanceOfType(contextItem, 'element()')) {
 			return Sequence.empty();
 		}
 
 		const allAttributes = domFacade.getAllAttributes(contextItem.value);
 		var attributesSequence = new Sequence(
-			allAttributes.map(attribute => new NodeValue(new AttributeNode(
-						contextItem.value,
-						attribute.name,
-						attribute.value
-			))));
+			allAttributes.map(
+				attribute => NodeValue.createFromNode(
+					new AttributeNode(contextItem.value, attribute.name, attribute.value))));
 		/**
 		 * @type {!Selector}
 		 */

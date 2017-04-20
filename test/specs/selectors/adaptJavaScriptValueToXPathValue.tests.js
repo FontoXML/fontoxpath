@@ -4,7 +4,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	it('turns numbers into integers', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(1, 'xs:integer');
 		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-		chai.assert(xPathSequence.first().instanceOfType('xs:integer'), 'is an integer');
+		chai.assert(xPathSequence.first().type === ('xs:integer'), 'is an integer');
 		chai.assert.equal(xPathSequence.first().value, 1, 'is 1');
 	});
 
@@ -15,27 +15,27 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	it('turns numbers into doubles', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(1.0, 'xs:double');
 		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-		chai.assert(xPathSequence.first().instanceOfType('xs:double'), 'is a double');
+		chai.assert(xPathSequence.first().type === ('xs:double'), 'is a double');
 		chai.assert.equal(xPathSequence.first().value, 1.0, 'is 1.0');
 	});
 
 	it('turns nodes into nodes', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(window.document);
 		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-		chai.assert(xPathSequence.first().instanceOfType('node()'), 'is a node');
+		chai.assert(xPathSequence.first().type === 'document()', 'is a document');
 	});
 
 	it('turns numbers into decimals', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(1.0, 'xs:decimal');
 		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-		chai.assert(xPathSequence.first().instanceOfType('xs:decimal'), 'is a decimal');
+		chai.assert(xPathSequence.first().type === ('xs:decimal'), 'is a decimal');
 		chai.assert.equal(xPathSequence.first().value, 1.0, 'is 1.0');
 	});
 
 	it('turns numbers into floats', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(1.0, 'xs:float');
 		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-		chai.assert(xPathSequence.first().instanceOfType('xs:float'), 'is a float');
+		chai.assert(xPathSequence.first().type === ('xs:float'), 'is a float');
 		chai.assert.equal(xPathSequence.first().value, 1.0, 'is 1.0');
 	});
 
@@ -46,14 +46,14 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	it('turns booleans into booleans', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(false, 'xs:boolean');
 		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-		chai.assert(xPathSequence.first().instanceOfType('xs:boolean'), 'is a boolean');
+		chai.assert(xPathSequence.first().type === ('xs:boolean'), 'is a boolean');
 		chai.assert.equal(xPathSequence.first().value, false, 'is false');
 	});
 
 	it('turns strings into xs:string?', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue('a', 'xs:string?');
 		chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-		chai.assert(xPathSequence.first().instanceOfType('xs:string'), 'is a string');
+		chai.assert(xPathSequence.first().type === ('xs:string'), 'is a string');
 		chai.assert.equal(xPathSequence.first().value, 'a', 'is the same string');
 	});
 
@@ -61,9 +61,9 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(['a', 'b', 'c'], 'xs:string+');
 		chai.assert.equal(xPathSequence.getLength(), 3, 'is a sequence with length 3');
 		const values = xPathSequence.getAllValues();
-		chai.assert(xPathSequence.first().instanceOfType('xs:string'), 'first is a string');
-		chai.assert(values[1].instanceOfType('xs:string'), 'second is a string');
-		chai.assert(values[2].instanceOfType('xs:string'), 'third is a string');
+		chai.assert(xPathSequence.first().type === ('xs:string'), 'first is a string');
+		chai.assert(values[1].type === ('xs:string'), 'second is a string');
+		chai.assert(values[2].type === ('xs:string'), 'third is a string');
 		chai.assert.equal(xPathSequence.first().value, 'a', 'is a');
 		chai.assert.equal(values[1].value, 'b', 'is b');
 		chai.assert.equal(values[2].value, 'c', 'is c');
@@ -73,9 +73,9 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(['a', 'b', 'c'], 'xs:string*');
 		chai.assert.equal(xPathSequence.getLength(), 3, 'is a sequence with length 3');
 		const values = xPathSequence.getAllValues();
-		chai.assert(xPathSequence.first().instanceOfType('xs:string'), 'first is a string');
-		chai.assert(values[1].instanceOfType('xs:string'), 'second is a string');
-		chai.assert(values[2].instanceOfType('xs:string'), 'third is a string');
+		chai.assert(xPathSequence.first().type === ('xs:string'), 'first is a string');
+		chai.assert(values[1].type === ('xs:string'), 'second is a string');
+		chai.assert(values[2].type === ('xs:string'), 'third is a string');
 		chai.assert.equal(xPathSequence.first().value, 'a', 'is a');
 		chai.assert.equal(values[1].value, 'b', 'is b');
 		chai.assert.equal(values[2].value, 'c', 'is c');
@@ -90,21 +90,21 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 		it('can automatically convert numbers', () => {
 			const xPathSequence = adaptJavaScriptValueToXPathValue(1.0, 'item()');
 			chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-			chai.assert(xPathSequence.first().instanceOfType('xs:decimal'), 'is a decimal');
+			chai.assert(xPathSequence.first().type === ('xs:decimal'), 'is a decimal');
 			chai.assert.equal(xPathSequence.first().value, 1.0, 'is 1.0');
 		});
 
 		it('can automatically convert strings', () => {
 			const xPathSequence = adaptJavaScriptValueToXPathValue('a', 'item()');
 			chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-			chai.assert(xPathSequence.first().instanceOfType('xs:string'), 'is a string');
+			chai.assert(xPathSequence.first().type === ('xs:string'), 'is a string');
 			chai.assert.equal(xPathSequence.first().value, 'a', 'is "a"');
 		});
 
 		it('can automatically convert booleans', () => {
 			const xPathSequence = adaptJavaScriptValueToXPathValue(true, 'item()');
 			chai.assert(xPathSequence.isSingleton(), 'is a singleton sequence');
-			chai.assert(xPathSequence.first().instanceOfType('xs:boolean'), 'is a boolean');
+			chai.assert(xPathSequence.first().type === ('xs:boolean'), 'is a boolean');
 			chai.assert.equal(xPathSequence.first().value, true, 'is true');
 		});
 

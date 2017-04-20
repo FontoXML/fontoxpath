@@ -1,10 +1,8 @@
-import DynamicContext from '../DynamicContext';
-import Sequence from '../dataTypes/Sequence';
 /**
- * @param  {!DynamicContext}  _dynamicContext
- * @param  {!Sequence}        arraySequence
- * @param  {!Sequence}        positionSequence
- * @return {!Sequence}
+ * @param  {!../DynamicContext}  _dynamicContext
+ * @param  {!../dataTypes/Sequence}        arraySequence
+ * @param  {!../dataTypes/Sequence}        positionSequence
+ * @return {!../dataTypes/Sequence}
  */
 export default function arrayGet (_dynamicContext, arraySequence, positionSequence) {
 	var position = positionSequence.first().value,

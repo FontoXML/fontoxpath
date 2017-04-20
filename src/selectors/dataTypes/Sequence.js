@@ -1,11 +1,11 @@
-import Item from './Item';
-import NodeValue from './NodeValue';
-import BooleanValue from './BooleanValue';
+import getEffectiveBooleanValue from './getEffectiveBooleanValue';
+import atomize from './atomize';
+import isInstanceOfType from './isInstanceOfType';
 
 /**
  * @constructor
  * @template T
- * @extends {Item<!Generator<T>>}
+ * @extends {./Value}
  * @param  {!Array<T> | !Iterator<T>}  valueIterator
  * @param  {?number=}                       predictedLength
  */
@@ -13,7 +13,7 @@ function Sequence (valueIterator, predictedLength = null) {
 	if (Array.isArray(valueIterator)) {
 		return new ArrayBackedSequence(valueIterator);
 	}
-    Item.call(this, () => {
+	this.value = () => {
 		let i = -1;
 		return {
 			[Symbol.iterator]: function () {
@@ -55,7 +55,7 @@ function Sequence (valueIterator, predictedLength = null) {
 				return value;
 			}
 		};
-	});
+	};
 
 	this._rawIterator = valueIterator;
 
@@ -65,8 +65,6 @@ function Sequence (valueIterator, predictedLength = null) {
 
 	this._cachedValues = [];
 }
-
-Sequence.prototype = Object.create(Item.prototype);
 
 Sequence.prototype.getAllValues = function () {
 	if (this._iteratorHasProgressed && this._length !== this._cachedValues.length) {
@@ -86,10 +84,10 @@ Sequence.prototype.first = function () {
 Sequence.prototype.map = function (callback) {
 	let i = -1;
 	/**
-	 * @type {!Iterator<!Item>}
+	 * @type {!Iterator<!./Value>}
 	 */
 	const iterator = this.value();
-	return new Sequence(/** @type {!Iterator<!Item>} */ ({
+	return new Sequence(/** @type {!Iterator<!./Value>} */ ({
 		next: () => {
 			i++;
 			const value = iterator.next();
@@ -107,11 +105,11 @@ Sequence.prototype.map = function (callback) {
 Sequence.prototype.filter = function (callback) {
 	let i = -1;
 	/**
-	 * @type {!Iterator<!Item>}
+	 * @type {!Iterator<!./Value>}
 	 */
 	const iterator = this.value();
 
-	return new Sequence(/** @type {!Iterator<!Item>} */ ({
+	return new Sequence(/** @type {!Iterator<!./Value>} */ ({
 		next: () => {
 			i++;
 			let value = iterator.next();
@@ -129,7 +127,7 @@ Sequence.prototype.filter = function (callback) {
  * @return {!Sequence}
  */
 Sequence.prototype.atomize = function (dynamicContext) {
-    return this.map(value => value.atomize(dynamicContext));
+    return this.map(value => atomize(value, dynamicContext));
 };
 
 Sequence.prototype.isEmpty = function () {
@@ -185,14 +183,14 @@ Sequence.prototype.getEffectiveBooleanValue = function () {
 	if (firstValue.done) {
 		return false;
 	}
-	if (firstValue.value instanceof NodeValue) {
+	if (isInstanceOfType(firstValue.value, 'node()')) {
 		return true;
 	}
 	const secondValue = iterator.next();
 	if (!secondValue.done) {
 		throw new Error('FORG0006: A wrong argument type was specified in a function call.');
 	}
-	return firstValue.value.getEffectiveBooleanValue();
+	return getEffectiveBooleanValue(firstValue.value);
 };
 
 /**
@@ -200,12 +198,12 @@ Sequence.prototype.getEffectiveBooleanValue = function () {
  * @extends Sequence
  */
 function EmptySequence () {
-	Item.call(this, () => (
+	this.value = () => (
 		{
 			[Symbol.iterator]: function () { return this; },
 			next: () => ({ done: true })
 		}
-	));
+	);
 }
 EmptySequence.prototype.getEffectiveBooleanValue = () => false;
 EmptySequence.prototype.first = () => null;
@@ -217,29 +215,12 @@ const emptySequence = new EmptySequence();
 
 EmptySequence.prototype.atomize = EmptySequence.prototype.filter = EmptySequence.prototype.map = () => emptySequence;
 
-let singletonTrueSequence;
-let singletonFalseSequence;
-
 /**
  * @extends Sequence
  * @constructor
  */
 function SingletonSequence (onlyValue) {
-	if (onlyValue === BooleanValue.FALSE) {
-		if (singletonFalseSequence) {
-			return singletonFalseSequence;
-		}
-		singletonFalseSequence = this;
-	}
-
-	if (onlyValue === BooleanValue.TRUE) {
-		if (singletonTrueSequence) {
-			return singletonTrueSequence;
-		}
-		singletonTrueSequence = this;
-	}
-
-	Item.call(this, () => {
+	this.value = () => {
 		let hasPassed = false;
 		return {
 			[Symbol.iterator]: function () { return this; },
@@ -251,13 +232,13 @@ function SingletonSequence (onlyValue) {
 				return { done: false, value: onlyValue };
 			}
 		};
-	});
+	};
 	this._onlyValue = onlyValue;
 	this._effectiveBooleanValue = null;
 }
 SingletonSequence.prototype.getEffectiveBooleanValue = function () {
 	if (this._effectiveBooleanValue === null) {
-		this._effectiveBooleanValue = this._onlyValue.getEffectiveBooleanValue();
+		this._effectiveBooleanValue = getEffectiveBooleanValue(this._onlyValue);
 	}
 	return this._effectiveBooleanValue;
 };
@@ -271,7 +252,7 @@ SingletonSequence.prototype.isEmpty = () => false;
 SingletonSequence.prototype.getLength = () => 1;
 SingletonSequence.prototype.isSingleton = () => true;
 SingletonSequence.prototype.atomize = function (dynamicContext) {
-	return new SingletonSequence(this._onlyValue.atomize(dynamicContext));
+	return new SingletonSequence(atomize(this._onlyValue, dynamicContext));
 };
 SingletonSequence.prototype.filter = function (cb) {
 	if (cb(this._onlyValue, 0, this)) {
@@ -294,7 +275,7 @@ function ArrayBackedSequence (values) {
 	if (values.length === 1) {
 		return new SingletonSequence(values[0]);
 	}
-	Item.call(this, () => {
+	this.value = () => {
 		let i = -1;
 		return {
 			[Symbol.iterator]: function () { return this; },
@@ -306,7 +287,7 @@ function ArrayBackedSequence (values) {
 				return { done: false, value: values[i] };
 			}
 		};
-	});
+	};
 
 	this._values = values;
 }
@@ -319,7 +300,7 @@ ArrayBackedSequence.prototype.getAllValues = function () {
 	return this._values.concat();
 };
 ArrayBackedSequence.prototype.getEffectiveBooleanValue = function () {
-	if (this._values[0] instanceof NodeValue) {
+	if (isInstanceOfType(this._values[0], 'node()')) {
 		return true;
 	}
 	// We always have a length > 1, or we'd be a singletonSequence
@@ -327,7 +308,7 @@ ArrayBackedSequence.prototype.getEffectiveBooleanValue = function () {
 };
 ArrayBackedSequence.prototype.filter = function (cb) {
 	let i = -1;
-	return new Sequence(/** @type {!Iterator<!Item>} */ ({
+	return new Sequence(/** @type {!Iterator<!./Value>} */ ({
 		next: () => {
 			i++;
 			while (i < this._values.length && !cb(this._values[i], i, this)) {
@@ -344,7 +325,7 @@ ArrayBackedSequence.prototype.filter = function (cb) {
 };
 ArrayBackedSequence.prototype.map = function (cb) {
 	let i = -1;
-	return new Sequence(/** @type {!Iterator<!Item>} */ ({
+	return new Sequence(/** @type {!Iterator<!./Value>} */ ({
 		next: () => {
 			i++;
 			if (i >= this._values.length) {
@@ -358,10 +339,10 @@ ArrayBackedSequence.prototype.getLength = function () {
 	return this._values.length;
 };
 ArrayBackedSequence.prototype.atomize = function (dynamicContext) {
-	return this.map(value => value.atomize(dynamicContext));
+	return this.map(value => atomize(value, dynamicContext));
 };
 /**
- * @param   {!Item}  value
+ * @param   {!./Value}  value
  * @return  {!Sequence}
  */
 Sequence.singleton = function (value) {

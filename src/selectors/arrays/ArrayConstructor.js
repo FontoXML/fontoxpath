@@ -1,4 +1,3 @@
-
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import ArrayValue from '../dataTypes/ArrayValue';
@@ -19,19 +18,16 @@ class ArrayConstructor extends Selector {
 			}));
 		this._curlyness = curlyness;
 		this._members = members;
-
-
 	}
 
 	evaluate (dynamicContext) {
 		if (this._curlyness === 'curly') {
-			return Sequence.singleton(new ArrayValue(
-				Array.from(this._members[0].evaluate(dynamicContext).value()).map(Sequence.singleton)));
+			return Sequence.singleton(
+				new ArrayValue(Array.from(this._members[0].evaluate(dynamicContext).value()).map(Sequence.singleton)));
 		}
 
 		return Sequence.singleton(
-			new ArrayValue(
-				this._members.map(entry => entry.evaluate(dynamicContext))));
+			new ArrayValue(this._members.map(entry => entry.evaluate(dynamicContext))));
 	}
 }
 export default ArrayConstructor;

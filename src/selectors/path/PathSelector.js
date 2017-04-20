@@ -1,11 +1,11 @@
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 import {
 	sortNodeValues,
 	compareNodePositions
 } from '../dataTypes/documentOrderUtils';
-import NodeValue from '../dataTypes/NodeValue';
 
 /**
  * @param   {!Iterator<!Sequence>}  sequences
@@ -52,7 +52,7 @@ function mergeSortedSequences (domFacade, sequences) {
 	var allIterators = allSequences
 		.map(seq => {
 			/**
-			 * @type {Iterator<../dataTypes/Item>}
+			 * @type {Iterator<../dataTypes/Value>}
 			 */
 			const it = seq.value();
 			return {
@@ -75,7 +75,7 @@ function mergeSortedSequences (domFacade, sequences) {
 				const consumedIterator = allIterators.shift();
 				consumedValue = consumedIterator.current;
 				consumedIterator.current = consumedIterator.next();
-				if (!consumedValue.value.instanceOfType('node()')) {
+				if (!isInstanceOfType(consumedValue.value, 'node()')) {
 					return consumedValue;
 				}
 				if (!consumedIterator.current.done) {
@@ -112,7 +112,7 @@ function sortResults (domFacade, result) {
     let resultContainsNodes = false,
         resultContainsNonNodes = false;
     result.forEach(function (resultValue) {
-        if (resultValue instanceof NodeValue) {
+        if (isInstanceOfType(resultValue, 'node()')) {
             resultContainsNodes = true;
         }
 		else {
@@ -177,7 +177,7 @@ class PathSelector extends Selector {
 					if (childContext.done) {
 						return { done: true };
 					}
-					if (!childContext.value.contextItem.instanceOfType('node()')) {
+					if (!isInstanceOfType(childContext.value.contextItem, 'node()')) {
 						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
 					}
 					return { done: false, value: selector.evaluate(childContext.value) };

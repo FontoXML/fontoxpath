@@ -11,7 +11,7 @@ function createSiblingGenerator (domFacade, node) {
 			}
 
 			return {
-				value: new NodeValue(node),
+				value: NodeValue.createFromNode(node),
 				done: false
 			};
 		}

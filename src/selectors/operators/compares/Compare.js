@@ -1,9 +1,9 @@
 import Sequence from '../../dataTypes/Sequence';
-import BooleanValue from '../../dataTypes/BooleanValue';
 import Selector from '../../Selector';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
 import valueCompare from './valueCompare';
+import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -47,16 +47,14 @@ class Compare extends Selector {
 		}
 
 		if (this._compare === 'nodeCompare') {
-			const nodeCompareResult = this._comparator(this._operator, firstSequence, secondSequence) ?
-				BooleanValue.TRUE :
-				BooleanValue.FALSE;
+			const nodeCompareResult = createAtomicValue(this._comparator(this._operator, firstSequence, secondSequence), 'xs:boolean');
 			return Sequence.singleton(nodeCompareResult);
 		}
 
 		// Atomize both sequences
 		const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
 		const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
-		const booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		const booleanValue = createAtomicValue(this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence), 'xs:boolean');
 		return Sequence.singleton(booleanValue);
 	}
 }

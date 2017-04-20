@@ -1,4 +1,5 @@
 import Selector from '../Selector';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 
 /**
  * @extends {Selector}
@@ -17,8 +18,6 @@ class Filter extends Selector {
 
 		this._selector = selector;
 		this._filterSelector = filterSelector;
-
-
 	}
 
 	getBucket () {
@@ -42,7 +41,7 @@ class Filter extends Selector {
 			}
 
 			const resultValue = result.first();
-			if (resultValue.instanceOfType('xs:numeric')) {
+			if (isInstanceOfType(resultValue, 'xs:numeric')) {
 				// Remember: XPath is one-based
 				return resultValue.value === i + 1;
 			}

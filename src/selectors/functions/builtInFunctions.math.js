@@ -1,8 +1,9 @@
-import DoubleValue from '../dataTypes/DoubleValue';
 import Sequence from '../dataTypes/Sequence';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+
 
 function mathPi (_dynamicContext) {
-	return Sequence.singleton(new DoubleValue(Math.PI));
+	return Sequence.singleton(createAtomicValue(Math.PI, 'xs:double'));
 }
 
 function mathExp (_dynamicContext, sequence) {
@@ -10,7 +11,7 @@ function mathExp (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.pow(Math.E, sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.pow(Math.E, sequence.first().value), 'xs:double'));
 }
 
 function mathExp10 (_dynamicContext, sequence) {
@@ -18,7 +19,7 @@ function mathExp10 (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.pow(10, sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.pow(10, sequence.first().value), 'xs:double'));
 }
 
 function mathLog (_dynamicContext, sequence) {
@@ -26,7 +27,7 @@ function mathLog (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.log(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.log(sequence.first().value), 'xs:double'));
 }
 
 function mathLog10 (_dynamicContext, sequence) {
@@ -34,7 +35,7 @@ function mathLog10 (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.log10(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.log10(sequence.first().value), 'xs:double'));
 }
 
 function mathPow (_dynamicContext, sequence, y) {
@@ -45,10 +46,10 @@ function mathPow (_dynamicContext, sequence, y) {
 	var valueX = sequence.first().value,
 		valueY = y.first().value;
 	if ((valueX === 1 || valueX === -1) && (valueY === Infinity || valueY === -Infinity || isNaN(valueY))) {
-		return Sequence.singleton(new DoubleValue(1));
+		return Sequence.singleton(createAtomicValue(1, 'xs:double'));
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.pow(sequence.first().value, y.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.pow(sequence.first().value, y.first().value), 'xs:double'));
 }
 
 function mathSqrt (_dynamicContext, sequence) {
@@ -56,7 +57,7 @@ function mathSqrt (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.sqrt(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.sqrt(sequence.first().value), 'xs:double'));
 }
 
 function mathSin (_dynamicContext, sequence) {
@@ -64,7 +65,7 @@ function mathSin (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.sin(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.sin(sequence.first().value), 'xs:double'));
 }
 
 function mathCos (_dynamicContext, sequence) {
@@ -72,7 +73,7 @@ function mathCos (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.cos(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.cos(sequence.first().value), 'xs:double'));
 }
 
 function mathTan (_dynamicContext, sequence) {
@@ -80,7 +81,7 @@ function mathTan (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.tan(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.tan(sequence.first().value), 'xs:double'));
 }
 
 function mathAsin (_dynamicContext, sequence) {
@@ -88,7 +89,7 @@ function mathAsin (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.asin(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.asin(sequence.first().value), 'xs:double'));
 }
 
 function mathAcos (_dynamicContext, sequence) {
@@ -96,7 +97,7 @@ function mathAcos (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.acos(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.acos(sequence.first().value), 'xs:double'));
 }
 
 function mathAtan (_dynamicContext, sequence) {
@@ -104,7 +105,7 @@ function mathAtan (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.atan(sequence.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.atan(sequence.first().value), 'xs:double'));
 }
 
 function mathAtan2 (_dynamicContext, sequence, x) {
@@ -112,7 +113,7 @@ function mathAtan2 (_dynamicContext, sequence, x) {
 		return sequence;
 	}
 
-	return Sequence.singleton(new DoubleValue(Math.atan2(sequence.first().value, x.first().value)));
+	return Sequence.singleton(createAtomicValue(Math.atan2(sequence.first().value, x.first().value), 'xs:double'));
 }
 
 export default {

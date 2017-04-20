@@ -1,32 +1,25 @@
-import arrayGet from '../functions/builtInFunctions.arrays.get';
+import FunctionValue from './FunctionValue';
 import Sequence from './Sequence';
-import FunctionItem from './FunctionItem';
+import arrayGet from '../functions/builtInFunctions.arrays.get';
 
 /**
- * @constructor
- * @extends {FunctionItem}
- * @param   {!Array<!Sequence>}  members
+ * @extends {./FunctionValue}
  */
-function ArrayValue (members) {
-	FunctionItem.call(this, function (dynamicContext, key) {
-		return arrayGet(dynamicContext, Sequence.singleton(this), key);
-	}.bind(this), 'array', ['xs:integer'], 1, 'item()*');
-	this.members = members;
+class ArrayValue extends FunctionValue {
+	/**
+	 * @param  {Array<./Value>}  members
+	 */
+	constructor (members) {
+		super({
+			value: (dynamicContext, key) => arrayGet(dynamicContext, Sequence.singleton(this), key),
+			name: 'array:get',
+			argumentTypes: ['xs:integer'],
+			arity: 1,
+			returnType: 'item()*'
+		});
+		this.type = 'array(*)';
+		this.members = members;
+	}
 }
-
-ArrayValue.prototype = Object.create(FunctionItem.prototype);
-ArrayValue.prototype.constructor = ArrayValue;
-
-/**
-* @return {string}
-*/
-ArrayValue.prototype.toString = function () {
-	return `(item fn:array ${this.members.map(member => member.toString())})`;
-};
-
-ArrayValue.prototype.instanceOfType = function (simpleTypeName) {
-	return simpleTypeName === 'array(*)' ||
-		FunctionItem.prototype.instanceOfType.call(this, simpleTypeName);
-};
 
 export default ArrayValue;

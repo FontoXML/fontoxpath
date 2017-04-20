@@ -1,7 +1,8 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
-import BooleanValue from '../dataTypes/BooleanValue';
 import Specificity from '../Specificity';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 
 /**
  * @extends {Selector}
@@ -14,11 +15,11 @@ class TypeTest extends Selector {
 		super(new Specificity({}));
 
 		this._type = type;
-
 	}
 
 	evaluate (dynamicContext) {
-		var booleanValue = dynamicContext.contextItem.instanceOfType(this._type) ? BooleanValue.TRUE : BooleanValue.FALSE;
+		var booleanValue = createAtomicValue(
+			isInstanceOfType(dynamicContext.contextItem, this._type), 'xs:boolean');
 		return Sequence.singleton(booleanValue);
 	}
 }

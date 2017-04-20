@@ -1,7 +1,8 @@
-import BooleanValue from '../dataTypes/BooleanValue';
 import Sequence from '../dataTypes/Sequence';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
 
 /**
  * @extends {Selector}
@@ -28,14 +29,14 @@ class NodeNameSelector extends Selector {
 	evaluate (dynamicContext) {
 		var node = dynamicContext.contextItem;
 
-		if (!node.instanceOfType('element()') && !node.instanceOfType('attribute()')) {
-			return Sequence.singleton(BooleanValue.FALSE);
+		if (!isInstanceOfType(node, 'element()') && !isInstanceOfType(node, 'attribute()')) {
+			return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 		}
 		if (this._nodeName === '*') {
-			return Sequence.singleton(BooleanValue.TRUE);
+			return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
 		}
 		var returnValue = this._nodeName === node.nodeName;
-		return Sequence.singleton(returnValue ? BooleanValue.TRUE : BooleanValue.FALSE);
+			return Sequence.singleton(returnValue ? createAtomicValue(true, 'xs:boolean') : createAtomicValue(false, 'xs:boolean'));
 	}
 
 	getBucket () {

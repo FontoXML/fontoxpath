@@ -1,4 +1,8 @@
-import { castToType, promoteToType } from '../dataTypes/conversionHelper';
+import castToType from '../dataTypes/castToType';
+import promoteToType from '../dataTypes/promoteToType';
+import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import atomize from '../dataTypes/atomize';
+
 import Sequence from '../dataTypes/Sequence';
 
 /**
@@ -17,7 +21,7 @@ function splitType (type) {
  * Test whether the provided argument is valid to be used as an function argument of the given type
  * @param   {string}           argumentType
  * @param   {!Sequence}        argument
- * @param   {!../DynamicContext.default}  dynamicContext
+ * @param   {!../DynamicContext}  dynamicContext
  * @return  {?Sequence}
  */
 export const transformArgument = (argumentType, argument, dynamicContext) => {
@@ -46,18 +50,18 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 	}
 
 	return argument.map(argumentItem => {
-		if (argumentItem.instanceOfType(type)) {
+		if (isInstanceOfType(argumentItem, type)) {
 			return argumentItem;
 		}
 
-		if (argumentItem.instanceOfType('node()')) {
-			argumentItem = argumentItem.atomize(dynamicContext);
+		if (isInstanceOfType(argumentItem, 'node()')) {
+			argumentItem = atomize(argumentItem, dynamicContext);
 		}
 		// Everything is an anyAtomicType, so no casting necessary.
 		if (type === 'xs:anyAtomicType') {
 			return argumentItem;
 		}
-		if (argumentItem.instanceOfType('xs:untypedAtomic')) {
+		if (isInstanceOfType(argumentItem, 'xs:untypedAtomic')) {
 			// We might be able to cast this to the wished type
 			const item = castToType(argumentItem, type);
 			if (!item) {
