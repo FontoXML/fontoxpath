@@ -15,12 +15,12 @@ class Unary extends Selector {
 	 * @param  {Selector}  valueExpr  The selector evaluating to the value to process
 	 */
 	constructor (kind, valueExpr) {
-		super(valueExpr.specificity, Selector.RESULT_ORDERINGS.SORTED);
+		super(valueExpr.specificity);
 		this._valueExpr = valueExpr;
 
 		this._kind = kind;
 
-		this._getStringifiedValue = () => `(${this._kind} ${this._valueExpr.toString()}})`;
+
 	}
 
 	evaluate (dynamicContext) {

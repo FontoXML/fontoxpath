@@ -110,7 +110,7 @@ function fnTail (_dynamicContext, sequence) {
 		return Sequence.empty();
 	}
 
-	const allItems = Array.from(sequence.value());
+	const allItems = sequence.getAllValues();
 	return Sequence.singleton(allItems[allItems.length - 1]);
 }
 
@@ -122,7 +122,7 @@ function fnInsertBefore (_dynamicContext, sequence, position, inserts) {
 	if (inserts.isEmpty()) {
 		return sequence;
 	}
-	const sequenceValue = Array.from(sequence.value());
+	const sequenceValue = sequence.getAllValues();
 
 	let effectivePosition = position.first().value;
 	if (effectivePosition < 1) {
@@ -138,7 +138,7 @@ function fnInsertBefore (_dynamicContext, sequence, position, inserts) {
 
 function fnRemove (_dynamicContext, sequence, position) {
 	const effectivePosition = position.first().value;
-	const sequenceValue = Array.from(sequence.value());
+	const sequenceValue = sequence.getAllValues();
 	if (!sequenceValue.length || effectivePosition < 1 || effectivePosition > sequenceValue.length) {
 		return new Sequence(sequenceValue);
 	}
@@ -147,7 +147,7 @@ function fnRemove (_dynamicContext, sequence, position) {
 }
 
 function fnReverse (_dynamicContext, sequence) {
-	return new Sequence(Array.from(sequence.value()).reverse());
+	return new Sequence(sequence.getAllValues().reverse());
 }
 
 function fnSubsequence (_dynamicContext, sequence, startingLoc, length) {
@@ -155,7 +155,7 @@ function fnSubsequence (_dynamicContext, sequence, startingLoc, length) {
 		return sequence;
 	}
 
-	const sequenceValue = Array.from(sequence.value());
+	const sequenceValue = sequence.getAllValues();
 	const startingLocValue = Math.round(startingLoc.first().value);
 	const effectiveLength = length ? startingLocValue + Math.round(length.first().value) - 1 : sequence.length;
 	return new Sequence(sequenceValue.slice(startingLocValue - 1, effectiveLength));
@@ -173,7 +173,7 @@ function fnDeepEqual (dynamicContext, parameter1, parameter2) {
 }
 
 function fnCount (_dynamicContext, sequence) {
-	return Sequence.singleton(new IntegerValue(sequence.getLength()));
+	return Sequence.singleton(new IntegerValue(sequence.getLength(false)));
 }
 
 function fnAvg (_dynamicContext, sequence) {
@@ -182,7 +182,7 @@ function fnAvg (_dynamicContext, sequence) {
 	}
 
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
-	var items = castUntypedItemsToDouble(Array.from(sequence.value()));
+	var items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
 	if (!items.every(item => item.instanceOfType('xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
@@ -212,7 +212,7 @@ function fnMax (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	var items = castItemsForMinMax(Array.from(sequence.value()));
+	var items = castItemsForMinMax(sequence.getAllValues());
 
 	// Use first element in array as initial value
 	return Sequence.singleton(
@@ -226,7 +226,7 @@ function fnMin (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	var items = castItemsForMinMax(Array.from(sequence.value()));
+	var items = castItemsForMinMax(sequence.getAllValues());
 
 	// Use first element in array as initial value
 	return Sequence.singleton(
@@ -241,7 +241,7 @@ function fnSum (_dynamicContext, sequence, zero) {
 		return zero;
 	}
 
-	var items = castUntypedItemsToDouble(Array.from(sequence.value()));
+	var items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
 	if (!items.every(item => item.instanceOfType('xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');

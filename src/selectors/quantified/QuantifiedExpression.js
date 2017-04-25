@@ -16,13 +16,13 @@ class QuantifiedExpression extends Selector {
 				function (specificity, inClause) {
 					return specificity.add(inClause[1].specificity);
 				}, satisfiesExpr.specificity);
-		super(specificity, Selector.RESULT_ORDERINGS.SORTED);
+		super(specificity);
 
 		this._quantifier = quantifier;
 		this._inClauses = inClauses;
 		this._satisfiesExpr = satisfiesExpr;
 
-		this._getStringifiedValue = () => `(quantified ${this._quantifier} ${this._inClauses.map(([name, selector]) => `(in-clause ${name} ${selector.toString()})`).join(' ')} ${this._satisfiesExpr.toString()})`;
+
 	}
 
 	evaluate (dynamicContext) {

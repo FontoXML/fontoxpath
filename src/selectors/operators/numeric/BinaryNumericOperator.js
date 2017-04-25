@@ -31,15 +31,13 @@ class BinaryNumericOperator extends Selector {
 	 * @param  {Selector}  secondValueExpr  The selector evaluating to the second value to process
 	 */
 	constructor (kind, firstValueExpr, secondValueExpr) {
-		super(
-			firstValueExpr.specificity.add(secondValueExpr.specificity),
-			Selector.RESULT_ORDERINGS.SORTED);
+		super(firstValueExpr.specificity.add(secondValueExpr.specificity));
 		this._firstValueExpr = firstValueExpr;
 		this._secondValueExpr = secondValueExpr;
 
 		this._kind = kind;
 
-		this._getStringifiedValue = () => `(${this._kind} ${this._firstValueExpr.toString()} ${this._secondValueExpr.toString()}})`;
+
 	}
 
 	evaluate (dynamicContext) {

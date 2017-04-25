@@ -27,10 +27,16 @@ export default function generalCompare (operator, firstSequence, secondSequence,
     // Change operator to equivalent valueCompare operator
     operator = OPERATOR_TRANSLATION[operator];
 
-    return Array.from(firstAtomizedSequence.value()).some(function (firstValue) {
-        var firstSingletonSequence = Sequence.singleton(firstValue);
-        return Array.from(secondAtomizedSequence.value()).some(function (secondValue) {
-            return valueCompare(operator, firstSingletonSequence, Sequence.singleton(secondValue));
-        });
-    });
+	const firstIterator = firstAtomizedSequence.value();
+	const secondSequenceValues = secondAtomizedSequence.getAllValues().map(item => Sequence.singleton(item));
+
+	for (let firstAtomizedValue = firstIterator.next(); !firstAtomizedValue.done; firstAtomizedValue = firstIterator.next()) {
+        var firstSingletonSequence = Sequence.singleton(firstAtomizedValue.value);
+        for (let i = 0, l = secondSequenceValues.length; i < l; ++i) {
+            if (valueCompare(operator, firstSingletonSequence, secondSequenceValues[i])) {
+				return true;
+			}
+        }
+    }
+	return false;
 }

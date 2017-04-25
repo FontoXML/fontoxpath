@@ -14,10 +14,14 @@ class AttributeAxis extends Selector {
 	constructor (attributeTestSelector) {
 		super(new Specificity({
 			[Specificity.ATTRIBUTE_KIND]: 1
-		}), Selector.RESULT_ORDERINGS.UNSORTED);
+		}), {
+			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
+			subtree: true,
+			peer: true
+		});
 
 		this._attributeTestSelector = attributeTestSelector;
-		this._getStringifiedValue = () => `(attribute ${this._attributeTestSelector.toString()})`;
+
 	}
 
 	/**
@@ -32,16 +36,13 @@ class AttributeAxis extends Selector {
 			return Sequence.empty();
 		}
 
+		const allAttributes = domFacade.getAllAttributes(contextItem.value);
 		var attributesSequence = new Sequence(
-			domFacade
-				.getAllAttributes(contextItem.value)
-				.map(function (attribute) {
-					return new NodeValue(new AttributeNode(
+			allAttributes.map(attribute => new NodeValue(new AttributeNode(
 						contextItem.value,
 						attribute.name,
 						attribute.value
-					));
-				}));
+			))));
 		const attributeTestSelector = this._attributeTestSelector;
 		return attributesSequence.filter((item, i) => {
 			const result = attributeTestSelector.evaluate(dynamicContext._createScopedContext({

@@ -33,7 +33,7 @@ class NamedFunctionRef extends Selector {
 			arity,
 			functionProperties.returnType);
 
-		this._getStringifiedValue = () => `(function-ref ${this._functionName} ${this._arity})`;
+
 	}
 
 	evaluate (_dynamicContext) {

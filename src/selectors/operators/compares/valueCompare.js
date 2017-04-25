@@ -1,8 +1,13 @@
 import { castToType } from '../../dataTypes/conversionHelper';
 
+/**
+ * @param  {string}    operator
+ * @param  {../../datatypes/Sequence}  firstSequence
+ * @param  {../../datatypes/Sequence}  secondSequence
+ */
 export default function valueCompare (operator, firstSequence, secondSequence) {
     // https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
-    if (!firstSequence.isSingleton() || !secondSequence.isSingleton()) {
+	if (!firstSequence.isSingleton() || !secondSequence.isSingleton()) {
         throw new Error('XPTY0004: Sequences to compare are not singleton');
     }
 

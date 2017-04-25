@@ -11,12 +11,16 @@ class LetExpression extends Selector {
 	constructor (rangeVariable, bindingSequence, returnExpression) {
 		super(
 			bindingSequence.specificity.add(returnExpression.specificity),
-			returnExpression.expectedResultOrder);
+			{
+				resultOrder: returnExpression.expectedResultOrder,
+				subtree: returnExpression.subtree,
+				peer: returnExpression.peer
+			});
 
 		this._rangeVariable = rangeVariable;
 		this._bindingSequence = bindingSequence;
 		this._returnExpression = returnExpression;
-		this._getStringifiedValue = () => `(let ${this._rangeVariable} ${this._bindingSequence.toString()} ${this._returnExpression.toString()})`;
+
 	}
 
 	evaluate (dynamicContext) {

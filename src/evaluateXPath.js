@@ -28,7 +28,7 @@ import nodeValueCache from './selectors/dataTypes/nodeValueCache';
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
 function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = {}) {
-	nodeValueCache.clear();
+//	nodeValueCache.clear();
 	if (!xpathSelector || typeof xpathSelector !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathSelector must be a string.');
 	}
@@ -85,7 +85,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			}
 
 			// Atomize all parts
-			return Array.from(rawResults.value()).map(function (value) {
+			return rawResults.getAllValues().map(function (value) {
 				return value.atomize(dynamicContext).value + '';
 			});
 
@@ -118,7 +118,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			if (rawResults.isEmpty()) {
 				return [];
 			}
-			const resultArray = Array.from(rawResults.value());
+			const resultArray = rawResults.getAllValues();
 			if (!resultArray.every(function (value) {
 				return value.instanceOfType('node()');
 			})) {
@@ -172,7 +172,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to an array');
 			}
 			return rawResults.first().members.map(function (entry) {
-				return Array.from(entry.atomize(dynamicContext).value()).map(function (atomizedValue) {
+				return entry.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
 					return atomizedValue.value;
 				});
 			});
@@ -181,7 +181,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			if (rawResults.isEmpty()) {
 				return [];
 			}
-			return Array.from(rawResults.value()).map(function (value) {
+			return rawResults.getAllValues().map(function (value) {
 				if (!(value instanceof NumericValue)) {
 					throw new Error('Expected XPath ' + xpathSelector + ' to resolve to numbers');
 				}
@@ -189,7 +189,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			});
 
 		default:
-var allValuesAreNodes = Array.from(rawResults.value()).every(function (value) {
+			var allValuesAreNodes = rawResults.getAllValues().every(function (value) {
 					return value.instanceOfType('node()') &&
 						!(value.instanceOfType('attribute()'));
 				});

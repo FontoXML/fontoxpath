@@ -18,7 +18,7 @@ class OrOperator extends Selector {
 			return selector.specificity;
 		}, new Specificity({}));
 
-		super(maxSpecificity, Selector.RESULT_ORDERINGS.SORTED);
+		super(maxSpecificity);
 
 		// If all subSelectors define the same bucket: use that one, else, use no bucket.
 		this._bucket = selectors.reduce(function (bucket, selector) {
@@ -37,7 +37,7 @@ class OrOperator extends Selector {
 		}, undefined);
 
 		this._subSelectors = selectors;
-		this._getStringifiedValue = () => `(or ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
+
 	}
 
 	evaluate (dynamicContext) {

@@ -9,12 +9,16 @@ class Filter extends Selector {
 	 * @param  {Selector}    filterSelector
 	 */
 	constructor (selector, filterSelector) {
-		super(selector.specificity.add(filterSelector.specificity), selector.expectedResultOrder);
+		super(selector.specificity.add(filterSelector.specificity), {
+			resultOrder: selector.expectedResultOrder,
+			peer: selector.peer,
+			subtree: selector.subtree
+		});
 
 		this._selector = selector;
 		this._filterSelector = filterSelector;
 
-		this._getStringifiedValue = () => `(filter ${this._selector} ${this._filterSelector})`;
+
 	}
 
 	getBucket () {

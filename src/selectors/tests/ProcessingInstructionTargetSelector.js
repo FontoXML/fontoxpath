@@ -13,10 +13,10 @@ class ProcessingInstructionTargetSelector extends Selector {
 	constructor (target) {
 		super(new Specificity({
 			[Specificity.NODENAME_KIND]: 1
-		}), Selector.RESULT_ORDERINGS.SORTED);
+		}));
 
 		this._target = target;
-		this._getStringifiedValue = () => `(processing-instruction ${this._target || ''})`;
+
 	}
 
 	evaluate (dynamicContext) {

@@ -13,10 +13,10 @@ class NodeTypeSelector extends Selector {
 	constructor (nodeType) {
 		super(new Specificity({
 			[Specificity.NODETYPE_KIND]: 1
-		}), Selector.RESULT_ORDERINGS.SORTED);
+		}));
 
 		this._nodeType = nodeType;
-		this._getStringifiedValue = () => `(node_type ${this._nodeType})`;
+
 	}
 
 	evaluate (dynamicContext) {

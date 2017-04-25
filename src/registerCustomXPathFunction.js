@@ -2,10 +2,6 @@ import adaptJavaScriptValueToXPathValue from './selectors/adaptJavaScriptValueTo
 import functionRegistry from './selectors/functions/functionRegistry';
 
 function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
-	if (valueSequence.instanceOfType('attribute()')) {
-		throw new Error('Cannot pass attribute nodes to custom functions');
-	}
-
 	switch (sequenceType[sequenceType.length - 1]) {
 		case '?':
 			if (valueSequence.isEmpty()) {
@@ -16,6 +12,9 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 		case '*':
 		case '+':
 			return Array.from(valueSequence.value()).map(function (value) {
+				if (value.instanceOfType('attribute()')) {
+					throw new Error('Cannot pass attribute nodes to custom functions');
+				}
 				return value.value;
 			});
 

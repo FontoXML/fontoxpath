@@ -9,25 +9,31 @@ function opTo (_dynamicContext, fromValue, toValue) {
 		return Sequence.empty();
 	}
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
-	return new Sequence(function* () {
-		for (let i = 0; i < to - from + 1; i++) {
-			yield new IntegerValue(from + i);
+	return new Sequence({
+		next: () => {
+			if (from > to) {
+				return { done: true };
+			}
+			return { done: false, value: new IntegerValue(from++) };
 		}
 	}, to - from + 1);
 }
 
 function opExcept (dynamicContext, firstNodes, secondNodes) {
-	var allNodes = Array.from(firstNodes.value()).filter(function (nodeA) {
-		return Array.from(secondNodes.value()).every(function (nodeB) {
+	const allSecondNodes = secondNodes.getAllValues();
+	var allNodes = firstNodes.getAllValues().filter(function (nodeA) {
+		return allSecondNodes.every(function (nodeB) {
 				return nodeA !== nodeB;
 			});
+
 		});
 	return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
 }
 
 function opIntersect (dynamicContext, firstNodes, secondNodes) {
-	var allNodes = Array.from(firstNodes.value()).filter(function (nodeA) {
-		return Array.from(secondNodes.value()).some(function (nodeB) {
+	const allSecondNodes = secondNodes.getAllValues();
+	var allNodes = firstNodes.getAllValues().filter(function (nodeA) {
+		return allSecondNodes.some(function (nodeB) {
 				return nodeA === nodeB;
 			});
 		});

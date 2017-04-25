@@ -15,14 +15,18 @@ class IfExpression extends Selector {
 			.add(elseExpression.specificity);
 		super(
 			specificity,
-			thenExpression.expectedResultOrder === elseExpression.expectedResultOrder ?
-				thenExpression.expectedResultOrder : Selector.RESULT_ORDERINGS.UNSORTED);
+			{
+				resultOrder: thenExpression.expectedResultOrder === elseExpression.expectedResultOrder ?
+					thenExpression.expectedResultOrder : Selector.RESULT_ORDERINGS.UNSORTED,
+				peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
+				subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree
+			});
 
 		this._testExpression = testExpression;
 		this._thenExpression = thenExpression;
 		this._elseExpression = elseExpression;
 
-		this._getStringifiedValue = () => `(if ${this._testExpression.toString()} ${this._thenExpression} ${this._elseExpression})`;
+
 	}
 
 	evaluate (dynamicContext) {

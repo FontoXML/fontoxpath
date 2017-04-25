@@ -11,14 +11,12 @@ class AndOperator extends Selector {
 	 * @param  {!Array<!Selector>}  selectors
 	 */
 	constructor (selectors) {
-		super(
-			selectors.reduce(function (specificity, selector) {
+		super(selectors.reduce(function (specificity, selector) {
 				return specificity.add(selector.specificity);
-			}, new Specificity({})),
-			Selector.RESULT_ORDERINGS.SORTED);
+			}, new Specificity({})));
 		this._subSelectors = selectors;
 
-		this._getStringifiedValue = () => `(and ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
+
 	}
 
 	evaluate (dynamicContext) {

@@ -8,12 +8,10 @@ import BooleanValue from '../dataTypes/BooleanValue';
  */
 class UniversalSelector extends Selector {
 	constructor () {
-		super(
-			new Specificity({
+		super(new Specificity({
 				[Specificity.UNIVERSAL_KIND]: 1
-			}),
-			Selector.RESULT_ORDERINGS.SORTED);
-		this._getStringifiedValue = () => '(universal)';
+			}));
+
 	}
 
 	evaluate () {

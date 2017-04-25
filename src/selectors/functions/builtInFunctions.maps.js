@@ -99,7 +99,7 @@ function mapContains (_dynamicContext, mapSequence, keySequence) {
 
 function mapRemove (_dynamicContext, mapSequence, keySequence) {
 	var resultingKeyValuePairs = mapSequence.first().keyValuePairs.concat();
-	Array.from(keySequence.value).forEach(function (key) {
+	keySequence.getAllValues().forEach(function (key) {
 		var indexOfExistingPair = resultingKeyValuePairs.findIndex(function (existingPair) {
 				return isSameMapKey(existingPair.key, key);
 			});

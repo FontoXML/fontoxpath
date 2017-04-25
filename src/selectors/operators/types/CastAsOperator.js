@@ -12,15 +12,12 @@ class castAsOperator extends Selector {
 	 * @param  {!boolean}   allowsEmptySequence
 	 */
 	constructor (expression, targetType, allowsEmptySequence) {
-		super(
-			expression.specificity,
-			Selector.RESULT_ORDERINGS.UNSORTED
-		);
+		super(expression.specificity);
 
 		this._expression = expression;
 		this._targetType = targetType;
 		this._allowsEmptySequence = allowsEmptySequence;
-		this._getStringifiedValue = () => `(cast-as ${this._expression} ${this._targetType} ${this._allowsEmptySequence})`;
+
 	}
 
 	evaluate (dynamicContext) {

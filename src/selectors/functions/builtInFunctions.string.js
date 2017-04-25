@@ -115,7 +115,7 @@ function xsString (_dynamicContext, sequence) {
 
 function fnStringJoin (_dynamicContext, sequence, separator) {
 	const separatorString = separator.first().value;
-	const joinedString = Array.from(sequence.value()).map(function (stringValue) {
+	const joinedString = sequence.getAllValues().map(function (stringValue) {
 		return stringValue.value;
 	}).join(separatorString);
 	return Sequence.singleton(new StringValue(joinedString));

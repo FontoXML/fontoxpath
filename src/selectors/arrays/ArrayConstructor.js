@@ -1,3 +1,4 @@
+
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import ArrayValue from '../dataTypes/ArrayValue';
@@ -13,13 +14,12 @@ class ArrayConstructor extends Selector {
 	 * @param   {!Array<!Selector>}  members    The selectors for the values
 	 */
 	constructor (curlyness, members) {
-		super(
-			new Specificity({
+		super(new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1
-			}), Selector.RESULT_ORDERINGS.UNSORTED);
+			}));
 		this._curlyness = curlyness;
 		this._members = members;
-		this._getStringifiedValue = () => `(array ${this._curlyness} ${this._members.map(member => member.toString()).join(' ')})`;
+
 
 	}
 

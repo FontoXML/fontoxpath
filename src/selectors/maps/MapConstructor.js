@@ -13,10 +13,10 @@ class MapConstructor extends Selector {
 	constructor (entries) {
 		super(new Specificity({
 			[Specificity.EXTERNAL_KIND]: 1
-		}), Selector.RESULT_ORDERINGS.UNSORTED);
+		}));
 		this._entries = entries;
 
-		this._getStringifiedValue = () => `(map ${this._entries.map(({ key, value }) => `(entry ${key.toString()} ${value.toString()})`).join(' ')})`;
+
 	}
 
 	evaluate (dynamicContext) {

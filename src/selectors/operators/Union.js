@@ -19,23 +19,19 @@ class Union extends Selector {
 			}
 			return selector.specificity;
 		}, new Specificity({}));
-		super(maxSpecificity, Selector.RESULT_ORDERINGS.UNSORTED);
+		super(maxSpecificity);
 
 		this._subSelectors = selectors;
-		this._getStringifiedValue = () => `(union ${this._subSelectors.map(selector => selector.toString()).join(' ')})`;
+
 	}
 
 	evaluate (dynamicContext) {
 		const nodeSet = this._subSelectors.reduce(function (resultingNodeSet, selector) {
 			const results = selector.evaluate(dynamicContext);
-			const allItemsAreNode = Array.from(results.value()).every(function (valueItem) {
-				return valueItem.instanceOfType('node()');
-			});
-
-			if (!allItemsAreNode) {
-				throw new Error('XPTY0004: The sequences to union are not of type node()*');
-			}
 			for (const nodeValue of results.value()) {
+				if (!nodeValue.instanceOfType('node()')) {
+					throw new Error('XPTY0004: The sequences to union are not of type node()*');
+				}
 				resultingNodeSet.add(nodeValue);
 			}
 			return resultingNodeSet;

@@ -11,10 +11,10 @@ class TypeTest extends Selector {
 	 * @param  {string}  type
 	 */
 	constructor (type) {
-		super(new Specificity({}), Selector.RESULT_ORDERINGS.SORTED);
+		super(new Specificity({}));
 
 		this._type = type;
-		this._getStringifiedValue = () => `(type-test ${this._type})`;
+
 	}
 
 	evaluate (dynamicContext) {

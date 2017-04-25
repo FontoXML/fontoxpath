@@ -26,10 +26,14 @@ class FollowingSiblingAxis extends Selector {
 	 * @param  {Selector}  siblingSelector
 	 */
 	constructor (siblingSelector) {
-		super(siblingSelector.specificity, Selector.RESULT_ORDERINGS.SORTED);
+		super(siblingSelector.specificity, {
+			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+			peer: true,
+			subtree: false
+		});
 
 		this._siblingSelector = siblingSelector;
-		this._getStringifiedValue = () => `(following-sibling ${this._siblingSelector.toString()})`;
+
 	}
 
 	/**
@@ -41,7 +45,7 @@ class FollowingSiblingAxis extends Selector {
         domFacade = dynamicContext.domFacade;
 
 		const siblingSelector = this._siblingSelector;
-		return new Sequence(() => createSiblingGenerator(domFacade, contextItem.value)).filter((item, i, sequence) => {
+		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter((item, i, sequence) => {
 			const result = siblingSelector.evaluate(dynamicContext._createScopedContext({
 				contextSequence: sequence,
 				contextItemIndex: i,

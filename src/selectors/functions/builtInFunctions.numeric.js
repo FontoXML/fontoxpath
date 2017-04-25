@@ -141,7 +141,7 @@ function returnRandomItemFromSequence (_dynamicContext, sequence) {
 		return sequence;
 	}
 
-	const sequenceValue = Array.from(sequence.value());
+	const sequenceValue = sequence.getAllValues();
 	const index = Math.floor(Math.random() * sequenceValue.length);
 	return Sequence.singleton(sequenceValue[index]);
 }

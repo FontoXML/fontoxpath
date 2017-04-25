@@ -8,8 +8,8 @@ function arraySize (_dynamicContext, arraySequence) {
 }
 
 function arrayPut (_dynamicContext, arraySequence, positionSequence, itemSequence) {
-	const position = positionSequence.first().value,
-	array = arraySequence.first();
+	const position = positionSequence.first().value;
+	const array = arraySequence.first();
 	if (position <= 0 || position > array.members.length) {
 		throw new Error('FOAY0001: array position out of bounds.');
 	}
@@ -48,15 +48,15 @@ function arraySubarray (_dynamicContext, arraySequence, startSequence, lengthSeq
 function arrayRemove (_dynamicContext, arraySequence, positionSequence) {
 	const array = arraySequence.first();
 	const indicesToRemove = Array.from(positionSequence.value()).map(function (value) {
-			return value.value;
-		})
-		.sort(function (a, b) {
-			// Sort them in reverse order, to keep them stable
-			return b - a;
-		})
-		.filter(function (item, i, all) {
-			return all[i - 1] !== item;
-		});
+		return value.value;
+	})
+		  .sort(function (a, b) {
+			  // Sort them in reverse order, to keep them stable
+			  return b - a;
+		  })
+		  .filter(function (item, i, all) {
+			  return all[i - 1] !== item;
+		  });
 
 	const newMembers = array.members.concat();
 	for (let i = 0, l = indicesToRemove.length; i < l; ++i) {
@@ -92,48 +92,63 @@ function arrayReverse (_dynamicContext, arraySequence) {
 
 function arrayJoin (_dynamicContext, arraySequence) {
 	const newMembers = Array.from(arraySequence.value()).reduce(function (joinedMembers, array) {
-			return joinedMembers.concat(array.members);
-		}, []);
+		return joinedMembers.concat(array.members);
+	}, []);
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayForEach (dynamicContext, arraySequence, functionItemSequence) {
-	const cb = functionItemSequence.first().value;
+	/**
+	 * @type {../dataTypes/FunctionItem}
+	 */
+	const cb = functionItemSequence.first();
 	const newMembers = arraySequence.first().members.map(function (member) {
-			return cb.call(undefined, dynamicContext, member);
-		});
+		return cb.value.call(undefined, dynamicContext, member);
+	});
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
-	const cb = functionItemSequence.first().value;
+	/**
+	 * @type {../dataTypes/FunctionItem}
+	 */
+	const cb = functionItemSequence.first();
 	const newMembers = arraySequence.first().members.filter(function (member) {
-			return cb.call(undefined, dynamicContext, member).getEffectiveBooleanValue();
-		});
+		return cb.value.call(undefined, dynamicContext, member).getEffectiveBooleanValue();
+	});
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
 
 function arrayFoldLeft (dynamicContext, arraySequence, startSequence, functionItemSequence) {
-	const cb = functionItemSequence.first().value;
+	/**
+	 * @type {../dataTypes/FunctionItem}
+	 */
+	const cb = functionItemSequence.first();
 	return arraySequence.first().members.reduce(function (accum, member) {
-		return cb.call(undefined, dynamicContext, accum, member);
+		return cb.value.call(undefined, dynamicContext, accum, member);
 	}, startSequence);
 }
 
 function arrayFoldRight (dynamicContext, arraySequence, startSequence, functionItemSequence) {
-	const cb = functionItemSequence.first().value;
+	/**
+	 * @type {../dataTypes/FunctionItem}
+	 */
+	const cb = functionItemSequence.first();
 	return arraySequence.first().members.reduceRight(function (accum, member) {
-		return cb.call(undefined, dynamicContext, accum, member);
+		return cb.value.call(undefined, dynamicContext, accum, member);
 	}, startSequence);
 }
 
 function arrayForEachPair (dynamicContext, arraySequenceA, arraySequenceB, functionItemSequence) {
-	const cb = functionItemSequence.first().value,
-		arrayA = arraySequenceA.first(),
-		arrayB = arraySequenceB.first();
+	/**
+	 * @type {../dataTypes/FunctionItem}
+	 */
+	const cb = functionItemSequence.first();
+	const arrayA = arraySequenceA.first();
+	const arrayB = arraySequenceB.first();
 	const newMembers = [];
 	for (let i = 0, l = Math.min(arrayA.members.length, arrayB.members.length); i < l; ++i) {
-		newMembers[i] = cb.call(undefined, dynamicContext, arrayA.members[i], arrayB.members[i]);
+		newMembers[i] = cb.value.call(undefined, dynamicContext, arrayA.members[i], arrayB.members[i]);
 	}
 
 	return Sequence.singleton(new ArrayValue(newMembers));
@@ -142,8 +157,8 @@ function arrayForEachPair (dynamicContext, arraySequenceA, arraySequenceB, funct
 function arraySort (dynamicContext, arraySequence) {
 	const array = arraySequence.first();
 	const newMembers = array.members.concat().sort(function (memberA, memberB) {
-			return memberA.atomize(dynamicContext).first().value > memberB.atomize(dynamicContext).first().value ? 1 : -1;
-		});
+		return memberA.atomize(dynamicContext).first().value > memberB.atomize(dynamicContext).first().value ? 1 : -1;
+	});
 
 	return Sequence.singleton(new ArrayValue(newMembers));
 }
@@ -208,7 +223,7 @@ export default {
 			returnType: 'array(*)',
 			callFunction: function (dynamicContext, arraySequence, startSequence) {
 				const lengthSequence = Sequence.singleton(new IntegerValue(
-						arraySequence.first().members.length - startSequence.first().value + 1));
+					arraySequence.first().members.length - startSequence.first().value + 1));
 				return arraySubarray(
 					dynamicContext,
 					arraySequence,

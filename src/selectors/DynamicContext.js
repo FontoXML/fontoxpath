@@ -11,7 +11,7 @@ let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ./dataTypes/Item, contextItemIndex: ?number, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object, cache: Cache}}  context  The context to overlay
+	 * @param  {{contextItem: ./dataTypes/Item, contextItemIndex: ?number, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -45,11 +45,6 @@ class DynamicContext {
 		this.variables = context.variables;
 	}
 
-	toString () {
-		const variables = `(variables ${Object.keys(this.variables).map(varKey => `(var ${varKey} ${this.variables[varKey].toString()})`)})`;
-		return `(dynamicContext ${this.contextSequence.value.length} ${this.contextItemIndex} ${this.contextItem.toString()} ${variables})`;
-	}
-
 	/**
 	 * @param   {!ScopingType}    overlayContext
 	 * @return  {!DynamicContext}
@@ -64,6 +59,10 @@ class DynamicContext {
 		});
 	}
 
+	/**
+	 * @param   {!./dataTypes/Sequence}  contextSequence
+	 * @return  {Iterator<DynamicContext>}
+	 */
 	createSequenceIterator (contextSequence) {
 		const innerContext = this._createScopedContext({ contextSequence, contextItemIndex: 0 });
 		let i = 0;

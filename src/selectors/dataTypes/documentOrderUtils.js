@@ -104,7 +104,7 @@ export const compareNodePositions = function compareNodePositions (domFacade, no
     if (node1.instanceOfType('attribute()') && !node2.instanceOfType('attribute()')) {
         value1 = domFacade.getParentNode(node1.value);
         value2 = node2.value;
-        if (node1 === value2) {
+        if (value1 === value2) {
             // Same element, so A
             return 1;
         }

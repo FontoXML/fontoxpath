@@ -61,22 +61,25 @@ class DescendantAxis extends Selector {
 	 */
 	constructor (descendantSelector, options) {
 		options = options || { inclusive: false };
-		super(descendantSelector.specificity, Selector.RESULT_ORDERINGS.SORTED);
+		super(descendantSelector.specificity, {
+			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+			subtree: true,
+			peer: false
+		});
 
 		this._descendantSelector = descendantSelector;
 		this._isInclusive = !!options.inclusive;
-		this._getStringifiedValue = () => `(descendant ${this._isInclusive} ${this._descendantSelector.toString()})`;
+
 	}
 
 	evaluate (dynamicContext) {
 		const inclusive = this._isInclusive;
-		const descendantSelector = this._descendantSelector;
-		const descendantSequence = new Sequence(() => createDescendantGenerator(
+		const descendantSequence = new Sequence(createDescendantGenerator(
 			dynamicContext.domFacade,
 			dynamicContext.contextItem.value,
 			inclusive));
 		return descendantSequence.filter((item, i) => {
-			const result = descendantSelector.evaluate(dynamicContext._createScopedContext({
+			const result = this._descendantSelector.evaluate(dynamicContext._createScopedContext({
 				contextSequence: descendantSequence,
 				contextItemIndex: i,
 				contextItem: item

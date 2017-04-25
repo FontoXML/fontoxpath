@@ -19,10 +19,10 @@ class NodeNameSelector extends Selector {
 				[Specificity.NODETYPE_KIND]: 1
 			};
 		}
-		super(new Specificity(specificity), Selector.RESULT_ORDERINGS.SORTED);
+		super(new Specificity(specificity));
 
 		this._nodeName = nodeName;
-		this._getStringifiedValue = () => `(node-name ${this._nodeName})`;
+
 	}
 
 	evaluate (dynamicContext) {

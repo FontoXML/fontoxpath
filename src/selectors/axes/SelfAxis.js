@@ -9,10 +9,14 @@ class SelfAxis extends Selector {
 	 * @param  {Selector}  selector
 	 */
 	constructor (selector) {
-		super(selector.specificity, Selector.RESULT_ORDERINGS.SORTED);
+		super(selector.specificity, {
+			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+			subtree: true,
+			peer: true
+		});
 
 		this._selector = selector;
-		this._getStringifiedValue = () => `(self ${this._selector.toString()})`;
+
 	}
 
 	/**

@@ -16,7 +16,7 @@ class Literal extends Selector {
 	 * @param  {!string}           type
 	 */
 	constructor (value, type) {
-		super(new Specificity({}), Selector.RESULT_ORDERINGS.UNSORTED);
+		super(new Specificity({}));
 		this._type = type;
 
 		/**
@@ -42,7 +42,7 @@ class Literal extends Selector {
 
 		this._valueSequence = Sequence.singleton(typedValue);
 
-		this._getStringifiedValue = () => `(literal ${this._type} ${this._valueSequence.first().value})`;
+
 	}
 
 	evaluate (_dynamicContext) {

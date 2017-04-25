@@ -35,12 +35,12 @@ class Compare extends Selector {
 				break;
 		}
 
-		this._getStringifiedValue = () => `(${this._compare} ${this._operator} ${this._firstSelector.toString()} ${this._secondSelector.toString()}})`;
+
 	}
 
 	evaluate (dynamicContext) {
-		const firstSequence = this._firstSelector.evaluate(dynamicContext),
-			  secondSequence = this._secondSelector.evaluate(dynamicContext);
+		const firstSequence = this._firstSelector.evaluate(dynamicContext);
+		const secondSequence = this._secondSelector.evaluate(dynamicContext);
 
 		if ((this._compare === 'valueCompare' || this._compare === 'nodeCompare') && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
 			return Sequence.empty();
@@ -56,9 +56,7 @@ class Compare extends Selector {
 		// Atomize both sequences
 		const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
 		const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
-		const booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ?
-			  BooleanValue.TRUE :
-			  BooleanValue.FALSE;
+		const booleanValue = this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence) ? BooleanValue.TRUE : BooleanValue.FALSE;
 		return Sequence.singleton(booleanValue);
 	}
 }

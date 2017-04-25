@@ -12,16 +12,13 @@ class InstanceOfOperator extends Selector {
 	 * @param  {!string}    multiplicity
 	 */
 	constructor (expression, typeTest, multiplicity) {
-		super(
-			expression.specificity,
-			Selector.RESULT_ORDERINGS.UNSORTED
-		);
+		super(expression.specificity);
 
 		this._expression = expression;
 		this._typeTest = typeTest;
 		this._multiplicity = multiplicity;
 
-		this._getStringifiedValue = () => `(instance-of ${this._expression.toString()} ${this._typeTest.toString()} ${this._multiplicity})`;
+
 	}
 
 	evaluate (dynamicContext) {

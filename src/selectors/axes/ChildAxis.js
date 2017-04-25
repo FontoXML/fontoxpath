@@ -7,10 +7,14 @@ import NodeValue from '../dataTypes/NodeValue';
  */
 class ChildAxis extends Selector {
 	constructor (childSelector) {
-		super(childSelector.specificity, Selector.RESULT_ORDERINGS.SORTED);
+		super(childSelector.specificity, {
+			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+			subtree: true,
+			peer: true
+		});
 
 		this._childSelector = childSelector;
-		this._getStringifiedValue = () => `(child ${this._childSelector.toString()})`;
+
 	}
 
 	/**
@@ -28,7 +32,7 @@ class ChildAxis extends Selector {
 				contextItemIndex: i,
 				contextSequence: sequence
 			});
-				return this._childSelector.evaluate(childContext).getEffectiveBooleanValue();
+			return this._childSelector.evaluate(childContext).getEffectiveBooleanValue();
 		});
 	}
 }

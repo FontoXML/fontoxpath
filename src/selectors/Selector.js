@@ -8,21 +8,29 @@ const RESULT_ORDERINGS = {
 };
 
 /**
+ * @type {!{resultOrder: !RESULT_ORDERINGS, subtree: boolean=, peer: boolean=}}
+ */
+let optimizationOptions;
+
+/**
  * @abstract
  */
 class Selector {
 	/**
-	 * @param  {!./Specificity}  specificity
-	 * @param  {!RESULT_ORDERINGS}       expectedResultOrder  Describe what the expected sorting order is, will be used to shortcut sorting at various places.
-	 *                                               Either 'sorted', 'reverse-sorted' or 'unsorted'. Sorted sequences are expected to be deduplicated.
-	 * @param  {Object=}          optimizationOptions
+	 * @param  {!./Specificity}        specificity
+	 * @param  {!optimizationOptions=} optimizationOptions              Additional information on this expression.
+	 * @param  {!RESULT_ORDERINGS}     optimizationOptions.resultOrder  Describe what the expected sorting order is, will be used to shortcut sorting at various places.
+	 *                                                                  Either 'sorted', 'reverse-sorted' or 'unsorted'. Sorted sequences are expected to be deduplicated.
+	 * @param  {boolean=}              optimizationOptions.subtree      Whether the expression will only return descendants of the context node
+	 * @param  {boolean=}              optimizationOptions.peer         Whether the expression will not return nodes who are ancestors of each other
 	 */
-	constructor (specificity, expectedResultOrder, optimizationOptions = {}) {
+	constructor (specificity, optimizationOptions = { resultOrder: RESULT_ORDERINGS.UNSORTED, peer: false, subtree: false}) {
 		this.specificity = specificity;
-		this.expectedResultOrder = expectedResultOrder;
+		this.expectedResultOrder = optimizationOptions.resultOrder;
+		this.subtree = !!optimizationOptions.subtree;
+		this.peer = !!optimizationOptions.peer;
 
-		this._optimizationOptions = optimizationOptions;
-		this._getStringifiedValue = () => null;
+
 	}
 
 	static get RESULT_ORDERINGS () {

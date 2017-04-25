@@ -30,11 +30,15 @@ class AncestorAxis extends Selector {
 	 */
 	constructor (ancestorSelector, options) {
 		options = options || { inclusive: false };
-		super(ancestorSelector.specificity, Selector.RESULT_ORDERINGS.REVERSE_SORTED);
+		super(ancestorSelector.specificity, {
+			resultOrder: Selector.RESULT_ORDERINGS.REVERSE_SORTED,
+			peer: false,
+			subtree: false
+		});
 
 		this._ancestorSelector = ancestorSelector;
 		this._isInclusive = !!options.inclusive;
-		this._getStringifiedValue = () => `(ancestor ${this._isInclusive} ${this._ancestorSelector.toString()})`;
+
 	}
 
 	/**
@@ -46,16 +50,15 @@ class AncestorAxis extends Selector {
 		const domFacade = dynamicContext.domFacade;
 
 		const contextNode = contextItem.value;
-		return new Sequence(
-			() => generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode))
-		).filter((item, i, sequence) => {
-			const ancestorContext = dynamicContext._createScopedContext({
-				contextItem: item,
-				contextItemIndex: i,
-				contextSequence: sequence
+		return new Sequence(generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)))
+			.filter((item, i, sequence) => {
+				const ancestorContext = dynamicContext._createScopedContext({
+					contextItem: item,
+					contextItemIndex: i,
+					contextSequence: sequence
+				});
+				return this._ancestorSelector.evaluate(ancestorContext).getEffectiveBooleanValue();
 			});
-			return this._ancestorSelector.evaluate(ancestorContext).getEffectiveBooleanValue();
-		});
 	}
 }
 

@@ -25,28 +25,27 @@ function doSelectorsBuild () {
 	return new Promise((resolve, reject) => {
 		new Compiler({
 			assume_function_wrapper: true,
-//			new_type_inf: true,
+			new_type_inf: true,
+			debug: true,
 			language_in: 'ES6',
-			language_out: 'ES5',
+			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',
-			jscomp_warning: [
-				'accessControls',
-				'checkDebuggerStatement',
-				'checkTypes',
-				'const',
-				'deprecated',
-				'deprecatedAnnotations',
-				'missingReturn',
-				'newCheckTypes',
-				'typeInvalidation',
-				'uselessCode'
-			],
-			jscomp_error: [
-				'checkVars',
-				'duplicate',
-				'missingProperties',
-				'undefinedVars'
-			],
+			// jscomp_error: [
+			// 	'accessControls',
+			// 	'checkDebuggerStatement',
+			// 	'checkTypes',
+			// 	'const',
+			// 	'deprecated',
+			// 	'deprecatedAnnotations',
+			// 	'missingReturn',
+			// 	'newCheckTypes',
+			// 	'typeInvalidation',
+			// 	'uselessCode',
+			// 	'checkVars',
+			// 	'duplicate',
+			// 	'missingProperties',
+			// 	'undefinedVars'
+			// ],
 			warning_level: 'VERBOSE',
 			compilation_level: 'ADVANCED',
 			externs: path.resolve('./externs/IDomFacade.js'),
