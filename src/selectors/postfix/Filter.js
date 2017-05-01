@@ -27,7 +27,7 @@ class Filter extends Selector {
 
 	evaluate (dynamicContext) {
 		/**
-		 * @type {Sequence}
+		 * @type {../dataTypes/Sequence}
 		 */
 		const valuesToFilter = this._selector.evaluate(dynamicContext);
 		return valuesToFilter.filter((item, i, sequence) => {

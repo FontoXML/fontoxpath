@@ -45,7 +45,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 
 	const contextSequence = Sequence.singleton(new NodeValue(contextNode));
 	const untypedVariables = Object.assign(variables || {});
-//	untypedVariables['theBest'] = 'FontoXML is the best!';
+	//	untypedVariables['theBest'] = 'FontoXML is the best!';
 	/**
 	 * @type {!Object}
 	 */
@@ -77,7 +77,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				return '';
 			}
 			// Atomize to convert (attribute)nodes to be strings
-			return rawResults.first().atomize(dynamicContext).value + '';
+			return rawResults.getAllValues().map(value => value.atomize(dynamicContext).value).join(' ');
 
 		case evaluateXPath.STRINGS_TYPE:
 			if (rawResults.isEmpty()) {
@@ -204,7 +204,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 			if (rawResults.isSingleton()) {
 				return rawResults.first().atomize(dynamicContext).value;
 			}
-			return rawResults.atomize(dynamicContext).value.map(function (atomizedValue) {
+			return Array.from(rawResults.atomize(dynamicContext).value()).map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
 	}

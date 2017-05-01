@@ -5,6 +5,9 @@ import NodeValue from '../dataTypes/NodeValue';
 function createChildGenerator (domFacade, node) {
 	const childNodes = domFacade.getChildNodes(node);
 	let i = 0;
+	/**
+	 * @type {number}
+	 */
 	const l = childNodes.length;
 	return {
 		next () {
@@ -20,7 +23,7 @@ function createChildGenerator (domFacade, node) {
 }
 
 function createDescendantGenerator (domFacade, node, inclusive) {
-	const descendantIteratorQueue = [createChildGenerator(domFacade, node, inclusive)];
+	const descendantIteratorQueue = [createChildGenerator(domFacade, node)];
 	return {
 		next: () => {
 			if (inclusive) {
@@ -74,6 +77,9 @@ class DescendantAxis extends Selector {
 
 	evaluate (dynamicContext) {
 		const inclusive = this._isInclusive;
+		/**
+		 * @type {!Sequence}
+		 */
 		const descendantSequence = new Sequence(createDescendantGenerator(
 			dynamicContext.domFacade,
 			dynamicContext.contextItem.value,

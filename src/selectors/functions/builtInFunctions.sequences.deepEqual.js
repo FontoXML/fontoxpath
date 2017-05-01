@@ -82,8 +82,8 @@ function nodeDeepEqual (dynamicContext, item1, item2) {
 	item1Nodes = item1Nodes.filter(filterElementAndTextNodes);
 	item2Nodes = item2Nodes.filter(filterElementAndTextNodes);
 
-	item1Nodes = new Sequence(item1Nodes.map((node) => new NodeValue(dynamicContext.domFacade, node)));
-	item2Nodes = new Sequence(item2Nodes.map((node) => new NodeValue(dynamicContext.domFacade, node)));
+	item1Nodes = new Sequence(item1Nodes.map((node) => new NodeValue(node)));
+	item2Nodes = new Sequence(item2Nodes.map((node) => new NodeValue(node)));
 
 	return sequenceDeepEqual(dynamicContext, item1Nodes, item2Nodes);
 }

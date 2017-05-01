@@ -2,8 +2,8 @@ import { castToType } from '../../dataTypes/conversionHelper';
 
 /**
  * @param  {string}    operator
- * @param  {../../datatypes/Sequence}  firstSequence
- * @param  {../../datatypes/Sequence}  secondSequence
+ * @param  {../../dataTypes/Sequence}  firstSequence
+ * @param  {../../dataTypes/Sequence}  secondSequence
  */
 export default function valueCompare (operator, firstSequence, secondSequence) {
     // https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp

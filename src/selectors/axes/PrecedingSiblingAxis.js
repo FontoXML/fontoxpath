@@ -41,12 +41,11 @@ class PrecedingSiblingAxis extends Selector {
 	 * @return  {Sequence}
 	 */
 	evaluate (dynamicContext) {
-		var contextItem = dynamicContext.contextItem,
-        domFacade = dynamicContext.domFacade;
+		const  contextItem = dynamicContext.contextItem;
+		const domFacade = dynamicContext.domFacade;
 
-		const siblingSelector = this._siblingSelector;
 		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter((item, i, sequence) => {
-			const result = siblingSelector.evaluate(dynamicContext._createScopedContext({
+			const result = this._siblingSelector.evaluate(dynamicContext._createScopedContext({
 				contextSequence: sequence,
 				contextItemIndex: i,
 				contextItem: item

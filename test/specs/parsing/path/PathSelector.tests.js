@@ -106,6 +106,101 @@ describe('relative paths', () => {
 		chai.assert.deepEqual(evaluateXPathToNodes('((@someAttribute, /someNode, //someChildNode)/.)[3]', documentNode.documentElement), [documentNode.documentElement.firstChild]);
 	});
 
+	it('sorts and dedupes child::/parent:: axes correctly', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNode'],
+			['someChildNode'],
+			['someChildNode']
+		], documentNode);
+		chai.assert.equal(evaluateXPathToString('/*/*/../name()', documentNode.documentElement), 'someNode');
+	});
+
+	it('sorts descendant::/child:: axes correctly', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNode', ['someGrandChildA1'], ['someGrandChildA2']],
+			['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
+			['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']]
+		], documentNode);
+		chai.assert.equal(evaluateXPathToString('descendant::someChildNode/*/name()', documentNode.documentElement), 'someGrandChildA1 someGrandChildA2 someGrandChildB1 someGrandChildB2 someGrandChildC1 someGrandChildC2');
+	});
+
+	it('sorts descendant-or-self::/child:: axes correctly', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNode', ['someGrandChildA1'], ['someGrandChildA2']],
+			['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
+			['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']]
+		], documentNode);
+		chai.assert.equal(evaluateXPathToString('/descendant-or-self::*/child::*!name()', documentNode.documentElement), 'someChildNode someGrandChildA1 someGrandChildA2 someChildNode someGrandChildB1 someGrandChildB2 someChildNode someGrandChildC1 someGrandChildC2');
+	});
+
+	it('sorts descendant-or-self::/child::/descendant-or-self:: axes correctly', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			[
+				'someChildNode',
+				[
+					'someGrandChildA1',
+					['someGrandGrandChildA1-1'],
+					['someGrandGrandChildA1-2']
+				],
+				[
+					'someGrandChildA2',
+					['someGrandGrandChildA2-1'],
+					['someGrandGrandChildA2-2']
+				]],
+			[
+				'someChildNode',
+				[
+					'someGrandChildB1',
+					['someGrandGrandChildB1-1'],
+					['someGrandGrandChildB1-2']
+				],
+				[
+					'someGrandChildB2',
+					['someGrandGrandChildB2-1'],
+					['someGrandGrandChildB2-2']
+				]],
+			[
+				'someChildNode',
+				[
+					'someGrandChildC1',
+					['someGrandGrandChildC1-1'],
+					['someGrandGrandChildC1-2']
+				],
+				[
+					'someGrandChildC2',
+					['someGrandGrandChild1C2-1'],
+					['someGrandGrandChild1C2-2']
+				]]
+		], documentNode);
+		chai.assert.equal(
+			evaluateXPathToString('/descendant-or-self::*/child::*/descendant-or-self::*!name()', documentNode.documentElement),
+			'someChildNode someGrandChildA1 someGrandGrandChildA1-1 someGrandGrandChildA1-2 someGrandChildA2 someGrandGrandChildA2-1 someGrandGrandChildA2-2 someChildNode someGrandChildB1 someGrandGrandChildB1-1 someGrandGrandChildB1-2 someGrandChildB2 someGrandGrandChildB2-1 someGrandGrandChildB2-2 someChildNode someGrandChildC1 someGrandGrandChildC1-1 someGrandGrandChildC1-2 someGrandChildC2 someGrandGrandChild1C2-1 someGrandGrandChild1C2-2');
+	});
+
+	it('sorts descendant::/ancestor:: axes correctly', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNodeA', ['someGrandChild'], ['someGrandChild']],
+			['someChildNodeB', ['someGrandChild'], ['someGrandChild']],
+			['someChildNodeC', ['someGrandChild'], ['someGrandChild']]
+		], documentNode);
+		chai.assert.equal(evaluateXPathToString('descendant::someGrandChild/ancestor::*!name()', documentNode.documentElement), 'someNode someChildNodeA someChildNodeB someChildNodeC');
+	});
+
+	it('sorts descendant-or-self::/descendant:: axes correctly', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNodeA', ['someGrandChildA1'], ['someGrandChildA2']],
+			['someChildNodeB', ['someGrandChildB1'], ['someGrandChildB2']],
+			['someChildNodeC', ['someGrandChildC1'], ['someGrandChildC2']]
+		], documentNode);
+		chai.assert.equal(evaluateXPathToString('descendant-or-self::*/descendant::*!name()', documentNode.documentElement), 'someChildNodeA someGrandChildA1 someGrandChildA2 someChildNodeB someGrandChildB1 someGrandChildB2 someChildNodeC someGrandChildC1 someGrandChildC2');
+	});
+
 	it('sorts attribute nodes alphabetically', () => {
 		jsonMlMapper.parse([
 			'someNode',

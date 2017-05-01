@@ -1,7 +1,8 @@
 import slimdom from 'slimdom';
 
 import {
-	evaluateXPathToNumber
+	evaluateXPathToNumber,
+	evaluateXPathToBoolean
 } from 'fontoxpath';
 
 let documentNode;
@@ -15,6 +16,18 @@ describe('unary operators', () => {
 
 	it('negates a - when passed an integer',
 		() => chai.assert.equal(evaluateXPathToNumber('-1', documentNode), -1));
+
+	it('returns a decimal when given a decimal',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('-(xs:decimal("1.5")) instance of xs:decimal', documentNode)));
+
+	it('returns a float when given a float',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('-(xs:float("1.5")) instance of xs:float', documentNode)));
+
+	it('returns a double when given a double',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('-(xs:double("1.5")) instance of xs:double', documentNode)));
+
+	it('returns an integer when given an integer',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('-(xs:integer("1")) instance of xs:integer', documentNode)));
 
 	it('accepts + when passed 0',
 		() => chai.assert.equal(evaluateXPathToNumber('+0', documentNode), 0));
@@ -34,9 +47,15 @@ describe('unary operators', () => {
 	it('resolves to NaN passed a string',
 		() => chai.assert.isNaN(evaluateXPathToNumber('+"something"', documentNode)));
 
+	it('resolves to NaN passed a string',
+		() => chai.assert.isNaN(evaluateXPathToNumber('-"something"', documentNode)));
+
 	it('resolves to NaN passed a boolean',
 		() => chai.assert.isNaN(evaluateXPathToNumber('+true()', documentNode)));
 
 	it('resolves to NaN passed a node',
 		() => chai.assert.isNaN(evaluateXPathToNumber('+.', documentNode)));
+
+	it('resolves to NaN passed the empty sequence',
+		() => chai.assert.isNaN(evaluateXPathToNumber('-()', documentNode)));
 });

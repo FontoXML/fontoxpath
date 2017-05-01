@@ -38,10 +38,12 @@ describe('Functions and operators on sequences', () => {
 		});
 
 		describe('fn:tail', () => {
-			it('returns an empty sequence when given an empty sequence',
+			it('returns the empty sequence when given the empty sequence',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('tail(())', documentNode), []));
-			it('returns the first item of a given sequence',
-				() => chai.assert.deepEqual(evaluateXPathToStrings('tail(("a", "b", "c"))', documentNode), ['c']));
+			it('returns the empty sequence when given a singleton sequence',
+				() => chai.assert.deepEqual(evaluateXPathToStrings('tail(("a"))', documentNode), []));
+			it('returns all but the first item of a given sequence',
+				() => chai.assert.deepEqual(evaluateXPathToStrings('tail(("a", "b", "c"))', documentNode), ['b', 'c']));
 		});
 
 		describe('fn:insert-before', () => {
@@ -86,6 +88,9 @@ describe('Functions and operators on sequences', () => {
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), 2)', documentNode), ['b', 'c']));
 			it('returns a sequence starting at position with given length',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), 2, 1)', documentNode), ['b']));
+			it('allows decimals',
+				() => chai.assert.deepEqual(evaluateXPathToStrings('let $x := (1 to 10)[. mod 2 = 0] return subsequence((0,$x),3,count($x) div 2)', documentNode), ['4', '6', '8']));
+
 			it('returns an empty sequence when startingLoc = -INF and length = +INF',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), xs:double("-INF"), xs:double("+INF"))', documentNode), []));
 		});

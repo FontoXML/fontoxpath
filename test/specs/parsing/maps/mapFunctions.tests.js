@@ -40,7 +40,7 @@ describe('map:get', () => {
 
 describe('map:merge', () => {
 	it('can merge two maps',
-		() => chai.assert.deepEqual(evaluateXPathToMap('map:merge((map {"a": 1}, map{"b":2}))', documentNode), { a: 1, b: 2 }));
+	   () => chai.assert.deepEqual(evaluateXPathToMap('map:merge((map {"a": 1}, map{"b":2}))', documentNode), { a: 1, b: 2 }));
 
 	it('can handle duplicates: use-first',
 		() => chai.assert.deepEqual(evaluateXPathToMap(`
@@ -123,6 +123,8 @@ describe('map:keys', () => {
 
 	it('returns the keys for a map with values',
 		() => chai.assert.deepEqual(evaluateXPathToStrings('map:keys(map{"a":1, "b":2})', documentNode), ['a', 'b']));
+	it('returns the keys of merged maps',
+		() => chai.assert.deepEqual(evaluateXPathToBoolean('let $result := map:keys(map:merge((map:entry("a", "1"), map:entry("b", 2)))) return $result = "a"', documentNode), true));
 });
 
 describe('map:contains', () => {

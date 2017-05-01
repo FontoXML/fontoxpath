@@ -17,21 +17,26 @@ function concatSortedSequences (_, sequences) {
 		return Sequence.empty();
 	}
 	let currentIterator = currentSequence.value.value();
+	let previousValue = null;
 	return new Sequence({
-		[Symbol.iterator]: function () { return this; },
 		next: function () {
 			if (currentSequence.done) {
 				return currentSequence;
 			}
+
 			let value;
 			// Scan to the next value
-			for (value = currentIterator.next(); value.done; value = currentIterator.next()) {
-				currentSequence = sequences.next();
-				if (currentSequence.done) {
-					return currentSequence;
+			do {
+				value = currentIterator.next();
+				if (value.done) {
+					currentSequence = sequences.next();
+					if (currentSequence.done) {
+						return value;
+					}
+					currentIterator = currentSequence.value.value();
 				}
-				currentIterator = currentSequence.value.value();
-			}
+			} while (value.done || value.value === previousValue);
+			previousValue = value.value;
 			return value;
 		}
 	});
@@ -47,7 +52,7 @@ function mergeSortedSequences (domFacade, sequences) {
 	var allIterators = allSequences
 		.map(seq => {
 			/**
-			 * @type {Iterator<Item>}
+			 * @type {Iterator<../dataTypes/Item>}
 			 */
 			const it = seq.value();
 			return {
@@ -152,7 +157,7 @@ class PathSelector extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		let previousSelector = null;
+		let sequenceHasPeerProperty = true;
 		/**
 		 * @type {Sequence}
 		 */
@@ -184,7 +189,7 @@ class PathSelector extends Selector {
 				case Selector.RESULT_ORDERINGS.REVERSE_SORTED: {
 					const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
 					resultValuesInOrderOfEvaluation = {
-						[Symbol.iterator]: function () { return this; },
+						[Symbol.iterator]: () => resultValuesInOrderOfEvaluation,
 						next: () => {
 							const result = resultValuesInReverseOrder.next();
 							if (result.done) {
@@ -196,7 +201,7 @@ class PathSelector extends Selector {
 					// Fallthrough for merges
 				}
 				case Selector.RESULT_ORDERINGS.SORTED:
-					if (!previousSelector || selector.peer && previousSelector.subtree) {
+					if (selector.subtree && sequenceHasPeerProperty) {
 						sortedResultSequence = concatSortedSequences(dynamicContext.domFacade, resultValuesInOrderOfEvaluation);
 						break;
 					}
@@ -213,7 +218,9 @@ class PathSelector extends Selector {
 								[])));
 
 			}
-			previousSelector = selector;
+			// If this selector returned non-peers, the sequence could be contaminated with ancestor/descendant nodes
+			// This makes sorting using concat impossible
+			sequenceHasPeerProperty = sequenceHasPeerProperty && selector.peer;
 			return sortedResultSequence;
 		}, Sequence.singleton(dynamicContext.contextItem));
 

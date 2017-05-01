@@ -13,11 +13,11 @@ let currentNodeId = 1;
  * @param  {!Node}       node
  */
 function NodeValue (node) {
-/*	if (nodeValueCache.has(node)) {
+	if (nodeValueCache.has(node)) {
 		return nodeValueCache.get(node);
 	}
     nodeValueCache.set(node, this);
-*/
+
     Item.call(this, node);
 
 	this._id = (currentNodeId++) + '';

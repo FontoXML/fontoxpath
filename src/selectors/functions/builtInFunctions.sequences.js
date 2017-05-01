@@ -109,9 +109,9 @@ function fnTail (_dynamicContext, sequence) {
 	if (sequence.isEmpty(sequence) || sequence.isSingleton()) {
 		return Sequence.empty();
 	}
-
-	const allItems = sequence.getAllValues();
-	return Sequence.singleton(allItems[allItems.length - 1]);
+	const innerIterator = sequence.value();
+	innerIterator.next();
+	return new Sequence(innerIterator);
 }
 
 function fnInsertBefore (_dynamicContext, sequence, position, inserts) {
@@ -150,15 +150,42 @@ function fnReverse (_dynamicContext, sequence) {
 	return new Sequence(sequence.getAllValues().reverse());
 }
 
-function fnSubsequence (_dynamicContext, sequence, startingLoc, length) {
+function fnSubsequence (_dynamicContext, sequence, startingLoc, lengthSequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 
-	const sequenceValue = sequence.getAllValues();
 	const startingLocValue = Math.round(startingLoc.first().value);
-	const effectiveLength = length ? startingLocValue + Math.round(length.first().value) - 1 : sequence.length;
-	return new Sequence(sequenceValue.slice(startingLocValue - 1, effectiveLength));
+	/**
+	 * @type {?number}
+	 */
+	const length = lengthSequence ? startingLocValue + Math.round(lengthSequence.first().value) : null;
+
+	if (length === null && startingLocValue < 1) {
+		// Shortcut: the length of this sequence is equal to the length of the other one
+		return sequence;
+	}
+
+	if (isNaN(startingLocValue) || isNaN(length)) {
+		return Sequence.empty();
+	}
+	// XPath starts from 1
+	let i = 1;
+	const iterator = sequence.value();
+	return new Sequence({
+		next: () => {
+			while (i < startingLocValue) {
+				i++;
+				iterator.next();
+			}
+			i++;
+
+			if (length !== null && i > length) {
+				return { done: true };
+			}
+			return iterator.next();
+		}
+	});
 }
 
 function fnUnordered (_dynamicContext, sequence) {

@@ -1,4 +1,6 @@
 import Selector from './Selector';
+import Sequence from './dataTypes/Sequence';
+
 /**
  * @extends {Selector}
  */
@@ -20,12 +22,14 @@ class LetExpression extends Selector {
 		this._rangeVariable = rangeVariable;
 		this._bindingSequence = bindingSequence;
 		this._returnExpression = returnExpression;
-
 	}
 
 	evaluate (dynamicContext) {
-		var newVariables = Object.create(null);
-		newVariables[this._rangeVariable] = this._bindingSequence.evaluate(dynamicContext);
+		const newVariables = Object.create(null);
+		const variable = this._bindingSequence.evaluate(dynamicContext);
+		// Copy the variable to prevent evaluating it
+		// This caused bugs with XPaths like `let $x := (1,2,3) return count($x) * count($x)`
+		newVariables[this._rangeVariable] = new Sequence(variable.getAllValues());
 		return this._returnExpression.evaluate(
 			dynamicContext._createScopedContext({
 				variables: newVariables

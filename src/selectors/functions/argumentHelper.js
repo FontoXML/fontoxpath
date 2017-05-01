@@ -57,7 +57,7 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 			// We might be able to cast this to the wished type
 			const item = castToType(argumentItem, type);
 			if (!item) {
-				throw new Error('Unable to convert to type');
+				throw new Error('XPTY0004 Unable to convert to type');
 			}
 			return item;
 		}
@@ -65,7 +65,7 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 		// We need to promote this
 		const item = promoteToType(argumentItem, type);
 		if (!item) {
-			throw new Error('Unable to convert to type');
+			throw new Error('XPTY0004 Unable to convert to type');
 		}
 		return item;
 	});

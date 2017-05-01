@@ -25,8 +25,7 @@ class SequenceOperator extends Selector {
 
 	evaluate (dynamicContext) {
 		let i = 0;
-		const l = this._selectors.length;
-		if (!l) {
+		if (!this._selectors.length) {
 			return Sequence.empty();
 		}
 		let currentValueIterator = this._selectors[i].evaluate(dynamicContext).value();
@@ -36,7 +35,7 @@ class SequenceOperator extends Selector {
 				let val = currentValueIterator.next();
 				while (val.done) {
 					i++;
-					if (i >= l) {
+					if (i >= this._selectors.length) {
 						return { done: true };
 					}
 					currentValueIterator = this._selectors[i].evaluate(dynamicContext).value();

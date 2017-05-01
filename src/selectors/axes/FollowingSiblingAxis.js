@@ -44,9 +44,8 @@ class FollowingSiblingAxis extends Selector {
 		var contextItem = dynamicContext.contextItem,
         domFacade = dynamicContext.domFacade;
 
-		const siblingSelector = this._siblingSelector;
 		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter((item, i, sequence) => {
-			const result = siblingSelector.evaluate(dynamicContext._createScopedContext({
+			const result = this._siblingSelector.evaluate(dynamicContext._createScopedContext({
 				contextSequence: sequence,
 				contextItemIndex: i,
 				contextItem: item

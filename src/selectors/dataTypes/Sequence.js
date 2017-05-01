@@ -5,7 +5,7 @@ import BooleanValue from './BooleanValue';
 /**
  * @constructor
  * @extends {Item<!Generator<!Item>>}
- * @param  {!Array<!Item> | !Iterator<!Item>}  valueIterator
+ * @param  {!Array<!Item> | !Iterator<!Item> | {next: function():!IIterableResult<!Item>}}  valueIterator
  * @param  {?number=}                       predictedLength
  */
 function Sequence (valueIterator, predictedLength = null) {
@@ -84,12 +84,12 @@ Sequence.prototype.first = function () {
 
 Sequence.prototype.map = function (callback) {
 	let i = -1;
+	/**
+	 * @type {Iterable<Item>}
+	 */
 	const iterator = this.value();
 	return new Sequence(
 		{
-			[Symbol.iterator]: function () {
-				return this;
-			},
 			next: () => {
 				i++;
 				const value = iterator.next();
@@ -108,13 +108,13 @@ Sequence.prototype.map = function (callback) {
 
 Sequence.prototype.filter = function (callback) {
 	let i = -1;
+	/**
+	 * @type {Iterable<Item>}
+	 */
 	const iterator = this.value();
 
 	return new Sequence(
 		{
-			[Symbol.iterator]: function () {
-				return this;
-			},
 			next: () => {
 				i++;
 				let value = iterator.next();
@@ -199,6 +199,7 @@ Sequence.prototype.getEffectiveBooleanValue = function () {
 };
 
 /**
+ * @constructor
  * @extends Sequence
  */
 function EmptySequence () {
@@ -330,7 +331,6 @@ ArrayBackedSequence.prototype.getEffectiveBooleanValue = function () {
 ArrayBackedSequence.prototype.filter = function (cb) {
 	let i = -1;
 	return new Sequence({
-		[Symbol.iterator]: function () { return this; },
 		next: () => {
 			i++;
 			while (i < this._values.length && !cb(this._values[i], i, this)) {
@@ -348,7 +348,6 @@ ArrayBackedSequence.prototype.filter = function (cb) {
 ArrayBackedSequence.prototype.map = function (cb) {
 	let i = -1;
 	return new Sequence({
-		[Symbol.iterator]: function () { return this; },
 		next: () => {
 			i++;
 			if (i >= this._values.length) {
@@ -361,7 +360,9 @@ ArrayBackedSequence.prototype.map = function (cb) {
 ArrayBackedSequence.prototype.getLength = function () {
 	return this._values.length;
 };
-
+ArrayBackedSequence.prototype.atomize = function (dynamicContext) {
+	return this.map(value => value.atomize(dynamicContext));
+};
 /**
  * @param   {!Item}  value
  * @return  {!Sequence}

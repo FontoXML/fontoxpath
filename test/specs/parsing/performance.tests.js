@@ -87,7 +87,7 @@ function fillDocument (document, element, depth) {
 		it('does not get slower', function () {
 			this.timeout(100000);
 			let i = 0;
-			setInterval(() => timeXPath(`/descendant::element()[@depth="4"] => count() + ${i++}`, document, false), 1000);
+//			setInterval(() => timeXPath(`/descendant::element()[@depth="4"] => count() + ${i++}`, document, false), 1000);
 			// chai.assert.closeTo(
 			// 	timeXPath('/descendant::element()[@depth="4"] => count() + 1', document, false),
 			// 	timeXPath('/descendant::element()[@depth="4"] => count() + 2', document, false),

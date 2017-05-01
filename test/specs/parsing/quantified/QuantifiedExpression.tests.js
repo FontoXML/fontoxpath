@@ -10,6 +10,9 @@ beforeEach(() => {
 });
 
 describe('quantified expressions', () => {
+	it('does not leak variables',
+	   () => chai.assert.throws(() => evaluateXPathToBoolean('some $a in (1, 2), $b in (1, 2), $c in (1, 2) satisfies 1, $c', documentNode, null), 'XPST0008'));
+
 	describe('every', () => {
 		it('allows usage of global variables inside the satisfies clause',
 			() => chai.assert(evaluateXPathToBoolean('every $x in true() satisfies $x = $y', documentNode, null, { y: true })));
