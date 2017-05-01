@@ -70,3 +70,7 @@ npm run test [--ci_mode] [--integration_tests]
 ```
 
 The integration tests run all tests only using the externally public API, using the closure build.
+
+## QT3 tests
+
+A basic test runner for the QT3 tests can be used by running `npm run test --qt3 --integration_tests`. For this, a recent version of the QT3 test set should be present at test/assets/.
