@@ -49,7 +49,7 @@ class DynamicContext {
 	 * @param   {!ScopingType}    overlayContext
 	 * @return  {!DynamicContext}
 	 */
-	_createScopedContext (overlayContext) {
+	createScopedContext (overlayContext) {
 		return new DynamicContext({
 			contextItemIndex: overlayContext.contextItemIndex !== undefined ? overlayContext.contextItemIndex : this.contextItemIndex,
 			contextSequence: overlayContext.contextSequence ? overlayContext.contextSequence : this.contextSequence,
@@ -64,7 +64,7 @@ class DynamicContext {
 	 * @return  {Iterator<DynamicContext>}
 	 */
 	createSequenceIterator (contextSequence) {
-		const innerContext = this._createScopedContext({ contextSequence, contextItemIndex: 0 });
+		const innerContext = this.createScopedContext({ contextSequence, contextItemIndex: 0 });
 		let i = 0;
 		const iterator = contextSequence.value();
 		return {
@@ -78,7 +78,7 @@ class DynamicContext {
 				}
 				return {
 					done: false,
-					value: innerContext._createScopedContext({
+					value: innerContext.createScopedContext({
 						contextItemIndex: i++,
 						contextItem: value.value
 					})

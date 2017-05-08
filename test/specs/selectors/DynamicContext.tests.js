@@ -19,14 +19,14 @@ describe('DynamicContext.createScopedContext()', () => {
 
 	it('copies the exising context and replaces the given values', () => {
 		const dynamicContext = new DynamicContext({
-				contextItemIndex: 0,
+			contextItemIndex: 0,
 			contextSequence: Sequence.singleton('contextSequence1'),
 				domFacade: 'domFacade1',
 				variables: {
 					variable: 'variables1'
 				}
-			}),
-			scopedContext = dynamicContext.createScopedContext({
+		});
+		const scopedContext = dynamicContext.createScopedContext({
 				contextItemIndex: 1,
 				contextSequence: Sequence.singleton('contextSequence2'),
 				domFacade: 'domFacade2',
@@ -34,10 +34,10 @@ describe('DynamicContext.createScopedContext()', () => {
 					variable: 'variables2',
 					extra: 'variable'
 				}
-			}),
-			expectedContext = new DynamicContext({
+		});
+		const expectedContext = new DynamicContext({
 				contextItemIndex: 1,
-				contextSequence: Sequence.singleton('contextSequence2'),
+				contextSequence: scopedContext.contextSequence,
 				domFacade: 'domFacade2',
 				variables: {
 					variable: 'variables2',

@@ -52,7 +52,7 @@ class AncestorAxis extends Selector {
 		const contextNode = contextItem.value;
 		return new Sequence(generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)))
 			.filter((item, i, sequence) => {
-				const ancestorContext = dynamicContext._createScopedContext({
+				const ancestorContext = dynamicContext.createScopedContext({
 					contextItem: item,
 					contextItemIndex: i,
 					contextSequence: sequence

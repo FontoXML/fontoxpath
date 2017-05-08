@@ -53,7 +53,7 @@ class QuantifiedExpression extends Selector {
 					variables[evaluatedInClauses[y].name] = Sequence.singleton(value);
 				}
 
-				var context = dynamicContext._createScopedContext({
+				var context = dynamicContext.createScopedContext({
 						variables: variables
 					});
 

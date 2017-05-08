@@ -47,16 +47,11 @@ function arraySubarray (_dynamicContext, arraySequence, startSequence, lengthSeq
 
 function arrayRemove (_dynamicContext, arraySequence, positionSequence) {
 	const array = arraySequence.first();
-	const indicesToRemove = Array.from(positionSequence.value()).map(function (value) {
-		return value.value;
-	})
-		  .sort(function (a, b) {
-			  // Sort them in reverse order, to keep them stable
-			  return b - a;
-		  })
-		  .filter(function (item, i, all) {
-			  return all[i - 1] !== item;
-		  });
+	const indicesToRemove = positionSequence.getAllValues()
+		.map(value => value.value)
+		// Sort them in reverse order, to keep them stable
+		.sort((a, b) => b - a)
+		.filter((item, i, all) => all[i - 1] !== item);
 
 	const newMembers = array.members.concat();
 	for (let i = 0, l = indicesToRemove.length; i < l; ++i) {
@@ -91,7 +86,7 @@ function arrayReverse (_dynamicContext, arraySequence) {
 }
 
 function arrayJoin (_dynamicContext, arraySequence) {
-	const newMembers = Array.from(arraySequence.value()).reduce(function (joinedMembers, array) {
+	const newMembers = arraySequence.getAllValues().reduce(function (joinedMembers, array) {
 		return joinedMembers.concat(array.members);
 	}, []);
 	return Sequence.singleton(new ArrayValue(newMembers));
@@ -166,11 +161,12 @@ function arraySort (dynamicContext, arraySequence) {
 
 function arrayFlatten (dynamicContext, itemSequence) {
 	let resultSequenceItems = [];
-	Array.from(itemSequence.value()).forEach(function (item) {
+
+	itemSequence.getAllValues().forEach(function (item) {
 		if (item.instanceOfType('array(*)')) {
 			item.members.forEach(function (member) {
 				const flattenedSequence = arrayFlatten(dynamicContext, member);
-				resultSequenceItems = resultSequenceItems.concat(flattenedSequence.value);
+				resultSequenceItems = resultSequenceItems.concat(flattenedSequence.getAllValues());
 			});
 			return;
 		}

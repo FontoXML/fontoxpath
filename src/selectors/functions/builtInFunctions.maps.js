@@ -10,7 +10,7 @@ function mapMerge (dynamicContext, mapSequence, optionMap) {
 	var duplicateKey = Sequence.singleton(new StringValue('duplicates'));
 	var duplicationHandlingValueSequence = mapGet(dynamicContext, optionMap, duplicateKey);
 	var duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.first().value;
-	var result = Array.from(mapSequence.value()).reduce(function (resultingKeyValuePairs, map) {
+	var result = mapSequence.getAllValues().reduce(function (resultingKeyValuePairs, map) {
 			map.keyValuePairs.forEach(function (keyValuePair) {
 				var existingPairIndex = resultingKeyValuePairs.findIndex(function (existingPair) {
 						return isSameMapKey(existingPair.key, keyValuePair.key);
@@ -32,7 +32,8 @@ function mapMerge (dynamicContext, mapSequence, optionMap) {
 								{
 									key: keyValuePair.key,
 									value: new Sequence(
-										Array.from(resultingKeyValuePairs[existingPairIndex].value.value()).concat(keyValuePair.value.value()))
+										resultingKeyValuePairs[existingPairIndex].value.getAllValues()
+											.concat(keyValuePair.value.getAllValues()))
 								});
 							return;
 						case 'use-any':

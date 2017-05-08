@@ -85,7 +85,7 @@ class DescendantAxis extends Selector {
 			dynamicContext.contextItem.value,
 			inclusive));
 		return descendantSequence.filter((item, i) => {
-			const result = this._descendantSelector.evaluate(dynamicContext._createScopedContext({
+			const result = this._descendantSelector.evaluate(dynamicContext.createScopedContext({
 				contextSequence: descendantSequence,
 				contextItemIndex: i,
 				contextItem: item

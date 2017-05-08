@@ -27,7 +27,7 @@ class AbsolutePathSelector extends Selector {
 		// Assume this is the start, so only one node
 		var contextSequence = Sequence.singleton(new NodeValue(documentNode));
 		return this._relativePathSelector.evaluate(
-			dynamicContext._createScopedContext({
+			dynamicContext.createScopedContext({
 				contextItem: new NodeValue(documentNode),
 				contextItemIndex: 0,
 				contextSequence: contextSequence

@@ -59,24 +59,26 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 
 	it('turns strings into xs:string+', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(['a', 'b', 'c'], 'xs:string+');
-		chai.assert.equal(xPathSequence.value.length, 3, 'is a sequence with length 3');
+		chai.assert.equal(xPathSequence.getLength(), 3, 'is a sequence with length 3');
+		const values = xPathSequence.getAllValues();
 		chai.assert(xPathSequence.first().instanceOfType('xs:string'), 'first is a string');
-		chai.assert(xPathSequence.value[1].instanceOfType('xs:string'), 'second is a string');
-		chai.assert(xPathSequence.value[2].instanceOfType('xs:string'), 'third is a string');
+		chai.assert(values[1].instanceOfType('xs:string'), 'second is a string');
+		chai.assert(values[2].instanceOfType('xs:string'), 'third is a string');
 		chai.assert.equal(xPathSequence.first().value, 'a', 'is a');
-		chai.assert.equal(xPathSequence.value[1].value, 'b', 'is b');
-		chai.assert.equal(xPathSequence.value[2].value, 'c', 'is c');
+		chai.assert.equal(values[1].value, 'b', 'is b');
+		chai.assert.equal(values[2].value, 'c', 'is c');
 	});
 
 	it('turns strings into xs:string*', () => {
 		const xPathSequence = adaptJavaScriptValueToXPathValue(['a', 'b', 'c'], 'xs:string*');
-		chai.assert.equal(xPathSequence.value.length, 3, 'is a sequence with length 3');
+		chai.assert.equal(xPathSequence.getLength(), 3, 'is a sequence with length 3');
+		const values = xPathSequence.getAllValues();
 		chai.assert(xPathSequence.first().instanceOfType('xs:string'), 'first is a string');
-		chai.assert(xPathSequence.value[1].instanceOfType('xs:string'), 'second is a string');
-		chai.assert(xPathSequence.value[2].instanceOfType('xs:string'), 'third is a string');
+		chai.assert(values[1].instanceOfType('xs:string'), 'second is a string');
+		chai.assert(values[2].instanceOfType('xs:string'), 'third is a string');
 		chai.assert.equal(xPathSequence.first().value, 'a', 'is a');
-		chai.assert.equal(xPathSequence.value[1].value, 'b', 'is b');
-		chai.assert.equal(xPathSequence.value[2].value, 'c', 'is c');
+		chai.assert.equal(values[1].value, 'b', 'is b');
+		chai.assert.equal(values[2].value, 'c', 'is c');
 	});
 
 	it('turns null into string? (empty sequence)', () => {

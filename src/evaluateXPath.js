@@ -7,8 +7,6 @@ import NumericValue from './selectors/dataTypes/NumericValue';
 import DomFacade from './DomFacade';
 import domBackedDomFacade from './domBackedDomFacade';
 
-import nodeValueCache from './selectors/dataTypes/nodeValueCache';
-
 /**
  * Evaluates an XPath on the given contextNode.
  * If the return type is ANY_TYPE, the returned value depends on the result of the XPath:
@@ -28,7 +26,6 @@ import nodeValueCache from './selectors/dataTypes/nodeValueCache';
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
 function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = {}) {
-//	nodeValueCache.clear();
 	if (!xpathSelector || typeof xpathSelector !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathSelector must be a string.');
 	}
@@ -45,7 +42,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 
 	const contextSequence = Sequence.singleton(new NodeValue(contextNode));
 	const untypedVariables = Object.assign(variables || {});
-	//	untypedVariables['theBest'] = 'FontoXML is the best!';
+	untypedVariables['theBest'] = 'FontoXML is the best!';
 	/**
 	 * @type {!Object}
 	 */
@@ -152,7 +149,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 					value = keyValuePair.value.first().atomize(dynamicContext).value;
 				}
 				else {
-					value = keyValuePair.value.atomize(dynamicContext).value.map(function (atomizedValue) {
+					value = keyValuePair.value.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
 						return atomizedValue.value;
 					});
 				}

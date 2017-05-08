@@ -51,6 +51,6 @@ describe('transformArgument()', () => {
 
 	it('can not convert an invalid argument (wrong type)', () => {
 		const argumentSequence = new Sequence([new BooleanValue(true)]);
-		chai.assert.isNull(transformArgument('xs:string', argumentSequence));
+		chai.assert.throws(() => transformArgument('xs:string', argumentSequence), 'XPTY0004');
 	});
 });

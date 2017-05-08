@@ -27,7 +27,7 @@ class ChildAxis extends Selector {
 		const nodeValues = domFacade.getChildNodes(contextItem.value).map((node) => new NodeValue(node));
 		const childContextSequence = new Sequence(nodeValues);
 		return childContextSequence.filter((item, i, sequence) => {
-			const childContext = dynamicContext._createScopedContext({
+			const childContext = dynamicContext.createScopedContext({
 				contextItem: item,
 				contextItemIndex: i,
 				contextSequence: sequence

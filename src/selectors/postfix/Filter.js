@@ -31,7 +31,7 @@ class Filter extends Selector {
 		 */
 		const valuesToFilter = this._selector.evaluate(dynamicContext);
 		return valuesToFilter.filter((item, i, sequence) => {
-			const result = this._filterSelector.evaluate(dynamicContext._createScopedContext({
+			const result = this._filterSelector.evaluate(dynamicContext.createScopedContext({
 				contextSequence: sequence,
 				contextItemIndex: i,
 				contextItem: item

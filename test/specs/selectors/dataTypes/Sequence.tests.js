@@ -59,12 +59,3 @@ describe('Sequence.getEffectiveBooleanValue()', () => {
 		chai.assert.throw(sequence.getEffectiveBooleanValue);
 	});
 });
-
-describe('Sequence.merge()', () => {
-	it('merges two sequences', () => {
-		const sequenceToMerge1 = new Sequence([new BooleanValue(true), new BooleanValue(false)]),
-			sequenceToMerge2 = new Sequence([new BooleanValue(true)]),
-			sequenceResult = new Sequence([new BooleanValue(true), new BooleanValue(false), new BooleanValue(true)]);
-		chai.assert.deepEqual(sequenceToMerge1.merge(sequenceToMerge2), sequenceResult);
-	});
-});

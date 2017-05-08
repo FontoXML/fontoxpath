@@ -48,7 +48,7 @@ class InstanceOfOperator extends Selector {
 
 		const isInstanceOf = Array.from(evaluatedExpression.value()).every(argumentItem => {
 			const contextItem = Sequence.singleton(argumentItem);
-			const scopedContext = dynamicContext._createScopedContext({
+			const scopedContext = dynamicContext.createScopedContext({
 				contextItemIndex: 0,
 				contextItem: argumentItem,
 				contextSequence: contextItem
