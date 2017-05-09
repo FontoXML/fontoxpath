@@ -60,22 +60,13 @@ function runTests (document) {
 			'Revaluating a filtered xpath must not cost significantly more then an unfiltered one');
 	});
 
-	it('Makes sorting fast by skipping it in some queries', function () {
-		this.timeout(10000);
-		const timeWithoutExtraSteps = timeXPath('(/descendant::*) => count() > 10', document);
-		// The extra steps should not add too much of a performance regression, since they do not have to be sorted
-		chai.assert.isAtMost(
-			timeXPath('(/child::*/child::*/child::*/child::*/child::*) => count()', document),
-			timeWithoutExtraSteps * 1.3);
-	});
-
 	it('Saves variable results', function () {
 		this.timeout(10000);
 		const timeWithoutExtraSteps = timeXPath('(/descendant::*) => count() > 10', document);
-		// The extra steps should not add too much of a performance regression, since they do not have to be sorted
+		// Variables should only be evaluated once, not n times
 		chai.assert.isAtMost(
-			timeXPath('let $c := (/descendant::*) => count() return $c + $c + $c', document),
-			timeWithoutExtraSteps * 1.3);
+			timeXPath('let $c := (/descendant::*) => count() return $c + $c + $c + $c + $c + $c', document),
+			timeWithoutExtraSteps * 2);
 	});
 }
 
