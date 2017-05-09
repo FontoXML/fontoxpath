@@ -43,6 +43,9 @@ class AttributeAxis extends Selector {
 						attribute.name,
 						attribute.value
 			))));
+		/**
+		 * @type {!Selector}
+		 */
 		const attributeTestSelector = this._attributeTestSelector;
 		return attributesSequence.filter((item, i) => {
 			const result = attributeTestSelector.evaluate(dynamicContext.createScopedContext({

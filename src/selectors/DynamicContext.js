@@ -61,16 +61,16 @@ class DynamicContext {
 
 	/**
 	 * @param   {!./dataTypes/Sequence}  contextSequence
-	 * @return  {Iterator<DynamicContext>}
+	 * @return  {!Iterator<!DynamicContext>}
 	 */
 	createSequenceIterator (contextSequence) {
 		const innerContext = this.createScopedContext({ contextSequence, contextItemIndex: 0 });
 		let i = 0;
+		/**
+		 * @type {!Iterator<!./dataTypes/Item>}
+		 */
 		const iterator = contextSequence.value();
-		return {
-			[Symbol.iterator]: function () {
-				return this;
-			},
+		return /** @type {!Iterator<!DynamicContext>}*/ ({
 			next: () => {
 				const value = iterator.next();
 				if (value.done) {
@@ -84,7 +84,7 @@ class DynamicContext {
 					})
 				};
 			}
-		};
+		});
 	}
 }
 

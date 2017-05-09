@@ -171,6 +171,9 @@ function fnSubsequence (_dynamicContext, sequence, startingLoc, lengthSequence) 
 	}
 	// XPath starts from 1
 	let i = 1;
+	/**
+	 * @type {!Iterator<!../dataTypes/Item>}
+	 */
 	const iterator = sequence.value();
 	return new Sequence({
 		next: () => {

@@ -19,24 +19,44 @@ function opTo (_dynamicContext, fromValue, toValue) {
 	}, to - from + 1);
 }
 
+/**
+ * @param   {../DynamicContext}  dynamicContext
+ * @param   {!Sequence<!../dataTypes/NodeValue>}  firstNodes
+ * @param   {!Sequence<!../dataTypes/NodeValue>}  secondNodes
+ * @return  {!Sequence<!../dataTypes/NodeValue>}
+ */
 function opExcept (dynamicContext, firstNodes, secondNodes) {
+	/**
+	 * @type {!Array<!../dataTypes/NodeValue>}
+	 */
 	const allSecondNodes = secondNodes.getAllValues();
-	var allNodes = firstNodes.getAllValues().filter(function (nodeA) {
-		return allSecondNodes.every(function (nodeB) {
-				return nodeA !== nodeB;
-			});
 
+	const allNodes = firstNodes.getAllValues().filter(function (nodeA) {
+		return allSecondNodes.every(function (nodeB) {
+			return nodeA !== nodeB;
 		});
+
+	});
 	return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
 }
 
+/**
+ * @param   {../DynamicContext}  dynamicContext
+ * @param   {!Sequence<!../dataTypes/NodeValue>}  firstNodes
+ * @param   {!Sequence<!../dataTypes/NodeValue>}  secondNodes
+ * @return  {!Sequence<!../dataTypes/NodeValue>}
+ */
 function opIntersect (dynamicContext, firstNodes, secondNodes) {
+	/**
+	 * @type {!Array<!../dataTypes/NodeValue>}
+	 */
 	const allSecondNodes = secondNodes.getAllValues();
-	var allNodes = firstNodes.getAllValues().filter(function (nodeA) {
+
+	const allNodes = firstNodes.getAllValues().filter(function (nodeA) {
 		return allSecondNodes.some(function (nodeB) {
-				return nodeA === nodeB;
-			});
+			return nodeA === nodeB;
 		});
+	});
 	return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
 }
 

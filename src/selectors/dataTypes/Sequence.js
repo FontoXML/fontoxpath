@@ -4,8 +4,9 @@ import BooleanValue from './BooleanValue';
 
 /**
  * @constructor
- * @extends {Item<!Generator<!Item>>}
- * @param  {!Array<!Item> | !Iterator<!Item> | {next: function():!IIterableResult<!Item>}}  valueIterator
+ * @template T
+ * @extends {Item<!Generator<T>>}
+ * @param  {!Array<T> | !Iterator<T>}  valueIterator
  * @param  {?number=}                       predictedLength
  */
 function Sequence (valueIterator, predictedLength = null) {
@@ -85,46 +86,42 @@ Sequence.prototype.first = function () {
 Sequence.prototype.map = function (callback) {
 	let i = -1;
 	/**
-	 * @type {Iterable<Item>}
+	 * @type {!Iterator<!Item>}
 	 */
 	const iterator = this.value();
-	return new Sequence(
-		{
-			next: () => {
-				i++;
-				const value = iterator.next();
-				if (value.done) {
-					return value;
-				}
-				return {
-					value: callback(value.value, i, this),
-					done: false
-				};
+	return new Sequence(/** @type {!Iterator<!Item>} */ ({
+		next: () => {
+			i++;
+			const value = iterator.next();
+			if (value.done) {
+				return value;
 			}
-		},
-		this._length
-	);
+			return {
+				value: callback(value.value, i, this),
+				done: false
+			};
+		}
+	}), this._length);
 };
 
 Sequence.prototype.filter = function (callback) {
 	let i = -1;
 	/**
-	 * @type {Iterable<Item>}
+	 * @type {!Iterator<!Item>}
 	 */
 	const iterator = this.value();
 
-	return new Sequence(
-		{
-			next: () => {
+	return new Sequence(/** @type {!Iterator<!Item>} */ ({
+		next: () => {
+			i++;
+			let value = iterator.next();
+			while (!value.done && !callback(value.value, i, this)) {
 				i++;
-				let value = iterator.next();
-				while (!value.done && !callback(value.value, i, this)) {
-					i++;
-					value = iterator.next();
-				}
-				return value;
+				value = iterator.next();
 			}
-		});
+			return value;
+		}
+	}));
 };
 
 /**
@@ -327,10 +324,10 @@ ArrayBackedSequence.prototype.getEffectiveBooleanValue = function () {
 	}
 	// We always have a length > 1, or we'd be a singletonSequence
 	throw new Error('FORG0006: A wrong argument type was specified in a function call.');
-}
+};
 ArrayBackedSequence.prototype.filter = function (cb) {
 	let i = -1;
-	return new Sequence({
+	return new Sequence(/** @type {!Iterator<!Item>} */ ({
 		next: () => {
 			i++;
 			while (i < this._values.length && !cb(this._values[i], i, this)) {
@@ -343,11 +340,11 @@ ArrayBackedSequence.prototype.filter = function (cb) {
 
 			return { done: false, value: this._values[i] };
 		}
-	});
+	}));
 };
 ArrayBackedSequence.prototype.map = function (cb) {
 	let i = -1;
-	return new Sequence({
+	return new Sequence(/** @type {!Iterator<!Item>} */ ({
 		next: () => {
 			i++;
 			if (i >= this._values.length) {
@@ -355,7 +352,7 @@ ArrayBackedSequence.prototype.map = function (cb) {
 			}
 			return { done: false, value: cb(this._values[i], i, this) };
 		}
-	});
+	}));
 };
 ArrayBackedSequence.prototype.getLength = function () {
 	return this._values.length;

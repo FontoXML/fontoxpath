@@ -2,14 +2,16 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import NodeValue from '../dataTypes/NodeValue';
 
+/**
+ * @param   {!IDomFacade}       domFacade
+ * @param   {!Node}             node
+ * @return  {!Iterator<!Node>}
+ */
 function createChildGenerator (domFacade, node) {
 	const childNodes = domFacade.getChildNodes(node);
 	let i = 0;
-	/**
-	 * @type {number}
-	 */
 	const l = childNodes.length;
-	return {
+	return /** @type {!Iterator<!Node>} */ ({
 		next () {
 			if (i >= l) {
 				return { done: true };
@@ -19,7 +21,7 @@ function createChildGenerator (domFacade, node) {
 				value: childNodes[i++]
 			};
 		}
-	};
+	});
 }
 
 function createDescendantGenerator (domFacade, node, inclusive) {

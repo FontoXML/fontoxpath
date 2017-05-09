@@ -1,6 +1,10 @@
 import { castToType, promoteToType } from '../dataTypes/conversionHelper';
 import Sequence from '../dataTypes/Sequence';
 
+/**
+ * @param   {string}          type
+ * @return  {!{type: string, multiplicity: string}}
+ */
 function splitType (type) {
 	// argumentType is something like 'xs:string?' or 'map(*)'
 	var parts = type.match(/^(.*[^+?*])([\+\*\?])?$/);

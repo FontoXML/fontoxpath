@@ -8,7 +8,7 @@ import {
 import NodeValue from '../dataTypes/NodeValue';
 
 /**
- * @param    {!IteratorIterable<!Sequence>}  sequences
+ * @param   {!Iterator<!Sequence>}  sequences
  * @return  {!Sequence}
  */
 function concatSortedSequences (_, sequences) {
@@ -43,8 +43,8 @@ function concatSortedSequences (_, sequences) {
 }
 
 /**
- * @param    {!IDomFacade}           domFacade
- * @param    {!IteratorIterable<!Sequence>}  sequences
+ * @param   {!IDomFacade}           domFacade
+ * @param   {!Iterable<!Sequence>}  sequences
  * @return  {!Sequence}
  */
 function mergeSortedSequences (domFacade, sequences) {
@@ -170,7 +170,7 @@ class PathSelector extends Selector {
 			/**
 			 * @type {!IteratorIterable<!Sequence>}
 			 */
-			let resultValuesInOrderOfEvaluation = {
+			let resultValuesInOrderOfEvaluation = /** @type {!IteratorIterable<!../dataTypes/Sequence>} */ ({
 				[Symbol.iterator]: () => resultValuesInOrderOfEvaluation,
 				next: () => {
 					const childContext = childContextIterator.next();
@@ -182,13 +182,13 @@ class PathSelector extends Selector {
 					}
 					return { done: false, value: selector.evaluate(childContext.value) };
 				}
-			};
+			});
 			// Assume nicely sorted
 			let sortedResultSequence;
 			switch (selector.expectedResultOrder) {
 				case Selector.RESULT_ORDERINGS.REVERSE_SORTED: {
 					const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
-					resultValuesInOrderOfEvaluation = {
+					resultValuesInOrderOfEvaluation = /** @type {!IteratorIterable<!../dataTypes/Sequence>} */ ({
 						[Symbol.iterator]: () => resultValuesInOrderOfEvaluation,
 						next: () => {
 							const result = resultValuesInReverseOrder.next();
@@ -197,7 +197,7 @@ class PathSelector extends Selector {
 							}
 							return { done: false, value: new Sequence(result.value.getAllValues().reverse()) };
 						}
-					};
+					});
 					// Fallthrough for merges
 				}
 				case Selector.RESULT_ORDERINGS.SORTED:
