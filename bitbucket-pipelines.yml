@@ -12,3 +12,6 @@ pipelines:
             - npm install
             - timeout 10m xvfb-run -a npm run test --ci_mode
             - timeout 10m xvfb-run -a npm run test --integration_tests --ci_mode
+            - (umask 077; echo $BITBUCKET_SSH_KEY | base64 --decode > ~/.ssh/id_rsa)
+            - git clone --depth 1 git@bitbucket.org:liones/fontoxpath-qt3-test-set ./test/assets/fontoxpath-qt3-test-set
+            - timeout 10m xvfb-run -a npm run test --integration_tests --ci_mode --qt3

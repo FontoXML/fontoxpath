@@ -80,6 +80,9 @@ module.exports = config => {
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
 		browsers: ciMode ? ['ChromiumNoSandbox', 'Firefox'] : [],
 
+		// The QT3 tests take a while to download
+		browserNoActivityTimeout: runQt3Tests ? 100000 : 10000,
+
 		// https://github.com/karma-runner/karma-chrome-launcher/issues/73#issuecomment-236597429
 		customLaunchers: {
 			ChromiumNoSandbox: {
@@ -132,7 +135,8 @@ module.exports = config => {
 								'env',
 								{
 									'targets': {
-										'chrome': 59
+										'chrome': 59,
+										'firefox': 49
 									}
 								}
 							]
