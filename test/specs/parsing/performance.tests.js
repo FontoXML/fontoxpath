@@ -66,7 +66,7 @@ function runTests (document) {
 		// Variables should only be evaluated once, not n times
 		chai.assert.isAtMost(
 			timeXPath('let $c := (/descendant::*) => count() return $c + $c + $c + $c + $c + $c', document),
-			timeWithoutExtraSteps * 2);
+			timeWithoutExtraSteps * 3);
 	});
 }
 

@@ -1,4 +1,4 @@
-image: liones/fontoxml-docker-pipelines-test:stable
+image: liones/fontoxml-docker-pipelines-test:latest
 
 clone:
     depth: 1
