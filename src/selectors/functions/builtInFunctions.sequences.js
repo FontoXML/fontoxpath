@@ -302,6 +302,27 @@ function fnSum (_dynamicContext, sequence, zero) {
 	return Sequence.singleton(new FloatValue(resultValue));
 }
 
+function fnZeroOrOne (_dynamicContext, arg) {
+	if (!arg.isEmpty() && !arg.isSingleton()) {
+		throw new Error('FORG0003: The argument passed to fn:zero-or-one contained more than one item.');
+	}
+	return arg;
+}
+
+function fnOneOrMore (_dynamicContext, arg) {
+	if (arg.isEmpty()) {
+		throw new Error('FORG0004: The argument passed to fn:one-or-more was empty.');
+	}
+	return arg;
+}
+
+function fnExactlyOne (_dynamicContext, arg) {
+	if (!arg.isSingleton()) {
+		throw new Error('FORG0005: The argument passed to fn:zero-or-one is empty or contained more then one item.');
+	}
+	return arg;
+}
+
 export default {
 	declarations: [
 		{
@@ -450,6 +471,27 @@ export default {
 			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType?'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: fnSum
+		},
+
+		{
+			name: 'zero-or-one',
+			argumentTypes: ['item()*'],
+			returnType: 'item()?',
+			callFunction: fnZeroOrOne
+		},
+
+		{
+			name: 'one-or-more',
+			argumentTypes: ['item()*'],
+			returnType: 'item()+',
+			callFunction: fnOneOrMore
+		},
+
+		{
+			name: 'exactly-one',
+			argumentTypes: ['item()*'],
+			returnType: 'item()',
+			callFunction: fnExactlyOne
 		}
 	],
 	functions: {

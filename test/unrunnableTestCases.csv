@@ -494,8 +494,8 @@ fn-codepoints-to-string-5,Error: XPST0017: Function fn:codepoints-to-string with
 fn-codepoints-to-string-6,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-codepoints-to-string-7,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-codepoints-to-string-8,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
-fn-codepoints-to-string-9,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-codepoints-to-string-10,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
+fn-codepoints-to-string-9,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
+fn-codepoints-to-string-10,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-codepoints-to-string-11,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-codepoints-to-string-12,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-codepoints-to-string-13,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
@@ -696,7 +696,6 @@ fn-concatsht2args-2,Error: XPST0017: Function xs:short with arity of 1 not regis
 fn-concatsht2args-3,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
 fn-concatsht2args-4,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
 fn-concatsht2args-5,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
-fn-concat-9,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
 fn-contains-17,Error: Not implemented: Specifying a collation is not supported
 fn-contains-18,Error: Not implemented: Specifying a collation is not supported
 fn-contains-19,Error: Not implemented: Specifying a collation is not supported
@@ -1245,22 +1244,22 @@ fn-document-uri-12,AssertionError: Expected executing the XPath "fn:contains(fn:
 fn-document-uri-13,Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found.
 fn-document-uri-14,Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found.
 fn-document-uri-15,AssertionError: Expected executing the XPath "fn:string-length(fn:string(fn:contains(fn:document-uri(fn:doc($uri)),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found..
-fn-document-uri-16,AssertionError: Expected executing the XPath "fn:upper-case(fn:string(fn:contains(fn:document-uri(fn:doc($uri)),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found..
-fn-document-uri-17,AssertionError: Expected executing the XPath "fn:lower-case(fn:string(fn:contains(fn:document-uri(fn:doc($uri)),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found..
+fn-document-uri-16,AssertionError: Expected executing the XPath "fn:upper-case(fn:string(fn:contains(fn:document-uri(fn:doc($uri)),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found..
+fn-document-uri-17,AssertionError: Expected executing the XPath "fn:lower-case(fn:string(fn:contains(fn:document-uri(fn:doc($uri)),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found..
 fn-document-uri-18,AssertionError: Expected executing the XPath "fn:concat(fn:string(fn:contains(fn:document-uri(fn:doc($uri)),$uri))," A String")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found..
 fn-document-uri-19,AssertionError: Expected executing the XPath "fn:string-join((fn:string(fn:contains(fn:document-uri(fn:doc($uri)),$uri))," A String"),"")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found..
-fn-document-uri-20,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-document-uri-21,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
+fn-document-uri-20,Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found.
+fn-document-uri-21,Error: XPST0017: Function fn:document-uri with arity of 1 not registered. No similar functions found.
 fn-document-uri-28,AssertionError: Expected executing the XPath "fn:contains((fn:doc($uri))/document-uri(),$uri) or ((fn:doc($uri))/document-uri() = "")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found..
 fn-document-uri-29,Error: XPST0017: Function document-uri with arity of 0 not registered. No similar functions found.
 fn-document-uri-30,Error: XPST0017: Function document-uri with arity of 0 not registered. No similar functions found.
 fn-document-uri-31,AssertionError: Expected executing the XPath "fn:string-length(fn:string(fn:contains((fn:doc($uri))/document-uri(),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found..
-fn-document-uri-32,AssertionError: Expected executing the XPath "fn:upper-case(fn:string(fn:contains((fn:doc($uri))/document-uri(),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found..
-fn-document-uri-33,AssertionError: Expected executing the XPath "fn:lower-case(fn:string(fn:contains((fn:doc($uri))/document-uri(),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found..
+fn-document-uri-32,AssertionError: Expected executing the XPath "fn:upper-case(fn:string(fn:contains((fn:doc($uri))/document-uri(),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found..
+fn-document-uri-33,AssertionError: Expected executing the XPath "fn:lower-case(fn:string(fn:contains((fn:doc($uri))/document-uri(),$uri)))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found..
 fn-document-uri-34,AssertionError: Expected executing the XPath "fn:concat(fn:string(fn:contains((fn:doc($uri))/document-uri(),$uri))," A String")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found..
 fn-document-uri-35,AssertionError: Expected executing the XPath "fn:string-join((fn:string(fn:contains((fn:doc($uri))/document-uri(),$uri))," A String"),"")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:doc with arity of 1 not registered. No similar functions found..
-fn-document-uri-36,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-document-uri-37,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
+fn-document-uri-36,Error: XPST0017: Function document-uri with arity of 0 not registered. No similar functions found.
+fn-document-uri-37,Error: XPST0017: Function document-uri with arity of 0 not registered. No similar functions found.
 K-DocumentURIFunc-2a,Error: XPST0017: Function document-uri with arity of 0 not registered. No similar functions found.
 K-DocumentURIFunc-3,Error: XPST0017: Function document-uri with arity of 1 not registered. No similar functions found.
 fn-element-with-id-1,Error: XPST0017: Function local-name with arity of 0 not registered. Did you mean "node-name (node()?)" or "node-name ()"?
@@ -1419,7 +1418,7 @@ K-ErrorFunc-6,AssertionError: expected [Function] to throw error including 'FOER
 K-ErrorFunc-7,Error: XPST0017: Function error with arity of 2 not registered. No similar functions found.
 K-ErrorFunc-8,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
 K-ErrorFunc-9,AssertionError: expected [Function] to throw error including '*' but got 'XPST0017: Function error with arity of 3 not registered. No similar functions found.'
-K-ErrorFunc-10,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.'
+K-ErrorFunc-10,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
 K2-ErrorFunc-1,AssertionError: Expected executing the XPath "(1, 2, error())[2]" to resolve to one of the expected results, but got Error: XPST0017: Function error with arity of 0 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'.
 K2-ErrorFunc-3,AssertionError: expected [Function] to throw error including '*' but got 'XPST0017: Function error with arity of 2 not registered. No similar functions found.'
 cbcl-error-002,AssertionError: Expected executing the XPath "empty(() + fn:error())" to resolve to one of the expected results, but got Error: XPST0017: Function fn:error with arity of 0 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function fn:error with arity of 0 not registered. No similar functions found.'.
@@ -1448,7 +1447,7 @@ cbcl-error-030,AssertionError: Expected executing the XPath "empty(fn:remove( fn
 cbcl-error-031,AssertionError: Expected executing the XPath "empty(fn:subsequence( fn:error(), 2, 2))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:error with arity of 0 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function fn:error with arity of 0 not registered. No similar functions found.'.
 cbcl-error-032,AssertionError: Expected executing the XPath "empty(fn:error() except fn:error() )" to resolve to one of the expected results, but got Error: XPST0017: Function fn:error with arity of 0 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function fn:error with arity of 0 not registered. No similar functions found.'.
 cbcl-error-033,AssertionError: Expected executing the XPath "empty(fn:error() intersect fn:error() )" to resolve to one of the expected results, but got Error: XPST0017: Function fn:error with arity of 0 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function fn:error with arity of 0 not registered. No similar functions found.'.
-cbcl-error-034,AssertionError: Expected executing the XPath "empty( fn:zero-or-one(fn:error()) )" to resolve to one of the expected results, but got Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.'.
+cbcl-error-034,AssertionError: Expected executing the XPath "empty( fn:zero-or-one(fn:error()) )" to resolve to one of the expected results, but got Error: XPST0017: Function fn:error with arity of 0 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function fn:error with arity of 0 not registered. No similar functions found.'.
 cbcl-error-035,AssertionError: Expected executing the XPath "empty( fn:error() treat as empty-sequence() )" to resolve to one of the expected results, but got Error: XPST0003: Unable to parse XPath: empty( fn:error() treat as empty-sequence() ). SyntaxError: Expected " ", "!", "!=", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "t" found., AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0003: Unable to parse XPath: empty( fn:error() treat as empty-sequence() ). SyntaxError: Expected " ", "!", "!=", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\\n", "\\r", "\\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "t" found.'.
 fn-escape-html-uri1args-1,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
 fn-escape-html-uri1args-2,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
@@ -1481,53 +1480,42 @@ K-EscapeHTMLURIFunc-4,Error: XPST0017: Function escape-html-uri with arity of 1 
 K-EscapeHTMLURIFunc-5,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
 K-EscapeHTMLURIFunc-6,Error: XPST0003: Unable to parse XPath: (normalize-space(iri-to-uri(("example.com", current-time())[1] treat as xs:string)))!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "t" found.
 cbcl-escape-html-uri-001,Error: XPST0017: Function fn:escape-html-uri with arity of 1 not registered. No similar functions found.
-fn-exactly-oneint1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneint1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneint1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneintg1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneintg1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneintg1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onedec1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onedec1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onedec1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onedbl1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onedbl1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onedbl1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneflt1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneflt1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneflt1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onelng1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onelng1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onelng1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneusht1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneusht1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneusht1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenint1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenint1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenint1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onepint1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onepint1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onepint1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneulng1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneulng1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-oneulng1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenpi1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenpi1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenpi1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenni1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenni1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onenni1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onesht1args-1,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onesht1args-2,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-onesht1args-3,Error: XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.
-fn-exactly-one-1,AssertionError: expected [Function] to throw error including 'FORG0005' but got 'XPST0017: Function fn:exactly-one with arity of 1 not registered. No similar functions found.'
-K-SeqExactlyOneFunc-3,AssertionError: expected [Function] to throw error including 'FORG0005' but got 'XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.'
-K-SeqExactlyOneFunc-4,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
-K-SeqExactlyOneFunc-5,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
-K-SeqExactlyOneFunc-6,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.'
-K-SeqExactlyOneFunc-7,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.'
-K-SeqExactlyOneFunc-8,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.'
-K-SeqExactlyOneFunc-9,AssertionError: expected [Function] to throw error including 'FORG0005' but got 'XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.'
+fn-exactly-oneint1args-1,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-exactly-oneint1args-2,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-exactly-oneint1args-3,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-exactly-oneintg1args-1,AssertionError: fn:exactly-one(xs:integer("-999999999999999999")): expected '-1000000000000000000' to equal '-999999999999999999'
+fn-exactly-oneintg1args-2,AssertionError: fn:exactly-one(xs:integer("830993497117024304")): expected '830993497117024300' to equal '830993497117024304'
+fn-exactly-oneintg1args-3,AssertionError: fn:exactly-one(xs:integer("999999999999999999")): expected '1000000000000000000' to equal '999999999999999999'
+fn-exactly-onedec1args-1,AssertionError: fn:exactly-one(xs:decimal("-999999999999999999")): expected '-1000000000000000000' to equal '-999999999999999999'
+fn-exactly-onedec1args-2,AssertionError: fn:exactly-one(xs:decimal("617375191608514839")): expected '617375191608514800' to equal '617375191608514839'
+fn-exactly-onedec1args-3,AssertionError: fn:exactly-one(xs:decimal("999999999999999999")): expected '1000000000000000000' to equal '999999999999999999'
+fn-exactly-onelng1args-1,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-exactly-onelng1args-2,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-exactly-onelng1args-3,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-exactly-oneusht1args-1,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-exactly-oneusht1args-2,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-exactly-oneusht1args-3,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-exactly-onenint1args-1,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-exactly-onenint1args-2,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-exactly-onenint1args-3,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-exactly-onepint1args-1,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-exactly-onepint1args-2,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-exactly-onepint1args-3,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-exactly-oneulng1args-1,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-exactly-oneulng1args-2,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-exactly-oneulng1args-3,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-exactly-onenpi1args-1,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-exactly-onenpi1args-2,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-exactly-onenpi1args-3,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-exactly-onenni1args-1,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-exactly-onenni1args-2,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-exactly-onenni1args-3,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-exactly-onesht1args-1,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-exactly-onesht1args-2,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-exactly-onesht1args-3,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+K-SeqExactlyOneFunc-6,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
+K-SeqExactlyOneFunc-7,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
+K-SeqExactlyOneFunc-8,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
 fn-existsint1args-1,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
 fn-existsint1args-2,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
 fn-existsint1args-3,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
@@ -2224,7 +2212,7 @@ cbcl-fn-format-number-031,Error: XPST0017: Function format-number with arity of 
 cbcl-fn-format-number-032,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
 cbcl-fn-format-number-033,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
 cbcl-fn-format-number-034,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
-cbcl-fn-format-number-035,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
+cbcl-fn-format-number-035,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
 cbcl-fn-format-number-036,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
 cbcl-fn-format-number-037,AssertionError: Expected executing the XPath "format-number(xs:decimal('-79228162514264337593543950335'), '0%')" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'FOCA0001' but got 'XPST0017: Function format-number with arity of 2 not registered. No similar functions found.', Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found., Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found..
 cbcl-fn-format-number-038,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
@@ -3168,8 +3156,8 @@ fn-id-dtd-12,Error: XPST0017: Function fn:substring with arity of 2 not register
 fn-id-dtd-13,AssertionError: fn:id("id4", /IDS[1])/name(): expected '' to equal 'elementwithid-4'
 fn-id-dtd-15,AssertionError: fn:id("id1 id1", /IDS[1])/name(): expected '' to equal 'elementwithid-1'
 fn-id-dtd-16,AssertionError: fn:id("id1 ID1", /IDS[1])/name(): expected '' to equal 'elementwithid-1'
-fn-id-dtd-17,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-id-dtd-18,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
+fn-id-dtd-17,AssertionError: fn:id(fn:lower-case("ID1"), /IDS[1])/name(): expected '' to equal 'elementwithid-1'
+fn-id-dtd-18,AssertionError: fn:id(fn:upper-case("id5"), /IDS[1])/name(): expected '' to equal 'elementwithid-6'
 fn-id-dtd-19,AssertionError: fn:id(fn:concat("i","d1"), /IDS[1])/name(): expected '' to equal 'elementwithid-1'
 fn-id-dtd-20,AssertionError: fn:id(xs:string("id1"), /IDS[1])/name(): expected '' to equal 'elementwithid-1'
 fn-id-dtd-21,AssertionError: fn:id(fn:string-join(("id","1"),""), /IDS[1])/name(): expected '' to equal 'elementwithid-1'
@@ -3188,8 +3176,8 @@ fn-idref-dtd-12,AssertionError: fn:node-name(fn:idref("id2", /IDS[1])): expected
 fn-idref-dtd-13,AssertionError: Expected XPath (fn:idref("id1", /IDS[1])) is (fn:idref("id1", /IDS[1])) to resolve to true: expected false to be true
 fn-idref-dtd-15,AssertionError: Expected XPath count(fn:idref(("id1","id1"), /IDS[1])) to resolve to 1: expected false to be true
 fn-idref-dtd-16,AssertionError: Expected XPath count(fn:idref(("id1","ID1"), /IDS[1])) to resolve to 1: expected false to be true
-fn-idref-dtd-17,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-idref-dtd-18,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
+fn-idref-dtd-17,AssertionError: fn:idref(fn:lower-case("ID1"), /IDS[1])/name(..): expected '' to equal 'elementwithidrefattr-1'
+fn-idref-dtd-18,AssertionError: fn:idref(fn:upper-case("id5"), /IDS[1])/name(..): expected '' to equal 'elementwithidrefattr-6'
 fn-idref-dtd-19,AssertionError: fn:idref(fn:concat("i","d1"), /IDS[1])/name(..): expected '' to equal 'elementwithidrefattr-1'
 fn-idref-dtd-20,AssertionError: fn:idref(xs:string("id1"), /IDS[1])/name(..): expected '' to equal 'elementwithidrefattr-1'
 fn-idref-dtd-21,AssertionError: fn:idref(fn:string-join(("id","1"),""), /IDS[1])/name(..): expected '' to equal 'elementwithidrefattr-1'
@@ -3496,31 +3484,9 @@ fn-local-name-from-qname-023,Error: XPST0017: Function fn:local-name-from-QName 
 fn-local-name-from-qname-024,Error: XPST0017: Function fn:local-name-from-QName with arity of 1 not registered. No similar functions found.
 K-LocalNameFromQNameFunc-3,Error: XPST0017: Function local-name-from-QName with arity of 1 not registered. No similar functions found.
 K-LocalNameFromQNameFunc-4,Error: XPST0017: Function local-name-from-QName with arity of 1 not registered. No similar functions found.
-fn-lower-case1args-1,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case1args-2,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case1args-3,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-1,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-2,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-3,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-4,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-5,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-6,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-7,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-8,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-9,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-10,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-11,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-12,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-13,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-14,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-15,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-16,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
-fn-lower-case-17,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
 fn-lower-case-18,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-lower-case-19,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-lower-case-20,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
-K-LowerCaseFunc-3,Error: XPST0017: Function lower-case with arity of 1 not registered. No similar functions found.
-K-LowerCaseFunc-4,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
 fn-maxint1args-1,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
 fn-maxint1args-2,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
 fn-maxint1args-3,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
@@ -5104,7 +5070,7 @@ fn-node-name-31,AssertionError: expected [Function] to throw an error
 fn-node-name-32,AssertionError: expected [Function] to throw an error
 K-NodeNameFunc-1,AssertionError: expected [Function] to throw an error
 K-NodeNameFunc-1a,AssertionError: expected [Function] to throw an error
-fn-normalize-space0args-1,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
+fn-normalize-space0args-1,AssertionError: //doc/normalize-space(zero-or-one(a[normalize-space() = 'Hello, How are you?'])): expected '' to equal 'Hello, How are you?'
 fn-normalize-space-2,AssertionError: expected [Function] to throw an error
 fn-normalize-space-23,AssertionError: Expected XPath /*/normalize-space() to resolve to "ns:barns:bar2ns:barDerivurn1test1test2": expected false to be true
 fn-normalize-space-24,AssertionError: expected [Function] to throw an error
@@ -5126,8 +5092,8 @@ fn-normalize-unicode2args-5,AssertionError: expected [Function] to throw error i
 fn-normalize-unicode2args-6,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function normalize-unicode with arity of 2 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?'
 fn-normalize-unicode-1,Error: XPST0017: Function fn:normalize-unicode with arity of 2 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
 fn-normalize-unicode-2,AssertionError: expected [Function] to throw error including 'FOCH0003' but got 'XPST0017: Function fn:normalize-unicode with arity of 2 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?'
-fn-normalize-unicode-3,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-normalize-unicode-4,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
+fn-normalize-unicode-3,Error: XPST0017: Function fn:normalize-unicode with arity of 1 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
+fn-normalize-unicode-4,Error: XPST0017: Function fn:normalize-unicode with arity of 1 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
 fn-normalize-unicode-5,Error: XPST0017: Function fn:normalize-unicode with arity of 1 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
 fn-normalize-unicode-6,Error: XPST0017: Function fn:normalize-unicode with arity of 1 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
 fn-normalize-unicode-7,Error: XPST0017: Function fn:substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)"?
@@ -5223,56 +5189,42 @@ fn-number-7,Error: XPST0017: Function implicit-timezone with arity of 0 not regi
 K-NodeNumberFunc-12,Error: XPST0017: Function xs:anyURI with arity of 1 not registered. No similar functions found.
 K-NodeNumberFunc-13,Error: XPST0017: Function xs:anyURI with arity of 1 not registered. No similar functions found.
 K-NodeNumberFunc-15,Error: XPST0017: Function xs:gYear with arity of 1 not registered. No similar functions found.
-fn-one-or-moreint1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreint1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreint1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreintg1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreintg1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreintg1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moredec1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moredec1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moredec1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moredbl1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moredbl1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moredbl1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreflt1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreflt1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreflt1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morelng1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morelng1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morelng1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreusht1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreusht1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreusht1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenint1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenint1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenint1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morepint1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morepint1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morepint1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreulng1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreulng1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moreulng1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenpi1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenpi1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenpi1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenni1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenni1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-morenni1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moresht1args-1,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moresht1args-2,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-moresht1args-3,Error: XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.
-fn-one-or-more-1,AssertionError: expected [Function] to throw error including 'FORG0004' but got 'XPST0017: Function fn:one-or-more with arity of 1 not registered. No similar functions found.'
-K-SeqOneOrMoreFunc-3,Error: XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.
-K-SeqOneOrMoreFunc-4,Error: XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.
-K-SeqOneOrMoreFunc-5,Error: XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.
-K-SeqOneOrMoreFunc-6,Error: XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.
-K-SeqOneOrMoreFunc-7,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.'
-K-SeqOneOrMoreFunc-8,AssertionError: expected [Function] to throw error including 'FORG0004' but got 'XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.'
+fn-one-or-moreint1args-1,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-one-or-moreint1args-2,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-one-or-moreint1args-3,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-one-or-moreintg1args-1,AssertionError: fn:one-or-more(xs:integer("-999999999999999999")): expected '-1000000000000000000' to equal '-999999999999999999'
+fn-one-or-moreintg1args-2,AssertionError: fn:one-or-more(xs:integer("830993497117024304")): expected '830993497117024300' to equal '830993497117024304'
+fn-one-or-moreintg1args-3,AssertionError: fn:one-or-more(xs:integer("999999999999999999")): expected '1000000000000000000' to equal '999999999999999999'
+fn-one-or-moredec1args-1,AssertionError: fn:one-or-more(xs:decimal("-999999999999999999")): expected '-1000000000000000000' to equal '-999999999999999999'
+fn-one-or-moredec1args-2,AssertionError: fn:one-or-more(xs:decimal("617375191608514839")): expected '617375191608514800' to equal '617375191608514839'
+fn-one-or-moredec1args-3,AssertionError: fn:one-or-more(xs:decimal("999999999999999999")): expected '1000000000000000000' to equal '999999999999999999'
+fn-one-or-morelng1args-1,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-one-or-morelng1args-2,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-one-or-morelng1args-3,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-one-or-moreusht1args-1,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-one-or-moreusht1args-2,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-one-or-moreusht1args-3,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-one-or-morenint1args-1,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-one-or-morenint1args-2,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-one-or-morenint1args-3,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-one-or-morepint1args-1,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-one-or-morepint1args-2,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-one-or-morepint1args-3,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-one-or-moreulng1args-1,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-one-or-moreulng1args-2,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-one-or-moreulng1args-3,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-one-or-morenpi1args-1,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-one-or-morenpi1args-2,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-one-or-morenpi1args-3,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-one-or-morenni1args-1,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-one-or-morenni1args-2,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-one-or-morenni1args-3,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-one-or-moresht1args-1,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-one-or-moresht1args-2,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-one-or-moresht1args-3,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+K-SeqOneOrMoreFunc-7,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
 K2-SeqOneOrMoreFunc-1,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-cbcl-one-or-more-004,AssertionError: expected [Function] to throw error including 'FORG0004' but got 'XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.'
-cbcl-one-or-more-005,AssertionError: expected [Function] to throw error including 'FORG0006' but got 'XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.'
-cbcl-one-or-more-006,AssertionError: expected [Function] to throw error including 'FORG0004' but got 'XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.'
+cbcl-one-or-more-004,AssertionError: expected [Function] to throw error including 'FORG0004' but got 'XPST0017: Function month-from-date with arity of 1 not registered. No similar functions found.'
 cbcl-one-or-more-007,Error: XPST0003: Unable to parse XPath:        boolean(one-or-more(for $x in (1 to 10)[. div 2 = 1] return true()))    . SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
 fn-outermost-007,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function fn:dateTime with arity of 2 not registered. No similar functions found.'
 fn-outermost-008,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function fn:current-dateTime with arity of 0 not registered. No similar functions found.'
@@ -5520,11 +5472,11 @@ fn-prefix-from-qname-5,Error: XPST0017: Function fn:prefix-from-QName with arity
 fn-prefix-from-qname-6,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
 fn-prefix-from-qname-7,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
 fn-prefix-from-qname-8,AssertionError: expected [Function] to throw error including 'FONS0004' but got 'XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.'
-fn-prefix-from-qname-9,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-prefix-from-qname-10,Error: XPST0017: Function fn:lower-case with arity of 1 not registered. No similar functions found.
+fn-prefix-from-qname-9,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
+fn-prefix-from-qname-10,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
 fn-prefix-from-qname-11,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
-fn-prefix-from-qname-12,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-prefix-from-qname-13,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
+fn-prefix-from-qname-12,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
+fn-prefix-from-qname-13,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
 fn-prefix-from-qname-14,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
 fn-prefix-from-qname-15,Error: XPST0017: Function fn:substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)"?
 fn-prefix-from-qname-16,Error: XPST0017: Function fn:prefix-from-QName with arity of 1 not registered. No similar functions found.
@@ -5573,7 +5525,6 @@ K-SeqRemoveFunc-21,Error: XPST0017: Function current-time with arity of 0 not re
 K-SeqRemoveFunc-22,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
 K-SeqRemoveFunc-23,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
 K-SeqRemoveFunc-24,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
-cbcl-fn-remove-001,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
 fn-replace3args-1,Error: XPST0017: Function fn:replace with arity of 3 not registered. No similar functions found.
 fn-replace3args-2,Error: XPST0017: Function fn:replace with arity of 3 not registered. No similar functions found.
 fn-replace3args-3,Error: XPST0017: Function fn:replace with arity of 3 not registered. No similar functions found.
@@ -6170,133 +6121,78 @@ fn-substring-19,Error: XPST0017: Function fn:substring with arity of 2 not regis
 fn-substring-20,Error: XPST0017: Function fn:substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)"?
 fn-substring-21,Error: XPST0017: Function fn:substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)"?
 fn-substring-22,Error: XPST0017: Function fn:substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)"?
-fn-substring-23,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-fn-substring-24,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-fn-substring-25,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-fn-substring-26,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-fn-substring-27,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-fn-substring-28,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-fn-substring-29,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-fn-substring-30,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-fn-substring-31,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-3,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-4,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-5,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-6,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-7,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-8,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-9,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-10,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-11,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-12,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-13,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-14,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-K-SubstringFunc-15,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
+fn-substring-23,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+fn-substring-24,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+fn-substring-25,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+fn-substring-26,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+fn-substring-27,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+fn-substring-28,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+fn-substring-29,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+fn-substring-30,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+fn-substring-31,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-3,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-4,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-5,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-6,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-7,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-8,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-9,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-10,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-11,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-12,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-13,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-14,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+K-SubstringFunc-15,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
 cbcl-substring-001,Error: XPST0017: Function fn:substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)"?
 cbcl-substring-002,Error: XPST0017: Function fn:substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)"?
-fn-substring-after-1,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-2,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-3,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-4,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-5,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-6,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-7,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-8,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-9,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-10,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-11,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-12,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-13,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-14,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-15,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-16,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-17,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-18,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-19,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-20,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-21,Error: XPST0017: Function fn:substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-22,Error: XPST0017: Function substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-23,Error: XPST0017: Function substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-24,Error: XPST0017: Function substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-25,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-fn-substring-after-26,Error: XPST0017: Function substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-27,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-28,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-29,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-30,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-31,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-32,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-33,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-34,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-35,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-36,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-37,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-38,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-39,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-40,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-41,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-after-42,AssertionError: Expected executing the XPath "fn:substring-after("Chapter-001-section-2", "ter-1", "http://www.w3.org/2013/collation/UCA?lang=en;numeric=yes")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOCH0004' but got 'XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.'.
-fn-substring-after-43,AssertionError: Expected executing the XPath "fn:substring-after("Chapter-100-bis", "Chapter-10", "http://www.w3.org/2013/collation/UCA?lang=en;numeric=yes")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'FOCH0004' but got 'XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.'.
-K-SubstringAfterFunc-4,AssertionError: expected [Function] to throw error including 'FOCH0002' but got 'XPST0017: Function substring-after with arity of 3 not registered. No similar functions found.'
-K-SubstringAfterFunc-5,Error: XPST0017: Function substring-after with arity of 3 not registered. No similar functions found.
-K-SubstringAfterFunc-6,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-K-SubstringAfterFunc-7,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-K-SubstringAfterFunc-8,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-K-SubstringAfterFunc-9,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-K-SubstringAfterFunc-10,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-K-SubstringAfterFunc-11,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-cbcl-substring-after-001,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. No similar functions found.
-fn-substring-before-1,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-2,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-3,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-4,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-5,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-6,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-7,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-8,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-9,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-10,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-11,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-12,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-13,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-14,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-15,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-16,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-17,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-18,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-19,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-20,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-21,Error: XPST0017: Function fn:substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-22,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-23,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-24,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-25,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-26,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-27,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-28,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-29,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-30,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-31,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-32,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-33,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-34,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-35,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-36,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-37,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-38,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-39,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-40,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-41,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-fn-substring-before-42,AssertionError: Expected executing the XPath "fn:substring-before("Chapter-001", "ter-1", "http://www.w3.org/2013/collation/UCA?lang=en;numeric=yes")" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'FOCH0004' but got 'XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?', Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?.
-fn-substring-before-43,AssertionError: Expected executing the XPath "fn:substring-before("Chapter-100", "Chapter-10", "http://www.w3.org/2013/collation/UCA?lang=en;numeric=yes")" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'FOCH0004' but got 'XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?', Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?.
-K-SubstringBeforeFunc-4,AssertionError: expected [Function] to throw error including 'FOCH0002' but got 'XPST0017: Function substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?'
-K-SubstringBeforeFunc-5,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-K-SubstringBeforeFunc-6,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-K-SubstringBeforeFunc-7,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-K-SubstringBeforeFunc-8,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-K-SubstringBeforeFunc-9,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-K-SubstringBeforeFunc-10,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-cbcl-substring-before-001,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-after-22,Error: XPST0017: Function substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)"?
+fn-substring-after-23,Error: XPST0017: Function substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)"?
+fn-substring-after-24,Error: XPST0017: Function substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)"?
+fn-substring-after-26,Error: XPST0017: Function substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)"?
+fn-substring-after-27,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-28,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-29,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-30,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-31,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-32,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-33,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-34,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-35,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-36,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-37,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-38,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-39,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-40,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-41,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-after-42,AssertionError: Expected executing the XPath "fn:substring-after("Chapter-001-section-2", "ter-1", "http://www.w3.org/2013/collation/UCA?lang=en;numeric=yes")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?, AssertionError: expected [Function] to throw error including 'FOCH0004' but got 'XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?'.
+fn-substring-after-43,AssertionError: Expected executing the XPath "fn:substring-after("Chapter-100-bis", "Chapter-10", "http://www.w3.org/2013/collation/UCA?lang=en;numeric=yes")" to resolve to one of the expected results, but got Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?, AssertionError: expected [Function] to throw error including 'FOCH0004' but got 'XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?'.
+K-SubstringAfterFunc-4,AssertionError: expected [Function] to throw error including 'FOCH0002' but got 'XPST0017: Function substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)"?'
+K-SubstringAfterFunc-5,Error: XPST0017: Function substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)"?
+cbcl-substring-after-001,Error: XPST0017: Function fn:substring-after with arity of 3 not registered. Did you mean "substring-after (xs:string?, xs:string?)" or "substring-before (xs:string?, xs:string?)"?
+fn-substring-before-22,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)"?
+fn-substring-before-23,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)"?
+fn-substring-before-24,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)"?
+fn-substring-before-26,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)"?
+fn-substring-before-27,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-28,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-29,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-30,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-31,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-32,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-33,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-34,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-35,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-36,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-37,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-38,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-39,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-40,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-41,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
+fn-substring-before-42,AssertionError: Expected executing the XPath "fn:substring-before("Chapter-001", "ter-1", "http://www.w3.org/2013/collation/UCA?lang=en;numeric=yes")" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'FOCH0004' but got 'XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?', Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?.
+fn-substring-before-43,AssertionError: Expected executing the XPath "fn:substring-before("Chapter-100", "Chapter-10", "http://www.w3.org/2013/collation/UCA?lang=en;numeric=yes")" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'FOCH0004' but got 'XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?', Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?.
+K-SubstringBeforeFunc-4,AssertionError: expected [Function] to throw error including 'FOCH0002' but got 'XPST0017: Function substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)"?'
+K-SubstringBeforeFunc-5,Error: XPST0017: Function substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)"?
+cbcl-substring-before-001,Error: XPST0017: Function fn:substring-before with arity of 3 not registered. Did you mean "substring-before (xs:string?, xs:string?)", "substring-after (xs:string?, xs:string?)" or "insert-before (item()*, xs:integer, item()*)"?
 fn-sumint1args-1,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
 fn-sumint1args-2,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
 fn-sumint1args-3,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
@@ -6440,7 +6336,6 @@ fn-sum-13,Error: XPST0017: Function year-from-date with arity of 1 not registere
 fn-sum-14,Error: XPST0017: Function year-from-date with arity of 1 not registered. No similar functions found.
 cbcl-sum-func-002,Error: XPST0003: Unable to parse XPath: (sum(for $x in 1 to 10 return 5))!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
 cbcl-sum-func-003,Error: XPST0003: Unable to parse XPath: (         for $x in 1 to 10, $y in 1 to 10 return concat('sum(',$x,' to ',$y,') = ',sum($x to $y))       )!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
-cbcl-sum-func-006,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
 fn-timezone-from-date-1,Error: XPST0017: Function fn:timezone-from-date with arity of 1 not registered. No similar functions found.
 fn-timezone-from-date-2,Error: XPST0017: Function fn:timezone-from-date with arity of 1 not registered. No similar functions found.
 fn-timezone-from-date-3,Error: XPST0017: Function fn:timezone-from-date with arity of 1 not registered. No similar functions found.
@@ -6510,7 +6405,6 @@ fn-tokenize-47,Error: XPST0017: Function codepoints-to-string with arity of 1 no
 fn-tokenize-48,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-tokenize-50,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-tokenize-51,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-fn-tokenize-52,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
 K-TokenizeFunc-1,AssertionError: expected [Function] to throw an error
 K-TokenizeFunc-3,AssertionError: expected [Function] to throw error including 'FORX0001' but got 'Not implemented: Using flags in tokenize is not supported'
 K-TokenizeFunc-4,AssertionError: expected [Function] to throw error including 'FORX0001' but got 'Not implemented: Using flags in tokenize is not supported'
@@ -6765,33 +6659,11 @@ fn-unparsed-text-lines-052,AssertionError: Expected executing the XPath "fn:unpa
 fn-unparsed-text-lines-053,Error: XPST0017: Function fn:unparsed-text-lines with arity of 1 not registered. No similar functions found.
 fn-unparsed-text-lines-054,Error: XPST0017: Function fn:unparsed-text-lines with arity of 1 not registered. No similar functions found.
 fn-unparsed-text-lines-055,AssertionError: expected [Function] to throw error including 'FOUT1170' but got 'XPST0017: Function fn:unparsed-text-lines with arity of 1 not registered. No similar functions found.'
-fn-upper-case1args-1,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case1args-2,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case1args-3,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-1,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-2,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-3,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-4,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-5,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-6,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-7,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-8,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-9,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-10,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-11,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-12,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-13,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-14,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-15,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-16,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
-fn-upper-case-17,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
 fn-upper-case-18,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-upper-case-19,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-upper-case-20,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-upper-case-21,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-upper-case-22,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
-K-UpperCaseFunc-3,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
-K-UpperCaseFunc-4,Error: XPST0017: Function lower-case with arity of 1 not registered. No similar functions found.
 fn-uri-collection-2,AssertionError: expected [Function] to throw error including 'FODC0002' but got 'XPST0017: Function fn:uri-collection with arity of 1 not registered. No similar functions found.'
 fn-uri-collection-3,AssertionError: Expected executing the XPath "fn:uri-collection("invalidURI%gg")" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'FODC0004' but got 'XPST0017: Function fn:uri-collection with arity of 1 not registered. No similar functions found.', AssertionError: expected [Function] to throw error including 'FODC0002' but got 'XPST0017: Function fn:uri-collection with arity of 1 not registered. No similar functions found.'.
 K2-SeqUriCollectionFunc-1,AssertionError: Expected executing the XPath "uri-collection("http:\\invalidURI\someURI%gg")" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'FODC0004' but got 'XPST0017: Function uri-collection with arity of 1 not registered. No similar functions found.', AssertionError: expected [Function] to throw error including 'FODC0002' but got 'XPST0017: Function uri-collection with arity of 1 not registered. No similar functions found.'.
@@ -6877,52 +6749,40 @@ fn-year-from-dateTime-19,Error: XPST0017: Function fn:year-from-dateTime with ar
 K-YearFromDateTimeFunc-3,Error: XPST0017: Function year-from-dateTime with arity of 1 not registered. No similar functions found.
 K-YearFromDateTimeFunc-4,Error: XPST0017: Function year-from-dateTime with arity of 1 not registered. No similar functions found.
 K-YearFromDateTimeFunc-5,Error: XPST0017: Function year-from-dateTime with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneint1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneint1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneint1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneintg1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneintg1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneintg1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onedec1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onedec1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onedec1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onedbl1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onedbl1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onedbl1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneflt1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneflt1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneflt1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onelng1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onelng1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onelng1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneusht1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneusht1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneusht1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenint1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenint1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenint1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onepint1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onepint1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onepint1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneulng1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneulng1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-oneulng1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenpi1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenpi1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenpi1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenni1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenni1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onenni1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onesht1args-1,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onesht1args-2,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-onesht1args-3,Error: XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.
-fn-zero-or-one-1,AssertionError: expected [Function] to throw error including 'FORG0003' but got 'XPST0017: Function fn:zero-or-one with arity of 1 not registered. No similar functions found.'
-K-SeqZeroOrOneFunc-3,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
-K-SeqZeroOrOneFunc-4,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
-K-SeqZeroOrOneFunc-5,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
-K-SeqZeroOrOneFunc-6,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
-K-SeqZeroOrOneFunc-7,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.'
-K-SeqZeroOrOneFunc-8,AssertionError: expected [Function] to throw error including 'FORG0003' but got 'XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.'
+fn-zero-or-oneint1args-1,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-zero-or-oneint1args-2,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-zero-or-oneint1args-3,Error: XPST0017: Function xs:int with arity of 1 not registered. No similar functions found.
+fn-zero-or-oneintg1args-1,AssertionError: fn:zero-or-one(xs:integer("-999999999999999999")): expected '-1000000000000000000' to equal '-999999999999999999'
+fn-zero-or-oneintg1args-2,AssertionError: fn:zero-or-one(xs:integer("830993497117024304")): expected '830993497117024300' to equal '830993497117024304'
+fn-zero-or-oneintg1args-3,AssertionError: fn:zero-or-one(xs:integer("999999999999999999")): expected '1000000000000000000' to equal '999999999999999999'
+fn-zero-or-onedec1args-1,AssertionError: fn:zero-or-one(xs:decimal("-999999999999999999")): expected '-1000000000000000000' to equal '-999999999999999999'
+fn-zero-or-onedec1args-2,AssertionError: fn:zero-or-one(xs:decimal("617375191608514839")): expected '617375191608514800' to equal '617375191608514839'
+fn-zero-or-onedec1args-3,AssertionError: fn:zero-or-one(xs:decimal("999999999999999999")): expected '1000000000000000000' to equal '999999999999999999'
+fn-zero-or-onelng1args-1,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-zero-or-onelng1args-2,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-zero-or-onelng1args-3,Error: XPST0017: Function xs:long with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-zero-or-oneusht1args-1,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-zero-or-oneusht1args-2,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-zero-or-oneusht1args-3,Error: XPST0017: Function xs:unsignedShort with arity of 1 not registered. No similar functions found.
+fn-zero-or-onenint1args-1,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-zero-or-onenint1args-2,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-zero-or-onenint1args-3,Error: XPST0017: Function xs:negativeInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-zero-or-onepint1args-1,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-zero-or-onepint1args-2,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-zero-or-onepint1args-3,Error: XPST0017: Function xs:positiveInteger with arity of 1 not registered. Did you mean "xs:integer (xs:anyAtomicType?)"?
+fn-zero-or-oneulng1args-1,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-zero-or-oneulng1args-2,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-zero-or-oneulng1args-3,Error: XPST0017: Function xs:unsignedLong with arity of 1 not registered. No similar functions found.
+fn-zero-or-onenpi1args-1,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-zero-or-onenpi1args-2,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-zero-or-onenpi1args-3,Error: XPST0017: Function xs:nonPositiveInteger with arity of 1 not registered. No similar functions found.
+fn-zero-or-onenni1args-1,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-zero-or-onenni1args-2,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-zero-or-onenni1args-3,Error: XPST0017: Function xs:nonNegativeInteger with arity of 1 not registered. No similar functions found.
+fn-zero-or-onesht1args-1,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-zero-or-onesht1args-2,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+fn-zero-or-onesht1args-3,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
+K-SeqZeroOrOneFunc-7,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
 cbcl-if-not-empty-001,Error: XPST0003: Unable to parse XPath: (for $x in zero-or-one((1 to 10)[. div 2 = 0]) return ())!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
 math-exp-004,AssertionError: Expected XPath math:exp(2) to resolve to 7.38905609893065e0: expected false to be true
 math-exp-006,AssertionError: Expected XPath math:exp(math:pi()) to resolve to 23.140692632779267e0: expected false to be true
@@ -7369,7 +7229,6 @@ op-concatsht2args-2,Error: XPST0017: Function xs:short with arity of 1 not regis
 op-concatsht2args-3,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
 op-concatsht2args-4,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
 op-concatsht2args-5,Error: XPST0017: Function xs:short with arity of 1 not registered. Did you mean "xs:float (xs:anyAtomicType?)"?
-op-concat-9,Error: XPST0017: Function fn:upper-case with arity of 1 not registered. No similar functions found.
 constSeq-16,Error: XPST0017: Function xs:anyURI with arity of 1 not registered. No similar functions found.
 constSeq-20,Error: XPST0017: Function xs:date with arity of 1 not registered. No similar functions found.
 constSeq-21,Error: XPST0017: Function xs:dateTime with arity of 1 not registered. Did you mean "xs:decimal (xs:anyAtomicType?)"?
@@ -9464,8 +9323,6 @@ abbreviatedSyntax-21,Error: XPST0003: Unable to parse XPath: (for $h in (/works)
 abbreviatedSyntax-22,Error: XPST0003: Unable to parse XPath: (for $h in (/works) return $h/employee/(status|overtime)/day/string())!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
 abbreviatedSyntax-24,Error: XPST0003: Unable to parse XPath: (for $h in (/works) return $h/employee/(status union overtime)/day/string())!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
 abbreviatedSyntax-25,Error: XPST0003: Unable to parse XPath: (for $h in (/works) return $h/employee[@name = "Jane Doe 13" or @type="FT"]/@name)!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
-ancestor-3,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
-ancestor-4,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
 ancestor-5,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1]/ancestor::works) << exactly-one(/works/employee[1]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
 ancestor-6,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1]/ancestor::works) << exactly-one(/works/employee[1]/ancestor::works). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
 ancestor-7,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1]/ancestor::works) << exactly-one(/works/employee[1]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
@@ -9473,8 +9330,6 @@ ancestor-8,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1
 ancestor-9,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1]/ancestor::works) >> exactly-one(/works/employee[1]/ancestor::works). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but ">" found.
 ancestor-10,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1]/ancestor::works) >> exactly-one(/works/employee[1]/hours). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but ">" found.
 unabbreviatedSyntax-10,Error: XPST0003: Unable to parse XPath: for $h in (/works/employee[1]/hours) return $h/ancestor::employee. SyntaxError: Expected " ", "!", "!=", "(", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", "||", or end of input but "$" found.
-ancestorself-3,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
-ancestorself-4,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
 ancestorself-5,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1]/ancestor-or-self::works) << exactly-one(/works/employee[1]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
 ancestorself-6,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1]/ancestor-or-self::works) << exactly-one(/works/employee[1]/ancestor-or-self::works). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
 ancestorself-7,Error: XPST0003: Unable to parse XPath: exactly-one(/works/employee[1]/ancestor-or-self::works) << exactly-one(/works/employee[1]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
@@ -9484,8 +9339,8 @@ ancestorself-10,Error: XPST0003: Unable to parse XPath: exactly-one(/works/emplo
 unabbreviatedSyntax-11,Error: XPST0003: Unable to parse XPath: ((for $h in (/works/employee[1]/hours) return $h/ancestor-or-self::employee)/@name)!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
 following-1,AssertionError: expected [Function] to throw error including 'XPTY0019' but got 'No selector counterpart for: following.'
 following-2,Error: No selector counterpart for: following.
-following-3,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
-following-4,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
+following-3,Error: No selector counterpart for: following.
+following-4,Error: No selector counterpart for: following.
 following-5,Error: XPST0003: Unable to parse XPath: (/works[1]/employee[11]/following::employee[1]) << (/works[1]/employee[13]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
 following-6,Error: XPST0003: Unable to parse XPath: exactly-one(/works[1]/employee[12]/following::employee) << exactly-one(/works[1]/employee[12]/following::employee). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
 following-7,Error: XPST0003: Unable to parse XPath: exactly-one(/works[1]/employee[12]/following::employee) << exactly-one(/works[1]/employee[12]/overtime[1]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
@@ -9502,8 +9357,6 @@ following-17,Error: No selector counterpart for: following.
 following-18,Error: No selector counterpart for: following.
 following-19,Error: No selector counterpart for: following.
 following-20,Error: No selector counterpart for: following.
-followingsibling-3,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
-followingsibling-4,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
 followingsibling-5,Error: XPST0003: Unable to parse XPath: exactly-one(/works[1]/employee[12]/overtime/day[1]/following-sibling::day) << exactly-one(/works[1]/employee[13]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
 followingsibling-6,Error: XPST0003: Unable to parse XPath: exactly-one(/works[1]/employee[12]/following-sibling::employee) << exactly-one(/works[1]/employee[12]/following-sibling::employee). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
 followingsibling-7,Error: XPST0003: Unable to parse XPath: exactly-one(/works[1]/employee[12]/following-sibling::employee) << exactly-one(/works[1]/employee[12]/overtime[1]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but "<" found.
@@ -9528,8 +9381,6 @@ preceding-17,Error: XPST0003: Unable to parse XPath: (/works[1]/employee[12]/pre
 preceding-18,Error: XPST0003: Unable to parse XPath: (/works[1]/employee[12]/preceding::employee) or fn:true(). SyntaxError: Expected "_", [A-Z], or [a-z] but ":" found.
 preceding-19,Error: XPST0003: Unable to parse XPath: (/works[1]/employee[12]/preceding::employee) or fn:false(). SyntaxError: Expected "_", [A-Z], or [a-z] but ":" found.
 preceding-20,Error: XPST0003: Unable to parse XPath: fn:deep-equal(/works[1]/employee[12]/preceding::employee,/works[1]/employee[12]/preceding::employee). SyntaxError: Expected "_", [A-Z], or [a-z] but ":" found.
-preceding-sibling-3,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
-preceding-sibling-4,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
 preceding-sibling-8,Error: XPST0003: Unable to parse XPath: exactly-one(/works[1]/employee[13]) >> exactly-one(/works[1]/employee[12]/preceding-sibling::employee[1]). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but ">" found.
 preceding-sibling-9,Error: XPST0003: Unable to parse XPath: exactly-one(/works[1]/employee[2]/preceding-sibling::employee) >> exactly-one(/works[1]/employee[2]/preceding-sibling::employee). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but ">" found.
 preceding-sibling-10,Error: XPST0003: Unable to parse XPath: exactly-one(/works[1]/employee[13]) >> exactly-one(/works[1]/employee[2]/preceding-sibling::employee). SyntaxError: Expected " ", "$", "'", "(", "(:", "*", "+", "-", ".", "..", "/", "//", "@", "Q", "[", "\"", "\n", "\r", "\t", "_", "ancestor", "ancestor-or-self", "array", "attribute", "attribute(", "attribute()", "child", "comment()", "decendant", "descendant", "descendant-or-self", "document-node(", "document-node()", "element", "following", "following-sibling", "map", "namespace-node()", "node()", "parent", "preceding-sibling", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element(", "self", "text()", [0-9], [A-Z], or [a-z] but ">" found.
@@ -12995,8 +12846,6 @@ K-CondExpr-9,Error: XPST0017: Function xs:anyURI with arity of 1 not registered.
 K-CondExpr-10,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
 K-CondExpr-11,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
 K-CondExpr-12,Error: XPST0003: Unable to parse XPath: if(boolean((1, 2, 3, current-time())[1] treat as xs:integer)) then true() else 4. SyntaxError: Expected " ", "!", "!=", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "t" found.
-cbcl-condexpr-001,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
-cbcl-condexpr-002,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
 instanceof1,Error: XPST0017: Function xs:dateTime with arity of 1 not registered. Did you mean "xs:decimal (xs:anyAtomicType?)"?
 instanceof2,Error: XPST0017: Function xs:dateTime with arity of 1 not registered. Did you mean "xs:decimal (xs:anyAtomicType?)"?
 instanceof3,Error: XPST0017: Function xs:dateTime with arity of 1 not registered. Did you mean "xs:decimal (xs:anyAtomicType?)"?
@@ -14107,8 +13956,6 @@ hof-025,Error: XPST0017: Function function-name with arity of 1 not registered. 
 hof-027,Error: XPST0003: Unable to parse XPath: (         let $f := fn:contains(?, "e")          return for $s in ("Mike", "John", "Dave", "Mary", "Jane") return $f($s))!string() => string-join(" "). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
 hof-032,Error: XPST0017: Function current-date with arity of 0 not registered. No similar functions found.
 hof-033,Error: XPST0017: Function local-name-from-QName with arity of 1 not registered. No similar functions found.
-hof-916,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?'
-hof-917,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?'
 function-item-1,Error: XPST0003: Unable to parse XPath: concat#64 instance of function(*). SyntaxError: Expected " ", "!=", "(:", "*", "+", ",", "-", ":", "<", "<<", "<=", "=", ">", ">=", ">>", "?", "\n", "\r", "\t", "_", "and", "div", "eq", "except", "ge", "gt", "idiv", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", "||", [A-Z], [\-.0-9], [a-z], or end of input but "(" found.
 function-item-7,Error: XPST0003: Unable to parse XPath: deep-equal(((let $a := 92, $b := true() return function($c) { $a, $b, $c })("lala")), (92, true(), "lala")). SyntaxError: Expected "!", "!=", "#", ")", "*", "+", ",", "-", "/", "//", ":", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "_", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", "||", [A-Z], [\-.0-9], or [a-z] but "(" found.
 function-item-8,Error: XPST0017: Function function-name with arity of 1 not registered. No similar functions found.
@@ -14138,18 +13985,15 @@ inline-function-12a,AssertionError: expected [Function] to throw error including
 inline-function-15,AssertionError: expected [Function] to throw error including 'XQST0039' but got 'XPST0003: Unable to parse XPath: function($Q{http://local/}foo, $Q{http://local/}bar, $Q{http://local/}foo) { \n              "lala", $Q{http://local/}foo, $Q{http://local/}bar }("gibbon", "monkey", "ape"). SyntaxError: Expected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "_", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", "||", [A-Z], [\\-.0-9], [a-z], or end of input but "(" found.'
 inline-function-16,Error: XPST0003: Unable to parse XPath: deep-equal((function($Q{http://local/}foo, $Q{http://local/}bar, $fn:foo) {                 "lala", $Q{http://local/}foo, $Q{http://local/}bar }("gibbon", "monkey", "ape")), ("lala", "gibbon", "monkey")). SyntaxError: Expected "!", "!=", "#", ")", "*", "+", ",", "-", "/", "//", ":", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "_", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", "||", [A-Z], [\-.0-9], or [a-z] but "(" found.
 xqhof10,Error: XPST0003: Unable to parse XPath: deep-equal((          for $f in (concat("one ", ?, " three"), substring-before("one two three", ?), matches(?, "t.*o"), xs:NCName(?))          return $f("two")       ), ("one two three", "one ", true(), xs:NCName("two"))). SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "$" found.
-xqhof12,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?'
+xqhof12,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function matches with arity of 2 not registered. No similar functions found.'
 surrogates08,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-surrogates02a,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-surrogates03a,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
+surrogates02a,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+surrogates03a,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
 surrogates04a,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 surrogates05a,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 surrogates06a,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 surrogates07a,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 surrogates08a,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-surrogates09a,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-surrogates10a,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-surrogates11a,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
 surrogates12a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 surrogates13a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 surrogates14a,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
@@ -14186,8 +14030,6 @@ functx-fn-codepoints-to-string-1,Error: XPST0017: Function codepoints-to-string 
 functx-fn-codepoints-to-string-2,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 functx-fn-codepoints-to-string-3,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 functx-fn-codepoints-to-string-all,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-functx-fn-compare-6,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
-functx-fn-compare-all,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
 functx-fn-count-3,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 functx-fn-count-all,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 functx-fn-data-1,Error: XPST0017: Function data with arity of 1 not registered. No similar functions found.
@@ -14214,7 +14056,6 @@ functx-fn-encode-for-uri-all,Error: XPST0017: Function encode-for-uri with arity
 functx-fn-escape-html-uri-1,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
 functx-fn-escape-html-uri-2,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
 functx-fn-escape-html-uri-all,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
-functx-fn-exactly-one-1,Error: XPST0017: Function exactly-one with arity of 1 not registered. No similar functions found.
 functx-fn-hours-from-dateTime-1,Error: XPST0017: Function hours-from-dateTime with arity of 1 not registered. No similar functions found.
 functx-fn-hours-from-dateTime-2,Error: XPST0017: Function hours-from-dateTime with arity of 1 not registered. No similar functions found.
 functx-fn-hours-from-dateTime-all,Error: XPST0017: Function hours-from-dateTime with arity of 1 not registered. No similar functions found.
@@ -14238,10 +14079,6 @@ functx-fn-local-name-from-QName-1,Error: XPST0017: Function local-name-from-QNam
 functx-fn-local-name-from-QName-2,Error: XPST0017: Function local-name-from-QName with arity of 1 not registered. No similar functions found.
 functx-fn-local-name-from-QName-3,Error: XPST0017: Function local-name-from-QName with arity of 1 not registered. No similar functions found.
 functx-fn-local-name-from-QName-all,Error: XPST0017: Function local-name-from-QName with arity of 1 not registered. No similar functions found.
-functx-fn-lower-case-1,Error: XPST0017: Function lower-case with arity of 1 not registered. No similar functions found.
-functx-fn-lower-case-2,Error: XPST0017: Function lower-case with arity of 1 not registered. No similar functions found.
-functx-fn-lower-case-3,Error: XPST0017: Function lower-case with arity of 1 not registered. No similar functions found.
-functx-fn-lower-case-all,Error: XPST0017: Function lower-case with arity of 1 not registered. No similar functions found.
 functx-fn-matches-1,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 functx-fn-matches-2,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 functx-fn-matches-3,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
@@ -14285,9 +14122,6 @@ functx-fn-normalize-unicode-2,Error: XPST0017: Function normalize-unicode with a
 functx-fn-normalize-unicode-all,Error: XPST0017: Function normalize-unicode with arity of 1 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
 functx-fn-number-6,AssertionError: Expected XPath let $priceDoc := (/) return ($priceDoc// prod/price[number() >          35]) to resolve to the given XML: expected [] to deeply equal [ Array(2) ]
 functx-fn-number-all,AssertionError:           let $priceDoc := (/)           return (number( $priceDoc//prod[1]/price), number( $priceDoc//prod[1]/@currency),                            number('29.99'), number('ABC'), number( () ),                            $priceDoc// prod/price[number() > 35]): expected false to be true
-functx-fn-one-or-more-1,Error: XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.
-functx-fn-one-or-more-2,Error: XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.
-functx-fn-one-or-more-all,Error: XPST0017: Function one-or-more with arity of 1 not registered. No similar functions found.
 functx-fn-QName-1,Error: XPST0017: Function QName with arity of 2 not registered. Did you mean "name (node()?)" or "name ()"?
 functx-fn-QName-2,Error: XPST0017: Function QName with arity of 2 not registered. Did you mean "name (node()?)" or "name ()"?
 functx-fn-QName-3,Error: XPST0017: Function QName with arity of 2 not registered. Did you mean "name (node()?)" or "name ()"?
@@ -14329,33 +14163,18 @@ functx-fn-string-to-codepoints-1,Error: XPST0017: Function string-to-codepoints 
 functx-fn-string-to-codepoints-2,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 functx-fn-string-to-codepoints-3,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 functx-fn-string-to-codepoints-all,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-functx-fn-substring-after-1,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-functx-fn-substring-after-2,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-functx-fn-substring-after-3,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-functx-fn-substring-after-4,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-functx-fn-substring-after-5,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-functx-fn-substring-after-6,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-functx-fn-substring-after-all,Error: XPST0017: Function substring-after with arity of 2 not registered. No similar functions found.
-functx-fn-substring-before-1,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-functx-fn-substring-before-2,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-functx-fn-substring-before-3,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-functx-fn-substring-before-4,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-functx-fn-substring-before-5,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-functx-fn-substring-before-6,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-functx-fn-substring-before-7,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-functx-fn-substring-before-all,Error: XPST0017: Function substring-before with arity of 2 not registered. Did you mean "insert-before (item()*, xs:integer, item()*)"?
-functx-fn-substring-1,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-2,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-3,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-4,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-5,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-6,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-7,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-8,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-9,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-10,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-11,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
-functx-fn-substring-all,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "string (item()?)", "string ()" or "xs:string (xs:anyAtomicType?)"?
+functx-fn-substring-1,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-2,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-3,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-4,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-5,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-6,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-7,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-8,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-9,Error: XPST0017: Function substring with arity of 3 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-10,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-11,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
+functx-fn-substring-all,Error: XPST0017: Function substring with arity of 2 not registered. Did you mean "xs:string (xs:anyAtomicType?)", "string (item()?)" or "string ()"?
 functx-fn-sum-3,Error: XPST0017: Function xs:yearMonthDuration with arity of 1 not registered. No similar functions found.
 functx-fn-sum-all,Error: XPST0017: Function xs:yearMonthDuration with arity of 1 not registered. No similar functions found.
 functx-fn-timezone-from-date-1,Error: XPST0017: Function timezone-from-date with arity of 1 not registered. No similar functions found.
@@ -14377,11 +14196,6 @@ functx-fn-translate-5,Error: XPST0017: Function translate with arity of 3 not re
 functx-fn-translate-6,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 functx-fn-translate-7,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 functx-fn-translate-all,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-functx-fn-upper-case-1,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
-functx-fn-upper-case-2,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
-functx-fn-upper-case-3,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
-functx-fn-upper-case-4,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
-functx-fn-upper-case-all,Error: XPST0017: Function upper-case with arity of 1 not registered. No similar functions found.
 functx-fn-year-from-date-1,Error: XPST0017: Function year-from-date with arity of 1 not registered. No similar functions found.
 functx-fn-year-from-dateTime-1,Error: XPST0017: Function year-from-dateTime with arity of 1 not registered. No similar functions found.
 functx-fn-years-from-duration-1,Error: XPST0017: Function years-from-duration with arity of 1 not registered. No similar functions found.
@@ -14390,8 +14204,5 @@ functx-fn-years-from-duration-3,Error: XPST0017: Function years-from-duration wi
 functx-fn-years-from-duration-4,Error: XPST0017: Function years-from-duration with arity of 1 not registered. No similar functions found.
 functx-fn-years-from-duration-5,Error: XPST0017: Function years-from-duration with arity of 1 not registered. No similar functions found.
 functx-fn-years-from-duration-all,Error: XPST0017: Function years-from-duration with arity of 1 not registered. No similar functions found.
-functx-fn-zero-or-one-1,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
-functx-fn-zero-or-one-2,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
-functx-fn-zero-or-one-all,Error: XPST0017: Function zero-or-one with arity of 1 not registered. No similar functions found.
 seq-queries-results-q1,Error: XPST0003: Unable to parse XPath: for $s in //section[section.title = "Procedure"] return ($s//incision)[2]/instrument. SyntaxError: Expected " ", "!", "!=", "(", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", "||", or end of input but "$" found.
 string-queries-results-q1,AssertionError: Expected XPath //news_item/title[contains(., "Foobar Corporation")] to resolve to the given XML: expected [ Array(2) ] to deeply equal []

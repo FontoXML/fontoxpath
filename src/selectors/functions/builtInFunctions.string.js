@@ -129,6 +129,58 @@ function fnStringLength (_dynamicContext, sequence) {
 	return Sequence.singleton(new IntegerValue(Array.from(sequence.first().value).length));
 }
 
+function fnSubstringBefore (_dynamicContext, arg1, arg2) {
+	let strArg1;
+	if (arg1.isEmpty()) {
+		strArg1 = '';
+	}
+	else {
+		strArg1 = arg1.first().value;
+	}
+	let strArg2;
+	if (arg2.isEmpty()) {
+		strArg2 = '';
+	}
+	else {
+		strArg2 = arg2.first().value;
+	}
+
+	if (strArg2 === '') {
+		return Sequence.singleton(new StringValue(''));
+	}
+	const startIndex = strArg1.indexOf(strArg2);
+	if (startIndex === -1) {
+		return Sequence.singleton(new StringValue(''));
+	}
+	return Sequence.singleton(new StringValue(strArg1.substring(0, startIndex)));
+}
+
+function fnSubstringAfter (_dynamicContext, arg1, arg2) {
+	let strArg1;
+	if (arg1.isEmpty()) {
+		strArg1 = '';
+	}
+	else {
+		strArg1 = arg1.first().value;
+	}
+	let strArg2;
+	if (arg2.isEmpty()) {
+		strArg2 = '';
+	}
+	else {
+		strArg2 = arg2.first().value;
+	}
+
+	if (strArg2 === '') {
+		return Sequence.singleton(new StringValue(strArg1));
+	}
+	const startIndex = strArg1.indexOf(strArg2);
+	if (startIndex === -1) {
+		return Sequence.singleton(new StringValue(''));
+	}
+	return Sequence.singleton(new StringValue(strArg1.substring(startIndex + strArg2.length)));
+}
+
 function fnTokenize (_dynamicContext, input, pattern) {
 	if (input.isEmpty() || input.first().value.length === 0) {
 		return Sequence.empty();
@@ -141,6 +193,21 @@ function fnTokenize (_dynamicContext, input, pattern) {
 				return new StringValue(token);
 			}));
 }
+
+function fnUpperCase (_dynamicContext, stringSequence) {
+	if (stringSequence.isEmpty()) {
+		return Sequence.singleton(new StringValue(''));
+	}
+	return stringSequence.map(string => new StringValue(string.value.toUpperCase()));
+}
+
+function fnLowerCase (_dynamicContext, stringSequence) {
+	if (stringSequence.isEmpty()) {
+		return Sequence.singleton(new StringValue(''));
+	}
+	return stringSequence.map(string => new StringValue(string.value.toLowerCase()));
+}
+
 
 function xsUntypedAtomic (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
@@ -267,11 +334,40 @@ export default {
 		},
 
 		{
+			name: 'substring-before',
+			argumentTypes: ['xs:string?', 'xs:string?'],
+			returnType: 'xs:string',
+			callFunction: fnSubstringBefore
+		},
+
+		{
+			name: 'substring-after',
+			argumentTypes: ['xs:string?', 'xs:string?'],
+			returnType: 'xs:string',
+			callFunction: fnSubstringAfter
+		},
+
+		{
 			name: 'string-join',
 			argumentTypes: ['xs:string*', 'xs:string'],
 			returnType: 'xs:string',
 			callFunction: fnStringJoin
 		},
+
+		{
+			name: 'upper-case',
+			argumentTypes: ['xs:string?'],
+			returnType: 'xs:string',
+			callFunction: fnUpperCase
+		},
+
+		{
+			name: 'lower-case',
+			argumentTypes: ['xs:string?'],
+			returnType: 'xs:string',
+			callFunction: fnLowerCase
+		},
+
 
 		{
 			name: 'string-join',

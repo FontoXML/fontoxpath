@@ -237,4 +237,40 @@ describe('functions over strings', () => {
 		it('returns the empty string when joining the empty sequence',
 			() => chai.assert.equal(evaluateXPathToString('string-join((), "X")', documentNode), ''));
 	});
+
+	describe('upper-case()', () => {
+		it('If the value of $arg1 is the empty sequence, the zero length string is returned',
+			() => chai.assert.equal(evaluateXPathToString('upper-case(())', documentNode), ''));
+
+		it('returns the string, uppercased',
+			() => chai.assert.equal(evaluateXPathToString('upper-case("1234PrrRRrrRt567")', documentNode), '1234PRRRRRRRT567'));
+	});
+
+	describe('lower-case()', () => {
+		it('If the value of $arg1 is the empty sequence, the zero length string is returned',
+			() => chai.assert.equal(evaluateXPathToString('lower-case(())', documentNode), ''));
+
+		it('returns the string, lowercased',
+			() => chai.assert.equal(evaluateXPathToString('lower-case("1234PrrRRrrRt567")', documentNode), '1234prrrrrrrt567'));
+	});
+
+	describe('substring-before()', () => {
+		it('Returns the substring before the match',
+			() => chai.assert.equal(evaluateXPathToString('substring-before("tattoo", "attoo")', documentNode), 't'));
+		it('May return the zero length string if the string matches from 0',
+			() => chai.assert.equal(evaluateXPathToString('substring-before("tattoo","tatto")', documentNode), ''));
+		it('May return the zero length string if the arguments are the empty sequence',
+			() => chai.assert.equal(evaluateXPathToString('substring-before((),())', documentNode), ''));
+	});
+
+	describe('substring-after()', () => {
+		it('Returns the substring after the match',
+			() => chai.assert.equal(evaluateXPathToString('substring-after("tattoo", "tat")', documentNode), 'too'));
+		it('Returns the substring after the match if the query occurs multiple times',
+			() => chai.assert.equal(evaluateXPathToString('substring-after("queryquery", "ue")', documentNode), 'ryquery'));
+		it('May return the zero length string if the string matches ending at the last character',
+			() => chai.assert.equal(evaluateXPathToString('substring-after("tattoo","ttoo")', documentNode), ''));
+		it('May return the zero length string if the arguments are the empty sequence',
+			() => chai.assert.equal(evaluateXPathToString('substring-after((),())', documentNode), ''));
+	});
 });
