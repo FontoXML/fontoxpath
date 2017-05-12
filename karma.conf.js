@@ -111,38 +111,39 @@ module.exports = config => {
 				}
 			},
 			module: {
-				preLoaders: coverageMode ? [
+				loaders: (coverageMode ? [
 					{
-						loader: 'istanbul-instrumenter',
+						loader: 'istanbul-instrumenter-loader',
 						test: /\.js$/,
 						include: path.resolve('src'),
 						query: {
 							esModules: true
 						}
 					}
-				] : [],
-
-				loaders: [{
-					loader: 'babel-loader',
-					test: /\.js$/,
-					include: runQt3Tests ? [path.resolve('src')] :
-						runIntegrationTests ?
-						[path.resolve('test')] :
-						[path.resolve('src'), path.resolve('test')],
-					query: {
-						presets: [
-							[
-								'env',
-								{
-									'targets': {
-										'chrome': 59,
-										'firefox': 49
-									}
-								}
-							]
-						]
-					}
-				}]
+				] : [])
+					.concat(
+						[{
+							loader: 'babel-loader',
+							test: /\.js$/,
+							include: runQt3Tests ? [path.resolve('src')] :
+								runIntegrationTests ?
+								[path.resolve('test')] :
+								[path.resolve('src'), path.resolve('test')],
+							query: {
+								presets: [
+									[
+										'env',
+										{
+											'targets': {
+												'chrome': 59,
+												'firefox': 49
+											}
+										}
+									]
+								]
+							}
+						}]
+					)
 			},
 			devtool: 'eval'
 		},
