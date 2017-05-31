@@ -30,6 +30,13 @@ describe('Functions and operators on sequences', () => {
 				() => chai.assert.isTrue(evaluateXPathToBoolean('exists((1, 2, 3))', documentNode)));
 		});
 
+		describe('fn:filter', () => {
+			it('filters a sequence',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('filter((1, 2, 3), function ($a) {$a = 2}) eq 2', documentNode)));
+			it('works in obscure cases',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('(1 to 20)[. = filter(1 to position(), function($x){$x idiv 2 * 2 = $x})] => deep-equal((2,4,6,8,10,12,14,16,18,20))', documentNode)));
+		});
+
 		describe('fn:head', () => {
 			it('returns an empty sequence when given an empty sequence',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('head(())', documentNode), []));

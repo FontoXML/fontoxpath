@@ -17,6 +17,7 @@ import NodeTypeSelector from '../selectors/tests/NodeTypeSelector';
 import ProcessingInstructionTargetSelector from '../selectors/tests/ProcessingInstructionTargetSelector';
 import TypeTest from '../selectors/tests/TypeTest';
 import FunctionCall from '../selectors/functions/FunctionCall';
+import InlineFunction from '../selectors/functions/InlineFunction';
 import AndOperator from '../selectors/operators/boolean/AndOperator';
 import OrOperator from '../selectors/operators/boolean/OrOperator';
 import UniversalSelector from '../selectors/operators/UniversalSelector';
@@ -116,6 +117,8 @@ function compile (ast) {
 			// Functions
 		case 'functionCall':
 			return functionCall(args);
+		case 'inlineFunction':
+			return inlineFunction(args);
 
 		case 'literal':
 			return literal(args);
@@ -253,6 +256,11 @@ function forExpression ([clauses, returnExpression]) {
 
 function functionCall (args) {
 	return new FunctionCall(compile(args[0]), args[1].map(arg => arg === 'argumentPlaceholder' ? null : compile(arg)));
+}
+
+function inlineFunction (args) {
+	const [params, returnType, body] = args;
+	return new InlineFunction(params, returnType, compile(body));
 }
 
 function instanceOf (args) {

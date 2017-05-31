@@ -13,11 +13,11 @@ XPath
 
 // 2
 ParamList
- = start:Param rest:( _ "," _ param:Param {return param} ) {return appendRest(["param", start], rest)}
+ = start:Param rest:( _ "," _ param:Param {return param} )* {return appendRest([start], rest)}
 
 // 3
 Param
- = "$" name:EQName _ type:TypeDeclaration? {return ["param", name, type]}
+ = "$" name:EQName type:TypeDeclaration? {return [name, type || "item()"]}
 
 // 4
 FunctionBody
@@ -26,7 +26,7 @@ FunctionBody
 // 5
 
 EnclosedExpr
- = "{" _ e:Expr _ "}" { return e }
+ = "{" _ e:Expr? _ "}" {return e || ["sequence"]}
 
 // 6
 Expr
@@ -43,10 +43,10 @@ ExprSingle
 // 8
 ForExpr = clause:SimpleForClause S "return" S expr:ExprSingle {return ["forExpression", clause, expr]}
 
-// 9 (Not implemented)
+// 9
 SimpleForClause = "for" S first:SimpleForBinding rest:( _ "," _ b:SimpleForBinding {return b})* {return [first].concat(rest)}
 
-// 10 (Not implemented)
+// 10
 SimpleForBinding = "$" varName:VarName S "in" S expr:ExprSingle {return [varName, expr]}
 
 // 11
@@ -57,7 +57,7 @@ LetExpr
 	if (bindings.length === 1) return ["let"].concat(bindings[0], [returnExpr]);
 	return bindings.reduceRight(function (expression, binding) {
 	    return ["let"].concat(binding, [expression]);
-	  }, returnExpr)
+	 }, returnExpr)
   }
 
 // 12
@@ -76,7 +76,7 @@ IfExpr
 
 // 16
 OrExpr
- = first:AndExpr rest:( _ "or" AssertAdjacentOpeningTerminal _ expr:AndExpr {return expr})* {return rest.length ? appendRest(['or', first], rest) : first}
+ = first:AndExpr rest:( _ "or" AssertAdjacentOpeningTerminal _ expr:AndExpr {return expr})* {return rest.length ? appendRest(["or", first], rest) : first}
 
 // 17
 AndExpr
@@ -121,7 +121,7 @@ UnionExpr
 
 // 24 Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
- = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return ["op:"+type, rhs] })? {
+ = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return ["op:"+type, rhs]})? {
      return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", rhs[0], 2], [lhs, rhs[1]]]
    }
 
@@ -145,7 +145,7 @@ CastExpr
 
 // 29
 ArrowExpr
- = lhs:UnaryExpr functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier _ argumentList:ArgumentList _ { return [functionName, argumentList]})* {
+ = lhs:UnaryExpr functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier _ argumentList:ArgumentList _ {return [functionName, argumentList]})* {
      if (!functionParts.length) return lhs;
      return functionParts.reduce(function (previousFunction, functionPart) {
        var args = [previousFunction].concat(functionPart[1]);
@@ -173,7 +173,7 @@ NodeComp = op:((op:"is" AssertAdjacentOpeningTerminal {return op}) / "<<" / ">>"
 
 // 35
 SimpleMapExpr
- = lhs:PathExpr parts:( _ "!" _ expr:PathExpr { return expr })* {
+ = lhs:PathExpr parts:( _ "!" _ expr:PathExpr {return expr})* {
      if (!parts.length) return lhs;
      return parts.reduce(function (previousMap, expression) {
          return ["simpleMap", previousMap, expression]
@@ -210,14 +210,14 @@ AxisStep
      if (!predicates.length) {
        return [axis, test];
      }
-     return predicates.reduce(function (accumulator, current) { return ["filter", accumulator, current] }, [axis, test])
+     return predicates.reduce(function (accumulator, current) {return ["filter", accumulator, current]}, [axis, test])
    }
  / AbbreviatedStep
 
 Axis
- = name:AxisName '::' { return name }
+ = name:AxisName "::" {return name}
  / "@" {return "attribute"}
- / "" { return "child" }
+ / "" {return "child"}
 
 AxisName
  = "ancestor-or-self"
@@ -234,7 +234,7 @@ AxisName
  / "self"
 
 AbbreviatedStep
- = ".." { return ["parent", ["kindTest", "node()"]] }
+ = ".." {return ["parent", ["kindTest", "node()"]]}
 
 // 46
 NodeTest = KindTest / nameTest:NameTest {return ["nameTest", nameTest]}
@@ -248,7 +248,7 @@ PostfixExpr
      filter:Predicate {return ["filter", filter]} /
      argList:ArgumentList {return ["functionCall", argList]} /
      lookup:Lookup {return ["lookup", lookup]}
-   )* {return postfixExpr.length ? postfixExpr.reduce(function (accumulator, currentExpr) { currentExpr.splice(1, 0, accumulator); return currentExpr; }, expr) : expr}
+   )* {return postfixExpr.length ? postfixExpr.reduce(function (accumulator, currentExpr) { currentExpr.splice(1, 0, accumulator); return currentExpr}, expr) : expr}
 
 // 50
 ArgumentList
@@ -304,7 +304,7 @@ ParenthesizedExpr
 // 62
 // Do not match '..'
 ContextItemExpr
- = "." !"." { return ["self", ["kindTest", "item()"]] }
+ = "." !"." {return ["self", ["typeTest", "item()"]]}
 
 // 63
 FunctionCall
@@ -324,7 +324,7 @@ ArgumentPlaceholder
 // 66
 FunctionItemExpr
  = NamedFunctionRef
-// / InlineFunctionExpr
+ / InlineFunctionExpr
 
 // 67
 NamedFunctionRef
@@ -332,8 +332,7 @@ NamedFunctionRef
 
 // 68
 InlineFunctionExpr
- = "function" _ "(" _ params:ParamList _ ")" _ body:FunctionBody {return ["inlineFunction", params, [], body]}
- / "function" _ "(" _ params:ParamList _ ")" _ "as" S type:SequenceType  _ body:FunctionBody {return ["inlineFunction", params, type, body]}
+ = "function" _ "(" _ params:ParamList? _ ")" _ returnType:( "as" S t:$SequenceType _ {return t})? body:FunctionBody {return ["inlineFunction", params || [], returnType || "item()*", body]}
 
 // 69
 MapConstructor
@@ -358,11 +357,11 @@ ArrayConstructor
 
 // 74
 SquareArrayConstructor
- = "[" _ entries:(first:ExprSingle _ rest:("," _ e:ExprSingle _ { return e })* { return appendRest([first], rest) })? "]" { return ["arrayConstructor", "square"].concat(entries || []) }
+ = "[" _ entries:(first:ExprSingle _ rest:("," _ e:ExprSingle _ {return e})* {return appendRest([first], rest)})? "]" {return ["arrayConstructor", "square"].concat(entries || [])}
 
 // 75
 CurlyArrayConstructor
- = "array" _ e:EnclosedExpr { return ['arrayConstructor', "curly", e] }
+ = "array" _ e:EnclosedExpr {return ["arrayConstructor", "curly", e]}
 
 // 76 (Not implemented)
 // UnaryLookup ::= "?" KeySpecifier
@@ -373,12 +372,12 @@ SingleType
 
 // 78
 TypeDeclaration
- = " as " SequenceType
+ = S "as" S st:$SequenceType {return st}
 
 // 79
 SequenceType
- = "empty-sequence()"
- / type:ItemType _ occurence:OccurenceIndicator? { return [type, occurence] }
+ = "empty-sequence()" {return ["empty-sequence()", "0"]}
+ / type:ItemType _ occurence:OccurenceIndicator? {return [type, occurence]}
 
 // 80
 OccurenceIndicator = "?" / "*" / "+"
@@ -386,27 +385,27 @@ OccurenceIndicator = "?" / "*" / "+"
 // 81
 ItemType
  = KindTest
- / "item()"
-// / FunctionTest { return "unsupported"}
+ / "item()" {return ["typeTest", "item()"]}
+ / FunctionTest
  / MapTest
  / ArrayTest
  / AtomicOrUnionType
  / ParenthesizedItemType
 
 // 82
-AtomicOrUnionType = typeName:EQName { return ["typeTest", typeName] }
+AtomicOrUnionType = typeName:EQName {return ["typeTest", typeName]}
 
 // 83
 KindTest
  = DocumentTest
  / ElementTest
  / AttributeTest
- / SchemaElementTest { return "unsupported"}
- / SchemaAttributeTest { return "unsupported"}
+ / SchemaElementTest {return "unsupported"}
+ / SchemaAttributeTest {return "unsupported"}
  / PITest
  / CommentTest
  / TextTest
- / NamespaceNodeTest { return "unsupported"}
+ / NamespaceNodeTest {return "unsupported"}
  / AnyKindTest
 
 // 84
@@ -484,11 +483,11 @@ TypeName = EQName
 FunctionTest = AnyFunctionTest / TypedFunctionTest
 
 // 103
-AnyFunctionTest = "function (*)"
+AnyFunctionTest = "function" _ "(" _ "*" _ ")" {return ["anyFunctionTest"]}
 
 // 104
 TypedFunctionTest
- = "function" _ "(" _ (SequenceType ("," _ SequenceType)*)? _ ")" S "as" S SequenceType
+ = "function" _ "(" _ types:(first:SequenceType rest:("," _ t:SequenceType {return t})* {return appendRest(first, rest)})? _ ")" S "as" S SequenceType {return ["functionTest", types]}
 
 // 105
 MapTest = AnyMapTest / TypedMapTest
@@ -553,7 +552,7 @@ Comment
 QName = PrefixedName / UnprefixedName
 
 // 123 Note: https://www.w3.org/TR/REC-xml-names/#NT-NCName
-NCName = start:NCNameStartChar rest:(NCNameChar*) {return start+rest.join('')}
+NCName = start:NCNameStartChar rest:(NCNameChar*) {return start + rest.join("")}
 
 // 124 Note: https://www.w3.org/TR/REC-xml/#NT-Char
 Char = [\t\n\r -\uD7FF\uE000\uFFFD] / [\uD800-\uDBFF][\uDC00-\uDFFF]	/* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */

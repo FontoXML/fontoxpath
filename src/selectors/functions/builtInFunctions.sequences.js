@@ -3,6 +3,7 @@ import castToType from '../dataTypes/castToType';
 import isInstanceOfType from '../dataTypes/isInstanceOfType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
+import { transformArgument } from './argumentHelper';
 
 import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 
@@ -319,6 +320,32 @@ function fnExactlyOne (_dynamicContext, arg) {
 	return arg;
 }
 
+function fnFilter (dynamicContext, sequence, callbackSequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	/**
+	 * @type {../dataTypes/FunctionValue}
+	 */
+	const callbackFn = callbackSequence.first();
+	return sequence.filter(item => {
+		// Tranform argument
+		const transformedArgument = transformArgument(
+			callbackFn.getArgumentTypes()[0],
+			Sequence.singleton(item),
+			dynamicContext);
+		if (!transformedArgument) {
+			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
+		}
+		const functionCallResult = callbackFn.value.call(undefined, dynamicContext, transformedArgument);
+		if (!functionCallResult.isSingleton() || !isInstanceOfType(functionCallResult.first(), 'xs:boolean')) {
+			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
+		}
+		return functionCallResult.first().value;
+	});
+}
+
 export default {
 	declarations: [
 		{
@@ -403,7 +430,7 @@ export default {
 			argumentTypes: ['item()*', 'item()*', 'xs:string'],
 			returnType: 'xs:boolean',
 			callFunction: function () {
-				throw new Error('Calling the deep-equal function with a non-default collation is not supported at this moment');
+				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
 
@@ -433,7 +460,7 @@ export default {
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: function () {
-				throw new Error('Calling the max function with a non-default collation is not supported at this moment');
+				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
 
@@ -449,7 +476,7 @@ export default {
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: function () {
-				throw new Error('Calling the min function with a non-default collation is not supported at this moment');
+				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
 
@@ -488,6 +515,13 @@ export default {
 			argumentTypes: ['item()*'],
 			returnType: 'item()',
 			callFunction: fnExactlyOne
+		},
+
+		{
+			name: 'filter',
+			argumentTypes: ['item()*', 'function(*)'],
+			returnType: 'item()',
+			callFunction: fnFilter
 		}
 	],
 	functions: {

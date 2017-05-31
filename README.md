@@ -52,7 +52,7 @@ For all available features, see the unit tests.
 
 ## Contribution
 
-To recompile the parser, run the following
+To recompile the parser, run the following:
 
 ```
 npm install

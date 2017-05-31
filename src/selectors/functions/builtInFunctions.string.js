@@ -4,7 +4,7 @@ import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 
 function collationError () {
-	throw new Error('Not implemented: Specifying a collation is not supported');
+	throw new Error('FOCH0002: No collations are supported');
 }
 
 function contextItemAsFirstArgument (fn, dynamicContext) {
