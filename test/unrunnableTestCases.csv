@@ -7701,7 +7701,7 @@ CastAs673b,Error: XPTY0004: Casting not supported from xs:string to xs:QName.
 CastAs677,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 CastAs678,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 CastFOCA0003-1,AssertionError: Expected executing the XPath "xs:integer(99e100)" to resolve to one of the expected results, but got Error: FOAR0002: can not cast 9.9e+101 to xs:integer, it is out of bounds for JavaScript numbers., AssertionError: expected [Function] to throw error including 'FOCA0003' but got 'FOAR0002: can not cast 9.9e+101 to xs:integer, it is out of bounds for JavaScript numbers.'.
-K-SeqExprCast-8,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'Cannot read property \'$getPrimitiveType$\' of undefined'
+K-SeqExprCast-8,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'Cannot read property \'ma\' of undefined'
 K-SeqExprCast-42,Error: XPST0017: Function xs:QName with arity of 1 not registered. Did you mean "xs:Name (xs:anyAtomicType?)", "xs:NCName (xs:anyAtomicType?)", "xs:time (xs:anyAtomicType?)" or "xs:date (xs:anyAtomicType?)"?
 K-SeqExprCast-43,Error: XPST0017: Function xs:QName with arity of 1 not registered. Did you mean "xs:Name (xs:anyAtomicType?)", "xs:NCName (xs:anyAtomicType?)", "xs:time (xs:anyAtomicType?)" or "xs:date (xs:anyAtomicType?)"?
 K-SeqExprCast-54,Error: XPST0017: Function xs:QName with arity of 1 not registered. Did you mean "xs:Name (xs:anyAtomicType?)", "xs:NCName (xs:anyAtomicType?)", "xs:time (xs:anyAtomicType?)" or "xs:date (xs:anyAtomicType?)"?
