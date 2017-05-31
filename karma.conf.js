@@ -10,10 +10,10 @@ if (runIntegrationTests && coverageMode) {
 }
 
 const bootstrapFile = runQt3Tests ?
-		require.resolve('./test/qt3tests.js') :
-		runIntegrationTests ?
-			require.resolve('./test/integrationtests.js') :
-			require.resolve('./test/alltests.js');
+	require.resolve('./test/qt3tests.js') :
+	runIntegrationTests ?
+		require.resolve('./test/integrationtests.js') :
+		require.resolve('./test/alltests.js');
 
 module.exports = config => {
 	config.set({

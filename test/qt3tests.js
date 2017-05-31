@@ -131,7 +131,6 @@ const shouldRunTestByName = require('text-loader!./runnableTestSets.csv')
 	  .map(line=>line.split(','))
 	  .reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 
-console.log('starting');
 const unrunnableTestCasesByName = require('text-loader!./unrunnableTestCases.csv')
 	  .split('\n')
 	  .map(line => line.split(','))
@@ -194,6 +193,7 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 					}
 					catch (e) {
 						window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
+						// And rethrow the error
 						throw e;
 					}
 				};
