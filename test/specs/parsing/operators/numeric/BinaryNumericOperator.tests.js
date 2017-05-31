@@ -27,6 +27,9 @@ describe('mathematical operators', () => {
 	it('can evaluate 1 idiv 2 to 1',
 		() => chai.assert.equal(evaluateXPathToNumber('1 idiv 2', documentNode), 0));
 
+	it('uses the correct ordering',
+		() => chai.assert.equal(evaluateXPathToNumber('2 idiv 2 * 2', documentNode), 2, 'This should be parsed as (2 idiv 2) * 2'));
+
 	it('returns the empty sequence if one of the operands is the empty sequence',
 		() => chai.assert.deepEqual(evaluateXPathToStrings('() + 1', documentNode), []));
 

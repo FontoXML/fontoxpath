@@ -105,9 +105,14 @@ AdditiveExpr
  / MultiplicativeExpr
 
 // 22
+multiplicativeExprOp
+ = op:("*" / ( op:("div" / "idiv" / "mod") AssertAdjacentOpeningTerminal {return op}))
 MultiplicativeExpr
- = lhs:UnionExpr _ op:("*" / ( op:("div" / "idiv" / "mod") AssertAdjacentOpeningTerminal {return op})) _ rhs:MultiplicativeExpr {return ["binaryOperator", op, lhs, rhs]}
- / UnionExpr
+ = lhs:UnionExpr rest:( _ op:multiplicativeExprOp _ rhs:UnionExpr {return {op: op, rhs: rhs}})* {
+		return rest.length === 0 ? lhs : rest.reduce(function (inner, nesting) {
+			return ["binaryOperator", nesting.op, inner, nesting.rhs]
+		}, lhs)
+	}
 
 // 23
 UnionExpr
