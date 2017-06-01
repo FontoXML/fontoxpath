@@ -206,9 +206,6 @@ describe('castable as', () => {
 	describe('as xs:yearMonthDuration', () => {
 		it('can not cast invalid untypedAtomics to xs:yearMonthDuration',
 			() => chai.assert.isFalse(evaluateXPathToBoolean('xs:untypedAtomic("-P1Y1M1DT1H1M1.123S") castable as xs:yearMonthDuration', documentNode)));
-	});
-
-	describe('as xs:yearMonthDuration', () => {
 		it('can not cast invalid strings to xs:yearMonthDuration',
 			() => chai.assert.isFalse(evaluateXPathToBoolean('"P3YT2H" castable as xs:dayTimeDuration', documentNode)));
 	});
@@ -218,7 +215,6 @@ describe('castable as', () => {
 			() => chai.assert.isTrue(evaluateXPathToBoolean('"someString" castable as xs:ENTITY', documentNode)));
 		it('disallows empty strings',
 			() => chai.assert.isFalse(evaluateXPathToBoolean('"" castable as xs:ENTITY', documentNode)));
-
 	});
 
 	describe('as xs:language', () => {

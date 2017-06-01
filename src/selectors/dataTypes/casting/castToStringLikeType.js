@@ -79,19 +79,19 @@ export default function castToStringLikeType (instanceOf) {
 	if (instanceOf('xs:yearMonthDuration')) {
 		return value => ({
 			successful: true,
-			value: value.buildString('xs:yearMonthDuration')
+			value: value.toString()
 		});
 	}
 	if (instanceOf('xs:dayTimeDuration')) {
 		return value => ({
 			successful: true,
-			value: value.buildString('xs:dayTimeDuration')
+			value: value.toString()
 		});
 	}
 	if (instanceOf('xs:duration')) {
 		return value => ({
 			successful: true,
-			value: value.buildString('xs:duration')
+			value: value.toString()
 		});
 	}
 	if (instanceOf('xs:hexBinary')) {

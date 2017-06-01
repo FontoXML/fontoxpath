@@ -203,7 +203,7 @@ op-divide-dayTimeDuration,false
 op-divide-dayTimeDuration-by-dayTimeDuration,false
 op-divide-yearMonthDuration,false
 op-divide-yearMonthDuration-by,false
-op-duration-equal,true
+op-duration-equal,false
 op-except,true
 op-gDay-equal,false
 op-gMonth-equal,false

@@ -12,7 +12,7 @@ export default function castToDuration (instanceOf) {
 		// Also for instanceOf('xs:dayTimeDuration') and instanceOf('xs:yearMonthDuration')
 		return value => ({
 			successful: true,
-			value: createDurationValue(value)
+			value: createDurationValue(value.toDuration())
 		});
 	}
 	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {

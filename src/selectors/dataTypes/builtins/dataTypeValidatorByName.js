@@ -250,6 +250,22 @@ function isValidInteger (value) {
 	return /^[+-]?\d+$/.test(value);
 }
 
+/**
+ * @param   {string}   value
+ * @return  {boolean}
+ */
+function isValidYearMonthDuration (value) {
+	return /^-?P[0-9]+(Y([0-9]+M)?|M)$/.test(value);
+}
+
+/**
+ * @param   {string}   value
+ * @return  {boolean}
+ */
+function isValidDayTimeDuration (value) {
+	return /^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9]+)?S)?)?$/.test(value);
+}
+
 export default {
 	'xs:anySimpleType': isValidAnySimpleType,
 	'xs:anyAtomicType': isValidAnyAtomicType,
@@ -284,5 +300,8 @@ export default {
 	'xs:IDREF': isValidID,
 	'xs:ENTITY': isValidENTITY,
 
-	'xs:integer': isValidInteger
+	'xs:integer': isValidInteger,
+
+	'xs:yearMonthDuration': isValidYearMonthDuration,
+	'xs:dayTimeDuration': isValidDayTimeDuration
 };
