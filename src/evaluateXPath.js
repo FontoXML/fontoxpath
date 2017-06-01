@@ -201,9 +201,9 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 				});
 			}
 			if (rawResults.isSingleton()) {
-				return rawResults.first().atomize(dynamicContext).value;
+				return atomize(rawResults.first(), dynamicContext).value;
 			}
-			return Array.from(rawResults.atomize(dynamicContext).value()).map(function (atomizedValue) {
+			return Array.from(atomize(rawResults, dynamicContext).value()).map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
 	}

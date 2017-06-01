@@ -1,12 +1,15 @@
 import slimdom from 'slimdom';
 
-import { domFacade } from 'fontoxpath';
-import evaluateXPathToBoolean from 'fontoxpath/evaluateXPathToBoolean';
-import evaluateXPathToFirstNode from 'fontoxpath/evaluateXPathToFirstNode';
-import evaluateXPathToNodes from 'fontoxpath/evaluateXPathToNodes';
-import evaluateXPathToNumber from 'fontoxpath/evaluateXPathToNumber';
-import evaluateXPathToString from 'fontoxpath/evaluateXPathToString';
-import evaluateXPathToStrings from 'fontoxpath/evaluateXPathToStrings';
+import {
+	domFacade,
+	evaluateXPathToBoolean,
+	evaluateXPath,
+	evaluateXPathToFirstNode,
+	evaluateXPathToNodes,
+	evaluateXPathToNumber,
+	evaluateXPathToString,
+	evaluateXPathToStrings
+} from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 describe('evaluateXPath', () => {
@@ -14,6 +17,14 @@ describe('evaluateXPath', () => {
 	beforeEach(() => {
 		documentNode = slimdom.createDocument();
 	});
+
+	it('Keeps booleans booleans',
+		() => chai.assert.equal(evaluateXPath('true()', documentNode, domFacade), true));
+	it('Keeps numbers numbers',
+		() => chai.assert.equal(evaluateXPath('1', documentNode, domFacade), 1));
+	it('Keeps nodes nodes',
+		() => chai.assert.equal(evaluateXPath('.', documentNode, domFacade), documentNode));
+
 
 	describe('toBoolean', () => {
 		it('Keeps booleans booleans',
