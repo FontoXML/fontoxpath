@@ -37,7 +37,6 @@ The following features are unavailable, but will be implemented at some point in
 
 * DateTime related functions
 * Collation related functions (`fn:compare#3`)
-* Inline functions
 * The `?` lookup operator for maps and arrays
 * XML parsing
 

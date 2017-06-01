@@ -15,9 +15,9 @@ describe('cast as', () => {
 	it('accepts empty sequences',
 		() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := () cast as xs:boolean? return $r => empty()', documentNode)));
 	it('does not accept empty sequences',
-		() => chai.assert.throws(() => evaluateXPathToBoolean('() cast as xs:boolean', documentNode)), 'XPST0004');
+		() => chai.assert.throws(() => evaluateXPathToBoolean('() cast as xs:boolean', documentNode), 'XPTY0004'));
 	it('does not accept sequences of length > 1',
-		() => chai.assert.throws(() => evaluateXPathToBoolean('("a", "b") cast as xs:boolean', documentNode)), 'XPST0004');
+		() => chai.assert.throws(() => evaluateXPathToBoolean('("a", "b") cast as xs:boolean', documentNode), 'XPTY0004'));
 
 	describe('to xs:boolean', () => {
 		it('casts "true" to true',
@@ -31,7 +31,7 @@ describe('cast as', () => {
 		it('casts xs:untypedAtomic to false',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:untypedAtomic("0") cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode)));
 		it('throws when given an invalid value',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('let $r := "wat" cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode)), 'FORG0001');
+			() => chai.assert.throws(() => evaluateXPathToBoolean('let $r := "wat" cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode), 'FORG0001'));
 		it('can cast integers to booleans: true',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := 25 cast as xs:boolean return $r instance of xs:boolean and $r = true()', documentNode)));
 		it('can cast integers to booleans: false',
@@ -59,13 +59,13 @@ describe('cast as', () => {
 		it('can cast untypedAtomic to decimals: "123"',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:untypedAtomic("123") cast as xs:decimal return $r instance of xs:decimal and $r = 123', documentNode)));
 		it('fails casting non-numeric untypedAtomic to decimals: "Not a number at ALL"',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('let $r := xs:untypedAtomic("Not a number at all") cast as xs:decimal return $r instance of xs:decimal and $r = 123', documentNode)), 'XPTY0004');
+			() => chai.assert.throws(() => evaluateXPathToBoolean('let $r := xs:untypedAtomic("Not a number at all") cast as xs:decimal return $r instance of xs:decimal and $r = 123', documentNode), 'FORG0001'));
 		it('can cast floats to decimals: 123.2',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:float("123.2") cast as xs:decimal return $r instance of xs:decimal and $r = 123.2', documentNode)));
 		it('can cast integers to decimals: 123.2',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := 123 cast as xs:decimal return $r instance of xs:decimal and $r = 123', documentNode)));
 		it('fails casting NaN to decimals',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('let $r := xs:float("NaN") cast as xs:decimal return $r instance of xs:decimal and $r = 123.2', documentNode)), 'FOCA0002');
+			() => chai.assert.throws(() => evaluateXPathToBoolean('let $r := xs:float("NaN") cast as xs:decimal return $r instance of xs:decimal and $r = 123.2', documentNode), 'FOCA0002'));
 	});
 
 	describe('to xs:float', () => {
@@ -180,7 +180,7 @@ describe('cast as', () => {
 
 	describe('to xs:long', () => {
 		it('can cast strings to xs:long: max bounds. This will not work because of JavaScript numbers not having the same ranges',
-			() => chai.assert.throws(() => evaluateXPathToNumber('xs:long("9223372036854775808")', documentNode), 9223372036854775808), 'FOAR0002');
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:long("9223372036854775808")', documentNode), 'FOCA0003'));
 		it('can cast strings to xs:long: middle bounds',
 			() => chai.assert.equal(evaluateXPathToNumber('xs:long("922337203685458")', documentNode), 922337203685458));
 	});
@@ -189,9 +189,9 @@ describe('cast as', () => {
 		it('can cast strings to xs:int',
 			() => chai.assert.equal(evaluateXPathToNumber('xs:int("1234")', documentNode), 1234));
 		it('xs:int can not be written in hexadecimal',
-			() => chai.assert.throws(() => evaluateXPathToNumber('xs:int("0x1234")', documentNode)), 'FORG0001');
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:int("0x1234")', documentNode), 'FORG0001'));
 		it('xs:int can not be written with fractions',
-			() => chai.assert.throws(() => evaluateXPathToNumber('xs:int("1.0")', documentNode)), 'FORG0001');
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:int("1.0")', documentNode), 'FORG0001'));
 	});
 
 
@@ -212,14 +212,14 @@ describe('cast as', () => {
 		it('can cast strings to xs:language',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('exists(xs:language("qya"))', documentNode)));
 		it('disallows integers at the start',
-			() => chai.assert.throws(() => evaluateXPathToNumber('xs:language("1234")', documentNode)), 'FORG0001');
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:language("1234")', documentNode), 'FORG0001'));
 		it('disallows integers as a type',
-			() => chai.assert.throws(() => evaluateXPathToNumber('xs:language(xs:int("1234"))', documentNode)), 'FORG0001');
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:language(xs:int("1234"))', documentNode), 'FORG0001'));
 	});
 
 	describe('to xs:error', () => {
 		it('can not cast anything to xs:error',
-			() => chai.assert.throws(() => evaluateXPathToNumber('1 cast as xs:error', documentNode)), 'FORG0001');
+			() => chai.assert.throws(() => evaluateXPathToNumber('1 cast as xs:error', documentNode), 'FORG0001'));
 	});
 
 	describe('to xs:dayTimeDuration', () => {
