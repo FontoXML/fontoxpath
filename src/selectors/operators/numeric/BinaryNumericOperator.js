@@ -66,6 +66,11 @@ class BinaryNumericOperator extends Selector {
 			secondValue = castToType(secondValue, 'xs:double');
 		}
 
+		if (!isInstanceOfType(firstValue, 'xs:numeric') || !isInstanceOfType(secondValue, 'xs:numeric')) {
+			// TODO: date / time like values
+			throw new Error('XPTY0004: the operands of the "' + this._kind + '" operator should be of type xs:numeric?.');
+		}
+
 		const result = executeOperator(this._kind, firstValue.value, secondValue.value);
 		let typedResult;
 		// Override for types

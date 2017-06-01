@@ -36,8 +36,8 @@ describe('mathematical operators', () => {
 	it('can evaluate 5 mod 3 to 2',
 		() => chai.assert.equal(evaluateXPathToNumber('5 mod 3', documentNode), 2));
 
-	it('can evaluate "something" + 1 to NaN',
-		() => chai.assert.isNaN(evaluateXPathToNumber('"something" + 1', documentNode)));
+	it('throws when passed strings',
+		() => chai.assert.throws(() => evaluateXPathToNumber('"something" + 1', documentNode), 'XPTY0004'));
 
 	it('can parse untyped attributes', () => {
 		jsonMlMapper.parse(['someElement', { a: '1' }], documentNode);

@@ -1528,7 +1528,6 @@ op-numeric-addnni2args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:
 op-numeric-addnni2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-addnni2args-4,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-addnni2args-5,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-op-numeric-addmix2args-2,AssertionError: expected [Function] to throw an error
 K-NumericAdd-4,AssertionError: Expected XPath 1.1 + 2.2 eq 3.3 to resolve to true: expected false to be true
 K-NumericAdd-15,AssertionError: Expected XPath (xs:integer(6) + xs:integer(2)) instance of xs:integer to resolve to true: expected false to be true
 K-NumericAdd-17,AssertionError: Expected XPath (xs:decimal(6) + xs:float(2)) instance of xs:float to resolve to true: expected false to be true
@@ -1551,13 +1550,7 @@ K-NumericAdd-35,AssertionError: Expected executing the XPath "3 + (4, error())" 
 K-NumericAdd-36,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
 K-NumericAdd-41,AssertionError: Expected executing the XPath "error() + 3" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.', AssertionError: expected [Function] to throw error including 'XPST0005' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'.
 K-NumericAdd-42,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. No similar functions found.'
-K-NumericAdd-43,AssertionError: expected [Function] to throw an error
-K-NumericAdd-44,AssertionError: expected [Function] to throw an error
 K-NumericAdd-60,AssertionError: Expected XPath (xs:untypedAtomic("3") + 3) instance of xs:double to resolve to true: expected false to be true
-K-NumericAdd-63,AssertionError: expected [Function] to throw an error
-K-NumericAdd-64,AssertionError: expected [Function] to throw an error
-K-NumericAdd-65,AssertionError: expected [Function] to throw an error
-K-NumericAdd-66,AssertionError: expected [Function] to throw an error
 op-numeric-equalintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-equalintg2args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-equalintg2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1653,7 +1646,6 @@ op-numeric-dividenpi2args-3,Error: FOCA0003: can not cast -999999999999999999 to
 op-numeric-dividenpi2args-4,AssertionError: Expected executing the XPath "fn:round-half-to-even((xs:nonPositiveInteger("-999999999999999999") div xs:nonPositiveInteger("-475688437271870490")),18)" to resolve to one of the expected results, but got Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers., Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers..
 op-numeric-dividenni2args-1,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-dividenni2args-2,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-op-numeric-dividemix2args-2,AssertionError: expected [Function] to throw an error
 K-NumericDivide-20,AssertionError: Expected XPath (xs:float(6) div xs:decimal(2)) instance of xs:float to resolve to true: expected false to be true
 K-NumericDivide-21,AssertionError: Expected XPath (xs:decimal(6) div xs:float(2)) instance of xs:float to resolve to true: expected false to be true
 K-NumericDivide-22,AssertionError: Expected XPath (xs:float(6) div xs:integer(2)) instance of xs:float to resolve to true: expected false to be true
@@ -1666,8 +1658,6 @@ K-NumericDivide-28,AssertionError: Expected XPath (xs:float(6) div xs:double(2))
 K-NumericDivide-29,AssertionError: Expected XPath (xs:double(6) div xs:integer(2)) instance of xs:double to resolve to true: expected false to be true
 K-NumericDivide-30,AssertionError: Expected XPath (xs:integer(6) div xs:double(2)) instance of xs:double to resolve to true: expected false to be true
 K-NumericDivide-31,AssertionError: Expected XPath (xs:double(6) div xs:double(2)) instance of xs:double to resolve to true: expected false to be true
-K-NumericDivide-32,AssertionError: expected [Function] to throw an error
-K-NumericDivide-33,AssertionError: expected [Function] to throw an error
 K2-NumericDivide-1,AssertionError: expected [Function] to throw an error
 K2-NumericDivide-2,AssertionError: expected [Function] to throw an error
 K2-NumericDivide-3,AssertionError: expected [Function] to throw an error
@@ -1746,7 +1736,6 @@ op-numeric-integer-dividenpi2args-3,Error: FOCA0003: can not cast -9999999999999
 op-numeric-integer-dividenpi2args-4,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-integer-dividenni2args-1,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-integer-dividenni2args-2,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-op-numeric-integer-dividemix2args-2,AssertionError: expected [Function] to throw an error
 op-numeric-integer-dividemix2args-10,AssertionError: expected [Function] to throw an error
 op-numeric-integer-divide-1,AssertionError: expected [Function] to throw an error
 K-NumericIntegerDivide-31,AssertionError: expected [Function] to throw an error
@@ -1757,8 +1746,6 @@ K-NumericIntegerDivide-37,AssertionError: expected [Function] to throw an error
 K-NumericIntegerDivide-38,AssertionError: expected [Function] to throw an error
 K-NumericIntegerDivide-39,AssertionError: expected [Function] to throw an error
 K-NumericIntegerDivide-40,AssertionError: expected [Function] to throw an error
-K-NumericIntegerDivide-46,AssertionError: expected [Function] to throw an error
-K-NumericIntegerDivide-47,AssertionError: expected [Function] to throw an error
 K2-NumericIntegerDivide-1,AssertionError: expected [Function] to throw an error
 K2-NumericIntegerDivide-2,AssertionError: expected [Function] to throw an error
 K2-NumericIntegerDivide-3,AssertionError: expected [Function] to throw an error
@@ -1855,7 +1842,6 @@ op-numeric-modulng2args-1,Error: FOCA0003: can not cast 130747108607674654 to xs
 op-numeric-modulng2args-2,Error: FOCA0003: can not cast 184467440737095516 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-modnni2args-1,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-modnni2args-2,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-op-numeric-modmix2args-2,AssertionError: expected [Function] to throw an error
 K-NumericMod-3,AssertionError: Expected XPath (xs:integer(6) mod xs:integer(2)) instance of xs:integer to resolve to true: expected false to be true
 K-NumericMod-5,AssertionError: Expected XPath (xs:decimal(6) mod xs:float(2)) instance of xs:float to resolve to true: expected false to be true
 K-NumericMod-6,AssertionError: Expected XPath (xs:float(6) mod xs:decimal(2)) instance of xs:float to resolve to true: expected false to be true
@@ -1870,8 +1856,6 @@ K-NumericMod-14,AssertionError: Expected XPath (xs:double(6) mod xs:integer(2)) 
 K-NumericMod-15,AssertionError: Expected XPath (xs:integer(6) mod xs:double(2)) instance of xs:double to resolve to true: expected false to be true
 K-NumericMod-16,AssertionError: Expected XPath (xs:double(6) mod xs:double(2)) instance of xs:double to resolve to true: expected false to be true
 K-NumericMod-19,AssertionError: Expected XPath 4.5 mod 1.2 eq 0.9 to resolve to true: expected false to be true
-K-NumericMod-24,AssertionError: expected [Function] to throw an error
-K-NumericMod-25,AssertionError: expected [Function] to throw an error
 K2-NumericMod-59,AssertionError: expected [Function] to throw an error
 K2-NumericMod-60,AssertionError: expected [Function] to throw an error
 K2-NumericMod-61,AssertionError: expected [Function] to throw an error
@@ -1889,7 +1873,6 @@ op-numeric-multiplynni2args-2,Error: FOCA0003: can not cast 303884545991464527 t
 op-numeric-multiplynni2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-multiplynni2args-4,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-multiplynni2args-5,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-op-numeric-multiplymix2args-2,AssertionError: expected [Function] to throw an error
 K-NumericMultiply-7,AssertionError: Expected XPath (xs:integer(6) * xs:integer(2)) instance of xs:integer to resolve to true: expected false to be true
 K-NumericMultiply-9,AssertionError: Expected XPath (xs:decimal(6) * xs:float(2)) instance of xs:float to resolve to true: expected false to be true
 K-NumericMultiply-10,AssertionError: Expected XPath (xs:float(6) * xs:decimal(2)) instance of xs:float to resolve to true: expected false to be true
@@ -1903,8 +1886,6 @@ K-NumericMultiply-17,AssertionError: Expected XPath (xs:float(6) * xs:double(2))
 K-NumericMultiply-18,AssertionError: Expected XPath (xs:double(6) * xs:integer(2)) instance of xs:double to resolve to true: expected false to be true
 K-NumericMultiply-19,AssertionError: Expected XPath (xs:integer(6) * xs:double(2)) instance of xs:double to resolve to true: expected false to be true
 K-NumericMultiply-20,AssertionError: Expected XPath (xs:double(6) * xs:double(2)) instance of xs:double to resolve to true: expected false to be true
-K-NumericMultiply-28,AssertionError: expected [Function] to throw an error
-K-NumericMultiply-29,AssertionError: expected [Function] to throw an error
 op-numeric-subtractintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-subtractintg2args-2,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-subtractintg2args-3,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1933,7 +1914,6 @@ op-numeric-subtractnni2args-2,Error: FOCA0003: can not cast 303884545991464527 t
 op-numeric-subtractnni2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-subtractnni2args-4,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-subtractnni2args-5,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-op-numeric-subtractmix2args-2,AssertionError: expected [Function] to throw an error
 K-NumericSubtract-7,AssertionError: Expected XPath (xs:integer(6) - xs:integer(2)) instance of xs:integer to resolve to true: expected false to be true
 K-NumericSubtract-9,AssertionError: Expected XPath (xs:decimal(6) - xs:float(2)) instance of xs:float to resolve to true: expected false to be true
 K-NumericSubtract-10,AssertionError: Expected XPath (xs:float(6) - xs:decimal(2)) instance of xs:float to resolve to true: expected false to be true
@@ -1947,8 +1927,6 @@ K-NumericSubtract-17,AssertionError: Expected XPath (xs:float(6) - xs:double(2))
 K-NumericSubtract-18,AssertionError: Expected XPath (xs:double(6) - xs:integer(2)) instance of xs:double to resolve to true: expected false to be true
 K-NumericSubtract-19,AssertionError: Expected XPath (xs:integer(6) - xs:double(2)) instance of xs:double to resolve to true: expected false to be true
 K-NumericSubtract-20,AssertionError: Expected XPath (xs:double(6) - xs:double(2)) instance of xs:double to resolve to true: expected false to be true
-K-NumericSubtract-25,AssertionError: expected [Function] to throw an error
-K-NumericSubtract-26,AssertionError: expected [Function] to throw an error
 K-NumericSubtract-33,AssertionError: Expected XPath (xs:untypedAtomic("3") - xs:untypedAtomic("3")) instance of xs:double to resolve to true: expected false to be true
 K-NumericSubtract-34,AssertionError: Expected XPath (xs:untypedAtomic("3") - 1.1) instance of xs:double to resolve to true: expected false to be true
 K-NumericSubtract-35,AssertionError: Expected XPath (1.1 - xs:untypedAtomic("3")) instance of xs:double to resolve to true: expected false to be true
@@ -2372,8 +2350,6 @@ K-ForExprWithout-30,AssertionError: expected [Function] to throw error including
 K-ForExprWithout-33,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPST0008, The variable PREFIXNOTEXIST:NOTEXIST is not in scope.'
 K-ForExprWithout-36,AssertionError: expected [Function] to throw an error
 K-ForExprWithout-37,AssertionError: expected [Function] to throw an error
-K-ForExprWithout-46,AssertionError: expected [Function] to throw an error
-K-ForExprWithout-47,AssertionError: expected [Function] to throw an error
 K-ForExprWithout-49,Error: XPST0017: Function trace with arity of 2 not registered. Did you mean "true ()"?
 K-ForExprWithout-55,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
 K-ForExprWithout-56,Error: XPST0017: Function timezone-from-time with arity of 1 not registered. No similar functions found.
@@ -2472,7 +2448,6 @@ K-SeqExprInstanceOf-66,AssertionError: Expected XPath ((10)mod(3)) instance of x
 cbcl-instance-of-001,Error: XPTY0004: the operands of the "+" operator should be of type xs:numeric?.
 LetExpr004,Error: FOCA0003: can not cast 92233720368547758 to xs:integer, it is out of bounds for JavaScript numbers.
 LetExpr005,Error: FOCA0003: can not cast -92233720368547758 to xs:integer, it is out of bounds for JavaScript numbers.
-LetExpr014,AssertionError: expected [Function] to throw an error
 Literals016,AssertionError: 65535032e2: expected '6553503200' to equal '6.5535032E9'
 Literals017,AssertionError: 65535.032e2: expected '6553503.2' to equal '6.5535032E6'
 Literals025,AssertionError: -65535.032e2: expected '-6553503.2' to equal '-6.5535032E6'
