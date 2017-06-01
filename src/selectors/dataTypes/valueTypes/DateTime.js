@@ -74,6 +74,30 @@ class DateTime {
 		this._type = type;
 	}
 
+	getYear () {
+		return this._years;
+	}
+
+	getMonth () {
+		return this._months;
+	}
+
+	getDay () {
+		return this._days;
+	}
+
+	getHours () {
+		return this._hours;
+	}
+
+	getMinutes () {
+		return this._minutes;
+	}
+
+	getSeconds () {
+		return this._seconds + this._secondFraction;
+	}
+
 	normalize (timezone = undefined) {
 		if (timezone === undefined && (this._timezone === null || this._timezone.isUTC())) {
 			// Noting to normalize

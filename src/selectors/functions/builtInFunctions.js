@@ -2,6 +2,7 @@ import builtInArrayFunctions from './builtInFunctions.arrays';
 import builtInBooleanFunctions from './builtInFunctions.boolean';
 import builtInContextFunctions from './builtInFunctions.context';
 import builtInDataTypeConstructors from './builtInFunctions.dataTypeConstructors';
+import builtInDateTimeFunctions from './builtInFunctions.dateTime';
 import builtInDebuggingFunctions from './builtInFunctions.debugging';
 import builtInIdentifierFunctions from './builtInFunctions.identifiers';
 import builtInJsonFunctions from './builtInFunctions.json';
@@ -27,6 +28,7 @@ const builtInFunctions = [].concat(
 	builtInBooleanFunctions.declarations,
 	builtInContextFunctions.declarations,
 	builtInDataTypeConstructors.declarations,
+	builtInDateTimeFunctions.declarations,
 	builtInDebuggingFunctions.declarations,
 	builtInIdentifierFunctions.declarations,
 	builtInJsonFunctions.declarations,
