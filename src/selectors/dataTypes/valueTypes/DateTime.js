@@ -1,4 +1,4 @@
-import Timezone from './Timezone';
+import Duration from './Duration';
 
 /**
  * @param   {string|undefined}  match
@@ -8,7 +8,11 @@ function parseMatch (match) {
 	return match ? parseInt(match, 10) : null;
 }
 
-// Helper function to compare two normalized dateTimes
+/**
+ * @param   {DateTime}  dateTime1
+ * @param   {DateTime}  dateTime2
+ * @return  {number}
+ */
 function compareNormalizedDateTime (dateTime1, dateTime2) {
 	const fields = [
 		[dateTime1._years, dateTime2._years],
@@ -31,33 +35,57 @@ function compareNormalizedDateTime (dateTime1, dateTime2) {
 
 	return 0;
 }
+
+/**
+ * @param   {number}  year
+ * @return  {string}
+ */
 function convertYearToString (year) {
-	let string = year + '';
-	switch (string.length) {
-		case 1:
-			string = '000' + string;
-			break;
-		case 2:
-			string = '00' + string;
-			break;
-		case 3:
-			string = '0' + string;
-			break;
-	}
-	return string;
+	const string = year + '';
+	return string.padStart(4, '0');
 }
 
+/**
+ * @param   {number}  value
+ * @return  {string}
+ */
 function convertToTwoCharString (value) {
 	const string = value + '';
 	return string.padStart(2, '0');
 }
 
+/**
+ * @param   {number}  seconds
+ * @return  {string}
+ */
 function convertSecondsToString (seconds) {
 	let string = seconds + '';
 	if (string.split('.')[0].length === 1) {
 		string = string.padStart(string.length + 1, '0');
 	}
 	return string;
+}
+
+/**
+ * @param   {Duration}  timezone
+ * @return  {boolean}
+ */
+function isUTC (timezone) {
+	return timezone.getHours() === 0 && timezone.getMinutes() === 0;
+}
+
+/**
+ * @param   {Duration} timezone
+ * @return  {string}
+ */
+function timezoneToString (timezone) {
+	if (isUTC(timezone)) {
+		return 'Z';
+	}
+
+	return (timezone.isPositive() ? '+' : '-') +
+		convertToTwoCharString(timezone.getHours()) + ':' +
+		convertToTwoCharString(timezone.getMinutes());
 }
 
 class DateTime {
@@ -69,7 +97,7 @@ class DateTime {
 		this._minutes = minutes;
 		this._seconds = seconds;
 		this._secondFraction = secondFraction;
-		this._timezone = timezone; // TODO: convert to dayTimeDuration
+		this._timezone = timezone;
 		this._isPositive = isPositive;
 		this._type = type;
 	}
@@ -98,8 +126,12 @@ class DateTime {
 		return this._seconds + this._secondFraction;
 	}
 
+	getTimezone () {
+		return this._timezone;
+	}
+
 	normalize (timezone = undefined) {
-		if (timezone === undefined && (this._timezone === null || this._timezone.isUTC())) {
+		if (timezone === undefined && (this._timezone === null || isUTC(this._timezone))) {
 			// Noting to normalize
 			return this;
 		}
@@ -123,7 +155,7 @@ class DateTime {
 		const hours = newDateTime.getHours();
 		const minutes = newDateTime.getMinutes();
 
-		return new DateTime(years, months, days, hours, minutes, this._seconds, this._secondFraction, Timezone.fromString('Z'), this._isPositive);
+		return new DateTime(years, months, days, hours, minutes, this._seconds, this._secondFraction, Duration.fromTimezoneString('Z'), this._isPositive);
 	}
 
 	// returns -1 if this < other, 0 if this === other, 1 if this > other, undefined if indeterminate
@@ -139,8 +171,8 @@ class DateTime {
 
 		// If only this has a timezone
 		if (normalizedThis._timezone && !normalizedOther._timezone) {
-			const normalizedOtherMin = other.normalize(Timezone.fromString('+14:00'));
-			const normalizedOtherMax = other.normalize(Timezone.fromString('-14:00'));
+			const normalizedOtherMin = other.normalize(Duration.fromTimezoneString('+14:00'));
+			const normalizedOtherMax = other.normalize(Duration.fromTimezoneString('-14:00'));
 
 			if (compareNormalizedDateTime(normalizedThis, normalizedOtherMin) < 0) {
 				return -1;
@@ -154,8 +186,8 @@ class DateTime {
 		}
 
 		// If only other has a timezone
-		const normalizedThisMin = this.normalize(Timezone.fromString('+14:00'));
-		const normalizedThisMax = this.normalize(Timezone.fromString('-14:00'));
+		const normalizedThisMin = this.normalize(Duration.fromTimezoneString('+14:00'));
+		const normalizedThisMax = this.normalize(Duration.fromTimezoneString('-14:00'));
 
 		if (compareNormalizedDateTime(normalizedThisMax, normalizedOther) < 0) {
 			return -1;
@@ -179,40 +211,40 @@ class DateTime {
 					convertToTwoCharString(this._hours) + ':' +
 					convertToTwoCharString(this._minutes) + ':' +
 					convertSecondsToString(this._seconds + this._secondFraction) +
-					(this._timezone ? this._timezone.toString() : '');
+					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:date':
 				return (this._isPositive ? '' : '-') +
 					convertYearToString(this._years) + '-' +
 					convertToTwoCharString(this._months) + '-' +
 					convertToTwoCharString(this._days) +
-					(this._timezone ? this._timezone.toString() : '');
+					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:time':
 				return convertToTwoCharString(this._hours) + ':' +
 					convertToTwoCharString(this._minutes) + ':' +
 					convertSecondsToString(this._seconds + this._secondFraction) +
-					(this._timezone ? this._timezone.toString() : '');
+					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:gDay':
 				return '---' +
 					convertToTwoCharString(this._days) +
-					(this._timezone ? this._timezone.toString() : '');
+					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:gMonth':
 				return '--' +
 					convertToTwoCharString(this._months) +
-					(this._timezone ? this._timezone.toString() : '');
+					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:gMonthDay':
 				return '--' +
 					convertToTwoCharString(this._months) + '-' +
 					convertToTwoCharString(this._days) +
-					(this._timezone ? this._timezone.toString() : '');
+					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:gYear':
 				return (this._isPositive ? '' : '-') +
 					convertYearToString(this._years) +
-					(this._timezone ? this._timezone.toString() : '');
+					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:gYearMonth':
 				return (this._isPositive ? '' : '-') +
 					convertYearToString(this._years) + '-' +
 					convertToTwoCharString(this._months) +
-					(this._timezone ? this._timezone.toString() : '');
+					(this._timezone ? timezoneToString(this._timezone) : '');
 		}
 		throw new Error('Unexpected subType');
 	}
@@ -315,7 +347,7 @@ DateTime.fromString = function (string) {
 	const minutes = parseMatch(match[7]);
 	const seconds = parseMatch(match[8]);
 	const secondFraction = match[9] ? parseFloat(match[9]) : 0;
-	const timezone = match[10] ? Timezone.fromString(match[10]) : null;
+	const timezone = match[10] ? Duration.fromTimezoneString(match[10]) : null;
 
 	if (years && (years < -271821 || years > 273860)) {
 		// These are the JavaScript bounds for date (https://tc39.github.io/ecma262/#sec-time-values-and-time-range)

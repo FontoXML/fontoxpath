@@ -107,6 +107,10 @@ class Duration {
 		return this._seconds % 86400 % 3600 % 60 + this._secondFraction;
 	}
 
+	isPositive () {
+		return this._isPositive;
+	}
+
 	compare (other) {
 		if (this._isPositive && !other._isPositive) {
 			return 1;
@@ -152,6 +156,13 @@ class Duration {
 		}
 	}
 
+	equals (other) {
+		return this._isPositive === other._isPositive &&
+			this._months === other._months &&
+			this._seconds === other._seconds &&
+			this._secondFraction === other._secondFraction;
+	}
+
 	toString () {
 		const string = (this._isPositive ? 'P' : '-P');
 
@@ -180,13 +191,14 @@ class Duration {
 }
 
 /**
+ * @static
  * @param   {string}  string
  * @param   {string}  type
  * @return  {?Duration}
  */
 Duration.fromString = function (string, type = 'xs:duration') {
-	const regEx = /^(-)?P(\d+Y)?(\d+M)?(\d+D)?(?:T(\d+H)?(\d+M)?(\d+(\.\d*)?S)?)?$/;
-	const match = regEx.exec(string);
+	const regex = /^(-)?P(\d+Y)?(\d+M)?(\d+D)?(?:T(\d+H)?(\d+M)?(\d+(\.\d*)?S)?)?$/;
+	const match = regex.exec(string);
 
 	if (!match) {
 		return null;
@@ -202,6 +214,26 @@ Duration.fromString = function (string, type = 'xs:duration') {
 	const secondFraction = match[8] ? parseFloat(match[8]) : 0;
 
 	return new Duration(years, months, days, hours, minutes, seconds, secondFraction, isPositive, type);
+};
+
+/**
+ * @static
+ * @param   {string}  string
+ * @return  {Duration}
+ */
+Duration.fromTimezoneString = function (string) {
+	const regex = /^(Z)|([+-])([01]\d):([0-5]\d)$/;
+	const match = regex.exec(string);
+
+	if (match[1] === 'Z') {
+		return new Duration(0, 0, 0, 0, 0, 0, 0, true, 'xs:dayTimeDuration');
+	}
+
+	const isPositive = match[2] === '+';
+	const hours = match[3] ? parseInt(match[3], 10) : 0;
+	const minutes = match[4] ? parseInt(match[4], 10) : 0;
+
+	return new Duration(0, 0, 0, hours, minutes, 0, 0, isPositive, 'xs:dayTimeDuration');
 };
 
 export default Duration;
