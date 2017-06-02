@@ -100,11 +100,11 @@ class Duration {
 	}
 
 	getMinutes () {
-		return Math.floor(this._seconds % 86400 % 3600 / 60);
+		return Math.floor(this._seconds % 3600 / 60);
 	}
 
 	getSeconds () {
-		return this._seconds % 86400 % 3600 % 60 + this._secondFraction;
+		return this._seconds % 60 + this._secondFraction;
 	}
 
 	isPositive () {

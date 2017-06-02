@@ -4,6 +4,7 @@ import builtInContextFunctions from './builtInFunctions.context';
 import builtInDataTypeConstructors from './builtInFunctions.dataTypeConstructors';
 import builtInDateTimeFunctions from './builtInFunctions.dateTime';
 import builtInDebuggingFunctions from './builtInFunctions.debugging';
+import builtInDurationFunctions from './builtInFunctions.duration';
 import builtInIdentifierFunctions from './builtInFunctions.identifiers';
 import builtInJsonFunctions from './builtInFunctions.json';
 import builtInMapFunctions from './builtInFunctions.maps';
@@ -30,6 +31,7 @@ const builtInFunctions = [].concat(
 	builtInDataTypeConstructors.declarations,
 	builtInDateTimeFunctions.declarations,
 	builtInDebuggingFunctions.declarations,
+	builtInDurationFunctions.declarations,
 	builtInIdentifierFunctions.declarations,
 	builtInJsonFunctions.declarations,
 	builtInMapFunctions.declarations,
