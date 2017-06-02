@@ -1,12 +1,10 @@
 import createSelectorFromXPath from './parsing/createSelectorFromXPath';
 import adaptJavaScriptValueToXPathValue from './selectors/adaptJavaScriptValueToXPathValue';
 import DynamicContext from './selectors/DynamicContext';
-import Sequence from './selectors/dataTypes/Sequence';
 import DomFacade from './DomFacade';
 import domBackedDomFacade from './domBackedDomFacade';
 
 import atomize from './selectors/dataTypes/atomize';
-import NodeValue from './selectors/dataTypes/NodeValue';
 import isInstanceOfType from './selectors/dataTypes/isInstanceOfType';
 
 /**
@@ -19,7 +17,7 @@ import isInstanceOfType from './selectors/dataTypes/isInstanceOfType';
  *  * Else, the sequence is atomized and returned.
  *
  * @param  {!string}       xpathSelector  The selector to execute. Supports XPath 3.1.
- * @param  {!Node}         contextNode    The node from which to run the XPath.
+ * @param  {*|null}        contextNode    The node from which to run the XPath.
  * @param  {?IDomFacade=}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number / string or boolean.
  * @param  {?number=}      returnType     One of the return types, indicates the expected type of the XPath query.
@@ -31,20 +29,20 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 	if (!xpathSelector || typeof xpathSelector !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathSelector must be a string.');
 	}
-	if (!contextNode) {
-		throw new TypeError('Failed to execute \'evaluateXPath\': contextNode must be a node.');
-	}
 	if (!domFacade) {
 		domFacade = domBackedDomFacade;
-	} else {
+	}
+	else {
 		domFacade = new DomFacade(domFacade);
 	}
 
 	const compiledSelector = createSelectorFromXPath(xpathSelector);
 
-	const contextSequence = Sequence.singleton(NodeValue.createFromNode(contextNode, 'node()'));
+	const contextSequence = contextNode ? adaptJavaScriptValueToXPathValue(contextNode) : null;
+
 	const untypedVariables = Object.assign(variables || {});
 	untypedVariables['theBest'] = 'FontoXML is the best!';
+
 	/**
 	 * @type {!Object}
 	 */
@@ -60,7 +58,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 	const dynamicContext = new DynamicContext({
 		contextItemIndex: 0,
 		contextSequence: contextSequence,
-		contextItem: NodeValue.createFromNode(contextNode, 'node()'),
+		contextItem: contextSequence ? contextSequence.first() : null,
 		domFacade,
 		variables: typedVariables
 	});
