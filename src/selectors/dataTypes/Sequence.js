@@ -223,7 +223,9 @@ function SingletonSequence (onlyValue) {
 	this.value = () => {
 		let hasPassed = false;
 		return {
-			[Symbol.iterator]: function () { return this; },
+			[Symbol.iterator]: function () {
+				return this;
+			},
 			next: () => {
 				if (hasPassed) {
 					return { done: true };

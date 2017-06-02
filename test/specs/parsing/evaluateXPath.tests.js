@@ -22,6 +22,8 @@ describe('evaluateXPath', () => {
 		() => chai.assert.equal(evaluateXPath('true()', documentNode, domFacade), true));
 	it('Keeps numbers numbers',
 		() => chai.assert.equal(evaluateXPath('1', documentNode, domFacade), 1));
+	it('Keeps strings strings',
+		() => chai.assert.equal(evaluateXPath('"string"', documentNode, domFacade), 'string'));
 	it('Keeps nodes nodes',
 		() => chai.assert.equal(evaluateXPath('.', documentNode, domFacade), documentNode));
 
