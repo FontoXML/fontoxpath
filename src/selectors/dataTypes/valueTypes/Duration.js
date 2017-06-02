@@ -57,7 +57,10 @@ function dayTimeDurationToString (duration) {
 class Duration {
 	constructor (years, months, days, hours, minutes, seconds, secondFraction, isPositive, type = 'xs:duration') {
 		this._months = years * 12 + months;
-		this._seconds = days * 86400 + hours * 3600 + minutes * 60 + seconds + secondFraction;
+		this._seconds = days * 86400 + hours * 3600 + minutes * 60 + seconds;
+		// Second fractions will be kept track of separately, as they introduce unnecessary imprecision errors when
+		//   retreiving seconds due to the usage of the % and / operators.
+		this._secondFraction = secondFraction;
 		this._isPositive = isPositive;
 		this._type = type;
 	}
@@ -75,6 +78,7 @@ class Duration {
 
 	toYearMonth () {
 		this._seconds = 0;
+		this._secondFraction = 0;
 		this._type = 'xs:yearMonthDuration';
 		return this;
 	}
@@ -100,7 +104,7 @@ class Duration {
 	}
 
 	getSeconds () {
-		return this._seconds % 86400 % 3600 % 60;
+		return this._seconds % 86400 % 3600 % 60 + this._secondFraction;
 	}
 
 	compare (other) {
@@ -113,7 +117,10 @@ class Duration {
 		}
 
 		const bothPositive = this._isPositive && other._isPositive;
-		if (bothPositive && this._months === other._months && this._seconds === other._seconds) {
+		if (bothPositive &&
+			this._months === other._months &&
+			this._seconds === other._seconds &&
+			this._secondFraction === other._secondFraction) {
 			return 0;
 		}
 
@@ -123,8 +130,8 @@ class Duration {
 		const otherMaxDays = computeMaxDays(other);
 
 		if (thisMinDays === otherMinDays && thisMaxDays === otherMaxDays) {
-			const thisSecondsWithoutDays = this._seconds % 86400;
-			const otherSecondsWithoutDays = other._seconds % 86400;
+			const thisSecondsWithoutDays = this._seconds % 86400 + this._secondFraction;
+			const otherSecondsWithoutDays = other._seconds % 86400 + other._secondFraction;
 			if (thisSecondsWithoutDays > otherSecondsWithoutDays) {
 				return bothPositive ? 1 : -1;
 			}
