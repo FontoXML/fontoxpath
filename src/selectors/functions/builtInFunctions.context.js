@@ -31,6 +31,22 @@ function fnPosition (dynamicContext) {
 	return Sequence.singleton(createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer'));
 }
 
+function fnCurrentDateTime (dynamicContext) {
+	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime, 'xs:dateTimeStamp'));
+}
+
+function fnCurrentDate (dynamicContext) {
+	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime.clone().convertToType('xs:date'), 'xs:date'));
+}
+
+function fnCurrentTime (dynamicContext) {
+	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime.clone().convertToType('xs:time'), 'xs:time'));
+}
+
+function fnImplicitTimezone (dynamicContext) {
+	return Sequence.singleton(createAtomicValue(dynamicContext.implicitTimezone, 'xs:dayTimeDuration'), 'xs:dayTimeDuration');
+}
+
 export default {
 	declarations: [
 		{
@@ -45,6 +61,34 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:integer',
 			callFunction: fnPosition
+		},
+
+		{
+			name: 'current-dateTime',
+			argumentTypes: [],
+			returnType: 'xs:dateTimeStamp',
+			callFunction: fnCurrentDateTime
+		},
+
+		{
+			name: 'current-date',
+			argumentTypes: [],
+			returnType: 'xs:date',
+			callFunction: fnCurrentDate
+		},
+
+		{
+			name: 'current-time',
+			argumentTypes: [],
+			returnType: 'xs:time',
+			callFunction: fnCurrentTime
+		},
+
+		{
+			name: 'implicit-timezone',
+			argumentTypes: [],
+			returnType: 'xs:dayTimeDuration',
+			callFunction: fnImplicitTimezone
 		}
 	],
 	functions: {

@@ -236,4 +236,16 @@ Duration.fromTimezoneString = function (string) {
 	return new Duration(0, 0, 0, hours, minutes, 0, 0, isPositive, 'xs:dayTimeDuration');
 };
 
+/**
+ * @static
+ * @param   {Date}  date
+ * @return  {Duration}
+ */
+Duration.fromJavascriptDate = function (date) {
+	const minutes = date.getTimezoneOffset();
+	const isPositive = minutes > -1;
+
+	return new Duration(0, 0, 0, 0, Math.abs(minutes), 0, 0, isPositive, 'xs:dayTimeDuration');
+};
+
 export default Duration;

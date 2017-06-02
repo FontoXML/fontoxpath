@@ -1,4 +1,7 @@
 import { ready } from './util/iterators';
+import DateTime from './dataTypes/valueTypes/DateTime';
+import Duration from './dataTypes/valueTypes/Duration';
+
 /**
  * @typedef {./dataTypes/Sequence}
  */
@@ -58,6 +61,19 @@ class DynamicContext {
 		 * @const
 		 */
 		this.nodesFactory = context.nodesFactory;
+
+		const date = new Date();
+		/**
+		 * @type {DateTime}
+		 * @const
+		 */
+		this.currentDateTime = DateTime.fromString(date.toISOString());
+
+		/**
+		 * @type {Duration}
+		 * @const
+		 */
+		this.implicitTimezone = Duration.fromJavascriptDate(date);
 	}
 
 	/**

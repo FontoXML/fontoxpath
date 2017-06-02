@@ -102,6 +102,20 @@ class DateTime {
 		this._type = type;
 	}
 
+	clone () {
+		return new DateTime(
+			this._years,
+			this._months,
+			this._days,
+			this._hours,
+			this._minutes,
+			this._seconds,
+			this._secondFraction,
+			this._timezone,
+			this._isPositive,
+			this._type);
+	}
+
 	getYear () {
 		return this._years;
 	}
