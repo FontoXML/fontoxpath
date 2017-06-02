@@ -93,7 +93,7 @@ class DateTime {
 		this._years = years;
 		this._months = months;
 		this._days = days;
-		this._hours = hours;
+		this._hours = hours === 24 ? 0 : hours;
 		this._minutes = minutes;
 		this._seconds = seconds;
 		this._secondFraction = secondFraction;
@@ -123,11 +123,23 @@ class DateTime {
 	}
 
 	getSeconds () {
+		return this._seconds;
+	}
+
+	getFullSeconds () {
 		return this._seconds + this._secondFraction;
+	}
+
+	getSecondFraction () {
+		return this._secondFraction;
 	}
 
 	getTimezone () {
 		return this._timezone;
+	}
+
+	isPositive () {
+		return this._isPositive;
 	}
 
 	normalize (timezone = undefined) {
