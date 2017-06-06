@@ -2350,7 +2350,6 @@ K-ForExprWithout-30,AssertionError: expected [Function] to throw error including
 K-ForExprWithout-33,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPST0008, The variable PREFIXNOTEXIST:NOTEXIST is not in scope.'
 K-ForExprWithout-36,AssertionError: expected [Function] to throw an error
 K-ForExprWithout-37,AssertionError: expected [Function] to throw an error
-K-ForExprWithout-49,Error: XPST0017: Function trace with arity of 2 not registered. Did you mean "true ()"?
 K-ForExprWithout-55,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
 K-ForExprWithout-56,Error: XPST0017: Function timezone-from-time with arity of 1 not registered. No similar functions found.
 K2-ForExprWithout-7,AssertionError: expected [Function] to throw an error

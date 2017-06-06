@@ -2,6 +2,7 @@ import builtInArrayFunctions from './builtInFunctions.arrays';
 import builtInBooleanFunctions from './builtInFunctions.boolean';
 import builtInContextFunctions from './builtInFunctions.context';
 import builtInDataTypeConstructors from './builtInFunctions.dataTypeConstructors.js';
+import builtInDebuggingFunctions from './builtInFunctions.debugging.js';
 import builtInIdentifierFunctions from './builtInFunctions.identifiers';
 import builtInJsonFunctions from './builtInFunctions.json';
 import builtInMathFunctions from './builtInFunctions.math';
@@ -23,6 +24,7 @@ export default [].concat(
 	builtInBooleanFunctions.declarations,
 	builtInContextFunctions.declarations,
 	builtInDataTypeConstructors.declarations,
+	builtInDebuggingFunctions.declarations,
 	builtInIdentifierFunctions.declarations,
 	builtInJsonFunctions.declarations,
 	builtInMathFunctions.declarations,
