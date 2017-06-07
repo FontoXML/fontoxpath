@@ -194,8 +194,8 @@ describe('functions over strings', () => {
 			chai.assert.equal(evaluateXPathToString('string(false())', documentNode), 'false');
 		});
 
-		it.skip('A dynamic error is raised [err:XPDY0002] by the zero-argument version of the function if the context item is absent.',
-			() => chai.assert.throw(() => evaluateXPathToString('string()', documentNode), /XPDY0002/));
+		it('A dynamic error is raised [err:XPDY0002] by the zero-argument version of the function if the context item is absent.',
+			() => chai.assert.throws(() => evaluateXPathToString('string()'), 'XPDY0002'));
 	});
 
 	describe('concat', () => {

@@ -26,6 +26,10 @@ describe('inline functions', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('let $x := true(), $fn := function () {$x}, $x := false() return $fn() = true()', documentNode, domFacade));
 	});
 
+	it('correctly binds contextItem / sequence', () => {
+		chai.assert.throws(() => evaluateXPathToBoolean('function () { position() }()', documentNode), 'XPDY0002');
+	});
+
 	it('throws an error for wrong number of arguments', () => {
 		chai.assert.throws(
 			() => evaluateXPathToBoolean('let $fn := function ($a as xs:boolean+){ $a } return $fn()', documentNode, domFacade),

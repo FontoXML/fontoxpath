@@ -2,6 +2,7 @@ import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import createSingleValueIterator from '../util/createSingleValueIterator';
 import {
 	sortNodeValues,
 	compareNodePositions
@@ -162,22 +163,25 @@ class PathSelector extends Selector {
 		 * @type {Sequence}
 		 */
 		const result = this._stepSelectors.reduce(function (intermediateResultNodesSequence, selector) {
-			/**
-			 * @type {Iterator<../DynamicContext>}
-			 */
-			const childContextIterator = dynamicContext.createSequenceIterator(intermediateResultNodesSequence);
-
+			let childContextIterator;
+			if (intermediateResultNodesSequence === null) {
+				// first call, we should use the current dynamic context
+				childContextIterator = createSingleValueIterator(dynamicContext);
+			}
+			else {
+				childContextIterator = dynamicContext.createSequenceIterator(intermediateResultNodesSequence);
+			}
 			/**
 			 * @type {!IteratorIterable<!Sequence>}
 			 */
-			let resultValuesInOrderOfEvaluation = /** @type {!IteratorIterable<!../dataTypes/Sequence>} */ ({
+			let resultValuesInOrderOfEvaluation = /** @type {!IteratorIterable<!Sequence>} */ ({
 				[Symbol.iterator]: () => resultValuesInOrderOfEvaluation,
 				next: () => {
 					const childContext = childContextIterator.next();
 					if (childContext.done) {
 						return { done: true };
 					}
-					if (!isInstanceOfType(childContext.value.contextItem, 'node()')) {
+					if (childContext.value.contextItem !== null && !isInstanceOfType(childContext.value.contextItem, 'node()')) {
 						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
 					}
 					return { done: false, value: selector.evaluate(childContext.value) };
@@ -222,7 +226,7 @@ class PathSelector extends Selector {
 			// This makes sorting using concat impossible
 			sequenceHasPeerProperty = sequenceHasPeerProperty && selector.peer;
 			return sortedResultSequence;
-		}, Sequence.singleton(dynamicContext.contextItem));
+		}, null);
 
 		return result;
 	}

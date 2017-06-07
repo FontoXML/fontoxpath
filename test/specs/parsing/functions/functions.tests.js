@@ -44,8 +44,8 @@ describe('functions', () => {
 			chai.assert.equal(evaluateXPathToNumber('number("12.3")', documentNode), 12.3);
 		});
 
-		it.skip('A dynamic error is raised [err:XPDY0002] if $arg is omitted and the context item is absent.',
-			() => chai.assert.throw(() => evaluateXPathToNumber('number()', documentNode), /XPDY0002/));
+		it('A dynamic error is raised [err:XPDY0002] if $arg is omitted and the context item is absent.',
+			() => chai.assert.throws(() => evaluateXPathToNumber('number()'), 'XPDY0002'));
 
 		it.skip('As a consequence of the rules given above, a type error occurs if the context item cannot be atomized, or if the result of atomizing the context item is a sequence containing more than one atomic value.',
 			() => chai.assert.throw(() => evaluateXPathToNumber('number()', documentNode)));

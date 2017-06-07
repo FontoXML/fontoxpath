@@ -11,17 +11,17 @@ let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ./dataTypes/Value, contextItemIndex: ?number, contextSequence: ?Sequence, domFacade: !IDomFacade, variables: !Object}}  context  The context to overlay
+	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: !IDomFacade, variables: !Object}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
-		 * @type {?number}
+		 * @type {!number}
 		 * @const
 		 */
 		this.contextItemIndex = context.contextItemIndex;
 
 		/**
-		 * @type {?Sequence}
+		 * @type {!Sequence}
 		 * @const
 		 */
 		this.contextSequence = context.contextSequence;
@@ -52,10 +52,10 @@ class DynamicContext {
 	createScopedContext (overlayContext) {
 		return new DynamicContext({
 			contextItemIndex: overlayContext.contextItemIndex !== undefined ? overlayContext.contextItemIndex : this.contextItemIndex,
-			contextSequence: overlayContext.contextSequence ? overlayContext.contextSequence : this.contextSequence,
+			contextSequence: overlayContext.contextSequence !== undefined ? overlayContext.contextSequence : this.contextSequence,
 			domFacade: overlayContext.domFacade ? overlayContext.domFacade : this.domFacade,
 			variables: overlayContext.variables ? Object.assign({}, this.variables, overlayContext.variables) : this.variables,
-			contextItem: overlayContext.contextItem ? overlayContext.contextItem : this.contextItem
+			contextItem: overlayContext.contextItem !== undefined ? overlayContext.contextItem : this.contextItem
 		});
 	}
 

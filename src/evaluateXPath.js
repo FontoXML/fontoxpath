@@ -5,10 +5,11 @@ import DomFacade from './DomFacade';
 import domBackedDomFacade from './domBackedDomFacade';
 
 import atomize from './selectors/dataTypes/atomize';
+import Sequence from './selectors/dataTypes/Sequence';
 import isInstanceOfType from './selectors/dataTypes/isInstanceOfType';
 
 /**
- * Evaluates an XPath on the given contextNode.
+ * Evaluates an XPath on the given contextItem.
  * If the return type is ANY_TYPE, the returned value depends on the result of the XPath:
  *  * If the XPath evaluates to the empty sequence, an empty array is returned.
  *  * If the XPath evaluates to a singleton node, that node is returned.
@@ -17,7 +18,7 @@ import isInstanceOfType from './selectors/dataTypes/isInstanceOfType';
  *  * Else, the sequence is atomized and returned.
  *
  * @param  {!string}       xpathSelector  The selector to execute. Supports XPath 3.1.
- * @param  {*|null}        contextNode    The node from which to run the XPath.
+ * @param  {*|null}        contextItem    The node from which to run the XPath.
  * @param  {?IDomFacade=}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number / string or boolean.
  * @param  {?number=}      returnType     One of the return types, indicates the expected type of the XPath query.
@@ -25,7 +26,7 @@ import isInstanceOfType from './selectors/dataTypes/isInstanceOfType';
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
-function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = {}) {
+function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = {}) {
 	if (!xpathSelector || typeof xpathSelector !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathSelector must be a string.');
 	}
@@ -38,7 +39,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 
 	const compiledSelector = createSelectorFromXPath(xpathSelector);
 
-	const contextSequence = contextNode ? adaptJavaScriptValueToXPathValue(contextNode) : null;
+	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
 	const untypedVariables = Object.assign(variables || {});
 	untypedVariables['theBest'] = 'FontoXML is the best!';
@@ -58,7 +59,7 @@ function evaluateXPath (xpathSelector, contextNode, domFacade, variables = {}, r
 	const dynamicContext = new DynamicContext({
 		contextItemIndex: 0,
 		contextSequence: contextSequence,
-		contextItem: contextSequence ? contextSequence.first() : null,
+		contextItem: contextSequence.first(),
 		domFacade,
 		variables: typedVariables
 	});

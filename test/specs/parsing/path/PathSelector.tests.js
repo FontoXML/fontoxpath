@@ -232,4 +232,15 @@ describe('relative paths', () => {
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('.//*', documentNode.documentElement), [documentNode.documentElement.firstChild, documentNode.documentElement.firstChild.firstChild]);
 	});
+
+	it('does not require context for the first item', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			[
+				'someChildNode',
+				['someGrandChild']
+			]
+		], documentNode);
+		chai.assert.deepEqual(evaluateXPathToNodes('function ($node) { $node//someGrandChild }(.)', documentNode.documentElement), [documentNode.documentElement.firstChild.firstChild]);
+	});
 });

@@ -32,19 +32,18 @@ class InlineFunction extends Selector {
 		const executeFunction = (_unboundDynamicContext, ...parameters) => {
 			// Since functionCall already does typechecking, we do not have to do it here
 			const scopedDynamicContext = dynamicContext.createScopedContext({
-					// TODO: should we pass contextItem / sequence? check spec
-					contextItem: null,
-					contextSequence: null,
-					variables: this._paramDescriptions.reduce((paramByName, [name, _type], i) => {
-						paramByName[name] = parameters[i];
-						return paramByName;
-					}, Object.create(null))
-				});
+				contextItem: null,
+				contextSequence: Sequence.empty(),
+				contextItemIndex: -1,
+				variables: this._paramDescriptions.reduce((paramByName, [name, _type], i) => {
+					paramByName[name] = parameters[i];
+					return paramByName;
+				}, Object.create(null))
+			});
 
-				return this._functionBody.evaluate(scopedDynamicContext);
-			};
+			return this._functionBody.evaluate(scopedDynamicContext);
+		};
 
-		// TODO: bind this contextItem? check spec
 		const functionItem = new FunctionValue({
 			value: executeFunction,
 			name: 'dynamic-function',

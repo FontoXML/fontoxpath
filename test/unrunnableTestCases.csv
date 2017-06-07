@@ -122,7 +122,6 @@ fn-boolean-mixed-args-035,Error: FOCA0003: can not cast -99999999999999999 to xs
 fn-boolean-mixed-args-037,Error: FOCA0003: can not cast 99999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-boolean-mixed-args-039,Error: FOCA0003: can not cast 9223372036854775807 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-boolean-mixed-args-040,Error: FOCA0003: can not cast -9223372036854775808 to xs:integer, it is out of bounds for JavaScript numbers.
-context-item-1,AssertionError: expected [Function] to throw an error
 K-SeqBooleanFunc-4,AssertionError: expected [Function] to throw error including 'FORG0006' but got 'XPST0017: Function xs:QName with arity of 1 not registered. Did you mean "xs:Name (xs:anyAtomicType?)", "xs:NCName (xs:anyAtomicType?)", "xs:date (xs:anyAtomicType?)" or "xs:time (xs:anyAtomicType?)"?'
 K-SeqBooleanFunc-16,Error: XPST0003: Unable to parse XPath: true() eq boolean(remove((xs:hexBinary("FF"), 1), 1) treat as xs:integer). SyntaxError: Expected " ", "!", "!=", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "union", "|", or "||" but "t" found.
 K-SeqBooleanFunc-32,Error: XPST0017: Function timezone-from-time with arity of 1 not registered. No similar functions found.
