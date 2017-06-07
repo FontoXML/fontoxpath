@@ -1,13 +1,15 @@
 import castToType from '../../dataTypes/castToType';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 
+import DateTime from '../../dataTypes/valueTypes/DateTime';
+
 // Use partial application to get to a comparer faster
 function bothAreStringOrAnyURI (a, b) {
 	return (isSubtypeOf(a, 'xs:string') || isSubtypeOf(a, 'xs:anyURI')) &&
 		(isSubtypeOf(b, 'xs:string') || isSubtypeOf(b, 'xs:anyURI'));
 }
 
-function generateCompareFunction (operator, typeA, typeB) {
+function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
@@ -29,6 +31,7 @@ function generateCompareFunction (operator, typeA, typeB) {
 		castFunctionForValueB = val => castToType(val, typeA);
 		typeB = typeA;
 	}
+
 	if (isSubtypeOf(typeA, 'xs:QName') && isSubtypeOf(typeB, 'xs:QName')) {
 		if (operator === 'eq') {
 			return (a, b) => {
@@ -44,9 +47,70 @@ function generateCompareFunction (operator, typeA, typeB) {
 		}
 		throw new Error('XPTY0004: Only the "eq" and "ne" comparison is defined for xs:QName');
 	}
-	else if (typeA !== typeB) {
-		if (!bothAreStringOrAnyURI(typeA, typeB)
-			&& !(isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric'))) {
+
+	if (isSubtypeOf(typeA, 'xs:dateTime') ||
+		isSubtypeOf(typeA, 'xs:date') ||
+		isSubtypeOf(typeA, 'xs:time')) {
+		switch (operator) {
+			case 'eq':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return DateTime.equal(castA.value, castB.value, dynamicContext.implicitTimezone);
+				};
+			case 'ne':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return !DateTime.equal(castA.value, castB.value, dynamicContext.implicitTimezone);
+				};
+
+			case 'lt':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return DateTime.lessThan(castA.value, castB.value, dynamicContext.implicitTimezone);
+				};
+			case 'le':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return DateTime.equal(castA.value, castB.value, dynamicContext.implicitTimezone) ||
+						DateTime.lessThan(castA.value, castB.value, dynamicContext.implicitTimezone);
+				};
+
+			case 'gt':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return DateTime.greaterThan(castA.value, castB.value, dynamicContext.implicitTimezone);
+				};
+			case 'ge':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return DateTime.equal(castA.value, castB.value, dynamicContext.implicitTimezone) ||
+						DateTime.greaterThan(castA.value, castB.value, dynamicContext.implicitTimezone);
+				};
+		}
+	}
+
+	if (isSubtypeOf(typeA, 'xs:gYearMonth') ||
+		isSubtypeOf(typeA, 'xs:gYear') ||
+		isSubtypeOf(typeA, 'xs:gMonthDay') ||
+		isSubtypeOf(typeA, 'xs:gMonth') ||
+		isSubtypeOf(typeA, 'xs:gDay')) {
+		switch (operator) {
+			case 'eq':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return DateTime.equal(castA.value, castB.value, dynamicContext.implicitTimezone);
+				};
+			case 'ne':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return DateTime.equal(castA.value, castB.value, dynamicContext.implicitTimezone);
+				};
+		}
+	}
+
+	if (typeA !== typeB) {
+		if (!bothAreStringOrAnyURI(typeA, typeB) &&
+			!(isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric'))) {
 			throw new Error('XPTY0004: Values to compare are not of the same type');
 		}
 	}
@@ -93,17 +157,16 @@ const comparatorsByTypingKey = Object.create(null);
  * @param  {string}                       operator
  * @param  {../../dataTypes/AtomicValue}  valueA
  * @param  {../../dataTypes/AtomicValue}  valueB
+ * @param  {../../DynamicContext}         dynamicContext
  * @return {boolean}
  */
-export default function valueCompare (operator, valueA, valueB) {
+export default function valueCompare (operator, valueA, valueB, dynamicContext) {
 	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
 	const typingKey = `${valueA.type}~${valueB.type}~${operator}`;
 	let prefabComparator = comparatorsByTypingKey[typingKey];
 	if (!prefabComparator) {
-		prefabComparator = comparatorsByTypingKey[typingKey] = generateCompareFunction(operator, valueA.type, valueB.type);
+		prefabComparator = comparatorsByTypingKey[typingKey] = generateCompareFunction(operator, valueA.type, valueB.type, dynamicContext);
 	}
-
-//	return generateCompareFunction(operator, valueA.type, valueB.type)(valueA, valueB);
 
 	return prefabComparator(valueA, valueB);
 }

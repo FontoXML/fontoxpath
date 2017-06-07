@@ -66,7 +66,8 @@ class Compare extends Selector {
 										([onlySecondValue]) => valueCompare(
 											this._operator,
 											onlyFirstValue,
-											onlySecondValue) ?
+											onlySecondValue,
+											dynamicContext) ?
 											Sequence.singletonTrueSequence() :
 											Sequence.singletonFalseSequence())),
 								default: (() => {
@@ -79,7 +80,7 @@ class Compare extends Selector {
 						});
 					}
 					// Only generalCompare left
-					return generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence);
+					return generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence, dynamicContext);
 				}
 			})
 		});

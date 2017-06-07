@@ -250,3 +250,253 @@ describe('Node compares', () => {
 		});
 	});
 });
+
+describe('dateTime compares', () => {
+	describe('eq', () => {
+		describe('xs:dateTime', () => {
+			it('returns true for "2000-10-10T12:00:00" and "2000-10-10T12:00:00"',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") eq xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns true for "2000-10-10T12:00:00+05:00" and "2000-10-10T12:00:00+05:00"',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00+05:00") eq xs:dateTime("2000-10-10T12:00:00+05:00")', documentNode)));
+			it('returns true for "2000-10-10T11:00:00-01:00" and "2000-10-10T16:00:00+04:00"',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T11:00:00-01:00") eq xs:dateTime("2000-10-10T16:00:00+04:00")', documentNode)));
+			it('returns true for "1999-12-31T24:00:00" and "2000-01-01T00:00:00"',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("1999-12-31T24:00:00") eq xs:dateTime("2000-01-01T00:00:00")', documentNode)));
+			it('returns false for "2005-04-04T24:00:00" and "2005-04-04T00:00:00"',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2005-04-04T24:00:00") eq xs:dateTime("2005-04-04T00:00:00")', documentNode)));
+			it('returns false for "2002-04-02T23:00:00-04:00" and "2002-04-03T02:00:00-01:00"',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2002-04-02T23:00:00-04:00") eq xs:dateTime("2002-04-03T02:00:00-01:00")', documentNode)));
+
+			it('returns false for "2000-10-10T12:00:10" and "2000-10-10T12:00:00"',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:10") eq xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns false for "2000-10-10T12:10:00" and "2000-10-10T12:00:00"',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:10:00") eq xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns false for "2000-10-10T12:00:00" and "2000-10-10T10:00:00"',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") eq xs:dateTime("2000-10-10T10:00:00")', documentNode)));
+			it('returns false for "2000-10-11T12:00:00" and "2000-10-10T12:00:00"',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-11T12:00:00") eq xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns false for "2000-11-10T12:00:00" and "2000-10-10T12:00:00"',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-11-10T12:00:00") eq xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns false for "2001-10-10T12:00:00" and "2000-10-10T12:00:00"',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2001-10-10T12:00:00") eq xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+		});
+
+		describe('xs:date', () => {
+			it('returns true for "2000-10-10" and "2000-10-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2000-10-10") eq xs:date("2000-10-10")', documentNode)));
+			it('returns true for "2000-10-10+05:30" and "2000-10-10+05:30"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2000-10-10+05:30") eq xs:date("2000-10-10+05:30")', documentNode)));
+			it('returns true for "2000-10-09-12:00" and "2000-10-10+12:00"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2000-10-09-12:00") eq xs:date("2000-10-10+12:00")', documentNode)));
+
+			it('returns false for "2000-10-11" and "2000-10-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2000-10-11") eq xs:date("2000-10-10")', documentNode)));
+			it('returns false for "2000-11-10" and "2000-10-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2000-11-10") eq xs:date("2000-10-10")', documentNode)));
+			it('returns false for "2001-10-10" and "2000-10-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2001-10-10") eq xs:date("2000-10-10")', documentNode)));
+		});
+
+		describe('xs:time', () => {
+			it('returns true for "10:10:10.1" and "10:10:10.1"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:10:10.1") eq xs:time("10:10:10.1")', documentNode)));
+			it('returns true for "10:10:10.1-10:25" and "10:10:10.1-10:25"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:10:10.1-10:25") eq xs:time("10:10:10.1-10:25")', documentNode)));
+
+			it('returns false for "10:10:10.2" and "10:10:10.1"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:time("10:10:10.2") eq xs:time("10:10:10.1")', documentNode)));
+			it('returns false for "10:10:11.1" and "10:10:10.1"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:time("10:10:11.1") eq xs:time("10:10:10.1")', documentNode)));
+			it('returns false for "10:11:10.1" and "10:10:10.1"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:time("10:11:10.1") eq xs:time("10:10:10.1")', documentNode)));
+			it('returns false for "11:10:10.1" and "10:10:10.1"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:time("11:10:10.1") eq xs:time("10:10:10.1")', documentNode)));
+		});
+	});
+
+	describe('lt', () => {
+		describe('xs:dateTime', () => {
+			it('returns false for xs:dateTime("2000-10-10T12:00:00") and xs:dateTime("2000-10-10T12:00:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") lt xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns false for xs:dateTime("2000-10-10T12:00:00+05:00") and xs:dateTime("2000-10-10T12:00:00+05:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00+05:00") lt xs:dateTime("2000-10-10T12:00:00+05:00")', documentNode)));
+			it('returns false for xs:dateTime("2000-10-10T11:00:00-01:00") and xs:dateTime("2000-10-10T16:00:00+04:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T11:00:00-01:00") lt xs:dateTime("2000-10-10T16:00:00+04:00")', documentNode)));
+			it('returns false for xs:dateTime("1999-12-31T24:00:00") and xs:dateTime("2000-01-01T00:00:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("1999-12-31T24:00:00") lt xs:dateTime("2000-01-01T00:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2005-04-04T00:00:00") and xs:dateTime("2005-04-04T24:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2005-04-04T00:00:00") lt xs:dateTime("2005-04-04T24:00:00")', documentNode)));
+			it('returns false for xs:dateTime("2002-04-02T23:00:00-04:00") and xs:dateTime("2002-04-03T02:00:00-01:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2002-04-02T23:00:00-04:00") lt xs:dateTime("2002-04-03T02:00:00-01:00")', documentNode)));
+
+			it('returns true for xs:dateTime("2000-10-10T12:00:00") and xs:dateTime("2000-10-10T12:00:10")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") lt xs:dateTime("2000-10-10T12:00:10")', documentNode)));
+			it('returns true for xs:dateTime("2000-10-10T12:00:00") and xs:dateTime("2000-10-10T12:10:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") lt xs:dateTime("2000-10-10T12:10:00")', documentNode)));
+			it('returns true for xs:dateTime("2000-10-10T10:00:00") and xs:dateTime("2000-10-10T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T10:00:00") lt xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2000-10-10T12:00:00") and xs:dateTime("2000-10-11T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") lt xs:dateTime("2000-10-11T12:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2000-10-10T12:00:00") and xs:dateTime("2000-11-10T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") lt xs:dateTime("2000-11-10T12:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2000-10-10T12:00:00") and xs:dateTime("2001-10-10T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") lt xs:dateTime("2001-10-10T12:00:00")', documentNode)));
+		});
+
+		describe('xs:date', () => {
+			it('returns false for "2000-10-10" and "2000-10-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2000-10-10") lt xs:date("2000-10-10")', documentNode)));
+			it('returns false for "2000-10-10+05:30" and "2000-10-10+05:30"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2000-10-10+05:30") lt xs:date("2000-10-10+05:30")', documentNode)));
+			it('returns false for "2000-10-09-12:00" and "2000-10-10+12:00"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2000-10-09-12:00") lt xs:date("2000-10-10+12:00")', documentNode)));
+
+			it('returns true for "2000-10-10" and "2000-10-11"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2000-10-10") lt xs:date("2000-10-11")', documentNode)));
+			it('returns true for "2000-10-10" and "2000-11-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2000-10-10") lt xs:date("2000-11-10")', documentNode)));
+			it('returns true for "2000-10-10" and "2001-10-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2000-10-10") lt xs:date("2001-10-10")', documentNode)));
+		});
+
+		describe('xs:time', () => {
+			it('returns false for "10:10:10.1" and "10:10:10.1"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:time("10:10:10.1") lt xs:time("10:10:10.1")', documentNode)));
+			it('returns false for "10:10:10.1-10:25" and "10:10:10.1-10:25"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:time("10:10:10.1-10:25") lt xs:time("10:10:10.1-10:25")', documentNode)));
+
+			it('returns true for "10:10:10.1" and "10:10:10.2"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:10:10.1") lt xs:time("10:10:10.2")', documentNode)));
+			it('returns true for "10:10:10.1" and "10:10:11.1"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:10:10.1") lt xs:time("10:10:11.1")', documentNode)));
+			it('returns true for "10:10:10.1" and "10:11:10.1"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:10:10.1") lt xs:time("10:11:10.1")', documentNode)));
+			it('returns true for "10:10:10.1" and "11:10:10.1"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:10:10.1") lt xs:time("11:10:10.1")', documentNode)));
+		});
+	});
+
+	describe('lt', () => {
+		describe('xs:dateTime', () => {
+			it('returns false for xs:dateTime("2000-10-10T12:00:00") and xs:dateTime("2000-10-10T12:00:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") gt xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns false for xs:dateTime("2000-10-10T12:00:00+05:00") and xs:dateTime("2000-10-10T12:00:00+05:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00+05:00") gt xs:dateTime("2000-10-10T12:00:00+05:00")', documentNode)));
+			it('returns false for xs:dateTime("2000-10-10T11:00:00-01:00") and xs:dateTime("2000-10-10T16:00:00+04:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2000-10-10T11:00:00-01:00") gt xs:dateTime("2000-10-10T16:00:00+04:00")', documentNode)));
+			it('returns false for xs:dateTime("1999-12-31T24:00:00") and xs:dateTime("2000-01-01T00:00:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("1999-12-31T24:00:00") gt xs:dateTime("2000-01-01T00:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2005-04-04T24:00:00") and xs:dateTime("2005-04-04T00:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2005-04-04T24:00:00") gt xs:dateTime("2005-04-04T00:00:00")', documentNode)));
+			it('returns false for xs:dateTime("2002-04-02T23:00:00-04:00") and xs:dateTime("2002-04-03T02:00:00-01:00")',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dateTime("2002-04-02T23:00:00-04:00") gt xs:dateTime("2002-04-03T02:00:00-01:00")', documentNode)));
+
+			it('returns true for xs:dateTime("2000-10-10T12:00:10") and xs:dateTime("2000-10-10T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:10") gt xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2000-10-10T12:10:00") and xs:dateTime("2000-10-10T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:10:00") gt xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2000-10-10T12:00:00") and xs:dateTime("2000-10-10T10:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-10T12:00:00") gt xs:dateTime("2000-10-10T10:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2000-10-11T12:00:00") and xs:dateTime("2000-10-10T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-11T12:00:00") gt xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2000-11-10T12:00:00") and xs:dateTime("2000-10-10T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-11-10T12:00:00") gt xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+			it('returns true for xs:dateTime("2001-10-10T12:00:00") and xs:dateTime("2000-10-10T12:00:00")',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2001-10-10T12:00:00") gt xs:dateTime("2000-10-10T12:00:00")', documentNode)));
+		});
+
+		describe('xs:date', () => {
+			it('returns false for "2000-10-10" and "2000-10-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2000-10-10") gt xs:date("2000-10-10")', documentNode)));
+			it('returns false for "2000-10-10+05:30" and "2000-10-10+05:30"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2000-10-10+05:30") gt xs:date("2000-10-10+05:30")', documentNode)));
+			it('returns false for "2000-10-09-12:00" and "2000-10-10+12:00"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:date("2000-10-09-12:00") gt xs:date("2000-10-10+12:00")', documentNode)));
+
+			it('returns true for "2000-10-11" and "2000-10-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2000-10-11") gt xs:date("2000-10-10")', documentNode)));
+			it('returns true for "2000-11-10" and "2000-10-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2000-11-10") gt xs:date("2000-10-10")', documentNode)));
+			it('returns true for "2001-10-10" and "2000-10-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:date("2001-10-10") gt xs:date("2000-10-10")', documentNode)));
+		});
+
+		describe('xs:time', () => {
+			it('returns false for "10:10:10.1" and "10:10:10.1"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:time("10:10:10.1") gt xs:time("10:10:10.1")', documentNode)));
+			it('returns false for "10:10:10.1-10:25" and "10:10:10.1-10:25"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:time("10:10:10.1-10:25") gt xs:time("10:10:10.1-10:25")', documentNode)));
+
+			it('returns true for "10:10:10.2" and "10:10:10.1"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:10:10.2") gt xs:time("10:10:10.1")', documentNode)));
+			it('returns true for "10:10:11.1" and "10:10:10.1"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:10:11.1") gt xs:time("10:10:10.1")', documentNode)));
+			it('returns true for "10:11:10.1" and "10:10:10.1"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("10:11:10.1") gt xs:time("10:10:10.1")', documentNode)));
+			it('returns true for "11:10:10.1" and "10:10:10.1"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:time("11:10:10.1") gt xs:time("10:10:10.1")', documentNode)));
+		});
+
+		describe('xs:gYearMonth', () => {
+			it('returns true for "2000-10" and "2000-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gYearMonth("2000-10") eq xs:gYearMonth("2000-10")', documentNode)));
+			it('returns true for "-2000-10" and "-2000-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gYearMonth("-2000-10") eq xs:gYearMonth("-2000-10")', documentNode)));
+			it('returns true for "2000-10+08:00" and "2000-10+08:00"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gYearMonth("2000-10+08:00") eq xs:gYearMonth("2000-10+08:00")', documentNode)));
+
+			it('returns false for "2000-11" and "2000-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gYearMonth("2000-11") eq xs:gYearMonth("2000-10")', documentNode)));
+			it('returns false for "-2000-10" and "2000-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gYearMonth("-2000-10") eq xs:gYearMonth("2000-10")', documentNode)));
+			it('returns false for "2001-10" and "2000-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gYearMonth("2001-10") eq xs:gYearMonth("2000-10")', documentNode)));
+		});
+
+		describe('xs:gYear', () => {
+			it('returns true for "2000" and "2000"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gYear("2000") eq xs:gYear("2000")', documentNode)));
+			it('returns true for "-2000" and "-2000"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gYear("-2000") eq xs:gYear("-2000")', documentNode)));
+			it('returns true for "2000+08:00" and "2000+08:00"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gYear("2000+08:00") eq xs:gYear("2000+08:00")', documentNode)));
+
+			it('returns false for "2001" and "2000"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gYear("2001") eq xs:gYear("2000")', documentNode)));
+			it('returns false for "-2000" and "2000"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gYear("-2000") eq xs:gYear("2000")', documentNode)));
+		});
+
+		describe('xs:gMonthDay', () => {
+			it('returns true for "--10-10" and "--10-10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gMonthDay("--10-10") eq xs:gMonthDay("--10-10")', documentNode)));
+			it('returns true for "--10-10+08:00" and "--10-10+08:00"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gMonthDay("--10-10+08:00") eq xs:gMonthDay("--10-10+08:00")', documentNode)));
+
+			it('returns false for "--10-11" and "--10-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gMonthDay("--10-11") eq xs:gMonthDay("--10-10")', documentNode)));
+			it('returns false for "--11-10" and "--10-10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gMonthDay("--11-10") eq xs:gMonthDay("--10-10")', documentNode)));
+		});
+
+		describe('xs:gMonth', () => {
+			it('returns true for "--10" and "--10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gMonth("--10") eq xs:gMonth("--10")', documentNode)));
+			it('returns true for "--10+08:00" and "--10+08:00"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gMonth("--10+08:00") eq xs:gMonth("--10+08:00")', documentNode)));
+
+			it('returns false for "--11" and "--10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gMonth("--11") eq xs:gMonth("--10")', documentNode)));
+		});
+
+		describe('xs:gDay', () => {
+			it('returns true for "---10" and "---10"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gDay("---10") eq xs:gDay("---10")', documentNode)));
+			it('returns true for "---10+08:00" and "---10+08:00"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:gDay("---10+08:00") eq xs:gDay("---10+08:00")', documentNode)));
+
+			it('returns false for "---11" and "---10"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:gDay("---11") eq xs:gDay("---10")', documentNode)));
+		});
+	});
+});

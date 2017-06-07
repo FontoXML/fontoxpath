@@ -14,6 +14,14 @@ function parseMatch (match) {
  * @return  {number}
  */
 function compareNormalizedDateTime (dateTime1, dateTime2) {
+	if (dateTime1._isPositive && !dateTime2._isPositive) {
+		return 1;
+	}
+	if (!dateTime1._isPositive && dateTime2._isPositive) {
+		return -1;
+	}
+
+	const bothPositive = dateTime1._isPositive && dateTime2.isPositive;
 	const fields = [
 		[dateTime1._years, dateTime2._years],
 		[dateTime1._months, dateTime2._months],
@@ -26,10 +34,10 @@ function compareNormalizedDateTime (dateTime1, dateTime2) {
 
 	for (let i = 0; i < 7; i++) {
 		if (fields[i][0] > fields[i][1]) {
-			return 1;
+			return bothPositive ? 1 : -1;
 		}
 		if (fields[i][0] < fields[i][1]) {
-			return -1;
+			return bothPositive ? -1 : 1;
 		}
 	}
 
@@ -92,7 +100,7 @@ class DateTime {
 	constructor (years, months, days, hours, minutes, seconds, secondFraction, timezone, isPositive, type = 'xs:dateTime') {
 		this._years = years;
 		this._months = months;
-		this._days = days;
+		this._days = days + (hours === 24 ? 1 : 0);
 		this._hours = hours === 24 ? 0 : hours;
 		this._minutes = minutes;
 		this._seconds = seconds;
@@ -346,6 +354,49 @@ class DateTime {
 		return this;
 	}
 }
+
+/**
+ * @static
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?Duration}  implicitTimezone
+ * @return  {boolean}
+ */
+DateTime.equal = function (dateTime1, dateTime2, implicitTimezone = undefined) {
+	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
+	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
+
+	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === 0;
+};
+
+/**
+ * @static
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?Duration}  implicitTimezone
+ * @return  {boolean}
+ */
+DateTime.lessThan = function (dateTime1, dateTime2, implicitTimezone = undefined) {
+	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
+	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
+
+	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === -1;
+};
+
+/**
+ * @static
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?Duration}  implicitTimezone
+ * @return  {boolean}
+ */
+DateTime.greaterThan = function (dateTime1, dateTime2, implicitTimezone = undefined) {
+	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
+	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
+
+	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === 1;
+};
+
 
 // dateTime    | (-)yyyy-mm-ddThh:mm:ss.ss(Z|[+-]hh:mm)
 // time        |               hh:mm:ss.ss(Z|[+-]hh:mm)

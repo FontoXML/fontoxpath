@@ -16,9 +16,10 @@ var OPERATOR_TRANSLATION = {
  * @param   {!string}          operator
  * @param   {!Sequence}        firstSequence
  * @param   {!Sequence}        secondSequence
+ * @param   {../../DynamicContext}  dynamicContext
  * @return  {!Sequence}
 */
-export default function generalCompare (operator, firstSequence, secondSequence) {
+export default function generalCompare (operator, firstSequence, secondSequence, dynamicContext) {
     // Change operator to equivalent valueCompare operator
     operator = OPERATOR_TRANSLATION[operator];
 
@@ -71,7 +72,7 @@ export default function generalCompare (operator, firstSequence, secondSequence)
 						}
 					}
 
-					if (valueCompare(operator, firstValue, secondValue)) {
+					if (valueCompare(operator, firstValue, secondValue, dynamicContext)) {
 						return true;
 					}
 				}
