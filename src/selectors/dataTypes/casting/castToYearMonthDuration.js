@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import Duration from '../valueTypes/Duration';
+import YearMonthDuration from '../valueTypes/YearMonthDuration';
 
 const createYearMonthDurationValue = value => createAtomicValue(value, 'xs:yearMonthDuration');
 
@@ -11,18 +11,18 @@ export default function castToYearMonthDuration (instanceOf) {
 	if (instanceOf('xs:duration') && !instanceOf('xs:dayTimeDuration')) {
 		return value => ({
 			successful: true,
-			value: createYearMonthDurationValue(value.toYearMonth())
+			value: createYearMonthDurationValue(value.getYearMonthDuration())
 		});
 	}
 	if (instanceOf('xs:dayTimeDuration')) {
-		return value => ({
+		return _value => ({
 			successful: true,
-			value: createYearMonthDurationValue(Duration.fromString('P0M', 'xs:yearMonthDuration'))
+			value: createYearMonthDurationValue(YearMonthDuration.fromString('P0M'))
 		});
 	}
 	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
 		return value => {
-			const parsedDuration = Duration.fromString(value, 'xs:yearMonthDuration');
+			const parsedDuration = YearMonthDuration.fromString(value);
 			if (parsedDuration) {
 				return {
 					successful: true,

@@ -1,4 +1,4 @@
-import Duration from './Duration';
+import DayTimeDuration from './DayTimeDuration';
 
 /**
  * @param   {string|undefined}  match
@@ -75,7 +75,7 @@ function convertSecondsToString (seconds) {
 }
 
 /**
- * @param   {Duration}  timezone
+ * @param   {DayTimeDuration}  timezone
  * @return  {boolean}
  */
 function isUTC (timezone) {
@@ -83,7 +83,7 @@ function isUTC (timezone) {
 }
 
 /**
- * @param   {Duration} timezone
+ * @param   {DayTimeDuration} timezone
  * @return  {string}
  */
 function timezoneToString (timezone) {
@@ -189,7 +189,7 @@ class DateTime {
 		const hours = newDateTime.getHours();
 		const minutes = newDateTime.getMinutes();
 
-		return new DateTime(years, months, days, hours, minutes, this._seconds, this._secondFraction, Duration.fromTimezoneString('Z'), this._isPositive);
+		return new DateTime(years, months, days, hours, minutes, this._seconds, this._secondFraction, DayTimeDuration.fromTimezoneString('Z'), this._isPositive);
 	}
 
 	// returns -1 if this < other, 0 if this === other, 1 if this > other, undefined if indeterminate
@@ -205,8 +205,8 @@ class DateTime {
 
 		// If only this has a timezone
 		if (normalizedThis._timezone && !normalizedOther._timezone) {
-			const normalizedOtherMin = other.normalize(Duration.fromTimezoneString('+14:00'));
-			const normalizedOtherMax = other.normalize(Duration.fromTimezoneString('-14:00'));
+			const normalizedOtherMin = other.normalize(DayTimeDuration.fromTimezoneString('+14:00'));
+			const normalizedOtherMax = other.normalize(DayTimeDuration.fromTimezoneString('-14:00'));
 
 			if (compareNormalizedDateTime(normalizedThis, normalizedOtherMin) < 0) {
 				return -1;
@@ -220,8 +220,8 @@ class DateTime {
 		}
 
 		// If only other has a timezone
-		const normalizedThisMin = this.normalize(Duration.fromTimezoneString('+14:00'));
-		const normalizedThisMax = this.normalize(Duration.fromTimezoneString('-14:00'));
+		const normalizedThisMin = this.normalize(DayTimeDuration.fromTimezoneString('+14:00'));
+		const normalizedThisMax = this.normalize(DayTimeDuration.fromTimezoneString('-14:00'));
 
 		if (compareNormalizedDateTime(normalizedThisMax, normalizedOther) < 0) {
 			return -1;
@@ -359,7 +359,7 @@ class DateTime {
  * @static
  * @param   {DateTime}   dateTime1
  * @param   {DateTime}   dateTime2
- * @param   {?Duration}  implicitTimezone
+ * @param   {?DayTimeDuration}  implicitTimezone
  * @return  {boolean}
  */
 DateTime.equal = function (dateTime1, dateTime2, implicitTimezone = undefined) {
@@ -373,7 +373,7 @@ DateTime.equal = function (dateTime1, dateTime2, implicitTimezone = undefined) {
  * @static
  * @param   {DateTime}   dateTime1
  * @param   {DateTime}   dateTime2
- * @param   {?Duration}  implicitTimezone
+ * @param   {?DayTimeDuration}  implicitTimezone
  * @return  {boolean}
  */
 DateTime.lessThan = function (dateTime1, dateTime2, implicitTimezone = undefined) {
@@ -387,7 +387,7 @@ DateTime.lessThan = function (dateTime1, dateTime2, implicitTimezone = undefined
  * @static
  * @param   {DateTime}   dateTime1
  * @param   {DateTime}   dateTime2
- * @param   {?Duration}  implicitTimezone
+ * @param   {?DayTimeDuration}  implicitTimezone
  * @return  {boolean}
  */
 DateTime.greaterThan = function (dateTime1, dateTime2, implicitTimezone = undefined) {
@@ -424,7 +424,7 @@ DateTime.fromString = function (string) {
 	const minutes = parseMatch(match[7]);
 	const seconds = parseMatch(match[8]);
 	const secondFraction = match[9] ? parseFloat(match[9]) : 0;
-	const timezone = match[10] ? Duration.fromTimezoneString(match[10]) : null;
+	const timezone = match[10] ? DayTimeDuration.fromTimezoneString(match[10]) : null;
 
 	if (years && (years < -271821 || years > 273860)) {
 		// These are the JavaScript bounds for date (https://tc39.github.io/ecma262/#sec-time-values-and-time-range)

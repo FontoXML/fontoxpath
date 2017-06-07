@@ -3,6 +3,8 @@ import createAtomicValue from 'fontoxpath/selectors/dataTypes/createAtomicValue'
 
 import DateTime from 'fontoxpath/selectors/dataTypes/valueTypes/DateTime';
 import Duration from 'fontoxpath/selectors/dataTypes/valueTypes/Duration';
+import YearMonthDuration from 'fontoxpath/selectors/dataTypes/valueTypes/YearMonthDuration';
+import DayTimeDuration from 'fontoxpath/selectors/dataTypes/valueTypes/DayTimeDuration';
 
 // Y = can be cast to target
 // N = can not be cast to target
@@ -720,12 +722,12 @@ describe('castToType()', () => {
 				createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration')));
 		it('from xs:yearMonthDuration',
 			() => chai.assert.deepEqual(
-				castToType(createAtomicValue(Duration.fromString('P10Y10M', 'xs:yearMonthDuration'), 'xs:yearMonthDuration'), 'xs:duration'),
-				createAtomicValue(Duration.fromString('P10Y10M', 'xs:duration'), 'xs:duration')));
+				castToType(createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration'), 'xs:duration'),
+				createAtomicValue(Duration.fromString('P10Y10M'), 'xs:duration')));
 		it('from xs:dayTimeDuration',
 			() => chai.assert.deepEqual(
-				castToType(createAtomicValue(Duration.fromString('P10Y10M', 'xs:dayTimeDuration'), 'xs:dayTimeDuration'), 'xs:duration'),
-				createAtomicValue(Duration.fromString('P10Y10M', 'xs:duration'), 'xs:duration')));
+				castToType(createAtomicValue(DayTimeDuration.fromString('P10D'), 'xs:dayTimeDuration'), 'xs:duration'),
+				createAtomicValue(Duration.fromString('P10D'), 'xs:duration')));
 		it('from xs:dateTime (throws XPTY0004)',
 			() => chai.assert.throws(
 				() => castToType(createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), 'xs:dateTime'), 'xs:duration'),
@@ -784,11 +786,11 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic',
 			() => chai.assert.deepEqual(
 				castToType(createAtomicValue('P10Y10M', 'xs:untypedAtomic'), 'xs:yearMonthDuration'),
-				createAtomicValue(Duration.fromString('P10Y10M', 'xs:yearMonthDuration'), 'xs:yearMonthDuration')));
+				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration')));
 		it('from xs:string',
 			() => chai.assert.deepEqual(
 				castToType(createAtomicValue('P10Y10M', 'xs:string'), 'xs:yearMonthDuration'),
-				createAtomicValue(Duration.fromString('P10Y10M', 'xs:yearMonthDuration'), 'xs:yearMonthDuration')));
+				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration')));
 		it('from xs:float (throws XPTY0004)',
 			() => chai.assert.throws(
 				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:yearMonthDuration'),
@@ -808,15 +810,15 @@ describe('castToType()', () => {
 		it('from xs:duration',
 			() => chai.assert.deepEqual(
 				castToType(createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration'), 'xs:yearMonthDuration'),
-				createAtomicValue(Duration.fromString('P10Y10M', 'xs:yearMonthDuration'), 'xs:yearMonthDuration')));
+				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration')));
 		it('from xs:yearMonthDuration',
 			() => chai.assert.deepEqual(
-				castToType(createAtomicValue(Duration.fromString('P10Y10M', 'xs:yearMonthDuration'), 'xs:yearMonthDuration'), 'xs:yearMonthDuration'),
-				createAtomicValue(Duration.fromString('P10Y10M', 'xs:yearMonthDuration'), 'xs:yearMonthDuration')));
+				castToType(createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration'), 'xs:yearMonthDuration'),
+				createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration')));
 		it('from xs:dayTimeDuration',
 			() => chai.assert.deepEqual(
-				castToType(createAtomicValue(Duration.fromString('P10Y10M', 'xs:dayTimeDuration'), 'xs:dayTimeDuration'), 'xs:yearMonthDuration'),
-				createAtomicValue(Duration.fromString('P0M', 'xs:yearMonthDuration'), 'xs:yearMonthDuration')));
+				castToType(createAtomicValue(DayTimeDuration.fromString('P10Y10M'), 'xs:dayTimeDuration'), 'xs:yearMonthDuration'),
+				createAtomicValue(YearMonthDuration.fromString('P0M'), 'xs:yearMonthDuration')));
 		it('from xs:dateTime (throws XPTY0004)',
 			() => chai.assert.throws(
 				() => castToType(createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), 'xs:dateTime'), 'xs:yearMonthDuration'),
@@ -875,11 +877,11 @@ describe('castToType()', () => {
 		it('from xs:untypedAtomic',
 			() => chai.assert.deepEqual(
 				castToType(createAtomicValue('P10DT10H10M10S', 'xs:untypedAtomic'), 'xs:dayTimeDuration'),
-				createAtomicValue(Duration.fromString('P10DT10H10M10S', 'xs:dayTimeDuration'), 'xs:dayTimeDuration')));
+				createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), 'xs:dayTimeDuration')));
 		it('from xs:string',
 			() => chai.assert.deepEqual(
 				castToType(createAtomicValue('P10DT10H10M10S', 'xs:string'), 'xs:dayTimeDuration'),
-				createAtomicValue(Duration.fromString('P10DT10H10M10S', 'xs:dayTimeDuration'), 'xs:dayTimeDuration')));
+				createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), 'xs:dayTimeDuration')));
 		it('from xs:float (throws XPTY0004)',
 			() => chai.assert.throws(
 				() => castToType(createAtomicValue(10.123, 'xs:float'), 'xs:dayTimeDuration'),
@@ -899,15 +901,15 @@ describe('castToType()', () => {
 		it('from xs:duration',
 			() => chai.assert.deepEqual(
 				castToType(createAtomicValue(Duration.fromString('P10Y10M10DT10H10M10S'), 'xs:duration'), 'xs:dayTimeDuration'),
-				createAtomicValue(Duration.fromString('P10DT10H10M10S', 'xs:dayTimeDuration'), 'xs:dayTimeDuration')));
+				createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), 'xs:dayTimeDuration')));
 		it('from xs:yearMonthDuration',
 			() => chai.assert.deepEqual(
-				castToType(createAtomicValue(Duration.fromString('P10Y10M', 'xs:yearMonthDuration'), 'xs:yearMonthDuration'), 'xs:dayTimeDuration'),
-				createAtomicValue(Duration.fromString('PT0S', 'xs:dayTimeDuration'), 'xs:dayTimeDuration')));
+				castToType(createAtomicValue(YearMonthDuration.fromString('P10Y10M'), 'xs:yearMonthDuration'), 'xs:dayTimeDuration'),
+				createAtomicValue(DayTimeDuration.fromString('PT0S'), 'xs:dayTimeDuration')));
 		it('from xs:dayTimeDuration',
 			() => chai.assert.deepEqual(
-				castToType(createAtomicValue(Duration.fromString('P10DT10H10M10S', 'xs:dayTimeDuration'), 'xs:dayTimeDuration'), 'xs:dayTimeDuration'),
-				createAtomicValue(Duration.fromString('P10DT10H10M10S', 'xs:dayTimeDuration'), 'xs:dayTimeDuration')));
+				castToType(createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), 'xs:dayTimeDuration'), 'xs:dayTimeDuration'),
+				createAtomicValue(DayTimeDuration.fromString('P10DT10H10M10S'), 'xs:dayTimeDuration')));
 		it('from xs:dateTime (throws XPTY0004)',
 			() => chai.assert.throws(
 				() => castToType(createAtomicValue(DateTime.fromString('2000-10-10T10:10:10+10:30'), 'xs:dateTime'), 'xs:dayTimeDuration'),

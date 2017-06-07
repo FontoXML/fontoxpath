@@ -1,5 +1,5 @@
 import DateTime from 'fontoxpath/selectors/dataTypes/valueTypes/DateTime';
-import Duration from 'fontoxpath/selectors/dataTypes/valueTypes/Duration';
+import DayTimeDuration from 'fontoxpath/selectors/dataTypes/valueTypes/DayTimeDuration';
 
 describe('Data type: dateTime', () => {
 	describe('DateTime.fromString()', () => {
@@ -20,34 +20,34 @@ describe('Data type: dateTime', () => {
 
 		it('accepts "2000-12-12T20:10:10.2Z" as input', () => {
 			const dateTime = DateTime.fromString('2000-12-12T20:10:10.2Z');
-			chai.assert.deepEqual(dateTime, new DateTime(2000, 12, 12, 20, 10, 10, .2, Duration.fromTimezoneString('Z'), true));
+			chai.assert.deepEqual(dateTime, new DateTime(2000, 12, 12, 20, 10, 10, .2, DayTimeDuration.fromTimezoneString('Z'), true));
 		});
 
 		it('accepts "2000-12-12T20:10:10.2+10:00" as input', () => {
 			const dateTime = DateTime.fromString('2000-12-12T20:10:10.2+10:00');
-			chai.assert.deepEqual(dateTime, new DateTime(2000, 12, 12, 20, 10, 10, .2, Duration.fromTimezoneString('+10:00'), true));
+			chai.assert.deepEqual(dateTime, new DateTime(2000, 12, 12, 20, 10, 10, .2, DayTimeDuration.fromTimezoneString('+10:00'), true));
 		});
 	});
 
 	describe('DateTime.normalize()', () => {
 		it('correctly normalizes "2000-12-12T12:00:00+10:00" to 2000-12-12T02:00:00Z', () => {
 			const dateTime = DateTime.fromString('2000-12-12T12:00:00+10:00');
-			chai.assert.deepEqual(dateTime.normalize(), new DateTime(2000, 12, 12, 2, 0, 0, 0, Duration.fromTimezoneString('Z'), true));
+			chai.assert.deepEqual(dateTime.normalize(), new DateTime(2000, 12, 12, 2, 0, 0, 0, DayTimeDuration.fromTimezoneString('Z'), true));
 		});
 
 		it('correctly normalizes "2001-01-01T08:00:00+10:00" to 2000-12-31T22:00:00Z', () => {
 			const dateTime = DateTime.fromString('2001-01-01T08:00:00+10:00');
-			chai.assert.deepEqual(dateTime.normalize(), new DateTime(2000, 12, 31, 22, 0, 0, 0, Duration.fromTimezoneString('Z'), true));
+			chai.assert.deepEqual(dateTime.normalize(), new DateTime(2000, 12, 31, 22, 0, 0, 0, DayTimeDuration.fromTimezoneString('Z'), true));
 		});
 
 		it('correctly normalizes "2000-12-12T12:00:00-10:00" to 2000-12-12T02:00:00Z', () => {
 			const dateTime = DateTime.fromString('2000-12-12T12:00:00-10:00');
-			chai.assert.deepEqual(dateTime.normalize(), new DateTime(2000, 12, 12, 22, 0, 0, 0, Duration.fromTimezoneString('Z'), true));
+			chai.assert.deepEqual(dateTime.normalize(), new DateTime(2000, 12, 12, 22, 0, 0, 0, DayTimeDuration.fromTimezoneString('Z'), true));
 		});
 
 		it('correctly normalizes "2000-12-31T22:00:00-10:00" to 2001-01-01T08:00:00Z', () => {
 			const dateTime = DateTime.fromString('2000-12-31T22:00:00-10:00');
-			chai.assert.deepEqual(dateTime.normalize(), new DateTime(2001, 1, 1, 8, 0, 0, 0, Duration.fromTimezoneString('Z'), true));
+			chai.assert.deepEqual(dateTime.normalize(), new DateTime(2001, 1, 1, 8, 0, 0, 0, DayTimeDuration.fromTimezoneString('Z'), true));
 		});
 
 		it('returns this when no timezone is set', () => {

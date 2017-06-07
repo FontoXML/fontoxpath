@@ -8,8 +8,19 @@ const createDurationValue = value => createAtomicValue(value, 'xs:duration');
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToDuration (instanceOf) {
+	if (instanceOf('xs:yearMonthDuration')) {
+		return value => ({
+			successful: true,
+			value: createDurationValue(Duration.fromYearMonthDuration(value))
+		});
+	}
+	if (instanceOf('xs:dayTimeDuration')) {
+		return value => ({
+			successful: true,
+			value: createDurationValue(Duration.fromDayTimeDuration(value))
+		});
+	}
 	if (instanceOf('xs:duration')) {
-		// Also for instanceOf('xs:dayTimeDuration') and instanceOf('xs:yearMonthDuration')
 		return value => ({
 			successful: true,
 			value: createDurationValue(value.toDuration())

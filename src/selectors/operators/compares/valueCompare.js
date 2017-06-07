@@ -2,7 +2,8 @@ import castToType from '../../dataTypes/castToType';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 
 import DateTime from '../../dataTypes/valueTypes/DateTime';
-import Duration from '../../dataTypes/valueTypes/Duration';
+import YearMonthDuration from '../../dataTypes/valueTypes/YearMonthDuration';
+import DayTimeDuration from '../../dataTypes/valueTypes/DayTimeDuration';
 
 // Use partial application to get to a comparer faster
 function bothAreStringOrAnyURI (a, b) {
@@ -121,13 +122,13 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 			case 'lt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return Duration.yearMonthDurationLessThan(castA.value, castB.value);
+					return YearMonthDuration.lessThan(castA.value, castB.value);
 				};
 
 			case 'gt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return Duration.yearMonthDurationGreaterThan(castA.value, castB.value);
+					return YearMonthDuration.greaterThan(castA.value, castB.value);
 				};
 		}
 	}
@@ -137,13 +138,13 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 			case 'lt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return Duration.dayTimeDurationLessThan(castA.value, castB.value);
+					return DayTimeDuration.lessThan(castA.value, castB.value);
 				};
 
 			case 'gt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return Duration.dayTimeDurationGreaterThan(castA.value, castB.value);
+					return DayTimeDuration.greaterThan(castA.value, castB.value);
 				};
 		}
 	}
@@ -153,13 +154,12 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 			case 'eq':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return Duration.equals(castA.value, castB.value);
+					return castA.value.equals(castB.value);
 				};
-
 			case 'ne':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return !Duration.equals(castA.value, castB.value);
+					return !castA.value.equals(castB.value);
 				};
 		}
 	}
