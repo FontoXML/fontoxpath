@@ -23,6 +23,9 @@ class SelfAxis extends Selector {
 	 * @return  {Sequence}
 	 */
 	evaluate (dynamicContext) {
+		if (dynamicContext.contextItem === null) {
+			throw new Error('XPDY0002: the context item is not defined');
+		}
 		var isMatch = this._selector.evaluate(dynamicContext).getEffectiveBooleanValue();
 		return isMatch ? Sequence.singleton(dynamicContext.contextItem) : Sequence.empty();
 	}

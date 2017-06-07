@@ -175,8 +175,10 @@ describe('array:for-each', () => {
 	it('returns an empty array when passed an empty sequence',
 		() => chai.assert.deepEqual(evaluateXPathToArray('array:for-each([], tokenize#1)', documentNode), []));
 
-	it('returns an empty array when passed an empty array',
+	it('returns the result of calling the function for each item',
 		() => chai.assert.deepEqual(evaluateXPathToArray('array:for-each([("the cat"),"sat",("on the mat")], tokenize#1)', documentNode), [['the', 'cat'], ['sat'], ['on', 'the', 'mat']]));
+	it('allows inline functions',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('array:for-each([1,2,3], function ($i) {$i + 1}) => deep-equal([2,3,4])', documentNode)));
 });
 
 describe('array:filter', () => {

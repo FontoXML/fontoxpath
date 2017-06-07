@@ -4,6 +4,9 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 var stringFunctions = builtinStringFunctions.functions;
 function contextItemAsFirstArgument (fn, dynamicContext) {
+	if (dynamicContext.contextItem === null) {
+		throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
+	}
 	return fn(dynamicContext, Sequence.singleton(dynamicContext.contextItem));
 }
 
