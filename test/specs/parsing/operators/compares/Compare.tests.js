@@ -500,3 +500,114 @@ describe('dateTime compares', () => {
 		});
 	});
 });
+
+describe('Duration compares', () => {
+	describe('eq', () => {
+		describe('xs:duration', () => {
+			it('returns true for "P10Y10M10DT10H10M10.1S" and "P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:duration("P10Y10M10DT10H10M10.1S") eq xs:duration("P10Y10M10DT10H10M10.1S")', documentNode)));
+			it('returns true for "-P10Y10M10DT10H10M10.1S" and "-P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:duration("-P10Y10M10DT10H10M10.1S") eq xs:duration("-P10Y10M10DT10H10M10.1S")', documentNode)));
+			it('returns true for "P1Y" and "P12M"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:duration("P1Y") eq xs:duration("P12M")', documentNode)));
+			it('returns true for "PT24H" and "P1D"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:duration("PT24H") eq xs:duration("P1D")', documentNode)));
+			it('returns false for "P1Y" and "P365D"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:duration("P1Y") eq xs:duration("P365D")', documentNode)));
+			it('returns false for "P11Y10M10DT10H10M10.1S" and "P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:duration("P11Y10M10DT10H10M10.1S") eq xs:duration("P10Y10M10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10Y11M10DT10H10M10.1S" and "P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:duration("P10Y11M10DT10H10M10.1S") eq xs:duration("P10Y10M10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10Y10M11DT10H10M10.1S" and "P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:duration("P10Y10M11DT10H10M10.1S") eq xs:duration("P10Y10M10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10Y10M10DT11H10M10.1S" and "P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:duration("P10Y10M10DT11H10M10.1S") eq xs:duration("P10Y10M10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10Y10M10DT10H11M10.1S" and "P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:duration("P10Y10M10DT10H11M10.1S") eq xs:duration("P10Y10M10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10Y10M10DT10H10M11.1S" and "P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:duration("P10Y10M10DT10H10M11.1S") eq xs:duration("P10Y10M10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10Y10M10DT10H10M10.2S" and "P10Y10M10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:duration("P10Y10M10DT10H10M10.2S") eq xs:duration("P10Y10M10DT10H10M10.1S")', documentNode)));
+		});
+
+		describe('xs:yearMonthDuration', () => {
+			it('returns true for "P10Y10M" and "P10Y10M"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:yearMonthDuration("P10Y10M") eq xs:yearMonthDuration("P10Y10M")', documentNode)));
+			it('returns false for "P11Y10M" and "P10Y10M"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:yearMonthDuration("P11Y10M") eq xs:yearMonthDuration("P10Y10M")', documentNode)));
+			it('returns false for "P10Y11M" and "P10Y10M"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:yearMonthDuration("P10Y11M") eq xs:yearMonthDuration("P10Y10M")', documentNode)));
+		});
+
+		describe('xs:dayTimeDuration', () => {
+			it('returns true for "P10DT10H10M10.1S" and "P10DT10H10M10.1S"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("P10DT10H10M10.1S") eq xs:dayTimeDuration("P10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P11DT10H10M10.1S" and "P10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("P11DT10H10M10.1S") eq xs:dayTimeDuration("P10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10DT11H10M10.1S" and "P10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("P10DT11H10M10.1S") eq xs:dayTimeDuration("P10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10DT10H11M10.1S" and "P10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("P10DT10H11M10.1S") eq xs:dayTimeDuration("P10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10DT10H10M11.1S" and "P10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("P10DT10H10M11.1S") eq xs:dayTimeDuration("P10DT10H10M10.1S")', documentNode)));
+			it('returns false for "P10DT10H10M10.2S" and "P10DT10H10M10.1S"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("P10DT10H10M10.2S") eq xs:dayTimeDuration("P10DT10H10M10.1S")', documentNode)));
+		});
+	});
+
+	describe('lt', () => {
+		describe('xs:yearMonthDuration', () => {
+			it('returns true for "P1Y" and "P2Y"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:yearMonthDuration("P1Y") lt xs:yearMonthDuration("P2Y")', documentNode)));
+			it('returns true for "P1Y" and "P13M"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:yearMonthDuration("P1Y") lt xs:yearMonthDuration("P13M")', documentNode)));
+			it('returns true for "P10M" and "P11M"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:yearMonthDuration("P10M") lt xs:yearMonthDuration("P11M")', documentNode)));
+			it('returns false for "P1Y" and "P1M"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:yearMonthDuration("P1Y") lt xs:yearMonthDuration("P1M")', documentNode)));
+			it('returns false for "P23M" and "P1Y"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:yearMonthDuration("P23M") lt xs:yearMonthDuration("P1Y")', documentNode)));
+		});
+
+		describe('xs:dayTimeDuration', () => {
+			it('returns true for "P10D" and "P11D"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("P10D") lt xs:dayTimeDuration("P11D")', documentNode)));
+			it('returns true for "P1D" and "PT25H"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("P1D") lt xs:dayTimeDuration("PT25H")', documentNode)));
+			it('returns true for "PT66M" and "PT2H"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("PT66M") lt xs:dayTimeDuration("PT2H")', documentNode)));
+			it('returns false for "PT33H" and "P1D"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("PT33H") lt xs:dayTimeDuration("P1D")', documentNode)));
+			it('returns false for "PT1500M" and "P1D"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("PT1500M") lt xs:dayTimeDuration("P1D")', documentNode)));
+		});
+	});
+
+	describe('gt', () => {
+		describe('xs:yearMonthDuration', () => {
+			it('returns true for "P2Y" and "P1Y"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:yearMonthDuration("P2Y") gt xs:yearMonthDuration("P1Y")', documentNode)));
+			it('returns true for "P13M" and "P1Y"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:yearMonthDuration("P13M") gt xs:yearMonthDuration("P1Y")', documentNode)));
+			it('returns true for "P11M" and "P10M"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:yearMonthDuration("P11M") gt xs:yearMonthDuration("P10M")', documentNode)));
+			it('returns false for "P1M" and "P1Y"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:yearMonthDuration("P1M") gt xs:yearMonthDuration("P1Y")', documentNode)));
+			it('returns false for "P1Y" and "P23M"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:yearMonthDuration("P1Y") gt xs:yearMonthDuration("P23M")', documentNode)));
+		});
+
+		describe('xs:dayTimeDuration', () => {
+			it('returns true for "P11D" and "P10D"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("P11D") gt xs:dayTimeDuration("P10D")', documentNode)));
+			it('returns true for "PT25H" and "P1D"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("PT25H") gt xs:dayTimeDuration("P1D")', documentNode)));
+			it('returns true for "PT2H" and "PT66M"',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("PT2H") gt xs:dayTimeDuration("PT66M")', documentNode)));
+			it('returns false for "P1D" and "PT33H"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("P1D") gt xs:dayTimeDuration("PT33H")', documentNode)));
+			it('returns false for "P1D" and "PT1500M"',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('xs:dayTimeDuration("P1D") gt xs:dayTimeDuration("PT1500M")', documentNode)));
+		});
+	});
+});

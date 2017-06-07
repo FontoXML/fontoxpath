@@ -197,8 +197,8 @@ op-date-less-than,true
 op-dateTime-equal,true
 op-dateTime-greater-than,true
 op-dateTime-less-than,true
-op-dayTimeDuration-greater-than,false
-op-dayTimeDuration-less-than,false
+op-dayTimeDuration-greater-than,true
+op-dayTimeDuration-less-than,true
 op-divide-dayTimeDuration,false
 op-divide-dayTimeDuration-by-dayTimeDuration,false
 op-divide-yearMonthDuration,false
@@ -248,8 +248,8 @@ op-time-greater-than,time
 op-time-less-than,time
 op-to,true
 op-union,true
-op-yearMonthDuration-greater-than,false
-op-yearMonthDuration-less-than,false
+op-yearMonthDuration-greater-than,true
+op-yearMonthDuration-less-than,true
 prod-AllowingEmpty,true
 prod-Annotation,true
 prod-AxisStep,true

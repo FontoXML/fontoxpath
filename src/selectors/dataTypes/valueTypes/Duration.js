@@ -192,6 +192,88 @@ class Duration {
 
 /**
  * @static
+ * @param   {Duration}  duration1
+ * @param   {Duration}  duration2
+ * @return  {boolean}
+ */
+Duration.equals = function (duration1, duration2) {
+	return duration1.equals(duration2);
+};
+
+/**
+ * @static
+ * @param   {Duration}  duration1
+ * @param   {Duration}  duration2
+ * @return  {boolean}
+ */
+Duration.yearMonthDurationLessThan = function (duration1, duration2) {
+	if (duration1._isPositive && !duration2._isPositive) {
+		return false;
+	}
+
+	if (!duration1._isPositive && duration2._isPositive) {
+		return true;
+	}
+
+	return duration1._months < duration2._months;
+};
+
+/**
+ * @static
+ * @param   {Duration}  duration1
+ * @param   {Duration}  duration2
+ * @return  {boolean}
+ */
+Duration.yearMonthDurationGreaterThan = function (duration1, duration2) {
+	if (duration1._isPositive && !duration2._isPositive) {
+		return true;
+	}
+
+	if (!duration1._isPositive && duration2._isPositive) {
+		return false;
+	}
+
+	return duration1._months > duration2._months;
+};
+
+/**
+ * @static
+ * @param   {Duration}  duration1
+ * @param   {Duration}  duration2
+ * @return  {boolean}
+ */
+Duration.dayTimeDurationLessThan = function (duration1, duration2) {
+	if (duration1._isPositive && !duration2._isPositive) {
+		return false;
+	}
+
+	if (!duration1._isPositive && duration2._isPositive) {
+		return true;
+	}
+
+	return (duration1._seconds + duration1._secondFraction) < (duration2._seconds + duration2._secondFraction);
+};
+
+/**
+ * @static
+ * @param   {Duration}  duration1
+ * @param   {Duration}  duration2
+ * @return  {boolean}
+ */
+Duration.dayTimeDurationGreaterThan = function (duration1, duration2) {
+	if (duration1._isPositive && !duration2._isPositive) {
+		return true;
+	}
+
+	if (!duration1._isPositive && duration2._isPositive) {
+		return false;
+	}
+
+	return (duration1._seconds + duration1._secondFraction) > (duration2._seconds + duration2._secondFraction);
+};
+
+/**
+ * @static
  * @param   {string}  string
  * @param   {string}  type
  * @return  {?Duration}

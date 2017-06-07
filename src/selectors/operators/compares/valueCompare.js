@@ -2,6 +2,7 @@ import castToType from '../../dataTypes/castToType';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 
 import DateTime from '../../dataTypes/valueTypes/DateTime';
+import Duration from '../../dataTypes/valueTypes/Duration';
 
 // Use partial application to get to a comparer faster
 function bothAreStringOrAnyURI (a, b) {
@@ -112,6 +113,54 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 		if (!bothAreStringOrAnyURI(typeA, typeB) &&
 			!(isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric'))) {
 			throw new Error('XPTY0004: Values to compare are not of the same type');
+		}
+	}
+
+	if (isSubtypeOf(typeA, 'xs:yearMonthDuration')) {
+		switch (operator) {
+			case 'lt':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return Duration.yearMonthDurationLessThan(castA.value, castB.value);
+				};
+
+			case 'gt':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return Duration.yearMonthDurationGreaterThan(castA.value, castB.value);
+				};
+		}
+	}
+
+	if (isSubtypeOf(typeA, 'xs:dayTimeDuration')) {
+		switch (operator) {
+			case 'lt':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return Duration.dayTimeDurationLessThan(castA.value, castB.value);
+				};
+
+			case 'gt':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return Duration.dayTimeDurationGreaterThan(castA.value, castB.value);
+				};
+		}
+	}
+
+	if (isSubtypeOf(typeA, 'xs:duration')) {
+		switch (operator) {
+			case 'eq':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return Duration.equals(castA.value, castB.value);
+				};
+
+			case 'ne':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return !Duration.equals(castA.value, castB.value);
+				};
 		}
 	}
 
