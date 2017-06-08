@@ -16,16 +16,16 @@ class SimpleMapOperator extends Selector {
 	 * @param  {!Selector}  expression2
 	 */
 	constructor (expression1, expression2) {
-		super(new Specificity({}).add(expression1.specificity));
+		super(new Specificity({}).add(expression1.specificity), {
+			canBeStaticallyEvaluated: expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
+		});
 
 		this._expression1 = expression1;
 		this._expression2 = expression2;
-
-
 	}
 
 	evaluate (dynamicContext) {
-		const sequence = this._expression1.evaluate(dynamicContext);
+		const sequence = this._expression1.evaluateMaybeStatically(dynamicContext);
 		/**
 		 * @type {Iterator<../DynamicContext>}
 		 */
@@ -39,7 +39,7 @@ class SimpleMapOperator extends Selector {
 					return { done: true };
 				}
 				if (!sequenceValueIterator) {
-					sequenceValueIterator = this._expression2.evaluate(childContext.value).value();
+					sequenceValueIterator = this._expression2.evaluateMaybeStatically(childContext.value).value();
 				}
 				let value = sequenceValueIterator.next();
 				while (value.done) {
@@ -47,7 +47,7 @@ class SimpleMapOperator extends Selector {
 					if (childContext.done) {
 						return { done: true };
 					}
-					sequenceValueIterator = this._expression2.evaluate(childContext.value).value();
+					sequenceValueIterator = this._expression2.evaluateMaybeStatically(childContext.value).value();
 					value = sequenceValueIterator.next();
 				}
 				return value;

@@ -9,7 +9,10 @@ class VarRef extends Selector {
 	 * @param  {string}  variableName
 	 */
 	constructor (variableName) {
-		super(new Specificity({}));
+		super(new Specificity({}), {
+			canBeStaticallyEvaluated: false,
+			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
+		});
 
 		this._variableName = variableName;
 

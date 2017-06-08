@@ -20,7 +20,7 @@ class NodeNameSelector extends Selector {
 				[Specificity.NODETYPE_KIND]: 1
 			};
 		}
-		super(new Specificity(specificity));
+		super(new Specificity(specificity), { canBeStaticallyEvaluated: false });
 
 		this._nodeName = nodeName;
 

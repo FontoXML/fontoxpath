@@ -38,15 +38,17 @@ class FunctionCall extends Selector {
 		}), {
 			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
 			peer: false,
-			subtree: false
+			subtree: false,
+			canBeStaticallyEvaluated: false //args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
 		});
 
 		this._args = args;
 		this._functionReference = functionReference;
+
 	}
 
 	evaluate (dynamicContext) {
-		var sequence = this._functionReference.evaluate(dynamicContext);
+		var sequence = this._functionReference.evaluateMaybeStatically(dynamicContext);
 
 		if (!sequence.isSingleton()) {
 			throw new Error('XPTY0004: expected base expression to evaluate to a sequence with a single item');
@@ -66,7 +68,7 @@ class FunctionCall extends Selector {
 			if (argument === null) {
 				return null;
 			}
-			return argument.evaluate(dynamicContext);
+			return argument.evaluateMaybeStatically(dynamicContext);
 		});
 
 		// Test if we have the correct arguments, and pre-convert the ones we can pre-convert

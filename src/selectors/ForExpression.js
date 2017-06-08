@@ -10,7 +10,9 @@ class ForExpression extends Selector {
 	 * @param  {!Selector}                       expression
 	 */
 	constructor (clauses, expression) {
-		super(new Specificity({}));
+		super(new Specificity({}), {
+			canBeStaticallyEvaluated: false
+		});
 
 		this._clauses = clauses;
 		this._expression = expression;
@@ -19,7 +21,7 @@ class ForExpression extends Selector {
 
 	evaluate (dynamicContext) {
 		const contextWithClauses = this._clauses.reduce((scopedContext, clause) => {
-			const clauseValue = clause.expression.evaluate(scopedContext);
+			const clauseValue = clause.expression.evaluateMaybeStatically(scopedContext);
 			return scopedContext.createScopedContext({
 				variables: {
 					[clause.varName]: clauseValue
@@ -27,7 +29,7 @@ class ForExpression extends Selector {
 			});
 		}, dynamicContext);
 
-		return this._expression.evaluate(contextWithClauses);
+		return this._expression.evaluateMaybeStatically(contextWithClauses);
 	}
 }
 

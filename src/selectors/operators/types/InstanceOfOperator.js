@@ -12,7 +12,7 @@ class InstanceOfOperator extends Selector {
 	 * @param  {!string}    multiplicity
 	 */
 	constructor (expression, typeTest, multiplicity) {
-		super(expression.specificity);
+		super(expression.specificity, { canBeStaticallyEvaluated: false });
 
 		this._expression = expression;
 		this._typeTest = typeTest;
@@ -20,7 +20,7 @@ class InstanceOfOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		const evaluatedExpression = this._expression.evaluate(dynamicContext);
+		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext);
 
 		switch (this._multiplicity) {
 			case '?':
@@ -52,7 +52,7 @@ class InstanceOfOperator extends Selector {
 				contextItem: argumentItem,
 				contextSequence: contextItem
 			});
-			return this._typeTest.evaluate(scopedContext).getEffectiveBooleanValue();
+			return this._typeTest.evaluateMaybeStatically(scopedContext).getEffectiveBooleanValue();
 		});
 
 		return Sequence.singleton(createAtomicValue(isInstanceOf, 'xs:boolean'));

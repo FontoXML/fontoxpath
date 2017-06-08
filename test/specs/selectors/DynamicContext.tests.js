@@ -29,7 +29,6 @@ describe('DynamicContext.createScopedContext()', () => {
 		const scopedContext = dynamicContext.createScopedContext({
 				contextItemIndex: 1,
 				contextSequence: Sequence.singleton('contextSequence2'),
-				domFacade: 'domFacade2',
 				variables: {
 					variable: 'variables2',
 					extra: 'variable'
@@ -38,7 +37,7 @@ describe('DynamicContext.createScopedContext()', () => {
 		const expectedContext = new DynamicContext({
 				contextItemIndex: 1,
 				contextSequence: scopedContext.contextSequence,
-				domFacade: 'domFacade2',
+				domFacade: 'domFacade1',
 				variables: {
 					variable: 'variables2',
 					extra: 'variable'

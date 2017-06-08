@@ -2,7 +2,6 @@ import Selector from '../../Selector';
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
-import getEffectiveBooleanValue from '../../dataTypes/getEffectiveBooleanValue';
 
 /**
  * @extends {Selector}
@@ -19,7 +18,9 @@ class OrOperator extends Selector {
 			return selector.specificity;
 		}, new Specificity({}));
 
-		super(maxSpecificity);
+		super(maxSpecificity, {
+			canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
+		});
 
 		// If all subSelectors define the same bucket: use that one, else, use no bucket.
 		this._bucket = selectors.reduce(function (bucket, selector) {
@@ -43,7 +44,7 @@ class OrOperator extends Selector {
 
 	evaluate (dynamicContext) {
 		var result = this._subSelectors.some(function (subSelector) {
-			return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
+			return subSelector.evaluateMaybeStatically(dynamicContext).getEffectiveBooleanValue();
 			});
 
 		return Sequence.singleton(createAtomicValue(result, 'xs:boolean'));

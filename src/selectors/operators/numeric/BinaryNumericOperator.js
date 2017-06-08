@@ -31,7 +31,9 @@ class BinaryNumericOperator extends Selector {
 	 * @param  {Selector}  secondValueExpr  The selector evaluating to the second value to process
 	 */
 	constructor (kind, firstValueExpr, secondValueExpr) {
-		super(firstValueExpr.specificity.add(secondValueExpr.specificity));
+		super(firstValueExpr.specificity.add(secondValueExpr.specificity), {
+			canBeStaticallyEvaluated: false
+		});
 		this._firstValueExpr = firstValueExpr;
 		this._secondValueExpr = secondValueExpr;
 
@@ -39,13 +41,13 @@ class BinaryNumericOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		const firstValueSequence = this._firstValueExpr.evaluate(dynamicContext).atomize(dynamicContext);
+		const firstValueSequence = this._firstValueExpr.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
 		if (firstValueSequence.isEmpty()) {
 			// Shortcut, if the first part is empty, we can return empty.
 			// As per spec, we do not have to evaluate the second part, though we could.
 			return firstValueSequence;
 		}
-		const secondValueSequence = this._secondValueExpr.evaluate(dynamicContext).atomize(dynamicContext);
+		const secondValueSequence = this._secondValueExpr.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
 		if (secondValueSequence.isEmpty()) {
 			return secondValueSequence;
 		}

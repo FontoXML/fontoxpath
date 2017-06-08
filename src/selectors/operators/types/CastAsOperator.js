@@ -12,7 +12,7 @@ class castAsOperator extends Selector {
 	 * @param  {!boolean}   allowsEmptySequence
 	 */
 	constructor (expression, targetType, allowsEmptySequence) {
-		super(expression.specificity);
+		super(expression.specificity, { canBeStaticallyEvaluated: false });
 
 		if (targetType === 'xs:anyAtomicType' || targetType === 'xs:anySimpleType' || targetType === 'xs:NOTATION') {
 			throw new Error('XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.');
@@ -25,7 +25,7 @@ class castAsOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var evaluatedExpression = this._expression.evaluate(dynamicContext).atomize(dynamicContext);
+		var evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
 
 		if (evaluatedExpression.isEmpty()) {
 			if (!this._allowsEmptySequence) {

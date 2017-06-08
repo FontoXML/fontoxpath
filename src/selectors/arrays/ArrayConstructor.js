@@ -15,7 +15,9 @@ class ArrayConstructor extends Selector {
 	constructor (curlyness, members) {
 		super(new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1
-			}));
+		}), {
+			canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
+		});
 		this._curlyness = curlyness;
 		this._members = members;
 	}
@@ -23,11 +25,11 @@ class ArrayConstructor extends Selector {
 	evaluate (dynamicContext) {
 		if (this._curlyness === 'curly') {
 			return Sequence.singleton(
-				new ArrayValue(Array.from(this._members[0].evaluate(dynamicContext).value()).map(Sequence.singleton)));
+				new ArrayValue(Array.from(this._members[0].evaluateMaybeStatically(dynamicContext).value()).map(Sequence.singleton)));
 		}
 
 		return Sequence.singleton(
-			new ArrayValue(this._members.map(entry => entry.evaluate(dynamicContext))));
+			new ArrayValue(this._members.map(entry => entry.evaluateMaybeStatically(dynamicContext))));
 	}
 }
 export default ArrayConstructor;

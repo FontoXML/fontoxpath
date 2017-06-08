@@ -12,7 +12,8 @@ class SelfAxis extends Selector {
 		super(selector.specificity, {
 			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
 			subtree: true,
-			peer: true
+			peer: true,
+			canBeStaticallyEvaluated: false
 		});
 
 		this._selector = selector;
@@ -26,7 +27,7 @@ class SelfAxis extends Selector {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: the context item is not defined');
 		}
-		var isMatch = this._selector.evaluate(dynamicContext).getEffectiveBooleanValue();
+		var isMatch = this._selector.evaluateMaybeStatically(dynamicContext).getEffectiveBooleanValue();
 		return isMatch ? Sequence.singleton(dynamicContext.contextItem) : Sequence.empty();
 	}
 

@@ -17,7 +17,8 @@ class SequenceOperator extends Selector {
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
 			{
-				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
+				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
+				canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
 			});
 		this._selectors = selectors;
 
@@ -28,7 +29,7 @@ class SequenceOperator extends Selector {
 		if (!this._selectors.length) {
 			return Sequence.empty();
 		}
-		let currentValueIterator = this._selectors[i].evaluate(dynamicContext).value();
+		let currentValueIterator = this._selectors[i].evaluateMaybeStatically(dynamicContext).value();
 
 		return new Sequence({
 			next: () => {
@@ -38,7 +39,7 @@ class SequenceOperator extends Selector {
 					if (i >= this._selectors.length) {
 						return { done: true };
 					}
-					currentValueIterator = this._selectors[i].evaluate(dynamicContext).value();
+					currentValueIterator = this._selectors[i].evaluateMaybeStatically(dynamicContext).value();
 					val = currentValueIterator.next();
 				}
 				return val;

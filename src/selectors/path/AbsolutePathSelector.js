@@ -13,7 +13,8 @@ class AbsolutePathSelector extends Selector {
 		super(relativePathSelector.specificity, {
 			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
 			subtree: false,
-			peer: false
+			peer: false,
+			canBeStaticallyEvaluated: false
 		});
 
 		this._relativePathSelector = relativePathSelector;
@@ -24,7 +25,7 @@ class AbsolutePathSelector extends Selector {
 		var documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;
 		// Assume this is the start, so only one node
 		var contextSequence = Sequence.singleton(NodeValue.createFromNode(documentNode, 'node()'));
-		return this._relativePathSelector.evaluate(
+		return this._relativePathSelector.evaluateMaybeStatically(
 			dynamicContext.createScopedContext({
 				contextItem: contextSequence.first(),
 				contextItemIndex: 0,

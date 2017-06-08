@@ -5,13 +5,13 @@ let Sequence;
 
 /**
  * All possible permutations
- * @typedef {!{contextItemIndex: !number, contextSequence: !Sequence}|{variables: Object}}|{contextItemIndex: number, contextSequence: !Sequence, domFacade: !IDomFacade, variables: !Object}}
+ * @typedef {!{contextItemIndex: !number, contextSequence: ?Sequence}|{variables: Object}}|{contextItemIndex: number, contextSequence: !Sequence, variables: !Object}}
  */
 let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: !IDomFacade, variables: !Object}}  context  The context to overlay
+	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -33,7 +33,7 @@ class DynamicContext {
 		this.contextItem = context.contextItem;
 
 		/**
-		 * @type {!IDomFacade}
+		 * @type {?IDomFacade}
 		 * @const
 		 */
 		this.domFacade = context.domFacade;
@@ -53,7 +53,7 @@ class DynamicContext {
 		return new DynamicContext({
 			contextItemIndex: overlayContext.contextItemIndex !== undefined ? overlayContext.contextItemIndex : this.contextItemIndex,
 			contextSequence: overlayContext.contextSequence !== undefined ? overlayContext.contextSequence : this.contextSequence,
-			domFacade: overlayContext.domFacade ? overlayContext.domFacade : this.domFacade,
+			domFacade: this.domFacade,
 			variables: overlayContext.variables ? Object.assign({}, this.variables, overlayContext.variables) : this.variables,
 			contextItem: overlayContext.contextItem !== undefined ? overlayContext.contextItem : this.contextItem
 		});

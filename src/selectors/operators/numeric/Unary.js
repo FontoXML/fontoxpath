@@ -14,14 +14,14 @@ class Unary extends Selector {
 	 * @param  {Selector}  valueExpr  The selector evaluating to the value to process
 	 */
 	constructor (kind, valueExpr) {
-		super(valueExpr.specificity);
+		super(valueExpr.specificity, { canBeStaticallyEvaluated: false });
 		this._valueExpr = valueExpr;
 
 		this._kind = kind;
 	}
 
 	evaluate (dynamicContext) {
-		var valueSequence = this._valueExpr.evaluate(dynamicContext);
+		var valueSequence = this._valueExpr.evaluateMaybeStatically(dynamicContext);
 		if (valueSequence.isEmpty()) {
 			return Sequence.singleton(createAtomicValue(Number.NaN, 'xs:double'));
 		}

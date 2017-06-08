@@ -13,15 +13,15 @@ class AndOperator extends Selector {
 	constructor (selectors) {
 		super(selectors.reduce(function (specificity, selector) {
 				return specificity.add(selector.specificity);
-			}, new Specificity({})));
+		}, new Specificity({})), {
+			canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
+		});
 		this._subSelectors = selectors;
-
-
 	}
 
 	evaluate (dynamicContext) {
 		var result = this._subSelectors.every(function (subSelector) {
-			return subSelector.evaluate(dynamicContext).getEffectiveBooleanValue();
+			return subSelector.evaluateMaybeStatically(dynamicContext).getEffectiveBooleanValue();
 			});
 
 		return Sequence.singleton(createAtomicValue(result, 'xs:boolean'));

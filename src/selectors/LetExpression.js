@@ -16,7 +16,8 @@ class LetExpression extends Selector {
 			{
 				resultOrder: returnExpression.expectedResultOrder,
 				subtree: returnExpression.subtree,
-				peer: returnExpression.peer
+				peer: returnExpression.peer,
+				canBeStaticallyEvaluated: false
 			});
 
 		this._rangeVariable = rangeVariable;
@@ -26,11 +27,11 @@ class LetExpression extends Selector {
 
 	evaluate (dynamicContext) {
 		const newVariables = Object.create(null);
-		const variable = this._bindingSequence.evaluate(dynamicContext);
+		const variable = this._bindingSequence.evaluateMaybeStatically(dynamicContext);
 		// Copy the variable to prevent evaluating it
 		// This caused bugs with XPaths like `let $x := (1,2,3) return count($x) * count($x)`
 		newVariables[this._rangeVariable] = new Sequence(variable.getAllValues());
-		return this._returnExpression.evaluate(
+		return this._returnExpression.evaluateMaybeStatically(
 			dynamicContext.createScopedContext({
 				variables: newVariables
 			}));

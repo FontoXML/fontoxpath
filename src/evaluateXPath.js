@@ -64,7 +64,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		variables: typedVariables
 	});
 
-	const rawResults = compiledSelector.evaluate(dynamicContext);
+	const rawResults = compiledSelector.evaluateMaybeStatically(dynamicContext);
 
 	switch (returnType) {
 		case evaluateXPath.BOOLEAN_TYPE:
@@ -202,7 +202,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (rawResults.isSingleton()) {
 				return atomize(rawResults.first(), dynamicContext).value;
 			}
-			return Array.from(atomize(rawResults, dynamicContext).value()).map(function (atomizedValue) {
+			return atomize(rawResults, dynamicContext).getAllValues().map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
 	}

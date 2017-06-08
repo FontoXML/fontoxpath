@@ -14,7 +14,7 @@ class ProcessingInstructionTargetSelector extends Selector {
 	constructor (target) {
 		super(new Specificity({
 			[Specificity.NODENAME_KIND]: 1
-		}));
+		}), { canBeStaticallyEvaluated: false });
 
 		this._target = target;
 

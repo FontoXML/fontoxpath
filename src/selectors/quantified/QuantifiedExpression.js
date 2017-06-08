@@ -16,7 +16,9 @@ class QuantifiedExpression extends Selector {
 				function (specificity, inClause) {
 					return specificity.add(inClause[1].specificity);
 				}, satisfiesExpr.specificity);
-		super(specificity);
+		super(specificity, {
+			canBeStaticallyEvaluated: false
+		});
 
 		this._quantifier = quantifier;
 		this._inClauses = inClauses;
@@ -29,7 +31,7 @@ class QuantifiedExpression extends Selector {
 		var evaluatedInClauses = this._inClauses.map(function (inClause) {
 				return {
 					name: inClause[0],
-					valueArray: Array.from(inClause[1].evaluate(dynamicContext).value())
+					valueArray: Array.from(inClause[1].evaluateMaybeStatically(dynamicContext).value())
 				};
 			});
 
@@ -57,7 +59,7 @@ class QuantifiedExpression extends Selector {
 						variables: variables
 					});
 
-				var result = this._satisfiesExpr.evaluate(context);
+				var result = this._satisfiesExpr.evaluateMaybeStatically(context);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
 					return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));

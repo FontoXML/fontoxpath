@@ -10,8 +10,9 @@ class UniversalSelector extends Selector {
 	constructor () {
 		super(new Specificity({
 				[Specificity.UNIVERSAL_KIND]: 1
-			}));
-
+		}), {
+			canBeStaticallyEvaluated: true
+		});
 	}
 
 	evaluate () {

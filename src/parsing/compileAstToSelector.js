@@ -39,6 +39,8 @@ import VarRef from '../selectors/VarRef';
 
 import Selector from '../selectors/Selector';
 
+const precompiledAstFragmentsByString = Object.create(null);
+
 // Basic and incomplete implementation of single steps as defined in XPATH 1.0 (http://www.w3.org/TR/xpath/)
 // Only single steps are allowed, because that's what selectors offer. Anyway: all paths have synonyms as (nested) predicates.
 // Missing:
@@ -54,112 +56,158 @@ import Selector from '../selectors/Selector';
  * @return {!Selector}
  */
 function compile (ast) {
-	var args = ast.slice(1);
-	switch (ast[0]) {
-			// Operators
-		case 'and':
-			return and(args);
-		case 'or':
-			return or(args);
-		case 'compare':
-			return compare(args);
-		case 'unaryPlus':
-			return unaryPlus(args);
-		case 'unaryMinus':
-			return unaryMinus(args);
-		case 'binaryOperator':
-			return binaryOperator(args);
-		case 'sequence':
-			return sequence(args);
-		case 'union':
-			return union(args);
+	const stringifiedAstFragment = JSON.stringify(ast);
+	let compiledAstFragment = precompiledAstFragmentsByString[stringifiedAstFragment];
 
-			// Tests
-		case 'nameTest':
-			return nameTest(args);
-		case 'kindTest':
-			return kindTest(args);
-		case 'typeTest':
-			return typeTest(args);
+	if (!compiledAstFragment) {
+		const args = ast.slice(1);
+		switch (ast[0]) {
+				// Operators
+			case 'and':
+				compiledAstFragment = and(args);
+				break;
+			case 'or':
+				compiledAstFragment = or(args);
+				break;
+			case 'compare':
+				compiledAstFragment = compare(args);
+				break;
+			case 'unaryPlus':
+				compiledAstFragment = unaryPlus(args);
+				break;
+			case 'unaryMinus':
+				compiledAstFragment = unaryMinus(args);
+				break;
+			case 'binaryOperator':
+				compiledAstFragment = binaryOperator(args);
+				break;
+			case 'sequence':
+				compiledAstFragment = sequence(args);
+				break;
+			case 'union':
+				compiledAstFragment = union(args);
+				break;
 
-			// Axes
-		case 'ancestor':
-			return ancestor(args);
-		case 'ancestor-or-self':
-			return ancestorOrSelf(args);
-		case 'attribute':
-			return attribute(args);
-		case 'child':
-			return child(args);
-		case 'descendant':
-			return descendant(args);
-		case 'descendant-or-self':
-			return descendantOrSelf(args);
-		case 'parent':
-			return parent(args);
-		case 'following-sibling':
-			return followingSibling(args);
-		case 'preceding-sibling':
-			return precedingSibling(args);
-		case 'self':
-			return self(args);
+				// Tests
+			case 'nameTest':
+				compiledAstFragment = nameTest(args);
+				break;
+			case 'kindTest':
+				compiledAstFragment = kindTest(args);
+				break;
+			case 'typeTest':
+				compiledAstFragment = typeTest(args);
+				break;
 
-			// Path
-		case 'absolutePath':
-			return absolutePath(args);
-		case 'path':
-			return path(args);
+				// Axes
+			case 'ancestor':
+				compiledAstFragment = ancestor(args);
+				break;
+			case 'ancestor-or-self':
+				compiledAstFragment = ancestorOrSelf(args);
+				break;
+			case 'attribute':
+				compiledAstFragment = attribute(args);
+				break;
+			case 'child':
+				compiledAstFragment = child(args);
+				break;
+			case 'descendant':
+				compiledAstFragment = descendant(args);
+				break;
+			case 'descendant-or-self':
+				compiledAstFragment = descendantOrSelf(args);
+				break;
+			case 'parent':
+				compiledAstFragment = parent(args);
+				break;
+			case 'following-sibling':
+				compiledAstFragment = followingSibling(args);
+				break;
+			case 'preceding-sibling':
+				compiledAstFragment = precedingSibling(args);
+				break;
+			case 'self':
+				compiledAstFragment = self(args);
+				break;
 
-			// Postfix operators
-		case 'filter':
-			return filter(args);
+				// Path
+			case 'absolutePath':
+				compiledAstFragment = absolutePath(args);
+				break;
+			case 'path':
+				compiledAstFragment = path(args);
+				break;
 
-			// Functions
-		case 'functionCall':
-			return functionCall(args);
-		case 'inlineFunction':
-			return inlineFunction(args);
+				// Postfix operators
+			case 'filter':
+				compiledAstFragment = filter(args);
+				break;
 
-		case 'literal':
-			return literal(args);
+				// Functions
+			case 'functionCall':
+				compiledAstFragment = functionCall(args);
+				break;
+			case 'inlineFunction':
+				compiledAstFragment = inlineFunction(args);
+				break;
 
-			// Variables
-		case 'let':
-			return letExpression(args);
-		case 'varRef':
-			return varRef(args);
-		case 'namedFunctionRef':
-			return namedFunctionRef(args);
-		case 'forExpression':
-			return forExpression(args);
+			case 'literal':
+				compiledAstFragment = literal(args);
+				break;
 
-			// Quantified
-		case 'quantified':
-			return quantified(args);
+				// Variables
+			case 'let':
+				compiledAstFragment = letExpression(args);
+				break;
+			case 'varRef':
+				compiledAstFragment = varRef(args);
+				break;
+			case 'namedFunctionRef':
+				compiledAstFragment = namedFunctionRef(args);
+				break;
+			case 'forExpression':
+				compiledAstFragment = forExpression(args);
+				break;
 
-			// Conditional
-		case 'conditional':
-			return conditional(args);
+				// Quantified
+			case 'quantified':
+				compiledAstFragment = quantified(args);
+				break;
 
-		case 'instance of':
-			return instanceOf(args);
-		case 'cast as':
-			return castAs(args);
-		case 'castable as':
-			return castableAs(args);
+				// Conditional
+			case 'conditional':
+				compiledAstFragment = conditional(args);
+				break;
 
-		case 'simpleMap':
-			return simpleMap(args);
+			case 'instance of':
+				compiledAstFragment = instanceOf(args);
+				break;
+			case 'cast as':
+				compiledAstFragment = castAs(args);
+				break;
+			case 'castable as':
+				compiledAstFragment = castableAs(args);
+				break;
 
-		case 'mapConstructor':
-			return mapConstructor(args);
+			case 'simpleMap':
+				compiledAstFragment = simpleMap(args);
+				break;
 
-		case 'arrayConstructor':
-			return arrayConstructor(args);
+			case 'mapConstructor':
+				compiledAstFragment = mapConstructor(args);
+				break;
 
-		default:
-			throw new Error('No selector counterpart for: ' + ast[0] + '.');
+			case 'arrayConstructor':
+				compiledAstFragment = arrayConstructor(args);
+				break;
+
+			default:
+				throw new Error('No selector counterpart for: ' + ast[0] + '.');
+		}
+		precompiledAstFragmentsByString[stringifiedAstFragment] = compiledAstFragment;
 	}
+	return compiledAstFragment;
 }
 
 function arrayConstructor (args) {
@@ -343,8 +391,8 @@ function precedingSibling (args) {
 
 function quantified (args) {
 	var inClauses = args[1].map(function (inClause) {
-			return [inClause[0], compile(inClause[1])];
-		});
+		return [inClause[0], compile(inClause[1])];
+	});
 	return new QuantifiedExpression(args[0], inClauses, compile(args[2]));
 }
 
