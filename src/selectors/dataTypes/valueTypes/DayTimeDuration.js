@@ -4,7 +4,7 @@ class DayTimeDuration {
 		//   retreiving seconds due to the usage of the % and / operators.
 		this._seconds = seconds;
 		this._secondFraction = secondFraction;
-		this._isPositive = isPositive;
+		this._isPositive = (seconds === 0 && secondFraction === 0) || isPositive;
 	}
 
 	getYears () {
@@ -178,7 +178,7 @@ DayTimeDuration.fromTimezoneString = function (string) {
 	const match = regex.exec(string);
 
 	if (match[1] === 'Z') {
-		return DayTimeDuration.fromParts(0, 0, 0, 0, 0, 0, 0, true);
+		return DayTimeDuration.fromParts(0, 0, 0, 0, 0, true);
 	}
 
 	const isPositive = match[2] === '+';
@@ -197,7 +197,7 @@ DayTimeDuration.fromJavascriptDateTimezone = function (date) {
 	const minutes = date.getTimezoneOffset();
 	const isPositive = minutes > -1;
 
-	return DayTimeDuration.fromParts(0, 0, 0, 0, Math.abs(minutes), 0, 0, isPositive);
+	return DayTimeDuration.fromParts(0, 0, Math.abs(minutes), 0, 0, isPositive);
 };
 
 export default DayTimeDuration;

@@ -45,115 +45,101 @@ class BinaryNumericOperator extends Selector {
 
 	evaluate (dynamicContext) {
 		const firstValueSequence = this._firstValueExpr.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
-		return firstValueSequence.mapAll(
-			firstValues => {
-				if (firstValues.length === 0) {
-					// Shortcut, if the first part is empty, we can return empty.
-					// As per spec, we do not have to evaluate the second part, though we could.
-					return Sequence.empty();
-				}
-				const secondValueSequence = this._secondValueExpr.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
-				return secondValueSequence.mapAll(
-					secondValues => {
-						if (secondValues.length === 0) {
-							return Sequence.empty();
-						}
+		if (firstValueSequence.isEmpty()) {
+			// Shortcut, if the first part is empty, we can return empty.
+			// As per spec, we do not have to evaluate the second part, though we could.
+			return firstValueSequence;
+		}
+		const secondValueSequence = this._secondValueExpr.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
+		if (secondValueSequence.isEmpty()) {
+			return secondValueSequence;
+		}
 
-						if (firstValues.length > 1 || secondValues.length > 1) {
-							throw new Error('XPTY0004: the operands of the "' + this._kind + '" operator should be of type xs:numeric?.');
-						}
+		if (!firstValueSequence.isSingleton() || !secondValueSequence.isSingleton()) {
+			throw new Error('XPTY0004: the operands of the "' + this._kind + '" operator should be of type xs:numeric?.');
+		}
 
-						// Cast both to doubles, if they are xs:untypedAtomic
-						let firstValue = firstValues[0];
-						let secondValue = secondValues[0];
+		// Cast both to doubles, if they are xs:untypedAtomic
+		let firstValue = firstValueSequence.first();
+		let secondValue = secondValueSequence.first();
 
-						if (isSubtypeOf(firstValue.type, 'xs:untypedAtomic')) {
-							firstValue = castToType(firstValue, 'xs:double');
-						}
+		if (isSubtypeOf(firstValue.type, 'xs:untypedAtomic')) {
+			firstValue = castToType(firstValue, 'xs:double');
+		}
 
-						if (isSubtypeOf(secondValue.type, 'xs:untypedAtomic')) {
-							secondValue = castToType(secondValue, 'xs:double');
-						}
+		if (isSubtypeOf(secondValue.type, 'xs:untypedAtomic')) {
+			secondValue = castToType(secondValue, 'xs:double');
+		}
 
-						if (isSubtypeOf(firstValue.type, 'xs:numeric') && isSubtypeOf(secondValue.type, 'xs:numeric')) {
-							const result = executeNumericOperator(this._kind, firstValue.value, secondValue.value);
-							if (this._kind === 'div') {
-								return Sequence.singleton(createAtomicValue(result, 'xs:decimal'));
-							}
-							else if (this._kind === 'idiv') {
-								return Sequence.singleton(createAtomicValue(result, 'xs:integer'));
-							}
-							// For now, always return a decimal, it's all the same in JavaScript
-							return Sequence.singleton(createAtomicValue(result, 'xs:decimal'));
-						}
-
-						// type of first value
-						// type of second value
-						// if one = double & other = yearMonthDuration
-						//   const firstIsDouble = first type === double
-						//   return add(firstIsDouble ? first : second, firstIsDouble ? second : first)
-
-						if (isSubtypeOf(firstValue.type, 'xs:yearMonthDuration') &&
-							isSubtypeOf(secondValue.type, 'xs:yearMonthDuration')) {
-							switch (this._kind) {
-								case '+':
-									return Sequence.singleton(createAtomicValue(YearMonthDuration.add(firstValue.value, secondValue.value), 'xs:yearMonthDuration'));
-								case '-':
-									return Sequence.singleton(createAtomicValue(YearMonthDuration.subtract(firstValue.value, secondValue.value), 'xs:yearMonthDuration'));
-								case 'div':
-									return Sequence.singleton(createAtomicValue(YearMonthDuration.divideByYearMonthDuration(firstValue.value, secondValue.value), 'xs:decimal'));
-							}
-						}
-						if (isSubtypeOf(firstValue.type, 'xs:yearMonthDuration') &&
-							isSubtypeOf(secondValue.type, 'xs:double')) {
-							switch (this._kind) {
-								case '*':
-									return Sequence.singleton(createAtomicValue(YearMonthDuration.multiply(firstValue.value, secondValue.value), 'xs:yearMonthDuration'));
-								case 'div':
-									return Sequence.singleton(createAtomicValue(YearMonthDuration.divide(firstValue.value, secondValue.value), 'xs:yearMonthDuration'));
-							}
-						}
-						if (isSubtypeOf(firstValue.type, 'xs:double') &&
-							isSubtypeOf(secondValue.type, 'xs:yearMonthDuration')) {
-							switch (this._kind) {
-								case '*':
-									return Sequence.singleton(createAtomicValue(YearMonthDuration.multiply(secondValue.value, firstValue.value), 'xs:yearMonthDuration'));
-							}
-						}
-
-						if (isSubtypeOf(firstValue.type, 'xs:dayTimeDuration') &&
-							isSubtypeOf(secondValue.type, 'xs:dayTimeDuration')) {
-							switch (this._kind) {
-								case '+':
-									return Sequence.singleton(createAtomicValue(DayTimeDuration.add(firstValue.value, secondValue.value), 'xs:dayTimeDuration'));
-								case '-':
-									return Sequence.singleton(createAtomicValue(DayTimeDuration.subtract(firstValue.value, secondValue.value), 'xs:dayTimeDuration'));
-								case 'div':
-									return Sequence.singleton(createAtomicValue(DayTimeDuration.divideByDayTimeDuration(firstValue.value, secondValue.value), 'xs:decimal'));
-							}
-						}
-						if (isSubtypeOf(firstValue.type, 'xs:dayTimeDuration') &&
-							isSubtypeOf(secondValue.type, 'xs:double')) {
-							switch (this._kind) {
-								case '*':
-									return Sequence.singleton(createAtomicValue(DayTimeDuration.multiply(firstValue.value, secondValue.value), 'xs:dayTimeDuration'));
-								case 'div':
-									return Sequence.singleton(createAtomicValue(DayTimeDuration.divide(firstValue.value, secondValue.value), 'xs:dayTimeDuration'));
-							}
-						}
-						if (isSubtypeOf(firstValue.type, 'xs:double') &&
-							isSubtypeOf(secondValue.type, 'xs:dayTimeDuration')) {
-							switch (this._kind) {
-								case '*':
-									return Sequence.singleton(createAtomicValue(DayTimeDuration.multiply(secondValue.value, firstValue.value), 'xs:dayTimeDuration'));
-							}
-						}
-
-						throw new Error('XPTY0004: the operands of the "' + this._kind + '" operator should be of type xs:numeric?.');
-					}
-				);
+		if (isSubtypeOf(firstValue.type, 'xs:numeric') && isSubtypeOf(secondValue.type, 'xs:numeric')) {
+			const result = executeNumericOperator(this._kind, firstValue.value, secondValue.value);
+			if (this._kind === 'div') {
+				return Sequence.singleton(createAtomicValue(result, 'xs:decimal'));
 			}
-		);
+			else if (this._kind === 'idiv') {
+				return Sequence.singleton(createAtomicValue(result, 'xs:integer'));
+			}
+			// For now, always return a decimal, it's all the same in JavaScript
+			return Sequence.singleton(createAtomicValue(result, 'xs:decimal'));
+		}
+
+		if (isSubtypeOf(firstValue.type, 'xs:yearMonthDuration') &&
+			isSubtypeOf(secondValue.type, 'xs:yearMonthDuration')) {
+			switch (this._kind) {
+				case '+':
+					return Sequence.singleton(createAtomicValue(YearMonthDuration.add(firstValue.value, secondValue.value), 'xs:yearMonthDuration'));
+				case '-':
+					return Sequence.singleton(createAtomicValue(YearMonthDuration.subtract(firstValue.value, secondValue.value), 'xs:yearMonthDuration'));
+				case 'div':
+					return Sequence.singleton(createAtomicValue(YearMonthDuration.divideByYearMonthDuration(firstValue.value, secondValue.value), 'xs:decimal'));
+			}
+		}
+		if (isSubtypeOf(firstValue.type, 'xs:yearMonthDuration') &&
+			isSubtypeOf(secondValue.type, 'xs:double')) {
+			switch (this._kind) {
+				case '*':
+					return Sequence.singleton(createAtomicValue(YearMonthDuration.multiply(firstValue.value, secondValue.value), 'xs:yearMonthDuration'));
+				case 'div':
+					return Sequence.singleton(createAtomicValue(YearMonthDuration.divide(firstValue.value, secondValue.value), 'xs:yearMonthDuration'));
+			}
+		}
+		if (isSubtypeOf(firstValue.type, 'xs:double') &&
+			isSubtypeOf(secondValue.type, 'xs:yearMonthDuration')) {
+			switch (this._kind) {
+				case '*':
+					return Sequence.singleton(createAtomicValue(YearMonthDuration.multiply(secondValue.value, firstValue.value), 'xs:yearMonthDuration'));
+			}
+		}
+
+		if (isSubtypeOf(firstValue.type, 'xs:dayTimeDuration') &&
+			isSubtypeOf(secondValue.type, 'xs:dayTimeDuration')) {
+			switch (this._kind) {
+				case '+':
+					return Sequence.singleton(createAtomicValue(DayTimeDuration.add(firstValue.value, secondValue.value), 'xs:dayTimeDuration'));
+				case '-':
+					return Sequence.singleton(createAtomicValue(DayTimeDuration.subtract(firstValue.value, secondValue.value), 'xs:dayTimeDuration'));
+				case 'div':
+					return Sequence.singleton(createAtomicValue(DayTimeDuration.divideByDayTimeDuration(firstValue.value, secondValue.value), 'xs:decimal'));
+			}
+		}
+		if (isSubtypeOf(firstValue.type, 'xs:dayTimeDuration') &&
+			isSubtypeOf(secondValue.type, 'xs:double')) {
+			switch (this._kind) {
+				case '*':
+					return Sequence.singleton(createAtomicValue(DayTimeDuration.multiply(firstValue.value, secondValue.value), 'xs:dayTimeDuration'));
+				case 'div':
+					return Sequence.singleton(createAtomicValue(DayTimeDuration.divide(firstValue.value, secondValue.value), 'xs:dayTimeDuration'));
+			}
+		}
+		if (isSubtypeOf(firstValue.type, 'xs:double') &&
+			isSubtypeOf(secondValue.type, 'xs:dayTimeDuration')) {
+			switch (this._kind) {
+				case '*':
+					return Sequence.singleton(createAtomicValue(DayTimeDuration.multiply(secondValue.value, firstValue.value), 'xs:dayTimeDuration'));
+			}
+		}
+
+		throw new Error('XPTY0004: the operands of the "' + this._kind + '" operator should be of type xs:numeric?.');
 	}
 }
 
