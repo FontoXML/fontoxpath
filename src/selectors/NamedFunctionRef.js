@@ -15,7 +15,9 @@ class NamedFunctionRef extends Selector {
 	constructor (functionName, arity) {
 		super(new Specificity({
 			[Specificity.EXTERNAL_KIND]: 1
-		}), Selector.RESULT_ORDERINGS.UNSORTED);
+		}), {
+			canBeStaticallyEvaluated: true
+		});
 
 		this._functionName = functionName;
 		this._arity = arity;

@@ -13,7 +13,8 @@ class ParentAxis extends Selector {
 		super(parentSelector.specificity, {
 			resultOrder: Selector.RESULT_ORDERINGS.REVERSE_SORTED,
 			peer: true,
-			subtree: true
+			subtree: true,
+			canBeStaticallyEvaluated: false
 		});
 
 		this._parentSelector = parentSelector;
@@ -37,7 +38,7 @@ class ParentAxis extends Selector {
 			contextSequence: parentSequence
 		});
 
-		const nodeIsMatch = this._parentSelector.evaluate(scopedContext).getEffectiveBooleanValue();
+		const nodeIsMatch = this._parentSelector.evaluateMaybeStatically(scopedContext).getEffectiveBooleanValue();
 		if (!nodeIsMatch) {
 			return Sequence.empty();
 		}

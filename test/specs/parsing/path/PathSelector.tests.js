@@ -126,6 +126,16 @@ describe('relative paths', () => {
 		chai.assert.equal(evaluateXPathToString('descendant::someChildNode/*/name()', documentNode.documentElement), 'someGrandChildA1 someGrandChildA2 someGrandChildB1 someGrandChildB2 someGrandChildC1 someGrandChildC2');
 	});
 
+	it('sorts child::/descendant:: axes correctly', () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNode', ['someGrandChildA1'], ['someGrandChildA2']],
+			['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
+			['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']]
+		], documentNode);
+		chai.assert.equal(evaluateXPathToString('(/someNode/someChildNode//*)!name()', documentNode.documentElement), 'someGrandChildA1 someGrandChildA2 someGrandChildB1 someGrandChildB2 someGrandChildC1 someGrandChildC2');
+	});
+
 	it('sorts descendant-or-self::/child:: axes correctly', () => {
 		jsonMlMapper.parse([
 			'someNode',

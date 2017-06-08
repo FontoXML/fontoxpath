@@ -138,6 +138,8 @@ class PathSelector extends Selector {
 	 * @param  {!Array<!Selector>}  stepSelectors
 	 */
 	constructor (stepSelectors) {
+		const pathResultsInPeerSequence = stepSelectors.every(selector => selector.peer);
+		const pathResultsInSubtreeSequence = stepSelectors.every(selector => selector.subtree);
 		super(
 			stepSelectors.reduce(function (specificity, selector) {
 				// Implicit AND, so sum
@@ -145,8 +147,9 @@ class PathSelector extends Selector {
 			}, new Specificity({})),
 			{
 				resultOrder: Selector.RESULT_ORDERINGS.SORTED,
-				peer: false,
-				subtree: false
+				peer: pathResultsInPeerSequence,
+				subtree: pathResultsInSubtreeSequence,
+				canBeStaticallyEvaluated: false
 			});
 
 		this._stepSelectors = stepSelectors;
@@ -184,7 +187,7 @@ class PathSelector extends Selector {
 					if (childContext.value.contextItem !== null && !isInstanceOfType(childContext.value.contextItem, 'node()')) {
 						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
 					}
-					return { done: false, value: selector.evaluate(childContext.value) };
+					return { done: false, value: selector.evaluateMaybeStatically(childContext.value) };
 				}
 			});
 			// Assume nicely sorted

@@ -17,7 +17,9 @@ class Compare extends Selector {
 	constructor (kind, firstSelector, secondSelector) {
 		super(
 			firstSelector.specificity.add(secondSelector.specificity),
-			Selector.RESULT_ORDERINGS.SORTED);
+			{
+				canBeStaticallyEvaluated: false
+			});
 		this._firstSelector = firstSelector;
 		this._secondSelector = secondSelector;
 
@@ -39,8 +41,8 @@ class Compare extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		const firstSequence = this._firstSelector.evaluate(dynamicContext);
-		const secondSequence = this._secondSelector.evaluate(dynamicContext);
+		const firstSequence = this._firstSelector.evaluateMaybeStatically(dynamicContext);
+		const secondSequence = this._secondSelector.evaluateMaybeStatically(dynamicContext);
 
 		if ((this._compare === 'valueCompare' || this._compare === 'nodeCompare') && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
 			return Sequence.empty();

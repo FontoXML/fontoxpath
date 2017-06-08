@@ -193,6 +193,10 @@ Sequence.prototype.getEffectiveBooleanValue = function () {
 	return getEffectiveBooleanValue(firstValue.value);
 };
 
+Sequence.prototype.expandSequence = function () {
+	return new ArrayBackedSequence(this.getAllValues());
+};
+
 /**
  * @constructor
  * @extends Sequence
@@ -211,6 +215,10 @@ EmptySequence.prototype.isEmpty = () => true;
 EmptySequence.prototype.getAllValues = () => [];
 EmptySequence.prototype.getLength = () => 0;
 EmptySequence.prototype.isSingleton = () => false;
+EmptySequence.prototype.expandSequence = function () {
+	return this;
+};
+
 const emptySequence = new EmptySequence();
 
 EmptySequence.prototype.atomize = EmptySequence.prototype.filter = EmptySequence.prototype.map = () => emptySequence;
@@ -264,6 +272,9 @@ SingletonSequence.prototype.filter = function (cb) {
 };
 SingletonSequence.prototype.map = function (cb) {
 	return new SingletonSequence(cb(this._onlyValue, 0, this));
+};
+SingletonSequence.prototype.expandSequence = function () {
+	return this;
 };
 
 /**
@@ -343,6 +354,10 @@ ArrayBackedSequence.prototype.getLength = function () {
 ArrayBackedSequence.prototype.atomize = function (dynamicContext) {
 	return this.map(value => atomize(value, dynamicContext));
 };
+ArrayBackedSequence.prototype.expandSequence = function () {
+	return this;
+};
+
 /**
  * @param   {!./Value}  value
  * @return  {!Sequence}

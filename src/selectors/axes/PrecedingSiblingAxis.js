@@ -29,7 +29,8 @@ class PrecedingSiblingAxis extends Selector {
 		super(siblingSelector.specificity, {
 			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
 			subtree: false,
-			peer: true
+			peer: true,
+			canBeStaticallyEvaluated: false
 		});
 
 		this._siblingSelector = siblingSelector;
@@ -45,7 +46,7 @@ class PrecedingSiblingAxis extends Selector {
 		const domFacade = dynamicContext.domFacade;
 
 		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter((item, i, sequence) => {
-			const result = this._siblingSelector.evaluate(dynamicContext.createScopedContext({
+			const result = this._siblingSelector.evaluateMaybeStatically(dynamicContext.createScopedContext({
 				contextSequence: sequence,
 				contextItemIndex: i,
 				contextItem: item

@@ -18,7 +18,8 @@ class AttributeAxis extends Selector {
 		}), {
 			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
 			subtree: true,
-			peer: true
+			peer: true,
+			canBeStaticallyEvaluated: false
 		});
 
 		this._attributeTestSelector = attributeTestSelector;
@@ -47,7 +48,7 @@ class AttributeAxis extends Selector {
 		 */
 		const attributeTestSelector = this._attributeTestSelector;
 		return attributesSequence.filter((item, i) => {
-			const result = attributeTestSelector.evaluate(dynamicContext.createScopedContext({
+			const result = attributeTestSelector.evaluateMaybeStatically(dynamicContext.createScopedContext({
 				contextSequence: attributesSequence,
 				contextItemIndex: i,
 				contextItem: item

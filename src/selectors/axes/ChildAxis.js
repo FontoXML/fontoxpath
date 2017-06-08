@@ -10,7 +10,8 @@ class ChildAxis extends Selector {
 		super(childSelector.specificity, {
 			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
 			subtree: true,
-			peer: true
+			peer: true,
+			canBeStaticallyEvaluated: false
 		});
 
 		this._childSelector = childSelector;
@@ -32,7 +33,7 @@ class ChildAxis extends Selector {
 				contextItemIndex: i,
 				contextSequence: sequence
 			});
-			return this._childSelector.evaluate(childContext).getEffectiveBooleanValue();
+			return this._childSelector.evaluateMaybeStatically(childContext).getEffectiveBooleanValue();
 		});
 	}
 }

@@ -33,7 +33,8 @@ class AncestorAxis extends Selector {
 		super(ancestorSelector.specificity, {
 			resultOrder: Selector.RESULT_ORDERINGS.REVERSE_SORTED,
 			peer: false,
-			subtree: false
+			subtree: false,
+			canBeStaticallyEvaluated: false
 		});
 
 		this._ancestorSelector = ancestorSelector;
@@ -56,7 +57,7 @@ class AncestorAxis extends Selector {
 					contextItemIndex: i,
 					contextSequence: sequence
 				});
-				return this._ancestorSelector.evaluate(ancestorContext).getEffectiveBooleanValue();
+				return this._ancestorSelector.evaluateMaybeStatically(ancestorContext).getEffectiveBooleanValue();
 			});
 	}
 }

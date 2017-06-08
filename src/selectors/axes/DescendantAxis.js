@@ -69,7 +69,8 @@ class DescendantAxis extends Selector {
 		super(descendantSelector.specificity, {
 			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
 			subtree: true,
-			peer: false
+			peer: false,
+			canBeStaticallyEvaluated: false
 		});
 
 		this._descendantSelector = descendantSelector;
@@ -87,7 +88,7 @@ class DescendantAxis extends Selector {
 			dynamicContext.contextItem.value,
 			inclusive));
 		return descendantSequence.filter((item, i) => {
-			const result = this._descendantSelector.evaluate(dynamicContext.createScopedContext({
+			const result = this._descendantSelector.evaluateMaybeStatically(dynamicContext.createScopedContext({
 				contextSequence: descendantSequence,
 				contextItemIndex: i,
 				contextItem: item

@@ -12,7 +12,7 @@ class NodeTypeSelector extends Selector {
 	constructor (nodeType) {
 		super(new Specificity({
 			[Specificity.NODETYPE_KIND]: 1
-		}));
+		}), { canBeStaticallyEvaluated: false });
 
 		this._nodeType = nodeType;
 

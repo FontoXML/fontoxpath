@@ -15,7 +15,11 @@ class InlineFunction extends Selector {
 	constructor (paramDescriptions, returnType, functionBody) {
 		super(new Specificity({
 			[Specificity.EXTERNAL_KIND]: 1
-		}), Selector.RESULT_ORDERINGS.UNSORTED);
+		}), {
+			// inline functions may use parameters, if they do, they can not be evaluated statically
+			canBeStaticallyEvaluated: !!paramDescriptions.length,
+			expectedResultOrder: Selector.RESULT_ORDERINGS.UNSORTED
+		});
 
 		this._paramDescriptions = paramDescriptions;
 		this._returnType = returnType;
@@ -41,7 +45,7 @@ class InlineFunction extends Selector {
 				}, Object.create(null))
 			});
 
-			return this._functionBody.evaluate(scopedDynamicContext);
+			return this._functionBody.evaluateMaybeStatically(scopedDynamicContext);
 		};
 
 		const functionItem = new FunctionValue({

@@ -12,7 +12,7 @@ class TypeTest extends Selector {
 	 * @param  {string}  type
 	 */
 	constructor (type) {
-		super(new Specificity({}));
+		super(new Specificity({}), { canBeStaticallyEvaluated: false });
 
 		this._type = type;
 	}

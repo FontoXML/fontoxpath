@@ -12,7 +12,7 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 
 		case '*':
 		case '+':
-			return Array.from(valueSequence.value()).map(function (value) {
+			return valueSequence.getAllValues().map(function (value) {
 				if (isInstanceOfType(value, 'attribute()')) {
 					throw new Error('Cannot pass attribute nodes to custom functions');
 				}

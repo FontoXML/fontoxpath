@@ -20,20 +20,23 @@ class Union extends Selector {
 			}
 			return selector.specificity;
 		}, new Specificity({}));
-		super(maxSpecificity);
+		super(maxSpecificity, {
+			canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
+		});
 
-		this._subSelectors = selectors;
+	this._subSelectors = selectors;
 
 	}
 
 	evaluate (dynamicContext) {
 		const nodeSet = this._subSelectors.reduce(function (resultingNodeSet, selector) {
-			const results = selector.evaluate(dynamicContext);
-			for (const nodeValue of results.value()) {
-				if (!isInstanceOfType(nodeValue, 'node()')) {
+			const results = selector.evaluateMaybeStatically(dynamicContext);
+			const it = results.value();
+			for (let nodeValue = it.next(); !nodeValue.done; nodeValue = it.next()) {
+				if (!isInstanceOfType(nodeValue.value, 'node()')) {
 					throw new Error('XPTY0004: The sequences to union are not of type node()*');
 				}
-				resultingNodeSet.add(nodeValue);
+				resultingNodeSet.add(nodeValue.value);
 			}
 			return resultingNodeSet;
 		}, new Set());

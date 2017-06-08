@@ -13,7 +13,10 @@ class Literal extends Selector {
 	 * @param  {!string}           type
 	 */
 	constructor (jsValue, type) {
-		super(new Specificity({}));
+		super(new Specificity({}), {
+			canBeStaticallyEvaluated: true,
+			resultOrder: Selector.RESULT_ORDERINGS.SORTED
+		});
 		this._type = type;
 
 		/**

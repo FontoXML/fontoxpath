@@ -12,19 +12,21 @@ class MapConstructor extends Selector {
 	constructor (entries) {
 		super(new Specificity({
 			[Specificity.EXTERNAL_KIND]: 1
-		}));
+		}), {
+			canBeStaticallyEvaluated: false
+		});
 		this._entries = entries;
 	}
 
 	evaluate (dynamicContext) {
 		var keyValuePairs = this._entries.map(function (keyValuePair) {
-				var keySequence = keyValuePair.key.evaluate(dynamicContext).atomize(dynamicContext);
+				var keySequence = keyValuePair.key.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
 				if (!keySequence.isSingleton()) {
 					throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
 				}
 				return {
 					key: keySequence.first(),
-					value: keyValuePair.value.evaluate(dynamicContext)
+					value: keyValuePair.value.evaluateMaybeStatically(dynamicContext)
 				};
 			});
 

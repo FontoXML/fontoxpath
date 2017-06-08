@@ -18,7 +18,8 @@ class IfExpression extends Selector {
 				resultOrder: thenExpression.expectedResultOrder === elseExpression.expectedResultOrder ?
 					thenExpression.expectedResultOrder : Selector.RESULT_ORDERINGS.UNSORTED,
 				peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
-				subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree
+				subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree,
+				canBeStaticallyEvaluated: testExpression.canBeStaticallyEvaluated && thenExpression.canBeStaticallyEvaluated && elseExpression.canBeStaticallyEvaluated
 			});
 
 		this._testExpression = testExpression;
@@ -29,10 +30,10 @@ class IfExpression extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		if (this._testExpression.evaluate(dynamicContext).getEffectiveBooleanValue()) {
-			return this._thenExpression.evaluate(dynamicContext);
+		if (this._testExpression.evaluateMaybeStatically(dynamicContext).getEffectiveBooleanValue()) {
+			return this._thenExpression.evaluateMaybeStatically(dynamicContext);
 		}
-		return this._elseExpression.evaluate(dynamicContext);
+		return this._elseExpression.evaluateMaybeStatically(dynamicContext);
 	}
 }
 
