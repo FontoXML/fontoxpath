@@ -124,11 +124,23 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return YearMonthDuration.lessThan(castA.value, castB.value);
 				};
+			case 'le':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value.equals(castB.value) ||
+						YearMonthDuration.lessThan(castA.value, castB.value);
+				};
 
 			case 'gt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return YearMonthDuration.greaterThan(castA.value, castB.value);
+				};
+			case 'ge':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value.equals(castB.value) ||
+						YearMonthDuration.greaterThan(castA.value, castB.value);
 				};
 		}
 	}
@@ -140,11 +152,23 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return DayTimeDuration.lessThan(castA.value, castB.value);
 				};
+			case 'le':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value.equals(castB.value) ||
+						DayTimeDuration.lessThan(castA.value, castB.value);
+				};
 
 			case 'gt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return DayTimeDuration.greaterThan(castA.value, castB.value);
+				};
+			case 'ge':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value.equals(castB.value) ||
+						DayTimeDuration.greaterThan(castA.value, castB.value);
 				};
 		}
 	}
