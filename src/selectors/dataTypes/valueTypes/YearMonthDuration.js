@@ -86,6 +86,50 @@ YearMonthDuration.greaterThan = function (yearMonthDuration1, yearMonthDuration2
 	return yearMonthDuration1._months > yearMonthDuration2._months;
 };
 
+YearMonthDuration.add = function (yearMonthDuration1, yearMonthDuration2) {
+	const months1 = yearMonthDuration1._isPositive ? yearMonthDuration1._months : -yearMonthDuration1._months;
+	const months2 = yearMonthDuration2._isPositive ? yearMonthDuration2._months : -yearMonthDuration2._months;
+	const result = months1 + months2;
+
+	return new YearMonthDuration(Math.abs(result), result > -1);
+};
+
+YearMonthDuration.subtract = function (yearMonthDuration1, yearMonthDuration2) {
+	const months1 = yearMonthDuration1._isPositive ? yearMonthDuration1._months : -yearMonthDuration1._months;
+	const months2 = yearMonthDuration2._isPositive ? yearMonthDuration2._months : -yearMonthDuration2._months;
+	const result = months1 - months2;
+
+	return new YearMonthDuration(Math.abs(result), result > -1);
+};
+
+YearMonthDuration.multiply = function (yearMonthDuration, double) {
+	if (isNaN(double)) {
+		throw new Error('FOCA0005: Cannot multiply xs:yearMonthDuration by NaN');
+	}
+
+	const months1 = yearMonthDuration._isPositive ? yearMonthDuration._months : -yearMonthDuration._months;
+	const result = months1 * double;
+
+	return new YearMonthDuration(Math.abs(result), result > -1);
+};
+
+YearMonthDuration.divide = function (yearMonthDuration, double) {
+	if (isNaN(double)) {
+		throw new Error('FOCA0005: Cannot divide xs:yearMonthDuration by NaN');
+	}
+
+	const months1 = yearMonthDuration._isPositive ? yearMonthDuration._months : -yearMonthDuration._months;
+	const result = months1 / double;
+
+	return new YearMonthDuration(Math.abs(result), result > -1);
+};
+
+YearMonthDuration.divideByYearMonthDuration = function (yearMonthDuration1, yearMonthDuration2) {
+	const months1 = yearMonthDuration1._isPositive ? yearMonthDuration1._months : -yearMonthDuration1._months;
+	const months2 = yearMonthDuration2._isPositive ? yearMonthDuration2._months : -yearMonthDuration2._months;
+	return months1 / months2;
+};
+
 /**
  * @static
  * @param   {number}  years

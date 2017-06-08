@@ -95,6 +95,42 @@ DayTimeDuration.greaterThan = function (dayTimeDuration1, dayTimeDuration2) {
 	return (dayTimeDuration1._seconds + dayTimeDuration1._secondFraction) > (dayTimeDuration2._seconds + dayTimeDuration2._secondFraction);
 };
 
+DayTimeDuration.add = function (dayTimeDuration1, dayTimeDuration2) {
+	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
+	const seconds2 = dayTimeDuration2._isPositive ? dayTimeDuration2._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration2._seconds + dayTimeDuration1._secondFraction);
+	const result = seconds1 + seconds2;
+
+	return new DayTimeDuration(Math.floor(result), parseFloat('.' + (result + '').split('.')[1]) || 0, result > -1);
+};
+
+DayTimeDuration.subtract = function (dayTimeDuration1, dayTimeDuration2) {
+	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
+	const seconds2 = dayTimeDuration2._isPositive ? dayTimeDuration2._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration2._seconds + dayTimeDuration1._secondFraction);
+	const result = seconds1 - seconds2;
+
+	return new DayTimeDuration(Math.floor(result), parseFloat('.' + (result + '').split('.')[1]) || 0, result > -1);
+};
+
+DayTimeDuration.multiply = function (dayTimeDuration1, double) {
+	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
+	const result = seconds1 * double;
+
+	return new DayTimeDuration(Math.floor(result), parseFloat('.' + (result + '').split('.')[1]) || 0, result > -1);
+};
+
+DayTimeDuration.divide = function (dayTimeDuration1, double) {
+	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
+	const result = seconds1 / double;
+
+	return new DayTimeDuration(Math.floor(result), parseFloat('.' + (result + '').split('.')[1]) || 0, result > -1);
+};
+
+DayTimeDuration.divideByDayTimeDuration = function (dayTimeDuration1, dayTimeDuration2) {
+	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
+	const seconds2 = dayTimeDuration2._isPositive ? dayTimeDuration2._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration2._seconds + dayTimeDuration1._secondFraction);
+	return seconds1 / seconds2;
+};
+
 /**
  * @static
  * @param   {number}  days
