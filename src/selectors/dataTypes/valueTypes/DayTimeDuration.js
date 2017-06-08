@@ -112,6 +112,10 @@ DayTimeDuration.subtract = function (dayTimeDuration1, dayTimeDuration2) {
 };
 
 DayTimeDuration.multiply = function (dayTimeDuration1, double) {
+	if (isNaN(double)) {
+		throw new Error('FOCA0005: Cannot divide xs:yearMonthDuration by NaN');
+	}
+
 	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
 	const result = seconds1 * double;
 
@@ -119,6 +123,10 @@ DayTimeDuration.multiply = function (dayTimeDuration1, double) {
 };
 
 DayTimeDuration.divide = function (dayTimeDuration1, double) {
+	if (isNaN(double)) {
+		throw new Error('FOCA0005: Cannot divide xs:yearMonthDuration by NaN');
+	}
+
 	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
 	const result = seconds1 / double;
 

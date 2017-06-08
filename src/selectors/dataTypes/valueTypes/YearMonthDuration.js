@@ -110,7 +110,7 @@ YearMonthDuration.multiply = function (yearMonthDuration, double) {
 	const months1 = yearMonthDuration._isPositive ? yearMonthDuration._months : -yearMonthDuration._months;
 	const result = months1 * double;
 
-	return new YearMonthDuration(Math.abs(result), result > -1);
+	return new YearMonthDuration(Math.round(result), result > -1);
 };
 
 YearMonthDuration.divide = function (yearMonthDuration, double) {
@@ -121,7 +121,7 @@ YearMonthDuration.divide = function (yearMonthDuration, double) {
 	const months1 = yearMonthDuration._isPositive ? yearMonthDuration._months : -yearMonthDuration._months;
 	const result = months1 / double;
 
-	return new YearMonthDuration(Math.abs(result), result > -1);
+	return new YearMonthDuration(Math.round(result), result > -1);
 };
 
 YearMonthDuration.divideByYearMonthDuration = function (yearMonthDuration1, yearMonthDuration2) {
