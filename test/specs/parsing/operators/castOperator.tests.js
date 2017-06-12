@@ -194,6 +194,24 @@ describe('cast as', () => {
 			() => chai.assert.throws(() => evaluateXPathToNumber('xs:int("1.0")', documentNode), 'FORG0001'));
 	});
 
+	describe('to xs:negativeInteger', () => {
+		it('can cast strings to xs:negativeInteger',
+			() => chai.assert.equal(evaluateXPathToNumber('xs:negativeInteger("-10")', documentNode), -10));
+		it('disallows positive values',
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:negativeInteger("1")', documentNode), 'FORG0001'));
+		it('disallows positive values 0',
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:negativeInteger("0")', documentNode), 'FORG0001'));
+	});
+
+	describe('to xs:nonNegativeInteger', () => {
+		it('can cast strings to xs:nonNegativeInteger',
+			() => chai.assert.equal(evaluateXPathToNumber('xs:nonNegativeInteger("10")', documentNode), 10));
+		it('allows 0',
+			() => chai.assert.equal(evaluateXPathToNumber('xs:nonNegativeInteger("0")', documentNode), 0));
+
+		it('disallows negative values',
+			() => chai.assert.throws(() => evaluateXPathToNumber('xs:nonNegativeInteger("-2")', documentNode), 'FORG0001'));
+		});
 
 	describe('to xs:normalizedString', () => {
 		it('can cast integers to xs:normalizedString',

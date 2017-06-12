@@ -1,6 +1,8 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
-import NodeValue from '../dataTypes/NodeValue';
+import createNodeValue from '../dataTypes/createNodeValue';
+import createSingleValueIterator from '../util/createSingleValueIterator';
+
 
 /**
  * @param   {!IDomFacade}       domFacade
@@ -14,7 +16,7 @@ function createChildGenerator (domFacade, node) {
 	return /** @type {!Iterator<!Node>} */ ({
 		next () {
 			if (i >= l) {
-				return { done: true };
+				return { done: true, value: undefined };
 			}
 			return {
 				done: false,
@@ -24,33 +26,26 @@ function createChildGenerator (domFacade, node) {
 	});
 }
 
-function createDescendantGenerator (domFacade, node, inclusive) {
-	const descendantIteratorQueue = [createChildGenerator(domFacade, node)];
+function createDescendantGenerator (domFacade, node) {
+	const descendantIteratorStack = [createSingleValueIterator(node)];
 	return {
 		next: () => {
-			if (inclusive) {
-				inclusive = false;
-				return {
-					done: false,
-					value: NodeValue.createFromNode(node)
-				};
+			if (!descendantIteratorStack.length) {
+				return { done: true, value: undefined };
 			}
-			if (!descendantIteratorQueue.length) {
-				return { done: true };
-			}
-			let value = descendantIteratorQueue[0].next();
+			let value = descendantIteratorStack[0].next();
 			while (value.done) {
-				descendantIteratorQueue.shift();
-				if (!descendantIteratorQueue.length) {
-					return { done: true };
+				descendantIteratorStack.shift();
+				if (!descendantIteratorStack.length) {
+					return { done: true, value: undefined };
 				}
-				value = descendantIteratorQueue[0].next();
+				value = descendantIteratorStack[0].next();
 			}
 			// Iterator over these children next
-			descendantIteratorQueue.unshift(createChildGenerator(domFacade, value.value));
+			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value));
 			return {
 				done: false,
-				value: NodeValue.createFromNode(value.value)
+				value: createNodeValue(value.value)
 			};
 		}
 	};
@@ -80,19 +75,21 @@ class DescendantAxis extends Selector {
 
 	evaluate (dynamicContext) {
 		const inclusive = this._isInclusive;
+		const iterator = createDescendantGenerator(
+			dynamicContext.domFacade,
+			dynamicContext.contextItem.value);
+		if (!inclusive) {
+			iterator.next();
+		}
 		/**
 		 * @type {!Sequence}
 		 */
-		const descendantSequence = new Sequence(createDescendantGenerator(
-			dynamicContext.domFacade,
-			dynamicContext.contextItem.value,
-			inclusive));
+		const descendantSequence = new Sequence(iterator);
 		return descendantSequence.filter((item, i) => {
-			const result = this._descendantSelector.evaluateMaybeStatically(dynamicContext.createScopedContext({
-				contextSequence: descendantSequence,
-				contextItemIndex: i,
-				contextItem: item
-			}));
+			const result = this._descendantSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(
+				i,
+				item,
+				descendantSequence));
 
 			return result.getEffectiveBooleanValue();
 		});

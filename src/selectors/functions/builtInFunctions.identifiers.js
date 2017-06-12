@@ -1,6 +1,5 @@
-import createAtomicValue from '../dataTypes/createAtomicValue';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
-import NodeValue from '../dataTypes/NodeValue';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
 
 function findDescendants (domFacade, node, isMatch) {
@@ -17,7 +16,7 @@ function findDescendants (domFacade, node, isMatch) {
 
 function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 	var targetNodeValue = targetNodeSequence.first();
-	if (!isInstanceOfType(targetNodeValue, 'node()')) {
+	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();
 	}
 	var domFacade = dynamicContext.domFacade;
@@ -50,12 +49,12 @@ function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 				isMatchingIdById[idAttribute] = false;
 				return true;
 			});
-	return new Sequence(matchingNodes.map(NodeValue.createFromNode));
+	return new Sequence(matchingNodes.map(createNodeValue));
 }
 
 function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
 	var targetNodeValue = targetNodeSequence.first();
-	if (!isInstanceOfType(targetNodeValue, 'node()')) {
+	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();
 	}
 	var domFacade = dynamicContext.domFacade;
@@ -83,7 +82,7 @@ function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
 					return isMatchingIdRefById[idRef];
 				});
 			});
-	return new Sequence(matchingNodes.map(NodeValue.createFromNode));
+	return new Sequence(matchingNodes.map(createNodeValue));
 }
 
 export default {

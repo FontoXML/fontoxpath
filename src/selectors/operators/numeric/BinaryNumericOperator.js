@@ -1,4 +1,4 @@
-import isInstanceOfType from '../../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import castToType from '../../dataTypes/castToType';
 import Sequence from '../../dataTypes/Sequence';
 import Selector from '../../Selector';
@@ -57,18 +57,18 @@ class BinaryNumericOperator extends Selector {
 		}
 
 		// Cast both to doubles, if they are xs:untypedAtomic
-		let firstValue = firstValueSequence.first(),
-			secondValue = secondValueSequence.first();
+		let firstValue = firstValueSequence.first();
+		let secondValue = secondValueSequence.first();
 
-		if (isInstanceOfType(firstValue, 'xs:untypedAtomic')) {
+		if (isSubtypeOf(firstValue.type, 'xs:untypedAtomic')) {
 			firstValue = castToType(firstValue, 'xs:double');
 		}
 
-		if (isInstanceOfType(secondValue, 'xs:untypedAtomic')) {
+		if (isSubtypeOf(secondValue.type, 'xs:untypedAtomic')) {
 			secondValue = castToType(secondValue, 'xs:double');
 		}
 
-		if (!isInstanceOfType(firstValue, 'xs:numeric') || !isInstanceOfType(secondValue, 'xs:numeric')) {
+		if (!isSubtypeOf(firstValue.type, 'xs:numeric') || !isSubtypeOf(secondValue.type, 'xs:numeric')) {
 			// TODO: date / time like values
 			throw new Error('XPTY0004: the operands of the "' + this._kind + '" operator should be of type xs:numeric?.');
 		}

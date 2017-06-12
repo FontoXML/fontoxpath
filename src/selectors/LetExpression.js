@@ -32,9 +32,7 @@ class LetExpression extends Selector {
 		// This caused bugs with XPaths like `let $x := (1,2,3) return count($x) * count($x)`
 		newVariables[this._rangeVariable] = new Sequence(variable.getAllValues());
 		return this._returnExpression.evaluateMaybeStatically(
-			dynamicContext.createScopedContext({
-				variables: newVariables
-			}));
+			dynamicContext.scopeWithVariables(newVariables));
 	}
 }
 export default LetExpression;

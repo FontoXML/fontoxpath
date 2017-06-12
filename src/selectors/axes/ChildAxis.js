@@ -1,6 +1,6 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
-import NodeValue from '../dataTypes/NodeValue';
+import createNodeValue from '../dataTypes/createNodeValue';
 
 /**
  * @extends {Selector}
@@ -25,14 +25,10 @@ class ChildAxis extends Selector {
 	evaluate (dynamicContext) {
 		const contextItem = dynamicContext.contextItem;
 		const domFacade = dynamicContext.domFacade;
-		const nodeValues = domFacade.getChildNodes(contextItem.value).map(NodeValue.createFromNode);
+		const nodeValues = domFacade.getChildNodes(contextItem.value).map(createNodeValue);
 		const childContextSequence = new Sequence(nodeValues);
 		return childContextSequence.filter((item, i, sequence) => {
-			const childContext = dynamicContext.createScopedContext({
-				contextItem: item,
-				contextItemIndex: i,
-				contextSequence: sequence
-			});
+			const childContext = dynamicContext.scopeWithFocus(i, item, sequence);
 			return this._childSelector.evaluateMaybeStatically(childContext).getEffectiveBooleanValue();
 		});
 	}

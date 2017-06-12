@@ -1,6 +1,6 @@
 import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import { transformArgument } from './argumentHelper';
@@ -14,7 +14,7 @@ import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 function convertItemsToCommonType (items) {
 	if (items.every(function (item) {
 		// xs:integer is the only numeric type with inherits from another numeric type
-		return isInstanceOfType(item, 'xs:integer') || isInstanceOfType(item, 'xs:decimal');
+		return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:decimal');
 	})) {
 		// They are all integers, we do not have to convert them to decimals
 		return items;
@@ -30,24 +30,24 @@ function convertItemsToCommonType (items) {
 
 	// If each value is an instance of one of the types xs:string or xs:anyURI, then all the values are cast to type xs:string
 	if (items.every(function (item) {
-		return isInstanceOfType(item, 'xs:string') ||
-			isInstanceOfType(item, 'xs:anyURI');
+		return isSubtypeOf(item.type, 'xs:string') ||
+			isSubtypeOf(item.type, 'xs:anyURI');
 	})) {
 		return items.map((item) => castToType(item, 'xs:string'));
 	}
 
 	// If each value is an instance of one of the types xs:decimal or xs:float, then all the values are cast to type xs:float.
 	if (items.every(function (item) {
-		return isInstanceOfType(item, 'xs:decimal') ||
-			isInstanceOfType(item, 'xs:float');
+		return isSubtypeOf(item.type, 'xs:decimal') ||
+			isSubtypeOf(item.type, 'xs:float');
 	})) {
 		return items.map((item) => castToType(item, 'xs:float'));
 	}
 	// If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all the values are cast to type xs:double.
 	if (items.every(function (item) {
-		return isInstanceOfType(item, 'xs:decimal') ||
-			isInstanceOfType(item, 'xs:float') ||
-			isInstanceOfType(item, 'xs:double');
+		return isSubtypeOf(item.type, 'xs:decimal') ||
+			isSubtypeOf(item.type, 'xs:float') ||
+			isSubtypeOf(item.type, 'xs:double');
 	})) {
 		return items.map((item) => castToType(item, 'xs:double'));
 	}
@@ -58,7 +58,7 @@ function convertItemsToCommonType (items) {
 
 function castUntypedItemsToDouble (items) {
 	return items.map(function (item) {
-		if (isInstanceOfType(item, 'xs:untypedAtomic')) {
+		if (isSubtypeOf(item.type, 'xs:untypedAtomic')) {
 			return castToType(item, 'xs:double');
 		}
 		return item;
@@ -181,7 +181,7 @@ function fnSubsequence (_dynamicContext, sequence, startingLoc, lengthSequence) 
 			i++;
 
 			if (length !== null && i > length) {
-				return { done: true };
+				return { done: true, value: undefined };
 			}
 			return iterator.next();
 		}
@@ -211,7 +211,7 @@ function fnAvg (_dynamicContext, sequence) {
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	var items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
-	if (!items.every(item => isInstanceOfType(item, 'xs:numeric'))) {
+	if (!items.every(item => isSubtypeOf(item.type, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
@@ -220,13 +220,13 @@ function fnAvg (_dynamicContext, sequence) {
 	}, 0) / items.length;
 
 	if (items.every(function (item) {
-		return isInstanceOfType(item, 'xs:integer') || isInstanceOfType(item, 'xs:double');
+		return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
 	})) {
 		return Sequence.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
 	if (items.every(function (item) {
-		return isInstanceOfType(item, 'xs:decimal');
+		return isSubtypeOf(item.type, 'xs:decimal');
 	})) {
 		return Sequence.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
@@ -270,7 +270,7 @@ function fnSum (_dynamicContext, sequence, zero) {
 
 	var items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
-	if (!items.every(item => isInstanceOfType(item, 'xs:numeric'))) {
+	if (!items.every(item => isSubtypeOf(item.type, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
@@ -279,19 +279,19 @@ function fnSum (_dynamicContext, sequence, zero) {
 	}, 0);
 
 	if (items.every(function (item) {
-		return isInstanceOfType(item, 'xs:integer');
+		return isSubtypeOf(item.type, 'xs:integer');
 	})) {
 		return Sequence.singleton(createAtomicValue(resultValue, 'xs:integer'));
 	}
 
 	if (items.every(function (item) {
-		return isInstanceOfType(item, 'xs:double');
+		return isSubtypeOf(item.type, 'xs:double');
 	})) {
 		return Sequence.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
 	if (items.every(function (item) {
-		return isInstanceOfType(item, 'xs:decimal');
+		return isSubtypeOf(item.type, 'xs:decimal');
 	})) {
 		return Sequence.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
@@ -339,7 +339,7 @@ function fnFilter (dynamicContext, sequence, callbackSequence) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
 		const functionCallResult = callbackFn.value.call(undefined, dynamicContext, transformedArgument);
-		if (!functionCallResult.isSingleton() || !isInstanceOfType(functionCallResult.first(), 'xs:boolean')) {
+		if (!functionCallResult.isSingleton() || !isSubtypeOf(functionCallResult.first().type, 'xs:boolean')) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
 		return functionCallResult.first().value;

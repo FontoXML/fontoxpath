@@ -1,19 +1,25 @@
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 import atomize from './atomize';
-import isInstanceOfType from './isInstanceOfType';
+import isSubtypeOf from './isSubtypeOf';
+
+/**
+ * @const
+ */
+const DONE_VALUE = { done: true, value: undefined };
 
 /**
  * @constructor
  * @template T
  * @extends {./Value}
- * @param  {!Array<T> | !Iterator<T>}  valueIterator
+ * @param  {!Array<T> | !Iterator<T>}       valueIteratorOrArray
  * @param  {?number=}                       predictedLength
  */
-function Sequence (valueIterator, predictedLength = null) {
-	if (Array.isArray(valueIterator)) {
-		return new ArrayBackedSequence(valueIterator);
+function Sequence (valueIteratorOrArray, predictedLength = null) {
+	if (Array.isArray(valueIteratorOrArray)) {
+		return new ArrayBackedSequence(valueIteratorOrArray);
 	}
 	this.value = () => {
+		const valueIterator = /** @type {!Iterator} */(valueIteratorOrArray);
 		let i = -1;
 		return {
 			[Symbol.iterator]: function () {
@@ -22,7 +28,7 @@ function Sequence (valueIterator, predictedLength = null) {
 			next: () => {
 				i++;
 				if (this._length !== null && i >= this._length) {
-					return { done: true };
+					return DONE_VALUE;
 				}
 
 				if (this._cachedValues[i] !== undefined) {
@@ -30,20 +36,20 @@ function Sequence (valueIterator, predictedLength = null) {
 				}
 
 				if (i === 0) {
-					const first = this._rawIterator.next();
+					const first = valueIterator.next();
 					if (first.done) {
 						this._length = 0;
-						return { done: true };
+						return DONE_VALUE;
 					}
 					this._cachedValues[0] = first.value;
 					return { done: false, value: first.value };
 				}
 
 				if (i === 1) {
-					const second = this._rawIterator.next();
+					const second = valueIterator.next();
 					if (second.done) {
 						this._length = 1;
-						return { done: true };
+						return DONE_VALUE;
 					}
 					this._cachedValues[1] = second.value;
 					return { done: false, value: second.value };
@@ -51,13 +57,11 @@ function Sequence (valueIterator, predictedLength = null) {
 
 				this._iteratorHasProgressed = true;
 
-				const value = this._rawIterator.next();
+				const value = valueIterator.next();
 				return value;
 			}
 		};
 	};
-
-	this._rawIterator = valueIterator;
 
 	this._length = predictedLength;
 
@@ -95,8 +99,8 @@ Sequence.prototype.map = function (callback) {
 				return value;
 			}
 			return {
-				value: callback(value.value, i, this),
-				done: false
+				done: false,
+				value: callback(value.value, i, this)
 			};
 		}
 	}), this._length);
@@ -183,7 +187,7 @@ Sequence.prototype.getEffectiveBooleanValue = function () {
 	if (firstValue.done) {
 		return false;
 	}
-	if (isInstanceOfType(firstValue.value, 'node()')) {
+	if (isSubtypeOf(firstValue.value.type, 'node()')) {
 		return true;
 	}
 	const secondValue = iterator.next();
@@ -205,7 +209,7 @@ function EmptySequence () {
 	this.value = () => (
 		{
 			[Symbol.iterator]: function () { return this; },
-			next: () => ({ done: true })
+			next: () => (DONE_VALUE)
 		}
 	);
 }
@@ -236,7 +240,7 @@ function SingletonSequence (onlyValue) {
 			},
 			next: () => {
 				if (hasPassed) {
-					return { done: true };
+					return DONE_VALUE;
 				}
 				hasPassed = true;
 				return { done: false, value: onlyValue };
@@ -295,7 +299,7 @@ function ArrayBackedSequence (values) {
 			next: () => {
 				i++;
 				if (i >= values.length) {
-					return { done: true };
+					return DONE_VALUE;
 				}
 				return { done: false, value: values[i] };
 			}
@@ -313,7 +317,7 @@ ArrayBackedSequence.prototype.getAllValues = function () {
 	return this._values.concat();
 };
 ArrayBackedSequence.prototype.getEffectiveBooleanValue = function () {
-	if (isInstanceOfType(this._values[0], 'node()')) {
+	if (isSubtypeOf(this._values[0].type, 'node()')) {
 		return true;
 	}
 	// We always have a length > 1, or we'd be a singletonSequence
@@ -329,7 +333,7 @@ ArrayBackedSequence.prototype.filter = function (cb) {
 			}
 
 			if (i >= this._values.length) {
-				return { done: true };
+				return DONE_VALUE;
 			}
 
 			return { done: false, value: this._values[i] };
@@ -342,7 +346,7 @@ ArrayBackedSequence.prototype.map = function (cb) {
 		next: () => {
 			i++;
 			if (i >= this._values.length) {
-				return { done: true };
+				return DONE_VALUE;
 			}
 			return { done: false, value: cb(this._values[i], i, this) };
 		}

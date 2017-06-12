@@ -1,5 +1,5 @@
 import adaptJavaScriptValueToXPathValue from './selectors/adaptJavaScriptValueToXPathValue';
-import isInstanceOfType from './selectors/dataTypes/isInstanceOfType';
+import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
 import functionRegistry from './selectors/functions/functionRegistry';
 
 function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
@@ -13,7 +13,7 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 		case '*':
 		case '+':
 			return valueSequence.getAllValues().map(function (value) {
-				if (isInstanceOfType(value, 'attribute()')) {
+				if (isSubtypeOf(value.type, 'attribute()')) {
 					throw new Error('Cannot pass attribute nodes to custom functions');
 				}
 				return value.value;

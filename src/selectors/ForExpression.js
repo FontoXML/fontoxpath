@@ -22,10 +22,8 @@ class ForExpression extends Selector {
 	evaluate (dynamicContext) {
 		const contextWithClauses = this._clauses.reduce((scopedContext, clause) => {
 			const clauseValue = clause.expression.evaluateMaybeStatically(scopedContext);
-			return scopedContext.createScopedContext({
-				variables: {
+			return scopedContext.scopeWithVariables({
 					[clause.varName]: clauseValue
-				}
 			});
 		}, dynamicContext);
 

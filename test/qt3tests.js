@@ -68,7 +68,7 @@ function createAsserter (assertNode) {
 			const expectedNodes = Array.from(parser.parseFromString(`<xml>${assertNode.textContent}</xml>`, 'text/xml').documentElement.childNodes).map(node => node.outerHTML);
 			return (xpath, contextNode, variablesInScope) => {
 				const result = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope).map(node => node.outerHTML);
-				return chai.assert.deepEqual(result, expectedNodes, `Expected XPath ${xpath} to resolve to the given XML`);
+				chai.assert.deepEqual(result, expectedNodes, `Expected XPath ${xpath} to resolve to the given XML`);
 			};
 		}
 		case 'assert-string-value': {

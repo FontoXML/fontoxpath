@@ -1,4 +1,4 @@
-import isInstanceOfType from './isInstanceOfType';
+import isSubtypeOf from './isSubtypeOf';
 
 /**
  * @param  {./Value}  value
@@ -6,22 +6,22 @@ import isInstanceOfType from './isInstanceOfType';
 export default function getEffectiveBooleanValue (value) {
 	const jsValue = value.value;
 
-	if (isInstanceOfType(value, 'xs:string') ||
-		isInstanceOfType(value, 'xs:anyURI') ||
-		isInstanceOfType(value, 'xs:untypedAtomic') ||
-		isInstanceOfType(value, 'xs:QName')) {
+	if (isSubtypeOf(value.type, 'xs:string') ||
+		isSubtypeOf(value.type, 'xs:anyURI') ||
+		isSubtypeOf(value.type, 'xs:untypedAtomic') ||
+		isSubtypeOf(value.type, 'xs:QName')) {
 		return jsValue.length !== 0;
 	}
 
-	if (isInstanceOfType(value, 'xs:boolean')) {
+	if (isSubtypeOf(value.type, 'xs:boolean')) {
 		return jsValue;
 	}
 
-	if (isInstanceOfType(value, 'xs:numeric')) {
+	if (isSubtypeOf(value.type, 'xs:numeric')) {
 		return !isNaN(jsValue) && jsValue !== 0;
 	}
 
-	if (isInstanceOfType(value, 'node()')) {
+	if (isSubtypeOf(value.type, 'node()')) {
 		return true;
 	}
 

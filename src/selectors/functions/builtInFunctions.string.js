@@ -1,7 +1,8 @@
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import atomize from '../dataTypes/atomize';
 
 function collationError () {
 	throw new Error('FOCH0002: No collations are supported');
@@ -101,8 +102,18 @@ function fnString (dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(createAtomicValue('', 'xs:string'));
 	}
-	if (isInstanceOfType(sequence.first(), 'node()')) {
-		return Sequence.singleton(sequence.first().getStringValue(dynamicContext));
+	const value = sequence.first();
+	if (isSubtypeOf(value.type, 'node()')) {
+
+		let stringValue;
+		if (isSubtypeOf(value.type, 'attribute()')) {
+			stringValue = value.value.getStringValue(dynamicContext);
+		}
+		else {
+			stringValue = atomize(value, dynamicContext);
+		}
+
+		return Sequence.singleton(stringValue);
 	}
 	return Sequence.singleton(castToType(sequence.first(), 'xs:string'));
 }

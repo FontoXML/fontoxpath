@@ -1,7 +1,7 @@
 import Specificity from '../Specificity';
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 
 /**
@@ -33,7 +33,7 @@ class Union extends Selector {
 			const results = selector.evaluateMaybeStatically(dynamicContext);
 			const it = results.value();
 			for (let nodeValue = it.next(); !nodeValue.done; nodeValue = it.next()) {
-				if (!isInstanceOfType(nodeValue.value, 'node()')) {
+				if (!isSubtypeOf(nodeValue.value.type, 'node()')) {
 					throw new Error('XPTY0004: The sequences to union are not of type node()*');
 				}
 				resultingNodeSet.add(nodeValue.value);

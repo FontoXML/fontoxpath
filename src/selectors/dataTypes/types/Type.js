@@ -12,15 +12,15 @@ const EWhitespaceTypes = {
  */
 class Type {
 	/**
+	 * @param  {string}                                      varietyName
 	 * @param  {../ETypeNames}                               name
 	 * @param  {Object<string, function (string): boolean>}  restrictions
-	 * @param  {Object<string, function (string): *>}  facets
+	 * @param  {Object<string, function (string): *>}        facets
 	 */
-	constructor (name, restrictions, facets) {
+	constructor (varietyName, name, restrictions, facets) {
 		this._name = name + '';
 		this._restrictions = restrictions;
 		this._facets = facets;
-		this._memberOfUnions = [];
 
 		this.WHITESPACETYPES = EWhitespaceTypes;
 	}
@@ -33,13 +33,6 @@ class Type {
 		}
 
 		return this._facets[restrictionName];
-	}
-
-	/**
-	 * @protected
-	 */
-	addAsMemberOfUnion (typeName) {
-		this._memberOfUnions.push(typeName);
 	}
 
 	/**
@@ -67,21 +60,6 @@ class Type {
 	getWhiteSpace () {
 	}
 
-	/**
-	 * @param  {string}  value
-	 */
-	normalizeWhitespace (value) {
-		switch (this.getWhiteSpace()) {
-			case 'preserve':
-				return value;
-
-			case 'replace':
-				return value.replace(/[\u0009\u000A\u000D]/g, ' ');
-
-			case 'collapse':
-				return value.replace(/[\u0009\u000A\u000D]/g, ' ').replace(/ {2,}/g, ' ').replace(/^ | $/g, '');
-		}
-	}
 
 	/**
 	 * @abstract

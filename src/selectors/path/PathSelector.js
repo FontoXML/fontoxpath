@@ -1,8 +1,8 @@
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
 import createSingleValueIterator from '../util/createSingleValueIterator';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import {
 	sortNodeValues,
 	compareNodePositions
@@ -70,13 +70,13 @@ function mergeSortedSequences (domFacade, sequences) {
 			let consumedValue;
 			do {
 				if (!allIterators.length) {
-					return { done: true };
+					return { done: true, value: undefined };
 				}
 
 				const consumedIterator = allIterators.shift();
 				consumedValue = consumedIterator.current;
 				consumedIterator.current = consumedIterator.next();
-				if (!isInstanceOfType(consumedValue.value, 'node()')) {
+				if (!isSubtypeOf(consumedValue.value.type, 'node()')) {
 					return consumedValue;
 				}
 				if (!consumedIterator.current.done) {
@@ -113,7 +113,7 @@ function sortResults (domFacade, result) {
     let resultContainsNodes = false,
         resultContainsNonNodes = false;
     result.forEach(function (resultValue) {
-        if (isInstanceOfType(resultValue, 'node()')) {
+        if (isSubtypeOf(resultValue.type, 'node()')) {
             resultContainsNodes = true;
         }
 		else {
@@ -182,9 +182,9 @@ class PathSelector extends Selector {
 				next: () => {
 					const childContext = childContextIterator.next();
 					if (childContext.done) {
-						return { done: true };
+						return { done: true, value: undefined };
 					}
-					if (childContext.value.contextItem !== null && !isInstanceOfType(childContext.value.contextItem, 'node()')) {
+					if (childContext.value.contextItem !== null && !isSubtypeOf(childContext.value.contextItem.type, 'node()')) {
 						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
 					}
 					return { done: false, value: selector.evaluateMaybeStatically(childContext.value) };
@@ -200,7 +200,7 @@ class PathSelector extends Selector {
 						next: () => {
 							const result = resultValuesInReverseOrder.next();
 							if (result.done) {
-								return { done: true };
+								return { done: true, value: undefined };
 							}
 							return { done: false, value: new Sequence(result.value.getAllValues().reverse()) };
 						}

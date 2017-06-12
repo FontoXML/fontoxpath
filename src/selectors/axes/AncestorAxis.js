@@ -1,20 +1,20 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
-import NodeValue from '../dataTypes/NodeValue';
+import createNodeValue from '../dataTypes/createNodeValue';
 
 function generateAncestors (domFacade, contextNode) {
 	let ancestor = contextNode;
 	return {
 		next: () => {
 			if (!ancestor) {
-				return { done: true };
+				return { done: true, value: undefined };
 			}
 			const previousAncestor = ancestor;
 			ancestor = previousAncestor && domFacade.getParentNode(previousAncestor);
 
 			return {
 				done: false,
-				value: NodeValue.createFromNode(previousAncestor)
+				value: createNodeValue(previousAncestor)
 			};
 		}
 	};
@@ -52,11 +52,7 @@ class AncestorAxis extends Selector {
 		const contextNode = contextItem.value;
 		return new Sequence(generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)))
 			.filter((item, i, sequence) => {
-				const ancestorContext = dynamicContext.createScopedContext({
-					contextItem: item,
-					contextItemIndex: i,
-					contextSequence: sequence
-				});
+				const ancestorContext = dynamicContext.scopeWithFocus(i, item, sequence);
 				return this._ancestorSelector.evaluateMaybeStatically(ancestorContext).getEffectiveBooleanValue();
 			});
 	}

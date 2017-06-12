@@ -1,4 +1,4 @@
-import isInstanceOfType from './isInstanceOfType';
+import isSubtypeOf from './isSubtypeOf';
 import createAtomicValue from './createAtomicValue';
 
 /**
@@ -7,31 +7,31 @@ import createAtomicValue from './createAtomicValue';
  * @return  {!./AtomicValue}
  */
 export default function atomize (value, dynamicContext) {
-	if (isInstanceOfType(value, 'xs:anyAtomicType') ||
-		isInstanceOfType(value, 'xs:untypedAtomic') ||
-		isInstanceOfType(value, 'xs:boolean') ||
-		isInstanceOfType(value, 'xs:decimal') ||
-		isInstanceOfType(value, 'xs:double') ||
-		isInstanceOfType(value, 'xs:float') ||
-		isInstanceOfType(value, 'xs:integer') ||
-		isInstanceOfType(value, 'xs:numeric') ||
-		isInstanceOfType(value, 'xs:QName') ||
-		isInstanceOfType(value, 'xs:string')) {
+	if (isSubtypeOf(value.type, 'xs:anyAtomicType') ||
+		isSubtypeOf(value.type, 'xs:untypedAtomic') ||
+		isSubtypeOf(value.type, 'xs:boolean') ||
+		isSubtypeOf(value.type, 'xs:decimal') ||
+		isSubtypeOf(value.type, 'xs:double') ||
+		isSubtypeOf(value.type, 'xs:float') ||
+		isSubtypeOf(value.type, 'xs:integer') ||
+		isSubtypeOf(value.type, 'xs:numeric') ||
+		isSubtypeOf(value.type, 'xs:QName') ||
+		isSubtypeOf(value.type, 'xs:string')) {
 		return value;
 	}
 
-	if (isInstanceOfType(value, 'node()')) {
+	if (isSubtypeOf(value.type, 'node()')) {
 		// TODO: Mix in types, by default get string value
-		if (isInstanceOfType(value, 'attribute()')) {
+		if (isSubtypeOf(value.type, 'attribute()')) {
 			return value.value.atomize(dynamicContext);
 		}
 
 		// Text nodes and documents should return their text, as untyped atomic
-		if (isInstanceOfType(value, 'text()')) {
+		if (isSubtypeOf(value.type, 'text()')) {
 			return createAtomicValue(dynamicContext.domFacade.getData(value.value), 'xs:untypedAtomic');
 		}
 		// comments and PIs are string
-		if (isInstanceOfType(value, 'comment()') || isInstanceOfType(value, 'processing-instruction()')) {
+		if (isSubtypeOf(value.type, 'comment()') || isSubtypeOf(value.type, 'processing-instruction()')) {
 			return createAtomicValue(dynamicContext.domFacade.getData(value.value), 'xs:string');
 		}
 
@@ -54,7 +54,7 @@ export default function atomize (value, dynamicContext) {
 	}
 
 	// (function || map) && !array
-	if (isInstanceOfType(value, 'function(*)')) {
+	if (isSubtypeOf(value.type, 'function(*)')) {
 		throw new Error('FOTY0013: Not supported on this type.');
 	}
 	throw new Error('Not implemented');

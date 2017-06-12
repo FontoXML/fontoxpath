@@ -5,8 +5,9 @@ import DomFacade from './DomFacade';
 import domBackedDomFacade from './domBackedDomFacade';
 
 import atomize from './selectors/dataTypes/atomize';
+import createNodeValue from './selectors/dataTypes/createNodeValue';
 import Sequence from './selectors/dataTypes/Sequence';
-import isInstanceOfType from './selectors/dataTypes/isInstanceOfType';
+import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
 
 /**
  * Evaluates an XPath on the given contextItem.
@@ -64,6 +65,9 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		variables: typedVariables
 	});
 
+	/**
+	 * @type {!./selectors/dataTypes/Sequence}
+	 */
 	const rawResults = compiledSelector.evaluateMaybeStatically(dynamicContext);
 
 	switch (returnType) {
@@ -91,8 +95,11 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (!rawResults.isSingleton()) {
 				return NaN;
 			}
+			/**
+			 * @type {?./selectors/dataTypes/Value}
+			 */
 			const first = rawResults.first();
-			if (!isInstanceOfType(first, 'xs:numeric')) {
+			if (!isSubtypeOf(first.type, 'xs:numeric')) {
 				return NaN;
 			}
 			return first.value;
@@ -102,11 +109,15 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (rawResults.isEmpty()) {
 				return null;
 			}
+
+			/**
+			 * @type {?./selectors/dataTypes/Value}
+			 */
 			const first = rawResults.first();
-			if (!(isInstanceOfType(first, 'node()'))) {
+			if (!(isSubtypeOf(first.type, 'node()'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
 			}
-			if (isInstanceOfType(first, 'attribute()')) {
+			if (isSubtypeOf(first.type, 'attribute()')) {
 				throw new Error('XPath can not resolve to attribute nodes');
 			}
 			return first.value;
@@ -116,14 +127,17 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (rawResults.isEmpty()) {
 				return [];
 			}
+			/**
+			 * @type {!Array<!./selectors/dataTypes/Value>}
+			 */
 			const resultArray = rawResults.getAllValues();
 			if (!resultArray.every(function (value) {
-				return isInstanceOfType(value, 'node()');
+				return isSubtypeOf(value.type, 'node()');
 			})) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a sequence of Nodes.');
 			}
 			if (resultArray.some(function (value) {
-				return isInstanceOfType(value, 'attribute()');
+				return isSubtypeOf(value.type, 'attribute()');
 			})) {
 				throw new Error('XPath ' + xpathSelector + ' should not resolve to attribute nodes');
 			}
@@ -136,11 +150,16 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (rawResults.isEmpty()) {
 				return {};
 			}
+
+			/**
+			 * @type {?./selectors/dataTypes/Value}
+			 */
+			const first = rawResults.first();
+
 			if (!rawResults.isSingleton()) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single map.');
 			}
-			const first = rawResults.first();
-			if (!(isInstanceOfType(first, 'map(*)'))) {
+			if (!(isSubtypeOf(first.type, 'map(*)'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a map');
 			}
 			return first.keyValuePairs.reduce(function (mapObject, keyValuePair) {
@@ -166,7 +185,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (!rawResults.isSingleton()) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single array.');
 			}
-			if (!isInstanceOfType(rawResults.first(), 'array(*)')) {
+			if (!isSubtypeOf(rawResults.first().type, 'array(*)')) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to an array');
 			}
 			return rawResults.first().members.map(function (entry) {
@@ -180,7 +199,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 				return [];
 			}
 			return rawResults.getAllValues().map(function (value) {
-				if (!isInstanceOfType(value, 'xs:numeric')) {
+				if (!isSubtypeOf(value.type, 'xs:numeric')) {
 					throw new Error('Expected XPath ' + xpathSelector + ' to resolve to numbers');
 				}
 				return value.value;
@@ -188,8 +207,8 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 
 		default:
 			var allValuesAreNodes = rawResults.getAllValues().every(function (value) {
-				return isInstanceOfType(value, 'node()') &&
-					!(isInstanceOfType(value, 'attribute()'));
+				return isSubtypeOf(value.type, 'node()') &&
+					!(isSubtypeOf(value.type, 'attribute()'));
 				});
 			if (allValuesAreNodes) {
 				if (rawResults.isSingleton()) {

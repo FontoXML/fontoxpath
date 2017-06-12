@@ -19,7 +19,7 @@ function opTo (_dynamicContext, fromValue, toValue) {
 	return new Sequence({
 		next: () => {
 			if (from > to) {
-				return { done: true };
+				return { done: true, value: undefined };
 			}
 			return { done: false, value: createAtomicValue(from++, 'xs:integer') };
 		}

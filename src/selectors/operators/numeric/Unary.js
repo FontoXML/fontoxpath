@@ -1,4 +1,4 @@
-import isInstanceOfType from '../../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import Sequence from '../../dataTypes/Sequence';
 import Selector from '../../Selector';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
@@ -28,25 +28,25 @@ class Unary extends Selector {
 
 		var value = atomize(valueSequence.first(), dynamicContext);
 		if (this._kind === '+') {
-			if (isInstanceOfType(value, 'xs:decimal') ||
-					isInstanceOfType(value, 'xs:double') ||
-					isInstanceOfType(value, 'xs:float') ||
-					isInstanceOfType(value, 'xs:integer')) {
+			if (isSubtypeOf(value.type, 'xs:decimal') ||
+					isSubtypeOf(value.type, 'xs:double') ||
+					isSubtypeOf(value.type, 'xs:float') ||
+					isSubtypeOf(value.type, 'xs:integer')) {
 				return valueSequence;
 			}
 			return Sequence.singleton(createAtomicValue(Number.NaN, 'xs:double'));
 		}
 
-		if (isInstanceOfType(value, 'xs:integer')) {
+		if (isSubtypeOf(value.type, 'xs:integer')) {
 			return Sequence.singleton(createAtomicValue(-value.value, 'xs:integer'));
 		}
-		if (isInstanceOfType(value, 'xs:decimal')) {
+		if (isSubtypeOf(value.type, 'xs:decimal')) {
 			return Sequence.singleton(createAtomicValue(-value.value, 'xs:decimal'));
 		}
-		if (isInstanceOfType(value, 'xs:double')) {
+		if (isSubtypeOf(value.type, 'xs:double')) {
 			return Sequence.singleton(createAtomicValue(-value.value, 'xs:double'));
 		}
-		if (isInstanceOfType(value, 'xs:float')) {
+		if (isSubtypeOf(value.type, 'xs:float')) {
 			return Sequence.singleton(createAtomicValue(-value.value, 'xs:float'));
 		}
 

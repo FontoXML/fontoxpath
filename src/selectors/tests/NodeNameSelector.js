@@ -2,7 +2,7 @@ import Sequence from '../dataTypes/Sequence';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 /**
  * @extends {Selector}
@@ -29,13 +29,13 @@ class NodeNameSelector extends Selector {
 	evaluate (dynamicContext) {
 		var node = dynamicContext.contextItem;
 
-		if (!isInstanceOfType(node, 'element()') && !isInstanceOfType(node, 'attribute()')) {
+		if (!isSubtypeOf(node.type, 'element()') && !isSubtypeOf(node.type, 'attribute()')) {
 			return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
 		}
 		if (this._nodeName === '*') {
 			return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
 		}
-		var returnValue = this._nodeName === node.nodeName;
+		var returnValue = this._nodeName === node.value.nodeName;
 			return Sequence.singleton(returnValue ? createAtomicValue(true, 'xs:boolean') : createAtomicValue(false, 'xs:boolean'));
 	}
 

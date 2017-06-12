@@ -36,7 +36,7 @@ class SimpleMapOperator extends Selector {
 		return new Sequence({
 			next: () => {
 				if (childContext.done) {
-					return { done: true };
+					return { done: true, value: undefined };
 				}
 				if (!sequenceValueIterator) {
 					sequenceValueIterator = this._expression2.evaluateMaybeStatically(childContext.value).value();
@@ -45,7 +45,7 @@ class SimpleMapOperator extends Selector {
 				while (value.done) {
 					childContext = childContextIterator.next();
 					if (childContext.done) {
-						return { done: true };
+						return { done: true, value: undefined };
 					}
 					sequenceValueIterator = this._expression2.evaluateMaybeStatically(childContext.value).value();
 					value = sequenceValueIterator.next();

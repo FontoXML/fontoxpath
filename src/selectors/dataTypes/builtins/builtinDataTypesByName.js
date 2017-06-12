@@ -1,36 +1,69 @@
 import builtinModels from './builtinModels';
 import dataTypeValidatorByName from './dataTypeValidatorByName';
-import facetsByDataTypeName from '../facets/facetsByDataTypeName';
-import PrimitiveType from '../types/PrimitiveType';
-import DerivedType from '../types/DerivedType';
-import ListType from '../types/ListType';
-import UnionType from '../types/UnionType';
+import facetHandlersByDataTypeName from '../facets/facetsByDataTypeName';
 
+/**
+ * @dict
+ */
 const builtinDataTypesByName = Object.create(null);
 
 builtinModels.forEach((model, index) => {
-	const name = model.name,
-		restrictions = model.restrictions;
+	const name = model.name;
+	const restrictionsByName = model.restrictions || {};
 
 	if (model.variety === 'primitive') {
 		const parent = model.parent ? builtinDataTypesByName[model.parent] : null,
 			validator = dataTypeValidatorByName[name] || null,
-			facets = facetsByDataTypeName[name];
-		builtinDataTypesByName[name] = new PrimitiveType(name, restrictions, parent, validator, facets);
+			facetHandlers = facetHandlersByDataTypeName[name];
+		builtinDataTypesByName[name] = {
+			variety: 'primitive',
+			name: name,
+			restrictionsByName: restrictionsByName,
+			parent: parent,
+			validator: validator,
+			facetHandlers: facetHandlers,
+			memberTypes: []
+		};
 	}
 	else if (model.variety === 'derived') {
 		const base = builtinDataTypesByName[model.base],
 		validator = dataTypeValidatorByName[name] || null;
-		builtinDataTypesByName[name] = new DerivedType(name, restrictions, base, validator);
+		builtinDataTypesByName[name] = {
+			variety: 'derived',
+			name: name,
+			restrictionsByName: restrictionsByName,
+			parent: base,
+			validator: validator,
+			facetHandlers: base.facetHandlers,
+			memberTypes: []
+		};
 	}
 	else if (model.variety === 'list') {
 		const type = builtinDataTypesByName[model.type];
-		builtinDataTypesByName[name] = new ListType(name, restrictions, type);
+		builtinDataTypesByName[name] = {
+			variety: 'union',
+			name: name,
+			restrictionsByName: restrictionsByName,
+			parent: type,
+			validator: null,
+			facetHandlers: facetHandlersByDataTypeName.list,
+			memberTypes: []
+		};
 	}
 	else if (model.variety === 'union') {
 		const memberTypes = model.memberTypes.map((memberTypeRef) => builtinDataTypesByName[memberTypeRef]);
-		builtinDataTypesByName[name] = new UnionType(name || index, model.restrictions, memberTypes);
+		builtinDataTypesByName[name] = {
+			variety: 'union',
+			name: name || index,
+			restrictionsByName: restrictionsByName,
+			parent: null,
+			validator: null,
+			facetHandlers: facetHandlersByDataTypeName.union,
+			memberTypes: memberTypes
+		};
 	}
 });
+
+
 
 export default builtinDataTypesByName;

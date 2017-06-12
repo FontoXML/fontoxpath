@@ -46,16 +46,34 @@ class DynamicContext {
 	}
 
 	/**
-	 * @param   {!ScopingType}    overlayContext
+	 * @param   {!Object<string, !./dataTypes/Sequence>}    variables
 	 * @return  {!DynamicContext}
 	 */
-	createScopedContext (overlayContext) {
+	scopeWithVariables (variables) {
 		return new DynamicContext({
-			contextItemIndex: overlayContext.contextItemIndex !== undefined ? overlayContext.contextItemIndex : this.contextItemIndex,
-			contextSequence: overlayContext.contextSequence !== undefined ? overlayContext.contextSequence : this.contextSequence,
+			contextItemIndex: this.contextItemIndex,
+			contextItem: this.contextItem,
+			contextSequence: this.contextSequence,
+
 			domFacade: this.domFacade,
-			variables: overlayContext.variables ? Object.assign({}, this.variables, overlayContext.variables) : this.variables,
-			contextItem: overlayContext.contextItem !== undefined ? overlayContext.contextItem : this.contextItem
+			variables: Object.assign({}, this.variables, variables)
+		});
+	}
+
+	/**
+	 * @param   {number}             contextItemIndex
+	 * @param   {./dataTypes/Value}  contextItem
+	 * @param   {Sequence}           [contextSequence]
+	 * @return  {!DynamicContext}
+	 */
+	scopeWithFocus (contextItemIndex, contextItem, contextSequence) {
+		return new DynamicContext({
+			contextItemIndex: contextItemIndex,
+			contextItem: contextItem,
+			contextSequence: contextSequence || this.contextSequence,
+
+			domFacade: this.domFacade,
+			variables: this.variables
 		});
 	}
 
@@ -64,7 +82,6 @@ class DynamicContext {
 	 * @return  {!Iterator<!DynamicContext>}
 	 */
 	createSequenceIterator (contextSequence) {
-		const innerContext = this.createScopedContext({ contextSequence, contextItemIndex: 0 });
 		let i = 0;
 		/**
 		 * @type {!Iterator<!./dataTypes/Value>}
@@ -78,10 +95,7 @@ class DynamicContext {
 				}
 				return {
 					done: false,
-					value: innerContext.createScopedContext({
-						contextItemIndex: i++,
-						contextItem: value.value
-					})
+					value: this.scopeWithFocus( i++, value.value, contextSequence)
 				};
 			}
 		});

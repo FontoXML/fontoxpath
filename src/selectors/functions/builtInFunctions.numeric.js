@@ -1,4 +1,4 @@
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import castToType from '../dataTypes/castToType';
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -7,13 +7,13 @@ import MapValue from '../dataTypes/MapValue';
 import { transformArgument } from './argumentHelper';
 
 function createValidNumericType (value, transformedValue) {
-	if (isInstanceOfType(value, 'xs:integer')) {
+	if (isSubtypeOf(value.type, 'xs:integer')) {
 		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:integer'));
 	}
-	if (isInstanceOfType(value, 'xs:float')) {
+	if (isSubtypeOf(value.type, 'xs:float')) {
 		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:float'));
 	}
-	if (isInstanceOfType(value, 'xs:double')) {
+	if (isSubtypeOf(value.type, 'xs:double')) {
 		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:double'));
 	}
 	// It must be a decimal, only four numeric types
@@ -71,7 +71,7 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 	var item = sequence.first(),
 		value = item.value;
 
-	if ((isInstanceOfType(item, 'xs:float') || isInstanceOfType(item, 'xs:double')) && (
+	if ((isSubtypeOf(item.type, 'xs:float') || isSubtypeOf(item.type, 'xs:double')) && (
 		value === 0 ||
 		isNaN(value) ||
 		value === +Infinity ||
@@ -85,7 +85,7 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 	}
 
 	var originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(function (type) {
-				return isInstanceOfType(item, type);
+				return isSubtypeOf(item.type, type);
 			}),
 		itemAsDecimal = castToType(item, 'xs:decimal'),
 		scaling = Math.pow(10, scalingPrecision),

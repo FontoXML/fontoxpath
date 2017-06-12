@@ -14,9 +14,6 @@ const RESULT_ORDERINGS = {
  */
 let optimizationOptions;
 
-// TODO: subclass dynamiccontext to allow setting (scoped) variables
-const contextlessDynamicContext = null;
-
 /**
  * @abstract
  */

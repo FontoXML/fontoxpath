@@ -1,5 +1,4 @@
 import tryCastToType from './casting/tryCastToType';
-
 /**
  * @param   {!./AtomicValue<*>}  value
  * @param   {string}    type
