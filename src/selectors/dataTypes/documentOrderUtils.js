@@ -1,4 +1,4 @@
-import isInstanceOfType from './isInstanceOfType';
+import isSubtypeOf from './isSubtypeOf';
 
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent
@@ -101,7 +101,7 @@ function comparePositions (domFacade, parentNode1, referenceNode1, parentNode2, 
 
 export const compareNodePositions = function compareNodePositions (domFacade, node1, node2) {
 	var value1, value2;
-	if (isInstanceOfType(node1, 'attribute()') && !isInstanceOfType(node2, 'attribute()')) {
+	if (isSubtypeOf(node1.type, 'attribute()') && !isSubtypeOf(node2.type, 'attribute()')) {
 		value1 = domFacade.getParentNode(node1.value);
 		value2 = node2.value;
 		if (value1 === value2) {
@@ -109,7 +109,7 @@ export const compareNodePositions = function compareNodePositions (domFacade, no
 			return 1;
 		}
 	}
-	else if (isInstanceOfType(node2, 'attribute()') && !isInstanceOfType(node1, 'attribute()')) {
+	else if (isSubtypeOf(node2.type, 'attribute()') && !isSubtypeOf(node1.type, 'attribute()')) {
 		value1 = node1.value;
 		value2 = domFacade.getParentNode(node2.value);
 		if (value1 === value2) {
@@ -117,7 +117,7 @@ export const compareNodePositions = function compareNodePositions (domFacade, no
 			return -1;
 		}
 	}
-	else if (isInstanceOfType(node1, 'attribute()') && isInstanceOfType(node2, 'attribute()')) {
+	else if (isSubtypeOf(node1.type, 'attribute()') && isSubtypeOf(node2.type, 'attribute()')) {
 		if (domFacade.getParentNode(node2.value) === domFacade.getParentNode(node1.value)) {
 			// Sort on attributes name
 			return node1.value.nodeName > node2.value.nodeName ? 1 : -1;
@@ -142,9 +142,9 @@ export const compareNodePositions = function compareNodePositions (domFacade, no
  * Attributes are sorted alphabetically by their names
  *
  * @param	{!IDomFacade}         domFacade
- * @param	{!Array<!./NodeValue>}    nodeValues
+ * @param	{!Array<!./Value>}    nodeValues
  *
- * @return  {!Array<!./NodeValue>}    The sorted nodes
+ * @return  {!Array<!./Value>}    The sorted nodes
  */
 export const sortNodeValues = function sortNodeValues (domFacade, nodeValues) {
 	return nodeValues

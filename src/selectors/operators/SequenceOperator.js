@@ -37,7 +37,7 @@ class SequenceOperator extends Selector {
 				while (val.done) {
 					i++;
 					if (i >= this._selectors.length) {
-						return { done: true };
+						return { done: true, value: undefined };
 					}
 					currentValueIterator = this._selectors[i].evaluateMaybeStatically(dynamicContext).value();
 					val = currentValueIterator.next();

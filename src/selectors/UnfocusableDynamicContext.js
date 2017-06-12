@@ -15,14 +15,4 @@ export default class UnfocusableDynamicContext extends DynamicContext {
 			domFacade: null
 		});
 	}
-
-	createScopedContext (scope) {
-		if (scope.contextItem) {
-			throw new Error('Can not create a focus-free dynamic context setting context');
-		}
-		// Only allow overlaying variables
-		return new UnfocusableDynamicContext({
-			variables: scope.variables ? Object.assign({}, this.variables, scope.variables) : this.variables
-		});
-	}
 }

@@ -3,6 +3,6 @@
 // When it is collected, the Node may be collected too
 // TODO: This must work for all values, and be in a 'static context' of some sort
 /**
- * @const {!Map<!Node, !./NodeValue>}
+ * @const {!Map<!Node, !./Value>}
  */
 export default new Map();

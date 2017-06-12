@@ -1,8 +1,8 @@
 import Sequence from './dataTypes/Sequence';
 import createAtomicValue from './dataTypes/createAtomicValue';
-import NodeValue from './dataTypes/NodeValue';
 import ArrayValue from './dataTypes/ArrayValue';
 import MapValue from './dataTypes/MapValue';
+import createNodeValue from './dataTypes/createNodeValue';
 
 function adaptItemToXPathValue (value) {
 	switch (typeof value) {
@@ -15,7 +15,7 @@ function adaptItemToXPathValue (value) {
 		case 'object':
 			// Test if it is a node
 			if (value && value.nodeType) {
-				return NodeValue.createFromNode(value);
+				return createNodeValue(value);
 			}
 			if (Array.isArray(value)) {
 				return new ArrayValue(value.map(val => Sequence.singleton(adaptItemToXPathValue(val))));

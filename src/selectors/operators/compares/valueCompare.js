@@ -1,95 +1,87 @@
 import castToType from '../../dataTypes/castToType';
-import isInstanceOfType from '../../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 
 // Use partial application to get to a comparer faster
 
-const stringValueToken = { type: 'xs:string', value: null };
-const doubleValueToken = { type: 'xs:double', value: null };
-const floatValueToken = { type: 'xs:float', value: null };
 function generateCompareFunction (operator, typeA, typeB) {
-	const functorsForValueA = [];
-	const functorsForValueB = [];
+	const castFunctionsForA = [];
+	const castFunctionsForB = [];
 
-	let valueA = { type: typeA, value: null };
-	let valueB = { type: typeB, value: null };
-
-
-    if (isInstanceOfType(valueA, 'xs:untypedAtomic') && isInstanceOfType(valueB, 'xs:untypedAtomic')) {
-        functorsForValueA.push((val) => castToType(val, 'xs:string'));
-		functorsForValueB.push((val) => castToType(val, 'xs:string'));
-		valueA = valueB = stringValueToken;
-    }
-	else if (isInstanceOfType(valueA, 'xs:untypedAtomic')) {
-		functorsForValueA.push((val) => castToType(val, valueB.type));
-		valueA = valueB;
+	if (isSubtypeOf(typeA, 'xs:untypedAtomic') && isSubtypeOf(typeB, 'xs:untypedAtomic')) {
+		castFunctionsForA.push((val) => castToType(val, 'xs:string'));
+		castFunctionsForB.push((val) => castToType(val, 'xs:string'));
+		typeA = typeB = 'xs:string';
 	}
-	else if (isInstanceOfType(valueB, 'xs:untypedAtomic')) {
-		functorsForValueB.push((val) => castToType(val, valueA.type));
-		valueB = valueA;
+	else if (isSubtypeOf(typeA, 'xs:untypedAtomic')) {
+		castFunctionsForA.push((val) => castToType(val, typeB));
+		typeA = typeB;
 	}
-    else if (valueA.type !== valueB.type) {
-        if ((isInstanceOfType(valueA, 'xs:string') || isInstanceOfType(valueA, 'xs:anyURI')) &&
-			(isInstanceOfType(valueB, 'xs:string') || isInstanceOfType(valueB, 'xs:anyURI'))) {
-			functorsForValueA.push((val) => castToType(val, 'xs:string'));
-			valueA = stringValueToken;
-			functorsForValueB.push((val) => castToType(val, 'xs:string'));
-			valueB = stringValueToken;
-        }
-/*		else if ((isInstanceOfType(valueA, 'xs:decimal') || isInstanceOfType(valueA, 'xs:float')) &&
-				 (isInstanceOfType(valueB, 'xs:decimal') || isInstanceOfType(valueB, 'xs:float'))) {
-			functorsForValueA.push((val) => castToType(val, 'xs:float'));
-			functorsForValueB.push((val) => castToType(val, 'xs:float'));
-			valueA = valueB = floatValueToken;
-        }
-*/		else if (isInstanceOfType(valueA, 'xs:numeric') && isInstanceOfType(valueB, 'xs:numeric')) {
-			functorsForValueA.push((val) => castToType(val, 'xs:double'));
-			functorsForValueB.push((val) => castToType(val, 'xs:double'));
-			valueA = valueB = doubleValueToken;
-        }
+	else if (isSubtypeOf(typeB, 'xs:untypedAtomic')) {
+		castFunctionsForB.push((val) => castToType(val, typeA));
+		typeB = typeA;
+	}
+	else if (typeA !== typeB) {
+		if ((isSubtypeOf(typeA, 'xs:string') || isSubtypeOf(typeA, 'xs:anyURI')) &&
+			(isSubtypeOf(typeB, 'xs:string') || isSubtypeOf(typeB, 'xs:anyURI'))) {
+			castFunctionsForA.push((val) => castToType(val, 'xs:string'));
+			typeA = 'xs:string';
+			castFunctionsForB.push((val) => castToType(val, 'xs:string'));
+			typeB = 'xs:string';
+		}
+		else if ((isSubtypeOf(typeA, 'xs:decimal') || isSubtypeOf(typeA, 'xs:float')) && (isSubtypeOf(typeB, 'xs:decimal') || isSubtypeOf(typeB, 'xs:float'))) {
+			castFunctionsForA.push((val) => castToType(val, 'xs:float'));
+			castFunctionsForB.push((val) => castToType(val, 'xs:float'));
+			typeA = typeB = 'xs:float';
+		}
+		else if (isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric')) {
+			castFunctionsForA.push((val) => castToType(val, 'xs:double'));
+			castFunctionsForB.push((val) => castToType(val, 'xs:double'));
+			typeA = typeB = 'xs:double';
+		}
 		else {
-            throw new Error('XPTY0004: Values to compare are not of the same type');
-        }
-    }
+			throw new Error('XPTY0004: Values to compare are not of the same type');
+		}
+	}
 
-	function applyFunctors (valA, valB) {
+	function applyCasts (valA, valB) {
 		return {
-			castA: functorsForValueA.reduce((val, functor) => functor(val), valA),
-			castB: functorsForValueB.reduce((val, functor) => functor(val), valB)
+			castA: castFunctionsForA.reduce((val, functor) => functor(val), valA),
+			castB: castFunctionsForB.reduce((val, functor) => functor(val), valB)
 		};
 	}
 
-    switch (operator) {
-        case 'eq':
-            return (a, b) => {
-				const { castA, castB } = applyFunctors(a, b);
+	switch (operator) {
+		case 'eq':
+			return (a, b) => {
+				const { castA, castB } = applyCasts(a, b);
 				return castA.value === castB.value;
 			};
-        case 'ne':
+		case 'ne':
 			return (a, b) => {
-				const { castA, castB } = applyFunctors(a, b);
+				const { castA, castB } = applyCasts(a, b);
 				return castA.value !== castB.value;
 			};
-        case 'lt':
+		case 'lt':
 			return (a, b) => {
-				const { castA, castB } = applyFunctors(a, b);
+				const { castA, castB } = applyCasts(a, b);
 				return castA.value < castB.value;
 			};
-        case 'le':
+		case 'le':
 			return (a, b) => {
-				const { castA, castB } = applyFunctors(a, b);
+				const { castA, castB } = applyCasts(a, b);
 				return castA.value <= castB.value;
 			};
-        case 'gt':
+		case 'gt':
 			return (a, b) => {
-				const { castA, castB } = applyFunctors(a, b);
+				const { castA, castB } = applyCasts(a, b);
 				return castA.value > castB.value;
 			};
-        case 'ge':
+		case 'ge':
 			return (a, b) => {
-				const { castA, castB } = applyFunctors(a, b);
+				const { castA, castB } = applyCasts(a, b);
 				return castA.value >= castB.value;
 			};
-    }
+	}
 
 	throw new Error('Unexpected compare operator');
 }
@@ -97,18 +89,18 @@ function generateCompareFunction (operator, typeA, typeB) {
 const comparatorsByTypingKey = Object.create(null);
 
 /**
- * @param  {string}    operator
+ * @param  {string}                    operator
  * @param  {../../dataTypes/Sequence}  firstSequence
  * @param  {../../dataTypes/Sequence}  secondSequence
  */
 export default function valueCompare (operator, firstSequence, secondSequence) {
-    // https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
+	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
 	if (!firstSequence.isSingleton() || !secondSequence.isSingleton()) {
-        throw new Error('XPTY0004: Sequences to compare are not singleton');
-    }
+		throw new Error('XPTY0004: Sequences to compare are not singleton');
+	}
 
-    const valueA = firstSequence.first();
-    const valueB = secondSequence.first();
+	const valueA = firstSequence.first();
+	const valueB = secondSequence.first();
 	const typingKey = `${valueA.type}~${valueB.type}~${operator}`;
 	let prefabComparator = comparatorsByTypingKey[typingKey];
 	if (!prefabComparator) {

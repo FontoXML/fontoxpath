@@ -2,7 +2,7 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import Specificity from '../Specificity';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 /**
  * @extends {Selector}
@@ -19,7 +19,7 @@ class TypeTest extends Selector {
 
 	evaluate (dynamicContext) {
 		var booleanValue = createAtomicValue(
-			isInstanceOfType(dynamicContext.contextItem, this._type), 'xs:boolean');
+			isSubtypeOf(dynamicContext.contextItem.type, this._type), 'xs:boolean');
 		return Sequence.singleton(booleanValue);
 	}
 }

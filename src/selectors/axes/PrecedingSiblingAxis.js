@@ -1,18 +1,18 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
-import NodeValue from '../dataTypes/NodeValue';
+import createNodeValue from '../dataTypes/createNodeValue';
 
 function createSiblingGenerator (domFacade, node) {
 	return {
 		next: () => {
 			node = node && domFacade.getPreviousSibling(node);
 			if (!node) {
-				return { done: true };
+				return { done: true, value: undefined };
 			}
 
 			return {
-				value: NodeValue.createFromNode(node),
-				done: false
+				done: false,
+				value: createNodeValue(node)
 			};
 		}
 	};
@@ -42,15 +42,11 @@ class PrecedingSiblingAxis extends Selector {
 	 * @return  {Sequence}
 	 */
 	evaluate (dynamicContext) {
-		const  contextItem = dynamicContext.contextItem;
+		const contextItem = dynamicContext.contextItem;
 		const domFacade = dynamicContext.domFacade;
 
 		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter((item, i, sequence) => {
-			const result = this._siblingSelector.evaluateMaybeStatically(dynamicContext.createScopedContext({
-				contextSequence: sequence,
-				contextItemIndex: i,
-				contextItem: item
-			}));
+			const result = this._siblingSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(i, item, sequence));
 
 			return result.getEffectiveBooleanValue();
 		});

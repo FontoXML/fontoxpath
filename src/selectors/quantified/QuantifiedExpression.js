@@ -12,10 +12,9 @@ class QuantifiedExpression extends Selector {
 	 * @param  {!Selector}         satisfiesExpr
 	 */
 	constructor (quantifier, inClauses, satisfiesExpr) {
-		var specificity = inClauses.reduce(
-				function (specificity, inClause) {
-					return specificity.add(inClause[1].specificity);
-				}, satisfiesExpr.specificity);
+		const specificity = inClauses.reduce(
+			(specificity, inClause) => specificity.add(inClause[1].specificity),
+			satisfiesExpr.specificity);
 		super(specificity, {
 			canBeStaticallyEvaluated: false
 		});
@@ -23,22 +22,18 @@ class QuantifiedExpression extends Selector {
 		this._quantifier = quantifier;
 		this._inClauses = inClauses;
 		this._satisfiesExpr = satisfiesExpr;
-
-
 	}
 
 	evaluate (dynamicContext) {
-		var evaluatedInClauses = this._inClauses.map(function (inClause) {
-				return {
-					name: inClause[0],
-					valueArray: Array.from(inClause[1].evaluateMaybeStatically(dynamicContext).value())
-				};
-			});
+		const evaluatedInClauses = this._inClauses.map(inClause => ({
+			name: inClause[0],
+			valueArray: Array.from(inClause[1].evaluateMaybeStatically(dynamicContext).value())
+		}));
 
-		var indices = new Array(evaluatedInClauses.length).fill(0);
+		const indices = new Array(evaluatedInClauses.length).fill(0);
 		indices[0] = -1;
 
-		var hasOverflowed = true;
+		let hasOverflowed = true;
 		while (hasOverflowed) {
 			hasOverflowed = false;
 			for (let i = 0, l = indices.length; i < l; ++i) {
@@ -48,18 +43,16 @@ class QuantifiedExpression extends Selector {
 					continue;
 				}
 
-				var variables = Object.create(null);
+				const variables = Object.create(null);
 
-				for (var y = 0; y < indices.length; y++) {
-					var value = evaluatedInClauses[y].valueArray[indices[y]];
+				for (let y = 0; y < indices.length; y++) {
+					const value = evaluatedInClauses[y].valueArray[indices[y]];
 					variables[evaluatedInClauses[y].name] = Sequence.singleton(value);
 				}
 
-				var context = dynamicContext.createScopedContext({
-						variables: variables
-					});
+				const context = dynamicContext.scopeWithVariables(variables);
 
-				var result = this._satisfiesExpr.evaluateMaybeStatically(context);
+				const result = this._satisfiesExpr.evaluateMaybeStatically(context);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
 					return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));

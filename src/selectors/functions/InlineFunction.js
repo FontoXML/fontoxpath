@@ -35,16 +35,12 @@ class InlineFunction extends Selector {
 		 */
 		const executeFunction = (_unboundDynamicContext, ...parameters) => {
 			// Since functionCall already does typechecking, we do not have to do it here
-			const scopedDynamicContext = dynamicContext.createScopedContext({
-				contextItem: null,
-				contextSequence: Sequence.empty(),
-				contextItemIndex: -1,
-				variables: this._paramDescriptions.reduce((paramByName, [name, _type], i) => {
+			const scopedDynamicContext = dynamicContext
+				.scopeWithFocus(-1, null, Sequence.empty())
+				.scopeWithVariables(this._paramDescriptions.reduce((paramByName, [name, _type], i) => {
 					paramByName[name] = parameters[i];
 					return paramByName;
-				}, Object.create(null))
-			});
-
+				}, Object.create(null)));
 			return this._functionBody.evaluateMaybeStatically(scopedDynamicContext);
 		};
 

@@ -1,6 +1,6 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
-import NodeValue from '../dataTypes/NodeValue';
+import createNodeValue from '../dataTypes/createNodeValue';
 
 /**
  * @extends {Selector}
@@ -31,13 +31,8 @@ class ParentAxis extends Selector {
 		if (!parentNode) {
 			return Sequence.empty();
 		}
-		const parentSequence = Sequence.singleton(NodeValue.createFromNode(parentNode));
-		const scopedContext = dynamicContext.createScopedContext({
-			contextItemIndex: 0,
-			contextItem: NodeValue.createFromNode(parentNode),
-			contextSequence: parentSequence
-		});
-
+		const parentSequence = Sequence.singleton(createNodeValue(parentNode));
+		const scopedContext = dynamicContext.scopeWithFocus(0, parentSequence.first(), parentSequence);
 		const nodeIsMatch = this._parentSelector.evaluateMaybeStatically(scopedContext).getEffectiveBooleanValue();
 		if (!nodeIsMatch) {
 			return Sequence.empty();

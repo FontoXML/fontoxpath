@@ -1,5 +1,5 @@
 import arrayGet from './builtInFunctions.arrays.get';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ArrayValue from '../dataTypes/ArrayValue';
@@ -164,7 +164,7 @@ function arrayFlatten (dynamicContext, itemSequence) {
 	let resultSequenceItems = [];
 
 	itemSequence.getAllValues().forEach(function (item) {
-		if (isInstanceOfType(item, 'array(*)')) {
+		if (isSubtypeOf(item.type, 'array(*)')) {
 			item.members.forEach(function (member) {
 				const flattenedSequence = arrayFlatten(dynamicContext, member);
 				resultSequenceItems = resultSequenceItems.concat(flattenedSequence.getAllValues());

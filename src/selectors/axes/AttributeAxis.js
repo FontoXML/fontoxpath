@@ -1,9 +1,9 @@
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
-import NodeValue from '../dataTypes/NodeValue';
+import createNodeValue from '../dataTypes/createNodeValue';
 import AttributeNode from '../dataTypes/AttributeNode';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 /**
  * @extends {Selector}
@@ -34,25 +34,24 @@ class AttributeAxis extends Selector {
 		var contextItem = dynamicContext.contextItem,
 			domFacade = dynamicContext.domFacade;
 
-		if (!isInstanceOfType(contextItem, 'element()')) {
+		if (!isSubtypeOf(contextItem.type, 'element()')) {
 			return Sequence.empty();
 		}
 
 		const allAttributes = domFacade.getAllAttributes(contextItem.value);
 		var attributesSequence = new Sequence(
 			allAttributes.map(
-				attribute => NodeValue.createFromNode(
+				attribute => createNodeValue(
 					new AttributeNode(contextItem.value, attribute.name, attribute.value))));
 		/**
 		 * @type {!Selector}
 		 */
 		const attributeTestSelector = this._attributeTestSelector;
 		return attributesSequence.filter((item, i) => {
-			const result = attributeTestSelector.evaluateMaybeStatically(dynamicContext.createScopedContext({
-				contextSequence: attributesSequence,
-				contextItemIndex: i,
-				contextItem: item
-			}));
+			const result = attributeTestSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(
+				i,
+				item,
+				attributesSequence));
 			return result.getEffectiveBooleanValue();
 		});
 	}

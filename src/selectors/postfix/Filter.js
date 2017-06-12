@@ -1,5 +1,5 @@
 import Selector from '../Selector';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Sequence from '../dataTypes/Sequence';
 
 /**
@@ -46,7 +46,7 @@ class Filter extends Selector {
 			 * @type {../dataTypes/Value}
 			 */
 			const resultValue = result.first();
-			if (isInstanceOfType(resultValue, 'xs:numeric')) {
+			if (isSubtypeOf(resultValue.type, 'xs:numeric')) {
 				let requestedIndex = resultValue.value;
 				if (!Number.isInteger(requestedIndex)) {
 					// There are only values for integer positions
@@ -69,18 +69,14 @@ class Filter extends Selector {
 		}
 
 		return valuesToFilter.filter((item, i, sequence) => {
-			const result = this._filterSelector.evaluateMaybeStatically(dynamicContext.createScopedContext({
-				contextSequence: sequence,
-				contextItemIndex: i,
-				contextItem: item
-			}));
+			const result = this._filterSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(i, item, sequence));
 
 			if (result.isEmpty()) {
 				return false;
 			}
 
 			const resultValue = result.first();
-			if (isInstanceOfType(resultValue, 'xs:numeric')) {
+			if (isSubtypeOf(resultValue.type, 'xs:numeric')) {
 				// Remember: XPath is one-based
 				return resultValue.value === i + 1;
 			}

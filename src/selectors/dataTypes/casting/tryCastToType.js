@@ -7,6 +7,8 @@ import {
 
 import builtinDataTypesByName from '../builtins/builtinDataTypesByName';
 
+import isSubtypeOf from '../isSubtypeOf';
+
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
 import castToBoolean from './castToBoolean';
@@ -42,7 +44,7 @@ const TREAT_AS_PRIMITIVE = [
  * @return   {{successful: boolean, value: !../AtomicValue<!./AtomicValueDataType>}|{successful: boolean, error: !Error}}
  */
 function castToPrimitiveType (value, from, to) {
-	const instanceOf = (type) => builtinDataTypesByName[from].instanceOfType(type);
+	const instanceOf = type => isSubtypeOf(from, type);
 
 	if (to === 'xs:error') {
 		return {
@@ -144,6 +146,13 @@ export default function tryCastToType (valueTuple, type) {
 
 	const primitiveFrom = TREAT_AS_PRIMITIVE.includes(from) ? from : getPrimitiveTypeName(from);
 	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
+
+	if (!primitiveTo || !primitiveFrom) {
+		return {
+			successful: false,
+			error: new Error('XPST0080: Casting from or to types without a primitive base type is not supported.')
+		};
+	}
 
 	let jsValue = valueTuple.value;
 

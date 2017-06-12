@@ -21,7 +21,26 @@ function fnNodeName (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	var nodeName = sequence.first().nodeName;
+	var node = sequence.first().value;
+	let nodeName;
+	switch (node.nodeType) {
+		case 2:
+			nodeName = node.nodeName;
+			break;
+		case 1:
+			// element
+			nodeName = node.nodeName;
+			break;
+		case 7:
+			// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
+			nodeName = (/** @type {ProcessingInstruction} */(node)).target;
+
+			break;
+		default:
+			// All other nodes have no name
+			nodeName = null;
+	}
+
 	if (nodeName === null) {
 		return Sequence.empty();
 	}

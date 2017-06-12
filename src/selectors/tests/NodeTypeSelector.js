@@ -19,11 +19,11 @@ class NodeTypeSelector extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		if (this._nodeType === 3 && dynamicContext.contextItem.nodeType === 4) {
+		if (this._nodeType === 3 && dynamicContext.contextItem.value.nodeType === 4) {
 			// CDATA_SECTION_NODES should be regarded as text nodes, and CDATA does not exist in the XPath Data Model
 			return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
 		}
-		const booleanValue = createAtomicValue(this._nodeType === dynamicContext.contextItem.nodeType, 'xs:boolean');
+		const booleanValue = createAtomicValue(this._nodeType === dynamicContext.contextItem.value.nodeType, 'xs:boolean');
 		return Sequence.singleton(booleanValue);
 	}
 

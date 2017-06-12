@@ -76,10 +76,10 @@ export default function castToStringLikeType (value, instanceOf, to) {
 			value: value.buildString('xs:yearMonthDuration')
 		};
 	}
-	if (instanceOf('xs:dateTimeDuration')) {
+	if (instanceOf('xs:dayTimeDuration')) {
 		return {
 			successful: true,
-			value: value.buildString('xs:dateTimeDuration')
+			value: value.buildString('xs:dayTimeDuration')
 		};
 	}
 	if (instanceOf('xs:duration')) {

@@ -1,6 +1,6 @@
 import castToType from '../dataTypes/castToType';
 import promoteToType from '../dataTypes/promoteToType';
-import isInstanceOfType from '../dataTypes/isInstanceOfType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import atomize from '../dataTypes/atomize';
 
 import Sequence from '../dataTypes/Sequence';
@@ -50,18 +50,18 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 	}
 
 	return argument.map(argumentItem => {
-		if (isInstanceOfType(argumentItem, type)) {
+		if (isSubtypeOf(argumentItem.type, type)) {
 			return argumentItem;
 		}
 
-		if (isInstanceOfType(argumentItem, 'node()')) {
+		if (isSubtypeOf(argumentItem.type, 'node()')) {
 			argumentItem = atomize(argumentItem, dynamicContext);
 		}
 		// Everything is an anyAtomicType, so no casting necessary.
 		if (type === 'xs:anyAtomicType') {
 			return argumentItem;
 		}
-		if (isInstanceOfType(argumentItem, 'xs:untypedAtomic')) {
+		if (isSubtypeOf(argumentItem.type, 'xs:untypedAtomic')) {
 			// We might be able to cast this to the wished type
 			const item = castToType(argumentItem, type);
 			if (!item) {
