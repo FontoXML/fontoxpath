@@ -1,10 +1,10 @@
 class DayTimeDuration {
-	constructor (seconds, secondFraction, isPositive) {
-		// Second fractions will be kept track of separately, as they introduce unnecessary imprecision errors when
-		//   retreiving seconds due to the usage of the % and / operators.
+	constructor (seconds) {
+		// if (seconds > Number.MAX_SAFE_INTEGER || Math.abs(seconds) === Infinity) {
+		// 	throw new Error('FODT0002: Value overflow while constructing xs:yearMonthDuration');
+		// }
+		// this._seconds = seconds < Number.MIN_SAFE_INTEGER || Object.is(-0, seconds) ? 0 : seconds;
 		this._seconds = seconds;
-		this._secondFraction = secondFraction;
-		this._isPositive = (seconds === 0 && secondFraction === 0) || isPositive;
 	}
 
 	getYears () {
@@ -16,36 +16,35 @@ class DayTimeDuration {
 	}
 
 	getDays () {
-		return Math.floor(this._seconds / 86400);
+		return (this._seconds / 86400) | 0;
 	}
 
 	getHours () {
-		return Math.floor(this._seconds % 86400 / 3600);
+		return (this._seconds % 86400 / 3600) | 0;
 	}
 
 	getMinutes () {
-		return Math.floor(this._seconds % 3600 / 60);
+		return (this._seconds % 3600 / 60) | 0;
 	}
 
 	getSeconds () {
-		return this._seconds % 60 + this._secondFraction;
+		const result = this._seconds % 60;
+		return Object.is(-0, result) ? 0 : result;
 	}
 
 	isPositive () {
-		return this._isPositive;
+		return Object.is(-0, this._seconds) ? false : this._seconds >= 0;
 	}
 
 	equals (other) {
-		return this._isPositive === other._isPositive &&
-			this._seconds === other._seconds &&
-			this._secondFraction === other._secondFraction;
+		return this._seconds === other._seconds;
 	}
 
 	toStringWithoutP () {
-		const days = this.getDays();
-		const hours = this.getHours();
-		const minutes = this.getMinutes();
-		const seconds = this.getSeconds();
+		const days = Math.abs(this.getDays());
+		const hours = Math.abs(this.getHours());
+		const minutes = Math.abs(this.getMinutes());
+		const seconds = Math.abs(this.getSeconds());
 		const stringValue = `${days ? `${days}DT` : 'T'}` +
 			`${hours ? `${hours}H` : ''}` +
 			`${minutes ? `${minutes}M` : ''}` +
@@ -55,7 +54,7 @@ class DayTimeDuration {
 	}
 
 	toString () {
-		return (this._isPositive ? 'P' : '-P') + this.toStringWithoutP();
+		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
 	}
 }
 
@@ -66,15 +65,7 @@ class DayTimeDuration {
  * @return  {boolean}
  */
 DayTimeDuration.lessThan = function (dayTimeDuration1, dayTimeDuration2) {
-	if (dayTimeDuration1._isPositive && !dayTimeDuration2._isPositive) {
-		return false;
-	}
-
-	if (!dayTimeDuration1._isPositive && dayTimeDuration2._isPositive) {
-		return true;
-	}
-
-	return (dayTimeDuration1._seconds + dayTimeDuration1._secondFraction) < (dayTimeDuration2._seconds + dayTimeDuration2._secondFraction);
+	return dayTimeDuration1._seconds < dayTimeDuration2._seconds;
 };
 
 /**
@@ -84,59 +75,44 @@ DayTimeDuration.lessThan = function (dayTimeDuration1, dayTimeDuration2) {
  * @return  {boolean}
  */
 DayTimeDuration.greaterThan = function (dayTimeDuration1, dayTimeDuration2) {
-	if (dayTimeDuration1._isPositive && !dayTimeDuration2._isPositive) {
-		return true;
-	}
-
-	if (!dayTimeDuration1._isPositive && dayTimeDuration2._isPositive) {
-		return false;
-	}
-
-	return (dayTimeDuration1._seconds + dayTimeDuration1._secondFraction) > (dayTimeDuration2._seconds + dayTimeDuration2._secondFraction);
+	return dayTimeDuration1._seconds > dayTimeDuration2._seconds;
 };
 
 DayTimeDuration.add = function (dayTimeDuration1, dayTimeDuration2) {
-	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
-	const seconds2 = dayTimeDuration2._isPositive ? dayTimeDuration2._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration2._seconds + dayTimeDuration1._secondFraction);
-	const result = seconds1 + seconds2;
-
-	return new DayTimeDuration(Math.floor(result), parseFloat('.' + (result + '').split('.')[1]) || 0, result > -1);
+	return new DayTimeDuration(dayTimeDuration1._seconds + dayTimeDuration2._seconds);
 };
 
 DayTimeDuration.subtract = function (dayTimeDuration1, dayTimeDuration2) {
-	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
-	const seconds2 = dayTimeDuration2._isPositive ? dayTimeDuration2._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration2._seconds + dayTimeDuration1._secondFraction);
-	const result = seconds1 - seconds2;
-
-	return new DayTimeDuration(Math.floor(result), parseFloat('.' + (result + '').split('.')[1]) || 0, result > -1);
+	return new DayTimeDuration(dayTimeDuration1._seconds - dayTimeDuration2._seconds);
 };
 
-DayTimeDuration.multiply = function (dayTimeDuration1, double) {
+DayTimeDuration.multiply = function (dayTimeDuration, double) {
 	if (isNaN(double)) {
-		throw new Error('FOCA0005: Cannot divide xs:yearMonthDuration by NaN');
+		throw new Error('FOCA0005: Cannot divide xs:dayTimeDuration by NaN');
 	}
-
-	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
-	const result = seconds1 * double;
-
-	return new DayTimeDuration(Math.floor(result), parseFloat('.' + (result + '').split('.')[1]) || 0, result > -1);
+	const result = dayTimeDuration._seconds * double;
+	if (result > Number.MAX_SAFE_INTEGER || Math.abs(result) === Infinity) {
+		throw new Error('FODT0002: Value overflow while multiplying xs:yearMonthDuration');
+	}
+	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
 };
 
-DayTimeDuration.divide = function (dayTimeDuration1, double) {
+DayTimeDuration.divide = function (dayTimeDuration, double) {
 	if (isNaN(double)) {
-		throw new Error('FOCA0005: Cannot divide xs:yearMonthDuration by NaN');
+		throw new Error('FOCA0005: Cannot divide xs:dayTimeDuration by NaN');
 	}
-
-	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
-	const result = seconds1 / double;
-
-	return new DayTimeDuration(Math.floor(result), parseFloat('.' + (result + '').split('.')[1]) || 0, result > -1);
+	const result = dayTimeDuration._seconds / double;
+	if (result > Number.MAX_SAFE_INTEGER || Math.abs(result) === Infinity) {
+		throw new Error('FODT0002: Value overflow while dividing xs:yearMonthDuration');
+	}
+	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
 };
 
 DayTimeDuration.divideByDayTimeDuration = function (dayTimeDuration1, dayTimeDuration2) {
-	const seconds1 = dayTimeDuration1._isPositive ? dayTimeDuration1._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration1._seconds + dayTimeDuration1._secondFraction);
-	const seconds2 = dayTimeDuration2._isPositive ? dayTimeDuration2._seconds + dayTimeDuration1._secondFraction : -(dayTimeDuration2._seconds + dayTimeDuration1._secondFraction);
-	return seconds1 / seconds2;
+	if (dayTimeDuration2._seconds === 0) {
+		return new Error('FOAR0001: Division by 0');
+	}
+	return dayTimeDuration1._seconds / dayTimeDuration2._seconds;
 };
 
 /**
@@ -150,7 +126,8 @@ DayTimeDuration.divideByDayTimeDuration = function (dayTimeDuration1, dayTimeDur
  * @return  {DayTimeDuration}
  */
 DayTimeDuration.fromParts = function (days, hours, minutes, seconds, secondFraction, isPositive) {
-	return new DayTimeDuration(days * 86400 + hours * 3600 + minutes * 60 + seconds, secondFraction, isPositive);
+	const totalSeconds = days * 86400 + hours * 3600 + minutes * 60 + seconds + secondFraction;
+	return new DayTimeDuration(isPositive || totalSeconds === 0 ? totalSeconds : -totalSeconds);
 };
 
 /**

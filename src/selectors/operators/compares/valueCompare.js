@@ -53,6 +53,11 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 	if (isSubtypeOf(typeA, 'xs:dateTime') ||
 		isSubtypeOf(typeA, 'xs:date') ||
 		isSubtypeOf(typeA, 'xs:time')) {
+		if ((isSubtypeOf(typeA, 'xs:date') && !isSubtypeOf(typeB, 'xs:date')) ||
+			(isSubtypeOf(typeA, 'xs:dateTime') && !isSubtypeOf(typeB, 'xs:dateTime')) ||
+			(isSubtypeOf(typeA, 'xs:time') && !isSubtypeOf(typeB, 'xs:time'))) {
+			throw new Error(`XPTY0004: Operator ${operator} is not available for ${typeA} and ${typeB}`);
+		}
 		switch (operator) {
 			case 'eq':
 				return (a, b) => {
@@ -105,7 +110,7 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 			case 'ne':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return DateTime.equal(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return !DateTime.equal(castA.value, castB.value, dynamicContext.implicitTimezone);
 				};
 		}
 	}
@@ -188,40 +193,47 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 		}
 	}
 
-	switch (operator) {
-		case 'eq':
-			return (a, b) => {
-				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value === castB.value;
-			};
-		case 'ne':
-			return (a, b) => {
-				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value !== castB.value;
-			};
-		case 'lt':
-			return (a, b) => {
-				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value < castB.value;
-			};
-		case 'le':
-			return (a, b) => {
-				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value <= castB.value;
-			};
-		case 'gt':
-			return (a, b) => {
-				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value > castB.value;
-			};
-		case 'ge':
-			return (a, b) => {
-				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value >= castB.value;
-			};
+	if (isSubtypeOf(typeA, 'xs:boolean') ||
+		isSubtypeOf(typeA, 'xs:string') ||
+		isSubtypeOf(typeA, 'xs:numeric') ||
+		isSubtypeOf(typeA, 'xs:anyURI') ||
+		isSubtypeOf(typeA, 'xs:hexBinary') ||
+		isSubtypeOf(typeA, 'xs:base64Binary')) {
+		switch (operator) {
+			case 'eq':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value === castB.value;
+				};
+			case 'ne':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value !== castB.value;
+				};
+			case 'lt':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value < castB.value;
+				};
+			case 'le':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value <= castB.value;
+				};
+			case 'gt':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value > castB.value;
+				};
+			case 'ge':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value >= castB.value;
+				};
+		}
 	}
 
-	throw new Error('Unexpected compare operator');
+	throw new Error(`XPTY0004: ${operator} not available for ${typeA} and ${typeB}`);
 }
 
 const comparatorsByTypingKey = Object.create(null);

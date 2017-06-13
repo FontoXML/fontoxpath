@@ -41,8 +41,7 @@ function fnDateTime (_dynamicContext, sequence, arg2) {
 		time.getMinutes(),
 		time.getSeconds(),
 		time.getSecondFraction(),
-		timezoneToUse,
-		date.isPositive());
+		timezoneToUse);
 	return Sequence.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
 }
 
@@ -148,7 +147,7 @@ export default {
 		{
 			name: 'timezone-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
-			returnType: 'xs:dateTimeDuration?',
+			returnType: 'xs:dayTimeDuration?',
 			callFunction: fnTimezoneFromDateTime
 		},
 		{
@@ -172,7 +171,7 @@ export default {
 		{
 			name: 'timezone-from-date',
 			argumentTypes: ['xs:date?'],
-			returnType: 'xs:dateTimeDuration?',
+			returnType: 'xs:dayTimeDuration?',
 			callFunction: fnTimezoneFromDateTime
 		},
 		{
@@ -196,9 +195,8 @@ export default {
 		{
 			name: 'timezone-from-time',
 			argumentTypes: ['xs:time?'],
-			returnType: 'xs:dateTimeDuration?',
+			returnType: 'xs:dayTimeDuration?',
 			callFunction: fnTimezoneFromDateTime
 		}
-	],
-	functions: {}
+	]
 };

@@ -14,16 +14,16 @@ function parseMatch (match) {
  * @return  {number}
  */
 function compareNormalizedDateTime (dateTime1, dateTime2) {
-	if (dateTime1._isPositive && !dateTime2._isPositive) {
+	if (dateTime1._years > dateTime2._years) {
 		return 1;
 	}
-	if (!dateTime1._isPositive && dateTime2._isPositive) {
+
+	if (dateTime1._years < dateTime2._years) {
 		return -1;
 	}
 
-	const bothPositive = dateTime1._isPositive && dateTime2.isPositive;
+	const bothPositive = dateTime1.isPositive() && dateTime2.isPositive();
 	const fields = [
-		[dateTime1._years, dateTime2._years],
 		[dateTime1._months, dateTime2._months],
 		[dateTime1._days, dateTime2._days],
 		[dateTime1._hours, dateTime2._hours],
@@ -32,7 +32,7 @@ function compareNormalizedDateTime (dateTime1, dateTime2) {
 		[dateTime1._secondFraction, dateTime2._secondFraction]
 	];
 
-	for (let i = 0; i < 7; i++) {
+	for (let i = 0; i < 6; i++) {
 		if (fields[i][0] > fields[i][1]) {
 			return bothPositive ? 1 : -1;
 		}
@@ -49,8 +49,12 @@ function compareNormalizedDateTime (dateTime1, dateTime2) {
  * @return  {string}
  */
 function convertYearToString (year) {
-	const string = year + '';
-	return string.padStart(4, '0');
+	let string = year + '';
+	const isNegative = string.startsWith('-');
+	if (isNegative) {
+		string = string.substring(1);
+	}
+	return (isNegative ? '-' : '') + string.padStart(4, '0');
 }
 
 /**
@@ -92,12 +96,12 @@ function timezoneToString (timezone) {
 	}
 
 	return (timezone.isPositive() ? '+' : '-') +
-		convertToTwoCharString(timezone.getHours()) + ':' +
-		convertToTwoCharString(timezone.getMinutes());
+		convertToTwoCharString(Math.abs(timezone.getHours())) + ':' +
+		convertToTwoCharString(Math.abs(timezone.getMinutes()));
 }
 
 class DateTime {
-	constructor (years, months, days, hours, minutes, seconds, secondFraction, timezone, isPositive, type = 'xs:dateTime') {
+	constructor (years, months, days, hours, minutes, seconds, secondFraction, timezone, type = 'xs:dateTime') {
 		this._years = years;
 		this._months = months;
 		this._days = days + (hours === 24 ? 1 : 0);
@@ -106,7 +110,6 @@ class DateTime {
 		this._seconds = seconds;
 		this._secondFraction = secondFraction;
 		this._timezone = timezone;
-		this._isPositive = isPositive;
 		this._type = type;
 	}
 
@@ -120,7 +123,6 @@ class DateTime {
 			this._seconds,
 			this._secondFraction,
 			this._timezone,
-			this._isPositive,
 			this._type);
 	}
 
@@ -161,7 +163,7 @@ class DateTime {
 	}
 
 	isPositive () {
-		return this._isPositive;
+		return this._years >= 0;
 	}
 
 	normalize (timezone = undefined) {
@@ -171,17 +173,7 @@ class DateTime {
 		}
 
 		const timezoneToUse = timezone ? timezone : this._timezone;
-
-		const timezoneHours = timezoneToUse.getHours();
-		const timezoneMinutes = timezoneToUse.getMinutes();
-		let newDateTime;
-
-		if (timezoneToUse.isPositive()) {
-			newDateTime = new Date(this._years, this._months - 1, this._days, this._hours - timezoneHours, this._minutes - timezoneMinutes);
-		}
-		else {
-			newDateTime = new Date(this._years, this._months - 1, this._days, this._hours + timezoneHours, this._minutes + timezoneMinutes);
-		}
+		const newDateTime = new Date(this._years, this._months - 1, this._days, this._hours - timezoneToUse.getHours(), this._minutes - timezoneToUse.getMinutes());
 
 		const years = newDateTime.getFullYear();
 		const months = newDateTime.getMonth() + 1;
@@ -189,10 +181,14 @@ class DateTime {
 		const hours = newDateTime.getHours();
 		const minutes = newDateTime.getMinutes();
 
-		return new DateTime(years, months, days, hours, minutes, this._seconds, this._secondFraction, DayTimeDuration.fromTimezoneString('Z'), this._isPositive);
+		return new DateTime(years, months, days, hours, minutes, this._seconds, this._secondFraction, DayTimeDuration.fromTimezoneString('Z'), this._type);
 	}
 
 	// returns -1 if this < other, 0 if this === other, 1 if this > other, undefined if indeterminate
+	/**
+	 * @param   {DateTime}  other
+	 * @return  {number|undefined}
+	 */
 	compare (other) {
 		const normalizedThis = this.normalize();
 		const normalizedOther = other.normalize();
@@ -234,12 +230,10 @@ class DateTime {
 		return undefined;
 	}
 
-
 	toString () {
 		switch (this._type) {
 			case 'xs:dateTime':
-				return (this._isPositive ? '' : '-') +
-					convertYearToString(this._years) + '-' +
+				return convertYearToString(this._years) + '-' +
 					convertToTwoCharString(this._months) + '-' +
 					convertToTwoCharString(this._days) + 'T' +
 					convertToTwoCharString(this._hours) + ':' +
@@ -247,8 +241,7 @@ class DateTime {
 					convertSecondsToString(this._seconds + this._secondFraction) +
 					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:date':
-				return (this._isPositive ? '' : '-') +
-					convertYearToString(this._years) + '-' +
+				return convertYearToString(this._years) + '-' +
 					convertToTwoCharString(this._months) + '-' +
 					convertToTwoCharString(this._days) +
 					(this._timezone ? timezoneToString(this._timezone) : '');
@@ -271,12 +264,10 @@ class DateTime {
 					convertToTwoCharString(this._days) +
 					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:gYear':
-				return (this._isPositive ? '' : '-') +
-					convertYearToString(this._years) +
+				return convertYearToString(this._years) +
 					(this._timezone ? timezoneToString(this._timezone) : '');
 			case 'xs:gYearMonth':
-				return (this._isPositive ? '' : '-') +
-					convertYearToString(this._years) + '-' +
+				return convertYearToString(this._years) + '-' +
 					convertToTwoCharString(this._months) +
 					(this._timezone ? timezoneToString(this._timezone) : '');
 		}
@@ -292,7 +283,6 @@ class DateTime {
 				this._minutes = 0;
 				this._seconds = 0;
 				this._secondFraction = 0;
-				this._isPositive = true;
 				this._type = 'xs:gDay';
 				break;
 			case 'xs:gMonth':
@@ -302,7 +292,6 @@ class DateTime {
 				this._minutes = 0;
 				this._seconds = 0;
 				this._secondFraction = 0;
-				this._isPositive = true;
 				this._type = 'xs:gMonth';
 				break;
 			case 'xs:gYear':
@@ -312,7 +301,6 @@ class DateTime {
 				this._minutes = 0;
 				this._seconds = 0;
 				this._secondFraction = 0;
-				this._isPositive = true;
 				this._type = 'xs:gYear';
 				break;
 			case 'xs:gMonthDay':
@@ -321,7 +309,6 @@ class DateTime {
 				this._minutes = 0;
 				this._seconds = 0;
 				this._secondFraction = 0;
-				this._isPositive = true;
 				this._type = 'xs:gMonthDay';
 				break;
 			case 'xs:gYearMonth':
@@ -330,14 +317,12 @@ class DateTime {
 				this._minutes = 0;
 				this._seconds = 0;
 				this._secondFraction = 0;
-				this._isPositive = true;
 				this._type = 'xs:gYearMonth';
 				break;
 			case 'xs:time':
 				this._years = 0;
 				this._months = 0;
 				this._days = 0;
-				this._isPositive = true;
 				this._type = 'xs:time';
 				break;
 			case 'xs:date':
@@ -415,8 +400,8 @@ DateTime.fromString = function (string) {
 	const regex = /(-)?(\d{4,})?(?:-(\d\d))?(?:-{1,2}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?/;
 	const match = regex.exec(string);
 
-	const isPositive = !match[1];
-	const years = parseMatch(match[2]);
+	const isNegative = !!match[1];
+	const years = match[2] ? parseInt((isNegative ? '-' : '') + match[2], 10) : null;
 	const months = parseMatch(match[3]);
 	const days = parseMatch(match[4]);
 	const t = match[5];
@@ -442,7 +427,6 @@ DateTime.fromString = function (string) {
 			seconds,
 			secondFraction,
 			timezone,
-			isPositive,
 			'xs:dateTime');
 	}
 
@@ -457,7 +441,6 @@ DateTime.fromString = function (string) {
 			seconds,
 			secondFraction,
 			timezone,
-			true,
 			'xs:time');
 	}
 
@@ -472,7 +455,6 @@ DateTime.fromString = function (string) {
 			0,
 			0,
 			timezone,
-			isPositive,
 			'xs:date');
 	}
 
@@ -487,11 +469,10 @@ DateTime.fromString = function (string) {
 			0,
 			0,
 			timezone,
-			isPositive,
 			'xs:gYearMonth');
 	}
 
-	if (!isPositive && months !== null && days !== null) {
+	if (isNegative && months !== null && days !== null) {
 		// There is no complete date component, but there is a month and a day -> gMonthDay
 		return new DateTime(
 			0,
@@ -502,7 +483,6 @@ DateTime.fromString = function (string) {
 			0,
 			0,
 			timezone,
-			true,
 			'xs:gMonthDay');
 	}
 
@@ -517,11 +497,10 @@ DateTime.fromString = function (string) {
 			0,
 			0,
 			timezone,
-			isPositive,
 			'xs:gYear');
 	}
 
-	if (!isPositive && months !== null) {
+	if (isNegative && months !== null) {
 		// There is only a month -> gMonth
 		return new DateTime(
 			0,
@@ -532,7 +511,6 @@ DateTime.fromString = function (string) {
 			0,
 			0,
 			timezone,
-			true,
 			'xs:gMonth');
 	}
 
@@ -546,7 +524,6 @@ DateTime.fromString = function (string) {
 		0,
 		0,
 		timezone,
-		true,
 		'xs:gDay');
 };
 

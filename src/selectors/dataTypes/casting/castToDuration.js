@@ -23,7 +23,7 @@ export default function castToDuration (instanceOf) {
 	if (instanceOf('xs:duration')) {
 		return value => ({
 			successful: true,
-			value: createDurationValue(value.toDuration())
+			value: createDurationValue(value)
 		});
 	}
 	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {

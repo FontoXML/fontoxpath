@@ -1,15 +1,18 @@
 class YearMonthDuration {
-	constructor (months, isPositive) {
-		this._months = months;
-		this._isPositive = isPositive;
+	constructor (months) {
+		if (months > Number.MAX_SAFE_INTEGER || Math.abs(months) === Infinity) {
+			throw new Error('FODT0002: Value overflow while constructing xs:yearMonthDuration');
+		}
+		this._months = months < Number.MIN_SAFE_INTEGER || Object.is(-0, months) ? 0 : months;
 	}
 
 	getYears () {
-		return Math.floor(this._months / 12);
+		return (this._months / 12) | 0;
 	}
 
 	getMonths () {
-		return this._months % 12;
+		const result = this._months % 12;
+		return Object.is(-0, result) ? 0 : result;
 	}
 
 	getDays () {
@@ -29,24 +32,23 @@ class YearMonthDuration {
 	}
 
 	isPositive () {
-		return this._isPositive;
+		return Object.is(-0, this._months) ? false : this._months >= 0;
 	}
 
 	equals (other) {
-		return this._isPositive === other._isPositive &&
-			this._months === other._months;
+		return this._months === other._months;
 	}
 
 	toStringWithoutP () {
-		const years = this.getYears();
-		const months = this.getMonths();
+		const years = Math.abs(this.getYears());
+		const months = Math.abs(this.getMonths());
 		const stringValue = `${years ? `${years}Y` : ''}` + `${months ? `${months}M` : ''}`;
 
 		return stringValue || '0M';
 	}
 
 	toString () {
-		return (this._isPositive ? 'P' : '-P') + this.toStringWithoutP();
+		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
 	}
 }
 
@@ -57,14 +59,6 @@ class YearMonthDuration {
  * @return  {boolean}
  */
 YearMonthDuration.lessThan = function (yearMonthDuration1, yearMonthDuration2) {
-	if (yearMonthDuration1._isPositive && !yearMonthDuration2._isPositive) {
-		return false;
-	}
-
-	if (!yearMonthDuration1._isPositive && yearMonthDuration2._isPositive) {
-		return true;
-	}
-
 	return yearMonthDuration1._months < yearMonthDuration2._months;
 };
 
@@ -75,59 +69,33 @@ YearMonthDuration.lessThan = function (yearMonthDuration1, yearMonthDuration2) {
  * @return  {boolean}
  */
 YearMonthDuration.greaterThan = function (yearMonthDuration1, yearMonthDuration2) {
-	if (yearMonthDuration1._isPositive && !yearMonthDuration2._isPositive) {
-		return true;
-	}
-
-	if (!yearMonthDuration1._isPositive && yearMonthDuration2._isPositive) {
-		return false;
-	}
-
 	return yearMonthDuration1._months > yearMonthDuration2._months;
 };
 
 YearMonthDuration.add = function (yearMonthDuration1, yearMonthDuration2) {
-	const months1 = yearMonthDuration1._isPositive ? yearMonthDuration1._months : -yearMonthDuration1._months;
-	const months2 = yearMonthDuration2._isPositive ? yearMonthDuration2._months : -yearMonthDuration2._months;
-	const result = months1 + months2;
-
-	return new YearMonthDuration(Math.abs(result), result > -1);
+	return new YearMonthDuration(yearMonthDuration1._months + yearMonthDuration2._months);
 };
 
 YearMonthDuration.subtract = function (yearMonthDuration1, yearMonthDuration2) {
-	const months1 = yearMonthDuration1._isPositive ? yearMonthDuration1._months : -yearMonthDuration1._months;
-	const months2 = yearMonthDuration2._isPositive ? yearMonthDuration2._months : -yearMonthDuration2._months;
-	const result = months1 - months2;
-
-	return new YearMonthDuration(Math.abs(result), result > -1);
+	return new YearMonthDuration(yearMonthDuration1._months - yearMonthDuration2._months);
 };
 
 YearMonthDuration.multiply = function (yearMonthDuration, double) {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot multiply xs:yearMonthDuration by NaN');
 	}
-
-	const months1 = yearMonthDuration._isPositive ? yearMonthDuration._months : -yearMonthDuration._months;
-	const result = months1 * double;
-
-	return new YearMonthDuration(Math.round(result), result > -1);
+	return new YearMonthDuration(Math.round(yearMonthDuration._months * double));
 };
 
 YearMonthDuration.divide = function (yearMonthDuration, double) {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot divide xs:yearMonthDuration by NaN');
 	}
-
-	const months1 = yearMonthDuration._isPositive ? yearMonthDuration._months : -yearMonthDuration._months;
-	const result = months1 / double;
-
-	return new YearMonthDuration(Math.round(result), result > -1);
+	return new YearMonthDuration(Math.round(yearMonthDuration._months / double));
 };
 
 YearMonthDuration.divideByYearMonthDuration = function (yearMonthDuration1, yearMonthDuration2) {
-	const months1 = yearMonthDuration1._isPositive ? yearMonthDuration1._months : -yearMonthDuration1._months;
-	const months2 = yearMonthDuration2._isPositive ? yearMonthDuration2._months : -yearMonthDuration2._months;
-	return months1 / months2;
+	return yearMonthDuration1._months / yearMonthDuration2._months;
 };
 
 /**
@@ -138,7 +106,8 @@ YearMonthDuration.divideByYearMonthDuration = function (yearMonthDuration1, year
  * @return  {YearMonthDuration}
  */
 YearMonthDuration.fromParts = function (years, months, isPositive) {
-	return new YearMonthDuration(years * 12 + months, isPositive);
+	const totalMonths = years * 12 + months;
+	return new YearMonthDuration(isPositive || totalMonths === 0 ? totalMonths : -totalMonths);
 };
 
 /**

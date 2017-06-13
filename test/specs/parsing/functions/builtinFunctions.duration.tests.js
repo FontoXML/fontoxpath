@@ -1,4 +1,4 @@
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPathToNumber
@@ -6,14 +6,14 @@ import {
 
 let documentNode;
 beforeEach(() => {
-	documentNode = slimdom.createDocument();
+	documentNode = new slimdom.Document();
 });
 
 describe('Duration related functions', () => {
 	describe('fn:years-from-duration', () => {
 		it('returns 10 for "P10Y10M10DT10H10M10.1S"',
 			() => chai.assert.equal(evaluateXPathToNumber('years-from-duration(xs:duration("P10Y10M10DT10H10M10.1S"))', documentNode), 10));
-		it('returns 10 for "-P10Y10M10DT10H10M10.1S"',
+		it('returns -10 for "-P10Y10M10DT10H10M10.1S"',
 			() => chai.assert.equal(evaluateXPathToNumber('years-from-duration(xs:duration("-P10Y10M10DT10H10M10.1S"))', documentNode), -10));
 		it('returns 0 for "P10DT10H10M10.1S"',
 			() => chai.assert.equal(evaluateXPathToNumber('years-from-duration(xs:dayTimeDuration("P10DT10H10M10.1S"))', documentNode), 0));
@@ -21,7 +21,7 @@ describe('Duration related functions', () => {
 			() => chai.assert.equal(evaluateXPathToNumber('years-from-duration(xs:dayTimeDuration("-P10DT10H10M10.1S"))', documentNode), 0));
 		it('returns 10 for "P10Y10M"',
 			() => chai.assert.equal(evaluateXPathToNumber('years-from-duration(xs:yearMonthDuration("P10Y10M"))', documentNode), 10));
-		it('returns 10 for "-P10Y10M"',
+		it('returns -10 for "-P10Y10M"',
 			() => chai.assert.equal(evaluateXPathToNumber('years-from-duration(xs:yearMonthDuration("-P10Y10M"))', documentNode), -10));
 	});
 
@@ -86,14 +86,14 @@ describe('Duration related functions', () => {
 	});
 
 	describe('fn:seconds-from-duration', () => {
-		it('returns 10 for "P10Y10M10DT10H10M10.1S"',
-			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:duration("P10Y10M10DT10H10M10.1S"))', documentNode), 10.1));
-		it('returns -10 for "-P10Y10M10DT10H10M10.1S"',
-			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:duration("-P10Y10M10DT10H10M10.1S"))', documentNode), -10.1));
-		it('returns 10 for "P10DT10H10M10.1S"',
-			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:dayTimeDuration("P10DT10H10M10.1S"))', documentNode), 10.1));
-		it('returns -10 for "-P10DT10H10M10.1S"',
-			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:dayTimeDuration("-P10DT10H10M10.1S"))', documentNode), -10.1));
+		it('returns 10 for "P10Y10M10DT10H10M10S"',
+			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:duration("P10Y10M10DT10H10M10S"))', documentNode), 10));
+		it('returns -10 for "-P10Y10M10DT10H10M10S"',
+			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:duration("-P10Y10M10DT10H10M10S"))', documentNode), -10));
+		it('returns 10 for "P10DT10H10M10S"',
+			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:dayTimeDuration("P10DT10H10M10S"))', documentNode), 10));
+		it('returns -10 for "-P10DT10H10M10S"',
+			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:dayTimeDuration("-P10DT10H10M10S"))', documentNode), -10));
 		it('returns 0 for "P10Y10M"',
 			() => chai.assert.equal(evaluateXPathToNumber('seconds-from-duration(xs:yearMonthDuration("P10Y10M"))', documentNode), 0));
 		it('returns 0 for "-P10Y10M"',

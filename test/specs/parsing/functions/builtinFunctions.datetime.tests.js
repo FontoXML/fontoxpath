@@ -1,4 +1,4 @@
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPathToNumber,
@@ -7,7 +7,7 @@ import {
 
 let documentNode;
 beforeEach(() => {
-	documentNode = slimdom.createDocument();
+	documentNode = new slimdom.Document();
 });
 
 describe('Date and time related functions', () => {

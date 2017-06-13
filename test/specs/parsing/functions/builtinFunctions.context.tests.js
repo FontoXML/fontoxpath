@@ -1,4 +1,4 @@
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPathToString
@@ -6,7 +6,7 @@ import {
 
 let documentNode;
 beforeEach(() => {
-	documentNode = slimdom.createDocument();
+	documentNode = new slimdom.Document();
 });
 
 describe('Context related functions', () => {

@@ -17,21 +17,21 @@ const MONTHS_TO_MIN_MAX_VALUES = [
 ];
 
 function computeMinDays (duration) {
-	const years = duration.getYears();
-	const months = duration.getMonths();
+	const years = Math.abs(duration.getYears());
+	const months = Math.abs(duration.getMonths());
 	const minNumberOfLeapYears = Math.floor(years / 4);
 
-	return duration.getDays() +
+	return Math.abs(duration.getDays()) +
 		(months === 0 ? 0 : MONTHS_TO_MIN_MAX_VALUES[months - 1][0]) +
 		minNumberOfLeapYears * 366 + (years - minNumberOfLeapYears) * 365;
 }
 
 function computeMaxDays (duration) {
-	const years = duration.getYears();
-	const months = duration.getMonths();
+	const years = Math.abs(duration.getYears());
+	const months = Math.abs(duration.getMonths());
 	const maxNumberOfLeapYears = Math.floor(years / 4) + (years % 4 > 0 ? 1 : 0);
 
-	return duration.getDays() +
+	return Math.abs(duration.getDays()) +
 		(months === 0 ? 0 : MONTHS_TO_MIN_MAX_VALUES[months - 1][1]) +
 		maxNumberOfLeapYears * 366 + (years - maxNumberOfLeapYears) * 365;
 }
@@ -75,7 +75,7 @@ class Duration {
 	}
 
 	isPositive () {
-		return this._yearMonthDuration.isPositive();
+		return this._yearMonthDuration.isPositive() && this._dayTimeDuration.isPositive();
 	}
 
 	compare (other) {
@@ -91,7 +91,6 @@ class Duration {
 			return 0;
 		}
 
-		const bothPositive = this.isPositive() && other.isPositive();
 		const thisMinDays = computeMinDays(this);
 		const thisMaxDays = computeMaxDays(this);
 		const otherMinDays = computeMinDays(other);
@@ -101,16 +100,17 @@ class Duration {
 			const thisSecondsWithoutDays = this.getHours() * 3600 + this.getMinutes() * 60 + this.getSeconds();
 			const otherSecondsWithoutDays = other.getHours() * 3600 + other.getMinutes() * 60 + other.getSeconds();
 			if (thisSecondsWithoutDays > otherSecondsWithoutDays) {
-				return bothPositive ? 1 : -1;
+				return 1;
 			}
 
 			if (thisSecondsWithoutDays < otherSecondsWithoutDays) {
-				return bothPositive ? -1 : 1;
+				return -1;
 			}
 
 			return 0;
 		}
 
+		const bothPositive = this.isPositive() && other.isPositive();
 		if (thisMinDays > otherMaxDays) {
 			return bothPositive ? 1 : -1;
 		}
@@ -126,7 +126,7 @@ class Duration {
 	}
 
 	toString () {
-		const string = this._yearMonthDuration.isPositive() ? 'P' : '-P';
+		const string = this.isPositive() ? 'P' : '-P';
 		const TYM = this._yearMonthDuration.toStringWithoutP();
 		const TDT = this._dayTimeDuration.toStringWithoutP();
 
@@ -154,9 +154,11 @@ class Duration {
  * @return {Duration}
  */
 Duration.fromParts = function (years, months, days, hours, minutes, seconds, secondFraction, isPositive) {
+	const totalMonths = years * 12 + months;
+	const totalSeconds = days * 86400 + hours * 3600 + minutes * 60 + seconds + secondFraction;
 	return new Duration(
-		new YearMonthDuration(years * 12 + months, isPositive),
-		new DayTimeDuration(days * 86400 + hours * 3600 + minutes * 60 + seconds, secondFraction, isPositive));
+		new YearMonthDuration(isPositive ? totalMonths : -totalMonths),
+		new DayTimeDuration(isPositive ? totalSeconds : -totalSeconds));
 };
 
 /**
@@ -190,7 +192,7 @@ Duration.fromString = function (string) {
  * @return  {Duration}
  */
 Duration.fromYearMonthDuration = function (yearMonthDuration) {
-	return new Duration(yearMonthDuration, new DayTimeDuration(0, 0, yearMonthDuration.isPositive()));
+	return new Duration(yearMonthDuration, new DayTimeDuration(yearMonthDuration.isPositive() ? 0 : -0));
 };
 
 /**
@@ -199,7 +201,7 @@ Duration.fromYearMonthDuration = function (yearMonthDuration) {
  * @return  {Duration}
  */
 Duration.fromDayTimeDuration = function (dayTimeDuration) {
-	return new Duration(new YearMonthDuration(0, dayTimeDuration.isPositive()), dayTimeDuration);
+	return new Duration(new YearMonthDuration(dayTimeDuration.isPositive() ? 0 : -0), dayTimeDuration);
 };
 
 export default Duration;
