@@ -27,6 +27,9 @@ function createChildGenerator (domFacade, node) {
 }
 
 function createDescendantGenerator (domFacade, node) {
+	/**
+	 * @type {!Array<!Iterator<!Node>>}
+	 */
 	const descendantIteratorStack = [createSingleValueIterator(node)];
 	return {
 		next: () => {

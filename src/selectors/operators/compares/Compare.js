@@ -25,19 +25,6 @@ class Compare extends Selector {
 
 		this._compare = kind[0];
 		this._operator = kind[1];
-		switch (kind[0]) {
-			case 'generalCompare':
-				this._comparator = generalCompare;
-				break;
-			case 'valueCompare':
-				this._comparator = valueCompare;
-				break;
-			case 'nodeCompare':
-				this._comparator = nodeCompare;
-				break;
-		}
-
-
 	}
 
 	evaluate (dynamicContext) {
@@ -49,15 +36,27 @@ class Compare extends Selector {
 		}
 
 		if (this._compare === 'nodeCompare') {
-			const nodeCompareResult = createAtomicValue(this._comparator(this._operator, firstSequence, secondSequence), 'xs:boolean');
+			const nodeCompareResult = createAtomicValue(nodeCompare(this._operator, firstSequence, secondSequence), 'xs:boolean');
 			return Sequence.singleton(nodeCompareResult);
 		}
 
 		// Atomize both sequences
 		const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
 		const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
-		const booleanValue = createAtomicValue(this._comparator(this._operator, firstAtomizedSequence, secondAtomizedSequence), 'xs:boolean');
-		return Sequence.singleton(booleanValue);
+
+		let result;
+		switch (this._compare) {
+			case 'valueCompare':
+				if (!firstAtomizedSequence.isSingleton() || !secondAtomizedSequence.isSingleton()) {
+					throw new Error('XPTY0004: Sequences to compare are not singleton');
+				}
+				result = valueCompare(this._operator, firstAtomizedSequence.first(), secondAtomizedSequence.first());
+				break;
+			case 'generalCompare':
+				result = generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence);
+				break;
+		}
+		return Sequence.singleton(createAtomicValue(result, 'xs:boolean'));
 	}
 }
 
