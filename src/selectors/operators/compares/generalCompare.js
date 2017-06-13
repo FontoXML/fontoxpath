@@ -16,24 +16,18 @@ var OPERATOR_TRANSLATION = {
  * @param   {!string}          operator
  * @param   {!Sequence}        firstSequence
  * @param   {!Sequence}        secondSequence
- * @param   {!DynamicContext}  dynamicContext
  * @return  {!boolean}
 */
-export default function generalCompare (operator, firstSequence, secondSequence, dynamicContext) {
-    // Atomize both sequences
-    var firstAtomizedSequence = firstSequence.atomize(dynamicContext);
-    var secondAtomizedSequence = secondSequence.atomize(dynamicContext);
-
+export default function generalCompare (operator, firstSequence, secondSequence) {
     // Change operator to equivalent valueCompare operator
     operator = OPERATOR_TRANSLATION[operator];
 
-	const firstIterator = firstAtomizedSequence.value();
-	const secondSequenceValues = secondAtomizedSequence.getAllValues().map(item => Sequence.singleton(item));
+	const firstIterator = firstSequence.value();
+	const secondSequenceValues = secondSequence.getAllValues();
 
 	for (let firstAtomizedValue = firstIterator.next(); !firstAtomizedValue.done; firstAtomizedValue = firstIterator.next()) {
-        var firstSingletonSequence = Sequence.singleton(firstAtomizedValue.value);
         for (let i = 0, l = secondSequenceValues.length; i < l; ++i) {
-            if (valueCompare(operator, firstSingletonSequence, secondSequenceValues[i])) {
+            if (valueCompare(operator, firstAtomizedValue.value, secondSequenceValues[i])) {
 				return true;
 			}
         }
