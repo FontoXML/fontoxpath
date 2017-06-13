@@ -23,7 +23,6 @@ class AttributeAxis extends Selector {
 		});
 
 		this._attributeTestSelector = attributeTestSelector;
-
 	}
 
 	/**
@@ -48,10 +47,7 @@ class AttributeAxis extends Selector {
 		 */
 		const attributeTestSelector = this._attributeTestSelector;
 		return attributesSequence.filter((item, i) => {
-			const result = attributeTestSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(
-				i,
-				item,
-				attributesSequence));
+			const result = attributeTestSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(i, item, attributesSequence));
 			return result.getEffectiveBooleanValue();
 		});
 	}

@@ -1,7 +1,7 @@
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 import atomize from './atomize';
 import isSubtypeOf from './isSubtypeOf';
-
+import { trueBoolean, falseBoolean } from './createAtomicValue';
 /**
  * @const
  */
@@ -375,6 +375,15 @@ Sequence.singleton = function (value) {
  */
 Sequence.empty = function () {
 	return emptySequence;
+};
+
+const singletonTrueSequence = new SingletonSequence(trueBoolean);
+const singletonFalseSequence = new SingletonSequence(falseBoolean);
+Sequence.singletonTrueSequence = function () {
+	return singletonTrueSequence;
+};
+Sequence.singletonFalseSequence = function () {
+	return singletonFalseSequence;
 };
 
 

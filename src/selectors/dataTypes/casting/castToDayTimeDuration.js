@@ -4,44 +4,45 @@ import Duration from '../valueTypes/Duration';
 const createDayTimeDurationValue = value => createAtomicValue(value, 'xs:dayTimeDuration');
 
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @return {{successful: boolean, value: ../valueTypes/Duration}|{successful: boolean, error: !Error}}
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
-export default function castToDayTimeDuration (value, instanceOf) {
+export default function castToDayTimeDuration (instanceOf) {
 	if (instanceOf('xs:dayTimeDuration')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createDayTimeDurationValue(value)
-		};
+		});
 	}
 	if (instanceOf('xs:duration') && !instanceOf('xs:yearMonthDuration')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createDayTimeDurationValue(value.toDayTime())
-		};
+		});
 	}
 	if (instanceOf('xs:yearMonthDuration')) {
-		return {
+		return () => ({
 			successful: true,
 			value: createDayTimeDurationValue(Duration.fromString('PT0.0S', 'xs:dayTimeDuration'))
-		};
+		});
 	}
 	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
-		const parsedDuration = Duration.fromString(value, 'xs:dayTimeDuration');
-		if (parsedDuration) {
+		return value => {
+			const parsedDuration = Duration.fromString(value, 'xs:dayTimeDuration');
+			if (parsedDuration) {
+				return {
+					successful: true,
+					value: createDayTimeDurationValue(parsedDuration)
+				};
+			}
 			return {
-				successful: true,
-				value: createDayTimeDurationValue(parsedDuration)
+				successful: false,
+				error: new Error(`FORG0001: Can not cast ${value} to xs:dayTimeDuration`)
 			};
-		}
-		return {
-			successful: false,
-			error: new Error(`FORG0001: Can not cast ${value} to xs:dayTimeDuration`)
 		};
 	}
-	return {
+	return () => ({
 		successful: false,
 		error: new Error('XPTY0004: Casting not supported from given type to xs:dayTimeDuration or any of its derived types.')
-	};
+	});
 }

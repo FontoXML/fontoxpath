@@ -2,17 +2,22 @@ import castToFloatLikeType from './castToFloatLikeType';
 import createAtomicValue from '../createAtomicValue';
 
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @return {{successful: boolean, value: ../AtomicValue<number>}|{successful: boolean, error: !Error}}
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
-export default function castToFloat (value, instanceOf) {
-	const castResult = castToFloatLikeType(value, instanceOf, 'xs:float');
-	if (!castResult.successful) {
-		return castResult;
-	}
-	return {
-		successful: true,
-		value: createAtomicValue(castResult.value, 'xs:float')
+export default function castToFloat (instanceOf) {
+	/**
+	 * @type {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
+	 */
+	const caster = castToFloatLikeType(instanceOf, 'xs:float');
+	return value => {
+		const castResult = caster(value);
+		if (!castResult.successful) {
+			return castResult;
+		}
+		return {
+			successful: true,
+			value: createAtomicValue(castResult.value, 'xs:float')
+		};
 	};
 }

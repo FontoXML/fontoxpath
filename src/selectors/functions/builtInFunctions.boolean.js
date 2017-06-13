@@ -1,20 +1,19 @@
 import Sequence from '../dataTypes/Sequence';
-import createAtomicValue from '../dataTypes/createAtomicValue';
 
 function fnNot (_dynamicContext, sequence) {
-	return Sequence.singleton(createAtomicValue(!sequence.getEffectiveBooleanValue(), 'xs:boolean'));
+	return !sequence.getEffectiveBooleanValue() ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();;
 }
 
 function fnBoolean (_dynamicContext, sequence) {
-	return Sequence.singleton(createAtomicValue(sequence.getEffectiveBooleanValue(), 'xs:boolean'));
+	return sequence.getEffectiveBooleanValue() ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();;
 }
 
 function fnTrue () {
-	return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+	return Sequence.singletonTrueSequence();
 }
 
 function fnFalse () {
-	return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+	return Sequence.singletonFalseSequence();
 }
 
 export default {

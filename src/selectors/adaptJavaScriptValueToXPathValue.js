@@ -3,11 +3,12 @@ import createAtomicValue from './dataTypes/createAtomicValue';
 import ArrayValue from './dataTypes/ArrayValue';
 import MapValue from './dataTypes/MapValue';
 import createNodeValue from './dataTypes/createNodeValue';
+import { trueBoolean, falseBoolean } from './dataTypes/createAtomicValue';
 
 function adaptItemToXPathValue (value) {
 	switch (typeof value) {
 		case 'boolean':
-			return createAtomicValue(value, 'xs:boolean');
+			return value ? trueBoolean : falseBoolean;
 		case 'number':
 			return createAtomicValue(value, 'xs:decimal');
 		case 'string':
@@ -33,7 +34,7 @@ function adaptItemToXPathValue (value) {
 function adaptJavaScriptValueToXPathValue (type, value) {
 	switch (type) {
 		case 'xs:boolean':
-			return createAtomicValue(!!value, 'xs:boolean');
+			return value ? trueBoolean : falseBoolean;
 		case 'xs:string':
 			return createAtomicValue(value + '', 'xs:string');
 		case 'xs:double':

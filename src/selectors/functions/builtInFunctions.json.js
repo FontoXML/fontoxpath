@@ -28,7 +28,7 @@ function convert (obj) {
 		case 'string':
 			return Sequence.singleton(createAtomicValue(obj, 'xs:string'));
 		case 'boolean':
-			return Sequence.singleton(createAtomicValue(obj, 'xs:boolean'));
+			return obj ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();;
 		default:
 			throw new Error('Unexpected type in JSON parse');
 	}

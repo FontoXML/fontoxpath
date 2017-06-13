@@ -11,31 +11,30 @@ function hexToString (hex) {
 }
 
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @return {{successful: boolean, value: ../AtomicValue<string>}|{successful: boolean, error: !Error}}
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
-export default function castToBase64Binary (value, instanceOf) {
+export default function castToBase64Binary (instanceOf) {
 	if (instanceOf('xs:base64Binary')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createBase64BinaryValue(value)
-		};
+		});
 	}
 	if (instanceOf('xs:hexBinary')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createBase64BinaryValue(btoa(hexToString(value)))
-		};
+		});
 	}
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createBase64BinaryValue(value)
-		};
+		});
 	}
-	return {
+	return () => ({
 		successful: false,
 		error: new Error('XPTY0004: Casting not supported from given type to xs:base64Binary or any of its derived types.')
-	};
+	});
 }

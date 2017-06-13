@@ -11,31 +11,30 @@ function stringToHex (string) {
 }
 
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @return {{successful: boolean, value: ../AtomicValue<string>}|{successful: boolean, error: !Error}}
- */
-export default function castToHexBinary (value, instanceOf) {
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
+*/
+export default function castToHexBinary (instanceOf) {
 	if (instanceOf('xs:hexBinary')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createHexBinaryValue(value)
-		};
+		});
 	}
 	if (instanceOf('xs:base64Binary')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createHexBinaryValue(stringToHex(atob(value)))
-		};
+		});
 	}
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createHexBinaryValue(value)
-		};
+		});
 	}
-	return {
+	return value => ({
 		successful: false,
 		error: new Error('XPTY0004: Casting not supported from given type to xs:hexBinary or any of its derived types.')
-	};
+	});
 }

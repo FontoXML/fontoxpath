@@ -52,50 +52,50 @@ function fnContains (_dynamicContext, arg1, arg2) {
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	const contains = !arg2.isEmpty() ? arg2.first().value : '';
 	if (contains.length === 0) {
-		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+		return Sequence.singletonTrueSequence();
 	}
 
 	if (stringToTest.length === 0) {
-		return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+		return Sequence.singletonFalseSequence();
 	}
 
 	// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
 	if (stringToTest.includes(contains)) {
-		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+		return Sequence.singletonTrueSequence();
 	}
-		return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+		return Sequence.singletonFalseSequence();
 }
 
 function fnStartsWith (_dynamicContext, arg1, arg2) {
 	const startsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (startsWith.length === 0) {
-		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+		return Sequence.singletonTrueSequence();
 	}
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	if (stringToTest.length === 0) {
-		return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+		return Sequence.singletonFalseSequence();
 	}
 	// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
 	if (stringToTest.startsWith(startsWith)) {
-		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+		return Sequence.singletonTrueSequence();
 	}
-	return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+	return Sequence.singletonFalseSequence();
 }
 
 function fnEndsWith (_dynamicContext, arg1, arg2) {
 	const endsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (endsWith.length === 0) {
-		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+		return Sequence.singletonTrueSequence();
 	}
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	if (stringToTest.length === 0) {
-		return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+		return Sequence.singletonFalseSequence();
 	}
 	// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
 	if (stringToTest.endsWith(endsWith)) {
-		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+		return Sequence.singletonTrueSequence();
 	}
-	return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+	return Sequence.singletonFalseSequence();
 }
 
 function fnString (dynamicContext, sequence) {

@@ -4,11 +4,11 @@ import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 // Use partial application to get to a comparer faster
 function bothAreStringOrAnyURI (a, b) {
 	return (isSubtypeOf(a, 'xs:string') || isSubtypeOf(a, 'xs:anyURI')) &&
- 		(isSubtypeOf(b, 'xs:string') || isSubtypeOf(b, 'xs:anyURI'));
+		(isSubtypeOf(b, 'xs:string') || isSubtypeOf(b, 'xs:anyURI'));
 }
 
 function generateCompareFunction (operator, typeA, typeB) {
-let castFunctionForValueA = null;
+	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
 	if (isSubtypeOf(typeA, 'xs:untypedAtomic') && isSubtypeOf(typeB, 'xs:untypedAtomic')) {
@@ -85,6 +85,8 @@ export default function valueCompare (operator, valueA, valueB) {
 	if (!prefabComparator) {
 		prefabComparator = comparatorsByTypingKey[typingKey] = generateCompareFunction(operator, valueA.type, valueB.type);
 	}
+
+//	return generateCompareFunction(operator, valueA.type, valueB.type)(valueA, valueB);
 
 	return prefabComparator(valueA, valueB);
 }

@@ -1,43 +1,47 @@
-import createAtomicValue from '../createAtomicValue';
-
-const createBooleanValue = value => createAtomicValue(value, 'xs:boolean');
+import { trueBoolean, falseBoolean } from '../createAtomicValue';
 
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @return {{successful: boolean, value: ../AtomicValue<boolean>}|{successful: boolean, error: !Error}}
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
-export default function castToBoolean (value, instanceOf) {
+export default function castToBoolean (instanceOf) {
 	if (instanceOf('xs:boolean')) {
-		return {
+		return value => ({
 			successful: true,
-			value: createBooleanValue(value)
-		};
+			value: value ? trueBoolean : falseBoolean
+		});
 	}
 	if (instanceOf('xs:numeric')) {
-		return {
+		return value => ({
 			successful: true,
-			value: createBooleanValue(!(value === 0 || isNaN(value)))
-		};
+			value: (value === 0 || isNaN(value)) ? falseBoolean : trueBoolean
+		});
 	}
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
-		switch (value) {
-			case 'true':
-			case '1':
-				return {
-					successful: true,
-					value: createBooleanValue(true)
-				};
-			case 'false':
-			case '0':
-				return {
-					successful: true,
-					value: createBooleanValue(false)
-				};
-		}
+		return value => {
+			switch (value) {
+				case 'true':
+				case '1':
+					return {
+						successful: true,
+						value: trueBoolean
+					};
+				case 'false':
+				case '0':
+					return {
+						successful: true,
+						value: falseBoolean
+					};
+				default:
+					return {
+						successful: false,
+						error: new Error('XPTY0004: Casting not supported from given type to xs:boolean or any of its derived types.')
+					};
+			}
+		};
 	}
-	return {
+	return () => ({
 		successful: false,
 		error: new Error('XPTY0004: Casting not supported from given type to xs:boolean or any of its derived types.')
-	};
+	});
 }

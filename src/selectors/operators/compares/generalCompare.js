@@ -1,7 +1,5 @@
 import Sequence from '../../dataTypes/Sequence';
-import DynamicContext from '../../DynamicContext';
 import valueCompare from './valueCompare';
-
 
 var OPERATOR_TRANSLATION = {
     '=': 'eq',

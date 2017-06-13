@@ -10,14 +10,15 @@ export default function nodeCompare (operator, firstSequence, secondSequence) {
 	if (!firstSequence.isSingleton() || !secondSequence.isSingleton()) {
 		throw new Error('XPTY0004: Sequences to compare are not singleton');
 	}
-
-	if (!isSubtypeOf(firstSequence.first().type, 'node()') || !isSubtypeOf(secondSequence.first().type, 'node()')) {
+	const first = firstSequence.first();
+	const second = secondSequence.first();
+	if (!isSubtypeOf(first.type, 'node()') || !isSubtypeOf(second.type, 'node()')) {
 		throw new Error('XPTY0004: Sequences to compare are not nodes');
 	}
 
 	switch (operator) {
 		case 'is':
-			return firstSequence.first() === secondSequence.first();
+			return first === second;
 		case '<<':
 		case '>>':
 			throw new Error('Node ordering comparisons are not implemented.');

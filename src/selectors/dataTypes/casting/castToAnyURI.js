@@ -3,25 +3,24 @@ import createAtomicValue from '../createAtomicValue';
 const createAnyURIValue = value => createAtomicValue(value, 'xs:anyURI');
 
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @return {{successful: boolean, value: ../AtomicValue<string>}|{successful: boolean, error: !Error}}
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
-export default function castToAnyURI (value, instanceOf) {
+export default function castToAnyURI (instanceOf) {
 	if (instanceOf('xs:anyURI')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createAnyURIValue(value)
-		};
+		});
 	}
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createAnyURIValue(value)
-		};
+		});
 	}
-	return {
+	return () => ({
 		successful: false,
 		error: new Error('XPTY0004: Casting not supported from given type to xs:anyURI or any of its derived types.')
-	};
+	});
 }

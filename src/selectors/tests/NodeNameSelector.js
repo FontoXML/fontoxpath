@@ -1,7 +1,6 @@
 import Sequence from '../dataTypes/Sequence';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
-import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 /**
@@ -27,16 +26,16 @@ class NodeNameSelector extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var node = dynamicContext.contextItem;
+		const node = dynamicContext.contextItem;
 
 		if (!isSubtypeOf(node.type, 'element()') && !isSubtypeOf(node.type, 'attribute()')) {
-			return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+			return Sequence.singletonFalseSequence();
 		}
 		if (this._nodeName === '*') {
-			return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+			return Sequence.singletonTrueSequence();
 		}
-		var returnValue = this._nodeName === node.value.nodeName;
-			return Sequence.singleton(returnValue ? createAtomicValue(true, 'xs:boolean') : createAtomicValue(false, 'xs:boolean'));
+		const returnValue = this._nodeName === node.value.nodeName;
+		return returnValue ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 	}
 
 	getBucket () {

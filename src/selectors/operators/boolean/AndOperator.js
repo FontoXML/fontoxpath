@@ -1,7 +1,6 @@
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
 import Selector from '../../Selector';
-import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -24,7 +23,7 @@ class AndOperator extends Selector {
 			return subSelector.evaluateMaybeStatically(dynamicContext).getEffectiveBooleanValue();
 			});
 
-		return Sequence.singleton(createAtomicValue(result, 'xs:boolean'));
+		return result ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();;
 	}
 
 	getBucket () {
