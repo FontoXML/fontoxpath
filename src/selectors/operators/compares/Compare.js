@@ -3,7 +3,7 @@ import Selector from '../../Selector';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
 import valueCompare from './valueCompare';
-import createAtomicValue from '../../dataTypes/createAtomicValue';
+import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -36,8 +36,8 @@ class Compare extends Selector {
 		}
 
 		if (this._compare === 'nodeCompare') {
-			const nodeCompareResult = createAtomicValue(nodeCompare(this._operator, firstSequence, secondSequence), 'xs:boolean');
-			return Sequence.singleton(nodeCompareResult);
+			const nodeCompareResult = nodeCompare(this._operator, firstSequence, secondSequence);
+			return nodeCompareResult ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 		}
 
 		// Atomize both sequences
@@ -56,7 +56,7 @@ class Compare extends Selector {
 				result = generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence);
 				break;
 		}
-		return Sequence.singleton(createAtomicValue(result, 'xs:boolean'));
+		return result ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 	}
 }
 

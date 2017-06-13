@@ -4,31 +4,30 @@ import DateTime from '../valueTypes/DateTime';
 const createGMonthValue = value => createAtomicValue(value, 'xs:gMonth');
 
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @return {{successful: boolean, value: ../AtomicValue<!../valueTypes/DateTime>}|{successful: boolean, error: !Error}}
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
-export default function castToGMonth (value, instanceOf) {
+export default function castToGMonth (instanceOf) {
 	if (instanceOf('xs:gMonth')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createGMonthValue(value)
-		};
+		});
 	}
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createGMonthValue(value.convertToType('xs:gMonth'))
-		};
+		});
 	}
 	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createGMonthValue(DateTime.fromString(value))
-		};
+		});
 	}
-	return {
+	return value => ({
 		successful: false,
 		error: new Error('XPTY0004: Casting not supported from given type to xs:gMonth or any of its derived types.')
-	};
+	});
 }

@@ -2,6 +2,7 @@ import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import { transformArgument } from './argumentHelper';
 
@@ -80,18 +81,18 @@ function castItemsForMinMax (items) {
 
 function fnEmpty (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
-		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+		return Sequence.singletonTrueSequence();
 	}
 
-	return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+	return Sequence.singletonFalseSequence();
 }
 
 function fnExists (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
-		return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+		return Sequence.singletonFalseSequence();
 	}
 
-		return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+		return Sequence.singletonTrueSequence();
 }
 
 function fnHead (_dynamicContext, sequence) {
@@ -193,10 +194,7 @@ function fnUnordered (_dynamicContext, sequence) {
 }
 
 function fnDeepEqual (dynamicContext, parameter1, parameter2) {
-	return Sequence.singleton(
-		sequenceDeepEqual(dynamicContext, parameter1, parameter2) ?
-			createAtomicValue(true, 'xs:boolean') :
-			createAtomicValue(false, 'xs:boolean'));
+	return sequenceDeepEqual(dynamicContext, parameter1, parameter2) ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 }
 
 function fnCount (_dynamicContext, sequence) {

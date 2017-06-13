@@ -1,7 +1,6 @@
 import Sequence from '../dataTypes/Sequence';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
-import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 /**
@@ -25,7 +24,7 @@ class ProcessingInstructionTargetSelector extends Selector {
 		var nodeValue = dynamicContext.contextItem;
 		var isMatchingProcessingInstruction = isSubtypeOf(nodeValue.type, 'processing-instruction()') &&
 			nodeValue.value.target === this._target;
-		return Sequence.singleton(createAtomicValue(isMatchingProcessingInstruction, 'xs:boolean'));
+		return isMatchingProcessingInstruction ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 	}
 
 	getBucket () {

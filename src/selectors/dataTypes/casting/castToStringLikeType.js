@@ -1,60 +1,60 @@
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @param  {string}  to
- * @return {{successful: boolean, value: string}|{successful: boolean, error: !Error}}
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
-export default function castToStringLikeType (value, instanceOf, to) {
+export default function castToStringLikeType (instanceOf) {
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
-		return {
+		return value => ({
 			successful: true,
 			value: value + ''
-		};
+		});
 	}
 	if (instanceOf('xs:anyURI')) {
-		return {
+		return value => ({
 			successful: true,
 			value: value
-		};
+		});
 	}
 	if (instanceOf('xs:QName') || instanceOf('xs:NOTATION')) {
-		return {
+		return value => ({
 			successful: true,
 			value: value.toString()
-		};
+		});
 	}
 	if (instanceOf('xs:numeric')) {
 		if (instanceOf('xs:integer') || instanceOf('xs:decimal')) {
-			return {
+			return value => ({
 				successful: true,
 				value: (value + '').replace('e', 'E')
-			};
+			});
 		}
-		else if (instanceOf('xs:float') || instanceOf('xs:double')) {
-			if (isNaN(value)) {
-				return {
-					successful: true,
-					value: 'NaN'
-				};
-			}
-			else if (!isFinite(value)) {
-				return {
-					successful: true,
-					value: `${value < 0 ? '-' : ''}INF`
-				};
-			}
-			else if (Object.is(value, -0)) {
-				return {
-					successful: true,
-					value: '-0'
-				};
-			}
-			// Use Javascript's built in number formatting. This outputs like 1e+100. The valid XPath version is
-			// 1E100: without the +, and with the exponent in capitals
+		if (instanceOf('xs:float') || instanceOf('xs:double')) {
+			return value => {
+				if (isNaN(value)) {
+					return {
+						successful: true,
+						value: 'NaN'
+					};
+				}
+				if (!isFinite(value)) {
+					return {
+						successful: true,
+						value: `${value < 0 ? '-' : ''}INF`
+					};
+				}
+				if (Object.is(value, -0)) {
+					return {
+						successful: true,
+						value: '-0'
+					};
+				}
+				// Use Javascript's built in number formatting. This outputs like 1e+100. The valid XPath version is
+				// 1E100: without the +, and with the exponent in capitals
 				return {
 					successful: true,
 					value: (Object.is(-0, value) ? '-0' : value + '').replace('e', 'E').replace('E+', 'E')
 				};
+			};
 		}
 	}
 	if (instanceOf('xs:dateTime') ||
@@ -65,37 +65,37 @@ export default function castToStringLikeType (value, instanceOf, to) {
 		instanceOf('xs:gMonthDay') ||
 		instanceOf('xs:gYear') ||
 		instanceOf('xs:gYearMonth')) {
-		return {
+		return value => ({
 			successful: true,
 			value: value.toString()
-		};
+		});
 	}
 	if (instanceOf('xs:yearMonthDuration')) {
-		return {
+		return value => ({
 			successful: true,
 			value: value.buildString('xs:yearMonthDuration')
-		};
+		});
 	}
 	if (instanceOf('xs:dayTimeDuration')) {
-		return {
+		return value => ({
 			successful: true,
 			value: value.buildString('xs:dayTimeDuration')
-		};
+		});
 	}
 	if (instanceOf('xs:duration')) {
-		return {
+		return value => ({
 			successful: true,
 			value: value.buildString('xs:duration')
-		};
+		});
 	}
 	if (instanceOf('xs:hexBinary')) {
-		return {
+		return value => ({
 			successful: true,
 			value: value.toUpperCase()
-		};
+		});
 	}
-	return {
+return value => ({
 		successful: true,
 		value: value + ''
-	};
+	});
 }

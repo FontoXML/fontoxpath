@@ -26,7 +26,7 @@ function doSelectorsBuild () {
 		new Compiler({
 			assume_function_wrapper: true,
 			new_type_inf: true,
-			debug: true,
+			debug: false,
 			language_in: 'ES6',
 			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',

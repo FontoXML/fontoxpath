@@ -1,6 +1,5 @@
 import Sequence from '../../dataTypes/Sequence';
 import Selector from '../../Selector';
-import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -25,13 +24,13 @@ class InstanceOfOperator extends Selector {
 		switch (this._multiplicity) {
 			case '?':
 				if (!evaluatedExpression.isEmpty() && !evaluatedExpression.isSingleton()) {
-					return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+					return Sequence.singletonFalseSequence();
 				}
 				break;
 
 			case '+':
 				if (evaluatedExpression.isEmpty()) {
-					return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+					return Sequence.singletonFalseSequence();
 				}
 				break;
 
@@ -40,7 +39,7 @@ class InstanceOfOperator extends Selector {
 
 			default:
 				if (!evaluatedExpression.isSingleton()) {
-					return Sequence.singleton(createAtomicValue(false, 'xs:boolean'));
+					return Sequence.singletonFalseSequence();
 				}
 		}
 
@@ -50,7 +49,7 @@ class InstanceOfOperator extends Selector {
 			return this._typeTest.evaluateMaybeStatically(scopedContext).getEffectiveBooleanValue();
 		});
 
-		return Sequence.singleton(createAtomicValue(isInstanceOf, 'xs:boolean'));
+		return isInstanceOf ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 	}
 }
 

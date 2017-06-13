@@ -22,15 +22,15 @@ function isSubtypeOfType (subType, superType) {
 /**
  * xs:int is a subtype of xs:integer
  * xs:decimal is a subtype of xs:numeric
- * xs:NMTOKENS is a subtype of xs:NMTOKEN
+ * xs:NMTOKENS is a subtype of xs:NM TOKEN
  * @param  {./ETypeNames}  subTypeName
  * @param  {./ETypeNames}  superTypeName
  */
 export default function isSubtypeOf (subTypeName, superTypeName) {
-	console.assert(typeof superTypeName === 'string' && typeof subTypeName === 'string');
 	if (subTypeName === superTypeName) {
 		return true;
 	}
+
 	const superType = builtinDataTypesByName[superTypeName];
 	/**
 	 * @type {!./types/Type}
@@ -38,12 +38,4 @@ export default function isSubtypeOf (subTypeName, superTypeName) {
 	const subType = builtinDataTypesByName[subTypeName];
 
 	return isSubtypeOfType(subType, superType);
-	// const compareKey = `${subTypeName}~${type}`;
-
-	// let precomputedValue = instanceOfTypeShortcutTable[compareKey];
-	// if (precomputedValue === undefined) {
-	// 	precomputedValue = instanceOfTypeShortcutTable[compareKey] = builtinDataTypesByName[subTypeName].instanceOfType(type);
-	// }
-
-	// return precomputedValue;
 }

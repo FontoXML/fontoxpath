@@ -4,7 +4,7 @@ import Sequence from 'fontoxpath/selectors/dataTypes/Sequence';
 describe('DynamicContext scoping functions()', () => {
 	it('copies the exising context', () => {
 		const dynamicContext = new DynamicContext({
-				contextItemIndex: 0,
+			contextItemIndex: 0,
 			contextSequence: Sequence.singleton('contextSequence1'),
 				domFacade: 'domFacade1',
 				variables: {
@@ -22,10 +22,10 @@ describe('DynamicContext scoping functions()', () => {
 			contextItemIndex: 0,
 			contextItem: 'contextSequence1',
 			contextSequence: Sequence.singleton('contextSequence1'),
-				domFacade: 'domFacade1',
-				variables: {
-					variable: 'variables1'
-				}
+			domFacade: 'domFacade1',
+			variables: {
+				variable: 'variables1'
+			}
 		});
 		const scopedContext = dynamicContext
 			.scopeWithFocus(1, 'contextSequence2', Sequence.singleton('contextSequence2'))

@@ -1,7 +1,5 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
 
-const valueCacheByValueByType = Object.create(null);
-
 /**
 * @param    {*}  value
 * @param    {./ETypeNames}  type
@@ -12,21 +10,23 @@ export default function createAtomicValue (value, type) {
 		return null;
 	}
 
-	if (type === 'xs:boolean' || type === 'xs:string' || type === 'xs:untypedAtomic' || type === 'xs:integer') {
-		let cache = valueCacheByValueByType[type];
+	// if (type === 'xs:boolean' || type === 'xs:string' || type === 'xs:untypedAtomic' || type === 'xs:integer') {
+	// 	let cache = valueCacheByValueByType[type];
 
-		if (!cache) {
-			cache = valueCacheByValueByType[type] = Object.create(null);
-		}
-		let existingValue = cache[value];
-		if (!existingValue) {
-			existingValue = { type: type, value: value };
-		}
-		return existingValue;
-	}
-	const typedValue = {
+	// 	if (!cache) {
+	// 		cache = valueCacheByValueByType[type] = Object.create(null);
+	// 	}
+	// 	let existingValue = cache[value];
+	// 	if (!existingValue) {
+	// 		existingValue = { type: type, value: value };
+	// 	}
+	// 	return existingValue;
+	// }
+	return {
 		type: type,
 		value: value
 	};
-	return typedValue;
 }
+
+export const trueBoolean = createAtomicValue(true, 'xs:boolean');
+export const falseBoolean = createAtomicValue(false, 'xs:boolean');

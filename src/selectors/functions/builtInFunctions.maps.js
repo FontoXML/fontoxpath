@@ -93,7 +93,7 @@ function mapContains (_dynamicContext, mapSequence, keySequence) {
 			function (pair) {
 				return isSameMapKey(pair.key, keySequence.first());
 			});
-	return Sequence.singleton(createAtomicValue(doesContain, 'xs:boolean'));
+	return doesContain ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 }
 
 function mapRemove (_dynamicContext, mapSequence, keySequence) {

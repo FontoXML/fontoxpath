@@ -1,7 +1,7 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import Specificity from '../Specificity';
-import createAtomicValue from '../dataTypes/createAtomicValue';
+import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 /**
  * @extends {Selector}
  */
@@ -21,9 +21,9 @@ class NodeTypeSelector extends Selector {
 	evaluate (dynamicContext) {
 		if (this._nodeType === 3 && dynamicContext.contextItem.value.nodeType === 4) {
 			// CDATA_SECTION_NODES should be regarded as text nodes, and CDATA does not exist in the XPath Data Model
-			return Sequence.singleton(createAtomicValue(true, 'xs:boolean'));
+			return Sequence.singletonTrueSequence();
 		}
-		const booleanValue = createAtomicValue(this._nodeType === dynamicContext.contextItem.value.nodeType, 'xs:boolean');
+		const booleanValue = this._nodeType === dynamicContext.contextItem.value.nodeType ? trueBoolean : falseBoolean;
 		return Sequence.singleton(booleanValue);
 	}
 

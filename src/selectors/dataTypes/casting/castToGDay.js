@@ -4,31 +4,30 @@ import DateTime from '../valueTypes/DateTime';
 const createGDayValue = value => createAtomicValue(value, 'xs:gDay');
 
 /**
- * @param  {./AtomicValueDataType}  value
  * @param  {function(string):boolean}  instanceOf
- * @return {{successful: boolean, value: ../AtomicValue<!../valueTypes/DateTime>}|{successful: boolean, error: !Error}}
+ * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
-export default function castToGDay (value, instanceOf) {
+export default function castToGDay (instanceOf) {
 	if (instanceOf('xs:gDay')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createGDayValue(value)
-		};
+		});
 	}
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createGDayValue(value.convertToType('xs:gDay'))
-		};
+		});
 	}
 	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
-		return {
+		return value => ({
 			successful: true,
 			value: createGDayValue(DateTime.fromString(value))
-		};
+		});
 	}
-	return {
+	return () => ({
 		successful: false,
 		error: new Error('XPTY0004: Casting not supported from given type to xs:gDay or any of its derived types.')
-	};
+	});
 }

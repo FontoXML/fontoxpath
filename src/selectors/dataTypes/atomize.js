@@ -23,7 +23,7 @@ export default function atomize (value, dynamicContext) {
 	if (isSubtypeOf(value.type, 'node()')) {
 		// TODO: Mix in types, by default get string value
 		if (isSubtypeOf(value.type, 'attribute()')) {
-			return value.value.atomize(dynamicContext);
+			return createAtomicValue(value.value.value, 'xs:untypedAtomic');
 		}
 
 		// Text nodes and documents should return their text, as untyped atomic
