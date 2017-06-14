@@ -4,8 +4,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import {
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
-	evaluateXPathToStrings,
-	evaluateXPathToString
+	evaluateXPathToStrings
 } from 'fontoxpath';
 
 let documentNode;
@@ -76,6 +75,8 @@ describe('Durations', () => {
 			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("PT10S") div xs:dayTimeDuration("PT5S") eq xs:decimal("2")', documentNode)));
 		it('can evaluate "P2DT53M11S" div "PT1S"',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:dayTimeDuration("P2DT53M11S") div xs:dayTimeDuration("PT1S") eq xs:decimal("175991")', documentNode)));
+		it('can evaluate implicit timezone div 0',
+			() => chai.assert.throws(() => evaluateXPathToBoolean('fn:string(fn:implicit-timezone() div 0 )', documentNode), 'FODT0002'));
 	});
 
 	it('bliep',

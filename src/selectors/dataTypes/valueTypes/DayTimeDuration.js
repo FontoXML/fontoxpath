@@ -1,9 +1,5 @@
 class DayTimeDuration {
 	constructor (seconds) {
-		// if (seconds > Number.MAX_SAFE_INTEGER || Math.abs(seconds) === Infinity) {
-		// 	throw new Error('FODT0002: Value overflow while constructing xs:yearMonthDuration');
-		// }
-		// this._seconds = seconds < Number.MIN_SAFE_INTEGER || Object.is(-0, seconds) ? 0 : seconds;
 		this._seconds = seconds;
 	}
 
@@ -88,11 +84,11 @@ DayTimeDuration.subtract = function (dayTimeDuration1, dayTimeDuration2) {
 
 DayTimeDuration.multiply = function (dayTimeDuration, double) {
 	if (isNaN(double)) {
-		throw new Error('FOCA0005: Cannot divide xs:dayTimeDuration by NaN');
+		throw new Error('FOCA0005: Cannot multiply xs:dayTimeDuration by NaN');
 	}
 	const result = dayTimeDuration._seconds * double;
-	if (result > Number.MAX_SAFE_INTEGER || Math.abs(result) === Infinity) {
-		throw new Error('FODT0002: Value overflow while multiplying xs:yearMonthDuration');
+	if (result > Number.MAX_SAFE_INTEGER || !Number.isFinite(result)) {
+		throw new Error('FODT0002: Value overflow while multiplying xs:dayTimeDuration');
 	}
 	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
 };
@@ -102,8 +98,8 @@ DayTimeDuration.divide = function (dayTimeDuration, double) {
 		throw new Error('FOCA0005: Cannot divide xs:dayTimeDuration by NaN');
 	}
 	const result = dayTimeDuration._seconds / double;
-	if (result > Number.MAX_SAFE_INTEGER || Math.abs(result) === Infinity) {
-		throw new Error('FODT0002: Value overflow while dividing xs:yearMonthDuration');
+	if (result > Number.MAX_SAFE_INTEGER || !Number.isFinite(result)) {
+		throw new Error('FODT0002: Value overflow while dividing xs:dayTimeDuration');
 	}
 	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
 };

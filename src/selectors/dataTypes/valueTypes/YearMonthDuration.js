@@ -1,9 +1,6 @@
 class YearMonthDuration {
 	constructor (months) {
-		if (months > Number.MAX_SAFE_INTEGER || Math.abs(months) === Infinity) {
-			throw new Error('FODT0002: Value overflow while constructing xs:yearMonthDuration');
-		}
-		this._months = months < Number.MIN_SAFE_INTEGER || Object.is(-0, months) ? 0 : months;
+		this._months = months;
 	}
 
 	getYears () {
@@ -12,7 +9,7 @@ class YearMonthDuration {
 
 	getMonths () {
 		const result = this._months % 12;
-		return Object.is(-0, result) ? 0 : result;
+		return result === 0 ? 0 : result;
 	}
 
 	getDays () {
@@ -84,14 +81,22 @@ YearMonthDuration.multiply = function (yearMonthDuration, double) {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot multiply xs:yearMonthDuration by NaN');
 	}
-	return new YearMonthDuration(Math.round(yearMonthDuration._months * double));
+	const result = Math.round(yearMonthDuration._months * double);
+	if (result > Number.MAX_SAFE_INTEGER || !Number.isFinite(result)) {
+		throw new Error('FODT0002: Value overflow while constructing xs:yearMonthDuration');
+	}
+	return new YearMonthDuration(result < Number.MIN_SAFE_INTEGER || result === 0 ? 0 : result);
 };
 
 YearMonthDuration.divide = function (yearMonthDuration, double) {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot divide xs:yearMonthDuration by NaN');
 	}
-	return new YearMonthDuration(Math.round(yearMonthDuration._months / double));
+	const result = Math.round(yearMonthDuration._months / double);
+	if (result > Number.MAX_SAFE_INTEGER || !Number.isFinite(result)) {
+		throw new Error('FODT0002: Value overflow while dividing xs:yearMonthDuration');
+	}
+	return new YearMonthDuration(result < Number.MIN_SAFE_INTEGER || result === 0 ? 0 : result);
 };
 
 YearMonthDuration.divideByYearMonthDuration = function (yearMonthDuration1, yearMonthDuration2) {
@@ -107,6 +112,9 @@ YearMonthDuration.divideByYearMonthDuration = function (yearMonthDuration1, year
  */
 YearMonthDuration.fromParts = function (years, months, isPositive) {
 	const totalMonths = years * 12 + months;
+	if (totalMonths > Number.MAX_SAFE_INTEGER || !Number.isFinite(totalMonths)) {
+		throw new Error('FODT0002: Value overflow while constructing xs:yearMonthDuration');
+	}
 	return new YearMonthDuration(isPositive || totalMonths === 0 ? totalMonths : -totalMonths);
 };
 

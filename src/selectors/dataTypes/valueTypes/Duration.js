@@ -143,47 +143,13 @@ class Duration {
 
 /**
  * @static
- * @param  {number}  years
- * @param  {number}  months
- * @param  {number}  days
- * @param  {number}  hours
- * @param  {number}  minutes
- * @param  {number}  seconds
- * @param  {number}  secondFraction
- * @param  {boolean} isPositive
- * @return {Duration}
- */
-Duration.fromParts = function (years, months, days, hours, minutes, seconds, secondFraction, isPositive) {
-	const totalMonths = years * 12 + months;
-	const totalSeconds = days * 86400 + hours * 3600 + minutes * 60 + seconds + secondFraction;
-	return new Duration(
-		new YearMonthDuration(isPositive ? totalMonths : -totalMonths),
-		new DayTimeDuration(isPositive ? totalSeconds : -totalSeconds));
-};
-
-/**
- * @static
  * @param   {string}  string
  * @return  {?Duration}
  */
 Duration.fromString = function (string) {
-	const regex = /^(-)?P(\d+Y)?(\d+M)?(\d+D)?(?:T(\d+H)?(\d+M)?(\d+(\.\d*)?S)?)?$/;
-	const match = regex.exec(string);
-
-	if (!match) {
-		return null;
-	}
-
-	const isPositive = !match[1];
-	const years = match[2] ? parseInt(match[2], 10) : 0;
-	const months = match[3] ? parseInt(match[3], 10) : 0;
-	const days = match[4] ? parseInt(match[4], 10) : 0;
-	const hours = match[5] ? parseInt(match[5], 10) : 0;
-	const minutes = match[6] ? parseInt(match[6], 10) : 0;
-	const seconds = match[7] ? parseInt(match[7], 10) : 0;
-	const secondFraction = match[8] ? parseFloat(match[8]) : 0;
-
-	return Duration.fromParts(years, months, days, hours, minutes, seconds, secondFraction, isPositive);
+	return new Duration(
+			YearMonthDuration.fromString(string),
+			DayTimeDuration.fromString(string));
 };
 
 /**
