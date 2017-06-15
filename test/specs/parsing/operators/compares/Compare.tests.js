@@ -1,4 +1,4 @@
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 import { domFacade } from 'fontoxpath';
 import { evaluateXPathToNodes, evaluateXPathToNumber, evaluateXPathToBoolean } from 'fontoxpath';

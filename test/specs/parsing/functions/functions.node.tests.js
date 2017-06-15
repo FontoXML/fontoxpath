@@ -4,7 +4,7 @@ import {
 } from 'fontoxpath';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 let documentNode;
 beforeEach(() => {
@@ -19,9 +19,7 @@ describe('functions over nodes', () => {
 		it('it defaults to the context item when the argument is omitted', () => {
 			jsonMlMapper.parse([
 				'someElement',
-				[
-					'Some text.'
-				]
+				'Some text.'
 			], documentNode);
 			chai.assert.equal(evaluateXPathToString('node-name()', documentNode.firstChild), 'someElement');
 		});
@@ -29,9 +27,7 @@ describe('functions over nodes', () => {
 		it('it returns the node name of the given context', () => {
 			jsonMlMapper.parse([
 				'someElement',
-				[
-					'Some text.'
-				]
+				'Some text.'
 			], documentNode);
 			chai.assert.equal(evaluateXPathToString('node-name(.)', documentNode.firstChild), 'someElement');
 		});

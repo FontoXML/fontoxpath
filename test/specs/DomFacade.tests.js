@@ -1,4 +1,4 @@
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 import DomFacade from 'fontoxpath/DomFacade';
 import { domFacade as adaptingDomFacade } from 'fontoxpath';
@@ -85,7 +85,7 @@ describe('DomFacade', () => {
 			() => chai.assert.deepEqual(domFacade.getAllAttributes(attributeNode), []));
 		it('returns an attribute value', () => {
 			chai.assert.deepEqual(
-				domFacade.getAllAttributes(documentNode.documentElement),
+				domFacade.getAllAttributes(documentNode.documentElement).map(({ name, value }) => ({ name, value })),
 				[{ name: 'someAttribute', value: 'someValue' }]);
 		});
 	});
