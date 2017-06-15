@@ -1,4 +1,4 @@
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
@@ -168,8 +168,10 @@ describe('Functions and operators on sequences', () => {
 				chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(., .)', documentNode));
 			});
 			it('returns true for two sequences containing two equal document nodes with equal child nodes', () => {
-				jsonMlMapper.parse(
+				jsonMlMapper.parse([
+					'someElement',
 					'Some string.'
+				]
 				, documentNode);
 				chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(., .)', documentNode));
 			});

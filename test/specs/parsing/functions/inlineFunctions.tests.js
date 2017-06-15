@@ -2,7 +2,7 @@ import {
 	evaluateXPathToBoolean,
 	domFacade
 } from 'fontoxpath';
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 let documentNode;
 beforeEach(() => {

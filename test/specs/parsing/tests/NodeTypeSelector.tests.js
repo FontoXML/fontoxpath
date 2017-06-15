@@ -1,4 +1,4 @@
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
@@ -10,7 +10,7 @@ beforeEach(() => {
 	documentNode = slimdom.createDocument();
 });
 
-describe('NodeTypeSelector', () => {
+describe('KindTest', () => {
 	it('can select any element -> element()', () => {
 		jsonMlMapper.parse([
 			'someOtherParentElement',

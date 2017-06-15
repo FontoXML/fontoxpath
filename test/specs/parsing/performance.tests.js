@@ -1,5 +1,5 @@
 import { evaluateXPathToNumber, evaluateXPathToBoolean } from 'fontoxpath';
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 const cacheId = {};
 describe('performance', () => {

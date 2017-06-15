@@ -1,5 +1,5 @@
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPathToNumber,
@@ -74,8 +74,8 @@ describe('functions over strings', () => {
 			() => chai.assert.equal(evaluateXPathToString('normalize-space(())', documentNode), ''));
 
 		it('If no argument is supplied, then $arg defaults to the string value (calculated using fn:string()) of the context item (.)', () => {
-			documentNode.appendChild(documentNode.createTextNode('   A piece	of text  '));
-			chai.assert.equal(evaluateXPathToString('./normalize-space()', documentNode), 'A piece of text');
+			const textNode = documentNode.createTextNode('   A piece	of text  ');
+			chai.assert.equal(evaluateXPathToString('./normalize-space()', textNode), 'A piece of text');
 		});
 	});
 
@@ -136,12 +136,12 @@ describe('functions over strings', () => {
 
 	describe('string', () => {
 		it('In the zero-argument version of the function, $arg defaults to the context item. That is, calling fn:string() is equivalent to calling fn:string(.).', () => {
-			jsonMlMapper.parse('Some text.', documentNode);
+			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
 			chai.assert.equal(evaluateXPathToString('string()', documentNode), 'Some text.');
 		});
 
 		it('returns the string value of the passed node: text nodes.', () => {
-			jsonMlMapper.parse('Some text.', documentNode);
+			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
 			chai.assert.equal(evaluateXPathToString('string()', documentNode.firstChild), 'Some text.');
 		});
 
@@ -165,8 +165,8 @@ describe('functions over strings', () => {
 
 		describe('If $arg is a node, the function returns string value of the node, as obtained using the dm:string-value accessor defined in [XQuery and XPath Data Model (XDM) 3.0] (see Section 5.13 string-value Accessor).', () => {
 			it('works directly on a textNode', () => {
-				jsonMlMapper.parse('Some text.', documentNode);
-				chai.assert.equal(evaluateXPathToString('string(.)', documentNode), 'Some text.');
+				jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
+				chai.assert.equal(evaluateXPathToString('string(.)', documentNode.documentElement.firstChild), 'Some text.');
 			});
 
 			it('works on descendants', () => {

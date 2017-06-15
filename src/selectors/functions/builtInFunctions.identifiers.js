@@ -27,7 +27,7 @@ function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 			});
 			return byId;
 		}, Object.create(null));
-	var documentNode = targetNodeValue.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
+	var documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
 		targetNodeValue.value : targetNodeValue.value.ownerDocument;
 
 	var matchingNodes = findDescendants(
@@ -62,7 +62,7 @@ function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
 			byId[idValue.value] = true;
 			return byId;
 		}, Object.create(null));
-	var documentNode = targetNodeValue.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
+	var documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
 		targetNodeValue.value : targetNodeValue.value.ownerDocument;
 	// TODO: Index idrefs to optimize this lookup
 	var matchingNodes = findDescendants(

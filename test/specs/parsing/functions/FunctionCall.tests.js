@@ -1,5 +1,5 @@
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import slimdom from 'slimdom';
+import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPathToBoolean,
