@@ -11,7 +11,7 @@ let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object}}  context  The context to overlay
+	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -43,6 +43,12 @@ class DynamicContext {
 		 * @const
 		 */
 		this.variables = context.variables;
+
+		/**
+		 * @type {!function(string):?string}
+		 * @const
+		 */
+		this.resolveNamespacePrefix = context.resolveNamespacePrefix;
 	}
 
 	/**
@@ -56,7 +62,8 @@ class DynamicContext {
 			contextSequence: this.contextSequence,
 
 			domFacade: this.domFacade,
-			variables: Object.assign({}, this.variables, variables)
+			variables: Object.assign({}, this.variables, variables),
+			resolveNamespacePrefix: this.resolveNamespacePrefix
 		});
 	}
 
@@ -73,7 +80,8 @@ class DynamicContext {
 			contextSequence: contextSequence || this.contextSequence,
 
 			domFacade: this.domFacade,
-			variables: this.variables
+			variables: this.variables,
+			resolveNamespacePrefix: this.resolveNamespacePrefix
 		});
 	}
 

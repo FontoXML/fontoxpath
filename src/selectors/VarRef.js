@@ -6,13 +6,18 @@ import Specificity from './Specificity';
  */
 class VarRef extends Selector {
 	/**
+	 * @param  {string}  prefix
+	 * @param  {string}  namespaceURI
 	 * @param  {string}  variableName
 	 */
-	constructor (variableName) {
+	constructor (prefix, namespaceURI, variableName) {
 		super(new Specificity({}), {
 			canBeStaticallyEvaluated: false,
 			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
 		});
+		if (prefix || namespaceURI) {
+			throw new Error('Not implemented: references to variables with a namespace URI or a prefix.');
+		}
 
 		this._variableName = variableName;
 

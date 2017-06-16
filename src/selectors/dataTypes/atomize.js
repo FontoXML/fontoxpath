@@ -57,5 +57,5 @@ export default function atomize (value, dynamicContext) {
 	if (isSubtypeOf(value.type, 'function(*)')) {
 		throw new Error('FOTY0013: Not supported on this type.');
 	}
-	throw new Error('Not implemented');
+	throw new Error(`Atomizing ${value.type} is not implemented.`);
 }

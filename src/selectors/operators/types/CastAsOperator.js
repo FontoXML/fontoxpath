@@ -8,18 +8,21 @@ import castToType from '../../dataTypes/castToType';
 class castAsOperator extends Selector {
 	/**
 	 * @param  {!Selector}  expression
-	 * @param  {!string}    targetType
+	 * @param  {{prefix:string, namespaceURI:string, name}}    targetType
 	 * @param  {!boolean}   allowsEmptySequence
 	 */
 	constructor (expression, targetType, allowsEmptySequence) {
 		super(expression.specificity, { canBeStaticallyEvaluated: false });
-
-		if (targetType === 'xs:anyAtomicType' || targetType === 'xs:anySimpleType' || targetType === 'xs:NOTATION') {
+		this._targetType = targetType.prefix ? `${targetType.prefix}:${targetType.name}` : targetType.name;
+		if (this._targetType === 'xs:anyAtomicType' || this._targetType === 'xs:anySimpleType' || this._targetType === 'xs:NOTATION') {
 			throw new Error('XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.');
 		}
 
+		if (targetType.namespaceURI) {
+			throw new Error('Not implemented: casting expressions with a namespace URI.');
+		}
+
 		this._expression = expression;
-		this._targetType = targetType;
 		this._allowsEmptySequence = allowsEmptySequence;
 
 	}

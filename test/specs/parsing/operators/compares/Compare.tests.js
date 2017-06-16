@@ -62,6 +62,17 @@ describe('Value compares', () => {
 		it('+0 eq -0',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('+0 eq -0', documentNode)));
 
+		it('does QNames',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('fn:QName("a", "a") eq fn:QName("a","a")')));
+		it('returns false for unequal qnames: on localPart',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('fn:QName("a", "a") eq fn:QName("a","b")')));
+		it('returns false for unequal qnames: on uri',
+			() => chai.assert.isFalse(evaluateXPathToBoolean('fn:QName("a", "a") eq fn:QName("b","a")')));
+		it('returns true for absent prefix', () => chai.assert.isTrue(evaluateXPathToBoolean('QName((), "local") eq xs:QName("local")')));
+		it('returns true for equal qnames: unequal on prefix',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('fn:QName("a", "a:a") eq fn:QName("a","b:a")')));
+		it('returns true for equal qnames: absent prefix',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('QName("", "local") eq xs:QName("local")')));
 		it('returns false if the first operand is not equal to the second',
 			() => chai.assert.isFalse(evaluateXPathToBoolean('1 eq 2', documentNode)));
 	});

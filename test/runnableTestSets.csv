@@ -68,7 +68,7 @@ fn-iri-to-uri,false
 fn-lang,false
 fn-last,true
 fn-local-name,false
-fn-local-name-from-QName,false
+fn-local-name-from-QName,true
 fn-lower-case,true
 fn-for-each,false
 fn-max,true
@@ -85,7 +85,7 @@ fn-month-from-dateTime,false
 fn-name,true
 fn-namespace-uri,false
 fn-namespace-uri-for-prefix,false
-fn-namespace-uri-from-QName,false
+fn-namespace-uri-from-QName,true
 fn-nilled,false
 fn-node-name,true
 fn-normalize-space,true
@@ -99,8 +99,8 @@ fn-parse-xml,false
 fn-parse-xml-fragment,false
 fn-path,false
 fn-position,true
-fn-prefix-from-QName,false
-fn-QName,false
+fn-prefix-from-QName,true
+fn-QName,true
 fn-remove,true
 fn-replace,false
 fn-resolve-QName,false
@@ -229,7 +229,7 @@ op-numeric-multiply,true
 op-numeric-subtract,true
 op-numeric-unary-minus,true
 op-numeric-unary-plus,true
-op-QName-equal,false
+op-QName-equal,true
 op-string-equal,true
 op-string-greater-than,true
 op-string-less-than,true

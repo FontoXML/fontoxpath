@@ -15,7 +15,13 @@ export default function castToStringLikeType (instanceOf) {
 			value: value
 		});
 	}
-	if (instanceOf('xs:QName') || instanceOf('xs:NOTATION')) {
+	if (instanceOf('xs:QName')) {
+		return value => ({
+			successful: true,
+			value: value.prefix ? `${value.prefix}:${value.localPart}` : value.localPart
+		});
+	}
+	if (instanceOf('xs:NOTATION')) {
 		return value => ({
 			successful: true,
 			value: value.toString()

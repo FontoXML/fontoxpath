@@ -92,12 +92,12 @@ StringConcatExpr
  = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* {
      if (!rest.length) return first;
 	 var args = [first].concat(rest);
-     return appendRest(["functionCall", ["namedFunctionRef", "concat", args.length], args])
+     return appendRest(["functionCall", ["namedFunctionRef", [null, null, "concat"], args.length], args])
    }
 
 // 20
 RangeExpr
- = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", "op:to", 2], [lhs, rhs]]}
+ = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", ["op", null, "to"], 2], [lhs, rhs]]}
 
 // 21
 AdditiveExpr
@@ -122,7 +122,7 @@ UnionExpr
 // 24 Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
  = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return ["op:"+type, rhs]})? {
-     return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", rhs[0], 2], [lhs, rhs[1]]]
+     return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", [null, null, rhs[0]], 2], [lhs, rhs[1]]]
    }
 
 // 25
@@ -240,7 +240,13 @@ AbbreviatedStep
 NodeTest = KindTest / nameTest:NameTest {return ["nameTest", nameTest]}
 
 // 47
-NameTest = EQName / "*"
+NameTest = WildCard / EQName
+
+// 48
+WildCard =  "*:" name:NCName {return ['*', null, name]}
+ / "*" {return ['*', null, '*']}
+ / uri:BracedURILiteral "*" {return [null, uri, name]}
+ / prefix:NCName ":*" {return [prefix, null, '*']}
 
 // 49
 PostfixExpr
@@ -304,7 +310,7 @@ ParenthesizedExpr
 // 62
 // Do not match '..'
 ContextItemExpr
- = "." !"." {return ["self", ["typeTest", "item()"]]}
+ = "." !"." {return ["self", ["typeTest", [null, null, "item()"]]]}
 
 // 63
 FunctionCall
@@ -385,7 +391,7 @@ OccurenceIndicator = "?" / "*" / "+"
 // 81
 ItemType
  = KindTest
- / "item()" {return ["typeTest", "item()"]}
+ / "item()" {return ["typeTest", [null, null, "item()"]]}
  / FunctionTest
  / MapTest
  / ArrayTest
@@ -493,7 +499,7 @@ TypedFunctionTest
 MapTest = AnyMapTest / TypedMapTest
 
 // 106
-AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["typeTest", "map(*)"]}
+AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["typeTest", [null, null, "map(*)"]]}
 
 // 107
 TypedMapTest = "map" _ "(" _ keyType:AtomicOrUnionType _ "," _ valueType:SequenceType _ ")" {return ["typedMapTest", keyType, valueType]}
@@ -511,7 +517,8 @@ TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTes
 ParenthesizedItemType = "(" _ ItemType _ ")"
 
 // 112
-EQName = QName / URIQualifiedName
+EQName = uri:URIQualifiedName {return [null, uri[0], uri[1]]}
+ / name:QName {return [name[0], null, name[1]]}
 
 // 113
 IntegerLiteral = digits:Digits {return ["literal", digits, "xs:integer"]}
@@ -531,10 +538,10 @@ StringLiteral
  / "\'" contents:(EscapeApos / [^\'])* "\'" {return ["literal", contents.join(""), "xs:string"]}
 
 // 117
-URIQualifiedName = BracedURILiteral / NCName
+URIQualifiedName = uri:BracedURILiteral name:NCName {return [uri, name]}
 
 // 118
-BracedURILiteral = "Q" _ "{" [^{}]* "}"
+BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('')}
 
 // 119
 EscapeQuot
@@ -566,9 +573,9 @@ CommentContents
  = !"(:" !":)" Char
 
 // XML types
-PrefixedName = $(Prefix ":" LocalPart)
+PrefixedName = prefix:Prefix ":" local:LocalPart {return [prefix, local]}
 
-UnprefixedName = LocalPart
+UnprefixedName = local:LocalPart {return [null, local]}
 
 LocalPart = NCName
 

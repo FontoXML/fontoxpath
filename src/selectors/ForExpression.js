@@ -1,12 +1,19 @@
 import Selector from './Selector';
 import Specificity from './Specificity';
 
+function buildVarName ({ prefix, namespaceURI, name }) {
+	if (namespaceURI) {
+		throw new Error('Not implemented: for expressions with a namespace URI in the binding.');
+	}
+	return prefix ? `${prefix}:${name}` : name;
+}
+
 /**
  * @extends {Selector}
  */
 class ForExpression extends Selector {
 	/**
-	 * @param  {!Array<!{varName, expression}>}  clauses
+	 * @param  {!Array<!{varName:{prefix:string, namespaceURI:string, name:string}, expression}>}  clauses
 	 * @param  {!Selector}                       expression
 	 */
 	constructor (clauses, expression) {
@@ -23,7 +30,7 @@ class ForExpression extends Selector {
 		const contextWithClauses = this._clauses.reduce((scopedContext, clause) => {
 			const clauseValue = clause.expression.evaluateMaybeStatically(scopedContext);
 			return scopedContext.scopeWithVariables({
-					[clause.varName]: clauseValue
+				[buildVarName(clause.varName)]: clauseValue
 			});
 		}, dynamicContext);
 

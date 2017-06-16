@@ -14,7 +14,7 @@ function DomFacade (domFacade) {
  */
 function isAttributeNode (node) {
 	return node.nodeType === 2;
-};
+}
 
 /**
  * @param  {!Node}  node

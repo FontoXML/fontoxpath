@@ -17,11 +17,11 @@ FontoXPath supplies a number of API functions:
 * domFacade: A wrapper to the DOM. All DOM accesses should go through here
 * A number of evaluateXPath.* functions:
   * `evaluateXPath(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}, returnType: number) => *`
-  * `evaluateXPathToNodes(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => Node[]`
-  * `evaluateXPathToFirstNode(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => Node`
-  * `evaluateXPathToBoolean(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => boolean`
-  * `evaluateXPathToNumber(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => number`
-  * `evaluateXPathToNumbers(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}) => number[]`
+  * `evaluateXPathToNodes(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}, options: {namespaceResolver: function(string):string?}) => Node[]`
+  * `evaluateXPathToFirstNode(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}, options:  {namespaceResolver: function(string):string?}) => Node`
+  * `evaluateXPathToBoolean(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}, options:  {namespaceResolver: function(string):string?}) => boolean`
+  * `evaluateXPathToNumber(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}, options:  {namespaceResolver: function(string):string?}) => number`
+  * `evaluateXPathToNumbers(xpath: string, contextNode: Node, domFacade: DomFacade?, variables: Object={}, options:  {namespaceResolver: function(string):string?}) => number[]`
 * `precompileXPath(xpath: string) => Promise<string>`
   * A no-op on systems without indexedDB
 * `registerCustomXPathFunction(name: string, signature: string[], returnType: string, callback: function)`

@@ -32,17 +32,23 @@ describe('map constructor', () => {
 		() => chai.assert.deepEqual(evaluateXPathToMap('map {*: 1}', documentNode), { 'A piece of text': 1 }));
 
 	it('is parsed using longest substring (map{x:a:b} is map{{(x:a):b})', () => {
-		const element = jsonMlMapper.parseNode(documentNode, [
-				'someElement',
-				{
-					'xmlns:x': 'xxx',
-					'xmlns:a': 'aaa'
-				},
-				['x:a', 'a'],
-				['a:b', 'a:b'],
-				['b', 'b']
-			]);
-		chai.assert.deepEqual(evaluateXPathToMap('map {x:a:b}', element), { a: 'b' });
+		const element = documentNode.createElement('someElement');
+
+		element.appendChild(documentNode.createElementNS('xxx', 'x:a')).appendChild(documentNode.createTextNode('a'));
+		element.appendChild(documentNode.createElementNS('aaa', 'a:b')).appendChild(documentNode.createTextNode('a:b'));
+		element.appendChild(documentNode.createElementNS('', 'b')).appendChild(documentNode.createTextNode('b'));
+		const namespacesByPrefix = {
+			'a': 'aaa',
+			'x': 'xxx',
+			'': null
+		};
+		chai.assert.deepEqual(
+			evaluateXPathToMap('map {x:a:b}', element, null, null, {
+				namespaceResolver: (prefix) => namespacesByPrefix[prefix]
+			}),
+			{
+				a: 'b'
+			});
 	});
 
 	it('throws an error when the key is not a singleton sequence',

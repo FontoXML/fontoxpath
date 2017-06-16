@@ -379,9 +379,17 @@ Sequence.empty = function () {
 
 const singletonTrueSequence = new SingletonSequence(trueBoolean);
 const singletonFalseSequence = new SingletonSequence(falseBoolean);
+
+/**
+ * @return {!Sequence}
+ */
 Sequence.singletonTrueSequence = function () {
 	return singletonTrueSequence;
 };
+
+/**
+ * @return {!Sequence}
+ */
 Sequence.singletonFalseSequence = function () {
 	return singletonFalseSequence;
 };

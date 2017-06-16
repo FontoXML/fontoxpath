@@ -9,20 +9,24 @@ import FunctionValue from './dataTypes/FunctionValue';
  */
 class NamedFunctionRef extends Selector {
 	/**
-	 * @param  {string}    functionName
+	 * @param  {{prefix:string, namespaceURI:string, name}}    functionReference
 	 * @param  {number}    arity
 	 */
-	constructor (functionName, arity) {
+	constructor (functionReference, arity) {
 		super(new Specificity({
 			[Specificity.EXTERNAL_KIND]: 1
 		}), {
 			canBeStaticallyEvaluated: true
 		});
 
-		this._functionName = functionName;
+		if (functionReference.namespaceURI) {
+			throw new Error('Not implemented: casting expressions with a namespace URI.');
+		}
+
+		const functionName = functionReference.prefix ? `${functionReference.prefix}:${functionReference.name}` : functionReference.name;
 		this._arity = arity;
 
-		var functionProperties = functionRegistry.getFunctionByArity(this._functionName, this._arity);
+		var functionProperties = functionRegistry.getFunctionByArity(functionName, this._arity);
 
 		if (!functionProperties) {
 			throw new Error(`XPST0017: Function ${functionName} with arity of ${arity} not registered. ${functionRegistry.getAlternativesAsStringFor(functionName)}`);

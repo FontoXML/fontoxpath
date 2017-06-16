@@ -3,7 +3,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
 
 function findDescendants (domFacade, node, isMatch) {
-	var results = domFacade.getChildNodes(node)
+	const results = domFacade.getChildNodes(node)
 		.reduce(function (matchingNodes, childNode) {
 			Array.prototype.push.apply(matchingNodes, findDescendants(domFacade, childNode, isMatch));
 			return matchingNodes;
@@ -14,23 +14,34 @@ function findDescendants (domFacade, node, isMatch) {
 	return results;
 }
 
+/**
+ * @param  {!../DynamicContext}      dynamicContext
+ * @param  {!../dataTypes/Sequence}  idrefSequence
+ * @param  {!../dataTypes/Sequence}  targetNodeSequence
+ * @return  {!../dataTypes/Sequence}
+ */
 function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
-	var targetNodeValue = targetNodeSequence.first();
+	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();
 	}
-	var domFacade = dynamicContext.domFacade;
+	/**
+	 * @type {!IDomFacade}
+	 */
+	const domFacade = dynamicContext.domFacade;
 	// TODO: Index ids to optimize this lookup
-	var isMatchingIdById = idrefSequence.getAllValues().reduce(function (byId, idrefValue) {
+	/**
+	 * @type {!IObject<string, boolean>}
+	 */
+	const isMatchingIdById = idrefSequence.getAllValues().reduce(function (byId, idrefValue) {
 			idrefValue.value.split(/\s+/).forEach(function (id) {
 				byId[id] = true;
 			});
 			return byId;
 		}, Object.create(null));
-	var documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
-		targetNodeValue.value : targetNodeValue.value.ownerDocument;
+	const documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ? targetNodeValue.value : targetNodeValue.value.ownerDocument;
 
-	var matchingNodes = findDescendants(
+	const matchingNodes = findDescendants(
 			domFacade,
 			documentNode,
 			function (node) {
@@ -38,7 +49,7 @@ function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 				if (node.nodeType !== node.ELEMENT_NODE) {
 					return false;
 				}
-				var idAttribute = domFacade.getAttribute(node, 'id');
+				const idAttribute = domFacade.getAttribute(node, 'id');
 				if (!idAttribute) {
 					return false;
 				}
@@ -52,20 +63,32 @@ function fnId (dynamicContext, idrefSequence, targetNodeSequence) {
 	return new Sequence(matchingNodes.map(createNodeValue));
 }
 
+/**
+ * @param  {!../DynamicContext}      dynamicContext
+ * @param  {!../dataTypes/Sequence}  idSequence
+ * @param  {!../dataTypes/Sequence}  targetNodeSequence
+ * @return  {!../dataTypes/Sequence}
+ */
 function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
-	var targetNodeValue = targetNodeSequence.first();
+	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();
 	}
-	var domFacade = dynamicContext.domFacade;
-	var isMatchingIdRefById = idSequence.getAllValues().reduce(function (byId, idValue) {
+	/**
+	 * @type {!IDomFacade}
+	 */
+	const domFacade = dynamicContext.domFacade;
+	/**
+	 * @type {!IObject<string, boolean>}
+	 */
+	const isMatchingIdRefById = idSequence.getAllValues().reduce(function (byId, idValue) {
 			byId[idValue.value] = true;
 			return byId;
 		}, Object.create(null));
-	var documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
+	const documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
 		targetNodeValue.value : targetNodeValue.value.ownerDocument;
 	// TODO: Index idrefs to optimize this lookup
-	var matchingNodes = findDescendants(
+	const matchingNodes = findDescendants(
 			domFacade,
 			documentNode,
 			function (node) {
@@ -73,11 +96,11 @@ function fnIdref (dynamicContext, idSequence, targetNodeSequence) {
 				if (node.nodeType !== node.ELEMENT_NODE) {
 					return false;
 				}
-				var idAttribute = domFacade.getAttribute(node, 'idref');
+				const idAttribute = domFacade.getAttribute(node, 'idref');
 				if (!idAttribute) {
 					return false;
 				}
-				var idRefs = idAttribute.split(/\s+/);
+				const idRefs = idAttribute.split(/\s+/);
 				return idRefs.some(function (idRef) {
 					return isMatchingIdRefById[idRef];
 				});

@@ -12,7 +12,8 @@ export default class UnfocusableDynamicContext extends DynamicContext {
 			contextItemIndex: -1,
 			contextSequence: Sequence.empty(),
 			variables: variables,
-			domFacade: null
+			domFacade: null,
+			resolveNamespacePrefix: () => ''
 		});
 	}
 }

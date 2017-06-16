@@ -278,6 +278,7 @@ export default {
 	'xs:language': isValidLanguage,
 	'xs:NMTOKEN': isValidNMTOKEN,
 	'xs:Name': isValidName,
+	'xs:QName': isValidQName,
 	'xs:NCName': isValidNCName,
 	'xs:ID': isValidID,
 	'xs:IDREF': isValidID,
