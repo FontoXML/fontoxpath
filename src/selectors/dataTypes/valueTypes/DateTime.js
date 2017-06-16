@@ -113,19 +113,6 @@ class DateTime {
 		this._type = type;
 	}
 
-	clone () {
-		return new DateTime(
-			this._years,
-			this._months,
-			this._days,
-			this._hours,
-			this._minutes,
-			this._seconds,
-			this._secondFraction,
-			this._timezone,
-			this._type);
-	}
-
 	getYear () {
 		return this._years;
 	}
@@ -275,113 +262,35 @@ class DateTime {
 	}
 
 	convertToType (type) {
+		// xs:date       xxxx-xx-xxT00:00:00
+		// xs:time       1972-12-31Txx:xx:xx
+		// xs:gYearMonth xxxx-xx-01T00:00:00
+		// xs:gYear      xxxx-01-01T00:00:00
+		// xs:gMonthDay  1972-xx-xxT00:00:00
+		// xs:gMonth     1972-xx-01T00:00:00
+		// xs:gDay       1972-12-xxT00:00:00
+
 		switch (type) {
 			case 'xs:gDay':
-				this._years = 0;
-				this._months = 0;
-				this._hours = 0;
-				this._minutes = 0;
-				this._seconds = 0;
-				this._secondFraction = 0;
-				this._type = 'xs:gDay';
-				break;
+				return new DateTime(1972, 12, this._days, 0, 0, 0, 0, this._timezone, 'xs:gDay');
 			case 'xs:gMonth':
-				this._years = 0;
-				this._days = 0;
-				this._hours = 0;
-				this._minutes = 0;
-				this._seconds = 0;
-				this._secondFraction = 0;
-				this._type = 'xs:gMonth';
-				break;
+				return new DateTime(1972, this._months, 1, 0, 0, 0, 0, this._timezone, 'xs:gMonth');
 			case 'xs:gYear':
-				this._months = 0;
-				this._days = 0;
-				this._hours = 0;
-				this._minutes = 0;
-				this._seconds = 0;
-				this._secondFraction = 0;
-				this._type = 'xs:gYear';
-				break;
+				return new DateTime(this._years, 1, 1, 0, 0, 0, 0, this._timezone, 'xs:gYear');
 			case 'xs:gMonthDay':
-				this._years = 0;
-				this._hours = 0;
-				this._minutes = 0;
-				this._seconds = 0;
-				this._secondFraction = 0;
-				this._type = 'xs:gMonthDay';
-				break;
+				return new DateTime(1972, this._months, this._days, 0, 0, 0, 0, this._timezone, 'xs:gMonthDay');
 			case 'xs:gYearMonth':
-				this._days = 0;
-				this._hours = 0;
-				this._minutes = 0;
-				this._seconds = 0;
-				this._secondFraction = 0;
-				this._type = 'xs:gYearMonth';
-				break;
+				return new DateTime(this._years, this._months, 1, 0, 0, 0, 0, this._timezone, 'xs:gYearMonth');
 			case 'xs:time':
-				this._years = 0;
-				this._months = 0;
-				this._days = 0;
-				this._type = 'xs:time';
-				break;
+				return new DateTime(1972, 12, 31, this._hours, this._minutes, this._seconds, this._secondFraction, this._timezone, 'xs:time');
 			case 'xs:date':
-				this._hours = 0;
-				this._minutes = 0;
-				this._seconds = 0;
-				this._secondFraction = 0;
-				this._type = 'xs:date';
-				break;
+				return new DateTime(this._years, this._months, this._days, 0, 0, 0, 0, this._timezone, 'xs:date');
 			case 'xs:dateTime':
 			default:
-				this._type = 'xs:dateTime';
+				return new DateTime(this._years, this._months, this._days, this._hours, this._minutes, this._seconds, this._secondFraction, this._timezone, 'xs:dateTime');
 		}
-		return this;
 	}
 }
-
-/**
- * @static
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {boolean}
- */
-DateTime.equal = function (dateTime1, dateTime2, implicitTimezone = undefined) {
-	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
-	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
-
-	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === 0;
-};
-
-/**
- * @static
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {boolean}
- */
-DateTime.lessThan = function (dateTime1, dateTime2, implicitTimezone = undefined) {
-	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
-	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
-
-	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === -1;
-};
-
-/**
- * @static
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {boolean}
- */
-DateTime.greaterThan = function (dateTime1, dateTime2, implicitTimezone = undefined) {
-	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
-	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
-
-	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === 1;
-};
-
 
 // dateTime    | (-)yyyy-mm-ddThh:mm:ss.ss(Z|[+-]hh:mm)
 // time        |               hh:mm:ss.ss(Z|[+-]hh:mm)
@@ -397,19 +306,18 @@ DateTime.greaterThan = function (dateTime1, dateTime2, implicitTimezone = undefi
  * @return  {DateTime}
  */
 DateTime.fromString = function (string) {
-	const regex = /(-)?(\d{4,})?(?:-(\d\d))?(?:-{1,2}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?/;
+	const regex = /^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
 	const match = regex.exec(string);
 
-	const isNegative = !!match[1];
-	const years = match[2] ? parseInt((isNegative ? '-' : '') + match[2], 10) : null;
-	const months = parseMatch(match[3]);
-	const days = parseMatch(match[4]);
-	const t = match[5];
-	const hours = parseMatch(match[6]);
-	const minutes = parseMatch(match[7]);
-	const seconds = parseMatch(match[8]);
-	const secondFraction = match[9] ? parseFloat(match[9]) : 0;
-	const timezone = match[10] ? DayTimeDuration.fromTimezoneString(match[10]) : null;
+	const years = match[1] ? parseInt(match[1], 10) : null;
+	const months = parseMatch(match[2]);
+	const days = parseMatch(match[3]);
+	const t = match[4];
+	const hours = parseMatch(match[5]);
+	const minutes = parseMatch(match[6]);
+	const seconds = parseMatch(match[7]);
+	const secondFraction = match[8] ? parseFloat(match[8]) : 0;
+	const timezone = match[9] ? DayTimeDuration.fromTimezoneString(match[9]) : null;
 
 	if (years && (years < -271821 || years > 273860)) {
 		// These are the JavaScript bounds for date (https://tc39.github.io/ecma262/#sec-time-values-and-time-range)
@@ -433,9 +341,9 @@ DateTime.fromString = function (string) {
 	if (hours !== null && minutes !== null && seconds !== null) {
 		// There is no T separator, but there is a time component -> time
 		return new DateTime(
-			0,
-			0,
-			0,
+			1972,
+			12,
+			31,
 			hours,
 			minutes,
 			seconds,
@@ -463,7 +371,7 @@ DateTime.fromString = function (string) {
 		return new DateTime(
 			years,
 			months,
-			0,
+			1,
 			0,
 			0,
 			0,
@@ -472,10 +380,10 @@ DateTime.fromString = function (string) {
 			'xs:gYearMonth');
 	}
 
-	if (isNegative && months !== null && days !== null) {
+	if (months !== null && days !== null) {
 		// There is no complete date component, but there is a month and a day -> gMonthDay
 		return new DateTime(
-			0,
+			1972,
 			months,
 			days,
 			0,
@@ -490,8 +398,8 @@ DateTime.fromString = function (string) {
 		// There is only a year -> gYear
 		return new DateTime(
 			years,
-			0,
-			0,
+			1,
+			1,
 			0,
 			0,
 			0,
@@ -500,12 +408,12 @@ DateTime.fromString = function (string) {
 			'xs:gYear');
 	}
 
-	if (isNegative && months !== null) {
+	if (months !== null) {
 		// There is only a month -> gMonth
 		return new DateTime(
-			0,
+			1972,
 			months,
-			0,
+			1,
 			0,
 			0,
 			0,
@@ -516,8 +424,8 @@ DateTime.fromString = function (string) {
 
 	// There is only one option left -> gDay
 	return new DateTime(
-		0,
-		0,
+		1972,
+		12,
 		days,
 		0,
 		0,
@@ -526,5 +434,48 @@ DateTime.fromString = function (string) {
 		timezone,
 		'xs:gDay');
 };
+
+/**
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?DayTimeDuration}  implicitTimezone
+ * @return  {boolean}
+ */
+export function equal (dateTime1, dateTime2, implicitTimezone = undefined) {
+	if (dateTime1._type !== dateTime2._type) {
+		return false;
+	}
+
+	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
+	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
+
+	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === 0;
+}
+
+/**
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?DayTimeDuration}  implicitTimezone
+ * @return  {boolean}
+ */
+export function lessThan (dateTime1, dateTime2, implicitTimezone = undefined) {
+	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
+	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
+
+	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === -1;
+}
+
+/**
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?DayTimeDuration}  implicitTimezone
+ * @return  {boolean}
+ */
+export function greaterThan (dateTime1, dateTime2, implicitTimezone = undefined) {
+	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
+	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
+
+	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === 1;
+}
 
 export default DateTime;

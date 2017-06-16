@@ -80,5 +80,5 @@ describe('Durations', () => {
 	});
 
 	it('bliep',
-		() => chai.assert.isTrue(evaluateXPathToBoolean('fn:string(fn:implicit-timezone() * 0)', documentNode)));
+		() => chai.assert.isTrue(evaluateXPathToBoolean('xs:double(40) + xs:untypedAtomic("40")', documentNode)));
 });

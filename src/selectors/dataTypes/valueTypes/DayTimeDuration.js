@@ -1,26 +1,33 @@
-class DayTimeDuration {
+import AbstractDuration from './AbstractDuration';
+
+/**
+ * @extends {AbstractDuration}
+ */
+class DayTimeDuration extends AbstractDuration {
 	constructor (seconds) {
+		super();
+
+		if (seconds > Number.MAX_SAFE_INTEGER || seconds < Number.MIN_SAFE_INTEGER) {
+			throw new Error('FODT0002: Number of seconds given to construct DayTimeDuration overflows MAX_SAFE_INTEGER or MIN_SAFE_INTEGER');
+		}
+
 		this._seconds = seconds;
 	}
 
-	getYears () {
-		return 0;
-	}
-
-	getMonths () {
-		return 0;
+	getRawSeconds () {
+		return this._seconds;
 	}
 
 	getDays () {
-		return (this._seconds / 86400) | 0;
+		return Math.trunc(this._seconds / 86400);
 	}
 
 	getHours () {
-		return (this._seconds % 86400 / 3600) | 0;
+		return Math.trunc((this._seconds % 86400) / 3600);
 	}
 
 	getMinutes () {
-		return (this._seconds % 3600 / 60) | 0;
+		return Math.trunc((this._seconds % 3600) / 60);
 	}
 
 	getSeconds () {
@@ -30,10 +37,6 @@ class DayTimeDuration {
 
 	isPositive () {
 		return Object.is(-0, this._seconds) ? false : this._seconds >= 0;
-	}
-
-	equals (other) {
-		return this._seconds === other._seconds;
 	}
 
 	toStringWithoutP () {
@@ -53,63 +56,6 @@ class DayTimeDuration {
 		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
 	}
 }
-
-/**
- * @static
- * @param   {DayTimeDuration}  dayTimeDuration1
- * @param   {DayTimeDuration}  dayTimeDuration2
- * @return  {boolean}
- */
-DayTimeDuration.lessThan = function (dayTimeDuration1, dayTimeDuration2) {
-	return dayTimeDuration1._seconds < dayTimeDuration2._seconds;
-};
-
-/**
- * @static
- * @param   {DayTimeDuration}  dayTimeDuration1
- * @param   {DayTimeDuration}  dayTimeDuration2
- * @return  {boolean}
- */
-DayTimeDuration.greaterThan = function (dayTimeDuration1, dayTimeDuration2) {
-	return dayTimeDuration1._seconds > dayTimeDuration2._seconds;
-};
-
-DayTimeDuration.add = function (dayTimeDuration1, dayTimeDuration2) {
-	return new DayTimeDuration(dayTimeDuration1._seconds + dayTimeDuration2._seconds);
-};
-
-DayTimeDuration.subtract = function (dayTimeDuration1, dayTimeDuration2) {
-	return new DayTimeDuration(dayTimeDuration1._seconds - dayTimeDuration2._seconds);
-};
-
-DayTimeDuration.multiply = function (dayTimeDuration, double) {
-	if (isNaN(double)) {
-		throw new Error('FOCA0005: Cannot multiply xs:dayTimeDuration by NaN');
-	}
-	const result = dayTimeDuration._seconds * double;
-	if (result > Number.MAX_SAFE_INTEGER || !Number.isFinite(result)) {
-		throw new Error('FODT0002: Value overflow while multiplying xs:dayTimeDuration');
-	}
-	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
-};
-
-DayTimeDuration.divide = function (dayTimeDuration, double) {
-	if (isNaN(double)) {
-		throw new Error('FOCA0005: Cannot divide xs:dayTimeDuration by NaN');
-	}
-	const result = dayTimeDuration._seconds / double;
-	if (result > Number.MAX_SAFE_INTEGER || !Number.isFinite(result)) {
-		throw new Error('FODT0002: Value overflow while dividing xs:dayTimeDuration');
-	}
-	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
-};
-
-DayTimeDuration.divideByDayTimeDuration = function (dayTimeDuration1, dayTimeDuration2) {
-	if (dayTimeDuration2._seconds === 0) {
-		return new Error('FOAR0001: Division by 0');
-	}
-	return dayTimeDuration1._seconds / dayTimeDuration2._seconds;
-};
 
 /**
  * @static
@@ -180,5 +126,85 @@ DayTimeDuration.fromJavascriptDateTimezone = function (date) {
 
 	return DayTimeDuration.fromParts(0, 0, Math.abs(minutes), 0, 0, isPositive);
 };
+
+/**
+ * @param   {DayTimeDuration}  dayTimeDuration1
+ * @param   {DayTimeDuration}  dayTimeDuration2
+ * @return  {boolean}
+ */
+export function lessThan (dayTimeDuration1, dayTimeDuration2) {
+	return dayTimeDuration1._seconds < dayTimeDuration2._seconds;
+}
+
+/**
+ * @param   {DayTimeDuration}  dayTimeDuration1
+ * @param   {DayTimeDuration}  dayTimeDuration2
+ * @return  {boolean}
+ */
+export function greaterThan (dayTimeDuration1, dayTimeDuration2) {
+	return dayTimeDuration1._seconds > dayTimeDuration2._seconds;
+}
+
+/**
+ * @param   {DayTimeDuration}  dayTimeDuration1
+ * @param   {DayTimeDuration}  dayTimeDuration2
+ * @return  {DayTimeDuration}
+ */
+export function add (dayTimeDuration1, dayTimeDuration2) {
+	return new DayTimeDuration(dayTimeDuration1._seconds + dayTimeDuration2._seconds);
+}
+
+/**
+ * @param   {DayTimeDuration}  dayTimeDuration1
+ * @param   {DayTimeDuration}  dayTimeDuration2
+ * @return  {DayTimeDuration}
+ */
+export function subtract (dayTimeDuration1, dayTimeDuration2) {
+	return new DayTimeDuration(dayTimeDuration1._seconds - dayTimeDuration2._seconds);
+}
+
+/**
+ * @param   {DayTimeDuration}  dayTimeDuration
+ * @param   {number}           double
+ * @return  {DayTimeDuration}
+ */
+export function multiply (dayTimeDuration, double) {
+	if (isNaN(double)) {
+		throw new Error('FOCA0005: Cannot multiply xs:dayTimeDuration by NaN');
+	}
+	const result = dayTimeDuration._seconds * double;
+	if (result > Number.MAX_SAFE_INTEGER || !Number.isFinite(result)) {
+		throw new Error('FODT0002: Value overflow while multiplying xs:dayTimeDuration');
+	}
+	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
+}
+
+/**
+ * @param   {DayTimeDuration}  dayTimeDuration
+ * @param   {number}           double
+ * @return  {DayTimeDuration}
+ */
+export function divide (dayTimeDuration, double) {
+	if (isNaN(double)) {
+		throw new Error('FOCA0005: Cannot divide xs:dayTimeDuration by NaN');
+	}
+	const result = dayTimeDuration._seconds / double;
+	if (result > Number.MAX_SAFE_INTEGER || !Number.isFinite(result)) {
+		throw new Error('FODT0002: Value overflow while dividing xs:dayTimeDuration');
+	}
+	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
+}
+
+/**
+ * @param   {DayTimeDuration}  dayTimeDuration1
+ * @param   {DayTimeDuration}  dayTimeDuration2
+ * @return  {number}
+ */
+export function divideByDayTimeDuration (dayTimeDuration1, dayTimeDuration2) {
+	if (dayTimeDuration2._seconds === 0) {
+		throw new Error('FOAR0001: Division by 0');
+	}
+	return dayTimeDuration1._seconds / dayTimeDuration2._seconds;
+}
 
 export default DayTimeDuration;

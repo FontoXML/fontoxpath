@@ -7,6 +7,7 @@ import builtInFunctionsNode from './builtInFunctions.node';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import { equal } from '../dataTypes/valueTypes/DateTime';
 
 /**
  * @type {function(../DynamicContext, ../dataTypes/Sequence):../dataTypes/Sequence}
@@ -74,9 +75,30 @@ function anyAtomicTypeDeepEqual (_dynamicContext, item1, item2) {
 		temp2 = castToType(item2, 'xs:double');
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
+
 	if (isSubtypeOf(item1.type, 'xs:QName') && isSubtypeOf(item2.type, 'xs:QName')) {
 		return item1.value.namespaceURI === item2.value.namespaceURI &&
 			item1.value.localPart === item2.value.localPart;
+	}
+
+	if ((isSubtypeOf(item1.type, 'xs:dateTime') ||
+			isSubtypeOf(item1.type, 'xs:date') ||
+			isSubtypeOf(item1.type, 'xs:time') ||
+			isSubtypeOf(item1.type, 'xs:gYearMonth') ||
+			isSubtypeOf(item1.type, 'xs:gYear') ||
+			isSubtypeOf(item1.type, 'xs:gMonthDay') ||
+			isSubtypeOf(item1.type, 'xs:gMonth') ||
+			isSubtypeOf(item1.type, 'xs:gDay')
+		) && (
+			isSubtypeOf(item2.type, 'xs:dateTime') ||
+			isSubtypeOf(item2.type, 'xs:date') ||
+			isSubtypeOf(item2.type, 'xs:time') ||
+			isSubtypeOf(item2.type, 'xs:gYearMonth') ||
+			isSubtypeOf(item2.type, 'xs:gYear') ||
+			isSubtypeOf(item2.type, 'xs:gMonthDay') ||
+			isSubtypeOf(item2.type, 'xs:gMonth') ||
+			isSubtypeOf(item2.type, 'xs:gDay'))) {
+		return equal(item1.value, item2.value);
 	}
 	return item1.value === item2.value;
 }

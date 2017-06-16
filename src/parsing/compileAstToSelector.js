@@ -25,8 +25,8 @@ import Union from '../selectors/operators/Union';
 import IntersectExcept from '../selectors/operators/IntersectExcept';
 import SequenceOperator from '../selectors/operators/SequenceOperator';
 import SimpleMapOperator from '../selectors/operators/SimpleMapOperator';
-import Unary from '../selectors/operators/numeric/Unary';
-import BinaryNumericOperator from '../selectors/operators/numeric/BinaryNumericOperator';
+import Unary from '../selectors/operators/arithmetic/Unary';
+import BinaryOperator from '../selectors/operators/arithmetic/BinaryOperator';
 import Compare from '../selectors/operators/compares/Compare';
 import InstanceOfOperator from '../selectors/operators/types/InstanceOfOperator';
 import CastAsOperator from '../selectors/operators/types/CastAsOperator';
@@ -309,7 +309,7 @@ function binaryOperator (args, compilationOptions) {
 	const a = compile(args[1], compilationOptions);
 	const b = compile(args[2], compilationOptions);
 
-	return new BinaryNumericOperator(kind, a, b);
+	return new BinaryOperator(kind, a, b);
 }
 
 function child (args, compilationOptions) {

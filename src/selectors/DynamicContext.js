@@ -73,7 +73,7 @@ class DynamicContext {
 		 * @type {DayTimeDuration}
 		 * @const
 		 */
-		this.implicitTimezone = DayTimeDuration.fromJavascriptDateTimezone(date);
+		this.implicitTimezone = DayTimeDuration.fromString('PT0S');
 	}
 
 	/**

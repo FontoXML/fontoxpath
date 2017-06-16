@@ -36,11 +36,11 @@ function fnCurrentDateTime (dynamicContext) {
 }
 
 function fnCurrentDate (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime.clone().convertToType('xs:date'), 'xs:date'));
+	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime.convertToType('xs:date'), 'xs:date'));
 }
 
 function fnCurrentTime (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime.clone().convertToType('xs:time'), 'xs:time'));
+	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime.convertToType('xs:time'), 'xs:time'));
 }
 
 function fnImplicitTimezone (dynamicContext) {

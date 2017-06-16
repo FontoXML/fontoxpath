@@ -1,3 +1,4 @@
+import AbstractDuration from './AbstractDuration';
 import YearMonthDuration from './YearMonthDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -29,17 +30,30 @@ function computeMinDays (duration) {
 function computeMaxDays (duration) {
 	const years = Math.abs(duration.getYears());
 	const months = Math.abs(duration.getMonths());
-	const maxNumberOfLeapYears = Math.floor(years / 4) + (years % 4 > 0 ? 1 : 0);
+	const maxNumberOfLeapYears = Math.ceil(years / 4);
 
 	return Math.abs(duration.getDays()) +
 		(months === 0 ? 0 : MONTHS_TO_MIN_MAX_VALUES[months - 1][1]) +
 		maxNumberOfLeapYears * 366 + (years - maxNumberOfLeapYears) * 365;
 }
 
-class Duration {
+/**
+ * @extends {AbstractDuration}
+ */
+class Duration extends AbstractDuration {
 	constructor (yearMonthDuration, dayTimeDuration) {
+		super();
+
 		this._yearMonthDuration = yearMonthDuration;
 		this._dayTimeDuration = dayTimeDuration;
+	}
+
+	getRawMonths () {
+		return this._yearMonthDuration.getRawMonths();
+	}
+
+	getRawSeconds () {
+		return this._dayTimeDuration.getRawSeconds();
 	}
 
 	getYearMonthDuration () {
@@ -118,11 +132,6 @@ class Duration {
 		if (thisMaxDays < otherMinDays) {
 			return bothPositive ? -1 : 1;
 		}
-	}
-
-	equals (other) {
-		return this._yearMonthDuration.equals(other._yearMonthDuration) &&
-			this._dayTimeDuration.equals(other._dayTimeDuration);
 	}
 
 	toString () {
