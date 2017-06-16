@@ -33,6 +33,35 @@ describe('functions over nodes', () => {
 		});
 	});
 
+	describe('local-name()', () => {
+		it('returns the empty string if $arg is an empty sequence',
+			() => chai.assert.deepEqual(evaluateXPathToString('local-name(())', documentNode), ''));
+
+		it('it defaults to the context item when the argument is omitted', () => {
+			jsonMlMapper.parse([
+				'someElement',
+				'Some text.'
+			], documentNode);
+			chai.assert.equal(evaluateXPathToString('local-name()', documentNode.firstChild), 'someElement');
+		});
+
+		it('it returns the node name of the given context', () => {
+			jsonMlMapper.parse([
+				'someElement',
+				'Some text.'
+			], documentNode);
+			chai.assert.equal(evaluateXPathToString('local-name(.)', documentNode.firstChild), 'someElement');
+		});
+
+		it('it returns the PI target for PIs', () => {
+			jsonMlMapper.parse([
+				'?somePi',
+				'With some data'
+			], documentNode);
+			chai.assert.equal(evaluateXPathToString('local-name(.)', documentNode.firstChild), 'somePi');
+		});
+	});
+
 	describe('name()', () => {
 		it('returns an empty sequence if $arg is an empty sequence',
 			() => chai.assert.deepEqual(evaluateXPathToStrings('name(())', documentNode), []));
@@ -40,6 +69,11 @@ describe('functions over nodes', () => {
 		it('it defaults to the context item when the argument is omitted', () => {
 			jsonMlMapper.parse(['someElement'], documentNode);
 			chai.assert.equal(evaluateXPathToString('name()', documentNode.firstChild), 'someElement');
+		});
+
+		it('it returns the name including namespace prefixes', () => {
+			const element = documentNode.createElementNS('http://example.com/ns', 'ns:someElement');
+			chai.assert.equal(evaluateXPathToString('name()', element), 'ns:someElement');
 		});
 
 		it('it returns the node name of the given context', () => {
@@ -113,6 +147,12 @@ describe('functions over nodes', () => {
 		it('returns the bottom level nodes if the nodes are not direct children', () => {
 			jsonMlMapper.parse(['root', ['child', ['descendant']], ['child', ['descendant'], ['descendant']]], documentNode);
 			chai.assert.deepEqual(evaluateXPathToStrings('(//* => innermost())!name()', documentNode), ['descendant', 'descendant', 'descendant']);
+		});
+
+		it('returns the bottom level nodes across two documents', () => {
+			var docA = (new DOMParser()).parseFromString('<a><b/><c/></a>', 'text/xml');
+			var docB = (new DOMParser()).parseFromString('<A><B/><C/></A>', 'text/xml');
+			chai.assert.deepEqual(evaluateXPathToStrings('(innermost(($docA//node(), $docB//node())))!name()', documentNode, null, { docA, docB }), ['b', 'c', 'B', 'C']);
 		});
 
 		it('sorts the passed sequence', () => {

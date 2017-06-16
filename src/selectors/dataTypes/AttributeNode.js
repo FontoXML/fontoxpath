@@ -3,13 +3,15 @@ import createAtomicValue from './createAtomicValue';
  * @constructor
  * @extends {Node}
  * @param  {Element}  element
- * @param  {string}   attributeName
- * @param  {string}   attributeValue
+ * @param  {AttributeNode}   attribute
  */
-function AttributeNode (element, attributeName, attributeValue) {
-    this.value = attributeValue;
-    this.nodeName = attributeName;
+function AttributeNode (element, attribute) {
+    this.value = attribute.value;
+    this.localName = attribute.localName;
+    this.namespaceURI = attribute.namespaceURI;
+    this.prefix = attribute.prefix;
     this.parentNode = element;
+    this.ownerDocument = element.ownerDocument;
 
     this.nodeType = this.ATTRIBUTE_NODE;
 }

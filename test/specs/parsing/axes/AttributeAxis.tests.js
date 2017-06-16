@@ -2,7 +2,8 @@ import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPathToStrings,
-	evaluateXPathToString
+	evaluateXPathToString,
+	evaluateXPathToBoolean
 } from 'fontoxpath';
 
 let documentNode;
@@ -33,8 +34,8 @@ describe('attribute', () => {
 
 	it('allows namespaces', () => {
 		const element = documentNode.createElement('someElement');
-		element.setAttribute('someNamespace:someAttribute', 'someValue');
-		chai.assert.equal(evaluateXPathToString('attribute::someNamespace:someAttribute', element), 'someValue');
+		element.setAttributeNS('http://fontoxml.com/ns/', 'someNamespace:someAttribute', 'someValue');
+		chai.assert.equal(evaluateXPathToString('attribute::someNamespace:someAttribute', element, null, null, { namespaceResolver: () => 'http://fontoxml.com/ns/' }), 'someValue');
 	});
 
 	it('parses the shorthand for existence', () => {
@@ -51,8 +52,8 @@ describe('attribute', () => {
 
 	it('allows namespaces in the shorthand', () => {
 		const element = documentNode.createElement('someElement');
-		element.setAttribute('someNamespace:someAttribute', 'someValue');
-		chai.assert.equal(evaluateXPathToString('@someNamespace:someAttribute="someValue"', element), 'true');
+		element.setAttributeNS('http://fontoxml.com/ns/', 'someNamespace:someAttribute', 'someValue');
+		chai.assert.equal(evaluateXPathToString('@someNamespace:someAttribute="someValue"', element, null, null, { namespaceResolver: () => 'http://fontoxml.com/ns/' }), 'true');
 	});
 
 	it('allows a wildcard as attribute name', () => {
@@ -77,5 +78,10 @@ describe('attribute', () => {
 		element.setAttribute('c', 'c');
 		element.setAttribute('a', 'a');
 		chai.assert.oneOf(evaluateXPathToString('@*[last()]/name()', element), ['a', 'b', 'c']);
+	});
+
+	it('does not contain namespace declarations', () => {
+		const doc = (new window.DOMParser()).parseFromString('<someElement xmlns:ns="http://example.org/ns" ns:attr="someValue"/>', 'text/xml');
+		chai.assert.isTrue(evaluateXPathToBoolean('@* => count() eq 1', doc.documentElement));
 	});
 });

@@ -24,8 +24,7 @@ describe('DomFacade', () => {
 
 		attributeNode = new AttributeNode(
 			documentNode.documentElement,
-			'someAttribute',
-			'someValue');
+			documentNode.documentElement.getAttributeNode('someAttribute'));
 		domFacade = new DomFacade(adaptingDomFacade);
 	});
 

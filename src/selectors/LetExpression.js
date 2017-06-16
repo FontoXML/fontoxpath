@@ -6,7 +6,7 @@ import Sequence from './dataTypes/Sequence';
  */
 class LetExpression extends Selector {
 	/**
-	 * @param  {string}    rangeVariable
+	 * @param  {{prefix:string, namespaceURI:string, name}}    rangeVariable
 	 * @param  {Selector}  bindingSequence
 	 * @param  {Selector}  returnExpression
 	 */
@@ -20,7 +20,11 @@ class LetExpression extends Selector {
 				canBeStaticallyEvaluated: false
 			});
 
-		this._rangeVariable = rangeVariable;
+		if (rangeVariable.prefix || rangeVariable.namespaceURI) {
+			throw new Error('Not implemented: let expressions with namespace usage.');
+		}
+
+		this._rangeVariable = rangeVariable.name;
 		this._bindingSequence = bindingSequence;
 		this._returnExpression = returnExpression;
 	}

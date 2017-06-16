@@ -22,6 +22,7 @@ class ArrayConstructor extends Selector {
 		this._members = members;
 	}
 
+
 	evaluate (dynamicContext) {
 		if (this._curlyness === 'curly') {
 			return Sequence.singleton(

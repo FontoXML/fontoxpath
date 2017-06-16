@@ -22,10 +22,10 @@ function compareSiblingPositions (domFacade, node1, node2) {
 		return 1;
 	}
 
-	var parentNode = domFacade.getParentNode(node1);
-	var childNodes = domFacade.getChildNodes(/** @type {!Node} */(parentNode));
-	for (var i = 0, l = childNodes.length; i < l; ++i) {
-		var childNode = childNodes[i];
+	const parentNode = domFacade.getParentNode(node1);
+	const childNodes = domFacade.getChildNodes(/** @type {!Node} */(parentNode));
+	for (let i = 0, l = childNodes.length; i < l; ++i) {
+		const childNode = childNodes[i];
 		if (childNode === node1) {
 			return -1;
 		}
@@ -44,8 +44,8 @@ function compareSiblingPositions (domFacade, node1, node2) {
  * @return	{!Array<Node>}            All of the ancestors of the given node
  */
 function findAllAncestors (domFacade, node) {
-	var ancestors = [];
-	for (var ancestor = node; ancestor; ancestor = domFacade.getParentNode(ancestor)) {
+	const ancestors = [];
+	for (let ancestor = node; ancestor; ancestor = domFacade.getParentNode(ancestor)) {
 		ancestors.unshift(ancestor);
 	}
 
@@ -55,33 +55,43 @@ function findAllAncestors (domFacade, node) {
 /**
  * Compares the given positions w.r.t. document order in this state
  *
- * @param {!IDomFacade} domFacade       The domFacade in which to consider the nodes
- * @param {!Node}       parentNode1     The parent of the first position
- * @param {?Node}       referenceNode1  The next sibling of the first position
- * @param {!Node}       parentNode2     The parent of the second position
- * @param {?Node}       referenceNode2  The next sibling of the second position
+ * @param {!Array<!Node>} tieBreakerArr  Results of earlier comparisons, used as a tie breaker for compares between documents
+ * @param {!IDomFacade} domFacade        The domFacade in which to consider the nodes
+ * @param {!Node}       parentNode1      The parent of the first position
+ * @param {?Node}       referenceNode1   The next sibling of the first position
+ * @param {!Node}       parentNode2      The parent of the second position
+ * @param {?Node}       referenceNode2   The next sibling of the second position
  *
  * @return {number}     Returns 0 if the positions are equal, -1 if the first position precedes the second,
  *						and 1 otherwise.
  */
-function comparePositions (domFacade, parentNode1, referenceNode1, parentNode2, referenceNode2) {
-	var bias = 0;
+function comparePositions (tieBreakerArr, domFacade, parentNode1, referenceNode1, parentNode2, referenceNode2) {
+	let bias = 0;
 	if (parentNode1 !== parentNode2) {
-		var ancestors1 = findAllAncestors(domFacade, parentNode1),
-			ancestors2 = findAllAncestors(domFacade, parentNode2);
+		const ancestors1 = findAllAncestors(domFacade, parentNode1);
+		const ancestors2 = findAllAncestors(domFacade, parentNode2);
+		const topAncestor1 = ancestors1[0];
+		const topAncestor2 = ancestors2[0];
+
+		if (topAncestor1 !== topAncestor2) {
+			// Separate trees, use earlier determined tie breakers
+			let index1 = tieBreakerArr.indexOf(topAncestor1);
+			let index2 = tieBreakerArr.indexOf(topAncestor2);
+			if (index1 === -1) {
+				index1 = tieBreakerArr.push(topAncestor1);
+			}
+			if (index2 === -1) {
+				index2 = tieBreakerArr.push(topAncestor2);
+			}
+			return index1 - index2;
+		}
+
 		// Skip common ancestors
-		var commonAncestor = null,
-			i, l;
+		let i, l;
 		for (i = 0, l = Math.min(ancestors1.length, ancestors2.length); i < l; ++i) {
 			if (ancestors1[i] !== ancestors2[i]) {
 				break;
 			}
-
-			commonAncestor = ancestors1[i];
-		}
-		// No defined ordering between different trees
-		if (!commonAncestor) {
-			return 0;
 		}
 
 		if (i < ancestors1.length) {
@@ -98,9 +108,8 @@ function comparePositions (domFacade, parentNode1, referenceNode1, parentNode2, 
 	// Compare positions under the common ancestor
 	return compareSiblingPositions(domFacade, referenceNode1, referenceNode2) || bias;
 }
-
-export const compareNodePositions = function compareNodePositions (domFacade, node1, node2) {
-	var value1, value2;
+function compareNodePositionsWithTieBreaker (tieBreakerArr, domFacade, node1, node2) {
+	let value1, value2;
 	if (isSubtypeOf(node1.type, 'attribute()') && !isSubtypeOf(node2.type, 'attribute()')) {
 		value1 = domFacade.getParentNode(node1.value);
 		value2 = node2.value;
@@ -120,7 +129,7 @@ export const compareNodePositions = function compareNodePositions (domFacade, no
 	else if (isSubtypeOf(node1.type, 'attribute()') && isSubtypeOf(node2.type, 'attribute()')) {
 		if (domFacade.getParentNode(node2.value) === domFacade.getParentNode(node1.value)) {
 			// Sort on attributes name
-			return node1.value.nodeName > node2.value.nodeName ? 1 : -1;
+			return node1.value.localName > node2.value.localName ? 1 : -1;
 		}
 		value1 = domFacade.getParentNode(node1.value);
 		value2 = domFacade.getParentNode(node2.value);
@@ -131,11 +140,15 @@ export const compareNodePositions = function compareNodePositions (domFacade, no
 	}
 
 	return comparePositions(
+		tieBreakerArr,
 		domFacade,
 		value1, domFacade.getFirstChild(value1),
 		value2, domFacade.getFirstChild(value2));
 };
 
+export const compareNodePositions = function (domFacade, node1, node2) {
+	return compareNodePositionsWithTieBreaker([], domFacade, node1, node2);
+};
 /**
  * Sort (and deduplicate) the nodeValues in DOM order
  * Attributes are placed after their elements, before childnodes.
@@ -147,9 +160,10 @@ export const compareNodePositions = function compareNodePositions (domFacade, no
  * @return  {!Array<!./Value>}    The sorted nodes
  */
 export const sortNodeValues = function sortNodeValues (domFacade, nodeValues) {
+	const tieBreakerArr = [];
 	return nodeValues
 		.sort(function (node1, node2) {
-			return compareNodePositions(domFacade, node1, node2);
+			return compareNodePositionsWithTieBreaker(tieBreakerArr, domFacade, node1, node2);
 		})
 		.filter(function (nodeValue, i, sortedNodes) {
 			if (i === 0) {

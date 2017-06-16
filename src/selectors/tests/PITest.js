@@ -6,7 +6,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 /**
  * @extends {Selector}
  */
-class ProcessingInstructionTargetSelector extends Selector {
+class PITest extends Selector {
 	/**
 	 * @param  {string}  target
 	 */
@@ -19,6 +19,10 @@ class ProcessingInstructionTargetSelector extends Selector {
 
 	}
 
+	/**
+	 * @param   {!../DynamicContext}      dynamicContext
+	 * @return  {!../dataTypes/Sequence}
+	 */
 	evaluate (dynamicContext) {
 		// Assume singleton
 		var nodeValue = dynamicContext.contextItem;
@@ -31,4 +35,4 @@ class ProcessingInstructionTargetSelector extends Selector {
 		return 'type-7';
 	}
 }
-export default ProcessingInstructionTargetSelector;
+export default PITest;

@@ -30,18 +30,30 @@ class AttributeAxis extends Selector {
 	 * @return  {Sequence}
 	 */
 	evaluate (dynamicContext) {
-		var contextItem = dynamicContext.contextItem,
-			domFacade = dynamicContext.domFacade;
+		/**
+		 * @type {../dataTypes/Value}
+		 */
+		const contextItem = dynamicContext.contextItem;
+		const domFacade = dynamicContext.domFacade;
 
 		if (!isSubtypeOf(contextItem.type, 'element()')) {
 			return Sequence.empty();
 		}
 
-		const allAttributes = domFacade.getAllAttributes(contextItem.value);
-		var attributesSequence = new Sequence(
+		// The spec on attributes:
+		// A set of Attribute Nodes constructed from the attribute information
+		// items appearing in the [attributes] property.
+		// This includes all of the "special" attributes (xml:lang, xml:space, xsi:type, etc.)
+		// but does not include namespace declarations (because they are not attributes).
+		const allAttributes = domFacade.getAllAttributes(contextItem.value)
+			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/');
+		/**
+		 * @type {Sequence}
+		 */
+		const attributesSequence = new Sequence(
 			allAttributes.map(
 				attribute => createNodeValue(
-					new AttributeNode(contextItem.value, attribute.name, attribute.value))));
+					new AttributeNode(contextItem.value, attribute))));
 		/**
 		 * @type {!Selector}
 		 */

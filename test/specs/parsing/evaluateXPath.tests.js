@@ -110,7 +110,27 @@ describe('evaluateXPath', () => {
 
 	describe('using the actual browser HTML DOM', () => {
 		it('will find an HTML node', ()=> {
-			chai.assert.isTrue(evaluateXPathToBoolean('/descendant::HTML', window.document, domFacade));
+			chai.assert.isTrue(evaluateXPathToBoolean('/descendant::html', window.document, domFacade, null, { namespaceResolver: () => 'http://www.w3.org/1999/xhtml' }));
+			chai.assert.isTrue(evaluateXPathToBoolean('/descendant::Q{http://www.w3.org/1999/xhtml}html', window.document, domFacade));
+
+		});
+	});
+
+	describe('namespaceResolver', () => {
+		it('can resolve the built-in namespaces', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("fn:string") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions"'), 'fn');
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("xs:string") => namespace-uri-from-QName() eq "http://www.w3.org/2001/XMLSchema"'), 'xs');
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("map:merge") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/map"'), 'map');
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("array:sort") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/array"'), 'array');
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("math:pi") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions/math"'), 'math');
+		});
+
+		it('can resolve using the passed element', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("html") => namespace-uri-from-QName() eq "http://www.w3.org/1999/xhtml"', window.document));
+		});
+
+		it('can resolve using the passed resolver', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("xxx:yyy") => namespace-uri-from-QName() eq "http://example.com/ns"', null, null, null, { namespaceResolver: () => 'http://example.com/ns' }));
 		});
 	});
 });

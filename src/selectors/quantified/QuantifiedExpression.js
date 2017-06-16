@@ -1,6 +1,13 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 
+function buildVarName ({ prefix, namespaceURI, name }) {
+	if (namespaceURI) {
+		throw new Error('Not implemented: quantified expressions with a namespace URI in the binding.');
+	}
+	return prefix ? `${prefix}:${name}` : name;
+}
+
 /**
  * @extends {Selector}
  */
@@ -25,7 +32,7 @@ class QuantifiedExpression extends Selector {
 
 	evaluate (dynamicContext) {
 		const evaluatedInClauses = this._inClauses.map(inClause => ({
-			name: inClause[0],
+			name: buildVarName(inClause[0]),
 			valueArray: Array.from(inClause[1].evaluateMaybeStatically(dynamicContext).value())
 		}));
 

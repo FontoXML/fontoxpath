@@ -5,7 +5,7 @@ import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 /**
  * @extends {Selector}
  */
-class NodeTypeSelector extends Selector {
+class KindTest extends Selector {
 	/**
 	 * @param  {number}  nodeType
 	 */
@@ -18,6 +18,10 @@ class NodeTypeSelector extends Selector {
 
 	}
 
+	/**
+	 * @param   {!../DynamicContext}      dynamicContext
+	 * @return  {!../dataTypes/Sequence}
+	 */
 	evaluate (dynamicContext) {
 		if (this._nodeType === 3 && dynamicContext.contextItem.value.nodeType === 4) {
 			// CDATA_SECTION_NODES should be regarded as text nodes, and CDATA does not exist in the XPath Data Model
@@ -31,4 +35,4 @@ class NodeTypeSelector extends Selector {
 		return 'type-' + this._nodeType;
 	}
 }
-export default NodeTypeSelector;
+export default KindTest;

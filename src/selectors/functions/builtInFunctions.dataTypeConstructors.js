@@ -1,11 +1,43 @@
 import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import QName from '../dataTypes/valueTypes/QName';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import { validatePattern, normalizeWhitespace } from '../dataTypes/typeHelpers';
 
 function genericDataTypeConstructor (dataType, _dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(castToType(sequence.first(), dataType));
+}
+
+function xsQName (dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+	const value = sequence.first();
+	if (isSubtypeOf(value.type, 'xs:numeric')) {
+		// This won't ever work
+		throw new Error('XPTY0004: The provided QName is not a string-like value.');
+	}
+	let lexicalQName = castToType(value, 'xs:string').value;
+	// Test lexical scope
+	lexicalQName = normalizeWhitespace(lexicalQName, 'xs:QName');
+	if (!validatePattern(lexicalQName, 'xs:QName')) {
+		throw new Error('FORG0001: The provided QName is invalid.');
+	}
+	if (!lexicalQName.includes(':')) {
+		// Only a local part
+		const namespaceURI = dynamicContext.resolveNamespacePrefix('');
+		return Sequence.singleton(createAtomicValue(new QName('', namespaceURI, lexicalQName), 'xs:QName'));
+	}
+	const [prefix, localPart] = lexicalQName.split(':');
+	const namespaceURI = dynamicContext.resolveNamespacePrefix(prefix);
+	if (!namespaceURI) {
+		throw new Error(`FONS0004: The value ${lexicalQName} can not be casted to a QName. Did you mean to use fn:QName?`);
+	}
+	return Sequence.singleton(createAtomicValue(new QName(prefix, namespaceURI, localPart), 'xs:QName'));
 }
 
 export default {
@@ -127,12 +159,17 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:base64Binary')
 		},
 		{
+			name: 'xs:QName',
+			argumentTypes: ['xs:anyAtomicType?'],
+			returnType: 'xs:QName?',
+			callFunction: xsQName
+		},
+		{
 			name: 'xs:anyURI',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:anyURI?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:anyURI')
 		},
-		// TODO: QName constructor function
 		// NOTATION cannot be instantiated
 		{
 			name: 'xs:normalizedString',

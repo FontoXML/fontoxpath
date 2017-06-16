@@ -11,6 +11,13 @@ function generateCompareFunction (operator, typeA, typeB) {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
+	function applyCastFunctions (valA, valB) {
+		return {
+			castA: castFunctionForValueA ? castFunctionForValueA(valA) : valA,
+			castB: castFunctionForValueB ? castFunctionForValueB(valB) : valB
+		};
+	}
+
 	if (isSubtypeOf(typeA, 'xs:untypedAtomic') && isSubtypeOf(typeB, 'xs:untypedAtomic')) {
 		typeA = typeB = 'xs:string';
 	}
@@ -22,17 +29,25 @@ function generateCompareFunction (operator, typeA, typeB) {
 		castFunctionForValueB = val => castToType(val, typeA);
 		typeB = typeA;
 	}
+	if (isSubtypeOf(typeA, 'xs:QName') && isSubtypeOf(typeB, 'xs:QName')) {
+		if (operator === 'eq') {
+			return (a, b) => {
+                const { castA, castB } = applyCastFunctions(a, b);
+				return castA.value.namespaceURI === castB.value.namespaceURI && castA.value.localPart === castB.value.localPart;
+			};
+		}
+		if (operator === 'ne') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return castA.value.namespaceURI !== castB.value.namespaceURI || castA.value.localPart !== castB.value.localPart;
+			};
+		}
+		throw new Error('XPTY0004: Only the "eq" and "ne" comparison is defined for xs:QName');
+	}
 	else if (typeA !== typeB) {
 		if (!bothAreStringOrAnyURI(typeA, typeB) && !(isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric'))) {
 			throw new Error('XPTY0004: Values to compare are not of the same type');
 		}
-	}
-
-	function applyCastFunctions (valA, valB) {
-		return {
-			castA: castFunctionForValueA ? castFunctionForValueA(valA) : valA,
-			castB: castFunctionForValueB ? castFunctionForValueB(valB) : valB
-		};
 	}
 
 	switch (operator) {

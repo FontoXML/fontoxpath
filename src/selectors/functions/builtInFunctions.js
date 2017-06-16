@@ -5,11 +5,12 @@ import builtInDataTypeConstructors from './builtInFunctions.dataTypeConstructors
 import builtInDebuggingFunctions from './builtInFunctions.debugging';
 import builtInIdentifierFunctions from './builtInFunctions.identifiers';
 import builtInJsonFunctions from './builtInFunctions.json';
+import builtInMapFunctions from './builtInFunctions.maps';
 import builtInMathFunctions from './builtInFunctions.math';
 import builtInNodeFunctions from './builtInFunctions.node';
-import builtInMapFunctions from './builtInFunctions.maps';
 import builtInNumericFunctions from './builtInFunctions.numeric';
 import builtInOperatorFunctions from './builtInFunctions.operators';
+import builtInQNameFunctions from './builtInFunctions.qnames';
 import builtInSequencesFunctions from './builtInFunctions.sequences';
 import builtInStringFunctions from './builtInFunctions.string';
 
@@ -27,10 +28,11 @@ export default [].concat(
 	builtInDebuggingFunctions.declarations,
 	builtInIdentifierFunctions.declarations,
 	builtInJsonFunctions.declarations,
+	builtInMapFunctions.declarations,
 	builtInMathFunctions.declarations,
 	builtInNodeFunctions.declarations,
-	builtInMapFunctions.declarations,
 	builtInNumericFunctions.declarations,
 	builtInOperatorFunctions.declarations,
+	builtInQNameFunctions.declarations,
 	builtInSequencesFunctions.declarations,
 	builtInStringFunctions.declarations);

@@ -12,9 +12,9 @@ import FollowingSiblingAxis from '../selectors/axes/FollowingSiblingAxis';
 import ParentAxis from '../selectors/axes/ParentAxis';
 import PrecedingSiblingAxis from '../selectors/axes/PrecedingSiblingAxis';
 import SelfSelector from '../selectors/axes/SelfAxis';
-import NodeNameSelector from '../selectors/tests/NodeNameSelector';
-import NodeTypeSelector from '../selectors/tests/NodeTypeSelector';
-import ProcessingInstructionTargetSelector from '../selectors/tests/ProcessingInstructionTargetSelector';
+import NameTest from '../selectors/tests/NameTest';
+import KindTest from '../selectors/tests/KindTest';
+import PITest from '../selectors/tests/PITest';
 import TypeTest from '../selectors/tests/TypeTest';
 import FunctionCall from '../selectors/functions/FunctionCall';
 import InlineFunction from '../selectors/functions/InlineFunction';
@@ -232,7 +232,7 @@ function ancestor (args) {
 }
 
 function ancestorOrSelf (args) {
-	var subSelector = compile(args[0]);
+	const subSelector = compile(args[0]);
 	return new AncestorAxis(subSelector, { inclusive: true });
 }
 
@@ -245,9 +245,9 @@ function attribute (args) {
 }
 
 function binaryOperator (args) {
-	var kind = args[0];
-	var a = compile(args[1]);
-	var b = compile(args[2]);
+	const kind = args[0];
+	const a = compile(args[1]);
+	const b = compile(args[2]);
 
 	return new BinaryNumericOperator(kind, a, b);
 }
@@ -261,22 +261,22 @@ function descendant (args) {
 }
 
 function descendantOrSelf (args) {
-	var subSelector = compile(args[0]);
+	const subSelector = compile(args[0]);
 	return new DescendantAxis(subSelector, { inclusive: true });
 }
 
 function castAs (args) {
-	var expression = compile(args[0]);
-	var sequenceType = args[1];
+	const expression = compile(args[0]);
+	const [[prefix, namespaceURI, name], multiplicity] = args[1];
 
-	return new CastAsOperator(expression, sequenceType[0], sequenceType[1]);
+	return new CastAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
 }
 
 function castableAs (args) {
-	var expression = compile(args[0]);
-	var sequenceType = args[1];
+	const expression = compile(args[0]);
+	const [[prefix, namespaceURI, name], multiplicity] = args[1];
 
-	return new CastableAsOperator(expression, sequenceType[0], sequenceType[1]);
+	return new CastableAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
 }
 
 // Binary compare (=, !=, le, is, etc)
@@ -298,7 +298,9 @@ function followingSibling (args) {
 
 function forExpression ([clauses, returnExpression]) {
 	return new ForExpression(
-		clauses.map(([varName, expression]) => ({ varName, expression: compile(expression) })),
+		clauses.map(([[prefix, namspaceURI, name], expression]) => ({
+			varName: { prefix, namspaceURI, name },
+			expression: compile(expression) })),
 		compile(returnExpression));
 }
 
@@ -308,22 +310,25 @@ function functionCall (args) {
 
 function inlineFunction (args) {
 	const [params, returnType, body] = args;
-	return new InlineFunction(params, returnType, compile(body));
+	return new InlineFunction(
+		params.map(([[prefix, namespaceURI, name], type]) => ([{ prefix, namespaceURI, name }, type])),
+		returnType,
+		compile(body));
 }
 
 function instanceOf (args) {
-	var expression = compile(args[0]);
-	var sequenceType = args[1];
+	const expression = compile(args[0]);
+	const sequenceType = args[1];
 
 	return new InstanceOfOperator(expression, compile(sequenceType[0]), sequenceType[1] || '');
 }
 
 function letExpression (args) {
-	var rangeVariable = args[0];
-	var bindingSequence = compile(args[1]);
-	var returnExpression = compile(args[2]);
+	const [prefix, namespaceURI, name] = args[0];
+	const bindingSequence = compile(args[1]);
+	const returnExpression = compile(args[2]);
 
-	return new LetExpression(rangeVariable, bindingSequence, returnExpression);
+	return new LetExpression({ prefix, namespaceURI, name }, bindingSequence, returnExpression);
 }
 
 function literal (args) {
@@ -331,13 +336,13 @@ function literal (args) {
 }
 
 function namedFunctionRef (args) {
-	var functionName = args.shift();
-	return new NamedFunctionRef(functionName, args[0]);
+	const [[prefix, namespaceURI, name], arity] = args;
+	return new NamedFunctionRef({ prefix, namespaceURI, name }, arity);
 }
 
 function nameTest (args) {
-	var nodeName = args[0];
-	return new NodeNameSelector(nodeName);
+	const [prefix, namespaceURI, localName] = args[0];
+	return new NameTest(prefix, namespaceURI, localName);
 }
 
 function kindTest (args) {
@@ -345,28 +350,28 @@ function kindTest (args) {
 		case 'item()':
 			return new UniversalSelector();
 		case 'node()':
-			return new TypeTest('node()');
+			return new TypeTest(null, null, 'node()');
 		case 'element()':
 			if (args.length === 2) {
-				return new NodeNameSelector(args[1]);
+				return new NameTest(args[1]);
 			}
 
 			if (args.length > 2) {
 				throw new Error('element() with more than 1 argument is not supported.');
 			}
 
-			return new NodeTypeSelector(1);
+			return new KindTest(1);
 		case 'text()':
-			return new NodeTypeSelector(3);
+			return new KindTest(3);
 		case 'processing-instruction()':
 			if (args.length > 1) {
-				return new ProcessingInstructionTargetSelector(args[1]);
+				return new PITest(args[1]);
 			}
-			return new NodeTypeSelector(7);
+			return new KindTest(7);
 		case 'comment()':
-			return new NodeTypeSelector(8);
+			return new KindTest(8);
 		case 'document-node()':
-			return new NodeTypeSelector(9);
+			return new KindTest(9);
 
 		default:
 			throw new Error('Unrecognized nodeType: ' + args[0]);
@@ -390,8 +395,8 @@ function precedingSibling (args) {
 }
 
 function quantified (args) {
-	var inClauses = args[1].map(function (inClause) {
-		return [inClause[0], compile(inClause[1])];
+	const inClauses = args[1].map(([[prefix, namespaceURI, name], expression]) => {
+		return [{ prefix, namespaceURI, name }, compile(expression)];
 	});
 	return new QuantifiedExpression(args[0], inClauses, compile(args[2]));
 }
@@ -409,7 +414,8 @@ function simpleMap (args) {
 }
 
 function typeTest (args) {
-	return new TypeTest(args[0]);
+	const [prefix, namespaceURI, name] = args[0];
+	return new TypeTest(prefix, namespaceURI, name);
 }
 
 function unaryPlus (args) {
@@ -425,7 +431,8 @@ function union (args) {
 }
 
 function varRef (args) {
-	return new VarRef(args[0]);
+	const [prefix, namespaceURI, name] = args[0];
+	return new VarRef(prefix, namespaceURI, name);
 }
 
 /**

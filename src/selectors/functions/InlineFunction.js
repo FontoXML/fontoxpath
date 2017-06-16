@@ -3,6 +3,13 @@ import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import FunctionValue from '../dataTypes/FunctionValue';
 
+function buildVarName ({ prefix, namespaceURI, name }) {
+	if (namespaceURI) {
+		throw new Error('Not implemented: inline functions with a namespace URI in the binding.');
+	}
+	return prefix ? `${prefix}:${name}` : name;
+}
+
 /**
  * @extends Selector
  */
@@ -21,7 +28,7 @@ class InlineFunction extends Selector {
 			expectedResultOrder: Selector.RESULT_ORDERINGS.UNSORTED
 		});
 
-		this._paramDescriptions = paramDescriptions;
+		this._paramDescriptions = paramDescriptions.map(([paramName, type]) => ([buildVarName(paramName), type]));
 		this._returnType = returnType;
 		this._functionBody = functionBody;
 	}

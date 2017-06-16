@@ -1,6 +1,10 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
-const instanceOfTypeShortcutTable = Object.create(null);
 
+/**
+ * @param   {!./types/Type}  subType
+ * @param   {!./types/Type}  superType
+ * @return  {boolean}
+ */
 function isSubtypeOfType (subType, superType) {
 	if (superType.variety === 'union') {
 		// It is a union type, which can only be the topmost types
@@ -23,8 +27,9 @@ function isSubtypeOfType (subType, superType) {
  * xs:int is a subtype of xs:integer
  * xs:decimal is a subtype of xs:numeric
  * xs:NMTOKENS is a subtype of xs:NM TOKEN
- * @param  {./ETypeNames}  subTypeName
- * @param  {./ETypeNames}  superTypeName
+ * @param   {./ETypeNames}  subTypeName
+ * @param   {./ETypeNames}  superTypeName
+ * @return  {boolean}
  */
 export default function isSubtypeOf (subTypeName, superTypeName) {
 	if (subTypeName === superTypeName) {
@@ -36,6 +41,14 @@ export default function isSubtypeOf (subTypeName, superTypeName) {
 	 * @type {!./types/Type}
 	 */
 	const subType = builtinDataTypesByName[subTypeName];
+
+	if (!superType) {
+		if (!superTypeName.startsWith('xs:')) {
+			// Note that 'xs' is the only namespace currently supported
+			throw new Error(`XPST0081: The type ${superTypeName} does not exist.`);
+		}
+		throw new Error(`XPST0051: The type ${superTypeName} does not exist.`);
+	}
 
 	return isSubtypeOfType(subType, superType);
 }

@@ -5,8 +5,6 @@ import {
 	validateRestrictions
 } from '../typeHelpers';
 
-import builtinDataTypesByName from '../builtins/builtinDataTypesByName';
-
 import isSubtypeOf from '../isSubtypeOf';
 
 import castToAnyURI from './castToAnyURI';
@@ -95,6 +93,8 @@ function castToPrimitiveType (from, to) {
 			return castToHexBinary(instanceOf);
 		case 'xs:anyURI':
 			return castToAnyURI(instanceOf);
+		case 'xs:QName':
+			throw new Error('Casting to xs:QName is not implemented.');
 	}
 
 	return () => ({

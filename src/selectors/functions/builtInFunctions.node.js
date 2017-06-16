@@ -2,7 +2,12 @@ import builtinStringFunctions from './builtInFunctions.string';
 import Sequence from '../dataTypes/Sequence';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-var stringFunctions = builtinStringFunctions.functions;
+import QName from '../dataTypes/valueTypes/QName';
+/**
+ * @type {function(../DynamicContext, !Sequence): !Sequence}
+ */
+const fnString = builtinStringFunctions.functions.string;
+
 function contextItemAsFirstArgument (fn, dynamicContext) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
@@ -14,39 +19,55 @@ function fnName (dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return stringFunctions.string(dynamicContext, fnNodeName(dynamicContext, sequence));
+	return fnString(dynamicContext, fnNodeName(dynamicContext, sequence));
+}
+
+function fnLocalName (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return Sequence.singleton(createAtomicValue('', 'xs:string'));
+	}
+	/**
+	 * @type {Node}
+	 */
+	const node = sequence.first().value;
+
+	if (node.nodeType === 7) {
+		const pi = /** @type {ProcessingInstruction} */ (node);
+		return Sequence.singleton(createAtomicValue(pi.target, 'xs:string'));
+	}
+
+	return Sequence.singleton(createAtomicValue(node.localName || '', 'xs:string'));
 }
 
 function fnNodeName (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	var node = sequence.first().value;
-	let nodeName;
+	/**
+	 * @type {Node}
+	 */
+	const node = sequence.first().value;
 	switch (node.nodeType) {
-		case 2:
-			nodeName = node.nodeName;
-			break;
 		case 1:
-			// element
-			nodeName = node.nodeName;
-			break;
+		case 2:
+			// element or attribute
+			return Sequence.singleton(createAtomicValue(new QName(node.prefix, node.namespaceURI, node.localName), 'xs:QName'));
 		case 7:
 			// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
-			nodeName = (/** @type {ProcessingInstruction} */(node)).target;
-
-			break;
+			const processingInstruction = /** @type {ProcessingInstruction} */ (node);
+			return Sequence.singleton(createAtomicValue(new QName('', '', processingInstruction.target), 'xs:QName'));
 		default:
 			// All other nodes have no name
-			nodeName = null;
-	}
-
-	if (nodeName === null) {
 		return Sequence.empty();
 	}
-	return Sequence.singleton(createAtomicValue(nodeName, 'xs:QName'));
 }
 
+/**
+ * @param   {IDomFacade}  domFacade
+ * @param   {Node}        ancestor
+ * @param   {Node}        descendant
+ * @return  {boolean}
+ */
 function contains (domFacade, ancestor, descendant) {
 	if (ancestor.nodeType === 2) {
 		return ancestor === descendant;
@@ -65,7 +86,10 @@ function fnOutermost (dynamicContext, nodeSequence) {
 		return nodeSequence;
 	}
 
-	var resultNodes = sortNodeValues(dynamicContext.domFacade, nodeSequence.getAllValues())
+	/**
+	 * @type {Array<Node>}
+	 */
+	const resultNodes = sortNodeValues(dynamicContext.domFacade, nodeSequence.getAllValues())
 		.reduce(function (previousNodes, node, i) {
 			if (i === 0) {
 				previousNodes.push(node);
@@ -89,7 +113,10 @@ function fnInnermost (dynamicContext, nodeSequence) {
 		return nodeSequence;
 	}
 
-	var resultNodes = sortNodeValues(dynamicContext.domFacade, nodeSequence.getAllValues())
+	/**
+	 * @type {Array<Node>}
+	 */
+	const resultNodes = sortNodeValues(dynamicContext.domFacade, nodeSequence.getAllValues())
 		.reduceRight(function (followingNodes, node, i, allNodes) {
 			if (i === allNodes.length - 1) {
 				followingNodes.push(node);
@@ -150,6 +177,20 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:QName?',
 			callFunction: contextItemAsFirstArgument.bind(null, fnNodeName)
+		},
+
+		{
+			name: 'local-name',
+			argumentTypes: ['node()?'],
+			returnType: 'xs:string',
+			callFunction: fnLocalName
+		},
+
+		{
+			name: 'local-name',
+			argumentTypes: [],
+			returnType: 'xs:string',
+			callFunction: contextItemAsFirstArgument.bind(null, fnLocalName)
 		}
 	],
 	functions: {
