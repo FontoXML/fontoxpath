@@ -12,7 +12,7 @@ import {
 
 let documentNode;
 beforeEach(() => {
-	documentNode = slimdom.createDocument();
+	documentNode = new slimdom.Document();
 });
 
 describe('relative paths', () => {

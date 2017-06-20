@@ -8,7 +8,7 @@ import {
 describe('createSelectorFromXPathAsync', () => {
 	let documentNode;
 	beforeEach(() => {
-		documentNode = slimdom.createDocument();
+		documentNode = new slimdom.Document();
 	});
 
 	it('can compile a selector asynchronously', () => {

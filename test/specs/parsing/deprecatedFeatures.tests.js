@@ -7,7 +7,7 @@ import {
 describe('Deprecated features', () => {
 	let documentNode;
 	beforeEach(() => {
-		documentNode = slimdom.createDocument();
+		documentNode = new slimdom.Document();
 	});
 
 	it('Does not accept functions as tests anymore',

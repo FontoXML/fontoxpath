@@ -77,5 +77,5 @@ function runTests (document) {
 
 describe('performance of descendant axis', () => {
 	describe('in browser DOM', () => runTests(window.document.implementation.createDocument(null, null)));
-	describe('in slimdom', () => runTests(slimdom.createDocument()));
+	describe('in slimdom', () => runTests(new slimdom.Document()));
 });

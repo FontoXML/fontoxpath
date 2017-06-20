@@ -7,7 +7,7 @@ import {
 describe('IfExpression', () => {
 	let documentNode;
 	beforeEach(() => {
-		documentNode = slimdom.createDocument();
+		documentNode = new slimdom.Document();
 	});
 
 	it('returns the value of the then expression if the test resolves to true',
