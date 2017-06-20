@@ -65,6 +65,9 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	const untypedVariables = Object.assign(variables || {});
 	untypedVariables['theBest'] = 'FontoXML is the best!';
 
+	/**
+	 *
+	 */
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
 
 	/**

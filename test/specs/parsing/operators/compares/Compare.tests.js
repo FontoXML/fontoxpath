@@ -6,7 +6,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
-	documentNode = slimdom.createDocument();
+	documentNode = new slimdom.Document();
 });
 
 describe('Value compares', () => {

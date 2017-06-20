@@ -8,7 +8,7 @@ import * as slimdom from 'slimdom';
 
 let documentNode;
 beforeEach(() => {
-	documentNode = slimdom.createDocument();
+	documentNode = new slimdom.Document();
 });
 
 describe('functions over nodes', () => {

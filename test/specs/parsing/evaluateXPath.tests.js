@@ -15,7 +15,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 describe('evaluateXPath', () => {
 	let documentNode;
 	beforeEach(() => {
-		documentNode = slimdom.createDocument();
+		documentNode = new slimdom.Document();
 	});
 
 	it('Keeps booleans booleans',

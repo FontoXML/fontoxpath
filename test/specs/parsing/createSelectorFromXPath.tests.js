@@ -8,7 +8,7 @@ import {
 describe('createSelectorFromXPath', () => {
 	let documentNode;
 	beforeEach(() => {
-		documentNode = slimdom.createDocument();
+		documentNode = new slimdom.Document();
 	});
 
 	it('matches hovercrafts full of eels', () => {

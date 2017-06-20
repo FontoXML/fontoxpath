@@ -10,7 +10,7 @@ import {
 describe('registerCustomXPath() =>', () => {
 	let documentNode;
 	beforeEach(() => {
-		documentNode = slimdom.createDocument();
+		documentNode = new slimdom.Document();
 	});
 
 	before(() => {

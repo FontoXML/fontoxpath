@@ -6,7 +6,7 @@ import {
 } from 'fontoxpath';
 
 let documentNode;
-beforeEach(() => documentNode = slimdom.createDocument());
+beforeEach(() => documentNode = new slimdom.Document());
 
 describe('Integer literal', () => {
 	it('results in an integer',

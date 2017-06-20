@@ -12,7 +12,7 @@ describe('DomFacade', () => {
 	let attributeNode;
 
 	beforeEach(() => {
-		documentNode = slimdom.createDocument();
+		documentNode = new slimdom.Document();
 		jsonMlMapper.parse([
 			'someElement',
 			{
