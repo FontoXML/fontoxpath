@@ -126,7 +126,8 @@ describe('evaluateXPath', () => {
 		});
 
 		it('can resolve using the passed element', () => {
-			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("html") => namespace-uri-from-QName() eq "http://www.w3.org/1999/xhtml"', window.document));
+			const ele = documentNode.createElementNS('http://example.com/ns', 'element');
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("something-without-a-prefix") => namespace-uri-from-QName() eq "http://example.com/ns"', ele));
 		});
 
 		it('can resolve using the passed resolver', () => {
