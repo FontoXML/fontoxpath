@@ -49,7 +49,7 @@
     "pegjs": "^0.10.0",
     "sinon": "^2.2.0",
     "sinon-chai": "^2.10.0",
-    "slimdom": "bwrrp/slimdom.js#align-with-spec",
+    "slimdom": "^2.0.0",
     "text-loader": "0.0.1",
     "uglify-js": "^3.0.4",
     "webpack": "^2.5.1"
