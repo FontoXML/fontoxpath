@@ -75,7 +75,7 @@ module.exports = config => {
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-		browsers: ciMode ? ['ChromiumNoSandbox', 'Firefox'] : [],
+		browsers: ciMode ? ['Firefox', 'ChromiumNoSandbox'] : [],
 
 		// The QT3 tests take a while to download
 		browserNoActivityTimeout: runQt3Tests ? 200000 : 20000,
@@ -84,7 +84,11 @@ module.exports = config => {
 		customLaunchers: {
 			ChromiumNoSandbox: {
 				base: 'Chromium',
-				flags: ['--no-sandbox']
+				flags: [
+					'--no-sandbox',
+					// We don't really care for throttling of our unit tests...
+					'--disable-background-timer-throttling'
+				]
 			}
 		},
 

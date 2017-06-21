@@ -26,7 +26,7 @@ function createDefaultNamespaceResolver (contextItem) {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return (_prefix) => null;
 	}
-	return prefix => (/** @type {Node} */(contextItem)).lookupNamespaceURI(prefix);
+	return prefix => (/** @type {Node} */(contextItem)).lookupNamespaceURI(prefix || null);
 }
 
 /**
