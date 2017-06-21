@@ -134,13 +134,14 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment[source]', 
 
 const shouldRunTestByName = require('text-loader!./runnableTestSets.csv')
 	.split('\n')
-	  .map(line=>line.split(','))
-	  .reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
+	.map(line=>line.split(','))
+	.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 
 const unrunnableTestCasesByName = require('text-loader!./unrunnableTestCases.csv')
-	  .split('\n')
-	  .map(line => line.split(','))
-	  .reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join('.') }), Object.create(null));
+	.split('\n')
+	.map(line => line.split(','))
+	.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join('.') }), Object.create(null));
+
 
 evaluateXPathToNodes('/catalog/test-set', catalog)
 	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
