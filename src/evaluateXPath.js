@@ -39,7 +39,7 @@ function createDefaultNamespaceResolver (contextItem) {
  *  * Else, the sequence is atomized and returned.
  *
  * @param  {!string}       xpathSelector  The selector to execute. Supports XPath 3.1.
- * @param  {Node|*|null}        contextItem    The node from which to run the XPath.
+ * @param  {Node|*|null}   contextItem    The node from which to run the XPath.
  * @param  {?IDomFacade=}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number / string or boolean.
  * @param  {?number=}      returnType     One of the return types, indicates the expected type of the XPath query.
@@ -65,9 +65,6 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	const untypedVariables = Object.assign(variables || {});
 	untypedVariables['theBest'] = 'FontoXML is the best!';
 
-	/**
-	 *
-	 */
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
 
 	/**

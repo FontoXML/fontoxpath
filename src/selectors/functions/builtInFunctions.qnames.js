@@ -42,10 +42,7 @@ function fnNamespaceURIFromQName (_dynamicContext, arg) {
 		return arg;
 	}
 	const qname = arg.first().value;
-	if (!qname.namespaceURI) {
-		return Sequence.empty();
-	}
-	return Sequence.singleton(createAtomicValue(qname.namespaceURI, 'xs:anyURI'));
+	return Sequence.singleton(createAtomicValue(qname.namespaceURI || '', 'xs:anyURI'));
 }
 
 function fnLocalNameFromQName (_dynamicContext, arg) {

@@ -28,8 +28,7 @@ function anyAtomicTypeDeepEqual (_dynamicContext, item1, item2) {
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 	if (isSubtypeOf(item1.type, 'xs:QName') && isSubtypeOf(item2.type, 'xs:QName')) {
-		return item1.value.prefix === item2.value.prefix &&
-			item1.value.namespaceURI === item2.value.namespaceURI &&
+		return item1.value.namespaceURI === item2.value.namespaceURI &&
 			item1.value.localPart === item2.value.localPart;
 	}
 	return item1.value === item2.value;

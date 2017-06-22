@@ -142,7 +142,7 @@ describe('functions over strings', () => {
 
 		it('returns the string value of the passed node: text nodes.', () => {
 			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
-			chai.assert.equal(evaluateXPathToString('string()', documentNode.firstChild), 'Some text.');
+			chai.assert.equal(evaluateXPathToString('string()', documentNode.documentElement.firstChild), 'Some text.');
 		});
 
 		it('returns the string value of the passed node: PI nodes.', () => {

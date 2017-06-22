@@ -541,7 +541,7 @@ StringLiteral
 URIQualifiedName = uri:BracedURILiteral name:NCName {return [uri, name]}
 
 // 118
-BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('')}
+BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').trim()}
 
 // 119
 EscapeQuot

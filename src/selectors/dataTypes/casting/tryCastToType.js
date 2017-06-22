@@ -140,7 +140,7 @@ function createCastingFunction (from, to) {
 	if (!primitiveTo || !primitiveFrom) {
 		return (_val) => ({
 			successful: false,
-			error: new Error('XPST0080: Casting from or to types without a primitive base type is not supported.')
+			error: new Error('XPST0081: Can not cast: type is unknown.')
 		});
 	}
 	const converters = [];

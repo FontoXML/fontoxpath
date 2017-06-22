@@ -36,7 +36,7 @@ describe('functions over qnames', () => {
 
 	describe('namespace-uri-from-QName()', () => {
 		it('Returns the namespace-uri of a qname with no prefix',
-			() => chai.assert.isTrue(evaluateXPathToBoolean('namespace-uri-from-QName(QName((), "someElement")) => empty()', documentNode)));
+			() => chai.assert.isTrue(evaluateXPathToBoolean('namespace-uri-from-QName(QName((), "someElement")) = ""', documentNode)));
 		it('Returns the namespace-uri of a qname with a prefix',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('namespace-uri-from-QName(QName("http://example.com/ns", "ns:someElement")) = "http://example.com/ns"', documentNode)));
 		it('Returns the namespace uri of a qname resulting from an attribute', () => {
