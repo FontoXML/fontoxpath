@@ -32,7 +32,7 @@ function generateCompareFunction (operator, typeA, typeB) {
 	if (isSubtypeOf(typeA, 'xs:QName') && isSubtypeOf(typeB, 'xs:QName')) {
 		if (operator === 'eq') {
 			return (a, b) => {
-                const { castA, castB } = applyCastFunctions(a, b);
+				const { castA, castB } = applyCastFunctions(a, b);
 				return castA.value.namespaceURI === castB.value.namespaceURI && castA.value.localPart === castB.value.localPart;
 			};
 		}

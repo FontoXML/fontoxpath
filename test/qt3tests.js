@@ -196,7 +196,6 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 
 				let contextNode;
 				const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
-prefix => namespaces[prefix];
 				let namespaceResolver = localNamespaceResolver;
 				let variablesInScope = undefined;
 				if (environmentName) {

@@ -20,7 +20,7 @@ class NamedFunctionRef extends Selector {
 		});
 
 		if (functionReference.namespaceURI) {
-			throw new Error('Not implemented: casting expressions with a namespace URI.');
+			throw new Error('Not implemented: function references with a namespace URI.');
 		}
 
 		const functionName = functionReference.prefix ? `${functionReference.prefix}:${functionReference.name}` : functionReference.name;

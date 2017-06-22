@@ -2016,7 +2016,6 @@ CastAs673b,Error: Casting to xs:QName is not implemented.
 CastAs677,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 CastAs678,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 CastFOCA0003-1,AssertionError: Expected executing the XPath "xs:integer(99e100)" to resolve to one of the expected results, but got Error: FOAR0002: can not cast 9.9e+101 to xs:integer, it is out of bounds for JavaScript numbers., AssertionError: expected [Function] to throw error including 'FOCA0003' but got 'FOAR0002: can not cast 9.9e+101 to xs:integer, it is out of bounds for JavaScript numbers.'.
-K-SeqExprCast-8,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPST0080: Casting from or to types without a primitive base type is not supported.'
 K-SeqExprCast-68,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
 K-SeqExprCast-69,AssertionError: Expected executing the XPath ". cast as xs:QName" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.', AssertionError: expected [Function] to throw error including 'XPDY0002' but got 'Casting to xs:QName is not implemented.'.
 K-SeqExprCast-71a,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
@@ -2212,9 +2211,7 @@ eqname-020,Error: Not implemented: casting expressions with a namespace URI.
 eqname-021,Error: Not implemented: casting expressions with a namespace URI.
 eqname-022,Error: Not implemented: casting expressions with a namespace URI.
 eqname-024,Error: Not implemented: references to variables with a namespace URI or a prefix.
-eqname-025,Error: Not implemented: references to variables with a namespace URI or a prefix.
-eqname-026,AssertionError: string((//Q{  http://www.example.com/AuctionWatch  }Start)[1]): expected '' to equal '3.00'
-eqname-027,AssertionError: string(          /Q{  http://www.example.com/AuctionWatch}AuctionWatchList/          Q{   http://www.example.com/AuctionWatch}Auction[2]/          @Q{  http://www.example.com/auctioneers#yabadoo}ID): expected '' to equal '13143816'
+eqname-025,Error: XPTY0004: the operands of the "+" operator should be of type xs:numeric?.
 eqname-029p,Error: Not implemented: casting expressions with a namespace URI.
 eqname-030,Error: Not implemented: references to variables with a namespace URI or a prefix.
 eqname-031,Error: Not implemented: references to variables with a namespace URI or a prefix.
@@ -2224,7 +2221,7 @@ eqname-034,AssertionError: Expected executing the XPath "          let $Q{$Q}a :
 eqname-908,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'Not implemented: casting expressions with a namespace URI.'
 eqname-909p,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'Not implemented: casting expressions with a namespace URI.'
 eqname-910,AssertionError: expected [Function] to throw an error
-eqname-913,AssertionError: expected [Function] to throw error including 'XQST0039' but got 'Not implemented: inline functions with a namespace URI in the binding.'
+eqname-913,AssertionError: expected [Function] to throw an error
 ForExpr012,Error: XPTY0004: expected argument list of function string to be [undefined+], got function with argument list [item()?].
 ForExpr013,AssertionError: Expected XPath          for $fileName in //File/FileName,              $folderName in //Folder[contains(description, 'fren')]/FolderName          return ($folderName, $fileName) to resolve to the given XML: expected [ Array(102) ] to deeply equal []
 ForExpr015,Error: XPTY0004: expected argument list of function string to be [undefined+], got function with argument list [item()?].
@@ -2255,10 +2252,10 @@ K-ForExprWithout-56,Error: XPST0017: Function timezone-from-time with arity of 1
 K2-ForExprWithout-7,AssertionError: expected [Function] to throw an error
 K2-ForExprWithout-40,AssertionError: expected [Function] to throw an error
 K2-ForExprWithout-41,AssertionError: expected [Function] to throw an error
-FunctionCall-010,Error: XPST0080: Casting from or to types without a primitive base type is not supported.
+FunctionCall-010,Error: XPST0081: Can not cast: type is unknown.
 FunctionCall-011,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 FunctionCall-012,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.'
-FunctionCall-027,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0080: Casting from or to types without a primitive base type is not supported.'
+FunctionCall-027,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0081: Can not cast: type is unknown.'
 FunctionCall-044,AssertionError: expected [Function] to throw an error
 FunctionCall-048,AssertionError: expected [Function] to throw an error
 K-FunctionCallExpr-5,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPST0017: Function prefix-does-not-exist:func-does-not-exist with arity of 3 not registered. No similar functions found.'
@@ -3176,7 +3173,6 @@ functx-fn-months-from-duration-2,Error: XPST0017: Function months-from-duration 
 functx-fn-months-from-duration-3,Error: XPST0017: Function months-from-duration with arity of 1 not registered. No similar functions found.
 functx-fn-months-from-duration-4,Error: XPST0017: Function months-from-duration with arity of 1 not registered. No similar functions found.
 functx-fn-months-from-duration-all,Error: XPST0017: Function months-from-duration with arity of 1 not registered. No similar functions found.
-functx-fn-namespace-uri-from-QName-all,AssertionError: (namespace-uri-from-QName( QName ('http://datypic.com/pre', 'prefixed')), namespace-uri-from-QName( QName ('', 'unprefixed')), namespace-uri-from-QName( () )): expected 'http://datypic.com/pre' to equal 'http://datypic.com/pre '
 functx-fn-normalize-unicode-1,Error: XPST0017: Function normalize-unicode with arity of 1 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
 functx-fn-normalize-unicode-2,Error: XPST0017: Function normalize-unicode with arity of 2 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
 functx-fn-normalize-unicode-all,Error: XPST0017: Function normalize-unicode with arity of 1 not registered. Did you mean "normalize-space (xs:string?)" or "normalize-space ()"?
