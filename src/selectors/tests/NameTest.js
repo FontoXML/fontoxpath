@@ -75,6 +75,9 @@ class NameTest extends Selector {
 		}
 		else {
 			resolvedNamespaceURI = dynamicContext.resolveNamespacePrefix(this._prefix);
+			if (!resolvedNamespaceURI) {
+				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
+			}
 		}
 
 		return node.value.namespaceURI === resolvedNamespaceURI ?

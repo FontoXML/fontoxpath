@@ -14,6 +14,8 @@ import builtInQNameFunctions from './builtInFunctions.qnames';
 import builtInSequencesFunctions from './builtInFunctions.sequences';
 import builtInStringFunctions from './builtInFunctions.string';
 
+import builtInFontoxpathFunctions from './builtInFunctions.fontoxpath';
+
 import Sequence from '../dataTypes/Sequence';
 import DynamicContext from '../DynamicContext';
 
@@ -35,4 +37,5 @@ export default [].concat(
 	builtInOperatorFunctions.declarations,
 	builtInQNameFunctions.declarations,
 	builtInSequencesFunctions.declarations,
-	builtInStringFunctions.declarations);
+	builtInStringFunctions.declarations,
+	builtInFontoxpathFunctions.declarations);

@@ -90,7 +90,9 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 				return DEFAULT_NAMESPACES[prefix];
 			}
 			return namespaceResolver(prefix);
-		}
+		},
+		// propagate the compiler here
+		createSelectorFromXPath: createSelectorFromXPath
 	});
 
 	/**

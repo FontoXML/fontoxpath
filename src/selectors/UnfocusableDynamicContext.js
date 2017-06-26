@@ -13,7 +13,10 @@ export default class UnfocusableDynamicContext extends DynamicContext {
 			contextSequence: Sequence.empty(),
 			variables: variables,
 			domFacade: null,
-			resolveNamespacePrefix: () => ''
+			resolveNamespacePrefix: () => '',
+			createSelectorFromXPath: () => {
+				throw new Error('Statically evaluating inline expressions is not supported.');
+			}
 		});
 	}
 }

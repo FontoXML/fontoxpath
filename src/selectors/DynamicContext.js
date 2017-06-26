@@ -5,13 +5,13 @@ let Sequence;
 
 /**
  * All possible permutations
- * @typedef {!{contextItemIndex: !number, contextSequence: ?Sequence}|{variables: Object}}|{contextItemIndex: number, contextSequence: !Sequence, variables: !Object}}
+ * @typedef {!{contextItemIndex: !number, contextSequence: ?Sequence}|{variables: Object}}|{contextItemIndex: number, contextSequence: !Sequence, variables: !Object, createSelectorFromXPath: function(string):!./Selector}}
  */
 let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string}}  context  The context to overlay
+	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string, createSelectorFromXPath: function(string):!./Selector}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -49,6 +49,8 @@ class DynamicContext {
 		 * @const
 		 */
 		this.resolveNamespacePrefix = context.resolveNamespacePrefix;
+
+		this.createSelectorFromXPath = context.createSelectorFromXPath;
 	}
 
 	/**
@@ -63,7 +65,8 @@ class DynamicContext {
 
 			domFacade: this.domFacade,
 			variables: Object.assign({}, this.variables, variables),
-			resolveNamespacePrefix: this.resolveNamespacePrefix
+			resolveNamespacePrefix: this.resolveNamespacePrefix,
+			createSelectorFromXPath: this.createSelectorFromXPath
 		});
 	}
 
@@ -81,7 +84,8 @@ class DynamicContext {
 
 			domFacade: this.domFacade,
 			variables: this.variables,
-			resolveNamespacePrefix: this.resolveNamespacePrefix
+			resolveNamespacePrefix: this.resolveNamespacePrefix,
+			createSelectorFromXPath: this.createSelectorFromXPath
 		});
 	}
 
