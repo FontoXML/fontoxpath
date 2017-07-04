@@ -5,14 +5,14 @@ import { trueBoolean, falseBoolean } from './createAtomicValue';
 /**
  * @const
  */
-const DONE_VALUE = { done: true, value: undefined };
+const DONE_VALUE = { done: true, ready: true, value: undefined };
 
 /**
  * @constructor
  * @template T
  * @extends {./Value}
- * @param  {!Array<T> | !Iterator<T>}       valueIteratorOrArray
- * @param  {?number=}                       predictedLength
+ * @param   {!Array<T> | !Iterator<T>}  valueIteratorOrArray
+ * @param   {?number=}                  predictedLength
  */
 function Sequence (valueIteratorOrArray, predictedLength = null) {
 	if (Array.isArray(valueIteratorOrArray)) {
@@ -20,44 +20,35 @@ function Sequence (valueIteratorOrArray, predictedLength = null) {
 	}
 	this.value = () => {
 		const valueIterator = /** @type {!Iterator} */(valueIteratorOrArray);
-		let i = -1;
+		let i = 0;
 		return {
 			[Symbol.iterator]: function () {
 				return this;
 			},
 			next: () => {
-				i++;
 				if (this._length !== null && i >= this._length) {
 					return DONE_VALUE;
 				}
 
 				if (this._cachedValues[i] !== undefined) {
-					return { done: false, value: this._cachedValues[i] };
+					return { done: false, ready: true, value: this._cachedValues[i++] };
 				}
-
-				if (i === 0) {
-					const first = valueIterator.next();
-					if (first.done) {
-						this._length = 0;
-						return DONE_VALUE;
-					}
-					this._cachedValues[0] = first.value;
-					return { done: false, value: first.value };
-				}
-
-				if (i === 1) {
-					const second = valueIterator.next();
-					if (second.done) {
-						this._length = 1;
-						return DONE_VALUE;
-					}
-					this._cachedValues[1] = second.value;
-					return { done: false, value: second.value };
-				}
-
-				this._iteratorHasProgressed = true;
 
 				const value = valueIterator.next();
+				if (!value.ready) {
+					return value;
+				}
+				if (value.done) {
+					this._length = i;
+					return value;
+				}
+				if (i < 2) {
+					this._cachedValues[i] = value.value;
+				}
+				else {
+					this._iteratorHasProgressed = true;
+				}
+				i++;
 				return value;
 			}
 		};
@@ -73,8 +64,17 @@ function Sequence (valueIteratorOrArray, predictedLength = null) {
 Sequence.prototype.getAllValues = function () {
 	if (this._iteratorHasProgressed && this._length !== this._cachedValues.length) {
 		throw new Error('Implementation error: Sequence Iterator has progressed.');
+
 	}
-	return Array.from(this.value());
+	const iterator = this.value();
+	const values = [];
+	for (let val = iterator.next; !val.done; val = iterator.next()) {
+		if (!val.ready) {
+			throw new Error('infinite loop prevented');
+		}
+		values.push(val.value);
+	}
+	return values;
 };
 
 Sequence.prototype.first = function () {
@@ -98,8 +98,12 @@ Sequence.prototype.map = function (callback) {
 			if (value.done) {
 				return value;
 			}
+			if (!value.ready) {
+				return value;
+			}
 			return {
 				done: false,
+				ready: true,
 				value: callback(value.value, i, this)
 			};
 		}
@@ -117,13 +121,50 @@ Sequence.prototype.filter = function (callback) {
 		next: () => {
 			i++;
 			let value = iterator.next();
-			while (!value.done && !callback(value.value, i, this)) {
+			while (!value.done) {
+				if (!value.ready) {
+					return value;
+				}
+				if (callback(value.value, i, this)) {
+					return value;
+				}
+
 				i++;
 				value = iterator.next();
 			}
 			return value;
 		}
 	}));
+};
+
+Sequence.prototype.mapAll = function (cb) {
+	const iterator = this.value();
+	let mappedResults;
+	const allResults = [];
+	let isReady = false;
+	let readyPromise = null;
+	(function processNextResult () {
+		for (let value = iterator.next(); !value.done; value = iterator.next()) {
+			if (!value.ready) {
+				readyPromise = value.promise.then(processNextResult);
+				return;
+			}
+			allResults.push(value.value);
+		}
+		mappedResults = cb(allResults);
+		isReady = true;
+	})();
+	return new Sequence({
+		next: () => {
+			if (!isReady) {
+				return { ready: false, promise: readyPromise, done: false };
+			}
+			if (!mappedResults.length) {
+				return DONE_VALUE;
+			}
+			return { done: false, ready: true, value: mappedResults.shift() };
+		}
+	});
 };
 
 /**
@@ -155,6 +196,9 @@ Sequence.prototype.isSingleton = function () {
 	const iterator = this.value();
 
 	let value = iterator.next();
+	if (!value.ready) {
+		throw new Error('What to do here?');
+	}
 	if (value.done) {
 		return false;
 	}
@@ -202,6 +246,49 @@ Sequence.prototype.expandSequence = function () {
 };
 
 /**
+ * @param  {{empty: function():}}
+ */
+Sequence.prototype.mapCases = function (cases) {
+	const scanIterator = this.value();
+	const returnIterator = this.value();
+	let scanIteration = 0;
+	const firstTwoValues = [];
+	return new Sequence({
+		next: () => {
+			// We need to reach two iterations
+			while (scanIteration < 3) {
+				const value = scanIterator.next();
+				if (!value.ready) {
+					return value;
+				}
+				if (value.done) {
+					break;
+				}
+				firstTwoValues.push(value.value);
+				scanIteration++;
+			}
+			switch (scanIteration) {
+				case 0:
+					return cases.empty();
+				case 1:
+					const value = returnIterator.next();
+					if (value.done || !value.ready) {
+						return value;
+					}
+					return { done: false, ready: true, value: cases.singleton(this.first()) };
+				default: {
+					const value = returnIterator.next();
+					if (value.done || !value.ready) {
+						return value;
+					}
+					return { done: false, ready: true, value: cases.multiple(value.value) };
+				}
+			}
+		}
+	});
+};
+
+/**
  * @constructor
  * @extends Sequence
  */
@@ -223,6 +310,8 @@ EmptySequence.prototype.expandSequence = function () {
 	return this;
 };
 
+EmptySequence.prototype.mapCases = ({ empty }) => new Sequence({ next: empty });
+
 const emptySequence = new EmptySequence();
 
 EmptySequence.prototype.atomize = EmptySequence.prototype.filter = EmptySequence.prototype.map = () => emptySequence;
@@ -243,7 +332,7 @@ function SingletonSequence (onlyValue) {
 					return DONE_VALUE;
 				}
 				hasPassed = true;
-				return { done: false, value: onlyValue };
+				return { done: false, ready: true, value: onlyValue };
 			}
 		};
 	};
@@ -277,8 +366,14 @@ SingletonSequence.prototype.filter = function (cb) {
 SingletonSequence.prototype.map = function (cb) {
 	return new SingletonSequence(cb(this._onlyValue, 0, this));
 };
+SingletonSequence.prototype.mapAll = function (cb) {
+	return new SingletonSequence(cb([this._onlyValue], 0, this));
+};
 SingletonSequence.prototype.expandSequence = function () {
 	return this;
+};
+SingletonSequence.prototype.mapCases = function ({ singleton }) {
+	return new SingletonSequence(singleton(this._onlyValue));
 };
 
 /**
@@ -301,7 +396,7 @@ function ArrayBackedSequence (values) {
 				if (i >= values.length) {
 					return DONE_VALUE;
 				}
-				return { done: false, value: values[i] };
+				return { done: false, ready: true, value: values[i] };
 			}
 		};
 	};
@@ -336,7 +431,7 @@ ArrayBackedSequence.prototype.filter = function (cb) {
 				return DONE_VALUE;
 			}
 
-			return { done: false, value: this._values[i] };
+			return { done: false, ready: true, value: this._values[i] };
 		}
 	}));
 };
@@ -348,7 +443,7 @@ ArrayBackedSequence.prototype.map = function (cb) {
 			if (i >= this._values.length) {
 				return DONE_VALUE;
 			}
-			return { done: false, value: cb(this._values[i], i, this) };
+			return { done: false, ready: true, value: cb(this._values[i], i, this) };
 		}
 	}));
 };
@@ -360,6 +455,9 @@ ArrayBackedSequence.prototype.atomize = function (dynamicContext) {
 };
 ArrayBackedSequence.prototype.expandSequence = function () {
 	return this;
+};
+ArrayBackedSequence.prototype.mapCases = function ({ multiple }) {
+	return this.map(multiple);
 };
 
 /**

@@ -3,10 +3,11 @@ import atomize from '../dataTypes/atomize';
 import Sequence from '../dataTypes/Sequence';
 
 function fnTrace (dynamicContext, arg, label) {
-	const argumentItems = arg.getAllValues();
-	const argumentAsStrings = argumentItems.map(value => castToType(atomize(value, dynamicContext), 'xs:string'));
-	console.log.apply(console, label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]);
-	return new Sequence(argumentItems);
+	return arg.mapAll(allItems => {
+		const argumentAsStrings = allItems.map(value => castToType(atomize(value, dynamicContext), 'xs:string'));
+		console.log.apply(console, label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]);
+		return allItems;
+	});
 }
 
 export default {

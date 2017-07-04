@@ -92,11 +92,14 @@ function fnExists (_dynamicContext, sequence) {
 		return Sequence.singletonFalseSequence();
 	}
 
-		return Sequence.singletonTrueSequence();
+	return Sequence.singletonTrueSequence();
 }
 
 function fnHead (_dynamicContext, sequence) {
 	if (sequence.isEmpty(sequence)) {
+		return sequence;
+	}
+	if (sequence.isSingleton(sequence)) {
 		return sequence;
 	}
 
@@ -130,7 +133,7 @@ function fnInsertBefore (_dynamicContext, sequence, position, inserts) {
 		effectivePosition = sequenceValue.length + 1;
 	}
 
-	sequenceValue.splice.apply(sequenceValue, [effectivePosition - 1, 0].concat(Array.from(inserts.value())));
+	sequenceValue.splice.apply(sequenceValue, [effectivePosition - 1, 0].concat(inserts.getAllValues()));
 	return new Sequence(sequenceValue);
 }
 
@@ -182,7 +185,7 @@ function fnSubsequence (_dynamicContext, sequence, startingLoc, lengthSequence) 
 			i++;
 
 			if (length !== null && i > length) {
-				return { done: true, value: undefined };
+				return { done: true,  ready: true, value: undefined };
 			}
 			return iterator.next();
 		}

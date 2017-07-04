@@ -22,6 +22,13 @@ function fnName (dynamicContext, sequence) {
 	return fnString(dynamicContext, fnNodeName(dynamicContext, sequence));
 }
 
+function fnNamespaceURI (_dynamicContext, sequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+	return Sequence.singleton(createAtomicValue(sequence.first().value.namespaceURI || '', 'xs:anyURI'));
+}
+
 function fnLocalName (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(createAtomicValue('', 'xs:string'));
@@ -149,6 +156,20 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(null, fnName)
+		},
+
+		{
+			name: 'namespace-uri',
+			argumentTypes: ['node()'],
+			returnType: 'xs:anyURI',
+			callFunction: fnNamespaceURI
+		},
+
+		{
+			name: 'namespace-uri',
+			argumentTypes: [],
+			returnType: 'xs:anyURI',
+			callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI)
 		},
 
 		{

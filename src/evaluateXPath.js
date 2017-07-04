@@ -235,6 +235,33 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 				return value.value;
 			});
 
+		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
+			const it = rawResults.value();
+			let iteration = 0;
+			function getNextResult () {
+				if (iteration++ > 100) {
+					return { done: true };
+				}
+				const value = it.next();
+				if (value.done) {
+					return {
+						done: true
+					};
+				}
+				if (value.ready) {
+					return {
+						done: false,
+						value: value.value.value
+					};
+				}
+				return value.promise.then(getNextResult);
+			}
+			return {
+				[Symbol.asyncIterator]: function () {return this;},
+				next: () => new Promise(resolve => resolve(getNextResult()))
+			};
+		}
+
 		default:
 			var allValuesAreNodes = rawResults.getAllValues().every(function (value) {
 				return isSubtypeOf(value.type, 'node()') &&
@@ -298,6 +325,8 @@ evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = 10;
 evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = 11;
 
 evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = 12;
+
+evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE = 99;
 
 /**
  * Resolve to an array of numbers

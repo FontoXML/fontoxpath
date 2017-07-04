@@ -17,6 +17,36 @@ function splitType (type) {
 		multiplicity: parts[2]
 	};
 }
+
+function mapItem (argumentItem, type, dynamicContext) {
+	if (isSubtypeOf(argumentItem.type, type)) {
+		return argumentItem;
+	}
+
+	if (isSubtypeOf(argumentItem.type, 'node()')) {
+		argumentItem = atomize(argumentItem, dynamicContext);
+	}
+	// Everything is an anyAtomicType, so no casting necessary.
+	if (type === 'xs:anyAtomicType') {
+		return argumentItem;
+	}
+	if (isSubtypeOf(argumentItem.type, 'xs:untypedAtomic')) {
+		// We might be able to cast this to the wished type
+		const item = castToType(argumentItem, type);
+		if (!item) {
+			throw new Error('XPTY0004 Unable to convert to type');
+		}
+		return item;
+	}
+
+	// We need to promote this
+	const item = promoteToType(argumentItem, type);
+	if (!item) {
+		throw new Error('XPTY0004 Unable to convert to type');
+	}
+	return item;
+}
+
 /**
  * Test whether the provided argument is valid to be used as an function argument of the given type
  * @param   {string}           argumentType
@@ -26,55 +56,23 @@ function splitType (type) {
  */
 export const transformArgument = (argumentType, argument, dynamicContext) => {
 	const { type, multiplicity } = splitType(argumentType);
-
-	switch (multiplicity) {
-		case '?':
-			if (!argument.isEmpty() && !argument.isSingleton()) {
-				return null;
+	return argument.mapCases({
+		empty: () => {
+			if (multiplicity === '+' || !multiplicity) {
+				// Error case: should be passed through to caller
+				throw new Error('Multiplicity of function argument is incorrect.');
 			}
-			break;
-
-		case '+':
-			if (argument.isEmpty()) {
-				return null;
+			return { done: true };
+		},
+		singleton: (value) => {
+			return mapItem(value, type, dynamicContext);
+		},
+		multiple: (value) => {
+			if (multiplicity === '?' || !multiplicity) {
+				// Error case: should be passed through to caller
+				throw new Error('Multiplicity of function argument is incorrect.');
 			}
-			break;
-
-		case '*':
-			break;
-
-		default:
-			if (!argument.isSingleton()) {
-				return null;
-			}
-	}
-
-	return argument.map(argumentItem => {
-		if (isSubtypeOf(argumentItem.type, type)) {
-			return argumentItem;
+			return mapItem(value, type, dynamicContext);
 		}
-
-		if (isSubtypeOf(argumentItem.type, 'node()')) {
-			argumentItem = atomize(argumentItem, dynamicContext);
-		}
-		// Everything is an anyAtomicType, so no casting necessary.
-		if (type === 'xs:anyAtomicType') {
-			return argumentItem;
-		}
-		if (isSubtypeOf(argumentItem.type, 'xs:untypedAtomic')) {
-			// We might be able to cast this to the wished type
-			const item = castToType(argumentItem, type);
-			if (!item) {
-				throw new Error('XPTY0004 Unable to convert to type');
-			}
-			return item;
-		}
-
-		// We need to promote this
-		const item = promoteToType(argumentItem, type);
-		if (!item) {
-			throw new Error('XPTY0004 Unable to convert to type');
-		}
-		return item;
 	});
 };
