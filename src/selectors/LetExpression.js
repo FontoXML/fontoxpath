@@ -32,9 +32,7 @@ class LetExpression extends Selector {
 	evaluate (dynamicContext) {
 		const newVariables = Object.create(null);
 		const variable = this._bindingSequence.evaluateMaybeStatically(dynamicContext);
-		// Copy the variable to prevent evaluating it
-		// This caused bugs with XPaths like `let $x := (1,2,3) return count($x) * count($x)`
-		newVariables[this._rangeVariable] = new Sequence(variable.getAllValues());
+		newVariables[this._rangeVariable] = variable;
 		return this._returnExpression.evaluateMaybeStatically(
 			dynamicContext.scopeWithVariables(newVariables));
 	}

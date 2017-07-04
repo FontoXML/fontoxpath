@@ -116,18 +116,20 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 }
 
 function fnNumber (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return Sequence.singleton(createAtomicValue(NaN, 'xs:double'));
-	}
-	try {
-		return Sequence.singleton(castToType(sequence.first(), 'xs:double'));
-	}
-	catch (error) {
-		if (error.message.includes('FORG0001')) {
-			return Sequence.singleton(createAtomicValue(NaN, 'xs:double'));
+	return sequence.mapToEmptyOrSingleton({
+		empty: () => createAtomicValue(NaN, 'xs:double'),
+		singleton: first => {
+			try {
+				return Sequence.singleton(castToType(first, 'xs:double'));
+			}
+			catch (error) {
+				if (error.message.includes('FORG0001')) {
+					return createAtomicValue(NaN, 'xs:double');
+				}
+				throw error;
+			}
 		}
-		throw error;
-	}
+	});
 }
 
 function returnRandomItemFromSequence (_dynamicContext, sequence) {

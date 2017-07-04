@@ -16,9 +16,10 @@ function createChildGenerator (domFacade, node) {
 	return /** @type {!Iterator<!Node>} */ ({
 		next () {
 			if (i >= l) {
-				return { done: true, value: undefined };
+				return { ready: true, done: true, value: undefined };
 			}
 			return {
+				ready: true,
 				done: false,
 				value: childNodes[i++]
 			};
@@ -34,19 +35,20 @@ function createDescendantGenerator (domFacade, node) {
 	return {
 		next: () => {
 			if (!descendantIteratorStack.length) {
-				return { done: true, value: undefined };
+				return { ready: true, done: true, value: undefined };
 			}
 			let value = descendantIteratorStack[0].next();
 			while (value.done) {
 				descendantIteratorStack.shift();
 				if (!descendantIteratorStack.length) {
-					return { done: true, value: undefined };
+					return { ready: true, done: true, value: undefined };
 				}
 				value = descendantIteratorStack[0].next();
 			}
 			// Iterator over these children next
 			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value));
 			return {
+				ready: true,
 				done: false,
 				value: createNodeValue(value.value)
 			};

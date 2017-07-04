@@ -3,10 +3,10 @@ export default function createSingleValueIterator (onlyValue) {
 	return {
 		next: () => {
 			if (hasPassed) {
-				return { done: true };
+				return { done: true, ready: true, value: undefined };
 			}
 			hasPassed = true;
-			return { done: false, value: onlyValue };
+			return { done: false, ready: true, value: onlyValue };
 		}
 	};
 }

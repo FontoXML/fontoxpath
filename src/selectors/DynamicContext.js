@@ -105,9 +105,13 @@ class DynamicContext {
 				if (value.done) {
 					return value;
 				}
+				if (!value.ready) {
+					return value;
+				}
 				return {
 					done: false,
-					value: this.scopeWithFocus( i++, value.value, contextSequence)
+					value: this.scopeWithFocus( i++, value.value, contextSequence),
+					ready: true
 				};
 			}
 		});

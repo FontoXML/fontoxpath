@@ -8,44 +8,44 @@ function mapMerge (dynamicContext, mapSequence, optionMap) {
 	var duplicateKey = Sequence.singleton(createAtomicValue('duplicates', 'xs:string'));
 	var duplicationHandlingValueSequence = mapGet(dynamicContext, optionMap, duplicateKey);
 	var duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.first().value;
-	var result = mapSequence.getAllValues().reduce(function (resultingKeyValuePairs, map) {
-			map.keyValuePairs.forEach(function (keyValuePair) {
-				var existingPairIndex = resultingKeyValuePairs.findIndex(function (existingPair) {
+	return mapSequence.mapAll(
+		allValues =>
+			new MapValue(allValues.reduce((resultingKeyValuePairs, map) => {
+				map.keyValuePairs.forEach(function (keyValuePair) {
+					var existingPairIndex = resultingKeyValuePairs.findIndex(function (existingPair) {
 						return isSameMapKey(existingPair.key, keyValuePair.key);
 					});
 
-				if (existingPairIndex >= 0) {
-					// Duplicate keys, use options to determine what to do
-					switch (duplicationHandlingStrategy) {
-						case 'reject':
-							throw new Error('FOJS0003: Duplicate encountered when merging maps.');
-						case 'use-last':
-							// Use this one
-							resultingKeyValuePairs.splice(existingPairIndex, 1, keyValuePair);
-							return;
-						case 'combine':
-							resultingKeyValuePairs.splice(
-								existingPairIndex,
-								1,
-								{
-									key: keyValuePair.key,
-									value: new Sequence(
-										resultingKeyValuePairs[existingPairIndex].value.getAllValues()
-											.concat(keyValuePair.value.getAllValues()))
-								});
-							return;
-						case 'use-any':
-						case 'use-first':
-						default:
-							return;
+					if (existingPairIndex >= 0) {
+						// Duplicate keys, use options to determine what to do
+						switch (duplicationHandlingStrategy) {
+							case 'reject':
+								throw new Error('FOJS0003: Duplicate encountered when merging maps.');
+							case 'use-last':
+								// Use this one
+								resultingKeyValuePairs.splice(existingPairIndex, 1, keyValuePair);
+								return;
+							case 'combine':
+								resultingKeyValuePairs.splice(
+									existingPairIndex,
+									1,
+									{
+										key: keyValuePair.key,
+										value: new Sequence(
+											resultingKeyValuePairs[existingPairIndex].value.getAllValues()
+												.concat(keyValuePair.value.getAllValues()))
+									});
+								return;
+							case 'use-any':
+							case 'use-first':
+							default:
+								return;
+						}
 					}
-				}
-				resultingKeyValuePairs.push(keyValuePair);
-			});
-			return resultingKeyValuePairs;
-		}, []);
-
-	return Sequence.singleton(new MapValue(result));
+					resultingKeyValuePairs.push(keyValuePair);
+				});
+				return resultingKeyValuePairs;
+			}, [])));
 }
 
 function mapPut (_dynamicContext, mapSequence, keySequence, value) {

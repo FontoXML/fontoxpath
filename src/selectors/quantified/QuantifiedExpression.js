@@ -33,7 +33,7 @@ class QuantifiedExpression extends Selector {
 	evaluate (dynamicContext) {
 		const evaluatedInClauses = this._inClauses.map(inClause => ({
 			name: buildVarName(inClause[0]),
-			valueArray: Array.from(inClause[1].evaluateMaybeStatically(dynamicContext).value())
+			valueArray: inClause[1].evaluateMaybeStatically(dynamicContext).getAllValues()
 		}));
 
 		const indices = new Array(evaluatedInClauses.length).fill(0);

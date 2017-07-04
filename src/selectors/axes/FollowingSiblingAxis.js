@@ -7,11 +7,12 @@ function createSiblingGenerator (domFacade, node) {
 		next: () => {
 			node = node && domFacade.getNextSibling(node);
 			if (!node) {
-				return { done: true, value: undefined };
+				return { done: true, ready: true, value: undefined };
 			}
 
 			return {
 				done: false,
+				ready: true,
 				value: createNodeValue(node)
 			};
 		}

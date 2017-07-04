@@ -7,13 +7,14 @@ function generateAncestors (domFacade, contextNode) {
 	return {
 		next: () => {
 			if (!ancestor) {
-				return { done: true, value: undefined };
+				return { done: true, ready: true, value: undefined };
 			}
 			const previousAncestor = ancestor;
 			ancestor = previousAncestor && domFacade.getParentNode(previousAncestor);
 
 			return {
 				done: false,
+				ready: true,
 				value: createNodeValue(previousAncestor)
 			};
 		}
