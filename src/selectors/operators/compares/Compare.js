@@ -3,7 +3,6 @@ import Selector from '../../Selector';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
 import valueCompare from './valueCompare';
-import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}

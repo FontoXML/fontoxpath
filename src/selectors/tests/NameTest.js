@@ -59,8 +59,8 @@ class NameTest extends Selector {
 		}
 
 		let resolvedNamespaceURI;
-		if (this._namespaceURI) {
-			resolvedNamespaceURI = this._namespaceURI;
+		if (this._namespaceURI !== null) {
+			resolvedNamespaceURI = this._namespaceURI || null;
 		}
 		else if (this._prefix === null) {
 			// An unprefixed QName, when used as a name test on an axis whose principal node kind is element,
