@@ -3255,3 +3255,6 @@ functx-fn-years-from-duration-4,Error: XPST0017: Function years-from-duration wi
 functx-fn-years-from-duration-5,Error: XPST0017: Function years-from-duration with arity of 1 not registered. No similar functions found.
 functx-fn-years-from-duration-all,Error: XPST0017: Function years-from-duration with arity of 1 not registered. No similar functions found.
 string-queries-results-q1,AssertionError: Expected XPath //news_item/title[contains(., "Foobar Corporation")] to resolve to the given XML: expected [ Array(2) ] to deeply equal []
+CastAs682,AssertionError: xs:gYear('2017-00:30'): expected '2017-00' to equal '2017-00:30'
+CastAs683,AssertionError: xs:gYearMonth('2017-07-00:30'): expected '2017-07-00' to equal '2017-07-00:30'
+CastAs684,AssertionError: xs:gMonth('--07-00:30'): expected '--07-00' to equal '--07-00:30'
