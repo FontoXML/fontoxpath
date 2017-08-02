@@ -45,23 +45,14 @@ class AttributeAxis extends Selector {
 		// items appearing in the [attributes] property.
 		// This includes all of the "special" attributes (xml:lang, xml:space, xsi:type, etc.)
 		// but does not include namespace declarations (because they are not attributes).
-		const allAttributes = domFacade.getAllAttributes(contextItem.value)
-			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/');
-		/**
-		 * @type {Sequence}
-		 */
-		const attributesSequence = new Sequence(
-			allAttributes.map(
-				attribute => createNodeValue(
-					new AttributeNode(contextItem.value, attribute))));
+		const matchingAttributes = domFacade.getAllAttributes(contextItem.value)
+			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
+			.map(attribute => createNodeValue(new AttributeNode(contextItem.value, attribute)))
+			.filter(item => this._attributeTestSelector.evaluateToBoolean(dynamicContext, item));
 		/**
 		 * @type {!Selector}
 		 */
-		const attributeTestSelector = this._attributeTestSelector;
-		return attributesSequence.filter((item, i) => {
-			const result = attributeTestSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(i, item, attributesSequence));
-			return result.getEffectiveBooleanValue();
-		});
+		return new Sequence(matchingAttributes);
 	}
 }
 export default AttributeAxis;

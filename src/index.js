@@ -1,5 +1,6 @@
 import evaluateXPath from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
+import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
 import evaluateXPathToFirstNode from './evaluateXPathToFirstNode';
 import evaluateXPathToNodes from './evaluateXPathToNodes';
@@ -32,6 +33,7 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 		exports['evaluateXPath'] = evaluateXPath;
 		exports['evaluateXPathToArray'] = evaluateXPathToArray;
 		exports['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
+		exports['evaluateXPathToAsyncIterator'] = evaluateXPathToAsyncIterator;
 		exports['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
 		exports['evaluateXPathToMap'] = evaluateXPathToMap;
 		exports['evaluateXPathToNodes'] = evaluateXPathToNodes;
@@ -51,6 +53,7 @@ export {
 	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
+	evaluateXPathToAsyncIterator,
 	evaluateXPathToFirstNode,
 	evaluateXPathToMap,
 	evaluateXPathToNodes,

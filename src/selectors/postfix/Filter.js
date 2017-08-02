@@ -68,20 +68,63 @@ class Filter extends Selector {
 			return Sequence.empty();
 		}
 
-		return valuesToFilter.filter((item, i, sequence) => {
-			const result = this._filterSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(i, item, sequence));
+		const iteratorToFilter = valuesToFilter.value();
+		let iteratorItem = null;
+		let i = 0;
+		let filterResultSequence = null;
+		return new Sequence({
+			next: () => {
+				while (!iteratorItem || !iteratorItem.done) {
+					if (!iteratorItem) {
+						iteratorItem = iteratorToFilter.next();
+					}
+					if (iteratorItem.done) {
+						return iteratorItem;
+					}
+					if (!iteratorItem.ready) {
+						const itemToReturn = iteratorItem;
+						iteratorItem = null;
+						return itemToReturn;
+					}
+					if (!filterResultSequence) {
+						filterResultSequence = this._filterSelector.evaluateMaybeStatically(
+							dynamicContext.scopeWithFocus(i, iteratorItem.value, valuesToFilter));
+					}
 
-			if (result.isEmpty()) {
-				return false;
+					const first = filterResultSequence.tryGetFirst();
+					if (!first.ready) {
+						return { done: false, ready: false, promise: first.promise };
+					}
+					let shouldReturnCurrentValue;
+					if (first.value === null) {
+						// Actually empty, very falsy indeed
+						// Continue to next
+						shouldReturnCurrentValue = false;
+					}
+					else if (isSubtypeOf(first.value.type, 'xs:numeric')) {
+						// Remember: XPath is one-based
+						shouldReturnCurrentValue = first.value.value === i + 1;
+					}
+					else {
+						const ebv = filterResultSequence.tryGetEffectiveBooleanValue();
+						if (!ebv.ready) {
+							return { done: false, ready: false, promise: ebv.promise };
+						}
+						shouldReturnCurrentValue = ebv.value;
+					}
+					// Prepare awaiting the next one
+					filterResultSequence = null;
+					const returnableValue = iteratorItem.value;
+					iteratorItem = null;
+					i++;
+					if (shouldReturnCurrentValue) {
+						return { done: false, ready: true, value: returnableValue };
+					}
+					// Continue to the next one
+				}
+
+				return iteratorItem;
 			}
-
-			const resultValue = result.first();
-			if (isSubtypeOf(resultValue.type, 'xs:numeric')) {
-				// Remember: XPath is one-based
-				return resultValue.value === i + 1;
-			}
-
-			return result.getEffectiveBooleanValue();
 		});
 	}
 }

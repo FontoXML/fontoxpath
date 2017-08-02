@@ -45,11 +45,8 @@ class PrecedingSiblingAxis extends Selector {
 	evaluate (dynamicContext) {
 		const contextItem = dynamicContext.contextItem;
 		const domFacade = dynamicContext.domFacade;
-
-		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter((item, i, sequence) => {
-			const result = this._siblingSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(i, item, sequence));
-
-			return result.getEffectiveBooleanValue();
+		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter(item=> {
+			return this._siblingSelector.evaluateToBoolean(dynamicContext, item);
 		});
 	}
 }

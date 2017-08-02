@@ -45,6 +45,22 @@ describe('descendant-or-self', () => {
 		chai.assert.deepEqual(evaluateXPathToNodes('descendant-or-self::*', documentNode.documentElement), [documentNode.documentElement, documentNode.documentElement.firstChild]);
 	});
 
+	it('ordering of deeper descendants', () => {
+		jsonMlMapper.parse([
+			'someParentElement',
+			['someElement', ['someElement', ['someElement']]]
+		], documentNode);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes('descendant-or-self::*', documentNode.documentElement),
+			[
+				documentNode.documentElement,
+				documentNode.documentElement.firstChild,
+				documentNode.documentElement.firstChild.firstChild,
+				documentNode.documentElement.firstChild.firstChild.firstChild
+			]
+		);
+	});
+
 	it('ordering of descendants with complex-ish queries', () => {
 		jsonMlMapper.parse([
 			'root',

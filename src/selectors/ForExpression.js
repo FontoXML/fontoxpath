@@ -55,7 +55,7 @@ class ForExpression extends Selector {
 							}
 							continue;
 						}
-						const contextWithVars = previousContext.scopeWithVariables({ [previousVarName]: Sequence.singleton(value) });
+						const contextWithVars = previousContext.scopeWithVariables({ [previousVarName]: () => Sequence.singleton(value) });
 						resultStack.shift({
 							context: contextWithVars,
 							resultSequence: this._clauses[0].evaluateMaybeStatically(contextWithVars)
@@ -70,10 +70,11 @@ class ForExpression extends Selector {
 							resultStack.shift();
 							continue;
 						}
+						// Because the bindings for a forexpresion are always singleton, we do not have to allow double iteration.
 						expressionResultIterator = this._expression.evaluateMaybeStatically(
 							resultStack[0].context.scopeWithVariables(
-								{ [resultStack[0].varName]:  Sequence.singleton(nextValue.value) }
-							));
+								{ [resultStack[0].varName]:  () => Sequence.singleton(nextValue.value) }
+							)).value();
 					}
 					// Scanning for result / Result yielding phase
 					const yieldableValue = expressionResultIterator.next();

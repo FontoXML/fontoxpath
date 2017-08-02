@@ -7,6 +7,8 @@ import {
 
 import isSubtypeOf from '../isSubtypeOf';
 
+import createAtomicValue from '../createAtomicValue';
+
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
 import castToBoolean from './castToBoolean';
@@ -106,6 +108,9 @@ function castToPrimitiveType (from, to) {
 const precomputedCastFunctorsByTypeString = Object.create(null);
 
 function createCastingFunction (from, to) {
+	if (from === 'xs:untypedAtomic' && to === 'xs:string') {
+		return val => ({ successful: true, value: createAtomicValue(val, 'xs:string') });
+	}
 	if (to === 'xs:NOTATION') {
 		return (_val) => ({
 			successful: false,
@@ -170,12 +175,25 @@ function createCastingFunction (from, to) {
 			value: value.value
 		}));
 	}
-	if (primitiveTo === 'xs:untypedAtomic' || primitiveTo === 'xs:string') {
+		if (primitiveTo === 'xs:untypedAtomic' || primitiveTo === 'xs:string') {
+			converters.push(typedValue => {
+				if (!validatePattern(typedValue, to)) {
+					return {
+						successful: false,
+						error: new Error(`FORG0001: Cannot cast ${typedValue} to ${to}, pattern validation failed.`)
+					};
+				}
+				return {
+					successful: true,
+					value: typedValue
+				};
+			});
+		}
 		converters.push(typedValue => {
-			if (!validatePattern(typedValue, to)) {
+			if (!validateRestrictions(typedValue, to)) {
 				return {
 					successful: false,
-					error: new Error(`FORG0001: Cannot cast ${typedValue} to ${to}, pattern validation failed.`)
+					error: new Error(`FORG0001: Cannot cast "${typedValue}" to ${to}, restriction validation failed.`)
 				};
 			}
 			return {
@@ -183,20 +201,6 @@ function createCastingFunction (from, to) {
 				value: typedValue
 			};
 		});
-	}
-
-	converters.push(typedValue => {
-		if (!validateRestrictions(typedValue, to)) {
-			return {
-				successful: false,
-				error: new Error(`FORG0001: Cannot cast "${typedValue}" to ${to}, restriction validation failed.`)
-			};
-		}
-		return {
-			successful: true,
-			value: typedValue
-		};
-	});
 
 
 	// assume we can just use the primitive datatype

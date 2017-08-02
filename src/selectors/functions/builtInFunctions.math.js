@@ -1,119 +1,70 @@
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 
-
 function mathPi (_dynamicContext) {
 	return Sequence.singleton(createAtomicValue(Math.PI, 'xs:double'));
 }
 
 function mathExp (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.pow(Math.E, sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.pow(Math.E, onlyValue.value), 'xs:double'));
 }
 
 function mathExp10 (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.pow(10, sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.pow(10, onlyValue.value), 'xs:double'));
 }
 
 function mathLog (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.log(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.log(onlyValue.value), 'xs:double'));
 }
 
 function mathLog10 (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.log10(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.log10(onlyValue.value), 'xs:double'));
 }
 
-function mathPow (_dynamicContext, sequence, y) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	var valueX = sequence.first().value,
-		valueY = y.first().value;
-	if ((valueX === 1 || valueX === -1) && (valueY === Infinity || valueY === -Infinity || isNaN(valueY))) {
-		return Sequence.singleton(createAtomicValue(1, 'xs:double'));
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.pow(sequence.first().value, y.first().value), 'xs:double'));
+function mathPow (_dynamicContext, base, exponent) {
+	// Note: base is double?, exponent is numeric. In the base is empty case, return empty.
+	return exponent.mapAll(
+		([valueY]) => base.map(
+			valueX => {
+				// isFinite is false for +Infinity, -Infinity and NaN
+				if (Math.abs(valueX.value) === 1 && !Number.isFinite(valueY.value)) {
+					return createAtomicValue(1, 'xs:double');
+				}
+				return createAtomicValue(Math.pow(valueX.value, valueY.value), 'xs:double');
+			}));
 }
 
 function mathSqrt (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.sqrt(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.sqrt(onlyValue.value), 'xs:double'));
 }
 
 function mathSin (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.sin(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.sin(onlyValue.value), 'xs:double'));
 }
 
 function mathCos (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.cos(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.cos(onlyValue.value), 'xs:double'));
 }
 
 function mathTan (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.tan(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.tan(onlyValue.value), 'xs:double'));
 }
 
 function mathAsin (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.asin(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.asin(onlyValue.value), 'xs:double'));
 }
 
 function mathAcos (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.acos(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.acos(onlyValue.value), 'xs:double'));
 }
 
 function mathAtan (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.atan(sequence.first().value), 'xs:double'));
+	return sequence.map(onlyValue => createAtomicValue(Math.atan(onlyValue.value), 'xs:double'));
 }
 
-function mathAtan2 (_dynamicContext, sequence, x) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	return Sequence.singleton(createAtomicValue(Math.atan2(sequence.first().value, x.first().value), 'xs:double'));
+function mathAtan2 (_dynamicContext, x, y) {
+	// Note that x is the double? argument, y is double.
+	return y.mapAll(([onlyYValue]) => x.map(onlyXValue => createAtomicValue(Math.atan2(onlyXValue.value, onlyYValue.value), 'xs:double')));
 }
 
 export default {

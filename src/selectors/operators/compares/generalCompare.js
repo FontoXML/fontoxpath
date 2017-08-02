@@ -14,21 +14,24 @@ var OPERATOR_TRANSLATION = {
  * @param   {!string}          operator
  * @param   {!Sequence}        firstSequence
  * @param   {!Sequence}        secondSequence
- * @return  {!boolean}
+ * @return  {!Sequence}
 */
 export default function generalCompare (operator, firstSequence, secondSequence) {
     // Change operator to equivalent valueCompare operator
     operator = OPERATOR_TRANSLATION[operator];
 
-	const firstIterator = firstSequence.value();
-	const secondSequenceValues = secondSequence.getAllValues();
+	return secondSequence.mapAll(
+		allSecondValues =>
+			firstSequence.filter(firstValue => {
+				for (let i = 0, l = allSecondValues.length; i < l; ++i) {
+					if (valueCompare(operator, firstValue, allSecondValues[i])) {
+						return true;
+					}
+				}
+				return false;
+			}).switchCases({
+				empty: () => Sequence.singletonFalseSequence(),
+				default: () => Sequence.singletonTrueSequence()
+			}));
 
-	for (let firstAtomizedValue = firstIterator.next(); !firstAtomizedValue.done; firstAtomizedValue = firstIterator.next()) {
-        for (let i = 0, l = secondSequenceValues.length; i < l; ++i) {
-            if (valueCompare(operator, firstAtomizedValue.value, secondSequenceValues[i])) {
-				return true;
-			}
-        }
-    }
-	return false;
 }

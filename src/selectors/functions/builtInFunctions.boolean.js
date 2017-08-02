@@ -1,11 +1,11 @@
 import Sequence from '../dataTypes/Sequence';
 
 function fnNot (_dynamicContext, sequence) {
-	return !sequence.getEffectiveBooleanValue() ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();;
+	return !sequence.getEffectiveBooleanValue() ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 }
 
 function fnBoolean (_dynamicContext, sequence) {
-	return sequence.getEffectiveBooleanValue() ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();;
+	return sequence.getEffectiveBooleanValue() ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 }
 
 function fnTrue () {

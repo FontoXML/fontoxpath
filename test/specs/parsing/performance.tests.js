@@ -2,7 +2,7 @@ import { evaluateXPathToNumber, evaluateXPathToBoolean } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
 const cacheId = {};
-describe('performance', () => {
+describe.skip('performance', () => {
 	// Warm up the cache
 	// Counting to 10 milion takes a couple of seconds.
 	before(function () {

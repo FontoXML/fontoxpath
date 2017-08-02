@@ -10,7 +10,7 @@ function mapMerge (dynamicContext, mapSequence, optionMap) {
 	var duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.first().value;
 	return mapSequence.mapAll(
 		allValues =>
-			new MapValue(allValues.reduce((resultingKeyValuePairs, map) => {
+			Sequence.singleton(new MapValue(allValues.reduce((resultingKeyValuePairs, map) => {
 				map.keyValuePairs.forEach(function (keyValuePair) {
 					var existingPairIndex = resultingKeyValuePairs.findIndex(function (existingPair) {
 						return isSameMapKey(existingPair.key, keyValuePair.key);
@@ -45,7 +45,7 @@ function mapMerge (dynamicContext, mapSequence, optionMap) {
 					resultingKeyValuePairs.push(keyValuePair);
 				});
 				return resultingKeyValuePairs;
-			}, [])));
+			}, []))));
 }
 
 function mapPut (_dynamicContext, mapSequence, keySequence, value) {

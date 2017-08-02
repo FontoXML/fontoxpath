@@ -14,6 +14,8 @@ describe('extension functions', () => {
 	describe('fontoxpath:evaluate()', () => {
 		it('can run inline functions',
 			() => chai.assert.equal(evaluateXPathToBoolean('fontoxpath:evaluate("true()", map{})', documentNode, domFacade), true));
+		it('can iterate over the same sequence, inside the evaluate call',
+			() => chai.assert.equal(evaluateXPathToBoolean('fontoxpath:evaluate("count($x) + count(reverse($x))", map{"x": (1,2,3,4,5)})', documentNode, domFacade), true));
 		it('can run inline inline functions',
 			() => chai.assert.equal(evaluateXPathToBoolean('fontoxpath:evaluate("fontoxpath:evaluate(""true()"", map{})", map{})', documentNode, domFacade), true));
 		it('can run inside inline functions',

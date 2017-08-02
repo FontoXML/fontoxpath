@@ -29,7 +29,7 @@ class VarRef extends Selector {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
 		}
 
-		return value;
+		return value();
 	}
 }
 

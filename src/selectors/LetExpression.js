@@ -1,5 +1,5 @@
 import Selector from './Selector';
-import Sequence from './dataTypes/Sequence';
+import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
 /**
  * @extends {Selector}
@@ -32,7 +32,9 @@ class LetExpression extends Selector {
 	evaluate (dynamicContext) {
 		const newVariables = Object.create(null);
 		const variable = this._bindingSequence.evaluateMaybeStatically(dynamicContext);
-		newVariables[this._rangeVariable] = variable;
+		// Because we might iterate it multiple times in the return expression,
+		//   we need to save all of the values given by the expresion...
+		newVariables[this._rangeVariable] = createDoublyIterableSequence(variable);
 		return this._returnExpression.evaluateMaybeStatically(
 			dynamicContext.scopeWithVariables(newVariables));
 	}

@@ -243,7 +243,7 @@ class PathSelector extends Selector {
 							if (result.done) {
 								return result;
 							}
-							return { done: false, ready: true, value: result.value.mapAll(items => items.reverse()) };
+							return { done: false, ready: true, value: result.value.mapAll(items => new Sequence(items.reverse())) };
 						}
 					});
 					// Fallthrough for merges
@@ -259,7 +259,7 @@ class PathSelector extends Selector {
 				case Selector.RESULT_ORDERINGS.UNSORTED: {
 					// The result should be sorted before we can continue
 					const concattedSequence = concatSortedSequences(dynamicContext.domFacade, resultValuesInOrderOfEvaluation);
-					return concattedSequence.mapAll(allValues => sortResults(dynamicContext.domFacade, allValues));
+					return concattedSequence.mapAll(allValues => new Sequence(sortResults(dynamicContext.domFacade, allValues)));
 				}
 
 			}

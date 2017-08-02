@@ -12,7 +12,7 @@ describe('asynchronous XPaths', () => {
 		documentNode = new slimdom.Document();
 	});
 
-	it('can run XPath expressions asynchronously', async function () {
+	it('can run XPath expressions asynchronously', async () => {
 		const items = [];
 		const it = evaluateXPath('fontoxpath:sleep(10)', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
 
@@ -23,7 +23,7 @@ describe('asynchronous XPaths', () => {
 		chai.assert(items.length === 0);
 	});
 
-	it('can resolve async results', async function () {
+	it('can resolve async results', async () => {
 		const items = [];
 		const it = evaluateXPath('fontoxpath:sleep(10, true())', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
 
@@ -35,7 +35,7 @@ describe('asynchronous XPaths', () => {
 		chai.assert(items[0] === true);
 	});
 
-	it('fetch stuff', async function () {
+	it('fetch stuff', async () => {
 		const items = [];
 		const it = evaluateXPath('fontoxpath:fetch("https://raw.githubusercontent.com/LeoWoerteler/QT3TS/master/catalog.xml", map{"method": "get"}) => trace()', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
 

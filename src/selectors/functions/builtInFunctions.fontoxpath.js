@@ -1,6 +1,7 @@
 import DynamicContext from '../DynamicContext';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 /**
  * @param  {../DynamicContext}      dynamicContext
@@ -20,12 +21,12 @@ function fontoxpathEvaluate (dynamicContext, query, args) {
 				queryString = queryValue.value.value;
 				const variables = {};
 				args.first().keyValuePairs.reduce((expandedArgs, arg) => {
-					expandedArgs[arg.key.value] = arg.value;
+					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value);
 					return expandedArgs;
 				}, variables);
 
 				// Take off the context item
-				const contextItemSequence = variables['.'] || Sequence.empty();
+				const contextItemSequence = variables['.'] ? variables['.']() : Sequence.empty();
 				delete variables['.'];
 
 				const selector = dynamicContext.createSelectorFromXPath(queryString);
@@ -48,7 +49,7 @@ function fontoxpathEvaluate (dynamicContext, query, args) {
 				};
 				const innerDynamicContext = new DynamicContext(context);
 
-				resultIterator = selector.evaluate(innerDynamicContext);
+				resultIterator = selector.evaluate(innerDynamicContext).value();
 			}
 			return resultIterator.next();
 

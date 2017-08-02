@@ -1,44 +1,36 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import castToType from '../dataTypes/castToType';
+import tryCastToType from '../dataTypes/casting/tryCastToType';
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import MapValue from '../dataTypes/MapValue';
 import { transformArgument } from './argumentHelper';
 
-function createValidNumericType (value, transformedValue) {
-	if (isSubtypeOf(value.type, 'xs:integer')) {
-		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:integer'));
+function createValidNumericType (type, transformedValue) {
+	if (isSubtypeOf(type, 'xs:integer')) {
+		return createAtomicValue(transformedValue, 'xs:integer');
 	}
-	if (isSubtypeOf(value.type, 'xs:float')) {
-		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:float'));
+	if (isSubtypeOf(type, 'xs:float')) {
+		return createAtomicValue(transformedValue, 'xs:float');
 	}
-	if (isSubtypeOf(value.type, 'xs:double')) {
-		return Sequence.singleton(createAtomicValue(transformedValue, 'xs:double'));
+	if (isSubtypeOf(type, 'xs:double')) {
+		return createAtomicValue(transformedValue, 'xs:double');
 	}
 	// It must be a decimal, only four numeric types
-	return Sequence.singleton(createAtomicValue(transformedValue, 'xs:decimal'));
+	return createAtomicValue(transformedValue, 'xs:decimal');
 }
 
 function fnAbs (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-	return createValidNumericType(sequence.first(), Math.abs(sequence.first().value));
+	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.abs(onlyValue.value)));
 }
 
 function fnCeiling (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-	return createValidNumericType(sequence.first(), Math.ceil(sequence.first().value));
+	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value)));
 }
 
 function fnFloor (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-	return createValidNumericType(sequence.first(), Math.floor(sequence.first().value));
+	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.floor(onlyValue.value)));
 }
 
 function isHalf (value, scaling) {
@@ -50,84 +42,104 @@ function getNumberOfDecimalDigits (value) {
 		return 0;
 	}
 
-	var result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(value + ''),
+	const result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(value + ''),
 		decimals = result[1] ? result[1].length : 0;
 
 	if (result[3]) {
 		if (result[2]) {
 			return decimals + parseInt(result[3], 10);
 		}
-		var returnVal = decimals - parseInt(result[3], 10);
+		const returnVal = decimals - parseInt(result[3], 10);
 		return returnVal < 0 ? 0 : returnVal;
 	}
 	return decimals;
 }
 
 function fnRound (halfToEven, _dynamicContext, sequence, precision) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
+	let done = false;
+	return new Sequence({
+		next: () => {
+			if (done) {
+				return { ready: true, done: true, value: undefined };
+			}
+			const firstValue = sequence.tryGetFirst();
+			if (!firstValue.ready) {
+				return { ready: false, done: false, promise: firstValue.promise };
+			}
+			if (!firstValue.value) {
+				// Empty sequence
+				done = true;
+				return { ready: true, done: true, value: undefined };
+			}
+			const item = firstValue.value;
+			const value = item.value;
 
-	var item = sequence.first(),
-		value = item.value;
+			if ((isSubtypeOf(item.type, 'xs:float') || isSubtypeOf(item.type, 'xs:double')) && (
+				value === 0 ||
+					isNaN(value) ||
+					value === +Infinity ||
+					value === -Infinity)) {
+				done = true;
+				return { ready: true, done: false, value: item };
+			}
+			let scalingPrecision;
+			if (precision) {
+				const sp = precision.tryGetFirst();
+				if (!sp.ready) {
+					return { ready: false, done: false, promise: precision.promise };
+				}
+				scalingPrecision = sp.value.value;
+			} else {
+				scalingPrecision = 0;
+			}
+			done = true;
 
-	if ((isSubtypeOf(item.type, 'xs:float') || isSubtypeOf(item.type, 'xs:double')) && (
-		value === 0 ||
-		isNaN(value) ||
-		value === +Infinity ||
-		value === -Infinity)) {
-		return Sequence.singleton(item);
-	}
+			if (getNumberOfDecimalDigits(value) < scalingPrecision) {
+				return { ready: true, done: false, value: item };
+			}
 
-	var scalingPrecision = precision ? precision.first().value : 0;
-	if (getNumberOfDecimalDigits(value) < scalingPrecision) {
-		return sequence;
-	}
-
-	var originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(function (type) {
+			const originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(function (type) {
 				return isSubtypeOf(item.type, type);
-			}),
-		itemAsDecimal = castToType(item, 'xs:decimal'),
-		scaling = Math.pow(10, scalingPrecision),
-		roundedNumber = 0;
+			});
+			const itemAsDecimal = castToType(item, 'xs:decimal');
+			const scaling = Math.pow(10, scalingPrecision);
+			let roundedNumber = 0;
 
-	if (halfToEven && isHalf(itemAsDecimal.value, scaling)) {
-		if (Math.floor(itemAsDecimal.value * scaling) % 2 === 0) {
-			roundedNumber = Math.floor(itemAsDecimal.value * scaling) / scaling;
-		}
-		else {
-			roundedNumber = Math.ceil(itemAsDecimal.value * scaling) / scaling;
-		}
-	}
-	else {
-		roundedNumber = Math.round(itemAsDecimal.value * scaling) / scaling;
-	}
+			if (halfToEven && isHalf(itemAsDecimal.value, scaling)) {
+				if (Math.floor(itemAsDecimal.value * scaling) % 2 === 0) {
+					roundedNumber = Math.floor(itemAsDecimal.value * scaling) / scaling;
+				} else {
+					roundedNumber = Math.ceil(itemAsDecimal.value * scaling) / scaling;
+				}
+			} else {
+				roundedNumber = Math.round(itemAsDecimal.value * scaling) / scaling;
+			}
 
-	switch (originalType) {
-		case 'xs:decimal':
-			return Sequence.singleton(createAtomicValue(roundedNumber, 'xs:decimal'));
-		case 'xs:double':
-			return Sequence.singleton(createAtomicValue(roundedNumber, 'xs:double'));
-		case 'xs:float':
-			return Sequence.singleton(createAtomicValue(roundedNumber, 'xs:float'));
-		case 'xs:integer':
-			return Sequence.singleton(createAtomicValue(roundedNumber, 'xs:integer'));
-	}
+			switch (originalType) {
+				case 'xs:decimal':
+					return { ready: true, done: false, value: createAtomicValue(roundedNumber, 'xs:decimal') };
+				case 'xs:double':
+					return { ready: true, done: false, value: createAtomicValue(roundedNumber, 'xs:double') };
+				case 'xs:float':
+					return { ready: true, done: false, value: createAtomicValue(roundedNumber, 'xs:float') };
+				case 'xs:integer':
+					return { ready: true, done: false, value: createAtomicValue(roundedNumber, 'xs:integer') };
+			}
+		}
+	});
 }
 
+
+
 function fnNumber (_dynamicContext, sequence) {
-	return sequence.mapToEmptyOrSingleton({
-		empty: () => createAtomicValue(NaN, 'xs:double'),
-		singleton: first => {
-			try {
-				return Sequence.singleton(castToType(first, 'xs:double'));
+	return sequence.switchCases({
+		empty: () => Sequence.singleton(createAtomicValue(NaN, 'xs:double')),
+		singleton: () => {
+			const castResult = tryCastToType(sequence.first(), 'xs:double');
+			if (castResult.successful) {
+				return Sequence.singleton(castResult.value);
 			}
-			catch (error) {
-				if (error.message.includes('FORG0001')) {
-					return createAtomicValue(NaN, 'xs:double');
-				}
-				throw error;
-			}
+			return Sequence.singleton(createAtomicValue(NaN, 'xs:double'));
 		}
 	});
 }

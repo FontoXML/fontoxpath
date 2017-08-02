@@ -2,6 +2,7 @@ import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import FunctionValue from '../dataTypes/FunctionValue';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 function buildVarName ({ prefix, namespaceURI, name }) {
 	if (namespaceURI) {
@@ -45,7 +46,7 @@ class InlineFunction extends Selector {
 			const scopedDynamicContext = dynamicContext
 				.scopeWithFocus(-1, null, Sequence.empty())
 				.scopeWithVariables(this._paramDescriptions.reduce((paramByName, [name, _type], i) => {
-					paramByName[name] = parameters[i];
+					paramByName[name] = createDoublyIterableSequence(parameters[i]);
 					return paramByName;
 				}, Object.create(null)));
 			return this._functionBody.evaluateMaybeStatically(scopedDynamicContext);
