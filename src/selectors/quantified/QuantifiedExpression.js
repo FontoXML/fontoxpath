@@ -53,7 +53,7 @@ class QuantifiedExpression extends Selector {
 
 				for (let y = 0; y < indices.length; y++) {
 					const value = evaluatedInClauses[y].valueArray[indices[y]];
-					variables[evaluatedInClauses[y].name] = Sequence.singleton(value);
+					variables[evaluatedInClauses[y].name] = () => Sequence.singleton(value);
 				}
 
 				const context = dynamicContext.scopeWithVariables(variables);

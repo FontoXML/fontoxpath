@@ -68,13 +68,48 @@ Sequence.prototype.getAllValues = function () {
 	}
 	const iterator = this.value();
 	const values = [];
-	for (let val = iterator.next; !val.done; val = iterator.next()) {
+	for (let val = iterator.next(); !val.done; val = iterator.next()) {
 		if (!val.ready) {
 			throw new Error('infinite loop prevented');
 		}
 		values.push(val.value);
 	}
 	return values;
+};
+
+Sequence.prototype.tryGetEffectiveBooleanValue = function () {
+	const iterator = this.value();
+	const firstValue = iterator.next();
+	if (!firstValue.ready) {
+		return { ready: false, promise: firstValue.promise };
+	}
+	if (firstValue.done) {
+		return { ready: true, value: false };
+	}
+	if (isSubtypeOf(firstValue.value.type, 'node()')) {
+		return { ready: true, value: true };
+	}
+	const secondValue = iterator.next();
+	if (!secondValue.ready) {
+		return { ready: false, promise: secondValue.promise };
+	}
+
+	if (!secondValue.done) {
+		throw new Error('FORG0006: A wrong argument type was specified in a function call.');
+	}
+	return { ready: true, value: getEffectiveBooleanValue(firstValue.value) };
+};
+
+Sequence.prototype.tryGetFirst = function () {
+	const iterator = this.value();
+	const firstValue = iterator.next();
+	if (!firstValue.ready) {
+		return { ready: false, promise: firstValue.promise };
+	}
+	if (firstValue.done) {
+		return { ready: true, value: null };
+	}
+	return { ready: true, value: firstValue.value };
 };
 
 Sequence.prototype.first = function () {
@@ -139,7 +174,7 @@ Sequence.prototype.filter = function (callback) {
 
 Sequence.prototype.mapAll = function (cb) {
 	const iterator = this.value();
-	let mappedResults;
+	let mappedResultsIterator;
 	const allResults = [];
 	let isReady = false;
 	let readyPromise = null;
@@ -151,7 +186,7 @@ Sequence.prototype.mapAll = function (cb) {
 			}
 			allResults.push(value.value);
 		}
-		mappedResults = cb(allResults);
+		mappedResultsIterator = cb(allResults).value();
 		isReady = true;
 	})();
 	return new Sequence({
@@ -159,10 +194,7 @@ Sequence.prototype.mapAll = function (cb) {
 			if (!isReady) {
 				return { ready: false, promise: readyPromise, done: false };
 			}
-			if (!mappedResults.length) {
-				return DONE_VALUE;
-			}
-			return { done: false, ready: true, value: mappedResults.shift() };
+			return mappedResultsIterator.next();
 		}
 	});
 };
@@ -231,6 +263,9 @@ Sequence.prototype.getEffectiveBooleanValue = function () {
 	if (firstValue.done) {
 		return false;
 	}
+	if (!firstValue.ready) {
+		throw new Error('What to do here?');
+	}
 	if (isSubtypeOf(firstValue.value.type, 'node()')) {
 		return true;
 	}
@@ -248,42 +283,55 @@ Sequence.prototype.expandSequence = function () {
 /**
  * @param  {{empty: function():}}
  */
-Sequence.prototype.mapCases = function (cases) {
+Sequence.prototype.switchCases = function (cases) {
 	const scanIterator = this.value();
-	const returnIterator = this.value();
 	let scanIteration = 0;
-	const firstTwoValues = [];
+	let resultIterator = null;
 	return new Sequence({
 		next: () => {
-			// We need to reach two iterations
-			while (scanIteration < 3) {
-				const value = scanIterator.next();
-				if (!value.ready) {
-					return value;
-				}
-				if (value.done) {
-					break;
-				}
-				firstTwoValues.push(value.value);
-				scanIteration++;
-			}
-			switch (scanIteration) {
-				case 0:
-					return cases.empty();
-				case 1:
-					const value = returnIterator.next();
-					if (value.done || !value.ready) {
+			if (!resultIterator) {
+				// If we do not handle singleton different from multiple, we can shortcut by only consuming a single item
+				if (cases.empty && !cases.multiple && !cases.singleton) {
+					const value = scanIterator.next();
+					if (!value.ready) {
 						return value;
 					}
-					return { done: false, ready: true, value: cases.singleton(this.first()) };
-				default: {
-					const value = returnIterator.next();
-					if (value.done || !value.ready) {
-						return value;
+					if (value.done) {
+						resultIterator = cases.empty().value();
 					}
-					return { done: false, ready: true, value: cases.multiple(value.value) };
+					else {
+						resultIterator = cases.default().value();
+					}
+				} else {
+					// We need to reach two iterations
+					while (scanIteration < 2) {
+						const value = scanIterator.next();
+						if (!value.ready) {
+							return value;
+						}
+						if (value.done) {
+							break;
+						}
+						scanIteration++;
+					}
+
+					switch (scanIteration) {
+						case 0: {
+							resultIterator = (cases.empty || cases.default)().value();
+							break;
+						}
+						case 1: {
+							resultIterator = (cases.singleton || cases.default)().value();
+							break;
+						}
+						default: {
+							resultIterator = (cases.multiple || cases.default)().value();
+							break;
+						}
+					}
 				}
 			}
+			return resultIterator.next();
 		}
 	});
 };
@@ -296,7 +344,7 @@ function EmptySequence () {
 	this.value = () => (
 		{
 			[Symbol.iterator]: function () { return this; },
-			next: () => (DONE_VALUE)
+			next: () => DONE_VALUE
 		}
 	);
 }
@@ -306,11 +354,16 @@ EmptySequence.prototype.isEmpty = () => true;
 EmptySequence.prototype.getAllValues = () => [];
 EmptySequence.prototype.getLength = () => 0;
 EmptySequence.prototype.isSingleton = () => false;
+EmptySequence.prototype.mapAll = cb => cb([]);
+EmptySequence.prototype.tryGetFirst = () => ({ ready: true, value: null });
+EmptySequence.prototype.tryGetEffectiveBooleanValue = function () {
+	return { ready: true, value: this.getEffectiveBooleanValue() };
+};
 EmptySequence.prototype.expandSequence = function () {
 	return this;
 };
 
-EmptySequence.prototype.mapCases = ({ empty }) => new Sequence({ next: empty });
+EmptySequence.prototype.switchCases = cases => (cases.empty || cases.default)();
 
 const emptySequence = new EmptySequence();
 
@@ -345,6 +398,9 @@ SingletonSequence.prototype.getEffectiveBooleanValue = function () {
 	}
 	return this._effectiveBooleanValue;
 };
+SingletonSequence.prototype.tryGetEffectiveBooleanValue = function () {
+	return { ready: true, value: this.getEffectiveBooleanValue() };
+};
 SingletonSequence.prototype.first = function () {
 	return this._onlyValue;
 };
@@ -352,6 +408,9 @@ SingletonSequence.prototype.getAllValues = function () {
 	return [this._onlyValue];
 };
 SingletonSequence.prototype.isEmpty = () => false;
+SingletonSequence.prototype.tryGetFirst = function () {
+	return { ready: true, value: this._onlyValue };
+};
 SingletonSequence.prototype.getLength = () => 1;
 SingletonSequence.prototype.isSingleton = () => true;
 SingletonSequence.prototype.atomize = function (dynamicContext) {
@@ -367,14 +426,13 @@ SingletonSequence.prototype.map = function (cb) {
 	return new SingletonSequence(cb(this._onlyValue, 0, this));
 };
 SingletonSequence.prototype.mapAll = function (cb) {
-	return new SingletonSequence(cb([this._onlyValue], 0, this));
+	return cb([this._onlyValue], 0, this);
 };
 SingletonSequence.prototype.expandSequence = function () {
 	return this;
 };
-SingletonSequence.prototype.mapCases = function ({ singleton }) {
-	return new SingletonSequence(singleton(this._onlyValue));
-};
+SingletonSequence.prototype.switchCases = cases => (cases.singleton || cases.default)();
+
 
 /**
  * @constructor
@@ -404,6 +462,12 @@ function ArrayBackedSequence (values) {
 	this._values = values;
 }
 ArrayBackedSequence.prototype.isEmpty = () => false;
+ArrayBackedSequence.prototype.tryGetFirst = function () {
+	return { ready: true, value: this._values[0] };
+};
+ArrayBackedSequence.prototype.tryGetEffectiveBooleanValue = function () {
+	return { ready: true, value: this.getEffectiveBooleanValue() };
+};
 ArrayBackedSequence.prototype.isSingleton = () => false;
 ArrayBackedSequence.prototype.first = function () {
 	return this._values[0];
@@ -447,6 +511,9 @@ ArrayBackedSequence.prototype.map = function (cb) {
 		}
 	}));
 };
+ArrayBackedSequence.prototype.mapAll = function (cb) {
+	return cb(this._values);
+};
 ArrayBackedSequence.prototype.getLength = function () {
 	return this._values.length;
 };
@@ -456,9 +523,7 @@ ArrayBackedSequence.prototype.atomize = function (dynamicContext) {
 ArrayBackedSequence.prototype.expandSequence = function () {
 	return this;
 };
-ArrayBackedSequence.prototype.mapCases = function ({ multiple }) {
-	return this.map(multiple);
-};
+ArrayBackedSequence.prototype.switchCases = cases => (cases.multiple || cases.default)();
 
 /**
  * @param   {!./Value}  value

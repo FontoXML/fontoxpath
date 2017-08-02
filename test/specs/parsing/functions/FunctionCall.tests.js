@@ -5,7 +5,9 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
-	evaluateXPathToNumbers
+	evaluateXPathToNumbers,
+	evaluateXPathToNumber,
+	evaluateXPathToAsyncIterator
 } from 'fontoxpath';
 
 let documentNode;
@@ -18,7 +20,38 @@ describe('Dynamic function call', () => {
 		() => chai.assert.equal(evaluateXPathToString('let $fn := concat#3 return $fn("abc", "def", "ghi")', documentNode), 'abcdefghi'));
 
 	it('parses a function with a function to be executed as one of its arguments',
-		() => chai.assert.equal(evaluateXPathToString('let $fn := concat#2 return $fn(avg((10, 20)), max((2, 50)))', documentNode), '1550'));
+	   () => chai.assert.equal(evaluateXPathToString('let $fn := concat#2 return $fn(avg((10, 20)), max((2, 50)))', documentNode), '1550'));
+
+	it('allows recursion',
+		() => chai.assert.equal(evaluateXPathToNumber('let $fn := function ($recurse, $i) {if ($i < 100) then $recurse($recurse, $i + 1) else $i } return $fn($fn, 0)', documentNode), 100));
+
+	it('allows async recursion', async () => {
+		const it = evaluateXPathToAsyncIterator('let $fn := function ($recurse, $i) {if ($i < 100) then fontoxpath:sleep(1, $recurse($recurse, $i + 1)) else $i } return $fn($fn, 0)', documentNode);
+
+		chai.assert.equal((await it.next()).value, 100);
+	   chai.assert.equal((await it.next()).done, true);
+	});
+
+	it('Fibonacci', async () => {
+		const it = evaluateXPathToAsyncIterator(
+			`
+let $fib := function ($recurse, $a, $b) {
+ ($a, $recurse($recurse, $b, $a + $b))
+},
+$fib-entries := $fib($fib, 1, 1)
+return $fib-entries
+`,
+			documentNode);
+		chai.assert.equal((await it.next()).value, 1);
+		chai.assert.equal((await it.next()).value, 1);
+		chai.assert.equal((await it.next()).value, 2);
+		chai.assert.equal((await it.next()).value, 3);
+		chai.assert.equal((await it.next()).value, 5);
+		chai.assert.equal((await it.next()).value, 8);
+	   	chai.assert.equal((await it.next()).value, 13);
+	   	chai.assert.equal((await it.next()).value, 21);
+	   	chai.assert.equal((await it.next()).value, 34);
+	});
 
 	it('parses a function with a fixed number of arguments',
 		() => chai.assert.isFalse(evaluateXPathToBoolean('let $fn := not#1 return $fn(true())', documentNode)));

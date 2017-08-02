@@ -1,4 +1,5 @@
 import Selector from '../Selector';
+import Sequence from '../dataTypes/Sequence';
 /**
  * @extends {Selector}
  */
@@ -30,10 +31,24 @@ class IfExpression extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		if (this._testExpression.evaluateMaybeStatically(dynamicContext).getEffectiveBooleanValue()) {
-			return this._thenExpression.evaluateMaybeStatically(dynamicContext);
-		}
-		return this._elseExpression.evaluateMaybeStatically(dynamicContext);
+		let resultIterator = null;
+		const ifExpressionResultSequence = this._testExpression.evaluateMaybeStatically(dynamicContext);
+		return new Sequence({
+			next: () => {
+				if (!resultIterator) {
+					const ifExpressionResult = ifExpressionResultSequence.tryGetEffectiveBooleanValue();
+
+					if (!ifExpressionResult.ready) {
+						return { done: false, ready: false, promise: ifExpressionResult.promise };
+					}
+					const resultSequence = ifExpressionResult.value ?
+						this._thenExpression.evaluateMaybeStatically(dynamicContext) :
+						this._elseExpression.evaluateMaybeStatically(dynamicContext);
+					resultIterator = resultSequence.value();
+				}
+				return resultIterator.next();
+			}
+		});
 	}
 }
 

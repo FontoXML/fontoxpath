@@ -72,7 +72,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	 */
 	const typedVariables = Object.keys(untypedVariables)
 		.reduce(function (typedVariables, variableName) {
-			typedVariables[variableName] = adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
+			typedVariables[variableName] = () => adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
 			return typedVariables;
 		}, Object.create(null));
 
@@ -101,8 +101,13 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	const rawResults = compiledSelector.evaluateMaybeStatically(dynamicContext);
 
 	switch (returnType) {
-		case evaluateXPath.BOOLEAN_TYPE:
-			return rawResults.getEffectiveBooleanValue();
+		case evaluateXPath.BOOLEAN_TYPE: {
+			const ebv = rawResults.tryGetEffectiveBooleanValue();
+			if (!ebv.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+			}
+			return ebv.value;
+		}
 
 		case evaluateXPath.STRING_TYPE:
 			if (rawResults.isEmpty()) {

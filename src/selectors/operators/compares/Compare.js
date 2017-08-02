@@ -1,4 +1,5 @@
 import Sequence from '../../dataTypes/Sequence';
+import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 import Selector from '../../Selector';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
@@ -30,32 +31,56 @@ class Compare extends Selector {
 		const firstSequence = this._firstSelector.evaluateMaybeStatically(dynamicContext);
 		const secondSequence = this._secondSelector.evaluateMaybeStatically(dynamicContext);
 
-		if ((this._compare === 'valueCompare' || this._compare === 'nodeCompare') && (firstSequence.isEmpty() || secondSequence.isEmpty())) {
-			return Sequence.empty();
-		}
-
-		if (this._compare === 'nodeCompare') {
-			const nodeCompareResult = nodeCompare(this._operator, firstSequence, secondSequence);
-			return nodeCompareResult ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
-		}
-
-		// Atomize both sequences
-		const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
-		const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
-
-		let result;
-		switch (this._compare) {
-			case 'valueCompare':
-				if (!firstAtomizedSequence.isSingleton() || !secondAtomizedSequence.isSingleton()) {
-					throw new Error('XPTY0004: Sequences to compare are not singleton');
+		return firstSequence.switchCases({
+			empty: () => {
+				if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
+					return Sequence.empty();
 				}
-				result = valueCompare(this._operator, firstAtomizedSequence.first(), secondAtomizedSequence.first());
-				break;
-			case 'generalCompare':
-				result = generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence);
-				break;
-		}
-		return result ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+				return Sequence.singletonFalseSequence();
+			},
+			default: () => secondSequence.switchCases({
+				empty: () => {
+					if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
+						return Sequence.empty();
+					}
+					return Sequence.singletonFalseSequence();
+				},
+				default: () => {
+					if (this._compare === 'nodeCompare') {
+						const nodeCompareResult = nodeCompare(this._operator, firstSequence, secondSequence);
+						return nodeCompareResult ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+					}
+					// Atomize both sequences
+					const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
+					const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
+
+					switch (this._compare) {
+						case 'valueCompare':
+							return firstAtomizedSequence.switchCases({
+								singleton: () => secondAtomizedSequence.switchCases({
+									singleton: () => firstAtomizedSequence.mapAll(
+										([onlyFirstValue]) => secondAtomizedSequence.mapAll(
+											([onlySecondValue]) => valueCompare(
+												this._operator,
+												onlyFirstValue,
+												onlySecondValue) ?
+												Sequence.singletonTrueSequence() :
+												Sequence.singletonFalseSequence())),
+									default: () => {
+										throw new Error('XPTY0004: Sequences to compare are not singleton');
+									}
+								}),
+								default: () => {
+									throw new Error('XPTY0004: Sequences to compare are not singleton');
+								}
+							});
+							break;
+						case 'generalCompare':
+							return generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence);
+					}
+				}
+			})
+		});
 	}
 }
 

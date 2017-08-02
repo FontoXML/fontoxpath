@@ -22,13 +22,12 @@ class KindTest extends Selector {
 	 * @param   {!../DynamicContext}      dynamicContext
 	 * @return  {!../dataTypes/Sequence}
 	 */
-	evaluate (dynamicContext) {
-		if (this._nodeType === 3 && dynamicContext.contextItem.value.nodeType === 4) {
+	evaluateToBoolean (_dynamicContext, node) {
+		if (this._nodeType === 3 && node.value.nodeType === 4) {
 			// CDATA_SECTION_NODES should be regarded as text nodes, and CDATA does not exist in the XPath Data Model
-			return Sequence.singletonTrueSequence();
+			return true;
 		}
-		const booleanValue = this._nodeType === dynamicContext.contextItem.value.nodeType ? trueBoolean : falseBoolean;
-		return Sequence.singleton(booleanValue);
+		return this._nodeType === node.value.nodeType;
 	}
 
 	getBucket () {

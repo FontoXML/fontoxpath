@@ -29,32 +29,34 @@ class NameTest extends Selector {
 
 	}
 
+	evaluate (dynamicContext) {
+		return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem) ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	}
+
 	/**
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}
 	 */
-	evaluate (dynamicContext) {
-		const node = dynamicContext.contextItem;
+	evaluateToBoolean (dynamicContext, node) {
 		const nodeIsElement = isSubtypeOf(node.type, 'element()');
 		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');
 		if (!nodeIsElement && !nodeIsAttribute) {
-			return Sequence.singletonFalseSequence();
+			return false;
 		}
 		// Easy cases first
 		if (this._prefix === null && this._localName === '*') {
-			return Sequence.singletonTrueSequence();
+			return true;
 		}
 		if (this._prefix === '*') {
 			if (this._localName === '*') {
-				return Sequence.singletonTrueSequence();
+				return true;
 			}
-			return this._localName === node.value.localName ?
-				Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+			return this._localName === node.value.localName;
 
 		}
 		if (this._localName !== '*') {
 			if (this._localName !== node.value.localName) {
-				return Sequence.singletonFalseSequence();
+				return false;
 			}
 		}
 
@@ -80,9 +82,7 @@ class NameTest extends Selector {
 			}
 		}
 
-		return node.value.namespaceURI === resolvedNamespaceURI ?
-			Sequence.singletonTrueSequence() :
-			Sequence.singletonFalseSequence();
+		return node.value.namespaceURI === resolvedNamespaceURI;
 	}
 
 	getBucket () {

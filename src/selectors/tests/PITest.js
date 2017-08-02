@@ -23,12 +23,11 @@ class PITest extends Selector {
 	 * @param   {!../DynamicContext}      dynamicContext
 	 * @return  {!../dataTypes/Sequence}
 	 */
-	evaluate (dynamicContext) {
+	evaluateToBoolean (_dynamicContext, node) {
 		// Assume singleton
-		var nodeValue = dynamicContext.contextItem;
-		var isMatchingProcessingInstruction = isSubtypeOf(nodeValue.type, 'processing-instruction()') &&
-			nodeValue.value.target === this._target;
-		return isMatchingProcessingInstruction ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+		var isMatchingProcessingInstruction = isSubtypeOf(node.type, 'processing-instruction()') &&
+			node.value.target === this._target;
+		return isMatchingProcessingInstruction;
 	}
 
 	getBucket () {

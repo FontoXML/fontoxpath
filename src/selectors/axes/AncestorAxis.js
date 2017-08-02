@@ -52,9 +52,8 @@ class AncestorAxis extends Selector {
 
 		const contextNode = contextItem.value;
 		return new Sequence(generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)))
-			.filter((item, i, sequence) => {
-				const ancestorContext = dynamicContext.scopeWithFocus(i, item, sequence);
-				return this._ancestorSelector.evaluateMaybeStatically(ancestorContext).getEffectiveBooleanValue();
+			.filter(item => {
+				return this._ancestorSelector.evaluateToBoolean(dynamicContext, item);
 			});
 	}
 }

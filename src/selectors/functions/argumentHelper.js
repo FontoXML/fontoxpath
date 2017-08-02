@@ -56,23 +56,30 @@ function mapItem (argumentItem, type, dynamicContext) {
  */
 export const transformArgument = (argumentType, argument, dynamicContext) => {
 	const { type, multiplicity } = splitType(argumentType);
-	return argument.mapCases({
-		empty: () => {
-			if (multiplicity === '+' || !multiplicity) {
-				// Error case: should be passed through to caller
-				throw new Error('Multiplicity of function argument is incorrect.');
-			}
-			return { done: true };
-		},
-		singleton: (value) => {
-			return mapItem(value, type, dynamicContext);
-		},
-		multiple: (value) => {
-			if (multiplicity === '?' || !multiplicity) {
-				// Error case: should be passed through to caller
-				throw new Error('Multiplicity of function argument is incorrect.');
-			}
-			return mapItem(value, type, dynamicContext);
-		}
-	});
+	switch (multiplicity) {
+		case '?':
+			return argument.switchCases({
+				default: () => argument.map(value => mapItem(value, type, dynamicContext)),
+				multiple: () => {
+					throw new Error('Multiplicity of function argument is incorrect.');
+				}
+			});
+		case '+':
+			return argument.switchCases({
+				empty: () => {
+					throw new Error('Multiplicity of function argument is incorrect.');
+				},
+				default: () => argument.map(value => mapItem(value, type, dynamicContext))
+			});
+		case '*':
+			return argument.map(value => mapItem(value, type, dynamicContext));
+		default:
+			// excactly one
+			return argument.switchCases({
+				singleton: () => argument.map(value => mapItem(value, type, dynamicContext)),
+				default: () => {
+					throw new Error('Multiplicity of function argument is incorrect.');
+}
+			});
+	}
 };

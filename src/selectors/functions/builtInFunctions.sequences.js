@@ -2,11 +2,41 @@ import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import { transformArgument } from './argumentHelper';
 
 import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
+
+function subSequence (sequence, start, length) {
+	// XPath starts from 1
+	let i = 1;
+	/**
+	 * @type {!Iterator<!../dataTypes/Value>}
+	 */
+	const iterator = sequence.value();
+	return new Sequence({
+		next: () => {
+			while (i < start) {
+				const val = iterator.next();
+				if (!val.ready) {
+					return val;
+				}
+				i++;
+			}
+			if (length !== null && i >= length) {
+				return { done: true, ready: true, value: undefined };
+			}
+
+			const val = iterator.next();
+			if (!val.ready) {
+				return val;
+			}
+			i++;
+
+			return val;
+		}
+	});
+}
 
 /**
  * Promote all given (numeric) items to single common type
@@ -80,39 +110,27 @@ function castItemsForMinMax (items) {
 }
 
 function fnEmpty (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return Sequence.singletonTrueSequence();
-	}
-
-	return Sequence.singletonFalseSequence();
+	return sequence.switchCases({
+		empty: () => Sequence.singletonTrueSequence(),
+		singleton: () => Sequence.singletonFalseSequence(),
+		multiple: () => Sequence.singletonFalseSequence()
+	});
 }
 
 function fnExists (_dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return Sequence.singletonFalseSequence();
-	}
-
-	return Sequence.singletonTrueSequence();
+	return sequence.switchCases({
+		empty: () => Sequence.singletonFalseSequence(),
+		singleton: () => Sequence.singletonTrueSequence(),
+		multiple: () => Sequence.singletonTrueSequence()
+	});
 }
 
 function fnHead (_dynamicContext, sequence) {
-	if (sequence.isEmpty(sequence)) {
-		return sequence;
-	}
-	if (sequence.isSingleton(sequence)) {
-		return sequence;
-	}
-
-	return Sequence.singleton(sequence.first());
+	return subSequence(sequence, 1, 2);
 }
 
 function fnTail (_dynamicContext, sequence) {
-	if (sequence.isEmpty(sequence) || sequence.isSingleton()) {
-		return Sequence.empty();
-	}
-	const innerIterator = sequence.value();
-	innerIterator.next();
-	return new Sequence(innerIterator);
+	return subSequence(sequence, 2, null);
 }
 
 function fnInsertBefore (_dynamicContext, sequence, position, inserts) {
@@ -148,44 +166,42 @@ function fnRemove (_dynamicContext, sequence, position) {
 }
 
 function fnReverse (_dynamicContext, sequence) {
-	return new Sequence(sequence.getAllValues().reverse());
+	return sequence.mapAll(allValues => new Sequence(allValues.reverse()));
 }
 
-function fnSubsequence (_dynamicContext, sequence, startingLoc, lengthSequence) {
-	if (sequence.isEmpty()) {
-		return sequence;
-	}
-
-	const startingLocValue = Math.round(startingLoc.first().value);
-	/**
-	 * @type {?number}
-	 */
-	const length = lengthSequence ? startingLocValue + Math.round(lengthSequence.first().value) : null;
-
-	if (length === null && startingLocValue < 1) {
-		// Shortcut: the length of this sequence is equal to the length of the other one
-		return sequence;
-	}
-
-	if (isNaN(startingLocValue) || isNaN(length)) {
-		return Sequence.empty();
-	}
-	// XPath starts from 1
-	let i = 1;
-	/**
-	 * @type {!Iterator<!../dataTypes/Value>}
-	 */
-	const iterator = sequence.value();
+function fnSubsequence (_dynamicContext, sequence, startSequence, lengthSequence) {
+	let iterator = null;
 	return new Sequence({
 		next: () => {
-			while (i < startingLocValue) {
-				i++;
-				iterator.next();
-			}
-			i++;
+			if (!iterator) {
+				const startVal = startSequence.tryGetFirst();
+				if (!startVal.ready) {
+					return { done: false, ready: false, promise: startVal.promise };
+				}
+				if (!startVal.value) {
+					return { done: true };
+				}
+				const start = Math.round(startVal.value.value);
 
-			if (length !== null && i > length) {
-				return { done: true,  ready: true, value: undefined };
+				let length;
+				if (lengthSequence) {
+					const lengthVal = lengthSequence.tryGetFirst();
+					if (!lengthVal.ready) {
+						return { done: false, ready: false, promise: lengthVal.promise };
+					}
+					if (!lengthVal.value) {
+						iterator = Sequence.empty().value();
+
+						return { done: true };
+					}
+					length = start + Math.round(lengthVal.value.value);
+				} else {
+					length = null;
+				}
+				if (isNaN(start) || isNaN(length)) {
+					return { done: true };
+				}
+				iterator = subSequence(sequence, start, length).value();
 			}
 			return iterator.next();
 		}

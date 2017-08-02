@@ -6,7 +6,7 @@ function fnTrace (dynamicContext, arg, label) {
 	return arg.mapAll(allItems => {
 		const argumentAsStrings = allItems.map(value => castToType(atomize(value, dynamicContext), 'xs:string'));
 		console.log.apply(console, label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]);
-		return allItems;
+		return new Sequence(allItems);
 	});
 }
 

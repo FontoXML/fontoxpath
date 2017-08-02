@@ -22,15 +22,16 @@ class TypeTest extends Selector {
 		this._typeName = prefix ? prefix + ':' + typeName : typeName;
 	}
 
+	evaluate (dynamicContext) {
+		return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem) ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	}
 
 	/**
 	 * @param   {!../DynamicContext}      dynamicContext
 	 * @return  {!../dataTypes/Sequence}
 	 */
-	evaluate (dynamicContext) {
-		var booleanValue = createAtomicValue(
-			isSubtypeOf(dynamicContext.contextItem.type, this._typeName), 'xs:boolean');
-		return Sequence.singleton(booleanValue);
+	evaluateToBoolean (_dynamicContext, item) {
+		return isSubtypeOf(item.type, this._typeName);
 	}
 }
 export default TypeTest;

@@ -90,13 +90,8 @@ class DescendantAxis extends Selector {
 		 * @type {!Sequence}
 		 */
 		const descendantSequence = new Sequence(iterator);
-		return descendantSequence.filter((item, i) => {
-			const result = this._descendantSelector.evaluateMaybeStatically(dynamicContext.scopeWithFocus(
-				i,
-				item,
-				descendantSequence));
-
-			return result.getEffectiveBooleanValue();
+		return descendantSequence.filter(item => {
+			return this._descendantSelector.evaluateToBoolean(dynamicContext, item);
 		});
 	}
 }

@@ -6,6 +6,7 @@ import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
+	evaluateXPathToAsyncIterator,
 	evaluateXPathToNumbers,
 	evaluateXPathToString
 } from 'fontoxpath';
@@ -252,5 +253,20 @@ describe('relative paths', () => {
 			]
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('function ($node) { $node//someGrandChild }(.)', documentNode.documentElement), [documentNode.documentElement.firstChild.firstChild]);
+	});
+
+	it('allows delayed execution', async () => {
+		jsonMlMapper.parse([
+			'someNode',
+			[
+				'someChildNode',
+				['someGrandChild']
+			]
+		], documentNode);
+		const it = evaluateXPathToAsyncIterator('/someNode[fontoxpath:sleep(1, true())]', documentNode);
+
+		const val = await it.next();
+
+		chai.assert(val.value === documentNode.documentElement);
 	});
 });

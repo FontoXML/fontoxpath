@@ -31,13 +31,12 @@ class ParentAxis extends Selector {
 		if (!parentNode) {
 			return Sequence.empty();
 		}
-		const parentSequence = Sequence.singleton(createNodeValue(parentNode));
-		const scopedContext = dynamicContext.scopeWithFocus(0, parentSequence.first(), parentSequence);
-		const nodeIsMatch = this._parentSelector.evaluateMaybeStatically(scopedContext).getEffectiveBooleanValue();
+		const parentNodeValue = createNodeValue(parentNode);
+		const nodeIsMatch = this._parentSelector.evaluateToBoolean(dynamicContext, parentNodeValue);
 		if (!nodeIsMatch) {
 			return Sequence.empty();
 		}
-		return parentSequence;
+		return Sequence.singleton(parentNodeValue);
 	}
 }
 

@@ -27,9 +27,8 @@ class ChildAxis extends Selector {
 		const domFacade = dynamicContext.domFacade;
 		const nodeValues = domFacade.getChildNodes(contextItem.value).map(createNodeValue);
 		const childContextSequence = new Sequence(nodeValues);
-		return childContextSequence.filter((item, i, sequence) => {
-			const childContext = dynamicContext.scopeWithFocus(i, item, sequence);
-			return this._childSelector.evaluateMaybeStatically(childContext).getEffectiveBooleanValue();
+		return childContextSequence.filter(item => {
+				return this._childSelector.evaluateToBoolean(dynamicContext, item);
 		});
 	}
 }
