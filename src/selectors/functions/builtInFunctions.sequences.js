@@ -178,9 +178,6 @@ function fnSubsequence (_dynamicContext, sequence, startSequence, lengthSequence
 				if (!startVal.ready) {
 					return { done: false, ready: false, promise: startVal.promise };
 				}
-				if (!startVal.value) {
-					return { done: true };
-				}
 				const start = Math.round(startVal.value.value);
 
 				let length;
@@ -189,17 +186,12 @@ function fnSubsequence (_dynamicContext, sequence, startSequence, lengthSequence
 					if (!lengthVal.ready) {
 						return { done: false, ready: false, promise: lengthVal.promise };
 					}
-					if (!lengthVal.value) {
-						iterator = Sequence.empty().value();
-
-						return { done: true };
-					}
 					length = start + Math.round(lengthVal.value.value);
 				} else {
 					length = null;
 				}
 				if (isNaN(start) || isNaN(length)) {
-					return { done: true };
+					return { done: true, ready: true };
 				}
 				iterator = subSequence(sequence, start, length).value();
 			}
@@ -213,11 +205,24 @@ function fnUnordered (_dynamicContext, sequence) {
 }
 
 function fnDeepEqual (dynamicContext, parameter1, parameter2) {
-	return sequenceDeepEqual(dynamicContext, parameter1, parameter2) ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	return new Sequence(sequenceDeepEqual(dynamicContext, parameter1, parameter2)).map(jsValue => createAtomicValue(jsValue, 'xs:boolean'));
 }
 
 function fnCount (_dynamicContext, sequence) {
-	return Sequence.singleton(createAtomicValue(sequence.getLength(false), 'xs:integer'));
+	let hasPassed = false;
+	return new Sequence({
+		next: () => {
+			if (hasPassed) {
+				return { done: true, ready: true };
+			}
+			const length = sequence.tryGetLength();
+			if (!length.ready) {
+				return { done: false, ready: false, promise: length.promise };
+			}
+			hasPassed = true;
+			return { done: false, ready: true, value: createAtomicValue(length.value, 'xs:integer') };
+		}
+	});
 }
 
 function fnAvg (_dynamicContext, sequence) {

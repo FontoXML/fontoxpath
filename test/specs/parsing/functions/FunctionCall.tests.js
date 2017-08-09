@@ -26,7 +26,7 @@ describe('Dynamic function call', () => {
 		() => chai.assert.equal(evaluateXPathToNumber('let $fn := function ($recurse, $i) {if ($i < 100) then $recurse($recurse, $i + 1) else $i } return $fn($fn, 0)', documentNode), 100));
 
 	it('allows async recursion', async () => {
-		const it = evaluateXPathToAsyncIterator('let $fn := function ($recurse, $i) {if ($i < 100) then fontoxpath:sleep(1, $recurse($recurse, $i + 1)) else $i } return $fn($fn, 0)', documentNode);
+		const it = evaluateXPathToAsyncIterator('let $fn := function ($recurse, $i) {if ($i < 100) then fontoxpath:sleep($recurse($recurse, $i + 1), 1) else $i } return $fn($fn, 0)', documentNode);
 
 		chai.assert.equal((await it.next()).value, 100);
 	   chai.assert.equal((await it.next()).done, true);

@@ -30,40 +30,39 @@ class SimpleMapOperator extends Selector {
 		 * @type {Iterator<../DynamicContext>}
 		 */
 		const childContextIterator = dynamicContext.createSequenceIterator(sequence);
-		let childContext = childContextIterator.next();
+		let childContext = null;
 		let sequenceValueIterator = null;
-
+		let done = false;
 		return new Sequence({
 			next: () => {
-				if (childContext.done) {
-					return childContext;
-				}
-				if (!childContext.ready) {
-					return {
-						done: false,
-						ready: false,
-						promise: childContext.promise.then(() => childContext = childContextIterator.next())
-					};
-				}
-				if (!sequenceValueIterator) {
-					sequenceValueIterator = this._expression2.evaluateMaybeStatically(childContext.value).value();
-				}
-				let value = sequenceValueIterator.next();
-				while (value.done) {
-					childContext = childContextIterator.next();
-					if (childContext.done) {
-						return childContext;
+				while (!done) {
+					if (!childContext) {
+						childContext = childContextIterator.next();
+						if (childContext.done) {
+							done = true;
+							return childContext;
+						}
+						if (!childContext.ready) {
+							const returnableValue = childContext;
+							childContext = null;
+							return returnableValue;
+						}
+
 					}
-					if (!childContext.ready) {
-						return childContext;
-					}
+
+					// Now that we have moved an item in the input, start generating mapped items
 					if (!sequenceValueIterator) {
 						sequenceValueIterator = this._expression2.evaluateMaybeStatically(childContext.value).value();
 					}
-					sequenceValueIterator = this._expression2.evaluateMaybeStatically(childContext.value).value();
-					value = sequenceValueIterator.next();
+					const value = sequenceValueIterator.next();
+					if (value.done) {
+						sequenceValueIterator = null;
+						// Move to next
+						childContext = null;
+						continue;
+					}
+					return value;
 				}
-				return value;
 			}
 		});
 	}

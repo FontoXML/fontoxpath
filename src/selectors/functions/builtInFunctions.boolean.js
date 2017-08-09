@@ -1,11 +1,46 @@
 import Sequence from '../dataTypes/Sequence';
+import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 
 function fnNot (_dynamicContext, sequence) {
-	return !sequence.getEffectiveBooleanValue() ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	const ebv = sequence.tryGetEffectiveBooleanValue();
+	if (ebv.ready) {
+		return ebv.value === false ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	}
+	let done = false;
+	return new Sequence({
+		next: () => {
+			if (done) {
+				return { done: true, ready: true };
+			}
+			const ebv = sequence.tryGetEffectiveBooleanValue();
+			if (!ebv.ready) {
+				return { done: false, ready: false, promise: ebv.promise };
+			}
+			done = true;
+			return ebv.value === false ? trueBoolean : falseBoolean;
+		}
+	});
 }
 
 function fnBoolean (_dynamicContext, sequence) {
-	return sequence.getEffectiveBooleanValue() ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	const ebv = sequence.tryGetEffectiveBooleanValue();
+	if (ebv.ready) {
+		return ebv.value ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	}
+	let done = false;
+	return new Sequence({
+		next: () => {
+			if (done) {
+				return { done: true, ready: true };
+			}
+			const ebv = sequence.tryGetEffectiveBooleanValue();
+			if (!ebv.ready) {
+				return { done: false, ready: false, promise: ebv.promise };
+			}
+			done = true;
+			return ebv.value ? trueBoolean : falseBoolean;
+		}
+	});
 }
 
 function fnTrue () {

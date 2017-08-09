@@ -70,24 +70,24 @@ function mergeSortedSequences (domFacade, sequences) {
 	let allSequencesLoaded = false;
 	let allSequencesLoadedPromise = null;
 	(function loadSequences () {
-		const val = sequences.next();
-		if (val.done) {
-			allSequencesLoaded = true;
-			return undefined;
+		let val = sequences.next();
+		while (!val.done) {
+			if (!val.ready) {
+				allSequencesLoadedPromise = val.promise.then(loadSequences);
+				return allSequencesLoadedPromise;
+			}
+			const iterator = val.value.value();
+			const mappedIterator = {
+				current: iterator.next(),
+				next: () => iterator.next()
+			};
+			if (!mappedIterator.current.done) {
+				allIterators.push(mappedIterator);
+			}
+			val = sequences.next();
 		}
-		if (!val.ready) {
-			allSequencesLoadedPromise = val.promise.then(loadSequences);
-			return allSequencesLoadedPromise;
-		}
-		const iterator = val.value.value();
-		const mappedIterator = {
-			current: iterator.next(),
-			next: () => iterator.next()
-		};
-		if (!mappedIterator.current.done) {
-			allIterators.push(mappedIterator);
-		}
-		return loadSequences();
+		allSequencesLoaded = true;
+		return undefined;
 	})();
 	let previousNode = null;
 	return new Sequence({
@@ -121,7 +121,10 @@ function mergeSortedSequences (domFacade, sequences) {
 					while (low <= high) {
 						mid = Math.floor((low + high) / 2);
 						const otherNode = allIterators[mid].current.value;
-						const comparisonResult = compareNodePositions(domFacade, consumedIterator.current.value, otherNode);
+						const comparisonResult = compareNodePositions(
+							domFacade,
+							consumedIterator.current.value,
+							otherNode);
 						if (comparisonResult === 0) {
 							// The same, this should be 0
 							low = mid;

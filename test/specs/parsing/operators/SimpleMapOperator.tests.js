@@ -5,6 +5,8 @@ import {
 	evaluateXPathToStrings
 } from 'fontoxpath';
 
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
+
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
@@ -33,6 +35,15 @@ describe('Simple map operator', () => {
 		chai.assert.deepEqual(evaluateXPathToStrings('. ! (@first, @second, @last) ! string(.)', element), ['a', 'b', 'z']);
 	});
 
-	it('sets the context sequence',
+	it(
+		'sets the context sequence',
 		() => chai.assert.deepEqual(evaluateXPathToStrings('("a", "b", "c")!position()!string()', documentNode), ['1', '2', '3']));
+
+	it(
+		'can map to async functions',
+		async () => chai.assert.equal(await evaluateXPathToAsyncSingleton('("a", "b", "c")!fontoxpath:sleep(., 1) => string-join()', documentNode), 'abc'));
+	it(
+		'can map an async filled sequence',
+		async () => chai.assert.equal(await evaluateXPathToAsyncSingleton('("a" => fontoxpath:sleep(1), "b", "c" => fontoxpath:sleep(1))!string() => string-join()', documentNode), 'abc'));
+
 });

@@ -25,32 +25,30 @@ function fnQName (_dynamicContext, paramURI, paramQName) {
 	return Sequence.singleton(createAtomicValue(new QName(prefix, uri, localPart), 'xs:QName'));
 }
 
-
 function fnPrefixFromQName (_dynamicContext, arg) {
-	if (arg.isEmpty()) {
-		return arg;
-	}
-	const qname = arg.first().value;
-	if (!qname.prefix) {
-		return Sequence.empty();
-	}
-	return Sequence.singleton(createAtomicValue(qname.prefix, 'xs:NCName'));
+	return arg.mapAll(([qname]) => {
+		const qnameValue = qname.value;
+		if (!qnameValue.prefix) {
+			return Sequence.empty();
+		}
+		return Sequence.singleton(createAtomicValue(qnameValue.prefix, 'xs:NCName'));
+	});
 }
 
 function fnNamespaceURIFromQName (_dynamicContext, arg) {
-	if (arg.isEmpty()) {
-		return arg;
-	}
-	const qname = arg.first().value;
-	return Sequence.singleton(createAtomicValue(qname.namespaceURI || '', 'xs:anyURI'));
+	return arg.map(qname => {
+		const qnameValue = qname.value;
+		return createAtomicValue(qnameValue.namespaceURI || '', 'xs:anyURI');
+	});
+
 }
 
 function fnLocalNameFromQName (_dynamicContext, arg) {
-	if (arg.isEmpty()) {
-		return arg;
-	}
-	const qname = arg.first().value;
-	return Sequence.singleton(createAtomicValue(qname.localPart, 'xs:NCName'));
+	return arg.map(qname => {
+		const qnameValue = qname.value;
+		return createAtomicValue(qnameValue.localPart, 'xs:NCName');
+	});
+
 }
 
 export default {

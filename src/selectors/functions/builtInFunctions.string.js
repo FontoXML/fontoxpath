@@ -3,6 +3,7 @@ import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import atomize from '../dataTypes/atomize';
+import zipSingleton from '../util/zipSingleton';
 
 function collationError () {
 	throw new Error('FOCH0002: No collations are supported');
@@ -39,13 +40,15 @@ function fnConcat (dynamicContext) {
 	stringSequences = stringSequences.map(function (sequence) {
 		return sequence.atomize(dynamicContext);
 	});
-	const strings = stringSequences.map(function (sequence) {
-			if (sequence.isEmpty()) {
-				return '';
-			}
-			return sequence.first().value;
-		});
-	return Sequence.singleton(createAtomicValue(strings.join(''), 'xs:string'));
+	return zipSingleton(stringSequences, function (stringValues) {
+		return Sequence.singleton(
+			createAtomicValue(
+				stringValues
+					.map(stringValue => stringValue === null ? '' : stringValue.value)
+					.join(''),
+				'xs:string'));
+
+	});
 }
 
 function fnContains (_dynamicContext, arg1, arg2) {
@@ -99,31 +102,32 @@ function fnEndsWith (_dynamicContext, arg1, arg2) {
 }
 
 function fnString (dynamicContext, sequence) {
-	if (sequence.isEmpty()) {
-		return Sequence.singleton(createAtomicValue('', 'xs:string'));
-	}
-	const value = sequence.first();
-	if (isSubtypeOf(value.type, 'node()')) {
+	return sequence.switchCases({
+		empty: () => Sequence.singleton(createAtomicValue('', 'xs:string')),
+		default: () => sequence.map(value => {
+			if (isSubtypeOf(value.type, 'node()')) {
+				let stringValue;
+				if (isSubtypeOf(value.type, 'attribute()')) {
+					stringValue = value.value.getStringValue(dynamicContext);
+				}
+				else {
+					stringValue = atomize(value, dynamicContext);
+				}
 
-		let stringValue;
-		if (isSubtypeOf(value.type, 'attribute()')) {
-			stringValue = value.value.getStringValue(dynamicContext);
-		}
-		else {
-			stringValue = atomize(value, dynamicContext);
-		}
-
-		return Sequence.singleton(stringValue);
-	}
-	return Sequence.singleton(castToType(sequence.first(), 'xs:string'));
+				return stringValue;
+			}
+			return castToType(value, 'xs:string');
+		})
+	});
 }
 
 function fnStringJoin (_dynamicContext, sequence, separator) {
 	const separatorString = separator.first().value;
-	const joinedString = sequence.getAllValues().map(function (stringValue) {
-		return stringValue.value;
-	}).join(separatorString);
-	return Sequence.singleton(createAtomicValue(joinedString, 'xs:string'));
+	return sequence.mapAll(
+		allStrings => {
+			const joinedString = allStrings.map(stringValue => stringValue.value).join(separatorString);
+			return Sequence.singleton(createAtomicValue(joinedString, 'xs:string'));
+		});
 }
 
 function fnStringLength (_dynamicContext, sequence) {

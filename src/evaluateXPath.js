@@ -18,6 +18,24 @@ const DEFAULT_NAMESPACES = {
 	'math': 'http://www.w3.org/2005/xpath-functions/math'
 };
 
+function transformMapToObject (map, dynamicContext) {
+	return map.keyValuePairs.reduce(function (mapObject, keyValuePair) {
+		var key = keyValuePair.key.value;
+		var value;
+		if (keyValuePair.value.isSingleton()) {
+			value = atomize(keyValuePair.value.first(), dynamicContext).value;
+		}
+		else {
+			value = keyValuePair.value.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
+				return atomizedValue.value;
+			});
+		}
+		mapObject[key] = value;
+		return mapObject;
+	}, {});
+
+}
+
 /**
  * @param   {Node|*}  contextItem
  * @return  {function(string):?string}
@@ -197,20 +215,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (!(isSubtypeOf(first.type, 'map(*)'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a map');
 			}
-			return first.keyValuePairs.reduce(function (mapObject, keyValuePair) {
-				var key = keyValuePair.key.value;
-				var value;
-				if (keyValuePair.value.isSingleton()) {
-					value = atomize(keyValuePair.value.first(), dynamicContext).value;
-				}
-				else {
-					value = keyValuePair.value.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
-						return atomizedValue.value;
-					});
-				}
-				mapObject[key] = value;
-				return mapObject;
-			}, {});
+			return transformMapToObject(first, dynamicContext);
 		}
 
 		case evaluateXPath.ARRAY_TYPE:
@@ -242,24 +247,26 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 
 		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
 			const it = rawResults.value();
-			let iteration = 0;
 			function getNextResult () {
-				if (iteration++ > 100) {
-					return { done: true };
-				}
 				const value = it.next();
 				if (value.done) {
 					return {
 						done: true
 					};
 				}
-				if (value.ready) {
+				if (!value.ready) {
+					return value.promise.then(getNextResult);
+				}
+				if (isSubtypeOf(value.value.type, 'map(*)')) {
 					return {
 						done: false,
-						value: value.value.value
+						value: transformMapToObject(value.value, dynamicContext)
 					};
 				}
-				return value.promise.then(getNextResult);
+				return {
+					done: false,
+					value: value.value.value
+				};
 			}
 			return {
 				[Symbol.asyncIterator]: function () {return this;},

@@ -27,6 +27,9 @@ describe('evaluateXPath', () => {
 	it('Keeps nodes nodes',
 		() => chai.assert.equal(evaluateXPath('.', documentNode, domFacade), documentNode));
 
+	it(
+		'Requires the XPath selector',
+		() => chai.assert.throws(() => evaluateXPath(), 'xpathSelector must be a string'));
 
 	describe('toBoolean', () => {
 		it('Keeps booleans booleans',

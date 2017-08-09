@@ -9,6 +9,8 @@ if (runIntegrationTests && coverageMode) {
 	throw new Error('No coverage possible for integration tests.');
 }
 
+console.log(`Running ${runIntegrationTests ? 'integration' : runQt3Tests ? 'QT3' : 'unit' } tests ${coverageMode ? 'with' : 'without'} recording coverage`);
+
 const bootstrapFile = runQt3Tests ?
 	require.resolve('./test/qt3tests.js') :
 	runIntegrationTests ?
@@ -112,38 +114,27 @@ module.exports = config => {
 				}
 			},
 			module: {
-				loaders: (coverageMode ? [
-					{
-						loader: 'istanbul-instrumenter-loader',
-						test: /\.js$/,
-						include: path.resolve('src'),
-						query: {
-							esModules: true
-						}
+				loaders: [{
+					loader: 'babel-loader',
+					test: /\.js$/,
+					include: runQt3Tests ? [path.resolve('src')] :
+						runIntegrationTests ?
+						[path.resolve('test')] :
+						[path.resolve('src'), path.resolve('test')],
+					options: {
+						presets: [
+							[
+								'env',
+								{
+									targets: {
+										chrome: 59
+									}
+								}
+							]
+						],
+						plugins: !coverageMode ? [] : [ ['istanbul', { include: ['src/**/*.js'], exclude: ['text/**/*.js'] }] ]
 					}
-				] : [])
-					.concat(
-						[{
-							loader: 'babel-loader',
-							test: /\.js$/,
-							include: runQt3Tests ? [path.resolve('src')] :
-								runIntegrationTests ?
-								[path.resolve('test')] :
-								[path.resolve('src'), path.resolve('test')],
-							query: {
-								presets: [
-									[
-										'env',
-										{
-											'targets': {
-												'chrome': 59
-											}
-										}
-									]
-								]
-							}
-						}]
-					)
+				}]
 			},
 			devtool: 'eval'
 		},
@@ -161,7 +152,6 @@ module.exports = config => {
 		plugins: [
 			webpack,
 			'karma-webpack',
-			'istanbul-instrumenter-loader',
 			'karma-mocha',
 			'karma-coverage',
 			'karma-chrome-launcher',

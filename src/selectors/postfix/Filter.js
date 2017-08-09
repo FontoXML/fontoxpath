@@ -53,15 +53,30 @@ class Filter extends Selector {
 					return Sequence.empty();
 				}
 				const iterator = valuesToFilter.value();
-				for (let value = iterator.next(); !value.done; value = iterator.next()) {
-					if (requestedIndex-- === 1) {
-						return Sequence.singleton(value.value);
+				let done = false;
+				// Note that using filter here is a bad choice, because we only want one item.
+				// TODO: implement Sequence.itemAt(i), which is a no-op for empty sequences, a O(1) op for array backed sequence / singleton sequences and a O(n) for normal sequences.
+				// If we move sorting to sequences, this will be even faster, since a select is faster than a sort.
+				return new Sequence({
+					next: () => {
+						if (!done) {
+							for (let value = iterator.next(); !value.done; value = iterator.next()) {
+								if (!value.ready) {
+									return value;
+								}
+								if (requestedIndex-- === 1) {
+									done = true;
+									return value;
+								}
+							}
+							done = true;
+						}
+						return { done: true, ready: true };
 					}
-				}
-				return Sequence.empty();
+				});
 			}
-
 			// If all the items resolve to true, we can return all items, or none if vice versa
+			// This can be gotten synchronously, because of the check for static evaluation
 			if (result.getEffectiveBooleanValue()) {
 				return valuesToFilter;
 			}

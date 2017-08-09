@@ -2,6 +2,8 @@ import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import MapValue from '../dataTypes/MapValue';
+import zipSingleton from '../util/zipSingleton';
+
 /**
  * @extends {Selector}
  */
@@ -19,18 +21,20 @@ class MapConstructor extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var keyValuePairs = this._entries.map(function (keyValuePair) {
-				var keySequence = keyValuePair.key.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
-				if (!keySequence.isSingleton()) {
-					throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
-				}
-				return {
-					key: keySequence.first(),
-					value: keyValuePair.value.evaluateMaybeStatically(dynamicContext)
-				};
-			});
+		const keySequences = this._entries
+				.map(kvp => kvp.key.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext).switchCases({
+					default: () => {
+						throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
+					},
+					singleton: seq => seq
+				}));
 
-		return Sequence.singleton(new MapValue(keyValuePairs));
+		return zipSingleton(
+			keySequences,
+			keys => Sequence.singleton(new MapValue(keys.map((key, keyIndex) => ({
+				key,
+				value: this._entries[keyIndex].value.evaluateMaybeStatically(dynamicContext)
+			})))));
 	}
 }
 

@@ -25,8 +25,8 @@ class ArrayConstructor extends Selector {
 
 	evaluate (dynamicContext) {
 		if (this._curlyness === 'curly') {
-			return Sequence.singleton(
-				new ArrayValue(Array.from(this._members[0].evaluateMaybeStatically(dynamicContext).value()).map(Sequence.singleton)));
+			return this._members[0].evaluateMaybeStatically(dynamicContext)
+				.mapAll(allValues => Sequence.singleton(new ArrayValue(allValues.map(Sequence.singleton))));
 		}
 
 		return Sequence.singleton(

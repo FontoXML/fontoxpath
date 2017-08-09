@@ -9,6 +9,8 @@ import {
 	evaluateXPathToStrings
 } from 'fontoxpath';
 
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
+
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
@@ -21,6 +23,8 @@ describe('Functions and operators on sequences', () => {
 				() => chai.assert.isTrue(evaluateXPathToBoolean('empty(())', documentNode)));
 			it('returns false for an non-empty sequence',
 				() => chai.assert.isFalse(evaluateXPathToBoolean('empty((1, 2, 3))', documentNode)));
+			it('returns false for an non-empty sequence',
+				() => chai.assert.isFalse(evaluateXPathToBoolean('empty(1)', documentNode)));
 		});
 
 		describe('fn:exists', () => {
@@ -100,6 +104,18 @@ describe('Functions and operators on sequences', () => {
 
 			it('returns an empty sequence when startingLoc = -INF and length = +INF',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), xs:double("-INF"), xs:double("+INF"))', documentNode), []));
+			it('allows async parameters: sequence', async () => {
+				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c") => fontoxpath:sleep(1), 2, 1)'), "b");
+			});
+			it('allows async parameters: async items in sequence', async () => {
+				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a" => fontoxpath:sleep(1), "b" => fontoxpath:sleep(10), "c"), 2, 1)'), "b");
+			});
+			it('allows async parameters: from', async () => {
+				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c"), 2 => fontoxpath:sleep(1), 1)'), "b");
+			});
+			it('allows async parameters: length', async () => {
+				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c"), 2, 1 => fontoxpath:sleep(1))'), "b");
+			});
 		});
 
 		describe('fn:unordered', () => {
@@ -112,79 +128,385 @@ describe('Functions and operators on sequences', () => {
 
 	describe('Functions that compare values in sequences', () => {
 		describe('fn:deep-equal', () => {
-			it('returns true if both sequences are empty',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((), ())', documentNode)));
-			it('returns true if both sequences contain an equal string',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(("abc"), ("abc"))', documentNode)));
-			it('returns true if both sequences contain an equal number (1 vs 1)',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((1), (1))', documentNode)));
-			it('returns true if both sequences contain an equal number (1 vs float 1)',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((1), (xs:float("1")))', documentNode)));
-			it('returns true if both sequences contain an equal number (float NaN vs float NaN)',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:float("NaN")), (xs:float("NaN")))', documentNode)));
-			it('returns true if both sequences contain an equal number (double 1 vs 1)',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("1")), (1))', documentNode)));
-			it('returns true if both sequences contain an equal number (xs:int and xs:int)',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:int("-2147483648")),(xs:int("-2147483648")))', documentNode)));
-			it('returns true if both sequences contain an equal number (double 1 vs float 1)',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("1")), (xs:float("1")))', documentNode)));
-			it('returns true if both sequences contain an equal number (double 1 vs double 1)',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("1")), (xs:double("1")))', documentNode)));
-			it('returns true if both sequences contain an equal number (double NaN vs double NaN)',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("NaN")), (xs:double("NaN")))', documentNode)));
-			it('returns true if both sequences contain an equal boolean',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:boolean("true")), xs:boolean("true"))', documentNode)));
-			it('returns true if both sequences contain an equal set of values',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(("abc", 1, xs:boolean("false")), ("abc", 1, xs:boolean("false")))', documentNode)));
+			describe('sync parameters', () => {
+				it('returns true if both sequences are empty', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((), ())', documentNode));
+				});
 
-			it('returns false if both sequences have a different length',
-				() => chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(("xyz", "abc"), ("abc"))', documentNode)));
-			it('returns false if both sequences contain different strings',
-				() => chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(("xyz"), ("abc"))', documentNode)));
-			it('returns false if both sequences contain different numbers',
-				() => chai.assert.isFalse(evaluateXPathToBoolean('deep-equal((22), (42))', documentNode)));
-			it('returns false if both sequences contain different booleans',
-				() => chai.assert.isFalse(evaluateXPathToBoolean('deep-equal((xs:boolean("true")), (xs:boolean("false")))', documentNode)));
-			it('returns false if both sequences contain multiple different values',
-				() => chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(("abc", 12, xs:boolean("false"), xs:boolean("true")), ("abc", 12, xs:boolean("false"), xs:boolean("false")))', documentNode)));
+				it('returns true if both sequences contain an equal string', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(("abc"), ("abc"))', documentNode));
+				});
 
-			it('returns true if both sequences contain an equal map',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((map { "a": 123, "b": 456 }), (map { "a": 123, "b": 456 }))', documentNode)));
-			it('returns true if both sequences contain an equal map with items on different positions',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((map { "b": 456, "a": 123 }), (map { "a": 123, "b": 456 }))', documentNode)));
-			it('returns true if both sequences contain an equal array',
-				() => chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(([1, 2, 5, 8]), ([1, 2, 5, 8]))', document)));
+				it('returns false if both sequences are a function', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(true#0, true#0)', documentNode));
+				});
 
-			it('returns false if both sequences contain maps with a different length',
-				() => chai.assert.isFalse(evaluateXPathToBoolean('deep-equal((map { "a": 123, "b": 456 }), (map { "a": 123, "b": 456, "c": 789 }))', documentNode)));
-			it('returns false if both sequences contain maps with different keys',
-				() => chai.assert.isFalse(evaluateXPathToBoolean('deep-equal((map { "a": 123, "b": 456 }), (map { "y": 123, "z": 456 }))', documentNode)));
+				it('returns true if both sequences contain an equal number (1 vs 1)', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((1), (1))', documentNode));
+				});
 
-			it('returns false if both sequences contain arrays with a different length',
-				() => chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(([1, 2, 5, 8, 10]), ([1, 2, 5, 8]))', document)));
+				it('returns true if both sequences contain an equal number (1 vs float 1)', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((1), (xs:float("1")))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal number (float NaN vs float NaN)', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:float("NaN")), (xs:float("NaN")))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal number (double 1 vs 1)', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("1")), (1))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal number (xs:int and xs:int)', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:int("-2147483648")),(xs:int("-2147483648")))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal number (double 1 vs float 1)', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("1")), (xs:float("1")))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal number (double 1 vs double 1)', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("1")), (xs:double("1")))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal number (double NaN vs double NaN)', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:double("NaN")), (xs:double("NaN")))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal boolean', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((xs:boolean("true")), xs:boolean("true"))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal set of values', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(("abc", 1, xs:boolean("false")), ("abc", 1, xs:boolean("false")))', documentNode));
+				});
+
+
+				it('returns false if both sequences have a different length', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(("xyz", "abc"), ("abc"))', documentNode));
+				});
+
+				it('returns false if both sequences contain different strings', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(("xyz"), ("abc"))', documentNode));
+				});
+
+				it('returns false if both sequences contain different numbers', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal((22), (42))', documentNode));
+				});
+
+				it('returns false if both sequences contain different booleans', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal((xs:boolean("true")), (xs:boolean("false")))', documentNode));
+				});
+
+				it('returns false if both sequences contain multiple different values', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(("abc", 12, xs:boolean("false"), xs:boolean("true")), ("abc", 12, xs:boolean("false"), xs:boolean("false")))', documentNode));
+				});
+
+
+				it('returns true if both sequences contain an equal map', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((map { "a": 123, "b": 456 }), (map { "a": 123, "b": 456 }))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal map with items on different positions', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal((map { "b": 456, "a": 123 }), (map { "a": 123, "b": 456 }))', documentNode));
+				});
+
+				it('returns true if both sequences contain an equal array', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(([1, 2, 5, 8]), ([1, 2, 5, 8]))', document));
+				});
+
+
+				it('returns false if both sequences contain maps with a different length', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal((map { "a": 123, "b": 456 }), (map { "a": 123, "b": 456, "c": 789 }))', documentNode));
+				});
+
+				it('returns false if both sequences contain maps with different keys', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal((map { "a": 123, "b": 456 }), (map { "y": 123, "z": 456 }))', documentNode));
+				});
+
+
+				it('returns false if both sequences contain arrays with a different length', () => {
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(([1, 2, 5, 8, 10]), ([1, 2, 5, 8]))', document));
+				});
+
+
+				// document
+				it('returns true for two sequences containing two equal document nodes', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(., .)', documentNode));
+				});
+				it('returns true for two sequences containing two equal document nodes with equal child nodes', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						'Some string.'
+					], documentNode);
+
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(., .)', documentNode));
+				});
+
+				// element
+				it('returns true for the same element', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						'Some text node.'
+					], documentNode);
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(./someElement, ./someElement)', documentNode));
+				});
+				it('returns true two equal elements', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someEqualElement',
+							'Some equal text.'
+						],
+						[
+							'someEqualElement',
+							'Some equal text.'
+						]
+					], documentNode);
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				});
+				it('returns true two unequal elements (unequal on node name)', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someEqualElement',
+							'Some equal text.'
+						],
+						[
+							'someUnequalElement',
+							'Some equal text.'
+						]
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement, ./someElement/someUnequalElement)', documentNode));
+				});
+				it('returns true two unequal elements (unequal on contents)', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someEqualElement',
+							'Some equal text.'
+						],
+						[
+							'someEqualElement',
+							'Some unequal text.'
+						]
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				});
+
+				// attribute
+				it('returns true for two sequences containing two equal attribute nodes', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someElement',
+							{ someAttribute: 'value' }
+						],
+						[
+							'someElement',
+							{ someAttribute: 'value' }
+						]
+					], documentNode);
+					chai.assert.isTrue(evaluateXPathToBoolean('let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1], $attributeNode[2])', documentNode));
+				});
+				it('returns false for two sequences containing two unequal attribute nodes', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someElement',
+							{ someAttribute: 'value1' }
+						],
+						[
+							'someElement',
+							{ someAttribute: 'value2' }
+						]
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1], $attributeNode[2])', documentNode));
+				});
+
+				// PI
+				it('returns true for two sequences containing two equal PI\'s', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'?somePi',
+							'value'
+						],
+						[
+							'?somePi',
+							'value'
+						]
+					], documentNode);
+					chai.assert.isTrue(evaluateXPathToBoolean('let $piNode := ./someElement/processing-instruction() return deep-equal($piNode[1], $piNode[2])', documentNode));
+				});
+				it('returns false for two sequences containing two unequal PI\'s', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'?somePi',
+							'value1'
+						],
+						[
+							'?somePi',
+							'value2'
+						]
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('let $piNode := ./someElement/processing-instruction() return deep-equal($piNode[1], $piNode[2])', documentNode));
+				});
+
+				// text
+				it('returns true for two sequences containing two equal text nodes', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						'Some text.',
+						'Some text.'
+					], documentNode);
+					chai.assert.isTrue(evaluateXPathToBoolean('let $textNode := ./someElement/text() return deep-equal($textNode[1], $textNode[2])', documentNode));
+				});
+				it('returns false for two sequences containing two equal text nodes', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						'Some text',
+						'Some text.'
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('let $textNode := ./someElement/text() return deep-equal($textNode[1], $textNode[2])', documentNode));
+				});
+
+				it('returns false for comments', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						['!', 'Some comment.'],
+						['!', 'Some comment.']
+					], documentNode);
+					chai.assert.isTrue(evaluateXPathToBoolean('let $commentNode := ./someElement/comment() return deep-equal($commentNode[1], $commentNode[2])', documentNode));
+				});
+			});
+		});
+
+		describe('async params', () => {
+			it('returns true if both sequences are empty', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(() => fontoxpath:sleep(1), () => fontoxpath:sleep(1))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal string', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(("abc") => fontoxpath:sleep(1), ("abc") => fontoxpath:sleep(1))', documentNode));
+			});
+
+			it('returns false if both sequences are a function', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(true#0 => fontoxpath:sleep(1), true#0 => fontoxpath:sleep(1))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal number (1 vs 1)', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((1) => fontoxpath:sleep(1), (1) => fontoxpath:sleep(1))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal number (1 vs float 1)', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((1) => fontoxpath:sleep(1), (xs:float("1") => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal number (float NaN vs float NaN)', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((xs:float("NaN") => fontoxpath:sleep(1)), (xs:float("NaN") => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal number (double 1 vs 1)', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((xs:double("1") => fontoxpath:sleep(1)), (1) => fontoxpath:sleep(1))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal number (xs:int and xs:int)', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((xs:int("-2147483648")) => fontoxpath:sleep(1), (xs:int("-2147483648") => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal number (double 1 vs float 1)', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((xs:double("1") => fontoxpath:sleep(1)), (xs:float("1") => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal number (double 1 vs double 1)', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((xs:double("1") => fontoxpath:sleep(1)), (xs:double("1") => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal number (double NaN vs double NaN)', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((xs:double("NaN") => fontoxpath:sleep(1)), (xs:double("NaN") => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal boolean', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((xs:boolean("true") => fontoxpath:sleep(1)), xs:boolean("true") => fontoxpath:sleep(1))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal set of values', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(("abc" => fontoxpath:sleep(1), 1, xs:boolean("false")), ("abc", 1 => fontoxpath:sleep(1), xs:boolean("false")))', documentNode));
+			});
+
+
+			it('returns false if both sequences have a different length', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(("xyz", "abc" => fontoxpath:sleep(1)), ("abc"))', documentNode));
+			});
+
+			it('returns false if both sequences contain different strings', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(("xyz" => fontoxpath:sleep(1)), ("abc") => fontoxpath:sleep(1))', documentNode));
+			});
+
+			it('returns false if both sequences contain different numbers', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal((22 => fontoxpath:sleep(1)), (42 => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns false if both sequences contain different booleans', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal((xs:boolean("true") => fontoxpath:sleep(1)), (xs:boolean("false") => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns false if both sequences contain multiple different values', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(("abc", 12 => fontoxpath:sleep(1), xs:boolean("false"), xs:boolean("true")), ("abc", 12, xs:boolean("false"), xs:boolean("false")))', documentNode));
+			});
+
+
+			it('returns true if both sequences contain an equal map', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((map { "a": 123, "b": 456 => fontoxpath:sleep(1) }), (map { "a": 123, "b": 456 } => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal map with items on different positions', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((map { "b" => fontoxpath:sleep(1): 456, "a": 123 }), (map { "a": 123, "b": 456 } => fontoxpath:sleep(1)))', documentNode));
+			});
+
+			it('returns true if both sequences contain an equal array', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(([1, 2, 5, 8] => fontoxpath:sleep(1)), ([1, 2, 5, 8]))', document));
+			});
+
+
+			it('returns false if both sequences contain maps with a different length', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal((map { "a": 123, "b": 456 }), (map { "a": 123, "b": 456, "c": 789 => fontoxpath:sleep(10) }))', documentNode));
+			});
+
+			it('returns false if both sequences contain maps with different keys', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal((map { "a": 123, "b" => fontoxpath:sleep(1): 456 }), (map { "y": 123, "z": 456 }))', documentNode));
+			});
+
+
+			it('returns false if both sequences contain arrays with a different length', async () => {
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(([1, 2, 5, 8, 10] => fontoxpath:sleep(1)), ([1, 2, 5, 8] => fontoxpath:sleep(1)))', document));
+			});
+
 
 			// document
-			it('returns true for two sequences containing two equal document nodes', () => {
-				chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(., .)', documentNode));
+			it('returns true for two sequences containing two equal document nodes', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(., . => fontoxpath:sleep(1))', documentNode));
 			});
-			it('returns true for two sequences containing two equal document nodes with equal child nodes', () => {
+			it('returns true for two sequences containing two equal document nodes with equal child nodes', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					'Some string.'
-				]
-				, documentNode);
-				chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(., .)', documentNode));
+				], documentNode);
+
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(. => fontoxpath:sleep(1), .)', documentNode));
 			});
 
 			// element
-			it('returns true for the same element', () => {
+			it('returns true for the same element', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					'Some text node.'
 				], documentNode);
-				chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(./someElement, ./someElement)', documentNode));
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(./someElement, ./someElement => fontoxpath:sleep(1))', documentNode));
 			});
-			it('returns true two equal elements', () => {
+			it('returns true two equal elements', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					[
@@ -196,9 +518,9 @@ describe('Functions and operators on sequences', () => {
 						'Some equal text.'
 					]
 				], documentNode);
-				chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(./someElement => fontoxpath:sleep(1)/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
 			});
-			it('returns true two unequal elements (unequal on node name)', () => {
+			it('returns true two unequal elements (unequal on node name)', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					[
@@ -210,9 +532,9 @@ describe('Functions and operators on sequences', () => {
 						'Some equal text.'
 					]
 				], documentNode);
-				chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement, ./someElement/someUnequalElement)', documentNode));
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(./someElement/someEqualElement => fontoxpath:sleep(1), ./someElement/someUnequalElement)', documentNode));
 			});
-			it('returns true two unequal elements (unequal on conetents)', () => {
+			it('returns true two unequal elements (unequal on contents)', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					[
@@ -224,11 +546,11 @@ describe('Functions and operators on sequences', () => {
 						'Some unequal text.'
 					]
 				], documentNode);
-				chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2] => fontoxpath:sleep(1))', documentNode));
 			});
 
 			// attribute
-			it('returns true for two sequences containing two equal attribute nodes', () => {
+			it('returns true for two sequences containing two equal attribute nodes', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					[
@@ -240,9 +562,9 @@ describe('Functions and operators on sequences', () => {
 						{ someAttribute: 'value' }
 					]
 				], documentNode);
-				chai.assert.isTrue(evaluateXPathToBoolean('let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1], $attributeNode[2])', documentNode));
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1] => fontoxpath:sleep(1), $attributeNode[2])', documentNode));
 			});
-			it('returns false for two sequences containing two unequal attribute nodes', () => {
+			it('returns false for two sequences containing two unequal attribute nodes', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					[
@@ -254,11 +576,11 @@ describe('Functions and operators on sequences', () => {
 						{ someAttribute: 'value2' }
 					]
 				], documentNode);
-				chai.assert.isFalse(evaluateXPathToBoolean('let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1], $attributeNode[2])', documentNode));
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1], $attributeNode[2] => fontoxpath:sleep(1))', documentNode));
 			});
 
 			// PI
-			it('returns true for two sequences containing two equal PI\'s', () => {
+			it('returns true for two sequences containing two equal PI\'s', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					[
@@ -270,9 +592,9 @@ describe('Functions and operators on sequences', () => {
 						'value'
 					]
 				], documentNode);
-				chai.assert.isTrue(evaluateXPathToBoolean('let $piNode := ./someElement/processing-instruction() return deep-equal($piNode[1], $piNode[2])', documentNode));
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('let $piNode := ./someElement/processing-instruction() return deep-equal($piNode[1], $piNode[2] => fontoxpath:sleep(1))', documentNode));
 			});
-			it('returns false for two sequences containing two unequal PI\'s', () => {
+			it('returns false for two sequences containing two unequal PI\'s', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					[
@@ -284,25 +606,34 @@ describe('Functions and operators on sequences', () => {
 						'value2'
 					]
 				], documentNode);
-				chai.assert.isFalse(evaluateXPathToBoolean('let $piNode := ./someElement/processing-instruction() return deep-equal($piNode[1], $piNode[2])', documentNode));
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('let $piNode := ./someElement/processing-instruction() return deep-equal($piNode[1] => fontoxpath:sleep(1), $piNode[2])', documentNode));
 			});
 
 			// text
-			it('returns true for two sequences containing two equal text nodes', () => {
+			it('returns true for two sequences containing two equal text nodes', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					'Some text.',
 					'Some text.'
 				], documentNode);
-				chai.assert.isTrue(evaluateXPathToBoolean('let $textNode := ./someElement/text() return deep-equal($textNode[1], $textNode[2])', documentNode));
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('let $textNode := ./someElement/text() => fontoxpath:sleep(1) return deep-equal($textNode[1], $textNode[2])', documentNode));
 			});
-			it('returns false for two sequences containing two equal text nodes', () => {
+			it('returns false for two sequences containing two equal text nodes', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					'Some text',
 					'Some text.'
 				], documentNode);
-				chai.assert.isFalse(evaluateXPathToBoolean('let $textNode := ./someElement/text() return deep-equal($textNode[1], $textNode[2])', documentNode));
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('let $textNode := ./someElement/text() => fontoxpath:sleep(1) return deep-equal($textNode[1], $textNode[2])', documentNode));
+			});
+
+			it('returns false for comments', async () => {
+				jsonMlMapper.parse([
+					'someElement',
+					['!', 'Some comment.'],
+					['!', 'Some comment.']
+				], documentNode);
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('let $commentNode := ./someElement/comment() => fontoxpath:sleep(1) return deep-equal($commentNode[1], $commentNode[2])', documentNode));
 			});
 		});
 	});

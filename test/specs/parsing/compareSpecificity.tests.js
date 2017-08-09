@@ -13,4 +13,7 @@ describe('compareSpecificity', () => {
 		() => chai.assert.equal(compareSpecificity('@id', 'self::name'), 1));
 	it('functions > attributes',
 		() => chai.assert.equal(compareSpecificity('id("123")', '@id'), 1));
+	it('union is the maximum of its operands',
+		() => chai.assert.equal(compareSpecificity('self::name | id("123") | self::otherName | id("123")', 'self::name'), 1));
+
 });

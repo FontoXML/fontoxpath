@@ -21,6 +21,8 @@ describe('Math functions', () => {
 			() => chai.assert.isTrue(evaluateXPathToBoolean('math:exp(()) => empty()', documentNode)));
 		it('returns 1 for input 0',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('math:exp(0) = 1', documentNode)));
+		it('allows async params',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('math:exp(0 => fontoxpath:sleep(1)) = 1', documentNode)));
 		it('returns 2.718281828459045e0 for input 1',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('math:exp(1) = 2.718281828459045', documentNode)));
 		it('returns 0.36787944117144233e0 for input -1',
