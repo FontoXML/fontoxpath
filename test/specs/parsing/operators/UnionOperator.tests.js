@@ -4,6 +4,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import {
 	evaluateXPathToNodes
 } from 'fontoxpath';
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 
 let documentNode;
 beforeEach(() => {
@@ -27,6 +28,18 @@ describe('union', () => {
 		chai.assert.deepEqual(evaluateXPathToNodes('(//someNode|//someChildNode)', documentNode), [documentNode.firstChild, documentNode.firstChild.firstChild]);
 	});
 
+	it('allows union over async sequences', async () => {
+		jsonMlMapper.parse([
+			'someNode',
+			['someChildNode']
+		], documentNode);
+		chai.assert.equal(
+			await evaluateXPathToAsyncSingleton(
+				'((//someChildNode => fontoxpath:sleep(1)) | (//someNode => fontoxpath:sleep(2)))!local-name()!string() => string-join(",")',
+				documentNode),
+		'someNode,someChildNode');
+	});
+
 	it('allows union (written out) without spaces', () => {
 		jsonMlMapper.parse([
 			'someNode',
@@ -44,7 +57,7 @@ describe('union', () => {
 	});
 
 	it('throws an error when not passed a node sequence',
-		() => chai.expect(() => evaluateXPathToNodes('(1,2,3) | (4,5,6)', documentNode), /ERRXPTY0004/));
+		() => chai.assert.throws(() => evaluateXPathToNodes('(1,2,3) | (4,5,6)', documentNode), 'XPTY0004'));
 
 	it('sorts nodes', () => {
 		jsonMlMapper.parse([

@@ -2,7 +2,8 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToArray
+	evaluateXPathToArray,
+	evaluateXPathToAsyncIterator
 } from 'fontoxpath';
 
 let documentNode;
@@ -22,7 +23,10 @@ describe('array constructor', () => {
 	describe('curly', () => {
 		it('can be parsed',
 			() => chai.assert.isOk(evaluateXPathToArray('array {1, 2}', documentNode)), 'It should be able to be parsed');
-
+		it('can be filled async', async () => {
+			const iterator = evaluateXPathToAsyncIterator('array {(1, 2) => fontoxpath:sleep(1), 3}(1)', documentNode);
+			chai.assert.equal((await iterator.next()).value, 1);
+		});
 		it('unfolds passed sequences',
 			() => chai.assert.deepEqual(evaluateXPathToArray('array {("a", "b"), "c"}', documentNode), [['a'], ['b'], ['c']]));
 	});
@@ -30,7 +34,10 @@ describe('array constructor', () => {
 	describe('square', () => {
 		it('can be parsed',
 			() => chai.assert.isOk(evaluateXPathToArray('[1, 2]', documentNode)), 'It should be able to be parsed');
-
+		it('can be filled async', async () => {
+			const iterator = evaluateXPathToAsyncIterator('[1 => fontoxpath:sleep(1), 2](1)', documentNode);
+			chai.assert.equal((await iterator.next()).value, 1);
+		});
 		it('does not unfold passed sequences',
 			() => chai.assert.deepEqual(evaluateXPathToArray('[("a", "b"), "c"]', documentNode), [['a', 'b'], ['c']]));
 	});

@@ -296,11 +296,12 @@ function followingSibling (args) {
 	return new FollowingSiblingAxis(compile(args[0]));
 }
 
-function forExpression ([clauses, returnExpression]) {
+function forExpression ([[prefix, namespaceURI, name], expression, returnExpression]) {
 	return new ForExpression(
-		clauses.map(([[prefix, namspaceURI, name], expression]) => ({
-			varName: { prefix, namspaceURI, name },
-			expression: compile(expression) })),
+		{
+			varName: { prefix, namespaceURI, name },
+			expression: compile(expression)
+		},
 		compile(returnExpression));
 }
 

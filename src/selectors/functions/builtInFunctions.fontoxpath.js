@@ -58,18 +58,24 @@ function fontoxpathEvaluate (dynamicContext, query, args) {
 }
 
 
-function fontoxpathSleep (_dynamicContext, howLong, val = Sequence.empty()) {
+function fontoxpathSleep (_dynamicContext, val, howLong) {
 	let ready = false;
-	const readyPromise = new Promise(
-		resolve => setTimeout(() => {
-			ready = true;
-			resolve();
-		}, howLong.first().value)
-	);
-
+	let readyPromise;
 	const valueIterator = val.value();
 	return new Sequence({
 		next: () => {
+			if (!readyPromise) {
+				const time = howLong ? howLong.tryGetFirst() : { ready: true, value: 0 };
+				if (!time.ready) {
+					return { done: false, value: undefined, ready: false, promise: time.promise };
+				}
+				readyPromise = new Promise(
+					resolve => setTimeout(() => {
+						ready = true;
+						resolve();
+					}, time.value)
+				);
+			}
 			if (!ready) {
 				return { done: false, value: undefined, ready: false, promise: readyPromise };
 			}
@@ -121,13 +127,13 @@ export default {
 		},
 		{
 			name: 'fontoxpath:sleep',
-			argumentTypes: ['xs:numeric', 'item()*'],
+			argumentTypes: ['item()*', 'xs:numeric'],
 			returnType: 'item()*',
 			callFunction: fontoxpathSleep
 		},
 		{
 			name: 'fontoxpath:sleep',
-			argumentTypes: ['xs:numeric'],
+			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fontoxpathSleep
 		},

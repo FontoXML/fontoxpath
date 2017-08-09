@@ -1,6 +1,7 @@
 import isSameMapKey from './isSameMapKey';
 import Sequence from '../dataTypes/Sequence';
 import DynamicContext from '../DynamicContext';
+import zipSingleton from '../util/zipSingleton';
 
 /**
  * @param   {!DynamicContext}  _dynamicContext
@@ -9,13 +10,14 @@ import DynamicContext from '../DynamicContext';
  * @return  {!Sequence}
  */
 export default function mapGet (_dynamicContext, mapSequence, key) {
-	var map = mapSequence.first();
-	var matchingPair = map.keyValuePairs.find(function (keyValuePair) {
-			return isSameMapKey(keyValuePair.key, key.first());
+	return zipSingleton([mapSequence, key], ([map, keyValue]) => {
+		var matchingPair = map.keyValuePairs.find(function (keyValuePair) {
+			return isSameMapKey(keyValuePair.key, keyValue);
 		});
 
-	if (!matchingPair) {
-		return Sequence.empty();
-	}
-	return matchingPair.value;
+		if (!matchingPair) {
+			return Sequence.empty();
+		}
+		return matchingPair.value;
+	});
 }

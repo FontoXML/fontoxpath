@@ -61,13 +61,13 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 			return argument.switchCases({
 				default: () => argument.map(value => mapItem(value, type, dynamicContext)),
 				multiple: () => {
-					throw new Error('Multiplicity of function argument is incorrect.');
+					throw new Error('XPTY0004: Multiplicity of function argument is incorrect. Expected "?", but got "+".');
 				}
 			});
 		case '+':
 			return argument.switchCases({
 				empty: () => {
-					throw new Error('Multiplicity of function argument is incorrect.');
+					throw new Error('XPTY0004: Multiplicity of function argument is incorrect. Expected "+", but got "empty-sequence()"');
 				},
 				default: () => argument.map(value => mapItem(value, type, dynamicContext))
 			});
@@ -78,7 +78,7 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 			return argument.switchCases({
 				singleton: () => argument.map(value => mapItem(value, type, dynamicContext)),
 				default: () => {
-					throw new Error('Multiplicity of function argument is incorrect.');
+					throw new Error('XPTY0004: Multiplicity of function argument is incorrect. Expected exactly one');
 }
 			});
 	}

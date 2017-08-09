@@ -132,7 +132,7 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 
 
 function fnNumber (_dynamicContext, sequence) {
-	return sequence.switchCases({
+	return sequence.atomize().switchCases({
 		empty: () => Sequence.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
 			const castResult = tryCastToType(sequence.first(), 'xs:double');

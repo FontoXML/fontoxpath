@@ -2222,36 +2222,6 @@ eqname-908,AssertionError: expected [Function] to throw error including 'XPST001
 eqname-909p,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'Not implemented: casting expressions with a namespace URI.'
 eqname-910,AssertionError: expected [Function] to throw an error
 eqname-913,AssertionError: expected [Function] to throw an error
-ForExpr012,Error: XPTY0004: expected argument list of function string to be [undefined+], got function with argument list [item()?].
-ForExpr013,AssertionError: Expected XPath          for $fileName in //File/FileName,              $folderName in //Folder[contains(description, 'fren')]/FolderName          return ($folderName, $fileName) to resolve to the given XML: expected [ Array(102) ] to deeply equal []
-ForExpr015,Error: XPTY0004: expected argument list of function string to be [undefined+], got function with argument list [item()?].
-ForExpr016,AssertionError: Expected XPath for $folder in //Folder, $index in (1, 2, 3) return $folder/File[$index]/FileName to resolve to the given XML: expected [ Array(54) ] to deeply equal [ Array(66) ]
-ForExpr021,AssertionError: for $i in (1, 2), $j in (3, 4) return ($i, $j): expected '1 2 3 4' to equal '1 3 1 4 2 3 2 4'
-ForExpr025,AssertionError: Expected XPath for $file in (//Folder)[1]/File, $file in (//Folder)[2]/File return $file/FileName to resolve to the given XML: expected [ Array(1) ] to deeply equal [ Array(31) ]
-ForExpr030,Error: XPTY0004: the operands of the "*" operator should be of type xs:numeric?.
-K-ForExprWithout-11,Error: XPTY0004: the operands of the "+" operator should be of type xs:numeric?.
-K-ForExprWithout-18,AssertionError: Expected executing the XPath "empty(for $var in () return current-time())" to resolve to one of the expected results, but got Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'XPST0005' but got 'XPST0017: Function current-time with arity of 0 not registered. No similar functions found.'.
-K-ForExprWithout-19,AssertionError: Expected executing the XPath "empty(for $var in () return 1)" to resolve to one of the expected results, but got AssertionError: Expected XPath empty(for $var in () return 1) to resolve to true: expected false to be true, AssertionError: expected [Function] to throw an error.
-K-ForExprWithout-20,AssertionError: Expected executing the XPath "empty((for $var in () return current-time()))" to resolve to one of the expected results, but got Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found., AssertionError: expected [Function] to throw error including 'XPST0005' but got 'XPST0017: Function current-time with arity of 0 not registered. No similar functions found.'.
-K-ForExprWithout-21,AssertionError: Expected executing the XPath "empty((for $var in () return 1) eq 1)" to resolve to one of the expected results, but got AssertionError: Expected XPath empty((for $var in () return 1) eq 1) to resolve to true: expected false to be true, AssertionError: expected [Function] to throw an error.
-K-ForExprWithout-22,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
-K-ForExprWithout-23,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
-K-ForExprWithout-24,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-ForExprWithout-25,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-ForExprWithout-27,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-28,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-30,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-31,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-33,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-34,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-36,AssertionError: expected [Function] to throw an error
-K-ForExprWithout-37,AssertionError: expected [Function] to throw an error
-K-ForExprWithout-51,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-ForExprWithout-55,Error: XPST0017: Function current-time with arity of 0 not registered. No similar functions found.
-K-ForExprWithout-56,Error: XPST0017: Function timezone-from-time with arity of 1 not registered. No similar functions found.
-K2-ForExprWithout-7,AssertionError: expected [Function] to throw an error
-K2-ForExprWithout-40,AssertionError: expected [Function] to throw an error
-K2-ForExprWithout-41,AssertionError: expected [Function] to throw an error
 FunctionCall-010,Error: XPST0081: Can not cast: type is unknown.
 FunctionCall-011,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 FunctionCall-012,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.'

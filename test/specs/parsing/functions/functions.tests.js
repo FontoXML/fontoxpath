@@ -9,6 +9,8 @@ import {
 	evaluateXPathToString
 } from 'fontoxpath';
 
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
+
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
@@ -22,6 +24,9 @@ describe('functions', () => {
 			() => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[. > 2][last()]', documentNode), 3));
 		it('can target the second to last item',
 			() => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[last() - 1]', documentNode), 2));
+		it('works in async sequences', async () => {
+			chai.assert.equal(await evaluateXPathToAsyncSingleton('((1,2,3) => fontoxpath:sleep(1))[last()]'), 3);
+		});
 	});
 
 	describe('position()', () => {
@@ -47,8 +52,12 @@ describe('functions', () => {
 		it('A dynamic error is raised [err:XPDY0002] if $arg is omitted and the context item is absent.',
 			() => chai.assert.throws(() => evaluateXPathToNumber('number()'), 'XPDY0002'));
 
-		it.skip('As a consequence of the rules given above, a type error occurs if the context item cannot be atomized, or if the result of atomizing the context item is a sequence containing more than one atomic value.',
-			() => chai.assert.throw(() => evaluateXPathToNumber('number()', documentNode)));
+		it('As a consequence of the rules given above, a type error occurs if the context item cannot be atomized, or if the result of atomizing the context item is a sequence containing more than one atomic value.',
+			() => chai.assert.throws(() => evaluateXPathToNumber('number(concat#2)', documentNode)), 'XPTY0004');
+		it('allows async input', async () => {
+			chai.assert.equal(await evaluateXPathToAsyncSingleton('number(fontoxpath:sleep(10, 10))'), 10);
+		});
+
 	});
 
 	describe('boolean', () => {

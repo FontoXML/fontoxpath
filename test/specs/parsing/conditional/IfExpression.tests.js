@@ -15,19 +15,19 @@ describe('IfExpression', () => {
 		() => chai.assert(evaluateXPathToBoolean('(if (true()) then "then expression" else "else expression") eq "then expression"', documentNode)));
 
 	it('Allows async conditions', async () => {
-		const it = evaluateXPathToAsyncIterator('(if (fontoxpath:sleep(1, true())) then "then expression" else "else expression") eq "then expression"', documentNode);
+		const it = evaluateXPathToAsyncIterator('(if (fontoxpath:sleep(true(), 1)) then "then expression" else "else expression") eq "then expression"', documentNode);
 		chai.assert.deepEqual(await it.next(), { done: false, value: true });
 		chai.assert.deepEqual(await it.next(), { done: true });
 	});
 
 	it('Allows async thenExpression', async () => {
-		const it = evaluateXPathToAsyncIterator('(if (true()) then fontoxpath:sleep(1, "then expression") else "else expression") eq "then expression"', documentNode);
+		const it = evaluateXPathToAsyncIterator('(if (true()) then fontoxpath:sleep("then expression", 1) else "else expression") eq "then expression"', documentNode);
 		chai.assert.deepEqual(await it.next(), { done: false, value: true });
 		chai.assert.deepEqual(await it.next(), { done: true });
 	});
 
 	it('Allows async elseExpression', async () => {
-		const it = evaluateXPathToAsyncIterator('(if (false()) then "then expression" else fontoxpath:sleep(1, "else expression")) eq "else expression"', documentNode);
+		const it = evaluateXPathToAsyncIterator('(if (false()) then "then expression" else fontoxpath:sleep("else expression", 1)) eq "else expression"', documentNode);
 		chai.assert.deepEqual(await it.next(), { done: false, value: true });
 		chai.assert.deepEqual(await it.next(), { done: true });
 	});

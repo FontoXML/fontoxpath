@@ -263,7 +263,7 @@ describe('relative paths', () => {
 				['someGrandChild']
 			]
 		], documentNode);
-		const it = evaluateXPathToAsyncIterator('/someNode[fontoxpath:sleep(1, true())]', documentNode);
+		const it = evaluateXPathToAsyncIterator('/someNode[fontoxpath:sleep(true(), 1)]', documentNode);
 
 		const val = await it.next();
 

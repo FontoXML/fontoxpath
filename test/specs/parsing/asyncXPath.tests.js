@@ -14,7 +14,7 @@ describe('asynchronous XPaths', () => {
 
 	it('can run XPath expressions asynchronously', async () => {
 		const items = [];
-		const it = evaluateXPath('fontoxpath:sleep(10)', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
+		const it = evaluateXPath('fontoxpath:sleep((), 10)', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
 
 		for (let value = await it.next(); !value.done; value = await it.next()) {
 			items.push(value.value);
@@ -25,7 +25,7 @@ describe('asynchronous XPaths', () => {
 
 	it('can resolve async results', async () => {
 		const items = [];
-		const it = evaluateXPath('fontoxpath:sleep(10, true())', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
+		const it = evaluateXPath('fontoxpath:sleep(true(), 10)', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
 
 		for (let value = await it.next(); !value.done; value = await it.next()) {
 			items.push(value.value);

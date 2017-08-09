@@ -14,78 +14,49 @@ function buildVarName ({ prefix, namespaceURI, name }) {
  */
 class ForExpression extends Selector {
 	/**
-	 * @param  {!Array<!{varName:{prefix:string, namespaceURI:string, name:string}, expression}>}  clauses
+	 * @param  {!{varName:{prefix:string, namespaceURI:string, name:string}, expression}}  clauses
 	 * @param  {!Selector}                       expression
 	 */
-	constructor (clauses, expression) {
+	constructor (clause, expression) {
 		super(new Specificity({}), {
 			canBeStaticallyEvaluated: false
 		});
 
-		this._clauses = clauses
-			.map(({varName, expression}) => ({varName: buildVarName(varName), expression}));
-		this._expression = expression;
-
+		this._varName = buildVarName(clause.varName);
+		this._clauseExpression = clause.expression;
+		this._returnExpression = expression;
 	}
 
 	evaluate (dynamicContext) {
-		const resultStack = [{
-			context: dynamicContext,
-			varName: this._clauses[0].varName,
-			resultIterator: this._clauses[0].expression.evaluateMaybeStatically(dynamicContext).value()
-		}];
-		let expressionResultIterator = null;
-
+		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext).value();
+		let returnIterator = null;
+		let done = false;
 		return new Sequence({
 			next: () => {
-				while (resultStack.length) {
-					while (resultStack.length < this._clauses.length) {
-						// Building phase
-						const previousVariableIterator = resultStack[0].resultIterator;
-						const previousVarName = resultStack[0].varName;
-						const previousContext = resultStack[0].context;
-						const value = previousVariableIterator.next();
-						if (!value.ready) {
-							return value;
+				while (!done) {
+					if (returnIterator === null) {
+						const currentClauseValue = clauseIterator.next();
+						if (!currentClauseValue.ready) {
+							return currentClauseValue;
 						}
-						if (value.done) {
-							resultStack.shift();
-							if (!resultStack.length) {
-								return { done: true, ready: true };
-							}
-							continue;
+						if (currentClauseValue.done) {
+							done = true;
+							break;
 						}
-						const contextWithVars = previousContext.scopeWithVariables({ [previousVarName]: () => Sequence.singleton(value) });
-						resultStack.shift({
-							context: contextWithVars,
-							resultSequence: this._clauses[0].evaluateMaybeStatically(contextWithVars)
-						});
+						const contextWithVars = dynamicContext.scopeWithVariables({ [this._varName]: () => {
+							return Sequence.singleton(currentClauseValue.value);
+						}});
+						returnIterator = this._returnExpression.evaluateMaybeStatically(contextWithVars).value();
 					}
-					if (!expressionResultIterator) {
-						const nextValue = resultStack[0].resultIterator.next();
-						if (!nextValue.ready) {
-							return nextValue;
-						}
-						if (nextValue.done) {
-							resultStack.shift();
-							continue;
-						}
-						// Because the bindings for a forexpresion are always singleton, we do not have to allow double iteration.
-						expressionResultIterator = this._expression.evaluateMaybeStatically(
-							resultStack[0].context.scopeWithVariables(
-								{ [resultStack[0].varName]:  () => Sequence.singleton(nextValue.value) }
-							)).value();
-					}
-					// Scanning for result / Result yielding phase
-					const yieldableValue = expressionResultIterator.next();
-					if (yieldableValue.done) {
-						// Done with this result, better luck next time
-						expressionResultIterator = null;
+					const returnValue = returnIterator.next();
+					if (returnValue.done) {
+						returnIterator = null;
+						// Get the next one
 						continue;
 					}
-					return yieldableValue;
+					return returnValue;
 				}
-				return { ready: true, done: true };
+				return { done: true, value: undefined, ready: true };
 			}
 		});
 	}

@@ -7,15 +7,22 @@ import {
 	evaluateXPathToStrings
 } from 'fontoxpath';
 
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
+
 describe('registerCustomXPath() =>', () => {
 	let documentNode;
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
+
+		jsonMlMapper.parse([
+			'someElement',
+			{ 'someAttribute': 'someValue' }
+		], documentNode);
 	});
 
 	before(() => {
 		registerCustomXPathFunction(
-			'fonto:custom-test1',
+			'test:custom-function1',
 			['xs:string?'],
 			'xs:boolean',
 			function (dynamicContext, string) {
@@ -25,7 +32,7 @@ describe('registerCustomXPath() =>', () => {
 			});
 
 		registerCustomXPathFunction(
-			'fonto:custom-test2',
+			'test:custom-function2',
 			['xs:string', 'xs:boolean'],
 			'xs:boolean',
 			function (dynamicContext, string, boolean) {
@@ -36,18 +43,18 @@ describe('registerCustomXPath() =>', () => {
 			});
 
 		registerCustomXPathFunction(
-			'fonto:custom-test3',
-			['item()?'],
+			'test:custom-function3',
+			['item()*'],
 			'item()',
-			function (dynamicContext, string) {
+			function (dynamicContext, input) {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
 
-				return string;
+				return input[0] || null;
 			});
 
 		registerCustomXPathFunction(
-			'fonto:custom-test4',
+			'test:custom-function4',
 			['xs:string*'],
 			'xs:string*',
 			function (dynamicContext, stringArray) {
@@ -61,25 +68,29 @@ describe('registerCustomXPath() =>', () => {
 	});
 
 	it('the registered function can be used in a xPath selector with return value boolean', () => {
-		chai.assert.isTrue(evaluateXPathToBoolean('fonto:custom-test1("test")', documentNode));
-		chai.assert.isFalse(evaluateXPathToBoolean('fonto:custom-test1("bla")', documentNode));
-		chai.assert.isTrue(evaluateXPathToBoolean('fonto:custom-test1(())', documentNode));
+		chai.assert.isTrue(evaluateXPathToBoolean('test:custom-function1("test")', documentNode));
+		chai.assert.isFalse(evaluateXPathToBoolean('test:custom-function1("bla")', documentNode));
+		chai.assert.isTrue(evaluateXPathToBoolean('test:custom-function1(())', documentNode));
 	});
 
 	it('the registered function can be used in a xPath selector with 2 arguments', () => {
-		chai.assert.isTrue(evaluateXPathToBoolean('fonto:custom-test2("test", true())', documentNode));
-		chai.assert.isFalse(evaluateXPathToBoolean('fonto:custom-test2("test", false())', documentNode));
+		chai.assert.isTrue(evaluateXPathToBoolean('test:custom-function2("test", true())', documentNode));
+		chai.assert.isFalse(evaluateXPathToBoolean('test:custom-function2("test", false())', documentNode));
 	});
 
 	it('the registered function can be used in a xPath selector with return value string', () => {
-		chai.assert.isTrue(evaluateXPathToString('fonto:custom-test3("test")', documentNode) === 'test');
-		chai.assert.isTrue(evaluateXPathToString('fonto:custom-test3("test")', documentNode) === 'test');
+		chai.assert.isTrue(evaluateXPathToString('test:custom-function3("test")', documentNode) === 'test');
+		chai.assert.isTrue(evaluateXPathToString('test:custom-function3("test")', documentNode) === 'test');
+	});
+
+	it('disallows attributes as parameters', () => {
+		chai.assert.throws(() => evaluateXPathToString('test:custom-function3(//@*)', documentNode), 'Cannot pass attribute nodes');
 	});
 
 	it('the registered function can be used in a xPath selector with return value array', () => {
-		chai.assert.deepEqual(evaluateXPathToStrings('fonto:custom-test4(("abc", "123", "XYZ"))', documentNode), ['abc-test', '123-test', 'XYZ-test']);
+		chai.assert.deepEqual(evaluateXPathToStrings('test:custom-function4(("abc", "123", "XYZ"))', documentNode), ['abc-test', '123-test', 'XYZ-test']);
 		// Returns ['abc-test'], but does get atomized by the evaluateXPath function
-		chai.assert.deepEqual(evaluateXPathToString('fonto:custom-test4(("abc"))', documentNode), 'abc-test');
-		chai.assert.deepEqual(evaluateXPathToStrings('fonto:custom-test4(())', documentNode), []);
+		chai.assert.deepEqual(evaluateXPathToString('test:custom-function4(("abc"))', documentNode), 'abc-test');
+		chai.assert.deepEqual(evaluateXPathToStrings('test:custom-function4(())', documentNode), []);
 	});
 });

@@ -7,8 +7,23 @@ const {
 	evaluateXPathToString
 } = require('fontoxpath');
 
-const context = require.context('text-loader!assets', true, /\.xml$/);
+const context = require.context('text-loader!assets', true, /\.xml|\.out$/);
 const parser = new DOMParser();
+
+const instantiatedDocumentByAbsolutePath = Object.create(null);
+
+function getFile (fileName) {
+	while (fileName.includes('..')) {
+		const parts = fileName.split('/');
+		fileName = parts.slice(0, parts.indexOf('..') - 1).concat(parts.slice(parts.indexOf('..') + 1)).join('/');
+	}
+	if (instantiatedDocumentByAbsolutePath[fileName]) {
+		return instantiatedDocumentByAbsolutePath[fileName];
+	}
+
+	return instantiatedDocumentByAbsolutePath[fileName] =
+		parser.parseFromString(context(`./QT3TS-master/${fileName}`), 'text/xml');
+}
 
 function createAsserter (assertNode) {
 	switch (assertNode.localName) {
@@ -26,9 +41,6 @@ function createAsserter (assertNode) {
 						a(xpath, contextNode, variablesInScope, namespaceResolver);
 					}
 					catch (error) {
-						// if (error.name !== 'AssertionError') {
-						// 	throw error;
-						// }
 						errors.push(error);
 						return false;
 					}
@@ -66,7 +78,14 @@ function createAsserter (assertNode) {
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) instance of ${expectedType}`, contextNode, null, variablesInScope, { namespaceResolver }), `Expected XPath ${xpath} to resolve to something of type ${expectedType}`);
 		}
 		case 'assert-xml': {
-			const expectedNodes = Array.from(parser.parseFromString(`<xml>${assertNode.textContent}</xml>`, 'text/xml').documentElement.childNodes).map(node => node.outerHTML);
+			let parsedFragment;
+			if (evaluateXPathToBoolean('@file', assertNode)) {
+				parsedFragment = getFile(evaluateXPathToString('"prod/" || @file', assertNode));
+			}
+			else {
+				parsedFragment = parser.parseFromString(`<xml>${assertNode.textContent}</xml>`, 'text/xml').documentElement;
+			}
+			const expectedNodes = Array.from(parsedFragment.childNodes).map(node => node.outerHTML);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const result = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope, { namespaceResolver }).map(node => node.outerHTML);
 				chai.assert.deepEqual(result, expectedNodes, `Expected XPath ${xpath} to resolve to the given XML`);
@@ -85,21 +104,6 @@ function createAsserter (assertNode) {
 }
 function getAsserterForTest (testCase) {
 	return createAsserter(evaluateXPathToFirstNode('./result/*', testCase));
-}
-
-const instantiatedDocumentByAbsolutePath = Object.create(null);
-
-function getFile (fileName) {
-	while (fileName.includes('..')) {
-		const parts = fileName.split('/');
-		fileName = parts.slice(0, parts.indexOf('..') - 1).concat(parts.slice(parts.indexOf('..') + 1)).join('/');
-	}
-	if (instantiatedDocumentByAbsolutePath[fileName]) {
-		return instantiatedDocumentByAbsolutePath[fileName];
-	}
-
-	return instantiatedDocumentByAbsolutePath[fileName] =
-		parser.parseFromString(context(`./QT3TS-master/${fileName}`), 'text/xml');
 }
 
 const catalog = getFile('catalog.xml');

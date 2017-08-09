@@ -14,6 +14,9 @@ describe('or operator', () => {
 	it('can parse an "or" selector', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('false() or true()', documentNode));
 	});
+	it('can parse an "or" selector returning false', () => {
+		chai.assert.isFalse(evaluateXPathToBoolean('false() or false()', documentNode));
+	});
 
 	it('can parse an "or" selector with different buckets', () => {
 		jsonMlMapper.parse([

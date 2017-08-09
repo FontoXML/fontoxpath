@@ -41,7 +41,13 @@ ExprSingle
  / OrExpr
 
 // 8
-ForExpr = clause:SimpleForClause S "return" S expr:ExprSingle {return ["forExpression", clause, expr]}
+ForExpr = clauses:SimpleForClause S "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
+	// The bindings part consists of the rangeVariable and the bindingSequence.
+	// Multiple bindings are syntactic sugar for 'for $x in 1 return for $x in $y return $x * 2'
+	return clauses.reduceRight(function (expression, clause) {
+	    return ["forExpression"].concat(clause, [expression]);
+	 }, returnExpr)
+  }
 
 // 9
 SimpleForClause = "for" S first:SimpleForBinding rest:( _ "," _ b:SimpleForBinding {return b})* {return [first].concat(rest)}
@@ -54,7 +60,6 @@ LetExpr
 = bindings:SimpleLetClause _ "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
 	// The bindings part consists of the rangeVariable and the bindingSequence.
 	// Multiple bindings are syntactic sugar for 'let $x := 1 return let $y := $x * 2'
-	if (bindings.length === 1) return ["let"].concat(bindings[0], [returnExpr]);
 	return bindings.reduceRight(function (expression, binding) {
 	    return ["let"].concat(binding, [expression]);
 	 }, returnExpr)
