@@ -13,7 +13,7 @@ describe('getBucketForSelector', () => {
 		chai.assert.equal(getBucketForSelector('true() or self::element()'), null);
 	});
 	it('returns the correct bucket for selectors using the or operator, all having the same bucket', () => {
-		chai.assert.equal(getBucketForSelector('self::element() or self::element()'), null);
+		chai.assert.equal(getBucketForSelector('self::element() or self::element()'), 'type-1');
 	});
 	it('returns the correct bucket for PI selectors', () => {
 		chai.assert.equal(getBucketForSelector('self::processing-instruction()'), 'type-7');

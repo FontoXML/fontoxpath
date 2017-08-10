@@ -19,21 +19,34 @@ const DEFAULT_NAMESPACES = {
 };
 
 function transformMapToObject (map, dynamicContext) {
-	return map.keyValuePairs.reduce(function (mapObject, keyValuePair) {
-		var key = keyValuePair.key.value;
-		var value;
-		if (keyValuePair.value.isSingleton()) {
-			value = atomize(keyValuePair.value.first(), dynamicContext).value;
+	const mapObj = {};
+	let i = 0;
+	let done = false;
+	return {
+		next: () => {
+			if (done) {
+				return { done: true, ready: true, value: undefined };
+			}
+			while (i < map.keyValuePairs.length) {
+				const val = map.keyValuePairs[i].value
+					.atomize(dynamicContext)
+					.switchCases({
+						default: seq => seq,
+						multiple: () => {
+							throw new Error('Serialization error: The value of an entry in a map is expected to be a singleton sequence.');
+						}
+					})
+					.tryGetFirst();
+				if (!val.ready) {
+					return { done: false, ready: false, promise: val.promise };
+				}
+				mapObj[map.keyValuePairs[i].key.value] = val.value.value; // TODO: recurse for array
+				i++;
+			}
+			done = true;
+			return { done: false, ready: true, value: mapObj };
 		}
-		else {
-			value = keyValuePair.value.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
-				return atomizedValue.value;
-			});
-		}
-		mapObject[key] = value;
-		return mapObject;
-	}, {});
-
+	};
 }
 
 /**
@@ -215,7 +228,11 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (!(isSubtypeOf(first.type, 'map(*)'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a map');
 			}
-			return transformMapToObject(first, dynamicContext);
+			const transformedMap = transformMapToObject(first, dynamicContext).next();
+			if (!transformedMap.ready) {
+				throw new Error('Expected XPath ' + xpathSelector + ' to synchronously resolve to a map');
+			}
+			return transformedMap.value;
 		}
 
 		case evaluateXPath.ARRAY_TYPE:
@@ -247,29 +264,45 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 
 		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
 			const it = rawResults.value();
+			let transformedValueGenerator = null;
+			let done = false;
 			function getNextResult () {
-				const value = it.next();
-				if (value.done) {
-					return {
-						done: true
-					};
-				}
-				if (!value.ready) {
-					return value.promise.then(getNextResult);
-				}
-				if (isSubtypeOf(value.value.type, 'map(*)')) {
-					return {
-						done: false,
-						value: transformMapToObject(value.value, dynamicContext)
-					};
+				while (!done) {
+					if (!transformedValueGenerator) {
+						const value = it.next();
+						if (value.done) {
+							done = true;
+							break;
+						}
+						if (!value.ready) {
+							return value.promise.then(getNextResult);
+						}
+						if (isSubtypeOf(value.value.type, 'map(*)')) {
+							transformedValueGenerator = transformMapToObject(value.value, dynamicContext);
+						} else {
+							return {
+								done: false,
+								value: value.value.value
+							};
+						}
+					}
+					const transformedValue = transformedValueGenerator.next();
+					if (!transformedValue.ready) {
+						return transformedValue.promise.then(getNextResult);
+					}
+					if (transformedValue.done) {
+						transformedValueGenerator = null;
+					}
+					return transformedValue;
 				}
 				return {
-					done: false,
-					value: value.value.value
+					done: true
 				};
 			}
 			return {
-				[Symbol.asyncIterator]: function () {return this;},
+				[Symbol.asyncIterator]: function () {
+					return this;
+				},
 				next: () => new Promise(resolve => resolve(getNextResult()))
 			};
 		}

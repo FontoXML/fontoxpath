@@ -518,7 +518,7 @@ describe('Functions and operators on sequences', () => {
 						'Some equal text.'
 					]
 				], documentNode);
-				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(./someElement => fontoxpath:sleep(1)/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal((./someElement => fontoxpath:sleep(1))/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
 			});
 			it('returns true two unequal elements (unequal on node name)', async () => {
 				jsonMlMapper.parse([

@@ -13,18 +13,33 @@ const nodeName = builtInFunctionsNode.functions.nodeName;
 function asyncGenerateEvery (items, cb) {
 	let i = 0;
 	const l = items.length;
-	while (i < l) {
-		const compareResult = cb(items[i], i, items);
-		if (!compareResult.ready) {
-			return compareResult;
+	let done = false;
+	let filterGenerator = null;
+	return {
+		next: () => {
+			if (!done) {
+				while (i < l) {
+					if (!filterGenerator) {
+						filterGenerator = cb(items[i], i, items);
+					}
+					const filterResult = filterGenerator.next();
+					if (!filterResult.ready) {
+						return filterResult;
+					}
+					filterGenerator = null;
+					if (filterResult.value) {
+						i++;
+						continue;
+					}
+					return { done: false, ready: true, value: false };
+				}
+				done = true;
+				return { done: false, ready: true, value: true };
+
+			}
+			return { ready: true, done: true };
 		}
-		if (compareResult.value) {
-			i++;
-			continue;
-		}
-		return createSingleValueIterator(false);
-	}
-	return createSingleValueIterator(true);
+	};
 }
 
 function filterElementAndTextNodes (node) {
@@ -36,21 +51,20 @@ function anyAtomicTypeDeepEqual (_dynamicContext, item1, item2) {
 		(isSubtypeOf(item2.type, 'xs:decimal') || isSubtypeOf(item2.type, 'xs:float'))) {
 		const temp1 = castToType(item1, 'xs:float');
 		const temp2 = castToType(item2, 'xs:float');
-		return createSingleValueIterator(temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value)));
+		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 	if (
 		(isSubtypeOf(item1.type, 'xs:decimal') || isSubtypeOf(item1.type, 'xs:float') || isSubtypeOf(item1.type, 'xs:double')) &&
 			(isSubtypeOf(item2.type, 'xs:decimal') || isSubtypeOf(item2.type, 'xs:float') || isSubtypeOf(item2.type, 'xs:double'))) {
 		const temp1 = castToType(item1, 'xs:double'),
 		temp2 = castToType(item2, 'xs:double');
-		return createSingleValueIterator(temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value)));
+		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 	if (isSubtypeOf(item1.type, 'xs:QName') && isSubtypeOf(item2.type, 'xs:QName')) {
-		return createSingleValueIterator(
-			item1.value.namespaceURI === item2.value.namespaceURI &&
-				item1.value.localPart === item2.value.localPart);
+		return item1.value.namespaceURI === item2.value.namespaceURI &&
+			item1.value.localPart === item2.value.localPart;
 	}
-	return createSingleValueIterator(item1.value === item2.value);
+	return item1.value === item2.value;
 }
 
 function sequenceDeepEqual (dynamicContext, sequence1, sequence2) {
@@ -73,12 +87,12 @@ function sequenceDeepEqual (dynamicContext, sequence1, sequence2) {
 				if (!item1.ready) {
 					const oldItem = item1;
 					item1 = null;
-					return { ready: false, promise: oldItem.promise };
+					return { ready: false, done: false, promise: oldItem.promise };
 				}
 				if (!item2.ready) {
 					const oldItem = item2;
 					item2 = null;
-					return { ready: false, promise: oldItem.promise };
+					return { ready: false, done: false, promise: oldItem.promise };
 				}
 
 				if (item1.done || item2.done) {
@@ -118,7 +132,7 @@ function mapTypeDeepEqual (dynamicContext, item1, item2) {
 			return createSingleValueIterator(false);
 		}
 
-		return sequenceDeepEqual(dynamicContext, mapEntry1.value, mapEntry2.value).next();
+		return sequenceDeepEqual(dynamicContext, mapEntry1.value, mapEntry2.value);
 	});
 }
 
@@ -184,7 +198,6 @@ function atomicTypeNodeDeepEqual (dynamicContext, item1, item2) {
 		dynamicContext,
 		nodeName(dynamicContext, Sequence.singleton(item1)),
 		nodeName(dynamicContext, Sequence.singleton(item2)));
-	const contentsEqualGenerator = anyAtomicTypeDeepEqual(dynamicContext, atomize(item1, dynamicContext), atomize(item2, dynamicContext));
 	let done = false;
 	return {
 		next: () => {
@@ -201,19 +214,25 @@ function atomicTypeNodeDeepEqual (dynamicContext, item1, item2) {
 					return namesAreEqualResult;
 				}
 			}
-			const contentsEqualResult = contentsEqualGenerator.next();
-			if (contentsEqualGenerator.ready) {
-				done = true;
-			}
-			return contentsEqualResult;
+			return {
+				done: false,
+				ready: true,
+				value: anyAtomicTypeDeepEqual(
+					dynamicContext,
+					atomize(item1, dynamicContext),
+					atomize(item2, dynamicContext))
+			};
 		}
 	};
 }
 
+/**
+ * @return  {}
+ */
 function itemDeepEqual (dynamicContext, item1, item2) {
 	// All atomic types
 	if (isSubtypeOf(item1.type, 'xs:anyAtomicType') && isSubtypeOf(item2.type, 'xs:anyAtomicType')) {
-		return anyAtomicTypeDeepEqual(dynamicContext, item1, item2);
+		return createSingleValueIterator(anyAtomicTypeDeepEqual(dynamicContext, item1, item2));
 	}
 
 	// Maps
