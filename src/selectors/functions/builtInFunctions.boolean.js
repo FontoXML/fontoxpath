@@ -17,7 +17,7 @@ function fnNot (_dynamicContext, sequence) {
 				return { done: false, ready: false, promise: ebv.promise };
 			}
 			done = true;
-			return ebv.value === false ? trueBoolean : falseBoolean;
+			return { done: false, ready: true, value: ebv.value === false ? trueBoolean : falseBoolean };
 		}
 	});
 }
@@ -38,7 +38,7 @@ function fnBoolean (_dynamicContext, sequence) {
 				return { done: false, ready: false, promise: ebv.promise };
 			}
 			done = true;
-			return ebv.value ? trueBoolean : falseBoolean;
+			return { done: false, ready: true, value: ebv.value ? trueBoolean : falseBoolean };
 		}
 	});
 }

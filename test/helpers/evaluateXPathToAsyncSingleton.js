@@ -5,6 +5,7 @@ export default async function evaluateXPathToAsyncSingleton (xpath, documentNode
 	if (first.done) {
 		return null;
 	}
-	chai.assert.isTrue((await iterator.next()).done);
+	const second = await iterator.next();
+	chai.assert.isTrue(second.done, 'The XPath should resolve to a singleton, or nothing.');
 	return first.value;
 }

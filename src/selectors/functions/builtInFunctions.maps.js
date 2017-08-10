@@ -3,6 +3,7 @@ import mapGet from './builtInFunctions.maps.get';
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
+import zipSingleton from '../util/zipSingleton';
 
 function mapMerge (dynamicContext, mapSequence, optionMap) {
 	var duplicateKey = Sequence.singleton(createAtomicValue('duplicates', 'xs:string'));
@@ -48,79 +49,83 @@ function mapMerge (dynamicContext, mapSequence, optionMap) {
 			}, []))));
 }
 
-function mapPut (_dynamicContext, mapSequence, keySequence, value) {
-	var resultingKeyValuePairs = mapSequence.first().keyValuePairs.concat();
-	var indexOfExistingPair = resultingKeyValuePairs.findIndex(function (existingPair) {
-			return isSameMapKey(existingPair.key, keySequence.first());
+function mapPut (_dynamicContext, mapSequence, keySequence, newValueSequence) {
+	return zipSingleton([mapSequence, keySequence], ([map, newKey]) => {
+		var resultingKeyValuePairs = map.keyValuePairs.concat();
+		var indexOfExistingPair = resultingKeyValuePairs.findIndex(function (existingPair) {
+			return isSameMapKey(existingPair.key, newKey);
 		});
-	if (indexOfExistingPair >= 0) {
-		// Duplicate keys, use options to determine what to do
-		resultingKeyValuePairs.splice(
-			indexOfExistingPair,
-			1,
-			{
-				key: keySequence.first(),
-				value: value
+		if (indexOfExistingPair >= 0) {
+			// Duplicate keys, use options to determine what to do
+			resultingKeyValuePairs.splice(
+				indexOfExistingPair,
+				1,
+				{
+					key: newKey,
+					value: newValueSequence
+				});
+		}
+		else {
+			resultingKeyValuePairs.push({
+				key: newKey,
+				value: newValueSequence
 			});
-	}
-	else {
-		resultingKeyValuePairs.push({
-			key: keySequence.first(),
-			value: value
-		});
-	}
-	return Sequence.singleton(new MapValue(resultingKeyValuePairs));
+		}
+		return Sequence.singleton(new MapValue(resultingKeyValuePairs));
+	});
 }
 
 function mapEntry (_dynamicContext, keySequence, value) {
-	return Sequence.singleton(new MapValue([{ key: keySequence.first(), value: value }]));
+	return keySequence.map(onlyKey => new MapValue([{ key: onlyKey, value: value }]));
 }
 
 function mapSize (_dynamicContext, mapSequence) {
-	return Sequence.singleton(createAtomicValue(mapSequence.first().keyValuePairs.length, 'xs:integer'));
+	return mapSequence.map(onlyMap => createAtomicValue(onlyMap.keyValuePairs.length, 'xs:integer'));
 }
 
 function mapKeys (_dynamicContext, mapSequence) {
-	var keys = mapSequence.first().keyValuePairs.map(
-			function (pair) {
-				return pair.key;
-			});
-	return new Sequence(keys);
+	return zipSingleton([mapSequence], ([map]) => new Sequence(map.keyValuePairs.map(pair => pair.key)));
 }
 
 function mapContains (_dynamicContext, mapSequence, keySequence) {
-	var doesContain = mapSequence.first().keyValuePairs.some(
-			function (pair) {
-				return isSameMapKey(pair.key, keySequence.first());
-			});
-	return doesContain ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	return zipSingleton([mapSequence, keySequence], ([map, key]) => {
+		const doesContain = map.keyValuePairs.some(pair => isSameMapKey(pair.key, key));
+		return doesContain ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+	});
 }
 
 function mapRemove (_dynamicContext, mapSequence, keySequence) {
-	var resultingKeyValuePairs = mapSequence.first().keyValuePairs.concat();
-	keySequence.getAllValues().forEach(function (key) {
-		var indexOfExistingPair = resultingKeyValuePairs.findIndex(function (existingPair) {
-				return isSameMapKey(existingPair.key, key);
+	return zipSingleton([mapSequence], ([map]) => {
+		const resultingKeyValuePairs = map.keyValuePairs.concat();
+		return keySequence.mapAll(keys => {
+			keys.forEach(function (key) {
+				const indexOfExistingPair = resultingKeyValuePairs.findIndex(existingPair => isSameMapKey(existingPair.key, key));
+				if (indexOfExistingPair >= 0) {
+					resultingKeyValuePairs.splice(
+						indexOfExistingPair,
+						1);
+				}
 			});
-		if (indexOfExistingPair >= 0) {
-			resultingKeyValuePairs.splice(
-				indexOfExistingPair,
-				1);
-		}
+			return Sequence.singleton(new MapValue(resultingKeyValuePairs));
+		});
 	});
-	return Sequence.singleton(new MapValue(resultingKeyValuePairs));
 }
 
 function mapForEach (dynamicContext, mapSequence, functionItemSequence) {
-	var resultingKeyValuePairs = mapSequence.first().keyValuePairs.map(function (keyValuePair) {
-			var newValue = functionItemSequence.first().value
-				.call(undefined, dynamicContext, Sequence.singleton(keyValuePair.key), keyValuePair.value);
+	return zipSingleton([mapSequence, functionItemSequence], ([map, functionItem]) => {
+		const resultingKeyValuePairs = map.keyValuePairs.map(function (keyValuePair) {
+			const newValue = functionItem.value.call(
+				undefined,
+				dynamicContext,
+				Sequence.singleton(keyValuePair.key),
+				keyValuePair.value);
 			return {
 				key: keyValuePair.key,
 				value: newValue
 			};
 		});
-	return Sequence.singleton(new MapValue(resultingKeyValuePairs));
+		return Sequence.singleton(new MapValue(resultingKeyValuePairs));
+	});
 }
 
 export default {

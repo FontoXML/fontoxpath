@@ -98,11 +98,11 @@ map:merge((
 ), map {"duplicates": "use-any"})`, documentNode), { a: 1 }));
 
 		it('can handle duplicates: combine',
-			() => chai.assert.deepEqual(evaluateXPathToMap(`
+			() => chai.assert.isTrue(evaluateXPathToBoolean(`
 map:merge((
   map {"a": 1},
   map {"a": 2}
-), map {"duplicates": "combine"})`, documentNode), { a: [1, 2] }));
+), map {"duplicates": "combine"}) => deep-equal(map{"a": (1,2)})`, documentNode)));
 
 		it('can handle duplicates: reject',
 			() => chai.assert.throws(() => evaluateXPathToMap(`
@@ -163,7 +163,10 @@ map:merge((
 		it('returns the keys for a map with values',
 			() => chai.assert.deepEqual(evaluateXPathToStrings('map:keys(map{"a":1, "b":2})', documentNode), ['a', 'b']));
 		it('returns the keys of merged maps',
-			() => chai.assert.deepEqual(evaluateXPathToBoolean('let $result := map:keys(map:merge((map:entry("a", "1"), map:entry("b", 2)))) return $result = "a"', documentNode), true));
+			() => chai.assert.isTrue(evaluateXPathToBoolean('let $result := map:keys(map:merge((map:entry("a", "1"), map:entry("b", 2)))) return $result = "a"', documentNode)));
+		it('works with async params', async () => {
+			chai.assert.isTrue(await evaluateXPathToAsyncSingleton('let $result := map:keys(map{"a": 1, "b": 2} => fontoxpath:sleep()) return $result = "a"', documentNode));
+		});
 	});
 
 	describe('map:contains', () => {
@@ -172,11 +175,19 @@ map:merge((
 
 		it('returns true if the key is present',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('map:contains(map{"a":1}, "a")', documentNode)));
+
+		it('works with async params', async () => {
+			chai.assert.isTrue(await evaluateXPathToAsyncSingleton('map:contains(map{"a":1} => fontoxpath:sleep(), "a")', documentNode));
+		});
 	});
 
 	describe('map:remove', () => {
 		it('removes an item from the map',
 			() => chai.assert.deepEqual(evaluateXPathToMap('map:remove(map{"a": 1}, "a")', documentNode), {}));
+
+		it('works with async params', async () => {
+			chai.assert.deepEqual(await evaluateXPathToAsyncSingleton('map:remove(map{"a":1} => fontoxpath:sleep(), "a")', documentNode), {});
+		});
 
 		it('does nothing if the key is not present',
 			() => chai.assert.deepEqual(evaluateXPathToMap('map:remove(map{"a":1}, "b")', documentNode), { a: 1 }));
@@ -188,5 +199,8 @@ map:merge((
 	describe('map:for-each', () => {
 		it('executes a function over every item',
 			() => chai.assert.deepEqual(evaluateXPathToMap('map:for-each(map{"a":"b", "b": "c"}, concat#2)', documentNode), { a: 'ab', b: 'bc' }));
+		it('works with async params', async () => {
+			chai.assert.deepEqual(await evaluateXPathToAsyncSingleton('map:for-each(map{"a":1, "b": 2} => fontoxpath:sleep(), function ($key, $val) {$key || $val})', documentNode), { a: 'a1', b: 'b2' });
+		});
 	});
 });
