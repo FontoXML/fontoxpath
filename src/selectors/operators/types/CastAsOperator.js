@@ -28,18 +28,21 @@ class castAsOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
-
-		if (evaluatedExpression.isEmpty()) {
-			if (!this._allowsEmptySequence) {
-				throw new Error('XPTY0004: Sequence to cast is empty while target type is singleton.');
+		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
+		return evaluatedExpression.switchCases({
+			empty: () => {
+				if (!this._allowsEmptySequence) {
+					throw new Error('XPTY0004: Sequence to cast is empty while target type is singleton.');
+				}
+				return Sequence.empty();
+			},
+			singleton: () => {
+				return evaluatedExpression.map(value => castToType(value, this._targetType));
+			},
+			multiple: () => {
+				throw new Error('XPTY0004: Sequence to cast is not singleton or empty.');
 			}
-			return evaluatedExpression;
-		}
-		if (evaluatedExpression.isSingleton()) {
-			return Sequence.singleton(castToType(evaluatedExpression.first(), this._targetType));
-		}
-		throw new Error('XPTY0004: Sequence to cast is not singleton or empty.');
+		});
 	}
 }
 

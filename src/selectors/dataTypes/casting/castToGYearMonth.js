@@ -8,12 +8,6 @@ const createGYearMonthValue = value => createAtomicValue(value, 'xs:gYearMonth')
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToGYearMonth (instanceOf) {
-	if (instanceOf('xs:gYearMonth')) {
-		return value => ({
-			successful: true,
-			value: createGYearMonthValue(value)
-		});
-	}
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
 		return value => ({
 			successful: true,

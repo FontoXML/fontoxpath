@@ -1,6 +1,7 @@
 import Sequence from '../../dataTypes/Sequence';
 import Selector from '../../Selector';
 import canCastToType from '../../dataTypes/canCastToType';
+import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -29,15 +30,21 @@ class CastableAsOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
-
-		if (evaluatedExpression.isEmpty()) {
-			return this._allowsEmptySequence ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
-		}
-		if (evaluatedExpression.isSingleton()) {
-			return canCastToType(evaluatedExpression.first(), this._targetType) ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
-		}
-		return Sequence.singletonFalseSequence();;
+		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
+		return evaluatedExpression.switchCases({
+			empty: () => {
+				if (!this._allowsEmptySequence) {
+					return Sequence.singletonFalseSequence();
+				}
+				return Sequence.singletonTrueSequence();
+			},
+			singleton: () => {
+				return evaluatedExpression.map(value => canCastToType(value, this._targetType) ? trueBoolean : falseBoolean);
+			},
+			multiple: () => {
+				return Sequence.singletonFalseSequence();
+			}
+		});
 	}
 }
 

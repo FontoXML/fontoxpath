@@ -4,6 +4,7 @@ import {
 	evaluateXPathToBoolean
 } from 'fontoxpath';
 
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
@@ -16,6 +17,9 @@ describe('castable as', () => {
 		() => chai.assert.isFalse(evaluateXPathToBoolean('() castable as xs:boolean', documentNode)), 'XPST0004');
 	it('does not accept sequences of length > 1',
 		() => chai.assert.isFalse(evaluateXPathToBoolean('("a", "b") castable as xs:boolean', documentNode)), 'XPST0004');
+	it('accepts async params', async () => {
+		chai.assert.isTrue(await evaluateXPathToAsyncSingleton('("a" => fontoxpath:sleep()) castable as xs:string', documentNode));
+	});
 
 	describe('as xs:boolean', () => {
 		it('casts "true" to true',

@@ -8,12 +8,6 @@ const createYearMonthDurationValue = value => createAtomicValue(value, 'xs:yearM
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToYearMonthDuration (instanceOf) {
-	if (instanceOf('xs:yearMonthDuration')) {
-		return value => ({
-			successful: true,
-			value: createYearMonthDurationValue(value)
-		});
-	}
 	if (instanceOf('xs:duration') && !instanceOf('xs:dayTimeDuration')) {
 		return value => ({
 			successful: true,

@@ -5,7 +5,7 @@ import createAtomicValue from '../createAtomicValue';
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToDecimal (instanceOf) {
-	if (instanceOf('xs:decimal') || instanceOf('xs:integer')) {
+	if (instanceOf('xs:integer')) {
 		return value => ({
 			successful: true,
 			value: createAtomicValue(value, 'xs:decimal')

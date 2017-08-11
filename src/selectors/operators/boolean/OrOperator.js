@@ -1,6 +1,7 @@
 import Selector from '../../Selector';
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
+import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 
 /**
  * @extends {Selector}
@@ -38,15 +39,36 @@ class OrOperator extends Selector {
 		}, undefined);
 
 		this._subSelectors = selectors;
-
 	}
 
 	evaluate (dynamicContext) {
-		var result = this._subSelectors.some(function (subSelector) {
-			return subSelector.evaluateMaybeStatically(dynamicContext).getEffectiveBooleanValue();
-			});
-
-		return result ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+		let i = 0;
+		let resultSequence = null;
+		let done = false;
+		return new Sequence({
+			next: () => {
+				if (!done) {
+					while (i < this._subSelectors.length) {
+						if (!resultSequence) {
+							resultSequence = this._subSelectors[i].evaluateMaybeStatically(dynamicContext);
+						}
+						const ebv = resultSequence.tryGetEffectiveBooleanValue();
+						if (!ebv.ready) {
+							return { done: false, ready: false, promise: ebv.promise };
+						}
+						if (ebv.value === true) {
+							done = true;
+							return { done: false, ready: true, value: trueBoolean };
+						}
+						resultSequence = null;
+						i++;
+					}
+					done = true;
+					return { done: false, ready: true, value: falseBoolean };
+				}
+				return { done: true, ready: true };
+			}
+		});
 	}
 
 	getBucket () {
