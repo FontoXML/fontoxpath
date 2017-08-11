@@ -7,12 +7,6 @@ const createAnyURIValue = value => createAtomicValue(value, 'xs:anyURI');
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToAnyURI (instanceOf) {
-	if (instanceOf('xs:anyURI')) {
-		return value => ({
-			successful: true,
-			value: createAnyURIValue(value)
-		});
-	}
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
 		return value => ({
 			successful: true,

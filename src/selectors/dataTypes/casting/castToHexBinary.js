@@ -15,12 +15,6 @@ function stringToHex (string) {
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
 */
 export default function castToHexBinary (instanceOf) {
-	if (instanceOf('xs:hexBinary')) {
-		return value => ({
-			successful: true,
-			value: createHexBinaryValue(value)
-		});
-	}
 	if (instanceOf('xs:base64Binary')) {
 		return value => ({
 			successful: true,

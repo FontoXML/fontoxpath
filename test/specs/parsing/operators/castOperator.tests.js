@@ -6,6 +6,8 @@ import {
 	evaluateXPathToNumber
 } from 'fontoxpath';
 
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
+
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
@@ -22,6 +24,8 @@ describe('cast as', () => {
 	describe('to xs:boolean', () => {
 		it('casts "true" to true',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := "true" cast as xs:boolean return $r instance of xs:boolean and $r = true()', documentNode)));
+		it('casts true() to true',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := true() cast as xs:boolean return $r instance of xs:boolean and $r = true()', documentNode)));
 		it('casts "false" to false',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := "false" cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode)));
 		it('casts "1" to true',
@@ -31,11 +35,14 @@ describe('cast as', () => {
 		it('casts xs:untypedAtomic to false',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := xs:untypedAtomic("0") cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode)));
 		it('throws when given an invalid value',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('let $r := "wat" cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode), 'FORG0001'));
+			() => chai.assert.throws(() => evaluateXPathToBoolean('"wat" cast as xs:boolean', documentNode), 'FORG0001'));
 		it('can cast integers to booleans: true',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := 25 cast as xs:boolean return $r instance of xs:boolean and $r = true()', documentNode)));
 		it('can cast integers to booleans: false',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('let $r := 0 cast as xs:boolean return $r instance of xs:boolean and $r = false()', documentNode)));
+		it('allows casting async params', async () => {
+			chai.assert.isTrue(await evaluateXPathToAsyncSingleton('let $r := 0 => fontoxpath:sleep() cast as xs:boolean return $r instance of xs:boolean and $r = false()'));
+		});
 	});
 
 	describe('to xs:integer', () => {

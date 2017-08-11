@@ -8,12 +8,6 @@ const createDateValue = value => createAtomicValue(value, 'xs:date');
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToDate (instanceOf) {
-	if (instanceOf('xs:date')) {
-		return value => ({
-			successful: true,
-			value: createDateValue(value)
-		});
-	}
 	if (instanceOf('xs:dateTime')) {
 		return value => ({
 			successful: true,

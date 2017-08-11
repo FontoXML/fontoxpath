@@ -5,12 +5,6 @@ import { trueBoolean, falseBoolean } from '../createAtomicValue';
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToBoolean (instanceOf) {
-	if (instanceOf('xs:boolean')) {
-		return value => ({
-			successful: true,
-			value: value ? trueBoolean : falseBoolean
-		});
-	}
 	if (instanceOf('xs:numeric')) {
 		return value => ({
 			successful: true,

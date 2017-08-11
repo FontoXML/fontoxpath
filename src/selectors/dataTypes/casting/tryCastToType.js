@@ -175,25 +175,12 @@ function createCastingFunction (from, to) {
 			value: value.value
 		}));
 	}
-		if (primitiveTo === 'xs:untypedAtomic' || primitiveTo === 'xs:string') {
-			converters.push(typedValue => {
-				if (!validatePattern(typedValue, to)) {
-					return {
-						successful: false,
-						error: new Error(`FORG0001: Cannot cast ${typedValue} to ${to}, pattern validation failed.`)
-					};
-				}
-				return {
-					successful: true,
-					value: typedValue
-				};
-			});
-		}
+	if (primitiveTo === 'xs:untypedAtomic' || primitiveTo === 'xs:string') {
 		converters.push(typedValue => {
-			if (!validateRestrictions(typedValue, to)) {
+			if (!validatePattern(typedValue, to)) {
 				return {
 					successful: false,
-					error: new Error(`FORG0001: Cannot cast "${typedValue}" to ${to}, restriction validation failed.`)
+					error: new Error(`FORG0001: Cannot cast ${typedValue} to ${to}, pattern validation failed.`)
 				};
 			}
 			return {
@@ -201,6 +188,19 @@ function createCastingFunction (from, to) {
 				value: typedValue
 			};
 		});
+	}
+	converters.push(typedValue => {
+		if (!validateRestrictions(typedValue, to)) {
+			return {
+				successful: false,
+				error: new Error(`FORG0001: Cannot cast "${typedValue}" to ${to}, restriction validation failed.`)
+			};
+		}
+		return {
+			successful: true,
+			value: typedValue
+		};
+	});
 
 
 	// assume we can just use the primitive datatype

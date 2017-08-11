@@ -8,12 +8,6 @@ const createGMonthDayValue = value => createAtomicValue(value, 'xs:gMonthDay');
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToGMonthDay (instanceOf) {
-	if (instanceOf('xs:gMonthDay')) {
-		return value => ({
-			successful: true,
-			value: createGMonthDayValue(value)
-		});
-	}
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
 		return value => ({
 			successful: true,

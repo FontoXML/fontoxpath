@@ -8,12 +8,6 @@ const createGYearValue = value => createAtomicValue(value, 'xs:gYear');
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToGYear (instanceOf) {
-	if (instanceOf('xs:gYear')) {
-		return value => ({
-			successful: true,
-			value: createGYearValue(value)
-		});
-	}
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
 		return value => ({
 			successful: true,

@@ -47,8 +47,7 @@ class Compare extends Selector {
 				},
 				default: () => {
 					if (this._compare === 'nodeCompare') {
-						const nodeCompareResult = nodeCompare(this._operator, firstSequence, secondSequence);
-						return nodeCompareResult ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+						return nodeCompare(this._operator, firstSequence, secondSequence);
 					}
 					// Atomize both sequences
 					const firstAtomizedSequence = firstSequence.atomize(dynamicContext);

@@ -1,7 +1,7 @@
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
 import Selector from '../../Selector';
-
+import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 /**
  * @extends {Selector}
  */
@@ -11,7 +11,7 @@ class AndOperator extends Selector {
 	 */
 	constructor (selectors) {
 		super(selectors.reduce(function (specificity, selector) {
-				return specificity.add(selector.specificity);
+			return specificity.add(selector.specificity);
 		}, new Specificity({})), {
 			canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
 		});
@@ -19,11 +19,33 @@ class AndOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
-		var result = this._subSelectors.every(function (subSelector) {
-			return subSelector.evaluateMaybeStatically(dynamicContext).getEffectiveBooleanValue();
-			});
-
-		return result ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();;
+		let i = 0;
+		let resultSequence = null;
+		let done = false;
+		return new Sequence({
+			next: () => {
+				if (!done) {
+					while (i < this._subSelectors.length) {
+						if (!resultSequence) {
+							resultSequence = this._subSelectors[i].evaluateMaybeStatically(dynamicContext);
+						}
+						const ebv = resultSequence.tryGetEffectiveBooleanValue();
+						if (!ebv.ready) {
+							return { done: false, ready: false, promise: ebv.promise };
+						}
+						if (ebv.value === false) {
+							done = true;
+							return { done: false, ready: true, value: falseBoolean };
+						}
+						resultSequence = null;
+						i++;
+					}
+					done = true;
+					return { done: false, ready: true, value: trueBoolean };
+				}
+				return { done: true, ready: true };
+			}
+		});
 	}
 
 	getBucket () {

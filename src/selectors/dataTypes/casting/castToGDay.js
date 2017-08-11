@@ -8,12 +8,6 @@ const createGDayValue = value => createAtomicValue(value, 'xs:gDay');
  * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToGDay (instanceOf) {
-	if (instanceOf('xs:gDay')) {
-		return value => ({
-			successful: true,
-			value: createGDayValue(value)
-		});
-	}
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
 		return value => ({
 			successful: true,
