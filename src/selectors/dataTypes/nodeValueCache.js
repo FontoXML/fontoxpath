@@ -5,4 +5,6 @@
 /**
  * @const {!Map<!Node, !./Value>}
  */
-export default new Map();
+const nodeValueCache = new Map();
+
+export default nodeValueCache;

@@ -52,6 +52,8 @@ function doSelectorsBuild () {
 			warning_level: 'VERBOSE',
 			compilation_level: 'ADVANCED',
 			externs: path.resolve('./externs/IDomFacade.js'),
+			module_resolution: 'NODE',
+			dependency_mode: 'STRICT',
 			output_wrapper: `
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
@@ -71,7 +73,8 @@ function doSelectorsBuild () {
 });
 //# sourceMappingURL=./fontoxpath.js.map`,
 			js_output_file: './dist/fontoxpath.js',
-			js: './src/**/*.js'
+			entry_point: './src/index.js',
+			js: './src/**.js'
 		})
 			.run((exitCode, stdOut, stdErr) => {
 				if (exitCode !== 0) {

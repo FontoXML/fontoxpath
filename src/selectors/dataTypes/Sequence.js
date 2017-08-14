@@ -7,7 +7,6 @@ import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 /**
  * @constructor
- * @extends {./Value}
  * @param   {!Array | !../util/iterators.AsyncIterator<!./Value>}  valueIteratorOrArray
  * @param   {?number=}                  predictedLength
  */

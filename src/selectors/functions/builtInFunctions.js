@@ -22,7 +22,7 @@ import DynamicContext from '../DynamicContext';
 /**
  * @type {!Array<!Object<string, {name: string, argumentTypes: !Array<string>, returnType: string, callFunction: function (DynamicContext, ...!Sequence): !Sequence}>>}
  */
-export default [].concat(
+const builtInFunctions = [].concat(
 	builtInArrayFunctions.declarations,
 	builtInBooleanFunctions.declarations,
 	builtInContextFunctions.declarations,
@@ -39,3 +39,5 @@ export default [].concat(
 	builtInSequencesFunctions.declarations,
 	builtInStringFunctions.declarations,
 	builtInFontoxpathFunctions.declarations);
+
+export default builtInFunctions;

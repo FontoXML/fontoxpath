@@ -303,9 +303,9 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 				};
 			}
 			return {
-				[Symbol.asyncIterator]: function () {
-					return this;
-				},
+				// [Symbol.asyncIterator]: function () {
+				// 	return this;
+				// },
 				next: () => new Promise(resolve => resolve(getNextResult()))
 			};
 		}
