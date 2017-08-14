@@ -3,10 +3,7 @@ import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import {
-	sortNodeValues,
-	compareNodePositions
-} from '../dataTypes/documentOrderUtils';
+import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
 
 import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 

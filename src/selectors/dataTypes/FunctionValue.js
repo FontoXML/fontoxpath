@@ -17,15 +17,11 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 	return argumentTypes;
 }
 
-/**
- * @extends {./Value}
- */
 class FunctionValue {
 	/**
 	 * @param  {{value: !function(!../DynamicContext, !Sequence): !Sequence, name: string, argumentTypes: !Array<string>, arity: number, returnType: string}}  properties
 	 */
-	constructor (properties) {
-		const { value, name, argumentTypes, arity, returnType } = properties;
+	constructor ({ value, name, argumentTypes, arity, returnType }) {
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
 		this._name = name;

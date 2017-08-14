@@ -1,5 +1,15 @@
 /**
- * @typedef {{type: !string, value: *}}
+ * @record
  */
-let Value;
-export default Value;
+export default class Value {
+	constructor () {
+		/**
+		 * @type {string}
+		 */
+		this.type;
+		/**
+		 * @type {?}
+		 */
+		this.value;
+	}
+};

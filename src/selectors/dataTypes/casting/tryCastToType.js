@@ -1,9 +1,4 @@
-import {
-	getPrimitiveTypeName,
-	normalizeWhitespace,
-	validatePattern,
-	validateRestrictions
-} from '../typeHelpers';
+import { getPrimitiveTypeName, normalizeWhitespace, validatePattern, validateRestrictions } from '../typeHelpers';
 
 import isSubtypeOf from '../isSubtypeOf';
 
