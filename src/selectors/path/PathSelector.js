@@ -8,8 +8,10 @@ import {
 	compareNodePositions
 } from '../dataTypes/documentOrderUtils';
 
+import { ready, notReady, DONE_TOKEN } from '../util/iterators';
+
 /**
- * @param   {!Iterator<!Sequence>}  sequences
+ * @param   {!../util/iterators.AsyncIterator<!Sequence>}  sequences
  * @return  {!Sequence}
  */
 function concatSortedSequences (_, sequences) {
@@ -22,13 +24,9 @@ function concatSortedSequences (_, sequences) {
 	return new Sequence({
 		next: function () {
 			if (!currentSequence.ready) {
-				return {
-					done: false,
-					ready: false,
-					promise: currentSequence.promise.then(() => {
-						currentSequence = sequences.next();
-					})
-				};
+				return notReady(currentSequence.promise.then(() => {
+					currentSequence = sequences.next();
+				}));
 			}
 			if (currentSequence.done) {
 				return currentSequence;
@@ -59,8 +57,8 @@ function concatSortedSequences (_, sequences) {
 }
 
 /**
- * @param   {!IDomFacade}           domFacade
- * @param   {!Iterable<!Sequence>}  sequences
+ * @param   {!IDomFacade}                                  domFacade
+ * @param   {!../util/iterators.AsyncIterator<!Sequence>}  sequences
  * @return  {!Sequence}
  */
 function mergeSortedSequences (domFacade, sequences) {
@@ -96,12 +94,12 @@ function mergeSortedSequences (domFacade, sequences) {
 		},
 		next: () => {
 			if (!allSequencesLoaded) {
-				return { done: false, value: undefined, promise: allSequencesLoadedPromise, ready: false };
+				return notReady(allSequencesLoadedPromise);
 			}
 			let consumedValue;
 			do {
 				if (!allIterators.length) {
-					return { ready: true, done: true, value: undefined };
+					return DONE_TOKEN;
 				}
 
 				const consumedIterator = allIterators.shift();
@@ -200,7 +198,7 @@ class PathSelector extends Selector {
 	evaluate (dynamicContext) {
 		let sequenceHasPeerProperty = true;
 		/**
-		 * @type {Sequence}
+		 * @type {!Sequence}
 		 */
 		const result = this._stepSelectors.reduce(function (intermediateResultNodesSequence, selector) {
 			let childContextIterator;
@@ -212,10 +210,9 @@ class PathSelector extends Selector {
 				childContextIterator = dynamicContext.createSequenceIterator(intermediateResultNodesSequence);
 			}
 			/**
-			 * @type {!IteratorIterable<!Sequence>}
+			 * @type {!../util/iterators.AsyncIterator<!Sequence>}
 			 */
-			let resultValuesInOrderOfEvaluation = /** @type {!IteratorIterable<!Sequence>} */ ({
-				[Symbol.iterator]: () => resultValuesInOrderOfEvaluation,
+			let resultValuesInOrderOfEvaluation = {
 				next: () => {
 					const childContext = childContextIterator.next();
 					if (!childContext.ready) {
@@ -228,16 +225,15 @@ class PathSelector extends Selector {
 					if (childContext.value.contextItem !== null && !isSubtypeOf(childContext.value.contextItem.type, 'node()')) {
 						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
 					}
-					return { done: false, ready: true, value: selector.evaluateMaybeStatically(childContext.value) };
+					return ready(selector.evaluateMaybeStatically(childContext.value));
 				}
-			});
+			};
 			// Assume nicely sorted
 			let sortedResultSequence;
 			switch (selector.expectedResultOrder) {
 				case Selector.RESULT_ORDERINGS.REVERSE_SORTED: {
 					const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
-					resultValuesInOrderOfEvaluation = /** @type {!IteratorIterable<!../dataTypes/Sequence>} */ ({
-						[Symbol.iterator]: () => resultValuesInOrderOfEvaluation,
+					resultValuesInOrderOfEvaluation = /** @type {!../util/iterators.AsyncIterator<!Sequence>} */ ({
 						next: () => {
 							const result = resultValuesInReverseOrder.next();
 							if (!result.ready) {
@@ -246,7 +242,7 @@ class PathSelector extends Selector {
 							if (result.done) {
 								return result;
 							}
-							return { done: false, ready: true, value: result.value.mapAll(items => new Sequence(items.reverse())) };
+							return ready(result.value.mapAll(items => new Sequence(items.reverse())));
 						}
 					});
 					// Fallthrough for merges

@@ -1,5 +1,9 @@
 import Sequence from '../dataTypes/Sequence';
 
+/**
+ * @param   {!Sequence}  sequence
+ * @return  {!function():!Sequence}
+ */
 export default function createDoublyIterableSequence (sequence) {
 	const savedValues = [];
 	const backingIterator = sequence.value();

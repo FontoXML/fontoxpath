@@ -1,5 +1,10 @@
 import Sequence from '../dataTypes/Sequence';
 
+/**
+ * @param   {!Array<!Sequence>}  sequences
+ * @param   {!function(!Array<!../dataTypes/Value>):!Sequence}  callback
+ * @return  {!Sequence}
+ */
 export default function zipSingleton (sequences, callback) {
 	const firstValues = sequences.map(seq => seq.tryGetFirst());
 	if (firstValues.every(val => val.ready)) {

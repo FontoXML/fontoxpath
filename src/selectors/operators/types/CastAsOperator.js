@@ -28,6 +28,9 @@ class castAsOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
+		/**
+		 * @type {Sequence}
+		 */
 		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext);
 		return evaluatedExpression.switchCases({
 			empty: () => {
@@ -39,9 +42,9 @@ class castAsOperator extends Selector {
 			singleton: () => {
 				return evaluatedExpression.map(value => castToType(value, this._targetType));
 			},
-			multiple: () => {
+			multiple: (() => {
 				throw new Error('XPTY0004: Sequence to cast is not singleton or empty.');
-			}
+			})
 		});
 	}
 }

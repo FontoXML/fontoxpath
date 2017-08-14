@@ -1,12 +1,14 @@
 import DynamicContext from '../DynamicContext';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 /**
- * @param  {../DynamicContext}      dynamicContext
- * @param  {../dataTypes/Sequence}  query
- * @param  {../dataTypes/Sequence}  args
+ * @param  {!../DynamicContext}      dynamicContext
+ * @param  {!../dataTypes/Sequence}  query
+ * @param  {!../dataTypes/Sequence}  args
  */
 function fontoxpathEvaluate (dynamicContext, query, args) {
 	let resultIterator;
@@ -57,27 +59,36 @@ function fontoxpathEvaluate (dynamicContext, query, args) {
 	});
 }
 
-
+/**
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {!Sequence}           val
+ * @param   {!Sequence}           howLong
+ * @return  {!Sequence}
+ */
 function fontoxpathSleep (_dynamicContext, val, howLong) {
 	let ready = false;
 	let readyPromise;
+
 	const valueIterator = val.value();
 	return new Sequence({
 		next: () => {
 			if (!readyPromise) {
-				const time = howLong ? howLong.tryGetFirst() : { ready: true, value: 0 };
+				/**
+				 * @type {!../util/iterators.AsyncResult}
+				 */
+				const time = howLong ? howLong.tryGetFirst() : ready(createAtomicValue(0, 'xs:integer'));
 				if (!time.ready) {
-					return { done: false, value: undefined, ready: false, promise: time.promise };
+					return notReady(readyPromise);
 				}
 				readyPromise = new Promise(
 					resolve => setTimeout(() => {
 						ready = true;
 						resolve();
-					}, time.value)
+					}, time.value.value)
 				);
 			}
 			if (!ready) {
-				return { done: false, value: undefined, ready: false, promise: readyPromise };
+				return notReady(readyPromise);
 			}
 			return valueIterator.next();
 		}
@@ -106,13 +117,13 @@ function fontoxpathFetch (_dynamicContext, url) {
 					});
 			}
 			if (!ready) {
-				return { done: false, value: undefined, ready: false, promise: readyPromise };
+				return notReady(readyPromise);
 			}
 			if (!done) {
 				done = true;
-				return { done: false, ready: true, value: createNodeValue(result) };
+				return ready(createNodeValue(result));
 			}
-			return { done: true, value: undefined, ready: true, promise: undefined };
+			return DONE_TOKEN;
 		}
 	});
 }

@@ -19,6 +19,9 @@ class InstanceOfOperator extends Selector {
 	}
 
 	evaluate (dynamicContext) {
+		/**
+		 * @type {!Sequence}
+		 */
 		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext);
 		return evaluatedExpression.switchCases({
 			empty: () => {

@@ -1,6 +1,7 @@
 import Selector from './Selector';
 import Sequence from './dataTypes/Sequence';
 import Specificity from './Specificity';
+import { DONE_TOKEN } from './util/iterators';
 
 function buildVarName ({ prefix, namespaceURI, name }) {
 	if (namespaceURI) {
@@ -14,7 +15,7 @@ function buildVarName ({ prefix, namespaceURI, name }) {
  */
 class ForExpression extends Selector {
 	/**
-	 * @param  {!{varName:{prefix:string, namespaceURI:string, name:string}, expression}}  clauses
+	 * @param  {!{varName:{prefix:string, namespaceURI:string, name:string}, expression}}  clause
 	 * @param  {!Selector}                       expression
 	 */
 	constructor (clause, expression) {
@@ -23,19 +24,31 @@ class ForExpression extends Selector {
 		});
 
 		this._varName = buildVarName(clause.varName);
+		/**
+		 * @type {!Selector}
+		 */
 		this._clauseExpression = clause.expression;
+		/**
+		 * @type {!Selector}
+		 */
 		this._returnExpression = expression;
 	}
 
 	evaluate (dynamicContext) {
+		/**
+		 * @type {!./util/iterators.AsyncIterator<!./dataTypes/Value>}
+		 */
 		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext).value();
+		/**
+		 * @type {?./util/iterators.AsyncIterator<!./dataTypes/Value>}
+		 */
 		let returnIterator = null;
 		let done = false;
 		return new Sequence({
 			next: () => {
 				while (!done) {
 					if (returnIterator === null) {
-						const currentClauseValue = clauseIterator.next();
+						var currentClauseValue = clauseIterator.next();
 						if (!currentClauseValue.ready) {
 							return currentClauseValue;
 						}
@@ -43,9 +56,14 @@ class ForExpression extends Selector {
 							done = true;
 							break;
 						}
-						const contextWithVars = dynamicContext.scopeWithVariables({ [this._varName]: () => {
-							return Sequence.singleton(currentClauseValue.value);
-						}});
+						/**
+						 * @type {!./DynamicContext}
+						 */
+						const contextWithVars = dynamicContext.scopeWithVariables({
+							[this._varName]: () => {
+								return Sequence.singleton(currentClauseValue.value);
+							}
+						});
 						returnIterator = this._returnExpression.evaluateMaybeStatically(contextWithVars).value();
 					}
 					const returnValue = returnIterator.next();
@@ -56,7 +74,7 @@ class ForExpression extends Selector {
 					}
 					return returnValue;
 				}
-				return { done: true, value: undefined, ready: true };
+				return DONE_TOKEN;
 			}
 		});
 	}

@@ -49,9 +49,6 @@ class AttributeAxis extends Selector {
 			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 			.map(attribute => createNodeValue(new AttributeNode(contextItem.value, attribute)))
 			.filter(item => this._attributeTestSelector.evaluateToBoolean(dynamicContext, item));
-		/**
-		 * @type {!Selector}
-		 */
 		return new Sequence(matchingAttributes);
 	}
 }

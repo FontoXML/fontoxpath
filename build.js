@@ -41,7 +41,7 @@ function doSelectorsBuild () {
 				'deprecated',
 				'deprecatedAnnotations',
 				'duplicate',
-				'inferredConstCheck',
+//				'inferredConstCheck',
 				'missingProperties',
 				'missingReturn',
 				'newCheckTypes',
@@ -71,7 +71,7 @@ function doSelectorsBuild () {
 });
 //# sourceMappingURL=./fontoxpath.js.map`,
 			js_output_file: './dist/fontoxpath.js',
-			js: './src/**.js'
+			js: './src/**/*.js'
 		})
 			.run((exitCode, stdOut, stdErr) => {
 				if (exitCode !== 0) {

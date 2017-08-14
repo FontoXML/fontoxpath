@@ -1,12 +1,11 @@
-import Sequence from '../dataTypes/Sequence';
-import Selector from '../Selector';
+import TestAbstractExpression from './TestAbstractExpression';
 import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 /**
- * @extends {Selector}
+ * @extends {./TestAbstractExpression}
  */
-class NameTest extends Selector {
+class NameTest extends TestAbstractExpression {
 	/**
 	 * @param  {?string}  prefix
 	 * @param  {?string}  namespaceURI
@@ -21,7 +20,7 @@ class NameTest extends Selector {
 				[Specificity.NODETYPE_KIND]: 1
 			};
 		}
-		super(new Specificity(specificity), { canBeStaticallyEvaluated: false });
+		super(new Specificity(specificity));
 
 		this._localName = localName;
 		this._namespaceURI = namespaceURI;
@@ -29,14 +28,6 @@ class NameTest extends Selector {
 
 	}
 
-	evaluate (dynamicContext) {
-		return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem) ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
-	}
-
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluateToBoolean (dynamicContext, node) {
 		const nodeIsElement = isSubtypeOf(node.type, 'element()');
 		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');

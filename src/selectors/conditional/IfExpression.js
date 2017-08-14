@@ -5,9 +5,9 @@ import Sequence from '../dataTypes/Sequence';
  */
 class IfExpression extends Selector {
 	/**
-	 * @param  {Selector}  testExpression
-	 * @param  {Selector}  thenExpression
-	 * @param  {Selector}  elseExpression
+	 * @param  {!Selector}  testExpression
+	 * @param  {!Selector}  thenExpression
+	 * @param  {!Selector}  elseExpression
 	 */
 	constructor (testExpression, thenExpression, elseExpression) {
 		var specificity = testExpression.specificity
@@ -26,12 +26,13 @@ class IfExpression extends Selector {
 		this._testExpression = testExpression;
 		this._thenExpression = thenExpression;
 		this._elseExpression = elseExpression;
-
-
 	}
 
 	evaluate (dynamicContext) {
 		let resultIterator = null;
+		/**
+		 * @type {../dataTypes/Sequence}
+		 */
 		const ifExpressionResultSequence = this._testExpression.evaluateMaybeStatically(dynamicContext);
 		return new Sequence({
 			next: () => {

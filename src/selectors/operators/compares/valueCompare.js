@@ -92,6 +92,7 @@ const comparatorsByTypingKey = Object.create(null);
  * @param  {string}                       operator
  * @param  {../../dataTypes/AtomicValue}  valueA
  * @param  {../../dataTypes/AtomicValue}  valueB
+ * @return {boolean}
  */
 export default function valueCompare (operator, valueA, valueB) {
 	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp

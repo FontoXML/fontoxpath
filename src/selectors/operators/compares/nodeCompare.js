@@ -6,7 +6,7 @@ import zipSingleton from '../../util/zipSingleton';
  * @param   {string}     operator
  * @param   {!../../dataTypes/Sequence}  firstSequence
  * @param   {!../../dataTypes/Sequence}  secondSequence
- * @return  {Sequence}
+ * @return  {!Sequence}
  */
 export default function nodeCompare (operator, firstSequence, secondSequence) {
 	// https://www.w3.org/TR/xpath-31/#doc-xpath31-NodeComp
