@@ -1,6 +1,11 @@
 import Sequence from '../dataTypes/Sequence';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 
+/**
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {Sequence}           sequence
+ * @return  {Sequence}
+ */
 function fnNot (_dynamicContext, sequence) {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
@@ -22,6 +27,11 @@ function fnNot (_dynamicContext, sequence) {
 	});
 }
 
+/**
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {Sequence}           sequence
+ * @return  {Sequence}
+ */
 function fnBoolean (_dynamicContext, sequence) {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
@@ -43,10 +53,16 @@ function fnBoolean (_dynamicContext, sequence) {
 	});
 }
 
+/**
+ * @return  {Sequence}
+ */
 function fnTrue () {
 	return Sequence.singletonTrueSequence();
 }
 
+/**
+ * @return  {Sequence}
+ */
 function fnFalse () {
 	return Sequence.singletonFalseSequence();
 }

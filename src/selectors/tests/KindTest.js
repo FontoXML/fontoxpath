@@ -1,27 +1,21 @@
-import Selector from '../Selector';
-import Sequence from '../dataTypes/Sequence';
+import TestAbstractExpression from './TestAbstractExpression';
 import Specificity from '../Specificity';
-import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 /**
- * @extends {Selector}
+ * @extends {./TestAbstractExpression}
  */
-class KindTest extends Selector {
+class KindTest extends TestAbstractExpression {
 	/**
 	 * @param  {number}  nodeType
 	 */
 	constructor (nodeType) {
 		super(new Specificity({
 			[Specificity.NODETYPE_KIND]: 1
-		}), { canBeStaticallyEvaluated: false });
+		}));
 
 		this._nodeType = nodeType;
 
 	}
 
-	/**
-	 * @param   {!../DynamicContext}      dynamicContext
-	 * @return  {!../dataTypes/Sequence}
-	 */
 	evaluateToBoolean (_dynamicContext, node) {
 		if (this._nodeType === 3 && node.value.nodeType === 4) {
 			// CDATA_SECTION_NODES should be regarded as text nodes, and CDATA does not exist in the XPath Data Model

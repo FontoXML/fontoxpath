@@ -263,6 +263,9 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			});
 
 		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
+			/**
+			 * @type {./selectors/util/iterators.AsyncIterator}
+			 */
 			const it = rawResults.value();
 			let transformedValueGenerator = null;
 			let done = false;

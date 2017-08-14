@@ -2,7 +2,6 @@ import Sequence from '../dataTypes/Sequence';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 
-
 function opTo (_dynamicContext, fromSequence, toSequence) {
 	// shortcut the non-trivial case of both values being known
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
@@ -54,9 +53,9 @@ function opTo (_dynamicContext, fromSequence, toSequence) {
 }
 /**
  * @param   {../DynamicContext}  dynamicContext
- * @param   {!Sequence<!../dataTypes/Value>}  firstNodes
- * @param   {!Sequence<!../dataTypes/Value>}  secondNodes
- * @return  {!Sequence<!../dataTypes/Value>}
+ * @param   {!Sequence}  firstNodes
+ * @param   {!Sequence}  secondNodes
+ * @return  {!Sequence}
  */
 function opExcept (dynamicContext, firstNodes, secondNodes) {
 	/**
@@ -75,9 +74,9 @@ function opExcept (dynamicContext, firstNodes, secondNodes) {
 
 /**
  * @param   {../DynamicContext}  dynamicContext
- * @param   {!Sequence<!../dataTypes/Value>}  firstNodes
- * @param   {!Sequence<!../dataTypes/Value>}  secondNodes
- * @return  {!Sequence<!../dataTypes/Value>}
+ * @param   {!Sequence}  firstNodes
+ * @param   {!Sequence}  secondNodes
+ * @return  {!Sequence}
  */
 function opIntersect (dynamicContext, firstNodes, secondNodes) {
 	/**

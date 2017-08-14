@@ -1,5 +1,11 @@
 import Sequence from '../dataTypes/Sequence';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
+
+/**
+ * @param   {!Sequence}                                         sequence
+ * @param   {!function(!../dataTypes/Value):!Sequence}  typeTest
+ * @return  {!Sequence}
+ */
 export default function sequenceEvery (sequence, typeTest) {
 	const iterator = sequence.value();
 	let typeTestResultIterator = null;

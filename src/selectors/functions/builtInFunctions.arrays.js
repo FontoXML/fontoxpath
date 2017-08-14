@@ -128,6 +128,9 @@ function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
 		([array, functionItem]) => {
+			/**
+			 * @type {!Array<!Sequence>}
+			 */
 			const filterResultSequences = array.members.map(member => functionItem.value.call(
 				undefined,
 				dynamicContext,

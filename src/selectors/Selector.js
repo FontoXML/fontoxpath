@@ -19,8 +19,8 @@ let optimizationOptions;
  */
 class Selector {
 	/**
-	 * @param  {!./Specificity}        specificity
-	 * @param  {!optimizationOptions=} optimizationOptions              Additional information on this expression.
+	 * @param  {!./Specificity}         specificity
+	 * @param  {!optimizationOptions=}  optimizationOptions  Additional information on this expression.
  are ancestors of each other
 	 */
 	constructor (specificity, optimizationOptions = { resultOrder: RESULT_ORDERINGS.UNSORTED, peer: false, subtree: false }) {

@@ -7,6 +7,8 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import MapValue from '../dataTypes/MapValue';
 import { transformArgument } from './argumentHelper';
 
+import { DONE_TOKEN, ready, notReady } from '../util/iterators';
+
 function createValidNumericType (type, transformedValue) {
 	if (isSubtypeOf(type, 'xs:integer')) {
 		return createAtomicValue(transformedValue, 'xs:integer');
@@ -21,14 +23,29 @@ function createValidNumericType (type, transformedValue) {
 	return createAtomicValue(transformedValue, 'xs:decimal');
 }
 
+/**
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {Sequence}           sequence
+ * @return  {Sequence}
+ */
 function fnAbs (_dynamicContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.abs(onlyValue.value)));
 }
 
+/**
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {Sequence}           sequence
+ * @return  {Sequence}
+ */
 function fnCeiling (_dynamicContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value)));
 }
 
+/**
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {Sequence}           sequence
+ * @return  {Sequence}
+ */
 function fnFloor (_dynamicContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.floor(onlyValue.value)));
 }
@@ -55,22 +72,32 @@ function getNumberOfDecimalDigits (value) {
 	return decimals;
 }
 
+/**
+ * @param   {boolean}            halfToEven
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {Sequence}           sequence
+ * @param   {Sequence}           precision
+ * @return  {Sequence}
+ */
 function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 	let done = false;
 	return new Sequence({
 		next: () => {
 			if (done) {
-				return { ready: true, done: true, value: undefined };
+				return DONE_TOKEN;
 			}
 			const firstValue = sequence.tryGetFirst();
 			if (!firstValue.ready) {
-				return { ready: false, done: false, promise: firstValue.promise };
+				return notReady(firstValue.promise);
 			}
 			if (!firstValue.value) {
 				// Empty sequence
 				done = true;
-				return { ready: true, done: true, value: undefined };
+				return DONE_TOKEN;
 			}
+			/**
+			 * @type {../dataTypes/Value}
+			 */
 			const item = firstValue.value;
 			const value = item.value;
 
@@ -80,13 +107,13 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 					value === +Infinity ||
 					value === -Infinity)) {
 				done = true;
-				return { ready: true, done: false, value: item };
+				return ready(item);
 			}
 			let scalingPrecision;
 			if (precision) {
 				const sp = precision.tryGetFirst();
 				if (!sp.ready) {
-					return { ready: false, done: false, promise: precision.promise };
+					return notReady(sp.promise);
 				}
 				scalingPrecision = sp.value.value;
 			} else {
@@ -95,7 +122,7 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 			done = true;
 
 			if (getNumberOfDecimalDigits(value) < scalingPrecision) {
-				return { ready: true, done: false, value: item };
+				return ready(item);
 			}
 
 			const originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(function (type) {
@@ -117,22 +144,25 @@ function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 
 			switch (originalType) {
 				case 'xs:decimal':
-					return { ready: true, done: false, value: createAtomicValue(roundedNumber, 'xs:decimal') };
+					return ready(createAtomicValue(roundedNumber, 'xs:decimal'));
 				case 'xs:double':
-					return { ready: true, done: false, value: createAtomicValue(roundedNumber, 'xs:double') };
+					return ready(createAtomicValue(roundedNumber, 'xs:double'));
 				case 'xs:float':
-					return { ready: true, done: false, value: createAtomicValue(roundedNumber, 'xs:float') };
+					return ready(createAtomicValue(roundedNumber, 'xs:float'));
 				case 'xs:integer':
-					return { ready: true, done: false, value: createAtomicValue(roundedNumber, 'xs:integer') };
+					return ready(createAtomicValue(roundedNumber, 'xs:integer'));
 			}
 		}
 	});
 }
 
-
-
-function fnNumber (_dynamicContext, sequence) {
-	return sequence.atomize().switchCases({
+/**
+ * @param   {../DynamicContext}  dynamicContext
+ * @param   {Sequence}           sequence
+ * @return  {Sequence}
+ */
+function fnNumber (dynamicContext, sequence) {
+	return sequence.atomize(dynamicContext).switchCases({
 		empty: () => Sequence.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
 			const castResult = tryCastToType(sequence.first(), 'xs:double');
@@ -144,6 +174,11 @@ function fnNumber (_dynamicContext, sequence) {
 	});
 }
 
+/**
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {Sequence}           sequence
+ * @return  {Sequence}
+ */
 function returnRandomItemFromSequence (_dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -154,6 +189,11 @@ function returnRandomItemFromSequence (_dynamicContext, sequence) {
 	return Sequence.singleton(sequenceValue[index]);
 }
 
+/**
+ * @param   {../DynamicContext}  _dynamicContext
+ * @param   {Sequence}           _sequence
+ * @return  {Sequence}
+ */
 function fnRandomNumberGenerator (_dynamicContext, _sequence) {
 	// Ignore the optional seed, as Math.random does not support a seed
 	return Sequence.singleton(new MapValue([

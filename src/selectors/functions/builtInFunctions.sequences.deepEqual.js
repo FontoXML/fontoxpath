@@ -5,11 +5,25 @@ import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import builtInFunctionsNode from './builtInFunctions.node';
 import createSingleValueIterator from '../util/createSingleValueIterator';
+
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+
 /**
  * @type {function(../DynamicContext, ../dataTypes/Sequence):../dataTypes/Sequence}
  */
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
+/**
+* @typedef {../util/iterators.AsyncIterator}
+*/
+let AsyncIterator;
+
+/**
+ * @template T
+ * @param  {!Array<T>}                                      items
+ * @param  {!function(T, number, Array<T>):AsyncIterator}  cb
+ * @return {AsyncIterator}
+ */
 function asyncGenerateEvery (items, cb) {
 	let i = 0;
 	const l = items.length;
@@ -31,13 +45,13 @@ function asyncGenerateEvery (items, cb) {
 						i++;
 						continue;
 					}
-					return { done: false, ready: true, value: false };
+					return ready(false);
 				}
 				done = true;
-				return { done: false, ready: true, value: true };
+				return ready(true);
 
 			}
-			return { ready: true, done: true };
+			return DONE_TOKEN;
 		}
 	};
 }
@@ -67,6 +81,12 @@ function anyAtomicTypeDeepEqual (_dynamicContext, item1, item2) {
 	return item1.value === item2.value;
 }
 
+/**
+ * @param   {../DynamicContext}  dynamicContext
+ * @param   {!Sequence}             sequence1
+ * @param   {!Sequence}             sequence2
+ * @return  {!AsyncIterator}
+ */
 function sequenceDeepEqual (dynamicContext, sequence1, sequence2) {
 	const it1 = sequence1.value();
 	const it2 = sequence2.value();
@@ -87,17 +107,17 @@ function sequenceDeepEqual (dynamicContext, sequence1, sequence2) {
 				if (!item1.ready) {
 					const oldItem = item1;
 					item1 = null;
-					return { ready: false, done: false, promise: oldItem.promise };
+					return notReady(oldItem.promise);
 				}
 				if (!item2.ready) {
 					const oldItem = item2;
 					item2 = null;
-					return { ready: false, done: false, promise: oldItem.promise };
+					return notReady(oldItem.promise);
 				}
 
 				if (item1.done || item2.done) {
 					done = true;
-					return { done: false, ready: true, value: item1.done === item2.done };
+					return ready(item1.done === item2.done);
 				}
 				if (!comparisonGenerator) {
 					comparisonGenerator = itemDeepEqual(dynamicContext, item1.value, item2.value);
@@ -115,11 +135,17 @@ function sequenceDeepEqual (dynamicContext, sequence1, sequence2) {
 				item1 = null;
 				item2 = null;
 			}
-			return { done: true, ready: true };
+			return DONE_TOKEN;
 		}
 	};
 }
 
+/**
+ * @param   {../DynamicContext}   dynamicContext
+ * @param   {../dataTypes/MapValue}  item1
+ * @param   {../dataTypes/MapValue}  item2
+ * @return  {AsyncIterator}
+ */
 function mapTypeDeepEqual (dynamicContext, item1, item2) {
 	if (item1.keyValuePairs.length !== item2.keyValuePairs.length) {
 		return createSingleValueIterator(false);
@@ -136,6 +162,12 @@ function mapTypeDeepEqual (dynamicContext, item1, item2) {
 	});
 }
 
+/**
+ * @param   {../DynamicContext}   dynamicContext
+ * @param   {../dataTypes/ArrayValue}  item1
+ * @param   {../dataTypes/ArrayValue}  item2
+ * @return  {AsyncIterator}
+ */
 function arrayTypeDeepEqual (dynamicContext, item1, item2) {
 	if (item1.members.length !== item2.members.length) {
 		return createSingleValueIterator(false);
@@ -147,6 +179,12 @@ function arrayTypeDeepEqual (dynamicContext, item1, item2) {
 	});
 }
 
+/**
+ * @param   {../DynamicContext}   dynamicContext
+ * @param   {../dataTypes/Value}  item1
+ * @param   {../dataTypes/Value}  item2
+ * @return  {AsyncIterator}
+ */
 function nodeDeepEqual (dynamicContext, item1, item2) {
 	let item1Nodes = dynamicContext.domFacade.getChildNodes(item1.value),
 	item2Nodes = dynamicContext.domFacade.getChildNodes(item2.value);
@@ -161,6 +199,12 @@ function nodeDeepEqual (dynamicContext, item1, item2) {
 	return sequenceDeepEqual(dynamicContext, item1Nodes, item2Nodes);
 }
 
+/**
+ * @param   {../DynamicContext}   dynamicContext
+ * @param   {../dataTypes/Value}  item1
+ * @param   {../dataTypes/Value}  item2
+ * @return  {AsyncIterator}
+ */
 function elementNodeDeepEqual (dynamicContext, item1, item2) {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
@@ -171,7 +215,7 @@ function elementNodeDeepEqual (dynamicContext, item1, item2) {
 	return {
 		next: () => {
 			if (done) {
-				return { ready: true, done: true };
+				return DONE_TOKEN;
 			}
 			const namesAreEqualResult = namesAreEqualResultGenerator.next();
 			if (!namesAreEqualResult.ready) {
@@ -192,7 +236,13 @@ function elementNodeDeepEqual (dynamicContext, item1, item2) {
 	};
 }
 
-// Nodes which contain an atomic type (text -> string, processing-instruction -> string, attribute -> any atomic type)
+/**
+ * Nodes which contain an atomic type (text -> string, processing-instruction -> string, attribute -> any atomic type)
+ * @param   {../DynamicContext}   dynamicContext
+ * @param   {../dataTypes/Value}  item1
+ * @param   {../dataTypes/Value}  item2
+ * @return  {AsyncIterator}
+ */
 function atomicTypeNodeDeepEqual (dynamicContext, item1, item2) {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
@@ -202,7 +252,7 @@ function atomicTypeNodeDeepEqual (dynamicContext, item1, item2) {
 	return {
 		next: () => {
 			if (done) {
-				return { ready: true, done: true };
+				return DONE_TOKEN;
 			}
 			const namesAreEqualResult = namesAreEqualResultGenerator.next();
 			if (!namesAreEqualResult.ready) {
@@ -214,20 +264,19 @@ function atomicTypeNodeDeepEqual (dynamicContext, item1, item2) {
 					return namesAreEqualResult;
 				}
 			}
-			return {
-				done: false,
-				ready: true,
-				value: anyAtomicTypeDeepEqual(
-					dynamicContext,
-					atomize(item1, dynamicContext),
-					atomize(item2, dynamicContext))
-			};
+			return ready(anyAtomicTypeDeepEqual(
+				dynamicContext,
+				atomize(item1, dynamicContext),
+				atomize(item2, dynamicContext)));
 		}
 	};
 }
 
 /**
- * @return  {}
+ * @param   {../DynamicContext}   dynamicContext
+ * @param   {../dataTypes/Value}  item1
+ * @param   {../dataTypes/Value}  item2
+ * @return  {AsyncIterator}
  */
 function itemDeepEqual (dynamicContext, item1, item2) {
 	// All atomic types

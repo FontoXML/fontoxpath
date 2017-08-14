@@ -122,12 +122,11 @@ function fnString (dynamicContext, sequence) {
 }
 
 function fnStringJoin (_dynamicContext, sequence, separator) {
-	const separatorString = separator.first().value;
-	return sequence.mapAll(
+	return zipSingleton([separator], ([separatorString]) => sequence.mapAll(
 		allStrings => {
-			const joinedString = allStrings.map(stringValue => stringValue.value).join(separatorString);
+			const joinedString = allStrings.map(stringValue => stringValue.value).join(separatorString.value);
 			return Sequence.singleton(createAtomicValue(joinedString, 'xs:string'));
-		});
+		}));
 }
 
 function fnStringLength (_dynamicContext, sequence) {

@@ -1,28 +1,18 @@
-import Sequence from '../dataTypes/Sequence';
-import Selector from '../Selector';
+import TestAbstractExpression from './TestAbstractExpression';
 import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
-/**
- * @extends {Selector}
- */
-class PITest extends Selector {
+class PITest extends TestAbstractExpression {
 	/**
 	 * @param  {string}  target
 	 */
 	constructor (target) {
-		super(new Specificity({
-			[Specificity.NODENAME_KIND]: 1
-		}), { canBeStaticallyEvaluated: false });
+		super({ canBeStaticallyEvaluated: false });
 
 		this._target = target;
 
 	}
 
-	/**
-	 * @param   {!../DynamicContext}      dynamicContext
-	 * @return  {!../dataTypes/Sequence}
-	 */
 	evaluateToBoolean (_dynamicContext, node) {
 		// Assume singleton
 		var isMatchingProcessingInstruction = isSubtypeOf(node.type, 'processing-instruction()') &&
@@ -34,4 +24,5 @@ class PITest extends Selector {
 		return 'type-7';
 	}
 }
+
 export default PITest;

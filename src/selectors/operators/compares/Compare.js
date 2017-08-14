@@ -1,5 +1,4 @@
 import Sequence from '../../dataTypes/Sequence';
-import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 import Selector from '../../Selector';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
@@ -11,8 +10,8 @@ import valueCompare from './valueCompare';
 class Compare extends Selector {
 	/**
 	 * @param  {Array<string>}    kind
-	 * @param  {Selector}  firstSelector
-	 * @param  {Selector}  secondSelector
+	 * @param  {!Selector}  firstSelector
+	 * @param  {!Selector}  secondSelector
 	 */
 	constructor (kind, firstSelector, secondSelector) {
 		super(
@@ -28,7 +27,13 @@ class Compare extends Selector {
 	}
 
 	evaluate (dynamicContext) {
+		/**
+		 * @type {!Sequence}
+		 */
 		const firstSequence = this._firstSelector.evaluateMaybeStatically(dynamicContext);
+		/**
+		 * @type {!Sequence}
+		 */
 		const secondSequence = this._secondSelector.evaluateMaybeStatically(dynamicContext);
 
 		return firstSequence.switchCases({
@@ -53,30 +58,27 @@ class Compare extends Selector {
 					const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
 					const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
 
-					switch (this._compare) {
-						case 'valueCompare':
-							return firstAtomizedSequence.switchCases({
-								singleton: () => secondAtomizedSequence.switchCases({
-									singleton: () => firstAtomizedSequence.mapAll(
-										([onlyFirstValue]) => secondAtomizedSequence.mapAll(
-											([onlySecondValue]) => valueCompare(
-												this._operator,
-												onlyFirstValue,
-												onlySecondValue) ?
-												Sequence.singletonTrueSequence() :
-												Sequence.singletonFalseSequence())),
-									default: () => {
-										throw new Error('XPTY0004: Sequences to compare are not singleton');
-									}
-								}),
-								default: () => {
-									throw new Error('XPTY0004: Sequences to compare are not singleton');
-								}
-							});
-							break;
-						case 'generalCompare':
-							return generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence);
-					}
+					if (this._compare === 'valueCompare')
+						return firstAtomizedSequence.switchCases({
+							singleton: () => secondAtomizedSequence.switchCases({
+								singleton: () => firstAtomizedSequence.mapAll(
+									([onlyFirstValue]) => secondAtomizedSequence.mapAll(
+										([onlySecondValue]) => valueCompare(
+											this._operator,
+											onlyFirstValue,
+											onlySecondValue) ?
+											Sequence.singletonTrueSequence() :
+											Sequence.singletonFalseSequence())),
+								default: (() => {
+									throw new Error('XPTY0004: Sequences to comapre are not singleton.');
+								})
+							}),
+							default: (() => {
+								throw new Error('XPTY0004: Sequences to comapre are not singleton.');
+							})
+						});
+					// Only generalCompare left
+					return generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence);
 				}
 			})
 		});

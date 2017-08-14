@@ -28,7 +28,7 @@ class Filter extends Selector {
 
 	evaluate (dynamicContext) {
 		/**
-		 * @type {../dataTypes/Sequence}
+		 * @type {!Sequence}
 		 */
 		const valuesToFilter = this._selector.evaluateMaybeStatically(dynamicContext);
 
@@ -43,7 +43,7 @@ class Filter extends Selector {
 			}
 
 			/**
-			 * @type {../dataTypes/Value}
+			 * @type {?../dataTypes/Value}
 			 */
 			const resultValue = result.first();
 			if (isSubtypeOf(resultValue.type, 'xs:numeric')) {
@@ -83,6 +83,9 @@ class Filter extends Selector {
 			return Sequence.empty();
 		}
 
+		/**
+		 * @type {!../util/iterators.AsyncIterator<../dataTypes/Value>}
+		 */
 		const iteratorToFilter = valuesToFilter.value();
 		let iteratorItem = null;
 		let i = 0;

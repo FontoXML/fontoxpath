@@ -58,7 +58,7 @@ export default function castToStringLikeType (instanceOf) {
 				// 1E100: without the +, and with the exponent in capitals
 				return {
 					successful: true,
-					value: (Object.is(-0, value) ? '-0' : value + '').replace('e', 'E').replace('E+', 'E')
+					value: value.replace('e', 'E').replace('E+', 'E')
 				};
 			};
 		}
