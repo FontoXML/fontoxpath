@@ -5,6 +5,7 @@ import {
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import * as slimdom from 'slimdom';
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 
 let documentNode;
 beforeEach(() => {
@@ -30,6 +31,14 @@ describe('functions over nodes', () => {
 				'Some text.'
 			], documentNode);
 			chai.assert.equal(evaluateXPathToString('node-name(.)', documentNode.firstChild), 'someElement');
+		});
+
+		it('it accepts async parameters', async () => {
+			jsonMlMapper.parse([
+				'someElement',
+				'Some text.'
+			], documentNode);
+			chai.assert.equal(await evaluateXPathToAsyncSingleton('node-name(. => fontoxpath:sleep()) => string()', documentNode.firstChild), 'someElement');
 		});
 	});
 
@@ -59,6 +68,14 @@ describe('functions over nodes', () => {
 				'With some data'
 			], documentNode);
 			chai.assert.equal(evaluateXPathToString('local-name(.)', documentNode.firstChild), 'somePi');
+		});
+
+		it('it accepts async parameters', async () => {
+			jsonMlMapper.parse([
+				'someElement',
+				'Some text.'
+			], documentNode);
+			chai.assert.equal(await evaluateXPathToAsyncSingleton('local-name(. => fontoxpath:sleep())', documentNode.firstChild), 'someElement');
 		});
 	});
 
@@ -96,8 +113,15 @@ describe('functions over nodes', () => {
 			chai.assert.equal(evaluateXPathToStrings('name(.)', documentNode.firstChild), '');
 		});
 
-		it('it returns the empty string for documents',
-			() => chai.assert.equal(evaluateXPathToStrings('name(.)', documentNode), ''));
+		it('it returns the empty string for documents', () => chai.assert.equal(evaluateXPathToStrings('name(.)', documentNode), ''));
+
+		it('it accepts async parameters', async () => {
+			jsonMlMapper.parse([
+				'someElement',
+				'Some text.'
+			], documentNode);
+			chai.assert.equal(await evaluateXPathToAsyncSingleton('name(. => fontoxpath:sleep())', documentNode.firstChild), 'someElement');
+		});
 	});
 
 	describe('outermost()', () => {
@@ -131,6 +155,11 @@ describe('functions over nodes', () => {
 
 		it('returns the empty sequence when passed the empty sequence',
 			() => chai.assert.deepEqual(evaluateXPathToStrings('outermost(())', documentNode), []));
+
+		it('accepts async parameters', async () => {
+			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
+			chai.assert.deepEqual(await evaluateXPathToAsyncSingleton('array{(/root//* => fontoxpath:sleep() => outermost())!name()}', documentNode), ['child', 'child']);
+		});
 	});
 
 	describe('innermost()', () => {
@@ -175,5 +204,10 @@ describe('functions over nodes', () => {
 
 		it('returns the empty sequence when passed the empty sequence',
 			() => chai.assert.deepEqual(evaluateXPathToStrings('innermost(())', documentNode), []));
+
+		it('accepts async parameters', async () => {
+			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
+			chai.assert.deepEqual(await evaluateXPathToAsyncSingleton('array{(/root//* => fontoxpath:sleep() => innermost())!name()}', documentNode), ['child', 'descendant']);
+		});
 	});
 });

@@ -1,6 +1,7 @@
 import Selector from '../Selector';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Sequence from '../dataTypes/Sequence';
+import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 /**
  * @extends {Selector}
@@ -71,7 +72,7 @@ class Filter extends Selector {
 							}
 							done = true;
 						}
-						return { done: true, ready: true };
+						return DONE_TOKEN;
 					}
 				});
 			}
@@ -111,7 +112,7 @@ class Filter extends Selector {
 
 					const first = filterResultSequence.tryGetFirst();
 					if (!first.ready) {
-						return { done: false, ready: false, promise: first.promise };
+						return notReady(first.promise);
 					}
 					let shouldReturnCurrentValue;
 					if (first.value === null) {
@@ -126,7 +127,7 @@ class Filter extends Selector {
 					else {
 						const ebv = filterResultSequence.tryGetEffectiveBooleanValue();
 						if (!ebv.ready) {
-							return { done: false, ready: false, promise: ebv.promise };
+							return notReady(ebv.promise);
 						}
 						shouldReturnCurrentValue = ebv.value;
 					}
@@ -136,7 +137,7 @@ class Filter extends Selector {
 					iteratorItem = null;
 					i++;
 					if (shouldReturnCurrentValue) {
-						return { done: false, ready: true, value: returnableValue };
+						return ready(returnableValue);
 					}
 					// Continue to the next one
 				}

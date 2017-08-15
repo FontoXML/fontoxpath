@@ -1,22 +1,19 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
+import { DONE_TOKEN, ready } from '../util/iterators';
 
 function generateAncestors (domFacade, contextNode) {
 	let ancestor = contextNode;
 	return {
 		next: () => {
 			if (!ancestor) {
-				return { done: true, ready: true, value: undefined };
+				return DONE_TOKEN;
 			}
 			const previousAncestor = ancestor;
 			ancestor = previousAncestor && domFacade.getParentNode(previousAncestor);
 
-			return {
-				done: false,
-				ready: true,
-				value: createNodeValue(previousAncestor)
-			};
+			return ready(createNodeValue(previousAncestor));
 		}
 	};
 }
@@ -26,7 +23,7 @@ function generateAncestors (domFacade, contextNode) {
  */
 class AncestorAxis extends Selector {
 	/**
-	 * @param  {Selector}  ancestorSelector
+	 * @param  {!../tests/TestAbstractExpression}  ancestorSelector
 	 * @param  {{inclusive:boolean}=}    options
 	 */
 	constructor (ancestorSelector, options) {

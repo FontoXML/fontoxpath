@@ -6,6 +6,9 @@ import createNodeValue from '../dataTypes/createNodeValue';
  * @extends {Selector}
  */
 class ChildAxis extends Selector {
+	/**
+	 * @param  {!../tests/TestAbstractExpression}  childSelector
+	 */
 	constructor (childSelector) {
 		super(childSelector.specificity, {
 			resultOrder: Selector.RESULT_ORDERINGS.SORTED,

@@ -1,5 +1,6 @@
 import Sequence from '../dataTypes/Sequence';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 /**
  * @param   {../DynamicContext}  _dynamicContext
@@ -15,14 +16,14 @@ function fnNot (_dynamicContext, sequence) {
 	return new Sequence({
 		next: () => {
 			if (done) {
-				return { done: true, ready: true };
+				return DONE_TOKEN;
 			}
 			const ebv = sequence.tryGetEffectiveBooleanValue();
 			if (!ebv.ready) {
-				return { done: false, ready: false, promise: ebv.promise };
+				return notReady(ebv.promise);
 			}
 			done = true;
-			return { done: false, ready: true, value: ebv.value === false ? trueBoolean : falseBoolean };
+			return ready(ebv.value === false ? trueBoolean : falseBoolean);
 		}
 	});
 }
@@ -41,14 +42,14 @@ function fnBoolean (_dynamicContext, sequence) {
 	return new Sequence({
 		next: () => {
 			if (done) {
-				return { done: true, ready: true };
+				return DONE_TOKEN;
 			}
 			const ebv = sequence.tryGetEffectiveBooleanValue();
 			if (!ebv.ready) {
-				return { done: false, ready: false, promise: ebv.promise };
+				return notReady(ebv.promise);
 			}
 			done = true;
-			return { done: false, ready: true, value: ebv.value ? trueBoolean : falseBoolean };
+			return ready(ebv.value ? trueBoolean : falseBoolean);
 		}
 	});
 }

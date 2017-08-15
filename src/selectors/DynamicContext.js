@@ -1,3 +1,4 @@
+import { ready } from './util/iterators';
 /**
  * @typedef {./dataTypes/Sequence}
  */
@@ -108,11 +109,7 @@ class DynamicContext {
 				if (!value.ready) {
 					return value;
 				}
-				return {
-					done: false,
-					value: this.scopeWithFocus( i++, value.value, contextSequence),
-					ready: true
-				};
+				return ready(this.scopeWithFocus( i++, value.value, contextSequence));
 			}
 		});
 	}

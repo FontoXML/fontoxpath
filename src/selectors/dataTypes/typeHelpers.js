@@ -20,13 +20,15 @@ export function normalizeWhitespace (string, typeName) {
 	const type = builtinDataTypesByName[typeName];
 	const restrictionsByName = type.restrictionsByName;
 	if (!restrictionsByName || !restrictionsByName.whiteSpace) {
+		if (!type.parent) {
+			return string;
+		}
 		return normalizeWhitespace(string, type.parent.name);
 	}
 	const whiteSpaceType = type.restrictionsByName.whiteSpace;
 	switch (whiteSpaceType) {
 		case 'preserve':
 			return string;
-
 		case 'replace':
 			return string.replace(/[\u0009\u000A\u000D]/g, ' ');
 

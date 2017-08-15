@@ -7,7 +7,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
  */
 class ParentAxis extends Selector {
 	/**
-	 * @param  {Selector}  parentSelector
+	 * @param  {!../tests/TestAbstractExpression}  parentSelector
 	 */
 	constructor (parentSelector) {
 		super(parentSelector.specificity, {

@@ -2,7 +2,7 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
 import createSingleValueIterator from '../util/createSingleValueIterator';
-
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 /**
  * @param   {!IDomFacade}       domFacade
@@ -16,13 +16,9 @@ function createChildGenerator (domFacade, node) {
 	return /** @type {!Iterator<!Node>} */ ({
 		next () {
 			if (i >= l) {
-				return { ready: true, done: true, value: undefined };
+				return DONE_TOKEN;
 			}
-			return {
-				ready: true,
-				done: false,
-				value: childNodes[i++]
-			};
+			return ready(childNodes[i++]);
 		}
 	});
 }
@@ -35,23 +31,19 @@ function createDescendantGenerator (domFacade, node) {
 	return {
 		next: () => {
 			if (!descendantIteratorStack.length) {
-				return { ready: true, done: true, value: undefined };
+				return DONE_TOKEN;
 			}
 			let value = descendantIteratorStack[0].next();
 			while (value.done) {
 				descendantIteratorStack.shift();
 				if (!descendantIteratorStack.length) {
-					return { ready: true, done: true, value: undefined };
+					return DONE_TOKEN;
 				}
 				value = descendantIteratorStack[0].next();
 			}
 			// Iterator over these children next
 			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value));
-			return {
-				ready: true,
-				done: false,
-				value: createNodeValue(value.value)
-			};
+			return ready(createNodeValue(value.value));
 		}
 	};
 }
@@ -61,7 +53,7 @@ function createDescendantGenerator (domFacade, node) {
  */
 class DescendantAxis extends Selector {
 	/**
-	 * @param  {!Selector}  descendantSelector
+	 * @param  {!../tests/TestAbstractExpression}  descendantSelector
 	 * @param  {{inclusive:boolean}=}    options
 	 */
 	constructor (descendantSelector, options) {

@@ -26,6 +26,14 @@ describe('evaluateXPath', () => {
 		() => chai.assert.equal(evaluateXPath('"string"', documentNode, domFacade), 'string'));
 	it('Keeps nodes nodes',
 		() => chai.assert.equal(evaluateXPath('.', documentNode, domFacade), documentNode));
+	it('Returns the value of attribute nodes', () => {
+		jsonMlMapper.parse([
+			'someElement',
+			{ someAttribute: 'someValue' },
+			'Some data'
+		], documentNode);
+		chai.assert.equal(evaluateXPath('//@*', documentNode, domFacade), 'someValue');
+	});
 
 	it(
 		'Requires the XPath selector',
