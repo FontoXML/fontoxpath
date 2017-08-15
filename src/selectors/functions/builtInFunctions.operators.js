@@ -1,6 +1,7 @@
 import Sequence from '../dataTypes/Sequence';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import {ready, notReady, DONE_TOKEN } from '../util/iterators';
 
 function opTo (_dynamicContext, fromSequence, toSequence) {
 	// shortcut the non-trivial case of both values being known
@@ -18,7 +19,7 @@ function opTo (_dynamicContext, fromSequence, toSequence) {
 		toValue = to.value.value;
 		// By providing a length, we do not have to hold an end condition into account
 		return new Sequence({
-			next: () => ({ done: false, ready: true, value: createAtomicValue(fromValue++, 'xs:integer') })
+			next: () => ready(createAtomicValue(fromValue++, 'xs:integer'))
 		}, toValue - fromValue + 1);
 	}
 	return new Sequence({
@@ -26,29 +27,28 @@ function opTo (_dynamicContext, fromSequence, toSequence) {
 			if (fromValue === null) {
 				const from = fromSequence.tryGetFirst();
 				if (!from.ready) {
-					return { done: false, ready: false, promise: from.promise };
+					return notReady(from.promise);
 				}
 				if (from.value === null) {
-					return { done: true, ready: true };
+					return DONE_TOKEN;
 				}
 				fromValue = from.value.value;
 			}
 			if (toValue === null) {
 				const to = toSequence.tryGetFirst();
 				if (!to.ready) {
-					return { done: false, ready: false, promise: to.promise };
+					return notReady(to.promise);
 				}
 				if (to.value === null) {
-					return { done: true, ready: true };
+					return DONE_TOKEN;
 				}
 				toValue = to.value.value;
 			}
 			if (fromValue > toValue) {
-				return { done: true, ready: true, value: undefined };
+				return DONE_TOKEN;
 			}
-			return { done: false, ready: true, value: createAtomicValue(fromValue++, 'xs:integer') };
+			return ready(createAtomicValue(fromValue++, 'xs:integer'));
 		}
-
 	});
 }
 /**

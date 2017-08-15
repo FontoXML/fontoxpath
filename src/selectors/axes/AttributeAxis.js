@@ -10,7 +10,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
  */
 class AttributeAxis extends Selector {
 	/**
-	 * @param  {!Selector}    attributeTestSelector
+	 * @param  {!../tests/TestAbstractExpression}  attributeTestSelector
 	 */
 	constructor (attributeTestSelector) {
 		super(new Specificity({

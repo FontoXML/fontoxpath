@@ -42,18 +42,18 @@ describe('asynchronous XPaths', () => {
 		for (let value = await it.next(); !value.done; value = await it.next()) {
 			items.push(value.value);
 		}
-		console.log(items);
 		chai.assert(items.length === 1);
 	});
 
 	it('can run XPath tests using a load of indirection', async () => {
 		const items = [];
 		const it = evaluateXPath(xqueryFile, null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
-
-		for (let value = await it.next(); !value.done; value = await it.next()) {
-			items.push(value.value);
+		try {
+			for (let value = await it.next(); !value.done; value = await it.next()) {
+				items.push(value.value);
+			}
+		} catch (err) {
+			chai.assert.isTrue(err.message.includes('FOCA0003'));
 		}
-		console.log(items);
-		chai.assert(items.length === 1);
 	});
 });

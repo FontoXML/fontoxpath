@@ -49,25 +49,26 @@ function mapItem (argumentItem, type, dynamicContext) {
 
 /**
  * Test whether the provided argument is valid to be used as an function argument of the given type
- * @param   {string}           argumentType
- * @param   {!Sequence}        argument
+ * @param   {string}              argumentType
+ * @param   {!Sequence}           argument
  * @param   {!../DynamicContext}  dynamicContext
+ * @param   {string}              functionName       Used for debugging purposes
  * @return  {?Sequence}
  */
-export const transformArgument = (argumentType, argument, dynamicContext) => {
+export const transformArgument = (argumentType, argument, dynamicContext, functionName) => {
 	const { type, multiplicity } = splitType(argumentType);
 	switch (multiplicity) {
 		case '?':
 			return argument.switchCases({
 				default: () => argument.map(value => mapItem(value, type, dynamicContext)),
 				multiple: () => {
-					throw new Error('XPTY0004: Multiplicity of function argument is incorrect. Expected "?", but got "+".');
+					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "?", but got "+".`);
 				}
 			});
 		case '+':
 			return argument.switchCases({
 				empty: () => {
-					throw new Error('XPTY0004: Multiplicity of function argument is incorrect. Expected "+", but got "empty-sequence()"');
+					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`);
 				},
 				default: () => argument.map(value => mapItem(value, type, dynamicContext))
 			});
@@ -78,7 +79,7 @@ export const transformArgument = (argumentType, argument, dynamicContext) => {
 			return argument.switchCases({
 				singleton: () => argument.map(value => mapItem(value, type, dynamicContext)),
 				default: () => {
-					throw new Error('XPTY0004: Multiplicity of function argument is incorrect. Expected exactly one');
+					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected exactly one`);
 }
 			});
 	}

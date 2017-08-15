@@ -2,6 +2,7 @@ import Selector from '../../Selector';
 import Specificity from '../../Specificity';
 import Sequence from '../../dataTypes/Sequence';
 import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
+import { DONE_TOKEN, notReady, ready } from '../../util/iterators';
 
 /**
  * @extends {Selector}
@@ -54,19 +55,19 @@ class OrOperator extends Selector {
 						}
 						const ebv = resultSequence.tryGetEffectiveBooleanValue();
 						if (!ebv.ready) {
-							return { done: false, ready: false, promise: ebv.promise };
+							return notReady(ebv.promise);
 						}
 						if (ebv.value === true) {
 							done = true;
-							return { done: false, ready: true, value: trueBoolean };
+							return ready(trueBoolean);
 						}
 						resultSequence = null;
 						i++;
 					}
 					done = true;
-					return { done: false, ready: true, value: falseBoolean };
+					return ready(falseBoolean);
 				}
-				return { done: true, ready: true };
+				return DONE_TOKEN;
 			}
 		});
 	}

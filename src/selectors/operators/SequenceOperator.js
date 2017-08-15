@@ -1,7 +1,7 @@
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
-
+import { DONE_TOKEN } from '../util/iterators';
 /**
  * The Sequence selector evaluates its operands and returns them as a single sequence
  *
@@ -37,7 +37,7 @@ class SequenceOperator extends Selector {
 				while (val.done) {
 					i++;
 					if (i >= this._selectors.length) {
-						return { done: true, value: undefined, ready: true };
+						return DONE_TOKEN;
 					}
 					currentValueIterator = this._selectors[i].evaluateMaybeStatically(dynamicContext).value();
 					val = currentValueIterator.next();

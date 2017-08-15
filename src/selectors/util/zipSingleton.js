@@ -1,5 +1,5 @@
 import Sequence from '../dataTypes/Sequence';
-
+import { notReady } from './iterators';
 /**
  * @param   {!Array<!Sequence>}  sequences
  * @param   {!function(!Array<!../dataTypes/Value>):!Sequence}  callback
@@ -24,7 +24,7 @@ export default function zipSingleton (sequences, callback) {
 					const val = firstValues[i] = sequences[i].tryGetFirst();
 					if (!val.ready) {
 						allReady = false;
-						return { done: false, ready: false, promise: val.promise };
+						return notReady(val.promise);
 					}
 				}
 				if (allReady) {

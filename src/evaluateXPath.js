@@ -22,25 +22,33 @@ function transformMapToObject (map, dynamicContext) {
 	const mapObj = {};
 	let i = 0;
 	let done = false;
+	let transformedValueIterator = null;
 	return {
 		next: () => {
 			if (done) {
 				return { done: true, ready: true, value: undefined };
 			}
 			while (i < map.keyValuePairs.length) {
-				const val = map.keyValuePairs[i].value
-					.atomize(dynamicContext)
-					.switchCases({
-						default: seq => seq,
-						multiple: () => {
-							throw new Error('Serialization error: The value of an entry in a map is expected to be a singleton sequence.');
-						}
-					})
-					.tryGetFirst();
-				if (!val.ready) {
-					return { done: false, ready: false, promise: val.promise };
+				if (!transformedValueIterator) {
+					const val = map.keyValuePairs[i].value
+						.switchCases({
+							default: seq => seq,
+							multiple: () => {
+								throw new Error('Serialization error: The value of an entry in a map is expected to be a singleton sequence.');
+							}
+						})
+						.tryGetFirst();
+					if (!val.ready) {
+						return { done: false, ready: false, promise: val.promise };
+					}
+					transformedValueIterator = transformXPathItemToJavascriptObject(val.value, dynamicContext);
 				}
-				mapObj[map.keyValuePairs[i].key.value] = val.value.value; // TODO: recurse for array
+				const transformedValue = transformedValueIterator.next();
+				if (!transformedValue.ready) {
+					return transformedValue;
+				}
+				transformedValueIterator = null;
+				mapObj[map.keyValuePairs[i].key.value] = transformedValue.value;
 				i++;
 			}
 			done = true;
@@ -49,6 +57,59 @@ function transformMapToObject (map, dynamicContext) {
 	};
 }
 
+function transformArrayToArray (array, dynamicContext) {
+	const arr = [];
+	let i = 0;
+	let done = false;
+	let transformedMemberGenerator = null;
+	return {
+		next: () => {
+			if (done) {
+				return { done: true, ready: true, value: undefined };
+			}
+			while (i < array.members.length) {
+				if (!transformedMemberGenerator) {
+					const val = array.members[i]
+						.switchCases({
+							default: seq => seq,
+							multiple: () => {
+								throw new Error('Serialization error: The value of an entry in an array is expected to be a singleton sequence.');
+							}
+						})
+						.tryGetFirst();
+					if (!val.ready) {
+						return { done: false, ready: false, promise: val.promise };
+					}
+					transformedMemberGenerator = transformXPathItemToJavascriptObject(val.value, dynamicContext);
+				}
+				const transformedValue = transformedMemberGenerator.next();
+				if (!transformedValue.ready) {
+					return transformedValue;
+				}
+				transformedMemberGenerator = null;
+				arr[i++] = transformedValue.value;
+			}
+			done = true;
+			return { done: false, ready: true, value: arr };
+		}
+	};
+}
+
+function transformXPathItemToJavascriptObject (value, dynamicContext) {
+	if (isSubtypeOf(value.type, 'map(*)')) {
+		return transformMapToObject(value, dynamicContext);
+	}
+	if (isSubtypeOf(value.type, 'array(*)')) {
+		return transformArrayToArray(value, dynamicContext);
+	}
+	return {
+		next: () => ({
+			done: false,
+			ready: true,
+			value: value.value
+		})
+	};
+}
 /**
  * @param   {Node|*}  contextItem
  * @return  {function(string):?string}
@@ -280,22 +341,13 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 						if (!value.ready) {
 							return value.promise.then(getNextResult);
 						}
-						if (isSubtypeOf(value.value.type, 'map(*)')) {
-							transformedValueGenerator = transformMapToObject(value.value, dynamicContext);
-						} else {
-							return {
-								done: false,
-								value: value.value.value
-							};
-						}
+						transformedValueGenerator = transformXPathItemToJavascriptObject(value.value, dynamicContext);
 					}
 					const transformedValue = transformedValueGenerator.next();
 					if (!transformedValue.ready) {
 						return transformedValue.promise.then(getNextResult);
 					}
-					if (transformedValue.done) {
-						transformedValueGenerator = null;
-					}
+					transformedValueGenerator = null;
 					return transformedValue;
 				}
 				return {
@@ -326,7 +378,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (rawResults.isSingleton()) {
 				return atomize(rawResults.first(), dynamicContext).value;
 			}
-			return atomize(rawResults, dynamicContext).getAllValues().map(function (atomizedValue) {
+			return rawResults.atomize().getAllValues().map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
 	}

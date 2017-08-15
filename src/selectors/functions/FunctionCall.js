@@ -4,7 +4,7 @@ import Selector from '../Selector';
 import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
-function transformArgumentList (argumentTypes, argumentList, dynamicContext) {
+function transformArgumentList (argumentTypes, argumentList, dynamicContext, functionItem) {
 	if (argumentList.length !== argumentTypes.length) {
 		return null;
 	}
@@ -15,7 +15,7 @@ function transformArgumentList (argumentTypes, argumentList, dynamicContext) {
 			transformedArguments.push(null);
 			continue;
 		}
-		const transformedArgument = transformArgument(argumentTypes[i], argumentList[i], dynamicContext);
+		const transformedArgument = transformArgument(argumentTypes[i], argumentList[i], dynamicContext, functionItem);
 		if (transformedArgument === null) {
 			return null;
 		}
@@ -44,7 +44,6 @@ class FunctionCall extends Selector {
 
 		this._args = args;
 		this._functionReference = functionReference;
-
 	}
 
 	evaluate (dynamicContext) {
@@ -71,7 +70,7 @@ class FunctionCall extends Selector {
 					});
 
 					// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
-					var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, dynamicContext);
+					var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, dynamicContext, functionItem);
 					if (transformedArguments === null) {
 						throw new Error(`XPTY0004: expected argument list of function ${functionItem.getName()} to be [${argumentListToString(evaluatedArgs)}], got function with argument list [${functionItem.getArgumentTypes().join(', ')}].`);
 					}

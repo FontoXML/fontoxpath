@@ -288,7 +288,7 @@ export default {
 			returnType: 'xs:double',
 			callFunction: (dynamicContext) => {
 				const atomizedContextItem = dynamicContext.contextItem &&
-					transformArgument('xs:anyAtomicType?', Sequence.singleton(dynamicContext.contextItem), dynamicContext);
+					transformArgument('xs:anyAtomicType?', Sequence.singleton(dynamicContext.contextItem), dynamicContext, 'fn:number');
 				if (!atomizedContextItem) {
 					throw new Error('XPDY0002: fn:number needs an atomizable context item.');
 				}

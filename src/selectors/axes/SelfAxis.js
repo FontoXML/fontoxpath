@@ -6,7 +6,7 @@ import Sequence from '../dataTypes/Sequence';
  */
 class SelfAxis extends Selector {
 	/**
-	 * @param  {Selector}  selector
+	 * @param  {!../tests/TestAbstractExpression}  selector
 	 */
 	constructor (selector) {
 		super(selector.specificity, {

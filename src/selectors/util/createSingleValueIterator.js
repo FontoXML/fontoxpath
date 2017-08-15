@@ -1,12 +1,13 @@
+import { DONE_TOKEN, ready } from './iterators';
 export default function createSingleValueIterator (onlyValue) {
 	let hasPassed = false;
 	return {
 		next: () => {
 			if (hasPassed) {
-				return { done: true, ready: true, value: undefined };
+				return DONE_TOKEN;
 			}
 			hasPassed = true;
-			return { done: false, ready: true, value: onlyValue };
+			return ready(onlyValue);
 		}
 	};
 }

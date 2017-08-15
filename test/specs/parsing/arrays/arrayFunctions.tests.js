@@ -9,6 +9,7 @@ import {
 } from 'fontoxpath';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
@@ -590,4 +591,30 @@ describe('array:flatten', () => {
 				'array:flatten([1,2,3,[4,5,[6]],7] => array:for-each(fontoxpath:sleep(?, 1)))!string() => string-join("")',
 				documentNode),
 			'1234567'));
+});
+
+describe('complex queries', () => {
+	it('can build jsonml', async () => {
+		const jsonMlFragment = [
+			'someElement',
+			{
+				some: 'attributes'
+			},
+			'Some data',
+			[ 'childElement', {'with': 'attributes'}, 'and text'],
+			'And some more data'
+		];
+		jsonMlMapper.parse(jsonMlFragment, documentNode);
+		const xpath = `
+let $processDescendants := function ($recurse, $node) {
+  if ($node/self::text()) then
+    $node/string()
+  else if ($node/self::element()) then
+    array{name($node), map:merge($node/@*!map:entry(name(.), string(.))), $node/child::node()!$recurse($recurse, .)}
+  else []
+}
+return $processDescendants($processDescendants, /*)
+`;
+		chai.assert.deepEqual(await evaluateXPathToAsyncSingleton(xpath, documentNode), jsonMlFragment);
+	});
 });

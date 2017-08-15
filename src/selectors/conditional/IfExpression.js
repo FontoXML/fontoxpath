@@ -1,5 +1,7 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
+import { notReady } from '../util/iterators';
+
 /**
  * @extends {Selector}
  */
@@ -40,7 +42,7 @@ class IfExpression extends Selector {
 					const ifExpressionResult = ifExpressionResultSequence.tryGetEffectiveBooleanValue();
 
 					if (!ifExpressionResult.ready) {
-						return { done: false, ready: false, promise: ifExpressionResult.promise };
+						return notReady(ifExpressionResult.promise);
 					}
 					const resultSequence = ifExpressionResult.value ?
 						this._thenExpression.evaluateMaybeStatically(dynamicContext) :

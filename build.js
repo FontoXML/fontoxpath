@@ -41,7 +41,6 @@ function doSelectorsBuild () {
 				'deprecated',
 				'deprecatedAnnotations',
 				'duplicate',
-//				'inferredConstCheck',
 				'missingProperties',
 				'missingReturn',
 				'newCheckTypes',

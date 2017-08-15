@@ -54,7 +54,7 @@ describe('cast as', () => {
 		it('can cast decimals to integers: INF',
 		   () => chai.assert.throws(() => evaluateXPathToBoolean('xs:double("INF") cast as xs:integer'), 'FOCA0002'));
 		it('can cast decimals to integers: out of range',
-		   () => chai.assert.throws(() => evaluateXPathToBoolean('xs:double("1E100") cast as xs:integer'), 'FOARA0002'));
+		   () => chai.assert.throws(() => evaluateXPathToBoolean('xs:double("1E100") cast as xs:integer'), 'FOAR0002'));
 		it('can cast strings to integers: unparsable',
 		 () => chai.assert.throws(() => evaluateXPathToBoolean('"Not a number" cast as xs:integer'), 'FORG0001'));
 	});

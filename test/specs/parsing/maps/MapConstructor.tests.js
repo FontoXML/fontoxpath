@@ -36,7 +36,9 @@ describe('map constructor', () => {
 
 		element.appendChild(documentNode.createElementNS('xxx', 'x:a')).appendChild(documentNode.createTextNode('a'));
 		element.appendChild(documentNode.createElementNS('aaa', 'a:b')).appendChild(documentNode.createTextNode('a:b'));
-		element.appendChild(documentNode.createElementNS('', 'b')).appendChild(documentNode.createTextNode('b'));
+;
+		const expectedElement = element.appendChild(documentNode.createElementNS('', 'b'));
+		expectedElement.appendChild(documentNode.createTextNode('b'));
 		const namespacesByPrefix = {
 			'a': 'aaa',
 			'x': 'xxx',
@@ -47,7 +49,7 @@ describe('map constructor', () => {
 				namespaceResolver: (prefix) => namespacesByPrefix[prefix]
 			}),
 			{
-				a: 'b'
+				a: expectedElement
 			});
 	});
 

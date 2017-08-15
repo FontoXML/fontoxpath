@@ -5,6 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ArrayValue from '../dataTypes/ArrayValue';
 import zipSingleton from '../util/zipSingleton';
 import concatSequences from '../util/concatSequences';
+import { DONE_TOKEN, ready } from '../util/iterators';
 
 function arraySize (_dynamicContext, arraySequence) {
 	return zipSingleton(
@@ -140,7 +141,7 @@ function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
 			return new Sequence({
 				next: () => {
 					if (done) {
-						return { done: true, value: undefined, ready: true };
+						return DONE_TOKEN;
 					}
 					let allReady = true;
 					for (let i = 0, l = array.members.length; i < l; ++i) {
@@ -164,11 +165,7 @@ function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
 					}
 					const newMembers = array.members.filter((_, i) => effectiveBooleanValues[i].value);
 					done = true;
-					return {
-						done: false,
-						value: new ArrayValue(newMembers),
-						ready: true
-					};
+					return ready(new ArrayValue(newMembers));
 				}
 			});
 		});

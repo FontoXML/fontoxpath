@@ -1,20 +1,17 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
+import { DONE_TOKEN, ready } from '../util/iterators';
 
 function createSiblingGenerator (domFacade, node) {
 	return {
 		next: () => {
 			node = node && domFacade.getPreviousSibling(node);
 			if (!node) {
-				return { done: true, ready: true, value: undefined };
+				return DONE_TOKEN;
 			}
 
-			return {
-				done: false,
-				ready: true,
-				value: createNodeValue(node)
-			};
+			return ready(createNodeValue(node));
 		}
 	};
 }

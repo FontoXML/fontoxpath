@@ -66,7 +66,7 @@ function fontoxpathEvaluate (dynamicContext, query, args) {
  * @return  {!Sequence}
  */
 function fontoxpathSleep (_dynamicContext, val, howLong) {
-	let ready = false;
+	let doneWithSleep = false;
 	let readyPromise;
 
 	const valueIterator = val.value();
@@ -82,12 +82,12 @@ function fontoxpathSleep (_dynamicContext, val, howLong) {
 				}
 				readyPromise = new Promise(
 					resolve => setTimeout(() => {
-						ready = true;
+						doneWithSleep = true;
 						resolve();
 					}, time.value.value)
 				);
 			}
-			if (!ready) {
+			if (!doneWithSleep) {
 				return notReady(readyPromise);
 			}
 			return valueIterator.next();
@@ -96,7 +96,7 @@ function fontoxpathSleep (_dynamicContext, val, howLong) {
 }
 
 function fontoxpathFetch (_dynamicContext, url) {
-	let ready = false;
+	let doneWithFetch = false;
 	let result = null;
 	let done = false;
 	let readyPromise = null;
@@ -112,11 +112,11 @@ function fontoxpathFetch (_dynamicContext, url) {
 					.then(response => response.text())
 					.then(text => new DOMParser().parseFromString(text, 'application/xml'))
 					.then(doc => {
-						ready = true;
+						doneWithFetch = true;
 						result = doc;
 					});
 			}
-			if (!ready) {
+			if (!doneWithFetch) {
 				return notReady(readyPromise);
 			}
 			if (!done) {

@@ -6,6 +6,7 @@ import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import { transformArgument } from './argumentHelper';
 
 import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 function subSequence (sequence, start, length) {
 	// XPath starts from 1
@@ -24,7 +25,7 @@ function subSequence (sequence, start, length) {
 				i++;
 			}
 			if (length !== null && i >= length) {
-				return { done: true, ready: true, value: undefined };
+				return DONE_TOKEN;
 			}
 
 			const val = iterator.next();
@@ -176,7 +177,7 @@ function fnSubsequence (_dynamicContext, sequence, startSequence, lengthSequence
 			if (!iterator) {
 				const startVal = startSequence.tryGetFirst();
 				if (!startVal.ready) {
-					return { done: false, ready: false, promise: startVal.promise };
+					return notReady(startVal.promise);
 				}
 				const start = Math.round(startVal.value.value);
 
@@ -184,14 +185,14 @@ function fnSubsequence (_dynamicContext, sequence, startSequence, lengthSequence
 				if (lengthSequence) {
 					const lengthVal = lengthSequence.tryGetFirst();
 					if (!lengthVal.ready) {
-						return { done: false, ready: false, promise: lengthVal.promise };
+						return notReady(lengthVal.promise);
 					}
 					length = start + Math.round(lengthVal.value.value);
 				} else {
 					length = null;
 				}
 				if (isNaN(start) || isNaN(length)) {
-					return { done: true, ready: true };
+					return DONE_TOKEN;
 				}
 				iterator = subSequence(sequence, start, length).value();
 			}
@@ -213,14 +214,14 @@ function fnCount (_dynamicContext, sequence) {
 	return new Sequence({
 		next: () => {
 			if (hasPassed) {
-				return { done: true, ready: true };
+				return DONE_TOKEN;
 			}
 			const length = sequence.tryGetLength();
 			if (!length.ready) {
-				return { done: false, ready: false, promise: length.promise };
+				return notReady(length.promise);
 			}
 			hasPassed = true;
-			return { done: false, ready: true, value: createAtomicValue(length.value, 'xs:integer') };
+			return ready(createAtomicValue(length.value, 'xs:integer'));
 		}
 	});
 }
@@ -356,10 +357,8 @@ function fnFilter (dynamicContext, sequence, callbackSequence) {
 		const transformedArgument = transformArgument(
 			callbackFn.getArgumentTypes()[0],
 			Sequence.singleton(item),
-			dynamicContext);
-		if (!transformedArgument) {
-			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
-		}
+			dynamicContext,
+			'fn:filter');
 		const functionCallResult = callbackFn.value.call(undefined, dynamicContext, transformedArgument);
 		if (!functionCallResult.isSingleton() || !isSubtypeOf(functionCallResult.first().type, 'xs:boolean')) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);

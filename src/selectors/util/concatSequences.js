@@ -1,5 +1,5 @@
 import Sequence from '../dataTypes/Sequence';
-
+import { DONE_TOKEN } from './iterators';
 export default function concatSequences (sequences) {
 	let i = 0;
 	let iterator = null;
@@ -17,7 +17,7 @@ export default function concatSequences (sequences) {
 				}
 				return value;
 			}
-			return { done: true, ready: true, value: undefined };
+			return DONE_TOKEN;
 		}
 	});
 }
