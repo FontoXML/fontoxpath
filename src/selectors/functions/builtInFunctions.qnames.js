@@ -2,31 +2,37 @@ import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import QName from '../dataTypes/valueTypes/QName';
 import { validatePattern } from '../dataTypes/typeHelpers';
+import zipSingleton from '../util/zipSingleton';
 
 function fnQName (_dynamicContext, paramURI, paramQName) {
-	const lexicalQName = paramQName.first().value;
-	if (!validatePattern(lexicalQName, 'xs:QName')) {
-		throw new Error('FOCA0002: The provided QName is invalid.');
-	}
-	const uri = paramURI.isEmpty() ? null : paramURI.first().value || null;
-	if (uri === null && lexicalQName.includes(':')) {
-		throw new Error('FOCA0002: The URI of a QNAme may not be empty if a prefix is provided.');
-	}
-	// Skip URI validation for now
+	return zipSingleton([paramURI, paramQName], ([uriValue, lexicalQNameValue]) => {
+		const lexicalQName = lexicalQNameValue.value;
+		if (!validatePattern(lexicalQName, 'xs:QName')) {
+			throw new Error('FOCA0002: The provided QName is invalid.');
+		}
+		const uri = uriValue ? uriValue.value || null : null;
+		if (uri === null && lexicalQName.includes(':')) {
+			throw new Error('FOCA0002: The URI of a QNAme may not be empty if a prefix is provided.');
+		}
+		// Skip URI validation for now
 
-	if (paramURI.isEmpty()) {
-		return Sequence.singleton(createAtomicValue(new QName('', null, lexicalQName), 'xs:QName'));
-	}
-	if (!lexicalQName.includes(':')) {
-		// Only a local part
-		return Sequence.singleton(createAtomicValue(new QName('', uri, lexicalQName), 'xs:QName'));
-	}
-	const [prefix, localPart] = lexicalQName.split(':');
-	return Sequence.singleton(createAtomicValue(new QName(prefix, uri, localPart), 'xs:QName'));
+		if (paramURI.isEmpty()) {
+			return Sequence.singleton(createAtomicValue(new QName('', null, lexicalQName), 'xs:QName'));
+		}
+		if (!lexicalQName.includes(':')) {
+			// Only a local part
+			return Sequence.singleton(createAtomicValue(new QName('', uri, lexicalQName), 'xs:QName'));
+		}
+		const [prefix, localPart] = lexicalQName.split(':');
+		return Sequence.singleton(createAtomicValue(new QName(prefix, uri, localPart), 'xs:QName'));
+	});
 }
 
 function fnPrefixFromQName (_dynamicContext, arg) {
-	return arg.mapAll(([qname]) => {
+	return zipSingleton([arg], ([qname]) => {
+		if (qname === null) {
+			return Sequence.empty();
+		}
 		const qnameValue = qname.value;
 		if (!qnameValue.prefix) {
 			return Sequence.empty();

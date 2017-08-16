@@ -37,7 +37,7 @@ describe('asynchronous XPaths', () => {
 
 	it('fetch stuff', async () => {
 		const items = [];
-		const it = evaluateXPath('fontoxpath:fetch("https://raw.githubusercontent.com/LeoWoerteler/QT3TS/master/catalog.xml", map{"method": "get"}) => trace()', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
+		const it = evaluateXPath('fontoxpath:fetch("https://raw.githubusercontent.com/LeoWoerteler/QT3TS/master/catalog.xml", map{"method": "get"})', null, null, null, evaluateXPath.ASYNC_ITERATOR_TYPE);
 
 		for (let value = await it.next(); !value.done; value = await it.next()) {
 			items.push(value.value);
