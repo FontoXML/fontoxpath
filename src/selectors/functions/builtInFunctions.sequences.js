@@ -7,6 +7,7 @@ import { transformArgument } from './argumentHelper';
 
 import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import zipSingleton from '../util/zipSingleton';
 
 function subSequence (sequence, start, length) {
 	// XPath starts from 1
@@ -15,6 +16,19 @@ function subSequence (sequence, start, length) {
 	 * @type {!Iterator<!../dataTypes/Value>}
 	 */
 	const iterator = sequence.value();
+
+	const predictedLength = sequence.tryGetLength(true);
+	let newSequenceLength = null;
+	const startIndex = Math.max(start - 1, 0);
+	if (predictedLength.ready && predictedLength.value !== -1) {
+		let endIndex;
+		if (length === null) {
+			endIndex = predictedLength.value;
+		} else {
+			endIndex = Math.max(0, Math.min(predictedLength.value, length + (start - 1)));
+		}
+		newSequenceLength = Math.max(0, endIndex - startIndex);
+	}
 	return new Sequence({
 		next: () => {
 			while (i < start) {
@@ -24,7 +38,7 @@ function subSequence (sequence, start, length) {
 				}
 				i++;
 			}
-			if (length !== null && i >= length) {
+			if (length !== null && i >= start + length) {
 				return DONE_TOKEN;
 			}
 
@@ -36,7 +50,7 @@ function subSequence (sequence, start, length) {
 
 			return val;
 		}
-	});
+	}, newSequenceLength);
 }
 
 /**
@@ -127,7 +141,7 @@ function fnExists (_dynamicContext, sequence) {
 }
 
 function fnHead (_dynamicContext, sequence) {
-	return subSequence(sequence, 1, 2);
+	return subSequence(sequence, 1, 1);
 }
 
 function fnTail (_dynamicContext, sequence) {
@@ -171,34 +185,34 @@ function fnReverse (_dynamicContext, sequence) {
 }
 
 function fnSubsequence (_dynamicContext, sequence, startSequence, lengthSequence) {
-	let iterator = null;
-	return new Sequence({
-		next: () => {
-			if (!iterator) {
-				const startVal = startSequence.tryGetFirst();
-				if (!startVal.ready) {
-					return notReady(startVal.promise);
-				}
-				const start = Math.round(startVal.value.value);
-
-				let length;
-				if (lengthSequence) {
-					const lengthVal = lengthSequence.tryGetFirst();
-					if (!lengthVal.ready) {
-						return notReady(lengthVal.promise);
-					}
-					length = start + Math.round(lengthVal.value.value);
-				} else {
-					length = null;
-				}
-				if (isNaN(start) || isNaN(length)) {
-					return DONE_TOKEN;
-				}
-				iterator = subSequence(sequence, start, length).value();
+	return zipSingleton(
+		[startSequence, lengthSequence],
+		([startVal, lengthVal]) => {
+			if (startVal.value === Infinity) {
+				return Sequence.empty();
 			}
-			return iterator.next();
-		}
-	});
+			if (startVal.value === -Infinity) {
+				if (lengthVal && lengthVal.value === Infinity) {
+					return Sequence.empty();
+				}
+				return sequence;
+			}
+			if (lengthVal) {
+				if (isNaN(lengthVal.value)) {
+					return Sequence.empty();
+				}
+				if (lengthVal.value === Infinity) {
+					lengthVal = null;
+				}
+			}
+			if (isNaN(startVal.value)) {
+				return Sequence.empty();
+			}
+			return subSequence(
+				sequence,
+				Math.round(startVal.value),
+				lengthVal ? Math.round(lengthVal.value) : null);
+		});
 }
 
 function fnUnordered (_dynamicContext, sequence) {
@@ -216,7 +230,7 @@ function fnCount (_dynamicContext, sequence) {
 			if (hasPassed) {
 				return DONE_TOKEN;
 			}
-			const length = sequence.tryGetLength();
+			const length = sequence.tryGetLength(false);
 			if (!length.ready) {
 				return notReady(length.promise);
 			}
@@ -422,7 +436,8 @@ export default {
 			name: 'subsequence',
 			argumentTypes: ['item()*', 'xs:double'],
 			returnType: 'item()*',
-			callFunction: fnSubsequence
+			callFunction: (dynamicContext, sequence, start) =>
+				fnSubsequence(dynamicContext, sequence, start, Sequence.empty())
 		},
 
 		{

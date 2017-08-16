@@ -3,7 +3,7 @@ import * as slimdom from 'slimdom';
 import {
 	evaluateXPathToBoolean
 } from 'fontoxpath';
-
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
@@ -80,24 +80,31 @@ describe('Data type constructors', () => {
 		() => chai.assert.throws(() => evaluateXPathToBoolean('xs:NOTATION("abc") instance of xs:NOTATION+', documentNode)));
 
 	describe('QName', () => {
-		it('xs:QName() with prefix',
-			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("xs:abc") instance of xs:QName', documentNode)));
-		it('xs:QName() with invalid string value',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('xs:QName("1abc") instance of xs:QName', documentNode), 'FORG0001'));
-		it('xs:QName() with prefix',
-			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("xs:abc") instance of xs:QName', documentNode)));
-		it('xs:QName() with unknown prefix',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('xs:QName("abc:abc") instance of xs:QName', documentNode)), 'FORG0001');
-		it('xs:QName() without prefix',
-			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("abc") instance of xs:QName', documentNode, null, null, { namespaceResolver: () => 'http://example.com/ns' })));
-		// fn:QName is the usable constructor
-		it('fn:QName() with prefix',
-			() => chai.assert.isTrue(evaluateXPathToBoolean('fn:QName("http://example.com/ns", "xs:abc") instance of xs:QName', documentNode)));
-		it('fn:QName() with invalid string value',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('fn:QName("http://example.com/ns", "1abc")', documentNode), 'FOCA0002'));
-		it('fn:QName() with absent namespaceURI',
-			() => chai.assert.throws(() => evaluateXPathToBoolean('fn:QName((), "abc:abc")', documentNode), 'FOCA0002'));
+		describe('xs:QName', () => {
+			it('xs:QName() with prefix',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("xs:abc") instance of xs:QName', documentNode)));
+			it('xs:QName() with invalid string value',
+				() => chai.assert.throws(() => evaluateXPathToBoolean('xs:QName("1abc") instance of xs:QName', documentNode), 'FORG0001'));
+			it('xs:QName() with prefix',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("xs:abc") instance of xs:QName', documentNode)));
+			it('xs:QName() with unknown prefix',
+				() => chai.assert.throws(() => evaluateXPathToBoolean('xs:QName("abc:abc") instance of xs:QName', documentNode)), 'FORG0001');
+			it('xs:QName() without prefix',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("abc") instance of xs:QName', documentNode, null, null, { namespaceResolver: () => 'http://example.com/ns' })));
+		});
 
+		describe('fn:QName', () => {
+			// fn:QName is the usable constructor
+			it('fn:QName() with prefix',
+				() => chai.assert.isTrue(evaluateXPathToBoolean('fn:QName("http://example.com/ns", "xs:abc") instance of xs:QName', documentNode)));
+			it('fn:QName() with invalid string value',
+				() => chai.assert.throws(() => evaluateXPathToBoolean('fn:QName("http://example.com/ns", "1abc")', documentNode), 'FOCA0002'));
+			it('fn:QName() with absent namespaceURI',
+				() => chai.assert.throws(() => evaluateXPathToBoolean('fn:QName((), "abc:abc")', documentNode), 'FOCA0002'));
+			it('accepts async params', async () => {
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('fn:QName("http://example.com/ns" => fontoxpath:sleep(1), "xs:abc" => fontoxpath:sleep(1)) instance of xs:QName', documentNode));
+			});
+		});
 
 	});
 

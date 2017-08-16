@@ -20,6 +20,13 @@ describe('functions', () => {
 	describe('last()', () => {
 		it('returns the length of the dynamic context size',
 			() => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[last()]', documentNode), 3));
+		it('Works with paths', () => {
+			jsonMlMapper.parse([
+				'someParentElement'
+			].concat(new Array(10).fill(['someElement'])), documentNode);
+
+			chai.assert.equal(evaluateXPathToString('/descendant::*/(last() - position())!string()=>string-join(",")', documentNode), '10,9,8,7,6,5,4,3,2,1,0');
+		});
 		it('uses the size of the current dynamic context',
 			() => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[. > 2][last()]', documentNode), 3));
 		it('can target the second to last item',

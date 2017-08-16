@@ -16,6 +16,12 @@ function Sequence (valueIteratorOrArray, predictedLength = null) {
 	}
 	this._currentPosition = 0;
 	/**
+	 * Defines whether intermediate values must be saved. This is needed for counting the length of a sequence, with the intent to iterate over it at a later stage.
+	 * An XPath example would be (1,2,3)[last()], which will execute the last() function 3 times, and 'normally' iterating over the sequence once.
+	 * The first call to last() would consume the sequence, making the normal iteration have no values at the 3rd index.
+	 */
+	this._saveValues = false;
+	/**
 	 * @type {!function():!../util/iterators.AsyncIterator}
 	 */
 	this.value = () => {
@@ -39,13 +45,14 @@ function Sequence (valueIteratorOrArray, predictedLength = null) {
 					return value;
 				}
 				if (value.done) {
-					this._length = Math.min(i, 2) + this._currentPosition;
+					const length = Math.min(i, 2) + this._currentPosition;
+					this._length = length;
 					return value;
 				}
-				if (i < 2) {
+				if (this._saveValues || i < 2) {
 					this._cachedValues[i] = value.value;
 				}
-				else {
+				if (i >= 2) {
 					this._currentPosition++;
 					this._iteratorHasProgressed = true;
 				}
@@ -107,12 +114,16 @@ Sequence.prototype.tryGetEffectiveBooleanValue = function () {
 /**
  * @return  {../util/iterators.AsyncResult<number>}
  */
-Sequence.prototype.tryGetLength = function () {
+Sequence.prototype.tryGetLength = function (onlyIfCheap = false) {
 	if (this._length !== null) {
 		return ready(this._length);
 	}
+	if (onlyIfCheap) {
+		return ready(-1);
+	}
 	const iterator = this.value();
 	let val = iterator.next();
+	this._saveValues = true;
 	while (val.ready && !val.done) {
 		val = iterator.next();
 	}
@@ -268,25 +279,6 @@ Sequence.prototype.isSingleton = function () {
 	return value.done;
 };
 
-Sequence.prototype.getLength = function (keepItems = true) {
-	if (this._length !== null) {
-		return this._length;
-	}
-	let length = 0;
-
-	const iterator = this.value();
-	let item = iterator.next();
-	while (!item.done) {
-		if (keepItems) {
-			this._cachedValues[length] = item.value;
-		}
-		length++;
-		item = iterator.next();
-	}
-	this._length = length;
-	return length;
-};
-
 Sequence.prototype.getEffectiveBooleanValue = function () {
 	const iterator = this.value();
 	const firstValue = iterator.next();
@@ -338,11 +330,18 @@ Sequence.prototype.switchCases = function (cases) {
 					if (!value.ready) {
 						return value;
 					}
+					let resultSequence;
 					if (value.done) {
-						resultIterator = cases.empty(this).value();
+						resultSequence = cases.empty(this);
 					}
 					else {
-						resultIterator = cases.default(this).value();
+						resultSequence = cases.default(this);
+					}
+					resultIterator = resultSequence.value();
+					// Try to mirror through length;
+					const resultSequenceLength = resultSequence.tryGetLength(true);
+					if (resultSequenceLength.ready && resultSequenceLength.value !== -1) {
+						this._length = resultSequenceLength.value;
 					}
 				} else {
 					// We need to reach two iterations
@@ -356,20 +355,23 @@ Sequence.prototype.switchCases = function (cases) {
 						}
 						scanIteration++;
 					}
-
+					let resultSequence;
 					switch (scanIteration) {
-						case 0: {
-							resultIterator = (cases.empty || cases.default)(this).value();
+						case 0:
+							resultSequence = (cases.empty || cases.default)(this);
 							break;
-						}
-						case 1: {
-							resultIterator = (cases.singleton || cases.default)(this).value();
+						case 1:
+							resultSequence = (cases.singleton || cases.default)(this);
 							break;
-						}
-						default: {
-							resultIterator = (cases.multiple || cases.default)(this).value();
+						default:
+							resultSequence = (cases.multiple || cases.default)(this);
 							break;
-						}
+					}
+					resultIterator = resultSequence.value();
+					// Try to mirror through length;
+					const resultSequenceLength = resultSequence.tryGetLength(true);
+					if (resultSequenceLength.ready && resultSequenceLength.value !== -1) {
+						this._length = resultSequenceLength.value;
 					}
 				}
 			}
@@ -398,7 +400,7 @@ EmptySequence.prototype.getLength = () => 0;
 EmptySequence.prototype.isSingleton = () => false;
 EmptySequence.prototype.mapAll = callback => callback([]);
 EmptySequence.prototype.tryGetFirst = () => ready(null);
-EmptySequence.prototype.tryGetLength = () => ready(0);
+EmptySequence.prototype.tryGetLength = (_onlyIfCheap) => ready(0);
 EmptySequence.prototype.tryGetEffectiveBooleanValue = function () {
 	return ready(this.getEffectiveBooleanValue());
 };
@@ -458,7 +460,7 @@ SingletonSequence.prototype.isEmpty = () => false;
 SingletonSequence.prototype.tryGetFirst = function () {
 	return ready(this._onlyValue);
 };
-SingletonSequence.prototype.tryGetLength = function () {
+SingletonSequence.prototype.tryGetLength = function (_onlyIfCheap) {
 	return ready(1);
 };
 SingletonSequence.prototype.getLength = () => 1;
@@ -520,7 +522,7 @@ ArrayBackedSequence.prototype.isEmpty = () => false;
 ArrayBackedSequence.prototype.tryGetFirst = function () {
 	return ready(this._values[0]);
 };
-ArrayBackedSequence.prototype.tryGetLength = function () {
+ArrayBackedSequence.prototype.tryGetLength = function (_onlyIfCheap) {
 	return ready(this._values.length);
 };
 ArrayBackedSequence.prototype.tryGetEffectiveBooleanValue = function () {

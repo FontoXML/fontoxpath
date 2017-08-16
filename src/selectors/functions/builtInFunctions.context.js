@@ -1,12 +1,26 @@
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 function fnLast (dynamicContext) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error('XPDY0002: The fn:last() function depends on dynamic context, which is absent.');
 	}
 
-	return Sequence.singleton(createAtomicValue(dynamicContext.contextSequence.getLength(), 'xs:integer'));
+	let done = false;
+	return new Sequence({
+		next: () => {
+			if (done) {
+				return DONE_TOKEN;
+			}
+			const length = dynamicContext.contextSequence.tryGetLength(false);
+			if (length.ready) {
+				done = true;
+				return ready(createAtomicValue(length.value, 'xs:integer'));
+			}
+			return notReady(length.promise);
+		}
+	}, 1);
 }
 
 function fnPosition (dynamicContext) {

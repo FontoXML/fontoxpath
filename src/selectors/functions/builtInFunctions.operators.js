@@ -1,7 +1,7 @@
 import Sequence from '../dataTypes/Sequence';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import {ready, notReady, DONE_TOKEN } from '../util/iterators';
+import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 
 function opTo (_dynamicContext, fromSequence, toSequence) {
 	// shortcut the non-trivial case of both values being known
@@ -17,6 +17,9 @@ function opTo (_dynamicContext, fromSequence, toSequence) {
 		}
 		fromValue = from.value.value;
 		toValue = to.value.value;
+		if (fromValue > toValue) {
+			return Sequence.empty();
+		}
 		// By providing a length, we do not have to hold an end condition into account
 		return new Sequence({
 			next: () => ready(createAtomicValue(fromValue++, 'xs:integer'))

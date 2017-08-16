@@ -29,6 +29,8 @@ describe('functions over qnames', () => {
 	});
 
 	describe('prefix-from-QName()', () => {
+		it('returns the empty sequence if inputted the empty sequence',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('prefix-from-QName(()) => count() = 0', documentNode)));
 		it('Returns the prefix of a qname with no prefix',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('prefix-from-QName(QName((), "someElement")) => empty()', documentNode)));
 		it('Returns the prefix of a qname with a prefix',
