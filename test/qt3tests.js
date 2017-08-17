@@ -11,6 +11,8 @@ const context = require.context('text-loader!assets', true, /\.xml|\.out$/);
 const parser = new DOMParser();
 
 const instantiatedDocumentByAbsolutePath = Object.create(null);
+// Especially the CI can be slow, up the timeout to 60s.
+mocha.timeout(60000);
 
 function getFile (fileName) {
 	while (fileName.includes('..')) {
