@@ -21,19 +21,28 @@ function getFile (fileName) {
 		return instantiatedDocumentByAbsolutePath[fileName];
 	}
 
+	let content = context(`./QT3TS-master/${fileName}`);
+	if (fileName.endsWith('.out')) {
+		content = `<xml>${content}</xml>`;
+		const parsedContents = Array.from(parser.parseFromString(content, 'text/xml').firstChild.childNodes);
+		const documentFragment = new DocumentFragment();
+		parsedContents.forEach(node => documentFragment.appendChild(node));
+		return instantiatedDocumentByAbsolutePath[fileName] = documentFragment;
+
+	}
 	return instantiatedDocumentByAbsolutePath[fileName] =
-		parser.parseFromString(context(`./QT3TS-master/${fileName}`), 'text/xml');
+		parser.parseFromString(content, 'text/xml');
 }
 
-function createAsserter (assertNode) {
+function createAsserter (baseUrl, assertNode) {
 	switch (assertNode.localName) {
 		case 'all-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode).map(createAsserter);
+			const asserts = evaluateXPathToNodes('*', assertNode).map(createAsserter.bind(null, baseUrl));
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
 				asserts.forEach(a => a(xpath, contextNode, variablesInScope, namespaceResolver));
 		}
 		case 'any-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode).map(createAsserter);
+			const asserts = evaluateXPathToNodes('*', assertNode).map(createAsserter.bind(null, baseUrl));
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const errors = [];
 				chai.assert(asserts.some((a => {
@@ -80,7 +89,7 @@ function createAsserter (assertNode) {
 		case 'assert-xml': {
 			let parsedFragment;
 			if (evaluateXPathToBoolean('@file', assertNode)) {
-				parsedFragment = getFile(evaluateXPathToString('"prod/" || @file', assertNode));
+				parsedFragment = getFile(evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, { baseUrl }));
 			}
 			else {
 				parsedFragment = parser.parseFromString(`<xml>${assertNode.textContent}</xml>`, 'text/xml').documentElement;
@@ -102,8 +111,8 @@ function createAsserter (assertNode) {
 	}
 
 }
-function getAsserterForTest (testCase) {
-	return createAsserter(evaluateXPathToFirstNode('./result/*', testCase));
+function getAsserterForTest (baseUrl, testCase) {
+	return createAsserter(baseUrl, evaluateXPathToFirstNode('./result/*', testCase));
 }
 
 const catalog = getFile('catalog.xml');
@@ -184,45 +193,46 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 
 		window.log = '';
 		describe(evaluateXPathToString('/test-set/description', testSet), () => {
-				for (const testCase of testCases) {
-					const testName = evaluateXPathToString('./@name', testCase);
-					const description = evaluateXPathToString('if (description/text()) then description else test', testCase);
-					if (unrunnableTestCasesByName[testName]) {
-						it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
-						continue;
-					}
-
-					const testQuery = evaluateXPathToString('./test', testCase);
-					const asserter = getAsserterForTest(testCase);
-					const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
-
-					const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
-					let namespaceResolver = localNamespaceResolver;
-					let variablesInScope = undefined;
-					const environmentNode = evaluateXPathToFirstNode('let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment', testCase, null);
-					let env;
-					if (environmentNode) {
-						env = createEnvironment(testSetFileName.substr(0, testSetFileName.lastIndexOf('/')), environmentNode);
-					}
-					else {
-						env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
-					}
-					const contextNode = env.contextNode;
-					namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
-					variablesInScope = env.variables;
-
-					const assertFn = () => {
-						try {
-							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
-						}
-						catch (e) {
-							window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
-							// And rethrow the error
-							throw e;
-						}
-					};
-					assertFn.toString = () => testCase.outerHTML;
-					it(description, assertFn);
+			for (const testCase of testCases) {
+				const testName = evaluateXPathToString('./@name', testCase);
+				const description = evaluateXPathToString('if (description/text()) then description else test', testCase);
+				if (unrunnableTestCasesByName[testName]) {
+					it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
+					continue;
 				}
+
+				const testQuery = evaluateXPathToString('./test', testCase);
+				const baseUrl = testSetFileName.substr(0, testSetFileName.lastIndexOf('/'));
+				const asserter = getAsserterForTest(baseUrl, testCase);
+				const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
+
+				const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
+				let namespaceResolver = localNamespaceResolver;
+				let variablesInScope = undefined;
+				const environmentNode = evaluateXPathToFirstNode('let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment', testCase, null);
+				let env;
+				if (environmentNode) {
+					env = createEnvironment(baseUrl, environmentNode);
+				}
+				else {
+					env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
+				}
+				const contextNode = env.contextNode;
+				namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
+				variablesInScope = env.variables;
+
+				const assertFn = () => {
+					try {
+						asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
+					}
+					catch (e) {
+						window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
+						// And rethrow the error
+						throw e;
+					}
+				};
+				assertFn.toString = () => testCase.outerHTML;
+				it(description, assertFn);
+			}
 		});
 	});
