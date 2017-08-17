@@ -44,7 +44,7 @@ function fnConcat (dynamicContext) {
 		return Sequence.singleton(
 			createAtomicValue(
 				stringValues
-					.map(stringValue => stringValue === null ? '' : stringValue.value)
+					.map(stringValue => stringValue === null ? '' : castToType(stringValue, 'xs:string').value)
 					.join(''),
 				'xs:string'));
 
