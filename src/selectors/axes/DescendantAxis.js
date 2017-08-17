@@ -71,6 +71,10 @@ class DescendantAxis extends Selector {
 	}
 
 	evaluate (dynamicContext) {
+		if (dynamicContext.contextItem === null) {
+			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
+		}
+
 		const inclusive = this._isInclusive;
 		const iterator = createDescendantGenerator(
 			dynamicContext.domFacade,

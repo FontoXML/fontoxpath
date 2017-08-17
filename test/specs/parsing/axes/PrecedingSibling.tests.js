@@ -28,4 +28,8 @@ describe('preceding-sibling', () => {
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('preceding-sibling::someSiblingElement', documentNode.documentElement.lastChild), []);
 	});
+
+	it('throws the correct error if context is absent', () => {
+		chai.assert.throws(() => evaluateXPathToNodes('preceding-sibling::*', null), 'XPDY0002');
+	});
 });

@@ -21,6 +21,9 @@ class AbsolutePathSelector extends Selector {
 	}
 
 	evaluate (dynamicContext) {
+		if (dynamicContext.contextItem === null) {
+			throw new Error('XPDY0002: context is absent, it needs to be present to use paths.');
+		}
 		var node = dynamicContext.contextItem.value;
 		var documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;
 		// Assume this is the start, so only one node

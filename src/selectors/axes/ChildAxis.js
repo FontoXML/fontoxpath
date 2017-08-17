@@ -27,6 +27,9 @@ class ChildAxis extends Selector {
 	 */
 	evaluate (dynamicContext) {
 		const contextItem = dynamicContext.contextItem;
+		if (contextItem === null) {
+			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
+		}
 		const domFacade = dynamicContext.domFacade;
 		const nodeValues = domFacade.getChildNodes(contextItem.value).map(createNodeValue);
 		const childContextSequence = new Sequence(nodeValues);

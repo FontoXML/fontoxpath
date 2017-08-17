@@ -84,4 +84,8 @@ describe('attribute', () => {
 		const doc = (new window.DOMParser()).parseFromString('<someElement xmlns:ns="http://example.org/ns" ns:attr="someValue"/>', 'text/xml');
 		chai.assert.isTrue(evaluateXPathToBoolean('@* => count() eq 1', doc.documentElement));
 	});
+
+	it('throws the correct error if context is absent', () => {
+		chai.assert.throws(() => evaluateXPathToBoolean('@*', null), 'XPDY0002');
+	});
 });

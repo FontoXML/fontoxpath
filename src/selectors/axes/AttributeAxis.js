@@ -34,6 +34,10 @@ class AttributeAxis extends Selector {
 		 * @type {../dataTypes/Value}
 		 */
 		const contextItem = dynamicContext.contextItem;
+		if (contextItem === null) {
+			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
+		}
+
 		const domFacade = dynamicContext.domFacade;
 
 		if (!isSubtypeOf(contextItem.type, 'element()')) {

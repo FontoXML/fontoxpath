@@ -256,9 +256,9 @@ WildCard =  "*:" name:NCName {return ['*', null, name]}
 // 49
 PostfixExpr
  = expr:PrimaryExpr postfixExpr:(
-     filter:Predicate {return ["filter", filter]} /
-     argList:ArgumentList {return ["functionCall", argList]} /
-     lookup:Lookup {return ["lookup", lookup]}
+   (_ filter:Predicate {return ["filter", filter]}) /
+   (_ argList:ArgumentList {return ["functionCall", argList]}) /
+   (_ lookup:Lookup {return ["lookup", lookup]})
    )* {return postfixExpr.length ? postfixExpr.reduce(function (accumulator, currentExpr) { currentExpr.splice(1, 0, accumulator); return currentExpr}, expr) : expr}
 
 // 50

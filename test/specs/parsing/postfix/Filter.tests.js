@@ -10,6 +10,8 @@ import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSing
 describe('Filter (predicate)', () => {
 	it('parses',
 		() => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[. = 2]'), 2));
+	it('allows spaces',
+		() => chai.assert.equal(evaluateXPathToNumber('(1,2,3)   [. = 2]'), 2));
 	it('returns empty sequence when inputted empty sequence',
 		() => chai.assert.empty(evaluateXPathToNumbers('(1,2,3)[()]')));
 	it('returns the sequence when filtering with a string',
