@@ -26,4 +26,8 @@ describe('parent', () => {
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('parent::node()', documentNode), []);
 	});
+
+	it('throws the correct error if context is absent', () => {
+		chai.assert.throws(() => evaluateXPathToNodes('parent::*', null), 'XPDY0002');
+	});
 });

@@ -46,4 +46,7 @@ describe('child', () => {
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToFirstNode('someParentElement/child::*[last()]', documentNode), documentNode.documentElement.lastChild);
 	});
+	it('throws the correct error if context is absent', () => {
+		chai.assert.throws(() => evaluateXPathToFirstNode('*', null), 'XPDY0002');
+	});
 });

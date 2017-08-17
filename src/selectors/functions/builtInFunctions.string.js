@@ -286,9 +286,9 @@ export default {
 			name: 'normalize-space',
 			argumentTypes: [],
 			returnType: 'xs:string',
-			callFunction: function (dynamicContext) {
-				return fnNormalizeSpace(dynamicContext, fnString(dynamicContext, Sequence.singleton(dynamicContext.contextItem)));
-			}
+			callFunction: contextItemAsFirstArgument.bind(null, (
+				(dynamicContext, contextItem) =>
+					fnNormalizeSpace(dynamicContext, fnString(dynamicContext, contextItem))))
 		},
 
 		{
@@ -375,9 +375,9 @@ export default {
 			name: 'string-length',
 			argumentTypes: [],
 			returnType: 'xs:integer',
-			callFunction: function (dynamicContext) {
-				return fnStringLength(dynamicContext, fnString(dynamicContext, Sequence.singleton(dynamicContext.contextItem)));
-			}
+			callFunction: contextItemAsFirstArgument.bind(null, (
+				(dynamicContext, contextItem) =>
+					fnStringLength(dynamicContext, fnString(dynamicContext, contextItem))))
 		},
 
 		{

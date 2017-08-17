@@ -69,4 +69,8 @@ describe('descendant-or-self', () => {
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('//*[name() = "root" or name() => starts-with("a") or name() => starts-with("b")]', documentNode).map(node => node.nodeName), ['root', 'a', 'a-a', 'a-b', 'b', 'b-a', 'b-b']);
 	});
+
+	it('throws the correct error if context is absent', () => {
+		chai.assert.throws(() => evaluateXPathToNodes('descendant::*', null), 'XPDY0002');
+	});
 });

@@ -40,8 +40,12 @@ class FollowingSiblingAxis extends Selector {
 	 * @return  {Sequence}
 	 */
 	evaluate (dynamicContext) {
-		var contextItem = dynamicContext.contextItem,
-        domFacade = dynamicContext.domFacade;
+		const contextItem = dynamicContext.contextItem;
+		if (contextItem === null) {
+			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
+		}
+
+        const domFacade = dynamicContext.domFacade;
 
 		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter(item => {
 			return this._siblingSelector.evaluateToBoolean(dynamicContext, item);

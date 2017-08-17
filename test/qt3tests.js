@@ -118,13 +118,13 @@ function createEnvironment (cwd, environmentNode) {
 	const namespaces = evaluateXPathToMap('(namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', environmentNode);
 
 	return {
-		contextNode: fileName ? getFile((cwd ? cwd + '/' : '') + fileName) : emptyDoc,
+		contextNode: fileName ? getFile((cwd ? cwd + '/' : '') + fileName) : null,
 		variables,
 		namespaceResolver: Object.keys(namespaces).length ? prefix => namespaces[prefix] : null
 	};
 }
 
-const environmentsByName = evaluateXPathToNodes('/catalog/environment[source]', catalog)
+const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 	.reduce((envByName, environmentNode) =>	{
 		return Object.assign(
 			envByName,
@@ -194,30 +194,23 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 
 					const testQuery = evaluateXPathToString('./test', testCase);
 					const asserter = getAsserterForTest(testCase);
-
-					const environmentName = evaluateXPathToString('./environment/@ref', testCase);
 					const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
 
-					let contextNode;
 					const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
 					let namespaceResolver = localNamespaceResolver;
 					let variablesInScope = undefined;
-					if (environmentName) {
-						const environmentNode = evaluateXPathToFirstNode('/test-set/environment[@name = $envName]', testCase, null, { envName: environmentName });
-						let env;
-						if (environmentNode) {
-							env = createEnvironment(testSetFileName.substr(0, testSetFileName.lastIndexOf('/')), environmentNode);
-						}
-						else {
-							env = environmentsByName[environmentName] || environmentsByName['empty'];
-						}
-						contextNode = env.contextNode;
-						namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
-						variablesInScope = env.variables;
+					const environmentNode = evaluateXPathToFirstNode('let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment', testCase, null);
+					let env;
+					if (environmentNode) {
+						env = createEnvironment(testSetFileName.substr(0, testSetFileName.lastIndexOf('/')), environmentNode);
 					}
 					else {
-						contextNode = environmentsByName['empty'].contextNode;
+						env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
 					}
+					const contextNode = env.contextNode;
+					namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
+					variablesInScope = env.variables;
+
 					const assertFn = () => {
 						try {
 							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
