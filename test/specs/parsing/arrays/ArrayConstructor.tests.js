@@ -3,7 +3,8 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
 	evaluateXPathToArray,
-	evaluateXPathToAsyncIterator
+	evaluateXPathToAsyncIterator,
+	evaluateXPathToString
 } from 'fontoxpath';
 
 let documentNode;
@@ -28,7 +29,7 @@ describe('array constructor', () => {
 			chai.assert.equal((await iterator.next()).value, 1);
 		});
 		it('unfolds passed sequences',
-			() => chai.assert.deepEqual(evaluateXPathToArray('array {("a", "b"), "c"}', documentNode), [['a'], ['b'], ['c']]));
+			() => chai.assert.deepEqual(evaluateXPathToArray('array {("a", "b"), "c"}', documentNode), ['a', 'b', 'c']));
 	});
 
 	describe('square', () => {
@@ -39,6 +40,6 @@ describe('array constructor', () => {
 			chai.assert.equal((await iterator.next()).value, 1);
 		});
 		it('does not unfold passed sequences',
-			() => chai.assert.deepEqual(evaluateXPathToArray('[("a", "b"), "c"]', documentNode), [['a', 'b'], ['c']]));
+			() => chai.assert.equal(evaluateXPathToString('[("a", "b"), "c"](1)', documentNode), ['a b']));
 	});
 });

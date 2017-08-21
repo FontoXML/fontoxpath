@@ -67,7 +67,19 @@ function Sequence (valueIteratorOrArray, predictedLength = null) {
 	this._iteratorHasProgressed = false;
 
 	this._cachedValues = [];
+	return this;
 }
+
+Sequence.prototype.tryGetAllValues = function () {
+	const iterator = this.value();
+	this._saveValues = true;
+	for (let val = iterator.next(); !val.done; val = iterator.next()) {
+		if (!val.ready) {
+			return notReady(val.promise);
+		}
+	}
+	return ready(this._cachedValues);
+};
 
 Sequence.prototype.getAllValues = function () {
 	if (this._iteratorHasProgressed && this._length !== this._cachedValues.length) {
@@ -401,6 +413,8 @@ EmptySequence.prototype.isSingleton = () => false;
 EmptySequence.prototype.mapAll = callback => callback([]);
 EmptySequence.prototype.tryGetFirst = () => ready(null);
 EmptySequence.prototype.tryGetLength = (_onlyIfCheap) => ready(0);
+EmptySequence.prototype.tryGetAllValues = () => ready([]);
+
 EmptySequence.prototype.tryGetEffectiveBooleanValue = function () {
 	return ready(this.getEffectiveBooleanValue());
 };
@@ -449,6 +463,9 @@ SingletonSequence.prototype.getEffectiveBooleanValue = function () {
 };
 SingletonSequence.prototype.tryGetEffectiveBooleanValue = function () {
 	return ready(this.getEffectiveBooleanValue());
+};
+SingletonSequence.prototype.tryGetAllValues = function () {
+	return ready([this._onlyValue]);
 };
 SingletonSequence.prototype.first = function () {
 	return this._onlyValue;
@@ -527,6 +544,10 @@ ArrayBackedSequence.prototype.tryGetLength = function (_onlyIfCheap) {
 };
 ArrayBackedSequence.prototype.tryGetEffectiveBooleanValue = function () {
 	return ready(this.getEffectiveBooleanValue());
+};
+
+ArrayBackedSequence.prototype.tryGetAllValues = function () {
+	return ready(this._values);
 };
 ArrayBackedSequence.prototype.isSingleton = () => false;
 ArrayBackedSequence.prototype.first = function () {
