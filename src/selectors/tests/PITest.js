@@ -7,7 +7,9 @@ class PITest extends TestAbstractExpression {
 	 * @param  {string}  target
 	 */
 	constructor (target) {
-		super({ canBeStaticallyEvaluated: false });
+		super(new Specificity({
+			[Specificity.NODENAME_KIND]: 1
+		}));
 
 		this._target = target;
 
