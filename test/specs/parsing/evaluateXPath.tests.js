@@ -2,9 +2,11 @@ import * as slimdom from 'slimdom';
 
 import {
 	domFacade,
-	evaluateXPathToBoolean,
 	evaluateXPath,
+	evaluateXPathToArray,
+	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
+	evaluateXPathToMap,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
@@ -159,6 +161,42 @@ describe('evaluateXPath', () => {
 		it(
 			'throws for async results',
 			() => chai.assert.throws(() => evaluateXPathToNodes('fontoxpath:sleep(())', documentNode, domFacade), 'can not be resolved synchronously'));
+	});
+
+	describe('toArray', () => {
+		it('returns a singleton array', () => {
+			chai.assert.deepEqual(evaluateXPathToArray('[1,2,3]'), [1, 2, 3]);
+		});
+		it('returns a nested array', () => {
+			chai.assert.deepEqual(evaluateXPathToArray('[1, [2, 2.5], 3]'), [1, [2, 2.5], 3]);
+		});
+		it('Transfroms singleton sequences to null', () => {
+			chai.assert.deepEqual(evaluateXPathToArray('[1, (), 3]'), [1, null, 3]);
+		});
+		it('throws for arrays with sequences', () => {
+			chai.assert.throws(() => evaluateXPathToArray('[1, (2, 2.5), 3]'), 'Serialization error');
+		});
+		it(
+			'throws for async results',
+			() => chai.assert.throws(() => evaluateXPathToArray('fontoxpath:sleep(())', documentNode, domFacade), 'can not be resolved synchronously'));
+	});
+
+	describe('toMap', () => {
+		it('returns a simple map', () => {
+			chai.assert.deepEqual(evaluateXPathToMap('map{1:2}'), { 1: 2 });
+		});
+		it('returns a nested map', () => {
+			chai.assert.deepEqual(evaluateXPathToMap('map{1:map{2:3}}'), { 1: { 2: 3 } });
+		});
+		it('Transfroms singleton sequences to null', () => {
+			chai.assert.deepEqual(evaluateXPathToMap('map{1:()}'), { 1: null });
+		});
+		it('throws for maps with sequences', () => {
+			chai.assert.throws(() => evaluateXPathToMap('map{1:(2,3)}'), 'Serialization error');
+		});
+		it(
+			'throws for async results',
+			() => chai.assert.throws(() => evaluateXPathToMap('fontoxpath:sleep(())', documentNode, domFacade), 'can not be resolved synchronously'));
 	});
 
 	describe('using the actual browser HTML DOM', () => {

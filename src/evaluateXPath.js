@@ -9,6 +9,8 @@ import castToType from './selectors/dataTypes/castToType';
 import Sequence from './selectors/dataTypes/Sequence';
 import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
 
+import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
+
 const DEFAULT_NAMESPACES = {
 	'xml': 'http://www.w3.org/XML/1998/namespace',
 	'xs': 'http://www.w3.org/2001/XMLSchema',
@@ -26,7 +28,7 @@ function transformMapToObject (map, dynamicContext) {
 	return {
 		next: () => {
 			if (done) {
-				return { done: true, ready: true, value: undefined };
+				return DONE_TOKEN;
 			}
 			while (i < map.keyValuePairs.length) {
 				if (!transformedValueIterator) {
@@ -39,8 +41,14 @@ function transformMapToObject (map, dynamicContext) {
 						})
 						.tryGetFirst();
 					if (!val.ready) {
-						return { done: false, ready: false, promise: val.promise };
+						return notReady(val.promise);
 					}
+					if (val.value === null) {
+						mapObj[map.keyValuePairs[i].key.value] = null;
+						i++;
+						continue;
+					}
+
 					transformedValueIterator = transformXPathItemToJavascriptObject(val.value, dynamicContext);
 				}
 				const transformedValue = transformedValueIterator.next();
@@ -52,7 +60,7 @@ function transformMapToObject (map, dynamicContext) {
 				i++;
 			}
 			done = true;
-			return { done: false, ready: true, value: mapObj };
+			return ready(mapObj);
 		}
 	};
 }
@@ -65,7 +73,7 @@ function transformArrayToArray (array, dynamicContext) {
 	return {
 		next: () => {
 			if (done) {
-				return { done: true, ready: true, value: undefined };
+				return DONE_TOKEN;
 			}
 			while (i < array.members.length) {
 				if (!transformedMemberGenerator) {
@@ -78,7 +86,11 @@ function transformArrayToArray (array, dynamicContext) {
 						})
 						.tryGetFirst();
 					if (!val.ready) {
-						return { done: false, ready: false, promise: val.promise };
+						return notReady(val.promise);
+					}
+					if (val.value === null) {
+						arr[i++] = null;
+						continue;
 					}
 					transformedMemberGenerator = transformXPathItemToJavascriptObject(val.value, dynamicContext);
 				}
@@ -90,7 +102,7 @@ function transformArrayToArray (array, dynamicContext) {
 				arr[i++] = transformedValue.value;
 			}
 			done = true;
-			return { done: false, ready: true, value: arr };
+			return ready(arr);
 		}
 	};
 }
@@ -103,11 +115,7 @@ function transformXPathItemToJavascriptObject (value, dynamicContext) {
 		return transformArrayToArray(value, dynamicContext);
 	}
 	return {
-		next: () => ({
-			done: false,
-			ready: true,
-			value: value.value
-		})
+		next: () => ready(value.value)
 	};
 }
 /**
