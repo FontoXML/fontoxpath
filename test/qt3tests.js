@@ -228,6 +228,9 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 						asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
 					}
 					catch (e) {
+						if (e instanceof TypeError) {
+							throw e;
+						}
 						window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
 						// And rethrow the error
 						throw e;
