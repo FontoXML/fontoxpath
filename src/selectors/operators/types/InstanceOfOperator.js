@@ -32,14 +32,14 @@ class InstanceOfOperator extends Selector {
 				return Sequence.singletonFalseSequence();
 			},
 			multiple: () => {
-				if (this._multiplicity === '?') {
-					return Sequence.singletonFalseSequence();
+				if (this._multiplicity === '+' || this._multiplicity === '*') {
+					return sequenceEvery(evaluatedExpression, value => {
+						const contextItem = Sequence.singleton(value);
+						const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
+						return this._typeTest.evaluateMaybeStatically(scopedContext);
+					});
 				}
-				return sequenceEvery(evaluatedExpression, value => {
-					const contextItem = Sequence.singleton(value);
-					const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
-					return this._typeTest.evaluateMaybeStatically(scopedContext);
-				});
+				return Sequence.singletonFalseSequence();
 			},
 			singleton: () => {
 				return sequenceEvery(evaluatedExpression, value => {
