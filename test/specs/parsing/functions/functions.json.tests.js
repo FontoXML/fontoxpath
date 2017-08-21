@@ -17,7 +17,7 @@ describe('functions over json', () => {
 		() => chai.assert.deepEqual(evaluateXPathToMap('parse-json("{""a"": 1}")', documentNode, domFacade), { a: 1 }));
 
 	it('can parse json arrays',
-		() => chai.assert.deepEqual(evaluateXPathToArray('parse-json("[1,2,3]")', documentNode, domFacade), [[1], [2], [3]]));
+		() => chai.assert.deepEqual(evaluateXPathToArray('parse-json("[1,2,3]")', documentNode, domFacade), [1, 2, 3]));
 
 	it('can parse json booleans',
 		() => chai.assert.isTrue(evaluateXPathToBoolean('parse-json("true") eq true()', documentNode, domFacade)));

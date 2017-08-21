@@ -201,91 +201,93 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			return ebv.value;
 		}
 
-		case evaluateXPath.STRING_TYPE:
-			if (rawResults.isEmpty()) {
+		case evaluateXPath.STRING_TYPE: {
+			const allValues = rawResults.tryGetAllValues();
+			if (!allValues.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+			}
+			if (!allValues.value.length) {
 				return '';
 			}
 			// Atomize to convert (attribute)nodes to be strings
-			return rawResults.getAllValues().map(value => castToType(atomize(value, dynamicContext), 'xs:string').value).join(' ');
-
-		case evaluateXPath.STRINGS_TYPE:
-			if (rawResults.isEmpty()) {
+			return allValues.value.map(value => castToType(atomize(value, dynamicContext), 'xs:string').value).join(' ');
+		}
+		case evaluateXPath.STRINGS_TYPE: {
+			const allValues = rawResults.tryGetAllValues();
+			if (!allValues.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+			}
+			if (!allValues.value.length) {
 				return [];
 			}
-
 			// Atomize all parts
-			return rawResults.getAllValues().map(function (value) {
+			return allValues.value.map(function (value) {
 				return atomize(value, dynamicContext).value + '';
 			});
+		}
 
 		case evaluateXPath.NUMBER_TYPE: {
-			if (!rawResults.isSingleton()) {
+			const first = rawResults.tryGetFirst();
+			if (!first.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+			}
+			if (!first.value) {
 				return NaN;
 			}
-			/**
-			 * @type {?./selectors/dataTypes/Value}
-			 */
-			const first = rawResults.first();
-			if (!isSubtypeOf(first.type, 'xs:numeric')) {
+			if (!isSubtypeOf(first.value.type, 'xs:numeric')) {
 				return NaN;
 			}
-			return first.value;
+			return first.value.value;
 		}
 
 		case evaluateXPath.FIRST_NODE_TYPE: {
-			if (rawResults.isEmpty()) {
+			const first = rawResults.tryGetFirst();
+			if (!first.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+			}
+			if (!first.value) {
 				return null;
 			}
-
-			/**
-			 * @type {?./selectors/dataTypes/Value}
-			 */
-			const first = rawResults.first();
-			if (!(isSubtypeOf(first.type, 'node()'))) {
+			if (!(isSubtypeOf(first.value.type, 'node()'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
 			}
-			if (isSubtypeOf(first.type, 'attribute()')) {
+			if (isSubtypeOf(first.value.type, 'attribute()')) {
 				throw new Error('XPath can not resolve to attribute nodes');
 			}
-			return first.value;
+			return first.value.value;
 		}
 
 		case evaluateXPath.NODES_TYPE: {
-			if (rawResults.isEmpty()) {
-				return [];
+			const allResults = rawResults.tryGetAllValues();
+			if (!allResults.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
 			}
-			/**
-			 * @type {!Array<!./selectors/dataTypes/Value>}
-			 */
-			const resultArray = rawResults.getAllValues();
-			if (!resultArray.every(function (value) {
+
+			if (!allResults.value.every(function (value) {
 				return isSubtypeOf(value.type, 'node()');
 			})) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a sequence of Nodes.');
 			}
-			if (resultArray.some(function (value) {
+			if (allResults.value.some(function (value) {
 				return isSubtypeOf(value.type, 'attribute()');
 			})) {
 				throw new Error('XPath ' + xpathSelector + ' should not resolve to attribute nodes');
 			}
-			return resultArray.map(function (nodeValue) {
+			return allResults.value.map(function (nodeValue) {
 				return nodeValue.value;
 			});
 		}
 
 		case evaluateXPath.MAP_TYPE: {
-			if (rawResults.isEmpty()) {
-				return {};
+			const allValues = rawResults.tryGetAllValues();
+			if (!allValues.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
 			}
 
-			/**
-			 * @type {?./selectors/dataTypes/Value}
-			 */
-			const first = rawResults.first();
-
-			if (!rawResults.isSingleton()) {
+			if (allValues.value.length !== 1) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single map.');
 			}
+			const first = allValues.value[0];
 			if (!(isSubtypeOf(first.type, 'map(*)'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a map');
 			}
@@ -296,32 +298,38 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			return transformedMap.value;
 		}
 
-		case evaluateXPath.ARRAY_TYPE:
-			if (rawResults.isEmpty()) {
-				return {};
+		case evaluateXPath.ARRAY_TYPE: {
+			const allValues = rawResults.tryGetAllValues();
+			if (!allValues.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
 			}
-			if (!rawResults.isSingleton()) {
+
+			if (allValues.value.length !== 1) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single array.');
 			}
-			if (!isSubtypeOf(rawResults.first().type, 'array(*)')) {
+			const first = allValues.value[0];
+			if (!(isSubtypeOf(first.type, 'array(*)'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to an array');
 			}
-			return rawResults.first().members.map(function (entry) {
-				return entry.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
-					return atomizedValue.value;
-				});
-			});
-
-		case evaluateXPath.NUMBERS_TYPE:
-			if (rawResults.isEmpty()) {
-				return [];
+			const transformedArray = transformArrayToArray(first, dynamicContext).next();
+			if (!transformedArray.ready) {
+				throw new Error('Expected XPath ' + xpathSelector + ' to synchronously resolve to a map');
 			}
-			return rawResults.getAllValues().map(function (value) {
+			return transformedArray.value;
+		}
+
+		case evaluateXPath.NUMBERS_TYPE: {
+			const allValues = rawResults.tryGetAllValues();
+			if (!allValues.ready) {
+				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+			}
+			return allValues.value.map(function (value) {
 				if (!isSubtypeOf(value.type, 'xs:numeric')) {
 					throw new Error('Expected XPath ' + xpathSelector + ' to resolve to numbers');
 				}
 				return value.value;
 			});
+		}
 
 		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
 			/**
@@ -354,33 +362,43 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 					done: true
 				};
 			}
+			if ('asyncIterator' in Symbol) {
+				return {
+					[(/** @type {{asyncIterator:*}} */ (Symbol)).asyncIterator]: function () {
+						return this;
+					},
+					next: () => new Promise(resolve => resolve(getNextResult()))
+				};
+			}
 			return {
-				// [Symbol.asyncIterator]: function () {
-				// 	return this;
-				// },
 				next: () => new Promise(resolve => resolve(getNextResult()))
 			};
 		}
 
-		default:
-			var allValuesAreNodes = rawResults.getAllValues().every(function (value) {
+		default: {
+			const allValues = rawResults.tryGetAllValues();
+			if (!allValues.ready) {
+				throw new Error('The XPath ' + xpathSelector + ' can not be resolved synchronously.');
+			}
+			const allValuesAreNodes = allValues.value.every(function (value) {
 				return isSubtypeOf(value.type, 'node()') &&
 					!(isSubtypeOf(value.type, 'attribute()'));
 				});
 			if (allValuesAreNodes) {
-				if (rawResults.isSingleton()) {
-					return rawResults.first().value;
+				if (allValues.value.length === 1) {
+					return allValues.value[0].value;
 				}
-				return Array.from(rawResults).map(function (nodeValue) {
+				return allValues.value.map(function (nodeValue) {
 					return nodeValue.value;
 				});
 			}
-			if (rawResults.isSingleton()) {
-				return atomize(rawResults.first(), dynamicContext).value;
+			if (allValues.value.length === 1) {
+				return atomize(allValues.value[0], dynamicContext).value;
 			}
-			return rawResults.atomize().getAllValues().map(function (atomizedValue) {
+			return rawResults.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
+		}
 	}
 }
 
