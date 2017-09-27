@@ -3,8 +3,8 @@
 // When it is collected, the Node may be collected too
 // TODO: This must work for all values, and be in a 'static context' of some sort
 /**
- * @const {!Map<!Node, !./Value>}
+ * @const {!WeakMap<!Node, !./Value>}
  */
-const nodeValueCache = new Map();
+const nodeValueCache = new WeakMap();
 
 export default nodeValueCache;
