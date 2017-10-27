@@ -311,6 +311,15 @@ describe('Functions and operators on sequences', () => {
 					], documentNode);
 					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
 				});
+				it('returns true for equal elements with different prefixes for the same uri', () => {
+					const dom = new DOMParser().parseFromString(`
+<xml>
+  <ns1:matrix xmlns:ns1="http://example.com/ns1" frame="all"><ns2:tgroup xmlns:ns2="http://example.com/ns2" cols="1"><ns2:colspec colname="column-0" colnum="1" colwidth="1*" colsep="1" rowsep="1"/><ns2:tbody><ns2:row><ns2:entry colname="column-0" rowsep="1" colsep="1"/></ns2:row></ns2:tbody></ns2:tgroup></ns1:matrix>
+  <matrix xmlns="http://example.com/ns1" frame="all"><tgroup xmlns="http://example.com/ns2" cols="1"><colspec colname="column-0" colnum="1" colwidth="1*" colsep="1" rowsep="1"/><tbody><row><entry colname="column-0" colsep="1" rowsep="1"/></row></tbody></tgroup></matrix>
+</xml>`, 'text/xml');
+
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(/xml/*[1], /xml/*[2])', dom), 'both elements must be equal');
+				});
 
 				// attribute
 				it('returns true for two sequences containing two equal attribute nodes', () => {
