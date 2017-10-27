@@ -297,7 +297,7 @@ describe('Functions and operators on sequences', () => {
 					], documentNode);
 					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement, ./someElement/someUnequalElement)', documentNode));
 				});
-				it('returns true two unequal elements (unequal on contents)', () => {
+				it('returns false two unequal elements (unequal on contents)', () => {
 					jsonMlMapper.parse([
 						'someElement',
 						[
@@ -350,6 +350,63 @@ describe('Functions and operators on sequences', () => {
 					], documentNode);
 					chai.assert.isFalse(evaluateXPathToBoolean('let $attributeNode := ./someElement/someElement/@someAttribute return deep-equal($attributeNode[1], $attributeNode[2])', documentNode));
 				});
+				it('returns false for two unequal elements (unequal on attributes)', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someEqualElement',
+							{ attr1: 'A' }
+						],
+						[
+							'someEqualElement',
+							{ attr1: 'B' }
+						]
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				});
+				it('returns false for two unequal elements (A has more attributes)', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someEqualElement',
+							{ attr1: 'someAttributeValue', attr2: 'hah' }
+						],
+						[
+							'someEqualElement',
+							{ attr1: 'someAttributeValue' }
+						]
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				});
+				it('returns false for two unequal elements (B has more attributes)', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someEqualElement',
+							{ attr1: 'someAttributeValue' }
+						],
+						[
+							'someEqualElement',
+							{ attr1: 'someAttributeValue', attr2: 'hah' }
+						]
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				});
+				it('returns false for two unequal elements (other names)', () => {
+					jsonMlMapper.parse([
+						'someElement',
+						[
+							'someEqualElement',
+							{ AAAA: 'someAttributeValue' }
+						],
+						[
+							'someEqualElement',
+							{ BBBB: 'someAttributeValue' }
+						]
+					], documentNode);
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
+				});
+
 
 				// PI
 				it('returns true for two sequences containing two equal PI\'s', () => {
