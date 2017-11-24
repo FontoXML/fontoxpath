@@ -25,7 +25,7 @@ class PrecedingSiblingAxis extends Selector {
 	 */
 	constructor (siblingSelector) {
 		super(siblingSelector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+			resultOrder: Selector.RESULT_ORDERINGS.REVERSE_SORTED,
 			subtree: false,
 			peer: true,
 			canBeStaticallyEvaluated: false
