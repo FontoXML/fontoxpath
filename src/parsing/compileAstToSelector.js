@@ -468,7 +468,15 @@ function varRef (args) {
 
 // XQuery Node constructors
 function dirElementConstructor (args) {
-	const [[prefix, name], closingQName, attList, contents] = args;
+	const [
+		openingQName,
+		closingQName,
+		attList,
+		contents
+	] = args;
+
+	const prefix = /** @type {string} */ (openingQName[0]);
+	const name = /** @type {string} */ (openingQName[1]);
 	if (closingQName) {
 		// Throw a parsing error if the closingName does not match up
 		const [closingPrefix, closingName] = closingQName;

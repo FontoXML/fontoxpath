@@ -12,7 +12,7 @@ let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string, createSelectorFromXPath: function(string):!./Selector, nodesFactory: !Object}}  context  The context to overlay
+	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string, createSelectorFromXPath: function(string):!./Selector, nodesFactory: !INodesFactory}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -53,6 +53,10 @@ class DynamicContext {
 
 		this.createSelectorFromXPath = context.createSelectorFromXPath;
 
+		/**
+		 * @type {!INodesFactory}
+		 * @const
+		 */
 		this.nodesFactory = context.nodesFactory;
 	}
 
@@ -96,6 +100,7 @@ class DynamicContext {
 
 	/**
 	 * @param {function(string):string?} namespaceResolver
+	 *
 	 * @return {!DynamicContext}
 	 */
 	scopeWithNamespaceResolver (namespaceResolver) {

@@ -1,5 +1,5 @@
 import XPATHPARSER_VERSION from './XPATHPARSER_VERSION';
-import xPathParserRaw from './xPathParser.raw.js';
+import xPathParserRaw from './xPathParser.raw';
 import compileAstToSelector from './compileAstToSelector';
 import createSelectorFromXPath from './createSelectorFromXPath';
 
