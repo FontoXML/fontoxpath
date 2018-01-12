@@ -196,7 +196,10 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			return namespaceResolver(prefix);
 		},
 		// propagate the compiler here
-		createSelectorFromXPath: createSelectorFromXPath
+		createSelectorFromXPath: createSelectorFromXPath,
+		nodesFactory: options.nodesFactory || {
+			createElementNS: contextItem && (contextItem.ownerDocument || contextItem).createElementNS
+		}
 	});
 
 	/**

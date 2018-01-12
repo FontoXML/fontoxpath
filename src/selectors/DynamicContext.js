@@ -12,7 +12,7 @@ let ScopingType;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string, createSelectorFromXPath: function(string):!./Selector}}  context  The context to overlay
+	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string, createSelectorFromXPath: function(string):!./Selector, nodesFactory: !Object}}  context  The context to overlay
 	 */
 	constructor (context) {
 		/**
@@ -52,6 +52,8 @@ class DynamicContext {
 		this.resolveNamespacePrefix = context.resolveNamespacePrefix;
 
 		this.createSelectorFromXPath = context.createSelectorFromXPath;
+
+		this.nodesFactory = context.nodesFactory;
 	}
 
 	/**
@@ -67,7 +69,8 @@ class DynamicContext {
 			domFacade: this.domFacade,
 			variables: Object.assign({}, this.variables, variables),
 			resolveNamespacePrefix: this.resolveNamespacePrefix,
-			createSelectorFromXPath: this.createSelectorFromXPath
+			createSelectorFromXPath: this.createSelectorFromXPath,
+			nodesFactory: this.nodesFactory
 		});
 	}
 
@@ -86,7 +89,26 @@ class DynamicContext {
 			domFacade: this.domFacade,
 			variables: this.variables,
 			resolveNamespacePrefix: this.resolveNamespacePrefix,
-			createSelectorFromXPath: this.createSelectorFromXPath
+			createSelectorFromXPath: this.createSelectorFromXPath,
+			nodesFactory: this.nodesFactory
+		});
+	}
+
+	/**
+	 * @param {function(string):string?} namespaceResolver
+	 * @return {!DynamicContext}
+	 */
+	scopeWithNamespaceResolver (namespaceResolver) {
+		return new DynamicContext({
+			contextItemIndex: this.contextItemIndex,
+			contextItem: this.contextItem,
+			contextSequence: this.contextSequence,
+
+			domFacade: this.domFacade,
+			variables: this.variables,
+			resolveNamespacePrefix: namespaceResolver,
+			createSelectorFromXPath: this.createSelectorFromXPath,
+			nodesFactory: this.nodesFactory
 		});
 	}
 

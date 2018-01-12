@@ -38,6 +38,9 @@ import LetExpression from '../selectors/LetExpression';
 import NamedFunctionRef from '../selectors/NamedFunctionRef';
 import VarRef from '../selectors/VarRef';
 
+import DirElementConstructor from '../selectors/xquery/DirElementConstructor';
+import DirCommentConstructor from '../selectors/xquery/DirCommentConstructor';
+
 import Selector from '../selectors/Selector';
 
 const precompiledAstFragmentsByString = Object.create(null);
@@ -204,6 +207,15 @@ function compile (ast) {
 
 			case 'arrayConstructor':
 				compiledAstFragment = arrayConstructor(args);
+				break;
+
+				// XQuery element constructors
+			case 'DirElementConstructor':
+				compiledAstFragment = dirElementConstructor(args);
+				break;
+
+			case 'DirCommentConstructor':
+				compiledAstFragment = dirCommentConstructor(args);
 				break;
 
 			default:
@@ -451,6 +463,43 @@ function intersectExcept (args) {
 function varRef (args) {
 	const [prefix, namespaceURI, name] = args[0];
 	return new VarRef(prefix, namespaceURI, name);
+}
+
+
+// XQuery Node constructors
+function dirElementConstructor (args) {
+	const [[prefix, name], closingQName, attList, contents] = args;
+	if (closingQName) {
+		// Throw a parsing error if the closingName does not match up
+		const [closingPrefix, closingName] = closingQName;
+
+		if (prefix !== closingPrefix || name !== closingName) {
+			throw new Error('XQST0118: The start and the end tag of an element constructor must be equal');
+		}
+	}
+
+	return new DirElementConstructor(
+		prefix,
+		name,
+		attList.map(([name, val]) => ({
+			name: name,
+			partialValues: val.map(partialValue => {
+				if (typeof partialValue === 'string') {
+					return partialValue;
+				}
+				return compile(partialValue);
+			})
+		})),
+		contents.map(content => {
+			if (typeof content === 'string') {
+				return compile(['literal', content, 'xs:string']);
+			}
+			return compile(content);
+		}));
+}
+
+function dirCommentConstructor (args) {
+	return new DirCommentConstructor(args[0]);
 }
 
 /**
