@@ -50,7 +50,10 @@ function doSelectorsBuild () {
 			],
 			warning_level: 'VERBOSE',
 			compilation_level: 'ADVANCED',
-			externs: path.resolve('./externs/IDomFacade.js'),
+			externs: [
+				path.resolve('./externs/IDomFacade.js'),
+				path.resolve('./externs/INodesFactory.js')
+			],
 			module_resolution: 'NODE',
 			dependency_mode: 'STRICT',
 			output_wrapper: `

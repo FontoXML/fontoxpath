@@ -9,7 +9,7 @@ import Sequence from '../dataTypes/Sequence';
  */
 class DircommentConstructor extends Selector {
 	/**
-	 * @param  {string}  comment
+	 * @param  {string}  contents
 	 */
 	constructor (contents) {
 		super(new Specificity({}), {
@@ -20,6 +20,10 @@ class DircommentConstructor extends Selector {
 		this._contents = contents;
 	}
 
+	/**
+	 * @param  {!../DynamicContext} dynamicContext
+	 * @return {!Sequence}
+	 */
 	evaluate (dynamicContext) {
 		const nodesFactory = dynamicContext.nodesFactory;
 		return Sequence.singleton(createNodeValue(nodesFactory.createComment(this._contents)));

@@ -27,8 +27,8 @@ class DirElementConstructor extends Selector {
 	/**
 	 * @param  {string}  prefix
 	 * @param  {string}  name
-	 * @param  {Array<{name:Array<string>,partialValues:Array<string|Selector>}>}  attributes
-	 * @param  {Array<Selector>}  contents  Strings and enclosed expressions
+	 * @param  {!Array<!{name:!Array<!string>,partialValues:!Array<(!string|!Selector)>}>}  attributes
+	 * @param  {!Array<!Selector>}  contents  Strings and enclosed expressions
 	 */
 	constructor (prefix, name, attributes, contents) {
 		super(new Specificity({}), {
@@ -39,7 +39,14 @@ class DirElementConstructor extends Selector {
 		this._prefix = prefix;
 		this._name = name;
 
+		/**
+		 * @type {!Object<!string, !string>}
+		 */
 		this._namespacesInScope = {};
+
+		/**
+		 * @type {!Array<!{qualifiedName:!{prefix:!string,localPart:!string},partialValues:!Array<(!string|!Selector)>}>}
+		 */
 		this._attributes = [];
 
 		attributes.forEach(({ name, partialValues }) => {
@@ -66,9 +73,14 @@ class DirElementConstructor extends Selector {
 		this._contents = contents;
 	}
 
+	/**
+	 * @param  {!../DynamicContext} dynamicContext
+	 * @return {!Sequence}
+	 */
 	evaluate (dynamicContext) {
-		const nodesFactory = dynamicContext.nodesFactory;
-
+		/**
+		 * @type {!../DynamicContext}
+		 */
 		const dynamicContextWithNamespaces = dynamicContext.scopeWithNamespaceResolver(
 			prefix => {
 				prefix = prefix || '';
@@ -76,6 +88,11 @@ class DirElementConstructor extends Selector {
 					this._namespacesInScope[prefix] :
 					dynamicContext.resolveNamespacePrefix(prefix);
 			});
+
+		/**
+		 * @type INodesFactory
+		 */
+		const nodesFactory = dynamicContext.nodesFactory;
 
 		const attributes = this._attributes.map(({ qualifiedName, partialValues }) => ({
 			qualifiedName,
@@ -154,7 +171,7 @@ class DirElementConstructor extends Selector {
 						element.appendChild(childNode.value.cloneNode(true));
 						return;
 					}
-					const atomizedValue = castToType(atomize(childNode), 'xs:string').value;
+					const atomizedValue = castToType(atomize(childNode, dynamicContextWithNamespaces), 'xs:string').value;
 					element.appendChild(nodesFactory.createTextNode(atomizedValue));
 				});
 
