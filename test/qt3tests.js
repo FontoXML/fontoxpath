@@ -37,6 +37,12 @@ function getFile (fileName) {
 }
 
 function createAsserter (baseUrl, assertNode) {
+	const nodesFactory = {
+		createElementNS: assertNode.ownerDocument.createElementNS.bind(assertNode.ownerDocument),
+		createTextNode: assertNode.ownerDocument.createTextNode.bind(assertNode.ownerDocument),
+		createComment: assertNode.ownerDocument.createComment.bind(assertNode.ownerDocument)
+	};
+
 	switch (assertNode.localName) {
 		case 'all-of': {
 			const asserts = evaluateXPathToNodes('*', assertNode).map(createAsserter.bind(null, baseUrl));
@@ -62,31 +68,31 @@ function createAsserter (baseUrl, assertNode) {
 		case 'error': {
 			const errorCode = evaluateXPathToString('@code', assertNode);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
-				chai.assert.throws(() => evaluateXPathToString(xpath, contextNode, null, variablesInScope, { namespaceResolver }), errorCode, xpath);
+				chai.assert.throws(() => evaluateXPathToString(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), errorCode === '*' ? '' : errorCode, xpath);
 		}
 		case 'assert':
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`let $result := (${xpath}) return ${evaluateXPathToString('.', assertNode)}`, contextNode, null, variablesInScope, { namespaceResolver }), xpath);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`let $result := (${xpath}) return ${evaluateXPathToString('.', assertNode)}`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), xpath);
 		case 'assert-true':
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, { namespaceResolver }), `Expected XPath ${xpath} to resolve to true`);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), `Expected XPath ${xpath} to resolve to true`);
 		case 'assert-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) = (${equalWith})`, contextNode, null, variablesInScope, { namespaceResolver }), `Expected XPath ${xpath} to resolve to ${equalWith}`);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) = (${equalWith})`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), `Expected XPath ${xpath} to resolve to ${equalWith}`);
 		}
 		case 'assert-deep-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`deep-equal((${xpath}), (${equalWith}))`, contextNode, null, variablesInScope, { namespaceResolver }), `Expected XPath ${xpath} to (deep equally) resolve to ${equalWith}`);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`deep-equal((${xpath}), (${equalWith}))`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), `Expected XPath ${xpath} to (deep equally) resolve to ${equalWith}`);
 		}
 		case 'assert-empty':
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) => empty()`, contextNode, null, variablesInScope, { namespaceResolver }), `Expected XPath ${xpath} to resolve to the empty sequence`);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) => empty()`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), `Expected XPath ${xpath} to resolve to the empty sequence`);
 		case 'assert-false':
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isFalse(evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, { namespaceResolver }), `Expected XPath ${xpath} to resolve to false`);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isFalse(evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), `Expected XPath ${xpath} to resolve to false`);
 		case 'assert-count': {
 			const expectedCount = evaluateXPathToNumber('number(.)', assertNode);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.equal(evaluateXPathToNumber(`(${xpath}) => count()`, contextNode, null, variablesInScope, { namespaceResolver }), expectedCount, `Expected ${xpath} to resolve to ${expectedCount}`);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.equal(evaluateXPathToNumber(`(${xpath}) => count()`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), expectedCount, `Expected ${xpath} to resolve to ${expectedCount}`);
 		}
 		case 'assert-type': {
 			const expectedType = evaluateXPathToString('.', assertNode);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) instance of ${expectedType}`, contextNode, null, variablesInScope, { namespaceResolver }), `Expected XPath ${xpath} to resolve to something of type ${expectedType}`);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) instance of ${expectedType}`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), `Expected XPath ${xpath} to resolve to something of type ${expectedType}`);
 		}
 		case 'assert-xml': {
 			let parsedFragment;
@@ -96,15 +102,17 @@ function createAsserter (baseUrl, assertNode) {
 			else {
 				parsedFragment = parser.parseFromString(`<xml>${assertNode.textContent}</xml>`, 'text/xml').documentElement;
 			}
-			const expectedNodes = Array.from(parsedFragment.childNodes).map(node => node.outerHTML);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
-				const result = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope, { namespaceResolver }).map(node => node.outerHTML);
-				chai.assert.deepEqual(result, expectedNodes, `Expected XPath ${xpath} to resolve to the given XML`);
+				const result = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory });
+				chai.assert(evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
+					a: result,
+					b: Array.from(parsedFragment.childNodes)
+				}), `Expected XPath ${xpath} to resolve to the given XML. Expected ${result.map(result=>result.outerHTML).join(' ')} to equal ${parsedFragment.innerHTML}`);
 			};
 		}
 		case 'assert-string-value': {
 			const expectedString = evaluateXPathToString('.', assertNode);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.equal(evaluateXPathToString(`(${xpath})!string() => string-join(" ")`, contextNode, null, variablesInScope, { namespaceResolver }), expectedString, xpath);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.equal(evaluateXPathToString(`(${xpath})!string() => string-join(" ")`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory }), expectedString, xpath);
 		}
 		default:
 			return () => {
@@ -172,7 +180,6 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
      $dependencies/@value = (
        (:"schemaValidation",:)
        "schemaImport",
-       ("XQ10", "XQ30+", "XQ31+", "XQ10+"),
        (:"staticTyping",:)
        (:"serialization",:)
        "infoset-dtd",

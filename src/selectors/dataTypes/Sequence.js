@@ -504,7 +504,7 @@ SingletonSequence.prototype.switchCases = function (cases) {
 	if (cases.singleton) {
 		return /** @type {!Sequence} */ (cases.singleton(this));
 	}
-		return /** @type {!Sequence} */ (cases.default(this));
+	return /** @type {!Sequence} */ (cases.default(this));
 };
 
 

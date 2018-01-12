@@ -5,6 +5,21 @@
 		}
 		return arr.concat(optionalArr);
 	}
+
+	function accumulateDirContents (parts) {
+		if (!parts.length) {
+			return [];
+		}
+		var result = [parts[0]];
+		for (var i = 1; i < parts.length; ++i) {
+			if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
+				result[result.length-1] += parts[i];
+				continue;
+			}
+			result.push(parts[i]);
+		}
+		return result;
+	}
 }
 
 // 1
@@ -288,6 +303,7 @@ PrimaryExpr
  / ParenthesizedExpr
  / ContextItemExpr
  / FunctionCall
+ / NodeConstructor
  / FunctionItemExpr
  / MapConstructor
  / ArrayConstructor
@@ -549,10 +565,12 @@ URIQualifiedName = uri:BracedURILiteral name:NCName {return [uri, name]}
 BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').trim()}
 
 // 119
+// 226 in XQuery
 EscapeQuot
  = "\"\"" {return "\""}
 
 // 120
+// 227 in XQuery
 EscapeApos
  = "''" {return "'"}
 
@@ -577,6 +595,87 @@ Digits
 CommentContents
  = !"(:" !":)" Char
 
+
+
+// XQuery part starts here
+
+// 140
+NodeConstructor
+ = DirectConstructor
+// / ComputedConstructor
+
+// 141
+DirectConstructor
+ = DirElemConstructor
+ / DirCommentConstructor
+// / DirPIConstructor
+
+// 142
+DirElemConstructor
+ = "<" name:QName attList:DirAttributeList endPart:(
+   ("/>" {return null}) /
+   (">" contents:DirElemContent* "</" closingname:QName ExplicitWhitespace? ">" {return [contents, closingname]} ))
+ {return ['DirElementConstructor', name, endPart && endPart[1], attList || [], endPart && accumulateDirContents(endPart[0]) || []]}
+
+// 147
+DirElemContent
+ = _ content:DirectConstructor _ {return content}
+ / _ content:CDataSection _ {return content}
+ / _ content:CommonContent _ {return content}
+ / _ content:ElementContentChar _ {return content}
+
+// 228
+ElementContentChar = ![{}<&] ch:Char {return ch}
+
+// 148
+CommonContent
+= char:PredefinedEntityRef
+ / ref:CharRef
+ / "{{" { return "\u007b" } // PegJS does not like unbalanced curly braces in JS context
+ / "}}"  { return "\u007d" } // PegJS does not like unbalanced curly braces in JS context
+ / EnclosedExpr
+
+// 153
+CDataSection = "<!CDATA[" contents:CDataSectionContents "]]>" {return contents}
+
+// 154
+CDataSectionContents = (!"]]>" ch:Char)*{return ch.join('')}
+
+// 143
+DirAttributeList = attrs:(ExplicitWhitespace attr:(name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue {return [name, value]})?{return attr})* {return attrs.filter(Boolean) || []}
+
+// 144
+DirAttributeValue
+ = '"' chars:(EscapeQuot / QuotAttrValueContent)* '"' {return accumulateDirContents(chars)}
+ / "'" chars:(EscapeApos / AposAttrValueContent)* "'" {return accumulateDirContents(chars)}
+
+// 145
+QuotAttrValueContent = char:QuotAttrValueContentChar / CommonContent
+
+// 146
+AposAttrValueContent = char:AposAttrValueContentChar / CommonContent
+
+// 149
+DirCommentConstructor = "<!--" contents:$DirCommentContents "-->" {return ["DirCommentConstructor", contents]}
+
+// 150
+DirCommentContents = ((!"-" Char) / ("-" (!"-" Char)))*
+
+// 229
+QuotAttrValueContentChar = ![\"{}<&] ch:Char {return ch}
+
+// 230
+AposAttrValueContentChar = ![\'{}<&] ch:Char {return ch}
+
+// 233
+CharRef
+ = '&#x' codePoint:([0-9a-fA-F]+) ';' {return String.fromCodePoint(parseInt(codePoint.join(""), 16))}
+ / '&#' codePoint:([0-9]+) ';' {return String.fromCodePoint(parseInt(codePoint.join(""), 10))}
+
+// 225
+PredefinedEntityRef
+ = "&" char:( "lt" {return "<"} / "gt" {return ">"} / "amp" {return "&"} / "quot" {return "\""} / "apos" {return "'"} ) ";" {return char}
+
 // XML types
 PrefixedName = prefix:Prefix ":" local:LocalPart {return [prefix, local]}
 
@@ -596,6 +695,9 @@ _
 
 S
  = WhitespaceCharacter+
+
+ExplicitWhitespace
+ = ("\u0020" / "\u0009" / "\u000D" / "\u000A")+
 
 WhitespaceCharacter
  = "\u0020" / "\u0009" / "\u000D" / "\u000A"
