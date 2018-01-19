@@ -321,6 +321,11 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(/xml/*[1], /xml/*[2])', dom), 'both elements must be equal');
 				});
 
+				// Constructed elements
+				it('returns true for two elements which are equal', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('<a> </a> => deep-equal((<a/>))', documentNode));
+				});
+
 				// attribute
 				it('returns true for two sequences containing two equal attribute nodes', () => {
 					jsonMlMapper.parse([

@@ -3,7 +3,8 @@ import * as slimdom from 'slimdom';
 import {
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
-	evaluateXPathToNumber
+	evaluateXPathToNumber,
+	evaluateXPathToNumbers
 } from 'fontoxpath';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
@@ -255,5 +256,32 @@ describe('cast as', () => {
 	describe('to xs:dayTimeDuration', () => {
 		it('from xs:yearMonthDuration',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('xs:string(xs:dayTimeDuration(xs:yearMonthDuration("-P543Y456M"))) eq "PT0S"')));
+	});
+
+	describe('from nodes', () => {
+		it('can cast from nodes to doubles', () => {
+			chai.assert.deepEqual(evaluateXPathToNumbers(
+				`let $ex :=
+   <bla><n> -2 </n>
+      <n> -3.0e5 </n>
+      <n> +2345.6e0 </n>
+      <n>
+         +5678e0
+      </n>
+      <n>
+         1.2345e4
+      </n>
+      <n>
+         5.6789e+4
+      </n>
+      <n>
+         INF
+      </n>
+   </bla>
+   return
+   $ex//n[.>1000] ! xs:double(.)`,
+				new slimdom.Document()
+			), [2345.6, 5678, 12345, 56789, Infinity]);
+		});
 	});
 });

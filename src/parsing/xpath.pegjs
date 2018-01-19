@@ -608,7 +608,7 @@ NodeConstructor
 DirectConstructor
  = DirElemConstructor
  / DirCommentConstructor
-// / DirPIConstructor
+ / DirPIConstructor
 
 // 142
 DirElemConstructor
@@ -619,10 +619,10 @@ DirElemConstructor
 
 // 147
 DirElemContent
- = _ content:DirectConstructor _ {return content}
- / _ content:CDataSection _ {return content}
- / _ content:CommonContent _ {return content}
- / _ content:ElementContentChar _ {return content}
+ =  content:DirectConstructor {return content}
+ /  content:CDataSection {return content}
+ /  content:CommonContent {return content}
+ /  content:ElementContentChar {return content}
 
 // 228
 ElementContentChar = ![{}<&] ch:Char {return ch}
@@ -661,6 +661,12 @@ DirCommentConstructor = "<!--" contents:$DirCommentContents "-->" {return ["DirC
 // 150
 DirCommentContents = ((!"-" Char) / ("-" (!"-" Char)))*
 
+// 151
+DirPIConstructor = "<?" target:$PITarget contents:(ExplicitWhitespace contents:$DirPIContents {return contents})? "?>" {return ["DirPIConstructor", target, contents || ""]}
+
+// 152
+DirPIContents = (!"?>" Char)*
+
 // 229
 QuotAttrValueContentChar = ![\"{}<&] ch:Char {return ch}
 
@@ -669,12 +675,15 @@ AposAttrValueContentChar = ![\'{}<&] ch:Char {return ch}
 
 // 233
 CharRef
- = '&#x' codePoint:([0-9a-fA-F]+) ';' {return String.fromCodePoint(parseInt(codePoint.join(""), 16))}
- / '&#' codePoint:([0-9]+) ';' {return String.fromCodePoint(parseInt(codePoint.join(""), 10))}
+ = $('&#x' codePoint:([0-9a-fA-F]+) ';')
+ / $('&#' codePoint:([0-9]+) ';')
 
 // 225
 PredefinedEntityRef
- = "&" char:( "lt" {return "<"} / "gt" {return ">"} / "amp" {return "&"} / "quot" {return "\""} / "apos" {return "'"} ) ";" {return char}
+ = $("&" ("lt"/"gt"/"amp"/"quot"/"apos") ";")
+
+// 232
+PITarget = !(("X"/"x")("M"/"m")("L"/"l")) Name
 
 // XML types
 PrefixedName = prefix:Prefix ":" local:LocalPart {return [prefix, local]}
@@ -688,6 +697,12 @@ Prefix = NCName
 NCNameStartChar = [A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD] / [\uD800-\uDB7F][\uDC00-\uDFFF]
 
 NCNameChar = NCNameStartChar / [\-\.0-9\xB7\u0300-\u036F\u203F\u2040]
+
+NameChar = NCNameChar / ":"
+
+NameStartChar = NCNameStartChar / ":"
+
+Name = $(NameStartChar (NameChar)*)
 
 // Whitespace Note: https://www.w3.org/TR/REC-xml/#NT-S
 _

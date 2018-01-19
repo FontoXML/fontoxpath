@@ -61,7 +61,6 @@ class DirElementConstructor extends Selector {
 				return;
 			}
 
-
 			const namespaceURI = getAttributeValueForNamespaceDeclaration(partialValues);
 			const namespacePrefix = name[0] === 'xmlns' ? name[1] : '';
 			if (namespacePrefix in this._namespacesInScope) {
@@ -132,6 +131,7 @@ class DirElementConstructor extends Selector {
 				}
 
 				if (!childNodesPhaseDone) {
+					// Accumulate all children
 					childNodesSequences = concatSequences(this._contents.map(contentSelector => contentSelector.evaluate(dynamicContextWithNamespaces)));
 					childNodesPhaseDone = true;
 				}
@@ -145,6 +145,7 @@ class DirElementConstructor extends Selector {
 
 				const element = nodesFactory.createElementNS(elementNamespaceURI, this._prefix ? this._prefix + ':' + this._name : this._name);
 
+				// Plonk all attribute on the element
 				attributes.forEach(attr => {
 					const attrName = attr.qualifiedName.prefix ? attr.qualifiedName.prefix + ':' + attr.qualifiedName.localPart : attr.qualifiedName.localPart;
 					const attributeNamespaceURI = attr.qualifiedName.prefix ? dynamicContextWithNamespaces.resolveNamespacePrefix(attr.qualifiedName.prefix) : null;
@@ -154,8 +155,10 @@ class DirElementConstructor extends Selector {
 					element.setAttributeNS(attributeNamespaceURI, attrName, attr.value);
 				});
 
+				// Plonk all childNodes, these are special though
 				allChildNodesItrResult.value.forEach(childNode => {
 					if (isSubtypeOf(childNode.type, 'attribute()')) {
+						// The contents may include attributes, 'clone' them and set them on the element
 						if (element.hasAttributeNS(childNode.value.namespaceURI, childNode.value.localName)) {
 							throw new Error(`XQST0040: The attribute ${childNode.value.name} is already present on a constructed element.`);
 						}
@@ -168,9 +171,12 @@ class DirElementConstructor extends Selector {
 					}
 
 					if (isSubtypeOf(childNode.type, 'node()')) {
+						// Deep clone child elemenets
+						// TODO: skip copy if the childNode has already been created in the expression
 						element.appendChild(childNode.value.cloneNode(true));
 						return;
 					}
+					// TODO: Whitespace handling...
 					const atomizedValue = castToType(atomize(childNode, dynamicContextWithNamespaces), 'xs:string').value;
 					element.appendChild(nodesFactory.createTextNode(atomizedValue));
 				});

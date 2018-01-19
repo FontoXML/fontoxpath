@@ -130,6 +130,14 @@ function createDefaultNamespaceResolver (contextItem) {
 }
 
 /**
+ * @typedef {{
+ *   namespaceResolver: ?function(string):string?,
+ *   nodesFactory: INodesFactory?
+ * }}
+ */
+let Options;
+
+/**
  * Evaluates an XPath on the given contextItem.
  * If the return type is ANY_TYPE, the returned value depends on the result of the XPath:
  *  * If the XPath evaluates to the empty sequence, an empty array is returned.
@@ -143,11 +151,11 @@ function createDefaultNamespaceResolver (contextItem) {
  * @param  {?IDomFacade=}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number, string, boolean, nodes or object literals and arrays.
  * @param  {?number=}      returnType     One of the return types, indicates the expected type of the XPath query.
- * @param  {?{namespaceResolver: ?function(string):string?}=}      options        Extra options for evaluating this XPath
+ * @param  {?Options=}     options        Extra options for evaluating this XPath
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
-function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null }) {
+function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null }) {
 	if (!xpathSelector || typeof xpathSelector !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathSelector must be a string.');
 	}
@@ -181,6 +189,37 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		}, Object.create(null));
 
 	/**
+	 * @type {INodesFactory}
+	 */
+	let nodesFactory = options['nodesFactory'];
+	if (!nodesFactory) {
+		if (contextItem && 'nodeType' in contextItem) {
+			nodesFactory = {
+				createElementNS: contextItem && (contextItem.ownerDocument || contextItem).createElementNS.bind(contextItem.ownerDocument || contextItem),
+				createTextNode: contextItem && (contextItem.ownerDocument || contextItem).createTextNode.bind(contextItem.ownerDocument || contextItem),
+				createComment: contextItem && (contextItem.ownerDocument || contextItem).createComment.bind(contextItem.ownerDocument || contextItem),
+				createProcessingInstruction: contextItem && (contextItem.ownerDocument || contextItem).createProcessingInstruction.bind(contextItem.ownerDocument || contextItem)
+			};
+		}
+		else {
+			nodesFactory = {
+				createElementNS: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				},
+				createTextNode: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				},
+				createComment: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				},
+				createProcessingInstruction: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				}
+			};
+		}
+	}
+
+	/**
 	 * @type {!DynamicContext}
 	 */
 	const dynamicContext = new DynamicContext({
@@ -197,9 +236,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		},
 		// propagate the compiler here
 		createSelectorFromXPath: createSelectorFromXPath,
-		nodesFactory: options.nodesFactory || {
-			createElementNS: contextItem && (contextItem.ownerDocument || contextItem).createElementNS
-		}
+		nodesFactory: nodesFactory
 	});
 
 	/**

@@ -53,9 +53,11 @@ describe('unary operators', () => {
 	it('resolves to NaN passed a boolean',
 		() => chai.assert.isNaN(evaluateXPathToNumber('+true()', documentNode)));
 
-	it('resolves to NaN passed a node',
-		() => chai.assert.isNaN(evaluateXPathToNumber('+.', documentNode)));
+	it('resolves to the empty sequence when passed the empty sequence',
+		() => chai.assert.isTrue(evaluateXPathToBoolean('-() => empty()', documentNode)));
 
-	it('resolves to NaN passed the empty sequence',
-		() => chai.assert.isNaN(evaluateXPathToNumber('-()', documentNode)));
+	it('accepts untyped atomics for "-"',
+		() => chai.assert.equal(evaluateXPathToNumber('-<a>1</a>', documentNode), -1));
+	it('accepts untyped atomics for "+"',
+		() => chai.assert.equal(evaluateXPathToNumber('+<a>1</a>', documentNode), 1));
 });

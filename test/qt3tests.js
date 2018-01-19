@@ -7,7 +7,7 @@ const {
 	evaluateXPathToString
 } = require('fontoxpath');
 
-const context = require.context('text-loader!assets', true, /\.xml|\.out$/);
+const context = require.context('text-loader!assets/', true, /\.xq|\.xml|\.out$/);
 const parser = new DOMParser();
 
 const instantiatedDocumentByAbsolutePath = Object.create(null);
@@ -32,6 +32,9 @@ function getFile (fileName) {
 		return instantiatedDocumentByAbsolutePath[fileName] = documentFragment;
 
 	}
+	if (fileName.includes('.xq')) {
+		return content;
+	}
 	return instantiatedDocumentByAbsolutePath[fileName] =
 		parser.parseFromString(content, 'text/xml');
 }
@@ -40,7 +43,8 @@ function createAsserter (baseUrl, assertNode) {
 	const nodesFactory = {
 		createElementNS: assertNode.ownerDocument.createElementNS.bind(assertNode.ownerDocument),
 		createTextNode: assertNode.ownerDocument.createTextNode.bind(assertNode.ownerDocument),
-		createComment: assertNode.ownerDocument.createComment.bind(assertNode.ownerDocument)
+		createComment: assertNode.ownerDocument.createComment.bind(assertNode.ownerDocument),
+		createProcessingInstruction: assertNode.ownerDocument.createProcessingInstruction.bind(assertNode.ownerDocument)
 	};
 
 	switch (assertNode.localName) {
@@ -210,8 +214,16 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 					continue;
 				}
 
-				const testQuery = evaluateXPathToString('./test', testCase);
 				const baseUrl = testSetFileName.substr(0, testSetFileName.lastIndexOf('/'));
+
+				let testQuery;
+				if (evaluateXPathToBoolean('./test/@file', testCase)) {
+					testQuery = getFile(
+						evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, { baseUrl }));
+				}
+				else {
+					testQuery = evaluateXPathToString('./test', testCase);
+				}
 				const asserter = getAsserterForTest(baseUrl, testCase);
 				const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
 

@@ -58,7 +58,7 @@ class Compare extends Selector {
 					const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
 					const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
 
-					if (this._compare === 'valueCompare')
+					if (this._compare === 'valueCompare') {
 						return firstAtomizedSequence.switchCases({
 							singleton: () => secondAtomizedSequence.switchCases({
 								singleton: () => firstAtomizedSequence.mapAll(
@@ -70,13 +70,14 @@ class Compare extends Selector {
 											Sequence.singletonTrueSequence() :
 											Sequence.singletonFalseSequence())),
 								default: (() => {
-									throw new Error('XPTY0004: Sequences to comapre are not singleton.');
+									throw new Error('XPTY0004: Sequences to compare are not singleton.');
 								})
 							}),
 							default: (() => {
-								throw new Error('XPTY0004: Sequences to comapre are not singleton.');
+								throw new Error('XPTY0004: Sequences to compare are not singleton.');
 							})
 						});
+					}
 					// Only generalCompare left
 					return generalCompare(this._operator, firstAtomizedSequence, secondAtomizedSequence);
 				}

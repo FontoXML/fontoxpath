@@ -120,7 +120,7 @@ function fnString (dynamicContext, sequence) {
 function fnStringJoin (_dynamicContext, sequence, separator) {
 	return zipSingleton([separator], ([separatorString]) => sequence.mapAll(
 		allStrings => {
-			const joinedString = allStrings.map(stringValue => stringValue.value).join(separatorString.value);
+			const joinedString = allStrings.map(stringValue => castToType(stringValue, 'xs:string').value).join(separatorString.value);
 			return Sequence.singleton(createAtomicValue(joinedString, 'xs:string'));
 		}));
 }
@@ -331,7 +331,7 @@ export default {
 
 		{
 			name: 'string-join',
-			argumentTypes: ['xs:string*', 'xs:string'],
+			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:string',
 			callFunction: fnStringJoin
 		},
