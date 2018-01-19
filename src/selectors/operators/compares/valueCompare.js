@@ -45,7 +45,8 @@ function generateCompareFunction (operator, typeA, typeB) {
 		throw new Error('XPTY0004: Only the "eq" and "ne" comparison is defined for xs:QName');
 	}
 	else if (typeA !== typeB) {
-		if (!bothAreStringOrAnyURI(typeA, typeB) && !(isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric'))) {
+		if (!bothAreStringOrAnyURI(typeA, typeB)
+			&& !(isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric'))) {
 			throw new Error('XPTY0004: Values to compare are not of the same type');
 		}
 	}

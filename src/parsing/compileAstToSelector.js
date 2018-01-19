@@ -40,10 +40,36 @@ import VarRef from '../selectors/VarRef';
 
 import DirElementConstructor from '../selectors/xquery/DirElementConstructor';
 import DirCommentConstructor from '../selectors/xquery/DirCommentConstructor';
-
-import Selector from '../selectors/Selector';
+import DirPIConstructor from '../selectors/xquery/DirPIConstructor';
 
 const precompiledAstFragmentsByString = Object.create(null);
+
+function parseCharacterReferences (input) {
+	return input
+		.replace(/(&[^;]+);/g, match => {
+			// TODO: validate whether we have a valid codepoint
+			if (/^&#x/.test(match)) {
+				return String.fromCodePoint(parseInt(match.slice(3, -1), 16));
+			}
+			if (/^&#/.test(match)) {
+				return String.fromCodePoint(parseInt(match.slice(2, -1), 10));
+			}
+			switch (match) {
+				case '&lt;':
+					return '<';
+				case '&gt;':
+					return '>';
+				case '&amp;':
+					return '&';
+				case '&quot;':
+					return '"';
+				case '&apos;':
+					return '\'';
+			}
+
+			throw new Error('XPST0003: Unknown character reference: "' + match + '"');
+		});
+}
 
 // Basic and incomplete implementation of single steps as defined in XPATH 1.0 (http://www.w3.org/TR/xpath/)
 // Only single steps are allowed, because that's what selectors offer. Anyway: all paths have synonyms as (nested) predicates.
@@ -57,7 +83,7 @@ const precompiledAstFragmentsByString = Object.create(null);
 //  * variables
 /**
  * @param  {!Array<?>}  ast
- * @return {!Selector}
+ * @return {!../selectors/Selector}
  */
 function compile (ast) {
 	const stringifiedAstFragment = JSON.stringify(ast);
@@ -216,6 +242,10 @@ function compile (ast) {
 
 			case 'DirCommentConstructor':
 				compiledAstFragment = dirCommentConstructor(args);
+				break;
+
+			case 'DirPIConstructor':
+				compiledAstFragment = dirPIConstructor(args);
 				break;
 
 			default:
@@ -468,12 +498,16 @@ function varRef (args) {
 
 // XQuery Node constructors
 function dirElementConstructor (args) {
-	const [
-		openingQName,
-		closingQName,
-		attList,
-		contents
-	] = args;
+	const openingQName = args[0];
+	const closingQName = args[1];
+	/**
+	 * @type {!Array<string|!Array>}
+	 */
+	const attList = args[2];
+	/**
+	 * @type {!Array<string|!Array>}
+	 */
+	const contents = args[3];
 
 	const prefix = /** @type {string} */ (openingQName[0]);
 	const name = /** @type {string} */ (openingQName[1]);
@@ -493,26 +527,40 @@ function dirElementConstructor (args) {
 			name: name,
 			partialValues: val.map(partialValue => {
 				if (typeof partialValue === 'string') {
-					return partialValue;
+					return parseCharacterReferences(partialValue);
 				}
 				return compile(partialValue);
 			})
 		})),
-		contents.map(content => {
+		contents.reduce((mappedContents, content, i) => {
 			if (typeof content === 'string') {
-				return compile(['literal', content, 'xs:string']);
+				if (i === 0 || typeof contents[i - 1] !== 'string') {
+					content = content.trimLeft();
+				}
+				if (i === contents.length - 1 || typeof contents[i + 1] !== 'string') {
+					content = content.trimRight();
+				}
+				if (content.length !== 0) {
+					mappedContents.push(compile(['literal', parseCharacterReferences(content), 'xs:string']));
+				}
+				return mappedContents;
 			}
-			return compile(content);
-		}));
+			mappedContents.push(compile(content));
+			return mappedContents;
+		}, []));
 }
 
 function dirCommentConstructor (args) {
 	return new DirCommentConstructor(args[0]);
 }
 
+function dirPIConstructor (args) {
+	return new DirPIConstructor(args[0], args[1]);
+}
+
 /**
  * @param   {!Array<?>}  xPathAst
- * @return  {!Selector}
+ * @return  {!../selectors/Selector}
  */
 export default function parseSelectorAsync (xPathAst) {
     return compile(xPathAst);
