@@ -10,15 +10,16 @@ class NameTest extends TestAbstractExpression {
 	 * @param  {?string}  prefix
 	 * @param  {?string}  namespaceURI
 	 * @param  {string}   localName
+	 * @param  {{kind: ?number}} [options=]
 	 */
-	constructor (prefix, namespaceURI, localName) {
-		var specificity = {
-				[Specificity.NODENAME_KIND]: 1
-			};
-		if (localName === '*') {
-			specificity = {
-				[Specificity.NODETYPE_KIND]: 1
-			};
+	constructor (prefix, namespaceURI, localName, options = { kind: null }) {
+		const specificity = {};
+
+		if (localName !== '*') {
+			specificity[Specificity.NODENAME_KIND] = 1;
+		}
+		if (options.kind !== null) {
+			specificity[Specificity.NODETYPE_KIND] = 1;
 		}
 		super(new Specificity(specificity));
 
@@ -26,12 +27,16 @@ class NameTest extends TestAbstractExpression {
 		this._namespaceURI = namespaceURI;
 		this._prefix = prefix;
 
+		this._kind = options.kind;
 	}
 
 	evaluateToBoolean (dynamicContext, node) {
 		const nodeIsElement = isSubtypeOf(node.type, 'element()');
 		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');
 		if (!nodeIsElement && !nodeIsAttribute) {
+			return false;
+		}
+		if (this._kind !== null && ((this._kind === 1 && !nodeIsElement) || this._kind === 2 && !nodeIsAttribute)) {
 			return false;
 		}
 		// Easy cases first
@@ -78,8 +83,10 @@ class NameTest extends TestAbstractExpression {
 
 	getBucket () {
 		if (this._localName === '*') {
-			// While * is a test matching attributes or elements, buckets are never used to match nodes.
-			return 'type-1';
+			if (this._kind === null) {
+				return null;
+			}
+			return `type-${this._kind}`;
 		}
 		return 'name-' + this._localName;
 	}

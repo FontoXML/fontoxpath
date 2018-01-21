@@ -354,7 +354,7 @@ function kindTest (args) {
 			return new TypeTest(null, null, 'node()');
 		case 'element()':
 			if (args.length === 2) {
-				return new NameTest(args[1]);
+				return new NameTest(args[1][0], args[1][1], args[1][2], { kind: 1 });
 			}
 
 			if (args.length > 2) {
@@ -373,7 +373,16 @@ function kindTest (args) {
 			return new KindTest(8);
 		case 'document-node()':
 			return new KindTest(9);
+		case 'attribute()':
+			if (args.length === 2) {
+				return new NameTest(args[1][0], args[1][1], args[1][2], { kind: 2 });
+			}
 
+			if (args.length > 2) {
+				throw new Error('attribute() with more than 1 argument is not supported.');
+			}
+
+			return new KindTest(2);
 		default:
 			throw new Error('Unrecognized nodeType: ' + args[0]);
 	}

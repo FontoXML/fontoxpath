@@ -2816,7 +2816,6 @@ named-function-ref-reserved-function-names-013,AssertionError: expected [Functio
 named-function-ref-reserved-function-names-014,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'XPST0017: Function switch with arity of 0 not registered. No similar functions found.'
 named-function-ref-reserved-function-names-017,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'XPST0017: Function array with arity of 0 not registered. No similar functions found.'
 named-function-ref-reserved-function-names-018,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'XPST0017: Function map with arity of 0 not registered. Did you mean "max (xs:anyAtomicType*)" or "max (xs:anyAtomicType*, xs:string)"?'
-NodeTest005,AssertionError: Expected XPath /*/. to resolve to something of type element(Root): expected false to be true
 K2-NameTest-11,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPDY0002: context is absent, it needs to be present to use axes.'
 K2-NameTest-35,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'No selector counterpart for: u.'
 K2-NameTest-36,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'No selector counterpart for: u.'
@@ -2831,7 +2830,7 @@ K2-NameTest-46,AssertionError: expected [Function] to throw error including 'XPS
 K2-NodeTest-19,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'XPDY0002: context is absent, it needs to be present to use axes.'
 K2-NodeTest-22,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPDY0002: context is absent, it needs to be present to use axes.'
 K2-NodeTest-23,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPDY0002: context is absent, it needs to be present to use axes.'
-K2-NodeTest-24,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'Unrecognized nodeType: attribute()'
+K2-NodeTest-24,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPDY0002: context is absent, it needs to be present to use axes.'
 K2-NodeTest-25,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPDY0002: context is absent, it needs to be present to use axes.'
 K2-NodeTest-26,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'No selector counterpart for: u.'
 K2-NodeTest-27,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'No selector counterpart for: u.'

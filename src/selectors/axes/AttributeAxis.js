@@ -55,5 +55,10 @@ class AttributeAxis extends Selector {
 			.filter(item => this._attributeTestSelector.evaluateToBoolean(dynamicContext, item));
 		return new Sequence(matchingAttributes);
 	}
+
+	getBucket () {
+		// The attribute axis is a non-empty sequence for only elements
+		return 'type-1';
+	}
 }
 export default AttributeAxis;
