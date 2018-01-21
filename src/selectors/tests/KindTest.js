@@ -13,7 +13,6 @@ class KindTest extends TestAbstractExpression {
 		}));
 
 		this._nodeType = nodeType;
-
 	}
 
 	evaluateToBoolean (_dynamicContext, node) {
