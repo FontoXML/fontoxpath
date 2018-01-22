@@ -2,7 +2,6 @@ import Selector from '../Selector';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
-import AttributeNode from '../dataTypes/AttributeNode';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 /**
@@ -51,7 +50,7 @@ class AttributeAxis extends Selector {
 		// but does not include namespace declarations (because they are not attributes).
 		const matchingAttributes = domFacade.getAllAttributes(contextItem.value)
 			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
-			.map(attribute => createNodeValue(new AttributeNode(contextItem.value, attribute)))
+			.map(attribute => createNodeValue(attribute))
 			.filter(item => this._attributeTestSelector.evaluateToBoolean(dynamicContext, item));
 		return new Sequence(matchingAttributes);
 	}

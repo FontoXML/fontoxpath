@@ -6,6 +6,9 @@ function ReadOnlyDomFacade () {
 }
 
 ReadOnlyDomFacade.prototype.getParentNode = (node) => {
+	if (node.nodeType === 2) {
+		return /** @type {!Attr} */(node).ownerElement;
+	}
 	return node.parentNode;
 };
 
@@ -36,10 +39,17 @@ ReadOnlyDomFacade.prototype.getChildNodes = function (node) {
 };
 
 ReadOnlyDomFacade.prototype.getAttribute = function (node, attributeName) {
+	if (node.nodeType === 2) {
+		return null;
+	}
 	return node.getAttribute(attributeName);
 };
 
 ReadOnlyDomFacade.prototype.getAllAttributes = function (node) {
+	if (node.nodeType === 2) {
+		return [];
+	}
+
 	return Array.from(/** @type {!Iterable<Attr>} */ (node.attributes));
 };
 

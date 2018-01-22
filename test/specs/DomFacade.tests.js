@@ -4,8 +4,6 @@ import DomFacade from 'fontoxpath/DomFacade';
 import { domFacade as adaptingDomFacade } from 'fontoxpath';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import AttributeNode from 'fontoxpath/selectors/dataTypes/AttributeNode';
-
 describe('DomFacade', () => {
 	let documentNode;
 	let domFacade;
@@ -22,9 +20,7 @@ describe('DomFacade', () => {
 			['someChildElement']
 		], documentNode);
 
-		attributeNode = new AttributeNode(
-			documentNode.documentElement,
-			documentNode.documentElement.getAttributeNode('someAttribute'));
+		attributeNode = documentNode.documentElement.getAttributeNode('someAttribute');
 		domFacade = new DomFacade(adaptingDomFacade);
 	});
 

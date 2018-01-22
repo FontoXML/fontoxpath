@@ -21,9 +21,6 @@ function isAttributeNode (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getParentNode = function (node) {
-	if (isAttributeNode(node)) {
-		return node.parentNode;
-	}
 	return this._domFacade.getParentNode(node);
 };
 
@@ -32,9 +29,6 @@ DomFacade.prototype.getParentNode = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getFirstChild = function (node) {
-	if (isAttributeNode(node)) {
-		return null;
-	}
 	return this._domFacade.getFirstChild(node);
 };
 
@@ -43,10 +37,6 @@ DomFacade.prototype.getFirstChild = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getLastChild = function (node) {
-	if (isAttributeNode(node)) {
-		return null;
-	}
-
 	return this._domFacade.getLastChild(node);
 };
 
@@ -55,10 +45,6 @@ DomFacade.prototype.getLastChild = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getNextSibling = function (node) {
-	if (isAttributeNode(node)) {
-		return null;
-	}
-
 	return this._domFacade.getNextSibling(node);
 };
 
@@ -67,10 +53,6 @@ DomFacade.prototype.getNextSibling = function (node) {
  * @return  {?Node}
  */
 DomFacade.prototype.getPreviousSibling = function (node) {
-	if (isAttributeNode(node)) {
-		return null;
-	}
-
 	return this._domFacade.getPreviousSibling(node);
 };
 
@@ -79,10 +61,6 @@ DomFacade.prototype.getPreviousSibling = function (node) {
  * @return  {!Array<!Node>}
  */
 DomFacade.prototype.getChildNodes = function (node) {
-	if (isAttributeNode(node)) {
-		return [];
-	}
-
 	var childNodes = [];
 
 	for (var childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
@@ -93,10 +71,6 @@ DomFacade.prototype.getChildNodes = function (node) {
 };
 
 DomFacade.prototype.getAttribute = function (node, attributeName) {
-	if (isAttributeNode(node)) {
-		return null;
-	}
-
 	var value = this._domFacade.getAttribute(node, attributeName);
 	if (!value) {
 		return null;
@@ -105,16 +79,12 @@ DomFacade.prototype.getAttribute = function (node, attributeName) {
 };
 
 DomFacade.prototype.getAllAttributes = function (node) {
-	if (isAttributeNode(node)) {
-		return [];
-	}
-
 	return this._domFacade.getAllAttributes(node);
 };
 
 DomFacade.prototype.getData = function (node) {
 	if (isAttributeNode(node)) {
-		return /** @type {!./selectors/dataTypes/AttributeNode.default} */(node).value;
+		return /** @type {!Attr} */(node).value;
 	}
 
 	return this._domFacade.getData(node) || '';
