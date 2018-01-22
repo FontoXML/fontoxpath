@@ -454,7 +454,7 @@ AttributeTest
  / "attribute()" {return ["kindTest", "attribute()"]}
 
 // 91
-AttribNameOrWildCard = AttributeName / "*"
+AttribNameOrWildCard = AttributeName / ("*" {return ["*", null, "*"]})
 
 // 92
 SchemaAttributeTest
@@ -470,7 +470,7 @@ ElementTest
  / "element" _ "(" _ ")" {return ["kindTest", "element()"]}
 
 // 95
-ElementNameOrWildCard = ElementName / "*"
+ElementNameOrWildCard = ElementName / ("*" {return ["*", null, "*"]})
 
 // 96
 SchemaElementTest = "schema-element(" ElementDeclaration ")"
