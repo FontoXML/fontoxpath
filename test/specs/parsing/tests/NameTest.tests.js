@@ -1,6 +1,7 @@
 import * as slimdom from 'slimdom';
 
 import {
+	getBucketForSelector,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode
 } from 'fontoxpath';
@@ -54,9 +55,29 @@ describe('nameTests', () => {
 		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}someElement', elementWithNamespace), null, 'Empty namespace should not match non-absent namespace.');
 	});
 
-
 	it('throws when seeing undeclared prefixes', () => {
 		documentNode.appendChild(documentNode.createElement('someElement'));
 		chai.assert.throws(() => evaluateXPathToBoolean('//someNonExistingNS:*', documentNode), 'XPST0081');
+	});
+
+	describe('bucketing', () => {
+		it('returns null if the selector is "self::*"', () => {
+			chai.assert.isNull(getBucketForSelector('self::*'));
+		});
+		it('returns null if the selector is "self::*[@attr]"', () => {
+			chai.assert.isNull(getBucketForSelector('self::*[@attr]'));
+		});
+		it('returns type-1 if the selector is "self::element(*)"', () => {
+			chai.assert.equal(getBucketForSelector('self::element(*)'), 'type-1');
+		});
+		it('returns name-xxx if the selector is "self::element(xxx)"', () => {
+			chai.assert.equal(getBucketForSelector('self::element(xxx)'), 'name-xxx');
+		});
+		it('returns type-2 if the selector is "self::attribute(*)"', () => {
+			chai.assert.equal(getBucketForSelector('self::attribute(*)'), 'type-2');
+		});
+		it('returns name-xxx if the selector is "self::attribute(xxx)"', () => {
+			chai.assert.equal(getBucketForSelector('self::attribute(xxx)'), 'name-xxx');
+		});
 	});
 });
