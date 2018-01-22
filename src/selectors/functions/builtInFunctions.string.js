@@ -106,14 +106,10 @@ function fnString (dynamicContext, sequence) {
 		empty: () => Sequence.singleton(createAtomicValue('', 'xs:string')),
 		default: () => sequence.map(value => {
 			if (isSubtypeOf(value.type, 'node()')) {
-				let stringValue;
+				const stringValue = atomize(value, dynamicContext);
 				if (isSubtypeOf(value.type, 'attribute()')) {
-					stringValue = value.value.getStringValue(dynamicContext);
+					return castToType(stringValue, 'xs:string');
 				}
-				else {
-					stringValue = atomize(value, dynamicContext);
-				}
-
 				return stringValue;
 			}
 			return castToType(value, 'xs:string');

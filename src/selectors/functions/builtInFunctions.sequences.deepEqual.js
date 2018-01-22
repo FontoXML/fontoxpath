@@ -1,7 +1,6 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
-import AttributeNode from '../dataTypes/AttributeNode';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import builtInFunctionsNode from './builtInFunctions.node';
@@ -214,13 +213,11 @@ function elementNodeDeepEqual (dynamicContext, item1, item2) {
 	const attributes1 = dynamicContext.domFacade.getAllAttributes(item1.value)
 		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 		.sort((attrA, attrB) => attrA.name > attrB.name ? 1 : -1)
-		.map(attr => new AttributeNode(item1.value, attr))
 		.map(attr => createNodeValue(attr));
 
 	const attributes2 = dynamicContext.domFacade.getAllAttributes(item2.value)
 		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 		.sort((attrA, attrB) => attrA.name > attrB.name ? 1 : -1)
-		.map(attr => new AttributeNode(item2.value, attr))
 		.map(attr => createNodeValue(attr));
 
 	const attributesDeepEqualGenerator = sequenceDeepEqual(
