@@ -82,10 +82,11 @@ function parseCharacterReferences (input) {
 //  * operators, such as >, <, *, +, | and =, unless in the context of attributes
 //  * variables
 /**
- * @param  {!Array<?>}  ast
- * @return {!../selectors/Selector}
+ * @param   {!Array<?>}               ast
+ * @param   {{allowXQuery:boolean}}   compilationOptions
+ * @return  {!../selectors/Selector}
  */
-function compile (ast) {
+function compile (ast, compilationOptions) {
 	const stringifiedAstFragment = JSON.stringify(ast);
 	let compiledAstFragment = precompiledAstFragmentsByString[stringifiedAstFragment];
 
@@ -94,158 +95,158 @@ function compile (ast) {
 		switch (ast[0]) {
 				// Operators
 			case 'and':
-				compiledAstFragment = and(args);
+				compiledAstFragment = and(args, compilationOptions);
 				break;
 			case 'or':
-				compiledAstFragment = or(args);
+				compiledAstFragment = or(args, compilationOptions);
 				break;
 			case 'compare':
-				compiledAstFragment = compare(args);
+				compiledAstFragment = compare(args, compilationOptions);
 				break;
 			case 'unaryPlus':
-				compiledAstFragment = unaryPlus(args);
+				compiledAstFragment = unaryPlus(args, compilationOptions);
 				break;
 			case 'unaryMinus':
-				compiledAstFragment = unaryMinus(args);
+				compiledAstFragment = unaryMinus(args, compilationOptions);
 				break;
 			case 'binaryOperator':
-				compiledAstFragment = binaryOperator(args);
+				compiledAstFragment = binaryOperator(args, compilationOptions);
 				break;
 			case 'sequence':
-				compiledAstFragment = sequence(args);
+				compiledAstFragment = sequence(args, compilationOptions);
 				break;
 			case 'union':
-				compiledAstFragment = union(args);
+				compiledAstFragment = union(args, compilationOptions);
 				break;
 			case 'intersectExcept':
-				compiledAstFragment = intersectExcept(args);
+				compiledAstFragment = intersectExcept(args, compilationOptions);
 				break;
 
 				// Tests
 			case 'nameTest':
-				compiledAstFragment = nameTest(args);
+				compiledAstFragment = nameTest(args, compilationOptions);
 				break;
 			case 'kindTest':
-				compiledAstFragment = kindTest(args);
+				compiledAstFragment = kindTest(args, compilationOptions);
 				break;
 			case 'typeTest':
-				compiledAstFragment = typeTest(args);
+				compiledAstFragment = typeTest(args, compilationOptions);
 				break;
 
 				// Axes
 			case 'ancestor':
-				compiledAstFragment = ancestor(args);
+				compiledAstFragment = ancestor(args, compilationOptions);
 				break;
 			case 'ancestor-or-self':
-				compiledAstFragment = ancestorOrSelf(args);
+				compiledAstFragment = ancestorOrSelf(args, compilationOptions);
 				break;
 			case 'attribute':
-				compiledAstFragment = attribute(args);
+				compiledAstFragment = attribute(args, compilationOptions);
 				break;
 			case 'child':
-				compiledAstFragment = child(args);
+				compiledAstFragment = child(args, compilationOptions);
 				break;
 			case 'descendant':
-				compiledAstFragment = descendant(args);
+				compiledAstFragment = descendant(args, compilationOptions);
 				break;
 			case 'descendant-or-self':
-				compiledAstFragment = descendantOrSelf(args);
+				compiledAstFragment = descendantOrSelf(args, compilationOptions);
 				break;
 			case 'parent':
-				compiledAstFragment = parent(args);
+				compiledAstFragment = parent(args, compilationOptions);
 				break;
 			case 'following-sibling':
-				compiledAstFragment = followingSibling(args);
+				compiledAstFragment = followingSibling(args, compilationOptions);
 				break;
 			case 'preceding-sibling':
-				compiledAstFragment = precedingSibling(args);
+				compiledAstFragment = precedingSibling(args, compilationOptions);
 				break;
 			case 'self':
-				compiledAstFragment = self(args);
+				compiledAstFragment = self(args, compilationOptions);
 				break;
 
 				// Path
 			case 'absolutePath':
-				compiledAstFragment = absolutePath(args);
+				compiledAstFragment = absolutePath(args, compilationOptions);
 				break;
 			case 'path':
-				compiledAstFragment = path(args);
+				compiledAstFragment = path(args, compilationOptions);
 				break;
 
 				// Postfix operators
 			case 'filter':
-				compiledAstFragment = filter(args);
+				compiledAstFragment = filter(args, compilationOptions);
 				break;
 
 				// Functions
 			case 'functionCall':
-				compiledAstFragment = functionCall(args);
+				compiledAstFragment = functionCall(args, compilationOptions);
 				break;
 			case 'inlineFunction':
-				compiledAstFragment = inlineFunction(args);
+				compiledAstFragment = inlineFunction(args, compilationOptions);
 				break;
 
 			case 'literal':
-				compiledAstFragment = literal(args);
+				compiledAstFragment = literal(args, compilationOptions);
 				break;
 
 				// Variables
 			case 'let':
-				compiledAstFragment = letExpression(args);
+				compiledAstFragment = letExpression(args, compilationOptions);
 				break;
 			case 'varRef':
-				compiledAstFragment = varRef(args);
+				compiledAstFragment = varRef(args, compilationOptions);
 				break;
 			case 'namedFunctionRef':
-				compiledAstFragment = namedFunctionRef(args);
+				compiledAstFragment = namedFunctionRef(args, compilationOptions);
 				break;
 			case 'forExpression':
-				compiledAstFragment = forExpression(args);
+				compiledAstFragment = forExpression(args, compilationOptions);
 				break;
 
 				// Quantified
 			case 'quantified':
-				compiledAstFragment = quantified(args);
+				compiledAstFragment = quantified(args, compilationOptions);
 				break;
 
 				// Conditional
 			case 'conditional':
-				compiledAstFragment = conditional(args);
+				compiledAstFragment = conditional(args, compilationOptions);
 				break;
 
 			case 'instance of':
-				compiledAstFragment = instanceOf(args);
+				compiledAstFragment = instanceOf(args, compilationOptions);
 				break;
 			case 'cast as':
-				compiledAstFragment = castAs(args);
+				compiledAstFragment = castAs(args, compilationOptions);
 				break;
 			case 'castable as':
-				compiledAstFragment = castableAs(args);
+				compiledAstFragment = castableAs(args, compilationOptions);
 				break;
 
 			case 'simpleMap':
-				compiledAstFragment = simpleMap(args);
+				compiledAstFragment = simpleMap(args, compilationOptions);
 				break;
 
 			case 'mapConstructor':
-				compiledAstFragment = mapConstructor(args);
+				compiledAstFragment = mapConstructor(args, compilationOptions);
 				break;
 
 			case 'arrayConstructor':
-				compiledAstFragment = arrayConstructor(args);
+				compiledAstFragment = arrayConstructor(args, compilationOptions);
 				break;
 
 				// XQuery element constructors
 			case 'DirElementConstructor':
-				compiledAstFragment = dirElementConstructor(args);
+				compiledAstFragment = dirElementConstructor(args, compilationOptions);
 				break;
 
 			case 'DirCommentConstructor':
-				compiledAstFragment = dirCommentConstructor(args);
+				compiledAstFragment = dirCommentConstructor(args, compilationOptions);
 				break;
 
 			case 'DirPIConstructor':
-				compiledAstFragment = dirPIConstructor(args);
+				compiledAstFragment = dirPIConstructor(args, compilationOptions);
 				break;
 
 			default:
@@ -256,143 +257,143 @@ function compile (ast) {
 	return compiledAstFragment;
 }
 
-function arrayConstructor (args) {
-	return new ArrayConstructor(args[0], args.slice(1).map(compile));
+function arrayConstructor (args, compilationOptions) {
+	return new ArrayConstructor(args[0], args.slice(1).map(arg => compile(arg, compilationOptions)));
 }
 
-function mapConstructor (args) {
+function mapConstructor (args, compilationOptions) {
 	return new MapConstructor(args.map(function (keyValuePair) {
 		return {
-			key: compile(keyValuePair[0]),
-			value: compile(keyValuePair[1])
+			key: compile(keyValuePair[0], compilationOptions),
+			value: compile(keyValuePair[1], compilationOptions)
 		};
 	}));
 }
 
-function absolutePath (args) {
-	return new AbsolutePathSelector(compile(args[0]));
+function absolutePath (args, compilationOptions) {
+	return new AbsolutePathSelector(compile(args[0], compilationOptions));
 }
 
-function ancestor (args) {
-	return new AncestorAxis(compile(args[0]));
+function ancestor (args, compilationOptions) {
+	return new AncestorAxis(compile(args[0], compilationOptions));
 }
 
-function ancestorOrSelf (args) {
-	const subSelector = compile(args[0]);
+function ancestorOrSelf (args, compilationOptions) {
+	const subSelector = compile(args[0], compilationOptions);
 	return new AncestorAxis(subSelector, { inclusive: true });
 }
 
-function and (args) {
-	return new AndOperator(args.map(compile));
+function and (args, compilationOptions) {
+	return new AndOperator(args.map(arg => compile(arg, compilationOptions)));
 }
 
-function attribute (args) {
-	return new AttributeAxis(compile(args[0]));
+function attribute (args, compilationOptions) {
+	return new AttributeAxis(compile(args[0], compilationOptions));
 }
 
-function binaryOperator (args) {
+function binaryOperator (args, compilationOptions) {
 	const kind = args[0];
-	const a = compile(args[1]);
-	const b = compile(args[2]);
+	const a = compile(args[1], compilationOptions);
+	const b = compile(args[2], compilationOptions);
 
 	return new BinaryNumericOperator(kind, a, b);
 }
 
-function child (args) {
-	return new ChildAxis(compile(args[0]));
+function child (args, compilationOptions) {
+	return new ChildAxis(compile(args[0], compilationOptions));
 }
 
-function descendant (args) {
-	return new DescendantAxis(compile(args[0]));
+function descendant (args, compilationOptions) {
+	return new DescendantAxis(compile(args[0], compilationOptions));
 }
 
-function descendantOrSelf (args) {
-	const subSelector = compile(args[0]);
+function descendantOrSelf (args, compilationOptions) {
+	const subSelector = compile(args[0], compilationOptions);
 	return new DescendantAxis(subSelector, { inclusive: true });
 }
 
-function castAs (args) {
-	const expression = compile(args[0]);
+function castAs (args, compilationOptions) {
+	const expression = compile(args[0], compilationOptions);
 	const [[prefix, namespaceURI, name], multiplicity] = args[1];
 
 	return new CastAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
 }
 
-function castableAs (args) {
-	const expression = compile(args[0]);
+function castableAs (args, compilationOptions) {
+	const expression = compile(args[0], compilationOptions);
 	const [[prefix, namespaceURI, name], multiplicity] = args[1];
 
 	return new CastableAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
 }
 
 // Binary compare (=, !=, le, is, etc)
-function compare (args) {
-	return new Compare(args[0], compile(args[1]), compile(args[2]));
+function compare (args, compilationOptions) {
+	return new Compare(args[0], compile(args[1], compilationOptions), compile(args[2], compilationOptions));
 }
 
-function conditional (args) {
-	return new IfExpression(compile(args[0]), compile(args[1]), compile(args[2]));
+function conditional (args, compilationOptions) {
+	return new IfExpression(compile(args[0], compilationOptions), compile(args[1], compilationOptions), compile(args[2], compilationOptions));
 }
 
-function filter (args) {
-	return new Filter(compile(args[0]), compile(args[1]));
+function filter (args, compilationOptions) {
+	return new Filter(compile(args[0], compilationOptions), compile(args[1], compilationOptions));
 }
 
-function followingSibling (args) {
-	return new FollowingSiblingAxis(compile(args[0]));
+function followingSibling (args, compilationOptions) {
+	return new FollowingSiblingAxis(compile(args[0], compilationOptions));
 }
 
-function forExpression ([[prefix, namespaceURI, name], expression, returnExpression]) {
+function forExpression ([[prefix, namespaceURI, name], expression, returnExpression], compilationOptions) {
 	return new ForExpression(
 		{
 			varName: { prefix, namespaceURI, name },
-			expression: compile(expression)
+			expression: compile(expression, compilationOptions)
 		},
-		compile(returnExpression));
+		compile(returnExpression, compilationOptions));
 }
 
-function functionCall (args) {
-	return new FunctionCall(compile(args[0]), args[1].map(arg => arg === 'argumentPlaceholder' ? null : compile(arg)));
+function functionCall (args, compilationOptions) {
+	return new FunctionCall(compile(args[0], compilationOptions), args[1].map(arg => arg === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
 }
 
-function inlineFunction (args) {
+function inlineFunction (args, compilationOptions) {
 	const [params, returnType, body] = args;
 	return new InlineFunction(
 		params.map(([[prefix, namespaceURI, name], type]) => ([{ prefix, namespaceURI, name }, type])),
 		returnType,
-		compile(body));
+		compile(body, compilationOptions));
 }
 
-function instanceOf (args) {
-	const expression = compile(args[0]);
+function instanceOf (args, compilationOptions) {
+	const expression = compile(args[0], compilationOptions);
 	const sequenceType = args[1];
 
-	return new InstanceOfOperator(expression, compile(sequenceType[0]), sequenceType[1] || '');
+	return new InstanceOfOperator(expression, compile(sequenceType[0], compilationOptions), sequenceType[1] || '');
 }
 
-function letExpression (args) {
+function letExpression (args, compilationOptions) {
 	const [prefix, namespaceURI, name] = args[0];
-	const bindingSequence = compile(args[1]);
-	const returnExpression = compile(args[2]);
+	const bindingSequence = compile(args[1], compilationOptions);
+	const returnExpression = compile(args[2], compilationOptions);
 
 	return new LetExpression({ prefix, namespaceURI, name }, bindingSequence, returnExpression);
 }
 
-function literal (args) {
+function literal (args, compilationOptions) {
 	return new Literal(args[0], args[1]);
 }
 
-function namedFunctionRef (args) {
+function namedFunctionRef (args, compilationOptions) {
 	const [[prefix, namespaceURI, name], arity] = args;
 	return new NamedFunctionRef({ prefix, namespaceURI, name }, arity);
 }
 
-function nameTest (args) {
+function nameTest (args, compilationOptions) {
 	const [prefix, namespaceURI, localName] = args[0];
 	return new NameTest(prefix, namespaceURI, localName);
 }
 
-function kindTest (args) {
+function kindTest (args, _compilationOptions) {
 	switch (args[0]) {
 		case 'item()':
 			return new UniversalSelector();
@@ -434,70 +435,73 @@ function kindTest (args) {
 	}
 }
 
-function or (args) {
-	return new OrOperator(args.map(compile));
+function or (args, compilationOptions) {
+	return new OrOperator(args.map(arg => compile(arg, compilationOptions)));
 }
 
-function parent (args) {
-	return new ParentAxis(compile(args[0]));
+function parent (args, compilationOptions) {
+	return new ParentAxis(compile(args[0], compilationOptions));
 }
 
-function path (args) {
-	return new PathSelector(args.map(compile));
+function path (args, compilationOptions) {
+	return new PathSelector(args.map(arg => compile(arg, compilationOptions)));
 }
 
-function precedingSibling (args) {
-	return new PrecedingSiblingAxis(compile(args[0]));
+function precedingSibling (args, compilationOptions) {
+	return new PrecedingSiblingAxis(compile(args[0], compilationOptions));
 }
 
-function quantified (args) {
+function quantified (args, compilationOptions) {
 	const inClauses = args[1].map(([[prefix, namespaceURI, name], expression]) => {
-		return [{ prefix, namespaceURI, name }, compile(expression)];
+		return [{ prefix, namespaceURI, name }, compile(expression, compilationOptions)];
 	});
-	return new QuantifiedExpression(args[0], inClauses, compile(args[2]));
+	return new QuantifiedExpression(args[0], inClauses, compile(args[2], compilationOptions));
 }
 
-function self (args) {
-	return new SelfSelector(compile(args[0]));
+function self (args, compilationOptions) {
+	return new SelfSelector(compile(args[0], compilationOptions));
 }
 
-function sequence (args) {
-	return new SequenceOperator(args.map(compile));
+function sequence (args, compilationOptions) {
+	return new SequenceOperator(args.map(arg => compile(arg, compilationOptions)));
 }
 
-function simpleMap (args) {
-	return new SimpleMapOperator(compile(args[0]), compile(args[1]));
+function simpleMap (args, compilationOptions) {
+	return new SimpleMapOperator(compile(args[0], compilationOptions), compile(args[1], compilationOptions));
 }
 
-function typeTest (args) {
+function typeTest (args, _compilationOptions) {
 	const [prefix, namespaceURI, name] = args[0];
 	return new TypeTest(prefix, namespaceURI, name);
 }
 
-function unaryPlus (args) {
-	return new Unary('+', compile(args[0]));
+function unaryPlus (args, compilationOptions) {
+	return new Unary('+', compile(args[0], compilationOptions));
 }
 
-function unaryMinus (args) {
-	return new Unary('-', compile(args[0]));
+function unaryMinus (args, compilationOptions) {
+	return new Unary('-', compile(args[0], compilationOptions));
 }
 
-function union (args) {
-	return new Union(args.map(compile));
+function union (args, compilationOptions) {
+	return new Union(args.map(arg => compile(arg, compilationOptions)));
 }
 
-function intersectExcept (args) {
-	return new IntersectExcept(args[0], compile(args[1]), compile(args[2]));
+function intersectExcept (args, compilationOptions) {
+	return new IntersectExcept(args[0], compile(args[1], compilationOptions), compile(args[2], compilationOptions));
 }
 
-function varRef (args) {
+function varRef (args, _compilationOptions) {
 	const [prefix, namespaceURI, name] = args[0];
 	return new VarRef(prefix, namespaceURI, name);
 }
 
 
 // XQuery Node constructors
-function dirElementConstructor (args) {
+function dirElementConstructor (args, compilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	}
 	const openingQName = args[0];
 	const closingQName = args[1];
 	/**
@@ -529,7 +533,7 @@ function dirElementConstructor (args) {
 				if (typeof partialValue === 'string') {
 					return parseCharacterReferences(partialValue);
 				}
-				return compile(partialValue);
+				return compile(partialValue, compilationOptions);
 			})
 		})),
 		contents.reduce((mappedContents, content, i) => {
@@ -541,20 +545,20 @@ function dirElementConstructor (args) {
 					content = content.trimRight();
 				}
 				if (content.length !== 0) {
-					mappedContents.push(compile(['literal', parseCharacterReferences(content), 'xs:string']));
+					mappedContents.push(compile(['literal', parseCharacterReferences(content), 'xs:string'], compilationOptions));
 				}
 				return mappedContents;
 			}
-			mappedContents.push(compile(content));
+			mappedContents.push(compile(content, compilationOptions));
 			return mappedContents;
 		}, []));
 }
 
-function dirCommentConstructor (args) {
+function dirCommentConstructor (args, _compilationOptions) {
 	return new DirCommentConstructor(args[0]);
 }
 
-function dirPIConstructor (args) {
+function dirPIConstructor (args, _compilationOptions) {
 	return new DirPIConstructor(args[0], args[1]);
 }
 
@@ -562,6 +566,6 @@ function dirPIConstructor (args) {
  * @param   {!Array<?>}  xPathAst
  * @return  {!../selectors/Selector}
  */
-export default function parseSelectorAsync (xPathAst) {
-    return compile(xPathAst);
+export default function parseSelectorAsync (xPathAst, compilationOptions) {
+    return compile(xPathAst, compilationOptions);
 }

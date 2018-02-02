@@ -16,11 +16,12 @@ import createSelectorFromXPath from './parsing/createSelectorFromXPath';
 import domFacade from './domBackedDomFacade';
 
 function getBucketForSelector (xpathString) {
-	return createSelectorFromXPath(xpathString).getBucket();
+	return createSelectorFromXPath(xpathString, { allowXQuery: false }).getBucket();
 }
 
 function compareSpecificity (xpathStringA, xpathStringB) {
-	return createSelectorFromXPath(xpathStringA).specificity.compareTo(createSelectorFromXPath(xpathStringB).specificity);
+	return createSelectorFromXPath(xpathStringA, { allowXQuery: false }).specificity
+		.compareTo(createSelectorFromXPath(xpathStringB, { allowXQuery: false }).specificity);
 }
 
 /**

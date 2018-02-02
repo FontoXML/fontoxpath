@@ -171,7 +171,7 @@ if (supportsAsyncCompilation()) {
 					// Swallow errors, we have an AST, so not being able to save it should only cost us some load time performance for any next loads.
 					console.warn(error);
 				}).then(function () {
-					var selector = compileAstToSelector(result['ast']);
+					var selector = compileAstToSelector(result['ast'], { allowXQuery: false });
 					resolve(selector);
 				});
 			};
@@ -208,7 +208,7 @@ if (supportsAsyncCompilation()) {
                                 compileXPathAsync(db, xPathString).then(resolve, reject);
                                 return;
                             }
-                            resolve(compileAstToSelector(xPathAndAst['ast']));
+                            resolve(compileAstToSelector(xPathAndAst['ast'], { allowXQuery: false }));
                         };
 
                         request.onerror = function event (evt) {
@@ -222,7 +222,7 @@ if (supportsAsyncCompilation()) {
 	};
 }
 else {
-	createSelectorFromXPathAsync = xPathString => new Promise(resolve => resolve(createSelectorFromXPath(xPathString)));
+	createSelectorFromXPathAsync = xPathString => new Promise(resolve => resolve(createSelectorFromXPath(xPathString, { allowXQuery: false })));
 }
 
 export default createSelectorFromXPathAsync;
