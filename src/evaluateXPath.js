@@ -132,7 +132,8 @@ function createDefaultNamespaceResolver (contextItem) {
 /**
  * @typedef {{
  *   namespaceResolver: ?function(string):string?,
- *   nodesFactory: INodesFactory?
+ *   nodesFactory: INodesFactory?,
+ *   language: string
  * }}
  */
 let Options;
@@ -155,7 +156,7 @@ let Options;
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
-function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null }) {
+function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1' }) {
 	if (!xpathSelector || typeof xpathSelector !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathSelector must be a string.');
 	}
@@ -166,7 +167,11 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	// Always wrap in an actual domFacade
 	const wrappedDomFacade = new DomFacade(domFacade);
 
-	const compiledSelector = createSelectorFromXPath(xpathSelector);
+	const compilationOptions = {
+		allowXQuery: options.language === 'XQuery3.1'
+	};
+
+	const compiledSelector = createSelectorFromXPath(xpathSelector, compilationOptions);
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
