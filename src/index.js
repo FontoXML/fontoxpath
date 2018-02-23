@@ -28,24 +28,24 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 */
 (function () {
 	/* istanbul ignore else */
-	if (typeof exports !== 'undefined') {
-		exports['compareSpecificity'] = compareSpecificity;
-		exports['domFacade'] = domFacade;
-		exports['evaluateXPath'] = evaluateXPath;
-		exports['evaluateXPathToArray'] = evaluateXPathToArray;
-		exports['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
-		exports['evaluateXPathToAsyncIterator'] = evaluateXPathToAsyncIterator;
-		exports['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
-		exports['evaluateXPathToMap'] = evaluateXPathToMap;
-		exports['evaluateXPathToNodes'] = evaluateXPathToNodes;
-		exports['evaluateXPathToNumber'] = evaluateXPathToNumber;
-		exports['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
-		exports['evaluateXPathToString'] = evaluateXPathToString;
-		exports['evaluateXPathToStrings'] = evaluateXPathToStrings;
-		exports['getBucketForSelector'] = getBucketForSelector;
-		exports['getBucketsForNode'] = getBucketsForNode;
-		exports['precompileXPath'] = precompileXPath;
-		exports['registerCustomXPathFunction'] = registerCustomXPathFunction;
+	if (typeof window !== 'undefined') {
+		window['compareSpecificity'] = compareSpecificity;
+		window['domFacade'] = domFacade;
+		window['evaluateXPath'] = evaluateXPath;
+		window['evaluateXPathToArray'] = evaluateXPathToArray;
+		window['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
+		window['evaluateXPathToAsyncIterator'] = evaluateXPathToAsyncIterator;
+		window['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
+		window['evaluateXPathToMap'] = evaluateXPathToMap;
+		window['evaluateXPathToNodes'] = evaluateXPathToNodes;
+		window['evaluateXPathToNumber'] = evaluateXPathToNumber;
+		window['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
+		window['evaluateXPathToString'] = evaluateXPathToString;
+		window['evaluateXPathToStrings'] = evaluateXPathToStrings;
+		window['getBucketForSelector'] = getBucketForSelector;
+		window['getBucketsForNode'] = getBucketsForNode;
+		window['precompileXPath'] = precompileXPath;
+		window['registerCustomXPathFunction'] = registerCustomXPathFunction;
 	}
 })();
 

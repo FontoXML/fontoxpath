@@ -20,7 +20,7 @@ import Sequence from '../dataTypes/Sequence';
 import DynamicContext from '../DynamicContext';
 
 /**
- * @type {!Array<!Object<string, {name: string, argumentTypes: !Array<string>, returnType: string, callFunction: function (DynamicContext, ...!Sequence): !Sequence}>>}
+ * @type {!Array<!{name: string, argumentTypes: !Array<string>, returnType: string, callFunction: function (DynamicContext, ...!Sequence): !Sequence}>}
  */
 const builtInFunctions = [].concat(
 	builtInArrayFunctions.declarations,

@@ -66,9 +66,9 @@ function doSelectorsBuild () {
 		root.fontoxpath = factory();
 	}
 })(this, function () {
-	var exports = {};
+	var window = {};
 	%output%
-	return exports;
+	return window;
 });
 //# sourceMappingURL=./fontoxpath.js.map`,
 			js_output_file: './dist/fontoxpath.js',

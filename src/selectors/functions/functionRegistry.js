@@ -4,7 +4,7 @@ import Sequence from '../dataTypes/Sequence';
 /**
  * @typedef {({name: !string, callFunction: !function(*): !Sequence, argumentTypes: !Array<string>, returnType: !string})}
  */
-var FunctionProperties;
+let FunctionProperties;
 
 /**
  * @dict
