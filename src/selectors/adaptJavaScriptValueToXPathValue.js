@@ -5,6 +5,13 @@ import MapValue from './dataTypes/MapValue';
 import createNodeValue from './dataTypes/createNodeValue';
 import { trueBoolean, falseBoolean } from './dataTypes/createAtomicValue';
 
+/**
+ * Adapt a JavaScript value to the equivalent in XPath. This dynamically assigns the closest type
+ *
+ * @param  {?} value
+ * @return {?./dataTypes/Value} Null if the value is absent and the empty sequence should be
+ * outputted instead
+ */
 function adaptItemToXPathValue (value) {
 	switch (typeof value) {
 		case 'boolean':
@@ -14,23 +21,44 @@ function adaptItemToXPathValue (value) {
 		case 'string':
 			return createAtomicValue(value, 'xs:string');
 		case 'object':
+			if (value === null) {
+				return null;
+			}
 			// Test if it is a node
-			if (value && value.nodeType) {
+			if (value.nodeType) {
 				return createNodeValue(value);
 			}
 			if (Array.isArray(value)) {
-				return new ArrayValue(value.map(val => Sequence.singleton(adaptItemToXPathValue(val))));
+				return new ArrayValue(value.map(
+					arrayItem => {
+						const adaptedArrayItem = adaptItemToXPathValue(arrayItem);
+						if (adaptedArrayItem === null) {
+							return Sequence.empty();
+						}
+						return Sequence.singleton(adaptedArrayItem);
+					}));
 			}
 			// Make it a map
-			return new MapValue(Object.keys(value)
-				.map(key => ({
-					key: createAtomicValue(key, 'xs:string'),
-					value: Sequence.singleton(adaptItemToXPathValue(value[key]))
-				})));
+			return new MapValue(
+				Object.keys(value).map(key => {
+					const adaptedValue = adaptItemToXPathValue(value[key]);
+					return {
+						key: createAtomicValue(key, 'xs:string'),
+						value: adaptedValue === null ?
+							Sequence.empty() :
+							Sequence.singleton(adaptedValue)
+					};
+				}));
 	}
 	throw new Error('Value ' + value + ' of type ' + typeof value + ' is not adaptable to an XPath value.');
 }
 
+/**
+ * Adapt a JavaScript value to the equivalent in XPath. This tries to keep the preferred type
+ *
+ * @param  {?} value
+ * @return {?./dataTypes/Value} Null if the value is absent and the empty sequence should be outputted instead
+ */
 function adaptJavaScriptValueToXPathValue (type, value) {
 	switch (type) {
 		case 'xs:boolean':
@@ -51,16 +79,17 @@ function adaptJavaScriptValueToXPathValue (type, value) {
 		case 'item()':
 			return adaptItemToXPathValue(value);
 		default:
-			throw new Error('Values of the type ' + type + ' is not expected to be returned from custom function.');
+			throw new Error(`Values of the type ${type} can not be adapted to equivalent XPath values.`);
 	}
 }
 
 /**
  * @param  {?}        value
  * @param  {string=}  expectedType
+* @return  {!Sequence}
  */
 export default function adaptJavaScriptValueToXPath (value, expectedType) {
-	expectedType = expectedType || 'item()';
+	expectedType = expectedType || 'item()?';
 
 	var parts = expectedType.match(/^([^+?*]*)([\+\*\?])?$/),
 		type = parts[1],
@@ -76,7 +105,7 @@ export default function adaptJavaScriptValueToXPath (value, expectedType) {
 		case '+':
 		case '*': {
 			const convertedValues = value.map(adaptJavaScriptValueToXPathValue.bind(null, type));
-			return new Sequence(convertedValues);
+			return new Sequence(convertedValues.filter(convertedValue => convertedValue !== null));
 		}
 
 		default:

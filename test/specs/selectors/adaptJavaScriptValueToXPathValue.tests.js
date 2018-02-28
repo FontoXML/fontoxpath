@@ -9,7 +9,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('does not support unknown types', () => {
-		chai.assert.throws(() => adaptJavaScriptValueToXPathValue(1, 'fonto:theBestType'), ' is not expected to be returned from custom function');
+		chai.assert.throws(() => adaptJavaScriptValueToXPathValue(1, 'fonto:theBestType'), ' can not be adapted to equivalent XPath values');
 	});
 
 	it('turns numbers into doubles', () => {
@@ -114,11 +114,15 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 			chai.assert(xpathSequence.first().type === ('map(*)'), 'is a map');
 		});
 
+		it('can automatically convert null to the empty sequence', () => {
+			const xpathSequence = adaptJavaScriptValueToXPathValue(null);
+			chai.assert(xpathSequence.isEmpty(), 'is the empty sequence');
+		});
+
 		it('can automatically convert arrays', () => {
 			const xpathSequence = adaptJavaScriptValueToXPathValue([], 'item()');
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === ('array(*)'), 'is an array');
-
 		});
 	});
 });
