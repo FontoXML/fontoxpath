@@ -29,18 +29,22 @@ function adaptItemToXPathValue (value) {
 				return createNodeValue(value);
 			}
 			if (Array.isArray(value)) {
-				return new ArrayValue(value.map(
+				return new ArrayValue(
+					value
+						.map(
 					arrayItem => {
-						const adaptedArrayItem = adaptItemToXPathValue(arrayItem);
-						if (adaptedArrayItem === null) {
+						if (arrayItem === null || arrayItem === undefined) {
 							return Sequence.empty();
 						}
+						const adaptedArrayItem = adaptItemToXPathValue(arrayItem);
 						return Sequence.singleton(adaptedArrayItem);
 					}));
 			}
 			// Make it a map
 			return new MapValue(
-				Object.keys(value).map(key => {
+				Object.keys(value)
+					.filter(key => value[key] !== undefined)
+					.map(key => {
 					const adaptedValue = adaptItemToXPathValue(value[key]);
 					return {
 						key: createAtomicValue(key, 'xs:string'),
@@ -50,7 +54,7 @@ function adaptItemToXPathValue (value) {
 					};
 				}));
 	}
-	throw new Error('Value ' + value + ' of type ' + typeof value + ' is not adaptable to an XPath value.');
+	throw new Error(`Value ${value} of type "${typeof value}" is not adaptable to an XPath value.`);
 }
 
 /**
@@ -79,7 +83,7 @@ function adaptJavaScriptValueToXPathValue (type, value) {
 		case 'item()':
 			return adaptItemToXPathValue(value);
 		default:
-			throw new Error(`Values of the type ${type} can not be adapted to equivalent XPath values.`);
+			throw new Error(`Values of the type "${type}" can not be adapted to equivalent XPath values.`);
 	}
 }
 
@@ -105,7 +109,8 @@ export default function adaptJavaScriptValueToXPath (value, expectedType) {
 		case '+':
 		case '*': {
 			const convertedValues = value.map(adaptJavaScriptValueToXPathValue.bind(null, type));
-			return new Sequence(convertedValues.filter(convertedValue => convertedValue !== null));
+			return new Sequence(
+				convertedValues.filter(convertedValue => convertedValue !== null));
 		}
 
 		default:

@@ -37,9 +37,13 @@ describe('varRef', () => {
 		it('can reference variables: mixed maps and arrays',
 			() => chai.assert.equal(evaluateXPathToNumber('$x(1)("a")', documentNode, null, { x: [{ 'a': 123 }] }), 123));
 		it('can reference variables: maps with null values',
-			() => chai.assert.isTrue(evaluateXPathToBoolean('$x("x") => empty()', documentNode, null, { x: { x: null}  })));
+			() => chai.assert.isTrue(evaluateXPathToBoolean('$x("x") => empty()', documentNode, null, { x: { x: null } })));
+		it('can reference variables: maps with undefined values (undefined means absent)',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('$x("x") => empty()', documentNode, null, { x: { x: undefined } })));
 		it('can reference variables: arrays with null values',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('$x(1) => empty()', documentNode, null, { x: [ null ] })));
+		it('can reference variables: arrays with undefined values (undefined means null)',
+			() => chai.assert.isTrue(evaluateXPathToBoolean('$x(1) => empty()', documentNode, null, { x: [ undefined ] })));
 
 		it('can reference variables: ',
 			() => chai.assert.equal(evaluateXPathToNumber('$x(1)("a")', documentNode, null, { x: [{ 'a': 123 }] }), 123));

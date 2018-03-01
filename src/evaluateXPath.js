@@ -141,7 +141,7 @@ function createDefaultNamespaceResolver (contextItem) {
  * @param  {!string}       xpathSelector  The selector to execute. Supports XPath 3.1.
  * @param  {Node|*|null}   contextItem    The node from which to run the XPath.
  * @param  {?IDomFacade=}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number / string or boolean.
+ * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number, string, boolean, nodes or object literals and arrays.
  * @param  {?number=}      returnType     One of the return types, indicates the expected type of the XPath query.
  * @param  {?{namespaceResolver: ?function(string):string?}=}      options        Extra options for evaluating this XPath
  *
@@ -172,6 +172,9 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	 */
 	const typedVariables = Object.keys(untypedVariables)
 		.reduce(function (typedVariables, variableName) {
+			if (untypedVariables[variableName] === undefined) {
+				return typedVariables;
+			}
 			typedVariables[variableName] = () => adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
 			return typedVariables;
 		}, Object.create(null));
