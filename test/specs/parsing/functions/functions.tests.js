@@ -287,63 +287,6 @@ describe('functions', () => {
 		});
 	});
 
-	describe('op:intersect()', () => {
-		it('returns an empty sequence if both args are an empty sequences',
-			() => chai.assert.deepEqual(evaluateXPathToNodes('op:intersect((), ())', documentNode), []));
-
-		it('returns an empty sequence if one of the operands is the empty sequence', () => {
-			chai.assert.deepEqual(evaluateXPathToNodes('op:intersect(., ())', documentNode), []);
-			chai.assert.deepEqual(evaluateXPathToNodes('op:intersect((), .)', documentNode), []);
-		});
-
-		it('returns the intersect between two node sequences', () => {
-			jsonMlMapper.parse([
-				'someNode',
-				['a', { someAttribute: 'someValue' }],
-				['b', { someAttribute: 'someOtherValue' }]
-			], documentNode);
-			chai.assert.deepEqual(evaluateXPathToNodes('op:intersect(//*[@someAttribute], //b)', documentNode), [documentNode.documentElement.lastChild]);
-		});
-
-		it('is bound to the intersect operator', () => {
-			jsonMlMapper.parse([
-				'someNode',
-				['a', { someAttribute: 'someValue' }],
-				['b', { someAttribute: 'someOtherValue' }]
-			], documentNode);
-			chai.assert.deepEqual(evaluateXPathToNodes('//*[@someAttribute] intersect //b', documentNode), [documentNode.documentElement.lastChild]);
-		});
-	});
-
-	describe('op:except()', () => {
-		it('returns an empty sequence if both args are empty sequences',
-			() => chai.assert.deepEqual(evaluateXPathToNodes('op:except((), ())', documentNode), []));
-
-		it('returns the filled sequence if the first operand is the empty sequence',
-			() => chai.assert.deepEqual(evaluateXPathToNodes('op:except(., ())', documentNode), [documentNode]));
-
-		it('returns the empty sequence if the second operand is empty',
-			() => chai.assert.deepEqual(evaluateXPathToNodes('op:except((), .)', documentNode), []));
-
-		it('returns the first node sequence, except nodes from the second sequence', () => {
-			jsonMlMapper.parse([
-				'someNode',
-				['a', { someAttribute: 'someValue' }],
-				['b', { someAttribute: 'someOtherValue' }]
-			], documentNode);
-			chai.assert.deepEqual(evaluateXPathToNodes('op:except(//*[@someAttribute], //b)', documentNode), [documentNode.documentElement.firstChild]);
-		});
-
-		it('is bound to the except operator', () => {
-			jsonMlMapper.parse([
-				'someNode',
-				['a', { someAttribute: 'someValue' }],
-				['b', { someAttribute: 'someOtherValue' }]
-			], documentNode);
-			chai.assert.deepEqual(evaluateXPathToNodes('//*[@someAttribute] except //b', documentNode), [documentNode.documentElement.firstChild]);
-		});
-	});
-
 	describe('unknown functions', () => {
 		it('throws when trying to execute an unknown function',
 			() => chai.assert.throws(() => evaluateXPathToString('blerp()', documentNode), 'XPST0017'));

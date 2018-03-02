@@ -1,5 +1,4 @@
 import Sequence from '../dataTypes/Sequence';
-import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 
@@ -54,64 +53,9 @@ function opTo (_dynamicContext, fromSequence, toSequence) {
 		}
 	});
 }
-/**
- * @param   {../DynamicContext}  dynamicContext
- * @param   {!Sequence}  firstNodes
- * @param   {!Sequence}  secondNodes
- * @return  {!Sequence}
- */
-function opExcept (dynamicContext, firstNodes, secondNodes) {
-	/**
-	 * @type {!Array<!../dataTypes/Value>}
-	 */
-	const allSecondNodes = secondNodes.getAllValues();
-
-	const allNodes = firstNodes.getAllValues().filter(function (nodeA) {
-		return allSecondNodes.every(function (nodeB) {
-			return nodeA !== nodeB;
-		});
-
-	});
-	return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
-}
-
-/**
- * @param   {../DynamicContext}  dynamicContext
- * @param   {!Sequence}  firstNodes
- * @param   {!Sequence}  secondNodes
- * @return  {!Sequence}
- */
-function opIntersect (dynamicContext, firstNodes, secondNodes) {
-	/**
-	 * @type {!Array<!../dataTypes/Value>}
-	 */
-	const allSecondNodes = secondNodes.getAllValues();
-
-	const allNodes = firstNodes.getAllValues().filter(function (nodeA) {
-		return allSecondNodes.some(function (nodeB) {
-			return nodeA === nodeB;
-		});
-	});
-	return new Sequence(sortNodeValues(dynamicContext.domFacade, allNodes));
-}
-
 
 export default {
 	declarations: [
-		{
-			name: 'op:except',
-			argumentTypes: ['node()*', 'node()*'],
-			returnType: 'node()*',
-			callFunction: opExcept
-		},
-
-		{
-			name: 'op:intersect',
-			argumentTypes: ['node()*', 'node()*'],
-			returnType: 'node()*',
-			callFunction: opIntersect
-		},
-
 		{
 			name: 'op:to',
 			argumentTypes: ['xs:integer?', 'xs:integer?'],
@@ -120,8 +64,6 @@ export default {
 		},
 	],
 	functions: {
-		except: opExcept,
-		intersect: opIntersect,
 		to: opTo
 	}
 };

@@ -22,6 +22,7 @@ import AndOperator from '../selectors/operators/boolean/AndOperator';
 import OrOperator from '../selectors/operators/boolean/OrOperator';
 import UniversalSelector from '../selectors/operators/UniversalSelector';
 import Union from '../selectors/operators/Union';
+import IntersectExcept from '../selectors/operators/IntersectExcept';
 import SequenceOperator from '../selectors/operators/SequenceOperator';
 import SimpleMapOperator from '../selectors/operators/SimpleMapOperator';
 import Unary from '../selectors/operators/numeric/Unary';
@@ -86,6 +87,9 @@ function compile (ast) {
 				break;
 			case 'union':
 				compiledAstFragment = union(args);
+				break;
+			case 'intersectExcept':
+				compiledAstFragment = intersectExcept(args);
 				break;
 
 				// Tests
@@ -438,6 +442,10 @@ function unaryMinus (args) {
 
 function union (args) {
 	return new Union(args.map(compile));
+}
+
+function intersectExcept (args) {
+	return new IntersectExcept(args[0], compile(args[1]), compile(args[2]));
 }
 
 function varRef (args) {
