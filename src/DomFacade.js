@@ -5,6 +5,13 @@
  * @param  {!IDomFacade}  domFacade
  */
 function DomFacade (domFacade) {
+	/**
+	 * Defines the ordering of detached nodes, to ensure stable sorting of unrelated nodes.
+	 *
+	 * @type {!Array<!./selectors/dataTypes/Value>}
+	 */
+	this.orderOfDetachedNodes = [];
+
 	this._domFacade = domFacade;
 }
 

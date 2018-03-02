@@ -154,9 +154,9 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	if (!domFacade) {
 		domFacade = domBackedDomFacade;
 	}
-	else {
-		domFacade = new DomFacade(domFacade);
-	}
+
+	// Always wrap in an actual domFacade
+	const wrappedDomFacade = new DomFacade(domFacade);
 
 	const compiledSelector = createSelectorFromXPath(xpathSelector);
 
@@ -186,7 +186,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		contextItemIndex: 0,
 		contextSequence: contextSequence,
 		contextItem: contextSequence.first(),
-		domFacade,
+		domFacade: wrappedDomFacade,
 		variables: typedVariables,
 		resolveNamespacePrefix: prefix => {
 			if (DEFAULT_NAMESPACES[prefix]) {

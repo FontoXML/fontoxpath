@@ -126,8 +126,8 @@ UnionExpr
 
 // 24 Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
- = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return ["op:"+type, rhs]})? {
-     return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", [null, null, rhs[0]], 2], [lhs, rhs[1]]]
+ = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return [type, rhs]})? {
+     return rhs === null ? lhs : ["intersectExcept", rhs[0], lhs, rhs[1]]
    }
 
 // 25

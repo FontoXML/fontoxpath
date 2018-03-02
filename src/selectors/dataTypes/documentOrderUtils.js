@@ -131,7 +131,7 @@ function compareNodePositionsWithTieBreaker (tieBreakerArr, domFacade, node1, no
 }
 
 export const compareNodePositions = function (domFacade, node1, node2) {
-	return compareNodePositionsWithTieBreaker([], domFacade, node1, node2);
+	return compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2);
 };
 
 /**
@@ -139,16 +139,15 @@ export const compareNodePositions = function (domFacade, node1, node2) {
  * Attributes are placed after their elements, before childnodes.
  * Attributes are sorted alphabetically by their names
  *
- * @param	{!IDomFacade}         domFacade
+ * @param	{!../../DomFacade}    domFacade
  * @param	{!Array<!./Value>}    nodeValues
  *
  * @return  {!Array<!./Value>}    The sorted nodes
  */
 export const sortNodeValues = function sortNodeValues (domFacade, nodeValues) {
-	const tieBreakerArr = [];
 	return nodeValues
 		.sort(function (node1, node2) {
-			return compareNodePositionsWithTieBreaker(tieBreakerArr, domFacade, node1, node2);
+			return compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2);
 		})
 		.filter(function (nodeValue, i, sortedNodes) {
 			if (i === 0) {

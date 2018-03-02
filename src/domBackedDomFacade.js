@@ -2,33 +2,39 @@
  * @constructor
  * @implements {IDomFacade}
  */
-function ReadOnlyDomFacade () {
+function DomBackedDomFacade () {
+	/**
+	 * Defines the ordering of detached nodes, to ensure stable sorting of unrelated nodes.
+	 *
+	 * @type {!Array<!./selectors/dataTypes/Value>}
+	 */
+	this.orderOfDetachedNodes = [];
 }
 
-ReadOnlyDomFacade.prototype.getParentNode = (node) => {
+DomBackedDomFacade.prototype.getParentNode = (node) => {
 	if (node.nodeType === 2) {
 		return /** @type {!Attr} */(node).ownerElement;
 	}
 	return node.parentNode;
 };
 
-ReadOnlyDomFacade.prototype.getFirstChild = function (node) {
+DomBackedDomFacade.prototype.getFirstChild = function (node) {
 	return node.firstChild;
 };
 
-ReadOnlyDomFacade.prototype.getLastChild = function (node) {
+DomBackedDomFacade.prototype.getLastChild = function (node) {
 	return node.lastChild;
 };
 
-ReadOnlyDomFacade.prototype.getNextSibling = function (node) {
+DomBackedDomFacade.prototype.getNextSibling = function (node) {
 	return node.nextSibling;
 };
 
-ReadOnlyDomFacade.prototype.getPreviousSibling = function (node) {
+DomBackedDomFacade.prototype.getPreviousSibling = function (node) {
 	return node.previousSibling;
 };
 
-ReadOnlyDomFacade.prototype.getChildNodes = function (node) {
+DomBackedDomFacade.prototype.getChildNodes = function (node) {
 	var childNodes = [];
 
 	for (var childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
@@ -38,14 +44,14 @@ ReadOnlyDomFacade.prototype.getChildNodes = function (node) {
 	return childNodes;
 };
 
-ReadOnlyDomFacade.prototype.getAttribute = function (node, attributeName) {
+DomBackedDomFacade.prototype.getAttribute = function (node, attributeName) {
 	if (node.nodeType === 2) {
 		return null;
 	}
 	return node.getAttribute(attributeName);
 };
 
-ReadOnlyDomFacade.prototype.getAllAttributes = function (node) {
+DomBackedDomFacade.prototype.getAllAttributes = function (node) {
 	if (node.nodeType === 2) {
 		return [];
 	}
@@ -53,12 +59,12 @@ ReadOnlyDomFacade.prototype.getAllAttributes = function (node) {
 	return Array.from(/** @type {!Iterable<Attr>} */ (node.attributes));
 };
 
-ReadOnlyDomFacade.prototype.getData = function (node) {
+DomBackedDomFacade.prototype.getData = function (node) {
 	return node.data || '';
 };
 
-ReadOnlyDomFacade.prototype.getRelatedNodes = function (node, callback) {
+DomBackedDomFacade.prototype.getRelatedNodes = function (node, callback) {
 	return callback(node, this);
 };
 
-export default new ReadOnlyDomFacade();
+export default new DomBackedDomFacade();
