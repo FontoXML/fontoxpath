@@ -26,7 +26,7 @@ export default function generalCompare (operator, firstSequence, secondSequence)
 		allSecondValues =>
 			firstSequence.filter(firstValue => {
 				for (let i = 0, l = allSecondValues.length; i < l; ++i) {
-					// General comapres are value compares, with one difference:
+					// General comapres are value compare, with one difference:
 					// If exactly one of the atomic values is an instance of xs:untypedAtomic, it is
 					// cast to a type depending on the other value's dynamic type T according to the
 					// following rules, in which V denotes the value to be cast:

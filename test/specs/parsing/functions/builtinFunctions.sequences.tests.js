@@ -323,7 +323,7 @@ describe('Functions and operators on sequences', () => {
 
 				// Constructed elements
 				it('returns true for two elements which are equal', () => {
-					chai.assert.isTrue(evaluateXPathToBoolean('<a> </a> => deep-equal((<a/>))', documentNode));
+					chai.assert.isTrue(evaluateXPathToBoolean('<a></a> => deep-equal((<a/>))', documentNode, undefined, {}, { language: 'XQuery3.1' }));
 				});
 
 				// attribute

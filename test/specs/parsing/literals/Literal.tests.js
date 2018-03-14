@@ -46,4 +46,10 @@ describe('String literal', () => {
 		() => chai.assert.equal(evaluateXPathToBoolean('"some"instance of xs:string', documentNode), true));
 	it('allows directly adjacent compares operators',
 		() => chai.assert.throws(() => evaluateXPathToBoolean('"s"is"s"', documentNode), 'XPTY0004'));
+	it('transforms entity references in XQuery mode', () => {
+		chai.assert.equal(evaluateXPathToString('"&amp;"', documentNode, null, {}, { language: 'XQuery3.1' }), '&');
+	});
+	it('does not transform entity references in XPath mode', () => {
+		chai.assert.equal(evaluateXPathToString('"&amp;"', documentNode, null, {}, { language: 'XPath3.1' }), '&amp;');
+	});
 });

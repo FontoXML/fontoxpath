@@ -54,7 +54,7 @@ export default function atomize (value, dynamicContext) {
 	}
 
 	// (function || map) && !array
-	if (isSubtypeOf(value.type, 'function(*)')) {
+	if (isSubtypeOf(value.type, 'function(*)') && !isSubtypeOf(value.type, 'array(*)')) {
 		throw new Error(`FOTY0013: Atomization is not supported for ${value.type}.`);
 	}
 	throw new Error(`Atomizing ${value.type} is not implemented.`);

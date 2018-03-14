@@ -34,4 +34,14 @@ class INodesFactory {
 	 */
 	createTextNode (contents) {
 	}
+
+	/**
+	 * @nosideeffects
+	 * @export
+	 * @param   {!string}  target
+	 * @param   {!string}  data
+	 * @return  {!Text}
+	 */
+	createProcessingInstruction (target, data) {
+	}
 }

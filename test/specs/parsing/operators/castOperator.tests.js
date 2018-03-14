@@ -280,7 +280,10 @@ describe('cast as', () => {
    </bla>
    return
    $ex//n[.>1000] ! xs:double(.)`,
-				new slimdom.Document()
+				new slimdom.Document(),
+				undefined,
+				{},
+				{ language: 'XQuery3.1' }
 			), [2345.6, 5678, 12345, 56789, Infinity]);
 		});
 	});

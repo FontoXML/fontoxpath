@@ -98,7 +98,7 @@ class DirElementConstructor extends Selector {
 			valueSequences: partialValues
 				.map(
 					value => typeof value === 'string' ?
-						Sequence.singleton({value, type: 'xs:string' }) :
+						Sequence.singleton({ value, type: 'xs:string' }) :
 					value.evaluateMaybeStatically(dynamicContextWithNamespaces).atomize(dynamicContextWithNamespaces)),
 			hasAllValues: false,
 			value: null
@@ -132,7 +132,10 @@ class DirElementConstructor extends Selector {
 
 				if (!childNodesPhaseDone) {
 					// Accumulate all children
-					childNodesSequences = concatSequences(this._contents.map(contentSelector => contentSelector.evaluate(dynamicContextWithNamespaces)));
+					childNodesSequences = concatSequences(
+						this._contents.map(
+							contentSelector => contentSelector.evaluateMaybeStatically(dynamicContextWithNamespaces)
+								.mapAll(allValues => new Sequence([allValues]))));
 					childNodesPhaseDone = true;
 				}
 
@@ -156,30 +159,48 @@ class DirElementConstructor extends Selector {
 				});
 
 				// Plonk all childNodes, these are special though
-				allChildNodesItrResult.value.forEach(childNode => {
-					if (isSubtypeOf(childNode.type, 'attribute()')) {
-						// The contents may include attributes, 'clone' them and set them on the element
-						if (element.hasAttributeNS(childNode.value.namespaceURI, childNode.value.localName)) {
-							throw new Error(`XQST0040: The attribute ${childNode.value.name} is already present on a constructed element.`);
+				allChildNodesItrResult.value.forEach(childNodes => {
+					childNodes.forEach((childNode, i) => {
+						if (isSubtypeOf(childNode.type, 'xs:anyAtomicType')) {
+							const atomizedValue = castToType(atomize(childNode, dynamicContextWithNamespaces), 'xs:string').value;
+							if (i !== 0 && isSubtypeOf(childNodes[i - 1].type, 'xs:anyAtomicType')) {
+								element.appendChild(nodesFactory.createTextNode(' ' + atomizedValue));
+								return;
+							}
+							element.appendChild(nodesFactory.createTextNode(atomizedValue));
+							return;
 						}
-						element.setAttributeNS(
-							childNode.value.namespaceURI,
-							childNode.value.prefix ?
-								childNode.value.prefix + ':' + childNode.value.localName : childNode.value.localName,
-							childNode.value.value);
-						return;
-					}
+						if (isSubtypeOf(childNode.type, 'attribute()')) {
+							// The contents may include attributes, 'clone' them and set them on the element
+							if (element.hasAttributeNS(childNode.value.namespaceURI, childNode.value.localName)) {
+								throw new Error(
+									`XQST0040: The attribute ${childNode.value.name} is already present on a constructed element.`);
+							}
+							element.setAttributeNS(
+								childNode.value.namespaceURI,
+								childNode.value.prefix ?
+									childNode.value.prefix + ':' + childNode.value.localName : childNode.value.localName,
+								childNode.value.value);
+							return;
+						}
 
-					if (isSubtypeOf(childNode.type, 'node()')) {
-						// Deep clone child elemenets
-						// TODO: skip copy if the childNode has already been created in the expression
-						element.appendChild(childNode.value.cloneNode(true));
-						return;
-					}
-					// TODO: Whitespace handling...
-					const atomizedValue = castToType(atomize(childNode, dynamicContextWithNamespaces), 'xs:string').value;
-					element.appendChild(nodesFactory.createTextNode(atomizedValue));
+						if (isSubtypeOf(childNode.type, 'node()')) {
+							// Deep clone child elements
+							// TODO: skip copy if the childNode has already been created in the expression
+							element.appendChild(childNode.value.cloneNode(true));
+							return;
+						}
+
+						// We now only have unatomizable types left
+						// (function || map) && !array
+						if (isSubtypeOf(childNode.type, 'function(*)') && !isSubtypeOf(childNode.type, 'array(*)')) {
+							throw new Error(`FOTY0013: Atomization is not supported for ${childNode.type}.`);
+						}
+						throw new Error(`Atomizing ${childNode.type} is not implemented.`);
+					});
 				});
+
+				element.normalize();
 
 				done = true;
 

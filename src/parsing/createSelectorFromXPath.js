@@ -10,11 +10,14 @@ import compiledSelectorCache from './compiledSelectorCache';
  * @return {!../selectors/Selector}
  */
 export default function parseSelector (xPathString, compilationOptions) {
-	if (!compiledSelectorCache[xPathString]) {
+	var cacheKey = compilationOptions.allowXQuery ?
+		`XQuery_${xPathString}` :
+		`XPath_${xPathString}`;
+	if (!compiledSelectorCache[cacheKey]) {
 		try {
 			var ast = parse(xPathString);
 			var compilerResult = compileAstToSelector(ast, compilationOptions);
-			compiledSelectorCache[xPathString] = compilerResult;
+			compiledSelectorCache[cacheKey] = compilerResult;
 		}
 		catch (error) {
 			if (error instanceof SyntaxError) {
@@ -23,5 +26,5 @@ export default function parseSelector (xPathString, compilationOptions) {
 			throw error;
 		}
 	}
-	return compiledSelectorCache[xPathString];
+	return compiledSelectorCache[cacheKey];
 }

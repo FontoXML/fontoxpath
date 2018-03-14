@@ -11,6 +11,11 @@ import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
 
 import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
 
+function normalizeEndOfLines (xpathString) {
+	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
+	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xA));
+}
+
 const DEFAULT_NAMESPACES = {
 	'xml': 'http://www.w3.org/XML/1998/namespace',
 	'xs': 'http://www.w3.org/2001/XMLSchema',
@@ -164,6 +169,8 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		domFacade = domBackedDomFacade;
 	}
 
+	xpathSelector = normalizeEndOfLines(xpathSelector);
+
 	// Always wrap in an actual domFacade
 	const wrappedDomFacade = new DomFacade(domFacade);
 
@@ -199,11 +206,12 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	let nodesFactory = options['nodesFactory'];
 	if (!nodesFactory) {
 		if (contextItem && 'nodeType' in contextItem) {
+			const ownerDocument = contextItem.ownerDocument || contextItem;
 			nodesFactory = {
-				createElementNS: contextItem && (contextItem.ownerDocument || contextItem).createElementNS.bind(contextItem.ownerDocument || contextItem),
-				createTextNode: contextItem && (contextItem.ownerDocument || contextItem).createTextNode.bind(contextItem.ownerDocument || contextItem),
-				createComment: contextItem && (contextItem.ownerDocument || contextItem).createComment.bind(contextItem.ownerDocument || contextItem),
-				createProcessingInstruction: contextItem && (contextItem.ownerDocument || contextItem).createProcessingInstruction.bind(contextItem.ownerDocument || contextItem)
+				createElementNS: ownerDocument.createElementNS.bind(ownerDocument),
+				createTextNode: ownerDocument.createTextNode.bind(ownerDocument),
+				createComment: ownerDocument.createComment.bind(ownerDocument),
+				createProcessingInstruction: ownerDocument.createProcessingInstruction.bind(ownerDocument)
 			};
 		}
 		else {
@@ -507,5 +515,15 @@ evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE = 99;
  * Resolve to an array of numbers
  */
 evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = 13;
+
+/**
+ * Can be used to signal an XQuery program should be executed instead of an XPath
+ */
+evaluateXPath['XQUERY_3_1_LANGUAGE'] = evaluateXPath.XQUERY_3_1_LANGUAGE = 'XQuery3.1';
+
+/**
+ * Can be used to signal an XPath program should executed
+ */
+evaluateXPath['XPATH_3_1_LANGUAGE'] = evaluateXPath.XPATH_3_1_LANGUAGE = 'XPath3.1';
 
 export default evaluateXPath;

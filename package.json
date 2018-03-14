@@ -57,6 +57,7 @@
     "sinon": "^4.3.0",
     "sinon-chai": "^2.10.0",
     "slimdom": "^2.0.0",
+    "slimdom-sax-parser": "^1.1.0",
     "text-loader": "0.0.1",
     "uglify-js": "^3.0.4",
     "webpack": "^3.5.1"

@@ -56,8 +56,23 @@ describe('unary operators', () => {
 	it('resolves to the empty sequence when passed the empty sequence',
 		() => chai.assert.isTrue(evaluateXPathToBoolean('-() => empty()', documentNode)));
 
-	it('accepts untyped atomics for "-"',
-		() => chai.assert.equal(evaluateXPathToNumber('-<a>1</a>', documentNode), -1));
-	it('accepts untyped atomics for "+"',
-		() => chai.assert.equal(evaluateXPathToNumber('+<a>1</a>', documentNode), 1));
+	it('accepts untyped atomics for "-"', () => {
+		chai.assert.equal(evaluateXPathToNumber(
+			'-<a>1</a>',
+			documentNode,
+			undefined,
+			{},
+			{ language: 'XQuery3.1' }
+		), -1);
+	});
+
+	it('accepts untyped atomics for "+"', () => {
+		chai.assert.equal(evaluateXPathToNumber(
+			'+<a>1</a>',
+			documentNode,
+			undefined,
+			{},
+			{ language: 'XQuery3.1' }
+		), 1);
+	});
 });

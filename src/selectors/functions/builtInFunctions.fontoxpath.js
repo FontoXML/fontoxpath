@@ -31,7 +31,7 @@ function fontoxpathEvaluate (dynamicContext, query, args) {
 				const contextItemSequence = variables['.'] ? variables['.']() : Sequence.empty();
 				delete variables['.'];
 
-				const selector = dynamicContext.createSelectorFromXPath(queryString);
+				const selector = dynamicContext.createSelectorFromXPath(queryString, { allowXQuery: false });
 				const context = contextItemSequence.isEmpty() ? {
 					contextItem: null,
 					contextSequence: contextItemSequence,
