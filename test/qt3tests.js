@@ -7,8 +7,71 @@ const {
 	evaluateXPathToString
 } = require('fontoxpath');
 
-const context = require.context('text-loader!assets/', true, /\.xq|\.xml|\.out$/);
-const parser = new DOMParser();
+let context;
+let parser;
+
+let unrunnableTestCasesByName;
+let shouldRunTestByName;
+if (!(typeof window === 'undefined')) {
+	// In the browser
+	context = require.context('text-loader!assets/', true, /\.xq|\.xml|\.out$/);
+	parser = new DOMParser();
+
+
+	let greppedTestsetName = null;
+	if (typeof window !== 'undefined') {
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.has('grep')) {
+			[greppedTestsetName] = urlParams.get('grep').split('~');
+		}
+	}
+	if (greppedTestsetName) {
+		shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
+	}
+	else {
+		shouldRunTestByName = require('text-loader!./runnableTestSets.csv')
+			.split('\n')
+			.map(line=>line.split(','))
+			.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
+	}
+	unrunnableTestCasesByName = require('text-loader!./unrunnableTestCases.csv')
+		.split('\n')
+		.map(line => line.split(','))
+		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join('.') }), Object.create(null));
+}
+else {
+	const fs = require('fs');
+	// On node
+	context = what => fs.readFileSync(`test/assets/${what}`, 'utf-8');
+
+	const { sync } = require('slimdom-sax-parser');
+	parser = {
+		parseFromString: xmlString => {
+			try {
+				return sync(xmlString);
+			}
+			catch (e) {
+				console.log(`Error parsing the string ${xmlString}.`, e);
+				throw e;
+			}
+		}
+	};
+
+
+	shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
+		.split('\n')
+		.map(line=>line.split(','))
+		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
+
+	unrunnableTestCasesByName = fs.readFileSync('test/unrunnableTestCases.csv', 'utf-8')
+		.split('\n')
+		.map(line => line.split(','))
+		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
+
+}
+
+const globalDocument = parser.parseFromString('<xml/>', 'text/xml');
+
 
 const instantiatedDocumentByAbsolutePath = Object.create(null);
 // Especially the CI can be slow, up the timeout to 60s.
@@ -25,9 +88,12 @@ function getFile (fileName) {
 
 	let content = context(`./QT3TS-master/${fileName}`);
 	if (fileName.endsWith('.out')) {
+		if (content.endsWith('\n')) {
+			content = content.slice(0, -1);
+		}
 		content = `<xml>${content}</xml>`;
 		const parsedContents = Array.from(parser.parseFromString(content, 'text/xml').firstChild.childNodes);
-		const documentFragment = new DocumentFragment();
+		const documentFragment = globalDocument.createDocumentFragment(null, null);
 		parsedContents.forEach(node => documentFragment.appendChild(node));
 		return instantiatedDocumentByAbsolutePath[fileName] = documentFragment;
 
@@ -159,22 +225,15 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 		}
 	});
 
-const shouldRunTestByName = require('text-loader!./runnableTestSets.csv')
-	.split('\n')
-	.map(line=>line.split(','))
-	.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
+window.log = '';
 
-const unrunnableTestCasesByName = require('text-loader!./unrunnableTestCases.csv')
-	.split('\n')
-	.map(line => line.split(','))
-	.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join('.') }), Object.create(null));
-
-
-const testSetFileNames = evaluateXPathToNodes('/catalog/test-set', catalog)
+evaluateXPathToNodes('/catalog/test-set', catalog)
 	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
 	.map(testSetNode => evaluateXPathToString('@file', testSetNode))
 	.forEach(testSetFileName => {
 		const testSet = getFile(testSetFileName);
+
+		const testSetName = evaluateXPathToString('/test-set/@name', testSet);
 
 		// Find all the tests we can run
 		const testCases = evaluateXPathToNodes(`
@@ -204,61 +263,67 @@ const testSetFileNames = evaluateXPathToNodes('/catalog/test-set', catalog)
 			return;
 		}
 
-		window.log = '';
-		describe(evaluateXPathToString('/test-set/description', testSet), () => {
+		describe(evaluateXPathToString('/test-set/@name || /test-set/description!(if (string()) then "~" || . else "")', testSet), () => {
 			for (const testCase of testCases) {
-				const testName = evaluateXPathToString('./@name', testCase);
-				const description = evaluateXPathToString('if (description/text()) then description else test', testCase);
-				if (unrunnableTestCasesByName[testName]) {
-					it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
-					continue;
-				}
+				try {
+					const testName = evaluateXPathToString('./@name', testCase);
+					const description = testSetName + '~' + testName + '~' + evaluateXPathToString('if (description/text()) then description else test', testCase);
 
-				const baseUrl = testSetFileName.substr(0, testSetFileName.lastIndexOf('/'));
-
-				let testQuery;
-				if (evaluateXPathToBoolean('./test/@file', testCase)) {
-					testQuery = getFile(
-						evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, { baseUrl }));
-				}
-				else {
-					testQuery = evaluateXPathToString('./test', testCase);
-				}
-				const language = evaluateXPathToString(
-					'if (((dependency | ../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30", "XQ30+", "XQ31+", "XQ31")) then "XQuery3.1" else "XPath3.1"', testCase);
-				const asserter = getAsserterForTest(baseUrl, testCase, language);
-				const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
-
-				const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
-				let namespaceResolver = localNamespaceResolver;
-				let variablesInScope = undefined;
-				const environmentNode = evaluateXPathToFirstNode('let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment', testCase, null);
-				let env;
-				if (environmentNode) {
-					env = createEnvironment(baseUrl, environmentNode);
-				}
-				else {
-					env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
-				}
-				const contextNode = env.contextNode;
-				namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
-				variablesInScope = env.variables;
-
-				const assertFn = () => {
-					try {
-						asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
+					if (unrunnableTestCasesByName[testName]) {
+						it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
+						continue;
 					}
-					catch (e) {
-						if (e instanceof TypeError) {
+
+					const assertFn = () => {
+						const baseUrl = testSetFileName.substr(0, testSetFileName.lastIndexOf('/'));
+
+						let testQuery;
+						if (evaluateXPathToBoolean('./test/@file', testCase)) {
+							testQuery = getFile(
+								evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, { baseUrl }));
+						}
+						else {
+							testQuery = evaluateXPathToString('./test', testCase);
+						}
+						const language = evaluateXPathToString(
+							'if (((dependency | ../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10", "XQ10+", "XQ30", "XQ30+", "XQ31+", "XQ31")) then "XQuery3.1" else "XPath3.1"', testCase);
+						const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
+
+						const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
+						let namespaceResolver = localNamespaceResolver;
+						let variablesInScope = undefined;
+						const environmentNode = evaluateXPathToFirstNode('let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment', testCase, null);
+						let env;
+						if (environmentNode) {
+							env = createEnvironment(baseUrl, environmentNode);
+						}
+						else {
+							env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
+						}
+						const contextNode = env.contextNode;
+						namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
+						variablesInScope = env.variables;
+						const asserter = getAsserterForTest(baseUrl, testCase, language);
+
+						try {
+							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
+						}
+						catch (e) {
+							if (e instanceof TypeError) {
+								throw e;
+							}
+							window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
+							// And rethrow the error
 							throw e;
 						}
-						window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
-						// And rethrow the error
-						throw e;
-					}
-				};
-				assertFn.toString = () => testCase.outerHTML;
-				it(description, assertFn);
+					};
+					assertFn.toString = () => testCase.outerHTML;
+					it(description, assertFn);
+				}
+				catch (e) {
+					console.error(e);
+					continue;
+				}
 			}
 		});
 	});

@@ -618,14 +618,15 @@ DirElemConstructor
  {return ['DirElementConstructor', name, endPart && endPart[1], attList || [], endPart && accumulateDirContents(endPart[0]) || []]}
 
 // 147
+// Note: changed the order around to prevent CDATA to be parsed as element content
 DirElemContent
- =  content:DirectConstructor {return content}
- /  content:CDataSection {return content}
- /  content:CommonContent {return content}
- /  content:ElementContentChar {return content}
+ =  CDataSection
+ /  DirectConstructor
+ /  CommonContent
+ /  $ElementContentChar
 
 // 228
-ElementContentChar = ![{}<&] ch:Char {return ch}
+ElementContentChar = ![{}<&] Char
 
 // 148
 CommonContent
@@ -636,10 +637,10 @@ CommonContent
  / EnclosedExpr
 
 // 153
-CDataSection = "<!CDATA[" contents:CDataSectionContents "]]>" {return contents}
+CDataSection = "<![CDATA[" contents:$CDataSectionContents "]]>" {return ["CDataSection", contents]}
 
 // 154
-CDataSectionContents = (!"]]>" ch:Char)*{return ch.join('')}
+CDataSectionContents = (!"]]>" Char)*
 
 // 143
 DirAttributeList = attrs:(ExplicitWhitespace attr:(name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue {return [name, value]})?{return attr})* {return attrs.filter(Boolean) || []}
@@ -675,8 +676,8 @@ AposAttrValueContentChar = ![\'{}<&] ch:Char {return ch}
 
 // 233
 CharRef
- = $('&#x' codePoint:([0-9a-fA-F]+) ';')
- / $('&#' codePoint:([0-9]+) ';')
+ = $("&#x" codePoint:([0-9a-fA-F]+) ";")
+ / $("&#" codePoint:([0-9]+) ";")
 
 // 225
 PredefinedEntityRef
