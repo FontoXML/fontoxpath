@@ -162,8 +162,9 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
-	const untypedVariables = Object.assign({}, variables || {});
-	untypedVariables['theBest'] = 'FontoXML is the best!';
+	const untypedVariables = Object.assign(
+		{ 'theBest': 'FontoXML is the best!' },
+		variables);
 
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
 
