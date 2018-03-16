@@ -10,6 +10,7 @@ map-remove-012,Tries to make a map of length 500K
 map-contains-016,Tries to make a map of huge length
 map-get-016,Tries to make a map of huge length
 RexParser,Loads missing files...
+K2-DirectConElemNamespace-76,Fails in Google Chrome because of an uri parsing error
 fn-absintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-absintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-absintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
