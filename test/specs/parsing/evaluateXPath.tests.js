@@ -225,4 +225,64 @@ describe('evaluateXPath', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("xxx:yyy") => namespace-uri-from-QName() eq "http://example.com/ns"', null, null, null, { namespaceResolver: () => 'http://example.com/ns' }));
 		});
 	});
+
+	describe('nodesFactory', () => {
+		beforeEach(() => {
+			sinon.spy(document, 'createComment');
+			sinon.spy(document, 'createElementNS');
+			sinon.spy(document, 'createProcessingInstruction');
+			sinon.spy(document, 'createTextNode');
+
+		});
+		afterEach( () => {
+			document.createComment.restore();
+			document.createElementNS.restore();
+			document.createProcessingInstruction.restore();
+			document.createTextNode.restore();
+
+		});
+		it('can use the passed nodesFactory', () => {
+			const slimdomDocument = new slimdom.Document();
+			const nodesFactory = {
+				createComment: sinon.spy(slimdomDocument, 'createComment').bind(slimdomDocument),
+				createElementNS: sinon.spy(slimdomDocument, 'createElementNS').bind(slimdomDocument),
+				createProcessingInstruction: sinon.spy(slimdomDocument, 'createProcessingInstruction').bind(slimdomDocument),
+				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument)
+			};
+
+			evaluateXPathToBoolean('<element>Some text, a <?processing instruction ?> and a <!--comment--></element>', null, null, null, { nodesFactory, language: 'XQuery3.1' });
+
+			chai.assert.isFalse(document.createComment.called, 'document.createComment');
+			chai.assert.isFalse(document.createElementNS.called, 'document.createElementNS');
+			chai.assert.isFalse(document.createProcessingInstruction.called, 'document.createProcessingInstruction');
+			chai.assert.isFalse(document.createTextNode.called, 'document.createTextNode');
+
+			chai.assert.isTrue(slimdomDocument.createComment.called, 'nodesFactory.createComment');
+			chai.assert.isTrue(slimdomDocument.createElementNS.called, 'nodesFactory.createElementNS');
+			chai.assert.isTrue(slimdomDocument.createProcessingInstruction.called, 'nodesFactory.createProcessingInstruction');
+			chai.assert.isTrue(slimdomDocument.createTextNode.called, 'nodesFactory.createTextNode');
+		});
+
+		it('defaults to the passed document', () => {
+			const slimdomDocument = new slimdom.Document();
+			sinon.spy(slimdomDocument, 'createComment').bind(slimdomDocument);
+			sinon.spy(slimdomDocument, 'createElementNS').bind(slimdomDocument);
+			sinon.spy(slimdomDocument, 'createProcessingInstruction').bind(slimdomDocument);
+			sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument);
+
+			chai.assert.equal(
+				evaluateXPathToFirstNode('<element>Some text, a <?processing instruction ?> and a <!--comment--></element>', slimdomDocument, null, null, { language: 'XQuery3.1' }).outerHTML,
+				'<element>Some text, a <?processing instruction ?> and a <!--comment--></element>');
+
+			chai.assert.isTrue(slimdomDocument.createComment.called, 'createComment');
+			chai.assert.isTrue(slimdomDocument.createElementNS.called, 'createElementNS');
+			chai.assert.isTrue(slimdomDocument.createProcessingInstruction.called, 'createProcessingInstruction');
+			chai.assert.isTrue(slimdomDocument.createTextNode.called, 'createTextNode');
+		});
+
+		it('Does not error when passed a non-node with a nodetype but without the constructor functions', () => {
+			chai.assert.doesNotThrow(
+				() => evaluateXPathToBoolean('true()', { nodeType: 1 }, null, null, { language: 'XQuery3.1' }));
+		});
+	});
 });

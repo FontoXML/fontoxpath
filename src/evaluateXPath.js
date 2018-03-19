@@ -204,17 +204,26 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	 * @type {INodesFactory}
 	 */
 	let nodesFactory = options['nodesFactory'];
-	if (!nodesFactory) {
-		if (contextItem && 'nodeType' in contextItem) {
-			const ownerDocument = contextItem.ownerDocument || contextItem;
-			nodesFactory = {
-				createElementNS: ownerDocument.createElementNS.bind(ownerDocument),
-				createTextNode: ownerDocument.createTextNode.bind(ownerDocument),
-				createComment: ownerDocument.createComment.bind(ownerDocument),
-				createProcessingInstruction: ownerDocument.createProcessingInstruction.bind(ownerDocument)
-			};
+	if (!nodesFactory && compilationOptions.allowXQuery) {
+		if (contextItem && 'nodeType' in /** @type {!Node} */(contextItem)) {
+			const ownerDocument = /** @type {Document} }*/(contextItem.ownerDocument || contextItem);
+			if ((typeof ownerDocument.createElementNS === 'function') &&
+				(typeof ownerDocument.createProcessingInstruction === 'function') &&
+				(typeof ownerDocument.createTextNode === 'function') &&
+				(typeof ownerDocument.createComment === 'function')) {
+
+				nodesFactory = /** @type {!INodesFactory} */({
+					createElementNS: ownerDocument.createElementNS.bind(ownerDocument),
+					createTextNode: ownerDocument.createTextNode.bind(ownerDocument),
+					createComment: ownerDocument.createComment.bind(ownerDocument),
+					createProcessingInstruction: ownerDocument.createProcessingInstruction.bind(ownerDocument)
+				});
+			}
 		}
-		else {
+
+		if (!nodesFactory) {
+			// We do not have a nodesFactory instance as a parameter, nor can we generate one from the context item.
+			// Throw an error as soon as one of these functions is called.
 			nodesFactory = {
 				createElementNS: () => {
 					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
