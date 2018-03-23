@@ -2,28 +2,10 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
 import createSingleValueIterator from '../util/createSingleValueIterator';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, ready } from '../util/iterators';
+import createChildGenerator from '../util/createChildGenerator';
 
-/**
- * @param   {!IDomFacade}       domFacade
- * @param   {!Node}             node
- * @return  {!Iterator<!Node>}
- */
-function createChildGenerator (domFacade, node) {
-	const childNodes = domFacade.getChildNodes(node);
-	let i = 0;
-	const l = childNodes.length;
-	return /** @type {!Iterator<!Node>} */ ({
-		next () {
-			if (i >= l) {
-				return DONE_TOKEN;
-			}
-			return ready(childNodes[i++]);
-		}
-	});
-}
-
-function createDescendantGenerator (domFacade, node) {
+function createInclusiveDescendantGenerator (domFacade, node) {
 	/**
 	 * @type {!Array<!Iterator<!Node>>}
 	 */
@@ -76,7 +58,7 @@ class DescendantAxis extends Selector {
 		}
 
 		const inclusive = this._isInclusive;
-		const iterator = createDescendantGenerator(
+		const iterator = createInclusiveDescendantGenerator(
 			dynamicContext.domFacade,
 			dynamicContext.contextItem.value);
 		if (!inclusive) {

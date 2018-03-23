@@ -256,9 +256,9 @@ prod-AxisStep,true
 prod-AxisStep.abbr,true
 prod-AxisStep.ancestor,true
 prod-AxisStep.ancestor-or-self,true
-prod-AxisStep.following,false
+prod-AxisStep.following,true
 prod-AxisStep.following-sibling,true
-prod-AxisStep.preceding,false
+prod-AxisStep.preceding,true
 prod-AxisStep.preceding-sibling,true
 prod-AxisStep.static-typing,false
 prod-AxisStep.unabbr,true
