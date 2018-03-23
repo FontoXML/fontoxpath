@@ -1,6 +1,7 @@
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import DateTime from '../dataTypes/valueTypes/DateTime';
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 function fnDateTime (_dynamicContext, sequence, arg2) {
 	if (sequence.isEmpty()) {
@@ -103,97 +104,113 @@ function fnTimezoneFromDateTime (_dynamicContext, sequence) {
 export default {
 	declarations: [
 		{
-			name: 'dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'dateTime',
 			argumentTypes: ['xs:date?', 'xs:time?'],
 			returnType: 'xs:dateTime?',
 			callFunction: fnDateTime
 		},
 		{
-			name: 'year-from-dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'year-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
 			callFunction: fnYearFromDateTime
 		},
 		{
-			name: 'month-from-dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'month-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
 			callFunction: fnMonthFromDateTime
 		},
 		{
-			name: 'day-from-dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'day-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
 			callFunction: fnDayFromDateTime
 		},
 		{
-			name: 'hours-from-dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'hours-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
 			callFunction: fnHoursFromDateTime
 		},
 		{
-			name: 'minutes-from-dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'minutes-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
 			callFunction: fnMinutesFromDateTime
 		},
 		{
-			name: 'seconds-from-dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'seconds-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:decimal?',
 			callFunction: fnSecondsFromDateTime
 		},
 		{
-			name: 'timezone-from-dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'timezone-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:dayTimeDuration?',
 			callFunction: fnTimezoneFromDateTime
 		},
 		{
-			name: 'year-from-date',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'year-from-date',
 			argumentTypes: ['xs:date?'],
 			returnType: 'xs:integer?',
 			callFunction: fnYearFromDateTime
 		},
 		{
-			name: 'month-from-date',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'month-from-date',
 			argumentTypes: ['xs:date?'],
 			returnType: 'xs:integer?',
 			callFunction: fnMonthFromDateTime
 		},
 		{
-			name: 'day-from-date',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'day-from-date',
 			argumentTypes: ['xs:date?'],
 			returnType: 'xs:integer?',
 			callFunction: fnDayFromDateTime
 		},
 		{
-			name: 'timezone-from-date',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'timezone-from-date',
 			argumentTypes: ['xs:date?'],
 			returnType: 'xs:dayTimeDuration?',
 			callFunction: fnTimezoneFromDateTime
 		},
 		{
-			name: 'hours-from-time',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'hours-from-time',
 			argumentTypes: ['xs:time?'],
 			returnType: 'xs:integer?',
 			callFunction: fnHoursFromDateTime
 		},
 		{
-			name: 'minutes-from-time',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'minutes-from-time',
 			argumentTypes: ['xs:time?'],
 			returnType: 'xs:integer?',
 			callFunction: fnMinutesFromDateTime
 		},
 		{
-			name: 'seconds-from-time',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'seconds-from-time',
 			argumentTypes: ['xs:time?'],
 			returnType: 'xs:decimal?',
 			callFunction: fnSecondsFromDateTime
 		},
 		{
-			name: 'timezone-from-time',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'timezone-from-time',
 			argumentTypes: ['xs:time?'],
 			returnType: 'xs:dayTimeDuration?',
 			callFunction: fnTimezoneFromDateTime

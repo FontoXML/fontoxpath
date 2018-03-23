@@ -2,6 +2,8 @@ import castToType from '../dataTypes/castToType';
 import atomize from '../dataTypes/atomize';
 import Sequence from '../dataTypes/Sequence';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function fnTrace (dynamicContext, arg, label) {
 	return arg.mapAll(allItems => {
 		const argumentAsStrings = allItems.map(value => castToType(atomize(value, dynamicContext), 'xs:string'));
@@ -13,13 +15,15 @@ function fnTrace (dynamicContext, arg, label) {
 export default {
 	declarations: [
 		{
-			name: 'trace',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'trace',
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fnTrace
 		},
 		{
-			name: 'trace',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'trace',
 			argumentTypes: ['item()*', 'xs:string'],
 			returnType: 'item()*',
 			callFunction: fnTrace

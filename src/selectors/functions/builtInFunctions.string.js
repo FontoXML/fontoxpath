@@ -7,6 +7,8 @@ import zipSingleton from '../util/zipSingleton';
 
 import { DONE_TOKEN, ready } from '../util/iterators';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 import builtInNumericFunctions from './builtInFunctions.numeric.js';
 /**
  * @type {function(boolean, ../DynamicContext, !Sequence, ?Sequence):!Sequence}
@@ -297,63 +299,72 @@ function fnNormalizeSpace (_dynamicContext, arg) {
 export default {
 	declarations: [
 		{
-			name: 'compare',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'compare',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:integer?',
 			callFunction: fnCompare
 		},
 
 		{
-			name: 'compare',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'compare',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
 			returnType: 'xs:integer?',
 			callFunction: collationError
 		},
 
 		{
-			name: 'concat',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'concat',
 			argumentTypes: ['xs:anyAtomicType?', 'xs:anyAtomicType?', '...'],
 			returnType: 'xs:string',
 			callFunction: fnConcat
 		},
 
 		{
-			name: 'contains',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'contains',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
 			callFunction: collationError
 		},
 
 		{
-			name: 'contains',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'contains',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
 			callFunction: fnContains
 		},
 
 		{
-			name: 'ends-with',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'ends-with',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
 			callFunction: fnEndsWith
 		},
 
 		{
-			name: 'ends-with',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'ends-with',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
 			returnType: 'xs:boolean',
 			callFunction: collationError
 		},
 
 		{
-			name: 'normalize-space',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'normalize-space',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:string',
 			callFunction: fnNormalizeSpace
 		},
 
 		{
-			name: 'normalize-space',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'normalize-space',
 			argumentTypes: [],
 			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(null, (
@@ -362,77 +373,88 @@ export default {
 		},
 
 		{
-			name: 'starts-with',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'starts-with',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
 			callFunction: fnStartsWith
 		},
 
 		{
-			name: 'starts-with',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'starts-with',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
 			returnType: 'xs:boolean',
 			callFunction: collationError
 		},
 
 		{
-			name: 'string',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'string',
 			argumentTypes: ['item()?'],
 			returnType: 'xs:string',
 			callFunction: fnString
 		},
 
 		{
-			name: 'string',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'string',
 			argumentTypes: [],
 			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(null, fnString)
 		},
 
 		{
-			name: 'substring-before',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'substring-before',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:string',
 			callFunction: fnSubstringBefore
 		},
 
 		{
-			name: 'substring-after',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'substring-after',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:string',
 			callFunction: fnSubstringAfter
 		},
 
 		{
-			name: 'string-join',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'string-join',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:string',
 			callFunction: fnStringJoin
 		},
 
 		{
-			name: 'substring',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'substring',
 			argumentTypes: ['xs:string?', 'xs:double'],
 			returnType: 'xs:string',
 			callFunction: fnSubstring
 		},
 
 		{
-			name: 'substring',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'substring',
 			argumentTypes: ['xs:string?', 'xs:double', 'xs:double'],
 			returnType: 'xs:string',
 			callFunction: fnSubstring
 		},
 
 		{
-			name: 'upper-case',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'upper-case',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:string',
 			callFunction: fnUpperCase
 		},
 
 		{
-			name: 'lower-case',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'lower-case',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:string',
 			callFunction: fnLowerCase
@@ -440,7 +462,8 @@ export default {
 
 
 		{
-			name: 'string-join',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'string-join',
 			argumentTypes: ['xs:string*'],
 			returnType: 'xs:string',
 			callFunction: function (dynamicContext, arg1) {
@@ -449,14 +472,16 @@ export default {
 		},
 
 		{
-			name: 'string-length',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'string-length',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:integer',
 			callFunction: fnStringLength
 		},
 
 		{
-			name: 'string-length',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'string-length',
 			argumentTypes: [],
 			returnType: 'xs:integer',
 			callFunction: contextItemAsFirstArgument.bind(null, (
@@ -465,7 +490,8 @@ export default {
 		},
 
 		{
-			name: 'tokenize',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'tokenize',
 			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
 			returnType: 'xs:string*',
 			callFunction: function (dynamicContext, input, pattern, flags) {
@@ -474,14 +500,16 @@ export default {
 		},
 
 		{
-			name: 'tokenize',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'tokenize',
 			argumentTypes: ['xs:string?', 'xs:string'],
 			returnType: 'xs:string*',
 			callFunction: fnTokenize
 		},
 
 		{
-			name: 'tokenize',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'tokenize',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:string*',
 			callFunction: function (dynamicContext, input) {

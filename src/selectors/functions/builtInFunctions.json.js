@@ -3,6 +3,8 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ArrayValue from '../dataTypes/ArrayValue';
 import MapValue from '../dataTypes/MapValue';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 /**
  * @param  {*}  obj
  * @return {Sequence}
@@ -50,7 +52,8 @@ function fnParseJson (_dynamicContext, jsonString) {
 export default {
 	declarations: [
 		{
-			name: 'parse-json',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'parse-json',
 			argumentTypes: ['xs:string'],
 			returnType: 'item()?',
 			callFunction: fnParseJson

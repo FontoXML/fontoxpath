@@ -2,6 +2,8 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function findDescendants (domFacade, node, isMatch) {
 	const results = domFacade.getChildNodes(node)
 		.reduce(function (matchingNodes, childNode) {
@@ -112,14 +114,16 @@ export default {
 	declarations: [
 
 		{
-			name: 'id',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'id',
 			argumentTypes: ['xs:string*', 'node()'],
 			returnType: 'element()*',
 			callFunction: fnId
 		},
 
 		{
-			name: 'id',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'id',
 			argumentTypes: ['xs:string*'],
 			returnType: 'element()*',
 			callFunction: function (dynamicContext, strings) {
@@ -128,14 +132,16 @@ export default {
 		},
 
 		{
-			name: 'idref',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'idref',
 			argumentTypes: ['xs:string*', 'node()'],
 			returnType: 'node()*',
 			callFunction: fnIdref
 		},
 
 		{
-			name: 'idref',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'idref',
 			argumentTypes: ['xs:string*'],
 			returnType: 'node()*',
 			callFunction: function (dynamicContext, strings) {

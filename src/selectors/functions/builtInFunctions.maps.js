@@ -6,6 +6,8 @@ import MapValue from '../dataTypes/MapValue';
 import zipSingleton from '../util/zipSingleton';
 import concatSequences from '../util/concatSequences';
 
+import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 /**
  * @param   {../DynamicContext}  dynamicContext
  * @param   {!Sequence}           mapSequence
@@ -185,21 +187,24 @@ function mapForEach (dynamicContext, mapSequence, functionItemSequence) {
 export default {
 	declarations: [
 		{
-			name: 'map:contains',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'contains',
 			argumentTypes: ['map(*)', 'xs:anyAtomicType'],
 			returnType: 'xs:boolean',
 			callFunction: mapContains
 		},
 
 		{
-			name: 'map:entry',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'entry',
 			argumentTypes: ['xs:anyAtomicType', 'item()*'],
 			returnType: 'map(*)',
 			callFunction: mapEntry
 		},
 
 		{
-			name: 'map:for-each',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'for-each',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['map(*)', 'function(xs:anyAtomicType, item()*) as item()*'],
 			argumentTypes: ['map(*)', 'function(*)'],
@@ -208,28 +213,32 @@ export default {
 		},
 
 		{
-			name: 'map:get',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'get',
 			argumentTypes: ['map(*)', 'xs:anyAtomicType'],
 			returnType: 'item()*',
 			callFunction: mapGet
 		},
 
 		{
-			name: 'map:keys',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'keys',
 			argumentTypes: ['map(*)'],
 			returnType: 'xs:anyAtomicType*',
 			callFunction: mapKeys
 		},
 
 		{
-			name: 'map:merge',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'merge',
 			argumentTypes: ['map(*)*', 'map(*)'],
 			returnType: 'map(*)',
 			callFunction: mapMerge
 		},
 
 		{
-			name: 'map:merge',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'merge',
 			argumentTypes: ['map(*)*'],
 			returnType: 'map(*)',
 			callFunction: function (dynamicContext, maps) {
@@ -244,21 +253,24 @@ export default {
 		},
 
 		{
-			name: 'map:put',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'put',
 			argumentTypes: ['map(*)', 'xs:anyAtomicType', 'item()*'],
 			returnType: 'map(*)',
 			callFunction: mapPut
 		},
 
 		{
-			name: 'map:remove',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'remove',
 			argumentTypes: ['map(*)', 'xs:anyAtomicType*'],
 			returnType: 'map(*)',
 			callFunction: mapRemove
 		},
 
 		{
-			name: 'map:size',
+			namespaceURI: MAP_NAMESPACE_URI,
+			localName: 'size',
 			argumentTypes: ['map(*)'],
 			returnType: 'xs:integer',
 			callFunction: mapSize

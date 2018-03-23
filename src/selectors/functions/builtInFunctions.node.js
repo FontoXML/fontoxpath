@@ -5,6 +5,8 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import QName from '../dataTypes/valueTypes/QName';
 import zipSingleton from '../util/zipSingleton';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 /**
  * @type {function(../DynamicContext, !Sequence): !Sequence}
  */
@@ -95,20 +97,20 @@ function fnOutermost (dynamicContext, nodeSequence) {
 		 * @type {!Array<!../dataTypes/Value>}
 		 */
 		const resultNodes = sortNodeValues(dynamicContext.domFacade, allNodeValues)
-			.reduce(function (previousNodes, node, i) {
-				if (i === 0) {
-					previousNodes.push(node);
-					return previousNodes;
-				}
-				// Because the nodes are sorted, the previous node is either a 'previous node', or an ancestor of this node
-				if (contains(dynamicContext.domFacade, previousNodes[previousNodes.length - 1].value, node.value)) {
-					// The previous node is an ancestor
-					return previousNodes;
-				}
+			  .reduce(function (previousNodes, node, i) {
+				  if (i === 0) {
+					  previousNodes.push(node);
+					  return previousNodes;
+				  }
+				  // Because the nodes are sorted, the previous node is either a 'previous node', or an ancestor of this node
+				  if (contains(dynamicContext.domFacade, previousNodes[previousNodes.length - 1].value, node.value)) {
+					  // The previous node is an ancestor
+					  return previousNodes;
+				  }
 
-				previousNodes.push(node);
-				return previousNodes;
-			}, []);
+				  previousNodes.push(node);
+				  return previousNodes;
+			  }, []);
 
 		return new Sequence(resultNodes);
 	});
@@ -146,70 +148,80 @@ function fnInnermost (dynamicContext, nodeSequence) {
 export default {
 	declarations: [
 		{
-			name: 'name',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'name',
 			argumentTypes: ['node()?'],
 			returnType: 'xs:string',
 			callFunction: fnName
 		},
 
 		{
-			name: 'name',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'name',
 			argumentTypes: [],
 			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(null, fnName)
 		},
 
 		{
-			name: 'namespace-uri',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'namespace-uri',
 			argumentTypes: ['node()'],
 			returnType: 'xs:anyURI',
 			callFunction: fnNamespaceURI
 		},
 
 		{
-			name: 'namespace-uri',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'namespace-uri',
 			argumentTypes: [],
 			returnType: 'xs:anyURI',
 			callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI)
 		},
 
 		{
-			name: 'innermost',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'innermost',
 			argumentTypes: ['node()*'],
 			returnType: 'node()*',
 			callFunction: fnInnermost
 		},
 
 		{
-			name: 'outermost',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'outermost',
 			argumentTypes: ['node()*'],
 			returnType: 'node()*',
 			callFunction: fnOutermost
 		},
 
 		{
-			name: 'node-name',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'node-name',
 			argumentTypes: ['node()?'],
 			returnType: 'xs:QName?',
 			callFunction: fnNodeName
 		},
 
 		{
-			name: 'node-name',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'node-name',
 			argumentTypes: [],
 			returnType: 'xs:QName?',
 			callFunction: contextItemAsFirstArgument.bind(null, fnNodeName)
 		},
 
 		{
-			name: 'local-name',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'local-name',
 			argumentTypes: ['node()?'],
 			returnType: 'xs:string',
 			callFunction: fnLocalName
 		},
 
 		{
-			name: 'local-name',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'local-name',
 			argumentTypes: [],
 			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(null, fnLocalName)

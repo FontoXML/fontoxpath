@@ -57,11 +57,12 @@ function opTo (_dynamicContext, fromSequence, toSequence) {
 export default {
 	declarations: [
 		{
-			name: 'op:to',
+			namespaceURI: 'http://fontoxpath/operators',
+			localName: 'to',
 			argumentTypes: ['xs:integer?', 'xs:integer?'],
 			returnType: 'xs:integer*',
 			callFunction: opTo
-		},
+		}
 	],
 	functions: {
 		to: opTo

@@ -7,6 +7,8 @@ import zipSingleton from '../util/zipSingleton';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
+import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function arraySize (_dynamicContext, arraySequence) {
 	return zipSingleton(
 		[arraySequence],
@@ -233,42 +235,48 @@ function arrayFlatten (_dynamicContext, itemSequence) {
 export default {
 	declarations: [
 		{
-			name: 'array:size',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'size',
 			argumentTypes: ['array(*)'],
 			returnType: 'xs:integer',
 			callFunction: arraySize
 		},
 
 		{
-			name: 'array:get',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'get',
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'item()*',
 			callFunction: arrayGet
 		},
 
 		{
-			name: 'array:put',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'put',
 			argumentTypes: ['array(*)', 'xs:integer', 'item()*'],
 			returnType: 'array(*)',
 			callFunction: arrayPut
 		},
 
 		{
-			name: 'array:append',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'append',
 			argumentTypes: ['array(*)', 'item()*'],
 			returnType: 'array(*)',
 			callFunction: arrayAppend
 		},
 
 		{
-			name: 'array:subarray',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'subarray',
 			argumentTypes: ['array(*)', 'xs:integer', 'xs:integer'],
 			returnType: 'array(*)',
 			callFunction: arraySubarray
 		},
 
 		{
-			name: 'array:subarray',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'subarray',
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'array(*)',
 			callFunction: function (dynamicContext, arraySequence, startSequence) {
@@ -284,21 +292,24 @@ export default {
 		},
 
 		{
-			name: 'array:remove',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'remove',
 			argumentTypes: ['array(*)', 'xs:integer*'],
 			returnType: 'array(*)',
 			callFunction: arrayRemove
 		},
 
 		{
-			name: 'array:insert-before',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'insert-before',
 			argumentTypes: ['array(*)', 'xs:integer', 'item()*'],
 			returnType: 'array(*)',
 			callFunction: arrayInsertBefore
 		},
 
 		{
-			name: 'array:head',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'head',
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
 			callFunction: function (dynamicContext, arraySequence) {
@@ -307,7 +318,8 @@ export default {
 		},
 
 		{
-			name: 'array:tail',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'tail',
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
 			callFunction: function (dynamicContext, arraySequence) {
@@ -316,21 +328,24 @@ export default {
 		},
 
 		{
-			name: 'array:reverse',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'reverse',
 			argumentTypes: ['array(*)'],
 			returnType: 'array(*)',
 			callFunction: arrayReverse
 		},
 
 		{
-			name: 'array:join',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'join',
 			argumentTypes: ['array(*)*'],
 			returnType: 'array(*)',
 			callFunction: arrayJoin
 		},
 
 		{
-			name: 'array:for-each',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'for-each',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'function(item()*) as item()*)]
 			argumentTypes: ['array(*)', 'function(*)'],
@@ -339,7 +354,8 @@ export default {
 		},
 
 		{
-			name: 'array:filter',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'filter',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'function(item()*) as xs:boolean)]
 			argumentTypes: ['array(*)', 'function(*)'],
@@ -348,7 +364,8 @@ export default {
 		},
 
 		{
-			name: 'array:fold-left',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'fold-left',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', 'function(item()*, item()*) as item())]
 			argumentTypes: ['array(*)', 'item()*', 'function(*)'],
@@ -357,7 +374,8 @@ export default {
 		},
 
 		{
-			name: 'array:fold-right',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'fold-right',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', 'function(item()*, item()*) as item())]
 			argumentTypes: ['array(*)', 'item()*', 'function(*)'],
@@ -366,7 +384,8 @@ export default {
 		},
 
 		{
-			name: 'array:for-each-pair',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'for-each-pair',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', 'function(item()*, item()*) as item())]
 			argumentTypes: ['array(*)', 'array(*)', 'function(*)'],
@@ -375,14 +394,16 @@ export default {
 		},
 
 		{
-			name: 'array:sort',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'sort',
 			argumentTypes: ['array(*)'],
 			returnType: 'array(*)',
 			callFunction: arraySort
 		},
 
 		{
-			name: 'array:flatten',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			localName: 'flatten',
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: arrayFlatten
@@ -404,6 +425,6 @@ export default {
 		reverse: arrayReverse,
 		size: arraySize,
 		sort: arraySort,
-		subarray: arraySubarray
+		subArray: arraySubarray
 	}
 };

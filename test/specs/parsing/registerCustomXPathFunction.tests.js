@@ -9,7 +9,7 @@ import {
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-describe('registerCustomXPath() =>', () => {
+describe('registerCustomXPath', () => {
 	let documentNode;
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
@@ -171,11 +171,26 @@ describe('registerCustomXPath() =>', () => {
 		chai.assert.isTrue(evaluateXPathToString('test:custom-function3("test")', documentNode) === 'test');
 	});
 
+	it('functions can be registered using a namespace', () => {
+		var namespaceURI = 'http://www.example.com/customFunctionTest';
+		registerCustomXPathFunction(
+			{ namespaceURI: 'http://www.example.com/customFunctionTest', localName: 'test' },
+			[],
+			'xs:boolean',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return true;
+			});
+		chai.assert.isTrue(evaluateXPathToBoolean(`Q{${namespaceURI}}test()`, null), 'Attempt to access the function using the namespace uri');
+	});
+
 	it('disallows attributes as parameters', () => {
 		chai.assert.throws(() => evaluateXPathToString('test:custom-function3(//@*)', documentNode), 'Cannot pass attribute nodes');
 	});
 
-	it('the registered function can be used in a xPath selector with return value array', () => {
+	it('the registered function can be used in an XPath selector with return value array', () => {
 		chai.assert.deepEqual(evaluateXPathToStrings('test:custom-function4(("abc", "123", "XYZ"))', documentNode), ['abc-test', '123-test', 'XYZ-test']);
 		// Returns ['abc-test'], but does get atomized by the evaluateXPath function
 		chai.assert.deepEqual(evaluateXPathToString('test:custom-function4(("abc"))', documentNode), 'abc-test');

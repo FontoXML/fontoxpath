@@ -112,12 +112,12 @@ StringConcatExpr
  = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* {
      if (!rest.length) return first;
 	 var args = [first].concat(rest);
-     return appendRest(["functionCall", ["namedFunctionRef", [null, null, "concat"], args.length], args])
+     return appendRest(["functionCall", ["namedFunctionRef", [null, "http://www.w3.org/2005/xpath-functions", "concat"], args.length], args])
    }
 
 // 20
 RangeExpr
- = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", ["op", null, "to"], 2], [lhs, rhs]]}
+ = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", [null, "http://fontoxpath/operators", "to"], 2], [lhs, rhs]]}
 
 // 21
 AdditiveExpr
