@@ -5,6 +5,8 @@ import QName from '../dataTypes/valueTypes/QName';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { validatePattern, normalizeWhitespace } from '../dataTypes/typeHelpers';
 
+import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function genericDataTypeConstructor (dataType, _dynamicContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -43,13 +45,15 @@ function xsQName (dynamicContext, sequence) {
 export default {
 	declarations: [
 		{
-			name: 'xs:untypedAtomic',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'untypedAtomic',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:untypedAtomic?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:untypedAtomic')
 		},
 		{
-			name: 'xs:error',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'error',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:error?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:error')
@@ -57,284 +61,331 @@ export default {
 		// AnySimpleType cannot be instantiated
 		// AnyAtomicType cannot be instantiated
 		{
-			name: 'xs:string',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'string',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:string?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:string')
 		},
 		{
-			name: 'xs:boolean',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'boolean',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:boolean?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:boolean')
 		},
 		{
-			name: 'xs:decimal',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'decimal',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:decimal?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:decimal')
 		},
 		{
-			name: 'xs:float',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'float',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:float?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:float')
 		},
 		{
-			name: 'xs:double',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'double',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:double?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:double')
 		},
 		{
-			name: 'xs:duration',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'duration',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:duration?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:duration')
 		},
 		{
-			name: 'xs:dateTime',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'dateTime',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:dateTime?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:dateTime')
 		},
 		{
-			name: 'xs:dateTimeStamp',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'dateTimeStamp',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:dateTime?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:dateTimeStamp')
 		},
 		{
-			name: 'xs:time',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'time',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:time?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:time')
 		},
 		{
-			name: 'xs:date',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'date',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:date?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:date')
 		},
 		{
-			name: 'xs:gYearMonth',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'gYearMonth',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:gYearMonth?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:gYearMonth')
 		},
 		{
-			name: 'xs:gYear',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'gYear',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:gYear?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:gYear')
 		},
 		{
-			name: 'xs:gMonthDay',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'gMonthDay',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:gMonthDay?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:gMonthDay')
 		},
 		{
-			name: 'xs:gDay',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'gDay',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:gDay?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:gDay')
 		},
 		{
-			name: 'xs:gMonth',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'gMonth',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:gMonth?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:gMonth')
 		},
 		{
-			name: 'xs:hexBinary',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'hexBinary',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:hexBinary?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:hexBinary')
 		},
 		{
-			name: 'xs:base64Binary',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'base64Binary',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:base64Binary?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:base64Binary')
 		},
 		{
-			name: 'xs:QName',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'QName',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:QName?',
 			callFunction: xsQName
 		},
 		{
-			name: 'xs:anyURI',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'anyURI',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:anyURI?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:anyURI')
 		},
 		// NOTATION cannot be instantiated
 		{
-			name: 'xs:normalizedString',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'normalizedString',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:normalizedString?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:normalizedString')
 		},
 		{
-			name: 'xs:token',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'token',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:token?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:token')
 		},
 		{
-			name: 'xs:language',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'language',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:language?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:language')
 		},
 		{
-			name: 'xs:NMTOKEN',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'NMTOKEN',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:NMTOKEN?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:NMTOKEN')
 		},
 		{
-			name: 'xs:NMTOKENS',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'NMTOKENS',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:NMTOKENS*',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:NMTOKENS')
 		},
 		{
-			name: 'xs:Name',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'Name',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:Name?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:Name')
 		},
 		{
-			name: 'xs:NCName',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'NCName',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:NCName?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:NCName')
 		},
 		{
-			name: 'xs:ID',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'ID',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:ID?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:ID')
 		},
 		{
-			name: 'xs:IDREF',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'IDREF',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:IDREF?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:IDREF')
 		},
 		{
-			name: 'xs:IDREFS',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'IDREFS',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:IDREFS*',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:IDREFS')
 		},
 		{
-			name: 'xs:ENTITY',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'ENTITY',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:ENTITY?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:ENTITY')
 		},
 		{
-			name: 'xs:ENTITIES',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'ENTITIES',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:ENTITIES*',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:ENTITIES')
 		},
 		{
-			name: 'xs:integer',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'integer',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:integer?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:integer')
 		},
 		{
-			name: 'xs:nonPositiveInteger',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'nonPositiveInteger',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:nonPositiveInteger?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:nonPositiveInteger')
 		},
 		{
-			name: 'xs:negativeInteger',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'negativeInteger',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:negativeInteger?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:negativeInteger')
 		},
 		{
-			name: 'xs:long',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'long',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:long?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:long')
 		},
 		{
-			name: 'xs:int',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'int',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:int?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:int')
 		},
 		{
-			name: 'xs:short',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'short',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:short?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:short')
 		},
 		{
-			name: 'xs:byte',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'byte',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:byte?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:byte')
 		},
 		{
-			name: 'xs:nonNegativeInteger',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'nonNegativeInteger',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:nonNegativeInteger?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:nonNegativeInteger')
 		},
 		{
-			name: 'xs:unsignedLong',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'unsignedLong',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:unsignedLong?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:unsignedLong')
 		},
 		{
-			name: 'xs:unsignedInt',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'unsignedInt',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:unsignedInt?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:unsignedInt')
 		},
 		{
-			name: 'xs:unsignedShort',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'unsignedShort',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:unsignedShort?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:unsignedShort')
 		},
 		{
-			name: 'xs:unsignedByte',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'unsignedByte',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:unsignedByte?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:unsignedByte')
 		},
 		{
-			name: 'xs:positiveInteger',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'positiveInteger',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:positiveInteger?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:positiveInteger')
 		},
 		{
-			name: 'xs:yearMonthDuration',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'yearMonthDuration',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:yearMonthDuration?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:yearMonthDuration')
 		},
 		{
-			name: 'xs:dayTimeDuration',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'dayTimeDuration',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:dayTimeDuration?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:dayTimeDuration')
 		},
 		{
-			name: 'xs:dateTimeStamp',
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'dateTimeStamp',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:dateTimeStamp?',
 			callFunction: genericDataTypeConstructor.bind(null, 'xs:dateTimeStamp')

@@ -1,6 +1,8 @@
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 
+import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function mathPi (_dynamicContext) {
 	return Sequence.singleton(createAtomicValue(Math.PI, 'xs:double'));
 }
@@ -70,98 +72,112 @@ function mathAtan2 (_dynamicContext, x, y) {
 export default {
 	declarations: [
 		{
-			name: 'math:pi',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'pi',
 			argumentTypes: [],
 			returnType: 'xs:double',
 			callFunction: mathPi
 		},
 
 		{
-			name: 'math:exp',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'exp',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathExp
 		},
 
 		{
-			name: 'math:exp10',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'exp10',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathExp10
 		},
 
 		{
-			name: 'math:log',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'log',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathLog
 		},
 
 		{
-			name: 'math:log10',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'log10',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathLog10
 		},
 
 		{
-			name: 'math:pow',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'pow',
 			argumentTypes: ['xs:double?', 'xs:numeric'],
 			returnType: 'xs:double?',
 			callFunction: mathPow
 		},
 
 		{
-			name: 'math:sqrt',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'sqrt',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathSqrt
 		},
 
 		{
-			name: 'math:sin',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'sin',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathSin
 		},
 
 		{
-			name: 'math:cos',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'cos',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathCos
 		},
 
 		{
-			name: 'math:tan',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'tan',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathTan
 		},
 
 		{
-			name: 'math:asin',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'asin',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathAsin
 		},
 
 		{
-			name: 'math:acos',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'acos',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathAcos
 		},
 
 		{
-			name: 'math:atan',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'atan',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
 			callFunction: mathAtan
 		},
 
 		{
-			name: 'math:atan2',
+			namespaceURI: MATH_NAMESPACE_URI,
+			localName: 'atan2',
 			argumentTypes: ['xs:double?', 'xs:double'],
 			returnType: 'xs:double?',
 			callFunction: mathAtan2

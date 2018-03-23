@@ -11,19 +11,14 @@ import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
 
 import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
 
+import {
+	staticallyKnownNamespaceByPrefix
+} from './selectors/staticallyKnownNamespaces';
+
 function normalizeEndOfLines (xpathString) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xA));
 }
-
-const DEFAULT_NAMESPACES = {
-	'xml': 'http://www.w3.org/XML/1998/namespace',
-	'xs': 'http://www.w3.org/2001/XMLSchema',
-	'fn': 'http://www.w3.org/2005/xpath-functions',
-	'map': 'http://www.w3.org/2005/xpath-functions/map',
-	'array': 'http://www.w3.org/2005/xpath-functions/array',
-	'math': 'http://www.w3.org/2005/xpath-functions/math'
-};
 
 function transformMapToObject (map, dynamicContext) {
 	const mapObj = {};
@@ -252,8 +247,8 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		variables: typedVariables,
 
 		resolveNamespacePrefix: prefix => {
-			if (DEFAULT_NAMESPACES[prefix]) {
-				return DEFAULT_NAMESPACES[prefix];
+			if (staticallyKnownNamespaceByPrefix[prefix]) {
+				return staticallyKnownNamespaceByPrefix[prefix];
 			}
 			return namespaceResolver(prefix);
 		},

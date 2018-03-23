@@ -2,6 +2,8 @@ import Sequence from '../dataTypes/Sequence';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 /**
  * @param   {../DynamicContext}  _dynamicContext
  * @param   {Sequence}           sequence
@@ -71,28 +73,32 @@ function fnFalse () {
 export default {
 	declarations: [
 		{
-			name: 'boolean',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'boolean',
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnBoolean
 		},
 
 		{
-			name: 'true',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'true',
 			argumentTypes: [],
 			returnType: 'xs:boolean',
 			callFunction: fnTrue
 		},
 
 		{
-			name: 'not',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'not',
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnNot
 		},
 
 		{
-			name: 'false',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'false',
 			argumentTypes: [],
 			returnType: 'xs:boolean',
 			callFunction: fnFalse

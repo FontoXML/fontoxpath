@@ -1,5 +1,6 @@
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 
 function fnYearsFromDuration (_dynamicContext, sequence) {
@@ -47,37 +48,43 @@ function fnSecondsFromDuration (_dynamicContext, sequence) {
 export default {
 	declarations: [
 		{
-			name: 'years-from-duration',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'years-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
 			callFunction: fnYearsFromDuration
 		},
 		{
-			name: 'months-from-duration',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'months-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
 			callFunction: fnMonthsFromDuration
 		},
 		{
-			name: 'days-from-duration',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'days-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
 			callFunction: fnDaysFromDuration
 		},
 		{
-			name: 'hours-from-duration',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'hours-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
 			callFunction: fnHoursFromDuration
 		},
 		{
-			name: 'minutes-from-duration',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'minutes-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
 			callFunction: fnMinutesFromDuration
 		},
 		{
-			name: 'seconds-from-duration',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'seconds-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:decimal?',
 			callFunction: fnSecondsFromDuration

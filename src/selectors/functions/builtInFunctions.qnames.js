@@ -4,6 +4,8 @@ import QName from '../dataTypes/valueTypes/QName';
 import { validatePattern } from '../dataTypes/typeHelpers';
 import zipSingleton from '../util/zipSingleton';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function fnQName (_dynamicContext, paramURI, paramQName) {
 	return zipSingleton([paramURI, paramQName], ([uriValue, lexicalQNameValue]) => {
 		const lexicalQName = lexicalQNameValue.value;
@@ -60,25 +62,29 @@ function fnLocalNameFromQName (_dynamicContext, arg) {
 export default {
 	declarations: [
 		{
-			name: 'QName',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'QName',
 			argumentTypes: ['xs:string?', 'xs:string'],
 			returnType: 'xs:QName',
 			callFunction: fnQName
 		},
 		{
-			name: 'prefix-from-QName',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'prefix-from-QName',
 			argumentTypes: ['xs:QName?'],
 			returnType: 'xs:NCName?',
 			callFunction: fnPrefixFromQName
 		},
 		{
-			name: 'local-name-from-QName',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'local-name-from-QName',
 			argumentTypes: ['xs:QName?'],
 			returnType: 'xs:NCName?',
 			callFunction: fnLocalNameFromQName
 		},
 		{
-			name: 'namespace-uri-from-QName',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'namespace-uri-from-QName',
 			argumentTypes: ['xs:QName?'],
 			returnType: 'xs:anyURI?',
 			callFunction: fnNamespaceURIFromQName

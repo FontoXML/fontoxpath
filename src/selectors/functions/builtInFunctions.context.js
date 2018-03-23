@@ -2,6 +2,8 @@ import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function fnLast (dynamicContext) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error('XPDY0002: The fn:last() function depends on dynamic context, which is absent.');
@@ -50,42 +52,48 @@ function fnImplicitTimezone (dynamicContext) {
 export default {
 	declarations: [
 		{
-			name: 'last',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'last',
 			argumentTypes: [],
 			returnType: 'xs:integer',
 			callFunction: fnLast
 		},
 
 		{
-			name: 'position',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'position',
 			argumentTypes: [],
 			returnType: 'xs:integer',
 			callFunction: fnPosition
 		},
 
 		{
-			name: 'current-dateTime',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'current-dateTime',
 			argumentTypes: [],
 			returnType: 'xs:dateTimeStamp',
 			callFunction: fnCurrentDateTime
 		},
 
 		{
-			name: 'current-date',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'current-date',
 			argumentTypes: [],
 			returnType: 'xs:date',
 			callFunction: fnCurrentDate
 		},
 
 		{
-			name: 'current-time',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'current-time',
 			argumentTypes: [],
 			returnType: 'xs:time',
 			callFunction: fnCurrentTime
 		},
 
 		{
-			name: 'implicit-timezone',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'implicit-timezone',
 			argumentTypes: [],
 			returnType: 'xs:dayTimeDuration',
 			callFunction: fnImplicitTimezone

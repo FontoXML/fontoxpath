@@ -2,7 +2,7 @@ import builtInFunctions from './builtInFunctions';
 import Sequence from '../dataTypes/Sequence';
 
 /**
- * @typedef {({name: !string, callFunction: !function(*): !Sequence, argumentTypes: !Array<string>, returnType: !string})}
+ * @typedef {({localName: !string, namespaceURI: string, callFunction: !function(*): !Sequence, argumentTypes: !Array<string>, returnType: !string})}
  */
 let FunctionProperties;
 
@@ -54,9 +54,12 @@ function getAlternativesAsStringFor (functionName) {
 		// Get closest functions by levenstein distance
 		alternativeFunctions = Object.keys(registeredFunctionsByName)
 			.map(alternativeName => {
+				// Remove the namespace uri part of the cache key
 				return {
 					name: alternativeName,
-					distance: computeLevenshteinDistance(functionName, alternativeName)
+					distance: computeLevenshteinDistance(
+						functionName,
+						alternativeName.slice(alternativeName.lastIndexOf(':') + 1))
 				};
 			})
 			.sort((a, b) => a.distance - b.distance)
@@ -75,7 +78,7 @@ function getAlternativesAsStringFor (functionName) {
 		return 'No similar functions found.';
 	}
 
-	return alternativeFunctions.map(functionDeclaration => `"${functionDeclaration.name} (${functionDeclaration.argumentTypes.join(', ')})"`)
+	return alternativeFunctions.map(functionDeclaration => `"Q{${functionDeclaration.namespaceURI}}${functionDeclaration.localName} (${functionDeclaration.argumentTypes.join(', ')})"`)
 		.reduce((accumulator, functionName, index, array) => {
 		if (index === 0) {
 			return accumulator + functionName;
@@ -85,16 +88,13 @@ function getAlternativesAsStringFor (functionName) {
 }
 
 /**
- * @param	{!string}  functionName
- * @param	{!number}  arity
- * @return	{?FunctionProperties}
+ * @param   {string}   functionNamespaceURI
+ * @param   {!string}  functionLocalName
+ * @param   {!number}  arity
+ * @return  {?FunctionProperties}
  */
-function getFunctionByArity (functionName, arity) {
-	let matchingFunctions = registeredFunctionsByName[functionName];
-
-	if (!matchingFunctions && functionName.startsWith('fn:')) {
-		matchingFunctions = registeredFunctionsByName[functionName.substr(3)];
-	}
+function getFunctionByArity (functionNamespaceURI, functionLocalName, arity) {
+	const matchingFunctions = registeredFunctionsByName[functionNamespaceURI + ':' + functionLocalName];
 
 	if (!matchingFunctions) {
 		return null;
@@ -113,20 +113,22 @@ function getFunctionByArity (functionName, arity) {
 	}
 
 	return {
-		name: functionName,
+		namespaceURI: functionNamespaceURI,
+		localName: functionLocalName,
 		callFunction: matchingFunction.callFunction,
 		argumentTypes: matchingFunction.argumentTypes,
 		returnType: matchingFunction.returnType
 	};
 }
 
-function registerFunction (name, argumentTypes, returnType, callFunction) {
-	if (!registeredFunctionsByName[name]) {
-		registeredFunctionsByName[name] = [];
+function registerFunction (namespaceURI, localName, argumentTypes, returnType, callFunction) {
+	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {
+		registeredFunctionsByName[namespaceURI + ':' + localName] = [];
 	}
 
-	registeredFunctionsByName[name].push({
-		name: name,
+	registeredFunctionsByName[namespaceURI + ':' + localName].push({
+		localName: localName,
+		namespaceURI: namespaceURI,
 		argumentTypes: argumentTypes,
 		returnType: returnType,
 		callFunction: callFunction
@@ -136,7 +138,8 @@ function registerFunction (name, argumentTypes, returnType, callFunction) {
 // bootstrap builtin functions
 builtInFunctions.forEach(builtInFunction => {
 	registerFunction(
-		builtInFunction.name,
+		builtInFunction.namespaceURI,
+		builtInFunction.localName,
 		builtInFunction.argumentTypes,
 		builtInFunction.returnType,
 		builtInFunction.callFunction);

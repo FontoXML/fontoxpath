@@ -9,6 +9,8 @@ import { transformArgument } from './argumentHelper';
 
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function createValidNumericType (type, transformedValue) {
 	if (isSubtypeOf(type, 'xs:integer')) {
 		return createAtomicValue(transformedValue, 'xs:integer');
@@ -227,63 +229,72 @@ function fnRandomNumberGenerator (_dynamicContext, _sequence) {
 export default {
 	declarations: [
 		{
-			name: 'abs',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'abs',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
 			callFunction: fnAbs
 		},
 
 		{
-			name: 'ceiling',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'ceiling',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
 			callFunction: fnCeiling
 		},
 
 		{
-			name: 'floor',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'floor',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
 			callFunction: fnFloor
 		},
 
 		{
-			name: 'round',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'round',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric',
 			callFunction: fnRound.bind(null, false)
 		},
 
 		{
-			name: 'round',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'round',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric',
 			callFunction: fnRound.bind(null, false)
 		},
 
 		{
-			name: 'round-half-to-even',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric',
 			callFunction: fnRound.bind(null, true)
 		},
 
 		{
-			name: 'round-half-to-even',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric',
 			callFunction: fnRound.bind(null, true)
 		},
 
 		{
-			name: 'number',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'number',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:double',
 			callFunction: fnNumber
 		},
 
 		{
-			name: 'number',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'number',
 			argumentTypes: [],
 			returnType: 'xs:double',
 			callFunction: (dynamicContext) => {
@@ -297,14 +308,16 @@ export default {
 		},
 
 		{
-			name: 'random-number-generator',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'random-number-generator',
 			argumentTypes: [],
 			returnType: 'map(*)',
 			callFunction: fnRandomNumberGenerator
 		},
 
 		{
-			name: 'random-number-generator',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'random-number-generator',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'map(*)',
 			callFunction: () => {

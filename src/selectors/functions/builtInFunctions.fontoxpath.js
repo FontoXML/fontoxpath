@@ -5,6 +5,8 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
+import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 /**
  * @param  {!../DynamicContext}      dynamicContext
  * @param  {!../dataTypes/Sequence}  query
@@ -131,31 +133,36 @@ function fontoxpathFetch (_dynamicContext, url) {
 export default {
 	declarations: [
 		{
-			name: 'fontoxpath:evaluate',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			localName: 'evaluate',
 			argumentTypes: ['xs:string', 'map(*)'],
 			returnType: 'item()*',
 			callFunction: fontoxpathEvaluate
 		},
 		{
-			name: 'fontoxpath:sleep',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			localName: 'sleep',
 			argumentTypes: ['item()*', 'xs:numeric'],
 			returnType: 'item()*',
 			callFunction: fontoxpathSleep
 		},
 		{
-			name: 'fontoxpath:sleep',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			localName: 'sleep',
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fontoxpathSleep
 		},
 		{
-			name: 'fontoxpath:fetch',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			localName: 'fetch',
 			argumentTypes: ['xs:string', 'map(*)'],
 			returnType: 'item()*',
 			callFunction: fontoxpathFetch
 		},
 		{
-			name: 'fontoxpath:fetch',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			localName: 'fetch',
 			argumentTypes: ['xs:string'],
 			returnType: 'item()*',
 			callFunction: fontoxpathFetch

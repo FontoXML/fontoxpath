@@ -9,6 +9,8 @@ import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
 function subSequence (sequence, start, length) {
 	// XPath starts from 1
 	let i = 1;
@@ -384,56 +386,64 @@ function fnFilter (dynamicContext, sequence, callbackSequence) {
 export default {
 	declarations: [
 		{
-			name: 'empty',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'empty',
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnEmpty
 		},
 
 		{
-			name: 'exists',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'exists',
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnExists
 		},
 
 		{
-			name: 'head',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'head',
 			argumentTypes: ['item()*'],
 			returnType: 'item()?',
 			callFunction: fnHead
 		},
 
 		{
-			name: 'tail',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'tail',
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fnTail
 		},
 
 		{
-			name: 'insert-before',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'insert-before',
 			argumentTypes: ['item()*', 'xs:integer', 'item()*'],
 			returnType: 'item()*',
 			callFunction: fnInsertBefore
 		},
 
 		{
-			name: 'remove',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'remove',
 			argumentTypes: ['item()*', 'xs:integer'],
 			returnType: 'item()*',
 			callFunction: fnRemove
 		},
 
 		{
-			name: 'reverse',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'reverse',
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fnReverse
 		},
 
 		{
-			name: 'subsequence',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'subsequence',
 			argumentTypes: ['item()*', 'xs:double'],
 			returnType: 'item()*',
 			callFunction: (dynamicContext, sequence, start) =>
@@ -441,28 +451,32 @@ export default {
 		},
 
 		{
-			name: 'subsequence',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'subsequence',
 			argumentTypes: ['item()*', 'xs:double', 'xs:double'],
 			returnType: 'item()*',
 			callFunction: fnSubsequence
 		},
 
 		{
-			name: 'unordered',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'unordered',
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fnUnordered
 		},
 
 		{
-			name: 'deep-equal',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'deep-equal',
 			argumentTypes: ['item()*', 'item()*'],
 			returnType: 'xs:boolean',
 			callFunction: fnDeepEqual
 		},
 
 		{
-			name: 'deep-equal',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'deep-equal',
 			argumentTypes: ['item()*', 'item()*', 'xs:string'],
 			returnType: 'xs:boolean',
 			callFunction: function () {
@@ -471,28 +485,32 @@ export default {
 		},
 
 		{
-			name: 'count',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'count',
 			argumentTypes: ['item()*'],
 			returnType: 'xs:integer',
 			callFunction: fnCount
 		},
 
 		{
-			name: 'avg',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'avg',
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: fnAvg
 		},
 
 		{
-			name: 'max',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'max',
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: fnMax
 		},
 
 		{
-			name: 'max',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'max',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: function () {
@@ -501,14 +519,16 @@ export default {
 		},
 
 		{
-			name: 'min',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'min',
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: fnMin
 		},
 
 		{
-			name: 'min',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'min',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: function () {
@@ -517,7 +537,8 @@ export default {
 		},
 
 		{
-			name: 'sum',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'sum',
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType',
 			callFunction: function (dynamicContext, sequence) {
@@ -526,35 +547,40 @@ export default {
 		},
 
 		{
-			name: 'sum',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'sum',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType?'],
 			returnType: 'xs:anyAtomicType?',
 			callFunction: fnSum
 		},
 
 		{
-			name: 'zero-or-one',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'zero-or-one',
 			argumentTypes: ['item()*'],
 			returnType: 'item()?',
 			callFunction: fnZeroOrOne
 		},
 
 		{
-			name: 'one-or-more',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'one-or-more',
 			argumentTypes: ['item()*'],
 			returnType: 'item()+',
 			callFunction: fnOneOrMore
 		},
 
 		{
-			name: 'exactly-one',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'exactly-one',
 			argumentTypes: ['item()*'],
 			returnType: 'item()',
 			callFunction: fnExactlyOne
 		},
 
 		{
-			name: 'filter',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'filter',
 			argumentTypes: ['item()*', 'function(*)'],
 			returnType: 'item()',
 			callFunction: fnFilter
