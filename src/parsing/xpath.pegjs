@@ -246,11 +246,12 @@ AxisName
  / "child"
  / "decendant"
  / "following-sibling"
+ / "following"
  / "descendant-or-self"
  / "descendant"
- / "following"
  / "parent"
  / "preceding-sibling"
+ / "preceding"
  / "self"
 
 AbbreviatedStep

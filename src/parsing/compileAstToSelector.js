@@ -8,8 +8,10 @@ import AttributeAxis from '../selectors/axes/AttributeAxis';
 import AncestorAxis from '../selectors/axes/AncestorAxis';
 import ChildAxis from '../selectors/axes/ChildAxis';
 import DescendantAxis from '../selectors/axes/DescendantAxis';
+import FollowingAxis from '../selectors/axes/FollowingAxis';
 import FollowingSiblingAxis from '../selectors/axes/FollowingSiblingAxis';
 import ParentAxis from '../selectors/axes/ParentAxis';
+import PrecedingAxis from '../selectors/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../selectors/axes/PrecedingSiblingAxis';
 import SelfSelector from '../selectors/axes/SelfAxis';
 import NameTest from '../selectors/tests/NameTest';
@@ -173,6 +175,12 @@ function compile (ast, compilationOptions) {
 				break;
 			case 'preceding-sibling':
 				compiledAstFragment = precedingSibling(args, compilationOptions);
+				break;
+			case 'following':
+				compiledAstFragment = following(args, compilationOptions);
+				break;
+			case 'preceding':
+				compiledAstFragment = preceding(args, compilationOptions);
 				break;
 			case 'self':
 				compiledAstFragment = self(args, compilationOptions);
@@ -356,6 +364,10 @@ function followingSibling (args, compilationOptions) {
 	return new FollowingSiblingAxis(compile(args[0], compilationOptions));
 }
 
+function following (args, compilationOptions) {
+	return new FollowingAxis(compile(args[0], compilationOptions));
+}
+
 function forExpression ([[prefix, namespaceURI, name], expression, returnExpression], compilationOptions) {
 	return new ForExpression(
 		{
@@ -465,6 +477,10 @@ function path (args, compilationOptions) {
 
 function precedingSibling (args, compilationOptions) {
 	return new PrecedingSiblingAxis(compile(args[0], compilationOptions));
+}
+
+function preceding (args, compilationOptions) {
+	return new PrecedingAxis(compile(args[0], compilationOptions));
 }
 
 function quantified (args, compilationOptions) {
