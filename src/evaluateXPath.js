@@ -469,7 +469,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (allValues.value.length === 1) {
 				return atomize(allValues.value[0], dynamicContext).value;
 			}
-			return rawResults.atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
+			return new Sequence(allValues.value).atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
 		}

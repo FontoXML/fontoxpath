@@ -29,6 +29,9 @@ describe('evaluateXPath', () => {
 		() => chai.assert.equal(evaluateXPath('"string"', documentNode, domFacade), 'string'));
 	it('Keeps nodes nodes',
 		() => chai.assert.equal(evaluateXPath('.', documentNode, domFacade), documentNode));
+	it('returns the correct number of results', () => {
+		chai.assert.equal(evaluateXPath('(1 to 250)').length, 250);
+	});
 	it('Returns the value of attribute nodes', () => {
 		jsonMlMapper.parse([
 			'someElement',
