@@ -16,8 +16,12 @@ describe('Context related functions', () => {
 			() => chai.assert.isOk(evaluateXPathToString('current-dateTime()', documentNode)));
 		it('returns the same value during the execution of the query',
 			() => chai.assert.isTrue(evaluateXPathToBoolean('current-dateTime() eq current-dateTime()')));
-		it('returns different values for different queries',
-			() => chai.assert.notEqual(evaluateXPathToString('current-dateTime()'), setTimeout(evaluateXPathToString('current-dateTime()'), 100)));
+		it('returns different values for different queries', async () => {
+			const dateTime = evaluateXPathToString('current-dateTime()');
+			const dateTimeLater = await new Promise(resolve => setTimeout(() => resolve(evaluateXPathToString('current-dateTime()')), 100));
+
+			chai.assert.notEqual(dateTime, dateTimeLater);
+		});
 	});
 	describe('fn:current-date', () => {
 		it('returns the current date',
