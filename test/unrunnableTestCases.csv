@@ -481,17 +481,14 @@ fn-current-date-6,Error: Not implemented: arithmetic on dates and times
 fn-current-date-7,Error: Not implemented: arithmetic on dates and times
 fn-current-date-9,Error: Not implemented: arithmetic on dates and times
 fn-current-date-21,Error: Not implemented: arithmetic on dates and times
-fn-current-dateTime-5,Error: Not implemented: arithmetic on dates and times
 fn-current-dateTime-6,Error: Not implemented: arithmetic on dates and times
 fn-current-datetime-7,Error: Not implemented: arithmetic on dates and times
-fn-current-dateTime-9,Error: Not implemented: arithmetic on dates and times
 fn-current-dateTime-21,Error: Not implemented: arithmetic on dates and times
 fn-current-time-5,Error: Not implemented: arithmetic on dates and times
 fn-current-time-6,Error: Not implemented: arithmetic on dates and times
 fn-current-time-7,Error: Not implemented: arithmetic on dates and times
 fn-current-time-9,Error: Not implemented: arithmetic on dates and times
 fn-dateTime-22,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
-fn-dateTime-23,Error: Not implemented: arithmetic on dates and times
 fn-dateTime-24,Error: Not implemented: arithmetic on dates and times
 fn-dateTime-25,Error: Not implemented: arithmetic on dates and times
 fn-dateTime-26,Error: Not implemented: arithmetic on dates and times

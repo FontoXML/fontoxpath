@@ -5,6 +5,10 @@ import Selector from '../../Selector';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 import {
+	subtract as dateTimeSubtract
+} from '../../dataTypes/valueTypes/DateTime';
+
+import {
 	add as yearMonthDurationAdd,
 	subtract as yearMonthDurationSubtract,
 	multiply as yearMonthDurationMultiply,
@@ -169,16 +173,28 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 		}
 	}
 
-	if (isSubtypeOf(typeA, 'xs:date') || isSubtypeOf(typeB, 'xs:date') ||
-		isSubtypeOf(typeA, 'xs:time') || isSubtypeOf(typeB, 'xs:time') ||
-		isSubtypeOf(typeA, 'xs:dateTime') || isSubtypeOf(typeB, 'xs:dateTime')) {
+	if (isSubtypeOf(typeA, 'xs:dateTime') && isSubtypeOf(typeB, 'xs:dateTime')) {
+		if (operator === '-') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(dateTimeSubtract(castA.value, castB.value), 'xs:dayTimeDuration');
+			};
+		}
+
+		// TODO: The other operators
+		throw new Error('Not implemented: Only subtraction of dateTimes is implemented.');
+	}
+
+	if (isSubtypeOf(typeA, 'xs:dateTime') || isSubtypeOf(typeB, 'xs:dateTime') ||
+		isSubtypeOf(typeA, 'xs:date') || isSubtypeOf(typeB, 'xs:date') ||
+		isSubtypeOf(typeA, 'xs:time') || isSubtypeOf(typeB, 'xs:time')) {
 		throw new Error('Not implemented: arithmetic on dates and times');
 	}
 
 	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 }
 
-const operatorsByTypeingKey = Object.create(null);
+const operatorsByTypingKey = Object.create(null);
 
 /**
  * @extends {Selector}
@@ -219,13 +235,12 @@ class BinaryOperator extends Selector {
 							throw new Error('XPTY0004: the operands of the "' + this._operator + '" operator should be empty or singleton.');
 						}
 
-						// Cast both to doubles, if they are xs:untypedAtomic
 						const firstValue = firstValues[0];
 						const secondValue = secondValues[0];
 						const typingKey = `${firstValue.type}~${secondValue.type}~${this._operator}`;
-						let prefabOperator = operatorsByTypeingKey[typingKey];
+						let prefabOperator = operatorsByTypingKey[typingKey];
 						if (!prefabOperator) {
-							prefabOperator = operatorsByTypeingKey[typingKey] = generateBinaryOperatorFunction(this._operator, firstValue.type, secondValue.type);
+							prefabOperator = operatorsByTypingKey[typingKey] = generateBinaryOperatorFunction(this._operator, firstValue.type, secondValue.type);
 						}
 
 						return Sequence.singleton(prefabOperator(firstValue, secondValue));

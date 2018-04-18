@@ -153,20 +153,30 @@ class DateTime {
 		return this._years >= 0;
 	}
 
+	toJavaScriptDate (implicitTimezone) {
+		const timezoneToUse = this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
+		return new Date(
+			this._years,
+			this._months - 1,
+			this._days,
+			this._hours - timezoneToUse.getHours(),
+			this._minutes - timezoneToUse.getMinutes(),
+			this._seconds + this._secondFraction
+		);
+	}
+
 	normalize (timezone = undefined) {
 		if (timezone === undefined && (this._timezone === null || isUTC(this._timezone))) {
 			// Noting to normalize
 			return this;
 		}
 
-		const timezoneToUse = timezone ? timezone : this._timezone;
-		const newDateTime = new Date(this._years, this._months - 1, this._days, this._hours - timezoneToUse.getHours(), this._minutes - timezoneToUse.getMinutes());
-
-		const years = newDateTime.getFullYear();
-		const months = newDateTime.getMonth() + 1;
-		const days = newDateTime.getDate();
-		const hours = newDateTime.getHours();
-		const minutes = newDateTime.getMinutes();
+		const jsDate = this.toJavaScriptDate(timezone || this._timezone);
+		const years = jsDate.getFullYear();
+		const months = jsDate.getMonth() + 1;
+		const days = jsDate.getDate();
+		const hours = jsDate.getHours();
+		const minutes = jsDate.getMinutes();
 
 		return new DateTime(years, months, days, hours, minutes, this._seconds, this._secondFraction, DayTimeDuration.fromTimezoneString('Z'), this._type);
 	}
@@ -446,10 +456,11 @@ export function equal (dateTime1, dateTime2, implicitTimezone = undefined) {
 		return false;
 	}
 
-	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
-	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
-
-	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === 0;
+	if (dateTime1.toJavaScriptDate(implicitTimezone).getTime() === dateTime2.toJavaScriptDate(implicitTimezone).getTime()) {
+		// We should break the tie on the secondFraction property, which has no counterpart in JS dates
+		return dateTime1._secondFraction === dateTime2._secondFraction;
+	}
+	return false;
 }
 
 /**
@@ -459,10 +470,11 @@ export function equal (dateTime1, dateTime2, implicitTimezone = undefined) {
  * @return  {boolean}
  */
 export function lessThan (dateTime1, dateTime2, implicitTimezone = undefined) {
-	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
-	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
-
-	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === -1;
+	if (dateTime1.toJavaScriptDate(implicitTimezone).getTime() === dateTime2.toJavaScriptDate(implicitTimezone).getTime()) {
+		// We should break the tie on the secondFraction property, which has no counterpart in JS dates
+		return dateTime1._secondFraction < dateTime2._secondFraction;
+	}
+	return dateTime1.toJavaScriptDate(implicitTimezone) < dateTime2.toJavaScriptDate(implicitTimezone);
 }
 
 /**
@@ -472,10 +484,19 @@ export function lessThan (dateTime1, dateTime2, implicitTimezone = undefined) {
  * @return  {boolean}
  */
 export function greaterThan (dateTime1, dateTime2, implicitTimezone = undefined) {
-	const normalizedDateTime1 = dateTime1.normalize(dateTime1.getTimezone() ? undefined : implicitTimezone);
-	const normalizedDateTime2 = dateTime2.normalize(dateTime2.getTimezone() ? undefined : implicitTimezone);
+		if (dateTime1.toJavaScriptDate(implicitTimezone).getTime() === dateTime2.toJavaScriptDate(implicitTimezone).getTime()) {
+		// We should break the tie on the secondFraction property, which has no counterpart in JS dates
+		return dateTime1._secondFraction > dateTime2._secondFraction;
+	}
+	return dateTime1.toJavaScriptDate(implicitTimezone) > dateTime2.toJavaScriptDate(implicitTimezone);
+}
 
-	return compareNormalizedDateTime(normalizedDateTime1, normalizedDateTime2) === 1;
+export function subtract (dateTime1, dateTime2, implicitTimezone = undefined) {
+	// Divided by 1000 because date subtraction results in milliseconds
+	const secondsOfDuration = (dateTime1.toJavaScriptDate(implicitTimezone) - dateTime2.toJavaScriptDate(implicitTimezone)) / 1000;
+	return new DayTimeDuration(
+secondsOfDuration
+	);
 }
 
 export default DateTime;

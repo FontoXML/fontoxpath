@@ -79,6 +79,9 @@ describe('Durations', () => {
 			() => chai.assert.throws(() => evaluateXPathToBoolean('fn:string(fn:implicit-timezone() div 0 )', documentNode), 'FODT0002'));
 	});
 
-	it('bliep',
-		() => chai.assert.isTrue(evaluateXPathToBoolean('xs:double(40) + xs:untypedAtomic("40")', documentNode)));
+	describe('xs:dateTime', () => {
+		it('can subtract dateTimes', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('xs:dateTime("2000-10-30T06:12:00-05:00") - xs:dateTime("1999-11-28T09:00:00Z") eq xs:dayTimeDuration("P337DT2H12M")'));
+		});
+	});
 });

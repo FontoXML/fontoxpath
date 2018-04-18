@@ -60,7 +60,7 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 		throw new Error('XPTY0004: Only the "eq" and "ne" comparison is defined for xs:QName');
 	}
 
-	function areBothSubtypeOf(type) {
+	function areBothSubtypeOf (type) {
 		return isSubtypeOf(typeA, type) && isSubtypeOf(typeB, type);
 	}
 
@@ -195,6 +195,11 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 
 	if (areBothSubtypeOf('xs:dayTimeDuration')) {
 		switch (operator) {
+			case 'eq':
+				return (a, b) => {
+					const { castA, castB } = applyCastFunctions(a, b);
+					return castA.value.equals(castB.value);
+				};
 			case 'lt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
@@ -206,7 +211,6 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 					return castA.value.equals(castB.value) ||
 						dayTimeDurationLessThan(castA.value, castB.value);
 				};
-
 			case 'gt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
