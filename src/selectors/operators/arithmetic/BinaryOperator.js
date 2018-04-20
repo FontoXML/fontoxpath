@@ -5,7 +5,10 @@ import Selector from '../../Selector';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 import {
-	subtract as dateTimeSubtract
+	subtract as dateTimeSubtract,
+	add as dateTimeAdd,
+	addDuration as addDurationToDateTime,
+	subtractDuration as subtractDurationFromDateTime
 } from '../../dataTypes/valueTypes/DateTime';
 
 import {
@@ -173,22 +176,118 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 		}
 	}
 
-	if (isSubtypeOf(typeA, 'xs:dateTime') && isSubtypeOf(typeB, 'xs:dateTime')) {
+	if ((isSubtypeOf(typeA, 'xs:dateTime') && isSubtypeOf(typeB, 'xs:dateTime')) ||
+		(isSubtypeOf(typeA, 'xs:date') && isSubtypeOf(typeB, 'xs:date')) ||
+		(isSubtypeOf(typeA, 'xs:time') && isSubtypeOf(typeB, 'xs:time'))) {
 		if (operator === '-') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(dateTimeSubtract(castA.value, castB.value), 'xs:dayTimeDuration');
 			};
 		}
+		if (operator === '-') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(dateTimeAdd(castA.value, castB.value), 'xs:dayTimeDuration');
+			};
+		}
 
-		// TODO: The other operators
-		throw new Error('Not implemented: Only subtraction of dateTimes is implemented.');
+		throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 	}
 
-	if (isSubtypeOf(typeA, 'xs:dateTime') || isSubtypeOf(typeB, 'xs:dateTime') ||
-		isSubtypeOf(typeA, 'xs:date') || isSubtypeOf(typeB, 'xs:date') ||
-		isSubtypeOf(typeA, 'xs:time') || isSubtypeOf(typeB, 'xs:time')) {
-		throw new Error('Not implemented: arithmetic on dates and times');
+	if ((isSubtypeOf(typeA, 'xs:dateTime') && isSubtypeOf(typeB, 'xs:yearMonthDuration')) ||
+		(isSubtypeOf(typeA, 'xs:dateTime') && isSubtypeOf(typeB, 'xs:dayTimeDuration'))) {
+		if (operator === '+') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:dateTime');
+			};
+		}
+		if (operator === '-') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), 'xs:dateTime');
+			};
+		}
+	}
+
+	if ((isSubtypeOf(typeA, 'xs:date') && isSubtypeOf(typeB, 'xs:yearMonthDuration')) ||
+		(isSubtypeOf(typeA, 'xs:date') && isSubtypeOf(typeB, 'xs:dayTimeDuration'))) {
+		if (operator === '+') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:date');
+			};
+		}
+		if (operator === '-') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), 'xs:date');
+			};
+		}
+	}
+
+	if (isSubtypeOf(typeA, 'xs:time') && isSubtypeOf(typeB, 'xs:dayTimeDuration')) {
+		if (operator === '+') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:time');
+			};
+		}
+		if (operator === '-') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), 'xs:time');
+			};
+		}
+	}
+
+	if ((isSubtypeOf(typeB, 'xs:yearMonthDuration') && isSubtypeOf(typeA, 'xs:dateTime')) ||
+		(isSubtypeOf(typeB, 'xs:dayTimeDuration') && isSubtypeOf(typeA, 'xs:dateTime'))) {
+		if (operator === '+') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:dateTime');
+			};
+		}
+		if (operator === '-') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), 'xs:dateTime');
+			};
+		}
+
+	}
+
+	if ((isSubtypeOf(typeB, 'xs:dayTimeDuration') && isSubtypeOf(typeA, 'xs:date')) ||
+		((isSubtypeOf(typeB, 'xs:yearMonthDuration') && isSubtypeOf(typeA, 'xs:date')))) {
+		if (operator === '+') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:date');
+			};
+		}
+		if (operator === '-') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), 'xs:date');
+			};
+		}
+	}
+
+	if (isSubtypeOf(typeB, 'xs:dayTimeDuration') && isSubtypeOf(typeA, 'xs:time')) {
+		if (operator === '+') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:time');
+			};
+		}
+		if (operator === '-') {
+			return (a, b) => {
+				const { castA, castB } = applyCastFunctions(a, b);
+				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), 'xs:time');
+			};
+		}
 	}
 
 	throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
@@ -240,7 +339,10 @@ class BinaryOperator extends Selector {
 						const typingKey = `${firstValue.type}~${secondValue.type}~${this._operator}`;
 						let prefabOperator = operatorsByTypingKey[typingKey];
 						if (!prefabOperator) {
-							prefabOperator = operatorsByTypingKey[typingKey] = generateBinaryOperatorFunction(this._operator, firstValue.type, secondValue.type);
+							prefabOperator = operatorsByTypingKey[typingKey] = generateBinaryOperatorFunction(
+								this._operator,
+								firstValue.type,
+								secondValue.type);
 						}
 
 						return Sequence.singleton(prefabOperator(firstValue, secondValue));

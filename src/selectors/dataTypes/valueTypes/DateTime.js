@@ -9,42 +9,6 @@ function parseMatch (match) {
 }
 
 /**
- * @param   {DateTime}  dateTime1
- * @param   {DateTime}  dateTime2
- * @return  {number}
- */
-function compareNormalizedDateTime (dateTime1, dateTime2) {
-	if (dateTime1._years > dateTime2._years) {
-		return 1;
-	}
-
-	if (dateTime1._years < dateTime2._years) {
-		return -1;
-	}
-
-	const bothPositive = dateTime1.isPositive() && dateTime2.isPositive();
-	const fields = [
-		[dateTime1._months, dateTime2._months],
-		[dateTime1._days, dateTime2._days],
-		[dateTime1._hours, dateTime2._hours],
-		[dateTime1._minutes, dateTime2._minutes],
-		[dateTime1._seconds, dateTime2._seconds],
-		[dateTime1._secondFraction, dateTime2._secondFraction]
-	];
-
-	for (let i = 0; i < 6; i++) {
-		if (fields[i][0] > fields[i][1]) {
-			return bothPositive ? 1 : -1;
-		}
-		if (fields[i][0] < fields[i][1]) {
-			return bothPositive ? -1 : 1;
-		}
-	}
-
-	return 0;
-}
-
-/**
  * @param   {number}  year
  * @return  {string}
  */
@@ -153,7 +117,7 @@ class DateTime {
 		return this._years >= 0;
 	}
 
-	toJavaScriptDate (implicitTimezone) {
+	toJavaScriptDate (implicitTimezone = undefined) {
 		const timezoneToUse = this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
 		return new Date(
 			this._years,
@@ -163,68 +127,6 @@ class DateTime {
 			this._minutes - timezoneToUse.getMinutes(),
 			this._seconds + this._secondFraction
 		);
-	}
-
-	normalize (timezone = undefined) {
-		if (timezone === undefined && (this._timezone === null || isUTC(this._timezone))) {
-			// Noting to normalize
-			return this;
-		}
-
-		const jsDate = this.toJavaScriptDate(timezone || this._timezone);
-		const years = jsDate.getFullYear();
-		const months = jsDate.getMonth() + 1;
-		const days = jsDate.getDate();
-		const hours = jsDate.getHours();
-		const minutes = jsDate.getMinutes();
-
-		return new DateTime(years, months, days, hours, minutes, this._seconds, this._secondFraction, DayTimeDuration.fromTimezoneString('Z'), this._type);
-	}
-
-	// returns -1 if this < other, 0 if this === other, 1 if this > other, undefined if indeterminate
-	/**
-	 * @param   {DateTime}  other
-	 * @return  {number|undefined}
-	 */
-	compare (other) {
-		const normalizedThis = this.normalize();
-		const normalizedOther = other.normalize();
-
-		// Both have a timezone (Z at this point) or both do not have any timezone
-		if (normalizedThis._timezone && normalizedOther._timezone ||
-			!normalizedThis._timezone && !normalizedOther._timezone) {
-			return compareNormalizedDateTime(normalizedThis, normalizedOther);
-		}
-
-		// If only this has a timezone
-		if (normalizedThis._timezone && !normalizedOther._timezone) {
-			const normalizedOtherMin = other.normalize(DayTimeDuration.fromTimezoneString('+14:00'));
-			const normalizedOtherMax = other.normalize(DayTimeDuration.fromTimezoneString('-14:00'));
-
-			if (compareNormalizedDateTime(normalizedThis, normalizedOtherMin) < 0) {
-				return -1;
-			}
-
-			if (compareNormalizedDateTime(normalizedThis, normalizedOtherMax) > 0) {
-				return 1;
-			}
-
-			return undefined;
-		}
-
-		// If only other has a timezone
-		const normalizedThisMin = this.normalize(DayTimeDuration.fromTimezoneString('+14:00'));
-		const normalizedThisMax = this.normalize(DayTimeDuration.fromTimezoneString('-14:00'));
-
-		if (compareNormalizedDateTime(normalizedThisMax, normalizedOther) < 0) {
-			return -1;
-		}
-
-		if (compareNormalizedDateTime(normalizedThisMin, normalizedOther) > 0) {
-			return 1;
-		}
-
-		return undefined;
 	}
 
 	toString () {
@@ -445,6 +347,35 @@ DateTime.fromString = function (string) {
 		'xs:gDay');
 };
 
+
+/**
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?DayTimeDuration}  implicitTimezone
+ * @return  {number}
+ */
+export function compare (dateTime1, dateTime2, implicitTimezone = undefined) {
+	const jsTime1 = dateTime1.toJavaScriptDate(implicitTimezone).getTime();
+	const jsTime2 = dateTime2.toJavaScriptDate(implicitTimezone).getTime();
+
+	if (jsTime1 === jsTime2) {
+		// We should break the tie on the secondFraction property, which has no counterpart in JS dates
+		if (dateTime1._secondFraction === dateTime2._secondFraction) {
+			return 0;
+		}
+		if (dateTime1._secondFraction > dateTime2._secondFraction) {
+			return 1;
+		}
+		return -1;
+	}
+
+	if (jsTime1 > jsTime2) {
+		return 1;
+	}
+
+	return -1;
+}
+
 /**
  * @param   {DateTime}   dateTime1
  * @param   {DateTime}   dateTime2
@@ -452,15 +383,7 @@ DateTime.fromString = function (string) {
  * @return  {boolean}
  */
 export function equal (dateTime1, dateTime2, implicitTimezone = undefined) {
-	if (dateTime1._type !== dateTime2._type) {
-		return false;
-	}
-
-	if (dateTime1.toJavaScriptDate(implicitTimezone).getTime() === dateTime2.toJavaScriptDate(implicitTimezone).getTime()) {
-		// We should break the tie on the secondFraction property, which has no counterpart in JS dates
-		return dateTime1._secondFraction === dateTime2._secondFraction;
-	}
-	return false;
+	return compare(dateTime1, dateTime2, implicitTimezone) === 0;
 }
 
 /**
@@ -470,11 +393,7 @@ export function equal (dateTime1, dateTime2, implicitTimezone = undefined) {
  * @return  {boolean}
  */
 export function lessThan (dateTime1, dateTime2, implicitTimezone = undefined) {
-	if (dateTime1.toJavaScriptDate(implicitTimezone).getTime() === dateTime2.toJavaScriptDate(implicitTimezone).getTime()) {
-		// We should break the tie on the secondFraction property, which has no counterpart in JS dates
-		return dateTime1._secondFraction < dateTime2._secondFraction;
-	}
-	return dateTime1.toJavaScriptDate(implicitTimezone) < dateTime2.toJavaScriptDate(implicitTimezone);
+	return compare(dateTime1, dateTime2, implicitTimezone) < 0;
 }
 
 /**
@@ -484,19 +403,55 @@ export function lessThan (dateTime1, dateTime2, implicitTimezone = undefined) {
  * @return  {boolean}
  */
 export function greaterThan (dateTime1, dateTime2, implicitTimezone = undefined) {
-		if (dateTime1.toJavaScriptDate(implicitTimezone).getTime() === dateTime2.toJavaScriptDate(implicitTimezone).getTime()) {
-		// We should break the tie on the secondFraction property, which has no counterpart in JS dates
-		return dateTime1._secondFraction > dateTime2._secondFraction;
-	}
-	return dateTime1.toJavaScriptDate(implicitTimezone) > dateTime2.toJavaScriptDate(implicitTimezone);
+	return compare(dateTime1, dateTime2, implicitTimezone) > 0;
 }
 
+
+/**
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?DayTimeDuration}  implicitTimezone
+ * @return  {DayTimeDuration}
+ */
+export function add (dateTime1, dateTime2, implicitTimezone = undefined) {
+	// Divided by 1000 because date subtraction results in milliseconds
+	const secondsOfDuration = (dateTime1.toJavaScriptDate(implicitTimezone) + dateTime2.toJavaScriptDate(implicitTimezone)) / 1000;
+	return new DayTimeDuration(
+		secondsOfDuration
+	);
+}
+
+/**
+ * @param   {DateTime}   dateTime1
+ * @param   {DateTime}   dateTime2
+ * @param   {?DayTimeDuration}  implicitTimezone
+ * @return  {DayTimeDuration}
+ */
 export function subtract (dateTime1, dateTime2, implicitTimezone = undefined) {
 	// Divided by 1000 because date subtraction results in milliseconds
 	const secondsOfDuration = (dateTime1.toJavaScriptDate(implicitTimezone) - dateTime2.toJavaScriptDate(implicitTimezone)) / 1000;
 	return new DayTimeDuration(
-secondsOfDuration
+		secondsOfDuration
 	);
+}
+
+/**
+ * @param   {!DateTime}   dateTime
+ * @param   {!./AbstractDuration}   _duration
+ * @return  {!DateTime}
+ */
+export function addDuration (dateTime, _duration) {
+	throw new Error(`Not implemented: adding durations to ${dateTime._type}`);
+}
+
+
+/**
+ * @param   {!DateTime}   dateTime
+ * @param   {!./AbstractDuration}   _duration
+ * @return  {!DateTime}
+ */
+export function subtractDuration (dateTime, _duration) {
+	throw new Error(`Not implemented: subtracting durations from ${dateTime._type}`);
 }
 
 export default DateTime;
