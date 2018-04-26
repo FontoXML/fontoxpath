@@ -19,7 +19,6 @@ const bootstrapFile = runQt3Tests ?
 
 module.exports = config => {
 	config.set({
-
 		// base path that will be used to resolve all patterns (eg. files, exclude)
 		basePath: '',
 
@@ -104,17 +103,20 @@ module.exports = config => {
 		concurrency: runQt3Tests ? 1 : Infinity,
 
 		webpack: {
+			mode: 'development',
+
 			resolve: {
 				alias: {
 					'fontoxpath': runIntegrationTests ?
 						path.resolve('./dist/fontoxpath.js') :
 						path.resolve('./src'),
 					'test-helpers': path.resolve('test/helpers/'),
-					'assets': path.resolve('test/assets')
+					'assets': path.resolve('test/assets'),
+					'slimdom': require.resolve('slimdom')
 				}
 			},
 			module: {
-				loaders: [{
+				rules: [{
 					loader: 'babel-loader',
 					test: /\.js$/,
 					include: runQt3Tests ? [path.resolve('src')] :
