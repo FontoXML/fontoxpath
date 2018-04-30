@@ -5,6 +5,14 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import atomize from '../dataTypes/atomize';
 import zipSingleton from '../util/zipSingleton';
 
+import { DONE_TOKEN, ready } from '../util/iterators';
+
+import builtInNumericFunctions from './builtInFunctions.numeric.js';
+/**
+ * @type {function(boolean, ../DynamicContext, !Sequence, ?Sequence):!Sequence}
+ */
+const fnRound = builtInNumericFunctions.functions.round;
+
 function collationError () {
 	throw new Error('FOCH0002: No collations are supported');
 }
@@ -185,6 +193,72 @@ function fnSubstringAfter (_dynamicContext, arg1, arg2) {
 	return Sequence.singleton(createAtomicValue(strArg1.substring(startIndex + strArg2.length), 'xs:string'));
 }
 
+function fnSubstring (dynamicContext, sourceString, start, length) {
+	const roundedStart = fnRound(false, dynamicContext, start, null);
+	/**
+	 * @type {?Sequence}
+	 */
+	const roundedLength = length !== null ? fnRound(false, dynamicContext, length, null) : null;
+
+	let done = false;
+	let sourceStringItem = null;
+	let startItem = null;
+	let lengthItem = null;
+	return new Sequence({
+		next: () => {
+			if (done) {
+				return DONE_TOKEN;
+			}
+			if (!sourceStringItem) {
+				sourceStringItem = sourceString.tryGetFirst();
+				if (!sourceStringItem.ready) {
+					sourceStringItem = null;
+					return sourceStringItem;
+				}
+
+				if (sourceStringItem.value === null) {
+					// The first argument can be the empty sequence
+					done = true;
+					return ready(createAtomicValue('', 'xs:string'));
+				}
+			}
+
+			if (!startItem) {
+				startItem = roundedStart.tryGetFirst();
+				if (!startItem.ready) {
+					const toReturn = startItem;
+					startItem = null;
+					return toReturn;
+				}
+			}
+
+			if (!lengthItem && length) {
+				lengthItem = null;
+				lengthItem = roundedLength.tryGetFirst();
+				if (!lengthItem.ready) {
+					const toReturn = lengthItem;
+					lengthItem = null;
+					return toReturn;
+				}
+			}
+
+			done = true;
+
+			/**
+			 * @type {string}
+			 */
+			const strValue = sourceStringItem.value.value;
+			return ready(createAtomicValue(
+				Array.from(strValue)
+					.slice(
+						Math.max(startItem.value.value - 1, 0),
+						length ? startItem.value.value + lengthItem.value.value - 1 : undefined)
+					.join(''),
+				'xs:string'));
+		}
+	});
+}
+
 function fnTokenize (_dynamicContext, input, pattern) {
 	if (input.isEmpty() || input.first().value.length === 0) {
 		return Sequence.empty();
@@ -334,6 +408,20 @@ export default {
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:string',
 			callFunction: fnStringJoin
+		},
+
+		{
+			name: 'substring',
+			argumentTypes: ['xs:string?', 'xs:double'],
+			returnType: 'xs:string',
+			callFunction: fnSubstring
+		},
+
+		{
+			name: 'substring',
+			argumentTypes: ['xs:string?', 'xs:double', 'xs:double'],
+			returnType: 'xs:string',
+			callFunction: fnSubstring
 		},
 
 		{

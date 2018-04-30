@@ -75,9 +75,9 @@ function getNumberOfDecimalDigits (value) {
 /**
  * @param   {boolean}            halfToEven
  * @param   {../DynamicContext}  _dynamicContext
- * @param   {Sequence}           sequence
- * @param   {Sequence}           precision
- * @return  {Sequence}
+ * @param   {!Sequence}           sequence
+ * @param   {?Sequence}           precision
+ * @return  {!Sequence}
  */
 function fnRound (halfToEven, _dynamicContext, sequence, precision) {
 	let done = false;
@@ -313,6 +313,7 @@ export default {
 		}
 	],
 	functions: {
-		number: fnNumber
+		number: fnNumber,
+		round: fnRound
 	}
 };

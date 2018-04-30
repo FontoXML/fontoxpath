@@ -121,9 +121,9 @@ fn-string-join,true
 fn-string-length,true
 fn-string-to-codepoints,false
 fn-subsequence,true
-fn-substring,false
-fn-substring-after,false
-fn-substring-before,false
+fn-substring,true
+fn-substring-after,true
+fn-substring-before,true
 fn-sum,true
 fn-tail,true
 fn-timezone-from-date,true
