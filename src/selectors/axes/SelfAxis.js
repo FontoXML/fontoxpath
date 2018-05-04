@@ -9,12 +9,15 @@ class SelfAxis extends Selector {
 	 * @param  {!../tests/TestAbstractExpression}  selector
 	 */
 	constructor (selector) {
-		super(selector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
-			subtree: true,
-			peer: true,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			selector.specificity,
+			[selector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+				subtree: true,
+				peer: true,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._selector = selector;
 	}

@@ -13,7 +13,7 @@ class CastableAsOperator extends Selector {
 	 * @param  {!boolean}   allowsEmptySequence
 	 */
 	constructor (expression, targetType, allowsEmptySequence) {
-		super(expression.specificity, { canBeStaticallyEvaluated: false });
+		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 
 		this._targetType = targetType.prefix ? `${targetType.prefix}:${targetType.name}` : targetType.name;
 		if (this._targetType === 'xs:anyAtomicType' || this._targetType === 'xs:anySimpleType' || this._targetType === 'xs:NOTATION') {

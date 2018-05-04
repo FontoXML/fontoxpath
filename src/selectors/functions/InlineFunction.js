@@ -21,9 +21,12 @@ class InlineFunction extends Selector {
 	 * @param  {!Selector}               functionBody
 	 */
 	constructor (paramDescriptions, returnType, functionBody) {
-		super(new Specificity({
-			[Specificity.EXTERNAL_KIND]: 1
-		}), {
+		super(
+			new Specificity({
+				[Specificity.EXTERNAL_KIND]: 1
+			}),
+			[functionBody],
+			{
 			// inline functions may never be statically evaluated because the domfacade may be used in the function body to resolve dom relations
 			canBeStaticallyEvaluated: false,
 			expectedResultOrder: Selector.RESULT_ORDERINGS.UNSORTED

@@ -14,7 +14,10 @@ class Unary extends Selector {
 	 * @param  {Selector}  valueExpr  The selector evaluating to the value to process
 	 */
 	constructor (kind, valueExpr) {
-		super(valueExpr.specificity, { canBeStaticallyEvaluated: false });
+		super(
+			valueExpr.specificity,
+			[valueExpr],
+			{ canBeStaticallyEvaluated: false });
 		this._valueExpr = valueExpr;
 
 		this._kind = kind;

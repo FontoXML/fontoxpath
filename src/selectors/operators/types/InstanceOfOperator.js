@@ -11,7 +11,7 @@ class InstanceOfOperator extends Selector {
 	 * @param  {!string}    multiplicity
 	 */
 	constructor (expression, typeTest, multiplicity) {
-		super(expression.specificity, { canBeStaticallyEvaluated: false });
+		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 
 		this._expression = expression;
 		this._typeTest = typeTest;

@@ -12,10 +12,13 @@ class DircommentConstructor extends Selector {
 	 * @param  {string}  contents
 	 */
 	constructor (contents) {
-		super(new Specificity({}), {
-			canBeStaticallyEvaluated: false,
-			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
-		});
+		super(
+			new Specificity({}),
+			[],
+			{
+				canBeStaticallyEvaluated: false,
+				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
+			});
 
 		this._contents = contents;
 	}

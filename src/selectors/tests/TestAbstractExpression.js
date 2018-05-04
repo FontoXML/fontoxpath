@@ -10,7 +10,7 @@ class TestAbstractSelector extends Selector {
 	 * @param  {!../Specificity}  specificity
 	 */
 	constructor (specificity) {
-		super(specificity, { canBeStaticallyEvaluated: false });
+		super(specificity, [], { canBeStaticallyEvaluated: false });
 	}
 
 	/**

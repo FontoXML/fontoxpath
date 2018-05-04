@@ -16,6 +16,7 @@ class SequenceOperator extends Selector {
 			selectors.reduce(function (specificity, selector) {
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
+			selectors,
 			{
 				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
 				canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)

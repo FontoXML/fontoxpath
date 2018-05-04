@@ -2,7 +2,7 @@ function createHashKey (namespaceURI, localName) {
 	return `Q{${namespaceURI}}${localName}`;
 }
 
-class StaticContext {
+export default class StaticContext {
 	constructor (parentContext) {
 		/**
 		 * @type {StaticContext|null}
@@ -17,7 +17,7 @@ class StaticContext {
 		if (!this._registeredFunctionsByHash[createHashKey(namespaceURI, localName)]) {
 			this._registeredFunctionsByHash[createHashKey(namespaceURI, localName)] = [];
 		}
-		this._registeredFunctionsByHash[createHashKey(namespaceURI, localName)] .push({
+		this._registeredFunctionsByHash[createHashKey(namespaceURI, localName)].push({
 			arity: arity,
 			isCompiled: false,
 			compileFunction: compileFunction,
@@ -59,7 +59,7 @@ class StaticContext {
 		this._registeredNamespaces[prefix] = namespaceURI;
 	}
 
-	lookupVariable (namespaceURI, localName) {
+	lookupVariable (_namespaceURI, _localName) {
 		// TODO
 	}
 

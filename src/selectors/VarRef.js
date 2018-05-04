@@ -11,10 +11,13 @@ class VarRef extends Selector {
 	 * @param  {string}  variableName
 	 */
 	constructor (prefix, namespaceURI, variableName) {
-		super(new Specificity({}), {
-			canBeStaticallyEvaluated: false,
-			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
-		});
+		super(
+			new Specificity({}),
+			[],
+			{
+				canBeStaticallyEvaluated: false,
+				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
+			});
 		if (prefix || namespaceURI) {
 			throw new Error('Not implemented: references to variables with a namespace URI or a prefix.');
 		}

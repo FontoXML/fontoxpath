@@ -28,12 +28,15 @@ class AncestorAxis extends Selector {
 	 */
 	constructor (ancestorSelector, options) {
 		options = options || { inclusive: false };
-		super(ancestorSelector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.REVERSE_SORTED,
-			peer: false,
-			subtree: false,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			ancestorSelector.specificity,
+			[ancestorSelector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.REVERSE_SORTED,
+				peer: false,
+				subtree: false,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._ancestorSelector = ancestorSelector;
 		this._isInclusive = !!options.inclusive;

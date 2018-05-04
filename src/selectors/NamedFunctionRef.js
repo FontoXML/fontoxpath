@@ -31,11 +31,14 @@ class NamedFunctionRef extends Selector {
 	 * @param  {number}    arity
 	 */
 	constructor (functionReference, arity) {
-		super(new Specificity({
-			[Specificity.EXTERNAL_KIND]: 1
-		}), {
-			canBeStaticallyEvaluated: true
-		});
+		super(
+			new Specificity({
+				[Specificity.EXTERNAL_KIND]: 1
+			}),
+			[],
+			{
+				canBeStaticallyEvaluated: true
+			});
 
 		this._arity = arity;
 

@@ -12,11 +12,15 @@ class MapConstructor extends Selector {
 	 * @param  {Array<{key: !Selector, value:! Selector}>}  entries  key-value tuples of selectors which will evaluate to key / value pairs
 	 */
 	constructor (entries) {
-		super(new Specificity({
-			[Specificity.EXTERNAL_KIND]: 1
-		}), {
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			new Specificity({
+				[Specificity.EXTERNAL_KIND]: 1
+			}),
+			entries.reduce(
+				(allSelectors, { key, value }) => allSelectors.concat(key, value), []),
+			{
+				canBeStaticallyEvaluated: false
+			});
 		this._entries = entries;
 	}
 

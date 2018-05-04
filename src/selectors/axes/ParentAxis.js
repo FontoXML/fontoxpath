@@ -10,12 +10,15 @@ class ParentAxis extends Selector {
 	 * @param  {!../tests/TestAbstractExpression}  parentSelector
 	 */
 	constructor (parentSelector) {
-		super(parentSelector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.REVERSE_SORTED,
-			peer: true,
-			subtree: true,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			parentSelector.specificity,
+			[parentSelector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.REVERSE_SORTED,
+				peer: true,
+				subtree: true,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._parentSelector = parentSelector;
 	}

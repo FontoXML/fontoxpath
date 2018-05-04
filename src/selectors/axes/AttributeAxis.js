@@ -12,14 +12,17 @@ class AttributeAxis extends Selector {
 	 * @param  {!../tests/TestAbstractExpression}  attributeTestSelector
 	 */
 	constructor (attributeTestSelector) {
-		super(new Specificity({
-			[Specificity.ATTRIBUTE_KIND]: 1
-		}), {
-			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
-			subtree: true,
-			peer: true,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			new Specificity({
+				[Specificity.ATTRIBUTE_KIND]: 1
+			}),
+			[attributeTestSelector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
+				subtree: true,
+				peer: true,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._attributeTestSelector = attributeTestSelector;
 	}

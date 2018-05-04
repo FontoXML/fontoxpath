@@ -13,15 +13,18 @@ class ArrayConstructor extends Selector {
 	 * @param   {!Array<!Selector>}  members    The selectors for the values
 	 */
 	constructor (curlyness, members) {
-		super(new Specificity({
-				[Specificity.EXTERNAL_KIND]: 1
-		}), {
-			canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
-		});
+		super(
+			new Specificity({
+			[Specificity.EXTERNAL_KIND]: 1
+			}),
+			members,
+			{
+				canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
+			});
+
 		this._curlyness = curlyness;
 		this._members = members;
 	}
-
 
 	evaluate (dynamicContext) {
 		if (this._curlyness === 'curly') {

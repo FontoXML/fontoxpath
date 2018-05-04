@@ -12,11 +12,14 @@ class AndOperator extends Selector {
 	 * @param  {!Array<!Selector>}  selectors
 	 */
 	constructor (selectors) {
-		super(selectors.reduce(function (specificity, selector) {
-			return specificity.add(selector.specificity);
-		}, new Specificity({})), {
-			canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
-		});
+		super(
+			selectors.reduce(function (specificity, selector) {
+				return specificity.add(selector.specificity);
+			}, new Specificity({})),
+			selectors,
+			{
+				canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
+			});
 		this._subSelectors = selectors;
 	}
 
