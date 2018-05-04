@@ -47,6 +47,18 @@ describe('nameTests', () => {
 		chai.assert.equal(evaluateXPathToFirstNode('self::Q{http://fontoxml.com/ns/}someElement', element), element);
 	});
 
+	it('allows wildcard tests with a namespace URI', () => {
+		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
+		chai.assert.equal(evaluateXPathToFirstNode('self::Q{http://fontoxml.com/ns/}*', element), element);
+	});
+
+	it('allows wildcard tests with an empty namespace URI', () => {
+		const element = documentNode.createElementNS('', 'someElement');
+		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}*', element), element);
+		const elementWithNamespace = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
+		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}*', elementWithNamespace), null);
+	});
+
 	it('Q{} matches the empty namespace', () => {
 		const element = documentNode.createElement('someElement');
 		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}someElement', element), element);

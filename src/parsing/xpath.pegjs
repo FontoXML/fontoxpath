@@ -266,7 +266,7 @@ NameTest = WildCard / EQName
 // 48
 WildCard =  "*:" name:NCName {return ['*', null, name]}
  / "*" {return ['*', null, '*']}
- / uri:BracedURILiteral "*" {return [null, uri, name]}
+ / uri:BracedURILiteral "*" {return [null, uri, '*']}
  / prefix:NCName ":*" {return [prefix, null, '*']}
 
 // 49

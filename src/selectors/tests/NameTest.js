@@ -40,7 +40,8 @@ class NameTest extends TestAbstractExpression {
 			return false;
 		}
 		// Easy cases first
-		if (this._prefix === null && this._localName === '*') {
+		if (
+			this._prefix === null && this._namespaceURI !== '' && this._localName === '*') {
 			return true;
 		}
 		if (this._prefix === '*') {
