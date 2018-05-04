@@ -70,7 +70,7 @@ class FunctionCall extends Selector {
 					});
 
 					// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
-					var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, dynamicContext, functionItem);
+					var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, dynamicContext, functionItem.getName());
 					if (transformedArguments === null) {
 						throw new Error(`XPTY0004: expected argument list of function ${functionItem.getName()} to be [${argumentListToString(evaluatedArgs)}], got function with argument list [${functionItem.getArgumentTypes().join(', ')}].`);
 					}

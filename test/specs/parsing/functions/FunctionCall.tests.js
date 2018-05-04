@@ -120,4 +120,9 @@ describe('function argument transformation', () => {
 		], documentNode);
 		chai.assert.throws(() => evaluateXPathToNumbers('@attr to 2', documentNode.firstChild), 'FORG0001');
 	});
+
+	it('Mentions the erroneous function if argument conversion fails', () => {
+		chai.assert.throws(() => evaluateXPathToNumbers('abs((1,2,3))', documentNode.firstChild), 'abs');
+		chai.assert.throws(() => evaluateXPathToNumbers('array:size(())', documentNode.firstChild), 'size');
+	});
 });
