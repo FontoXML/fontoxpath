@@ -19,9 +19,12 @@ class OrOperator extends Selector {
 			return selector.specificity;
 		}, new Specificity({}));
 
-		super(maxSpecificity, {
-			canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
-		});
+		super(
+			maxSpecificity,
+			selectors,
+			{
+				canBeStaticallyEvaluated: selectors.every(selector => selector.canBeStaticallyEvaluated)
+			});
 
 		// If all subSelectors define the same bucket: use that one, else, use no bucket.
 		this._bucket = selectors.reduce(function (bucket, selector) {

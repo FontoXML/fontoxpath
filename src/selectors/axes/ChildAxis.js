@@ -10,12 +10,15 @@ class ChildAxis extends Selector {
 	 * @param  {!../tests/TestAbstractExpression}  childSelector
 	 */
 	constructor (childSelector) {
-		super(childSelector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
-			subtree: true,
-			peer: true,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			childSelector.specificity,
+			[childSelector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+				subtree: true,
+				peer: true,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._childSelector = childSelector;
 

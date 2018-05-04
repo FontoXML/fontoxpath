@@ -17,6 +17,7 @@ class IfExpression extends Selector {
 			.add(elseExpression.specificity);
 		super(
 			specificity,
+			[testExpression, thenExpression, elseExpression],
 			{
 				resultOrder: thenExpression.expectedResultOrder === elseExpression.expectedResultOrder ?
 					thenExpression.expectedResultOrder : Selector.RESULT_ORDERINGS.UNSORTED,

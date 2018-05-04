@@ -44,9 +44,13 @@ class IntersectExcept extends Selector {
 		const maxSpecificity = expression1.specificity.compareTo(expression2.specificity) > 0 ?
 			expression1.specificity :
 			expression2.specificity;
-		super(maxSpecificity, {
-			canBeStaticallyEvaluated: expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
-		});
+		super(
+			maxSpecificity,
+			[expression1, expression2],
+			{
+				canBeStaticallyEvaluated: expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
+			}
+		);
 
 		this._intersectOrExcept = intersectOrExcept;
 		this._expression1 = expression1;

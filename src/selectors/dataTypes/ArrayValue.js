@@ -10,13 +10,14 @@ class ArrayValue extends FunctionValue {
 	 * @param  {Array<./Value>}  members
 	 */
 	constructor (members) {
-		super({
-			value: (dynamicContext, key) => arrayGet(dynamicContext, Sequence.singleton(this), key),
-			name: 'array:get',
-			argumentTypes: ['xs:integer'],
-			arity: 1,
-			returnType: 'item()*'
-		});
+		super(
+			{
+				value: (dynamicContext, key) => arrayGet(dynamicContext, Sequence.singleton(this), key),
+				name: 'array:get',
+				argumentTypes: ['xs:integer'],
+				arity: 1,
+				returnType: 'item()*'
+			});
 		this.type = 'array(*)';
 		this.members = members;
 	}

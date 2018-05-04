@@ -13,10 +13,13 @@ class DirPIConstructor extends Selector {
 	 * @param  {!string}  data
 	 */
 	constructor (target, data) {
-		super(new Specificity({}), {
-			canBeStaticallyEvaluated: false,
-			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
-		});
+		super(
+			new Specificity({}),
+			[],
+			{
+				canBeStaticallyEvaluated: false,
+				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
+			});
 
 		this._target = target;
 		this._data = data;

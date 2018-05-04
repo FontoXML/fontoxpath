@@ -13,6 +13,7 @@ class LetExpression extends Selector {
 	constructor (rangeVariable, bindingSequence, returnExpression) {
 		super(
 			bindingSequence.specificity.add(returnExpression.specificity),
+			[bindingSequence, returnExpression],
 			{
 				resultOrder: returnExpression.expectedResultOrder,
 				subtree: returnExpression.subtree,

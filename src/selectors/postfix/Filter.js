@@ -12,12 +12,15 @@ class Filter extends Selector {
 	 * @param  {Selector}    filterSelector
 	 */
 	constructor (selector, filterSelector) {
-		super(selector.specificity.add(filterSelector.specificity), {
-			resultOrder: selector.expectedResultOrder,
-			peer: selector.peer,
-			subtree: selector.subtree,
-			canBeStaticallyEvaluated: selector.canBeStaticallyEvaluated && filterSelector.canBeStaticallyEvaluated
-		});
+		super(
+			selector.specificity.add(filterSelector.specificity),
+			[selector, filterSelector],
+			{
+				resultOrder: selector.expectedResultOrder,
+				peer: selector.peer,
+				subtree: selector.subtree,
+				canBeStaticallyEvaluated: selector.canBeStaticallyEvaluated && filterSelector.canBeStaticallyEvaluated
+			});
 
 		this._selector = selector;
 		this._filterSelector = filterSelector;

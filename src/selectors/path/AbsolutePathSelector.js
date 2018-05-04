@@ -10,12 +10,15 @@ class AbsolutePathSelector extends Selector {
 	 * @param  {Selector}  relativePathSelector
 	 */
 	constructor (relativePathSelector) {
-		super(relativePathSelector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
-			subtree: false,
-			peer: false,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			relativePathSelector.specificity,
+			[relativePathSelector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+				subtree: false,
+				peer: false,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._relativePathSelector = relativePathSelector;
 	}

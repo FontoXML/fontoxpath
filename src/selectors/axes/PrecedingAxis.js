@@ -70,12 +70,15 @@ class PrecedingAxis extends Selector {
 	 * @param  {Selector}  testSelector
 	 */
 	constructor (testSelector) {
-		super(testSelector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
-			peer: true,
-			subtree: false,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			testSelector.specificity,
+			[testSelector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+				peer: true,
+				subtree: false,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._testSelector = testSelector;
 	}

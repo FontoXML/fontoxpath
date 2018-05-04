@@ -40,12 +40,15 @@ class DescendantAxis extends Selector {
 	 */
 	constructor (descendantSelector, options) {
 		options = options || { inclusive: false };
-		super(descendantSelector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
-			subtree: true,
-			peer: false,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			descendantSelector.specificity,
+			[descendantSelector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+				subtree: true,
+				peer: false,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._descendantSelector = descendantSelector;
 		this._isInclusive = !!options.inclusive;

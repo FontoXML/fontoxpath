@@ -16,6 +16,7 @@ class Compare extends Selector {
 	constructor (kind, firstSelector, secondSelector) {
 		super(
 			firstSelector.specificity.add(secondSelector.specificity),
+			[],
 			{
 				canBeStaticallyEvaluated: false
 			});

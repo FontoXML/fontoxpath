@@ -193,6 +193,7 @@ class PathSelector extends Selector {
 				// Implicit AND, so sum
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
+			stepSelectors,
 			{
 				resultOrder: Selector.RESULT_ORDERINGS.SORTED,
 				peer: pathResultsInPeerSequence,

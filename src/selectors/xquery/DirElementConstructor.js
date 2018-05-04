@@ -31,10 +31,13 @@ class DirElementConstructor extends Selector {
 	 * @param  {!Array<!Selector>}  contents  Strings and enclosed expressions
 	 */
 	constructor (prefix, name, attributes, contents) {
-		super(new Specificity({}), {
-			canBeStaticallyEvaluated: false,
-			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
-		});
+		super(
+			new Specificity({}),
+			contents,
+			{
+				canBeStaticallyEvaluated: false,
+				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
+			});
 
 		this._prefix = prefix;
 		this._name = name;

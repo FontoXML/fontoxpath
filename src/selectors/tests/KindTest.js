@@ -8,7 +8,8 @@ class KindTest extends TestAbstractExpression {
 	 * @param  {number}  nodeType
 	 */
 	constructor (nodeType) {
-		super(new Specificity({
+		super(
+			new Specificity({
 			[Specificity.NODETYPE_KIND]: 1
 		}));
 

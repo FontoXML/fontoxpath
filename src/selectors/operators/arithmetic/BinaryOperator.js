@@ -305,9 +305,12 @@ class BinaryOperator extends Selector {
 	 * @param  {Selector}  secondValueExpr  The selector evaluating to the second value to process
 	 */
 	constructor (operator, firstValueExpr, secondValueExpr) {
-		super(firstValueExpr.specificity.add(secondValueExpr.specificity), {
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			firstValueExpr.specificity.add(secondValueExpr.specificity),
+			[firstValueExpr, secondValueExpr],
+			{
+				canBeStaticallyEvaluated: false
+			});
 		this._firstValueExpr = firstValueExpr;
 		this._secondValueExpr = secondValueExpr;
 

@@ -20,9 +20,12 @@ class Union extends Selector {
 			}
 			return expression.specificity;
 		}, new Specificity({}));
-		super(maxSpecificity, {
-			canBeStaticallyEvaluated: expressions.every(expression => expression.canBeStaticallyEvaluated)
-		});
+		super(
+			maxSpecificity,
+			expressions,
+			{
+				canBeStaticallyEvaluated: expressions.every(expression => expression.canBeStaticallyEvaluated)
+			});
 
 	this._subSelectors = expressions;
 

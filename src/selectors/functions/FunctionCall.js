@@ -33,14 +33,17 @@ class FunctionCall extends Selector {
 	 * @param  {!Array<!Selector>}  args              The arguments to be evaluated and passed to the function
 	 */
 	constructor (functionReference, args) {
-		super(new Specificity({
-			[Specificity.EXTERNAL_KIND]: 1
-		}), {
-			resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
-			peer: false,
-			subtree: false,
-			canBeStaticallyEvaluated: false //args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
-		});
+		super(
+			new Specificity({
+				[Specificity.EXTERNAL_KIND]: 1
+			}),
+			[functionReference].concat(args),
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
+				peer: false,
+				subtree: false,
+				canBeStaticallyEvaluated: false //args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
+			});
 
 		this._args = args;
 		this._functionReference = functionReference;

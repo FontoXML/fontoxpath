@@ -80,6 +80,9 @@ return $fib-entries
 	it('throws when a function is called with the wrong type of arguments',
 		() => chai.assert.throws(() => evaluateXPathToString('let $fn := ends-with#2 return $fn(0, 0)', documentNode), 'XPTY0004'));
 
+	it('throws when a function is called with the wrong multiplicity of arguments',
+		() => chai.assert.throws(() => evaluateXPathToString('let $fn := ends-with#2 return $fn(0, 0)', documentNode), 'XPTY0004'));
+
 	it('throws when a function is called with the wrong number of arguments',
 		() => chai.assert.throws(() => evaluateXPathToString('let $fn := false#0 return $fn(1, 2)', documentNode), 'XPTY0004'));
 

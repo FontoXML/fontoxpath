@@ -19,9 +19,12 @@ class ForExpression extends Selector {
 	 * @param  {!Selector}                       expression
 	 */
 	constructor (clause, expression) {
-		super(new Specificity({}), {
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			new Specificity({}),
+			[expression],
+			{
+				canBeStaticallyEvaluated: false
+			});
 
 		this._varName = buildVarName(clause.varName);
 		/**

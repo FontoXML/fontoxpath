@@ -21,9 +21,12 @@ class QuantifiedExpression extends Selector {
 		const specificity = inClauses.reduce(
 			(specificity, inClause) => specificity.add(inClause[1].specificity),
 			satisfiesExpr.specificity);
-		super(specificity, {
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			specificity,
+			inClauses.concat(satisfiesExpr),
+			{
+				canBeStaticallyEvaluated: false
+			});
 
 		this._quantifier = quantifier;
 		this._inClauses = inClauses;

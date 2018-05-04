@@ -24,12 +24,15 @@ class FollowingSiblingAxis extends Selector {
 	 * @param  {Selector}  siblingSelector
 	 */
 	constructor (siblingSelector) {
-		super(siblingSelector.specificity, {
-			resultOrder: Selector.RESULT_ORDERINGS.SORTED,
-			peer: true,
-			subtree: false,
-			canBeStaticallyEvaluated: false
-		});
+		super(
+			siblingSelector.specificity,
+			[siblingSelector],
+			{
+				resultOrder: Selector.RESULT_ORDERINGS.SORTED,
+				peer: true,
+				subtree: false,
+				canBeStaticallyEvaluated: false
+			});
 
 		this._siblingSelector = siblingSelector;
 
