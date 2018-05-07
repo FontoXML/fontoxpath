@@ -228,7 +228,7 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 window.log = '';
 
 evaluateXPathToNodes('/catalog/test-set', catalog)
-	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
+	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)] !== false)
 	.map(testSetNode => evaluateXPathToString('@file', testSetNode))
 	.forEach(testSetFileName => {
 		const testSet = getFile(testSetFileName);
