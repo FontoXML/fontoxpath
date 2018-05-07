@@ -4,6 +4,7 @@ import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import zipSingleton from '../util/zipSingleton';
+import concatSequences from '../util/concatSequences';
 
 /**
  * @param   {../DynamicContext}  dynamicContext
@@ -168,24 +169,18 @@ function mapRemove (_dynamicContext, mapSequence, keySequence) {
  * @return  {!Sequence}
  */
 function mapForEach (dynamicContext, mapSequence, functionItemSequence) {
-	return zipSingleton([mapSequence, functionItemSequence], ([map, functionItem]) => {
-		/**
-		 * @type {Array<{key: ../dataTypes/Value, value: Sequence}>}
-		 */
-		const resultingKeyValuePairs = map.keyValuePairs.map(function (keyValuePair) {
-			const newValue = functionItem.value.call(
-				undefined,
-				dynamicContext,
-				Sequence.singleton(keyValuePair.key),
-				keyValuePair.value);
-			return {
-				key: keyValuePair.key,
-				value: newValue
-			};
+	return zipSingleton(
+		[mapSequence, functionItemSequence],
+		([map, functionItem]) => {
+			return concatSequences(map.keyValuePairs.map(function (keyValuePair) {
+				return functionItem.value.call(
+					undefined,
+					dynamicContext,
+					Sequence.singleton(keyValuePair.key),
+					keyValuePair.value);
+			}));
 		});
-		return Sequence.singleton(new MapValue(resultingKeyValuePairs));
-	});
-}
+	}
 
 export default {
 	declarations: [

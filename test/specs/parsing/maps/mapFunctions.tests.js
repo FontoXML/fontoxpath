@@ -197,10 +197,16 @@ map:merge((
 	});
 
 	describe('map:for-each', () => {
-		it('executes a function over every item',
-			() => chai.assert.deepEqual(evaluateXPathToMap('map:for-each(map{"a":"b", "b": "c"}, concat#2)', documentNode), { a: 'ab', b: 'bc' }));
+		it('executes a function over every item', () => {
+			chai.assert.deepEqual(evaluateXPathToStrings(
+				'map:for-each(map{"a":"b", "b": "c"}, concat#2)',
+				documentNode
+			), ['ab', 'bc']);
+		});
 		it('works with async params', async () => {
-			chai.assert.deepEqual(await evaluateXPathToAsyncSingleton('map:for-each(map{"a":1, "b": 2} => fontoxpath:sleep(), function ($key, $val) {$key || $val})', documentNode), { a: 'a1', b: 'b2' });
+			chai.assert.deepEqual(
+				await evaluateXPathToAsyncSingleton(
+					'array{map:for-each(map{"a":1, "b": 2} => fontoxpath:sleep(), function ($key, $val) {$key || $val})}', documentNode), ['a1', 'b2']);
 		});
 	});
 });
