@@ -325,9 +325,6 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (!(isSubtypeOf(first.value.type, 'node()'))) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
 			}
-			if (isSubtypeOf(first.value.type, 'attribute()')) {
-				throw new Error('XPath can not resolve to attribute nodes');
-			}
 			return first.value.value;
 		}
 
@@ -341,11 +338,6 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 				return isSubtypeOf(value.type, 'node()');
 			})) {
 				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a sequence of Nodes.');
-			}
-			if (allResults.value.some(function (value) {
-				return isSubtypeOf(value.type, 'attribute()');
-			})) {
-				throw new Error('XPath ' + xpathSelector + ' should not resolve to attribute nodes');
 			}
 			return allResults.value.map(function (nodeValue) {
 				return nodeValue.value;

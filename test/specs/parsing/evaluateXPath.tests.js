@@ -131,7 +131,7 @@ describe('evaluateXPath', () => {
 			jsonMlMapper.parse(['someElement', {
 				someAttribute: 'someValue'
 			}], documentNode);
-			chai.assert.throws(() => evaluateXPathToFirstNode('//@someAttribute', documentNode, domFacade));
+			chai.assert.equal(evaluateXPathToFirstNode('//@someAttribute', documentNode, domFacade), documentNode.documentElement.attributes[0]);
 		});
 		it('Throws when the xpath resolves to not a node', () => {
 			chai.assert.throws(() => evaluateXPathToFirstNode('1', documentNode, domFacade));
@@ -159,7 +159,7 @@ describe('evaluateXPath', () => {
 			jsonMlMapper.parse(['someElement', {
 				someAttribute: 'someValue'
 			}], documentNode);
-			chai.assert.throws(() => evaluateXPathToNodes('//@someAttribute', documentNode, domFacade));
+			chai.assert.deepEqual(evaluateXPathToNodes('//@someAttribute', documentNode, domFacade), documentNode.documentElement.attributes);
 		});
 		it(
 			'throws for async results',
