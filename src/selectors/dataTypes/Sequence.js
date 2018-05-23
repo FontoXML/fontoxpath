@@ -253,11 +253,11 @@ Sequence.prototype.mapAll = function (callback) {
 };
 
 /**
- * @param  {!../DynamicContext} dynamicContext
+ * @param  {!../ExecutionParameters}  executionParameters
  * @return {!Sequence}
  */
-Sequence.prototype.atomize = function (dynamicContext) {
-    return this.map(value => atomize(value, dynamicContext));
+Sequence.prototype.atomize = function (executionParameters) {
+    return this.map(value => atomize(value, executionParameters));
 };
 
 Sequence.prototype.isEmpty = function () {
@@ -482,8 +482,8 @@ SingletonSequence.prototype.tryGetLength = function (_onlyIfCheap) {
 };
 SingletonSequence.prototype.getLength = () => 1;
 SingletonSequence.prototype.isSingleton = () => true;
-SingletonSequence.prototype.atomize = function (dynamicContext) {
-	return new SingletonSequence(atomize(this._onlyValue, dynamicContext));
+SingletonSequence.prototype.atomize = function (executionParameters) {
+	return new SingletonSequence(atomize(this._onlyValue, executionParameters));
 };
 SingletonSequence.prototype.filter = function (callback) {
 	if (callback(this._onlyValue, 0, this)) {
@@ -598,8 +598,8 @@ ArrayBackedSequence.prototype.mapAll = function (callback) {
 ArrayBackedSequence.prototype.getLength = function () {
 	return this._values.length;
 };
-ArrayBackedSequence.prototype.atomize = function (dynamicContext) {
-	return this.map(value => atomize(value, dynamicContext));
+ArrayBackedSequence.prototype.atomize = function (executionParameters) {
+	return this.map(value => atomize(value, executionParameters));
 };
 ArrayBackedSequence.prototype.expandSequence = function () {
 	return this;

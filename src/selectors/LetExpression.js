@@ -30,14 +30,18 @@ class LetExpression extends Selector {
 		this._returnExpression = returnExpression;
 	}
 
-	evaluate (dynamicContext) {
-		const newVariables = Object.create(null);
-		const variable = this._bindingSequence.evaluateMaybeStatically(dynamicContext);
-		// Because we might iterate it multiple times in the return expression,
-		//   we need to save all of the values given by the expresion...
-		newVariables[this._rangeVariable] = createDoublyIterableSequence(variable);
-		return this._returnExpression.evaluateMaybeStatically(
-			dynamicContext.scopeWithVariables(newVariables));
+	performStaticEvaluation (staticContext) {
+		const scopedStaticContext = staticContext.introduceScope();
+		scopedStaticContext.registerVariable(null, this._rangeVariable, (executionParameters) => {
+			return this._bindingSequence.evaluateMaybeStatically(null, executionParameters);
+		});
+
+		this._bindingSequence.performStaticEvaluation(staticContext);
+		this._returnExpression.performStaticEvaluation(scopedStaticContext);
+	}
+
+	evaluate (dynamicContext, executionParameters) {
+		return this._returnExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
 	}
 }
 export default LetExpression;

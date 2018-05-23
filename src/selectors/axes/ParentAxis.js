@@ -27,12 +27,12 @@ class ParentAxis extends Selector {
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}
 	 */
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
 
-		const domFacade = dynamicContext.domFacade;
+		const domFacade = executionParameters.domFacade;
 
 		const parentNode = domFacade.getParentNode(dynamicContext.contextItem.value);
 		if (!parentNode) {

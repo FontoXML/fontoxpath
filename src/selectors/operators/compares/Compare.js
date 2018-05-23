@@ -16,7 +16,7 @@ class Compare extends Selector {
 	constructor (kind, firstSelector, secondSelector) {
 		super(
 			firstSelector.specificity.add(secondSelector.specificity),
-			[],
+			[firstSelector, secondSelector],
 			{
 				canBeStaticallyEvaluated: false
 			});
@@ -27,15 +27,15 @@ class Compare extends Selector {
 		this._operator = kind[1];
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		/**
 		 * @type {!Sequence}
 		 */
-		const firstSequence = this._firstSelector.evaluateMaybeStatically(dynamicContext);
+		const firstSequence = this._firstSelector.evaluateMaybeStatically(dynamicContext, executionParameters);
 		/**
 		 * @type {!Sequence}
 		 */
-		const secondSequence = this._secondSelector.evaluateMaybeStatically(dynamicContext);
+		const secondSequence = this._secondSelector.evaluateMaybeStatically(dynamicContext, executionParameters);
 
 		return firstSequence.switchCases({
 			empty: () => {

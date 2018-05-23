@@ -27,7 +27,7 @@ class DircommentConstructor extends Selector {
 	 * @param  {!../DynamicContext} dynamicContext
 	 * @return {!Sequence}
 	 */
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		const nodesFactory = dynamicContext.nodesFactory;
 		return Sequence.singleton(createNodeValue(nodesFactory.createComment(this._contents)));
 	}

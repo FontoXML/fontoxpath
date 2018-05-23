@@ -3,11 +3,11 @@ import Sequence from './dataTypes/Sequence';
 import Specificity from './Specificity';
 import { DONE_TOKEN } from './util/iterators';
 
-function buildVarName ({ prefix, namespaceURI, name }) {
+function buildVarName ({ prefix, namespaceURI, name }, staticContext) {
 	if (namespaceURI) {
-		throw new Error('Not implemented: for expressions with a namespace URI in the binding.');
+		return `Q{${namespaceURI}}${name}}`;
 	}
-	return prefix ? `${prefix}:${name}` : name;
+	return `Q${staticContext.lookupNamespaceURI(prefix)}${name}`;
 }
 
 /**
@@ -26,7 +26,10 @@ class ForExpression extends Selector {
 				canBeStaticallyEvaluated: false
 			});
 
-		this._varName = buildVarName(clause.varName);
+		this._varName = clause.varName;
+
+		this._variableBindingKey = null;
+
 		/**
 		 * @type {!Selector}
 		 */
@@ -37,11 +40,15 @@ class ForExpression extends Selector {
 		this._returnExpression = expression;
 	}
 
-	evaluate (dynamicContext) {
+	performStaticEvaluation (staticContext) {
+		this._variableBindingKey = buildVarName(this._varName, staticContext);
+	}
+
+	evaluate (dynamicContext, executionParameters) {
 		/**
 		 * @type {!./util/iterators.AsyncIterator<!./dataTypes/Value>}
 		 */
-		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext).value();
+		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext, executionParameters).value();
 		/**
 		 * @type {?./util/iterators.AsyncIterator<!./dataTypes/Value>}
 		 */
@@ -62,12 +69,15 @@ class ForExpression extends Selector {
 						/**
 						 * @type {!./DynamicContext}
 						 */
-						const contextWithVars = dynamicContext.scopeWithVariables({
+						const contextWithVars = dynamicContext.scopeWithVariableBindings({
 							[this._varName]: () => {
 								return Sequence.singleton(currentClauseValue.value);
 							}
 						});
-						returnIterator = this._returnExpression.evaluateMaybeStatically(contextWithVars).value();
+						returnIterator = this._returnExpression.evaluateMaybeStatically(
+							contextWithVars,
+							executionParameters
+						).value();
 					}
 					const returnValue = returnIterator.next();
 					if (returnValue.done) {

@@ -49,8 +49,8 @@ class FunctionCall extends Selector {
 		this._functionReference = functionReference;
 	}
 
-	evaluate (dynamicContext) {
-		var sequence = this._functionReference.evaluateMaybeStatically(dynamicContext);
+	evaluate (dynamicContext, executionParameters) {
+		var sequence = this._functionReference.evaluateMaybeStatically(dynamicContext, executionParameters);
 		return sequence.switchCases({
 			default: () => {
 				throw new Error('XPTY0004: expected base expression to evaluate to a sequence with a single item');
@@ -69,7 +69,7 @@ class FunctionCall extends Selector {
 						if (argument === null) {
 							return null;
 						}
-						return argument.evaluateMaybeStatically(dynamicContext);
+						return argument.evaluateMaybeStatically(dynamicContext, executionParameters);
 					});
 
 					// Test if we have the correct arguments, and pre-convert the ones we can pre-convert

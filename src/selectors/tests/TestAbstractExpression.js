@@ -22,7 +22,7 @@ class TestAbstractSelector extends Selector {
 	evaluateToBoolean (_dynamicContext, _item) {
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem) ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 	}
 

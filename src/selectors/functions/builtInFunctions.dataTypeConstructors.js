@@ -7,14 +7,14 @@ import { validatePattern, normalizeWhitespace } from '../dataTypes/typeHelpers';
 
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-function genericDataTypeConstructor (dataType, _dynamicContext, sequence) {
+function genericDataTypeConstructor (dataType, _dynamicContext, _executionParameters, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(castToType(sequence.first(), dataType));
 }
 
-function xsQName (dynamicContext, sequence) {
+function xsQName (dynamicContext, _executionParameters, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}

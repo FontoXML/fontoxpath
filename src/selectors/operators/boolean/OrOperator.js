@@ -45,7 +45,7 @@ class OrOperator extends Selector {
 		this._subSelectors = selectors;
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		let i = 0;
 		let resultSequence = null;
 		let done = false;
@@ -54,7 +54,7 @@ class OrOperator extends Selector {
 				if (!done) {
 					while (i < this._subSelectors.length) {
 						if (!resultSequence) {
-							resultSequence = this._subSelectors[i].evaluateMaybeStatically(dynamicContext);
+							resultSequence = this._subSelectors[i].evaluateMaybeStatically(dynamicContext, executionParameters);
 						}
 						const ebv = resultSequence.tryGetEffectiveBooleanValue();
 						if (!ebv.ready) {

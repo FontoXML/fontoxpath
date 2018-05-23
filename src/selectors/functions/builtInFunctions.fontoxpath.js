@@ -9,10 +9,11 @@ import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 /**
  * @param  {!../DynamicContext}      dynamicContext
+ * @param  {!../ExecutionParameters} executionParameters
  * @param  {!../dataTypes/Sequence}  query
  * @param  {!../dataTypes/Sequence}  args
  */
-function fontoxpathEvaluate (dynamicContext, query, args) {
+function fontoxpathEvaluate (dynamicContext, executionParameters, query, args) {
 	let resultIterator;
 	let queryString;
 	return new Sequence({
@@ -39,7 +40,7 @@ function fontoxpathEvaluate (dynamicContext, query, args) {
 					contextSequence: contextItemSequence,
 					contextItemIndex: -1,
 					variables,
-					domFacade: dynamicContext.domFacade,
+					domFacade: executionParameters.domFacade,
 					resolveNamespacePrefix: dynamicContext.resolveNamespacePrefix,
 					createSelectorFromXPath: dynamicContext.createSelectorFromXPath
 				} : {
@@ -47,13 +48,13 @@ function fontoxpathEvaluate (dynamicContext, query, args) {
 					contextSequence: contextItemSequence,
 					contextItemIndex: 0,
 					variables,
-					domFacade: dynamicContext.domFacade,
+					domFacade: executionParameters.domFacade,
 					resolveNamespacePrefix: dynamicContext.resolveNamespacePrefix,
 					createSelectorFromXPath: dynamicContext.createSelectorFromXPath
 				};
 				const innerDynamicContext = new DynamicContext(context);
 
-				resultIterator = selector.evaluate(innerDynamicContext).value();
+				resultIterator = selector.evaluate(innerDynamicContext, executionParameters).value();
 			}
 			return resultIterator.next();
 

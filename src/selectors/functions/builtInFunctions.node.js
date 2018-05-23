@@ -8,45 +8,19 @@ import zipSingleton from '../util/zipSingleton';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 /**
- * @type {function(../DynamicContext, !Sequence): !Sequence}
+ * @type {function(!../DynamicContext, !../ExecutionParameters, !Sequence): !Sequence}
  */
 const fnString = builtinStringFunctions.functions.string;
 
-function contextItemAsFirstArgument (fn, dynamicContext) {
+function contextItemAsFirstArgument (fn, dynamicContext, executionParameters) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
 	}
-	return fn(dynamicContext, Sequence.singleton(dynamicContext.contextItem));
+	return fn(dynamicContext, executionParameters, Sequence.singleton(dynamicContext.contextItem));
 }
 
-function fnName (dynamicContext, sequence) {
-	return sequence.switchCases({
-		empty: () => Sequence.empty(),
-		default: () => fnString(dynamicContext, fnNodeName(dynamicContext, sequence))
-	});
-}
 
-function fnNamespaceURI (_dynamicContext, sequence) {
-	return sequence.map(node => createAtomicValue(node.value.namespaceURI || '', 'xs:anyURI'));
-}
-
-function fnLocalName (_dynamicContext, sequence) {
-	return sequence.switchCases({
-		empty: () => Sequence.singleton(createAtomicValue('', 'xs:string')),
-		default: () => {
-			return sequence.map(node => {
-				if (node.value.nodeType === 7) {
-					const pi = /** @type {ProcessingInstruction} */ (node.value);
-					return createAtomicValue(pi.target, 'xs:string');
-				}
-
-				return createAtomicValue(node.value.localName || '', 'xs:string');
-			});
-		}
-	});
-}
-
-function fnNodeName (_dynamicContext, sequence) {
+function fnNodeName (_dynamicContext, _executionParameters, sequence) {
 	return zipSingleton([sequence], ([nodeValue]) => {
 		if (nodeValue === null) {
 			return Sequence.empty();
@@ -65,6 +39,33 @@ function fnNodeName (_dynamicContext, sequence) {
 				return Sequence.empty();
 		}
 
+	});
+}
+
+function fnName (dynamicContext, executionParameters, sequence) {
+	return sequence.switchCases({
+		empty: () => Sequence.empty(),
+		default: () => fnString(dynamicContext, executionParameters, fnNodeName(dynamicContext, executionParameters, sequence))
+	});
+}
+
+function fnNamespaceURI (_dynamicContext, _executionParameters, sequence) {
+	return sequence.map(node => createAtomicValue(node.value.namespaceURI || '', 'xs:anyURI'));
+}
+
+function fnLocalName (_dynamicContext, _executionParameters, sequence) {
+	return sequence.switchCases({
+		empty: () => Sequence.singleton(createAtomicValue('', 'xs:string')),
+		default: () => {
+			return sequence.map(node => {
+				if (node.value.nodeType === 7) {
+					const pi = /** @type {ProcessingInstruction} */ (node.value);
+					return createAtomicValue(pi.target, 'xs:string');
+				}
+
+				return createAtomicValue(node.value.localName || '', 'xs:string');
+			});
+		}
 	});
 }
 
@@ -87,7 +88,7 @@ function contains (domFacade, ancestor, descendant) {
 	return false;
 }
 
-function fnOutermost (dynamicContext, nodeSequence) {
+function fnOutermost (_dynamicContext, executionParameters, nodeSequence) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
 			return Sequence.empty();
@@ -96,27 +97,27 @@ function fnOutermost (dynamicContext, nodeSequence) {
 		/**
 		 * @type {!Array<!../dataTypes/Value>}
 		 */
-		const resultNodes = sortNodeValues(dynamicContext.domFacade, allNodeValues)
-			  .reduce(function (previousNodes, node, i) {
-				  if (i === 0) {
-					  previousNodes.push(node);
-					  return previousNodes;
-				  }
-				  // Because the nodes are sorted, the previous node is either a 'previous node', or an ancestor of this node
-				  if (contains(dynamicContext.domFacade, previousNodes[previousNodes.length - 1].value, node.value)) {
-					  // The previous node is an ancestor
-					  return previousNodes;
-				  }
+		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues).reduce(
+			function (previousNodes, node, i) {
+				if (i === 0) {
+					previousNodes.push(node);
+					return previousNodes;
+				}
+				// Because the nodes are sorted, the previous node is either a 'previous node', or an ancestor of this node
+				if (contains(executionParameters.domFacade, previousNodes[previousNodes.length - 1].value, node.value)) {
+					// The previous node is an ancestor
+					return previousNodes;
+				}
 
-				  previousNodes.push(node);
-				  return previousNodes;
-			  }, []);
+				previousNodes.push(node);
+				return previousNodes;
+			}, []);
 
 		return new Sequence(resultNodes);
 	});
 }
 
-function fnInnermost (dynamicContext, nodeSequence) {
+function fnInnermost (_dynamicContext, executionParameters, nodeSequence) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
 			return Sequence.empty();
@@ -125,14 +126,14 @@ function fnInnermost (dynamicContext, nodeSequence) {
 		/**
 		 * @type {!Array<!../dataTypes/Value>}
 		 */
-		const resultNodes = sortNodeValues(dynamicContext.domFacade, allNodeValues)
+		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues)
 			.reduceRight(function (followingNodes, node, i, allNodes) {
 				if (i === allNodes.length - 1) {
 					followingNodes.push(node);
 					return followingNodes;
 				}
 				// Because the nodes are sorted, the following node is either a 'following node', or a descendant of this node
-				if (contains(dynamicContext.domFacade, node.value, followingNodes[0].value)) {
+				if (contains(executionParameters.domFacade, node.value, followingNodes[0].value)) {
 					// The previous node is an ancestor
 					return followingNodes;
 				}

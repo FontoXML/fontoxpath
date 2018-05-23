@@ -31,15 +31,15 @@ class Union extends Selector {
 
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		return concatSequences(
 			this._subSelectors.map(
-				expression => expression.evaluateMaybeStatically(dynamicContext)))
+				expression => expression.evaluateMaybeStatically(dynamicContext, executionParameters)))
 			.mapAll(allValues => {
 				if (allValues.some(nodeValue => !isSubtypeOf(nodeValue.type, 'node()'))) {
 					throw new Error('XPTY0004: The sequences to union are not of type node()*');
 				}
-				const sortedValues = sortNodeValues(dynamicContext.domFacade, allValues);
+				const sortedValues = sortNodeValues(executionParameters.domFacade, allValues);
 				return new Sequence(sortedValues);
 			});
 	}

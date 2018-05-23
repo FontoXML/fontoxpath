@@ -26,7 +26,7 @@ class SelfAxis extends Selector {
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}
 	 */
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}

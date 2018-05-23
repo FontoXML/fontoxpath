@@ -9,13 +9,13 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-function arraySize (_dynamicContext, arraySequence) {
+function arraySize (dynamicContext, _executionParameters, arraySequence) {
 	return zipSingleton(
 		[arraySequence],
 		([array]) => Sequence.singleton(createAtomicValue(array.members.length, 'xs:integer')));
 }
 
-function arrayPut (_dynamicContext, arraySequence, positionSequence, itemSequence) {
+function arrayPut (dynamicContext, _executionParameters, arraySequence, positionSequence, itemSequence) {
 	return zipSingleton(
 		[positionSequence, arraySequence],
 		([position, array]) => {
@@ -29,7 +29,7 @@ function arrayPut (_dynamicContext, arraySequence, positionSequence, itemSequenc
 		});
 }
 
-function arrayAppend (_dynamicContext, arraySequence, itemSequence) {
+function arrayAppend (dynamicContext, _executionParameters, arraySequence, itemSequence) {
 	return zipSingleton(
 		[arraySequence],
 		([array]) => {
@@ -38,7 +38,7 @@ function arrayAppend (_dynamicContext, arraySequence, itemSequence) {
 		});
 }
 
-function arraySubarray (_dynamicContext, arraySequence, startSequence, lengthSequence) {
+function arraySubarray (dynamicContext, _executionParameters, arraySequence, startSequence, lengthSequence) {
 	return zipSingleton(
 		[arraySequence, startSequence, lengthSequence],
 		([array, start, length]) => {
@@ -62,7 +62,7 @@ function arraySubarray (_dynamicContext, arraySequence, startSequence, lengthSeq
 		});
 }
 
-function arrayRemove (_dynamicContext, arraySequence, positionSequence) {
+function arrayRemove (dynamicContext, _executionParameters, arraySequence, positionSequence) {
 	return zipSingleton(
 		[arraySequence],
 		([array]) => positionSequence.mapAll(allIndices => {
@@ -85,7 +85,7 @@ function arrayRemove (_dynamicContext, arraySequence, positionSequence) {
 	);
 }
 
-function arrayInsertBefore (_dynamicContext, arraySequence, positionSequence, itemSequence) {
+function arrayInsertBefore (dynamicContext, _executionParameters, arraySequence, positionSequence, itemSequence) {
 	return zipSingleton(
 		[arraySequence, positionSequence],
 		([array, position]) => {
@@ -101,13 +101,13 @@ function arrayInsertBefore (_dynamicContext, arraySequence, positionSequence, it
 		});
 }
 
-function arrayReverse (_dynamicContext, arraySequence) {
+function arrayReverse (dynamicContext, _executionParameters, arraySequence) {
 	return zipSingleton(
 		[arraySequence],
 		([array]) => Sequence.singleton(new ArrayValue(array.members.concat().reverse())));
 }
 
-function arrayJoin (_dynamicContext, arraySequence) {
+function arrayJoin (dynamicContext, _executionParameters, arraySequence) {
 	return arraySequence.mapAll(allArrays => {
 		const newMembers = allArrays.reduce(
 			(joinedMembers, array) => joinedMembers.concat(array.members),
@@ -116,18 +116,18 @@ function arrayJoin (_dynamicContext, arraySequence) {
 	});
 }
 
-function arrayForEach (dynamicContext, arraySequence, functionItemSequence) {
+function arrayForEach (dynamicContext, executionParameters, arraySequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
 		([array, functionItem]) => {
 			const newMembers = array.members.map(function (member) {
-				return functionItem.value.call(undefined, dynamicContext, member);
+				return functionItem.value.call(undefined, executionParameters, member);
 			});
 			return Sequence.singleton(new ArrayValue(newMembers));
 		});
 }
 
-function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
+function arrayFilter (dynamicContext, executionParameters, arraySequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
 		([array, functionItem]) => {
@@ -136,7 +136,7 @@ function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
 			 */
 			const filterResultSequences = array.members.map(member => functionItem.value.call(
 				undefined,
-				dynamicContext,
+				executionParameters,
 				member));
 			const effectiveBooleanValues = [];
 			let done = false;
@@ -173,40 +173,40 @@ function arrayFilter (dynamicContext, arraySequence, functionItemSequence) {
 		});
 }
 
-function arrayFoldLeft (dynamicContext, arraySequence, startSequence, functionItemSequence) {
+function arrayFoldLeft (dynamicContext, executionParameters, arraySequence, startSequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
 		([array, functionItem]) => array.members.reduce(
-			(accum, member) => functionItem.value.call(undefined, dynamicContext, accum, member),
+			(accum, member) => functionItem.value.call(undefined, executionParameters, accum, member),
 			startSequence));
 }
 
-function arrayFoldRight (dynamicContext, arraySequence, startSequence, functionItemSequence) {
+function arrayFoldRight (dynamicContext, executionParameters, arraySequence, startSequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
 		([array, functionItem]) => array.members.reduceRight(
-			(accum, member) => functionItem.value.call(undefined, dynamicContext, accum, member),
+			(accum, member) => functionItem.value.call(undefined, executionParameters, accum, member),
 			startSequence));
 }
 
-function arrayForEachPair (dynamicContext, arraySequenceA, arraySequenceB, functionItemSequence) {
+function arrayForEachPair (dynamicContext, executionParameters, arraySequenceA, arraySequenceB, functionItemSequence) {
 	return zipSingleton(
 		[arraySequenceA, arraySequenceB, functionItemSequence],
 		([arrayA, arrayB, functionItem]) => {
 			const newMembers = [];
 			for (let i = 0, l = Math.min(arrayA.members.length, arrayB.members.length); i < l; ++i) {
-				newMembers[i] = functionItem.value.call(undefined, dynamicContext, arrayA.members[i], arrayB.members[i]);
+				newMembers[i] = functionItem.value.call(undefined, executionParameters, arrayA.members[i], arrayB.members[i]);
 			}
 
 			return Sequence.singleton(new ArrayValue(newMembers));
 		});
 }
 
-function arraySort (dynamicContext, arraySequence) {
+function arraySort (dynamicContext, executionParameters, arraySequence) {
 	return zipSingleton(
 		[arraySequence],
 		([array]) => {
-			const atomizedMembers = array.members.map(member => member.atomize(dynamicContext));
+			const atomizedMembers = array.members.map(member => member.atomize(dynamicContext, executionParameters));
 			return zipSingleton(
 				atomizedMembers,
 				atomizedItems => {
@@ -220,7 +220,7 @@ function arraySort (dynamicContext, arraySequence) {
 		});
 }
 
-function arrayFlatten (_dynamicContext, itemSequence) {
+function arrayFlatten (dynamicContext, _executionParameters, itemSequence) {
 	return itemSequence.mapAll(items => items.reduce(function flattenItem (flattenedItems, item) {
 		if (isSubtypeOf(item.type, 'array(*)')) {
 			return item.members.reduce(
@@ -279,12 +279,13 @@ export default {
 			localName: 'subarray',
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'array(*)',
-			callFunction: function (dynamicContext, arraySequence, startSequence) {
+			callFunction: function (dynamicContext, executionParameters, arraySequence, startSequence) {
 				const lengthSequence = Sequence.singleton(createAtomicValue(
 					arraySequence.first().members.length - startSequence.first().value + 1,
 					'xs:integer'));
 				return arraySubarray(
 					dynamicContext,
+					executionParameters,
 					arraySequence,
 					startSequence,
 					lengthSequence);
@@ -312,8 +313,8 @@ export default {
 			localName: 'head',
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
-			callFunction: function (dynamicContext, arraySequence) {
-				return arrayGet(dynamicContext, arraySequence, Sequence.singleton(createAtomicValue(1, 'xs:integer')));
+			callFunction: function (dynamicContext, executionParameters, arraySequence) {
+				return arrayGet(dynamicContext, executionParameters, arraySequence, Sequence.singleton(createAtomicValue(1, 'xs:integer')));
 			}
 		},
 
@@ -322,8 +323,8 @@ export default {
 			localName: 'tail',
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
-			callFunction: function (dynamicContext, arraySequence) {
-				return arrayRemove(dynamicContext, arraySequence, Sequence.singleton(createAtomicValue(1, 'xs:integer')));
+			callFunction: function (dynamicContext, executionParameters, arraySequence) {
+				return arrayRemove(dynamicContext, executionParameters, arraySequence, Sequence.singleton(createAtomicValue(1, 'xs:integer')));
 			}
 		},
 

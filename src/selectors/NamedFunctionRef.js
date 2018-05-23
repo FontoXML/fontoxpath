@@ -3,23 +3,10 @@ import Specificity from './Specificity';
 import Sequence from './dataTypes/Sequence';
 import functionRegistry from './functions/functionRegistry';
 import FunctionValue from './dataTypes/FunctionValue';
-import { FUNCTIONS_NAMESPACE_URI, staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
+import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 
-function getFunctionItem (functionReference, arity) {
-	let namespaceURI = functionReference.namespaceURI;
-	if (!namespaceURI) {
-		if (!functionReference.prefix) {
-			namespaceURI = FUNCTIONS_NAMESPACE_URI;
-		}
-		else {
-			namespaceURI = staticallyKnownNamespaceByPrefix[functionReference.prefix] || null;
-			if (namespaceURI === null) {
-				throw new Error(`XPST0017: There is no uri registered for prefix ${functionReference.prefix}.`);
-			}
-		}
-	}
-
-	return functionRegistry.getFunctionByArity(namespaceURI, functionReference.name, arity) || null;
+function buildFormattedFunctionName (functionReference) {
+	return `${functionReference.namespaceURI ? `Q{${functionReference.namespaceURI}}` : functionReference.prefix ? `${functionReference.prefix}:` : ''}${functionReference.localName}`;
 }
 
 /**
@@ -41,14 +28,32 @@ class NamedFunctionRef extends Selector {
 			});
 
 		this._arity = arity;
+		this._functionReference = functionReference;
 
-		this._functionProperties = getFunctionItem(
-			functionReference,
-			arity);
-		if (!this._functionProperties) {
-			const formattedFunctionName = `${functionReference.namespaceURI ? `Q{${functionReference.namespaceURI}}` : functionReference.prefix ? `${functionReference.prefix}:` : ''}${functionReference.name}`;
-			throw new Error(`XPST0017: Function ${formattedFunctionName} with arity of ${this._arity} not registered. ${functionRegistry.getAlternativesAsStringFor(functionReference.name)}`);
+		this._functionProperties = null;
+	}
+
+	performStaticEvaluation (staticContext) {
+		let namespaceURI = this._functionReference.namespaceURI;
+		if (!namespaceURI) {
+			if (!this._functionReference.prefix) {
+				namespaceURI = FUNCTIONS_NAMESPACE_URI;
+			}
+			else {
+				namespaceURI = staticContext.resolveNamespace(this._functionReference.prefix);
+				if (namespaceURI === null) {
+					throw new Error(`XPST0017: There is no uri registered for prefix ${this._functionReference.prefix}.`);
+				}
+			}
 		}
+
+		this._functionProperties = staticContext.lookupFunction(namespaceURI, this._functionReference.localName, this._arity) || null;
+;
+		if (!this._functionProperties) {
+			throw new Error(`XPST0017: Function ${buildFormattedFunctionName(this._functionReference)} with arity of ${this._arity} not registered. ${functionRegistry.getAlternativesAsStringFor(this._functionReference.name)}`);
+		}
+
+		super.performStaticEvaluation(staticContext);
 	}
 
 	evaluate (_dynamicContext) {

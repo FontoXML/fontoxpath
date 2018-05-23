@@ -24,9 +24,9 @@ class MapConstructor extends Selector {
 		this._entries = entries;
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		const keySequences = this._entries
-				.map(kvp => kvp.key.evaluateMaybeStatically(dynamicContext).atomize(dynamicContext).switchCases({
+				.map(kvp => kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(dynamicContext, executionParameters).switchCases({
 					default: () => {
 						throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
 					},
@@ -37,7 +37,7 @@ class MapConstructor extends Selector {
 			keySequences,
 			keys => Sequence.singleton(new MapValue(keys.map((key, keyIndex) => ({
 				key,
-				value: this._entries[keyIndex].value.evaluateMaybeStatically(dynamicContext)
+				value: this._entries[keyIndex].value.evaluateMaybeStatically(dynamicContext, executionParameters)
 			})))));
 	}
 }

@@ -2,12 +2,14 @@ import createSelectorFromXPath from './parsing/createSelectorFromXPath';
 import adaptJavaScriptValueToXPathValue from './selectors/adaptJavaScriptValueToXPathValue';
 import DynamicContext from './selectors/DynamicContext';
 import DomFacade from './DomFacade';
+import ExecutionParameters from './selectors/ExecutionParameters';
 import domBackedDomFacade from './domBackedDomFacade';
 
 import atomize from './selectors/dataTypes/atomize';
 import castToType from './selectors/dataTypes/castToType';
 import Sequence from './selectors/dataTypes/Sequence';
 import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
+import staticallyCompileXPath from './parsing/staticallyCompileXPath';
 
 import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
 
@@ -173,27 +175,10 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		allowXQuery: options.language === 'XQuery3.1'
 	};
 
-	const compiledSelector = createSelectorFromXPath(xpathSelector, compilationOptions);
+	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
+	const compiledSelector = staticallyCompileXPath(xpathSelector, compilationOptions, variables, namespaceResolver);
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
-
-	const untypedVariables = Object.assign(
-		{ 'theBest': 'FontoXML is the best!' },
-		variables);
-
-	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
-
-	/**
-	 * @type {!Object}
-	 */
-	const typedVariables = Object.keys(untypedVariables)
-		.reduce(function (typedVariables, variableName) {
-			if (untypedVariables[variableName] === undefined) {
-				return typedVariables;
-			}
-			typedVariables[variableName] = () => adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
-			return typedVariables;
-		}, Object.create(null));
 
 	/**
 	 * @type {INodesFactory}
@@ -244,8 +229,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		contextSequence: contextSequence,
 		contextItem: contextSequence.first(),
 		domFacade: wrappedDomFacade,
-		variables: typedVariables,
-
+		variables: {},
 		resolveNamespacePrefix: prefix => {
 			if (staticallyKnownNamespaceByPrefix[prefix]) {
 				return staticallyKnownNamespaceByPrefix[prefix];
@@ -257,10 +241,16 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		nodesFactory: nodesFactory
 	});
 
+	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, createSelectorFromXPath);
+
 	/**
 	 * @type {!./selectors/dataTypes/Sequence}
 	 */
-	const rawResults = compiledSelector.evaluateMaybeStatically(dynamicContext);
+	const rawResults = compiledSelector.evaluateMaybeStatically(dynamicContext, {
+		domFacade: wrappedDomFacade,
+		nodesFactory: nodesFactory,
+		createSelectorFromXPath: createSelectorFromXPath
+	});
 
 	switch (returnType) {
 		case evaluateXPath.BOOLEAN_TYPE: {
@@ -457,7 +447,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 			if (allValues.value.length === 1) {
 				return atomize(allValues.value[0], dynamicContext).value;
 			}
-			return new Sequence(allValues.value).atomize(dynamicContext).getAllValues().map(function (atomizedValue) {
+			return new Sequence(allValues.value).atomize(dynamicContext, executionParameters).getAllValues().map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
 		}

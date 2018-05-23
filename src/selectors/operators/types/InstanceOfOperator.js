@@ -18,11 +18,11 @@ class InstanceOfOperator extends Selector {
 		this._multiplicity = multiplicity;
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		/**
 		 * @type {!Sequence}
 		 */
-		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext);
+		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext, executionParameters);
 		return evaluatedExpression.switchCases({
 			empty: () => {
 				if (this._multiplicity === '?' || this._multiplicity === '*') {

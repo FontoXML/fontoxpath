@@ -37,7 +37,7 @@ class InlineFunction extends Selector {
 		this._functionBody = functionBody;
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		/**
 		 * @param   {../DynamicContext}           _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
 		 *                                                                  This shall not be used
@@ -48,11 +48,11 @@ class InlineFunction extends Selector {
 			// Since functionCall already does typechecking, we do not have to do it here
 			const scopedDynamicContext = dynamicContext
 				.scopeWithFocus(-1, null, Sequence.empty())
-				.scopeWithVariables(this._paramDescriptions.reduce((paramByName, [name, _type], i) => {
+				.scopeWithVariableBindings(this._paramDescriptions.reduce((paramByName, [name, _type], i) => {
 					paramByName[name] = createDoublyIterableSequence(parameters[i]);
 					return paramByName;
 				}, Object.create(null)));
-			return this._functionBody.evaluateMaybeStatically(scopedDynamicContext);
+			return this._functionBody.evaluateMaybeStatically(scopedDynamicContext, executionParameters);
 		};
 
 		const functionItem = new FunctionValue({
