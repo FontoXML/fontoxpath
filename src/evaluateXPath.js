@@ -250,6 +250,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 		contextItem: contextSequence.first(),
 		domFacade: wrappedDomFacade,
 		variables: typedVariables,
+
 		resolveNamespacePrefix: prefix => {
 			if (DEFAULT_NAMESPACES[prefix]) {
 				return DEFAULT_NAMESPACES[prefix];

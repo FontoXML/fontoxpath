@@ -8,6 +8,11 @@ import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
 let Sequence;
 
 /**
+ * @typedef {!{isInitialized: boolean, currentDateTime: ?DateTime, implicitTimezone: ?DayTimeDuration}}
+ */
+let TemporalContext;
+
+/**
  * All possible permutations
  * @typedef {!{contextItemIndex: !number, contextSequence: ?Sequence}|{variables: Object}}|{contextItemIndex: number, contextSequence: !Sequence, variables: !Object, createSelectorFromXPath: function(string):!./Selector}}
  */
@@ -16,8 +21,11 @@ let ScopingType;
 class DynamicContext {
 	/**
 	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string, createSelectorFromXPath: function(string):!./Selector, nodesFactory: !INodesFactory}}  context  The context to overlay
+	 * @param  {!TemporalContext=}  temporalContext
 	 */
-	constructor (context) {
+	constructor (context, temporalContext = { isInitialized: false, currentDateTime: null, implicitTimezone: null}) {
+		this._temporalContext = temporalContext;
+
 		/**
 		 * @type {!number}
 		 * @const
@@ -61,19 +69,26 @@ class DynamicContext {
 		 * @const
 		 */
 		this.nodesFactory = context.nodesFactory;
+	}
 
-		const date = new Date();
-		/**
-		 * @type {DateTime}
-		 * @const
-		 */
-		this.currentDateTime = DateTime.fromString(date.toISOString());
+	getCurrentDateTime () {
+		if (!this._temporalContext.isInitialized) {
+			this._temporalContext.isInitialized = true;
 
-		/**
-		 * @type {DayTimeDuration}
-		 * @const
-		 */
-		this.implicitTimezone = DayTimeDuration.fromString('PT0S');
+			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString()),
+			this._temporalContext.implicitTimezone = DayTimeDuration.fromString('PT0S');
+		}
+		return this._temporalContext.currentDateTime;
+	}
+
+	getImplicitTimezone () {
+		if (!this._temporalContext.isInitialized) {
+			this._temporalContext.isInitialized = true;
+
+			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString()),
+			this._temporalContext.implicitTimezone = DayTimeDuration.fromString('PT0S');
+		}
+		return this._temporalContext.implicitTimezone;
 	}
 
 	/**
@@ -81,17 +96,19 @@ class DynamicContext {
 	 * @return  {!DynamicContext}
 	 */
 	scopeWithVariables (variables) {
-		return new DynamicContext({
-			contextItemIndex: this.contextItemIndex,
-			contextItem: this.contextItem,
-			contextSequence: this.contextSequence,
+		return new DynamicContext(
+			{
+				contextItemIndex: this.contextItemIndex,
+				contextItem: this.contextItem,
+				contextSequence: this.contextSequence,
 
-			domFacade: this.domFacade,
-			variables: Object.assign({}, this.variables, variables),
-			resolveNamespacePrefix: this.resolveNamespacePrefix,
-			createSelectorFromXPath: this.createSelectorFromXPath,
-			nodesFactory: this.nodesFactory
-		});
+				domFacade: this.domFacade,
+				variables: Object.assign({}, this.variables, variables),
+				resolveNamespacePrefix: this.resolveNamespacePrefix,
+				createSelectorFromXPath: this.createSelectorFromXPath,
+				nodesFactory: this.nodesFactory
+			},
+			this._temporalContext);
 	}
 
 	/**
@@ -101,17 +118,19 @@ class DynamicContext {
 	 * @return  {!DynamicContext}
 	 */
 	scopeWithFocus (contextItemIndex, contextItem, contextSequence) {
-		return new DynamicContext({
-			contextItemIndex: contextItemIndex,
-			contextItem: contextItem,
-			contextSequence: contextSequence || this.contextSequence,
+		return new DynamicContext(
+			{
+				contextItemIndex: contextItemIndex,
+				contextItem: contextItem,
+				contextSequence: contextSequence || this.contextSequence,
 
-			domFacade: this.domFacade,
-			variables: this.variables,
-			resolveNamespacePrefix: this.resolveNamespacePrefix,
-			createSelectorFromXPath: this.createSelectorFromXPath,
-			nodesFactory: this.nodesFactory
-		});
+				domFacade: this.domFacade,
+				variables: this.variables,
+				resolveNamespacePrefix: this.resolveNamespacePrefix,
+				createSelectorFromXPath: this.createSelectorFromXPath,
+				nodesFactory: this.nodesFactory
+			},
+			this._temporalContext);
 	}
 
 	/**
@@ -120,17 +139,19 @@ class DynamicContext {
 	 * @return {!DynamicContext}
 	 */
 	scopeWithNamespaceResolver (namespaceResolver) {
-		return new DynamicContext({
-			contextItemIndex: this.contextItemIndex,
-			contextItem: this.contextItem,
-			contextSequence: this.contextSequence,
+		return new DynamicContext(
+			{
+				contextItemIndex: this.contextItemIndex,
+				contextItem: this.contextItem,
+				contextSequence: this.contextSequence,
 
-			domFacade: this.domFacade,
-			variables: this.variables,
-			resolveNamespacePrefix: namespaceResolver,
-			createSelectorFromXPath: this.createSelectorFromXPath,
-			nodesFactory: this.nodesFactory
-		});
+				domFacade: this.domFacade,
+				variables: this.variables,
+				resolveNamespacePrefix: namespaceResolver,
+				createSelectorFromXPath: this.createSelectorFromXPath,
+				nodesFactory: this.nodesFactory
+			},
+			this._temporalContext);
 	}
 
 	/**

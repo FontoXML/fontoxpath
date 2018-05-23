@@ -32,19 +32,19 @@ function fnPosition (dynamicContext) {
 }
 
 function fnCurrentDateTime (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime, 'xs:dateTimeStamp'));
+	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp'));
 }
 
 function fnCurrentDate (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime.convertToType('xs:date'), 'xs:date'));
+	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date'));
 }
 
 function fnCurrentTime (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.currentDateTime.convertToType('xs:time'), 'xs:time'));
+	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time'));
 }
 
 function fnImplicitTimezone (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.implicitTimezone, 'xs:dayTimeDuration'), 'xs:dayTimeDuration');
+	return Sequence.singleton(createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration'), 'xs:dayTimeDuration');
 }
 
 export default {
