@@ -31,12 +31,12 @@ class IfExpression extends Selector {
 		this._elseExpression = elseExpression;
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		let resultIterator = null;
 		/**
 		 * @type {../dataTypes/Sequence}
 		 */
-		const ifExpressionResultSequence = this._testExpression.evaluateMaybeStatically(dynamicContext);
+		const ifExpressionResultSequence = this._testExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
 		return new Sequence({
 			next: () => {
 				if (!resultIterator) {
@@ -46,8 +46,8 @@ class IfExpression extends Selector {
 						return notReady(ifExpressionResult.promise);
 					}
 					const resultSequence = ifExpressionResult.value ?
-						this._thenExpression.evaluateMaybeStatically(dynamicContext) :
-						this._elseExpression.evaluateMaybeStatically(dynamicContext);
+						this._thenExpression.evaluateMaybeStatically(dynamicContext, executionParameters) :
+						this._elseExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
 					resultIterator = resultSequence.value();
 				}
 				return resultIterator.next();

@@ -1,13 +1,9 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 
-function buildVarName ({ prefix, namespaceURI, name }) {
-	if (namespaceURI) {
-		throw new Error('Not implemented: quantified expressions with a namespace URI in the binding.');
-	}
-	return prefix ? `${prefix}:${name}` : name;
+function buildVarName ({ prefix, namespaceURI, name }, staticContext) {
+	staticContext.lookupVariable(prefix, namespaceURI, name);
 }
-
 /**
  * @extends {Selector}
  */
@@ -31,12 +27,18 @@ class QuantifiedExpression extends Selector {
 		this._quantifier = quantifier;
 		this._inClauses = inClauses;
 		this._satisfiesExpr = satisfiesExpr;
+
+		this._inClauseVariableNames = null;
 	}
 
-	evaluate (dynamicContext) {
-		const evaluatedInClauses = this._inClauses.map(inClause => ({
-			name: buildVarName(inClause[0]),
-			valueArray: inClause[1].evaluateMaybeStatically(dynamicContext).getAllValues()
+	performStaticEvaluation (staticContext) {
+		this._inClauseVariableNames = this._inClauses.map(inClause => buildVarName(inClause[0], staticContext));
+	}
+
+	evaluate (dynamicContext, executionParameters) {
+		const evaluatedInClauses = this._inClauses.map(({ inClause, i }) => ({
+			name: this._inClauseVariableNames[i],
+			valueArray: inClause[1].evaluateMaybeStatically(dynamicContext, executionParameters).getAllValues()
 		}));
 
 		const indices = new Array(evaluatedInClauses.length).fill(0);
@@ -59,7 +61,7 @@ class QuantifiedExpression extends Selector {
 					variables[evaluatedInClauses[y].name] = () => Sequence.singleton(value);
 				}
 
-				const context = dynamicContext.scopeWithVariables(variables);
+				const context = dynamicContext.scopeWithVariableBindings(variables);
 
 				const result = this._satisfiesExpr.evaluateMaybeStatically(context);
 

@@ -26,14 +26,14 @@ class ArrayConstructor extends Selector {
 		this._members = members;
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		if (this._curlyness === 'curly') {
-			return this._members[0].evaluateMaybeStatically(dynamicContext)
+			return this._members[0].evaluateMaybeStatically(dynamicContext, executionParameters)
 				.mapAll(allValues => Sequence.singleton(new ArrayValue(allValues.map(Sequence.singleton))));
 		}
 
 		return Sequence.singleton(
-			new ArrayValue(this._members.map(entry => entry.evaluateMaybeStatically(dynamicContext))));
+			new ArrayValue(this._members.map(entry => entry.evaluateMaybeStatically(dynamicContext, executionParameters))));
 	}
 }
 export default ArrayConstructor;

@@ -57,15 +57,15 @@ class IntersectExcept extends Selector {
 		this._expression2 = expression2;
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		const firstResult = ensureSortedSequence(
 			this._intersectOrExcept,
-			dynamicContext.domFacade,
+			executionParameters.domFacade,
 			this._expression1.evaluate(dynamicContext),
 			this._expression1.expectedResultOrder);
 		const secondResult = ensureSortedSequence(
 			this._intersectOrExcept,
-			dynamicContext.domFacade,
+			executionParameters.domFacade,
 			this._expression2.evaluate(dynamicContext),
 			this._expression2.expectedResultOrder);
 
@@ -117,7 +117,7 @@ class IntersectExcept extends Selector {
 						continue;
 					}
 
-					const comparisonResult = compareNodePositions(dynamicContext.domFacade, firstValue, secondValue);
+					const comparisonResult = compareNodePositions(executionParameters.domFacade, firstValue, secondValue);
 					if (comparisonResult < 0) {
 						const toReturn = ready(firstValue);
 						firstValue = null;

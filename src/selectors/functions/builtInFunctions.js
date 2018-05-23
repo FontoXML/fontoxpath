@@ -20,9 +20,10 @@ import builtInFontoxpathFunctions from './builtInFunctions.fontoxpath';
 
 import Sequence from '../dataTypes/Sequence';
 import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 
 /**
- * @type {!Array<!{localName: string, namespaceURI: string, argumentTypes: !Array<string>, returnType: string, callFunction: function (DynamicContext, ...!Sequence): !Sequence}>}
+ * @type {!Array<!{localName: string, namespaceURI: string, argumentTypes: !Array<string>, returnType: string, callFunction: function (DynamicContext, ExecutionParameters, ...!Sequence): !Sequence}>}
  */
 const builtInFunctions = [].concat(
 	builtInArrayFunctions.declarations,

@@ -46,13 +46,13 @@ class AncestorAxis extends Selector {
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}
 	 */
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
 
-		const domFacade = dynamicContext.domFacade;
+		const domFacade = executionParameters.domFacade;
 
 		const contextNode = contextItem.value;
 		return new Sequence(generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)))

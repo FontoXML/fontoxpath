@@ -36,7 +36,7 @@ function convert (obj) {
 	}
 }
 
-function fnParseJson (_dynamicContext, jsonString) {
+function fnParseJson (_dynamicContext, _executionParameters, jsonString) {
 	/** @type {?} */
 	let jsObject;
 	try {

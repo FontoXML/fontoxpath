@@ -1,4 +1,5 @@
 import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 
 /**
  * @enum {string}
@@ -85,38 +86,44 @@ class Selector {
 	 * @public
 	 * @final
 	 * @param   {?./DynamicContext}      dynamicContext
+	 * @param   {!ExecutionParameters}   executionParameters
 	 * @return  {!./dataTypes/Sequence}
 	 */
-	evaluateMaybeStatically (dynamicContext) {
-		if (dynamicContext.contextItem === null) {
+	evaluateMaybeStatically (dynamicContext, executionParameters) {
+		if (!dynamicContext || dynamicContext.contextItem === null) {
 			// We must be free of context here. But: this will be memoized / constant folded on a
 			// higher level, so there is no use in keeping these intermediate results
-			return this.evaluate(dynamicContext);
+			return this.evaluate(dynamicContext, executionParameters);
 		}
 		if (this.canBeStaticallyEvaluated) {
-			return this.evaluateWithoutFocus(dynamicContext);
+			return this.evaluateWithoutFocus(dynamicContext, executionParameters);
 		}
-		return this.evaluate(dynamicContext);
+		return this.evaluate(dynamicContext, executionParameters);
 	}
 
 	/**
 	 * @abstract
-	 * @param   {!./DynamicContext}  _dynamicContext
+	 * @param   {!./DynamicContext}      _dynamicContext
+	 * @param   {!ExecutionParameters}   _executionParameters
 	 * @return  {!./dataTypes/Sequence}
 	 */
-	evaluate (_dynamicContext) {
+	evaluate (_dynamicContext, _executionParameters) {
 		//    throw new Error('Not Implemented');
 	}
 
 	/**
 	 * @protected
 	 * @final
-	 * @param   {?./DynamicContext}      contextlessDynamicContext
+	 * @param   {?./DynamicContext}      _contextlessDynamicContext
+	 * @param   {!ExecutionParameters}   executionParameters
 	 * @return  {!./dataTypes/Sequence}
 	 */
-	evaluateWithoutFocus (contextlessDynamicContext) {
+	evaluateWithoutFocus (_contextlessDynamicContext, executionParameters) {
 		if (this._eagerlyEvaluatedValue === null) {
-			this._eagerlyEvaluatedValue = this.evaluate(contextlessDynamicContext).expandSequence();
+			this._eagerlyEvaluatedValue = this.evaluate(
+				null,
+				executionParameters
+			).expandSequence();
 		}
 		return this._eagerlyEvaluatedValue;
 	}

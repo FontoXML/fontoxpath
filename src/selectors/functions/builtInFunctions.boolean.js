@@ -6,10 +6,11 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 /**
  * @param   {../DynamicContext}  _dynamicContext
+ * @param   {../ExecutionParameters}  _executionParameters
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
-function fnNot (_dynamicContext, sequence) {
+function fnNot (_dynamicContext, _executionParameters, sequence) {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
 		return ebv.value === false ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
@@ -32,10 +33,11 @@ function fnNot (_dynamicContext, sequence) {
 
 /**
  * @param   {../DynamicContext}  _dynamicContext
+ * @param   {../ExecutionParameters}  _executionParameters
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
-function fnBoolean (_dynamicContext, sequence) {
+function fnBoolean (_dynamicContext, _executionParameters, sequence) {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
 		return ebv.value ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();

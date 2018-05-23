@@ -12,18 +12,12 @@ let Sequence;
  */
 let TemporalContext;
 
-/**
- * All possible permutations
- * @typedef {!{contextItemIndex: !number, contextSequence: ?Sequence}|{variables: Object}}|{contextItemIndex: number, contextSequence: !Sequence, variables: !Object, createSelectorFromXPath: function(string):!./Selector}}
- */
-let ScopingType;
-
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence, domFacade: ?IDomFacade, variables: !Object, resolveNamespacePrefix: function(string):?string, createSelectorFromXPath: function(string):!./Selector, nodesFactory: !INodesFactory}}  context  The context to overlay
+	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence,variableBindings:!Object<!Sequence>}}  context  The context to overlay
 	 * @param  {!TemporalContext=}  temporalContext
 	 */
-	constructor (context, temporalContext = { isInitialized: false, currentDateTime: null, implicitTimezone: null}) {
+	constructor (context, temporalContext = { isInitialized: false, currentDateTime: null, implicitTimezone: null }) {
 		this._temporalContext = temporalContext;
 
 		/**
@@ -45,37 +39,16 @@ class DynamicContext {
 		this.contextItem = context.contextItem;
 
 		/**
-		 * @type {?IDomFacade}
-		 * @const
+		 * @type {!Object<!Sequence>}
 		 */
-		this.domFacade = context.domFacade;
-
-		/**
-		 * @type {!Object}
-		 * @const
-		 */
-		this.variables = context.variables;
-
-		/**
-		 * @type {!function(string):?string}
-		 * @const
-		 */
-		this.resolveNamespacePrefix = context.resolveNamespacePrefix;
-
-		this.createSelectorFromXPath = context.createSelectorFromXPath;
-
-		/**
-		 * @type {!INodesFactory}
-		 * @const
-		 */
-		this.nodesFactory = context.nodesFactory;
+		this.variableBindings = context.variableBindings;
 	}
 
 	getCurrentDateTime () {
 		if (!this._temporalContext.isInitialized) {
 			this._temporalContext.isInitialized = true;
 
-			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString()),
+			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString());
 			this._temporalContext.implicitTimezone = DayTimeDuration.fromString('PT0S');
 		}
 		return this._temporalContext.currentDateTime;
@@ -85,30 +58,10 @@ class DynamicContext {
 		if (!this._temporalContext.isInitialized) {
 			this._temporalContext.isInitialized = true;
 
-			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString()),
+			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString());
 			this._temporalContext.implicitTimezone = DayTimeDuration.fromString('PT0S');
 		}
 		return this._temporalContext.implicitTimezone;
-	}
-
-	/**
-	 * @param   {!Object<string, !./dataTypes/Sequence>}    variables
-	 * @return  {!DynamicContext}
-	 */
-	scopeWithVariables (variables) {
-		return new DynamicContext(
-			{
-				contextItemIndex: this.contextItemIndex,
-				contextItem: this.contextItem,
-				contextSequence: this.contextSequence,
-
-				domFacade: this.domFacade,
-				variables: Object.assign({}, this.variables, variables),
-				resolveNamespacePrefix: this.resolveNamespacePrefix,
-				createSelectorFromXPath: this.createSelectorFromXPath,
-				nodesFactory: this.nodesFactory
-			},
-			this._temporalContext);
 	}
 
 	/**
@@ -123,33 +76,22 @@ class DynamicContext {
 				contextItemIndex: contextItemIndex,
 				contextItem: contextItem,
 				contextSequence: contextSequence || this.contextSequence,
-
-				domFacade: this.domFacade,
-				variables: this.variables,
-				resolveNamespacePrefix: this.resolveNamespacePrefix,
-				createSelectorFromXPath: this.createSelectorFromXPath,
-				nodesFactory: this.nodesFactory
+				variableBindings: this.variableBindings
 			},
 			this._temporalContext);
 	}
 
 	/**
-	 * @param {function(string):string?} namespaceResolver
-	 *
-	 * @return {!DynamicContext}
+	 * @param {!Object<!Sequence>}  variableBindings
+	 * @return  {!DynamicContext}
 	 */
-	scopeWithNamespaceResolver (namespaceResolver) {
+	scopeWithVariableBindings (variableBindings) {
 		return new DynamicContext(
 			{
+				variableBindings: Object.assign(Object.create(null), this.variableBindings, variableBindings),
 				contextItemIndex: this.contextItemIndex,
 				contextItem: this.contextItem,
-				contextSequence: this.contextSequence,
-
-				domFacade: this.domFacade,
-				variables: this.variables,
-				resolveNamespacePrefix: namespaceResolver,
-				createSelectorFromXPath: this.createSelectorFromXPath,
-				nodesFactory: this.nodesFactory
+				contextSequence: this.contextSequence
 			},
 			this._temporalContext);
 	}

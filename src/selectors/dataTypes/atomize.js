@@ -2,11 +2,11 @@ import isSubtypeOf from './isSubtypeOf';
 import createAtomicValue from './createAtomicValue';
 
 /**
- * @param   {!./Value}            value
- * @param   {!../DynamicContext}  dynamicContext
+ * @param   {!./Value}                 value
+ * @param   {!../ExecutionParameters}  executionParameters
  * @return  {!./AtomicValue}
  */
-export default function atomize (value, dynamicContext) {
+export default function atomize (value, executionParameters) {
 	if (isSubtypeOf(value.type, 'xs:anyAtomicType') ||
 		isSubtypeOf(value.type, 'xs:untypedAtomic') ||
 		isSubtypeOf(value.type, 'xs:boolean') ||
@@ -28,11 +28,11 @@ export default function atomize (value, dynamicContext) {
 
 		// Text nodes and documents should return their text, as untyped atomic
 		if (isSubtypeOf(value.type, 'text()')) {
-			return createAtomicValue(dynamicContext.domFacade.getData(value.value), 'xs:untypedAtomic');
+			return createAtomicValue(executionParameters.domFacade.getData(value.value), 'xs:untypedAtomic');
 		}
 		// comments and PIs are string
 		if (isSubtypeOf(value.type, 'comment()') || isSubtypeOf(value.type, 'processing-instruction()')) {
-			return createAtomicValue(dynamicContext.domFacade.getData(value.value), 'xs:string');
+			return createAtomicValue(executionParameters.domFacade.getData(value.value), 'xs:string');
 		}
 
 		// This is an element or a document node. Because we do not know the specific type of this element.
@@ -41,7 +41,7 @@ export default function atomize (value, dynamicContext) {
 			if (node.nodeType === node.TEXT_NODE || node.nodeType === 4) {
 				return [node];
 			}
-			return dynamicContext.domFacade.getChildNodes(node)
+			return executionParameters.domFacade.getChildNodes(node)
 				.reduce(function (textNodes, childNode) {
 					Array.prototype.push.apply(textNodes, getTextNodes(childNode));
 					return textNodes;
@@ -49,7 +49,7 @@ export default function atomize (value, dynamicContext) {
 		})(value.value);
 
 		return createAtomicValue(allTextNodes.map(function (textNode) {
-			return dynamicContext.domFacade.getData(textNode);
+			return executionParameters.domFacade.getData(textNode);
 		}).join(''), 'xs:untypedAtomic');
 	}
 

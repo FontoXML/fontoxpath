@@ -31,7 +31,7 @@ class AttributeAxis extends Selector {
 	 * @param   {../DynamicContext}  dynamicContext
 	 * @return  {Sequence}
 	 */
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		/**
 		 * @type {../dataTypes/Value}
 		 */
@@ -40,7 +40,7 @@ class AttributeAxis extends Selector {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
 
-		const domFacade = dynamicContext.domFacade;
+		const domFacade = executionParameters.domFacade;
 
 		if (!isSubtypeOf(contextItem.type, 'element()')) {
 			return Sequence.empty();

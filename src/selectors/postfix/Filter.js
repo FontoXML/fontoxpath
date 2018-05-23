@@ -30,18 +30,18 @@ class Filter extends Selector {
 		return this._selector.getBucket();
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		/**
 		 * @type {!Sequence}
 		 */
-		const valuesToFilter = this._selector.evaluateMaybeStatically(dynamicContext);
+		const valuesToFilter = this._selector.evaluateMaybeStatically(dynamicContext, executionParameters);
 
 		if (this._filterSelector.canBeStaticallyEvaluated) {
 			// Shortcut, if this is numeric, all the values are the same numeric value, same for booleans
 			/**
 			 * @type {!Sequence}
 			 */
-			const result = this._filterSelector.evaluateMaybeStatically(dynamicContext);
+			const result = this._filterSelector.evaluateMaybeStatically(dynamicContext, executionParameters);
 			if (result.isEmpty()) {
 				return result;
 			}

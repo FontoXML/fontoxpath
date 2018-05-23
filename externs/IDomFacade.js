@@ -77,7 +77,7 @@ IDomFacade.prototype.getAttribute = function (_node, _attributeName) {
  * @nosideeffects
  * @export
  * @param   {!Node}    _node
- * @return  {!Array<{name:!string,value:!string}>}
+ * @return  {!Array<!Attr>}
  */
 IDomFacade.prototype.getAllAttributes = function (_node) {
 };

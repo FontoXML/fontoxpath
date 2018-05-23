@@ -209,7 +209,7 @@ class PathSelector extends Selector {
 		return this._stepSelectors[0].getBucket();
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		let sequenceHasPeerProperty = true;
 		/**
 		 * @type {!Sequence}
@@ -263,16 +263,16 @@ class PathSelector extends Selector {
 				}
 				case Selector.RESULT_ORDERINGS.SORTED:
 					if (selector.subtree && sequenceHasPeerProperty) {
-						sortedResultSequence = concatSortedSequences(dynamicContext.domFacade, resultValuesInOrderOfEvaluation);
+						sortedResultSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
 						break;
 					}
 					// Only locally sorted
-					sortedResultSequence = mergeSortedSequences(dynamicContext.domFacade, resultValuesInOrderOfEvaluation);
+					sortedResultSequence = mergeSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
 					break;
 				case Selector.RESULT_ORDERINGS.UNSORTED: {
 					// The result should be sorted before we can continue
-					const concattedSequence = concatSortedSequences(dynamicContext.domFacade, resultValuesInOrderOfEvaluation);
-					return concattedSequence.mapAll(allValues => new Sequence(sortResults(dynamicContext.domFacade, allValues)));
+					const concattedSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
+					return concattedSequence.mapAll(allValues => new Sequence(sortResults(executionParameters.domFacade, allValues)));
 				}
 
 			}

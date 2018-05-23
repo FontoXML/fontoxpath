@@ -25,12 +25,12 @@ class SequenceOperator extends Selector {
 
 	}
 
-	evaluate (dynamicContext) {
+	evaluate (dynamicContext, executionParameters) {
 		let i = 0;
 		if (!this._selectors.length) {
 			return Sequence.empty();
 		}
-		let currentValueIterator = this._selectors[i].evaluateMaybeStatically(dynamicContext).value();
+		let currentValueIterator = this._selectors[i].evaluateMaybeStatically(dynamicContext, executionParameters).value();
 
 		return new Sequence({
 			next: () => {
@@ -40,7 +40,7 @@ class SequenceOperator extends Selector {
 					if (i >= this._selectors.length) {
 						return DONE_TOKEN;
 					}
-					currentValueIterator = this._selectors[i].evaluateMaybeStatically(dynamicContext).value();
+					currentValueIterator = this._selectors[i].evaluateMaybeStatically(dynamicContext, executionParameters).value();
 					val = currentValueIterator.next();
 				}
 				return val;

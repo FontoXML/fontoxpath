@@ -23,8 +23,8 @@ class Unary extends Selector {
 		this._kind = kind;
 	}
 
-	evaluate (dynamicContext) {
-		return this._valueExpr.evaluateMaybeStatically(dynamicContext)
+	evaluate (dynamicContext, executionParameters) {
+		return this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters)
 			.atomize(dynamicContext)
 			.mapAll(atomizedValues => {
 				if (atomizedValues.length === 0) {

@@ -33,7 +33,10 @@ class DirElementConstructor extends Selector {
 	constructor (prefix, name, attributes, contents) {
 		super(
 			new Specificity({}),
-			contents,
+			contents.concat(attributes.reduce(
+				(attributeSelectorParts, { partialValues }) =>
+					attributeSelectorParts.concat(partialValues.filter(value => typeof value !== 'string' )),
+				[])),
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
@@ -76,25 +79,30 @@ class DirElementConstructor extends Selector {
 	}
 
 	/**
+	 * @param  {!../StaticContext}  staticContext
+	 */
+	performStaticEvaluation (staticContext) {
+		// Register namespace related things
+		/**
+		 * @type  {!../StaticContext}
+		 */
+		const scopedStaticContext = staticContext.introduceScope();
+		Object.keys(this._namespacesInScope)
+			.forEach(prefix => scopedStaticContext.registerNamespace(prefix || '', this._namespacesInScope));
+
+		this._childSelectors.forEach(subselector => subselector.performStaticEvaluation(staticContext));
+	}
+
+	/**
 	 * @param  {!../DynamicContext} dynamicContext
+	 * @param  {!../ExecutionParameters} executionParameters
 	 * @return {!Sequence}
 	 */
-	evaluate (dynamicContext) {
-		/**
-		 * @type {!../DynamicContext}
-		 */
-		const dynamicContextWithNamespaces = dynamicContext.scopeWithNamespaceResolver(
-			prefix => {
-				prefix = prefix || '';
-				return prefix in this._namespacesInScope ?
-					this._namespacesInScope[prefix] :
-					dynamicContext.resolveNamespacePrefix(prefix);
-			});
-
+	evaluate (dynamicContext, executionParameters) {
 		/**
 		 * @type INodesFactory
 		 */
-		const nodesFactory = dynamicContext.nodesFactory;
+		const nodesFactory = executionParameters.nodesFactory;
 
 		const attributes = this._attributes.map(({ qualifiedName, partialValues }) => ({
 			qualifiedName,
@@ -102,7 +110,7 @@ class DirElementConstructor extends Selector {
 				.map(
 					value => typeof value === 'string' ?
 						Sequence.singleton({ value, type: 'xs:string' }) :
-					value.evaluateMaybeStatically(dynamicContextWithNamespaces).atomize(dynamicContextWithNamespaces)),
+					value.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(dynamicContext, executionParameters)),
 			hasAllValues: false,
 			value: null
 		}));
@@ -137,7 +145,7 @@ class DirElementConstructor extends Selector {
 					// Accumulate all children
 					childNodesSequences = concatSequences(
 						this._contents.map(
-							contentSelector => contentSelector.evaluateMaybeStatically(dynamicContextWithNamespaces)
+							contentSelector => contentSelector.evaluateMaybeStatically(dynamicContext, executionParameters)
 								.mapAll(allValues => new Sequence([allValues]))));
 					childNodesPhaseDone = true;
 				}
@@ -147,14 +155,14 @@ class DirElementConstructor extends Selector {
 					return allChildNodesItrResult;
 				}
 
-				const elementNamespaceURI = dynamicContextWithNamespaces.resolveNamespacePrefix(this._prefix);
+				const elementNamespaceURI = executionParameters.resolveNamespacePrefix(this._prefix);
 
 				const element = nodesFactory.createElementNS(elementNamespaceURI, this._prefix ? this._prefix + ':' + this._name : this._name);
 
 				// Plonk all attribute on the element
 				attributes.forEach(attr => {
 					const attrName = attr.qualifiedName.prefix ? attr.qualifiedName.prefix + ':' + attr.qualifiedName.localPart : attr.qualifiedName.localPart;
-					const attributeNamespaceURI = attr.qualifiedName.prefix ? dynamicContextWithNamespaces.resolveNamespacePrefix(attr.qualifiedName.prefix) : null;
+					const attributeNamespaceURI = attr.qualifiedName.prefix ? executionParameters.resolveNamespacePrefix(attr.qualifiedName.prefix) : null;
 					if (element.hasAttributeNS(attributeNamespaceURI, attr.qualifiedName.localPart)) {
 						throw new Error(`XQST0040: The attribute ${attrName} is already present on a constructed element.`);
 					}
@@ -165,7 +173,7 @@ class DirElementConstructor extends Selector {
 				allChildNodesItrResult.value.forEach(childNodes => {
 					childNodes.forEach((childNode, i) => {
 						if (isSubtypeOf(childNode.type, 'xs:anyAtomicType')) {
-							const atomizedValue = castToType(atomize(childNode, dynamicContextWithNamespaces), 'xs:string').value;
+							const atomizedValue = castToType(atomize(childNode, dynamicContext), 'xs:string').value;
 							if (i !== 0 && isSubtypeOf(childNodes[i - 1].type, 'xs:anyAtomicType')) {
 								element.appendChild(nodesFactory.createTextNode(' ' + atomizedValue));
 								return;

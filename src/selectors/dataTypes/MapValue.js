@@ -11,7 +11,7 @@ class MapValue extends FunctionValue {
 	 */
 	constructor (keyValuePairs) {
 		super({
-			value: (dynamicContext, key) => mapGet(dynamicContext, Sequence.singleton(this), key),
+			value: (dynamicContext, executionParameters, key) => mapGet(dynamicContext, executionParameters, Sequence.singleton(this), key),
 			name: 'map:get',
 			argumentTypes: ['item()'],
 			arity: 1,
