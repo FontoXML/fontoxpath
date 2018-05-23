@@ -112,36 +112,36 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 			case 'eq':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return dateTimeEqual(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 			case 'ne':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return !dateTimeEqual(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return !dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 
 			case 'lt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return dateTimeLessThan(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return dateTimeLessThan(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 			case 'le':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return dateTimeEqual(castA.value, castB.value, dynamicContext.implicitTimezone) ||
-						dateTimeLessThan(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone()) ||
+						dateTimeLessThan(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 
 			case 'gt':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return dateTimeGreaterThan(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return dateTimeGreaterThan(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 			case 'ge':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return dateTimeEqual(castA.value, castB.value, dynamicContext.implicitTimezone) ||
-						dateTimeGreaterThan(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone()) ||
+						dateTimeGreaterThan(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 		}
 	}
@@ -155,12 +155,12 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 			case 'eq':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return dateTimeEqual(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 			case 'ne':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return !dateTimeEqual(castA.value, castB.value, dynamicContext.implicitTimezone);
+					return !dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 		}
 	}
