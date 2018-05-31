@@ -17,15 +17,15 @@ function buildVarName ({ prefix, namespaceURI, name }) {
 class InlineFunction extends Selector {
 	/**
 	 * @param  {!Array<!Array<string>>}  paramDescriptions  An array of tuples of name and type of the parameters
-	 * @param  {string}                returnType
-	 * @param  {!Selector}              functionBody
+	 * @param  {string}                  returnType
+	 * @param  {!Selector}               functionBody
 	 */
 	constructor (paramDescriptions, returnType, functionBody) {
 		super(new Specificity({
 			[Specificity.EXTERNAL_KIND]: 1
 		}), {
-			// inline functions may use parameters, if they do, they can not be evaluated statically
-			canBeStaticallyEvaluated: !!paramDescriptions.length,
+			// inline functions may never be statically evaluated because the domfacade may be used in the function body to resolve dom relations
+			canBeStaticallyEvaluated: false,
 			expectedResultOrder: Selector.RESULT_ORDERINGS.UNSORTED
 		});
 
@@ -36,7 +36,7 @@ class InlineFunction extends Selector {
 
 	evaluate (dynamicContext) {
 		/**
-		 * @param   {../DynamicContext}           _unboundDynamicContext  The dynamic context at the moment of the function call
+		 * @param   {../DynamicContext}           _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
 		 *                                                                  This shall not be used
 		 * @param   {...!../dataTypes/Sequence}   parameters              The parameters of the function
 		 * @return  {!../dataTypes/Sequence}      The result of the function call
