@@ -33,28 +33,28 @@ if (supportsAsyncCompilation()) {
 
 	// Webworkers need a function string
 	var compileFunction = [
-			xPathParserRaw,
-			'',
-			'self.onmessage = function (event) {',
-			'	var ast;',
-			'	try {',
-			'		ast = self.xPathParser.parse(event.data.xPath);',
-			'	} catch (error) {',
-			'		self.postMessage({',
-			'			success: false,',
-			'			key: event.data.key,',
-			'			error: error.message',
-			'		});',
-			'		return;',
-			'	}',
+		xPathParserRaw(),
+		'',
+		'self.onmessage = function (event) {',
+		'	var ast;',
+		'	try {',
+		'		ast = self.xPathParser.parse(event.data.xPath);',
+		'	} catch (error) {',
+		'		self.postMessage({',
+		'			success: false,',
+		'			key: event.data.key,',
+		'			error: error.message',
+		'		});',
+		'		return;',
+		'	}',
 
-			'	self.postMessage({',
-			'		success: true,',
-			'		key: event.data.key,',
-			'		ast: ast',
-			'	});',
-			'}'
-		].join('\n');
+		'	self.postMessage({',
+		'		success: true,',
+		'		key: event.data.key,',
+		'		ast: ast',
+		'	});',
+		'}'
+	].join('\n');
 
 
 	var blob = new Blob([compileFunction]),

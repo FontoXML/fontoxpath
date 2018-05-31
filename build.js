@@ -16,7 +16,7 @@ function doPegJsBuild () {
 			exportVar: 'xPathParser'
 		}))
 		.then(parserString => UglifyJS.minify(parserString).code)
-		.then(parserString => `export default ${JSON.stringify(parserString)};`)
+		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
 		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./src/parsing/xPathParser.raw.js', parserString, (err) => err ? reject(err) : resolve())))
 		.then(() => console.info('Parser generator done'));
 }
