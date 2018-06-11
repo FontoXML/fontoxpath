@@ -104,7 +104,7 @@ AndExpr
 
 // 18
 ComparisonExpr
- = lhs:StringConcatExpr _ op:(ValueComp / GeneralComp / NodeComp) _ rhs:StringConcatExpr {return ["compare", op, lhs, rhs]} // Note: the whole 1<2<3 shenanigan is removed from 3.1
+ = lhs:StringConcatExpr _ op:(ValueComp / NodeComp / GeneralComp) _ rhs:StringConcatExpr {return ["compare", op, lhs, rhs]} // Note: the whole 1<2<3 shenanigan is removed from 3.1
  / StringConcatExpr
 
 // 19
@@ -189,7 +189,7 @@ GeneralComp = op:("=" / "!=" / "<=" / "<" / ">=" / ">") {return ["generalCompare
 ValueComp = op:("eq" / "ne" / "lt" / "le" / "gt" / "ge") AssertAdjacentOpeningTerminal {return ["valueCompare", op]}
 
 // 34
-NodeComp = op:((op:"is" AssertAdjacentOpeningTerminal {return op}) / "<<" / ">>") {return ["nodeCompare", op]}
+NodeComp = op:(op:("is"/"<<"/">>") AssertAdjacentOpeningTerminal {return op}) {return ["nodeCompare", op]}
 
 // 35
 SimpleMapExpr
