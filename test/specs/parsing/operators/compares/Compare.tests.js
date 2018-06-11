@@ -215,8 +215,11 @@ describe('General compares', () => {
 
 describe('Node compares', () => {
 	beforeEach(() => {
-		documentNode.appendChild(documentNode.createElement('someElement'));
+		const parentNode = documentNode.appendChild(documentNode.createElement('someElement'));
+		parentNode.appendChild(documentNode.createElement('firstElement'));
+		parentNode.appendChild(documentNode.createElement('secondElement'));
 	});
+
 	describe('is', () => {
 		it('returns true for the same node', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('. is .', documentNode));
@@ -247,6 +250,36 @@ describe('Node compares', () => {
 		});
 		it('works with async parameters',async () => {
 			chai.assert.isTrue(await evaluateXPathToAsyncSingleton('. is (. => fontoxpath:sleep())', documentNode));
+		});
+	});
+
+	describe('<<', () => {
+		it('returns true when the first element comes before the second element', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('//firstElement << //secondElement', documentNode));
+		});
+		it('return false when the second element comes before the first element', () => {
+			chai.assert.isFalse(evaluateXPathToBoolean('//secondElement << //firstElement', documentNode));
+		});
+		it('returns true when the first element is an ancestor of the second element', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('/someElement << //secondElement', documentNode));
+		});
+		it('returns false when the first element is a descendant of the second element', () => {
+			chai.assert.isFalse(evaluateXPathToBoolean('//secondElement << /someElement', documentNode));
+		});
+	});
+
+	describe('>>', () => {
+		it('returns false when the first element comes after the second element', () => {
+			chai.assert.isFalse(evaluateXPathToBoolean('//firstElement >> //secondElement', documentNode));
+		});
+		it('return true when the second element comes after the first element', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('//secondElement >> //firstElement', documentNode));
+		});
+		it('returns false when the first element is an ancestor of the second element', () => {
+			chai.assert.isFalse(evaluateXPathToBoolean('/someElement >> //secondElement', documentNode));
+		});
+		it('returns true when the first element is a descendant of the second element', () => {
+			chai.assert.isTrue(evaluateXPathToBoolean('//secondElement >> /someElement', documentNode));
 		});
 	});
 });

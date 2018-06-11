@@ -32,7 +32,6 @@ fn-codepoints-to-string,false
 fn-collection,false
 fn-collation-key,false
 fn-compare,false
-fn-compare,false
 fn-concat,true
 fn-contains,true
 fn-contains-token,false

@@ -347,7 +347,7 @@ function castableAs (args, compilationOptions) {
 	return new CastableAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
 }
 
-// Binary compare (=, !=, le, is, etc)
+// Binary compare (=, !=, le, is, <<, >>, etc)
 function compare (args, compilationOptions) {
 	return new Compare(args[0], compile(args[1], compilationOptions), compile(args[2], compilationOptions));
 }
