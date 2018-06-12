@@ -55,7 +55,6 @@ sooner if you can help!](./CONTRIBUTING.md)):
 * The `?` lookup operator for maps and arrays
 * XML parsing
 * The `treat as` operator
-* The `>>` and `<<` operators
 
 For all available features, see the unit tests.
 
