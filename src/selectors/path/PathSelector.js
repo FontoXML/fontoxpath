@@ -85,6 +85,8 @@ function mergeSortedSequences (domFacade, sequences) {
 		return undefined;
 	})();
 	let previousNode = null;
+
+	let allSequencesAreSorted = false;
 	return new Sequence({
 		[Symbol.iterator]: function () {
 			return this;
@@ -93,6 +95,19 @@ function mergeSortedSequences (domFacade, sequences) {
 			if (!allSequencesLoaded) {
 				return notReady(allSequencesLoadedPromise);
 			}
+
+			if (!allSequencesAreSorted) {
+				allSequencesAreSorted = true;
+
+				if (allIterators.every((iterator => isSubtypeOf(iterator.current.value.type, 'node()')))) {
+					// Sort the iterators initially. We know these iterators return locally sorted items, but we do not know the inter-ordering of these items.
+					allIterators.sort((iteratorA, iteratorB) => compareNodePositions(
+						domFacade,
+						iteratorA.current.value,
+						iteratorB.current.value));
+				}
+			}
+
 			let consumedValue;
 			do {
 				if (!allIterators.length) {
@@ -103,6 +118,7 @@ function mergeSortedSequences (domFacade, sequences) {
 				consumedValue = consumedIterator.current;
 				consumedIterator.current = consumedIterator.next();
 				if (!isSubtypeOf(consumedValue.value.type, 'node()')) {
+					// Sorting does not matter
 					return consumedValue;
 				}
 				if (!consumedIterator.current.ready) {
