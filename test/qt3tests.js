@@ -30,12 +30,12 @@ if (!(typeof window === 'undefined')) {
 	}
 	else {
 		shouldRunTestByName = require('text-loader!./runnableTestSets.csv')
-			.split('\n')
+			.split('/\r?\n/')
 			.map(line=>line.split(','))
 			.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 	}
 	unrunnableTestCasesByName = require('text-loader!./unrunnableTestCases.csv')
-		.split('\n')
+		.split('/\r?\n/')
 		.map(line => line.split(','))
 		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join('.') }), Object.create(null));
 }
@@ -67,7 +67,7 @@ else {
 		.split('\n')
 		.map(line => line.split(','))
 		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
-
+		
 }
 
 const globalDocument = parser.parseFromString('<xml/>', 'text/xml');
