@@ -76,7 +76,7 @@ function doSelectorsBuild () {
 //# sourceMappingURL=./fontoxpath.js.map`,
 			js_output_file: './dist/fontoxpath.js',
 			entry_point: './src/index.js',
-			js: './src/**.js'
+			js: '"src/**.js"'
 		})
 			.run((exitCode, stdOut, stdErr) => {
 				if (exitCode !== 0) {
