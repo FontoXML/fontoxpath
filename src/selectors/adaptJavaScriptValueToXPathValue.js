@@ -4,6 +4,7 @@ import ArrayValue from './dataTypes/ArrayValue';
 import MapValue from './dataTypes/MapValue';
 import createNodeValue from './dataTypes/createNodeValue';
 import { trueBoolean, falseBoolean } from './dataTypes/createAtomicValue';
+import DateTime from './dataTypes/valueTypes/DateTime';
 
 /**
  * Adapt a JavaScript value to the equivalent in XPath. This dynamically assigns the closest type
@@ -78,6 +79,15 @@ function adaptJavaScriptValueToXPathValue (type, value) {
 			return createAtomicValue(value | 0, 'xs:integer');
 		case 'xs:float':
 			return createAtomicValue(+value, 'xs:float');
+		case 'xs:date':
+		case 'xs:time':
+		case 'xs:dateTime':
+		case 'xs:gYearMonth':
+		case 'xs:gYear':
+		case 'xs:gMonthDay': 
+		case 'xs:gMonth':    
+		case 'xs:gDay':   
+			return createAtomicValue(DateTime.fromString(value.toISOString()).convertToType(type), type);
 		case 'node()':
 			throw new Error('XPath custom functions should not return a node, use traversals instead.');
 		case 'item()':
