@@ -59,12 +59,12 @@ else {
 
 
 	shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
-		.split('\n')
+		.split(/\r?\n/)
 		.map(line=>line.split(','))
 		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 
 	unrunnableTestCasesByName = fs.readFileSync('test/unrunnableTestCases.csv', 'utf-8')
-		.split('\n')
+		.split(/\r?\n/)
 		.map(line => line.split(','))
 		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
 
