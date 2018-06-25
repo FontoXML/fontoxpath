@@ -65,6 +65,94 @@ describe('registerCustomXPath() =>', () => {
 					return string + '-test';
 				});
 			});
+
+		registerCustomXPathFunction(
+			'test:custom-date-function',
+			[],
+			'xs:date',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
+			});
+
+		registerCustomXPathFunction(
+			'test:custom-time-function',
+			[],
+			'xs:time',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
+			});
+
+		registerCustomXPathFunction(
+			'test:custom-dateTime-function',
+			[],
+			'xs:dateTime',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
+			});
+
+		registerCustomXPathFunction(
+			'test:custom-gYearMonth-function',
+			[],
+			'xs:gYearMonth',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
+			});
+
+		registerCustomXPathFunction(
+			'test:custom-gYear-function',
+			[],
+			'xs:gYear',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
+			});
+
+		registerCustomXPathFunction(
+			'test:custom-gMonthDay-function',
+			[],
+			'xs:gMonthDay',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
+			});
+
+		registerCustomXPathFunction(
+			'test:custom-gMonth-function',
+			[],
+			'xs:gMonth',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
+			});
+
+		registerCustomXPathFunction(
+			'test:custom-gDay-function',
+			[],
+			'xs:gDay',
+			function (dynamicContext) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+
+				return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
+			});
 	});
 
 	it('the registered function can be used in a xPath selector with return value boolean', () => {
@@ -92,5 +180,37 @@ describe('registerCustomXPath() =>', () => {
 		// Returns ['abc-test'], but does get atomized by the evaluateXPath function
 		chai.assert.deepEqual(evaluateXPathToString('test:custom-function4(("abc"))', documentNode), 'abc-test');
 		chai.assert.deepEqual(evaluateXPathToStrings('test:custom-function4(())', documentNode), []);
+	});
+
+	it ('the registered function can be used in a xPath selector with return value date', () => {
+		chai.assert.equal(evaluateXPathToString('test:custom-date-function()', documentNode), '2018-06-22Z');
+	});
+
+	it ('the registered function can be used in a xPath selector with return value time', () => {
+		chai.assert.equal(evaluateXPathToString('test:custom-time-function()', documentNode), '10:25:30Z');
+	});
+
+	it ('the registered function can be used in a xPath selector with return value dateTime', () => {
+		chai.assert.equal(evaluateXPathToString('test:custom-dateTime-function()', documentNode), '2018-06-22T10:25:30Z');
+	});
+
+	it ('the registered function can be used in a xPath selector with return value gYearMonth', () => {
+		chai.assert.equal(evaluateXPathToString('test:custom-gYearMonth-function()', documentNode), '2018-06Z');
+	});
+
+	it ('the registered function can be used in a xPath selector with return value gYear', () => {
+		chai.assert.equal(evaluateXPathToString('test:custom-gYear-function()', documentNode), '2018Z');
+	});
+
+	it ('the registered function can be used in a xPath selector with return value gMonthDay', () => {
+		chai.assert.equal(evaluateXPathToString('test:custom-gMonthDay-function()', documentNode), '--06-22Z');
+	});
+
+	it ('the registered function can be used in a xPath selector with return value gMonth', () => {
+		chai.assert.equal(evaluateXPathToString('test:custom-gMonth-function()', documentNode), '--06Z');
+	});
+
+	it ('the registered function can be used in a xPath selector with return value gDay', () => {
+		chai.assert.equal(evaluateXPathToString('test:custom-gDay-function()', documentNode), '---22Z');
 	});
 });

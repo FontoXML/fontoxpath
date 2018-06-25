@@ -1,4 +1,5 @@
 import adaptJavaScriptValueToXPathValue from 'fontoxpath/selectors/adaptJavaScriptValueToXPathValue';
+import DateTime from 'fontoxpath/selectors/dataTypes/valueTypes/DateTime';
 
 describe('adaptJavaScriptValueToXPathValue', () => {
 	it('turns numbers into integers', () => {
@@ -84,6 +85,63 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	it('turns null into string? (empty sequence)', () => {
 		const xpathSequence = adaptJavaScriptValueToXPathValue(null, 'xs:string?');
 		chai.assert(xpathSequence.isEmpty(), 'is a singleton sequence');
+	});
+
+
+	it('turns date into xs:date', () => {
+		const xpathSequence = adaptJavaScriptValueToXPathValue(new Date(Date.UTC(2018, 5, 22, 9, 10, 20)), 'xs:date');
+		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xpathSequence.first().type === ('xs:date'), 'is a date');
+		chai.assert.deepEqual(xpathSequence.first().value, DateTime.fromString('2018-06-22Z'), 'is 22nd June 2018');
+	});
+
+	it('turns date into xs:time', () => {
+		const xpathSequence = adaptJavaScriptValueToXPathValue(new Date(Date.UTC(2018, 5, 22, 9, 10, 20)), 'xs:time');
+		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xpathSequence.first().type === ('xs:time'), 'is a time');
+		chai.assert.deepEqual(xpathSequence.first().value, DateTime.fromString('09:10:20Z'), 'is 09:10:20');
+	});
+
+	it('turns date into xs:dateTime', () => {
+		const xpathSequence = adaptJavaScriptValueToXPathValue(new Date(Date.UTC(2018, 5, 22, 9, 10, 20)), 'xs:dateTime');
+		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xpathSequence.first().type === ('xs:dateTime'), 'is a dateTime');
+		chai.assert.deepEqual(xpathSequence.first().value, DateTime.fromString('2018-06-22T09:10:20Z'), 'is 22nd June 2018 09:10:20');
+	});
+
+	it('turns date into xs:gYearMonth', () => {
+		const xpathSequence = adaptJavaScriptValueToXPathValue(new Date(Date.UTC(2018, 5, 22, 9, 10, 20)), 'xs:gYearMonth');
+		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xpathSequence.first().type === ('xs:gYearMonth'), 'is a gYearMonth');
+		chai.assert.deepEqual(xpathSequence.first().value, DateTime.fromString('2018-06Z'), 'is June 2018');
+	});
+
+	it('turns date into xs:gYear', () => {
+		const xpathSequence = adaptJavaScriptValueToXPathValue(new Date(Date.UTC(2018, 5, 22, 9, 10, 20)), 'xs:gYear');
+		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xpathSequence.first().type === ('xs:gYear'), 'is a gYear');
+		chai.assert.deepEqual(xpathSequence.first().value, DateTime.fromString('2018Z'), 'is 2018');
+	});
+
+	it('turns date into xs:gMonthDay', () => {
+		const xpathSequence = adaptJavaScriptValueToXPathValue(new Date(Date.UTC(2018, 5, 22, 9, 10, 20)), 'xs:gMonthDay');
+		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xpathSequence.first().type === ('xs:gMonthDay'), 'is a gMonthDay');
+		chai.assert.deepEqual(xpathSequence.first().value, DateTime.fromString('-06-22Z'), 'is 22nd June');
+	});
+
+	it('turns date into xs:gMonth', () => {
+		const xpathSequence = adaptJavaScriptValueToXPathValue(new Date(Date.UTC(2018, 5, 22, 9, 10, 20)), 'xs:gMonth');
+		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xpathSequence.first().type === ('xs:gMonth'), 'is a gMonth');
+		chai.assert.deepEqual(xpathSequence.first().value, DateTime.fromString('-06Z'), 'is June');
+	});
+
+	it('turns date into xs:gDay', () => {
+		const xpathSequence = adaptJavaScriptValueToXPathValue(new Date(Date.UTC(2018, 5, 22, 9, 10, 20)), 'xs:gDay');
+		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
+		chai.assert(xpathSequence.first().type === ('xs:gDay'), 'is a gDay');
+		chai.assert.deepEqual(xpathSequence.first().value, DateTime.fromString('---22Z'), 'is 22nd');
 	});
 
 	describe('converting to item()', () => {
