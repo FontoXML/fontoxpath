@@ -67,7 +67,7 @@ else {
 		.split('\n')
 		.map(line => line.split(','))
 		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
-		
+
 }
 
 const globalDocument = parser.parseFromString('<xml/>', 'text/xml');
