@@ -41,7 +41,7 @@ class DynamicContext {
 		/**
 		 * @type {!Object<!Sequence>}
 		 */
-		this.variableBindings = context.variableBindings;
+		this.variableBindings = context.variableBindings || Object.create(null);
 	}
 
 	getCurrentDateTime () {

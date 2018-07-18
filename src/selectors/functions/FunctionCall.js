@@ -82,7 +82,7 @@ class FunctionCall extends Selector {
 						return functionItem.applyArguments(transformedArguments);
 					}
 
-					return functionItem.value.apply(undefined, [dynamicContext].concat(transformedArguments));
+					return functionItem.value.apply(undefined, [dynamicContext, executionParameters].concat(transformedArguments));
 				});
 			}
 		});

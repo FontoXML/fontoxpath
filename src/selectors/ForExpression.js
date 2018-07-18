@@ -26,7 +26,9 @@ class ForExpression extends Selector {
 				canBeStaticallyEvaluated: false
 			});
 
-		this._varName = clause.varName;
+		this._prefix = clause.varName.prefix;
+		this._namespaceURI = clause.varName.namespaceURI;
+		this._localName = clause.varName.name;
 
 		this._variableBindingKey = null;
 
@@ -41,7 +43,14 @@ class ForExpression extends Selector {
 	}
 
 	performStaticEvaluation (staticContext) {
-		this._variableBindingKey = buildVarName(this._varName, staticContext);
+		if (this._prefix !== null) {
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+
+			if (!this._namespaceURI && this._prefix) {
+				throw new Error(`XPST0081: Could not resolve namespace for prefix ${this._prefix} using in a for expression`);
+			}
+		}
+		this._variableBindingKey = staticContext.registerVariable(this._namespaceURI, this._localName);
 	}
 
 	evaluate (dynamicContext, executionParameters) {
@@ -66,16 +75,12 @@ class ForExpression extends Selector {
 							done = true;
 							break;
 						}
-						/**
-						 * @type {!./DynamicContext}
-						 */
-						const contextWithVars = dynamicContext.scopeWithVariableBindings({
-							[this._varName]: () => {
-								return Sequence.singleton(currentClauseValue.value);
-							}
-						});
+
+						dynamicContext.variableBindings[this._variableBindingKey] =
+							Sequence.singleton(currentClauseValue.value);
+
 						returnIterator = this._returnExpression.evaluateMaybeStatically(
-							contextWithVars,
+							dynamicContext,
 							executionParameters
 						).value();
 					}
