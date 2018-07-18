@@ -44,26 +44,30 @@ class DirElementConstructor extends Selector {
 
 		this._prefix = prefix;
 		this._name = name;
+		this._namespaceURI = null;
 
 		/**
 		 * @type {!Object<!string, !string>}
 		 */
 		this._namespacesInScope = {};
 
-		/**
-		 * @type {!Array<!{qualifiedName:!{prefix:!string,localPart:!string},partialValues:!Array<(!string|!Selector)>}>}
-		 */
-		this._attributes = [];
+		this._attributes = attributes;
+		this._resolvedAttributes = [];
 
-		attributes.forEach(({ name, partialValues }) => {
+		this._contents = contents;
+	}
+
+	/**
+	 * @param  {!../StaticContext}  staticContext
+	 */
+	performStaticEvaluation (staticContext) {
+		this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+
+		var unresolvedAttributes = [];
+
+		this._attributes.forEach(({ name, partialValues }) => {
 			if (!(name[1] === 'xmlns' && name[0] === null) && name[0] !== 'xmlns') {
-				this._attributes.push({
-					qualifiedName: {
-						prefix: name[0],
-						localPart: name[1]
-					},
-					partialValues
-				});
+				unresolvedAttributes.push({ name, partialValues });
 				return;
 			}
 
@@ -75,13 +79,6 @@ class DirElementConstructor extends Selector {
 			this._namespacesInScope[namespacePrefix] = namespaceURI;
 		});
 
-		this._contents = contents;
-	}
-
-	/**
-	 * @param  {!../StaticContext}  staticContext
-	 */
-	performStaticEvaluation (staticContext) {
 		// Register namespace related things
 		/**
 		 * @type  {!../StaticContext}
@@ -89,6 +86,20 @@ class DirElementConstructor extends Selector {
 		const scopedStaticContext = staticContext.introduceScope();
 		Object.keys(this._namespacesInScope)
 			.forEach(prefix => scopedStaticContext.registerNamespace(prefix || '', this._namespacesInScope));
+
+		// Now resolve the other attributes
+		this._resolvedAttributes = unresolvedAttributes
+			.map(
+				({ name, partialValues }) =>
+					({
+						qualifiedName: {
+							prefix: name[0],
+							localPart: name[1],
+							namespaceURI: scopedStaticContext.resolveNamespace(name[0])
+						},
+						partialValues
+					})
+			);
 
 		this._childSelectors.forEach(subselector => subselector.performStaticEvaluation(staticContext));
 	}
@@ -104,7 +115,7 @@ class DirElementConstructor extends Selector {
 		 */
 		const nodesFactory = executionParameters.nodesFactory;
 
-		const attributes = this._attributes.map(({ qualifiedName, partialValues }) => ({
+		const attributes = this._resolvedAttributes.map(({ qualifiedName, partialValues }) => ({
 			qualifiedName,
 			valueSequences: partialValues
 				.map(
@@ -155,14 +166,12 @@ class DirElementConstructor extends Selector {
 					return allChildNodesItrResult;
 				}
 
-				const elementNamespaceURI = executionParameters.resolveNamespacePrefix(this._prefix);
-
-				const element = nodesFactory.createElementNS(elementNamespaceURI, this._prefix ? this._prefix + ':' + this._name : this._name);
+				const element = nodesFactory.createElementNS(this._namespaceURI, this._prefix ? this._prefix + ':' + this._name : this._name);
 
 				// Plonk all attribute on the element
 				attributes.forEach(attr => {
 					const attrName = attr.qualifiedName.prefix ? attr.qualifiedName.prefix + ':' + attr.qualifiedName.localPart : attr.qualifiedName.localPart;
-					const attributeNamespaceURI = attr.qualifiedName.prefix ? executionParameters.resolveNamespacePrefix(attr.qualifiedName.prefix) : null;
+					const attributeNamespaceURI = attr.qualifiedName.namespaceURI;
 					if (element.hasAttributeNS(attributeNamespaceURI, attr.qualifiedName.localPart)) {
 						throw new Error(`XQST0040: The attribute ${attrName} is already present on a constructed element.`);
 					}

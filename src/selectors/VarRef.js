@@ -15,7 +15,7 @@ class VarRef extends Selector {
 			new Specificity({}),
 			[],
 			{
-				canBeStaticallyEvaluated: true,
+				canBeStaticallyEvaluated: false,
 				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED
 			});
 		if (prefix || namespaceURI) {
@@ -26,19 +26,18 @@ class VarRef extends Selector {
 		this._namespaceURI = namespaceURI;
 		this._prefix = prefix;
 
-		this._variableBinding = null;
+		this._variableBindingName = null;
 	}
 
 	performStaticEvaluation (staticContext) {
-		// TODO: Namespaces
-		this._variableBinding = staticContext.lookupVariable(this._prefix, this._namespaceURI, this._variableName);
-		if (!this._variableBinding) {
+		this._variableBindingName = staticContext.lookupVariable(this._namespaceURI, this._variableName);
+		if (!this._variableBindingName) {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
 		}
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		return dynamicContext.variableBindings[this._variableBinding](executionParameters);
+		return dynamicContext.variableBindings[this._variableBindingName](executionParameters);
 	}
 }
 

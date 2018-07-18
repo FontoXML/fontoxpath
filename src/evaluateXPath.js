@@ -13,9 +13,6 @@ import staticallyCompileXPath from './parsing/staticallyCompileXPath';
 
 import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
 
-import {
-	staticallyKnownNamespaceByPrefix
-} from './selectors/staticallyKnownNamespaces';
 
 function normalizeEndOfLines (xpathString) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
@@ -227,18 +224,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	const dynamicContext = new DynamicContext({
 		contextItemIndex: 0,
 		contextSequence: contextSequence,
-		contextItem: contextSequence.first(),
-		domFacade: wrappedDomFacade,
-		variables: {},
-		resolveNamespacePrefix: prefix => {
-			if (staticallyKnownNamespaceByPrefix[prefix]) {
-				return staticallyKnownNamespaceByPrefix[prefix];
-			}
-			return namespaceResolver(prefix);
-		},
-		// propagate the compiler here
-		createSelectorFromXPath: createSelectorFromXPath,
-		nodesFactory: nodesFactory
+		contextItem: contextSequence.first()
 	});
 
 	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, createSelectorFromXPath);

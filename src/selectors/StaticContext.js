@@ -70,8 +70,9 @@ export default class StaticContext {
 	 * We need this to separate variable declaration (which is required to be done statically) and
 	 * from when the dynamic context of the variable will be known.
 	 */
-	registerVariable (namespaceURI, localName, createSequence) {
-		this._registeredVariablesByHash[createHashKey(namespaceURI, localName)] = createSequence;
+	registerVariable (namespaceURI, localName) {
+		return this._registeredVariablesByHash[createHashKey(namespaceURI, localName)] =
+			createHashKey(namespaceURI, localName);
 	}
 
 	registerNamespace (prefix, namespaceURI) {
@@ -95,7 +96,7 @@ export default class StaticContext {
 	}
 
 	resolveNamespace (prefix) {
-		return this._registeredNamespaces ||
+		return prefix in this._registeredNamespaces ? this._registeredNamespaces[prefix] :
 			this.parentContext === null ? null : this.parentContext.resolveNamespace(prefix);
 	}
 }

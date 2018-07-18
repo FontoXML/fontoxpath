@@ -30,6 +30,16 @@ class NameTest extends TestAbstractExpression {
 		this._kind = options.kind;
 	}
 
+	performStaticEvaluation (staticContext) {
+		if (!this._namespaceURI === null && this._prefix !== '*') {
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+
+			if (!this._namespaceURI && this._prefix) {
+				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
+			}
+		}
+	}
+
 	evaluateToBoolean (dynamicContext, node) {
 		const nodeIsElement = isSubtypeOf(node.type, 'element()');
 		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');
@@ -58,25 +68,19 @@ class NameTest extends TestAbstractExpression {
 		}
 
 		let resolvedNamespaceURI;
-		if (this._namespaceURI !== null) {
-			resolvedNamespaceURI = this._namespaceURI || null;
-		}
-		else if (this._prefix === null) {
+		if (this._prefix === null) {
 			// An unprefixed QName, when used as a name test on an axis whose principal node kind is element,
 			//    has the namespace URI of the default element/type namespace in the expression context;
 			//    otherwise, it has no namespace URI.
 			if (nodeIsElement) {
-				resolvedNamespaceURI = dynamicContext.resolveNamespacePrefix('');
+				resolvedNamespaceURI = this._namespaceURI;
 			}
 			else {
 				resolvedNamespaceURI = null;
 			}
 		}
 		else {
-			resolvedNamespaceURI = dynamicContext.resolveNamespacePrefix(this._prefix);
-			if (!resolvedNamespaceURI) {
-				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
-			}
+			resolvedNamespaceURI = this._namespaceURI;
 		}
 
 		return node.value.namespaceURI === resolvedNamespaceURI;

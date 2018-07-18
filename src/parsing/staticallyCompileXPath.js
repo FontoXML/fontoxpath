@@ -34,6 +34,7 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, typedVariables);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
+
 	compiledSelector.performStaticEvaluation(rootStaticContext);
 
 	if (executionSpecificStaticContext.executionContextWasRequired) {

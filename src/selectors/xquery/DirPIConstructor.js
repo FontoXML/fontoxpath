@@ -26,11 +26,11 @@ class DirPIConstructor extends Selector {
 	}
 
 	/**
-	 * @param  {!../DynamicContext} dynamicContext
+	 * @param  {!../DynamicContext} _dynamicContext
 	 * @return {!Sequence}
 	 */
-	evaluate (dynamicContext, executionParameters) {
-		const nodesFactory = dynamicContext.nodesFactory;
+	evaluate (_dynamicContext, executionParameters) {
+		const nodesFactory = executionParameters.nodesFactory;
 		return Sequence.singleton(createNodeValue(nodesFactory.createProcessingInstruction(this._target, this._data)));
 	}
 }

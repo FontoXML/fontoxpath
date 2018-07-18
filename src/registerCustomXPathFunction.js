@@ -58,7 +58,7 @@ function splitFunctionName (name) {
 /**
  * Add a custom test for use in xpath-serialized selectors.
  *
- * @param   {string|!{namespaceURI, localName}}  name        The name of this custom function. The string overload is deprecated, please register functions using the object overload
+ * @param   {string|!{namespaceURI: !string, localName: !string}}  name        The name of this custom function. The string overload is deprecated, please register functions using the object overload
  * @param   {Array<string>}  signature   The signature of the test, as array of strings (e.g. ['item()', 'node()?', 'xs:numeric'])
  * @param   {string}         returnType  The return type of the test, as sequence type (e.g. 'xs:boolean()')
  * @param   {function(*):*}  callback    The test itself, which gets the dynamicContext and arguments passed

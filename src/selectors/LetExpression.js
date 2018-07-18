@@ -28,19 +28,21 @@ class LetExpression extends Selector {
 		this._rangeVariable = rangeVariable.name;
 		this._bindingSequence = bindingSequence;
 		this._returnExpression = returnExpression;
+
+		this._variableBinding = null;
 	}
 
 	performStaticEvaluation (staticContext) {
 		const scopedStaticContext = staticContext.introduceScope();
-		scopedStaticContext.registerVariable(null, this._rangeVariable, (executionParameters) => {
-			return this._bindingSequence.evaluateMaybeStatically(null, executionParameters);
-		});
+		this._variableBinding = scopedStaticContext.registerVariable(null, this._rangeVariable);
 
 		this._bindingSequence.performStaticEvaluation(staticContext);
 		this._returnExpression.performStaticEvaluation(scopedStaticContext);
 	}
 
 	evaluate (dynamicContext, executionParameters) {
+		dynamicContext.variableBindings[this._variableBinding] = createDoublyIterableSequence(this._bindingSequence.evaluateMaybeStatically(dynamicContext, executionParameters));
+
 		return this._returnExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
 	}
 }

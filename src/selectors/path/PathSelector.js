@@ -239,7 +239,7 @@ class PathSelector extends Selector {
 					if (childContext.value.contextItem !== null && !isSubtypeOf(childContext.value.contextItem.type, 'node()')) {
 						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
 					}
-					return ready(selector.evaluateMaybeStatically(childContext.value));
+					return ready(selector.evaluateMaybeStatically(childContext.value, executionParameters));
 				}
 			};
 			// Assume nicely sorted

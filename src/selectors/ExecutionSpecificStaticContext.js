@@ -1,6 +1,11 @@
 import Context from './Context';
 import functionRegistry from './functions/functionRegistry';
 
+import {
+	staticallyKnownNamespaceByPrefix
+} from './staticallyKnownNamespaces';
+
+
 /**
  * XPaths in FontoXPath know of two separate contexts: the static one and the context at evaluation.
  *
@@ -26,6 +31,10 @@ export default class ExecutionSpecificStaticContext {
 	}
 
 	resolveNamespace (prefix) {
+		// See if it 'statically' known:
+		if (staticallyKnownNamespaceByPrefix[prefix]) {
+			return staticallyKnownNamespaceByPrefix[prefix];
+		}
 		this.executionContextWasRequired = true;
 
 		return this._namespaceResolver(prefix);
