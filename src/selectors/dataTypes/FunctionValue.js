@@ -39,13 +39,13 @@ class FunctionValue {
 	applyArguments (appliedArguments) {
 		var fn = this.value;
 		// fn (dynamicContext, ...arg)
-		function curriedFunction (dynamicContext) {
-			var newArguments = Array.from(arguments).slice(1);
+		function curriedFunction (dynamicContext, executionParameters, staticContext) {
+			var newArguments = Array.from(arguments).slice(3);
 			var allArguments = appliedArguments.map(function (argument) {
 				// If argument === null, it is a placeholder, so use a provided one
 				return argument || newArguments.shift();
 			});
-			return fn.apply(undefined, [dynamicContext].concat(allArguments));
+			return fn.apply(undefined, [dynamicContext, executionParameters, staticContext].concat(allArguments));
 		}
 		var argumentTypes = appliedArguments.reduce(function (indices, arg, index) {
 			if (arg === null) {

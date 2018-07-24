@@ -12,15 +12,15 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
  */
 const fnString = builtinStringFunctions.functions.string;
 
-function contextItemAsFirstArgument (fn, dynamicContext, executionParameters) {
+function contextItemAsFirstArgument (fn, dynamicContext, executionParameters, _staticContext) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
 	}
-	return fn(dynamicContext, executionParameters, Sequence.singleton(dynamicContext.contextItem));
+	return fn(dynamicContext, executionParameters, _staticContext, Sequence.singleton(dynamicContext.contextItem));
 }
 
 
-function fnNodeName (_dynamicContext, _executionParameters, sequence) {
+function fnNodeName (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return zipSingleton([sequence], ([nodeValue]) => {
 		if (nodeValue === null) {
 			return Sequence.empty();
@@ -42,18 +42,18 @@ function fnNodeName (_dynamicContext, _executionParameters, sequence) {
 	});
 }
 
-function fnName (dynamicContext, executionParameters, sequence) {
+function fnName (dynamicContext, executionParameters, _staticContext, sequence) {
 	return sequence.switchCases({
 		empty: () => Sequence.empty(),
-		default: () => fnString(dynamicContext, executionParameters, fnNodeName(dynamicContext, executionParameters, sequence))
+		default: () => fnString(dynamicContext, executionParameters, _staticContext, fnNodeName(dynamicContext, executionParameters, _staticContext, sequence))
 	});
 }
 
-function fnNamespaceURI (_dynamicContext, _executionParameters, sequence) {
+function fnNamespaceURI (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence.map(node => createAtomicValue(node.value.namespaceURI || '', 'xs:anyURI'));
 }
 
-function fnLocalName (_dynamicContext, _executionParameters, sequence) {
+function fnLocalName (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence.switchCases({
 		empty: () => Sequence.singleton(createAtomicValue('', 'xs:string')),
 		default: () => {
@@ -88,7 +88,7 @@ function contains (domFacade, ancestor, descendant) {
 	return false;
 }
 
-function fnOutermost (_dynamicContext, executionParameters, nodeSequence) {
+function fnOutermost (_dynamicContext, executionParameters, _staticContext, nodeSequence) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
 			return Sequence.empty();
@@ -117,7 +117,7 @@ function fnOutermost (_dynamicContext, executionParameters, nodeSequence) {
 	});
 }
 
-function fnInnermost (_dynamicContext, executionParameters, nodeSequence) {
+function fnInnermost (_dynamicContext, executionParameters, _staticContext, nodeSequence) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
 			return Sequence.empty();

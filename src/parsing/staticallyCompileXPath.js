@@ -1,4 +1,3 @@
-import adaptJavaScriptValueToXPathValue from '../selectors/adaptJavaScriptValueToXPathValue';
 import createSelectorFromXPath from './createSelectorFromXPath';
 
 import ExecutionSpecificStaticContext from '../selectors/ExecutionSpecificStaticContext';
@@ -16,19 +15,15 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 
 	const compiledSelector = createSelectorFromXPath(xpathString, compilationOptions);
 
-	const untypedVariables = Object.assign(
-		{ 'theBest': 'FontoXML is the best!' },
-		variables);
-
 	/**
 	 * @type {!Object<string, function():!../selectors/dataTypes/Sequence>}
 	 */
-	const typedVariables = Object.keys(untypedVariables)
+	const typedVariables = Object.keys(variables)
 		.reduce(function (typedVariables, variableName) {
-			if (untypedVariables[variableName] === undefined) {
+			if (variables[variableName] === undefined) {
 				return typedVariables;
 			}
-			typedVariables[variableName] = () => adaptJavaScriptValueToXPathValue(untypedVariables[variableName]);
+			typedVariables[variableName] = `GLOBAL_${variableName}`;
 			return typedVariables;
 		}, Object.create(null));
 

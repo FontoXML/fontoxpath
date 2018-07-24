@@ -61,12 +61,12 @@ class IntersectExcept extends Selector {
 		const firstResult = ensureSortedSequence(
 			this._intersectOrExcept,
 			executionParameters.domFacade,
-			this._expression1.evaluate(dynamicContext),
+			this._expression1.evaluateMaybeStatically(dynamicContext, executionParameters),
 			this._expression1.expectedResultOrder);
 		const secondResult = ensureSortedSequence(
 			this._intersectOrExcept,
 			executionParameters.domFacade,
-			this._expression2.evaluate(dynamicContext),
+			this._expression2.evaluateMaybeStatically(dynamicContext, executionParameters),
 			this._expression2.expectedResultOrder);
 
 		const firstIterator = firstResult.value();

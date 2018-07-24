@@ -32,7 +32,7 @@ class AbsolutePathSelector extends Selector {
 		// Assume this is the start, so only one node
 		var contextSequence = Sequence.singleton(createNodeValue(documentNode));
 		return this._relativePathSelector.evaluateMaybeStatically(
-			dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence));
+			dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence), executionParameters);
 	}
 
 }

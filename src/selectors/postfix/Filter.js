@@ -110,7 +110,8 @@ class Filter extends Selector {
 					}
 					if (!filterResultSequence) {
 						filterResultSequence = this._filterSelector.evaluateMaybeStatically(
-							dynamicContext.scopeWithFocus(i, iteratorItem.value, valuesToFilter));
+							dynamicContext.scopeWithFocus(i, iteratorItem.value, valuesToFilter),
+							executionParameters);
 					}
 
 					const first = filterResultSequence.tryGetFirst();

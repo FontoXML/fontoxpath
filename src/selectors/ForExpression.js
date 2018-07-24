@@ -21,7 +21,7 @@ class ForExpression extends Selector {
 	constructor (clause, expression) {
 		super(
 			new Specificity({}),
-			[expression],
+			[clause.expression],
 			{
 				canBeStaticallyEvaluated: false
 			});
@@ -50,7 +50,12 @@ class ForExpression extends Selector {
 				throw new Error(`XPST0081: Could not resolve namespace for prefix ${this._prefix} using in a for expression`);
 			}
 		}
-		this._variableBindingKey = staticContext.registerVariable(this._namespaceURI, this._localName);
+
+		this._clauseExpression.performStaticEvaluation(staticContext);
+		const scopedContext = staticContext.introduceScope();
+		this._variableBindingKey = scopedContext.registerVariable(this._namespaceURI, this._localName);
+
+		this._returnExpression.performStaticEvaluation(scopedContext);
 	}
 
 	evaluate (dynamicContext, executionParameters) {
@@ -77,7 +82,7 @@ class ForExpression extends Selector {
 						}
 
 						dynamicContext.variableBindings[this._variableBindingKey] =
-							Sequence.singleton(currentClauseValue.value);
+							() => Sequence.singleton(currentClauseValue.value);
 
 						returnIterator = this._returnExpression.evaluateMaybeStatically(
 							dynamicContext,

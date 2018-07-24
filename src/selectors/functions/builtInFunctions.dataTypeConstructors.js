@@ -7,14 +7,14 @@ import { validatePattern, normalizeWhitespace } from '../dataTypes/typeHelpers';
 
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-function genericDataTypeConstructor (dataType, _dynamicContext, _executionParameters, sequence) {
+function genericDataTypeConstructor (dataType, _dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(castToType(sequence.first(), dataType));
 }
 
-function xsQName (dynamicContext, _executionParameters, sequence) {
+function xsQName (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -31,13 +31,13 @@ function xsQName (dynamicContext, _executionParameters, sequence) {
 	}
 	if (!lexicalQName.includes(':')) {
 		// Only a local part
-		const namespaceURI = dynamicContext.resolveNamespacePrefix('');
+		const namespaceURI = staticContext.resolveNamespace('');
 		return Sequence.singleton(createAtomicValue(new QName('', namespaceURI, lexicalQName), 'xs:QName'));
 	}
 	const [prefix, localPart] = lexicalQName.split(':');
-	const namespaceURI = dynamicContext.resolveNamespacePrefix(prefix);
+	const namespaceURI = staticContext.resolveNamespace(prefix);
 	if (!namespaceURI) {
-		throw new Error(`FONS0004: The value ${lexicalQName} can not be casted to a QName. Did you mean to use fn:QName?`);
+		throw new Error(`FONS0004: The value ${lexicalQName} can not be cast to a QName. Did you mean to use fn:QName?`);
 	}
 	return Sequence.singleton(createAtomicValue(new QName(prefix, namespaceURI, localPart), 'xs:QName'));
 }
