@@ -4,7 +4,7 @@ import Sequence from '../dataTypes/Sequence';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-function fnTrace (dynamicContext, _executionParameters, arg, label) {
+function fnTrace (dynamicContext, _executionParameters, _staticContext, arg, label) {
 	return arg.mapAll(allItems => {
 		const argumentAsStrings = allItems.map(value => castToType(atomize(value, dynamicContext), 'xs:string'));
 		console.log.apply(console, label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]);

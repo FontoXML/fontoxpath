@@ -15,9 +15,14 @@ import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
  * @param   {!Sequence}           optionMap
  * @return  {!Sequence}
  */
-function mapMerge (dynamicContext, executionParameters, mapSequence, optionMap) {
+function mapMerge (dynamicContext, executionParameters, staticContext, mapSequence, optionMap) {
 	const duplicateKey = Sequence.singleton(createAtomicValue('duplicates', 'xs:string'));
-	const duplicationHandlingValueSequence = mapGet(dynamicContext, executionParameters, optionMap, duplicateKey);
+	const duplicationHandlingValueSequence = mapGet(
+		dynamicContext,
+		executionParameters,
+		staticContext,
+		optionMap,
+		duplicateKey);
 	/**
 	 * @type {string}
 	 */
@@ -70,7 +75,7 @@ function mapMerge (dynamicContext, executionParameters, mapSequence, optionMap) 
  * @param   {!Sequence}           newValueSequence
  * @return  {!Sequence}
  */
-function mapPut (_dynamicContext, _executionParameters, mapSequence, keySequence, newValueSequence) {
+function mapPut (_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence, newValueSequence) {
 	return zipSingleton([mapSequence, keySequence], ([map, newKey]) => {
 		/**
 		 * @type {Array<{key: ../dataTypes/Value, value: Sequence}>}
@@ -106,7 +111,7 @@ function mapPut (_dynamicContext, _executionParameters, mapSequence, keySequence
  * @param   {!Sequence}           value
  * @return  {!Sequence}
  */
-function mapEntry (_dynamicContext, _executionParameters, keySequence, value) {
+function mapEntry (_dynamicContext, _executionParameters, _staticContext, keySequence, value) {
 	return keySequence.map(onlyKey => new MapValue([{ key: onlyKey, value: value }]));
 }
 
@@ -116,7 +121,7 @@ function mapEntry (_dynamicContext, _executionParameters, keySequence, value) {
  * @param   {!Sequence}           mapSequence
  * @return  {!Sequence}
  */
-function mapSize (_dynamicContext, _executionParameters, mapSequence) {
+function mapSize (_dynamicContext, _executionParameters, _staticContext, mapSequence) {
 	return mapSequence.map(onlyMap => createAtomicValue(onlyMap.keyValuePairs.length, 'xs:integer'));
 }
 
@@ -126,7 +131,7 @@ function mapSize (_dynamicContext, _executionParameters, mapSequence) {
  * @param   {!Sequence}           mapSequence
  * @return  {!Sequence}
  */
-function mapKeys (_dynamicContext, _executionParameters, mapSequence) {
+function mapKeys (_dynamicContext, _executionParameters, _staticContext, mapSequence) {
 	return zipSingleton([mapSequence], ([map]) => new Sequence(map.keyValuePairs.map(pair => pair.key)));
 }
 
@@ -137,7 +142,7 @@ function mapKeys (_dynamicContext, _executionParameters, mapSequence) {
  * @param   {!Sequence}           keySequence
  * @return  {!Sequence}
  */
-function mapContains (_dynamicContext, _executionParameters, mapSequence, keySequence) {
+function mapContains (_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence) {
 	return zipSingleton([mapSequence, keySequence], ([map, key]) => {
 		const doesContain = map.keyValuePairs.some(pair => isSameMapKey(pair.key, key));
 		return doesContain ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
@@ -151,7 +156,7 @@ function mapContains (_dynamicContext, _executionParameters, mapSequence, keySeq
  * @param   {!Sequence}           keySequence
  * @return  {!Sequence}
  */
-function mapRemove (_dynamicContext, _executionParameters, mapSequence, keySequence) {
+function mapRemove (_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence) {
 	return zipSingleton([mapSequence], ([map]) => {
 		/**
 		 * @type {Array<{key: ../dataTypes/Value, value: Sequence}>}
@@ -178,7 +183,7 @@ function mapRemove (_dynamicContext, _executionParameters, mapSequence, keySeque
  * @param   {!Sequence}           functionItemSequence
  * @return  {!Sequence}
  */
-function mapForEach (dynamicContext, executionParameters, mapSequence, functionItemSequence) {
+function mapForEach (dynamicContext, executionParameters, _staticContext, mapSequence, functionItemSequence) {
 	return zipSingleton(
 		[mapSequence, functionItemSequence],
 		([map, functionItem]) => {
@@ -250,10 +255,11 @@ export default {
 			localName: 'merge',
 			argumentTypes: ['map(*)*'],
 			returnType: 'map(*)',
-			callFunction: function (dynamicContext, executionParameters, maps) {
+			callFunction: function (dynamicContext, executionParameters, staticContext, maps) {
 				return mapMerge(
 					dynamicContext,
 					executionParameters,
+					staticContext,
 					maps,
 					Sequence.singleton(new MapValue([{
 						key: createAtomicValue('duplicates', 'xs:string'),

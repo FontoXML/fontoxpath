@@ -31,7 +31,7 @@ class NameTest extends TestAbstractExpression {
 	}
 
 	performStaticEvaluation (staticContext) {
-		if (!this._namespaceURI === null && this._prefix !== '*') {
+		if (this._namespaceURI === null && this._prefix !== '*') {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 
 			if (!this._namespaceURI && this._prefix) {
@@ -40,7 +40,7 @@ class NameTest extends TestAbstractExpression {
 		}
 	}
 
-	evaluateToBoolean (dynamicContext, node) {
+	evaluateToBoolean (_dynamicContext, node) {
 		const nodeIsElement = isSubtypeOf(node.type, 'element()');
 		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');
 		if (!nodeIsElement && !nodeIsAttribute) {

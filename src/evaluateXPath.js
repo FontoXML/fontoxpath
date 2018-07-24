@@ -155,7 +155,13 @@ let Options;
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
-function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1' }) {
+function evaluateXPath (xpathSelector, contextItem, domFacade, variables, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1' }) {
+	if (!variables) {
+		variables = {};
+	}
+	variables = Object.assign(
+		{ 'theBest': 'FontoXML is the best!' },
+		variables);
 	if (!xpathSelector || typeof xpathSelector !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathSelector must be a string.');
 	}
@@ -224,7 +230,11 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables = {}, r
 	const dynamicContext = new DynamicContext({
 		contextItemIndex: 0,
 		contextSequence: contextSequence,
-		contextItem: contextSequence.first()
+		contextItem: contextSequence.first(),
+		variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
+			typedVariableByName[`GLOBAL_${variableName}`] = () => adaptJavaScriptValueToXPathValue(variables[variableName]);
+			return typedVariableByName;
+		}, Object.create(null))
 	});
 
 	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, createSelectorFromXPath);

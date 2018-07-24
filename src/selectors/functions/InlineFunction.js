@@ -4,13 +4,6 @@ import Sequence from '../dataTypes/Sequence';
 import FunctionValue from '../dataTypes/FunctionValue';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
-function buildVarName ({ prefix, namespaceURI, name }) {
-	if (namespaceURI) {
-		throw new Error('Not implemented: inline functions with a namespace URI in the binding.');
-	}
-	return prefix ? `${prefix}:${name}` : name;
-}
-
 /**
  * @extends Selector
  */
@@ -32,9 +25,29 @@ class InlineFunction extends Selector {
 			expectedResultOrder: Selector.RESULT_ORDERINGS.UNSORTED
 		});
 
-		this._paramDescriptions = paramDescriptions.map(([paramName, type]) => ([buildVarName(paramName), type]));
+		this._parameterNames = paramDescriptions.map(([name]) => name);
+		this._parameterTypes = paramDescriptions.map(([_name, type]) => type);
+
+		this._parameterBindingNames = null;
 		this._returnType = returnType;
 		this._functionBody = functionBody;
+	}
+
+	performStaticEvaluation (staticContext) {
+		const scopedStaticContext = staticContext.introduceScope();
+		this._parameterBindingNames = this._parameterNames
+			.map(name => {
+				let namespaceURI = name.namespaceURI;
+				const prefix = name.prefix;
+				const localName = name.name;
+
+				if (!namespaceURI === null && prefix !== '*') {
+					namespaceURI = staticContext.resolveNamespace(prefix);
+				}
+				return scopedStaticContext.registerVariable(namespaceURI, localName);
+			});
+
+		this._functionBody.performStaticEvaluation(scopedStaticContext);
 	}
 
 	evaluate (dynamicContext, executionParameters) {
@@ -44,12 +57,12 @@ class InlineFunction extends Selector {
 		 * @param   {...!../dataTypes/Sequence}   parameters              The parameters of the function
 		 * @return  {!../dataTypes/Sequence}      The result of the function call
 		 */
-		const executeFunction = (_unboundDynamicContext, ...parameters) => {
+		const executeFunction = (_unboundDynamicContext, _executionContext, _staticContext, ...parameters) => {
 			// Since functionCall already does typechecking, we do not have to do it here
 			const scopedDynamicContext = dynamicContext
 				.scopeWithFocus(-1, null, Sequence.empty())
-				.scopeWithVariableBindings(this._paramDescriptions.reduce((paramByName, [name, _type], i) => {
-					paramByName[name] = createDoublyIterableSequence(parameters[i]);
+				.scopeWithVariableBindings(this._parameterBindingNames.reduce((paramByName, bindingName, i) => {
+					paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
 					return paramByName;
 				}, Object.create(null)));
 			return this._functionBody.evaluateMaybeStatically(scopedDynamicContext, executionParameters);
@@ -58,8 +71,8 @@ class InlineFunction extends Selector {
 		const functionItem = new FunctionValue({
 			value: executeFunction,
 			name: 'dynamic-function',
-			argumentTypes: this._paramDescriptions.map(([_name, type]) => type),
-			arity: this._paramDescriptions.length,
+			argumentTypes: this._parameterTypes,
+			arity: this._parameterTypes.length,
 			returnType: this._returnType
 		});
 		return Sequence.singleton(functionItem);

@@ -37,7 +37,7 @@ class FunctionCall extends Selector {
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1
 			}),
-			[functionReference].concat(args),
+			[functionReference].concat(args.filter(arg => !!arg)),
 			{
 				resultOrder: Selector.RESULT_ORDERINGS.UNSORTED,
 				peer: false,
@@ -47,6 +47,13 @@ class FunctionCall extends Selector {
 
 		this._args = args;
 		this._functionReference = functionReference;
+
+		this._staticContext = null;
+	}
+
+	performStaticEvaluation (staticContext) {
+		this._staticContext = staticContext;
+		super.performStaticEvaluation(staticContext);
 	}
 
 	evaluate (dynamicContext, executionParameters) {
@@ -65,7 +72,7 @@ class FunctionCall extends Selector {
 						throw new Error(`XPTY0004: expected arity of function ${functionItem.getName()} to be ${this._args.length}, got function with arity of ${functionItem.getArity()}`);
 					}
 
-					var evaluatedArgs = this._args.map(function (argument) {
+					var evaluatedArgs = this._args.map(argument => {
 						if (argument === null) {
 							return null;
 						}
@@ -82,7 +89,9 @@ class FunctionCall extends Selector {
 						return functionItem.applyArguments(transformedArguments);
 					}
 
-					return functionItem.value.apply(undefined, [dynamicContext, executionParameters].concat(transformedArguments));
+					return functionItem.value.apply(
+						undefined,
+						[dynamicContext, executionParameters, this._staticContext].concat(transformedArguments));
 				});
 			}
 		});

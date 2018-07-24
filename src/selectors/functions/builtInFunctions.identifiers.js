@@ -23,7 +23,7 @@ function findDescendants (domFacade, node, isMatch) {
  * @param  {!../dataTypes/Sequence}  targetNodeSequence
  * @return  {!../dataTypes/Sequence}
  */
-function fnId (_dynamicContext, executionParameters, idrefSequence, targetNodeSequence) {
+function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequence, targetNodeSequence) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();
@@ -73,7 +73,7 @@ function fnId (_dynamicContext, executionParameters, idrefSequence, targetNodeSe
  * @param  {!../dataTypes/Sequence}  targetNodeSequence
  * @return  {!../dataTypes/Sequence}
  */
-function fnIdref (dynamicContext, executionParameters, idSequence, targetNodeSequence) {
+function fnIdref (dynamicContext, executionParameters, _staticContext, idSequence, targetNodeSequence) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();
@@ -128,8 +128,8 @@ export default {
 			localName: 'id',
 			argumentTypes: ['xs:string*'],
 			returnType: 'element()*',
-			callFunction: function (dynamicContext, executionParameters, strings) {
-				return fnId(dynamicContext, executionParameters, strings, Sequence.singleton(dynamicContext.contextItem));
+			callFunction: function (dynamicContext, executionParameters, _staticContext, strings) {
+				return fnId(dynamicContext, executionParameters, _staticContext, strings, Sequence.singleton(dynamicContext.contextItem));
 			}
 		},
 
@@ -146,8 +146,8 @@ export default {
 			localName: 'idref',
 			argumentTypes: ['xs:string*'],
 			returnType: 'node()*',
-			callFunction: function (dynamicContext, executionParameters, strings) {
-				return fnIdref(dynamicContext, executionParameters, strings, Sequence.singleton(dynamicContext.contextItem));
+			callFunction: function (dynamicContext, executionParameters, _staticContext, strings) {
+				return fnIdref(dynamicContext, executionParameters, _staticContext, strings, Sequence.singleton(dynamicContext.contextItem));
 			}
 		}
 	],

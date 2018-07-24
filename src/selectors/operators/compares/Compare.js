@@ -53,7 +53,7 @@ class Compare extends Selector {
 				},
 				default: () => {
 					if (this._compare === 'nodeCompare') {
-						return nodeCompare(this._operator, dynamicContext.domFacade, firstSequence, secondSequence);
+						return nodeCompare(this._operator, executionParameters.domFacade, firstSequence, secondSequence);
 					}
 					// Atomize both sequences
 					const firstAtomizedSequence = firstSequence.atomize(dynamicContext);

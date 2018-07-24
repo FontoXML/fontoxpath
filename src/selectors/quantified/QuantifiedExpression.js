@@ -1,44 +1,50 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 
-function buildVarName ({ prefix, namespaceURI, name }, staticContext) {
-	staticContext.lookupVariable(prefix, namespaceURI, name);
-}
 /**
  * @extends {Selector}
  */
 class QuantifiedExpression extends Selector {
 	/**
-	 * @param  {!string}           quantifier
-	 * @param  {!Array<!Array<!Selector>>}  inClauses
-	 * @param  {!Selector}         satisfiesExpr
+	 * @param  {!string}                                                     quantifier
+	 * @param  {!Array<{prefix:?string,namespaceURI:?string,name:!string}>}  inClauseNames
+	 * @param  {!Array<!Selector>}                                           inClauseExpressions
+	 * @param  {!Selector}                                                   satisfiesExpr
 	 */
-	constructor (quantifier, inClauses, satisfiesExpr) {
-		const specificity = inClauses.reduce(
-			(specificity, inClause) => specificity.add(inClause[1].specificity),
+	constructor (quantifier, inClauseNames, inClauseExpressions, satisfiesExpr) {
+		const specificity = inClauseExpressions.reduce(
+			(specificity, inClause) => specificity.add(inClause.specificity),
 			satisfiesExpr.specificity);
 		super(
 			specificity,
-			inClauses.concat(satisfiesExpr),
+			inClauseExpressions.concat(satisfiesExpr),
 			{
 				canBeStaticallyEvaluated: false
 			});
 
 		this._quantifier = quantifier;
-		this._inClauses = inClauses;
+		this._inClauseNames = inClauseNames;
+		this._inClauseExpressions = inClauseExpressions;
 		this._satisfiesExpr = satisfiesExpr;
 
 		this._inClauseVariableNames = null;
 	}
 
 	performStaticEvaluation (staticContext) {
-		this._inClauseVariableNames = this._inClauses.map(inClause => buildVarName(inClause[0], staticContext));
+		let scopedContext = staticContext.introduceScope();
+		this._inClauseVariableNames = this._inClauseNames.map(inClauseName => {
+			scopedContext = scopedContext.introduceScope();
+			return scopedContext.registerVariable(inClauseName.namespaceURI, inClauseName.name);
+		});
+		this._inClauseExpressions.forEach(expr => expr.performStaticEvaluation(staticContext));
+		this._satisfiesExpr.performStaticEvaluation(scopedContext);
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		const evaluatedInClauses = this._inClauses.map(({ inClause, i }) => ({
-			name: this._inClauseVariableNames[i],
-			valueArray: inClause[1].evaluateMaybeStatically(dynamicContext, executionParameters).getAllValues()
+		const evaluatedInClauses = this._inClauseVariableNames.map((variableBinding, i) => ({
+			name: variableBinding,
+			valueArray: this._inClauseExpressions[i]
+				.evaluateMaybeStatically(dynamicContext, executionParameters).getAllValues()
 		}));
 
 		const indices = new Array(evaluatedInClauses.length).fill(0);

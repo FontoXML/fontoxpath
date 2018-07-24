@@ -126,7 +126,7 @@ function castItemsForMinMax (items) {
 	return convertItemsToCommonType(items);
 }
 
-function fnEmpty (_dynamicContext, _executionParameters, sequence) {
+function fnEmpty (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence.switchCases({
 		empty: () => Sequence.singletonTrueSequence(),
 		singleton: () => Sequence.singletonFalseSequence(),
@@ -134,7 +134,7 @@ function fnEmpty (_dynamicContext, _executionParameters, sequence) {
 	});
 }
 
-function fnExists (_dynamicContext, _executionParameters, sequence) {
+function fnExists (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence.switchCases({
 		empty: () => Sequence.singletonFalseSequence(),
 		singleton: () => Sequence.singletonTrueSequence(),
@@ -142,15 +142,15 @@ function fnExists (_dynamicContext, _executionParameters, sequence) {
 	});
 }
 
-function fnHead (_dynamicContext, _executionParameters, sequence) {
+function fnHead (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return subSequence(sequence, 1, 1);
 }
 
-function fnTail (_dynamicContext, _executionParameters, sequence) {
+function fnTail (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return subSequence(sequence, 2, null);
 }
 
-function fnInsertBefore (_dynamicContext, _executionParameters, sequence, position, inserts) {
+function fnInsertBefore (_dynamicContext, _executionParameters, staticContext, sequence, position, inserts) {
 	if (sequence.isEmpty()) {
 		return inserts;
 	}
@@ -172,7 +172,7 @@ function fnInsertBefore (_dynamicContext, _executionParameters, sequence, positi
 	return new Sequence(sequenceValue);
 }
 
-function fnRemove (_dynamicContext, _executionParameters, sequence, position) {
+function fnRemove (_dynamicContext, _executionParameters, staticContext, sequence, position) {
 	const effectivePosition = position.first().value;
 	const sequenceValue = sequence.getAllValues();
 	if (!sequenceValue.length || effectivePosition < 1 || effectivePosition > sequenceValue.length) {
@@ -182,11 +182,11 @@ function fnRemove (_dynamicContext, _executionParameters, sequence, position) {
 	return new Sequence(sequenceValue);
 }
 
-function fnReverse (_dynamicContext, _executionParameters, sequence) {
+function fnReverse (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence.mapAll(allValues => new Sequence(allValues.reverse()));
 }
 
-function fnSubsequence (_dynamicContext, _executionParameters, sequence, startSequence, lengthSequence) {
+function fnSubsequence (_dynamicContext, _executionParameters, staticContext, sequence, startSequence, lengthSequence) {
 	return zipSingleton(
 		[startSequence, lengthSequence],
 		([startVal, lengthVal]) => {
@@ -217,15 +217,15 @@ function fnSubsequence (_dynamicContext, _executionParameters, sequence, startSe
 		});
 }
 
-function fnUnordered (_dynamicContext, _executionParameters, sequence) {
+function fnUnordered (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence;
 }
 
-function fnDeepEqual (dynamicContext, executionParameters, parameter1, parameter2) {
-	return new Sequence(sequenceDeepEqual(dynamicContext, executionParameters, parameter1, parameter2)).map(jsValue => createAtomicValue(jsValue, 'xs:boolean'));
+function fnDeepEqual (dynamicContext, executionParameters, _staticContext, parameter1, parameter2) {
+	return new Sequence(sequenceDeepEqual(dynamicContext, executionParameters, _staticContext, parameter1, parameter2)).map(jsValue => createAtomicValue(jsValue, 'xs:boolean'));
 }
 
-function fnCount (_dynamicContext, _executionParameters, sequence) {
+function fnCount (_dynamicContext, _executionParameters, staticContext, sequence) {
 	let hasPassed = false;
 	return new Sequence({
 		next: () => {
@@ -242,7 +242,7 @@ function fnCount (_dynamicContext, _executionParameters, sequence) {
 	});
 }
 
-function fnAvg (_dynamicContext, _executionParameters, sequence) {
+function fnAvg (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -273,7 +273,7 @@ function fnAvg (_dynamicContext, _executionParameters, sequence) {
 	return Sequence.singleton(createAtomicValue(resultValue, 'xs:float'));
 }
 
-function fnMax (_dynamicContext, _executionParameters, sequence) {
+function fnMax (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -287,7 +287,7 @@ function fnMax (_dynamicContext, _executionParameters, sequence) {
 		}));
 }
 
-function fnMin (_dynamicContext, _executionParameters, sequence) {
+function fnMin (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -301,7 +301,7 @@ function fnMin (_dynamicContext, _executionParameters, sequence) {
 		}));
 }
 
-function fnSum (_dynamicContext, _executionParameters, sequence, zero) {
+function fnSum (_dynamicContext, _executionParameters, staticContext, sequence, zero) {
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	if (sequence.isEmpty()) {
 		return zero;
@@ -338,28 +338,28 @@ function fnSum (_dynamicContext, _executionParameters, sequence, zero) {
 	return Sequence.singleton(createAtomicValue(resultValue, 'xs:float'));
 }
 
-function fnZeroOrOne (_dynamicContext, _executionParameters, arg) {
+function fnZeroOrOne (_dynamicContext, _executionParameters, staticContext, arg) {
 	if (!arg.isEmpty() && !arg.isSingleton()) {
 		throw new Error('FORG0003: The argument passed to fn:zero-or-one contained more than one item.');
 	}
 	return arg;
 }
 
-function fnOneOrMore (_dynamicContext, _executionParameters, arg) {
+function fnOneOrMore (_dynamicContext, _executionParameters, staticContext, arg) {
 	if (arg.isEmpty()) {
 		throw new Error('FORG0004: The argument passed to fn:one-or-more was empty.');
 	}
 	return arg;
 }
 
-function fnExactlyOne (_dynamicContext, _executionParameters, arg) {
+function fnExactlyOne (_dynamicContext, _executionParameters, staticContext, arg) {
 	if (!arg.isSingleton()) {
 		throw new Error('FORG0005: The argument passed to fn:zero-or-one is empty or contained more then one item.');
 	}
 	return arg;
 }
 
-function fnFilter (dynamicContext, executionParameters, sequence, callbackSequence) {
+function fnFilter (dynamicContext, executionParameters, _staticContext, sequence, callbackSequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -375,7 +375,7 @@ function fnFilter (dynamicContext, executionParameters, sequence, callbackSequen
 			Sequence.singleton(item),
 			dynamicContext,
 			'fn:filter');
-		const functionCallResult = callbackFn.value.call(undefined, dynamicContext, transformedArgument);
+		const functionCallResult = callbackFn.value.call(undefined, dynamicContext, executionParameters, _staticContext, transformedArgument);
 		if (!functionCallResult.isSingleton() || !isSubtypeOf(functionCallResult.first().type, 'xs:boolean')) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
@@ -446,8 +446,8 @@ export default {
 			localName: 'subsequence',
 			argumentTypes: ['item()*', 'xs:double'],
 			returnType: 'item()*',
-			callFunction: (dynamicContext, executionParameters, sequence, start) =>
-				fnSubsequence(dynamicContext, executionParameters, sequence, start, Sequence.empty())
+			callFunction: (dynamicContext, executionParameters, _staticContext, sequence, start) =>
+				fnSubsequence(dynamicContext, executionParameters, _staticContext, sequence, start, Sequence.empty())
 		},
 
 		{
@@ -541,8 +541,8 @@ export default {
 			localName: 'sum',
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType',
-			callFunction: function (dynamicContext, executionParameters, sequence) {
-				return fnSum(dynamicContext, executionParameters, sequence, Sequence.singleton(createAtomicValue(0, 'xs:integer')));
+			callFunction: function (dynamicContext, executionParameters, _staticContext, sequence) {
+				return fnSum(dynamicContext, executionParameters, _staticContext, sequence, Sequence.singleton(createAtomicValue(0, 'xs:integer')));
 			}
 		},
 

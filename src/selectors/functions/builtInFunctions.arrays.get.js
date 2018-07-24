@@ -5,7 +5,7 @@
  * @param  {!../dataTypes/Sequence}        positionSequence
  * @return {!../dataTypes/Sequence}
  */
-export default function arrayGet (_dynamicContext, _executionParameters, arraySequence, positionSequence) {
+export default function arrayGet (_dynamicContext, _executionParameters, staticContext, arraySequence, positionSequence) {
 	return positionSequence.mapAll(([position]) => arraySequence.mapAll(([array]) => {
 		const positionValue = position.value;
 		if (positionValue <= 0 || positionValue > array.members.length) {

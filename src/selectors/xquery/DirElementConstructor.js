@@ -52,6 +52,10 @@ class DirElementConstructor extends Selector {
 		this._namespacesInScope = {};
 
 		this._attributes = attributes;
+
+		/**
+* @type {Array<{qualifiedName: Object, partialValues: !Array<(!Selector|string)>}>}
+*/
 		this._resolvedAttributes = [];
 
 		this._contents = contents;
@@ -72,6 +76,9 @@ class DirElementConstructor extends Selector {
 			}
 
 			const namespaceURI = getAttributeValueForNamespaceDeclaration(partialValues);
+			/**
+			 * @type {string}
+			 */
 			const namespacePrefix = name[0] === 'xmlns' ? name[1] : '';
 			if (namespacePrefix in this._namespacesInScope) {
 				throw new Error(`XQST0071: The namespace declaration with the prefix ${namespacePrefix} has already been declared on the constructed element.`);
@@ -111,7 +118,7 @@ class DirElementConstructor extends Selector {
 	 */
 	evaluate (dynamicContext, executionParameters) {
 		/**
-		 * @type INodesFactory
+		 * @type {INodesFactory}
 		 */
 		const nodesFactory = executionParameters.nodesFactory;
 

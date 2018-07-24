@@ -12,7 +12,7 @@ class ArrayValue extends FunctionValue {
 	constructor (members) {
 		super(
 			{
-				value: (dynamicContext, executionParameters, key) => arrayGet(dynamicContext, executionParameters, Sequence.singleton(this), key),
+				value: (dynamicContext, executionParameters, staticContext, key) => arrayGet(dynamicContext, executionParameters, staticContext, Sequence.singleton(this), key),
 				name: 'array:get',
 				argumentTypes: ['xs:integer'],
 				arity: 1,

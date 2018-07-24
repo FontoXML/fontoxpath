@@ -476,10 +476,15 @@ function preceding (args, compilationOptions) {
 }
 
 function quantified (args, compilationOptions) {
-	const inClauses = args[1].map(([[prefix, namespaceURI, name], expression]) => {
-		return [{ prefix, namespaceURI, name }, compile(expression, compilationOptions)];
+	const inClauseExpressions = args[1].map(([_name, expression]) => {
+		return compile(expression, compilationOptions);
 	});
-	return new QuantifiedExpression(args[0], inClauses, compile(args[2], compilationOptions));
+	const inClauseNames = args[1].map(([[namespaceURI, prefix, name], _expression]) => {
+		return {
+			namespaceURI, prefix, name
+		};
+	});
+	return new QuantifiedExpression(args[0], inClauseNames, inClauseExpressions, compile(args[2], compilationOptions));
 }
 
 function self (args, compilationOptions) {

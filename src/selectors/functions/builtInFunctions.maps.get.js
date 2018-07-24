@@ -10,7 +10,7 @@ import zipSingleton from '../util/zipSingleton';
  * @param   {!Sequence}        key
  * @return  {!Sequence}
  */
-export default function mapGet (_dynamicContext, _executionParameters, mapSequence, key) {
+export default function mapGet (_dynamicContext, _executionParameters, _staticContext, mapSequence, key) {
 	return zipSingleton([mapSequence, key], ([map, keyValue]) => {
 		var matchingPair = map.keyValuePairs.find(function (keyValuePair) {
 			return isSameMapKey(keyValuePair.key, keyValue);

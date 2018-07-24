@@ -10,7 +10,7 @@ import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import { equal } from '../dataTypes/valueTypes/DateTime';
 
 /**
- * @type {function(!../DynamicContext, ../ExecutionParameters, ../dataTypes/Sequence):../dataTypes/Sequence}
+ * @type {function(!../DynamicContext, ../ExecutionParameters, !../StaticContext, ../dataTypes/Sequence):../dataTypes/Sequence}
  */
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
@@ -61,7 +61,7 @@ function filterElementAndTextNodes (node) {
 	return node.nodeType === node.ELEMENT_NODE || node.nodeType === node.TEXT_NODE;
 }
 
-function anyAtomicTypeDeepEqual (_dynamicContext, _executionParameters, item1, item2) {
+function anyAtomicTypeDeepEqual (_dynamicContext, _executionParameters, staticContext, item1, item2) {
 	if ((isSubtypeOf(item1.type, 'xs:decimal') || isSubtypeOf(item1.type, 'xs:float')) &&
 		(isSubtypeOf(item2.type, 'xs:decimal') || isSubtypeOf(item2.type, 'xs:float'))) {
 		const temp1 = castToType(item1, 'xs:float');
@@ -109,7 +109,7 @@ function anyAtomicTypeDeepEqual (_dynamicContext, _executionParameters, item1, i
  * @param   {!Sequence}             sequence2
  * @return  {!AsyncIterator}
  */
-function sequenceDeepEqual (dynamicContext, executionParameters, sequence1, sequence2) {
+function sequenceDeepEqual (dynamicContext, executionParameters, _staticContext, sequence1, sequence2) {
 	const it1 = sequence1.value();
 	const it2 = sequence2.value();
 	let item1 = null;
@@ -142,7 +142,7 @@ function sequenceDeepEqual (dynamicContext, executionParameters, sequence1, sequ
 					return ready(item1.done === item2.done);
 				}
 				if (!comparisonGenerator) {
-					comparisonGenerator = itemDeepEqual(dynamicContext, executionParameters, item1.value, item2.value);
+					comparisonGenerator = itemDeepEqual(dynamicContext, executionParameters, _staticContext, item1.value, item2.value);
 				}
 				const comparisonResult = comparisonGenerator.next();
 				if (!comparisonResult.ready) {
@@ -168,19 +168,19 @@ function sequenceDeepEqual (dynamicContext, executionParameters, sequence1, sequ
  * @param   {../dataTypes/MapValue}  item2
  * @return  {AsyncIterator}
  */
-function mapTypeDeepEqual (dynamicContext, executionParameters, item1, item2) {
+function mapTypeDeepEqual (dynamicContext, executionParameters, staticContext, item1, item2) {
 	if (item1.keyValuePairs.length !== item2.keyValuePairs.length) {
 		return createSingleValueIterator(false);
 	}
 
 	return asyncGenerateEvery(item1.keyValuePairs, mapEntry1 => {
-		const mapEntry2 = item2.keyValuePairs.find((entry) => anyAtomicTypeDeepEqual(dynamicContext, executionParameters, entry.key, mapEntry1.key));
+		const mapEntry2 = item2.keyValuePairs.find((entry) => anyAtomicTypeDeepEqual(dynamicContext, executionParameters, staticContext, entry.key, mapEntry1.key));
 
 		if (!mapEntry2) {
 			return createSingleValueIterator(false);
 		}
 
-		return sequenceDeepEqual(dynamicContext, executionParameters, mapEntry1.value, mapEntry2.value);
+		return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, mapEntry1.value, mapEntry2.value);
 	});
 }
 
@@ -190,14 +190,14 @@ function mapTypeDeepEqual (dynamicContext, executionParameters, item1, item2) {
  * @param   {../dataTypes/ArrayValue}  item2
  * @return  {AsyncIterator}
  */
-function arrayTypeDeepEqual (dynamicContext, executionParameters, item1, item2) {
+function arrayTypeDeepEqual (dynamicContext, executionParameters, staticContext, item1, item2) {
 	if (item1.members.length !== item2.members.length) {
 		return createSingleValueIterator(false);
 	}
 
 	return asyncGenerateEvery(item1.members, (arrayEntry1, index) => {
 		const arrayEntry2 = item2.members[index];
-		return sequenceDeepEqual(dynamicContext, executionParameters, arrayEntry1, arrayEntry2);
+		return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, arrayEntry1, arrayEntry2);
 	});
 }
 
@@ -207,7 +207,7 @@ function arrayTypeDeepEqual (dynamicContext, executionParameters, item1, item2) 
  * @param   {../dataTypes/Value}  item2
  * @return  {AsyncIterator}
  */
-function nodeDeepEqual (dynamicContext, executionParameters, item1, item2) {
+function nodeDeepEqual (dynamicContext, executionParameters, staticContext, item1, item2) {
 	let item1Nodes = executionParameters.domFacade.getChildNodes(item1.value);
 	let item2Nodes = executionParameters.domFacade.getChildNodes(item2.value);
 
@@ -217,7 +217,7 @@ function nodeDeepEqual (dynamicContext, executionParameters, item1, item2) {
 	item1Nodes = new Sequence(item1Nodes.map(createNodeValue));
 	item2Nodes = new Sequence(item2Nodes.map(createNodeValue));
 
-	return sequenceDeepEqual(dynamicContext, executionParameters, item1Nodes, item2Nodes);
+	return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, item1Nodes, item2Nodes);
 }
 
 /**
@@ -226,13 +226,14 @@ function nodeDeepEqual (dynamicContext, executionParameters, item1, item2) {
  * @param   {../dataTypes/Value}  item2
  * @return  {AsyncIterator}
  */
-function elementNodeDeepEqual (dynamicContext, executionParameters, item1, item2) {
+function elementNodeDeepEqual (dynamicContext, executionParameters, staticContext, item1, item2) {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
-		nodeName(dynamicContext, executionParameters, Sequence.singleton(item1)),
-		nodeName(dynamicContext, executionParameters, Sequence.singleton(item2)));
-	const nodeDeepEqualGenerator = nodeDeepEqual(dynamicContext, executionParameters, item1, item2);
+		staticContext,
+		nodeName(dynamicContext, executionParameters, staticContext, Sequence.singleton(item1)),
+		nodeName(dynamicContext, executionParameters, staticContext, Sequence.singleton(item2)));
+	const nodeDeepEqualGenerator = nodeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2);
 	const attributes1 = executionParameters.domFacade.getAllAttributes(item1.value)
 		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 		.sort((attrA, attrB) => attrA.name > attrB.name ? 1 : -1)
@@ -246,6 +247,7 @@ function elementNodeDeepEqual (dynamicContext, executionParameters, item1, item2
 	const attributesDeepEqualGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
+		staticContext,
 		new Sequence(attributes1),
 		new Sequence(attributes2));
 	let done = false;
@@ -289,12 +291,13 @@ function elementNodeDeepEqual (dynamicContext, executionParameters, item1, item2
  * @param   {../dataTypes/Value}  item2
  * @return  {AsyncIterator}
  */
-function atomicTypeNodeDeepEqual (dynamicContext, executionParameters, item1, item2) {
+function atomicTypeNodeDeepEqual (dynamicContext, executionParameters, staticContext, item1, item2) {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
-		nodeName(dynamicContext, executionParameters, Sequence.singleton(item1)),
-		nodeName(dynamicContext, executionParameters, Sequence.singleton(item2)));
+		staticContext,
+		nodeName(dynamicContext, executionParameters, staticContext, Sequence.singleton(item1)),
+		nodeName(dynamicContext, executionParameters, staticContext, Sequence.singleton(item2)));
 	let done = false;
 	return {
 		next: () => {
@@ -314,6 +317,7 @@ function atomicTypeNodeDeepEqual (dynamicContext, executionParameters, item1, it
 			return ready(anyAtomicTypeDeepEqual(
 				dynamicContext,
 				executionParameters,
+				staticContext,
 				atomize(item1, executionParameters),
 				atomize(item2, executionParameters)));
 		}
@@ -327,48 +331,48 @@ function atomicTypeNodeDeepEqual (dynamicContext, executionParameters, item1, it
  * @param   {../dataTypes/Value}  item2
  * @return  {AsyncIterator}
  */
-function itemDeepEqual (dynamicContext, executionParameters, item1, item2) {
+function itemDeepEqual (dynamicContext, executionParameters, _staticContext, item1, item2) {
 	// All atomic types
 	if (isSubtypeOf(item1.type, 'xs:anyAtomicType') && isSubtypeOf(item2.type, 'xs:anyAtomicType')) {
-		return createSingleValueIterator(anyAtomicTypeDeepEqual(dynamicContext, executionParameters, item1, item2));
+		return createSingleValueIterator(anyAtomicTypeDeepEqual(dynamicContext, executionParameters, _staticContext, item1, item2));
 	}
 
 	// Maps
 	if (isSubtypeOf(item1.type, 'map(*)') && isSubtypeOf(item2.type, 'map(*)')) {
-		return mapTypeDeepEqual(dynamicContext, executionParameters, item1, item2);
+		return mapTypeDeepEqual(dynamicContext, executionParameters, _staticContext, item1, item2);
 	}
 
 	// Arrays
 	if (isSubtypeOf(item1.type, 'array(*)') && isSubtypeOf(item2.type, 'array(*)')) {
-		return arrayTypeDeepEqual(dynamicContext, executionParameters, item1, item2);
+		return arrayTypeDeepEqual(dynamicContext, executionParameters, _staticContext, item1, item2);
 	}
 
 	// Nodes
 	if (isSubtypeOf(item1.type, 'node()') && isSubtypeOf(item2.type, 'node()')) {
 		// Document nodes
 		if (isSubtypeOf(item1.type, 'document()') && isSubtypeOf(item2.type, 'document()')) {
-			return nodeDeepEqual(dynamicContext, executionParameters, item1, item2);
+			return nodeDeepEqual(dynamicContext, executionParameters, _staticContext, item1, item2);
 		}
 
 		// Element nodes, cannot be compared due to missing schema information
 		if (isSubtypeOf(item1.type, 'element()') && isSubtypeOf(item2.type, 'element()')) {
-			return elementNodeDeepEqual(dynamicContext, executionParameters, item1, item2);
+			return elementNodeDeepEqual(dynamicContext, executionParameters, _staticContext, item1, item2);
 		}
 
 		// Attribute nodes
 		if (isSubtypeOf(item1.type, 'attribute()') && isSubtypeOf(item2.type, 'attribute()')) {
-			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, item1, item2);
+			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, _staticContext, item1, item2);
 		}
 
 		// Processing instruction node
 		if (isSubtypeOf(item1.type, 'processing-instruction()') && isSubtypeOf(item2.type, 'processing-instruction()')) {
-			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, item1, item2);
+			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, _staticContext, item1, item2);
 		}
 
 		// Text nodes, or comment nodes
 		if ((isSubtypeOf(item1.type, 'text()') || isSubtypeOf(item1.type, 'comment()')) &&
 			(isSubtypeOf(item2.type, 'text()') || isSubtypeOf(item2.type, 'comment()'))) {
-			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, item1, item2);
+			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, _staticContext, item1, item2);
 		}
 	}
 

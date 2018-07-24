@@ -3,7 +3,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import DateTime from '../dataTypes/valueTypes/DateTime';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-function fnDateTime (_dynamicContext, _executionParameters, sequence, arg2) {
+function fnDateTime (_dynamicContext, _executionParameters, staticContext, sequence, arg2) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -46,49 +46,49 @@ function fnDateTime (_dynamicContext, _executionParameters, sequence, arg2) {
 	return Sequence.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
 }
 
-function fnYearFromDateTime (_dynamicContext, _executionParameters, sequence) {
+function fnYearFromDateTime (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getYear(), 'xs:integer'));
 }
 
-function fnMonthFromDateTime (_dynamicContext, _executionParameters, sequence) {
+function fnMonthFromDateTime (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getMonth(), 'xs:integer'));
 }
 
-function fnDayFromDateTime (_dynamicContext, _executionParameters, sequence) {
+function fnDayFromDateTime (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getDay(), 'xs:integer'));
 }
 
-function fnHoursFromDateTime (_dynamicContext, _executionParameters, sequence) {
+function fnHoursFromDateTime (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getHours(), 'xs:integer'));
 }
 
-function fnMinutesFromDateTime (_dynamicContext, _executionParameters, sequence) {
+function fnMinutesFromDateTime (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer'));
 }
 
-function fnSecondsFromDateTime (_dynamicContext, _executionParameters, sequence) {
+function fnSecondsFromDateTime (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getFullSeconds(), 'xs:decimal'));
 }
 
-function fnTimezoneFromDateTime (_dynamicContext, _executionParameters, sequence) {
+function fnTimezoneFromDateTime (_dynamicContext, _executionParameters, staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}

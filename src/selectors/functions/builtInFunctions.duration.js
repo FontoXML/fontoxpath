@@ -3,42 +3,42 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 
-function fnYearsFromDuration (_dynamicContext, _executionParameters, sequence) {
+function fnYearsFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getYears(), 'xs:integer'));
 }
 
-function fnMonthsFromDuration (_dynamicContext, _executionParameters, sequence) {
+function fnMonthsFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getMonths(), 'xs:integer'));
 }
 
-function fnDaysFromDuration (_dynamicContext, _executionParameters, sequence) {
+function fnDaysFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getDays(), 'xs:integer'));
 }
 
-function fnHoursFromDuration (_dynamicContext, _executionParameters, sequence) {
+function fnHoursFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getHours(), 'xs:integer'));
 }
 
-function fnMinutesFromDuration (_dynamicContext, _executionParameters, sequence) {
+function fnMinutesFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer'));
 }
 
-function fnSecondsFromDuration (_dynamicContext, _executionParameters, sequence) {
+function fnSecondsFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}

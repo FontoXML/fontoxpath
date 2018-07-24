@@ -31,7 +31,7 @@ function createValidNumericType (type, transformedValue) {
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
-function fnAbs (_dynamicContext, _executionParameters, sequence) {
+function fnAbs (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.abs(onlyValue.value)));
 }
 
@@ -41,7 +41,7 @@ function fnAbs (_dynamicContext, _executionParameters, sequence) {
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
-function fnCeiling (_dynamicContext, _executionParameters, sequence) {
+function fnCeiling (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value)));
 }
 
@@ -51,7 +51,7 @@ function fnCeiling (_dynamicContext, _executionParameters, sequence) {
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
-function fnFloor (_dynamicContext, _executionParameters, sequence) {
+function fnFloor (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.floor(onlyValue.value)));
 }
 
@@ -85,7 +85,7 @@ function getNumberOfDecimalDigits (value) {
  * @param   {?Sequence}           precision
  * @return  {!Sequence}
  */
-function fnRound (halfToEven, _dynamicContext, _executionParameters, sequence, precision) {
+function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticContext, sequence, precision) {
 	let done = false;
 	return new Sequence({
 		next: () => {
@@ -167,7 +167,7 @@ function fnRound (halfToEven, _dynamicContext, _executionParameters, sequence, p
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
-function fnNumber (_dynamicContext, executionParameters, sequence) {
+function fnNumber (_dynamicContext, executionParameters, _staticContext, sequence) {
 	return sequence.atomize(executionParameters).switchCases({
 		empty: () => Sequence.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
@@ -186,7 +186,7 @@ function fnNumber (_dynamicContext, executionParameters, sequence) {
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
-function returnRandomItemFromSequence (_dynamicContext, _executionParameters, sequence) {
+function returnRandomItemFromSequence (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -202,7 +202,7 @@ function returnRandomItemFromSequence (_dynamicContext, _executionParameters, se
  * @param   {Sequence}           _sequence
  * @return  {Sequence}
  */
-function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _sequence) {
+function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _staticContext, _sequence) {
 	// Ignore the optional seed, as Math.random does not support a seed
 	return Sequence.singleton(new MapValue([
 		{
@@ -303,13 +303,13 @@ export default {
 			localName: 'number',
 			argumentTypes: [],
 			returnType: 'xs:double',
-			callFunction: (dynamicContext, executionParameters) => {
+			callFunction: (dynamicContext, executionParameters, _staticContext) => {
 				const atomizedContextItem = dynamicContext.contextItem &&
 					transformArgument('xs:anyAtomicType?', Sequence.singleton(dynamicContext.contextItem), dynamicContext, 'fn:number');
 				if (!atomizedContextItem) {
 					throw new Error('XPDY0002: fn:number needs an atomizable context item.');
 				}
-				return fnNumber(dynamicContext, executionParameters, atomizedContextItem);
+				return fnNumber(dynamicContext, executionParameters, _staticContext, atomizedContextItem);
 			}
 		},
 

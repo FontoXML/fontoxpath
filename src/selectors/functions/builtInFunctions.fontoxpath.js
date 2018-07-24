@@ -7,13 +7,16 @@ import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
+import StaticContext from '../StaticContext';
+import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
+
 /**
  * @param  {!../DynamicContext}      dynamicContext
  * @param  {!../ExecutionParameters} executionParameters
  * @param  {!../dataTypes/Sequence}  query
  * @param  {!../dataTypes/Sequence}  args
  */
-function fontoxpathEvaluate (dynamicContext, executionParameters, query, args) {
+function fontoxpathEvaluate (dynamicContext, executionParameters, _staticContext, query, args) {
 	let resultIterator;
 	let queryString;
 	return new Sequence({
@@ -24,22 +27,30 @@ function fontoxpathEvaluate (dynamicContext, executionParameters, query, args) {
 					return queryValue;
 				}
 				queryString = queryValue.value.value;
-				const variables = {};
-				args.first().keyValuePairs.reduce((expandedArgs, arg) => {
-					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value);
+				const variables = args.first().keyValuePairs.reduce((expandedArgs, arg) => {
+					expandedArgs[arg.key.value] = `GLOBAL_${arg.key.value}`;
 					return expandedArgs;
-				}, variables);
+				}, {});
 
 				// Take off the context item
 				const contextItemSequence = variables['.'] ? variables['.']() : Sequence.empty();
 				delete variables['.'];
 
-				const selector = dynamicContext.createSelectorFromXPath(queryString, { allowXQuery: false });
+				const selector = executionParameters.createSelectorFromXPath(queryString, { allowXQuery: false });
+				selector.performStaticEvaluation(
+					new StaticContext(
+						new ExecutionSpecificStaticContext(
+							() => null,
+							args.first().keyValuePairs.reduce((expandedArgs, arg) => {
+								expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value);
+								return expandedArgs;
+							}, variables))));
+
 				const context = contextItemSequence.isEmpty() ? {
 					contextItem: null,
 					contextSequence: contextItemSequence,
 					contextItemIndex: -1,
-					variables,
+					variableBindings: variables,
 					domFacade: executionParameters.domFacade,
 					resolveNamespacePrefix: dynamicContext.resolveNamespacePrefix,
 					createSelectorFromXPath: dynamicContext.createSelectorFromXPath
@@ -47,7 +58,7 @@ function fontoxpathEvaluate (dynamicContext, executionParameters, query, args) {
 					contextItem: contextItemSequence.first(),
 					contextSequence: contextItemSequence,
 					contextItemIndex: 0,
-					variables,
+					variableBindings: variables,
 					domFacade: executionParameters.domFacade,
 					resolveNamespacePrefix: dynamicContext.resolveNamespacePrefix,
 					createSelectorFromXPath: dynamicContext.createSelectorFromXPath
@@ -64,11 +75,12 @@ function fontoxpathEvaluate (dynamicContext, executionParameters, query, args) {
 
 /**
  * @param   {../DynamicContext}  _dynamicContext
+ * @param  {!../ExecutionParameters} _executionParameters
  * @param   {!Sequence}           val
  * @param   {!Sequence}           howLong
  * @return  {!Sequence}
  */
-function fontoxpathSleep (_dynamicContext, val, howLong) {
+function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext, val, howLong) {
 	let doneWithSleep = false;
 	let readyPromise;
 
@@ -98,7 +110,7 @@ function fontoxpathSleep (_dynamicContext, val, howLong) {
 	});
 }
 
-function fontoxpathFetch (_dynamicContext, url) {
+function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext, url) {
 	let doneWithFetch = false;
 	let result = null;
 	let done = false;
