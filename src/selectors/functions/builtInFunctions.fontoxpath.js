@@ -27,37 +27,48 @@ function fontoxpathEvaluate (dynamicContext, executionParameters, _staticContext
 					return queryValue;
 				}
 				queryString = queryValue.value.value;
+				/**
+				 * @type {Object<string, function():Sequence>}
+				 */
 				const variables = args.first().keyValuePairs.reduce((expandedArgs, arg) => {
 					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value);
 					return expandedArgs;
-				}, {});
+				}, Object.create(null));
 
 				// Take off the context item
 				const contextItemSequence = variables['.'] ? variables['.']() : Sequence.empty();
 				delete variables['.'];
 
 				const selector = executionParameters.createSelectorFromXPath(queryString, { allowXQuery: false });
-				selector.performStaticEvaluation(
-					new StaticContext(
-						new ExecutionSpecificStaticContext(
-							() => null,
-							Object.keys(variables).reduce(
-								(vars, varName) => {
-									vars[varName] = varName;
-									return vars;
-								}, {}))));
+				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
+					// Plainly ignore any namespace bindings from the outside
+					() => null,
+					Object.keys(variables).reduce(
+						(vars, varName) => {
+							vars[varName] = varName;
+							return vars;
+						}, {}));
+
+				selector.performStaticEvaluation(new StaticContext(executionSpecificStaticContext));
+
+				const variableBindings = Object.keys(variables).reduce((variablesByBindingKey, varName) => {
+						variablesByBindingKey[executionSpecificStaticContext.lookupVariable(null, varName)] =
+							variables[varName];
+						return variablesByBindingKey;
+				}, Object.create(null));
 
 				const context = contextItemSequence.isEmpty() ? {
 					contextItem: null,
 					contextSequence: contextItemSequence,
 					contextItemIndex: -1,
-					variableBindings: variables
+					variableBindings: variableBindings
 				} : {
 					contextItem: contextItemSequence.first(),
 					contextSequence: contextItemSequence,
 					contextItemIndex: 0,
-					variableBindings: variables
+					variableBindings: variableBindings
 				};
+
 				const innerDynamicContext = new DynamicContext(context);
 
 				resultIterator = selector.evaluate(innerDynamicContext, executionParameters).value();

@@ -1,11 +1,10 @@
 import createSelectorFromXPath from './createSelectorFromXPath';
 
-import ExecutionSpecificStaticContext from '../selectors/ExecutionSpecificStaticContext';
 import StaticContext from '../selectors/StaticContext';
 
 import compiledSelectorCache from './compiledSelectorCache';
 
-export default function staticallyCompileXPath (xpathString, compilationOptions, variables, namespaceResolver) {
+export default function staticallyCompileXPath (xpathString, compilationOptions, executionSpecificStaticContext) {
 	var cacheKey = compilationOptions.allowXQuery ?
 		`XQuery_${xpathString}` :
 		`XPath_${xpathString}`;
@@ -14,20 +13,6 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 	}
 
 	const compiledSelector = createSelectorFromXPath(xpathString, compilationOptions);
-
-	/**
-	 * @type {!Object<string, function():!../selectors/dataTypes/Sequence>}
-	 */
-	const typedVariables = Object.keys(variables)
-		.reduce(function (typedVariables, variableName) {
-			if (variables[variableName] === undefined) {
-				return typedVariables;
-			}
-			typedVariables[variableName] = `GLOBAL_${variableName}`;
-			return typedVariables;
-		}, Object.create(null));
-
-	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, typedVariables);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
 	compiledSelector.performStaticEvaluation(rootStaticContext);

@@ -42,9 +42,11 @@ class LetExpression extends Selector {
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		dynamicContext.variableBindings[this._variableBinding] = createDoublyIterableSequence(this._bindingSequence.evaluateMaybeStatically(dynamicContext, executionParameters));
+		const scopedContext = dynamicContext.scopeWithVariableBindings({
+			[this._variableBinding]: createDoublyIterableSequence(this._bindingSequence.evaluateMaybeStatically(dynamicContext, executionParameters))
+		});
 
-		return this._returnExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
+		return this._returnExpression.evaluateMaybeStatically(scopedContext, executionParameters);
 	}
 }
 export default LetExpression;
