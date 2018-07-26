@@ -11,8 +11,9 @@ import Sequence from './selectors/dataTypes/Sequence';
 import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
 import staticallyCompileXPath from './parsing/staticallyCompileXPath';
 
-import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
+import ExecutionSpecificStaticContext from './selectors/ExecutionSpecificStaticContext';
 
+import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
 
 function normalizeEndOfLines (xpathString) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
@@ -179,7 +180,8 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 	};
 
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
-	const compiledSelector = staticallyCompileXPath(xpathSelector, compilationOptions, variables, namespaceResolver);
+	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, variables);
+	const compiledSelector = staticallyCompileXPath(xpathSelector, compilationOptions, executionSpecificStaticContext);
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
@@ -232,7 +234,8 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		contextSequence: contextSequence,
 		contextItem: contextSequence.first(),
 		variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
-			typedVariableByName[`GLOBAL_${variableName}`] = () => adaptJavaScriptValueToXPathValue(variables[variableName]);
+			typedVariableByName[executionSpecificStaticContext.lookupVariable(null, variableName)] =
+				() => adaptJavaScriptValueToXPathValue(variables[variableName]);
 			return typedVariableByName;
 		}, Object.create(null))
 	});

@@ -30,6 +30,10 @@ class VarRef extends Selector {
 	}
 
 	performStaticEvaluation (staticContext) {
+		if (this.prefix) {
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+		}
+
 		this._variableBindingName = staticContext.lookupVariable(this._namespaceURI, this._variableName);
 		if (!this._variableBindingName) {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');

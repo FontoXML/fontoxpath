@@ -21,7 +21,14 @@ import {
 export default class ExecutionSpecificStaticContext {
 	constructor (namespaceResolver, variableByName) {
 		this._namespaceResolver = namespaceResolver;
-		this._variableByName = variableByName;
+		this._variableBindingByName = Object.keys(variableByName)
+			.reduce((bindings, variableName) => {
+				if (variableByName[variableName] === undefined) {
+					return bindings;
+				}
+				bindings[variableName] = `GLOBAL_${variableName}`;
+				return bindings;
+			}, Object.create(null));
 
 		/**
 		 * This flag will be set to true if this EvaluationContext was used while statically
@@ -31,7 +38,7 @@ export default class ExecutionSpecificStaticContext {
 	}
 
 	resolveNamespace (prefix) {
-		// See if it 'statically' known:
+		// See if it 'globally' known:
 		if (staticallyKnownNamespaceByPrefix[prefix]) {
 			return staticallyKnownNamespaceByPrefix[prefix];
 		}
@@ -51,7 +58,7 @@ export default class ExecutionSpecificStaticContext {
 			return null;
 		}
 
-		return this._variableByName[localName];
+		return this._variableBindingByName[localName];
 	}
 
 	lookupFunction (namespaceURI, localName, arity) {

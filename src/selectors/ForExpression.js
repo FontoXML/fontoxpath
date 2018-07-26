@@ -3,13 +3,6 @@ import Sequence from './dataTypes/Sequence';
 import Specificity from './Specificity';
 import { DONE_TOKEN } from './util/iterators';
 
-function buildVarName ({ prefix, namespaceURI, name }, staticContext) {
-	if (namespaceURI) {
-		return `Q{${namespaceURI}}${name}}`;
-	}
-	return `Q${staticContext.lookupNamespaceURI(prefix)}${name}`;
-}
-
 /**
  * @extends {Selector}
  */
@@ -82,11 +75,12 @@ class ForExpression extends Selector {
 							break;
 						}
 
-						dynamicContext.variableBindings[this._variableBindingKey] =
-							() => Sequence.singleton(currentClauseValue.value);
+						const nestedContext = dynamicContext.scopeWithVariableBindings({
+							[this._variableBindingKey]: () => Sequence.singleton(currentClauseValue.value)
+						});
 
 						returnIterator = this._returnExpression.evaluateMaybeStatically(
-							dynamicContext,
+							nestedContext,
 							executionParameters
 						).value();
 					}
