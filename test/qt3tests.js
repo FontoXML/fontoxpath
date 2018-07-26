@@ -241,7 +241,7 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
   let $dependencies := (./dependency | ../dependency)
   return not(
      $dependencies/@value = (
-       (:"schemaValidation",:)
+       "schemaValidation",
        "schemaImport",
        (:"staticTyping",:)
        (:"serialization",:)
