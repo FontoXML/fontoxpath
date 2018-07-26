@@ -14,7 +14,7 @@ function buildFormattedFunctionName (functionReference) {
  */
 class NamedFunctionRef extends Selector {
 	/**
-	 * @param  {{prefix:string, namespaceURI:string, name:string}}    functionReference
+	 * @param  {{prefix:string, namespaceURI:string, localName:string}}    functionReference
 	 * @param  {number}    arity
 	 */
 	constructor (functionReference, arity) {
@@ -48,7 +48,7 @@ class NamedFunctionRef extends Selector {
 		}
 
 		this._functionProperties = staticContext.lookupFunction(namespaceURI, this._functionReference.localName, this._arity) || null;
-;
+
 		if (!this._functionProperties) {
 			throw new Error(`XPST0017: Function ${buildFormattedFunctionName(this._functionReference)} with arity of ${this._arity} not registered. ${functionRegistry.getAlternativesAsStringFor(this._functionReference.localName)}`);
 		}

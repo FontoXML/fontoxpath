@@ -28,7 +28,7 @@ function fontoxpathEvaluate (dynamicContext, executionParameters, _staticContext
 				}
 				queryString = queryValue.value.value;
 				const variables = args.first().keyValuePairs.reduce((expandedArgs, arg) => {
-					expandedArgs[arg.key.value] = `GLOBAL_${arg.key.value}`;
+					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value);
 					return expandedArgs;
 				}, {});
 
@@ -41,27 +41,22 @@ function fontoxpathEvaluate (dynamicContext, executionParameters, _staticContext
 					new StaticContext(
 						new ExecutionSpecificStaticContext(
 							() => null,
-							args.first().keyValuePairs.reduce((expandedArgs, arg) => {
-								expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value);
-								return expandedArgs;
-							}, variables))));
+							Object.keys(variables).reduce(
+								(vars, varName) => {
+									vars[varName] = varName;
+									return vars;
+								}, {}))));
 
 				const context = contextItemSequence.isEmpty() ? {
 					contextItem: null,
 					contextSequence: contextItemSequence,
 					contextItemIndex: -1,
-					variableBindings: variables,
-					domFacade: executionParameters.domFacade,
-					resolveNamespacePrefix: dynamicContext.resolveNamespacePrefix,
-					createSelectorFromXPath: dynamicContext.createSelectorFromXPath
+					variableBindings: variables
 				} : {
 					contextItem: contextItemSequence.first(),
 					contextSequence: contextItemSequence,
 					contextItemIndex: 0,
-					variableBindings: variables,
-					domFacade: executionParameters.domFacade,
-					resolveNamespacePrefix: dynamicContext.resolveNamespacePrefix,
-					createSelectorFromXPath: dynamicContext.createSelectorFromXPath
+					variableBindings: variables
 				};
 				const innerDynamicContext = new DynamicContext(context);
 

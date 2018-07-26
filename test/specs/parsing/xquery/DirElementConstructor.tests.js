@@ -27,6 +27,15 @@ describe('DirElementConstructor', () => {
 	it('Joins inner expressions using spaces', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('(<element attr="{(1,2,3)}"/>)/@attr = "1 2 3"', documentNode, undefined, {}, { language: 'XQuery3.1' }));
 	});
+	it('Allows creating namespaced elements', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('(<xxx:element xmlns:xxx="XXX"/>)', documentNode, undefined, {}, { language: 'XQuery3.1' }));
+	});
+	it('Allows creating namespaced elements with attributes', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('some $attr in <element xmlns="XXX" attr="0"/>/@* satisfies node-name($attr) => prefix-from-QName() => empty()', documentNode, undefined, {}, { language: 'XQuery3.1' }));
+	});
+	it('Allows creating namespaced elements without prefixes', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('<element xmlns="XXX"/> => node-name() => prefix-from-QName() => empty()', documentNode, undefined, {}, { language: 'XQuery3.1' }));
+	});
 	it('Allows mixing inner expressions and direct attributes', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('(<element attr="1 2 3 {(4,5,6)} 7 8 9"/>)/@attr = "1 2 3 4 5 6 7 8 9"', documentNode, undefined, {}, { language: 'XQuery3.1' }));
 	});

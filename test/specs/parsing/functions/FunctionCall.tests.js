@@ -71,6 +71,9 @@ return $fib-entries
 	it('parses a function with a no arguments',
 		() => chai.assert.isFalse(evaluateXPathToBoolean('let $fn := false#0 return $fn()', documentNode)));
 
+	it('parses a dynamic functionc all with the arrow syntax',
+		() => chai.assert.isFalse(evaluateXPathToBoolean('let $fn := not#1 return true() => $fn()', documentNode)));
+
 	it('throws when the base expression does not evaluate to a function',
 		() => chai.assert.throws(() => evaluateXPathToString('let $notfn := 123 return $notfn("someArgument")', documentNode), 'XPTY0004'));
 

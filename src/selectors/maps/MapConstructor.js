@@ -26,7 +26,7 @@ class MapConstructor extends Selector {
 
 	evaluate (dynamicContext, executionParameters) {
 		const keySequences = this._entries
-				.map(kvp => kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(dynamicContext, executionParameters).switchCases({
+				.map(kvp => kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters).atomize( executionParameters).switchCases({
 					default: () => {
 						throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
 					},

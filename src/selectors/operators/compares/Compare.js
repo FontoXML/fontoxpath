@@ -56,8 +56,8 @@ class Compare extends Selector {
 						return nodeCompare(this._operator, executionParameters.domFacade, firstSequence, secondSequence);
 					}
 					// Atomize both sequences
-					const firstAtomizedSequence = firstSequence.atomize(dynamicContext);
-					const secondAtomizedSequence = secondSequence.atomize(dynamicContext);
+					const firstAtomizedSequence = firstSequence.atomize(executionParameters);
+					const secondAtomizedSequence = secondSequence.atomize(executionParameters);
 
 					if (this._compare === 'valueCompare') {
 						return firstAtomizedSequence.switchCases({

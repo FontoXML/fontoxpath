@@ -8,7 +8,7 @@ import zipSingleton from '../util/zipSingleton';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 /**
- * @type {function(!../DynamicContext, !../ExecutionParameters, !Sequence): !Sequence}
+ * @type {function(!../DynamicContext, !../ExecutionParameters, !../StaticContext, !Sequence): !Sequence}
  */
 const fnString = builtinStringFunctions.functions.string;
 
@@ -42,10 +42,18 @@ function fnNodeName (_dynamicContext, _executionParameters, staticContext, seque
 	});
 }
 
-function fnName (dynamicContext, executionParameters, _staticContext, sequence) {
+function fnName (dynamicContext, executionParameters, staticContext, sequence) {
 	return sequence.switchCases({
 		empty: () => Sequence.empty(),
-		default: () => fnString(dynamicContext, executionParameters, _staticContext, fnNodeName(dynamicContext, executionParameters, _staticContext, sequence))
+		default: () => fnString(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			fnNodeName(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				sequence))
 	});
 }
 

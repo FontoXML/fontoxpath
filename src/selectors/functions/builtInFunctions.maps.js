@@ -183,7 +183,7 @@ function mapRemove (_dynamicContext, _executionParameters, _staticContext, mapSe
  * @param   {!Sequence}           functionItemSequence
  * @return  {!Sequence}
  */
-function mapForEach (dynamicContext, executionParameters, _staticContext, mapSequence, functionItemSequence) {
+function mapForEach (dynamicContext, executionParameters, staticContext, mapSequence, functionItemSequence) {
 	return zipSingleton(
 		[mapSequence, functionItemSequence],
 		([map, functionItem]) => {
@@ -192,6 +192,7 @@ function mapForEach (dynamicContext, executionParameters, _staticContext, mapSeq
 					undefined,
 					dynamicContext,
 					executionParameters,
+					staticContext,
 					Sequence.singleton(keyValuePair.key),
 					keyValuePair.value);
 			}));

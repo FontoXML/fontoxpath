@@ -1,25 +1,25 @@
 {
-	function appendRest (arr, optionalArr) {
-		if (!optionalArr) {
-			return arr;
-		}
-		return arr.concat(optionalArr);
-	}
+    function appendRest (arr, optionalArr) {
+        if (!optionalArr) {
+            return arr;
+        }
+        return arr.concat(optionalArr);
+    }
 
-	function accumulateDirContents (parts) {
-		if (!parts.length) {
-			return [];
-		}
-		var result = [parts[0]];
-		for (var i = 1; i < parts.length; ++i) {
-			if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
-				result[result.length-1] += parts[i];
-				continue;
-			}
-			result.push(parts[i]);
-		}
-		return result;
-	}
+    function accumulateDirContents (parts) {
+        if (!parts.length) {
+            return [];
+        }
+        var result = [parts[0]];
+        for (var i = 1; i < parts.length; ++i) {
+            if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
+                result[result.length-1] += parts[i];
+                continue;
+            }
+            result.push(parts[i]);
+        }
+        return result;
+    }
 }
 
 // 1
@@ -57,11 +57,11 @@ ExprSingle
 
 // 8
 ForExpr = clauses:SimpleForClause S "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
-	// The bindings part consists of the rangeVariable and the bindingSequence.
-	// Multiple bindings are syntactic sugar for 'for $x in 1 return for $x in $y return $x * 2'
-	return clauses.reduceRight(function (expression, clause) {
-	    return ["forExpression"].concat(clause, [expression]);
-	 }, returnExpr)
+    // The bindings part consists of the rangeVariable and the bindingSequence.
+    // Multiple bindings are syntactic sugar for 'for $x in 1 return for $x in $y return $x * 2'
+    return clauses.reduceRight(function (expression, clause) {
+        return ["forExpression"].concat(clause, [expression]);
+     }, returnExpr)
   }
 
 // 9
@@ -73,11 +73,11 @@ SimpleForBinding = "$" varName:VarName S "in" S expr:ExprSingle {return [varName
 // 11
 LetExpr
 = bindings:SimpleLetClause _ "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
-	// The bindings part consists of the rangeVariable and the bindingSequence.
-	// Multiple bindings are syntactic sugar for 'let $x := 1 return let $y := $x * 2'
-	return bindings.reduceRight(function (expression, binding) {
-	    return ["let"].concat(binding, [expression]);
-	 }, returnExpr)
+    // The bindings part consists of the rangeVariable and the bindingSequence.
+    // Multiple bindings are syntactic sugar for 'let $x := 1 return let $y := $x * 2'
+    return bindings.reduceRight(function (expression, binding) {
+        return ["let"].concat(binding, [expression]);
+     }, returnExpr)
   }
 
 // 12
@@ -111,7 +111,7 @@ ComparisonExpr
 StringConcatExpr
  = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* {
      if (!rest.length) return first;
-	 var args = [first].concat(rest);
+     var args = [first].concat(rest);
      return appendRest(["functionCall", ["namedFunctionRef", [null, "http://www.w3.org/2005/xpath-functions", "concat"], args.length], args])
    }
 
@@ -129,10 +129,10 @@ multiplicativeExprOp
  = op:("*" / ( op:("div" / "idiv" / "mod") AssertAdjacentOpeningTerminal {return op}))
 MultiplicativeExpr
  = lhs:UnionExpr rest:( _ op:multiplicativeExprOp _ rhs:UnionExpr {return {op: op, rhs: rhs}})* {
-		return rest.length === 0 ? lhs : rest.reduce(function (inner, nesting) {
-			return ["binaryOperator", nesting.op, inner, nesting.rhs]
-		}, lhs)
-	}
+        return rest.length === 0 ? lhs : rest.reduce(function (inner, nesting) {
+            return ["binaryOperator", nesting.op, inner, nesting.rhs]
+        }, lhs)
+    }
 
 // 23
 UnionExpr
@@ -169,7 +169,11 @@ ArrowExpr
      if (!functionParts.length) return lhs;
      return functionParts.reduce(function (previousFunction, functionPart) {
        var args = [previousFunction].concat(functionPart[1]);
-       return ["functionCall", ["namedFunctionRef", functionPart[0], args.length], args];
+       return [
+         "functionCall",
+         functionPart[0][0] === 'namedFunctionRef' ? functionPart[0].concat([args.length]) : functionPart[0],
+         args
+       ];
      }, lhs);
    }
 
@@ -295,7 +299,7 @@ Lookup = "?" key:KeySpecifier {return key}
 KeySpecifier = NCName / VarRef / ParenthesizedExpr / "*"
 
 // 55
-ArrowFunctionSpecifier = EQName / VarRef / ParenthesizedExpr
+ArrowFunctionSpecifier = name:EQName {return ["namedFunctionRef", name]} / VarRef / ParenthesizedExpr
 
 // 56
 PrimaryExpr
@@ -586,7 +590,7 @@ QName = PrefixedName / UnprefixedName
 NCName = start:NCNameStartChar rest:(NCNameChar*) {return start + rest.join("")}
 
 // 124 Note: https://www.w3.org/TR/REC-xml/#NT-Char
-Char = [\t\n\r -\uD7FF\uE000\uFFFD] / [\uD800-\uDBFF][\uDC00-\uDFFF]	/* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
+Char = [\t\n\r -\uD7FF\uE000\uFFFD] / [\uD800-\uDBFF][\uDC00-\uDFFF] /* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
 
 // 125
 Digits
@@ -690,7 +694,7 @@ PITarget = !(("X"/"x")("M"/"m")("L"/"l")) Name
 // XML types
 PrefixedName = prefix:Prefix ":" local:LocalPart {return [prefix, local]}
 
-UnprefixedName = local:LocalPart {return [null, local]}
+UnprefixedName = local:LocalPart {return ['', local]}
 
 LocalPart = NCName
 

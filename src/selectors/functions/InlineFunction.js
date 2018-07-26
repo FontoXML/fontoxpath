@@ -34,7 +34,7 @@ class InlineFunction extends Selector {
 	}
 
 	performStaticEvaluation (staticContext) {
-		const scopedStaticContext = staticContext.introduceScope();
+		staticContext.introduceScope();
 		this._parameterBindingNames = this._parameterNames
 			.map(name => {
 				let namespaceURI = name.namespaceURI;
@@ -44,10 +44,11 @@ class InlineFunction extends Selector {
 				if (!namespaceURI === null && prefix !== '*') {
 					namespaceURI = staticContext.resolveNamespace(prefix);
 				}
-				return scopedStaticContext.registerVariable(namespaceURI, localName);
+				return staticContext.registerVariable(namespaceURI, localName);
 			});
 
-		this._functionBody.performStaticEvaluation(scopedStaticContext);
+		this._functionBody.performStaticEvaluation(staticContext);
+		staticContext.removeScope();
 	}
 
 	evaluate (dynamicContext, executionParameters) {

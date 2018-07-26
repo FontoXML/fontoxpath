@@ -19,12 +19,12 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 
 class FunctionValue {
 	/**
-	 * @param  {{value: !function(!../DynamicContext, !Sequence): !Sequence, name: string, argumentTypes: !Array<string>, arity: number, returnType: string}}  properties
+	 * @param  {{value: !function(!../DynamicContext, !Sequence): !Sequence, localName: string, argumentTypes: !Array<string>, arity: number, returnType: string}}  properties
 	 */
-	constructor ({ value, name, argumentTypes, arity, returnType }) {
+	constructor ({ value, localName, argumentTypes, arity, returnType }) {
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
-		this._name = name;
+		this._localName = localName;
 		this._arity = arity;
 		this._returnType = returnType;
 
@@ -56,7 +56,7 @@ class FunctionValue {
 
 		var functionItem = new FunctionValue({
 			value: curriedFunction,
-			name: 'bound function',
+			localName: 'boundFunction',
 			argumentTypes: argumentTypes,
 			arity: argumentTypes.length,
 			returnType: this._returnType
@@ -78,7 +78,7 @@ class FunctionValue {
 	}
 
 	getName () {
-		return this._name;
+		return this._localName;
 	}
 }
 

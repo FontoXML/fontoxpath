@@ -31,13 +31,23 @@ class QuantifiedExpression extends Selector {
 	}
 
 	performStaticEvaluation (staticContext) {
-		let scopedContext = staticContext.introduceScope();
-		this._inClauseVariableNames = this._inClauseNames.map(inClauseName => {
-			scopedContext = scopedContext.introduceScope();
-			return scopedContext.registerVariable(inClauseName.namespaceURI, inClauseName.name);
-		});
-		this._inClauseExpressions.forEach(expr => expr.performStaticEvaluation(staticContext));
-		this._satisfiesExpr.performStaticEvaluation(scopedContext);
+		this._inClauseVariableNames = [];
+		for (let i = 0, l = this._inClauseNames.length; i < l; ++i) {
+			const expr = this._inClauseExpressions[i];
+			expr.performStaticEvaluation(staticContext);
+
+			// The existance of this variable should be known for the next expression
+			staticContext.introduceScope();
+			const inClauseName = this._inClauseNames[i];
+			const varBindingName = staticContext.registerVariable(inClauseName.namespaceURI, inClauseName.name);
+			this._inClauseVariableNames[i] = varBindingName;
+		}
+
+		this._satisfiesExpr.performStaticEvaluation(staticContext);
+
+		for (let i = 0, l = this._inClauseNames.length; i < l; ++i) {
+			staticContext.removeScope();
+		}
 	}
 
 	evaluate (dynamicContext, executionParameters) {

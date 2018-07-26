@@ -33,7 +33,7 @@ class CastableAsOperator extends Selector {
 		/**
 		 * @type {!Sequence}
 		 */
-		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(dynamicContext, executionParameters);
+		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters);
 		return evaluatedExpression.switchCases({
 			empty: () => {
 				if (!this._allowsEmptySequence) {

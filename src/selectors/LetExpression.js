@@ -33,11 +33,12 @@ class LetExpression extends Selector {
 	}
 
 	performStaticEvaluation (staticContext) {
-		const scopedStaticContext = staticContext.introduceScope();
-		this._variableBinding = scopedStaticContext.registerVariable(null, this._rangeVariable);
+		staticContext.introduceScope();
+		this._variableBinding = staticContext.registerVariable(null, this._rangeVariable);
 
 		this._bindingSequence.performStaticEvaluation(staticContext);
-		this._returnExpression.performStaticEvaluation(scopedStaticContext);
+		this._returnExpression.performStaticEvaluation(staticContext);
+		staticContext.removeScope();
 	}
 
 	evaluate (dynamicContext, executionParameters) {

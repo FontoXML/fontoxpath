@@ -52,10 +52,11 @@ class ForExpression extends Selector {
 		}
 
 		this._clauseExpression.performStaticEvaluation(staticContext);
-		const scopedContext = staticContext.introduceScope();
-		this._variableBindingKey = scopedContext.registerVariable(this._namespaceURI, this._localName);
+		staticContext.introduceScope();
+		this._variableBindingKey = staticContext.registerVariable(this._namespaceURI, this._localName);
 
-		this._returnExpression.performStaticEvaluation(scopedContext);
+		this._returnExpression.performStaticEvaluation(staticContext);
+		staticContext.removeScope();
 	}
 
 	evaluate (dynamicContext, executionParameters) {
