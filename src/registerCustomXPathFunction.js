@@ -67,11 +67,11 @@ function splitFunctionName (name) {
 export default function registerCustomXPathFunction (name, signature, returnType, callback) {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
-	const callFunction = function (dynamicContext) {
+	const callFunction = function (dynamicContext, executionParameters, _staticContext) {
 			// Make arguments a read array instead of a array-like object
 			const args = Array.from(arguments);
 
-			args.splice(0, 1);
+			args.splice(0, 3);
 
 			const newArguments = args.map(function (argument, index) {
 					return adaptXPathValueToJavascriptValue(argument, signature[index]);
@@ -80,7 +80,7 @@ export default function registerCustomXPathFunction (name, signature, returnType
 			// Adapt the domFacade into another object to prevent passing everything. The closure compiler might rename some variables otherwise.
 			// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
 			const dynamicContextAdapter = {};
-			dynamicContextAdapter['domFacade'] = dynamicContext.domFacade;
+			dynamicContextAdapter['domFacade'] = executionParameters.domFacade;
 
 			const jsResult = callback.apply(undefined, [dynamicContextAdapter].concat(newArguments));
 			const xpathResult = adaptJavaScriptValueToXPathValue(jsResult, returnType);

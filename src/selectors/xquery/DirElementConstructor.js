@@ -65,12 +65,10 @@ class DirElementConstructor extends Selector {
 	 * @param  {!../StaticContext}  staticContext
 	 */
 	performStaticEvaluation (staticContext) {
-		this._namespaceURI = staticContext.resolveNamespace(this._prefix);
-
 		var unresolvedAttributes = [];
 
 		this._attributes.forEach(({ name, partialValues }) => {
-			if (!(name[1] === 'xmlns' && name[0] === null) && name[0] !== 'xmlns') {
+			if (!(name[1] === 'xmlns' && name[0] === '') && name[0] !== 'xmlns') {
 				unresolvedAttributes.push({ name, partialValues });
 				return;
 			}
@@ -87,12 +85,9 @@ class DirElementConstructor extends Selector {
 		});
 
 		// Register namespace related things
-		/**
-		 * @type  {!../StaticContext}
-		 */
-		const scopedStaticContext = staticContext.introduceScope();
+		staticContext.introduceScope();
 		Object.keys(this._namespacesInScope)
-			.forEach(prefix => scopedStaticContext.registerNamespace(prefix || '', this._namespacesInScope));
+			.forEach(prefix => staticContext.registerNamespace(prefix || '', this._namespacesInScope[prefix]));
 
 		// Now resolve the other attributes
 		this._resolvedAttributes = unresolvedAttributes
@@ -102,13 +97,17 @@ class DirElementConstructor extends Selector {
 						qualifiedName: {
 							prefix: name[0],
 							localPart: name[1],
-							namespaceURI: scopedStaticContext.resolveNamespace(name[0])
+							namespaceURI: name[0] ? staticContext.resolveNamespace(name[0]) : null
 						},
 						partialValues
 					})
 			);
 
 		this._childSelectors.forEach(subselector => subselector.performStaticEvaluation(staticContext));
+
+		this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+
+		staticContext.removeScope();
 	}
 
 	/**
@@ -128,7 +127,7 @@ class DirElementConstructor extends Selector {
 				.map(
 					value => typeof value === 'string' ?
 						Sequence.singleton({ value, type: 'xs:string' }) :
-					value.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(dynamicContext, executionParameters)),
+					value.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters)),
 			hasAllValues: false,
 			value: null
 		}));
@@ -189,7 +188,7 @@ class DirElementConstructor extends Selector {
 				allChildNodesItrResult.value.forEach(childNodes => {
 					childNodes.forEach((childNode, i) => {
 						if (isSubtypeOf(childNode.type, 'xs:anyAtomicType')) {
-							const atomizedValue = castToType(atomize(childNode, dynamicContext), 'xs:string').value;
+							const atomizedValue = castToType(atomize(childNode, executionParameters), 'xs:string').value;
 							if (i !== 0 && isSubtypeOf(childNodes[i - 1].type, 'xs:anyAtomicType')) {
 								element.appendChild(nodesFactory.createTextNode(' ' + atomizedValue));
 								return;

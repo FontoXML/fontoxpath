@@ -266,7 +266,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 				return '';
 			}
 			// Atomize to convert (attribute)nodes to be strings
-			return allValues.value.map(value => castToType(atomize(value, dynamicContext), 'xs:string').value).join(' ');
+			return allValues.value.map(value => castToType(atomize(value, executionParameters), 'xs:string').value).join(' ');
 		}
 		case evaluateXPath.STRINGS_TYPE: {
 			const allValues = rawResults.tryGetAllValues();
@@ -443,7 +443,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 			if (allValues.value.length === 1) {
 				return atomize(allValues.value[0], dynamicContext).value;
 			}
-			return new Sequence(allValues.value).atomize(dynamicContext, executionParameters).getAllValues().map(function (atomizedValue) {
+			return new Sequence(allValues.value).atomize(executionParameters).getAllValues().map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
 		}

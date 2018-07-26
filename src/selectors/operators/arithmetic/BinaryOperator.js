@@ -318,7 +318,7 @@ class BinaryOperator extends Selector {
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		const firstValueSequence = this._firstValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(dynamicContext, executionParameters);
+		const firstValueSequence = this._firstValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters);
 		return firstValueSequence.mapAll(
 			firstValues => {
 				if (firstValues.length === 0) {
@@ -326,7 +326,7 @@ class BinaryOperator extends Selector {
 					// As per spec, we do not have to evaluate the second part, though we could.
 					return Sequence.empty();
 				}
-				const secondValueSequence = this._secondValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(dynamicContext, executionParameters);
+				const secondValueSequence = this._secondValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters);
 				return secondValueSequence.mapAll(
 					secondValues => {
 						if (secondValues.length === 0) {

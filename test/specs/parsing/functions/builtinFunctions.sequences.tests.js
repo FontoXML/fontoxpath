@@ -325,6 +325,9 @@ describe('Functions and operators on sequences', () => {
 				it('returns true for two elements which are equal', () => {
 					chai.assert.isTrue(evaluateXPathToBoolean('<a></a> => deep-equal((<a/>))', documentNode, undefined, {}, { language: 'XQuery3.1' }));
 				});
+				it('returns true for elements which only differ on prefix', () => {
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(<e xmlns="http://www.example.com/ns"/>, <p:e xmlns:p="http://www.example.com/ns"/>)', documentNode, undefined, {}, { language: 'XQuery3.1' }));
+				});
 
 				// attribute
 				it('returns true for two sequences containing two equal attribute nodes', () => {

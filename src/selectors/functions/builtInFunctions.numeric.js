@@ -303,13 +303,13 @@ export default {
 			localName: 'number',
 			argumentTypes: [],
 			returnType: 'xs:double',
-			callFunction: (dynamicContext, executionParameters, _staticContext) => {
+			callFunction: (dynamicContext, executionParameters, staticContext) => {
 				const atomizedContextItem = dynamicContext.contextItem &&
-					transformArgument('xs:anyAtomicType?', Sequence.singleton(dynamicContext.contextItem), dynamicContext, 'fn:number');
+					transformArgument('xs:anyAtomicType?', Sequence.singleton(dynamicContext.contextItem), executionParameters, 'fn:number');
 				if (!atomizedContextItem) {
 					throw new Error('XPDY0002: fn:number needs an atomizable context item.');
 				}
-				return fnNumber(dynamicContext, executionParameters, _staticContext, atomizedContextItem);
+				return fnNumber(dynamicContext, executionParameters, staticContext, atomizedContextItem);
 			}
 		},
 

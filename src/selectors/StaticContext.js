@@ -1,7 +1,18 @@
 import Context from './Context';
 
 function createHashKey (namespaceURI, localName) {
-	return `Q{${namespaceURI}}${localName}`;
+	return `Q{${namespaceURI || ''}}${localName}`;
+}
+
+function lookupInOverrides (overrides, key) {
+	key = key + '';
+	for (let i = overrides.length - 1; i >= 0; --i) {
+		if (key in overrides[i]) {
+			return overrides[i][key];
+		}
+	}
+
+	return undefined;
 }
 
 /**
@@ -21,47 +32,25 @@ export default class StaticContext {
 		 */
 		this.parentContext = parentContext;
 
+		this._scopeDepth = 0;
+		this._scopeCount = 0;
+
+		this._registeredNamespaceURIByPrefix = [Object.create(null)];
+		this._registeredVariableBindingByHashKey = [Object.create(null)];
+
+		// Functions may never be added for only a closure
 		this._registeredFunctionsByHash = Object.create(null);
-		this._registeredNamespaces = Object.create(null);
-		this._registeredVariablesByHash = Object.create(null);
 	}
 
 	registerFunctionDefinition (namespaceURI, localName, arity, compileFunction) {
-		if (!this._registeredFunctionsByHash[createHashKey(namespaceURI, localName)]) {
-			this._registeredFunctionsByHash[createHashKey(namespaceURI, localName)] = [];
-		}
-		this._registeredFunctionsByHash[createHashKey(namespaceURI, localName)].push({
-			arity: arity,
-			isCompiled: false,
-			compileFunction: compileFunction,
-			compiledFunction: null
-		});
+		// TODO
 	}
 
 	lookupFunction (namespaceURI, localName, arity) {
-		const functionDefinitionsForFunction = this._registeredFunctionsByHash[createHashKey(namespaceURI, localName)];
-
-		if (!functionDefinitionsForFunction) {
-			return this.parentContext === null ? null : this.parentContext.lookupFunction(
-				namespaceURI,
-				localName,
-				arity);
-		}
-
-		const functionDefinitionForArity = functionDefinitionsForFunction.find(func => func.arity === arity);
-		if (!functionDefinitionForArity) {
-			return this.parentContext === null ? null : this.parentContext.lookupFunction(
-				namespaceURI,
-				localName,
-				arity);
-		}
-
-		if (!functionDefinitionForArity.isCompiled) {
-			functionDefinitionForArity.compiledFunction = functionDefinitionForArity.compileFunction();
-			functionDefinitionForArity.isCompiled = true;
-		}
-
-		return functionDefinitionForArity.compiledFunction;
+		return this.parentContext === null ? null : this.parentContext.lookupFunction(
+			namespaceURI,
+			localName,
+			arity);
 	}
 
 	/**
@@ -71,32 +60,64 @@ export default class StaticContext {
 	 * from when the dynamic context of the variable will be known.
 	 */
 	registerVariable (namespaceURI, localName) {
-		return this._registeredVariablesByHash[createHashKey(namespaceURI, localName)] =
-			createHashKey(namespaceURI, localName);
+		const hash = createHashKey(namespaceURI, localName);
+		return this._registeredVariableBindingByHashKey[this._scopeDepth][hash] = `${hash}[${this._scopeCount}]`;
 	}
 
 	registerNamespace (prefix, namespaceURI) {
-		if (prefix in this._registeredNamespaces) {
-			throw new Error('Duplicate namespace decalaration');
-		}
-
-		this._registeredNamespaces[prefix] = namespaceURI;
+		this._registeredNamespaceURIByPrefix[this._scopeDepth][prefix] = namespaceURI;
 	}
 
 	lookupVariable (namespaceURI, localName) {
-		return this._registeredVariablesByHash[createHashKey(namespaceURI, localName)] ||
-			this.parentContext.lookupVariable(namespaceURI, localName);
+		const hash = createHashKey(namespaceURI, localName);
+		const varNameInCurrentScope = lookupInOverrides(this._registeredVariableBindingByHashKey, hash);
+		if (varNameInCurrentScope) {
+			return varNameInCurrentScope;
+		}
+		return this.parentContext.lookupVariable(namespaceURI, localName);
 	}
 
-	/**
-	 * @return {!StaticContext}
-	 */
 	introduceScope () {
-		return new StaticContext(this);
+		this._scopeCount++;
+		this._scopeDepth++;
+
+		this._registeredNamespaceURIByPrefix[this._scopeDepth] = Object.create(null);
+		this._registeredVariableBindingByHashKey[this._scopeDepth] = Object.create(null);
+	}
+
+	removeScope () {
+		this._registeredNamespaceURIByPrefix.length = this._scopeDepth;
+		this._registeredVariableBindingByHashKey.length = this._scopeDepth;
+		this._scopeDepth--;
 	}
 
 	resolveNamespace (prefix) {
-		return prefix in this._registeredNamespaces ? this._registeredNamespaces[prefix] :
-			this.parentContext === null ? null : this.parentContext.resolveNamespace(prefix);
+		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix || '');
+		if (uri === undefined) {
+			return this.parentContext === null ? undefined : this.parentContext.resolveNamespace(prefix);
+		}
+		return uri;
+	}
+
+	/**
+	 * Make a clone of this static context at the current scope that can be retained for later usage
+	 * (such as dynamic namespace lookups)
+	 *
+	 * @return {StaticContext}
+	 */
+	cloneContext () {
+		const contextAtThisPoint = new StaticContext(this.parentContext);
+		for (var i = 0; i < this._scopeDepth + 1; ++i) {
+			contextAtThisPoint._registeredNamespaceURIByPrefix = [Object.assign(
+				Object.create(null),
+				contextAtThisPoint._registeredNamespaceURIByPrefix[0],
+				this._registeredNamespaceURIByPrefix[i])];
+			contextAtThisPoint._registeredVariableBindingByHashKey = [Object.assign(
+				Object.create(null),
+				contextAtThisPoint._registeredVariableBindingByHashKey[0],
+				this._registeredVariableBindingByHashKey[i])];
+		}
+
+		return contextAtThisPoint;
 	}
 }

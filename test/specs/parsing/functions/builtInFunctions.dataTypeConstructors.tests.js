@@ -87,6 +87,9 @@ describe('Data type constructors', () => {
 				() => chai.assert.throws(() => evaluateXPathToBoolean('xs:QName("1abc") instance of xs:QName', documentNode), 'FORG0001'));
 			it('xs:QName() with prefix',
 				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("xs:abc") instance of xs:QName', documentNode)));
+			it('xs:QName() with prefix declared in an element constructor', () => {
+				chai.assert.isTrue(evaluateXPathToBoolean('<ele xmlns:prefix="XXX">{xs:QName("prefix:abc")}</ele>', documentNode, null, null, { language: 'XQuery3.1' }));
+			});
 			it('xs:QName() with unknown prefix',
 				() => chai.assert.throws(() => evaluateXPathToBoolean('xs:QName("abc:abc") instance of xs:QName', documentNode)), 'FORG0001');
 			it('xs:QName() without prefix',

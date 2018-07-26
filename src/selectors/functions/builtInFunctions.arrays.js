@@ -284,13 +284,14 @@ export default {
 			localName: 'subarray',
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'array(*)',
-			callFunction: function (dynamicContext, executionParameters, _staticContext, arraySequence, startSequence) {
+			callFunction: function (dynamicContext, executionParameters, staticContext, arraySequence, startSequence) {
 				const lengthSequence = Sequence.singleton(createAtomicValue(
 					arraySequence.first().members.length - startSequence.first().value + 1,
 					'xs:integer'));
 				return arraySubarray(
 					dynamicContext,
 					executionParameters,
+					staticContext,
 					arraySequence,
 					startSequence,
 					lengthSequence);

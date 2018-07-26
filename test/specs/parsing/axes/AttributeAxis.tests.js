@@ -38,6 +38,12 @@ describe('attribute', () => {
 		chai.assert.equal(evaluateXPathToString('attribute::someNamespace:someAttribute', element, null, null, { namespaceResolver: () => 'http://fontoxml.com/ns/' }), 'someValue');
 	});
 
+	it('allows namespaces using the EQName syntax', () => {
+		const element = documentNode.createElement('someElement');
+		element.setAttributeNS('http://fontoxml.com/ns/', 'someNamespace:someAttribute', 'someValue');
+		chai.assert.equal(evaluateXPathToString('attribute::Q{http://fontoxml.com/ns/}someAttribute', element, null, null, { namespaceResolver: () => 'http://fontoxml.com/ns/' }), 'someValue');
+	});
+
 	it('parses the shorthand for existence', () => {
 		const element = documentNode.createElement('someElement');
 		element.setAttribute('someAttribute', 'someValue');

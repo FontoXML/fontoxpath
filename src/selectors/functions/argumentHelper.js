@@ -18,13 +18,13 @@ function splitType (type) {
 	};
 }
 
-function mapItem (argumentItem, type, dynamicContext) {
+function mapItem (argumentItem, type, executionParameters) {
 	if (isSubtypeOf(argumentItem.type, type)) {
 		return argumentItem;
 	}
 
 	if (isSubtypeOf(argumentItem.type, 'node()')) {
-		argumentItem = atomize(argumentItem, dynamicContext);
+		argumentItem = atomize(argumentItem, executionParameters);
 	}
 	// Everything is an anyAtomicType, so no casting necessary.
 	if (type === 'xs:anyAtomicType') {
@@ -51,16 +51,16 @@ function mapItem (argumentItem, type, dynamicContext) {
  * Test whether the provided argument is valid to be used as an function argument of the given type
  * @param   {string}              argumentType
  * @param   {!Sequence}           argument
- * @param   {!../DynamicContext}  dynamicContext
+ * @param   {!../ExecutionParameters}  executionParameters
  * @param   {string}              functionName       Used for debugging purposes
  * @return  {?Sequence}
  */
-export const transformArgument = (argumentType, argument, dynamicContext, functionName) => {
+export const transformArgument = (argumentType, argument, executionParameters, functionName) => {
 	const { type, multiplicity } = splitType(argumentType);
 	switch (multiplicity) {
 		case '?':
 			return argument.switchCases({
-				default: () => argument.map(value => mapItem(value, type, dynamicContext)),
+				default: () => argument.map(value => mapItem(value, type, executionParameters)),
 				multiple: () => {
 					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "?", but got "+".`);
 				}
@@ -70,14 +70,14 @@ export const transformArgument = (argumentType, argument, dynamicContext, functi
 				empty: () => {
 					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`);
 				},
-				default: () => argument.map(value => mapItem(value, type, dynamicContext))
+				default: () => argument.map(value => mapItem(value, type, executionParameters))
 			});
 		case '*':
-			return argument.map(value => mapItem(value, type, dynamicContext));
+			return argument.map(value => mapItem(value, type, executionParameters));
 		default:
 			// excactly one
 			return argument.switchCases({
-				singleton: () => argument.map(value => mapItem(value, type, dynamicContext)),
+				singleton: () => argument.map(value => mapItem(value, type, executionParameters)),
 				default: () => {
 					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected exactly one`);
 }

@@ -99,8 +99,6 @@ function parseCharacterReferences (input) {
  * @return  {!../selectors/Selector}
  */
 function compile (ast, compilationOptions) {
-	const stringifiedAstFragment = JSON.stringify(ast);
-
 	const args = ast.slice(1);
 	switch (ast[0]) {
 			// Operators

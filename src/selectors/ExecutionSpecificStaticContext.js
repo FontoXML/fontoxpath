@@ -37,7 +37,11 @@ export default class ExecutionSpecificStaticContext {
 		}
 		this.executionContextWasRequired = true;
 
-		return this._namespaceResolver(prefix);
+		const uri = this._namespaceResolver(prefix);
+		if (uri === undefined && !prefix) {
+			return null;
+		}
+		return uri;
 	}
 
 	lookupVariable (namespaceURI, localName) {

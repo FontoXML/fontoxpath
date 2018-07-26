@@ -68,19 +68,20 @@ class NameTest extends TestAbstractExpression {
 		}
 
 		let resolvedNamespaceURI;
-		if (this._prefix === null) {
+		if (this._prefix === '') {
 			// An unprefixed QName, when used as a name test on an axis whose principal node kind is element,
 			//    has the namespace URI of the default element/type namespace in the expression context;
 			//    otherwise, it has no namespace URI.
 			if (nodeIsElement) {
-				resolvedNamespaceURI = this._namespaceURI;
+				resolvedNamespaceURI = this._namespaceURI || null;
 			}
 			else {
 				resolvedNamespaceURI = null;
 			}
 		}
 		else {
-			resolvedNamespaceURI = this._namespaceURI;
+			// We have a prefixed name test.
+			resolvedNamespaceURI = this._namespaceURI || null;
 		}
 
 		return node.value.namespaceURI === resolvedNamespaceURI;

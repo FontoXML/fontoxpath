@@ -25,7 +25,7 @@ class Unary extends Selector {
 
 	evaluate (dynamicContext, executionParameters) {
 		return this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters)
-			.atomize(dynamicContext)
+			.atomize(executionParameters)
 			.mapAll(atomizedValues => {
 				if (atomizedValues.length === 0) {
 					// Return the empty sequence when inputted the empty sequence
