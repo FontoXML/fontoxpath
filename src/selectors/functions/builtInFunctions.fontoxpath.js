@@ -11,12 +11,12 @@ import StaticContext from '../StaticContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 
 /**
- * @param  {!../DynamicContext}      dynamicContext
+ * @param  {!../DynamicContext}      _dynamicContext
  * @param  {!../ExecutionParameters} executionParameters
  * @param  {!../dataTypes/Sequence}  query
  * @param  {!../dataTypes/Sequence}  args
  */
-function fontoxpathEvaluate (dynamicContext, executionParameters, _staticContext, query, args) {
+function fontoxpathEvaluate (_dynamicContext, executionParameters, _staticContext, query, args) {
 	let resultIterator;
 	let queryString;
 	return new Sequence({

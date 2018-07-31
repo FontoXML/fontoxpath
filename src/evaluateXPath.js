@@ -11,7 +11,7 @@ import Sequence from './selectors/dataTypes/Sequence';
 import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
 import staticallyCompileXPath from './parsing/staticallyCompileXPath';
 
-import ExecutionSpecificStaticContext from './selectors/ExecutionSpecificStaticContext';
+import { generateGlobalVariableBindingName } from './selectors/ExecutionSpecificStaticContext';
 
 import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
 
@@ -180,8 +180,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 	};
 
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
-	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, variables);
-	const compiledSelector = staticallyCompileXPath(xpathSelector, compilationOptions, executionSpecificStaticContext);
+	const compiledSelector = staticallyCompileXPath(xpathSelector, compilationOptions, namespaceResolver, variables);
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
@@ -234,7 +233,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		contextSequence: contextSequence,
 		contextItem: contextSequence.first(),
 		variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
-			typedVariableByName[executionSpecificStaticContext.lookupVariable(null, variableName)] =
+			typedVariableByName[generateGlobalVariableBindingName(variableName)] =
 				() => adaptJavaScriptValueToXPathValue(variables[variableName]);
 			return typedVariableByName;
 		}, Object.create(null))

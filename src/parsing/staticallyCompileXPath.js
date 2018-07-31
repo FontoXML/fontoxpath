@@ -1,15 +1,22 @@
 import createSelectorFromXPath from './createSelectorFromXPath';
 
 import StaticContext from '../selectors/StaticContext';
+import ExecutionSpecificStaticContext from '../selectors/ExecutionSpecificStaticContext';
 
-import compiledSelectorCache from './compiledSelectorCache';
+import {
+	getStaticCompilationResultFromCache,
+	storeStaticCompilationResultInCache
+} from './compiledSelectorCache';
 
-export default function staticallyCompileXPath (xpathString, compilationOptions, executionSpecificStaticContext) {
-	var cacheKey = compilationOptions.allowXQuery ?
-		`XQuery_${xpathString}` :
-		`XPath_${xpathString}`;
-	if (compiledSelectorCache[cacheKey]) {
-		return compiledSelectorCache[cacheKey];
+export default function staticallyCompileXPath (xpathString, compilationOptions, namespaceResolver, variables) {
+	const language = compilationOptions.allowXQuery ? `XQuery` : `XPath`;
+
+	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, variables);
+
+	const fromCache = getStaticCompilationResultFromCache(xpathString, language, namespaceResolver, variables);
+
+	if (fromCache) {
+		return fromCache;
 	}
 
 	const compiledSelector = createSelectorFromXPath(xpathString, compilationOptions);
@@ -17,14 +24,7 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 
 	compiledSelector.performStaticEvaluation(rootStaticContext);
 
-	if (executionSpecificStaticContext.executionContextWasRequired) {
-		// We may not re-use this statically compiled XPath with another execution-time context because it depended on this part of information
-		return compiledSelector;
-	}
-
-	// Since the static context is static, we are now sure that this statically compiled XPath can
-	// be reused for other execution contexts.
-	compiledSelectorCache[cacheKey] = compiledSelector;
+	storeStaticCompilationResultInCache(xpathString, language, executionSpecificStaticContext, compiledSelector);
 
 	return compiledSelector;
 }
