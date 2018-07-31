@@ -88,10 +88,10 @@ class DynamicContext {
 	scopeWithVariableBindings (variableBindings) {
 		return new DynamicContext(
 			{
-				variableBindings: Object.assign(Object.create(null), this.variableBindings, variableBindings),
 				contextItemIndex: this.contextItemIndex,
 				contextItem: this.contextItem,
-				contextSequence: this.contextSequence
+				contextSequence: this.contextSequence,
+				variableBindings: Object.assign(Object.create(null), this.variableBindings, variableBindings)
 			},
 			this._temporalContext);
 	}
