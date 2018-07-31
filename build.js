@@ -6,6 +6,7 @@ const path = require('path');
 
 const skipParserBuild = process.env.npm_config_skip_parser;
 const skipClosureBuild = process.env.npm_config_skip_closure;
+const doDebugBuild = process.env.npm_config_debug;
 
 function doPegJsBuild () {
 	return new Promise((resolve, reject) => fs.readFile('./src/parsing/xpath.pegjs', 'utf8', (err, file) => err ? reject(err) : resolve(file)))
@@ -26,7 +27,7 @@ function doSelectorsBuild () {
 		new Compiler({
 			assume_function_wrapper: true,
 			new_type_inf: true,
-			debug: false,
+			debug: !!doDebugBuild,
 			language_in: 'ES6',
 			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',

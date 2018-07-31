@@ -79,7 +79,7 @@ class QuantifiedExpression extends Selector {
 
 				const context = dynamicContext.scopeWithVariableBindings(variables);
 
-				const result = this._satisfiesExpr.evaluateMaybeStatically(context);
+				const result = this._satisfiesExpr.evaluateMaybeStatically(context, executionParameters);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
 					return Sequence.singletonTrueSequence();

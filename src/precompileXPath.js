@@ -1,6 +1,4 @@
 import createSelectorFromXPathAsync from './parsing/createSelectorFromXPathAsync';
-import compiledSelectorCache from './parsing/compiledSelectorCache';
-
 
 /**
  * Precompile an XPath selector asynchronously.
@@ -12,8 +10,7 @@ import compiledSelectorCache from './parsing/compiledSelectorCache';
  */
 export default function precompileXPath (xPathString) {
 	return createSelectorFromXPathAsync(xPathString)
-		.then(function (selector) {
-			compiledSelectorCache[xPathString] = selector;
+		.then(function (_selector) {
 			return xPathString;
 		});
 }

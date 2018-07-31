@@ -5,6 +5,7 @@ import {
 	staticallyKnownNamespaceByPrefix
 } from './staticallyKnownNamespaces';
 
+export const generateGlobalVariableBindingName = variableName => `GLOBAL_${variableName}`;
 
 /**
  * XPaths in FontoXPath know of two separate contexts: the static one and the context at evaluation.
@@ -26,9 +27,14 @@ export default class ExecutionSpecificStaticContext {
 				if (variableByName[variableName] === undefined) {
 					return bindings;
 				}
-				bindings[variableName] = `GLOBAL_${variableName}`;
+				bindings[variableName] = generateGlobalVariableBindingName(variableName);
 				return bindings;
 			}, Object.create(null));
+
+		this._referredVariableByName = Object.create(null);
+		this._referredNamespaceByName = Object.create(null);
+
+		this._variableValueByName = variableByName;
 
 		/**
 		 * This flag will be set to true if this EvaluationContext was used while statically
@@ -45,9 +51,18 @@ export default class ExecutionSpecificStaticContext {
 		this.executionContextWasRequired = true;
 
 		const uri = this._namespaceResolver(prefix);
+
+		if (!this._referredNamespaceByName[prefix]) {
+			this._referredNamespaceByName[prefix] = {
+				prefix: prefix,
+				namespaceURI: uri
+			};
+		}
+
 		if (uri === undefined && !prefix) {
 			return null;
 		}
+
 		return uri;
 	}
 
@@ -58,11 +73,26 @@ export default class ExecutionSpecificStaticContext {
 			return null;
 		}
 
-		return this._variableBindingByName[localName];
+		const bindingName = this._variableBindingByName[localName];
+		if (!this._referredVariableByName[localName]) {
+			this._referredVariableByName[localName] = {
+				name: localName,
+				value: this._variableValueByName[localName]
+			};
+		}
+		return bindingName;
 	}
 
 	lookupFunction (namespaceURI, localName, arity) {
 		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
 		return functionRegistry.getFunctionByArity(namespaceURI, localName, arity);
+	}
+
+	getReferredNamespaces () {
+		return Object.values(this._referredNamespaceByName);
+	}
+
+	getReferredVariables () {
+		return Object.values(this._referredVariableByName);
 	}
 }
