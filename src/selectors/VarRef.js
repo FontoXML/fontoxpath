@@ -40,8 +40,8 @@ class VarRef extends Selector {
 		}
 	}
 
-	evaluate (dynamicContext, executionParameters) {
-		return dynamicContext.variableBindings[this._variableBindingName](executionParameters);
+	evaluate (dynamicContext, _executionParameters) {
+		return dynamicContext.variableBindings[this._variableBindingName]();
 	}
 }
 
