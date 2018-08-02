@@ -75,6 +75,8 @@ describe('quantified expressions', () => {
 		describe('multiple variable binding', () => {
 			it('returns true if one the satisfies options returns true',
 				() => chai.assert(evaluateXPathToBoolean('some $x in true(), $y in true() satisfies $x = $y', documentNode)));
+			it('can re-use variables in further bindings',
+				() => chai.assert(evaluateXPathToBoolean('every $x in (1, 2), $y in $x satisfies $y', documentNode)));
 
 			it('returns false if none the satisfies options returns true',
 				() => chai.assert(evaluateXPathToBoolean('(some $x in false(), $y in true() satisfies $x = $y) = false()', documentNode)));
