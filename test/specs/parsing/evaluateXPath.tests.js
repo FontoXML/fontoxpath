@@ -92,7 +92,11 @@ describe('evaluateXPath', () => {
 	describe('toString', () => {
 		it('Keeps string values strings',
 			() => chai.assert.equal(evaluateXPathToString('"A piece of text"', documentNode, domFacade), 'A piece of text'));
-
+		it('Makes strings from nodes', () => {
+			documentNode.appendChild(documentNode.createElement('element'));
+			documentNode.documentElement.appendChild(documentNode.createTextNode('A piece of text'));
+			chai.assert.equal(evaluateXPathToString('.', documentNode, domFacade), 'A piece of text');
+		});
 		it('Stringifies numeric types',
 			() => chai.assert.equal(evaluateXPathToString('42', documentNode, domFacade), '42'));
 

@@ -280,7 +280,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 			}
 			// Atomize all parts
 			return allValues.value.map(function (value) {
-				return atomize(value, dynamicContext).value + '';
+				return atomize(value, executionParameters).value + '';
 			});
 		}
 
@@ -443,7 +443,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 				});
 			}
 			if (allValues.value.length === 1) {
-				return atomize(allValues.value[0], dynamicContext).value;
+				return atomize(allValues.value[0], executionParameters).value;
 			}
 			return new Sequence(allValues.value).atomize(executionParameters).getAllValues().map(function (atomizedValue) {
 				return atomizedValue.value;
