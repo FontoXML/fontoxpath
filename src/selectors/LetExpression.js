@@ -6,7 +6,7 @@ import createDoublyIterableSequence from './util/createDoublyIterableSequence';
  */
 class LetExpression extends Selector {
 	/**
-	 * @param  {{prefix:string, namespaceURI:string, name}}    rangeVariable
+	 * @param  {{prefix:string, namespaceURI:string, name: string}}    rangeVariable
 	 * @param  {Selector}  bindingSequence
 	 * @param  {Selector}  returnExpression
 	 */
@@ -25,7 +25,10 @@ class LetExpression extends Selector {
 			throw new Error('Not implemented: let expressions with namespace usage.');
 		}
 
-		this._rangeVariable = rangeVariable.name;
+		this._prefix = rangeVariable.prefix;
+		this._namespaceURI = rangeVariable.namespaceURI;
+		this._localName = rangeVariable.name;
+
 		this._bindingSequence = bindingSequence;
 		this._returnExpression = returnExpression;
 
@@ -33,8 +36,16 @@ class LetExpression extends Selector {
 	}
 
 	performStaticEvaluation (staticContext) {
+		if (this._prefix) {
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+
+			if (!this._namespaceURI && this._prefix) {
+				throw new Error(`XPST0081: Could not resolve namespace for prefix ${this._prefix} using in a for expression`);
+			}
+		}
+
 		staticContext.introduceScope();
-		this._variableBinding = staticContext.registerVariable(null, this._rangeVariable);
+		this._variableBinding = staticContext.registerVariable(this._namespaceURI, this._localName);
 
 		this._bindingSequence.performStaticEvaluation(staticContext);
 		this._returnExpression.performStaticEvaluation(staticContext);
