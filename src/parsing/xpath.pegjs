@@ -23,7 +23,7 @@
 }
 
 // 1
-XPath
+QueryBody
  = _ expr:Expr _ {return expr}
 
 // 2
@@ -604,10 +604,117 @@ CommentContents
 
 // XQuery part starts here
 
+// 1
+Module
+	= _ (VersionDecl _)? (LibraryModule / MainModule) _
+
+// 2
+VersionDecl
+ = "xquery" _ (("encoding" S StringLiteral) / ("version" S StringLiteral (S "encoding" S StringLiteral)? )) Separator
+
+// 3
+MainModule
+ = Prolog _ QueryBody
+
+// 4
+LibraryModule
+ = ModuleDecl _ Prolog
+
+// 5
+ModuleDecl
+ = "module" S "namespace" S NCName _ "=" _ URILiteral _ Separator
+
+// 6
+Prolog
+ = ((DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _)* ((ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _)*
+
+// 7
+Separator = ";"
+
+// 8
+Setter
+ = BoundarySpaceDecl / DefaultCollationDecl / BaseURIDecl / ConstructionDecl / OrderingModeDecl / EmptyOrderDecl / CopyNamespacesDecl / DecimalFormatDecl
+
+// 9
+BoundarySpaceDecl = "declare" S "boundary-space" S ("preserve" / "strip")
+
+// 10
+DefaultCollationDecl = "declare" S "default" "collation" URILiteral
+
+// 11
+BaseURIDecl = "declare" S "base-uri" S URILiteral
+
+// 12
+ConstructionDecl = "declare" S "construction" S ("strip" / "preserve")
+
+// 13
+OrderingModeDecl
+ = "declare" S "ordering" S ("ordered" / "unordered")
+// 14
+EmptyOrderDecl
+ = "declare" S "default" S "order" S "empty" S ("greatest" / "least")
+// 15
+CopyNamespacesDecl
+ = "declare" S "copy-namespaces" S PreserveMode _ "," _ InheritMode
+// 16
+PreserveMode
+ = "preserve" / "no-preserve"
+// 17
+InheritMode
+ = "inherit" / "no-inherit"
+// 18
+DecimalFormatDecl
+ = "declare" S (("decimal-format" S EQName) / ("default" S "decimal-format")) (DFPropertyName S "=" S StringLiteral)*
+// 19
+DFPropertyName
+ = "decimal-separator" / "grouping-separator" / "infinity" / "minus-sign" / "NaN" / "percent" / "per-mille" / "zero-digit" / "digit" / "pattern-separator" / "exponent-separator"
+
+// 20
+Import = SchemaImport / ModuleImport
+
+// 21
+SchemaImport
+ = "import" S "schema" (S SchemaPrefix)? S URILiteral ( S "at" S URILiteral ( S ","  S URILiteral)*)?
+// 22
+SchemaPrefix
+ = ("namespace" S NCName S "=") / ("default" S "element" S "namespace")
+// 23
+ModuleImport
+ = "import" S "module" (S "namespace" NCName "=")? S URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)?
+// 24
+NamespaceDecl
+ = "declare" S "namespace" S NCName _ "=" _ URILiteral
+// 25
+DefaultNamespaceDecl
+ = "declare" S "default" S ("element" / "function") S "namespace" S URILiteral
+// 26
+AnnotatedDecl
+ = "declare" S Annotation* S (VarDecl / FunctionDecl)
+// 27
+Annotation
+ = "%" _ EQName (_ "(" _ Literal (_ "," _ Literal)* _")")?
+// 28
+VarDecl
+ = "variable" S "$" _ VarName (_ TypeDeclaration)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
+// 29
+VarValue
+ = ExprSingle
+// 30
+VarDefaultValue
+ = ExprSingle
+// 31
+ContextItemDecl
+ = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
+// 32
+FunctionDecl
+ = "function" S (!ReservedFunctionNames) EQName _ "(" _ ParamList? _ ")" S ("as" S SequenceType)? (_ FunctionBody / (_ "external")) /* xgc: reserved-function-names */
+// 37
+OptionDecl
+ = "declare" S  "option" S EQName S StringLiteral
 // 140
 NodeConstructor
  = DirectConstructor
-// / ComputedConstructor
+// / ComputedConstructro
 
 // 141
 DirectConstructor
@@ -672,6 +779,9 @@ DirPIConstructor = "<?" target:$PITarget contents:(ExplicitWhitespace contents:$
 
 // 152
 DirPIContents = (!"?>" Char)*
+
+// 217
+URILiteral = StringLiteral
 
 // 229
 QuotAttrValueContentChar = ![\"{}<&] ch:Char {return ch}
