@@ -51,11 +51,20 @@ class QuantifiedExpression extends Selector {
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		const evaluatedInClauses = this._inClauseVariableNames.map((variableBinding, i) => ({
-			name: variableBinding,
-			valueArray: this._inClauseExpressions[i]
-				.evaluateMaybeStatically(dynamicContext, executionParameters).getAllValues()
-		}));
+		let scopingContext = dynamicContext;
+		const evaluatedInClauses = this._inClauseVariableNames.map((variableBinding, i) => {
+			/**
+			 * @type {!Array<!Object>}
+			 */
+			const allValuesInInClause = this._inClauseExpressions[i]
+				.evaluateMaybeStatically(scopingContext, executionParameters).getAllValues();
+
+			scopingContext = dynamicContext.scopeWithVariableBindings({
+				[variableBinding]: () => new Sequence(allValuesInInClause)
+			});
+
+			return allValuesInInClause;
+		});
 
 		const indices = new Array(evaluatedInClauses.length).fill(0);
 		indices[0] = -1;
@@ -64,7 +73,7 @@ class QuantifiedExpression extends Selector {
 		while (hasOverflowed) {
 			hasOverflowed = false;
 			for (let i = 0, l = indices.length; i < l; ++i) {
-				const valueArray = evaluatedInClauses[i].valueArray;
+				const valueArray = evaluatedInClauses[i];
 				if (++indices[i] > valueArray.length - 1) {
 					indices[i] = 0;
 					continue;
@@ -73,12 +82,11 @@ class QuantifiedExpression extends Selector {
 				const variables = Object.create(null);
 
 				for (let y = 0; y < indices.length; y++) {
-					const value = evaluatedInClauses[y].valueArray[indices[y]];
-					variables[evaluatedInClauses[y].name] = () => Sequence.singleton(value);
+					const value = evaluatedInClauses[y][indices[y]];
+					variables[this._inClauseVariableNames[y]] = () => Sequence.singleton(value);
 				}
 
 				const context = dynamicContext.scopeWithVariableBindings(variables);
-
 				const result = this._satisfiesExpr.evaluateMaybeStatically(context, executionParameters);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
