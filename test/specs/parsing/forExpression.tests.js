@@ -52,4 +52,7 @@ describe('for expressions', () => {
 		chai.assert.isTrue((await it.next()).done);
 	});
 
+	it('defined prefixless variables in the empty namespace', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('<element xmlns="XXX">{for $x in ("A") return $Q{}x}</element> = "A"', documentNode, null, null, { language: 'XQuery3.1' }));
+	});
 });

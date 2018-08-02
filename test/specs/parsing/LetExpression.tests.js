@@ -25,6 +25,9 @@ describe('let', () => {
 		() => chai.assert.deepEqual(evaluateXPathToNumber('let $x := 1, $y := 2 return $x * $y', documentNode), 2));
 	it('can be chained with spaces everywhere',
 		() => chai.assert.deepEqual(evaluateXPathToNumber('let $x := 1 , $y := 2 return $x * $y', documentNode), 2));
-	it('chains in the correct order',
-		() => chai.assert.deepEqual(evaluateXPathToNumber('let $x := 1, $y := 2, $x := 3 return $x (: If the order would be inverse, $x would still be 1 :)', documentNode), 3));
+	it('chains in the correct order', () => chai.assert.deepEqual(evaluateXPathToNumber('let $x := 1, $y := 2, $x := 3 return $x (: If the order would be inverse, $x would still be 1 :)', documentNode), 3));
+
+	it('defined prefixless variables in the empty namespace', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('<element xmlns="XXX">{let $x := "A" return $Q{}x}</element> = "A"', documentNode, null, null, { language: 'XQuery3.1' }));
+	});
 });

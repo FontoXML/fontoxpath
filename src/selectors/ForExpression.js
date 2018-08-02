@@ -36,7 +36,7 @@ class ForExpression extends Selector {
 	}
 
 	performStaticEvaluation (staticContext) {
-		if (this._prefix !== null) {
+		if (this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 
 			if (!this._namespaceURI && this._prefix) {
