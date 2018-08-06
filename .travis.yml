@@ -6,15 +6,15 @@ services:
     - docker
 
 before_install:
-    - docker pull liones/fontoxml-docker-base-pipelines:latest
+    - docker login $TOOLS_INTERNAL_REGISTRY_URL -u $TOOLS_INTERNAL_REGISTRY_USERNAME -p $TOOLS_INTERNAL_REGISTRY_PASSWORD
 
 before_script:
     - mkdir -p ./test/assets
     - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets
 
 script:
-    - docker run --volume=`pwd`:/fontoxpath -w /fontoxpath liones/fontoxml-docker-base-pipelines /bin/sh -c "
+    - docker run --volume=`pwd`:/fontoxpath -w /fontoxpath $TOOLS_INTERNAL_REGISTRY_URL/build-tools/fontoxml-pipeline-test-build /bin/sh -c "
         npm install &&
-        timeout 10m xvfb-run -a npm run test --ci_mode &&
-        timeout 10m xvfb-run -a npm run test --integration_tests --ci_mode &&
-        timeout 10m xvfb-run -a npm run test --integration_tests --ci_mode --qt3;"
+        timeout 600 xvfb-run -a npm run test --ci_mode &&
+        timeout 600 xvfb-run -a npm run test --integration_tests --ci_mode &&
+        timeout 600 xvfb-run -a npm run test --integration_tests --ci_mode --qt3;"
