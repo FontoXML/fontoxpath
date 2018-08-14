@@ -12,8 +12,8 @@ export default function argumentListToString (argumentList) {
 		}
 
 		if (argument.isSingleton()) {
-			return argument.first().primitiveTypeName || 'item()';
+			return argument.first().type || 'item()';
 		}
-		return argument.first().primitiveTypeName + '+';
+		return argument.first().type + '+';
 	}).join(', ');
 }

@@ -1,13 +1,15 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
 
+import AtomicValue from './AtomicValue';
+
 /**
 * @param    {*}  value
-* @param    {./ETypeNames}  type
-* @returns  {?./AtomicValue<*>}
+* @param    {string}  type
+* @returns  {!AtomicValue<*>}
 */
 export default function createAtomicValue (value, type) {
 	if (!builtinDataTypesByName[type]) {
-		return null;
+		throw new Error('Unknown type');
 	}
 
 	// if (type === 'xs:boolean' || type === 'xs:string' || type === 'xs:untypedAtomic' || type === 'xs:integer') {

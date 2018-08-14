@@ -5596,7 +5596,7 @@ function-item-6,AssertionError: expected [Function] to throw error including 'FO
 function-item-8,Error: XPST0017: Function function-name with arity of 1 not registered. No similar functions found.
 function-item-9,Error: XPST0017: Function function-name with arity of 1 not registered. No similar functions found.
 function-item-10,Error: No selector counterpart for: functionTest.
-function-item-11,Error: XPTY0004: Multiplicity of function argument of type item() for undefined is incorrect. Expected exactly one
+function-item-11,Error: XPTY0004: Multiplicity of function argument of type item() for dynamic-function is incorrect. Expected exactly one
 function-item-12,Error: No selector counterpart for: anyFunctionTest.
 function-item-13,Error: No selector counterpart for: functionTest.
 function-item-14,Error: No selector counterpart for: functionTest.

@@ -46,7 +46,7 @@ function fnCurrentTime (dynamicContext) {
 }
 
 function fnImplicitTimezone (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration'), 'xs:dayTimeDuration');
+	return Sequence.singleton(createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration'));
 }
 
 export default {

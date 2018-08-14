@@ -23,11 +23,6 @@ class DircommentConstructor extends Selector {
 		this._contents = contents;
 	}
 
-	/**
-	 * @param  {!../DynamicContext} _dynamicContext
-	 * @param  {!../ExecutionParameters} executionParameters
-	 * @return {!Sequence}
-	 */
 	evaluate (_dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 		return Sequence.singleton(createNodeValue(nodesFactory.createComment(this._contents)));

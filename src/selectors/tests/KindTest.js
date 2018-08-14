@@ -1,8 +1,7 @@
 import TestAbstractExpression from './TestAbstractExpression';
 import Specificity from '../Specificity';
-/**
- * @extends {./TestAbstractExpression}
- */
+
+
 class KindTest extends TestAbstractExpression {
 	/**
 	 * @param  {number}  nodeType

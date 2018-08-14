@@ -7,9 +7,6 @@ import zipSingleton from '../util/zipSingleton';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-/**
- * @type {function(!../DynamicContext, !../ExecutionParameters, !../StaticContext, !Sequence): !Sequence}
- */
 const fnString = builtinStringFunctions.functions.string;
 
 function contextItemAsFirstArgument (fn, dynamicContext, executionParameters, _staticContext) {
@@ -102,9 +99,6 @@ function fnOutermost (_dynamicContext, executionParameters, _staticContext, node
 			return Sequence.empty();
 		}
 
-		/**
-		 * @type {!Array<!../dataTypes/Value>}
-		 */
 		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues).reduce(
 			function (previousNodes, node, i) {
 				if (i === 0) {
@@ -131,9 +125,6 @@ function fnInnermost (_dynamicContext, executionParameters, _staticContext, node
 			return Sequence.empty();
 		}
 
-		/**
-		 * @type {!Array<!../dataTypes/Value>}
-		 */
 		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues)
 			.reduceRight(function (followingNodes, node, i, allNodes) {
 				if (i === allNodes.length - 1) {

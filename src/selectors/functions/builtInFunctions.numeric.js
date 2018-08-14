@@ -5,11 +5,15 @@ import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import MapValue from '../dataTypes/MapValue';
+import AtomicValue from '../dataTypes/AtomicValue';
 import { transformArgument } from './argumentHelper';
 
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 
 function createValidNumericType (type, transformedValue) {
 	if (isSubtypeOf(type, 'xs:integer')) {
@@ -26,8 +30,8 @@ function createValidNumericType (type, transformedValue) {
 }
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
- * @param  {../ExecutionParameters}  _executionParameters
+ * @param   {DynamicContext}  _dynamicContext
+ * @param  {ExecutionParameters}  _executionParameters
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
@@ -36,8 +40,8 @@ function fnAbs (_dynamicContext, _executionParameters, _staticContext, sequence)
 }
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
- * @param  {../ExecutionParameters}  _executionParameters
+ * @param   {DynamicContext}  _dynamicContext
+ * @param  {ExecutionParameters}  _executionParameters
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
@@ -46,8 +50,8 @@ function fnCeiling (_dynamicContext, _executionParameters, _staticContext, seque
 }
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
- * @param  {../ExecutionParameters}  _executionParameters
+ * @param   {DynamicContext}  _dynamicContext
+ * @param  {ExecutionParameters}  _executionParameters
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
@@ -79,8 +83,8 @@ function getNumberOfDecimalDigits (value) {
 
 /**
  * @param   {boolean}            halfToEven
- * @param   {../DynamicContext}  _dynamicContext
- * @param  {../ExecutionParameters}  _executionParameters
+ * @param   {DynamicContext}  _dynamicContext
+ * @param  {ExecutionParameters}  _executionParameters
  * @param   {!Sequence}           sequence
  * @param   {?Sequence}           precision
  * @return  {!Sequence}
@@ -101,9 +105,7 @@ function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticCont
 				done = true;
 				return DONE_TOKEN;
 			}
-			/**
-			 * @type {../dataTypes/Value}
-			 */
+
 			const item = firstValue.value;
 			const value = item.value;
 
@@ -134,7 +136,7 @@ function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticCont
 			const originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(function (type) {
 				return isSubtypeOf(item.type, type);
 			});
-			const itemAsDecimal = castToType(item, 'xs:decimal');
+			const itemAsDecimal = /** @type {AtomicValue<number>} */ (castToType(item, 'xs:decimal'));
 			const scaling = Math.pow(10, scalingPrecision);
 			let roundedNumber = 0;
 
@@ -163,7 +165,7 @@ function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticCont
 }
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
+ * @param   {DynamicContext}  _dynamicContext
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
@@ -171,7 +173,7 @@ function fnNumber (_dynamicContext, executionParameters, _staticContext, sequenc
 	return sequence.atomize(executionParameters).switchCases({
 		empty: () => Sequence.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
-			const castResult = tryCastToType(sequence.first(), 'xs:double');
+			const castResult = tryCastToType(/** @type {!AtomicValue<?>} */ (sequence.first()), 'xs:double');
 			if (castResult.successful) {
 				return Sequence.singleton(castResult.value);
 			}
@@ -181,8 +183,8 @@ function fnNumber (_dynamicContext, executionParameters, _staticContext, sequenc
 }
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
- * @param   {../ExecutionParameters}  _executionParameters
+ * @param   {DynamicContext}  _dynamicContext
+ * @param   {ExecutionParameters}  _executionParameters
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
@@ -197,8 +199,8 @@ function returnRandomItemFromSequence (_dynamicContext, _executionParameters, _s
 }
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
- * @param   {../ExecutionParameters}  _executionParameters
+ * @param   {DynamicContext}  _dynamicContext
+ * @param   {ExecutionParameters}  _executionParameters
  * @param   {Sequence}           _sequence
  * @return  {Sequence}
  */
@@ -213,7 +215,8 @@ function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _static
 			key: createAtomicValue('next', 'xs:string'),
 			value: Sequence.singleton(new FunctionValue({
 				value: fnRandomNumberGenerator,
-				name: '',
+				localName: '',
+				namespaceURI: '',
 				argumentTypes: [],
 				arity: 0,
 				returnType: 'map(*)'
@@ -223,7 +226,8 @@ function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _static
 			key: createAtomicValue('permute', 'xs:string'),
 			value: Sequence.singleton(new FunctionValue({
 				value: returnRandomItemFromSequence,
-				name: '',
+				localName: '',
+				namespaceURI: '',
 				argumentTypes: ['item()*'],
 				arity: 1,
 				returnType: 'item()*'

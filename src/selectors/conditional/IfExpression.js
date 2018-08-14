@@ -33,9 +33,6 @@ class IfExpression extends Selector {
 
 	evaluate (dynamicContext, executionParameters) {
 		let resultIterator = null;
-		/**
-		 * @type {../dataTypes/Sequence}
-		 */
 		const ifExpressionResultSequence = this._testExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
 		return new Sequence({
 			next: () => {

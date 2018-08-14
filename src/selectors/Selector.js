@@ -1,5 +1,8 @@
 import DynamicContext from './DynamicContext';
+import StaticContext from './StaticContext';
 import ExecutionParameters from './ExecutionParameters';
+import Specificity from './Specificity';
+import Sequence from './dataTypes/Sequence';
 
 /**
  * @enum {string}
@@ -11,7 +14,7 @@ const RESULT_ORDERINGS = {
 };
 
 /**
- * @type {!{resultOrder: !RESULT_ORDERINGS, subtree: boolean, peer: boolean, canBeStaticallyEvaluated: boolean}}
+ * @typedef {!({resultOrder: (!RESULT_ORDERINGS|undefined), subtree: (boolean|undefined), peer: (boolean|undefined), canBeStaticallyEvaluated: (boolean|undefined)})}
  */
 let OptimizationOptions;
 
@@ -20,7 +23,7 @@ let OptimizationOptions;
  */
 class Selector {
 	/**
-	 * @param  {!./Specificity}         specificity
+	 * @param  {!Specificity}           specificity
 	 * @param  {!Array<!Selector>}      childSelectors       The logical children of this Expression
 	 * @param  {!OptimizationOptions}   optimizationOptions  Additional information on this expression.
 	 */
@@ -35,9 +38,6 @@ class Selector {
 		}
 	) {
 
-		/**
-		 * @property {!./Specificity} specificity
-		 */
 		this.specificity = specificity;
 		this.expectedResultOrder = optimizationOptions.resultOrder || RESULT_ORDERINGS.UNSORTED;
 		this.subtree = !!optimizationOptions.subtree;
@@ -49,7 +49,7 @@ class Selector {
 		/**
 		 * Eagerly evaluate
 		 *
-		 * @type {?./dataTypes/Sequence}
+		 * @type {?Sequence}
 		 */
 		this._eagerlyEvaluatedValue = null;
 	}
@@ -63,7 +63,7 @@ class Selector {
 
 
 	/**
-	 * @param  {!./StaticContext}  staticContext
+	 * @param  {!StaticContext}  staticContext
 	 */
 	performStaticEvaluation (staticContext) {
 		this._childSelectors.forEach(selector => selector.performStaticEvaluation(staticContext));
@@ -85,9 +85,9 @@ class Selector {
 	/**
 	 * @public
 	 * @final
-	 * @param   {?./DynamicContext}      dynamicContext
+	 * @param   {?DynamicContext}        dynamicContext
 	 * @param   {!ExecutionParameters}   executionParameters
-	 * @return  {!./dataTypes/Sequence}
+	 * @return  {!Sequence}
 	 */
 	evaluateMaybeStatically (dynamicContext, executionParameters) {
 		if (!dynamicContext || dynamicContext.contextItem === null) {
@@ -103,9 +103,9 @@ class Selector {
 
 	/**
 	 * @abstract
-	 * @param   {!./DynamicContext}      _dynamicContext
+	 * @param   {?DynamicContext}        _dynamicContext
 	 * @param   {!ExecutionParameters}   _executionParameters
-	 * @return  {!./dataTypes/Sequence}
+	 * @return  {!Sequence}
 	 */
 	evaluate (_dynamicContext, _executionParameters) {
 		//    throw new Error('Not Implemented');
@@ -114,9 +114,9 @@ class Selector {
 	/**
 	 * @protected
 	 * @final
-	 * @param   {?./DynamicContext}      _contextlessDynamicContext
+	 * @param   {?DynamicContext}      _contextlessDynamicContext
 	 * @param   {!ExecutionParameters}   executionParameters
-	 * @return  {!./dataTypes/Sequence}
+	 * @return  {!Sequence}
 	 */
 	evaluateWithoutFocus (_contextlessDynamicContext, executionParameters) {
 		if (this._eagerlyEvaluatedValue === null) {

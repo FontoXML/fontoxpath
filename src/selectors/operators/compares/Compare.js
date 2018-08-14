@@ -28,13 +28,7 @@ class Compare extends Selector {
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		/**
-		 * @type {!Sequence}
-		 */
 		const firstSequence = this._firstSelector.evaluateMaybeStatically(dynamicContext, executionParameters);
-		/**
-		 * @type {!Sequence}
-		 */
 		const secondSequence = this._secondSelector.evaluateMaybeStatically(dynamicContext, executionParameters);
 
 		return firstSequence.switchCases({

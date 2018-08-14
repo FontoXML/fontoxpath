@@ -44,6 +44,9 @@ class DirElementConstructor extends Selector {
 
 		this._prefix = prefix;
 		this._name = name;
+		/**
+		 * @type {string|null}
+		 */
 		this._namespaceURI = null;
 
 		/**
@@ -61,9 +64,6 @@ class DirElementConstructor extends Selector {
 		this._contents = contents;
 	}
 
-	/**
-	 * @param  {!../StaticContext}  staticContext
-	 */
 	performStaticEvaluation (staticContext) {
 		var unresolvedAttributes = [];
 
@@ -105,16 +105,16 @@ class DirElementConstructor extends Selector {
 
 		this._childSelectors.forEach(subselector => subselector.performStaticEvaluation(staticContext));
 
-		this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+		const namespaceURI = staticContext.resolveNamespace(this._prefix);
+
+		if (namespaceURI === undefined && this._prefix) {
+			throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
+		}
+		this._namespaceURI = namespaceURI || null;
 
 		staticContext.removeScope();
 	}
 
-	/**
-	 * @param  {!../DynamicContext} dynamicContext
-	 * @param  {!../ExecutionParameters} executionParameters
-	 * @return {!Sequence}
-	 */
 	evaluate (dynamicContext, executionParameters) {
 		/**
 		 * @type {INodesFactory}
@@ -172,7 +172,9 @@ class DirElementConstructor extends Selector {
 					return allChildNodesItrResult;
 				}
 
-				const element = nodesFactory.createElementNS(this._namespaceURI, this._prefix ? this._prefix + ':' + this._name : this._name);
+				const element = nodesFactory.createElementNS(
+					this._namespaceURI,
+					this._prefix ? this._prefix + ':' + this._name : this._name);
 
 				// Plonk all attribute on the element
 				attributes.forEach(attr => {
@@ -193,7 +195,7 @@ class DirElementConstructor extends Selector {
 								element.appendChild(nodesFactory.createTextNode(' ' + atomizedValue));
 								return;
 							}
-							element.appendChild(nodesFactory.createTextNode(atomizedValue));
+							element.appendChild(nodesFactory.createTextNode('' + atomizedValue));
 							return;
 						}
 						if (isSubtypeOf(childNode.type, 'attribute()')) {

@@ -1,5 +1,8 @@
 import createAtomicValue from '../createAtomicValue';
 
+import AtomicValueDataType from './AtomicValueDataType';
+import AtomicValue from '../AtomicValue';
+
 const createBase64BinaryValue = value => createAtomicValue(value, 'xs:base64Binary');
 
 function hexToString (hex) {
@@ -12,7 +15,7 @@ function hexToString (hex) {
 
 /**
  * @param  {function(string):boolean}  instanceOf
- * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
+ * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToBase64Binary (instanceOf) {
 	if (instanceOf('xs:hexBinary')) {

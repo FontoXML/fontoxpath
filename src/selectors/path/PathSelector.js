@@ -1,14 +1,15 @@
 import Selector from '../Selector';
+import DomFacade from '../../DomFacade';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
-
+import { AsyncIterator } from '../util/iterators';
 import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 
 /**
- * @param   {!../util/iterators.AsyncIterator<!Sequence>}  sequences
+ * @param   {!AsyncIterator<!Sequence>}  sequences
  * @return  {!Sequence}
  */
 function concatSortedSequences (_, sequences) {
@@ -54,8 +55,8 @@ function concatSortedSequences (_, sequences) {
 }
 
 /**
- * @param   {!IDomFacade}                                  domFacade
- * @param   {!../util/iterators.AsyncIterator<!Sequence>}  sequences
+ * @param   {!DomFacade}                 domFacade
+ * @param   {!AsyncIterator<!Sequence>}  sequences
  * @return  {!Sequence}
  */
 function mergeSortedSequences (domFacade, sequences) {
@@ -224,7 +225,7 @@ class PathSelector extends Selector {
 				childContextIterator = dynamicContext.createSequenceIterator(intermediateResultNodesSequence);
 			}
 			/**
-			 * @type {!../util/iterators.AsyncIterator<!Sequence>}
+			 * @type {!AsyncIterator<!Sequence>}
 			 */
 			let resultValuesInOrderOfEvaluation = {
 				next: () => {
@@ -247,7 +248,7 @@ class PathSelector extends Selector {
 			switch (selector.expectedResultOrder) {
 				case Selector.RESULT_ORDERINGS.REVERSE_SORTED: {
 					const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
-					resultValuesInOrderOfEvaluation = /** @type {!../util/iterators.AsyncIterator<!Sequence>} */ ({
+					resultValuesInOrderOfEvaluation = /** @type {!AsyncIterator<!Sequence>} */ ({
 						next: () => {
 							const result = resultValuesInReverseOrder.next();
 							if (!result.ready) {

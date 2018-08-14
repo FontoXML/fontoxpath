@@ -2,6 +2,9 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
 
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 function findDescendants (domFacade, node, isMatch) {
@@ -17,11 +20,11 @@ function findDescendants (domFacade, node, isMatch) {
 }
 
 /**
- * @param  {!../DynamicContext} _dynamicContext
- * @param  {!../ExecutionParameters} executionParameters
- * @param  {!../dataTypes/Sequence}  idrefSequence
- * @param  {!../dataTypes/Sequence}  targetNodeSequence
- * @return  {!../dataTypes/Sequence}
+ * @param  {!DynamicContext} _dynamicContext
+ * @param  {!ExecutionParameters} executionParameters
+ * @param  {!Sequence}  idrefSequence
+ * @param  {!Sequence}  targetNodeSequence
+ * @return  {!Sequence}
  */
 function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequence, targetNodeSequence) {
 	const targetNodeValue = targetNodeSequence.first();
@@ -67,20 +70,17 @@ function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequen
 }
 
 /**
- * @param  {!../DynamicContext}      dynamicContext
- * @param  {!../ExecutionParameters}      executionParameters
- * @param  {!../dataTypes/Sequence}  idSequence
- * @param  {!../dataTypes/Sequence}  targetNodeSequence
- * @return  {!../dataTypes/Sequence}
+ * @param  {!DynamicContext}      dynamicContext
+ * @param  {!ExecutionParameters}      executionParameters
+ * @param  {!Sequence}  idSequence
+ * @param  {!Sequence}  targetNodeSequence
+ * @return  {!Sequence}
  */
 function fnIdref (dynamicContext, executionParameters, _staticContext, idSequence, targetNodeSequence) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();
 	}
-	/**
-	 * @type {!IDomFacade}
-	 */
 	const domFacade = executionParameters.domFacade;
 	/**
 	 * @type {!IObject<string, boolean>}

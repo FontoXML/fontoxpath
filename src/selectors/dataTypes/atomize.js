@@ -1,10 +1,14 @@
 import isSubtypeOf from './isSubtypeOf';
 import createAtomicValue from './createAtomicValue';
 
+import Value from './Value';
+import AtomicValue from './AtomicValue';
+import ExecutionParameters from '../ExecutionParameters';
+
 /**
- * @param   {!./Value}                 value
- * @param   {!../ExecutionParameters}  executionParameters
- * @return  {!./AtomicValue}
+ * @param   {!Value}                 value
+ * @param   {!ExecutionParameters}  executionParameters
+ * @return  {!AtomicValue}
  */
 export default function atomize (value, executionParameters) {
 	if (isSubtypeOf(value.type, 'xs:anyAtomicType') ||

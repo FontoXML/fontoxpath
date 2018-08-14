@@ -5,8 +5,8 @@ import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 
 /**
  * @param   {string}     operator
- * @param   {!../../dataTypes/Sequence}  firstSequence
- * @param   {!../../dataTypes/Sequence}  secondSequence
+ * @param   {!Sequence}  firstSequence
+ * @param   {!Sequence}  secondSequence
  * @return  {!Sequence}
  */
 export default function nodeCompare (operator, domFacade, firstSequence, secondSequence) {

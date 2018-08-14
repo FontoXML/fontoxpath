@@ -15,6 +15,10 @@ import {
 	greaterThan as dayTimeDurationGreaterThan
 } from '../../dataTypes/valueTypes/DayTimeDuration';
 
+import DynamicContext from '../../DynamicContext';
+import Value from '../../dataTypes/Value';
+import AtomicValue from '../../dataTypes/AtomicValue';
+
 // Use partial application to get to a comparer faster
 function areBothStringOrAnyURI (a, b) {
 	return (isSubtypeOf(a, 'xs:string') || isSubtypeOf(a, 'xs:anyURI')) &&
@@ -246,10 +250,10 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 const comparatorsByTypingKey = Object.create(null);
 
 /**
- * @param  {string}                       operator
- * @param  {../../dataTypes/AtomicValue}  valueA
- * @param  {../../dataTypes/AtomicValue}  valueB
- * @param  {../../DynamicContext}         dynamicContext
+ * @param  {string}           operator
+ * @param  {!AtomicValue}     valueA
+ * @param  {!AtomicValue}     valueB
+ * @param  {DynamicContext}  dynamicContext
  */
 export default function valueCompare (operator, valueA, valueB, dynamicContext) {
 	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp

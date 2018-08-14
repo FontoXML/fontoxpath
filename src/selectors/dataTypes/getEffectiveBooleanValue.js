@@ -1,7 +1,9 @@
 import isSubtypeOf from './isSubtypeOf';
 
+import Value from './Value';
+
 /**
- * @param  {./Value}  value
+ * @param  {Value}  value
  */
 export default function getEffectiveBooleanValue (value) {
 	const jsValue = value.value;

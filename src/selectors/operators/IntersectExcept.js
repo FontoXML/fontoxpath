@@ -1,38 +1,39 @@
 import Selector from '../Selector';
+import DomFacade from '../../DomFacade';
 import Sequence from '../dataTypes/Sequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
+
 /**
  * @param  {string}       intersectOrExcept
- * @param  {!IDomFacade}  domFacade
+ * @param  {!DomFacade}   domFacade
  * @param  {!Sequence}    sequence
- * @param  {number}       expectedResultOrder
+ * @param  {?}            expectedResultOrder
  *
  * @return {!Sequence}
  */
 function ensureSortedSequence (intersectOrExcept, domFacade, sequence, expectedResultOrder) {
-	sequence = sequence.map(value => {
-		if (!isSubtypeOf(value.type, 'node()')) {
+	return sequence.mapAll(values => {
+		if (values.some(value => !isSubtypeOf(value.type, 'node()'))) {
 			throw new Error(`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`);
 		}
-		return value;
-	});
-	if (expectedResultOrder === Selector.RESULT_ORDERINGS.SORTED) {
-		return sequence;
-	}
-	if (expectedResultOrder === Selector.RESULT_ORDERINGS.REVERSE_SORTED) {
-		return sequence.mapAll(allItems => new Sequence(allItems.reverse()));
-	}
+		if (expectedResultOrder === Selector.RESULT_ORDERINGS.SORTED) {
+			return new Sequence(values);
 
-	// Unsorted
-	return sequence.mapAll(allItems => new Sequence(sortNodeValues(domFacade, allItems)));
+		}
+		if (expectedResultOrder === Selector.RESULT_ORDERINGS.REVERSE_SORTED) {
+			return new Sequence(values.reverse());
+		}
+
+		// Unsorted
+		return new Sequence(sortNodeValues(domFacade, values));
+	});
 }
 
 /**
  * The 'intersect' expression: intersect and except
- * @extends {Selector}
  */
 class IntersectExcept extends Selector {
 	/**

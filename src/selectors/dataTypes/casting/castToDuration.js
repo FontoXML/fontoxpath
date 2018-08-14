@@ -1,11 +1,14 @@
 import createAtomicValue from '../createAtomicValue';
 import Duration from '../valueTypes/Duration';
 
+import AtomicValueDataType from './AtomicValueDataType';
+import AtomicValue from '../AtomicValue';
+
 const createDurationValue = value => createAtomicValue(value, 'xs:duration');
 
 /**
  * @param  {function(string):boolean}  instanceOf
- * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
+ * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToDuration (instanceOf) {
 	if (instanceOf('xs:yearMonthDuration')) {
@@ -28,7 +31,7 @@ export default function castToDuration (instanceOf) {
 	}
 	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
 		return value => {
-			const parsedDuration = Duration.fromString(value, 'xs:duration');
+			const parsedDuration = Duration.fromString(value);
 			if (parsedDuration) {
 				return {
 					successful: true,

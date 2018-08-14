@@ -1,4 +1,7 @@
 import Sequence from './Sequence';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import StaticContext from '../StaticContext';
 
 /**
  * @param  {!Array<!string>}  argumentTypes
@@ -19,14 +22,15 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 
 class FunctionValue {
 	/**
-	 * @param  {{value: !function(!../DynamicContext, !Sequence): !Sequence, localName: string, argumentTypes: !Array<string>, arity: number, returnType: string}}  properties
+	 * @param  {{value: !function(!DynamicContext, !ExecutionParameters, !StaticContext, !Sequence): !Sequence, localName: string, argumentTypes: !Array<string>, arity: number, returnType: string, namespaceURI: string}}  properties
 	 */
-	constructor ({ value, localName, argumentTypes, arity, returnType }) {
+	constructor ({ value, localName, namespaceURI, argumentTypes, arity, returnType }) {
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
 		this._localName = localName;
 		this._arity = arity;
 		this._returnType = returnType;
+		this._namespaceURI = namespaceURI;
 
 		this.type = 'function(*)';
 	}
@@ -57,6 +61,7 @@ class FunctionValue {
 		var functionItem = new FunctionValue({
 			value: curriedFunction,
 			localName: 'boundFunction',
+			namespaceURI: this._namespaceURI,
 			argumentTypes: argumentTypes,
 			arity: argumentTypes.length,
 			returnType: this._returnType

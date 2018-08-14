@@ -59,6 +59,7 @@ function doSelectorsBuild () {
 			dependency_mode: 'STRICT',
 			output_wrapper: `
 (function (root, factory) {
+// NEW
 	if (typeof define === 'function' && define.amd) {
 		// AMD
 		define([], factory);

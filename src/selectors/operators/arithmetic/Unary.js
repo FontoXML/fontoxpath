@@ -39,7 +39,7 @@ class Unary extends Selector {
 				const value = atomizedValues[0];
 
 				if (isSubtypeOf(value.type, 'xs:untypedAtomic')) {
-					const castValue = castToType(value, 'xs:double').value;
+					const castValue = /** @type {number} */ (castToType(value, 'xs:double').value);
 					return Sequence.singleton(createAtomicValue(this._kind === '+' ? castValue : -castValue, 'xs:double'));
 				}
 
@@ -54,16 +54,16 @@ class Unary extends Selector {
 				}
 
 				if (isSubtypeOf(value.type, 'xs:integer')) {
-					return Sequence.singleton(createAtomicValue(-value.value, 'xs:integer'));
+					return Sequence.singleton(createAtomicValue(/** @type {number} */ (value.value) * -1, 'xs:integer'));
 				}
 				if (isSubtypeOf(value.type, 'xs:decimal')) {
-					return Sequence.singleton(createAtomicValue(-value.value, 'xs:decimal'));
+					return Sequence.singleton(createAtomicValue(/** @type {number} */ (value.value) * -1, 'xs:decimal'));
 				}
 				if (isSubtypeOf(value.type, 'xs:double')) {
-					return Sequence.singleton(createAtomicValue(-value.value, 'xs:double'));
+					return Sequence.singleton(createAtomicValue(/** @type {number} */ (value.value) * -1, 'xs:double'));
 				}
 				if (isSubtypeOf(value.type, 'xs:float')) {
-					return Sequence.singleton(createAtomicValue(-value.value, 'xs:float'));
+					return Sequence.singleton(createAtomicValue(/** @type {number} */ (value.value) * -1, 'xs:float'));
 				}
 
 				return Sequence.singleton(createAtomicValue(Number.NaN, 'xs:double'));

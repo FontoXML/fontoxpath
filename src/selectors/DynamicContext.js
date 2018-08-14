@@ -1,11 +1,8 @@
-import { ready } from './util/iterators';
+import { ready, AsyncIterator } from './util/iterators';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
-
-/**
- * @typedef {./dataTypes/Sequence}
- */
-let Sequence;
+import Sequence from './dataTypes/Sequence';
+import Value from './dataTypes/Value';
 
 /**
  * @typedef {!{isInitialized: boolean, currentDateTime: ?DateTime, implicitTimezone: ?DayTimeDuration}}
@@ -14,7 +11,7 @@ let TemporalContext;
 
 class DynamicContext {
 	/**
-	 * @param  {{contextItem: ?./dataTypes/Value, contextItemIndex: number, contextSequence: !Sequence,variableBindings:!Object<!Sequence>}}  context  The context to overlay
+	 * @param  {{contextItem: ?Value, contextItemIndex: number, contextSequence: !Sequence,variableBindings:!Object<function():!Sequence>}}  context  The context to overlay
 	 * @param  {!TemporalContext=}  temporalContext
 	 */
 	constructor (context, temporalContext = { isInitialized: false, currentDateTime: null, implicitTimezone: null }) {
@@ -33,13 +30,13 @@ class DynamicContext {
 		this.contextSequence = context.contextSequence;
 
 		/**
-		 * @type {?./dataTypes/Value}
+		 * @type {?Value}
 		 * @const
 		 */
 		this.contextItem = context.contextItem;
 
 		/**
-		 * @type {!Object<!Sequence>}
+		 * @type {!Object<!function():!Sequence>}
 		 */
 		this.variableBindings = context.variableBindings || Object.create(null);
 	}
@@ -66,7 +63,7 @@ class DynamicContext {
 
 	/**
 	 * @param   {number}             contextItemIndex
-	 * @param   {./dataTypes/Value}  contextItem
+	 * @param   {Value}  contextItem
 	 * @param   {Sequence}           [contextSequence]
 	 * @return  {!DynamicContext}
 	 */
@@ -82,7 +79,7 @@ class DynamicContext {
 	}
 
 	/**
-	 * @param {!Object<!Sequence>}  variableBindings
+	 * @param {!Object<!function():!Sequence>}  variableBindings
 	 * @return  {!DynamicContext}
 	 */
 	scopeWithVariableBindings (variableBindings) {
@@ -97,16 +94,13 @@ class DynamicContext {
 	}
 
 	/**
-	 * @param   {!./dataTypes/Sequence}  contextSequence
-	 * @return  {!Iterator<!DynamicContext>}
+	 * @param   {!Sequence}  contextSequence
+	 * @return  {!AsyncIterator<!DynamicContext>}
 	 */
 	createSequenceIterator (contextSequence) {
 		let i = 0;
-		/**
-		 * @type {!Iterator<!./dataTypes/Value>}
-		 */
 		const iterator = contextSequence.value();
-		return /** @type {!Iterator<!DynamicContext>}*/ ({
+		return /** @type {!AsyncIterator<!DynamicContext>}*/ ({
 			next: () => {
 				const value = iterator.next();
 				if (value.done) {

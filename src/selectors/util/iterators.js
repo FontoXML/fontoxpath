@@ -49,8 +49,12 @@ export class AsyncResult {
 		 */
 		this.value;
 		/**
-		 * @type Promise|undefined
+		 * @type {Promise|undefined}
 		 */
 		this.promise;
+		/**
+		 * @type {boolean}
+		 */
+		this.ready;
 	}
 };

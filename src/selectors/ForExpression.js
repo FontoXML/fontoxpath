@@ -53,13 +53,7 @@ class ForExpression extends Selector {
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		/**
-		 * @type {!./util/iterators.AsyncIterator<!./dataTypes/Value>}
-		 */
 		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext, executionParameters).value();
-		/**
-		 * @type {?./util/iterators.AsyncIterator<!./dataTypes/Value>}
-		 */
 		let returnIterator = null;
 		let done = false;
 		return new Sequence({

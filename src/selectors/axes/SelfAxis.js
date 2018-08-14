@@ -1,12 +1,10 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
-/**
- * @extends {Selector}
- */
 class SelfAxis extends Selector {
 	/**
-	 * @param  {!../tests/TestAbstractExpression}  selector
+	 * @param  {!TestAbstractExpression}  selector
 	 */
 	constructor (selector) {
 		super(
@@ -22,11 +20,7 @@ class SelfAxis extends Selector {
 		this._selector = selector;
 	}
 
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
-	evaluate (dynamicContext, executionParameters) {
+	evaluate (dynamicContext, _executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}

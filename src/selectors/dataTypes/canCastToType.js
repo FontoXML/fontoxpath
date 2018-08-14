@@ -1,7 +1,8 @@
 import tryCastToType from './casting/tryCastToType';
+import AtomicValue from './AtomicValue';
 
 /**
- * @param   {!./AtomicValue<*>}  value
+ * @param   {!AtomicValue<?>}  value
  * @param   {string}               type
  * @return  {boolean}
  */

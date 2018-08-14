@@ -1,4 +1,5 @@
 import Selector from '../Selector';
+import DynamicContext from '../DynamicContext';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import FunctionValue from '../dataTypes/FunctionValue';
@@ -53,10 +54,10 @@ class InlineFunction extends Selector {
 
 	evaluate (dynamicContext, executionParameters) {
 		/**
-		 * @param   {../DynamicContext}           _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
+		 * @param   {DynamicContext}           _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
 		 *                                                                  This shall not be used
-		 * @param   {...!../dataTypes/Sequence}   parameters              The parameters of the function
-		 * @return  {!../dataTypes/Sequence}      The result of the function call
+		 * @param   {...!Sequence}   parameters              The parameters of the function
+		 * @return  {!Sequence}      The result of the function call
 		 */
 		const executeFunction = (_unboundDynamicContext, _executionContext, _staticContext, ...parameters) => {
 			// Since functionCall already does typechecking, we do not have to do it here
@@ -71,7 +72,8 @@ class InlineFunction extends Selector {
 
 		const functionItem = new FunctionValue({
 			value: executeFunction,
-			name: 'dynamic-function',
+			localName: 'dynamic-function',
+			namespaceURI: '',
 			argumentTypes: this._parameterTypes,
 			arity: this._parameterTypes.length,
 			returnType: this._returnType

@@ -5,9 +5,13 @@ import { trueBoolean, falseBoolean } from './createAtomicValue';
 
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
+import Value from './Value';
+import { AsyncIterator, AsyncResult } from  '../util/iterators';
+import ExecutionParameters from '../ExecutionParameters';
+
 /**
  * @constructor
- * @param   {!Array | !../util/iterators.AsyncIterator<!./Value>}  valueIteratorOrArray
+ * @param   {!Array | !AsyncIterator<!Value>}  valueIteratorOrArray
  * @param   {?number=}                  predictedLength
  */
 function Sequence (valueIteratorOrArray, predictedLength = null) {
@@ -22,10 +26,10 @@ function Sequence (valueIteratorOrArray, predictedLength = null) {
 	 */
 	this._saveValues = false;
 	/**
-	 * @type {!function():!../util/iterators.AsyncIterator}
+	 * @type {!function():!AsyncIterator}
 	 */
 	this.value = () => {
-		const valueIterator = /** @type {!../util/iterators.AsyncIterator<!./Value>} */(valueIteratorOrArray);
+		const valueIterator = /** @type {!AsyncIterator<!Value>} */(valueIteratorOrArray);
 		let i = this._currentPosition;
 		return {
 			[Symbol.iterator]: function () {
@@ -98,7 +102,7 @@ Sequence.prototype.getAllValues = function () {
 };
 
 /**
- * @return  {../util/iterators.AsyncResult<boolean>}
+ * @return  {AsyncResult<boolean>}
  */
 Sequence.prototype.tryGetEffectiveBooleanValue = function () {
 	const iterator = this.value();
@@ -124,7 +128,7 @@ Sequence.prototype.tryGetEffectiveBooleanValue = function () {
 };
 
 /**
- * @return  {../util/iterators.AsyncResult<number>}
+ * @return  {AsyncResult<number>}
  */
 Sequence.prototype.tryGetLength = function (onlyIfCheap = false) {
 	if (this._length !== null) {
@@ -146,7 +150,7 @@ Sequence.prototype.tryGetLength = function (onlyIfCheap = false) {
 };
 
 /**
- * @return  {!../util/iterators.AsyncResult<?./Value>}
+ * @return  {!AsyncResult<?Value>}
  */
 Sequence.prototype.tryGetFirst = function () {
 	const iterator = this.value();
@@ -161,7 +165,7 @@ Sequence.prototype.tryGetFirst = function () {
 };
 
 /**
- * @return  {?./Value}
+ * @return  {?Value}
  */
 Sequence.prototype.first = function () {
 	if (this._cachedValues[0] !== undefined) {
@@ -172,7 +176,7 @@ Sequence.prototype.first = function () {
 };
 
 /**
- * @param   {function(!./Value, number, !Sequence):!Sequence} callback
+ * @param   {function(!Value, number, !Sequence):!Value} callback
  * @return  {!Sequence}
  */
 Sequence.prototype.map = function (callback) {
@@ -194,7 +198,7 @@ Sequence.prototype.map = function (callback) {
 };
 
 /**
- * @param   {function(!./Value, number, !Sequence):boolean} callback
+ * @param   {function(!Value, number, !Sequence):boolean} callback
  * @return  {!Sequence}
  */
 Sequence.prototype.filter = function (callback) {
@@ -222,7 +226,7 @@ Sequence.prototype.filter = function (callback) {
 };
 
 /**
- * @param   {function(!Array<!./Value>):!Sequence} callback
+ * @param   {function(!Array<!Value>):!Sequence} callback
  * @return  {!Sequence}
  */
 Sequence.prototype.mapAll = function (callback) {
@@ -253,7 +257,7 @@ Sequence.prototype.mapAll = function (callback) {
 };
 
 /**
- * @param  {!../ExecutionParameters}  executionParameters
+ * @param  {!ExecutionParameters}  executionParameters
  * @return {!Sequence}
  */
 Sequence.prototype.atomize = function (executionParameters) {
@@ -316,17 +320,12 @@ Sequence.prototype.expandSequence = function () {
 
 
 /**
- * @typedef {function(!Sequence):(!Sequence|undefined)}
+ * @typedef {(undefined|function(!Sequence):!Sequence)}
  */
 let switchCasesCase;
 
 /**
- * @param  {
-             {empty: switchCasesCase, singleton: switchCasesCase, multiple: switchCasesCase}|
-             {empty: switchCasesCase, default: switchCasesCase}|
-             {singleton: switchCasesCase, default: switchCasesCase}|
-             {multiple: switchCasesCase, default: switchCasesCase}
-           } cases
+ * @param  {(!{empty: switchCasesCase, singleton: switchCasesCase, multiple: switchCasesCase, default: switchCasesCase})} cases
  * @return {!Sequence}
  */
 Sequence.prototype.switchCases = function (cases) {
@@ -430,7 +429,9 @@ EmptySequence.prototype.switchCases = function (cases) {
 
 const emptySequence = new EmptySequence();
 
-EmptySequence.prototype.atomize = EmptySequence.prototype.filter = EmptySequence.prototype.map = () => emptySequence;
+EmptySequence.prototype.atomize = () => emptySequence;
+EmptySequence.prototype.filter = () => emptySequence;
+EmptySequence.prototype.map = () => emptySequence;
 
 /**
  * @extends Sequence
@@ -612,7 +613,7 @@ ArrayBackedSequence.prototype.switchCases = function (cases) {
 };
 
 /**
- * @param   {!./Value}  value
+ * @param   {!Value}  value
  * @return  {!Sequence}
  */
 Sequence.singleton = function (value) {

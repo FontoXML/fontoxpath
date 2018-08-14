@@ -43,7 +43,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.1.1",
-    "google-closure-compiler": "^20180402.0.0",
+    "google-closure-compiler": "^20180805.0.0",
     "karma": "^2.0.4",
     "karma-chrome-launcher": "^2.1.1",
     "karma-coverage": "^1.1.2",

@@ -2,6 +2,7 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 function createSiblingGenerator (domFacade, node) {
 	return {
@@ -16,12 +17,9 @@ function createSiblingGenerator (domFacade, node) {
 	};
 }
 
-/**
- * @extends {Selector}
- */
 class FollowingSiblingAxis extends Selector {
 	/**
-	 * @param  {Selector}  siblingSelector
+	 * @param  {!TestAbstractExpression}  siblingSelector
 	 */
 	constructor (siblingSelector) {
 		super(
@@ -38,10 +36,6 @@ class FollowingSiblingAxis extends Selector {
 
 	}
 
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluate (dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
