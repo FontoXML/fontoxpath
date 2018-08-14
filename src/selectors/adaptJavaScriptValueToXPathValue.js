@@ -69,6 +69,9 @@ function adaptItemToXPathValue (value) {
  * @return {?Value} Null if the value is absent and the empty sequence should be outputted instead
  */
 function adaptJavaScriptValueToXPathValue (type, value) {
+	if (value === null) {
+		return null;
+	}
 	switch (type) {
 		case 'xs:boolean':
 			return value ? trueBoolean : falseBoolean;
