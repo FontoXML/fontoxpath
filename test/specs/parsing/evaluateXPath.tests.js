@@ -46,7 +46,7 @@ describe('evaluateXPath', () => {
 
 	it(
 		'Requires the XPath selector',
-		() => chai.assert.throws(() => evaluateXPath(), 'xpathSelector must be a string'));
+		() => chai.assert.throws(() => evaluateXPath(), 'xpathExpression must be a string'));
 
 	describe('toBoolean', () => {
 		it('Keeps booleans booleans',

@@ -1,4 +1,4 @@
-import createSelectorFromXPathAsync from './parsing/createSelectorFromXPathAsync';
+import createExpressionFromXPathAsync from './parsing/createExpressionFromXPathAsync';
 
 /**
  * Precompile an XPath selector asynchronously.
@@ -9,7 +9,7 @@ import createSelectorFromXPathAsync from './parsing/createSelectorFromXPathAsync
  * @return  {Promise}   A promise which is resolved with the xpath string after compilation.
  */
 export default function precompileXPath (xPathString) {
-	return createSelectorFromXPathAsync(xPathString)
+	return createExpressionFromXPathAsync(xPathString)
 		.then(function (_selector) {
 			return xPathString;
 		});

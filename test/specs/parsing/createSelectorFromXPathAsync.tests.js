@@ -5,7 +5,7 @@ import {
 	evaluateXPathToNumber
 } from 'fontoxpath';
 
-describe('createSelectorFromXPathAsync', () => {
+describe('createExpressionFromXPathAsync', () => {
 	let documentNode;
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
