@@ -8,20 +8,20 @@ describe('argumentListToString()', () => {
 	});
 
 	it('returns type when given a Sequence with 1 item', () => {
-		var argumentList = [new Sequence([{ primitiveTypeName: 'type' }])];
+		var argumentList = [new Sequence([{ type: 'type' }])];
 		chai.assert.equal(argumentListToString(argumentList), 'type');
 	});
 
 	it('returns type when given a Sequence with multiple items', () => {
-		var argumentList = [new Sequence([{ primitiveTypeName: 'type' }, { primitiveTypeName: 'type' }])];
+		var argumentList = [new Sequence([{ type: 'type' }, { type: 'type' }])];
 		chai.assert.equal(argumentListToString(argumentList), 'type+');
 	});
 
 	it('returns a type list when given multiple Sequences', () => {
 		var argumentList = [
 			new Sequence([]),
-			new Sequence([{ primitiveTypeName: 'type' }]),
-			new Sequence([{ primitiveTypeName: 'type' }, { primitiveTypeName: 'type' }])];
+			new Sequence([{ type: 'type' }]),
+			new Sequence([{ type: 'type' }, { type: 'type' }])];
 		chai.assert.equal(argumentListToString(argumentList), 'item()?, type, type+');
 	});
 });
