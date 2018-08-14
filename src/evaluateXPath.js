@@ -1,19 +1,19 @@
-import createSelectorFromXPath from './parsing/createSelectorFromXPath';
-import adaptJavaScriptValueToXPathValue from './selectors/adaptJavaScriptValueToXPathValue';
-import DynamicContext from './selectors/DynamicContext';
+import createExpressionFromXPath from './parsing/createExpressionFromXPath';
+import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
+import DynamicContext from './expressions/DynamicContext';
 import DomFacade from './DomFacade';
-import ExecutionParameters from './selectors/ExecutionParameters';
+import ExecutionParameters from './expressions/ExecutionParameters';
 import domBackedDomFacade from './domBackedDomFacade';
 
-import atomize from './selectors/dataTypes/atomize';
-import castToType from './selectors/dataTypes/castToType';
-import Sequence from './selectors/dataTypes/Sequence';
-import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
+import atomize from './expressions/dataTypes/atomize';
+import castToType from './expressions/dataTypes/castToType';
+import Sequence from './expressions/dataTypes/Sequence';
+import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import staticallyCompileXPath from './parsing/staticallyCompileXPath';
 
-import { generateGlobalVariableBindingName } from './selectors/ExecutionSpecificStaticContext';
+import { generateGlobalVariableBindingName } from './expressions/ExecutionSpecificStaticContext';
 
-import { DONE_TOKEN, ready, notReady } from './selectors/util/iterators';
+import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
 
 function normalizeEndOfLines (xpathString) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
@@ -147,7 +147,7 @@ let Options;
  *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
  *  * Else, the sequence is atomized and returned.
  *
- * @param  {!string}       xpathSelector  The selector to execute. Supports XPath 3.1.
+ * @param  {!string}       xpathExpression  The selector to execute. Supports XPath 3.1.
  * @param  {Node|*|null}   contextItem    The node from which to run the XPath.
  * @param  {?IDomFacade=}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number, string, boolean, nodes or object literals and arrays.
@@ -156,21 +156,21 @@ let Options;
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
-function evaluateXPath (xpathSelector, contextItem, domFacade, variables, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1' }) {
+function evaluateXPath (xpathExpression, contextItem, domFacade, variables, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1' }) {
 	if (!variables) {
 		variables = {};
 	}
 	variables = Object.assign(
 		{ 'theBest': 'FontoXML is the best!' },
 		variables);
-	if (!xpathSelector || typeof xpathSelector !== 'string' ) {
-		throw new TypeError('Failed to execute \'evaluateXPath\': xpathSelector must be a string.');
+	if (!xpathExpression || typeof xpathExpression !== 'string' ) {
+		throw new TypeError('Failed to execute \'evaluateXPath\': xpathExpression must be a string.');
 	}
 	if (!domFacade) {
 		domFacade = domBackedDomFacade;
 	}
 
-	xpathSelector = normalizeEndOfLines(xpathSelector);
+	xpathExpression = normalizeEndOfLines(xpathExpression);
 
 	// Always wrap in an actual domFacade
 	const wrappedDomFacade = new DomFacade(domFacade);
@@ -180,7 +180,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 	};
 
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
-	const compiledSelector = staticallyCompileXPath(xpathSelector, compilationOptions, namespaceResolver, variables);
+	const compiledExpression = staticallyCompileXPath(xpathExpression, compilationOptions, namespaceResolver, variables);
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
@@ -239,22 +239,22 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		}, Object.create(null))
 	});
 
-	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, createSelectorFromXPath);
+	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, createExpressionFromXPath);
 
 	/**
 	 * @type {!Sequence}
 	 */
-	const rawResults = compiledSelector.evaluateMaybeStatically(dynamicContext, {
+	const rawResults = compiledExpression.evaluateMaybeStatically(dynamicContext, {
 		domFacade: wrappedDomFacade,
 		nodesFactory: nodesFactory,
-		createSelectorFromXPath: createSelectorFromXPath
+		createExpressionFromXPath: createExpressionFromXPath
 	});
 
 	switch (returnType) {
 		case evaluateXPath.BOOLEAN_TYPE: {
 			const ebv = rawResults.tryGetEffectiveBooleanValue();
 			if (!ebv.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 			return ebv.value;
 		}
@@ -262,7 +262,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		case evaluateXPath.STRING_TYPE: {
 			const allValues = rawResults.tryGetAllValues();
 			if (!allValues.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 			if (!allValues.value.length) {
 				return '';
@@ -273,7 +273,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		case evaluateXPath.STRINGS_TYPE: {
 			const allValues = rawResults.tryGetAllValues();
 			if (!allValues.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 			if (!allValues.value.length) {
 				return [];
@@ -287,7 +287,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		case evaluateXPath.NUMBER_TYPE: {
 			const first = rawResults.tryGetFirst();
 			if (!first.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 			if (!first.value) {
 				return NaN;
@@ -301,13 +301,13 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		case evaluateXPath.FIRST_NODE_TYPE: {
 			const first = rawResults.tryGetFirst();
 			if (!first.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 			if (!first.value) {
 				return null;
 			}
 			if (!(isSubtypeOf(first.value.type, 'node()'))) {
-				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to Node. Got ' + rawResults.value[0]);
+				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to Node. Got ' + rawResults.value[0]);
 			}
 			return first.value.value;
 		}
@@ -315,13 +315,13 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		case evaluateXPath.NODES_TYPE: {
 			const allResults = rawResults.tryGetAllValues();
 			if (!allResults.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 
 			if (!allResults.value.every(function (value) {
 				return isSubtypeOf(value.type, 'node()');
 			})) {
-				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a sequence of Nodes.');
+				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to a sequence of Nodes.');
 			}
 			return allResults.value.map(function (nodeValue) {
 				return nodeValue.value;
@@ -331,19 +331,19 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		case evaluateXPath.MAP_TYPE: {
 			const allValues = rawResults.tryGetAllValues();
 			if (!allValues.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 
 			if (allValues.value.length !== 1) {
-				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single map.');
+				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to a single map.');
 			}
 			const first = allValues.value[0];
 			if (!(isSubtypeOf(first.type, 'map(*)'))) {
-				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a map');
+				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to a map');
 			}
 			const transformedMap = transformMapToObject(first, dynamicContext).next();
 			if (!transformedMap.ready) {
-				throw new Error('Expected XPath ' + xpathSelector + ' to synchronously resolve to a map');
+				throw new Error('Expected XPath ' + xpathExpression + ' to synchronously resolve to a map');
 			}
 			return transformedMap.value;
 		}
@@ -351,19 +351,19 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		case evaluateXPath.ARRAY_TYPE: {
 			const allValues = rawResults.tryGetAllValues();
 			if (!allValues.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 
 			if (allValues.value.length !== 1) {
-				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to a single array.');
+				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to a single array.');
 			}
 			const first = allValues.value[0];
 			if (!(isSubtypeOf(first.type, 'array(*)'))) {
-				throw new Error('Expected XPath ' + xpathSelector + ' to resolve to an array');
+				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to an array');
 			}
 			const transformedArray = transformArrayToArray(first, dynamicContext).next();
 			if (!transformedArray.ready) {
-				throw new Error('Expected XPath ' + xpathSelector + ' to synchronously resolve to a map');
+				throw new Error('Expected XPath ' + xpathExpression + ' to synchronously resolve to a map');
 			}
 			return transformedArray.value;
 		}
@@ -371,11 +371,11 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		case evaluateXPath.NUMBERS_TYPE: {
 			const allValues = rawResults.tryGetAllValues();
 			if (!allValues.ready) {
-				throw new Error(`The XPath ${xpathSelector} can not be resolved synchronously.`);
+				throw new Error(`The XPath ${xpathExpression} can not be resolved synchronously.`);
 			}
 			return allValues.value.map(function (value) {
 				if (!isSubtypeOf(value.type, 'xs:numeric')) {
-					throw new Error('Expected XPath ' + xpathSelector + ' to resolve to numbers');
+					throw new Error('Expected XPath ' + xpathExpression + ' to resolve to numbers');
 				}
 				return value.value;
 			});
@@ -425,7 +425,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		default: {
 			const allValues = rawResults.tryGetAllValues();
 			if (!allValues.ready) {
-				throw new Error('The XPath ' + xpathSelector + ' can not be resolved synchronously.');
+				throw new Error('The XPath ' + xpathExpression + ' can not be resolved synchronously.');
 			}
 			const allValuesAreNodes = allValues.value.every(function (value) {
 				return isSubtypeOf(value.type, 'node()') &&

@@ -1,12 +1,12 @@
-import createSelectorFromXPath from './createSelectorFromXPath';
+import createExpressionFromXPath from './createExpressionFromXPath';
 
-import StaticContext from '../selectors/StaticContext';
-import ExecutionSpecificStaticContext from '../selectors/ExecutionSpecificStaticContext';
+import StaticContext from '../expressions/StaticContext';
+import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 
 import {
 	getStaticCompilationResultFromCache,
 	storeStaticCompilationResultInCache
-} from './compiledSelectorCache';
+} from './compiledExpressionCache';
 
 export default function staticallyCompileXPath (xpathString, compilationOptions, namespaceResolver, variables) {
 	const language = compilationOptions.allowXQuery ? `XQuery` : `XPath`;
@@ -19,12 +19,12 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 		return fromCache;
 	}
 
-	const compiledSelector = createSelectorFromXPath(xpathString, compilationOptions);
+	const compiledExpression = createExpressionFromXPath(xpathString, compilationOptions);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
-	compiledSelector.performStaticEvaluation(rootStaticContext);
+	compiledExpression.performStaticEvaluation(rootStaticContext);
 
-	storeStaticCompilationResultInCache(xpathString, language, executionSpecificStaticContext, compiledSelector);
+	storeStaticCompilationResultInCache(xpathString, language, executionSpecificStaticContext, compiledExpression);
 
-	return compiledSelector;
+	return compiledExpression;
 }

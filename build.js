@@ -22,7 +22,7 @@ function doPegJsBuild () {
 		.then(() => console.info('Parser generator done'));
 }
 
-function doSelectorsBuild () {
+function doExpressionsBuild () {
 	return new Promise((resolve, reject) => {
 		new Compiler({
 			assume_function_wrapper: true,
@@ -98,7 +98,7 @@ if (!skipParserBuild) {
 }
 
 if (!skipClosureBuild) {
-	chain = chain.then(doSelectorsBuild);
+	chain = chain.then(doExpressionsBuild);
 }
 
 chain.catch((err) => {

@@ -1,10 +1,10 @@
-import adaptJavaScriptValueToXPathValue from './selectors/adaptJavaScriptValueToXPathValue';
-import isSubtypeOf from './selectors/dataTypes/isSubtypeOf';
-import functionRegistry from './selectors/functions/functionRegistry';
+import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
+import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
+import functionRegistry from './expressions/functions/functionRegistry';
 import {
 	staticallyKnownNamespaceByPrefix,
 	registerStaticallyKnownNamespace
-} from './selectors/staticallyKnownNamespaces';
+} from './expressions/staticallyKnownNamespaces';
 
 function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 	switch (sequenceType[sequenceType.length - 1]) {
@@ -56,7 +56,7 @@ function splitFunctionName (name) {
 }
 
 /**
- * Add a custom test for use in xpath-serialized selectors.
+ * Add a custom test for use in xpath-serialized expressions.
  *
  * @param   {string|!{namespaceURI: !string, localName: !string}}  name        The name of this custom function. The string overload is deprecated, please register functions using the object overload
  * @param   {Array<string>}  signature   The signature of the test, as array of strings (e.g. ['item()', 'node()?', 'xs:numeric'])

@@ -12,16 +12,16 @@ import evaluateXPathToStrings from './evaluateXPathToStrings';
 import precompileXPath from './precompileXPath';
 import getBucketsForNode from './getBucketsForNode';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
-import createSelectorFromXPath from './parsing/createSelectorFromXPath';
+import createExpressionFromXPath from './parsing/createExpressionFromXPath';
 import domFacade from './domBackedDomFacade';
 
 function getBucketForSelector (xpathString) {
-	return createSelectorFromXPath(xpathString, { allowXQuery: false }).getBucket();
+	return createExpressionFromXPath(xpathString, { allowXQuery: false }).getBucket();
 }
 
 function compareSpecificity (xpathStringA, xpathStringB) {
-	return createSelectorFromXPath(xpathStringA, { allowXQuery: false }).specificity
-		.compareTo(createSelectorFromXPath(xpathStringB, { allowXQuery: false }).specificity);
+	return createExpressionFromXPath(xpathStringA, { allowXQuery: false }).specificity
+		.compareTo(createExpressionFromXPath(xpathStringB, { allowXQuery: false }).specificity);
 }
 
 /**
