@@ -2,14 +2,11 @@ import TestAbstractExpression from './TestAbstractExpression';
 import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
-/**
- * @extends {./TestAbstractExpression}
- */
 class TypeTest extends TestAbstractExpression {
 	/**
-	 * @param  {string}  prefix         The prefix of the given type
-	 * @param  {string}  namespaceURI   The namespace uri of the given type. At the moment, this is not used.
-	 * @param  {string}  typeName       The actual name of the type
+	 * @param  {?string}  prefix         The prefix of the given type
+	 * @param  {?string}  namespaceURI   The namespace uri of the given type. At the moment, this is not used.
+	 * @param  {string}   typeName       The actual name of the type
 	 */
 	constructor (prefix, namespaceURI, typeName) {
 		super(new Specificity({}));

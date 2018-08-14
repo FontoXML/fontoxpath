@@ -1,10 +1,14 @@
 import createAtomicValue from '../createAtomicValue';
 
+import AtomicValueDataType from './AtomicValueDataType';
+import AtomicValue from '../AtomicValue';
+
 const createAnyURIValue = value => createAtomicValue(value, 'xs:anyURI');
+
 
 /**
  * @param  {function(string):boolean}  instanceOf
- * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
+ * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToAnyURI (instanceOf) {
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {

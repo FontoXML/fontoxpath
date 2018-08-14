@@ -85,7 +85,7 @@ IDomFacade.prototype.getAllAttributes = function (_node) {
 /**
  * @nosideeffects
  * @export
- * @param   {!Node|*}    _node
+ * @param   {!Node}    _node
  * @return  {string}
  */
 IDomFacade.prototype.getData = function (_node) {

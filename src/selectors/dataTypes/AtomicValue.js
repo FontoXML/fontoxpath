@@ -1,6 +1,9 @@
+import Value from './Value';
+
 /**
  * @record
  * @template T
+ * @extends {Value}
  */
 export default class AtomicValue {
 	constructor () {

@@ -2,9 +2,6 @@ import TestAbstractExpression from './TestAbstractExpression';
 import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
-/**
- * @extends {./TestAbstractExpression}
- */
 class NameTest extends TestAbstractExpression {
 	/**
 	 * @param  {?string}  prefix
@@ -32,7 +29,7 @@ class NameTest extends TestAbstractExpression {
 
 	performStaticEvaluation (staticContext) {
 		if (this._namespaceURI === null && this._prefix !== '*') {
-			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '');
 
 			if (!this._namespaceURI && this._prefix) {
 				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);

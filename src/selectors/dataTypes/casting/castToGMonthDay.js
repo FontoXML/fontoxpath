@@ -1,11 +1,14 @@
 import createAtomicValue from '../createAtomicValue';
 import DateTime from '../valueTypes/DateTime';
 
+import AtomicValueDataType from './AtomicValueDataType';
+import AtomicValue from '../AtomicValue';
+
 const createGMonthDayValue = value => createAtomicValue(value, 'xs:gMonthDay');
 
 /**
  * @param  {function(string):boolean}  instanceOf
- * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
+ * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToGMonthDay (instanceOf) {
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {

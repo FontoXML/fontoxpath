@@ -7,14 +7,20 @@ import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
+import MapValue from '../dataTypes/MapValue';
+
 import StaticContext from '../StaticContext';
+import ExecutionParameters from '../ExecutionParameters';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 
 /**
- * @param  {!../DynamicContext}      _dynamicContext
- * @param  {!../ExecutionParameters} executionParameters
- * @param  {!../dataTypes/Sequence}  query
- * @param  {!../dataTypes/Sequence}  args
+ * @param  {!DynamicContext}      _dynamicContext
+ * @param  {!ExecutionParameters} executionParameters
+ * @param  {!StaticContext}  _staticContext
+ * @param  {!Sequence}  query
+ * @param  {!Sequence}  args
+ *
+ * @return {!Sequence}
  */
 function fontoxpathEvaluate (_dynamicContext, executionParameters, _staticContext, query, args) {
 	let resultIterator;
@@ -30,7 +36,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, _staticContex
 				/**
 				 * @type {Object<string, function():Sequence>}
 				 */
-				const variables = args.first().keyValuePairs.reduce((expandedArgs, arg) => {
+				const variables = /** @type {!MapValue} */ (args.first()).keyValuePairs.reduce((expandedArgs, arg) => {
 					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value);
 					return expandedArgs;
 				}, Object.create(null));
@@ -80,8 +86,9 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, _staticContex
 }
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
- * @param  {!../ExecutionParameters} _executionParameters
+ * @param   {!DynamicContext}  _dynamicContext
+ * @param   {!ExecutionParameters} _executionParameters
+ * @param   {!StaticContext}  _staticContext
  * @param   {!Sequence}           val
  * @param   {!Sequence}           howLong
  * @return  {!Sequence}
@@ -94,9 +101,7 @@ function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext,
 	return new Sequence({
 		next: () => {
 			if (!readyPromise) {
-				/**
-				 * @type {!../util/iterators.AsyncResult}
-				 */
+
 				const time = howLong ? howLong.tryGetFirst() : ready(createAtomicValue(0, 'xs:integer'));
 				if (!time.ready) {
 					return notReady(readyPromise);

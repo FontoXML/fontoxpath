@@ -1,5 +1,6 @@
 import { parse, SyntaxError } from './xPathParser';
 import compileAstToSelector from './compileAstToSelector';
+import Selector from '../selectors/Selector';
 
 /**
  * @dict
@@ -19,7 +20,7 @@ export function getParseResultFromCache (string, language) {
  *
  * @param  {string}                  xPathString         The string to parse
  * @param  {{allowXQuery: boolean}}  compilationOptions  Whether the compiler should parse XQuery
- * @return {!../selectors/Selector}
+ * @return {!Selector}
  */
 export default function parseSelector (xPathString, compilationOptions) {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';

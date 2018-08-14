@@ -3,13 +3,14 @@ import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 /**
  * @extends {Selector}
  */
 class AttributeAxis extends Selector {
 	/**
-	 * @param  {!../tests/TestAbstractExpression}  attributeTestSelector
+	 * @param  {!TestAbstractExpression}  attributeTestSelector
 	 */
 	constructor (attributeTestSelector) {
 		super(
@@ -27,14 +28,7 @@ class AttributeAxis extends Selector {
 		this._attributeTestSelector = attributeTestSelector;
 	}
 
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluate (dynamicContext, executionParameters) {
-		/**
-		 * @type {../dataTypes/Value}
-		 */
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');

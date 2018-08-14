@@ -11,11 +11,14 @@ import zipSingleton from '../util/zipSingleton';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
+import FunctionValue from '../dataTypes/FunctionValue';
+import Value from '../dataTypes/Value';
+
 function subSequence (sequence, start, length) {
 	// XPath starts from 1
 	let i = 1;
 	/**
-	 * @type {!Iterator<!../dataTypes/Value>}
+	 * @type {!Iterator<!Value>}
 	 */
 	const iterator = sequence.value();
 
@@ -217,15 +220,35 @@ function fnSubsequence (_dynamicContext, _executionParameters, staticContext, se
 		});
 }
 
-function fnUnordered (_dynamicContext, _executionParameters, staticContext, sequence) {
+function fnUnordered (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence;
 }
 
-function fnDeepEqual (dynamicContext, executionParameters, _staticContext, parameter1, parameter2) {
-	return new Sequence(sequenceDeepEqual(dynamicContext, executionParameters, _staticContext, parameter1, parameter2)).map(jsValue => createAtomicValue(jsValue, 'xs:boolean'));
+function fnDeepEqual (dynamicContext, executionParameters, staticContext, parameter1, parameter2) {
+	let hasPassed = false;
+	const deepEqualityIterator = sequenceDeepEqual(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			parameter1,
+			parameter2);
+
+	return new Sequence({
+		next: () => {
+			if (hasPassed) {
+				return DONE_TOKEN;
+			}
+			const result = deepEqualityIterator.next();
+			if (!result.ready || result.done) {
+				return result;
+			}
+			hasPassed = true;
+			return ready(createAtomicValue(result.value, 'xs:boolean'));
+		}
+	});
 }
 
-function fnCount (_dynamicContext, _executionParameters, staticContext, sequence) {
+function fnCount (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	let hasPassed = false;
 	return new Sequence({
 		next: () => {
@@ -242,7 +265,7 @@ function fnCount (_dynamicContext, _executionParameters, staticContext, sequence
 	});
 }
 
-function fnAvg (_dynamicContext, _executionParameters, staticContext, sequence) {
+function fnAvg (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -359,13 +382,13 @@ function fnExactlyOne (_dynamicContext, _executionParameters, staticContext, arg
 	return arg;
 }
 
-function fnFilter (dynamicContext, executionParameters, _staticContext, sequence, callbackSequence) {
+function fnFilter (dynamicContext, executionParameters, staticContext, sequence, callbackSequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
 
 	/**
-	 * @type {../dataTypes/FunctionValue}
+	 * @type {FunctionValue}
 	 */
 	const callbackFn = callbackSequence.first();
 	return sequence.filter(item => {
@@ -375,7 +398,12 @@ function fnFilter (dynamicContext, executionParameters, _staticContext, sequence
 			Sequence.singleton(item),
 			dynamicContext,
 			'fn:filter');
-		const functionCallResult = callbackFn.value.call(undefined, dynamicContext, executionParameters, _staticContext, transformedArgument);
+		const functionCallResult = callbackFn.value.call(
+			undefined,
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			transformedArgument);
 		if (!functionCallResult.isSingleton() || !isSubtypeOf(functionCallResult.first().type, 'xs:boolean')) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}

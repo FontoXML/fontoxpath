@@ -1,9 +1,11 @@
 import Sequence from '../dataTypes/Sequence';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from './iterators';
+import Value from '../dataTypes/Value';
+
 /**
  * @param   {!Sequence}                                         sequence
- * @param   {!function(!../dataTypes/Value):!Sequence}  typeTest
+ * @param   {!function(!Value):!Sequence}  typeTest
  * @return  {!Sequence}
  */
 export default function sequenceEvery (sequence, typeTest) {

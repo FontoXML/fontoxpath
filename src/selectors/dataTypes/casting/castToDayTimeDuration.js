@@ -1,11 +1,14 @@
 import createAtomicValue from '../createAtomicValue';
 import DayTimeDuration from '../valueTypes/DayTimeDuration';
 
+import AtomicValueDataType from './AtomicValueDataType';
+import AtomicValue from '../AtomicValue';
+
 const createDayTimeDurationValue = value => createAtomicValue(value, 'xs:dayTimeDuration');
 
 /**
  * @param  {function(string):boolean}  instanceOf
- * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
+ * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToDayTimeDuration (instanceOf) {
 	if (instanceOf('xs:duration') && !instanceOf('xs:yearMonthDuration')) {
@@ -17,12 +20,12 @@ export default function castToDayTimeDuration (instanceOf) {
 	if (instanceOf('xs:yearMonthDuration')) {
 		return () => ({
 			successful: true,
-			value: createDayTimeDurationValue(DayTimeDuration.fromString('PT0.0S', 'xs:dayTimeDuration'))
+			value: createDayTimeDurationValue(DayTimeDuration.fromString('PT0.0S'))
 		});
 	}
 	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
 		return value => {
-			const parsedDuration = DayTimeDuration.fromString(value, 'xs:dayTimeDuration');
+			const parsedDuration = DayTimeDuration.fromString(value);
 			if (parsedDuration) {
 				return {
 					successful: true,

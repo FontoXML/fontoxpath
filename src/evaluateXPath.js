@@ -131,9 +131,9 @@ function createDefaultNamespaceResolver (contextItem) {
 
 /**
  * @typedef {{
- *   namespaceResolver: ?function(string):string?,
- *   nodesFactory: INodesFactory?,
- *   language: string
+ *   namespaceResolver: (undefined|?function(string):string?),
+ *   nodesFactory: (undefined|INodesFactory?),
+ *   language: (undefined|string)
  * }}
  */
 let Options;
@@ -242,7 +242,7 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, createSelectorFromXPath);
 
 	/**
-	 * @type {!./selectors/dataTypes/Sequence}
+	 * @type {!Sequence}
 	 */
 	const rawResults = compiledSelector.evaluateMaybeStatically(dynamicContext, {
 		domFacade: wrappedDomFacade,
@@ -382,9 +382,6 @@ function evaluateXPath (xpathSelector, contextItem, domFacade, variables, return
 		}
 
 		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
-			/**
-			 * @type {./selectors/util/iterators.AsyncIterator}
-			 */
 			const it = rawResults.value();
 			let transformedValueGenerator = null;
 			let done = false;

@@ -1,12 +1,14 @@
 import Sequence from '../dataTypes/Sequence';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
- * @param   {../ExecutionParameters}  _executionParameters
+ * @param   {!DynamicContext}  _dynamicContext
+ * @param   {!ExecutionParameters}  _executionParameters
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */
@@ -32,8 +34,8 @@ function fnNot (_dynamicContext, _executionParameters, _staticContext, sequence)
 }
 
 /**
- * @param   {../DynamicContext}  _dynamicContext
- * @param   {../ExecutionParameters}  _executionParameters
+ * @param   {!DynamicContext}  _dynamicContext
+ * @param   {!ExecutionParameters}  _executionParameters
  * @param   {Sequence}           sequence
  * @return  {Sequence}
  */

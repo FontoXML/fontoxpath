@@ -29,9 +29,6 @@ class SimpleMapOperator extends Selector {
 
 	evaluate (dynamicContext, executionParameters) {
 		const sequence = this._expression1.evaluateMaybeStatically(dynamicContext, executionParameters);
-		/**
-		 * @type {Iterator<../DynamicContext>}
-		 */
 		const childContextIterator = dynamicContext.createSequenceIterator(sequence);
 		let childContext = null;
 		let sequenceValueIterator = null;

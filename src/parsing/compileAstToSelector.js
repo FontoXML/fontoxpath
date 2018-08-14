@@ -1,3 +1,6 @@
+import Selector from '../selectors/Selector';
+import TestAbstractExpression from '../selectors/tests/TestAbstractExpression';
+
 import PathSelector from '../selectors/path/PathSelector';
 import ForExpression from '../selectors/ForExpression';
 import MapConstructor from '../selectors/maps/MapConstructor';
@@ -96,7 +99,7 @@ function parseCharacterReferences (input) {
 /**
  * @param   {!Array<?>}               ast
  * @param   {{allowXQuery:boolean}}   compilationOptions
- * @return  {!../selectors/Selector}
+ * @return  {!Selector}
  */
 function compile (ast, compilationOptions) {
 	const args = ast.slice(1);
@@ -286,11 +289,11 @@ function absolutePath (args, compilationOptions) {
 }
 
 function ancestor (args, compilationOptions) {
-	return new AncestorAxis(compile(args[0], compilationOptions));
+	return new AncestorAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function ancestorOrSelf (args, compilationOptions) {
-	const subSelector = compile(args[0], compilationOptions);
+	const subSelector = /** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions));
 	return new AncestorAxis(subSelector, { inclusive: true });
 }
 
@@ -299,7 +302,7 @@ function and (args, compilationOptions) {
 }
 
 function attribute (args, compilationOptions) {
-	return new AttributeAxis(compile(args[0], compilationOptions));
+	return new AttributeAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function binaryOperator (args, compilationOptions) {
@@ -311,15 +314,15 @@ function binaryOperator (args, compilationOptions) {
 }
 
 function child (args, compilationOptions) {
-	return new ChildAxis(compile(args[0], compilationOptions));
+	return new ChildAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function descendant (args, compilationOptions) {
-	return new DescendantAxis(compile(args[0], compilationOptions));
+	return new DescendantAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function descendantOrSelf (args, compilationOptions) {
-	const subSelector = compile(args[0], compilationOptions);
+	const subSelector = /** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions));
 	return new DescendantAxis(subSelector, { inclusive: true });
 }
 
@@ -351,11 +354,11 @@ function filter (args, compilationOptions) {
 }
 
 function followingSibling (args, compilationOptions) {
-	return new FollowingSiblingAxis(compile(args[0], compilationOptions));
+	return new FollowingSiblingAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function following (args, compilationOptions) {
-	return new FollowingAxis(compile(args[0], compilationOptions));
+	return new FollowingAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function forExpression ([[prefix, namespaceURI, name], expression, returnExpression], compilationOptions) {
@@ -458,7 +461,7 @@ function or (args, compilationOptions) {
 }
 
 function parent (args, compilationOptions) {
-	return new ParentAxis(compile(args[0], compilationOptions));
+	return new ParentAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function path (args, compilationOptions) {
@@ -466,11 +469,11 @@ function path (args, compilationOptions) {
 }
 
 function precedingSibling (args, compilationOptions) {
-	return new PrecedingSiblingAxis(compile(args[0], compilationOptions));
+	return new PrecedingSiblingAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function preceding (args, compilationOptions) {
-	return new PrecedingAxis(compile(args[0], compilationOptions));
+	return new PrecedingAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function quantified (args, compilationOptions) {
@@ -486,7 +489,7 @@ function quantified (args, compilationOptions) {
 }
 
 function self (args, compilationOptions) {
-	return new SelfSelector(compile(args[0], compilationOptions));
+	return new SelfSelector(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
 }
 
 function sequence (args, compilationOptions) {
@@ -622,7 +625,7 @@ function dirPIConstructor (args, _compilationOptions) {
 
 /**
  * @param   {!Array<?>}  xPathAst
- * @return  {!../selectors/Selector}
+ * @return  {!Selector}
  */
 export default function parseSelectorAsync (xPathAst, compilationOptions) {
     return compile(xPathAst, compilationOptions);

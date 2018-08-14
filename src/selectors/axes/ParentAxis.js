@@ -1,13 +1,11 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
-/**
- * @extends {Selector}
- */
 class ParentAxis extends Selector {
 	/**
-	 * @param  {!../tests/TestAbstractExpression}  parentSelector
+	 * @param  {!TestAbstractExpression}  parentSelector
 	 */
 	constructor (parentSelector) {
 		super(
@@ -23,10 +21,6 @@ class ParentAxis extends Selector {
 		this._parentSelector = parentSelector;
 	}
 
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluate (dynamicContext, executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');

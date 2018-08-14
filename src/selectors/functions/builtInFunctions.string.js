@@ -9,10 +9,10 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
+import DynamicContext from '../DynamicContext';
+
 import builtInNumericFunctions from './builtInFunctions.numeric.js';
-/**
- * @type {function(boolean, ../DynamicContext, !../ExecutionParameters, !../StaticContext, !Sequence, ?Sequence):!Sequence}
- */
+
 const fnRound = builtInNumericFunctions.functions.round;
 
 function collationError () {

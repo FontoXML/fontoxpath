@@ -3,6 +3,8 @@ import valueCompare from './valueCompare';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import castToType from '../../dataTypes/castToType';
 
+import DynamicContext from '../../DynamicContext';
+
 var OPERATOR_TRANSLATION = {
     '=': 'eq',
     '>': 'gt',
@@ -16,7 +18,7 @@ var OPERATOR_TRANSLATION = {
  * @param   {!string}          operator
  * @param   {!Sequence}        firstSequence
  * @param   {!Sequence}        secondSequence
- * @param   {../../DynamicContext}  dynamicContext
+ * @param   {DynamicContext}   dynamicContext
  * @return  {!Sequence}
 */
 export default function generalCompare (operator, firstSequence, secondSequence, dynamicContext) {

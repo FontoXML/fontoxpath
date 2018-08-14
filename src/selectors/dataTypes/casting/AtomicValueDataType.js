@@ -1,5 +1,8 @@
+import DateTime from '../valueTypes/DateTime';
+import Duration from '../valueTypes/Duration';
+
 /**
- * @typedef {number|string|boolean|!../valueTypes/DateTime|!../valueTypes/Duration}
+ * @typedef {number|string|boolean|!DateTime|!Duration}
  */
-let Value;
-export default Value;
+let AtomicValueDataType;
+export default AtomicValueDataType;

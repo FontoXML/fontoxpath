@@ -1,3 +1,4 @@
+import ExecutionParameters from '../ExecutionParameters';
 import castToType from '../dataTypes/castToType';
 import promoteToType from '../dataTypes/promoteToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -51,9 +52,9 @@ function mapItem (argumentItem, type, executionParameters) {
  * Test whether the provided argument is valid to be used as an function argument of the given type
  * @param   {string}              argumentType
  * @param   {!Sequence}           argument
- * @param   {!../ExecutionParameters}  executionParameters
+ * @param   {!ExecutionParameters}  executionParameters
  * @param   {string}              functionName       Used for debugging purposes
- * @return  {?Sequence}
+ * @return  {!Sequence}
  */
 export const transformArgument = (argumentType, argument, executionParameters, functionName) => {
 	const { type, multiplicity } = splitType(argumentType);

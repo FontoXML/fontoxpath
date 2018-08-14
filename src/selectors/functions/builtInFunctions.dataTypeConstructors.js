@@ -1,4 +1,5 @@
 import Sequence from '../dataTypes/Sequence';
+import AtomicValue from '../dataTypes/AtomicValue';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import QName from '../dataTypes/valueTypes/QName';
@@ -23,7 +24,7 @@ function xsQName (_dynamicContext, _executionParameters, staticContext, sequence
 		// This won't ever work
 		throw new Error('XPTY0004: The provided QName is not a string-like value.');
 	}
-	let lexicalQName = castToType(value, 'xs:string').value;
+	let lexicalQName = /** @type {AtomicValue<string>} */ (castToType(value, 'xs:string')).value;
 	// Test lexical scope
 	lexicalQName = normalizeWhitespace(lexicalQName, 'xs:QName');
 	if (!validatePattern(lexicalQName, 'xs:QName')) {

@@ -1,4 +1,5 @@
 import DayTimeDuration from './DayTimeDuration';
+import AbstractDuration from './AbstractDuration';
 
 /**
  * @param   {string|undefined}  match
@@ -437,7 +438,7 @@ export function subtract (dateTime1, dateTime2, implicitTimezone = undefined) {
 
 /**
  * @param   {!DateTime}   dateTime
- * @param   {!./AbstractDuration}   _duration
+ * @param   {!AbstractDuration}   _duration
  * @return  {!DateTime}
  */
 export function addDuration (dateTime, _duration) {
@@ -447,7 +448,7 @@ export function addDuration (dateTime, _duration) {
 
 /**
  * @param   {!DateTime}   dateTime
- * @param   {!./AbstractDuration}   _duration
+ * @param   {!AbstractDuration}   _duration
  * @return  {!DateTime}
  */
 export function subtractDuration (dateTime, _duration) {

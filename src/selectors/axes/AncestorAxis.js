@@ -2,6 +2,7 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 function generateAncestors (domFacade, contextNode) {
 	let ancestor = contextNode;
@@ -23,7 +24,7 @@ function generateAncestors (domFacade, contextNode) {
  */
 class AncestorAxis extends Selector {
 	/**
-	 * @param  {!../tests/TestAbstractExpression}  ancestorSelector
+	 * @param  {!TestAbstractExpression}  ancestorSelector
 	 * @param  {{inclusive:boolean}=}    options
 	 */
 	constructor (ancestorSelector, options) {
@@ -42,10 +43,6 @@ class AncestorAxis extends Selector {
 		this._isInclusive = !!options.inclusive;
 	}
 
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluate (dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {

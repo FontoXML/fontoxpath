@@ -30,7 +30,7 @@ class VarRef extends Selector {
 	}
 
 	performStaticEvaluation (staticContext) {
-		if (this.prefix) {
+		if (this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 		}
 

@@ -4,6 +4,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import createChildGenerator from '../util/createChildGenerator';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 function createInclusiveDescendantGenerator (domFacade, node) {
 	/**
@@ -35,7 +36,7 @@ function createInclusiveDescendantGenerator (domFacade, node) {
  */
 class DescendantAxis extends Selector {
 	/**
-	 * @param  {!../tests/TestAbstractExpression}  descendantSelector
+	 * @param  {!TestAbstractExpression}  descendantSelector
 	 * @param  {{inclusive:boolean}=}    options
 	 */
 	constructor (descendantSelector, options) {

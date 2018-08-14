@@ -1,10 +1,5 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
 
-/**
- * @param   {!./types/Type}  subType
- * @param   {!./types/Type}  superType
- * @return  {boolean}
- */
 function isSubtypeOfType (subType, superType) {
 	if (superType.variety === 'union') {
 		// It is a union type, which can only be the topmost types
@@ -27,8 +22,8 @@ function isSubtypeOfType (subType, superType) {
  * xs:int is a subtype of xs:integer
  * xs:decimal is a subtype of xs:numeric
  * xs:NMTOKENS is a subtype of xs:NM TOKEN
- * @param   {./ETypeNames}  subTypeName
- * @param   {./ETypeNames}  superTypeName
+ * @param   {./ETypeNames|string}  subTypeName
+ * @param   {./ETypeNames|string}  superTypeName
  * @return  {boolean}
  */
 export default function isSubtypeOf (subTypeName, superTypeName) {
@@ -37,9 +32,6 @@ export default function isSubtypeOf (subTypeName, superTypeName) {
 	}
 
 	const superType = builtinDataTypesByName[superTypeName];
-	/**
-	 * @type {!./types/Type}
-	 */
 	const subType = builtinDataTypesByName[subTypeName];
 
 	if (!superType) {

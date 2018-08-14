@@ -38,17 +38,11 @@ class Filter extends Selector {
 
 		if (this._filterSelector.canBeStaticallyEvaluated) {
 			// Shortcut, if this is numeric, all the values are the same numeric value, same for booleans
-			/**
-			 * @type {!Sequence}
-			 */
 			const result = this._filterSelector.evaluateMaybeStatically(dynamicContext, executionParameters);
 			if (result.isEmpty()) {
 				return result;
 			}
 
-			/**
-			 * @type {?../dataTypes/Value}
-			 */
 			const resultValue = result.first();
 			if (isSubtypeOf(resultValue.type, 'xs:numeric')) {
 				let requestedIndex = resultValue.value;
@@ -87,9 +81,6 @@ class Filter extends Selector {
 			return Sequence.empty();
 		}
 
-		/**
-		 * @type {!../util/iterators.AsyncIterator<../dataTypes/Value>}
-		 */
 		const iteratorToFilter = valuesToFilter.value();
 		let iteratorItem = null;
 		let i = 0;

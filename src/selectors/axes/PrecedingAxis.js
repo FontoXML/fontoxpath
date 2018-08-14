@@ -4,6 +4,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
 import createDescendantGenerator from '../util/createDescendantGenerator';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 function createPrecedingGenerator (domFacade, node) {
 	const nodeStack = [];
@@ -62,12 +63,9 @@ function createPrecedingGenerator (domFacade, node) {
 }
 
 
-/**
- * @extends {Selector}
- */
 class PrecedingAxis extends Selector {
 	/**
-	 * @param  {Selector}  testSelector
+	 * @param  {!TestAbstractExpression}  testSelector
 	 */
 	constructor (testSelector) {
 		super(
@@ -83,10 +81,6 @@ class PrecedingAxis extends Selector {
 		this._testSelector = testSelector;
 	}
 
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluate (dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {

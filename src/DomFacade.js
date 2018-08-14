@@ -1,3 +1,5 @@
+import Value from './selectors/dataTypes/Value';
+
 /**
  * Adapter for the DOM, can be used to use a different DOM implementation
  * @constructor
@@ -8,7 +10,7 @@ function DomFacade (domFacade) {
 	/**
 	 * Defines the ordering of detached nodes, to ensure stable sorting of unrelated nodes.
 	 *
-	 * @type {!Array<!./selectors/dataTypes/Value>}
+	 * @type {!Array<!Value>}
 	 */
 	this.orderOfDetachedNodes = [];
 

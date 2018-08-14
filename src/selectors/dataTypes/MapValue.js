@@ -1,18 +1,18 @@
 import FunctionValue from './FunctionValue';
 import Sequence from './Sequence';
+import Value from './Value';
 import mapGet from '../functions/builtInFunctions.maps.get';
+import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-/**
- * @extends {./FunctionValue}
- */
 class MapValue extends FunctionValue {
 	/**
-	 * @param  {Array<{key: !./Value, value: ./Sequence}>}  keyValuePairs
+	 * @param  {Array<{key: !Value, value: !Sequence}>}  keyValuePairs
 	 */
 	constructor (keyValuePairs) {
 		super({
 			value: (dynamicContext, executionParameters, staticContext, key) => mapGet(dynamicContext, executionParameters, staticContext, Sequence.singleton(this), key),
-			name: 'map:get',
+			localName: 'get',
+			namespaceURI: MAP_NAMESPACE_URI,
 			argumentTypes: ['item()'],
 			arity: 1,
 			returnType: 'item()*'

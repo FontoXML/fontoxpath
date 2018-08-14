@@ -1,9 +1,11 @@
 import isSubtypeOf from './isSubtypeOf';
+import DomFacade from '../../DomFacade';
+import Value from './Value';
 
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent
  *
- * @param {!IDomFacade} domFacade The domFacade in which to consider the nodes
+ * @param {!DomFacade}  domFacade The domFacade in which to consider the nodes
  * @param {!Node}       node1     The first node
  * @param {!Node}       node2      The second node
  *
@@ -31,7 +33,7 @@ function compareSiblingElements (domFacade, node1, node2) {
 /**
  * Find all ancestors of the given node
  *
- * @param	{!IDomFacade}  domFacade  The domFacade to consider relations in
+ * @param	{!DomFacade}   domFacade  The domFacade to consider relations in
  * @param	{!Node}         node      The node to find all ancestors of
  * @return	{!Array<!Node>}            All of the ancestors of the given node
  */
@@ -48,7 +50,7 @@ function findAllAncestors (domFacade, node) {
  * Compares the given positions w.r.t. document order in this state
  *
  * @param {!Array<!Node>} tieBreakerArr  Results of earlier comparisons, used as a tie breaker for compares between documents
- * @param {!IDomFacade} domFacade        The domFacade in which to consider the nodes
+ * @param {!DomFacade}  domFacade        The domFacade in which to consider the nodes
  * @param {!Node}       nodeA
  * @param {!Node}       nodeB
  *
@@ -139,10 +141,10 @@ export const compareNodePositions = function (domFacade, node1, node2) {
  * Attributes are placed after their elements, before childnodes.
  * Attributes are sorted alphabetically by their names
  *
- * @param	{!../../DomFacade}    domFacade
- * @param	{!Array<!./Value>}    nodeValues
+ * @param	{!DomFacade}          domFacade
+ * @param	{!Array<!Value>}    nodeValues
  *
- * @return  {!Array<!./Value>}    The sorted nodes
+ * @return  {!Array<!Value>}    The sorted nodes
  */
 export const sortNodeValues = function sortNodeValues (domFacade, nodeValues) {
 	return nodeValues

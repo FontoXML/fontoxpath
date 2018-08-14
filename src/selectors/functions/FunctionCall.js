@@ -3,6 +3,7 @@ import { transformArgument } from './argumentHelper';
 import Selector from '../Selector';
 import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import FunctionValue from '../dataTypes/FunctionValue';
 
 function transformArgumentList (argumentTypes, argumentList, executionParameters, functionItem) {
 	if (argumentList.length !== argumentTypes.length) {
@@ -63,10 +64,12 @@ class FunctionCall extends Selector {
 				throw new Error('XPTY0004: expected base expression to evaluate to a sequence with a single item');
 			},
 			singleton: () => {
-				return sequence.mapAll(([functionItem]) => {
-					if (!isSubtypeOf(functionItem.type, 'function(*)')) {
+				return sequence.mapAll(([item]) => {
+					if (!isSubtypeOf(item.type, 'function(*)')) {
 						throw new Error('XPTY0004: expected base expression to evaluate to a function item');
 					}
+
+					const functionItem = /** @type {!FunctionValue} */ (item);
 
 					if (functionItem.getArity() !== this._args.length) {
 						throw new Error(`XPTY0004: expected arity of function ${functionItem.getName()} to be ${this._args.length}, got function with arity of ${functionItem.getArity()}`);

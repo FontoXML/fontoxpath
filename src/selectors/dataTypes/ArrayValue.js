@@ -1,19 +1,18 @@
 import FunctionValue from './FunctionValue';
 import Sequence from './Sequence';
 import arrayGet from '../functions/builtInFunctions.arrays.get';
+import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-/**
- * @extends {./FunctionValue}
- */
 class ArrayValue extends FunctionValue {
 	/**
-	 * @param  {Array<./Value>}  members
+	 * @param  {!Array<!Sequence>}  members
 	 */
 	constructor (members) {
 		super(
 			{
 				value: (dynamicContext, executionParameters, staticContext, key) => arrayGet(dynamicContext, executionParameters, staticContext, Sequence.singleton(this), key),
-				name: 'array:get',
+				localName: 'get',
+				namespaceURI: ARRAY_NAMESPACE_URI,
 				argumentTypes: ['xs:integer'],
 				arity: 1,
 				returnType: 'item()*'

@@ -5,15 +5,20 @@ import MapValue from './dataTypes/MapValue';
 import createNodeValue from './dataTypes/createNodeValue';
 import { trueBoolean, falseBoolean } from './dataTypes/createAtomicValue';
 import DateTime from './dataTypes/valueTypes/DateTime';
+import Value from './dataTypes/Value';
 
 /**
  * Adapt a JavaScript value to the equivalent in XPath. This dynamically assigns the closest type
  *
  * @param  {?} value
- * @return {?./dataTypes/Value} Null if the value is absent and the empty sequence should be
- * outputted instead
+ * @return {?Value} Null if the value is absent and the empty sequence should be
+ * output instead
  */
 function adaptItemToXPathValue (value) {
+	if (value === null) {
+		return null;
+	}
+
 	switch (typeof value) {
 		case 'boolean':
 			return value ? trueBoolean : falseBoolean;
@@ -22,9 +27,6 @@ function adaptItemToXPathValue (value) {
 		case 'string':
 			return createAtomicValue(value, 'xs:string');
 		case 'object':
-			if (value === null) {
-				return null;
-			}
 			// Test if it is a node
 			if (value.nodeType) {
 				return createNodeValue(value);
@@ -34,11 +36,13 @@ function adaptItemToXPathValue (value) {
 					value
 						.map(
 					arrayItem => {
-						if (arrayItem === null || arrayItem === undefined) {
+						if (arrayItem === undefined) {
 							return Sequence.empty();
 						}
 						const adaptedArrayItem = adaptItemToXPathValue(arrayItem);
-						return Sequence.singleton(adaptedArrayItem);
+						return adaptedArrayItem === null ?
+							Sequence.empty() :
+							Sequence.singleton(adaptedArrayItem);
 					}));
 			}
 			// Make it a map
@@ -62,7 +66,7 @@ function adaptItemToXPathValue (value) {
  * Adapt a JavaScript value to the equivalent in XPath. This tries to keep the preferred type
  *
  * @param  {?} value
- * @return {?./dataTypes/Value} Null if the value is absent and the empty sequence should be outputted instead
+ * @return {?Value} Null if the value is absent and the empty sequence should be outputted instead
  */
 function adaptJavaScriptValueToXPathValue (type, value) {
 	switch (type) {
@@ -84,9 +88,9 @@ function adaptJavaScriptValueToXPathValue (type, value) {
 		case 'xs:dateTime':
 		case 'xs:gYearMonth':
 		case 'xs:gYear':
-		case 'xs:gMonthDay': 
-		case 'xs:gMonth':    
-		case 'xs:gDay':   
+		case 'xs:gMonthDay':
+		case 'xs:gMonth':
+		case 'xs:gDay':
 			return createAtomicValue(DateTime.fromString(value.toISOString()).convertToType(type), type);
 		case 'node()':
 			throw new Error('XPath custom functions should not return a node, use traversals instead.');
@@ -111,10 +115,11 @@ export default function adaptJavaScriptValueToXPath (value, expectedType) {
 
 	switch (multiplicity) {
 		case '?':
-			if (value === null) {
+			const adaptedValue = adaptJavaScriptValueToXPathValue(type, value);
+			if (adaptedValue === null) {
 				return Sequence.empty();
 			}
-			return Sequence.singleton(adaptJavaScriptValueToXPathValue(type, value));
+			return Sequence.singleton(adaptedValue);
 
 		case '+':
 		case '*': {
@@ -123,7 +128,12 @@ export default function adaptJavaScriptValueToXPath (value, expectedType) {
 				convertedValues.filter(convertedValue => convertedValue !== null));
 		}
 
-		default:
-			return Sequence.singleton(adaptJavaScriptValueToXPathValue(type, value));
+		default: {
+			const adaptedValue = adaptJavaScriptValueToXPathValue(type, value);
+			if (adaptedValue === null) {
+				return Sequence.empty();
+			}
+			return Sequence.singleton(adaptedValue);
+		}
 	}
 }

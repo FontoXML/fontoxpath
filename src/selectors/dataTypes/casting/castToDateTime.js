@@ -1,11 +1,13 @@
 import createAtomicValue from '../createAtomicValue';
 import DateTime from '../valueTypes/DateTime';
+import AtomicValueDataType from './AtomicValueDataType';
+import AtomicValue from '../AtomicValue';
 
 const createDateTimeValue = value => createAtomicValue(value, 'xs:dateTime');
 
 /**
  * @param   {function(string):boolean}       instanceOf
- * @return {function (./AtomicValueDataType) : ({successful: boolean, value: ../AtomicValue}|{successful: boolean, error: !Error})}
+ * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
  */
 export default function castToDateTime (instanceOf) {
 	if (instanceOf('xs:date')) {

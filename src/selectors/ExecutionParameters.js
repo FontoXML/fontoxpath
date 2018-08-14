@@ -1,7 +1,8 @@
+import DomFacade from '../DomFacade';
 export default class ExecutionParameters {
 	constructor (domFacade, nodesFactory, createSelectorFromXPath) {
 		/**
-		 *@type {!IDomFacade}
+		 *@type {!DomFacade}
 		 */
 		this.domFacade = domFacade;
 		/**

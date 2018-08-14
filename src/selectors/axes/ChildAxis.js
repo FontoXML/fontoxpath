@@ -1,13 +1,14 @@
 import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 /**
  * @extends {Selector}
  */
 class ChildAxis extends Selector {
 	/**
-	 * @param  {!../tests/TestAbstractExpression}  childSelector
+	 * @param  {!TestAbstractExpression}  childSelector
 	 */
 	constructor (childSelector) {
 		super(
@@ -24,10 +25,6 @@ class ChildAxis extends Selector {
 
 	}
 
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluate (dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {

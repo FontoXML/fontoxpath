@@ -1,9 +1,7 @@
 import Sequence from '../../dataTypes/Sequence';
 import Selector from '../../Selector';
 import sequenceEvery from '../../util/sequenceEvery';
-/**
- * @extends {Selector}
- */
+
 class InstanceOfOperator extends Selector {
 	/**
 	 * @param  {!Selector}  expression
@@ -36,7 +34,7 @@ class InstanceOfOperator extends Selector {
 					return sequenceEvery(evaluatedExpression, value => {
 						const contextItem = Sequence.singleton(value);
 						const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
-						return this._typeTest.evaluateMaybeStatically(scopedContext);
+						return this._typeTest.evaluateMaybeStatically(scopedContext, executionParameters);
 					});
 				}
 				return Sequence.singletonFalseSequence();
@@ -45,7 +43,7 @@ class InstanceOfOperator extends Selector {
 				return sequenceEvery(evaluatedExpression, value => {
 					const contextItem = Sequence.singleton(value);
 					const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
-					return this._typeTest.evaluateMaybeStatically(scopedContext);
+					return this._typeTest.evaluateMaybeStatically(scopedContext, executionParameters);
 				});
 			}
 		});

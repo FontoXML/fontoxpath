@@ -22,9 +22,6 @@ class Literal extends Selector {
 			});
 		this._type = type;
 
-		/**
-		 * @type {../dataTypes/Value}
-		 */
 		let value;
 		switch (type) {
 			case 'xs:integer':

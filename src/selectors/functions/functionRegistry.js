@@ -2,7 +2,7 @@ import builtInFunctions from './builtInFunctions';
 import Sequence from '../dataTypes/Sequence';
 
 /**
- * @typedef {({localName: !string, namespaceURI: string, callFunction: !function(*): !Sequence, argumentTypes: !Array<string>, returnType: !string})}
+ * @typedef {({localName: !string, namespaceURI: string, arity: number, callFunction: !function(*): !Sequence, argumentTypes: !Array<string>, returnType: !string})}
  */
 let FunctionProperties;
 
@@ -117,6 +117,7 @@ function getFunctionByArity (functionNamespaceURI, functionLocalName, arity) {
 		localName: functionLocalName,
 		callFunction: matchingFunction.callFunction,
 		argumentTypes: matchingFunction.argumentTypes,
+		arity: arity,
 		returnType: matchingFunction.returnType
 	};
 }
@@ -130,6 +131,7 @@ function registerFunction (namespaceURI, localName, argumentTypes, returnType, c
 		localName: localName,
 		namespaceURI: namespaceURI,
 		argumentTypes: argumentTypes,
+		arity: argumentTypes.length,
 		returnType: returnType,
 		callFunction: callFunction
 	});

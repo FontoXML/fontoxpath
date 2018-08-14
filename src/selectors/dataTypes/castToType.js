@@ -1,8 +1,10 @@
 import tryCastToType from './casting/tryCastToType';
+import AtomicValue from './AtomicValue';
+
 /**
- * @param   {!./AtomicValue<*>}  value
+ * @param   {!AtomicValue<?>}  value
  * @param   {string}    type
- * @return  {!./AtomicValue<*>}
+ * @return  {!AtomicValue<?>}
  */
 export default function castToType (value, type) {
 	const result = tryCastToType(value, type);

@@ -2,6 +2,7 @@ import Selector from '../Selector';
 import Sequence from '../dataTypes/Sequence';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 import createDescendantGenerator from '../util/createDescendantGenerator';
 
@@ -54,12 +55,9 @@ function createFollowingGenerator (domFacade, node) {
 }
 
 
-/**
- * @extends {Selector}
- */
 class FollowingAxis extends Selector {
 	/**
-	 * @param  {Selector}  testSelector
+	 * @param  {TestAbstractExpression}  testSelector
 	 */
 	constructor (testSelector) {
 		super(
@@ -75,10 +73,6 @@ class FollowingAxis extends Selector {
 		this._testSelector = testSelector;
 	}
 
-	/**
-	 * @param   {../DynamicContext}  dynamicContext
-	 * @return  {Sequence}
-	 */
 	evaluate (dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {

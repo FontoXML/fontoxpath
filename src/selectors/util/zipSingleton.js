@@ -1,8 +1,11 @@
 import Sequence from '../dataTypes/Sequence';
 import { notReady } from './iterators';
+
+import Value from '../dataTypes/Value';
+
 /**
  * @param   {!Array<!Sequence>}  sequences
- * @param   {!function(!Array<!../dataTypes/Value>):!Sequence}  callback
+ * @param   {!function(!Array<!Value>):!Sequence}  callback
  * @return  {!Sequence}
  */
 export default function zipSingleton (sequences, callback) {
