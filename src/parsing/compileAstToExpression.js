@@ -107,28 +107,20 @@ function compile (ast, compilationOptions) {
 			// Operators
 		case 'and':
 			return and(args, compilationOptions);
-			break;
 		case 'or':
 			return or(args, compilationOptions);
-			break;
 		case 'compare':
 			return compare(args, compilationOptions);
-			break;
 		case 'unaryPlus':
 			return unaryPlus(args, compilationOptions);
-			break;
 		case 'unaryMinus':
 			return unaryMinus(args, compilationOptions);
-			break;
 		case 'binaryOperator':
 			return binaryOperator(args, compilationOptions);
-			break;
 		case 'sequence':
 			return sequence(args, compilationOptions);
-			break;
 		case 'union':
 			return union(args, compilationOptions);
-			break;
 		case 'intersectExcept':
 			return intersectExcept(args, compilationOptions);
 			break;
@@ -136,10 +128,8 @@ function compile (ast, compilationOptions) {
 			// Tests
 		case 'nameTest':
 			return nameTest(args, compilationOptions);
-			break;
 		case 'kindTest':
 			return kindTest(args, compilationOptions);
-			break;
 		case 'typeTest':
 			return typeTest(args, compilationOptions);
 			break;
@@ -147,37 +137,26 @@ function compile (ast, compilationOptions) {
 			// Axes
 		case 'ancestor':
 			return ancestor(args, compilationOptions);
-			break;
 		case 'ancestor-or-self':
 			return ancestorOrSelf(args, compilationOptions);
-			break;
 		case 'attribute':
 			return attribute(args, compilationOptions);
-			break;
 		case 'child':
 			return child(args, compilationOptions);
-			break;
 		case 'descendant':
 			return descendant(args, compilationOptions);
-			break;
 		case 'descendant-or-self':
 			return descendantOrSelf(args, compilationOptions);
-			break;
 		case 'parent':
 			return parent(args, compilationOptions);
-			break;
 		case 'following-sibling':
 			return followingSibling(args, compilationOptions);
-			break;
 		case 'preceding-sibling':
 			return precedingSibling(args, compilationOptions);
-			break;
 		case 'following':
 			return following(args, compilationOptions);
-			break;
 		case 'preceding':
 			return preceding(args, compilationOptions);
-			break;
 		case 'self':
 			return self(args, compilationOptions);
 			break;
@@ -185,7 +164,6 @@ function compile (ast, compilationOptions) {
 			// Path
 		case 'absolutePath':
 			return absolutePath(args, compilationOptions);
-			break;
 		case 'path':
 			return path(args, compilationOptions);
 			break;
@@ -198,73 +176,55 @@ function compile (ast, compilationOptions) {
 			// Functions
 		case 'functionCall':
 			return functionCall(args, compilationOptions);
-			break;
 		case 'inlineFunction':
 			return inlineFunction(args, compilationOptions);
-			break;
 
 		case 'literal':
 			return literal(args, compilationOptions);
-			break;
 
 			// Variables
 		case 'let':
 			return letExpression(args, compilationOptions);
-			break;
 		case 'varRef':
 			return varRef(args, compilationOptions);
-			break;
 		case 'namedFunctionRef':
 			return namedFunctionRef(args, compilationOptions);
-			break;
 		case 'forExpression':
 			return forExpression(args, compilationOptions);
-			break;
 
 			// Quantified
 		case 'quantified':
 			return quantified(args, compilationOptions);
-			break;
 
 			// Conditional
 		case 'conditional':
 			return conditional(args, compilationOptions);
-			break;
 
 		case 'instance of':
 			return instanceOf(args, compilationOptions);
-			break;
 		case 'cast as':
 			return castAs(args, compilationOptions);
-			break;
 		case 'castable as':
 			return castableAs(args, compilationOptions);
-			break;
 
 		case 'simpleMap':
 			return simpleMap(args, compilationOptions);
-			break;
 
 		case 'mapConstructor':
 			return mapConstructor(args, compilationOptions);
-			break;
 
 		case 'arrayConstructor':
 			return arrayConstructor(args, compilationOptions);
-			break;
 
 			// XQuery element constructors
 		case 'DirElementConstructor':
 			return dirElementConstructor(args, compilationOptions);
-			break;
 
 		case 'DirCommentConstructor':
 			return dirCommentConstructor(args, compilationOptions);
-			break;
 
 		case 'DirPIConstructor':
 			return dirPIConstructor(args, compilationOptions);
-			break;
 
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
@@ -627,6 +587,6 @@ function dirPIConstructor (args, _compilationOptions) {
  * @param   {!Array<?>}  xPathAst
  * @return  {!Expression}
  */
-export default function parseExpressionAsync (xPathAst, compilationOptions) {
+export default function (xPathAst, compilationOptions) {
     return compile(xPathAst, compilationOptions);
 }

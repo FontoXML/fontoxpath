@@ -606,7 +606,7 @@ CommentContents
 
 // 1
 Module
-	= _ (VersionDecl _)? (LibraryModule / MainModule) _
+	= _ (VersionDecl _)? module:(LibraryModule / MainModule) _ { return module }
 
 // 2
 VersionDecl
@@ -618,15 +618,16 @@ MainModule
 
 // 4
 LibraryModule
- = ModuleDecl _ Prolog
+ = moduleDecl:ModuleDecl _ prolog:Prolog {return {moduleDecl: moduleDecl, prolog: prolog}}
 
 // 5
 ModuleDecl
- = "module" S "namespace" S NCName _ "=" _ URILiteral _ Separator
+ = "module" S "namespace" S prefix:$NCName _ "=" _ uriLiteral:URILiteral _ Separator {return {prefix: prefix, namespaceURI: uriLiteral[1]}}
 
 // 6
 Prolog
- = ((DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _)* ((ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _)*
+ = moduleSettings:(prologPart:(DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _ {return prologPart})*
+   declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _ {return prologPart})* {return {moduleSettings: moduleSettings, declarations: declarations }}
 
 // 7
 Separator = ";"
@@ -689,10 +690,10 @@ DefaultNamespaceDecl
  = "declare" S "default" S ("element" / "function") S "namespace" S URILiteral
 // 26
 AnnotatedDecl
- = "declare" S Annotation* S (VarDecl / FunctionDecl)
+ = "declare" S annotations:Annotation* S decl:(VarDecl / FunctionDecl) { return {annotations: annotations, declaration :decl}}
 // 27
 Annotation
- = "%" _ EQName (_ "(" _ Literal (_ "," _ Literal)* _")")?
+ = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")")? { return [annotation, params]}
 // 28
 VarDecl
  = "variable" S "$" _ VarName (_ TypeDeclaration)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
@@ -707,7 +708,21 @@ ContextItemDecl
  = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
 // 32
 FunctionDecl
- = "function" S (!ReservedFunctionNames) EQName _ "(" _ ParamList? _ ")" S ("as" S SequenceType)? (_ FunctionBody / (_ "external")) /* xgc: reserved-function-names */
+ = "function" S
+   (!ReservedFunctionNames) name:EQName _
+   "(" _ params:ParamList? _ ")" S
+   returnType:("as" S st:SequenceType {return st})?
+   body:( _ body:FunctionBody{return body} / (_ "external"))
+   {
+       return {
+               type: 'functionDeclaration',
+			   name: name,
+			   params: params || [],
+			   returnType: returnType,
+			   body: body
+			}
+   }
+
 // 37
 OptionDecl
  = "declare" S  "option" S EQName S StringLiteral

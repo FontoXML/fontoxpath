@@ -14,7 +14,8 @@ function doPegJsBuild () {
 			cache: true,
 			output: 'source',
 			format: 'globals',
-			exportVar: 'xPathParser'
+			exportVar: 'xPathParser',
+			allowedStartRules: ['Module', 'QueryBody']
 		}))
 		.then(parserString => UglifyJS.minify(parserString).code)
 		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)

@@ -1,5 +1,5 @@
 import createExpressionFromXPath from './createExpressionFromXPath';
-
+import { enhanceStaticContextWithModule } from '../globalModuleCache';
 import StaticContext from '../expressions/StaticContext';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 
@@ -8,12 +8,12 @@ import {
 	storeStaticCompilationResultInCache
 } from './compiledExpressionCache';
 
-export default function staticallyCompileXPath (xpathString, compilationOptions, namespaceResolver, variables) {
+export default function staticallyCompileXPath (xpathString, compilationOptions, namespaceResolver, variables, moduleImports) {
 	const language = compilationOptions.allowXQuery ? `XQuery` : `XPath`;
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, variables);
 
-	const fromCache = getStaticCompilationResultFromCache(xpathString, language, namespaceResolver, variables);
+	const fromCache = getStaticCompilationResultFromCache(xpathString, language, namespaceResolver, variables, moduleImports);
 
 	if (fromCache) {
 		return fromCache;
@@ -22,9 +22,16 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 	const compiledExpression = createExpressionFromXPath(xpathString, compilationOptions);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
+	Object.keys(moduleImports).forEach(modulePrefix => {
+		const moduleURI = moduleImports[modulePrefix];
+		enhanceStaticContextWithModule(rootStaticContext, moduleURI);
+
+		rootStaticContext.registerNamespace(modulePrefix, moduleURI);
+	});
+
 	compiledExpression.performStaticEvaluation(rootStaticContext);
 
-	storeStaticCompilationResultInCache(xpathString, language, executionSpecificStaticContext, compiledExpression);
+	storeStaticCompilationResultInCache(xpathString, language, executionSpecificStaticContext, moduleImports, compiledExpression);
 
 	return compiledExpression;
 }
