@@ -38,7 +38,8 @@ if (supportsAsyncCompilation()) {
 		'self.onmessage = function (event) {',
 		'	var ast;',
 		'	try {',
-		'		ast = self.xPathParser.parse(event.data.xPath);',
+		'		// We are not interested in parsing XQuery async (yet)',
+		'		ast = self.xPathParser.parse(event.data.xPath, { startRule: "QueryBody" });',
 		'	} catch (error) {',
 		'		self.postMessage({',
 		'			success: false,',
@@ -173,7 +174,7 @@ if (supportsAsyncCompilation()) {
 				}).then(function () {
 					var selector = compileAstToExpression(result['ast'], { allowXQuery: false });
 					resolve(selector);
-				});
+				}).catch(reject);
 			};
 
 			worker.postMessage({

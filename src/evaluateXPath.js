@@ -133,7 +133,8 @@ function createDefaultNamespaceResolver (contextItem) {
  * @typedef {{
  *   namespaceResolver: (undefined|?function(string):string?),
  *   nodesFactory: (undefined|INodesFactory?),
- *   language: (undefined|string)
+ *   language: (undefined|string),
+ *   moduleImports: (undefined|Object<string, string>)
  * }}
  */
 let Options;
@@ -156,7 +157,7 @@ let Options;
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
-function evaluateXPath (xpathExpression, contextItem, domFacade, variables, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1' }) {
+function evaluateXPath (xpathExpression, contextItem, domFacade, variables, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1', moduleImports: {} }) {
 	if (!variables) {
 		variables = {};
 	}
@@ -179,8 +180,15 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 		allowXQuery: options.language === 'XQuery3.1'
 	};
 
+	const moduleImports = options['moduleImports'] || Object.create(null);
+
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
-	const compiledExpression = staticallyCompileXPath(xpathExpression, compilationOptions, namespaceResolver, variables);
+	const compiledExpression = staticallyCompileXPath(
+		xpathExpression,
+		compilationOptions,
+		namespaceResolver,
+		variables,
+		moduleImports);
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 

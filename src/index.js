@@ -12,6 +12,7 @@ import evaluateXPathToStrings from './evaluateXPathToStrings';
 import precompileXPath from './precompileXPath';
 import getBucketsForNode from './getBucketsForNode';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
+import registerXQueryModule from './registerXQueryModule';
 import createExpressionFromXPath from './parsing/createExpressionFromXPath';
 import domFacade from './domBackedDomFacade';
 
@@ -46,6 +47,7 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 		window['getBucketForSelector'] = getBucketForSelector;
 		window['getBucketsForNode'] = getBucketsForNode;
 		window['precompileXPath'] = precompileXPath;
+		window['registerXQueryModule'] = registerXQueryModule;
 		window['registerCustomXPathFunction'] = registerCustomXPathFunction;
 	}
 })();
@@ -63,6 +65,7 @@ export {
 	evaluateXPathToNumbers,
 	evaluateXPathToStrings,
 	precompileXPath,
+	registerXQueryModule,
 	evaluateXPathToString,
 	registerCustomXPathFunction,
 	getBucketsForNode,

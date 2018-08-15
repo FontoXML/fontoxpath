@@ -31,7 +31,8 @@ export default function parseExpression (xPathString, compilationOptions) {
 		if (cached) {
 			ast = cached;
 		} else {
-			ast = parse(xPathString);
+			// We are absolutely not interested in XQuery modules here
+			ast = parse(xPathString, { 'startRule': 'QueryBody' });
 			storeParseResultInCache(xPathString, language, ast);
 		}
 

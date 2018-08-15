@@ -42,11 +42,23 @@ export default class StaticContext {
 		this._registeredFunctionsByHash = Object.create(null);
 	}
 
-	registerFunctionDefinition (namespaceURI, localName, arity, compileFunction) {
-		// TODO
+	registerFunctionDefinition (namespaceURI, localName, arity, functionDefinition) {
+		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
+		const duplicateFunction = this._registeredFunctionsByHash[hashKey];
+		if (duplicateFunction) {
+			throw new Error('Duplicate function registration');
+		}
+
+		this._registeredFunctionsByHash[hashKey] = functionDefinition;
 	}
 
 	lookupFunction (namespaceURI, localName, arity) {
+		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
+		const foundFunction = this._registeredFunctionsByHash[hashKey];
+		if (foundFunction) {
+			return foundFunction;
+		}
+
 		return this.parentContext === null ? null : this.parentContext.lookupFunction(
 			namespaceURI,
 			localName,
