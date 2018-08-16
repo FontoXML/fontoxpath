@@ -3,7 +3,6 @@ import Value from './expressions/dataTypes/Value';
 /**
  * Adapter for the DOM, can be used to use a different DOM implementation
  * @constructor
- * @implements {IDomFacade}
  * @param  {!IDomFacade}  domFacade
  */
 function DomFacade (domFacade) {

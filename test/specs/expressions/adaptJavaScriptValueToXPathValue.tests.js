@@ -42,10 +42,6 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 		chai.assert.equal(xpathSequence.first().value, 1.0, 'is 1.0');
 	});
 
-	it('cannot convert nodes', function () {
-		chai.assert.throws(() => adaptJavaScriptValueToXPathValue(slimdom.document.createElement('test'), 'node()'), 'XPath custom functions should not return a node, use traversals instead.');
-	});
-
 	it('turns booleans into booleans', () => {
 		const xpathSequence = adaptJavaScriptValueToXPathValue(false, 'xs:boolean');
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');

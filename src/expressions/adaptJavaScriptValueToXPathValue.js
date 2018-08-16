@@ -96,7 +96,10 @@ function adaptJavaScriptValueToXPathValue (type, value) {
 		case 'xs:gDay':
 			return createAtomicValue(DateTime.fromString(value.toISOString()).convertToType(type), type);
 		case 'node()':
-			throw new Error('XPath custom functions should not return a node, use traversals instead.');
+		case 'element()':
+		case 'text':
+		case 'comment()':
+			return createNodeValue(value);
 		case 'item()':
 			return adaptItemToXPathValue(value);
 		default:

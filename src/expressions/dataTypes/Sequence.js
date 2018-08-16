@@ -74,6 +74,9 @@ function Sequence (valueIteratorOrArray, predictedLength = null) {
 	return this;
 }
 
+/**
+ * @return {AsyncResult<!Array<!Value>>}
+ */
 Sequence.prototype.tryGetAllValues = function () {
 	const iterator = this.value();
 	this._saveValues = true;
@@ -85,6 +88,9 @@ Sequence.prototype.tryGetAllValues = function () {
 	return ready(this._cachedValues);
 };
 
+/**
+ * @return {!Array<!Value>}
+ */
 Sequence.prototype.getAllValues = function () {
 	if (this._iteratorHasProgressed && this._length !== this._cachedValues.length) {
 		throw new Error('Implementation error: Sequence Iterator has progressed.');
@@ -264,6 +270,9 @@ Sequence.prototype.atomize = function (executionParameters) {
     return this.map(value => atomize(value, executionParameters));
 };
 
+/**
+ * @return {boolean}
+ */
 Sequence.prototype.isEmpty = function () {
 	if (this._length === 0) {
 		return true;
@@ -273,6 +282,9 @@ Sequence.prototype.isEmpty = function () {
 	return value.done;
 };
 
+/**
+ * @return {boolean}
+ */
 Sequence.prototype.isSingleton = function () {
 	if (this._length === 0) {
 		return false;
@@ -295,6 +307,9 @@ Sequence.prototype.isSingleton = function () {
 	return value.done;
 };
 
+/**
+ * @return {boolean}
+ */
 Sequence.prototype.getEffectiveBooleanValue = function () {
 	const iterator = this.value();
 	const firstValue = iterator.next();
@@ -314,6 +329,9 @@ Sequence.prototype.getEffectiveBooleanValue = function () {
 	return getEffectiveBooleanValue(firstValue.value);
 };
 
+/**
+ * @return {!Sequence}
+ */
 Sequence.prototype.expandSequence = function () {
 	return new ArrayBackedSequence(this.getAllValues());
 };
@@ -424,7 +442,7 @@ EmptySequence.prototype.switchCases = function (cases) {
 	if (cases.empty) {
 		return /** @type {!Sequence} */ (cases.empty(this));
 	}
-		return /** @type {!Sequence} */ (cases.default(this));
+	return /** @type {!Sequence} */ (cases.default(this));
 };
 
 const emptySequence = new EmptySequence();
@@ -609,7 +627,7 @@ ArrayBackedSequence.prototype.switchCases = function (cases) {
 	if (cases.multiple) {
 		return /** @type {!Sequence} */ (cases.multiple(this));
 	}
-		return /** @type {!Sequence} */ (cases.default(this));
+	return /** @type {!Sequence} */ (cases.default(this));
 };
 
 /**

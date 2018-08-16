@@ -4,10 +4,11 @@ import ArrayValue from '../dataTypes/ArrayValue';
 import MapValue from '../dataTypes/MapValue';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 /**
  * @param  {*}  obj
- * @return {Sequence}
+ * @return {!Sequence}
  */
 function convert (obj) {
 	switch (typeof obj) {
@@ -36,6 +37,9 @@ function convert (obj) {
 	}
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnParseJson (_dynamicContext, _executionParameters, _staticContext, jsonString) {
 	/** @type {?} */
 	let jsObject;

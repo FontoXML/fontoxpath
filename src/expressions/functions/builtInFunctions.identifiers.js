@@ -2,10 +2,9 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
 
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
-
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 function findDescendants (domFacade, node, isMatch) {
 	const results = domFacade.getChildNodes(node)
@@ -20,20 +19,13 @@ function findDescendants (domFacade, node, isMatch) {
 }
 
 /**
- * @param  {!DynamicContext} _dynamicContext
- * @param  {!ExecutionParameters} executionParameters
- * @param  {!Sequence}  idrefSequence
- * @param  {!Sequence}  targetNodeSequence
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequence, targetNodeSequence) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();
 	}
-	/**
-	 * @type {!IDomFacade}
-	 */
 	const domFacade = executionParameters.domFacade;
 	// TODO: Index ids to optimize this lookup
 	/**
@@ -70,13 +62,9 @@ function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequen
 }
 
 /**
- * @param  {!DynamicContext}      dynamicContext
- * @param  {!ExecutionParameters}      executionParameters
- * @param  {!Sequence}  idSequence
- * @param  {!Sequence}  targetNodeSequence
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
-function fnIdref (dynamicContext, executionParameters, _staticContext, idSequence, targetNodeSequence) {
+function fnIdref (_dynamicContext, executionParameters, _staticContext, idSequence, targetNodeSequence) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
 		return Sequence.empty();

@@ -2,28 +2,47 @@ import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function mathPi (_dynamicContext, _executionParameters, _staticContext) {
 	return Sequence.singleton(createAtomicValue(Math.PI, 'xs:double'));
 }
 
-function mathExp (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathExp (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.pow(Math.E, onlyValue.value), 'xs:double'));
 }
 
-function mathExp10 (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathExp10 (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.pow(10, onlyValue.value), 'xs:double'));
 }
 
-function mathLog (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathLog (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.log(onlyValue.value), 'xs:double'));
 }
 
-function mathLog10 (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathLog10 (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.log10(onlyValue.value), 'xs:double'));
 }
 
-function mathPow (_dynamicContext, _executionParameters, staticContext, base, exponent) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathPow (_dynamicContext, _executionParameters, _staticContext, base, exponent) {
 	// Note: base is double?, exponent is numeric. In the base is empty case, return empty.
 	return exponent.mapAll(
 		([valueY]) => base.map(
@@ -36,35 +55,59 @@ function mathPow (_dynamicContext, _executionParameters, staticContext, base, ex
 			}));
 }
 
-function mathSqrt (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathSqrt (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.sqrt(onlyValue.value), 'xs:double'));
 }
 
-function mathSin (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathSin (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.sin(onlyValue.value), 'xs:double'));
 }
 
-function mathCos (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathCos (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.cos(onlyValue.value), 'xs:double'));
 }
 
-function mathTan (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathTan (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.tan(onlyValue.value), 'xs:double'));
 }
 
-function mathAsin (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathAsin (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.asin(onlyValue.value), 'xs:double'));
 }
 
-function mathAcos (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathAcos (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.acos(onlyValue.value), 'xs:double'));
 }
 
-function mathAtan (_dynamicContext, _executionParameters, staticContext, sequence) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathAtan (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createAtomicValue(Math.atan(onlyValue.value), 'xs:double'));
 }
 
-function mathAtan2 (_dynamicContext, _executionParameters, staticContext, x, y) {
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function mathAtan2 (_dynamicContext, _executionParameters, _staticContext, x, y) {
 	// Note that x is the double? argument, y is double.
 	return y.mapAll(([onlyYValue]) => x.map(onlyXValue => createAtomicValue(Math.atan2(onlyXValue.value, onlyYValue.value), 'xs:double')));
 }

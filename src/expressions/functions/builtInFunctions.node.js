@@ -8,6 +8,8 @@ import isSubtypeOfType from '../dataTypes/isSubtypeOf';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createFromNode from '../dataTypes/createNodeValue';
+import DomFacade from '../../DomFacade';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnString = builtinStringFunctions.functions.string;
 
@@ -18,7 +20,9 @@ function contextItemAsFirstArgument (fn, dynamicContext, executionParameters, _s
 	return fn(dynamicContext, executionParameters, _staticContext, Sequence.singleton(dynamicContext.contextItem));
 }
 
-
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnNodeName (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return zipSingleton([sequence], ([nodeValue]) => {
 		if (nodeValue === null) {
@@ -41,6 +45,9 @@ function fnNodeName (_dynamicContext, _executionParameters, staticContext, seque
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnName (dynamicContext, executionParameters, staticContext, sequence) {
 	return sequence.switchCases({
 		empty: () => Sequence.empty(),
@@ -56,10 +63,16 @@ function fnName (dynamicContext, executionParameters, staticContext, sequence) {
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnNamespaceURI (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence.map(node => createAtomicValue(node.value.namespaceURI || '', 'xs:anyURI'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnLocalName (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence.switchCases({
 		empty: () => Sequence.singleton(createAtomicValue('', 'xs:string')),
@@ -77,7 +90,7 @@ function fnLocalName (_dynamicContext, _executionParameters, staticContext, sequ
 }
 
 /**
- * @param   {IDomFacade}  domFacade
+ * @param   {!DomFacade}  domFacade
  * @param   {Node}        ancestor
  * @param   {Node}        descendant
  * @return  {boolean}
@@ -95,6 +108,9 @@ function contains (domFacade, ancestor, descendant) {
 	return false;
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnOutermost (_dynamicContext, executionParameters, _staticContext, nodeSequence) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
@@ -121,6 +137,9 @@ function fnOutermost (_dynamicContext, executionParameters, _staticContext, node
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnInnermost (_dynamicContext, executionParameters, _staticContext, nodeSequence) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
@@ -147,6 +166,9 @@ function fnInnermost (_dynamicContext, executionParameters, _staticContext, node
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnRoot (_dynamicContext, executionParameters, _staticContext, nodeSequence) {
 	return nodeSequence.map(node => {
 		if (!isSubtypeOfType(node.type, 'node()')) {
