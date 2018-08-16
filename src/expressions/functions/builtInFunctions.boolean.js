@@ -1,16 +1,13 @@
 import Sequence from '../dataTypes/Sequence';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
+import FunctionDefinitionType from './FunctionDefinitionType';
+
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {Sequence}           sequence
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnNot (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
@@ -33,11 +30,9 @@ function fnNot (_dynamicContext, _executionParameters, _staticContext, sequence)
 	});
 }
 
+
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {Sequence}           sequence
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnBoolean (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
@@ -60,15 +55,17 @@ function fnBoolean (_dynamicContext, _executionParameters, _staticContext, seque
 	});
 }
 
+
 /**
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnTrue () {
 	return Sequence.singletonTrueSequence();
 }
 
+
 /**
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnFalse () {
 	return Sequence.singletonFalseSequence();

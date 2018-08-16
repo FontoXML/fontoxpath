@@ -187,7 +187,7 @@ class DirElementConstructor extends Expression {
 				});
 
 				// Plonk all childNodes, these are special though
-				allChildNodesItrResult.value.forEach(childNodes => {
+				allChildNodesItrResult.value.forEach(/** {!Array<!Value>} */childNodes => {
 					childNodes.forEach((childNode, i) => {
 						if (isSubtypeOf(childNode.type, 'xs:anyAtomicType')) {
 							const atomizedValue = castToType(atomize(childNode, executionParameters), 'xs:string').value;
@@ -199,16 +199,17 @@ class DirElementConstructor extends Expression {
 							return;
 						}
 						if (isSubtypeOf(childNode.type, 'attribute()')) {
+							const attrNode = /** @type {!Attr} */ (childNode.value);
 							// The contents may include attributes, 'clone' them and set them on the element
-							if (element.hasAttributeNS(childNode.value.namespaceURI, childNode.value.localName)) {
+							if (element.hasAttributeNS(attrNode.namespaceURI, attrNode.localName)) {
 								throw new Error(
-									`XQST0040: The attribute ${childNode.value.name} is already present on a constructed element.`);
+									`XQST0040: The attribute ${attrNode.name} is already present on a constructed element.`);
 							}
 							element.setAttributeNS(
-								childNode.value.namespaceURI,
-								childNode.value.prefix ?
-									childNode.value.prefix + ':' + childNode.value.localName : childNode.value.localName,
-								childNode.value.value);
+								attrNode.namespaceURI,
+								attrNode.prefix ?
+									attrNode.prefix + ':' + attrNode.localName : attrNode.localName,
+								attrNode.value);
 							return;
 						}
 

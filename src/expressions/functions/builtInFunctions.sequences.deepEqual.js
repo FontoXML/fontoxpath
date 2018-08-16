@@ -16,9 +16,6 @@ import StaticContext from '../StaticContext';
 import MapValue from '../dataTypes/MapValue';
 import ArrayValue from '../dataTypes/ArrayValue';
 
-/**
- * @type {function(!DynamicContext, !ExecutionParameters, !StaticContext, !Sequence):!Sequence}
- */
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
 

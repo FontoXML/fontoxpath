@@ -1,18 +1,10 @@
-import Sequence from '../dataTypes/Sequence';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
-import StaticContext from '../StaticContext';
+import FunctionDefinitionType from './FunctionDefinitionType';
 import ArrayValue from '../dataTypes/ArrayValue';
 
-
 /**
- * @param  {!DynamicContext}  _dynamicContext
- * @param  {!ExecutionParameters}  _executionParameters
- * @param  {!StaticContext}  _staticContext
- * @param  {!Sequence}        arraySequence
- * @param  {!Sequence}        positionSequence
- * @return {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
+
 export default function arrayGet (_dynamicContext, _executionParameters, _staticContext, arraySequence, positionSequence) {
 	return positionSequence.mapAll(([position]) => arraySequence.mapAll(([array]) => {
 		const positionValue = position.value;

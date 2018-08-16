@@ -29,9 +29,9 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 }
 
 /**
-* @param  {string|!{namespaceURI, localName}} name
-* @return {!{namespaceURI: string, localName: string}}
-*/
+ * @param  {string|!{namespaceURI, localName}} name
+ * @return {!{namespaceURI: string, localName: string}}
+ */
 function splitFunctionName (name) {
 	if (typeof name === 'object') {
 		return name;
@@ -68,25 +68,25 @@ export default function registerCustomXPathFunction (name, signature, returnType
 	const { namespaceURI, localName } = splitFunctionName(name);
 
 	const callFunction = function (dynamicContext, executionParameters, _staticContext) {
-			// Make arguments a read array instead of a array-like object
-			const args = Array.from(arguments);
+		// Make arguments a read array instead of a array-like object
+		const args = Array.from(arguments);
 
-			args.splice(0, 3);
+		args.splice(0, 3);
 
-			const newArguments = args.map(function (argument, index) {
-					return adaptXPathValueToJavascriptValue(argument, signature[index]);
-				});
+		const newArguments = args.map(function (argument, index) {
+			return adaptXPathValueToJavascriptValue(argument, signature[index]);
+		});
 
-			// Adapt the domFacade into another object to prevent passing everything. The closure compiler might rename some variables otherwise.
-			// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
-			const dynamicContextAdapter = {};
-			dynamicContextAdapter['domFacade'] = executionParameters.domFacade;
+		// Adapt the domFacade into another object to prevent passing everything. The closure compiler might rename some variables otherwise.
+		// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
+		const dynamicContextAdapter = {};
+		dynamicContextAdapter['domFacade'] = executionParameters.domFacade;
 
-			const jsResult = callback.apply(undefined, [dynamicContextAdapter].concat(newArguments));
-			const xpathResult = adaptJavaScriptValueToXPathValue(jsResult, returnType);
+		const jsResult = callback.apply(undefined, [dynamicContextAdapter].concat(newArguments));
+		const xpathResult = adaptJavaScriptValueToXPathValue(jsResult, returnType);
 
-			return xpathResult;
-		};
+		return xpathResult;
+	};
 
 	functionRegistry.registerFunction(namespaceURI, localName, signature, returnType, callFunction);
 }

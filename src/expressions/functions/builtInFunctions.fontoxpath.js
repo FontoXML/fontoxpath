@@ -13,17 +13,11 @@ import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
 
 import StaticContext from '../StaticContext';
-import ExecutionParameters from '../ExecutionParameters';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 /**
- * @param  {!DynamicContext}      _dynamicContext
- * @param  {!ExecutionParameters} executionParameters
- * @param  {!StaticContext}  staticContext
- * @param  {!Sequence}  query
- * @param  {!Sequence}  args
- *
- * @return {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext, query, args) {
 	let resultIterator;
@@ -89,12 +83,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 }
 
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters} _executionParameters
- * @param   {!StaticContext}  _staticContext
- * @param   {!Sequence}           val
- * @param   {!Sequence}           howLong
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext, val, howLong) {
 	let doneWithSleep = false;

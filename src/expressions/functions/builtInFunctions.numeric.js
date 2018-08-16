@@ -12,8 +12,7 @@ import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 function createValidNumericType (type, transformedValue) {
 	if (isSubtypeOf(type, 'xs:integer')) {
@@ -30,30 +29,21 @@ function createValidNumericType (type, transformedValue) {
 }
 
 /**
- * @param   {DynamicContext}  _dynamicContext
- * @param  {ExecutionParameters}  _executionParameters
- * @param   {Sequence}           sequence
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnAbs (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.abs(onlyValue.value)));
 }
 
 /**
- * @param   {DynamicContext}  _dynamicContext
- * @param  {ExecutionParameters}  _executionParameters
- * @param   {Sequence}           sequence
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnCeiling (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value)));
 }
 
 /**
- * @param   {DynamicContext}  _dynamicContext
- * @param  {ExecutionParameters}  _executionParameters
- * @param   {Sequence}           sequence
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnFloor (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.map(onlyValue => createValidNumericType(onlyValue.type, Math.floor(onlyValue.value)));
@@ -81,14 +71,6 @@ function getNumberOfDecimalDigits (value) {
 	return decimals;
 }
 
-/**
- * @param   {boolean}            halfToEven
- * @param   {DynamicContext}  _dynamicContext
- * @param  {ExecutionParameters}  _executionParameters
- * @param   {!Sequence}           sequence
- * @param   {?Sequence}           precision
- * @return  {!Sequence}
- */
 function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticContext, sequence, precision) {
 	let done = false;
 	return new Sequence({
@@ -165,9 +147,7 @@ function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticCont
 }
 
 /**
- * @param   {DynamicContext}  _dynamicContext
- * @param   {Sequence}           sequence
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnNumber (_dynamicContext, executionParameters, _staticContext, sequence) {
 	return sequence.atomize(executionParameters).switchCases({
@@ -183,10 +163,7 @@ function fnNumber (_dynamicContext, executionParameters, _staticContext, sequenc
 }
 
 /**
- * @param   {DynamicContext}  _dynamicContext
- * @param   {ExecutionParameters}  _executionParameters
- * @param   {Sequence}           sequence
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function returnRandomItemFromSequence (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
@@ -199,10 +176,7 @@ function returnRandomItemFromSequence (_dynamicContext, _executionParameters, _s
 }
 
 /**
- * @param   {DynamicContext}  _dynamicContext
- * @param   {ExecutionParameters}  _executionParameters
- * @param   {Sequence}           _sequence
- * @return  {Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _staticContext, _sequence) {
 	// Ignore the optional seed, as Math.random does not support a seed
@@ -267,7 +241,7 @@ export default {
 			localName: 'round',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric',
-			callFunction: fnRound.bind(null, false)
+			callFunction: /** @type {FunctionDefinitionType} */ (fnRound.bind(null, false))
 		},
 
 		{
@@ -275,7 +249,7 @@ export default {
 			localName: 'round',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric',
-			callFunction: fnRound.bind(null, false)
+			callFunction: /** @type {FunctionDefinitionType} */ (fnRound.bind(null, false))
 		},
 
 		{
@@ -283,7 +257,7 @@ export default {
 			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric',
-			callFunction: fnRound.bind(null, true)
+			callFunction: /** @type {FunctionDefinitionType} */ (fnRound.bind(null, true))
 		},
 
 		{
@@ -291,7 +265,7 @@ export default {
 			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric',
-			callFunction: fnRound.bind(null, true)
+			callFunction: /** @type {FunctionDefinitionType} */ (fnRound.bind(null, true))
 		},
 
 		{

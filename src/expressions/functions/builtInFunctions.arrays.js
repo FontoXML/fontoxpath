@@ -8,13 +8,20 @@ import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arraySize (_dynamicContext, _executionParameters, _staticContext, arraySequence) {
 	return zipSingleton(
 		[arraySequence],
 		([array]) => Sequence.singleton(createAtomicValue(/** @type {!ArrayValue} */ (array).members.length, 'xs:integer')));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayPut (_dynamicContext, _executionParameters, _staticContext, arraySequence, positionSequence, itemSequence) {
 	return zipSingleton(
 		[positionSequence, arraySequence],
@@ -29,6 +36,9 @@ function arrayPut (_dynamicContext, _executionParameters, _staticContext, arrayS
 		});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayAppend (_dynamicContext, _executionParameters, _staticContext, arraySequence, itemSequence) {
 	return zipSingleton(
 		[arraySequence],
@@ -38,6 +48,9 @@ function arrayAppend (_dynamicContext, _executionParameters, _staticContext, arr
 		});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arraySubarray (_dynamicContext, _executionParameters, _staticContext, arraySequence, startSequence, lengthSequence) {
 	return zipSingleton(
 		[arraySequence, startSequence, lengthSequence],
@@ -62,6 +75,9 @@ function arraySubarray (_dynamicContext, _executionParameters, _staticContext, a
 		});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayRemove (_dynamicContext, _executionParameters, _staticContext, arraySequence, positionSequence) {
 	return zipSingleton(
 		[arraySequence],
@@ -85,6 +101,9 @@ function arrayRemove (_dynamicContext, _executionParameters, _staticContext, arr
 	);
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayInsertBefore (_dynamicContext, _executionParameters, _staticContext, arraySequence, positionSequence, itemSequence) {
 	return zipSingleton(
 		[arraySequence, positionSequence],
@@ -101,12 +120,18 @@ function arrayInsertBefore (_dynamicContext, _executionParameters, _staticContex
 		});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayReverse (_dynamicContext, _executionParameters, _staticContext, arraySequence) {
 	return zipSingleton(
 		[arraySequence],
 		([array]) => Sequence.singleton(new ArrayValue(/** @type {!ArrayValue} */ (array).members.concat().reverse())));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayJoin (_dynamicContext, _executionParameters, _staticContext, arraySequence) {
 	return arraySequence.mapAll(allArrays => {
 		const newMembers = allArrays.reduce(
@@ -116,6 +141,9 @@ function arrayJoin (_dynamicContext, _executionParameters, _staticContext, array
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayForEach (dynamicContext, executionParameters, staticContext, arraySequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
@@ -127,6 +155,9 @@ function arrayForEach (dynamicContext, executionParameters, staticContext, array
 		});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayFilter (dynamicContext, executionParameters, staticContext, arraySequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
@@ -175,6 +206,9 @@ function arrayFilter (dynamicContext, executionParameters, staticContext, arrayS
 		});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayFoldLeft (dynamicContext, executionParameters, staticContext, arraySequence, startSequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
@@ -183,6 +217,9 @@ function arrayFoldLeft (dynamicContext, executionParameters, staticContext, arra
 			startSequence));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayFoldRight (dynamicContext, executionParameters, staticContext, arraySequence, startSequence, functionItemSequence) {
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
@@ -191,6 +228,9 @@ function arrayFoldRight (dynamicContext, executionParameters, staticContext, arr
 			startSequence));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayForEachPair (dynamicContext, executionParameters, staticContext, arraySequenceA, arraySequenceB, functionItemSequence) {
 	return zipSingleton(
 		[arraySequenceA, arraySequenceB, functionItemSequence],
@@ -212,6 +252,9 @@ function arrayForEachPair (dynamicContext, executionParameters, staticContext, a
 		});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arraySort (_dynamicContext, executionParameters, _staticContext, arraySequence) {
 	return zipSingleton(
 		[arraySequence],
@@ -232,10 +275,13 @@ function arraySort (_dynamicContext, executionParameters, _staticContext, arrayS
 		});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function arrayFlatten (__dynamicContext, _executionParameters, _staticContext, itemSequence) {
 	return itemSequence.mapAll(items => items.reduce(function flattenItem (flattenedItems, item) {
 		if (isSubtypeOf(item.type, 'array(*)')) {
-			return item.members.reduce(
+			return /** @type {ArrayValue} */ (item).members.reduce(
 				(flattenedItemsOfMember, member) => member.mapAll(
 					allValues => allValues.reduce(flattenItem, flattenedItemsOfMember)),
 				flattenedItems);

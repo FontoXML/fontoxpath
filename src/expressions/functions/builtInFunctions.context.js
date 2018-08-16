@@ -3,7 +3,11 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnLast (dynamicContext) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error('XPDY0002: The fn:last() function depends on dynamic context, which is absent.');
@@ -25,6 +29,9 @@ function fnLast (dynamicContext) {
 	}, 1);
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnPosition (dynamicContext) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error('XPDY0002: The fn:position() function depends on dynamic context, which is absent.');
@@ -33,18 +40,30 @@ function fnPosition (dynamicContext) {
 	return Sequence.singleton(createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnCurrentDateTime (dynamicContext) {
 	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnCurrentDate (dynamicContext) {
 	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnCurrentTime (dynamicContext) {
 	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnImplicitTimezone (dynamicContext) {
 	return Sequence.singleton(createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration'));
 }

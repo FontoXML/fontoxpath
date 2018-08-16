@@ -3,9 +3,13 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import QName from '../dataTypes/valueTypes/QName';
 import { validatePattern } from '../dataTypes/typeHelpers';
 import zipSingleton from '../util/zipSingleton';
-
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
+import FunctionDefinitionType from'./FunctionDefinitionType';
+
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnQName (_dynamicContext, _executionParameters, _staticContext, paramURI, paramQName) {
 	return zipSingleton([paramURI, paramQName], ([uriValue, lexicalQNameValue]) => {
 		const lexicalQName = lexicalQNameValue.value;
@@ -30,6 +34,9 @@ function fnQName (_dynamicContext, _executionParameters, _staticContext, paramUR
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnPrefixFromQName (_dynamicContext, _executionParameters, _staticContext, arg) {
 	return zipSingleton([arg], ([qname]) => {
 		if (qname === null) {
@@ -43,6 +50,9 @@ function fnPrefixFromQName (_dynamicContext, _executionParameters, _staticContex
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnNamespaceURIFromQName (_dynamicContext, _executionParameters, _staticContext, arg) {
 	return arg.map(qname => {
 		const qnameValue = qname.value;
@@ -51,6 +61,9 @@ function fnNamespaceURIFromQName (_dynamicContext, _executionParameters, _static
 
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnLocalNameFromQName (_dynamicContext, _executionParameters, _staticContext, arg) {
 	return arg.map(qname => {
 		const qnameValue = qname.value;

@@ -4,9 +4,14 @@ import Sequence from '../dataTypes/Sequence';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-function fnTrace (dynamicContext, _executionParameters, _staticContext, arg, label) {
+import FunctionDefinitionType from './FunctionDefinitionType';
+
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function fnTrace (_dynamicContext, executionParameters, _staticContext, arg, label) {
 	return arg.mapAll(allItems => {
-		const argumentAsStrings = allItems.map(value => castToType(atomize(value, dynamicContext), 'xs:string'));
+		const argumentAsStrings = allItems.map(value => castToType(atomize(value, executionParameters), 'xs:string'));
 		console.log.apply(console, label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]);
 		return new Sequence(allItems);
 	});

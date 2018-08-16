@@ -1,18 +1,13 @@
 import isSameMapKey from './isSameMapKey';
 import Sequence from '../dataTypes/Sequence';
 
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
 import zipSingleton from '../util/zipSingleton';
 
 import MapValue from '../dataTypes/MapValue';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {!Sequence}        mapSequence
- * @param   {!Sequence}        key
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 export default function mapGet (_dynamicContext, _executionParameters, _staticContext, mapSequence, key) {
 	return zipSingleton([mapSequence, key], ([map, keyValue]) => {

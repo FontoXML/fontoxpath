@@ -8,15 +8,10 @@ import concatSequences from '../util/concatSequences';
 
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 /**
- * @param   {!DynamicContext}   dynamicContext
- * @param   {!ExecutionParameters}  executionParameters
- * @param   {!Sequence}           mapSequence
- * @param   {!Sequence}           optionMap
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function mapMerge (dynamicContext, executionParameters, staticContext, mapSequence, optionMap) {
 	const duplicateKey = Sequence.singleton(createAtomicValue('duplicates', 'xs:string'));
@@ -71,12 +66,7 @@ function mapMerge (dynamicContext, executionParameters, staticContext, mapSequen
 }
 
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {!Sequence}           mapSequence
- * @param   {!Sequence}           keySequence
- * @param   {!Sequence}           newValueSequence
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function mapPut (_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence, newValueSequence) {
 	return zipSingleton([mapSequence, keySequence], ([map, newKey]) => {
@@ -106,21 +96,14 @@ function mapPut (_dynamicContext, _executionParameters, _staticContext, mapSeque
 }
 
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {!Sequence}           keySequence
- * @param   {!Sequence}           value
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function mapEntry (_dynamicContext, _executionParameters, _staticContext, keySequence, value) {
 	return keySequence.map(onlyKey => new MapValue([{ key: onlyKey, value: value }]));
 }
 
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {!Sequence}           mapSequence
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function mapSize (_dynamicContext, _executionParameters, _staticContext, mapSequence) {
 	return mapSequence.map(onlyMap => createAtomicValue(
@@ -129,21 +112,14 @@ function mapSize (_dynamicContext, _executionParameters, _staticContext, mapSequ
 }
 
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {!Sequence}           mapSequence
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function mapKeys (_dynamicContext, _executionParameters, _staticContext, mapSequence) {
 	return zipSingleton([mapSequence], ([map]) => new Sequence(/** @type {!MapValue} */(map).keyValuePairs.map(pair => pair.key)));
 }
 
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {!Sequence}           mapSequence
- * @param   {!Sequence}           keySequence
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function mapContains (_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence) {
 	return zipSingleton([mapSequence, keySequence], ([map, key]) => {
@@ -153,11 +129,7 @@ function mapContains (_dynamicContext, _executionParameters, _staticContext, map
 }
 
 /**
- * @param   {!DynamicContext}  _dynamicContext
- * @param   {!ExecutionParameters}  _executionParameters
- * @param   {!Sequence}           mapSequence
- * @param   {!Sequence}           keySequence
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function mapRemove (_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence) {
 	return zipSingleton([mapSequence], ([map]) => {
@@ -178,11 +150,7 @@ function mapRemove (_dynamicContext, _executionParameters, _staticContext, mapSe
 }
 
 /**
- * @param   {!DynamicContext}  dynamicContext
- * @param   {!ExecutionParameters}  executionParameters
- * @param   {!Sequence}           mapSequence
- * @param   {!Sequence}           functionItemSequence
- * @return  {!Sequence}
+ * @type {!FunctionDefinitionType}
  */
 function mapForEach (dynamicContext, executionParameters, staticContext, mapSequence, functionItemSequence) {
 	return zipSingleton(

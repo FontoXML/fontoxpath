@@ -1,7 +1,9 @@
+import DomFacade from '../../DomFacade';
+
 import { DONE_TOKEN, ready } from './iterators';
 
 /**
- * @param   {!IDomFacade}       domFacade
+ * @param   {!DomFacade}       domFacade
  * @param   {!Node}             node
  * @return  {!Iterator<!Node>}
  */

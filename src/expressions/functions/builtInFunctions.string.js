@@ -13,6 +13,8 @@ import DynamicContext from '../DynamicContext';
 
 import builtInNumericFunctions from './builtInFunctions.numeric.js';
 
+import FunctionDefinitionType from'./FunctionDefinitionType';
+
 const fnRound = builtInNumericFunctions.functions.round;
 
 function collationError () {
@@ -26,6 +28,9 @@ function contextItemAsFirstArgument (fn, dynamicContext, executionParameters, _s
 	return fn(dynamicContext, executionParameters, _staticContext, Sequence.singleton(dynamicContext.contextItem));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnCompare (_dynamicContext, _executionParameters, _staticContext, arg1, arg2) {
 	if (arg1.isEmpty() || arg2.isEmpty()) {
 		return Sequence.empty();
@@ -45,6 +50,9 @@ function fnCompare (_dynamicContext, _executionParameters, _staticContext, arg1,
 	return Sequence.singleton(createAtomicValue(0, 'xs:integer'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnConcat (_dynamicContext, executionParameters, _staticContext) {
 	let stringSequences = Array.from(arguments).slice(3);
 	stringSequences = stringSequences.map(function (sequence) {
@@ -61,6 +69,9 @@ function fnConcat (_dynamicContext, executionParameters, _staticContext) {
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnContains (_dynamicContext, _executionParameters, _staticContext, arg1, arg2) {
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	const contains = !arg2.isEmpty() ? arg2.first().value : '';
@@ -79,6 +90,9 @@ function fnContains (_dynamicContext, _executionParameters, _staticContext, arg1
 		return Sequence.singletonFalseSequence();
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnStartsWith (_dynamicContext, _executionParameters, _staticContext, arg1, arg2) {
 	const startsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (startsWith.length === 0) {
@@ -95,6 +109,9 @@ function fnStartsWith (_dynamicContext, _executionParameters, _staticContext, ar
 	return Sequence.singletonFalseSequence();
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnEndsWith (_dynamicContext, _executionParameters, _staticContext, arg1, arg2) {
 	const endsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (endsWith.length === 0) {
@@ -111,6 +128,9 @@ function fnEndsWith (_dynamicContext, _executionParameters, _staticContext, arg1
 	return Sequence.singletonFalseSequence();
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnString (_dynamicContext, executionParameters, _staticContext, sequence) {
 	return sequence.switchCases({
 		empty: () => Sequence.singleton(createAtomicValue('', 'xs:string')),
@@ -127,6 +147,9 @@ function fnString (_dynamicContext, executionParameters, _staticContext, sequenc
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnStringJoin (_dynamicContext, _executionParameters, _staticContext, sequence, separator) {
 	return zipSingleton([separator], ([separatorString]) => sequence.mapAll(
 		allStrings => {
@@ -135,6 +158,9 @@ function fnStringJoin (_dynamicContext, _executionParameters, _staticContext, se
 		}));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnStringLength (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(createAtomicValue(0, 'xs:integer'));
@@ -143,6 +169,9 @@ function fnStringLength (_dynamicContext, _executionParameters, _staticContext, 
 	return Sequence.singleton(createAtomicValue(Array.from(sequence.first().value).length, 'xs:integer'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnSubstringBefore (_dynamicContext, _executionParameters, _staticContext, arg1, arg2) {
 	let strArg1;
 	if (arg1.isEmpty()) {
@@ -169,6 +198,9 @@ function fnSubstringBefore (_dynamicContext, _executionParameters, _staticContex
 	return Sequence.singleton(createAtomicValue(strArg1.substring(0, startIndex), 'xs:string'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnSubstringAfter (_dynamicContext, _executionParameters, _staticContext, arg1, arg2) {
 	let strArg1;
 	if (arg1.isEmpty()) {
@@ -195,6 +227,9 @@ function fnSubstringAfter (_dynamicContext, _executionParameters, _staticContext
 	return Sequence.singleton(createAtomicValue(strArg1.substring(startIndex + strArg2.length), 'xs:string'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnSubstring (dynamicContext, executionParameters, staticContext, sourceString, start, length) {
 	const roundedStart = fnRound(false, dynamicContext, executionParameters, staticContext, start, null);
 	/**
@@ -261,6 +296,9 @@ function fnSubstring (dynamicContext, executionParameters, staticContext, source
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnTokenize (_dynamicContext, _executionParameters, _staticContext, input, pattern) {
 	if (input.isEmpty() || input.first().value.length === 0) {
 		return Sequence.empty();
@@ -274,6 +312,9 @@ function fnTokenize (_dynamicContext, _executionParameters, _staticContext, inpu
 			}));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnUpperCase (_dynamicContext, _executionParameters, _staticContext, stringSequence) {
 	if (stringSequence.isEmpty()) {
 		return Sequence.singleton(createAtomicValue('', 'xs:string'));
@@ -281,6 +322,9 @@ function fnUpperCase (_dynamicContext, _executionParameters, _staticContext, str
 	return stringSequence.map(string => createAtomicValue(string.value.toUpperCase(), 'xs:string'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnLowerCase (_dynamicContext, _executionParameters, _staticContext, stringSequence) {
 	if (stringSequence.isEmpty()) {
 		return Sequence.singleton(createAtomicValue('', 'xs:string'));
@@ -288,6 +332,9 @@ function fnLowerCase (_dynamicContext, _executionParameters, _staticContext, str
 	return stringSequence.map(string => createAtomicValue(string.value.toLowerCase(), 'xs:string'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnNormalizeSpace (_dynamicContext, _executionParameters, _staticContext, arg) {
 	if (arg.isEmpty()) {
 		return Sequence.singleton(createAtomicValue('', 'xs:string'));

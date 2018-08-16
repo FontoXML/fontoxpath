@@ -1,8 +1,11 @@
 import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
-
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnYearsFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -10,6 +13,9 @@ function fnYearsFromDuration (_dynamicContext, _executionParameters, _staticCont
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getYears(), 'xs:integer'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnMonthsFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -17,6 +23,9 @@ function fnMonthsFromDuration (_dynamicContext, _executionParameters, _staticCon
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getMonths(), 'xs:integer'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnDaysFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -24,6 +33,9 @@ function fnDaysFromDuration (_dynamicContext, _executionParameters, _staticConte
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getDays(), 'xs:integer'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnHoursFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -31,6 +43,9 @@ function fnHoursFromDuration (_dynamicContext, _executionParameters, _staticCont
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getHours(), 'xs:integer'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnMinutesFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -38,6 +53,9 @@ function fnMinutesFromDuration (_dynamicContext, _executionParameters, _staticCo
 	return Sequence.singleton(createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer'));
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnSecondsFromDuration (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	if (sequence.isEmpty()) {
 		return sequence;

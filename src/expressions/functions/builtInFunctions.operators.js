@@ -2,6 +2,11 @@ import Sequence from '../dataTypes/Sequence';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 
+import FunctionDefinitionType from './FunctionDefinitionType';
+
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function opTo (_dynamicContext, _executionParameters, staticContext, fromSequence, toSequence) {
 	// shortcut the non-trivial case of both values being known
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
