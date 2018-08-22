@@ -14,6 +14,8 @@ beforeEach(() => {
 describe('let', () => {
 	it('creates a variable reference',
 		() => chai.assert.equal(evaluateXPathToNumber('let $x := 1 return $x', documentNode), 1));
+	it('can assign a variable to the same name',
+		() => chai.assert.equal(evaluateXPathToNumber('let $x := 1 return let $x := $x + 1 return $x', documentNode), 2));
 	it('can be used in a function',
 		() => chai.assert.equal(evaluateXPathToBoolean('boolean(let $x := 1 return $x)', documentNode), true));
 	it('evaluates eagerly',

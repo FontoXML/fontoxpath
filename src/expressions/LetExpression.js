@@ -44,10 +44,10 @@ class LetExpression extends Expression {
 			}
 		}
 
+		this._bindingSequence.performStaticEvaluation(staticContext);
+
 		staticContext.introduceScope();
 		this._variableBinding = staticContext.registerVariable(this._namespaceURI, this._localName);
-
-		this._bindingSequence.performStaticEvaluation(staticContext);
 		this._returnExpression.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
 	}

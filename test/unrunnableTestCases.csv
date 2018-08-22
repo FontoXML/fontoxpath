@@ -1283,8 +1283,8 @@ array-filter-004,Error: No selector counterpart for: anyArrayTest.
 array-filter-005,Error: No selector counterpart for: anyArrayTest.
 array-filter-006,Error: No selector counterpart for: anyArrayTest.
 array-filter-007,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Atomizing array(*) is not implemented.'
-array-filter-008,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'e is undefined'
-array-filter-009,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'f.indexOf is not a function'
+array-filter-008,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'arg2 is undefined'
+array-filter-009,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'strArg1.indexOf is not a function'
 array-flatten-010,Error: Atomizing array(*) is not implemented.
 array-fold-right-002,Error: XPTY0004 Unable to convert to type
 array-fold-right-003,AssertionError: Expected XPath array:fold-right(["the cat", "sat", "on the mat"], "", function($a,$z){concat($a, " ", $z)}) to (deep equally) resolve to "the cat sat on the mat ": expected false to be true
@@ -1297,8 +1297,8 @@ array-for-each-002,Error: No selector counterpart for: anyArrayTest.
 array-for-each-003,Error: No selector counterpart for: anyArrayTest.
 array-for-each-004,Error: No selector counterpart for: anyArrayTest.
 array-for-each-005,Error: No selector counterpart for: anyArrayTest.
-array-for-each-006,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'e is undefined'
-array-for-each-007,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'a.value.toUpperCase is not a function'
+array-for-each-006,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'position is undefined'
+array-for-each-007,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'string.value.toUpperCase is not a function'
 array-for-each-pair-301,Error: No selector counterpart for: anyArrayTest.
 array-for-each-pair-302,Error: No selector counterpart for: anyArrayTest.
 array-for-each-pair-303,Error: No selector counterpart for: anyArrayTest.
