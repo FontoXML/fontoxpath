@@ -304,25 +304,28 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 						else {
 							env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
 						}
-						const moduleImports = evaluateXPathToArray(
-							'array{module!map{"uri": @uri/string(), "file": $baseUrl || "/" || @file/string()}}',
-							testCase,
-							null,
-							{
-								baseUrl: baseUrl
-							});
-						moduleImports.forEach(moduleImport => {
-							const targetNamespace = registeredModuleURIByFileName[moduleImport.file] ||
-								registerXQueryModule(getFile(moduleImport.file));
 
-							registeredModuleURIByFileName[moduleImport.file] = targetNamespace;
-						});
 						const contextNode = env.contextNode;
 						namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
 						variablesInScope = env.variables;
 						const asserter = getAsserterForTest(baseUrl, testCase, language);
 
 						try {
+							// Load the module within the try to catch any errors from the module
+							const moduleImports = evaluateXPathToArray(
+								'array{module!map{"uri": @uri/string(), "file": $baseUrl || "/" || @file/string()}}',
+								testCase,
+								null,
+								{
+									baseUrl: baseUrl
+								});
+							moduleImports.forEach(moduleImport => {
+								const targetNamespace = registeredModuleURIByFileName[moduleImport.file] ||
+									registerXQueryModule(getFile(moduleImport.file));
+
+								registeredModuleURIByFileName[moduleImport.file] = targetNamespace;
+							});
+
 							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
 						}
 						catch (e) {
