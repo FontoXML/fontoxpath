@@ -1,3 +1,4 @@
+import chai from 'chai';
 import { evaluateXPathToAsyncIterator } from 'fontoxpath';
 export default async function evaluateXPathToAsyncSingleton (xpath, documentNode) {
 	const iterator = evaluateXPathToAsyncIterator(xpath, documentNode);

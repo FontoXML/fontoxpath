@@ -1,7 +1,9 @@
+import chai from 'chai';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
+	evaluateXPathToFirstNode,
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
@@ -230,7 +232,7 @@ describe('Functions and operators on sequences', () => {
 				});
 
 				it('returns true if both sequences contain an equal array', () => {
-					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(([1, 2, 5, 8]), ([1, 2, 5, 8]))', document));
+					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(([1, 2, 5, 8]), ([1, 2, 5, 8]))', documentNode));
 				});
 
 
@@ -244,7 +246,7 @@ describe('Functions and operators on sequences', () => {
 
 
 				it('returns false if both sequences contain arrays with a different length', () => {
-					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(([1, 2, 5, 8, 10]), ([1, 2, 5, 8]))', document));
+					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(([1, 2, 5, 8, 10]), ([1, 2, 5, 8]))', documentNode));
 				});
 
 
@@ -312,11 +314,11 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isFalse(evaluateXPathToBoolean('deep-equal(./someElement/someEqualElement[1], ./someElement/someEqualElement[2])', documentNode));
 				});
 				it('returns true for equal elements with different prefixes for the same uri', () => {
-					const dom = new DOMParser().parseFromString(`
+					const dom = evaluateXPathToFirstNode(`
 <xml>
   <ns1:matrix xmlns:ns1="http://example.com/ns1" frame="all"><ns2:tgroup xmlns:ns2="http://example.com/ns2" cols="1"><ns2:colspec colname="column-0" colnum="1" colwidth="1*" colsep="1" rowsep="1"/><ns2:tbody><ns2:row><ns2:entry colname="column-0" rowsep="1" colsep="1"/></ns2:row></ns2:tbody></ns2:tgroup></ns1:matrix>
   <matrix xmlns="http://example.com/ns1" frame="all"><tgroup xmlns="http://example.com/ns2" cols="1"><colspec colname="column-0" colnum="1" colwidth="1*" colsep="1" rowsep="1"/><tbody><row><entry colname="column-0" colsep="1" rowsep="1"/></row></tbody></tgroup></matrix>
-</xml>`, 'text/xml');
+</xml>`, documentNode, null, null, {language: 'XQuery3.1'});
 
 					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(/xml/*[1], /xml/*[2])', dom), 'both elements must be equal');
 				});
@@ -559,7 +561,7 @@ describe('Functions and operators on sequences', () => {
 			});
 
 			it('returns true if both sequences contain an equal array', async () => {
-				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(([1, 2, 5, 8] => fontoxpath:sleep(1)), ([1, 2, 5, 8]))', document));
+				chai.assert.isTrue(await evaluateXPathToAsyncSingleton('deep-equal(([1, 2, 5, 8] => fontoxpath:sleep(1)), ([1, 2, 5, 8]))', documentNode));
 			});
 
 
@@ -573,7 +575,7 @@ describe('Functions and operators on sequences', () => {
 
 
 			it('returns false if both sequences contain arrays with a different length', async () => {
-				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(([1, 2, 5, 8, 10] => fontoxpath:sleep(1)), ([1, 2, 5, 8] => fontoxpath:sleep(1)))', document));
+				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('deep-equal(([1, 2, 5, 8, 10] => fontoxpath:sleep(1)), ([1, 2, 5, 8] => fontoxpath:sleep(1)))', documentNode));
 			});
 
 

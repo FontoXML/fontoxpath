@@ -1,3 +1,4 @@
+import chai from 'chai';
 import argumentListToString from 'fontoxpath/expressions/functions/argumentListToString';
 import Sequence from 'fontoxpath/expressions/dataTypes/Sequence';
 

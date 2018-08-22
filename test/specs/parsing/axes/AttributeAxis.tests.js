@@ -1,3 +1,4 @@
+import chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import {
@@ -87,8 +88,11 @@ describe('attribute', () => {
 	});
 
 	it('does not contain namespace declarations', () => {
-		const doc = (new window.DOMParser()).parseFromString('<someElement xmlns:ns="http://example.org/ns" ns:attr="someValue"/>', 'text/xml');
-		chai.assert.isTrue(evaluateXPathToBoolean('@* => count() eq 1', doc.documentElement));
+		const element = documentNode.createElement('someElement');
+		element.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:prefix', 'https://www.example.org');
+		element.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns', 'https://www.example.org');
+		element.setAttributeNS('https://www.example.org', 'prefix:someAttribute', 'someValue');
+		chai.assert.isTrue(evaluateXPathToBoolean('@* => count() eq 1', element));
 	});
 
 	it('throws the correct error if context is absent', () => {

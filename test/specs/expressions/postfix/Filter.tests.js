@@ -1,3 +1,5 @@
+import chai from 'chai';
+import sinon from 'sinon';
 import Filter from 'fontoxpath/expressions/postfix/Filter';
 import Specificity from 'fontoxpath/expressions/Specificity';
 

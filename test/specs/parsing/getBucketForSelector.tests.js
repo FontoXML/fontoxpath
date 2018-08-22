@@ -1,3 +1,4 @@
+import chai from 'chai';
 import { getBucketForSelector } from 'fontoxpath';
 describe('getBucketForSelector', () => {
 	it('returns the correct bucket for element expressions', () => {

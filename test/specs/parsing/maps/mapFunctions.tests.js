@@ -1,3 +1,4 @@
+import chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';

@@ -1,3 +1,5 @@
+import mocha from 'mocha';
+import chai from 'chai';
 const {
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
@@ -14,18 +16,18 @@ let parser;
 
 let unrunnableTestCasesByName;
 let shouldRunTestByName;
-if (!(typeof window === 'undefined')) {
+if (typeof window !== 'undefined') {
 	// In the browser
 	context = require.context('text-loader!assets/', true, /\.xq|\.xqm|\.xml|\.out$/);
 	parser = new DOMParser();
 
 
+	window.log = '';
+
 	let greppedTestsetName = null;
-	if (typeof window !== 'undefined') {
-		const urlParams = new URLSearchParams(window.location.search);
-		if (urlParams.has('grep')) {
-			[greppedTestsetName] = urlParams.get('grep').split('~');
-		}
+	const urlParams = new URLSearchParams(window.location.search);
+	if (urlParams.has('grep')) {
+		[greppedTestsetName] = urlParams.get('grep').split('~');
 	}
 	if (greppedTestsetName) {
 		shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
@@ -45,6 +47,14 @@ else {
 	const fs = require('fs');
 	// On node
 	context = what => fs.readFileSync(`test/assets/${what}`, 'utf-8');
+
+	global.atob = function (b64Encoded) {
+		return new Buffer(b64Encoded, 'base64').toString();
+	};
+
+	global.btoa = function (str) {
+		return new Buffer(str).toString('base64');
+	};
 
 	const { sync } = require('slimdom-sax-parser');
 	parser = {
@@ -77,7 +87,10 @@ const globalDocument = parser.parseFromString('<xml/>', 'text/xml');
 
 const instantiatedDocumentByAbsolutePath = Object.create(null);
 // Especially the CI can be slow, up the timeout to 60s.
-mocha.timeout(60000);
+
+if (mocha.timeout) {
+	mocha.timeout(60000);
+}
 
 function getFile (fileName) {
 	while (fileName.includes('..')) {
@@ -172,7 +185,7 @@ function createAsserter (baseUrl, assertNode, language) {
 				parsedFragment = getFile(evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, { baseUrl }));
 			}
 			else {
-				parsedFragment = parser.parseFromString(`<xml>${assertNode.textContent}</xml>`, 'text/xml').documentElement;
+				parsedFragment = parser.parseFromString(`<xml>${evaluateXPathToString('.', assertNode)}</xml>`, 'text/xml').documentElement;
 			}
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const result = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language });
@@ -227,7 +240,6 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 		}
 	});
 
-window.log = '';
 
 const registeredModuleURIByFileName = Object.create(null);
 
@@ -332,7 +344,10 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 							if (e instanceof TypeError) {
 								throw e;
 							}
-							window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
+
+							if (typeof window !== 'undefined') {
+								window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
+							}
 							// And rethrow the error
 							throw e;
 						}
