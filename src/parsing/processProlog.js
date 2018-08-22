@@ -18,18 +18,18 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 ];
 
 /**
-* @typedef {{declarations: AnnotatedDeclaration}}
-*/
+ * @typedef {{declarations: AnnotatedDeclaration}}
+ */
 let Prolog;
 
 /**
-* @typedef {{annotations: ?, declaration: Declaration}}
-*/
+ * @typedef {{annotations: ?, declaration: Declaration}}
+ */
 let AnnotatedDeclaration;
 
 /**
-* @typedef {{type: string, name: Array<string>, body: Array<?>, returnType: ?string, params: Array<?>}}
-*/
+ * @typedef {{type: string, name: Array<string>, body: Array<?>, returnType: ?string, params: Array<?>}}
+ */
 let Declaration;
 
 /**
@@ -62,44 +62,43 @@ export default function processProlog (prolog, staticContext) {
 		}
 	});
 
-	prolog['declarations'].forEach(declarationAndAnnotations => {
-		const declaration = declarationAndAnnotations['declaration'];
-		const annotations = declarationAndAnnotations['annotations'].map(annotation => {
-			let annotationNamespaceURI = annotation[0][1];
-			const annotationPrefix = annotation[0][0];
-			if (!annotationNamespaceURI) {
-				annotationNamespaceURI = staticContext.resolveNamespace(annotationPrefix);
-			}
-			if (!annotationNamespaceURI && annotationPrefix) {
-				throw new Error(`XPST0008: The prefix ${annotationPrefix} is not declared`);
-			}
-			return {
-				annotationName: {
-					prefix: annotationPrefix,
-					namespaceURI: annotationNamespaceURI,
-					localName: annotation[0][2]
-				},
-				parameters: annotation[1]
-			};
-		});
-		// Functions are public unless they're private
-		const isPublicDeclaration = annotations.every(annotation => !annotation.namespaceURI && annotation.localName !== 'private');
-		let [ declarationPrefix, declarationNamespaceURI, declarationLocalName ] = declaration['name'];
-
-		if (!declarationNamespaceURI) {
-			declarationNamespaceURI = staticContext.resolveNamespace(declarationPrefix);
-
-			if (!declarationNamespaceURI && declarationPrefix) {
-				throw new Error(`XPST0081: The prefix "${declarationPrefix}" could not be resolved`);
-			}
-		}
-
-		if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
-			throw new Error('XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.');
-		}
+	prolog['declarations'].forEach(declaration => {
 
 		switch (declaration['type']) {
 			case 'functionDeclaration': {
+				let [ declarationPrefix, declarationNamespaceURI, declarationLocalName ] = declaration['name'];
+
+				if (!declarationNamespaceURI) {
+					declarationNamespaceURI = staticContext.resolveNamespace(declarationPrefix);
+
+					if (!declarationNamespaceURI && declarationPrefix) {
+						throw new Error(`XPST0081: The prefix "${declarationPrefix}" could not be resolved`);
+					}
+				}
+
+				if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
+					throw new Error('XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.');
+				}
+				const annotations = declaration['annotations'].map(annotation => {
+					let annotationNamespaceURI = annotation[0][1];
+					const annotationPrefix = annotation[0][0];
+					if (!annotationNamespaceURI) {
+						annotationNamespaceURI = staticContext.resolveNamespace(annotationPrefix);
+					}
+					if (!annotationNamespaceURI && annotationPrefix) {
+						throw new Error(`XPST0008: The prefix ${annotationPrefix} is not declared`);
+					}
+					return {
+						annotationName: {
+							prefix: annotationPrefix,
+							namespaceURI: annotationNamespaceURI,
+							localName: annotation[0][2]
+						},
+						parameters: annotation[1]
+					};
+				});
+				// Functions are public unless they're private
+				const isPublicDeclaration = annotations.every(annotation => !annotation.namespaceURI && annotation.localName !== 'private');
 
 				if (!declarationNamespaceURI) {
 					throw new Error('XQST0060: Functions declared in a module must reside in a namespace.');
@@ -148,13 +147,13 @@ export default function processProlog (prolog, staticContext) {
 				};
 
 				const functionDefinition = {
-						callFunction: executeFunction,
-						localName: declarationLocalName,
-						namespaceURI: declarationNamespaceURI,
-						argumentTypes: paramTypes,
-						arity: paramNames.length,
-						returnType: returnType
-					};
+					callFunction: executeFunction,
+					localName: declarationLocalName,
+					namespaceURI: declarationNamespaceURI,
+					argumentTypes: paramTypes,
+					arity: paramNames.length,
+					returnType: returnType
+				};
 
 				staticContext.registerFunctionDefinition(
 					declarationNamespaceURI,

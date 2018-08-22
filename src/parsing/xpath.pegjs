@@ -637,26 +637,26 @@ Setter
  = BoundarySpaceDecl / DefaultCollationDecl / BaseURIDecl / ConstructionDecl / OrderingModeDecl / EmptyOrderDecl / CopyNamespacesDecl / DecimalFormatDecl
 
 // 9
-BoundarySpaceDecl = "declare" S "boundary-space" S ("preserve" / "strip")
+BoundarySpaceDecl = "declare" S "boundary-space" S ("preserve" / "strip") {return {type: 'boundarySpaceDecl'}}
 
 // 10
-DefaultCollationDecl = "declare" S "default" "collation" URILiteral
+DefaultCollationDecl = "declare" S "default" "collation" URILiteral {return {type: 'defaultCollationDecl'}}
 
 // 11
-BaseURIDecl = "declare" S "base-uri" S URILiteral
+BaseURIDecl = "declare" S "base-uri" S URILiteral {return {type: 'baseURIDecl'}}
 
 // 12
-ConstructionDecl = "declare" S "construction" S ("strip" / "preserve")
+ConstructionDecl = "declare" S "construction" S ("strip" / "preserve") {return {type: 'constructionDecl'}}
 
 // 13
 OrderingModeDecl
- = "declare" S "ordering" S ("ordered" / "unordered")
+ = "declare" S "ordering" S ("ordered" / "unordered") {return {type: 'orderingModeDecl'}}
 // 14
 EmptyOrderDecl
- = "declare" S "default" S "order" S "empty" S ("greatest" / "least")
+ = "declare" S "default" S "order" S "empty" S ("greatest" / "least") {return {type: 'emptyOrderDecl'}}
 // 15
 CopyNamespacesDecl
- = "declare" S "copy-namespaces" S PreserveMode _ "," _ InheritMode
+ = "declare" S "copy-namespaces" S PreserveMode _ "," _ InheritMode {return {type: 'copyNamespacesDecl'}}
 // 16
 PreserveMode
  = "preserve" / "no-preserve"
@@ -665,7 +665,7 @@ InheritMode
  = "inherit" / "no-inherit"
 // 18
 DecimalFormatDecl
- = "declare" S (("decimal-format" S EQName) / ("default" S "decimal-format")) (DFPropertyName S "=" S StringLiteral)*
+ = "declare" S (("decimal-format" S EQName) / ("default" S "decimal-format")) (DFPropertyName S "=" S StringLiteral)* {return {type: 'decimalFormatDecl'}}
 // 19
 DFPropertyName
  = "decimal-separator" / "grouping-separator" / "infinity" / "minus-sign" / "NaN" / "percent" / "per-mille" / "zero-digit" / "digit" / "pattern-separator" / "exponent-separator"
@@ -675,7 +675,7 @@ Import = SchemaImport / ModuleImport
 
 // 21
 SchemaImport
- = "import" S "schema" (S SchemaPrefix)? S URILiteral ( S "at" S URILiteral ( S ","  S URILiteral)*)?
+ = "import" S "schema" (S SchemaPrefix)? S URILiteral ( S "at" S URILiteral ( S ","  S URILiteral)*)? {return {type: 'schemaImportl'}}
 // 22
 SchemaPrefix
  = ("namespace" S NCName S "=") / ("default" S "element" S "namespace")
@@ -691,10 +691,10 @@ NamespaceDecl
  = "declare" S "namespace" S prefix:NCName _ "=" _ uri:URILiteral {return {type: 'namespaceDecl', prefix: prefix, namespaceURI: uri[1]}}
 // 25
 DefaultNamespaceDecl
- = "declare" S "default" S ("element" / "function") S "namespace" S URILiteral
+ = "declare" S "default" S elementOrFunction:("element" / "function") S "namespace" S uri:URILiteral {return {type: 'defaultNamespaceDecl', elementOrFunction: elementOrFunction, namespaceURI: uri[1]}}
 // 26
 AnnotatedDecl
- = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl) { return {annotations: annotations, declaration :decl}}
+ = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl) { return Object.assign(decl, {annotations: annotations})}
 // 27
 Annotation
  = "%" _ annotation:EQName params:(_ "(" _ lhs:$Literal rhs:(_ "," _ part:$Literal {return part})* _")")? { return [annotation, params]}
@@ -709,7 +709,7 @@ VarDefaultValue
  = ExprSingle
 // 31
 ContextItemDecl
- = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
+ = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?)) {return {type: 'contextItemDecl'}}
 // 32
 FunctionDecl
  = "function" S
@@ -729,7 +729,7 @@ FunctionDecl
 
 // 37
 OptionDecl
- = "declare" S  "option" S EQName S StringLiteral
+ = "declare" S  "option" S EQName S StringLiteral {return {type: 'optionDecl'}}
 // 140
 NodeConstructor
  = DirectConstructor
