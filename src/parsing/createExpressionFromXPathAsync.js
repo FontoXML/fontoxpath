@@ -4,29 +4,18 @@ import compileAstToExpression from './compileAstToExpression';
 import parseExpression from './parseExpression';
 
 function supportsAsyncCompilation () {
-	if (typeof window === 'undefined') {
-		return false;
-	}
-
 	// For async compilation, we'll need at least webworkers, Blop and URL.
 	// For the extra storage, we'll need indexedDB. These are all not available on Node.JS, and on some older browsers
-	return window.indexedDB !== undefined &&
-		window.Blob !== undefined &&
-		window.Worker !== undefined &&
-		window.URL !== undefined;
+	return typeof indexedDB !== 'undefined' &&
+		typeof Blob !== 'undefined' &&
+		typeof Worker !== 'undefined' &&
+		typeof URL !== 'undefined';
 }
 
 let createExpressionFromXPathAsync;
 
 if (supportsAsyncCompilation()) {
 	// We can compile asynchronously, set up a connection to the database as eager as possible
-	const global = window;
-
-	const indexedDB = /** @type {!IDBFactory} */ (global.indexedDB);
-	const Blob = global.Blob;
-	const Worker = global.Worker;
-	const URL = global.URL;
-
 	const SELECTOR_STORE_NAME = 'fontoxpath';
 	const SELECTOR_INDEXED_DB_NAME = 'fontoxpath-cache';
 
@@ -223,10 +212,10 @@ if (supportsAsyncCompilation()) {
 	};
 }
 else {
-	createExpressionFromXPathAsync = xPathString => new Promise(resolve => resolve(() => {
+	createExpressionFromXPathAsync = xPathString => new Promise(resolve => {
 		const ast = parseExpression(xPathString, { allowXQuery: false });
-		return compileAstToExpression(ast, { allowXQuery: false });
-	}));
+		return resolve(compileAstToExpression(ast, { allowXQuery: false }));
+	});
 }
 
 export default createExpressionFromXPathAsync;
