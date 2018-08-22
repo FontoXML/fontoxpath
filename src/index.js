@@ -13,16 +13,21 @@ import precompileXPath from './precompileXPath';
 import getBucketsForNode from './getBucketsForNode';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
-import createExpressionFromXPath from './parsing/createExpressionFromXPath';
+import parseExpression from './parsing/parseExpression';
+import compileAstToExpression from './parsing/compileAstToExpression';
 import domFacade from './domBackedDomFacade';
 
+function parseXPath (xpathString) {
+	const ast = parseExpression(xpathString, { allowXQuery: false });
+	return compileAstToExpression(ast['body'], { allowXQuery: false });
+}
+
 function getBucketForSelector (xpathString) {
-	return createExpressionFromXPath(xpathString, { allowXQuery: false }).getBucket();
+	return parseXPath(xpathString).getBucket();
 }
 
 function compareSpecificity (xpathStringA, xpathStringB) {
-	return createExpressionFromXPath(xpathStringA, { allowXQuery: false }).specificity
-		.compareTo(createExpressionFromXPath(xpathStringB, { allowXQuery: false }).specificity);
+	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
 }
 
 /**

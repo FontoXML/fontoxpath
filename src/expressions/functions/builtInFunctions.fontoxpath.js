@@ -9,6 +9,9 @@ import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import MapValue from '../dataTypes/MapValue';
 
+import compileAstToExpression from '../../parsing/compileAstToExpression';
+import parseExpression from '../../parsing/parseExpression';
+
 import StaticContext from '../StaticContext';
 import ExecutionParameters from '../ExecutionParameters';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
@@ -45,7 +48,8 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, _staticContex
 				const contextItemSequence = variables['.'] ? variables['.']() : Sequence.empty();
 				delete variables['.'];
 
-				const selector = executionParameters.createExpressionFromXPath(queryString, { allowXQuery: false });
+				const ast = parseExpression(queryString, { allowXQuery: false });
+				const selector = compileAstToExpression(ast['body'], { allowXQuery: false });
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 					// Plainly ignore any namespace bindings from the outside
 					() => null,

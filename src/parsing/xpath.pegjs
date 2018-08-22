@@ -32,7 +32,7 @@ ParamList
 
 // 3
 Param
- = "$" name:EQName type:TypeDeclaration? {return [name, type || "item()"]}
+ = "$" name:EQName type:TypeDeclaration? {return [name, type || "item()*"]}
 
 // 4
 FunctionBody
@@ -409,7 +409,7 @@ TypeDeclaration
 // 79
 SequenceType
  = "empty-sequence()" {return ["empty-sequence()", "0"]}
- / type:ItemType _ occurence:OccurenceIndicator? {return [type, occurence]}
+ / type:ItemType occurence:(_ o:OccurenceIndicator {return o})? {return [type, occurence]}
 
 // 80
 OccurenceIndicator = "?" / "*" / "+"
@@ -614,11 +614,11 @@ VersionDecl
 
 // 3
 MainModule
- = Prolog _ QueryBody
+ = prolog:Prolog _ body:QueryBody {return {type:'mainModule', prolog: prolog, body: body}}
 
 // 4
 LibraryModule
- = moduleDecl:ModuleDecl _ prolog:Prolog {return {moduleDecl: moduleDecl, prolog: prolog}}
+ = moduleDecl:ModuleDecl _ prolog:Prolog {return {type: 'libraryModule', moduleDecl: moduleDecl, prolog: prolog}}
 
 // 5
 ModuleDecl
@@ -681,22 +681,26 @@ SchemaPrefix
  = ("namespace" S NCName S "=") / ("default" S "element" S "namespace")
 // 23
 ModuleImport
- = "import" S "module" (S "namespace" NCName "=")? S URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)?
+ = "import" S "module"
+   prefix:(S "namespace" S prefix:$NCName _ "=" {return prefix})?
+   _ uri:URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)?
+   {return {type: "moduleImport", prefix: prefix, namespaceURI: uri[1]}}
+
 // 24
 NamespaceDecl
- = "declare" S "namespace" S NCName _ "=" _ URILiteral
+ = "declare" S "namespace" S prefix:NCName _ "=" _ uri:URILiteral {return {type: 'namespaceDecl', prefix: prefix, namespaceURI: uri[1]}}
 // 25
 DefaultNamespaceDecl
  = "declare" S "default" S ("element" / "function") S "namespace" S URILiteral
 // 26
 AnnotatedDecl
- = "declare" S annotations:Annotation* S decl:(VarDecl / FunctionDecl) { return {annotations: annotations, declaration :decl}}
+ = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl) { return {annotations: annotations, declaration :decl}}
 // 27
 Annotation
- = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")")? { return [annotation, params]}
+ = "%" _ annotation:EQName params:(_ "(" _ lhs:$Literal rhs:(_ "," _ part:$Literal {return part})* _")")? { return [annotation, params]}
 // 28
 VarDecl
- = "variable" S "$" _ VarName (_ TypeDeclaration)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
+ = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})? value:((_ ":=" _ v:VarValue {return {type: 'internal', value: v}}) / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return v})? {return {type: 'external', defaultValue: defaultValue || null}})) {return {type: 'varDecl', name: name, varType: varType, value: value}}
 // 29
 VarValue
  = ExprSingle

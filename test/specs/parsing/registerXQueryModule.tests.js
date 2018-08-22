@@ -54,4 +54,34 @@ declare %public function test:is-odd ($n) {
 		chai.assert.equal(result, true);
 	});
 
+	it('Can import a registered module', () => {
+		registerXQueryModule(`
+module namespace test = "https://www.example.org/test3/submodule";
+declare %public function test:hello ($a) {
+  "Hello " || $a
+};
+`);
+		registerXQueryModule(`
+module namespace test = "https://www.example.org/test3/mainModule";
+import module namespace submodule = "https://www.example.org/test3/submodule";
+
+declare %public function test:hello ($a) {
+  submodule:hello($a) || "!!!"
+};
+`);
+
+		const result = evaluateXPath(
+			'test:hello("World")',
+			null,
+			null,
+			null,
+			null,
+			{
+				moduleImports: {
+					test: 'https://www.example.org/test3/mainModule'
+				}
+			});
+
+			chai.assert.equal(result, 'Hello World!!!');
+	});
 });

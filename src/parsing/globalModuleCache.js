@@ -27,10 +27,14 @@ export const loadModuleFile = function loadModuleFile (uri, moduleContents) {
 export const enhanceStaticContextWithModule = function enhanceStaticContextWithModule (staticContext, uri) {
 	const moduleContents = loadedModulesByNamespaceURI[uri];
 
+	if (!moduleContents) {
+		throw new Error(`XQST0051: No modules found with the namespace uri ${uri}`);
+	}
+
 	moduleContents.functionDeclarations
 		.forEach(
 			functionDeclaration => staticContext.registerFunctionDefinition(
-				functionDeclaration.namespaceURI,
+				uri,
 				functionDeclaration.localName,
 				functionDeclaration.arity,
 				functionDeclaration.functionDefinition)

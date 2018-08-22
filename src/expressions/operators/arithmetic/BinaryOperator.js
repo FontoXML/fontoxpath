@@ -51,17 +51,17 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 			case '+':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(castA.value + castB.value, 'xs:decimal');
+					return createAtomicValue(castA.value + castB.value, typeA === typeB ? typeA : 'xs:decimal');
 				};
 			case '-':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(castA.value - castB.value, 'xs:decimal');
+					return createAtomicValue(castA.value - castB.value, typeA === typeB ? typeA : 'xs:decimal');
 				};
 			case '*':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(castA.value * castB.value, 'xs:decimal');
+					return createAtomicValue(castA.value * castB.value, typeA === typeB ? typeA : 'xs:decimal');
 				};
 			case 'div':
 				return (a, b) => {
@@ -71,8 +71,8 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 			case 'idiv':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					if (castB.value === 0 || castB.value === -0) {
-						throw new Error('FOAR0001: Devisor of idiv operator cannot be (-)0');
+					if (castB.value === 0) {
+						throw new Error('FOAR0001: Divisor of idiv operator cannot be (-)0');
 					}
 					if (Number.isNaN(castA.value) || Number.isNaN(castB.value) || !Number.isFinite(castA.value)) {
 						throw new Error('FOAR0002: One of the operands of idiv is NaN or the first operand is (-)INF');

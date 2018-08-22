@@ -1,7 +1,7 @@
 import XPATHPARSER_VERSION from './XPATHPARSER_VERSION';
 import xPathParserRaw from './xPathParser.raw';
 import compileAstToExpression from './compileAstToExpression';
-import createExpressionFromXPath from './createExpressionFromXPath';
+import parseExpression from './parseExpression';
 
 function supportsAsyncCompilation () {
 	if (typeof window === 'undefined') {
@@ -223,7 +223,10 @@ if (supportsAsyncCompilation()) {
 	};
 }
 else {
-	createExpressionFromXPathAsync = xPathString => new Promise(resolve => resolve(createExpressionFromXPath(xPathString, { allowXQuery: false })));
+	createExpressionFromXPathAsync = xPathString => new Promise(resolve => resolve(() => {
+		const ast = parseExpression(xPathString, { allowXQuery: false });
+		return compileAstToExpression(ast, { allowXQuery: false });
+	}));
 }
 
 export default createExpressionFromXPathAsync;
