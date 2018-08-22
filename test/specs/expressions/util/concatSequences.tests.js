@@ -1,3 +1,4 @@
+import chai from 'chai';
 import Sequence from 'fontoxpath/expressions/dataTypes/Sequence';
 import concatSequences from 'fontoxpath/expressions/util/concatSequences';
 

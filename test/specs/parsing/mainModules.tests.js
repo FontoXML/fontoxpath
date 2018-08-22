@@ -1,3 +1,4 @@
+import chai from 'chai';
 import { registerXQueryModule, evaluateXPath } from 'fontoxpath';
 
 describe('Main modules', () => {

@@ -214,7 +214,7 @@ if (supportsAsyncCompilation()) {
 else {
 	createExpressionFromXPathAsync = xPathString => new Promise(resolve => {
 		const ast = parseExpression(xPathString, { allowXQuery: false });
-		return resolve(compileAstToExpression(ast, { allowXQuery: false }));
+		return resolve(compileAstToExpression(ast['body'], { allowXQuery: false }));
 	});
 }
 

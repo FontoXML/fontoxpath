@@ -1,3 +1,4 @@
+import chai from 'chai';
 import {
 	evaluateXPathToBoolean,
 	evaluateXPathToNumbers

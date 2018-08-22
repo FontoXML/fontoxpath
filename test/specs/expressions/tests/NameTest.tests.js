@@ -1,3 +1,4 @@
+import chai from 'chai';
 import NameTest from 'fontoxpath/expressions/tests/NameTest';
 
 describe('NameTest.getBucket()', () => {

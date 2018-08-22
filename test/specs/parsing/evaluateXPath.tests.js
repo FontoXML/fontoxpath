@@ -1,4 +1,6 @@
+import chai from 'chai';
 import * as slimdom from 'slimdom';
+import sinon from 'sinon';
 
 import {
 	domFacade,
@@ -13,6 +15,7 @@ import {
 	evaluateXPathToString,
 	evaluateXPathToStrings
 } from 'fontoxpath';
+
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 describe('evaluateXPath', () => {
@@ -206,14 +209,6 @@ describe('evaluateXPath', () => {
 			() => chai.assert.throws(() => evaluateXPathToMap('fontoxpath:sleep(())', documentNode, domFacade), 'can not be resolved synchronously'));
 	});
 
-	describe('using the actual browser HTML DOM', () => {
-		it('will find an HTML node', ()=> {
-			chai.assert.isTrue(evaluateXPathToBoolean('/descendant::html', window.document, domFacade, null, { namespaceResolver: () => 'http://www.w3.org/1999/xhtml' }));
-			chai.assert.isTrue(evaluateXPathToBoolean('/descendant::Q{http://www.w3.org/1999/xhtml}html', window.document, domFacade));
-
-		});
-	});
-
 	describe('namespaceResolver', () => {
 		it('can resolve the built-in namespaces', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("fn:string") => namespace-uri-from-QName() eq "http://www.w3.org/2005/xpath-functions"'), 'fn');
@@ -234,20 +229,6 @@ describe('evaluateXPath', () => {
 	});
 
 	describe('nodesFactory', () => {
-		beforeEach(() => {
-			sinon.spy(document, 'createComment');
-			sinon.spy(document, 'createElementNS');
-			sinon.spy(document, 'createProcessingInstruction');
-			sinon.spy(document, 'createTextNode');
-
-		});
-		afterEach( () => {
-			document.createComment.restore();
-			document.createElementNS.restore();
-			document.createProcessingInstruction.restore();
-			document.createTextNode.restore();
-
-		});
 		it('can use the passed nodesFactory', () => {
 			const slimdomDocument = new slimdom.Document();
 			const nodesFactory = {
@@ -258,11 +239,6 @@ describe('evaluateXPath', () => {
 			};
 
 			evaluateXPathToBoolean('<element>Some text, a <?processing instruction ?> and a <!--comment--></element>', null, null, null, { nodesFactory, language: 'XQuery3.1' });
-
-			chai.assert.isFalse(document.createComment.called, 'document.createComment');
-			chai.assert.isFalse(document.createElementNS.called, 'document.createElementNS');
-			chai.assert.isFalse(document.createProcessingInstruction.called, 'document.createProcessingInstruction');
-			chai.assert.isFalse(document.createTextNode.called, 'document.createTextNode');
 
 			chai.assert.isTrue(slimdomDocument.createComment.called, 'nodesFactory.createComment');
 			chai.assert.isTrue(slimdomDocument.createElementNS.called, 'nodesFactory.createElementNS');

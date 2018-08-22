@@ -1,3 +1,4 @@
+import chai from 'chai';
 import { evaluateXPathToNumber, evaluateXPathToBoolean } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
@@ -21,9 +22,9 @@ describe('performance', () => {
 
 
 function timeXPath (xpath, document) {
-	const then = performance.now();
+	const then = Date.now();
 	chai.assert(evaluateXPathToBoolean(xpath, document), `The passed XPath ${xpath} should resolve to true`);
-	const now =  performance.now();
+	const now =  Date.now();
 	return now - then;
 }
 
@@ -77,6 +78,5 @@ function runTests (document) {
 }
 
 describe('performance of descendant axis', () => {
-	describe('in browser DOM', () => runTests(window.document.implementation.createDocument(null, null)));
 	describe('in slimdom', () => runTests(new slimdom.Document()));
 });

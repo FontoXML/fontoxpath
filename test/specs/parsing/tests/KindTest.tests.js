@@ -1,3 +1,4 @@
+import chai from 'chai';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
@@ -27,10 +28,6 @@ describe('KindTest', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('self::element(someElement)', documentNode.documentElement.firstChild));
 	});
 
-	it('can select any element -> element(prefix:name)', () => {
-		const browserDocument = new DOMParser().parseFromString('<xml xmlns:prefix="http://example.com/ns"><prefix:element/></xml>', 'text/xml');
-		chai.assert.isTrue(evaluateXPathToBoolean('self::element(prefix:element)', browserDocument.documentElement.firstChild));
-	});
 
 	it('can select any text node -> text()', () => {
 		jsonMlMapper.parse([
@@ -40,10 +37,17 @@ describe('KindTest', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('self::text()', documentNode.documentElement.firstChild));
 	});
 
-	it('regards CDATA nodes as text nodes', () => {
-		const browserDocument = new DOMParser().parseFromString('<xml><![CDATA[Some CData]]></xml>', 'text/xml');
-		chai.assert.isTrue(evaluateXPathToBoolean('child::text()', browserDocument.documentElement));
-	});
+	if (typeof DOMParser !== 'undefined') {
+		it('can select any element -> element(prefix:name)', () => {
+			const browserDocument = new DOMParser().parseFromString('<xml xmlns:prefix="http://example.com/ns"><prefix:element/></xml>', 'text/xml');
+			chai.assert.isTrue(evaluateXPathToBoolean('self::element(prefix:element)', browserDocument.documentElement.firstChild));
+		});
+
+		it('regards CDATA nodes as text nodes', () => {
+			const browserDocument = new DOMParser().parseFromString('<xml><![CDATA[Some CData]]></xml>', 'text/xml');
+			chai.assert.isTrue(evaluateXPathToBoolean('child::text()', browserDocument.documentElement));
+		});
+	}
 
 	it('can select any PI -> processing-instruction()', () => {
 		jsonMlMapper.parse([
