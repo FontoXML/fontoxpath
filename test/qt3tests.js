@@ -1,10 +1,12 @@
 const {
+	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToMap,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
-	evaluateXPathToString
+	evaluateXPathToString,
+	registerXQueryModule
 } = require('fontoxpath');
 
 let context;
@@ -14,7 +16,7 @@ let unrunnableTestCasesByName;
 let shouldRunTestByName;
 if (!(typeof window === 'undefined')) {
 	// In the browser
-	context = require.context('text-loader!assets/', true, /\.xq|\.xml|\.out$/);
+	context = require.context('text-loader!assets/', true, /\.xq|\.xqm|\.xml|\.out$/);
 	parser = new DOMParser();
 
 
@@ -146,7 +148,7 @@ function createAsserter (baseUrl, assertNode, language) {
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), `Expected XPath ${xpath} to resolve to true`);
 		case 'assert-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`(${xpath}) = (${equalWith})`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), `Expected XPath ${xpath} to resolve to ${equalWith}`);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`${xpath} = ${equalWith}`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), `Expected XPath ${xpath} to resolve to ${equalWith}`);
 		}
 		case 'assert-deep-eq': {
 			const equalWith = evaluateXPathToString('.', assertNode);
@@ -182,7 +184,7 @@ function createAsserter (baseUrl, assertNode, language) {
 		}
 		case 'assert-string-value': {
 			const expectedString = evaluateXPathToString('.', assertNode);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.equal(evaluateXPathToString(`(${xpath})!string() => string-join(" ")`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), expectedString, xpath);
+			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.equal(evaluateXPathToString(`${xpath}`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), expectedString, xpath);
 		}
 		default:
 			return () => {
@@ -227,8 +229,10 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 
 window.log = '';
 
+const registeredModuleURIByFileName = Object.create(null);
+
 evaluateXPathToNodes('/catalog/test-set', catalog)
-	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)] !== false)
+	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
 	.map(testSetNode => evaluateXPathToString('@file', testSetNode))
 	.forEach(testSetFileName => {
 		const testSet = getFile(testSetFileName);
@@ -248,7 +252,7 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
        "infoset-dtd",
        (:"xpath-1.0-compatibility",:)
        "namespace-axis",
-       "moduleImport",
+       (:"moduleImport",:)
        "schema-location-hint",
        (:"collection-stability",:)
        "directory-as-collation-uri",
@@ -300,6 +304,19 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 						else {
 							env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
 						}
+						const moduleImports = evaluateXPathToArray(
+							'array{module!map{"uri": @uri/string(), "file": $baseUrl || "/" || @file/string()}}',
+							testCase,
+							null,
+							{
+								baseUrl: baseUrl
+							});
+						moduleImports.forEach(moduleImport => {
+							const targetNamespace = registeredModuleURIByFileName[moduleImport.file] ||
+								registerXQueryModule(getFile(moduleImport.file));
+
+							registeredModuleURIByFileName[moduleImport.file] = targetNamespace;
+						});
 						const contextNode = env.contextNode;
 						namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
 						variablesInScope = env.variables;

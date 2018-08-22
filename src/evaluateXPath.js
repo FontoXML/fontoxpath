@@ -1,4 +1,4 @@
-import createExpressionFromXPath from './parsing/createExpressionFromXPath';
+import parseExpression from './parsing/parseExpression';
 import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
 import DynamicContext from './expressions/DynamicContext';
 import DomFacade from './DomFacade';
@@ -247,7 +247,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 		}, Object.create(null))
 	});
 
-	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, createExpressionFromXPath);
+	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory);
 
 	/**
 	 * @type {!Sequence}
@@ -255,7 +255,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 	const rawResults = compiledExpression.evaluateMaybeStatically(dynamicContext, {
 		domFacade: wrappedDomFacade,
 		nodesFactory: nodesFactory,
-		createExpressionFromXPath: createExpressionFromXPath
+		parseExpression: parseExpression
 	});
 
 	switch (returnType) {

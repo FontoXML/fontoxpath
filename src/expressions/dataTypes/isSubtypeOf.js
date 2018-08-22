@@ -37,9 +37,9 @@ export default function isSubtypeOf (subTypeName, superTypeName) {
 	if (!superType) {
 		if (!superTypeName.startsWith('xs:')) {
 			// Note that 'xs' is the only namespace currently supported
-			throw new Error(`XPST0081: The type ${superTypeName} does not exist.`);
+			throw new Error(`XPST0081: The type ${superTypeName} could not be found.`);
 		}
-		throw new Error(`XPST0051: The type ${superTypeName} does not exist.`);
+		throw new Error(`XPST0051: The type ${superTypeName} could not be found.`);
 	}
 
 	return isSubtypeOfType(subType, superType);

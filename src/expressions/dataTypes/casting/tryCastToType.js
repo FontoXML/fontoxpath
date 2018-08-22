@@ -143,7 +143,7 @@ function createCastingFunction (from, to) {
 	if (!primitiveTo || !primitiveFrom) {
 		return (_val) => ({
 			successful: false,
-			error: new Error('XPST0081: Can not cast: type is unknown.')
+			error: new Error(`XPST0081: Can not cast: type ${primitiveTo ? from : to} is unknown.`)
 		});
 	}
 	const converters = [];

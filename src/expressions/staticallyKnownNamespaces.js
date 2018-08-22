@@ -2,9 +2,11 @@ export const XML_NAMESPACE_URI = 'http://www.w3.org/XML/1998/namespace';
 export const XMLSCHEMA_NAMESPACE_URI = 'http://www.w3.org/2001/XMLSchema';
 export const ARRAY_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions/array';
 export const FUNCTIONS_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions';
+export const LOCAL_NAMESPACE_URI = 'http://www.w3.org/2005/xquery-local-functions';
 export const MAP_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions/map';
 export const MATH_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions/math';
 export const FONTOXPATH_NAMESPACE_URI = 'http://fontoxml.com/fontoxpath';
+
 
 export const staticallyKnownNamespaceByPrefix = {
 	'xml': XML_NAMESPACE_URI,
@@ -13,7 +15,8 @@ export const staticallyKnownNamespaceByPrefix = {
 	'map': MAP_NAMESPACE_URI,
 	'array': ARRAY_NAMESPACE_URI,
 	'math': MATH_NAMESPACE_URI,
-	'fontoxpath': FONTOXPATH_NAMESPACE_URI
+	'fontoxpath': FONTOXPATH_NAMESPACE_URI,
+	'local': LOCAL_NAMESPACE_URI
 };
 
 export function registerStaticallyKnownNamespace (prefix, namespaceURI) {

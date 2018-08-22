@@ -16,6 +16,7 @@ export default function promoteToType (value, type) {
 			if (type === 'xs:double') {
 				return createAtomicValue(value.value, 'xs:double');
 			}
+
 		}
 		return null;
 	}

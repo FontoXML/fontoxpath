@@ -1,6 +1,6 @@
 import DomFacade from '../DomFacade';
 export default class ExecutionParameters {
-	constructor (domFacade, nodesFactory, createExpressionFromXPath) {
+	constructor (domFacade, nodesFactory) {
 		/**
 		 *@type {!DomFacade}
 		 */
@@ -9,6 +9,5 @@ export default class ExecutionParameters {
 		 * @type {!INodesFactory}
 		 */
 		this.nodesFactory = nodesFactory;
-		this.createExpressionFromXPath = createExpressionFromXPath;
 	}
 }

@@ -1,17 +1,15 @@
 import { parse, SyntaxError } from './xPathParser';
-import compileAstToExpression from './compileAstToExpression';
-import Expression from '../expressions/Expression';
 
 /**
  * @dict
  */
 const astParseResultCache = Object.create(null);
 
-export function storeParseResultInCache (string, language, ast) {
+function storeParseResultInCache (string, language, ast) {
 	astParseResultCache[`${language}~${string}`] = ast;
 }
 
-export function getParseResultFromCache (string, language) {
+function getParseResultFromCache (string, language) {
 	return astParseResultCache[`${language}~${string}`] || null;
 }
 
@@ -20,7 +18,6 @@ export function getParseResultFromCache (string, language) {
  *
  * @param  {string}                  xPathString         The string to parse
  * @param  {{allowXQuery: boolean}}  compilationOptions  Whether the compiler should parse XQuery
- * @return {!Expression}
  */
 export default function parseExpression (xPathString, compilationOptions) {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
@@ -32,15 +29,15 @@ export default function parseExpression (xPathString, compilationOptions) {
 			ast = cached;
 		} else {
 			// We are absolutely not interested in XQuery modules here
-			ast = parse(xPathString, { 'startRule': 'QueryBody' });
+			ast = parse(xPathString, { 'startRule': 'Module' });
 			storeParseResultInCache(xPathString, language, ast);
 		}
-
-		return compileAstToExpression(ast, compilationOptions);
+		return ast;
 	}
 	catch (error) {
 		if (error instanceof SyntaxError) {
-			throw new Error('XPST0003: Unable to parse XPath: ' + xPathString + '. ' + error);
+			throw new Error(
+				`XPST0003: Unable to parse XPath: "${xPathString}".\n${error.message}\n${xPathString.slice(0, error['location']['start']['offset']) + '[Error is around here]' + xPathString.slice(error['location']['start']['offset'])}`);
 		}
 		throw error;
 	}
