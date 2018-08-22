@@ -75,7 +75,7 @@ module.exports = config => {
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-		browsers: ciMode ? ['Firefox', 'ChromiumNoSandbox'] : [],
+		browsers: ciMode ? runQt3Tests ? ['Firefox'] : ['Firefox', 'ChromiumNoSandbox'] : [],
 
 		// The QT3 tests take a while to download
 		browserNoActivityTimeout: runQt3Tests ? 200000 : 20000,

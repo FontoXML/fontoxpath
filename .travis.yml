@@ -11,6 +11,6 @@ before_script:
   - npm install
 
 script:
-    - timeout 600 xvfb-run -a npm run test --ci_mode
-    - timeout 600 xvfb-run -a npm run test --integration_tests --ci_mode
-    - timeout 600 xvfb-run -a npm run test --integration_tests --ci_mode --qt3
+    - timeout 600 xvfb-run -a npm run test --ci_mode;
+    - timeout 600 xvfb-run -a npm run test --integration_tests --ci_mode;
+    - timeout 600 xvfb-run -a npm run test --integration_tests --ci_mode --qt3;
