@@ -19,13 +19,13 @@ import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 /**
  * @param  {!DynamicContext}      _dynamicContext
  * @param  {!ExecutionParameters} executionParameters
- * @param  {!StaticContext}  _staticContext
+ * @param  {!StaticContext}  staticContext
  * @param  {!Sequence}  query
  * @param  {!Sequence}  args
  *
  * @return {!Sequence}
  */
-function fontoxpathEvaluate (_dynamicContext, executionParameters, _staticContext, query, args) {
+function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext, query, args) {
 	let resultIterator;
 	let queryString;
 	return new Sequence({
@@ -51,8 +51,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, _staticContex
 				const ast = parseExpression(queryString, { allowXQuery: false });
 				const selector = compileAstToExpression(ast['body'], { allowXQuery: false });
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
-					// Plainly ignore any namespace bindings from the outside
-					() => null,
+					prefix => staticContext.resolveNamespace(prefix),
 					Object.keys(variables).reduce(
 						(vars, varName) => {
 							vars[varName] = varName;

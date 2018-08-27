@@ -22,6 +22,16 @@ describe('extension functions', () => {
 			() => chai.assert.equal(evaluateXPathToBoolean('function() {fontoxpath:evaluate("true()", map{})}()', documentNode, domFacade), true));
 		it('accepts parameters',
 			() => chai.assert.equal(evaluateXPathToBoolean('fontoxpath:evaluate("$a", map{"a":true()})', documentNode, domFacade), true));
+		it('retains namespaces in scope', () => {
+			chai.assert.equal(
+				evaluateXPathToBoolean(
+					'fontoxpath:evaluate("fun:true()", map{})',
+					documentNode,
+					domFacade,
+					{},
+					{ namespaceResolver: prefix => ({ fun: 'http://www.w3.org/2005/xpath-functions' }[prefix]) }),
+				true);
+		});
 		it('accepts "." as contextItem',
 			() => chai.assert.equal(evaluateXPathToBoolean('fontoxpath:evaluate(".", map{".":true()})', documentNode, domFacade), true));
 
