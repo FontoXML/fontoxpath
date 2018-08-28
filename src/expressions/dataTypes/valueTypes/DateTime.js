@@ -120,13 +120,13 @@ class DateTime {
 
 	toJavaScriptDate (implicitTimezone = undefined) {
 		const timezoneToUse = this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
-		return new Date(
+		return new Date(Date.UTC(
 			this._years,
 			this._months - 1,
 			this._days,
 			this._hours - timezoneToUse.getHours(),
 			this._minutes - timezoneToUse.getMinutes(),
-			this._seconds + this._secondFraction
+			this._seconds + this._secondFraction)
 		);
 	}
 
