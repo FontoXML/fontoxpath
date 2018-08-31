@@ -101,7 +101,7 @@ function getFile (fileName) {
 		return instantiatedDocumentByAbsolutePath[fileName];
 	}
 
-	let content = context(`./QT3TS-master/${fileName}`);
+	let content = context(`./QT3TS-master/${fileName}`).replace(/\r\n/g, '\n');
 	if (fileName.endsWith('.out')) {
 		if (content.endsWith('\n')) {
 			content = content.slice(0, -1);
@@ -192,7 +192,10 @@ function createAsserter (baseUrl, assertNode, language) {
 				chai.assert(evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
 					a: result,
 					b: Array.from(parsedFragment.childNodes)
-				}), `Expected XPath ${xpath} to resolve to the given XML. Expected ${result.map(result=>result.outerHTML).join(' ')} to equal ${parsedFragment.innerHTML}`);
+				}), `Expected XPath ${xpath} to resolve to the given XML. Expected ${result.map(result=>result.outerHTML).join(' ')} to equal ${
+					parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE ?
+						parsedFragment.childNodes.map(n => n.outerHTML).join(' ') :
+						parsedFragment.innerHTML}`);
 			};
 		}
 		case 'assert-string-value': {
