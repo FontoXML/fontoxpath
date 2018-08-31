@@ -49,11 +49,11 @@ else {
 	context = what => fs.readFileSync(`test/assets/${what}`, 'utf-8');
 
 	global.atob = function (b64Encoded) {
-		return new Buffer(b64Encoded, 'base64').toString();
+		return new Buffer(b64Encoded, 'base64').toString('binary');
 	};
 
 	global.btoa = function (str) {
-		return new Buffer(str).toString('base64');
+		return new Buffer(str, 'binary').toString('base64');
 	};
 
 	const { sync } = require('slimdom-sax-parser');
