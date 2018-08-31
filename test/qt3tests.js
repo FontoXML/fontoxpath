@@ -353,7 +353,7 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
 						}
 					};
 					assertFn.toString = () => testCase.outerHTML;
-					it(description, assertFn);
+					it(description, assertFn).timeout(60000);
 				}
 				catch (e) {
 					console.error(e);
