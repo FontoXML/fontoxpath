@@ -5,7 +5,7 @@ import {
 	evaluateXPath
 } from 'fontoxpath';
 
-//import xqueryFile from 'text-loader!./asyncXPath.xq';
+import xqueryFile from 'text-loader!./asyncXPath.xq';
 
 describe('asynchronous XPaths', () => {
 	let documentNode;
