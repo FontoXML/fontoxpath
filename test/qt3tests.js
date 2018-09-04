@@ -1,4 +1,3 @@
-import mocha from 'mocha';
 import chai from 'chai';
 const {
 	evaluateXPathToArray,
@@ -20,7 +19,6 @@ if (typeof window !== 'undefined') {
 	// In the browser
 	context = require.context('text-loader!assets/', true, /\.xq|\.xqm|\.xml|\.out$/);
 	parser = new DOMParser();
-
 
 	window.log = '';
 
@@ -56,6 +54,11 @@ else {
 		return new Buffer(str, 'binary').toString('base64');
 	};
 
+
+	mocha = require('mocha');
+
+
+
 	const { sync } = require('slimdom-sax-parser');
 	parser = {
 		parseFromString: xmlString => {
@@ -88,7 +91,7 @@ const globalDocument = parser.parseFromString('<xml/>', 'text/xml');
 const instantiatedDocumentByAbsolutePath = Object.create(null);
 // Especially the CI can be slow, up the timeout to 60s.
 
-if (mocha.timeout) {
+if (typeof mocha !== 'undefined' && mocha.timeout) {
 	mocha.timeout(60000);
 }
 
