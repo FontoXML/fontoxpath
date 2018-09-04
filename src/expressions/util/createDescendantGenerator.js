@@ -2,11 +2,11 @@ import createChildGenerator from './createChildGenerator';
 import { DONE_TOKEN, ready } from './iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
 
-export default function createDescendantGenerator (domFacade, node) {
+export default function createDescendantGenerator (domFacade, node, returnInReverse = false) {
 	/**
 	 * @type {!Array<!Iterator<!Node>>}
 	 */
-	const descendantIteratorStack = [createChildGenerator(domFacade, node)];
+	const descendantIteratorStack = [createChildGenerator(domFacade, node, returnInReverse)];
 	return {
 		next: () => {
 			if (!descendantIteratorStack.length) {
@@ -21,7 +21,7 @@ export default function createDescendantGenerator (domFacade, node) {
 				value = descendantIteratorStack[0].next();
 			}
 			// Iterator over these children next
-			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value));
+			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value, returnInReverse));
 			return ready(createNodeValue(value.value));
 		}
 	};

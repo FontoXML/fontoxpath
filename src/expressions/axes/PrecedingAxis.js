@@ -9,19 +9,12 @@ import TestAbstractExpression from '../tests/TestAbstractExpression';
 function createPrecedingGenerator (domFacade, node) {
 	const nodeStack = [];
 
-	for (
-		let parentNode = domFacade.getParentNode(node);
-		node && parentNode;
-		node = parentNode, parentNode = domFacade.getParentNode(node)) {
-		const firstSibling = domFacade.getFirstChild(parentNode);
-
-		if (firstSibling === node) {
+	for (; node; node = domFacade.getParentNode(node)) {
+		const previousSibling = domFacade.getPreviousSibling(node);
+		if (previousSibling === null) {
 			continue;
 		}
-		nodeStack.unshift({
-			firstSibling,
-			endNode: node
-		});
+		nodeStack.push(previousSibling);
 	}
 
 	let nephewGenerator = null;
@@ -29,29 +22,29 @@ function createPrecedingGenerator (domFacade, node) {
 		next: () => {
 			while (nephewGenerator || nodeStack.length) {
 				if (!nephewGenerator) {
-					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0].firstSibling);
+					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0], true);
+				}
+
+				const nephew = nephewGenerator.next();
+
+
+				if (nephew.done) {
+					// We are done with the descendants of the node currently on the stack
+					nephewGenerator = null;
 
 					// Set the focus to the concurrent sibling of this node
-					const nextNode = domFacade.getNextSibling(nodeStack[0].firstSibling);
-					const toReturn = ready(createNodeValue(nodeStack[0].firstSibling));
-					if (nextNode === nodeStack[0].endNode) {
+					const nextNode = domFacade.getPreviousSibling(nodeStack[0]);
+					const toReturn = ready(createNodeValue(nodeStack[0]));
+					if (nextNode === null) {
 						// This is the last sibling, we can continue with a child of the current
 						// node (an uncle of the original node) in the next iteration
 						nodeStack.shift();
 					}
 					else {
-						nodeStack[0].firstSibling = nextNode;
+						nodeStack[0] = nextNode;
 					}
 
 					return toReturn;
-				}
-
-				const nephew = nephewGenerator.next();
-
-				if (nephew.done) {
-					// We are done with the descendants of the node currently on the stack
-					nephewGenerator = null;
-					continue;
 				}
 
 				return nephew;
@@ -72,7 +65,7 @@ class PrecedingAxis extends Expression {
 			testExpression.specificity,
 			[testExpression],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.SORTED,
+				resultOrder: Expression.RESULT_ORDERINGS.REVERSE_SORTED,
 				peer: true,
 				subtree: false,
 				canBeStaticallyEvaluated: false
