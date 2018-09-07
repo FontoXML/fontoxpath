@@ -5,11 +5,8 @@ import { DONE_TOKEN, ready } from './iterators';
  * @param   {!Node}             node
  * @return  {!Iterator<!Node>}
  */
-export default function createChildGenerator (domFacade, node, returnInReverse = false) {
-	let childNodes = domFacade.getChildNodes(node);
-	if (returnInReverse) {
-		childNodes = Array.from(childNodes).reverse();
-	}
+export default function createChildGenerator (domFacade, node) {
+	const childNodes = domFacade.getChildNodes(node);
 	let i = 0;
 	const l = childNodes.length;
 	return /** @type {!Iterator<!Node>} */ ({

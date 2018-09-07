@@ -63,8 +63,8 @@ return map{
 				null,
 				{ language: 'XQuery3.1' }
 		);
-//		chai.assert.equal(result.got.length, 5);
-		chai.assert.equal(result.got[0], result.expected[0]);
+		chai.assert.equal(result.got.length, 5);
+		chai.assert.deepEqual(result.got, result.expected);
 	});
 
 	it('does not return non-matching preceding nodes', () => {
