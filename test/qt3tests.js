@@ -54,11 +54,7 @@ else {
 		return new Buffer(str, 'binary').toString('base64');
 	};
 
-
-	mocha = require('mocha');
-
-
-
+	const mocha = require('mocha');
 	const { sync } = require('slimdom-sax-parser');
 	parser = {
 		parseFromString: xmlString => {
@@ -72,7 +68,6 @@ else {
 		}
 	};
 
-
 	shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
 		.split(/\r?\n/)
 		.map(line=>line.split(','))
@@ -82,12 +77,9 @@ else {
 		.split(/\r?\n/)
 		.map(line => line.split(','))
 		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
-
 }
 
 const globalDocument = parser.parseFromString('<xml/>', 'text/xml');
-
-
 const instantiatedDocumentByAbsolutePath = Object.create(null);
 // Especially the CI can be slow, up the timeout to 60s.
 
