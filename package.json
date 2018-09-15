@@ -16,6 +16,10 @@
 		"type": "git",
 		"url": "git@github.com:FontoXML/fontoxpath.git"
 	},
+	"files": [
+		"dist/fontoxpath.js",
+		"dist/fontoxpath.js.map"
+	],
 	"keywords": [
 		"FontoXPath",
 		"fontoxpath",
