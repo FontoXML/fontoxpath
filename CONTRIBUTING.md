@@ -93,9 +93,11 @@ have three forms:
 
 FontoXPath contains two different test sets: the unit tests which you
 can run with `npm run test` and the QT3 tests which you can run with
-`npm run qt3-tests`. They both run in Node. By running the tests with
+`npm run qt3tests`. They both run in Node. By running the tests with
 the `--inspect` flag, they can be debugged: `npm run test --inspect
---inspect-brk`
+--inspect-brk`. The tests can also be executed with the built version
+of fontoxpath. Use the `--dist` flag to do so: `npm run qt3-test --
+--dist`. The unit tests can be executed using `npm run integrationtests`
 
 The JavaScript unit tests can be used while developing, since they run
 quite fast. The QT3 tests can be used to verify your implementation
