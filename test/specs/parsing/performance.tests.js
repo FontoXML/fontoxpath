@@ -2,25 +2,6 @@ import chai from 'chai';
 import { evaluateXPathToNumber, evaluateXPathToBoolean } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
-const cacheId = {};
-describe('performance', () => {
-	// Warm up the cache
-	// Counting to 10 milion takes a couple of seconds.
-	before(function () {
-		this.timeout(100000);
-		evaluateXPathToNumber('count(0 to 10000000)', document, null, {}, {cacheId});
-	});
-
-	it('can reuse cached results', function () {
-		evaluateXPathToNumber('count(0 to 10000000)', document, null, {}, {cacheId});
-	});
-
-	it('can reuse cached sub-results', function () {
-		chai.assert.isTrue(evaluateXPathToBoolean('10000001 = count(0 to 10000000)', document, null, {}, {cacheId}));
-	});
-});
-
-
 function timeXPath (xpath, document) {
 	const then = Date.now();
 	chai.assert(evaluateXPathToBoolean(xpath, document), `The passed XPath ${xpath} should resolve to true`);

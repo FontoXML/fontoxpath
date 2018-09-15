@@ -43,7 +43,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('cannot convert nodes', function () {
-		chai.assert.throws(() => adaptJavaScriptValueToXPathValue(window.document.documentElement, 'node()'), 'XPath custom functions should not return a node, use traversals instead.');
+		chai.assert.throws(() => adaptJavaScriptValueToXPathValue(slimdom.document.createElement('test'), 'node()'), 'XPath custom functions should not return a node, use traversals instead.');
 	});
 
 	it('turns booleans into booleans', () => {
