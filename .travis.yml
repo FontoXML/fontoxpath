@@ -1,16 +1,11 @@
 language: node_js
 node_js: "node"
 
-addons:
-    chrome: stable
-    firefox: latest
-
 before_script:
   - mkdir -p ./test/assets
   - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets
-  - npm install
 
 script:
-    - timeout 600 xvfb-run -a npm run test --ci_mode;
-    - timeout 600 xvfb-run -a npm run test --integration_tests --ci_mode;
-    - timeout 600 xvfb-run -a npm run qt3tests;
+    - timeout 600 xvfb-run -a npm run test;
+    - timeout 600 xvfb-run -a npm run integrationtests;
+    - timeout 600 xvfb-run -a npm run qt3tests --dist;

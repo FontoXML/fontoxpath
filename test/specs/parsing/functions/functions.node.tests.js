@@ -180,8 +180,10 @@ describe('functions over nodes', () => {
 		});
 
 		it('returns the bottom level nodes across two documents', () => {
-			var docA = (new DOMParser()).parseFromString('<a><b/><c/></a>', 'text/xml');
-			var docB = (new DOMParser()).parseFromString('<A><B/><C/></A>', 'text/xml');
+			var docA = new slimdom.Document();
+			jsonMlMapper.parse(['a', ['b'], ['c']], docA);
+			var docB = new slimdom.Document();
+			jsonMlMapper.parse(['A', ['B'], ['C']], docB);
 			const result = evaluateXPathToStrings('(innermost(($docA//node(), $docB//node())))!name()', documentNode, null, { docA, docB });
 			try {
 				chai.assert.deepEqual(result, ['b', 'c', 'B', 'C']);

@@ -37,6 +37,18 @@ import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTime
 // NOT |  Y   Y   N   N   N   N   N   N   N   N   N   N   N   N   N   N   N   N   N   N   N   Y   ?
 
 describe('castToType()', () => {
+	before(() => {
+		if (typeof atob === 'undefined') {
+			global.atob = function (b64Encoded) {
+				return new Buffer(b64Encoded, 'base64').toString();
+			};
+
+			global.btoa = function (str) {
+				return new Buffer(str).toString('base64');
+			};
+		}
+	});
+
 	describe('casting to or from xs:anySimpleType', () => {
 		it('throws when casting to xs:anySimpleType', () => {
 			chai.assert.throw(() => castToType(createAtomicValue('string', 'xs:string'), 'xs:anySimpleType'));

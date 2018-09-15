@@ -1,67 +1,58 @@
 {
-  "name": "fontoxpath",
-  "version": "2.10.1",
-  "description": "A minimalistic XPath 3.1 engine in JavaScript",
-  "main": "dist/fontoxpath.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "karma start",
-    "build": "node ./build.js",
-    "qt3tests": "mocha --require babel-core/register ./test/qt3tests.js -R min"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:FontoXML/fontoxpath.git"
-  },
-  "keywords": [
-    "FontoXPath",
-    "fontoxpath",
-    "FontoXML",
-    "XPath",
-    "XPath3.1",
-    "xpath",
-    "xpath3.1",
-    "W3C",
-    "w3c",
-    "XML",
-    "xml",
-    "XQuery",
-    "xquery",
-    "fontoxml"
-  ],
-  "author": "The FontoXML team",
-  "license": "MIT",
-  "homepage": "https://github.com/FontoXML/fontoxpath",
-  "devDependencies": {
-    "babel": "^6.23.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-plugin-istanbul": "^4.1.6",
-    "babel-plugin-module-resolver": "^3.1.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-es2015": "^6.24.1",
-    "chai": "^4.1.1",
-    "google-closure-compiler": "^20180805.0.0",
-    "karma": "^2.0.4",
-    "karma-chrome-launcher": "^2.1.1",
-    "karma-coverage": "^1.1.2",
-    "karma-firefox-launcher": "^1.0.1",
-    "karma-mocha": "^1.3.0",
-    "karma-sinon-chai": "^2.0.2",
-    "karma-spec-reporter": "0.0.32",
-    "karma-webpack": "^3.0.0",
-    "mocha": "^5.2.0",
-    "pegjs": "^0.10.0",
-    "sinon": "^6.1.4",
-    "sinon-chai": "^3.2.0",
-    "slimdom": "^2.1.3",
-    "slimdom-sax-parser": "^1.1.2",
-    "text-loader": "0.0.1",
-    "uglify-js": "^3.4.5",
-    "webpack": "^4.16.2"
-  }
+	"name": "fontoxpath",
+	"version": "2.10.1",
+	"description": "A minimalistic XPath 3.1 engine in JavaScript",
+	"main": "dist/fontoxpath.js",
+	"directories": {
+		"test": "test"
+	},
+	"scripts": {
+		"build": "node ./build.js",
+		"test": "mocha --recursive --require @babel/register test/specs/",
+		"integrationtests": "mocha --recursive --require @babel/register test/specs/parsing --dist",
+		"qt3tests": "mocha --require @babel/register test/qt3tests.js --reporter min"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:FontoXML/fontoxpath.git"
+	},
+	"keywords": [
+		"FontoXPath",
+		"fontoxpath",
+		"FontoXML",
+		"XPath",
+		"XPath3.1",
+		"xpath",
+		"xpath3.1",
+		"W3C",
+		"w3c",
+		"XML",
+		"xml",
+		"XQuery",
+		"xquery",
+		"fontoxml"
+	],
+	"author": "The FontoXML team",
+	"license": "MIT",
+	"homepage": "https://github.com/FontoXML/fontoxpath",
+	"devDependencies": {
+		"babel-loader": "^8.0.2",
+		"babel-plugin-istanbul": "^5.0.1",
+		"babel-plugin-module-resolver": "^3.1.1",
+		"chai": "^4.1.1",
+		"google-closure-compiler": "^20180805.0.0",
+		"mocha": "^5.2.0",
+		"pegjs": "^0.10.0",
+		"sinon": "^6.1.4",
+		"sinon-chai": "^3.2.0",
+		"slimdom": "^2.1.3",
+		"slimdom-sax-parser": "^1.1.2",
+		"text-loader": "0.0.1",
+		"uglify-js": "^3.4.5"
+	},
+	"dependencies": {
+		"@babel/core": "^7.0.1",
+		"@babel/preset-env": "^7.0.0",
+		"@babel/register": "^7.0.0"
+	}
 }

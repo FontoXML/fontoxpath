@@ -152,13 +152,19 @@ describe('functions over strings', () => {
 		});
 
 		it('regards CDATA nodes as text nodes', () => {
-			const browserDocument = new DOMParser().parseFromString('<xml><![CDATA[Some <CDATA>]]></xml>', 'text/xml');
-			chai.assert.equal(evaluateXPathToString('string()', browserDocument.documentElement.firstChild), 'Some <CDATA>');
+			const document = new slimdom.Document();
+			var element = document.appendChild(document.createElement('test'));
+			element.appendChild(document.createTextNode('Some '));
+			element.appendChild(document.createCDATASection('<CDATA>'));
+			chai.assert.equal(evaluateXPathToString('string()', document.documentElement), 'Some <CDATA>');
 		});
 
 		it('regards CDATA childnodes as text nodes', () => {
-			const browserDocument = new DOMParser().parseFromString('<xml><![CDATA[Some <CDATA>]]></xml>', 'text/xml');
-			chai.assert.equal(evaluateXPathToString('string()', browserDocument.documentElement), 'Some <CDATA>');
+			const document = new slimdom.Document();
+			var element = document.appendChild(document.createElement('test'));
+			element.appendChild(document.createTextNode('Some '));
+			element.appendChild(document.createCDATASection('<CDATA>'));
+			chai.assert.equal(evaluateXPathToString('string()', document), 'Some <CDATA>');
 		});
 
 		it('If $arg is the empty sequence, the function returns the zero-length string.',
@@ -219,7 +225,7 @@ describe('functions over strings', () => {
 			chai.assert.equal(evaluateXPathToNumber('/someElement/string-length()', documentNode), 15);
 		});
 
-		it('counts codepoints.not characters', () => {
+		it('counts codepoints. not characters', () => {
 			// '💩'.length === 2
 			chai.assert.equal(evaluateXPathToNumber('string-length("💩")', documentNode), 1);
 		});

@@ -68,11 +68,16 @@ else {
 		}
 	};
 
-	shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
-		.split(/\r?\n/)
-		.map(line=>line.split(','))
-		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
-
+	const indexOfGrep = process.argv.indexOf('--grep');
+	if (indexOfGrep >= 0) {
+		const [greppedTestsetName] = process.argv[indexOfGrep + 1].split('~');
+		shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
+	} else {
+		shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
+			.split(/\r?\n/)
+			.map(line=>line.split(','))
+			.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
+	}
 	unrunnableTestCasesByName = fs.readFileSync('test/unrunnableTestCases.csv', 'utf-8')
 		.split(/\r?\n/)
 		.map(line => line.split(','))
