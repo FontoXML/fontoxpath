@@ -1,3 +1,7 @@
+const fontoXPathAlias = process.argv.includes('--dist') ? "./dist/fontoxpath.js" : "./src/";
+
+console.log(`Using ${fontoXPathAlias} as an alias for fontoxpath`);
+
 module.exports = {
 	"presets": [
 		[
@@ -11,11 +15,12 @@ module.exports = {
 	],
 	"plugins": [
 		[
-			"module-resolver", {
-			"alias": {
-				"fontoxpath": process.argv.includes('--dist') ? "./dist/fontoxpath.js" : "./src/",
-				"test-helpers": "./test/helpers/"
-			}
+			"module-resolver",
+			{
+				"alias": {
+					"fontoxpath": fontoXPathAlias,
+					"test-helpers": "./test/helpers/"
+				}
 			}
 		]
 	]

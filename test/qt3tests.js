@@ -1,5 +1,5 @@
 import chai from 'chai';
-const {
+import {
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
@@ -8,81 +8,53 @@ const {
 	evaluateXPathToNumber,
 	evaluateXPathToString,
 	registerXQueryModule
-} = require('fontoxpath');
+} from 'fontoxpath';
 
-let context;
-let parser;
+import fs from 'fs';
+
+import mocha from 'mocha';
+import { sync, slimdom } from 'slimdom-sax-parser';
+
+const context = what => fs.readFileSync(`test/assets/${what}`, 'utf-8');
+
+global.atob = function (b64Encoded) {
+	return new Buffer(b64Encoded, 'base64').toString('binary');
+};
+
+global.btoa = function (str) {
+	return new Buffer(str, 'binary').toString('base64');
+};
+
+const parser = {
+	parseFromString: xmlString => {
+		try {
+			return sync(xmlString);
+		}
+		catch (e) {
+			console.log(`Error parsing the string ${xmlString}.`, e);
+			throw e;
+		}
+	}
+};
 
 let unrunnableTestCasesByName;
 let shouldRunTestByName;
-if (typeof window !== 'undefined') {
-	// In the browser
-	context = require.context('text-loader!assets/', true, /\.xq|\.xqm|\.xml|\.out$/);
-	parser = new DOMParser();
 
-	window.log = '';
-
-	let greppedTestsetName = null;
-	const urlParams = new URLSearchParams(window.location.search);
-	if (urlParams.has('grep')) {
-		[greppedTestsetName] = urlParams.get('grep').split('~');
-	}
-	if (greppedTestsetName) {
-		shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
-	}
-	else {
-		shouldRunTestByName = require('text-loader!./runnableTestSets.csv')
-			.split(/\r?\n/)
-			.map(line=>line.split(','))
-			.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
-	}
-	unrunnableTestCasesByName = require('text-loader!./unrunnableTestCases.csv')
+const indexOfGrep = process.argv.indexOf('--grep');
+if (indexOfGrep >= 0) {
+	const [greppedTestsetName] = process.argv[indexOfGrep + 1].split('~');
+	shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
+} else {
+	shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
 		.split(/\r?\n/)
-		.map(line => line.split(','))
-		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join('.') }), Object.create(null));
+		.map(line=>line.split(','))
+		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 }
-else {
-	const fs = require('fs');
-	// On node
-	context = what => fs.readFileSync(`test/assets/${what}`, 'utf-8');
-
-	global.atob = function (b64Encoded) {
-		return new Buffer(b64Encoded, 'base64').toString('binary');
-	};
-
-	global.btoa = function (str) {
-		return new Buffer(str, 'binary').toString('base64');
-	};
-
-	const mocha = require('mocha');
-	const { sync } = require('slimdom-sax-parser');
-	parser = {
-		parseFromString: xmlString => {
-			try {
-				return sync(xmlString);
-			}
-			catch (e) {
-				console.log(`Error parsing the string ${xmlString}.`, e);
-				throw e;
-			}
-		}
-	};
-
-	const indexOfGrep = process.argv.indexOf('--grep');
-	if (indexOfGrep >= 0) {
-		const [greppedTestsetName] = process.argv[indexOfGrep + 1].split('~');
-		shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
-	} else {
-		shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
-			.split(/\r?\n/)
-			.map(line=>line.split(','))
-			.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
-	}
-	unrunnableTestCasesByName = fs.readFileSync('test/unrunnableTestCases.csv', 'utf-8')
-		.split(/\r?\n/)
-		.map(line => line.split(','))
-		.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
-}
+const unrunnableTestCases = fs.readFileSync('test/unrunnableTestCases.csv', 'utf-8');
+unrunnableTestCasesByName = unrunnableTestCases
+	.split(/\r?\n/)
+	.map(line => line.split(','))
+	.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
 
 const globalDocument = parser.parseFromString('<xml/>', 'text/xml');
 const instantiatedDocumentByAbsolutePath = Object.create(null);
@@ -192,9 +164,9 @@ function createAsserter (baseUrl, assertNode, language) {
 				chai.assert(evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
 					a: result,
 					b: Array.from(parsedFragment.childNodes)
-				}), `Expected XPath ${xpath} to resolve to the given XML. Expected ${result.map(result=>result.outerHTML).join(' ')} to equal ${
+				}), `Expected XPath ${xpath} to resolve to the given XML. Expected ${result.map(result=>new slimdom.XMLSerializer().serializeToString(result)).join(' ')} to equal ${
 					parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE ?
-						parsedFragment.childNodes.map(n => n.outerHTML).join(' ') :
+						parsedFragment.childNodes.map(n => new slimdom.XMLSerializer().serializeToString(n)).join(' ') :
 						parsedFragment.innerHTML}`);
 			};
 		}
@@ -246,16 +218,18 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 
 const registeredModuleURIByFileName = Object.create(null);
 
-evaluateXPathToNodes('/catalog/test-set', catalog)
-	.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
-	.map(testSetNode => evaluateXPathToString('@file', testSetNode))
-	.forEach(testSetFileName => {
-		const testSet = getFile(testSetFileName);
+describe('qt3 test set', () => {
+	let log = unrunnableTestCases;
+	evaluateXPathToNodes('/catalog/test-set', catalog)
+		.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
+		.map(testSetNode => evaluateXPathToString('@file', testSetNode))
+		.forEach(testSetFileName => {
+			const testSet = getFile(testSetFileName);
 
-		const testSetName = evaluateXPathToString('/test-set/@name', testSet);
+			const testSetName = evaluateXPathToString('/test-set/@name', testSet);
 
-		// Find all the tests we can run
-		const testCases = evaluateXPathToNodes(`
+			// Find all the tests we can run
+			const testCases = evaluateXPathToNodes(`
 /test-set/test-case[
   let $dependencies := (./dependency | ../dependency)
   return not(
@@ -278,90 +252,95 @@ evaluateXPathToNodes('/catalog/test-set', catalog)
        "non-unicode-codepoint-collation",
        "simple-uca-fallback",
        "advanced-uca-fallback"))]`, testSet);
-		if (!testCases.length) {
-			return;
-		}
+			if (!testCases.length) {
+				return;
+			}
 
-		describe(evaluateXPathToString('/test-set/@name || /test-set/description!(if (string()) then "~" || . else "")', testSet), () => {
-			for (const testCase of testCases) {
-				try {
-					const testName = evaluateXPathToString('./@name', testCase);
-					const description = testSetName + '~' + testName + '~' + evaluateXPathToString('if (description/text()) then description else test', testCase);
+			describe(evaluateXPathToString('/test-set/@name || /test-set/description!(if (string()) then "~" || . else "")', testSet), () => {
+				for (const testCase of testCases) {
+					try {
+						const testName = evaluateXPathToString('./@name', testCase);
+						const description = testSetName + '~' + testName + '~' + evaluateXPathToString('if (description/text()) then description else test', testCase);
 
-					if (unrunnableTestCasesByName[testName]) {
-						it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
-						continue;
-					}
-
-					const assertFn = () => {
-						const baseUrl = testSetFileName.substr(0, testSetFileName.lastIndexOf('/'));
-
-						let testQuery;
-						if (evaluateXPathToBoolean('./test/@file', testCase)) {
-							testQuery = getFile(
-								evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, { baseUrl }));
-						}
-						else {
-							testQuery = evaluateXPathToString('./test', testCase);
-						}
-						const language = evaluateXPathToString(
-							'if (((dependency | ../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10", "XQ10+", "XQ30", "XQ30+", "XQ31+", "XQ31")) then "XQuery3.1" else "XPath3.1"', testCase);
-						const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
-
-						const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
-						let namespaceResolver = localNamespaceResolver;
-						let variablesInScope = undefined;
-						const environmentNode = evaluateXPathToFirstNode('let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment', testCase, null);
-						let env;
-						if (environmentNode) {
-							env = createEnvironment(baseUrl, environmentNode);
-						}
-						else {
-							env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
+						if (unrunnableTestCasesByName[testName]) {
+							it.skip(`${unrunnableTestCasesByName[testName]}. (${description})`);
+							continue;
 						}
 
-						const contextNode = env.contextNode;
-						namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
-						variablesInScope = env.variables;
-						const asserter = getAsserterForTest(baseUrl, testCase, language);
+						const assertFn = () => {
+							const baseUrl = testSetFileName.substr(0, testSetFileName.lastIndexOf('/'));
 
-						try {
-							// Load the module within the try to catch any errors from the module
-							const moduleImports = evaluateXPathToArray(
-								'array{module!map{"uri": @uri/string(), "file": $baseUrl || "/" || @file/string()}}',
-								testCase,
-								null,
-								{
-									baseUrl: baseUrl
+							let testQuery;
+							if (evaluateXPathToBoolean('./test/@file', testCase)) {
+								testQuery = getFile(
+									evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, { baseUrl }));
+							}
+							else {
+								testQuery = evaluateXPathToString('./test', testCase);
+							}
+							const language = evaluateXPathToString(
+								'if (((dependency | ../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10", "XQ10+", "XQ30", "XQ30+", "XQ31+", "XQ31")) then "XQuery3.1" else "XPath3.1"', testCase);
+							const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
+
+							const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
+							let namespaceResolver = localNamespaceResolver;
+							let variablesInScope = undefined;
+							const environmentNode = evaluateXPathToFirstNode('let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment', testCase, null);
+							let env;
+							if (environmentNode) {
+								env = createEnvironment(baseUrl, environmentNode);
+							}
+							else {
+								env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
+							}
+
+							const contextNode = env.contextNode;
+							namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
+							variablesInScope = env.variables;
+							try {
+								const asserter = getAsserterForTest(baseUrl, testCase, language);
+
+								// Load the module within the try to catch any errors from the module
+								const moduleImports = evaluateXPathToArray(
+									'array{module!map{"uri": @uri/string(), "file": $baseUrl || "/" || @file/string()}}',
+									testCase,
+									null,
+									{
+										baseUrl: baseUrl
+									});
+								moduleImports.forEach(moduleImport => {
+									const targetNamespace = registeredModuleURIByFileName[moduleImport.file] ||
+										registerXQueryModule(getFile(moduleImport.file));
+
+									registeredModuleURIByFileName[moduleImport.file] = targetNamespace;
 								});
-							moduleImports.forEach(moduleImport => {
-								const targetNamespace = registeredModuleURIByFileName[moduleImport.file] ||
-									registerXQueryModule(getFile(moduleImport.file));
 
-								registeredModuleURIByFileName[moduleImport.file] = targetNamespace;
-							});
+								asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
+							}
+							catch (e) {
+								if (e instanceof TypeError) {
+									throw e;
+								}
 
-							asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
-						}
-						catch (e) {
-							if (e instanceof TypeError) {
+								log += `${testName},${e.toString().replace(/\n/g, ' ').trim()}\n`;
+
+								// And rethrow the error
 								throw e;
 							}
-
-							if (typeof window !== 'undefined') {
-								window.log += `${testName},${e.toString().replace(/\n/g, ' ')}\n`;
-							}
-							// And rethrow the error
-							throw e;
-						}
-					};
-					assertFn.toString = () => testCase.outerHTML;
-					it(description, assertFn).timeout(60000);
+						};
+						assertFn.toString = () => new slimdom.XMLSerializer().serializeToString(testCase);
+						it(description, assertFn).timeout(60000);
+					}
+					catch (e) {
+						console.error(e);
+						continue;
+					}
 				}
-				catch (e) {
-					console.error(e);
-					continue;
-				}
-			}
+			});
 		});
+
+	after(() => {
+		console.log(`Writing a log of ${log.split('\n').length}`);
+		fs.writeFileSync('./test/unrunnableTestCases.csv', log);
 	});
+});
