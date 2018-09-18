@@ -295,7 +295,9 @@ describe('qt3 test set', () => {
 							}
 
 							const contextNode = env.contextNode;
-							namespaceResolver = localNamespaceResolver ? prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) : null;
+							namespaceResolver = localNamespaceResolver ?
+								prefix => localNamespaceResolver(prefix) || env.namespaceResolver(prefix) :
+								prefix => env.namespaceResolver ? env.namespaceResolver(prefix) : prefix === '' ? null : undefined;
 							variablesInScope = env.variables;
 							try {
 								const asserter = getAsserterForTest(baseUrl, testCase, language);

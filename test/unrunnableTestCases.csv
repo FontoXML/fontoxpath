@@ -2916,7 +2916,6 @@ K2-DirectConElemContent-48,Error: XPST0003: Unable to parse XPath: "document{   
 cbcl-ns-fixup-1,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 ElemContentArray-001,Error: Atomizing array(*) is not implemented.
 ElemContentArray-002,Error: Atomizing array(*) is not implemented.
-Constr-namespace-1,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'NamespaceError: Qualified name with prefix can not have a null namespace'
 Constr-namespace-6,AssertionError: expected [Function] to throw an error
 Constr-namespace-7,AssertionError: expected [Function] to throw an error
 Constr-namespace-14,AssertionError: Expected executing the XPath "<foo:elem xmlns:foo="http://www.example.com/parent"><child xmlns:foo=""><foo:grand-child/></child></foo:elem>" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'XPST0081' but got 'NamespaceError: Qualified name with prefix can not have a null namespace', AssertionError: expected [Function] to throw error including 'XQST0085' but got 'NamespaceError: Qualified name with prefix can not have a null namespace'.
@@ -3131,7 +3130,7 @@ FunctionCall-022,Error: XPST0003: Unable to parse XPath: "deep-equal((          
 FunctionCall-027,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0081: Can not cast: type xs:NMTOKENS is unknown.'
 FunctionCall-044,AssertionError: expected [Function] to throw an error
 FunctionCall-048,AssertionError: expected [Function] to throw an error
-K-FunctionCallExpr-5,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPST0017: There is no uri registered for prefix prefix-does-not-exist.'
+K-FunctionCallExpr-5,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPST0017: Function prefix-does-not-exist:func-does-not-exist with arity of 3 not registered. No similar functions found.'
 K-FunctionCallExpr-15a,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
 K-FunctionCallExpr-16a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 K-FunctionCallExpr-17a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
