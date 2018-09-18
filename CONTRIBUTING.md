@@ -110,9 +110,9 @@ about similar functions.
 
 If you expect new QT3 tests to succeed, remove the last number of
 lines from the `test/unrunnableTestCases.csv` file. Keep the first 13
-lines, they are tests which are known to cause timeouts in the
-browser. Run `copy(log)` in the development tools of your browser to
-copy the test log and paste them in the `unrunnableTestCases` file.
+lines, they are tests which are known to cause timeouts. The test
+runner will generate a new version of the
+`test/unrunnableTestCases.csv` file. Use `git` to find differences.
 
 If you are adding a new feature, edit the file
 `test/runnableTestSets.csv`. This file disables tests for features we

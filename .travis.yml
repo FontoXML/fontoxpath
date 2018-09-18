@@ -8,4 +8,4 @@ before_script:
 script:
     - timeout 600 xvfb-run -a npm run test;
     - timeout 600 xvfb-run -a npm run integrationtests;
-    - timeout 600 xvfb-run -a npm run qt3tests --dist;
+    - timeout 600 xvfb-run -a npm run qt3tests -- --dist --reporter min;
