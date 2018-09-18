@@ -54,7 +54,7 @@ https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz
 
 XPath functions are an ideal place to start off as a first pull
 request. They usually only require some local changes and the spec is
-very readable and clear on the intended behaviour The specification
+very readable and clear on the intended behaviour. The specification
 can be found [here](https://www.w3.org/TR/xpath-functions-31/). The
 [QT3 test set](https://dev.w3.org/2011/QT3-test-suite/) set usually
 contains a large number of tests.
@@ -101,18 +101,18 @@ of fontoxpath. Use the `--dist` flag to do so: `npm run qt3-test --
 
 The JavaScript unit tests can be used while developing, since they run
 quite fast. The QT3 tests can be used to verify your implementation
-but they are quire slow. Running all 20k of them can take up to five
+but they are quite slow. Running all 20k of them can take up to five
 minutes.
 
 New JavaScript tests can be added to a `*.tests.js` file somewhere in
 the `test/specs` folder. Try to add a new test in a file with tests
 about similar functions.
 
-If you expect new QT3 tests to succeed, remove the last number of
-lines from the `test/unrunnableTestCases.csv` file. Keep the first 13
-lines, they are tests which are known to cause timeouts. The test
-runner will generate a new version of the
-`test/unrunnableTestCases.csv` file. Use `git` to find differences.
+If you expect new QT3 tests to succeed, remove all except the first 13
+lines from the `test/unrunnableTestCases.csv` file. The first 13 lines
+are tests which are known to cause timeouts. The test runner will
+generate a new version of the `test/unrunnableTestCases.csv` file. Use
+`git` to find differences.
 
 If you are adding a new feature, edit the file
 `test/runnableTestSets.csv`. This file disables tests for features we
