@@ -22,8 +22,8 @@ function isSubtypeOfType (subType, superType) {
  * xs:int is a subtype of xs:integer
  * xs:decimal is a subtype of xs:numeric
  * xs:NMTOKENS is a subtype of xs:NM TOKEN
- * @param   {./ETypeNames|string}  subTypeName
- * @param   {./ETypeNames|string}  superTypeName
+ * @param   {string}   subTypeName
+ * @param   {string}   superTypeName
  * @return  {boolean}
  */
 export default function isSubtypeOf (subTypeName, superTypeName) {
