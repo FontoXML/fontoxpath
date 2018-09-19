@@ -6,6 +6,7 @@ before_script:
   - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets
 
 script:
-    - timeout 600 xvfb-run -a npm run test;
-    - timeout 600 xvfb-run -a npm run integrationtests;
-    - timeout 600 xvfb-run -a npm run qt3tests -- --dist --reporter min;
+    - timeout 600 xvfb-run -a npm run test -- --reporter dot;
+    - timeout 600 xvfb-run -a npm run integrationtests -- --reporter dot;
+    - timeout 600 xvfb-run -a npm run qt3tests -- --dist --reporter dot;
+    - npm run build
