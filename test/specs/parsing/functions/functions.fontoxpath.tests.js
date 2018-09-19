@@ -3,7 +3,8 @@ import * as slimdom from 'slimdom';
 
 import {
 	domFacade,
-	evaluateXPathToBoolean
+	evaluateXPathToBoolean,
+	evaluateXPathToString
 } from 'fontoxpath';
 
 let documentNode;
@@ -12,6 +13,17 @@ beforeEach(() => {
 });
 
 describe('extension functions', () => {
+	describe('fontoxpath:version()', () => {
+		it('returns the version', () => {
+			try {
+				chai.assert.equal(evaluateXPathToString('fontoxpath:version()'), 'devbuild');
+			} catch (_error) {
+				chai.assert.match(
+					evaluateXPathToString('fontoxpath:version()'),
+						/\d+\.\d+\.\d+/);
+			}
+		});
+	});
 	describe('fontoxpath:evaluate()', () => {
 		it('can run inline functions',
 			() => chai.assert.equal(evaluateXPathToBoolean('fontoxpath:evaluate("true()", map{})', documentNode, domFacade), true));

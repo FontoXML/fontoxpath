@@ -124,6 +124,17 @@ function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext,
 	});
 }
 
+function fontoxpathVersion () {
+	let version;
+	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
+	if (typeof VERSION === 'undefined') {
+		version = 'devbuild';
+	} else {
+		version = VERSION;
+	}
+	return Sequence.singleton(createAtomicValue(version, 'xs:string'));
+}
+
 function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext, url) {
 	let doneWithFetch = false;
 	let result = null;
@@ -193,7 +204,13 @@ export default {
 			argumentTypes: ['xs:string'],
 			returnType: 'item()*',
 			callFunction: fontoxpathFetch
+		},
+		{
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			localName: 'version',
+			argumentTypes: [],
+			returnType: 'xs:string',
+			callFunction: fontoxpathVersion
 		}
-
 	]
 };

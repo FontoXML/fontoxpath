@@ -27,9 +27,8 @@ function doExpressionsBuild () {
 	return new Promise((resolve, reject) => {
 		new Compiler({
 			assume_function_wrapper: true,
-			new_type_inf: true,
 			debug: !!doDebugBuild,
-			language_in: 'ES6',
+			language_in: 'stable',
 			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',
 			jscomp_error: [
@@ -72,6 +71,7 @@ function doExpressionsBuild () {
 	}
 })(this, function () {
 	var window = {};
+	var VERSION='${require('./package.json').version}';
 	%output%
 	return window;
 });
