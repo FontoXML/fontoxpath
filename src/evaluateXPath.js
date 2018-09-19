@@ -438,7 +438,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 			const allValuesAreNodes = allValues.value.every(function (value) {
 				return isSubtypeOf(value.type, 'node()') &&
 					!(isSubtypeOf(value.type, 'attribute()'));
-				});
+			});
 			if (allValuesAreNodes) {
 				if (allValues.value.length === 1) {
 					return allValues.value[0].value;
@@ -448,8 +448,24 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 				});
 			}
 			if (allValues.value.length === 1) {
+				const first = allValues.value[0];
+				if (isSubtypeOf(first.type, 'array(*)')) {
+					const transformedArray = transformArrayToArray(first, dynamicContext).next();
+					if (!transformedArray.ready) {
+						throw new Error('Expected XPath ' + xpathExpression + ' to synchronously resolve to an array');
+					}
+					return transformedArray.value;
+				}
+				if (isSubtypeOf(first.type, 'map(*)')) {
+					const transformedMap = transformMapToObject(first, dynamicContext).next();
+					if (!transformedMap.ready) {
+						throw new Error('Expected XPath ' + xpathExpression + ' to synchronously resolve to a map');
+					}
+					return transformedMap.value;
+				}
 				return atomize(allValues.value[0], executionParameters).value;
 			}
+
 			return new Sequence(allValues.value).atomize(executionParameters).getAllValues().map(function (atomizedValue) {
 				return atomizedValue.value;
 			});
@@ -458,7 +474,10 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 }
 
 /**
- * Returns the result of the query, can be anything depending on the query
+ * Returns the result of the query, can be anything depending on the
+ * query. Note that the return type is determined dynamically, not
+ * statically: XPaths returning empty sequences will return empty
+ * arrays and not null, like one might expect.
  */
 evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = 0;
 
@@ -468,17 +487,23 @@ evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = 0;
 evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = 1;
 
 /**
- * Resolve to a string, like //someElement[1] resolves to the text content of the first someElement
+ * Resolve to a string, like //someElement[1] resolves to the text
+ * content of the first someElement
  */
 evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = 2;
 
 /**
- * Resolves to true or false, uses the effective boolean value to determin result. count(1) resolves to true, count(()) resolves to false
+ * Resolves to true or false, uses the effective boolean value to
+ * determin result. count(1) resolves to true, count(()) resolves to
+ * false
  */
 evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = 3;
 
 /**
- * Resolve to all nodes the XPath resolves to. Returns nodes in the order the XPath would. Meaning (//a, //b) resolves to all A nodes, followed by all B nodes. //*[self::a or self::b] resolves to A and B nodes in document order.
+ * Resolve to all nodes the XPath resolves to. Returns nodes in the
+ * order the XPath would. Meaning (//a, //b) resolves to all A nodes,
+ * followed by all B nodes. //*[self::a or self::b] resolves to A and
+ * B nodes in document order.
  */
 evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = 7;
 
@@ -507,7 +532,8 @@ evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE = 99;
 evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = 13;
 
 /**
- * Can be used to signal an XQuery program should be executed instead of an XPath
+ * Can be used to signal an XQuery program should be executed instead
+ * of an XPath
  */
 evaluateXPath['XQUERY_3_1_LANGUAGE'] = evaluateXPath.XQUERY_3_1_LANGUAGE = 'XQuery3.1';
 
