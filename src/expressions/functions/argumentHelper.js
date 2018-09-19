@@ -19,7 +19,7 @@ function splitType (type) {
 	};
 }
 
-function mapItem (argumentItem, type, executionParameters) {
+function mapItem (argumentItem, type, executionParameters, functionName) {
 	if (isSubtypeOf(argumentItem.type, type)) {
 		return argumentItem;
 	}
@@ -35,7 +35,8 @@ function mapItem (argumentItem, type, executionParameters) {
 		// We might be able to cast this to the wished type
 		const item = castToType(argumentItem, type);
 		if (!item) {
-			throw new Error('XPTY0004 Unable to convert to type');
+			throw new Error(
+				`XPTY0004 Unable to convert ${argumentItem.type} to type ${type} while calling ${functionName}`);
 		}
 		return item;
 	}
@@ -43,7 +44,8 @@ function mapItem (argumentItem, type, executionParameters) {
 	// We need to promote this
 	const item = promoteToType(argumentItem, type);
 	if (!item) {
-		throw new Error('XPTY0004 Unable to convert to type');
+		throw new Error(
+			`XPTY0004 Unable to cast ${argumentItem.type} to type ${type} while calling ${functionName}`);
 	}
 	return item;
 }
@@ -61,7 +63,7 @@ export const transformArgument = (argumentType, argument, executionParameters, f
 	switch (multiplicity) {
 		case '?':
 			return argument.switchCases({
-				default: () => argument.map(value => mapItem(value, type, executionParameters)),
+				default: () => argument.map(value => mapItem(value, type, executionParameters, functionName)),
 				multiple: () => {
 					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "?", but got "+".`);
 				}
@@ -71,14 +73,14 @@ export const transformArgument = (argumentType, argument, executionParameters, f
 				empty: () => {
 					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`);
 				},
-				default: () => argument.map(value => mapItem(value, type, executionParameters))
+				default: () => argument.map(value => mapItem(value, type, executionParameters, functionName))
 			});
 		case '*':
-			return argument.map(value => mapItem(value, type, executionParameters));
+			return argument.map(value => mapItem(value, type, executionParameters, functionName));
 		default:
 			// excactly one
 			return argument.switchCases({
-				singleton: () => argument.map(value => mapItem(value, type, executionParameters)),
+				singleton: () => argument.map(value => mapItem(value, type, executionParameters, functionName)),
 				default: () => {
 					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected exactly one`);
 }
