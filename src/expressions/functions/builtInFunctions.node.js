@@ -4,8 +4,10 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import QName from '../dataTypes/valueTypes/QName';
 import zipSingleton from '../util/zipSingleton';
+import isSubtypeOfType from '../dataTypes/isSubtypeOf';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import createFromNode from '../dataTypes/createNodeValue';
 
 const fnString = builtinStringFunctions.functions.string;
 
@@ -145,6 +147,22 @@ function fnInnermost (_dynamicContext, executionParameters, _staticContext, node
 	});
 }
 
+function fnRoot (_dynamicContext, executionParameters, _staticContext, nodeSequence) {
+	return nodeSequence.map(node => {
+		if (!isSubtypeOfType(node.type, 'node()')) {
+			throw new Error('XPTY0004 Argument passed to fn:root() should be of the type node()');
+		}
+
+		let ancestor;
+		let parent = node.value;
+		while (parent) {
+			ancestor = parent;
+			parent = executionParameters.domFacade.getParentNode(ancestor);
+		}
+		return createFromNode(ancestor);
+	});
+}
+
 export default {
 	declarations: [
 		{
@@ -225,6 +243,22 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:string',
 			callFunction: contextItemAsFirstArgument.bind(null, fnLocalName)
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'root',
+			argumentTypes: ['node()?'],
+			returnType: 'node()?',
+			callFunction: fnRoot
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'root',
+			argumentTypes: [],
+			returnType: 'node()?',
+			callFunction: contextItemAsFirstArgument.bind(null, fnRoot)
 		}
 	],
 	functions: {
