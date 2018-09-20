@@ -23,5 +23,7 @@ module.exports = {
 				}
 			}
 		]
-	]
+	],
+	"sourceMaps": true,
+	"retainLines": true
 };

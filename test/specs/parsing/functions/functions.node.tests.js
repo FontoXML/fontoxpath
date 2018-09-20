@@ -1,5 +1,7 @@
 import chai from 'chai';
 import {
+	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode,
 	evaluateXPathToStrings,
 	evaluateXPathToString
 } from 'fontoxpath';
@@ -123,6 +125,26 @@ describe('functions over nodes', () => {
 			], documentNode);
 			chai.assert.equal(await evaluateXPathToAsyncSingleton('name(. => fontoxpath:sleep())', documentNode.firstChild), 'someElement');
 		});
+	});
+
+	describe('root()', () => {
+		it('returns the root of the given context',
+			() => chai.assert.equal(evaluateXPathToFirstNode('root()', documentNode), documentNode));
+
+		it('returns the root of the given document',
+			() => chai.assert.equal(evaluateXPathToFirstNode('root(.)', documentNode), documentNode));
+
+		it('returns the root of the given constructed element',
+			() => chai.assert.isTrue(evaluateXPathToBoolean(`
+let $element := <root><child><node/></child></root>,
+	$node := $element//node
+return root($node) = $element`, documentNode, null, null, { language: 'XQuery3.1' }), true));
+
+		it('returns the root of the given constructed element from context',
+			() => chai.assert.isTrue(evaluateXPathToBoolean(`
+let $element := <root><child><node/></child></root>,
+	$node := $element//node
+return $node/root() = $element`, documentNode, null, null, { language: 'XQuery3.1' }), true));
 	});
 
 	describe('outermost()', () => {
