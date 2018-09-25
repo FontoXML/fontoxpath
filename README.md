@@ -1,4 +1,4 @@
-# fontoxpath [![Build Status](https://travis-ci.org/FontoXML/fontoxpath.svg?branch=master)](https://travis-ci.org/FontoXML/fontoxpath) [![devDependency Status](https://david-dm.org/FontoXML/fontoxpath/dev-status.svg)](https://david-dm.org/FontoXML/fontoxpath#info=devDependencies) [![NPM version](https://badge.fury.io/js/fontoxpath.svg)](http://badge.fury.io/js/fontoxpath) [![Greenkeeper badge](https://badges.greenkeeper.io/FontoXML/fontoxpath.svg)](https://greenkeeper.io/)
+# fontoxpath [![Build Status](https://travis-ci.org/FontoXML/fontoxpath.svg?branch=master)](https://travis-ci.org/FontoXML/fontoxpath) [![devDependency Status](https://david-dm.org/FontoXML/fontoxpath/dev-status.svg)](https://david-dm.org/FontoXML/fontoxpath#info=devDependencies) [![NPM version](https://badge.fury.io/js/fontoxpath.svg)](http://badge.fury.io/js/fontoxpath) [![Greenkeeper badge](https://badges.greenkeeper.io/FontoXML/fontoxpath.svg)](https://greenkeeper.io/) [![install size](https://packagephobia.now.sh/badge?p=fontoxpath)](https://packagephobia.now.sh/result?p=fontoxpath)
 
 A minimalistic [XPath 3.1](https://www.w3.org/TR/xpath-31/) selector engine for (XML) nodes.
 
