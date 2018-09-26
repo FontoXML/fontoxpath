@@ -436,6 +436,10 @@ fn-floornpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:integ
 fn-floornni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-floornni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-floor-1,Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
+for-each-002,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
+for-each-006,Error: XPST0081: The type function(node()) as node() could not be found.
+for-each-010,Error: XPST0017: Function function-name with arity of 1 not registered. No similar functions found.
+for-each-011,Error: XPST0081: The type (function(item()) as item()) could not be found.
 generate-id-000,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 generate-id-001,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 generate-id-002,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
@@ -1214,7 +1218,6 @@ map-get-017,AssertionError: map:get(map{1:"Sunday",2:"Monday",3:"Tuesday",xs:dur
 map-get-018,Error: XPST0017: Function function-name with arity of 1 not registered. No similar functions found.
 map-get-023,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 map-get-024,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
-map-get-100,Error: XPST0017: Function fn:for-each with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))"?
 map-entry-001-hof,Error: No selector counterpart for: typedMapTest.
 map-entry-001,Error: No selector counterpart for: typedMapTest.
 map-entry-002,Error: No selector counterpart for: typedMapTest.
@@ -1263,8 +1266,8 @@ array-filter-004,Error: No selector counterpart for: anyArrayTest.
 array-filter-005,Error: No selector counterpart for: anyArrayTest.
 array-filter-006,Error: No selector counterpart for: anyArrayTest.
 array-filter-007,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Atomizing array(*) is not implemented.'
-array-filter-008,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Cannot read property \'u\' of undefined'
-array-filter-009,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'f.indexOf is not a function'
+array-filter-008,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Cannot read property \'isEmpty\' of undefined'
+array-filter-009,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'strArg1.indexOf is not a function'
 array-flatten-010,Error: Atomizing array(*) is not implemented.
 array-fold-right-002,Error: XPTY0004 Unable to cast xs:integer to type array(*) while calling size
 array-fold-right-003,AssertionError: Expected XPath array:fold-right(["the cat", "sat", "on the mat"], "", function($a,$z){concat($a, " ", $z)}) to (deep equally) resolve to "the cat sat on the mat ": expected false to be true
@@ -1278,7 +1281,7 @@ array-for-each-003,Error: No selector counterpart for: anyArrayTest.
 array-for-each-004,Error: No selector counterpart for: anyArrayTest.
 array-for-each-005,Error: No selector counterpart for: anyArrayTest.
 array-for-each-006,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Cannot read property \'first\' of undefined'
-array-for-each-007,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'a.value.toUpperCase is not a function'
+array-for-each-007,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'string.value.toUpperCase is not a function'
 array-for-each-pair-301,Error: No selector counterpart for: anyArrayTest.
 array-for-each-pair-302,Error: No selector counterpart for: anyArrayTest.
 array-for-each-pair-303,Error: No selector counterpart for: anyArrayTest.
@@ -3595,14 +3598,12 @@ function-literal-419,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-420,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}function-name with arity of 1 not registered. No similar functions found.
 function-literal-421,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}function-arity with arity of 1 not registered. No similar functions found.
 function-literal-422,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}function-arity with arity of 1 not registered. No similar functions found.
-function-literal-423,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))"?
-function-literal-424,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))"?
 function-literal-427,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}fold-left with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))"?
 function-literal-428,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}fold-left with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))"?
 function-literal-429,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}fold-right with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))"?
 function-literal-430,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}fold-right with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))"?
-function-literal-431,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
-function-literal-432,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
+function-literal-431,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
+function-literal-432,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
 function-literal-524,Error: XPST0081: Can not cast: type xs:IDREFS is unknown.
 function-literal-526,Error: XPST0081: Can not cast: type xs:NMTOKENS is unknown.
 function-literal-528,Error: XPST0081: Can not cast: type xs:ENTITIES is unknown.
@@ -5640,9 +5641,7 @@ fo-test-fn-function-name-002,Error: XPST0017: Function fn:function-name with ari
 fo-test-fn-function-arity-001,Error: XPST0017: Function fn:function-arity with arity of 1 not registered. No similar functions found.
 fo-test-fn-function-arity-002,Error: XPST0017: Function fn:function-arity with arity of 1 not registered. No similar functions found.
 fo-test-fn-function-arity-003,Error: XPST0017: Function fn:function-arity with arity of 1 not registered. No similar functions found.
-fo-test-fn-for-each-001,Error: XPST0017: Function fn:for-each with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))"?
-fo-test-fn-for-each-002,Error: XPST0017: Function fn:for-each with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))"?
-fo-test-fn-for-each-003,Error: XPST0017: Function fn:for-each with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))"?
+fo-test-fn-for-each-002,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fo-test-fn-filter-002,Error: XPST0017: Function fn:lang with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
 fo-test-fn-fold-left-001,Error: XPST0017: Function fn:fold-left with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))"?
 fo-test-fn-fold-left-002,Error: XPST0017: Function fn:fold-left with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))"?
@@ -5655,9 +5654,9 @@ fo-test-fn-fold-left-008,Error: XPST0017: Function fn:fold-left with arity of 3 
 fo-test-fn-fold-right-001,Error: XPST0017: Function fn:fold-right with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))"?
 fo-test-fn-fold-right-002,Error: XPST0017: Function fn:fold-right with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))"?
 fo-test-fn-fold-right-003,Error: XPST0017: Function fn:fold-right with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}fold-right (array(*), item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/array}fold-left (array(*), item()*, function(*))"?
-fo-test-fn-for-each-pair-001,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
-fo-test-fn-for-each-pair-002,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
-fo-test-fn-for-each-pair-003,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
+fo-test-fn-for-each-pair-001,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
+fo-test-fn-for-each-pair-002,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
+fo-test-fn-for-each-pair-003,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*), array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*), function(*))", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*))" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*), function(*))"?
 fo-test-fn-sort-001,Error: XPST0017: Function fn:sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*))", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
 fo-test-fn-sort-002,Error: XPST0017: Function fn:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*))", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
 fo-test-fn-apply-001,Error: XPST0017: Function fn:apply with arity of 2 not registered. No similar functions found.

@@ -43,6 +43,15 @@ describe('Functions and operators on sequences', () => {
 				() => chai.assert.isTrue(evaluateXPathToBoolean('(1 to 20)[. = filter(1 to position(), function($x){$x idiv 2 * 2 = $x})] => deep-equal((2,4,6,8,10,12,14,16,18,20))', documentNode)));
 		});
 
+		describe('fn:for-each', () => {
+			it('applies the function to an empty sequence',
+				() => chai.assert.deepEqual(evaluateXPathToNumbers('for-each((), function($a) {$a * $a})', documentNode), []));
+			it('applies the function to each item',
+				() => chai.assert.deepEqual(evaluateXPathToNumbers('for-each(1 to 5, function($a) {$a * $a})', documentNode), [1, 4, 9, 16, 25]));
+			it('applies the function to each item and returns more items',
+				() => chai.assert.deepEqual(evaluateXPathToNumbers('for-each(1 to 5, function($a) {($a, $a + 1)})', documentNode), [1, 2, 2, 3, 3, 4, 4, 5, 5, 6]));
+		});
+
 		describe('fn:head', () => {
 			it('returns an empty sequence when given an empty sequence',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('head(())', documentNode), []));

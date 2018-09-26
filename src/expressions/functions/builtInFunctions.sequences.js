@@ -450,7 +450,7 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 	 */
 	const callbackFn = callbackSequence.first();
 	return sequence.filter(item => {
-		// Tranform argument
+		// Transform argument
 		const transformedArgument = transformArgument(
 			callbackFn.getArgumentTypes()[0],
 			Sequence.singleton(item),
@@ -466,6 +466,56 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
 		return functionCallResult.first().value;
+	});
+}
+
+function fnForEach (dynamicContext, executionParameters, staticContext, sequence, callbackSequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	const callbackFn = callbackSequence.first();
+	const callbackArgumentTypes = callbackFn.getArgumentTypes();
+	if (callbackArgumentTypes.length !== 1) {
+		throw new Error(`XPTY0004: function passed to fn:for-each has the wrong arity.`);
+	}
+
+	const sequences = sequence.map(item => {
+		// Transform argument
+		const transformedArgument = transformArgument(
+			callbackArgumentTypes[0],
+			Sequence.singleton(item),
+			dynamicContext,
+			'fn:for-each');
+		return callbackFn.value.call(
+			undefined,
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			transformedArgument);
+	});
+
+	const outerIterator = sequences.value();
+	let innerIterator;
+	return new Sequence({
+		next: () => {
+			while (true) {
+				if (!innerIterator) {
+					const nextSequence = outerIterator.next();
+					// TODO: Consider handling the ready state
+					if (nextSequence.done) {
+						return nextSequence;
+					}
+					innerIterator = nextSequence.value.value();
+				}
+
+				const entry = innerIterator.next();
+				if (!entry.done) {
+					return entry;
+				}
+				innerIterator = null;
+			}
+		}
 	});
 }
 
@@ -668,8 +718,16 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'filter',
 			argumentTypes: ['item()*', 'function(*)'],
-			returnType: 'item()',
+			returnType: 'item()*',
 			callFunction: fnFilter
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'for-each',
+			argumentTypes: ['item()*', 'function(*)'],
+			returnType: 'item()*',
+			callFunction: fnForEach
 		}
 	],
 	functions: {

@@ -85,10 +85,10 @@ fn-filter,true
 fn-floor,true
 fn-fold-left,false
 fn-fold-right,false
-fn-for-each,false
+fn-for-each,true
 fn-for-each-pair,false
 fn-format-date,false
-fn-format-dateTime,flase
+fn-format-dateTime,false
 fn-format-integer,false
 fn-format-number,false
 fn-format-time,false
