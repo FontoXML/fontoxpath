@@ -83,7 +83,7 @@ fn-exists,true
 fn-false,true
 fn-filter,true
 fn-floor,true
-fn-fold-left,false
+fn-fold-left,true
 fn-fold-right,false
 fn-for-each,true
 fn-for-each-pair,false

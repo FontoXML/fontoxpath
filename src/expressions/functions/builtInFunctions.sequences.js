@@ -449,10 +449,15 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 	 * @type {FunctionValue}
 	 */
 	const callbackFn = callbackSequence.first();
+	const callbackArgumentTypes = callbackFn.getArgumentTypes();
+	if (callbackArgumentTypes.length !== 1) {
+		throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
+	}
+
 	return sequence.filter(item => {
 		// Transform argument
 		const transformedArgument = transformArgument(
-			callbackFn.getArgumentTypes()[0],
+			callbackArgumentTypes[0],
 			Sequence.singleton(item),
 			executionParameters,
 			'fn:filter');
@@ -474,10 +479,13 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 		return sequence;
 	}
 
+	/**
+	 * @type {FunctionValue}
+	 */
 	const callbackFn = callbackSequence.first();
 	const callbackArgumentTypes = callbackFn.getArgumentTypes();
 	if (callbackArgumentTypes.length !== 1) {
-		throw new Error(`XPTY0004: function passed to fn:for-each has the wrong arity.`);
+		throw new Error(`XPTY0004: signature of function passed to fn:for-each is incompatible.`);
 	}
 
 	const sequences = sequence.map(item => {
@@ -517,6 +525,43 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 			}
 		}
 	});
+}
+
+function fnFoldLeft (dynamicContext, executionParameters, staticContext, sequence, zero, callbackSequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	/**
+	 * @type {FunctionValue}
+	 */
+	const callbackFn = callbackSequence.first();
+	const callbackArgumentTypes = callbackFn.getArgumentTypes();
+	if (callbackArgumentTypes.length !== 2) {
+		throw new Error(`XPTY0004: signature of function passed to fn:fold-left is incompatible.`);
+	}
+
+	return sequence.mapAll(values =>
+		values.reduce((previous, current) => {
+			const previousArg = transformArgument(
+				callbackArgumentTypes[0],
+				previous,
+				dynamicContext,
+				'fn:fold-left');
+			const currentArg = transformArgument(
+				callbackArgumentTypes[1],
+				Sequence.singleton(current),
+				dynamicContext,
+				'fn:fold-left');
+			return callbackFn.value.call(
+				undefined,
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				previousArg,
+				currentArg);
+		}, zero)
+	);
 }
 
 export default {
@@ -728,6 +773,14 @@ export default {
 			argumentTypes: ['item()*', 'function(*)'],
 			returnType: 'item()*',
 			callFunction: fnForEach
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'fold-left',
+			argumentTypes: ['item()*', 'item()*', 'function(*)'],
+			returnType: 'item()*',
+			callFunction: fnFoldLeft
 		}
 	],
 	functions: {

@@ -108,8 +108,8 @@ New JavaScript tests can be added to a `*.tests.js` file somewhere in
 the `test/specs` folder. Try to add a new test in a file with tests
 about similar functions.
 
-If you expect new QT3 tests to succeed, remove all except the first 12
-lines from the `test/unrunnableTestCases.csv` file. The first 12 lines
+If you expect new QT3 tests to succeed, remove all except the first 13
+lines from the `test/unrunnableTestCases.csv` file. The first 13 lines
 are tests which are known to cause timeouts. The test runner will
 generate a new version of the `test/unrunnableTestCases.csv` file. Use
 `git` to find differences.

@@ -41,15 +41,28 @@ describe('Functions and operators on sequences', () => {
 				() => chai.assert.isTrue(evaluateXPathToBoolean('filter((1, 2, 3), function ($a) {$a = 2}) eq 2', documentNode)));
 			it('works in obscure cases',
 				() => chai.assert.isTrue(evaluateXPathToBoolean('(1 to 20)[. = filter(1 to position(), function($x){$x idiv 2 * 2 = $x})] => deep-equal((2,4,6,8,10,12,14,16,18,20))', documentNode)));
+			it('throws error with wrong arity',
+				() => chai.assert.throws(() => evaluateXPathToNumbers('filter(1 to 3, function(){true()})', documentNode), 'XPTY0004: signature of function passed to fn:filter is incompatible.'));
 		});
 
 		describe('fn:for-each', () => {
 			it('applies the function to an empty sequence',
-				() => chai.assert.deepEqual(evaluateXPathToNumbers('for-each((), function($a) {$a * $a})', documentNode), []));
+				() => chai.assert.isEmpty(evaluateXPathToNumbers('for-each((), function($a) {$a * $a})', documentNode)));
 			it('applies the function to each item',
 				() => chai.assert.deepEqual(evaluateXPathToNumbers('for-each(1 to 5, function($a) {$a * $a})', documentNode), [1, 4, 9, 16, 25]));
 			it('applies the function to each item and returns more items',
 				() => chai.assert.deepEqual(evaluateXPathToNumbers('for-each(1 to 5, function($a) {($a, $a + 1)})', documentNode), [1, 2, 2, 3, 3, 4, 4, 5, 5, 6]));
+		});
+
+		describe('fn:fold-left', () => {
+			it('fold empty sequence',
+				() => chai.assert.deepEqual(evaluateXPathToNumbers('fold-left((), (), function($a, $b) {$a + $b})', documentNode), []));
+			it('get sum of sequence',
+				() => chai.assert.deepEqual(evaluateXPathToNumber('fold-left(1 to 5, 0, function($a, $b) {$a + $b})', documentNode), 15));
+			it('reverse sequence',
+				() => chai.assert.deepEqual(evaluateXPathToNumbers('fold-left(1 to 5, (), function($a, $b) {($b, $a)})', documentNode), [5, 4, 3, 2, 1]));
+			it('concat values indicating order',
+				() => chai.assert.deepEqual(evaluateXPathToString('fold-left(1 to 5, "$zero", fn:concat("$f(", ?, ", ", ?, ")"))', documentNode), '$f($f($f($f($f($zero, 1), 2), 3), 4), 5)'));
 		});
 
 		describe('fn:head', () => {
