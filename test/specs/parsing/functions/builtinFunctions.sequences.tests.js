@@ -65,6 +65,15 @@ describe('Functions and operators on sequences', () => {
 				() => chai.assert.deepEqual(evaluateXPathToString('fold-left(1 to 5, "$zero", fn:concat("$f(", ?, ", ", ?, ")"))', documentNode), '$f($f($f($f($f($zero, 1), 2), 3), 4), 5)'));
 		});
 
+		describe('fn:fold-right', () => {
+			it('fold empty sequence',
+				() => chai.assert.deepEqual(evaluateXPathToNumbers('fold-right((), (), function($a, $b) {$a + $b})', documentNode), []));
+			it('get sum of sequence',
+				() => chai.assert.deepEqual(evaluateXPathToNumber('fold-right(1 to 5, 0, function($a, $b) {$a + $b})', documentNode), 15));
+			it('concat values indicating order',
+				() => chai.assert.deepEqual(evaluateXPathToString('fold-right(1 to 5, "$zero", fn:concat("$f(", ?, ", ", ?, ")"))', documentNode), '$f(1, $f(2, $f(3, $f(4, $f(5, $zero)))))'));
+		});
+
 		describe('fn:head', () => {
 			it('returns an empty sequence when given an empty sequence',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('head(())', documentNode), []));

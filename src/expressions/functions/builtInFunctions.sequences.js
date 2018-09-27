@@ -564,6 +564,43 @@ function fnFoldLeft (dynamicContext, executionParameters, staticContext, sequenc
 	);
 }
 
+function fnFoldRight (dynamicContext, executionParameters, staticContext, sequence, zero, callbackSequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	/**
+	 * @type {FunctionValue}
+	 */
+	const callbackFn = callbackSequence.first();
+	const callbackArgumentTypes = callbackFn.getArgumentTypes();
+	if (callbackArgumentTypes.length !== 2) {
+		throw new Error(`XPTY0004: signature of function passed to fn:fold-right is incompatible.`);
+	}
+
+	return sequence.mapAll(values =>
+		values.reverse().reduce((previous, current) => {
+			const previousArg = transformArgument(
+				callbackArgumentTypes[0],
+				previous,
+				dynamicContext,
+				'fn:fold-right');
+			const currentArg = transformArgument(
+				callbackArgumentTypes[1],
+				Sequence.singleton(current),
+				dynamicContext,
+				'fn:fold-right');
+			return callbackFn.value.call(
+				undefined,
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				currentArg,
+				previousArg);
+		}, zero)
+	);
+}
+
 export default {
 	declarations: [
 		{
@@ -781,6 +818,14 @@ export default {
 			argumentTypes: ['item()*', 'item()*', 'function(*)'],
 			returnType: 'item()*',
 			callFunction: fnFoldLeft
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'fold-right',
+			argumentTypes: ['item()*', 'item()*', 'function(*)'],
+			returnType: 'item()*',
+			callFunction: fnFoldRight
 		}
 	],
 	functions: {

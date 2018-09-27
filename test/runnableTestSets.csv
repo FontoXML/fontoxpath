@@ -84,7 +84,7 @@ fn-false,true
 fn-filter,true
 fn-floor,true
 fn-fold-left,true
-fn-fold-right,false
+fn-fold-right,true
 fn-for-each,true
 fn-for-each-pair,false
 fn-format-date,false
