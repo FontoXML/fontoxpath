@@ -474,6 +474,9 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnForEach (dynamicContext, executionParameters, staticContext, sequence, callbackSequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -488,33 +491,31 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 		throw new Error(`XPTY0004: signature of function passed to fn:for-each is incompatible.`);
 	}
 
-	const sequences = sequence.map(item => {
-		// Transform argument
-		const transformedArgument = transformArgument(
-			callbackArgumentTypes[0],
-			Sequence.singleton(item),
-			executionParameters,
-			'fn:for-each');
-		return callbackFn.value.call(
-			undefined,
-			dynamicContext,
-			executionParameters,
-			staticContext,
-			transformedArgument);
-	});
-
-	const outerIterator = sequences.value();
+	const outerIterator = sequence.value();
 	let innerIterator;
 	return new Sequence({
 		next: () => {
 			while (true) {
 				if (!innerIterator) {
-					const nextSequence = outerIterator.next();
-					// TODO: Consider handling the ready state
-					if (nextSequence.done) {
-						return nextSequence;
+					const item = outerIterator.next();
+
+					if (!item.ready || item.done) {
+						return item;
 					}
-					innerIterator = nextSequence.value.value();
+
+					const transformedArgument = transformArgument(
+						callbackArgumentTypes[0],
+						Sequence.singleton(item.value),
+						executionParameters,
+						'fn:for-each');
+					const nextSequence = callbackFn.value.call(
+						undefined,
+						dynamicContext,
+						executionParameters,
+						staticContext,
+						transformedArgument);
+
+					innerIterator = nextSequence.value();
 				}
 
 				const entry = innerIterator.next();
@@ -527,6 +528,9 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 	});
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnFoldLeft (dynamicContext, executionParameters, staticContext, sequence, zero, callbackSequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -564,6 +568,9 @@ function fnFoldLeft (dynamicContext, executionParameters, staticContext, sequenc
 	);
 }
 
+/**
+ * @type {!FunctionDefinitionType}
+ */
 function fnFoldRight (dynamicContext, executionParameters, staticContext, sequence, zero, callbackSequence) {
 	if (sequence.isEmpty()) {
 		return sequence;
@@ -579,7 +586,7 @@ function fnFoldRight (dynamicContext, executionParameters, staticContext, sequen
 	}
 
 	return sequence.mapAll(values =>
-		values.reverse().reduce((previous, current) => {
+		values.reduceRight((previous, current) => {
 			const previousArg = transformArgument(
 				callbackArgumentTypes[0],
 				previous,
