@@ -449,10 +449,15 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 	 * @type {FunctionValue}
 	 */
 	const callbackFn = callbackSequence.first();
+	const callbackArgumentTypes = callbackFn.getArgumentTypes();
+	if (callbackArgumentTypes.length !== 1) {
+		throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
+	}
+
 	return sequence.filter(item => {
-		// Tranform argument
+		// Transform argument
 		const transformedArgument = transformArgument(
-			callbackFn.getArgumentTypes()[0],
+			callbackArgumentTypes[0],
 			Sequence.singleton(item),
 			executionParameters,
 			'fn:filter');
@@ -467,6 +472,140 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 		}
 		return functionCallResult.first().value;
 	});
+}
+
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function fnForEach (dynamicContext, executionParameters, staticContext, sequence, callbackSequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	/**
+	 * @type {FunctionValue}
+	 */
+	const callbackFn = callbackSequence.first();
+	const callbackArgumentTypes = callbackFn.getArgumentTypes();
+	if (callbackArgumentTypes.length !== 1) {
+		throw new Error(`XPTY0004: signature of function passed to fn:for-each is incompatible.`);
+	}
+
+	const outerIterator = sequence.value();
+	let innerIterator;
+	return new Sequence({
+		next: () => {
+			while (true) {
+				if (!innerIterator) {
+					const item = outerIterator.next();
+
+					if (!item.ready || item.done) {
+						return item;
+					}
+
+					const transformedArgument = transformArgument(
+						callbackArgumentTypes[0],
+						Sequence.singleton(item.value),
+						executionParameters,
+						'fn:for-each');
+					const nextSequence = callbackFn.value.call(
+						undefined,
+						dynamicContext,
+						executionParameters,
+						staticContext,
+						transformedArgument);
+
+					innerIterator = nextSequence.value();
+				}
+
+				const entry = innerIterator.next();
+				if (!entry.done) {
+					return entry;
+				}
+				innerIterator = null;
+			}
+		}
+	});
+}
+
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function fnFoldLeft (dynamicContext, executionParameters, staticContext, sequence, zero, callbackSequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	/**
+	 * @type {FunctionValue}
+	 */
+	const callbackFn = callbackSequence.first();
+	const callbackArgumentTypes = callbackFn.getArgumentTypes();
+	if (callbackArgumentTypes.length !== 2) {
+		throw new Error(`XPTY0004: signature of function passed to fn:fold-left is incompatible.`);
+	}
+
+	return sequence.mapAll(values =>
+		values.reduce((previous, current) => {
+			const previousArg = transformArgument(
+				callbackArgumentTypes[0],
+				previous,
+				executionParameters,
+				'fn:fold-left');
+			const currentArg = transformArgument(
+				callbackArgumentTypes[1],
+				Sequence.singleton(current),
+				executionParameters,
+				'fn:fold-left');
+			return callbackFn.value.call(
+				undefined,
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				previousArg,
+				currentArg);
+		}, zero)
+	);
+}
+
+/**
+ * @type {!FunctionDefinitionType}
+ */
+function fnFoldRight (dynamicContext, executionParameters, staticContext, sequence, zero, callbackSequence) {
+	if (sequence.isEmpty()) {
+		return sequence;
+	}
+
+	/**
+	 * @type {FunctionValue}
+	 */
+	const callbackFn = callbackSequence.first();
+	const callbackArgumentTypes = callbackFn.getArgumentTypes();
+	if (callbackArgumentTypes.length !== 2) {
+		throw new Error(`XPTY0004: signature of function passed to fn:fold-right is incompatible.`);
+	}
+
+	return sequence.mapAll(values =>
+		values.reduceRight((previous, current) => {
+			const previousArg = transformArgument(
+				callbackArgumentTypes[0],
+				previous,
+				executionParameters,
+				'fn:fold-right');
+			const currentArg = transformArgument(
+				callbackArgumentTypes[1],
+				Sequence.singleton(current),
+				executionParameters,
+				'fn:fold-right');
+			return callbackFn.value.call(
+				undefined,
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				currentArg,
+				previousArg);
+		}, zero)
+	);
 }
 
 export default {
@@ -668,8 +807,32 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'filter',
 			argumentTypes: ['item()*', 'function(*)'],
-			returnType: 'item()',
+			returnType: 'item()*',
 			callFunction: fnFilter
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'for-each',
+			argumentTypes: ['item()*', 'function(*)'],
+			returnType: 'item()*',
+			callFunction: fnForEach
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'fold-left',
+			argumentTypes: ['item()*', 'item()*', 'function(*)'],
+			returnType: 'item()*',
+			callFunction: fnFoldLeft
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'fold-right',
+			argumentTypes: ['item()*', 'item()*', 'function(*)'],
+			returnType: 'item()*',
+			callFunction: fnFoldRight
 		}
 	],
 	functions: {

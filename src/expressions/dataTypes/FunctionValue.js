@@ -22,7 +22,7 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 
 class FunctionValue {
 	/**
-	 * @param  {{value: !function(!DynamicContext, !ExecutionParameters, !StaticContext, !Sequence): !Sequence, localName: string, argumentTypes: !Array<string>, arity: number, returnType: string, namespaceURI: string}}  properties
+	 * @param  {{value: !function(!DynamicContext, !ExecutionParameters, !StaticContext, ...!Sequence): !Sequence, localName: string, argumentTypes: !Array<string>, arity: number, returnType: string, namespaceURI: string}}  properties
 	 */
 	constructor ({ value, localName, namespaceURI, argumentTypes, arity, returnType }) {
 		this.value = value;

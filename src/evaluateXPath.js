@@ -494,8 +494,8 @@ evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = 2;
 
 /**
  * Resolves to true or false, uses the effective boolean value to
- * determin result. count(1) resolves to true, count(()) resolves to
- * false
+ * determine the result. count(1) resolves to true, count(())
+ * resolves to false
  */
 evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = 3;
 
