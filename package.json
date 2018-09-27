@@ -7,6 +7,7 @@
 		"test": "test"
 	},
 	"scripts": {
+		"prepare": "npm run build",
 		"build": "node ./build.js",
 		"test": "mocha --recursive --require @babel/register test/specs/",
 		"integrationtests": "mocha --recursive --require @babel/register test/specs/parsing --dist",

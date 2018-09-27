@@ -127,7 +127,7 @@ fix. If you are running into any problems, do not hesitate to ask for
 help!
 
 The build can be double-checked using the `npm run qt3tests -- --dist`
-command.
+command. The build does not have to be checked in.
 
 ### Making a commit
 
