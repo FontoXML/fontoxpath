@@ -32,6 +32,7 @@ function doExpressionsBuild () {
 			language_in: 'stable',
 			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',
+			source_map_location_mapping: '"src|../src"',
 			jscomp_warning: reportUnknownTypes ? ['reportUnknownTypes'] : [],
 			jscomp_error: [
 				'accessControls',
