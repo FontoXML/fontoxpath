@@ -493,7 +493,7 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 		const transformedArgument = transformArgument(
 			callbackArgumentTypes[0],
 			Sequence.singleton(item),
-			dynamicContext,
+			executionParameters,
 			'fn:for-each');
 		return callbackFn.value.call(
 			undefined,
@@ -546,12 +546,12 @@ function fnFoldLeft (dynamicContext, executionParameters, staticContext, sequenc
 			const previousArg = transformArgument(
 				callbackArgumentTypes[0],
 				previous,
-				dynamicContext,
+				executionParameters,
 				'fn:fold-left');
 			const currentArg = transformArgument(
 				callbackArgumentTypes[1],
 				Sequence.singleton(current),
-				dynamicContext,
+				executionParameters,
 				'fn:fold-left');
 			return callbackFn.value.call(
 				undefined,
@@ -583,12 +583,12 @@ function fnFoldRight (dynamicContext, executionParameters, staticContext, sequen
 			const previousArg = transformArgument(
 				callbackArgumentTypes[0],
 				previous,
-				dynamicContext,
+				executionParameters,
 				'fn:fold-right');
 			const currentArg = transformArgument(
 				callbackArgumentTypes[1],
 				Sequence.singleton(current),
-				dynamicContext,
+				executionParameters,
 				'fn:fold-right');
 			return callbackFn.value.call(
 				undefined,
