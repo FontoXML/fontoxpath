@@ -10,6 +10,8 @@ declare decimal-format blaat minus-sign = "foo" NaN = "bar";
 declare %prrt:annotated("prrt") function Q{prrt}vrot ($prrt:x as element(vrot:vrot)) as function(*) external;
 
 declare variable $prrt:xxx := "123";
+
+declare variable $vrot:vrot := true() or false() or 1 or 2 and 4;
 `;
 
 function print (what, indent, n) {
