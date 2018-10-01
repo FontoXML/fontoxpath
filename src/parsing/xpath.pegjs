@@ -36,7 +36,8 @@ ModuleDecl
 // 6
 Prolog
  = moduleSettings:(prologPart:(DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _ {return prologPart})*
-   declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _ {return prologPart})* {return ["prolog"].concat(moduleSettings).concat(declarations)}
+   declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _{return prologPart})* 
+   {return ["prolog"].concat(moduleSettings).concat(declarations)}
 
 // 7
 Separator = ";"
@@ -117,15 +118,15 @@ DefaultNamespaceDecl
 
 // 26
 AnnotatedDecl
- = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl) { return Object.assign(decl, {annotations: annotations})}
+ = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl) {return [decl[0]].concat(annotations).concat(decl.slice(1))}
 
 // 27
 Annotation
- = "%" _ annotation:EQName params:(_ "(" _ lhs:$Literal rhs:(_ "," _ part:$Literal {return part})* _")" {return lhs.concat(rhs)})? { return [annotation, params]}
+ = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})? { return ["annotation", ["annotationName", annotation]].concat(params ? ["arguments", params] : [])}
 
 // 28
 VarDecl
- = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})? value:((_ ":=" _ v:VarValue {return {type: 'internal', value: v}}) / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return v})? {return {type: 'external', defaultValue: defaultValue || null}})) {return {type: 'varDecl', name: name, varType: varType, value: value}}
+ = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})? value:((_ ":=" _ v:VarValue {return {type: 'internal', value: v}}) / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return v})? {return {type: 'external', defaultValue: defaultValue || null}})) {return {type:'varDecl', name: name, varType: varType, value: value}}
 
 // 29
 VarValue
@@ -141,7 +142,8 @@ ContextItemDecl
 
 // 32
 FunctionDecl
- = "function" S (!ReservedFunctionNames) EQName _ "(" _ ParamList? _ ")" (S "as" S SequenceType)? ( _ FunctionBody / "external")
+ = "function" S (!ReservedFunctionNames) name:EQName _ "(" _ paramList:ParamList? _ ")" typeDeclaration:(S "as" S t:SequenceType {return t})? _ body:((body:FunctionBody {return ["functionBody", body]}) / ("external" {return ["externalDefinition"]}))
+ {return ["functionDecl", ["functionName"].concat(name), ["paramList"].concat(paramList || [])].concat(typeDeclaration ? ["typeDeclaration", typeDeclaration] : []).concat([body])}
 
 // 33
 ParamList
@@ -169,8 +171,9 @@ Expr
 
 // 40 TODO, fix proper
 ExprSingle = "abc"
+
 // 112
-EQName = uri:URIQualifiedName {return [{prefix: null, uri: uriQName[0]}, uriQName[1]]}
+EQName = uri:URIQualifiedName {return [{prefix: null, uri: uri[0]}, uri[1]]}
  / name:QName {return [{prefix: name[0], uri: null}, name[1]]}
 
 // 129
@@ -187,7 +190,7 @@ VarName
 
 // 183
 TypeDeclaration
- = "as" S st:$SequenceType {return st}
+ = "as" S st:SequenceType {return st}
 
 // 184
 SequenceType
@@ -294,7 +297,7 @@ SimpleTypeName = TypeName
 TypeName = EQName
 
 // 207
-FunctionTest = annotations:Annotation* test:(AnyFunctionTest / TypedFunctionTest) {return test.splice.apply(test, [1, 0].concat(annotations))}
+FunctionTest = annotations:Annotation* test:(AnyFunctionTest / TypedFunctionTest) {return [test[0]].concat(annotations).concat(test.slice(1))}
 
 // 208
 AnyFunctionTest = "function" _ "(" _ "*" _ ")" {return ["anyFunctionTest"]}
