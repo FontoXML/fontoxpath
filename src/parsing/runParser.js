@@ -5,9 +5,7 @@ const input = `xquery version "1.0" encoding "utf-8";
 module namespace test="prrt";
 import module namespace test = "http://www.example.org/mainmodules.tests#1";
 
-declare %public function test:prrt ($a as node(), $b as function (*) as xs:boolean) as xs:boolean {
-    $b($a)
-};
+declare %public function test:prrt ($a as node(), $b as function (item()?) as xs:boolean) as xs:boolean {abc};
 
 `;
 

@@ -136,7 +136,7 @@ ContextItemDecl
 
 // 32
 FunctionDecl
- = "function" S (!ReservedFunctionNames) EQName _ "(" _ ParamList? _ ")" S ("as" SequenceType)? ( _ FunctionBody / "external")
+ = "function" S (!ReservedFunctionNames) EQName _ "(" _ ParamList? _ ")" (S "as" S SequenceType)? ( _ FunctionBody / "external")
 
 // 33
 ParamList
@@ -160,7 +160,7 @@ OptionDecl
 
 // 39
 Expr
- = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle {return part})* {return lsh.concat(rhs)}
+ = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle {return part})* {return lhs.concat(rhs)}
 
 // 40 TODO, fix proper
 ExprSingle = "abc"
