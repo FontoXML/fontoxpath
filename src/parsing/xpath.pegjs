@@ -126,7 +126,10 @@ Annotation
 
 // 28
 VarDecl
- = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})? value:((_ ":=" _ v:VarValue {return {type: 'internal', value: v}}) / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return v})? {return {type: 'external', defaultValue: defaultValue || null}})) {return {type:'varDecl', name: name, varType: varType, value: value}}
+ = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})? 
+      value:((_ ":=" _ v:VarValue {return ["varValue", value]})
+      / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])})) 
+  {return ["varDecl", ["varName"].concat(name), ["typeDeclaration", varType], value]}
 
 // 29
 VarValue
