@@ -35,7 +35,7 @@ ModuleDecl
 
 // 6
 Prolog
- = moduleSettings:(prologPart:(DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _)*
+ = moduleSettings:(prologPart:(DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _ {return prologPart})*
    declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _ {return prologPart})* {return ["prolog"].concat(moduleSettings).concat(declarations)}
 
 // 7
@@ -99,7 +99,7 @@ SchemaPrefix
 // 23
 ModuleImport
  = "import" S "module"
-   prefix:(S "namespace" S prefix:$NCName _ "=" {return ["moduleImport", ["targetNamespace"]]})?
+   prefix:(S "namespace" S prefix:$NCName _ "=" {return prefix})?
    _ uri:URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)? {return ["moduleImport", ["namespacePrefix", prefix], ["targetNamespace", uri]]}
 
 // 24
@@ -116,7 +116,7 @@ AnnotatedDecl
 
 // 27
 Annotation
- = "%" _ annotation:EQName params:(_ "(" _ lhs:$Literal rhs:(_ "," _ part:$Literal {return part})* _")")? { return [annotation, params]}
+ = "%" _ annotation:EQName params:(_ "(" _ lhs:$Literal rhs:(_ "," _ part:$Literal {return part})* _")" {return lhs.concat(rhs)})? { return [annotation, params]}
 
 // 28
 VarDecl
@@ -134,13 +134,33 @@ VarDefaultValue
 ContextItemDecl
  = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?)) {return {type: 'contextItemDecl'}}
 
-// 32 TODO: Implement
+// 32
 FunctionDecl
- = "function"
+ = "function" S (!ReservedFunctionNames) EQName _ "(" _ ParamList? _ ")" S ("as" SequenceType)? ( _ FunctionBody / "external")
+
+// 33
+ParamList
+ = lhs:Param rhs:(_ "," _ param:Param {return param})* {return lhs.concat(rhs)}
+
+// 34
+Param
+ = "$" varName:EQName S typeDeclaration:TypeDeclaration? {return ["param", ["varName", varName], ["typeDeclaration", typeDeclaration]]}
+
+// 35
+FunctionBody
+ = EnclosedExpr
+
+// 36
+EnclosedExpr
+ = "{" _ e:Expr? _ "}" {return e}
 
 // 37
 OptionDecl
  = "declare" S  "option" S EQName S StringLiteral {return {type: 'optionDecl'}}
+
+// 39
+Expr
+ = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle {return part})* {return lsh.concat(rhs)}
 
 // 40 TODO, fix proper
 ExprSingle = "abc"
@@ -162,7 +182,7 @@ VarName
 
 // 183
 TypeDeclaration
- = S "as" S st:$SequenceType {return st}
+ = "as" S st:$SequenceType {return st}
 
 // 184
 SequenceType
@@ -401,3 +421,23 @@ NameChar = NCNameChar / ":"
 NameStartChar = NCNameStartChar / ":"
 
 Name = $(NameStartChar (NameChar)*)
+
+ReservedFunctionNames
+ = "array"
+ / "attribute"
+ / "comment"
+ / "document-node"
+ / "element"
+ / "empty-sequence"
+ / "function"
+ / "if"
+ / "item"
+ / "map"
+ / "namespace-node"
+ / "node"
+ / "processing-instruction"
+ / "schema-attribute"
+ / "schema-element"
+ / "switch"
+ / "text"
+ / "typeswitch"
