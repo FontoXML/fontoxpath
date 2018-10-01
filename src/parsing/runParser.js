@@ -3,7 +3,13 @@ const parser = require('./xPathParser.raw.js');
 
 const input = `xquery version "1.0" encoding "utf-8";
 module namespace test="prrt";
-import module namespace test = "http://www.example.org/mainmodules.tests#1";`;
+import module namespace test = "http://www.example.org/mainmodules.tests#1";
+
+declare %public function test:prrt ($a as node(), $b as function (*) as xs:boolean) as xs:boolean {
+    $b($a)
+};
+
+`;
 
 function print (what, indent, n) {
     const filler = Array(indent).fill(' ').join('');
@@ -19,5 +25,10 @@ function print (what, indent, n) {
     }
 }
 
-
-console.log(print(parser.xPathParser.parse(input), 0, 0));
+try {
+    console.log(print(parser.xPathParser.parse(input), 0, 0));
+} catch(err) {
+    console.log(err);
+    const start = err.location.start.offset;
+    console.log(input.substring(0, start) + '[HERE]' + input.substring(start));
+}
