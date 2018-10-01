@@ -186,8 +186,8 @@ TypeDeclaration
 
 // 184
 SequenceType
- = "empty-sequence()" {return ["empty-sequence()", "0"]}
- / type:ItemType occurence:(_ o:OccurenceIndicator {return o})? {return [type, occurence]}
+ = "empty-sequence()" {return [["voidSequenceType"]]}
+ / type:ItemType occurence:(_ o:OccurenceIndicator {return o})? {return ["sequenceType", ["itemType", type]].concat(occurence ? [["occurenceIndicator", occurence]] : [])}
 
 // 185
 OccurenceIndicator = "?" / "*" / "+"
@@ -195,7 +195,7 @@ OccurenceIndicator = "?" / "*" / "+"
 // 186
 ItemType
  = KindTest
- / "item()" {return ["typeTest", [null, null, "item()"]]}
+ / "item()" {return ["anyItemType"]}
  / FunctionTest
  / MapTest
  / ArrayTest
@@ -203,76 +203,75 @@ ItemType
  / ParenthesizedItemType
 
 // 187
-AtomicOrUnionType = typeName:EQName {return ["typeTest", typeName]}
+AtomicOrUnionType = typeName:EQName {return ["atomicType", typeName]}
 
 // 188
 KindTest
  = DocumentTest
  / ElementTest
  / AttributeTest
- / SchemaElementTest {return "unsupported"}
- / SchemaAttributeTest {return "unsupported"}
+ / SchemaElementTest
+ / SchemaAttributeTest
  / PITest
  / CommentTest
  / TextTest
- / NamespaceNodeTest {return "unsupported"}
+ / NamespaceNodeTest
  / AnyKindTest
 
 // 189
 AnyKindTest
- = "node()" {return ["kindTest", "node()"]}
+ = "node()" {return ["anyKindTest"]}
 
 // 190
 DocumentTest
- = "document-node(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["kindTest", "document-node()", innerTest]}
- / "document-node()" {return ["kindTest", "document-node()"]}
+ = "document-node(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["documentTest"].concat(innerTest ? [innerTest] : [])}
 
 // 191
 TextTest
- = "text()" {return ["kindTest", "text()"]}
+ = "text()" {return ["textTest"]}
 
 // 192
 CommentTest
- = "comment()" {return ["kindTest", "comment()"]}
+ = "comment()" {return ["commentTest"]}
 
 // 193
 NamespaceNodeTest
- = "namespace-node()" {return ["kindTest", "namespace-node()"]}
+ = "namespace-node()" {return ["namespaceNodeTest"]}
 
 // 194
 // Let's keep it simple: only accept NCNames, optionally quoted, since quoted non-ncnames should throw a typeError later anyway
 PITest
- = "processing-instruction(" _ target:NCName _ ")" {return ["kindTest", "processing-instruction()", target]}
- / "processing-instruction(" _ literal:StringLiteral _ ")" {return ["kindTest", "processing-instruction()", literal[1]]}
- / "processing-instruction()" {return ["kindTest", "processing-instruction()"]}
+ = "processing-instruction(" _ target:NCName _ ")" {return ["piTest", ["piTarget", target]]}
+ / "processing-instruction(" _ literal:StringLiteral _ ")" {return ["piTest", ["piTarget", literal]]}
+ / "processing-instruction()" {return ["piTest"]}
 
 // 195
 AttributeTest
- = "attribute(" _ name:AttribNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "attribute()", name, type]}
- / "attribute(" _ name:AttribNameOrWildCard _ ")" {return ["kindTest", "attribute()", name]}
- / "attribute()" {return ["kindTest", "attribute()"]}
+ = "attribute(" _ name:AttribNameOrWildCard _ "," _ type:TypeName _ ")" {return ["attributeTest", ["attributeName", name], ["typeName", type]]}
+ / "attribute(" _ name:AttribNameOrWildCard _ ")" {return ["attributeTest", ["attributeName", name]]}
+ / "attribute()" {return ["attributeTest"]}
 
 // 196
-AttribNameOrWildCard = AttributeName / ("*" {return ["*", null, "*"]})
+AttribNameOrWildCard = name:AttributeName {return ["QName"].concat(name)} / ("*" {return ["star"]})
 
 // 197
 SchemaAttributeTest
- = "schema-attribute(" _ decl:AttributeDeclaration _ ")" {return ["kindTest", "schema-attribute()", decl]}
+ = "schema-attribute(" _ decl:AttributeDeclaration _ ")" {return ["schemaAttributeTest"].concat(decl)}
 
 // 198
 AttributeDeclaration = AttributeName
 
 // 199
 ElementTest
- = "element" _ "(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "element()", name, type]}
- / "element" _ "(" _ name:ElementNameOrWildCard _ ")" {return ["kindTest", "element()", name]}
- / "element" _ "(" _ ")" {return ["kindTest", "element()"]}
+ = "element" _ "(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["elementTest", ["elementName"].concat(name), ["typeName"].concat(type)]}
+ / "element" _ "(" _ name:ElementNameOrWildCard _ ")" {return ["elementTest", ["elementName"].concat(name)]}
+ / "element" _ "(" _ ")" {return ["anyElementTest"]}
 
 // 200
-ElementNameOrWildCard = ElementName / ("*" {return ["*", null, "*"]})
+ElementNameOrWildCard = name:ElementName {return ["QName"].concat(name)} / ("*" {return ["star"]})
 
 // 201
-SchemaElementTest = "schema-element(" ElementDeclaration ")"
+SchemaElementTest = "schema-element" _ "(" decl:ElementDeclaration ")" {return ["schemaElementTest"].concat(decl)}
 
 // 202
 ElementDeclaration = ElementName
@@ -290,20 +289,20 @@ SimpleTypeName = TypeName
 TypeName = EQName
 
 // 207
-FunctionTest = AnyFunctionTest / TypedFunctionTest
+FunctionTest = annotations:Annotation* test:(AnyFunctionTest / TypedFunctionTest) {return test.splice.apply(test, [1, 0].concat(annotations))}
 
 // 208
 AnyFunctionTest = "function" _ "(" _ "*" _ ")" {return ["anyFunctionTest"]}
 
 // 209
 TypedFunctionTest
- = "function" _ "(" _ types:(first:SequenceType rest:("," _ t:SequenceType {return t})* {return appendRest(first, rest)})? _ ")" S "as" S SequenceType {return ["functionTest", types]}
+ = "function" _ "(" _ paramTypeList:(lhs:SequenceType rhs:("," _ t:SequenceType {return t})* {return lhs.concat.apply(lhs, rhs)})? _ ")" S "as" S returnType:SequenceType {return ["functionTest", ["paramTypeList", paramTypeList], returnType]}
 
 // 210
 MapTest = AnyMapTest / TypedMapTest
 
 // 211
-AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["typeTest", [null, null, "map(*)"]]}
+AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["anyMapTest"]}
 
 // 212
 TypedMapTest = "map" _ "(" _ keyType:AtomicOrUnionType _ "," _ valueType:SequenceType _ ")" {return ["typedMapTest", keyType, valueType]}
@@ -318,7 +317,7 @@ AnyArrayTest = "array" _ "(" _ "*" _ ")" {return ["anyArrayTest"]}
 TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", type]}
 
 // 216
-ParenthesizedItemType = "(" _ type:ItemType _ ")" {return type}
+ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", type]}
 
 // 217
 URILiteral = StringLiteral
