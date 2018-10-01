@@ -52,22 +52,22 @@ BoundarySpaceDecl = "declare" S "boundary-space" S value:("preserve" / "strip") 
 DefaultCollationDecl = "declare" S "default" "collation" value:URILiteral {return ['defaultCollationDecl', value]}
 
 // 11
-BaseURIDecl = "declare" S "base-uri" S value:URILiteral {return {type: 'baseURIDecl'}}
+BaseURIDecl = "declare" S "base-uri" S value:URILiteral {return ['baseUriDecl', value]}
 
 // 12
-ConstructionDecl = "declare" S "construction" S ("strip" / "preserve") {return {type: 'constructionDecl'}}
+ConstructionDecl = "declare" S "construction" S value:("strip" / "preserve") {return ['constructionDecl', value]}
 
 // 13
 OrderingModeDecl
- = "declare" S "ordering" S ("ordered" / "unordered") {return {type: 'orderingModeDecl'}}
+ = "declare" S "ordering" S value:("ordered" / "unordered") {return ['orderingModeDecl', value]}
 
 // 14
 EmptyOrderDecl
- = "declare" S "default" S "order" S "empty" S ("greatest" / "least") {return {type: 'emptyOrderDecl'}}
+ = "declare" S "default" S "order" S "empty" S value:("greatest" / "least") {return ['emptyOrderDecl', value]}
 
 // 15
 CopyNamespacesDecl
- = "declare" S "copy-namespaces" S PreserveMode _ "," _ InheritMode {return {type: 'copyNamespacesDecl'}}
+ = "declare" S "copy-namespaces" S preserveMode:PreserveMode _ "," _ inheritMode:InheritMode {return['copyNamespacesDecl', ['preserveMode', preserveMode], ['inheritMode', inheritMode]]}
 
 // 16
 PreserveMode
@@ -79,7 +79,12 @@ InheritMode
 
 // 18
 DecimalFormatDecl
- = "declare" S (("decimal-format" S EQName) / ("default" S "decimal-format")) (DFPropertyName S "=" S StringLiteral)* {return {type: 'decimalFormatDecl'}}
+ = "declare" S 
+ decimalFormatName:(("decimal-format" S name:EQName {return ["decimalFormatName"].concat(name)}) / ("default" S "decimal-format" {return null}))
+ decimalFormatParams:(S name:DFPropertyName S "=" S value:StringLiteral
+    {return ["decimalFormatParam", ["decimalFormatParamName", name], ["decimalFormatParamValue", value]]}
+ )*
+ {return ['decimalFormatDecl'].concat(decimalFormatName ? [decimalFormatName] : []).concat(decimalFormatParams)}
 
 // 19
 DFPropertyName
@@ -108,7 +113,7 @@ NamespaceDecl
 
 // 25
 DefaultNamespaceDecl
- = "declare" S "default" S elementOrFunction:("element" / "function") S "namespace" S uri:URILiteral {return {type: 'defaultNamespaceDecl', elementOrFunction: elementOrFunction, namespaceURI: uri[1]}}
+ = "declare" S "default" S elementOrFunction:("element" / "function") S "namespace" S uri:URILiteral {return ["defaultNamespaceDecl", ["defaultNamespaceCategory", elementOrFunction], ["uri", uri]]}
 
 // 26
 AnnotatedDecl
