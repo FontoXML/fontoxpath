@@ -1,19 +1,16 @@
 {
   function parseCodePoint (codePoint) {
     // TODO: Assert not in XPath mode
-	if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
-		(codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
-		(codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
+  if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
+    (codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
+    (codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
         return String.fromCodePoint(codePoint);
-	}
-	throw new Error(`XQST0090: The character reference ${codePoint} (${codePoint.toString(16)}) does not reference a valid codePoint.`);
+  }
+  throw new Error(`XQST0090: The character reference ${codePoint} (${codePoint.toString(16)}) does not reference a valid codePoint.`);
   }
 
   function makeBinaryOp (kind, lhs, rhs) {
-      if (rhs.length === 0) {
-          return lhs;
-      }
-      return [kind, ["firstOperator", lhs], ["secondOperator", makeBinaryOp(kind, lhs.slice(0, 1), lhs.slice(1))]];
+      return rhs.reduce(function(lh, rh) {return [kind, ["firstOperator", lh], ["secondOperator", rh]]}, lhs);
   }
 }
 
@@ -113,6 +110,7 @@ SchemaPrefix
 ModuleImport
  = "import" S "module"
    prefix:(S "namespace" S prefix:$NCName _ "=" {return prefix})?
+  // TODO: The URILiteral should be preceded with whitespace if the no prefix is set
    _ uri:URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)? {return ["moduleImport", ["namespacePrefix", prefix], ["targetNamespace", uri]]}
 
 // 24
@@ -134,7 +132,7 @@ Annotation
 // 28
 VarDecl
  = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})? 
-      value:((_ ":=" _ v:VarValue {return ["varValue", value]})
+      value:((_ ":=" _ value:VarValue {return ["varValue", value]})
       / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])})) 
   {return ["varDecl", ["varName"].concat(name), ["typeDeclaration", varType], value]}
 
@@ -146,7 +144,7 @@ VarValue
 VarDefaultValue
  = ExprSingle
 
-// 31
+// 31 TODO: Convert to XQueryX
 ContextItemDecl
  = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?)) {return {type: 'contextItemDecl'}}
 
@@ -201,67 +199,65 @@ AndExpr
 
 // 85
 ComparisonExpr
- = lhs:StringConcatExpr (_ op:(ValueComp / NodeComp / GeneralComp) _ rhs:StringConcatExpr)? {return rhs ? [op, lhs, rhs] : lhs}
- 
+ = lhs:StringConcatExpr rhs:(_ op:(ValueComp / NodeComp / GeneralComp) _ expr:StringConcatExpr {return [op, expr]})?
+ {return rhs ? [rhs[0], ["firstOperator", lhs], ["secondOperator", rhs[1]]] : lhs}
+
 // 86
 StringConcatExpr
- = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})*
+ = lhs:RangeExpr rhs:( _ "||" _ expr:RangeExpr {return expr})*
    {return makeBinaryOp("stringConcatenateOp", lhs, rhs)}
 
 // 87
 RangeExpr
  = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})?
-  {return rhs === null ? lhs : ["rangeSequenceExpr", ["startExpr", lhs], ["endExpr", rhs]]]}
+  {return rhs === null ? lhs : ["rangeSequenceExpr", ["startExpr", lhs], ["endExpr", rhs]]}
 
 // 88
 AdditiveExpr
- = lhs:MultiplicativeExpr (_ op:("-" {return "subtractOp"}/ "+" {return "addOp"}) _ rhs:AdditiveExpr {return [op, lhs, rhs]})?
- 
-// WE WERE HERE!!!!
+ = lhs:MultiplicativeExpr rhs:(_ op:("-" {return "subtractOp"}/ "+" {return "addOp"}) _ expr:MultiplicativeExpr {return [op, expr]})*
+ {return rhs.reduce(function (lhs, additiveOp) {return [additiveOp[0], ["firstOperator", lhs], ["secondOperator", additiveOp[1]]]}, lhs)}
 
 // 89
-multiplicativeExprOp
- = op:("*" / ( op:("div" / "idiv" / "mod") AssertAdjacentOpeningTerminal {return op}))
 MultiplicativeExpr
- = lhs:UnionExpr rest:( _ op:multiplicativeExprOp _ rhs:UnionExpr {return {op: op, rhs: rhs}})* {
-        return rest.length === 0 ? lhs : rest.reduce(function (inner, nesting) {
-            return ["binaryOperator", nesting.op, inner, nesting.rhs]
-        }, lhs)
-    }
+ = lhs:UnionExpr rhs:( _ op:(
+   "*" {return "multiplyOp"}
+   / "div" AssertAdjacentOpeningTerminal {return "divOp"}
+   / "idiv" AssertAdjacentOpeningTerminal {return "idivOp"}
+   / "mod" AssertAdjacentOpeningTerminal {return "modOp"})
+   _ expr:UnionExpr {return [op, expr]})*
+ {return rhs.reduce(function (lhs, multiplicativeOp) {return [multiplicativeOp[0], ["firstOperator", lhs], ["secondOperator", multiplicativeOp[1]]]}, lhs)}
 
 // 90
 UnionExpr
- = first:IntersectExpr rest:( _ ("|"/("union" AssertAdjacentOpeningTerminal)) _ expr:IntersectExpr {return expr})+ {return appendRest(["union", first], rest)}
- / IntersectExpr
+ = lhs:IntersectExpr rhs:( _ ("|"/("union" AssertAdjacentOpeningTerminal)) _ expr:IntersectExpr {return expr})*
+ {return makeBinaryOp("unionOp", lhs, rhs)}
 
 // 91 Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
- = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return [type, rhs]})? {
-     return rhs === null ? lhs : ["intersectExcept", rhs[0], lhs, rhs[1]]
-   }
+ = lhs:InstanceofExpr rhs:(_ op:("intersect" {return "intersectOp"} / "except" {return "exceptOp"}) AssertAdjacentOpeningTerminal _ expr:IntersectExpr {return [op, expr]})*
+ {return rhs.reduce(function (lhs, intersectOp) {return [intersectOp[0], ["firstOperator", lhs], ["secondOperator", intersectOp[1]]]}, lhs)}
 
 // 92
 InstanceofExpr
- = lhs:TreatExpr rhs:(_ "instance" S "of" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["instance of", lhs, rhs] : lhs}
+ = lhs:TreatExpr rhs:(_ "instance" S "of" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["instanceOfExpr", ["argExpr", lhs], ["sequenceType", rhs]] : lhs}
  / TreatExpr
 
 // 93
 TreatExpr
-// = lhs:CastableExpr _ "treat" S "as" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return ["treat as", lhs, rhs]}
- = CastableExpr
+ = lhs:CastableExpr rhs:(_ "treat" S "as" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["treatExpr", ["argExpr", lhs], ["sequenceType", rhs]] : lhs}
 
 // 94
 CastableExpr
- = lhs:CastExpr rhs:(_ "castable" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castable as", lhs, rhs] : lhs}
+ = lhs:CastExpr rhs:(_ "castable" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castableExpr", ["argExpr", lhs], ["singleType", rhs]] : lhs}
 
 // 95
 CastExpr
- = lhs:ArrowExpr rhs:(_ "cast" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["cast as", lhs, rhs] : lhs}
+ = lhs:ArrowExpr rhs:(_ "cast" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castExpr", ["argExpr", lhs], ["singleType", rhs]] : lhs}
 
-// 96
+// 96 TODO: Implementation
 ArrowExpr
- = lhs:UnaryExpr functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier _ argumentList:ArgumentList _ {return [functionName, argumentList]})* {
-     if (!functionParts.length) return lhs;
+ = UnaryExpr
+ /* = lhs:UnaryExpr {return lhs} functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier _ argumentList:ArgumentList _ {return [functionName, argumentList]})* {
      return functionParts.reduce(function (previousFunction, functionPart) {
        var args = [previousFunction].concat(functionPart[1]);
        return [
@@ -270,15 +266,15 @@ ArrowExpr
          args
        ];
      }, lhs);
-   }
+   }*/
 
 // 97
 UnaryExpr
- = "-" expr:UnaryExpr {return ["unaryMinus", expr]}
- / "+" expr:UnaryExpr {return ["unaryPlus", expr]}
+ = "-" expr:UnaryExpr {return ["unaryMinusOp", ["operand", expr]]}
+ / "+" expr:UnaryExpr {return ["unaryPlus", ["operand", expr]]}
  / ValueExpr
 
-// 98
+// 98 TODO: Should be: ValidateExpr | ExtensionExpr | SimpleMapExpr
 ValueExpr = SimpleMapExpr
 
 // 99
@@ -307,12 +303,17 @@ NodeComp
 
 // 107
 SimpleMapExpr
- = lhs:PathExpr parts:( _ "!" _ expr:PathExpr {return expr})* {
-     if (!parts.length) return lhs;
-     return parts.reduce(function (previousMap, expression) {
-         return ["simpleMap", previousMap, expression]
-     }, lhs);
-   }
+ = lhs:PathExpr rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", [lhs].concat(rhs)] : lhs}
+
+// 108
+PathExpr
+ = "/" _ pathExpr:RelativePathExpr? {return ["pathExpr", ["rootExpr"].concat(pathExpr)]}
+ / "//" _ pathExpr:RelativePathExpr {return ["pathExpr", ["rootExpr"], ["stepExpr", ["xpathAxis", "descendant-or-self"], ["kindTest", "node()"]].concat(pathExpr)]}
+ / pathExpr:RelativePathExpr {return ["pathExpr", pathExpr]}
+
+// 109
+RelativePathExpr
+ = "test"
 
 // 112
 EQName = uri:URIQualifiedName {return [{prefix: null, uri: uri[0]}, uri[1]]}
@@ -329,6 +330,10 @@ NumericLiteral = literal:(DoubleLiteral / DecimalLiteral / IntegerLiteral) ![a-z
 // 132
 VarName
  = EQName
+
+// 182
+SingleType
+ = typeName:SimpleTypeName optional:"?"? {return optional ? ["singleType", ["atomicType", typeName], ["optional"]] : ["singleType", ["atomicType", typeName]]}
 
 // 183
 TypeDeclaration
