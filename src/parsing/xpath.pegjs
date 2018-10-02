@@ -307,13 +307,14 @@ SimpleMapExpr
 
 // 108
 PathExpr
- = "/" _ pathExpr:RelativePathExpr? {return pathExpr ? ["pathExpr", ["rootExpr"]].concat(pathExpr) : ["pathExpr", ["rootExpr"]]}
- / "//" _ pathExpr:RelativePathExpr {return ["pathExpr", ["rootExpr"], ["stepExpr", ["xpathAxis", "descendant-or-self"], ["kindTest", "node()"]].concat(pathExpr)]}
- / pathExpr:RelativePathExpr {return ["pathExpr", pathExpr]}
+ = "//" _ pathExpr:RelativePathExpr {return ["pathExpr", ["rootExpr"], ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]].concat(pathExpr)}
+ / "/" _ pathExpr:RelativePathExpr? {return pathExpr ? ["pathExpr", ["rootExpr"]].concat(pathExpr) : ["pathExpr", ["rootExpr"]]}
+ / pathExpr:RelativePathExpr {return ["pathExpr"].concat(pathExpr)}
 
 // 109
 RelativePathExpr
- = lhs:StepExpr rhs:(lh:("/" {return []}/ "//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["kindTest", "node()"]]}) rhs:StepExpr {return lh.concat(rhs)})* {return [lhs].concat(rhs)}
+ = lhs:StepExpr rhs:(lh:("//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]} / "/" {return false}) rh:StepExpr {return lh ? [lh, rh] : [rh]})*
+ {return [lhs].concat(rhs.reduce(function (all, items) {return all.concat(items)}, []))}
 
 // 110 TODO: Suppport PostfixExpr i.e. PostfixExpr / AxisStep
 StepExpr
