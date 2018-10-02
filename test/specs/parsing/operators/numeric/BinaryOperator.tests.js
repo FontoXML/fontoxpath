@@ -7,6 +7,7 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPathToStrings
 } from 'fontoxpath';
+import { isRegExp } from 'util';
 
 let documentNode;
 beforeEach(() => {
@@ -31,6 +32,12 @@ describe('mathematical operators', () => {
 
 	it('uses the correct ordering',
 		() => chai.assert.equal(evaluateXPathToNumber('2 idiv 2 * 2', documentNode), 2, 'This should be parsed as (2 idiv 2) * 2'));
+
+	it('subtracts in the correct order',
+		() => chai.assert.equal(evaluateXPathToNumber('5 - 1 - 1', documentNode), 3));
+
+	it('subtracts in the correct order when parentheses are used',
+		() => chai.assert.equal(evaluateXPathToNumber('5 - (1 - 1)', documentNode), 5));
 
 	it('returns the empty sequence if one of the operands is the empty sequence',
 		() => chai.assert.deepEqual(evaluateXPathToStrings('() + 1', documentNode), []));

@@ -121,8 +121,12 @@ RangeExpr
 
 // 21
 AdditiveExpr
- = lhs:MultiplicativeExpr _ op:("-" / "+") _ rhs:AdditiveExpr {return ["binaryOperator", op, lhs, rhs]}
- / MultiplicativeExpr
+ = lhs:MultiplicativeExpr rest:( _ op:("-" / "+") _ rhs:MultiplicativeExpr {return {op: op, rhs: rhs}})* {
+        return rest.length === 0 ? lhs : rest.reduce(function (inner, nesting) {
+            return ["binaryOperator", nesting.op, inner, nesting.rhs]
+        }, lhs)
+    }
+/ MultiplicativeExpr
 
 // 22
 multiplicativeExprOp
