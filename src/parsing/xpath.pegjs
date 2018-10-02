@@ -24,7 +24,7 @@ MainModule
 
 // 2
 VersionDeclaration
- = "xquery" _ versionAndEncoding:( 
+ = "xquery" _ versionAndEncoding:(
     ("encoding" S e:StringLiteral {return ["encoding", e]})
     / ("version" S version:StringLiteral encoding:(S "encoding" S e:StringLiteral {return e})? {return [["version", version], ["encoding", encoding]]})
 ) _ Separator {return ["versionDecl"].concat(versionAndEncoding)}
@@ -40,7 +40,7 @@ ModuleDecl
 // 6
 Prolog
  = moduleSettings:(prologPart:(DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _ {return prologPart})*
-   declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _{return prologPart})* 
+   declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _{return prologPart})*
    {return ["prolog"].concat(moduleSettings).concat(declarations)}
 
 // 7
@@ -84,7 +84,7 @@ InheritMode
 
 // 18
 DecimalFormatDecl
- = "declare" S 
+ = "declare" S
  decimalFormatName:(("decimal-format" S name:EQName {return ["decimalFormatName"].concat(name)}) / ("default" S "decimal-format" {return null}))
  decimalFormatParams:(S name:DFPropertyName S "=" S value:StringLiteral
     {return ["decimalFormatParam", ["decimalFormatParamName", name], ["decimalFormatParamValue", value]]}
@@ -131,9 +131,9 @@ Annotation
 
 // 28
 VarDecl
- = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})? 
+ = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})?
       value:((_ ":=" _ value:VarValue {return ["varValue", value]})
-      / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])})) 
+      / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])}))
   {return ["varDecl", ["varName"].concat(name), ["typeDeclaration", varType], value]}
 
 // 29
@@ -303,21 +303,75 @@ NodeComp
 
 // 107
 SimpleMapExpr
- = lhs:PathExpr rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", [lhs].concat(rhs)] : lhs}
+ = lhs:PathExpr {return lhs}// rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", [lhs].concat(rhs)] : lhs}
 
 // 108
 PathExpr
- = "/" _ pathExpr:RelativePathExpr? {return ["pathExpr", ["rootExpr"].concat(pathExpr)]}
+ = "/" _ pathExpr:RelativePathExpr? {return pathExpr ? ["pathExpr", ["rootExpr"]].concat(pathExpr) : ["pathExpr", ["rootExpr"]]}
  / "//" _ pathExpr:RelativePathExpr {return ["pathExpr", ["rootExpr"], ["stepExpr", ["xpathAxis", "descendant-or-self"], ["kindTest", "node()"]].concat(pathExpr)]}
  / pathExpr:RelativePathExpr {return ["pathExpr", pathExpr]}
 
 // 109
 RelativePathExpr
- = "test"
+ = lhs:StepExpr rhs:(lh:("/" {return []}/ "//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["kindTest", "node()"]]}) rhs:StepExpr {return lh.concat(rhs)})* {return [lhs].concat(rhs)}
+
+// 110 TODO: Suppport PostfixExpr i.e. PostfixExpr / AxisStep
+StepExpr
+ = AxisStep
+
+// 111
+AxisStep
+ = stepExpr:(ReverseStep / ForwardStep) PredicateList {return ["stepExpr", stepExpr[0], stepExpr[1]]}
 
 // 112
-EQName = uri:URIQualifiedName {return [{prefix: null, uri: uri[0]}, uri[1]]}
- / name:QName {return [{prefix: name[0], uri: null}, name[1]]}
+ForwardStep
+ = step:(axis:ForwardAxis nodeTest:NodeTest {return [["xpathAxis", axis], nodeTest]}) / AbbrevForwardStep {return step}
+
+// 113
+ForwardAxis
+ = ("child" "::") {return "child"}
+ / ("descendant" "::") {return "descendant"}
+ / ("attribute" "::") {return "attribute"}
+ / ("self" "::") {return "self"}
+ / ("descendant-or-self" "::") {return "descendant-or-self"}
+ / ("following-sibling" "::") {return "following-sibling"}
+ / ("following" "::") {return "following"}
+
+// 114
+AbbrevForwardStep
+ = "@"? NodeTest
+
+// 115
+ReverseStep
+ = step:(axis:ReverseAxis nodeTest:NodeTest {return [["xpathAxis", axis], nodeTest]}) / AbbrevReverseStep {return step}
+
+// 116
+ ReverseAxis
+ = ("parent" "::") {return "parent"}
+ / ("ancestor" "::") {return "ancestor"}
+ / ("preceding-sibling" "::") {return "preceding-sibling"}
+ / ("preceding" "::") {return "preceding"}
+ / ("ancestor-or-self" "::") {return "ancestor-or-self"}
+
+// 117
+AbbrevReverseStep
+ = ".."
+
+// 118
+NodeTest
+ = KindTest / NameTest
+
+// 119 TODO: Suppport wildcard i.e. EQName / Wildcard
+NameTest
+ = EQName
+
+// 123
+PredicateList
+ = Predicate*
+
+// 124
+Predicate
+ = "[" Expr "]"
 
 // 129
 Literal
@@ -476,6 +530,10 @@ ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemTyp
 
 // 217
 URILiteral = StringLiteral
+
+// 218
+EQName = uri:URIQualifiedName {return [{prefix: null, uri: uri[0]}, uri[1]]}
+ / name:QName {return [{prefix: name[0], uri: null}, name[1]]}
 
 // 219
 IntegerLiteral = digits:Digits {return ["integerConstantExpr", digits]}

@@ -3,7 +3,8 @@ const parser = require('./xPathParser.raw.js');
 
 const input = `
 module namespace test="prrt";
-declare variable $test := /test;`;
+declare variable $test := /;
+declare variable $test := /child::node()/ancestor::node();`;
 
 function print (what, indent, n) {
     const filler = Array(indent).fill(' ').join('');
