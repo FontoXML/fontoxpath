@@ -7,7 +7,6 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPathToStrings
 } from 'fontoxpath';
-import { isRegExp } from 'util';
 
 let documentNode;
 beforeEach(() => {
