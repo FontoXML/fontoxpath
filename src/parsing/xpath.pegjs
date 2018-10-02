@@ -254,19 +254,13 @@ CastableExpr
 CastExpr
  = lhs:ArrowExpr rhs:(_ "cast" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castExpr", ["argExpr", lhs], ["singleType", rhs]] : lhs}
 
-// 96 TODO: Implementation
+// 96
 ArrowExpr
- = UnaryExpr
- /* = lhs:UnaryExpr {return lhs} functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier _ argumentList:ArgumentList _ {return [functionName, argumentList]})* {
-     return functionParts.reduce(function (previousFunction, functionPart) {
-       var args = [previousFunction].concat(functionPart[1]);
-       return [
-         "functionCall",
-         functionPart[0][0] === 'namedFunctionRef' ? functionPart[0].concat([args.length]) : functionPart[0],
-         args
-       ];
-     }, lhs);
-   }*/
+ = argExpr:UnaryExpr functionParts:( _ "=>" _ functionSpecifier:ArrowFunctionSpecifier _ argumentList:ArgumentList {return [functionSpecifier, argumentList]})* {
+     return functionParts.reduce(function (argExpr, functionPart) {
+       return ["arrowExpr", ["argExpr", argExpr], functionPart[0], ["arguments", functionPart[1]]]
+     }, argExpr);
+   }
 
 // 97
 UnaryExpr
@@ -374,6 +368,13 @@ PredicateList
 Predicate
  = "[" Expr "]"
 
+// 122
+ArgumentList
+ = "(" _ args:(first:Argument rest:( _ "," _ arg:Argument {return arg})* {return appendRest([first], rest)})? _ ")" {return args||[]}
+
+// 127
+ArrowFunctionSpecifier = name:EQName {return ["EQName", name]} / VarRef / ParenthesizedExpr
+
 // 129
 Literal
  = NumericLiteral / StringLiteral
@@ -382,9 +383,27 @@ Literal
 // Note: changes because double accepts less than decimal, accepts less than integer
 NumericLiteral = literal:(DoubleLiteral / DecimalLiteral / IntegerLiteral) ![a-zA-Z] {return literal}
 
+// 131
+VarRef
+ = "$" varName:VarName {return ["varRef", ["name"].concat(varName)]}
+
 // 132
 VarName
  = EQName
+
+// 133
+ParenthesizedExpr
+ = "(" _ expr:Expr _ ")" {return expr}
+ / "(" _ ")" {return null}
+
+// 138
+Argument
+ = ArgumentPlaceholder
+ / ExprSingle
+
+// 139
+ArgumentPlaceholder
+ = "?" {return ["argumentPlaceholder"]}
 
 // 182
 SingleType

@@ -5,7 +5,10 @@ const input = `
 module namespace test="prrt";
 declare variable $test := child::node();
 declare variable $test := child::node()/ancestor::node();
-declare variable $test := child::node()//ancestor::node();`;
+declare variable $test := child::node()//ancestor::node();
+declare variable $test := /test => fn:string() => $prrt(()) => vrot(?);
+`;
+>>>>>>> Stashed changes
 
 function print (what, indent, n) {
     const filler = Array(indent).fill(' ').join('');
