@@ -175,7 +175,7 @@ OptionDecl
 
 // 39
 Expr
- = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle {return part})* {return lhs.concat(rhs)}
+ = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle {return part})* {return rhs.length === 0 ? lhs : ["sequenceExpr", lhs].concat(rhs)}
 
 // 40 TODO, fix proper
 ExprSingle
@@ -303,7 +303,7 @@ SimpleMapExpr
 PathExpr
  = "//" _ pathExpr:RelativePathExpr {return ["pathExpr", ["rootExpr"], ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]].concat(pathExpr)}
  / "/" _ pathExpr:RelativePathExpr? {return pathExpr ? ["pathExpr", ["rootExpr"]].concat(pathExpr) : ["pathExpr", ["rootExpr"]]}
- / pathExpr:RelativePathExpr {return ["pathExpr"].concat(pathExpr)}
+ / pathExpr:RelativePathExpr
 
 // 109
 RelativePathExpr
@@ -312,7 +312,8 @@ RelativePathExpr
 
 // 110 TODO: Suppport PostfixExpr i.e. PostfixExpr / AxisStep
 StepExpr
- = AxisStep
+ = PostfixExpr
+ / AxisStep
 
 // 111
 AxisStep
@@ -320,7 +321,7 @@ AxisStep
 
 // 112
 ForwardStep
- = step:(axis:ForwardAxis nodeTest:NodeTest {return [["xpathAxis", axis], nodeTest]}) / AbbrevForwardStep {return step}
+ = step:(axis:ForwardAxis nodeTest:NodeTest {return [["xpathAxis", axis], nodeTest]}) {return step} / AbbrevForwardStep
 
 // 113
 ForwardAxis
@@ -360,24 +361,55 @@ NodeTest
 NameTest
  = EQName
 
-// 123
-PredicateList
- = Predicate*
-
-// 124
-Predicate
- = "[" Expr "]"
+// 121
+PostfixExpr
+ = expr:PrimaryExpr postfixExpr:(
+   (_ filter:Predicate {return filter})
+   / (_ argList:ArgumentList {return argList})
+   / (_ lookup:Lookup {return lookup})
+   )* {return postfixExpr.length === 0 ? expr : ["predicates"].concat(postfixExpr)}
 
 // 122
 ArgumentList
- = "(" _ args:(first:Argument rest:( _ "," _ arg:Argument {return arg})* {return appendRest([first], rest)})? _ ")" {return args||[]}
+ = "(" _ args:(first:Argument rest:( _ "," _ arg:Argument {return arg})* {return [first].concat(rest)})? _ ")" {return args||[]}
+
+// 123
+PredicateList
+ = predicates:Predicate* {return ["predicates", predicates]}
+
+// 124
+Predicate
+ = "[" expr:Expr "]" {return expr}
+
+// 125
+Lookup
+ = "?" _ KeySpecifier
+
+KeySpecifier
+ = NCName / IntegerLiteral / ParenthesizedExpr / "*"
 
 // 127
 ArrowFunctionSpecifier = name:EQName {return ["EQName", name]} / VarRef / ParenthesizedExpr
 
+// 128
+PrimaryExpr
+ = Literal
+// / VarRef
+ / ParenthesizedExpr
+// / ContextItemExpr
+ / FunctionCall
+// / OrderedExpr
+// / UnorderedExpr
+// / NodeConstructor
+// / FunctionItemExpr
+// / MapConstructor
+// / ArrayConstructor
+// / StringConstructor
+// / UnaryLookup
+
 // 129
 Literal
- = NumericLiteral / StringLiteral
+ = NumericLiteral / lit:StringLiteral { return ["stringConstantExpr", lit]}
 
 // 130
 // Note: changes because double accepts less than decimal, accepts less than integer
@@ -395,6 +427,12 @@ VarName
 ParenthesizedExpr
  = "(" _ expr:Expr _ ")" {return expr}
  / "(" _ ")" {return null}
+
+// 137
+FunctionCall
+// Do not match reserved function names as function names, they should be tests or other built-ins.
+// Match the '(' because 'elementWhatever' IS a valid function name
+ = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {return ["functionCallExpr", ["functionName"].concat(name), ["arguments"].concat(args)]}
 
 // 138
 Argument
