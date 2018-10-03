@@ -170,7 +170,8 @@ ParamList
 
 // 34
 Param
- = "$" varName:EQName S typeDeclaration:TypeDeclaration? {return ["param", ["varName", varName], ["typeDeclaration", typeDeclaration]]}
+ = "$" varName:EQName typeDeclaration:(S t:TypeDeclaration {return t})?
+ {return ["param", ["varName"].concat(varName).concat(typeDeclaration ? ["typeDeclaration", typeDeclaration] : [])]}
 
 // 35
 FunctionBody
