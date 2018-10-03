@@ -3,12 +3,8 @@ const parser = require('./xPathParser.raw.js');
 
 const input = `
 module namespace test="prrt";
-declare variable $test := child::node();
-declare variable $test := child::node()/ancestor::node();
-declare variable $test := child::node()//ancestor::node();
-declare variable $test := /test => fn:string() => $prrt(()) => vrot(?);
+declare variable $test := 123[vrot("123", ?, (1,2,3))][1];
 `;
->>>>>>> Stashed changes
 
 function print (what, indent, n) {
     const filler = Array(indent).fill(' ').join('');
@@ -20,7 +16,10 @@ function print (what, indent, n) {
             if (what === null) {
                 return filler + what;
             }
-            return Object.keys(what).map(k => filler + '' + k + ': "' + what[k] + '"').join('\n');
+			if (n !== 1) {
+				console.warn('Attributes at the wrong place!!!');
+			}
+            return Object.keys(what).map(k => filler + '⤷' + k + ': "' + what[k] + '"').join('\n');
         }
         default: {
             if (n === 0) {
