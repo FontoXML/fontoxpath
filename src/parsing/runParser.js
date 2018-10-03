@@ -2,9 +2,11 @@
 const parser = require('./xPathParser.raw.js');
 
 const input = `
-for $x as xs:int in (1 to 10)
-let $y := $x * $x
-return if ($x = 10) then $x else 123
+import module namespace xxx="yyy";
+import schema namespace xxx="sd";
+import schema default element namespace "YYY";
+import schema "TTT";
+yyy:prrt()
 `;
 
 function print (what, indent, n) {
@@ -20,7 +22,7 @@ function print (what, indent, n) {
 			if (n !== 1) {
 				console.warn('Attributes at the wrong place!!!');
 			}
-			return Object.keys(what).map(k => filler + '⤷' + k + ': "' + what[k] + '"').join('\n');
+			return Object.keys(what).map(k => `${filler}⤷${k}: ${what[k] === null ? 'null' : `"${what[k]}"`}`).join('\n');
 		}
 		default: {
 			if (n === 0) {
