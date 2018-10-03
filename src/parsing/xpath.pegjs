@@ -315,7 +315,7 @@ SimpleMapExpr
 PathExpr
  = "//" _ pathExpr:RelativePathExpr {return ["pathExpr", ["rootExpr"], ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]].concat(pathExpr)}
  / "/" _ pathExpr:RelativePathExpr? {return pathExpr ? ["pathExpr", ["rootExpr"]].concat(pathExpr) : ["pathExpr", ["rootExpr"]]}
- / pathExpr:RelativePathExpr {return ["pathExpr", pathExpr]}
+ / pathExpr:RelativePathExpr {return pathExpr[0][0] === "stepExpr" ? ["pathExpr"].concat(pathExpr) : pathExpr[0]}
 
 // 109
 RelativePathExpr
