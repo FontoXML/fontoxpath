@@ -20,26 +20,31 @@
 
 // 1
 Module
- = _ versionDecl:VersionDeclaration? _ module:(LibraryModule / MainModule) _ {return ["module"].concat(versionDecl ? [versionDecl] : []).concat([module])}
+ = _ versionDecl:VersionDeclaration? _ module:(LibraryModule / MainModule) _
+   {return ["module"].concat(versionDecl ? [versionDecl] : []).concat([module])}
 
 // TODO Implement
 MainModule
- = prolog:Prolog queryBody:QueryBody {return ["mainModule"].concat(prolog ? [prolog] : []).concat([queryBody])}
+ = prolog:Prolog queryBody:QueryBody
+   {return ["mainModule"].concat(prolog ? [prolog] : []).concat([queryBody])}
 
 // 2
 VersionDeclaration
  = "xquery" _ versionAndEncoding:(
     ("encoding" S e:StringLiteral {return ["encoding", e]})
     / ("version" S version:StringLiteral encoding:(S "encoding" S e:StringLiteral {return e})? {return [["version", version], ["encoding", encoding]]})
-) _ Separator {return ["versionDecl"].concat(versionAndEncoding)}
+  ) _ Separator
+  {return ["versionDecl"].concat(versionAndEncoding)}
 
 // 4
 LibraryModule
- = moduleDecl:ModuleDecl _ prolog:Prolog {return ["libraryModule", moduleDecl].concat(prolog ? [prolog] : [])}
+ = moduleDecl:ModuleDecl _ prolog:Prolog
+   {return ["libraryModule", moduleDecl].concat(prolog ? [prolog] : [])}
 
 // 5
 ModuleDecl
- = "module" S "namespace" S prefix:$NCName _ "=" _ uri:URILiteral _ Separator {return ["moduleDecl", ["prefix", prefix], ["uri", uri]]}
+ = "module" S "namespace" S prefix:$NCName _ "=" _ uri:URILiteral _ Separator
+   {return ["moduleDecl", ["prefix", prefix], ["uri", uri]]}
 
 // 6
 Prolog
@@ -55,28 +60,39 @@ Setter
  = BoundarySpaceDecl / DefaultCollationDecl / BaseURIDecl / ConstructionDecl / OrderingModeDecl / EmptyOrderDecl / CopyNamespacesDecl / DecimalFormatDecl
 
 // 9
-BoundarySpaceDecl = "declare" S "boundary-space" S value:("preserve" / "strip") {return ['boundarySpaceDecl', value]}
+BoundarySpaceDecl
+ = "declare" S "boundary-space" S value:("preserve" / "strip")
+   {return ["boundarySpaceDecl", value]}
 
 // 10
-DefaultCollationDecl = "declare" S "default" "collation" value:URILiteral {return ['defaultCollationDecl', value]}
+DefaultCollationDecl
+ = "declare" S "default" "collation" value:URILiteral
+   {return ["defaultCollationDecl", value]}
 
 // 11
-BaseURIDecl = "declare" S "base-uri" S value:URILiteral {return ['baseUriDecl', value]}
+BaseURIDecl
+ = "declare" S "base-uri" S value:URILiteral
+   {return ["baseUriDecl", value]}
 
 // 12
-ConstructionDecl = "declare" S "construction" S value:("strip" / "preserve") {return ['constructionDecl', value]}
+ConstructionDecl
+ = "declare" S "construction" S value:("strip" / "preserve")
+   {return ["constructionDecl", value]}
 
 // 13
 OrderingModeDecl
- = "declare" S "ordering" S value:("ordered" / "unordered") {return ['orderingModeDecl', value]}
+ = "declare" S "ordering" S value:("ordered" / "unordered")
+   {return ["orderingModeDecl", value]}
 
 // 14
 EmptyOrderDecl
- = "declare" S "default" S "order" S "empty" S value:("greatest" / "least") {return ['emptyOrderDecl', value]}
+ = "declare" S "default" S "order" S "empty" S value:("greatest" / "least")
+   {return ["emptyOrderDecl", value]}
 
 // 15
 CopyNamespacesDecl
- = "declare" S "copy-namespaces" S preserveMode:PreserveMode _ "," _ inheritMode:InheritMode {return['copyNamespacesDecl', ['preserveMode', preserveMode], ['inheritMode', inheritMode]]}
+ = "declare" S "copy-namespaces" S preserveMode:PreserveMode _ "," _ inheritMode:InheritMode
+   {return["copyNamespacesDecl", ["preserveMode", preserveMode], ["inheritMode", inheritMode]]}
 
 // 16
 PreserveMode
@@ -104,34 +120,49 @@ Import = SchemaImport / ModuleImport
 
 // 21
 SchemaImport
- = "import" S "schema" (S SchemaPrefix)? S URILiteral ( S "at" S URILiteral ( S ","  S URILiteral)*)? {return {type: 'schemaImportl'}}
+ = "import" S "schema"
+   prefix:(S p:SchemaPrefix {return p})? _
+   namespace:URILiteral
+   targetLocations:( S "at" S first:URILiteral rest:( S ","  S uri:URILiteral {return uri})* {return [first].concat(rest)})?
+   {
+     return ["schemaImport"]
+       .concat(prefix ? [prefix] : [])
+       .concat([["targetNamespace", namespace]])
+       .concat(targetLocations ? [targetLocations] : [])
+    }
 
 // 22
 SchemaPrefix
- = ("namespace" S NCName S "=") / ("default" S "element" S "namespace")
+ = "namespace" S prefix:NCName _ "=" {return ["namespacePrefix", prefix]}
+ / ("default" S "element" S "namespace" AssertAdjacentOpeningTerminal) {return ["defaultElementNamespace"]}
 
 // 23
 ModuleImport
  = "import" S "module"
    prefix:(S "namespace" S prefix:$NCName _ "=" {return prefix})?
   // TODO: The URILiteral should be preceded with whitespace if the no prefix is set
-   _ uri:URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)? {return ["moduleImport", ["namespacePrefix", prefix], ["targetNamespace", uri]]}
+   _ uri:URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)?
+   {return ["moduleImport", ["namespacePrefix", prefix], ["targetNamespace", uri]]}
 
 // 24
 NamespaceDecl
- = "declare" S "namespace" S prefix:NCName _ "=" _ uri:URILiteral {return {type: 'namespaceDecl', prefix: prefix, namespaceURI: uri[1]}}
+ = "declare" S "namespace" S prefix:NCName _ "=" _ uri:URILiteral
+   {return {type: 'namespaceDecl', prefix: prefix, namespaceURI: uri[1]}}
 
 // 25
 DefaultNamespaceDecl
- = "declare" S "default" S elementOrFunction:("element" / "function") S "namespace" S uri:URILiteral {return ["defaultNamespaceDecl", ["defaultNamespaceCategory", elementOrFunction], ["uri", uri]]}
+ = "declare" S "default" S elementOrFunction:("element" / "function") S "namespace" S uri:URILiteral
+   {return ["defaultNamespaceDecl", ["defaultNamespaceCategory", elementOrFunction], ["uri", uri]]}
 
 // 26
 AnnotatedDecl
- = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl) {return [decl[0]].concat(annotations).concat(decl.slice(1))}
+ = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl)
+   {return [decl[0]].concat(annotations).concat(decl.slice(1))}
 
 // 27
 Annotation
- = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})? { return ["annotation", ["annotationName"].concat(annotation)].concat(params ? ["arguments", params] : [])}
+ = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})?
+   {return ["annotation", ["annotationName"].concat(annotation)].concat(params ? ["arguments", params] : [])}
 
 // 28
 VarDecl
@@ -150,7 +181,8 @@ VarDefaultValue
 
 // 31 TODO: Convert to XQueryX
 ContextItemDecl
- = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?)) {return {type: 'contextItemDecl'}}
+ = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
+   {return {type: 'contextItemDecl'}}
 
 // 32
 FunctionDecl
@@ -159,10 +191,10 @@ FunctionDecl
    return [
    "functionDecl",
       ["functionName"].concat(name),
-	  ["paramList"].concat(paramList || [])
-	]
-	.concat(typeDeclaration ? ["typeDeclaration", typeDeclaration] : [])
-	.concat([body])}
+      ["paramList"].concat(paramList || [])
+    ]
+    .concat(typeDeclaration ? ["typeDeclaration", typeDeclaration] : [])
+    .concat([body])}
 
 // 33
 ParamList
@@ -190,7 +222,8 @@ QueryBody
 
 // 39
 Expr
- = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle {return part})* {return rhs.length === 0 ? lhs : ["sequenceExpr", lhs].concat(rhs)}
+ = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle{return part})*
+   {return rhs.length === 0 ? lhs : ["sequenceExpr", lhs].concat(rhs)}
 
 // 40 TODO, fix proper
 ExprSingle
@@ -204,7 +237,8 @@ ExprSingle
 
 // 41
 FLWORExpr
- = initialClause:InitialClause _ intermediateClauses:IntermediateClause* _ returnClause:ReturnClause {return ["flworExpr", [initialClause].concat(intermediateClauses), returnClause]}
+ = initialClause:InitialClause _ intermediateClauses:IntermediateClause* _ returnClause:ReturnClause
+   {return ["flworExpr", [initialClause].concat(intermediateClauses), returnClause]}
 
 // 42
 InitialClause
@@ -257,11 +291,11 @@ QuantifiedExpr
  = kind:("some" / "every") S quantifiedExprInClauses:(
    "$" varName:VarName S "in" S exprSingle:ExprSingle restExpr:("," _ "$" name:VarName S "in" S expr:ExprSingle
      {return [[varName, exprSingle]]
-	   .concat(rest)
-	   .map(function (inClause) {
-	       return ["quantifiedExprInClause", ["typedVariableBinding", ["varName"].concat(inClause[0])], ["sourceExpr", inClause[1]]]
-		 })
-		}
+       .concat(rest)
+       .map(function (inClause) {
+           return ["quantifiedExprInClause", ["typedVariableBinding", ["varName"].concat(inClause[0])], ["sourceExpr", inClause[1]]]
+         })
+        }
  )*) S "satisfies" S predicateExpr:ExprSingle
  {return ["quantifiedExpr", ["quantifier", kind]].concat(quantifiedExprInClauses).concat([predicateExpr])}
 
@@ -551,9 +585,9 @@ InlineFunctionExpr
  {
    return ["inlineFunctionExpr"]
      .concat(annotations)
-	 .concat([["paramList"].concat(params || [])])
-	 .concat(typeDeclaration ? [typeDeclaration] : [])
-	 .concat([["functionBody"].concat(body)])
+     .concat([["paramList"].concat(params || [])])
+     .concat(typeDeclaration ? [typeDeclaration] : [])
+     .concat([["functionBody"].concat(body)])
  }
 
 // 170
@@ -581,7 +615,7 @@ ArrayConstructor
 SquareArrayConstructor
  = "[" _ entries:(
      first:ExprSingle _ rest:("," _ e:ExprSingle {return e})*
-	 {return [first].concat(rest).map(function (elem) {return ["arrayElem", elem]})}
+     {return [first].concat(rest).map(function (elem) {return ["arrayElem", elem]})}
    )? _ "]" {return ["squareArray"].concat(entries)}
 
 // 176
