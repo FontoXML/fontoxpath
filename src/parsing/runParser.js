@@ -4,6 +4,7 @@ const parser = require('./xPathParser.raw.js');
 const input = `
 module namespace test="prrt";
 declare variable $test := 123[vrot("123", ?, (1,2,3))][1][$prrt][. >= 12][function($a, $b){123}];
+declare variable $arr := ([1,2,3], array{(1,2,3)}, map{"1":2});
 `;
 
 function print (what, indent, n) {
