@@ -13,6 +13,7 @@ const buildNewParser = process.env.npm_config_new;
 function doPegJsBuild () {
 	return new Promise((resolve, reject) => fs.readFile('./src/parsing/xpath.old.pegjs', 'utf8', (err, file) => err ? reject(err) : resolve(file)))
 		.then(pegJsString => peg.generate(pegJsString, {
+			allowedStartRules: ['Module'],
 			cache: true,
 			output: 'source',
 			format: 'globals',
@@ -29,7 +30,7 @@ function doNewPegJsBuild () {
 		.then(pegJsString => peg.generate(pegJsString, {
 			cache: true,
 			output: 'source',
-			format: 'globals',
+			format: 'commonjs',
 			exportVar: 'xPathParser'
 		}))
 		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./src/parsing/xPathParser.new.js', parserString, (err) => err ? reject(err) : resolve())))

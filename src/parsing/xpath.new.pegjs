@@ -147,7 +147,7 @@ ModuleImport
 // 24
 NamespaceDecl
  = "declare" S "namespace" S prefix:NCName _ "=" _ uri:URILiteral
-   {return {type: 'namespaceDecl', prefix: prefix, namespaceURI: uri[1]}}
+   {return ["namespaceDecl", ["prefix", prefix], ["uri", uri]]}
 
 // 25
 DefaultNamespaceDecl
@@ -238,7 +238,7 @@ ExprSingle
 // 41
 FLWORExpr
  = initialClause:InitialClause _ intermediateClauses:IntermediateClause* _ returnClause:ReturnClause
-   {return ["flworExpr", [initialClause].concat(intermediateClauses), returnClause]}
+   {return ["flworExpr", initialClause].concat(intermediateClauses).concat([returnClause])}
 
 // 42
 InitialClause
@@ -280,7 +280,7 @@ LetClause
 // 49
 LetBinding
  = "$" varName:VarName _ typeDecl:TypeDeclaration? _ ":=" _ expr:ExprSingle
-   {return ["letClauseItem", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : []), ["letExpr", expr]]}
+   {return ["letClauseItem", ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])], ["letExpr", expr]]}
 
 // 69
 ReturnClause
@@ -855,7 +855,7 @@ WhitespaceCharacter
 // XML Types
 PrefixedName = prefix:Prefix ":" local:LocalPart {return [prefix, local]}
 
-UnprefixedName = local:LocalPart {return ['', local]}
+UnprefixedName = local:LocalPart {return [null, local]}
 
 LocalPart = NCName
 
