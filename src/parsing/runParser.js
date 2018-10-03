@@ -2,9 +2,9 @@
 const parser = require('./xPathParser.raw.js');
 
 const input = `
-module namespace test="prrt";
-declare variable $test := 1;
-declare variable $arr := ([1,2,3], array{(1,2,3)}, map{"1":2});
+for $x as xs:int in (1 to 10)
+let $y := $x * $x
+return $x
 `;
 
 function print (what, indent, n) {
