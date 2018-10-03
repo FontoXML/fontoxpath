@@ -421,8 +421,8 @@ PrimaryExpr
 // / UnorderedExpr
 // / NodeConstructor
  / FunctionItemExpr
-// / MapConstructor
-// / ArrayConstructor
+ / MapConstructor
+ / ArrayConstructor
 // / StringConstructor
 // / UnaryLookup
 
@@ -485,6 +485,38 @@ InlineFunctionExpr
 	 .concat(typeDeclaration ? [typeDeclaration] : [])
 	 .concat([["functionBody"].concat(body)])
  }
+
+// 170
+MapConstructor
+ = "map" _ "{" _ entries:(first:MapConstructorEntry rest:(_ "," _ e:MapConstructorEntry {return e})*{return [first].concat(rest)})? _ "}" {return ["mapConstructor"].concat(entries)}
+
+// 171
+MapConstructorEntry
+ = k:MapKeyExpr _ ":" _ v:MapValueExpr {return ["mapConstructorEntry", k, v]}
+
+// 172
+MapKeyExpr
+ = expr:ExprSingle {return ["mapKeyExpr", expr]}
+
+// 173
+MapValueExpr
+ = expr:ExprSingle {return ["mapValueExpr", expr]}
+
+// 174
+ArrayConstructor
+ = con:SquareArrayConstructor {return ["arrayConstructor", con]}
+ / con:CurlyArrayConstructor {return ["arrayConstructor",  con]}
+
+// 175
+SquareArrayConstructor
+ = "[" _ entries:(
+     first:ExprSingle _ rest:("," _ e:ExprSingle {return e})*
+	 {return [first].concat(rest).map(function (elem) {return ["arrayElem", elem]})}
+   )? _ "]" {return ["squareArray"].concat(entries)}
+
+// 176
+CurlyArrayConstructor
+ = "array" _ e:EnclosedExpr {return ["curlyArray"].concat(e ? [["arrayElem", e]] : [])}
 
 // 182
 SingleType
