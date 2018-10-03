@@ -131,7 +131,7 @@ AnnotatedDecl
 
 // 27
 Annotation
- = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})? { return ["annotation", ["annotationName", annotation]].concat(params ? ["arguments", params] : [])}
+ = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})? { return ["annotation", ["annotationName"].concat(annotation)].concat(params ? ["arguments", params] : [])}
 
 // 28
 VarDecl
@@ -155,7 +155,14 @@ ContextItemDecl
 // 32
 FunctionDecl
  = "function" S (!ReservedFunctionNames) name:EQName _ "(" _ paramList:ParamList? _ ")" typeDeclaration:(S "as" S t:SequenceType {return t})? _ body:((body:FunctionBody {return ["functionBody", body]}) / ("external" {return ["externalDefinition"]}))
- {return ["functionDecl", ["functionName"].concat(name), ["paramList"].concat(paramList || [])].concat(typeDeclaration ? ["typeDeclaration", typeDeclaration] : []).concat([body])}
+ {
+   return [
+   "functionDecl",
+      ["functionName"].concat(name),
+	  ["paramList"].concat(paramList || [])
+	]
+	.concat(typeDeclaration ? ["typeDeclaration", typeDeclaration] : [])
+	.concat([body])}
 
 // 33
 ParamList
@@ -171,7 +178,7 @@ FunctionBody
 
 // 36
 EnclosedExpr
- = "{" _ e:Expr? _ "}" {return e}
+ = "{" _ e:Expr? _ "}" {return e || ["sequenceExpr"]}
 
 // 37
 OptionDecl
@@ -204,7 +211,7 @@ AndExpr
 // 85
 ComparisonExpr
  = lhs:StringConcatExpr rhs:(_ op:(ValueComp / NodeComp / GeneralComp) _ expr:StringConcatExpr {return [op, expr]})?
- {return rhs ? [rhs[0], ["firstOperator", lhs], ["secondOperator", rhs[1]]] : lhs}
+ {return rhs ? [rhs[0], ["firstOperator"].concat(lhs), ["secondOperator"].concat(rhs[1])] : lhs}
 
 // 86
 StringConcatExpr
@@ -393,19 +400,19 @@ KeySpecifier
  = NCName / IntegerLiteral / ParenthesizedExpr / "*"
 
 // 127
-ArrowFunctionSpecifier = name:EQName {return ["EQName", name]} / VarRef / ParenthesizedExpr
+ArrowFunctionSpecifier = name:EQName {return ["EQName"].concat(name)} / VarRef / ParenthesizedExpr
 
 // 128
 PrimaryExpr
  = Literal
-// / VarRef
+ / VarRef
  / ParenthesizedExpr
-// / ContextItemExpr
+ / ContextItemExpr
  / FunctionCall
 // / OrderedExpr
 // / UnorderedExpr
 // / NodeConstructor
-// / FunctionItemExpr
+ / FunctionItemExpr
 // / MapConstructor
 // / ArrayConstructor
 // / StringConstructor
@@ -432,6 +439,10 @@ ParenthesizedExpr
  = "(" _ expr:Expr _ ")" {return expr}
  / "(" _ ")" {return null}
 
+// 134
+ContextItemExpr
+ = "." {return ["contextItemExpr"]}
+
 // 137
 FunctionCall
 // Do not match reserved function names as function names, they should be tests or other built-ins.
@@ -446,6 +457,26 @@ Argument
 // 139
 ArgumentPlaceholder
  = "?" {return ["argumentPlaceholder"]}
+
+// 167
+FunctionItemExpr
+ = NamedFunctionRef
+ / InlineFunctionExpr
+
+// 168
+NamedFunctionRef
+ = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", ["functionName"], name, integer]}
+
+// 169
+InlineFunctionExpr
+ = annotations:Annotation* _ "function" _ "(" _ params:ParamList? _ ")" _ typeDeclaration:( "as" S t:SequenceType _ {return ["typeDeclaration", t]})? body:FunctionBody
+ {
+   return ["inlineFunctionExpr"]
+     .concat(annotations)
+	 .concat([["paramList"].concat(params || [])])
+	 .concat(typeDeclaration ? [typeDeclaration] : [])
+	 .concat([["functionBody"].concat(body)])
+ }
 
 // 182
 SingleType
@@ -474,7 +505,7 @@ ItemType
  / ParenthesizedItemType
 
 // 187
-AtomicOrUnionType = typeName:EQName {return ["atomicType", typeName]}
+AtomicOrUnionType = typeName:EQName {return ["atomicType"].concat(typeName)}
 
 // 188
 KindTest

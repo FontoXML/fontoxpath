@@ -3,7 +3,7 @@ const parser = require('./xPathParser.raw.js');
 
 const input = `
 module namespace test="prrt";
-declare variable $test := parent::bob/../@henk[bob]/descendant::node();
+declare variable $test := 123[vrot("123", ?, (1,2,3))][1][$prrt][. >= 12][function(){123}];
 `;
 
 function print (what, indent, n) {
