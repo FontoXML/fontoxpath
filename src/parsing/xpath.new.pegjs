@@ -553,7 +553,7 @@ ParenthesizedExpr
 
 // 134
 ContextItemExpr
- = "." {return ["contextItemExpr"]}
+ = "." !"." {return ["contextItemExpr"]}
 
 // 137
 FunctionCall

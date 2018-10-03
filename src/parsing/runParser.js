@@ -2,11 +2,7 @@
 const parser = require('./xPathParser.new.js');
 
 const input = `
-import module namespace xxx="yyy";
-import schema namespace xxx="sd";
-import schema default element namespace "YYY";
-import schema "TTT";
-yyy:prrt()
+yyy:prrt(..)
 `;
 
 function print (what, indent, n) {
