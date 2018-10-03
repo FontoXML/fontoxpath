@@ -8,19 +8,32 @@ const skipParserBuild = process.env.npm_config_skip_parser;
 const skipClosureBuild = process.env.npm_config_skip_closure;
 const doDebugBuild = process.env.npm_config_debug;
 const reportUnknownTypes = process.env.npm_config_report_unknown_types;
+const buildNewParser = process.env.npm_config_new;
 
 function doPegJsBuild () {
-	return new Promise((resolve, reject) => fs.readFile('./src/parsing/xpath.pegjs', 'utf8', (err, file) => err ? reject(err) : resolve(file)))
+	return new Promise((resolve, reject) => fs.readFile('./src/parsing/xpath.old.pegjs', 'utf8', (err, file) => err ? reject(err) : resolve(file)))
 		.then(pegJsString => peg.generate(pegJsString, {
 			cache: true,
 			output: 'source',
 			format: 'globals',
 			exportVar: 'xPathParser'
 		}))
-		//.then(parserString => UglifyJS.minify(parserString).code)
-	//	.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
+	.then(parserString => UglifyJS.minify(parserString).code)
+		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
 		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./src/parsing/xPathParser.raw.js', parserString, (err) => err ? reject(err) : resolve())))
 		.then(() => console.info('Parser generator done'));
+}
+
+function doNewPegJsBuild () {
+	return new Promise((resolve, reject) => fs.readFile('./src/parsing/xpath.new.pegjs', 'utf8', (err, file) => err ? reject(err) : resolve(file)))
+		.then(pegJsString => peg.generate(pegJsString, {
+			cache: true,
+			output: 'source',
+			format: 'globals',
+			exportVar: 'xPathParser'
+		}))
+		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./src/parsing/xPathParser.new.js', parserString, (err) => err ? reject(err) : resolve())))
+		.then(() => console.info('(new) Parser generator done'));
 }
 
 function doExpressionsBuild () {
@@ -92,16 +105,26 @@ function doExpressionsBuild () {
 	})
 		.then((stdOut) => {
 			console.info(stdOut);
+			console.info('Closure build done');
 		});
 }
 
 var chain = Promise.resolve();
-if (!skipParserBuild) {
-	chain = chain.then(doPegJsBuild);
-}
 
-if (!skipClosureBuild) {
-	chain = chain.then(doExpressionsBuild);
+if (buildNewParser) {
+	chain = doNewPegJsBuild();
+}
+else {
+	chain = chain.then(doNewPegJsBuild);
+
+	if (!skipParserBuild) {
+		chain = chain.then(doPegJsBuild);
+	}
+
+	if (!skipClosureBuild) {
+		chain = chain.then(doExpressionsBuild);
+	}
+
 }
 
 chain.catch((err) => {
