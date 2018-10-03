@@ -12,6 +12,10 @@
   function makeBinaryOp (kind, lhs, rhs) {
       return rhs.reduce(function(lh, rh) {return [kind, ["firstOperator", lh], ["secondOperator", rh]]}, lhs);
   }
+
+  function isAttributeTest (nodeTest) {
+    return nodeTest[0] === "attributeTest" || nodeTest[0] === "schemaAttributeTest";
+  }
 }
 
 // 1
@@ -310,18 +314,18 @@ RelativePathExpr
  = lhs:StepExpr rhs:(lh:("//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]} / "/" {return false}) rh:StepExpr {return lh ? [lh, rh] : [rh]})*
  {return [lhs].concat(rhs.reduce(function (all, items) {return all.concat(items)}, []))}
 
-// 110 TODO: Suppport PostfixExpr i.e. PostfixExpr / AxisStep
+// 110
 StepExpr
  = PostfixExpr
  / AxisStep
 
 // 111
 AxisStep
- = stepExpr:(ReverseStep / ForwardStep) PredicateList {return ["stepExpr", stepExpr[0], stepExpr[1]]}
+ = stepExpr:(ReverseStep / ForwardStep) predicates:PredicateList {return stepExpr.concat(predicates)}
 
 // 112
 ForwardStep
- = step:(axis:ForwardAxis nodeTest:NodeTest {return [["xpathAxis", axis], nodeTest]}) {return step} / AbbrevForwardStep
+ = step:(axis:ForwardAxis nodeTest:NodeTest {return ["stepExpr", ["xpathAxis", axis], nodeTest]}) / step:AbbrevForwardStep {return step}
 
 // 113
 ForwardAxis
@@ -335,11 +339,11 @@ ForwardAxis
 
 // 114
 AbbrevForwardStep
- = "@"? NodeTest
+ = attributeTest:"@"? nodeTest:NodeTest {return attributeTest || isAttributeTest(nodeTest) ? ["stepExpr", ["xpathAxis", "attribute"], nodeTest] : ["stepExpr", ["xpathAxis" , "child"], nodeTest]}
 
 // 115
 ReverseStep
- = step:(axis:ReverseAxis nodeTest:NodeTest {return [["xpathAxis", axis], nodeTest]}) / AbbrevReverseStep {return step}
+ = step:(axis:ReverseAxis nodeTest:NodeTest {return ["stepExpr", ["xpathAxis", axis], nodeTest]}) / step:AbbrevReverseStep {return step}
 
 // 116
  ReverseAxis
@@ -351,7 +355,7 @@ ReverseStep
 
 // 117
 AbbrevReverseStep
- = ".."
+ = ".." {return ["stepExpr", ["xpathAxis", "parent"]]}
 
 // 118
 NodeTest
@@ -359,7 +363,7 @@ NodeTest
 
 // 119 TODO: Suppport wildcard i.e. EQName / Wildcard
 NameTest
- = EQName
+ = name:EQName {return ["nameTest"].concat(name)}
 
 // 121
 PostfixExpr
@@ -375,7 +379,7 @@ ArgumentList
 
 // 123
 PredicateList
- = predicates:Predicate* {return ["predicates", predicates]}
+ = predicates:Predicate* {return predicates.length ? ["predicates", predicates] : []}
 
 // 124
 Predicate
