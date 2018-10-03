@@ -1,5 +1,5 @@
 // TODO: Remove this file before merging into master
-const parser = require('./xPathParser.raw.js');
+const parser = require('./xPathParser.new.js');
 
 const input = `
 import module namespace xxx="yyy";
