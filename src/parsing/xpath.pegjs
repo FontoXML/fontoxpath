@@ -301,13 +301,13 @@ NodeComp
 
 // 107
 SimpleMapExpr
- = lhs:PathExpr {return lhs}// rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", [lhs].concat(rhs)] : lhs}
+ = lhs:PathExpr rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", [lhs].concat(rhs)] : lhs}
 
 // 108
 PathExpr
  = "//" _ pathExpr:RelativePathExpr {return ["pathExpr", ["rootExpr"], ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]].concat(pathExpr)}
  / "/" _ pathExpr:RelativePathExpr? {return pathExpr ? ["pathExpr", ["rootExpr"]].concat(pathExpr) : ["pathExpr", ["rootExpr"]]}
- / pathExpr:RelativePathExpr
+ / pathExpr:RelativePathExpr {return ["pathExpr", pathExpr]}
 
 // 109
 RelativePathExpr
