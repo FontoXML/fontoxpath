@@ -369,9 +369,16 @@ AbbrevReverseStep
 NodeTest
  = KindTest / NameTest
 
-// 119 TODO: Suppport wildcard i.e. EQName / Wildcard
+// 119
 NameTest
- = name:EQName {return ["nameTest"].concat(name)}
+ = Wildcard / name:EQName {return ["nameTest"].concat(name)}
+
+// 120
+Wildcard
+ = "*:" name:NCName {return ["Wildcard", ["star"], ["NCName", name]]}
+ / "*" {return ["Wildcard"]}
+ / uri:BracedURILiteral "*" {return ["Wildcard", ["uri", uri], ["star"]]}
+ / prefix:NCName ":*" {return ["Wildcard", ["NCName", prefix], ["star"]]}
 
 // 121
 PostfixExpr
