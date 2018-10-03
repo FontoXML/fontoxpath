@@ -20,11 +20,11 @@
 
 // 1
 Module
- = _ versionDecl:VersionDeclaration? _ module:(LibraryModule / MainModule) {return ["module", versionDecl, module]}
+ = _ versionDecl:VersionDeclaration? _ module:(LibraryModule / MainModule) _ {return ["module"].concat(versionDecl ? [versionDecl] : []).concat([module])}
 
 // TODO Implement
 MainModule
- = "main" {return 'main'}
+ = prolog:Prolog queryBody:QueryBody {return ["mainModule"].concat(prolog ? [prolog] : []).concat([queryBody])}
 
 // 2
 VersionDeclaration
@@ -35,7 +35,7 @@ VersionDeclaration
 
 // 4
 LibraryModule
- = moduleDecl:ModuleDecl _ prolog:Prolog {return ["libraryModule", moduleDecl, prolog]}
+ = moduleDecl:ModuleDecl _ prolog:Prolog {return ["libraryModule", moduleDecl].concat(prolog ? [prolog] : [])}
 
 // 5
 ModuleDecl
@@ -45,7 +45,7 @@ ModuleDecl
 Prolog
  = moduleSettings:(prologPart:(DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _ {return prologPart})*
    declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _{return prologPart})*
-   {return ["prolog"].concat(moduleSettings).concat(declarations)}
+   {return moduleSettings.length === 0 && declarations.length === 0 ? null : ["prolog"].concat(moduleSettings).concat(declarations)}
 
 // 7
 Separator = ";"
@@ -185,24 +185,90 @@ EnclosedExpr
 OptionDecl
  = "declare" S  "option" S EQName S StringLiteral {return {type: 'optionDecl'}}
 
+QueryBody
+ = expr:Expr {return ["queryBody", expr]}
+
 // 39
 Expr
  = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle {return part})* {return rhs.length === 0 ? lhs : ["sequenceExpr", lhs].concat(rhs)}
 
 // 40 TODO, fix proper
 ExprSingle
- /*= FLWORExpr
+ = FLWORExpr
  / QuantifiedExpr
- / SwitchExpr
- / TypeswitchExpr
- / IfExpr
- / TryCatchExpr*/
- = OrExpr
+// / SwitchExpr
+// / TypeswitchExpr
+// / IfExpr
+// / TryCatchExpr
+ / OrExpr
+
+// 41
+FLWORExpr
+ = initialClause:InitialClause _ intermediateClauses:IntermediateClause* _ returnClause:ReturnClause {return ["flworExpr", [initialClause].concat(intermediateClauses), returnClause]}
+
+// 42
+InitialClause
+ = ForClause
+ / LetClause
+// / WindowClause
+
+// 43
+IntermediateClause
+ = InitialClause
+ // / WhereClause
+ // / GroupByClause
+ // / OrderByClause
+ // / CountClause
+
+// 44
+ForClause
+ = "for" S first:ForBinding rest:(_ "," _ binding:ForBinding {return binding})*
+   {return ["forClause", first].concat(rest)}
+
+// 45
+ForBinding
+ = "$" varName:VarName _ typeDecl:TypeDeclaration? _ AllowingEmpty? _ PositionalVar? _ "in"_ expr:ExprSingle
+   {return ["forClauseItem", ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : []), ["forExpr", expr]]]}
+
+// 46
+AllowingEmpty
+ = "allowing" S "empty"
+
+// 47
+PositionalVar
+ = "at" S "$" VarName
+
+// 48
+LetClause
+ = "let" _ first:LetBinding _ rest:("," _ binding:LetBinding {return binding})*
+   {return ["letClause", first].concat(rest)}
+
+// 49
+LetBinding
+ = "$" varName:VarName _ typeDecl:TypeDeclaration? _ ":=" _ expr:ExprSingle
+   {return ["letClauseItem", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : []), ["letExpr", expr]]}
+
+// 69
+ReturnClause
+ = "return" _ expr:ExprSingle {return ["returnClause", expr]}
+
+// 70
+QuantifiedExpr
+ = kind:("some" / "every") S quantifiedExprInClauses:(
+   "$" varName:VarName S "in" S exprSingle:ExprSingle restExpr:("," _ "$" name:VarName S "in" S expr:ExprSingle
+     {return [[varName, exprSingle]]
+	   .concat(rest)
+	   .map(function (inClause) {
+	       return ["quantifiedExprInClause", ["typedVariableBinding", ["varName"].concat(inClause[0])], ["sourceExpr", inClause[1]]]
+		 })
+		}
+ )*) S "satisfies" S predicateExpr:ExprSingle
+ {return ["quantifiedExpr", ["quantifier", kind]].concat(quantifiedExprInClauses).concat([predicateExpr])}
 
  // 83
  OrExpr
- = lhs:AndExpr rhs:( _ "or" AssertAdjacentOpeningTerminal _ expr:AndExpr {return expr})*
-   {return makeBinaryOp("orOp", lhs, rhs)}
+  = lhs:AndExpr rhs:( _ "or" AssertAdjacentOpeningTerminal _ expr:AndExpr {return expr})*
+    {return makeBinaryOp("orOp", lhs, rhs)}
 
 // 84
 AndExpr
@@ -524,7 +590,7 @@ SingleType
 
 // 183
 TypeDeclaration
- = "as" S st:SequenceType {return st}
+ = "as" S st:SequenceType {return ["typeDeclaration", st]}
 
 // 184
 SequenceType
