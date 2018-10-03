@@ -4,7 +4,7 @@ const parser = require('./xPathParser.raw.js');
 const input = `
 for $x as xs:int in (1 to 10)
 let $y := $x * $x
-return $x
+return if ($x = 10) then $x else 123
 `;
 
 function print (what, indent, n) {
