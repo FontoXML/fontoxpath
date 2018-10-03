@@ -198,7 +198,7 @@ ExprSingle
  / QuantifiedExpr
 // / SwitchExpr
 // / TypeswitchExpr
-// / IfExpr
+ / IfExpr
 // / TryCatchExpr
  / OrExpr
 
@@ -264,6 +264,10 @@ QuantifiedExpr
 		}
  )*) S "satisfies" S predicateExpr:ExprSingle
  {return ["quantifiedExpr", ["quantifier", kind]].concat(quantifiedExprInClauses).concat([predicateExpr])}
+
+IfExpr
+ = "if" _ "(" _ ifClause:Expr _ ")" _ "then" AssertAdjacentOpeningTerminal _ thenClause:ExprSingle _ "else" AssertAdjacentOpeningTerminal _ elseClause:ExprSingle
+   {return ["ifThenElseExpr", ["ifClause", ifClause], ["thenClause", thenClause], ["elseClause", elseClause]]}
 
  // 83
  OrExpr
