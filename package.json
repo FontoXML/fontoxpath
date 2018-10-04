@@ -11,7 +11,8 @@
 		"build": "node ./build.js",
 		"test": "mocha --recursive --require @babel/register test/specs/",
 		"integrationtests": "mocha --recursive --require @babel/register test/specs/parsing --dist",
-		"qt3tests": "mocha --require @babel/register test/qt3tests.js"
+		"qt3tests": "mocha --require @babel/register test/qt3tests.js",
+		"qt3testsxqueryx": "mocha --require @babel/register test/qt3testsXQueryX.js"
 	},
 	"repository": {
 		"type": "git",
