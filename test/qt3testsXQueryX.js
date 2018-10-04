@@ -1,20 +1,62 @@
-const { evaluateXPathToBoolean, evaluateXPathToString } = require('../dist/fontoxpath');
-const parser = require('../src/parsing/xPathParser.new');
-const jsonMlMapper = require('./helpers/jsonMlMapper');
-const fs = require('fs');
-const mocha = require('mocha');
-const path = require('path');
-const { sync, slimdom } = require('slimdom-sax-parser');
+import  {
+	evaluateXPathToBoolean,
+	evaluateXPathToString
+} from 'fontoxpath';
+
+import parser from 'fontoxpath/parsing/xPathParser.new';
+
+import fs from 'fs';
+import path from 'path';
+import chai from 'chai';
+
+import { sync, slimdom } from 'slimdom-sax-parser';
+
+/**
+ * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
+ * create nodes.
+ *
+ * JsonML is always expected to be a JavaScript structure. If you have a string of JSON, use JSON.parse first.
+ *
+ * @param   {Document}  document  The document to use to create nodes
+ * @param   {JsonML}    jsonml    The JsonML fragment to parse
+ *
+ * @return  {Node}      The root node of the constructed DOM fragment
+ */
+export function parseNode (document, jsonml) {
+	if (typeof jsonml === 'string') {
+		return document.createTextNode(jsonml);
+	}
+
+	if (!Array.isArray(jsonml)) {
+		throw new TypeError('JsonML element should be an array or string');
+	}
+
+	var name = jsonml[0];
+
+	// Node must be a normal element
+	var element = document.createElementNS('http://www.w3.org/2005/XQueryX', 'xqx:' + name),
+	firstChild = jsonml[1],
+	firstChildIndex = 1;
+	if ((typeof firstChild === 'object') && !Array.isArray(firstChild)) {
+		for (var attributeName in firstChild) {
+			if (firstChild[attributeName] !== null) {
+				element.setAttributeNS('http://www.w3.org/2005/XQueryX', 'xqx:' + attributeName, firstChild[attributeName]);
+			}
+		}
+		firstChildIndex = 2;
+	}
+	// Parse children
+	for (var i = firstChildIndex, l = jsonml.length; i < l; ++i) {
+		var node = parseNode(document, jsonml[i]);
+		element.appendChild(node);
+	}
+
+	return element;
+}
+
+
 
 const baseDir = path.join('test', 'assets', 'QT3TS-master');
-
-let shouldRunTestByName;
-
-const indexOfGrep = process.argv.indexOf('--grep');
-if (indexOfGrep >= 0) {
-	const [greppedTestsetName] = process.argv[indexOfGrep + 1].split('~');
-	shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
-}
 
 function tryGetXQuery (test) {
 	let xQueryPath = path.join(baseDir, test.directory, test.testName);
@@ -72,25 +114,28 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 
 					if (!xQuery) {
 						this.skip();
-						return;
 					}
 
+					let jsonMl;
 					try {
-						const parsed = parser.parse(xQuery);
-						const expected = sync(fs.readFileSync(testCasePath, 'utf-8'));
-						const actual = jsonMlMapper.parse(parsed, new slimdom.Document());
-
-						chai.assert(evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, { expected, actual }), 'expected: "${expected}" actual: "${actual}"');
+						jsonMl = parser.parse(xQuery);
 					}
 					catch (err) {
-						console.log(testCasePath);
-						console.log(err);
 						if (err.location) {
 							const start = err.location.start.offset;
-							console.log(xQuery.substring(0, start) + '[HERE]' + xQuery.substring(start));
+							chai.assert.fail('Parse error', 'No parse error', xQuery.substring(0, start) + '[HERE]' + xQuery.substring(start));
 						}
-						throw err;
+						else {
+							throw err;
+						}
+						this.skip();
 					}
+
+					const expected = sync(fs.readFileSync(testCasePath, 'utf-8'));
+					const actual = new slimdom.Document();
+					actual.appendChild(parseNode(actual, jsonMl));
+
+					chai.assert(evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, { expected, actual }), `expected: "${expected.documentElement.outerHTML}" actual: "${actual.documentElement.outerHTML}"`);
 				});
 			});
 		});
