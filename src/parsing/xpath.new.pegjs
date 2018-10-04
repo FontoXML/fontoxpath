@@ -532,7 +532,7 @@ PrimaryExpr
 
 // 129
 Literal
- = NumericLiteral / lit:StringLiteral { return ["stringConstantExpr", lit]}
+ = NumericLiteral / lit:StringLiteral { return ["stringConstantExpr", ["value", lit]]}
 
 // 130
 // Note: changes because double accepts less than decimal, accepts less than integer
@@ -773,12 +773,12 @@ EQName = uri:URIQualifiedName {return [{prefix: null, uri: uri[0]}, uri[1]]}
  / name:QName {return [{prefix: name[0], uri: null}, name[1]]}
 
 // 219
-IntegerLiteral = digits:Digits {return ["integerConstantExpr", digits]}
+IntegerLiteral = digits:Digits {return ["integerConstantExpr", ["value", digits]]}
 
 // 220
 DecimalLiteral
- = "." digits:Digits {return ["decimalConstantExpr", parseFloat("." + digits)]}
- / decimal:$(Digits "." Digits?) {return ["decimalConstantExpr", parseFloat(decimal)]}
+ = "." digits:Digits {return ["decimalConstantExpr", ["value", parseFloat("." + digits)]]}
+ / decimal:$(Digits "." Digits?) {return ["decimalConstantExpr", ["value", parseFloat(decimal)]]}
 
 // 221
 DoubleLiteral

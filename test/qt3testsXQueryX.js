@@ -1,4 +1,4 @@
-import  {
+import {
 	evaluateXPathToBoolean,
 	evaluateXPathToString
 } from 'fontoxpath';
@@ -24,7 +24,7 @@ import { sync, slimdom } from 'slimdom-sax-parser';
  * @return  {Node}      The root node of the constructed DOM fragment
  */
 export function parseNode (document, jsonml) {
-	if (typeof jsonml === 'string') {
+	if (typeof jsonml === 'string' || typeof jsonml === 'number') {
 		return document.createTextNode(jsonml);
 	}
 
@@ -60,28 +60,27 @@ export function parseNode (document, jsonml) {
 const baseDir = path.join('test', 'assets', 'QT3TS-master');
 
 function tryGetXQuery (test) {
-	let xQueryPath = path.join(baseDir, test.directory, test.testName);
+	const xQueryPath = path.join(baseDir, test.directory, test.testName);
+
+	let testFilePath = xQueryPath + '.xml';
+	if (fs.existsSync(testFilePath)) {
+		const xml = sync(fs.readFileSync(testFilePath, 'utf-8'));
+		const xQuery = evaluateXPathToString('//test-case[@name=$testCase]/test', xml, null, { testCase: test.testCase });
+		return xQuery;
+	}
 
 	if (fs.existsSync(xQueryPath)) {
 		// Should be a folder containing a '.xq' file
 		if (!fs.lstatSync(xQueryPath).isDirectory()) {
 			throw new Error('This is not expected.');
 		}
-		xQueryPath = path.join(xQueryPath, test.testCase) + '.xq';
-		if (!fs.existsSync(xQueryPath)) {
+		testFilePath = path.join(xQueryPath, test.testCase) + '.xq';
+		if (!fs.existsSync(testFilePath)) {
 			return null;
 		}
 
-		return fs.readFileSync(xQueryPath, 'utf-8');
+		return fs.readFileSync(testFilePath, 'utf-8');
 	}
-
-	xQueryPath = xQueryPath + '.xml';
-	if (!fs.existsSync(xQueryPath)) {
-		throw new Error('No xQuery test file found.');
-	}
-
-	const xml = sync(fs.readFileSync(xQueryPath, 'utf-8'));
-	return evaluateXPathToString('//test-case[@name=$testCase]/test', xml, null, { testCase: test.testCase });
 }
 
 fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
@@ -99,7 +98,7 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 
 		// Sub directories are the test name prefixed with "{parent directory}-"
 		const testName = subDirectory.substring(directory.length + 1);
-		describe(testName, () => {
+		describe(directory + '/' + testName, () => {
 			fs.readdirSync(subDirectoryPath).forEach(testCase => {
 				const testCasePath = path.join(subDirectoryPath, testCase);
 				if (fs.lstatSync(testCasePath).isDirectory()) {
@@ -131,16 +130,17 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 						this.skip();
 					}
 
-					const expected = sync(fs.readFileSync(testCasePath, 'utf-8').replace(/\n\s+</g, '<'));
+					const expected = sync(fs.readFileSync(testCasePath, 'utf-8').replace(/\n\s*</g, '<'));
 					const actual = new slimdom.Document();
 					actual.appendChild(parseNode(actual, jsonMl));
+					actual.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX
+                                http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
 
 					if (!evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, { expected, actual })) {
-						chai.assert.fail(
-							actual.documentElement.outerHTML,
-							expected.documentElement.outerHTML,
-							'Expected the XML to be deep-equal',
-							'fn:deep-equal()');
+						chai.assert.equal(
+							actual.documentElement.outerHTML.replace(/></g, '>\n<'),
+							expected.documentElement.outerHTML.replace(/></g, '>\n<'),
+							'Expected the XML to be deep-equal');
 					}
 				});
 			});
