@@ -316,7 +316,7 @@ AndExpr
 // 85
 ComparisonExpr
  = lhs:StringConcatExpr rhs:(_ op:(ValueComp / NodeComp / GeneralComp) _ expr:StringConcatExpr {return [op, expr]})?
- {return rhs ? [rhs[0], ["firstOperand"].concat(lhs), ["secondOperand"].concat(rhs[1])] : lhs}
+ {return rhs ? [rhs[0], ["firstOperand", lhs], ["secondOperand", rhs[1]]] : lhs}
 
 // 86
 StringConcatExpr
