@@ -421,14 +421,27 @@ PathExpr
  / AbsoluteLocationPath
 
 RelativePathExpr
- = lhs:StepExpr _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExpr
-   {return ["pathExpr", lhs[0] === "stepExpr" ? lhs : ["stepExpr", lhs], abbrev].concat(rhs[0] === "pathExpr" ? rhs.slice(1) : [rhs])}
- / lhs:StepExpr _ "/" _ rhs:RelativePathExpr
-   {return ["pathExpr", lhs[0] === "stepExpr" ? lhs : ["stepExpr", lhs]].concat(rhs[0] === "pathExpr" ? rhs.slice(1) : [rhs])}
- / step:StepExpr {return step[0] !== "stepExpr" ? step : ["pathExpr", step]}
+ = lhs:StepExprWithForcedStep _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExprWithForcedStep
+   {return ["pathExpr", lhs, abbrev].concat(rhs)}
+  / lhs:StepExprWithForcedStep _ "/" _ rhs:RelativePathExprWithForcedStep
+   {return ["pathExpr", lhs].concat(rhs)}
+  / StepExprWithoutStep // Pass-through for normal stuff
+  / step:StepExprWithForcedStep {return ["pathExpr", step]}
 
-StepExpr
- = PostfixExpr
+RelativePathExprWithForcedStep
+ = lhs:StepExprWithForcedStep _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExprWithForcedStep
+   {return [lhs, abbrev].concat(rhs)}
+ / lhs:StepExprWithForcedStep _ "/" _ rhs:RelativePathExprWithForcedStep
+   {return [lhs].concat(rhs)}
+// / step:StepExprWithoutStep {return [["stepExpr",step]]}
+ / step:StepExprWithForcedStep
+    {return [step]}
+
+StepExprWithoutStep
+ = PostfixExprWithoutStep
+
+StepExprWithForcedStep
+ = expr:PostfixExprWithStep {return ["stepExpr", expr]}
  / AxisStep
 
 AbsoluteLocationPath
@@ -437,10 +450,26 @@ AbsoluteLocationPath
  / abbrev:LocationPathAbbreviation _ path: RelativePathExpr
    {return ["pathExpr", ["rootExpr"], abbrev].concat(path[0] === "pathExpr" ? path.slice(1) : [path])}
  / "/"
- {return ["pathExpr", ["rootExpr"]]}
+   {return ["pathExpr", ["rootExpr"]]}
 
 LocationPathAbbreviation
  = "//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]}
+
+// 121
+PostfixExprWithStep
+ = expr:PrimaryExpr postfixExpr:(
+     (_ filter:Predicate {return filter})
+   / (_ argList:ArgumentList {return argList})
+   / (_ lookup:Lookup {return lookup})
+   )* {return postfixExpr.length === 0 ? ["filterExpr", expr] : ["predicates"].concat(postfixExpr)}
+
+PostfixExprWithoutStep
+ = expr:PrimaryExpr postfixExpr:(
+     (_ filter:Predicate {return filter})
+   / (_ argList:ArgumentList {return argList})
+   / (_ lookup:Lookup {return lookup})
+   )* {return postfixExpr.length === 0 ? expr : ["predicates"].concat(postfixExpr)}
+
 
 // === end of changes ===
 
@@ -482,7 +511,7 @@ ReverseStep
 
 // 117
 AbbrevReverseStep
- = ".." {return ["stepExpr", ["xpathAxis", "parent"]]}
+ = ".." {return ["stepExpr", ["xpathAxis", "parent"], ["anyKindTest"]]}
 
 // 118
 NodeTest
@@ -498,14 +527,6 @@ Wildcard
  / "*" {return ["Wildcard"]}
  / uri:BracedURILiteral "*" {return ["Wildcard", ["uri", uri], ["star"]]}
  / prefix:NCName ":*" {return ["Wildcard", ["NCName", prefix], ["star"]]}
-
-// 121
-PostfixExpr
- = expr:PrimaryExpr postfixExpr:(
-   (_ filter:Predicate {return filter})
-   / (_ argList:ArgumentList {return argList})
-   / (_ lookup:Lookup {return lookup})
-   )* {return postfixExpr.length === 0 ? expr : ["predicates"].concat(postfixExpr)}
 
 // 122
 ArgumentList
