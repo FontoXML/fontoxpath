@@ -11,6 +11,7 @@ import chai from 'chai';
 
 import { sync, slimdom } from 'slimdom-sax-parser';
 
+
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
  * create nodes.
@@ -99,7 +100,6 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 		// Sub directories are the test name prefixed with "{parent directory}-"
 		const testName = subDirectory.substring(directory.length + 1);
 		describe(testName, () => {
-
 			fs.readdirSync(subDirectoryPath).forEach(testCase => {
 				const testCasePath = path.join(subDirectoryPath, testCase);
 				if (fs.lstatSync(testCasePath).isDirectory()) {
@@ -131,11 +131,17 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 						this.skip();
 					}
 
-					const expected = sync(fs.readFileSync(testCasePath, 'utf-8'));
+					const expected = sync(fs.readFileSync(testCasePath, 'utf-8').replace(/\n\s+</g, '<'));
 					const actual = new slimdom.Document();
 					actual.appendChild(parseNode(actual, jsonMl));
 
-					chai.assert(evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, { expected, actual }), `expected: "${expected.documentElement.outerHTML}" actual: "${actual.documentElement.outerHTML}"`);
+					if (!evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, { expected, actual })) {
+						chai.assert.fail(
+							actual.documentElement.outerHTML,
+							expected.documentElement.outerHTML,
+							'Expected the XML to be deep-equal',
+							'fn:deep-equal()');
+					}
 				});
 			});
 		});
