@@ -9,3 +9,4 @@ script:
     - timeout 600 xvfb-run -a npm run test -- --reporter dot;
     - timeout 600 xvfb-run -a npm run integrationtests -- --reporter dot;
     - timeout 600 xvfb-run -a npm run qt3tests -- --dist --reporter dot;
+    - timeout 600 xvfb-run -a npm run qt3testsxqueryx -- --dist --reporter dot;
