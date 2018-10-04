@@ -553,7 +553,7 @@ ArrowFunctionSpecifier = name:EQName {return ["EQName"].concat(name)} / VarRef /
 PrimaryExpr
  = Literal
  / VarRef
- / ParenthesizedExpr
+ / expr:ParenthesizedExpr {return ["sequenceExpr", expr]}
  / ContextItemExpr
  / FunctionCall
 // / OrderedExpr
