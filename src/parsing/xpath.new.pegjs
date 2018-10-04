@@ -415,29 +415,43 @@ NodeComp
 SimpleMapExpr
  = lhs:PathExpr rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", [lhs].concat(rhs)] : lhs}
 
-// 108
+// === 108 - 110 (simplified for ease of parsing)
 PathExpr
- = "//" _ pathExpr:RelativePathExpr {return ["pathExpr", ["rootExpr"], ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]].concat(pathExpr)}
- / "/" _ pathExpr:RelativePathExpr? {return pathExpr ? ["pathExpr", ["rootExpr"]].concat(pathExpr) : ["pathExpr", ["rootExpr"]]}
- / pathExpr:RelativePathExpr {return pathExpr[0][0] === "stepExpr" ? ["pathExpr"].concat(pathExpr) : pathExpr[0]}
+ = RelativePathExpr
+ / AbsoluteLocationPath
 
-// 109
 RelativePathExpr
- = lhs:StepExpr rhs:(lh:("//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]} / "/" {return false}) rh:StepExpr {return lh ? [lh, rh] : [rh]})*
- {return [lhs].concat(rhs.reduce(function (all, items) {return all.concat(items)}, []))}
+ = lhs:StepExpr _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExpr
+   {return ["pathExpr", lhs[0] === "stepExpr" ? lhs : ["stepExpr", lhs], abbrev].concat(rhs[0] === "pathExpr" ? rhs.slice(1) : [rhs])}
+ / lhs:StepExpr _ "/" _ rhs:RelativePathExpr
+   {return ["pathExpr", lhs[0] === "stepExpr" ? lhs : ["stepExpr", lhs]].concat(rhs[0] === "pathExpr" ? rhs.slice(1) : [rhs])}
+ / step:StepExpr {return step[0] !== "stepExpr" ? step : ["pathExpr", step]}
 
-// 110
 StepExpr
  = PostfixExpr
  / AxisStep
 
+AbsoluteLocationPath
+ = "/" _ path:RelativePathExpr
+   {return ["pathExpr", ["rootExpr"]].concat(path.slice(1))}
+ / abbrev:LocationPathAbbreviation _ path: RelativePathExpr
+   {return ["pathExpr", ["rootExpr"], abbrev].concat(path[0] === "pathExpr" ? path.slice(1) : [path])}
+ / "/"
+ {return ["pathExpr", ["rootExpr"]]}
+
+LocationPathAbbreviation
+ = "//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]}
+
+// === end of changes ===
+
 // 111
 AxisStep
- = stepExpr:(ReverseStep / ForwardStep) predicates:PredicateList {return stepExpr.concat(predicates)}
+ = stepExpr:(ReverseStep / ForwardStep) predicates:PredicateList {return predicates.length === 0 ? stepExpr : stepExpr.concat([predicates])}
 
 // 112
 ForwardStep
- = step:(axis:ForwardAxis nodeTest:NodeTest {return ["stepExpr", ["xpathAxis", axis], nodeTest]}) / step:AbbrevForwardStep {return step}
+ = axis:ForwardAxis nodeTest:NodeTest {return ["stepExpr", ["xpathAxis", axis], nodeTest]}
+ / AbbrevForwardStep
 
 // 113
 ForwardAxis
@@ -451,7 +465,8 @@ ForwardAxis
 
 // 114
 AbbrevForwardStep
- = attributeTest:"@"? nodeTest:NodeTest {return attributeTest || isAttributeTest(nodeTest) ? ["stepExpr", ["xpathAxis", "attribute"], nodeTest] : ["stepExpr", ["xpathAxis" , "child"], nodeTest]}
+ = attributeTest:"@"? nodeTest:NodeTest
+   {return attributeTest || isAttributeTest(nodeTest) ? ["stepExpr", ["xpathAxis", "attribute"], nodeTest] : ["stepExpr", ["xpathAxis" , "child"], nodeTest]}
 
 // 115
 ReverseStep
@@ -498,7 +513,7 @@ ArgumentList
 
 // 123
 PredicateList
- = predicates:Predicate* {return predicates.length ? ["predicates", predicates] : []}
+ = predicates:Predicate* {return predicates.length ? ["predicates"].concat(predicates) : []}
 
 // 124
 Predicate
