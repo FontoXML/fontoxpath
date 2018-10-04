@@ -443,7 +443,7 @@ StepExprWithoutStep
 
 // Parses expressions in a path i.e. must be a step expression
 StepExprWithForcedStep
- = expr:PostfixExprWithStep {return ["stepExpr", expr]}
+ = expr:PostfixExprWithStep {return ["stepExpr"].concat(expr)}
  / AxisStep
 
 AbsoluteLocationPath
@@ -463,15 +463,11 @@ PostfixExprWithStep
      (_ filter:Predicate {return filter})
    / (_ argList:ArgumentList {return argList})
    / (_ lookup:Lookup {return lookup})
-   )* {return postfixExpr.length === 0 ? ["filterExpr", expr] : ["predicates"].concat(postfixExpr)}
+   )* {return postfixExpr.length === 0 ? [["filterExpr", expr]] : [["filterExpr", expr], ["predicates"].concat(postfixExpr)]}
 
 // Expression is not in a step expression, i.e. can not have predicates and does not need filterExpr wrapper
 PostfixExprWithoutStep
- = expr:PrimaryExpr postfixExpr:(
-     (_ filter:Predicate {return filter})
-   / (_ argList:ArgumentList {return argList})
-   / (_ lookup:Lookup {return lookup})
-   )* {return postfixExpr.length === 0 ? expr : ["predicates"].concat(postfixExpr)}
+ = expr:PrimaryExpr !(Predicate) {return expr}
 
 
 // === end of changes ===
