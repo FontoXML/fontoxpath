@@ -10,7 +10,7 @@
   }
 
   function makeBinaryOp (kind, lhs, rhs) {
-      return rhs.reduce(function(lh, rh) {return [kind, ["firstOperator", lh], ["secondOperator", rh]]}, lhs);
+      return rhs.reduce(function(lh, rh) {return [kind, ["firstOperand", lh], ["secondOperand", rh]]}, lhs);
   }
 
   function isAttributeTest (nodeTest) {
@@ -316,7 +316,7 @@ AndExpr
 // 85
 ComparisonExpr
  = lhs:StringConcatExpr rhs:(_ op:(ValueComp / NodeComp / GeneralComp) _ expr:StringConcatExpr {return [op, expr]})?
- {return rhs ? [rhs[0], ["firstOperator"].concat(lhs), ["secondOperator"].concat(rhs[1])] : lhs}
+ {return rhs ? [rhs[0], ["firstOperand"].concat(lhs), ["secondOperand"].concat(rhs[1])] : lhs}
 
 // 86
 StringConcatExpr
@@ -331,7 +331,7 @@ RangeExpr
 // 88
 AdditiveExpr
  = lhs:MultiplicativeExpr rhs:(_ op:("-" {return "subtractOp"}/ "+" {return "addOp"}) _ expr:MultiplicativeExpr {return [op, expr]})*
- {return rhs.reduce(function (lhs, additiveOp) {return [additiveOp[0], ["firstOperator", lhs], ["secondOperator", additiveOp[1]]]}, lhs)}
+ {return rhs.reduce(function (lhs, additiveOp) {return [additiveOp[0], ["firstOperand", lhs], ["secondOperand", additiveOp[1]]]}, lhs)}
 
 // 89
 MultiplicativeExpr
@@ -341,7 +341,7 @@ MultiplicativeExpr
    / "idiv" AssertAdjacentOpeningTerminal {return "idivOp"}
    / "mod" AssertAdjacentOpeningTerminal {return "modOp"})
    _ expr:UnionExpr {return [op, expr]})*
- {return rhs.reduce(function (lhs, multiplicativeOp) {return [multiplicativeOp[0], ["firstOperator", lhs], ["secondOperator", multiplicativeOp[1]]]}, lhs)}
+ {return rhs.reduce(function (lhs, multiplicativeOp) {return [multiplicativeOp[0], ["firstOperand", lhs], ["secondOperand", multiplicativeOp[1]]]}, lhs)}
 
 // 90
 UnionExpr
@@ -351,7 +351,7 @@ UnionExpr
 // 91 Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
 IntersectExpr
  = lhs:InstanceofExpr rhs:(_ op:("intersect" {return "intersectOp"} / "except" {return "exceptOp"}) AssertAdjacentOpeningTerminal _ expr:IntersectExpr {return [op, expr]})*
- {return rhs.reduce(function (lhs, intersectOp) {return [intersectOp[0], ["firstOperator", lhs], ["secondOperator", intersectOp[1]]]}, lhs)}
+ {return rhs.reduce(function (lhs, intersectOp) {return [intersectOp[0], ["firstOperand", lhs], ["secondOperand", intersectOp[1]]]}, lhs)}
 
 // 92
 InstanceofExpr
