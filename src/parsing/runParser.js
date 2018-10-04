@@ -1,9 +1,7 @@
 // TODO: Remove this file before merging into master
 const parser = require('./xPathParser.new.js');
 
-const input = `
-yyy:prrt(..)
-`;
+const input = `(adjust-date-to-timezone( xs:date('2006-02-15'), ()))`;
 
 function print (what, indent, n) {
 	const filler = Array(indent).fill(' ').join('');
@@ -30,10 +28,12 @@ function print (what, indent, n) {
 }
 
 try {
-	console.log(print(parser.xPathParser.parse(input), 0, 0));
+	console.log(print(parser.parse(input), 0, 0));
 }
 catch (err) {
 	console.log(err);
-	const start = err.location.start.offset;
-	console.log(input.substring(0, start) + '[HERE]' + input.substring(start));
+	if (err.location) {
+		const start = err.location.start.offset;
+		console.log(input.substring(0, start) + '[HERE]' + input.substring(start));
+	}
 }
