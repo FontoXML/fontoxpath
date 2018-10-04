@@ -428,34 +428,36 @@ RelativePathExpr
   / StepExprWithoutStep // Pass-through for normal stuff
   / step:StepExprWithForcedStep {return ["pathExpr", step]}
 
+// Parses expressions, we already now we are in a path so each will be step expression
 RelativePathExprWithForcedStep
  = lhs:StepExprWithForcedStep _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExprWithForcedStep
    {return [lhs, abbrev].concat(rhs)}
  / lhs:StepExprWithForcedStep _ "/" _ rhs:RelativePathExprWithForcedStep
    {return [lhs].concat(rhs)}
-// / step:StepExprWithoutStep {return [["stepExpr",step]]}
  / step:StepExprWithForcedStep
     {return [step]}
 
+// Parses expressions which are not in a path i.e. which are not step expressions
 StepExprWithoutStep
  = PostfixExprWithoutStep
 
+// Parses expressions in a path i.e. must be a step expression
 StepExprWithForcedStep
  = expr:PostfixExprWithStep {return ["stepExpr", expr]}
  / AxisStep
 
 AbsoluteLocationPath
- = "/" _ path:RelativePathExpr
-   {return ["pathExpr", ["rootExpr"]].concat(path.slice(1))}
- / abbrev:LocationPathAbbreviation _ path: RelativePathExpr
-   {return ["pathExpr", ["rootExpr"], abbrev].concat(path[0] === "pathExpr" ? path.slice(1) : [path])}
+ = "/" _ path:RelativePathExprWithForcedStep
+   {return ["pathExpr", ["rootExpr"]].concat(path)}
+ / abbrev:LocationPathAbbreviation _ path: RelativePathExprWithForcedStep
+   {return ["pathExpr", ["rootExpr"], abbrev].concat(path)}
  / "/"
    {return ["pathExpr", ["rootExpr"]]}
 
 LocationPathAbbreviation
  = "//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]}
 
-// 121
+// 121 Expression must in a step expression, i.e. expression must be wrapped in a filterExpr
 PostfixExprWithStep
  = expr:PrimaryExpr postfixExpr:(
      (_ filter:Predicate {return filter})
@@ -463,6 +465,7 @@ PostfixExprWithStep
    / (_ lookup:Lookup {return lookup})
    )* {return postfixExpr.length === 0 ? ["filterExpr", expr] : ["predicates"].concat(postfixExpr)}
 
+// Expression is not in a step expression, i.e. can not have predicates and does not need filterExpr wrapper
 PostfixExprWithoutStep
  = expr:PrimaryExpr postfixExpr:(
      (_ filter:Predicate {return filter})
