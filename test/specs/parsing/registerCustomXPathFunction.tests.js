@@ -229,4 +229,19 @@ describe('registerCustomXPath', () => {
 	it ('the registered function can be used in a xPath selector with return value gDay', () => {
 		chai.assert.equal(evaluateXPathToString('test:custom-gDay-function()', documentNode), '---22Z');
 	});
+
+	it('', () => {
+		const outerDomFacade = {'this-is-the-outer-one': true};
+		registerCustomXPathFunction(
+			'test:custom-function-keeps-the-dom-facade',
+			[],
+			'xs:boolean',
+			function (dynamicContext, string) {
+				chai.assert.equal(outerDomFacade, dynamicContext.domFacade);
+				return true;
+			});
+		chai.assert.isTrue(
+			evaluateXPathToBoolean('test:custom-function-keeps-the-dom-facade()', documentNode, outerDomFacade));
+
+	});
 });

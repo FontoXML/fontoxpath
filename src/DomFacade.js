@@ -98,6 +98,10 @@ DomFacade.prototype.getData = function (node) {
 	return this._domFacade.getData(node) || '';
 };
 
+DomFacade.prototype.unwrap = function () {
+	return this._domFacade;
+};
+
 // Can be used to create an extra frame when tracking dependencies
 DomFacade.prototype.getRelatedNodes = function (node, callback) {
 	return callback(node, this);

@@ -80,7 +80,7 @@ export default function registerCustomXPathFunction (name, signature, returnType
 		// Adapt the domFacade into another object to prevent passing everything. The closure compiler might rename some variables otherwise.
 		// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
 		const dynamicContextAdapter = {};
-		dynamicContextAdapter['domFacade'] = executionParameters.domFacade;
+		dynamicContextAdapter['domFacade'] = executionParameters.domFacade.unwrap();
 
 		const jsResult = callback.apply(undefined, [dynamicContextAdapter].concat(newArguments));
 		const xpathResult = adaptJavaScriptValueToXPathValue(jsResult, returnType);
