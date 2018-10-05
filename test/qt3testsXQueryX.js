@@ -3,14 +3,15 @@ import {
 	evaluateXPathToString
 } from 'fontoxpath';
 
-import parser from 'fontoxpath/parsing/xPathParser.new';
+import xPathParserRaw from 'fontoxpath/parsing/xPathParser.new';
+const parser = /** @type {({xPathParser: {parse:function(!string):?}, SyntaxError:?})} */ ({});
+new Function(xPathParserRaw).call(parser);
 
 import fs from 'fs';
 import path from 'path';
 import chai from 'chai';
 
 import { sync, slimdom } from 'slimdom-sax-parser';
-
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
@@ -117,7 +118,7 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 
 					let jsonMl;
 					try {
-						jsonMl = parser.parse(xQuery);
+						jsonMl = parser.xPathParser.parse(xQuery);
 					}
 					catch (err) {
 						if (err.location) {

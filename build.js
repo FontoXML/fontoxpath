@@ -30,9 +30,10 @@ function doNewPegJsBuild () {
 		.then(pegJsString => peg.generate(pegJsString, {
 			cache: true,
 			output: 'source',
-			format: 'commonjs',
+			format: 'globals',
 			exportVar: 'xPathParser'
 		}))
+		.then(parserString => `module.exports = ${JSON.stringify(parserString)};`)
 		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./src/parsing/xPathParser.new.js', parserString, (err) => err ? reject(err) : resolve())))
 		.then(() => console.info('(new) Parser generator done'));
 }
