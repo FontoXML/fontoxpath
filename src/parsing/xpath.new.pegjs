@@ -385,7 +385,7 @@ UnaryExpr
  / ValueExpr
 
 // 98 TODO: Should be: ValidateExpr | ExtensionExpr | SimpleMapExpr
-ValueExpr = SimpleMapExpr
+ValueExpr = ExtensionExpr / SimpleMapExpr
 
 // 99
 GeneralComp
@@ -410,6 +410,18 @@ NodeComp
  = "is" AssertAdjacentOpeningTerminal {return "isOp"}
  / "<<" {return "nodeBeforeOp"}
  / ">>" {return "nodeAfterOp"}
+
+// 104
+ExtensionExpr
+ = pragma:Pragma+ _ "{" _ Expr? _ "}" {return ["extensionExpr"].concat(pragma)}
+
+// 105
+Pragma
+ = "(#" S? name:EQName contents:(S contents:PragmaContents {return contents})? _ "#)" {return contents ? ["pragma", ["pragmaName", name], ["pragmaContents", contents]] : ["pragma", ["pragmaName", name]]}
+
+// 106
+PragmaContents
+ = chars:(char:Char !'#)' {return char})* {return chars.join('')}
 
 // 107
 SimpleMapExpr
