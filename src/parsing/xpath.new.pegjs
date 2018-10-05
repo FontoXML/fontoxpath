@@ -237,7 +237,7 @@ ExprSingle
 
 // 41
 FLWORExpr
- = initialClause:InitialClause _ intermediateClauses:IntermediateClause* _ returnClause:ReturnClause
+ = initialClause:InitialClause intermediateClauses:(_ intermediateClause:IntermediateClause {return intermediateClause})* _ returnClause:ReturnClause
    {return ["flworExpr", initialClause].concat(intermediateClauses).concat([returnClause])}
 
 // 42
@@ -249,7 +249,7 @@ InitialClause
 // 43
 IntermediateClause
  = InitialClause
- // / WhereClause
+ / WhereClause
  // / GroupByClause
  // / OrderByClause
  // / CountClause
@@ -282,6 +282,10 @@ LetBinding
  = "$" varName:VarName _ typeDecl:TypeDeclaration? _ ":=" _ expr:ExprSingle
    {return ["letClauseItem", ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])], ["letExpr", expr]]}
 
+// 60
+WhereClause
+ = "where" AssertAdjacentOpeningTerminal _ expr:ExprSingle {return ["whereClause", expr]}
+
 // 69
 ReturnClause
  = "return" _ expr:ExprSingle {return ["returnClause", expr]}
@@ -299,12 +303,13 @@ QuantifiedExpr
  )*) S "satisfies" S predicateExpr:ExprSingle
  {return ["quantifiedExpr", ["quantifier", kind]].concat(quantifiedExprInClauses).concat([predicateExpr])}
 
+// 77
 IfExpr
  = "if" _ "(" _ ifClause:Expr _ ")" _ "then" AssertAdjacentOpeningTerminal _ thenClause:ExprSingle _ "else" AssertAdjacentOpeningTerminal _ elseClause:ExprSingle
    {return ["ifThenElseExpr", ["ifClause", ifClause], ["thenClause", thenClause], ["elseClause", elseClause]]}
 
  // 83
- OrExpr
+OrExpr
   = lhs:AndExpr rhs:( _ "or" AssertAdjacentOpeningTerminal _ expr:AndExpr {return expr})*
     {return makeBinaryOp("orOp", lhs, rhs)}
 
@@ -384,9 +389,10 @@ UnaryExpr
  / "+" expr:UnaryExpr {return ["unaryPlus", ["operand", expr]]}
  / ValueExpr
 
-// 98 TODO: Should be: ValidateExpr | ExtensionExpr | SimpleMapExpr
+// 98
 ValueExpr
 = ValidateExpr
+ / ExtensionExpr
  / SimpleMapExpr
 
 // 99
@@ -415,7 +421,7 @@ NodeComp
 
 // 102
 ValidateExpr
- = "validate" modeOrType:(_mode:ValidationMode {return ["validationMode", mode]} / (_ "type" _ type:TypeName {return ["type"].concat(type)}))? _ "{" _ expr:Expr _ "}"
+ = "validate" modeOrType:(_ mode:ValidationMode {return ["validationMode", mode]} / (_ "type" _ type:TypeName {return ["type"].concat(type)}))? _ "{" _ expr:Expr _ "}"
    {return ["validateExpr"].concat(modeOrType ? [modeOrType] : []).concat([expr])}
 
 // 103
@@ -560,7 +566,7 @@ PredicateList
 
 // 124
 Predicate
- = "[" expr:Expr "]" {return expr}
+ = "[" _  expr:Expr _ "]" {return expr}
 
 // 125
 Lookup
