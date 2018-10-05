@@ -4,7 +4,7 @@ const parser = /** @type {({xPathParser: {parse:function(!string):?}, SyntaxErro
 new Function(xPathParserRaw).call(parser);
 const { sync, slimdom } = require('slimdom-sax-parser');
 
-const xQuery = `$person:bob/is/not/$dog:henk/*`;
+const xQuery = `(# exq:distinct //city by @country #){}`;
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
@@ -101,9 +101,18 @@ function printXml (document) {
 	});
 }
 
-let jsonMl;
 try {
-	jsonMl = parser.xPathParser.parse(xQuery);
+	const jsonMl = parser.xPathParser.parse(xQuery);
+
+	console.log('----------------JsonML----------------');
+	console.log(printJsonMl(jsonMl, 0, 0));
+
+	const document = new slimdom.Document();
+	document.appendChild(parseNode(document, jsonMl));
+	document.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
+
+	console.log('-----------------XML-----------------');
+	printXml(document);
 }
 catch (err) {
 	console.log(err);
@@ -112,13 +121,3 @@ catch (err) {
 		console.log(xQuery.substring(0, start) + '[HERE]' + xQuery.substring(start));
 	}
 }
-
-console.log('----------------JsonML----------------');
-console.log(printJsonMl(jsonMl, 0, 0));
-
-const document = new slimdom.Document();
-document.appendChild(parseNode(document, jsonMl));
-document.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
-
-console.log('-----------------XML-----------------');
-printXml(document);
