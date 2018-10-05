@@ -385,7 +385,9 @@ UnaryExpr
  / ValueExpr
 
 // 98 TODO: Should be: ValidateExpr | ExtensionExpr | SimpleMapExpr
-ValueExpr = ExtensionExpr / SimpleMapExpr
+ValueExpr
+= ValidateExpr
+ / SimpleMapExpr
 
 // 99
 GeneralComp
@@ -410,6 +412,15 @@ NodeComp
  = "is" AssertAdjacentOpeningTerminal {return "isOp"}
  / "<<" {return "nodeBeforeOp"}
  / ">>" {return "nodeAfterOp"}
+
+// 102
+ValidateExpr
+ = "validate" modeOrType:(_mode:ValidationMode {return ["validationMode", mode]} / (_ "type" _ type:TypeName {return ["type"].concat(type)}))? _ "{" _ expr:Expr _ "}"
+   {return ["validateExpr"].concat(modeOrType ? [modeOrType] : []).concat([expr])}
+
+// 103
+ValidationMode
+ = "lax" / "strict"
 
 // 104
 ExtensionExpr
