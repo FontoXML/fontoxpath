@@ -4,14 +4,12 @@ const parser = /** @type {({xPathParser: {parse:function(!string):?}, SyntaxErro
 new Function(xPathParserRaw).call(parser);
 const { sync, slimdom } = require('slimdom-sax-parser');
 
-// const xQuery = `//fots:test-case[
-// 		contains(test, "declare variable")]`;
-
-const xQuery = `let $testsets := //fots:test-set/@file/(validate{doc(resolve-uri(., base-uri(..)))})
-for $test in $testsets//fots:test-case
-where empty($test/(fots:dependency | ../fots:dependency)) or
-	  exists($test/(fots:dependency | ../fots:dependency)[contains(., "XP")])
-return $test`;
+const xQuery = `declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";
+let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))
+for $schema in (.|$testsets)//fots:environment/fots:schema
+let $targetNamespace := doc(resolve-uri($schema/@file, base-uri($schema)))/*/@targetNamespace
+where not($schema/@uri eq $targetNamespace or (empty($targetNamespace) and string(@uri)=''))
+return ($schema, <file>{base-uri($schema)}</file>)`;
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
