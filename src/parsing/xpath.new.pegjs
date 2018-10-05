@@ -16,6 +16,28 @@
   function isAttributeTest (nodeTest) {
     return nodeTest[0] === "attributeTest" || nodeTest[0] === "schemaAttributeTest";
   }
+
+  function accumulateDirContents (parts, expressionsOnly) {
+        if (!parts.length) {
+            return [];
+        }
+        const result = [parts[0]];
+        for (let i = 1; i < parts.length; ++i) {
+            if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
+                result[result.length-1] += parts[i];
+                continue;
+            }
+            result.push(parts[i]);
+        }
+        if (result.length > 1 || expressionsOnly){
+          for (let i = 0; i < result.length; i++) {
+            if (typeof result[i] === "string") {
+              result[i] = ["stringConstantExpr", result[i]];
+            }
+          }
+        }
+        return result;
+    }
 }
 
 // 1
@@ -587,7 +609,7 @@ PrimaryExpr
  / FunctionCall
 // / OrderedExpr
 // / UnorderedExpr
-// / NodeConstructor
+ / NodeConstructor
  / FunctionItemExpr
  / MapConstructor
  / ArrayConstructor
@@ -633,6 +655,66 @@ Argument
 // 139
 ArgumentPlaceholder
  = "?" {return ["argumentPlaceholder"]}
+
+// 140
+NodeConstructor
+ = DirectConstructor
+// / ComputedConstructro
+
+// 141
+DirectConstructor
+ = DirElemConstructor
+//  / DirCommentConstructor
+//  / DirPIConstructor
+
+// 142
+DirElemConstructor
+ = "<" name:QName attList:DirAttributeList endPart:(
+   ("/>" {return null}) /
+   (">" contents:DirElemContent* "</" closingname:QName ExplicitWhitespace? ">" {return [contents, closingname]} ))
+ {return ['elementConstructor', ["tagName"].concat(name)].concat([["attributeList"].concat(attList)] || []).concat(endPart ? [["elementContent"].concat(accumulateDirContents(endPart[0], true))] : [])}
+
+// 143
+DirAttributeList
+ = attrs:(ExplicitWhitespace attr:(attribute)? {return attr})*
+   {return attrs.filter(Boolean).map(attr => ["attributeConstructor", attr[0], attr[1]]) || []}
+
+attribute
+ = name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue
+   {return [["attributeName"].concat(name), value.length === 1 && typeof value[0] === "string" ? ["attributeValue", value[0]] : ["attributeValueExpr"].concat(value)]}
+
+// 144
+DirAttributeValue
+ = '"' chars:(EscapeQuot / QuotAttrValueContent)* '"' {return accumulateDirContents(chars, false)}
+ / "'" chars:(EscapeApos / AposAttrValueContent)* "'" {return accumulateDirContents(chars, false)}
+
+// 145
+QuotAttrValueContent = char:QuotAttrValueContentChar / CommonContent
+
+// 146
+AposAttrValueContent = char:AposAttrValueContentChar / CommonContent
+
+// 147
+// Note: changed the order around to prevent CDATA to be parsed as element content
+DirElemContent
+ = CDataSection
+ / DirectConstructor
+ / CommonContent
+ / $ElementContentChar
+
+// 148
+CommonContent
+= char:PredefinedEntityRef
+ / ref:CharRef
+ / "{{" { return "\u007b" } // PegJS does not like unbalanced curly braces in JS context
+ / "}}"  { return "\u007d" } // PegJS does not like unbalanced curly braces in JS context
+ / EnclosedExpr
+
+// 153
+CDataSection = "<![CDATA[" contents:$CDataSectionContents "]]>" {return ["CDataSection", contents]}
+
+// 154
+CDataSectionContents = (!"]]>" Char)*
 
 // 167
 FunctionItemExpr
@@ -875,6 +957,15 @@ EscapeQuot
 // 227
 EscapeApos
  = "''" {return "'"}
+
+// 228
+ElementContentChar = ![{}<&] Char
+
+// 229
+QuotAttrValueContentChar = ![\"{}<&] ch:Char {return ch}
+
+// 230
+AposAttrValueContentChar = ![\'{}<&] ch:Char {return ch}
 
 // 231
 Comment
