@@ -262,7 +262,7 @@ ForClause
 // 45
 ForBinding
  = "$" varName:VarName _ typeDecl:TypeDeclaration? _ AllowingEmpty? _ PositionalVar? _ "in"_ expr:ExprSingle
-   {return ["forClauseItem", ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : []), ["forExpr", expr]]]}
+   {return ["forClauseItem", ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])], ["forExpr", expr]]}
 
 // 46
 AllowingEmpty
@@ -422,7 +422,7 @@ NodeComp
 // 102
 ValidateExpr
  = "validate" modeOrType:(_ mode:ValidationMode {return ["validationMode", mode]} / (_ "type" _ type:TypeName {return ["type"].concat(type)}))? _ "{" _ expr:Expr _ "}"
-   {return ["validateExpr"].concat(modeOrType ? [modeOrType] : []).concat([expr])}
+   {return ["validateExpr"].concat(modeOrType ? [modeOrType] : []).concat([["argExpr", expr]])}
 
 // 103
 ValidationMode
