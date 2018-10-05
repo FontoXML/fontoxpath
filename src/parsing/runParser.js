@@ -4,7 +4,14 @@ const parser = /** @type {({xPathParser: {parse:function(!string):?}, SyntaxErro
 new Function(xPathParserRaw).call(parser);
 const { sync, slimdom } = require('slimdom-sax-parser');
 
-const xQuery = `(# exq:distinct //city by @country #){}`;
+// const xQuery = `//fots:test-case[
+// 		contains(test, "declare variable")]`;
+
+const xQuery = `let $testsets := //fots:test-set/@file/(validate{doc(resolve-uri(., base-uri(..)))})
+for $test in $testsets//fots:test-case
+where empty($test/(fots:dependency | ../fots:dependency)) or
+	  exists($test/(fots:dependency | ../fots:dependency)[contains(., "XP")])
+return $test`;
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
@@ -85,16 +92,22 @@ function printXml (document) {
 		else if (element === elements[elements.length - 1]) {
 			row = row.substring(0, row.length - 1);
 		}
-		switch (row.search(/<\//g)) {
-			case -1:
-				indent = Array(depth++).fill('  ').join('');
-				break;
-			case 0:
-				indent = Array(--depth).fill('  ').join('');
-				break;
-			default:
-				indent = Array(depth).fill('  ').join('');
-				break;
+
+		if (row.substring(row.length - 2) === '/>') {
+			indent = Array(depth).fill('  ').join('');
+		}
+		else {
+			switch (row.search(/<\//g)) {
+				case -1:
+					indent = Array(depth++).fill('  ').join('');
+					break;
+				case 0:
+					indent = Array(--depth).fill('  ').join('');
+					break;
+				default:
+					indent = Array(depth).fill('  ').join('');
+					break;
+			}
 		}
 
 		console.log(indent + row);
