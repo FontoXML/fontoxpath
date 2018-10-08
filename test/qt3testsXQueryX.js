@@ -16,6 +16,8 @@ import { sync, slimdom } from 'slimdom-sax-parser';
 const skippableTestNames = [
 	'Catalog005', // Was generated to an old version
 	'Catalog006', // Was generated to an old version
+	'Catalog007', // Encoding is commented
+	'Catalog014' // Was generated to an old version
 ];
 
 /**
