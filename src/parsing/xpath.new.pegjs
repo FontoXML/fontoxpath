@@ -758,7 +758,7 @@ ArgumentPlaceholder
 // 140
 NodeConstructor
  = DirectConstructor
-// / ComputedConstructro
+ / ComputedConstructor
 
 // 141
 DirectConstructor
@@ -820,6 +820,21 @@ CDataSection = "<![CDATA[" contents:$CDataSectionContents "]]>" {return ["CDataS
 
 // 154
 CDataSectionContents = (!"]]>" Char)*
+
+// 155
+ComputedConstructor
+ = // CompDocConstructor
+// / CompElemConstructor
+ CompAttrConstructor
+//  / CompNamespaceConstructor
+//  / CompTextConstructor
+//  / CompCommentConstructor
+//  / CompPIConstructor
+
+// 159
+CompAttrConstructor
+ = "attribute" name:(AssertAdjacentOpeningTerminal _ name:EQName {return ["tagName", name]} / ( _ "{" _ nameExpr:Expr _ "}" {return ["tagNameExpr", nameExpr]})) _ expr:EnclosedExpr
+ {return ["computedAttributeConstructor", name].concat(expr ? ["valueExpr", expr] : [])}
 
 // 167
 FunctionItemExpr
