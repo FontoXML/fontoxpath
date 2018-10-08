@@ -1051,8 +1051,8 @@ IntegerLiteral = digits:Digits {return ["integerConstantExpr", ["value", digits]
 
 // 220
 DecimalLiteral
- = "." digits:Digits {return ["decimalConstantExpr", ["value", parseFloat("." + digits)]]}
- / decimal:$(Digits "." Digits?) {return ["decimalConstantExpr", ["value", parseFloat(decimal)]]}
+ = "." digits:Digits {return ["decimalConstantExpr", ["value", digits]]}
+ / decimal:$(Digits "." Digits?) {return ["decimalConstantExpr", ["value", decimal]]}
 
 // 221
 DoubleLiteral
