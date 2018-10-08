@@ -84,8 +84,9 @@ MainModule
 VersionDeclaration
  = "xquery" _ versionAndEncoding:(
     ("encoding" S e:StringLiteral {return ["encoding", e]})
-    / ("version" S version:StringLiteral encoding:(S "encoding" S e:StringLiteral {return e})? {return [["version", version], ["encoding", encoding]]})
-  ) _ Separator
+    / ("version" S version:StringLiteral encoding:(S "encoding" S e:StringLiteral {return e})?
+	  {return [["version", version]].concat(encoding ? [["encoding", encoding]] : [])}
+	  )) _ Separator
   {return ["versionDecl"].concat(versionAndEncoding)}
 
 // 4
@@ -303,7 +304,7 @@ IntermediateClause
  = InitialClause
  / WhereClause
  / GroupByClause
-// / OrderByClause
+ / OrderByClause
 // / CountClause
 
 // 44
@@ -362,6 +363,34 @@ groupVarInitialize
 // 64
 GroupingVariable
  = "$" varName:VarName {return ["varName"].concat(varName)}
+
+// 65
+OrderByClause
+ = stable:(("order" S "by" {return false}) / ("stable" S "order" S "by" {return true})) _ specList:OrderSpecList
+ {return ["orderByClause"].concat(stable ? ["stable"] : []).concat(specList)}
+
+// 66
+OrderSpecList
+ = first:OrderSpec rest:(_ "," _ os:OrderSpec {return os})*
+   {return [first].concat(rest)}
+
+// 67
+OrderSpec
+ = expr:ExprSingle _ modifier:OrderModifier
+   {return ["orderBySpec", ["orderByExpr", expr]].concat(modifier ? [modifier] : [])}
+
+// 68
+OrderModifier
+ = kind:("ascending" / "descending")? _ empty:("empty" _ ("greatest" {return "empty greatest"}/ "least" {return "empty least"}))? _ collation:("collation" URILiteral)?
+   {
+	 if (!kind && ! empty && !collation) {
+	    return null;
+	 }
+     return ["orderModifier"]
+	   .concat(kind ? [["orderingKind", kind]] : [])
+	   .concat(empty ? [["emptyOrderingMode", empty]] : [])
+	   .concat(collation ? [["collation", collation]] : [])
+   }
 
 // 69
 ReturnClause
