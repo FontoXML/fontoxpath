@@ -748,7 +748,7 @@ NodeConstructor
 // 141
 DirectConstructor
  = DirElemConstructor
-//  / DirCommentConstructor
+ / DirCommentConstructor
 //  / DirPIConstructor
 
 // 142
@@ -793,6 +793,12 @@ CommonContent
  / "{{" { return "\u007b" } // PegJS does not like unbalanced curly braces in JS context
  / "}}"  { return "\u007d" } // PegJS does not like unbalanced curly braces in JS context
  / EnclosedExpr
+
+// 149
+DirCommentConstructor = "<!--" contents:$DirCommentContents "-->" {return ["computedCommentConstructor", ["argExpr", ["stringConstantExpr", ["value", contents]]]]}
+
+// 150
+DirCommentContents = ((!"-" Char) / ("-" (!"-" Char)))*
 
 // 153
 CDataSection = "<![CDATA[" contents:$CDataSectionContents "]]>" {return ["CDataSection", contents]}
