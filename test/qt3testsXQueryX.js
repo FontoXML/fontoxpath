@@ -134,6 +134,7 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 					const expected = sync(fs.readFileSync(testCasePath, 'utf-8').replace(/\n\s*</g, '<'));
 					const actual = new slimdom.Document();
 					actual.appendChild(parseNode(actual, jsonMl));
+					actual.normalize();
 					actual.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX
                                 http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
 
