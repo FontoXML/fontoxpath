@@ -14,8 +14,9 @@ import chai from 'chai';
 import { sync, slimdom } from 'slimdom-sax-parser';
 
 const skippableTestNames = [
-	'Catalog005',
-	'Catalog006'
+	'Catalog005', // Was generated to an old version
+	'Catalog006', // Was generated to an old version
+	'Catalog007'  // Encoding is commented
 ];
 
 /**
