@@ -221,7 +221,7 @@ VarDecl
  = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})?
       value:((_ ":=" _ value:VarValue {return ["varValue", value]})
       / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])}))
-  {return ["varDecl", ["varName"].concat(name), ["typeDeclaration", varType], value]}
+  {return ["varDecl", ["varName"].concat(name), varType, value]}
 
 // 29
 VarValue
@@ -245,17 +245,17 @@ FunctionDecl
       ["functionName"].concat(name),
       ["paramList"].concat(paramList || [])
     ]
-    .concat(typeDeclaration ? ["typeDeclaration", typeDeclaration] : [])
+    .concat(typeDeclaration ? [["typeDeclaration"].concat(typeDeclaration)] : [])
     .concat([body])}
 
 // 33
 ParamList
- = lhs:Param rhs:(_ "," _ param:Param {return param})* {return lhs.concat(rhs)}
+ = lhs:Param rhs:(_ "," _ param:Param {return param})* {return [lhs].concat(rhs)}
 
 // 34
 Param
  = "$" varName:EQName typeDeclaration:(S t:TypeDeclaration {return t})?
- {return ["param", ["varName"].concat(varName).concat(typeDeclaration ? ["typeDeclaration", typeDeclaration] : [])]}
+ {return ["param", ["varName"].concat(varName)].concat(typeDeclaration ? [typeDeclaration] : [])}
 
 // 35
 FunctionBody
@@ -412,12 +412,12 @@ IntersectExpr
 
 // 92
 InstanceofExpr
- = lhs:TreatExpr rhs:(_ "instance" S "of" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["instanceOfExpr", ["argExpr", lhs], ["sequenceType", rhs]] : lhs}
+ = lhs:TreatExpr rhs:(_ "instance" S "of" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["instanceOfExpr", ["argExpr", lhs], ["sequenceType"].concat(rhs)] : lhs}
  / TreatExpr
 
 // 93
 TreatExpr
- = lhs:CastableExpr rhs:(_ "treat" S "as" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["treatExpr", ["argExpr", lhs], ["sequenceType", rhs]] : lhs}
+ = lhs:CastableExpr rhs:(_ "treat" S "as" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["treatExpr", ["argExpr", lhs], ["sequenceType"].concat(rhs)] : lhs}
 
 // 94
 CastableExpr
@@ -757,12 +757,12 @@ NamedFunctionRef
 
 // 169
 InlineFunctionExpr
- = annotations:Annotation* _ "function" _ "(" _ params:ParamList? _ ")" _ typeDeclaration:( "as" S t:SequenceType _ {return ["typeDeclaration", t]})? body:FunctionBody
+ = annotations:Annotation* _ "function" _ "(" _ params:ParamList? _ ")" _ typeDeclaration:( "as" S t:SequenceType _ {return [t]})? body:FunctionBody
  {
    return ["inlineFunctionExpr"]
      .concat(annotations)
      .concat([["paramList"].concat(params || [])])
-     .concat(typeDeclaration ? [typeDeclaration] : [])
+     .concat(typeDeclaration ? ["sequenceType"].concat(typeDeclaration) : [])
      .concat([["functionBody"].concat(body)])
  }
 
@@ -804,12 +804,12 @@ SingleType
 
 // 183
 TypeDeclaration
- = "as" S st:SequenceType {return ["typeDeclaration", st]}
+ = "as" S st:SequenceType {return ["typeDeclaration"].concat(st)}
 
 // 184
 SequenceType
  = "empty-sequence()" {return [["voidSequenceType"]]}
- / type:ItemType occurence:(_ o:OccurenceIndicator {return o})? {return ["sequenceType", ["itemType", type]].concat(occurence ? [["occurenceIndicator", occurence]] : [])}
+ / type:ItemType occurence:(_ o:OccurenceIndicator {return o})? {return [type].concat(occurence ? [["occurenceIndicator", occurence]] : [])}
 
 // 185
 OccurenceIndicator = "?" / "*" / "+"
@@ -927,7 +927,7 @@ MapTest = AnyMapTest / TypedMapTest
 AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["anyMapTest"]}
 
 // 212
-TypedMapTest = "map" _ "(" _ keyType:AtomicOrUnionType _ "," _ valueType:SequenceType _ ")" {return ["typedMapTest", keyType, valueType]}
+TypedMapTest = "map" _ "(" _ keyType:AtomicOrUnionType _ "," _ valueType:SequenceType _ ")" {return ["typedMapTest", keyType, ["sequenceType"].concat(valueType)]}
 
 // 213
 ArrayTest = AnyArrayTest / TypedArrayTest
@@ -936,10 +936,10 @@ ArrayTest = AnyArrayTest / TypedArrayTest
 AnyArrayTest = "array" _ "(" _ "*" _ ")" {return ["anyArrayTest"]}
 
 // 215
-TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", type]}
+TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", ["sequenceType"].concat(type)]}
 
 // 216
-ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", type]}
+ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", ["sequenceType"].concat(type)]}
 
 // 217
 URILiteral = StringLiteral

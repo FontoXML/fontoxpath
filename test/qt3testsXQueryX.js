@@ -36,6 +36,9 @@ export function parseNode (document, jsonml) {
 	var name = jsonml[0];
 
 	// Node must be a normal element
+	if (!(typeof name === 'string')) {
+		console.error(name + ' is not a string. In: "' + JSON.stringify(jsonml) + '"');
+	}
 	var element = document.createElementNS('http://www.w3.org/2005/XQueryX', 'xqx:' + name),
 	firstChild = jsonml[1],
 	firstChildIndex = 1;
