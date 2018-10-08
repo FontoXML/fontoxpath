@@ -66,32 +66,28 @@ export function parseNode (document, jsonml) {
 	return element;
 }
 
-
-
 const baseDir = path.join('test', 'assets', 'QT3TS-master');
 
 function tryGetXQuery (test) {
-	const xQueryPath = path.join(baseDir, test.directory, test.testName);
+	const testDirectory = path.join(baseDir, test.directory);
+	const testFilePath = path.join(testDirectory, test.testName) + '.xml';
 
-	let testFilePath = xQueryPath + '.xml';
-	if (fs.existsSync(testFilePath)) {
-		const xml = sync(fs.readFileSync(testFilePath, 'utf-8'));
-		const xQuery = evaluateXPathToString('//test-case[@name=$testCase]/test', xml, null, { testCase: test.testCase });
-		return xQuery;
+	if (!fs.existsSync(testFilePath)) {
+		return null;
 	}
 
-	if (fs.existsSync(xQueryPath)) {
-		// Should be a folder containing a '.xq' file
-		if (!fs.lstatSync(xQueryPath).isDirectory()) {
-			throw new Error('This is not expected.');
-		}
-		testFilePath = path.join(xQueryPath, test.testCase) + '.xq';
-		if (!fs.existsSync(testFilePath)) {
-			return null;
-		}
+	const xml = sync(fs.readFileSync(testFilePath, 'utf-8'));
 
-		return fs.readFileSync(testFilePath, 'utf-8');
+	const xQueryRelativePath = evaluateXPathToString('//test-case[@name=$testCase]/test/@file', xml, null, { testCase: test.testCase });
+	if (xQueryRelativePath) {
+		const xQueryPath = path.join(testDirectory, xQueryRelativePath);
+		if (fs.existsSync(xQueryPath)) {
+			return fs.readFileSync(xQueryPath, 'utf-8');
+		}
+		return null;
 	}
+
+	return evaluateXPathToString('//test-case[@name=$testCase]/test', xml, null, { testCase: test.testCase });
 }
 
 fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
