@@ -752,10 +752,10 @@ AposAttrValueContent = char:AposAttrValueContentChar / CommonContent
 // 147
 // Note: changed the order around to prevent CDATA to be parsed as element content
 DirElemContent
- = CDataSection
- / DirectConstructor
- / CommonContent
- / $ElementContentChar
+ = _ content:CDataSection _ {return content}
+ / _ content:DirectConstructor _ {return content}
+ / _ content:CommonContent _ {return content}
+ / _ content:$ElementContentChar _ {return content}
 
 // 148
 CommonContent
