@@ -17,12 +17,12 @@
     return nodeTest[0] === "attributeTest" || nodeTest[0] === "schemaAttributeTest";
   }
 
-  function accumulateDirContents (parts, expressionsOnly) {
+  function accumulateDirContents (parts, expressionsOnly, normalizeWhitespace) {
         if (!parts.length) {
             return [];
         }
-        const result = [parts[0]];
-        for (let i = 1; i < parts.length; ++i) {
+        var result = [parts[0]];
+        for (var i = 1; i < parts.length; ++i) {
             if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
                 result[result.length-1] += parts[i];
                 continue;
@@ -30,22 +30,24 @@
             result.push(parts[i]);
         }
 
-		if (typeof result[0] === 'string') {
-		  result[0] = result[0].trimLeft()
-		  if (result[0] === '') {
-		    result.shift();
-          }
+		if (typeof result[0] === "string" && result.length === 0) {
+		  return [];
 		}
 
-		if (typeof result[result.length - 1] === 'string') {
-		  result[result.length - 1] = result[result.length - 1].trimRight()
-		  if (result[result.length - 1] === '') {
-		    result.pop();
-          }
+		if (normalizeWhitespace) {
+		  result = result.filter(function (item, i) {
+		    if (typeof item !== 'string') {
+		      return true;
+		    }
+		    if (/^\s*$/.test(item)) {
+		      return false;
+		    }
+		    return true;
+		  });
 		}
 
 		if (result.length > 1 || expressionsOnly){
-          for (let i = 0; i < result.length; i++) {
+          for (var i = 0; i < result.length; i++) {
             if (typeof result[i] === "string") {
               result[i] = ["stringConstantExpr", ["value", result[i]]];
             }
@@ -388,7 +390,7 @@ GroupingVariable
 // 65
 OrderByClause
  = stable:(("order" S "by" {return false}) / ("stable" S "order" S "by" {return true})) _ specList:OrderSpecList
- {return ["orderByClause"].concat(stable ? ["stable"] : []).concat(specList)}
+ {return ["orderByClause"].concat(stable ? [["stable"]] : []).concat(specList)}
 
 // 66
 OrderSpecList
@@ -777,7 +779,7 @@ DirElemConstructor
  = "<" name:QName attList:DirAttributeList endPart:(
    ("/>" {return null}) /
    (">"  contents:DirElemContent* _ "</" closingname:QName ExplicitWhitespace? ">" {return [contents, closingname]} ))
- {return ['elementConstructor', ["tagName"].concat(name)].concat(attList.length ? [["attributeList"].concat(attList)] : []).concat(endPart ? [["elementContent"].concat(accumulateDirContents(endPart[0], true))] : [])}
+ {return ['elementConstructor', ["tagName"].concat(name)].concat(attList.length ? [["attributeList"].concat(attList)] : []).concat(endPart ? [["elementContent"].concat(accumulateDirContents(endPart[0], true, true))] : [])}
 
 // 143
 DirAttributeList
@@ -790,8 +792,8 @@ attribute
 
 // 144
 DirAttributeValue
- = '"' chars:(EscapeQuot / QuotAttrValueContent)* '"' {return accumulateDirContents(chars, false)}
- / "'" chars:(EscapeApos / AposAttrValueContent)* "'" {return accumulateDirContents(chars, false)}
+ = '"' chars:(EscapeQuot / QuotAttrValueContent)* '"' {return accumulateDirContents(chars, false, false)}
+ / "'" chars:(EscapeApos / AposAttrValueContent)* "'" {return accumulateDirContents(chars, false, false)}
 
 // 145
 QuotAttrValueContent = char:QuotAttrValueContentChar / CommonContent
@@ -839,8 +841,8 @@ ComputedConstructor
 
 // 159
 CompAttrConstructor
- = "attribute" name:(AssertAdjacentOpeningTerminal _ name:EQName {return ["tagName", name]} / ( _ "{" _ nameExpr:Expr _ "}" {return ["tagNameExpr", nameExpr]})) _ expr:EnclosedExpr
- {return ["computedAttributeConstructor", name].concat(expr ? ["valueExpr", expr] : [])}
+ = "attribute" name:(AssertAdjacentOpeningTerminal _ name:EQName {return ["tagName"].concat(name)} / ( _ "{" _ nameExpr:Expr _ "}" {return ["tagNameExpr", nameExpr]})) _ expr:EnclosedExpr
+ {return ["computedAttributeConstructor", name].concat(expr ? [["valueExpr", expr]] : [])}
 
 // 167
 FunctionItemExpr
@@ -1042,7 +1044,7 @@ URILiteral = StringLiteral
 
 // 218
 EQName = uri:URIQualifiedName {return [{prefix: null, uri: uri[0]}, uri[1]]}
- / name:QName {return [{prefix: name[0], uri: null}, name[1]]}
+ / QName
 
 // 219
 IntegerLiteral = digits:Digits {return ["integerConstantExpr", ["value", digits]]}
@@ -1134,9 +1136,9 @@ WhitespaceCharacter
  / Comment // Note: comments can occur anywhere where whitespace is allowed: https://www.w3.org/TR/xpath-3/#DefaultWhitespaceHandling
 
 // XML Types
-PrefixedName = prefix:Prefix ":" local:LocalPart {return [prefix, local]}
+PrefixedName = prefix:Prefix ":" local:LocalPart {return [{prefix: prefix}, local]}
 
-UnprefixedName = local:LocalPart {return [null, local]}
+UnprefixedName = local:LocalPart {return [local]}
 
 LocalPart = NCName
 
