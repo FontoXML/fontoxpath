@@ -329,8 +329,14 @@ ForClause
 
 // 45
 ForBinding
- = "$" varName:VarName _ typeDecl:TypeDeclaration? _ AllowingEmpty? _ PositionalVar? _ "in"_ expr:ExprSingle
-   {return ["forClauseItem", ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])], ["forExpr", expr]]}
+ = "$" varName:VarName _ typeDecl:TypeDeclaration? _ empty:AllowingEmpty? _ pos:PositionalVar? _ "in"_ expr:ExprSingle
+   {
+     return [
+	   "forClauseItem",
+	   ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])]]
+	   .concat(empty ? [["allowingEmpty"]] : [])
+	   .concat(pos ? [pos] : [])
+	   .concat([["forExpr", expr]])}
 
 // 46
 AllowingEmpty
@@ -338,7 +344,7 @@ AllowingEmpty
 
 // 47
 PositionalVar
- = "at" S "$" VarName
+ = "at" S "$" varName:VarName {return ["positionalVariableBinding"].concat(varName)}
 
 // 48
 LetClause
