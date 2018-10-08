@@ -13,12 +13,9 @@ import chai from 'chai';
 
 import { sync, slimdom } from 'slimdom-sax-parser';
 
-const skippableTestNames = [
-	'Catalog005', // Was generated to an old version
-	'Catalog006', // Was generated to an old version
-	'Catalog007', // Encoding is commented
-	'Catalog014' // Was generated to an old version
-];
+const skippableTestNames = fs.readFileSync(path.join('test', 'unrunnableXQueryXTestNames.csv'), 'utf-8')
+	.split(/[\r\n]/)
+	.map(line => line.split(/,/g)[0]);
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
