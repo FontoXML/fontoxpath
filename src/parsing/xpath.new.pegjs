@@ -222,7 +222,7 @@ VarDecl
  = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})?
       value:((_ ":=" _ value:VarValue {return ["varValue", value]})
       / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])}))
-  {return ["varDecl", ["varName"].concat(name), varType, value]}
+  {return ["varDecl", ["varName"].concat(name)].concat(varType ? [varType] : []).concat([value])}
 
 // 29
 VarValue
@@ -1057,8 +1057,8 @@ Comment
 
 // 233
 CharRef
- = ("&#x" codePoint:([0-9a-fA-F]+) ";") {return parseCodePoint(parseInt(charref, 16))}
- / ("&#" codePoint:([0-9]+) ";") {return parseCodePoint(parseInt(charref, 10))}
+ = codePoint:("&#x" codePoint:([0-9a-fA-F]+) ";" {return codePoint}) {return parseCodePoint(parseInt(codePoint, 16))}
+ / codePoint:("&#" codePoint:([0-9]+) ";" {return codePoint}) {return parseCodePoint(parseInt(codePoint, 10))}
 
 // 234 Note: https://www.w3.org/TR/REC-xml-names/#NT-QName
 QName = PrefixedName / UnprefixedName
