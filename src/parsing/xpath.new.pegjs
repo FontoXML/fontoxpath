@@ -548,7 +548,7 @@ PostfixExprWithStep
 
 // Expression is not in a step expression, i.e. can not have predicates and does not need filterExpr wrapper
 PostfixExprWithoutStep
- = expr:PrimaryExpr !(Predicate) {return expr}
+ = expr:PrimaryExpr !(_ Predicate) {return expr}
 
 
 // === end of changes ===
@@ -885,8 +885,8 @@ AttributeDeclaration = AttributeName
 
 // 199
 ElementTest
- = "element" _ "(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["elementTest", ["elementName"].concat(name), ["typeName"].concat(type)]}
- / "element" _ "(" _ name:ElementNameOrWildCard _ ")" {return ["elementTest", ["elementName"].concat(name)]}
+ = "element" _ "(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["elementTest", ["elementName", name], ["typeName"].concat(type)]}
+ / "element" _ "(" _ name:ElementNameOrWildCard _ ")" {return ["elementTest", ["elementName", name]]}
  / "element" _ "(" _ ")" {return ["anyElementTest"]}
 
 // 200
