@@ -555,7 +555,7 @@ PostfixExprWithoutStep
 
 // 111
 AxisStep
- = stepExpr:(ReverseStep / ForwardStep) predicates:PredicateList {return predicates.length === 0 ? stepExpr : stepExpr.concat([predicates])}
+ = stepExpr:(ReverseStep / ForwardStep) _ predicates:PredicateList {return predicates.length === 0 ? stepExpr : stepExpr.concat([predicates])}
 
 // 112
 ForwardStep
