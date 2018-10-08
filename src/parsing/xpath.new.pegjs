@@ -29,10 +29,25 @@
             }
             result.push(parts[i]);
         }
-        if (result.length > 1 || expressionsOnly){
+
+		if (typeof result[0] === 'string') {
+		  result[0] = result[0].trimLeft()
+		  if (result[0] === '') {
+		    result.shift();
+          }
+		}
+
+		if (typeof result[result.length - 1] === 'string') {
+		  result[result.length - 1] = result[result.length - 1].trimRight()
+		  if (result[result.length - 1] === '') {
+		    result.pop();
+          }
+		}
+
+		if (result.length > 1 || expressionsOnly){
           for (let i = 0; i < result.length; i++) {
             if (typeof result[i] === "string") {
-              result[i] = ["stringConstantExpr", result[i]];
+              result[i] = ["stringConstantExpr", ["value", result[i]]];
             }
           }
         }
@@ -219,7 +234,7 @@ Annotation
 
 // 28
 VarDecl
- = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})?
+ = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return t})?
       value:((_ ":=" _ value:VarValue {return ["varValue", value]})
       / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])}))
   {return ["varDecl", ["varName"].concat(name)].concat(varType ? [varType] : []).concat([value])}
@@ -333,7 +348,7 @@ LetClause
 // 49
 LetBinding
  = "$" varName:VarName _ typeDecl:TypeDeclaration? _ ":=" _ expr:ExprSingle
-   {return ["letClauseItem", ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])], ["letExpr", expr]]}
+   {return ["letClauseItem", ["typedVariableBinding", ["varName"].concat(varName)].concat(typeDecl ? [typeDecl] : []), ["letExpr", expr]]}
 
 // 60
 WhereClause
@@ -755,7 +770,7 @@ DirectConstructor
 DirElemConstructor
  = "<" name:QName attList:DirAttributeList endPart:(
    ("/>" {return null}) /
-   (">" contents:DirElemContent* "</" closingname:QName ExplicitWhitespace? ">" {return [contents, closingname]} ))
+   (">"  contents:DirElemContent* _ "</" closingname:QName ExplicitWhitespace? ">" {return [contents, closingname]} ))
  {return ['elementConstructor', ["tagName"].concat(name)].concat(attList.length ? [["attributeList"].concat(attList)] : []).concat(endPart ? [["elementContent"].concat(accumulateDirContents(endPart[0], true))] : [])}
 
 // 143
@@ -781,10 +796,10 @@ AposAttrValueContent = char:AposAttrValueContentChar / CommonContent
 // 147
 // Note: changed the order around to prevent CDATA to be parsed as element content
 DirElemContent
- = _ content:CDataSection _ {return content}
- / _ content:DirectConstructor _ {return content}
- / _ content:CommonContent _ {return content}
- / _ content:$ElementContentChar _ {return content}
+ = content:CDataSection {return content}
+ / content:DirectConstructor {return content}
+ / content:CommonContent {return content}
+ / content:$ElementContentChar {return content}
 
 // 148
 CommonContent
@@ -869,10 +884,10 @@ TypeDeclaration
 // 184
 SequenceType
  = "empty-sequence()" {return [["voidSequenceType"]]}
- / type:ItemType occurence:(_ o:OccurenceIndicator {return o})? {return [type].concat(occurence ? [["occurenceIndicator", occurence]] : [])}
+ / type:ItemType occurrence:(_ o:OccurrenceIndicator {return o})? {return [type].concat(occurrence ? [["occurrenceIndicator", occurrence]] : [])}
 
 // 185
-OccurenceIndicator = "?" / "*" / "+"
+OccurrenceIndicator = "?" / "*" / "+"
 
 // 186
 ItemType
@@ -947,7 +962,7 @@ AttributeDeclaration = AttributeName
 ElementTest
  = "element" _ "(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["elementTest", ["elementName", name], ["typeName"].concat(type)]}
  / "element" _ "(" _ name:ElementNameOrWildCard _ ")" {return ["elementTest", ["elementName", name]]}
- / "element" _ "(" _ ")" {return ["anyElementTest"]}
+ / "element" _ "(" _ ")" {return ["elementTest"]}
 
 // 200
 ElementNameOrWildCard = name:ElementName {return ["QName"].concat(name)} / ("*" {return ["star"]})
