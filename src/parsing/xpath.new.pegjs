@@ -38,6 +38,36 @@
         }
         return result;
     }
+
+    function wrapInSequenceExprIfNeeded(expr) {
+      switch(expr[0]){
+        // These expressions do not have to be wrapped (are allowed in a filterExpr)
+        case "constantExpr":
+        case "varRef":
+        case "contextItemExpr":
+        case "functionCallExpr":
+        case "sequenceExpr":
+        case "elementConstructor":
+        case "computedElementConstructor":
+        case "computedAttributeConstructor":
+        case "computedDocumentConstructor":
+        case "computedTextConstructor":
+        case "computedCommentConstructor":
+        case "computedNamespaceConstructor":
+        case "computedPIConstructor":
+        case "orderedExpr":
+        case "unorderedExpr":
+        case "namedFunctionRef":
+        case "inlineFunctionExpr":
+        case "dynamicFunctionInvocationExpr":
+        case "mapConstructor":
+        case "arrayConstructor":
+        case "stringConstructor":
+        case "unaryLookup":
+          return expr;
+      }
+      return ["sequenceExpr", expr];
+    }
 }
 
 // 1
@@ -244,7 +274,7 @@ QueryBody
 
 // 39
 Expr
- = lhs:ExprSingle rhs:(_ "," _ part:ExprSingle{return part})*
+ = lhs:ExprSingle rhs:(_ "," _ expr:ExprSingle{return expr})*
    {return rhs.length === 0 ? lhs : ["sequenceExpr", lhs].concat(rhs)}
 
 // 40 TODO, fix proper
@@ -510,7 +540,7 @@ LocationPathAbbreviation
 
 // 121 Expression must in a step expression, i.e. expression must be wrapped in a filterExpr
 PostfixExprWithStep
- = expr:PrimaryExpr postfixExpr:(
+ = expr:(expr:PrimaryExpr {return wrapInSequenceExprIfNeeded(expr)}) postfixExpr:(
      (_ filter:Predicate {return filter})
    / (_ argList:ArgumentList {return argList})
    / (_ lookup:Lookup {return lookup})
@@ -604,7 +634,7 @@ ArrowFunctionSpecifier = name:EQName {return ["EQName"].concat(name)} / VarRef /
 PrimaryExpr
  = Literal
  / VarRef
- / expr:ParenthesizedExpr {return ["sequenceExpr", expr]}
+ / ParenthesizedExpr
  / ContextItemExpr
  / FunctionCall
 // / OrderedExpr
@@ -635,7 +665,7 @@ VarName
 // 133
 ParenthesizedExpr
  = "(" _ expr:Expr _ ")" {return expr}
- / "(" _ ")" {return null}
+ / "(" _ ")" {return ["sequenceExpr"]}
 
 // 134
 ContextItemExpr
@@ -672,7 +702,7 @@ DirElemConstructor
  = "<" name:QName attList:DirAttributeList endPart:(
    ("/>" {return null}) /
    (">" contents:DirElemContent* "</" closingname:QName ExplicitWhitespace? ">" {return [contents, closingname]} ))
- {return ['elementConstructor', ["tagName"].concat(name)].concat([["attributeList"].concat(attList)] || []).concat(endPart ? [["elementContent"].concat(accumulateDirContents(endPart[0], true))] : [])}
+ {return ['elementConstructor', ["tagName"].concat(name)].concat(attList.length ? [["attributeList"].concat(attList)] : []).concat(endPart ? [["elementContent"].concat(accumulateDirContents(endPart[0], true))] : [])}
 
 // 143
 DirAttributeList
