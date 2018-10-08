@@ -302,9 +302,9 @@ InitialClause
 IntermediateClause
  = InitialClause
  / WhereClause
- // / GroupByClause
- // / OrderByClause
- // / CountClause
+ / GroupByClause
+// / OrderByClause
+// / CountClause
 
 // 44
 ForClause
@@ -337,6 +337,31 @@ LetBinding
 // 60
 WhereClause
  = "where" AssertAdjacentOpeningTerminal _ expr:ExprSingle {return ["whereClause", expr]}
+
+// 61
+GroupByClause
+ = "group" S "by" _ groupingSpecList:GroupingSpecList {return ["groupByClause"].concat(groupingSpecList)}
+
+// 62
+GroupingSpecList
+ = first:GroupingSpec rest:(_ "," _ gs:GroupingSpec {return gs})* {return [first].concat(rest)}
+
+// 63
+GroupingSpec
+ = varName:GroupingVariable init:groupVarInitialize? col:(_ "collation" _ uri:URILiteral {return ["collation", uri]})?
+   {return ["groupingSpec", varName].concat(init ? [init] : []).concat(col ? [col] : [])}
+
+groupVarInitialize
+ = _ t:TypeDeclaration? _ ":=" _ val:ExprSingle
+   {
+     return ["groupVarInitialize"]
+       .concat(t ? [["typeDeclaration"].concat(t)] : [])
+	   .concat([["varValue", val]])
+   }
+
+// 64
+GroupingVariable
+ = "$" varName:VarName {return ["varName"].concat(varName)}
 
 // 69
 ReturnClause
