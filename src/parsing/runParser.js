@@ -122,6 +122,8 @@ try {
 	document.appendChild(parseNode(document, jsonMl));
 	document.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
 
+	document.normalize();
+
 	console.log('-----------------XML-----------------');
 	printXml(document);
 }
