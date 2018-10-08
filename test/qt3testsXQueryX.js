@@ -13,6 +13,11 @@ import chai from 'chai';
 
 import { sync, slimdom } from 'slimdom-sax-parser';
 
+const skippableTestNames = [
+	'Catalog005',
+	'Catalog006'
+];
+
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
  * create nodes.
@@ -112,6 +117,10 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 				// Test case is the file name without extension
 				testCase = testCase.substring(0, testCase.length - 4);
 
+				if (skippableTestNames.includes(testCase)) {
+					it.skip(testCase);
+					return;
+				}
 				it(testCase, function () {
 					const xQuery = tryGetXQuery({ directory, testName, testCase });
 
