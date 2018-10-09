@@ -40,14 +40,27 @@ export default function processProlog (prolog, staticContext) {
 	astHelper.getChildren(prolog, '*').some(feature => {
 		switch (feature[0]) {
 			case 'moduleImport':
+			case 'namespaceDecl':
 			case 'functionDecl':
 				break;
 			default:
-				throw new Error('Not implemented: only module imports and function declarations are implemented in XQuery modules');
+				throw new Error('Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules');
 		}
 	});
 
 	// First, let's import modules
+	astHelper.getChildren(prolog, 'moduleImport').forEach(moduleImport => {
+		const moduleImportPrefix = astHelper.getTextContent(astHelper.getFirstChild(moduleImport, 'namespacePrefix'));
+		const moduleImportNamespaceURI = astHelper.getTextContent(astHelper.getFirstChild(moduleImport, 'targetNamespace'));
+
+		staticContext.registerNamespace(moduleImportPrefix, moduleImportNamespaceURI);
+		enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
+	});
+	astHelper.getChildren(prolog, 'namespaceDecl').forEach(namespaceDecl =>
+		staticContext.registerNamespace(
+			astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'prefix')),
+			astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))));
+
 	astHelper.getChildren(prolog, 'moduleSettings').forEach(moduleSetting => {
 		const type = moduleSetting['type'];
 		switch (type) {
