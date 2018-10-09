@@ -85,7 +85,7 @@ function getAttribute (ast, attributeName) {
 		return null;
 	}
 	const attrs = ast[1];
-	if (typeof attrs !== 'object' || !Array.isArray(attrs)) {
+	if (typeof attrs !== 'object' || Array.isArray(attrs)) {
 		return null;
 	}
 
