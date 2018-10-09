@@ -1,6 +1,8 @@
 import Expression from '../expressions/Expression';
 import TestAbstractExpression from '../expressions/tests/TestAbstractExpression';
 
+import astHelper from './astHelper';
+
 import PathExpression from '../expressions/path/PathExpression';
 import ForExpression from '../expressions/ForExpression';
 import MapConstructor from '../expressions/maps/MapConstructor';
@@ -102,141 +104,142 @@ function parseCharacterReferences (input) {
  * @return  {!Expression}
  */
 function compile (ast, compilationOptions) {
-	const args = ast.slice(1);
-	switch (ast[0]) {
+	const name = ast[0];
+	switch (name) {
 			// Operators
-		case 'andOperator':
-			return andOperator(args, compilationOptions);
+		case 'andOp':
+			return andOp(ast, compilationOptions);
 		case 'or':
-			return or(args, compilationOptions);
+			return or(ast, compilationOptions);
 		case 'compare':
-			return compare(args, compilationOptions);
+			return compare(ast, compilationOptions);
 		case 'unaryPlus':
-			return unaryPlus(args, compilationOptions);
+			return unaryPlus(ast, compilationOptions);
 		case 'unaryMinus':
-			return unaryMinus(args, compilationOptions);
+			return unaryMinus(ast, compilationOptions);
 		case 'binaryOperator':
-			return binaryOperator(args, compilationOptions);
+			return binaryOperator(ast, compilationOptions);
 		case 'sequence':
-			return sequence(args, compilationOptions);
+			return sequence(ast, compilationOptions);
 		case 'union':
-			return union(args, compilationOptions);
+			return union(ast, compilationOptions);
 		case 'intersectExcept':
-			return intersectExcept(args, compilationOptions);
+			return intersectExcept(ast, compilationOptions);
 			break;
 
 			// Tests
 		case 'nameTest':
-			return nameTest(args, compilationOptions);
+			return nameTest(ast, compilationOptions);
 		case 'kindTest':
-			return kindTest(args, compilationOptions);
+			return kindTest(ast, compilationOptions);
 		case 'typeTest':
-			return typeTest(args, compilationOptions);
+			return typeTest(ast, compilationOptions);
 			break;
 
 			// Axes
 		case 'ancestor':
-			return ancestor(args, compilationOptions);
+			return ancestor(ast, compilationOptions);
 		case 'ancestor-or-self':
-			return ancestorOrSelf(args, compilationOptions);
+			return ancestorOrSelf(ast, compilationOptions);
 		case 'attribute':
-			return attribute(args, compilationOptions);
+			return attribute(ast, compilationOptions);
 		case 'child':
-			return child(args, compilationOptions);
+			return child(ast, compilationOptions);
 		case 'descendant':
-			return descendant(args, compilationOptions);
+			return descendant(ast, compilationOptions);
 		case 'descendant-or-self':
-			return descendantOrSelf(args, compilationOptions);
+			return descendantOrSelf(ast, compilationOptions);
 		case 'parent':
-			return parent(args, compilationOptions);
+			return parent(ast, compilationOptions);
 		case 'following-sibling':
-			return followingSibling(args, compilationOptions);
+			return followingSibling(ast, compilationOptions);
 		case 'preceding-sibling':
-			return precedingSibling(args, compilationOptions);
+			return precedingSibling(ast, compilationOptions);
 		case 'following':
-			return following(args, compilationOptions);
+			return following(ast, compilationOptions);
 		case 'preceding':
-			return preceding(args, compilationOptions);
+			return preceding(ast, compilationOptions);
 		case 'self':
-			return self(args, compilationOptions);
+			return self(ast, compilationOptions);
 			break;
 
 			// Path
 		case 'absolutePath':
-			return absolutePath(args, compilationOptions);
+			return absolutePath(ast, compilationOptions);
 		case 'path':
-			return path(args, compilationOptions);
+			return path(ast, compilationOptions);
 			break;
 
 			// Postfix operators
 		case 'filter':
-			return filter(args, compilationOptions);
+			return filter(ast, compilationOptions);
 			break;
 
 			// Functions
 		case 'functionCall':
-			return functionCall(args, compilationOptions);
+			return functionCall(ast, compilationOptions);
 		case 'inlineFunction':
-			return inlineFunction(args, compilationOptions);
+			return inlineFunction(ast, compilationOptions);
 
-		case 'literal':
-			return literal(args, compilationOptions);
+			// Literals
+		case 'integerConstantExpr':
+			return integerConstantExpr(ast, compilationOptions);
 
 			// Variables
 		case 'let':
-			return letExpression(args, compilationOptions);
+			return letExpression(ast, compilationOptions);
 		case 'varRef':
-			return varRef(args, compilationOptions);
+			return varRef(ast, compilationOptions);
 		case 'namedFunctionRef':
-			return namedFunctionRef(args, compilationOptions);
+			return namedFunctionRef(ast, compilationOptions);
 		case 'forExpression':
-			return forExpression(args, compilationOptions);
+			return forExpression(ast, compilationOptions);
 
 			// Quantified
 		case 'quantified':
-			return quantified(args, compilationOptions);
+			return quantified(ast, compilationOptions);
 
 			// Conditional
 		case 'conditional':
-			return conditional(args, compilationOptions);
+			return conditional(ast, compilationOptions);
 
 		case 'instance of':
-			return instanceOf(args, compilationOptions);
+			return instanceOf(ast, compilationOptions);
 		case 'cast as':
-			return castAs(args, compilationOptions);
+			return castAs(ast, compilationOptions);
 		case 'castable as':
-			return castableAs(args, compilationOptions);
+			return castableAs(ast, compilationOptions);
 
 		case 'simpleMap':
-			return simpleMap(args, compilationOptions);
+			return simpleMap(ast, compilationOptions);
 
 		case 'mapConstructor':
-			return mapConstructor(args, compilationOptions);
+			return mapConstructor(ast, compilationOptions);
 
 		case 'arrayConstructor':
-			return arrayConstructor(args, compilationOptions);
+			return arrayConstructor(ast, compilationOptions);
 
 			// XQuery element constructors
 		case 'DirElementConstructor':
-			return dirElementConstructor(args, compilationOptions);
+			return dirElementConstructor(ast, compilationOptions);
 
 		case 'DirCommentConstructor':
-			return dirCommentConstructor(args, compilationOptions);
+			return dirCommentConstructor(ast, compilationOptions);
 
 		case 'DirPIConstructor':
-			return dirPIConstructor(args, compilationOptions);
+			return dirPIConstructor(ast, compilationOptions);
 
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}
 }
 
-function arrayConstructor (args, compilationOptions) {
-	return new ArrayConstructor(args[0], args.slice(1).map(arg => compile(arg, compilationOptions)));
+function arrayConstructor (ast, compilationOptions) {
+	return new ArrayConstructor(ast[0], ast.slice(1).map(arg => compile(arg, compilationOptions)));
 }
 
-function mapConstructor (args, compilationOptions) {
-	return new MapConstructor(args.map(function (keyValuePair) {
+function mapConstructor (ast, compilationOptions) {
+	return new MapConstructor(ast.map(function (keyValuePair) {
 		return {
 			key: compile(keyValuePair[0], compilationOptions),
 			value: compile(keyValuePair[1], compilationOptions)
@@ -244,81 +247,84 @@ function mapConstructor (args, compilationOptions) {
 	}));
 }
 
-function absolutePath (args, compilationOptions) {
-	return new AbsolutePathExpression(compile(args[0], compilationOptions));
+function absolutePath (ast, compilationOptions) {
+	return new AbsolutePathExpression(compile(ast[0], compilationOptions));
 }
 
-function ancestor (args, compilationOptions) {
-	return new AncestorAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function ancestor (ast, compilationOptions) {
+	return new AncestorAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function ancestorOrSelf (args, compilationOptions) {
-	const subExpression = /** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions));
+function ancestorOrSelf (ast, compilationOptions) {
+	const subExpression = /** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions));
 	return new AncestorAxis(subExpression, { inclusive: true });
 }
 
-function andOperator (args, compilationOptions) {
-	return new AndOperator([]);
+function andOp (ast, compilationOptions) {
+	return new AndOperator([
+		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], compilationOptions),
+		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], compilationOptions)
+	]);
 }
 
-function attribute (args, compilationOptions) {
-	return new AttributeAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function attribute (ast, compilationOptions) {
+	return new AttributeAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function binaryOperator (args, compilationOptions) {
-	const kind = args[0];
-	const a = compile(args[1], compilationOptions);
-	const b = compile(args[2], compilationOptions);
+function binaryOperator (ast, compilationOptions) {
+	const kind = ast[0];
+	const a = compile(ast[1], compilationOptions);
+	const b = compile(ast[2], compilationOptions);
 
 	return new BinaryOperator(kind, a, b);
 }
 
-function child (args, compilationOptions) {
-	return new ChildAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function child (ast, compilationOptions) {
+	return new ChildAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function descendant (args, compilationOptions) {
-	return new DescendantAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function descendant (ast, compilationOptions) {
+	return new DescendantAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function descendantOrSelf (args, compilationOptions) {
-	const subExpression = /** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions));
+function descendantOrSelf (ast, compilationOptions) {
+	const subExpression = /** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions));
 	return new DescendantAxis(subExpression, { inclusive: true });
 }
 
-function castAs (args, compilationOptions) {
-	const expression = compile(args[0], compilationOptions);
-	const [[prefix, namespaceURI, name], multiplicity] = args[1];
+function castAs (ast, compilationOptions) {
+	const expression = compile(ast[0], compilationOptions);
+	const [[prefix, namespaceURI, name], multiplicity] = ast[1];
 
 	return new CastAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
 }
 
-function castableAs (args, compilationOptions) {
-	const expression = compile(args[0], compilationOptions);
-	const [[prefix, namespaceURI, name], multiplicity] = args[1];
+function castableAs (ast, compilationOptions) {
+	const expression = compile(ast[0], compilationOptions);
+	const [[prefix, namespaceURI, name], multiplicity] = ast[1];
 
 	return new CastableAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
 }
 
 // Binary compare (=, !=, le, is, <<, >>, etc)
-function compare (args, compilationOptions) {
-	return new Compare(args[0], compile(args[1], compilationOptions), compile(args[2], compilationOptions));
+function compare (ast, compilationOptions) {
+	return new Compare(ast[0], compile(ast[1], compilationOptions), compile(ast[2], compilationOptions));
 }
 
-function conditional (args, compilationOptions) {
-	return new IfExpression(compile(args[0], compilationOptions), compile(args[1], compilationOptions), compile(args[2], compilationOptions));
+function conditional (ast, compilationOptions) {
+	return new IfExpression(compile(ast[0], compilationOptions), compile(ast[1], compilationOptions), compile(ast[2], compilationOptions));
 }
 
-function filter (args, compilationOptions) {
-	return new Filter(compile(args[0], compilationOptions), compile(args[1], compilationOptions));
+function filter (ast, compilationOptions) {
+	return new Filter(compile(ast[0], compilationOptions), compile(ast[1], compilationOptions));
 }
 
-function followingSibling (args, compilationOptions) {
-	return new FollowingSiblingAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function followingSibling (ast, compilationOptions) {
+	return new FollowingSiblingAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function following (args, compilationOptions) {
-	return new FollowingAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function following (ast, compilationOptions) {
+	return new FollowingAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
 function forExpression ([[prefix, namespaceURI, name], expression, returnExpression], compilationOptions) {
@@ -330,62 +336,61 @@ function forExpression ([[prefix, namespaceURI, name], expression, returnExpress
 		compile(returnExpression, compilationOptions));
 }
 
-function functionCall (args, compilationOptions) {
-	return new FunctionCall(compile(args[0], compilationOptions), args[1].map(arg => arg === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
+function functionCall (ast, compilationOptions) {
+	return new FunctionCall(compile(ast[0], compilationOptions), ast[1].map(arg => arg === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
 }
 
-function inlineFunction (args, compilationOptions) {
-	const [params, returnType, body] = args;
+function inlineFunction (ast, compilationOptions) {
+	const [params, returnType, body] = ast;
 	return new InlineFunction(
 		params.map(([[prefix, namespaceURI, name], type]) => ([{ prefix, namespaceURI, name }, type])),
 		returnType,
 		compile(body, compilationOptions));
 }
 
-function instanceOf (args, compilationOptions) {
-	const expression = compile(args[0], compilationOptions);
-	const sequenceType = args[1];
+function instanceOf (ast, compilationOptions) {
+	const expression = compile(ast[0], compilationOptions);
+	const sequenceType = ast[1];
 
 	return new InstanceOfOperator(expression, compile(sequenceType[0], compilationOptions), sequenceType[1] || '');
 }
 
-function letExpression (args, compilationOptions) {
-	const [prefix, namespaceURI, name] = args[0];
-	const bindingSequence = compile(args[1], compilationOptions);
-	const returnExpression = compile(args[2], compilationOptions);
+function letExpression (ast, compilationOptions) {
+	const [prefix, namespaceURI, name] = ast[0];
+	const bindingSequence = compile(ast[1], compilationOptions);
+	const returnExpression = compile(ast[2], compilationOptions);
 
 	return new LetExpression({ prefix, namespaceURI, name }, bindingSequence, returnExpression);
 }
 
-function literal ([value, type], compilationOptions) {
-	if (type === 'xs:string' && compilationOptions.allowXQuery) {
-		value = parseCharacterReferences(value);
-	}
-	return new Literal(value, type);
+function integerConstantExpr (ast, _compilationOptions) {
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		'xs:integer');
 }
 
-function namedFunctionRef (args, _compilationOptions) {
-	const [[prefix, namespaceURI, localName], arity] = args;
+function namedFunctionRef (ast, _compilationOptions) {
+	const [[prefix, namespaceURI, localName], arity] = ast;
 	return new NamedFunctionRef({ prefix, namespaceURI, localName }, arity);
 }
 
-function nameTest (args, _compilationOptions) {
-	const [prefix, namespaceURI, localName] = args[0];
+function nameTest (ast, _compilationOptions) {
+	const [prefix, namespaceURI, localName] = ast[0];
 	return new NameTest(prefix, namespaceURI, localName);
 }
 
-function kindTest (args, _compilationOptions) {
-	switch (args[0]) {
+function kindTest (ast, _compilationOptions) {
+	switch (ast[0]) {
 		case 'item()':
 			return new UniversalExpression();
 		case 'node()':
 			return new TypeTest(null, null, 'node()');
 		case 'element()':
-			if (args.length === 2) {
-				return new NameTest(args[1][0], args[1][1], args[1][2], { kind: 1 });
+			if (ast.length === 2) {
+				return new NameTest(ast[1][0], ast[1][1], ast[1][2], { kind: 1 });
 			}
 
-			if (args.length > 2) {
+			if (ast.length > 2) {
 				throw new Error('element() with more than 1 argument is not supported.');
 			}
 
@@ -393,8 +398,8 @@ function kindTest (args, _compilationOptions) {
 		case 'text()':
 			return new KindTest(3);
 		case 'processing-instruction()':
-			if (args.length > 1) {
-				return new PITest(args[1]);
+			if (ast.length > 1) {
+				return new PITest(ast[1]);
 			}
 			return new KindTest(7);
 		case 'comment()':
@@ -402,87 +407,87 @@ function kindTest (args, _compilationOptions) {
 		case 'document-node()':
 			return new KindTest(9);
 		case 'attribute()':
-			if (args.length === 2) {
-				return new NameTest(args[1][0], args[1][1], args[1][2], { kind: 2 });
+			if (ast.length === 2) {
+				return new NameTest(ast[1][0], ast[1][1], ast[1][2], { kind: 2 });
 			}
 
-			if (args.length > 2) {
+			if (ast.length > 2) {
 				throw new Error('attribute() with more than 1 argument is not supported.');
 			}
 
 			return new KindTest(2);
 		default:
-			throw new Error('Unrecognized nodeType: ' + args[0]);
+			throw new Error('Unrecognized nodeType: ' + ast[0]);
 	}
 }
 
-function or (args, compilationOptions) {
-	return new OrOperator(args.map(arg => compile(arg, compilationOptions)));
+function or (ast, compilationOptions) {
+	return new OrOperator(ast.map(arg => compile(arg, compilationOptions)));
 }
 
-function parent (args, compilationOptions) {
-	return new ParentAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function parent (ast, compilationOptions) {
+	return new ParentAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function path (args, compilationOptions) {
-	return new PathExpression(args.map(arg => compile(arg, compilationOptions)));
+function path (ast, compilationOptions) {
+	return new PathExpression(ast.map(arg => compile(arg, compilationOptions)));
 }
 
-function precedingSibling (args, compilationOptions) {
-	return new PrecedingSiblingAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function precedingSibling (ast, compilationOptions) {
+	return new PrecedingSiblingAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function preceding (args, compilationOptions) {
-	return new PrecedingAxis(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function preceding (ast, compilationOptions) {
+	return new PrecedingAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function quantified (args, compilationOptions) {
-	const inClauseExpressions = args[1].map(([_name, expression]) => {
+function quantified (ast, compilationOptions) {
+	const inClauseExpressions = ast[1].map(([_name, expression]) => {
 		return compile(expression, compilationOptions);
 	});
-	const inClauseNames = args[1].map(([[namespaceURI, prefix, name], _expression]) => {
+	const inClauseNames = ast[1].map(([[namespaceURI, prefix, name], _expression]) => {
 		return {
 			namespaceURI, prefix, name
 		};
 	});
-	return new QuantifiedExpression(args[0], inClauseNames, inClauseExpressions, compile(args[2], compilationOptions));
+	return new QuantifiedExpression(ast[0], inClauseNames, inClauseExpressions, compile(ast[2], compilationOptions));
 }
 
-function self (args, compilationOptions) {
-	return new SelfExpression(/** @type {!TestAbstractExpression} */(compile(args[0], compilationOptions)));
+function self (ast, compilationOptions) {
+	return new SelfExpression(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
-function sequence (args, compilationOptions) {
-	return new SequenceOperator(args.map(arg => compile(arg, compilationOptions)));
+function sequence (ast, compilationOptions) {
+	return new SequenceOperator(ast.map(arg => compile(arg, compilationOptions)));
 }
 
-function simpleMap (args, compilationOptions) {
-	return new SimpleMapOperator(compile(args[0], compilationOptions), compile(args[1], compilationOptions));
+function simpleMap (ast, compilationOptions) {
+	return new SimpleMapOperator(compile(ast[0], compilationOptions), compile(ast[1], compilationOptions));
 }
 
-function typeTest (args, _compilationOptions) {
-	const [prefix, namespaceURI, name] = args[0];
+function typeTest (ast, _compilationOptions) {
+	const [prefix, namespaceURI, name] = ast[0];
 	return new TypeTest(prefix, namespaceURI, name);
 }
 
-function unaryPlus (args, compilationOptions) {
-	return new Unary('+', compile(args[0], compilationOptions));
+function unaryPlus (ast, compilationOptions) {
+	return new Unary('+', compile(ast[0], compilationOptions));
 }
 
-function unaryMinus (args, compilationOptions) {
-	return new Unary('-', compile(args[0], compilationOptions));
+function unaryMinus (ast, compilationOptions) {
+	return new Unary('-', compile(ast[0], compilationOptions));
 }
 
-function union (args, compilationOptions) {
-	return new Union(args.map(arg => compile(arg, compilationOptions)));
+function union (ast, compilationOptions) {
+	return new Union(ast.map(arg => compile(arg, compilationOptions)));
 }
 
-function intersectExcept (args, compilationOptions) {
-	return new IntersectExcept(args[0], compile(args[1], compilationOptions), compile(args[2], compilationOptions));
+function intersectExcept (ast, compilationOptions) {
+	return new IntersectExcept(ast[0], compile(ast[1], compilationOptions), compile(ast[2], compilationOptions));
 }
 
-function varRef (args, _compilationOptions) {
-	const [prefix, namespaceURI, name] = args[0];
+function varRef (ast, _compilationOptions) {
+	const [prefix, namespaceURI, name] = ast[0];
 	return new VarRef(prefix, namespaceURI, name);
 }
 
@@ -491,20 +496,20 @@ function isTextNodeOrCDataSection (item) {
 }
 
 // XQuery Node constructors
-function dirElementConstructor (args, compilationOptions) {
+function dirElementConstructor (ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
-	const openingQName = args[0];
-	const closingQName = args[1];
+	const openingQName = ast[0];
+	const closingQName = ast[1];
 	/**
 	 * @type {!Array<string|!Array>}
 	 */
-	const attList = args[2];
+	const attList = ast[2];
 	/**
 	 * @type {!Array<string|!Array>}
 	 */
-	const contents = args[3];
+	const contents = ast[3];
 
 	const prefix = /** @type {string} */ (openingQName[0]);
 	const name = /** @type {string} */ (openingQName[1]);
@@ -575,12 +580,12 @@ function dirElementConstructor (args, compilationOptions) {
 		}, []));
 }
 
-function dirCommentConstructor (args, _compilationOptions) {
-	return new DirCommentConstructor(args[0]);
+function dirCommentConstructor (ast, _compilationOptions) {
+	return new DirCommentConstructor(ast[0]);
 }
 
-function dirPIConstructor (args, _compilationOptions) {
-	return new DirPIConstructor(args[0], args[1]);
+function dirPIConstructor (ast, _compilationOptions) {
+	return new DirPIConstructor(ast[0], ast[1]);
 }
 
 /**

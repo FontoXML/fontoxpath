@@ -16,7 +16,7 @@ function getFirstChild (ast, name) {
 		if (!Array.isArray(ast[i])) {
 			continue;
 		}
-		if (ast[i][0] === name) {
+		if (name === '*' || ast[i][0] === name) {
 			return ast[i];
 		}
 	}
@@ -33,7 +33,12 @@ function getTextContent (ast) {
 	return ast[1] || '';
 }
 
+function followPath (ast, path) {
+	return path.reduce(getFirstChild, ast);
+}
+
 export default {
 	getFirstChild: getFirstChild,
-	getTextContent: getTextContent
+	getTextContent: getTextContent,
+	followPath: followPath
 };
