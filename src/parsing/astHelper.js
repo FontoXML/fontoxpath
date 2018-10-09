@@ -1,6 +1,6 @@
 /**
-* @typedef {Array<string|Object|Array>} AST
-*/
+ * @typedef {Array<string|Object|Array>} AST
+ */
 let AST;
 
 /**
@@ -51,16 +51,51 @@ function getFirstChild (ast, name) {
  * @return  {string}  The string content
  */
 function getTextContent (ast) {
-	return ast[1] || '';
+	if (ast.length < 2) {
+		return '';
+	}
+	if (typeof ast[1] === 'object') {
+		return ast[2];
+	}
+	return ast[1];
 }
 
+/**
+ * Follow a path to an AST node
+ *
+ * @param   {!AST}            ast
+ * @param   {!Array<string>}  path
+ *
+ * @return  {?AST}
+ */
 function followPath (ast, path) {
 	return path.reduce(getFirstChild, ast);
 }
 
+/**
+ * Get the value of the given attribute
+ *
+ * @param  {!AST}    ast
+ * @param  {string}  name
+ *
+ * @return {atring|null}
+ */
+function getAttribute (ast, attributeName) {
+	if (!Array.isArray(ast)) {
+		return null;
+	}
+	const attrs = ast[1];
+	if (typeof attrs !== 'object' || !Array.isArray(attrs)) {
+		return null;
+	}
+
+	return attrs[attributeName] || null;
+}
+
 export default {
-	getChildren: getChildren,
+	followPath: followPath,
+	getChildren, getChildren,
 	getFirstChild: getFirstChild,
 	getTextContent: getTextContent,
-	followPath: followPath
+	getAttribute: getAttribute
 };

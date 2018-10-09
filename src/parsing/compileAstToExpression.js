@@ -176,10 +176,12 @@ function compile (ast, compilationOptions) {
 			break;
 
 			// Functions
-		case 'functionCall':
+		case 'functionCallExpr':
 			return functionCall(ast, compilationOptions);
 		case 'inlineFunction':
 			return inlineFunction(ast, compilationOptions);
+		case 'arrowExpr':
+			return arrowExpr(ast, compilationOptions);
 
 			// Literals
 		case 'integerConstantExpr':
@@ -190,8 +192,6 @@ function compile (ast, compilationOptions) {
 			return letExpression(ast, compilationOptions);
 		case 'varRef':
 			return varRef(ast, compilationOptions);
-		case 'namedFunctionRef':
-			return namedFunctionRef(ast, compilationOptions);
 		case 'forExpression':
 			return forExpression(ast, compilationOptions);
 
@@ -337,7 +337,32 @@ function forExpression ([[prefix, namespaceURI, name], expression, returnExpress
 }
 
 function functionCall (ast, compilationOptions) {
-	return new FunctionCall(compile(ast[0], compilationOptions), ast[1].map(arg => arg === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
+	const functionName = astHelper.getFirstChild(ast, 'functionName');
+	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
+	return new FunctionCall(
+		new NamedFunctionRef(
+			{
+				prefix: astHelper.getAttribute(functionName, 'prefix'),
+				namespaceURI: astHelper.getAttribute(functionName, 'URI'),
+				localName: astHelper.getTextContent(functionName)
+			},
+			functionArguments.length),
+		functionArguments.map(arg => compile(arg, compilationOptions)));
+}
+
+function arrowExpr (ast, compilationOptions) {
+	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
+	const functionName = astHelper.getFirstChild(ast, 'EQName');
+	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
+	return new FunctionCall(
+		new NamedFunctionRef(
+			{
+				prefix: astHelper.getAttribute(functionName, 'prefix'),
+				namespaceURI: astHelper.getAttribute(functionName, 'URI'),
+				localName: astHelper.getTextContent(functionName)
+			},
+			functionArguments.length + 1),
+		[compile(argExpr, compilationOptions)].concat(functionArguments.map(arg => compile(arg, compilationOptions))));
 }
 
 function inlineFunction (ast, compilationOptions) {
@@ -367,11 +392,6 @@ function integerConstantExpr (ast, _compilationOptions) {
 	return new Literal(
 		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
 		'xs:integer');
-}
-
-function namedFunctionRef (ast, _compilationOptions) {
-	const [[prefix, namespaceURI, localName], arity] = ast;
-	return new NamedFunctionRef({ prefix, namespaceURI, localName }, arity);
 }
 
 function nameTest (ast, _compilationOptions) {

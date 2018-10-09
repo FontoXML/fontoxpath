@@ -512,7 +512,7 @@ CastExpr
 ArrowExpr
  = argExpr:UnaryExpr functionParts:( _ "=>" _ functionSpecifier:ArrowFunctionSpecifier _ argumentList:ArgumentList {return [functionSpecifier, argumentList]})* {
      return functionParts.reduce(function (argExpr, functionPart) {
-       return ["arrowExpr", ["argExpr", argExpr], functionPart[0], ["arguments", functionPart[1]]]
+       return ["arrowExpr", ["argExpr", argExpr], functionPart[0], ["arguments"].concat(functionPart[1])]
      }, argExpr);
    }
 
