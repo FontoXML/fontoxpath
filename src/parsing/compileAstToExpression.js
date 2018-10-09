@@ -167,6 +167,8 @@ function compile (ast, compilationOptions) {
 			return varRef(ast, compilationOptions);
 		case 'forExpression':
 			return forExpression(ast, compilationOptions);
+		case 'flworExpr':
+			return flworExpression(ast, compilationOptions);
 
 			// Quantified
 		case 'quantified':
@@ -269,6 +271,46 @@ function forExpression ([[prefix, namespaceURI, name], expression, returnExpress
 			expression: compile(expression, compilationOptions)
 		},
 		compile(returnExpression, compilationOptions));
+}
+
+function flworExpression (ast, compilationOptions) {
+	const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
+	const returnClauseExpression = astHelper.getFirstChild(intermediateClausesAndReturnClause[intermediateClausesAndReturnClause.length - 1], '*');
+	const intermediateClauses = intermediateClausesAndReturnClause.slice(0, -1);
+
+	if (intermediateClauses.length) {
+		throw new Error('Not implemented: Intermediate clauses in flwor expressions are not implemented yet');
+	}
+
+	if (initialClause[0] === 'forClause') {
+		const forClauseItems = astHelper.getChildren(initialClause, '*');
+		return forClauseItems
+			.reduceRight(
+				(returnExpr, forClauseItem) => {
+					const expression = 	astHelper.followPath(forClauseItem, ['forExpr', '*']);
+					return new ForExpression(
+						astHelper.getQName(astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])),
+						compile(expression, compilationOptions),
+						returnExpr);
+				},
+				compile(returnClauseExpression, compilationOptions));
+	}
+
+	if (initialClause[0] === 'letClause') {
+		const letClauseItems = astHelper.getChildren(initialClause, '*');
+		return letClauseItems
+			.reduceRight(
+				(returnExpr, letClauseItem) => {
+					const expression = 	astHelper.followPath(letClauseItem, ['letExpr', '*']);
+					return new LetExpression(
+						astHelper.getQName(astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])),
+						compile(expression, compilationOptions),
+						returnExpr);
+				},
+				compile(returnClauseExpression, compilationOptions));
+	}
+
+	throw new Error(`Not implemented: ${initialClause[0]} is not supported in a flwor expression`);
 }
 
 function functionCall (ast, compilationOptions) {
@@ -453,7 +495,7 @@ function pathExpr (ast, compilationOptions) {
 				}
 				return astHelper.getChildren(predicates, '*')
 					.reduce(
-						(predicate, innerStep) => new Filter(compile(predicate, compilationOptions), innerStep),
+						(innerStep, predicate) => new Filter(compile(predicate, compilationOptions), innerStep),
 						axisExpression);
 			}
 		});
@@ -525,11 +567,8 @@ function intersectExcept (ast, compilationOptions) {
 }
 
 function varRef (ast, _compilationOptions) {
-	const nameNode = astHelper.getFirstChild(ast, 'name');
-	const prefix = astHelper.getAttribute(nameNode, 'prefix');
-	const namespaceURI = astHelper.getAttribute(nameNode, 'URI');
-	const name = astHelper.getTextContent(nameNode);
-	return new VarRef(prefix, namespaceURI, name);
+	const { prefix, namespaceURI, localName } = astHelper.getQName(ast);
+	return new VarRef(prefix, namespaceURI, localName );
 }
 
 function isTextNodeOrCDataSection (item) {
