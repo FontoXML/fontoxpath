@@ -85,6 +85,10 @@
       }
       return ["sequenceExpr", expr];
     }
+
+	function throwError (code, cause) {
+	  throw new Error(code + ": " + cause);
+    }
 }
 
 // 1
@@ -772,23 +776,42 @@ NodeConstructor
 DirectConstructor
  = DirElemConstructor
  / DirCommentConstructor
-//  / DirPIConstructor
+ / DirPIConstructor
 
 // 142
 DirElemConstructor
- = "<" name:QName attList:DirAttributeList endPart:(
+ = "<" name:QName attList:DirAttributeList contents:(
    ("/>" {return null}) /
-   (">"  contents:DirElemContent* _ "</" closingname:QName ExplicitWhitespace? ">" {return [contents, closingname]} ))
- {return ['elementConstructor', ["tagName"].concat(name)].concat(attList.length ? [["attributeList"].concat(attList)] : []).concat(endPart ? [["elementContent"].concat(accumulateDirContents(endPart[0], true, true))] : [])}
+   (">"  contents:DirElemContent* _ "</" QName ExplicitWhitespace? ">" {return accumulateDirContents(contents, true, true)} ))
+ {return ['elementConstructor', ["tagName"].concat(name)].concat(attList.length ? [["attributeList"].concat(attList)] : []).concat(contents && contents.length ? [["elementContent"].concat(contents)] : [])}
 
 // 143
 DirAttributeList
  = attrs:(ExplicitWhitespace attr:(attribute)? {return attr})*
-   {return attrs.filter(Boolean).map(attr => ["attributeConstructor", attr[0], attr[1]]) || []}
+   {
+     return attrs
+	   .filter(Boolean)
+   }
 
 attribute
  = name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue
-   {return [["attributeName"].concat(name), value.length === 1 && typeof value[0] === "string" ? ["attributeValue", value[0]] : ["attributeValueExpr"].concat(value)]}
+   {
+     if (name.length === 1 && name[0] === "xmlns") {
+	   if (typeof value[0] !== "string") {
+	     throwError("XQST0022", "A namespace declaration may not contain enclosed expressions");
+       }
+	   return ["namespaceDeclaration", ["uri", value[0]]]
+	 }
+	 if (name[0].prefix === "xmlns") {
+	   if (typeof value[0] !== "string") {
+	     throwError("XQST0022", "The namespace declaration for 'xmlns:" + name[1] + "' may not contain enclosed expressions");
+       }
+	   return ["namespaceDeclaration", ["prefix", name[1]], ["uri", value[0]]]
+	 }
+	 return [
+	   "attributeConstructor",
+	   ["attributeName"].concat(name),
+	   value.length === 1 && typeof value[0] === "string" ? ["attributeValue", value[0]] : ["attributeValueExpr"].concat(value)]}
 
 // 144
 DirAttributeValue
@@ -822,6 +845,12 @@ DirCommentConstructor = "<!--" contents:$DirCommentContents "-->" {return ["comp
 
 // 150
 DirCommentContents = ((!"-" Char) / ("-" (!"-" Char)))*
+
+// 151
+DirPIConstructor = "<?" target:$PITarget contents:(ExplicitWhitespace contents:$DirPIContents {return contents})? "?>" {return ["computedPIConstructor", ["piTarget", target], ["piTargetExpr", ["stringConstantExpr", ["value", contents]]]]}
+
+// 152
+DirPIContents = (!"?>" Char)*
 
 // 153
 CDataSection = "<![CDATA[" contents:$CDataSectionContents "]]>" {return ["CDataSection", contents]}
@@ -1098,6 +1127,9 @@ AposAttrValueContentChar = ![\'{}<&] ch:Char {return ch}
 // 231
 Comment
  = "(:" (CommentContents / Comment)* ":)"
+
+// 232
+PITarget = !(("X"/"x")("M"/"m")("L"/"l")) Name
 
 // 233
 CharRef
