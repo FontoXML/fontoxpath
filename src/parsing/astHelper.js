@@ -1,11 +1,15 @@
+/**
+* @typedef {Array<string|Object|Array>} AST
+*/
+let AST;
 
 /**
  * Get the first child with the given name. Automatically skips attributes
  *
- * @param   {!Array<string|Object|Array>}  ast   The parent
- * @param   {string}                       name  The name of the child, without any prefixes
+ * @param   {!AST}    ast   The parent
+ * @param   {string}  name  The name of the child, without any prefixes
  *
- * @return  {?Array<string|Object|Array>}  The matching child, or null
+ * @return  {?AST}  The matching child, or null
  */
 function getFirstChild (ast, name) {
 	for (let i = 1; i < ast.length; ++i) {
@@ -19,6 +23,17 @@ function getFirstChild (ast, name) {
 	return null;
 }
 
+/**
+ * Get the textContent of the given ast node (assuming its type is simpleContent)
+ *
+ * @param   {!AST}    ast  The parent
+ * @return  {string}  The string content
+ */
+function getTextContent (ast) {
+	return ast[1] || '';
+}
+
 export default {
-	getFirstChild: getFirstChild
+	getFirstChild: getFirstChild,
+	getTextContent: getTextContent
 };
