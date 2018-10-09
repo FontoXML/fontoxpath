@@ -109,8 +109,8 @@ function compile (ast, compilationOptions) {
 			// Operators
 		case 'andOp':
 			return andOp(ast, compilationOptions);
-		case 'or':
-			return or(ast, compilationOptions);
+		case 'orOp':
+			return orOp(ast, compilationOptions);
 		case 'compare':
 			return compare(ast, compilationOptions);
 		case 'unaryPlus':
@@ -125,7 +125,6 @@ function compile (ast, compilationOptions) {
 			return union(ast, compilationOptions);
 		case 'intersectExcept':
 			return intersectExcept(ast, compilationOptions);
-			break;
 
 			// Tests
 		case 'nameTest':
@@ -134,46 +133,16 @@ function compile (ast, compilationOptions) {
 			return kindTest(ast, compilationOptions);
 		case 'typeTest':
 			return typeTest(ast, compilationOptions);
-			break;
-
-			// Axes
-		case 'ancestor':
-			return ancestor(ast, compilationOptions);
-		case 'ancestor-or-self':
-			return ancestorOrSelf(ast, compilationOptions);
-		case 'attribute':
-			return attribute(ast, compilationOptions);
-		case 'child':
-			return child(ast, compilationOptions);
-		case 'descendant':
-			return descendant(ast, compilationOptions);
-		case 'descendant-or-self':
-			return descendantOrSelf(ast, compilationOptions);
-		case 'parent':
-			return parent(ast, compilationOptions);
-		case 'following-sibling':
-			return followingSibling(ast, compilationOptions);
-		case 'preceding-sibling':
-			return precedingSibling(ast, compilationOptions);
-		case 'following':
-			return following(ast, compilationOptions);
-		case 'preceding':
-			return preceding(ast, compilationOptions);
-		case 'self':
-			return self(ast, compilationOptions);
-			break;
+		case 'piTest':
+			return piTest(ast, compilationOptions);
 
 			// Path
-		case 'absolutePath':
-			return absolutePath(ast, compilationOptions);
-		case 'path':
-			return path(ast, compilationOptions);
-			break;
+		case 'pathExpr':
+			return pathExpr(ast, compilationOptions);
 
 			// Postfix operators
 		case 'filter':
 			return filter(ast, compilationOptions);
-			break;
 
 			// Functions
 		case 'functionCallExpr':
@@ -247,28 +216,11 @@ function mapConstructor (ast, compilationOptions) {
 	}));
 }
 
-function absolutePath (ast, compilationOptions) {
-	return new AbsolutePathExpression(compile(ast[0], compilationOptions));
-}
-
-function ancestor (ast, compilationOptions) {
-	return new AncestorAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
-}
-
-function ancestorOrSelf (ast, compilationOptions) {
-	const subExpression = /** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions));
-	return new AncestorAxis(subExpression, { inclusive: true });
-}
-
 function andOp (ast, compilationOptions) {
 	return new AndOperator([
 		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], compilationOptions),
 		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], compilationOptions)
 	]);
-}
-
-function attribute (ast, compilationOptions) {
-	return new AttributeAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
 function binaryOperator (ast, compilationOptions) {
@@ -277,19 +229,6 @@ function binaryOperator (ast, compilationOptions) {
 	const b = compile(ast[2], compilationOptions);
 
 	return new BinaryOperator(kind, a, b);
-}
-
-function child (ast, compilationOptions) {
-	return new ChildAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
-}
-
-function descendant (ast, compilationOptions) {
-	return new DescendantAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
-}
-
-function descendantOrSelf (ast, compilationOptions) {
-	const subExpression = /** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions));
-	return new DescendantAxis(subExpression, { inclusive: true });
 }
 
 function castAs (ast, compilationOptions) {
@@ -319,14 +258,6 @@ function filter (ast, compilationOptions) {
 	return new Filter(compile(ast[0], compilationOptions), compile(ast[1], compilationOptions));
 }
 
-function followingSibling (ast, compilationOptions) {
-	return new FollowingSiblingAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
-}
-
-function following (ast, compilationOptions) {
-	return new FollowingAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
-}
-
 function forExpression ([[prefix, namespaceURI, name], expression, returnExpression], compilationOptions) {
 	return new ForExpression(
 		{
@@ -341,11 +272,7 @@ function functionCall (ast, compilationOptions) {
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 	return new FunctionCall(
 		new NamedFunctionRef(
-			{
-				prefix: astHelper.getAttribute(functionName, 'prefix'),
-				namespaceURI: astHelper.getAttribute(functionName, 'URI'),
-				localName: astHelper.getTextContent(functionName)
-			},
+			astHelper.getQName(functionName),
 			functionArguments.length),
 		functionArguments.map(arg => compile(arg, compilationOptions)));
 }
@@ -356,11 +283,7 @@ function arrowExpr (ast, compilationOptions) {
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 	return new FunctionCall(
 		new NamedFunctionRef(
-			{
-				prefix: astHelper.getAttribute(functionName, 'prefix'),
-				namespaceURI: astHelper.getAttribute(functionName, 'URI'),
-				localName: astHelper.getTextContent(functionName)
-			},
+			astHelper.getQName(functionName),
 			functionArguments.length + 1),
 		[compile(argExpr, compilationOptions)].concat(functionArguments.map(arg => compile(arg, compilationOptions))));
 }
@@ -395,8 +318,7 @@ function integerConstantExpr (ast, _compilationOptions) {
 }
 
 function nameTest (ast, _compilationOptions) {
-	const [prefix, namespaceURI, localName] = ast[0];
-	return new NameTest(prefix, namespaceURI, localName);
+	return new NameTest(astHelper.getQName(ast));
 }
 
 function kindTest (ast, _compilationOptions) {
@@ -441,24 +363,100 @@ function kindTest (ast, _compilationOptions) {
 	}
 }
 
-function or (ast, compilationOptions) {
-	return new OrOperator(ast.map(arg => compile(arg, compilationOptions)));
+function orOp (ast, compilationOptions) {
+	return new OrOperator([
+		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], compilationOptions),
+		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], compilationOptions)
+	]);
 }
 
-function parent (ast, compilationOptions) {
-	return new ParentAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
+function pathExpr (ast, compilationOptions) {
+	const steps = astHelper.getChildren(ast, 'stepExpr')
+		.map(step => {
+			const axis = astHelper.getFirstChild(step, 'xpathAxis');
+			if (axis) {
+				const test = astHelper.getFirstChild(step, [
+					'attributeTest',
+					'anyElementTest',
+					'piTest',
+					'documentTest',
+					'commentTest',
+					'namespaceTest',
+					'anyKindTest',
+					'textTest',
+					'anyFunctionTest',
+					'typedFunctionTest',
+					'schemaAttributeTest',
+					'atomicType',
+					'anyItemType',
+					'parenthesizedItemType',
+					'typedMapTest',
+					'typedArrayTest',
+					'nameTest',
+					'WildCard'
+				]);
+
+				const predicates = astHelper.getFirstChild(step, 'predicates');
+
+				let axisExpression;
+				switch (astHelper.getTextContent(axis)) {
+					case 'ancestor':
+						axisExpression = new AncestorAxis(compile(test, compilationOptions), { inclusive: false });
+						break;
+					case 'ancestor-or-self':
+						axisExpression = new AncestorAxis(compile(test, compilationOptions), { inclusive: true });
+						break;
+					case 'attribute':
+						axisExpression = new AttributeAxis(compile(test, compilationOptions));
+						break;
+					case 'child':
+						axisExpression = new ChildAxis(compile(test, compilationOptions));
+						break;
+					case 'descendant':
+						axisExpression = new DescendantAxis(compile(test, compilationOptions), { inclusive: false });
+						break;
+					case 'descendant-or-self':
+						axisExpression = new DescendantAxis(compile(test, compilationOptions), { inclusive: true });
+						break;
+					case 'parent':
+						axisExpression = new ParentAxis(compile(test, compilationOptions));
+						break;
+					case 'following-sibling':
+						axisExpression = new FollowingSiblingAxis(compile(test, compilationOptions));
+						break;
+					case 'preceding-sibling':
+						axisExpression = new PrecedingSiblingAxis(compile(test, compilationOptions));
+						break;
+					case 'following':
+						axisExpression = new FollowingAxis(compile(test, compilationOptions));
+						break;
+					case 'preceding':
+						axisExpression = new PrecedingAxis(compile(test, compilationOptions));
+						break;
+					case 'self':
+						axisExpression = new SelfExpression(compile(test, compilationOptions));
+						break;
+				}
+
+				if (!predicates) {
+					return axisExpression;
+				}
+				return astHelper.getChildren(predicates, '*')
+					.reduce(
+						(predicate, innerStep) => new Filter(compile(predicate, compilationOptions), innerStep),
+						axisExpression);
+			}
+		});
+	const isAbsolute = astHelper.getFirstChild('root');
+	const pathExpr = new PathExpression(steps);
+	if (isAbsolute) {
+		return new AbsolutePathExpression(pathExpr);
+	}
+	return pathExpr;
 }
 
-function path (ast, compilationOptions) {
-	return new PathExpression(ast.map(arg => compile(arg, compilationOptions)));
-}
-
-function precedingSibling (ast, compilationOptions) {
-	return new PrecedingSiblingAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
-}
-
-function preceding (ast, compilationOptions) {
-	return new PrecedingAxis(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
+function piTest (ast, compilationOptions) {
+	return new KindTest(7);
 }
 
 function quantified (ast, compilationOptions) {
@@ -471,10 +469,6 @@ function quantified (ast, compilationOptions) {
 		};
 	});
 	return new QuantifiedExpression(ast[0], inClauseNames, inClauseExpressions, compile(ast[2], compilationOptions));
-}
-
-function self (ast, compilationOptions) {
-	return new SelfExpression(/** @type {!TestAbstractExpression} */(compile(ast[0], compilationOptions)));
 }
 
 function sequence (ast, compilationOptions) {

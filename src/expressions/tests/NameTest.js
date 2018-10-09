@@ -9,7 +9,7 @@ class NameTest extends TestAbstractExpression {
 	 * @param  {string}   localName
 	 * @param  {{kind: ?number}} [options=]
 	 */
-	constructor (prefix, namespaceURI, localName, options = { kind: null }) {
+	constructor ({ prefix, namespaceURI, localName }, options = { kind: null }) {
 		const specificity = {};
 
 		if (localName !== '*') {
