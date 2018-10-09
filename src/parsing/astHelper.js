@@ -27,17 +27,20 @@ function getChildren (ast, name) {
 /**
  * Get the first child with the given name. Automatically skips attributes
  *
- * @param   {!AST}    ast   The parent
- * @param   {string}  name  The name of the child, without any prefixes
+ * @param   {!AST}                  ast   The parent
+ * @param   {string|Array<string>}  name  The name of the child, without any prefixes. Array for "or"
  *
  * @return  {?AST}  The matching child, or null
  */
 function getFirstChild (ast, name) {
+	if (name !== '*' && !Array.isArray(name)) {
+		name = [name];
+	}
 	for (let i = 1; i < ast.length; ++i) {
 		if (!Array.isArray(ast[i])) {
 			continue;
 		}
-		if (name === '*' || ast[i][0] === name) {
+		if (name === '*' || name.includes(ast[i][0])) {
 			return ast[i];
 		}
 	}
@@ -92,10 +95,26 @@ function getAttribute (ast, attributeName) {
 	return attrs[attributeName] || null;
 }
 
+/**
+ * Get the parts of a QName
+ *
+ * @param  {!AST}  ast
+ *
+ * @return {{prefix: ?string, namespaceURI: ?string, localName: string}}
+ */
+function getQName (ast) {
+	return {
+		prefix: getAttribute(ast, 'prefix'),
+		namespaceURI: getAttribute(ast, 'URI'),
+		localName: getTextContent(ast)
+	};
+}
+
 export default {
 	followPath: followPath,
 	getChildren, getChildren,
 	getFirstChild: getFirstChild,
 	getTextContent: getTextContent,
-	getAttribute: getAttribute
+	getAttribute: getAttribute,
+	getQName: getQName
 };
