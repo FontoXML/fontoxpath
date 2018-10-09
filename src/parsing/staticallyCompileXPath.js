@@ -29,8 +29,9 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 		throw new Error('Can not execute a library module.');
 	}
 
-	const prolog = astHelper.getFirstChild(ast, 'prolog');
-	const queryBodyContents = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
+	const mainModule = astHelper.getFirstChild(ast, 'mainModule');
+	const prolog = astHelper.getFirstChild(mainModule, 'prolog');
+	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
 	if (prolog) {
