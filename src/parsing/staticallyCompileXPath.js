@@ -6,6 +6,8 @@ import compileAstToExpression from './compileAstToExpression';
 import processProlog from './processProlog';
 import Expression from '../expressions/Expression';
 
+import astHelper from './astHelper';
+
 import {
 	getStaticCompilationResultFromCache,
 	storeStaticCompilationResultInCache
@@ -23,22 +25,22 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 	}
 
 	const ast = parseExpression(xpathString, compilationOptions);
-
-	if (ast['type'] === 'libraryModule') {
+	if (astHelper.getFirstChild(ast, 'libraryModule')) {
 		throw new Error('Can not execute a library module.');
 	}
 
-	const prolog = ast['prolog'];
-	const moduleBody = ast['body'];
+	const prolog = astHelper.getFirstChild(ast, 'prolog');
+	const queryBodyContents = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
-	if (compilationOptions.allowXQuery) {
+	if (prolog) {
+		if (!compilationOptions.allowXQuery) {
+			throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+		}
 		processProlog(prolog, rootStaticContext);
-	} else if (ast['prolog']['moduleSettings'].length || ast['prolog']['declarations'].length) {
-		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 
-	const compiledExpression = compileAstToExpression(moduleBody, compilationOptions);
+	const compiledExpression = compileAstToExpression(queryBodyContents, compilationOptions);
 
 	Object.keys(moduleImports).forEach(modulePrefix => {
 		const moduleURI = moduleImports[modulePrefix];
