@@ -105,8 +105,8 @@ function compile (ast, compilationOptions) {
 	const args = ast.slice(1);
 	switch (ast[0]) {
 			// Operators
-		case 'and':
-			return and(args, compilationOptions);
+		case 'andOperator':
+			return andOperator(args, compilationOptions);
 		case 'or':
 			return or(args, compilationOptions);
 		case 'compare':
@@ -257,8 +257,8 @@ function ancestorOrSelf (args, compilationOptions) {
 	return new AncestorAxis(subExpression, { inclusive: true });
 }
 
-function and (args, compilationOptions) {
-	return new AndOperator(args.map(arg => compile(arg, compilationOptions)));
+function andOperator (args, compilationOptions) {
+	return new AndOperator([]);
 }
 
 function attribute (args, compilationOptions) {
