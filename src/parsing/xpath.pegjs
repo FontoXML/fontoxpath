@@ -1066,7 +1066,7 @@ AnyArrayTest = "array" _ "(" _ "*" _ ")" {return ["anyArrayTest"]}
 TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", ["sequenceType"].concat(type)]}
 
 // 216
-ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", ["sequenceType"].concat(type)]}
+ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", ["sequenceType", type]]}
 
 // 217
 URILiteral = StringLiteral
