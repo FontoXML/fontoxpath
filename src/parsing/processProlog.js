@@ -1,3 +1,4 @@
+import astHelper from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
 
 import Sequence from '../expressions/dataTypes/Sequence';
@@ -18,22 +19,17 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 ];
 
 /**
- * @typedef {{declarations: AnnotatedDeclaration}}
+ * @typedef {Array<string|Object|Array>} AST
  */
-let Prolog;
+let AST;
 
 /**
- * @typedef {{annotations: ?, declaration: Declaration}}
+ * @typedef {{type: string, occurrence: string}} TypeDeclaration
  */
-let AnnotatedDeclaration;
+let TypeDeclaration;
 
 /**
- * @typedef {{type: string, name: Array<string>, body: Array<?>, returnType: ?string, params: Array<?>}}
- */
-let Declaration;
-
-/**
- * @param   {!Prolog}         prolog              The prolog of the module to process
+ * @param   {!AST}            prolog              The prolog of the module to process
  * @param   {!StaticContext}  staticContext
  */
 export default function processProlog (prolog, staticContext) {
@@ -41,8 +37,18 @@ export default function processProlog (prolog, staticContext) {
 
 	const compiledFunctionDeclarations = [];
 
+	astHelper.getChildren(prolog, '*').some(feature => {
+		switch (feature[0]) {
+			case 'moduleImport':
+			case 'functionDecl':
+				break;
+			default:
+				throw new Error('Not implemented: only module imports and function declarations are implemented in XQuery modules');
+		}
+	});
+
 	// First, let's import modules
-	prolog['moduleSettings'].forEach(moduleSetting => {
+	astHelper.getChildren(prolog, 'moduleSettings').forEach(moduleSetting => {
 		const type = moduleSetting['type'];
 		switch (type) {
 			case 'moduleImport': {
@@ -62,124 +68,106 @@ export default function processProlog (prolog, staticContext) {
 		}
 	});
 
-	prolog['declarations'].forEach(declaration => {
+	astHelper.getChildren(prolog, 'functionDecl').forEach(declaration => {
+		const functionName = astHelper.getFirstChild(declaration, 'functionName');
+		const declarationPrefix = astHelper.getAttribute(functionName, 'prefix');
+		let declarationNamespaceURI = astHelper.getAttribute(functionName, 'URI');
+		const declarationLocalName = astHelper.getTextContent(functionName);
 
-		switch (declaration['type']) {
-			case 'functionDeclaration': {
-				let [ declarationPrefix, declarationNamespaceURI, declarationLocalName ] = declaration['name'];
+		if (!declarationNamespaceURI) {
+			declarationNamespaceURI = staticContext.resolveNamespace(declarationPrefix);
 
-				if (!declarationNamespaceURI) {
-					declarationNamespaceURI = staticContext.resolveNamespace(declarationPrefix);
-
-					if (!declarationNamespaceURI && declarationPrefix) {
-						throw new Error(`XPST0081: The prefix "${declarationPrefix}" could not be resolved`);
-					}
-				}
-
-				if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
-					throw new Error('XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.');
-				}
-				const annotations = declaration['annotations'].map(annotation => {
-					let annotationNamespaceURI = annotation[0][1];
-					const annotationPrefix = annotation[0][0];
-					if (!annotationNamespaceURI) {
-						annotationNamespaceURI = staticContext.resolveNamespace(annotationPrefix);
-					}
-					if (!annotationNamespaceURI && annotationPrefix) {
-						throw new Error(`XPST0008: The prefix ${annotationPrefix} is not declared`);
-					}
-					return {
-						annotationName: {
-							prefix: annotationPrefix,
-							namespaceURI: annotationNamespaceURI,
-							localName: annotation[0][2]
-						},
-						parameters: annotation[1]
-					};
-				});
-				// Functions are public unless they're private
-				const isPublicDeclaration = annotations.every(annotation => !annotation.namespaceURI && annotation.localName !== 'private');
-
-				if (!declarationNamespaceURI) {
-					throw new Error('XQST0060: Functions declared in a module must reside in a namespace.');
-				}
-
-				const body = declaration['body'];
-				const returnType = declaration['returnType'];
-				const paramNames = declaration['params'].map(([name]) => name);
-				const paramTypes = declaration['params'].map(([_name, type]) => type);
-
-				if (staticContext.lookupFunction(declarationNamespaceURI, declarationLocalName, paramTypes.length)) {
-					throw new Error(
-						`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${paramTypes.length} has already been declared.`);
-				}
-
-				const compiledFunctionBody = compileAstToExpression(body, { allowXQuery: true });
-
-				const staticContextLeaf = new StaticContext(staticContext);
-				const parameterBindingNames = paramNames.map(param => {
-					let namespaceURI = param[0];
-					const prefix = param[1];
-					const localName = param[2];
-
-					if (!namespaceURI === null && prefix !== '*') {
-						namespaceURI = staticContext.resolveNamespace(prefix);
-					}
-					return staticContextLeaf.registerVariable(namespaceURI, localName);
-				});
-
-
-				const executeFunction = (
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					...parameters
-				) => {
-					const scopedDynamicContext = dynamicContext
-						.scopeWithFocus(-1, null, Sequence.empty())
-						.scopeWithVariableBindings(parameterBindingNames.reduce((paramByName, bindingName, i) => {
-							paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
-							return paramByName;
-						}, Object.create(null)));
-					return compiledFunctionBody.evaluateMaybeStatically(
-						scopedDynamicContext,
-						executionParameters);
-				};
-
-				const functionDefinition = {
-					callFunction: executeFunction,
-					localName: declarationLocalName,
-					namespaceURI: declarationNamespaceURI,
-					argumentTypes: paramTypes,
-					arity: paramNames.length,
-					returnType: returnType
-				};
-
-				staticContext.registerFunctionDefinition(
-					declarationNamespaceURI,
-					declarationLocalName,
-					paramNames.length,
-					functionDefinition);
-
-				staticallyCompilableExpressions.push({
-					expression: compiledFunctionBody,
-					staticContextLeaf: staticContextLeaf
-				});
-
-				if (isPublicDeclaration) {
-					// Only mark the registration as the public API for the module if it's public
-					compiledFunctionDeclarations.push({
-						namespaceURI: declarationNamespaceURI,
-						localName: declarationLocalName,
-						arity: paramNames.length,
-						functionDefinition
-					});
-				}
-				break;
+			if (!declarationNamespaceURI && declarationPrefix) {
+				throw new Error(`XPST0081: The prefix "${declarationPrefix}" could not be resolved`);
 			}
-			default: {
-				throw new Error('Not implemented: only module imports and function declarations are implemented in XQuery modules');
+		}
+
+		if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
+			throw new Error('XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.');
+		}
+
+		// Functions are public unless they're private
+		const isPublicDeclaration = astHelper
+			.getChildren(declaration, 'annotation')
+			.map(annotation => astHelper.getFirstChild(annotation, 'annotationName'))
+			.every(annotationName => !astHelper.getAttribute('URI') && astHelper.getTextContent(annotationName) !== 'private');
+
+		if (!declarationNamespaceURI) {
+			throw new Error('XQST0060: Functions declared in a module must reside in a namespace.');
+		}
+
+		// functionBody always has a single expression
+		const body = astHelper.getFirstChild(declaration, 'functionBody')[1];
+		const returnType = astHelper.getTypeDeclaration(declaration);
+		const params = astHelper.getChildren(astHelper.getFirstChild(declaration, 'paramList'), 'param');
+		const paramNames = params.map(param => astHelper.getFirstChild(param, 'varName'));
+		const paramTypes = params.map(param => astHelper.getTypeDeclaration(param));
+
+		if (staticContext.lookupFunction(declarationNamespaceURI, declarationLocalName, paramTypes.length)) {
+			throw new Error(
+				`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${paramTypes.length} has already been declared.`);
+		}
+
+		const compiledFunctionBody = compileAstToExpression(body, { allowXQuery: true });
+
+		const staticContextLeaf = new StaticContext(staticContext);
+		const parameterBindingNames = paramNames.map(param => {
+			let namespaceURI = astHelper.getAttribute(param, 'URI');
+			const prefix = astHelper.getAttribute(param, 'prefix');
+			const localName = astHelper.getTextContent(param);
+
+			if (!namespaceURI === null && prefix !== '*') {
+				namespaceURI = staticContext.resolveNamespace(prefix);
 			}
+			return staticContextLeaf.registerVariable(namespaceURI, localName);
+		});
+
+
+		const executeFunction = (
+			dynamicContext,
+			executionParameters,
+			_staticContext,
+			...parameters
+		) => {
+			const scopedDynamicContext = dynamicContext
+				.scopeWithFocus(-1, null, Sequence.empty())
+				.scopeWithVariableBindings(parameterBindingNames.reduce((paramByName, bindingName, i) => {
+					paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
+					return paramByName;
+				}, Object.create(null)));
+			return compiledFunctionBody.evaluateMaybeStatically(
+				scopedDynamicContext,
+				executionParameters);
+		};
+
+		const functionDefinition = {
+			callFunction: executeFunction,
+			localName: declarationLocalName,
+			namespaceURI: declarationNamespaceURI,
+			argumentTypes: paramTypes,
+			arity: paramNames.length,
+			returnType: returnType
+		};
+
+		staticContext.registerFunctionDefinition(
+			declarationNamespaceURI,
+			declarationLocalName,
+			paramNames.length,
+			functionDefinition);
+
+		staticallyCompilableExpressions.push({
+			expression: compiledFunctionBody,
+			staticContextLeaf: staticContextLeaf
+		});
+
+		if (isPublicDeclaration) {
+			// Only mark the registration as the public API for the module if it's public
+			compiledFunctionDeclarations.push({
+				namespaceURI: declarationNamespaceURI,
+				localName: declarationLocalName,
+				arity: paramNames.length,
+				functionDefinition
+			});
 		}
 	});
 

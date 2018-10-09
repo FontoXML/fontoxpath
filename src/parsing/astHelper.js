@@ -4,6 +4,11 @@
 let AST;
 
 /**
+ * @typedef {{type: string, occurrence: string}} TypeDeclaration
+ */
+let TypeDeclaration;
+
+/**
  * Get the all children with the given name. Automatically skips attributes
  *
  * @param   {!AST}    ast   The parent
@@ -64,6 +69,72 @@ function getTextContent (ast) {
 }
 
 /**
+ * Get the type declaration described in the given ast node
+ *
+ * @param   {!AST}    ast  The parent
+ * @return  {TypeDeclaration}  The type declaration
+ */
+function getTypeDeclaration (ast) {
+	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
+	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
+		return null;
+	}
+
+	const determineType = (typeAst) => {
+		const typeDeclaration = getFirstChild(typeAst, '*');
+		switch (typeDeclaration[0]) {
+			case 'documentTest':
+				return 'document()';
+			case 'elementTest':
+				return 'element()';
+			case 'attributeTest':
+				return 'attribute()';
+			case 'piTest':
+				return 'processing-instruction()';
+			case 'commentTest':
+				return 'comment()';
+			case 'textTest':
+				return 'text()';
+			case 'anyKindTest':
+				return 'node()';
+			case 'anyItemType':
+				return 'item()';
+			case 'anyFunctionTest':
+			case 'functionTest':
+				return 'function(*)';
+			case 'anyMapTest':
+			case 'typedMapTest':
+				return 'map(*)';
+			case 'anyArrayTest':
+			case 'typedArrayTest':
+				return 'array(*)';
+			case 'atomicType':
+				return [getAttribute(typeDeclaration, 'prefix'), getTextContent(typeDeclaration)].join(':');
+			case 'parenthesizedItemType':
+				return determineType(getFirstChild(typeDeclaration, 'sequenceType'));
+			case 'schemaElementTest':
+			case 'schemaAttributeTest':
+			case 'namespaceNodeTest':
+			default:
+				throw new Error(`Type declaration "${getFirstChild(typeDeclarationAst, '*')[0]}" is not supported.`);
+		}
+	};
+
+	const type = determineType(typeDeclarationAst);
+
+	let occurrence = null;
+	const occurrenceNode = getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
+	if (occurrenceNode) {
+		occurrence = getTextContent(occurrenceNode);
+	}
+
+	return {
+		type,
+		occurrence
+	};
+}
+
+/**
  * Follow a path to an AST node
  *
  * @param   {!AST}            ast
@@ -115,6 +186,7 @@ export default {
 	getChildren, getChildren,
 	getFirstChild: getFirstChild,
 	getTextContent: getTextContent,
+	getTypeDeclaration: getTypeDeclaration,
 	getAttribute: getAttribute,
 	getQName: getQName
 };

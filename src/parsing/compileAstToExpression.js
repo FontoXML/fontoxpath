@@ -125,6 +125,8 @@ function compile (ast, compilationOptions) {
 			return union(ast, compilationOptions);
 		case 'intersectExcept':
 			return intersectExcept(ast, compilationOptions);
+		case 'stringConcatenateOp':
+			return stringConcatenateOp(ast, compilationOptions);
 
 			// Tests
 		case 'nameTest':
@@ -155,6 +157,8 @@ function compile (ast, compilationOptions) {
 			// Literals
 		case 'integerConstantExpr':
 			return integerConstantExpr(ast, compilationOptions);
+		case 'stringConstantExpr':
+			return stringConstantExpr(ast, compilationOptions);
 
 			// Variables
 		case 'let':
@@ -315,6 +319,12 @@ function integerConstantExpr (ast, _compilationOptions) {
 	return new Literal(
 		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
 		'xs:integer');
+}
+
+function stringConstantExpr (ast, _compilationOptions) {
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		'xs:string');
 }
 
 function nameTest (ast, _compilationOptions) {
@@ -479,6 +489,20 @@ function simpleMap (ast, compilationOptions) {
 	return new SimpleMapOperator(compile(ast[0], compilationOptions), compile(ast[1], compilationOptions));
 }
 
+function stringConcatenateOp (ast, compilationOptions) {
+	const args = [
+		astHelper.getFirstChild(ast, 'firstOperand')[1],
+		astHelper.getFirstChild(ast, 'secondOperand')[1]];
+	return new FunctionCall(
+		new NamedFunctionRef(
+			{
+				namespaceURI: 'http://www.w3.org/2005/xpath-functions',
+				localName: 'concat'
+			},
+			args.length),
+		args.map(arg => compile(arg, compilationOptions)));
+}
+
 function typeTest (ast, _compilationOptions) {
 	const [prefix, namespaceURI, name] = ast[0];
 	return new TypeTest(prefix, namespaceURI, name);
@@ -501,7 +525,10 @@ function intersectExcept (ast, compilationOptions) {
 }
 
 function varRef (ast, _compilationOptions) {
-	const [prefix, namespaceURI, name] = ast[0];
+	const nameNode = astHelper.getFirstChild(ast, 'name');
+	const prefix = astHelper.getAttribute(nameNode, 'prefix');
+	const namespaceURI = astHelper.getAttribute(nameNode, 'URI');
+	const name = astHelper.getTextContent(nameNode);
 	return new VarRef(prefix, namespaceURI, name);
 }
 
@@ -570,7 +597,7 @@ function dirElementConstructor (ast, compilationOptions) {
 						return mappedContents;
 					}
 
-					if (!isTextNodeOrCDataSection(contents[i - 1]) && !isTextNodeOrCDataSection(contents[i+1])) {
+					if (!isTextNodeOrCDataSection(contents[i - 1]) && !isTextNodeOrCDataSection(contents[i + 1])) {
 						// This is boundary whitespace
 						return mappedContents;
 					}
