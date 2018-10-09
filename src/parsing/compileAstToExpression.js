@@ -567,7 +567,7 @@ function intersectExcept (ast, compilationOptions) {
 }
 
 function varRef (ast, _compilationOptions) {
-	const { prefix, namespaceURI, localName } = astHelper.getQName(ast);
+	const { prefix, namespaceURI, localName } = astHelper.getQName(astHelper.getFirstChild(ast, 'name'));
 	return new VarRef(prefix, namespaceURI, localName );
 }
 
