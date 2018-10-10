@@ -111,8 +111,6 @@ function compile (ast, compilationOptions) {
 			return andOp(ast, compilationOptions);
 		case 'orOp':
 			return orOp(ast, compilationOptions);
-		case 'compare':
-			return compare(ast, compilationOptions);
 		case 'unaryPlus':
 			return unaryPlus(ast, compilationOptions);
 		case 'unaryMinus':
@@ -128,6 +126,10 @@ function compile (ast, compilationOptions) {
 		case 'stringConcatenateOp':
 			return stringConcatenateOp(ast, compilationOptions);
 
+			// Compares
+		case 'equalOp':
+			return compare(ast, compilationOptions);
+
 			// Tests
 		case 'nameTest':
 			return nameTest(ast, compilationOptions);
@@ -137,6 +139,8 @@ function compile (ast, compilationOptions) {
 			return typeTest(ast, compilationOptions);
 		case 'piTest':
 			return piTest(ast, compilationOptions);
+		case 'anyKindTest':
+			return anyKindTest(ast, compilationOptions);
 
 			// Path
 		case 'pathExpr':
@@ -253,7 +257,10 @@ function castableAs (ast, compilationOptions) {
 
 // Binary compare (=, !=, le, is, <<, >>, etc)
 function compare (ast, compilationOptions) {
-	return new Compare(ast[0], compile(ast[1], compilationOptions), compile(ast[2], compilationOptions));
+	return new Compare(
+		ast[0],
+		compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions),
+		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions));
 }
 
 function conditional (ast, compilationOptions) {
@@ -261,7 +268,7 @@ function conditional (ast, compilationOptions) {
 }
 
 function filter (ast, compilationOptions) {
-	return new Filter(compile(ast[0], compilationOptions), compile(ast[1], compilationOptions));
+	return new Filter(compile(ast[1], compilationOptions), compile(ast[0], compilationOptions));
 }
 
 function forExpression ([[prefix, namespaceURI, name], expression, returnExpression], compilationOptions) {
@@ -415,6 +422,10 @@ function kindTest (ast, _compilationOptions) {
 	}
 }
 
+function anyKindTest (ast, compilationOptions) {
+	return new TypeTest(null, null, 'node()');
+}
+
 function orOp (ast, compilationOptions) {
 	return new OrOperator([
 		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], compilationOptions),
@@ -445,7 +456,7 @@ function pathExpr (ast, compilationOptions) {
 					'typedMapTest',
 					'typedArrayTest',
 					'nameTest',
-					'WildCard'
+					'Wildcard'
 				]);
 
 				const predicates = astHelper.getFirstChild(step, 'predicates');
@@ -494,8 +505,8 @@ function pathExpr (ast, compilationOptions) {
 					return axisExpression;
 				}
 				return astHelper.getChildren(predicates, '*')
-					.reduce(
-						(innerStep, predicate) => new Filter(compile(predicate, compilationOptions), innerStep),
+					.reduceRight(
+						(innerStep, predicate) => new Filter(innerStep, compile(predicate, compilationOptions)),
 						axisExpression);
 			}
 		});

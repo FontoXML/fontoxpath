@@ -119,9 +119,9 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 				it(testCase, function () {
 					const xQuery = tryGetXQuery({ directory, testName, testCase });
 
-					if (!xQuery) {
-						this.skip();
-					}
+					// if (!xQuery) {
+					// 	this.skip();
+					// }
 
 					let jsonMl;
 					try {

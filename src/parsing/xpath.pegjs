@@ -1066,13 +1066,13 @@ AnyArrayTest = "array" _ "(" _ "*" _ ")" {return ["anyArrayTest"]}
 TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", ["sequenceType"].concat(type)]}
 
 // 216
-ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", ["sequenceType", type]]}
+ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", ["sequenceType"].concat(type)]}
 
 // 217
 URILiteral = StringLiteral
 
 // 218
-EQName = uri:URIQualifiedName {return [{prefix: null, uri: uri[0]}, uri[1]]}
+EQName = uri:URIQualifiedName {return [{prefix: null, URI: uri[0]}, uri[1]]}
  / QName
 
 // 219

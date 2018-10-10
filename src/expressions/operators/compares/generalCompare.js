@@ -6,12 +6,12 @@ import castToType from '../../dataTypes/castToType';
 import DynamicContext from '../../DynamicContext';
 
 var OPERATOR_TRANSLATION = {
-    '=': 'eq',
-    '>': 'gt',
-    '<': 'lt',
-    '!=': 'ne',
-    '<=': 'le',
-    '>=': 'ge'
+    'equalOp': 'eqOp',
+    'notEqualOp': 'gtOp',
+    'lessThanOrEqualOp': 'ltOp',
+    'lessThanOp': 'neOp',
+    'greaterThanOrEqualOp': 'leOp',
+    'greaterThanOp': 'geOp'
 };
 
 /**
