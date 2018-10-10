@@ -76,32 +76,32 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 		areBothSubtypeOf('xs:base64Binary') ||
 		areBothStringOrAnyURI(typeA, typeB)) {
 		switch (operator) {
-			case 'eq':
+			case 'eqOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value === castB.value;
 				};
-			case 'ne':
+			case 'neOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value !== castB.value;
 				};
-			case 'lt':
+			case 'ltOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value < castB.value;
 				};
-			case 'le':
+			case 'leOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value <= castB.value;
 				};
-			case 'gt':
+			case 'gtOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value > castB.value;
 				};
-			case 'ge':
+			case 'geOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value >= castB.value;
@@ -113,35 +113,35 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 		areBothSubtypeOf('xs:date') ||
 		areBothSubtypeOf('xs:time')) {
 		switch (operator) {
-			case 'eq':
+			case 'eqOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
-			case 'ne':
+			case 'neOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return !dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 
-			case 'lt':
+			case 'ltOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return dateTimeLessThan(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
-			case 'le':
+			case 'leOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone()) ||
 						dateTimeLessThan(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
 
-			case 'gt':
+			case 'gtOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return dateTimeGreaterThan(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
-			case 'ge':
+			case 'geOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone()) ||
@@ -156,12 +156,12 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 		areBothSubtypeOf('xs:gMonth') ||
 		areBothSubtypeOf('xs:gDay')) {
 		switch (operator) {
-			case 'eq':
+			case 'eqOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone());
 				};
-			case 'ne':
+			case 'neOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return !dateTimeEqual(castA.value, castB.value, dynamicContext.getImplicitTimezone());
@@ -171,24 +171,24 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 
 	if (areBothSubtypeOf('xs:yearMonthDuration')) {
 		switch (operator) {
-			case 'lt':
+			case 'ltOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return yearMonthDurationLessThan(castA.value, castB.value);
 				};
-			case 'le':
+			case 'leOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value.equals(castB.value) ||
 						yearMonthDurationLessThan(castA.value, castB.value);
 				};
 
-			case 'gt':
+			case 'gtOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return yearMonthDurationGreaterThan(castA.value, castB.value);
 				};
-			case 'ge':
+			case 'geOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value.equals(castB.value) ||
@@ -199,28 +199,28 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 
 	if (areBothSubtypeOf('xs:dayTimeDuration')) {
 		switch (operator) {
-			case 'eq':
+			case 'eqOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value.equals(castB.value);
 				};
-			case 'lt':
+			case 'ltOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return dayTimeDurationLessThan(castA.value, castB.value);
 				};
-			case 'le':
+			case 'leOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value.equals(castB.value) ||
 						dayTimeDurationLessThan(castA.value, castB.value);
 				};
-			case 'gt':
+			case 'gtOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return dayTimeDurationGreaterThan(castA.value, castB.value);
 				};
-			case 'ge':
+			case 'geOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value.equals(castB.value) ||
@@ -231,12 +231,12 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 
 	if (areBothSubtypeOf('xs:duration')) {
 		switch (operator) {
-			case 'eq':
+			case 'eqOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return castA.value.equals(castB.value);
 				};
-			case 'ne':
+			case 'neOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return !castA.value.equals(castB.value);
