@@ -1,26 +1,12 @@
 // TODO: Remove this file before merging into master
-const xPathParserRaw = require('./xPathParser.new');
-const parser = /** @type {({xPathParser: {parse:function(!string):?}, SyntaxError:?})} */ ({});
-new Function(xPathParserRaw).call(parser);
-const { sync, slimdom } = require('slimdom-sax-parser');
+const fs = require('fs');
+const path = require('path');
+const parserString = fs.readFileSync(path.join('src', 'parsing', 'xpath.pegjs'), 'utf-8');
+const peg = require('pegjs');
+const parser = peg.generate(parserString);
+const { slimdom } = require('slimdom-sax-parser');
 
-const xQuery = `        declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";
-        (: ask whether a test is XQuery-only :)
-        declare function local:needs-xq($t as element(fots:test-case)) as xs:boolean {
-            let $spec := $t/fots:dependency[@type='spec'][1]
-            return exists($spec) and contains($spec/@value, 'XQ') and not(contains($spec/@value, 'XP'))
-               and not(starts-with($t/@name, 'fo-test-' (: special exemption for generated tests :)))
-        };
-        let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))
-        let $nsenvs :=
-            for $t in ($testsets|.)
-            for $e in $t//fots:environment[@name]
-            where exists($e/fots:namespace)
-            return concat($t/*/@name, '~', $e/@name/string())
-        let $xq-testcases := $testsets//fots:test-case [local:needs-xq(.)]
-        for $tc in $xq-testcases [concat(/*/@name, '~', fots:environment/@ref) = $nsenvs or fots:environment[fots:namespace]]
-        return $tc/@name/string()
-`;
+const xQuery = `array {(1, 2) => fontoxpath:sleep(1), 3}(1)[1](1)[1](1)[1]`;
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
@@ -92,6 +78,7 @@ function printJsonMl (what, indent, n) {
 function printXml (document) {
 	let depth = 0;
 	const elements = document.documentElement.outerHTML.split(/></g);
+	const prettiedXml = [];
 	elements.forEach(element => {
 		let indent;
 		let row = '<' + element + '>';
@@ -119,12 +106,13 @@ function printXml (document) {
 			}
 		}
 
-		console.log(indent + row);
+		prettiedXml.push(indent + row + '\n');
 	});
+	return prettiedXml.join('');
 }
 
 try {
-	const jsonMl = parser.xPathParser.parse(xQuery);
+	const jsonMl = parser.parse(xQuery);
 
 	console.log('----------------JsonML----------------');
 	console.log(printJsonMl(jsonMl, 0, 0));
@@ -136,7 +124,9 @@ try {
 	document.normalize();
 
 	console.log('-----------------XML-----------------');
-	printXml(document);
+	const prettiedXml = printXml(document);
+	console.log(prettiedXml);
+	console.log(document.documentElement.outerHTML);
 }
 catch (err) {
 	console.log(err);
