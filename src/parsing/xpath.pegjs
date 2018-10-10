@@ -89,6 +89,24 @@
 	function throwError (code, cause) {
 	  throw new Error(code + ": " + cause);
     }
+
+	function getQName (qname) {
+	  return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1]
+	}
+
+	function assertEqualQNames (a, b) {
+	   var nameA = getQName(a);
+	   var nameB = getQName(b);
+	   if (nameA !== nameB) {
+	     throwError(
+		   "XQST0118",
+		   "The start and the end tag of an element constructor must be equal. \"" +
+		     nameA +
+			 "\" does not match \"" +
+			 nameB +
+			 "\"");
+	   }
+    }
 }
 
 // 1
@@ -782,8 +800,19 @@ DirectConstructor
 DirElemConstructor
  = "<" name:QName attList:DirAttributeList contents:(
    ("/>" {return null}) /
-   (">"  contents:DirElemContent* _ "</" QName ExplicitWhitespace? ">" {return accumulateDirContents(contents, true, true)} ))
- {return ['elementConstructor', ["tagName"].concat(name)].concat(attList.length ? [["attributeList"].concat(attList)] : []).concat(contents && contents.length ? [["elementContent"].concat(contents)] : [])}
+   (">"  contents:DirElemContent* _ "</" endName:QName ExplicitWhitespace? ">"
+     {
+	   assertEqualQNames(name, endName);
+	   return accumulateDirContents(contents, true, true)
+	 }))
+ {
+   return [
+       'elementConstructor',
+	   ["tagName"].concat(name)
+	 ]
+	 .concat(attList.length ? [["attributeList"].concat(attList)] : [])
+	 .concat(contents && contents.length ? [["elementContent"].concat(contents)] : [])
+  }
 
 // 143
 DirAttributeList
@@ -860,13 +889,17 @@ CDataSectionContents = (!"]]>" Char)*
 
 // 155
 ComputedConstructor
- = // CompDocConstructor
+ = CompDocConstructor
 // / CompElemConstructor
- CompAttrConstructor
+/ CompAttrConstructor
 //  / CompNamespaceConstructor
 //  / CompTextConstructor
 //  / CompCommentConstructor
 //  / CompPIConstructor
+
+// 156
+CompDocConstructor
+ = "document" _ expr:EnclosedExpr {return expr; /*return ["computedDocumentConstructor", expr]*/}
 
 // 159
 CompAttrConstructor
