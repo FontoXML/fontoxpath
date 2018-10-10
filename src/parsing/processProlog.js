@@ -24,11 +24,6 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 let AST;
 
 /**
- * @typedef {{type: string, occurrence: string}} TypeDeclaration
- */
-let TypeDeclaration;
-
-/**
  * @param   {!AST}            prolog              The prolog of the module to process
  * @param   {!StaticContext}  staticContext
  */
