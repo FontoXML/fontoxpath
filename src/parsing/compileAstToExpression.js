@@ -115,9 +115,11 @@ function compile (ast, compilationOptions) {
 			return unaryPlus(ast, compilationOptions);
 		case 'unaryMinus':
 			return unaryMinus(ast, compilationOptions);
-		case 'binaryOperator':
+		case 'addOp':
+		case 'subtractOp':
+		case 'multiplyOp':
 			return binaryOperator(ast, compilationOptions);
-		case 'sequence':
+		case 'sequenceExpr':
 			return sequence(ast, compilationOptions);
 		case 'union':
 			return union(ast, compilationOptions);
@@ -211,7 +213,7 @@ function compile (ast, compilationOptions) {
 			return arrayConstructor(ast, compilationOptions);
 
 			// XQuery element constructors
-		case 'DirElementConstructor':
+		case 'elementConstructor':
 			return dirElementConstructor(ast, compilationOptions);
 
 		case 'DirCommentConstructor':
@@ -247,8 +249,8 @@ function andOp (ast, compilationOptions) {
 
 function binaryOperator (ast, compilationOptions) {
 	const kind = ast[0];
-	const a = compile(ast[1], compilationOptions);
-	const b = compile(ast[2], compilationOptions);
+	const a = compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions);
+	const b = compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions);
 
 	return new BinaryOperator(kind, a, b);
 }
@@ -550,7 +552,7 @@ function quantified (ast, compilationOptions) {
 }
 
 function sequence (ast, compilationOptions) {
-	return new SequenceOperator(ast.map(arg => compile(arg, compilationOptions)));
+	return new SequenceOperator(astHelper.getChildren(ast, '*').map(arg => compile(arg, compilationOptions)));
 }
 
 function simpleMap (ast, compilationOptions) {
