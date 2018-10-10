@@ -2,14 +2,21 @@ import Sequence from './Sequence';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
+import TypeDeclaration from './TypeDeclaration';
 
 /**
- * @param  {!Array<!string>}  argumentTypes
+ * @param  {!Array<!TypeDeclaration>}  argumentTypes
  * @param  {!number}  arity
  * @return {!Array<!string>}
  */
 function expandRestArgumentToArity (argumentTypes, arity) {
-	var indexOfRest = argumentTypes.indexOf('...');
+	let indexOfRest = -1;
+	for (var i = 0; i < argumentTypes.length; i++) {
+		if (argumentTypes[i].isRestArgument) {
+			indexOfRest = i;
+		}
+	}
+
 	if (indexOfRest > -1) {
 		var replacePart = new Array(arity - (argumentTypes.length - 1))
 			.fill(argumentTypes[indexOfRest - 1]);
@@ -22,7 +29,7 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 
 class FunctionValue {
 	/**
-	 * @param  {{value: !function(!DynamicContext, !ExecutionParameters, !StaticContext, ...!Sequence): !Sequence, localName: string, argumentTypes: !Array<string>, arity: number, returnType: string, namespaceURI: string}}  properties
+	 * @param  {{value: !function(!DynamicContext, !ExecutionParameters, !StaticContext, ...!Sequence): !Sequence, localName: string, argumentTypes: !Array<TypeDeclaration>, arity: number, returnType: string, namespaceURI: string}}  properties
 	 */
 	constructor ({ value, localName, namespaceURI, argumentTypes, arity, returnType }) {
 		this.value = value;

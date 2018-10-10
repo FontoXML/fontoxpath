@@ -1,5 +1,6 @@
 import builtInFunctions from './builtInFunctions';
 import Sequence from '../dataTypes/Sequence';
+import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
 /**
  * @typedef {({localName: !string, namespaceURI: string, arity: number, callFunction: !function(*): !Sequence, argumentTypes: !Array<string>, returnType: !string})}
@@ -101,9 +102,9 @@ function getFunctionByArity (functionNamespaceURI, functionLocalName, arity) {
 	}
 
 	const matchingFunction = matchingFunctions.find(/** @type {function(FunctionProperties):boolean} */ (functionDeclaration => {
-		const indexOfRest = functionDeclaration.argumentTypes.indexOf('...');
-		if (indexOfRest > -1) {
-			return indexOfRest <= arity;
+		const hasRestArgument = functionDeclaration.argumentTypes.some(argument => argument.isRestArgument);
+		if (hasRestArgument) {
+			return functionDeclaration.argumentTypes.length - 1 <= arity;
 		}
 		return functionDeclaration.argumentTypes.length === arity;
 	}));
@@ -122,6 +123,21 @@ function getFunctionByArity (functionNamespaceURI, functionLocalName, arity) {
 	};
 }
 
+/**
+ * @param   {string}          type
+ * @return  {TypeDeclaration}
+ */
+function splitType (type) {
+	// argumentType is something like 'xs:string?' or 'map(*)'
+	var parts = type.match(/^(.*[^+?*])([\+\*\?])?$/);
+	return parts[1] === '...' ? {
+		isRestArgument: true
+	} : {
+		type: parts[1],
+		occurrence: parts[2]
+	};
+}
+
 function registerFunction (namespaceURI, localName, argumentTypes, returnType, callFunction) {
 	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {
 		registeredFunctionsByName[namespaceURI + ':' + localName] = [];
@@ -130,7 +146,7 @@ function registerFunction (namespaceURI, localName, argumentTypes, returnType, c
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
 		localName: localName,
 		namespaceURI: namespaceURI,
-		argumentTypes: argumentTypes,
+		argumentTypes: argumentTypes.map(argumentType => splitType(argumentType)),
 		arity: argumentTypes.length,
 		returnType: returnType,
 		callFunction: callFunction

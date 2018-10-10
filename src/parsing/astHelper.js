@@ -1,12 +1,9 @@
+import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
+
 /**
  * @typedef {Array<string|Object|Array>} AST
  */
 let AST;
-
-/**
- * @typedef {{type: string, occurrence: string}} TypeDeclaration
- */
-let TypeDeclaration;
 
 /**
  * Get the all children with the given name. Automatically skips attributes
