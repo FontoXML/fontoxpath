@@ -641,13 +641,34 @@ LocationPathAbbreviation
 PostfixExprWithStep
  = expr:(expr:PrimaryExpr {return wrapInSequenceExprIfNeeded(expr)}) postfixExpr:(
      (_ filter:Predicate {return filter})
-   / (_ argList:ArgumentList {return argList})
+   / (_ argList:ArgumentList {return ["argumentList", argList]})
    / (_ lookup:Lookup {return lookup})
-   )* {return postfixExpr.length === 0 ? [["filterExpr", expr]] : [["filterExpr", expr], ["predicates"].concat(postfixExpr)]}
+   )* {
+let toWrap = expr;
+
+let predicates = [];
+postfixExpr.forEach(postFix => {
+  if (postFix[0] === "predicate") {
+    predicates.push(postFix);
+  }
+  else if (postFix[0] === "argumentList") {
+    if (predicates.length) {
+      // Wrap in pathExpr to fit the predicates
+      toWrap = ["pathExpr", ["stepExpr", ["filterExpr", toWrap], ["predicates"].concat(predicates)]];
+      predicates = [];
+    }
+    toWrap = ["dynamicFunctionInvocationExpr", ["functionItem", toWrap], ["arguments"].concat(postFix[1])];
+  }
+});
+
+return predicates.length ?
+  [["filterExpr", toWrap], ["predicates"].concat(predicates)] :
+  [["filterExpr", toWrap]];
+}
 
 // Expression is not in a step expression, i.e. can not have predicates and does not need filterExpr wrapper
 PostfixExprWithoutStep
- = expr:PrimaryExpr !(_ Predicate) {return expr}
+ = expr:PrimaryExpr !(_ Predicate / _ ArgumentList) {return expr}
 
 
 // === end of changes ===
@@ -717,7 +738,7 @@ PredicateList
 
 // 124
 Predicate
- = "[" _  expr:Expr _ "]" {return expr}
+ = "[" _  expr:Expr _ "]" {return ["predicate", expr]}
 
 // 125
 Lookup

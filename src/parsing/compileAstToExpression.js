@@ -6,7 +6,8 @@ import astHelper from './astHelper';
 import PathExpression from '../expressions/path/PathExpression';
 import ForExpression from '../expressions/ForExpression';
 import MapConstructor from '../expressions/maps/MapConstructor';
-import ArrayConstructor from '../expressions/arrays/ArrayConstructor';
+import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
+import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
 import AbsolutePathExpression from '../expressions/path/AbsolutePathExpression';
 import Filter from '../expressions/postfix/Filter';
 import AttributeAxis from '../expressions/axes/AttributeAxis';
@@ -228,7 +229,18 @@ function compile (ast, compilationOptions) {
 }
 
 function arrayConstructor (ast, compilationOptions) {
-	return new ArrayConstructor(ast[0], ast.slice(1).map(arg => compile(arg, compilationOptions)));
+	const arrConstructor = astHelper.getFirstChild(ast, '*');
+	const members = astHelper.getChildren(arrConstructor, 'arrayElem').map(arrayElem => compile(astHelper.getFirstChild(arrayElem, '*'), compilationOptions));
+	switch (arrConstructor[0]) {
+		case 'curlyArray':
+			return new CurlyArrayConstructor(members);
+		case 'squareArray':
+			return new SquareArrayConstructor(members);
+		default:
+			throw new Error('Unrecognized arrayType: ' + arrConstructor[0]);
+	}
+
+	// return new ArrayConstructor(ast[0], ast.slice(1).map(arg => compile(arg, compilationOptions)));
 }
 
 function mapConstructor (ast, compilationOptions) {
