@@ -180,7 +180,7 @@ function getQName (ast) {
 
 export default {
 	followPath: followPath,
-	getChildren, getChildren,
+	getChildren: getChildren,
 	getFirstChild: getFirstChild,
 	getTextContent: getTextContent,
 	getTypeDeclaration: getTypeDeclaration,
