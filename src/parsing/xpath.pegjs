@@ -640,7 +640,7 @@ LocationPathAbbreviation
 // 121 Expression must in a step expression, i.e. expression must be wrapped in a filterExpr
 PostfixExprWithStep
  = expr:(expr:PrimaryExpr {return wrapInSequenceExprIfNeeded(expr)}) postfixExpr:(
-     (_ filter:Predicate {return filter})
+     (_ filter:Predicate {return ["predicate", filter]})
    / (_ argList:ArgumentList {return ["argumentList", argList]})
    / (_ lookup:Lookup {return lookup})
    )* {
@@ -649,7 +649,7 @@ let toWrap = expr;
 let predicates = [];
 postfixExpr.forEach(postFix => {
   if (postFix[0] === "predicate") {
-    predicates.push(postFix);
+    predicates.push(postFix[1]);
   }
   else if (postFix[0] === "argumentList") {
     if (predicates.length) {
@@ -738,7 +738,7 @@ PredicateList
 
 // 124
 Predicate
- = "[" _  expr:Expr _ "]" {return ["predicate", expr]}
+ = "[" _  expr:Expr _ "]" {return expr}
 
 // 125
 Lookup
