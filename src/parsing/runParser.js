@@ -4,6 +4,7 @@ const path = require('path');
 const parserString = fs.readFileSync(path.join('src', 'parsing', 'xpath.pegjs'), 'utf-8');
 const peg = require('pegjs');
 const parser = peg.generate(parserString);
+
 const { slimdom } = require('slimdom-sax-parser');
 
 const xQuery = `array {(1, 2) => fontoxpath:sleep(1), 3}(1)[1](1)[1](1)[1]`;

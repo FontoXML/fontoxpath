@@ -116,7 +116,7 @@ Module
 
 // TODO Implement
 MainModule
- = prolog:Prolog queryBody:QueryBody
+ = prolog:Prolog _ queryBody:QueryBody
    {return ["mainModule"].concat(prolog ? [prolog] : []).concat([queryBody])}
 
 // 2

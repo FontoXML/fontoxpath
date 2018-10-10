@@ -172,6 +172,8 @@ function compile (ast, compilationOptions) {
 			return inlineFunction(ast, compilationOptions);
 		case 'arrowExpr':
 			return arrowExpr(ast, compilationOptions);
+		case 'dynamicFunctionInvocationExpr':
+			return dynamicFunctionInvocationExpr(ast, compilationOptions);
 
 			// Literals
 		case 'integerConstantExpr':
@@ -370,6 +372,14 @@ function arrowExpr (ast, compilationOptions) {
 		[compile(argExpr, compilationOptions)].concat(functionArguments.map(arg => compile(arg, compilationOptions))));
 }
 
+function dynamicFunctionInvocationExpr (ast, compilationOptions) {
+	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
+	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
+	return new FunctionCall(
+		compile(functionItemContent, compilationOptions),
+		functionArguments.map(arg => compile(arg, compilationOptions)));
+}
+
 function inlineFunction (ast, compilationOptions) {
 	const [params, returnType, body] = ast;
 	return new InlineFunction(
@@ -538,8 +548,11 @@ function pathExpr (ast, compilationOptions) {
 						(innerStep, predicate) => new Filter(innerStep, compile(predicate, compilationOptions)),
 						axisExpression);
 			}
+			// We must be a filter expression
+			const filterExpr = astHelper.followPath(step, ['filterExpr', '*']);
+			return compile(filterExpr, compilationOptions);
 		});
-	const isAbsolute = astHelper.getFirstChild('root');
+	const isAbsolute = astHelper.getFirstChild(ast, 'root');
 	const pathExpr = new PathExpression(steps);
 	if (isAbsolute) {
 		return new AbsolutePathExpression(pathExpr);
