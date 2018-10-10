@@ -143,6 +143,10 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 					actual.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX
                                 http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
 
+					if (actual.documentElement.outerHTML.replace(/></g, '>\n<') === expected.documentElement.outerHTML.replace(/></g, '>\n<')) {
+						return;
+					}
+
 					if (!evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, { expected, actual })) {
 						chai.assert.equal(
 							actual.documentElement.outerHTML.replace(/></g, '>\n<'),
