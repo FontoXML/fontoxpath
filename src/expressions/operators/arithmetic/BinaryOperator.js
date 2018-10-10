@@ -48,7 +48,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 
 	if (isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric')) {
 		switch (operator) {
-			case '+':
+			case 'addOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(castA.value + castB.value, typeA === typeB ? typeA : 'xs:decimal');
@@ -58,7 +58,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(castA.value - castB.value, typeA === typeB ? typeA : 'xs:decimal');
 				};
-			case '*':
+			case 'multiplyOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(castA.value * castB.value, typeA === typeB ? typeA : 'xs:decimal');
@@ -92,7 +92,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 
 	if (isSubtypeOf(typeA, 'xs:yearMonthDuration') && isSubtypeOf(typeB, 'xs:yearMonthDuration')) {
 		switch (operator) {
-			case '+':
+			case 'addOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(yearMonthDurationAdd(castA.value, castB.value), 'xs:yearMonthDuration');
@@ -112,7 +112,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 
 	if (isSubtypeOf(typeA, 'xs:yearMonthDuration') && isSubtypeOf(typeB, 'xs:numeric')) {
 		switch (operator) {
-			case '*':
+			case 'multiplyOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(yearMonthDurationMultiply(castA.value, castB.value), 'xs:yearMonthDuration');
@@ -126,7 +126,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 	}
 
 	if (isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:yearMonthDuration')) {
-		if (operator === '*') {
+		if (operator === 'multiplyOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(yearMonthDurationMultiply(castB.value, castA.value), 'xs:yearMonthDuration');
@@ -136,7 +136,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 
 	if (isSubtypeOf(typeA, 'xs:dayTimeDuration') && isSubtypeOf(typeB, 'xs:dayTimeDuration')) {
 		switch (operator) {
-			case '+':
+			case 'addOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(dayTimeDurationAdd(castA.value, castB.value), 'xs:dayTimeDuration');
@@ -155,7 +155,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 	}
 	if (isSubtypeOf(typeA, 'xs:dayTimeDuration') && isSubtypeOf(typeB, 'xs:numeric')) {
 		switch (operator) {
-			case '*':
+			case 'multiplyOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(dayTimeDurationMultiply(castA.value, castB.value), 'xs:dayTimeDuration');
@@ -168,7 +168,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 		}
 	}
 	if (isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:dayTimeDuration')) {
-		if (operator === '*') {
+		if (operator === 'multiplyOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(dayTimeDurationMultiply(castB.value, castA.value), 'xs:dayTimeDuration');
@@ -197,7 +197,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 
 	if ((isSubtypeOf(typeA, 'xs:dateTime') && isSubtypeOf(typeB, 'xs:yearMonthDuration')) ||
 		(isSubtypeOf(typeA, 'xs:dateTime') && isSubtypeOf(typeB, 'xs:dayTimeDuration'))) {
-		if (operator === '+') {
+		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:dateTime');
@@ -213,7 +213,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 
 	if ((isSubtypeOf(typeA, 'xs:date') && isSubtypeOf(typeB, 'xs:yearMonthDuration')) ||
 		(isSubtypeOf(typeA, 'xs:date') && isSubtypeOf(typeB, 'xs:dayTimeDuration'))) {
-		if (operator === '+') {
+		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:date');
@@ -228,7 +228,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 	}
 
 	if (isSubtypeOf(typeA, 'xs:time') && isSubtypeOf(typeB, 'xs:dayTimeDuration')) {
-		if (operator === '+') {
+		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:time');
@@ -244,7 +244,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 
 	if ((isSubtypeOf(typeB, 'xs:yearMonthDuration') && isSubtypeOf(typeA, 'xs:dateTime')) ||
 		(isSubtypeOf(typeB, 'xs:dayTimeDuration') && isSubtypeOf(typeA, 'xs:dateTime'))) {
-		if (operator === '+') {
+		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:dateTime');
@@ -261,7 +261,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 
 	if ((isSubtypeOf(typeB, 'xs:dayTimeDuration') && isSubtypeOf(typeA, 'xs:date')) ||
 		((isSubtypeOf(typeB, 'xs:yearMonthDuration') && isSubtypeOf(typeA, 'xs:date')))) {
-		if (operator === '+') {
+		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:date');
@@ -276,7 +276,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 	}
 
 	if (isSubtypeOf(typeB, 'xs:dayTimeDuration') && isSubtypeOf(typeA, 'xs:time')) {
-		if (operator === '+') {
+		if (operator === 'addOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:time');
