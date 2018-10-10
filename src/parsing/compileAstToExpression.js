@@ -128,7 +128,19 @@ function compile (ast, compilationOptions) {
 
 			// Compares
 		case 'equalOp':
+		case 'notEqualOp':
+		case 'lessThanOrEqualOp':
+		case 'lessThanOp':
+		case 'greaterThanOrEqualOp':
+		case 'greaterThanOp':
+		case 'eqOp':
+		case 'neOp':
+		case 'ltOp':
+		case 'leOp':
+		case 'gtOp':
+		case 'geOp':
 			return compare(ast, compilationOptions);
+
 
 			// Tests
 		case 'nameTest':
@@ -179,8 +191,8 @@ function compile (ast, compilationOptions) {
 			return quantified(ast, compilationOptions);
 
 			// Conditional
-		case 'conditional':
-			return conditional(ast, compilationOptions);
+		case 'ifThenElseExpr':
+			return IfThenElseExpr(ast, compilationOptions);
 
 		case 'instance of':
 			return instanceOf(ast, compilationOptions);
@@ -263,8 +275,11 @@ function compare (ast, compilationOptions) {
 		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions));
 }
 
-function conditional (ast, compilationOptions) {
-	return new IfExpression(compile(ast[0], compilationOptions), compile(ast[1], compilationOptions), compile(ast[2], compilationOptions));
+function IfThenElseExpr (ast, compilationOptions) {
+	return new IfExpression(
+		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'), compilationOptions),
+		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'), compilationOptions),
+		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'), compilationOptions));
 }
 
 function filter (ast, compilationOptions) {
