@@ -4,4 +4,3 @@ node_modules
 test/assets
 dist/fontoxpath.*
 src/parsing/xPathParser.raw.js
-src/parsing/xPathParser.new.js

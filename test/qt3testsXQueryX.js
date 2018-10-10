@@ -3,9 +3,7 @@ import {
 	evaluateXPathToString
 } from 'fontoxpath';
 
-import xPathParserRaw from 'fontoxpath/parsing/xPathParser.new';
-const parser = /** @type {({xPathParser: {parse:function(!string):?}, SyntaxError:?})} */ ({});
-new Function(xPathParserRaw).call(parser);
+import { parse } from 'fontoxpath/parsing/xPathParser';
 
 import fs from 'fs';
 import path from 'path';
@@ -125,7 +123,7 @@ fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 
 					let jsonMl;
 					try {
-						jsonMl = parser.xPathParser.parse(xQuery);
+						jsonMl = parse(xQuery);
 					}
 					catch (err) {
 						if (err.location) {
