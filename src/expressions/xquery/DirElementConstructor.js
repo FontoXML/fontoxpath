@@ -25,25 +25,22 @@ function getAttributeValueForNamespaceDeclaration (partialValueExpressions) {
  */
 class DirElementConstructor extends Expression {
 	/**
-	 * @param  {string}  prefix
-	 * @param  {string}  name
-	 * @param  {!Array<!{name:!Array<!string>,partialValues:!Array<(!string|!Expression)>}>}  attributes
+	 * @param  {{prefix:string, localName: string}}
+	 * @param  {!Array<!{name:Expression,partialValues:!Array<!Expression>}>}  attributes
+	 * @param  {!Array<!{prefix: string, uri: string}>}     namespaceDeclarations
 	 * @param  {!Array<!Expression>}  contents  Strings and enclosed expressions
 	 */
-	constructor (prefix, name, attributes, contents) {
+	constructor (name, attributes, namespaceDeclarations, contents) {
 		super(
 			new Specificity({}),
-			contents.concat(attributes.reduce(
-				(attributeExpressionParts, { partialValues }) =>
-					attributeExpressionParts.concat(partialValues.filter(value => typeof value !== 'string' )),
-				[])),
+			contents.concat(attributes),
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
 			});
 
-		this._prefix = prefix;
-		this._name = name;
+		this._prefix = name.prefix;
+		this._name = name.localName;
 		/**
 		 * @type {string|null}
 		 */
@@ -52,56 +49,26 @@ class DirElementConstructor extends Expression {
 		/**
 		 * @type {!Object<!string, !string>}
 		 */
-		this._namespacesInScope = {};
+		this._namespacesInScope = namespaceDeclarations.reduce(
+			(namespacesInScope, namespaceDecl) => {
+				if (namespaceDecl.prefix in namespacesInScope) {
+					throw new Error(`XQST0071: The namespace declaration with the prefix ${namespaceDecl.prefix} has already been declared on the constructed element.`);
+				}
+				namespacesInScope[namespaceDecl.prefix] = namespaceDecl.uri;
+				return namespacesInScope;
+			}, {});
+
 
 		this._attributes = attributes;
-
-		/**
-* @type {Array<{qualifiedName: Object, partialValues: !Array<(!Expression|string)>}>}
-*/
-		this._resolvedAttributes = [];
 
 		this._contents = contents;
 	}
 
 	performStaticEvaluation (staticContext) {
-		var unresolvedAttributes = [];
-
-		this._attributes.forEach(({ name, partialValues }) => {
-			if (!(name[1] === 'xmlns' && name[0] === '') && name[0] !== 'xmlns') {
-				unresolvedAttributes.push({ name, partialValues });
-				return;
-			}
-
-			const namespaceURI = getAttributeValueForNamespaceDeclaration(partialValues);
-			/**
-			 * @type {string}
-			 */
-			const namespacePrefix = name[0] === 'xmlns' ? name[1] : '';
-			if (namespacePrefix in this._namespacesInScope) {
-				throw new Error(`XQST0071: The namespace declaration with the prefix ${namespacePrefix} has already been declared on the constructed element.`);
-			}
-			this._namespacesInScope[namespacePrefix] = namespaceURI;
-		});
-
 		// Register namespace related things
 		staticContext.introduceScope();
 		Object.keys(this._namespacesInScope)
-			.forEach(prefix => staticContext.registerNamespace(prefix || '', this._namespacesInScope[prefix]));
-
-		// Now resolve the other attributes
-		this._resolvedAttributes = unresolvedAttributes
-			.map(
-				({ name, partialValues }) =>
-					({
-						qualifiedName: {
-							prefix: name[0],
-							localPart: name[1],
-							namespaceURI: name[0] ? staticContext.resolveNamespace(name[0]) : null
-						},
-						partialValues
-					})
-			);
+			.forEach(prefix => staticContext.registerNamespace(prefix, this._namespacesInScope[prefix]));
 
 		this._childExpressions.forEach(subselector => subselector.performStaticEvaluation(staticContext));
 
@@ -121,15 +88,11 @@ class DirElementConstructor extends Expression {
 		 */
 		const nodesFactory = executionParameters.nodesFactory;
 
-		const attributes = this._resolvedAttributes.map(({ qualifiedName, partialValues }) => ({
-			qualifiedName,
-			valueSequences: partialValues
-				.map(
-					value => typeof value === 'string' ?
-						Sequence.singleton({ value, type: 'xs:string' }) :
-					value.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters)),
-			hasAllValues: false,
-			value: null
+		const attributes = this._attributes.map(attribute => ({
+			value: null,
+			sequence: attribute.evaluateMaybeStatically(
+				dynamicContext,
+				executionParameters)
 		}));
 
 		let attributePhaseDone = false;
@@ -144,11 +107,11 @@ class DirElementConstructor extends Expression {
 					return DONE_TOKEN;
 				}
 				if (!attributePhaseDone) {
-					let unfinishedAttributeRetrieve = attributes.find(attr => !attr.hasAllValues);
+					let unfinishedAttributeRetrieve = attributes.find(attr => !attr.value);
 					while (unfinishedAttributeRetrieve) {
-						const vals = unfinishedAttributeRetrieve.valueSequences.map(sequence => sequence.tryGetAllValues());
-						if (vals.some(val => !val.ready)) {
-							return vals.find(val => !val.ready);
+						const attributeValues = unfinishedAttributeRetrieve.sequence.tryGetAllValues();
+						if (!attributeValues.ready) {
+							return attributeValues;
 						}
 						unfinishedAttributeRetrieve.value = vals
 							.map(val => val.value.map(v => castToType(v, 'xs:string').value).join(' ')).join('');
