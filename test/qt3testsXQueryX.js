@@ -80,7 +80,7 @@ function run () {
 
 		const xml = sync(await fs.promises.readFile(testFilePath, 'utf-8'));
 
-		const xQueryRelativePath = evaluateXPathToString('//test-case[@name=$testCase]/test/@file', xml, null, { testCase: test.testCase });
+		const xQueryRelativePath = evaluateXPathToString('/descendant::test-case[@name=$testCase]/head(.)/test/@file', xml, null, { testCase: test.testCase });
 		if (xQueryRelativePath) {
 			const xQueryPath = path.join(testDirectory, xQueryRelativePath);
 			if (fs.existsSync(xQueryPath)) {
@@ -89,7 +89,7 @@ function run () {
 			return null;
 		}
 
-		return normalizeEndOfLines(evaluateXPathToString('//test-case[@name=$testCase]/test', xml, null, { testCase: test.testCase }));
+		return normalizeEndOfLines(evaluateXPathToString('/descendant::test-case[@name=$testCase]/head(.)/test', xml, null, { testCase: test.testCase }));
 	}
 
 	fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
@@ -144,14 +144,16 @@ function run () {
 								this.skip();
 							}
 
-							const expected = sync((await fs.promises.readFile(testCasePath, 'utf-8')).replace(/\n\s*</g, '<'));
+							const rawFile = (await fs.promises.readFile(testCasePath, 'utf-8')).replace(/\n\s*</g, '<');
 							const actual = new slimdom.Document();
 							actual.appendChild(parseNode(actual, jsonMl));
 							actual.normalize();
 							actual.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX
                                 http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
 
-							if (actual.documentElement.outerHTML.replace(/></g, '>\n<') === expected.documentElement.outerHTML.replace(/></g, '>\n<')) {
+							const expected = sync(rawFile);
+
+							if (actual.documentElement.innerHTML.replace(/></g, '>\n<') === expected.documentElement.innerHTML.replace(/></g, '>\n<')) {
 								return;
 							}
 
