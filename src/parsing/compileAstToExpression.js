@@ -48,6 +48,7 @@ import NamedFunctionRef from '../expressions/NamedFunctionRef';
 import VarRef from '../expressions/VarRef';
 
 import DirElementConstructor from '../expressions/xquery/DirElementConstructor';
+import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import DirCommentConstructor from '../expressions/xquery/DirCommentConstructor';
 import DirPIConstructor from '../expressions/xquery/DirPIConstructor';
 
@@ -196,13 +197,13 @@ function compile (ast, compilationOptions) {
 		case 'arrayConstructor':
 			return arrayConstructor(ast, compilationOptions);
 
-			// XQuery element constructors
+			// XQuery node constructors
 		case 'elementConstructor':
 			return dirElementConstructor(ast, compilationOptions);
-
+		case 'attributeConstructor':
+			return attributeConstructor(ast, compilationOptions);
 		case 'DirCommentConstructor':
 			return dirCommentConstructor(ast, compilationOptions);
-
 		case 'DirPIConstructor':
 			return dirPIConstructor(ast, compilationOptions);
 
@@ -746,7 +747,7 @@ function dirElementConstructor (ast, compilationOptions) {
 	}
 	const name = astHelper.getQName(astHelper.getFirstChild(ast, 'tagName'));
 
-	const attList = astHelper.getFirstChild(astHelper, 'attributeList');
+	const attList = astHelper.getFirstChild(ast, 'attributeList');
 	const attributes = attList ? astHelper
 		.getChildren(attList, 'attributeConstructor')
 		.map(attr => compile(attr, compilationOptions)) : [];
@@ -768,11 +769,29 @@ function dirElementConstructor (ast, compilationOptions) {
 		contentExpressions);
 }
 
-function dirCommentConstructor (ast, _compilationOptions) {
+function attributeConstructor (ast, compilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	}
+	const attrName = astHelper.getQName(astHelper.getFirstChild(ast, 'attributeName'));
+	const attrValue = astHelper.getTextContent(astHelper.getFirstChild(ast, 'attributeValue'));
+	return new AttributeConstructor(attrName, {
+		value: attrValue,
+		valueExprParts: null
+	});
+}
+
+function dirCommentConstructor (ast, compilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	}
 	return new DirCommentConstructor(ast[0]);
 }
 
-function dirPIConstructor (ast, _compilationOptions) {
+function dirPIConstructor (ast, compilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	}
 	return new DirPIConstructor(ast[0], ast[1]);
 }
 

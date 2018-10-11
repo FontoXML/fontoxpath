@@ -9,24 +9,13 @@ import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
 import concatSequences from '../util/concatSequences';
 
-function getAttributeValueForNamespaceDeclaration (partialValueExpressions) {
-	if (!partialValueExpressions.length) {
-		return null;
-	}
-	if (partialValueExpressions.length > 1 || typeof partialValueExpressions[0] !== 'string') {
-		throw new Error('XQST0022: The value of namespace declaration attributes may not contain enclosed expressions.');
-	}
-
-	return partialValueExpressions[0];
-}
-
 /**
  * @extends {Expression}
  */
 class DirElementConstructor extends Expression {
 	/**
 	 * @param  {{prefix:string, localName: string}}
-	 * @param  {!Array<!{name:Expression,partialValues:!Array<!Expression>}>}  attributes
+	 * @param  {!Array<!Expression>}  attributes
 	 * @param  {!Array<!{prefix: string, uri: string}>}     namespaceDeclarations
 	 * @param  {!Array<!Expression>}  contents  Strings and enclosed expressions
 	 */
@@ -88,12 +77,8 @@ class DirElementConstructor extends Expression {
 		 */
 		const nodesFactory = executionParameters.nodesFactory;
 
-		const attributes = this._attributes.map(attribute => ({
-			value: null,
-			sequence: attribute.evaluateMaybeStatically(
-				dynamicContext,
-				executionParameters)
-		}));
+		let attributesSequence;
+		let attributeNodes;
 
 		let attributePhaseDone = false;
 
@@ -107,17 +92,17 @@ class DirElementConstructor extends Expression {
 					return DONE_TOKEN;
 				}
 				if (!attributePhaseDone) {
-					let unfinishedAttributeRetrieve = attributes.find(attr => !attr.value);
-					while (unfinishedAttributeRetrieve) {
-						const attributeValues = unfinishedAttributeRetrieve.sequence.tryGetAllValues();
-						if (!attributeValues.ready) {
-							return attributeValues;
-						}
-						unfinishedAttributeRetrieve.value = vals
-							.map(val => val.value.map(v => castToType(v, 'xs:string').value).join(' ')).join('');
-						unfinishedAttributeRetrieve.hasAllValues = true;
-						unfinishedAttributeRetrieve = attributes.find(attr => !attr.hasAllValues);
+					if (!attributesSequence) {
+						attributesSequence = concatSequences(
+							this._attributes
+								.map(attr => attr.evaluateMaybeStatically(dynamicContext, executionParameters)));
 					}
+
+					const allAttributes = attributesSequence.tryGetAllValues();
+					if (!allAttributes.ready) {
+						return allAttributes;
+					}
+					attributeNodes = allAttributes.value;
 					attributePhaseDone = true;
 				}
 
@@ -140,13 +125,11 @@ class DirElementConstructor extends Expression {
 					this._prefix ? this._prefix + ':' + this._name : this._name);
 
 				// Plonk all attribute on the element
-				attributes.forEach(attr => {
-					const attrName = attr.qualifiedName.prefix ? attr.qualifiedName.prefix + ':' + attr.qualifiedName.localPart : attr.qualifiedName.localPart;
-					const attributeNamespaceURI = attr.qualifiedName.namespaceURI;
-					if (element.hasAttributeNS(attributeNamespaceURI, attr.qualifiedName.localPart)) {
-						throw new Error(`XQST0040: The attribute ${attrName} is already present on a constructed element.`);
+				attributeNodes.forEach(attr => {
+					if (element.hasAttributeNS(attr.value.namespaceURI, attr.value.localName)) {
+						throw new Error(`XQST0040: The attribute ${attr.value.name} is already present on a constructed element.`);
 					}
-					element.setAttributeNS(attributeNamespaceURI, attrName, attr.value);
+					element.setAttributeNodeNS(attr.value);
 				});
 
 				// Plonk all childNodes, these are special though

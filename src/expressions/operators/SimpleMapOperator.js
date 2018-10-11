@@ -28,7 +28,7 @@ class SimpleMapOperator extends Expression {
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		const sequence = this._expression1.evaluateMaybeStatically(dynamicContext, executionParameters);
+		const sequence = new Sequence(this._expression1.evaluateMaybeStatically(dynamicContext, executionParameters).getAllValues());
 		const childContextIterator = dynamicContext.createSequenceIterator(sequence);
 		let childContext = null;
 		let sequenceValueIterator = null;
