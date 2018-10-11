@@ -29,7 +29,7 @@ export default function parseExpression (xPathString, compilationOptions) {
 			ast = cached;
 		} else {
 			// We are absolutely not interested in XQuery modules here
-			ast = parse(xPathString, { 'startRule': 'Module' });
+			ast = parse(xPathString);
 			storeParseResultInCache(xPathString, language, ast);
 		}
 		return ast;

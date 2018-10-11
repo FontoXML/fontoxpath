@@ -83,8 +83,8 @@ function compile (ast, compilationOptions) {
 			return binaryOperator(ast, compilationOptions);
 		case 'sequenceExpr':
 			return sequence(ast, compilationOptions);
-		case 'union':
-			return union(ast, compilationOptions);
+		case 'unionOp':
+			return unionOp(ast, compilationOptions);
 		case 'intersectExcept':
 			return intersectExcept(ast, compilationOptions);
 		case 'stringConcatenateOp':
@@ -115,8 +115,12 @@ function compile (ast, compilationOptions) {
 			return typeTest(ast, compilationOptions);
 		case 'piTest':
 			return piTest(ast, compilationOptions);
+		case 'elementTest':
+			return elementTest(ast, compilationOptions);
 		case 'anyKindTest':
 			return anyKindTest(ast, compilationOptions);
+		case 'Wildcard':
+			return wildcard(ast, compilationOptions);
 
 			// Path
 		case 'pathExpr':
@@ -443,6 +447,7 @@ function pathExpr (ast, compilationOptions) {
 					'anyElementTest',
 					'piTest',
 					'documentTest',
+					'elementTest',
 					'commentTest',
 					'namespaceTest',
 					'anyKindTest',
@@ -525,6 +530,10 @@ function piTest (ast, compilationOptions) {
 	return new KindTest(7);
 }
 
+function elementTest (ast, compilationOptions) {
+	return new KindTest(1);
+}
+
 function quantified (ast, compilationOptions) {
 	const inClauseExpressions = ast[1].map(([_name, expression]) => {
 		return compile(expression, compilationOptions);
@@ -572,8 +581,11 @@ function unaryMinus (ast, compilationOptions) {
 	return new Unary('-', compile(ast[0], compilationOptions));
 }
 
-function union (ast, compilationOptions) {
-	return new Union(ast.map(arg => compile(arg, compilationOptions)));
+function unionOp (ast, compilationOptions) {
+	return new Union([
+		compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions),
+		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions),
+	]);
 }
 
 function intersectExcept (ast, compilationOptions) {
@@ -585,8 +597,36 @@ function varRef (ast, _compilationOptions) {
 	return new VarRef(prefix, namespaceURI, localName );
 }
 
-function isTextNodeOrCDataSection (item) {
-	return item !== undefined && ((typeof item === 'string') || (item[0] === 'CDataSection'));
+function wildcard (ast, compilationOptions) {
+	if (!astHelper.getFirstChild(ast, 'star')) {
+		return new NameTest({
+			prefix: '*',
+			localName: '*'
+		});
+	}
+	const uri = astHelper.getFirstChild(ast, 'uri');
+	if (uri) {
+		return new NameTest({
+			namespaceURI: astHelper.getTextContent(uri),
+			localName: '*'
+		});
+	}
+
+	// Either the prefix or the localName are 'starred', find out which one
+	const ncName = astHelper.getFirstChild(ast, 'NCName');
+	if (astHelper.getFirstChild(ast, '*')[0] === 'star') {
+		// The prefix is 'starred'
+		return new NameTest({
+			prefix: '*',
+			localName: astHelper.getTextContent(ncName)
+		});
+	}
+
+	// The localName is 'starred'
+	return new NameTest({
+		prefix: astHelper.getTextContent(ncName),
+		localName: '*'
+	});
 }
 
 // XQuery Node constructors
