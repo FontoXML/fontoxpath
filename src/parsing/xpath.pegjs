@@ -1,14 +1,4 @@
 {
-  function parseCodePoint (codePoint) {
-    // TODO: Assert not in XPath mode
-  if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
-    (codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
-    (codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
-        return String.fromCodePoint(codePoint);
-  }
-  throw new Error(`XQST0090: The character reference ${codePoint} (${codePoint.toString(16)}) does not reference a valid codePoint.`);
-  }
-
   function makeBinaryOp (kind, lhs, rhs) {
       return rhs.reduce(function(lh, rh) {return [kind, ["firstOperand", lh], ["secondOperand", rh]]}, lhs);
   }
@@ -16,6 +6,45 @@
   function isAttributeTest (nodeTest) {
     return nodeTest[0] === "attributeTest" || nodeTest[0] === "schemaAttributeTest";
   }
+
+function assertValidCodePoint (codePoint) {
+	if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
+		(codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
+		(codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
+		return;
+	}
+	throwError("XQST0090", "The character reference ${codePoint} (${codePoint.toString(16)}) does not reference a valid codePoint.");
+}
+
+function parseCharacterReferences (input) {
+	return input
+		.replace(/(&[^;]+);/g, match => {
+			if (/^&#x/.test(match)) {
+				const codePoint = parseInt(match.slice(3, -1), 16);
+				assertValidCodePoint(codePoint);
+				return String.fromCodePoint(codePoint);
+			}
+			if (/^&#/.test(match)) {
+				const codePoint = parseInt(match.slice(2, -1), 10);
+				assertValidCodePoint(codePoint);
+				return String.fromCodePoint(codePoint);
+			}
+			switch (match) {
+				case '&lt;':
+					return '<';
+				case '&gt;':
+					return '>';
+				case '&amp;':
+					return '&';
+				case '&quot;':
+					return String.fromCharCode(34);
+				case '&apos;':
+					return String.fromCharCode(39);
+			}
+
+			throwError("XPST0003", "Unknown character reference: \"" + match + "\"");
+		});
+}
 
   function accumulateDirContents (parts, expressionsOnly, normalizeWhitespace) {
         if (!parts.length) {
@@ -35,15 +64,16 @@
 		}
 
 		if (normalizeWhitespace) {
-		  result = result.filter(function (item, i) {
+		  result = result.reduce(function (filteredItems, item, i) {
 		    if (typeof item !== 'string') {
-		      return true;
+		      filteredItems.push(item);
 		    }
-		    if (/^\s*$/.test(item)) {
-		      return false;
+			else if (!/^\s*$/.test(item)) {
+			  // Not only whitespace
+		      filteredItems.push(parseCharacterReferences(item));
 		    }
-		    return true;
-		  });
+		    return filteredItems;
+		  }, []);
 		}
 
 		if (result.length > 1 || expressionsOnly){
@@ -768,7 +798,7 @@ PrimaryExpr
 
 // 129
 Literal
- = NumericLiteral / lit:StringLiteral { return ["stringConstantExpr", ["value", lit]]}
+ = NumericLiteral / lit:StringLiteral { return ["stringConstantExpr", ["value", parseCharacterReferences(lit)]]}
 
 // 130
 // Note: changes because double accepts less than decimal, accepts less than integer
@@ -1187,8 +1217,8 @@ PITarget = !(("X"/"x")("M"/"m")("L"/"l")) Name
 
 // 233
 CharRef
- = codePoint:("&#x" codePoint:([0-9a-fA-F]+) ";" {return codePoint}) {return parseCodePoint(parseInt(codePoint, 16))}
- / codePoint:("&#" codePoint:([0-9]+) ";" {return codePoint}) {return parseCodePoint(parseInt(codePoint, 10))}
+ = $("&#x" [0-9a-fA-F]+ ";")
+ / $("&#" [0-9]+ ";")
 
 // 234 Note: https://www.w3.org/TR/REC-xml-names/#NT-QName
 QName = PrefixedName / UnprefixedName

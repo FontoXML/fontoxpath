@@ -50,45 +50,6 @@ import DirElementConstructor from '../expressions/xquery/DirElementConstructor';
 import DirCommentConstructor from '../expressions/xquery/DirCommentConstructor';
 import DirPIConstructor from '../expressions/xquery/DirPIConstructor';
 
-function assertValidCodePoint (codePoint) {
-	if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
-		(codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
-		(codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
-		return;
-	}
-	throw new Error(`XQST0090: The character reference ${codePoint} (${codePoint.toString(16)}) does not reference a valid codePoint.`);
-}
-
-function parseCharacterReferences (input) {
-	return input
-		.replace(/(&[^;]+);/g, match => {
-			if (/^&#x/.test(match)) {
-				const codePoint = parseInt(match.slice(3, -1), 16);
-				assertValidCodePoint(codePoint);
-				return String.fromCodePoint(codePoint);
-			}
-			if (/^&#/.test(match)) {
-				const codePoint = parseInt(match.slice(2, -1), 10);
-				assertValidCodePoint(codePoint);
-				return String.fromCodePoint(codePoint);
-			}
-			switch (match) {
-				case '&lt;':
-					return '<';
-				case '&gt;':
-					return '>';
-				case '&amp;':
-					return '&';
-				case '&quot;':
-					return '"';
-				case '&apos;':
-					return '\'';
-			}
-
-			throw new Error('XPST0003: Unknown character reference: "' + match + '"');
-		});
-}
-
 // Basic and incomplete implementation of single steps as defined in XPATH 1.0 (http://www.w3.org/TR/xpath/)
 // Only single steps are allowed, because that's what expressions offer. Anyway: all paths have synonyms as (nested) predicates.
 // Missing:
