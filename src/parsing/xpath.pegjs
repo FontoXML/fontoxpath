@@ -8,42 +8,42 @@
   }
 
 function assertValidCodePoint (codePoint) {
-	if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
-		(codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
-		(codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
-		return;
-	}
-	throwError("XQST0090", "The character reference ${codePoint} (${codePoint.toString(16)}) does not reference a valid codePoint.");
+    if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
+        (codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
+        (codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
+        return;
+    }
+    throwError("XQST0090", "The character reference ${codePoint} (${codePoint.toString(16)}) does not reference a valid codePoint.");
 }
 
 function parseCharacterReferences (input) {
-	return input
-		.replace(/(&[^;]+);/g, function (match) {
-			if (/^&#x/.test(match)) {
-				var codePoint = parseInt(match.slice(3, -1), 16);
-				assertValidCodePoint(codePoint);
-				return String.fromCodePoint(codePoint);
-			}
-			if (/^&#/.test(match)) {
-				var codePoint = parseInt(match.slice(2, -1), 10);
-				assertValidCodePoint(codePoint);
-				return String.fromCodePoint(codePoint);
-			}
-			switch (match) {
-				case '&lt;':
-					return '<';
-				case '&gt;':
-					return '>';
-				case '&amp;':
-					return '&';
-				case '&quot;':
-					return String.fromCharCode(34);
-				case '&apos;':
-					return String.fromCharCode(39);
-			}
+    return input
+        .replace(/(&[^;]+);/g, function (match) {
+            if (/^&#x/.test(match)) {
+                var codePoint = parseInt(match.slice(3, -1), 16);
+                assertValidCodePoint(codePoint);
+                return String.fromCodePoint(codePoint);
+            }
+            if (/^&#/.test(match)) {
+                var codePoint = parseInt(match.slice(2, -1), 10);
+                assertValidCodePoint(codePoint);
+                return String.fromCodePoint(codePoint);
+            }
+            switch (match) {
+                case '&lt;':
+                    return '<';
+                case '&gt;':
+                    return '>';
+                case '&amp;':
+                    return '&';
+                case '&quot;':
+                    return String.fromCharCode(34);
+                case '&apos;':
+                    return String.fromCharCode(39);
+            }
 
-			throwError("XPST0003", "Unknown character reference: \"" + match + "\"");
-		});
+            throwError("XPST0003", "Unknown character reference: \"" + match + "\"");
+        });
 }
 
   function accumulateDirContents (parts, expressionsOnly, normalizeWhitespace) {
@@ -59,24 +59,28 @@ function parseCharacterReferences (input) {
             result.push(parts[i]);
         }
 
-		if (typeof result[0] === "string" && result.length === 0) {
-		  return [];
+        if (typeof result[0] === "string" && result.length === 0) {
+          return [];
+        }
+
+        if (normalizeWhitespace) {
+          result = result.reduce(function (filteredItems, item, i) {
+            if (typeof item !== 'string') {
+              filteredItems.push(item);
+            }
+            else if (!/^\s*$/.test(item)) {
+              // Not only whitespace
+              filteredItems.push(parseCharacterReferences(item));
+            }
+            return filteredItems;
+          }, []);
+        }
+
+		if (!result.length) {
+		  return result;
 		}
 
-		if (normalizeWhitespace) {
-		  result = result.reduce(function (filteredItems, item, i) {
-		    if (typeof item !== 'string') {
-		      filteredItems.push(item);
-		    }
-			else if (!/^\s*$/.test(item)) {
-			  // Not only whitespace
-		      filteredItems.push(parseCharacterReferences(item));
-		    }
-		    return filteredItems;
-		  }, []);
-		}
-
-		if (result.length > 1 || expressionsOnly){
+        if (result.length > 1 || expressionsOnly){
           for (var i = 0; i < result.length; i++) {
             if (typeof result[i] === "string") {
               result[i] = ["stringConstantExpr", ["value", result[i]]];
@@ -115,26 +119,26 @@ function parseCharacterReferences (input) {
       return ["sequenceExpr", expr];
     }
 
-	function throwError (code, cause) {
-	  throw new Error(code + ": " + cause);
+    function throwError (code, cause) {
+      throw new Error(code + ": " + cause);
     }
 
-	function getQName (qname) {
-	  return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1]
-	}
+    function getQName (qname) {
+      return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1]
+    }
 
-	function assertEqualQNames (a, b) {
-	   var nameA = getQName(a);
-	   var nameB = getQName(b);
-	   if (nameA !== nameB) {
-	     throwError(
-		   "XQST0118",
-		   "The start and the end tag of an element constructor must be equal. \"" +
-		     nameA +
-			 "\" does not match \"" +
-			 nameB +
-			 "\"");
-	   }
+    function assertEqualQNames (a, b) {
+       var nameA = getQName(a);
+       var nameB = getQName(b);
+       if (nameA !== nameB) {
+         throwError(
+           "XQST0118",
+           "The start and the end tag of an element constructor must be equal. \"" +
+             nameA +
+             "\" does not match \"" +
+             nameB +
+             "\"");
+       }
     }
 }
 
@@ -153,8 +157,8 @@ VersionDeclaration
  = "xquery" _ versionAndEncoding:(
     ("encoding" S e:StringLiteral {return ["encoding", e]})
     / ("version" S version:StringLiteral encoding:(S "encoding" S e:StringLiteral {return e})?
-	  {return [["version", version]].concat(encoding ? [["encoding", encoding]] : [])}
-	  )) _ Separator
+      {return [["version", version]].concat(encoding ? [["encoding", encoding]] : [])}
+      )) _ Separator
   {return ["versionDecl"].concat(versionAndEncoding)}
 
 // 4
@@ -385,11 +389,11 @@ ForBinding
  = "$" varName:VarName _ typeDecl:TypeDeclaration? _ empty:AllowingEmpty? _ pos:PositionalVar? _ "in"_ expr:ExprSingle
    {
      return [
-	   "forClauseItem",
-	   ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])]]
-	   .concat(empty ? [["allowingEmpty"]] : [])
-	   .concat(pos ? [pos] : [])
-	   .concat([["forExpr", expr]])}
+       "forClauseItem",
+       ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])]]
+       .concat(empty ? [["allowingEmpty"]] : [])
+       .concat(pos ? [pos] : [])
+       .concat([["forExpr", expr]])}
 
 // 46
 AllowingEmpty
@@ -431,7 +435,7 @@ groupVarInitialize
    {
      return ["groupVarInitialize"]
        .concat(t ? [["typeDeclaration"].concat(t)] : [])
-	   .concat([["varValue", val]])
+       .concat([["varValue", val]])
    }
 
 // 64
@@ -457,13 +461,13 @@ OrderSpec
 OrderModifier
  = kind:("ascending" / "descending")? _ empty:("empty" _ ("greatest" {return "empty greatest"}/ "least" {return "empty least"}))? _ collation:("collation" URILiteral)?
    {
-	 if (!kind && ! empty && !collation) {
-	    return null;
-	 }
+     if (!kind && ! empty && !collation) {
+        return null;
+     }
      return ["orderModifier"]
-	   .concat(kind ? [["orderingKind", kind]] : [])
-	   .concat(empty ? [["emptyOrderingMode", empty]] : [])
-	   .concat(collation ? [["collation", collation]] : [])
+       .concat(kind ? [["orderingKind", kind]] : [])
+       .concat(empty ? [["emptyOrderingMode", empty]] : [])
+       .concat(collation ? [["collation", collation]] : [])
    }
 
 // 69
@@ -472,16 +476,26 @@ ReturnClause
 
 // 70
 QuantifiedExpr
- = kind:("some" / "every") S quantifiedExprInClauses:(
-   "$" varName:VarName S "in" S exprSingle:ExprSingle restExpr:("," _ "$" name:VarName S "in" S expr:ExprSingle
-     {return [[varName, exprSingle]]
-       .concat(rest)
-       .map(function (inClause) {
-           return ["quantifiedExprInClause", ["typedVariableBinding", ["varName"].concat(inClause[0])], ["sourceExpr", inClause[1]]]
-         })
-        }
- )*) S "satisfies" S predicateExpr:ExprSingle
- {return ["quantifiedExpr", ["quantifier", kind]].concat(quantifiedExprInClauses).concat([predicateExpr])}
+ = kind:("some" / "every") S quantifiedExprInClauses:quantifiedExprInClauses S "satisfies" S predicateExpr:ExprSingle
+ {return ["quantifiedExpr", ["quantifier", kind]].concat(quantifiedExprInClauses).concat([["predicateExpr", predicateExpr]])}
+
+quantifiedExprInClauses
+ = first:quantifiedExprInClause rest:(_ "," _ q:quantifiedExprInClause {return q})*
+ {return [first].concat(rest)}
+
+quantifiedExprInClause
+ = "$" varName:VarName type:(S t:TypeDeclaration {return t})? S "in" S exprSingle:ExprSingle
+   {
+     return [
+       "quantifiedExprInClause",
+       [
+         "typedVariableBinding",
+         ["varName"].concat(varName)
+	   ].concat(type ? [type] : []),
+	   ["sourceExpr", exprSingle]
+	 ]
+   }
+
 
 // 77
 IfExpr
@@ -628,10 +642,10 @@ SimpleMapExpr
     first :
    [
       "simpleMapExpr",
-	  first[0] === "pathExpr" ? first : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(first)]]]
+      first[0] === "pathExpr" ? first : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(first)]]]
    ].concat(rest.map(function (item) {
      return item[0] === "pathExpr" ? item : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(item)]]]
-	 }))
+     }))
   }
 // === 108 - 110 (simplified for ease of parsing)
 PathExpr
@@ -861,16 +875,16 @@ DirElemConstructor
    ("/>" {return null}) /
    (">"  contents:DirElemContent* _ "</" endName:QName ExplicitWhitespace? ">"
      {
-	   assertEqualQNames(name, endName);
-	   return accumulateDirContents(contents, true, true)
-	 }))
+       assertEqualQNames(name, endName);
+       return accumulateDirContents(contents, true, true)
+     }))
  {
    return [
        "elementConstructor",
-	   ["tagName"].concat(name)
-	 ]
-	 .concat(attList.length ? [["attributeList"].concat(attList)] : [])
-	 .concat(contents && contents.length ? [["elementContent"].concat(contents)] : [])
+       ["tagName"].concat(name)
+     ]
+     .concat(attList.length ? [["attributeList"].concat(attList)] : [])
+     .concat(contents && contents.length ? [["elementContent"].concat(contents)] : [])
   }
 
 // 143
@@ -878,28 +892,32 @@ DirAttributeList
  = attrs:(ExplicitWhitespace attr:(attribute)? {return attr})*
    {
      return attrs
-	   .filter(Boolean)
+       .filter(Boolean)
    }
 
 attribute
  = name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue
    {
      if (name.length === 1 && name[0] === "xmlns") {
-	   if (typeof value[0] !== "string") {
-	     throwError("XQST0022", "A namespace declaration may not contain enclosed expressions");
+       if (typeof value[0] !== "string") {
+         throwError("XQST0022", "A namespace declaration may not contain enclosed expressions");
        }
-	   return ["namespaceDeclaration", ["uri", value[0]]]
-	 }
-	 if (name[0].prefix === "xmlns") {
-	   if (typeof value[0] !== "string") {
-	     throwError("XQST0022", "The namespace declaration for 'xmlns:" + name[1] + "' may not contain enclosed expressions");
+       return ["namespaceDeclaration", ["uri", value[0]]]
+     }
+     if (name[0].prefix === "xmlns") {
+       if (typeof value[0] !== "string") {
+         throwError("XQST0022", "The namespace declaration for 'xmlns:" + name[1] + "' may not contain enclosed expressions");
        }
-	   return ["namespaceDeclaration", ["prefix", name[1]], ["uri", value[0]]]
-	 }
-	 return [
-	   "attributeConstructor",
-	   ["attributeName"].concat(name),
-	   value.length === 1 && typeof value[0] === "string" ? ["attributeValue", value[0]] : ["attributeValueExpr"].concat(value)]}
+       return ["namespaceDeclaration", ["prefix", name[1]], ["uri", value[0]]]
+     }
+     return [
+       "attributeConstructor",
+       ["attributeName"].concat(name),
+       value.length === 0 ?
+	     ["attributeValue"] :
+		 value.length === 1 && typeof value[0] === "string" ?
+		   ["attributeValue", value[0]] :
+		   ["attributeValueExpr"].concat(value)]}
 
 // 144
 DirAttributeValue
