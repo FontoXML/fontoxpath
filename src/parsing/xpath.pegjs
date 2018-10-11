@@ -964,7 +964,7 @@ FunctionItemExpr
 
 // 168
 NamedFunctionRef
- = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", ["functionName"], name, integer]}
+ = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", ["functionName"].concat(name), integer]}
 
 // 169
 InlineFunctionExpr
