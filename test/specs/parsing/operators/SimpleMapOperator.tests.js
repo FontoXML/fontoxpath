@@ -19,6 +19,16 @@ describe('Simple map operator', () => {
 		chai.assert.equal(evaluateXPathToString('. ! name(.)', element), 'someElement');
 	});
 
+	it('works in more intricate cases', () => {
+		chai.assert.equal(evaluateXPathToString(
+			'<root><a><b>FIRST</b></a><b>SECOND</b></root>!child::a!child::b',
+			documentNode,
+			null,
+			null,
+			{language: 'XQuery3.1'}
+		), 'FIRST');
+	})
+
 	it('accepts a sequence as first expression: (1, 2, 3) ! string()',
 		() => chai.assert.deepEqual(evaluateXPathToStrings('(1, 2, 3) ! string()', documentNode), ['1', '2', '3']));
 

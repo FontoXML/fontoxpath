@@ -623,7 +623,7 @@ PragmaContents
 
 // 107
 SimpleMapExpr
- = lhs:PathExpr rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", [lhs].concat(rhs)] : lhs}
+ = lhs:PathExpr rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", lhs].concat(rhs) : lhs}
 
 // === 108 - 110 (simplified for ease of parsing)
 PathExpr
