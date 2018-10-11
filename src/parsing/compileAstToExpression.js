@@ -509,8 +509,9 @@ function orOp (ast, compilationOptions) {
 }
 
 function pathExpr (ast, compilationOptions) {
-	const steps = astHelper.getChildren(ast, 'stepExpr')
-		.map(step => {
+	const rawSteps = astHelper.getChildren(ast, 'stepExpr');
+
+	const steps = rawSteps.map(step => {
 			const axis = astHelper.getFirstChild(step, 'xpathAxis');
 			if (axis) {
 				const test = astHelper.getFirstChild(step, [
@@ -589,8 +590,8 @@ function pathExpr (ast, compilationOptions) {
 			const filterExpr = astHelper.followPath(step, ['filterExpr', '*']);
 			return compile(filterExpr, compilationOptions);
 		});
-	const isAbsolute = astHelper.getFirstChild(ast, 'root');
-	const hasMultipleAxisSteps = isAbsolute || steps.filter(step => astHelper.getFirstChild(step, 'axisStep')).length >= 2;
+	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
+	const hasMultipleAxisSteps = isAbsolute || rawSteps.filter(step => astHelper.getFirstChild(step, 'xpathAxis')).length >= 2;
 	const pathExpr = new PathExpression(steps, hasMultipleAxisSteps);
 	if (isAbsolute) {
 		return new AbsolutePathExpression(pathExpr);
