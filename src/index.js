@@ -16,10 +16,12 @@ import registerXQueryModule from './registerXQueryModule';
 import parseExpression from './parsing/parseExpression';
 import compileAstToExpression from './parsing/compileAstToExpression';
 import domFacade from './domBackedDomFacade';
+import astHelper from './parsing/astHelper';
 
 function parseXPath (xpathString) {
 	const ast = parseExpression(xpathString, { allowXQuery: false });
-	return compileAstToExpression(ast['body'], { allowXQuery: false });
+	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
+	return compileAstToExpression(queryBody, { allowXQuery: false });
 }
 
 function getBucketForSelector (xpathString) {
