@@ -115,8 +115,6 @@ function compile (ast, compilationOptions) {
 			return nameTest(ast, compilationOptions);
 		case 'kindTest':
 			return kindTest(ast, compilationOptions);
-		case 'typeTest':
-			return typeTest(ast, compilationOptions);
 		case 'piTest':
 			return piTest(ast, compilationOptions);
 		case 'textTest':
@@ -131,6 +129,8 @@ function compile (ast, compilationOptions) {
 			return anyArrayTest(ast, compilationOptions);
 		case 'Wildcard':
 			return wildcard(ast, compilationOptions);
+		case 'atomicType':
+			return typeTest(ast, compilationOptions);
 
 			// Path
 		case 'pathExpr':
@@ -665,8 +665,8 @@ function rangeSequenceExpr (ast, compilationOptions) {
 }
 
 function typeTest (ast, _compilationOptions) {
-	const [prefix, namespaceURI, name] = ast[0];
-	return new TypeTest(prefix, namespaceURI, name);
+	const type = astHelper.getQName(ast);
+	return new TypeTest(type);
 }
 
 function anyMapTest (_ast, _compilationOptions) {

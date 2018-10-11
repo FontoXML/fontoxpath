@@ -4,21 +4,15 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 class TypeTest extends TestAbstractExpression {
 	/**
-	 * @param  {?string}  prefix         The prefix of the given type
-	 * @param  {?string}  namespaceURI   The namespace uri of the given type. At the moment, this is not used.
-	 * @param  {string}   typeName       The actual name of the type
+	 * @param  {QName}
 	 */
-	constructor (prefix, namespaceURI, typeName) {
+	constructor (type) {
 		super(new Specificity({}));
-		if (namespaceURI) {
-			throw new Error('Not implemented: typetests with a namespace URI.');
-		}
-
-		this._typeName = prefix ? prefix + ':' + typeName : typeName;
+		this._type = type;
 	}
 
 	evaluateToBoolean (_dynamicContext, item) {
-		return isSubtypeOf(item.type, this._typeName);
+		return isSubtypeOf(item.type, this._type.prefix ? this._type.prefix + ':' + this._type.localName : this._type.localName);
 	}
 }
 export default TypeTest;
