@@ -498,7 +498,7 @@ function kindTest (ast, _compilationOptions) {
 }
 
 function anyKindTest (ast, compilationOptions) {
-	return new TypeTest(null, null, 'node()');
+	return new TypeTest({prefix: null, localName: 'node()'});
 }
 
 function orOp (ast, compilationOptions) {
@@ -670,11 +670,11 @@ function typeTest (ast, _compilationOptions) {
 }
 
 function anyMapTest (_ast, _compilationOptions) {
-	return new TypeTest(null, null, 'map(*)');
+	return new TypeTest({prefix: null, localName: 'map(*)'});
 }
 
 function anyArrayTest (_ast, _compilationOptions) {
-	return new TypeTest(null, null, 'map(*)');
+	return new TypeTest({prefix: null, localName: 'array(*)'});
 }
 
 function unaryPlus (ast, compilationOptions) {
