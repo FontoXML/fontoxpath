@@ -119,6 +119,8 @@ function compile (ast, compilationOptions) {
 			return typeTest(ast, compilationOptions);
 		case 'piTest':
 			return piTest(ast, compilationOptions);
+		case 'textTest':
+			return textTest(ast, compilationOptions);
 		case 'elementTest':
 			return elementTest(ast, compilationOptions);
 		case 'anyKindTest':
@@ -377,6 +379,12 @@ function typeDeclarationToType (typeDeclarationAst) {
 		case 'anyKindTest':
 			typeName = 'node()';
 			break;
+		case 'anyItemType':
+			typeName = 'item()';
+			break;
+		case 'textTest':
+			typeName = 'text()';
+			break;
 		default:
 			throw new Error('Unrecognized type');
 	}
@@ -588,6 +596,10 @@ function piTest (ast, compilationOptions) {
 
 function elementTest (ast, compilationOptions) {
 	return new KindTest(1);
+}
+
+function textTest () {
+	return new KindTest(3);
 }
 
 function quantified (ast, compilationOptions) {
