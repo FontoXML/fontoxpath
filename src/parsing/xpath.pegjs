@@ -97,6 +97,7 @@ function parseCharacterReferences (input) {
         case "varRef":
         case "contextItemExpr":
         case "functionCallExpr":
+        case "sequenceExpr":
         case "elementConstructor":
         case "computedElementConstructor":
         case "computedAttributeConstructor":
@@ -191,7 +192,7 @@ BoundarySpaceDecl
 
 // 10
 DefaultCollationDecl
- = "declare" S "default" "collation" value:URILiteral
+ = "declare" S "default" S "collation" S value:URILiteral
    {return ["defaultCollationDecl", value]}
 
 // 11
@@ -953,7 +954,7 @@ DirCommentConstructor = "<!--" contents:$DirCommentContents "-->" {return ["comp
 DirCommentContents = ((!"-" Char) / ("-" (!"-" Char)))*
 
 // 151
-DirPIConstructor = "<?" target:$PITarget contents:(ExplicitWhitespace contents:$DirPIContents {return contents})? "?>" {return ["computedPIConstructor", ["piTarget", target], ["piTargetExpr", ["stringConstantExpr", ["value", contents]]]]}
+DirPIConstructor = "<?" target:$PITarget contents:(ExplicitWhitespace contents:$DirPIContents {return contents})? "?>" {return ["computedPIConstructor", ["piTarget", target], ["piValueExpr", ["stringConstantExpr", ["value", contents]]]]}
 
 // 152
 DirPIContents = (!"?>" Char)*
@@ -995,7 +996,7 @@ CompAttrConstructor
 // 160
 CompNamespaceConstructor
  = "namespace" _ prefix:(Prefix / EnclosedPrefixExpr) _ uri:EnclosedURIExpr
- {return ["computedNamespaceConstructor", prefix].concat(uri)}
+ {return ["computedNamespaceConstructor"].concat(prefix).concat(uri)}
 
 // 161
 Prefix
@@ -1136,7 +1137,7 @@ CommentTest
 
 // 193
 NamespaceNodeTest
- = "namespace-node()" {return ["namespaceNodeTest"]}
+ = "namespace-node()" {return ["namespaceTest"]}
 
 // 194
 // Let's keep it simple: only accept NCNames, optionally quoted, since quoted non-ncnames should throw a typeError later anyway
@@ -1147,7 +1148,7 @@ PITest
 
 // 195
 AttributeTest
- = "attribute(" _ name:AttribNameOrWildCard _ "," _ type:TypeName _ ")" {return ["attributeTest", ["attributeName", name], ["typeName", type]]}
+ = "attribute(" _ name:AttribNameOrWildCard _ "," _ type:TypeName _ ")" {return ["attributeTest", ["attributeName", name], ["typeName"].concat(type)]}
  / "attribute(" _ name:AttribNameOrWildCard _ ")" {return ["attributeTest", ["attributeName", name]]}
  / "attribute()" {return ["attributeTest"]}
 
