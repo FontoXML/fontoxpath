@@ -591,8 +591,11 @@ function pathExpr (ast, compilationOptions) {
 			return compile(filterExpr, compilationOptions);
 		});
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
-	const hasMultipleAxisSteps = isAbsolute || rawSteps.filter(step => astHelper.getFirstChild(step, 'xpathAxis')).length >= 2;
-	const pathExpr = new PathExpression(steps, hasMultipleAxisSteps);
+	// If an path has no axis steps, we should skip sorting. The path
+	// is probably a chain of filter expressions or lookups
+	const requireSorting = isAbsolute ||
+		rawSteps.filter(step => astHelper.getFirstChild(step, 'xpathAxis')).length >= 1;
+	const pathExpr = new PathExpression(steps, requireSorting);
 	if (isAbsolute) {
 		return new AbsolutePathExpression(pathExpr);
 	}
