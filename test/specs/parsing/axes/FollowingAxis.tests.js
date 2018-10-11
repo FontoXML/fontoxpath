@@ -60,6 +60,7 @@ return map{
 			{ language: 'XQuery3.1' }
 		);
 		chai.assert.equal(result.got.length, 5);
+		chai.assert.equal(result.expected.length, 5);
 		chai.assert.deepEqual(result.got, result.expected);
 	});
 

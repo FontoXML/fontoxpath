@@ -17,7 +17,14 @@ function doPegJsBuild () {
 			format: 'globals',
 			exportVar: 'xPathParser'
 		}))
-		// .then(parserString => UglifyJS.minify(parserString).code)
+		.then(parserString => {
+			const uglified = UglifyJS.minify(parserString);
+			if (uglified.error) {
+				fs.writeFileSync('./src/parsing/xPathParser.raw.js', parserString);
+				throw uglified.error;
+			}
+			return uglified.code;
+		})
 		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
 		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./src/parsing/xPathParser.raw.js', parserString, (err) => err ? reject(err) : resolve())))
 		.then(() => console.info('Parser generator done'));

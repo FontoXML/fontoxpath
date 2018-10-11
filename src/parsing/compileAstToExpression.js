@@ -206,7 +206,8 @@ function compile (ast, compilationOptions) {
 			return dirCommentConstructor(ast, compilationOptions);
 		case 'DirPIConstructor':
 			return dirPIConstructor(ast, compilationOptions);
-
+		case 'CDataSection':
+			return CDataSection(ast, compilationOptions);
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}
@@ -753,10 +754,13 @@ function dirElementConstructor (ast, compilationOptions) {
 		.map(attr => compile(attr, compilationOptions)) : [];
 	const namespaceDecls = attList ? astHelper
 		.getChildren(attList, 'namespaceDeclaration')
-		.map(namespaceDecl => ({
-			prefix: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'prefix')),
-			uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
-		})) : [];
+		.map(namespaceDecl => {
+			const prefixElement = astHelper.getFirstChild(namespaceDecl, 'prefix');
+			return {
+				prefix: prefixElement ? astHelper.getTextContent(prefixElement) : null,
+				uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
+			};
+		}) : [];
 
 	const content = astHelper.getFirstChild(ast, 'elementContent');
 	const contentExpressions = content ? astHelper.getChildren(content, '*')
@@ -769,15 +773,27 @@ function dirElementConstructor (ast, compilationOptions) {
 		contentExpressions);
 }
 
+function CDataSection (ast, compilationOptions) {
+	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
+	return new Literal(astHelper.getTextContent(ast), 'xs:string');
+}
+
 function attributeConstructor (ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 	const attrName = astHelper.getQName(astHelper.getFirstChild(ast, 'attributeName'));
-	const attrValue = astHelper.getTextContent(astHelper.getFirstChild(ast, 'attributeValue'));
+	const attrValueElement = astHelper.getFirstChild(ast, 'attributeValue');
+	const attrValue = attrValueElement ? astHelper.getTextContent(attrValueElement) : null;
+	const attrValueExprElement = astHelper.getFirstChild(ast, 'attributeValueExpr');
+	const attrValueExpressions = attrValueExprElement ?
+		astHelper
+			.getChildren(attrValueExprElement, '*')
+			.map(expr => compile(expr, compilationOptions)) :
+		null;
 	return new AttributeConstructor(attrName, {
 		value: attrValue,
-		valueExprParts: null
+		valueExprParts: attrValueExpressions
 	});
 }
 
