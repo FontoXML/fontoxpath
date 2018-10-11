@@ -120,6 +120,10 @@ function compile (ast, compilationOptions) {
 			return elementTest(ast, compilationOptions);
 		case 'anyKindTest':
 			return anyKindTest(ast, compilationOptions);
+		case 'anyMapTest':
+			return anyMapTest(ast, compilationOptions);
+		case 'anyArrayTest':
+			return anyArrayTest(ast, compilationOptions);
 		case 'Wildcard':
 			return wildcard(ast, compilationOptions);
 
@@ -169,7 +173,7 @@ function compile (ast, compilationOptions) {
 		case 'ifThenElseExpr':
 			return IfThenElseExpr(ast, compilationOptions);
 
-		case 'instance of':
+		case 'instanceOfExpr':
 			return instanceOf(ast, compilationOptions);
 		case 'cast as':
 			return castAs(ast, compilationOptions);
@@ -365,10 +369,13 @@ function inlineFunction (ast, compilationOptions) {
 }
 
 function instanceOf (ast, compilationOptions) {
-	const expression = compile(ast[0], compilationOptions);
-	const sequenceType = ast[1];
+	const expression = compile(astHelper.followPath(ast, ['argExpr', '*']), compilationOptions);
+	const sequenceType = astHelper.followPath(ast, ['sequenceType', '*']);
+	const occurrence = astHelper.followPath(ast, ['sequenceType', 'occurrenceIndicator']);
 
-	return new InstanceOfOperator(expression, compile(sequenceType[0], compilationOptions), sequenceType[1] || '');
+	return new InstanceOfOperator(
+		expression, compile(sequenceType, compilationOptions),
+		occurrence ? astHelper.getTextContent(occurrence) : '');
 }
 
 function letExpression (ast, compilationOptions) {
@@ -589,6 +596,14 @@ function stringConcatenateOp (ast, compilationOptions) {
 function typeTest (ast, _compilationOptions) {
 	const [prefix, namespaceURI, name] = ast[0];
 	return new TypeTest(prefix, namespaceURI, name);
+}
+
+function anyMapTest (_ast, _compilationOptions) {
+	return new TypeTest(null, null, 'map(*)');
+}
+
+function anyArrayTest (_ast, _compilationOptions) {
+	return new TypeTest(null, null, 'map(*)');
 }
 
 function unaryPlus (ast, compilationOptions) {
