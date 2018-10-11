@@ -326,7 +326,7 @@ function functionCall (ast, compilationOptions) {
 		new NamedFunctionRef(
 			astHelper.getQName(functionName),
 			functionArguments.length),
-		functionArguments.map(arg => compile(arg, compilationOptions)));
+		functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
 }
 
 function arrowExpr (ast, compilationOptions) {
@@ -337,7 +337,9 @@ function arrowExpr (ast, compilationOptions) {
 		new NamedFunctionRef(
 			astHelper.getQName(functionName),
 			functionArguments.length + 1),
-		[compile(argExpr, compilationOptions)].concat(functionArguments.map(arg => compile(arg, compilationOptions))));
+		[
+			compile(argExpr, compilationOptions)]
+			.concat(functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions))));
 }
 
 function dynamicFunctionInvocationExpr (ast, compilationOptions) {
@@ -345,7 +347,7 @@ function dynamicFunctionInvocationExpr (ast, compilationOptions) {
 	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
 	return new FunctionCall(
 		compile(functionItemContent, compilationOptions),
-		functionArguments.map(arg => compile(arg, compilationOptions)));
+		functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
 }
 
 function namedFunctionRef (ast, _compilationOptions) {
