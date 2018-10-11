@@ -139,6 +139,8 @@ function compile (ast, compilationOptions) {
 			return arrowExpr(ast, compilationOptions);
 		case 'dynamicFunctionInvocationExpr':
 			return dynamicFunctionInvocationExpr(ast, compilationOptions);
+		case 'namedFunctionRef':
+			return namedFunctionRef(ast, compilationOptions);
 
 			// Literals
 		case 'integerConstantExpr':
@@ -341,6 +343,12 @@ function dynamicFunctionInvocationExpr (ast, compilationOptions) {
 	return new FunctionCall(
 		compile(functionItemContent, compilationOptions),
 		functionArguments.map(arg => compile(arg, compilationOptions)));
+}
+
+function namedFunctionRef (ast, _compilationOptions) {
+	const functionName = astHelper.getFirstChild(ast, 'functionName');
+	const arity = astHelper.getTextContent(astHelper.followPath(ast, ['integerConstantExpr', 'value']));
+	return new NamedFunctionRef(astHelper.getQName(functionName), parseInt(arity, 10));
 }
 
 function inlineFunction (ast, compilationOptions) {
@@ -582,7 +590,7 @@ function unaryMinus (ast, compilationOptions) {
 function unionOp (ast, compilationOptions) {
 	return new Union([
 		compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions),
-		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions),
+		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions)
 	]);
 }
 
