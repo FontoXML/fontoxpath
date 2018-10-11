@@ -974,7 +974,7 @@ InlineFunctionExpr
      .concat(annotations)
      .concat([["paramList"].concat(params || [])])
      .concat(typeDeclaration ? ["sequenceType"].concat(typeDeclaration) : [])
-     .concat([["functionBody"].concat(body)])
+     .concat([["functionBody", body]])
  }
 
 // 170

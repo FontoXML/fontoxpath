@@ -140,7 +140,7 @@ function compile (ast, compilationOptions) {
 			// Functions
 		case 'functionCallExpr':
 			return functionCall(ast, compilationOptions);
-		case 'inlineFunction':
+		case 'inlineFunctionExpr':
 			return inlineFunction(ast, compilationOptions);
 		case 'arrowExpr':
 			return arrowExpr(ast, compilationOptions);
@@ -360,12 +360,31 @@ function namedFunctionRef (ast, _compilationOptions) {
 	return new NamedFunctionRef(astHelper.getQName(functionName), parseInt(arity, 10));
 }
 
+function typeDeclarationToType (typeDeclarationAst) {
+	const returnTypeQName = astHelper.getQName(astHelper.getFirstChild(typeDeclarationAst, '*'));
+	const occurrence = astHelper.getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
+
+	return {
+		type: returnTypeQName.prefix ? returnTypeQName.prefix + ':' + returnTypeQName.localName : returnTypeQName.localName,
+		occurrence: occurrence ? astHelper.getTextContent(occurrence) : ''
+	};
+}
+
 function inlineFunction (ast, compilationOptions) {
-	const [params, returnType, body] = ast;
+	const params = astHelper.getChildren(astHelper.getFirstChild(ast, 'paramList'), '*');
+	const returnTypeDecl = astHelper.getFirstChild(ast, 'typeDeclaration');
+	const functionBody = astHelper.followPath(ast, ['functionBody', '*']);
+
 	return new InlineFunction(
-		params.map(([[prefix, namespaceURI, name], type]) => ([{ prefix, namespaceURI, name }, type])),
-		returnType,
-		compile(body, compilationOptions));
+		params.map(param => {
+			const paramTypeDecl = astHelper.getFirstChild(param, 'typeDeclaration');
+			return {
+				name: astHelper.getQName(astHelper.getFirstChild(param, 'varName')),
+				type: paramTypeDecl ? typeDeclarationToType(paramTypeDecl) : { type: 'item()', occurrence: '*' }
+			};
+		}),
+		returnTypeDecl ? typeDeclarationToType(returnTypeDecl) : { type: 'item()', occurrence: '*' },
+		compile(functionBody, compilationOptions));
 }
 
 function instanceOf (ast, compilationOptions) {
