@@ -858,7 +858,7 @@ DirElemConstructor
 	 }))
  {
    return [
-       'elementConstructor',
+       "elementConstructor",
 	   ["tagName"].concat(name)
 	 ]
 	 .concat(attList.length ? [["attributeList"].concat(attList)] : [])
@@ -941,7 +941,7 @@ CDataSectionContents = (!"]]>" Char)*
 // 155
 ComputedConstructor
  = CompDocConstructor
-// / CompElemConstructor
+ / CompElemConstructor
 / CompAttrConstructor
 //  / CompNamespaceConstructor
 //  / CompTextConstructor
@@ -951,6 +951,15 @@ ComputedConstructor
 // 156
 CompDocConstructor
  = "document" _ expr:EnclosedExpr {return expr; /*return ["computedDocumentConstructor", expr]*/}
+
+// 157
+CompElemConstructor
+ = "element" _ tagName:((n:EQName {return ["tagName"].concat(n)}) / ("{" _ expr:Expr _ "}" {return ["tagNameExpr", expr]})) _ content:EnclosedContentExpr
+ { return ["computedElementConstructor", tagName, ["contentExpr", content]]}
+
+// 158
+EnclosedContentExpr
+ = EnclosedExpr
 
 // 159
 CompAttrConstructor
