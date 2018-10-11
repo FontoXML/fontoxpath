@@ -3,6 +3,8 @@ import xPathParserRaw from './xPathParser.raw';
 import compileAstToExpression from './compileAstToExpression';
 import parseExpression from './parseExpression';
 
+import astHelper from './astHelper';
+
 function supportsAsyncCompilation () {
 	// For async compilation, we'll need at least webworkers, Blop and URL.
 	// For the extra storage, we'll need indexedDB. These are all not available on Node.JS, and on some older browsers
@@ -214,7 +216,7 @@ if (supportsAsyncCompilation()) {
 else {
 	createExpressionFromXPathAsync = xPathString => new Promise(resolve => {
 		const ast = parseExpression(xPathString, { allowXQuery: false });
-		return resolve(compileAstToExpression(ast['body'], { allowXQuery: false }));
+		return resolve(astHelper.followPath(compileAstToExpression(ast, ['moduleBody', 'queryBody', '*']), { allowXQuery: false }));
 	});
 }
 
