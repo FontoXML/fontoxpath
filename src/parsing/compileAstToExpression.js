@@ -13,6 +13,7 @@ import Filter from '../expressions/postfix/Filter';
 import AttributeAxis from '../expressions/axes/AttributeAxis';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
 import ChildAxis from '../expressions/axes/ChildAxis';
+import ContextItemExpression from '../expressions/path/ContextItemExpression';
 import DescendantAxis from '../expressions/axes/DescendantAxis';
 import FollowingAxis from '../expressions/axes/FollowingAxis';
 import FollowingSiblingAxis from '../expressions/axes/FollowingSiblingAxis';
@@ -125,6 +126,8 @@ function compile (ast, compilationOptions) {
 			// Path
 		case 'pathExpr':
 			return pathExpr(ast, compilationOptions);
+		case 'contextItemExpr':
+			return new ContextItemExpression();
 
 			// Postfix operators
 		case 'filter':
@@ -173,7 +176,7 @@ function compile (ast, compilationOptions) {
 		case 'castable as':
 			return castableAs(ast, compilationOptions);
 
-		case 'simpleMap':
+		case 'simpleMapExpr':
 			return simpleMap(ast, compilationOptions);
 
 		case 'mapConstructor':
@@ -211,12 +214,12 @@ function arrayConstructor (ast, compilationOptions) {
 }
 
 function mapConstructor (ast, compilationOptions) {
-	return new MapConstructor(ast.map(function (keyValuePair) {
-		return {
-			key: compile(keyValuePair[0], compilationOptions),
-			value: compile(keyValuePair[1], compilationOptions)
-		};
-	}));
+	return new MapConstructor(
+		astHelper.getChildren(ast, 'mapConstructorEntry')
+			.map(keyValuePair => ({
+				key: compile(astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']), compilationOptions),
+				value: compile(astHelper.followPath(keyValuePair, ['mapValueExpr', '*']), compilationOptions)
+			})));
 }
 
 function andOp (ast, compilationOptions) {
@@ -525,7 +528,8 @@ function pathExpr (ast, compilationOptions) {
 			return compile(filterExpr, compilationOptions);
 		});
 	const isAbsolute = astHelper.getFirstChild(ast, 'root');
-	const pathExpr = new PathExpression(steps);
+	const hasMultipleAxisSteps = isAbsolute || steps.filter(step => astHelper.getFirstChild(step, 'axisStep')).length >= 2;
+	const pathExpr = new PathExpression(steps, hasMultipleAxisSteps);
 	if (isAbsolute) {
 		return new AbsolutePathExpression(pathExpr);
 	}
@@ -557,7 +561,13 @@ function sequence (ast, compilationOptions) {
 }
 
 function simpleMap (ast, compilationOptions) {
-	return new SimpleMapOperator(compile(ast[0], compilationOptions), compile(ast[1], compilationOptions));
+	return astHelper.getChildren(ast, '*')
+		.reduceRight((lhs, rhs) => {
+			if (lhs === null) {
+				return compile(rhs, compilationOptions);
+			}
+			return new SimpleMapOperator(compile(rhs, compilationOptions), lhs);
+		}, null);
 }
 
 function stringConcatenateOp (ast, compilationOptions) {
@@ -653,14 +663,15 @@ function dirElementConstructor (ast, compilationOptions) {
 			uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
 		})) : [];
 
-	const contents = astHelper.getChildren(astHelper.getFirstChild(ast, 'elementContent'), '*')
-		.map(content => compile(content, compilationOptions));
+	const content = astHelper.getFirstChild(ast, 'elementContent');
+	const contentExpressions = content ? astHelper.getChildren(content, '*')
+		.map(content => compile(content, compilationOptions)) : [];
 
 	return new DirElementConstructor(
 		name,
 		attributes,
 		namespaceDecls,
-		contents);
+		contentExpressions);
 }
 
 function dirCommentConstructor (ast, _compilationOptions) {

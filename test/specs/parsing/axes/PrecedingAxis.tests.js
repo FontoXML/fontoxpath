@@ -20,9 +20,12 @@ describe('preceding', () => {
 			['someOtherElement', ['someOtherElement']],
 			['someElement']
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('preceding::someOtherElement', documentNode.documentElement.lastChild), [
-			documentNode.documentElement.firstChild.firstChild,
-			documentNode.documentElement.firstChild
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'preceding::someOtherElement',
+				documentNode.documentElement.lastChild).map(node => node.outerHTML), [
+					documentNode.documentElement.firstChild.firstChild.outerHTML,
+					documentNode.documentElement.firstChild.outerHTML
 		]);
 	});
 
@@ -64,6 +67,7 @@ return map{
 				{ language: 'XQuery3.1' }
 		);
 		chai.assert.equal(result.got.length, 5);
+		chai.assert.equal(result.expected.length, 5);
 		chai.assert.deepEqual(result.got, result.expected);
 	});
 
