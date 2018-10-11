@@ -18,14 +18,14 @@ function assertValidCodePoint (codePoint) {
 
 function parseCharacterReferences (input) {
 	return input
-		.replace(/(&[^;]+);/g, match => {
+		.replace(/(&[^;]+);/g, function (match) {
 			if (/^&#x/.test(match)) {
-				const codePoint = parseInt(match.slice(3, -1), 16);
+				var codePoint = parseInt(match.slice(3, -1), 16);
 				assertValidCodePoint(codePoint);
 				return String.fromCodePoint(codePoint);
 			}
 			if (/^&#/.test(match)) {
-				const codePoint = parseInt(match.slice(2, -1), 10);
+				var codePoint = parseInt(match.slice(2, -1), 10);
 				assertValidCodePoint(codePoint);
 				return String.fromCodePoint(codePoint);
 			}
@@ -93,7 +93,6 @@ function parseCharacterReferences (input) {
         case "varRef":
         case "contextItemExpr":
         case "functionCallExpr":
-        case "sequenceExpr":
         case "elementConstructor":
         case "computedElementConstructor":
         case "computedAttributeConstructor":
@@ -333,7 +332,7 @@ FunctionBody
 
 // 36
 EnclosedExpr
- = "{" _ e:Expr? _ "}" {return e || ["sequenceExpr"]}
+ = "{" _ e:Expr? _ "}" {return e || null}
 
 // 37
 OptionDecl
@@ -623,8 +622,17 @@ PragmaContents
 
 // 107
 SimpleMapExpr
- = lhs:PathExpr rhs:( _ "!" _ expr:PathExpr {return expr})* {return rhs.length ? ["simpleMapExpr", lhs].concat(rhs) : lhs}
-
+ = first:PathExpr rest:( _ "!" _ expr:PathExpr {return expr})*
+ {
+ return rest.length === 0 ?
+    first :
+   [
+      "simpleMapExpr",
+	  first[0] === "pathExpr" ? first : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(first)]]]
+   ].concat(rest.map(function (item) {
+     return item[0] === "pathExpr" ? item : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(item)]]]
+	 }))
+  }
 // === 108 - 110 (simplified for ease of parsing)
 PathExpr
  = RelativePathExpr
@@ -674,10 +682,10 @@ PostfixExprWithStep
    / (_ argList:ArgumentList {return ["argumentList", argList]})
    / (_ lookup:Lookup {return lookup})
    )* {
-let toWrap = expr;
+var toWrap = expr;
 
-let predicates = [];
-postfixExpr.forEach(postFix => {
+var predicates = [];
+postfixExpr.forEach(function (postFix) {
   if (postFix[0] === "predicate") {
     predicates.push(postFix[1]);
   }
@@ -687,7 +695,7 @@ postfixExpr.forEach(postFix => {
       toWrap = ["pathExpr", ["stepExpr", ["filterExpr", toWrap], ["predicates"].concat(predicates)]];
       predicates = [];
     }
-    toWrap = ["dynamicFunctionInvocationExpr", ["functionItem", toWrap], ["arguments"].concat(postFix[1])];
+    toWrap = ["dynamicFunctionInvocationExpr", ["functionItem", toWrap]].concat(postFix[1].length ? [["arguments"].concat(postFix[1])] : []);
   }
 });
 
@@ -918,7 +926,7 @@ CommonContent
  / ref:CharRef
  / "{{" { return "\u007b" } // PegJS does not like unbalanced curly braces in JS context
  / "}}"  { return "\u007d" } // PegJS does not like unbalanced curly braces in JS context
- / EnclosedExpr
+ / expr:EnclosedExpr {return expr || ["sequenceExpr"]}
 
 // 149
 DirCommentConstructor = "<!--" contents:$DirCommentContents "-->" {return ["computedCommentConstructor", ["argExpr", ["stringConstantExpr", ["value", contents]]]]}
@@ -942,29 +950,61 @@ CDataSectionContents = (!"]]>" Char)*
 ComputedConstructor
  = CompDocConstructor
  / CompElemConstructor
-/ CompAttrConstructor
-//  / CompNamespaceConstructor
-//  / CompTextConstructor
-//  / CompCommentConstructor
-//  / CompPIConstructor
+ / CompAttrConstructor
+ / CompNamespaceConstructor
+ / CompTextConstructor
+ / CompCommentConstructor
+ / CompPIConstructor
 
 // 156
 CompDocConstructor
- = "document" _ expr:EnclosedExpr {return expr; /*return ["computedDocumentConstructor", expr]*/}
+ = "document" _ expr:EnclosedExpr {return expr ? ["computedDocumentConstructor", ["argExpr", expr]] : ["computedDocumentConstructor"]}
 
 // 157
 CompElemConstructor
  = "element" _ tagName:((n:EQName {return ["tagName"].concat(n)}) / ("{" _ expr:Expr _ "}" {return ["tagNameExpr", expr]})) _ content:EnclosedContentExpr
- { return ["computedElementConstructor", tagName, ["contentExpr", content]]}
+ { return ["computedElementConstructor", tagName].concat(content)}
 
 // 158
 EnclosedContentExpr
- = EnclosedExpr
+ = expr:EnclosedExpr {return expr ? [["contentExpr", expr]] : []}
 
 // 159
 CompAttrConstructor
  = "attribute" name:(AssertAdjacentOpeningTerminal _ name:EQName {return ["tagName"].concat(name)} / ( _ "{" _ nameExpr:Expr _ "}" {return ["tagNameExpr", nameExpr]})) _ expr:EnclosedExpr
  {return ["computedAttributeConstructor", name].concat(expr ? [["valueExpr", expr]] : [])}
+
+// 160
+CompNamespaceConstructor
+ = "namespace" _ prefix:(Prefix / EnclosedPrefixExpr) _ uri:EnclosedURIExpr
+ {return ["computedNamespaceConstructor", prefix].concat(uri)}
+
+// 161
+Prefix
+ = p:NCName {return ["prefix", p]}
+
+// 162
+EnclosedPrefixExpr
+ = expr:EnclosedExpr {return expr ? [["prefixExpr", expr]] : []}
+
+// 163
+EnclosedURIExpr
+ = expr:EnclosedExpr {return expr ? [["URIExpr", expr]] : []}
+
+// 164
+CompTextConstructor
+ = "text" _ expr:EnclosedExpr
+ {return ["computedTextConstructor"].concat(expr ? [["argExpr", expr]] : [])}
+
+// 165
+CompCommentConstructor
+ = "comment" _ expr:EnclosedExpr
+   {return ["computedCommentConstructor"].concat(expr ? [["argExpr", expr]] : [])}
+
+// 166
+CompPIConstructor
+ = "processing-instruction" _ target:((name:NCName {return ["piTarget", name]}) / ("{" _ expr:Expr _ "}" {return ["piTargetExpr", expr]})) _ value:EnclosedExpr
+   {return ["computedPIConstructor", target].concat(value ? [["piValueExpr", value]] : [])}
 
 // 167
 FunctionItemExpr
@@ -1178,7 +1218,7 @@ DecimalLiteral
 
 // 221
 DoubleLiteral
- = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["doubleConstantExpr", parseFloat(double)]}
+ = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["doubleConstantExpr", ["value", double]]}
 
 // 222
 StringLiteral
@@ -1261,13 +1301,13 @@ WhitespaceCharacter
  / Comment // Note: comments can occur anywhere where whitespace is allowed: https://www.w3.org/TR/xpath-3/#DefaultWhitespaceHandling
 
 // XML Types
-PrefixedName = prefix:Prefix ":" local:LocalPart {return [{prefix: prefix}, local]}
+PrefixedName = prefix:XMLPrefix ":" local:LocalPart {return [{prefix: prefix}, local]}
 
 UnprefixedName = local:LocalPart {return [local]}
 
 LocalPart = NCName
 
-Prefix = NCName
+XMLPrefix = NCName
 
 NCNameStartChar = [A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD] / [\uD800-\uDB7F][\uDC00-\uDFFF]
 

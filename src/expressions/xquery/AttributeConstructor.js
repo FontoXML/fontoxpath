@@ -58,20 +58,20 @@ class DirAttributeConstructor extends Expression {
 							.mapAll(allValues => Sequence.singleton(
 								createAtomicValue(allValues.map(val => val.value).join(' '), 'xs:string')
 							));
-					})
-					.mapAll(
-						allValueParts =>
-							Sequence.singleton(
-								createNodeValue(
-									createAttribute(
-										nodesFactory,
-										this._namespaceURI,
-										this._name,
-										allValueParts.map(val => val.value).join('')
-									)
+					}))
+				.mapAll(
+					allValueParts =>
+						Sequence.singleton(
+							createNodeValue(
+								createAttribute(
+									nodesFactory,
+									this._namespaceURI,
+									this._name,
+									allValueParts.map(val => val.value).join('')
 								)
 							)
-					));
+						)
+				);
 		}
 
 		return Sequence.singleton(createNodeValue(createAttribute(
