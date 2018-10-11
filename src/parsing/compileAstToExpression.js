@@ -159,6 +159,8 @@ function compile (ast, compilationOptions) {
 			return integerConstantExpr(ast, compilationOptions);
 		case 'stringConstantExpr':
 			return stringConstantExpr(ast, compilationOptions);
+		case 'decimalConstantExpr':
+			return decimalConstantExpr(ast, compilationOptions);
 
 			// Variables
 		case 'let':
@@ -441,6 +443,12 @@ function stringConstantExpr (ast, _compilationOptions) {
 	return new Literal(
 		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
 		'xs:string');
+}
+
+function decimalConstantExpr (ast, _compilationOptions) {
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		'xs:decimal');
 }
 
 function nameTest (ast, _compilationOptions) {
