@@ -69,7 +69,8 @@ export const transformArgument = (argumentType, argument, executionParameters, f
 			return argument.switchCases({
 				singleton: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName)),
 				default: () => {
-					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected exactly one`);
+					throw new Error(
+						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${argumentType.occurrence} for ${functionName} is incorrect. Expected exactly one`);
 }
 			});
 	}

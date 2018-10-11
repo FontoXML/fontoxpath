@@ -90,6 +90,8 @@ function compile (ast, compilationOptions) {
 			return intersectExcept(ast, compilationOptions);
 		case 'stringConcatenateOp':
 			return stringConcatenateOp(ast, compilationOptions);
+		case 'rangeSequenceExpr':
+			return rangeSequenceExpr(ast, compilationOptions);
 
 			// Compares
 		case 'equalOp':
@@ -104,6 +106,7 @@ function compile (ast, compilationOptions) {
 		case 'leOp':
 		case 'gtOp':
 		case 'geOp':
+		case 'isOp':
 			return compare(ast, compilationOptions);
 
 
@@ -361,11 +364,26 @@ function namedFunctionRef (ast, _compilationOptions) {
 }
 
 function typeDeclarationToType (typeDeclarationAst) {
-	const returnTypeQName = astHelper.getQName(astHelper.getFirstChild(typeDeclarationAst, '*'));
+	const rawType = astHelper.getFirstChild(typeDeclarationAst, '*');
+	let typeName;
+	switch (rawType[0]) {
+		case 'atomicType': {
+			const returnTypeQName = astHelper.getQName(rawType);
+			typeName = returnTypeQName.prefix ?
+				returnTypeQName.prefix + ':' + returnTypeQName.localName :
+				returnTypeQName.localName;
+			break;
+		}
+		case 'anyKindTest':
+			typeName = 'node()';
+			break;
+		default:
+			throw new Error('Unrecognized type');
+	}
 	const occurrence = astHelper.getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
 
 	return {
-		type: returnTypeQName.prefix ? returnTypeQName.prefix + ':' + returnTypeQName.localName : returnTypeQName.localName,
+		type: typeName,
 		occurrence: occurrence ? astHelper.getTextContent(occurrence) : ''
 	};
 }
@@ -607,6 +625,20 @@ function stringConcatenateOp (ast, compilationOptions) {
 			{
 				namespaceURI: 'http://www.w3.org/2005/xpath-functions',
 				localName: 'concat'
+			},
+			args.length),
+		args.map(arg => compile(arg, compilationOptions)));
+}
+
+function rangeSequenceExpr (ast, compilationOptions) {
+	const args = [
+		astHelper.getFirstChild(ast, 'startExpr')[1],
+		astHelper.getFirstChild(ast, 'endExpr')[1]];
+	return new FunctionCall(
+		new NamedFunctionRef(
+			{
+				namespaceURI: 'http://fontoxpath/operators',
+				localName: 'to'
 			},
 			args.length),
 		args.map(arg => compile(arg, compilationOptions)));
