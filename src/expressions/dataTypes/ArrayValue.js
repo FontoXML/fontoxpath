@@ -13,9 +13,9 @@ class ArrayValue extends FunctionValue {
 				value: (dynamicContext, executionParameters, staticContext, key) => arrayGet(dynamicContext, executionParameters, staticContext, Sequence.singleton(this), key),
 				localName: 'get',
 				namespaceURI: ARRAY_NAMESPACE_URI,
-				argumentTypes: ['xs:integer'],
+				argumentTypes: [{ type: 'xs:integer' }],
 				arity: 1,
-				returnType: 'item()*'
+				returnType: { type: 'item()', occurrence: '*' }
 			});
 		this.type = 'array(*)';
 		this.members = members;

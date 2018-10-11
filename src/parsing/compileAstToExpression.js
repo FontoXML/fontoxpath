@@ -206,8 +206,6 @@ function arrayConstructor (ast, compilationOptions) {
 		default:
 			throw new Error('Unrecognized arrayType: ' + arrConstructor[0]);
 	}
-
-	// return new ArrayConstructor(ast[0], ast.slice(1).map(arg => compile(arg, compilationOptions)));
 }
 
 function mapConstructor (ast, compilationOptions) {
