@@ -74,9 +74,9 @@ function compile (ast, compilationOptions) {
 			return andOp(ast, compilationOptions);
 		case 'orOp':
 			return orOp(ast, compilationOptions);
-		case 'unaryPlus':
+		case 'unaryPlusOp':
 			return unaryPlus(ast, compilationOptions);
-		case 'unaryMinus':
+		case 'unaryMinusOp':
 			return unaryMinus(ast, compilationOptions);
 		case 'addOp':
 		case 'subtractOp':
@@ -607,11 +607,13 @@ function anyArrayTest (_ast, _compilationOptions) {
 }
 
 function unaryPlus (ast, compilationOptions) {
-	return new Unary('+', compile(ast[0], compilationOptions));
+	const operand = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'operand'), '*');
+	return new Unary('+', compile(operand, compilationOptions));
 }
 
 function unaryMinus (ast, compilationOptions) {
-	return new Unary('-', compile(ast[0], compilationOptions));
+	const operand = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'operand'), '*');
+	return new Unary('-', compile(operand, compilationOptions));
 }
 
 function unionOp (ast, compilationOptions) {
