@@ -777,5 +777,5 @@ function dirPIConstructor (ast, _compilationOptions) {
  * @return  {!Expression}
  */
 export default function (xPathAst, compilationOptions) {
-    return compile(xPathAst, compilationOptions);
+	return compile(xPathAst, compilationOptions);
 }
