@@ -12,6 +12,12 @@ import chai from 'chai';
 
 import { sync, slimdom } from 'slimdom-sax-parser';
 
+if (!fs.promises) {
+	fs.promises = {
+		readFile: fs.readFileSync
+	};
+}
+
 function run () {
 	const skippableTestNames = fs.readFileSync(path.join('test', 'unrunnableXQueryXTestNames.csv'), 'utf-8')
 		.split(/[\r\n]/)
@@ -77,6 +83,7 @@ function run () {
 		if (!fs.existsSync(testFilePath)) {
 			return null;
 		}
+
 
 		const xml = sync(await fs.promises.readFile(testFilePath, 'utf-8'));
 
@@ -168,6 +175,6 @@ function run () {
 				});
 			});
 	});
-};
+}
 
 run();
