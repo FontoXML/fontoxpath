@@ -11,7 +11,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import DynamicContext from '../DynamicContext';
 
-import builtInNumericFunctions from './builtInFunctions.numeric.js';
+import builtInNumericFunctions from './builtInFunctions.numeric';
 
 import FunctionDefinitionType from'./FunctionDefinitionType';
 
