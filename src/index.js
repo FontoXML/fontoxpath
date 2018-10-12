@@ -48,7 +48,7 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 		window['evaluateXPathToMap'] = evaluateXPathToMap;
 		window['evaluateXPathToNodes'] = evaluateXPathToNodes;
 		window['evaluateXPathToNumber'] = evaluateXPathToNumber;
-		window['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
+ 		window['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
 		window['evaluateXPathToString'] = evaluateXPathToString;
 		window['evaluateXPathToStrings'] = evaluateXPathToStrings;
 		window['getBucketForSelector'] = getBucketForSelector;

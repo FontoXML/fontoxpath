@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<title>fontoxpath</title>
+		<!-- <script src="./fontoxpath.js" type="application/javascript">
+		</script> -->
+		<script src="./main.js" type="module">
+	</script>
+		<!-- <script src="./maggie.js" type="application/javascript">
+		</script> -->
+		<style>
+		 	#xmlFile * {
+				all: initial;
+				display: block;
+				margin: 5px 5px 5px 5px;
+				border: 1px solid black;
+				min-height: 5px;
+			}
+			#xpathField {
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<h4>Edit the XML here</h4>
+			<pre id="xmlSource" contentEditable="true"> </pre>
+			<h4>Edit the XPath here:</h4>
+			<label><input id="allowXQuery" type="checkbox"/>XQuery</label>
+			<input type="text" id="xpathField" value="//*"></input>
+		</div>
+		<hr>
+		<div>
+			<p id="log" />
+			<h4>Preview</h4>
+			<p id="xmlFile"/>
+			<h4>Result, as text</h4>
+			<pre id="resultText"></pre>
+		</div>
+	</body>
+</html>
