@@ -19,7 +19,7 @@ const domParser = new DOMParser();
 let xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
 xmlFile.innerHTML = xmlSource.innerText;
 
-function rerunXPath () {
+function tryEvaluateToNodes () {
 	let resultNodes;
 	try {
 		resultNodes = fontoxpath.evaluateXPathToNodes(
@@ -33,12 +33,12 @@ function rerunXPath () {
 		);
 	}
 	catch (err) {
-		log.innerText = 'Error: ' + err.message;
-		resultText.innerText = fontoxpath.evaluateXPath(xpathField.value, xmlDoc, fontoxpath.domFacade) + '';
-		return;
+		xmlFile.innerText = err.message;
+		return false;
 	}
+
 	log.innerText = '';
-	const text = resultNodes.map(node => node.nodeType === node.TEXT_NODE ? node.textContent : node.outerHTML).join('\n');
+	const text = resultNodes.map(node => node.nodeType === node.TEXT_NODE ? node.textContent : node.outerHTML).join('\n\n');
 	resultText.innerText = text;
 
 	const paths = resultNodes.map(
@@ -52,11 +52,29 @@ function rerunXPath () {
 				node);
 		});
 	const htmlNodes = paths
-		  .map(path => fontoxpath.evaluateXPathToFirstNode(path, xmlFile, fontoxpath.domFacade))
-		  .filter(n => !!n);
+		.map(path => fontoxpath.evaluateXPathToFirstNode(path, xmlFile, fontoxpath.domFacade))
+		.filter(n => !!n);
 
 	htmlNodes.forEach(node => node.setAttribute('style', 'border: 1px solid red'));
+	return true;
 }
+
+function rerunXPath () {
+	if (tryEvaluateToNodes()) {
+		return;
+	}
+	try {
+		const result = fontoxpath.evaluateXPath(xpathField.value, xmlDoc, fontoxpath.domFacade) + '';
+		resultText.innerText = result;
+	}
+	catch (err) {
+		log.innerText = 'Error: ' + err.message;
+		resultText.innerText = '';
+		return;
+	}
+	log.innerText = '';
+}
+
 xmlSource.oninput = xpathField.oninput = _evt => {
 	try {
 		xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
@@ -68,7 +86,8 @@ xmlSource.oninput = xpathField.oninput = _evt => {
 		}
 		rerunXPath();
 	}
-	catch (e) {
+	catch (_) {
+		// Catch all exceptions
 	}
 };
 
