@@ -94,15 +94,21 @@ async function rerunXPath () {
 	tryEvaluateToNodes();
 }
 
+xmlSource.oninput = _evt => {
+	xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
+	xmlFile.innerHTML = xmlDoc.documentElement.outerHTML;
+
+	if (fontoxpath.evaluateXPathToBoolean('//parseerror', xmlDoc, fontoxpath.domFacade)) {
+		log.innerText = 'Error: invalid XML';
+		return;
+	}
+};
+
 xmlSource.oninput = xpathField.oninput = _evt => {
 	try {
 		xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
 		xmlFile.innerHTML = xmlDoc.documentElement.outerHTML;
 
-		if (fontoxpath.evaluateXPathToBoolean('//parseerror', xmlDoc, fontoxpath.domFacade)) {
-			log.innerText = 'Error: invalid XML';
-			return;
-		}
 		rerunXPath();
 	}
 	catch (_) {
