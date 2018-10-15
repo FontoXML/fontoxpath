@@ -53,7 +53,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(castA.value + castB.value, typeA === typeB ? typeA : 'xs:decimal');
 				};
-			case '-':
+			case 'subtractOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(castA.value - castB.value, typeA === typeB ? typeA : 'xs:decimal');
@@ -63,12 +63,12 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(castA.value * castB.value, typeA === typeB ? typeA : 'xs:decimal');
 				};
-			case 'div':
+			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(castA.value / castB.value, 'xs:decimal');
 				};
-			case 'idiv':
+			case 'idivOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					if (castB.value === 0) {
@@ -82,7 +82,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 					}
 					return createAtomicValue(Math.trunc(castA.value / castB.value), 'xs:integer');
 				};
-			case 'mod':
+			case 'modOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(castA.value % castB.value, 'xs:decimal');
@@ -97,12 +97,12 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(yearMonthDurationAdd(castA.value, castB.value), 'xs:yearMonthDuration');
 				};
-			case '-':
+			case 'subtractOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(yearMonthDurationSubtract(castA.value, castB.value), 'xs:yearMonthDuration');
 				};
-			case 'div':
+			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(yearMonthDurationDivideByYearMonthDuration(castA.value, castB.value), 'xs:double');
@@ -117,7 +117,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(yearMonthDurationMultiply(castA.value, castB.value), 'xs:yearMonthDuration');
 				};
-			case 'div':
+			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(yearMonthDurationDivide(castA.value, castB.value), 'xs:yearMonthDuration');
@@ -141,12 +141,12 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(dayTimeDurationAdd(castA.value, castB.value), 'xs:dayTimeDuration');
 				};
-			case '-':
+			case 'subtractOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(dayTimeDurationSubtract(castA.value, castB.value), 'xs:dayTimeDuration');
 				};
-			case 'div':
+			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(dayTimeDurationDivideByDayTimeDuration(castA.value, castB.value), 'xs:decimal');
@@ -160,7 +160,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(dayTimeDurationMultiply(castA.value, castB.value), 'xs:dayTimeDuration');
 				};
-			case 'div':
+			case 'divOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(dayTimeDurationDivide(castA.value, castB.value), 'xs:dayTimeDuration');
@@ -179,13 +179,13 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 	if ((isSubtypeOf(typeA, 'xs:dateTime') && isSubtypeOf(typeB, 'xs:dateTime')) ||
 		(isSubtypeOf(typeA, 'xs:date') && isSubtypeOf(typeB, 'xs:date')) ||
 		(isSubtypeOf(typeA, 'xs:time') && isSubtypeOf(typeB, 'xs:time'))) {
-		if (operator === '-') {
+		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(dateTimeSubtract(castA.value, castB.value), 'xs:dayTimeDuration');
 			};
 		}
-		if (operator === '-') {
+		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(dateTimeAdd(castA.value, castB.value), 'xs:dayTimeDuration');
@@ -203,7 +203,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:dateTime');
 			};
 		}
-		if (operator === '-') {
+		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), 'xs:dateTime');
@@ -219,7 +219,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:date');
 			};
 		}
-		if (operator === '-') {
+		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), 'xs:date');
@@ -234,7 +234,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 				return createAtomicValue(addDurationToDateTime(castA.value, castB.value), 'xs:time');
 			};
 		}
-		if (operator === '-') {
+		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(subtractDurationFromDateTime(castA.value, castB.value), 'xs:time');
@@ -250,7 +250,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:dateTime');
 			};
 		}
-		if (operator === '-') {
+		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), 'xs:dateTime');
@@ -267,7 +267,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:date');
 			};
 		}
-		if (operator === '-') {
+		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), 'xs:date');
@@ -282,7 +282,7 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 				return createAtomicValue(addDurationToDateTime(castB.value, castA.value), 'xs:time');
 			};
 		}
-		if (operator === '-') {
+		if (operator === 'subtractOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return createAtomicValue(subtractDurationFromDateTime(castB.value, castA.value), 'xs:time');
@@ -300,7 +300,7 @@ const operatorsByTypingKey = Object.create(null);
  */
 class BinaryOperator extends Expression {
 	/**
-	 * @param  {string}    operator         One of +, -, *, div, idiv, mod
+	 * @param  {string}    operator         One of addOp, substractOp, multiplyOp, divOp, idivOp, modOp
 	 * @param  {Expression}  firstValueExpr   The selector evaluating to the first value to process
 	 * @param  {Expression}  secondValueExpr  The selector evaluating to the second value to process
 	 */

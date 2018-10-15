@@ -82,6 +82,9 @@ function compile (ast, compilationOptions) {
 		case 'addOp':
 		case 'subtractOp':
 		case 'multiplyOp':
+		case 'divOp':
+		case 'idivOp':
+		case 'modOp':
 			return binaryOperator(ast, compilationOptions);
 		case 'sequenceExpr':
 			return sequence(ast, compilationOptions);
@@ -162,6 +165,8 @@ function compile (ast, compilationOptions) {
 			return stringConstantExpr(ast, compilationOptions);
 		case 'decimalConstantExpr':
 			return decimalConstantExpr(ast, compilationOptions);
+		case 'doubleConstantExpr':
+			return doubleConstantExpr(ast, compilationOptions);
 
 			// Variables
 		case 'varRef':
@@ -430,6 +435,12 @@ function decimalConstantExpr (ast, _compilationOptions) {
 	return new Literal(
 		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
 		'xs:decimal');
+}
+
+function doubleConstantExpr (ast, _compilationOptions) {
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		'xs:double');
 }
 
 function nameTest (ast, _compilationOptions) {
