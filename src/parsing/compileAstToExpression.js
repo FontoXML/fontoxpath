@@ -164,12 +164,8 @@ function compile (ast, compilationOptions) {
 			return decimalConstantExpr(ast, compilationOptions);
 
 			// Variables
-		case 'let':
-			return letExpression(ast, compilationOptions);
 		case 'varRef':
 			return varRef(ast, compilationOptions);
-		case 'forExpression':
-			return forExpression(ast, compilationOptions);
 		case 'flworExpr':
 			return flworExpression(ast, compilationOptions);
 
@@ -281,15 +277,6 @@ function IfThenElseExpr (ast, compilationOptions) {
 
 function filter (ast, compilationOptions) {
 	return new Filter(compile(ast[1], compilationOptions), compile(ast[0], compilationOptions));
-}
-
-function forExpression ([[prefix, namespaceURI, name], expression, returnExpression], compilationOptions) {
-	return new ForExpression(
-		{
-			varName: { prefix, namespaceURI, name },
-			expression: compile(expression, compilationOptions)
-		},
-		compile(returnExpression, compilationOptions));
 }
 
 function flworExpression (ast, compilationOptions) {
@@ -425,14 +412,6 @@ function instanceOf (ast, compilationOptions) {
 	return new InstanceOfOperator(
 		expression, compile(sequenceType, compilationOptions),
 		occurrence ? astHelper.getTextContent(occurrence) : '');
-}
-
-function letExpression (ast, compilationOptions) {
-	const [prefix, namespaceURI, name] = ast[0];
-	const bindingSequence = compile(ast[1], compilationOptions);
-	const returnExpression = compile(ast[2], compilationOptions);
-
-	return new LetExpression({ prefix, namespaceURI, name }, bindingSequence, returnExpression);
 }
 
 function integerConstantExpr (ast, _compilationOptions) {

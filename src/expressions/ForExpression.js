@@ -22,7 +22,7 @@ class ForExpression extends Expression {
 
 		this._prefix = rangeVariable.prefix;
 		this._namespaceURI = rangeVariable.namespaceURI;
-		this._localName = rangeVariable.name;
+		this._localName = rangeVariable.localName;
 
 		this._variableBindingKey = null;
 
