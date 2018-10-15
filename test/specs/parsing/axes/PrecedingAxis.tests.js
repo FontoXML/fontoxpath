@@ -24,8 +24,8 @@ describe('preceding', () => {
 			evaluateXPathToNodes(
 				'preceding::someOtherElement',
 				documentNode.documentElement.lastChild).map(node => node.outerHTML), [
-					documentNode.documentElement.firstChild.firstChild.outerHTML,
-					documentNode.documentElement.firstChild.outerHTML
+					documentNode.documentElement.firstChild.outerHTML,
+					documentNode.documentElement.firstChild.firstChild.outerHTML
 		]);
 	});
 
@@ -58,7 +58,7 @@ let $dom := <element>
 
 return map{
 	"got": array{$dom!descendant::self[1]!preceding::*},
-	"expected": array{($dom!descendant-or-self::*[@expectedPreceding]) => reverse()}
+	"expected": array{($dom!descendant-or-self::*[@expectedPreceding])}
 }
 `,
 				documentNode,
@@ -83,13 +83,13 @@ return map{
 	it('correctly orders its results', () => {
 		jsonMlMapper.parse([
 			'someParentElement',
-			['someNonMatchingElement', ['someSiblingElement', {position: 'first'}]],
-			['someNonMatchingElement', ['someSiblingElement', {position: 'second'}]],
+			['someNonMatchingElement', ['someSiblingElement', { position: 'first' }]],
+			['someNonMatchingElement', ['someSiblingElement', { position: 'second' }]],
 			['someElement']
 		], documentNode);
 		chai.assert.equal(
 			evaluateXPathToString('(preceding::someSiblingElement)[1]/@position', documentNode.documentElement.lastChild),
-			'second');
+			'first');
 	});
 
 	it('does nothing when there are no preceding siblings', () => {
