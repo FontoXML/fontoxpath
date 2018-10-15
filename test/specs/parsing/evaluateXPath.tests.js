@@ -28,8 +28,8 @@ describe('evaluateXPath', () => {
 	it('Keeps numbers numbers', () => chai.assert.equal(evaluateXPath('1', documentNode, domFacade), 1));
 	it('Keeps strings strings', () => chai.assert.equal(evaluateXPath('"string"', documentNode, domFacade), 'string'));
 	it('Keeps nodes nodes', () => chai.assert.equal(evaluateXPath('.', documentNode, domFacade), documentNode));
-	it('Keeps arrays arrays',  () => chai.assert.deepEqual(evaluateXPath('[1,2,3]', documentNode, domFacade), [1,2,3]));
-	it('Keeps maps maps',  () => chai.assert.deepEqual(evaluateXPath('map{1:2,"a":"b"}', documentNode, domFacade), { 1: 2, a: 'b' }));
+	it('Keeps arrays arrays', () => chai.assert.deepEqual(evaluateXPath('[1,2,3]', documentNode, domFacade), [1, 2, 3]));
+	it('Keeps maps maps', () => chai.assert.deepEqual(evaluateXPath('map{1:2,"a":"b"}', documentNode, domFacade), { 1: 2, a: 'b' }));
 
 	it('returns the correct number of results', () => {
 		chai.assert.equal(evaluateXPath('(1 to 250)').length, 250);
