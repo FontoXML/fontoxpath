@@ -500,7 +500,7 @@ function kindTest (ast, _compilationOptions) {
 }
 
 function anyKindTest (ast, compilationOptions) {
-	return new TypeTest({prefix: null, localName: 'node()'});
+	return new TypeTest({ prefix: null, localName: 'node()' });
 }
 
 function orOp (ast, compilationOptions) {
@@ -515,6 +515,10 @@ function pathExpr (ast, compilationOptions) {
 
 	const steps = rawSteps.map(step => {
 			const axis = astHelper.getFirstChild(step, 'xpathAxis');
+
+			const predicates = astHelper.getFirstChild(step, 'predicates');
+			let stepExpression;
+
 			if (axis) {
 				const test = astHelper.getFirstChild(step, [
 					'attributeTest',
@@ -538,59 +542,59 @@ function pathExpr (ast, compilationOptions) {
 					'Wildcard'
 				]);
 
-				const predicates = astHelper.getFirstChild(step, 'predicates');
-
-				let axisExpression;
 				switch (astHelper.getTextContent(axis)) {
 					case 'ancestor':
-						axisExpression = new AncestorAxis(compile(test, compilationOptions), { inclusive: false });
+						stepExpression = new AncestorAxis(compile(test, compilationOptions), { inclusive: false });
 						break;
 					case 'ancestor-or-self':
-						axisExpression = new AncestorAxis(compile(test, compilationOptions), { inclusive: true });
+						stepExpression = new AncestorAxis(compile(test, compilationOptions), { inclusive: true });
 						break;
 					case 'attribute':
-						axisExpression = new AttributeAxis(compile(test, compilationOptions));
+						stepExpression = new AttributeAxis(compile(test, compilationOptions));
 						break;
 					case 'child':
-						axisExpression = new ChildAxis(compile(test, compilationOptions));
+						stepExpression = new ChildAxis(compile(test, compilationOptions));
 						break;
 					case 'descendant':
-						axisExpression = new DescendantAxis(compile(test, compilationOptions), { inclusive: false });
+						stepExpression = new DescendantAxis(compile(test, compilationOptions), { inclusive: false });
 						break;
 					case 'descendant-or-self':
-						axisExpression = new DescendantAxis(compile(test, compilationOptions), { inclusive: true });
+						stepExpression = new DescendantAxis(compile(test, compilationOptions), { inclusive: true });
 						break;
 					case 'parent':
-						axisExpression = new ParentAxis(compile(test, compilationOptions));
+						stepExpression = new ParentAxis(compile(test, compilationOptions));
 						break;
 					case 'following-sibling':
-						axisExpression = new FollowingSiblingAxis(compile(test, compilationOptions));
+						stepExpression = new FollowingSiblingAxis(compile(test, compilationOptions));
 						break;
 					case 'preceding-sibling':
-						axisExpression = new PrecedingSiblingAxis(compile(test, compilationOptions));
+						stepExpression = new PrecedingSiblingAxis(compile(test, compilationOptions));
 						break;
 					case 'following':
-						axisExpression = new FollowingAxis(compile(test, compilationOptions));
+						stepExpression = new FollowingAxis(compile(test, compilationOptions));
 						break;
 					case 'preceding':
-						axisExpression = new PrecedingAxis(compile(test, compilationOptions));
+						stepExpression = new PrecedingAxis(compile(test, compilationOptions));
 						break;
 					case 'self':
-						axisExpression = new SelfExpression(compile(test, compilationOptions));
+						stepExpression = new SelfExpression(compile(test, compilationOptions));
 						break;
 				}
-
-				if (!predicates) {
-					return axisExpression;
-				}
-				return astHelper.getChildren(predicates, '*')
-					.reduceRight(
-						(innerStep, predicate) => new Filter(innerStep, compile(predicate, compilationOptions)),
-						axisExpression);
 			}
-			// We must be a filter expression
-			const filterExpr = astHelper.followPath(step, ['filterExpr', '*']);
-			return compile(filterExpr, compilationOptions);
+			else {
+				// We must be a filter expression
+				const filterExpr = astHelper.followPath(step, ['filterExpr', '*']);
+				stepExpression = compile(filterExpr, compilationOptions);
+			}
+
+			if (!predicates) {
+				return stepExpression;
+			}
+			return astHelper.getChildren(predicates, '*')
+				.reduceRight(
+					(innerStep, predicate) => new Filter(innerStep, compile(predicate, compilationOptions)),
+					stepExpression);
+
 		});
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
 	// If an path has no axis steps, we should skip sorting. The path
@@ -676,11 +680,11 @@ function typeTest (ast, _compilationOptions) {
 }
 
 function anyMapTest (_ast, _compilationOptions) {
-	return new TypeTest({prefix: null, localName: 'map(*)'});
+	return new TypeTest({ prefix: null, localName: 'map(*)' });
 }
 
 function anyArrayTest (_ast, _compilationOptions) {
-	return new TypeTest({prefix: null, localName: 'array(*)'});
+	return new TypeTest({ prefix: null, localName: 'array(*)' });
 }
 
 function unaryPlus (ast, compilationOptions) {
