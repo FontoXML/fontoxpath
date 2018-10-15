@@ -601,6 +601,12 @@ function pathExpr (ast, compilationOptions) {
 	// is probably a chain of filter expressions or lookups
 	const requireSorting = isAbsolute ||
 		rawSteps.filter(step => astHelper.getFirstChild(step, 'xpathAxis')).length >= 1;
+
+	// Directly use expressions which are not path expression
+	if (!requireSorting && steps.length === 1) {
+		return steps[0];
+	}
+
 	const pathExpr = new PathExpression(steps, requireSorting);
 	if (isAbsolute) {
 		return new AbsolutePathExpression(pathExpr);
