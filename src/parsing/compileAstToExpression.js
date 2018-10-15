@@ -202,10 +202,10 @@ function compile (ast, compilationOptions) {
 			return dirElementConstructor(ast, compilationOptions);
 		case 'attributeConstructor':
 			return attributeConstructor(ast, compilationOptions);
-		case 'DirCommentConstructor':
-			return dirCommentConstructor(ast, compilationOptions);
-		case 'DirPIConstructor':
-			return dirPIConstructor(ast, compilationOptions);
+		case 'computedCommentConstructor':
+			return computedCommentConstructor(ast, compilationOptions);
+		case 'computedPIConstructor':
+			return computedPIConstructor(ast, compilationOptions);
 		case 'CDataSection':
 			return CDataSection(ast, compilationOptions);
 		default:
@@ -807,19 +807,21 @@ function attributeConstructor (ast, compilationOptions) {
 	});
 }
 
-function dirCommentConstructor (ast, compilationOptions) {
+function computedCommentConstructor (ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
-	return new DirCommentConstructor(ast[0]);
+	return new DirCommentConstructor(astHelper.getTextContent(astHelper.getFirstChild(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), 'stringConstantExpr'), 'value')));
 }
 
-function dirPIConstructor (ast, compilationOptions) {
+function computedPIConstructor (ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
-	return new DirPIConstructor(ast[0], ast[1]);
-}
+	return new DirPIConstructor(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'piTarget')),
+		astHelper.getTextContent(astHelper.getFirstChild(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'piValueExpr'), 'stringConstantExpr'), 'value')));
+	}
 
 /**
  * @param   {!Array<?>}  xPathAst
