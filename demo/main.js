@@ -8,9 +8,9 @@ const xpathField = document.getElementById('xpathField');
 const allowXQuery = document.getElementById('allowXQuery');
 
 xmlSource.innerText = `<xml>
-<herp>Herp</herp>
-<derp id="durp">derp</derp>
-<hurr durr="durrdurrdurr">durrrrrr</hurr>
+	<herp>Herp</herp>
+	<derp id="durp">derp</derp>
+	<hurr durr="durrdurrdurr">durrrrrr</hurr>
 </xml>
 	`;
 
@@ -38,8 +38,6 @@ function tryEvaluateToNodes () {
 	}
 
 	log.innerText = '';
-	const text = resultNodes.map(node => node.nodeType === node.TEXT_NODE ? node.textContent : node.outerHTML).join('\n\n');
-	resultText.innerText = text;
 
 	const paths = resultNodes.map(
 		node => {
@@ -59,20 +57,41 @@ function tryEvaluateToNodes () {
 	return true;
 }
 
-function rerunXPath () {
-	if (tryEvaluateToNodes()) {
-		return;
-	}
+async function rerunXPath () {
+	// Clear results from previous run
+	log.innerText = '';
+	resultText.innerText = '';
+
+	let it;
 	try {
-		const result = fontoxpath.evaluateXPath(xpathField.value, xmlDoc, fontoxpath.domFacade) + '';
-		resultText.innerText = result;
+		it = await fontoxpath.evaluateXPathToAsyncIterator(
+			xpathField.value,
+			xmlDoc,
+			null,
+			null,
+			{
+				language: allowXQuery.checked ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE
+			}
+		);
 	}
 	catch (err) {
-		log.innerText = 'Error: ' + err.message;
-		resultText.innerText = '';
+		log.innerText = err.message;
 		return;
 	}
-	log.innerText = '';
+
+	const raw = [];
+	for (let item = await it.next(); !item.done; item = await it.next()) {
+		if (item.value instanceof Node) {
+			raw.push(item.value.outerHTML);
+		}
+		else {
+			raw.push(item.value);
+		}
+	}
+
+	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
+
+	tryEvaluateToNodes();
 }
 
 xmlSource.oninput = xpathField.oninput = _evt => {
