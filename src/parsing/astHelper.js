@@ -74,7 +74,7 @@ function getTextContent (ast) {
 function getTypeDeclaration (ast) {
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return null;
+		return { type: 'item()', occurrence: '*' };
 	}
 
 	const determineType = (typeAst) => {
