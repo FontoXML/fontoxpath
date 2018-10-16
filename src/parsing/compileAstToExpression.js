@@ -338,15 +338,27 @@ function functionCall (ast, compilationOptions) {
 
 function arrowExpr (ast, compilationOptions) {
 	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
-	const functionName = astHelper.getFirstChild(ast, 'EQName');
-	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
-	return new FunctionCall(
-		new NamedFunctionRef(
-			astHelper.getQName(functionName),
-			functionArguments.length + 1),
-		[
-			compile(argExpr, compilationOptions)]
-			.concat(functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions))));
+
+	// Each part an EQName, expression, or arguments passed to the previous part
+	const parts = astHelper.getChildren(ast, '*').slice(1);
+
+	let args = [compile(argExpr, compilationOptions)];
+	for (let i = 0; i < parts.length; i++) {
+		if (parts[i][0] === 'arguments') {
+			continue;
+		}
+		if (parts[i + 1][0] === 'arguments') {
+			const functionArguments = astHelper.getChildren(parts[i + 1], '*');
+			args = args.concat(functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
+		}
+
+		const func = parts[i][0] === 'EQName' ?
+			new NamedFunctionRef(astHelper.getQName(parts[i]), args.length) :
+			compile(parts[i], compilationOptions);
+		args = [new FunctionCall(func, args)];
+
+	}
+	return args[0];
 }
 
 function dynamicFunctionInvocationExpr (ast, compilationOptions) {
