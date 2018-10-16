@@ -1,5 +1,6 @@
 import {
 	evaluateXPathToBoolean,
+	evaluateXPathToMap,
 	evaluateXPathToString
 } from 'fontoxpath';
 
@@ -76,27 +77,45 @@ function run () {
 		return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xA));
 	}
 
-	async function tryGetXQuery (test) {
-		const testDirectory = path.join(baseDir, test.directory);
-		const testFilePath = path.join(testDirectory, test.testName) + '.xml';
+	const xQueries = [];
+	async function tryGetXQuery (directory, testName, testCase) {
+		let queries = xQueries[testName];
+		if (!queries) {
+			queries = await getXQueries(directory, testName);
+			xQueries[testName] = queries;
+		}
 
+		return queries[testCase];
+	}
+
+	async function getXQueries (directory, testName) {
+		const testDirectory = path.join(baseDir, directory);
+		const testFilePath = path.join(testDirectory, testName) + '.xml';
 		if (!fs.existsSync(testFilePath)) {
 			return null;
 		}
 
-
 		const xml = sync(await fs.promises.readFile(testFilePath, 'utf-8'));
+		const xQueries = evaluateXPathToMap('(/descendant::test-case/map:entry(@name, (test/@file/string(), test/string())[1])) => map:merge()', xml);
 
-		const xQueryRelativePath = evaluateXPathToString('/descendant::test-case[@name=$testCase]/head(.)/test/@file', xml, null, { testCase: test.testCase });
-		if (xQueryRelativePath) {
-			const xQueryPath = path.join(testDirectory, xQueryRelativePath);
-			if (fs.existsSync(xQueryPath)) {
-				return fs.promises.readFile(xQueryPath, 'utf-8');
+		Object.keys(xQueries).forEach(key => {
+			const value = xQueries[key];
+
+			if (value.substring(value.length - 3) === '.xq') {
+				const xQueryPath = path.join(testDirectory, value);
+				if (fs.existsSync(xQueryPath)) {
+					xQueries[key] = fs.promises.readFile(xQueryPath, 'utf-8');
+				}
+				else {
+					xQueries[key] = null;
+				}
 			}
-			return null;
-		}
+			else {
+				xQueries[key] = normalizeEndOfLines(value);
+			}
+		});
 
-		return normalizeEndOfLines(evaluateXPathToString('/descendant::test-case[@name=$testCase]/head(.)/test', xml, null, { testCase: test.testCase }));
+		return xQueries;
 	}
 
 	fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
@@ -130,7 +149,7 @@ function run () {
 							return;
 						}
 						it(testCase, async function () {
-							const xQuery = await tryGetXQuery({ directory, testName, testCase });
+							const xQuery = await tryGetXQuery(directory, testName, testCase);
 
 							if (!xQuery) {
 								throw new Error('XQuery script could not be found!');
