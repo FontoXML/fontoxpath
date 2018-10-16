@@ -581,7 +581,7 @@ ArrowExpr
 // 97
 UnaryExpr
  = "-" expr:UnaryExpr {return ["unaryMinusOp", ["operand", expr]]}
- / "+" expr:UnaryExpr {return ["unaryPlus", ["operand", expr]]}
+ / "+" expr:UnaryExpr {return ["unaryPlusOp", ["operand", expr]]}
  / ValueExpr
 
 // 98
