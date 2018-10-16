@@ -351,10 +351,17 @@ function arrowExpr (ast, compilationOptions) {
 
 function dynamicFunctionInvocationExpr (ast, compilationOptions) {
 	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
-	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
+
+	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
+	let args = [];
+	if (argumentsAst) {
+		const functionArguments = astHelper.getChildren(argumentsAst, '*');
+		args = functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions));
+	}
+
 	return new FunctionCall(
 		compile(functionItemContent, compilationOptions),
-		functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
+		args);
 }
 
 function namedFunctionRef (ast, _compilationOptions) {
