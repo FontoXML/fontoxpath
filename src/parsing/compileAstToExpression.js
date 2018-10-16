@@ -121,6 +121,8 @@ function compile (ast, compilationOptions) {
 			return kindTest(ast, compilationOptions);
 		case 'piTest':
 			return piTest(ast, compilationOptions);
+		case 'commentTest':
+			return commentTest(ast, compilationOptions);
 		case 'textTest':
 			return textTest(ast, compilationOptions);
 		case 'elementTest':
@@ -606,6 +608,10 @@ function pathExpr (ast, compilationOptions) {
 
 function piTest (ast, compilationOptions) {
 	return new KindTest(7);
+}
+
+function commentTest (ast, compilationOptions) {
+	return new KindTest(8);
 }
 
 function elementTest (ast, compilationOptions) {
