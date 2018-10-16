@@ -106,7 +106,8 @@ function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticCont
 					return notReady(sp.promise);
 				}
 				scalingPrecision = sp.value.value;
-			} else {
+			}
+			else {
 				scalingPrecision = 0;
 			}
 			done = true;
@@ -125,10 +126,12 @@ function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticCont
 			if (halfToEven && isHalf(itemAsDecimal.value, scaling)) {
 				if (Math.floor(itemAsDecimal.value * scaling) % 2 === 0) {
 					roundedNumber = Math.floor(itemAsDecimal.value * scaling) / scaling;
-				} else {
+				}
+				else {
 					roundedNumber = Math.ceil(itemAsDecimal.value * scaling) / scaling;
 				}
-			} else {
+			}
+			else {
 				roundedNumber = Math.round(itemAsDecimal.value * scaling) / scaling;
 			}
 
@@ -202,7 +205,7 @@ function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _static
 				value: returnRandomItemFromSequence,
 				localName: '',
 				namespaceURI: '',
-				argumentTypes: ['item()*'],
+				argumentTypes: [{ type: 'item()', occurrence: '*' }],
 				arity: 1,
 				returnType: 'item()*'
 			}))
@@ -283,7 +286,7 @@ export default {
 			returnType: 'xs:double',
 			callFunction: (dynamicContext, executionParameters, staticContext) => {
 				const atomizedContextItem = dynamicContext.contextItem &&
-					transformArgument('xs:anyAtomicType?', Sequence.singleton(dynamicContext.contextItem), executionParameters, 'fn:number');
+					transformArgument({ type: 'xs:anyAtomicType', occurrence: '?' }, Sequence.singleton(dynamicContext.contextItem), executionParameters, 'fn:number');
 				if (!atomizedContextItem) {
 					throw new Error('XPDY0002: fn:number needs an atomizable context item.');
 				}
