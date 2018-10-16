@@ -10,7 +10,7 @@ export default class TypeDeclaration {
 		/**
 		 * @type {string}
 		 */
-		this.occurence;
+		this.occurrence;
 		/**
 		 * @type {boolean}
 		 */
