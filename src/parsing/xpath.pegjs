@@ -564,11 +564,11 @@ TreatExpr
 
 // 94
 CastableExpr
- = lhs:CastExpr rhs:(_ "castable" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castableExpr", ["argExpr", lhs], ["singleType", rhs]] : lhs}
+ = lhs:CastExpr rhs:(_ "castable" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castableExpr", ["argExpr", lhs], rhs] : lhs}
 
 // 95
 CastExpr
- = lhs:ArrowExpr rhs:(_ "cast" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castExpr", ["argExpr", lhs], ["singleType", rhs]] : lhs}
+ = lhs:ArrowExpr rhs:(_ "cast" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castExpr", ["argExpr", lhs], rhs] : lhs}
 
 // 96
 ArrowExpr
@@ -1079,7 +1079,7 @@ CurlyArrayConstructor
 
 // 182
 SingleType
- = typeName:SimpleTypeName optional:"?"? {return optional ? ["singleType", ["atomicType", typeName], ["optional"]] : ["singleType", ["atomicType", typeName]]}
+ = typeName:SimpleTypeName optional:"?"? {return optional ? ["singleType", ["atomicType"].concat(typeName), ["optional"]] : ["singleType", ["atomicType"].concat(typeName)]}
 
 // 183
 TypeDeclaration

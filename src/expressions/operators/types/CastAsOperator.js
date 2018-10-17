@@ -8,12 +8,12 @@ import castToType from '../../dataTypes/castToType';
 class castAsOperator extends Expression {
 	/**
 	 * @param  {!Expression}  expression
-	 * @param  {{prefix:string, namespaceURI:string, name}}    targetType
+	 * @param  {{prefix:string, namespaceURI:string, localName}}    targetType
 	 * @param  {!boolean}   allowsEmptySequence
 	 */
 	constructor (expression, targetType, allowsEmptySequence) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
-		this._targetType = targetType.prefix ? `${targetType.prefix}:${targetType.name}` : targetType.name;
+		this._targetType = targetType.prefix ? `${targetType.prefix}:${targetType.localName}` : targetType.localName;
 		if (this._targetType === 'xs:anyAtomicType' || this._targetType === 'xs:anySimpleType' || this._targetType === 'xs:NOTATION') {
 			throw new Error('XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.');
 		}
