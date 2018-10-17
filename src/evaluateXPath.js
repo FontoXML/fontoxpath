@@ -177,7 +177,8 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 	const wrappedDomFacade = new DomFacade(domFacade);
 
 	const compilationOptions = {
-		allowXQuery: options.language === 'XQuery3.1'
+		allowXQuery: options.language === 'XQuery3.1',
+		disableCache: options.disableCache
 	};
 
 	const moduleImports = options['moduleImports'] || Object.create(null);

@@ -29,6 +29,7 @@ async function rerunXPath () {
 			null,
 			null,
 			{
+				disableCache: true,
 				language: allowXQuery.checked ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE
 			}
 		);
