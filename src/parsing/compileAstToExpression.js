@@ -180,7 +180,7 @@ function compile (ast, compilationOptions) {
 		case 'CDataSection':
 			return CDataSection(ast, compilationOptions);
 		default:
-			compileTest(ast, compilationOptions);
+			return compileTest(ast, compilationOptions);
 	}
 }
 
@@ -438,7 +438,8 @@ function instanceOf (ast, compilationOptions) {
 	const occurrence = astHelper.followPath(ast, ['sequenceType', 'occurrenceIndicator']);
 
 	return new InstanceOfOperator(
-		expression, compile(sequenceType, compilationOptions),
+		expression,
+		compile(sequenceType, compilationOptions),
 		occurrence ? astHelper.getTextContent(occurrence) : '');
 }
 
