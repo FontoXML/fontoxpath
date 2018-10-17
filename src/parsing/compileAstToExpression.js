@@ -195,6 +195,8 @@ function compileTest (ast, compilationOptions) {
 			return commentTest(ast, compilationOptions);
 		case 'textTest':
 			return textTest(ast, compilationOptions);
+		case 'attributeTest':
+			return attributeTest(ast, compilationOptions);
 		case 'elementTest':
 			return elementTest(ast, compilationOptions);
 		case 'anyKindTest':
@@ -599,6 +601,10 @@ function commentTest (ast, compilationOptions) {
 
 function elementTest (ast, compilationOptions) {
 	return new KindTest(1);
+}
+
+function attributeTest (ast, compilationOptions) {
+	return new KindTest(2);
 }
 
 function textTest (_ast, _compilationOptions) {
