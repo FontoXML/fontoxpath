@@ -90,7 +90,8 @@ function compile (ast, compilationOptions) {
 			return sequence(ast, compilationOptions);
 		case 'unionOp':
 			return unionOp(ast, compilationOptions);
-		case 'intersectExcept':
+		case 'exceptOp':
+		case 'intersectOp':
 			return intersectExcept(ast, compilationOptions);
 		case 'stringConcatenateOp':
 			return stringConcatenateOp(ast, compilationOptions);
@@ -734,7 +735,11 @@ function unionOp (ast, compilationOptions) {
 }
 
 function intersectExcept (ast, compilationOptions) {
-	return new IntersectExcept(ast[0], compile(ast[1], compilationOptions), compile(ast[2], compilationOptions));
+	return new IntersectExcept(
+		ast[0],
+		compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions),
+		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions)
+	);
 }
 
 function varRef (ast, _compilationOptions) {
