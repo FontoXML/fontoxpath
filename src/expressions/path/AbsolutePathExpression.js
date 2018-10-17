@@ -1,5 +1,6 @@
 import Expression from '../Expression';
 import Sequence from '../dataTypes/Sequence';
+import Specificity from '../Specificity';
 import createNodeValue from '../dataTypes/createNodeValue';
 
 /**
@@ -11,14 +12,15 @@ class AbsolutePathExpression extends Expression {
 	 */
 	constructor (relativePathExpression) {
 		super(
-			relativePathExpression.specificity,
-			[relativePathExpression],
+			relativePathExpression ? relativePathExpression.specificity : new Specificity({}),
+			relativePathExpression ? [relativePathExpression] : [],
 			{
 				resultOrder: Expression.RESULT_ORDERINGS.SORTED,
 				subtree: false,
 				peer: false,
 				canBeStaticallyEvaluated: false
-			});
+			}
+		);
 
 		this._relativePathExpression = relativePathExpression;
 	}
@@ -31,8 +33,10 @@ class AbsolutePathExpression extends Expression {
 		var documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;
 		// Assume this is the start, so only one node
 		var contextSequence = Sequence.singleton(createNodeValue(documentNode));
-		return this._relativePathExpression.evaluateMaybeStatically(
-			dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence), executionParameters);
+		return this._relativePathExpression ?
+			this._relativePathExpression.evaluateMaybeStatically(
+			dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence), executionParameters) :
+			contextSequence;
 	}
 
 }

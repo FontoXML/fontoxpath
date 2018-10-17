@@ -627,6 +627,9 @@ function pathExpr (ast, compilationOptions) {
 		return steps[0];
 	}
 
+	if (isAbsolute && steps.length === 0) {
+		return new AbsolutePathExpression();
+	}
 	const pathExpr = new PathExpression(steps, requireSorting);
 	if (isAbsolute) {
 		return new AbsolutePathExpression(pathExpr);
