@@ -566,7 +566,7 @@ function pathExpr (ast, compilationOptions) {
 			return stepExpression;
 		}
 		return astHelper.getChildren(predicates, '*')
-			.reduceRight(
+			.reduce(
 				(innerStep, predicate) => new Filter(innerStep, compile(predicate, compilationOptions)),
 				stepExpression);
 
