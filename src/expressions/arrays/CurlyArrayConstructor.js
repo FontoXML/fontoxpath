@@ -24,6 +24,9 @@ class CurlyArrayConstructor extends Expression {
 	}
 
 	evaluate (dynamicContext, executionParameters) {
+		if (this._members.length === 0) {
+			return Sequence.singleton(new ArrayValue([]));
+		}
 		return this._members[0].evaluateMaybeStatically(dynamicContext, executionParameters)
 			.mapAll(allValues => Sequence.singleton(new ArrayValue(allValues.map(Sequence.singleton))));
 	}
