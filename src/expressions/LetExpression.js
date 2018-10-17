@@ -6,7 +6,7 @@ import createDoublyIterableSequence from './util/createDoublyIterableSequence';
  */
 class LetExpression extends Expression {
 	/**
-	 * @param  {{prefix:string, namespaceURI:string, localName: string}}    rangeVariable
+	 * @param  {{prefix:string, namespaceURI:?string, localName: string}}    rangeVariable
 	 * @param  {Expression}  bindingSequence
 	 * @param  {Expression}  returnExpression
 	 */

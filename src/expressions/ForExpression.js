@@ -1,6 +1,5 @@
 import Expression from './Expression';
 import Sequence from './dataTypes/Sequence';
-import Specificity from './Specificity';
 import { DONE_TOKEN } from './util/iterators';
 
 /**
@@ -8,7 +7,7 @@ import { DONE_TOKEN } from './util/iterators';
  */
 class ForExpression extends Expression {
 	/**
-	 * @param  {{prefix:string, namespaceURI:string, name: string}}    rangeVariable
+	 * @param  {{prefix:string, namespaceURI:?string, localName: string}}    rangeVariable
 	 * @param  {Expression}  clauseExpression
 	 * @param  {Expression}  returnExpression
 	 */
@@ -26,13 +25,7 @@ class ForExpression extends Expression {
 
 		this._variableBindingKey = null;
 
-		/**
-		 * @type {!Expression}
-		 */
 		this._clauseExpression = clauseExpression;
-		/**
-		 * @type {!Expression}
-		 */
 		this._returnExpression = returnExpression;
 	}
 

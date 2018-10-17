@@ -4,12 +4,11 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 class NameTest extends TestAbstractExpression {
 	/**
-	 * @param  {?string}  prefix
-	 * @param  {?string}  namespaceURI
-	 * @param  {string}   localName
+	 * @param  {{prefix:string, namespaceURI: ?string, localName: string}} name
 	 * @param  {{kind: ?number}} [options=]
 	 */
-	constructor ({ prefix, namespaceURI, localName }, options = { kind: null }) {
+	constructor (name, options = { kind: null }) {
+		const { prefix, namespaceURI, localName } = name;
 		const specificity = {};
 
 		if (localName !== '*') {

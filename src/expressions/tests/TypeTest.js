@@ -4,7 +4,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 class TypeTest extends TestAbstractExpression {
 	/**
-	 * @param  {QName}
+	 * @param  {{prefix:string, namespaceURI: ?string, localName: string}} type
 	 */
 	constructor (type) {
 		super(new Specificity({}));

@@ -82,8 +82,8 @@ export default function processProlog (prolog, staticContext) {
 		let declarationNamespaceURI = astHelper.getAttribute(functionName, 'URI');
 		const declarationLocalName = astHelper.getTextContent(functionName);
 
-		if (!declarationNamespaceURI) {
-			declarationNamespaceURI = staticContext.resolveNamespace(declarationPrefix);
+		if (declarationNamespaceURI === null) {
+			declarationNamespaceURI = staticContext.resolveNamespace(declarationPrefix || '');
 
 			if (!declarationNamespaceURI && declarationPrefix) {
 				throw new Error(`XPST0081: The prefix "${declarationPrefix}" could not be resolved`);
@@ -98,14 +98,14 @@ export default function processProlog (prolog, staticContext) {
 		const isPublicDeclaration = astHelper
 			.getChildren(declaration, 'annotation')
 			.map(annotation => astHelper.getFirstChild(annotation, 'annotationName'))
-			.every(annotationName => !astHelper.getAttribute('URI') && astHelper.getTextContent(annotationName) !== 'private');
+			.every(annotationName => !astHelper.getAttribute(annotationName, 'URI') && astHelper.getTextContent(annotationName) !== 'private');
 
 		if (!declarationNamespaceURI) {
 			throw new Error('XQST0060: Functions declared in a module must reside in a namespace.');
 		}
 
 		// functionBody always has a single expression
-		const body = astHelper.getFirstChild(declaration, 'functionBody')[1];
+		const body = /** @type {!Array} */ (astHelper.getFirstChild(declaration, 'functionBody')[1]);
 		const returnType = astHelper.getTypeDeclaration(declaration);
 		const params = astHelper.getChildren(astHelper.getFirstChild(declaration, 'paramList'), 'param');
 		const paramNames = params.map(param => astHelper.getFirstChild(param, 'varName'));
@@ -124,8 +124,8 @@ export default function processProlog (prolog, staticContext) {
 			const prefix = astHelper.getAttribute(param, 'prefix');
 			const localName = astHelper.getTextContent(param);
 
-			if (!namespaceURI === null && prefix !== '*') {
-				namespaceURI = staticContext.resolveNamespace(prefix);
+			if (namespaceURI === null) {
+				namespaceURI = staticContext.resolveNamespace(prefix || '');
 			}
 			return staticContextLeaf.registerVariable(namespaceURI, localName);
 		});

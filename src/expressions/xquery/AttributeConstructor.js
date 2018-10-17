@@ -18,8 +18,8 @@ function createAttribute (nodesFactory, namespaceURI, name, value) {
  */
 class DirAttributeConstructor extends Expression {
 	/**
-	 * @param  {!QName}                                            name
-	 * @param  {!{valueString: ?string, valueExprParts: Array<!Expression>}}  value
+	 * @param  {{prefix:string, namespaceURI: ?string, localName: string}} name
+	 * @param  {!{valueString: ?string}|{valueExprParts: Array<!Expression>}}  value
 	 */
 	constructor (name, value) {
 		super(

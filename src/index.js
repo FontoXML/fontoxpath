@@ -21,6 +21,11 @@ import astHelper from './parsing/astHelper';
 function parseXPath (xpathString) {
 	const ast = parseExpression(xpathString, { allowXQuery: false });
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
+
+	if (queryBody === null) {
+		throw new Error('Library modules do not have a specificity');
+	}
+
 	return compileAstToExpression(queryBody, { allowXQuery: false });
 }
 

@@ -52,18 +52,8 @@ import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import DirCommentConstructor from '../expressions/xquery/DirCommentConstructor';
 import DirPIConstructor from '../expressions/xquery/DirPIConstructor';
 
-// Basic and incomplete implementation of single steps as defined in XPATH 1.0 (http://www.w3.org/TR/xpath/)
-// Only single steps are allowed, because that's what expressions offer. Anyway: all paths have synonyms as (nested) predicates.
-// Missing:
-//  * various functions, such as:
-//    * last()
-//    * first()
-//    * position()
-//    * name()
-//  * operators, such as >, <, *, +, | and =, unless in the context of attributes
-//  * variables
 /**
- * @param   {!Array<?>}               ast
+ * @param   {Array<?>}                ast
  * @param   {{allowXQuery:boolean}}   compilationOptions
  * @return  {!Expression}
  */
@@ -115,31 +105,6 @@ function compile (ast, compilationOptions) {
 		case 'nodeBeforeOp':
 		case 'nodeAfterOp':
 			return compare(ast, compilationOptions);
-
-
-			// Tests
-		case 'nameTest':
-			return nameTest(ast, compilationOptions);
-		case 'kindTest':
-			return kindTest(ast, compilationOptions);
-		case 'piTest':
-			return piTest(ast, compilationOptions);
-		case 'commentTest':
-			return commentTest(ast, compilationOptions);
-		case 'textTest':
-			return textTest(ast, compilationOptions);
-		case 'elementTest':
-			return elementTest(ast, compilationOptions);
-		case 'anyKindTest':
-			return anyKindTest(ast, compilationOptions);
-		case 'anyMapTest':
-			return anyMapTest(ast, compilationOptions);
-		case 'anyArrayTest':
-			return anyArrayTest(ast, compilationOptions);
-		case 'Wildcard':
-			return wildcard(ast, compilationOptions);
-		case 'atomicType':
-			return typeTest(ast, compilationOptions);
 
 			// Path
 		case 'pathExpr':
@@ -214,6 +179,35 @@ function compile (ast, compilationOptions) {
 			return computedPIConstructor(ast, compilationOptions);
 		case 'CDataSection':
 			return CDataSection(ast, compilationOptions);
+		default:
+			throw new Error('No selector counterpart for: ' + ast[0] + '.');
+	}
+}
+
+function compileTest (ast, compilationOptions) {
+	switch (ast[0]) {
+			// Tests
+		case 'nameTest':
+			return nameTest(ast, compilationOptions);
+		case 'piTest':
+			return piTest(ast, compilationOptions);
+		case 'commentTest':
+			return commentTest(ast, compilationOptions);
+		case 'textTest':
+			return textTest(ast, compilationOptions);
+		case 'elementTest':
+			return elementTest(ast, compilationOptions);
+		case 'anyKindTest':
+			return anyKindTest(ast, compilationOptions);
+		case 'anyMapTest':
+			return anyMapTest(ast, compilationOptions);
+		case 'anyArrayTest':
+			return anyArrayTest(ast, compilationOptions);
+		case 'Wildcard':
+			return wildcard(ast, compilationOptions);
+		case 'atomicType':
+			return typeTest(ast, compilationOptions);
+
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}
@@ -477,50 +471,8 @@ function nameTest (ast, _compilationOptions) {
 	return new NameTest(astHelper.getQName(ast));
 }
 
-function kindTest (ast, _compilationOptions) {
-	switch (ast[0]) {
-		case 'item()':
-			return new UniversalExpression();
-		case 'node()':
-			return new TypeTest(null, null, 'node()');
-		case 'element()':
-			if (ast.length === 2) {
-				return new NameTest(ast[1][0], ast[1][1], ast[1][2], { kind: 1 });
-			}
-
-			if (ast.length > 2) {
-				throw new Error('element() with more than 1 argument is not supported.');
-			}
-
-			return new KindTest(1);
-		case 'text()':
-			return new KindTest(3);
-		case 'processing-instruction()':
-			if (ast.length > 1) {
-				return new PITest(ast[1]);
-			}
-			return new KindTest(7);
-		case 'comment()':
-			return new KindTest(8);
-		case 'document-node()':
-			return new KindTest(9);
-		case 'attribute()':
-			if (ast.length === 2) {
-				return new NameTest(ast[1][0], ast[1][1], ast[1][2], { kind: 2 });
-			}
-
-			if (ast.length > 2) {
-				throw new Error('attribute() with more than 1 argument is not supported.');
-			}
-
-			return new KindTest(2);
-		default:
-			throw new Error('Unrecognized nodeType: ' + ast[0]);
-	}
-}
-
 function anyKindTest (ast, compilationOptions) {
-	return new TypeTest({ prefix: null, localName: 'node()' });
+	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'node()' });
 }
 
 function orOp (ast, compilationOptions) {
@@ -564,40 +516,40 @@ function pathExpr (ast, compilationOptions) {
 
 				switch (astHelper.getTextContent(axis)) {
 					case 'ancestor':
-						stepExpression = new AncestorAxis(compile(test, compilationOptions), { inclusive: false });
+						stepExpression = new AncestorAxis(compileTest(test, compilationOptions), { inclusive: false });
 						break;
 					case 'ancestor-or-self':
-						stepExpression = new AncestorAxis(compile(test, compilationOptions), { inclusive: true });
+						stepExpression = new AncestorAxis(compileTest(test, compilationOptions), { inclusive: true });
 						break;
 					case 'attribute':
-						stepExpression = new AttributeAxis(compile(test, compilationOptions));
+						stepExpression = new AttributeAxis(compileTest(test, compilationOptions));
 						break;
 					case 'child':
-						stepExpression = new ChildAxis(compile(test, compilationOptions));
+						stepExpression = new ChildAxis(compileTest(test, compilationOptions));
 						break;
 					case 'descendant':
-						stepExpression = new DescendantAxis(compile(test, compilationOptions), { inclusive: false });
+						stepExpression = new DescendantAxis(compileTest(test, compilationOptions), { inclusive: false });
 						break;
 					case 'descendant-or-self':
-						stepExpression = new DescendantAxis(compile(test, compilationOptions), { inclusive: true });
+						stepExpression = new DescendantAxis(compileTest(test, compilationOptions), { inclusive: true });
 						break;
 					case 'parent':
-						stepExpression = new ParentAxis(compile(test, compilationOptions));
+						stepExpression = new ParentAxis(compileTest(test, compilationOptions));
 						break;
 					case 'following-sibling':
-						stepExpression = new FollowingSiblingAxis(compile(test, compilationOptions));
+						stepExpression = new FollowingSiblingAxis(compileTest(test, compilationOptions));
 						break;
 					case 'preceding-sibling':
-						stepExpression = new PrecedingSiblingAxis(compile(test, compilationOptions));
+						stepExpression = new PrecedingSiblingAxis(compileTest(test, compilationOptions));
 						break;
 					case 'following':
-						stepExpression = new FollowingAxis(compile(test, compilationOptions));
+						stepExpression = new FollowingAxis(compileTest(test, compilationOptions));
 						break;
 					case 'preceding':
-						stepExpression = new PrecedingAxis(compile(test, compilationOptions));
+						stepExpression = new PrecedingAxis(compileTest(test, compilationOptions));
 						break;
 					case 'self':
-						stepExpression = new SelfExpression(compile(test, compilationOptions));
+						stepExpression = new SelfExpression(compileTest(test, compilationOptions));
 						break;
 				}
 			}
@@ -628,7 +580,7 @@ function pathExpr (ast, compilationOptions) {
 	}
 
 	if (isAbsolute && steps.length === 0) {
-		return new AbsolutePathExpression();
+		return new AbsolutePathExpression(null);
 	}
 	const pathExpr = new PathExpression(steps, requireSorting);
 	if (isAbsolute) {
@@ -649,12 +601,12 @@ function elementTest (ast, compilationOptions) {
 	return new KindTest(1);
 }
 
-function textTest () {
+function textTest (_ast, _compilationOptions) {
 	return new KindTest(3);
 }
 
 function quantified (ast, compilationOptions) {
-	const inClauseExpressions = ast[1].map(([_name, expression]) => {
+	const inClauseExpressions = astHelper.getFirstChild(ast, '*').map(([_name, expression]) => {
 		return compile(expression, compilationOptions);
 	});
 	const inClauseNames = ast[1].map(([[namespaceURI, prefix, name], _expression]) => {
@@ -687,6 +639,7 @@ function stringConcatenateOp (ast, compilationOptions) {
 		new NamedFunctionRef(
 			{
 				namespaceURI: 'http://www.w3.org/2005/xpath-functions',
+				prefix: '',
 				localName: 'concat'
 			},
 			args.length),
@@ -701,6 +654,7 @@ function rangeSequenceExpr (ast, compilationOptions) {
 		new NamedFunctionRef(
 			{
 				namespaceURI: 'http://fontoxpath/operators',
+				prefix: '',
 				localName: 'to'
 			},
 			args.length),
@@ -713,11 +667,11 @@ function typeTest (ast, _compilationOptions) {
 }
 
 function anyMapTest (_ast, _compilationOptions) {
-	return new TypeTest({ prefix: null, localName: 'map(*)' });
+	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'map(*)' });
 }
 
 function anyArrayTest (_ast, _compilationOptions) {
-	return new TypeTest({ prefix: null, localName: 'array(*)' });
+	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'array(*)' });
 }
 
 function unaryPlus (ast, compilationOptions) {
@@ -753,6 +707,7 @@ function varRef (ast, _compilationOptions) {
 function wildcard (ast, compilationOptions) {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return new NameTest({
+			namespaceURI: null,
 			prefix: '*',
 			localName: '*'
 		});
@@ -760,6 +715,7 @@ function wildcard (ast, compilationOptions) {
 	const uri = astHelper.getFirstChild(ast, 'uri');
 	if (uri) {
 		return new NameTest({
+			prefix: '',
 			namespaceURI: astHelper.getTextContent(uri),
 			localName: '*'
 		});
@@ -770,6 +726,7 @@ function wildcard (ast, compilationOptions) {
 	if (astHelper.getFirstChild(ast, '*')[0] === 'star') {
 		// The prefix is 'starred'
 		return new NameTest({
+		namespaceURI: null,
 			prefix: '*',
 			localName: astHelper.getTextContent(ncName)
 		});
@@ -777,6 +734,7 @@ function wildcard (ast, compilationOptions) {
 
 	// The localName is 'starred'
 	return new NameTest({
+		namespaceURI: null,
 		prefix: astHelper.getTextContent(ncName),
 		localName: '*'
 	});

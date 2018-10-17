@@ -4,7 +4,6 @@ import StaticContext from '../expressions/StaticContext';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import compileAstToExpression from './compileAstToExpression';
 import processProlog from './processProlog';
-import Expression from '../expressions/Expression';
 
 import astHelper from './astHelper';
 
@@ -25,13 +24,15 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 	}
 
 	const ast = parseExpression(xpathString, compilationOptions);
-	if (astHelper.getFirstChild(ast, 'libraryModule')) {
-		throw new Error('Can not execute a library module.');
-	}
 
 	const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 	const prolog = astHelper.getFirstChild(mainModule, 'prolog');
 	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
+	if (!queryBodyContents) {
+		// This must be a library module
+		throw new Error('Can not execute a library module.');
+	}
+
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
 	if (prolog) {

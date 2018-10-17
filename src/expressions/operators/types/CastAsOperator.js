@@ -8,7 +8,7 @@ import castToType from '../../dataTypes/castToType';
 class castAsOperator extends Expression {
 	/**
 	 * @param  {!Expression}  expression
-	 * @param  {{prefix:string, namespaceURI:string, localName}}    targetType
+	 * @param  {{prefix:string, namespaceURI:?string, localName:string}}    targetType
 	 * @param  {!boolean}   allowsEmptySequence
 	 */
 	constructor (expression, targetType, allowsEmptySequence) {

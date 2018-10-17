@@ -30,7 +30,7 @@ if (supportsAsyncCompilation()) {
 		'	var ast;',
 		'	try {',
 		'		// We are not interested in parsing XQuery async (yet)',
-		'		ast = self.xPathParser.parse(event.data.xPath, { startRule: "QueryBody" });',
+		'		ast = self.xPathParser.parse(event.data.xPath);',
 		'	} catch (error) {',
 		'		self.postMessage({',
 		'			success: false,',
@@ -216,7 +216,8 @@ if (supportsAsyncCompilation()) {
 else {
 	createExpressionFromXPathAsync = xPathString => new Promise(resolve => {
 		const ast = parseExpression(xPathString, { allowXQuery: false });
-		return resolve(compileAstToExpression(astHelper.followPath(ast, ['mainModule', 'queryBody', '*'])), { allowXQuery: false });
+		const queryBody = /** @type {!Array} */ (astHelper.followPath(ast, ['mainModule', 'queryBody', '*']));
+		resolve(compileAstToExpression(queryBody, { allowXQuery: false }));
 	});
 }
 
