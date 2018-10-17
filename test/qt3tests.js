@@ -97,7 +97,8 @@ function createAsserter (baseUrl, assertNode, language) {
 		createElementNS: assertNode.ownerDocument.createElementNS.bind(assertNode.ownerDocument),
 		createTextNode: assertNode.ownerDocument.createTextNode.bind(assertNode.ownerDocument),
 		createComment: assertNode.ownerDocument.createComment.bind(assertNode.ownerDocument),
-		createProcessingInstruction: assertNode.ownerDocument.createProcessingInstruction.bind(assertNode.ownerDocument)
+		createProcessingInstruction: assertNode.ownerDocument.createProcessingInstruction.bind(assertNode.ownerDocument),
+		createAttributeNS: assertNode.ownerDocument.createAttributeNS.bind(assertNode.ownerDocument)
 	};
 
 	switch (assertNode.localName) {
