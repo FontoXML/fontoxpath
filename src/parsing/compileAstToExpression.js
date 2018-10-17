@@ -600,11 +600,21 @@ function commentTest (ast, compilationOptions) {
 }
 
 function elementTest (ast, compilationOptions) {
-	return new KindTest(1);
+	const elementName = astHelper.getFirstChild(ast, 'elementName');
+	const star = elementName && astHelper.getFirstChild(elementName, 'star');
+	if (!elementName || star) {
+		return new KindTest(1);
+	}
+	return new NameTest(astHelper.getQName(astHelper.getFirstChild(elementName, 'QName')), {kind: 1});
 }
 
 function attributeTest (ast, compilationOptions) {
-	return new KindTest(2);
+	const attributeName = astHelper.getFirstChild(ast, 'attributeName');
+	const star = attributeName && astHelper.getFirstChild(attributeName, 'star');
+	if (!attributeName || star) {
+		return new KindTest(2);
+	}
+	return new NameTest(astHelper.getQName(astHelper.getFirstChild(attributeName, 'QName')), { kind: 2 });
 }
 
 function textTest (_ast, _compilationOptions) {

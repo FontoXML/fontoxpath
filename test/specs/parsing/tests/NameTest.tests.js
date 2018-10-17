@@ -23,7 +23,6 @@ describe('nameTests', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('self::*', element));
 	});
 
-
 	it('allows wildcards for just the localName part', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'ns:someElement');
 		chai.assert.isTrue(evaluateXPathToBoolean('self::someNs:*', element, null, null, {
