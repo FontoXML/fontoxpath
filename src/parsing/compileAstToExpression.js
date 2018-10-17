@@ -187,6 +187,8 @@ function compile (ast, compilationOptions) {
 function compileTest (ast, compilationOptions) {
 	switch (ast[0]) {
 			// Tests
+		case 'anyItemType':
+			return anyItemType(ast, compilationOptions);
 		case 'nameTest':
 			return nameTest(ast, compilationOptions);
 		case 'piTest':
@@ -212,6 +214,10 @@ function compileTest (ast, compilationOptions) {
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}
+}
+
+function anyItemType (ast, compilationOptions) {
+	return new UniversalExpression();
 }
 
 function arrayConstructor (ast, compilationOptions) {
