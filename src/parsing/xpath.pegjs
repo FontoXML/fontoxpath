@@ -17,6 +17,10 @@ function assertValidCodePoint (codePoint) {
 }
 
 function parseCharacterReferences (input) {
+	if (!options.xquery) {
+	   // XPath does not know of character references
+	   return input;
+	}
     return input
         .replace(/(&[^;]+);/g, function (match) {
             if (/^&#x/.test(match)) {
@@ -28,18 +32,6 @@ function parseCharacterReferences (input) {
                 var codePoint = parseInt(match.slice(2, -1), 10);
                 assertValidCodePoint(codePoint);
                 return String.fromCodePoint(codePoint);
-            }
-            switch (match) {
-                case '&lt;':
-                    return '<';
-                case '&gt;':
-                    return '>';
-                case '&amp;':
-                    return '&';
-                case '&quot;':
-                    return String.fromCharCode(34);
-                case '&apos;':
-                    return String.fromCharCode(39);
             }
 
             throwError("XPST0003", "Unknown character reference: \"" + match + "\"");
@@ -1241,8 +1233,8 @@ DoubleLiteral
 
 // 222
 StringLiteral
- = ('"' lit:(PredefinedEntityRef / CharRef / EscapeQuot / [^"&])* '"' {return lit.join('')})
- / ("'" lit:(PredefinedEntityRef / CharRef / EscapeApos / [^'&])* "'" {return lit.join('')})
+ = ("\"" lit:(PredefinedEntityRef / CharRef / EscapeQuot / [^\"&])* "\"" {return lit.join("")})
+ / ("'" lit:(PredefinedEntityRef / CharRef / EscapeApos / [^'&])* "'" {return lit.join("")})
 
 // 223
 URIQualifiedName = uri:BracedURILiteral localName:NCName {return [uri, localName]}
@@ -1253,11 +1245,11 @@ BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').trim()}
 // 225 TODO: Not in XPath mode
 PredefinedEntityRef
  = "&" c:(
-    "lt" {return "<"}
-    / "gt" {return ">"}
-    / "amp" {return "&"}
-    / "quot" {return "&"}
-    / "apos" {return "\'"}) ";" {return c}
+    "lt" {return options.xquery ? "<" : "&lt;"}
+    / "gt" {return options.xquery ? ">" : "&gt;"}
+    / "amp" {return options.xquery ? "&" : "&amp;"}
+    / "quot" {return options.xquery ? "&" : "&quot;"}
+    / "apos" {return options.xquery ? "\'" : "&apos;"}) ";" {return c}
 
 // 226
 EscapeQuot

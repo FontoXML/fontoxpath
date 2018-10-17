@@ -28,8 +28,7 @@ export default function parseExpression (xPathString, compilationOptions) {
 		if (cached) {
 			ast = cached;
 		} else {
-			// We are absolutely not interested in XQuery modules here
-			ast = parse(xPathString);
+			ast = parse(xPathString, { 'xquery': compilationOptions.allowXQuery });
 			storeParseResultInCache(xPathString, language, ast);
 		}
 		return ast;
