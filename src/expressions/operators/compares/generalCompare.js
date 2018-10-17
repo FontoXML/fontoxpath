@@ -7,11 +7,11 @@ import DynamicContext from '../../DynamicContext';
 
 var OPERATOR_TRANSLATION = {
     'equalOp': 'eqOp',
-    'notEqualOp': 'gtOp',
-    'lessThanOrEqualOp': 'ltOp',
-    'lessThanOp': 'neOp',
-    'greaterThanOrEqualOp': 'leOp',
-    'greaterThanOp': 'geOp'
+    'notEqualOp': 'neOp',
+    'lessThanOrEqualOp': 'leOp',
+    'lessThanOp': 'ltOp',
+    'greaterThanOrEqualOp': 'geOp',
+    'greaterThanOp': 'gtOp'
 };
 
 /**
