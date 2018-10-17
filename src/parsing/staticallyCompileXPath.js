@@ -17,10 +17,12 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, variables);
 
-	const fromCache = getStaticCompilationResultFromCache(xpathString, language, namespaceResolver, variables, moduleImports);
+	if (!compilationOptions.disableCache) {
+		const fromCache = getStaticCompilationResultFromCache(xpathString, language, namespaceResolver, variables, moduleImports);
 
-	if (fromCache) {
-		return fromCache;
+		if (fromCache) {
+			return fromCache;
+		}
 	}
 
 	const ast = parseExpression(xpathString, compilationOptions);
