@@ -6,6 +6,10 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
+/**
+ * @typedef {{prefix: string, namespaceURI: (string|null), localName: string}} QName
+ */
+let QName;
 
 /**
  * @extends Expression

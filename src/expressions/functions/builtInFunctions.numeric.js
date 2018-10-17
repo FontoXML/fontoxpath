@@ -196,7 +196,7 @@ function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _static
 				namespaceURI: '',
 				argumentTypes: [],
 				arity: 0,
-				returnType: 'map(*)'
+				returnType: { type: 'map(*)', occurrence: null }
 			}))
 		},
 		{
@@ -207,7 +207,7 @@ function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _static
 				namespaceURI: '',
 				argumentTypes: [{ type: 'item()', occurrence: '*' }],
 				arity: 1,
-				returnType: 'item()*'
+				returnType: { type: 'item()', occurrence: '*' }
 			}))
 		}
 	]));

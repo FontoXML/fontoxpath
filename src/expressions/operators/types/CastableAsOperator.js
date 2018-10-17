@@ -9,7 +9,7 @@ import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 class CastableAsOperator extends Expression {
 	/**
 	 * @param  {!Expression}  expression
-	 * @param  {{prefix:string, namespaceURI:string, localName}}    targetType
+	 * @param  {{prefix:string, namespaceURI:?string, localName:string}}    targetType
 	 * @param  {!boolean}   allowsEmptySequence
 	 */
 	constructor (expression, targetType, allowsEmptySequence) {

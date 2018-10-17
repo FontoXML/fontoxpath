@@ -8,12 +8,8 @@ export default class TypeDeclaration {
 		 */
 		this.type;
 		/**
-		 * @type {string}
+		 * @type {string|null}
 		 */
 		this.occurrence;
-		/**
-		 * @type {boolean}
-		 */
-		this.isRestArgument;
 	}
 }

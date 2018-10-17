@@ -1,9 +1,10 @@
 import builtInFunctions from './builtInFunctions';
 import Sequence from '../dataTypes/Sequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import RestArgument from '../dataTypes/RestArgument';
 
 /**
- * @typedef {({localName: !string, namespaceURI: string, arity: number, callFunction: !function(*): !Sequence, argumentTypes: !Array<string>, returnType: !string})}
+ * @typedef {{localName: !string, namespaceURI: string, arity: number, callFunction: !function(*): !Sequence, argumentTypes: !Array<!TypeDeclaration|!RestArgument>, returnType: !TypeDeclaration}}
  */
 let FunctionProperties;
 
@@ -125,16 +126,14 @@ function getFunctionByArity (functionNamespaceURI, functionLocalName, arity) {
 
 /**
  * @param   {string}          type
- * @return  {TypeDeclaration}
+ * @return  {!TypeDeclaration}
  */
 function splitType (type) {
 	// argumentType is something like 'xs:string?' or 'map(*)'
-	var parts = type.match(/^(.*[^+?*])([\+\*\?])?$/);
-	return parts[1] === '...' ? {
-		isRestArgument: true
-	} : {
+	var parts = type.match(/^(.*[^+?*])([+*?])?$/);
+	return {
 		type: parts[1],
-		occurrence: parts[2]
+		occurrence: parts[2] || null
 	};
 }
 
@@ -146,9 +145,15 @@ function registerFunction (namespaceURI, localName, argumentTypes, returnType, c
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
 		localName: localName,
 		namespaceURI: namespaceURI,
-		argumentTypes: argumentTypes.map(argumentType => splitType(argumentType)),
+		argumentTypes: argumentTypes
+			.map(
+				argumentType => argumentType === '...' ?
+					{
+						isRestArgument: true
+					} :
+				splitType(argumentType)),
 		arity: argumentTypes.length,
-		returnType: returnType,
+		returnType: splitType(returnType),
 		callFunction: callFunction
 	});
 }

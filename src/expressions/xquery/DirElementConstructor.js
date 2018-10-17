@@ -14,7 +14,7 @@ import concatSequences from '../util/concatSequences';
  */
 class DirElementConstructor extends Expression {
 	/**
-	 * @param  {{prefix:string, localName: string}}
+	 * @param  {{prefix:string, namespaceURI: ?string, localName: string}} name
 	 * @param  {!Array<!Expression>}  attributes
 	 * @param  {!Array<!{prefix: string, uri: string}>}     namespaceDeclarations
 	 * @param  {!Array<!Expression>}  contents  Strings and enclosed expressions

@@ -9,7 +9,7 @@ import valueCompare from './valueCompare';
  */
 class Compare extends Expression {
 	/**
-	 * @param  {Array<string>}    kind
+	 * @param  {string}       kind
 	 * @param  {!Expression}  firstExpression
 	 * @param  {!Expression}  secondExpression
 	 */

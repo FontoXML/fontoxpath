@@ -1,7 +1,12 @@
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 
 /**
- * @typedef {Array<string|Object|Array>} AST
+ * @typedef {{prefix: string, namespaceURI: (string|null), localName: string}} QName
+ */
+let QName;
+
+/**
+ * @typedef {Array<string|Object|AST>} AST
  */
 let AST;
 
@@ -11,7 +16,7 @@ let AST;
  * @param   {!AST}    ast   The parent
  * @param   {string}  name  The name of the children, without any prefixes
  *
- * @return  {Array<AST>}  The matching children
+ * @return  {!Array<!AST>}  The matching children
  */
 function getChildren (ast, name) {
 	const children = [];
@@ -52,7 +57,7 @@ function getFirstChild (ast, name) {
 /**
  * Get the textContent of the given ast node (assuming its type is simpleContent)
  *
- * @param   {!AST}    ast  The parent
+ * @param   {AST}    ast  The parent
  * @return  {string}  The string content
  */
 function getTextContent (ast) {
@@ -117,6 +122,10 @@ function getTypeDeclaration (ast) {
 		}
 	};
 
+
+	/**
+	 * @type {!string}
+	 */
 	const type = determineType(typeDeclarationAst);
 
 	let occurrence = null;
@@ -147,9 +156,9 @@ function followPath (ast, path) {
  * Get the value of the given attribute
  *
  * @param  {!AST}    ast
- * @param  {string}  name
+ * @param  {string}  attributeName
  *
- * @return {atring|null}
+ * @return {string|null}
  */
 function getAttribute (ast, attributeName) {
 	if (!Array.isArray(ast)) {
@@ -168,11 +177,11 @@ function getAttribute (ast, attributeName) {
  *
  * @param  {!AST}  ast
  *
- * @return {{prefix: ?string, namespaceURI: ?string, localName: string}}
+ * @return {!QName}
  */
 function getQName (ast) {
 	return {
-		prefix: getAttribute(ast, 'prefix'),
+		prefix: getAttribute(ast, 'prefix') || '',
 		namespaceURI: getAttribute(ast, 'URI'),
 		localName: getTextContent(ast)
 	};
