@@ -5,7 +5,7 @@ const log = document.getElementById('log');
 const resultText = document.getElementById('resultText');
 const xpathField = document.getElementById('xpathField');
 const allowXQuery = document.getElementById('allowXQuery');
-
+const bucketField = document.getElementById('bucketField');
 
 const domParser = new DOMParser();
 
@@ -60,6 +60,8 @@ async function rerunXPath () {
 	}
 
 	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
+
+	bucketField.innerText = allowXQuery.checked ? 'Buckets can not be used in XQuery' : fontoxpath.getBucketForSelector(xpathField.value);
 }
 
 xmlSource.oninput = _evt => {
