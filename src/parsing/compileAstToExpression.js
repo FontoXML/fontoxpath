@@ -145,7 +145,7 @@ function compile (ast, compilationOptions) {
 			return flworExpression(ast, compilationOptions);
 
 			// Quantified
-		case 'quantified':
+		case 'quantifiedExpr':
 			return quantified(ast, compilationOptions);
 
 			// Conditional
@@ -606,15 +606,17 @@ function textTest (_ast, _compilationOptions) {
 }
 
 function quantified (ast, compilationOptions) {
-	const inClauseExpressions = astHelper.getFirstChild(ast, '*').map(([_name, expression]) => {
-		return compile(expression, compilationOptions);
-	});
-	const inClauseNames = ast[1].map(([[namespaceURI, prefix, name], _expression]) => {
-		return {
-			namespaceURI, prefix, name
-		};
-	});
-	return new QuantifiedExpression(ast[0], inClauseNames, inClauseExpressions, compile(ast[2], compilationOptions));
+	const quantifier = astHelper.getTextContent(astHelper.getFirstChild(ast, 'quantifier'));
+	const predicateExpr = astHelper.followPath(ast, ['predicateExpr', '*']);
+	const quantifierInClauses = astHelper.getChildren(ast, 'quantifiedExprInClause')
+		.map(inClause => {
+			const name = astHelper.getQName(astHelper.followPath(inClause, ['typedVariableBinding', 'varName']));
+			const sourceExpr = astHelper.followPath(inClause, ['sourceExpr', '*']);
+
+			return { name, sourceExpr: compile(sourceExpr, compilationOptions) };
+		});
+
+	return new QuantifiedExpression(quantifier, quantifierInClauses, compile(predicateExpr, compilationOptions));
 }
 
 function sequence (ast, compilationOptions) {
