@@ -49,13 +49,13 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 	}
 
 	if (isSubtypeOf(typeA, 'xs:QName') && isSubtypeOf(typeB, 'xs:QName')) {
-		if (operator === 'eq') {
+		if (operator === 'eqOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return castA.value.namespaceURI === castB.value.namespaceURI && castA.value.localPart === castB.value.localPart;
 			};
 		}
-		if (operator === 'ne') {
+		if (operator === 'neOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
 				return castA.value.namespaceURI !== castB.value.namespaceURI || castA.value.localPart !== castB.value.localPart;
