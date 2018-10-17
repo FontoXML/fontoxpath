@@ -29,6 +29,15 @@ describe('KindTest', () => {
 	});
 
 
+	it('does not match if the names do not match', () => {
+		jsonMlMapper.parse([
+			'someOtherParentElement',
+			['AAAAA']
+		], documentNode);
+		chai.assert.isFalse(evaluateXPathToBoolean('self::element(BBBBB)', documentNode.documentElement.firstChild));
+	});
+
+
 	it('can select any text node -> text()', () => {
 		jsonMlMapper.parse([
 			'someOtherParentElement',
