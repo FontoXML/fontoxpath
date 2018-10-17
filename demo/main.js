@@ -41,7 +41,14 @@ async function rerunXPath () {
 	const raw = [];
 	for (let item = await it.next(); !item.done; item = await it.next()) {
 		if (item.value instanceof Node) {
-			raw.push(item.value.outerHTML);
+			switch (item.value.nodeType) {
+				case 2: // Attribute
+					raw.push(`${item.value.nodeName}="${item.value.nodeValue}"`);
+					break;
+				default:
+					raw.push(item.value.outerHTML);
+					break;
+			}
 		}
 		else {
 			raw.push(item.value);
