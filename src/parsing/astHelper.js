@@ -169,7 +169,7 @@ function getAttribute (ast, attributeName) {
 		return null;
 	}
 
-	return attrs[attributeName] || null;
+	return attributeName in attrs ? attrs[attributeName] : null;
 }
 
 /**

@@ -892,7 +892,7 @@ attribute
  = name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue
    {
      if (name.length === 1 && name[0] === "xmlns") {
-       if (typeof value[0] !== "string") {
+       if (value.length && typeof value[0] !== "string") {
          throwError("XQST0022", "A namespace declaration may not contain enclosed expressions");
        }
        return ["namespaceDeclaration", ["uri", value[0]]]
