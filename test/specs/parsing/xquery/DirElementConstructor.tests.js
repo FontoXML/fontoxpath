@@ -31,6 +31,9 @@ describe('DirElementConstructor', () => {
 	it('Allows creating namespaced elements', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('(<xxx:element xmlns:xxx="XXX"/>)', documentNode, undefined, {}, { language: 'XQuery3.1' }));
 	});
+	it('Allows creating elements with no namespace', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('(<element xmlns=""/>)/self::Q{}element', documentNode, undefined, {}, { language: 'XQuery3.1' }));
+	});
 	it('Allows creating namespaced elements with attributes', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('some $attr in <element xmlns="XXX" attr="0"/>/@* satisfies node-name($attr) => prefix-from-QName() => empty()', documentNode, undefined, {}, { language: 'XQuery3.1' }));
 	});
