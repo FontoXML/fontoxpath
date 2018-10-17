@@ -186,9 +186,9 @@ function compile (ast, compilationOptions) {
 
 		case 'instanceOfExpr':
 			return instanceOf(ast, compilationOptions);
-		case 'cast as':
+		case 'castExpr':
 			return castAs(ast, compilationOptions);
-		case 'castable as':
+		case 'castableExpr':
 			return castableAs(ast, compilationOptions);
 
 		case 'simpleMapExpr':
@@ -254,17 +254,23 @@ function binaryOperator (ast, compilationOptions) {
 }
 
 function castAs (ast, compilationOptions) {
-	const expression = compile(ast[0], compilationOptions);
-	const [[prefix, namespaceURI, name], multiplicity] = ast[1];
+	const expression = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'), compilationOptions);
 
-	return new CastAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
+	const singleType = astHelper.getFirstChild(ast, 'singleType');
+	const targetType = astHelper.getQName(astHelper.getFirstChild(singleType, 'atomicType'));
+	const optional = astHelper.getFirstChild(singleType, 'optional') !== null;
+
+	return new CastAsOperator(expression, targetType, optional);
 }
 
 function castableAs (ast, compilationOptions) {
-	const expression = compile(ast[0], compilationOptions);
-	const [[prefix, namespaceURI, name], multiplicity] = ast[1];
+	const expression = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'), compilationOptions);
 
-	return new CastableAsOperator(expression, { prefix, namespaceURI, name }, multiplicity);
+	const singleType = astHelper.getFirstChild(ast, 'singleType');
+	const targetType = astHelper.getQName(astHelper.getFirstChild(singleType, 'atomicType'));
+	const optional = astHelper.getFirstChild(singleType, 'optional') !== null;
+
+	return new CastableAsOperator(expression, targetType, optional);
 }
 
 // Binary compare (=, !=, le, is, <<, >>, etc)
