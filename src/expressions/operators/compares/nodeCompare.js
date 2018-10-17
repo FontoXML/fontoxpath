@@ -33,12 +33,12 @@ export default function nodeCompare (operator, domFacade, firstSequence, secondS
 							Sequence.singletonTrueSequence() :
 							Sequence.singletonFalseSequence();
 
-					case '<<':
+					case 'nodeBeforeOp':
 						return compareNodePositions(domFacade, first, second) < 0 ?
 							Sequence.singletonTrueSequence() :
 							Sequence.singletonFalseSequence();
 
-					case '>>':
+					case 'nodeAfterOp':
 						return compareNodePositions(domFacade, first, second) > 0 ?
 							Sequence.singletonTrueSequence() :
 							Sequence.singletonFalseSequence();

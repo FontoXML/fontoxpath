@@ -111,6 +111,8 @@ function compile (ast, compilationOptions) {
 		case 'gtOp':
 		case 'geOp':
 		case 'isOp':
+		case 'nodeBeforeOp':
+		case 'nodeAfterOp':
 			return compare(ast, compilationOptions);
 
 
