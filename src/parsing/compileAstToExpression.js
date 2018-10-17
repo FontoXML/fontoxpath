@@ -180,7 +180,7 @@ function compile (ast, compilationOptions) {
 		case 'CDataSection':
 			return CDataSection(ast, compilationOptions);
 		default:
-			throw new Error('No selector counterpart for: ' + ast[0] + '.');
+			compileTest(ast, compilationOptions);
 	}
 }
 
@@ -207,7 +207,6 @@ function compileTest (ast, compilationOptions) {
 			return wildcard(ast, compilationOptions);
 		case 'atomicType':
 			return typeTest(ast, compilationOptions);
-
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}
