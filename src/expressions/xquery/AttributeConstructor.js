@@ -61,7 +61,9 @@ class DirAttributeConstructor extends Expression {
 							.evaluate(dynamicContext, executionParameters)
 							.atomize(executionParameters)
 							.mapAll(allValues => Sequence.singleton(
-								createAtomicValue(allValues.map(val => val.value).join(' '), 'xs:string')
+								createAtomicValue(
+									allValues.map(val => val.value).join(' '),
+									'xs:string')
 							));
 					}))
 				.mapAll(
@@ -72,7 +74,9 @@ class DirAttributeConstructor extends Expression {
 									nodesFactory,
 									this._namespaceURI,
 									this._name,
-									allValueParts.map(val => val.value).join('')
+									allValueParts
+										.map(val => val.value)
+										.join('')
 								)
 							)
 						)

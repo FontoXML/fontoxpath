@@ -13,7 +13,7 @@ let xmlDoc;
 
 function setCookie () {
 	const source = encodeURIComponent(xmlSource.innerText);
-	const xpath = encodeURIComponent(xpathField.innerText.replace(/[\s]/g, ' '));
+	const xpath = encodeURIComponent(xpathField.innerText);
 
 	document.cookie = `xpath-editor-state=${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
 }
@@ -23,7 +23,7 @@ async function rerunXPath () {
 	log.innerText = '';
 	resultText.innerText = '';
 
-	const xpath = xpathField.innerText.replace(/[\s]/g, ' ');
+	const xpath = xpathField.innerText;
 
 	let it;
 	try {
