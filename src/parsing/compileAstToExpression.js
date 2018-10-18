@@ -49,7 +49,7 @@ import VarRef from '../expressions/VarRef';
 
 import DirElementConstructor from '../expressions/xquery/DirElementConstructor';
 import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
-import DirCommentConstructor from '../expressions/xquery/DirCommentConstructor';
+import CommentConstructor from '../expressions/xquery/CommentConstructor';
 import DirPIConstructor from '../expressions/xquery/DirPIConstructor';
 
 /**
@@ -837,7 +837,9 @@ function computedCommentConstructor (ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
-	return new DirCommentConstructor(astHelper.getTextContent(astHelper.getFirstChild(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), 'stringConstantExpr'), 'value')));
+	const argExpr = astHelper.getFirstChild(ast, 'argExpr');
+	const expr = argExpr ? compile(astHelper.getFirstChild(argExpr, '*')) : null;
+	return new CommentConstructor(expr);
 }
 
 function computedPIConstructor (ast, compilationOptions) {
