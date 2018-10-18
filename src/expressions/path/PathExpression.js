@@ -8,6 +8,17 @@ import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrder
 import { AsyncIterator } from '../util/iterators';
 import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 
+function isSameNodeValue (a, b) {
+	if (a === null || b === null) {
+		return false;
+	}
+	if (!isSubtypeOf(a.type, 'node()') || !isSubtypeOf(b.type, 'node()')) {
+		return false;
+	}
+
+	return a.value === b.value;
+}
+
 /**
  * @param   {!AsyncIterator<!Sequence>}  sequences
  * @return  {!Sequence}
@@ -47,7 +58,7 @@ function concatSortedSequences (_, sequences) {
 					}
 					currentIterator = currentSequence.value.value();
 				}
-			} while (value.done || value.value === previousValue);
+			} while (value.done || isSameNodeValue(value.value, previousValue));
 			previousValue = value.value;
 			return value;
 		}
@@ -151,7 +162,7 @@ function mergeSortedSequences (domFacade, sequences) {
 					}
 					allIterators.splice(low, 0, consumedIterator);
 				}
-			} while (previousNode === consumedValue.value);
+			} while (isSameNodeValue(consumedValue.value, previousNode));
 			previousNode = consumedValue.value;
 			return consumedValue;
 		}
