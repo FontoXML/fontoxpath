@@ -1,6 +1,6 @@
 {
 function makeBinaryOp (kind, lhs, rhs) {
-      return rhs.reduce(function(lh, rh) {return [kind, ["firstOperand", lh], ["secondOperand", rh]]}, lhs);
+    return rhs.reduce(function(lh, rh) {return [kind, ["firstOperand", lh], ["secondOperand", rh]]}, lhs);
 }
 
 function isAttributeTest (nodeTest) {
@@ -13,7 +13,7 @@ function assertValidCodePoint (codePoint) {
         (codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
         return;
     }
-    throwError("XQST0090", "The character reference ${codePoint} (${codePoint.toString(16)}) does not reference a valid codePoint.");
+    throwError("XQST0090", "The character reference " + codePoint + " ("  + codePoint.toString(16) + ") does not reference a valid codePoint.");
 }
 
 function parseCharacterReferences (input) {
@@ -51,30 +51,28 @@ function accumulateDirContents (parts, expressionsOnly, normalizeWhitespace) {
       return [];
     }
 
-    if (normalizeWhitespace) {
-        result = result.reduce(function (filteredItems, item, i) {
-            if (typeof item !== 'string') {
-              filteredItems.push(item);
-            }
-            else if (!/^\s*$/.test(item)) {
-                // Not only whitespace
+    result = result.reduce(function (filteredItems, item, i) {
+        if (typeof item !== 'string') {
+            filteredItems.push(item);
+        }
+        else if (!normalizeWhitespace || !/^\s*$/.test(item)) {
+            // Not only whitespace
+            filteredItems.push(parseCharacterReferences(item));
+        }
+        else {
+            var next = result[i + 1];
+            if (next && next[0] === "CDataSection") {
                 filteredItems.push(parseCharacterReferences(item));
             }
             else {
-                var next = result[i + 1];
-                if (next && next[0] === "CDataSection") {
+                var previous = result[i - 1];
+                if (previous && previous[0] === "CDataSection") {
                     filteredItems.push(parseCharacterReferences(item));
                 }
-                else {
-                    var previous = result[i - 1];
-                    if (previous && previous[0] === "CDataSection") {
-                        filteredItems.push(parseCharacterReferences(item));
-                    }
-                }
             }
-            return filteredItems;
-        }, []);
-    }
+        }
+        return filteredItems;
+    }, []);
 
     if (!result.length) {
         return result;
@@ -117,7 +115,7 @@ function wrapInSequenceExprIfNeeded(expr) {
         case "unaryLookup":
             return expr;
         }
-	return ["sequenceExpr", expr];
+    return ["sequenceExpr", expr];
 }
 
 function throwError (code, cause) {
@@ -250,7 +248,7 @@ SchemaImport
  = "import" S "schema"
    prefix:(S p:SchemaPrefix {return p})? _
    namespace:URILiteral
-   targetLocations:( S "at" S first:URILiteral rest:( S ","  S uri:URILiteral {return uri})* {return [first].concat(rest)})?
+   targetLocations:( S "at" S first:URILiteral rest:( S "," S uri:URILiteral {return uri})* {return [first].concat(rest)})?
    {
      return ["schemaImport"]
        .concat(prefix ? [prefix] : [])
@@ -493,9 +491,9 @@ quantifiedExprInClause
        [
          "typedVariableBinding",
          ["varName"].concat(varName)
-	   ].concat(type ? [type] : []),
-	   ["sourceExpr", exprSingle]
-	 ]
+       ].concat(type ? [type] : []),
+       ["sourceExpr", exprSingle]
+     ]
    }
 
 
@@ -880,7 +878,7 @@ DirectConstructor
 DirElemConstructor
  = "<" name:QName attList:DirAttributeList contents:(
    ("/>" {return null}) /
-   (">"  contents:DirElemContent* _ "</" endName:QName ExplicitWhitespace? ">"
+   (">"      contents:DirElemContent* _ "</" endName:QName ExplicitWhitespace? ">"
      {
        assertEqualQNames(name, endName);
        return accumulateDirContents(contents, true, true)
@@ -921,10 +919,10 @@ attribute
        "attributeConstructor",
        ["attributeName"].concat(name),
        value.length === 0 ?
-	     ["attributeValue"] :
-		 value.length === 1 && typeof value[0] === "string" ?
-		   ["attributeValue", value[0]] :
-		   ["attributeValueExpr"].concat(value)]}
+         ["attributeValue"] :
+         value.length === 1 && typeof value[0] === "string" ?
+           ["attributeValue", value[0]] :
+           ["attributeValueExpr"].concat(value)]}
 
 // 144
 DirAttributeValue
@@ -932,10 +930,10 @@ DirAttributeValue
  / "'" chars:(EscapeApos / AposAttrValueContent)* "'" {return accumulateDirContents(chars, false, false)}
 
 // 145
-QuotAttrValueContent = char:QuotAttrValueContentChar / CommonContent
+QuotAttrValueContent = char:QuotAttrValueContentChar {return char.replace(/[\x20\x0D\x0A\x09]/g, ' ')} / CommonContent
 
 // 146
-AposAttrValueContent = char:AposAttrValueContentChar / CommonContent
+AposAttrValueContent = char:AposAttrValueContentChar {return char.replace(/[\x20\x0D\x0A\x09]/g, ' ')} / CommonContent
 
 // 147
 // Note: changed the order around to prevent CDATA to be parsed as element content
@@ -950,7 +948,7 @@ CommonContent
 = char:PredefinedEntityRef
  / ref:CharRef
  / "{{" { return "\u007b" } // PegJS does not like unbalanced curly braces in JS context
- / "}}"  { return "\u007d" } // PegJS does not like unbalanced curly braces in JS context
+ / "}}" { return "\u007d" } // PegJS does not like unbalanced curly braces in JS context
  / expr:EnclosedExpr {return expr || ["sequenceExpr"]}
 
 // 149
