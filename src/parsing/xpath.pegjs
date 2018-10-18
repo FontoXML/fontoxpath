@@ -1220,7 +1220,7 @@ IntegerLiteral = digits:Digits {return ["integerConstantExpr", ["value", digits]
 
 // 220
 DecimalLiteral
- = "." digits:Digits {return ["decimalConstantExpr", ["value", digits]]}
+ = decimal:$("." Digits) {return ["decimalConstantExpr", ["value", decimal]]}
  / decimal:$(Digits "." Digits?) {return ["decimalConstantExpr", ["value", decimal]]}
 
 // 221
