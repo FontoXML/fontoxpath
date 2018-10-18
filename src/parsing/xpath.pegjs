@@ -1304,7 +1304,7 @@ Char = [\t\n\r -\uD7FF\uE000\uFFFD] / [\uD800-\uDBFF][\uDC00-\uDFFF] /* any Unic
 
 // 238
 Digits
- = digits:[0-9]+ {return parseInt(digits.join(""), 10)}
+ = digits:[0-9]+ {return digits.join("")}
 
 // 239
 CommentContents
