@@ -18,7 +18,6 @@ function setCookie () {
 	document.cookie = `xpath-editor-state=${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
 }
 
-
 async function rerunXPath () {
 	// Clear results from previous run
 	log.innerText = '';
@@ -46,22 +45,7 @@ async function rerunXPath () {
 
 	const raw = [];
 	for (let item = await it.next(); !item.done; item = await it.next()) {
-		if (item.value instanceof Node) {
-			switch (item.value.nodeType) {
-				case 2: // Attribute
-					raw.push(`${item.value.nodeName}="${item.value.nodeValue}"`);
-					break;
-				case 9: // Document
-					raw.push(item.value.nodeName);
-					break;
-				default:
-					raw.push(item.value.outerHTML);
-					break;
-			}
-		}
-		else {
-			raw.push(item.value);
-		}
+		raw.push(item.value instanceof Node ? new XMLSerializer().serializeToString(item.value) : item.value);
 	}
 
 	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
