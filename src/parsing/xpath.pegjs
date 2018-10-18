@@ -1,11 +1,11 @@
 {
-  function makeBinaryOp (kind, lhs, rhs) {
+function makeBinaryOp (kind, lhs, rhs) {
       return rhs.reduce(function(lh, rh) {return [kind, ["firstOperand", lh], ["secondOperand", rh]]}, lhs);
-  }
+}
 
-  function isAttributeTest (nodeTest) {
+function isAttributeTest (nodeTest) {
     return nodeTest[0] === "attributeTest" || nodeTest[0] === "schemaAttributeTest";
-  }
+}
 
 function assertValidCodePoint (codePoint) {
     if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
@@ -17,10 +17,10 @@ function assertValidCodePoint (codePoint) {
 }
 
 function parseCharacterReferences (input) {
-	if (!options.xquery) {
-	   // XPath does not know of character references
-	   return input;
-	}
+    if (!options.xquery) {
+        // XPath does not know of character references
+        return input;
+    }
     return input
         .replace(/(&#[^;]+);/g, function (match) {
             if (/^&#x/.test(match)) {
@@ -34,52 +34,64 @@ function parseCharacterReferences (input) {
         });
 }
 
-  function accumulateDirContents (parts, expressionsOnly, normalizeWhitespace) {
-        if (!parts.length) {
-            return [];
+function accumulateDirContents (parts, expressionsOnly, normalizeWhitespace) {
+    if (!parts.length) {
+        return [];
+    }
+    var result = [parts[0]];
+    for (var i = 1; i < parts.length; ++i) {
+        if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
+            result[result.length-1] += parts[i];
+            continue;
         }
-        var result = [parts[0]];
-        for (var i = 1; i < parts.length; ++i) {
-            if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
-                result[result.length-1] += parts[i];
-                continue;
-            }
-            result.push(parts[i]);
-        }
+        result.push(parts[i]);
+    }
 
-        if (typeof result[0] === "string" && result.length === 0) {
-          return [];
-        }
+    if (typeof result[0] === "string" && result.length === 0) {
+      return [];
+    }
 
-        if (normalizeWhitespace) {
-          result = result.reduce(function (filteredItems, item, i) {
+    if (normalizeWhitespace) {
+        result = result.reduce(function (filteredItems, item, i) {
             if (typeof item !== 'string') {
               filteredItems.push(item);
             }
             else if (!/^\s*$/.test(item)) {
-              // Not only whitespace
-              filteredItems.push(parseCharacterReferences(item));
+                // Not only whitespace
+                filteredItems.push(parseCharacterReferences(item));
+            }
+            else {
+                var next = result[i + 1];
+                if (next && next[0] === "CDataSection") {
+                    filteredItems.push(parseCharacterReferences(item));
+                }
+                else {
+                    var previous = result[i - 1];
+                    if (previous && previous[0] === "CDataSection") {
+                        filteredItems.push(parseCharacterReferences(item));
+                    }
+                }
             }
             return filteredItems;
-          }, []);
-        }
+        }, []);
+    }
 
-		if (!result.length) {
-		  return result;
-		}
-
-        if (result.length > 1 || expressionsOnly){
-          for (var i = 0; i < result.length; i++) {
-            if (typeof result[i] === "string") {
-              result[i] = ["stringConstantExpr", ["value", result[i]]];
-            }
-          }
-        }
+    if (!result.length) {
         return result;
     }
 
-    function wrapInSequenceExprIfNeeded(expr) {
-      switch(expr[0]){
+    if (result.length > 1 || expressionsOnly){
+        for (var i = 0; i < result.length; i++) {
+            if (typeof result[i] === "string") {
+                result[i] = ["stringConstantExpr", ["value", result[i]]];
+            }
+        }
+    }
+    return result;
+}
+
+function wrapInSequenceExprIfNeeded(expr) {
+    switch(expr[0]){
         // These expressions do not have to be wrapped (are allowed in a filterExpr)
         case "constantExpr":
         case "varRef":
@@ -103,32 +115,33 @@ function parseCharacterReferences (input) {
         case "arrayConstructor":
         case "stringConstructor":
         case "unaryLookup":
-          return expr;
-      }
-      return ["sequenceExpr", expr];
-    }
+            return expr;
+        }
+	return ["sequenceExpr", expr];
+}
 
-    function throwError (code, cause) {
-      throw new Error(code + ": " + cause);
-    }
+function throwError (code, cause) {
+    throw new Error(code + ": " + cause);
+}
 
-    function getQName (qname) {
-      return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1]
-    }
+function getQName (qname) {
+    return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1]
+}
 
-    function assertEqualQNames (a, b) {
-       var nameA = getQName(a);
-       var nameB = getQName(b);
-       if (nameA !== nameB) {
-         throwError(
+function assertEqualQNames (a, b) {
+   var nameA = getQName(a);
+   var nameB = getQName(b);
+   if (nameA !== nameB) {
+       throwError(
            "XQST0118",
            "The start and the end tag of an element constructor must be equal. \"" +
-             nameA +
-             "\" does not match \"" +
-             nameB +
-             "\"");
-       }
-    }
+               nameA +
+               "\" does not match \"" +
+               nameB +
+               "\"");
+   }
+}
+
 }
 
 // 1
