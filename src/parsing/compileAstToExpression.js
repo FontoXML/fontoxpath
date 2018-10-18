@@ -786,7 +786,7 @@ function dirElementConstructor (ast, compilationOptions) {
 		.map(namespaceDecl => {
 			const prefixElement = astHelper.getFirstChild(namespaceDecl, 'prefix');
 			return {
-				prefix: prefixElement ? astHelper.getTextContent(prefixElement) : null,
+				prefix: prefixElement ? astHelper.getTextContent(prefixElement) : '',
 				uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
 			};
 		}) : [];

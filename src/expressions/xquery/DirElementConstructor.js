@@ -43,7 +43,7 @@ class DirElementConstructor extends Expression {
 				if (namespaceDecl.prefix in namespacesInScope) {
 					throw new Error(`XQST0071: The namespace declaration with the prefix ${namespaceDecl.prefix} has already been declared on the constructed element.`);
 				}
-				namespacesInScope[namespaceDecl.prefix || ''] = namespaceDecl.uri;
+				namespacesInScope[namespaceDecl.prefix] = namespaceDecl.uri;
 				return namespacesInScope;
 			}, {});
 
