@@ -21,16 +21,34 @@ function parseCharacterReferences (input) {
         // XPath does not know of character references
         return input;
     }
+
     return input
-        .replace(/(&#[^;]+);/g, function (match) {
+        .replace(/(&[^;]+);/g, function (match) {
             if (/^&#x/.test(match)) {
                 var codePoint = parseInt(match.slice(3, -1), 16);
                 assertValidCodePoint(codePoint);
                 return String.fromCodePoint(codePoint);
             }
-            var codePoint = parseInt(match.slice(2, -1), 10);
-            assertValidCodePoint(codePoint);
-            return String.fromCodePoint(codePoint);
+
+            if (/^&#/.test(match)) {
+                var codePoint = parseInt(match.slice(2, -1), 10);
+                assertValidCodePoint(codePoint);
+                return String.fromCodePoint(codePoint);
+            }
+
+            switch (match) {
+                case '&lt;':
+                    return '<';
+                case '&gt;':
+                    return '>';
+                case '&amp;':
+                    return '&';
+                case '&quot;':
+                    return String.fromCharCode(34);
+                case '&apos;':
+                    return String.fromCharCode(39);
+            }
+            throwError("XPST0003", "Unknown character reference: \"" + match + "\"");
         });
 }
 
@@ -1257,14 +1275,9 @@ URIQualifiedName = uri:BracedURILiteral localName:NCName {return [uri, localName
 // 224
 BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').trim()}
 
-// 225 TODO: Not in XPath mode
+// 225
 PredefinedEntityRef
- = "&" c:(
-    "lt" {return "<"}
-    / "gt" {return ">"}
-    / "amp" {return "&"}
-    / "quot" {return "\""}
-    / "apos" {return "\'"}) ";" {return c}
+ = $("&" ( "lt" / "gt" / "amp" / "quot" / "apos") ";")
 
 // 226
 EscapeQuot
