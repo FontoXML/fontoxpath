@@ -442,7 +442,7 @@ function inlineFunction (ast, compilationOptions) {
 			};
 		}),
 		returnTypeDecl ? typeDeclarationToType(returnTypeDecl) : { type: 'item()', occurrence: '*' },
-		compile(functionBody, compilationOptions));
+		functionBody ? compile(functionBody, compilationOptions) : new SequenceOperator([]));
 }
 
 function instanceOf (ast, compilationOptions) {
