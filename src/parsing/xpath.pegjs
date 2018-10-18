@@ -22,31 +22,15 @@ function parseCharacterReferences (input) {
 	   return input;
 	}
     return input
-        .replace(/(&[^;]+);/g, function (match) {
+        .replace(/(&#[^;]+);/g, function (match) {
             if (/^&#x/.test(match)) {
                 var codePoint = parseInt(match.slice(3, -1), 16);
                 assertValidCodePoint(codePoint);
                 return String.fromCodePoint(codePoint);
             }
-            if (/^&#/.test(match)) {
-                var codePoint = parseInt(match.slice(2, -1), 10);
-                assertValidCodePoint(codePoint);
-                return String.fromCodePoint(codePoint);
-            }
-            switch (match) {
-                case '&lt;':
-                    return '<';
-                case '&gt;':
-                    return '>';
-                case '&amp;':
-                    return '&';
-                case '&quot;':
-                    return String.fromCharCode(34);
-                case '&apos;':
-                    return String.fromCharCode(39);
-            }
-
-            throwError("XPST0003", "Unknown character reference: \"" + match + "\"");
+            var codePoint = parseInt(match.slice(2, -1), 10);
+            assertValidCodePoint(codePoint);
+            return String.fromCodePoint(codePoint);
         });
 }
 
@@ -1245,8 +1229,11 @@ DoubleLiteral
 
 // 222
 StringLiteral
- = ("\"" lit:(PredefinedEntityRef / CharRef / EscapeQuot / [^\"&])* "\"" {return lit.join("")})
- / ("'" lit:(PredefinedEntityRef / CharRef / EscapeApos / [^'&])* "'" {return lit.join("")})
+ = &{return options.xquery} "\"" lit:(PredefinedEntityRef / CharRef / EscapeQuot / [^\"&])* "\"" {return lit.join("")}
+ / &{return options.xquery} "'" lit:(PredefinedEntityRef / CharRef / EscapeApos / [^'&])* "'" {return lit.join("")}
+ // In XPath, the ampersand _is_ allowed, but there are not character references
+ / &{return !options.xquery} "\"" lit:(EscapeQuot / [^\"])* "\"" {return lit.join("")}
+ / &{return !options.xquery} "'" lit:(EscapeApos / [^'])* "'" {return lit.join("")}
 
 // 223
 URIQualifiedName = uri:BracedURILiteral localName:NCName {return [uri, localName]}
@@ -1256,7 +1243,12 @@ BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').trim()}
 
 // 225 TODO: Not in XPath mode
 PredefinedEntityRef
- = $("&" ( "lt" / "gt" / "amp" / "quot" / "apos" )";")
+ = "&" c:(
+    "lt" {return "<"}
+    / "gt" {return ">"}
+    / "amp" {return "&"}
+    / "quot" {return "\""}
+    / "apos" {return "\'"}) ";" {return c}
 
 // 226
 EscapeQuot
