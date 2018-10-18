@@ -847,27 +847,22 @@ function computedPIConstructor (ast, compilationOptions) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 
-	const valueExpr = astHelper.getFirstChild(ast, 'piValueExpr');
-	const contents = astHelper.getChildren(valueExpr, '*');
-	if (contents.length !== 0) {
-		throw new Error('Not implemented: computed PI constructors');
-	}
-	let data;
-	switch (contents[0][0]) {
-		case 'stringConstantExpr':
-			data = astHelper.getTextContent(astHelper.getFirstChild(contents[0], 'value'));
-			break;
-		case 'sequenceExpr':
-			data = '';
-			break;
-		default:
-			throw new Error('Not implemented: computed PI constructors');
-	}
+	const targetExpr = astHelper.getFirstChild(ast, 'piTargetExpr');
+	const target = astHelper.getFirstChild(ast, 'piTarget');
+	const piValueExpr = astHelper.getFirstChild(ast, 'piValueExpr');
 
 	return new DirPIConstructor(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'piTarget')),
-		data);
-	}
+		{
+			targetExpr: targetExpr ?
+				compile(astHelper.getFirstChild(targetExpr, '*'), compilationOptions) :
+				null,
+			targetValue: target ? astHelper.getTextContent(target) : null
+		},
+		piValueExpr ?
+			compile(astHelper.getFirstChild(piValueExpr, '*'), compilationOptions) :
+			new SequenceOperator([])
+	);
+}
 
 /**
  * @param   {!Array<?>}  xPathAst
