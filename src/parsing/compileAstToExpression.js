@@ -304,6 +304,9 @@ function flworExpression (ast, compilationOptions) {
 	const intermediateClauses = intermediateClausesAndReturnClause.slice(0, -1);
 
 	if (intermediateClauses.length) {
+		if (!compilationOptions.allowXQuery) {
+			throw new Error('XPST0003: Use of XQuery FLWOR expressions in XPath is no allowed');
+		}
 		throw new Error('Not implemented: Intermediate clauses in flwor expressions are not implemented yet');
 	}
 
