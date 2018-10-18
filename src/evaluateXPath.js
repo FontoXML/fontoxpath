@@ -114,6 +114,9 @@ function transformXPathItemToJavascriptObject (value, dynamicContext) {
 	if (isSubtypeOf(value.type, 'array(*)')) {
 		return transformArrayToArray(value, dynamicContext);
 	}
+	if (isSubtypeOf(value.type, 'xs:QName')) {
+		return { next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localPart}`) };
+	}
 	return {
 		next: () => ready(value.value)
 	};
@@ -471,8 +474,11 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 				return atomize(allValues.value[0], executionParameters).value;
 			}
 
-			return new Sequence(allValues.value).atomize(executionParameters).getAllValues().map(function (atomizedValue) {
-				return atomizedValue.value;
+			return new Sequence(allValues.value)
+				.atomize(executionParameters)
+				.getAllValues()
+				.map(function (atomizedValue) {
+					return atomizedValue.value;
 			});
 		}
 	}

@@ -13,7 +13,7 @@ let xmlDoc;
 
 function setCookie () {
 	const source = encodeURIComponent(xmlSource.innerText);
-	const xpath = encodeURIComponent(xpathField.value);
+	const xpath = encodeURIComponent(xpathField.innerText);
 
 	document.cookie = `xpath-editor-state=${source.length}~${source}${xpath};max-age=${60*60*24*7}`;
 }
@@ -27,7 +27,7 @@ async function rerunXPath () {
 	let it;
 	try {
 		it = await fontoxpath.evaluateXPathToAsyncIterator(
-			xpathField.value,
+			xpathField.innerText,
 			xmlDoc,
 			null,
 			null,
@@ -61,7 +61,7 @@ async function rerunXPath () {
 
 	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
 
-	bucketField.innerText = allowXQuery.checked ? 'Buckets can not be used in XQuery' : fontoxpath.getBucketForSelector(xpathField.value);
+	bucketField.innerText = allowXQuery.checked ? 'Buckets can not be used in XQuery' : fontoxpath.getBucketForSelector(xpathField.innerText);
 }
 
 xmlSource.oninput = _evt => {
@@ -111,7 +111,7 @@ function loadFromCookie () {
 	xmlDoc = domParser.parseFromString(decodeURIComponent(source), 'text/xml');
 
 	const xpathStartOffset = sourceStart + sourceLength;
-	xpathField.value = decodeURIComponent(cookie.substring(xpathStartOffset));
+	xpathField.innerText = decodeURIComponent(cookie.substring(xpathStartOffset));
 }
 
 loadFromCookie();
