@@ -32,9 +32,15 @@ class CommentConstructor extends Expression {
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
 		return sequence
 			.atomize(executionParameters)
-			.mapAll(items =>
-				Sequence.singleton(
-					createNodeValue(nodesFactory.createComment(items.map(item => castToType(item, 'xs:string').value).join(' ')))));
+			.mapAll(items => {
+				const content = items.map(item => castToType(item, 'xs:string').value).join(' ');
+
+				if (content.indexOf('-->') !== -1) {
+					throw new Error('XQDY0072: The contents of the data of a comment may not include "-->"');
+				}
+
+				return Sequence.singleton(createNodeValue(nodesFactory.createComment(content)));
+			});
 	}
 }
 
