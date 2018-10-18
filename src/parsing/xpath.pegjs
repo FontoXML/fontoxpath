@@ -1199,7 +1199,7 @@ AnyFunctionTest = "function" _ "(" _ "*" _ ")" {return ["anyFunctionTest"]}
 
 // 209
 TypedFunctionTest
- = "function" _ "(" _ paramTypeList:(lhs:SequenceType rhs:("," _ t:SequenceType {return t})* {return lhs.concat.apply(lhs, rhs)})? _ ")" S "as" S returnType:SequenceType {return ["functionTest", ["paramTypeList", paramTypeList], returnType]}
+ = "function" _ "(" _ paramTypeList:(lhs:SequenceType rhs:("," _ t:SequenceType {return t})* {return lhs.concat.apply(lhs, rhs)})? _ ")" S "as" S returnType:SequenceType {return ["typedFunctionTest", ["paramTypeList", ["sequenceType"].concat(paramTypeList)], ["sequenceType"].concat(returnType)]}
 
 // 210
 MapTest = AnyMapTest / TypedMapTest
@@ -1220,7 +1220,7 @@ AnyArrayTest = "array" _ "(" _ "*" _ ")" {return ["anyArrayTest"]}
 TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", ["sequenceType"].concat(type)]}
 
 // 216
-ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", ["sequenceType"].concat(type)]}
+ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", type]}
 
 // 217
 URILiteral = StringLiteral

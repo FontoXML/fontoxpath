@@ -83,8 +83,7 @@ function getTypeDeclaration (ast) {
 	}
 
 	const determineType = (typeAst) => {
-		const typeDeclaration = getFirstChild(typeAst, '*');
-		switch (typeDeclaration[0]) {
+		switch (typeAst[0]) {
 			case 'documentTest':
 				return 'document()';
 			case 'elementTest':
@@ -103,6 +102,7 @@ function getTypeDeclaration (ast) {
 				return 'item()';
 			case 'anyFunctionTest':
 			case 'functionTest':
+			case 'typedFunctionTest':
 				return 'function(*)';
 			case 'anyMapTest':
 			case 'typedMapTest':
@@ -111,9 +111,9 @@ function getTypeDeclaration (ast) {
 			case 'typedArrayTest':
 				return 'array(*)';
 			case 'atomicType':
-				return [getAttribute(typeDeclaration, 'prefix'), getTextContent(typeDeclaration)].join(':');
+				return [getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':');
 			case 'parenthesizedItemType':
-				return determineType(getFirstChild(typeDeclaration, 'sequenceType'));
+				return determineType(getFirstChild(typeAst, '*'));
 			case 'schemaElementTest':
 			case 'schemaAttributeTest':
 			case 'namespaceNodeTest':
@@ -122,11 +122,10 @@ function getTypeDeclaration (ast) {
 		}
 	};
 
-
 	/**
 	 * @type {!string}
 	 */
-	const type = determineType(typeDeclarationAst);
+	const type = determineType(getFirstChild(typeDeclarationAst, '*'));
 
 	let occurrence = null;
 	const occurrenceNode = getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
