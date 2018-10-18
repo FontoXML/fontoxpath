@@ -24,7 +24,7 @@ class DirAttributeConstructor extends Expression {
 	constructor (name, value) {
 		super(
 			new Specificity({}),
-			[],
+			value.valueExprParts || [],
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
@@ -38,11 +38,12 @@ class DirAttributeConstructor extends Expression {
 
 	performStaticEvaluation (staticContext) {
 		const namespaceURI = staticContext.resolveNamespace(this._prefix);
-
 		if (namespaceURI === undefined && this._prefix) {
 			throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
 		}
 		this._namespaceURI = namespaceURI || null;
+
+		super.performStaticEvaluation(staticContext);
 	}
 
 	evaluate (dynamicContext, executionParameters) {
