@@ -656,11 +656,11 @@ function sequence (ast, compilationOptions) {
 
 function simpleMap (ast, compilationOptions) {
 	return astHelper.getChildren(ast, '*')
-		.reduceRight((lhs, rhs) => {
+		.reduce((lhs, rhs) => {
 			if (lhs === null) {
 				return compile(rhs, compilationOptions);
 			}
-			return new SimpleMapOperator(compile(rhs, compilationOptions), lhs);
+			return new SimpleMapOperator(lhs, compile(rhs, compilationOptions));
 		}, null);
 }
 
