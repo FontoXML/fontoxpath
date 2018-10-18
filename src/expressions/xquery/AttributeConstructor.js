@@ -37,12 +37,16 @@ class DirAttributeConstructor extends Expression {
 	}
 
 	performStaticEvaluation (staticContext) {
-		const namespaceURI = staticContext.resolveNamespace(this._prefix);
-		if (namespaceURI === undefined && this._prefix) {
-			throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
+		if (this._prefix === '') {
+			this._namespaceURI = null;
 		}
-		this._namespaceURI = namespaceURI || null;
-
+		else {
+			const namespaceURI = staticContext.resolveNamespace(this._prefix);
+			if (namespaceURI === undefined && this._prefix) {
+				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
+			}
+			this._namespaceURI = namespaceURI || null;
+		}
 		super.performStaticEvaluation(staticContext);
 	}
 
