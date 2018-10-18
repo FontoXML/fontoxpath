@@ -15,7 +15,7 @@ function setCookie () {
 	const source = encodeURIComponent(xmlSource.innerText);
 	const xpath = encodeURIComponent(xpathField.innerText);
 
-	document.cookie = `xpath-editor-state=${source.length}~${source}${xpath};max-age=${60*60*24*7}`;
+	document.cookie = `xpath-editor-state=${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
 }
 
 
@@ -48,6 +48,9 @@ async function rerunXPath () {
 			switch (item.value.nodeType) {
 				case 2: // Attribute
 					raw.push(`${item.value.nodeName}="${item.value.nodeValue}"`);
+					break;
+				case 9: // Document
+					raw.push(item.value.nodeName);
 					break;
 				default:
 					raw.push(item.value.outerHTML);
