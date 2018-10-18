@@ -844,9 +844,27 @@ function computedPIConstructor (ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
+
+	const valueExpr = astHelper.getFirstChild(ast, 'piValueExpr');
+	const contents = astHelper.getChildren(valueExpr, '*');
+	if (contents.length !== 0) {
+		throw new Error('Not implemented: computed PI constructors');
+	}
+	let data;
+	switch (contents[0][0]) {
+		case 'stringConstantExpr':
+			data = astHelper.getTextContent(astHelper.getFirstChild(contents[0], 'value'));
+			break;
+		case 'sequenceExpr':
+			data = '';
+			break;
+		default:
+			throw new Error('Not implemented: computed PI constructors');
+	}
+
 	return new DirPIConstructor(
 		astHelper.getTextContent(astHelper.getFirstChild(ast, 'piTarget')),
-		astHelper.getTextContent(astHelper.getFirstChild(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'piValueExpr'), 'stringConstantExpr'), 'value')));
+		data);
 	}
 
 /**
