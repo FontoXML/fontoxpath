@@ -685,7 +685,8 @@ AbsoluteLocationPath
    {return ["pathExpr", ["rootExpr"]].concat(path)}
  / abbrev:LocationPathAbbreviation _ path: RelativePathExprWithForcedStep
    {return ["pathExpr", ["rootExpr"], abbrev].concat(path)}
- / "/"
+ // Note: the token immediately after the "/" can not be any charatcer that could be interpreted as a Releative path (which are * (for wildcards), < (node constructors) or a-zA-Z (name tests)
+ / "/" !(_ [*<a-zA-Z])
    {return ["pathExpr", ["rootExpr"]]}
 
 LocationPathAbbreviation
