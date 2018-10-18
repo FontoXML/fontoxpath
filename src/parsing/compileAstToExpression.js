@@ -603,6 +603,10 @@ function pathExpr (ast, compilationOptions) {
 }
 
 function piTest (ast, compilationOptions) {
+	const piTarget = astHelper.getFirstChild(ast, 'piTarget');
+	if (piTarget) {
+		return new PITest(astHelper.getTextContent(piTarget));
+	}
 	return new KindTest(7);
 }
 
