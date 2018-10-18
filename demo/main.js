@@ -13,7 +13,7 @@ let xmlDoc;
 
 function setCookie () {
 	const source = encodeURIComponent(xmlSource.innerText);
-	const xpath = encodeURIComponent(xpathField.innerText);
+	const xpath = encodeURIComponent(xpathField.innerText.replace(/[\s]/g, ' '));
 
 	document.cookie = `xpath-editor-state=${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
 }
@@ -24,10 +24,12 @@ async function rerunXPath () {
 	log.innerText = '';
 	resultText.innerText = '';
 
+	const xpath = xpathField.innerText.replace(/[\s]/g, ' ');
+
 	let it;
 	try {
 		it = await fontoxpath.evaluateXPathToAsyncIterator(
-			xpathField.innerText,
+			xpath,
 			xmlDoc,
 			null,
 			null,
@@ -64,7 +66,7 @@ async function rerunXPath () {
 
 	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
 
-	bucketField.innerText = allowXQuery.checked ? 'Buckets can not be used in XQuery' : fontoxpath.getBucketForSelector(xpathField.innerText);
+	bucketField.innerText = allowXQuery.checked ? 'Buckets can not be used in XQuery' : fontoxpath.getBucketForSelector(xpath);
 }
 
 xmlSource.oninput = _evt => {
