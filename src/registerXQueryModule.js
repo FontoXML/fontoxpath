@@ -40,15 +40,17 @@ export default function registerXQueryModule (moduleString) {
 	staticContext.registerNamespace(moduleTargetPrefix, moduleTargetNamespaceURI);
 
 	const prolog = astHelper.getFirstChild(libraryModule, 'prolog');
-	const moduleDeclaration = processProlog(prolog, staticContext);
+	if (prolog !== null) {
+		const moduleDeclaration = processProlog(prolog, staticContext);
+		moduleDeclaration.functionDeclarations.forEach(({ namespaceURI }) => {
+			if (moduleTargetNamespaceURI !== namespaceURI) {
+				throw new Error('XQST0048: Functions and variables declared in a module must reside in the module target namespace.');
+			}
+		});
 
-	moduleDeclaration.functionDeclarations.forEach(({ namespaceURI }) => {
-		if (moduleTargetNamespaceURI !== namespaceURI) {
-			throw new Error('XQST0048: Functions and variables declared in a module must reside in the module target namespace.');
-		}
-	});
+		loadModuleFile(moduleTargetNamespaceURI, moduleDeclaration);
 
-	loadModuleFile(moduleTargetNamespaceURI, moduleDeclaration);
+	}
 
 	return moduleTargetNamespaceURI;
 }
