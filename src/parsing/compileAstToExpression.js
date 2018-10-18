@@ -197,6 +197,8 @@ function compileTest (ast, compilationOptions) {
 			return commentTest(ast, compilationOptions);
 		case 'textTest':
 			return textTest(ast, compilationOptions);
+		case 'documentTest':
+			return documentTest(ast, compilationOptions);
 		case 'attributeTest':
 			return attributeTest(ast, compilationOptions);
 		case 'elementTest':
@@ -605,13 +607,17 @@ function commentTest (ast, compilationOptions) {
 	return new KindTest(8);
 }
 
+function documentTest (ast, compilationOptions) {
+	return new KindTest(9);
+}
+
 function elementTest (ast, compilationOptions) {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
 	if (!elementName || star) {
 		return new KindTest(1);
 	}
-	return new NameTest(astHelper.getQName(astHelper.getFirstChild(elementName, 'QName')), {kind: 1});
+	return new NameTest(astHelper.getQName(astHelper.getFirstChild(elementName, 'QName')), { kind: 1 });
 }
 
 function attributeTest (ast, compilationOptions) {
