@@ -65,9 +65,9 @@ function getTextContent (ast) {
 		return '';
 	}
 	if (typeof ast[1] === 'object') {
-		return ast[2];
+		return ast[2] || '';
 	}
-	return ast[1];
+	return ast[1] || '';
 }
 
 /**
