@@ -418,7 +418,7 @@ function typeDeclarationToType (typeDeclarationAst) {
 			typeName = 'text()';
 			break;
 		default:
-			throw new Error('Unrecognized type');
+			throw new Error(`Unrecognized type "${rawType[0]}".`);
 	}
 	const occurrence = astHelper.getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
 
