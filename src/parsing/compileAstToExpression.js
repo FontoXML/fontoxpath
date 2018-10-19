@@ -50,7 +50,7 @@ import VarRef from '../expressions/VarRef';
 import DirElementConstructor from '../expressions/xquery/DirElementConstructor';
 import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
-import DirPIConstructor from '../expressions/xquery/DirPIConstructor';
+import PIConstructor from '../expressions/xquery/PIConstructor';
 
 /**
  * @param   {Array<?>}                ast
@@ -838,7 +838,7 @@ function computedCommentConstructor (ast, compilationOptions) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 	const argExpr = astHelper.getFirstChild(ast, 'argExpr');
-	const expr = argExpr ? compile(astHelper.getFirstChild(argExpr, '*')) : null;
+	const expr = argExpr ? compile(astHelper.getFirstChild(argExpr, '*'), compilationOptions) : null;
 	return new CommentConstructor(expr);
 }
 
@@ -851,7 +851,7 @@ function computedPIConstructor (ast, compilationOptions) {
 	const target = astHelper.getFirstChild(ast, 'piTarget');
 	const piValueExpr = astHelper.getFirstChild(ast, 'piValueExpr');
 
-	return new DirPIConstructor(
+	return new PIConstructor(
 		{
 			targetExpr: targetExpr ?
 				compile(astHelper.getFirstChild(targetExpr, '*'), compilationOptions) :
