@@ -15,15 +15,18 @@ function assertValidTarget (target) {
 /**
  * @extends {Expression}
  */
-class DirPIConstructor extends Expression {
+class PIConstructor extends Expression {
 	/**
 	 * @param  {!{targetExpr: ?Expression, targetValue: ?string}}  target
 	 * @param  {!Expression}  dataExpr
 	 */
 	constructor (target, dataExpr) {
+		const expressions = target.targetExpr ? [target.targetExpr].concat(dataExpr) : [dataExpr];
 		super(
-			new Specificity({}),
-			[],
+			expressions.reduce(function (specificity, selector) {
+				return specificity.add(selector.specificity);
+			}, new Specificity({})),
+			expressions,
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
@@ -46,28 +49,28 @@ class DirPIConstructor extends Expression {
 				}
 
 				// Get the target
-				if (this._target.targetExpr === null) {
+				if (this._target.targetValue !== null) {
 					assertValidTarget(this._target.targetValue);
 					return Sequence.singleton(createNodeValue(
 						nodesFactory.createProcessingInstruction(this._target.targetValue, data)));
 				}
 
-				return this._target.targetExpr.evaluateMaybeStatically(dynamicContext)
+				return this._target.targetExpr.evaluateMaybeStatically(dynamicContext, executionParameters)
 					.atomize(executionParameters)
-					.mapCases({
+					.switchCases({
 						singleton: targetSequence => {
 							const target = targetSequence.first();
 
-							if (!isSubtypeOf(targetSequence.type, 'xs:NCName') &&
-								!isSubtypeOf(targetSequence.type, 'xs:string') &&
-								!isSubtypeOf(targetSequence.type, 'xs:untypedAtomic')) {
+							if (!isSubtypeOf(target.type, 'xs:NCName') &&
+								!isSubtypeOf(target.type, 'xs:string') &&
+								!isSubtypeOf(target.type, 'xs:untypedAtomic')) {
 								throw new Error('XPTY0004: The target of a constructed PI should be a xs:NCname, xs:string, or untyped atomic value.');
 							}
 
 							assertValidTarget(target.value);
 
 							return Sequence.singleton(createNodeValue(
-								nodesFactory.createProcessingInstruction(target, data)));
+								nodesFactory.createProcessingInstruction(target.value, data)));
 						},
 						default: () => {
 							throw new Error('XPTY0004: The target of a constructed PI should be a singleton sequence.');
@@ -77,4 +80,4 @@ class DirPIConstructor extends Expression {
 	}
 }
 
-export default DirPIConstructor;
+export default PIConstructor;

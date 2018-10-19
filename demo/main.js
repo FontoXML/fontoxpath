@@ -25,9 +25,9 @@ async function rerunXPath () {
 
 	const xpath = xpathField.innerText;
 
-	let it;
+	const raw = [];
 	try {
-		it = await fontoxpath.evaluateXPathToAsyncIterator(
+		const it = await fontoxpath.evaluateXPathToAsyncIterator(
 			xpath,
 			xmlDoc,
 			null,
@@ -37,15 +37,14 @@ async function rerunXPath () {
 				language: allowXQuery.checked ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE
 			}
 		);
+
+		for (let item = await it.next(); !item.done; item = await it.next()) {
+			raw.push(item.value instanceof Node ? new XMLSerializer().serializeToString(item.value) : item.value);
+		}
 	}
 	catch (err) {
 		log.innerText = err.message;
 		return;
-	}
-
-	const raw = [];
-	for (let item = await it.next(); !item.done; item = await it.next()) {
-		raw.push(item.value instanceof Node ? new XMLSerializer().serializeToString(item.value) : item.value);
 	}
 
 	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
