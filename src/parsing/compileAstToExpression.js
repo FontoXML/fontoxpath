@@ -112,10 +112,6 @@ function compile (ast, compilationOptions) {
 		case 'contextItemExpr':
 			return new ContextItemExpression();
 
-			// Postfix operators
-		case 'filter':
-			return filter(ast, compilationOptions);
-
 			// Functions
 		case 'functionCallExpr':
 			return functionCall(ast, compilationOptions);
@@ -292,10 +288,6 @@ function IfThenElseExpr (ast, compilationOptions) {
 		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'), compilationOptions),
 		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'), compilationOptions),
 		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'), compilationOptions));
-}
-
-function filter (ast, compilationOptions) {
-	return new Filter(compile(ast[1], compilationOptions), compile(ast[0], compilationOptions));
 }
 
 function flworExpression (ast, compilationOptions) {
