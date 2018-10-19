@@ -80,7 +80,7 @@ function getAlternativesAsStringFor (functionName) {
 		return 'No similar functions found.';
 	}
 
-	return alternativeFunctions.map(functionDeclaration => `"Q{${functionDeclaration.namespaceURI}}${functionDeclaration.localName} (${functionDeclaration.argumentTypes.join(', ')})"`)
+	return alternativeFunctions.map(functionDeclaration => `"Q{${functionDeclaration.namespaceURI}}${functionDeclaration.localName} (${functionDeclaration.argumentTypes.map(argumentType => argumentType.type + argumentType.occurrence).join(', ')})"`)
 		.reduce((accumulator, functionName, index, array) => {
 		if (index === 0) {
 			return accumulator + functionName;
