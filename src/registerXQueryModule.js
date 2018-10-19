@@ -49,7 +49,9 @@ export default function registerXQueryModule (moduleString) {
 		});
 
 		loadModuleFile(moduleTargetNamespaceURI, moduleDeclaration);
-
+	}
+	else {
+		loadModuleFile(moduleTargetNamespaceURI, { functionDeclarations: [] });
 	}
 
 	return moduleTargetNamespaceURI;
