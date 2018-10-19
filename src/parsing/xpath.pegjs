@@ -925,13 +925,13 @@ attribute
        if (value.length && typeof value[0] !== "string") {
          throwError("XQST0022", "A namespace declaration may not contain enclosed expressions");
        }
-       return ["namespaceDeclaration", ["uri", value[0]]]
+       return ["namespaceDeclaration", value.length ? ["uri", value[0]] : ["uri"]]
      }
      if (name[0].prefix === "xmlns") {
-       if (typeof value[0] !== "string") {
+       if (value.length && typeof value[0] !== "string") {
          throwError("XQST0022", "The namespace declaration for 'xmlns:" + name[1] + "' may not contain enclosed expressions");
        }
-       return ["namespaceDeclaration", ["prefix", name[1]], ["uri", value[0]]]
+       return ["namespaceDeclaration", ["prefix", name[1]], value.length ? ["uri", value[0]] : ["uri"]]
      }
      return [
        "attributeConstructor",
