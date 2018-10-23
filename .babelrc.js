@@ -14,6 +14,7 @@ module.exports = {
 		]
 	],
 	"plugins": [
+		["istanbul"],
 		[
 			"module-resolver",
 			{
