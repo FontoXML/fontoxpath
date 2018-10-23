@@ -116,6 +116,10 @@ function createAsserter (baseUrl, assertNode, language) {
 						a(xpath, contextNode, variablesInScope, namespaceResolver);
 					}
 					catch (error) {
+						if (error instanceof TypeError) {
+							// TypeErrors are always errors
+							throw error;
+						}
 						errors.push(error);
 						return false;
 					}
@@ -280,7 +284,7 @@ describe('qt3 test set', () => {
 								testQuery = evaluateXPathToString('./test', testCase);
 							}
 							const language = evaluateXPathToString(
-								'if (((dependency | ../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10", "XQ10+", "XQ30", "XQ30+", "XQ31+", "XQ31")) then "XQuery3.1" else "XPath3.1"', testCase);
+								'if (((dependency | ../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31")) then "XQuery3.1" else "XPath3.1"', testCase);
 							const namespaces = evaluateXPathToMap('(environment/namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()', testCase);
 
 							const localNamespaceResolver = Object.keys(namespaces).length ? prefix => namespaces[prefix] : null;
