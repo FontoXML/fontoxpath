@@ -9,10 +9,11 @@
 	"scripts": {
 		"prepare": "npm run build",
 		"build": "node ./build.js",
-		"test": "mocha --recursive --require @babel/register test/specs/",
+		"test": "nyc mocha --recursive --require @babel/register test/specs/",
 		"integrationtests": "mocha --recursive --require @babel/register test/specs/parsing --dist",
 		"qt3tests": "mocha --require @babel/register test/qt3tests.js",
-		"qt3testsxqueryx": "mocha --require @babel/register test/qt3testsXQueryX.js"
+		"qt3testsxqueryx": "mocha --require @babel/register test/qt3testsXQueryX.js",
+		"coverage": "nyc report --reporter=text-lcov | coveralls"
 	},
 	"repository": {
 		"type": "git",
@@ -47,9 +48,11 @@
 		"@babel/register": "^7.0.0",
 		"babel-plugin-module-resolver": "^3.1.1",
 		"chai": "^4.1.2",
+		"coveralls": "^3.0.2",
 		"google-closure-compiler": "^20180910.0.0",
 		"mocha": "^5.2.0",
 		"node-static-alias": "^1.1.2",
+		"nyc": "^13.1.0",
 		"pegjs": "^0.10.0",
 		"sinon": "^6.3.4",
 		"sinon-chai": "^3.2.0",
