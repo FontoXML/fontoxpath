@@ -41,7 +41,7 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 * @suppress {undefinedVars}
 */
 (function () {
-	/* istanbul ignore else */
+	/* istanbul ignore next */
 	if (typeof window !== 'undefined') {
 		window['compareSpecificity'] = compareSpecificity;
 		window['domFacade'] = domFacade;
