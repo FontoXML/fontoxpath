@@ -11,7 +11,7 @@
 		"build": "node ./build.js",
 		"test": "nyc mocha --recursive --require @babel/register test/specs/",
 		"integrationtests": "mocha --recursive --require @babel/register test/specs/parsing --dist",
-		"qt3tests": "mocha --require @babel/register test/qt3tests.js",
+		"qt3tests": "nyc --no-clean mocha --require @babel/register test/qt3tests.js",
 		"qt3testsxqueryx": "mocha --require @babel/register test/qt3testsXQueryX.js",
 		"coverage": "nyc report --reporter=text-lcov | coveralls"
 	},
