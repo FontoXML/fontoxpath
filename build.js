@@ -34,7 +34,7 @@ function doExpressionsBuild () {
 	return new Promise((resolve, reject) => {
 		new Compiler({
 			assume_function_wrapper: true,
-			debug: true,
+			debug: !!doDebugBuild,
 			language_in: 'stable',
 			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',
