@@ -529,7 +529,6 @@ K-ContextLastFunc-26,Error: No selector counterpart for: treatExpr.
 K-ContextLastFunc-27,Error: No selector counterpart for: treatExpr.
 cbcl-last-in-sequence-004,Error: XPST0008, The variable p is not in scope.
 cbcl-last-in-sequence-005,Error: XPST0008, The variable p is not in scope.
-LocalNameFromQNameFunc015,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
 LocalNameFromQNameFunc015a,AssertionError: expected [Function] to throw error including 'XPTY0117' but got 'Casting to xs:QName is not implemented.'
 LocalNameFromQNameFunc018,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 fn-lower-case-18,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
@@ -664,7 +663,6 @@ cbcl-min-017,AssertionError: expected [Function] to throw an error
 fn-month-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-name-16,AssertionError: Expected executing the XPath "for $h in (./works/employee[2]) return fn:count(fn:name($h/self::div))" to resolve to one of the expected results, but got AssertionError: for $h in (./works/employee[2]) return fn:count(fn:name($h/self::div)): expected '0' to equal '1', AssertionError: expected [Function] to throw an error.
 K-NameFunc-3,AssertionError: Expected XPath name(()) eq "" to resolve to true: expected false to be true
-NamespaceURIFromQNameFunc015,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
 NamespaceURIFromQNameFunc015a,AssertionError: expected [Function] to throw error including 'XPTY0117' but got 'Casting to xs:QName is not implemented.'
 NamespaceURIFromQNameFunc018,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-NamespaceURIFromQNameFunc-1,Error: Casting to xs:QName is not implemented.
@@ -688,7 +686,6 @@ fn-node-name-21,Error: No selector counterpart for: computedTextConstructor.
 fn-node-name-28,Error: No selector counterpart for: computedNamespaceConstructor.
 fn-node-name-30,AssertionError: expected [Function] to throw an error
 fn-node-name-31,AssertionError: expected [Function] to throw an error
-K-NodeNameFunc-1,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'XPDY0002: The function which was called depends on dynamic context, which is absent.'
 fn-notintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-notintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-notintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -924,7 +921,6 @@ fn-roundnpi1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integ
 fn-roundnpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-roundnni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-roundnni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-K-RoundFunc-2,AssertionError: expected [Function] to throw an error
 fn-round-1,Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 fn-round2args-4,AssertionError: Expected XPath fn:round(35.425, 2) to resolve to 35.43: expected false to be true
 fn-round-half-to-evenintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1000,10 +996,8 @@ fn-string-35,AssertionError: expected [Function] to throw an error
 fn-string-36,AssertionError: expected [Function] to throw an error
 fn-string-37,AssertionError: expected [Function] to throw an error
 fn-string-38,AssertionError: expected [Function] to throw an error
-fn-string-join-27,AssertionError: expected [Function] to throw an error
 fn-string-join-29,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 fn-string-join-31,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-K-StringJoinFunc-1,AssertionError: expected [Function] to throw an error
 fn-string-length-21,AssertionError: expected [Function] to throw error including 'FOTY0013' but got 'XPTY0004 Unable to cast function(*) to type xs:string while calling string-length'
 K-SeqSubsequenceFunc-30,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K2-SeqSubsequenceFunc-1,Error: No selector counterpart for: treatExpr.
@@ -1981,7 +1975,6 @@ Axes111,Error: Not implemented: only module imports, namespace declarations, and
 Axes112,AssertionError: expected [Function] to throw error including 'XQST0134' but got 'No selector counterpart for: namespaceTest.'
 Axes115,AssertionError: Expected executing the XPath "/*/attribute::namespace-node()" to resolve to one of the expected results, but got Error: No selector counterpart for: namespaceTest., AssertionError: expected [Function] to throw error including 'XPST0005' but got 'No selector counterpart for: namespaceTest.'.
 Axes117,Error: No selector counterpart for: computedNamespaceConstructor.
-Axes127,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'No selector counterpart for: namespaceTest.'
 axis-err-1,AssertionError: expected [Function] to throw error including 'XPTY0020' but got 'XPTY0019: The / operator can only be applied to xml/json nodes.'
 K2-Axes-1,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-Axes-2,AssertionError: expected [Function] to throw error including 'XPDY0050' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
@@ -2041,10 +2034,7 @@ K2-preceding-siblingAxis-4,Error: Not implemented: only module imports, namespac
 K2-preceding-siblingAxis-5,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 unabbreviatedSyntax-3,AssertionError: for $h in (/works[1]/employee[2]) return $h/child::text(): expected '\n    \n    \n    \n    Text data from Employee[2]\n  ' to equal 'Text data from Employee[2]'
 CastableAs647,Error: Casting to xs:QName is not implemented.
-CastableAs648,Error: Casting to xs:QName is not implemented.
 CastableAs648a,Error: Casting to xs:QName is not implemented.
-K-SeqExprCastable-5,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.'
-K-SeqExprCastable-6,AssertionError: expected [Function] to throw an error
 K-SeqExprCastable-6a,AssertionError: expected [Function] to throw an error
 K-SeqExprCastable-19,Error: Casting to xs:QName is not implemented.
 K-SeqExprCastable-22,AssertionError: Expected executing the XPath "not(xs:untypedAtomic("ncname") castable as xs:QName)" to resolve to one of the expected results, but got Error: Casting to xs:QName is not implemented., Error: Casting to xs:QName is not implemented..
@@ -2082,11 +2072,8 @@ CastAs338,AssertionError: xs:dayTimeDuration("P14D") cast as xs:dayTimeDuration:
 CastAs600,AssertionError: xs:base64Binary("aA+zZ/09") cast as xs:hexBinary: expected '68FB367FD3D' to equal '680FB367FD3D'
 CastAs647,AssertionError: Expected executing the XPath "xs:string(2.123456789123456789) cast as xs:decimal" to resolve to one of the expected results, but got AssertionError: xs:string(2.123456789123456789) cast as xs:decimal: expected '2.123456789123457' to equal '2.123456789123456789', AssertionError: expected [Function] to throw an error.
 CastAs670,AssertionError: Expected executing the XPath "let $d1 := '2006-07-12' cast as xs:date let $oneky := xs:yearMonthDuration('P1000Y') let $d2 := $d1 + $oneky let $d3 := $d2 + $oneky let $d4 := $d3 + $oneky let $d5 := $d4 + $oneky let $d6 := $d5 + $oneky let $d7 := $d6 + $oneky let $d8 := $d7 + $oneky let $d9 := $d8 + $oneky let $d10 := $d9 + $oneky return $d10" to resolve to one of the expected results, but got Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet, AssertionError: expected [Function] to throw error including 'FODT0001' but got 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'.
-CastAs673a,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
 CastAs673b,Error: Casting to xs:QName is not implemented.
-CastAs674,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0003: Use of XQuery functionality is not allowed in XPath context'
 CastAs674a,Error: Casting to xs:QName is not implemented.
-CastAs675,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0003: Use of XQuery functionality is not allowed in XPath context'
 CastAs675a,AssertionError: expected [Function] to throw error including 'XPTY0117' but got 'Casting to xs:QName is not implemented.'
 CastAs677,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 CastAs678,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
@@ -2095,15 +2082,10 @@ CastAsNamespaceSensitiveType-2,AssertionError: expected [Function] to throw erro
 CastAsNamespaceSensitiveType-4,AssertionError: expected [Function] to throw error including 'XPTY0117' but got 'XPST0080: Casting to xs:NOTATION is not permitted.'
 CastAsNamespaceSensitiveType-5,AssertionError: expected [Function] to throw error including 'XPTY0117' but got 'XPST0080: Casting to xs:NOTATION is not permitted.'
 CastFOCA0003-1,AssertionError: Expected executing the XPath "xs:integer(99e100)" to resolve to one of the expected results, but got Error: FOAR0002: can not cast 9.9e+101 to xs:integer, it is out of bounds for JavaScript numbers., AssertionError: expected [Function] to throw error including 'FOCA0003' but got 'FOAR0002: can not cast 9.9e+101 to xs:integer, it is out of bounds for JavaScript numbers.'.
-K-SeqExprCast-4,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.'
-K-SeqExprCast-5,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0081: Can not cast: type xs:untyped is unknown.'
 K-SeqExprCast-5a,AssertionError: expected [Function] to throw error including 'XQST0052' but got 'XPST0081: Can not cast: type xs:untyped is unknown.'
-K-SeqExprCast-7,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0081: Can not cast: type xs:anyType is unknown.'
 K-SeqExprCast-7a,AssertionError: expected [Function] to throw error including 'XQST0052' but got 'XPST0081: Can not cast: type xs:anyType is unknown.'
-K-SeqExprCast-9,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0081: Can not cast: type xs:doesNotExist is unknown.'
 K-SeqExprCast-9a,AssertionError: expected [Function] to throw error including 'XQST0052' but got 'XPST0081: Can not cast: type xs:doesNotExist is unknown.'
 K-SeqExprCast-68,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
-K-SeqExprCast-71a,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
 K-SeqExprCast-71b,Error: Casting to xs:QName is not implemented.
 K-SeqExprCast-127,AssertionError: Expected XPath xs:string(xs:base64Binary("aaa a")) eq "aaaa" to resolve to true: expected false to be true
 K-SeqExprCast-143,Error: No selector counterpart for: treatExpr.
@@ -2132,7 +2114,6 @@ K-SeqExprCast-299,AssertionError: expected [Function] to throw an error
 K-SeqExprCast-312,AssertionError: expected [Function] to throw an error
 K-SeqExprCast-350,AssertionError: Expected XPath string(xs:dateTime("2004-03-31T24:00:00")) eq "2004-04-01T00:00:00" to resolve to true: expected false to be true
 K-SeqExprCast-379,AssertionError: expected [Function] to throw an error
-K-SeqExprCast-422,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
 K-SeqExprCast-422a,AssertionError: expected [Function] to throw error including 'FORG0001' but got 'Casting to xs:QName is not implemented.'
 K-SeqExprCast-423,Error: Casting to xs:QName is not implemented.
 K-SeqExprCast-482,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.'
@@ -2383,7 +2364,6 @@ Constr-compcomment-doubledash-1,AssertionError: expected [Function] to throw an 
 Constr-compcomment-doubledash-2,AssertionError: expected [Function] to throw an error
 Constr-compcomment-doubledash-3,AssertionError: expected [Function] to throw an error
 Constr-compcomment-doubledash-4,AssertionError: expected [Function] to throw an error
-K2-ComputeConComment-4,AssertionError: expected [Function] to throw an error
 K2-ComputeConComment-5,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 cbcl-constr-compcomment-001,AssertionError: expected [Function] to throw an error
 cbcl-constr-compcomment-002,AssertionError: expected [Function] to throw error including 'XQDY0072' but got 'No selector counterpart for: computedElementConstructor.'
@@ -2538,7 +2518,6 @@ Constr-text-nested-2,Error: No selector counterpart for: computedTextConstructor
 Constr-text-nested-3,Error: No selector counterpart for: computedDocumentConstructor.
 K2-ConText-3,Error: No selector counterpart for: computedTextConstructor.
 K2-ConText-4,Error: No selector counterpart for: computedTextConstructor.
-K2-ConText-5,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'No selector counterpart for: computedTextConstructor.'
 K2-ConText-5a,Error: No selector counterpart for: computedTextConstructor.
 K2-ConText-6,Error: No selector counterpart for: computedTextConstructor.
 K2-ConText-14,Error: No selector counterpart for: computedTextConstructor.
@@ -2647,7 +2626,6 @@ decimal-format-909err,AssertionError: expected [Function] to throw error includi
 decimal-format-910err,AssertionError: expected [Function] to throw error including 'XQST0097' but got 'XPST0003: Unable to parse XPath: "\n        declare default decimal-format zero-digit="a";\n        format-number(931.4857,\'aaa.$$a\')".\nExpected " ", "(:", "\\n", "\\r", or "\\t" but "=" found.\n\n        declare default decimal-format zero-digit[Error is around here]="a";\n        format-number(931.4857,\'aaa.$$a\')'
 decimal-format-911err,AssertionError: expected [Function] to throw error including 'XQST0097' but got 'XPST0003: Unable to parse XPath: "\n        declare default decimal-format minus-sign="--";\n        format-number(931.4857,\'000.$$0\')".\nExpected " ", "(:", "\\n", "\\r", or "\\t" but "=" found.\n\n        declare default decimal-format minus-sign[Error is around here]="--";\n        format-number(931.4857,\'000.$$0\')'
 decimal-format-912err,AssertionError: expected [Function] to throw error including 'XQST0098' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-Constr-attr-enclexpr-9,AssertionError: expected [Function] to throw an error
 Constr-attr-id-2,AssertionError: Expected executing the XPath "<elem xml:id=" a{'b c d',' '}"/>" to resolve to one of the expected results, but got AssertionError: Expected XPath <elem xml:id=" a{'b c d',' '}"/> to resolve to the given XML. Expected <elem xml:id=" ab c d  "/> to equal <elem xml:id="ab c d"/>, AssertionError: expected [Function] to throw an error.
 K2-DirectConElemAttr-36,AssertionError: string(<elem attr="{processing-instruction name {" content "}}"/>/@attr): expected ' content ' to equal 'content '
 K2-DirectConElemAttr-38,Error: No selector counterpart for: computedAttributeConstructor.
@@ -2686,7 +2664,6 @@ K2-DirectConElem-42,Error: No selector counterpart for: computedDocumentConstruc
 K2-DirectConElem-43,Error: No selector counterpart for: computedDocumentConstructor.
 K2-DirectConElem-45,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConElem-51,AssertionError: Expected XPath <e xml:id=" fo"/> to resolve to the given XML. Expected <e xml:id=" fo"/> to equal <e xml:id="fo"/>
-K2-DirectConElem-53,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'No selector counterpart for: computedNamespaceConstructor.'
 K2-DirectConElem-53a,Error: No selector counterpart for: computedNamespaceConstructor.
 cbcl-directconelem-001,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-directconelem-002,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2742,7 +2719,6 @@ K2-DirectConElemContent-15,Error: XPST0017: Function data with arity of 1 not re
 K2-DirectConElemContent-29,Error: No selector counterpart for: computedTextConstructor.
 K2-DirectConElemContent-32,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConElemContent-33,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
-K2-DirectConElemContent-35,Error: XPST0003: Use of XQuery functionality is not allowed in XPath context
 K2-DirectConElemContent-35a,AssertionError: Expected XPath <e/> instance of element(*, xs:untyped) to resolve to false: expected true to be false
 K2-DirectConElemContent-36,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-DirectConElemContent-38,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2938,13 +2914,11 @@ FunctionCall-013,Error: XPST0003: Unable to parse XPath: "(         declare func
 FunctionCall-014,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 FunctionCall-022,Error: XPST0003: Unable to parse XPath: "deep-equal((          declare function local:unique($in as xs:integer*) as xs:boolean { count($in) = count(distinct-values($in)) };          (local:unique([1,2,3,4,5]), local:unique([1,2,3,4,4]))), (true(), false()))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. deep-equal((          declare [Error is around here]function local:unique($in as xs:integer*) as xs:boolean { count($in) = count(distinct-values($in)) };          (local:unique([1,2,3,4,5]), local:unique([1,2,3,4,4]))), (true(), false()))
 FunctionCall-027,AssertionError: expected [Function] to throw error including 'XPST0051' but got 'XPST0081: Can not cast: type xs:NMTOKENS is unknown.'
-FunctionCall-044,AssertionError: expected [Function] to throw an error
 FunctionCall-048,AssertionError: expected [Function] to throw an error
 K-FunctionCallExpr-5,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'XPST0017: Function prefix-does-not-exist:func-does-not-exist with arity of 3 not registered. No similar functions found.'
 K-FunctionCallExpr-15a,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
 K-FunctionCallExpr-16a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 K-FunctionCallExpr-17a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
-K-FunctionCallExpr-25,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'XPST0003: Use of XQuery functionality is not allowed in XPath context'
 K-FunctionCallExpr-25a,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 K2-FunctionCallExpr-10,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-FunctionCallExpr-11,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
@@ -2953,16 +2927,7 @@ cbcl-promotion-002,Error: XPST0008, The variable p is not in scope.
 cbcl-promotion-003,Error: XPST0008, The variable p is not in scope.
 cbcl-promotion-005,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0008, The variable p is not in scope.'
 cbcl-promotion-006,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function index-of with arity of 2 not registered. No similar functions found.'
-function-call-reserved-function-names-014,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function local:function() { fn:true() }; 	function()       ". Expected " ", "(:", "\n", "\r", "\t", "as", or "{" but end of input found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function local:function() { fn:true() }; 	function()       [Error is around here]
-function-call-reserved-function-names-015,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function namespace-node($arg) { fn:true() }; 	namespace-node(1)       ". Expected " ", "(:", "\n", "\r", or "\t" but "n" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]namespace-node($arg) { fn:true() }; 	namespace-node(1)
-function-call-reserved-function-names-016,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function local:switch() { fn:true() }; 	switch()       ". Expected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function local:switch() { fn:true() }; 	switch[Error is around here]()
-function-call-reserved-function-names-033,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'XPST0003: Unable to parse XPath: "\n\tfunction()\n      ".\nExpected " ", "(:", "\\n", "\\r", "\\t", "as", or "{" but end of input found.\n\n\tfunction()\n      [Error is around here]'
 function-call-reserved-function-names-034,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'XPST0003: Unable to parse XPath: "\n\tnamespace-node(1)\n      ".\nExpected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.\n\n\tnamespace-node[Error is around here](1)\n      '
-function-call-reserved-function-names-035,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'XPST0003: Unable to parse XPath: "\n\tswitch()\n      ".\nExpected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.\n\n\tswitch[Error is around here]()\n      '
-function-call-reserved-function-names-039,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function local:array() { fn:true() }; 	array()       ". Expected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "{", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function local:array() { fn:true() }; 	array[Error is around here]()
-function-call-reserved-function-names-041,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'XPST0003: Unable to parse XPath: "\n\tarray()\n      ".\nExpected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "{", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.\n\n\tarray[Error is around here]()\n      '
-function-call-reserved-function-names-043,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function local:map() { fn:true() }; 	map()       ". Expected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "{", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function local:map() { fn:true() }; 	map[Error is around here]()
-function-call-reserved-function-names-045,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'XPST0003: Unable to parse XPath: "\n\tmap()\n      ".\nExpected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "{", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.\n\n\tmap[Error is around here]()\n      '
 function-declaration-004,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 function-declaration-005,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 function-declaration-006,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
@@ -2977,14 +2942,12 @@ function-declaration-023,AssertionError: Expected executing the XPath "         
 function-declaration-024,AssertionError: expected [Function] to throw an error
 function-declaration-025,AssertionError: expected [Function] to throw error including 'XQST0060' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 function-declaration-026,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-function-declaration-027,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'Cannot read property \'0\' of null'
 function-declaration-028,Error: XPST0003: Unable to parse XPath: "(          declare function local:function() { };          local:function()) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. (          declare [Error is around here]function local:function() { };          local:function()) => empty()
 function-declaration-029,Error: XPST0003: Unable to parse XPath: "(          declare function local:function($x) { (:there is nothing here:) };          local:function(3)) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. (          declare [Error is around here]function local:function($x) { (:there is nothing here:) };          local:function(3)) => empty()
 function-declaration-030,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Cannot read property \'0\' of null'
 K-FunctionProlog-2,AssertionError: expected [Function] to throw error including 'XQST0045' but got 'XQST0060: Functions declared in a module must reside in a namespace.'
 K-FunctionProlog-10,AssertionError: expected [Function] to throw an error
 K-FunctionProlog-11,AssertionError: expected [Function] to throw an error
-K-FunctionProlog-12a,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-FunctionProlog-12b,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-FunctionProlog-14,AssertionError: expected [Function] to throw an error
 K-FunctionProlog-18,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -3035,22 +2998,6 @@ K2-FunctionProlog-37,AssertionError:        declare function local:foo($arg ) as
 K2-FunctionProlog-38,AssertionError: expected [Function] to throw error including 'XPST0017' but got 'No selector counterpart for: computedTextConstructor.'
 K2-FunctionProlog-39,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-FunctionProlog-40,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-function-decl-reserved-function-names-001,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function attribute() { fn:true() }; 	local:attribute()       ". Expected " ", "(:", "\n", "\r", or "\t" but "a" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]attribute() { fn:true() }; 	local:attribute()
-function-decl-reserved-function-names-003,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function comment() { fn:true() }; 	local:comment()       ". Expected " ", "(:", "\n", "\r", or "\t" but "c" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]comment() { fn:true() }; 	local:comment()
-function-decl-reserved-function-names-005,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function document-node() { fn:true() }; 	local:document-node()       ". Expected " ", "(:", "\n", "\r", or "\t" but "d" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]document-node() { fn:true() }; 	local:document-node()
-function-decl-reserved-function-names-007,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function element() { fn:true() }; 	local:element()       ". Expected " ", "(:", "\n", "\r", or "\t" but "e" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]element() { fn:true() }; 	local:element()
-function-decl-reserved-function-names-009,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function empty-sequence() { fn:true() }; 	local:empty-sequence()       ". Expected " ", "(:", "\n", "\r", or "\t" but "e" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]empty-sequence() { fn:true() }; 	local:empty-sequence()
-function-decl-reserved-function-names-011,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function function() { fn:true() }; 	local:function()       ". Expected " ", "(:", "\n", "\r", or "\t" but "f" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]function() { fn:true() }; 	local:function()
-function-decl-reserved-function-names-013,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function if() { fn:true() }; 	local:if()       ". Expected " ", "(:", "\n", "\r", or "\t" but "i" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]if() { fn:true() }; 	local:if()
-function-decl-reserved-function-names-015,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function item() { fn:true() }; 	local:item()       ". Expected " ", "(:", "\n", "\r", or "\t" but "i" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]item() { fn:true() }; 	local:item()
-function-decl-reserved-function-names-017,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function namespace-node() { fn:true() }; 	local:namespace-node()       ". Expected " ", "(:", "\n", "\r", or "\t" but "n" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]namespace-node() { fn:true() }; 	local:namespace-node()
-function-decl-reserved-function-names-019,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function node() { fn:true() }; 	local:node()       ". Expected " ", "(:", "\n", "\r", or "\t" but "n" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]node() { fn:true() }; 	local:node()
-function-decl-reserved-function-names-021,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function processing-instruction() { fn:true() }; 	local:processing-instruction()       ". Expected " ", "(:", "\n", "\r", or "\t" but "p" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]processing-instruction() { fn:true() }; 	local:processing-instruction()
-function-decl-reserved-function-names-023,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function schema-attribute() { fn:true() }; 	local:schema-attribute()       ". Expected " ", "(:", "\n", "\r", or "\t" but "s" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]schema-attribute() { fn:true() }; 	local:schema-attribute()
-function-decl-reserved-function-names-025,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function schema-element() { fn:true() }; 	local:schema-element()       ". Expected " ", "(:", "\n", "\r", or "\t" but "s" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]schema-element() { fn:true() }; 	local:schema-element()
-function-decl-reserved-function-names-027,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function switch() { fn:true() }; 	local:switch()       ". Expected " ", "(:", "\n", "\r", or "\t" but "s" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]switch() { fn:true() }; 	local:switch()
-function-decl-reserved-function-names-029,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function text() { fn:true() }; 	local:text()       ". Expected " ", "(:", "\n", "\r", or "\t" but "t" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]text() { fn:true() }; 	local:text()
-function-decl-reserved-function-names-031,Error: XPST0003: Unable to parse XPath: " 	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function typeswitch() { fn:true() }; 	local:typeswitch()       ". Expected " ", "(:", "\n", "\r", or "\t" but "t" found.  	declare default function namespace "http://www.w3.org/2005/xquery-local-functions"; 	declare function [Error is around here]typeswitch() { fn:true() }; 	local:typeswitch()
 K-GenCompEq-16,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K-GenCompEq-17,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K-GenCompEq-18,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
@@ -3095,7 +3042,6 @@ K-CondExpr-4,Error: No selector counterpart for: treatExpr.
 K-CondExpr-6,Error: No selector counterpart for: treatExpr.
 K-CondExpr-12,Error: No selector counterpart for: treatExpr.
 K2-CondExpr-3,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-inline-fn-006,AssertionError: expected [Function] to throw an error
 inline-fn-012a,AssertionError: expected [Function] to throw an error
 inline-fn-013,AssertionError: Expected XPath           let $add := function($x, $y) as xs:double {$x + $y}          return $add(3, 4)        to resolve to something of type xs:double: expected false to be true
 inline-fn-015,Error: XPST0003: Unable to parse XPath: "          let $add := %Q{http://example.com/speed}fast %Q{http://example.com/origin}author("Mike") function($x, $y) {$x + $y} return $add(2,2)        = 4". Expected " ", "(", "(:", "\n", "\r", "\t", or "function" but "%" found.           let $add := %Q{http://example.com/speed}fast [Error is around here]%Q{http://example.com/origin}author("Mike") function($x, $y) {$x + $y} return $add(2,2)        = 4
@@ -3720,8 +3666,6 @@ K2-ForExprPositionalVar-1,Error: XPST0008, The variable p is not in scope.
 K2-ForExprPositionalVar-2,AssertionError: Expected executing the XPath "let $tree := <e> <a id="1"/> <a id="2"/> <a id="3"/> </e> for $i at $pos in ("a", "b", "c") return ($tree/@id eq $pos, $pos)" to resolve to one of the expected results, but got Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet, AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'.
 K2-ForExprPositionalVar-3,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 K2-ForExprPositionalVar-4,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
-K-FilterExpr-4,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'Atomizing array(*) is not implemented.'
-K-FilterExpr-5,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'Atomizing array(*) is not implemented.'
 K-FilterExpr-51,AssertionError: Expected executing the XPath "((0, 1, 2, "a", "b", "c")[. instance of xs:string][. treat as xs:string eq "c"] treat as xs:string) eq "c"" to resolve to one of the expected results, but got Error: No selector counterpart for: treatExpr., AssertionError: expected [Function] to throw error including 'XPDY0050' but got 'No selector counterpart for: treatExpr.'.
 K-FilterExpr-52,AssertionError: Expected executing the XPath "((0, 1, 2, "a", "b", "c")[. instance of xs:integer][. treat as xs:integer eq 0] treat as xs:integer) eq 0" to resolve to one of the expected results, but got Error: No selector counterpart for: treatExpr., AssertionError: expected [Function] to throw error including 'XPDY0050' but got 'No selector counterpart for: treatExpr.'.
 K-FilterExpr-92,AssertionError: expected [Function] to throw an error
@@ -3981,28 +3925,18 @@ VarDecl061,Error: Not implemented: only module imports, namespace declarations, 
 VarDecl062,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 VarDecl063,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 VarDecl064,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-vardeclerr,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 vardeclerr-1,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 internalvar-2,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-K2-InternalVariablesWithout-1,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-1a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-1b,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-InternalVariablesWithout-1c,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-InternalVariablesWithout-2,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-2a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-InternalVariablesWithout-3,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-3a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-InternalVariablesWithout-4,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-4a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-InternalVariablesWithout-5,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-5a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-InternalVariablesWithout-6,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-6a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-InternalVariablesWithout-7,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-7a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-InternalVariablesWithout-8,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-8a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-InternalVariablesWithout-9,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-9a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-InternalVariablesWithout-10,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-InternalVariablesWithout-11,AssertionError: Expected executing the XPath "declare variable $local:myVar := local:thisFunctionDoesNotExist(); 1" to resolve to one of the expected results, but got Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules, AssertionError: expected [Function] to throw error including 'XPST0017' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'.
@@ -4023,7 +3957,6 @@ vardeclwithtype-11,Error: Not implemented: only module imports, namespace declar
 vardeclwithtype-12,AssertionError: expected [Function] to throw error including 'XQST0049' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 vardeclwithtype-13,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 vardeclwithtype-14,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-vardeclwithtype-15a,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 vardeclwithtype-15b,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 vardeclwithtype-16,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 vardeclwithtype-17,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -4038,25 +3971,17 @@ K-InternalVariablesWith-2,Error: Not implemented: only module imports, namespace
 K-InternalVariablesWith-3,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-4,AssertionError: Expected executing the XPath "declare variable $myVar as xs:gYear := 2006; true()" to resolve to one of the expected results, but got Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules, AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'.
 K-InternalVariablesWith-5,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K-InternalVariablesWith-6a,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-6b,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-K-InternalVariablesWith-9a,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-9b,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-InternalVariablesWith-11,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-InternalVariablesWith-12,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-InternalVariablesWith-13,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-14,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K-InternalVariablesWith-15a,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-15b,AssertionError: expected [Function] to throw error including 'XPST0008' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K-InternalVariablesWith-16,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-16a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K-InternalVariablesWith-17,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-17a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K-InternalVariablesWith-18,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-18a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K-InternalVariablesWith-19,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-19a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K-InternalVariablesWith-20,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-20a,AssertionError: expected [Function] to throw error including 'XQDY0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K-InternalVariablesWith-21,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-InternalVariablesWith-1,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
@@ -4097,7 +4022,6 @@ K2-ExternalVariablesWithout-10,Error: Not implemented: only module imports, name
 K2-ExternalVariablesWithout-11,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-ExternalVariablesWithout-12,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-ExternalVariablesWithout-13,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-K2-ExternalVariablesWithout-18,AssertionError: expected [Function] to throw error including 'XPST0003' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-ExternalVariablesWithout-18b,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-ExternalVariablesWithout-19,AssertionError: expected [Function] to throw error including 'XPDY0002' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 K2-ExternalVariablesWithout-20,AssertionError: expected [Function] to throw error including 'XPDY0002' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
@@ -4180,23 +4104,15 @@ extvardef-019,Error: Not implemented: only module imports, namespace declaration
 extvardef-020,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 extvardef-021,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 extvardef-022,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-version_declaration-023-v1,AssertionError: expected [Function] to throw an error
 version_declaration-007,AssertionError: expected [Function] to throw an error
 version_declaration-008,AssertionError: expected [Function] to throw an error
-VersionDecl-v1-processor-and-v3-query,AssertionError: expected [Function] to throw an error
-version_declaration-010,AssertionError: expected [Function] to throw an error
 version_declaration-010-v3,AssertionError: expected [Function] to throw an error
-K-VersionProlog-3,AssertionError: expected [Function] to throw an error
 K-VersionProlog-3-v3,AssertionError: expected [Function] to throw an error
-K-VersionProlog-4,AssertionError: expected [Function] to throw an error
 K-VersionProlog-4-v3,AssertionError: expected [Function] to throw an error
-prolog-version-6,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 prolog-version-6-v3,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 prolog-version-6-v31,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-prolog-version-7,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 prolog-version-7-v3,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 prolog-version-7-v31,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-K-VersionProlog-5,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-VersionProlog-5-v3,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 combined-errors-1,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 combined-errors-2,AssertionError: Expected executing the XPath "import schema namespace atomic="http://www.w3.org/XQueryTest"; "ABC"" to resolve to one of the expected results, but got Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules, AssertionError: expected [Function] to throw error including 'XQST0009' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'.
@@ -4255,7 +4171,6 @@ XPTY0004_06,AssertionError: expected [Function] to throw an error
 XPTY0004_07,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'No selector counterpart for: computedDocumentConstructor.'
 XPTY0004_08,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'No selector counterpart for: computedAttributeConstructor.'
 XPTY0004_09,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'
-XPTY0004_12,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 XPTY0004_12a,AssertionError: expected [Function] to throw error including 'FOER0000' but got 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 XPTY0004_29,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'No selector counterpart for: computedElementConstructor.'
 XPTY0004_31,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'No selector counterpart for: computedAttributeConstructor.'
@@ -4267,7 +4182,6 @@ XPTY0004_37,AssertionError: expected [Function] to throw an error
 XPTY0004_38,AssertionError: expected [Function] to throw an error
 XPTY0004_39,AssertionError: expected [Function] to throw an error
 XPTY0004_40,AssertionError: expected [Function] to throw an error
-XPTY0004_45,AssertionError: Expected executing the XPath "concat('prefix:', 'localname') cast as xs:QName" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Casting to xs:QName is not implemented.', AssertionError: expected [Function] to throw error including 'FONS0004' but got 'Casting to xs:QName is not implemented.'.
 XPTY0004_47,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 XPTY0004_48,AssertionError: Expected executing the XPath "let $i := (1, 3, 2) order by $i return $i" to resolve to one of the expected results, but got Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet, AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'.
 XPTY0020,AssertionError: expected [Function] to throw error including 'XPTY0020' but got 'XPTY0019: The / operator can only be applied to xml/json nodes.'
@@ -4304,7 +4218,6 @@ XQST0046_12,AssertionError: Expected executing the XPath "for $x in ("a", "a", "
 XQST0047,AssertionError: expected [Function] to throw error including 'XQST0047' but got 'Duplicate function registration'
 XQST0048,Error: XQST0048: Functions and variables declared in a module must reside in the module target namespace.
 XQST0049,AssertionError: expected [Function] to throw error including 'XQST0049' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-XQST0054,AssertionError: expected [Function] to throw error including 'XQST0054' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 XQST0055,AssertionError: expected [Function] to throw error including 'XQST0055' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 XQST0057,AssertionError: expected [Function] to throw error including 'XQST0057' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 XQST0059_2,AssertionError: expected [Function] to throw error including 'XQST0059' but got 'XPST0003: Unable to parse XPath: "import module namespace foo = "http://www.w3.org/" at "DoesNotExist.xq"; 1".\nExpected "\'" or "\\"" but " " found.\nimport module namespace foo = "http://www.w3.org/" at[Error is around here] "DoesNotExist.xq"; 1'
@@ -4322,7 +4235,6 @@ XQST0070_2,AssertionError: expected [Function] to throw error including 'XQST007
 XQST0070_3,SyntaxError: Expected " ", "(:", ";", "\n", "\r", or "\t" but end of input found.
 XQST0070_4,AssertionError: expected [Function] to throw an error
 XQST0076,AssertionError: expected [Function] to throw error including 'XQST0076' but got 'XPST0003: Unable to parse XPath: "for $x in (\'a\', \'b\', \'c\') order by $x collation \'http://www.w3.org/\' return $x".\nExpected "\'" or "\\"" but " " found.\nfor $x in (\'a\', \'b\', \'c\') order by $x collation[Error is around here] \'http://www.w3.org/\' return $x'
-XQST0079,AssertionError: expected [Function] to throw error including 'XQST0079' but got 'XPST0003: Unable to parse XPath: "declare namespace prefix = "http://www.w3.org/"; (# prefix:pragma #) { }".\nExpected " ", "#)", "(:", "\\n", "\\r", "\\t", [\\t\\n\\r -퟿�], or [�-�] but end of input found.\ndeclare namespace prefix = "http://www.w3.org/"; (# prefix:pragma #) { }[Error is around here]'
 XQST0085,AssertionError: expected [Function] to throw an error
 XQST0085b,Error: XPST0017: Function in-scope-prefixes with arity of 1 not registered. No similar functions found.
 XQST0085c,AssertionError: expected [Function] to throw error including 'XPST0081' but got 'NamespaceError: Qualified name with prefix can not have a null namespace'
@@ -4330,15 +4242,11 @@ XQST0087,AssertionError: expected [Function] to throw an error
 XQST0088_1,AssertionError: expected [Function] to throw error including 'XQST0088' but got 'XQST0051: No modules found with the namespace uri '
 XQST0088_2,Error: XPST0081: The prefix "cheese" could not be resolved
 XQST0089,AssertionError: expected [Function] to throw an error
-XQST0093,Error: Duplicate function registration
 XQST0093a,Error: Duplicate function registration
 XQTY0024_1,AssertionError: expected [Function] to throw error including 'XQTY0024' but got 'No selector counterpart for: computedAttributeConstructor.'
 XQTY0024_2,AssertionError: expected [Function] to throw error including 'XQTY0024' but got 'No selector counterpart for: computedAttributeConstructor.'
 XQTY0024_3,AssertionError: expected [Function] to throw error including 'XQTY0024' but got 'No selector counterpart for: computedAttributeConstructor.'
 XQTY0024_4,AssertionError: expected [Function] to throw error including 'XQTY0024' but got 'No selector counterpart for: computedAttributeConstructor.'
-XQTY0086_1,AssertionError: expected [Function] to throw error including 'XQTY0086' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-XQTY0086_2,AssertionError: expected [Function] to throw error including 'XQTY0086' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-XQTY0086_3,AssertionError: expected [Function] to throw error including 'XQTY0086' but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 XQST0125_1,AssertionError: expected [Function] to throw an error
 XQST0125_2,AssertionError: expected [Function] to throw an error
 annex-1,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
