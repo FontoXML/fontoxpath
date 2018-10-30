@@ -1,6 +1,5 @@
 import Expression from './Expression';
 import Sequence from './dataTypes/Sequence';
-import Specificity from './Specificity';
 import { DONE_TOKEN } from './util/iterators';
 
 /**
@@ -8,31 +7,26 @@ import { DONE_TOKEN } from './util/iterators';
  */
 class ForExpression extends Expression {
 	/**
-	 * @param  {!{varName:{prefix:string, namespaceURI:string, name:string}, expression}}  clause
-	 * @param  {!Expression}                       expression
+	 * @param  {{prefix:string, namespaceURI:?string, localName: string}}    rangeVariable
+	 * @param  {Expression}  clauseExpression
+	 * @param  {Expression}  returnExpression
 	 */
-	constructor (clause, expression) {
+	constructor (rangeVariable, clauseExpression, returnExpression) {
 		super(
-			new Specificity({}),
-			[clause.expression],
+			clauseExpression.specificity.add(returnExpression.specificity),
+			[clauseExpression, returnExpression],
 			{
 				canBeStaticallyEvaluated: false
 			});
 
-		this._prefix = clause.varName.prefix;
-		this._namespaceURI = clause.varName.namespaceURI;
-		this._localName = clause.varName.name;
+		this._prefix = rangeVariable.prefix;
+		this._namespaceURI = rangeVariable.namespaceURI;
+		this._localName = rangeVariable.localName;
 
 		this._variableBindingKey = null;
 
-		/**
-		 * @type {!Expression}
-		 */
-		this._clauseExpression = clause.expression;
-		/**
-		 * @type {!Expression}
-		 */
-		this._returnExpression = expression;
+		this._clauseExpression = clauseExpression;
+		this._returnExpression = returnExpression;
 	}
 
 	performStaticEvaluation (staticContext) {

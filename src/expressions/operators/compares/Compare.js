@@ -9,7 +9,7 @@ import valueCompare from './valueCompare';
  */
 class Compare extends Expression {
 	/**
-	 * @param  {Array<string>}    kind
+	 * @param  {string}       kind
 	 * @param  {!Expression}  firstExpression
 	 * @param  {!Expression}  secondExpression
 	 */
@@ -23,8 +23,27 @@ class Compare extends Expression {
 		this._firstExpression = firstExpression;
 		this._secondExpression = secondExpression;
 
-		this._compare = kind[0];
-		this._operator = kind[1];
+		switch (kind) {
+			case 'equalOp':
+			case 'notEqualOp':
+			case 'lessThanOrEqualOp':
+			case 'lessThanOp':
+			case 'greaterThanOrEqualOp':
+			case 'greaterThanOp':
+				this._compare = 'generalCompare';
+				break;
+			case 'eqOp':
+			case 'neOp':
+			case 'ltOp':
+			case 'leOp':
+			case 'gtOp':
+			case 'geOp':
+				this._compare = 'valueCompare';
+				break;
+			default:
+				this._compare = 'nodeCompare';
+		}
+		this._operator = kind;
 	}
 
 	evaluate (dynamicContext, executionParameters) {

@@ -1,637 +1,199 @@
 {
-    function appendRest (arr, optionalArr) {
-        if (!optionalArr) {
-            return arr;
-        }
-        return arr.concat(optionalArr);
+function makeBinaryOp (kind, lhs, rhs) {
+    return rhs.reduce(function(lh, rh) {return [kind, ["firstOperand", lh], ["secondOperand", rh]]}, lhs);
+}
+
+function isAttributeTest (nodeTest) {
+    return nodeTest[0] === "attributeTest" || nodeTest[0] === "schemaAttributeTest";
+}
+
+function assertValidCodePoint (codePoint) {
+    if ((codePoint >= 0x1 && codePoint <= 0xD7FF) ||
+        (codePoint >= 0xE000 && codePoint <= 0xFFFD) ||
+        (codePoint >= 0x10000 && codePoint <= 0x10FFFF)) {
+        return;
+    }
+    throwError("XQST0090", "The character reference " + codePoint + " ("  + codePoint.toString(16) + ") does not reference a valid codePoint.");
+}
+
+function parseCharacterReferences (input) {
+    if (!options.xquery) {
+        // XPath does not know of character references
+        return input;
     }
 
-    function accumulateDirContents (parts) {
-        if (!parts.length) {
-            return [];
-        }
-        var result = [parts[0]];
-        for (var i = 1; i < parts.length; ++i) {
-            if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
-                result[result.length-1] += parts[i];
-                continue;
+    return input
+        .replace(/(&[^;]+);/g, function (match) {
+            if (/^&#x/.test(match)) {
+                var codePoint = parseInt(match.slice(3, -1), 16);
+                assertValidCodePoint(codePoint);
+                return String.fromCodePoint(codePoint);
             }
-            result.push(parts[i]);
+
+            if (/^&#/.test(match)) {
+                var codePoint = parseInt(match.slice(2, -1), 10);
+                assertValidCodePoint(codePoint);
+                return String.fromCodePoint(codePoint);
+            }
+
+            switch (match) {
+                case '&lt;':
+                    return '<';
+                case '&gt;':
+                    return '>';
+                case '&amp;':
+                    return '&';
+                case '&quot;':
+                    return String.fromCharCode(34);
+                case '&apos;':
+                    return String.fromCharCode(39);
+            }
+            throwError("XPST0003", "Unknown character reference: \"" + match + "\"");
+        });
+}
+
+function accumulateDirContents (parts, expressionsOnly, normalizeWhitespace) {
+    if (!parts.length) {
+        return [];
+    }
+    var result = [parts[0]];
+    for (var i = 1; i < parts.length; ++i) {
+        if (typeof result[result.length-1] === "string" && typeof parts[i] === "string") {
+            result[result.length-1] += parts[i];
+            continue;
         }
+        result.push(parts[i]);
+    }
+
+    if (typeof result[0] === "string" && result.length === 0) {
+      return [];
+    }
+
+    result = result.reduce(function (filteredItems, item, i) {
+        if (typeof item !== 'string') {
+            filteredItems.push(item);
+        }
+        else if (!normalizeWhitespace || !/^\s*$/.test(item)) {
+            // Not only whitespace
+            filteredItems.push(parseCharacterReferences(item));
+        }
+        else {
+            var next = result[i + 1];
+            if (next && next[0] === "CDataSection") {
+                filteredItems.push(parseCharacterReferences(item));
+            }
+            else {
+                var previous = result[i - 1];
+                if (previous && previous[0] === "CDataSection") {
+                    filteredItems.push(parseCharacterReferences(item));
+                }
+            }
+        }
+        return filteredItems;
+    }, []);
+
+    if (!result.length) {
         return result;
     }
+
+    if (result.length > 1 || expressionsOnly){
+        for (var i = 0; i < result.length; i++) {
+            if (typeof result[i] === "string") {
+                result[i] = ["stringConstantExpr", ["value", result[i]]];
+            }
+        }
+    }
+    return result;
+}
+
+function wrapInSequenceExprIfNeeded(expr) {
+    switch(expr[0]){
+        // These expressions do not have to be wrapped (are allowed in a filterExpr)
+        case "constantExpr":
+        case "varRef":
+        case "contextItemExpr":
+        case "functionCallExpr":
+        case "sequenceExpr":
+        case "elementConstructor":
+        case "computedElementConstructor":
+        case "computedAttributeConstructor":
+        case "computedDocumentConstructor":
+        case "computedTextConstructor":
+        case "computedCommentConstructor":
+        case "computedNamespaceConstructor":
+        case "computedPIConstructor":
+        case "orderedExpr":
+        case "unorderedExpr":
+        case "namedFunctionRef":
+        case "inlineFunctionExpr":
+        case "dynamicFunctionInvocationExpr":
+        case "mapConstructor":
+        case "arrayConstructor":
+        case "stringConstructor":
+        case "unaryLookup":
+            return expr;
+        }
+    return ["sequenceExpr", expr];
+}
+
+function throwError (code, cause) {
+    throw new Error(code + ": " + cause);
+}
+
+function getQName (qname) {
+    return qname.length === 1 ? qname[0] : qname[0].prefix + ':' + qname[1]
+}
+
+function assertEqualQNames (a, b) {
+   var nameA = getQName(a);
+   var nameB = getQName(b);
+   if (nameA !== nameB) {
+       throwError(
+           "XQST0118",
+           "The start and the end tag of an element constructor must be equal. \"" +
+               nameA +
+               "\" does not match \"" +
+               nameB +
+               "\"");
+   }
+}
+
 }
 
 // 1
-QueryBody
- = _ expr:Expr _ {return expr}
-
-// 2
-ParamList
- = start:Param rest:( _ "," _ param:Param {return param} )* {return appendRest([start], rest)}
-
-// 3
-Param
- = "$" name:EQName type:TypeDeclaration? {return [name, type || "item()*"]}
-
-// 4
-FunctionBody
- = EnclosedExpr
-
-// 5
-
-EnclosedExpr
- = "{" _ e:Expr? _ "}" {return e || ["sequence"]}
-
-// 6
-Expr
- = first:ExprSingle rest:( _ "," _ expr:ExprSingle {return expr})* {return rest.length ? appendRest(["sequence", first], rest) : first}
-
-// 7 (Note: ordering changed because of greediness)
-ExprSingle
- = LetExpr
- / QuantifiedExpr
- / IfExpr
- / ForExpr
- / OrExpr
-
-// 8
-ForExpr = clauses:SimpleForClause S "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
-    // The bindings part consists of the rangeVariable and the bindingSequence.
-    // Multiple bindings are syntactic sugar for 'for $x in 1 return for $x in $y return $x * 2'
-    return clauses.reduceRight(function (expression, clause) {
-        return ["forExpression"].concat(clause, [expression]);
-     }, returnExpr)
-  }
-
-// 9
-SimpleForClause = "for" S first:SimpleForBinding rest:( _ "," _ b:SimpleForBinding {return b})* {return [first].concat(rest)}
-
-// 10
-SimpleForBinding = "$" varName:VarName S "in" S expr:ExprSingle {return [varName, expr]}
-
-// 11
-LetExpr
-= bindings:SimpleLetClause _ "return" AssertAdjacentOpeningTerminal _ returnExpr:ExprSingle {
-    // The bindings part consists of the rangeVariable and the bindingSequence.
-    // Multiple bindings are syntactic sugar for 'let $x := 1 return let $y := $x * 2'
-    return bindings.reduceRight(function (expression, binding) {
-        return ["let"].concat(binding, [expression]);
-     }, returnExpr)
-  }
-
-// 12
-SimpleLetClause = "let" _ first:SimpleLetBinding rest:( _ "," _ binding:SimpleLetBinding {return binding})* {return appendRest([first], rest)}
-
-// 13
-SimpleLetBinding = "$" rangeVariable:VarName _ ":=" _ bindingSequence:ExprSingle {return [rangeVariable, bindingSequence]}
-
-// 14
-QuantifiedExpr
- = kind:("some" / "every") S "$" varName:VarName S "in" S exprSingle:ExprSingle restExpr:("," _ "$" name:VarName S "in" S expr:ExprSingle {return [name, expr]})* S "satisfies" S satisfiesExpr:ExprSingle {return ["quantified", kind, [[varName, exprSingle]].concat(restExpr), satisfiesExpr]}
-
-// 15
-IfExpr
- = "if" _ "(" _ testExpr:Expr _ ")" _ "then" AssertAdjacentOpeningTerminal _ thenExpr:ExprSingle _ "else" AssertAdjacentOpeningTerminal _ elseExpr:ExprSingle {return ["conditional", testExpr, thenExpr, elseExpr]}
-
-// 16
-OrExpr
- = first:AndExpr rest:( _ "or" AssertAdjacentOpeningTerminal _ expr:AndExpr {return expr})* {return rest.length ? appendRest(["or", first], rest) : first}
-
-// 17
-AndExpr
- = first:ComparisonExpr rest:( _ "and" AssertAdjacentOpeningTerminal _ expr:ComparisonExpr {return expr})* {return rest.length ? appendRest(["and", first], rest) : first}
-
-// 18
-ComparisonExpr
- = lhs:StringConcatExpr _ op:(ValueComp / NodeComp / GeneralComp) _ rhs:StringConcatExpr {return ["compare", op, lhs, rhs]} // Note: the whole 1<2<3 shenanigan is removed from 3.1
- / StringConcatExpr
-
-// 19
-StringConcatExpr
- = first:RangeExpr rest:( _ "||" _ expr:RangeExpr {return expr})* {
-     if (!rest.length) return first;
-     var args = [first].concat(rest);
-     return appendRest(["functionCall", ["namedFunctionRef", [null, "http://www.w3.org/2005/xpath-functions", "concat"], args.length], args])
-   }
-
-// 20
-RangeExpr
- = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})? {return rhs === null ? lhs : ["functionCall", ["namedFunctionRef", [null, "http://fontoxpath/operators", "to"], 2], [lhs, rhs]]}
-
-// 21
-AdditiveExpr
- = lhs:MultiplicativeExpr rest:( _ op:("-" / "+") _ rhs:MultiplicativeExpr {return {op: op, rhs: rhs}})* {
-        return rest.length === 0 ? lhs : rest.reduce(function (inner, nesting) {
-            return ["binaryOperator", nesting.op, inner, nesting.rhs]
-        }, lhs)
-    }
-/ MultiplicativeExpr
-
-// 22
-multiplicativeExprOp
- = op:("*" / ( op:("div" / "idiv" / "mod") AssertAdjacentOpeningTerminal {return op}))
-MultiplicativeExpr
- = lhs:UnionExpr rest:( _ op:multiplicativeExprOp _ rhs:UnionExpr {return {op: op, rhs: rhs}})* {
-        return rest.length === 0 ? lhs : rest.reduce(function (inner, nesting) {
-            return ["binaryOperator", nesting.op, inner, nesting.rhs]
-        }, lhs)
-    }
-
-// 23
-UnionExpr
- = first:IntersectExpr rest:( _ ("|"/("union" AssertAdjacentOpeningTerminal)) _ expr:IntersectExpr {return expr})+ {return appendRest(["union", first], rest)}
- / IntersectExpr
-
-// 24 Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
-IntersectExpr
- = lhs:InstanceofExpr rhs:(_ type:("intersect" / "except") AssertAdjacentOpeningTerminal _ rhs:IntersectExpr {return [type, rhs]})? {
-     return rhs === null ? lhs : ["intersectExcept", rhs[0], lhs, rhs[1]]
-   }
-
-// 25
-InstanceofExpr
- = lhs:TreatExpr rhs:(_ "instance" S "of" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["instance of", lhs, rhs] : lhs}
- / TreatExpr
-
-// 26
-TreatExpr
-// = lhs:CastableExpr _ "treat" S "as" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return ["treat as", lhs, rhs]}
- = CastableExpr
-
-// 27
-CastableExpr
- = lhs:CastExpr rhs:(_ "castable" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castable as", lhs, rhs] : lhs}
-
-// 28
-CastExpr
- = lhs:ArrowExpr rhs:(_ "cast" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["cast as", lhs, rhs] : lhs}
-
-// 29
-ArrowExpr
- = lhs:UnaryExpr functionParts:( _ "=>" _ functionName:ArrowFunctionSpecifier _ argumentList:ArgumentList _ {return [functionName, argumentList]})* {
-     if (!functionParts.length) return lhs;
-     return functionParts.reduce(function (previousFunction, functionPart) {
-       var args = [previousFunction].concat(functionPart[1]);
-       return [
-         "functionCall",
-         functionPart[0][0] === 'namedFunctionRef' ? functionPart[0].concat([args.length]) : functionPart[0],
-         args
-       ];
-     }, lhs);
-   }
-
-// 30
-UnaryExpr
- = "-" expr:UnaryExpr {return ["unaryMinus", expr]}
- / "+" expr:UnaryExpr {return ["unaryPlus", expr]}
- / ValueExpr
-
-// 31
-ValueExpr = SimpleMapExpr
-
-// 32
-GeneralComp = op:("=" / "!=" / "<=" / "<" / ">=" / ">") {return ["generalCompare", op]}
-
-// 33
-ValueComp = op:("eq" / "ne" / "lt" / "le" / "gt" / "ge") AssertAdjacentOpeningTerminal {return ["valueCompare", op]}
-
-// 34
-NodeComp = op:(op:("is"/"<<"/">>") AssertAdjacentOpeningTerminal {return op}) {return ["nodeCompare", op]}
-
-// 35
-SimpleMapExpr
- = lhs:PathExpr parts:( _ "!" _ expr:PathExpr {return expr})* {
-     if (!parts.length) return lhs;
-     return parts.reduce(function (previousMap, expression) {
-         return ["simpleMap", previousMap, expression]
-     }, lhs);
-   }
-
-// 36-46 (simplified)
-PathExpr
- = RelativePathExpr
- / AbsoluteLocationPath
-
-// 37
-RelativePathExpr
- = lhs:StepExpr _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExpr {return ["path", lhs, abbrev].concat(rhs[0] === "path" ? rhs.slice(1) : [rhs])}
- / lhs:StepExpr _ "/" _ rhs:RelativePathExpr {return ["path", lhs].concat(rhs[0] === "path" ? rhs.slice(1) : [rhs])}
- / StepExpr
-
-// 38
-StepExpr
- = PostfixExpr
- / AxisStep
-
-AbsoluteLocationPath
- = "/" _ path:RelativePathExpr { return ["absolutePath", path] }
- / abbrev:LocationPathAbbreviation _ path: RelativePathExpr { return ["absolutePath", ["path", abbrev].concat(path[0] === "path" ? path.slice(1) : [path])] }
- / "/" { return ["absolutePath", ["path", ["self", ["kindTest", "document-node()"]]]] }
-
-LocationPathAbbreviation
- = "//" {return ["descendant-or-self", ["kindTest", "node()"]]}
-
-// 39
-AxisStep
- = axis:Axis test:NodeTest predicates:Predicate* {
-     if (!predicates.length) {
-       return [axis, test];
-     }
-     return predicates.reduce(function (accumulator, current) {return ["filter", accumulator, current]}, [axis, test])
-   }
- / AbbreviatedStep
-
-Axis
- = name:AxisName "::" {return name}
- / "@" {return "attribute"}
- / "" {return "child"}
-
-AxisName
- = "ancestor-or-self"
- / "ancestor"
- / "attribute"
- / "child"
- / "decendant"
- / "following-sibling"
- / "following"
- / "descendant-or-self"
- / "descendant"
- / "parent"
- / "preceding-sibling"
- / "preceding"
- / "self"
-
-AbbreviatedStep
- = ".." {return ["parent", ["kindTest", "node()"]]}
-
-// 46
-NodeTest = KindTest / nameTest:NameTest {return ["nameTest", nameTest]}
-
-// 47
-NameTest = WildCard / EQName
-
-// 48
-WildCard =  "*:" name:NCName {return ['*', null, name]}
- / "*" {return ['*', null, '*']}
- / uri:BracedURILiteral "*" {return [null, uri, '*']}
- / prefix:NCName ":*" {return [prefix, null, '*']}
-
-// 49
-PostfixExpr
- = expr:PrimaryExpr postfixExpr:(
-   (_ filter:Predicate {return ["filter", filter]}) /
-   (_ argList:ArgumentList {return ["functionCall", argList]}) /
-   (_ lookup:Lookup {return ["lookup", lookup]})
-   )* {return postfixExpr.length ? postfixExpr.reduce(function (accumulator, currentExpr) { currentExpr.splice(1, 0, accumulator); return currentExpr}, expr) : expr}
-
-// 50
-ArgumentList
- = "(" _ args:(first:Argument rest:( _ "," _ arg:Argument {return arg})* {return appendRest([first], rest)})? _ ")" {return args||[]}
-
-// 51 (Not implemented)
-// PredicateList ::= Predicate*
-
-// 52
-Predicate
- = "[" _ e:Expr _ "]" {return e};
-
-// 53
-Lookup = "?" key:KeySpecifier {return key}
-
-// 54
-KeySpecifier = NCName / VarRef / ParenthesizedExpr / "*"
-
-// 55
-ArrowFunctionSpecifier = name:EQName {return ["namedFunctionRef", name]} / VarRef / ParenthesizedExpr
-
-// 56
-PrimaryExpr
- = Literal
- / VarRef
- / ParenthesizedExpr
- / ContextItemExpr
- / FunctionCall
- / NodeConstructor
- / FunctionItemExpr
- / MapConstructor
- / ArrayConstructor
-// / UnaryLookup
-
-// 57
-Literal = NumericLiteral / StringLiteral
-
-// 58 Note: changes because double accepts less than decimal, accepts less than integer
-NumericLiteral = literal:(DoubleLiteral / DecimalLiteral / IntegerLiteral) ![a-zA-Z] {return literal}
-
-// 59
-VarRef
- = "$" varName:VarName {return ["varRef", varName]}
-
-// 60
-VarName
- = EQName
-
-// 61
-ParenthesizedExpr
- = "(" _ expr:Expr _ ")" {return expr}
- / "(" _ ")" {return ["sequence"]}
-
-// 62
-// Do not match '..'
-ContextItemExpr
- = "." !"." {return ["self", ["typeTest", [null, null, "item()"]]]}
-
-// 63
-FunctionCall
-// Do not match reserved function names as function names, they should be tests or other built-ins.
-// Match the '(' because 'elementWhatever' IS a valid function name
- = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {return ["functionCall", ["namedFunctionRef", name, args.length], args]}
-
-// 64
-Argument
- = ArgumentPlaceholder
- / ExprSingle
-
-// 65
-ArgumentPlaceholder
- = "?" {return "argumentPlaceholder"}
-
-// 66
-FunctionItemExpr
- = NamedFunctionRef
- / InlineFunctionExpr
-
-// 67
-NamedFunctionRef
- = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", name, integer[1]]}
-
-// 68
-InlineFunctionExpr
- = "function" _ "(" _ params:ParamList? _ ")" _ returnType:( "as" S t:$SequenceType _ {return t})? body:FunctionBody {return ["inlineFunction", params || [], returnType || "item()*", body]}
-
-// 69
-MapConstructor
- = "map" _ "{" _ entries:(first:MapConstructorEntry rest:(_ "," _ e:MapConstructorEntry {return e})*{return appendRest([first], rest)})? _ "}" {return appendRest(["mapConstructor"], entries)}
-
-// 70
-MapConstructorEntry
- = k:MapKeyExpr _ ":" _ v:MapValueExpr {return [k, v]}
-
-// 71
-MapKeyExpr
- = ExprSingle
-
-// 72
-MapValueExpr
- = ExprSingle
-
-// 73
-ArrayConstructor
- = SquareArrayConstructor
- / CurlyArrayConstructor
-
-// 74
-SquareArrayConstructor
- = "[" _ entries:(first:ExprSingle _ rest:("," _ e:ExprSingle _ {return e})* {return appendRest([first], rest)})? "]" {return ["arrayConstructor", "square"].concat(entries || [])}
-
-// 75
-CurlyArrayConstructor
- = "array" _ e:EnclosedExpr {return ["arrayConstructor", "curly", e]}
-
-// 76 (Not implemented)
-// UnaryLookup ::= "?" KeySpecifier
-
-// 77
-SingleType
- = typeName:SimpleTypeName multiplicity:"?"? {return [typeName, !!multiplicity]}
-
-// 78
-TypeDeclaration
- = S "as" S st:$SequenceType {return st}
-
-// 79
-SequenceType
- = "empty-sequence()" {return ["empty-sequence()", "0"]}
- / type:ItemType occurence:(_ o:OccurenceIndicator {return o})? {return [type, occurence]}
-
-// 80
-OccurenceIndicator = "?" / "*" / "+"
-
-// 81
-ItemType
- = KindTest
- / "item()" {return ["typeTest", [null, null, "item()"]]}
- / FunctionTest
- / MapTest
- / ArrayTest
- / AtomicOrUnionType
- / ParenthesizedItemType
-
-// 82
-AtomicOrUnionType = typeName:EQName {return ["typeTest", typeName]}
-
-// 83
-KindTest
- = DocumentTest
- / ElementTest
- / AttributeTest
- / SchemaElementTest {return "unsupported"}
- / SchemaAttributeTest {return "unsupported"}
- / PITest
- / CommentTest
- / TextTest
- / NamespaceNodeTest {return "unsupported"}
- / AnyKindTest
-
-// 84
-AnyKindTest
- = "node()" {return ["kindTest", "node()"]}
-
-// 85
-DocumentTest
- = "document-node(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["kindTest", "document-node()", innerTest]}
- / "document-node()" {return ["kindTest", "document-node()"]}
-
-// 86
-TextTest
- = "text()" {return ["kindTest", "text()"]}
-
-// 87
-CommentTest
- = "comment()" {return ["kindTest", "comment()"]}
-
-// 88
-NamespaceNodeTest
- = "namespace-node()" {return ["kindTest", "namespace-node()"]}
-
-// 89
-// Let's keep it simple: only accept NCNames, optionally quoted, since quoted non-ncnames should throw a typeError later anyway
-PITest
- = "processing-instruction(" _ target:NCName _ ")" {return ["kindTest", "processing-instruction()", target]}
- / "processing-instruction(" _ literal:StringLiteral _ ")" {return ["kindTest", "processing-instruction()", literal[1]]}
- / "processing-instruction()" {return ["kindTest", "processing-instruction()"]}
-
-// 90
-AttributeTest
- = "attribute(" _ name:AttribNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "attribute()", name, type]}
- / "attribute(" _ name:AttribNameOrWildCard _ ")" {return ["kindTest", "attribute()", name]}
- / "attribute()" {return ["kindTest", "attribute()"]}
-
-// 91
-AttribNameOrWildCard = AttributeName / ("*" {return ["*", null, "*"]})
-
-// 92
-SchemaAttributeTest
- = "schema-attribute(" _ decl:AttributeDeclaration _ ")" {return ["kindTest", "schema-attribute()", decl]}
-
-// 93
-AttributeDeclaration = AttributeName
-
-// 94
-ElementTest
- = "element" _ "(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["kindTest", "element()", name, type]}
- / "element" _ "(" _ name:ElementNameOrWildCard _ ")" {return ["kindTest", "element()", name]}
- / "element" _ "(" _ ")" {return ["kindTest", "element()"]}
-
-// 95
-ElementNameOrWildCard = ElementName / ("*" {return ["*", null, "*"]})
-
-// 96
-SchemaElementTest = "schema-element(" ElementDeclaration ")"
-
-// 97
-ElementDeclaration = ElementName
-
-// 98
-AttributeName = EQName
-
-// 99
-ElementName = EQName
-
-// 100
-SimpleTypeName = TypeName
-
-// 101
-TypeName = EQName
-
-// 102
-FunctionTest = AnyFunctionTest / TypedFunctionTest
-
-// 103
-AnyFunctionTest = "function" _ "(" _ "*" _ ")" {return ["anyFunctionTest"]}
-
-// 104
-TypedFunctionTest
- = "function" _ "(" _ types:(first:SequenceType rest:("," _ t:SequenceType {return t})* {return appendRest(first, rest)})? _ ")" S "as" S SequenceType {return ["functionTest", types]}
-
-// 105
-MapTest = AnyMapTest / TypedMapTest
-
-// 106
-AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["typeTest", [null, null, "map(*)"]]}
-
-// 107
-TypedMapTest = "map" _ "(" _ keyType:AtomicOrUnionType _ "," _ valueType:SequenceType _ ")" {return ["typedMapTest", keyType, valueType]}
-
-// 108
-ArrayTest = AnyArrayTest / TypedArrayTest
-
-// 109
-AnyArrayTest = "array" _ "(" _ "*" _ ")" {return ["anyArrayTest"]}
-
-// 110
-TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", type]}
-
-// 111
-ParenthesizedItemType = "(" _ ItemType _ ")"
-
-// 112
-EQName = uri:URIQualifiedName {return [null, uri[0], uri[1]]}
- / name:QName {return [name[0], null, name[1]]}
-
-// 113
-IntegerLiteral = digits:Digits {return ["literal", digits, "xs:integer"]}
-
-// 114
-DecimalLiteral
- = "." digits:Digits {return ["literal", parseFloat("." + digits, 10), "xs:decimal"]}
- / decimal:$(Digits "." Digits?) {return ["literal", parseFloat(decimal, 10), "xs:decimal"]}
-
-// 115
-DoubleLiteral
- = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["literal", parseFloat(double, 10), "xs:double"]}
-
-// 116
-StringLiteral
- = '\"' contents:(EscapeQuot / [^\"])* '\"' {return ["literal", contents.join(""), "xs:string"]}
- / "\'" contents:(EscapeApos / [^\'])* "\'" {return ["literal", contents.join(""), "xs:string"]}
-
-// 117
-URIQualifiedName = uri:BracedURILiteral name:NCName {return [uri, name]}
-
-// 118
-BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').trim()}
-
-// 119
-// 226 in XQuery
-EscapeQuot
- = "\"\"" {return "\""}
-
-// 120
-// 227 in XQuery
-EscapeApos
- = "''" {return "'"}
-
-// 121
-Comment
- = "(:" (CommentContents / Comment)* ":)"
-
-// 122 Note: https://www.w3.org/TR/REC-xml-names/#NT-QName
-QName = PrefixedName / UnprefixedName
-
-// 123 Note: https://www.w3.org/TR/REC-xml-names/#NT-NCName
-NCName = start:NCNameStartChar rest:(NCNameChar*) {return start + rest.join("")}
-
-// 124 Note: https://www.w3.org/TR/REC-xml/#NT-Char
-Char = [\t\n\r -\uD7FF\uE000\uFFFD] / [\uD800-\uDBFF][\uDC00-\uDFFF] /* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
-
-// 125
-Digits
- = digits:[0-9]+ {return parseInt(digits.join(""), 10)}
-
-// 126
-CommentContents
- = !"(:" !":)" Char
-
-
-
-// XQuery part starts here
-
-// 1
 Module
-	= _ (VersionDecl _)? module:(LibraryModule / MainModule) _ { return module }
+ = _ versionDecl:VersionDeclaration? _ module:(LibraryModule / MainModule) _
+   {return ["module"].concat(versionDecl ? [versionDecl] : []).concat([module])}
+
+// TODO Implement
+MainModule
+ = prolog:Prolog _ queryBody:QueryBody
+   {return ["mainModule"].concat(prolog ? [prolog] : []).concat([queryBody])}
 
 // 2
-VersionDecl
- = "xquery" _ (("encoding" S StringLiteral) / ("version" S StringLiteral (S "encoding" S StringLiteral)? )) Separator
-
-// 3
-MainModule
- = prolog:Prolog _ body:QueryBody {return {type:'mainModule', prolog: prolog, body: body}}
+VersionDeclaration
+ = "xquery" _ versionAndEncoding:(
+    ("encoding" S e:StringLiteral {return ["encoding", e]})
+    / ("version" S version:StringLiteral encoding:(S "encoding" S e:StringLiteral {return e})?
+      {return [["version", version]].concat(encoding ? [["encoding", encoding]] : [])}
+      )) _ Separator
+  {return ["versionDecl"].concat(versionAndEncoding)}
 
 // 4
 LibraryModule
- = moduleDecl:ModuleDecl _ prolog:Prolog {return {type: 'libraryModule', moduleDecl: moduleDecl, prolog: prolog}}
+ = moduleDecl:ModuleDecl _ prolog:Prolog
+   {return ["libraryModule", moduleDecl].concat(prolog ? [prolog] : [])}
 
 // 5
 ModuleDecl
- = "module" S "namespace" S prefix:$NCName _ "=" _ uriLiteral:URILiteral _ Separator {return {prefix: prefix, namespaceURI: uriLiteral[1]}}
+ = "module" S "namespace" S prefix:$NCName _ "=" _ uri:URILiteral _ Separator
+   {return ["moduleDecl", ["prefix", prefix], ["uri", uri]]}
 
 // 6
 Prolog
  = moduleSettings:(prologPart:(DefaultNamespaceDecl / Setter / NamespaceDecl / Import) _ Separator _ {return prologPart})*
-   declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _ {return prologPart})* {return {moduleSettings: moduleSettings, declarations: declarations }}
+   declarations:(prologPart:(ContextItemDecl / AnnotatedDecl / OptionDecl) _ Separator _{return prologPart})*
+   {return moduleSettings.length === 0 && declarations.length === 0 ? null : ["prolog"].concat(moduleSettings).concat(declarations)}
 
 // 7
 Separator = ";"
@@ -641,35 +203,57 @@ Setter
  = BoundarySpaceDecl / DefaultCollationDecl / BaseURIDecl / ConstructionDecl / OrderingModeDecl / EmptyOrderDecl / CopyNamespacesDecl / DecimalFormatDecl
 
 // 9
-BoundarySpaceDecl = "declare" S "boundary-space" S ("preserve" / "strip") {return {type: 'boundarySpaceDecl'}}
+BoundarySpaceDecl
+ = "declare" S "boundary-space" S value:("preserve" / "strip")
+   {return ["boundarySpaceDecl", value]}
 
 // 10
-DefaultCollationDecl = "declare" S "default" "collation" URILiteral {return {type: 'defaultCollationDecl'}}
+DefaultCollationDecl
+ = "declare" S "default" S "collation" S value:URILiteral
+   {return ["defaultCollationDecl", value]}
 
 // 11
-BaseURIDecl = "declare" S "base-uri" S URILiteral {return {type: 'baseURIDecl'}}
+BaseURIDecl
+ = "declare" S "base-uri" S value:URILiteral
+   {return ["baseUriDecl", value]}
 
 // 12
-ConstructionDecl = "declare" S "construction" S ("strip" / "preserve") {return {type: 'constructionDecl'}}
+ConstructionDecl
+ = "declare" S "construction" S value:("strip" / "preserve")
+   {return ["constructionDecl", value]}
 
 // 13
 OrderingModeDecl
- = "declare" S "ordering" S ("ordered" / "unordered") {return {type: 'orderingModeDecl'}}
+ = "declare" S "ordering" S value:("ordered" / "unordered")
+   {return ["orderingModeDecl", value]}
+
 // 14
 EmptyOrderDecl
- = "declare" S "default" S "order" S "empty" S ("greatest" / "least") {return {type: 'emptyOrderDecl'}}
+ = "declare" S "default" S "order" S "empty" S value:("greatest" / "least")
+   {return ["emptyOrderDecl", value]}
+
 // 15
 CopyNamespacesDecl
- = "declare" S "copy-namespaces" S PreserveMode _ "," _ InheritMode {return {type: 'copyNamespacesDecl'}}
+ = "declare" S "copy-namespaces" S preserveMode:PreserveMode _ "," _ inheritMode:InheritMode
+   {return["copyNamespacesDecl", ["preserveMode", preserveMode], ["inheritMode", inheritMode]]}
+
 // 16
 PreserveMode
  = "preserve" / "no-preserve"
+
 // 17
 InheritMode
  = "inherit" / "no-inherit"
+
 // 18
 DecimalFormatDecl
- = "declare" S (("decimal-format" S EQName) / ("default" S "decimal-format")) (DFPropertyName S "=" S StringLiteral)* {return {type: 'decimalFormatDecl'}}
+ = "declare" S
+ decimalFormatName:(("decimal-format" S name:EQName {return ["decimalFormatName"].concat(name)}) / ("default" S "decimal-format" {return null}))
+ decimalFormatParams:(S name:DFPropertyName S "=" S value:StringLiteral
+    {return ["decimalFormatParam", ["decimalFormatParamName", name], ["decimalFormatParamValue", value]]}
+ )*
+ {return ['decimalFormatDecl'].concat(decimalFormatName ? [decimalFormatName] : []).concat(decimalFormatParams)}
+
 // 19
 DFPropertyName
  = "decimal-separator" / "grouping-separator" / "infinity" / "minus-sign" / "NaN" / "percent" / "per-mille" / "zero-digit" / "digit" / "pattern-separator" / "exponent-separator"
@@ -679,65 +263,628 @@ Import = SchemaImport / ModuleImport
 
 // 21
 SchemaImport
- = "import" S "schema" (S SchemaPrefix)? S URILiteral ( S "at" S URILiteral ( S ","  S URILiteral)*)? {return {type: 'schemaImportl'}}
+ = "import" S "schema"
+   prefix:(S p:SchemaPrefix {return p})? _
+   namespace:URILiteral
+   targetLocations:( S "at" S first:URILiteral rest:( S "," S uri:URILiteral {return uri})* {return [first].concat(rest)})?
+   {
+     return ["schemaImport"]
+       .concat(prefix ? [prefix] : [])
+       .concat([["targetNamespace", namespace]])
+       .concat(targetLocations ? [targetLocations] : [])
+    }
+
 // 22
 SchemaPrefix
- = ("namespace" S NCName S "=") / ("default" S "element" S "namespace")
+ = "namespace" S prefix:NCName _ "=" {return ["namespacePrefix", prefix]}
+ / ("default" S "element" S "namespace" AssertAdjacentOpeningTerminal) {return ["defaultElementNamespace"]}
+
 // 23
 ModuleImport
  = "import" S "module"
    prefix:(S "namespace" S prefix:$NCName _ "=" {return prefix})?
+  // TODO: The URILiteral should be preceded with whitespace if the no prefix is set
    _ uri:URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)?
-   {return {type: "moduleImport", prefix: prefix, namespaceURI: uri[1]}}
+   {return ["moduleImport", ["namespacePrefix", prefix], ["targetNamespace", uri]]}
 
 // 24
 NamespaceDecl
- = "declare" S "namespace" S prefix:NCName _ "=" _ uri:URILiteral {return {type: 'namespaceDecl', prefix: prefix, namespaceURI: uri[1]}}
+ = "declare" S "namespace" S prefix:NCName _ "=" _ uri:URILiteral
+   {return ["namespaceDecl", ["prefix", prefix], ["uri", uri]]}
+
 // 25
 DefaultNamespaceDecl
- = "declare" S "default" S elementOrFunction:("element" / "function") S "namespace" S uri:URILiteral {return {type: 'defaultNamespaceDecl', elementOrFunction: elementOrFunction, namespaceURI: uri[1]}}
+ = "declare" S "default" S elementOrFunction:("element" / "function") S "namespace" S uri:URILiteral
+   {return ["defaultNamespaceDecl", ["defaultNamespaceCategory", elementOrFunction], ["uri", uri]]}
+
 // 26
 AnnotatedDecl
- = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl) { return Object.assign(decl, {annotations: annotations})}
+ = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl)
+   {return [decl[0]].concat(annotations).concat(decl.slice(1))}
+
 // 27
 Annotation
- = "%" _ annotation:EQName params:(_ "(" _ lhs:$Literal rhs:(_ "," _ part:$Literal {return part})* _")")? { return [annotation, params]}
+ = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})?
+   {return ["annotation", ["annotationName"].concat(annotation)].concat(params ? ["arguments", params] : [])}
+
 // 28
 VarDecl
- = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return type})? value:((_ ":=" _ v:VarValue {return {type: 'internal', value: v}}) / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return v})? {return {type: 'external', defaultValue: defaultValue || null}})) {return {type: 'varDecl', name: name, varType: varType, value: value}}
+ = "variable" S "$" _ name:VarName varType:(_ t:TypeDeclaration {return t})?
+      value:((_ ":=" _ value:VarValue {return ["varValue", value]})
+      / (S "external" defaultValue:(_ ":=" _ v:VarDefaultValue {return ["varValue", v]})? {return ["external"].concat(defaultValue ? [defaultValue] : [])}))
+  {return ["varDecl", ["varName"].concat(name)].concat(varType ? [varType] : []).concat([value])}
+
 // 29
 VarValue
  = ExprSingle
+
 // 30
 VarDefaultValue
  = ExprSingle
-// 31
+
+// 31 TODO: Convert to XQueryX
 ContextItemDecl
- = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?)) {return {type: 'contextItemDecl'}}
+ = "declare" S "context" S "item" (S "as" ItemType)? ((_ ":=" _ VarValue) / (S "external" (_ ":=" _ VarDefaultValue)?))
+   {return {type: 'contextItemDecl'}}
+
 // 32
 FunctionDecl
- = "function" S
-   (!ReservedFunctionNames) name:EQName _
-   "(" _ params:ParamList? _ ")" S
-   returnType:("as" S st:SequenceType {return st})?
-   body:( _ body:FunctionBody{return body} / (_ "external"))
-   {
-       return {
-               type: 'functionDeclaration',
-			   name: name,
-			   params: params || [],
-			   returnType: returnType,
-			   body: body
-			}
-   }
+ = "function" S (!ReservedFunctionNames) name:EQName _ "(" _ paramList:ParamList? _ ")" typeDeclaration:(S "as" S t:SequenceType {return t})? _ body:((body:FunctionBody {return ["functionBody", body]}) / ("external" {return ["externalDefinition"]}))
+ {
+   return [
+   "functionDecl",
+      ["functionName"].concat(name),
+      ["paramList"].concat(paramList || [])
+    ]
+    .concat(typeDeclaration ? [["typeDeclaration"].concat(typeDeclaration)] : [])
+    .concat([body])}
+
+// 33
+ParamList
+ = lhs:Param rhs:(_ "," _ param:Param {return param})* {return [lhs].concat(rhs)}
+
+// 34
+Param
+ = "$" varName:EQName typeDeclaration:(S t:TypeDeclaration {return t})?
+ {return ["param", ["varName"].concat(varName)].concat(typeDeclaration ? [typeDeclaration] : [])}
+
+// 35
+FunctionBody
+ = EnclosedExpr
+
+// 36
+EnclosedExpr
+ = "{" _ e:Expr? _ "}" {return e || null}
 
 // 37
 OptionDecl
  = "declare" S  "option" S EQName S StringLiteral {return {type: 'optionDecl'}}
+
+QueryBody
+ = expr:Expr {return ["queryBody", expr]}
+
+// 39
+Expr
+ = lhs:ExprSingle rhs:(_ "," _ expr:ExprSingle{return expr})*
+   {return rhs.length === 0 ? lhs : ["sequenceExpr", lhs].concat(rhs)}
+
+// 40 TODO, fix proper
+ExprSingle
+ = FLWORExpr
+ / QuantifiedExpr
+// / SwitchExpr
+// / TypeswitchExpr
+ / IfExpr
+// / TryCatchExpr
+ / OrExpr
+
+// 41
+FLWORExpr
+ = initialClause:InitialClause intermediateClauses:(_ intermediateClause:IntermediateClause {return intermediateClause})* _ returnClause:ReturnClause
+   {return ["flworExpr", initialClause].concat(intermediateClauses).concat([returnClause])}
+
+// 42
+InitialClause
+ = ForClause
+ / LetClause
+// / WindowClause
+
+// 43
+IntermediateClause
+ = InitialClause
+ / WhereClause
+ / GroupByClause
+ / OrderByClause
+// / CountClause
+
+// 44
+ForClause
+ = "for" S first:ForBinding rest:(_ "," _ binding:ForBinding {return binding})*
+   {return ["forClause", first].concat(rest)}
+
+// 45
+ForBinding
+ = "$" varName:VarName _ typeDecl:TypeDeclaration? _ empty:AllowingEmpty? _ pos:PositionalVar? _ "in"_ expr:ExprSingle
+   {
+     return [
+       "forClauseItem",
+       ["typedVariableBinding", ["varName"].concat(varName).concat(typeDecl ? [typeDecl] : [])]]
+       .concat(empty ? [["allowingEmpty"]] : [])
+       .concat(pos ? [pos] : [])
+       .concat([["forExpr", expr]])}
+
+// 46
+AllowingEmpty
+ = "allowing" S "empty"
+
+// 47
+PositionalVar
+ = "at" S "$" varName:VarName {return ["positionalVariableBinding"].concat(varName)}
+
+// 48
+LetClause
+ = "let" _ first:LetBinding _ rest:("," _ binding:LetBinding {return binding})*
+   {return ["letClause", first].concat(rest)}
+
+// 49
+LetBinding
+ = "$" varName:VarName _ typeDecl:TypeDeclaration? _ ":=" _ expr:ExprSingle
+   {return ["letClauseItem", ["typedVariableBinding", ["varName"].concat(varName)].concat(typeDecl ? [typeDecl] : []), ["letExpr", expr]]}
+
+// 60
+WhereClause
+ = "where" AssertAdjacentOpeningTerminal _ expr:ExprSingle {return ["whereClause", expr]}
+
+// 61
+GroupByClause
+ = "group" S "by" _ groupingSpecList:GroupingSpecList {return ["groupByClause"].concat(groupingSpecList)}
+
+// 62
+GroupingSpecList
+ = first:GroupingSpec rest:(_ "," _ gs:GroupingSpec {return gs})* {return [first].concat(rest)}
+
+// 63
+GroupingSpec
+ = varName:GroupingVariable init:groupVarInitialize? col:(_ "collation" _ uri:URILiteral {return ["collation", uri]})?
+   {return ["groupingSpec", varName].concat(init ? [init] : []).concat(col ? [col] : [])}
+
+groupVarInitialize
+ = _ t:TypeDeclaration? _ ":=" _ val:ExprSingle
+   {
+     return ["groupVarInitialize"]
+       .concat(t ? [["typeDeclaration"].concat(t)] : [])
+       .concat([["varValue", val]])
+   }
+
+// 64
+GroupingVariable
+ = "$" varName:VarName {return ["varName"].concat(varName)}
+
+// 65
+OrderByClause
+ = stable:(("order" S "by" {return false}) / ("stable" S "order" S "by" {return true})) _ specList:OrderSpecList
+ {return ["orderByClause"].concat(stable ? [["stable"]] : []).concat(specList)}
+
+// 66
+OrderSpecList
+ = first:OrderSpec rest:(_ "," _ os:OrderSpec {return os})*
+   {return [first].concat(rest)}
+
+// 67
+OrderSpec
+ = expr:ExprSingle _ modifier:OrderModifier
+   {return ["orderBySpec", ["orderByExpr", expr]].concat(modifier ? [modifier] : [])}
+
+// 68
+OrderModifier
+ = kind:("ascending" / "descending")? _ empty:("empty" _ ("greatest" {return "empty greatest"}/ "least" {return "empty least"}))? _ collation:("collation" URILiteral)?
+   {
+     if (!kind && ! empty && !collation) {
+        return null;
+     }
+     return ["orderModifier"]
+       .concat(kind ? [["orderingKind", kind]] : [])
+       .concat(empty ? [["emptyOrderingMode", empty]] : [])
+       .concat(collation ? [["collation", collation]] : [])
+   }
+
+// 69
+ReturnClause
+ = "return" _ expr:ExprSingle {return ["returnClause", expr]}
+
+// 70
+QuantifiedExpr
+ = kind:("some" / "every") S quantifiedExprInClauses:quantifiedExprInClauses S "satisfies" S predicateExpr:ExprSingle
+ {return ["quantifiedExpr", ["quantifier", kind]].concat(quantifiedExprInClauses).concat([["predicateExpr", predicateExpr]])}
+
+quantifiedExprInClauses
+ = first:quantifiedExprInClause rest:(_ "," _ q:quantifiedExprInClause {return q})*
+ {return [first].concat(rest)}
+
+quantifiedExprInClause
+ = "$" varName:VarName type:(S t:TypeDeclaration {return t})? S "in" S exprSingle:ExprSingle
+   {
+     return [
+       "quantifiedExprInClause",
+       [
+         "typedVariableBinding",
+         ["varName"].concat(varName)
+       ].concat(type ? [type] : []),
+       ["sourceExpr", exprSingle]
+     ]
+   }
+
+
+// 77
+IfExpr
+ = "if" _ "(" _ ifClause:Expr _ ")" _ "then" AssertAdjacentOpeningTerminal _ thenClause:ExprSingle _ "else" AssertAdjacentOpeningTerminal _ elseClause:ExprSingle
+   {return ["ifThenElseExpr", ["ifClause", ifClause], ["thenClause", thenClause], ["elseClause", elseClause]]}
+
+ // 83
+OrExpr
+  = lhs:AndExpr rhs:( _ "or" AssertAdjacentOpeningTerminal _ expr:AndExpr {return expr})*
+    {return makeBinaryOp("orOp", lhs, rhs)}
+
+// 84
+AndExpr
+ = lhs:ComparisonExpr rhs:( _ "and" AssertAdjacentOpeningTerminal _ expr:ComparisonExpr {return expr})*
+   {return makeBinaryOp("andOp", lhs, rhs)}
+
+// 85
+ComparisonExpr
+ = lhs:StringConcatExpr rhs:(_ op:(ValueComp / NodeComp / GeneralComp) _ expr:StringConcatExpr {return [op, expr]})?
+ {return rhs ? [rhs[0], ["firstOperand", lhs], ["secondOperand", rhs[1]]] : lhs}
+
+// 86
+StringConcatExpr
+ = lhs:RangeExpr rhs:( _ "||" _ expr:RangeExpr {return expr})*
+   {return makeBinaryOp("stringConcatenateOp", lhs, rhs)}
+
+// 87
+RangeExpr
+ = lhs:AdditiveExpr rhs:( _ "to" AssertAdjacentOpeningTerminal _ rhs:AdditiveExpr {return rhs})?
+  {return rhs === null ? lhs : ["rangeSequenceExpr", ["startExpr", lhs], ["endExpr", rhs]]}
+
+// 88
+AdditiveExpr
+ = lhs:MultiplicativeExpr rhs:(_ op:("-" {return "subtractOp"}/ "+" {return "addOp"}) _ expr:MultiplicativeExpr {return [op, expr]})*
+ {return rhs.reduce(function (lhs, additiveOp) {return [additiveOp[0], ["firstOperand", lhs], ["secondOperand", additiveOp[1]]]}, lhs)}
+
+// 89
+MultiplicativeExpr
+ = lhs:UnionExpr rhs:( _ op:(
+   "*" {return "multiplyOp"}
+   / "div" AssertAdjacentOpeningTerminal {return "divOp"}
+   / "idiv" AssertAdjacentOpeningTerminal {return "idivOp"}
+   / "mod" AssertAdjacentOpeningTerminal {return "modOp"})
+   _ expr:UnionExpr {return [op, expr]})*
+ {return rhs.reduce(function (lhs, multiplicativeOp) {return [multiplicativeOp[0], ["firstOperand", lhs], ["secondOperand", multiplicativeOp[1]]]}, lhs)}
+
+// 90
+UnionExpr
+ = lhs:IntersectExpr rhs:( _ ("|"/("union" AssertAdjacentOpeningTerminal)) _ expr:IntersectExpr {return expr})*
+ {return makeBinaryOp("unionOp", lhs, rhs)}
+
+// 91 Note: was InstanceofExpr ("intersect"/"except" InstanceofExpr)*, but this does not work out with () intersect () except ().
+IntersectExpr
+ = lhs:InstanceofExpr rhs:(_ op:("intersect" {return "intersectOp"} / "except" {return "exceptOp"}) AssertAdjacentOpeningTerminal _ expr:IntersectExpr {return [op, expr]})*
+ {return rhs.reduce(function (lhs, intersectOp) {return [intersectOp[0], ["firstOperand", lhs], ["secondOperand", intersectOp[1]]]}, lhs)}
+
+// 92
+InstanceofExpr
+ = lhs:TreatExpr rhs:(_ "instance" S "of" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["instanceOfExpr", ["argExpr", lhs], ["sequenceType"].concat(rhs)] : lhs}
+ / TreatExpr
+
+// 93
+TreatExpr
+ = lhs:CastableExpr rhs:(_ "treat" S "as" AssertAdjacentOpeningTerminal _ rhs:SequenceType {return rhs})? {return rhs ? ["treatExpr", ["argExpr", lhs], ["sequenceType"].concat(rhs)] : lhs}
+
+// 94
+CastableExpr
+ = lhs:CastExpr rhs:(_ "castable" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castableExpr", ["argExpr", lhs], rhs] : lhs}
+
+// 95
+CastExpr
+ = lhs:ArrowExpr rhs:(_ "cast" S "as" AssertAdjacentOpeningTerminal _ rhs:SingleType {return rhs})? {return rhs ? ["castExpr", ["argExpr", lhs], rhs] : lhs}
+
+// 96
+ArrowExpr
+ = argExpr:UnaryExpr functionParts:( _ "=>" _ functionSpecifier:ArrowFunctionSpecifier _ argumentList:ArgumentList {return [functionSpecifier, argumentList]})* {
+     return functionParts.reduce(function (argExpr, functionPart) {
+       return ["arrowExpr", ["argExpr", argExpr], functionPart[0], ["arguments"].concat(functionPart[1])]
+     }, argExpr);
+   }
+
+// 97
+UnaryExpr
+ = "-" expr:UnaryExpr {return ["unaryMinusOp", ["operand", expr]]}
+ / "+" expr:UnaryExpr {return ["unaryPlusOp", ["operand", expr]]}
+ / ValueExpr
+
+// 98
+ValueExpr
+= ValidateExpr
+ / ExtensionExpr
+ / SimpleMapExpr
+
+// 99
+GeneralComp
+ = "=" {return "equalOp"}
+ / "!=" {return "notEqualOp"}
+ / "<=" {return "lessThanOrEqualOp"}
+ / "<" {return "lessThanOp"}
+ / ">=" {return "greaterThanOrEqualOp"}
+ / ">" {return "greaterThanOp"}
+
+// 100
+ValueComp
+ = "eq" AssertAdjacentOpeningTerminal {return "eqOp"}
+ / "ne" AssertAdjacentOpeningTerminal {return "neOp"}
+ / "lt" AssertAdjacentOpeningTerminal {return "ltOp"}
+ / "le" AssertAdjacentOpeningTerminal {return "leOp"}
+ / "gt" AssertAdjacentOpeningTerminal {return "gtOp"}
+ / "ge" AssertAdjacentOpeningTerminal {return "geOp"}
+
+// 101
+NodeComp
+ = "is" AssertAdjacentOpeningTerminal {return "isOp"}
+ / "<<" {return "nodeBeforeOp"}
+ / ">>" {return "nodeAfterOp"}
+
+// 102
+ValidateExpr
+ = "validate" modeOrType:(_ mode:ValidationMode {return ["validationMode", mode]} / (_ "type" _ type:TypeName {return ["type"].concat(type)}))? _ "{" _ expr:Expr _ "}"
+   {return ["validateExpr"].concat(modeOrType ? [modeOrType] : []).concat([["argExpr", expr]])}
+
+// 103
+ValidationMode
+ = "lax" / "strict"
+
+// 104
+ExtensionExpr
+ = pragma:Pragma+ _ "{" _ Expr? _ "}" {return ["extensionExpr"].concat(pragma)}
+
+// 105
+Pragma
+ = "(#" S? name:EQName contents:(S contents:PragmaContents {return contents})? _ "#)" {return contents ? ["pragma", ["pragmaName", name], ["pragmaContents", contents]] : ["pragma", ["pragmaName", name]]}
+
+// 106
+PragmaContents
+ = chars:(char:Char !'#)' {return char})* {return chars.join('')}
+
+// 107
+SimpleMapExpr
+ = first:PathExpr rest:( _ "!" _ expr:PathExpr {return expr})*
+ {
+ return rest.length === 0 ?
+    first :
+   [
+      "simpleMapExpr",
+      first[0] === "pathExpr" ? first : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(first)]]]
+   ].concat(rest.map(function (item) {
+     return item[0] === "pathExpr" ? item : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(item)]]]
+     }))
+  }
+// === 108 - 110 (simplified for ease of parsing)
+PathExpr
+ = RelativePathExpr
+ / AbsoluteLocationPath
+
+RelativePathExpr
+ = lhs:StepExprWithForcedStep _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExprWithForcedStep
+   {return ["pathExpr", lhs, abbrev].concat(rhs)}
+  / lhs:StepExprWithForcedStep _ "/" _ rhs:RelativePathExprWithForcedStep
+   {return ["pathExpr", lhs].concat(rhs)}
+  / StepExprWithoutStep // Pass-through for normal stuff
+  / step:StepExprWithForcedStep {return ["pathExpr", step]}
+
+// Parses expressions, we already now we are in a path so each will be step expression
+RelativePathExprWithForcedStep
+ = lhs:StepExprWithForcedStep _ abbrev:LocationPathAbbreviation _ rhs:RelativePathExprWithForcedStep
+   {return [lhs, abbrev].concat(rhs)}
+ / lhs:StepExprWithForcedStep _ "/" _ rhs:RelativePathExprWithForcedStep
+   {return [lhs].concat(rhs)}
+ / step:StepExprWithForcedStep
+    {return [step]}
+
+// Parses expressions which are not in a path i.e. which are not step expressions
+StepExprWithoutStep
+ = PostfixExprWithoutStep
+
+// Parses expressions in a path i.e. must be a step expression
+StepExprWithForcedStep
+ = expr:PostfixExprWithStep {return ["stepExpr"].concat(expr)}
+ / AxisStep
+
+AbsoluteLocationPath
+ = "/" _ path:RelativePathExprWithForcedStep
+   {return ["pathExpr", ["rootExpr"]].concat(path)}
+ / abbrev:LocationPathAbbreviation _ path: RelativePathExprWithForcedStep
+   {return ["pathExpr", ["rootExpr"], abbrev].concat(path)}
+ // Note: the token immediately after the "/" can not be any charatcer
+ // that could be interpreted as a Releative path (which are * (for
+ // wildcards), < (node constructors) or a-zA-Z (name tests). This is
+ // called the leading lone slash constraint, which is different between
+ // XPath and XQuery
+ / "/" !(_ (&{return options.xquery} [*<a-zA-Z]) / (&{return !options.xquery}[*a-zA-Z]))
+   {return ["pathExpr", ["rootExpr"]]}
+
+LocationPathAbbreviation
+ = "//" {return ["stepExpr", ["xpathAxis", "descendant-or-self"], ["anyKindTest"]]}
+
+// 121 Expression must in a step expression, i.e. expression must be wrapped in a filterExpr
+PostfixExprWithStep
+ = expr:(expr:PrimaryExpr {return wrapInSequenceExprIfNeeded(expr)}) postfixExpr:(
+     (_ filter:Predicate {return ["predicate", filter]})
+   / (_ argList:ArgumentList {return ["argumentList", argList]})
+   / (_ lookup:Lookup {return lookup})
+   )* {
+var toWrap = expr;
+
+var predicates = [];
+postfixExpr.forEach(function (postFix) {
+  if (postFix[0] === "predicate") {
+    predicates.push(postFix[1]);
+  }
+  else if (postFix[0] === "argumentList") {
+    if (predicates.length) {
+      // Wrap in pathExpr to fit the predicates
+      toWrap = ["pathExpr", ["stepExpr", ["filterExpr", toWrap], ["predicates"].concat(predicates)]];
+      predicates = [];
+    }
+    toWrap = ["dynamicFunctionInvocationExpr", ["functionItem", toWrap]].concat(postFix[1].length ? [["arguments"].concat(postFix[1])] : []);
+  }
+});
+
+return predicates.length ?
+  [["filterExpr", toWrap], ["predicates"].concat(predicates)] :
+  [["filterExpr", toWrap]];
+}
+
+// Expression is not in a step expression, i.e. can not have predicates and does not need filterExpr wrapper
+PostfixExprWithoutStep
+ = expr:PrimaryExpr !(_ Predicate / _ ArgumentList) {return expr}
+
+
+// === end of changes ===
+
+// 111
+AxisStep
+ = stepExpr:(ReverseStep / ForwardStep) predicates:PredicateList {return predicates.length === 0 ? stepExpr : stepExpr.concat([predicates])}
+
+// 112
+ForwardStep
+ = axis:ForwardAxis nodeTest:NodeTest {return ["stepExpr", ["xpathAxis", axis], nodeTest]}
+ / AbbrevForwardStep
+
+// 113
+ForwardAxis
+ = ("child" "::") {return "child"}
+ / ("descendant" "::") {return "descendant"}
+ / ("attribute" "::") {return "attribute"}
+ / ("self" "::") {return "self"}
+ / ("descendant-or-self" "::") {return "descendant-or-self"}
+ / ("following-sibling" "::") {return "following-sibling"}
+ / ("following" "::") {return "following"}
+
+// 114
+AbbrevForwardStep
+ = attributeTest:"@"? nodeTest:NodeTest
+   {return attributeTest || isAttributeTest(nodeTest) ? ["stepExpr", ["xpathAxis", "attribute"], nodeTest] : ["stepExpr", ["xpathAxis" , "child"], nodeTest]}
+
+// 115
+ReverseStep
+ = step:(axis:ReverseAxis nodeTest:NodeTest {return ["stepExpr", ["xpathAxis", axis], nodeTest]}) / step:AbbrevReverseStep {return step}
+
+// 116
+ ReverseAxis
+ = ("parent" "::") {return "parent"}
+ / ("ancestor" "::") {return "ancestor"}
+ / ("preceding-sibling" "::") {return "preceding-sibling"}
+ / ("preceding" "::") {return "preceding"}
+ / ("ancestor-or-self" "::") {return "ancestor-or-self"}
+
+// 117
+AbbrevReverseStep
+ = ".." {return ["stepExpr", ["xpathAxis", "parent"], ["anyKindTest"]]}
+
+// 118
+NodeTest
+ = KindTest / NameTest
+
+// 119
+NameTest
+ = Wildcard / name:EQName {return ["nameTest"].concat(name)}
+
+// 120
+Wildcard
+ = "*:" name:NCName {return ["Wildcard", ["star"], ["NCName", name]]}
+ / "*" {return ["Wildcard"]}
+ / uri:BracedURILiteral "*" {return ["Wildcard", ["uri", uri], ["star"]]}
+ / prefix:NCName ":*" {return ["Wildcard", ["NCName", prefix], ["star"]]}
+
+// 122
+ArgumentList
+ = "(" _ args:(first:Argument rest:( _ "," _ arg:Argument {return arg})* {return [first].concat(rest)})? _ ")" {return args||[]}
+
+// 123
+PredicateList
+ = predicates:(_ predicate:Predicate {return predicate})* {return predicates.length ? ["predicates"].concat(predicates) : []}
+
+// 124
+Predicate
+ = "[" _  expr:Expr _ "]" {return expr}
+
+// 125
+Lookup
+ = "?" _ KeySpecifier
+
+KeySpecifier
+ = NCName / IntegerLiteral / ParenthesizedExpr / "*"
+
+// 127
+ArrowFunctionSpecifier = name:EQName {return ["EQName"].concat(name)} / VarRef / ParenthesizedExpr
+
+// 128
+PrimaryExpr
+ = Literal
+ / VarRef
+ / ParenthesizedExpr
+ / ContextItemExpr
+ / FunctionCall
+// / OrderedExpr
+// / UnorderedExpr
+ / NodeConstructor
+ / FunctionItemExpr
+ / MapConstructor
+ / ArrayConstructor
+// / StringConstructor
+// / UnaryLookup
+
+// 129
+Literal
+ = NumericLiteral / lit:StringLiteral { return ["stringConstantExpr", ["value", parseCharacterReferences(lit)]]}
+
+// 130
+// Note: changes because double accepts less than decimal, accepts less than integer
+NumericLiteral = literal:(DoubleLiteral / DecimalLiteral / IntegerLiteral) ![a-zA-Z] {return literal}
+
+// 131
+VarRef
+ = "$" varName:VarName {return ["varRef", ["name"].concat(varName)]}
+
+// 132
+VarName
+ = EQName
+
+// 133
+ParenthesizedExpr
+ = "(" _ expr:Expr _ ")" {return expr}
+ / "(" _ ")" {return ["sequenceExpr"]}
+
+// 134
+ContextItemExpr
+ = "." !"." {return ["contextItemExpr"]}
+
+// 137
+FunctionCall
+// Do not match reserved function names as function names, they should be tests or other built-ins.
+// Match the '(' because 'elementWhatever' IS a valid function name
+ = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {return ["functionCallExpr", ["functionName"].concat(name), ["arguments"].concat(args)]}
+
+// 138
+Argument
+ = ArgumentPlaceholder
+ / ExprSingle
+
+// 139
+ArgumentPlaceholder
+ = "?" {return ["argumentPlaceholder"]}
+
 // 140
 NodeConstructor
  = DirectConstructor
-// / ComputedConstructro
+ / ComputedConstructor
 
 // 141
 DirectConstructor
@@ -747,29 +894,92 @@ DirectConstructor
 
 // 142
 DirElemConstructor
- = "<" name:QName attList:DirAttributeList endPart:(
+ = "<" name:QName attList:DirAttributeList contents:(
    ("/>" {return null}) /
-   (">" contents:DirElemContent* "</" closingname:QName ExplicitWhitespace? ">" {return [contents, closingname]} ))
- {return ['DirElementConstructor', name, endPart && endPart[1], attList || [], endPart && accumulateDirContents(endPart[0]) || []]}
+   (">"      contents:DirElemContent* _ "</" endName:QName ExplicitWhitespace? ">"
+     {
+       assertEqualQNames(name, endName);
+       return accumulateDirContents(contents, true, true)
+     }))
+ {
+   return [
+       "elementConstructor",
+       ["tagName"].concat(name)
+     ]
+     .concat(attList.length ? [["attributeList"].concat(attList)] : [])
+     .concat(contents && contents.length ? [["elementContent"].concat(contents)] : [])
+  }
+
+// 143
+DirAttributeList
+ = attrs:(ExplicitWhitespace attr:(attribute)? {return attr})*
+   {
+     return attrs
+       .filter(Boolean)
+   }
+
+attribute
+ = name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue
+   {
+     if (name.length === 1 && name[0] === "xmlns") {
+       if (value.length && typeof value[0] !== "string") {
+         throwError("XQST0022", "A namespace declaration may not contain enclosed expressions");
+       }
+       return ["namespaceDeclaration", value.length ? ["uri", value[0]] : ["uri"]]
+     }
+     if (name[0].prefix === "xmlns") {
+       if (value.length && typeof value[0] !== "string") {
+         throwError("XQST0022", "The namespace declaration for 'xmlns:" + name[1] + "' may not contain enclosed expressions");
+       }
+       return ["namespaceDeclaration", ["prefix", name[1]], value.length ? ["uri", value[0]] : ["uri"]]
+     }
+     return [
+       "attributeConstructor",
+       ["attributeName"].concat(name),
+       value.length === 0 ?
+         ["attributeValue"] :
+         value.length === 1 && typeof value[0] === "string" ?
+           ["attributeValue", value[0]] :
+           ["attributeValueExpr"].concat(value)]}
+
+// 144
+DirAttributeValue
+ = '"' chars:(EscapeQuot / QuotAttrValueContent)* '"' {return accumulateDirContents(chars, false, false)}
+ / "'" chars:(EscapeApos / AposAttrValueContent)* "'" {return accumulateDirContents(chars, false, false)}
+
+// 145
+QuotAttrValueContent = char:QuotAttrValueContentChar {return char.replace(/[\x20\x0D\x0A\x09]/g, ' ')} / CommonContent
+
+// 146
+AposAttrValueContent = char:AposAttrValueContentChar {return char.replace(/[\x20\x0D\x0A\x09]/g, ' ')} / CommonContent
 
 // 147
 // Note: changed the order around to prevent CDATA to be parsed as element content
 DirElemContent
- =  CDataSection
- /  DirectConstructor
- /  CommonContent
- /  $ElementContentChar
-
-// 228
-ElementContentChar = ![{}<&] Char
+ = content:CDataSection {return content}
+ / content:DirectConstructor {return content}
+ / content:CommonContent {return content}
+ / content:$ElementContentChar {return content}
 
 // 148
 CommonContent
 = char:PredefinedEntityRef
  / ref:CharRef
  / "{{" { return "\u007b" } // PegJS does not like unbalanced curly braces in JS context
- / "}}"  { return "\u007d" } // PegJS does not like unbalanced curly braces in JS context
- / EnclosedExpr
+ / "}}" { return "\u007d" } // PegJS does not like unbalanced curly braces in JS context
+ / expr:EnclosedExpr {return expr || ["sequenceExpr"]}
+
+// 149
+DirCommentConstructor = "<!--" contents:$DirCommentContents "-->" {return ["computedCommentConstructor", ["argExpr", ["stringConstantExpr", ["value", contents]]]]}
+
+// 150
+DirCommentContents = ((!"-" Char) / ("-" (!"-" Char)))*
+
+// 151
+DirPIConstructor = "<?" target:$PITarget contents:(ExplicitWhitespace contents:$DirPIContents {return contents})? "?>" {return ["computedPIConstructor", ["piTarget", target], ["piValueExpr", ["stringConstantExpr", ["value", contents]]]]}
+
+// 152
+DirPIContents = (!"?>" Char)*
 
 // 153
 CDataSection = "<![CDATA[" contents:$CDataSectionContents "]]>" {return ["CDataSection", contents]}
@@ -777,34 +987,308 @@ CDataSection = "<![CDATA[" contents:$CDataSectionContents "]]>" {return ["CDataS
 // 154
 CDataSectionContents = (!"]]>" Char)*
 
-// 143
-DirAttributeList = attrs:(ExplicitWhitespace attr:(name:QName ExplicitWhitespace? "=" ExplicitWhitespace? value:DirAttributeValue {return [name, value]})?{return attr})* {return attrs.filter(Boolean) || []}
+// 155
+ComputedConstructor
+ = CompDocConstructor
+ / CompElemConstructor
+ / CompAttrConstructor
+ / CompNamespaceConstructor
+ / CompTextConstructor
+ / CompCommentConstructor
+ / CompPIConstructor
 
-// 144
-DirAttributeValue
- = '"' chars:(EscapeQuot / QuotAttrValueContent)* '"' {return accumulateDirContents(chars)}
- / "'" chars:(EscapeApos / AposAttrValueContent)* "'" {return accumulateDirContents(chars)}
+// 156
+CompDocConstructor
+ = "document" _ expr:EnclosedExpr {return expr ? ["computedDocumentConstructor", ["argExpr", expr]] : ["computedDocumentConstructor"]}
 
-// 145
-QuotAttrValueContent = char:QuotAttrValueContentChar / CommonContent
+// 157
+CompElemConstructor
+ = "element" _ tagName:((n:EQName {return ["tagName"].concat(n)}) / ("{" _ expr:Expr _ "}" {return ["tagNameExpr", expr]})) _ content:EnclosedContentExpr
+ { return ["computedElementConstructor", tagName].concat(content)}
 
-// 146
-AposAttrValueContent = char:AposAttrValueContentChar / CommonContent
+// 158
+EnclosedContentExpr
+ = expr:EnclosedExpr {return expr ? [["contentExpr", expr]] : []}
 
-// 149
-DirCommentConstructor = "<!--" contents:$DirCommentContents "-->" {return ["DirCommentConstructor", contents]}
+// 159
+CompAttrConstructor
+ = "attribute" name:(AssertAdjacentOpeningTerminal _ name:EQName {return ["tagName"].concat(name)} / ( _ "{" _ nameExpr:Expr _ "}" {return ["tagNameExpr", nameExpr]})) _ expr:EnclosedExpr
+ {return ["computedAttributeConstructor", name].concat(expr ? [["valueExpr", expr]] : [])}
 
-// 150
-DirCommentContents = ((!"-" Char) / ("-" (!"-" Char)))*
+// 160
+CompNamespaceConstructor
+ = "namespace" _ prefix:(Prefix / EnclosedPrefixExpr) _ uri:EnclosedURIExpr
+ {return ["computedNamespaceConstructor"].concat(prefix).concat(uri)}
 
-// 151
-DirPIConstructor = "<?" target:$PITarget contents:(ExplicitWhitespace contents:$DirPIContents {return contents})? "?>" {return ["DirPIConstructor", target, contents || ""]}
+// 161
+Prefix
+ = p:NCName {return ["prefix", p]}
 
-// 152
-DirPIContents = (!"?>" Char)*
+// 162
+EnclosedPrefixExpr
+ = expr:EnclosedExpr {return expr ? [["prefixExpr", expr]] : []}
+
+// 163
+EnclosedURIExpr
+ = expr:EnclosedExpr {return expr ? [["URIExpr", expr]] : []}
+
+// 164
+CompTextConstructor
+ = "text" _ expr:EnclosedExpr
+ {return ["computedTextConstructor"].concat(expr ? [["argExpr", expr]] : [])}
+
+// 165
+CompCommentConstructor
+ = "comment" _ expr:EnclosedExpr
+   {return ["computedCommentConstructor"].concat(expr ? [["argExpr", expr]] : [])}
+
+// 166
+CompPIConstructor
+ = "processing-instruction" _ target:((name:NCName {return ["piTarget", name]}) / ("{" _ expr:Expr _ "}" {return ["piTargetExpr", expr]})) _ value:EnclosedExpr
+   {return ["computedPIConstructor", target].concat(value ? [["piValueExpr", value]] : [])}
+
+// 167
+FunctionItemExpr
+ = NamedFunctionRef
+ / InlineFunctionExpr
+
+// 168
+NamedFunctionRef
+ = name:EQName "#" integer:IntegerLiteral {return ["namedFunctionRef", ["functionName"].concat(name), integer]}
+
+// 169
+InlineFunctionExpr
+ = annotations:Annotation* _ "function" _ "(" _ params:ParamList? _ ")" _ typeDeclaration:( "as" S t:SequenceType _ {return [t]})? body:FunctionBody
+ {
+   return ["inlineFunctionExpr"]
+     .concat(annotations)
+     .concat([["paramList"].concat(params || [])])
+     .concat(typeDeclaration ? ["sequenceType"].concat(typeDeclaration) : [])
+     .concat([["functionBody", body]])
+ }
+
+// 170
+MapConstructor
+ = "map" _ "{" _ entries:(first:MapConstructorEntry rest:(_ "," _ e:MapConstructorEntry {return e})*{return [first].concat(rest)})? _ "}" {return ["mapConstructor"].concat(entries)}
+
+// 171
+MapConstructorEntry
+ = k:MapKeyExpr _ ":" _ v:MapValueExpr {return ["mapConstructorEntry", k, v]}
+
+// 172
+MapKeyExpr
+ = expr:ExprSingle {return ["mapKeyExpr", expr]}
+
+// 173
+MapValueExpr
+ = expr:ExprSingle {return ["mapValueExpr", expr]}
+
+// 174
+ArrayConstructor
+ = con:SquareArrayConstructor {return ["arrayConstructor", con]}
+ / con:CurlyArrayConstructor {return ["arrayConstructor",  con]}
+
+// 175
+SquareArrayConstructor
+ = "[" _ entries:(
+     first:ExprSingle _ rest:("," _ e:ExprSingle {return e})*
+     {return [first].concat(rest).map(function (elem) {return ["arrayElem", elem]})}
+   )? _ "]" {return ["squareArray"].concat(entries)}
+
+// 176
+CurlyArrayConstructor
+ = "array" _ e:EnclosedExpr {return ["curlyArray"].concat(e ? [["arrayElem", e]] : [])}
+
+// 182
+SingleType
+ = typeName:SimpleTypeName optional:"?"? {return optional ? ["singleType", ["atomicType"].concat(typeName), ["optional"]] : ["singleType", ["atomicType"].concat(typeName)]}
+
+// 183
+TypeDeclaration
+ = "as" S st:SequenceType {return ["typeDeclaration"].concat(st)}
+
+// 184
+SequenceType
+ = "empty-sequence()" {return [["voidSequenceType"]]}
+ / type:ItemType occurrence:(_ o:OccurrenceIndicator {return o})? {return [type].concat(occurrence ? [["occurrenceIndicator", occurrence]] : [])}
+
+// 185
+OccurrenceIndicator = "?" / "*" / "+"
+
+// 186
+ItemType
+ = KindTest
+ / "item()" {return ["anyItemType"]}
+ / FunctionTest
+ / MapTest
+ / ArrayTest
+ / AtomicOrUnionType
+ / ParenthesizedItemType
+
+// 187
+AtomicOrUnionType = typeName:EQName {return ["atomicType"].concat(typeName)}
+
+// 188
+KindTest
+ = DocumentTest
+ / ElementTest
+ / AttributeTest
+ / SchemaElementTest
+ / SchemaAttributeTest
+ / PITest
+ / CommentTest
+ / TextTest
+ / NamespaceNodeTest
+ / AnyKindTest
+
+// 189
+AnyKindTest
+ = "node()" {return ["anyKindTest"]}
+
+// 190
+DocumentTest
+ = "document-node(" _ innerTest:(ElementTest / SchemaElementTest)? _ ")" {return ["documentTest"].concat(innerTest ? [innerTest] : [])}
+
+// 191
+TextTest
+ = "text()" {return ["textTest"]}
+
+// 192
+CommentTest
+ = "comment()" {return ["commentTest"]}
+
+// 193
+NamespaceNodeTest
+ = "namespace-node()" {return ["namespaceTest"]}
+
+// 194
+// Let's keep it simple: only accept NCNames, optionally quoted, since quoted non-ncnames should throw a typeError later anyway
+PITest
+ = "processing-instruction(" _ target:NCName _ ")" {return ["piTest", ["piTarget", target]]}
+ / "processing-instruction(" _ literal:StringLiteral _ ")" {return ["piTest", ["piTarget", literal]]}
+ / "processing-instruction()" {return ["piTest"]}
+
+// 195
+AttributeTest
+ = "attribute(" _ name:AttribNameOrWildCard _ "," _ type:TypeName _ ")" {return ["attributeTest", ["attributeName", name], ["typeName"].concat(type)]}
+ / "attribute(" _ name:AttribNameOrWildCard _ ")" {return ["attributeTest", ["attributeName", name]]}
+ / "attribute()" {return ["attributeTest"]}
+
+// 196
+AttribNameOrWildCard = name:AttributeName {return ["QName"].concat(name)} / ("*" {return ["star"]})
+
+// 197
+SchemaAttributeTest
+ = "schema-attribute(" _ decl:AttributeDeclaration _ ")" {return ["schemaAttributeTest"].concat(decl)}
+
+// 198
+AttributeDeclaration = AttributeName
+
+// 199
+ElementTest
+ = "element" _ "(" _ name:ElementNameOrWildCard _ "," _ type:TypeName _ ")" {return ["elementTest", ["elementName", name], ["typeName"].concat(type)]}
+ / "element" _ "(" _ name:ElementNameOrWildCard _ ")" {return ["elementTest", ["elementName", name]]}
+ / "element" _ "(" _ ")" {return ["elementTest"]}
+
+// 200
+ElementNameOrWildCard = name:ElementName {return ["QName"].concat(name)} / ("*" {return ["star"]})
+
+// 201
+SchemaElementTest = "schema-element" _ "(" decl:ElementDeclaration ")" {return ["schemaElementTest"].concat(decl)}
+
+// 202
+ElementDeclaration = ElementName
+
+// 203
+AttributeName = EQName
+
+// 204
+ElementName = EQName
+
+// 205
+SimpleTypeName = TypeName
+
+// 206
+TypeName = EQName
+
+// 207
+FunctionTest = annotations:Annotation* test:(AnyFunctionTest / TypedFunctionTest) {return [test[0]].concat(annotations).concat(test.slice(1))}
+
+// 208
+AnyFunctionTest = "function" _ "(" _ "*" _ ")" {return ["anyFunctionTest"]}
+
+// 209
+TypedFunctionTest
+ = "function" _ "(" _ paramTypeList:(lhs:SequenceType rhs:("," _ t:SequenceType {return t})* {return lhs.concat.apply(lhs, rhs)})? _ ")" S "as" S returnType:SequenceType {return ["typedFunctionTest", ["paramTypeList", ["sequenceType"].concat(paramTypeList)], ["sequenceType"].concat(returnType)]}
+
+// 210
+MapTest = AnyMapTest / TypedMapTest
+
+// 211
+AnyMapTest = "map" _ "(" _ "*" _ ")" {return ["anyMapTest"]}
+
+// 212
+TypedMapTest = "map" _ "(" _ keyType:AtomicOrUnionType _ "," _ valueType:SequenceType _ ")" {return ["typedMapTest", keyType, ["sequenceType"].concat(valueType)]}
+
+// 213
+ArrayTest = AnyArrayTest / TypedArrayTest
+
+// 214
+AnyArrayTest = "array" _ "(" _ "*" _ ")" {return ["anyArrayTest"]}
+
+// 215
+TypedArrayTest = "array" _ "(" _ type:SequenceType _ ")" {return ["typedArrayTest", ["sequenceType"].concat(type)]}
+
+// 216
+ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemType", type]}
 
 // 217
 URILiteral = StringLiteral
+
+// 218
+EQName = uri:URIQualifiedName {return [{prefix: null, URI: uri[0]}, uri[1]]}
+ / QName
+
+// 219
+IntegerLiteral = digits:Digits {return ["integerConstantExpr", ["value", digits]]}
+
+// 220
+DecimalLiteral
+ = decimal:$("." Digits) {return ["decimalConstantExpr", ["value", decimal]]}
+ / decimal:$(Digits "." Digits?) {return ["decimalConstantExpr", ["value", decimal]]}
+
+// 221
+DoubleLiteral
+ = double:$((("." Digits) / (Digits ("." [0-9]*)?)) [eE] [+-]? Digits) {return ["doubleConstantExpr", ["value", double]]}
+
+// 222
+StringLiteral
+ = &{return options.xquery} "\"" lit:(PredefinedEntityRef / CharRef / EscapeQuot / [^\"&])* "\"" {return lit.join("")}
+ / &{return options.xquery} "'" lit:(PredefinedEntityRef / CharRef / EscapeApos / [^'&])* "'" {return lit.join("")}
+ // In XPath, the ampersand _is_ allowed, but there are not character references
+ / &{return !options.xquery} "\"" lit:(EscapeQuot / [^\"])* "\"" {return lit.join("")}
+ / &{return !options.xquery} "'" lit:(EscapeApos / [^'])* "'" {return lit.join("")}
+
+// 223
+URIQualifiedName = uri:BracedURILiteral localName:NCName {return [uri, localName]}
+
+// 224
+BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').trim()}
+
+// 225
+PredefinedEntityRef
+ = $("&" ( "lt" / "gt" / "amp" / "quot" / "apos") ";")
+
+// 226
+EscapeQuot
+ = "\"\"" {return "\""}
+
+// 227
+EscapeApos
+ = "''" {return "'"}
+
+// 228
+ElementContentChar = ![{}<&] Char
 
 // 229
 QuotAttrValueContentChar = ![\"{}<&] ch:Char {return ch}
@@ -812,36 +1296,34 @@ QuotAttrValueContentChar = ![\"{}<&] ch:Char {return ch}
 // 230
 AposAttrValueContentChar = ![\'{}<&] ch:Char {return ch}
 
-// 233
-CharRef
- = $("&#x" codePoint:([0-9a-fA-F]+) ";")
- / $("&#" codePoint:([0-9]+) ";")
-
-// 225
-PredefinedEntityRef
- = $("&" ("lt"/"gt"/"amp"/"quot"/"apos") ";")
+// 231
+Comment
+ = "(:" (CommentContents / Comment)* ":)"
 
 // 232
 PITarget = !(("X"/"x")("M"/"m")("L"/"l")) Name
 
-// XML types
-PrefixedName = prefix:Prefix ":" local:LocalPart {return [prefix, local]}
+// 233
+CharRef
+ = $("&#x" [0-9a-fA-F]+ ";")
+ / $("&#" [0-9]+ ";")
 
-UnprefixedName = local:LocalPart {return ['', local]}
+// 234 Note: https://www.w3.org/TR/REC-xml-names/#NT-QName
+QName = PrefixedName / UnprefixedName
 
-LocalPart = NCName
+// 235 Note: https://www.w3.org/TR/REC-xml-names/#NT-NCName
+NCName = start:NCNameStartChar rest:(NCNameChar*) {return start + rest.join("")}
 
-Prefix = NCName
+// 237 Note: https://www.w3.org/TR/REC-xml/#NT-Char
+Char = [\t\n\r -\uD7FF\uE000\uFFFD] / [\uD800-\uDBFF][\uDC00-\uDFFF] /* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
 
-NCNameStartChar = [A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD] / [\uD800-\uDB7F][\uDC00-\uDFFF]
+// 238
+Digits
+ = digits:[0-9]+ {return digits.join("")}
 
-NCNameChar = NCNameStartChar / [\-\.0-9\xB7\u0300-\u036F\u203F\u2040]
-
-NameChar = NCNameChar / ":"
-
-NameStartChar = NCNameStartChar / ":"
-
-Name = $(NameStartChar (NameChar)*)
+// 239
+CommentContents
+ = !"(:" !":)" Char
 
 // Whitespace Note: https://www.w3.org/TR/REC-xml/#NT-S
 _
@@ -856,6 +1338,25 @@ ExplicitWhitespace
 WhitespaceCharacter
  = "\u0020" / "\u0009" / "\u000D" / "\u000A"
  / Comment // Note: comments can occur anywhere where whitespace is allowed: https://www.w3.org/TR/xpath-3/#DefaultWhitespaceHandling
+
+// XML Types
+PrefixedName = prefix:XMLPrefix ":" local:LocalPart {return [{prefix: prefix}, local]}
+
+UnprefixedName = local:LocalPart {return [local]}
+
+LocalPart = NCName
+
+XMLPrefix = NCName
+
+NCNameStartChar = [A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD] / [\uD800-\uDB7F][\uDC00-\uDFFF]
+
+NCNameChar = NCNameStartChar / [\-\.0-9\xB7\u0300-\u036F\u203F\u2040]
+
+NameChar = NCNameChar / ":"
+
+NameStartChar = NCNameStartChar / ":"
+
+Name = $(NameStartChar (NameChar)*)
 
 ReservedFunctionNames
  = "array"

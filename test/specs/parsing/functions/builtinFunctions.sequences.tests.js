@@ -156,16 +156,16 @@ describe('Functions and operators on sequences', () => {
 			it('returns the first item when start = -10 and length = 12',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), -10, 12)', documentNode), ['a']));
 			it('allows async parameters: sequence', async () => {
-				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c") => fontoxpath:sleep(1), 2, 1)'), "b");
+				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c") => fontoxpath:sleep(1), 2, 1)'), 'b');
 			});
 			it('allows async parameters: async items in sequence', async () => {
-				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a" => fontoxpath:sleep(1), "b" => fontoxpath:sleep(10), "c"), 2, 1)'), "b");
+				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a" => fontoxpath:sleep(1), "b" => fontoxpath:sleep(10), "c"), 2, 1)'), 'b');
 			});
 			it('allows async parameters: from', async () => {
-				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c"), 2 => fontoxpath:sleep(1), 1)'), "b");
+				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c"), 2 => fontoxpath:sleep(1), 1)'), 'b');
 			});
 			it('allows async parameters: length', async () => {
-				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c"), 2, 1 => fontoxpath:sleep(1))'), "b");
+				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c"), 2, 1 => fontoxpath:sleep(1))'), 'b');
 			});
 		});
 
@@ -349,7 +349,7 @@ describe('Functions and operators on sequences', () => {
 <xml>
   <ns1:matrix xmlns:ns1="http://example.com/ns1" frame="all"><ns2:tgroup xmlns:ns2="http://example.com/ns2" cols="1"><ns2:colspec colname="column-0" colnum="1" colwidth="1*" colsep="1" rowsep="1"/><ns2:tbody><ns2:row><ns2:entry colname="column-0" rowsep="1" colsep="1"/></ns2:row></ns2:tbody></ns2:tgroup></ns1:matrix>
   <matrix xmlns="http://example.com/ns1" frame="all"><tgroup xmlns="http://example.com/ns2" cols="1"><colspec colname="column-0" colnum="1" colwidth="1*" colsep="1" rowsep="1"/><tbody><row><entry colname="column-0" colsep="1" rowsep="1"/></row></tbody></tgroup></matrix>
-</xml>`, documentNode, null, null, {language: 'XQuery3.1'});
+</xml>`, documentNode, null, null, { language: 'XQuery3.1' });
 
 					chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(/xml/*[1], /xml/*[2])', dom), 'both elements must be equal');
 				});
@@ -497,7 +497,7 @@ describe('Functions and operators on sequences', () => {
 					chai.assert.isFalse(evaluateXPathToBoolean('let $textNode := ./someElement/text() return deep-equal($textNode[1], $textNode[2])', documentNode));
 				});
 
-				it('returns false for comments', () => {
+				it('returns true for comments', () => {
 					jsonMlMapper.parse([
 						'someElement',
 						['!', 'Some comment.'],
@@ -752,7 +752,7 @@ describe('Functions and operators on sequences', () => {
 				chai.assert.isFalse(await evaluateXPathToAsyncSingleton('let $textNode := ./someElement/text() => fontoxpath:sleep(1) return deep-equal($textNode[1], $textNode[2])', documentNode));
 			});
 
-			it('returns false for comments', async () => {
+			it('returns true for comments', async () => {
 				jsonMlMapper.parse([
 					'someElement',
 					['!', 'Some comment.'],

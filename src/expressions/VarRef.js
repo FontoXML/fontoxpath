@@ -7,7 +7,7 @@ import Specificity from './Specificity';
 class VarRef extends Expression {
 	/**
 	 * @param  {string}  prefix
-	 * @param  {string}  namespaceURI
+	 * @param  {?string}  namespaceURI
 	 * @param  {string}  variableName
 	 */
 	constructor (prefix, namespaceURI, variableName) {

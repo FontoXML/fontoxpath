@@ -14,7 +14,7 @@ function buildFormattedFunctionName (functionReference) {
  */
 class NamedFunctionRef extends Expression {
 	/**
-	 * @param  {{prefix:string, namespaceURI:string, localName:string}}    functionReference
+	 * @param  {{prefix:string, namespaceURI:?string, localName:string}}    functionReference
 	 * @param  {number}    arity
 	 */
 	constructor (functionReference, arity) {

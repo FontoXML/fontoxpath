@@ -5,19 +5,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import atomize from '../dataTypes/atomize';
 
 import Sequence from '../dataTypes/Sequence';
-
-/**
- * @param   {string}          type
- * @return  {!{type: string, multiplicity: string}}
- */
-function splitType (type) {
-	// argumentType is something like 'xs:string?' or 'map(*)'
-	var parts = type.match(/^(.*[^+?*])([\+\*\?])?$/);
-	return {
-		type: parts[1],
-		multiplicity: parts[2]
-	};
-}
+import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
 function mapItem (argumentItem, type, executionParameters, functionName) {
 	if (isSubtypeOf(argumentItem.type, type)) {
@@ -52,18 +40,17 @@ function mapItem (argumentItem, type, executionParameters, functionName) {
 
 /**
  * Test whether the provided argument is valid to be used as an function argument of the given type
- * @param   {string}              argumentType
- * @param   {!Sequence}           argument
- * @param   {!ExecutionParameters}  executionParameters
- * @param   {string}              functionName       Used for debugging purposes
+ * @param   {TypeDeclaration}      argumentType
+ * @param   {!Sequence}            argument
+ * @param   {!ExecutionParameters} executionParameters
+ * @param   {string}               functionName       Used for debugging purposes
  * @return  {!Sequence}
  */
 export const transformArgument = (argumentType, argument, executionParameters, functionName) => {
-	const { type, multiplicity } = splitType(argumentType);
-	switch (multiplicity) {
+	switch (argumentType.occurrence) {
 		case '?':
 			return argument.switchCases({
-				default: () => argument.map(value => mapItem(value, type, executionParameters, functionName)),
+				default: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName)),
 				multiple: () => {
 					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "?", but got "+".`);
 				}
@@ -73,16 +60,17 @@ export const transformArgument = (argumentType, argument, executionParameters, f
 				empty: () => {
 					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`);
 				},
-				default: () => argument.map(value => mapItem(value, type, executionParameters, functionName))
+				default: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName))
 			});
 		case '*':
-			return argument.map(value => mapItem(value, type, executionParameters, functionName));
+			return argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName));
 		default:
 			// excactly one
 			return argument.switchCases({
-				singleton: () => argument.map(value => mapItem(value, type, executionParameters, functionName)),
+				singleton: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName)),
 				default: () => {
-					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected exactly one`);
+					throw new Error(
+						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${argumentType.occurrence} for ${functionName} is incorrect. Expected exactly one`);
 }
 			});
 	}

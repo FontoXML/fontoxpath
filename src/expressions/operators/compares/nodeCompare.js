@@ -28,17 +28,17 @@ export default function nodeCompare (operator, domFacade, firstSequence, secondS
 						throw new Error('XPTY0004: Sequences to compare are not nodes');
 					}
 				switch (operator) {
-					case 'is':
+					case 'isOp':
 						return first === second ?
 							Sequence.singletonTrueSequence() :
 							Sequence.singletonFalseSequence();
 
-					case '<<':
+					case 'nodeBeforeOp':
 						return compareNodePositions(domFacade, first, second) < 0 ?
 							Sequence.singletonTrueSequence() :
 							Sequence.singletonFalseSequence();
 
-					case '>>':
+					case 'nodeAfterOp':
 						return compareNodePositions(domFacade, first, second) > 0 ?
 							Sequence.singletonTrueSequence() :
 							Sequence.singletonFalseSequence();

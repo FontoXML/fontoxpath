@@ -59,7 +59,9 @@ export function parseNode (document, jsonml) {
 	firstChildIndex = 1;
 	if ((typeof firstChild === 'object') && !Array.isArray(firstChild)) {
 		for (var attributeName in firstChild) {
-			element.setAttribute(attributeName, firstChild[attributeName]);
+			if (firstChild[attributeName] !== null) {
+				element.setAttribute(attributeName, firstChild[attributeName]);
+			}
 		}
 		firstChildIndex = 2;
 	}

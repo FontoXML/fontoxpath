@@ -1,8 +1,10 @@
 import builtInFunctions from './builtInFunctions';
 import Sequence from '../dataTypes/Sequence';
+import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import RestArgument from '../dataTypes/RestArgument';
 
 /**
- * @typedef {({localName: !string, namespaceURI: string, arity: number, callFunction: !function(*): !Sequence, argumentTypes: !Array<string>, returnType: !string})}
+ * @typedef {{localName: !string, namespaceURI: string, arity: number, callFunction: !function(*): !Sequence, argumentTypes: !Array<!TypeDeclaration|!RestArgument>, returnType: !TypeDeclaration}}
  */
 let FunctionProperties;
 
@@ -78,7 +80,7 @@ function getAlternativesAsStringFor (functionName) {
 		return 'No similar functions found.';
 	}
 
-	return alternativeFunctions.map(functionDeclaration => `"Q{${functionDeclaration.namespaceURI}}${functionDeclaration.localName} (${functionDeclaration.argumentTypes.join(', ')})"`)
+	return alternativeFunctions.map(functionDeclaration => `"Q{${functionDeclaration.namespaceURI}}${functionDeclaration.localName} (${functionDeclaration.argumentTypes.map(argumentType => argumentType.type + argumentType.occurrence).join(', ')})"`)
 		.reduce((accumulator, functionName, index, array) => {
 		if (index === 0) {
 			return accumulator + functionName;
@@ -101,9 +103,9 @@ function getFunctionByArity (functionNamespaceURI, functionLocalName, arity) {
 	}
 
 	const matchingFunction = matchingFunctions.find(/** @type {function(FunctionProperties):boolean} */ (functionDeclaration => {
-		const indexOfRest = functionDeclaration.argumentTypes.indexOf('...');
-		if (indexOfRest > -1) {
-			return indexOfRest <= arity;
+		const hasRestArgument = functionDeclaration.argumentTypes.some(argument => argument.isRestArgument);
+		if (hasRestArgument) {
+			return functionDeclaration.argumentTypes.length - 1 <= arity;
 		}
 		return functionDeclaration.argumentTypes.length === arity;
 	}));
@@ -122,6 +124,19 @@ function getFunctionByArity (functionNamespaceURI, functionLocalName, arity) {
 	};
 }
 
+/**
+ * @param   {string}          type
+ * @return  {!TypeDeclaration}
+ */
+function splitType (type) {
+	// argumentType is something like 'xs:string?' or 'map(*)'
+	var parts = type.match(/^(.*[^+?*])([+*?])?$/);
+	return {
+		type: parts[1],
+		occurrence: parts[2] || null
+	};
+}
+
 function registerFunction (namespaceURI, localName, argumentTypes, returnType, callFunction) {
 	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {
 		registeredFunctionsByName[namespaceURI + ':' + localName] = [];
@@ -130,9 +145,15 @@ function registerFunction (namespaceURI, localName, argumentTypes, returnType, c
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
 		localName: localName,
 		namespaceURI: namespaceURI,
-		argumentTypes: argumentTypes,
+		argumentTypes: argumentTypes
+			.map(
+				argumentType => argumentType === '...' ?
+					{
+						isRestArgument: true
+					} :
+				splitType(argumentType)),
 		arity: argumentTypes.length,
-		returnType: returnType,
+		returnType: splitType(returnType),
 		callFunction: callFunction
 	});
 }

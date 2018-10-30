@@ -114,6 +114,9 @@ function transformXPathItemToJavascriptObject (value, dynamicContext) {
 	if (isSubtypeOf(value.type, 'array(*)')) {
 		return transformArrayToArray(value, dynamicContext);
 	}
+	if (isSubtypeOf(value.type, 'xs:QName')) {
+		return { next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localPart}`) };
+	}
 	return {
 		next: () => ready(value.value)
 	};
@@ -177,7 +180,8 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 	const wrappedDomFacade = new DomFacade(domFacade);
 
 	const compilationOptions = {
-		allowXQuery: options.language === 'XQuery3.1'
+		allowXQuery: options.language === 'XQuery3.1',
+		disableCache: options.disableCache
 	};
 
 	const moduleImports = options['moduleImports'] || Object.create(null);
@@ -208,7 +212,8 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 					createElementNS: ownerDocument.createElementNS.bind(ownerDocument),
 					createTextNode: ownerDocument.createTextNode.bind(ownerDocument),
 					createComment: ownerDocument.createComment.bind(ownerDocument),
-					createProcessingInstruction: ownerDocument.createProcessingInstruction.bind(ownerDocument)
+					createProcessingInstruction: ownerDocument.createProcessingInstruction.bind(ownerDocument),
+					createAttributeNS: ownerDocument.createAttributeNS.bind(ownerDocument)
 				});
 			}
 		}
@@ -227,6 +232,9 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
 				},
 				createProcessingInstruction: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				},
+				createAttributeNS: () => {
 					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
 				}
 			};
@@ -466,8 +474,11 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 				return atomize(allValues.value[0], executionParameters).value;
 			}
 
-			return new Sequence(allValues.value).atomize(executionParameters).getAllValues().map(function (atomizedValue) {
-				return atomizedValue.value;
+			return new Sequence(allValues.value)
+				.atomize(executionParameters)
+				.getAllValues()
+				.map(function (atomizedValue) {
+					return atomizedValue.value;
 			});
 		}
 	}

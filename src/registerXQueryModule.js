@@ -1,3 +1,4 @@
+import astHelper from './parsing/astHelper';
 import { parse } from './parsing/xPathParser';
 import StaticContext from './expressions/StaticContext';
 import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
@@ -20,27 +21,38 @@ export default function registerXQueryModule (moduleString) {
 	// - Statically compile it (assuming every import can be resolved, TODO: figure out if XQuery has circular imports. I hope not...)
 
 	/**
-	 * @type {XQueryModuleAST}
+	 * @type {Array<string|Object|Array>} AST
 	 */
 	const parsedModule = parse(moduleString, { 'startRule': 'Module' });
 
-	// First, lets get the module main bit
-	const moduleTargetNamespaceURI = parsedModule['moduleDecl']['namespaceURI'];
-	const moduleTargetPrefix = parsedModule['moduleDecl']['prefix'];
+	const libraryModule = astHelper.getFirstChild(parsedModule, 'libraryModule');
+	if (!libraryModule) {
+		throw new Error('XQuery module must be declared in a library module.');
+	}
+	const moduleDecl = astHelper.getFirstChild(libraryModule, 'moduleDecl');
+	const uriNode = astHelper.getFirstChild(moduleDecl, 'uri');
+	const moduleTargetNamespaceURI = astHelper.getTextContent(uriNode);
+	const prefixNode = astHelper.getFirstChild(moduleDecl, 'prefix');
+	const moduleTargetPrefix = astHelper.getTextContent(prefixNode);
 
 	const staticContext = new StaticContext(new ExecutionSpecificStaticContext(() => null, Object.create(null)));
 
 	staticContext.registerNamespace(moduleTargetPrefix, moduleTargetNamespaceURI);
 
-	const moduleDeclaration = processProlog(parsedModule['prolog'], staticContext);
+	const prolog = astHelper.getFirstChild(libraryModule, 'prolog');
+	if (prolog !== null) {
+		const moduleDeclaration = processProlog(prolog, staticContext);
+		moduleDeclaration.functionDeclarations.forEach(({ namespaceURI }) => {
+			if (moduleTargetNamespaceURI !== namespaceURI) {
+				throw new Error('XQST0048: Functions and variables declared in a module must reside in the module target namespace.');
+			}
+		});
 
-	moduleDeclaration.functionDeclarations.forEach(({ namespaceURI }) => {
-		if (moduleTargetNamespaceURI !== namespaceURI) {
-			throw new Error('XQST0048: Functions and variables declared in a module must reside in the module target namespace.');
-		}
-	});
-
-	loadModuleFile(moduleTargetNamespaceURI, moduleDeclaration);
+		loadModuleFile(moduleTargetNamespaceURI, moduleDeclaration);
+	}
+	else {
+		loadModuleFile(moduleTargetNamespaceURI, { functionDeclarations: [] });
+	}
 
 	return moduleTargetNamespaceURI;
 }

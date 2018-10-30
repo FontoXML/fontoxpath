@@ -112,7 +112,7 @@ class IntersectExcept extends Expression {
 						const toReturn = ready(firstValue);
 						firstValue = null;
 						secondValue = null;
-						if (this._intersectOrExcept === 'intersect') {
+						if (this._intersectOrExcept === 'intersectOp') {
 							return toReturn;
 						}
 						continue;
@@ -122,7 +122,7 @@ class IntersectExcept extends Expression {
 					if (comparisonResult < 0) {
 						const toReturn = ready(firstValue);
 						firstValue = null;
-						if (this._intersectOrExcept === 'except') {
+						if (this._intersectOrExcept === 'exceptOp') {
 							return toReturn;
 						}
 					}
@@ -132,7 +132,7 @@ class IntersectExcept extends Expression {
 				}
 
 				// The second array is empty.
-				if (this._intersectOrExcept === 'except') {
+				if (this._intersectOrExcept === 'exceptOp') {
 					// Since X \ ∅ = X, we can output all items of X
 					if (firstValue !== null) {
 						const toReturn = ready(firstValue);

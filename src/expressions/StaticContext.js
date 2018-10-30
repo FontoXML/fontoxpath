@@ -104,7 +104,7 @@ export default class StaticContext {
 	}
 
 	resolveNamespace (prefix) {
-		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix || '');
+		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix);
 		if (uri === undefined) {
 			return this.parentContext === null ? undefined : this.parentContext.resolveNamespace(prefix);
 		}

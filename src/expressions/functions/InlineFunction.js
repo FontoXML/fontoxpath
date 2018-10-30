@@ -4,15 +4,21 @@ import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
 import FunctionValue from '../dataTypes/FunctionValue';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import TypeDeclaration from '../dataTypes/TypeDeclaration';
+
+/**
+ * @typedef {{prefix: string, namespaceURI: (string|null), localName: string}} QName
+ */
+let QName;
 
 /**
  * @extends Expression
  */
 class InlineFunction extends Expression {
 	/**
-	 * @param  {!Array<!Array<string>>}  paramDescriptions  An array of tuples of name and type of the parameters
-	 * @param  {string}                  returnType
-	 * @param  {!Expression}               functionBody
+	 * @param  {Array<{name:QName, type: TypeDeclaration}>}  paramDescriptions
+	 * @param  {TypeDeclaration}         returnType
+	 * @param  {Expression}              functionBody
 	 */
 	constructor (paramDescriptions, returnType, functionBody) {
 		super(
@@ -26,8 +32,8 @@ class InlineFunction extends Expression {
 			expectedResultOrder: Expression.RESULT_ORDERINGS.UNSORTED
 		});
 
-		this._parameterNames = paramDescriptions.map(([name]) => name);
-		this._parameterTypes = paramDescriptions.map(([_name, type]) => type);
+		this._parameterNames = paramDescriptions.map(({ name }) => name);
+		this._parameterTypes = paramDescriptions.map(({ type }) => type);
 
 		this._parameterBindingNames = null;
 		this._returnType = returnType;
@@ -40,7 +46,7 @@ class InlineFunction extends Expression {
 			.map(name => {
 				let namespaceURI = name.namespaceURI;
 				const prefix = name.prefix;
-				const localName = name.name;
+				const localName = name.localName;
 
 				if (!namespaceURI === null && prefix !== '*') {
 					namespaceURI = staticContext.resolveNamespace(prefix);

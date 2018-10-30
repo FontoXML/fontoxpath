@@ -16,10 +16,17 @@ import registerXQueryModule from './registerXQueryModule';
 import parseExpression from './parsing/parseExpression';
 import compileAstToExpression from './parsing/compileAstToExpression';
 import domFacade from './domBackedDomFacade';
+import astHelper from './parsing/astHelper';
 
 function parseXPath (xpathString) {
 	const ast = parseExpression(xpathString, { allowXQuery: false });
-	return compileAstToExpression(ast['body'], { allowXQuery: false });
+	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
+
+	if (queryBody === null) {
+		throw new Error('Library modules do not have a specificity');
+	}
+
+	return compileAstToExpression(queryBody, { allowXQuery: false });
 }
 
 function getBucketForSelector (xpathString) {
@@ -34,7 +41,7 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 * @suppress {undefinedVars}
 */
 (function () {
-	/* istanbul ignore else */
+	/* istanbul ignore next */
 	if (typeof window !== 'undefined') {
 		window['compareSpecificity'] = compareSpecificity;
 		window['domFacade'] = domFacade;
@@ -46,7 +53,7 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 		window['evaluateXPathToMap'] = evaluateXPathToMap;
 		window['evaluateXPathToNodes'] = evaluateXPathToNodes;
 		window['evaluateXPathToNumber'] = evaluateXPathToNumber;
-		window['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
+ 		window['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
 		window['evaluateXPathToString'] = evaluateXPathToString;
 		window['evaluateXPathToStrings'] = evaluateXPathToStrings;
 		window['getBucketForSelector'] = getBucketForSelector;

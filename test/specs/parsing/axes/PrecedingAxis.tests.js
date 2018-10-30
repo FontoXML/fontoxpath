@@ -20,9 +20,12 @@ describe('preceding', () => {
 			['someOtherElement', ['someOtherElement']],
 			['someElement']
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('preceding::someOtherElement', documentNode.documentElement.lastChild), [
-			documentNode.documentElement.firstChild.firstChild,
-			documentNode.documentElement.firstChild
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'preceding::someOtherElement',
+				documentNode.documentElement.lastChild).map(node => node.outerHTML), [
+					documentNode.documentElement.firstChild.outerHTML,
+					documentNode.documentElement.firstChild.firstChild.outerHTML
 		]);
 	});
 
@@ -55,7 +58,7 @@ let $dom := <element>
 
 return map{
 	"got": array{$dom!descendant::self[1]!preceding::*},
-	"expected": array{($dom!descendant-or-self::*[@expectedPreceding]) => reverse()}
+	"expected": array{($dom!descendant-or-self::*[@expectedPreceding])}
 }
 `,
 				documentNode,
@@ -64,6 +67,7 @@ return map{
 				{ language: 'XQuery3.1' }
 		);
 		chai.assert.equal(result.got.length, 5);
+		chai.assert.equal(result.expected.length, 5);
 		chai.assert.deepEqual(result.got, result.expected);
 	});
 
@@ -79,13 +83,13 @@ return map{
 	it('correctly orders its results', () => {
 		jsonMlMapper.parse([
 			'someParentElement',
-			['someNonMatchingElement', ['someSiblingElement', {position: 'first'}]],
-			['someNonMatchingElement', ['someSiblingElement', {position: 'second'}]],
+			['someNonMatchingElement', ['someSiblingElement', { position: 'first' }]],
+			['someNonMatchingElement', ['someSiblingElement', { position: 'second' }]],
 			['someElement']
 		], documentNode);
 		chai.assert.equal(
 			evaluateXPathToString('(preceding::someSiblingElement)[1]/@position', documentNode.documentElement.lastChild),
-			'second');
+			'first');
 	});
 
 	it('does nothing when there are no preceding siblings', () => {

@@ -4,7 +4,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
 	evaluateXPathToNodes,
-	evaluateXPathToStrings,
+	evaluateXPathToStrings
 } from 'fontoxpath';
 
 let documentNode;
@@ -50,7 +50,7 @@ describe('ancestor-or-self', () => {
 			'someParentElement',
 			['someElement']
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('ancestor-or-self::*', documentNode.documentElement.firstChild), [documentNode.documentElement.firstChild, documentNode.documentElement]);
+		chai.assert.deepEqual(evaluateXPathToNodes('ancestor-or-self::*', documentNode.documentElement.firstChild), [documentNode.documentElement, documentNode.documentElement.firstChild]);
 	});
 
 	it('sets the context sequence', () => {

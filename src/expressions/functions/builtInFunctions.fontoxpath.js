@@ -16,6 +16,8 @@ import StaticContext from '../StaticContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
+import astHelper from '../../parsing/astHelper';
+
 /**
  * @type {!FunctionDefinitionType}
  */
@@ -43,7 +45,10 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 				delete variables['.'];
 
 				const ast = parseExpression(queryString, { allowXQuery: false });
-				const selector = compileAstToExpression(ast['body'], { allowXQuery: false });
+				const mainModule = astHelper.getFirstChild(ast, 'mainModule');
+				const queryBodyContents = /** @type {!Array} */ (astHelper.followPath(ast, ['mainModule', 'queryBody', '*']));
+
+				const selector = compileAstToExpression(queryBodyContents, { allowXQuery: false });
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 					prefix => staticContext.resolveNamespace(prefix),
 					Object.keys(variables).reduce(
@@ -118,7 +123,8 @@ function fontoxpathVersion () {
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	if (typeof VERSION === 'undefined') {
 		version = 'devbuild';
-	} else {
+	}
+	else {
 		version = VERSION;
 	}
 	return Sequence.singleton(createAtomicValue(version, 'xs:string'));

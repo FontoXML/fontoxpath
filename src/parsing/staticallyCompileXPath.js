@@ -4,7 +4,8 @@ import StaticContext from '../expressions/StaticContext';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import compileAstToExpression from './compileAstToExpression';
 import processProlog from './processProlog';
-import Expression from '../expressions/Expression';
+
+import astHelper from './astHelper';
 
 import {
 	getStaticCompilationResultFromCache,
@@ -16,29 +17,34 @@ export default function staticallyCompileXPath (xpathString, compilationOptions,
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, variables);
 
-	const fromCache = getStaticCompilationResultFromCache(xpathString, language, namespaceResolver, variables, moduleImports);
+	if (!compilationOptions.disableCache) {
+		const fromCache = getStaticCompilationResultFromCache(xpathString, language, namespaceResolver, variables, moduleImports);
 
-	if (fromCache) {
-		return fromCache;
+		if (fromCache) {
+			return fromCache;
+		}
 	}
 
 	const ast = parseExpression(xpathString, compilationOptions);
 
-	if (ast['type'] === 'libraryModule') {
+	const mainModule = astHelper.getFirstChild(ast, 'mainModule');
+	const prolog = astHelper.getFirstChild(mainModule, 'prolog');
+	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
+	if (!queryBodyContents) {
+		// This must be a library module
 		throw new Error('Can not execute a library module.');
 	}
 
-	const prolog = ast['prolog'];
-	const moduleBody = ast['body'];
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
-	if (compilationOptions.allowXQuery) {
+	if (prolog) {
+		if (!compilationOptions.allowXQuery) {
+			throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+		}
 		processProlog(prolog, rootStaticContext);
-	} else if (ast['prolog']['moduleSettings'].length || ast['prolog']['declarations'].length) {
-		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 
-	const compiledExpression = compileAstToExpression(moduleBody, compilationOptions);
+	const compiledExpression = compileAstToExpression(queryBodyContents, compilationOptions);
 
 	Object.keys(moduleImports).forEach(modulePrefix => {
 		const moduleURI = moduleImports[modulePrefix];

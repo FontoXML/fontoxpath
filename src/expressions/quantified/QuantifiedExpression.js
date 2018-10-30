@@ -2,16 +2,23 @@ import Expression from '../Expression';
 import Sequence from '../dataTypes/Sequence';
 
 /**
+ * @typedef {{name:{prefix:?string,namespaceURI:?string,name:!string},sourceExpr:Expression}} InClause
+ */
+let InClause;
+
+/**
  * @extends {Expression}
  */
 class QuantifiedExpression extends Expression {
 	/**
-	 * @param  {!string}                                                     quantifier
-	 * @param  {!Array<{prefix:?string,namespaceURI:?string,name:!string}>}  inClauseNames
-	 * @param  {!Array<!Expression>}                                           inClauseExpressions
-	 * @param  {!Expression}                                                   satisfiesExpr
+	 * @param  {string}              quantifier
+	 * @param  {!Array<InClause>}    inClauses
+	 * @param  {!Expression}         satisfiesExpr
 	 */
-	constructor (quantifier, inClauseNames, inClauseExpressions, satisfiesExpr) {
+	constructor (quantifier, inClauses, satisfiesExpr) {
+		const inClauseExpressions = inClauses.map(inClause => inClause.sourceExpr);
+		const inClauseNames = inClauses.map(inClause => inClause.name);
+
 		const specificity = inClauseExpressions.reduce(
 			(specificity, inClause) => specificity.add(inClause.specificity),
 			satisfiesExpr.specificity);
@@ -39,7 +46,8 @@ class QuantifiedExpression extends Expression {
 			// The existance of this variable should be known for the next expression
 			staticContext.introduceScope();
 			const inClauseName = this._inClauseNames[i];
-			const varBindingName = staticContext.registerVariable(inClauseName.namespaceURI, inClauseName.name);
+			const inClauseNameNamespaceURI = staticContext.resolveNamespace(inClauseName.prefix);
+			const varBindingName = staticContext.registerVariable(inClauseNameNamespaceURI, inClauseName.localName);
 			this._inClauseVariableNames[i] = varBindingName;
 		}
 
