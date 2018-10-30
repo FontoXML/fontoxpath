@@ -238,7 +238,10 @@ describe('qt3 test set', () => {
 /test-set/test-case[
   let $dependencies := (./dependency | ../dependency)
   return not(
-     $dependencies/@value = (
+     $dependencies/@value/tokenize(.) = (
+       "XQ10",
+       "XQ20",
+       "XQ30",
        "schemaValidation",
        "schemaImport",
        (:"staticTyping",:)
