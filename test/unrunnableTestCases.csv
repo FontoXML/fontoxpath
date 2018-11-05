@@ -988,14 +988,6 @@ fn-stringnpi1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:inte
 fn-stringnpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-stringnni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-stringnni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-fn-string-23,AssertionError: expected [Function] to throw an error
-fn-string-32,AssertionError: expected [Function] to throw an error
-fn-string-33,AssertionError: expected [Function] to throw an error
-fn-string-34,AssertionError: expected [Function] to throw an error
-fn-string-35,AssertionError: expected [Function] to throw an error
-fn-string-36,AssertionError: expected [Function] to throw an error
-fn-string-37,AssertionError: expected [Function] to throw an error
-fn-string-38,AssertionError: expected [Function] to throw an error
 fn-string-join-29,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 fn-string-join-31,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-string-length-21,AssertionError: expected [Function] to throw error including 'FOTY0013' but got 'XPTY0004 Unable to cast function(*) to type xs:string while calling string-length'
@@ -3049,7 +3041,6 @@ inline-fn-021,Error: XPST0017: Function function-name with arity of 1 not regist
 inline-fn-022,Error: XPST0017: Function function-arity with arity of 1 not registered. No similar functions found.
 inline-fn-023,Error: XPST0017: Function apply with arity of 2 not registered. No similar functions found.
 inline-fn-025,Error: XPST0017: Function function-arity with arity of 1 not registered. No similar functions found.
-inline-fn-028,AssertionError: expected [Function] to throw an error
 inline-fn-029,AssertionError: expected [Function] to throw an error
 inline-fn-030,AssertionError: expected [Function] to throw error including 'FOTY0013' but got 'XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?'
 inline-fn-032,Error: No selector counterpart for: anyFunctionTest.
@@ -4285,7 +4276,6 @@ hof-043,Error: XPST0081: Can not cast: type xs:numeric is unknown.
 hof-045,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 hof-052,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 hof-053,Error: XPST0003: Unable to parse XPath: "       	declare function local:f($x as xs:long, $y as xs:NCName) as element(e, xs:anyAtomicType) { <e x="{$x}" y="{$y}"/> };        	local:f#2 instance of function(xs:long, xs:NCName) as element(),        	local:f#2 instance of function(xs:long, xs:NCName) as element()+,        	local:f#2 instance of function(xs:long, xs:NCName) as element()?,        	local:f#2 instance of function(xs:long, xs:NCName) as element()*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType?)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType?)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:untyped)?       ". Expected " ", "(:", ")", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "?" found.        	declare function local:f($x as xs:long, $y as xs:NCName) as element(e, xs:anyAtomicType) { <e x="{$x}" y="{$y}"/> };        	local:f#2 instance of function(xs:long, xs:NCName) as element(),        	local:f#2 instance of function(xs:long, xs:NCName) as element()+,        	local:f#2 instance of function(xs:long, xs:NCName) as element()?,        	local:f#2 instance of function(xs:long, xs:NCName) as element()*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType[Error is around here]?)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType?)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:untyped)?
-hof-905,AssertionError: expected [Function] to throw an error
 hof-906,AssertionError: expected [Function] to throw error including 'FOTY0013' but got 'XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?'
 hof-907,AssertionError: expected [Function] to throw an error
 hof-912,AssertionError: expected [Function] to throw error including 'XPTY0004' but got 'XPST0017: Function translate with arity of 3 not registered. No similar functions found.'
@@ -5099,8 +5089,6 @@ XMark-Q18,AssertionError: Expected XPath (: Purpose: Convert the currency of the
 XMark-Q19,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 XMark-Q20,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 XMark-All,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
-fo-test-fn-string-005,AssertionError: expected [Function] to throw an error
-fo-test-fn-string-006,AssertionError: expected [Function] to throw an error
 fo-test-fn-data-001,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 fo-test-fn-data-002,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 fo-test-fn-data-003,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?

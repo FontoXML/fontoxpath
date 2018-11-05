@@ -137,6 +137,13 @@ function createCastingFunction (from, to) {
 		});
 	}
 
+	if (isSubtypeOf(from, 'function(*)') && to === 'xs:string') {
+		return (_val) => ({
+			successful: false,
+			error: new Error('FOTY0014: Casting from function item to xs:string is not permitted.')
+		});
+	}
+
 	const primitiveFrom = TREAT_AS_PRIMITIVE.includes(from) ? from : getPrimitiveTypeName(from);
 	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
 
