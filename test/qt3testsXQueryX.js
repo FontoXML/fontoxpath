@@ -68,14 +68,14 @@ function parseNode (document, jsonml) {
 function run () {
 	const failingTestCSVPath = path.join('test', 'failingXQueryXTestNames.csv');
 	const skippableTests = fs.readFileSync(failingTestCSVPath, 'utf-8')
-		.split(/[\r\n]/);
+		.split(/\r?\n/);
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
 	const baseDir = path.join('test', 'assets', 'QT3TS-master');
 
 	function normalizeEndOfLines (xpathString) {
 		// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
-		return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xA));
+		return xpathString.replace(/(\x0D+\x0A)|(\x0D+(?!\x0A))/g, String.fromCharCode(0xA));
 	}
 	async function getXQueries (directory, testName) {
 		const testDirectory = path.join(baseDir, directory);
