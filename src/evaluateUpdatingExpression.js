@@ -44,6 +44,9 @@ function normalizeEndOfLines (xpathString) {
  */
 export default async function evaluateUpdatingExpression (updateScript, contextItem, domFacade, variables, options) {
 	variables = variables || {};
+	if (!domFacade) {
+		domFacade = domBackedDomFacade;
+	}
 	updateScript = normalizeEndOfLines(updateScript);
 	// Always wrap in an actual domFacade
 	const wrappedDomFacade = new DomFacade(domFacade);
@@ -63,6 +66,53 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
+
+	/**
+	 * @type {INodesFactory}
+	 */
+	let nodesFactory = options['nodesFactory'];
+	if (!nodesFactory) {
+		if (contextItem && 'nodeType' in /** @type {!Node} */(contextItem)) {
+			const ownerDocument = /** @type {Document} }*/(contextItem.ownerDocument || contextItem);
+			if ((typeof ownerDocument.createElementNS === 'function') &&
+				(typeof ownerDocument.createProcessingInstruction === 'function') &&
+				(typeof ownerDocument.createTextNode === 'function') &&
+				(typeof ownerDocument.createComment === 'function')) {
+
+				nodesFactory = /** @type {!INodesFactory} */({
+					createElementNS: ownerDocument.createElementNS.bind(ownerDocument),
+					createTextNode: ownerDocument.createTextNode.bind(ownerDocument),
+					createComment: ownerDocument.createComment.bind(ownerDocument),
+					createProcessingInstruction: ownerDocument.createProcessingInstruction.bind(ownerDocument),
+					createAttributeNS: ownerDocument.createAttributeNS.bind(ownerDocument)
+				});
+			}
+		}
+
+		if (!nodesFactory) {
+			// We do not have a nodesFactory instance as a parameter, nor can we generate one from the context item.
+			// Throw an error as soon as one of these functions is called.
+			nodesFactory = {
+				createElementNS: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				},
+				createTextNode: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				},
+				createComment: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				},
+				createProcessingInstruction: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				},
+				createAttributeNS: () => {
+					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+				}
+			};
+		}
+	}
+
+
 	/**
 	 * @type {!DynamicContext}
 	 */
@@ -76,11 +126,6 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 			return typedVariableByName;
 		}, Object.create(null))
 	});
-
-		/**
-	 * @type {INodesFactory}
-	 */
-	let nodesFactory = options['nodesFactory'];
 
 	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory);
 

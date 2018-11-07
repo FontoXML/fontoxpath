@@ -175,9 +175,9 @@ async function rerunXPath () {
 			}
 		);
 
-		for (let item = await it.next(); !item.done; item = await it.next()) {
-			raw.push(item.value instanceof Node ? new XMLSerializer().serializeToString(item.value) : item.value);
-		}
+		await it;
+		console.log(it);
+		
 	}
 	catch (err) {
 		log.innerText = err.message;

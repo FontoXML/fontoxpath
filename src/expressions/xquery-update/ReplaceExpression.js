@@ -102,7 +102,7 @@ class ReplaceNodeExpression extends Expression {
 					// document node is replaced in $rlist by its
 					// children.
 					for (let i = 0; i < rlist.length; ++i) {
-						if (isSubTypeOf(rlist[i].type, 'document-node()')) {
+						if (isSubTypeOf(rlist[i].type, 'document()')) {
 							rlist.splice.apply(rlist, [i, 1].concat(executionParameters.getChildNodes(rlist[i])));
 							--i;
 						}
@@ -128,17 +128,17 @@ class ReplaceNodeExpression extends Expression {
 					if (tv.value.xdmValue.length !== 1) {
 						throw errXUTY0008();
 					}
-					if (!isSubTypeOf(tv.xdmValue[0].type, 'element()') &&
-						!isSubTypeOf(tv.xdmValue[0].type, 'attribute()') &&
-						!isSubTypeOf(tv.xdmValue[0].type, 'text()') &&
-						!isSubTypeOf(tv.xdmValue[0].type, 'comment()') &&
-						!isSubTypeOf(tv.xdmValue[0].type, 'processing-instruction()')) {
+					if (!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
+						!isSubTypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
+						!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
+						!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
+						!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')) {
 						throw errXUTY0008();
 					}
 
 					// If the result consists of a node whose parent
 					// property is empty, [err:XUDY0009] is raised.
-					parent = executionParameters.domFacade.getParentNode(tv.xdmValue[0].value);
+					parent = executionParameters.domFacade.getParentNode(tv.value.xdmValue[0].value);
 					if (parent === null) {
 						throw errXUDY0009();
 					}
@@ -154,12 +154,12 @@ class ReplaceNodeExpression extends Expression {
 				// comment, or processing instruction nodes
 				// [err:XUTY0010].
 				if (!isSubTypeOf(target.type, 'attribute()')) {
-					if (rlist.some(
+					if (!rlist.every(
 						node =>
-							!isSubTypeOf(node.type, 'element()') ||
-							!isSubTypeOf(node.type, 'text()') ||
-							!isSubTypeOf(node.type, 'comment()') ||
-							!isSubTypeOf(node.type, 'processing-instruction()'))) {
+							isSubTypeOf(node.type, 'element()') ||
+							isSubTypeOf(node.type, 'text()') ||
+							isSubTypeOf(node.type, 'comment()') ||
+							isSubTypeOf(node.type, 'processing-instruction()'))) {
 						throw errXUTY0010();
 					}
 				}
@@ -206,7 +206,7 @@ class ReplaceNodeExpression extends Expression {
 				return ready({
 					value: Sequence.empty(),
 					pendingUpdateList: mergeUpdates(
-						replaceNode(target, rlist),
+						[replaceNode(target.value, rlist.map(nodeValue => nodeValue.value))],
 						rlistUpdates,
 						targetUpdates)
 				});
