@@ -1,7 +1,6 @@
 import {
 	evaluateXPathToBoolean,
-	evaluateXPathToMap,
-	evaluateXPathToString
+	evaluateXPathToMap
 } from 'fontoxpath';
 
 import { parse } from 'fontoxpath/parsing/xPathParser';
@@ -118,7 +117,6 @@ function run () {
 		return queries && queries[testCase];
 	}
 
-
 	fs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
 		const directoryPath = path.join(baseDir, 'xqueryx', directory);
 
@@ -180,7 +178,8 @@ function run () {
 							const actual = new slimdom.Document();
 							try {
 								actual.appendChild(parseNode(actual, jsonMl));
-							} catch (e) {
+							}
+							catch (e) {
 								skippableTests.push(`${testCase},Parser resulted in invalid JsonML`);
 								throw e;
 							}
@@ -191,7 +190,8 @@ function run () {
 							let expected;
 							try {
 								expected = sync(rawFile);
-							} catch (e) {
+							}
+							catch (e) {
 								skippableTests.push(`${testCase},Expected XML could not be parsed`);
 								throw e;
 							}
@@ -212,8 +212,8 @@ function run () {
 										new slimdom.XMLSerializer().serializeToString(actual.documentElement).replace(/></g, '>\n<'),
 										new slimdom.XMLSerializer().serializeToString(expected.documentElement).replace(/></g, '>\n<'),
 										'Expected the XML to be deep-equal');
-
-								} catch (e) {
+								}
+								catch (e) {
 									skippableTests.push(`${testCase},result was not equal`);
 
 									throw e;
