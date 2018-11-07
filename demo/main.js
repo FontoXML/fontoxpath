@@ -6,6 +6,7 @@ const log = document.getElementById('log');
 const resultText = document.getElementById('resultText');
 const xpathField = document.getElementById('xpathField');
 const allowXQuery = document.getElementById('allowXQuery');
+const allowXQueryUpdateFacility = document.getElementById('allowXQueryUpdateFacility');
 const bucketField = document.getElementById('bucketField');
 const astJsonMl = document.getElementById('astJsonMl');
 const astXml = document.getElementById('astXml');
@@ -18,7 +19,7 @@ function setCookie () {
 	const source = encodeURIComponent(xmlSource.innerText);
 	const xpath = encodeURIComponent(xpathField.innerText);
 
-	document.cookie = `xpath-editor-state=${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
+	document.cookie = `xpath-editor-state=${allowXQuery.checked ? 1 : 0}${allowXQueryUpdateFacility.checked ? 1 : 0}${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
 }
 
 function stringifyJsonMl (what, indent, n) {
@@ -164,14 +165,13 @@ async function rerunXPath () {
 		const prettiedXml = indentXml(document);
 		astXml.innerText = prettiedXml;
 
-		const it = await fontoxpath.evaluateXPathToAsyncIterator(
+		const it = await fontoxpath.evaluateUpdatingExpression(
 			xpath,
 			xmlDoc,
 			null,
 			null,
 			{
 				disableCache: true,
-				language: allowXQuery.checked ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE
 			}
 		);
 
@@ -225,8 +225,15 @@ function loadFromCookie () {
 	}
 
 	const headerPartLength = 'xpath-editor-state='.length;
-	const sourceLengthString = cookie.match(/^xpath-editor-state=(\d+)~/)[1];
-	const sourceStart = headerPartLength + sourceLengthString.length + 1;
+	const firstPart = cookie.match(/^xpath-editor-state=(\d+)~/)[1];
+	// The first two characters are actually the state of the xquery and xquf checkboxes
+	allowXQuery.checked = firstPart[0] === '1';
+
+	allowXQueryUpdateFacility.checked = firstPart[1] === '1';
+
+	var sourceLengthString = firstPart.substring(2);
+
+	const sourceStart = headerPartLength + firstPart.length + 1;
 	const sourceLength = parseInt(sourceLengthString, 10);
 	const source = cookie.substring(sourceStart, sourceStart + sourceLength);
 

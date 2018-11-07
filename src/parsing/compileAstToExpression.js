@@ -52,6 +52,8 @@ import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 
+import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
+
 /**
  * @param   {Array<?>}                ast
  * @param   {{allowXQuery:boolean}}   compilationOptions
@@ -175,6 +177,10 @@ function compile (ast, compilationOptions) {
 			return computedPIConstructor(ast, compilationOptions);
 		case 'CDataSection':
 			return CDataSection(ast, compilationOptions);
+
+			// XQuery update facility
+		case 'replaceExpr':
+			return replaceExpression(ast, compilationOptions);
 		default:
 			return compileTest(ast, compilationOptions);
 	}
@@ -854,6 +860,13 @@ function computedPIConstructor (ast, compilationOptions) {
 			compile(astHelper.getFirstChild(piValueExpr, '*'), compilationOptions) :
 			new SequenceOperator([])
 	);
+}
+
+function replaceExpression (ast, compilationOptions) {
+	const isReplaceValue = !!astHelper.getFirstChild(ast, 'replaceValue');
+	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
+	const replacementExpr = compile(astHelper.followPath(ast, ['replacementExpr', '*']), compilationOptions);
+	return new ReplaceExpression(isReplaceValue, targetExpr, replacementExpr);
 }
 
 /**
