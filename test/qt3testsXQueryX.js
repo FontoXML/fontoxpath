@@ -40,7 +40,7 @@ function run () {
 			if (value.substring(value.length - 3) === '.xq') {
 				const xQueryPath = path.join(testDirectory, value);
 				if (fs.existsSync(xQueryPath)) {
-					xQueries[key] = fs.promises.readFile(xQueryPath, 'utf-8');
+					xQueries[key] = normalizeEndOfLines(fs.promises.readFile(xQueryPath, 'utf-8'));
 				}
 				else {
 					xQueries[key] = null;

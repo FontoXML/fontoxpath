@@ -11,10 +11,15 @@ if (!fs.promises) {
 function run () {
 	const failingTestCSVPath = path.join('test', 'failingXQUTSXQueryXTestNames.csv');
 	const skippableTests = fs.readFileSync(failingTestCSVPath, 'utf-8')
-		.split(/[\r\n]/);
+		.split(/\r?\n/);
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
 	const baseDir = path.join('test', 'assets', 'XQUTS_current', 'Queries');
+
+	function normalizeEndOfLines (xpathString) {
+		// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
+		return xpathString.replace(/(\x0D+\x0A)|(\x0D+(?!\x0A))/g, String.fromCharCode(0xA));
+	}
 
 	function buildTestCases (testPath) {
 		const xQueryXPath = path.join(baseDir, 'XQueryX', ...testPath);
@@ -45,7 +50,7 @@ function run () {
 					}
 					return await fs.promises.readFile(xQueryPath, 'utf-8');
 				};
-				const loadXQueryX = async () => await fs.promises.readFile(xQueryXPath, 'utf-8');
+				const loadXQueryX = async () => normalizeEndOfLines(await fs.promises.readFile(xQueryXPath, 'utf-8'));
 
 				buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, actual => {
 					actual.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2007/xquery-update-10
