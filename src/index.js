@@ -10,6 +10,7 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import evaluateUpdatingExpression from './evaluateUpdatingExpression';
+import executePendingUpdateList from './executePendingUpdateList';
 import precompileXPath from './precompileXPath';
 import getBucketsForNode from './getBucketsForNode';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
@@ -54,10 +55,11 @@ function compareSpecificity (xpathStringA, xpathStringB) {
 		window['evaluateXPathToMap'] = evaluateXPathToMap;
 		window['evaluateXPathToNodes'] = evaluateXPathToNodes;
 		window['evaluateXPathToNumber'] = evaluateXPathToNumber;
- 		window['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
+		window['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
 		window['evaluateXPathToString'] = evaluateXPathToString;
 		window['evaluateXPathToStrings'] = evaluateXPathToStrings;
 		window['evaluateUpdatingExpression'] = evaluateUpdatingExpression;
+		window['executePendingUpdateList'] = executePendingUpdateList;
 		window['getBucketForSelector'] = getBucketForSelector;
 		window['getBucketsForNode'] = getBucketsForNode;
 		window['precompileXPath'] = precompileXPath;
@@ -79,6 +81,7 @@ export {
 	evaluateXPathToNumbers,
 	evaluateXPathToStrings,
 	evaluateUpdatingExpression,
+	executePendingUpdateList,
 	precompileXPath,
 	registerXQueryModule,
 	evaluateXPathToString,

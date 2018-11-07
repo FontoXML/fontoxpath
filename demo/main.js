@@ -4,6 +4,7 @@ import * as parser from '../src/parsing/xPathParser';
 const xmlSource = document.getElementById('xmlSource');
 const log = document.getElementById('log');
 const resultText = document.getElementById('resultText');
+const updateResult = document.getElementById('updateResult');
 const xpathField = document.getElementById('xpathField');
 const allowXQuery = document.getElementById('allowXQuery');
 const allowXQueryUpdateFacility = document.getElementById('allowXQueryUpdateFacility');
@@ -144,6 +145,7 @@ async function rerunXPath () {
 	// Clear results from previous run
 	log.innerText = '';
 	resultText.innerText = '';
+	updateResult.innerText = '';
 	astJsonMl.innerText = '';
 	astXml.innerText = '';
 
@@ -171,13 +173,13 @@ async function rerunXPath () {
 			null,
 			null,
 			{
-				disableCache: true,
+				disableCache: true
 			}
 		);
 
 		await it;
-		console.log(it);
-		
+		fontoxpath.executePendingUpdateList(it.pendingUpdateList, null, null, {});
+		updateResult.innerText = xmlDoc.documentElement.outerHTML;
 	}
 	catch (err) {
 		log.innerText = err.message;
