@@ -54,7 +54,7 @@ class PossiblyUpdatingExpression extends Expression {
 								if (!attempt.ready) {
 									return attempt;
 								}
-								updateList = mergeUpdates(updateList, attempt.value.pendingUpdateList);
+								updateList = mergeUpdates(updateList, ...attempt.value.pendingUpdateList);
 								values = attempt.value.value;
 							}
 
