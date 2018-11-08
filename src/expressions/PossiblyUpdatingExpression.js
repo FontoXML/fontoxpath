@@ -25,7 +25,7 @@ class PossiblyUpdatingExpression extends Expression {
 			dynamicContext,
 			executionParameters,
 			this._childExpressions
-				.map(expr => innerDynamicContext => expr.evaluate(innerDynamicContext)));
+				.map(expr => innerDynamicContext => expr.evaluate(innerDynamicContext, executionParameters)));
 	}
 
 	evaluateWithUpdateList (dynamicContext, executionParameters) {
