@@ -204,7 +204,7 @@ class ReplaceNodeExpression extends Expression {
 				// upd:mergeUpdates: upd:replaceNode($target, $rlist)
 				done = true;
 				return ready({
-					value: Sequence.empty(),
+					value: [],
 					pendingUpdateList: mergeUpdates(
 						[replaceNode(target.value, rlist.map(nodeValue => nodeValue.value))],
 						rlistUpdates,

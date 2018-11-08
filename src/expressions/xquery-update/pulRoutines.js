@@ -1,3 +1,3 @@
-export const mergeUpdates = function (pul1, pul2) {
-	return pul1.concat(pul2);
+export const mergeUpdates = function (pul1, ...puls) {
+	return pul1.concat(puls.filter(Boolean));
 };

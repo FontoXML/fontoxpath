@@ -152,7 +152,7 @@ async function runUpdatingXQuery (script) {
 		}
 	);
 
-	resultText.innerText = `[${ result.value.getAllValues().map(item => `"${item}"`).join(', ')}]\n\n${JSON.stringify(result.pendingUpdateList)}`;
+	resultText.innerText = `[${ result.xdmValue.map(item => `"${item}"`).join(', ')}]\n\n${JSON.stringify(result.pendingUpdateList)}`;
 	fontoxpath.executePendingUpdateList(result.pendingUpdateList, null, null, {});
 	updateResult.innerText = xmlDoc.documentElement.outerHTML;
 }
