@@ -16,14 +16,14 @@ class PossiblyUpdatingExpression extends Expression {
 	 * @param   {DynamicContest}               _dynamicContest
 	 * @return  {Sequence}
 	 */
-	performFunctionalEvaluation (_dynamicContext, _executionParamaters, _sequenceCallbacks) {
+	performFunctionalEvaluation (_dynamicContext, _executionParameters, _sequenceCallbacks) {
 
 	}
 
-	evaluate (dynamicContext, executionParamaters) {
+	evaluate (dynamicContext, executionParameters) {
 		return this.performFunctionalEvaluation(
 			dynamicContext,
-			executionParamaters,
+			executionParameters,
 			this._childExpressions
 				.map(expr => innerDynamicContext => expr.evaluate(innerDynamicContext)));
 	}
