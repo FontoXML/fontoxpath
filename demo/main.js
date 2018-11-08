@@ -141,6 +141,41 @@ function indentXml (document) {
 	return prettiedXml.join('');
 }
 
+async function runUpdatingXQuery (script) {
+	const result = await fontoxpath.evaluateUpdatingExpression(
+		script,
+		xmlDoc,
+		null,
+		null,
+		{
+			disableCache: true,
+		}
+	);
+
+	resultText.innerText = `[${ result.value.getAllValues().map(item => `"${item}"`).join(', ')}]\n\n${JSON.stringify(result.pendingUpdateList)}`;
+	fontoxpath.executePendingUpdateList(result.pendingUpdateList, null, null, {});
+	updateResult.innerText = xmlDoc.documentElement.outerHTML;
+}
+
+async function runNormalXPath (script, asXQuery) {
+	const raw = [];
+	const it = fontoxpath.evaluateXPathToAsyncIterator(
+		script,
+		xmlDoc,
+		null,
+		null,
+		{
+			language: allowXQuery.checked ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
+			disableCache: true,
+		}
+	);
+
+	for (let item = await it.next(); !item.done; item = await it.next()) {
+		raw.push(item.value instanceof Node ? new XMLSerializer().serializeToString(item.value) : item.value);
+	}
+	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
+}
+
 async function rerunXPath () {
 	// Clear results from previous run
 	log.innerText = '';
@@ -151,7 +186,6 @@ async function rerunXPath () {
 
 	const xpath = xpathField.innerText;
 
-	const raw = [];
 	try {
 		// First try to get the AST as it has a higher change of succeeding
 		const ast = parser.parse(xpath);
@@ -167,26 +201,17 @@ async function rerunXPath () {
 		const prettiedXml = indentXml(document);
 		astXml.innerText = prettiedXml;
 
-		const it = await fontoxpath.evaluateUpdatingExpression(
-			xpath,
-			xmlDoc,
-			null,
-			null,
-			{
-				disableCache: true
-			}
-		);
-
-		await it;
-		fontoxpath.executePendingUpdateList(it.pendingUpdateList, null, null, {});
-		updateResult.innerText = xmlDoc.documentElement.outerHTML;
+		if (allowXQueryUpdateFacility.checked) {
+			await runUpdatingXQuery(xpath);
+		}
+		else {
+			await runNormalXPath(xpath, allowXQuery.checked);
+		}
 	}
 	catch (err) {
 		log.innerText = err.message;
 		return;
 	}
-
-	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
 
 	bucketField.innerText = allowXQuery.checked ? 'Buckets can not be used in XQuery' : fontoxpath.getBucketForSelector(xpath);
 }
