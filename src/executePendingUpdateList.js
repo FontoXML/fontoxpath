@@ -51,6 +51,8 @@ export default async function executePendingUpdateList (pendingUpdateList, conte
 				});
 				break;
 			}
+			default:
+				throw new Error('Not implemented: the execution for operation ' + operation.type + ' is not yet implemented.');
 		}
 	});
 }
