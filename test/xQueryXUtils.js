@@ -12,20 +12,20 @@ import { sync, slimdom } from 'slimdom-sax-parser';
  * JsonML is always expected to be a JavaScript structure. If you have a string of JSON, use JSON.parse first.
  *
  * @param   {Document}  document  The document to use to create nodes
- * @param   {JsonML}    jsonml    The JsonML fragment to parse
+ * @param   {JsonML}    ast       The JsonML fragment to parse
  *
  * @return  {Node}      The root node of the constructed DOM fragment
  */
-function parseNode (document, jsonml) {
-	if (typeof jsonml === 'string' || typeof jsonml === 'number') {
-		return document.createTextNode(jsonml);
+export function parseAst (document, ast) {
+	if (typeof ast === 'string' || typeof ast === 'number') {
+		return document.createTextNode(ast);
 	}
 
-	if (!Array.isArray(jsonml)) {
+	if (!Array.isArray(ast)) {
 		throw new TypeError('JsonML element should be an array or string');
 	}
 
-	var name = jsonml[0];
+	var name = ast[0];
 	let prefix, namespaceUri;
 	switch (name) {
 		case 'replaceExpr':
@@ -44,10 +44,10 @@ function parseNode (document, jsonml) {
 
 	// Node must be a normal element
 	if (!(typeof name === 'string')) {
-		console.error(name + ' is not a string. In: "' + JSON.stringify(jsonml) + '"');
+		console.error(name + ' is not a string. In: "' + JSON.stringify(ast) + '"');
 	}
 	var element = document.createElementNS(namespaceUri, prefix + name),
-		firstChild = jsonml[1],
+		firstChild = ast[1],
 		firstChildIndex = 1;
 	if ((typeof firstChild === 'object') && !Array.isArray(firstChild)) {
 		for (var attributeName in firstChild) {
@@ -58,8 +58,8 @@ function parseNode (document, jsonml) {
 		firstChildIndex = 2;
 	}
 	// Parse children
-	for (var i = firstChildIndex, l = jsonml.length; i < l; ++i) {
-		var node = parseNode(document, jsonml[i]);
+	for (var i = firstChildIndex, l = ast.length; i < l; ++i) {
+		var node = parseAst(document, ast[i]);
 		element.appendChild(node);
 	}
 
@@ -94,7 +94,7 @@ export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests
 		const rawFile = (await loadXQueryX()).replace(/\n\s*</g, '<').replace(/\r/g, '');
 		const actual = new slimdom.Document();
 		try {
-			actual.appendChild(parseNode(actual, jsonMl));
+			actual.appendChild(parseAst(actual, jsonMl));
 		}
 		catch (e) {
 			skippableTests.push(`${testCase},Parser resulted in invalid JsonML`);

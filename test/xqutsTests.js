@@ -12,10 +12,12 @@ import {
 	executePendingUpdateList,
 	registerXQueryModule
 } from 'fontoxpath';
+import { parse } from 'fontoxpath/parsing/xPathParser';
+import { parseAst } from './xQueryXUtils';
 import fs from 'fs';
 import path from 'path';
 import mocha from 'mocha';
-import { sync } from 'slimdom-sax-parser';
+import { sync, slimdom } from 'slimdom-sax-parser';
 
 global.atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
@@ -60,6 +62,22 @@ function getFile (filename) {
 	return cachedFiles[filename] = content.replace(/\r\n/g, '\n');
 }
 
+function isUpdatingQuery (testName, query) {
+	const ast = parse(query);
+	const doc = new slimdom.Document();
+	try {
+		doc.appendChild(parseAst(doc, ast));
+	}
+	catch (e) {
+		unrunnableTestCases.push(`${testName},Parser resulted in invalid JsonML`);
+		throw e;
+	}
+	return evaluateXPathToBoolean(
+		'declare namespace xqxuf="http://www.w3.org/2007/xquery-update-10"; exists(//xqxuf:*)', doc,
+		null, null, { language: 'XQuery3.1' }
+	);
+}
+
 async function runTestCase (testName, testCase) {
 	const states = evaluateXPathToAsyncIterator(`let $basePath := @FilePath
 	return state!map{
@@ -88,12 +106,8 @@ async function runTestCase (testName, testCase) {
 		const expectedFile = state['output-file'] ? getFile(path.join('ExpectedTestResults', state['output-file'].file)) : null;
 		const expectedError = state['expected-error'];
 
-		function isUpdating (q) {
-			return q.includes('return replace node ');
-		}
-
 		let actual;
-		const execution = isUpdating(query) ? async () => {
+		const execution = isUpdatingQuery(testName, query) ? async () => {
 			const it = await evaluateUpdatingExpression(query, xmlDoc, null, { [variable]: xmlDoc }, {});
 			executePendingUpdateList(it.pendingUpdateList, null, null, {});
 		} : async () => {
@@ -136,7 +150,6 @@ async function runTestCase (testName, testCase) {
 }
 
 function buildTestCases (testGroup) {
-	// (test-case/@name, string(test-case/description))[1]
 	evaluateXPathToNodes('test-group | test-case', testGroup).forEach(test => {
 		switch (test.localName) {
 			case 'test-group': {
