@@ -129,8 +129,15 @@ async function runTestCase (testName, testCase) {
 
 		try {
 			if (expectedError) {
-				chai.assert.throws(async () => await execution,
-				expectedError === '*' ? '' : expectedError, `Should throw error ${expectedError}.`);
+				try {
+					await execution();
+				}
+				catch (e) {
+					if (!e.message.startsWith(expectedError === '*' ? '' : expectedError)) {
+						chai.assert.equal(e.message, expectedError, `Should throw error ${expectedError}.`);
+					}
+				}
+				chai.assert.fail(null, null, `Should throw error ${expectedError}.`);
 			}
 			else {
 				await execution();
