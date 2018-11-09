@@ -1,4 +1,5 @@
 import Expression from '../Expression';
+import UpdatingExpression from '../UpdatingExpression';
 import Specificity from '../Specificity';
 
 import Sequence from '../dataTypes/Sequence';
@@ -18,7 +19,7 @@ import {
 } from './XQueryUpdateFacilityErrors';
 
 function ensureUpdateListWrapper (expression) {
-	if (expression.isUpdating) {
+	if (expression instanceof UpdatingExpression) {
 		return (dynamicContext, executionParameters) => expression.evaluateWithUpdateList(dynamicContext, executionParameters);
 	}
 
@@ -45,10 +46,9 @@ function ensureUpdateListWrapper (expression) {
 }
 
 /**
- * @extends     {Expression}
- * @implements  {UpdatingExpression}
+ * @extends     {UpdatingExpression}
  */
-class ReplaceNodeExpression extends Expression {
+class ReplaceNodeExpression extends UpdatingExpression {
 	/**
 	 * @param  {boolean} valueOf
 	 * @param  {!Expression} targetExpression
@@ -66,7 +66,6 @@ class ReplaceNodeExpression extends Expression {
 		this._valueOf = valueOf;
 		this._targetExpression = targetExpression;
 		this._replacementExpression = replacementExpression;
-		this.isUpdating = true;
 	}
 
 	evaluateWithUpdateList (dynamicContext, executionParameters) {

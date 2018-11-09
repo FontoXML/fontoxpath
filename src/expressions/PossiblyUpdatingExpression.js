@@ -1,4 +1,5 @@
 import Expression from './Expression';
+import UpdatingExpression from './UpdatingExpression';
 import { DONE_TOKEN, ready } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import Sequence from './dataTypes/Sequence';
@@ -35,7 +36,7 @@ class PossiblyUpdatingExpression extends Expression {
 			dynamicContext,
 			executionParameters,
 			this._childExpressions.map(expr => {
-				if (!expr.isUpdating) {
+				if (!(expr instanceof UpdatingExpression)) {
 					return innerDynamicContext => expr.evaluate(innerDynamicContext, executionParameters);
 				}
 
