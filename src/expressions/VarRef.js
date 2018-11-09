@@ -41,6 +41,11 @@ class VarRef extends Expression {
 	}
 
 	evaluate (dynamicContext, _executionParameters) {
+		const variableBinding = dynamicContext.variableBindings[this._variableBindingName];
+		if (!variableBinding) {
+			throw new Error('XQDY0054: The variable ' + this._variableName + ' is declared but not in scope.');
+		}
+
 		return dynamicContext.variableBindings[this._variableBindingName]();
 	}
 }

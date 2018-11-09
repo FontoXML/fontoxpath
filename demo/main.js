@@ -148,7 +148,7 @@ async function runUpdatingXQuery (script) {
 		null,
 		null,
 		{
-			disableCache: true,
+			disableCache: true
 		}
 	);
 
@@ -165,8 +165,8 @@ async function runNormalXPath (script, asXQuery) {
 		null,
 		null,
 		{
-			language: allowXQuery.checked ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
-			disableCache: true,
+			language: asXQuery ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
+			disableCache: true
 		}
 	);
 

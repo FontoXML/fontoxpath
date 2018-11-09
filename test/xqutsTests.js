@@ -78,6 +78,19 @@ function isUpdatingQuery (testName, query) {
 	);
 }
 
+function areEqual (actualElement, expectedElement) {
+	// Try fast string compare
+	if (actualElement.outerHTML === expectedElement.outerHTML) {
+		return true;
+	}
+
+	// Wrap actual and expected in a root element allowing deep-equal comparison
+	const compareDoc = parser.parseFromString('<compare><actual/><expected/></compare>', 'text/xml');
+	evaluateXPathToFirstNode('compare/actual', compareDoc).appendChild(actualElement.cloneNode(true));
+	evaluateXPathToFirstNode('compare/expected', compareDoc).appendChild(expectedElement.cloneNode(true));
+	return evaluateXPathToBoolean('deep-equal(compare/actual/*, compare/expected/*)', compareDoc);
+}
+
 async function runTestCase (testName, testCase) {
 	const states = evaluateXPathToAsyncIterator(`let $basePath := @FilePath
 	return state!map{
@@ -111,7 +124,7 @@ async function runTestCase (testName, testCase) {
 			const it = await evaluateUpdatingExpression(query, xmlDoc, null, { [variable]: xmlDoc }, {});
 			executePendingUpdateList(it.pendingUpdateList, null, null, {});
 		} : async () => {
-			actual = evaluateXPathToFirstNode(query, xmlDoc, null, { [variable]: xmlDoc }, {});
+			actual = evaluateXPathToFirstNode(query, xmlDoc, null, { [variable]: xmlDoc }, { language: 'XQuery3.1' });
 		};
 
 		try {
@@ -126,12 +139,11 @@ async function runTestCase (testName, testCase) {
 			if (expectedFile) {
 				const expectedDoc = parser.parseFromString(expectedFile);
 
-				// Wrap actual and expected in a root element allowing deep-equal comparison
-				const compareDoc = parser.parseFromString('<compare><actual/><expected/></compare>', 'text/xml');
-				evaluateXPathToFirstNode('compare/actual', compareDoc).appendChild(actual || xmlDoc.documentElement);
-				evaluateXPathToFirstNode('compare/expected', compareDoc).appendChild(expectedDoc.documentElement);
-				chai.assert.isTrue(evaluateXPathToBoolean('deep-equal(compare/actual, compare/expected)', compareDoc),
-				'Expected and actual are not equal.');
+				const actualElement = actual || xmlDoc.documentElement;
+				if (!areEqual(actualElement, expectedDoc.documentElement)) {
+					// Do comparison on on outer HTML for clear fail message
+					chai.assert.equal(actualElement.outerHTML, expectedDoc.documentElement.outerHTML);
+				}
 			}
 		}
 		catch (e) {
