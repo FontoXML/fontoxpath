@@ -88,6 +88,7 @@ function areEqual (actualElement, expectedElement) {
 	const compareDoc = parser.parseFromString('<compare><actual/><expected/></compare>', 'text/xml');
 	evaluateXPathToFirstNode('compare/actual', compareDoc).appendChild(actualElement.cloneNode(true));
 	evaluateXPathToFirstNode('compare/expected', compareDoc).appendChild(expectedElement.cloneNode(true));
+	compareDoc.normalize();
 	return evaluateXPathToBoolean('deep-equal(compare/actual/*, compare/expected/*)', compareDoc);
 }
 
@@ -146,7 +147,14 @@ async function runTestCase (testName, testCase) {
 			if (expectedFile) {
 				const expectedDoc = parser.parseFromString(expectedFile);
 
-				const actualElement = actual || xmlDoc.documentElement;
+				const actualElement = function () {
+					if (actual) {
+						return actual.nodeType === actual.DOCUMENT_NODE ?
+							actual.documentElement :
+							actual;
+					}
+					return xmlDoc.documentElement;
+				}();
 				if (!areEqual(actualElement, expectedDoc.documentElement)) {
 					// Do comparison on on outer HTML for clear fail message
 					chai.assert.equal(actualElement.outerHTML, expectedDoc.documentElement.outerHTML);

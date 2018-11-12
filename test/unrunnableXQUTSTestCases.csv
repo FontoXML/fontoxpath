@@ -9,7 +9,6 @@ id-replace-expr-028,AssertionError: Should throw error XUDY0027.: expected 'Not 
 id-replace-expr-030,Error: No selector counterpart for: computedTextConstructor.
 id-replace-expr-034,Error: No selector counterpart for: computedAttributeConstructor.
 id-replace-expr-08,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
-id-replace-expr-09,Error: XUTY0010
 id-replace-expr-019,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-020,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-021,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
@@ -17,8 +16,6 @@ id-replace-expr-024,AssertionError: Should throw error XQDY0072.
 id-replace-expr-025,AssertionError: Should throw error XQDY0026.
 id-replace-expr-026,AssertionError: Should throw error XUDY0027.
 id-replace-expr-027,AssertionError: Should throw error XUDY0027.
-complex-replacevalues-q4,HierarchyRequestError: HierarchyRequestError: node must be a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction or Comment node
-complex-replacevalues-q9,HierarchyRequestError: HierarchyRequestError: node must be a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction or Comment node
-complex-replacevalues-q10,HierarchyRequestError: HierarchyRequestError: node must be a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction or Comment node
+complex-replacevalues-q9,Error: Error: undefined:6:33: documents may contain only one root.
+complex-replacevalues-q10,Error: Error: undefined:1:100: documents may contain only one root.
 complex-replacevalues-q11,Error: XPST0008, The variable pos is not in scope.
-complex-replacevalues-q14,HierarchyRequestError: HierarchyRequestError: node must be a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction or Comment node

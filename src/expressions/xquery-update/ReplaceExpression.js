@@ -10,6 +10,7 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import parseContent from '../ElementConstructorContent';
 
 import {
 	errXQDY0026,
@@ -77,15 +78,16 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 				}
 				// Let $rlist be the node sequence that results
 				// from this evaluation.
-				rlist = rl.value.xdmValue;
+				const allChildNodes = [rl.value.xdmValue];
+				rlist = parseContent(allChildNodes, executionParameters);
 				rlistUpdates = rl.value.pendingUpdates;
 
 				// If $rlist contains a document node, the
 				// document node is replaced in $rlist by its
 				// children.
-				for (let i = 0; i < rlist.length; ++i) {
-					if (isSubTypeOf(rlist[i].type, 'document()')) {
-						rlist.splice.apply(rlist, [i, 1].concat(executionParameters.getChildNodes(rlist[i])));
+				for (let i = 0; i < rlist.contentNodes.length; ++i) {
+					if (rlist.contentNodes[i].nodeType === rlist.contentNodes[i].DOCUMENT_NODE) {
+						rlist.contentNodes.splice.apply(rlist.contentNodes, [i, 1].concat(executionParameters.domFacade.getChildNodes(rlist.contentNodes[i])));
 						--i;
 					}
 				}
@@ -136,12 +138,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 			// comment, or processing instruction nodes
 			// [err:XUTY0010].
 			if (!isSubTypeOf(target.type, 'attribute()')) {
-				if (!rlist.every(
-					node =>
-						isSubTypeOf(node.type, 'element()') ||
-						isSubTypeOf(node.type, 'text()') ||
-						isSubTypeOf(node.type, 'comment()') ||
-						isSubTypeOf(node.type, 'processing-instruction()'))) {
+				if (rlist.attributes.length) {
 					throw errXUTY0010();
 				}
 			}
@@ -150,7 +147,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 
 				// $rlist must consist exclusively of zero or more
 				// attribute nodes [err:XUTY0011].
-				if (rlist.some(node => !isSubTypeOf(node.type, 'attribute()'))) {
+				if (rlist.contentNodes.length) {
 					throw errXUTY0011();
 				}
 
@@ -164,18 +161,18 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 				// Multiple attribute nodes in $rlist may not have
 				// QNames whose implied namespace bindings
 				// conflict with each other [err:XUDY0024].
-				rlist.reduce((namespaceBindings, attributeNode) => {
-					const prefix = attributeNode.value.prefix || '';
+				rlist.attributes.reduce((namespaceBindings, attributeNode) => {
+					const prefix = attributeNode.prefix || '';
 					const alreadyDeclaredNamespace = namespaceBindings[prefix];
-					if (alreadyDeclaredNamespace !== null) {
-						if (attributeNode.value.namespaceURI !== alreadyDeclaredNamespace) {
+					if (alreadyDeclaredNamespace) {
+						if (attributeNode.namespaceURI !== alreadyDeclaredNamespace) {
 							throw errXUDY0024();
 						}
 					}
 
-					namespaceBindings[prefix] = attributeNode.value.namespaceURI;
+					namespaceBindings[prefix] = attributeNode.namespaceURI;
 					return namespaceBindings;
-				});
+				}, []);
 			}
 
 			// The result of the replace expression is an empty
@@ -188,7 +185,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 			return ready({
 				value: [],
 				pendingUpdateList: mergeUpdates(
-					[replaceNode(target.value, rlist.map(nodeValue => nodeValue.value))],
+					[replaceNode(target.value, rlist.attributes.concat(rlist.contentNodes))],
 					rlistUpdates,
 					targetUpdates)
 			});
@@ -280,24 +277,39 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				});
 			}
 
-			// If $target is an attribute, text, comment, or processing instruction node, let $string be the string value of the text node constructed in Step 1. If Step 1 did not construct a text node, let $string be a zero-length string. Then:
+			// If $target is an attribute, text, comment, or
+			// processing instruction node, let $string be the string
+			// value of the text node constructed in Step 1. If Step
+			// 1 did not construct a text node, let $string be a
+			// zero-length string. Then:
 			if (isSubTypeOf(target.type, 'attribute()') ||
 				isSubTypeOf(target.type, 'text()') ||
 				isSubTypeOf(target.type, 'comment()') ||
 				isSubTypeOf(target.type, 'processing-instruction()')) {
 				const string = text ? text.data : '';
 
-				// If $target is a comment node, and $string contains two adjacent hyphens or ends with a hyphen, a dynamic error is raised [err:XQDY0072].
+				// If $target is a comment node, and $string contains
+				// two adjacent hyphens or ends with a hyphen, a
+				// dynamic error is raised [err:XQDY0072].
 				if (isSubTypeOf(target.type, 'comment()') && (string.includes('--') || string.endsWith('-'))) {
 					throw errXQDY0072();
 				}
 
-				// If $target is a processing instruction node, and $string contains the substring "?>", a dynamic error is raised [err:XQDY0026].
+				// If $target is a processing instruction node, and
+				// $string contains the substring "?>", a dynamic
+				// error is raised [err:XQDY0026].
 				if (isSubTypeOf(target.target, 'processing-instruction()') && string.includes('?>')) {
 					throw errXQDY0026();
 				}
 
-				// In the absence of errors, the result of a replace expression is an empty XDM instance and a pending update list constructed by merging the pending update lists returned by the TargetExpr and the expression following the keyword with with the following update primitives using upd:mergeUpdates: upd:replaceValue($target, $string).
+				// In the absence of errors, the result of a replace
+				// expression is an empty XDM instance and a pending
+				// update list constructed by merging the pending
+				// update lists returned by the TargetExpr and the
+				// expression following the keyword with with the
+				// following update primitives using
+				// upd:mergeUpdates: upd:replaceValue($target,
+				// $string).
 				done = true;
 				return ready({
 					value: [],
