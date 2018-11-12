@@ -221,8 +221,11 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				// The result of this step, in the absence of errors,
 				// is either a single text node or an empty sequence.
 				// Let $text be the result of this step.
-				const stringValue = castToType(atomize(rl.value.xdmValue[0], executionParameters), 'xs:string');
-				text = executionParameters.nodesFactory.createTextNode(stringValue.value);
+				const atomized = rl.value.xdmValue.map(value => castToType(atomize(value, executionParameters), 'xs:string'));
+
+				text = atomized.length === 0 ?
+					null :
+					executionParameters.nodesFactory.createTextNode(atomized.map(value => value.value).join(' '));
 				rlistUpdates = rl.value.pendingUpdates;
 			}
 
@@ -282,7 +285,7 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				isSubTypeOf(target.type, 'text()') ||
 				isSubTypeOf(target.type, 'comment()') ||
 				isSubTypeOf(target.type, 'processing-instruction()')) {
-				const string = isSubTypeOf(text.type, 'text()') ? text.value : '';
+				const string = text ? text.data : '';
 
 				// If $target is a comment node, and $string contains two adjacent hyphens or ends with a hyphen, a dynamic error is raised [err:XQDY0072].
 				if (isSubTypeOf(target.type, 'comment()') && (string.includes('--') || string.endsWith('-'))) {

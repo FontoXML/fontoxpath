@@ -1,16 +1,21 @@
 /**
- * @constructor
+ * @class
  * @implements {IDocumentWriter}
  */
-function DomBackedDocumentWriter () {
-}
+export default new class DomBackedDocumentWriter {
+	insertBefore (parent, newNode, referenceNode) {
+		return parent.insertBefore(newNode, referenceNode);
+	}
 
-DomBackedDocumentWriter.prototype.removeChild = (parent, child) => {
-	return parent.removeChild(child);
-};
+	removeChild (parent, child) {
+		return parent.removeChild(child);
+	}
 
-DomBackedDocumentWriter.prototype.insertBefore = function (parent, newNode, referenceNode) {
-	return parent.insertBefore(newNode, referenceNode);
-};
+	setAttributeNS (node, namespace, name, value) {
+		node.setAttributeNS(namespace, name, value);
+	}
 
-export default new DomBackedDocumentWriter();
+	setData (node, data) {
+		node.data = data;
+	}
+}();

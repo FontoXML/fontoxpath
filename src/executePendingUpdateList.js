@@ -58,6 +58,16 @@ export default async function executePendingUpdateList (pendingUpdateList, conte
 				});
 				break;
 			}
+			case 'replaceValue': {
+				if (operation.target.nodeType === operation.target.ATTRIBUTE_NODE) {
+					const attribute = operation.target;
+					documentWriter.setAttributeNS(attribute.ownerElement, attribute.namespaceURI, attribute.name, operation['string-value']);
+				}
+				else {
+					documentWriter.setData(operation.target, operation['string-value']);
+				}
+				break;
+			}
 			default:
 				throw new Error('Not implemented: the execution for operation ' + operation.type + ' is not yet implemented.');
 		}

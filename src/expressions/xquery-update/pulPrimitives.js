@@ -18,6 +18,6 @@ export const replaceValue = function (/** NodeValue */target, /** xs:string */st
 	return {
 		type: 'replaceValue',
 		target: target,
-		stringValue: stringValue
+		'string-value': stringValue
 	};
 };

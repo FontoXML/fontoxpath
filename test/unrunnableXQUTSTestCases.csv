@@ -8,26 +8,17 @@ id-replace-expr-023,AssertionError: Should throw error XUTY0011.: expected 'No s
 id-replace-expr-028,AssertionError: Should throw error XUDY0027.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUDY0027'
 id-replace-expr-030,Error: No selector counterpart for: computedTextConstructor.
 id-replace-expr-034,Error: No selector counterpart for: computedAttributeConstructor.
-id-replace-expr-05,Error: XUTY0010
-id-replace-expr-06,Error: XUTY0011
-id-replace-expr-07,Error: XUTY0010
 id-replace-expr-08,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 id-replace-expr-09,Error: XUTY0010
 id-replace-expr-019,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-020,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-021,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
-id-replace-expr-024,AssertionError: Should throw error XQDY0072.: expected 'XUTY0010' to equal 'XQDY0072'
-id-replace-expr-025,AssertionError: Should throw error XQDY0026.: expected 'XUTY0010' to equal 'XQDY0026'
+id-replace-expr-024,AssertionError: Should throw error XQDY0072.
+id-replace-expr-025,AssertionError: Should throw error XQDY0026.
 id-replace-expr-026,AssertionError: Should throw error XUDY0027.
 id-replace-expr-027,AssertionError: Should throw error XUDY0027.
-id-replace-expr-035,AssertionError: expected '<employee name="Jane Doe 1" gender="female">\n   <empnum>E1</empnum>\n   <pnum>P1</pnum>\n   \n  </employee>' to equal '<employee name="Jane Doe 1" gender="female">\n   <empnum>E1</empnum>\n   <pnum>P1</pnum>\n   <hours/>\n  </employee>'
-id-replace-expr-036,Error: XUTY0010
-id-replace-expr-041,Error: XUTY0011
-id-replace-expr-042,Error: XUTY0010
-id-replace-expr-043,Error: XUTY0010
-id-replace-expr-044,Error: XUTY0010
-complex-replacevalues-q4,Error: XUTY0010
-complex-replacevalues-q9,Error: XUTY0010
-complex-replacevalues-q10,Error: XUTY0010
+complex-replacevalues-q4,HierarchyRequestError: HierarchyRequestError: node must be a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction or Comment node
+complex-replacevalues-q9,HierarchyRequestError: HierarchyRequestError: node must be a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction or Comment node
+complex-replacevalues-q10,HierarchyRequestError: HierarchyRequestError: node must be a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction or Comment node
 complex-replacevalues-q11,Error: XPST0008, The variable pos is not in scope.
-complex-replacevalues-q14,Error: XUTY0010
+complex-replacevalues-q14,HierarchyRequestError: HierarchyRequestError: node must be a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction or Comment node
