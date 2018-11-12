@@ -200,7 +200,8 @@ if (supportsAsyncCompilation()) {
                                 compileXPathAsync(db, xPathString).then(resolve, reject);
                                 return;
                             }
-                            resolve(compileAstToExpression(xPathAndAst['ast'], { allowXQuery: false }));
+							const queryBody = /** @type {!Array} */ (astHelper.followPath(xPathAndAst['ast'], ['mainModule', 'queryBody', '*']));
+                            resolve(compileAstToExpression(queryBody, { allowXQuery: false }));
                         };
 
                         request.onerror = function event (evt) {
