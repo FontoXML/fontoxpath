@@ -46,7 +46,7 @@ class QuantifiedExpression extends Expression {
 			// The existance of this variable should be known for the next expression
 			staticContext.introduceScope();
 			const inClauseName = this._inClauseNames[i];
-			const inClauseNameNamespaceURI = staticContext.resolveNamespace(inClauseName.prefix);
+			const inClauseNameNamespaceURI = inClauseName.prefix ? staticContext.resolveNamespace(inClauseName.prefix) : null;
 			const varBindingName = staticContext.registerVariable(inClauseNameNamespaceURI, inClauseName.localName);
 			this._inClauseVariableNames[i] = varBindingName;
 		}
