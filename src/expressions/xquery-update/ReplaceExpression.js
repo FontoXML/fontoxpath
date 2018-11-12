@@ -7,6 +7,8 @@ import { replaceElementContent, replaceNode, replaceValue } from './pulPrimitive
 import { mergeUpdates } from './pulRoutines';
 
 import { DONE_TOKEN, ready } from '../util/iterators';
+import atomize from '../dataTypes/atomize';
+import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 
 import {
@@ -219,7 +221,8 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				// The result of this step, in the absence of errors,
 				// is either a single text node or an empty sequence.
 				// Let $text be the result of this step.
-				text = rl.value.xdmValue[0];
+				const stringValue = castToType(atomize(rl.value.xdmValue[0], executionParameters), 'xs:string');
+				text = executionParameters.nodesFactory.createTextNode(stringValue.value);
 				rlistUpdates = rl.value.pendingUpdates;
 			}
 

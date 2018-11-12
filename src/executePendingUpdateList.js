@@ -42,6 +42,13 @@ export default async function executePendingUpdateList (pendingUpdateList, conte
 
 	pendingUpdateList.forEach(operation => {
 		switch (operation.type) {
+			case 'replaceElementContent': {
+				domFacade.getChildNodes(operation.target).forEach(node => documentWriter.removeChild(operation.target, node));
+				if (operation.text) {
+					documentWriter.insertBefore(operation.target, operation.text, null);
+				}
+				break;
+			}
 			case 'replaceNode': {
 				const parent = wrappedDomFacade.getParentNode(operation.target);
 				const following = wrappedDomFacade.getNextSibling(operation.target);
