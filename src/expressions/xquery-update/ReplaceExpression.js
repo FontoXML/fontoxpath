@@ -298,7 +298,7 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				// If $target is a processing instruction node, and
 				// $string contains the substring "?>", a dynamic
 				// error is raised [err:XQDY0026].
-				if (isSubTypeOf(target.target, 'processing-instruction()') && string.includes('?>')) {
+				if (isSubTypeOf(target.type, 'processing-instruction()') && string.includes('?>')) {
 					throw errXQDY0026();
 				}
 
