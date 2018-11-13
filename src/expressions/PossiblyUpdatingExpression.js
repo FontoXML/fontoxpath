@@ -1,21 +1,31 @@
 import Expression from './Expression';
-import UpdatingExpression from './UpdatingExpression';
-import { DONE_TOKEN, ready } from './util/iterators';
+import UpdatingExpression from './xquery-update/UpdatingExpression';
+import { DONE_TOKEN, ready, AsyncIterator } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import Sequence from './dataTypes/Sequence';
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
+import Value from './dataTypes/Value';
+import { PendingUpdate } from './xquery-update/PendingUpdate';
 
-class PossiblyUpdatingExpression extends Expression {
-	constructor (...constructorArguments) {
-		super(...constructorArguments);
+export class UpdatingExpressionResult {
+	constructor (/** !Array<!Value> */values, /** !Array<!PendingUpdate> */ pendingUpdates) {
+		this.xdmValue = values;
+		this.pendingUpdateList = pendingUpdates;
 	}
+}
 
+/**
+ * @abstract
+ */
+class PossiblyUpdatingExpression extends Expression {
 	/**
 	 * @abstract
 	 *
-	 * @param   {Array<(function():Sequence)>} _sequenceCallbacks
-	 * @param   {ExecutionParameters}          _executionParameters
-	 * @param   {DynamicContest}               _dynamicContest
-	 * @return  {Sequence}
+	 * @param   {DynamicContext}                                _dynamicContext
+	 * @param   {!ExecutionParameters}                          _executionParameters
+	 * @param   {!Array<(function(DynamicContext):!Sequence)>}  _sequenceCallbacks
+	 * @return  {!Sequence}
 	 */
 	performFunctionalEvaluation (_dynamicContext, _executionParameters, _sequenceCallbacks) {
 
@@ -29,6 +39,11 @@ class PossiblyUpdatingExpression extends Expression {
 				.map(expr => innerDynamicContext => expr.evaluate(innerDynamicContext, executionParameters)));
 	}
 
+	/**
+	 * @param   {!DynamicContext}                               dynamicContext
+	 * @param   {!ExecutionParameters}                          executionParameters
+	 * @return  {!AsyncIterator<UpdatingExpressionResult>}
+	 */
 	evaluateWithUpdateList (dynamicContext, executionParameters) {
 		let updateList = [];
 
@@ -39,9 +54,9 @@ class PossiblyUpdatingExpression extends Expression {
 				if (!(expr instanceof UpdatingExpression)) {
 					return innerDynamicContext => expr.evaluate(innerDynamicContext, executionParameters);
 				}
-
 				return innerDynamicContext => {
-					const updateListAndValue = expr.evaluateWithUpdateList(innerDynamicContext, executionParameters);
+					const updatingExpression = /** @type {PossiblyUpdatingExpression} */ (expr);
+					const updateListAndValue = updatingExpression.evaluateWithUpdateList(innerDynamicContext, executionParameters);
 					let values;
 					let done = false;
 					let i = 0;
@@ -56,7 +71,7 @@ class PossiblyUpdatingExpression extends Expression {
 									return attempt;
 								}
 								updateList = mergeUpdates(updateList, ...attempt.value.pendingUpdateList);
-								values = attempt.value.value;
+								values = attempt.value.xdmValue;
 							}
 
 							if (i > values.length) {
@@ -82,10 +97,7 @@ class PossiblyUpdatingExpression extends Expression {
 					return allValues;
 				}
 				done = true;
-				return ready({
-					pendingUpdateList: updateList,
-					xdmValue: allValues.value
-				});
+				return ready(new UpdatingExpressionResult(allValues.value, updateList));
 			}
 		};
 	}

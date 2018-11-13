@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import UpdatingExpression from '../UpdatingExpression';
+import UpdatingExpression from './UpdatingExpression';
 import Specificity from '../Specificity';
 
 import Sequence from '../dataTypes/Sequence';

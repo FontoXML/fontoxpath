@@ -15,6 +15,8 @@ import { generateGlobalVariableBindingName } from './expressions/ExecutionSpecif
 
 import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
 
+import PendingUpdate from './expressions/xquery-update/PendingUpdate';
+
 /**
  * @param   {Node|*}  contextItem
  * @return  {function(string):?string}
@@ -35,12 +37,12 @@ function normalizeEndOfLines (xpathString) {
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
  *
  * @param  {!string}       updateScript     The updateScript to execute. Supports XPath 3.1.
- * @param  {any }          contextItem  The initial context for the script
+ * @param  {*}             contextItem  The initial context for the script
  * @param  {?IDomFacade=}  domFacade    The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}      variables    Extra variables (name=>value). Values can be number / string or boolean.
  * @param  {?Object=}      options      Extra options for evaluating this XPath
  *
- * @return  {Promise<{updateList: pendingUpdate[], result: Object}>}         The string result.
+ * @return  {Promise<{updateList: Array<Object>, result: Object}>}         The string result.
  */
 export default async function evaluateUpdatingExpression (updateScript, contextItem, domFacade, variables, options) {
 	variables = variables || {};
@@ -136,5 +138,8 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 		await attempt.promise;
 	}
 
-	return attempt.value;
+	return {
+		'result': attempt.value.xdmValue,
+		'pendingUpdates': attempt.value.pendingUpdates.map(update => update.toTransferable())
+	};
 }

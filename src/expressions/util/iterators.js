@@ -21,7 +21,7 @@ export class IterationResult {
 		 */
 		this.ready;
 	}
-};
+}
 
 export const DONE_TOKEN = { done: true, value: undefined, ready: true, promise: undefined };
 export const notReady = promise => ({ done: false, value: undefined, ready: false, promise: promise });
@@ -36,7 +36,7 @@ export class AsyncIterator {
 	 * @return {!IterationResult<T>}
 	 */
 	next () {}
-};
+}
 
 /**
  * @record
@@ -57,4 +57,4 @@ export class AsyncResult {
 		 */
 		this.ready;
 	}
-};
+}

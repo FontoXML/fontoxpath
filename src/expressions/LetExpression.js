@@ -2,9 +2,6 @@ import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
-/**
- * @extends {Expression}
- */
 class LetExpression extends PossiblyUpdatingExpression {
 	/**
 	 * @param  {{prefix:string, namespaceURI:?string, localName: string}}    rangeVariable

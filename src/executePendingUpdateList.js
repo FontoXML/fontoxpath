@@ -1,33 +1,18 @@
-import parseExpression from './parsing/parseExpression';
-import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
-import DynamicContext from './expressions/DynamicContext';
 import DomFacade from './DomFacade';
-import ExecutionParameters from './expressions/ExecutionParameters';
 import domBackedDomFacade from './domBackedDomFacade';
 import domBackedDocumentWriter from './domBackedDocumentWriter';
+import { PendingUpdate } from './expressions/xquery-update/PendingUpdate';
 
-import atomize from './expressions/dataTypes/atomize';
-import castToType from './expressions/dataTypes/castToType';
-import Sequence from './expressions/dataTypes/Sequence';
-import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
-import staticallyCompileXPath from './parsing/staticallyCompileXPath';
-
-import { generateGlobalVariableBindingName } from './expressions/ExecutionSpecificStaticContext';
-
-import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
+const ATTRIBUTE_NODE = 2;
 
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
  *
- * @param  {!string}       updateScript     The updateScript to execute. Supports XPath 3.1.
- * @param  {any }          contextItem  The initial context for the script
- * @param  {?IDomFacade=}  domFacade    The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  {?Object=}      variables    Extra variables (name=>value). Values can be number / string or boolean.
- * @param  {?Object=}      options      Extra options for evaluating this XPath
- *
- * @return  {Promise<{updateList: pendingUpdate[], result: Object}>}         The string result.
+ * @param  {!Array<!Object>}  pendingUpdates  The updateScript to execute.
+ * @param  {?IDomFacade=}            domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?IDocumentWriter=}       documentWriter  Extra options for evaluating this XPath
  */
-export default async function executePendingUpdateList (pendingUpdateList, contextItem, domFacade, options) {
+export default function executePendingUpdateList (pendingUpdates, domFacade, documentWriter) {
 	if (!domFacade) {
 		domFacade = domBackedDomFacade;
 	}
@@ -35,41 +20,45 @@ export default async function executePendingUpdateList (pendingUpdateList, conte
 	// Always wrap in an actual domFacade
 	const wrappedDomFacade = new DomFacade(domFacade);
 
-	let documentWriter = options['documentWriter'];
 	if (!documentWriter) {
 		documentWriter = domBackedDocumentWriter;
 	}
 
-	pendingUpdateList.forEach(operation => {
-		switch (operation.type) {
+	pendingUpdates.forEach(transferableUpdate => {
+		const pendingUpdate = PendingUpdate.fromTransferable(transferableUpdate);
+		switch (pendingUpdate.type) {
 			case 'replaceElementContent': {
-				domFacade.getChildNodes(operation.target).forEach(node => documentWriter.removeChild(operation.target, node));
-				if (operation.text) {
-					documentWriter.insertBefore(operation.target, operation.text, null);
+				domFacade.getChildNodes(pendingUpdate.target).forEach(node => documentWriter.removeChild(pendingUpdate.target, node));
+				if (pendingUpdate.text) {
+					documentWriter.insertBefore(pendingUpdate.target, pendingUpdate.text, null);
 				}
 				break;
 			}
 			case 'replaceNode': {
-				const parent = wrappedDomFacade.getParentNode(operation.target);
-				const following = wrappedDomFacade.getNextSibling(operation.target);
-				documentWriter.removeChild(parent, operation.target);
-				operation.replacement.forEach(newNode => {
+				const parent = (/** @type {!Node} */ (wrappedDomFacade.getParentNode(pendingUpdate.target)));
+				const following = wrappedDomFacade.getNextSibling(pendingUpdate.target);
+				documentWriter.removeChild(parent, pendingUpdate.target);
+				pendingUpdate.replacement.forEach(newNode => {
 					documentWriter.insertBefore(parent, newNode, following);
 				});
 				break;
 			}
 			case 'replaceValue': {
-				if (operation.target.nodeType === operation.target.ATTRIBUTE_NODE) {
-					const attribute = operation.target;
-					documentWriter.setAttributeNS(attribute.ownerElement, attribute.namespaceURI, attribute.name, operation['string-value']);
+				if (pendingUpdate.target.nodeType === ATTRIBUTE_NODE) {
+					const attribute = pendingUpdate.target;
+					documentWriter.setAttributeNS(
+						attribute.ownerElement,
+						attribute.namespaceURI,
+						attribute.name,
+						pendingUpdate.stringValue);
 				}
 				else {
-					documentWriter.setData(operation.target, operation['string-value']);
+					documentWriter.setData(pendingUpdate.target, pendingUpdate.stringValue);
 				}
 				break;
 			}
 			default:
-				throw new Error('Not implemented: the execution for operation ' + operation.type + ' is not yet implemented.');
+				throw new Error('Not implemented: the execution for pendingUpdate ' + pendingUpdate.type + ' is not yet implemented.');
 		}
 	});
 }
