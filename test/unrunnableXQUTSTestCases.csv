@@ -12,10 +12,7 @@ id-replace-expr-08,Error: Not implemented: Intermediate clauses in flwor express
 id-replace-expr-019,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-020,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-021,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
-id-replace-expr-024,AssertionError: Should throw error XQDY0072.
 id-replace-expr-025,AssertionError: Should throw error XQDY0026.
-id-replace-expr-026,AssertionError: Should throw error XUDY0027.
-id-replace-expr-027,AssertionError: Should throw error XUDY0027.
 complex-replacevalues-q9,Error: Error: undefined:6:33: documents may contain only one root.
 complex-replacevalues-q10,Error: Error: undefined:1:100: documents may contain only one root.
 complex-replacevalues-q11,Error: XPST0008, The variable pos is not in scope.

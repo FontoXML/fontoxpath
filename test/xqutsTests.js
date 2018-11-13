@@ -130,15 +130,19 @@ async function runTestCase (testName, testCase) {
 
 		try {
 			if (expectedError) {
+				let hasThrown = false;
 				try {
 					await execution();
 				}
 				catch (e) {
+					hasThrown = true;
 					if (!e.message.startsWith(expectedError === '*' ? '' : expectedError)) {
 						chai.assert.equal(e.message, expectedError, `Should throw error ${expectedError}.`);
 					}
 				}
-				chai.assert.fail(null, null, `Should throw error ${expectedError}.`);
+				if (!hasThrown) {
+					chai.assert.fail(null, null, `Should throw error ${expectedError}.`);
+				}
 			}
 			else {
 				await execution();
