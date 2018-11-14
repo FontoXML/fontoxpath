@@ -134,10 +134,10 @@ async function runTestCase (testName, testCase) {
 	const states = evaluateXPathToAsyncIterator(`let $basePath := @FilePath
 	return state!map{
 		"query": concat($basePath, query/@name, ".xq"),
-		"input-file": map{
+		"input-file": if(input-file) then(map{
 			"file": concat(input-file, ".xml"),
 			"variable": string(input-file/@variable)
-		},
+		}) else (),
 		"output-file": if(output-file) then(map{
 			"file": concat($basePath, output-file),
 			"compare": string(output-file/@compare)
@@ -152,13 +152,16 @@ async function runTestCase (testName, testCase) {
 		const state = entry.value;
 		const query = getFile(path.join('Queries', 'XQuery', state.query));
 		const inputFile = state['input-file'];
-		const xmlDoc = inputFiles[inputFile.file] || (inputFiles[inputFile.file] = parser.parseFromString(getFile(path.join('TestSources', inputFile.file))));
-		const variable = inputFile.variable;
-
+		let contextNode;
+		const variables = {};
+		if (inputFile) {
+			contextNode = inputFiles[inputFile.file] || (inputFiles[inputFile.file] = parser.parseFromString(getFile(path.join('TestSources', inputFile.file))));
+			variables[[inputFile.variable]] = contextNode;
+		}
 		const outputFile = state['output-file'];
 		const expectedError = state['expected-error'];
 
-		const args = [query, xmlDoc, null, { [variable]: xmlDoc }, { language: 'XQuery3.1' }];
+		const args = [query, contextNode, null, variables, { language: 'XQuery3.1' }];
 
 		try {
 			if (expectedError) {
@@ -189,7 +192,7 @@ async function runTestCase (testName, testCase) {
 					}
 					case 'Text': {
 						const actual = evaluateXPathToString(...args);
-						const actualNodes = [xmlDoc.createTextNode(actual)];
+						const actualNodes = [new slimdom.Document().createTextNode(actual)];
 
 						assertFragment(actualNodes, expectedString);
 						break;
