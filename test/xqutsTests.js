@@ -133,37 +133,54 @@ function assertFragment (actualNodes, expectedString) {
 }
 
 async function runTestCase (testName, testCase) {
-	const states = evaluateXPathToAsyncIterator(`let $basePath := @FilePath
+	const states = evaluateXPathToAsyncIterator(`declare function local:parse-input($state as element())
+	{
+		if($state/input-file) then(
+			for $input in $state/input-file
+			return map{
+				"file": concat($input, ".xml"),
+				"variable": string($input/@variable)
+			}
+		) else()
+	};
+
+	declare function local:parse-output($basePath as xs:string, $state as element())
+	{
+		if($state/output-file) then(
+			for $output in $state/output-file
+			return map{
+				"file": concat($basePath, $output),
+				"compare": string($output/@compare)
+			}
+		) else()
+	};
+
+	let $basePath := string(@FilePath)
 	return state!map{
 		"query": concat($basePath, query/@name, ".xq"),
-		"input-file": if(input-file) then(map{
-			"file": concat(input-file, ".xml"),
-			"variable": string(input-file/@variable)
-		}) else (),
-		"output-file": if(output-file) then(map{
-			"file": concat($basePath, output-file),
-			"compare": string(output-file/@compare)
-		}) else (),
-		"expected-errors": if(expected-error) then(array{for $error in expected-error return string($error)}) else ()
-	}`, testCase);
+		"input-files": array{local:parse-input(.)},
+		"output-files": array{local:parse-output($basePath, .)},
+		"expected-errors": if(expected-error) then(
+				array{for $error in expected-error return string($error)}
+			) else ()
+	}`, testCase, null, null, { language: 'XQuery3.1' });
 
-	const inputFiles = {};
+	const loadedInputFiles = {};
 
 	let entry = await states.next();
 	while (!entry.done) {
 		const state = entry.value;
 		const query = getFile(path.join('Queries', 'XQuery', state.query));
-		const inputFile = state['input-file'];
-		let contextNode;
 		const variables = {};
-		if (inputFile) {
-			contextNode = inputFiles[inputFile.file] || (inputFiles[inputFile.file] = parser.parseFromString(getFile(path.join('TestSources', inputFile.file))));
-			variables[[inputFile.variable]] = contextNode;
+		for (var inputFile in state['input-files']) {
+			const xmlDoc = loadedInputFiles[inputFile.file] ||
+				(loadedInputFiles[inputFile.file] = parser.parseFromString(getFile(path.join('TestSources', inputFile.file))));
+			variables[[inputFile.variable]] = xmlDoc;
 		}
 		const outputFile = state['output-file'];
 		const expectedErrors = state['expected-errors'];
 
-		const args = [query, contextNode, null, variables, { language: 'XQuery3.1' }];
+		const args = [query, null, null, variables, { language: 'XQuery3.1' }];
 
 		try {
 			if (expectedErrors) {
