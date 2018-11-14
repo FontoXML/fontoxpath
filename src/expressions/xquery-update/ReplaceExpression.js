@@ -45,7 +45,7 @@ function ensureUpdateListWrapper (expression) {
 				}
 				done = true;
 				return ready({
-					pendingUpdates: [],
+					pendingUpdateList: [],
 					xdmValue: allValues.value
 				});
 			}
@@ -80,7 +80,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 				// from this evaluation.
 				const allChildNodes = [rl.value.xdmValue];
 				rlist = parseContent(allChildNodes, executionParameters);
-				rlistUpdates = rl.value.pendingUpdates;
+				rlistUpdates = rl.value.pendingUpdateList;
 
 				// If $rlist contains a document node, the
 				// document node is replaced in $rlist by its
@@ -130,7 +130,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 				// Let $target be the node returned by the target
 				// expression, and let $parent be its parent node.
 				target = tv.value.xdmValue[0];
-				targetUpdates = tv.value.pendingUpdates;
+				targetUpdates = tv.value.pendingUpdateList;
 			}
 			// If $target is an element, text, comment, or
 			// processing instruction node, then $rlist must
@@ -220,10 +220,11 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				// Let $text be the result of this step.
 				const atomized = rl.value.xdmValue.map(value => castToType(atomize(value, executionParameters), 'xs:string'));
 
-				text = atomized.length === 0 ?
+				const textContent = atomized.map(value => value.value).join(' ');
+				text = textContent.length === 0 ?
 					null :
-					executionParameters.nodesFactory.createTextNode(atomized.map(value => value.value).join(' '));
-				rlistUpdates = rl.value.pendingUpdates;
+					executionParameters.nodesFactory.createTextNode(textContent);
+				rlistUpdates = rl.value.pendingUpdateList;
 			}
 
 			if (!target) {
@@ -256,7 +257,7 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				// Let $target be the node returned by the target
 				// expression.
 				target = tv.value.xdmValue[0];
-				targetUpdates = tv.value.pendingUpdates;
+				targetUpdates = tv.value.pendingUpdateList;
 			}
 
 			// If $target is an element node, the result of the

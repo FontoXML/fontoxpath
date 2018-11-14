@@ -8,11 +8,11 @@ const ATTRIBUTE_NODE = 2;
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
  *
- * @param  {!Array<!Object>}  pendingUpdates  The updateScript to execute.
+ * @param  {!Array<!Object>}  pendingUpdateList  The updateScript to execute.
  * @param  {?IDomFacade=}            domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?IDocumentWriter=}       documentWriter  Extra options for evaluating this XPath
  */
-export default function executePendingUpdateList (pendingUpdates, domFacade, documentWriter) {
+export default function executePendingUpdateList (pendingUpdateList, domFacade, documentWriter) {
 	if (!domFacade) {
 		domFacade = domBackedDomFacade;
 	}
@@ -24,7 +24,7 @@ export default function executePendingUpdateList (pendingUpdates, domFacade, doc
 		documentWriter = domBackedDocumentWriter;
 	}
 
-	pendingUpdates.forEach(transferableUpdate => {
+	pendingUpdateList.forEach(transferableUpdate => {
 		const pendingUpdate = PendingUpdate.fromTransferable(transferableUpdate);
 		switch (pendingUpdate.type) {
 			case 'replaceElementContent': {

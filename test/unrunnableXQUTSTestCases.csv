@@ -1,4 +1,6 @@
 id-replace-expr-02,Error: No selector counterpart for: computedAttributeConstructor.
+id-replace-expr-011,AssertionError: Should throw error XUST0001.: expected 'Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\\n", "\\r", "\\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found.' to equal 'XUST0001'
+id-replace-expr-012,AssertionError: Should throw error XUST0001.: expected 'Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\\n", "\\r", "\\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found.' to equal 'XUST0001'
 id-replace-expr-013,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-014,AssertionError: Should throw error XUDY0009.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUDY0009'
 id-replace-expr-015,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
@@ -6,12 +8,16 @@ id-replace-expr-016,AssertionError: Should throw error XUTY0011.: expected 'Not 
 id-replace-expr-022,AssertionError: Should throw error XUTY0010.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0010'
 id-replace-expr-023,AssertionError: Should throw error XUTY0011.: expected 'No selector counterpart for: computedAttributeConstructor.' to equal 'XUTY0011'
 id-replace-expr-028,AssertionError: Should throw error XUDY0027.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUDY0027'
+id-replace-expr-029,Error: Can not execute an updating expression without catching the pending updates
 id-replace-expr-030,Error: No selector counterpart for: computedTextConstructor.
 id-replace-expr-034,Error: No selector counterpart for: computedAttributeConstructor.
+id-replace-expr-045,SyntaxError: Expected " ", "!", "!=", "(", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "for", "ge", "group", "gt", "idiv", "instance", "intersect", "is", "le", "let", "lt", "mod", "ne", "or", "order", "return", "stable", "to", "treat", "union", "where", "|", or "||" but "$" found.
+id-replace-expr-045-no-inherit,SyntaxError: Expected " ", "!", "!=", "(", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "for", "ge", "group", "gt", "idiv", "instance", "intersect", "is", "le", "let", "lt", "mod", "ne", "or", "order", "return", "stable", "to", "treat", "union", "where", "|", or "||" but "$" found.
 id-replace-expr-08,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
+id-replace-expr-017,AssertionError: Should throw error XUST0001.: expected 'Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\\n", "\\r", "\\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found.' to equal 'XUST0001'
+id-replace-expr-018,AssertionError: Should throw error XUST0001.: expected 'Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\\n", "\\r", "\\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found.' to equal 'XUST0001'
 id-replace-expr-019,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-020,AssertionError: Should throw error XUTY0008.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUTY0008'
 id-replace-expr-021,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
-complex-replacevalues-q9,Error: Error: undefined:6:33: documents may contain only one root.
-complex-replacevalues-q10,Error: Error: undefined:1:100: documents may contain only one root.
 complex-replacevalues-q11,Error: XPST0008, The variable pos is not in scope.
+complex-replacevalues-q12,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet

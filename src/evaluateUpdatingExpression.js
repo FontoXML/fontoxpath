@@ -15,8 +15,6 @@ import { generateGlobalVariableBindingName } from './expressions/ExecutionSpecif
 
 import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
 
-import PendingUpdate from './expressions/xquery-update/PendingUpdate';
-
 /**
  * @param   {Node|*}  contextItem
  * @return  {function(string):?string}
@@ -133,13 +131,13 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 
 	const resultIterator = compiledExpression.evaluateWithUpdateList(dynamicContext, executionParameters);
 
-	let attempt = resultIterator.next();
+	const attempt = resultIterator.next();
 	while (!attempt.ready) {
 		await attempt.promise;
 	}
 
 	return {
-		'result': attempt.value.xdmValue,
-		'pendingUpdates': attempt.value.pendingUpdates.map(update => update.toTransferable())
+		'xdmValue': attempt.value.xdmValue,
+		'pendingUpdateList': attempt.value.pendingUpdateList.map(update => update.toTransferable())
 	};
 }

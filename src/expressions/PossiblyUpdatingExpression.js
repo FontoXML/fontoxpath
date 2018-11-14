@@ -9,9 +9,9 @@ import Value from './dataTypes/Value';
 import { PendingUpdate } from './xquery-update/PendingUpdate';
 
 export class UpdatingExpressionResult {
-	constructor (/** !Array<!Value> */values, /** !Array<!PendingUpdate> */ pendingUpdates) {
+	constructor (/** !Array<!Value> */values, /** !Array<!PendingUpdate> */ pendingUpdateList) {
 		this.xdmValue = values;
-		this.pendingUpdateList = pendingUpdates;
+		this.pendingUpdateList = pendingUpdateList;
 	}
 }
 

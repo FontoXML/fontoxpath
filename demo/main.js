@@ -209,7 +209,13 @@ async function rerunXPath () {
 		}
 	}
 	catch (err) {
-		log.innerText = err.message;
+		let errorMessage = err.message;
+		if (err.location) {
+			const start = err.location.start.offset;
+			errorMessage += '\n\n' + xpath.substring(0, start) + '[HERE]' + xpath.substring(start);
+		}
+
+		log.innerText = errorMessage;
 		return;
 	}
 

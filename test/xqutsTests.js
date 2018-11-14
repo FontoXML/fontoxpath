@@ -1,6 +1,7 @@
 import chai from 'chai';
 import {
 	evaluateUpdatingExpression,
+	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
@@ -78,18 +79,55 @@ function isUpdatingQuery (testName, query) {
 	);
 }
 
-function areEqual (actualElement, expectedElement) {
+async function assertError (testName, expectedError, query, args) {
+	let hasThrown = false;
+	try {
+		const _ = isUpdatingQuery(testName, query) ?
+			await evaluateUpdatingExpression(...args) :
+			evaluateXPath(...args.slice(0, args.length - 1), null, { language: 'XQuery3.1' });
+	}
+	catch (e) {
+		hasThrown = true;
+		if (!e.message.startsWith(expectedError === '*' ? '' : expectedError)) {
+			chai.assert.equal(e.message, expectedError, `Should throw error ${expectedError}.`);
+		}
+	}
+	if (!hasThrown) {
+		chai.assert.fail(null, null, `Should throw error ${expectedError}.`);
+	}
+}
+
+function assertXml (actual, expected) {
+	actual = actual.cloneNode(true);
+	actual.normalize();
+	expected.normalize();
+
+	const actualOuterHTML = actual.nodeType === actual.DOCUMENT_NODE ? actual.documentElement.outerHTML : actual.outerHTML;
+	const expectedOuterHTML = expected.nodeType === expected.DOCUMENT_NODE ? expected.documentElement.outerHTML : expected.outerHTML;
+
 	// Try fast string compare
-	if (actualElement.outerHTML === expectedElement.outerHTML) {
-		return true;
+	if (actualOuterHTML === expectedOuterHTML) {
+		return;
 	}
 
-	// Wrap actual and expected in a root element allowing deep-equal comparison
-	const compareDoc = parser.parseFromString('<compare><actual/><expected/></compare>', 'text/xml');
-	evaluateXPathToFirstNode('compare/actual', compareDoc).appendChild(actualElement.cloneNode(true));
-	evaluateXPathToFirstNode('compare/expected', compareDoc).appendChild(expectedElement.cloneNode(true));
-	compareDoc.normalize();
-	return evaluateXPathToBoolean('deep-equal(compare/actual/*, compare/expected/*)', compareDoc);
+	if (evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
+		a: actual,
+		b: expected
+	})) {
+		return;
+	}
+
+	// Do comparison on on outer HTML for clear fail message
+	chai.assert.equal(actualOuterHTML, expectedOuterHTML);
+}
+
+function assertFragment (actualNodes, expectedString) {
+	const actual = parser.parseFromString(`<root/>`);
+	actualNodes.map(node => node.cloneNode(true)).forEach(node => actual.documentElement.appendChild(node.nodeType === node.DOCUMENT_NODE ? node.documentElement : node));
+
+	const expected = parser.parseFromString(`<root>${expectedString}</root>`);
+
+	assertXml(actual, expected);
 }
 
 async function runTestCase (testName, testCase) {
@@ -117,52 +155,55 @@ async function runTestCase (testName, testCase) {
 		const xmlDoc = inputFiles[inputFile.file] || (inputFiles[inputFile.file] = parser.parseFromString(getFile(path.join('TestSources', inputFile.file))));
 		const variable = inputFile.variable;
 
-		const expectedFile = state['output-file'] ? getFile(path.join('ExpectedTestResults', state['output-file'].file)) : null;
+		const outputFile = state['output-file'];
 		const expectedError = state['expected-error'];
 
-		let actual;
-		const execution = isUpdatingQuery(testName, query) ? async () => {
-			const it = await evaluateUpdatingExpression(query, xmlDoc, null, { [variable]: xmlDoc }, {});
-			executePendingUpdateList(it.pendingUpdateList, null, null, {});
-		} : async () => {
-			actual = evaluateXPathToFirstNode(query, xmlDoc, null, { [variable]: xmlDoc }, { language: 'XQuery3.1' });
-		};
+		const args = [query, xmlDoc, null, { [variable]: xmlDoc }, { language: 'XQuery3.1' }];
 
 		try {
 			if (expectedError) {
-				let hasThrown = false;
-				try {
-					await execution();
+				await assertError(testName, expectedError, query, args);
+			}
+			else if (outputFile) {
+				if (isUpdatingQuery(testName, query)) {
+					throw new Error('An updating expression is not supported in the test framework with an expected value.');
 				}
-				catch (e) {
-					hasThrown = true;
-					if (!e.message.startsWith(expectedError === '*' ? '' : expectedError)) {
-						chai.assert.equal(e.message, expectedError, `Should throw error ${expectedError}.`);
+
+				const expectedString = getFile(path.join('ExpectedTestResults', outputFile.file));
+
+				switch (outputFile.compare) {
+					case 'XML': {
+						const actual = evaluateXPathToFirstNode(...args);
+						const expected = actual.nodeType === actual.DOCUMENT_NODE ?
+							parser.parseFromString(expectedString) :
+							parser.parseFromString(expectedString).documentElement;
+
+						assertXml(actual, expected);
+						break;
 					}
+					case 'Fragment': {
+						const actualNodes = evaluateXPathToNodes(...args);
+
+						assertFragment(actualNodes, expectedString);
+						break;
+					}
+					case 'Text': {
+						const actual = evaluateXPathToString(...args);
+						const actualNodes = [xmlDoc.createTextNode(actual)];
+
+						assertFragment(actualNodes, expectedString);
+						break;
+					}
+					default:
+						throw new Error('Compare ' + outputFile.compare + ' is not supported.');
 				}
-				if (!hasThrown) {
-					chai.assert.fail(null, null, `Should throw error ${expectedError}.`);
-				}
+			}
+			else if (isUpdatingQuery(testName, query)) {
+				const it = await evaluateUpdatingExpression(...args);
+				executePendingUpdateList(it.pendingUpdateList, null, null, {});
 			}
 			else {
-				await execution();
-			}
-
-			if (expectedFile) {
-				const expectedDoc = parser.parseFromString(expectedFile);
-
-				const actualElement = function () {
-					if (actual) {
-						return actual.nodeType === actual.DOCUMENT_NODE ?
-							actual.documentElement :
-							actual;
-					}
-					return xmlDoc.documentElement;
-				}();
-				if (!areEqual(actualElement, expectedDoc.documentElement)) {
-					// Do comparison on on outer HTML for clear fail message
-					chai.assert.equal(actualElement.outerHTML, expectedDoc.documentElement.outerHTML);
-				}
+				throw new Error('A non-updating expression is not supported in the test framework without an expected value.');
 			}
 		}
 		catch (e) {

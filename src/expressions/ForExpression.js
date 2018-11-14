@@ -1,11 +1,12 @@
 import Expression from './Expression';
+import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Sequence from './dataTypes/Sequence';
 import { DONE_TOKEN } from './util/iterators';
 
 /**
- * @extends {Expression}
+ * @extends {PossiblyUpdatingExpression}
  */
-class ForExpression extends Expression {
+class ForExpression extends PossiblyUpdatingExpression {
 	/**
 	 * @param  {{prefix:string, namespaceURI:?string, localName: string}}    rangeVariable
 	 * @param  {Expression}  clauseExpression
@@ -46,7 +47,7 @@ class ForExpression extends Expression {
 		staticContext.removeScope();
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	performFunctionalEvaluation (dynamicContext, executionParameters, [_createBindingSequence, createReturnExpression]) {
 		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext, executionParameters).value();
 		let returnIterator = null;
 		let done = false;
@@ -67,10 +68,7 @@ class ForExpression extends Expression {
 							[this._variableBindingKey]: () => Sequence.singleton(currentClauseValue.value)
 						});
 
-						returnIterator = this._returnExpression.evaluateMaybeStatically(
-							nestedContext,
-							executionParameters
-						).value();
+						returnIterator = createReturnExpression(nestedContext).value();
 					}
 					const returnValue = returnIterator.next();
 					if (returnValue.done) {
