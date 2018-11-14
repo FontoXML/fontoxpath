@@ -183,7 +183,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 			// upd:mergeUpdates: upd:replaceNode($target, $rlist)
 			done = true;
 			return ready({
-				value: [],
+				xdmValue: [],
 				pendingUpdateList: mergeUpdates(
 					[replaceNode(target.value, rlist.attributes.concat(rlist.contentNodes))],
 					rlistUpdates,
@@ -269,7 +269,7 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 			if (isSubTypeOf(target.type, 'element()')) {
 				done = true;
 				return ready({
-					value: [],
+					xdmValue: [],
 					pendingUpdateList: mergeUpdates(
 						[replaceElementContent(target.value, text)],
 						rlistUpdates,
@@ -312,7 +312,7 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				// $string).
 				done = true;
 				return ready({
-					value: [],
+					xdmValue: [],
 					pendingUpdateList: mergeUpdates(
 						[replaceValue(target.value, string)],
 						rlistUpdates,
