@@ -79,7 +79,9 @@ function isUpdatingQuery (testName, query) {
 	);
 }
 
-async function assertError (testName, expectedError, query, args) {
+async function assertError (testName, expectedErrors, query, args) {
+	const allowedErrors = expectedErrors.join(', ');
+
 	let hasThrown = false;
 	try {
 		const _ = isUpdatingQuery(testName, query) ?
@@ -88,12 +90,12 @@ async function assertError (testName, expectedError, query, args) {
 	}
 	catch (e) {
 		hasThrown = true;
-		if (!e.message.startsWith(expectedError === '*' ? '' : expectedError)) {
-			chai.assert.equal(e.message, expectedError, `Should throw error ${expectedError}.`);
+		if (!expectedErrors.some(expectedError => e.message.startsWith(expectedError === '*' ? '' : expectedError))) {
+			chai.assert.equal(e.message, allowedErrors, `Should throw error ${allowedErrors}.`);
 		}
 	}
 	if (!hasThrown) {
-		chai.assert.fail(null, null, `Should throw error ${expectedError}.`);
+		chai.assert.fail(null, null, `Should throw error ${allowedErrors}.`);
 	}
 }
 
@@ -142,7 +144,7 @@ async function runTestCase (testName, testCase) {
 			"file": concat($basePath, output-file),
 			"compare": string(output-file/@compare)
 		}) else (),
-		"expected-error": if(expected-error) then(string(expected-error)) else ()
+		"expected-errors": if(expected-error) then(array{for $error in expected-error return string($error)}) else ()
 	}`, testCase);
 
 	const inputFiles = {};
@@ -159,13 +161,13 @@ async function runTestCase (testName, testCase) {
 			variables[[inputFile.variable]] = contextNode;
 		}
 		const outputFile = state['output-file'];
-		const expectedError = state['expected-error'];
+		const expectedErrors = state['expected-errors'];
 
 		const args = [query, contextNode, null, variables, { language: 'XQuery3.1' }];
 
 		try {
-			if (expectedError) {
-				await assertError(testName, expectedError, query, args);
+			if (expectedErrors) {
+				await assertError(testName, expectedErrors, query, args);
 			}
 			else if (outputFile) {
 				if (isUpdatingQuery(testName, query)) {
