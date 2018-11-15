@@ -24,8 +24,20 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 let AST;
 
 /**
+ * @typedef {{
+ *  namespaceURI: string,
+ *  localName: string,
+ *  arity: number,
+ *  functionDefinition: !Object
+ * }} functionDeclaration
+ */
+let FunctionDeclaration;
+
+/**
  * @param   {!AST}            prolog              The prolog of the module to process
  * @param   {!StaticContext}  staticContext
+ *
+ * @return  {{functionDeclarations: !Array<!FunctionDeclaration>}}
  */
 export default function processProlog (prolog, staticContext) {
 	const staticallyCompilableExpressions = [];

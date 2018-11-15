@@ -260,11 +260,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 	/**
 	 * @type {!Sequence}
 	 */
-	const rawResults = compiledExpression.evaluateMaybeStatically(dynamicContext, {
-		domFacade: wrappedDomFacade,
-		nodesFactory: nodesFactory,
-		parseExpression: parseExpression
-	});
+	const rawResults = compiledExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
 
 	switch (returnType) {
 		case evaluateXPath.BOOLEAN_TYPE: {

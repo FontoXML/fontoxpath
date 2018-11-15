@@ -55,8 +55,8 @@ import PIConstructor from '../expressions/xquery/PIConstructor';
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 
 /**
- * @param   {Array<?>}                ast
- * @param   {{allowXQuery:boolean}}   compilationOptions
+ * @param   {Array<*>}                 ast
+ * @param   {!{allowXQuery: boolean}}  compilationOptions
  * @return  {!Expression}
  */
 function compile (ast, compilationOptions) {
@@ -186,6 +186,11 @@ function compile (ast, compilationOptions) {
 	}
 }
 
+/**
+ * @param   {Array<*>}                 ast
+ * @param   {!{allowXQuery: boolean}}  compilationOptions
+ * @return  {!TestAbstractExpression}
+ */
 function compileTest (ast, compilationOptions) {
 	switch (ast[0]) {
 			// Tests
@@ -870,7 +875,8 @@ function replaceExpression (ast, compilationOptions) {
 }
 
 /**
- * @param   {!Array<?>}  xPathAst
+ * @param   {!Array<*>}  xPathAst
+ * @param   {{allowXQuery: boolean}} compilationOptions
  * @return  {!Expression}
  */
 export default function (xPathAst, compilationOptions) {

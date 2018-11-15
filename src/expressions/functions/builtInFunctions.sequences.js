@@ -470,7 +470,7 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 		if (!functionCallResult.isSingleton() || !isSubtypeOf(functionCallResult.first().type, 'xs:boolean')) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
-		return functionCallResult.first().value;
+		return /** @type {boolean} */ (functionCallResult.first().value);
 	});
 }
 

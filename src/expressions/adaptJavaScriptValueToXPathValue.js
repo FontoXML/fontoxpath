@@ -110,7 +110,7 @@ function adaptJavaScriptValueToXPathValue (type, value) {
 /**
  * @param  {?}        value
  * @param  {string=}  expectedType
-* @return  {!Sequence}
+ * @return  {!Sequence}
  */
 export default function adaptJavaScriptValueToXPath (value, expectedType) {
 	expectedType = expectedType || 'item()?';

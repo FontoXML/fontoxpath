@@ -58,7 +58,7 @@ function getFirstChild (ast, name) {
  * Get the textContent of the given ast node (assuming its type is simpleContent)
  *
  * @param   {AST}    ast  The parent
- * @return  {string}  The string content
+ * @return  {string}      The string content
  */
 function getTextContent (ast) {
 	if (ast.length < 2) {

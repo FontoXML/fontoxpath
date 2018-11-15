@@ -1,7 +1,7 @@
 import xPathParserRaw from './xPathParser.raw';
-var module = /** @type {({xPathParser: {parse:function(!string):?}, SyntaxError:?})} */ ({});
+const module = {};
 new Function(xPathParserRaw()).call(module);
 
 const xpathParserModule = module['xPathParser'];
-export const parse = xpathParserModule['parse'];
-export const SyntaxError = xpathParserModule['SyntaxError'];
+export const parse = /** @type {function(!string, !{xquery: boolean}):!Array<*>} */ (xpathParserModule['parse']);
+export const SyntaxError = /** @type {Error} */ (xpathParserModule['SyntaxError']);

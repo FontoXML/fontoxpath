@@ -203,8 +203,8 @@ function arrayTypeDeepEqual (dynamicContext, executionParameters, staticContext,
 
 /**
  * @param   {!ExecutionParameters}   executionParameters
- * @param   {!Value}  item1
- * @param   {!Value}  item2
+ * @param   {!Value<!Node>}  item1
+ * @param   {!Value<!Node>}  item2
  * @return  {!AsyncIterator<boolean>}
  */
 function nodeDeepEqual (dynamicContext, executionParameters, staticContext, item1, item2) {

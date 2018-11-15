@@ -15,6 +15,10 @@ import { generateGlobalVariableBindingName } from './expressions/ExecutionSpecif
 
 import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
 
+import PendingUpdate from './expressions/xquery-update/PendingUpdate';
+
+import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
+
 /**
  * @param   {Node|*}  contextItem
  * @return  {function(string):?string}
@@ -54,15 +58,16 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 	const moduleImports = options['moduleImports'] || Object.create(null);
 
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
-	const compiledExpression = staticallyCompileXPath(
+	const compiledExpression = 	(/** @type {!PossiblyUpdatingExpression} */(staticallyCompileXPath(
 		updateScript,
 		{
 			allowXQuery: true,
-			allowXQueryUpdateFacility: true
+			allowXQueryUpdateFacility: true,
+			disableCache: false
 		},
 		namespaceResolver,
 		variables,
-		moduleImports);
+		moduleImports)));
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
@@ -137,7 +142,7 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 	}
 
 	return {
-		'xdmValue': attempt.value.xdmValue,
+		'result': attempt.value.xdmValue,
 		'pendingUpdateList': attempt.value.pendingUpdateList.map(update => update.toTransferable())
 	};
 }

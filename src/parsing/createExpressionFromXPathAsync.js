@@ -23,7 +23,7 @@ if (supportsAsyncCompilation()) {
 
 
 	// Webworkers need a function string
-	var compileFunction = [
+	const compileFunction = [
 		xPathParserRaw(),
 		'',
 		'self.onmessage = function (event) {',
@@ -49,13 +49,13 @@ if (supportsAsyncCompilation()) {
 	].join('\n');
 
 
-	var blob = new Blob([compileFunction]),
-    worker = new Worker(URL.createObjectURL(blob));
+	const blob = new Blob([compileFunction]);
+	const worker = new Worker(URL.createObjectURL(blob));
 
 	/**
 	 * @type {Object<string, function({success:boolean, ast:?Array<*>, error:Error})>}
 	 */
-	var waitingTaskCallbackByTaskKey = Object.create(null);
+	const waitingTaskCallbackByTaskKey = Object.create(null);
 
 	worker.onmessage = function (/** @type {MessageEvent} */ event) {
 		waitingTaskCallbackByTaskKey[event.data['key']](event.data);
@@ -76,51 +76,51 @@ if (supportsAsyncCompilation()) {
 			});
 	}
 
-	var databaseLoadingDone = () => new Promise(function (resolve, reject) {
-			var databaseCreateRequest = indexedDB.open(SELECTOR_INDEXED_DB_NAME, XPATHPARSER_VERSION);
+	const databaseLoadingDone = () => new Promise(function (resolve, reject) {
+			const databaseCreateRequest = indexedDB.open(SELECTOR_INDEXED_DB_NAME, XPATHPARSER_VERSION);
 			databaseCreateRequest.onsuccess = function () {
-				var db = databaseCreateRequest.result;
+				const db = databaseCreateRequest.result;
 				resolve(db);
 			};
 
 			databaseCreateRequest.onerror = function (evt) {
 				// event.error can not be used, as well as error.code.
-				if (databaseCreateRequest.error.name === 'VersionError') {
+				if (databaseCreateRequest['error']['name'] === 'VersionError') {
 					evt.preventDefault();
-					console.warn('Expression persisting cache downgrade needed. Recreating database.', databaseCreateRequest.error);
-					var deleteDatabaseRequest = indexedDB.deleteDatabase(SELECTOR_INDEXED_DB_NAME);
+					console.warn('Expression persisting cache downgrade needed. Recreating database.', databaseCreateRequest['error']);
+					const deleteDatabaseRequest = indexedDB.deleteDatabase(SELECTOR_INDEXED_DB_NAME);
 					deleteDatabaseRequest.onsuccess = function () {
 						// Re-open database, do not retry if errors
-						var secondAttemptCreateRequest = indexedDB.open(SELECTOR_INDEXED_DB_NAME, XPATHPARSER_VERSION);
+						const secondAttemptCreateRequest = indexedDB.open(SELECTOR_INDEXED_DB_NAME, XPATHPARSER_VERSION);
 						secondAttemptCreateRequest.onsuccess = function () {
-							var db = secondAttemptCreateRequest.result;
+							const db = secondAttemptCreateRequest['result'];
 							resolve(db);
 						};
 						secondAttemptCreateRequest.onupgradeneeded = function () {
-							return recreateDatabase(secondAttemptCreateRequest.result);
+							return recreateDatabase(secondAttemptCreateRequest['result']);
 						};
 					};
 					deleteDatabaseRequest.onerror = function () {
-						reject(deleteDatabaseRequest.error);
+						reject(deleteDatabaseRequest['error']);
 					};
 					return;
 				}
 
-				reject(databaseCreateRequest.error);
+				reject(databaseCreateRequest['error']);
 			};
 
 			databaseCreateRequest.onupgradeneeded = function () {
-				return recreateDatabase(databaseCreateRequest.result);
+				return recreateDatabase(databaseCreateRequest['result']);
 			};
 		});
 
-	var saveTransactionTimeout = null;
-	var pendingSaves = [];
+	let saveTransactionTimeout = null;
+	const pendingSaves = [];
 
 	function queueSave (db, xPathString, ast) {
 		if (!saveTransactionTimeout) {
 			saveTransactionTimeout = setTimeout(function () {
-				var objectStore = db.transaction(SELECTOR_STORE_NAME, 'readwrite').objectStore(SELECTOR_STORE_NAME);
+				const objectStore = db.transaction(SELECTOR_STORE_NAME, 'readwrite').objectStore(SELECTOR_STORE_NAME);
 				pendingSaves.forEach(function (callback) {
 					callback(objectStore);
 				});
@@ -132,7 +132,7 @@ if (supportsAsyncCompilation()) {
 		return new Promise(function (resolve, reject) {
 			pendingSaves.push(function (objectStore) {
 				// The keys of the items in the object store must be retained
-				var request = objectStore.add({
+				const request = objectStore.add({
 						'xPath': xPathString,
 						'ast': ast
 					});
@@ -159,13 +159,24 @@ if (supportsAsyncCompilation()) {
 					reject(new Error('Unable to parse XPath: ' + xPathString + '.\n' + result['error']));
 					return;
 				}
-				queueSave(db, xPathString, result['ast']).catch(function (error) {
-					// Swallow errors, we have an AST, so not being able to save it should only cost us some load time performance for any next loads.
-					console.warn(error);
-				}).then(function () {
-					var selector = compileAstToExpression(result['ast'], { allowXQuery: false });
-					resolve(selector);
-				}).catch(reject);
+				queueSave(db, xPathString, result['ast'])
+					.catch(function (error) {
+						// Swallow errors, we have an AST, so not
+						// being able to save it should only cost us
+						// some load time performance for any next
+						// loads.
+						console.warn(error);
+					})
+					.then(function () {
+						const ast = (/** @type {!Array<*>} */(result['ast']));
+						const queryBody = (/** @type {!Array<*>} */(astHelper.followPath(
+							ast,
+							['mainModule', 'queryBody', '*']
+						)));
+						const selector = compileAstToExpression(queryBody, { allowXQuery: false });
+						resolve(selector);
+					})
+					.catch(reject);
 			};
 
 			worker.postMessage({
@@ -175,7 +186,7 @@ if (supportsAsyncCompilation()) {
 		});
 	}
 
-	var compileDonePromiseByXPathString = Object.create(null);
+	const compileDonePromiseByXPathString = Object.create(null);
 
 	/**
 	 * Parse an XPath string to a selector.
@@ -191,10 +202,10 @@ if (supportsAsyncCompilation()) {
             function (db) {
                 return new Promise(
                     function (resolve, reject) {
-                        var objectStore = db.transaction(SELECTOR_STORE_NAME, 'readonly').objectStore(SELECTOR_STORE_NAME);
-                        var request = objectStore.get(xPathString);
+                        const objectStore = db.transaction(SELECTOR_STORE_NAME, 'readonly').objectStore(SELECTOR_STORE_NAME);
+                        const request = objectStore.get(xPathString);
                         request.onsuccess = function (event) {
-                            var xPathAndAst = request.result;
+                            const xPathAndAst = request.result;
                             if (!xPathAndAst) {
                                 // Not found, compile it.
                                 compileXPathAsync(db, xPathString).then(resolve, reject);

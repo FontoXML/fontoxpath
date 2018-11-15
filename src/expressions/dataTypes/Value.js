@@ -1,5 +1,6 @@
 /**
  * @record
+ * @template T
  */
 export default class Value {
 	constructor () {
@@ -8,7 +9,7 @@ export default class Value {
 		 */
 		this.type;
 		/**
-		 * @type {?}
+		 * @type {T}
 		 */
 		this.value;
 	}

@@ -165,8 +165,9 @@ function fnStringLength (_dynamicContext, _executionParameters, _staticContext, 
 	if (sequence.isEmpty()) {
 		return Sequence.singleton(createAtomicValue(0, 'xs:integer'));
 	}
+	const stringValue = /** @type {string} */ (sequence.first().value);
 	// In ES6, Array.from(💩).length === 1
-	return Sequence.singleton(createAtomicValue(Array.from(sequence.first().value).length, 'xs:integer'));
+	return Sequence.singleton(createAtomicValue(Array.from(stringValue).length, 'xs:integer'));
 }
 
 /**
@@ -281,10 +282,7 @@ function fnSubstring (dynamicContext, executionParameters, staticContext, source
 
 			done = true;
 
-			/**
-			 * @type {string}
-			 */
-			const strValue = sourceStringItem.value.value;
+			const strValue = /** @type {string} */ (sourceStringItem.value.value);
 			return ready(createAtomicValue(
 				Array.from(strValue)
 					.slice(

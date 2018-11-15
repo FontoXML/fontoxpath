@@ -45,7 +45,7 @@ class Filter extends Expression {
 
 			const resultValue = result.first();
 			if (isSubtypeOf(resultValue.type, 'xs:numeric')) {
-				let requestedIndex = resultValue.value;
+				let requestedIndex = /** @type {number} */ (resultValue.value);
 				if (!Number.isInteger(requestedIndex)) {
 					// There are only values for integer positions
 					return Sequence.empty();

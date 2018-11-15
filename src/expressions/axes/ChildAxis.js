@@ -31,7 +31,8 @@ class ChildAxis extends Expression {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
 		const domFacade = executionParameters.domFacade;
-		const nodeValues = domFacade.getChildNodes(contextItem.value).map(createNodeValue);
+		const /** !Node */ contextNode = contextItem.value;
+		const nodeValues = domFacade.getChildNodes(contextNode).map(createNodeValue);
 		const childContextSequence = new Sequence(nodeValues);
 		return childContextSequence.filter(item => {
 				return this._childExpression.evaluateToBoolean(dynamicContext, item);
