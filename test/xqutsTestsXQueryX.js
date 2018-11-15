@@ -14,7 +14,7 @@ function run () {
 		.split(/\r?\n/);
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
-	const baseDir = path.join('test', 'assets', 'XQUTS-master', 'Queries');
+	const baseDir = path.join('test', 'assets', 'XQUTS', 'Queries');
 
 	function normalizeEndOfLines (xpathString) {
 		// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.

@@ -44,13 +44,10 @@ compiler, please refer to the
 the Google Closure Compiler.
 
 Running the QT3 tests requires a recent version of the QT3 test set to
-be installed at `./test/assets/QT3TS-master`. The QT3 test set is
-mirrored [here](https://github.com/LeoWoerteler/QT3TS/). I usually use
-the following command to check out the latest test set: `curl -L
-https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz
--C ./test/assets`. Running the tests for XQuery Update Facility
-requires a recent version of the XQUTS test set to be installed at
-`./test/assets/XQUTS-master`. There exists a mirror
+be installed at `./test/assets/QT3TS`. The QT3 test set is mirrored
+[here](https://github.com/LeoWoerteler/QT3TS/). Running the tests for
+XQuery Update Facility requires a recent version of the XQUTS test set
+to be installed at `./test/assets/XQUTS`. There exists a mirror
 [here](https://github.com/LeoWoerteler/XQUTS).
 
 FontoXPath uses XQueryX as a parser format, this can be tested using
@@ -60,10 +57,10 @@ to run these tests, extract the `xqueryx.zip` file to the
 
 In short, execute the following commands on Linux:
 ```sh
- mkdir -p ./test/assets;
- curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets;
- curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets;
- unzip -q test/assets/QT3TS-master/xqueryx.zip -d ./test/assets/QT3TS-master/;
+ mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+ curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+ curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+ unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
 ```
 
 Or on Windows:

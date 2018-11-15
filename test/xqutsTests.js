@@ -55,7 +55,7 @@ function getFile (filename) {
 	if (cachedFiles[filename]) {
 		return cachedFiles[filename];
 	}
-	const content = fs.readFileSync(path.join('test', 'assets', 'XQUTS-master', filename), 'utf-8');
+	const content = fs.readFileSync(path.join('test', 'assets', 'XQUTS', filename), 'utf-8');
 	return cachedFiles[filename] = content.replace(/\r\n/g, '\n');
 }
 

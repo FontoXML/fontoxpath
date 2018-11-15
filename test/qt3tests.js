@@ -73,7 +73,7 @@ function getFile (fileName) {
 		return instantiatedDocumentByAbsolutePath[fileName];
 	}
 
-	let content = context(`./QT3TS-master/${fileName}`).replace(/\r\n/g, '\n');
+	let content = context(`./QT3TS/${fileName}`).replace(/\r\n/g, '\n');
 	if (fileName.endsWith('.out')) {
 		if (content.endsWith('\n')) {
 			content = content.slice(0, -1);
