@@ -146,7 +146,7 @@ async function runUpdatingXQuery (script) {
 		script,
 		xmlDoc,
 		null,
-		null,
+		{ 'input-context': xmlDoc },
 		{
 			disableCache: true
 		}
@@ -163,7 +163,7 @@ async function runNormalXPath (script, asXQuery) {
 		script,
 		xmlDoc,
 		null,
-		null,
+		{ 'input-context': xmlDoc },
 		{
 			language: asXQuery ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
 			disableCache: true
@@ -254,6 +254,7 @@ function loadFromCookie () {
 	<derp id="durp">derp</derp>
 	<hurr durr="durrdurrdurr">durrrrrr</hurr>
 </xml>`;
+		window.hljs.highlightBlock(xmlSource);
 		return;
 	}
 
@@ -271,6 +272,7 @@ function loadFromCookie () {
 	const source = cookie.substring(sourceStart, sourceStart + sourceLength);
 
 	xmlSource.innerText = decodeURIComponent(source);
+	window.hljs.highlightBlock(xmlSource);
 	xmlDoc = domParser.parseFromString(decodeURIComponent(source), 'text/xml');
 
 	const xpathStartOffset = sourceStart + sourceLength;

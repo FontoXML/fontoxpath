@@ -2,16 +2,12 @@ import chai from 'chai';
 import {
 	evaluateUpdatingExpression,
 	evaluateXPath,
-	evaluateXPathToArray,
 	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
-	evaluateXPathToMap,
 	evaluateXPathToNodes,
-	evaluateXPathToNumber,
 	evaluateXPathToString,
-	executePendingUpdateList,
-	registerXQueryModule
+	executePendingUpdateList
 } from 'fontoxpath';
 import { parse } from 'fontoxpath/parsing/xPathParser';
 import { parseAst } from './xQueryXUtils';
@@ -31,7 +27,7 @@ global.btoa = function (str) {
 const parser = {
 	parseFromString: xmlString => {
 		try {
-			return sync(xmlString);
+			return sync(xmlString.trim());
 		}
 		catch (e) {
 			console.log(`Error parsing the string ${xmlString}.`, e);
@@ -79,9 +75,7 @@ function isUpdatingQuery (testName, query) {
 	);
 }
 
-async function assertError (testName, expectedErrors, query, args) {
-	const allowedErrors = expectedErrors.join(', ');
-
+async function assertError (testName, expectedError, query, args) {
 	let hasThrown = false;
 	try {
 		const _ = isUpdatingQuery(testName, query) ?
@@ -90,12 +84,12 @@ async function assertError (testName, expectedErrors, query, args) {
 	}
 	catch (e) {
 		hasThrown = true;
-		if (!expectedErrors.some(expectedError => e.message.startsWith(expectedError === '*' ? '' : expectedError))) {
-			chai.assert.equal(e.message, allowedErrors, `Should throw error ${allowedErrors}.`);
+		if (!e.message.startsWith(expectedError === '*' ? '' : expectedError)) {
+			chai.assert.equal(e.message, expectedError, `Should throw error ${expectedError}.`);
 		}
 	}
 	if (!hasThrown) {
-		chai.assert.fail(null, null, `Should throw error ${allowedErrors}.`);
+		chai.assert.fail(null, null, `Should throw error ${expectedError}.`);
 	}
 }
 
@@ -132,6 +126,62 @@ function assertFragment (actualNodes, expectedString) {
 	assertXml(actual, expected);
 }
 
+async function runAssertions (expectedErrors, outputFiles, testName, query, args) {
+	const failed = [];
+	const catchAssertion = assertion => {
+		try {
+			assertion();
+		}
+		catch (e) {
+			failed.push(e);
+		}
+	};
+
+	for (const expectedError of expectedErrors) {
+		try {
+			await assertError(testName, expectedError, query, args);
+		}
+		catch (e) {
+			failed.push(e);
+		}
+	}
+
+	for (const outputFile of outputFiles) {
+		const expectedString = getFile(path.join('ExpectedTestResults', outputFile.file));
+
+		switch (outputFile.compare) {
+			case 'XML': {
+				const actual = evaluateXPathToFirstNode(...args);
+				const expected = actual.nodeType === actual.DOCUMENT_NODE ?
+					parser.parseFromString(expectedString) :
+					parser.parseFromString(expectedString).documentElement;
+
+				catchAssertion(() => assertXml(actual, expected));
+				break;
+			}
+			case 'Fragment': {
+				const actualNodes = evaluateXPathToNodes(...args);
+
+				catchAssertion(() => assertFragment(actualNodes, expectedString));
+				break;
+			}
+			case 'Text': {
+				const actual = evaluateXPathToString(...args);
+				const actualNodes = [new slimdom.Document().createTextNode(actual)];
+
+				catchAssertion(() => assertFragment(actualNodes, expectedString));
+				break;
+			}
+			default:
+				throw new Error('Compare ' + outputFile.compare + ' is not supported.');
+		}
+	}
+
+	if (failed.length === expectedErrors.length + outputFiles.length) {
+		throw new Error(failed.map(e => e.message).join(' or '));
+	}
+}
+
 async function runTestCase (testName, testCase) {
 	const states = evaluateXPathToAsyncIterator(`declare function local:parse-input($state as element())
 	{
@@ -162,7 +212,7 @@ async function runTestCase (testName, testCase) {
 		"output-files": array{local:parse-output($basePath, .)},
 		"expected-errors": if(expected-error) then(
 				array{for $error in expected-error return string($error)}
-			) else ()
+			) else (array{})
 	}`, testCase, null, null, { language: 'XQuery3.1' });
 
 	const loadedInputFiles = {};
@@ -172,60 +222,26 @@ async function runTestCase (testName, testCase) {
 		const state = entry.value;
 		const query = getFile(path.join('Queries', 'XQuery', state.query));
 		const variables = {};
-		for (var inputFile in state['input-files']) {
+		state['input-files'].forEach(inputFile => {
 			const xmlDoc = loadedInputFiles[inputFile.file] ||
 				(loadedInputFiles[inputFile.file] = parser.parseFromString(getFile(path.join('TestSources', inputFile.file))));
-			variables[[inputFile.variable]] = xmlDoc;
-		}
-		const outputFile = state['output-file'];
+			variables[inputFile.variable] = xmlDoc;
+		});
+		const outputFiles = state['output-files'];
 		const expectedErrors = state['expected-errors'];
 
-		const args = [query, null, null, variables, { language: 'XQuery3.1' }];
+		const args = [query, new slimdom.Document(), null, variables, { language: 'XQuery3.1' }];
 
 		try {
-			if (expectedErrors) {
-				await assertError(testName, expectedErrors, query, args);
-			}
-			else if (outputFile) {
-				if (isUpdatingQuery(testName, query)) {
-					throw new Error('An updating expression is not supported in the test framework with an expected value.');
-				}
-
-				const expectedString = getFile(path.join('ExpectedTestResults', outputFile.file));
-
-				switch (outputFile.compare) {
-					case 'XML': {
-						const actual = evaluateXPathToFirstNode(...args);
-						const expected = actual.nodeType === actual.DOCUMENT_NODE ?
-							parser.parseFromString(expectedString) :
-							parser.parseFromString(expectedString).documentElement;
-
-						assertXml(actual, expected);
-						break;
-					}
-					case 'Fragment': {
-						const actualNodes = evaluateXPathToNodes(...args);
-
-						assertFragment(actualNodes, expectedString);
-						break;
-					}
-					case 'Text': {
-						const actual = evaluateXPathToString(...args);
-						const actualNodes = [new slimdom.Document().createTextNode(actual)];
-
-						assertFragment(actualNodes, expectedString);
-						break;
-					}
-					default:
-						throw new Error('Compare ' + outputFile.compare + ' is not supported.');
-				}
+			if (expectedErrors.length || outputFiles.length) {
+				await runAssertions(expectedErrors, outputFiles, testName, query, args);
 			}
 			else if (isUpdatingQuery(testName, query)) {
 				const it = await evaluateUpdatingExpression(...args);
 				executePendingUpdateList(it.pendingUpdateList, null, null, {});
 			}
 			else {
-				throw new Error('A non-updating expression is not supported in the test framework without an expected value.');
+				throw new Error('A non-updating expression without an expected value is not supported in the test framework.');
 			}
 		}
 		catch (e) {
