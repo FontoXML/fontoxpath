@@ -1,5 +1,6 @@
 language: node_js
 node_js: "node"
+cache: npm
 
 before_script:
   - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
