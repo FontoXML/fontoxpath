@@ -34,13 +34,13 @@ function run () {
 		const xml = sync(await fs.promises.readFile(testFilePath, 'utf-8'));
 		const xQueries = evaluateXPathToMap('(/descendant::test-case/map:entry(@name, (test/@file/string(), test/string())[1])) => map:merge()', xml);
 
-		Object.keys(xQueries).forEach(key => {
+		for (const key of Object.keys(xQueries)) {
 			const value = xQueries[key];
 
 			if (value.substring(value.length - 3) === '.xq') {
 				const xQueryPath = path.join(testDirectory, value);
 				if (fs.existsSync(xQueryPath)) {
-					xQueries[key] = normalizeEndOfLines(fs.promises.readFile(xQueryPath, 'utf-8'));
+					xQueries[key] = normalizeEndOfLines(await fs.promises.readFile(xQueryPath, 'utf-8'));
 				}
 				else {
 					xQueries[key] = null;
@@ -49,7 +49,7 @@ function run () {
 			else {
 				xQueries[key] = normalizeEndOfLines(value);
 			}
-		});
+		}
 
 		return xQueries;
 	}
