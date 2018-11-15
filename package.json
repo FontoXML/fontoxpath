@@ -16,6 +16,7 @@
 		"ci-qt3tests": "nyc --no-clean mocha --require @babel/register test/qt3tests.js",
 		"qt3testsxqueryx": "mocha --require @babel/register test/qt3testsXQueryX.js",
 		"xqutstests": "mocha --require @babel/register test/xqutsTests.js",
+		"ci-xqutstests": "nyc --no-clean mocha --require @babel/register test/xqutsTests.js",
 		"xqutstestsxqueryx": "mocha --require @babel/register test/xqutsTestsXQueryX.js",
 		"coverage": "nyc report --reporter=text-lcov | coveralls"
 	},

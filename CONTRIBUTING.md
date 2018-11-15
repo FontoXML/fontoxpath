@@ -48,7 +48,27 @@ be installed at `./test/assets/QT3TS-master`. The QT3 test set is
 mirrored [here](https://github.com/LeoWoerteler/QT3TS/). I usually use
 the following command to check out the latest test set: `curl -L
 https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz
--C ./test/assets`
+-C ./test/assets`. Running the tests for XQuery Update Facility
+requires a recent version of the XQUTS test set to be installed at
+`./test/assets/XQUTS-master`. There exists a mirror
+[here](https://github.com/LeoWoerteler/XQUTS).
+
+FontoXPath uses XQueryX as a parser format, this can be tested using
+the XQueryX test set which is included in the QT3 test set. To be able
+to run these tests, extract the `xqueryx.zip` file to the
+`test/assets/QT3-master/xqueryx` folder.
+
+In short, execute the following commands on Linux:
+```sh
+ mkdir -p ./test/assets;
+ curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets;
+ curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets;
+ unzip -q test/assets/QT3TS-master/xqueryx.zip -d ./test/assets/QT3TS-master/;
+```
+
+Or on Windows:
+TODO
+
 
 ### Implementing a missing XPath function
 
