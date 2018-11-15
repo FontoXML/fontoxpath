@@ -173,7 +173,7 @@ async function runNormalXPath (script, asXQuery) {
 	for (let item = await it.next(); !item.done; item = await it.next()) {
 		raw.push(item.value instanceof Node ? new XMLSerializer().serializeToString(item.value) : item.value);
 	}
-	resultText.innerText = '[' + raw.map(item => `"${item}"`).join(', ') + ']';
+	resultText.innerText = JSON.stringify(raw, null, '  ');
 }
 
 async function rerunXPath () {
@@ -192,8 +192,6 @@ async function rerunXPath () {
 		astJsonMl.innerText = stringifyJsonMl(ast, 0, 0);
 
 		const document = new Document();
-
-		// const document = new slimdom.Document();
 		document.appendChild(parseNode(document, ast));
 		document.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
 		document.normalize();

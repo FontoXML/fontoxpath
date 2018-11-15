@@ -125,7 +125,7 @@ export default function processProlog (prolog, staticContext) {
 			const prefix = astHelper.getAttribute(param, 'prefix');
 			const localName = astHelper.getTextContent(param);
 
-			if (namespaceURI === null) {
+			if (prefix && namespaceURI === null) {
 				namespaceURI = staticContext.resolveNamespace(prefix || '');
 			}
 			return staticContextLeaf.registerVariable(namespaceURI, localName);
