@@ -174,6 +174,7 @@ async function runNormalXPath (script, asXQuery) {
 		raw.push(item.value instanceof Node ? new XMLSerializer().serializeToString(item.value) : item.value);
 	}
 	resultText.innerText = JSON.stringify(raw, null, '  ');
+	window.hljs.highlightBlock(resultText);
 }
 
 async function rerunXPath () {
@@ -198,6 +199,7 @@ async function rerunXPath () {
 
 		const prettiedXml = indentXml(document);
 		astXml.innerText = prettiedXml;
+		window.hljs.highlightBlock(astXml);
 
 		if (allowXQueryUpdateFacility.checked) {
 			await runUpdatingXQuery(xpath);
