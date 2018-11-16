@@ -604,6 +604,7 @@ function pathExpr (ast, compilationOptions) {
 				stepExpression);
 
 	});
+
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
 	// If an path has no axis steps, we should skip sorting. The path
 	// is probably a chain of filter expressions or lookups
@@ -611,6 +612,14 @@ function pathExpr (ast, compilationOptions) {
 
 	// Directly use expressions which are not path expression
 	if (!requireSorting && steps.length === 1) {
+		return steps[0];
+	}
+
+	// We do not have to sort the result of steps expressions when
+	// they already result to a ordered set
+	if (!isAbsolute &&
+		steps.length === 1 &&
+		steps[0].expectedResultOrder === Expression.RESULT_ORDERINGS.SORTED) {
 		return steps[0];
 	}
 
