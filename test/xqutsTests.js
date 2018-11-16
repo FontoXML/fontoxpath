@@ -288,6 +288,6 @@ describe('xml query update test suite', () => {
 
 	after(() => {
 		console.log(`Writing a log of ${unrunnableTestCases.length}`);
-		testFs.writeFileSync('./test/unrunnableXQUTSTestCases.csv', unrunnableTestCases.join('\n'));
+		testFs.writeFileSync('unrunnableXQUTSTestCases.csv', unrunnableTestCases.join('\n'));
 	});
 });
