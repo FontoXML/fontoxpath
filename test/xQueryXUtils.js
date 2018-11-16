@@ -70,11 +70,12 @@ export function parseAst (document, ast) {
 
 export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests, onActualParsed) {
 	it(testCase, async function () {
-		const xQuery = (await loadXQuery()).replace(/\r/g, '');
+		let xQuery = await loadXQuery();
 		if (!xQuery) {
 			skippableTests.push(`${testCase},XQuery script could not be found`);
 			throw new Error('XQuery script could not be found!');
 		}
+		xQuery = xQuery.replace(/\r/g, '');
 
 		let jsonMl;
 		try {

@@ -1,9 +1,12 @@
 id-comma-expr-01,Parse error
 id-comma-expr-010,Parse error
+id-comma-expr-011-test,XQuery script could not be found
 id-comma-expr-011,Parse error
+id-comma-expr-012-test,XQuery script could not be found
 id-comma-expr-012,Parse error
 id-comma-expr-013,Parse error
 id-comma-expr-014,Parse error
+id-comma-expr-018-test,XQuery script could not be found
 id-comma-expr-02,Parse error
 id-comma-expr-022,Parse error
 id-comma-expr-023,Parse error
@@ -56,6 +59,7 @@ id-conditional-expr-031,Parse error
 id-conditional-expr-032,Parse error
 id-conditional-expr-033,Parse error
 id-conditional-expr-034,Parse error
+id-conditional-expr-035-test,XQuery script could not be found
 id-conditional-expr-035,Parse error
 id-conditional-expr-04,Parse error
 id-conditional-expr-05,Parse error
@@ -129,6 +133,7 @@ id-function-declaration-01,Parse error
 id-function-declaration-010,Parse error
 id-function-declaration-011,Parse error
 id-function-declaration-012,Parse error
+id-function-declaration-013-test,XQuery script could not be found
 id-function-declaration-013,Parse error
 id-function-declaration-014,Parse error
 id-function-declaration-015,Parse error
@@ -339,6 +344,7 @@ id-replace-expr-011,Parse error
 id-replace-expr-012,Parse error
 id-replace-expr-017,Parse error
 id-replace-expr-018,Parse error
+id-replace-expr-022-test,XQuery script could not be found
 id-replace-expr-045-no-inherit,Parse error
 id-replace-expr-045,Parse error
 statictyp-xqupd-01,Parse error
@@ -455,6 +461,7 @@ id-transform-expr-09,Parse error
 id-typeswitch-expr-01,Parse error
 id-typeswitch-expr-010,Parse error
 id-typeswitch-expr-011,Parse error
+id-typeswitch-expr-012-test,XQuery script could not be found
 id-typeswitch-expr-012,Parse error
 id-typeswitch-expr-013,Parse error
 id-typeswitch-expr-014,Parse error
@@ -470,6 +477,7 @@ id-typeswitch-expr-022,Parse error
 id-typeswitch-expr-023,Parse error
 id-typeswitch-expr-024,Parse error
 id-typeswitch-expr-025,Parse error
+id-typeswitch-expr-026-test,XQuery script could not be found
 id-typeswitch-expr-026,Parse error
 id-typeswitch-expr-027,Parse error
 id-typeswitch-expr-028,Parse error
@@ -485,6 +493,7 @@ id-typeswitch-expr-036,Parse error
 id-typeswitch-expr-037,Parse error
 id-typeswitch-expr-038,Parse error
 id-typeswitch-expr-04,Parse error
+id-typeswitch-expr-05-test,XQuery script could not be found
 id-typeswitch-expr-05,Parse error
 id-typeswitch-expr-06,Parse error
 id-typeswitch-expr-07,Parse error
@@ -533,7 +542,9 @@ applyUpdates-015,Parse error
 applyUpdates-016,Parse error
 applyUpdates-021,Parse error
 applyUpdates-022,Parse error
+applyUpdates-023-test,XQuery script could not be found
 applyUpdates-023,Parse error
+applyUpdates-024-test,XQuery script could not be found
 applyUpdates-024,Parse error
 applyUpdates-025,Parse error
 applyUpdates-026,Parse error
@@ -556,7 +567,9 @@ setToUntyped-008,Parse error
 setToUntyped-009,Parse error
 setToUntyped-010,Parse error
 address-book-q1,Parse error
+namespace-q1-test,XQuery script could not be found
 namespaces-q1,Parse error
+nil-q1-test,XQuery script could not be found
 nil-q1,Parse error
 parts-q1,Parse error
 parts-q2,Parse error
@@ -570,6 +583,8 @@ relational-data-q3,Parse error
 relational-data-q4,Parse error
 relational-data-q5-1,Parse error
 relational-data-q5-2,Parse error
+relational-data-q5-test,XQuery script could not be found
+relational-data-q5,XQuery script could not be found
 relational-data-q6-1,Parse error
 relational-data-q6-2,Parse error
 relational-data-q7,Parse error
