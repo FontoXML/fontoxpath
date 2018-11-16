@@ -173,7 +173,7 @@ if (supportsAsyncCompilation()) {
 							ast,
 							['mainModule', 'queryBody', '*']
 						)));
-						const selector = compileAstToExpression(queryBody, { allowXQuery: false });
+						const selector = compileAstToExpression(queryBody, { allowXQuery: false, allowUpdating: false });
 						resolve(selector);
 					})
 					.catch(reject);
@@ -212,7 +212,7 @@ if (supportsAsyncCompilation()) {
                                 return;
                             }
 							const queryBody = /** @type {!Array} */ (astHelper.followPath(xPathAndAst['ast'], ['mainModule', 'queryBody', '*']));
-                            resolve(compileAstToExpression(queryBody, { allowXQuery: false }));
+                            resolve(compileAstToExpression(queryBody, { allowXQuery: false, allowUpdating: false }));
                         };
 
                         request.onerror = function event (evt) {
@@ -229,7 +229,7 @@ else {
 	createExpressionFromXPathAsync = xPathString => new Promise(resolve => {
 		const ast = parseExpression(xPathString, { allowXQuery: false });
 		const queryBody = /** @type {!Array} */ (astHelper.followPath(ast, ['mainModule', 'queryBody', '*']));
-		resolve(compileAstToExpression(queryBody, { allowXQuery: false }));
+		resolve(compileAstToExpression(queryBody, { allowXQuery: false, allowUpdating: false }));
 	});
 }
 

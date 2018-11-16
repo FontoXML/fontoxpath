@@ -19,6 +19,12 @@ export class UpdatingExpressionResult {
  * @abstract
  */
 class PossiblyUpdatingExpression extends Expression {
+	constructor (...args) {
+		super(...args);
+
+		this.isUpdating = this._childExpressions.some(childExpression => childExpression.isUpdating);
+	}
+
 	/**
 	 * @abstract
 	 *
@@ -51,7 +57,7 @@ class PossiblyUpdatingExpression extends Expression {
 			dynamicContext,
 			executionParameters,
 			this._childExpressions.map(expr => {
-				if (!(expr instanceof UpdatingExpression)) {
+				if (!expr.isUpdating) {
 					return innerDynamicContext => expr.evaluate(innerDynamicContext, executionParameters);
 				}
 				return innerDynamicContext => {
@@ -74,8 +80,9 @@ class PossiblyUpdatingExpression extends Expression {
 								values = attempt.value.xdmValue;
 							}
 
-							if (i > values.length) {
+							if (i >= values.length) {
 								done = true;
+								return DONE_TOKEN;
 							}
 
 							return ready(values[i++]);

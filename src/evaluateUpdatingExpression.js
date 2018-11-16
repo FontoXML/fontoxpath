@@ -60,15 +60,18 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 		updateScript,
 		{
 			allowXQuery: true,
-			allowXQueryUpdateFacility: true,
+			allowUpdating: true,
 			disableCache: false
 		},
 		namespaceResolver,
 		variables,
 		moduleImports)));
 
-	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
+	if (!compiledExpression.isUpdating) {
+		throw new Error(`The expression ${updateScript} is not updating and can not be executed as an updating expression.`);
+	}
 
+	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
 
 	/**
 	 * @type {INodesFactory}

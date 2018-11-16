@@ -1,15 +1,12 @@
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Expression from '../Expression';
 import Sequence from '../dataTypes/Sequence';
-import { notReady } from '../util/iterators';
 
-/**
- * @extends {Expression}
- */
-class IfExpression extends Expression {
+class IfExpression extends PossiblyUpdatingExpression {
 	/**
 	 * @param  {!Expression}  testExpression
-	 * @param  {!Expression}  thenExpression
-	 * @param  {!Expression}  elseExpression
+	 * @param  {!PossiblyUpdatingExpression}  thenExpression
+	 * @param  {!PossiblyUpdatingExpression}  elseExpression
 	 */
 	constructor (testExpression, thenExpression, elseExpression) {
 		var specificity = testExpression.specificity
@@ -20,36 +17,33 @@ class IfExpression extends Expression {
 			[testExpression, thenExpression, elseExpression],
 			{
 				resultOrder: thenExpression.expectedResultOrder === elseExpression.expectedResultOrder ?
-					thenExpression.expectedResultOrder : Expression.RESULT_ORDERINGS.UNSORTED,
+					thenExpression.expectedResultOrder : PossiblyUpdatingExpression.RESULT_ORDERINGS.UNSORTED,
 				peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
 				subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree,
 				canBeStaticallyEvaluated: testExpression.canBeStaticallyEvaluated && thenExpression.canBeStaticallyEvaluated && elseExpression.canBeStaticallyEvaluated
 			});
-
-		this._testExpression = testExpression;
-		this._thenExpression = thenExpression;
-		this._elseExpression = elseExpression;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	performFunctionalEvaluation (dynamicContext, _executionParameters, sequenceCallbacks) {
 		let resultIterator = null;
-		const ifExpressionResultSequence = this._testExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
+		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
 		return new Sequence({
 			next: () => {
 				if (!resultIterator) {
 					const ifExpressionResult = ifExpressionResultSequence.tryGetEffectiveBooleanValue();
 
 					if (!ifExpressionResult.ready) {
-						return notReady(ifExpressionResult.promise);
+						return ifExpressionResult;
 					}
 					const resultSequence = ifExpressionResult.value ?
-						this._thenExpression.evaluateMaybeStatically(dynamicContext, executionParameters) :
-						this._elseExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
+						sequenceCallbacks[1](dynamicContext) :
+						sequenceCallbacks[2](dynamicContext);
 					resultIterator = resultSequence.value();
 				}
 				return resultIterator.next();
 			}
 		});
+
 	}
 }
 

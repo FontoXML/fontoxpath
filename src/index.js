@@ -28,7 +28,7 @@ function parseXPath (xpathString) {
 		throw new Error('Library modules do not have a specificity');
 	}
 
-	return compileAstToExpression(queryBody, { allowXQuery: false });
+	return compileAstToExpression(queryBody, { allowXQuery: false, allowUpdating: false });
 }
 
 function getBucketForSelector (xpathString) {

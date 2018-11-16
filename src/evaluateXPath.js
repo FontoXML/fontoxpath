@@ -181,6 +181,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 
 	const compilationOptions = {
 		allowXQuery: options.language === 'XQuery3.1',
+		allowUpdating: false,
 		disableCache: options.disableCache
 	};
 

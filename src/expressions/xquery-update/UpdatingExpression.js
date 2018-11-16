@@ -6,6 +6,11 @@ import ExecutionParameters from '../ExecutionParameters';
  * @abstract
  */
 class UpdatingExpression extends Expression {
+	constructor (...args) {
+		super(...args);
+
+		this.isUpdating = true;
+	}
 	evaluate (_dynamicContext, _executionParameters) {
 		throw new Error('Can not execute an updating expression without catching the pending updates');
 	}

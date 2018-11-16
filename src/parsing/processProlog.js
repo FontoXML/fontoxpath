@@ -129,7 +129,7 @@ export default function processProlog (prolog, staticContext) {
 				`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${paramTypes.length} has already been declared.`);
 		}
 
-		const compiledFunctionBody = compileAstToExpression(body, { allowXQuery: true });
+		const compiledFunctionBody = compileAstToExpression(body, { allowXQuery: true, allowUpdating: false });
 
 		const staticContextLeaf = new StaticContext(staticContext);
 		const parameterBindingNames = paramNames.map(param => {

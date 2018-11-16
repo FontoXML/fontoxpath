@@ -16,7 +16,7 @@ import {
 
 /**
  * @param  {string}  xpathString
- * @param  {!{allowXQuery: boolean, disableCache: boolean}}  compilationOptions
+ * @param  {!{allowXQuery: boolean, disableCache: boolean, allowUpdating: boolean}}  compilationOptions
  * @param  {function(string):?string} namespaceResolver
  * @param  {!Object}  variables
  * @param  {!Object} moduleImports

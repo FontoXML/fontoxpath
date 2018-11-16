@@ -46,6 +46,8 @@ class Expression {
 
 		this._childExpressions = childExpressions;
 
+		this.isUpdating = false;;
+
 		/**
 		 * Eagerly evaluate
 		 *

@@ -22,7 +22,6 @@ class ChildAxis extends Expression {
 			});
 
 		this._childExpression = childExpression;
-
 	}
 
 	evaluate (dynamicContext, executionParameters) {

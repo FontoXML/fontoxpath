@@ -1,4 +1,5 @@
 import Expression from '../expressions/Expression';
+import PossiblyUpdatingExpression from '../expressions/PossiblyUpdatingExpression';
 import TestAbstractExpression from '../expressions/tests/TestAbstractExpression';
 
 import astHelper from './astHelper';
@@ -54,9 +55,25 @@ import PIConstructor from '../expressions/xquery/PIConstructor';
 
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 
+const COMPILATION_OPTIONS = {
+	XPATH_MODE: { allowXQuery: false, allowUpdating: false },
+	XQUERY_MODE: { allowXQuery: true, allowUpdating: false },
+	XQUERY_UPDATING_MODE: { allowXQuery: true, allowUpdating: true }
+};
+
+function disallowUpdating (compilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		return COMPILATION_OPTIONS.XPATH_MODE;
+	}
+	if (!compilationOptions.allowUpdating) {
+		return COMPILATION_OPTIONS.XQUERY_MODE;
+	}
+	return COMPILATION_OPTIONS.XQUERY_UPDATING_MODE;
+}
+
 /**
- * @param   {Array<*>}                 ast
- * @param   {!{allowXQuery: boolean}}  compilationOptions
+ * @param   {Array<*>}                                         ast
+ * @param   {!{allowXQuery: boolean, allowUpdating: boolean}}  compilationOptions
  * @return  {!Expression}
  */
 function compile (ast, compilationOptions) {
@@ -231,7 +248,8 @@ function anyItemType (ast, compilationOptions) {
 
 function arrayConstructor (ast, compilationOptions) {
 	const arrConstructor = astHelper.getFirstChild(ast, '*');
-	const members = astHelper.getChildren(arrConstructor, 'arrayElem').map(arrayElem => compile(astHelper.getFirstChild(arrayElem, '*'), compilationOptions));
+	const members = astHelper.getChildren(arrConstructor, 'arrayElem')
+		.map(arrayElem => compile(astHelper.getFirstChild(arrayElem, '*'), disallowUpdating(compilationOptions)));
 	switch (arrConstructor[0]) {
 		case 'curlyArray':
 			return new CurlyArrayConstructor(members);
@@ -246,28 +264,28 @@ function mapConstructor (ast, compilationOptions) {
 	return new MapConstructor(
 		astHelper.getChildren(ast, 'mapConstructorEntry')
 			.map(keyValuePair => ({
-				key: compile(astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']), compilationOptions),
-				value: compile(astHelper.followPath(keyValuePair, ['mapValueExpr', '*']), compilationOptions)
+				key: compile(astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']), disallowUpdating(compilationOptions)),
+				value: compile(astHelper.followPath(keyValuePair, ['mapValueExpr', '*']), disallowUpdating(compilationOptions))
 			})));
 }
 
 function andOp (ast, compilationOptions) {
 	return new AndOperator([
-		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], compilationOptions),
-		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], compilationOptions)
+		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], disallowUpdating(compilationOptions)),
+		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], disallowUpdating(compilationOptions))
 	]);
 }
 
 function binaryOperator (ast, compilationOptions) {
 	const kind = ast[0];
-	const a = compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions);
-	const b = compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions);
+	const a = compile(astHelper.followPath(ast, ['firstOperand', '*']), disallowUpdating(compilationOptions));
+	const b = compile(astHelper.followPath(ast, ['secondOperand', '*']), disallowUpdating(compilationOptions));
 
 	return new BinaryOperator(kind, a, b);
 }
 
 function castAs (ast, compilationOptions) {
-	const expression = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'), compilationOptions);
+	const expression = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'), disallowUpdating(compilationOptions));
 
 	const singleType = astHelper.getFirstChild(ast, 'singleType');
 	const targetType = astHelper.getQName(astHelper.getFirstChild(singleType, 'atomicType'));
@@ -277,7 +295,7 @@ function castAs (ast, compilationOptions) {
 }
 
 function castableAs (ast, compilationOptions) {
-	const expression = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'), compilationOptions);
+	const expression = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'), disallowUpdating(compilationOptions));
 
 	const singleType = astHelper.getFirstChild(ast, 'singleType');
 	const targetType = astHelper.getQName(astHelper.getFirstChild(singleType, 'atomicType'));
@@ -290,15 +308,15 @@ function castableAs (ast, compilationOptions) {
 function compare (ast, compilationOptions) {
 	return new Compare(
 		ast[0],
-		compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions),
-		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions));
+		compile(astHelper.followPath(ast, ['firstOperand', '*']), disallowUpdating(compilationOptions)),
+		compile(astHelper.followPath(ast, ['secondOperand', '*']), disallowUpdating(compilationOptions)));
 }
 
 function IfThenElseExpr (ast, compilationOptions) {
 	return new IfExpression(
-		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'), compilationOptions),
-		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'), compilationOptions),
-		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'), compilationOptions));
+		compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'), disallowUpdating(compilationOptions)),
+		/** @type {!PossiblyUpdatingExpression} */(compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'), compilationOptions)),
+		/** @type {!PossiblyUpdatingExpression} */(compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'), compilationOptions)));
 }
 
 function flworExpression (ast, compilationOptions) {
@@ -321,7 +339,7 @@ function flworExpression (ast, compilationOptions) {
 					const expression = 	astHelper.followPath(forClauseItem, ['forExpr', '*']);
 					return new ForExpression(
 						astHelper.getQName(astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])),
-						compile(expression, compilationOptions),
+						compile(expression, disallowUpdating(compilationOptions)),
 						returnExpr);
 				},
 				compile(returnClauseExpression, compilationOptions));
@@ -335,7 +353,7 @@ function flworExpression (ast, compilationOptions) {
 					const expression = 	astHelper.followPath(letClauseItem, ['letExpr', '*']);
 					return new LetExpression(
 						astHelper.getQName(astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])),
-						compile(expression, compilationOptions),
+						compile(expression, disallowUpdating(compilationOptions)),
 						returnExpr);
 				},
 				compile(returnClauseExpression, compilationOptions));
@@ -372,7 +390,7 @@ function arrowExpr (ast, compilationOptions) {
 
 		const func = parts[i][0] === 'EQName' ?
 			new NamedFunctionRef(astHelper.getQName(parts[i]), args.length) :
-			compile(parts[i], compilationOptions);
+			compile(parts[i], disallowUpdating(compilationOptions));
 		args = [new FunctionCall(func, args)];
 
 	}
@@ -455,7 +473,7 @@ function instanceOf (ast, compilationOptions) {
 
 	return new InstanceOfOperator(
 		expression,
-		compile(sequenceType, compilationOptions),
+		compile(sequenceType, disallowUpdating(compilationOptions)),
 		occurrence ? astHelper.getTextContent(occurrence) : '');
 }
 
@@ -493,8 +511,8 @@ function anyKindTest (ast, compilationOptions) {
 
 function orOp (ast, compilationOptions) {
 	return new OrOperator([
-		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], compilationOptions),
-		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], compilationOptions)
+		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], disallowUpdating(compilationOptions)),
+		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], disallowUpdating(compilationOptions))
 	]);
 }
 
@@ -531,49 +549,50 @@ function pathExpr (ast, compilationOptions) {
 				'Wildcard'
 			]);
 
+			const testExpression = compileTest(test, disallowUpdating(compilationOptions));
 			switch (astHelper.getTextContent(axis)) {
 				case 'ancestor':
-					stepExpression = new AncestorAxis(compileTest(test, compilationOptions), { inclusive: false });
+					stepExpression = new AncestorAxis(testExpression, { inclusive: false });
 					break;
 				case 'ancestor-or-self':
-					stepExpression = new AncestorAxis(compileTest(test, compilationOptions), { inclusive: true });
+					stepExpression = new AncestorAxis(testExpression, { inclusive: true });
 					break;
 				case 'attribute':
-					stepExpression = new AttributeAxis(compileTest(test, compilationOptions));
+					stepExpression = new AttributeAxis(testExpression);
 					break;
 				case 'child':
-					stepExpression = new ChildAxis(compileTest(test, compilationOptions));
+					stepExpression = new ChildAxis(testExpression);
 					break;
 				case 'descendant':
-					stepExpression = new DescendantAxis(compileTest(test, compilationOptions), { inclusive: false });
+					stepExpression = new DescendantAxis(testExpression, { inclusive: false });
 					break;
 				case 'descendant-or-self':
-					stepExpression = new DescendantAxis(compileTest(test, compilationOptions), { inclusive: true });
+					stepExpression = new DescendantAxis(testExpression, { inclusive: true });
 					break;
 				case 'parent':
-					stepExpression = new ParentAxis(compileTest(test, compilationOptions));
+					stepExpression = new ParentAxis(testExpression);
 					break;
 				case 'following-sibling':
-					stepExpression = new FollowingSiblingAxis(compileTest(test, compilationOptions));
+					stepExpression = new FollowingSiblingAxis(testExpression);
 					break;
 				case 'preceding-sibling':
-					stepExpression = new PrecedingSiblingAxis(compileTest(test, compilationOptions));
+					stepExpression = new PrecedingSiblingAxis(testExpression);
 					break;
 				case 'following':
-					stepExpression = new FollowingAxis(compileTest(test, compilationOptions));
+					stepExpression = new FollowingAxis(testExpression);
 					break;
 				case 'preceding':
-					stepExpression = new PrecedingAxis(compileTest(test, compilationOptions));
+					stepExpression = new PrecedingAxis(testExpression);
 					break;
 				case 'self':
-					stepExpression = new SelfExpression(compileTest(test, compilationOptions));
+					stepExpression = new SelfExpression(testExpression);
 					break;
 			}
 		}
 		else {
 			// We must be a filter expression
 			const filterExpr = astHelper.followPath(step, ['filterExpr', '*']);
-			stepExpression = compile(filterExpr, compilationOptions);
+			stepExpression = compile(filterExpr, disallowUpdating(compilationOptions));
 		}
 
 		if (!predicates) {
@@ -581,7 +600,7 @@ function pathExpr (ast, compilationOptions) {
 		}
 		return astHelper.getChildren(predicates, '*')
 			.reduce(
-				(innerStep, predicate) => new Filter(innerStep, compile(predicate, compilationOptions)),
+				(innerStep, predicate) => new Filter(innerStep, compile(predicate, disallowUpdating(compilationOptions))),
 				stepExpression);
 
 	});
@@ -605,7 +624,7 @@ function pathExpr (ast, compilationOptions) {
 	return pathExpr;
 }
 
-function piTest (ast, compilationOptions) {
+function piTest (ast, _compilationOptions) {
 	const piTarget = astHelper.getFirstChild(ast, 'piTarget');
 	if (piTarget) {
 		return new PITest(astHelper.getTextContent(piTarget));
@@ -613,15 +632,15 @@ function piTest (ast, compilationOptions) {
 	return new KindTest(7);
 }
 
-function commentTest (ast, compilationOptions) {
+function commentTest (_ast, _compilationOptions) {
 	return new KindTest(8);
 }
 
-function documentTest (ast, compilationOptions) {
+function documentTest (_ast, _compilationOptions) {
 	return new KindTest(9);
 }
 
-function elementTest (ast, compilationOptions) {
+function elementTest (ast, _compilationOptions) {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
 	if (!elementName || star) {
@@ -630,7 +649,7 @@ function elementTest (ast, compilationOptions) {
 	return new NameTest(astHelper.getQName(astHelper.getFirstChild(elementName, 'QName')), { kind: 1 });
 }
 
-function attributeTest (ast, compilationOptions) {
+function attributeTest (ast, _compilationOptions) {
 	const attributeName = astHelper.getFirstChild(ast, 'attributeName');
 	const star = attributeName && astHelper.getFirstChild(attributeName, 'star');
 	if (!attributeName || star) {
@@ -651,10 +670,10 @@ function quantified (ast, compilationOptions) {
 			const name = astHelper.getQName(astHelper.followPath(inClause, ['typedVariableBinding', 'varName']));
 			const sourceExpr = astHelper.followPath(inClause, ['sourceExpr', '*']);
 
-			return { name, sourceExpr: compile(sourceExpr, compilationOptions) };
+			return { name, sourceExpr: compile(sourceExpr, disallowUpdating(compilationOptions)) };
 		});
 
-	return new QuantifiedExpression(quantifier, quantifierInClauses, compile(predicateExpr, compilationOptions));
+	return new QuantifiedExpression(quantifier, quantifierInClauses, compile(predicateExpr, disallowUpdating(compilationOptions)));
 }
 
 function sequence (ast, compilationOptions) {
@@ -665,9 +684,9 @@ function simpleMap (ast, compilationOptions) {
 	return astHelper.getChildren(ast, '*')
 		.reduce((lhs, rhs) => {
 			if (lhs === null) {
-				return compile(rhs, compilationOptions);
+				return compile(rhs, disallowUpdating(compilationOptions));
 			}
-			return new SimpleMapOperator(lhs, compile(rhs, compilationOptions));
+			return new SimpleMapOperator(lhs, compile(rhs, disallowUpdating(compilationOptions)));
 		}, null);
 }
 
@@ -683,7 +702,7 @@ function stringConcatenateOp (ast, compilationOptions) {
 				localName: 'concat'
 			},
 			args.length),
-		args.map(arg => compile(arg, compilationOptions)));
+		args.map(arg => compile(arg, disallowUpdating(compilationOptions))));
 }
 
 function rangeSequenceExpr (ast, compilationOptions) {
@@ -698,7 +717,7 @@ function rangeSequenceExpr (ast, compilationOptions) {
 				localName: 'to'
 			},
 			args.length),
-		args.map(arg => compile(arg, compilationOptions)));
+		args.map(arg => compile(arg, disallowUpdating(compilationOptions))));
 }
 
 function typeTest (ast, _compilationOptions) {
@@ -726,16 +745,16 @@ function unaryMinus (ast, compilationOptions) {
 
 function unionOp (ast, compilationOptions) {
 	return new Union([
-		compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions),
-		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions)
+		compile(astHelper.followPath(ast, ['firstOperand', '*']), disallowUpdating(compilationOptions)),
+		compile(astHelper.followPath(ast, ['secondOperand', '*']), disallowUpdating(compilationOptions))
 	]);
 }
 
 function intersectExcept (ast, compilationOptions) {
 	return new IntersectExcept(
 		ast[0],
-		compile(astHelper.followPath(ast, ['firstOperand', '*']), compilationOptions),
-		compile(astHelper.followPath(ast, ['secondOperand', '*']), compilationOptions)
+		compile(astHelper.followPath(ast, ['firstOperand', '*']), disallowUpdating(compilationOptions)),
+		compile(astHelper.followPath(ast, ['secondOperand', '*']), disallowUpdating(compilationOptions))
 	);
 }
 
@@ -744,7 +763,7 @@ function varRef (ast, _compilationOptions) {
 	return new VarRef(prefix, namespaceURI, localName );
 }
 
-function wildcard (ast, compilationOptions) {
+function wildcard (ast, _compilationOptions) {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return new NameTest({
 			namespaceURI: null,
@@ -790,7 +809,8 @@ function dirElementConstructor (ast, compilationOptions) {
 	const attList = astHelper.getFirstChild(ast, 'attributeList');
 	const attributes = attList ? astHelper
 		.getChildren(attList, 'attributeConstructor')
-		.map(attr => compile(attr, compilationOptions)) : [];
+		.map(attr => compile(attr, disallowUpdating(compilationOptions))) : [];
+
 	const namespaceDecls = attList ? astHelper
 		.getChildren(attList, 'namespaceDeclaration')
 		.map(namespaceDecl => {
@@ -803,7 +823,7 @@ function dirElementConstructor (ast, compilationOptions) {
 
 	const content = astHelper.getFirstChild(ast, 'elementContent');
 	const contentExpressions = content ? astHelper.getChildren(content, '*')
-		.map(content => compile(content, compilationOptions)) : [];
+		.map(content => compile(content, disallowUpdating(compilationOptions))) : [];
 
 	return new DirElementConstructor(
 		name,
@@ -812,7 +832,7 @@ function dirElementConstructor (ast, compilationOptions) {
 		contentExpressions);
 }
 
-function CDataSection (ast, compilationOptions) {
+function CDataSection (ast, _compilationOptions) {
 	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
 	return new Literal(astHelper.getTextContent(ast), 'xs:string');
 }
@@ -828,7 +848,7 @@ function attributeConstructor (ast, compilationOptions) {
 	const attrValueExpressions = attrValueExprElement ?
 		astHelper
 			.getChildren(attrValueExprElement, '*')
-			.map(expr => compile(expr, compilationOptions)) :
+			.map(expr => compile(expr, disallowUpdating(compilationOptions))) :
 		null;
 	return new AttributeConstructor(attrName, {
 		value: attrValue,
@@ -841,7 +861,7 @@ function computedCommentConstructor (ast, compilationOptions) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 	const argExpr = astHelper.getFirstChild(ast, 'argExpr');
-	const expr = argExpr ? compile(astHelper.getFirstChild(argExpr, '*'), compilationOptions) : null;
+	const expr = argExpr ? compile(astHelper.getFirstChild(argExpr, '*'), disallowUpdating(compilationOptions)) : null;
 	return new CommentConstructor(expr);
 }
 
@@ -857,12 +877,12 @@ function computedPIConstructor (ast, compilationOptions) {
 	return new PIConstructor(
 		{
 			targetExpr: targetExpr ?
-				compile(astHelper.getFirstChild(targetExpr, '*'), compilationOptions) :
+				compile(astHelper.getFirstChild(targetExpr, '*'), disallowUpdating(compilationOptions)) :
 				null,
 			targetValue: target ? astHelper.getTextContent(target) : null
 		},
 		piValueExpr ?
-			compile(astHelper.getFirstChild(piValueExpr, '*'), compilationOptions) :
+			compile(astHelper.getFirstChild(piValueExpr, '*'), disallowUpdating(compilationOptions)) :
 			new SequenceOperator([])
 	);
 }
@@ -876,7 +896,7 @@ function replaceExpression (ast, compilationOptions) {
 
 /**
  * @param   {!Array<*>}  xPathAst
- * @param   {{allowXQuery: boolean}} compilationOptions
+ * @param   {{allowXQuery: boolean, allowUpdating: boolean}} compilationOptions
  * @return  {!Expression}
  */
 export default function (xPathAst, compilationOptions) {

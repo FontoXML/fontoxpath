@@ -45,10 +45,9 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 				delete variables['.'];
 
 				const ast = parseExpression(queryString, { allowXQuery: false });
-				const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 				const queryBodyContents = /** @type {!Array} */ (astHelper.followPath(ast, ['mainModule', 'queryBody', '*']));
 
-				const selector = compileAstToExpression(queryBodyContents, { allowXQuery: false });
+				const selector = compileAstToExpression(queryBodyContents, { allowXQuery: false, allowUpdating: false });
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 					prefix => staticContext.resolveNamespace(prefix),
 					Object.keys(variables).reduce(
