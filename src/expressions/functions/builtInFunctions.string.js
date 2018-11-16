@@ -13,7 +13,7 @@ import DynamicContext from '../DynamicContext';
 
 import builtInNumericFunctions from './builtInFunctions.numeric';
 
-import FunctionDefinitionType from'./FunctionDefinitionType';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnRound = builtInNumericFunctions.functions.round;
 
@@ -586,7 +586,7 @@ export default {
 	],
 	functions: {
 		concat: fnConcat,
-		endsWith: fnStartsWith,
+		endsWith: fnEndsWith,
 		normalizeSpace: fnNormalizeSpace,
 		startsWith: fnStartsWith,
 		string: fnString,

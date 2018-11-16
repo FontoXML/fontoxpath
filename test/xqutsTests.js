@@ -11,10 +11,10 @@ import {
 } from 'fontoxpath';
 import { parse } from 'fontoxpath/parsing/xPathParser';
 import { parseAst } from './xQueryXUtils';
-import fs from 'fs';
 import path from 'path';
 import mocha from 'mocha';
 import { sync, slimdom } from 'slimdom-sax-parser';
+import testFs from 'test-helpers/testFs';
 
 global.atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
@@ -41,8 +41,7 @@ if (typeof mocha !== 'undefined' && mocha.timeout) {
 	mocha.timeout(60000);
 }
 
-const unrunnableTestCases = fs.readFileSync(path.join('test', 'unrunnableXQUTSTestCases.csv'), 'utf-8')
-	.split(/\r?\n/).filter(row => row);
+const unrunnableTestCases = testFs.readFileSync('unrunnableXQUTSTestCases.csv').split(/\r?\n/).filter(row => row);
 const unrunnableTestCasesByName = unrunnableTestCases
 	.map(testCase => testCase.split(',')[0]);
 
@@ -55,7 +54,7 @@ function getFile (filename) {
 	if (cachedFiles[filename]) {
 		return cachedFiles[filename];
 	}
-	const content = fs.readFileSync(path.join('test', 'assets', 'XQUTS', filename), 'utf-8');
+	const content = testFs.readFileSync(path.join('XQUTS', filename));
 	return cachedFiles[filename] = content.replace(/\r\n/g, '\n');
 }
 
@@ -289,6 +288,6 @@ describe('xml query update test suite', () => {
 
 	after(() => {
 		console.log(`Writing a log of ${unrunnableTestCases.length}`);
-		fs.writeFileSync('./test/unrunnableXQUTSTestCases.csv', unrunnableTestCases.join('\n'));
+		testFs.writeFileSync('./test/unrunnableXQUTSTestCases.csv', unrunnableTestCases.join('\n'));
 	});
 });

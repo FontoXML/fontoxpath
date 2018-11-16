@@ -1,5 +1,7 @@
 import {
-	evaluateXPathToBoolean
+	evaluateXPath,
+	evaluateXPathToBoolean,
+	evaluateXPathToNodes
 } from 'fontoxpath';
 import { parse } from 'fontoxpath/parsing/xPathParser';
 import chai from 'chai';
@@ -68,7 +70,7 @@ export function parseAst (document, ast) {
 
 export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests, onActualParsed) {
 	it(testCase, async function () {
-		const xQuery = await loadXQuery();
+		const xQuery = (await loadXQuery()).replace(/\r/g, '');
 		if (!xQuery) {
 			skippableTests.push(`${testCase},XQuery script could not be found`);
 			throw new Error('XQuery script could not be found!');
@@ -91,7 +93,6 @@ export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests
 			this.skip();
 		}
 
-		const rawFile = (await loadXQueryX()).replace(/\n\s*</g, '<').replace(/\r/g, '');
 		const actual = new slimdom.Document();
 		try {
 			actual.appendChild(parseAst(actual, jsonMl));
@@ -105,11 +106,19 @@ export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests
 
 		let expected;
 		try {
+			const rawFile = (await loadXQueryX()).replace(/\r/g, '');
 			expected = sync(rawFile);
 		}
 		catch (e) {
 			skippableTests.push(`${testCase},Expected XML could not be parsed`);
 			throw e;
+		}
+		const nonSignificantWhitespace = evaluateXPathToNodes(
+			'//*/text()[starts-with(., "&#xA;") and normalize-space(.)=""]',
+			expected, null, null,
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE });
+		for (const node of nonSignificantWhitespace) {
+			node.parentNode.removeChild(node);
 		}
 
 		// Compare contents as a quick fail. Use

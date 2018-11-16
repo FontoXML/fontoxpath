@@ -10,12 +10,10 @@ import {
 	registerXQueryModule
 } from 'fontoxpath';
 
-import fs from 'fs';
+import testFs from 'test-helpers/testFs';
 
 import mocha from 'mocha';
 import { sync, slimdom } from 'slimdom-sax-parser';
-
-const context = what => fs.readFileSync(`test/assets/${what}`, 'utf-8');
 
 global.atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
@@ -37,21 +35,21 @@ const parser = {
 	}
 };
 
-let unrunnableTestCasesByName;
 let shouldRunTestByName;
 
 const indexOfGrep = process.argv.indexOf('--grep');
 if (indexOfGrep >= 0) {
 	const [greppedTestsetName] = process.argv[indexOfGrep + 1].split('~');
 	shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
-} else {
-	shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
+}
+else {
+	shouldRunTestByName = testFs.readFileSync('runnableTestSets.csv')
 		.split(/\r?\n/)
 		.map(line=>line.split(','))
 		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 }
-const unrunnableTestCases = fs.readFileSync('test/unrunnableTestCases.csv', 'utf-8');
-unrunnableTestCasesByName = unrunnableTestCases
+const unrunnableTestCases = testFs.readFileSync('unrunnableTestCases.csv');
+const unrunnableTestCasesByName = unrunnableTestCases
 	.split(/\r?\n/)
 	.map(line => line.split(','))
 	.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
@@ -73,7 +71,7 @@ function getFile (fileName) {
 		return instantiatedDocumentByAbsolutePath[fileName];
 	}
 
-	let content = context(`./QT3TS/${fileName}`).replace(/\r\n/g, '\n');
+	let content = testFs.readFileSync(`QT3TS/${fileName}`).replace(/\r\n/g, '\n');
 	if (fileName.endsWith('.out')) {
 		if (content.endsWith('\n')) {
 			content = content.slice(0, -1);
@@ -351,6 +349,6 @@ describe('qt3 test set', () => {
 
 	after(() => {
 		console.log(`Writing a log of ${log.split('\n').length}`);
-		fs.writeFileSync('./test/unrunnableTestCases.csv', log);
+		testFs.writeFileSync('unrunnableTestCases.csv', log);
 	});
 });

@@ -1,20 +1,12 @@
-import fs from 'fs';
 import path from 'path';
 import { buildTestCase } from './xQueryXUtils';
-
-if (!fs.promises) {
-	fs.promises = {
-		readFile: fs.readFileSync
-	};
-}
+import testFs from 'test-helpers/testFs';
 
 function run () {
-	const failingTestCSVPath = path.join('test', 'failingXQUTSXQueryXTestNames.csv');
-	const skippableTests = fs.readFileSync(failingTestCSVPath, 'utf-8')
-		.split(/\r?\n/);
+	const skippableTests = testFs.readFileSync('failingXQUTSXQueryXTestNames.csv').split(/\r?\n/);
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
-	const baseDir = path.join('test', 'assets', 'XQUTS', 'Queries');
+	const baseDir = path.join('XQUTS', 'Queries');
 
 	function normalizeEndOfLines (xpathString) {
 		// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
@@ -24,9 +16,9 @@ function run () {
 	function buildTestCases (testPath) {
 		const xQueryXPath = path.join(baseDir, 'XQueryX', ...testPath);
 
-		fs.readdirSync(xQueryXPath).forEach(candidate => {
+		testFs.readdirSync(xQueryXPath).forEach(candidate => {
 			const candidatePath = path.join(xQueryXPath, candidate);
-			if (fs.lstatSync(candidatePath).isDirectory()) {
+			if (testFs.lstatSync(candidatePath).isDirectory()) {
 				testPath.push(candidate);
 				describe(candidate, function () {
 					buildTestCases(testPath);
@@ -45,12 +37,12 @@ function run () {
 				const xQueryXPath = path.join(baseDir, 'XQueryX', ...testPath, candidate);
 
 				const loadXQuery = async () => {
-					if (!fs.existsSync(xQueryPath)) {
+					if (!testFs.existsSync(xQueryPath)) {
 						return null;
 					}
-					return await fs.promises.readFile(xQueryPath, 'utf-8');
+					return await testFs.readFile(xQueryPath);
 				};
-				const loadXQueryX = async () => normalizeEndOfLines(await fs.promises.readFile(xQueryXPath, 'utf-8'));
+				const loadXQueryX = async () => normalizeEndOfLines(await testFs.readFile(xQueryXPath));
 
 				buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, actual => {
 					actual.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2007/xquery-update-10
@@ -64,8 +56,10 @@ function run () {
 
 	after(() => {
 		console.log(`Marking ${skippableTests.length} tests as known to fail`);
-		fs.writeFileSync(failingTestCSVPath, skippableTests.join('\n').trim() + '\n');
+		testFs.writeFileSync('failingXQUTSXQueryXTestNames.csv', skippableTests.join('\n').trim() + '\n');
 	});
 }
 
-run();
+describe('XQUTS XQueryX tests', () => {
+	run();
+});
