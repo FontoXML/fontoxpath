@@ -15,8 +15,6 @@ import { generateGlobalVariableBindingName } from './expressions/ExecutionSpecif
 
 import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
 
-import PendingUpdate from './expressions/xquery-update/PendingUpdate';
-
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 
 /**
