@@ -143,7 +143,7 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 	}
 
 	return {
-		'result': attempt.value.xdmValue,
+		'xdmValue': attempt.value.xdmValue,
 		'pendingUpdateList': attempt.value.pendingUpdateList.map(update => update.toTransferable())
 	};
 }

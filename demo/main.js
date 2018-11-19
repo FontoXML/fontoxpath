@@ -1,5 +1,6 @@
 import * as fontoxpath from '../src/index';
 import * as parser from '../src/parsing/xPathParser';
+import builtInFunctionsDataTypeConstructors from '../src/expressions/functions/builtInFunctions.dataTypeConstructors';
 
 const xmlSource = document.getElementById('xmlSource');
 const log = document.getElementById('log');
@@ -141,18 +142,24 @@ function indentXml (document) {
 	return prettiedXml.join('');
 }
 
+function jsonXmlReplacer (_key, value) {
+	return value instanceof Node ?
+		new XMLSerializer().serializeToString(value) :
+		value;
+}
+
 async function runUpdatingXQuery (script) {
 	const result = await fontoxpath.evaluateUpdatingExpression(
 		script,
 		xmlDoc,
 		null,
-		{ 'input-context': xmlDoc },
+		null,
 		{
 			disableCache: true
 		}
 	);
 
-	resultText.innerText = `[${ result.xdmValue.map(item => `"${item}"`).join(', ')}]\n\n${JSON.stringify(result.pendingUpdateList)}`;
+	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
 	fontoxpath.executePendingUpdateList(result.pendingUpdateList, null, null, {});
 	updateResult.innerText = xmlDoc.documentElement.outerHTML;
 }
@@ -163,7 +170,7 @@ async function runNormalXPath (script, asXQuery) {
 		script,
 		xmlDoc,
 		null,
-		{ 'input-context': xmlDoc },
+		null,
 		{
 			language: asXQuery ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
 			disableCache: true
@@ -171,10 +178,9 @@ async function runNormalXPath (script, asXQuery) {
 	);
 
 	for (let item = await it.next(); !item.done; item = await it.next()) {
-		raw.push(item.value instanceof Node ? new XMLSerializer().serializeToString(item.value) : item.value);
+		raw.push(item.value);
 	}
-	resultText.innerText = JSON.stringify(raw, null, '  ');
-	window.hljs.highlightBlock(resultText);
+	resultText.innerText = JSON.stringify(raw, jsonXmlReplacer, '  ');
 }
 
 async function rerunXPath () {
@@ -207,6 +213,9 @@ async function rerunXPath () {
 		else {
 			await runNormalXPath(xpath, allowXQuery.checked);
 		}
+
+		window.hljs.highlightBlock(resultText);
+		window.hljs.highlightBlock(updateResult);
 	}
 	catch (err) {
 		let errorMessage = err.message;
