@@ -2,7 +2,7 @@
 
 A minimalistic [XPath 3.1](https://www.w3.org/TR/xpath-31/) selector engine for (XML) nodes.
 
-[Demo page](http://xpath.labs.fontoxml.com)
+[Demo page](https://xpath.playground.fontoxml.com)
 
 ## How to use
 
