@@ -12,7 +12,7 @@ import zipSingleton from '../util/zipSingleton';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionValue from '../dataTypes/FunctionValue';
-import Value from '../dataTypes/Value'
+import Value from '../dataTypes/Value';
 import FunctionDefinitionType from'./FunctionDefinitionType';
 
 function subSequence (sequence, start, length) {

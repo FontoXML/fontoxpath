@@ -27,7 +27,7 @@ import {
 } from './XQueryUpdateFacilityErrors';
 
 function ensureUpdateListWrapper (expression) {
-	if (expression instanceof UpdatingExpression) {
+	if (expression.isUpdating) {
 		return (dynamicContext, executionParameters) => expression.evaluateWithUpdateList(dynamicContext, executionParameters);
 	}
 

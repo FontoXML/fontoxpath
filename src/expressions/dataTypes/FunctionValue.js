@@ -78,6 +78,9 @@ class FunctionValue {
 		return Sequence.singleton(functionItem);
 	}
 
+	/**
+	 * @return {!Array<!TypeDeclaration>}
+	 */
 	getArgumentTypes () {
 		return this._argumentTypes;
 	}

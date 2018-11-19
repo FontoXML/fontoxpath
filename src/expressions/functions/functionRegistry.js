@@ -1,7 +1,7 @@
 import builtInFunctions from './builtInFunctions';
 import Sequence from '../dataTypes/Sequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import RestArgument from '../dataTypes/RestArgument';
+import RestArgument, {REST_ARGUMENT_INSTANCE} from '../dataTypes/RestArgument';
 
 /**
  * @typedef {{localName: !string, namespaceURI: string, arity: number, callFunction: !function(*): !Sequence, argumentTypes: !Array<!TypeDeclaration|!RestArgument>, returnType: !TypeDeclaration}}
@@ -148,9 +148,7 @@ function registerFunction (namespaceURI, localName, argumentTypes, returnType, c
 		argumentTypes: argumentTypes
 			.map(
 				argumentType => argumentType === '...' ?
-					{
-						isRestArgument: true
-					} :
+					REST_ARGUMENT_INSTANCE :
 				splitType(argumentType)),
 		arity: argumentTypes.length,
 		returnType: splitType(returnType),
