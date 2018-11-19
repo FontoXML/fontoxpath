@@ -36,11 +36,13 @@ export default function executePendingUpdateList (pendingUpdateList, domFacade, 
 			}
 			case 'replaceNode': {
 				const parent = (/** @type {!Node} */ (wrappedDomFacade.getParentNode(pendingUpdate.target)));
-				const following = wrappedDomFacade.getNextSibling(pendingUpdate.target);
-				documentWriter.removeChild(parent, pendingUpdate.target);
-				pendingUpdate.replacement.forEach(newNode => {
-					documentWriter.insertBefore(parent, newNode, following);
-				});
+				if (parent) {
+					const following = wrappedDomFacade.getNextSibling(pendingUpdate.target);
+					documentWriter.removeChild(parent, pendingUpdate.target);
+					pendingUpdate.replacement.forEach(newNode => {
+						documentWriter.insertBefore(parent, newNode, following);
+					});
+				}
 				break;
 			}
 			case 'replaceValue': {
