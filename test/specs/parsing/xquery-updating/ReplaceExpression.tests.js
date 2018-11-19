@@ -24,7 +24,7 @@ describe('ReplaceExpression', () => {
 		const ele = documentNode.appendChild(documentNode.createElement('ele'));
 		const result = await evaluateUpdatingExpression('replace node ele with <ele/>', documentNode, null, {}, {});
 
-		chai.assert.deepEqual(result.result, []);
+		chai.assert.deepEqual(result.xdmValue, []);
 		assertCorrectUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceNode',
@@ -38,7 +38,7 @@ describe('ReplaceExpression', () => {
 		const ele = documentNode.appendChild(documentNode.createElement('ele'));
 		const result = await evaluateUpdatingExpression('if (true()) then replace node ele with <ele/> else ()', documentNode, null, {}, {});
 
-		chai.assert.deepEqual(result.result, []);
+		chai.assert.deepEqual(result.xdmValue, []);
 		assertCorrectUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceNode',
