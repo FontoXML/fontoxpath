@@ -291,16 +291,6 @@ compatibility-013,Error: Should throw error XUDY0016.: expected 'Not implemented
 compatibility-014,Error: Should throw error XUDY0016.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUDY0016'
 compatibility-015,Error: Should throw error XUDY0016.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUDY0016'
 compatibility-016,Error: Should throw error XUDY0016.: expected 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet' to equal 'XUDY0016'
-compatibility-017,Error: Should throw error XUDY0017.
-compatibility-018,Error: Should throw error XUDY0017.
-compatibility-019,Error: Should throw error XUDY0017.
-compatibility-020,Error: Should throw error XUDY0017.
-compatibility-021,Error: Should throw error XUDY0017.
-compatibility-022,Error: Should throw error XUDY0017.
-compatibility-023,Error: Should throw error XUDY0017.
-compatibility-024,Error: Should throw error XUDY0017.
-compatibility-025,Error: Should throw error XUDY0017.
-compatibility-026,Error: Should throw error XUDY0017.
 compatibility-029,SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found.
 compatibility-030,SyntaxError: Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found.
 id-flwor-expr-01,Error: Should throw error XUST0001.: expected 'Expected " ", "!", "!=", "(", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\\n", "\\r", "\\t", "and", "cast", "castable", "div", "eq", "except", "for", "ge", "group", "gt", "idiv", "instance", "intersect", "is", "le", "let", "lt", "mod", "ne", "or", "order", "return", "stable", "to", "treat", "union", "where", "|", or "||" but "n" found.' to equal 'XUST0001'

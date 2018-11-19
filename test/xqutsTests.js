@@ -77,9 +77,13 @@ function isUpdatingQuery (testName, query) {
 async function assertError (testName, expectedError, query, args) {
 	let hasThrown = false;
 	try {
-		const _ = isUpdatingQuery(testName, query) ?
-			await evaluateUpdatingExpression(...args) :
+		if (isUpdatingQuery(testName, query)) {
+			const it = await evaluateUpdatingExpression(...args);
+			executePendingUpdateList(it.pendingUpdateList, null, null, {});
+		}
+		else {
 			evaluateXPath(...args.slice(0, args.length - 1), null, { language: 'XQuery3.1' });
+		}
 	}
 	catch (e) {
 		hasThrown = true;
