@@ -18,7 +18,7 @@ export const applyUpdates = function (pul, _revalidationModule, _inheritNamespac
 	pul.filter(pu => ['insertInto', 'insertAttributes', 'replaceValue', 'rename'].indexOf(pu.type) !== -1).forEach(pu => {
 		switch (pu.type) {
 			case 'replaceValue': {
-				replaceValue(pu.target, pu.stringValue);
+				replaceValue(pu.target, pu.stringValue, domFacade, documentWriter);
 				break;
 			}
 			default:
@@ -38,7 +38,7 @@ export const applyUpdates = function (pul, _revalidationModule, _inheritNamespac
 
 	// d. Next, all upd:replaceElementContent primitives are applied.
 	pul.filter(pu => pu.type === 'replaceElementContent').forEach(pu => {
-		replaceElementContent(pu.target, pu.text);
+		replaceElementContent(pu.target, pu.text, domFacade, documentWriter);
 	});
 
 	// e. Next, all upd:delete primitives are applied.
