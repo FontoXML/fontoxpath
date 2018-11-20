@@ -30,13 +30,4 @@ describe('createExpressionFromXPathAsync', () => {
 				chai.assert.equal(evaluateXPathToNumber(selector, documentNode), now + 1);
 			});
 	}).timeout(10000);
-
-	it('throws when compilation fails', () => {
-		return precompileXPath(']] Not valid at all! [[')
-			.then(function (_selector) {
-				chai.expect.fail();
-			}, function (error) {
-				chai.expect(error).to.be.instanceOf(Error);
-			});
-	}).timeout(10000);
 });
