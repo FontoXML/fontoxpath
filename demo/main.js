@@ -143,6 +143,15 @@ function indentXml (document) {
 }
 
 function jsonXmlReplacer (_key, value) {
+	if (value instanceof Attr) {
+		const attrString = [];
+		if (value.namespaceURI) {
+			attrString.push(`Q{${value.namespaceURI}}`);
+		}
+		attrString.push(value.localName, '="', value.value, '"');
+		return attrString.join('');
+	}
+
 	return value instanceof Node ?
 		new XMLSerializer().serializeToString(value) :
 		value;

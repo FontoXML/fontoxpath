@@ -7,6 +7,10 @@ export default new class DomBackedDocumentWriter {
 		return parent.insertBefore(newNode, referenceNode);
 	}
 
+	removeAttributeNS (node, namespace, name) {
+		return node.removeAttributeNS(namespace, name);
+	}
+
 	removeChild (parent, child) {
 		return parent.removeChild(child);
 	}

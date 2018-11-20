@@ -1,11 +1,13 @@
+import { replaceNode } from './applyPulPrimitives';
 import {
 	errXUDY0016,
-	errXUDY0017
+	errXUDY0017,
+	errXUDY0024
 } from './XQueryUpdateFacilityErrors';
 
 export const applyUpdates = function (pul, revalidationModule, inheritNamespaces, domFacade, documentWriter) {
 	// 1. Checks the update primitives on $pul for compatibility using upd:compatibilityCheck.
-	compatibilityCheck(pul);
+	compatibilityCheck(pul, domFacade);
 
 	// 2. The semantics of all update primitives on $pul, other than upd:put primitives, are made effective in the following order:
 	// a. First, all upd:insertInto, upd:insertAttributes, upd:replaceValue, and upd:rename primitives are applied.
@@ -19,8 +21,7 @@ export const applyUpdates = function (pul, revalidationModule, inheritNamespaces
 						attribute.namespaceURI,
 						attribute.name,
 						pu.stringValue);
-				}
-				else {
+				} else {
 					documentWriter.setData(pu.target, pu.stringValue);
 				}
 				break;
@@ -37,14 +38,7 @@ export const applyUpdates = function (pul, revalidationModule, inheritNamespaces
 
 	// c. Next, all upd:replaceNode primitives are applied.
 	pul.filter(pu => pu.type === 'replaceNode').forEach(pu => {
-		const parent = (/** @type {!Node} */ (domFacade.getParentNode(pu.target)));
-		if (parent) {
-			const following = domFacade.getNextSibling(pu.target);
-			documentWriter.removeChild(parent, pu.target);
-			pu.replacement.forEach(newNode => {
-				documentWriter.insertBefore(parent, newNode, following);
-			});
-		}
+		replaceNode(pu.target, pu.replacement, domFacade, documentWriter);
 	});
 
 	// d. Next, all upd:replaceElementContent primitives are applied.
@@ -61,7 +55,7 @@ export const applyUpdates = function (pul, revalidationModule, inheritNamespaces
 	});
 };
 
-const compatibilityCheck = function (pul) {
+const compatibilityCheck = function (pul, domFacade) {
 	function findDuplicateTargets (type, onFoundDuplicate) {
 		const targets = new Set();
 		pul.filter(pu => pu.type === type).map(pu => pu.target).forEach(target => {
@@ -96,7 +90,27 @@ const compatibilityCheck = function (pul) {
 	// 6. Two or more primitives in $pul create conflicting namespace bindings for the same element node [err:XUDY0024]. The following kinds of primitives create namespace bindings:
 	// a. upd:insertAttributes creates one namespace binding on the $target element corresponding to the implied namespace binding of the name of each attribute node in $content.
 	// b. upd:replaceNode creates one namespace binding on the $target element corresponding to the implied namespace binding of the name of each attribute node in $replacement.
-	// TODO: We support replace node thus we should validate this.
+	const map = new Map();
+	pul.filter(pu => pu.type === 'replaceNode' && pu.target.nodeType === pu.target.ATTRIBUTE_NODE).forEach(pu => {
+		const key = domFacade.getParentNode(pu.target);
+		const values = map.get(key);
+		if (values) {
+			values.push(...pu.replacement);
+		} else {
+			map.set(key, pu.replacement);
+		}
+	});
+	map.forEach((replacements, _element) => {
+		const prefixes = {};
+		replacements.forEach(replacement => {
+			if (!prefixes[replacement.prefix]) {
+				prefixes[replacement.prefix] = replacement.namespaceURI;
+			}
+			if (prefixes[replacement.prefix] !== replacement.namespaceURI) {
+				throw errXUDY0024();
+			}
+		});
+	});
 	// c. upd:rename creates a namespace binding on $target, or on the parent (if any) of $target if $target is an attribute node, corresponding to the implied namespace binding of $newName.
 };
 

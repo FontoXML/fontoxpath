@@ -2,7 +2,8 @@ import chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import {
-	evaluateUpdatingExpression
+	evaluateUpdatingExpression,
+	executePendingUpdateList
 } from 'fontoxpath';
 
 let documentNode;
@@ -181,6 +182,36 @@ describe('ReplaceExpression', () => {
 				null,
 				{},
 				{});
+		} catch (err) {
+			error = err;
+		}
+
+		chai.assert.throws(
+			() => {
+				if (error) {
+					throw error;
+				} else {
+					return null;
+				}
+			},
+			'XUDY0024');
+	});
+
+	it('disallows attributes with attributes with the same prefix but different namespaces', async () => {
+		const element = documentNode.appendChild(documentNode.createElement('element'));
+		element.setAttribute('attr1', '1234');
+		element.setAttribute('attr2', '5678');
+
+		let error;
+		try {
+			const result = await evaluateUpdatingExpression(
+				`replace node /element/@attr1 with <ele xmlns:xxx="YYY" xxx:attr="123"/>/@*,
+				replace node /element/@attr2 with <ele xmlns:xxx="ZZZ" xxx:attr="123"/>/@*`,
+				documentNode,
+				null,
+				{},
+				{});
+			executePendingUpdateList(result.pendingUpdateList, null, null);
 		} catch (err) {
 			error = err;
 		}

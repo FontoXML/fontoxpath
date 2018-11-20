@@ -19,6 +19,15 @@ class IDocumentWriter {
 
 	/**
 	 * @export
+	 * @param   {!Node}    node
+	 * @param   {?string}  namespace
+	 * @param   {!string}  name
+	 */
+	removeAttributeNS (node, namespace, name) {
+	}
+
+	/**
+	 * @export
 	 * @param   {!Node}  parent
 	 * @param   {!Node}  child
 	 * @return  {!Node}  The removed child node

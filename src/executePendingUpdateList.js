@@ -9,7 +9,7 @@ import { PendingUpdate } from './expressions/xquery-update/PendingUpdate';
  *
  * @param  {!Array<!Object>}  pendingUpdateList  The updateScript to execute.
  * @param  {?IDomFacade=}            domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  {?IDocumentWriter=}       documentWriter  Extra options for evaluating this XPath
+ * @param  {?IDocumentWriter=}       documentWriter  The documentWriter for writing changes.
  */
 export default function executePendingUpdateList (pendingUpdateList, domFacade, documentWriter) {
 	if (!domFacade) {
