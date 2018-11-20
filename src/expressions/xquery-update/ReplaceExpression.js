@@ -2,7 +2,6 @@ import Expression from '../Expression';
 import UpdatingExpression from './UpdatingExpression';
 import Specificity from '../Specificity';
 
-import Sequence from '../dataTypes/Sequence';
 import { replaceElementContent, replaceNode, replaceValue } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
@@ -128,8 +127,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 				if (rlist.attributes.length) {
 					throw errXUTY0010();
 				}
-			}
-			else {
+			} else {
 				// If $target is an attribute node, then:
 
 				// $rlist must consist exclusively of zero or more

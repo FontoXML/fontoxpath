@@ -16,6 +16,5 @@ script:
     - timeout 600 xvfb-run -a npm run qt3testsxqueryx -- --reporter dot;
     - timeout 600 xvfb-run -a npm run ci-xqutstests -- --reporter dot;
     - timeout 600 xvfb-run -a npm run xqutstestsxqueryx -- --reporter dot;
-    - timeout 600 xvfb-run -a npm run qt3testsxqueryx -- --reporter dot;
 
 after_success: npm run coverage

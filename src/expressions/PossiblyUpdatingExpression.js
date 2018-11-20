@@ -1,12 +1,9 @@
 import Expression from './Expression';
-import UpdatingExpression from './xquery-update/UpdatingExpression';
 import { DONE_TOKEN, ready, AsyncIterator } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import Sequence from './dataTypes/Sequence';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
-import Value from './dataTypes/Value';
-import { PendingUpdate } from './xquery-update/PendingUpdate';
 
 export class UpdatingExpressionResult {
 	constructor (/** !Array<!Value> */values, /** !Array<!PendingUpdate> */ pendingUpdateList) {
