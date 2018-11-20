@@ -269,11 +269,40 @@ function mapConstructor (ast, compilationOptions) {
 			})));
 }
 
+function unwrapBinaryOperator (operatorName, ast, compilationOptions) {
+	const compiledAstNodes = [];
+	function unwrapInner (ast) {
+		const firstOperand = astHelper.getFirstChild(ast, 'firstOperand');
+		const secondOperand = astHelper.getFirstChild(ast, 'secondOperand');
+
+		if (firstOperand[0] === operatorName) {
+			unwrapInner(firstOperand[1]);
+		}
+		else {
+			compiledAstNodes.push(compile(firstOperand[1], compilationOptions));
+		}
+		if (secondOperand[0] === operatorName) {
+			unwrapInner(secondOperand[1]);
+		}
+		else {
+			compiledAstNodes.push(compile(secondOperand[1], compilationOptions));
+		}
+	}
+	unwrapInner(ast);
+
+	return compiledAstNodes;
+}
+
 function andOp (ast, compilationOptions) {
-	return new AndOperator([
-		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], disallowUpdating(compilationOptions)),
-		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], disallowUpdating(compilationOptions))
-	]);
+	return new AndOperator(
+		unwrapBinaryOperator('andOp', ast, disallowUpdating(compilationOptions))
+	);
+}
+
+function orOp (ast, compilationOptions) {
+	return new OrOperator(
+		unwrapBinaryOperator('orOp', ast, disallowUpdating(compilationOptions))
+	);
 }
 
 function binaryOperator (ast, compilationOptions) {
@@ -509,12 +538,6 @@ function anyKindTest (ast, compilationOptions) {
 	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'node()' });
 }
 
-function orOp (ast, compilationOptions) {
-	return new OrOperator([
-		compile(astHelper.getFirstChild(ast, 'firstOperand')[1], disallowUpdating(compilationOptions)),
-		compile(astHelper.getFirstChild(ast, 'secondOperand')[1], disallowUpdating(compilationOptions))
-	]);
-}
 
 function pathExpr (ast, compilationOptions) {
 	const rawSteps = astHelper.getChildren(ast, 'stepExpr');
