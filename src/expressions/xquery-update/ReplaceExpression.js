@@ -33,17 +33,12 @@ function ensureUpdateListWrapper (expression) {
 
 	return (dynamicContext, executionParameters) => {
 		const sequence = expression.evaluate(dynamicContext, executionParameters);
-		let done = false;
 		return {
 			next: () => {
-				if (done) {
-					return DONE_TOKEN;
-				}
 				const allValues = sequence.tryGetAllValues();
 				if (!allValues.ready) {
 					return allValues;
 				}
-				done = true;
 				return ready({
 					pendingUpdateList: [],
 					xdmValue: allValues.value
@@ -54,18 +49,11 @@ function ensureUpdateListWrapper (expression) {
 }
 
 function evaluateReplaceNode (executionParameters, targetValueIterator, replacementValueIterator) {
-	let target;
-	let targetUpdates;
 	let rlist;
 	let rlistUpdates;
 	let parent;
-	let done = false;
 	return {
 		next: () => {
-			if (done) {
-				return DONE_TOKEN;
-			}
-
 			if (!rlist) {
 				// The expression following the keyword with is
 				// evaluated as though it were an enclosed
@@ -93,45 +81,44 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 				}
 			}
 
-			if (!target) {
-				// TargetExpr is evaluated and checked as follows:
-				const tv = targetValueIterator.next();
-				if (!tv.ready) {
-					return tv;
-				}
-				// If the result is an empty sequence,
-				// [err:XUDY0027] is raised.
-				if (tv.value.xdmValue.length === 0) {
-					throw errXUDY0027();
-				}
-
-				// If the result is non-empty and does not consist
-				// of a single element, attribute, text, comment,
-				// or processing instruction node, [err:XUTY0008]
-				// is raised.
-				if (tv.value.xdmValue.length !== 1) {
-					throw errXUTY0008();
-				}
-				if (!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')) {
-					throw errXUTY0008();
-				}
-
-				// If the result consists of a node whose parent
-				// property is empty, [err:XUDY0009] is raised.
-				parent = executionParameters.domFacade.getParentNode(tv.value.xdmValue[0].value);
-				if (parent === null) {
-					throw errXUDY0009();
-				}
-
-				// Let $target be the node returned by the target
-				// expression, and let $parent be its parent node.
-				target = tv.value.xdmValue[0];
-				targetUpdates = tv.value.pendingUpdateList;
+			// TargetExpr is evaluated and checked as follows:
+			const tv = targetValueIterator.next();
+			if (!tv.ready) {
+				return tv;
 			}
+			// If the result is an empty sequence,
+			// [err:XUDY0027] is raised.
+			if (tv.value.xdmValue.length === 0) {
+				throw errXUDY0027();
+			}
+
+			// If the result is non-empty and does not consist
+			// of a single element, attribute, text, comment,
+			// or processing instruction node, [err:XUTY0008]
+			// is raised.
+			if (tv.value.xdmValue.length !== 1) {
+				throw errXUTY0008();
+			}
+			if (!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
+				!isSubTypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
+				!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
+				!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
+				!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')) {
+				throw errXUTY0008();
+			}
+
+			// If the result consists of a node whose parent
+			// property is empty, [err:XUDY0009] is raised.
+			parent = executionParameters.domFacade.getParentNode(tv.value.xdmValue[0].value);
+			if (parent === null) {
+				throw errXUDY0009();
+			}
+
+			// Let $target be the node returned by the target
+			// expression, and let $parent be its parent node.
+			const target = tv.value.xdmValue[0];
+			const targetUpdates = tv.value.pendingUpdateList;
+
 			// If $target is an element, text, comment, or
 			// processing instruction node, then $rlist must
 			// consist exclusively of zero or more element, text,
@@ -181,7 +168,6 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 			// TargetExpr and the expression following the keyword
 			// with with the following update primitives using
 			// upd:mergeUpdates: upd:replaceNode($target, $rlist)
-			done = true;
 			return ready({
 				xdmValue: [],
 				pendingUpdateList: mergeUpdates(

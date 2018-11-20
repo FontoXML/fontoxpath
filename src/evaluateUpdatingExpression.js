@@ -137,9 +137,10 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 
 	const resultIterator = compiledExpression.evaluateWithUpdateList(dynamicContext, executionParameters);
 
-	const attempt = resultIterator.next();
+	let attempt = resultIterator.next();
 	while (!attempt.ready) {
 		await attempt.promise;
+		attempt = resultIterator.next();
 	}
 
 	return {
