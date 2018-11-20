@@ -1,11 +1,15 @@
-import { replaceNode } from './applyPulPrimitives';
+import {
+	replaceElementContent,
+	replaceNode,
+	replaceValue
+} from './applyPulPrimitives';
 import {
 	errXUDY0016,
 	errXUDY0017,
 	errXUDY0024
 } from './XQueryUpdateFacilityErrors';
 
-export const applyUpdates = function (pul, revalidationModule, inheritNamespaces, domFacade, documentWriter) {
+export const applyUpdates = function (pul, _revalidationModule, _inheritNamespaces, domFacade, documentWriter) {
 	// 1. Checks the update primitives on $pul for compatibility using upd:compatibilityCheck.
 	compatibilityCheck(pul, domFacade);
 
@@ -14,16 +18,7 @@ export const applyUpdates = function (pul, revalidationModule, inheritNamespaces
 	pul.filter(pu => ['insertInto', 'insertAttributes', 'replaceValue', 'rename'].indexOf(pu.type) !== -1).forEach(pu => {
 		switch (pu.type) {
 			case 'replaceValue': {
-				if (pu.target.nodeType === pu.target.ATTRIBUTE_NODE) {
-					const attribute = pu.target;
-					documentWriter.setAttributeNS(
-						attribute.ownerElement,
-						attribute.namespaceURI,
-						attribute.name,
-						pu.stringValue);
-				} else {
-					documentWriter.setData(pu.target, pu.stringValue);
-				}
+				replaceValue(pu.target, pu.stringValue);
 				break;
 			}
 			default:
@@ -43,10 +38,7 @@ export const applyUpdates = function (pul, revalidationModule, inheritNamespaces
 
 	// d. Next, all upd:replaceElementContent primitives are applied.
 	pul.filter(pu => pu.type === 'replaceElementContent').forEach(pu => {
-		domFacade.getChildNodes(pu.target).forEach(node => documentWriter.removeChild(pu.target, node));
-		if (pu.text) {
-			documentWriter.insertBefore(pu.target, pu.text, null);
-		}
+		replaceElementContent(pu.target, pu.text);
 	});
 
 	// e. Next, all upd:delete primitives are applied.
