@@ -52,7 +52,7 @@
         ],
         "brace-style": [
             "warn",
-            "stroustrup"
+            "1tbs"
         ],
         "comma-dangle": [
             "warn",

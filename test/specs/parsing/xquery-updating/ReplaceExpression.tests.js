@@ -92,7 +92,6 @@ describe('ReplaceExpression', () => {
 	});
 
 	it('disallows executing non-updating expressions', async () => {
-		const ele = documentNode.appendChild(documentNode.createElement('ele'));
 		let error;
 		try {
 			await evaluateUpdatingExpression('()', documentNode, null, {}, {});
@@ -106,7 +105,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'is not updating and can not be executed as an updating expression.');
 	});
 
@@ -124,7 +124,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUDY0027');
 	});
 
@@ -143,7 +144,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUTY0010');
 	});
 
@@ -163,7 +165,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUTY0011');
 	});
 
@@ -188,7 +191,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUDY0024');
 	});
 
@@ -206,7 +210,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUTY0008');
 	});
 
@@ -224,7 +229,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUTY0008');
 	});
 
@@ -242,7 +248,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUTY0008');
 	});
 
@@ -261,7 +268,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUDY0009');
 	});
 
@@ -280,7 +288,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUDY0027');
 	});
 
@@ -298,7 +307,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUTY0008');
 	});
 
@@ -316,7 +326,8 @@ describe('ReplaceExpression', () => {
 					throw error;
 				} else {
 					return null;
-				}},
+				}
+			},
 			'XUTY0008');
 	});
 
@@ -415,7 +426,6 @@ replace node fontoxpath:sleep(/element, 100) with fontoxpath:sleep(<newElement/>
 
 	it('allows replacing something with a whole document', async () => {
 		const element = documentNode.appendChild(documentNode.createElement('element'));
-		const comment = documentNode.appendChild(documentNode.createComment('comment'));
 
 		// Duplicate all list items and set the @count attribute to the new count of items, in a very roundabout way
 		const result = await evaluateUpdatingExpression(
