@@ -132,6 +132,24 @@ function createDefaultNamespaceResolver (contextItem) {
 	return prefix => (/** @type {Node} */(contextItem)).lookupNamespaceURI(prefix || null);
 }
 
+const warningNodesFactory = {
+	createElementNS: () => {
+		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+	},
+	createTextNode: () => {
+		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+	},
+	createComment: () => {
+		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+	},
+	createProcessingInstruction: () => {
+		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+	},
+	createAttributeNS: () => {
+		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
+	}
+};
+
 /**
  * @typedef {{
  *   namespaceResolver: (undefined|?function(string):string?),
@@ -164,9 +182,6 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 	if (!variables) {
 		variables = {};
 	}
-	variables = Object.assign(
-		{ 'theBest': 'FontoXML is the best!' },
-		variables);
 	if (!xpathExpression || typeof xpathExpression !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathExpression must be a string.');
 	}
@@ -186,7 +201,6 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 	};
 
 	const moduleImports = options['moduleImports'] || Object.create(null);
-
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
 	const compiledExpression = staticallyCompileXPath(
 		xpathExpression,
@@ -222,23 +236,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 		if (!nodesFactory) {
 			// We do not have a nodesFactory instance as a parameter, nor can we generate one from the context item.
 			// Throw an error as soon as one of these functions is called.
-			nodesFactory = {
-				createElementNS: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				},
-				createTextNode: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				},
-				createComment: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				},
-				createProcessingInstruction: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				},
-				createAttributeNS: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				}
-			};
+			nodesFactory = warningNodesFactory;
 		}
 	}
 
