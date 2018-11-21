@@ -29,11 +29,11 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 		}
 	);
 
-	const resultIterator = (/** @type {PossiblyUpdatingExpression} **/(expression)).evaluateWithUpdateList(dynamicContext, executionParameters);
-
 	if (!expression.isUpdating) {
 		throw new Error(`The expression ${updateScript} is not updating and can not be executed as an updating expression.`);
 	}
+
+	const resultIterator = (/** @type {PossiblyUpdatingExpression} **/(expression)).evaluateWithUpdateList(dynamicContext, executionParameters);
 
 	let attempt = resultIterator.next();
 	while (!attempt.ready) {
