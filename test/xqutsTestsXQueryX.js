@@ -3,7 +3,8 @@ import { buildTestCase } from './xQueryXUtils';
 import testFs from 'test-helpers/testFs';
 
 function run () {
-	const skippableTests = testFs.readFileSync('failingXQUTSXQueryXTestNames.csv').split(/\r?\n/);
+	const skippableTests = process.argv.indexOf('--regenerate') === -1 ?
+		testFs.readFileSync('failingXQUTSXQueryXTestNames.csv').split(/\r?\n/) : [];
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
 	const baseDir = path.join('XQUTS', 'Queries');
@@ -24,8 +25,7 @@ function run () {
 					buildTestCases(testPath);
 				});
 				testPath.pop();
-			}
-			else {
+			} else {
 				const testCase = candidate.substring(0, candidate.length - 4);
 
 				if (skippableTestNames.includes(testCase)) {

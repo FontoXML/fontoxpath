@@ -7,8 +7,8 @@ import { buildTestCase } from './xQueryXUtils';
 import testFs from 'test-helpers/testFs';
 
 function run () {
-	const skippableTests = testFs.readFileSync('failingXQueryXTestNames.csv')
-		.split(/\r?\n/);
+	const skippableTests = process.argv.indexOf('--regenerate') === -1 ?
+		testFs.readFileSync('failingXQueryXTestNames.csv').split(/\r?\n/) : [];
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
 	const baseDir = 'QT3TS';
@@ -34,12 +34,10 @@ function run () {
 				const xQueryPath = path.join(testDirectory, value);
 				if (testFs.existsSync(xQueryPath)) {
 					xQueries[key] = normalizeEndOfLines(await testFs.readFile(xQueryPath));
-				}
-				else {
+				} else {
 					xQueries[key] = null;
 				}
-			}
-			else {
+			} else {
 				xQueries[key] = normalizeEndOfLines(value);
 			}
 		}

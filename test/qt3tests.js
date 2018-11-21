@@ -27,8 +27,7 @@ const parser = {
 	parseFromString: xmlString => {
 		try {
 			return sync(xmlString);
-		}
-		catch (e) {
+		} catch (e) {
 			console.log(`Error parsing the string ${xmlString}.`, e);
 			throw e;
 		}
@@ -41,14 +40,14 @@ const indexOfGrep = process.argv.indexOf('--grep');
 if (indexOfGrep >= 0) {
 	const [greppedTestsetName] = process.argv[indexOfGrep + 1].split('~');
 	shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
-}
-else {
+} else {
 	shouldRunTestByName = testFs.readFileSync('runnableTestSets.csv')
 		.split(/\r?\n/)
 		.map(line=>line.split(','))
 		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 }
-const unrunnableTestCases = testFs.readFileSync('unrunnableTestCases.csv');
+const unrunnableTestCases = process.argv.indexOf('--regenerate') === -1 ?
+	testFs.readFileSync('unrunnableTestCases.csv') : '';
 const unrunnableTestCasesByName = unrunnableTestCases
 	.split(/\r?\n/)
 	.map(line => line.split(','))
@@ -112,8 +111,7 @@ function createAsserter (baseUrl, assertNode, language) {
 				chai.assert(asserts.some((a => {
 					try {
 						a(xpath, contextNode, variablesInScope, namespaceResolver);
-					}
-					catch (error) {
+					} catch (error) {
 						if (error instanceof TypeError) {
 							// TypeErrors are always errors
 							throw error;
@@ -158,8 +156,7 @@ function createAsserter (baseUrl, assertNode, language) {
 			let parsedFragment;
 			if (evaluateXPathToBoolean('@file', assertNode)) {
 				parsedFragment = getFile(evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, { baseUrl }));
-			}
-			else {
+			} else {
 				parsedFragment = parser.parseFromString(`<xml>${evaluateXPathToString('.', assertNode)}</xml>`, 'text/xml').documentElement;
 			}
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
@@ -280,8 +277,7 @@ describe('qt3 test set', () => {
 							if (evaluateXPathToBoolean('./test/@file', testCase)) {
 								testQuery = getFile(
 									evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, { baseUrl }));
-							}
-							else {
+							} else {
 								testQuery = evaluateXPathToString('./test', testCase);
 							}
 							const language = evaluateXPathToString(
@@ -295,8 +291,7 @@ describe('qt3 test set', () => {
 							let env;
 							if (environmentNode) {
 								env = createEnvironment(baseUrl, environmentNode);
-							}
-							else {
+							} else {
 								env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
 							}
 
@@ -324,8 +319,7 @@ describe('qt3 test set', () => {
 								});
 
 								asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
-							}
-							catch (e) {
+							} catch (e) {
 								if (e instanceof TypeError) {
 									throw e;
 								}
@@ -338,8 +332,7 @@ describe('qt3 test set', () => {
 						};
 						assertFn.toString = () => new slimdom.XMLSerializer().serializeToString(testCase);
 						it(description, assertFn).timeout(60000);
-					}
-					catch (e) {
+					} catch (e) {
 						console.error(e);
 						continue;
 					}

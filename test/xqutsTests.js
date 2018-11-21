@@ -28,8 +28,7 @@ const parser = {
 	parseFromString: xmlString => {
 		try {
 			return sync(xmlString.trim());
-		}
-		catch (e) {
+		} catch (e) {
 			console.log(`Error parsing the string ${xmlString}.`, e);
 			throw e;
 		}
@@ -41,7 +40,8 @@ if (typeof mocha !== 'undefined' && mocha.timeout) {
 	mocha.timeout(60000);
 }
 
-const unrunnableTestCases = testFs.readFileSync('unrunnableXQUTSTestCases.csv').split(/\r?\n/).filter(row => row);
+const unrunnableTestCases = process.argv.indexOf('--regenerate') === -1 ?
+	testFs.readFileSync('unrunnableXQUTSTestCases.csv').split(/\r?\n/).filter(row => row) : [];
 const unrunnableTestCasesByName = unrunnableTestCases
 	.map(testCase => testCase.split(',')[0]);
 
@@ -63,8 +63,7 @@ function isUpdatingQuery (testName, query) {
 	const doc = new slimdom.Document();
 	try {
 		doc.appendChild(parseAst(doc, ast));
-	}
-	catch (e) {
+	} catch (e) {
 		unrunnableTestCases.push(`${testName},Parser resulted in invalid JsonML`);
 		throw e;
 	}
@@ -80,12 +79,10 @@ async function assertError (testName, expectedError, query, args) {
 		if (isUpdatingQuery(testName, query)) {
 			const it = await evaluateUpdatingExpression(...args);
 			executePendingUpdateList(it.pendingUpdateList, null, null, {});
-		}
-		else {
+		} else {
 			evaluateXPath(...args.slice(0, args.length - 1), null, { language: 'XQuery3.1' });
 		}
-	}
-	catch (e) {
+	} catch (e) {
 		hasThrown = true;
 		if (!e.message.startsWith(expectedError === '*' ? '' : expectedError)) {
 			chai.assert.equal(e.message, expectedError, `Should throw error ${expectedError}.`);
@@ -134,8 +131,7 @@ async function runAssertions (expectedErrors, outputFiles, testName, query, args
 	const catchAssertion = assertion => {
 		try {
 			assertion();
-		}
-		catch (e) {
+		} catch (e) {
 			failed.push(e);
 		}
 	};
@@ -143,8 +139,7 @@ async function runAssertions (expectedErrors, outputFiles, testName, query, args
 	for (const expectedError of expectedErrors) {
 		try {
 			await assertError(testName, expectedError, query, args);
-		}
-		catch (e) {
+		} catch (e) {
 			failed.push(e);
 		}
 	}
@@ -238,16 +233,13 @@ async function runTestCase (testName, testCase) {
 		try {
 			if (expectedErrors.length || outputFiles.length) {
 				await runAssertions(expectedErrors, outputFiles, testName, query, args);
-			}
-			else if (isUpdatingQuery(testName, query)) {
+			} else if (isUpdatingQuery(testName, query)) {
 				const it = await evaluateUpdatingExpression(...args);
 				executePendingUpdateList(it.pendingUpdateList, null, null, {});
-			}
-			else {
+			} else {
 				throw new Error('A non-updating expression without an expected value is not supported in the test framework.');
 			}
-		}
-		catch (e) {
+		} catch (e) {
 			if (e instanceof TypeError) {
 				throw e;
 			}

@@ -16,12 +16,14 @@ Here are some important resources:
 - [The XPath 3.1 spec](https://www.w3.org/TR/xpath-31/).
 - [The XPath functions
   spec](https://www.w3.org/TR/xpath-functions-31/).
+- [The XQuery 3.1 spec](https://www.w3.org/TR/xquery-31/).
+- [The XQuery Update Facility 3.0 spec](https://www.w3.org/TR/xquery-update-30/).
 - [The FontoXPath playground](https://xpath.playground.fontoxml.com/).
 
 ## Creating an issue
 
 So you've found a bug, a missing feature or you have some
-feedback. Great! We appreciate an issue for it on the github
+feedback. Great! We appreciate an issue for it on the GitHub
 repository. If the issue is a request for a feature, we will implement
 it when we get to it, but a pull request would very much speed things
 up.
@@ -90,7 +92,7 @@ request. They usually only require some local changes and the spec is
 very readable and clear on the intended behaviour. The specification
 can be found [here](https://www.w3.org/TR/xpath-functions-31/). The
 [QT3 test set](https://dev.w3.org/2011/QT3-test-suite/) set usually
-contains a large number of tests.
+contains tests which cover the function.
 
 If you run into any problems when implementing what you want, do not
 hesitate to ask for help. Just make the pull request with whatever you
@@ -122,30 +124,36 @@ have three forms:
   that can be worked with.
 - `{ ready: true, done: true }`: We are done iterating.
 
+### Debugging
+
+We have added a [demo page (http://localhost:8080)](http://localhost:8080) which can be used for debugging. You only have to start the server with `node ./demo/server.js`. The demo page uses the source code without transpilation or compilation, this does require a [browser which supports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Browser_compatibility) `import`.
+
 ### Running the tests
 
-FontoXPath contains two different test sets: the unit tests which you
-can run with `npm run test` and the QT3 tests which you can run with
-`npm run qt3tests`. They both run in Node. By running the tests with
-the `--inspect` flag, they can be debugged: `npm run test -- --inspect
---inspect-brk`. The tests can also be executed with the built version
-of fontoxpath. Use the `--dist` flag to do so: `npm run qt3test --
---dist`. The unit tests can be executed using `npm run integrationtests`
+FontoXPath contains different test sets:
+
+|Tests|Run command|
+|-|-|
+|The unit tests|`npm run test`|
+|The QT3 tests|`npm run qt3tests`|
+|The QT3 XQueryX tests|`npm run qt3testsxqueryx`|
+|The XQUTS tests|`npm run xqutstests`|
+|The XQUTS XQueryX tests|`npm run xqutstestsxqueryx`|
+
+They all run in Node. By running the tests with
+the `--inspect` flag, they can be debugged: `npm run test -- --inspect --inspect-brk`. The tests can also be executed with the built version
+of fontoxpath. Use the `--dist` flag to do so: `npm run qt3test -- --dist`. The unit tests can be executed using `npm run integrationtests`
 
 The JavaScript unit tests can be used while developing, since they run
-quite fast. The QT3 tests can be used to verify your implementation
-but they are quite slow. Running all 20k of them can take up to five
+quite fast. The other tests can be used to verify your implementation
+but they are quite slow. Running all of them will likely take several
 minutes.
 
 New JavaScript tests can be added to a `*.tests.js` file somewhere in
 the `test/specs` folder. Try to add a new test in a file with tests
 about similar functions.
 
-If you expect new QT3 tests to succeed, remove all except the first 14
-lines from the `test/unrunnableTestCases.csv` file. The first 14 lines
-are tests which are known to cause timeouts. The test runner will
-generate a new version of the `test/unrunnableTestCases.csv` file. Use
-`git` to find differences.
+If you expect new tests to succeed run `npm run alltests -- --regenerate`, this will update the csv files which contain failing tests. Use `git` to find differences.
 
 If you are adding a new feature, edit the file
 `test/runnableTestSets.csv`. This file disables tests for features we
@@ -159,11 +167,13 @@ Compiler may warn about some code constructs. They are usually easy to
 fix. If you are running into any problems, do not hesitate to ask for
 help!
 
-The build can be double-checked using the `npm run qt3tests -- --dist`
-command. The build does not have to be checked in.
+The build can be double-checked using:
 
-### Making a commit
+```sh
+npm run qt3tests -- --dist
+npm run qt3testsxqueryx -- --dist
+npm run xqutstests -- --dist
+npm run xqutstestsxqueryx -- --dist
+```
 
-When you make a commit, remember to check in the current build, run
-the QT3 tests one last time and paste the results in the
-`unrunnableTestCases` file.
+The build does not have to be checked in.
