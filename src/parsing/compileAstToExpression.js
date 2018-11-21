@@ -271,20 +271,18 @@ function mapConstructor (ast, compilationOptions) {
 function unwrapBinaryOperator (operatorName, ast, compilationOptions) {
 	const compiledAstNodes = [];
 	function unwrapInner (ast) {
-		const firstOperand = astHelper.getFirstChild(ast, 'firstOperand');
-		const secondOperand = astHelper.getFirstChild(ast, 'secondOperand');
+		const firstOperand = astHelper.getFirstChild(ast, 'firstOperand')[1];
+		const secondOperand = astHelper.getFirstChild(ast, 'secondOperand')[1];
 
 		if (firstOperand[0] === operatorName) {
-			unwrapInner(firstOperand[1]);
-		}
-		else {
-			compiledAstNodes.push(compile(firstOperand[1], compilationOptions));
+			unwrapInner(firstOperand);
+		} else {
+			compiledAstNodes.push(compile(firstOperand, compilationOptions));
 		}
 		if (secondOperand[0] === operatorName) {
-			unwrapInner(secondOperand[1]);
-		}
-		else {
-			compiledAstNodes.push(compile(secondOperand[1], compilationOptions));
+			unwrapInner(secondOperand);
+		} else {
+			compiledAstNodes.push(compile(secondOperand, compilationOptions));
 		}
 	}
 	unwrapInner(ast);
