@@ -72,8 +72,7 @@ function disallowUpdating (compilationOptions) {
 }
 
 /**
- * @param   {Array<*>}                                         ast
- * @param   {!{allowXQuery: boolean, allowUpdating: boolean}}  compilationOptions
+ * @param   {Array<*>}      ast
  * @return  {!Expression}
  */
 function compile (ast, compilationOptions) {
@@ -928,7 +927,7 @@ function replaceExpression (ast, compilationOptions) {
 
 /**
  * @param   {!Array<*>}  xPathAst
- * @param   {{allowXQuery: boolean, allowUpdating: boolean}} compilationOptions
+ * @param   {{allowXQuery: (boolean|undefined), allowUpdating: (boolean|undefined)}} compilationOptions
  * @return  {!Expression}
  */
 export default function (xPathAst, compilationOptions) {
