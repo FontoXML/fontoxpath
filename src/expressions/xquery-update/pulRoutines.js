@@ -42,16 +42,16 @@ export const applyUpdates = function (pul, _revalidationModule, _inheritNamespac
 	});
 
 	// e. Next, all upd:delete primitives are applied.
-	pul.filter(pu => pu.type === 'delete').forEach(pu => {
-		throw new Error('Not implemented: the execution for pendingUpdate ' + pu.type + ' is not yet implemented.');
-	});
+	if (pul.some(pu => pu.type === 'delete')) {
+		throw new Error('Not implemented: the execution for pendingUpdate "delete" is not yet implemented.');
+	}
 
 	// Point 3. to 7. are either not necessary or should be done by the caller.
 
 	// 8. As the final step, all upd:put primitives on $pul are applied.
-	pul.filter(pu => pu.type === 'put').forEach(pu => {
-		throw new Error('Not implemented: the execution for pendingUpdate ' + pu.type + ' is not yet implemented.');
-	});
+	if (pul.some(pu => pu.type === 'put')) {
+		throw new Error('Not implemented: the execution for pendingUpdate "put" is not yet implemented.');
+	}
 };
 
 const compatibilityCheck = function (pul, domFacade) {

@@ -67,7 +67,7 @@ export default function buildEvaluationContext (expressionString, contextItem, d
 	const moduleImports = options['moduleImports'] || Object.create(null);
 
 	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
-	const expression = 	staticallyCompileXPath(
+	const expression = staticallyCompileXPath(
 		expressionString,
 		compilationOptions,
 		namespaceResolver,
