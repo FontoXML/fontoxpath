@@ -14,6 +14,7 @@ import { parseAst } from './xQueryXUtils';
 import path from 'path';
 import mocha from 'mocha';
 import { sync, slimdom } from 'slimdom-sax-parser';
+import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
 global.atob = function (b64Encoded) {
@@ -40,8 +41,7 @@ if (typeof mocha !== 'undefined' && mocha.timeout) {
 	mocha.timeout(60000);
 }
 
-const unrunnableTestCases = process.argv.indexOf('--regenerate') === -1 ?
-	testFs.readFileSync('unrunnableXQUTSTestCases.csv').split(/\r?\n/).filter(row => row) : [];
+const unrunnableTestCases = getSkippedTests('unrunnableXQUTSTestCases.csv');
 const unrunnableTestCasesByName = unrunnableTestCases
 	.map(testCase => testCase.split(',')[0]);
 

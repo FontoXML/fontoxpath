@@ -10,6 +10,7 @@ import {
 	registerXQueryModule
 } from 'fontoxpath';
 
+import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
 import mocha from 'mocha';
@@ -46,10 +47,8 @@ if (indexOfGrep >= 0) {
 		.map(line=>line.split(','))
 		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 }
-const unrunnableTestCases = process.argv.indexOf('--regenerate') === -1 ?
-	testFs.readFileSync('unrunnableTestCases.csv') : '';
+const unrunnableTestCases = getSkippedTests('unrunnableTestCases.csv');
 const unrunnableTestCasesByName = unrunnableTestCases
-	.split(/\r?\n/)
 	.map(line => line.split(','))
 	.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
 
@@ -219,7 +218,7 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 const registeredModuleURIByFileName = Object.create(null);
 
 describe('qt3 test set', () => {
-	let log = unrunnableTestCases;
+	const log = unrunnableTestCases;
 	evaluateXPathToNodes('/catalog/test-set', catalog)
 		.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
 		.map(testSetNode => evaluateXPathToString('@file', testSetNode))
@@ -324,7 +323,7 @@ describe('qt3 test set', () => {
 									throw e;
 								}
 
-								log += `${testName},${e.toString().replace(/\n/g, ' ').trim()}\n`;
+								log.push(`${testName},${e.toString().replace(/\n/g, ' ').trim()}`);
 
 								// And rethrow the error
 								throw e;
@@ -341,7 +340,7 @@ describe('qt3 test set', () => {
 		});
 
 	after(() => {
-		console.log(`Writing a log of ${log.split('\n').length}`);
-		testFs.writeFileSync('unrunnableTestCases.csv', log);
+		console.log(`Writing a log of ${log.length}`);
+		testFs.writeFileSync('unrunnableTestCases.csv', log.join('\n'));
 	});
 });

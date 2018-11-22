@@ -1,10 +1,10 @@
 import path from 'path';
 import { buildTestCase } from './xQueryXUtils';
+import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
 function run () {
-	const skippableTests = process.argv.indexOf('--regenerate') === -1 ?
-		testFs.readFileSync('failingXQUTSXQueryXTestNames.csv').split(/\r?\n/) : [];
+	const skippableTests = getSkippedTests('failingXQUTSXQueryXTestNames.csv');
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
 	const baseDir = path.join('XQUTS', 'Queries');

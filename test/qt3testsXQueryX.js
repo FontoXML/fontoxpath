@@ -4,11 +4,11 @@ import {
 import path from 'path';
 import { sync } from 'slimdom-sax-parser';
 import { buildTestCase } from './xQueryXUtils';
+import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
 function run () {
-	const skippableTests = process.argv.indexOf('--regenerate') === -1 ?
-		testFs.readFileSync('failingXQueryXTestNames.csv').split(/\r?\n/) : [];
+	const skippableTests = getSkippedTests('failingXQueryXTestNames.csv');
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
 	const baseDir = 'QT3TS';

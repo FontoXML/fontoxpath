@@ -19,7 +19,7 @@
 		"ci-xqutstests": "nyc --no-clean mocha --require @babel/register test/xqutsTests.js",
 		"xqutstestsxqueryx": "mocha --require @babel/register test/xqutsTestsXQueryX.js",
 		"coverage": "nyc report --reporter=text-lcov | coveralls",
-		"alltests": "mocha --recursive --require @babel/register test/**/*.tests.js"
+		"alltests": "mocha --recursive --require @babel/register test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX"
 	},
 	"repository": {
 		"type": "git",
