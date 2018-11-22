@@ -38,7 +38,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 					const resultSequence = ifExpressionResult.value ?
 						sequenceCallbacks[1](dynamicContext) :
 						sequenceCallbacks[2](dynamicContext);
-					resultIterator = resultSequence.value();
+					resultIterator = resultSequence.value;
 				}
 				return resultIterator.next();
 			}

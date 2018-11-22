@@ -37,12 +37,16 @@ function adaptItemToXPathValue (value) {
 						.map(
 					arrayItem => {
 						if (arrayItem === undefined) {
-							return Sequence.empty();
+							return () => Sequence.empty();
 						}
-						const adaptedArrayItem = adaptItemToXPathValue(arrayItem);
-						return adaptedArrayItem === null ?
-							Sequence.empty() :
-							Sequence.singleton(adaptedArrayItem);
+						const adaptedValue = adaptItemToXPathValue(arrayItem);
+						let adaptedSequence;
+						if (adaptedValue === null) {
+							adaptedSequence = Sequence.empty();
+						} else {
+							adaptedSequence = Sequence.singleton(adaptedValue);
+						}
+						return () => adaptedSequence;
 					}));
 			}
 			// Make it a map
@@ -50,12 +54,16 @@ function adaptItemToXPathValue (value) {
 				Object.keys(value)
 					.filter(key => value[key] !== undefined)
 					.map(key => {
-					const adaptedValue = adaptItemToXPathValue(value[key]);
+						const adaptedValue = adaptItemToXPathValue(value[key]);
+						let adaptedSequence;
+						if (adaptedValue === null) {
+							adaptedSequence = Sequence.empty();
+						} else {
+							adaptedSequence = Sequence.singleton(adaptedValue);
+						}
 					return {
 						key: createAtomicValue(key, 'xs:string'),
-						value: adaptedValue === null ?
-							Sequence.empty() :
-							Sequence.singleton(adaptedValue)
+						value: () => adaptedSequence
 					};
 				}));
 	}

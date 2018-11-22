@@ -7,7 +7,7 @@ export default function concatSequences (sequences) {
 		next: () => {
 			while (i < sequences.length) {
 				if (!iterator) {
-					iterator = sequences[i].value();
+					iterator = sequences[i].value;
 				}
 				const value = iterator.next();
 				if (value.done) {

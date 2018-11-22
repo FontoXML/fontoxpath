@@ -27,7 +27,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 	return new Sequence({
 		next: () => {
 			if (!resultIterator) {
-				const queryValue = query.value().next();
+				const queryValue = query.value.next();
 				if (!queryValue.ready) {
 					return queryValue;
 				}
@@ -36,7 +36,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 				 * @type {Object<string, function():Sequence>}
 				 */
 				const variables = /** @type {!MapValue} */ (args.first()).keyValuePairs.reduce((expandedArgs, arg) => {
-					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value);
+					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value());
 					return expandedArgs;
 				}, Object.create(null));
 
@@ -78,7 +78,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 
 				const innerDynamicContext = new DynamicContext(context);
 
-				resultIterator = selector.evaluate(innerDynamicContext, executionParameters).value();
+				resultIterator = selector.evaluate(innerDynamicContext, executionParameters).value;
 			}
 			return resultIterator.next();
 
@@ -93,7 +93,7 @@ function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext,
 	let doneWithSleep = false;
 	let readyPromise;
 
-	const valueIterator = val.value();
+	const valueIterator = val.value;
 	return new Sequence({
 		next: () => {
 			if (!readyPromise) {
@@ -138,7 +138,7 @@ function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext,
 	return new Sequence({
 		next: () => {
 			if (!readyPromise) {
-				const urlValue = url.value().next();
+				const urlValue = url.value.next();
 				if (!urlValue.ready) {
 					return urlValue;
 				}

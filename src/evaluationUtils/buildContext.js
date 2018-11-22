@@ -80,7 +80,7 @@ export default function buildEvaluationContext (expressionString, contextItem, d
 	 * @type {INodesFactory}
 	 */
 	let nodesFactory = options['nodesFactory'];
-	if (!nodesFactory) {
+	if (!nodesFactory && compilationOptions.allowXQuery) {
 		if (contextItem && 'nodeType' in /** @type {!Node} */(contextItem)) {
 			const ownerDocument = /** @type {Document} }*/(contextItem.ownerDocument || contextItem);
 			if ((typeof ownerDocument.createElementNS === 'function') &&
@@ -97,12 +97,10 @@ export default function buildEvaluationContext (expressionString, contextItem, d
 				});
 			}
 		}
-
-		if (!nodesFactory) {
-			// We do not have a nodesFactory instance as a parameter, nor can we generate one from the context item.
-			// Throw an error as soon as one of these functions is called.
-			nodesFactory = warningNodesFactory;
-		}
+	} else if (!nodesFactory) {
+		// We do not have a nodesFactory instance as a parameter, nor can we generate one from the context item.
+		// Throw an error as soon as one of these functions is called.
+		nodesFactory = warningNodesFactory;
 	}
 
 
@@ -121,7 +119,6 @@ export default function buildEvaluationContext (expressionString, contextItem, d
 	});
 
 	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory);
-
 
 	return {
 		executionParameters,

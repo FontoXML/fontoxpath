@@ -58,7 +58,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 
 	it('turns strings into xs:string+', () => {
 		const xpathSequence = adaptJavaScriptValueToXPathValue(['a', 'b', 'c'], 'xs:string+');
-		chai.assert.equal(xpathSequence.getLength(), 3, 'is a sequence with length 3');
+		chai.assert.equal(xpathSequence.tryGetLength().value, 3, 'is a sequence with length 3');
 		const values = xpathSequence.getAllValues();
 		chai.assert(xpathSequence.first().type === ('xs:string'), 'first is a string');
 		chai.assert(values[1].type === ('xs:string'), 'second is a string');
@@ -70,7 +70,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 
 	it('turns strings into xs:string*', () => {
 		const xpathSequence = adaptJavaScriptValueToXPathValue(['a', 'b', 'c'], 'xs:string*');
-		chai.assert.equal(xpathSequence.getLength(), 3, 'is a sequence with length 3');
+		chai.assert.equal(xpathSequence.tryGetLength().value, 3, 'is a sequence with length 3');
 		const values = xpathSequence.getAllValues();
 		chai.assert(xpathSequence.first().type === ('xs:string'), 'first is a string');
 		chai.assert(values[1].type === ('xs:string'), 'second is a string');

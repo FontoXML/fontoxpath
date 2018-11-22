@@ -186,11 +186,11 @@ function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _static
 	return Sequence.singleton(new MapValue([
 		{
 			key: createAtomicValue('number', 'xs:string'),
-			value: Sequence.singleton(createAtomicValue(Math.random(), 'xs:double'))
+			value: () => Sequence.singleton(createAtomicValue(Math.random(), 'xs:double'))
 		},
 		{
 			key: createAtomicValue('next', 'xs:string'),
-			value: Sequence.singleton(new FunctionValue({
+			value: () => Sequence.singleton(new FunctionValue({
 				value: fnRandomNumberGenerator,
 				localName: '',
 				namespaceURI: '',
@@ -201,7 +201,7 @@ function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _static
 		},
 		{
 			key: createAtomicValue('permute', 'xs:string'),
-			value: Sequence.singleton(new FunctionValue({
+			value: () => Sequence.singleton(new FunctionValue({
 				value: returnRandomItemFromSequence,
 				localName: '',
 				namespaceURI: '',

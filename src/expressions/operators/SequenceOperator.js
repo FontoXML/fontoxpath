@@ -24,7 +24,7 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 			});
 	}
 
-	performFunctionalEvaluation (dynamicContext, _executionParamaters, sequenceCallbacks) {
+	performFunctionalEvaluation (dynamicContext, _executionParameters, sequenceCallbacks) {
 		if (!sequenceCallbacks.length) {
 			return Sequence.empty();
 		}

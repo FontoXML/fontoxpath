@@ -103,7 +103,7 @@ class PossiblyUpdatingExpression extends Expression {
 					return allValues;
 				}
 				done = true;
-				return ready(new UpdatingExpressionResult(allValues.value, updateList));
+				return ready(new UpdatingExpressionResult(/** @type {!Array<!Value>} */(allValues.value), updateList));
 			}
 		};
 	}

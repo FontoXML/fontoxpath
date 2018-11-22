@@ -6,7 +6,7 @@ import { trueBoolean, falseBoolean } from './createAtomicValue';
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 import Value from './Value';
-import { AsyncIterator, AsyncResult } from  '../util/iterators';
+import { AsyncIterator, AsyncResult } from '../util/iterators';
 import ExecutionParameters from '../ExecutionParameters';
 
 /**
@@ -26,45 +26,42 @@ class Sequence {
 		 * The first call to last() would consume the sequence, making the normal iteration have no values at the 3rd index.
 		 */
 		this._saveValues = false;
+
+		const valueIterator = /** @type {!AsyncIterator<!Value>} */(valueIteratorOrArray);
 		/**
-		 * @type {!function():!AsyncIterator}
+		 * @type {!AsyncIterator<!Value>}
 		 */
-		this.value = () => {
-			const valueIterator = /** @type {!AsyncIterator<!Value>} */(valueIteratorOrArray);
-			let i = this._currentPosition;
-			return {
-				[Symbol.iterator]: function () {
-					return this;
-				},
-				next: () => {
-					if (this._length !== null && i >= this._length) {
-						return DONE_TOKEN;
-					}
+		this.value = {
+			[Symbol.iterator]: function () {
+				return this;
+			},
+			next: () => {
+				if (this._length !== null && this._currentPosition >= this._length) {
+					return DONE_TOKEN;
+				}
 
-					if (this._cachedValues[i] !== undefined) {
-						return ready(this._cachedValues[i++]);
-					}
+				if (this._cachedValues[this._currentPosition] !== undefined) {
+					return ready(this._cachedValues[this._currentPosition++]);
+				}
 
-					const value = valueIterator.next();
-					if (!value.ready) {
-						return value;
-					}
-					if (value.done) {
-						const length = Math.min(i, 2) + this._currentPosition;
-						this._length = length;
-						return value;
-					}
-					if (this._saveValues || i < 2) {
-						this._cachedValues[i] = value.value;
-					}
-					if (i >= 2) {
-						this._currentPosition++;
-						this._iteratorHasProgressed = true;
-					}
-					i++;
+				const value = valueIterator.next();
+				if (!value.ready) {
 					return value;
 				}
-			};
+				if (value.done) {
+					const length = this._currentPosition;
+					this._length = length;
+					return value;
+				}
+				if (this._saveValues || this._currentPosition < 2) {
+					this._cachedValues[this._currentPosition] = value.value;
+				}
+				if (this._currentPosition >= 2) {
+					this._iteratorHasProgressed = true;
+				}
+				this._currentPosition++;
+				return value;
+			}
 		};
 
 		this._length = predictedLength;
@@ -76,10 +73,17 @@ class Sequence {
 	}
 
 	/**
+	 * @private
+	 */
+	_reset (to = 0) {
+		this._currentPosition = to;
+	}
+
+	/**
 	 * @return {AsyncResult<!Array<!Value>>}
 	 */
 	tryGetAllValues () {
-		const iterator = this.value();
+		const iterator = this.value;
 		this._saveValues = true;
 		for (let val = iterator.next(); !val.done; val = iterator.next()) {
 			if (!val.ready) {
@@ -97,7 +101,7 @@ class Sequence {
 			throw new Error('Implementation error: Sequence Iterator has progressed.');
 
 		}
-		const iterator = this.value();
+		const iterator = this.value;
 		const values = [];
 		for (let val = iterator.next(); !val.done; val = iterator.next()) {
 			if (!val.ready) {
@@ -112,20 +116,23 @@ class Sequence {
 	 * @return  {AsyncResult<boolean>}
 	 */
 	tryGetEffectiveBooleanValue () {
-		const iterator = this.value();
+		const iterator = this.value;
 		const firstValue = iterator.next();
 		if (!firstValue.ready) {
-			return firstValue;
+			return /** @type {!AsyncResult<boolean>} */(firstValue);
 		}
 		if (firstValue.done) {
+			this._reset();
 			return ready(false);
 		}
 		if (isSubtypeOf(firstValue.value.type, 'node()')) {
+			this._reset();
 			return ready(true);
 		}
 		const secondValue = iterator.next();
+		this._reset();
 		if (!secondValue.ready) {
-			return secondValue;
+			return /** @type {!AsyncResult<boolean>} */(secondValue);
 		}
 
 		if (!secondValue.done) {
@@ -144,12 +151,15 @@ class Sequence {
 		if (onlyIfCheap) {
 			return ready(-1);
 		}
-		const iterator = this.value();
-		let val = iterator.next();
+		const oldPosition = this._currentPosition;
+		this._reset();
+		const iterator = this.value;
 		this._saveValues = true;
+		let val = iterator.next();
 		while (val.ready && !val.done) {
 			val = iterator.next();
 		}
+		this._reset(oldPosition);
 		if (val.done) {
 			return ready(this._length);
 		}
@@ -160,11 +170,12 @@ class Sequence {
 	 * @return  {!AsyncResult<?Value>}
 	 */
 	tryGetFirst () {
-		const iterator = this.value();
+		const iterator = this.value;
 		const firstValue = iterator.next();
 		if (!firstValue.ready) {
 			return firstValue;
 		}
+		this._reset();
 		if (firstValue.done) {
 			return ready(null);
 		}
@@ -178,8 +189,9 @@ class Sequence {
 		if (this._cachedValues[0] !== undefined) {
 			return this._cachedValues[0];
 		}
-		const value = this.value().next();
-		return value.done ? null : value.value;
+		const value = this.value.next();
+		this._reset();
+		return value.done ? null : /** @type {!Value} */(value.value);
 	}
 
 	/**
@@ -188,7 +200,7 @@ class Sequence {
 	 */
 	map (callback) {
 		let i = -1;
-		const iterator = this.value();
+		const iterator = this.value;
 		return new Sequence({
 			next: () => {
 				i++;
@@ -199,7 +211,7 @@ class Sequence {
 				if (!value.ready) {
 					return value;
 				}
-				return ready(callback(value.value, i, this));
+				return ready(callback(/** @type {!Value} */(value.value), i, this));
 			}
 		}, this._length);
 	}
@@ -210,7 +222,7 @@ class Sequence {
 	 */
 	filter (callback) {
 		let i = -1;
-		const iterator = this.value();
+		const iterator = this.value;
 
 		return new Sequence({
 			next: () => {
@@ -220,7 +232,7 @@ class Sequence {
 					if (!value.ready) {
 						return value;
 					}
-					if (callback(value.value, i, this)) {
+					if (callback(/** @type {!Value} */(value.value), i, this)) {
 						return value;
 					}
 
@@ -237,7 +249,7 @@ class Sequence {
 	 * @return  {!Sequence}
 	 */
 	mapAll (callback) {
-		const iterator = this.value();
+		const iterator = this.value;
 		let mappedResultsIterator;
 		const allResults = [];
 		let isReady = false;
@@ -250,7 +262,7 @@ class Sequence {
 				}
 				allResults.push(value.value);
 			}
-			mappedResultsIterator = callback(allResults).value();
+			mappedResultsIterator = callback(allResults).value;
 			isReady = true;
 		})();
 		return new Sequence({
@@ -278,8 +290,9 @@ class Sequence {
 		if (this._length === 0) {
 			return true;
 		}
-		const iterator = this.value();
+		const iterator = this.value;
 		const value = iterator.next();
+		this._reset();
 		return value.done;
 	}
 
@@ -295,16 +308,18 @@ class Sequence {
 			return true;
 		}
 
-		const iterator = this.value();
+		const iterator = this.value;
 
 		let value = iterator.next();
 		if (!value.ready) {
 			throw new Error('What to do here?');
 		}
 		if (value.done) {
+			this._reset();
 			return false;
 		}
 		value = iterator.next();
+		this._reset();
 		return value.done;
 	}
 
@@ -312,18 +327,21 @@ class Sequence {
 	 * @return {boolean}
 	 */
 	getEffectiveBooleanValue () {
-		const iterator = this.value();
+		const iterator = this.value;
 		const firstValue = iterator.next();
 		if (firstValue.done) {
+			this._reset();
 			return false;
 		}
 		if (!firstValue.ready) {
 			throw new Error('What to do here?');
 		}
 		if (isSubtypeOf(firstValue.value.type, 'node()')) {
+			this._reset();
 			return true;
 		}
 		const secondValue = iterator.next();
+		this._reset();
 		if (!secondValue.done) {
 			throw new Error('FORG0006: A wrong argument type was specified in a function call.');
 		}
@@ -342,7 +360,7 @@ class Sequence {
 	 * @return {!Sequence}
 	 */
 	switchCases (cases) {
-		const scanIterator = this.value();
+		const scanIterator = this.value;
 		let scanIteration = 0;
 		let resultIterator = null;
 		return new Sequence({
@@ -354,14 +372,14 @@ class Sequence {
 						if (!value.ready) {
 							return value;
 						}
+						this._reset();
 						let resultSequence;
 						if (value.done) {
 							resultSequence = cases.empty(this);
-						}
-						else {
+						} else {
 							resultSequence = cases.default(this);
 						}
-						resultIterator = resultSequence.value();
+						resultIterator = resultSequence.value;
 						// Try to mirror through length;
 						const resultSequenceLength = resultSequence.tryGetLength(true);
 						if (resultSequenceLength.ready && resultSequenceLength.value !== -1) {
@@ -379,6 +397,7 @@ class Sequence {
 							}
 							scanIteration++;
 						}
+						this._reset();
 						let resultSequence;
 						switch (scanIteration) {
 							case 0:
@@ -391,7 +410,7 @@ class Sequence {
 								resultSequence = (cases.multiple || cases.default)(this);
 								break;
 						}
-						resultIterator = resultSequence.value();
+						resultIterator = resultSequence.value;
 						// Try to mirror through length;
 						const resultSequenceLength = resultSequence.tryGetLength(true);
 						if (resultSequenceLength.ready && resultSequenceLength.value !== -1) {
@@ -411,18 +430,16 @@ let emptySequence;
  */
 class EmptySequence {
 	constructor () {
-		this.value = () => (
-			{
-				[Symbol.iterator]: function () {
-					return this;
-				},
-				next: () => DONE_TOKEN
-			}
-		);
+		this.value = {
+			[Symbol.iterator]: function () {
+				return this;
+			},
+			next: () => DONE_TOKEN
+		};
 	}
 	getEffectiveBooleanValue () {
 		return false;
-	};
+	}
 	first () {
 		return null;
 	}
@@ -432,11 +449,18 @@ class EmptySequence {
 	getAllValues () {
 		return [];
 	}
-	getLength () {return 0;}
-	isSingleton () {return false;}
-	mapAll (callback) { return callback([]); };
-	tryGetFirst () {return ready(null);}
-	tryGetLength (_onlyIfCheap) { return ready(0); }
+	isSingleton () {
+		return false;
+	}
+	mapAll (callback) {
+		return callback([]);
+	}
+	tryGetFirst () {
+		return ready(null);
+	}
+	tryGetLength (_onlyIfCheap) {
+		return ready(0);
+	}
 	tryGetAllValues () {
 		return ready([]);
 	}
@@ -470,20 +494,18 @@ emptySequence = new EmptySequence();
  */
 class SingletonSequence {
 	constructor (onlyValue) {
-		this.value = () => {
-			let hasPassed = false;
-			return {
-				[Symbol.iterator]: function () {
-					return this;
-				},
-				next: () => {
-					if (hasPassed) {
-						return DONE_TOKEN;
-					}
-					hasPassed = true;
-					return ready(onlyValue);
+		let hasPassed = false;
+		this.value = {
+			[Symbol.iterator]: function () {
+				return this;
+			},
+			next: () => {
+				if (hasPassed) {
+					return DONE_TOKEN;
 				}
-			};
+				hasPassed = true;
+				return ready(onlyValue);
+			}
 		};
 		this._onlyValue = onlyValue;
 		this._effectiveBooleanValue = null;
@@ -514,9 +536,6 @@ class SingletonSequence {
 	}
 	tryGetLength (_onlyIfCheap) {
 		return ready(1);
-	}
-	getLength () {
-		return 1;
 	}
 	isSingleton () {
 		return true;
@@ -561,20 +580,19 @@ class ArrayBackedSequence {
 		if (values.length === 1) {
 			return /** @type {?} */(new SingletonSequence(values[0]));
 		}
-		this.value = () => {
-			let i = -1;
-			return {
-				[Symbol.iterator]: function () {
-					return this;
-				},
-				next: () => {
-					i++;
-					if (i >= values.length) {
-						return DONE_TOKEN;
-					}
-					return ready(values[i]);
+
+		let i = -1;
+		this.value = {
+			[Symbol.iterator]: function () {
+				return this;
+			},
+			next: () => {
+				i++;
+				if (i >= values.length) {
+					return DONE_TOKEN;
 				}
-			};
+				return ready(values[i]);
+			}
 		};
 
 		this._values = values;
@@ -643,9 +661,6 @@ class ArrayBackedSequence {
 	mapAll (callback) {
 		return callback(this._values);
 	}
-	getLength () {
-		return this._values.length;
-	}
 	atomize (executionParameters) {
 		return this.map(value => atomize(value, executionParameters));
 	}
@@ -674,21 +689,18 @@ Sequence.empty = function () {
 	return emptySequence;
 };
 
-const singletonTrueSequence = new SingletonSequence(trueBoolean);
-const singletonFalseSequence = new SingletonSequence(falseBoolean);
-
 /**
  * @return {!Sequence}
  */
 Sequence.singletonTrueSequence = function () {
-	return singletonTrueSequence;
+	return new SingletonSequence(trueBoolean);
 };
 
 /**
  * @return {!Sequence}
  */
 Sequence.singletonFalseSequence = function () {
-	return singletonFalseSequence;
+	return new SingletonSequence(falseBoolean);
 };
 
 

@@ -4,6 +4,8 @@ import Sequence from '../dataTypes/Sequence';
 import MapValue from '../dataTypes/MapValue';
 import zipSingleton from '../util/zipSingleton';
 
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+
 /**
  * @extends {Expression}
  */
@@ -26,7 +28,7 @@ class MapConstructor extends Expression {
 
 	evaluate (dynamicContext, executionParameters) {
 		const keySequences = this._entries
-				.map(kvp => kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters).atomize( executionParameters).switchCases({
+				.map(kvp => kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters).switchCases({
 					default: () => {
 						throw new Error('XPTY0004: A key of a map should be a single atomizable value.');
 					},
@@ -37,7 +39,9 @@ class MapConstructor extends Expression {
 			keySequences,
 			keys => Sequence.singleton(new MapValue(keys.map((key, keyIndex) => ({
 				key,
-				value: this._entries[keyIndex].value.evaluateMaybeStatically(dynamicContext, executionParameters)
+				value: createDoublyIterableSequence(
+					this._entries[keyIndex].value.evaluateMaybeStatically(dynamicContext, executionParameters)
+				)
 			})))));
 	}
 }

@@ -6,7 +6,7 @@ import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 class MapValue extends FunctionValue {
 	/**
-	 * @param  {Array<{key: !Value, value: !Sequence}>}  keyValuePairs
+	 * @param  {Array<{key: !Value, value: !function():!Sequence}>}  keyValuePairs
 	 */
 	constructor (keyValuePairs) {
 		super({

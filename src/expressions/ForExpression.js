@@ -2,6 +2,7 @@ import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Sequence from './dataTypes/Sequence';
 import { DONE_TOKEN } from './util/iterators';
+import Value from './dataTypes/Value';
 
 /**
  * @extends {PossiblyUpdatingExpression}
@@ -48,7 +49,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 	}
 
 	performFunctionalEvaluation (dynamicContext, executionParameters, [_createBindingSequence, createReturnExpression]) {
-		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext, executionParameters).value();
+		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext, executionParameters).value;
 		let returnIterator = null;
 		let done = false;
 		return new Sequence({
@@ -65,10 +66,10 @@ class ForExpression extends PossiblyUpdatingExpression {
 						}
 
 						const nestedContext = dynamicContext.scopeWithVariableBindings({
-							[this._variableBindingKey]: () => Sequence.singleton(currentClauseValue.value)
+							[this._variableBindingKey]: () => Sequence.singleton(/** @type {!Value} */(currentClauseValue.value))
 						});
 
-						returnIterator = createReturnExpression(nestedContext).value();
+						returnIterator = createReturnExpression(nestedContext).value;
 					}
 					const returnValue = returnIterator.next();
 					if (returnValue.done) {

@@ -70,8 +70,8 @@ class IntersectExcept extends Expression {
 			this._expression2.evaluateMaybeStatically(dynamicContext, executionParameters),
 			this._expression2.expectedResultOrder);
 
-		const firstIterator = firstResult.value();
-		const secondIterator = secondResult.value();
+		const firstIterator = firstResult.value;
+		const secondIterator = secondResult.value;
 
 		let firstValue = null;
 		let secondValue = null;

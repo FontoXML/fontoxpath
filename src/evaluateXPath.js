@@ -19,7 +19,7 @@ function transformMapToObject (map, dynamicContext) {
 			}
 			while (i < map.keyValuePairs.length) {
 				if (!transformedValueIterator) {
-					const val = map.keyValuePairs[i].value
+					const val = map.keyValuePairs[i].value()
 						.switchCases({
 							default: seq => seq,
 							multiple: () => {
@@ -64,7 +64,7 @@ function transformArrayToArray (array, dynamicContext) {
 			}
 			while (i < array.members.length) {
 				if (!transformedMemberGenerator) {
-					const val = array.members[i]
+					const val = array.members[i]()
 						.switchCases({
 							default: seq => seq,
 							multiple: () => {
@@ -224,7 +224,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 				return null;
 			}
 			if (!(isSubtypeOf(first.value.type, 'node()'))) {
-				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to Node. Got ' + rawResults.value[0]);
+				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to Node. Got ' + first.value.type);
 			}
 			return first.value.value;
 		}
@@ -299,7 +299,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 		}
 
 		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
-			const it = rawResults.value();
+			const it = rawResults.value;
 			let transformedValueGenerator = null;
 			let done = false;
 			function getNextResult () {

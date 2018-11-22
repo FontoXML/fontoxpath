@@ -2,6 +2,7 @@ import Expression from '../Expression';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Sequence from '../dataTypes/Sequence';
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';
+import Value from '../dataTypes/Value';
 
 /**
  * @extends {Expression}
@@ -50,7 +51,7 @@ class Filter extends Expression {
 					// There are only values for integer positions
 					return Sequence.empty();
 				}
-				const iterator = valuesToFilter.value();
+				const iterator = valuesToFilter.value;
 				let done = false;
 				// Note that using filter here is a bad choice, because we only want one item.
 				// TODO: implement Sequence.itemAt(i), which is a no-op for empty sequences, a O(1) op for array backed sequence / singleton sequences and a O(n) for normal sequences.
@@ -81,7 +82,7 @@ class Filter extends Expression {
 			return Sequence.empty();
 		}
 
-		const iteratorToFilter = valuesToFilter.value();
+		const iteratorToFilter = valuesToFilter.value;
 		let iteratorItem = null;
 		let i = 0;
 		let filterResultSequence = null;
@@ -101,7 +102,7 @@ class Filter extends Expression {
 					}
 					if (!filterResultSequence) {
 						filterResultSequence = this._filterExpression.evaluateMaybeStatically(
-							dynamicContext.scopeWithFocus(i, iteratorItem.value, valuesToFilter),
+							dynamicContext.scopeWithFocus(i, /** @type {!Value} */(iteratorItem.value), valuesToFilter),
 							executionParameters);
 					}
 

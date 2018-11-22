@@ -2,6 +2,7 @@ import Expression from '../Expression';
 import Specificity from '../Specificity';
 import ArrayValue from '../dataTypes/ArrayValue';
 import Sequence from '../dataTypes/Sequence';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 /**
  * @extends {Expression}
@@ -25,7 +26,8 @@ class SquareArrayConstructor extends Expression {
 
 	evaluate (dynamicContext, executionParameters) {
 		return Sequence.singleton(
-			new ArrayValue(this._members.map(entry => entry.evaluateMaybeStatically(dynamicContext, executionParameters))));
+			new ArrayValue(
+				this._members.map(entry => createDoublyIterableSequence(entry.evaluateMaybeStatically(dynamicContext, executionParameters)))));
 	}
 }
 export default SquareArrayConstructor;

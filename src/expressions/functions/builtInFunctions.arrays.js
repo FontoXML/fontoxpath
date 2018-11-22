@@ -6,6 +6,7 @@ import ArrayValue from '../dataTypes/ArrayValue';
 import zipSingleton from '../util/zipSingleton';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, ready } from '../util/iterators';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -31,7 +32,7 @@ function arrayPut (_dynamicContext, _executionParameters, _staticContext, arrayS
 				throw new Error('FOAY0001: array position out of bounds.');
 			}
 				const newMembers = /** @type {!ArrayValue} */ (array).members.concat();
-			newMembers.splice(positionValue - 1, 1, itemSequence);
+			newMembers.splice(positionValue - 1, 1, createDoublyIterableSequence(itemSequence));
 			return Sequence.singleton(new ArrayValue(newMembers));
 		});
 }
@@ -43,7 +44,7 @@ function arrayAppend (_dynamicContext, _executionParameters, _staticContext, arr
 	return zipSingleton(
 		[arraySequence],
 		([array]) => {
-			const newMembers = /** @type {!ArrayValue} */ (array).members.concat([itemSequence]);
+			const newMembers = /** @type {!ArrayValue} */ (array).members.concat([createDoublyIterableSequence(itemSequence)]);
 			return Sequence.singleton(new ArrayValue(newMembers));
 		});
 }
@@ -70,7 +71,7 @@ function arraySubarray (_dynamicContext, _executionParameters, _staticContext, a
 				throw new Error('FOAY0001: subarray start + length out of bounds.');
 			}
 
-					const newMembers = /** @type {!ArrayValue} */ (array).members.slice(startValue - 1, lengthValue + startValue - 1);
+			const newMembers = /** @type {!ArrayValue} */ (array).members.slice(startValue - 1, lengthValue + startValue - 1);
 			return Sequence.singleton(new ArrayValue(newMembers));
 		});
 }
@@ -115,7 +116,7 @@ function arrayInsertBefore (_dynamicContext, _executionParameters, _staticContex
 			}
 
 			const newMembers = /** @type {!ArrayValue} */ (array).members.concat();
-			newMembers.splice(positionValue - 1, 0, itemSequence);
+			newMembers.splice(positionValue - 1, 0, createDoublyIterableSequence(itemSequence));
 			return Sequence.singleton(new ArrayValue(newMembers));
 		});
 }
@@ -149,7 +150,8 @@ function arrayForEach (dynamicContext, executionParameters, staticContext, array
 		[arraySequence, functionItemSequence],
 		([array, functionItem]) => {
 			const newMembers = /** @type {!ArrayValue} */ (array).members.map(function (member) {
-				return functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, member);
+				return createDoublyIterableSequence(
+					functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, member()));
 			});
 			return Sequence.singleton(new ArrayValue(newMembers));
 		});
@@ -170,7 +172,7 @@ function arrayFilter (dynamicContext, executionParameters, staticContext, arrayS
 				dynamicContext,
 				executionParameters,
 				staticContext,
-				member));
+				member()));
 			const effectiveBooleanValues = [];
 			let done = false;
 			return new Sequence({
@@ -198,7 +200,8 @@ function arrayFilter (dynamicContext, executionParameters, staticContext, arrayS
 								filterResult => filterResult.ready ? Promise.resolve() : filterResult.promise))
 						};
 					}
-					const newMembers = /** @type {!ArrayValue} */ (array).members.filter((_, i) => effectiveBooleanValues[i].value);
+					const newMembers = /** @type {!ArrayValue} */ (array).members
+						.filter((_, i) => effectiveBooleanValues[i].value);
 					done = true;
 					return ready(new ArrayValue(newMembers));
 				}
@@ -213,7 +216,7 @@ function arrayFoldLeft (dynamicContext, executionParameters, staticContext, arra
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
 		([array, functionItem]) => /** @type {!ArrayValue} */ (array).members.reduce(
-			(accum, member) => functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, accum, member),
+			(accum, member) => functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, accum, member()),
 			startSequence));
 }
 
@@ -224,7 +227,7 @@ function arrayFoldRight (dynamicContext, executionParameters, staticContext, arr
 	return zipSingleton(
 		[arraySequence, functionItemSequence],
 		([array, functionItem]) => /** @type {!ArrayValue} */ (array).members.reduceRight(
-			(accum, member) => functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, accum, member),
+			(accum, member) => functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, accum, member()),
 			startSequence));
 }
 
@@ -239,13 +242,13 @@ function arrayForEachPair (dynamicContext, executionParameters, staticContext, a
 			for (let i = 0, l = Math.min(
 				/** @type {!ArrayValue} */ (arrayA).members.length,
 				/** @type {!ArrayValue} */ (arrayB).members.length); i < l; ++i) {
-				newMembers[i] = functionItem.value.call(
+				newMembers[i] = createDoublyIterableSequence(functionItem.value.call(
 					undefined,
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					/** @type {!ArrayValue} */ (arrayA).members[i],
-					/** @type {!ArrayValue} */ (arrayB).members[i]);
+					/** @type {!ArrayValue} */ (arrayA).members[i](),
+					/** @type {!ArrayValue} */ (arrayB).members[i]()));
 			}
 
 			return Sequence.singleton(new ArrayValue(newMembers));
@@ -259,8 +262,7 @@ function arraySort (_dynamicContext, executionParameters, _staticContext, arrayS
 	return zipSingleton(
 		[arraySequence],
 		([array]) => {
-			const atomizedMembers = /** @type {!ArrayValue} */ (array).members
-				.map(member => member.atomize(executionParameters));
+			const atomizedMembers = /** @type {!ArrayValue} */ (array).members.map(createSequence => createSequence().atomize(executionParameters));
 
 			return zipSingleton(
 				atomizedMembers,
@@ -282,7 +284,7 @@ function arrayFlatten (__dynamicContext, _executionParameters, _staticContext, i
 	return itemSequence.mapAll(items => items.reduce(function flattenItem (flattenedItems, item) {
 		if (isSubtypeOf(item.type, 'array(*)')) {
 			return /** @type {ArrayValue} */ (item).members.reduce(
-				(flattenedItemsOfMember, member) => member.mapAll(
+				(flattenedItemsOfMember, member) => member().mapAll(
 					allValues => allValues.reduce(flattenItem, flattenedItemsOfMember)),
 				flattenedItems);
 		}

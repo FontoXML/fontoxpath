@@ -5,7 +5,7 @@ import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 class ArrayValue extends FunctionValue {
 	/**
-	 * @param  {!Array<!Sequence>}  members
+	 * @param  {!Array<!function():!Sequence>}  members
 	 */
 	constructor (members) {
 		super(

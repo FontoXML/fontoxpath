@@ -2,6 +2,7 @@ import Expression from '../Expression';
 import Specificity from '../Specificity';
 import ArrayValue from '../dataTypes/ArrayValue';
 import Sequence from '../dataTypes/Sequence';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 /**
  * @extends {Expression}
@@ -28,7 +29,8 @@ class CurlyArrayConstructor extends Expression {
 			return Sequence.singleton(new ArrayValue([]));
 		}
 		return this._members[0].evaluateMaybeStatically(dynamicContext, executionParameters)
-			.mapAll(allValues => Sequence.singleton(new ArrayValue(allValues.map(Sequence.singleton))));
+			.mapAll(allValues => Sequence.singleton(
+				new ArrayValue(allValues.map(item => createDoublyIterableSequence(Sequence.singleton(item))))));
 	}
 }
 export default CurlyArrayConstructor;
