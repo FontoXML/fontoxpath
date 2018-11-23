@@ -185,12 +185,6 @@ function generateBinaryOperatorFunction (operator, typeA, typeB) {
 				return createAtomicValue(dateTimeSubtract(castA.value, castB.value), 'xs:dayTimeDuration');
 			};
 		}
-		if (operator === 'subtractOp') {
-			return (a, b) => {
-				const { castA, castB } = applyCastFunctions(a, b);
-				return createAtomicValue(dateTimeAdd(castA.value, castB.value), 'xs:dayTimeDuration');
-			};
-		}
 
 		throw new Error(`XPTY0004: ${operator} not available for types ${typeA} and ${typeB}`);
 	}
