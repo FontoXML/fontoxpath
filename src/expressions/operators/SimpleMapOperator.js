@@ -1,6 +1,7 @@
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
+import DynamicContext from '../DynamicContext';
 
 /**
  * @extends {Expression}
@@ -52,9 +53,9 @@ class SimpleMapOperator extends Expression {
 
 					// Now that we have moved an item in the input, start generating mapped items
 					if (!sequenceValueIterator) {
-						sequenceValueIterator = this._expression2.evaluateMaybeStatically(childContext.value, executionParameters).value();
+						sequenceValueIterator = this._expression2.evaluateMaybeStatically(/** @type {!DynamicContext} */(childContext.value), executionParameters);
 					}
-					const value = sequenceValueIterator.next();
+					const value = sequenceValueIterator.value.next();
 					if (value.done) {
 						sequenceValueIterator = null;
 						// Move to next

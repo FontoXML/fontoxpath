@@ -48,8 +48,6 @@ describe('varRef', () => {
 
 		it('can reference variables: ',
 			() => chai.assert.equal(evaluateXPathToNumber('$x(1)("a")', documentNode, null, { x: [{ 'a': 123 }] }), 123));
-		it('can reference built-in variables',
-			() => chai.assert.deepEqual(evaluateXPathToString('$theBest', documentNode), 'FontoXML is the best!'));
 
 		it('does not mutate to the external variables object', () => {
 			const variables = { a: 1 };

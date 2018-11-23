@@ -5,6 +5,8 @@ import Value from './Value';
 import AtomicValue from './AtomicValue';
 import ExecutionParameters from '../ExecutionParameters';
 
+const TEXT_NODE = 3;
+
 /**
  * @param   {!Value}                 value
  * @param   {!ExecutionParameters}  executionParameters
@@ -25,32 +27,35 @@ export default function atomize (value, executionParameters) {
 	}
 
 	if (isSubtypeOf(value.type, 'node()')) {
+		const /** Node */ node = value.value;
+
 		// TODO: Mix in types, by default get string value
 		if (isSubtypeOf(value.type, 'attribute()')) {
-			return createAtomicValue(value.value.value, 'xs:untypedAtomic');
+			return createAtomicValue(node.value, 'xs:untypedAtomic');
 		}
 
 		// Text nodes and documents should return their text, as untyped atomic
 		if (isSubtypeOf(value.type, 'text()')) {
-			return createAtomicValue(executionParameters.domFacade.getData(value.value), 'xs:untypedAtomic');
+			return createAtomicValue(executionParameters.domFacade.getData(node), 'xs:untypedAtomic');
 		}
 		// comments and PIs are string
 		if (isSubtypeOf(value.type, 'comment()') || isSubtypeOf(value.type, 'processing-instruction()')) {
-			return createAtomicValue(executionParameters.domFacade.getData(value.value), 'xs:string');
+			return createAtomicValue(executionParameters.domFacade.getData(node), 'xs:string');
 		}
 
 		// This is an element or a document node. Because we do not know the specific type of this element.
 		// Documents should always be an untypedAtomic, of elements, we do not know the type, so they are untypedAtomic too
-		var allTextNodes = (function getTextNodes (node) {
-			if (node.nodeType === node.TEXT_NODE || node.nodeType === 4) {
-				return [node];
+		const allTextNodes = [];
+		(function getTextNodes (node) {
+			if (node.nodeType === TEXT_NODE || node.nodeType === 4) {
+				allTextNodes.push(node);
+				return;
 			}
-			return executionParameters.domFacade.getChildNodes(node)
-				.reduce(function (textNodes, childNode) {
-					Array.prototype.push.apply(textNodes, getTextNodes(childNode));
-					return textNodes;
-				}, []);
-		})(value.value);
+			executionParameters.domFacade.getChildNodes(node)
+				.forEach(function (childNode) {
+					getTextNodes(childNode);
+				});
+		})(node);
 
 		return createAtomicValue(allTextNodes.map(function (textNode) {
 			return executionParameters.domFacade.getData(textNode);

@@ -1,12 +1,10 @@
 <html>
 	<head>
 		<title>fontoxpath</title>
-		<!-- <script src="./fontoxpath.js" type="application/javascript">
-		</script> -->
-		<script src="./main.js" type="module">
-	</script>
-		<!-- <script src="./maggie.js" type="application/javascript">
-		</script> -->
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/default.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+		<script src="./main.js" type="module"></script>
 		<style>
 		 	#xmlFile * {
 				all: initial;
@@ -23,9 +21,11 @@
 	<body>
 		<div>
 			<h4>Edit the XML here</h4>
+			<sub>Note: Highlighting will only update on page reload.</sub>
 			<pre id="xmlSource" contentEditable="true"> </pre>
 			<h4>Edit the XPath here:</h4>
-			<label><input id="allowXQuery" type="checkbox" checked/>XQuery</label>
+			<label><input id="allowXQuery" type="checkbox"/>XQuery</label>
+			<label><input id="allowXQueryUpdateFacility" type="checkbox"/>XQuery Update Facility</label>
 			<pre type="text" contentEditable="true" id="xpathField" value="//*" style="min-height:100px"></pre>
 			<h4>The bucket for this selector</h4>
 			<pre id="bucketField"></pre>
@@ -35,6 +35,12 @@
 			<p id="log" />
 			<h4>Result, as text</h4>
 			<pre id="resultText"></pre>
+			<h4>Updated document</h4>
+			<pre id="updateResult"></pre>
+			<h4>AST, as JsonML</h4>
+			<pre id="astJsonMl"></pre>
+			<h4>AST, as XML</h4>
+			<pre id="astXml"></pre>
 		</div>
 	</body>
 </html>

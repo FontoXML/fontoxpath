@@ -11,6 +11,6 @@ export default function arrayGet (_dynamicContext, _executionParameters, _static
 		if (positionValue <= 0 || positionValue > /** @type {ArrayValue} */ (array).members.length) {
 			throw new Error('FOAY0001: array position out of bounds.');
 		}
-		return /** @type {ArrayValue} */ (array).members[positionValue - 1];
+		return /** @type {ArrayValue} */ (array).members[positionValue - 1]();
 	}));
 }

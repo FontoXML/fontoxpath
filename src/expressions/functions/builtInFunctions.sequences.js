@@ -12,7 +12,7 @@ import zipSingleton from '../util/zipSingleton';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionValue from '../dataTypes/FunctionValue';
-import Value from '../dataTypes/Value'
+import Value from '../dataTypes/Value';
 import FunctionDefinitionType from'./FunctionDefinitionType';
 
 function subSequence (sequence, start, length) {
@@ -21,7 +21,7 @@ function subSequence (sequence, start, length) {
 	/**
 	 * @type {!Iterator<!Value>}
 	 */
-	const iterator = sequence.value();
+	const iterator = sequence.value;
 
 	const predictedLength = sequence.tryGetLength(true);
 	let newSequenceLength = null;
@@ -470,7 +470,7 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 		if (!functionCallResult.isSingleton() || !isSubtypeOf(functionCallResult.first().type, 'xs:boolean')) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
-		return functionCallResult.first().value;
+		return /** @type {boolean} */ (functionCallResult.first().value);
 	});
 }
 
@@ -491,7 +491,7 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 		throw new Error(`XPTY0004: signature of function passed to fn:for-each is incompatible.`);
 	}
 
-	const outerIterator = sequence.value();
+	const outerIterator = sequence.value;
 	let innerIterator;
 	return new Sequence({
 		next: () => {
@@ -505,7 +505,7 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 
 					const transformedArgument = transformArgument(
 						callbackArgumentTypes[0],
-						Sequence.singleton(item.value),
+						Sequence.singleton(/** @type {!Value} */(item.value)),
 						executionParameters,
 						'fn:for-each');
 					const nextSequence = callbackFn.value.call(
@@ -515,7 +515,7 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 						staticContext,
 						transformedArgument);
 
-					innerIterator = nextSequence.value();
+					innerIterator = nextSequence.value;
 				}
 
 				const entry = innerIterator.next();

@@ -52,13 +52,13 @@ export const transformArgument = (argumentType, argument, executionParameters, f
 			return argument.switchCases({
 				default: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName)),
 				multiple: () => {
-					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "?", but got "+".`);
+					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${argumentType.occurrence} for ${functionName} is incorrect. Expected "?", but got "+".`);
 				}
 			});
 		case '+':
 			return argument.switchCases({
 				empty: () => {
-					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`);
+					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${argumentType.occurrence} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`);
 				},
 				default: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName))
 			});

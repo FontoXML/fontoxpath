@@ -24,8 +24,20 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 let AST;
 
 /**
+ * @typedef {{
+ *  namespaceURI: string,
+ *  localName: string,
+ *  arity: number,
+ *  functionDefinition: !Object
+ * }} functionDeclaration
+ */
+let FunctionDeclaration;
+
+/**
  * @param   {!AST}            prolog              The prolog of the module to process
  * @param   {!StaticContext}  staticContext
+ *
+ * @return  {{functionDeclarations: !Array<!FunctionDeclaration>}}
  */
 export default function processProlog (prolog, staticContext) {
 	const staticallyCompilableExpressions = [];
@@ -37,6 +49,7 @@ export default function processProlog (prolog, staticContext) {
 			case 'moduleImport':
 			case 'namespaceDecl':
 			case 'functionDecl':
+			case 'varDecl':
 				break;
 			default:
 				throw new Error('Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules');
@@ -116,7 +129,7 @@ export default function processProlog (prolog, staticContext) {
 				`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${paramTypes.length} has already been declared.`);
 		}
 
-		const compiledFunctionBody = compileAstToExpression(body, { allowXQuery: true });
+		const compiledFunctionBody = compileAstToExpression(body, { allowXQuery: true, allowUpdating: false });
 
 		const staticContextLeaf = new StaticContext(staticContext);
 		const parameterBindingNames = paramNames.map(param => {
@@ -124,7 +137,7 @@ export default function processProlog (prolog, staticContext) {
 			const prefix = astHelper.getAttribute(param, 'prefix');
 			const localName = astHelper.getTextContent(param);
 
-			if (namespaceURI === null) {
+			if (prefix && namespaceURI === null) {
 				namespaceURI = staticContext.resolveNamespace(prefix || '');
 			}
 			return staticContextLeaf.registerVariable(namespaceURI, localName);
@@ -177,6 +190,23 @@ export default function processProlog (prolog, staticContext) {
 				functionDefinition
 			});
 		}
+	});
+
+	const registeredVariables = [];
+	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
+		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
+		const external = astHelper.getFirstChild(varDecl, 'external');
+		if (!external || astHelper.getFirstChild(external, 'varValue')) {
+			throw new Error('Not implemented: only external variable declaration without default value is implemented in XQuery modules');
+		}
+
+		if (registeredVariables.some(registered => registered.namespaceURI === varName.namespaceURI && registered.localName === varName.localName)) {
+			throw new Error(`XQST0049: The variable ${varName.namespaceURI ? `Q{${varName.namespaceURI}}` : ''}${varName.localName} has already been declared.`);
+		}
+		if (!staticContext.lookupVariable(varName.namespaceURI, varName.localName)) {
+		staticContext.registerVariable(varName.namespaceURI, varName.localName);
+		}
+		registeredVariables.push(varName);
 	});
 
 	staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {

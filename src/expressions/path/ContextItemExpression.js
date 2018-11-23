@@ -9,7 +9,10 @@ class ContextItemExpression extends Expression {
 	constructor () {
 		super(
 			new Specificity({}),
-			[]
+			[],
+			{
+				resultOrder: Expression.RESULT_ORDERINGS.SORTED
+			}
 		);
 	}
 

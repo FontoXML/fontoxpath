@@ -28,7 +28,8 @@ class ParentAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		const parentNode = domFacade.getParentNode(dynamicContext.contextItem.value);
+		const /** !Node */ contextNode = dynamicContext.contextItem.value;
+		const parentNode = domFacade.getParentNode(contextNode);
 		if (!parentNode) {
 			return Sequence.empty();
 		}

@@ -1,13 +1,14 @@
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 import Sequence from '../dataTypes/Sequence';
-import { DONE_TOKEN } from '../util/iterators';
+import concatSequences from '../util/concatSequences';
 /**
  * The Sequence selector evaluates its operands and returns them as a single sequence
  *
- * @extends {Expression}
+ * @extends {PossiblyUpdatingExpression}
  */
-class SequenceOperator extends Expression {
+class SequenceOperator extends PossiblyUpdatingExpression {
 	/**
 	 * @param  {!Array<!Expression>}  expressions
 	 */
@@ -18,34 +19,16 @@ class SequenceOperator extends Expression {
 			}, new Specificity({})),
 			expressions,
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED,
+				resultOrder: PossiblyUpdatingExpression.RESULT_ORDERINGS.UNSORTED,
 				canBeStaticallyEvaluated: expressions.every(selector => selector.canBeStaticallyEvaluated)
 			});
-		this._expressions = expressions;
-
 	}
 
-	evaluate (dynamicContext, executionParameters) {
-		let i = 0;
-		if (!this._expressions.length) {
+	performFunctionalEvaluation (dynamicContext, _executionParameters, sequenceCallbacks) {
+		if (!sequenceCallbacks.length) {
 			return Sequence.empty();
 		}
-		let currentValueIterator = this._expressions[i].evaluateMaybeStatically(dynamicContext, executionParameters).value();
-
-		return new Sequence({
-			next: () => {
-				let val = currentValueIterator.next();
-				while (val.done) {
-					i++;
-					if (i >= this._expressions.length) {
-						return DONE_TOKEN;
-					}
-					currentValueIterator = this._expressions[i].evaluateMaybeStatically(dynamicContext, executionParameters).value();
-					val = currentValueIterator.next();
-				}
-				return val;
-			}
-		});
+		return concatSequences(sequenceCallbacks.map(cb => cb(dynamicContext)));
 	}
 }
 

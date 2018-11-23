@@ -41,7 +41,7 @@ function concatSortedSequences (_, sequences) {
 				return currentSequence;
 			}
 			if (!currentIterator) {
-				currentIterator = currentSequence.value.value();
+				currentIterator = currentSequence.value.value;
 			}
 
 			let value;
@@ -56,7 +56,7 @@ function concatSortedSequences (_, sequences) {
 					if (currentSequence.done) {
 						return value;
 					}
-					currentIterator = currentSequence.value.value();
+					currentIterator = currentSequence.value.value;
 				}
 			} while (value.done || isSameNodeValue(value.value, previousValue));
 			previousValue = value.value;
@@ -83,7 +83,7 @@ function mergeSortedSequences (domFacade, sequences) {
 				allSequencesLoadedPromise = val.promise.then(loadSequences);
 				return allSequencesLoadedPromise;
 			}
-			const iterator = val.value.value();
+			const iterator = val.value.value;
 			const mappedIterator = {
 				current: iterator.next(),
 				next: () => iterator.next()

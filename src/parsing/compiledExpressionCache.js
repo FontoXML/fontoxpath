@@ -1,7 +1,17 @@
 /**
  * @dict
+* @type {Object<string, Object<string, Array<CacheEntry>>>}
  */
 const compiledExpressionCache = Object.create(null);
+
+class CacheEntry {
+	constructor (referredNamespaces, referredVariables, compiledExpression, moduleImports) {
+		this.referredNamespaces = referredNamespaces;
+		this.referredVariables = referredVariables;
+		this.compiledExpression = compiledExpression;
+		this.moduleImports = moduleImports;
+	}
+}
 
 export function getStaticCompilationResultFromCache (selectorString, language, namespaceResolver, variables, moduleImports) {
 	const cachesForExpression = compiledExpressionCache[selectorString];
@@ -42,11 +52,11 @@ export function storeStaticCompilationResultInCache (selectorString, language, e
 		cachesForLanguage = cachesForExpression[language] = [];
 	}
 
-	cachesForLanguage.push({
-		referredNamespaces: executionStaticContext.getReferredNamespaces(),
-		referredVariables: executionStaticContext.getReferredVariables(),
-		compiledExpression: compiledExpression,
-		moduleImports: Object.keys(moduleImports)
+	cachesForLanguage.push(new CacheEntry(
+		executionStaticContext.getReferredNamespaces(),
+		executionStaticContext.getReferredVariables(),
+		compiledExpression,
+		Object.keys(moduleImports)
 			.map(moduleImportPrefix => ({ prefix: moduleImportPrefix, namespaceURI: moduleImports[moduleImportPrefix] }))
-	});
+	));
 }

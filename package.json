@@ -1,6 +1,6 @@
 {
 	"name": "fontoxpath",
-	"version": "3.0.0-alpha.1",
+	"version": "3.0.0-alpha.3",
 	"description": "A minimalistic XPath 3.1 engine in JavaScript",
 	"main": "dist/fontoxpath.js",
 	"directories": {
@@ -15,7 +15,11 @@
 		"qt3tests": "mocha --require @babel/register test/qt3tests.js",
 		"ci-qt3tests": "nyc --no-clean mocha --require @babel/register test/qt3tests.js",
 		"qt3testsxqueryx": "mocha --require @babel/register test/qt3testsXQueryX.js",
-		"coverage": "nyc report --reporter=text-lcov | coveralls"
+		"xqutstests": "mocha --require @babel/register test/xqutsTests.js",
+		"ci-xqutstests": "nyc --no-clean mocha --require @babel/register test/xqutsTests.js",
+		"xqutstestsxqueryx": "mocha --require @babel/register test/xqutsTestsXQueryX.js",
+		"coverage": "nyc report --reporter=text-lcov | coveralls",
+		"alltests": "mocha --recursive --require @babel/register test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX"
 	},
 	"repository": {
 		"type": "git",
@@ -39,6 +43,10 @@
 		"xml",
 		"XQuery",
 		"xquery",
+		"XQuery Update Facility",
+		"xquery update facility",
+		"XQUF",
+		"xquf",
 		"fontoxml"
 	],
 	"author": "The FontoXML team",
@@ -51,8 +59,8 @@
 		"babel-plugin-istanbul": "^5.1.0",
 		"babel-plugin-module-resolver": "^3.1.1",
 		"chai": "^4.1.2",
-		"google-closure-compiler": "^20181028.0.1",
 		"coveralls": "^3.0.2",
+		"google-closure-compiler": "^20181028.0.1",
 		"mocha": "^5.2.0",
 		"node-static-alias": "^1.1.2",
 		"nyc": "^13.1.0",

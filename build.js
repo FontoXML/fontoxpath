@@ -36,6 +36,7 @@ function doExpressionsBuild () {
 			assume_function_wrapper: true,
 			debug: !!doDebugBuild,
 			language_in: 'stable',
+			generate_exports: true,
 			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',
 			source_map_location_mapping: '"src|../src"',
@@ -62,7 +63,8 @@ function doExpressionsBuild () {
 			compilation_level: 'ADVANCED',
 			externs: [
 				path.resolve('./externs/IDomFacade.js'),
-				path.resolve('./externs/INodesFactory.js')
+				path.resolve('./externs/INodesFactory.js'),
+				path.resolve('./externs/IDocumentWriter.js')
 			],
 			module_resolution: 'NODE',
 			dependency_mode: 'STRICT',
@@ -84,7 +86,8 @@ function doExpressionsBuild () {
 	%output%
 	return window;
 });
-//# sourceMappingURL=./fontoxpath.js.map`,
+//# sourceMappingURL=./fontoxpath.js.map
+`,
 			js_output_file: './dist/fontoxpath.js',
 			entry_point: './src/index.js',
 			js: '"src/**.js"'

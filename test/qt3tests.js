@@ -10,12 +10,11 @@ import {
 	registerXQueryModule
 } from 'fontoxpath';
 
-import fs from 'fs';
+import { getSkippedTests } from 'test-helpers/getSkippedTests';
+import testFs from 'test-helpers/testFs';
 
 import mocha from 'mocha';
 import { sync, slimdom } from 'slimdom-sax-parser';
-
-const context = what => fs.readFileSync(`test/assets/${what}`, 'utf-8');
 
 global.atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
@@ -29,15 +28,13 @@ const parser = {
 	parseFromString: xmlString => {
 		try {
 			return sync(xmlString);
-		}
-		catch (e) {
+		} catch (e) {
 			console.log(`Error parsing the string ${xmlString}.`, e);
 			throw e;
 		}
 	}
 };
 
-let unrunnableTestCasesByName;
 let shouldRunTestByName;
 
 const indexOfGrep = process.argv.indexOf('--grep');
@@ -45,14 +42,13 @@ if (indexOfGrep >= 0) {
 	const [greppedTestsetName] = process.argv[indexOfGrep + 1].split('~');
 	shouldRunTestByName = { [greppedTestsetName.replace(/\\./g, '.')]: true };
 } else {
-	shouldRunTestByName = fs.readFileSync('test/runnableTestSets.csv', 'utf8')
+	shouldRunTestByName = testFs.readFileSync('runnableTestSets.csv')
 		.split(/\r?\n/)
 		.map(line=>line.split(','))
 		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 }
-const unrunnableTestCases = fs.readFileSync('test/unrunnableTestCases.csv', 'utf-8');
-unrunnableTestCasesByName = unrunnableTestCases
-	.split(/\r?\n/)
+const unrunnableTestCases = getSkippedTests('unrunnableTestCases.csv');
+const unrunnableTestCasesByName = unrunnableTestCases
 	.map(line => line.split(','))
 	.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
 
@@ -73,7 +69,7 @@ function getFile (fileName) {
 		return instantiatedDocumentByAbsolutePath[fileName];
 	}
 
-	let content = context(`./QT3TS-master/${fileName}`).replace(/\r\n/g, '\n');
+	let content = testFs.readFileSync(`QT3TS/${fileName}`).replace(/\r\n/g, '\n');
 	if (fileName.endsWith('.out')) {
 		if (content.endsWith('\n')) {
 			content = content.slice(0, -1);
@@ -114,8 +110,7 @@ function createAsserter (baseUrl, assertNode, language) {
 				chai.assert(asserts.some((a => {
 					try {
 						a(xpath, contextNode, variablesInScope, namespaceResolver);
-					}
-					catch (error) {
+					} catch (error) {
 						if (error instanceof TypeError) {
 							// TypeErrors are always errors
 							throw error;
@@ -160,8 +155,7 @@ function createAsserter (baseUrl, assertNode, language) {
 			let parsedFragment;
 			if (evaluateXPathToBoolean('@file', assertNode)) {
 				parsedFragment = getFile(evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, { baseUrl }));
-			}
-			else {
+			} else {
 				parsedFragment = parser.parseFromString(`<xml>${evaluateXPathToString('.', assertNode)}</xml>`, 'text/xml').documentElement;
 			}
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
@@ -224,7 +218,7 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 const registeredModuleURIByFileName = Object.create(null);
 
 describe('qt3 test set', () => {
-	let log = unrunnableTestCases;
+	const log = unrunnableTestCases;
 	evaluateXPathToNodes('/catalog/test-set', catalog)
 		.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
 		.map(testSetNode => evaluateXPathToString('@file', testSetNode))
@@ -282,8 +276,7 @@ describe('qt3 test set', () => {
 							if (evaluateXPathToBoolean('./test/@file', testCase)) {
 								testQuery = getFile(
 									evaluateXPathToString('$baseUrl || "/" || test/@file', testCase, null, { baseUrl }));
-							}
-							else {
+							} else {
 								testQuery = evaluateXPathToString('./test', testCase);
 							}
 							const language = evaluateXPathToString(
@@ -297,8 +290,7 @@ describe('qt3 test set', () => {
 							let env;
 							if (environmentNode) {
 								env = createEnvironment(baseUrl, environmentNode);
-							}
-							else {
+							} else {
 								env = environmentsByName[evaluateXPathToString('(./environment/@ref, "empty")[1]', testCase)];
 							}
 
@@ -326,13 +318,12 @@ describe('qt3 test set', () => {
 								});
 
 								asserter(testQuery, contextNode, variablesInScope, namespaceResolver);
-							}
-							catch (e) {
+							} catch (e) {
 								if (e instanceof TypeError) {
 									throw e;
 								}
 
-								log += `${testName},${e.toString().replace(/\n/g, ' ').trim()}\n`;
+								log.push(`${testName},${e.toString().replace(/\n/g, ' ').trim()}`);
 
 								// And rethrow the error
 								throw e;
@@ -340,8 +331,7 @@ describe('qt3 test set', () => {
 						};
 						assertFn.toString = () => new slimdom.XMLSerializer().serializeToString(testCase);
 						it(description, assertFn).timeout(60000);
-					}
-					catch (e) {
+					} catch (e) {
 						console.error(e);
 						continue;
 					}
@@ -350,7 +340,7 @@ describe('qt3 test set', () => {
 		});
 
 	after(() => {
-		console.log(`Writing a log of ${log.split('\n').length}`);
-		fs.writeFileSync('./test/unrunnableTestCases.csv', log);
+		console.log(`Writing a log of ${log.length}`);
+		testFs.writeFileSync('unrunnableTestCases.csv', log.join('\n'));
 	});
 });

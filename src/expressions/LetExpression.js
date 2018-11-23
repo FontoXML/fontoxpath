@@ -1,10 +1,11 @@
 import Expression from './Expression';
+import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
 /**
- * @extends {Expression}
+ * @extends {PossiblyUpdatingExpression}
  */
-class LetExpression extends Expression {
+class LetExpression extends PossiblyUpdatingExpression {
 	/**
 	 * @param  {{prefix:string, namespaceURI:?string, localName: string}}    rangeVariable
 	 * @param  {Expression}  bindingSequence
@@ -52,12 +53,12 @@ class LetExpression extends Expression {
 		staticContext.removeScope();
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	performFunctionalEvaluation (dynamicContext, _executionParameters, [createBindingSequence, createReturnExpression]) {
 		const scopedContext = dynamicContext.scopeWithVariableBindings({
-			[this._variableBinding]: createDoublyIterableSequence(this._bindingSequence.evaluateMaybeStatically(dynamicContext, executionParameters))
+			[this._variableBinding]: createDoublyIterableSequence(createBindingSequence(dynamicContext))
 		});
 
-		return this._returnExpression.evaluateMaybeStatically(scopedContext, executionParameters);
+		return createReturnExpression(scopedContext);
 	}
 }
 export default LetExpression;

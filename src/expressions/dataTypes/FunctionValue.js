@@ -4,6 +4,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
 import TypeDeclaration from './TypeDeclaration';
 import RestArgument from './RestArgument';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 /**
  * @param  {!Array<!TypeDeclaration|!RestArgument>}  argumentTypes
@@ -12,14 +13,14 @@ import RestArgument from './RestArgument';
  */
 function expandRestArgumentToArity (argumentTypes, arity) {
 	let indexOfRest = -1;
-	for (var i = 0; i < argumentTypes.length; i++) {
+	for (let i = 0; i < argumentTypes.length; i++) {
 		if (argumentTypes[i].isRestArgument) {
 			indexOfRest = i;
 		}
 	}
 
 	if (indexOfRest > -1) {
-		var replacePart = new Array(arity - (argumentTypes.length - 1))
+		const replacePart = new Array(arity - (argumentTypes.length - 1))
 			.fill(argumentTypes[indexOfRest - 1]);
 
 		return argumentTypes.slice(0, indexOfRest)
@@ -49,24 +50,35 @@ class FunctionValue {
 	 * @return  {!Sequence}
 	 */
 	applyArguments (appliedArguments) {
-		var fn = this.value;
+		const fn = this.value;
+
+		const argumentSequenceCreators = appliedArguments.map(arg => {
+			if (arg === null) {
+				return null;
+			}
+			return createDoublyIterableSequence(arg);
+		});
+
 		// fn (dynamicContext, ...arg)
 		function curriedFunction (dynamicContext, executionParameters, staticContext) {
-			var newArguments = Array.from(arguments).slice(3);
-			var allArguments = appliedArguments.map(function (argument) {
-				// If argument === null, it is a placeholder, so use a provided one
-				return argument || newArguments.shift();
+			const newArguments = Array.from(arguments).slice(3);
+			const allArguments = argumentSequenceCreators.map(function (createArgumentSequence) {
+				// If createArgumentSequence === null, it is a placeholder, so use a provided one
+				if (createArgumentSequence === null) {
+					return newArguments.shift();
+				}
+				return createArgumentSequence();
 			});
 			return fn.apply(undefined, [dynamicContext, executionParameters, staticContext].concat(allArguments));
 		}
-		var argumentTypes = appliedArguments.reduce(function (indices, arg, index) {
+		const argumentTypes = appliedArguments.reduce(function (indices, arg, index) {
 			if (arg === null) {
 				indices.push(this._argumentTypes[index]);
 			}
 			return indices;
 		}.bind(this), []);
 
-		var functionItem = new FunctionValue({
+		const functionItem = new FunctionValue({
 			value: curriedFunction,
 			localName: 'boundFunction',
 			namespaceURI: this._namespaceURI,
@@ -78,6 +90,9 @@ class FunctionValue {
 		return Sequence.singleton(functionItem);
 	}
 
+	/**
+	 * @return {!Array<!TypeDeclaration>}
+	 */
 	getArgumentTypes () {
 		return this._argumentTypes;
 	}

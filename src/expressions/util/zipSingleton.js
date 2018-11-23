@@ -31,7 +31,7 @@ export default function zipSingleton (sequences, callback) {
 					}
 				}
 				if (allReady) {
-					iterator = callback(firstValues.map(seq => seq.value)).value();
+					iterator = callback(firstValues.map(seq => seq.value)).value;
 				}
 			}
 			return iterator.next();

@@ -3,6 +3,7 @@ import StaticContext from './StaticContext';
 import ExecutionParameters from './ExecutionParameters';
 import Specificity from './Specificity';
 import Sequence from './dataTypes/Sequence';
+import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
 /**
  * @enum {string}
@@ -46,10 +47,12 @@ class Expression {
 
 		this._childExpressions = childExpressions;
 
+		this.isUpdating = false;
+
 		/**
 		 * Eagerly evaluate
 		 *
-		 * @type {?Sequence}
+		 * @type {?function():!Sequence}
 		 */
 		this._eagerlyEvaluatedValue = null;
 	}
@@ -120,12 +123,12 @@ class Expression {
 	 */
 	evaluateWithoutFocus (_contextlessDynamicContext, executionParameters) {
 		if (this._eagerlyEvaluatedValue === null) {
-			this._eagerlyEvaluatedValue = this.evaluate(
+			this._eagerlyEvaluatedValue = createDoublyIterableSequence(this.evaluate(
 				null,
 				executionParameters
-			).expandSequence();
+			).expandSequence());
 		}
-		return this._eagerlyEvaluatedValue;
+		return this._eagerlyEvaluatedValue();
 	}
 }
 

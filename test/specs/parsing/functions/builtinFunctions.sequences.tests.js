@@ -151,9 +151,9 @@ describe('Functions and operators on sequences', () => {
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), xs:double("-INF"))', documentNode), ['a', 'b', 'c']));
 			it('returns the full sequence when start = 1 and length = INF',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), 0, xs:double("+INF"))', documentNode), ['a', 'b', 'c']));
-			it('returns the first item when start = -10 and length = 12',
+			it('returns the first item when start = -10 and length = 12 FIRST',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), -10, 12)', documentNode), ['a']));
-			it('returns the first item when start = -10 and length = 12',
+			it('returns the first item when start = -10 and length = 12 SECOND, for static compilation checks',
 				() => chai.assert.deepEqual(evaluateXPathToStrings('subsequence(("a", "b", "c"), -10, 12)', documentNode), ['a']));
 			it('allows async parameters: sequence', async () => {
 				chai.assert.equal(await evaluateXPathToAsyncSingleton('subsequence(("a", "b", "c") => fontoxpath:sleep(1), 2, 1)'), 'b');

@@ -1,24 +1,11 @@
-import parseExpression from './parsing/parseExpression';
-import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
-import DynamicContext from './expressions/DynamicContext';
-import DomFacade from './DomFacade';
-import ExecutionParameters from './expressions/ExecutionParameters';
-import domBackedDomFacade from './domBackedDomFacade';
-
 import atomize from './expressions/dataTypes/atomize';
 import castToType from './expressions/dataTypes/castToType';
-import Sequence from './expressions/dataTypes/Sequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
-import staticallyCompileXPath from './parsing/staticallyCompileXPath';
-
-import { generateGlobalVariableBindingName } from './expressions/ExecutionSpecificStaticContext';
+import Sequence from './expressions/dataTypes/Sequence';
 
 import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
 
-function normalizeEndOfLines (xpathString) {
-	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
-	return xpathString.replace(/(\x0D+\x0A)|(\x0D+(?!\x0A))/g, String.fromCharCode(0xA));
-}
+import buildContext from './evaluationUtils/buildContext';
 
 function transformMapToObject (map, dynamicContext) {
 	const mapObj = {};
@@ -32,7 +19,7 @@ function transformMapToObject (map, dynamicContext) {
 			}
 			while (i < map.keyValuePairs.length) {
 				if (!transformedValueIterator) {
-					const val = map.keyValuePairs[i].value
+					const val = map.keyValuePairs[i].value()
 						.switchCases({
 							default: seq => seq,
 							multiple: () => {
@@ -77,7 +64,7 @@ function transformArrayToArray (array, dynamicContext) {
 			}
 			while (i < array.members.length) {
 				if (!transformedMemberGenerator) {
-					const val = array.members[i]
+					const val = array.members[i]()
 						.switchCases({
 							default: seq => seq,
 							multiple: () => {
@@ -121,16 +108,7 @@ function transformXPathItemToJavascriptObject (value, dynamicContext) {
 		next: () => ready(value.value)
 	};
 }
-/**
- * @param   {Node|*}  contextItem
- * @return  {function(string):?string}
- */
-function createDefaultNamespaceResolver (contextItem) {
-	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
-		return (_prefix) => null;
-	}
-	return prefix => (/** @type {Node} */(contextItem)).lookupNamespaceURI(prefix || null);
-}
+
 
 /**
  * @typedef {{
@@ -151,8 +129,8 @@ let Options;
  *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
  *  * Else, the sequence is atomized and returned.
  *
- * @param  {!string}       xpathExpression  The selector to execute. Supports XPath 3.1.
- * @param  {Node|*|null}   contextItem    The node from which to run the XPath.
+ * @param  {!string}      xpathExpression  The selector to execute. Supports XPath 3.1.
+ * @param  {Node|*|null}  contextItem    The node from which to run the XPath.
  * @param  {?IDomFacade=}  domFacade      The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  {?Object=}      variables      Extra variables (name=>value). Values can be number, string, boolean, nodes or object literals and arrays.
  * @param  {?number=}      returnType     One of the return types, indicates the expected type of the XPath query.
@@ -160,111 +138,34 @@ let Options;
  *
  * @return  {!Array<!Node>|Node|!Array<*>|*}
  */
-function evaluateXPath (xpathExpression, contextItem, domFacade, variables, returnType = evaluateXPath.ANY_TYPE, options = { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1', moduleImports: {} }) {
-	if (!variables) {
-		variables = {};
-	}
-	variables = Object.assign(
-		{ 'theBest': 'FontoXML is the best!' },
-		variables);
+function evaluateXPath (xpathExpression, contextItem, domFacade, variables, returnType, options) {
+	returnType = returnType || evaluateXPath.ANY_TYPE;
 	if (!xpathExpression || typeof xpathExpression !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathExpression must be a string.');
 	}
-	if (!domFacade) {
-		domFacade = domBackedDomFacade;
-	}
 
-	xpathExpression = normalizeEndOfLines(xpathExpression);
+	options = options || {};
 
-	// Always wrap in an actual domFacade
-	const wrappedDomFacade = new DomFacade(domFacade);
-
-	const compilationOptions = {
-		allowXQuery: options.language === 'XQuery3.1',
-		disableCache: options.disableCache
-	};
-
-	const moduleImports = options['moduleImports'] || Object.create(null);
-
-	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
-	const compiledExpression = staticallyCompileXPath(
+	const {
+		dynamicContext,
+		executionParameters,
+		expression
+	} = buildContext(
 		xpathExpression,
-		compilationOptions,
-		namespaceResolver,
-		variables,
-		moduleImports);
-
-	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
-
-	/**
-	 * @type {INodesFactory}
-	 */
-	let nodesFactory = options['nodesFactory'];
-	if (!nodesFactory && compilationOptions.allowXQuery) {
-		if (contextItem && 'nodeType' in /** @type {!Node} */(contextItem)) {
-			const ownerDocument = /** @type {Document} }*/(contextItem.ownerDocument || contextItem);
-			if ((typeof ownerDocument.createElementNS === 'function') &&
-				(typeof ownerDocument.createProcessingInstruction === 'function') &&
-				(typeof ownerDocument.createTextNode === 'function') &&
-				(typeof ownerDocument.createComment === 'function')) {
-
-				nodesFactory = /** @type {!INodesFactory} */({
-					createElementNS: ownerDocument.createElementNS.bind(ownerDocument),
-					createTextNode: ownerDocument.createTextNode.bind(ownerDocument),
-					createComment: ownerDocument.createComment.bind(ownerDocument),
-					createProcessingInstruction: ownerDocument.createProcessingInstruction.bind(ownerDocument),
-					createAttributeNS: ownerDocument.createAttributeNS.bind(ownerDocument)
-				});
-			}
-		}
-
-		if (!nodesFactory) {
-			// We do not have a nodesFactory instance as a parameter, nor can we generate one from the context item.
-			// Throw an error as soon as one of these functions is called.
-			nodesFactory = {
-				createElementNS: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				},
-				createTextNode: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				},
-				createComment: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				},
-				createProcessingInstruction: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				},
-				createAttributeNS: () => {
-					throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-				}
-			};
-		}
-	}
-
-	/**
-	 * @type {!DynamicContext}
-	 */
-	const dynamicContext = new DynamicContext({
-		contextItemIndex: 0,
-		contextSequence: contextSequence,
-		contextItem: contextSequence.first(),
-		variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
-			typedVariableByName[generateGlobalVariableBindingName(variableName)] =
-				() => adaptJavaScriptValueToXPathValue(variables[variableName]);
-			return typedVariableByName;
-		}, Object.create(null))
-	});
-
-	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory);
+		contextItem,
+		domFacade || null,
+		variables || {},
+		options,
+		{
+			allowXQuery: options.language === 'XQuery3.1',
+			allowUpdating: false,
+			disableCache: options.disableCache
+		});
 
 	/**
 	 * @type {!Sequence}
 	 */
-	const rawResults = compiledExpression.evaluateMaybeStatically(dynamicContext, {
-		domFacade: wrappedDomFacade,
-		nodesFactory: nodesFactory,
-		parseExpression: parseExpression
-	});
+	const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
 
 	switch (returnType) {
 		case evaluateXPath.BOOLEAN_TYPE: {
@@ -323,7 +224,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 				return null;
 			}
 			if (!(isSubtypeOf(first.value.type, 'node()'))) {
-				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to Node. Got ' + rawResults.value[0]);
+				throw new Error('Expected XPath ' + xpathExpression + ' to resolve to Node. Got ' + first.value.type);
 			}
 			return first.value.value;
 		}
@@ -398,7 +299,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 		}
 
 		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
-			const it = rawResults.value();
+			const it = rawResults.value;
 			let transformedValueGenerator = null;
 			let done = false;
 			function getNextResult () {

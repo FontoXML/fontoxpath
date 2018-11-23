@@ -376,6 +376,7 @@ ExprSingle
 // / TypeswitchExpr
  / IfExpr
 // / TryCatchExpr
+ / ReplaceExpr
  / OrExpr
 
 // 41
@@ -1013,7 +1014,7 @@ EnclosedContentExpr
 // 159
 CompAttrConstructor
  = "attribute" name:(AssertAdjacentOpeningTerminal _ name:EQName {return ["tagName"].concat(name)} / ( _ "{" _ nameExpr:Expr _ "}" {return ["tagNameExpr", nameExpr]})) _ expr:EnclosedExpr
- {return ["computedAttributeConstructor", name].concat(expr ? [["valueExpr", expr]] : [])}
+ {return ["computedAttributeConstructor", name].concat([["valueExpr", expr ? expr : ["sequenceExpr"]]])}
 
 // 160
 CompNamespaceConstructor
@@ -1324,6 +1325,18 @@ Digits
 // 239
 CommentContents
  = !"(:" !":)" Char
+
+// ===========XQuery Update Facility starts here===========
+
+// 202
+ReplaceExpr
+ = "replace" S replaceValue:("value" S "of" S)? "node" S targetExpr:TargetExpr S "with" S replacementExpr:ExprSingle
+ {return replaceValue ? ["replaceExpr", ["replaceValue"], ["targetExpr", targetExpr], ["replacementExpr", replacementExpr]] :
+ ["replaceExpr", ["targetExpr", targetExpr], ["replacementExpr", replacementExpr]]}
+
+// 205
+TargetExpr
+ = ExprSingle
 
 // Whitespace Note: https://www.w3.org/TR/REC-xml/#NT-S
 _

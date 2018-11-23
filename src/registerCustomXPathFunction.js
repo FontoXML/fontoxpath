@@ -5,7 +5,13 @@ import {
 	staticallyKnownNamespaceByPrefix,
 	registerStaticallyKnownNamespace
 } from './expressions/staticallyKnownNamespaces';
+import Sequence from'./expressions/dataTypes/Sequence';
 
+/**
+ * @param  {!Sequence}          valueSequence
+ * @param  {string}            sequenceType
+ * @return {*|null|!Array<*>}
+ */
 function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 	switch (sequenceType[sequenceType.length - 1]) {
 		case '?':
@@ -67,7 +73,7 @@ function splitFunctionName (name) {
 export default function registerCustomXPathFunction (name, signature, returnType, callback) {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
-	const callFunction = function (dynamicContext, executionParameters, _staticContext) {
+	const callFunction = function (_dynamicContext, executionParameters, _staticContext) {
 		// Make arguments a read array instead of a array-like object
 		const args = Array.from(arguments);
 

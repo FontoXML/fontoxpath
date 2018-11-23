@@ -18,6 +18,6 @@ export default function mapGet (_dynamicContext, _executionParameters, _staticCo
 		if (!matchingPair) {
 			return Sequence.empty();
 		}
-		return matchingPair.value;
+		return matchingPair.value();
 	});
 }

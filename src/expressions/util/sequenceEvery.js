@@ -9,7 +9,7 @@ import Value from '../dataTypes/Value';
  * @return  {!Sequence}
  */
 export default function sequenceEvery (sequence, typeTest) {
-	const iterator = sequence.value();
+	const iterator = sequence.value;
 	let typeTestResultIterator = null;
 	let done;
 	return new Sequence({
@@ -24,7 +24,7 @@ export default function sequenceEvery (sequence, typeTest) {
 						done = true;
 						return ready(trueBoolean);
 					}
-					typeTestResultIterator = typeTest(value.value);
+					typeTestResultIterator = typeTest(/** @type {!Value} */(value.value));
 				}
 				const ebv = typeTestResultIterator.tryGetEffectiveBooleanValue();
 				if (!ebv.ready) {

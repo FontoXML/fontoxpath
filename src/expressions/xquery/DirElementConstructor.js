@@ -8,6 +8,7 @@ import atomize from '../dataTypes/atomize';
 import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
 import concatSequences from '../util/concatSequences';
+import parseContent from '../ElementConstructorContent';
 
 /**
  * @extends {Expression}
@@ -133,46 +134,20 @@ class DirElementConstructor extends Expression {
 				});
 
 				// Plonk all childNodes, these are special though
-				allChildNodesItrResult.value.forEach(/** {!Array<!Value>} */childNodes => {
-					childNodes.forEach((childNode, i) => {
-						if (isSubtypeOf(childNode.type, 'xs:anyAtomicType')) {
-							const atomizedValue = castToType(atomize(childNode, executionParameters), 'xs:string').value;
-							if (i !== 0 && isSubtypeOf(childNodes[i - 1].type, 'xs:anyAtomicType')) {
-								element.appendChild(nodesFactory.createTextNode(' ' + atomizedValue));
-								return;
-							}
-							element.appendChild(nodesFactory.createTextNode('' + atomizedValue));
-							return;
-						}
-						if (isSubtypeOf(childNode.type, 'attribute()')) {
-							const attrNode = /** @type {!Attr} */ (childNode.value);
-							// The contents may include attributes, 'clone' them and set them on the element
-							if (element.hasAttributeNS(attrNode.namespaceURI, attrNode.localName)) {
-								throw new Error(
-									`XQST0040: The attribute ${attrNode.name} is already present on a constructed element.`);
-							}
-							element.setAttributeNS(
-								attrNode.namespaceURI,
-								attrNode.prefix ?
-									attrNode.prefix + ':' + attrNode.localName : attrNode.localName,
-								attrNode.value);
-							return;
-						}
-
-						if (isSubtypeOf(childNode.type, 'node()')) {
-							// Deep clone child elements
-							// TODO: skip copy if the childNode has already been created in the expression
-							element.appendChild(childNode.value.cloneNode(true));
-							return;
-						}
-
-						// We now only have unatomizable types left
-						// (function || map) && !array
-						if (isSubtypeOf(childNode.type, 'function(*)') && !isSubtypeOf(childNode.type, 'array(*)')) {
-							throw new Error(`FOTY0013: Atomization is not supported for ${childNode.type}.`);
-						}
-						throw new Error(`Atomizing ${childNode.type} is not implemented.`);
-					});
+				const parsedContent = parseContent(allChildNodesItrResult.value, executionParameters);
+				parsedContent.attributes.forEach(attrNode => {
+					// The contents may include attributes, 'clone' them and set them on the element
+					if (element.hasAttributeNS(attrNode.namespaceURI, attrNode.localName)) {
+						throw new Error(`XQST0040: The attribute ${attrNode.name} is already present on a constructed element.`);
+					}
+					element.setAttributeNS(
+						attrNode.namespaceURI,
+						attrNode.prefix ?
+							attrNode.prefix + ':' + attrNode.localName : attrNode.localName,
+						attrNode.value);
+				});
+				parsedContent.contentNodes.forEach(childNode => {
+					element.appendChild(childNode);
 				});
 
 				element.normalize();

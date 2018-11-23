@@ -103,9 +103,9 @@ describe('relative paths', () => {
 			{ someAttribute: 'someValue' },
 			['someChildNode']
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('((@someAttribute, /someNode, //someChildNode)/.)[1]', documentNode.documentElement), [documentNode.documentElement]);
-		chai.assert.deepEqual(evaluateXPathToString('((@someAttribute, /someNode, //someChildNode)/.)[2]', documentNode.documentElement), 'someValue');
-		chai.assert.deepEqual(evaluateXPathToNodes('((@someAttribute, /someNode, //someChildNode)/.)[3]', documentNode.documentElement), [documentNode.documentElement.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('((@someAttribute, /someNode, //someChildNode)/.)[1]', documentNode.documentElement), [documentNode.documentElement], 'Document element first');
+		chai.assert.deepEqual(evaluateXPathToString('((@someAttribute, /someNode, //someChildNode)/.)[2]', documentNode.documentElement), 'someValue', 'attributes of the document element second');
+		chai.assert.deepEqual(evaluateXPathToNodes('((@someAttribute, /someNode, //someChildNode)/.)[3]', documentNode.documentElement), [documentNode.documentElement.firstChild], 'Descendant elements last');
 	});
 
 	it('sorts and dedupes child::/parent:: axes correctly', () => {

@@ -17,7 +17,7 @@ function getParseResultFromCache (string, language) {
  * Parse an XPath string to a selector.
  *
  * @param  {string}                  xPathString         The string to parse
- * @param  {{allowXQuery: boolean}}  compilationOptions  Whether the compiler should parse XQuery
+ * @param  {{allowXQuery: (boolean|undefined)}}  compilationOptions  Whether the compiler should parse XQuery
  */
 export default function parseExpression (xPathString, compilationOptions) {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
@@ -28,7 +28,7 @@ export default function parseExpression (xPathString, compilationOptions) {
 		if (cached) {
 			ast = cached;
 		} else {
-			ast = parse(xPathString, { 'xquery': compilationOptions.allowXQuery });
+			ast = parse(xPathString, { 'xquery': !!compilationOptions.allowXQuery });
 			storeParseResultInCache(xPathString, language, ast);
 		}
 		return ast;

@@ -40,11 +40,11 @@ class Literal extends Expression {
 				throw new TypeError('Type ' + type + ' not expected in a literal');
 		}
 
-		this._valueSequence = Sequence.singleton(value);
+		this._createValueSequence = () => Sequence.singleton(value);
 	}
 
 	evaluate (_dynamicContext) {
-		return this._valueSequence;
+		return this._createValueSequence();
 	}
 }
 

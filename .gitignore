@@ -1,7 +1,8 @@
 platform
 coverage
 node_modules
-test/assets
+test/assets/QT3TS
+test/assets/XQUTS
 dist/fontoxpath.*
 src/parsing/xPathParser.raw.js
 .nyc_output

@@ -15,5 +15,6 @@ export default function argumentListToString (argumentList) {
 			return argument.first().type || 'item()';
 		}
 		return argument.first().type + '+';
-	}).join(', ');
+	})
+		.map(types => `${types}`).join(', ');
 }

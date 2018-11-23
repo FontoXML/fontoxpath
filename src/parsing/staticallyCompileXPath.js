@@ -7,11 +7,22 @@ import processProlog from './processProlog';
 
 import astHelper from './astHelper';
 
+import Expression from '../expressions/Expression';
+
 import {
 	getStaticCompilationResultFromCache,
 	storeStaticCompilationResultInCache
 } from './compiledExpressionCache';
 
+/**
+ * @param  {string}  xpathString
+ * @param  {!{allowXQuery: (boolean|undefined), disableCache: (boolean|undefined), allowUpdating: (boolean|undefined)}}  compilationOptions
+ * @param  {function(string):?string} namespaceResolver
+ * @param  {!Object}  variables
+ * @param  {!Object} moduleImports
+ *
+ * @return  {!Expression}
+ */
 export default function staticallyCompileXPath (xpathString, compilationOptions, namespaceResolver, variables, moduleImports) {
 	const language = compilationOptions.allowXQuery ? `XQuery` : `XPath`;
 

@@ -5,6 +5,7 @@ import MapValue from '../dataTypes/MapValue';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 /**
  * @param  {*}  obj
@@ -14,7 +15,7 @@ function convert (obj) {
 	switch (typeof obj) {
 		case 'object':
 			if (Array.isArray(obj)) {
-				return Sequence.singleton(new ArrayValue(obj.map(subObject => convert(subObject))));
+				return Sequence.singleton(new ArrayValue(obj.map(subObject => createDoublyIterableSequence(convert(subObject)))));
 			}
 			if (obj === null) {
 				return Sequence.empty();
@@ -23,7 +24,7 @@ function convert (obj) {
 			return Sequence.singleton(new MapValue(Object.keys(/** @type {!Object} */(obj)).map(key => {
 				return {
 					key: createAtomicValue(key, 'xs:string'),
-					value: convert(/** @type {!Object} */(obj)[key])
+					value: createDoublyIterableSequence(convert(/** @type {!Object} */(obj)[key]))
 				};
 			})));
 		case 'number':

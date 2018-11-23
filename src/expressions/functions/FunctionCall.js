@@ -1,14 +1,12 @@
 import argumentListToString from './argumentListToString';
 import { transformArgument } from './argumentHelper';
 import Expression from '../Expression';
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import FunctionValue from '../dataTypes/FunctionValue';
 
 function transformArgumentList (argumentTypes, argumentList, executionParameters, functionItem) {
-	if (argumentList.length !== argumentTypes.length) {
-		return null;
-	}
 	var transformedArguments = [];
 	for (let i = 0; i < argumentList.length; ++i) {
 		if (argumentList[i] === null) {
@@ -17,21 +15,15 @@ function transformArgumentList (argumentTypes, argumentList, executionParameters
 			continue;
 		}
 		const transformedArgument = transformArgument(argumentTypes[i], argumentList[i], executionParameters, functionItem);
-		if (transformedArgument === null) {
-			return null;
-		}
 		transformedArguments.push(transformedArgument);
 	}
 	return transformedArguments;
 }
 
-/**
- * @extends Expression
- */
-class FunctionCall extends Expression {
+class FunctionCall extends PossiblyUpdatingExpression {
 	/**
-	 * @param  {!Expression}    functionReference  Reference to the function to execute.
-	 * @param  {!Array<!Expression>}  args              The arguments to be evaluated and passed to the function
+	 * @param  {!Expression}                                      functionReference  Reference to the function to execute.
+	 * @param  {!Array<!PossiblyUpdatingExpression|!Expression|null>}  args               The arguments to be evaluated and passed to the function
 	 */
 	constructor (functionReference, args) {
 		super(
@@ -46,8 +38,9 @@ class FunctionCall extends Expression {
 				canBeStaticallyEvaluated: false //args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
 			});
 
-		this._args = args;
-		this._functionReference = functionReference;
+		this._callArity = args.length;
+
+		this._isGapByOffset = args.map(arg => arg === null);
 
 		this._staticContext = null;
 	}
@@ -57,8 +50,8 @@ class FunctionCall extends Expression {
 		super.performStaticEvaluation(staticContext);
 	}
 
-	evaluate (dynamicContext, executionParameters) {
-		var sequence = this._functionReference.evaluateMaybeStatically(dynamicContext, executionParameters);
+	performFunctionalEvaluation (dynamicContext, executionParameters, [createFunctionReferenceSequence, ...createArgumentSequences]) {
+		var sequence = createFunctionReferenceSequence(dynamicContext);
 		return sequence.switchCases({
 			default: () => {
 				throw new Error('XPTY0004: expected base expression to evaluate to a sequence with a single item');
@@ -71,22 +64,20 @@ class FunctionCall extends Expression {
 
 					const functionItem = /** @type {!FunctionValue} */ (item);
 
-					if (functionItem.getArity() !== this._args.length) {
-						throw new Error(`XPTY0004: expected arity of function ${functionItem.getName()} to be ${this._args.length}, got function with arity of ${functionItem.getArity()}`);
+					if (functionItem.getArity() !== this._callArity) {
+						throw new Error(`XPTY0004: expected arity of function ${functionItem.getName()} to be ${this._callArity}, got function with arity of ${functionItem.getArity()}`);
 					}
 
-					var evaluatedArgs = this._args.map(argument => {
-						if (argument === null) {
+					let argumentOffset = 0;
+					const evaluatedArgs = this._isGapByOffset.map(isGap => {
+						if (isGap) {
 							return null;
 						}
-						return argument.evaluateMaybeStatically(dynamicContext, executionParameters);
+						return createArgumentSequences[argumentOffset++](dynamicContext);
 					});
 
 					// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
 					var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, executionParameters, functionItem.getName());
-					if (transformedArguments === null) {
-						throw new Error(`XPTY0004: expected argument list of function ${functionItem.getName()} to be [${argumentListToString(evaluatedArgs)}], got function with argument list [${functionItem.getArgumentTypes().join(', ')}].`);
-					}
 
 					if (transformedArguments.indexOf(null) >= 0) {
 						return functionItem.applyArguments(transformedArguments);
@@ -94,7 +85,11 @@ class FunctionCall extends Expression {
 
 					return functionItem.value.apply(
 						undefined,
-						[dynamicContext, executionParameters, this._staticContext].concat(transformedArguments));
+						[
+							dynamicContext,
+							executionParameters,
+							this._staticContext
+						].concat(transformedArguments));
 				});
 			}
 		});

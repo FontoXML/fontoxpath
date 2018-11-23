@@ -5,7 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import zipSingleton from '../util/zipSingleton';
 import concatSequences from '../util/concatSequences';
-
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -48,9 +48,9 @@ function mapMerge (dynamicContext, executionParameters, staticContext, mapSequen
 									1,
 									{
 										key: keyValuePair.key,
-										value: new Sequence(
-											resultingKeyValuePairs[existingPairIndex].value.getAllValues()
-												.concat(keyValuePair.value.getAllValues()))
+										value: createDoublyIterableSequence(new Sequence(
+											resultingKeyValuePairs[existingPairIndex].value().getAllValues()
+												.concat(keyValuePair.value().getAllValues())))
 									});
 								return;
 							case 'use-any':
@@ -82,13 +82,12 @@ function mapPut (_dynamicContext, _executionParameters, _staticContext, mapSeque
 				1,
 				{
 					key: newKey,
-					value: newValueSequence
+					value: createDoublyIterableSequence(newValueSequence)
 				});
-		}
-		else {
+		} else {
 			resultingKeyValuePairs.push({
 				key: newKey,
-				value: newValueSequence
+				value: createDoublyIterableSequence(newValueSequence)
 			});
 		}
 		return Sequence.singleton(new MapValue(resultingKeyValuePairs));
@@ -99,7 +98,7 @@ function mapPut (_dynamicContext, _executionParameters, _staticContext, mapSeque
  * @type {!FunctionDefinitionType}
  */
 function mapEntry (_dynamicContext, _executionParameters, _staticContext, keySequence, value) {
-	return keySequence.map(onlyKey => new MapValue([{ key: onlyKey, value: value }]));
+	return keySequence.map(onlyKey => new MapValue([{ key: onlyKey, value: createDoublyIterableSequence(value) }]));
 }
 
 /**
@@ -163,7 +162,7 @@ function mapForEach (dynamicContext, executionParameters, staticContext, mapSequ
 					executionParameters,
 					staticContext,
 					Sequence.singleton(keyValuePair.key),
-					keyValuePair.value);
+					keyValuePair.value());
 			}));
 		});
 	}
@@ -233,7 +232,7 @@ export default {
 					maps,
 					Sequence.singleton(new MapValue([{
 						key: createAtomicValue('duplicates', 'xs:string'),
-						value: Sequence.singleton(createAtomicValue('use-first', 'xs:string'))
+						value: () => Sequence.singleton(createAtomicValue('use-first', 'xs:string'))
 					}])));
 			}
 		},

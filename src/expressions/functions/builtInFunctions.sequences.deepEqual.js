@@ -110,8 +110,8 @@ function anyAtomicTypeDeepEqual (_dynamicContext, _executionParameters, _staticC
  * @return  {!AsyncIterator<boolean>}
  */
 function sequenceDeepEqual (dynamicContext, executionParameters, staticContext, sequence1, sequence2) {
-	const it1 = sequence1.value();
-	const it2 = sequence2.value();
+	const it1 = sequence1.value;
+	const it2 = sequence2.value;
 	let item1 = null;
 	let item2 = null;
 	let comparisonGenerator = null;
@@ -142,7 +142,12 @@ function sequenceDeepEqual (dynamicContext, executionParameters, staticContext, 
 					return ready(item1.done === item2.done);
 				}
 				if (!comparisonGenerator) {
-					comparisonGenerator = itemDeepEqual(dynamicContext, executionParameters, staticContext, item1.value, item2.value);
+					comparisonGenerator = itemDeepEqual(
+						dynamicContext,
+						executionParameters,
+						staticContext,
+						/** @type {!Value} */(item1.value),
+						/** @type {!Value} */(item2.value));
 				}
 				const comparisonResult = comparisonGenerator.next();
 				if (!comparisonResult.ready) {
@@ -180,7 +185,7 @@ function mapTypeDeepEqual (dynamicContext, executionParameters, staticContext, i
 			return createSingleValueIterator(false);
 		}
 
-		return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, mapEntry1.value, mapEntry2.value);
+		return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, mapEntry1.value(), mapEntry2.value());
 	});
 }
 
@@ -197,14 +202,14 @@ function arrayTypeDeepEqual (dynamicContext, executionParameters, staticContext,
 
 	return asyncGenerateEvery(item1.members, (arrayEntry1, index) => {
 		const arrayEntry2 = item2.members[index];
-		return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, arrayEntry1, arrayEntry2);
+		return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, arrayEntry1(), arrayEntry2());
 	});
 }
 
 /**
  * @param   {!ExecutionParameters}   executionParameters
- * @param   {!Value}  item1
- * @param   {!Value}  item2
+ * @param   {!Value<!Node>}  item1
+ * @param   {!Value<!Node>}  item2
  * @return  {!AsyncIterator<boolean>}
  */
 function nodeDeepEqual (dynamicContext, executionParameters, staticContext, item1, item2) {

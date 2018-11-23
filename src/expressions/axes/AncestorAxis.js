@@ -51,7 +51,7 @@ class AncestorAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		const contextNode = contextItem.value;
+		const /** !Node */ contextNode = contextItem.value;
 		return new Sequence(generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)))
 			.filter(item => {
 				return this._ancestorExpression.evaluateToBoolean(dynamicContext, item);

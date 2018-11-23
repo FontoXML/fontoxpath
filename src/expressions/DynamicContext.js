@@ -99,7 +99,7 @@ class DynamicContext {
 	 */
 	createSequenceIterator (contextSequence) {
 		let i = 0;
-		const iterator = contextSequence.value();
+		const iterator = contextSequence.value;
 		return /** @type {!AsyncIterator<!DynamicContext>}*/ ({
 			next: () => {
 				const value = iterator.next();
@@ -109,7 +109,7 @@ class DynamicContext {
 				if (!value.ready) {
 					return value;
 				}
-				return ready(this.scopeWithFocus( i++, value.value, contextSequence));
+				return ready(this.scopeWithFocus(i++, /** @type {!Value} */(value.value), contextSequence));
 			}
 		});
 	}
