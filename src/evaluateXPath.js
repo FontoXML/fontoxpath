@@ -3,6 +3,8 @@ import castToType from './expressions/dataTypes/castToType';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import Sequence from './expressions/dataTypes/Sequence';
 
+import getBucketsForNode from './getBucketsForNode';
+
 import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
 
 import buildContext from './evaluationUtils/buildContext';
@@ -161,6 +163,18 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 			allowUpdating: false,
 			disableCache: options.disableCache
 		});
+
+	// Shortcut: if the xpathExpression defines buckets, the
+	// contextItem is a node and we are evaluating to a bucket, we can
+	// use it to return false if we are sure it won't match.
+	if (returnType === evaluateXPath.BOOLEAN_TYPE && contextItem && 'nodeType' in contextItem) {
+		const selectorBucket = expression.getBucket();
+		const bucketsForNode = getBucketsForNode(contextItem);
+		if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {
+			// We are sure that this selector will never match, without even running it
+			return false;
+		}
+	}
 
 	/**
 	 * @type {!Sequence}

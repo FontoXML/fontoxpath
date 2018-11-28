@@ -2,6 +2,7 @@ import chai from 'chai';
 import {
 	evaluateXPathToBoolean
 } from 'fontoxpath';
+import * as slimdom from 'slimdom';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 
@@ -10,6 +11,10 @@ describe('and operator', () => {
 
 	it('can parse an "and" selector', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('true() and true()'));
+	});
+
+	it('can optimize an and expression with buckets', () => {
+		chai.assert.isFalse(evaluateXPathToBoolean('self::p and false()', new slimdom.Document()));
 	});
 
 	it('can parse a concatenation of ands',
