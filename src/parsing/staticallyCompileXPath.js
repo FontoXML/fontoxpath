@@ -24,54 +24,66 @@ import {
  * @return  {!Expression}
  */
 export default function staticallyCompileXPath (xpathString, compilationOptions, namespaceResolver, variables, moduleImports) {
-	const language = compilationOptions.allowXQuery ? `XQuery` : `XPath`;
+	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
-	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(namespaceResolver, variables);
-
+	let fromCache = null;
 	if (!compilationOptions.disableCache) {
-		const fromCache = getStaticCompilationResultFromCache(xpathString, language, namespaceResolver, variables, moduleImports);
-
-		if (fromCache) {
-			return fromCache;
-		}
+		fromCache = getStaticCompilationResultFromCache(
+			xpathString,
+			language,
+			namespaceResolver,
+			variables,
+			moduleImports);
 	}
 
-	const ast = parseExpression(xpathString, compilationOptions);
-
-	const mainModule = astHelper.getFirstChild(ast, 'mainModule');
-	const prolog = astHelper.getFirstChild(mainModule, 'prolog');
-	const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
-	if (!queryBodyContents) {
-		// This must be a library module
-		throw new Error('Can not execute a library module.');
-	}
-
+	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
+		namespaceResolver,
+		variables);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
-	if (prolog) {
-		if (!compilationOptions.allowXQuery) {
-			throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	let expression;
+
+	if (fromCache !== null) {
+		expression = fromCache.expression;
+	} else {
+		// We can not use anything from the cache, parse + compile
+		const ast = parseExpression(xpathString, compilationOptions);
+
+		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
+		const prolog = astHelper.getFirstChild(mainModule, 'prolog');
+		const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
+		if (!queryBodyContents) {
+			// This must be a library module
+			throw new Error('Can not execute a library module.');
 		}
-		processProlog(prolog, rootStaticContext);
+
+		if (prolog) {
+			if (!compilationOptions.allowXQuery) {
+				throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+			}
+			processProlog(prolog, rootStaticContext);
+		}
+
+		expression = compileAstToExpression(queryBodyContents, compilationOptions);
 	}
 
-	const compiledExpression = compileAstToExpression(queryBodyContents, compilationOptions);
+	if (fromCache === null || fromCache.requiresStaticCompilation) {
+		Object.keys(moduleImports).forEach(modulePrefix => {
+			const moduleURI = moduleImports[modulePrefix];
+			enhanceStaticContextWithModule(rootStaticContext, moduleURI);
 
-	Object.keys(moduleImports).forEach(modulePrefix => {
-		const moduleURI = moduleImports[modulePrefix];
-		enhanceStaticContextWithModule(rootStaticContext, moduleURI);
+			rootStaticContext.registerNamespace(modulePrefix, moduleURI);
+		});
 
-		rootStaticContext.registerNamespace(modulePrefix, moduleURI);
-	});
+		expression.performStaticEvaluation(rootStaticContext);
 
-	compiledExpression.performStaticEvaluation(rootStaticContext);
+		storeStaticCompilationResultInCache(
+			xpathString,
+			language,
+			executionSpecificStaticContext,
+			moduleImports,
+			expression);
+	}
 
-	storeStaticCompilationResultInCache(
-		xpathString,
-		language,
-		executionSpecificStaticContext,
-		moduleImports,
-		compiledExpression);
-
-	return compiledExpression;
+	return expression;
 }

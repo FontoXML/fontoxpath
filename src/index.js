@@ -20,7 +20,17 @@ import compileAstToExpression from './parsing/compileAstToExpression';
 import domFacade from './domBackedDomFacade';
 import astHelper from './parsing/astHelper';
 
+import {
+	getAnyStaticCompilationResultFromCache,
+	storeHalfCompiledCompilationResultInCache
+} from './parsing/compiledExpressionCache';
+
 function parseXPath (xpathString) {
+	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath');
+	if (cachedExpression) {
+		return cachedExpression;
+	}
+
 	const ast = parseExpression(xpathString, { allowXQuery: false });
 	const queryBody = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 
@@ -28,7 +38,13 @@ function parseXPath (xpathString) {
 		throw new Error('Library modules do not have a specificity');
 	}
 
-	return compileAstToExpression(queryBody, { allowXQuery: false, allowUpdating: false });
+	const expression = compileAstToExpression(
+		queryBody,
+		{ allowXQuery: false, allowUpdating: false });
+
+	storeHalfCompiledCompilationResultInCache(xpathString, 'XPath', expression);
+
+	return expression;
 }
 
 function getBucketForSelector (xpathString) {
@@ -36,7 +52,8 @@ function getBucketForSelector (xpathString) {
 }
 
 function compareSpecificity (xpathStringA, xpathStringB) {
-	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
+	return parseXPath(xpathStringA).specificity
+		.compareTo(parseXPath(xpathStringB).specificity);
 }
 
 /**
