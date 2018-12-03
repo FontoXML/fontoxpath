@@ -1,14 +1,18 @@
+import { errXPST0081 } from '../XPathErrors';
+import { errXQDY0044 } from './XQueryErrors';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 
+import evaluateNameExpression from '../util/evaluateNameExpression';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
-import createAtomicValue from '../dataTypes/createAtomicValue';
+import QName from '../dataTypes/valueTypes/QName';
 
 import concatSequences from '../util/concatSequences';
 
-function createAttribute (nodesFactory, namespaceURI, name, value) {
-	const attr = nodesFactory.createAttributeNS(namespaceURI, name);
+function createAttribute (nodesFactory, name, value) {
+	const attr = nodesFactory.createAttributeNS(name.namespaceURI, name.buildPrefixedName());
 	attr.value = value;
 	return attr;
 }
@@ -16,42 +20,59 @@ function createAttribute (nodesFactory, namespaceURI, name, value) {
 /**
  * @extends {Expression}
  */
-class DirAttributeConstructor extends Expression {
+class AttributeConstructor extends Expression {
 	/**
-	 * @param  {{prefix:string, namespaceURI: ?string, localName: string}} name
-	 * @param  {!{valueString: ?string}|{valueExprParts: Array<!Expression>}}  value
+	 * @param  {{expr: Expression}|{prefix:string, namespaceURI: ?string, localName: string}} name
+	 * @param  {!{valueString: ?string}|{valueExprParts: Array<!Expression>}} value
 	 */
 	constructor (name, value) {
+		let childExpressions = value.valueExprParts || [];
+		childExpressions = childExpressions.concat(name.expr || []);
 		super(
 			new Specificity({}),
-			value.valueExprParts || [],
+			childExpressions,
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
 			});
 
-		this._name = name.prefix ? name.prefix + ':' + name.localName : name.localName;
-		this._prefix = name.prefix;
-		this._namespaceURI = null;
+		if (name.expr) {
+			this._nameExpr = name.expr;
+		} else {
+			this.name = new QName(name.prefix, name.namespaceURI, name.localName);
+		}
 		this._value = value;
+		this._staticContext = undefined;
 	}
 
 	performStaticEvaluation (staticContext) {
-		if (this._prefix === '') {
-			this._namespaceURI = null;
-		}
-		else {
-			const namespaceURI = staticContext.resolveNamespace(this._prefix);
-			if (namespaceURI === undefined && this._prefix) {
-				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
+		this._staticContext = staticContext.cloneContext();
+		if (this.name ) {
+			if (this.name.prefix && !this.name.namespaceURI) {
+				const namespaceURI = staticContext.resolveNamespace(this.name.prefix);
+				if (namespaceURI === undefined && this.name.prefix) {
+					throw errXPST0081(this.name.prefix);
+				}
+				this.name.namespaceURI = namespaceURI || null;
 			}
-			this._namespaceURI = namespaceURI || null;
 		}
 		super.performStaticEvaluation(staticContext);
 	}
 
 	evaluate (dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
+
+		if (this._nameExpr) {
+			this.name = evaluateNameExpression(this._staticContext, dynamicContext, executionParameters, this._nameExpr);
+		}
+
+		if (this.name.prefix === 'xmlns' ||
+		(!this.name.prefix && this.name.localPart === 'xmlns') ||
+		this.name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
+		(this.name.prefix === 'xml' && this.name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
+		(this.name.prefix && this.name.prefix !== 'xml' && this.name.namespaceURI === 'http://www.w3.org/XML/1998/namespace')) {
+			throw errXQDY0044();
+		}
 
 		if (this._value.valueExprParts) {
 			return concatSequences(
@@ -72,8 +93,7 @@ class DirAttributeConstructor extends Expression {
 							createNodeValue(
 								createAttribute(
 									nodesFactory,
-									this._namespaceURI,
-									this._name,
+									this.name,
 									allValueParts
 										.map(val => val.value)
 										.join('')
@@ -85,11 +105,10 @@ class DirAttributeConstructor extends Expression {
 
 		return Sequence.singleton(createNodeValue(createAttribute(
 			nodesFactory,
-			this._namespaceURI,
-			this._name,
+			this.name,
 			this._value.value)));
 
 	}
 }
 
-export default DirAttributeConstructor;
+export default AttributeConstructor;

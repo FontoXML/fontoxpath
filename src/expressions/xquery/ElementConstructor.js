@@ -1,40 +1,41 @@
+import { errXPST0081 } from '../XPathErrors';
+import { errXQDY0025, errXQST0040, errXQDY0096 } from './XQueryErrors';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 
+import evaluateNameExpression from '../util/evaluateNameExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import atomize from '../dataTypes/atomize';
 import Sequence from '../dataTypes/Sequence';
-import castToType from '../dataTypes/castToType';
 import concatSequences from '../util/concatSequences';
-import parseContent from '../ElementConstructorContent';
+import AttributeConstructor from './AttributeConstructor';
+import parseContent from './ElementConstructorContent';
+import QName from '../dataTypes/valueTypes/QName';
 
 /**
  * @extends {Expression}
  */
-class DirElementConstructor extends Expression {
+class ElementConstructor extends Expression {
 	/**
-	 * @param  {{prefix:string, namespaceURI: ?string, localName: string}} name
-	 * @param  {!Array<!Expression>}  attributes
+	 * @param  {{expr: Expression}|{prefix:string, namespaceURI: ?string, localName: string}} name
+	 * @param  {!Array<!AttributeConstructor>}  attributes
 	 * @param  {!Array<!{prefix: string, uri: string}>}     namespaceDeclarations
 	 * @param  {!Array<!Expression>}  contents  Strings and enclosed expressions
 	 */
 	constructor (name, attributes, namespaceDeclarations, contents) {
 		super(
 			new Specificity({}),
-			contents.concat(attributes),
+			contents.concat(attributes).concat(name.expr || []),
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
 			});
 
-		this._prefix = name.prefix;
-		this._name = name.localName;
-		/**
-		 * @type {string|null}
-		 */
-		this._namespaceURI = null;
+		if (name.expr) {
+			this._nameExpr = name.expr;
+		} else {
+			this._name = new QName(name.prefix, name.namespaceURI, name.localName);
+		}
 
 		/**
 		 * @type {!Object<!string, !string>}
@@ -52,6 +53,7 @@ class DirElementConstructor extends Expression {
 		this._attributes = attributes;
 
 		this._contents = contents;
+		this._staticContext = undefined;
 	}
 
 	performStaticEvaluation (staticContext) {
@@ -62,13 +64,28 @@ class DirElementConstructor extends Expression {
 
 		this._childExpressions.forEach(subselector => subselector.performStaticEvaluation(staticContext));
 
-		const namespaceURI = staticContext.resolveNamespace(this._prefix);
+		this._attributes.reduce((attributeNames, attribute) => {
+			// We can not throw a static error for computed attribute constructor of which we do not yet know the name
+			if (attribute.name) {
+				const attributeNamespaceURI = attribute.name.namespaceURI || staticContext.resolveNamespace(attribute.name.prefix);
+				const uriQualifiedName = `Q{${attributeNamespaceURI}}${attribute.name.localPart}`;
+				if (attributeNames.includes(uriQualifiedName)) {
+					throw errXQST0040(uriQualifiedName);
+				}
+				attributeNames.push(uriQualifiedName);
+			}
+			return attributeNames;
+		}, []);
 
-		if (namespaceURI === undefined && this._prefix) {
-			throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
+		if (this._name) {
+			const namespaceURI = staticContext.resolveNamespace(this._name.prefix);
+			if (namespaceURI === undefined && this._name.prefix) {
+				throw errXPST0081(this._name.prefix);
+			}
+			this._name.namespaceURI = namespaceURI || null;
 		}
-		this._namespaceURI = namespaceURI || null;
 
+		this._staticContext = staticContext.cloneContext();
 		staticContext.removeScope();
 	}
 
@@ -121,15 +138,23 @@ class DirElementConstructor extends Expression {
 					return allChildNodesItrResult;
 				}
 
+				if (this._nameExpr) {
+					this._name = evaluateNameExpression(this._staticContext, dynamicContext, executionParameters, this._nameExpr);
+				}
+
+				if (this._name.prefix === 'xmlns' ||
+				this._name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
+				(this._name.prefix === 'xml' && this._name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
+				(this._name.prefix && this._name.prefix !== 'xml' && this._name.namespaceURI === 'http://www.w3.org/XML/1998/namespace')) {
+					throw errXQDY0096();
+				}
+
 				const element = nodesFactory.createElementNS(
-					this._namespaceURI,
-					this._prefix ? this._prefix + ':' + this._name : this._name);
+					this._name.namespaceURI,
+					this._name.buildPrefixedName());
 
 				// Plonk all attribute on the element
 				attributeNodes.forEach(attr => {
-					if (element.hasAttributeNS(attr.value.namespaceURI, attr.value.localName)) {
-						throw new Error(`XQST0040: The attribute ${attr.value.name} is already present on a constructed element.`);
-					}
 					element.setAttributeNodeNS(attr.value);
 				});
 
@@ -138,7 +163,7 @@ class DirElementConstructor extends Expression {
 				parsedContent.attributes.forEach(attrNode => {
 					// The contents may include attributes, 'clone' them and set them on the element
 					if (element.hasAttributeNS(attrNode.namespaceURI, attrNode.localName)) {
-						throw new Error(`XQST0040: The attribute ${attrNode.name} is already present on a constructed element.`);
+						throw errXQDY0025(attrNode.name);
 					}
 					element.setAttributeNS(
 						attrNode.namespaceURI,
@@ -160,4 +185,4 @@ class DirElementConstructor extends Expression {
 	}
 }
 
-export default DirElementConstructor;
+export default ElementConstructor;

@@ -9,6 +9,10 @@ class QName {
 		this.prefix = prefix || '';
 		this.localPart = localPart;
 	}
+
+	buildPrefixedName () {
+		return this.prefix ? this.prefix + ':' + this.localPart : this.localPart;
+	}
 }
 
 export default QName;

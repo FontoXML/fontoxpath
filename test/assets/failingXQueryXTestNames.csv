@@ -12,6 +12,12 @@ K2-ComputeConAttr-35,Parses <![CDATA[]]> as a computedTextConstructor with <![CD
 K2-ComputeConAttr-36,Parses <![CDATA[]]> as a computedTextConstructor with <![CDATA[]]> as argument
 K2-ComputeConAttr-5,Parses <![CDATA[]]> as a computedTextConstructor with <![CDATA[]]> as argument
 K2-ComputeConAttr-6,Parses <![CDATA[]]> as a computedTextConstructor with <![CDATA[]]> as argument
+Constr-compelem-adjtext-1,Contains unneeded sequenceExpr wrappers
+Constr-compelem-adjtext-2,Contains unneeded sequenceExpr wrappers
+Constr-compelem-adjtext-3,Contains unneeded sequenceExpr wrappers
+Constr-compelem-baseuri-2,Contains unneeded sequenceExpr wrappers
+Constr-compelem-constrmod-7,Contains unneeded sequenceExpr wrappers
+Constr-compelem-parent-1,Contains unneeded sequenceExpr wrappers
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 raytracer,result was not equal
 functx-fn-root-all,result was not equal
@@ -1707,12 +1713,6 @@ Constr-docnode-constrmod-3,result was not equal
 Constr-docnode-constrmod-4,result was not equal
 Constr-docnode-parent-1,result was not equal
 K2-ConDocNode-17,result was not equal
-Constr-compelem-adjtext-1,result was not equal
-Constr-compelem-adjtext-2,result was not equal
-Constr-compelem-adjtext-3,result was not equal
-Constr-compelem-baseuri-2,result was not equal
-Constr-compelem-constrmod-7,result was not equal
-Constr-compelem-parent-1,result was not equal
 nscons-001,result was not equal
 nscons-004,result was not equal
 nscons-005,result was not equal

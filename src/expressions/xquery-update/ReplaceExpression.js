@@ -9,7 +9,7 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import parseContent from '../ElementConstructorContent';
+import parseContent from '../xquery/ElementConstructorContent';
 
 import {
 	errXQDY0026,

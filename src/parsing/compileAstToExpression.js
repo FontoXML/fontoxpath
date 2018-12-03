@@ -48,12 +48,14 @@ import LetExpression from '../expressions/LetExpression';
 import NamedFunctionRef from '../expressions/NamedFunctionRef';
 import VarRef from '../expressions/VarRef';
 
-import DirElementConstructor from '../expressions/xquery/DirElementConstructor';
+import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
+
+import { errXQTY0024 } from '../expressions/xquery/XQueryErrors';
 
 const COMPILATION_OPTIONS = {
 	XPATH_MODE: { allowXQuery: false, allowUpdating: false },
@@ -187,8 +189,12 @@ function compile (ast, compilationOptions) {
 			return dirElementConstructor(ast, compilationOptions);
 		case 'attributeConstructor':
 			return attributeConstructor(ast, compilationOptions);
+		case 'computedAttributeConstructor':
+			return computedAttributeConstructor(ast, compilationOptions);
 		case 'computedCommentConstructor':
 			return computedCommentConstructor(ast, compilationOptions);
+		case 'computedElementConstructor':
+			return computedElementConstructor(ast, compilationOptions);
 		case 'computedPIConstructor':
 			return computedPIConstructor(ast, compilationOptions);
 		case 'CDataSection':
@@ -608,8 +614,7 @@ function pathExpr (ast, compilationOptions) {
 					stepExpression = new SelfExpression(testExpression);
 					break;
 			}
-		}
-		else {
+		} else {
 			// We must be a filter expression
 			const filterExpr = astHelper.followPath(step, ['filterExpr', '*']);
 			stepExpression = compile(filterExpr, disallowUpdating(compilationOptions));
@@ -855,10 +860,11 @@ function dirElementConstructor (ast, compilationOptions) {
 		}) : [];
 
 	const content = astHelper.getFirstChild(ast, 'elementContent');
-	const contentExpressions = content ? astHelper.getChildren(content, '*')
-		.map(content => compile(content, disallowUpdating(compilationOptions))) : [];
+	const contentExpressions = content ?
+		astHelper.getChildren(content, '*').map(child => compile(child, disallowUpdating(compilationOptions))) :
+		[];
 
-	return new DirElementConstructor(
+	return new ElementConstructor(
 		name,
 		attributes,
 		namespaceDecls,
@@ -889,6 +895,24 @@ function attributeConstructor (ast, compilationOptions) {
 	});
 }
 
+function computedAttributeConstructor (ast, compilationOptions) {
+	const tagName = astHelper.getFirstChild(ast, 'tagName');
+	let name;
+	if (tagName) {
+		name = astHelper.getQName(tagName);
+	} else {
+		const tagNameExpr = astHelper.getFirstChild(ast, 'tagNameExpr');
+		name = { expr: compile(astHelper.getFirstChild(tagNameExpr, '*'), disallowUpdating(compilationOptions)) };
+	}
+
+	const valueExpr = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'valueExpr'), '*'), disallowUpdating(compilationOptions));
+
+	return new AttributeConstructor(name, {
+		value: null,
+		valueExprParts: [valueExpr]
+	});
+}
+
 function computedCommentConstructor (ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
@@ -896,6 +920,24 @@ function computedCommentConstructor (ast, compilationOptions) {
 	const argExpr = astHelper.getFirstChild(ast, 'argExpr');
 	const expr = argExpr ? compile(astHelper.getFirstChild(argExpr, '*'), disallowUpdating(compilationOptions)) : null;
 	return new CommentConstructor(expr);
+}
+
+function computedElementConstructor (ast, compilationOptions) {
+	const tagName = astHelper.getFirstChild(ast, 'tagName');
+	let name;
+	if (tagName) {
+		name = astHelper.getQName(tagName);
+	} else {
+		const tagNameExpr = astHelper.getFirstChild(ast, 'tagNameExpr');
+		name = { expr: compile(astHelper.getFirstChild(tagNameExpr, '*'), disallowUpdating(compilationOptions)) };
+	}
+
+	const content = astHelper.getFirstChild(ast, 'contentExpr');
+	const contentExpressions = content ?
+		astHelper.getChildren(content, '*').map(child => compile(child, disallowUpdating(compilationOptions))) :
+		[];
+
+	return new ElementConstructor(name, [], [], contentExpressions);
 }
 
 function computedPIConstructor (ast, compilationOptions) {

@@ -1,6 +1,5 @@
 import * as fontoxpath from '../src/index';
 import * as parser from '../src/parsing/xPathParser';
-import builtInFunctionsDataTypeConstructors from '../src/expressions/functions/builtInFunctions.dataTypeConstructors';
 
 const xmlSource = document.getElementById('xmlSource');
 const log = document.getElementById('log');
@@ -115,15 +114,13 @@ function indentXml (document) {
 		let row = '<' + element + '>';
 		if (element === elements[0]) {
 			row = row.substring(1);
-		}
-		else if (element === elements[elements.length - 1]) {
+		} else if (element === elements[elements.length - 1]) {
 			row = row.substring(0, row.length - 1);
 		}
 
 		if (row.substring(row.length - 2) === '/>') {
 			indent = Array(depth).fill('  ').join('');
-		}
-		else {
+		} else {
 			switch (row.search(/<\//g)) {
 				case -1:
 					indent = Array(depth++).fill('  ').join('');
@@ -218,15 +215,13 @@ async function rerunXPath () {
 
 		if (allowXQueryUpdateFacility.checked) {
 			await runUpdatingXQuery(xpath);
-		}
-		else {
+		} else {
 			await runNormalXPath(xpath, allowXQuery.checked);
 		}
 
 		window.hljs.highlightBlock(resultText);
 		window.hljs.highlightBlock(updateResult);
-	}
-	catch (err) {
+	} catch (err) {
 		let errorMessage = err.message;
 		if (err.location) {
 			const start = err.location.start.offset;
@@ -257,8 +252,7 @@ xpathField.oninput = _evt => {
 		xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
 
 		rerunXPath();
-	}
-	catch (_) {
+	} catch (_) {
 		// Catch all exceptions
 	}
 };

@@ -7,6 +7,8 @@ import StaticContext from '../expressions/StaticContext';
 
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 
+import { errXQST0070 } from '../expressions/xquery/XQueryErrors';
+
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
 	'http://www.w3.org/2001/XMLSchema',
@@ -64,10 +66,20 @@ export default function processProlog (prolog, staticContext) {
 		staticContext.registerNamespace(moduleImportPrefix, moduleImportNamespaceURI);
 		enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
 	});
-	astHelper.getChildren(prolog, 'namespaceDecl').forEach(namespaceDecl =>
-		staticContext.registerNamespace(
-			astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'prefix')),
-			astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))));
+	astHelper.getChildren(prolog, 'namespaceDecl').forEach(namespaceDecl => {
+		const prefix = astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'prefix'));
+		const namespaceURI = astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'));
+
+		if (prefix === 'xml' || prefix === 'xmlns') {
+			throw errXQST0070();
+		}
+
+		if (namespaceURI === 'http://www.w3.org/XML/1998/namespace' || namespaceURI === 'http://www.w3.org/2000/xmlns/') {
+			throw errXQST0070();
+		}
+
+		staticContext.registerNamespace(prefix, namespaceURI);
+	});
 
 	astHelper.getChildren(prolog, 'moduleSettings').forEach(moduleSetting => {
 		const type = moduleSetting['type'];
