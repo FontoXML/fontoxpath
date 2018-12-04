@@ -376,7 +376,12 @@ ExprSingle
 // / TypeswitchExpr
  / IfExpr
 // / TryCatchExpr
+// / InsertExpr
+// / DeleteExpr
+ / RenameExpr
  / ReplaceExpr
+// / UpdatingFunctionCall
+// / CopyModifyExpr
  / OrExpr
 
 // 41
@@ -1334,8 +1339,17 @@ ReplaceExpr
  {return replaceValue ? ["replaceExpr", ["replaceValue"], ["targetExpr", targetExpr], ["replacementExpr", replacementExpr]] :
  ["replaceExpr", ["targetExpr", targetExpr], ["replacementExpr", replacementExpr]]}
 
+// 203
+RenameExpr
+ = "rename" S "node" _ targetExpr:TargetExpr S "as" S newNameExpr:NewNameExpr
+ {return ["renameExpr", ["targetExpr", targetExpr], ["newNameExpr", newNameExpr]]}
+
 // 205
 TargetExpr
+ = ExprSingle
+
+// 206
+NewNameExpr
  = ExprSingle
 
 // Whitespace Note: https://www.w3.org/TR/REC-xml/#NT-S

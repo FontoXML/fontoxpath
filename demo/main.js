@@ -70,6 +70,8 @@ function parseNode (document, jsonml) {
 	var name = jsonml[0];
 	let prefix, namespaceUri;
 	switch (name) {
+		case 'newNameExpr':
+		case 'renameExpr':
 		case 'replaceExpr':
 		case 'replacementExpr':
 		case 'replaceValue':

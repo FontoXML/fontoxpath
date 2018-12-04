@@ -30,6 +30,8 @@ export function parseAst (document, ast) {
 	var name = ast[0];
 	let prefix, namespaceUri;
 	switch (name) {
+		case 'newNameExpr':
+		case 'renameExpr':
 		case 'replaceExpr':
 		case 'replacementExpr':
 		case 'replaceValue':
@@ -80,14 +82,12 @@ export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests
 		let jsonMl;
 		try {
 			jsonMl = parse(xQuery);
-		}
-		catch (err) {
+		} catch (err) {
 			if (err.location) {
 				const start = err.location.start.offset;
 				skippableTests.push(`${testCase},Parse error`);
 				chai.assert.fail('Parse error', 'No parse error', xQuery.substring(0, start) + '[HERE]' + xQuery.substring(start));
-			}
-			else {
+			} else {
 				skippableTests.push(`${testCase},Parser related error`);
 				throw err;
 			}
@@ -97,8 +97,7 @@ export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests
 		const actual = new slimdom.Document();
 		try {
 			actual.appendChild(parseAst(actual, jsonMl));
-		}
-		catch (e) {
+		} catch (e) {
 			skippableTests.push(`${testCase},Parser resulted in invalid JsonML`);
 			throw e;
 		}
@@ -109,8 +108,7 @@ export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests
 		try {
 			const rawFile = (await loadXQueryX()).replace(/\r/g, '');
 			expected = sync(rawFile);
-		}
-		catch (e) {
+		} catch (e) {
 			skippableTests.push(`${testCase},Expected XML could not be parsed`);
 			throw e;
 		}
@@ -138,8 +136,7 @@ export function buildTestCase (testCase, loadXQuery, loadXQueryX, skippableTests
 					new slimdom.XMLSerializer().serializeToString(actual.documentElement).replace(/></g, '>\n<'),
 					new slimdom.XMLSerializer().serializeToString(expected.documentElement).replace(/></g, '>\n<'),
 					'Expected the XML to be deep-equal');
-			}
-			catch (e) {
+			} catch (e) {
 				skippableTests.push(`${testCase},result was not equal`);
 
 				throw e;
