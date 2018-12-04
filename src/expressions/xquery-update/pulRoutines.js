@@ -106,7 +106,7 @@ const compatibilityCheck = function (pul, domFacade) {
 				prefixes[replacement.prefix] = replacement.namespaceURI;
 			}
 			if (prefixes[replacement.prefix] !== replacement.namespaceURI) {
-				throw errXUDY0024();
+				throw errXUDY0024(replacement.namespaceURI);
 			}
 		});
 	});

@@ -110,7 +110,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 			// property is empty, [err:XUDY0009] is raised.
 			parent = executionParameters.domFacade.getParentNode(tv.value.xdmValue[0].value);
 			if (parent === null) {
-				throw errXUDY0009();
+				throw errXUDY0009(tv.value.xdmValue[0].value);
 			}
 
 			// Let $target be the node returned by the target
@@ -151,7 +151,7 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 					const alreadyDeclaredNamespace = namespaceBindings[prefix];
 					if (alreadyDeclaredNamespace) {
 						if (attributeNode.namespaceURI !== alreadyDeclaredNamespace) {
-							throw errXUDY0024();
+							throw errXUDY0024(attributeNode.namespaceURI);
 						}
 					}
 
@@ -277,14 +277,14 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				// two adjacent hyphens or ends with a hyphen, a
 				// dynamic error is raised [err:XQDY0072].
 				if (isSubTypeOf(target.type, 'comment()') && (string.includes('--') || string.endsWith('-'))) {
-					throw errXQDY0072();
+					throw errXQDY0072(string);
 				}
 
 				// If $target is a processing instruction node, and
 				// $string contains the substring "?>", a dynamic
 				// error is raised [err:XQDY0026].
 				if (isSubTypeOf(target.type, 'processing-instruction()') && string.includes('?>')) {
-					throw errXQDY0026();
+					throw errXQDY0026(string);
 				}
 
 				// In the absence of errors, the result of a replace

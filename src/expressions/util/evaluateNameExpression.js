@@ -34,10 +34,10 @@ export default function evaluateNameExpression (staticContext, dynamicContext, e
 					localName = parts[1];
 				}
 				if (!isValidNCName(localName) || (prefix && !isValidNCName(prefix))) {
-					throw errXQDY0074();
+					throw errXQDY0074(prefix ? `${prefix}:${localName}` : localName);
 				}
 				if (prefix && !namespaceURI) {
-					throw errXQDY0074();
+					throw errXQDY0074(`${prefix}:${localName}`);
 				}
 				return Sequence.singleton(createNodeValue(new QName(prefix, namespaceURI, localName)));
 			}

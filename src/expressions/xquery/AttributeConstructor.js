@@ -71,7 +71,7 @@ class AttributeConstructor extends Expression {
 		this.name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
 		(this.name.prefix === 'xml' && this.name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
 		(this.name.prefix && this.name.prefix !== 'xml' && this.name.namespaceURI === 'http://www.w3.org/XML/1998/namespace')) {
-			throw errXQDY0044();
+			throw errXQDY0044(this.name);
 		}
 
 		if (this._value.valueExprParts) {

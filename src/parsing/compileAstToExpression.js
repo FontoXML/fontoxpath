@@ -55,8 +55,6 @@ import PIConstructor from '../expressions/xquery/PIConstructor';
 
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 
-import { errXQTY0024 } from '../expressions/xquery/XQueryErrors';
-
 const COMPILATION_OPTIONS = {
 	XPATH_MODE: { allowXQuery: false, allowUpdating: false },
 	XQUERY_MODE: { allowXQuery: true, allowUpdating: false },

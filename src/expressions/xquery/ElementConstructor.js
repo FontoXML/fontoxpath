@@ -49,7 +49,6 @@ class ElementConstructor extends Expression {
 				return namespacesInScope;
 			}, {});
 
-
 		this._attributes = attributes;
 
 		this._contents = contents;
@@ -146,7 +145,7 @@ class ElementConstructor extends Expression {
 				this._name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
 				(this._name.prefix === 'xml' && this._name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
 				(this._name.prefix && this._name.prefix !== 'xml' && this._name.namespaceURI === 'http://www.w3.org/XML/1998/namespace')) {
-					throw errXQDY0096();
+					throw errXQDY0096(this._name);
 				}
 
 				const element = nodesFactory.createElementNS(

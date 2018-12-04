@@ -14,7 +14,7 @@ function parseChildNodes (childNodes, executionParameters, attributes, contentNo
 	childNodes.forEach((childNode, i) => {
 		if (isSubtypeOf(childNode.type, 'attribute()')) {
 			if (attributesDone) {
-				throw errXQTY0024();
+				throw errXQTY0024(childNode.value);
 			}
 
 			const attrNode = /** @type {!Attr} */ (childNode.value);
