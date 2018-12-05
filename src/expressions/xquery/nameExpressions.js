@@ -1,5 +1,5 @@
 import { errXPTY0004 } from '../XPathErrors';
-import { errXQDY0074 } from '../xquery/XQueryErrors';
+import { errXQDY0041, errXQDY0074 } from '../xquery/XQueryErrors';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Sequence from '../dataTypes/Sequence';
@@ -16,8 +16,27 @@ const isValidNCName = (name) => {
 	return matches ? matches.length === 1 : false;
 };
 
-export default function evaluateNameExpression (staticContext, dynamicContext, executionParameters, nameExpr) {
-	const name = nameExpr.evaluate(dynamicContext, executionParameters).atomize(executionParameters);
+export function evaluateNCNameExpression (executionParameters, nameSequence) {
+	const name = nameSequence.atomize(executionParameters);
+	return name.switchCases({
+		singleton: seq => {
+			const nameValue = seq.first();
+			if (isSubtypeOf(nameValue.type, 'xs:string') || isSubtypeOf(nameValue.type, 'xs:untypedAtomic')) {
+				if (!isValidNCName(nameValue.value)) {
+					throw errXQDY0041(nameValue.value);
+				}
+				return Sequence.singleton(nameValue);
+			}
+			throw nameExprErr();
+		},
+		default: () => {
+			throw nameExprErr();
+		}
+	}).first().value;
+}
+
+export function evaluateQNameExpression (staticContext, executionParameters, nameSequence) {
+	const name = nameSequence.atomize(executionParameters);
 	return name.switchCases({
 		singleton: seq => {
 			const nameValue = seq.first();

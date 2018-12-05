@@ -3,7 +3,7 @@ import { errXQDY0025, errXQST0040, errXQDY0096 } from './XQueryErrors';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 
-import evaluateNameExpression from '../util/evaluateNameExpression';
+import { evaluateQNameExpression } from './nameExpressions';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
@@ -138,7 +138,8 @@ class ElementConstructor extends Expression {
 				}
 
 				if (this._nameExpr) {
-					this._name = evaluateNameExpression(this._staticContext, dynamicContext, executionParameters, this._nameExpr);
+					const nameSequence = this._nameExpr.evaluate(dynamicContext, executionParameters);
+					this._name = evaluateQNameExpression(this._staticContext, executionParameters, nameSequence);
 				}
 
 				if (this._name.prefix === 'xmlns' ||

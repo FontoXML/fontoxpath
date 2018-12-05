@@ -1,4 +1,51 @@
+import DomBackedNodesFactory from '../../DomBackedNodesFactory';
+import QName from '../dataTypes/valueTypes/QName';
+
 const ELEMENT_NODE = 1, ATTRIBUTE_NODE = 2, TEXT_NODE = 3, PROCESSING_INSTRUCTION_NODE = 7, COMMENT_NODE = 8;
+
+/**
+ * Changes the node-name of $target to $newName.
+ *
+ * @param  {!Node}              target          The target to replace.
+ * @param  {?QName}             newName         The new name.
+ * @param  {?IDomFacade=}       domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?INodesFactory=}    nodesFactory    The nodesFactory for creating nodes.
+ * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
+ */
+export const rename = function (target, newName, domFacade, nodesFactory, documentWriter) {
+	if (!nodesFactory) {
+		nodesFactory = new DomBackedNodesFactory(target);
+	}
+
+	let replacement;
+
+	switch (target.nodeType) {
+		case ELEMENT_NODE: {
+			const attributes = domFacade.getAllAttributes(target);
+			const childNodes = domFacade.getChildNodes(target);
+			replacement = nodesFactory.createElementNS(newName.namespaceURI, newName.buildPrefixedName());
+
+			attributes.forEach(attribute => {
+				documentWriter.setAttributeNS(replacement, attribute.namespaceURI, attribute.name, attribute.value);
+			});
+			childNodes.forEach(childNode => {
+				documentWriter.insertBefore(replacement, childNode, null);
+			});
+			break;
+		}
+		case ATTRIBUTE_NODE: {
+			replacement = nodesFactory.createAttributeNS(newName.namespaceURI, newName.buildPrefixedName());
+			replacement.value = target.value;
+			break;
+		}
+		case PROCESSING_INSTRUCTION_NODE: {
+			replacement = nodesFactory.createProcessingInstruction(newName.buildPrefixedName(), target.data);
+			break;
+		}
+	}
+
+	replaceNode(target, [replacement], domFacade, documentWriter);
+};
 
 /**
  * Replaces the existing children of the element node $target by the optional text node $text. The attributes of $target are not affected.

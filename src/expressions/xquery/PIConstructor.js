@@ -1,3 +1,6 @@
+import { errXPTY0004 } from '../XPathErrors';
+import { errXQDY0041 } from './XQueryErrors';
+import { evaluateNCNameExpression } from './nameExpressions';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 
@@ -49,33 +52,17 @@ class PIConstructor extends Expression {
 				}
 
 				// Get the target
+				let target;
 				if (this._target.targetValue !== null) {
-					assertValidTarget(this._target.targetValue);
-					return Sequence.singleton(createNodeValue(
-						nodesFactory.createProcessingInstruction(this._target.targetValue, data)));
+					target = this._target.targetValue;
+				} else {
+					const targetSequence = this._target.targetExpr.evaluateMaybeStatically(dynamicContext, executionParameters);
+					target = evaluateNCNameExpression(executionParameters, targetSequence);
 				}
 
-				return this._target.targetExpr.evaluateMaybeStatically(dynamicContext, executionParameters)
-					.atomize(executionParameters)
-					.switchCases({
-						singleton: targetSequence => {
-							const target = targetSequence.first();
-
-							if (!isSubtypeOf(target.type, 'xs:NCName') &&
-								!isSubtypeOf(target.type, 'xs:string') &&
-								!isSubtypeOf(target.type, 'xs:untypedAtomic')) {
-								throw new Error('XPTY0004: The target of a constructed PI should be a xs:NCname, xs:string, or untyped atomic value.');
-							}
-
-							assertValidTarget(target.value);
-
-							return Sequence.singleton(createNodeValue(
-								nodesFactory.createProcessingInstruction(target.value, data)));
-						},
-						default: () => {
-							throw new Error('XPTY0004: The target of a constructed PI should be a singleton sequence.');
-						}
-					});
+				assertValidTarget(target);
+				return Sequence.singleton(createNodeValue(
+					nodesFactory.createProcessingInstruction(target, data)));
 			});
 	}
 }

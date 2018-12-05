@@ -88,11 +88,12 @@ The arguments are the same as `evaluateXPath`. This returns a `Promise<Object>`,
 The pending update list can be executed using
 
 ```js
-executePendingUpdateList(pendingUpdateList, domFacade, documentWriter);
+executePendingUpdateList(pendingUpdateList, domFacade, nodesFactory, documentWriter);
 ```
 
 * `pendingUpdateList` `<Object[]>` The pending update list returned by `evaluateUpdatingExpression`.
 * `domFacade` `<IDomFacade>` See `evaluateXPath`. The default will use nodes from the `pendingUpdateList`.
+* `nodesFactory` `INodesFactory` A [INodesFactory](externs/INodesFactory.js) implementation which will be used for creating nodes. Defaults to an implementation which uses properties and methods of nodes from the `pendingUpdateList`.
 * `documentWriter` `<IDocumentWriter>` An [IDocumentWriter](externs/IDocumentWriter.js) implementation which will be used for modifying a DOM. Defaults to an implementation which uses properties and methods of nodes from the `pendingUpdateList`.
 
 ### Example

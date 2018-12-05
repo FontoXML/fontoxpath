@@ -311,7 +311,7 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 /**
  * @extends     {UpdatingExpression}
  */
-class ReplaceNodeExpression extends UpdatingExpression {
+class ReplaceExpression extends UpdatingExpression {
 	/**
 	 * @param  {boolean} valueOf
 	 * @param  {!Expression} targetExpression
@@ -341,4 +341,4 @@ class ReplaceNodeExpression extends UpdatingExpression {
 	}
 }
 
-export default ReplaceNodeExpression;
+export default ReplaceExpression;

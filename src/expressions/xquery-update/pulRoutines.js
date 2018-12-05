@@ -1,4 +1,5 @@
 import {
+	rename,
 	replaceElementContent,
 	replaceNode,
 	replaceValue
@@ -9,7 +10,7 @@ import {
 	errXUDY0024
 } from './XQueryUpdateFacilityErrors';
 
-export const applyUpdates = function (pul, _revalidationModule, _inheritNamespaces, domFacade, documentWriter) {
+export const applyUpdates = function (pul, _revalidationModule, _inheritNamespaces, domFacade, nodesFactory, documentWriter) {
 	// 1. Checks the update primitives on $pul for compatibility using upd:compatibilityCheck.
 	compatibilityCheck(pul, domFacade);
 
@@ -17,6 +18,10 @@ export const applyUpdates = function (pul, _revalidationModule, _inheritNamespac
 	// a. First, all upd:insertInto, upd:insertAttributes, upd:replaceValue, and upd:rename primitives are applied.
 	pul.filter(pu => ['insertInto', 'insertAttributes', 'replaceValue', 'rename'].indexOf(pu.type) !== -1).forEach(pu => {
 		switch (pu.type) {
+			case 'rename': {
+				rename(pu.target, pu.newName, domFacade, nodesFactory, documentWriter);
+				break;
+			}
 			case 'replaceValue': {
 				replaceValue(pu.target, pu.stringValue, domFacade, documentWriter);
 				break;

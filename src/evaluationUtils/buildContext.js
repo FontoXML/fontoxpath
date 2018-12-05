@@ -3,6 +3,7 @@ import DynamicContext from '../expressions/DynamicContext';
 import DomFacade from '../DomFacade';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import domBackedDomFacade from '../domBackedDomFacade';
+import DomBackedNodesFactory from '../DomBackedNodesFactory';
 import Expression from '../expressions/Expression';
 import Sequence from '../expressions/dataTypes/Sequence';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
@@ -23,24 +24,6 @@ function normalizeEndOfLines (xpathString) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xA));
 }
-
-const warningNodesFactory = {
-	createElementNS: () => {
-		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-	},
-	createTextNode: () => {
-		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-	},
-	createComment: () => {
-		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-	},
-	createProcessingInstruction: () => {
-		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-	},
-	createAttributeNS: () => {
-		throw new Error('Please pass a node factory if an XQuery script uses node constructors');
-	}
-};
 
 /**
  * @param  {!string}      expressionString  The updateScript to execute. Supports XPath 3.1.
@@ -81,28 +64,8 @@ export default function buildEvaluationContext (expressionString, contextItem, d
 	 */
 	let nodesFactory = options['nodesFactory'];
 	if (!nodesFactory && compilationOptions.allowXQuery) {
-		if (contextItem && 'nodeType' in /** @type {!Node} */(contextItem)) {
-			const ownerDocument = /** @type {Document} }*/(contextItem.ownerDocument || contextItem);
-			if ((typeof ownerDocument.createElementNS === 'function') &&
-				(typeof ownerDocument.createProcessingInstruction === 'function') &&
-				(typeof ownerDocument.createTextNode === 'function') &&
-				(typeof ownerDocument.createComment === 'function')) {
-
-				nodesFactory = /** @type {!INodesFactory} */({
-					createElementNS: ownerDocument.createElementNS.bind(ownerDocument),
-					createTextNode: ownerDocument.createTextNode.bind(ownerDocument),
-					createComment: ownerDocument.createComment.bind(ownerDocument),
-					createProcessingInstruction: ownerDocument.createProcessingInstruction.bind(ownerDocument),
-					createAttributeNS: ownerDocument.createAttributeNS.bind(ownerDocument)
-				});
-			}
-		}
-	} else if (!nodesFactory) {
-		// We do not have a nodesFactory instance as a parameter, nor can we generate one from the context item.
-		// Throw an error as soon as one of these functions is called.
-		nodesFactory = warningNodesFactory;
+		nodesFactory = new DomBackedNodesFactory(contextItem);
 	}
-
 
 	/**
 	 * @type {!DynamicContext}

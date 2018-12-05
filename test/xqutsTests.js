@@ -78,7 +78,7 @@ async function assertError (testName, expectedError, query, args) {
 	try {
 		if (isUpdatingQuery(testName, query)) {
 			const it = await evaluateUpdatingExpression(...args);
-			executePendingUpdateList(it.pendingUpdateList, null, null, {});
+			executePendingUpdateList(it.pendingUpdateList, null, null, null);
 		} else {
 			evaluateXPath(...args.slice(0, args.length - 1), null, { language: 'XQuery3.1' });
 		}
@@ -235,7 +235,7 @@ async function runTestCase (testName, testCase) {
 				await runAssertions(expectedErrors, outputFiles, testName, query, args);
 			} else if (isUpdatingQuery(testName, query)) {
 				const it = await evaluateUpdatingExpression(...args);
-				executePendingUpdateList(it.pendingUpdateList, null, null, {});
+				executePendingUpdateList(it.pendingUpdateList, null, null, null);
 			} else {
 				throw new Error('A non-updating expression without an expected value is not supported in the test framework.');
 			}

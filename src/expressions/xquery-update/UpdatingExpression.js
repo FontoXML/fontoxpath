@@ -19,6 +19,7 @@ class UpdatingExpression extends Expression {
 	 * @abstract
 	 * @param   {?DynamicContext}        _dynamicContext
 	 * @param   {!ExecutionParameters}   _executionParameters
+	 * @returns {{next: function(): ?}}
 	 */
 	evaluateWithUpdateList (_dynamicContext, _executionParameters) {
 		//    throw new Error('Not Implemented');

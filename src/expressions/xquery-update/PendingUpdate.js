@@ -19,6 +19,8 @@ class PendingUpdate {
 
 PendingUpdate.fromTransferable = function (transferable) {
 	switch (transferable['type']) {
+		case 'rename':
+			return new RenamePendingUpdate(transferable['target'], transferable['newName']);
 		case 'replaceNode':
 			return new ReplaceNodePendingUpdate(transferable['target'], transferable['replacement']);
 		case 'replaceValue':
@@ -29,6 +31,30 @@ PendingUpdate.fromTransferable = function (transferable) {
 			throw new Error(`Unexpected type "${transferable['type']}" when parsing a transferable pending update.`);
 	}
 };
+
+class RenamePendingUpdate extends PendingUpdate {
+	constructor (target, newName) {
+		super('rename');
+
+		/**
+		 * @type   {!Node}
+		 */
+		this.target = target;
+
+		/**
+		 * @type  {!Array<!Node>}
+		 */
+		this.newName = newName;
+	}
+
+	toTransferable () {
+		return {
+			'type': this.type,
+			'target': this.target,
+			'newName': this.newName
+		};
+	}
+}
 
 class ReplaceNodePendingUpdate extends PendingUpdate {
 	constructor (target, replacement) {
@@ -103,6 +129,7 @@ class ReplaceElementContentPendingUpdate extends PendingUpdate {
 
 export {
 	PendingUpdate,
+	RenamePendingUpdate,
 	ReplaceElementContentPendingUpdate,
 	ReplaceValuePendingUpdate,
 	ReplaceNodePendingUpdate

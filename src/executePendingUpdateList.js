@@ -7,11 +7,12 @@ import { PendingUpdate } from './expressions/xquery-update/PendingUpdate';
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
  *
- * @param  {!Array<!Object>}  pendingUpdateList  The updateScript to execute.
- * @param  {?IDomFacade=}            domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  {?IDocumentWriter=}       documentWriter  The documentWriter for writing changes.
+ * @param  {!Array<!Object>}    pendingUpdateList  The updateScript to execute.
+ * @param  {?IDomFacade=}       domFacade          The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?INodesFactory=}    nodesFactory       The nodesFactory for creating nodes.
+ * @param  {?IDocumentWriter=}  documentWriter     The documentWriter for writing changes.
  */
-export default function executePendingUpdateList (pendingUpdateList, domFacade, documentWriter) {
+export default function executePendingUpdateList (pendingUpdateList, domFacade, nodesFactory, documentWriter) {
 	if (!domFacade) {
 		domFacade = domBackedDomFacade;
 	}
@@ -24,5 +25,5 @@ export default function executePendingUpdateList (pendingUpdateList, domFacade, 
 	}
 
 	const pul = pendingUpdateList.map(PendingUpdate.fromTransferable);
-	applyUpdates(pul, null, null, wrappedDomFacade, documentWriter);
+	applyUpdates(pul, null, null, wrappedDomFacade, nodesFactory, documentWriter);
 }

@@ -211,7 +211,7 @@ describe('ReplaceExpression', () => {
 				null,
 				{},
 				{});
-			executePendingUpdateList(result.pendingUpdateList, null, null);
+			executePendingUpdateList(result.pendingUpdateList, null, null, null);
 		} catch (err) {
 			error = err;
 		}

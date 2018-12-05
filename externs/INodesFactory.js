@@ -7,7 +7,15 @@
  * @record
  */
 class INodesFactory {
-
+	/**
+	 * @nosideeffects
+	 * @export
+	 * @param   {?string}  namespaceURI
+	 * @param   {!string}  name
+	 * @return  {!Attr}
+	 */
+	createAttributeNS (namespaceURI, name) {
+	}
 	/**
 	 * @nosideeffects
 	 * @export
@@ -40,7 +48,7 @@ class INodesFactory {
 	 * @export
 	 * @param   {!string}  target
 	 * @param   {!string}  data
-	 * @return  {!Text}
+	 * @return  {!ProcessingInstruction}
 	 */
 	createProcessingInstruction (target, data) {
 	}

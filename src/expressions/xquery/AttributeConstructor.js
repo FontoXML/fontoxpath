@@ -3,7 +3,7 @@ import { errXQDY0044 } from './XQueryErrors';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 
-import evaluateNameExpression from '../util/evaluateNameExpression';
+import { evaluateQNameExpression } from './nameExpressions';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
@@ -63,7 +63,8 @@ class AttributeConstructor extends Expression {
 		const nodesFactory = executionParameters.nodesFactory;
 
 		if (this._nameExpr) {
-			this.name = evaluateNameExpression(this._staticContext, dynamicContext, executionParameters, this._nameExpr);
+			const nameSequence = this._nameExpr.evaluate(dynamicContext, executionParameters);
+			this.name = evaluateQNameExpression(this._staticContext, executionParameters, nameSequence);
 		}
 
 		if (this.name.prefix === 'xmlns' ||
