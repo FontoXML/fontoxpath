@@ -1,3 +1,4 @@
+import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
 import DomBackedNodesFactory from '../../DomBackedNodesFactory';
 import QName from '../dataTypes/valueTypes/QName';
 
@@ -85,6 +86,9 @@ export const replaceNode = function (target, replacement, domFacade, documentWri
 
 		documentWriter.removeAttributeNS(parent, target.namespaceURI, target.name);
 		replacement.forEach(attr => {
+			if (domFacade.getAttribute(parent, attr.name)) {
+				throw errXUDY0021(`An attribute ${attr.name} already exists.`);
+			}
 			documentWriter.setAttributeNS(parent, attr.namespaceURI, attr.name, attr.value);
 		});
 	}

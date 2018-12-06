@@ -5,6 +5,7 @@ export const errXUTY0011 = () => new Error('XUTY0011: When replacing an attribut
 export const errXUTY0012 = () => new Error('XUTY0012: The target of a rename expression must be a single element, attribute, or processing instruction node.');
 export const errXUDY0016 = (target) => new Error(`XUDY0016: The target ${target.outerHTML} is used in more than one replace expression.`);
 export const errXUDY0017 = (target) => new Error(`XUDY0017: The target ${target.outerHTML} is used in more than one replace value of expression.`);
+export const errXUDY0021 = (constraint) => new Error(`XUDY0021: Applying the updates will result in the XDM instance violating constraint: '${constraint}'`);
 export const errXUDY0023 = (namespaceURI) => new Error(`XUDY0023: The namespace binding ${namespaceURI} is conflicting.`);
 export const errXUDY0024 = (namespaceURI) => new Error(`XUDY0024: The namespace binding ${namespaceURI} is conflicting.`);
 export const errXUDY0027 = () => new Error('XUDY0027: The target for a replace expression should not be empty');
