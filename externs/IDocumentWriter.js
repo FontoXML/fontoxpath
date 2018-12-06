@@ -19,7 +19,7 @@ class IDocumentWriter {
 
 	/**
 	 * @export
-	 * @param   {!Node}    node
+	 * @param   {!Element} node
 	 * @param   {?string}  namespace
 	 * @param   {!string}  name
 	 */
@@ -37,7 +37,7 @@ class IDocumentWriter {
 
 	/**
 	 * @export
-	 * @param   {!Node}    node
+	 * @param   {!Element} node
 	 * @param   {?string}  namespace
 	 * @param   {!string}  name
 	 * @param   {!string}  value

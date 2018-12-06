@@ -27,7 +27,7 @@ export const rename = function (target, newName, domFacade, nodesFactory, docume
 			replacement = nodesFactory.createElementNS(newName.namespaceURI, newName.buildPrefixedName());
 
 			attributes.forEach(attribute => {
-				documentWriter.setAttributeNS(replacement, attribute.namespaceURI, attribute.name, attribute.value);
+				documentWriter.setAttributeNS(/** @type {!Element} */(replacement), attribute.namespaceURI, attribute.name, attribute.value);
 			});
 			childNodes.forEach(childNode => {
 				documentWriter.insertBefore(replacement, childNode, null);
@@ -84,12 +84,14 @@ export const replaceNode = function (target, replacement, domFacade, documentWri
 			throw new Error('Constraint "If $target is an attribute node, $replacement must consist of zero or more attribute nodes." failed.');
 		}
 
-		documentWriter.removeAttributeNS(parent, target.namespaceURI, target.name);
+		const element = /** @type {!Element} */(parent);
+
+		documentWriter.removeAttributeNS(element, target.namespaceURI, target.name);
 		replacement.forEach(attr => {
-			if (domFacade.getAttribute(parent, attr.name)) {
+			if (domFacade.getAttribute(element, attr.name)) {
 				throw errXUDY0021(`An attribute ${attr.name} already exists.`);
 			}
-			documentWriter.setAttributeNS(parent, attr.namespaceURI, attr.name, attr.value);
+			documentWriter.setAttributeNS(element, attr.namespaceURI, attr.name, attr.value);
 		});
 	}
 
@@ -115,7 +117,7 @@ export const replaceNode = function (target, replacement, domFacade, documentWri
  */
 export const replaceValue = function (target, stringValue, domFacade, documentWriter) {
 	if (target.nodeType === ATTRIBUTE_NODE) {
-		const element = domFacade.getParentNode(target);
+		const element = /** @type {!Element} */(domFacade.getParentNode(target));
 		if (element) {
 			documentWriter.setAttributeNS(element, target.namespaceURI, target.name, stringValue);
 		}
