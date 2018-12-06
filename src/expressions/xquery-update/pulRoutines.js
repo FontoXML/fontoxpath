@@ -9,6 +9,7 @@ import {
 	errXUDY0017,
 	errXUDY0024
 } from './XQueryUpdateFacilityErrors';
+import QName from '../dataTypes/valueTypes/QName';
 
 export const applyUpdates = function (pul, _revalidationModule, _inheritNamespaces, domFacade, nodesFactory, documentWriter) {
 	// 1. Checks the update primitives on $pul for compatibility using upd:compatibilityCheck.
@@ -92,30 +93,44 @@ const compatibilityCheck = function (pul, domFacade) {
 	// 5. Two or more upd:put primitives in $pul have the same $uri operand [err:XUDY0031].
 
 	// 6. Two or more primitives in $pul create conflicting namespace bindings for the same element node [err:XUDY0024]. The following kinds of primitives create namespace bindings:
+	const newQNamesByElement = new Map();
+	const getAttributeName = attribute => new QName(attribute.prefix, attribute.namespaceURI, attribute.localName);
 	// a. upd:insertAttributes creates one namespace binding on the $target element corresponding to the implied namespace binding of the name of each attribute node in $content.
 	// b. upd:replaceNode creates one namespace binding on the $target element corresponding to the implied namespace binding of the name of each attribute node in $replacement.
-	const map = new Map();
 	pul.filter(pu => pu.type === 'replaceNode' && pu.target.nodeType === pu.target.ATTRIBUTE_NODE).forEach(pu => {
-		const key = domFacade.getParentNode(pu.target);
-		const values = map.get(key);
-		if (values) {
-			values.push(...pu.replacement);
+		const element = domFacade.getParentNode(pu.target);
+		const qNames = newQNamesByElement.get(element);
+		if (qNames) {
+			qNames.push(...pu.replacement.map(getAttributeName));
 		} else {
-			map.set(key, pu.replacement);
+			newQNamesByElement.set(element, pu.replacement.map(getAttributeName));
 		}
 	});
-	map.forEach((replacements, _element) => {
+	// c. upd:rename creates a namespace binding on $target, or on the parent (if any) of $target if $target is an attribute node, corresponding to the implied namespace binding of $newName.
+	pul.filter(pu => pu.type === 'rename' && pu.target.nodeType === pu.target.ATTRIBUTE_NODE).forEach(pu => {
+		const element = domFacade.getParentNode(pu.target);
+		if (!element) {
+			return;
+		}
+		const qNames = newQNamesByElement.get(element);
+		if (qNames) {
+			qNames.push(pu.newName);
+		} else {
+			newQNamesByElement.set(element, [pu.newName]);
+		}
+	});
+
+	newQNamesByElement.forEach((qNames, _element) => {
 		const prefixes = {};
-		replacements.forEach(replacement => {
-			if (!prefixes[replacement.prefix]) {
-				prefixes[replacement.prefix] = replacement.namespaceURI;
+		qNames.forEach(qName => {
+			if (!prefixes[qName.prefix]) {
+				prefixes[qName.prefix] = qName.namespaceURI;
 			}
-			if (prefixes[replacement.prefix] !== replacement.namespaceURI) {
-				throw errXUDY0024(replacement.namespaceURI);
+			if (prefixes[qName.prefix] !== qName.namespaceURI) {
+				throw errXUDY0024(qName.namespaceURI);
 			}
 		});
 	});
-	// c. upd:rename creates a namespace binding on $target, or on the parent (if any) of $target if $target is an attribute node, corresponding to the implied namespace binding of $newName.
 };
 
 export const mergeUpdates = function (pul1, ...puls) {

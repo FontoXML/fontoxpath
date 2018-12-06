@@ -12,6 +12,7 @@ import QName from '../dataTypes/valueTypes/QName';
 
 import {
 	errXUTY0012,
+	errXUDY0023,
 	errXUDY0027
 } from './XQueryUpdateFacilityErrors';
 import Sequence from '../dataTypes/Sequence';
@@ -78,7 +79,10 @@ function evaluateNewName (staticContext, executionParameters, newNameValueIterat
 			const qName = evaluateQNameExpression(staticContext, executionParameters, nameSequence);
 
 			// If the namespace binding of $QName conflicts with any namespace binding in the namespaces property of $target, a dynamic error is raised [err:XUDY0023].
-			// TODO
+			const boundNamespaceURI = target.value.lookupNamespaceURI(qName.prefix);
+			if (boundNamespaceURI && boundNamespaceURI !== qName.namespaceURI) {
+				throw errXUDY0023(qName.namespaceURI);
+			}
 
 			return qName;
 		}
@@ -87,7 +91,12 @@ function evaluateNewName (staticContext, executionParameters, newNameValueIterat
 			const qName = evaluateQNameExpression(staticContext, executionParameters, nameSequence);
 
 			// If $QName has a non-absent namespace URI, and if the namespace binding of $QName conflicts with any namespace binding in the namespaces property of the parent (if any) of $target, a dynamic error is raised [err:XUDY0023].
-			// TODO
+			if (qName.namespaceURI) {
+				const boundNamespaceURI = target.value.lookupNamespaceURI(qName.prefix);
+				if (boundNamespaceURI && boundNamespaceURI !== qName.namespaceURI) {
+					throw errXUDY0023(qName.namespaceURI);
+				}
+			}
 
 			return qName;
 		}

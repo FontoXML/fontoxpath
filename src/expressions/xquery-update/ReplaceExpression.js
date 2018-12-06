@@ -21,6 +21,7 @@ import {
 	errXUDY0009,
 	errXUTY0010,
 	errXUTY0011,
+	errXUDY0023,
 	errXUDY0024,
 	errXUDY0027
 } from './XQueryUpdateFacilityErrors';
@@ -136,18 +137,21 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 					throw errXUTY0011();
 				}
 
-				// No attribute node in $rlist may have a QName
-				// whose implied namespace binding conflicts with
-				// a namespace binding in the "namespaces"
-				// property of $parent [err:XUDY0023].
-
-				// TODO
-
-				// Multiple attribute nodes in $rlist may not have
-				// QNames whose implied namespace bindings
-				// conflict with each other [err:XUDY0024].
 				rlist.attributes.reduce((namespaceBindings, attributeNode) => {
 					const prefix = attributeNode.prefix || '';
+
+					// No attribute node in $rlist may have a QName
+					// whose implied namespace binding conflicts with
+					// a namespace binding in the "namespaces"
+					// property of $parent [err:XUDY0023].
+					const boundNamespaceURI = parent.lookupNamespaceURI(prefix);
+					if (boundNamespaceURI && boundNamespaceURI !== attributeNode.namespaceURI) {
+						throw errXUDY0023(attributeNode.namespaceURI);
+					}
+
+					// Multiple attribute nodes in $rlist may not have
+					// QNames whose implied namespace bindings
+					// conflict with each other [err:XUDY0024].
 					const alreadyDeclaredNamespace = namespaceBindings[prefix];
 					if (alreadyDeclaredNamespace) {
 						if (attributeNode.namespaceURI !== alreadyDeclaredNamespace) {
