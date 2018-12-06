@@ -1,3 +1,7 @@
+id-transform-expr-051,Wraps contextItemExpr in a pathExpr which isn't required
+id-transform-expr-052,Wraps contextItemExpr in a pathExpr which isn't required
+id-transform-expr-053,Wraps contextItemExpr in a pathExpr which isn't required
+id-transform-expr-054,Wraps contextItemExpr in a pathExpr which isn't required
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 id-comma-expr-01,Parse error
 id-comma-expr-010,Parse error
@@ -260,17 +264,7 @@ fn-put-009,Parse error
 fn-put-010,Parse error
 fn-put-011,Parse error
 id-rename-expr-010,Parse error
-id-rename-expr-018,Parse error
-id-rename-expr-033-no-inherit,Parse error
-id-rename-expr-033,Parse error
-id-rename-expr-034-no-inherit,Parse error
-id-rename-expr-034,Parse error
-id-rename-expr-035,Parse error
-id-rename-expr-036,Parse error
-id-rename-expr-037,Parse error
 id-replace-expr-022-test,XQuery script could not be found
-id-replace-expr-045-no-inherit,Parse error
-id-replace-expr-045,Parse error
 statictyp-xqupd-01,Parse error
 statictyp-xqupd-02,Parse error
 statictyp-xqupd-03,Parse error
@@ -296,8 +290,6 @@ statictyp-xqupd-22,Parse error
 statictyp-xqupd-23,Parse error
 statictyp-xqupd-24,Parse error
 statictyp-xqupd-25,Parse error
-statictyp-xqupd-56,Parse error
-statictyp-xqupd-57,Parse error
 stf-delete-01,Parse error
 stf-delete-02,Parse error
 stf-insert-01,Parse error
@@ -311,65 +303,25 @@ stf-insert-into-03,Parse error
 stf-insert-into-04,Parse error
 stf-transform-01,Parse error
 stf-transform-02,Parse error
-stf-transform-03,Parse error
-id-transform-expr-01,Parse error
 id-transform-expr-010,Parse error
 id-transform-expr-011,Parse error
 id-transform-expr-012,Parse error
-id-transform-expr-013,Parse error
 id-transform-expr-014,Parse error
 id-transform-expr-015,Parse error
 id-transform-expr-016,Parse error
 id-transform-expr-017,Parse error
 id-transform-expr-018,Parse error
-id-transform-expr-019,Parse error
 id-transform-expr-02,Parse error
-id-transform-expr-020,Parse error
-id-transform-expr-021,Parse error
-id-transform-expr-022,Parse error
-id-transform-expr-023,Parse error
-id-transform-expr-024,Parse error
-id-transform-expr-025,Parse error
 id-transform-expr-026,Parse error
 id-transform-expr-027,Parse error
 id-transform-expr-028,Parse error
 id-transform-expr-029,Parse error
-id-transform-expr-03,Parse error
-id-transform-expr-030,Parse error
-id-transform-expr-031,Parse error
 id-transform-expr-032,Parse error
 id-transform-expr-033,Parse error
-id-transform-expr-034,Parse error
-id-transform-expr-035,Parse error
-id-transform-expr-036,Parse error
-id-transform-expr-037,Parse error
-id-transform-expr-038,Parse error
-id-transform-expr-039,Parse error
 id-transform-expr-04,Parse error
-id-transform-expr-040,Parse error
-id-transform-expr-041,Parse error
-id-transform-expr-042,Parse error
-id-transform-expr-043,Parse error
-id-transform-expr-044,Parse error
-id-transform-expr-045,Parse error
-id-transform-expr-046,Parse error
-id-transform-expr-047,Parse error
-id-transform-expr-048,Parse error
-id-transform-expr-049,Parse error
-id-transform-expr-05,Parse error
-id-transform-expr-050,Parse error
-id-transform-expr-051,Parse error
-id-transform-expr-052,Parse error
-id-transform-expr-053,Parse error
-id-transform-expr-054,Parse error
-id-transform-expr-055,Parse error
-id-transform-expr-056,Parse error
-id-transform-expr-057,Parse error
-id-transform-expr-058,Parse error
 id-transform-expr-06,Parse error
 id-transform-expr-07,Parse error
 id-transform-expr-08,Parse error
-id-transform-expr-09,Parse error
 id-typeswitch-expr-01,Parse error
 id-typeswitch-expr-010,Parse error
 id-typeswitch-expr-011,Parse error
@@ -412,7 +364,6 @@ id-typeswitch-expr-07,Parse error
 id-typeswitch-expr-08,Parse error
 id-typeswitch-expr-09,Parse error
 attribute-errors-q1,Parse error
-attribute-errors-q14,Parse error
 attribute-errors-q15,Parse error
 attribute-errors-q16,Parse error
 attribute-errors-q17,Parse error
@@ -464,11 +415,8 @@ setToUntyped-002,Parse error
 setToUntyped-003,Parse error
 setToUntyped-004,Parse error
 setToUntyped-005,Parse error
-setToUntyped-006,Parse error
 setToUntyped-007,Parse error
 setToUntyped-008,Parse error
-setToUntyped-009,Parse error
-setToUntyped-010,Parse error
 address-book-q1,Parse error
 namespace-q1-test,XQuery script could not be found
 nil-q1-test,XQuery script could not be found
@@ -492,7 +440,6 @@ relational-data-q6-2,Parse error
 relational-data-q7,Parse error
 relational-data-q8,Parse error
 relational-data-q9,Parse error
-soap-q1,Parse error
 revalidate-vallax-del-002-test,Parse error
 revalidate-vallax-del-004-test,Parse error
 revalidate-vallax-ins-003-test,Parse error

@@ -381,7 +381,7 @@ ExprSingle
  / RenameExpr
  / ReplaceExpr
 // / UpdatingFunctionCall
-// / CopyModifyExpr
+ / CopyModifyExpr
  / OrExpr
 
 // 41
@@ -1351,6 +1351,13 @@ TargetExpr
 // 206
 NewNameExpr
  = ExprSingle
+
+// 208
+CopyModifyExpr
+ = "copy" S lhs:TransformCopy rhs:(_ "," _ transformCopy:TransformCopy {return transformCopy})* _ "modify" S modifyExpr:ExprSingle S "return" S returnExpr:ExprSingle
+ {return ["transformExpr", ["transformCopies", lhs].concat(rhs), ["modifyExpr", modifyExpr], ["returnExpr", returnExpr]]}
+TransformCopy
+ = varRef:VarRef _ ":=" _ copySource:ExprSingle {return ["transformCopy", varRef, ["copySource", copySource]]}
 
 // Whitespace Note: https://www.w3.org/TR/REC-xml/#NT-S
 _

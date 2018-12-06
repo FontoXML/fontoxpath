@@ -70,12 +70,18 @@ function parseNode (document, jsonml) {
 	var name = jsonml[0];
 	let prefix, namespaceUri;
 	switch (name) {
+		case 'copySource':
+		case 'modifyExpr':
 		case 'newNameExpr':
 		case 'renameExpr':
 		case 'replaceExpr':
 		case 'replacementExpr':
 		case 'replaceValue':
+		case 'returnExpr':
 		case 'targetExpr':
+		case 'transformCopies':
+		case 'transformCopy':
+		case 'transformExpr':
 			// Elements added in the update facility need to be in a different namespace
 			prefix = 'xqxuf:';
 			namespaceUri = 'http://www.w3.org/2007/xquery-update-10';
