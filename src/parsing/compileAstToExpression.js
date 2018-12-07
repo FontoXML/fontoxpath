@@ -706,6 +706,10 @@ function quantified (ast, compilationOptions) {
 }
 
 function sequence (ast, compilationOptions) {
+	const childExpressions = astHelper.getChildren(ast, '*').map(arg => compile(arg, compilationOptions));
+	if (childExpressions.length === 1) {
+		return childExpressions[0];
+	}
 	return new SequenceOperator(astHelper.getChildren(ast, '*').map(arg => compile(arg, compilationOptions)));
 }
 

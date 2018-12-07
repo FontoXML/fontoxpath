@@ -22,6 +22,9 @@ describe('getBucketForSelector', () => {
 	it('returns the correct bucket for named element expressions', () => {
 		chai.assert.equal(getBucketForSelector('self::someElement'), 'name-someElement');
 	});
+	it('returns the correct bucket for filter expressions', () => {
+		chai.assert.equal(getBucketForSelector('(self::someElement)[@type="whatever"]'), 'name-someElement');
+	});
 	it('returns the correct bucket for text expressions', () => {
 		chai.assert.equal(getBucketForSelector('self::text()'), 'type-3');
 	});
