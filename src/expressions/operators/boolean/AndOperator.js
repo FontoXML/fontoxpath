@@ -47,7 +47,7 @@ class AndOperator extends Expression {
 									// This subExpression may NEVER match the given node
 									// We do not even have to evaluate the expression
 									i++;
-									done = false;
+									done = true;
 									return ready(falseBoolean);
 								}
 							}

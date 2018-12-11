@@ -14,7 +14,11 @@ describe('and operator', () => {
 	});
 
 	it('can optimize an and expression with buckets', () => {
-		chai.assert.isFalse(evaluateXPathToBoolean('self::p and false()', new slimdom.Document()));
+		chai.assert.isFalse(evaluateXPathToBoolean('self::p and true()', new slimdom.Document()));
+	});
+
+	it('can optimize an and expression with buckets, inside a not()', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('not(self::p and true())', new slimdom.Document()));
 	});
 
 	it('can parse a concatenation of ands',
