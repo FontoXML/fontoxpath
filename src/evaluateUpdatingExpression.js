@@ -9,7 +9,7 @@ import buildContext from './evaluationUtils/buildContext';
  * @param  {?Object=}      variables    Extra variables (name=>value). Values can be number / string or boolean.
  * @param  {?Object=}      options      Extra options for evaluating this XPath
  *
- * @return  {Promise<{updateList: Array<Object>, result: Object}>}         The string result.
+ * @return  {Promise<{pendingUpdateList: Array<Object>, xdmValue: Object}>}         The string result.
  */
 export default async function evaluateUpdatingExpression (updateScript, contextItem, domFacade, variables, options) {
 	const {
