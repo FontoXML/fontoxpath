@@ -3,6 +3,7 @@ import DynamicContext from '../expressions/DynamicContext';
 import DomFacade from '../DomFacade';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import domBackedDomFacade from '../domBackedDomFacade';
+import domBackedDocumentWriter from '../domBackedDocumentWriter';
 import DomBackedNodesFactory from '../DomBackedNodesFactory';
 import Expression from '../expressions/Expression';
 import Sequence from '../expressions/dataTypes/Sequence';
@@ -68,6 +69,14 @@ export default function buildEvaluationContext (expressionString, contextItem, d
 	}
 
 	/**
+	 * @type {IDocumentWriter}
+	 */
+	let documentWriter = options['documentWriter'];
+	if (!documentWriter && compilationOptions.allowUpdating) {
+		documentWriter = domBackedDocumentWriter;
+	}
+
+	/**
 	 * @type {!DynamicContext}
 	 */
 	const dynamicContext = new DynamicContext({
@@ -81,7 +90,7 @@ export default function buildEvaluationContext (expressionString, contextItem, d
 		}, Object.create(null))
 	});
 
-	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory);
+	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, documentWriter);
 
 	return {
 		executionParameters,

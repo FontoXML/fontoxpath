@@ -1,6 +1,6 @@
 import DomFacade from '../DomFacade';
 export default class ExecutionParameters {
-	constructor (domFacade, nodesFactory) {
+	constructor (domFacade, nodesFactory, documentWriter) {
 		/**
 		 *@type {!DomFacade}
 		 */
@@ -9,5 +9,9 @@ export default class ExecutionParameters {
 		 * @type {!INodesFactory}
 		 */
 		this.nodesFactory = nodesFactory;
+		/**
+		 * @type {!IDocumentWriter}
+		 */
+		this.documentWriter = documentWriter;
 	}
 }

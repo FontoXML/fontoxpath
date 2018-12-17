@@ -5,6 +5,7 @@ import {
 	replaceValue
 } from './applyPulPrimitives';
 import {
+	errXUDY0015,
 	errXUDY0016,
 	errXUDY0017,
 	errXUDY0024
@@ -74,6 +75,9 @@ const compatibilityCheck = function (pul, domFacade) {
 	// A dynamic error if any of the following conditions are detected:
 
 	// 1. Two or more upd:rename primitives in $pul have the same target node [err:XUDY0015].
+	findDuplicateTargets('rename', target => {
+		throw errXUDY0015(target);
+	});
 
 	// 2. Two or more upd:replaceNode primitives in $pul have the same target node [err:XUDY0016].
 	findDuplicateTargets('replaceNode', target => {

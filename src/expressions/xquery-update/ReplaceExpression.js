@@ -26,28 +26,6 @@ import {
 	errXUDY0027
 } from './XQueryUpdateFacilityErrors';
 
-function ensureUpdateListWrapper (expression) {
-	if (expression.isUpdating) {
-		return (dynamicContext, executionParameters) => expression.evaluateWithUpdateList(dynamicContext, executionParameters);
-	}
-
-	return (dynamicContext, executionParameters) => {
-		const sequence = expression.evaluate(dynamicContext, executionParameters);
-		return {
-			next: () => {
-				const allValues = sequence.tryGetAllValues();
-				if (!allValues.ready) {
-					return allValues;
-				}
-				return ready({
-					pendingUpdateList: [],
-					xdmValue: allValues.value
-				});
-			}
-		};
-	};
-}
-
 function evaluateReplaceNode (executionParameters, targetValueIterator, replacementValueIterator) {
 	let rlist;
 	let rlistUpdates;
@@ -336,8 +314,8 @@ class ReplaceExpression extends UpdatingExpression {
 	}
 
 	evaluateWithUpdateList (dynamicContext, executionParameters) {
-		const targetValueIterator = ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
-		const replacementValueIterator = ensureUpdateListWrapper(this._replacementExpression)(dynamicContext, executionParameters);
+		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
+		const replacementValueIterator = super.ensureUpdateListWrapper(this._replacementExpression)(dynamicContext, executionParameters);
 
 		return this._valueOf ?
 			evaluateReplaceNodeValue(executionParameters, targetValueIterator, replacementValueIterator) :

@@ -5,33 +5,12 @@ import {
 	evaluateUpdatingExpression,
 	executePendingUpdateList
 } from 'fontoxpath';
+import assertUpdateList from './assertUpdateList';
 
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
-
-function assertCorrectUpdateList (actual, expected) {
-	chai.assert.equal(expected.length, actual.length);
-	for (var i = 0, l = expected.length; i < l; ++i) {
-		chai.assert.equal(actual[i].type, expected[i].type);
-		chai.assert.equal(actual[i].target, expected[i].target);
-
-		switch (actual[i].type) {
-			case 'replaceNode':
-				actual[i]
-					.replacement
-					.forEach((replacement, j) => chai.assert.equal(new slimdom.XMLSerializer().serializeToString(replacement), expected[i].replacementXML[j]));
-				break;
-			case 'replaceElementContent':
-				chai.assert.equal(actual[i].text.data, expected[i].text);
-				break;
-			case 'replaceValue':
-				chai.assert.equal(actual[i]['string-value'], expected[i].stringValue);
-				break;
-		}
-	}
-}
 
 describe('ReplaceExpression', () => {
 	it('can replace a node and generate the correct update list', async () => {
@@ -39,7 +18,7 @@ describe('ReplaceExpression', () => {
 		const result = await evaluateUpdatingExpression('replace node ele with <ele/>', documentNode, null, {}, {});
 
 		chai.assert.deepEqual(result.xdmValue, []);
-		assertCorrectUpdateList(result.pendingUpdateList, [
+		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceNode',
 				target: ele,
@@ -54,7 +33,7 @@ describe('ReplaceExpression', () => {
 		const result = await evaluateUpdatingExpression('replace node ele/@attr with <ele attrReplace="value" />/@value', documentNode, null, {}, {});
 
 		chai.assert.deepEqual(result.xdmValue, []);
-		assertCorrectUpdateList(result.pendingUpdateList, [
+		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceNode',
 				target: ele.getAttributeNode('attr'),
@@ -69,7 +48,7 @@ describe('ReplaceExpression', () => {
 		const result = await evaluateUpdatingExpression('replace value of node ele/@attr with <?processing instruction?>', documentNode, null, {}, {});
 
 		chai.assert.deepEqual(result.xdmValue, []);
-		assertCorrectUpdateList(result.pendingUpdateList, [
+		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceValue',
 				target: ele.getAttributeNode('attr'),
@@ -83,7 +62,7 @@ describe('ReplaceExpression', () => {
 		const result = await evaluateUpdatingExpression('if (true()) then replace node ele with <ele/> else ()', documentNode, null, {}, {});
 
 		chai.assert.deepEqual(result.xdmValue, []);
-		assertCorrectUpdateList(result.pendingUpdateList, [
+		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceNode',
 				target: ele,
@@ -381,7 +360,7 @@ describe('ReplaceExpression', () => {
 			{});
 
 		chai.assert.deepEqual(result.xdmValue, []);
-		assertCorrectUpdateList(result.pendingUpdateList, [
+		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceValue',
 				target: list.getAttributeNode('count'),
@@ -421,7 +400,7 @@ replace value of node fontoxpath:sleep(/element, 100) with fontoxpath:sleep("100
 			{});
 
 		chai.assert.deepEqual(result.xdmValue, []);
-		assertCorrectUpdateList(result.pendingUpdateList, [
+		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceElementContent',
 				target: element,
@@ -446,7 +425,7 @@ replace node fontoxpath:sleep(/element, 100) with fontoxpath:sleep(<newElement/>
 			{});
 
 		chai.assert.deepEqual(result.xdmValue, []);
-		assertCorrectUpdateList(result.pendingUpdateList, [
+		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceNode',
 				target: element,
@@ -471,7 +450,7 @@ replace node /element with /
 			{});
 
 		chai.assert.deepEqual(result.xdmValue, []);
-		assertCorrectUpdateList(result.pendingUpdateList, [
+		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'replaceNode',
 				target: element,

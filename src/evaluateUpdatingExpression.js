@@ -25,7 +25,7 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 		{
 			allowXQuery: true,
 			allowUpdating: true,
-			disableCache: false
+			disableCache: options.disableCache
 		}
 	);
 

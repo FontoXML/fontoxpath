@@ -55,6 +55,9 @@ import PIConstructor from '../expressions/xquery/PIConstructor';
 
 import RenameExpression from '../expressions/xquery-update/RenameExpression';
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
+import TransformExpression from '../expressions/xquery-update/TransformExpression';
+
+import QName from '../expressions/dataTypes/valueTypes/QName';
 
 const COMPILATION_OPTIONS = {
 	XPATH_MODE: { allowXQuery: false, allowUpdating: false },
@@ -204,6 +207,8 @@ function compile (ast, compilationOptions) {
 			return renameExpression(ast, compilationOptions);
 		case 'replaceExpr':
 			return replaceExpression(ast, compilationOptions);
+		case 'transformExpr':
+			return transformExpression(ast, compilationOptions);
 		default:
 			return compileTest(ast, compilationOptions);
 	}
@@ -369,7 +374,7 @@ function flworExpression (ast, compilationOptions) {
 		return forClauseItems
 			.reduceRight(
 				(returnExpr, forClauseItem) => {
-					const expression = 	astHelper.followPath(forClauseItem, ['forExpr', '*']);
+					const expression = astHelper.followPath(forClauseItem, ['forExpr', '*']);
 					return new ForExpression(
 						astHelper.getQName(astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])),
 						compile(expression, disallowUpdating(compilationOptions)),
@@ -383,7 +388,7 @@ function flworExpression (ast, compilationOptions) {
 		return letClauseItems
 			.reduceRight(
 				(returnExpr, letClauseItem) => {
-					const expression = 	astHelper.followPath(letClauseItem, ['letExpr', '*']);
+					const expression = astHelper.followPath(letClauseItem, ['letExpr', '*']);
 					return new LetExpression(
 						astHelper.getQName(astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])),
 						compile(expression, disallowUpdating(compilationOptions)),
@@ -974,6 +979,17 @@ function replaceExpression (ast, compilationOptions) {
 	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
 	const replacementExpr = compile(astHelper.followPath(ast, ['replacementExpr', '*']), compilationOptions);
 	return new ReplaceExpression(isReplaceValue, targetExpr, replacementExpr);
+}
+
+function transformExpression (ast, compilationOptions) {
+	const transformCopies = astHelper.getChildren(astHelper.getFirstChild(ast, 'transformCopies'), 'transformCopy').map(transformCopy => {
+		const varName = astHelper.getQName(astHelper.getFirstChild(astHelper.getFirstChild(transformCopy, 'varRef'), 'name'));
+		const sourceExpr = compile(astHelper.getFirstChild(astHelper.getFirstChild(transformCopy, 'copySource'), '*'), compilationOptions);
+		return { varRef: new QName(varName.prefix, varName.namespaceURI, varName.localName), sourceExpr };
+	});
+	const modifyExpr = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'modifyExpr'), '*'), compilationOptions);
+	const returnExpr = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'returnExpr'), '*'), compilationOptions);
+	return new TransformExpression(transformCopies, modifyExpr, returnExpr);
 }
 
 /**

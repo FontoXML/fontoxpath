@@ -45,6 +45,10 @@ export const rename = function (target, newName, domFacade, nodesFactory, docume
 		}
 	}
 
+	if (!domFacade.getParentNode(target)) {
+		throw new Error('Not supported: renaming detached nodes.');
+	}
+
 	replaceNode(target, [replacement], domFacade, documentWriter);
 };
 
@@ -72,11 +76,8 @@ export const replaceElementContent = function (target, text, domFacade, document
  * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
  */
 export const replaceNode = function (target, replacement, domFacade, documentWriter) {
+	// The parent must exist or an error has been raised.
 	const parent = (/** @type {!Node} */ (domFacade.getParentNode(target)));
-	if (!parent) {
-		// We only have to change the parent property.
-		return;
-	}
 
 	if (target.nodeType === ATTRIBUTE_NODE) {
 		// All replacement must consist of attribute nodes.
@@ -120,6 +121,8 @@ export const replaceValue = function (target, stringValue, domFacade, documentWr
 		const element = /** @type {!Element} */(domFacade.getParentNode(target));
 		if (element) {
 			documentWriter.setAttributeNS(element, target.namespaceURI, target.name, stringValue);
+		} else {
+			target.value = stringValue;
 		}
 	} else {
 		documentWriter.setData(target, stringValue);

@@ -1,3 +1,5 @@
+import QName from '../dataTypes/valueTypes/QName';
+
 /**
  * @abstract
  */
@@ -42,16 +44,22 @@ class RenamePendingUpdate extends PendingUpdate {
 		this.target = target;
 
 		/**
-		 * @type  {!Array<!Node>}
+		 * @type  {!QName}
 		 */
-		this.newName = newName;
+		this.newName = newName.buildPrefixedName ?
+			newName :
+			new QName(newName.prefix, newName.namespaceURI, newName.localPart);
 	}
 
 	toTransferable () {
 		return {
 			'type': this.type,
 			'target': this.target,
-			'newName': this.newName
+			'newName': {
+				'prefix': this.newName.prefix,
+				'namespaceURI': this.newName.namespaceURI,
+				'localPart': this.newName.localPart
+			}
 		};
 	}
 }

@@ -3,9 +3,13 @@ export const errXUDY0009 = (target) => new Error(`XUDY0009: The target ${target.
 export const errXUTY0010 = () => new Error('XUTY0010: When replacing an an element, text, comment, or processing instruction node the new value must be a single node.');
 export const errXUTY0011 = () => new Error('XUTY0011: When replacing an attribute the new value must be zero or more attribute nodes.');
 export const errXUTY0012 = () => new Error('XUTY0012: The target of a rename expression must be a single element, attribute, or processing instruction node.');
+export const errXUTY0013 = () => new Error('XUTY0013: The source expression of a copy modify expression must return a single node.');
+export const errXUDY0014 = (target) => new Error(`XUDY0014: The target ${target.outerHTML} must be a node created by the copy clause.`);
+export const errXUDY0015 = (target) => new Error(`XUDY0015: The target ${target.outerHTML} is used in more than one rename expression.`);
 export const errXUDY0016 = (target) => new Error(`XUDY0016: The target ${target.outerHTML} is used in more than one replace expression.`);
 export const errXUDY0017 = (target) => new Error(`XUDY0017: The target ${target.outerHTML} is used in more than one replace value of expression.`);
 export const errXUDY0021 = (constraint) => new Error(`XUDY0021: Applying the updates will result in the XDM instance violating constraint: '${constraint}'`);
 export const errXUDY0023 = (namespaceURI) => new Error(`XUDY0023: The namespace binding ${namespaceURI} is conflicting.`);
 export const errXUDY0024 = (namespaceURI) => new Error(`XUDY0024: The namespace binding ${namespaceURI} is conflicting.`);
-export const errXUDY0027 = () => new Error('XUDY0027: The target for a replace expression should not be empty');
+export const errXUDY0027 = () => new Error('XUDY0027: The target for a replace expression should not be empty.');
+export const errXUDY0037 = () => new Error('XUDY0037: The modify expression of a copy modify expression can not contain a fn:put.');

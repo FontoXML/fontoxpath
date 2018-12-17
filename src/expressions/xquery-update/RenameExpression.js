@@ -17,61 +17,32 @@ import {
 } from './XQueryUpdateFacilityErrors';
 import Sequence from '../dataTypes/Sequence';
 
-function ensureUpdateListWrapper (expression) {
-	if (expression.isUpdating) {
-		return (dynamicContext, executionParameters) => expression.evaluateWithUpdateList(dynamicContext, executionParameters);
-	}
-
-	return (dynamicContext, executionParameters) => {
-		const sequence = expression.evaluate(dynamicContext, executionParameters);
-		return {
-			next: () => {
-				const allValues = sequence.tryGetAllValues();
-				if (!allValues.ready) {
-					return allValues;
-				}
-				return ready({
-					pendingUpdateList: [],
-					xdmValue: allValues.value
-				});
-			}
-		};
-	};
-}
-
-function evaluateTarget (targetValueIterator) {
+function evaluateTarget (targetXdmValue) {
 	// TargetExpr is evaluated and checked as follows:
-	const tv = targetValueIterator.next();
-	if (!tv.ready) {
-		return tv;
-	}
+
 	// If the result is an empty sequence,
 	// [err:XUDY0027] is raised.
-	if (tv.value.xdmValue.length === 0) {
+	if (targetXdmValue.length === 0) {
 		throw errXUDY0027();
 	}
 
 	// If the result is non-empty and does not consist of a single element, attribute, or processing instruction node, [err:XUTY0012] is raised.
-	if (tv.value.xdmValue.length !== 1) {
+	if (targetXdmValue.length !== 1) {
 		throw errXUTY0012();
 	}
-	if (!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
-		!isSubTypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
-		!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')) {
+	if (!isSubTypeOf(targetXdmValue[0].type, 'element()') &&
+		!isSubTypeOf(targetXdmValue[0].type, 'attribute()') &&
+		!isSubTypeOf(targetXdmValue[0].type, 'processing-instruction()')) {
 		throw errXUTY0012();
 	}
 
 	// Let $target be the node returned by the target expression.
-	return tv.value.xdmValue[0];
+	return targetXdmValue[0];
 }
 
-function evaluateNewName (staticContext, executionParameters, newNameValueIterator, target) {
+function evaluateNewName (staticContext, executionParameters, newNameXdmValue, target) {
 	// NewNameExpr is processed as follows:
-	const nnv = newNameValueIterator.next();
-	if (!nnv.ready) {
-		return nnv;
-	}
-	const nameSequence = new Sequence(nnv.value.xdmValue);
+	const nameSequence = new Sequence(newNameXdmValue);
 
 	switch (target.type) {
 		case 'element()': {
@@ -138,19 +109,27 @@ class RenameExpression extends UpdatingExpression {
 	}
 
 	evaluateWithUpdateList (dynamicContext, executionParameters) {
-		const targetValueIterator = ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
-		const newNameValueIterator = ensureUpdateListWrapper(this._newNameExpression)(dynamicContext, executionParameters);
+		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
+		const newNameValueIterator = super.ensureUpdateListWrapper(this._newNameExpression)(dynamicContext, executionParameters);
 
 		return {
 			next: () => {
-				const target = evaluateTarget(targetValueIterator);
-				const qName = evaluateNewName(this._staticContext, executionParameters, newNameValueIterator, target);
+				const tv = targetValueIterator.next();
+				if (!tv.ready) {
+					return tv;
+				}
+				const target = evaluateTarget(tv.value.xdmValue);
+
+				const nnv = newNameValueIterator.next();
+				if (!nnv.ready) {
+					return nnv;
+				}
+				const qName = evaluateNewName(this._staticContext, executionParameters, nnv.value.xdmValue, target);
 
 				// The result of the rename expression is an empty XDM instance and a pending update list constructed by merging the pending update lists returned by the NewNameExpr and TargetExpr with the following update primitives using upd:mergeUpdates: upd:rename($target, $QName).
 				return ready({
 					xdmValue: [],
-					// TODO: Actually merge the puls of the target and QName
-					pendingUpdateList: mergeUpdates([rename(target.value, qName)])
+					pendingUpdateList: mergeUpdates([rename(target.value, qName)], tv.value.pendingUpdateList, nnv.value.pendingUpdateList)
 				});
 			}
 		};

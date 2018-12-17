@@ -9,7 +9,7 @@ import {
 	evaluateXPathToString,
 	executePendingUpdateList
 } from 'fontoxpath';
-import { parse } from 'fontoxpath/parsing/xPathParser';
+import parseExpression from 'fontoxpath/parsing/parseExpression';
 import { parseAst } from './xQueryXUtils';
 import path from 'path';
 import mocha from 'mocha';
@@ -59,7 +59,7 @@ function getFile (filename) {
 }
 
 function isUpdatingQuery (testName, query) {
-	const ast = parse(query);
+	const ast = parseExpression(query, { allowXQuery: true }); // parse(query);
 	const doc = new slimdom.Document();
 	try {
 		doc.appendChild(parseAst(doc, ast));
@@ -73,10 +73,10 @@ function isUpdatingQuery (testName, query) {
 	);
 }
 
-async function assertError (testName, expectedError, query, args) {
+async function assertError (expectedError, args, isUpdating) {
 	let hasThrown = false;
 	try {
-		if (isUpdatingQuery(testName, query)) {
+		if (isUpdating) {
 			const it = await evaluateUpdatingExpression(...args);
 			executePendingUpdateList(it.pendingUpdateList, null, null, null);
 		} else {
@@ -126,7 +126,7 @@ function assertFragment (actualNodes, expectedString) {
 	assertXml(actual, expected);
 }
 
-async function runAssertions (expectedErrors, outputFiles, testName, query, args) {
+async function runAssertions (expectedErrors, outputFiles, args, isUpdating) {
 	const failed = [];
 	const catchAssertion = assertion => {
 		try {
@@ -138,7 +138,7 @@ async function runAssertions (expectedErrors, outputFiles, testName, query, args
 
 	for (const expectedError of expectedErrors) {
 		try {
-			await assertError(testName, expectedError, query, args);
+			await assertError(expectedError, args, isUpdating);
 		} catch (e) {
 			failed.push(e);
 		}
@@ -147,9 +147,18 @@ async function runAssertions (expectedErrors, outputFiles, testName, query, args
 	for (const outputFile of outputFiles) {
 		const expectedString = getFile(path.join('ExpectedTestResults', outputFile.file));
 
+		let xdmValue;
+		if (isUpdating) {
+			const it = await evaluateUpdatingExpression(...args);
+			xdmValue = it.xdmValue;
+			if (it.pendingUpdateList) {
+				executePendingUpdateList(it.pendingUpdateList, null, null, null);
+			}
+		}
+
 		switch (outputFile.compare) {
 			case 'XML': {
-				const actual = evaluateXPathToFirstNode(...args);
+				const actual = xdmValue ? xdmValue[0].value : evaluateXPathToFirstNode(...args);
 				const expected = actual.nodeType === actual.DOCUMENT_NODE ?
 					parser.parseFromString(expectedString) :
 					parser.parseFromString(expectedString).documentElement;
@@ -158,12 +167,15 @@ async function runAssertions (expectedErrors, outputFiles, testName, query, args
 				break;
 			}
 			case 'Fragment': {
-				const actualNodes = evaluateXPathToNodes(...args);
+				const actualNodes = xdmValue ? xdmValue.map(nodeValue => nodeValue.value) : evaluateXPathToNodes(...args);
 
 				catchAssertion(() => assertFragment(actualNodes, expectedString));
 				break;
 			}
 			case 'Text': {
+				if (xdmValue) {
+					throw new Error('Not yet supported: Updating query with text assertion.');
+				}
 				const actual = evaluateXPathToString(...args);
 				const actualNodes = [new slimdom.Document().createTextNode(actual)];
 
@@ -231,9 +243,10 @@ async function runTestCase (testName, testCase) {
 		const args = [query, new slimdom.Document(), null, variables, { language: 'XQuery3.1' }];
 
 		try {
+			const isUpdating = isUpdatingQuery(testName, query);
 			if (expectedErrors.length || outputFiles.length) {
-				await runAssertions(expectedErrors, outputFiles, testName, query, args);
-			} else if (isUpdatingQuery(testName, query)) {
+				await runAssertions(expectedErrors, outputFiles, args, isUpdating);
+			} else if (isUpdating) {
 				const it = await evaluateUpdatingExpression(...args);
 				executePendingUpdateList(it.pendingUpdateList, null, null, null);
 			} else {
