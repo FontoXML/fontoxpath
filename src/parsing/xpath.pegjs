@@ -376,7 +376,7 @@ ExprSingle
 // / TypeswitchExpr
  / IfExpr
 // / TryCatchExpr
-// / InsertExpr
+ / InsertExpr
 // / DeleteExpr
  / RenameExpr
  / ReplaceExpr
@@ -1333,6 +1333,18 @@ CommentContents
 
 // ===========XQuery Update Facility starts here===========
 
+// 199
+InsertExprTargetChoice
+ = insertAs:("as" S as:("first" {return ["insertAsFirst"]} / "last" {return ["insertAsLast"]} ) S {return as})?
+   "into" {return insertAs ? ["insertInto", insertAs] : ["insertInto"]}
+ / "after" {return ["insertAfter"]}
+ / "before" {return ["insertBefore"]}
+
+// 200
+InsertExpr
+ = "insert" S ("nodes" / "node") S sourceExpr:SourceExpr S ietc:InsertExprTargetChoice S targetExpr:TargetExpr
+ {return ["insertExpr", ["sourceExpr", sourceExpr], ietc, ["targetExpr", targetExpr]]}
+
 // 202
 ReplaceExpr
  = "replace" S replaceValue:("value" S "of" S)? "node" S targetExpr:TargetExpr S "with" S replacementExpr:ExprSingle
@@ -1343,6 +1355,10 @@ ReplaceExpr
 RenameExpr
  = "rename" S "node" _ targetExpr:TargetExpr S "as" S newNameExpr:NewNameExpr
  {return ["renameExpr", ["targetExpr", targetExpr], ["newNameExpr", newNameExpr]]}
+
+// 204
+SourceExpr
+ = ExprSingle
 
 // 205
 TargetExpr

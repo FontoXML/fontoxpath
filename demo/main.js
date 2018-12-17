@@ -71,16 +71,32 @@ function parseNode (document, jsonml) {
 	let prefix, namespaceUri;
 	switch (name) {
 		case 'copySource':
+		case 'insertAfter':
+		case 'insertAsFirst':
+		case 'insertAsLast':
+		case 'insertBefore':
+		case 'insertInto':
 		case 'modifyExpr':
 		case 'newNameExpr':
-		case 'renameExpr':
-		case 'replaceExpr':
 		case 'replacementExpr':
 		case 'replaceValue':
 		case 'returnExpr':
+		case 'sourceExpr':
 		case 'targetExpr':
 		case 'transformCopies':
 		case 'transformCopy':
+			if (parent && parent.prefix === 'xqxuf') {
+				// Elements added in the update facility need to be in a different namespace
+				prefix = 'xqxuf:';
+				namespaceUri = 'http://www.w3.org/2007/xquery-update-10';
+			} else {
+				prefix = 'xqx:';
+				namespaceUri = 'http://www.w3.org/2005/XQueryX';
+			}
+			break;
+		case 'insertExpr':
+		case 'renameExpr':
+		case 'replaceExpr':
 		case 'transformExpr':
 			// Elements added in the update facility need to be in a different namespace
 			prefix = 'xqxuf:';
@@ -106,7 +122,7 @@ function parseNode (document, jsonml) {
 	}
 	// Parse children
 	for (var i = firstChildIndex, l = jsonml.length; i < l; ++i) {
-		var node = parseNode(document, jsonml[i]);
+		var node = parseNode(document, jsonml[i], element);
 		element.appendChild(node);
 	}
 
