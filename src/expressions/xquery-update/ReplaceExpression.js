@@ -43,20 +43,12 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 					return rl;
 				}
 				// Let $rlist be the node sequence that results
-				// from this evaluation.
-				const allChildNodes = [rl.value.xdmValue];
-				rlist = parseContent(allChildNodes, executionParameters);
-				rlistUpdates = rl.value.pendingUpdateList;
-
-				// If $rlist contains a document node, the
+				// from this evaluation. If $rlist contains a document node, the
 				// document node is replaced in $rlist by its
 				// children.
-				for (let i = 0; i < rlist.contentNodes.length; ++i) {
-					if (rlist.contentNodes[i].nodeType === rlist.contentNodes[i].DOCUMENT_NODE) {
-						rlist.contentNodes.splice.apply(rlist.contentNodes, [i, 1].concat(executionParameters.domFacade.getChildNodes(rlist.contentNodes[i])));
-						--i;
-					}
-				}
+				const allChildNodes = [rl.value.xdmValue];
+				rlist = parseContent(allChildNodes, executionParameters, errXUDY0024);
+				rlistUpdates = rl.value.pendingUpdateList;
 			}
 
 			// TargetExpr is evaluated and checked as follows:

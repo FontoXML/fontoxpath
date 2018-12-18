@@ -5,6 +5,97 @@ import QName from '../dataTypes/valueTypes/QName';
 const ELEMENT_NODE = 1, ATTRIBUTE_NODE = 2, TEXT_NODE = 3, PROCESSING_INSTRUCTION_NODE = 7, COMMENT_NODE = 8;
 
 /**
+ * Inserts $content immediately after $target.
+ *
+ * @param  {!Node}              target          The target to insert after.
+ * @param  {!Array<!Node>}      content         The content.
+ * @param  {?IDomFacade=}       domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
+ */
+export const insertAfter = function (target, content, domFacade, documentWriter) {
+	// The parent must exist or an error has been raised.
+	const parent = (/** @type {!Node} */ (domFacade.getParentNode(target)));
+	const nextSibling = domFacade.getNextSibling(target);
+
+	content.forEach(node => {
+		documentWriter.insertBefore(parent, node, nextSibling);
+	});
+};
+
+/**
+ * Inserts $content immediately before $target.
+ *
+ * @param  {!Node}              target          The target to insert before.
+ * @param  {!Array<!Node>}      content         The content.
+ * @param  {?IDomFacade=}       domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
+ */
+export const insertBefore = function (target, content, domFacade, documentWriter) {
+	// The parent must exist or an error has been raised.
+	const parent = (/** @type {!Node} */ (domFacade.getParentNode(target)));
+
+	content.forEach(node => {
+		documentWriter.insertBefore(parent, node, target);
+	});
+};
+
+/**
+ * Inserts $content as the children of $target, in an implementation-dependent position.
+ *
+ * @param  {!Node}              target          The target to insert into.
+ * @param  {!Array<!Node>}      content         The content.
+ * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
+ */
+export const insertInto = function (target, content, documentWriter) {
+	insertIntoAsLast(target, content, documentWriter);
+};
+
+/**
+ * Inserts $content as the first children of $target.
+ *
+ * @param  {!Node}              target          The target to insert into.
+ * @param  {!Array<!Node>}      content         The content.
+ * @param  {?IDomFacade=}       domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
+ */
+export const insertIntoAsFirst = function (target, content, domFacade, documentWriter) {
+	const firstChild = domFacade.getFirstChild(target);
+	content.forEach(node => {
+		documentWriter.insertBefore(target, node, firstChild);
+	});
+};
+
+/**
+ * Inserts $content as the last children of $target.
+ *
+ * @param  {!Node}              target          The target to insert into.
+ * @param  {!Array<!Node>}      content         The content.
+ * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
+ */
+export const insertIntoAsLast = function (target, content, documentWriter) {
+	content.forEach(node => {
+		documentWriter.insertBefore(target, node, null);
+	});
+};
+
+/**
+ * Inserts $content as attributes of $target.
+ *
+ * @param  {!Element}           target          The target to insert into.
+ * @param  {!Array<!Attr>}      content         The content.
+ * @param  {?IDomFacade=}       domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
+ */
+export const insertAttributes = function (target, content, domFacade, documentWriter) {
+	content.forEach(attr => {
+		if (domFacade.getAttribute(target, attr.name)) {
+			throw errXUDY0021(`An attribute ${attr.name} already exists.`);
+		}
+		documentWriter.setAttributeNS(target, attr.namespaceURI, attr.name, attr.value);
+	});
+};
+
+/**
  * Changes the node-name of $target to $newName.
  *
  * @param  {!Node}              target          The target to replace.

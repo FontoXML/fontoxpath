@@ -1,4 +1,10 @@
 import {
+	insertAfter,
+	insertBefore,
+	insertInto,
+	insertIntoAsFirst,
+	insertIntoAsLast,
+	insertAttributes,
 	rename,
 	replaceElementContent,
 	replaceNode,
@@ -20,22 +26,37 @@ export const applyUpdates = function (pul, _revalidationModule, _inheritNamespac
 	// a. First, all upd:insertInto, upd:insertAttributes, upd:replaceValue, and upd:rename primitives are applied.
 	pul.filter(pu => ['insertInto', 'insertAttributes', 'replaceValue', 'rename'].indexOf(pu.type) !== -1).forEach(pu => {
 		switch (pu.type) {
-			case 'rename': {
+			case 'insertInto':
+				insertInto(pu.target, pu.content, documentWriter);
+				break;
+			case 'insertAttributes':
+				insertAttributes(pu.target, pu.content, domFacade, documentWriter);
+				break;
+			case 'rename':
 				rename(pu.target, pu.newName, domFacade, nodesFactory, documentWriter);
 				break;
-			}
-			case 'replaceValue': {
+			case 'replaceValue':
 				replaceValue(pu.target, pu.stringValue, domFacade, documentWriter);
 				break;
-			}
-			default:
-				throw new Error('Not implemented: the execution for pendingUpdate ' + pu.type + ' is not yet implemented.');
 		}
 	});
 
 	// b. Next, all upd:insertBefore, upd:insertAfter, upd:insertIntoAsFirst, and upd:insertIntoAsLast primitives are applied.
 	pul.filter(pu => ['insertBefore', 'insertAfter', 'insertIntoAsFirst', 'insertIntoAsLast'].indexOf(pu.type) !== -1).forEach(pu => {
-		throw new Error('Not implemented: the execution for pendingUpdate ' + pu.type + ' is not yet implemented.');
+		switch (pu.type) {
+			case 'insertAfter':
+				insertAfter(pu.target, pu.content, domFacade, documentWriter);
+				break;
+			case 'insertBefore':
+				insertBefore(pu.target, pu.content, domFacade, documentWriter);
+				break;
+			case 'insertIntoAsFirst':
+				insertIntoAsFirst(pu.target, pu.content, domFacade, documentWriter);
+				break;
+			case 'insertIntoAsLast':
+				insertIntoAsLast(pu.target, pu.content, documentWriter);
+				break;
+		}
 	});
 
 	// c. Next, all upd:replaceNode primitives are applied.

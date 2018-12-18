@@ -21,6 +21,18 @@ class PendingUpdate {
 
 PendingUpdate.fromTransferable = function (transferable) {
 	switch (transferable['type']) {
+		case 'insertAfter':
+			return new InsertAfterPendingUpdate(transferable['target'], transferable['content']);
+		case 'insertBefore':
+			return new InsertBeforePendingUpdate(transferable['target'], transferable['content']);
+		case 'insertInto':
+			return new InsertIntoPendingUpdate(transferable['target'], transferable['content']);
+		case 'insertIntoAsFirst':
+			return new InsertIntoAsFirstPendingUpdate(transferable['target'], transferable['content']);
+		case 'insertIntoAsLast':
+			return new InsertIntoAsLastPendingUpdate(transferable['target'], transferable['content']);
+		case 'insertAttributes':
+			return new InsertAttributesPendingUpdate(transferable['target'], transferable['content']);
 		case 'rename':
 			return new RenamePendingUpdate(transferable['target'], transferable['newName']);
 		case 'replaceNode':
@@ -33,6 +45,84 @@ PendingUpdate.fromTransferable = function (transferable) {
 			throw new Error(`Unexpected type "${transferable['type']}" when parsing a transferable pending update.`);
 	}
 };
+
+class InsertPendingUpdate extends PendingUpdate {
+	constructor (target, content, type) {
+		super(type);
+
+		/**
+		 * @type   {!Node}
+		 */
+		this.target = target;
+
+		/**
+		 * @type  {!Array<!Node>}
+		 */
+		this.content = content;
+	}
+
+	toTransferable () {
+		return {
+			'type': this.type,
+			'target': this.target,
+			'content': this.content
+		};
+	}
+}
+
+class InsertAfterPendingUpdate extends InsertPendingUpdate {
+	constructor (target, content) {
+		super(target, content, 'insertAfter');
+	}
+}
+
+class InsertBeforePendingUpdate extends InsertPendingUpdate {
+	constructor (target, content) {
+		super(target, content, 'insertBefore');
+	}
+}
+
+class InsertIntoPendingUpdate extends InsertPendingUpdate {
+	constructor (target, content) {
+		super(target, content, 'insertInto');
+	}
+}
+
+class InsertIntoAsFirstPendingUpdate extends InsertPendingUpdate {
+	constructor (target, content) {
+		super(target, content, 'insertIntoAsFirst');
+	}
+}
+
+class InsertIntoAsLastPendingUpdate extends InsertPendingUpdate {
+	constructor (target, content) {
+		super(target, content, 'insertIntoAsLast');
+	}
+}
+
+class InsertAttributesPendingUpdate extends PendingUpdate {
+	constructor (target, content) {
+		super('insertAttributes');
+
+		/**
+		 * @type   {!Element}
+		 */
+		this.target = target;
+
+		/**
+		 * @type  {!Array<!Attr>}
+		 */
+		this.content = content;
+	}
+
+	toTransferable () {
+		return {
+			'type': this.type,
+			'target': this.target,
+			'content': this.content
+		};
+	}
+}
 
 class RenamePendingUpdate extends PendingUpdate {
 	constructor (target, newName) {
@@ -132,11 +222,16 @@ class ReplaceElementContentPendingUpdate extends PendingUpdate {
 			'text': this.text
 		};
 	}
-
 }
 
 export {
 	PendingUpdate,
+	InsertAfterPendingUpdate,
+	InsertBeforePendingUpdate,
+	InsertIntoPendingUpdate,
+	InsertIntoAsFirstPendingUpdate,
+	InsertIntoAsLastPendingUpdate,
+	InsertAttributesPendingUpdate,
 	RenamePendingUpdate,
 	ReplaceElementContentPendingUpdate,
 	ReplaceValuePendingUpdate,

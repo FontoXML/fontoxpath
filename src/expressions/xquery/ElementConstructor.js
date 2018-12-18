@@ -1,5 +1,5 @@
 import { errXPST0081 } from '../XPathErrors';
-import { errXQDY0025, errXQST0040, errXQDY0096 } from './XQueryErrors';
+import { errXQTY0024, errXQDY0025, errXQST0040, errXQDY0096 } from './XQueryErrors';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 
@@ -159,7 +159,7 @@ class ElementConstructor extends Expression {
 				});
 
 				// Plonk all childNodes, these are special though
-				const parsedContent = parseContent(allChildNodesItrResult.value, executionParameters);
+				const parsedContent = parseContent(allChildNodesItrResult.value, executionParameters, errXQTY0024);
 				parsedContent.attributes.forEach(attrNode => {
 					// The contents may include attributes, 'clone' them and set them on the element
 					if (element.hasAttributeNS(attrNode.namespaceURI, attrNode.localName)) {

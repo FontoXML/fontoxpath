@@ -53,6 +53,8 @@ import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 
+import InsertExpression from '../expressions/xquery-update/InsertExpression';
+import { TargetChoice } from '../expressions/xquery-update/InsertExpression';
 import RenameExpression from '../expressions/xquery-update/RenameExpression';
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 import TransformExpression from '../expressions/xquery-update/TransformExpression';
@@ -203,6 +205,8 @@ function compile (ast, compilationOptions) {
 			return CDataSection(ast, compilationOptions);
 
 			// XQuery update facility
+		case 'insertExpr':
+			return insertExpression(ast, compilationOptions);
 		case 'renameExpr':
 			return renameExpression(ast, compilationOptions);
 		case 'replaceExpr':
@@ -966,6 +970,33 @@ function computedPIConstructor (ast, compilationOptions) {
 			compile(astHelper.getFirstChild(piValueExpr, '*'), disallowUpdating(compilationOptions)) :
 			new SequenceOperator([])
 	);
+}
+
+function insertExpression (ast, compilationOptions) {
+	const sourceExpr = compile(astHelper.followPath(ast, ['sourceExpr', '*']), compilationOptions);
+	let targetChoice;
+	const insertTargetChoice = astHelper.getChildren(ast, '*')[1];
+	switch (insertTargetChoice[0]) {
+		case 'insertAfter':
+			targetChoice = TargetChoice.INSERT_AFTER;
+			break;
+		case 'insertBefore':
+			targetChoice = TargetChoice.INSERT_BEFORE;
+			break;
+		case 'insertInto': {
+			const insertAfterChoice = astHelper.getFirstChild(insertTargetChoice, '*');
+			if (insertAfterChoice) {
+				targetChoice = insertAfterChoice[0] === 'insertAsFirst' ?
+					TargetChoice.INSERT_INTO_AS_FIRST :
+					TargetChoice.INSERT_INTO_AS_LAST;
+			} else {
+				targetChoice = TargetChoice.INSERT_INTO;
+			}
+			break;
+		}
+	}
+	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
+	return new InsertExpression(sourceExpr, /** @type {!TargetChoice} */(targetChoice), targetExpr);
 }
 
 function renameExpression (ast, compilationOptions) {

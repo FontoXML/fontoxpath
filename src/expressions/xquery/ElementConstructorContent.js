@@ -2,9 +2,8 @@ import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import { errXQTY0024 } from './XQueryErrors';
 
-function parseChildNodes (childNodes, executionParameters, attributes, contentNodes, attributesDone) {
+function parseChildNodes (childNodes, executionParameters, attributes, contentNodes, attributesDone, attributeError) {
 	/**
 	 * @type {INodesFactory}
 	 */
@@ -14,7 +13,7 @@ function parseChildNodes (childNodes, executionParameters, attributes, contentNo
 	childNodes.forEach((childNode, i) => {
 		if (isSubtypeOf(childNode.type, 'attribute()')) {
 			if (attributesDone) {
-				throw errXQTY0024(childNode.value);
+				throw attributeError(childNode.value);
 			}
 
 			const attrNode = /** @type {!Attr} */ (childNode.value);
@@ -39,7 +38,7 @@ function parseChildNodes (childNodes, executionParameters, attributes, contentNo
 		if (isSubtypeOf(childNode.type, 'document()')) {
 			const docChildNodes = [];
 			childNode.value.childNodes.forEach(node => docChildNodes.push(createNodeValue(node)));
-			attributesDone = parseChildNodes(docChildNodes, executionParameters, attributes, contentNodes, attributesDone);
+			attributesDone = parseChildNodes(docChildNodes, executionParameters, attributes, contentNodes, attributesDone, attributeError);
 			return;
 		}
 
@@ -62,14 +61,14 @@ function parseChildNodes (childNodes, executionParameters, attributes, contentNo
 	return attributesDone;
 }
 
-export default function parseContent (allChildNodes, executionParameters) {
+export default function parseContent (allChildNodes, executionParameters, attributeError) {
 	const attributes = [];
 	const contentNodes = [];
 
 	let attributesDone = false;
 	// Plonk all childNodes, these are special though
 	allChildNodes.forEach(/** {!Array<!Value>} */childNodes => {
-		attributesDone = parseChildNodes(childNodes, executionParameters, attributes, contentNodes, attributesDone);
+		attributesDone = parseChildNodes(childNodes, executionParameters, attributes, contentNodes, attributesDone, attributeError);
 	});
 
 	return { attributes, contentNodes };
