@@ -8,98 +8,20 @@ id-insert-expr-077,Wraps contextItemExpr in a pathExpr which isn't required
 id-insert-expr-078,Wraps contextItemExpr in a pathExpr which isn't required
 id-insert-expr-080,Wraps contextItemExpr in a pathExpr which isn't required
 id-insert-expr-093-test,Wraps contextItemExpr in a pathExpr which isn't required
+complex-deletes-q1,Wraps contextItemExpr in a pathExpr which isn't required
+complex-deletes-q13-test2,Wraps contextItemExpr in a pathExpr which isn't required
+complex-deletes-q2,Wraps contextItemExpr in a pathExpr which isn't required
+id-delete-expr-013,Wraps contextItemExpr in a pathExpr which isn't required
+id-delete-expr-014,Wraps contextItemExpr in a pathExpr which isn't required
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
-id-comma-expr-010,Parse error
 id-comma-expr-011-test,XQuery script could not be found
-id-comma-expr-011,Parse error
 id-comma-expr-012-test,XQuery script could not be found
-id-comma-expr-012,Parse error
-id-comma-expr-013,Parse error
-id-comma-expr-014,Parse error
 id-comma-expr-018-test,XQuery script could not be found
-id-comma-expr-029,Parse error
-id-comma-expr-030,Parse error
-id-comma-expr-031,Parse error
-id-comma-expr-032,Parse error
-id-comma-expr-033,Parse error
-id-comma-expr-034,Parse error
-id-comma-expr-035,Parse error
-id-comma-expr-08,Parse error
-id-comma-expr-09,Parse error
-id-conditional-expr-010,Parse error
-id-conditional-expr-011,Parse error
-id-conditional-expr-012,Parse error
-id-conditional-expr-025,Parse error
-id-conditional-expr-026,Parse error
-id-conditional-expr-027,Parse error
-id-conditional-expr-028,Parse error
-id-conditional-expr-029,Parse error
-id-conditional-expr-030,Parse error
-id-conditional-expr-031,Parse error
-id-conditional-expr-032,Parse error
-id-conditional-expr-033,Parse error
-id-conditional-expr-034,Parse error
 id-conditional-expr-035-test,XQuery script could not be found
-id-conditional-expr-035,Parse error
-id-conditional-expr-07,Parse error
-id-conditional-expr-08,Parse error
-id-conditional-expr-09,Parse error
-complex-deletes-q1,Parse error
-complex-deletes-q10,Parse error
-complex-deletes-q11,Parse error
-complex-deletes-q12,Parse error
-complex-deletes-q13-test2,result was not equal
-complex-deletes-q13,Parse error
-complex-deletes-q14,Parse error
-complex-deletes-q2,Parse error
-complex-deletes-q3,Parse error
-complex-deletes-q4,Parse error
-complex-deletes-q5,Parse error
-complex-deletes-q6,Parse error
-complex-deletes-q7,Parse error
-complex-deletes-q8,Parse error
-complex-deletes-q9,Parse error
-id-delete-expr-01,Parse error
-id-delete-expr-010,Parse error
-id-delete-expr-011,Parse error
-id-delete-expr-012-1,Parse error
-id-delete-expr-012,Parse error
-id-delete-expr-013,Parse error
-id-delete-expr-014,Parse error
-id-delete-expr-015,Parse error
-id-delete-expr-016,Parse error
-id-delete-expr-017,Parse error
-id-delete-expr-018,Parse error
-id-delete-expr-019,Parse error
-id-delete-expr-02,Parse error
-id-delete-expr-020,Parse error
-id-delete-expr-021,Parse error
-id-delete-expr-022,Parse error
-id-delete-expr-03,Parse error
-id-delete-expr-04,Parse error
-id-delete-expr-05,Parse error
-id-delete-expr-06,Parse error
-id-delete-expr-07,Parse error
-id-delete-expr-08,Parse error
-id-delete-expr-09,Parse error
-id-flwor-expr-017,Parse error
-id-flwor-expr-018,Parse error
-id-flwor-expr-019,Parse error
-id-flwor-expr-020,Parse error
-id-flwor-expr-021,Parse error
-id-flwor-expr-022,Parse error
-id-flwor-expr-024,Parse error
-id-flwor-expr-05,Parse error
-id-flwor-expr-06,Parse error
-id-flwor-expr-07,Parse error
-id-flwor-expr-08,Parse error
-id-function-call-02,Parse error
-id-function-call-05,Parse error
 id-function-declaration-01,Parse error
 id-function-declaration-010,Parse error
 id-function-declaration-012,Parse error
 id-function-declaration-013-test,XQuery script could not be found
-id-function-declaration-013,Parse error
 id-function-declaration-014,Parse error
 id-function-declaration-015,Parse error
 id-function-declaration-016,Parse error
@@ -108,27 +30,7 @@ id-function-declaration-03,Parse error
 id-function-declaration-04,Parse error
 id-function-declaration-05,Parse error
 id-function-declaration-06,Parse error
-id-function-declaration-07,Parse error
 id-function-declaration-08,Parse error
-id-insert-expr-044,Parse error
-id-other-expr-01,Parse error
-id-other-expr-013,Parse error
-id-other-expr-015,Parse error
-id-other-expr-017,Parse error
-id-other-expr-018,Parse error
-id-other-expr-026,Parse error
-id-other-expr-027,Parse error
-id-other-expr-028,Parse error
-id-other-expr-029,Parse error
-id-other-expr-030,Parse error
-id-other-expr-031,Parse error
-id-other-expr-032,Parse error
-id-other-expr-05,Parse error
-id-other-expr-06,Parse error
-id-other-expr-07,Parse error
-id-other-expr-08,Parse error
-id-other-expr-09,Parse error
-parenthesized-expr-02,Parse error
 function-declaration-02,Parse error
 function-declaration-03,Parse error
 function-declaration-04,Parse error
@@ -139,30 +41,7 @@ revalidation-declaration-04,Parse error
 revalidation-declaration-05,Parse error
 revalidation-declaration-06,Parse error
 fn-put-007,result was not equal
-id-rename-expr-010,Parse error
 id-replace-expr-022-test,XQuery script could not be found
-statictyp-xqupd-01,Parse error
-statictyp-xqupd-02,Parse error
-stf-delete-01,Parse error
-stf-delete-02,Parse error
-stf-transform-01,Parse error
-stf-transform-02,Parse error
-id-transform-expr-010,Parse error
-id-transform-expr-011,Parse error
-id-transform-expr-012,Parse error
-id-transform-expr-014,Parse error
-id-transform-expr-015,Parse error
-id-transform-expr-016,Parse error
-id-transform-expr-017,Parse error
-id-transform-expr-02,Parse error
-id-transform-expr-026,Parse error
-id-transform-expr-027,Parse error
-id-transform-expr-029,Parse error
-id-transform-expr-032,Parse error
-id-transform-expr-033,Parse error
-id-transform-expr-06,Parse error
-id-transform-expr-07,Parse error
-id-transform-expr-08,Parse error
 id-typeswitch-expr-01,Parse error
 id-typeswitch-expr-010,Parse error
 id-typeswitch-expr-011,Parse error
@@ -204,20 +83,8 @@ id-typeswitch-expr-06,Parse error
 id-typeswitch-expr-07,Parse error
 id-typeswitch-expr-08,Parse error
 id-typeswitch-expr-09,Parse error
-attribute-errors-q17,Parse error
-applyUpdates-001,Parse error
-applyUpdates-002,Parse error
-applyUpdates-007,Parse error
-applyUpdates-008,Parse error
-applyUpdates-009,Parse error
-applyUpdates-010,Parse error
-applyUpdates-011,Parse error
-applyUpdates-013,Parse error
-applyUpdates-014,Parse error
 applyUpdates-023-test,XQuery script could not be found
-applyUpdates-023,Parse error
 applyUpdates-024-test,XQuery script could not be found
-applyUpdates-024,Parse error
 propagateNamespaces01,result was not equal
 propagateNamespaces02,result was not equal
 propagateNamespaces03,result was not equal
@@ -226,15 +93,9 @@ propagateNamespaces05,result was not equal
 propagateNamespaces06,result was not equal
 namespace-q1-test,XQuery script could not be found
 nil-q1-test,XQuery script could not be found
-parts-q1,Parse error
-parts-q2,Parse error
-parts-q3-1,Parse error
 parts-q3-2,Parse error
-relational-data-q5-2,result was not equal
 relational-data-q5-test,XQuery script could not be found
 relational-data-q5,XQuery script could not be found
-relational-data-q6-1,Parse error
-relational-data-q6-2,Parse error
 revalidate-vallax-del-002-test,Parse error
 revalidate-vallax-del-004-test,Parse error
 revalidate-vallax-ins-003-test,Parse error
@@ -291,7 +152,6 @@ removeType-valskip-repnode-006-test,Parse error
 valskip-del-001,Parse error
 valskip-del-002,Parse error
 valskip-del-003,Parse error
-valskip-del-004-test,result was not equal
 valskip-del-004,Parse error
 valskip-del-005,Parse error
 valskip-ins-001,Parse error

@@ -55,6 +55,7 @@ export function parseAst (document, ast, parent) {
 				namespaceUri = 'http://www.w3.org/2005/XQueryX';
 			}
 			break;
+		case 'deleteExpr':
 		case 'insertExpr':
 		case 'renameExpr':
 		case 'replaceExpr':

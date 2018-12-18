@@ -377,7 +377,7 @@ ExprSingle
  / IfExpr
 // / TryCatchExpr
  / InsertExpr
-// / DeleteExpr
+ / DeleteExpr
  / RenameExpr
  / ReplaceExpr
 // / UpdatingFunctionCall
@@ -1344,6 +1344,11 @@ InsertExprTargetChoice
 InsertExpr
  = "insert" S ("nodes" / "node") S sourceExpr:SourceExpr S ietc:InsertExprTargetChoice S targetExpr:TargetExpr
  {return ["insertExpr", ["sourceExpr", sourceExpr], ietc, ["targetExpr", targetExpr]]}
+
+// 201
+DeleteExpr
+ = "delete" S ("nodes" / "node") S targetExpr:TargetExpr
+ {return ["deleteExpr", ["targetExpr", targetExpr]]}
 
 // 202
 ReplaceExpr
