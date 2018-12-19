@@ -53,6 +53,7 @@ import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 
+import DeleteExpression from '../expressions/xquery-update/DeleteExpression';
 import InsertExpression from '../expressions/xquery-update/InsertExpression';
 import { TargetChoice } from '../expressions/xquery-update/InsertExpression';
 import RenameExpression from '../expressions/xquery-update/RenameExpression';
@@ -205,6 +206,8 @@ function compile (ast, compilationOptions) {
 			return CDataSection(ast, compilationOptions);
 
 			// XQuery update facility
+		case 'deleteExpr':
+			return deleteExpression(ast, compilationOptions);
 		case 'insertExpr':
 			return insertExpression(ast, compilationOptions);
 		case 'renameExpr':
@@ -970,6 +973,11 @@ function computedPIConstructor (ast, compilationOptions) {
 			compile(astHelper.getFirstChild(piValueExpr, '*'), disallowUpdating(compilationOptions)) :
 			new SequenceOperator([])
 	);
+}
+
+function deleteExpression (ast, compilationOptions) {
+	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
+	return new DeleteExpression(targetExpr);
 }
 
 function insertExpression (ast, compilationOptions) {

@@ -1,4 +1,5 @@
 import {
+	DeletePendingUpdate,
 	InsertAfterPendingUpdate,
 	InsertAttributesPendingUpdate,
 	InsertBeforePendingUpdate,
@@ -11,6 +12,10 @@ import {
 	ReplaceValuePendingUpdate
 } from './PendingUpdate';
 import QName from '../dataTypes/valueTypes/QName';
+
+export const deletePu = function (/** !Node */target) {
+	return new DeletePendingUpdate(target);
+};
 
 export const insertAfter = function (/** !Node */target, /** Array<!Node> */content) {
 	return new InsertAfterPendingUpdate(target, content);

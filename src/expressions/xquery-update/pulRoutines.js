@@ -1,4 +1,5 @@
 import {
+	deletePu,
 	insertAfter,
 	insertBefore,
 	insertInto,
@@ -70,9 +71,9 @@ export const applyUpdates = function (pul, _revalidationModule, _inheritNamespac
 	});
 
 	// e. Next, all upd:delete primitives are applied.
-	if (pul.some(pu => pu.type === 'delete')) {
-		throw new Error('Not implemented: the execution for pendingUpdate "delete" is not yet implemented.');
-	}
+	pul.filter(pu => pu.type === 'delete').forEach(pu => {
+		deletePu(pu.target, domFacade, documentWriter);
+	});
 
 	// Point 3. to 7. are either not necessary or should be done by the caller.
 

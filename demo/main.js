@@ -184,7 +184,7 @@ async function runUpdatingXQuery (script) {
 		script,
 		xmlDoc,
 		null,
-		{ 'input-context': xmlDoc },
+		null,
 		{
 			disableCache: true
 		}
@@ -192,7 +192,7 @@ async function runUpdatingXQuery (script) {
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
 	fontoxpath.executePendingUpdateList(result.pendingUpdateList, null, null, null);
-	updateResult.innerText = xmlDoc.documentElement.outerHTML;
+	updateResult.innerText = new XMLSerializer().serializeToString(xmlDoc);
 }
 
 async function runNormalXPath (script, asXQuery) {
@@ -201,7 +201,7 @@ async function runNormalXPath (script, asXQuery) {
 		script,
 		xmlDoc,
 		null,
-		{ 'input-context': xmlDoc },
+		null,
 		{
 			language: asXQuery ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
 			disableCache: true

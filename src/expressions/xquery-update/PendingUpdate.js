@@ -21,6 +21,8 @@ class PendingUpdate {
 
 PendingUpdate.fromTransferable = function (transferable) {
 	switch (transferable['type']) {
+		case 'delete':
+			return new DeletePendingUpdate(transferable['target']);
 		case 'insertAfter':
 			return new InsertAfterPendingUpdate(transferable['target'], transferable['content']);
 		case 'insertBefore':
@@ -45,6 +47,24 @@ PendingUpdate.fromTransferable = function (transferable) {
 			throw new Error(`Unexpected type "${transferable['type']}" when parsing a transferable pending update.`);
 	}
 };
+
+class DeletePendingUpdate extends PendingUpdate {
+	constructor (target) {
+		super('delete');
+
+		/**
+		 * @type   {!Node}
+		 */
+		this.target = target;
+	}
+
+	toTransferable () {
+		return {
+			'type': this.type,
+			'target': this.target
+		};
+	}
+}
 
 class InsertPendingUpdate extends PendingUpdate {
 	constructor (target, content, type) {
@@ -226,6 +246,7 @@ class ReplaceElementContentPendingUpdate extends PendingUpdate {
 
 export {
 	PendingUpdate,
+	DeletePendingUpdate,
 	InsertAfterPendingUpdate,
 	InsertBeforePendingUpdate,
 	InsertIntoPendingUpdate,

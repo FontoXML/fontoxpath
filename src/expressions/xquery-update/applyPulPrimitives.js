@@ -5,6 +5,24 @@ import QName from '../dataTypes/valueTypes/QName';
 const ELEMENT_NODE = 1, ATTRIBUTE_NODE = 2, TEXT_NODE = 3, PROCESSING_INSTRUCTION_NODE = 7, COMMENT_NODE = 8;
 
 /**
+ * Deletes $target.
+ *
+ * @param  {!Node}              target          The target to delete.
+ * @param  {?IDomFacade=}       domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  {?IDocumentWriter=}  documentWriter  The documentWriter for writing changes.
+ */
+export const deletePu = function (target, domFacade, documentWriter) {
+	const parent = domFacade.getParentNode(target);
+	if (parent) {
+		if (target.nodeType === ATTRIBUTE_NODE) {
+			documentWriter.removeAttributeNS(/** @type {!Element} */(parent), target.namespaceURI, target.name);
+		} else {
+			documentWriter.removeChild(parent, target);
+		}
+	}
+};
+
+/**
  * Inserts $content immediately after $target.
  *
  * @param  {!Node}              target          The target to insert after.

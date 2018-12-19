@@ -73,12 +73,22 @@ function isUpdatingQuery (testName, query) {
 	);
 }
 
+function executePul (pul, args) {
+	executePendingUpdateList(pul, null, null, null);
+	const variables = args[3];
+	for (var key in variables) {
+		if (variables[key].normalize) {
+			variables[key].normalize();
+		}
+	}
+}
+
 async function assertError (expectedError, args, isUpdating) {
 	let hasThrown = false;
 	try {
 		if (isUpdating) {
 			const it = await evaluateUpdatingExpression(...args);
-			executePendingUpdateList(it.pendingUpdateList, null, null, null);
+			executePul(it.pendingUpdateList, args);
 		} else {
 			evaluateXPath(...args.slice(0, args.length - 1), null, { language: 'XQuery3.1' });
 		}
@@ -94,8 +104,7 @@ async function assertError (expectedError, args, isUpdating) {
 }
 
 function assertXml (actual, expected) {
-	actual = actual.cloneNode(true);
-	actual.normalize();
+	// actual.normalize();
 	expected.normalize();
 
 	const actualOuterHTML = actual.nodeType === actual.DOCUMENT_NODE ? actual.documentElement.outerHTML : actual.outerHTML;
@@ -119,7 +128,13 @@ function assertXml (actual, expected) {
 
 function assertFragment (actualNodes, expectedString) {
 	const actual = parser.parseFromString(`<root/>`);
-	actualNodes.map(node => node.cloneNode(true)).forEach(node => actual.documentElement.appendChild(node.nodeType === node.DOCUMENT_NODE ? node.documentElement : node));
+	actualNodes.map(node => node.cloneNode ? node.cloneNode(true) : actual.createTextNode(node)).forEach(node => {
+		if (node.nodeType === node.DOCUMENT_NODE) {
+			node.childNodes.forEach(childNode => actual.documentElement.appendChild(childNode.cloneNode(true)));
+		} else {
+			actual.documentElement.appendChild(node);
+		}
+	});
 
 	const expected = parser.parseFromString(`<root>${expectedString}</root>`);
 
@@ -152,8 +167,13 @@ async function runAssertions (expectedErrors, outputFiles, args, isUpdating) {
 			const it = await evaluateUpdatingExpression(...args);
 			xdmValue = it.xdmValue;
 			if (it.pendingUpdateList) {
-				executePendingUpdateList(it.pendingUpdateList, null, null, null);
+				executePul(it.pendingUpdateList, args);
 			}
+			xdmValue.forEach(nodeValue => {
+				if (nodeValue.value.normalize) {
+					nodeValue.value.normalize();
+				}
+			});
 		}
 
 		switch (outputFile.compare) {
@@ -248,7 +268,7 @@ async function runTestCase (testName, testCase) {
 				await runAssertions(expectedErrors, outputFiles, args, isUpdating);
 			} else if (isUpdating) {
 				const it = await evaluateUpdatingExpression(...args);
-				executePendingUpdateList(it.pendingUpdateList, null, null, null);
+				executePul(it.pendingUpdateList, args);
 			} else {
 				throw new Error('A non-updating expression without an expected value is not supported in the test framework.');
 			}

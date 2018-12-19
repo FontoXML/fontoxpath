@@ -1,6 +1,7 @@
 export const errXUTY0004 = (node) => new Error(`XUTY0004: The attribute ${node.name}="${node.value}" follows a node that is not an attribute node.`);
 export const errXUTY0005 = () => new Error('XUTY0005: The target of a insert expression with into must be a single element or document node.');
 export const errXUTY0006 = () => new Error('XUTY0006: The target of a insert expression with before or after must be a single element, text, comment, or processing instruction node.');
+export const errXUTY0007 = () => new Error('XUTY0007: The target of a delete expression must be a sequence of zero or more nodes.');
 export const errXUTY0008 = () => new Error('XUTY0008: The target of a replace expression must be a single element, attribute, text, comment, or processing instruction node.');
 export const errXUDY0009 = (target) => new Error(`XUDY0009: The target ${target.outerHTML} for replacing a node must have a parent.`);
 export const errXUTY0010 = () => new Error('XUTY0010: When replacing an an element, text, comment, or processing instruction node the new value must be a single node.');
