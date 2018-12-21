@@ -4,6 +4,7 @@ import Expression from '../Expression';
 import Specificity from '../Specificity';
 
 import { evaluateQNameExpression } from './nameExpressions';
+import { DONE_TOKEN, ready } from '../util/iterators';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
@@ -61,54 +62,82 @@ class AttributeConstructor extends Expression {
 
 	evaluate (dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
+		let nameIterator;
+		let name;
 
-		if (this._nameExpr) {
-			const nameSequence = this._nameExpr.evaluate(dynamicContext, executionParameters);
-			this.name = evaluateQNameExpression(this._staticContext, executionParameters, nameSequence);
-		}
+		let valueIterator;
 
-		if (this.name.prefix === 'xmlns' ||
-		(!this.name.prefix && this.name.localPart === 'xmlns') ||
-		this.name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
-		(this.name.prefix === 'xml' && this.name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
-		(this.name.prefix && this.name.prefix !== 'xml' && this.name.namespaceURI === 'http://www.w3.org/XML/1998/namespace')) {
-			throw errXQDY0044(this.name);
-		}
+		let done = false;
+		return new Sequence({
+			next: () => {
+				if (done) {
+					return DONE_TOKEN;
+				}
 
-		if (this._value.valueExprParts) {
-			return concatSequences(
-				this._value.valueExprParts
-					.map(expr => {
-						return expr
-							.evaluate(dynamicContext, executionParameters)
-							.atomize(executionParameters)
-							.mapAll(allValues => Sequence.singleton(
-								createAtomicValue(
-									allValues.map(val => val.value).join(' '),
-									'xs:string')
-							));
-					}))
-				.mapAll(
-					allValueParts =>
-						Sequence.singleton(
-							createNodeValue(
-								createAttribute(
-									nodesFactory,
-									this.name,
-									allValueParts
-										.map(val => val.value)
-										.join('')
-								)
-							)
-						)
-				);
-		}
+				if (!name) {
+					if (this._nameExpr) {
+						if (!nameIterator) {
+							const nameSequence = this._nameExpr.evaluate(dynamicContext, executionParameters);
+							nameIterator = evaluateQNameExpression(this._staticContext, executionParameters, nameSequence);
+						}
+						const nv = nameIterator.next();
+						if (!nv.ready) {
+							return nv;
+						}
+						name = nv.value.value;
+					} else {
+						name = this.name;
+					}
 
-		return Sequence.singleton(createNodeValue(createAttribute(
-			nodesFactory,
-			this.name,
-			this._value.value)));
+					if (name && (name.prefix === 'xmlns' ||
+					(!name.prefix && name.localPart === 'xmlns') ||
+					name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
+					(name.prefix === 'xml' && name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
+					(name.prefix && name.prefix !== 'xml' && name.namespaceURI === 'http://www.w3.org/XML/1998/namespace'))) {
+						throw errXQDY0044(name);
+					}
+				}
 
+				if (this._value.valueExprParts) {
+					if (!valueIterator) {
+						valueIterator = concatSequences(
+							this._value.valueExprParts
+								.map(expr => {
+									return expr
+										.evaluate(dynamicContext, executionParameters)
+										.atomize(executionParameters)
+										.mapAll(allValues => Sequence.singleton(
+											createAtomicValue(
+												allValues.map(val => val.value).join(' '),
+												'xs:string')
+										));
+								}))
+							.mapAll(
+								allValueParts =>
+									Sequence.singleton(
+										createNodeValue(
+											createAttribute(
+												nodesFactory,
+												name,
+												allValueParts
+													.map(val => val.value)
+													.join('')
+											)
+										)
+									)
+							).value;
+					}
+					return valueIterator.next();
+				}
+
+				done = true;
+
+				return ready(createNodeValue(createAttribute(
+					nodesFactory,
+					name,
+					this._value.value)));
+			}
+		});
 	}
 }
 

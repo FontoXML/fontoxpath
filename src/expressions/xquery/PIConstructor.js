@@ -4,6 +4,7 @@ import { evaluateNCNameExpression } from './nameExpressions';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 
+import { ready } from '../util/iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
 import Sequence from '../dataTypes/Sequence';
 import castToType from '../dataTypes/castToType';
@@ -51,18 +52,25 @@ class PIConstructor extends Expression {
 					throw new Error('XQDY0026: The contents of the data of a processing instruction may not include "?>"');
 				}
 
-				// Get the target
-				let target;
 				if (this._target.targetValue !== null) {
-					target = this._target.targetValue;
-				} else {
-					const targetSequence = this._target.targetExpr.evaluateMaybeStatically(dynamicContext, executionParameters);
-					target = evaluateNCNameExpression(executionParameters, targetSequence);
+					const target = this._target.targetValue;
+					assertValidTarget(target);
+					return Sequence.singleton(createNodeValue(nodesFactory.createProcessingInstruction(target, data)));
 				}
 
-				assertValidTarget(target);
-				return Sequence.singleton(createNodeValue(
-					nodesFactory.createProcessingInstruction(target, data)));
+				const targetSequence = this._target.targetExpr.evaluateMaybeStatically(dynamicContext, executionParameters);
+				const targetIterator = evaluateNCNameExpression(executionParameters, targetSequence);
+
+				return new Sequence({ next: () => {
+					const tv = targetIterator.next();
+					if (tv.done || !tv.ready) {
+						return tv;
+					}
+					const target = tv.value.value;
+
+					assertValidTarget(target);
+					return ready(createNodeValue(nodesFactory.createProcessingInstruction(target, data)));
+				} });
 			});
 	}
 }

@@ -32,7 +32,7 @@ export function evaluateNCNameExpression (executionParameters, nameSequence) {
 		default: () => {
 			throw nameExprErr();
 		}
-	}).first().value;
+	}).value;
 }
 
 export function evaluateQNameExpression (staticContext, executionParameters, nameSequence) {
@@ -58,12 +58,15 @@ export function evaluateQNameExpression (staticContext, executionParameters, nam
 				if (prefix && !namespaceURI) {
 					throw errXQDY0074(`${prefix}:${localName}`);
 				}
-				return Sequence.singleton(createNodeValue(new QName(prefix, namespaceURI, localName)));
+				return Sequence.singleton({
+					type: 'xs:QName',
+					value: new QName(prefix, namespaceURI, localName)
+				});
 			}
 			throw nameExprErr();
 		},
 		default: () => {
 			throw nameExprErr();
 		}
-	}).first().value;
+	}).value;
 }

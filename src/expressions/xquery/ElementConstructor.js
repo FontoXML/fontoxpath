@@ -94,13 +94,15 @@ class ElementConstructor extends Expression {
 		 */
 		const nodesFactory = executionParameters.nodesFactory;
 
+		let attributePhaseDone = false;
 		let attributesSequence;
 		let attributeNodes;
 
-		let attributePhaseDone = false;
-
 		let childNodesPhaseDone = false;
 		let childNodesSequences;
+		let allChildNodes;
+
+		let nameIterator;
 
 		let done = false;
 		return new Sequence({
@@ -124,22 +126,32 @@ class ElementConstructor extends Expression {
 				}
 
 				if (!childNodesPhaseDone) {
+					if (!childNodesSequences) {
 					// Accumulate all children
 					childNodesSequences = concatSequences(
 						this._contents.map(
 							contentExpression => contentExpression.evaluateMaybeStatically(dynamicContext, executionParameters)
 								.mapAll(allValues => new Sequence([allValues]))));
+					}
+
+					const allChildNodesItrResult = childNodesSequences.tryGetAllValues();
+					if (!allChildNodesItrResult.ready) {
+						return allChildNodesItrResult;
+					}
+					allChildNodes = allChildNodesItrResult.value;
 					childNodesPhaseDone = true;
 				}
 
-				const allChildNodesItrResult = childNodesSequences.tryGetAllValues();
-				if (!allChildNodesItrResult.ready) {
-					return allChildNodesItrResult;
-				}
-
 				if (this._nameExpr) {
-					const nameSequence = this._nameExpr.evaluate(dynamicContext, executionParameters);
-					this._name = evaluateQNameExpression(this._staticContext, executionParameters, nameSequence);
+					if (!nameIterator) {
+						const nameSequence = this._nameExpr.evaluate(dynamicContext, executionParameters);
+						nameIterator = evaluateQNameExpression(this._staticContext, executionParameters, nameSequence);
+					}
+					const nv = nameIterator.next();
+					if (!nv.ready) {
+						return nv;
+					}
+					this._name = nv.value.value;
 				}
 
 				if (this._name.prefix === 'xmlns' ||
@@ -159,7 +171,7 @@ class ElementConstructor extends Expression {
 				});
 
 				// Plonk all childNodes, these are special though
-				const parsedContent = parseContent(allChildNodesItrResult.value, executionParameters, errXQTY0024);
+				const parsedContent = parseContent(allChildNodes, executionParameters, errXQTY0024);
 				parsedContent.attributes.forEach(attrNode => {
 					// The contents may include attributes, 'clone' them and set them on the element
 					if (element.hasAttributeNS(attrNode.namespaceURI, attrNode.localName)) {

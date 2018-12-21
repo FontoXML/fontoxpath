@@ -47,7 +47,7 @@ function evaluateNewName (staticContext, executionParameters, newNameXdmValue, t
 	switch (target.type) {
 		case 'element()': {
 			// If $target is an element node, let $QName be the result of evaluating NewNameExpr as though it were the name expression of a computed element constructor (see Section 3.9.3.1 Computed Element Constructors XQ30).
-			const qName = evaluateQNameExpression(staticContext, executionParameters, nameSequence);
+			const qName = evaluateQNameExpression(staticContext, executionParameters, nameSequence).next().value.value;
 
 			// If the namespace binding of $QName conflicts with any namespace binding in the namespaces property of $target, a dynamic error is raised [err:XUDY0023].
 			const boundNamespaceURI = target.value.lookupNamespaceURI(qName.prefix);
@@ -59,7 +59,7 @@ function evaluateNewName (staticContext, executionParameters, newNameXdmValue, t
 		}
 		case 'attribute()' : {
 			// If $target is an attribute node, let $QName be the result of evaluating NewNameExpr as though it were the name expression of a computed attribute constructor (see Section 3.9.3.2 Computed Attribute Constructors XQ30).
-			const qName = evaluateQNameExpression(staticContext, executionParameters, nameSequence);
+			const qName = evaluateQNameExpression(staticContext, executionParameters, nameSequence).next().value.value;
 
 			// If $QName has a non-absent namespace URI, and if the namespace binding of $QName conflicts with any namespace binding in the namespaces property of the parent (if any) of $target, a dynamic error is raised [err:XUDY0023].
 			if (qName.namespaceURI) {
@@ -73,7 +73,7 @@ function evaluateNewName (staticContext, executionParameters, newNameXdmValue, t
 		}
 		case 'processing-instruction()' : {
 			// If $target is a processing instruction node, let $NCName be the result of evaluating NewNameExpr as though it were the name expression of a computed processing instruction constructor (see Section 3.9.3.5 Computed Processing Instruction Constructors XQ30),
-			const nCName = evaluateNCNameExpression(executionParameters, nameSequence);
+			const nCName = evaluateNCNameExpression(executionParameters, nameSequence).next().value.value;
 
 			// and let $QName be defined as fn:QName((), $NCName).
 			return new QName('', null, nCName);

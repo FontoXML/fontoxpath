@@ -3,16 +3,16 @@ import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPathToFirstNode,
-	evaluateXPathToBoolean,
-	evaluateXPathToString
+	evaluateXPathToBoolean
 } from 'fontoxpath';
+import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe('DirElementConstructor', () => {
+describe('ElementConstructor', () => {
 	it('can create an element', () => {
 		chai.assert.equal(evaluateXPathToFirstNode('<element/>', documentNode, undefined, {}, { language: 'XQuery3.1' }).nodeType, 1);
 	});
@@ -66,5 +66,13 @@ describe('DirElementConstructor', () => {
 	it('accepts CDataSections with newlines', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('<e><![CDATA[\n]]></e> eq "&#xA;"', documentNode, undefined, {}, { language: 'XQuery3.1' }));
 	});
+	it('can create an element with asynchronous', async () => {
+		const element = await evaluateXPathToAsyncSingleton(`
+		declare namespace fontoxpath="http://fontoxml.com/fontoxpath";
+		element {fontoxpath:sleep("elem", 100)} {fontoxpath:sleep("content", 100)}`, documentNode, undefined, {}, { language: 'XQuery3.1' });
 
+		chai.assert.equal(element.nodeType, 1);
+		chai.assert.equal(element.localName, 'elem');
+		chai.assert.equal(element.firstChild.data, 'content');
+	});
 });
