@@ -1,0 +1,38 @@
+{
+	"rules": {
+		"class-name": true,
+		"comment-format": [
+			true,
+			"check-space"
+		],
+		"eofline": true,
+		"indent": [
+			true,
+			"tabs"
+		],
+		"member-ordering": [
+			true,
+			{
+				"alphabetiz": true,
+				"order": "fields-first"
+			}
+		],
+		"no-trailing-whitespace": true,
+		"no-var-keyword": true,
+		"one-line": [
+			true,
+			"check-open-brace",
+			"check-whitespace"
+		],
+		"quotemark": [
+			true,
+			"double",
+			"avoid-escape"
+		],
+		"semicolon": [
+			true,
+			"always",
+			"ignore-bound-class-methods"
+		]
+	}
+}

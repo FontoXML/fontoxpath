@@ -3,6 +3,7 @@ coverage
 node_modules
 test/assets/QT3TS
 test/assets/XQUTS
+built
 dist/fontoxpath.*
 src/parsing/xPathParser.raw.js
 .nyc_output
