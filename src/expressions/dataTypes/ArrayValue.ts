@@ -4,16 +4,14 @@ import arrayGet from '../functions/builtInFunctions.arrays.get';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 class ArrayValue extends FunctionValue {
-	/**
-	 * @param  {!Array<!function():!Sequence>}  members
-	 */
-	constructor (members) {
+	members: (() => Sequence)[];
+	constructor(members: Array<(() => Sequence)>) {
 		super(
 			{
 				value: (dynamicContext, executionParameters, staticContext, key) => arrayGet(dynamicContext, executionParameters, staticContext, Sequence.singleton(this), key),
 				localName: 'get',
 				namespaceURI: ARRAY_NAMESPACE_URI,
-				argumentTypes: [{ type: 'xs:integer' }],
+				argumentTypes: [{ type: 'xs:integer', isRestArgument: false }],
 				arity: 1,
 				returnType: { type: 'item()', occurrence: '*' }
 			});
