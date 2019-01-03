@@ -1,7 +1,7 @@
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import concatSequences from '../util/concatSequences';
 /**
  * The Sequence selector evaluates its operands and returns them as a single sequence
@@ -26,7 +26,7 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 
 	performFunctionalEvaluation (dynamicContext, _executionParameters, sequenceCallbacks) {
 		if (!sequenceCallbacks.length) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 		return concatSequences(sequenceCallbacks.map(cb => cb(dynamicContext)));
 	}

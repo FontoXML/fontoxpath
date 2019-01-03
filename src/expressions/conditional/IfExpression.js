@@ -1,6 +1,6 @@
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 class IfExpression extends PossiblyUpdatingExpression {
 	/**
@@ -27,7 +27,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 	performFunctionalEvaluation (dynamicContext, _executionParameters, sequenceCallbacks) {
 		let resultIterator = null;
 		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => {
 				if (!resultIterator) {
 					const ifExpressionResult = ifExpressionResultSequence.tryGetEffectiveBooleanValue();

@@ -2,7 +2,7 @@ import DynamicContext from './DynamicContext';
 import StaticContext from './StaticContext';
 import ExecutionParameters from './ExecutionParameters';
 import Specificity from './Specificity';
-import Sequence from './dataTypes/Sequence';
+import ISequence from './dataTypes/ISequence';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
 /**
@@ -29,7 +29,7 @@ abstract class Expression {
 	canBeStaticallyEvaluated: boolean;
 	_childExpressions: Array<Expression>
 	isUpdating: boolean;
-	_eagerlyEvaluatedValue: () => Sequence
+	_eagerlyEvaluatedValue: () => ISequence
 	expectedResultOrder: string;
 
 	/**
@@ -61,7 +61,7 @@ abstract class Expression {
 		/**
 		 * Eagerly evaluate
 		 *
-		 * @type {?function():!Sequence}
+		 * @type {?function():!ISequence}
 		 */
 		this._eagerlyEvaluatedValue = null;
 	}
@@ -89,7 +89,7 @@ abstract class Expression {
 		return null;
 	}
 
-	evaluateMaybeStatically (dynamicContext:DynamicContext, executionParameters:ExecutionParameters): Sequence {
+	evaluateMaybeStatically (dynamicContext:DynamicContext, executionParameters:ExecutionParameters): ISequence {
 		if (!dynamicContext || dynamicContext.contextItem === null) {
 			// We must be free of context here. But: this will be memoized / constant folded on a
 			// higher level, so there is no use in keeping these intermediate results
@@ -101,9 +101,9 @@ abstract class Expression {
 		return this.evaluate(dynamicContext, executionParameters);
 	}
 
-	abstract evaluate (_dynamicContext: DynamicContext, _executionParameters: ExecutionParameters): Sequence
+	abstract evaluate (_dynamicContext: DynamicContext, _executionParameters: ExecutionParameters): ISequence
 
-	protected evaluateWithoutFocus (_contextlessDynamicContext: (DynamicContext|null), executionParameters:ExecutionParameters): Sequence {
+	protected evaluateWithoutFocus (_contextlessDynamicContext: (DynamicContext|null), executionParameters:ExecutionParameters): ISequence {
 		if (this._eagerlyEvaluatedValue === null) {
 			this._eagerlyEvaluatedValue = createDoublyIterableSequence(this.evaluate(
 				null,

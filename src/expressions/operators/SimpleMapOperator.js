@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 import Specificity from '../Specificity';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import DynamicContext from '../DynamicContext';
 
 /**
@@ -34,7 +34,7 @@ class SimpleMapOperator extends Expression {
 		let childContext = null;
 		let sequenceValueIterator = null;
 		let done = false;
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => {
 				while (!done) {
 					if (!childContext) {

@@ -6,7 +6,7 @@ import domBackedDomFacade from '../domBackedDomFacade';
 import domBackedDocumentWriter from '../domBackedDocumentWriter';
 import DomBackedNodesFactory from '../DomBackedNodesFactory';
 import Expression from '../expressions/Expression';
-import Sequence from '../expressions/dataTypes/Sequence';
+import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
 import { generateGlobalVariableBindingName } from '../expressions/ExecutionSpecificStaticContext';
 
@@ -58,7 +58,7 @@ export default function buildEvaluationContext (expressionString, contextItem, d
 		variables,
 		moduleImports);
 
-	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : Sequence.empty();
+	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : SequenceFactory.empty();
 
 	/**
 	 * @type {INodesFactory}

@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 
@@ -17,19 +17,19 @@ function opTo (_dynamicContext, _executionParameters, staticContext, fromSequenc
 
 	if (from.ready && to.ready) {
 		if (from.value === null || to.value === null) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 		fromValue = from.value.value;
 		toValue = to.value.value;
 		if (fromValue > toValue) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 		// By providing a length, we do not have to hold an end condition into account
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => ready(createAtomicValue(fromValue++, 'xs:integer'))
 		}, toValue - fromValue + 1);
 	}
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (fromValue === null) {
 				const from = fromSequence.tryGetFirst();

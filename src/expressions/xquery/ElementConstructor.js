@@ -6,7 +6,7 @@ import Specificity from '../Specificity';
 import { evaluateQNameExpression } from './nameExpressions';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import concatSequences from '../util/concatSequences';
 import AttributeConstructor from './AttributeConstructor';
 import parseContent from './ElementConstructorContent';
@@ -105,7 +105,7 @@ class ElementConstructor extends Expression {
 		let nameIterator;
 
 		let done = false;
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;
@@ -131,7 +131,7 @@ class ElementConstructor extends Expression {
 					childNodesSequences = concatSequences(
 						this._contents.map(
 							contentExpression => contentExpression.evaluateMaybeStatically(dynamicContext, executionParameters)
-								.mapAll(allValues => Sequence.create([allValues]))));
+								.mapAll(allValues => SequenceFactory.create([allValues]))));
 					}
 
 					const allChildNodesItrResult = childNodesSequences.tryGetAllValues();

@@ -1,7 +1,7 @@
 import Expression from '../Expression';
 import DomFacade from '../../DomFacade';
 import Specificity from '../Specificity';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
@@ -20,17 +20,17 @@ function isSameNodeValue (a, b) {
 }
 
 /**
- * @param   {!AsyncIterator<!Sequence>}  sequences
- * @return  {!Sequence}
+ * @param   {!AsyncIterator<!ISequence>}  sequences
+ * @return  {!ISequence}
  */
 function concatSortedSequences (_, sequences) {
 	let currentSequence = sequences.next();
 	if (currentSequence.done) {
-		return Sequence.empty();
+		return SequenceFactory.empty();
 	}
 	let currentIterator = null;
 	let previousValue = null;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: function () {
 			if (!currentSequence.ready) {
 				return notReady(currentSequence.promise.then(() => {
@@ -67,8 +67,8 @@ function concatSortedSequences (_, sequences) {
 
 /**
  * @param   {!DomFacade}                 domFacade
- * @param   {!AsyncIterator<!Sequence>}  sequences
- * @return  {!Sequence}
+ * @param   {!AsyncIterator<!ISequence>}  sequences
+ * @return  {!ISequence}
  */
 function mergeSortedSequences (domFacade, sequences) {
 	const allIterators = [];
@@ -99,7 +99,7 @@ function mergeSortedSequences (domFacade, sequences) {
 	let previousNode = null;
 
 	let allSequencesAreSorted = false;
-	return Sequence.create({
+	return SequenceFactory.create({
 		[Symbol.iterator]: function () {
 			return this;
 		},
@@ -227,7 +227,7 @@ class PathExpression extends Expression {
 	evaluate (dynamicContext, executionParameters) {
 		let sequenceHasPeerProperty = true;
 		/**
-		 * @type {!Sequence}
+		 * @type {!ISequence}
 		 */
 		const result = this._stepExpressions.reduce((intermediateResultNodesSequence, selector) => {
 			let childContextIterator;
@@ -239,7 +239,7 @@ class PathExpression extends Expression {
 				childContextIterator = dynamicContext.createSequenceIterator(intermediateResultNodesSequence);
 			}
 			/**
-			 * @type {!AsyncIterator<!Sequence>}
+			 * @type {!AsyncIterator<!ISequence>}
 			 */
 			let resultValuesInOrderOfEvaluation = {
 				next: () => {
@@ -266,7 +266,7 @@ class PathExpression extends Expression {
 				switch (selector.expectedResultOrder) {
 					case Expression.RESULT_ORDERINGS.REVERSE_SORTED: {
 						const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
-						resultValuesInOrderOfEvaluation = /** @type {!AsyncIterator<!Sequence>} */ ({
+						resultValuesInOrderOfEvaluation = /** @type {!AsyncIterator<!ISequence>} */ ({
 							next: () => {
 								const result = resultValuesInReverseOrder.next();
 								if (!result.ready) {
@@ -275,7 +275,7 @@ class PathExpression extends Expression {
 								if (result.done) {
 									return result;
 								}
-								return ready(result.value.mapAll(items => Sequence.create(items.reverse())));
+								return ready(result.value.mapAll(items => SequenceFactory.create(items.reverse())));
 							}
 						});
 						// Fallthrough for merges
@@ -291,7 +291,7 @@ class PathExpression extends Expression {
 					case Expression.RESULT_ORDERINGS.UNSORTED: {
 						// The result should be sorted before we can continue
 						const concattedSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
-						return concattedSequence.mapAll(allValues => Sequence.create(sortResults(executionParameters.domFacade, allValues)));
+						return concattedSequence.mapAll(allValues => SequenceFactory.create(sortResults(executionParameters.domFacade, allValues)));
 					}
 				}
 			}

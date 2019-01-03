@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
@@ -43,7 +43,7 @@ class PrecedingSiblingAxis extends Expression {
 		}
 
 		const domFacade = executionParameters.domFacade;
-		return Sequence.create(createSiblingGenerator(domFacade, contextItem.value)).filter(item=> {
+		return SequenceFactory.create(createSiblingGenerator(domFacade, contextItem.value)).filter(item=> {
 			return this._siblingExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

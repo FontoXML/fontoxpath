@@ -1,6 +1,6 @@
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import castToType from '../../dataTypes/castToType';
-import Sequence from '../../dataTypes/Sequence';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 
@@ -318,13 +318,13 @@ class BinaryOperator extends Expression {
 				if (firstValues.length === 0) {
 					// Shortcut, if the first part is empty, we can return empty.
 					// As per spec, we do not have to evaluate the second part, though we could.
-					return Sequence.empty();
+					return SequenceFactory.empty();
 				}
 				const secondValueSequence = this._secondValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters);
 				return secondValueSequence.mapAll(
 					secondValues => {
 						if (secondValues.length === 0) {
-							return Sequence.empty();
+							return SequenceFactory.empty();
 						}
 
 						if (firstValues.length > 1 || secondValues.length > 1) {
@@ -342,7 +342,7 @@ class BinaryOperator extends Expression {
 								secondValue.type);
 						}
 
-						return Sequence.singleton(prefabOperator(firstValue, secondValue));
+						return SequenceFactory.singleton(prefabOperator(firstValue, secondValue));
 					});
 			});
 	}

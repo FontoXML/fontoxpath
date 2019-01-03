@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
@@ -12,10 +12,10 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 function fnNot (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
-		return ebv.value === false ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+		return ebv.value === false ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
 	}
 	let done = false;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -37,10 +37,10 @@ function fnNot (_dynamicContext, _executionParameters, _staticContext, sequence)
 function fnBoolean (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
-		return ebv.value ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+		return ebv.value ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
 	}
 	let done = false;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -60,7 +60,7 @@ function fnBoolean (_dynamicContext, _executionParameters, _staticContext, seque
  * @type {!FunctionDefinitionType}
  */
 function fnTrue () {
-	return Sequence.singletonTrueSequence();
+	return SequenceFactory.singletonTrueSequence();
 }
 
 
@@ -68,7 +68,7 @@ function fnTrue () {
  * @type {!FunctionDefinitionType}
  */
 function fnFalse () {
-	return Sequence.singletonFalseSequence();
+	return SequenceFactory.singletonFalseSequence();
 }
 
 export default {

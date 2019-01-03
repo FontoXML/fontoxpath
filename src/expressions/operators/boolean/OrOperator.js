@@ -1,6 +1,6 @@
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
-import Sequence from '../../dataTypes/Sequence';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../../util/iterators';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
@@ -60,7 +60,7 @@ class OrOperator extends Expression {
 			}
 		}
 
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => {
 				if (!done) {
 					while (i < this._subExpressions.length) {

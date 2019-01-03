@@ -1,7 +1,7 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import castToType from '../dataTypes/castToType';
 import tryCastToType from '../dataTypes/casting/tryCastToType';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import MapValue from '../dataTypes/MapValue';
@@ -73,7 +73,7 @@ function getNumberOfDecimalDigits (value) {
 
 function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticContext, sequence, precision) {
 	let done = false;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -154,13 +154,13 @@ function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticCont
  */
 function fnNumber (_dynamicContext, executionParameters, _staticContext, sequence) {
 	return sequence.atomize(executionParameters).switchCases({
-		empty: () => Sequence.singleton(createAtomicValue(NaN, 'xs:double')),
+		empty: () => SequenceFactory.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
 			const castResult = tryCastToType(/** @type {!AtomicValue<?>} */ (sequence.first()), 'xs:double');
 			if (castResult.successful) {
-				return Sequence.singleton(castResult.value);
+				return SequenceFactory.singleton(castResult.value);
 			}
-			return Sequence.singleton(createAtomicValue(NaN, 'xs:double'));
+			return SequenceFactory.singleton(createAtomicValue(NaN, 'xs:double'));
 		}
 	});
 }
@@ -175,7 +175,7 @@ function returnRandomItemFromSequence (_dynamicContext, _executionParameters, _s
 
 	const sequenceValue = sequence.getAllValues();
 	const index = Math.floor(Math.random() * sequenceValue.length);
-	return Sequence.singleton(sequenceValue[index]);
+	return SequenceFactory.singleton(sequenceValue[index]);
 }
 
 /**
@@ -183,14 +183,14 @@ function returnRandomItemFromSequence (_dynamicContext, _executionParameters, _s
  */
 function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _staticContext, _sequence) {
 	// Ignore the optional seed, as Math.random does not support a seed
-	return Sequence.singleton(new MapValue([
+	return SequenceFactory.singleton(new MapValue([
 		{
 			key: createAtomicValue('number', 'xs:string'),
-			value: () => Sequence.singleton(createAtomicValue(Math.random(), 'xs:double'))
+			value: () => SequenceFactory.singleton(createAtomicValue(Math.random(), 'xs:double'))
 		},
 		{
 			key: createAtomicValue('next', 'xs:string'),
-			value: () => Sequence.singleton(new FunctionValue({
+			value: () => SequenceFactory.singleton(new FunctionValue({
 				value: fnRandomNumberGenerator,
 				localName: '',
 				namespaceURI: '',
@@ -201,7 +201,7 @@ function fnRandomNumberGenerator (_dynamicContext, _executionParameters, _static
 		},
 		{
 			key: createAtomicValue('permute', 'xs:string'),
-			value: () => Sequence.singleton(new FunctionValue({
+			value: () => SequenceFactory.singleton(new FunctionValue({
 				value: returnRandomItemFromSequence,
 				localName: '',
 				namespaceURI: '',
@@ -286,7 +286,7 @@ export default {
 			returnType: 'xs:double',
 			callFunction: (dynamicContext, executionParameters, staticContext) => {
 				const atomizedContextItem = dynamicContext.contextItem &&
-					transformArgument({ type: 'xs:anyAtomicType', occurrence: '?' }, Sequence.singleton(dynamicContext.contextItem), executionParameters, 'fn:number');
+					transformArgument({ type: 'xs:anyAtomicType', occurrence: '?' }, SequenceFactory.singleton(dynamicContext.contextItem), executionParameters, 'fn:number');
 				if (!atomizedContextItem) {
 					throw new Error('XPDY0002: fn:number needs an atomizable context item.');
 				}

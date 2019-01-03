@@ -1,6 +1,6 @@
 import isSameMapKey from './isSameMapKey';
 import mapGet from './builtInFunctions.maps.get';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import zipSingleton from '../util/zipSingleton';
@@ -14,7 +14,7 @@ import FunctionDefinitionType from './FunctionDefinitionType';
  * @type {!FunctionDefinitionType}
  */
 function mapMerge (dynamicContext, executionParameters, staticContext, mapSequence, optionMap) {
-	const duplicateKey = Sequence.singleton(createAtomicValue('duplicates', 'xs:string'));
+	const duplicateKey = SequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
 		executionParameters,
@@ -27,7 +27,7 @@ function mapMerge (dynamicContext, executionParameters, staticContext, mapSequen
 	const duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.first().value;
 	return mapSequence.mapAll(
 		allValues =>
-			Sequence.singleton(new MapValue(allValues.reduce((resultingKeyValuePairs, map) => {
+			SequenceFactory.singleton(new MapValue(allValues.reduce((resultingKeyValuePairs, map) => {
 				/** @type {!MapValue} */(map).keyValuePairs.forEach(function (keyValuePair) {
 					const existingPairIndex = resultingKeyValuePairs.findIndex(function (existingPair) {
 						return isSameMapKey(existingPair.key, keyValuePair.key);
@@ -48,7 +48,7 @@ function mapMerge (dynamicContext, executionParameters, staticContext, mapSequen
 									1,
 									{
 										key: keyValuePair.key,
-										value: createDoublyIterableSequence(Sequence.create(
+										value: createDoublyIterableSequence(SequenceFactory.create(
 											resultingKeyValuePairs[existingPairIndex].value().getAllValues()
 												.concat(keyValuePair.value().getAllValues())))
 									});
@@ -90,7 +90,7 @@ function mapPut (_dynamicContext, _executionParameters, _staticContext, mapSeque
 				value: createDoublyIterableSequence(newValueSequence)
 			});
 		}
-		return Sequence.singleton(new MapValue(resultingKeyValuePairs));
+		return SequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
 	});
 }
 
@@ -114,7 +114,7 @@ function mapSize (_dynamicContext, _executionParameters, _staticContext, mapSequ
  * @type {!FunctionDefinitionType}
  */
 function mapKeys (_dynamicContext, _executionParameters, _staticContext, mapSequence) {
-	return zipSingleton([mapSequence], ([map]) => Sequence.create(/** @type {!MapValue} */(map).keyValuePairs.map(pair => pair.key)));
+	return zipSingleton([mapSequence], ([map]) => SequenceFactory.create(/** @type {!MapValue} */(map).keyValuePairs.map(pair => pair.key)));
 }
 
 /**
@@ -123,7 +123,7 @@ function mapKeys (_dynamicContext, _executionParameters, _staticContext, mapSequ
 function mapContains (_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence) {
 	return zipSingleton([mapSequence, keySequence], ([map, key]) => {
 		const doesContain = /** @type {!MapValue} */(map).keyValuePairs.some(pair => isSameMapKey(pair.key, key));
-		return doesContain ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+		return doesContain ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
 	});
 }
 
@@ -143,7 +143,7 @@ function mapRemove (_dynamicContext, _executionParameters, _staticContext, mapSe
 						1);
 				}
 			});
-			return Sequence.singleton(new MapValue(resultingKeyValuePairs));
+			return SequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
 		});
 	});
 }
@@ -161,7 +161,7 @@ function mapForEach (dynamicContext, executionParameters, staticContext, mapSequ
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					Sequence.singleton(keyValuePair.key),
+					SequenceFactory.singleton(keyValuePair.key),
 					keyValuePair.value());
 			}));
 		});
@@ -230,9 +230,9 @@ export default {
 					executionParameters,
 					staticContext,
 					maps,
-					Sequence.singleton(new MapValue([{
+					SequenceFactory.singleton(new MapValue([{
 						key: createAtomicValue('duplicates', 'xs:string'),
-						value: () => Sequence.singleton(createAtomicValue('use-first', 'xs:string'))
+						value: () => SequenceFactory.singleton(createAtomicValue('use-first', 'xs:string'))
 					}])));
 			}
 		},

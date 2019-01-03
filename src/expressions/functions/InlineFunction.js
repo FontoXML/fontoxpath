@@ -1,7 +1,7 @@
 import Expression from '../Expression';
 import DynamicContext from '../DynamicContext';
 import Specificity from '../Specificity';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import FunctionValue from '../dataTypes/FunctionValue';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
@@ -62,13 +62,13 @@ class InlineFunction extends Expression {
 		/**
 		 * @param   {DynamicContext}           _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
 		 *                                                                  This shall not be used
-		 * @param   {...!Sequence}   parameters              The parameters of the function
-		 * @return  {!Sequence}      The result of the function call
+		 * @param   {...!ISequence}   parameters              The parameters of the function
+		 * @return  {!ISequence}      The result of the function call
 		 */
 		const executeFunction = (_unboundDynamicContext, _executionContext, _staticContext, ...parameters) => {
 			// Since functionCall already does typechecking, we do not have to do it here
 			const scopedDynamicContext = dynamicContext
-				.scopeWithFocus(-1, null, Sequence.empty())
+				.scopeWithFocus(-1, null, SequenceFactory.empty())
 				.scopeWithVariableBindings(this._parameterBindingNames.reduce((paramByName, bindingName, i) => {
 					paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
 					return paramByName;
@@ -84,7 +84,7 @@ class InlineFunction extends Expression {
 			arity: this._parameterTypes.length,
 			returnType: this._returnType
 		});
-		return Sequence.singleton(functionItem);
+		return SequenceFactory.singleton(functionItem);
 	}
 }
 

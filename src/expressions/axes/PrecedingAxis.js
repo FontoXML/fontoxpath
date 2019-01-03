@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
@@ -80,9 +80,9 @@ class PrecedingAxis extends Expression {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
 
-        const domFacade = executionParameters.domFacade;
+		const domFacade = executionParameters.domFacade;
 
-		return Sequence.create(createPrecedingGenerator(domFacade, contextItem.value)).filter(item => {
+		return SequenceFactory.create(createPrecedingGenerator(domFacade, contextItem.value)).filter(item => {
 			return this._testExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

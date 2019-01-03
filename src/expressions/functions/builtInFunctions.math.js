@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -8,7 +8,7 @@ import FunctionDefinitionType from './FunctionDefinitionType';
  * @type {!FunctionDefinitionType}
  */
 function mathPi (_dynamicContext, _executionParameters, _staticContext) {
-	return Sequence.singleton(createAtomicValue(Math.PI, 'xs:double'));
+	return SequenceFactory.singleton(createAtomicValue(Math.PI, 'xs:double'));
 }
 
 /**

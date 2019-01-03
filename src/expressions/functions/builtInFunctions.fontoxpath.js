@@ -1,5 +1,5 @@
 import DynamicContext from '../DynamicContext';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -24,7 +24,7 @@ import astHelper from '../../parsing/astHelper';
 function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext, query, args) {
 	let resultIterator;
 	let queryString;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (!resultIterator) {
 				const queryValue = query.value.next();
@@ -33,7 +33,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 				}
 				queryString = queryValue.value.value;
 				/**
-				 * @type {Object<string, function():Sequence>}
+				 * @type {Object<string, function():ISequence>}
 				 */
 				const variables = /** @type {!MapValue} */ (args.first()).keyValuePairs.reduce((expandedArgs, arg) => {
 					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value());
@@ -41,7 +41,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 				}, Object.create(null));
 
 				// Take off the context item
-				const contextItemSequence = variables['.'] ? variables['.']() : Sequence.empty();
+				const contextItemSequence = variables['.'] ? variables['.']() : SequenceFactory.empty();
 				delete variables['.'];
 
 				const ast = parseExpression(queryString, { allowXQuery: false });
@@ -94,7 +94,7 @@ function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext,
 	let readyPromise;
 
 	const valueIterator = val.value;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (!readyPromise) {
 
@@ -126,7 +126,7 @@ function fontoxpathVersion () {
 	else {
 		version = VERSION;
 	}
-	return Sequence.singleton(createAtomicValue(version, 'xs:string'));
+	return SequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 }
 
 function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext, url) {
@@ -135,7 +135,7 @@ function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext,
 	let done = false;
 	let readyPromise = null;
 
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (!readyPromise) {
 				const urlValue = url.value.next();

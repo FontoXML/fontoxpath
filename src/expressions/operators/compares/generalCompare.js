@@ -1,4 +1,4 @@
-import Sequence from '../../dataTypes/Sequence';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import valueCompare from './valueCompare';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import castToType from '../../dataTypes/castToType';
@@ -16,10 +16,10 @@ var OPERATOR_TRANSLATION = {
 
 /**
  * @param   {!string}          operator
- * @param   {!Sequence}        firstSequence
- * @param   {!Sequence}        secondSequence
+ * @param   {!ISequence}        firstSequence
+ * @param   {!ISequence}        secondSequence
  * @param   {DynamicContext}   dynamicContext
- * @return  {!Sequence}
+ * @return  {!ISequence}
 */
 export default function generalCompare (operator, firstSequence, secondSequence, dynamicContext) {
     // Change operator to equivalent valueCompare operator
@@ -80,8 +80,8 @@ export default function generalCompare (operator, firstSequence, secondSequence,
 				}
 				return false;
 			}).switchCases({
-				empty: () => Sequence.singletonFalseSequence(),
-				default: () => Sequence.singletonTrueSequence()
+				empty: () => SequenceFactory.singletonFalseSequence(),
+				default: () => SequenceFactory.singletonTrueSequence()
 			}));
 
 }

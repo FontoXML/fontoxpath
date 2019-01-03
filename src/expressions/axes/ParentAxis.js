@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
@@ -31,14 +31,14 @@ class ParentAxis extends Expression {
 		const /** !Node */ contextNode = dynamicContext.contextItem.value;
 		const parentNode = domFacade.getParentNode(contextNode);
 		if (!parentNode) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 		const parentNodeValue = createNodeValue(parentNode);
 		const nodeIsMatch = this._parentExpression.evaluateToBoolean(dynamicContext, parentNodeValue);
 		if (!nodeIsMatch) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
-		return Sequence.singleton(parentNodeValue);
+		return SequenceFactory.singleton(parentNodeValue);
 	}
 }
 

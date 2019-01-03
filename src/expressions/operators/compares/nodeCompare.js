@@ -1,13 +1,13 @@
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import Sequence from '../../dataTypes/Sequence';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import zipSingleton from '../../util/zipSingleton';
 import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 
 /**
  * @param   {string}     operator
- * @param   {!Sequence}  firstSequence
- * @param   {!Sequence}  secondSequence
- * @return  {!Sequence}
+ * @param   {!ISequence}  firstSequence
+ * @param   {!ISequence}  secondSequence
+ * @return  {!ISequence}
  */
 export default function nodeCompare (operator, domFacade, firstSequence, secondSequence) {
 	// https://www.w3.org/TR/xpath-31/#doc-xpath31-NodeComp
@@ -30,18 +30,18 @@ export default function nodeCompare (operator, domFacade, firstSequence, secondS
 				switch (operator) {
 					case 'isOp':
 						return first === second ?
-							Sequence.singletonTrueSequence() :
-							Sequence.singletonFalseSequence();
+							SequenceFactory.singletonTrueSequence() :
+							SequenceFactory.singletonFalseSequence();
 
 					case 'nodeBeforeOp':
 						return compareNodePositions(domFacade, first, second) < 0 ?
-							Sequence.singletonTrueSequence() :
-							Sequence.singletonFalseSequence();
+							SequenceFactory.singletonTrueSequence() :
+							SequenceFactory.singletonFalseSequence();
 
 					case 'nodeAfterOp':
 						return compareNodePositions(domFacade, first, second) > 0 ?
-							Sequence.singletonTrueSequence() :
-							Sequence.singletonFalseSequence();
+							SequenceFactory.singletonTrueSequence() :
+							SequenceFactory.singletonFalseSequence();
 
 					default:
 						throw new Error('Unexpected operator');

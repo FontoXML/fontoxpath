@@ -1,6 +1,6 @@
 import Specificity from '../Specificity';
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 import createAtomicValue from '../dataTypes/createAtomicValue';
 
@@ -40,7 +40,7 @@ class Literal extends Expression {
 				throw new TypeError('Type ' + type + ' not expected in a literal');
 		}
 
-		this._createValueSequence = () => Sequence.singleton(value);
+		this._createValueSequence = () => SequenceFactory.singleton(value);
 	}
 
 	evaluate (_dynamicContext) {

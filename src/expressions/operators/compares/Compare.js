@@ -1,4 +1,4 @@
-import Sequence from '../../dataTypes/Sequence';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
@@ -53,16 +53,16 @@ class Compare extends Expression {
 		return firstSequence.switchCases({
 			empty: () => {
 				if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
-					return Sequence.empty();
+					return SequenceFactory.empty();
 				}
-				return Sequence.singletonFalseSequence();
+				return SequenceFactory.singletonFalseSequence();
 			},
 			default: () => secondSequence.switchCases({
 				empty: () => {
 					if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
-						return Sequence.empty();
+						return SequenceFactory.empty();
 					}
-					return Sequence.singletonFalseSequence();
+					return SequenceFactory.singletonFalseSequence();
 				},
 				default: () => {
 					if (this._compare === 'nodeCompare') {
@@ -82,8 +82,8 @@ class Compare extends Expression {
 											onlyFirstValue,
 											onlySecondValue,
 											dynamicContext) ?
-											Sequence.singletonTrueSequence() :
-											Sequence.singletonFalseSequence())),
+											SequenceFactory.singletonTrueSequence() :
+											SequenceFactory.singletonFalseSequence())),
 								default: (() => {
 									throw new Error('XPTY0004: Sequences to compare are not singleton.');
 								})

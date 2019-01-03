@@ -1,7 +1,7 @@
 import astHelper from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
 
-import Sequence from '../expressions/dataTypes/Sequence';
+import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
 import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
 import StaticContext from '../expressions/StaticContext';
 
@@ -163,7 +163,7 @@ export default function processProlog (prolog, staticContext) {
 			...parameters
 		) => {
 			const scopedDynamicContext = dynamicContext
-				.scopeWithFocus(-1, null, Sequence.empty())
+				.scopeWithFocus(-1, null, SequenceFactory.empty())
 				.scopeWithVariableBindings(parameterBindingNames.reduce((paramByName, bindingName, i) => {
 					paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
 					return paramByName;

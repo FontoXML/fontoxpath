@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
@@ -42,9 +42,9 @@ class FollowingSiblingAxis extends Expression {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
 
-        const domFacade = executionParameters.domFacade;
+		const domFacade = executionParameters.domFacade;
 
-		return Sequence.create(createSiblingGenerator(domFacade, contextItem.value)).filter(item => {
+		return SequenceFactory.create(createSiblingGenerator(domFacade, contextItem.value)).filter(item => {
 			return this._siblingExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

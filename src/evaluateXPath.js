@@ -1,7 +1,7 @@
 import atomize from './expressions/dataTypes/atomize';
 import castToType from './expressions/dataTypes/castToType';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
-import Sequence from './expressions/dataTypes/Sequence';
+import SequenceFactory from './expressions/dataTypes/SequenceFactory';
 
 import getBucketsForNode from './getBucketsForNode';
 
@@ -177,7 +177,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 	}
 
 	/**
-	 * @type {!Sequence}
+	 * @type {!ISequence}
 	 */
 	const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
 
@@ -389,7 +389,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 				return atomize(allValues.value[0], executionParameters).value;
 			}
 
-			return Sequence.create(allValues.value)
+			return SequenceFactory.create(allValues.value)
 				.atomize(executionParameters)
 				.getAllValues()
 				.map(function (atomizedValue) {

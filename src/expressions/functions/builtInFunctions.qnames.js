@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import QName from '../dataTypes/valueTypes/QName';
 import { validatePattern } from '../dataTypes/typeHelpers';
@@ -23,14 +23,14 @@ function fnQName (_dynamicContext, _executionParameters, _staticContext, paramUR
 		// Skip URI validation for now
 
 		if (paramURI.isEmpty()) {
-			return Sequence.singleton(createAtomicValue(new QName('', null, lexicalQName), 'xs:QName'));
+			return SequenceFactory.singleton(createAtomicValue(new QName('', null, lexicalQName), 'xs:QName'));
 		}
 		if (!lexicalQName.includes(':')) {
 			// Only a local part
-			return Sequence.singleton(createAtomicValue(new QName('', uri, lexicalQName), 'xs:QName'));
+			return SequenceFactory.singleton(createAtomicValue(new QName('', uri, lexicalQName), 'xs:QName'));
 		}
 		const [prefix, localPart] = lexicalQName.split(':');
-		return Sequence.singleton(createAtomicValue(new QName(prefix, uri, localPart), 'xs:QName'));
+		return SequenceFactory.singleton(createAtomicValue(new QName(prefix, uri, localPart), 'xs:QName'));
 	});
 }
 
@@ -40,13 +40,13 @@ function fnQName (_dynamicContext, _executionParameters, _staticContext, paramUR
 function fnPrefixFromQName (_dynamicContext, _executionParameters, _staticContext, arg) {
 	return zipSingleton([arg], ([qname]) => {
 		if (qname === null) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 		const qnameValue = qname.value;
 		if (!qnameValue.prefix) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
-		return Sequence.singleton(createAtomicValue(qnameValue.prefix, 'xs:NCName'));
+		return SequenceFactory.singleton(createAtomicValue(qnameValue.prefix, 'xs:NCName'));
 	});
 }
 

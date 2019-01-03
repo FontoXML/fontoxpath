@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 import Specificity from '../Specificity';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import MapValue from '../dataTypes/MapValue';
 import zipSingleton from '../util/zipSingleton';
 
@@ -37,7 +37,7 @@ class MapConstructor extends Expression {
 
 		return zipSingleton(
 			keySequences,
-			keys => Sequence.singleton(new MapValue(keys.map((key, keyIndex) => ({
+			keys => SequenceFactory.singleton(new MapValue(keys.map((key, keyIndex) => ({
 				key,
 				value: createDoublyIterableSequence(
 					this._entries[keyIndex].value.evaluateMaybeStatically(dynamicContext, executionParameters)

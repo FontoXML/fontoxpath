@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 /**
  * @typedef {{name:{prefix:?string,namespaceURI:?string,name:!string},sourceExpr:Expression}} InClause
@@ -68,7 +68,7 @@ class QuantifiedExpression extends Expression {
 				.evaluateMaybeStatically(scopingContext, executionParameters).getAllValues();
 
 			scopingContext = dynamicContext.scopeWithVariableBindings({
-				[variableBinding]: () => Sequence.create(allValuesInInClause)
+				[variableBinding]: () => SequenceFactory.create(allValuesInInClause)
 			});
 
 			return allValuesInInClause;
@@ -91,17 +91,17 @@ class QuantifiedExpression extends Expression {
 
 				for (let y = 0; y < indices.length; y++) {
 					const value = evaluatedInClauses[y][indices[y]];
-					variables[this._inClauseVariableNames[y]] = () => Sequence.singleton(value);
+					variables[this._inClauseVariableNames[y]] = () => SequenceFactory.singleton(value);
 				}
 
 				const context = dynamicContext.scopeWithVariableBindings(variables);
 				const result = this._satisfiesExpr.evaluateMaybeStatically(context, executionParameters);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
-					return Sequence.singletonTrueSequence();
+					return SequenceFactory.singletonTrueSequence();
 				}
 				else if (!result.getEffectiveBooleanValue() && this._quantifier === 'every') {
-					return Sequence.singletonFalseSequence();
+					return SequenceFactory.singletonFalseSequence();
 				}
 				hasOverflowed = true;
 				break;
@@ -109,7 +109,7 @@ class QuantifiedExpression extends Expression {
 		}
 
 		// An every quantifier is true if all items match, a some is false if none of the items match
-		return this._quantifier === 'every' ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+		return this._quantifier === 'every' ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
 	}
 }
 export default QuantifiedExpression;

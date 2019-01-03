@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
@@ -14,7 +14,7 @@ function fnLast (dynamicContext) {
 	}
 
 	let done = false;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -37,35 +37,35 @@ function fnPosition (dynamicContext) {
 		throw new Error('XPDY0002: The fn:position() function depends on dynamic context, which is absent.');
 	}
 	// Note: +1 because XPath is one-based
-	return Sequence.singleton(createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer'));
 }
 
 /**
  * @type {!FunctionDefinitionType}
  */
 function fnCurrentDateTime (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp'));
+	return SequenceFactory.singleton(createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp'));
 }
 
 /**
  * @type {!FunctionDefinitionType}
  */
 function fnCurrentDate (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date'));
+	return SequenceFactory.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date'));
 }
 
 /**
  * @type {!FunctionDefinitionType}
  */
 function fnCurrentTime (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time'));
+	return SequenceFactory.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time'));
 }
 
 /**
  * @type {!FunctionDefinitionType}
  */
 function fnImplicitTimezone (dynamicContext) {
-	return Sequence.singleton(createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration'));
+	return SequenceFactory.singleton(createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration'));
 }
 
 export default {

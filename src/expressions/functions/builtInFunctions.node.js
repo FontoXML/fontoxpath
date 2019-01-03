@@ -1,5 +1,5 @@
 import builtinStringFunctions from './builtInFunctions.string';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import QName from '../dataTypes/valueTypes/QName';
@@ -17,7 +17,7 @@ function contextItemAsFirstArgument (fn, dynamicContext, executionParameters, _s
 	if (dynamicContext.contextItem === null) {
 		throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
 	}
-	return fn(dynamicContext, executionParameters, _staticContext, Sequence.singleton(dynamicContext.contextItem));
+	return fn(dynamicContext, executionParameters, _staticContext, SequenceFactory.singleton(dynamicContext.contextItem));
 }
 
 /**
@@ -26,20 +26,20 @@ function contextItemAsFirstArgument (fn, dynamicContext, executionParameters, _s
 function fnNodeName (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return zipSingleton([sequence], ([nodeValue]) => {
 		if (nodeValue === null) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 		switch (nodeValue.value.nodeType) {
 			case 1:
 			case 2:
 				// element or attribute
-				return Sequence.singleton(createAtomicValue(new QName(nodeValue.value.prefix, nodeValue.value.namespaceURI, nodeValue.value.localName), 'xs:QName'));
+				return SequenceFactory.singleton(createAtomicValue(new QName(nodeValue.value.prefix, nodeValue.value.namespaceURI, nodeValue.value.localName), 'xs:QName'));
 			case 7:
 				// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
 				const processingInstruction = /** @type {ProcessingInstruction} */ (nodeValue.value);
-				return Sequence.singleton(createAtomicValue(new QName('', '', processingInstruction.target), 'xs:QName'));
+				return SequenceFactory.singleton(createAtomicValue(new QName('', '', processingInstruction.target), 'xs:QName'));
 			default:
 				// All other nodes have no name
-				return Sequence.empty();
+				return SequenceFactory.empty();
 		}
 
 	});
@@ -50,7 +50,7 @@ function fnNodeName (_dynamicContext, _executionParameters, staticContext, seque
  */
 function fnName (dynamicContext, executionParameters, staticContext, sequence) {
 	return sequence.switchCases({
-		empty: () => Sequence.empty(),
+		empty: () => SequenceFactory.empty(),
 		default: () => fnString(
 			dynamicContext,
 			executionParameters,
@@ -75,7 +75,7 @@ function fnNamespaceURI (_dynamicContext, _executionParameters, staticContext, s
  */
 function fnLocalName (_dynamicContext, _executionParameters, staticContext, sequence) {
 	return sequence.switchCases({
-		empty: () => Sequence.singleton(createAtomicValue('', 'xs:string')),
+		empty: () => SequenceFactory.singleton(createAtomicValue('', 'xs:string')),
 		default: () => {
 			return sequence.map(node => {
 				if (node.value.nodeType === 7) {
@@ -114,7 +114,7 @@ function contains (domFacade, ancestor, descendant) {
 function fnOutermost (_dynamicContext, executionParameters, _staticContext, nodeSequence) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 
 		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues).reduce(
@@ -133,7 +133,7 @@ function fnOutermost (_dynamicContext, executionParameters, _staticContext, node
 				return previousNodes;
 			}, []);
 
-		return Sequence.create(resultNodes);
+		return SequenceFactory.create(resultNodes);
 	});
 }
 
@@ -143,7 +143,7 @@ function fnOutermost (_dynamicContext, executionParameters, _staticContext, node
 function fnInnermost (_dynamicContext, executionParameters, _staticContext, nodeSequence) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 
 		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues)
@@ -162,7 +162,7 @@ function fnInnermost (_dynamicContext, executionParameters, _staticContext, node
 				return followingNodes;
 			}, []);
 
-		return Sequence.create(resultNodes);
+		return SequenceFactory.create(resultNodes);
 	});
 }
 

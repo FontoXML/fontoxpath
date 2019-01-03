@@ -1,9 +1,9 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import { DONE_TOKEN } from './iterators';
 export default function concatSequences (sequences) {
 	let i = 0;
 	let iterator = null;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			while (i < sequences.length) {
 				if (!iterator) {

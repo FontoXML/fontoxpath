@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ArrayValue from '../dataTypes/ArrayValue';
 import MapValue from '../dataTypes/MapValue';
@@ -9,30 +9,30 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 /**
  * @param  {*}  obj
- * @return {!Sequence}
+ * @return {!ISequence}
  */
 function convert (obj) {
 	switch (typeof obj) {
 		case 'object':
 			if (Array.isArray(obj)) {
-				return Sequence.singleton(new ArrayValue(obj.map(subObject => createDoublyIterableSequence(convert(subObject)))));
+				return SequenceFactory.singleton(new ArrayValue(obj.map(subObject => createDoublyIterableSequence(convert(subObject)))));
 			}
 			if (obj === null) {
-				return Sequence.empty();
+				return SequenceFactory.empty();
 			}
 			// Normal object
-			return Sequence.singleton(new MapValue(Object.keys(/** @type {!Object} */(obj)).map(key => {
+			return SequenceFactory.singleton(new MapValue(Object.keys(/** @type {!Object} */(obj)).map(key => {
 				return {
 					key: createAtomicValue(key, 'xs:string'),
 					value: createDoublyIterableSequence(convert(/** @type {!Object} */(obj)[key]))
 				};
 			})));
 		case 'number':
-			return Sequence.singleton(createAtomicValue(obj, 'xs:double'));
+			return SequenceFactory.singleton(createAtomicValue(obj, 'xs:double'));
 		case 'string':
-			return Sequence.singleton(createAtomicValue(obj, 'xs:string'));
+			return SequenceFactory.singleton(createAtomicValue(obj, 'xs:string'));
 		case 'boolean':
-			return obj ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();;
+			return obj ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();;
 		default:
 			throw new Error('Unexpected type in JSON parse');
 	}

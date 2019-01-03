@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 import Value from '../dataTypes/Value';
 
@@ -33,7 +33,7 @@ class Filter extends Expression {
 
 	evaluate (dynamicContext, executionParameters) {
 		/**
-		 * @type {!Sequence}
+		 * @type {!ISequence}
 		 */
 		const valuesToFilter = this._selector.evaluateMaybeStatically(dynamicContext, executionParameters);
 
@@ -49,14 +49,14 @@ class Filter extends Expression {
 				let requestedIndex = /** @type {number} */ (resultValue.value);
 				if (!Number.isInteger(requestedIndex)) {
 					// There are only values for integer positions
-					return Sequence.empty();
+					return SequenceFactory.empty();
 				}
 				const iterator = valuesToFilter.value;
 				let done = false;
 				// Note that using filter here is a bad choice, because we only want one item.
 				// TODO: implement Sequence.itemAt(i), which is a no-op for empty sequences, a O(1) op for array backed sequence / singleton sequences and a O(n) for normal sequences.
 				// If we move sorting to sequences, this will be even faster, since a select is faster than a sort.
-				return Sequence.create({
+				return SequenceFactory.create({
 					next: () => {
 						if (!done) {
 							for (let value = iterator.next(); !value.done; value = iterator.next()) {
@@ -79,14 +79,14 @@ class Filter extends Expression {
 			if (result.getEffectiveBooleanValue()) {
 				return valuesToFilter;
 			}
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 
 		const iteratorToFilter = valuesToFilter.value;
 		let iteratorItem = null;
 		let i = 0;
 		let filterResultSequence = null;
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => {
 				while (!iteratorItem || !iteratorItem.done) {
 					if (!iteratorItem) {

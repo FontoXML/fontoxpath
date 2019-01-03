@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class SelfAxis extends Expression {
@@ -26,7 +26,7 @@ class SelfAxis extends Expression {
 		}
 
 		var isMatch = this._selector.evaluateToBoolean(dynamicContext, dynamicContext.contextItem);
-		return isMatch ? Sequence.singleton(dynamicContext.contextItem) : Sequence.empty();
+		return isMatch ? SequenceFactory.singleton(dynamicContext.contextItem) : SequenceFactory.empty();
 	}
 
 	getBucket () {

@@ -1,5 +1,5 @@
 import Specificity from '../../Specificity';
-import Sequence from '../../dataTypes/Sequence';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
 import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../../util/iterators';
@@ -36,7 +36,7 @@ class AndOperator extends Expression {
 				contextItemBuckets = getBucketsForNode(contextItem.value);
 			}
 		}
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => {
 				if (!done) {
 					while (i < this._subExpressions.length) {

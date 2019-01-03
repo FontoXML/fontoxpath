@@ -15,7 +15,7 @@ import {
 	errXUDY0023,
 	errXUDY0027
 } from './XQueryUpdateFacilityErrors';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 function evaluateTarget (targetXdmValue) {
 	// TargetExpr is evaluated and checked as follows:
@@ -42,7 +42,7 @@ function evaluateTarget (targetXdmValue) {
 
 function evaluateNewName (staticContext, executionParameters, newNameXdmValue, target) {
 	// NewNameExpr is processed as follows:
-	const nameSequence = Sequence.create(newNameXdmValue);
+	const nameSequence = SequenceFactory.create(newNameXdmValue);
 
 	switch (target.type) {
 		case 'element()': {

@@ -2,7 +2,7 @@ import { errXPTY0004 } from '../XPathErrors';
 import { errXQDY0041, errXQDY0074 } from '../xquery/XQueryErrors';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 
 const nameExprErr = () => errXPTY0004('a single xs:string or xs:untypedAtomic');
@@ -25,7 +25,7 @@ export function evaluateNCNameExpression (executionParameters, nameSequence) {
 				if (!isValidNCName(nameValue.value)) {
 					throw errXQDY0041(nameValue.value);
 				}
-				return Sequence.singleton(nameValue);
+				return SequenceFactory.singleton(nameValue);
 			}
 			throw nameExprErr();
 		},
@@ -41,7 +41,7 @@ export function evaluateQNameExpression (staticContext, executionParameters, nam
 		singleton: seq => {
 			const nameValue = seq.first();
 			if (isSubtypeOf(nameValue.type, 'xs:QName')) {
-				return Sequence.singleton(nameValue);
+				return SequenceFactory.singleton(nameValue);
 			} else if (isSubtypeOf(nameValue.type, 'xs:string') || isSubtypeOf(nameValue.type, 'xs:untypedAtomic')) {
 				let prefix, namespaceURI, localName;
 				const parts = nameValue.value.split(':');
@@ -58,7 +58,7 @@ export function evaluateQNameExpression (staticContext, executionParameters, nam
 				if (prefix && !namespaceURI) {
 					throw errXQDY0074(`${prefix}:${localName}`);
 				}
-				return Sequence.singleton({
+				return SequenceFactory.singleton({
 					type: 'xs:QName',
 					value: new QName(prefix, namespaceURI, localName)
 				});

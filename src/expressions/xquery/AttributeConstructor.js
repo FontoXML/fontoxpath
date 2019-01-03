@@ -7,7 +7,7 @@ import { evaluateQNameExpression } from './nameExpressions';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 
 import concatSequences from '../util/concatSequences';
@@ -68,7 +68,7 @@ class AttributeConstructor extends Expression {
 		let valueIterator;
 
 		let done = false;
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;
@@ -106,7 +106,7 @@ class AttributeConstructor extends Expression {
 									return expr
 										.evaluate(dynamicContext, executionParameters)
 										.atomize(executionParameters)
-										.mapAll(allValues => Sequence.singleton(
+										.mapAll(allValues => SequenceFactory.singleton(
 											createAtomicValue(
 												allValues.map(val => val.value).join(' '),
 												'xs:string')
@@ -114,7 +114,7 @@ class AttributeConstructor extends Expression {
 								}))
 							.mapAll(
 								allValueParts =>
-									Sequence.singleton(
+									SequenceFactory.singleton(
 										createNodeValue(
 											createAttribute(
 												nodesFactory,

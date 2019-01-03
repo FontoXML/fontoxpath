@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
@@ -32,7 +32,7 @@ class ChildAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 		const /** !Node */ contextNode = contextItem.value;
 		const nodeValues = domFacade.getChildNodes(contextNode).map(createNodeValue);
-		const childContextSequence = Sequence.create(nodeValues);
+		const childContextSequence = SequenceFactory.create(nodeValues);
 		return childContextSequence.filter(item => {
 				return this._childExpression.evaluateToBoolean(dynamicContext, item);
 		});

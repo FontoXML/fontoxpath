@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, ready } from '../util/iterators';
@@ -71,7 +71,7 @@ class DescendantAxis extends Expression {
 		/**
 		 * @type {!Sequence}
 		 */
-		const descendantSequence = Sequence.create(iterator);
+		const descendantSequence = SequenceFactory.create(iterator);
 		return descendantSequence.filter(item => {
 			return this._descendantExpression.evaluateToBoolean(dynamicContext, item);
 		});

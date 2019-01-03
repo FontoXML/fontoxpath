@@ -1,14 +1,15 @@
 import FunctionValue from './FunctionValue';
-import Sequence from './Sequence';
+import ISequence from './ISequence';
+import SequenceFactory from './SequenceFactory';
 import arrayGet from '../functions/builtInFunctions.arrays.get';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 class ArrayValue extends FunctionValue {
-	members: (() => Sequence)[];
-	constructor(members: Array<(() => Sequence)>) {
+	members: (() => ISequence)[];
+	constructor(members: Array<(() => ISequence)>) {
 		super(
 			{
-				value: (dynamicContext, executionParameters, staticContext, key) => arrayGet(dynamicContext, executionParameters, staticContext, Sequence.singleton(this), key),
+				value: (dynamicContext, executionParameters, staticContext, key) => arrayGet(dynamicContext, executionParameters, staticContext, SequenceFactory.singleton(this), key),
 				localName: 'get',
 				namespaceURI: ARRAY_NAMESPACE_URI,
 				argumentTypes: [{ type: 'xs:integer', isRestArgument: false }],

@@ -6,7 +6,7 @@ import Specificity from '../Specificity';
 
 import { ready } from '../util/iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
@@ -55,13 +55,13 @@ class PIConstructor extends Expression {
 				if (this._target.targetValue !== null) {
 					const target = this._target.targetValue;
 					assertValidTarget(target);
-					return Sequence.singleton(createNodeValue(nodesFactory.createProcessingInstruction(target, data)));
+					return SequenceFactory.singleton(createNodeValue(nodesFactory.createProcessingInstruction(target, data)));
 				}
 
 				const targetSequence = this._target.targetExpr.evaluateMaybeStatically(dynamicContext, executionParameters);
 				const targetIterator = evaluateNCNameExpression(executionParameters, targetSequence);
 
-				return Sequence.create({ next: () => {
+				return SequenceFactory.create({ next: () => {
 					const tv = targetIterator.next();
 					if (tv.done || !tv.ready) {
 						return tv;

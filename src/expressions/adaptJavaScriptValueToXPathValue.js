@@ -1,4 +1,4 @@
-import Sequence from './dataTypes/Sequence';
+import SequenceFactory from './dataTypes/SequenceFactory';
 import createAtomicValue from './dataTypes/createAtomicValue';
 import ArrayValue from './dataTypes/ArrayValue';
 import MapValue from './dataTypes/MapValue';
@@ -37,14 +37,14 @@ function adaptItemToXPathValue (value) {
 						.map(
 					arrayItem => {
 						if (arrayItem === undefined) {
-							return () => Sequence.empty();
+							return () => SequenceFactory.empty();
 						}
 						const adaptedValue = adaptItemToXPathValue(arrayItem);
 						let adaptedSequence;
 						if (adaptedValue === null) {
-							adaptedSequence = Sequence.empty();
+							adaptedSequence = SequenceFactory.empty();
 						} else {
-							adaptedSequence = Sequence.singleton(adaptedValue);
+							adaptedSequence = SequenceFactory.singleton(adaptedValue);
 						}
 						return () => adaptedSequence;
 					}));
@@ -57,9 +57,9 @@ function adaptItemToXPathValue (value) {
 						const adaptedValue = adaptItemToXPathValue(value[key]);
 						let adaptedSequence;
 						if (adaptedValue === null) {
-							adaptedSequence = Sequence.empty();
+							adaptedSequence = SequenceFactory.empty();
 						} else {
-							adaptedSequence = Sequence.singleton(adaptedValue);
+							adaptedSequence = SequenceFactory.singleton(adaptedValue);
 						}
 					return {
 						key: createAtomicValue(key, 'xs:string'),
@@ -118,7 +118,7 @@ function adaptJavaScriptValueToXPathValue (type, value) {
 /**
  * @param  {?}        value
  * @param  {string=}  expectedType
- * @return  {!Sequence}
+ * @return  {!ISequence}
  */
 export default function adaptJavaScriptValueToXPath (value, expectedType) {
 	expectedType = expectedType || 'item()?';
@@ -131,23 +131,23 @@ export default function adaptJavaScriptValueToXPath (value, expectedType) {
 		case '?':
 			const adaptedValue = adaptJavaScriptValueToXPathValue(type, value);
 			if (adaptedValue === null) {
-				return Sequence.empty();
+				return SequenceFactory.empty();
 			}
-			return Sequence.singleton(adaptedValue);
+			return SequenceFactory.singleton(adaptedValue);
 
 		case '+':
 		case '*': {
 			const convertedValues = value.map(adaptJavaScriptValueToXPathValue.bind(null, type));
-			return Sequence.create(
+			return SequenceFactory.create(
 				convertedValues.filter(convertedValue => convertedValue !== null));
 		}
 
 		default: {
 			const adaptedValue = adaptJavaScriptValueToXPathValue(type, value);
 			if (adaptedValue === null) {
-				return Sequence.empty();
+				return SequenceFactory.empty();
 			}
-			return Sequence.singleton(adaptedValue);
+			return SequenceFactory.singleton(adaptedValue);
 		}
 	}
 }

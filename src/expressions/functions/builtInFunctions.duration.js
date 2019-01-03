@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -10,7 +10,7 @@ function fnYearsFromDuration (_dynamicContext, _executionParameters, _staticCont
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getYears(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getYears(), 'xs:integer'));
 }
 
 /**
@@ -20,7 +20,7 @@ function fnMonthsFromDuration (_dynamicContext, _executionParameters, _staticCon
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getMonths(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getMonths(), 'xs:integer'));
 }
 
 /**
@@ -30,7 +30,7 @@ function fnDaysFromDuration (_dynamicContext, _executionParameters, _staticConte
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getDays(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getDays(), 'xs:integer'));
 }
 
 /**
@@ -40,7 +40,7 @@ function fnHoursFromDuration (_dynamicContext, _executionParameters, _staticCont
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getHours(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getHours(), 'xs:integer'));
 }
 
 /**
@@ -50,7 +50,7 @@ function fnMinutesFromDuration (_dynamicContext, _executionParameters, _staticCo
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer'));
 }
 
 /**
@@ -60,7 +60,7 @@ function fnSecondsFromDuration (_dynamicContext, _executionParameters, _staticCo
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getSeconds(), 'xs:decimal'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getSeconds(), 'xs:decimal'));
 }
 
 export default {

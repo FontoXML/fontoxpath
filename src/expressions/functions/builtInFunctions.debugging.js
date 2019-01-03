@@ -1,6 +1,6 @@
 import castToType from '../dataTypes/castToType';
 import atomize from '../dataTypes/atomize';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -13,7 +13,7 @@ function fnTrace (_dynamicContext, executionParameters, _staticContext, arg, lab
 	return arg.mapAll(allItems => {
 		const argumentAsStrings = allItems.map(value => castToType(atomize(value, executionParameters), 'xs:string'));
 		console.log.apply(console, label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]);
-		return Sequence.create(allItems);
+		return SequenceFactory.create(allItems);
 	});
 }
 

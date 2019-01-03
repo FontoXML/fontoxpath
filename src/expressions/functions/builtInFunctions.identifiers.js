@@ -1,6 +1,6 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createNodeValue from '../dataTypes/createNodeValue';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -24,7 +24,7 @@ function findDescendants (domFacade, node, isMatch) {
 function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequence, targetNodeSequence) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
-		return Sequence.empty();
+		return SequenceFactory.empty();
 	}
 	const domFacade = executionParameters.domFacade;
 	// TODO: Index ids to optimize this lookup
@@ -58,7 +58,7 @@ function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequen
 				isMatchingIdById[idAttribute] = false;
 				return true;
 			});
-	return Sequence.create(matchingNodes.map(createNodeValue));
+	return SequenceFactory.create(matchingNodes.map(createNodeValue));
 }
 
 /**
@@ -67,7 +67,7 @@ function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequen
 function fnIdref (_dynamicContext, executionParameters, _staticContext, idSequence, targetNodeSequence) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
-		return Sequence.empty();
+		return SequenceFactory.empty();
 	}
 	const domFacade = executionParameters.domFacade;
 	/**
@@ -97,7 +97,7 @@ function fnIdref (_dynamicContext, executionParameters, _staticContext, idSequen
 					return isMatchingIdRefById[idRef];
 				});
 			});
-	return Sequence.create(matchingNodes.map(createNodeValue));
+	return SequenceFactory.create(matchingNodes.map(createNodeValue));
 }
 
 export default {
@@ -117,7 +117,7 @@ export default {
 			argumentTypes: ['xs:string*'],
 			returnType: 'element()*',
 			callFunction: function (dynamicContext, executionParameters, _staticContext, strings) {
-				return fnId(dynamicContext, executionParameters, _staticContext, strings, Sequence.singleton(dynamicContext.contextItem));
+				return fnId(dynamicContext, executionParameters, _staticContext, strings, SequenceFactory.singleton(dynamicContext.contextItem));
 			}
 		},
 
@@ -135,7 +135,7 @@ export default {
 			argumentTypes: ['xs:string*'],
 			returnType: 'node()*',
 			callFunction: function (dynamicContext, executionParameters, _staticContext, strings) {
-				return fnIdref(dynamicContext, executionParameters, _staticContext, strings, Sequence.singleton(dynamicContext.contextItem));
+				return fnIdref(dynamicContext, executionParameters, _staticContext, strings, SequenceFactory.singleton(dynamicContext.contextItem));
 			}
 		}
 	],

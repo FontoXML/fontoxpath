@@ -1,5 +1,5 @@
 import isSameMapKey from './isSameMapKey';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 import zipSingleton from '../util/zipSingleton';
 
@@ -16,7 +16,7 @@ export default function mapGet (_dynamicContext, _executionParameters, _staticCo
 		});
 
 		if (!matchingPair) {
-			return Sequence.empty();
+			return SequenceFactory.empty();
 		}
 		return matchingPair.value();
 	});

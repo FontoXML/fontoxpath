@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 import DomFacade from '../../DomFacade';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
 import { DONE_TOKEN, ready } from '../util/iterators';
@@ -9,10 +9,10 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 /**
  * @param  {string}       intersectOrExcept
  * @param  {!DomFacade}   domFacade
- * @param  {!Sequence}    sequence
+ * @param  {!ISequence}    sequence
  * @param  {?}            expectedResultOrder
  *
- * @return {!Sequence}
+ * @return {!ISequence}
  */
 function ensureSortedSequence (intersectOrExcept, domFacade, sequence, expectedResultOrder) {
 	return sequence.mapAll(values => {
@@ -20,15 +20,15 @@ function ensureSortedSequence (intersectOrExcept, domFacade, sequence, expectedR
 			throw new Error(`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`);
 		}
 		if (expectedResultOrder === Expression.RESULT_ORDERINGS.SORTED) {
-			return Sequence.create(values);
+			return SequenceFactory.create(values);
 
 		}
 		if (expectedResultOrder === Expression.RESULT_ORDERINGS.REVERSE_SORTED) {
-			return Sequence.create(values.reverse());
+			return SequenceFactory.create(values.reverse());
 		}
 
 		// Unsorted
-		return Sequence.create(sortNodeValues(domFacade, values));
+		return SequenceFactory.create(sortNodeValues(domFacade, values));
 	});
 }
 
@@ -78,7 +78,7 @@ class IntersectExcept extends Expression {
 
 		let done = false;
 		let secondIteratorDone = false;
-		return Sequence.create({
+		return SequenceFactory.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;

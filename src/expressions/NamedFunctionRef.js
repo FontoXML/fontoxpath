@@ -1,6 +1,6 @@
 import Expression from './Expression';
 import Specificity from './Specificity';
-import Sequence from './dataTypes/Sequence';
+import SequenceFactory from './dataTypes/SequenceFactory';
 import functionRegistry from './functions/functionRegistry';
 import FunctionValue from './dataTypes/FunctionValue';
 import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
@@ -65,7 +65,7 @@ class NamedFunctionRef extends Expression {
 			arity: this._arity,
 			returnType: this._functionProperties.returnType
 		});
-		return Sequence.singleton(functionItem);
+		return SequenceFactory.singleton(functionItem);
 
 	}
 }

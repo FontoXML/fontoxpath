@@ -1,4 +1,5 @@
-import Sequence from './Sequence';
+import ISequence from './ISequence';
+import SequenceFactory from './SequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
@@ -7,7 +8,7 @@ import RestArgument from './RestArgument';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import Value from './Value';
 
-type FunctionSignature = (DynamicContext, ExecutionParameters, StaticContext, ...Sequence) => Sequence;
+type FunctionSignature = (DynamicContext, ExecutionParameters, StaticContext, ...Sequence) => ISequence;
 
 function expandRestArgumentToArity (argumentTypes, arity) {
 	let indexOfRest = -1;
@@ -27,7 +28,7 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 	return argumentTypes;
 }
 
-class FunctionValue extends Value<any> {
+class FunctionValue extends Value {
 	value: FunctionSignature;
 	private _localName: string;
 	private _namespaceURI: string;
@@ -45,7 +46,7 @@ class FunctionValue extends Value<any> {
 		arity: number,
 		returnType: TypeDeclaration
 	}) {
-		super();
+		super("function(*)", null);
 
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
@@ -53,14 +54,12 @@ class FunctionValue extends Value<any> {
 		this._arity = arity;
 		this._returnType = returnType;
 		this._namespaceURI = namespaceURI;
-
-		this.type = 'function(*)';
 	}
 
 	/**
 	 * Apply these arguments to curry them into a new function
 	 * @param   {!Array<?Sequence>}  appliedArguments
-	 * @return  {!Sequence}
+	 * @return  {!ISequence}
 	 */
 	applyArguments (appliedArguments) {
 		const fn = this.value;
@@ -84,7 +83,7 @@ class FunctionValue extends Value<any> {
 			});
 			return fn.apply(undefined, [dynamicContext, executionParameters, staticContext].concat(allArguments));
 		}
-		const argumentTypes = appliedArguments.reduce(function (indices, arg, index) {
+	const argumentTypes = appliedArguments.reduce(function (indices, arg, index) {
 			if (arg === null) {
 				indices.push(this._argumentTypes[index]);
 			}
@@ -100,7 +99,7 @@ class FunctionValue extends Value<any> {
 			returnType: this._returnType
 		});
 
-		return Sequence.singleton(functionItem);
+		return SequenceFactory.singleton(functionItem);
 	}
 
 	/**

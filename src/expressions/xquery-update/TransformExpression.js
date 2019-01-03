@@ -5,7 +5,7 @@ import { mergeUpdates } from './pulRoutines';
 import { ready } from '../util/iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import { errXUTY0013, errXUDY0014, errXUDY0037 } from './XQueryUpdateFacilityErrors';
 import { applyUpdates } from './pulRoutines';
@@ -109,7 +109,7 @@ class TransformExpression extends UpdatingExpression {
 
 						// The variable name is bound to the top-level copied node generated in the previous step. The scope of this variable binding includes all subexpressions of the containing copy modify expression that appear after the variable binding clause, including the source expressions of later variable bindings, but it does not include the source expression to which the current variable name is bound.
 						dynamicContext = dynamicContext.scopeWithVariableBindings({
-							[variableBinding.registeredVariable]: () => Sequence.singleton(copiedNodes)
+							[variableBinding.registeredVariable]: () => SequenceFactory.singleton(copiedNodes)
 						});
 					}
 				}

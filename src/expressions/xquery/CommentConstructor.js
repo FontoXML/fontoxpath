@@ -3,7 +3,7 @@ import Specificity from '../Specificity';
 
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 /**
  * @extends {Expression}
@@ -27,7 +27,7 @@ class CommentConstructor extends Expression {
 	evaluate (_dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 		if (!this._expr) {
-			return Sequence.singleton(createNodeValue(nodesFactory.createComment('')));
+			return SequenceFactory.singleton(createNodeValue(nodesFactory.createComment('')));
 		}
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
 		return sequence
@@ -39,7 +39,7 @@ class CommentConstructor extends Expression {
 					throw new Error('XQDY0072: The contents of the data of a comment may not include "-->"');
 				}
 
-				return Sequence.singleton(createNodeValue(nodesFactory.createComment(content)));
+				return SequenceFactory.singleton(createNodeValue(nodesFactory.createComment(content)));
 			});
 	}
 }

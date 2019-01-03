@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -35,7 +35,7 @@ function subSequence (sequence, start, length) {
 		}
 		newSequenceLength = Math.max(0, endIndex - startIndex);
 	}
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			while (i < start) {
 				const val = iterator.next();
@@ -135,9 +135,9 @@ function castItemsForMinMax (items) {
  */
 function fnEmpty (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.switchCases({
-		empty: () => Sequence.singletonTrueSequence(),
-		singleton: () => Sequence.singletonFalseSequence(),
-		multiple: () => Sequence.singletonFalseSequence()
+		empty: () => SequenceFactory.singletonTrueSequence(),
+		singleton: () => SequenceFactory.singletonFalseSequence(),
+		multiple: () => SequenceFactory.singletonFalseSequence()
 	});
 }
 
@@ -146,9 +146,9 @@ function fnEmpty (_dynamicContext, _executionParameters, _staticContext, sequenc
  */
 function fnExists (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	return sequence.switchCases({
-		empty: () => Sequence.singletonFalseSequence(),
-		singleton: () => Sequence.singletonTrueSequence(),
-		multiple: () => Sequence.singletonTrueSequence()
+		empty: () => SequenceFactory.singletonFalseSequence(),
+		singleton: () => SequenceFactory.singletonTrueSequence(),
+		multiple: () => SequenceFactory.singletonTrueSequence()
 	});
 }
 
@@ -188,7 +188,7 @@ function fnInsertBefore (_dynamicContext, _executionParameters, _staticContext, 
 	}
 
 	sequenceValue.splice.apply(sequenceValue, [effectivePosition - 1, 0].concat(inserts.getAllValues()));
-	return Sequence.create(sequenceValue);
+	return SequenceFactory.create(sequenceValue);
 }
 
 /**
@@ -198,17 +198,17 @@ function fnRemove (_dynamicContext, _executionParameters, _staticContext, sequen
 	const effectivePosition = position.first().value;
 	const sequenceValue = sequence.getAllValues();
 	if (!sequenceValue.length || effectivePosition < 1 || effectivePosition > sequenceValue.length) {
-		return Sequence.create(sequenceValue);
+		return SequenceFactory.create(sequenceValue);
 	}
 	sequenceValue.splice(effectivePosition - 1, 1);
-	return Sequence.create(sequenceValue);
+	return SequenceFactory.create(sequenceValue);
 }
 
 /**
  * @type {!FunctionDefinitionType}
  */
 function fnReverse (_dynamicContext, _executionParameters, _staticContext, sequence) {
-	return sequence.mapAll(allValues => Sequence.create(allValues.reverse()));
+	return sequence.mapAll(allValues => SequenceFactory.create(allValues.reverse()));
 }
 
 /**
@@ -219,24 +219,24 @@ function fnSubsequence (_dynamicContext, _executionParameters, _staticContext, s
 		[startSequence, lengthSequence],
 		([startVal, lengthVal]) => {
 			if (startVal.value === Infinity) {
-				return Sequence.empty();
+				return SequenceFactory.empty();
 			}
 			if (startVal.value === -Infinity) {
 				if (lengthVal && lengthVal.value === Infinity) {
-					return Sequence.empty();
+					return SequenceFactory.empty();
 				}
 				return sequence;
 			}
 			if (lengthVal) {
 				if (isNaN(lengthVal.value)) {
-					return Sequence.empty();
+					return SequenceFactory.empty();
 				}
 				if (lengthVal.value === Infinity) {
 					lengthVal = null;
 				}
 			}
 			if (isNaN(startVal.value)) {
-				return Sequence.empty();
+				return SequenceFactory.empty();
 			}
 			return subSequence(
 				sequence,
@@ -264,7 +264,7 @@ function fnDeepEqual (dynamicContext, executionParameters, staticContext, parame
 			parameter1,
 			parameter2);
 
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (hasPassed) {
 				return DONE_TOKEN;
@@ -284,7 +284,7 @@ function fnDeepEqual (dynamicContext, executionParameters, staticContext, parame
  */
 function fnCount (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	let hasPassed = false;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			if (hasPassed) {
 				return DONE_TOKEN;
@@ -321,16 +321,16 @@ function fnAvg (_dynamicContext, _executionParameters, _staticContext, sequence)
 	if (items.every(function (item) {
 		return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
 	})) {
-		return Sequence.singleton(createAtomicValue(resultValue, 'xs:double'));
+		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
 	if (items.every(function (item) {
 		return isSubtypeOf(item.type, 'xs:decimal');
 	})) {
-		return Sequence.singleton(createAtomicValue(resultValue, 'xs:decimal'));
+		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
 
-	return Sequence.singleton(createAtomicValue(resultValue, 'xs:float'));
+	return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
 }
 
 /**
@@ -344,7 +344,7 @@ function fnMax (_dynamicContext, _executionParameters, _staticContext, sequence)
 	var items = castItemsForMinMax(sequence.getAllValues());
 
 	// Use first element in array as initial value
-	return Sequence.singleton(
+	return SequenceFactory.singleton(
 		items.reduce(function (max, item) {
 			return max.value < item.value ? item : max;
 		}));
@@ -361,7 +361,7 @@ function fnMin (_dynamicContext, _executionParameters, _staticContext, sequence)
 	var items = castItemsForMinMax(sequence.getAllValues());
 
 	// Use first element in array as initial value
-	return Sequence.singleton(
+	return SequenceFactory.singleton(
 		items.reduce(function (min, item) {
 			return min.value > item.value ? item : min;
 		}));
@@ -389,22 +389,22 @@ function fnSum (_dynamicContext, _executionParameters, _staticContext, sequence,
 	if (items.every(function (item) {
 		return isSubtypeOf(item.type, 'xs:integer');
 	})) {
-		return Sequence.singleton(createAtomicValue(resultValue, 'xs:integer'));
+		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:integer'));
 	}
 
 	if (items.every(function (item) {
 		return isSubtypeOf(item.type, 'xs:double');
 	})) {
-		return Sequence.singleton(createAtomicValue(resultValue, 'xs:double'));
+		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
 	if (items.every(function (item) {
 		return isSubtypeOf(item.type, 'xs:decimal');
 	})) {
-		return Sequence.singleton(createAtomicValue(resultValue, 'xs:decimal'));
+		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
 
-	return Sequence.singleton(createAtomicValue(resultValue, 'xs:float'));
+	return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
 }
 
 /**
@@ -458,7 +458,7 @@ function fnFilter (dynamicContext, executionParameters, staticContext, sequence,
 		// Transform argument
 		const transformedArgument = transformArgument(
 			callbackArgumentTypes[0],
-			Sequence.singleton(item),
+			SequenceFactory.singleton(item),
 			executionParameters,
 			'fn:filter');
 		const functionCallResult = callbackFn.value.call(
@@ -493,7 +493,7 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 
 	const outerIterator = sequence.value;
 	let innerIterator;
-	return Sequence.create({
+	return SequenceFactory.create({
 		next: () => {
 			while (true) {
 				if (!innerIterator) {
@@ -505,7 +505,7 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 
 					const transformedArgument = transformArgument(
 						callbackArgumentTypes[0],
-						Sequence.singleton(/** @type {!Value} */(item.value)),
+						SequenceFactory.singleton(/** @type {!Value} */(item.value)),
 						executionParameters,
 						'fn:for-each');
 					const nextSequence = callbackFn.value.call(
@@ -554,7 +554,7 @@ function fnFoldLeft (dynamicContext, executionParameters, staticContext, sequenc
 				'fn:fold-left');
 			const currentArg = transformArgument(
 				callbackArgumentTypes[1],
-				Sequence.singleton(current),
+				SequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-left');
 			return callbackFn.value.call(
@@ -594,7 +594,7 @@ function fnFoldRight (dynamicContext, executionParameters, staticContext, sequen
 				'fn:fold-right');
 			const currentArg = transformArgument(
 				callbackArgumentTypes[1],
-				Sequence.singleton(current),
+				SequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-right');
 			return callbackFn.value.call(
@@ -672,7 +672,7 @@ export default {
 			argumentTypes: ['item()*', 'xs:double'],
 			returnType: 'item()*',
 			callFunction: (dynamicContext, executionParameters, _staticContext, sequence, start) =>
-				fnSubsequence(dynamicContext, executionParameters, _staticContext, sequence, start, Sequence.empty())
+				fnSubsequence(dynamicContext, executionParameters, _staticContext, sequence, start, SequenceFactory.empty())
 		},
 
 		{
@@ -767,7 +767,7 @@ export default {
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType',
 			callFunction: function (dynamicContext, executionParameters, _staticContext, sequence) {
-				return fnSum(dynamicContext, executionParameters, _staticContext, sequence, Sequence.singleton(createAtomicValue(0, 'xs:integer')));
+				return fnSum(dynamicContext, executionParameters, _staticContext, sequence, SequenceFactory.singleton(createAtomicValue(0, 'xs:integer')));
 			}
 		},
 

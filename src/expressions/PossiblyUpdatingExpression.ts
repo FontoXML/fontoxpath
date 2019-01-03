@@ -1,14 +1,15 @@
 import Expression from './Expression';
 import { DONE_TOKEN, ready, notReady, AsyncIterator } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
-import Sequence from './dataTypes/Sequence';
+import SequenceFactory from './dataTypes/SequenceFactory';
+import ISequence from './dataTypes/ISequence';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Value from './dataTypes/Value';
 import { PendingUpdate } from './xquery-update/PendingUpdate';
 
 export class UpdatingExpressionResult {
-	xdmValue: Array<Value<any>>
+	xdmValue: Array<Value>
 	pendingUpdateList: Array<PendingUpdate>
 	constructor (/** !Array<!Value> */values, /** !Array<!PendingUpdate> */ pendingUpdateList) {
 		this.xdmValue = values;
@@ -26,7 +27,7 @@ abstract class PossiblyUpdatingExpression extends Expression {
 	abstract performFunctionalEvaluation (
 		_dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		_sequenceCallbacks: Array<(DynamicContext) => Sequence>) : Sequence;
+		_sequenceCallbacks: Array<(DynamicContext) => ISequence>) : ISequence;
 
 	evaluate (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return this.performFunctionalEvaluation(
@@ -52,7 +53,7 @@ abstract class PossiblyUpdatingExpression extends Expression {
 					let values;
 					let done = false;
 					let i = 0;
-					return Sequence.create({
+					return SequenceFactory.create({
 						next: () => {
 							if (done) {
 								return DONE_TOKEN;
@@ -90,7 +91,7 @@ abstract class PossiblyUpdatingExpression extends Expression {
 					return notReady(allValues.promise);
 				}
 				done = true;
-				return ready(new UpdatingExpressionResult(allValues.value as Array<Value<any>>, updateList));
+				return ready(new UpdatingExpressionResult(allValues.value as Array<Value>, updateList));
 			}
 		};
 	}

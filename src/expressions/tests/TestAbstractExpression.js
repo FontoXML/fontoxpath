@@ -1,5 +1,5 @@
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 import DynamicContext from '../DynamicContext';
 import AtomicValue from '../dataTypes/AtomicValue';
@@ -23,7 +23,7 @@ class TestAbstractExpression extends Expression {
 	}
 
 	evaluate (dynamicContext, _executionParameters) {
-		return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem) ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
+		return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem) ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
 	}
 
 }

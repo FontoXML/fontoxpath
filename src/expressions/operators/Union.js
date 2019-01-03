@@ -1,6 +1,6 @@
 import Specificity from '../Specificity';
 import Expression from '../Expression';
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import concatSequences from '../util/concatSequences';
@@ -40,7 +40,7 @@ class Union extends Expression {
 					throw new Error('XPTY0004: The sequences to union are not of type node()*');
 				}
 				const sortedValues = sortNodeValues(executionParameters.domFacade, allValues);
-				return Sequence.create(sortedValues);
+				return SequenceFactory.create(sortedValues);
 			});
 	}
 }

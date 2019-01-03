@@ -1,4 +1,4 @@
-import Sequence from '../../dataTypes/Sequence';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
 import canCastToType from '../../dataTypes/canCastToType';
 import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
@@ -31,21 +31,21 @@ class CastableAsOperator extends Expression {
 
 	evaluate (dynamicContext, executionParameters) {
 		/**
-		 * @type {!Sequence}
+		 * @type {!ISequence}
 		 */
 		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters);
 		return evaluatedExpression.switchCases({
 			empty: () => {
 				if (!this._allowsEmptySequence) {
-					return Sequence.singletonFalseSequence();
+					return SequenceFactory.singletonFalseSequence();
 				}
-				return Sequence.singletonTrueSequence();
+				return SequenceFactory.singletonTrueSequence();
 			},
 			singleton: () => {
 				return evaluatedExpression.map(value => canCastToType(value, this._targetType) ? trueBoolean : falseBoolean);
 			},
 			multiple: () => {
-				return Sequence.singletonFalseSequence();
+				return SequenceFactory.singletonFalseSequence();
 			}
 		});
 	}

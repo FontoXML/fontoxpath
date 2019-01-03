@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import AtomicValue from '../dataTypes/AtomicValue';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -14,7 +14,7 @@ function genericDataTypeConstructor (dataType, _dynamicContext, _executionParame
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(castToType(sequence.first(), dataType));
+	return SequenceFactory.singleton(castToType(sequence.first(), dataType));
 }
 
 /**
@@ -38,14 +38,14 @@ function xsQName (_dynamicContext, _executionParameters, staticContext, sequence
 	if (!lexicalQName.includes(':')) {
 		// Only a local part
 		const namespaceURI = staticContext.resolveNamespace('');
-		return Sequence.singleton(createAtomicValue(new QName('', namespaceURI, lexicalQName), 'xs:QName'));
+		return SequenceFactory.singleton(createAtomicValue(new QName('', namespaceURI, lexicalQName), 'xs:QName'));
 	}
 	const [prefix, localPart] = lexicalQName.split(':');
 	const namespaceURI = staticContext.resolveNamespace(prefix);
 	if (!namespaceURI) {
 		throw new Error(`FONS0004: The value ${lexicalQName} can not be cast to a QName. Did you mean to use fn:QName?`);
 	}
-	return Sequence.singleton(createAtomicValue(new QName(prefix, namespaceURI, localPart), 'xs:QName'));
+	return SequenceFactory.singleton(createAtomicValue(new QName(prefix, namespaceURI, localPart), 'xs:QName'));
 }
 
 export default {

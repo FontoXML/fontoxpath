@@ -1,4 +1,4 @@
-import Sequence from '../../dataTypes/Sequence';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
 import castToType from '../../dataTypes/castToType';
 
@@ -29,7 +29,7 @@ class castAsOperator extends Expression {
 
 	evaluate (dynamicContext, executionParameters) {
 		/**
-		 * @type {Sequence}
+		 * @type {ISequence}
 		 */
 		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext, executionParameters).atomize(executionParameters);
 		return evaluatedExpression.switchCases({
@@ -37,7 +37,7 @@ class castAsOperator extends Expression {
 				if (!this._allowsEmptySequence) {
 					throw new Error('XPTY0004: Sequence to cast is empty while target type is singleton.');
 				}
-				return Sequence.empty();
+				return SequenceFactory.empty();
 			},
 			singleton: () => {
 				return evaluatedExpression.map(value => castToType(value, this._targetType));

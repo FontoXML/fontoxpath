@@ -1,4 +1,4 @@
-import Sequence from '../dataTypes/Sequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import DateTime from '../dataTypes/valueTypes/DateTime';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -47,7 +47,7 @@ function fnDateTime (_dynamicContext, _executionParameters, staticContext, seque
 		time.getSeconds(),
 		time.getSecondFraction(),
 		timezoneToUse);
-	return Sequence.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
+	return SequenceFactory.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
 }
 
 /**
@@ -57,7 +57,7 @@ function fnYearFromDateTime (_dynamicContext, _executionParameters, staticContex
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getYear(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getYear(), 'xs:integer'));
 }
 
 /**
@@ -67,7 +67,7 @@ function fnMonthFromDateTime (_dynamicContext, _executionParameters, staticConte
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getMonth(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getMonth(), 'xs:integer'));
 }
 
 /**
@@ -77,7 +77,7 @@ function fnDayFromDateTime (_dynamicContext, _executionParameters, staticContext
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getDay(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getDay(), 'xs:integer'));
 }
 
 /**
@@ -87,7 +87,7 @@ function fnHoursFromDateTime (_dynamicContext, _executionParameters, staticConte
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getHours(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getHours(), 'xs:integer'));
 }
 
 /**
@@ -97,7 +97,7 @@ function fnMinutesFromDateTime (_dynamicContext, _executionParameters, staticCon
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer'));
 }
 
 /**
@@ -107,7 +107,7 @@ function fnSecondsFromDateTime (_dynamicContext, _executionParameters, staticCon
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return Sequence.singleton(createAtomicValue(sequence.first().value.getFullSeconds(), 'xs:decimal'));
+	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getFullSeconds(), 'xs:decimal'));
 }
 /**
  * @type {!FunctionDefinitionType}
@@ -119,10 +119,10 @@ function fnTimezoneFromDateTime (_dynamicContext, _executionParameters, staticCo
 
 	const timezone = sequence.first().value.getTimezone();
 	if (!timezone) {
-		return Sequence.empty();
+		return SequenceFactory.empty();
 	}
 
-	return Sequence.singleton(createAtomicValue(timezone, 'xs:dayTimeDuration'));
+	return SequenceFactory.singleton(createAtomicValue(timezone, 'xs:dayTimeDuration'));
 }
 
 export default {
