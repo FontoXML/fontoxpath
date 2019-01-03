@@ -1,14 +1,17 @@
 import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from '../../util/iterators';
-import ISequence from '../ISequence';
+import ISequence, { SwitchCasesCases } from '../ISequence';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 import Value from '../Value';
+import SequenceFactory from '../SequenceFactory';
+import ExecutionParameters from '../../ExecutionParameters';
+import atomize from '../atomize';
 
 export default class SingletonSequence implements ISequence {
 	value: AsyncIterator<Value>;
 
 	private _effectiveBooleanValue: boolean;
 
-	constructor(private readonly _onlyValue: Value) {
+	constructor(private readonly _sequenceFactory: typeof SequenceFactory, private readonly _onlyValue: Value) {
 		let hasPassed = false;
 		this.value = {
 			next: () => {
@@ -22,8 +25,18 @@ export default class SingletonSequence implements ISequence {
 		this._effectiveBooleanValue = null;
 	}
 
+	atomize(executionParameters: ExecutionParameters): ISequence {
+		return this.map(value => atomize(value, executionParameters));
+	}
+
 	expandSequence(): ISequence {
 		return this;
+	}
+
+	filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
+		return callback(this._onlyValue, 0, this) ?
+			this :
+			this._sequenceFactory.create();
 	}
 
 	first(): Value | null {
@@ -47,6 +60,18 @@ export default class SingletonSequence implements ISequence {
 
 	isSingleton(): boolean {
 		return true;
+	}
+
+	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
+		return this._sequenceFactory.create(callback(this._onlyValue, 0, this));
+	}
+
+	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence {
+		return callback([this._onlyValue]);
+	}
+
+	switchCases(cases: SwitchCasesCases): ISequence {
+
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {

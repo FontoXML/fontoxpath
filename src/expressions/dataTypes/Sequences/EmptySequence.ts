@@ -1,6 +1,7 @@
 import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from '../../util/iterators';
-import ISequence from '../ISequence';
+import ISequence, { SwitchCasesCases } from '../ISequence';
 import Value from '../Value';
+import ExecutionParameters from '../../ExecutionParameters';
 
 export default class EmptySequence implements ISequence {
 	value: AsyncIterator<Value>;
@@ -11,7 +12,15 @@ export default class EmptySequence implements ISequence {
 		};
 	}
 
+	atomize(_executionParameters: ExecutionParameters): ISequence {
+		return this;
+	}
+
 	expandSequence(): ISequence {
+		return this;
+	}
+
+	filter(_callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
 		return this;
 	}
 
@@ -33,6 +42,18 @@ export default class EmptySequence implements ISequence {
 
 	isSingleton(): boolean {
 		return false;
+	}
+
+	map(_callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
+		return this;
+	}
+
+	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence {
+		return callback([]);
+	}
+
+	switchCases(cases: SwitchCasesCases): ISequence {
+
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {

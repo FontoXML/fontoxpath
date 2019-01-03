@@ -10,7 +10,7 @@ import IteratorBackedSequence from './Sequences/IteratorBackedSequence';
 const emptySequence = new EmptySequence();
 
 export default class SequenceFactory {
-	static create(value: Value | Array<Value> | AsyncIterator<Value> = null, predictedLength = null): ISequence {
+	static create(value: Value | Array<Value> | AsyncIterator<Value> = null, predictedLength: number = null): ISequence {
 		if (value === null) {
 			return emptySequence;
 		}
@@ -19,20 +19,20 @@ export default class SequenceFactory {
 				case 0:
 					return emptySequence;
 				case 1:
-					return new SingletonSequence(value[0]);
+					return new SingletonSequence(this, value[0]);
 				default:
-					return new ArrayBackedSequence(value);
+					return new ArrayBackedSequence(this, value);
 			}
 		}
 
 		if ((<AsyncIterator<Value>>value).next) {
-			return new IteratorBackedSequence(<AsyncIterator<Value>>value, predictedLength);
+			return new IteratorBackedSequence(this, <AsyncIterator<Value>>value, predictedLength);
 		}
-		return new SingletonSequence((<Value>value));
+		return new SingletonSequence(this, (<Value>value));
 	}
 
-	static singleton(value: Value) {
-		return new SingletonSequence(value);
+	static singleton(value: Value): ISequence {
+		return new SingletonSequence(this, value);
 	}
 
 	static empty() {

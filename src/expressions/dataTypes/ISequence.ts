@@ -1,21 +1,23 @@
 import Value from './Value';
 import { AsyncIterator, AsyncResult } from '../util/iterators';
-// import ExecutionParameters from '../ExecutionParameters';
+import ExecutionParameters from '../ExecutionParameters';
+
+export class SwitchCasesCases {
+	empty: (sequence: ISequence) => ISequence;
+	singleton?: (sequence: ISequence) => ISequence;
+	multiple?: (sequence: ISequence) => ISequence;
+	default?: (sequence: ISequence) => ISequence;
+}
 
 export default interface ISequence {
 	value: AsyncIterator<Value>;
 
-	// atomize(executionParameters: ExecutionParameters): ISequence;
+	atomize(executionParameters: ExecutionParameters): ISequence;
 	expandSequence(): ISequence;
-	// filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence;
-	// map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence;
-	// mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence;
-	// switchCases(cases: {
-	// 	empty: (sequence: ISequence) => ISequence,
-	// 	singleton: (sequence: ISequence) => ISequence,
-	// 	multiple: (sequence: ISequence) => ISequence,
-	// 	default: (sequence: ISequence) => ISequence
-	// }): ISequence;
+	filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence;
+	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence;
+	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence;
+	switchCases(cases: SwitchCasesCases): ISequence;
 
 	first(): Value | null;
 	getAllValues(): Array<Value>;

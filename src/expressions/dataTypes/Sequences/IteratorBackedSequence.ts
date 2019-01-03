@@ -1,10 +1,12 @@
 import { DONE_TOKEN, ready, notReady, AsyncIterator, AsyncResult } from '../../util/iterators';
 import Value from '../Value';
-import ISequence from '../ISequence';
+import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
-import ArrayBackedSequence from './ArrayBackedSequence';
+import SequenceFactory from '../SequenceFactory';
+import ExecutionParameters from '../../ExecutionParameters';
+import atomize from '../atomize';
 
 export default class IteratorBackedSequence implements ISequence {
 	value: AsyncIterator<Value>;
@@ -14,7 +16,10 @@ export default class IteratorBackedSequence implements ISequence {
 	private _currentPosition: number;
 	private _length: number;
 
-	constructor(valueIterator: AsyncIterator<Value>, predictedLength: number = null) {
+	constructor(
+		private readonly _sequenceFactory: typeof SequenceFactory,
+		valueIterator: AsyncIterator<Value>,
+		predictedLength: number = null) {
 		this.value = {
 			next: () => {
 				if (this._length !== null && this._currentPosition >= this._length) {
@@ -43,12 +48,40 @@ export default class IteratorBackedSequence implements ISequence {
 		this._length = predictedLength;
 	}
 
+	atomize(executionParameters: ExecutionParameters): ISequence {
+		return this.map(value => atomize(value, executionParameters));
+	}
+
 	expandSequence(): ISequence {
 		const values = this.tryGetAllValues();
 		if (!values.ready) {
 			throw new Error('Can not expand sequence which contains async entries.');
 		}
-		return new ArrayBackedSequence(values.value);
+		return this._sequenceFactory.create(values.value);
+	}
+
+	filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
+		let i = -1;
+		const iterator = this.value;
+
+		return this._sequenceFactory.create({
+			next: () => {
+				i++;
+				let value = iterator.next();
+				while (!value.done) {
+					if (!value.ready) {
+						return value;
+					}
+					if (callback(/** @type {!Value} */(value.value), i, this)) {
+						return value;
+					}
+
+					i++;
+					value = iterator.next();
+				}
+				return value;
+			}
+		});
 	}
 
 	first(): Value | null {
@@ -61,7 +94,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 	getAllValues(): Array<Value> {
 		const values = this.tryGetAllValues();
-		if(!values.ready) {
+		if (!values.ready) {
 			throw new Error('Sequence contains async values.');
 		}
 		return values.value;
@@ -69,7 +102,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 	getEffectiveBooleanValue(): boolean {
 		const effectiveBooleanValue = this.tryGetEffectiveBooleanValue();
-		if(!effectiveBooleanValue.ready) {
+		if (!effectiveBooleanValue.ready) {
 			throw new Error('Sequence contains async values.');
 		}
 		return effectiveBooleanValue.value;
@@ -112,6 +145,51 @@ export default class IteratorBackedSequence implements ISequence {
 		}
 		this.reset(oldPosition);
 		return secondValue.done;
+	}
+
+	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
+		let i = 0;
+		const iterator = this.value;
+		return this._sequenceFactory.create({
+			next: () => {
+				const value = iterator.next();
+				if (value.done || !value.ready) {
+					return value;
+				}
+				return ready(callback(value.value, i++, this));
+			}
+		});
+	}
+
+	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence {
+		const iterator = this.value;
+		let mappedResultsIterator;
+		const allResults = [];
+		let isReady = false;
+		let readyPromise = null;
+		(function processNextResult () {
+			for (let value = iterator.next(); !value.done; value = iterator.next()) {
+				if (!value.ready) {
+					readyPromise = value.promise.then(processNextResult);
+					return;
+				}
+				allResults.push(value.value);
+			}
+			mappedResultsIterator = callback(allResults).value;
+			isReady = true;
+		})();
+		return this._sequenceFactory.create({
+			next: () => {
+				if (!isReady) {
+					return notReady(readyPromise);
+				}
+				return mappedResultsIterator.next();
+			}
+		});
+	}
+
+	switchCases(cases: SwitchCasesCases): ISequence {
+
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {
