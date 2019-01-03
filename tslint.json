@@ -5,6 +5,7 @@
 			true,
 			"check-space"
 		],
+		"curly": true,
 		"eofline": true,
 		"indent": [
 			true,
@@ -26,7 +27,7 @@
 		],
 		"quotemark": [
 			true,
-			"double",
+			"single",
 			"avoid-escape"
 		],
 		"semicolon": [
