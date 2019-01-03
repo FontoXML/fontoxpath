@@ -1,10 +1,10 @@
-import { DONE_TOKEN, ready, notReady, AsyncIterator, AsyncResult } from "../../util/iterators";
-import Value from "../Value";
-import ISequence from "../ISequence";
-import isSubtypeOf from "../isSubtypeOf";
-import { errFORG0006 } from "../../functions/FunctionOperationErrors";
-import getEffectiveBooleanValue from "./getEffectiveBooleanValue";
-import SequenceFactory from "../SequenceFactory";
+import { DONE_TOKEN, ready, notReady, AsyncIterator, AsyncResult } from '../../util/iterators';
+import Value from '../Value';
+import ISequence from '../ISequence';
+import isSubtypeOf from '../isSubtypeOf';
+import { errFORG0006 } from '../../functions/FunctionOperationErrors';
+import getEffectiveBooleanValue from './getEffectiveBooleanValue';
+import SequenceFactory from '../SequenceFactory';
 
 export default class IteratorBackedSequence implements ISequence {
 	value: AsyncIterator<Value>;
@@ -45,15 +45,30 @@ export default class IteratorBackedSequence implements ISequence {
 
 	expandSequence(): ISequence {
 		const values = this.tryGetAllValues();
-		if(!values.ready) {
-			throw new Error("Can not expand sequence which contains async entries.");
+		if (!values.ready) {
+			throw new Error('Can not expand sequence which contains async entries.');
 		}
 		return SequenceFactory.create(values.value);
 	}
 
+	first(): Value | null {
+		const first = this.tryGetFirst();
+		if (!first.ready) {
+			throw new Error('First entry is async.');
+		}
+		return first.value;
+	}
+
+	isEmpty(): boolean {
+		if (this._length === 0) {
+			return true;
+		}
+		return this.first() === null;
+	}
+
 	tryGetAllValues(): AsyncResult<Array<Value>> {
 		if (this._currentPosition >= 2 && this._length !== this._cachedValues.length) {
-			throw new Error("Implementation error: Sequence Iterator has progressed.");
+			throw new Error('Implementation error: Sequence Iterator has progressed.');
 		}
 
 		const iterator = this.value;
@@ -68,19 +83,29 @@ export default class IteratorBackedSequence implements ISequence {
 	}
 
 	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
-		const firstValue = this.tryGetFirst();
-		if (!firstValue.ready) {
-			return notReady(firstValue.promise);
+		const iterator = this.value;
+		const oldPosition = this._currentPosition;
+
+		let firstValue: Value;
+		if (this._cachedValues[0] !== undefined) {
+			firstValue = this._cachedValues[0];
+		} else {
+			const it = iterator.next();
+			if (!it.ready) {
+				return notReady(it.promise);
+			}
+			firstValue = it.value;
 		}
 
-		if (isSubtypeOf(firstValue.value.type, "node()")) {
+		if (isSubtypeOf(firstValue.value.type, 'node()')) {
+			this.reset(oldPosition);
 			return ready(true);
 		}
 
 		if (this._cachedValues[1] !== undefined) {
 			throw errFORG0006();
 		}
-		const secondValue = this.value.next();
+		const secondValue = iterator.next();
 		if (!secondValue.ready) {
 			return notReady(secondValue.promise);
 		}
@@ -88,6 +113,7 @@ export default class IteratorBackedSequence implements ISequence {
 			throw errFORG0006();
 		}
 
+		this.reset(oldPosition);
 		return ready(getEffectiveBooleanValue(firstValue.value));
 	}
 
@@ -101,6 +127,9 @@ export default class IteratorBackedSequence implements ISequence {
 		if (!firstValue.ready) {
 			return firstValue;
 		}
+
+		// No first cache entry, the current position must have been 0
+		this.reset();
 
 		if (firstValue.done) {
 			return ready(null);
@@ -116,16 +145,17 @@ export default class IteratorBackedSequence implements ISequence {
 			return ready(-1);
 		}
 
-		const iterator = this.value;
-		this._cacheAllValues = true;
+		const oldPosition = this._currentPosition;
+		const values = this.tryGetAllValues();
+		if (!values.ready) {
+			return notReady(values.promise);
+		}
 
-		let val = iterator.next();
-		while (val.ready && !val.done) {
-			val = iterator.next();
-		}
-		if (val.done) {
-			return ready(this._length);
-		}
-		return notReady(val.promise);
+		this.reset(oldPosition);
+		return ready(this._length);
+	}
+
+	private reset(to = 0) {
+		this._currentPosition = to;
 	}
 }

@@ -1,7 +1,7 @@
-import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from "../../util/iterators";
-import ISequence from "../ISequence";
-import getEffectiveBooleanValue from "./getEffectiveBooleanValue";
-import Value from "../Value";
+import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from '../../util/iterators';
+import ISequence from '../ISequence';
+import getEffectiveBooleanValue from './getEffectiveBooleanValue';
+import Value from '../Value';
 
 export default class SingletonSequence implements ISequence {
 	value: AsyncIterator<Value>;
@@ -24,6 +24,14 @@ export default class SingletonSequence implements ISequence {
 
 	expandSequence(): ISequence {
 		return this;
+	}
+
+	first(): Value | null {
+		return this._onlyValue;
+	}
+
+	isEmpty(): boolean {
+		return false;
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {

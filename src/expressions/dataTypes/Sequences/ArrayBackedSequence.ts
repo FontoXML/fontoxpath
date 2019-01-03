@@ -1,8 +1,8 @@
-import isSubtypeOf from "../isSubtypeOf";
-import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from "../../util/iterators";
-import Value from "../Value";
-import ISequence from "../ISequence";
-import { errFORG0006 } from "../../functions/FunctionOperationErrors";
+import isSubtypeOf from '../isSubtypeOf';
+import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from '../../util/iterators';
+import Value from '../Value';
+import ISequence from '../ISequence';
+import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 
 export default class ArrayBackedSequence implements ISequence {
 	value: AsyncIterator<Value>;
@@ -24,12 +24,20 @@ export default class ArrayBackedSequence implements ISequence {
 		return this;
 	}
 
+	first(): Value | null {
+		return this._values[0];
+	}
+
+	isEmpty(): boolean {
+		return false;
+	}
+
 	tryGetAllValues(): AsyncResult<Array<Value>> {
 		return ready(this._values);
 	}
 
 	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
-		if (isSubtypeOf(this._values[0].type, "node()")) {
+		if (isSubtypeOf(this._values[0].type, 'node()')) {
 			return ready(true);
 		}
 		// We always have a length > 1, or we'd be a singletonSequence

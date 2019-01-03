@@ -1,7 +1,7 @@
-import { falseBoolean } from "../createAtomicValue";
-import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from "../../util/iterators";
-import ISequence from "../ISequence";
-import Value from "../Value";
+import { falseBoolean } from '../createAtomicValue';
+import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from '../../util/iterators';
+import ISequence from '../ISequence';
+import Value from '../Value';
 
 export default class EmptySequence implements ISequence {
 	value: AsyncIterator<Value>;
@@ -14,6 +14,14 @@ export default class EmptySequence implements ISequence {
 
 	expandSequence(): ISequence {
 		return this;
+	}
+
+	first(): Value | null {
+		return null;
+	}
+
+	isEmpty(): boolean {
+		return true;
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {
