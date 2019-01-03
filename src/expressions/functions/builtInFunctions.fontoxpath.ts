@@ -7,8 +7,6 @@ import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 
 import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-import MapValue from '../dataTypes/MapValue';
-
 import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
 
@@ -18,10 +16,7 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 
 import astHelper from '../../parsing/astHelper';
 
-/**
- * @type {!FunctionDefinitionType}
- */
-function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext, query, args) {
+let fontoxpathEvaluate: FunctionDefinitionType = function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext, query, args) {
 	let resultIterator;
 	let queryString;
 	return SequenceFactory.create({
@@ -32,10 +27,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 					return queryValue;
 				}
 				queryString = queryValue.value.value;
-				/**
-				 * @type {Object<string, function():ISequence>}
-				 */
-				const variables = /** @type {!MapValue} */ (args.first()).keyValuePairs.reduce((expandedArgs, arg) => {
+				const variables = (args.first()).keyValuePairs.reduce((expandedArgs, arg) => {
 					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value());
 					return expandedArgs;
 				}, Object.create(null));
@@ -45,7 +37,7 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 				delete variables['.'];
 
 				const ast = parseExpression(queryString, { allowXQuery: false });
-				const queryBodyContents = /** @type {!Array} */ (astHelper.followPath(ast, ['mainModule', 'queryBody', '*']));
+				const queryBodyContents = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
 
 				const selector = compileAstToExpression(queryBodyContents, { allowXQuery: false, allowUpdating: false });
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
@@ -84,12 +76,9 @@ function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext
 
 		}
 	});
-}
+};
 
-/**
- * @type {!FunctionDefinitionType}
- */
-function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext, val, howLong) {
+let fontoxpathSleep: FunctionDefinitionType = function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext, val, howLong) {
 	let doneWithSleep = false;
 	let readyPromise;
 
@@ -115,9 +104,11 @@ function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext,
 			return valueIterator.next();
 		}
 	});
-}
+};
 
-function fontoxpathVersion () {
+declare const VERSION: string | undefined;
+
+let fontoxpathVersion: FunctionDefinitionType = function fontoxpathVersion () {
 	let version;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	if (typeof VERSION === 'undefined') {
@@ -127,9 +118,9 @@ function fontoxpathVersion () {
 		version = VERSION;
 	}
 	return SequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
-}
+};
 
-function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext, url) {
+let fontoxpathFetch: FunctionDefinitionType = function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext, url) {
 	let doneWithFetch = false;
 	let result = null;
 	let done = false;
@@ -160,7 +151,7 @@ function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext,
 			return DONE_TOKEN;
 		}
 	});
-}
+};
 
 export default {
 	declarations: [

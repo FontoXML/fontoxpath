@@ -6,7 +6,7 @@ type ErrorResult = {
 };
 type SuccessResult = {
 	successful: true;
-	value: AtomicValue<any>
+	value: AtomicValue
 };
 
 type CastResult = ErrorResult | SuccessResult;

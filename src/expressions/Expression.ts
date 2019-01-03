@@ -5,21 +5,18 @@ import Specificity from './Specificity';
 import ISequence from './dataTypes/ISequence';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
-/**
- * @enum {string}
- */
-const RESULT_ORDERINGS = {
-	SORTED: 'sorted',
-	REVERSE_SORTED: 'reverse-sorted',
-	UNSORTED: 'unsorted'
-};
-
-interface OptimizationOptions {
-	resultOrder: string;
-	subtree: boolean;
-	peer: boolean;
-	canBeStaticallyEvaluated: boolean;
+enum RESULT_ORDERINGS {
+	SORTED = 'sorted',
+	REVERSE_SORTED = 'reverse-sorted',
+	UNSORTED = 'unsorted'
 }
+
+type OptimizationOptions = ({
+	resultOrder?: string;
+	subtree?: boolean;
+	peer?: boolean;
+	canBeStaticallyEvaluated?: boolean;
+});
 
 abstract class Expression {
 	specificity: Specificity;
@@ -27,9 +24,9 @@ abstract class Expression {
 	subtree: boolean;
 	peer: boolean;
 	canBeStaticallyEvaluated: boolean;
-	_childExpressions: Array<Expression>
+	_childExpressions: Array<Expression>;
 	isUpdating: boolean;
-	_eagerlyEvaluatedValue: () => ISequence
+	_eagerlyEvaluatedValue: () => ISequence;
 	expectedResultOrder: string;
 
 	/**
@@ -101,7 +98,7 @@ abstract class Expression {
 		return this.evaluate(dynamicContext, executionParameters);
 	}
 
-	abstract evaluate (_dynamicContext: DynamicContext, _executionParameters: ExecutionParameters): ISequence
+	abstract evaluate (_dynamicContext: DynamicContext, _executionParameters: ExecutionParameters): ISequence;
 
 	protected evaluateWithoutFocus (_contextlessDynamicContext: (DynamicContext|null), executionParameters:ExecutionParameters): ISequence {
 		if (this._eagerlyEvaluatedValue === null) {

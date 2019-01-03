@@ -1,5 +1,5 @@
 import Context from './Context';
-import functionRegistry from './functions/functionRegistry';
+import { getFunctionByArity } from './functions/functionRegistry';
 
 import {
 	staticallyKnownNamespaceByPrefix
@@ -16,10 +16,16 @@ export const generateGlobalVariableBindingName = variableName => `GLOBAL_${varia
  * If it does, this execution context will be used to mark the statically compiled selector as
  * specific for the evaluation context. If the XPath did not depend on the evaluation context, it
  * will be reused.
- *
- * @implements {Context}
  */
-export default class ExecutionSpecificStaticContext {
+export default class ExecutionSpecificStaticContext implements Context {
+	executionContextWasRequired: boolean;
+
+	private _namespaceResolver: any;
+	private _variableBindingByName: any;
+	private _referredVariableByName: any;
+	private _referredNamespaceByName: any;
+	private _variableValueByName: any;
+
 	constructor (namespaceResolver, variableByName) {
 		this._namespaceResolver = namespaceResolver;
 		this._variableBindingByName = Object.keys(variableByName)
@@ -85,7 +91,7 @@ export default class ExecutionSpecificStaticContext {
 
 	lookupFunction (namespaceURI, localName, arity) {
 		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
-		return functionRegistry.getFunctionByArity(namespaceURI, localName, arity);
+		return getFunctionByArity(namespaceURI, localName, arity);
 	}
 
 	getReferredNamespaces () {

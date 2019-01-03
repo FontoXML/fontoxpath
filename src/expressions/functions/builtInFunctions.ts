@@ -19,27 +19,26 @@ import builtInStringFunctions from './builtInFunctions.string';
 import builtInFontoxpathFunctions from './builtInFunctions.fontoxpath';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
-/**
- * @type {!Array<!{localName: string, namespaceURI: string, argumentTypes: !Array<string>, returnType: string, callFunction: !FunctionDefinitionType}>}
- */
-const builtInFunctions = [].concat(
-	builtInArrayFunctions.declarations,
-	builtInBooleanFunctions.declarations,
-	builtInContextFunctions.declarations,
-	builtInDataTypeConstructors.declarations,
-	builtInDatetimeFunctions.declarations,
-	builtInDebuggingFunctions.declarations,
-	builtInDurationFunctions.declarations,
-	builtInIdentifierFunctions.declarations,
-	builtInJsonFunctions.declarations,
-	builtInMapFunctions.declarations,
-	builtInMathFunctions.declarations,
-	builtInNodeFunctions.declarations,
-	builtInNumericFunctions.declarations,
-	builtInOperatorFunctions.declarations,
-	builtInQNameFunctions.declarations,
-	builtInSequencesFunctions.declarations,
-	builtInStringFunctions.declarations,
-	builtInFontoxpathFunctions.declarations);
+
+const builtInFunctions: Array<{ localName: string; namespaceURI: string; argumentTypes: Array<string>; returnType: string; callFunction: FunctionDefinitionType; }> =
+	[].concat(
+		builtInArrayFunctions.declarations,
+		builtInBooleanFunctions.declarations,
+		builtInContextFunctions.declarations,
+		builtInDataTypeConstructors.declarations,
+		builtInDatetimeFunctions.declarations,
+		builtInDebuggingFunctions.declarations,
+		builtInDurationFunctions.declarations,
+		builtInIdentifierFunctions.declarations,
+		builtInJsonFunctions.declarations,
+		builtInMapFunctions.declarations,
+		builtInMathFunctions.declarations,
+		builtInNodeFunctions.declarations,
+		builtInNumericFunctions.declarations,
+		builtInOperatorFunctions.declarations,
+		builtInQNameFunctions.declarations,
+		builtInSequencesFunctions.declarations,
+		builtInStringFunctions.declarations,
+		builtInFontoxpathFunctions.declarations);
 
 export default builtInFunctions;

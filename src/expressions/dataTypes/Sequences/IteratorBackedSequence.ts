@@ -4,7 +4,7 @@ import ISequence from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
-import SequenceFactory from '../SequenceFactory';
+import ArrayBackedSequence from './ArrayBackedSequence';
 
 export default class IteratorBackedSequence implements ISequence {
 	value: AsyncIterator<Value>;
@@ -48,7 +48,7 @@ export default class IteratorBackedSequence implements ISequence {
 		if (!values.ready) {
 			throw new Error('Can not expand sequence which contains async entries.');
 		}
-		return SequenceFactory.create(values.value);
+		return new ArrayBackedSequence(values.value);
 	}
 
 	first(): Value | null {

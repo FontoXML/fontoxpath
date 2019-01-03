@@ -1,7 +1,7 @@
 import Expression from './Expression';
 import Specificity from './Specificity';
 import SequenceFactory from './dataTypes/SequenceFactory';
-import functionRegistry from './functions/functionRegistry';
+import { getAlternativesAsStringFor } from './functions/functionRegistry';
 import FunctionValue from './dataTypes/FunctionValue';
 import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 
@@ -13,11 +13,15 @@ function buildFormattedFunctionName (functionReference) {
  * @extends {Expression}
  */
 class NamedFunctionRef extends Expression {
+	_arity: number;
+	_functionReference: { prefix: string; namespaceURI: string; localName: string; };
+	_functionProperties: any;
+
 	/**
 	 * @param  {{prefix:string, namespaceURI:?string, localName:string}}    functionReference
 	 * @param  {number}    arity
 	 */
-	constructor (functionReference, arity) {
+	constructor (functionReference: { prefix: string; namespaceURI: string | null; localName: string; }, arity: number) {
 		super(
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1
@@ -50,7 +54,7 @@ class NamedFunctionRef extends Expression {
 		this._functionProperties = staticContext.lookupFunction(namespaceURI, this._functionReference.localName, this._arity) || null;
 
 		if (!this._functionProperties) {
-			throw new Error(`XPST0017: Function ${buildFormattedFunctionName(this._functionReference)} with arity of ${this._arity} not registered. ${functionRegistry.getAlternativesAsStringFor(this._functionReference.localName)}`);
+			throw new Error(`XPST0017: Function ${buildFormattedFunctionName(this._functionReference)} with arity of ${this._arity} not registered. ${getAlternativesAsStringFor(this._functionReference.localName)}`);
 		}
 
 		super.performStaticEvaluation(staticContext);

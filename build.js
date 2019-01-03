@@ -26,7 +26,7 @@ function doPegJsBuild () {
 			return uglified.code;
 		})
 		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
-		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./src/parsing/xPathParser.raw.js', parserString, (err) => err ? reject(err) : resolve())))
+		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./built/parsing/xPathParser.raw.js', parserString, (err) => err ? reject(err) : resolve())))
 		.then(() => console.info('Parser generator done'));
 }
 
@@ -39,7 +39,7 @@ function doExpressionsBuild () {
 			generate_exports: true,
 			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',
-			source_map_location_mapping: '"src|../src"',
+			source_map_location_mapping: '"built|../built"',
 			jscomp_warning: reportUnknownTypes ? ['reportUnknownTypes'] : [],
 			jscomp_error: [
 				'accessControls',
@@ -89,8 +89,8 @@ function doExpressionsBuild () {
 //# sourceMappingURL=./fontoxpath.js.map
 `,
 			js_output_file: './dist/fontoxpath.js',
-			entry_point: './src/index.js',
-			js: '"src/**.js"'
+			entry_point: './built/index.js',
+			js: '"built/**.js"'
 		})
 			.run((exitCode, stdOut, stdErr) => {
 				if (exitCode !== 0) {

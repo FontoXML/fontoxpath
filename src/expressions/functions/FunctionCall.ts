@@ -1,4 +1,3 @@
-import argumentListToString from './argumentListToString';
 import { transformArgument } from './argumentHelper';
 import Expression from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
@@ -21,11 +20,15 @@ function transformArgumentList (argumentTypes, argumentList, executionParameters
 }
 
 class FunctionCall extends PossiblyUpdatingExpression {
+	private _callArity: number;
+	private _isGapByOffset: boolean[];
+	private _staticContext: any;
+
 	/**
-	 * @param  {!Expression}                                      functionReference  Reference to the function to execute.
-	 * @param  {!Array<!PossiblyUpdatingExpression|!Expression|null>}  args               The arguments to be evaluated and passed to the function
+	 * @param  functionReference  Reference to the function to execute.
+	 * @param  args               The arguments to be evaluated and passed to the function
 	 */
-	constructor (functionReference, args) {
+	constructor(functionReference: Expression, args: Array<PossiblyUpdatingExpression | Expression | null>) {
 		super(
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1
@@ -35,7 +38,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED,
 				peer: false,
 				subtree: false,
-				canBeStaticallyEvaluated: false //args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
+				canBeStaticallyEvaluated: false // args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
 			});
 
 		this._callArity = args.length;
@@ -51,7 +54,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 	}
 
 	performFunctionalEvaluation (dynamicContext, executionParameters, [createFunctionReferenceSequence, ...createArgumentSequences]) {
-		var sequence = createFunctionReferenceSequence(dynamicContext);
+		const sequence = createFunctionReferenceSequence(dynamicContext);
 		return sequence.switchCases({
 			default: () => {
 				throw new Error('XPTY0004: expected base expression to evaluate to a sequence with a single item');
@@ -62,7 +65,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 						throw new Error('XPTY0004: expected base expression to evaluate to a function item');
 					}
 
-					const functionItem = /** @type {!FunctionValue} */ (item);
+					const functionItem = item as FunctionValue;
 
 					if (functionItem.getArity() !== this._callArity) {
 						throw new Error(`XPTY0004: expected arity of function ${functionItem.getName()} to be ${this._callArity}, got function with arity of ${functionItem.getArity()}`);
@@ -77,7 +80,11 @@ class FunctionCall extends PossiblyUpdatingExpression {
 					});
 
 					// Test if we have the correct arguments, and pre-convert the ones we can pre-convert
-					var transformedArguments = transformArgumentList(functionItem.getArgumentTypes(), evaluatedArgs, executionParameters, functionItem.getName());
+					const transformedArguments = transformArgumentList(
+						functionItem.getArgumentTypes(),
+						evaluatedArgs,
+						executionParameters,
+						functionItem.getName());
 
 					if (transformedArguments.indexOf(null) >= 0) {
 						return functionItem.applyArguments(transformedArguments);

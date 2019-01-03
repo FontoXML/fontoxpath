@@ -26,8 +26,7 @@ import castToTime from './castToTime';
 import castToUntypedAtomic from './castToUntypedAtomic';
 import castToYearMonthDuration from './castToYearMonthDuration';
 
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
+import CastResult from './CastResult';
 
 const TREAT_AS_PRIMITIVE = [
 	'xs:integer',
@@ -35,12 +34,7 @@ const TREAT_AS_PRIMITIVE = [
 	'xs:yearMonthDuration'
 ];
 
-/**
- * @param    {string}                  from
- * @param    {!string}                 to
- * @return {function (!AtomicValueDataType) : !({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}}
- */
-function castToPrimitiveType (from, to) {
+function castToPrimitiveType(from: string, to: string): (AtomicValueDataType) => (CastResult) {
 	const instanceOf = type => isSubtypeOf(from, type);
 
 	if (to === 'xs:error') {

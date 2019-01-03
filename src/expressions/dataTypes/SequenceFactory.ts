@@ -1,11 +1,11 @@
-import { trueBoolean, falseBoolean } from "./createAtomicValue";
-import Value from "./Value";
-import { AsyncIterator } from "../util/iterators";
-import EmptySequence from "./Sequences/EmptySequence";
-import ISequence from "./ISequence";
-import SingletonSequence from "./Sequences/SingletonSequence";
-import ArrayBackedSequence from "./Sequences/ArrayBackedSequence";
-import IteratorBackedSequence from "./Sequences/IteratorBackedSequence";
+import { trueBoolean, falseBoolean } from './createAtomicValue';
+import Value from './Value';
+import { AsyncIterator } from '../util/iterators';
+import EmptySequence from './Sequences/EmptySequence';
+import ISequence from './ISequence';
+import SingletonSequence from './Sequences/SingletonSequence';
+import ArrayBackedSequence from './Sequences/ArrayBackedSequence';
+import IteratorBackedSequence from './Sequences/IteratorBackedSequence';
 
 const emptySequence = new EmptySequence();
 

@@ -9,7 +9,7 @@
 			"es2017",
 			"esnext.asynciterable"
 		],
-        "target": "es6",
+        "target": "es2017",
 		"module": "commonjs"
     },
 	"main": "src/evaluateXPath.js",

@@ -1,7 +1,9 @@
 import xPathParserRaw from './xPathParser.raw';
-const module = {};
-new Function(xPathParserRaw()).call(module);
 
-const xpathParserModule = module['xPathParser'];
+const xpathModule: any = {};
+
+new Function(xPathParserRaw()).call(xpathModule);
+
+const xpathParserModule = xpathModule['xPathParser'];
 export const parse =  (xpathParserModule['parse']);
 export const SyntaxError =  (xpathParserModule['SyntaxError']);

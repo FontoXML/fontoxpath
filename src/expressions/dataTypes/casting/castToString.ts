@@ -1,14 +1,9 @@
 import castToStringLikeType from './castToStringLikeType';
 import createAtomicValue from '../createAtomicValue';
 
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
+import CastResult from './CastResult';
 
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToString (instanceOf) {
+export default function castToString (instanceOf: (string) => boolean) : (Value) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
 	return value => {
 		const castResult = caster(value);

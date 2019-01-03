@@ -1,16 +1,11 @@
 import createAtomicValue from '../createAtomicValue';
 import YearMonthDuration from '../valueTypes/YearMonthDuration';
 
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
+import CastResult from './CastResult';
 
 const createYearMonthDurationValue = value => createAtomicValue(value, 'xs:yearMonthDuration');
 
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToYearMonthDuration (instanceOf) {
+export default function castToYearMonthDuration (instanceOf: (string) => boolean) : (Value) => CastResult {
 	if (instanceOf('xs:duration') && !instanceOf('xs:dayTimeDuration')) {
 		return value => ({
 			successful: true,

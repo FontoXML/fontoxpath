@@ -1,6 +1,6 @@
 import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
-import functionRegistry from './expressions/functions/functionRegistry';
+import { registerFunction } from './expressions/functions/functionRegistry';
 import {
 	staticallyKnownNamespaceByPrefix,
 	registerStaticallyKnownNamespace
@@ -84,5 +84,5 @@ export default function registerCustomXPathFunction(name: string | { namespaceUR
 		return xpathResult;
 	};
 
-	functionRegistry.registerFunction(namespaceURI, localName, signature, returnType, callFunction);
+	registerFunction(namespaceURI, localName, signature, returnType, callFunction);
 }

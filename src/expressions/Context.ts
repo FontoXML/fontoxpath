@@ -1,26 +1,23 @@
-/**
- * The common interface for StaticContext and ExecutionContext
- *
- * @interface
- */
-export default class Context {
-	constructor () {}
+export default interface Context {
 	/**
 	 * @param  {string}       namespaceURI
 	 * @param  {string}       localName
 	 * @param  {number}       arity
 	 * @return {Object|null}
 	 */
-	lookupFunction (namespaceURI, localName, arity) {}
+	lookupFunction(namespaceURI: string, localName: string, arity: number): object | null;
+
 	/**
 	 * @param  {string}  prefix
 	 * @return {?string}
 	 */
-	resolveNamespace (prefix) {}
+
+	resolveNamespace(prefix: string): string | null;
 	/**
 	 * @param  {string|null}  namespaceURI
 	 * @param  {string}       localName
 	 * @return {string|null}
 	 */
-	lookupVariable (namespaceURI, localName) {}
+
+	lookupVariable(namespaceURI: string | null, localName: string): string | null;
 }

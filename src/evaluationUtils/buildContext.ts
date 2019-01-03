@@ -8,7 +8,22 @@ import DomBackedNodesFactory from '../DomBackedNodesFactory';
 import Expression from '../expressions/Expression';
 import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
-import { generateGlobalVariableBindingName } from '../expressions/ExecutionSpecificStaticContext';
+
+import builtInFunctions from '../expressions/functions/builtInFunctions';
+import { registerFunction } from '../expressions/functions/functionRegistry';
+
+export const generateGlobalVariableBindingName = variableName => `GLOBAL_${variableName}`;
+
+// bootstrap builtin functions
+builtInFunctions.forEach(builtInFunction => {
+	registerFunction(
+		builtInFunction.namespaceURI,
+		builtInFunction.localName,
+		builtInFunction.argumentTypes,
+		builtInFunction.returnType,
+		builtInFunction.callFunction);
+});
+
 
 function createDefaultNamespaceResolver(contextItem: Node | any): (string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
