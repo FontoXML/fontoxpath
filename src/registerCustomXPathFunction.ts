@@ -5,14 +5,9 @@ import {
 	staticallyKnownNamespaceByPrefix,
 	registerStaticallyKnownNamespace
 } from './expressions/staticallyKnownNamespaces';
-import Sequence from'./expressions/dataTypes/Sequence';
+import ISequence from './expressions/dataTypes/ISequence';
 
-/**
- * @param  {!Sequence}          valueSequence
- * @param  {string}            sequenceType
- * @return {*|null|!Array<*>}
- */
-function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
+function adaptXPathValueToJavascriptValue(valueSequence: any, sequenceType: string): any | null | Array<any> {
 	switch (sequenceType[sequenceType.length - 1]) {
 		case '?':
 			if (valueSequence.isEmpty()) {
@@ -34,11 +29,7 @@ function adaptXPathValueToJavascriptValue (valueSequence, sequenceType) {
 	}
 }
 
-/**
- * @param  {string|!{namespaceURI, localName}} name
- * @return {!{namespaceURI: string, localName: string}}
- */
-function splitFunctionName (name) {
+function splitFunctionName(name: string | { namespaceURI; localName; }): { namespaceURI: string; localName: string; } {
 	if (typeof name === 'object') {
 		return name;
 	}
@@ -64,13 +55,12 @@ function splitFunctionName (name) {
 /**
  * Add a custom test for use in xpath-serialized expressions.
  *
- * @param   {string|!{namespaceURI: !string, localName: !string}}  name        The name of this custom function. The string overload is deprecated, please register functions using the object overload
- * @param   {Array<string>}  signature   The signature of the test, as array of strings (e.g. ['item()', 'node()?', 'xs:numeric'])
- * @param   {string}         returnType  The return type of the test, as sequence type (e.g. 'xs:boolean()')
- * @param   {function(*):*}  callback    The test itself, which gets the dynamicContext and arguments passed
- * @return  {undefined}
+ * @param  name        The name of this custom function. The string overload is deprecated, please register functions using the object overload
+ * @param  signature   The signature of the test, as array of strings (e.g. ['item()', 'node()?', 'xs:numeric'])
+ * @param  returnType  The return type of the test, as sequence type (e.g. 'xs:boolean()')
+ * @param  callback    The test itself, which gets the dynamicContext and arguments passed
  */
-export default function registerCustomXPathFunction (name, signature, returnType, callback) {
+export default function registerCustomXPathFunction(name: string | { namespaceURI: string; localName: string; }, signature: Array<string>, returnType: string, callback: (arg0: any) => any): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
 	const callFunction = function (_dynamicContext, executionParameters, _staticContext) {

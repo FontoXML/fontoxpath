@@ -1,5 +1,5 @@
-import Value from "./Value";
-import { AsyncIterator, AsyncResult } from "../util/iterators";
+import Value from './Value';
+import { AsyncIterator, AsyncResult } from '../util/iterators';
 
 export default interface ISequence {
 	value: AsyncIterator<Value>;

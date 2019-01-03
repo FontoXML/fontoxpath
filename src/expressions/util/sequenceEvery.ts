@@ -1,14 +1,9 @@
+import ISequence from '../dataTypes/ISequence';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from './iterators';
-import Value from '../dataTypes/Value';
 
-/**
- * @param   {!ISequence}                                         sequence
- * @param   {!function(!Value):!ISequence}  typeTest
- * @return  {!ISequence}
- */
-export default function sequenceEvery (sequence, typeTest) {
+export default function sequenceEvery(sequence: ISequence, typeTest: (Value) => ISequence): ISequence {
 	const iterator = sequence.value;
 	let typeTestResultIterator = null;
 	let done;
@@ -24,7 +19,7 @@ export default function sequenceEvery (sequence, typeTest) {
 						done = true;
 						return ready(trueBoolean);
 					}
-					typeTestResultIterator = typeTest(/** @type {!Value} */(value.value));
+					typeTestResultIterator = typeTest(value.value);
 				}
 				const ebv = typeTestResultIterator.tryGetEffectiveBooleanValue();
 				if (!ebv.ready) {

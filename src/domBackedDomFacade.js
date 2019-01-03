@@ -1,4 +1,6 @@
-class DomBackedDomFacade {
+import DomFacade from './DomFacade';
+
+class DomBackedDomFacade extends DomFacade {
 	getParentNode (node) {
 		if (node.nodeType === 2) {
 			return /** @type {!Attr} */(node).ownerElement;

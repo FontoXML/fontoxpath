@@ -10,11 +10,7 @@ import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
 import { generateGlobalVariableBindingName } from '../expressions/ExecutionSpecificStaticContext';
 
-/**
- * @param   {Node|*}  contextItem
- * @return  {function(string):?string}
- */
-function createDefaultNamespaceResolver (contextItem) {
+function createDefaultNamespaceResolver(contextItem: Node | any): (string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return (_prefix) => null;
 	}
@@ -26,21 +22,21 @@ function normalizeEndOfLines (xpathString) {
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xA));
 }
 
-/**
- * @param  {!string}      expressionString  The updateScript to execute. Supports XPath 3.1.
- * @param  {*}            contextItem  The initial context for the script
- * @param  {?IDomFacade}  domFacade  The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  {!Object}      variables  Extra variables (name=>value). Values can be number / string or boolean.
- * @param  {!Object}      options  Extra options for evaluating this expression
- * @param  {!Object}      compilationOptions  Extra options for compiling this expression
-*
-* @return {{expression: !Expression, dynamicContext: !DynamicContext, executionParameters: !ExecutionParameters}}
- */
-export default function buildEvaluationContext (expressionString, contextItem, domFacade, variables, options, compilationOptions) {
+export default function buildEvaluationContext(
+	expressionString: string,
+	contextItem: any,
+	domFacade: DomFacade | null,
+	variables: object,
+	options: object,
+	compilationOptions: {
+		allowXQuery: boolean,
+		allowUpdating: boolean,
+		disableCache: boolean
+	}): { expression: Expression; dynamicContext: DynamicContext; executionParameters: ExecutionParameters; } {
 	if (variables === null || variables === undefined) {
-		variables = /** @type {!Object} */(variables || {});
+		variables = variables || {};
 	}
-	options = /** @type {!Object} */(options || { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1', moduleImports: {} });
+	options = options || { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1', moduleImports: {} };
 	if (domFacade === null) {
 		domFacade = domBackedDomFacade;
 	}

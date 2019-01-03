@@ -14,16 +14,7 @@ import {
 	storeStaticCompilationResultInCache
 } from './compiledExpressionCache';
 
-/**
- * @param  {string}  xpathString
- * @param  {!{allowXQuery: (boolean|undefined), disableCache: (boolean|undefined), allowUpdating: (boolean|undefined)}}  compilationOptions
- * @param  {function(string):?string} namespaceResolver
- * @param  {!Object}  variables
- * @param  {!Object} moduleImports
- *
- * @return  {!Expression}
- */
-export default function staticallyCompileXPath (xpathString, compilationOptions, namespaceResolver, variables, moduleImports) {
+export default function staticallyCompileXPath(xpathString: string, compilationOptions: { allowXQuery: (boolean | undefined); disableCache: (boolean | undefined); allowUpdating: (boolean | undefined); }, namespaceResolver: (string) => string|null, variables: object, moduleImports: object): Expression {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
 	let fromCache = null;
