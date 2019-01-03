@@ -30,23 +30,35 @@ export default class SingletonSequence implements ISequence {
 		return this._onlyValue;
 	}
 
+	getAllValues(): Array<Value> {
+		return [this._onlyValue];
+	}
+
+	getEffectiveBooleanValue(): boolean {
+		if (this._effectiveBooleanValue === null) {
+			this._effectiveBooleanValue = getEffectiveBooleanValue(this._onlyValue);
+		}
+		return this._effectiveBooleanValue;
+	}
+
 	isEmpty(): boolean {
 		return false;
 	}
 
+	isSingleton(): boolean {
+		return true;
+	}
+
 	tryGetAllValues(): AsyncResult<Array<Value>> {
-		return ready([this._onlyValue]);
+		return ready(this.getAllValues());
 	}
 
 	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
-		if (this._effectiveBooleanValue === null) {
-			this._effectiveBooleanValue = getEffectiveBooleanValue(this._onlyValue);
-		}
-		return ready(this._effectiveBooleanValue);
+		return ready(this.getEffectiveBooleanValue());
 	}
 
 	tryGetFirst(): AsyncResult<Value> {
-		return ready(this._onlyValue);
+		return ready(this.first());
 	}
 
 	tryGetLength(): AsyncResult<number> {

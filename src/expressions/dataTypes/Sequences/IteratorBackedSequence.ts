@@ -59,11 +59,59 @@ export default class IteratorBackedSequence implements ISequence {
 		return first.value;
 	}
 
+	getAllValues(): Array<Value> {
+		const values = this.tryGetAllValues();
+		if(!values.ready) {
+			throw new Error('Sequence contains async values.');
+		}
+		return values.value;
+	}
+
+	getEffectiveBooleanValue(): boolean {
+		const effectiveBooleanValue = this.tryGetEffectiveBooleanValue();
+		if(!effectiveBooleanValue.ready) {
+			throw new Error('Sequence contains async values.');
+		}
+		return effectiveBooleanValue.value;
+	}
+
 	isEmpty(): boolean {
 		if (this._length === 0) {
 			return true;
 		}
 		return this.first() === null;
+	}
+
+	isSingleton(): boolean {
+		if (this._length !== null) {
+			return this._length === 1;
+		}
+
+		const iterator = this.value;
+		const oldPosition = this._currentPosition;
+
+		// Check there is at least one value
+		if (this._cachedValues[0] === undefined) {
+			const it = iterator.next();
+			if (!it.ready) {
+				throw new Error('Value is async');
+			}
+			if (it.done) {
+				this.reset(oldPosition);
+				return false;
+			}
+		}
+
+		if (this._cachedValues[1] !== undefined) {
+			this.reset(oldPosition);
+			return false;
+		}
+		const secondValue = iterator.next();
+		if (!secondValue.ready) {
+			throw new Error('Value is async');
+		}
+		this.reset(oldPosition);
+		return secondValue.done;
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {
@@ -93,6 +141,10 @@ export default class IteratorBackedSequence implements ISequence {
 			const it = iterator.next();
 			if (!it.ready) {
 				return notReady(it.promise);
+			}
+			if (it.done) {
+				this.reset(oldPosition);
+				return ready(false);
 			}
 			firstValue = it.value;
 		}

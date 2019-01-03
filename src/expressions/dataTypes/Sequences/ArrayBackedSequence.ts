@@ -28,24 +28,36 @@ export default class ArrayBackedSequence implements ISequence {
 		return this._values[0];
 	}
 
-	isEmpty(): boolean {
-		return false;
+	getAllValues(): Array<Value> {
+		return this._values;
 	}
 
-	tryGetAllValues(): AsyncResult<Array<Value>> {
-		return ready(this._values);
-	}
-
-	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
+	getEffectiveBooleanValue(): boolean {
 		if (isSubtypeOf(this._values[0].type, 'node()')) {
-			return ready(true);
+			return true;
 		}
 		// We always have a length > 1, or we'd be a singletonSequence
 		throw errFORG0006();
 	}
 
+	isEmpty(): boolean {
+		return false;
+	}
+
+	isSingleton(): boolean {
+		return false;
+	}
+
+	tryGetAllValues(): AsyncResult<Array<Value>> {
+		return ready(this.getAllValues());
+	}
+
+	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
+		return ready(this.getEffectiveBooleanValue());
+	}
+
 	tryGetFirst(): AsyncResult<Value> {
-		return ready(this._values[0]);
+		return ready(this.first());
 	}
 
 	tryGetLength(): AsyncResult<number> {
