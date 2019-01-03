@@ -1,7 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
+import CastResult from './CastResult';
 
 const createBase64BinaryValue = value => createAtomicValue(value, 'xs:base64Binary');
 
@@ -13,11 +11,7 @@ function hexToString (hex) {
 	return string;
 }
 
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToBase64Binary (instanceOf) {
+export default function castToBase64Binary (instanceOf: (string) => boolean) : (Value) => CastResult {
 	if (instanceOf('xs:hexBinary')) {
 		return value => ({
 			successful: true,

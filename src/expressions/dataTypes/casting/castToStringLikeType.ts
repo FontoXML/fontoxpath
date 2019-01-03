@@ -1,12 +1,4 @@
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
-
-
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToStringLikeType (instanceOf) {
+export default function castToStringLikeType(instanceOf: (string) => boolean) : (Value) => ({successful: true, value: any} | {successful: false, error: Error}) {
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
 		return value => ({
 			successful: true,

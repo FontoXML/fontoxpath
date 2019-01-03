@@ -1,15 +1,10 @@
 import createAtomicValue from '../createAtomicValue';
 
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
+import CastResult from './CastResult';
 
 const createIntegerValue = value => createAtomicValue(value, 'xs:integer');
 
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToInteger (instanceOf) {
+export default function castToInteger(instanceOf: (string) => boolean): (Value) => (CastResult) {
 	if (instanceOf('xs:boolean')) {
 		return value => ({
 			successful: true,

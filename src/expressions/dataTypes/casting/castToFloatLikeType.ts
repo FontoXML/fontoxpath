@@ -1,11 +1,5 @@
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
-
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToFloatLikeType (instanceOf, to) {
+export default function castToFloatLikeType (instanceOf: (string) => boolean, to: string) :
+(Value) => ({successful: true, value: any} | {successful: false, error: Error}) {
 	if (instanceOf('xs:numeric')) {
 		return value => ({
 			successful: true,

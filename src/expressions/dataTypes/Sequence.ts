@@ -25,7 +25,7 @@ abstract class Sequence {
 	}
 
 	abstract tryGetAllValues (): AsyncResult<Array<Value<any>>>
-	abstract expandSequence (): ISequence
+	abstract expandSequence (): Sequence
 	abstract tryGetFirst (): AsyncResult<Value<any>|null>
 
 	static singleton (value) {

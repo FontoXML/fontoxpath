@@ -1,13 +1,8 @@
 import createAtomicValue from '../createAtomicValue';
 
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
+import CastResult from './CastResult';
 
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToDecimal (instanceOf) {
+export default function castToDecimal (instanceOf: (string) => boolean) : (Value) => CastResult {
 	if (instanceOf('xs:integer')) {
 		return value => ({
 			successful: true,

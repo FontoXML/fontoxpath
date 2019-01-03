@@ -1,9 +1,8 @@
 import createAtomicValue from '../createAtomicValue';
 
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
-
 const createHexBinaryValue = value => createAtomicValue(value, 'xs:hexBinary');
+
+import CastResult from './CastResult';
 
 function stringToHex (string) {
 	let hex = '';
@@ -13,11 +12,7 @@ function stringToHex (string) {
 	return hex.toUpperCase();
 }
 
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToHexBinary (instanceOf) {
+export default function castToGDay(instanceOf: (string) => boolean): (Value) => (CastResult) {
 	if (instanceOf('xs:base64Binary')) {
 		return value => ({
 			successful: true,
@@ -30,7 +25,7 @@ export default function castToHexBinary (instanceOf) {
 			value: createHexBinaryValue(value)
 		});
 	}
-	return value => ({
+	return () => ({
 		successful: false,
 		error: new Error('XPTY0004: Casting not supported from given type to xs:hexBinary or any of its derived types.')
 	});

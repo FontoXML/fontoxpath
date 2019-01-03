@@ -1,17 +1,11 @@
 import { trueBoolean, falseBoolean } from '../createAtomicValue';
-import AtomicValueDataType from './AtomicValueDataType';
-import AtomicValue from '../AtomicValue';
+import CastResult from './CastResult';
 
-
-/**
- * @param  {function(string):boolean}  instanceOf
- * @return {function (AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}
- */
-export default function castToBoolean (instanceOf) {
+export default function castToBoolean (instanceOf: (string) => boolean) : (Value) => CastResult {
 	if (instanceOf('xs:numeric')) {
 		return value => ({
 			successful: true,
-			value: (value === 0 || isNaN(value)) ? falseBoolean : trueBoolean
+			value: value === 0 || isNaN(value) ? falseBoolean : trueBoolean
 		});
 	}
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
