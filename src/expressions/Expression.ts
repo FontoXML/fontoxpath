@@ -14,27 +14,36 @@ const RESULT_ORDERINGS = {
 	UNSORTED: 'unsorted'
 };
 
-/**
- * @typedef {!({resultOrder: (!RESULT_ORDERINGS|undefined), subtree: (boolean|undefined), peer: (boolean|undefined), canBeStaticallyEvaluated: (boolean|undefined)})}
- */
-let OptimizationOptions;
+interface OptimizationOptions {
+	resultOrder: string;
+	subtree: boolean;
+	peer: boolean;
+	canBeStaticallyEvaluated: boolean;
+}
 
-/**
- * @abstract
- */
-class Expression {
+abstract class Expression {
+	specificity: Specificity;
+	expression: string;
+	subtree: boolean;
+	peer: boolean;
+	canBeStaticallyEvaluated: boolean;
+	_childExpressions: Array<Expression>
+	isUpdating: boolean;
+	_eagerlyEvaluatedValue: () => Sequence
+	expectedResultOrder: string;
+
 	/**
-	 * @param  {!Specificity}           specificity
-	 * @param  {!Array<!Expression>}      childExpressions       The logical children of this Expression
-	 * @param  {!OptimizationOptions}   optimizationOptions  Additional information on this expression.
+	 * @param  specificity
+	 * @param  childExpressions       The logical children of this Expression
+	 * @param  optimizationOptions  Additional information on this expression.
 	 */
 	constructor (
-		specificity,
-		childExpressions,
-		optimizationOptions = {
+		specificity: Specificity,
+		childExpressions: Array<Expression>,
+		optimizationOptions: OptimizationOptions = {
 			resultOrder: RESULT_ORDERINGS.UNSORTED,
-			peer: false,
 			subtree: false,
+			peer: false,
 			canBeStaticallyEvaluated: false
 		}
 	) {
@@ -65,10 +74,7 @@ class Expression {
 	}
 
 
-	/**
-	 * @param  {!StaticContext}  staticContext
-	 */
-	performStaticEvaluation (staticContext) {
+	performStaticEvaluation (staticContext:StaticContext): void {
 		this._childExpressions.forEach(selector => selector.performStaticEvaluation(staticContext));
 	}
 
@@ -78,21 +84,12 @@ class Expression {
 	 * Buckets can be used for quickly filtering a set of expressions to only those potentially
 	 * applicable to a given node. Use getBucketsForNode to determine the buckets to consider for a
 	 * given node.
-	 *
-	 * @return  {?string}  Bucket name, or null if the selector is not bucketable.
 	 */
-	getBucket () {
+	getBucket ():string|null {
 		return null;
 	}
 
-	/**
-	 * @public
-	 * @final
-	 * @param   {?DynamicContext}        dynamicContext
-	 * @param   {!ExecutionParameters}   executionParameters
-	 * @return  {!Sequence}
-	 */
-	evaluateMaybeStatically (dynamicContext, executionParameters) {
+	evaluateMaybeStatically (dynamicContext:DynamicContext, executionParameters:ExecutionParameters): Sequence {
 		if (!dynamicContext || dynamicContext.contextItem === null) {
 			// We must be free of context here. But: this will be memoized / constant folded on a
 			// higher level, so there is no use in keeping these intermediate results
@@ -104,24 +101,9 @@ class Expression {
 		return this.evaluate(dynamicContext, executionParameters);
 	}
 
-	/**
-	 * @abstract
-	 * @param   {?DynamicContext}        _dynamicContext
-	 * @param   {!ExecutionParameters}   _executionParameters
-	 * @return  {!Sequence}
-	 */
-	evaluate (_dynamicContext, _executionParameters) {
-		//    throw new Error('Not Implemented');
-	}
+	abstract evaluate (_dynamicContext: DynamicContext, _executionParameters: ExecutionParameters): Sequence
 
-	/**
-	 * @protected
-	 * @final
-	 * @param   {?DynamicContext}      _contextlessDynamicContext
-	 * @param   {!ExecutionParameters}   executionParameters
-	 * @return  {!Sequence}
-	 */
-	evaluateWithoutFocus (_contextlessDynamicContext, executionParameters) {
+	protected evaluateWithoutFocus (_contextlessDynamicContext: (DynamicContext|null), executionParameters:ExecutionParameters): Sequence {
 		if (this._eagerlyEvaluatedValue === null) {
 			this._eagerlyEvaluatedValue = createDoublyIterableSequence(this.evaluate(
 				null,

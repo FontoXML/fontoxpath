@@ -56,7 +56,7 @@ class Filter extends Expression {
 				// Note that using filter here is a bad choice, because we only want one item.
 				// TODO: implement Sequence.itemAt(i), which is a no-op for empty sequences, a O(1) op for array backed sequence / singleton sequences and a O(n) for normal sequences.
 				// If we move sorting to sequences, this will be even faster, since a select is faster than a sort.
-				return new Sequence({
+				return Sequence.create({
 					next: () => {
 						if (!done) {
 							for (let value = iterator.next(); !value.done; value = iterator.next()) {
@@ -86,7 +86,7 @@ class Filter extends Expression {
 		let iteratorItem = null;
 		let i = 0;
 		let filterResultSequence = null;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				while (!iteratorItem || !iteratorItem.done) {
 					if (!iteratorItem) {

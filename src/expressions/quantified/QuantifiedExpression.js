@@ -68,7 +68,7 @@ class QuantifiedExpression extends Expression {
 				.evaluateMaybeStatically(scopingContext, executionParameters).getAllValues();
 
 			scopingContext = dynamicContext.scopeWithVariableBindings({
-				[variableBinding]: () => new Sequence(allValuesInInClause)
+				[variableBinding]: () => Sequence.create(allValuesInInClause)
 			});
 
 			return allValuesInInClause;

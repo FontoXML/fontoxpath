@@ -20,15 +20,15 @@ function ensureSortedSequence (intersectOrExcept, domFacade, sequence, expectedR
 			throw new Error(`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`);
 		}
 		if (expectedResultOrder === Expression.RESULT_ORDERINGS.SORTED) {
-			return new Sequence(values);
+			return Sequence.create(values);
 
 		}
 		if (expectedResultOrder === Expression.RESULT_ORDERINGS.REVERSE_SORTED) {
-			return new Sequence(values.reverse());
+			return Sequence.create(values.reverse());
 		}
 
 		// Unsorted
-		return new Sequence(sortNodeValues(domFacade, values));
+		return Sequence.create(sortNodeValues(domFacade, values));
 	});
 }
 
@@ -78,7 +78,7 @@ class IntersectExcept extends Expression {
 
 		let done = false;
 		let secondIteratorDone = false;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;

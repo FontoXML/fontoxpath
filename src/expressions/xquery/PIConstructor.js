@@ -61,7 +61,7 @@ class PIConstructor extends Expression {
 				const targetSequence = this._target.targetExpr.evaluateMaybeStatically(dynamicContext, executionParameters);
 				const targetIterator = evaluateNCNameExpression(executionParameters, targetSequence);
 
-				return new Sequence({ next: () => {
+				return Sequence.create({ next: () => {
 					const tv = targetIterator.next();
 					if (tv.done || !tv.ready) {
 						return tv;

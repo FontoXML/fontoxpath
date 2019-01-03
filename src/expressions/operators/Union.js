@@ -40,7 +40,7 @@ class Union extends Expression {
 					throw new Error('XPTY0004: The sequences to union are not of type node()*');
 				}
 				const sortedValues = sortNodeValues(executionParameters.domFacade, allValues);
-				return new Sequence(sortedValues);
+				return Sequence.create(sortedValues);
 			});
 	}
 }

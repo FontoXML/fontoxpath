@@ -14,11 +14,49 @@ import ExecutionParameters from '../ExecutionParameters';
  */
 let switchCasesCase;
 
-class Sequence {
-	constructor (valueIteratorOrArray, predictedLength = null) {
+abstract class Sequence {
+	public value: AsyncIterator<Value<any>>;
+
+	static create (valueIteratorOrArray: (Array<Value<any>>|AsyncIterator<Value<any>>), predictedLength = null) : Sequence{
 		if (Array.isArray(valueIteratorOrArray)) {
-			return new ArrayBackedSequence(valueIteratorOrArray);
+			return ArrayBackedSequence.create(valueIteratorOrArray);
 		}
+		return new IteratorBackedSequence(valueIteratorOrArray, predictedLength) as Sequence;
+	}
+
+	abstract tryGetAllValues (): AsyncResult<Array<Value<any>>>
+	abstract expandSequence (): ISequence
+	abstract tryGetFirst (): AsyncResult<Value<any>|null>
+
+	static singleton (value) {
+		return new SingletonSequence(value);
+	}
+
+	static empty () {
+		return emptySequence;
+	}
+
+	static singletonTrueSequence () {
+		return new SingletonSequence(trueBoolean);
+	}
+
+	static singletonFalseSequence () {
+		return new SingletonSequence(falseBoolean);
+	}
+}
+
+class IteratorBackedSequence extends Sequence {
+	private _currentPosition: number;
+	private _saveValues: boolean;
+	private _length: number;
+	private _cachedValues: Array<Value<any>>;
+	private _iteratorHasProgressed: boolean;
+
+	public value: AsyncIterator<Value<any>>;
+
+	constructor (valueIteratorOrArray: AsyncIterator<Value<any>>, predictedLength = null) {
+		super();
+
 		this._currentPosition = 0;
 		/**
 		 * Defines whether intermediate values must be saved. This is needed for counting the length of a sequence, with the intent to iterate over it at a later stage.
@@ -27,14 +65,9 @@ class Sequence {
 		 */
 		this._saveValues = false;
 
-		const valueIterator = /** @type {!AsyncIterator<!Value>} */(valueIteratorOrArray);
-		/**
-		 * @type {!AsyncIterator<!Value>}
-		 */
+		const valueIterator = valueIteratorOrArray;
+
 		this.value = {
-			[Symbol.iterator]: function () {
-				return this;
-			},
 			next: () => {
 				if (this._length !== null && this._currentPosition >= this._length) {
 					return DONE_TOKEN;
@@ -201,7 +234,7 @@ class Sequence {
 	map (callback) {
 		let i = -1;
 		const iterator = this.value;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				i++;
 				const value = iterator.next();
@@ -211,7 +244,7 @@ class Sequence {
 				if (!value.ready) {
 					return value;
 				}
-				return ready(callback(/** @type {!Value} */(value.value), i, this));
+				return ready(callback(value.value, i, this));
 			}
 		}, this._length);
 	}
@@ -224,7 +257,7 @@ class Sequence {
 		let i = -1;
 		const iterator = this.value;
 
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				i++;
 				let value = iterator.next();
@@ -265,7 +298,7 @@ class Sequence {
 			mappedResultsIterator = callback(allResults).value;
 			isReady = true;
 		})();
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				if (!isReady) {
 					return notReady(readyPromise);
@@ -352,18 +385,19 @@ class Sequence {
 	 * @return {!Sequence}
 	 */
 	expandSequence () {
-		return new ArrayBackedSequence(this.getAllValues());
+		return ArrayBackedSequence.create(this.getAllValues());
 	}
 
-	/**
-	 * @param  {(!{empty: switchCasesCase, singleton: switchCasesCase, multiple: switchCasesCase, default: switchCasesCase})} cases
-	 * @return {!Sequence}
-	 */
-	switchCases (cases) {
+	switchCases (cases: {
+		empty: ((Sequence) => Sequence | undefined),
+		singleton: ((Sequence) => Sequence | undefined),
+		multiple: ((Sequence) => Sequence | undefined),
+		default: ((Sequence) => Sequence | undefined)
+	}):Sequence {
 		const scanIterator = this.value;
 		let scanIteration = 0;
 		let resultIterator = null;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				if (!resultIterator) {
 					// If we do not handle singleton different from multiple, we can shortcut by only consuming a single item
@@ -425,15 +459,11 @@ class Sequence {
 }
 
 let emptySequence;
-/**
- * @extends Sequence
- */
-class EmptySequence {
+
+class EmptySequence extends Sequence {
 	constructor () {
+		super();
 		this.value = {
-			[Symbol.iterator]: function () {
-				return this;
-			},
 			next: () => DONE_TOKEN
 		};
 	}
@@ -489,16 +519,14 @@ class EmptySequence {
 
 emptySequence = new EmptySequence();
 
-/**
- * @extends Sequence
- */
-class SingletonSequence {
+class SingletonSequence extends Sequence {
+	private _onlyValue: Value<any>;
+	private _effectiveBooleanValue: boolean;
+
 	constructor (onlyValue) {
+		super();
 		let hasPassed = false;
 		this.value = {
-			[Symbol.iterator]: function () {
-				return this;
-			},
 			next: () => {
 				if (hasPassed) {
 					return DONE_TOKEN;
@@ -566,26 +594,25 @@ class SingletonSequence {
 	}
 }
 
-/**
- * @extends Sequence
- */
-class ArrayBackedSequence {
-	/**
-	 * @return {!Sequence}
-	 */
-	constructor (values) {
+class ArrayBackedSequence extends Sequence {
+	private _values: Array<Value<any>>;
+
+	static create (values):Sequence {
 		if (!values.length) {
-			return /** @type {?} */(emptySequence);
+			return emptySequence;
 		}
 		if (values.length === 1) {
-			return /** @type {?} */(new SingletonSequence(values[0]));
+			return new SingletonSequence(values[0]);
 		}
+
+		return new ArrayBackedSequence(values);
+	}
+
+	private constructor (values) {
+		super();
 
 		let i = -1;
 		this.value = {
-			[Symbol.iterator]: function () {
-				return this;
-			},
 			next: () => {
 				i++;
 				if (i >= values.length) {
@@ -631,7 +658,7 @@ class ArrayBackedSequence {
 	}
 	filter (callback) {
 		let i = -1;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				i++;
 				while (i < this._values.length && !callback(this._values[i], i, this)) {
@@ -648,7 +675,7 @@ class ArrayBackedSequence {
 	}
 	map (callback) {
 		let i = -1;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				i++;
 				if (i >= this._values.length) {
@@ -674,34 +701,6 @@ class ArrayBackedSequence {
 		return /** @type {!Sequence} */ (cases.default(this));
 	}
 }
-/**
- * @param   {!Value}  value
- * @return  {!Sequence}
- */
-Sequence.singleton = function (value) {
-    return new SingletonSequence(value);
-};
-
-/**
- * @return  {!Sequence}
- */
-Sequence.empty = function () {
-	return emptySequence;
-};
-
-/**
- * @return {!Sequence}
- */
-Sequence.singletonTrueSequence = function () {
-	return new SingletonSequence(trueBoolean);
-};
-
-/**
- * @return {!Sequence}
- */
-Sequence.singletonFalseSequence = function () {
-	return new SingletonSequence(falseBoolean);
-};
 
 
 export default Sequence;

@@ -105,7 +105,7 @@ class ElementConstructor extends Expression {
 		let nameIterator;
 
 		let done = false;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;
@@ -131,7 +131,7 @@ class ElementConstructor extends Expression {
 					childNodesSequences = concatSequences(
 						this._contents.map(
 							contentExpression => contentExpression.evaluateMaybeStatically(dynamicContext, executionParameters)
-								.mapAll(allValues => new Sequence([allValues]))));
+								.mapAll(allValues => Sequence.create([allValues]))));
 					}
 
 					const allChildNodesItrResult = childNodesSequences.tryGetAllValues();

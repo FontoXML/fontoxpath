@@ -1,16 +1,18 @@
 {
-	"compilerOptions": {
-		"allowJs": true,
+    "compilerOptions": {
+        "outDir": "/home/martin/projects/fontoxml/fontoxpath/built",
+		"rootDir": "src",
+        "allowJs": true,
 		"lib": [
 			"dom",
 			"es6",
 			"esnext.asynciterable"
 		],
-		"outDir": "./built",
-		"sourceMap": true,
-		"target": "es6"
-	},
-	"include": [
-		"./src/**/*"
-	]
+        "target": "es6",
+		"module": "commonjs"
+    },
+	"main": "src/evaluateXPath.js",
+    "include": [
+        "./src/**/*"
+    ]
 }

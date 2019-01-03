@@ -35,7 +35,7 @@ function subSequence (sequence, start, length) {
 		}
 		newSequenceLength = Math.max(0, endIndex - startIndex);
 	}
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			while (i < start) {
 				const val = iterator.next();
@@ -188,7 +188,7 @@ function fnInsertBefore (_dynamicContext, _executionParameters, _staticContext, 
 	}
 
 	sequenceValue.splice.apply(sequenceValue, [effectivePosition - 1, 0].concat(inserts.getAllValues()));
-	return new Sequence(sequenceValue);
+	return Sequence.create(sequenceValue);
 }
 
 /**
@@ -198,17 +198,17 @@ function fnRemove (_dynamicContext, _executionParameters, _staticContext, sequen
 	const effectivePosition = position.first().value;
 	const sequenceValue = sequence.getAllValues();
 	if (!sequenceValue.length || effectivePosition < 1 || effectivePosition > sequenceValue.length) {
-		return new Sequence(sequenceValue);
+		return Sequence.create(sequenceValue);
 	}
 	sequenceValue.splice(effectivePosition - 1, 1);
-	return new Sequence(sequenceValue);
+	return Sequence.create(sequenceValue);
 }
 
 /**
  * @type {!FunctionDefinitionType}
  */
 function fnReverse (_dynamicContext, _executionParameters, _staticContext, sequence) {
-	return sequence.mapAll(allValues => new Sequence(allValues.reverse()));
+	return sequence.mapAll(allValues => Sequence.create(allValues.reverse()));
 }
 
 /**
@@ -264,7 +264,7 @@ function fnDeepEqual (dynamicContext, executionParameters, staticContext, parame
 			parameter1,
 			parameter2);
 
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (hasPassed) {
 				return DONE_TOKEN;
@@ -284,7 +284,7 @@ function fnDeepEqual (dynamicContext, executionParameters, staticContext, parame
  */
 function fnCount (_dynamicContext, _executionParameters, _staticContext, sequence) {
 	let hasPassed = false;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (hasPassed) {
 				return DONE_TOKEN;
@@ -493,7 +493,7 @@ function fnForEach (dynamicContext, executionParameters, staticContext, sequence
 
 	const outerIterator = sequence.value;
 	let innerIterator;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			while (true) {
 				if (!innerIterator) {

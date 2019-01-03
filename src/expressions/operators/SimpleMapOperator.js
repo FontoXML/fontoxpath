@@ -34,7 +34,7 @@ class SimpleMapOperator extends Expression {
 		let childContext = null;
 		let sequenceValueIterator = null;
 		let done = false;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				while (!done) {
 					if (!childContext) {

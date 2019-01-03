@@ -133,7 +133,7 @@ function fnOutermost (_dynamicContext, executionParameters, _staticContext, node
 				return previousNodes;
 			}, []);
 
-		return new Sequence(resultNodes);
+		return Sequence.create(resultNodes);
 	});
 }
 
@@ -162,7 +162,7 @@ function fnInnermost (_dynamicContext, executionParameters, _staticContext, node
 				return followingNodes;
 			}, []);
 
-		return new Sequence(resultNodes);
+		return Sequence.create(resultNodes);
 	});
 }
 

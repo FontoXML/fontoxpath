@@ -9,7 +9,7 @@ export default function createDoublyIterableSequence (sequence) {
 	const backingIterator = sequence.value;
 	return function () {
 		let i = 0;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				if (savedValues[i] !== undefined) {
 					return savedValues[i++];

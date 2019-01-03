@@ -389,7 +389,7 @@ function evaluateXPath (xpathExpression, contextItem, domFacade, variables, retu
 				return atomize(allValues.value[0], executionParameters).value;
 			}
 
-			return new Sequence(allValues.value)
+			return Sequence.create(allValues.value)
 				.atomize(executionParameters)
 				.getAllValues()
 				.map(function (atomizedValue) {

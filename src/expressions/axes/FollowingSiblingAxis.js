@@ -44,7 +44,7 @@ class FollowingSiblingAxis extends Expression {
 
         const domFacade = executionParameters.domFacade;
 
-		return new Sequence(createSiblingGenerator(domFacade, contextItem.value)).filter(item => {
+		return Sequence.create(createSiblingGenerator(domFacade, contextItem.value)).filter(item => {
 			return this._siblingExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

@@ -49,7 +49,7 @@ class AttributeAxis extends Expression {
 			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 			.map(attribute => createNodeValue(attribute))
 			.filter(item => this._attributeTestExpression.evaluateToBoolean(dynamicContext, item));
-		return new Sequence(matchingAttributes);
+		return Sequence.create(matchingAttributes);
 	}
 
 	getBucket () {

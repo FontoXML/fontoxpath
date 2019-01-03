@@ -42,7 +42,7 @@ function evaluateTarget (targetXdmValue) {
 
 function evaluateNewName (staticContext, executionParameters, newNameXdmValue, target) {
 	// NewNameExpr is processed as follows:
-	const nameSequence = new Sequence(newNameXdmValue);
+	const nameSequence = Sequence.create(newNameXdmValue);
 
 	switch (target.type) {
 		case 'element()': {

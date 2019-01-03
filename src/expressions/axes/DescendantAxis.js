@@ -71,7 +71,7 @@ class DescendantAxis extends Expression {
 		/**
 		 * @type {!Sequence}
 		 */
-		const descendantSequence = new Sequence(iterator);
+		const descendantSequence = Sequence.create(iterator);
 		return descendantSequence.filter(item => {
 			return this._descendantExpression.evaluateToBoolean(dynamicContext, item);
 		});

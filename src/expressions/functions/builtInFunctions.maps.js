@@ -48,7 +48,7 @@ function mapMerge (dynamicContext, executionParameters, staticContext, mapSequen
 									1,
 									{
 										key: keyValuePair.key,
-										value: createDoublyIterableSequence(new Sequence(
+										value: createDoublyIterableSequence(Sequence.create(
 											resultingKeyValuePairs[existingPairIndex].value().getAllValues()
 												.concat(keyValuePair.value().getAllValues())))
 									});
@@ -114,7 +114,7 @@ function mapSize (_dynamicContext, _executionParameters, _staticContext, mapSequ
  * @type {!FunctionDefinitionType}
  */
 function mapKeys (_dynamicContext, _executionParameters, _staticContext, mapSequence) {
-	return zipSingleton([mapSequence], ([map]) => new Sequence(/** @type {!MapValue} */(map).keyValuePairs.map(pair => pair.key)));
+	return zipSingleton([mapSequence], ([map]) => Sequence.create(/** @type {!MapValue} */(map).keyValuePairs.map(pair => pair.key)));
 }
 
 /**

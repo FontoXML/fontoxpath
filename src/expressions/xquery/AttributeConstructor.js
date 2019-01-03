@@ -68,7 +68,7 @@ class AttributeConstructor extends Expression {
 		let valueIterator;
 
 		let done = false;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;

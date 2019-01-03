@@ -1,18 +1,19 @@
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import buildContext from './evaluationUtils/buildContext';
+
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
  *
- * @param  {!string}       updateScript     The updateScript to execute. Supports XPath 3.1.
- * @param  {*}             contextItem  The initial context for the script
- * @param  {?IDomFacade=}  domFacade    The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  {?Object=}      variables    Extra variables (name=>value). Values can be number / string or boolean.
- * @param  {?Object=}      options      Extra options for evaluating this XPath
+ * @param  updateScript The updateScript to execute. Supports XPath 3.1.
+ * @param  contextItem  The initial context for the script
+ * @param  domFacade    The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  variables    Extra variables (name=>value). Values can be number / string or boolean.
+ * @param  options      Extra options for evaluating this XPath
  *
- * @return  {Promise<{pendingUpdateList: Array<Object>, xdmValue: Object}>}         The string result.
+ * @return The string result.
  */
-export default async function evaluateUpdatingExpression (updateScript, contextItem, domFacade, variables, options) {
-	const {
+export default async function evaluateUpdatingExpression (updateScript: string, contextItem: any, domFacade: any, variables: Object, options: {disableCache: boolean}) {
+	let {
 		dynamicContext,
 		executionParameters,
 		expression
@@ -33,7 +34,7 @@ export default async function evaluateUpdatingExpression (updateScript, contextI
 		throw new Error(`The expression ${updateScript} is not updating and can not be executed as an updating expression.`);
 	}
 
-	const resultIterator = (/** @type {PossiblyUpdatingExpression} **/(expression)).evaluateWithUpdateList(dynamicContext, executionParameters);
+	const resultIterator = (<PossiblyUpdatingExpression> expression).evaluateWithUpdateList(dynamicContext, executionParameters);
 
 	let attempt = resultIterator.next();
 	while (!attempt.ready) {

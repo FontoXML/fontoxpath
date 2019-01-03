@@ -81,7 +81,7 @@ class FollowingAxis extends Expression {
 
         const domFacade = executionParameters.domFacade;
 
-		return new Sequence(createFollowingGenerator(domFacade, contextItem.value)).filter(item => {
+		return Sequence.create(createFollowingGenerator(domFacade, contextItem.value)).filter(item => {
 			return this._testExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

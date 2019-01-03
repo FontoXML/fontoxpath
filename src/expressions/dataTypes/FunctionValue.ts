@@ -5,12 +5,10 @@ import StaticContext from '../StaticContext';
 import TypeDeclaration from './TypeDeclaration';
 import RestArgument from './RestArgument';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import Value from './Value';
 
-/**
- * @param  {!Array<!TypeDeclaration|!RestArgument>}  argumentTypes
- * @param  {!number}  arity
- * @return {!Array<!TypeDeclaration>}
- */
+type FunctionSignature = (DynamicContext, ExecutionParameters, StaticContext, ...Sequence) => Sequence;
+
 function expandRestArgumentToArity (argumentTypes, arity) {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
@@ -29,11 +27,26 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 	return argumentTypes;
 }
 
-class FunctionValue {
-	/**
-	 * @param  {{value: !function(!DynamicContext, !ExecutionParameters, !StaticContext, ...!Sequence): !Sequence, localName: string, argumentTypes: !Array<!TypeDeclaration|!RestArgument>, arity: number, returnType: TypeDeclaration, namespaceURI: string}}  properties
-	 */
-	constructor ({ value, localName, namespaceURI, argumentTypes, arity, returnType }) {
+class FunctionValue extends Value<any> {
+	value: FunctionSignature;
+	private _localName: string;
+	private _namespaceURI: string;
+	private _argumentTypes: Array<TypeDeclaration|RestArgument>;
+	private _arity: number;
+	private _returnType: TypeDeclaration;
+
+	constructor ({
+		value, localName, namespaceURI, argumentTypes, arity, returnType
+	}: {
+		value: FunctionSignature,
+		localName: string,
+		namespaceURI: string,
+		argumentTypes: Array<TypeDeclaration|RestArgument>,
+		arity: number,
+		returnType: TypeDeclaration
+	}) {
+		super();
+
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
 		this._localName = localName;

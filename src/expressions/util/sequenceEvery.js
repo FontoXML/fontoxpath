@@ -12,7 +12,7 @@ export default function sequenceEvery (sequence, typeTest) {
 	const iterator = sequence.value;
 	let typeTestResultIterator = null;
 	let done;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			while (!done) {
 				if (!typeTestResultIterator) {

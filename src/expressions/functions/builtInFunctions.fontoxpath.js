@@ -24,7 +24,7 @@ import astHelper from '../../parsing/astHelper';
 function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext, query, args) {
 	let resultIterator;
 	let queryString;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (!resultIterator) {
 				const queryValue = query.value.next();
@@ -94,7 +94,7 @@ function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext,
 	let readyPromise;
 
 	const valueIterator = val.value;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (!readyPromise) {
 
@@ -135,7 +135,7 @@ function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext,
 	let done = false;
 	let readyPromise = null;
 
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (!readyPromise) {
 				const urlValue = url.value.next();

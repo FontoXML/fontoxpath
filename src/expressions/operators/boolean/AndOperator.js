@@ -36,7 +36,7 @@ class AndOperator extends Expression {
 				contextItemBuckets = getBucketsForNode(contextItem.value);
 			}
 		}
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				if (!done) {
 					while (i < this._subExpressions.length) {

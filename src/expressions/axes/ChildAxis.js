@@ -32,7 +32,7 @@ class ChildAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 		const /** !Node */ contextNode = contextItem.value;
 		const nodeValues = domFacade.getChildNodes(contextNode).map(createNodeValue);
-		const childContextSequence = new Sequence(nodeValues);
+		const childContextSequence = Sequence.create(nodeValues);
 		return childContextSequence.filter(item => {
 				return this._childExpression.evaluateToBoolean(dynamicContext, item);
 		});

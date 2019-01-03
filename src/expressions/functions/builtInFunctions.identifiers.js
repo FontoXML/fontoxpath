@@ -58,7 +58,7 @@ function fnId (_dynamicContext, executionParameters, _staticContext, idrefSequen
 				isMatchingIdById[idAttribute] = false;
 				return true;
 			});
-	return new Sequence(matchingNodes.map(createNodeValue));
+	return Sequence.create(matchingNodes.map(createNodeValue));
 }
 
 /**
@@ -97,7 +97,7 @@ function fnIdref (_dynamicContext, executionParameters, _staticContext, idSequen
 					return isMatchingIdRefById[idRef];
 				});
 			});
-	return new Sequence(matchingNodes.map(createNodeValue));
+	return Sequence.create(matchingNodes.map(createNodeValue));
 }
 
 export default {

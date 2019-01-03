@@ -25,11 +25,11 @@ function opTo (_dynamicContext, _executionParameters, staticContext, fromSequenc
 			return Sequence.empty();
 		}
 		// By providing a length, we do not have to hold an end condition into account
-		return new Sequence({
+		return Sequence.create({
 			next: () => ready(createAtomicValue(fromValue++, 'xs:integer'))
 		}, toValue - fromValue + 1);
 	}
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (fromValue === null) {
 				const from = fromSequence.tryGetFirst();

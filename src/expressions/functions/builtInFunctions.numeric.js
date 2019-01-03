@@ -73,7 +73,7 @@ function getNumberOfDecimalDigits (value) {
 
 function fnRound (halfToEven, _dynamicContext, _executionParameters, _staticContext, sequence, precision) {
 	let done = false;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;

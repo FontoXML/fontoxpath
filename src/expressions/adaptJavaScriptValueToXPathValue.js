@@ -138,7 +138,7 @@ export default function adaptJavaScriptValueToXPath (value, expectedType) {
 		case '+':
 		case '*': {
 			const convertedValues = value.map(adaptJavaScriptValueToXPathValue.bind(null, type));
-			return new Sequence(
+			return Sequence.create(
 				convertedValues.filter(convertedValue => convertedValue !== null));
 		}
 

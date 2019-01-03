@@ -52,7 +52,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(dynamicContext, executionParameters).value;
 		let returnIterator = null;
 		let done = false;
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				while (!done) {
 					if (returnIterator === null) {

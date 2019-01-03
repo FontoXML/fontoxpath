@@ -242,7 +242,7 @@ function fnSubstring (dynamicContext, executionParameters, staticContext, source
 	let sourceStringItem = null;
 	let startItem = null;
 	let lengthItem = null;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -303,7 +303,7 @@ function fnTokenize (_dynamicContext, _executionParameters, _staticContext, inpu
 	}
 	const string = input.first().value,
 		patternString = pattern.first().value;
-	return new Sequence(
+	return Sequence.create(
 		string.split(new RegExp(patternString))
 			.map(function (token) {
 				return createAtomicValue(token, 'xs:string');

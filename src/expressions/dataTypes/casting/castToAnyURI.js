@@ -5,7 +5,6 @@ import AtomicValue from '../AtomicValue';
 
 const createAnyURIValue = value => createAtomicValue(value, 'xs:anyURI');
 
-
 /**
  * @param  {function(string):boolean}  instanceOf
  * @return {function (!AtomicValueDataType) : ({successful: boolean, value: !AtomicValue}|{successful: boolean, error: !Error})}

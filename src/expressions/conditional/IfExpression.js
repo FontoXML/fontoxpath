@@ -27,7 +27,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 	performFunctionalEvaluation (dynamicContext, _executionParameters, sequenceCallbacks) {
 		let resultIterator = null;
 		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
-		return new Sequence({
+		return Sequence.create({
 			next: () => {
 				if (!resultIterator) {
 					const ifExpressionResult = ifExpressionResultSequence.tryGetEffectiveBooleanValue();

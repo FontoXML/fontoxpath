@@ -30,7 +30,7 @@ function concatSortedSequences (_, sequences) {
 	}
 	let currentIterator = null;
 	let previousValue = null;
-	return new Sequence({
+	return Sequence.create({
 		next: function () {
 			if (!currentSequence.ready) {
 				return notReady(currentSequence.promise.then(() => {
@@ -99,7 +99,7 @@ function mergeSortedSequences (domFacade, sequences) {
 	let previousNode = null;
 
 	let allSequencesAreSorted = false;
-	return new Sequence({
+	return Sequence.create({
 		[Symbol.iterator]: function () {
 			return this;
 		},
@@ -275,7 +275,7 @@ class PathExpression extends Expression {
 								if (result.done) {
 									return result;
 								}
-								return ready(result.value.mapAll(items => new Sequence(items.reverse())));
+								return ready(result.value.mapAll(items => Sequence.create(items.reverse())));
 							}
 						});
 						// Fallthrough for merges
@@ -291,7 +291,7 @@ class PathExpression extends Expression {
 					case Expression.RESULT_ORDERINGS.UNSORTED: {
 						// The result should be sorted before we can continue
 						const concattedSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
-						return concattedSequence.mapAll(allValues => new Sequence(sortResults(executionParameters.domFacade, allValues)));
+						return concattedSequence.mapAll(allValues => Sequence.create(sortResults(executionParameters.domFacade, allValues)));
 					}
 				}
 			}

@@ -175,7 +175,7 @@ function arrayFilter (dynamicContext, executionParameters, staticContext, arrayS
 				member()));
 			const effectiveBooleanValues = [];
 			let done = false;
-			return new Sequence({
+			return Sequence.create({
 				next: () => {
 					if (done) {
 						return DONE_TOKEN;

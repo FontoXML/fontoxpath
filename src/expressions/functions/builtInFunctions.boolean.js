@@ -15,7 +15,7 @@ function fnNot (_dynamicContext, _executionParameters, _staticContext, sequence)
 		return ebv.value === false ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 	}
 	let done = false;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -40,7 +40,7 @@ function fnBoolean (_dynamicContext, _executionParameters, _staticContext, seque
 		return ebv.value ? Sequence.singletonTrueSequence() : Sequence.singletonFalseSequence();
 	}
 	let done = false;
-	return new Sequence({
+	return Sequence.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;

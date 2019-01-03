@@ -219,8 +219,8 @@ function nodeDeepEqual (dynamicContext, executionParameters, staticContext, item
 	item1Nodes = item1Nodes.filter(filterElementAndTextNodes);
 	item2Nodes = item2Nodes.filter(filterElementAndTextNodes);
 
-	item1Nodes = new Sequence(item1Nodes.map(createNodeValue));
-	item2Nodes = new Sequence(item2Nodes.map(createNodeValue));
+	item1Nodes = Sequence.create(item1Nodes.map(createNodeValue));
+	item2Nodes = Sequence.create(item2Nodes.map(createNodeValue));
 
 	return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, item1Nodes, item2Nodes);
 }
@@ -253,8 +253,8 @@ function elementNodeDeepEqual (dynamicContext, executionParameters, staticContex
 		dynamicContext,
 		executionParameters,
 		staticContext,
-		new Sequence(attributes1),
-		new Sequence(attributes2));
+		Sequence.create(attributes1),
+		Sequence.create(attributes2));
 	let done = false;
 	return {
 		next: () => {
