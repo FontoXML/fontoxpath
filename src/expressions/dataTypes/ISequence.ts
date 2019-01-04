@@ -2,12 +2,27 @@ import Value from './Value';
 import { AsyncIterator, AsyncResult } from '../util/iterators';
 import ExecutionParameters from '../ExecutionParameters';
 
-export class SwitchCasesCases {
-	empty: (sequence: ISequence) => ISequence;
-	singleton?: (sequence: ISequence) => ISequence;
-	multiple?: (sequence: ISequence) => ISequence;
-	default?: (sequence: ISequence) => ISequence;
-}
+// https://github.com/Microsoft/TypeScript/issues/14094
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+export type SwitchCasesCases = XOR<XOR<XOR<
+	{
+		empty: (sequence: ISequence) => ISequence;
+		default: (sequence: ISequence) => ISequence;
+	},
+	{
+		singleton: (sequence: ISequence) => ISequence;
+		default: (sequence: ISequence) => ISequence;
+	}>,
+	{
+		multiple: (sequence: ISequence) => ISequence;
+		default: (sequence: ISequence) => ISequence;
+	}>,
+	{
+		empty: (sequence: ISequence) => ISequence;
+		singleton: (sequence: ISequence) => ISequence;
+		multiple: (sequence: ISequence) => ISequence;
+	}>;
 
 export default interface ISequence {
 	value: AsyncIterator<Value>;

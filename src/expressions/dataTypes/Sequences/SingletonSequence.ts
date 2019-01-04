@@ -71,7 +71,10 @@ export default class SingletonSequence implements ISequence {
 	}
 
 	switchCases(cases: SwitchCasesCases): ISequence {
-
+		if (cases.singleton) {
+			return (cases.singleton(this));
+		}
+		return (cases.default(this));
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {

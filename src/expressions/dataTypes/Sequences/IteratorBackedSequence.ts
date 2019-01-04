@@ -45,6 +45,8 @@ export default class IteratorBackedSequence implements ISequence {
 			}
 		};
 
+		this._cachedValues = [];
+		this._currentPosition = 0;
 		this._length = predictedLength;
 	}
 
@@ -87,7 +89,7 @@ export default class IteratorBackedSequence implements ISequence {
 	first(): Value | null {
 		const first = this.tryGetFirst();
 		if (!first.ready) {
-			throw new Error('First entry is async.');
+			throw new Error('First value is async.');
 		}
 		return first.value;
 	}
@@ -109,42 +111,19 @@ export default class IteratorBackedSequence implements ISequence {
 	}
 
 	isEmpty(): boolean {
-		if (this._length === 0) {
-			return true;
+		const isEmpty = this.tryIsEmpty();
+		if (!isEmpty.ready) {
+			throw new Error('First value is async.');
 		}
-		return this.first() === null;
+		return isEmpty.value;
 	}
 
 	isSingleton(): boolean {
-		if (this._length !== null) {
-			return this._length === 1;
+		const isSingleton = this.tryIsSingleton();
+		if (!isSingleton.ready) {
+			throw new Error('Sequence has async values.');
 		}
-
-		const iterator = this.value;
-		const oldPosition = this._currentPosition;
-
-		// Check there is at least one value
-		if (this._cachedValues[0] === undefined) {
-			const it = iterator.next();
-			if (!it.ready) {
-				throw new Error('Value is async');
-			}
-			if (it.done) {
-				this.reset(oldPosition);
-				return false;
-			}
-		}
-
-		if (this._cachedValues[1] !== undefined) {
-			this.reset(oldPosition);
-			return false;
-		}
-		const secondValue = iterator.next();
-		if (!secondValue.ready) {
-			throw new Error('Value is async');
-		}
-		this.reset(oldPosition);
-		return secondValue.done;
+		return isSingleton.value;
 	}
 
 	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
@@ -167,7 +146,7 @@ export default class IteratorBackedSequence implements ISequence {
 		const allResults = [];
 		let isReady = false;
 		let readyPromise = null;
-		(function processNextResult () {
+		(function processNextResult() {
 			for (let value = iterator.next(); !value.done; value = iterator.next()) {
 				if (!value.ready) {
 					readyPromise = value.promise.then(processNextResult);
@@ -189,7 +168,40 @@ export default class IteratorBackedSequence implements ISequence {
 	}
 
 	switchCases(cases: SwitchCasesCases): ISequence {
-
+		let resultIterator = null;
+		return this._sequenceFactory.create({
+			next: () => {
+				if (resultIterator) {
+					return resultIterator.next();
+				}
+				if (cases.empty) {
+					const isEmpty = this.tryIsEmpty();
+					if (!isEmpty.ready) {
+						return notReady(isEmpty.promise);
+					}
+					if (isEmpty.value) {
+						resultIterator = cases.empty(this).value;
+						return resultIterator.next();
+					}
+				}
+				if (cases.singleton) {
+					const isSingleton = this.tryIsSingleton();
+					if (!isSingleton.ready) {
+						return notReady(isSingleton.promise);
+					}
+					if (isSingleton.value) {
+						resultIterator = cases.singleton(this).value;
+						return resultIterator.next();
+					}
+				}
+				if (cases.default) {
+					resultIterator = cases.default(this).value;
+					return resultIterator.next();
+				}
+				resultIterator = cases.multiple(this).value;
+				return resultIterator.next();
+			}
+		});
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {
@@ -244,7 +256,7 @@ export default class IteratorBackedSequence implements ISequence {
 		}
 
 		this.reset(oldPosition);
-		return ready(getEffectiveBooleanValue(firstValue.value));
+		return ready(getEffectiveBooleanValue(firstValue));
 	}
 
 	tryGetFirst(): AsyncResult<Value> {
@@ -258,7 +270,7 @@ export default class IteratorBackedSequence implements ISequence {
 			return firstValue;
 		}
 
-		// No first cache entry, the current position must have been 0
+		// No first cache value, the current position must have been 0
 		this.reset();
 
 		if (firstValue.done) {
@@ -283,6 +295,49 @@ export default class IteratorBackedSequence implements ISequence {
 
 		this.reset(oldPosition);
 		return ready(this._length);
+	}
+
+	private tryIsEmpty(): AsyncResult<boolean> {
+		if (this._length === 0) {
+			return ready(true);
+		}
+		const firstValue = this.tryGetFirst();
+		if (!firstValue.ready) {
+			return notReady(firstValue.promise);
+		}
+		return ready(firstValue.value === null);
+	}
+
+	private tryIsSingleton(): AsyncResult<boolean> {
+		if (this._length !== null) {
+			return ready(this._length === 1);
+		}
+
+		const iterator = this.value;
+		const oldPosition = this._currentPosition;
+
+		// Check there is at least one value
+		if (this._cachedValues[0] === undefined) {
+			const it = iterator.next();
+			if (!it.ready) {
+				return notReady(it.promise);
+			}
+			if (it.done) {
+				this.reset(oldPosition);
+				return ready(false);
+			}
+		}
+
+		if (this._cachedValues[1] !== undefined) {
+			this.reset(oldPosition);
+			return ready(false);
+		}
+		const secondValue = iterator.next();
+		if (!secondValue.ready) {
+			return notReady(secondValue.promise);
+		}
+		this.reset(oldPosition);
+		return ready(secondValue.done);
 	}
 
 	private reset(to = 0) {

@@ -53,7 +53,10 @@ export default class EmptySequence implements ISequence {
 	}
 
 	switchCases(cases: SwitchCasesCases): ISequence {
-
+		if (cases.empty) {
+			return (cases.empty(this));
+		}
+		return (cases.default(this));
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {

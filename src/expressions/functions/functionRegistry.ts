@@ -144,3 +144,9 @@ export function registerFunction(namespaceURI, localName, argumentTypes, returnT
 		callFunction: callFunction
 	});
 }
+
+export default {
+	getAlternativesAsStringFor: getAlternativesAsStringFor,
+	getFunctionByArity: getFunctionByArity,
+	registerFunction: registerFunction
+};

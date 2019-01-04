@@ -91,7 +91,10 @@ export default class ArrayBackedSequence implements ISequence {
 	}
 
 	switchCases(cases: SwitchCasesCases): ISequence {
-
+		if (cases.multiple) {
+			return (cases.multiple(this));
+		}
+		return (cases.default(this));
 	}
 
 	tryGetAllValues(): AsyncResult<Array<Value>> {
