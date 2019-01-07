@@ -8,18 +8,19 @@
 	},
 	"scripts": {
 		"prepare": "npm run build",
-		"build": "node ./build.js",
-		"test": "mocha --recursive --require tsconfig-paths/register --require test/tshook.js test/specs/",
-		"ci-test": "nyc --no-clean mocha --recursive --require @babel/register test/specs/",
-		"integrationtests": "mocha --recursive --require @babel/register test/specs/parsing --dist",
-		"qt3tests": "mocha --require @babel/register test/qt3tests.js",
-		"ci-qt3tests": "nyc --no-clean mocha --require @babel/register test/qt3tests.js",
-		"qt3testsxqueryx": "mocha --require @babel/register test/qt3testsXQueryX.js",
-		"xqutstests": "mocha --require @babel/register test/xqutsTests.js",
-		"ci-xqutstests": "nyc --no-clean mocha --require @babel/register test/xqutsTests.js",
-		"xqutstestsxqueryx": "mocha --require @babel/register test/xqutsTestsXQueryX.js",
+		"build-dist": "node ./build.js",
+		"build": "tsickle -- --outDir built",
+		"test": "ts-mocha --paths --recursive -p test/tsconfig.json  test/specs",
+		"ci-test": "nyc --no-clean ts-mocha --paths test/specs --recursive -p test/tsconfig.json",
+		"integrationtests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/parsing --dist",
+		"qt3tests": "ts-mocha --paths -p test/tsconfig.json test/qt3tests.js",
+		"ci-qt3tests": "nyc --no-clean ts-mocha --paths -p test/tsconfig.json test/qt3tests.js",
+		"qt3testsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/qt3testsXQueryX.js",
+		"xqutstests": "ts-mocha --paths -p test/tsconfig.json test/xqutsTests.js",
+		"ci-xqutstests": "nyc --no-clean ts-mocha --paths -p test/tsconfig.json test/xqutsTests.js",
+		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.js",
 		"coverage": "nyc report --reporter=text-lcov | coveralls",
-		"alltests": "mocha --recursive --require @babel/register test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX",
+		"alltests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX",
 		"ts-build": "tslint -p tsconfig.json && tsc",
 		"ts-debug": ""
 	},
@@ -59,6 +60,7 @@
 		"@babel/preset-env": "^7.1.0",
 		"@babel/register": "^7.0.0",
 		"@types/chai": "^4.1.7",
+		"@types/mocha": "^5.2.5",
 		"@types/sinon": "^7.0.3",
 		"babel-plugin-istanbul": "^5.1.0",
 		"babel-plugin-module-resolver": "^3.1.1",
@@ -74,6 +76,7 @@
 		"sinon-chai": "^3.2.0",
 		"slimdom": "^2.1.3",
 		"slimdom-sax-parser": "^1.1.3",
+		"ts-mocha --paths": "^2.0.0",
 		"ts-node": "^7.0.1",
 		"tsconfig-paths": "^3.7.0",
 		"tsickle": "^0.34.0",
@@ -81,7 +84,5 @@
 		"typescript": "^3.1.6",
 		"uglify-js": "^3.4.9"
 	},
-	"dependencies": {
-		"@types/mocha": "^5.2.5"
-	}
+	"dependencies": {}
 }

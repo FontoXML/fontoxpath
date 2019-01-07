@@ -2,7 +2,6 @@ const peg = require('pegjs');
 const fs = require('fs');
 const Compiler = new require('google-closure-compiler').compiler;
 const UglifyJS = require('uglify-js');
-const path = require('path');
 
 const skipParserBuild = process.env.npm_config_skip_parser;
 const skipClosureBuild = process.env.npm_config_skip_closure;
@@ -26,7 +25,10 @@ function doPegJsBuild () {
 			return uglified.code;
 		})
 		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
-		.then(parserString => new Promise((resolve, reject) => fs.writeFile('./built/parsing/xPathParser.raw.js', parserString, (err) => err ? reject(err) : resolve())))
+		.then(parserString => Promise.all([
+			new Promise((resolve, reject) =>
+						fs.writeFile('./src/parsing/xPathParser.raw.js', parserString, (err) => err ? reject(err) : resolve()))
+		]))
 		.then(() => console.info('Parser generator done'));
 }
 

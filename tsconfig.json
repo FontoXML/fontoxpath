@@ -1,13 +1,7 @@
 {
     "compilerOptions": {
 		"baseUrl": ".",
-		"paths": {
-			"fontoxpath": ["./src/index.ts"],
-			"fontoxpath/*": ["./src/*"],
-			"test-helpers/*": ["./test/helpers/*"]
-		},
-        "outDir": "/home/martin/projects/fontoxml/fontoxpath/built",
-		"rootDir": ".",
+		"rootDir": "src",
         "allowJs": true,
 		"lib": [
 			"dom",
@@ -18,9 +12,8 @@
         "target": "es2017",
 		"module": "commonjs"
     },
-	"main": "src/index.js",
+	"main": "src/evaluateXPath.js",
     "include": [
-        "./src/**/*",
-		"./test/**/*"
+        "./src/**/*"
     ]
 }

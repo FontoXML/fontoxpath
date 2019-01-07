@@ -1,0 +1,16 @@
+{
+	"extends": "../tsconfig.json",
+    "compilerOptions": {
+		"baseUrl": "..",
+		"paths": {
+			"fontoxpath": ["src/index.ts"],
+			"fontoxpath/*": ["src/*"],
+			"test-helpers/*": ["test/helpers/*"]
+		}
+    },
+    "include": [
+        "../src/**/*",
+		"../test/**/*"
+    ]
+
+}
