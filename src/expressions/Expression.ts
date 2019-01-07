@@ -98,7 +98,7 @@ abstract class Expression {
 		return this.evaluate(dynamicContext, executionParameters);
 	}
 
-	abstract evaluate (_dynamicContext: DynamicContext, _executionParameters: ExecutionParameters): ISequence;
+	abstract evaluate (_dynamicContext?: DynamicContext, _executionParameters?: ExecutionParameters): ISequence;
 
 	protected evaluateWithoutFocus (_contextlessDynamicContext: (DynamicContext|null), executionParameters:ExecutionParameters): ISequence {
 		if (this._eagerlyEvaluatedValue === null) {

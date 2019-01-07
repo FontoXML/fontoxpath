@@ -24,7 +24,7 @@ function createAttribute (nodesFactory, name, value) {
 class AttributeConstructor extends Expression {
 	/**
 	 * @param  {{expr: Expression}|{prefix:string, namespaceURI: ?string, localName: string}} name
-	 * @param  {!{valueString: ?string}|{valueExprParts: Array<!Expression>}} value
+	 * @param  {!{value: ?string}|{valueExprParts: Array<!Expression>}} value
 	 */
 	constructor (name, value) {
 		let childExpressions = value.valueExprParts || [];

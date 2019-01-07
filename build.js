@@ -62,9 +62,6 @@ function doExpressionsBuild () {
 			warning_level: 'VERBOSE',
 			compilation_level: 'ADVANCED',
 			externs: [
-				path.resolve('./externs/IDomFacade.js'),
-				path.resolve('./externs/INodesFactory.js'),
-				path.resolve('./externs/IDocumentWriter.js')
 			],
 			module_resolution: 'NODE',
 			dependency_mode: 'STRICT',

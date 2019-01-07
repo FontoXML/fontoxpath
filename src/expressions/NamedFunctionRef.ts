@@ -9,9 +9,6 @@ function buildFormattedFunctionName (functionReference) {
 	return `${functionReference.namespaceURI ? `Q{${functionReference.namespaceURI}}` : functionReference.prefix ? `${functionReference.prefix}:` : ''}${functionReference.localName}`;
 }
 
-/**
- * @extends {Expression}
- */
 class NamedFunctionRef extends Expression {
 	_arity: number;
 	_functionReference: { prefix: string; namespaceURI: string; localName: string; };
@@ -60,7 +57,7 @@ class NamedFunctionRef extends Expression {
 		super.performStaticEvaluation(staticContext);
 	}
 
-	evaluate (_dynamicContext) {
+	evaluate () {
 		const functionItem = new FunctionValue({
 			value: this._functionProperties.callFunction,
 			namespaceURI: this._functionProperties.namespaceURI,
@@ -70,7 +67,6 @@ class NamedFunctionRef extends Expression {
 			returnType: this._functionProperties.returnType
 		});
 		return SequenceFactory.singleton(functionItem);
-
 	}
 }
 

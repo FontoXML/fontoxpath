@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import Specificity from 'fontoxpath/expressions/Specificity';
 
 describe('Specificity.compareTo()', () => {

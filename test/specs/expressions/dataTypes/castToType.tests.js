@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import castToType from 'fontoxpath/expressions/dataTypes/castToType';
 import createAtomicValue from 'fontoxpath/expressions/dataTypes/createAtomicValue';
 

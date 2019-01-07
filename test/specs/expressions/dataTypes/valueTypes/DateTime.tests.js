@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTimeDuration';
 

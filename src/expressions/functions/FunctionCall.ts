@@ -6,7 +6,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import FunctionValue from '../dataTypes/FunctionValue';
 
 function transformArgumentList (argumentTypes, argumentList, executionParameters, functionItem) {
-	var transformedArguments = [];
+	const transformedArguments = [];
 	for (let i = 0; i < argumentList.length; ++i) {
 		if (argumentList[i] === null) {
 			// This is the result of partial application, it will be inserted later
@@ -28,7 +28,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 	 * @param  functionReference  Reference to the function to execute.
 	 * @param  args               The arguments to be evaluated and passed to the function
 	 */
-	constructor(functionReference: Expression, args: Array<PossiblyUpdatingExpression | Expression | null>) {
+	constructor(functionReference: Expression, args: Array<Expression|null>) {
 		super(
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1

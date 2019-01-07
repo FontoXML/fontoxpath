@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import adaptJavaScriptValueToXPathValue from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import * as slimdom from 'slimdom';

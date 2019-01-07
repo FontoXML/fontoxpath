@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import Duration from 'fontoxpath/expressions/dataTypes/valueTypes/Duration';
 
 describe('Data type: duration', () => {

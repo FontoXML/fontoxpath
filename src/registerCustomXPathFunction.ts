@@ -5,7 +5,6 @@ import {
 	staticallyKnownNamespaceByPrefix,
 	registerStaticallyKnownNamespace
 } from './expressions/staticallyKnownNamespaces';
-import ISequence from './expressions/dataTypes/ISequence';
 
 function adaptXPathValueToJavascriptValue(valueSequence: any, sequenceType: string): any | null | Array<any> {
 	switch (sequenceType[sequenceType.length - 1]) {
@@ -60,7 +59,11 @@ function splitFunctionName(name: string | { namespaceURI; localName; }): { names
  * @param  returnType  The return type of the test, as sequence type (e.g. 'xs:boolean()')
  * @param  callback    The test itself, which gets the dynamicContext and arguments passed
  */
-export default function registerCustomXPathFunction(name: string | { namespaceURI: string; localName: string; }, signature: Array<string>, returnType: string, callback: (arg0: any) => any): void {
+export default function registerCustomXPathFunction(
+	name: string | { namespaceURI: string; localName: string; },
+	signature: Array<string>,
+	returnType: string,
+	callback: ({domFacade: IDomFacade}, ...any) => any): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
 	const callFunction = function (_dynamicContext, executionParameters, _staticContext) {

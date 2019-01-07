@@ -1,5 +1,5 @@
 import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
-import DomBackedNodesFactory from '../../DomBackedNodesFactory';
+import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
 import QName from '../dataTypes/valueTypes/QName';
 
 const ELEMENT_NODE = 1, ATTRIBUTE_NODE = 2, TEXT_NODE = 3, PROCESSING_INSTRUCTION_NODE = 7, COMMENT_NODE = 8;

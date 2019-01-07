@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 export default function assertCorrectUpdateList (actual, expected) {

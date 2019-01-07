@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import * as slimdom from 'slimdom';
 

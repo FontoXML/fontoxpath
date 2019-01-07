@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
 import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry';
 

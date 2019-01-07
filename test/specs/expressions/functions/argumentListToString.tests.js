@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import argumentListToString from 'fontoxpath/expressions/functions/argumentListToString';
 import SequenceFactory from 'fontoxpath/expressions/dataTypes/SequenceFactory';
 

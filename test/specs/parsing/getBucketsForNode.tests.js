@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import { getBucketsForNode } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 const doc = new slimdom.Document();

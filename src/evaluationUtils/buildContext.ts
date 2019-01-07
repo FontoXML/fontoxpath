@@ -1,16 +1,24 @@
-import adaptJavaScriptValueToXPathValue from '../expressions/adaptJavaScriptValueToXPathValue';
-import DynamicContext from '../expressions/DynamicContext';
-import DomFacade from '../DomFacade';
-import ExecutionParameters from '../expressions/ExecutionParameters';
-import domBackedDomFacade from '../domBackedDomFacade';
-import domBackedDocumentWriter from '../domBackedDocumentWriter';
-import DomBackedNodesFactory from '../DomBackedNodesFactory';
-import Expression from '../expressions/Expression';
-import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
-import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
+import domBackedDocumentWriter from '../documentWriter/domBackedDocumentWriter';
+import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWriter';
+import IDocumentWriter from '../documentWriter/IDocumentWriter';
 
+import domBackedDomFacade from '../domFacade/domBackedDomFacade';
+import DomFacade from '../domFacade/DomFacade';
+import IDomFacade from '../domFacade/IDomFacade';
+
+import DomBackedNodesFactory from '../nodesFactory/DomBackedNodesFactory';
+import INodesFactory from '../nodesFactory/INodesFactory';
+import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
+
+import adaptJavaScriptValueToXPathValue from '../expressions/adaptJavaScriptValueToXPathValue';
+import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
+import DynamicContext from '../expressions/DynamicContext';
+import ExecutionParameters from '../expressions/ExecutionParameters';
+import Expression from '../expressions/Expression';
 import builtInFunctions from '../expressions/functions/builtInFunctions';
 import { registerFunction } from '../expressions/functions/functionRegistry';
+import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
+
 
 export const generateGlobalVariableBindingName = variableName => `GLOBAL_${variableName}`;
 
@@ -23,7 +31,6 @@ builtInFunctions.forEach(builtInFunction => {
 		builtInFunction.returnType,
 		builtInFunction.callFunction);
 });
-
 
 function createDefaultNamespaceResolver(contextItem: Node | any): (string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
@@ -40,7 +47,7 @@ function normalizeEndOfLines (xpathString) {
 export default function buildEvaluationContext(
 	expressionString: string,
 	contextItem: any,
-	domFacade: DomFacade | null,
+	domFacade: IDomFacade | null,
 	variables: object,
 	options: object,
 	compilationOptions: {
@@ -54,10 +61,11 @@ export default function buildEvaluationContext(
 	options = options || { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1', moduleImports: {} };
 	if (domFacade === null) {
 		domFacade = domBackedDomFacade;
+	} else {
+		domFacade = new DomFacade(domFacade);
 	}
+
 	expressionString = normalizeEndOfLines(expressionString);
-	// Always wrap in an actual domFacade
-	const wrappedDomFacade = new DomFacade(domFacade);
 
 	const moduleImports = options['moduleImports'] || Object.create(null);
 
@@ -71,25 +79,20 @@ export default function buildEvaluationContext(
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : SequenceFactory.empty();
 
-	/**
-	 * @type {INodesFactory}
-	 */
-	let nodesFactory = options['nodesFactory'];
+	let nodesFactory: INodesFactory = options['nodesFactory'];
 	if (!nodesFactory && compilationOptions.allowXQuery) {
 		nodesFactory = new DomBackedNodesFactory(contextItem);
+	} else {
+		nodesFactory = wrapExternalNodesFactory(nodesFactory);
 	}
 
-	/**
-	 * @type {IDocumentWriter}
-	 */
-	let documentWriter = options['documentWriter'];
-	if (!documentWriter && compilationOptions.allowUpdating) {
+	let documentWriter: IDocumentWriter = options['documentWriter'];
+	if (!documentWriter) {
 		documentWriter = domBackedDocumentWriter;
+	} else {
+		documentWriter = wrapExternalDocumentWriter(documentWriter);
 	}
 
-	/**
-	 * @type {!DynamicContext}
-	 */
 	const dynamicContext = new DynamicContext({
 		contextItemIndex: 0,
 		contextSequence: contextSequence,
@@ -101,7 +104,7 @@ export default function buildEvaluationContext(
 		}, Object.create(null))
 	});
 
-	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, documentWriter);
+	const executionParameters = new ExecutionParameters(domFacade, nodesFactory, documentWriter);
 
 	return {
 		executionParameters,
