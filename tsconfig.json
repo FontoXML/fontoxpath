@@ -1,19 +1,21 @@
 {
-    "compilerOptions": {
+	"compilerOptions": {
+		"outDir": "./built",
 		"baseUrl": ".",
-		"rootDir": "src",
-        "allowJs": true,
+		"rootDir": ".",
+		"allowJs": true,
 		"lib": [
 			"dom",
 			"es6",
 			"es2017",
 			"esnext.asynciterable"
 		],
-        "target": "es2017",
-		"module": "commonjs"
-    },
-	"main": "src/evaluateXPath.js",
-    "include": [
-        "./src/**/*"
-    ]
+		"target": "es2017",
+		"module": "commonjs",
+		"sourceMap": true
+	},
+	"include": [
+		"./demo/**/*",
+		"./src/**/*"
+	]
 }
