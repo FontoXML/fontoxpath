@@ -1,10 +1,17 @@
 {
-	"all": true,
-	"cache": true,
+	"require": "ts-node/register",
 	"extension": [
-		".ts",
-		".js"
+		".js",
+		".ts"
 	],
-	"exclude": "test",
-	"include": "src/**/*"
+	"reporter": [
+		"text-summary",
+		"html"
+    ],
+	"instrument": true,
+	"sourceMap": true,
+	"include": [
+		"src/**/*@(js|ts)",
+		"test/**/*@(js|ts)"
+	]
 }

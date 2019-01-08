@@ -3,7 +3,6 @@ import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPathToArray,
-	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
 	evaluateXPathToStrings
@@ -606,7 +605,7 @@ array:for-each-pair(
 				[ 'childElement', {'with': 'attributes'}, 'and text'],
 				'And some more data'
 			];
-			jsonMlMapper.parse(jsonMlFragment, documentNode);
+			jsonMlMapper.parse(jsonMlFragment as any, documentNode);
 			const xpath = `
 let $processDescendants := function ($recurse, $node) {
   if ($node/self::text()) then

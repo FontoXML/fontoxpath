@@ -12,8 +12,9 @@
 		],
 		"target": "es2017",
 		"module": "commonjs",
-		"sourceMap": true
-	},
+		"inlineSourceMap": true,
+		"inlineSources": true
+    },
 	"include": [
 		"./demo/**/*",
 		"./src/**/*"

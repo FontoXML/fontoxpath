@@ -139,7 +139,14 @@ type Options = {
  * @param  returnType     One of the return types, indicates the expected type of the XPath query.
  * @param  options        Extra options for evaluating this XPath
  */
-function evaluateXPath(xpathExpression: string, contextItem: Node | any | null, domFacade: (IDomFacade | null) | undefined, variables: (object | null) | undefined, returnType: (number | null) | undefined, options: (Options | null) | undefined): Array<Node> | Node | Array<any> | any {
+function evaluateXPath(
+	xpathExpression: string,
+	contextItem?: Node | any | null,
+	domFacade?: (IDomFacade | null),
+	variables?: (object | null),
+	returnType?: (number | null),
+	options?: (Options | null)
+): Array<Node> | Node | Array<any> | any {
 	returnType = returnType || evaluateXPath.ANY_TYPE;
 	if (!xpathExpression || typeof xpathExpression !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathExpression must be a string.');

@@ -1,35 +1,32 @@
-import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
-import Expression from '../Expression';
-import Specificity from '../Specificity';
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import concatSequences from '../util/concatSequences';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const PossiblyUpdatingExpression_1 = require("../PossiblyUpdatingExpression");
+const Specificity_1 = require("../Specificity");
+const SequenceFactory_1 = require("../dataTypes/SequenceFactory");
+const concatSequences_1 = require("../util/concatSequences");
 /**
  * The Sequence selector evaluates its operands and returns them as a single sequence
  *
  * @extends {PossiblyUpdatingExpression}
  */
-class SequenceOperator extends PossiblyUpdatingExpression {
-	/**
-	 * @param  {!Array<!Expression>}  expressions
-	 */
-	constructor (expressions) {
-		super(
-			expressions.reduce(function (specificity, selector) {
-				return specificity.add(selector.specificity);
-			}, new Specificity({})),
-			expressions,
-			{
-				resultOrder: PossiblyUpdatingExpression.RESULT_ORDERINGS.UNSORTED,
-				canBeStaticallyEvaluated: expressions.every(selector => selector.canBeStaticallyEvaluated)
-			});
-	}
-
-	performFunctionalEvaluation (dynamicContext, _executionParameters, sequenceCallbacks) {
-		if (!sequenceCallbacks.length) {
-			return SequenceFactory.empty();
-		}
-		return concatSequences(sequenceCallbacks.map(cb => cb(dynamicContext)));
-	}
+class SequenceOperator extends PossiblyUpdatingExpression_1.default {
+    /**
+     * @param  {!Array<!Expression>}  expressions
+     */
+    constructor(expressions) {
+        super(expressions.reduce(function (specificity, selector) {
+            return specificity.add(selector.specificity);
+        }, new Specificity_1.default({})), expressions, {
+            resultOrder: PossiblyUpdatingExpression_1.default.RESULT_ORDERINGS.UNSORTED,
+            canBeStaticallyEvaluated: expressions.every(selector => selector.canBeStaticallyEvaluated)
+        });
+    }
+    performFunctionalEvaluation(dynamicContext, _executionParameters, sequenceCallbacks) {
+        if (!sequenceCallbacks.length) {
+            return SequenceFactory_1.default.empty();
+        }
+        return concatSequences_1.default(sequenceCallbacks.map(cb => cb(dynamicContext)));
+    }
 }
-
-export default SequenceOperator;
+exports.default = SequenceOperator;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU2VxdWVuY2VPcGVyYXRvci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIlNlcXVlbmNlT3BlcmF0b3IudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSw4RUFBdUU7QUFDdkUsZ0RBQXlDO0FBQ3pDLGtFQUEyRDtBQUMzRCw2REFBc0Q7QUFHdEQ7Ozs7R0FJRztBQUNILE1BQU0sZ0JBQWlCLFNBQVEsb0NBQTBCO0lBQ3hEOztPQUVHO0lBQ0gsWUFBWSxXQUE4QjtRQUN6QyxLQUFLLENBQ0osV0FBVyxDQUFDLE1BQU0sQ0FBQyxVQUFVLFdBQVcsRUFBRSxRQUFRO1lBQ2pELE9BQU8sV0FBVyxDQUFDLEdBQUcsQ0FBQyxRQUFRLENBQUMsV0FBVyxDQUFDLENBQUM7UUFDOUMsQ0FBQyxFQUFFLElBQUkscUJBQVcsQ0FBQyxFQUFFLENBQUMsQ0FBQyxFQUN2QixXQUFXLEVBQ1g7WUFDQyxXQUFXLEVBQUUsb0NBQTBCLENBQUMsZ0JBQWdCLENBQUMsUUFBUTtZQUNqRSx3QkFBd0IsRUFBRSxXQUFXLENBQUMsS0FBSyxDQUFDLFFBQVEsQ0FBQyxFQUFFLENBQUMsUUFBUSxDQUFDLHdCQUF3QixDQUFDO1NBQzFGLENBQUMsQ0FBQztJQUNMLENBQUM7SUFFRCwyQkFBMkIsQ0FBRSxjQUFjLEVBQUUsb0JBQW9CLEVBQUUsaUJBQWlCO1FBQ25GLElBQUksQ0FBQyxpQkFBaUIsQ0FBQyxNQUFNLEVBQUU7WUFDOUIsT0FBTyx5QkFBZSxDQUFDLEtBQUssRUFBRSxDQUFDO1NBQy9CO1FBQ0QsT0FBTyx5QkFBZSxDQUFDLGlCQUFpQixDQUFDLEdBQUcsQ0FBQyxFQUFFLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQyxjQUFjLENBQUMsQ0FBQyxDQUFDLENBQUM7SUFDekUsQ0FBQztDQUNEO0FBRUQsa0JBQWUsZ0JBQWdCLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgUG9zc2libHlVcGRhdGluZ0V4cHJlc3Npb24gZnJvbSAnLi4vUG9zc2libHlVcGRhdGluZ0V4cHJlc3Npb24nO1xuaW1wb3J0IFNwZWNpZmljaXR5IGZyb20gJy4uL1NwZWNpZmljaXR5JztcbmltcG9ydCBTZXF1ZW5jZUZhY3RvcnkgZnJvbSAnLi4vZGF0YVR5cGVzL1NlcXVlbmNlRmFjdG9yeSc7XG5pbXBvcnQgY29uY2F0U2VxdWVuY2VzIGZyb20gJy4uL3V0aWwvY29uY2F0U2VxdWVuY2VzJztcbmltcG9ydCBFeHByZXNzaW9uIGZyb20gJy4uL0V4cHJlc3Npb24nO1xuXG4vKipcbiAqIFRoZSBTZXF1ZW5jZSBzZWxlY3RvciBldmFsdWF0ZXMgaXRzIG9wZXJhbmRzIGFuZCByZXR1cm5zIHRoZW0gYXMgYSBzaW5nbGUgc2VxdWVuY2VcbiAqXG4gKiBAZXh0ZW5kcyB7UG9zc2libHlVcGRhdGluZ0V4cHJlc3Npb259XG4gKi9cbmNsYXNzIFNlcXVlbmNlT3BlcmF0b3IgZXh0ZW5kcyBQb3NzaWJseVVwZGF0aW5nRXhwcmVzc2lvbiB7XG5cdC8qKlxuXHQgKiBAcGFyYW0gIHshQXJyYXk8IUV4cHJlc3Npb24+fSAgZXhwcmVzc2lvbnNcblx0ICovXG5cdGNvbnN0cnVjdG9yKGV4cHJlc3Npb25zOiBBcnJheTxFeHByZXNzaW9uPikge1xuXHRcdHN1cGVyKFxuXHRcdFx0ZXhwcmVzc2lvbnMucmVkdWNlKGZ1bmN0aW9uIChzcGVjaWZpY2l0eSwgc2VsZWN0b3IpIHtcblx0XHRcdFx0cmV0dXJuIHNwZWNpZmljaXR5LmFkZChzZWxlY3Rvci5zcGVjaWZpY2l0eSk7XG5cdFx0XHR9LCBuZXcgU3BlY2lmaWNpdHkoe30pKSxcblx0XHRcdGV4cHJlc3Npb25zLFxuXHRcdFx0e1xuXHRcdFx0XHRyZXN1bHRPcmRlcjogUG9zc2libHlVcGRhdGluZ0V4cHJlc3Npb24uUkVTVUxUX09SREVSSU5HUy5VTlNPUlRFRCxcblx0XHRcdFx0Y2FuQmVTdGF0aWNhbGx5RXZhbHVhdGVkOiBleHByZXNzaW9ucy5ldmVyeShzZWxlY3RvciA9PiBzZWxlY3Rvci5jYW5CZVN0YXRpY2FsbHlFdmFsdWF0ZWQpXG5cdFx0XHR9KTtcblx0fVxuXG5cdHBlcmZvcm1GdW5jdGlvbmFsRXZhbHVhdGlvbiAoZHluYW1pY0NvbnRleHQsIF9leGVjdXRpb25QYXJhbWV0ZXJzLCBzZXF1ZW5jZUNhbGxiYWNrcykge1xuXHRcdGlmICghc2VxdWVuY2VDYWxsYmFja3MubGVuZ3RoKSB7XG5cdFx0XHRyZXR1cm4gU2VxdWVuY2VGYWN0b3J5LmVtcHR5KCk7XG5cdFx0fVxuXHRcdHJldHVybiBjb25jYXRTZXF1ZW5jZXMoc2VxdWVuY2VDYWxsYmFja3MubWFwKGNiID0+IGNiKGR5bmFtaWNDb250ZXh0KSkpO1xuXHR9XG59XG5cbmV4cG9ydCBkZWZhdWx0IFNlcXVlbmNlT3BlcmF0b3I7XG4iXX0=

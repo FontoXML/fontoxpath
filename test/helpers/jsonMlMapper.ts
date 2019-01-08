@@ -1,5 +1,9 @@
 // Format used is JsonML (http://www.jsonml.org/)
 
+interface JsonML extends Array<string|object|JsonML> {
+	0: string;
+}
+
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
  * create nodes.
@@ -11,7 +15,7 @@
  *
  * @return  {Node}      The root node of the constructed DOM fragment
  */
-export function parseNode (document, jsonml) {
+export function parseNode(document: Document, jsonml: JsonML|string): Node {
 	if (typeof jsonml === 'string') {
 		return document.createTextNode(jsonml);
 	}
@@ -20,12 +24,12 @@ export function parseNode (document, jsonml) {
 		throw new TypeError('JsonML element should be an array or string');
 	}
 
-	var name = jsonml[0];
+	const name = jsonml[0];
 
 	// Processing instructions are not officially part of the JSONML standard,
 	// we therefore encode them as elements containing a single text node
 	if (/^\?/.test(name)) {
-		var target = name.substring(1),
+		const target = name.substring(1),
 			data = jsonml[1] || '';
 		if (jsonml.length > 2 || (typeof data !== 'string')) {
 			throw new TypeError('JsonML processing instruction should contain at most a single string');
@@ -36,7 +40,7 @@ export function parseNode (document, jsonml) {
 	// Comments are not officially part of the JSONML standard,
 	// we therefore encode them as elements named '!' containing zero or one text node
 	if (name === '!') {
-		var comment = jsonml[1] || '';
+		const comment = jsonml[1] || '';
 		if (jsonml.length > 2 || (typeof comment !== 'string')) {
 			throw new TypeError('JsonML comment should contain at most a single string');
 		}
@@ -49,16 +53,19 @@ export function parseNode (document, jsonml) {
 		if (jsonml.length !== 4) {
 			throw new TypeError('JsonML doctype should contain three strings');
 		}
-		var doctype = document.implementation.createDocumentType(jsonml[1], jsonml[2], jsonml[3]);
+		const doctype = document.implementation.createDocumentType(
+			jsonml[1] as string,
+			jsonml[2] as string,
+			jsonml[3] as string);
 		return doctype;
 	}
 
 	// Node must be a normal element
-	var element = document.createElement(name),
-	firstChild = jsonml[1],
-	firstChildIndex = 1;
+	const element = document.createElement(name);
+	const firstChild = jsonml[1];
+	let firstChildIndex = 1;
 	if ((typeof firstChild === 'object') && !Array.isArray(firstChild)) {
-		for (var attributeName in firstChild) {
+		for (const attributeName in firstChild) {
 			if (firstChild[attributeName] !== null) {
 				element.setAttribute(attributeName, firstChild[attributeName]);
 			}
@@ -66,8 +73,8 @@ export function parseNode (document, jsonml) {
 		firstChildIndex = 2;
 	}
 	// Parse children
-	for (var i = firstChildIndex, l = jsonml.length; i < l; ++i) {
-		var node = parseNode(document, jsonml[i]);
+	for (let i = firstChildIndex, l = jsonml.length; i < l; ++i) {
+		const node = parseNode(document, jsonml[i] as JsonML | string);
 		element.appendChild(node);
 	}
 
@@ -78,13 +85,13 @@ export function parseNode (document, jsonml) {
  * Convenience wrapper for parseNode which will assume the given JsonML represents the document element,
  * and therefore append the result to the given document.
  *
- * @param   {JsonML}    jsonml    The JsonML fragment to parse
- * @param   {Document}  document  The document to use to create nodes
+ * @param   jsonml    The JsonML fragment to parse
+ * @param   document  The document to use to create nodes
  *
- * @return  {Document}  The given document, with the parse result appended
+ * @return  The given document, with the parse result appended
  */
-export function parse (jsonml, document) {
-	var root = parseNode(document, jsonml);
+export function parse(jsonml: JsonML|string, document: Document): Document {
+	const root = parseNode(document, jsonml);
 
 	document.appendChild(root);
 
@@ -105,33 +112,39 @@ export function parse (jsonml, document) {
  *
  * @return  {JsonML}
  */
-export function serialize (node) {
+export function serialize(node: Node): JsonML|string {
 	switch (node.nodeType) {
 		case node.TEXT_NODE:
-			return node.nodeValue;
+			return (node as Text).nodeValue;
 		case node.COMMENT_NODE:
-			return node.data ? ['!', node.data] : ['!'];
+			return (node as Comment).data ? ['!', (node as Comment).data] : ['!'];
 		case node.PROCESSING_INSTRUCTION_NODE:
-			return node.data ? ['?' + node.target, node.data] : ['?' + node.target];
+			return (node as ProcessingInstruction).data ?
+				['?' + (node as ProcessingInstruction).target, (node as ProcessingInstruction).data] :
+				['?' + (node as ProcessingInstruction).target];
 		case node.DOCUMENT_TYPE_NODE:
-			return ['!DOCTYPE', node.name, node.publicId, node.systemId];
+			return [
+				'!DOCTYPE',
+				(node as DocumentType).name,
+				(node as DocumentType).publicId,
+				(node as DocumentType).systemId];
 		default:
 			// Serialize element
-			var jsonml = [node.nodeName];
+			const jsonml = [node.nodeName] as JsonML;
 
-			if (node.attributes && node.attributes.length) {
-				var attributes = {};
+			if ((node as Element).attributes && (node as Element).attributes.length) {
+				const attributes = {};
 
-				for (var i = 0, l = node.attributes.length; i < l; ++i) {
-					var attr = node.attributes[i];
+				for (let i = 0, l = (node as Element).attributes.length; i < l; ++i) {
+					const attr = (node as Element).attributes[i];
 					attributes[attr.name] = attr.value;
 				}
 
-				jsonml.push(attributes);
+				jsonml[1] = attributes;
 			}
 
 			// Serialize child nodes
-			for (var childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
+			for (let childNode: Node = (node as Element).firstChild; childNode; childNode = childNode.nextSibling) {
 				jsonml.push(serialize(childNode));
 			}
 

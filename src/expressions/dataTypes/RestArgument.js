@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class RestArgument {
-	constructor () {
-		this.isRestArgument = true;
-	}
+    constructor() {
+        this.isRestArgument = true;
+    }
 }
-
-export default RestArgument;
-export const REST_ARGUMENT_INSTANCE = new RestArgument();
+exports.default = RestArgument;
+exports.REST_ARGUMENT_INSTANCE = new RestArgument();
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUmVzdEFyZ3VtZW50LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiUmVzdEFyZ3VtZW50LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsTUFBTSxZQUFZO0lBRWpCO1FBQ0MsSUFBSSxDQUFDLGNBQWMsR0FBRyxJQUFJLENBQUM7SUFDNUIsQ0FBQztDQUNEO0FBRUQsa0JBQWUsWUFBWSxDQUFDO0FBQ2YsUUFBQSxzQkFBc0IsR0FBRyxJQUFJLFlBQVksRUFBRSxDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiY2xhc3MgUmVzdEFyZ3VtZW50IHtcblx0aXNSZXN0QXJndW1lbnQ6IGJvb2xlYW47XG5cdGNvbnN0cnVjdG9yICgpIHtcblx0XHR0aGlzLmlzUmVzdEFyZ3VtZW50ID0gdHJ1ZTtcblx0fVxufVxuXG5leHBvcnQgZGVmYXVsdCBSZXN0QXJndW1lbnQ7XG5leHBvcnQgY29uc3QgUkVTVF9BUkdVTUVOVF9JTlNUQU5DRSA9IG5ldyBSZXN0QXJndW1lbnQoKTtcbiJdfQ==

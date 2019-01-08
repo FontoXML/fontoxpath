@@ -1,45 +1,35 @@
-import Expression from '../Expression';
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import createNodeValue from '../dataTypes/createNodeValue';
-import TestAbstractExpression from '../tests/TestAbstractExpression';
-
-class ParentAxis extends Expression {
-	/**
-	 * @param  {!TestAbstractExpression}  parentExpression
-	 */
-	constructor (parentExpression) {
-		super(
-			parentExpression.specificity,
-			[parentExpression],
-			{
-				resultOrder: Expression.RESULT_ORDERINGS.REVERSE_SORTED,
-				peer: true,
-				subtree: true,
-				canBeStaticallyEvaluated: false
-			});
-
-		this._parentExpression = parentExpression;
-	}
-
-	evaluate (dynamicContext, executionParameters) {
-		if (dynamicContext.contextItem === null) {
-			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
-		}
-
-		const domFacade = executionParameters.domFacade;
-
-		const /** !Node */ contextNode = dynamicContext.contextItem.value;
-		const parentNode = domFacade.getParentNode(contextNode);
-		if (!parentNode) {
-			return SequenceFactory.empty();
-		}
-		const parentNodeValue = createNodeValue(parentNode);
-		const nodeIsMatch = this._parentExpression.evaluateToBoolean(dynamicContext, parentNodeValue);
-		if (!nodeIsMatch) {
-			return SequenceFactory.empty();
-		}
-		return SequenceFactory.singleton(parentNodeValue);
-	}
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Expression_1 = require("../Expression");
+const SequenceFactory_1 = require("../dataTypes/SequenceFactory");
+const createNodeValue_1 = require("../dataTypes/createNodeValue");
+class ParentAxis extends Expression_1.default {
+    constructor(parentExpression) {
+        super(parentExpression.specificity, [parentExpression], {
+            resultOrder: Expression_1.default.RESULT_ORDERINGS.REVERSE_SORTED,
+            peer: true,
+            subtree: true,
+            canBeStaticallyEvaluated: false
+        });
+        this._parentExpression = parentExpression;
+    }
+    evaluate(dynamicContext, executionParameters) {
+        if (dynamicContext.contextItem === null) {
+            throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
+        }
+        const domFacade = executionParameters.domFacade;
+        const /** !Node */ contextNode = dynamicContext.contextItem.value;
+        const parentNode = domFacade.getParentNode(contextNode);
+        if (!parentNode) {
+            return SequenceFactory_1.default.empty();
+        }
+        const parentNodeValue = createNodeValue_1.default(parentNode);
+        const nodeIsMatch = this._parentExpression.evaluateToBoolean(dynamicContext, parentNodeValue);
+        if (!nodeIsMatch) {
+            return SequenceFactory_1.default.empty();
+        }
+        return SequenceFactory_1.default.singleton(parentNodeValue);
+    }
 }
-
-export default ParentAxis;
+exports.default = ParentAxis;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFyZW50QXhpcy5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIlBhcmVudEF4aXMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSw4Q0FBdUM7QUFDdkMsa0VBQTJEO0FBQzNELGtFQUEyRDtBQUczRCxNQUFNLFVBQVcsU0FBUSxvQkFBVTtJQUVsQyxZQUFZLGdCQUF3QztRQUNuRCxLQUFLLENBQ0osZ0JBQWdCLENBQUMsV0FBVyxFQUM1QixDQUFDLGdCQUFnQixDQUFDLEVBQ2xCO1lBQ0MsV0FBVyxFQUFFLG9CQUFVLENBQUMsZ0JBQWdCLENBQUMsY0FBYztZQUN2RCxJQUFJLEVBQUUsSUFBSTtZQUNWLE9BQU8sRUFBRSxJQUFJO1lBQ2Isd0JBQXdCLEVBQUUsS0FBSztTQUMvQixDQUFDLENBQUM7UUFFSixJQUFJLENBQUMsaUJBQWlCLEdBQUcsZ0JBQWdCLENBQUM7SUFDM0MsQ0FBQztJQUVELFFBQVEsQ0FBRSxjQUFjLEVBQUUsbUJBQW1CO1FBQzVDLElBQUksY0FBYyxDQUFDLFdBQVcsS0FBSyxJQUFJLEVBQUU7WUFDeEMsTUFBTSxJQUFJLEtBQUssQ0FBQyxrRUFBa0UsQ0FBQyxDQUFDO1NBQ3BGO1FBRUQsTUFBTSxTQUFTLEdBQUcsbUJBQW1CLENBQUMsU0FBUyxDQUFDO1FBRWhELE1BQU0sWUFBWSxDQUFDLFdBQVcsR0FBRyxjQUFjLENBQUMsV0FBVyxDQUFDLEtBQUssQ0FBQztRQUNsRSxNQUFNLFVBQVUsR0FBRyxTQUFTLENBQUMsYUFBYSxDQUFDLFdBQVcsQ0FBQyxDQUFDO1FBQ3hELElBQUksQ0FBQyxVQUFVLEVBQUU7WUFDaEIsT0FBTyx5QkFBZSxDQUFDLEtBQUssRUFBRSxDQUFDO1NBQy9CO1FBQ0QsTUFBTSxlQUFlLEdBQUcseUJBQWUsQ0FBQyxVQUFVLENBQUMsQ0FBQztRQUNwRCxNQUFNLFdBQVcsR0FBRyxJQUFJLENBQUMsaUJBQWlCLENBQUMsaUJBQWlCLENBQUMsY0FBYyxFQUFFLGVBQWUsQ0FBQyxDQUFDO1FBQzlGLElBQUksQ0FBQyxXQUFXLEVBQUU7WUFDakIsT0FBTyx5QkFBZSxDQUFDLEtBQUssRUFBRSxDQUFDO1NBQy9CO1FBQ0QsT0FBTyx5QkFBZSxDQUFDLFNBQVMsQ0FBQyxlQUFlLENBQUMsQ0FBQztJQUNuRCxDQUFDO0NBQ0Q7QUFFRCxrQkFBZSxVQUFVLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgRXhwcmVzc2lvbiBmcm9tICcuLi9FeHByZXNzaW9uJztcbmltcG9ydCBTZXF1ZW5jZUZhY3RvcnkgZnJvbSAnLi4vZGF0YVR5cGVzL1NlcXVlbmNlRmFjdG9yeSc7XG5pbXBvcnQgY3JlYXRlTm9kZVZhbHVlIGZyb20gJy4uL2RhdGFUeXBlcy9jcmVhdGVOb2RlVmFsdWUnO1xuaW1wb3J0IFRlc3RBYnN0cmFjdEV4cHJlc3Npb24gZnJvbSAnLi4vdGVzdHMvVGVzdEFic3RyYWN0RXhwcmVzc2lvbic7XG5cbmNsYXNzIFBhcmVudEF4aXMgZXh0ZW5kcyBFeHByZXNzaW9uIHtcblx0X3BhcmVudEV4cHJlc3Npb246IFRlc3RBYnN0cmFjdEV4cHJlc3Npb247XG5cdGNvbnN0cnVjdG9yKHBhcmVudEV4cHJlc3Npb246IFRlc3RBYnN0cmFjdEV4cHJlc3Npb24pIHtcblx0XHRzdXBlcihcblx0XHRcdHBhcmVudEV4cHJlc3Npb24uc3BlY2lmaWNpdHksXG5cdFx0XHRbcGFyZW50RXhwcmVzc2lvbl0sXG5cdFx0XHR7XG5cdFx0XHRcdHJlc3VsdE9yZGVyOiBFeHByZXNzaW9uLlJFU1VMVF9PUkRFUklOR1MuUkVWRVJTRV9TT1JURUQsXG5cdFx0XHRcdHBlZXI6IHRydWUsXG5cdFx0XHRcdHN1YnRyZWU6IHRydWUsXG5cdFx0XHRcdGNhbkJlU3RhdGljYWxseUV2YWx1YXRlZDogZmFsc2Vcblx0XHRcdH0pO1xuXG5cdFx0dGhpcy5fcGFyZW50RXhwcmVzc2lvbiA9IHBhcmVudEV4cHJlc3Npb247XG5cdH1cblxuXHRldmFsdWF0ZSAoZHluYW1pY0NvbnRleHQsIGV4ZWN1dGlvblBhcmFtZXRlcnMpIHtcblx0XHRpZiAoZHluYW1pY0NvbnRleHQuY29udGV4dEl0ZW0gPT09IG51bGwpIHtcblx0XHRcdHRocm93IG5ldyBFcnJvcignWFBEWTAwMDI6IGNvbnRleHQgaXMgYWJzZW50LCBpdCBuZWVkcyB0byBiZSBwcmVzZW50IHRvIHVzZSBheGVzLicpO1xuXHRcdH1cblxuXHRcdGNvbnN0IGRvbUZhY2FkZSA9IGV4ZWN1dGlvblBhcmFtZXRlcnMuZG9tRmFjYWRlO1xuXG5cdFx0Y29uc3QgLyoqICFOb2RlICovIGNvbnRleHROb2RlID0gZHluYW1pY0NvbnRleHQuY29udGV4dEl0ZW0udmFsdWU7XG5cdFx0Y29uc3QgcGFyZW50Tm9kZSA9IGRvbUZhY2FkZS5nZXRQYXJlbnROb2RlKGNvbnRleHROb2RlKTtcblx0XHRpZiAoIXBhcmVudE5vZGUpIHtcblx0XHRcdHJldHVybiBTZXF1ZW5jZUZhY3RvcnkuZW1wdHkoKTtcblx0XHR9XG5cdFx0Y29uc3QgcGFyZW50Tm9kZVZhbHVlID0gY3JlYXRlTm9kZVZhbHVlKHBhcmVudE5vZGUpO1xuXHRcdGNvbnN0IG5vZGVJc01hdGNoID0gdGhpcy5fcGFyZW50RXhwcmVzc2lvbi5ldmFsdWF0ZVRvQm9vbGVhbihkeW5hbWljQ29udGV4dCwgcGFyZW50Tm9kZVZhbHVlKTtcblx0XHRpZiAoIW5vZGVJc01hdGNoKSB7XG5cdFx0XHRyZXR1cm4gU2VxdWVuY2VGYWN0b3J5LmVtcHR5KCk7XG5cdFx0fVxuXHRcdHJldHVybiBTZXF1ZW5jZUZhY3Rvcnkuc2luZ2xldG9uKHBhcmVudE5vZGVWYWx1ZSk7XG5cdH1cbn1cblxuZXhwb3J0IGRlZmF1bHQgUGFyZW50QXhpcztcbiJdfQ==

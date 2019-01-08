@@ -1,240 +1,229 @@
-import decimalComparator from './comparators/decimalComparator';
-import doubleComparator from './comparators/doubleComparator';
-import dateTimeComparator from './comparators/dateTimeComparator';
-import durationComparator from './comparators/durationComparator';
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const decimalComparator_1 = require("./comparators/decimalComparator");
+const doubleComparator_1 = require("./comparators/doubleComparator");
+const dateTimeComparator_1 = require("./comparators/dateTimeComparator");
+const durationComparator_1 = require("./comparators/durationComparator");
 // enumeration
-function validateEnumeration (value, enumeration) {
-	return enumeration.includes(value);
+function validateEnumeration(value, enumeration) {
+    return enumeration.includes(value);
 }
-function validateEnumerationList (value, enumeration) {
-	return value.split(' ').every(function (val) {
-		return enumeration.includes(val);
-	});
+function validateEnumerationList(value, enumeration) {
+    return value.split(' ').every(function (val) {
+        return enumeration.includes(val);
+    });
 }
-
 // length, minLength, maxLength
-function getStringLength (value) {
-	// String is measured in code points
-	return value.length;
+function getStringLength(value) {
+    // String is measured in code points
+    return value.length;
 }
-function getHexBinaryLength (value) {
-	return value.length / 2;
+function getHexBinaryLength(value) {
+    return value.length / 2;
 }
-function getBase64Length (value) {
-	return Math.floor(value.replace(/[\u0009\u000A\u000D\u0020=]/g, '').length * 3 / 4);
+function getBase64Length(value) {
+    return Math.floor(value.replace(/[\u0009\u000A\u000D\u0020=]/g, '').length * 3 / 4);
 }
-function getListLength (value) {
-	return value.split(' ').length;
+function getListLength(value) {
+    return value.split(' ').length;
 }
-function createLengthFacet (getLengthFunction) {
-	return function validateLength (value, length) {
-		return getLengthFunction(value) === length;
-	};
+function createLengthFacet(getLengthFunction) {
+    return function validateLength(value, length) {
+        return getLengthFunction(value) === length;
+    };
 }
-function createMinLengthFacet (getLengthFunction) {
-	return function validateMinLength (value, minLength) {
-		return getLengthFunction(value) >= minLength;
-	};
+function createMinLengthFacet(getLengthFunction) {
+    return function validateMinLength(value, minLength) {
+        return getLengthFunction(value) >= minLength;
+    };
 }
-function createMaxLengthFacet (getLengthFunction) {
-	return function validateMaxLength (value, maxLength) {
-		return getLengthFunction(value) <= maxLength;
-	};
+function createMaxLengthFacet(getLengthFunction) {
+    return function validateMaxLength(value, maxLength) {
+        return getLengthFunction(value) <= maxLength;
+    };
 }
-
 // totalDigits
-function validateTotalDigits (value, totalDigits) {
-	var regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/,
-		match = regex.exec(value),
-		total = (match[1] ? match[1].length : 0) + (match[2] ? match[2].length : 0);
-
-	return total <= totalDigits;
+function validateTotalDigits(value, totalDigits) {
+    var regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/, match = regex.exec(value), total = (match[1] ? match[1].length : 0) + (match[2] ? match[2].length : 0);
+    return total <= totalDigits;
 }
-
 // fractionDigits
-function validateFractionDigits (value, fractionDigits) {
-	const string = value.toString();
-	if (string.indexOf('.') > -1 && fractionDigits === 0) {
-		return false;
-	}
-
-	var regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/,
-		match = regex.exec(string);
-
-	if (!match[2]) {
-		return true;
-	}
-
-	return match[2].length <= fractionDigits;
+function validateFractionDigits(value, fractionDigits) {
+    const string = value.toString();
+    if (string.indexOf('.') > -1 && fractionDigits === 0) {
+        return false;
+    }
+    var regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/, match = regex.exec(string);
+    if (!match[2]) {
+        return true;
+    }
+    return match[2].length <= fractionDigits;
 }
-
 // maxInclusive, maxExclusive, minInclusive, minExclusive
-function createMaxInclusiveFacet (comperator) {
-	return function validateMaxInclusive (value, maxInclusive) {
-		return comperator(value, maxInclusive) < 1;
-	};
+function createMaxInclusiveFacet(comperator) {
+    return function validateMaxInclusive(value, maxInclusive) {
+        return comperator(value, maxInclusive) < 1;
+    };
 }
-function createMaxExclusiveFacet (comperator) {
-	return function validateMaxExclusive (value, maxExclusive) {
-		return comperator(value, maxExclusive) < 0;
-	};
+function createMaxExclusiveFacet(comperator) {
+    return function validateMaxExclusive(value, maxExclusive) {
+        return comperator(value, maxExclusive) < 0;
+    };
 }
-function createMinInclusiveFacet (comperator) {
-	return function validateMinInclusive (value, minInclusive) {
-		return comperator(value, minInclusive) > -1;
-	};
+function createMinInclusiveFacet(comperator) {
+    return function validateMinInclusive(value, minInclusive) {
+        return comperator(value, minInclusive) > -1;
+    };
 }
-function createMinExclusiveFacet (comperator) {
-	return function validateMinExclusive (value, minExclusive) {
-		return comperator(value, minExclusive) > 0;
-	};
+function createMinExclusiveFacet(comperator) {
+    return function validateMinExclusive(value, minExclusive) {
+        return comperator(value, minExclusive) > 0;
+    };
 }
-
-function validateExplicitTimeZone (value, option) {
-	switch (option) {
-		case 'required':
-			return /(Z)|([+-])([01]\d):([0-5]\d)$/.test(value.toString());
-		case 'prohibited':
-			return !/(Z)|([+-])([01]\d):([0-5]\d)$/.test(value.toString());
-		case 'optional':
-			return true;
-	}
+function validateExplicitTimeZone(value, option) {
+    switch (option) {
+        case 'required':
+            return /(Z)|([+-])([01]\d):([0-5]\d)$/.test(value.toString());
+        case 'prohibited':
+            return !/(Z)|([+-])([01]\d):([0-5]\d)$/.test(value.toString());
+        case 'optional':
+            return true;
+    }
 }
-
-export default {
-	'xs:string': {
-		length: createLengthFacet(getStringLength),
-		minLength: createMinLengthFacet(getStringLength),
-		maxLength: createMaxLengthFacet(getStringLength),
-		enumeration: validateEnumeration
-	},
-	'xs:boolean': {},
-	'xs:float': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(doubleComparator),
-		maxExclusive: createMaxExclusiveFacet(doubleComparator),
-		minInclusive: createMinInclusiveFacet(doubleComparator),
-		minExclusive: createMinExclusiveFacet(doubleComparator)
-	},
-	'xs:double': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(doubleComparator),
-		maxExclusive: createMaxExclusiveFacet(doubleComparator),
-		minInclusive: createMinInclusiveFacet(doubleComparator),
-		minExclusive: createMinExclusiveFacet(doubleComparator)
-	},
-	'xs:decimal': {
-		totalDigits: validateTotalDigits,
-		fractionDigits: validateFractionDigits,
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(decimalComparator),
-		maxExclusive: createMaxExclusiveFacet(decimalComparator),
-		minInclusive: createMinInclusiveFacet(decimalComparator),
-		minExclusive: createMinExclusiveFacet(decimalComparator)
-	},
-	'xs:duration': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(durationComparator),
-		maxExclusive: createMaxExclusiveFacet(durationComparator),
-		minInclusive: createMinInclusiveFacet(durationComparator),
-		minExclusive: createMinExclusiveFacet(durationComparator)
-	},
-	'xs:dateTime': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(dateTimeComparator),
-		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
-		minInclusive: createMinInclusiveFacet(dateTimeComparator),
-		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
-	},
-	'xs:time': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(dateTimeComparator),
-		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
-		minInclusive: createMinInclusiveFacet(dateTimeComparator),
-		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
-	},
-	'xs:date': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(dateTimeComparator),
-		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
-		minInclusive: createMinInclusiveFacet(dateTimeComparator),
-		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
-	},
-	'xs:gYearMonth': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(dateTimeComparator),
-		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
-		minInclusive: createMinInclusiveFacet(dateTimeComparator),
-		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
-	},
-	'xs:gYear': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(dateTimeComparator),
-		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
-		minInclusive: createMinInclusiveFacet(dateTimeComparator),
-		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
-	},
-	'xs:gMonthDay': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(dateTimeComparator),
-		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
-		minInclusive: createMinInclusiveFacet(dateTimeComparator),
-		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
-	},
-	'xs:gDay': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(dateTimeComparator),
-		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
-		minInclusive: createMinInclusiveFacet(dateTimeComparator),
-		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
-	},
-	'xs:gMonth': {
-		enumeration: validateEnumeration,
-		maxInclusive: createMaxInclusiveFacet(dateTimeComparator),
-		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
-		minInclusive: createMinInclusiveFacet(dateTimeComparator),
-		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
-	},
-	'xs:hexBinary': {
-		length: createLengthFacet(getHexBinaryLength),
-		minLength: createMinLengthFacet(getHexBinaryLength),
-		maxLength: createMaxLengthFacet(getHexBinaryLength),
-		enumeration: validateEnumeration
-	},
-	'xs:base64Binary': {
-		length: createLengthFacet(getBase64Length),
-		minLength: createMinLengthFacet(getBase64Length),
-		maxLength: createMaxLengthFacet(getBase64Length),
-		enumeration: validateEnumeration
-	},
-	'xs:anyURI': {
-		length: createLengthFacet(getStringLength),
-		minLength: createMinLengthFacet(getStringLength),
-		maxLength: createMaxLengthFacet(getStringLength),
-		enumeration: validateEnumeration
-	},
-	'xs:QName': {
-		enumeration: validateEnumeration
-	},
-	'xs:NOTATION': {
-		enumeration: validateEnumeration
-	},
-	list: {
-		length: createLengthFacet(getListLength),
-		minLength: createMinLengthFacet(getListLength),
-		maxLength: createMaxLengthFacet(getListLength),
-		enumeration: validateEnumerationList
-	},
-	union: {
-		enumeration: validateEnumeration
-	}
+exports.default = {
+    'xs:string': {
+        length: createLengthFacet(getStringLength),
+        minLength: createMinLengthFacet(getStringLength),
+        maxLength: createMaxLengthFacet(getStringLength),
+        enumeration: validateEnumeration
+    },
+    'xs:boolean': {},
+    'xs:float': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(doubleComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(doubleComparator_1.default),
+        minInclusive: createMinInclusiveFacet(doubleComparator_1.default),
+        minExclusive: createMinExclusiveFacet(doubleComparator_1.default)
+    },
+    'xs:double': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(doubleComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(doubleComparator_1.default),
+        minInclusive: createMinInclusiveFacet(doubleComparator_1.default),
+        minExclusive: createMinExclusiveFacet(doubleComparator_1.default)
+    },
+    'xs:decimal': {
+        totalDigits: validateTotalDigits,
+        fractionDigits: validateFractionDigits,
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(decimalComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(decimalComparator_1.default),
+        minInclusive: createMinInclusiveFacet(decimalComparator_1.default),
+        minExclusive: createMinExclusiveFacet(decimalComparator_1.default)
+    },
+    'xs:duration': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(durationComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(durationComparator_1.default),
+        minInclusive: createMinInclusiveFacet(durationComparator_1.default),
+        minExclusive: createMinExclusiveFacet(durationComparator_1.default)
+    },
+    'xs:dateTime': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(dateTimeComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(dateTimeComparator_1.default),
+        minInclusive: createMinInclusiveFacet(dateTimeComparator_1.default),
+        minExclusive: createMinExclusiveFacet(dateTimeComparator_1.default),
+        explicitTimezone: validateExplicitTimeZone
+    },
+    'xs:time': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(dateTimeComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(dateTimeComparator_1.default),
+        minInclusive: createMinInclusiveFacet(dateTimeComparator_1.default),
+        minExclusive: createMinExclusiveFacet(dateTimeComparator_1.default),
+        explicitTimezone: validateExplicitTimeZone
+    },
+    'xs:date': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(dateTimeComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(dateTimeComparator_1.default),
+        minInclusive: createMinInclusiveFacet(dateTimeComparator_1.default),
+        minExclusive: createMinExclusiveFacet(dateTimeComparator_1.default),
+        explicitTimezone: validateExplicitTimeZone
+    },
+    'xs:gYearMonth': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(dateTimeComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(dateTimeComparator_1.default),
+        minInclusive: createMinInclusiveFacet(dateTimeComparator_1.default),
+        minExclusive: createMinExclusiveFacet(dateTimeComparator_1.default),
+        explicitTimezone: validateExplicitTimeZone
+    },
+    'xs:gYear': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(dateTimeComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(dateTimeComparator_1.default),
+        minInclusive: createMinInclusiveFacet(dateTimeComparator_1.default),
+        minExclusive: createMinExclusiveFacet(dateTimeComparator_1.default),
+        explicitTimezone: validateExplicitTimeZone
+    },
+    'xs:gMonthDay': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(dateTimeComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(dateTimeComparator_1.default),
+        minInclusive: createMinInclusiveFacet(dateTimeComparator_1.default),
+        minExclusive: createMinExclusiveFacet(dateTimeComparator_1.default),
+        explicitTimezone: validateExplicitTimeZone
+    },
+    'xs:gDay': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(dateTimeComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(dateTimeComparator_1.default),
+        minInclusive: createMinInclusiveFacet(dateTimeComparator_1.default),
+        minExclusive: createMinExclusiveFacet(dateTimeComparator_1.default),
+        explicitTimezone: validateExplicitTimeZone
+    },
+    'xs:gMonth': {
+        enumeration: validateEnumeration,
+        maxInclusive: createMaxInclusiveFacet(dateTimeComparator_1.default),
+        maxExclusive: createMaxExclusiveFacet(dateTimeComparator_1.default),
+        minInclusive: createMinInclusiveFacet(dateTimeComparator_1.default),
+        minExclusive: createMinExclusiveFacet(dateTimeComparator_1.default),
+        explicitTimezone: validateExplicitTimeZone
+    },
+    'xs:hexBinary': {
+        length: createLengthFacet(getHexBinaryLength),
+        minLength: createMinLengthFacet(getHexBinaryLength),
+        maxLength: createMaxLengthFacet(getHexBinaryLength),
+        enumeration: validateEnumeration
+    },
+    'xs:base64Binary': {
+        length: createLengthFacet(getBase64Length),
+        minLength: createMinLengthFacet(getBase64Length),
+        maxLength: createMaxLengthFacet(getBase64Length),
+        enumeration: validateEnumeration
+    },
+    'xs:anyURI': {
+        length: createLengthFacet(getStringLength),
+        minLength: createMinLengthFacet(getStringLength),
+        maxLength: createMaxLengthFacet(getStringLength),
+        enumeration: validateEnumeration
+    },
+    'xs:QName': {
+        enumeration: validateEnumeration
+    },
+    'xs:NOTATION': {
+        enumeration: validateEnumeration
+    },
+    list: {
+        length: createLengthFacet(getListLength),
+        minLength: createMinLengthFacet(getListLength),
+        maxLength: createMaxLengthFacet(getListLength),
+        enumeration: validateEnumerationList
+    },
+    union: {
+        enumeration: validateEnumeration
+    }
 };
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZmFjZXRzQnlEYXRhVHlwZU5hbWUuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmYWNldHNCeURhdGFUeXBlTmFtZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLHVFQUFnRTtBQUNoRSxxRUFBOEQ7QUFDOUQseUVBQWtFO0FBQ2xFLHlFQUFrRTtBQUVsRSxjQUFjO0FBQ2QsU0FBUyxtQkFBbUIsQ0FBRSxLQUFLLEVBQUUsV0FBVztJQUMvQyxPQUFPLFdBQVcsQ0FBQyxRQUFRLENBQUMsS0FBSyxDQUFDLENBQUM7QUFDcEMsQ0FBQztBQUNELFNBQVMsdUJBQXVCLENBQUUsS0FBSyxFQUFFLFdBQVc7SUFDbkQsT0FBTyxLQUFLLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxDQUFDLEtBQUssQ0FBQyxVQUFVLEdBQUc7UUFDMUMsT0FBTyxXQUFXLENBQUMsUUFBUSxDQUFDLEdBQUcsQ0FBQyxDQUFDO0lBQ2xDLENBQUMsQ0FBQyxDQUFDO0FBQ0osQ0FBQztBQUVELCtCQUErQjtBQUMvQixTQUFTLGVBQWUsQ0FBRSxLQUFLO0lBQzlCLG9DQUFvQztJQUNwQyxPQUFPLEtBQUssQ0FBQyxNQUFNLENBQUM7QUFDckIsQ0FBQztBQUNELFNBQVMsa0JBQWtCLENBQUUsS0FBSztJQUNqQyxPQUFPLEtBQUssQ0FBQyxNQUFNLEdBQUcsQ0FBQyxDQUFDO0FBQ3pCLENBQUM7QUFDRCxTQUFTLGVBQWUsQ0FBRSxLQUFLO0lBQzlCLE9BQU8sSUFBSSxDQUFDLEtBQUssQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDLDhCQUE4QixFQUFFLEVBQUUsQ0FBQyxDQUFDLE1BQU0sR0FBRyxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7QUFDckYsQ0FBQztBQUNELFNBQVMsYUFBYSxDQUFFLEtBQUs7SUFDNUIsT0FBTyxLQUFLLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxDQUFDLE1BQU0sQ0FBQztBQUNoQyxDQUFDO0FBQ0QsU0FBUyxpQkFBaUIsQ0FBRSxpQkFB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QkFBb0IsQ0FBQyxlQUFlLENBQUM7UUFDaEQsV0FBVyxFQUFFLG1CQUFtQjtLQUNoQztJQUNELFVBQVUsRUFBRTtRQUNYLFdBQVcsRUFBRSxtQkFBbUI7S0FDaEM7SUFDRCxhQUFhLEVBQUU7UUFDZCxXQUFXLEVBQUUsbUJBQW1CO0tBQ2hDO0lBQ0QsSUFBSSxFQUFFO1FBQ0wsTUFBTSxFQUFFLGlCQUFpQixDQUFDLGFBQWEsQ0FBQztRQUN4QyxTQUFTLEVBQUUsb0JBQW9CLENBQUMsYUFBYSxDQUFDO1FBQzlDLFNBQVMsRUFBRSxvQkFBb0IsQ0FBQyxhQUFhLENBQUM7UUFDOUMsV0FBVyxFQUFFLHVCQUF1QjtLQUNwQztJQUNELEtBQUssRUFBRTtRQUNOLFdBQVcsRUFBRSxtQkFBbUI7S0FDaEM7Q0FDRCxDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGRlY2ltYWxDb21wYXJhdG9yIGZyb20gJy4vY29tcGFyYXRvcnMvZGVjaW1hbENvbXBhcmF0b3InO1xuaW1wb3J0IGRvdWJsZUNvbXBhcmF0b3IgZnJvbSAnLi9jb21wYXJhdG9ycy9kb3VibGVDb21wYXJhdG9yJztcbmltcG9ydCBkYXRlVGltZUNvbXBhcmF0b3IgZnJvbSAnLi9jb21wYXJhdG9ycy9kYXRlVGltZUNvbXBhcmF0b3InO1xuaW1wb3J0IGR1cmF0aW9uQ29tcGFyYXRvciBmcm9tICcuL2NvbXBhcmF0b3JzL2R1cmF0aW9uQ29tcGFyYXRvcic7XG5cbi8vIGVudW1lcmF0aW9uXG5mdW5jdGlvbiB2YWxpZGF0ZUVudW1lcmF0aW9uICh2YWx1ZSwgZW51bWVyYXRpb24pIHtcblx0cmV0dXJuIGVudW1lcmF0aW9uLmluY2x1ZGVzKHZhbHVlKTtcbn1cbmZ1bmN0aW9uIHZhbGlkYXRlRW51bWVyYXRpb25MaXN0ICh2YWx1ZSwgZW51bWVyYXRpb24pIHtcblx0cmV0dXJuIHZhbHVlLnNwbGl0KCcgJykuZXZlcnkoZnVuY3Rpb24gKHZhbCkge1xuXHRcdHJldHVybiBlbnVtZXJhdGlvbi5pbmNsdWRlcyh2YWwpO1xuXHR9KTtcbn1cblxuLy8gbGVuZ3RoLCBtaW5MZW5ndGgsIG1heExlbmd0aFxuZnVuY3Rpb24gZ2V0U3RyaW5nTGVuZ3RoICh2YWx1ZSkge1xuXHQvLyBTdHJpbmcgaXMgbWVhc3VyZWQgaW4gY29kZSBwb2ludHNcblx0cmV0dXJuIHZhbHVlLmxlbmd0aDtcbn1cbmZ1bmN0aW9uIGdldEhleEJpbmFyeUxlbmd0aCAodmFsdWUpIHtcblx0cmV0dXJuIHZhbHVlLmxlbmd0aCAvIDI7XG59XG5mdW5jdGlvbiBnZXRCYXNlNjRMZW5ndGggKHZhbHVlKSB7XG5cdHJldHVybiBNYXRoLmZsb29yKHZhbHVlLnJlcGxhY2UoL1tcXHUwMDA5XFx1MDAwQVxcdTAwMERcXHUwMDIwPV0vZywgJycpLmxlbmd0aCAqIDMgLyA0KTtcbn1cbmZ1bmN0aW9uIGdldExpc3RMZW5ndGggKHZhbHVlKSB7XG5cdHJldHVybiB2YWx1ZS5zcGxpdCgnICcpLmxlbmd0aDtcbn1cbmZ1bmN0aW9uIGNyZWF0ZUxlbmd0aEZhY2V0IChnZXRMZW5ndGhGdW5jdGlvbikge1xuXHRyZXR1cm4gZnVuY3Rpb24gdmFsaWRhdGVMZW5ndGggKHZhbHVlLCBsZW5ndGgpIHtcblx0XHRyZXR1cm4gZ2V0TGVuZ3RoRnVuY3Rpb24odmFsdWUpID09PSBsZW5ndGg7XG5cdH07XG59XG5mdW5jdGlvbiBjcmVhdGVNaW5MZW5ndGhGYWNldCAoZ2V0TGVuZ3RoRnVuY3Rpb24pIHtcblx0cmV0dXJuIGZ1bmN0aW9uIHZhbGlkYXRlTWluTGVuZ3RoICh2YWx1ZSwgbWluTGVuZ3RoKSB7XG5cdFx0cmV0dXJuIGdldExlbmd0aEZ1bmN0aW9uKHZhbHVlKSA+PSBtaW5MZW5ndGg7XG5cdH07XG59XG5mdW5jdGlvbiBjcmVhdGVNYXhMZW5ndGhGYWNldCAoZ2V0TGVuZ3RoRnVuY3Rpb24pIHtcblx0cmV0dXJuIGZ1bmN0aW9uIHZhbGlkYXRlTWF4TGVuZ3RoICh2YWx1ZSwgbWF4TGVuZ3RoKSB7XG5cdFx0cmV0dXJuIGdldExlbmd0aEZ1bmN0aW9uKHZhbHVlKSA8PSBtYXhMZW5ndGg7XG5cdH07XG59XG5cbi8vIHRvdGFsRGlnaXRzXG5mdW5jdGlvbiB2YWxpZGF0ZVRvdGFsRGlnaXRzICh2YWx1ZSwgdG90YWxEaWdpdHMpIHtcblx0dmFyIHJlZ2V4ID0gL15bLStdPzAqKFsxLTldXFxkKik/KD86XFwuKCg/OlxcZCpbMS05XSkqKTAqKT8kLyxcblx0XHRtYXRjaCA9IHJlZ2V4LmV4ZWModmFsdWUpLFxuXHRcdHRvdGFsID0gKG1hdGNoWzFdID8gbWF0Y2hbMV0ubGVuZ3RoIDogMCkgKyAobWF0Y2hbMl0gPyBtYXRjaFsyXS5sZW5ndGggOiAwKTtcblxuXHRyZXR1cm4gdG90YWwgPD0gdG90YWxEaWdpdHM7XG59XG5cbi8vIGZyYWN0aW9uRGlnaXRzXG5mdW5jdGlvbiB2YWxpZGF0ZUZyYWN0aW9uRGlnaXRzICh2YWx1ZSwgZnJhY3Rpb25EaWdpdHMpIHtcblx0Y29uc3Qgc3RyaW5nID0gdmFsdWUudG9TdHJpbmcoKTtcblx0aWYgKHN0cmluZy5pbmRleE9mKCcuJykgPiAtMSAmJiBmcmFjdGlvbkRpZ2l0cyA9PT0gMCkge1xuXHRcdHJldHVybiBmYWxzZTtcblx0fVxuXG5cdHZhciByZWdleCA9IC9eWy0rXT8wKihbMS05XVxcZCopPyg/OlxcLigoPzpcXGQqWzEtOV0pKikwKik/JC8sXG5cdFx0bWF0Y2ggPSByZWdleC5leGVjKHN0cmluZyk7XG5cblx0aWYgKCFtYXRjaFsyXSkge1xuXHRcdHJldHVybiB0cnVlO1xuXHR9XG5cblx0cmV0dXJuIG1hdGNoWzJdLmxlbmd0aCA8PSBmcmFjdGlvbkRpZ2l0cztcbn1cblxuLy8gbWF4SW5jbHVzaXZlLCBtYXhFeGNsdXNpdmUsIG1pbkluY2x1c2l2ZSwgbWluRXhjbHVzaXZlXG5mdW5jdGlvbiBjcmVhdGVNYXhJbmNsdXNpdmVGYWNldCAoY29tcGVyYXRvcikge1xuXHRyZXR1cm4gZnVuY3Rpb24gdmFsaWRhdGVNYXhJbmNsdXNpdmUgKHZhbHVlLCBtYXhJbmNsdXNpdmUpIHtcblx0XHRyZXR1cm4gY29tcGVyYXRvcih2YWx1ZSwgbWF4SW5jbHVzaXZlKSA8IDE7XG5cdH07XG59XG5mdW5jdGlvbiBjcmVhdGVNYXhFeGNsdXNpdmVGYWNldCAoY29tcGVyYXRvcikge1xuXHRyZXR1cm4gZnVuY3Rpb24gdmFsaWRhdGVNYXhFeGNsdXNpdmUgKHZhbHVlLCBtYXhFeGNsdXNpdmUpIHtcblx0XHRyZXR1cm4gY29tcGVyYXRvcih2YWx1ZSwgbWF4RXhjbHVzaXZlKSA8IDA7XG5cdH07XG59XG5mdW5jdGlvbiBjcmVhdGVNaW5JbmNsdXNpdmVGYWNldCAoY29tcGVyYXRvcikge1xuXHRyZXR1cm4gZnVuY3Rpb24gdmFsaWRhdGVNaW5JbmNsdXNpdmUgKHZhbHVlLCBtaW5JbmNsdXNpdmUpIHtcblx0XHRyZXR1cm4gY29tcGVyYXRvcih2YWx1ZSwgbWluSW5jbHVzaXZlKSA+IC0xO1xuXHR9O1xufVxuZnVuY3Rpb24gY3JlYXRlTWluRXhjbHVzaXZlRmFjZXQgKGNvbXBlcmF0b3IpIHtcblx0cmV0dXJuIGZ1bmN0aW9uIHZhbGlkYXRlTWluRXhjbHVzaXZlICh2YWx1ZSwgbWluRXhjbHVzaXZlKSB7XG5cdFx0cmV0dXJuIGNvbXBlcmF0b3IodmFsdWUsIG1pbkV4Y2x1c2l2ZSkgPiAwO1xuXHR9O1xufVxuXG5mdW5jdGlvbiB2YWxpZGF0ZUV4cGxpY2l0VGltZVpvbmUgKHZhbHVlLCBvcHRpb24pIHtcblx0c3dpdGNoIChvcHRpb24pIHtcblx0XHRjYXNlICdyZXF1aXJlZCc6XG5cdFx0XHRyZXR1cm4gLyhaKXwoWystXSkoWzAxXVxcZCk6KFswLTVdXFxkKSQvLnRlc3QodmFsdWUudG9TdHJpbmcoKSk7XG5cdFx0Y2FzZSAncHJvaGliaXRlZCc6XG5cdFx0XHRyZXR1cm4gIS8oWil8KFsrLV0pKFswMV1cXGQpOihbMC01XVxcZCkkLy50ZXN0KHZhbHVlLnRvU3RyaW5nKCkpO1xuXHRcdGNhc2UgJ29wdGlvbmFsJzpcblx0XHRcdHJldHVybiB0cnVlO1xuXHR9XG59XG5cbmV4cG9ydCBkZWZhdWx0IHtcblx0J3hzOnN0cmluZyc6IHtcblx0XHRsZW5ndGg6IGNyZWF0ZUxlbmd0aEZhY2V0KGdldFN0cmluZ0xlbmd0aCksXG5cdFx0bWluTGVuZ3RoOiBjcmVhdGVNaW5MZW5ndGhGYWNldChnZXRTdHJpbmdMZW5ndGgpLFxuXHRcdG1heExlbmd0aDogY3JlYXRlTWF4TGVuZ3RoRmFjZXQoZ2V0U3RyaW5nTGVuZ3RoKSxcblx0XHRlbnVtZXJhdGlvbjogdmFsaWRhdGVFbnVtZXJhdGlvblxuXHR9LFxuXHQneHM6Ym9vbGVhbic6IHt9LFxuXHQneHM6ZmxvYXQnOiB7XG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb24sXG5cdFx0bWF4SW5jbHVzaXZlOiBjcmVhdGVNYXhJbmNsdXNpdmVGYWNldChkb3VibGVDb21wYXJhdG9yKSxcblx0XHRtYXhFeGNsdXNpdmU6IGNyZWF0ZU1heEV4Y2x1c2l2ZUZhY2V0KGRvdWJsZUNvbXBhcmF0b3IpLFxuXHRcdG1pbkluY2x1c2l2ZTogY3JlYXRlTWluSW5jbHVzaXZlRmFjZXQoZG91YmxlQ29tcGFyYXRvciksXG5cdFx0bWluRXhjbHVzaXZlOiBjcmVhdGVNaW5FeGNsdXNpdmVGYWNldChkb3VibGVDb21wYXJhdG9yKVxuXHR9LFxuXHQneHM6ZG91YmxlJzoge1xuXHRcdGVudW1lcmF0aW9uOiB2YWxpZGF0ZUVudW1lcmF0aW9uLFxuXHRcdG1heEluY2x1c2l2ZTogY3JlYXRlTWF4SW5jbHVzaXZlRmFjZXQoZG91YmxlQ29tcGFyYXRvciksXG5cdFx0bWF4RXhjbHVzaXZlOiBjcmVhdGVNYXhFeGNsdXNpdmVGYWNldChkb3VibGVDb21wYXJhdG9yKSxcblx0XHRtaW5JbmNsdXNpdmU6IGNyZWF0ZU1pbkluY2x1c2l2ZUZhY2V0KGRvdWJsZUNvbXBhcmF0b3IpLFxuXHRcdG1pbkV4Y2x1c2l2ZTogY3JlYXRlTWluRXhjbHVzaXZlRmFjZXQoZG91YmxlQ29tcGFyYXRvcilcblx0fSxcblx0J3hzOmRlY2ltYWwnOiB7XG5cdFx0dG90YWxEaWdpdHM6IHZhbGlkYXRlVG90YWxEaWdpdHMsXG5cdFx0ZnJhY3Rpb25EaWdpdHM6IHZhbGlkYXRlRnJhY3Rpb25EaWdpdHMsXG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb24sXG5cdFx0bWF4SW5jbHVzaXZlOiBjcmVhdGVNYXhJbmNsdXNpdmVGYWNldChkZWNpbWFsQ29tcGFyYXRvciksXG5cdFx0bWF4RXhjbHVzaXZlOiBjcmVhdGVNYXhFeGNsdXNpdmVGYWNldChkZWNpbWFsQ29tcGFyYXRvciksXG5cdFx0bWluSW5jbHVzaXZlOiBjcmVhdGVNaW5JbmNsdXNpdmVGYWNldChkZWNpbWFsQ29tcGFyYXRvciksXG5cdFx0bWluRXhjbHVzaXZlOiBjcmVhdGVNaW5FeGNsdXNpdmVGYWNldChkZWNpbWFsQ29tcGFyYXRvcilcblx0fSxcblx0J3hzOmR1cmF0aW9uJzoge1xuXHRcdGVudW1lcmF0aW9uOiB2YWxpZGF0ZUVudW1lcmF0aW9uLFxuXHRcdG1heEluY2x1c2l2ZTogY3JlYXRlTWF4SW5jbHVzaXZlRmFjZXQoZHVyYXRpb25Db21wYXJhdG9yKSxcblx0XHRtYXhFeGNsdXNpdmU6IGNyZWF0ZU1heEV4Y2x1c2l2ZUZhY2V0KGR1cmF0aW9uQ29tcGFyYXRvciksXG5cdFx0bWluSW5jbHVzaXZlOiBjcmVhdGVNaW5JbmNsdXNpdmVGYWNldChkdXJhdGlvbkNvbXBhcmF0b3IpLFxuXHRcdG1pbkV4Y2x1c2l2ZTogY3JlYXRlTWluRXhjbHVzaXZlRmFjZXQoZHVyYXRpb25Db21wYXJhdG9yKVxuXHR9LFxuXHQneHM6ZGF0ZVRpbWUnOiB7XG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb24sXG5cdFx0bWF4SW5jbHVzaXZlOiBjcmVhdGVNYXhJbmNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdG1heEV4Y2x1c2l2ZTogY3JlYXRlTWF4RXhjbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRtaW5JbmNsdXNpdmU6IGNyZWF0ZU1pbkluY2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0bWluRXhjbHVzaXZlOiBjcmVhdGVNaW5FeGNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdGV4cGxpY2l0VGltZXpvbmU6IHZhbGlkYXRlRXhwbGljaXRUaW1lWm9uZVxuXHR9LFxuXHQneHM6dGltZSc6IHtcblx0XHRlbnVtZXJhdGlvbjogdmFsaWRhdGVFbnVtZXJhdGlvbixcblx0XHRtYXhJbmNsdXNpdmU6IGNyZWF0ZU1heEluY2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0bWF4RXhjbHVzaXZlOiBjcmVhdGVNYXhFeGNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdG1pbkluY2x1c2l2ZTogY3JlYXRlTWluSW5jbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRtaW5FeGNsdXNpdmU6IGNyZWF0ZU1pbkV4Y2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0ZXhwbGljaXRUaW1lem9uZTogdmFsaWRhdGVFeHBsaWNpdFRpbWVab25lXG5cdH0sXG5cdCd4czpkYXRlJzoge1xuXHRcdGVudW1lcmF0aW9uOiB2YWxpZGF0ZUVudW1lcmF0aW9uLFxuXHRcdG1heEluY2x1c2l2ZTogY3JlYXRlTWF4SW5jbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRtYXhFeGNsdXNpdmU6IGNyZWF0ZU1heEV4Y2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0bWluSW5jbHVzaXZlOiBjcmVhdGVNaW5JbmNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdG1pbkV4Y2x1c2l2ZTogY3JlYXRlTWluRXhjbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRleHBsaWNpdFRpbWV6b25lOiB2YWxpZGF0ZUV4cGxpY2l0VGltZVpvbmVcblx0fSxcblx0J3hzOmdZZWFyTW9udGgnOiB7XG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb24sXG5cdFx0bWF4SW5jbHVzaXZlOiBjcmVhdGVNYXhJbmNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdG1heEV4Y2x1c2l2ZTogY3JlYXRlTWF4RXhjbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRtaW5JbmNsdXNpdmU6IGNyZWF0ZU1pbkluY2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0bWluRXhjbHVzaXZlOiBjcmVhdGVNaW5FeGNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdGV4cGxpY2l0VGltZXpvbmU6IHZhbGlkYXRlRXhwbGljaXRUaW1lWm9uZVxuXHR9LFxuXHQneHM6Z1llYXInOiB7XG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb24sXG5cdFx0bWF4SW5jbHVzaXZlOiBjcmVhdGVNYXhJbmNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdG1heEV4Y2x1c2l2ZTogY3JlYXRlTWF4RXhjbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRtaW5JbmNsdXNpdmU6IGNyZWF0ZU1pbkluY2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0bWluRXhjbHVzaXZlOiBjcmVhdGVNaW5FeGNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdGV4cGxpY2l0VGltZXpvbmU6IHZhbGlkYXRlRXhwbGljaXRUaW1lWm9uZVxuXHR9LFxuXHQneHM6Z01vbnRoRGF5Jzoge1xuXHRcdGVudW1lcmF0aW9uOiB2YWxpZGF0ZUVudW1lcmF0aW9uLFxuXHRcdG1heEluY2x1c2l2ZTogY3JlYXRlTWF4SW5jbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRtYXhFeGNsdXNpdmU6IGNyZWF0ZU1heEV4Y2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0bWluSW5jbHVzaXZlOiBjcmVhdGVNaW5JbmNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdG1pbkV4Y2x1c2l2ZTogY3JlYXRlTWluRXhjbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRleHBsaWNpdFRpbWV6b25lOiB2YWxpZGF0ZUV4cGxpY2l0VGltZVpvbmVcblx0fSxcblx0J3hzOmdEYXknOiB7XG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb24sXG5cdFx0bWF4SW5jbHVzaXZlOiBjcmVhdGVNYXhJbmNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdG1heEV4Y2x1c2l2ZTogY3JlYXRlTWF4RXhjbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRtaW5JbmNsdXNpdmU6IGNyZWF0ZU1pbkluY2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0bWluRXhjbHVzaXZlOiBjcmVhdGVNaW5FeGNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdGV4cGxpY2l0VGltZXpvbmU6IHZhbGlkYXRlRXhwbGljaXRUaW1lWm9uZVxuXHR9LFxuXHQneHM6Z01vbnRoJzoge1xuXHRcdGVudW1lcmF0aW9uOiB2YWxpZGF0ZUVudW1lcmF0aW9uLFxuXHRcdG1heEluY2x1c2l2ZTogY3JlYXRlTWF4SW5jbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRtYXhFeGNsdXNpdmU6IGNyZWF0ZU1heEV4Y2x1c2l2ZUZhY2V0KGRhdGVUaW1lQ29tcGFyYXRvciksXG5cdFx0bWluSW5jbHVzaXZlOiBjcmVhdGVNaW5JbmNsdXNpdmVGYWNldChkYXRlVGltZUNvbXBhcmF0b3IpLFxuXHRcdG1pbkV4Y2x1c2l2ZTogY3JlYXRlTWluRXhjbHVzaXZlRmFjZXQoZGF0ZVRpbWVDb21wYXJhdG9yKSxcblx0XHRleHBsaWNpdFRpbWV6b25lOiB2YWxpZGF0ZUV4cGxpY2l0VGltZVpvbmVcblx0fSxcblx0J3hzOmhleEJpbmFyeSc6IHtcblx0XHRsZW5ndGg6IGNyZWF0ZUxlbmd0aEZhY2V0KGdldEhleEJpbmFyeUxlbmd0aCksXG5cdFx0bWluTGVuZ3RoOiBjcmVhdGVNaW5MZW5ndGhGYWNldChnZXRIZXhCaW5hcnlMZW5ndGgpLFxuXHRcdG1heExlbmd0aDogY3JlYXRlTWF4TGVuZ3RoRmFjZXQoZ2V0SGV4QmluYXJ5TGVuZ3RoKSxcblx0XHRlbnVtZXJhdGlvbjogdmFsaWRhdGVFbnVtZXJhdGlvblxuXHR9LFxuXHQneHM6YmFzZTY0QmluYXJ5Jzoge1xuXHRcdGxlbmd0aDogY3JlYXRlTGVuZ3RoRmFjZXQoZ2V0QmFzZTY0TGVuZ3RoKSxcblx0XHRtaW5MZW5ndGg6IGNyZWF0ZU1pbkxlbmd0aEZhY2V0KGdldEJhc2U2NExlbmd0aCksXG5cdFx0bWF4TGVuZ3RoOiBjcmVhdGVNYXhMZW5ndGhGYWNldChnZXRCYXNlNjRMZW5ndGgpLFxuXHRcdGVudW1lcmF0aW9uOiB2YWxpZGF0ZUVudW1lcmF0aW9uXG5cdH0sXG5cdCd4czphbnlVUkknOiB7XG5cdFx0bGVuZ3RoOiBjcmVhdGVMZW5ndGhGYWNldChnZXRTdHJpbmdMZW5ndGgpLFxuXHRcdG1pbkxlbmd0aDogY3JlYXRlTWluTGVuZ3RoRmFjZXQoZ2V0U3RyaW5nTGVuZ3RoKSxcblx0XHRtYXhMZW5ndGg6IGNyZWF0ZU1heExlbmd0aEZhY2V0KGdldFN0cmluZ0xlbmd0aCksXG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb25cblx0fSxcblx0J3hzOlFOYW1lJzoge1xuXHRcdGVudW1lcmF0aW9uOiB2YWxpZGF0ZUVudW1lcmF0aW9uXG5cdH0sXG5cdCd4czpOT1RBVElPTic6IHtcblx0XHRlbnVtZXJhdGlvbjogdmFsaWRhdGVFbnVtZXJhdGlvblxuXHR9LFxuXHRsaXN0OiB7XG5cdFx0bGVuZ3RoOiBjcmVhdGVMZW5ndGhGYWNldChnZXRMaXN0TGVuZ3RoKSxcblx0XHRtaW5MZW5ndGg6IGNyZWF0ZU1pbkxlbmd0aEZhY2V0KGdldExpc3RMZW5ndGgpLFxuXHRcdG1heExlbmd0aDogY3JlYXRlTWF4TGVuZ3RoRmFjZXQoZ2V0TGlzdExlbmd0aCksXG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb25MaXN0XG5cdH0sXG5cdHVuaW9uOiB7XG5cdFx0ZW51bWVyYXRpb246IHZhbGlkYXRlRW51bWVyYXRpb25cblx0fVxufTtcbiJdfQ==

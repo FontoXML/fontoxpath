@@ -1,31 +1,14 @@
-import Expression from '../Expression';
-import SequenceFactory from '../dataTypes/SequenceFactory';
-
-import DynamicContext from '../DynamicContext';
-import AtomicValue from '../dataTypes/AtomicValue';
-
-/**
- * @extends {Expression}
- * @abstract
- */
-class TestAbstractExpression extends Expression {
-	constructor (specificity) {
-		super(specificity, [], { canBeStaticallyEvaluated: false });
-	}
-
-	/**
-	 * @abstract
-	 * @param   {DynamicContext}        _dynamicContext
-	 * @param   {AtomicValue}  _item
-	 * @return  {boolean}
-	 */
-	evaluateToBoolean (_dynamicContext, _item) {
-	}
-
-	evaluate (dynamicContext, _executionParameters) {
-		return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem) ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
-	}
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Expression_1 = require("../Expression");
+const SequenceFactory_1 = require("../dataTypes/SequenceFactory");
+class TestAbstractExpression extends Expression_1.default {
+    constructor(specificity) {
+        super(specificity, [], { canBeStaticallyEvaluated: false });
+    }
+    evaluate(dynamicContext, _executionParameters) {
+        return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem) ? SequenceFactory_1.default.singletonTrueSequence() : SequenceFactory_1.default.singletonFalseSequence();
+    }
 }
-
-export default TestAbstractExpression;
+exports.default = TestAbstractExpression;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiVGVzdEFic3RyYWN0RXhwcmVzc2lvbi5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIlRlc3RBYnN0cmFjdEV4cHJlc3Npb24udHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSw4Q0FBdUM7QUFDdkMsa0VBQTJEO0FBSzNELE1BQWUsc0JBQXVCLFNBQVEsb0JBQVU7SUFDdkQsWUFBYSxXQUFXO1FBQ3ZCLEtBQUssQ0FBQyxXQUFXLEVBQUUsRUFBRSxFQUFFLEVBQUUsd0JBQXdCLEVBQUUsS0FBSyxFQUFFLENBQUMsQ0FBQztJQUM3RCxDQUFDO0lBSUQsUUFBUSxDQUFFLGNBQWMsRUFBRSxvQkFBb0I7UUFDN0MsT0FBTyxJQUFJLENBQUMsaUJBQWlCLENBQUMsY0FBYyxFQUFFLGNBQWMsQ0FBQyxXQUFXLENBQUMsQ0FBQyxDQUFDLENBQUMseUJBQWUsQ0FBQyxxQkFBcUIsRUFBRSxDQUFDLENBQUMsQ0FBQyx5QkFBZSxDQUFDLHNCQUFzQixFQUFFLENBQUM7SUFDaEssQ0FBQztDQUVEO0FBRUQsa0JBQWUsc0JBQXNCLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgRXhwcmVzc2lvbiBmcm9tICcuLi9FeHByZXNzaW9uJztcbmltcG9ydCBTZXF1ZW5jZUZhY3RvcnkgZnJvbSAnLi4vZGF0YVR5cGVzL1NlcXVlbmNlRmFjdG9yeSc7XG5cbmltcG9ydCBEeW5hbWljQ29udGV4dCBmcm9tICcuLi9EeW5hbWljQ29udGV4dCc7XG5pbXBvcnQgQXRvbWljVmFsdWUgZnJvbSAnLi4vZGF0YVR5cGVzL0F0b21pY1ZhbHVlJztcblxuYWJzdHJhY3QgY2xhc3MgVGVzdEFic3RyYWN0RXhwcmVzc2lvbiBleHRlbmRzIEV4cHJlc3Npb24ge1xuXHRjb25zdHJ1Y3RvciAoc3BlY2lmaWNpdHkpIHtcblx0XHRzdXBlcihzcGVjaWZpY2l0eSwgW10sIHsgY2FuQmVTdGF0aWNhbGx5RXZhbHVhdGVkOiBmYWxzZSB9KTtcblx0fVxuXG5cdGFic3RyYWN0IGV2YWx1YXRlVG9Cb29sZWFuIChkeW5hbWljQ29udGV4dDogRHluYW1pY0NvbnRleHQsIGl0ZW06IEF0b21pY1ZhbHVlKTogYm9vbGVhbjtcblxuXHRldmFsdWF0ZSAoZHluYW1pY0NvbnRleHQsIF9leGVjdXRpb25QYXJhbWV0ZXJzKSB7XG5cdFx0cmV0dXJuIHRoaXMuZXZhbHVhdGVUb0Jvb2xlYW4oZHluYW1pY0NvbnRleHQsIGR5bmFtaWNDb250ZXh0LmNvbnRleHRJdGVtKSA/IFNlcXVlbmNlRmFjdG9yeS5zaW5nbGV0b25UcnVlU2VxdWVuY2UoKSA6IFNlcXVlbmNlRmFjdG9yeS5zaW5nbGV0b25GYWxzZVNlcXVlbmNlKCk7XG5cdH1cblxufVxuXG5leHBvcnQgZGVmYXVsdCBUZXN0QWJzdHJhY3RFeHByZXNzaW9uO1xuIl19

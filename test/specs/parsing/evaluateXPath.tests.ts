@@ -14,7 +14,7 @@ import {
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings
-} from 'fontoxpath';
+} from '../../../src';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
@@ -48,7 +48,7 @@ describe('evaluateXPath', () => {
 
 	it(
 		'Requires the XPath selector',
-		() => chai.assert.throws(() => evaluateXPath(), 'xpathExpression must be a string'));
+		() => chai.assert.throws(() => (evaluateXPath as any)(), 'xpathExpression must be a string'));
 
 	describe('toBoolean', () => {
 		it('Keeps booleans booleans',
@@ -253,7 +253,7 @@ describe('evaluateXPath', () => {
 			sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument);
 
 			chai.assert.equal(
-				evaluateXPathToFirstNode('<element>Some text, a <?processing instruction ?> and a <!--comment--></element>', slimdomDocument, null, null, { language: 'XQuery3.1' }).outerHTML,
+				(evaluateXPathToFirstNode('<element>Some text, a <?processing instruction ?> and a <!--comment--></element>', slimdomDocument, null, null, { language: 'XQuery3.1' }) as Element).outerHTML,
 				'<element>Some text, a <?processing instruction ?> and a <!--comment--></element>');
 
 			chai.assert.isTrue(slimdomDocument.createComment.called, 'createComment');

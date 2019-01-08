@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import DomFacade from 'fontoxpath/domFacade/DomFacade';
-import { domFacade as adaptingDomFacade } from 'fontoxpath';
+import DomFacade from '../../src/domFacade/DomFacade';
+import { domFacade as adaptingDomFacade } from '../../src';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 describe('DomFacade', () => {

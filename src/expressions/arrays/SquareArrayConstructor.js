@@ -1,33 +1,22 @@
-import Expression from '../Expression';
-import Specificity from '../Specificity';
-import ArrayValue from '../dataTypes/ArrayValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-
-/**
- * @extends {Expression}
- */
-class SquareArrayConstructor extends Expression {
-	/**
-	 * @param   {!Array<!Expression>}  members    The expressions for the values
-	 */
-	constructor (members) {
-		super(
-			new Specificity({
-			[Specificity.EXTERNAL_KIND]: 1
-			}),
-			members,
-			{
-				canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
-			});
-
-		this._members = members;
-	}
-
-	evaluate (dynamicContext, executionParameters) {
-		return SequenceFactory.singleton(
-			new ArrayValue(
-				this._members.map(entry => createDoublyIterableSequence(entry.evaluateMaybeStatically(dynamicContext, executionParameters)))));
-	}
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Expression_1 = require("../Expression");
+const Specificity_1 = require("../Specificity");
+const ArrayValue_1 = require("../dataTypes/ArrayValue");
+const SequenceFactory_1 = require("../dataTypes/SequenceFactory");
+const createDoublyIterableSequence_1 = require("../util/createDoublyIterableSequence");
+class SquareArrayConstructor extends Expression_1.default {
+    constructor(members) {
+        super(new Specificity_1.default({
+            [Specificity_1.default.EXTERNAL_KIND]: 1
+        }), members, {
+            canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
+        });
+        this._members = members;
+    }
+    evaluate(dynamicContext, executionParameters) {
+        return SequenceFactory_1.default.singleton(new ArrayValue_1.default(this._members.map(entry => createDoublyIterableSequence_1.default(entry.evaluateMaybeStatically(dynamicContext, executionParameters)))));
+    }
 }
-export default SquareArrayConstructor;
+exports.default = SquareArrayConstructor;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU3F1YXJlQXJyYXlDb25zdHJ1Y3Rvci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIlNxdWFyZUFycmF5Q29uc3RydWN0b3IudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSw4Q0FBdUM7QUFDdkMsZ0RBQXlDO0FBQ3pDLHdEQUFpRDtBQUNqRCxrRUFBMkQ7QUFDM0QsdUZBQWdGO0FBRWhGLE1BQU0sc0JBQXVCLFNBQVEsb0JBQVU7SUFFOUMsWUFBWSxPQUEwQjtRQUNyQyxLQUFLLENBQ0osSUFBSSxxQkFBVyxDQUFDO1lBQ2hCLENBQUMscUJBQVcsQ0FBQyxhQUFhLENBQUMsRUFBRSxDQUFDO1NBQzdCLENBQUMsRUFDRixPQUFPLEVBQ1A7WUFDQyx3QkFBd0IsRUFBRSxPQUFPLENBQUMsS0FBSyxDQUFDLE1BQU0sQ0FBQyxFQUFFLENBQUMsTUFBTSxDQUFDLHdCQUF3QixDQUFDO1NBQ2xGLENBQUMsQ0FBQztRQUVKLElBQUksQ0FBQyxRQUFRLEdBQUcsT0FBTyxDQUFDO0lBQ3pCLENBQUM7SUFFRCxRQUFRLENBQUUsY0FBYyxFQUFFLG1CQUFtQjtRQUM1QyxPQUFPLHlCQUFlLENBQUMsU0FBUyxDQUMvQixJQUFJLG9CQUFVLENBQ2IsSUFBSSxDQUFDLFFBQVEsQ0FBQyxHQUFHLENBQUMsS0FBSyxDQUFDLEVBQUUsQ0FBQyxzQ0FBNEIsQ0FBQyxLQUFLLENBQUMsdUJBQXVCLENBQUMsY0FBYyxFQUFFLG1CQUFtQixDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQztJQUNsSSxDQUFDO0NBQ0Q7QUFDRCxrQkFBZSxzQkFBc0IsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBFeHByZXNzaW9uIGZyb20gJy4uL0V4cHJlc3Npb24nO1xuaW1wb3J0IFNwZWNpZmljaXR5IGZyb20gJy4uL1NwZWNpZmljaXR5JztcbmltcG9ydCBBcnJheVZhbHVlIGZyb20gJy4uL2RhdGFUeXBlcy9BcnJheVZhbHVlJztcbmltcG9ydCBTZXF1ZW5jZUZhY3RvcnkgZnJvbSAnLi4vZGF0YVR5cGVzL1NlcXVlbmNlRmFjdG9yeSc7XG5pbXBvcnQgY3JlYXRlRG91Ymx5SXRlcmFibGVTZXF1ZW5jZSBmcm9tICcuLi91dGlsL2NyZWF0ZURvdWJseUl0ZXJhYmxlU2VxdWVuY2UnO1xuXG5jbGFzcyBTcXVhcmVBcnJheUNvbnN0cnVjdG9yIGV4dGVuZHMgRXhwcmVzc2lvbiB7XG5cdF9tZW1iZXJzOiBFeHByZXNzaW9uW107XG5cdGNvbnN0cnVjdG9yKG1lbWJlcnM6IEFycmF5PEV4cHJlc3Npb24+KSB7XG5cdFx0c3VwZXIoXG5cdFx0XHRuZXcgU3BlY2lmaWNpdHkoe1xuXHRcdFx0W1NwZWNpZmljaXR5LkVYVEVSTkFMX0tJTkRdOiAxXG5cdFx0XHR9KSxcblx0XHRcdG1lbWJlcnMsXG5cdFx0XHR7XG5cdFx0XHRcdGNhbkJlU3RhdGljYWxseUV2YWx1YXRlZDogbWVtYmVycy5ldmVyeShtZW1iZXIgPT4gbWVtYmVyLmNhbkJlU3RhdGljYWxseUV2YWx1YXRlZClcblx0XHRcdH0pO1xuXG5cdFx0dGhpcy5fbWVtYmVycyA9IG1lbWJlcnM7XG5cdH1cblxuXHRldmFsdWF0ZSAoZHluYW1pY0NvbnRleHQsIGV4ZWN1dGlvblBhcmFtZXRlcnMpIHtcblx0XHRyZXR1cm4gU2VxdWVuY2VGYWN0b3J5LnNpbmdsZXRvbihcblx0XHRcdG5ldyBBcnJheVZhbHVlKFxuXHRcdFx0XHR0aGlzLl9tZW1iZXJzLm1hcChlbnRyeSA9PiBjcmVhdGVEb3VibHlJdGVyYWJsZVNlcXVlbmNlKGVudHJ5LmV2YWx1YXRlTWF5YmVTdGF0aWNhbGx5KGR5bmFtaWNDb250ZXh0LCBleGVjdXRpb25QYXJhbWV0ZXJzKSkpKSk7XG5cdH1cbn1cbmV4cG9ydCBkZWZhdWx0IFNxdWFyZUFycmF5Q29uc3RydWN0b3I7XG4iXX0=

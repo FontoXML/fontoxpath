@@ -6,11 +6,13 @@
 			"fontoxpath": ["src/index.ts"],
 			"fontoxpath/*": ["src/*"],
 			"test-helpers/*": ["test/helpers/*"]
-		}
+		},
+		"sourceMap": true,
+		"inlineSourceMap": true,
+		"inlineSources": true
     },
     "include": [
         "../src/**/*",
 		"../test/**/*"
     ]
-
 }
