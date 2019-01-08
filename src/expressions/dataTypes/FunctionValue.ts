@@ -4,9 +4,9 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
 import TypeDeclaration from './TypeDeclaration';
-import RestArgument from './RestArgument';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import Value from './Value';
+import RestArgument from './RestArgument';
 
 type FunctionSignature = (DynamicContext, ExecutionParameters, StaticContext, ...Sequence) => ISequence;
 

@@ -1,47 +1,46 @@
 import Value from '../expressions/dataTypes/Value';
 import IDomFacade from './IDomFacade';
+import ConcreteNode, { NODE_TYPES, ConcreteElementNode, ConcreteDocumentNode, ConcreteParentNode, ConcreteChildNode, ConcreteAttributeNode, ConcreteCharacterDataNode } from './ConcreteNode';
 
-function isAttributeNode(node: Node): boolean {
-	return node.nodeType === 2;
+function isAttributeNode(node: ConcreteNode): boolean {
+	return node.nodeType === NODE_TYPES.ATTRIBUTE_NODE;
 }
 
 /**
  * Adapter for the DOM, can be used to use a different DOM implementation
  */
 class DomFacade implements IDomFacade {
-	orderOfDetachedNodes: Array<Value>;
-	private _domFacade: object;
-
-	constructor (domFacade) {
+	orderOfDetachedNodes: Array<ConcreteNode>;
+	
+	constructor (private readonly _domFacade: object) {
 		/**
 		 * Defines the ordering of detached nodes, to ensure stable sorting of unrelated nodes.
 		 */
 		this.orderOfDetachedNodes = [];
-
-		this._domFacade = domFacade;
 	}
 
-	getParentNode(node: Node): Node | null {
+	getParentNode (node: ConcreteElementNode) : ConcreteParentNode;
+	getParentNode(node: ConcreteNode): ConcreteParentNode {
 		return this._domFacade['getParentNode'](node);
 	}
 
-	getFirstChild(node: Node): Node | null {
+	getFirstChild(node: ConcreteParentNode): ConcreteChildNode {
 		return this._domFacade['getFirstChild'](node);
 	}
 
-	getLastChild(node: Node): Node | null {
+	getLastChild(node: ConcreteParentNode): ConcreteChildNode {
 		return this._domFacade['getLastChild'](node);
 	}
 
-	getNextSibling(node: Node): Node | null {
+	getNextSibling(node: ConcreteChildNode): ConcreteChildNode {
 		return this._domFacade['getNextSibling'](node);
 	}
 
-	getPreviousSibling(node: Node): Node | null {
+	getPreviousSibling(node: ConcreteChildNode): ConcreteChildNode {
 		return this._domFacade['getPreviousSibling'](node);
 	}
 
-	getChildNodes(node: Node): Array<Node> {
+	getChildNodes(node: ConcreteParentNode): ConcreteChildNode[] {
 		const childNodes = [];
 
 		for (let childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
@@ -51,7 +50,7 @@ class DomFacade implements IDomFacade {
 		return childNodes;
 	}
 
-	getAttribute (node, attributeName) {
+	getAttribute (node: ConcreteElementNode, attributeName: string): string {
 		const value = this._domFacade['getAttribute'](node, attributeName);
 		if (!value) {
 			return null;
@@ -59,13 +58,13 @@ class DomFacade implements IDomFacade {
 		return value;
 	}
 
-	getAllAttributes (node) {
+	getAllAttributes (node: ConcreteElementNode): ConcreteAttributeNode[] {
 		return this._domFacade['getAllAttributes'](node);
 	}
 
-	getData (node) {
-		if (isAttributeNode(node)) {
-			return (node as Attr).value;
+	getData (node: ConcreteAttributeNode | ConcreteCharacterDataNode) {
+		if (node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE) {
+			return node.value;
 		}
 
 		return this._domFacade['getData'](node) || '';

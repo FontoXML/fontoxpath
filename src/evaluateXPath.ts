@@ -107,7 +107,7 @@ function transformXPathItemToJavascriptObject (value, dynamicContext) {
 		return transformArrayToArray(value, dynamicContext);
 	}
 	if (isSubtypeOf(value.type, 'xs:QName')) {
-		return { next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localPart}`) };
+		return { next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localName}`) };
 	}
 	return {
 		next: () => ready(value.value)

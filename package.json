@@ -10,7 +10,7 @@
 		"prepare": "npm run build",
 		"build-dist": "node ./build.js",
 		"build": "tsickle -- --outDir built",
-		"test": "ts-mocha --paths --recursive -p test/tsconfig.json  test/specs",
+		"test": "nyc mocha --compilers ts-node/register --require source-map-support/register --require tsconfig-paths/register specs/parsing/**/*.@(ts|js) -p test/tsconfig.json",
 		"ci-test": "nyc --no-clean ts-mocha --paths test/specs --recursive -p test/tsconfig.json",
 		"integrationtests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/parsing --dist",
 		"qt3tests": "ts-mocha --paths -p test/tsconfig.json test/qt3tests.js",

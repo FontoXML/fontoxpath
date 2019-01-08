@@ -1,59 +1,68 @@
 import IDomFacade from './IDomFacade';
+import ConcreteNode, { ConcreteElementNode, ConcreteParentNode, ConcreteChildNode, NODE_TYPES, ConcreteAttributeNode } from './ConcreteNode';
 
 class DomBackedDomFacade implements IDomFacade {
-	getParentNode (node: Node) {
-		if (node['nodeType'] === 2) {
-			return (node as Attr).ownerElement;
-		}
-		return node['parentNode'];
+	orderOfDetachedNodes: ConcreteNode[];
+	constructor () {
+		this.orderOfDetachedNodes = [];
 	}
 
-	getFirstChild (node: Node): Node {
+	getParentNode (node: ConcreteElementNode) : ConcreteParentNode;
+	getParentNode(node: ConcreteNode): ConcreteParentNode {
+		if (node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE) {
+			return node.ownerElement;
+		}
+		return node['parentNode'] as ConcreteParentNode;
+	}
+
+	getFirstChild(node: ConcreteParentNode): ConcreteChildNode {
 		return node['firstChild'];
 	}
 
-	getLastChild (node: Node): Node {
+	getLastChild(node: ConcreteParentNode): ConcreteChildNode {
 		return node['lastChild'];
 	}
 
-	getNextSibling (node: Node): Node {
-		return node['nextSibling'];
+	getNextSibling(node: ConcreteChildNode): ConcreteChildNode {
+		return node['nextSibling'] as ConcreteChildNode;
 	}
 
-	getPreviousSibling (node: Node): Node {
-		return node['previousSibling'];
+	getPreviousSibling(node: ConcreteChildNode): ConcreteChildNode {
+		return node['previousSibling'] as ConcreteChildNode;
 	}
 
-	getChildNodes (node: Node): Array<Node> {
+	getChildNodes(node: ConcreteParentNode): ConcreteChildNode[] {
 		const childNodes = [];
 
-		for (let childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
+		for (let childNode: ConcreteChildNode = this.getFirstChild(node);
+			childNode;
+			childNode = this.getNextSibling(childNode) as ConcreteChildNode) {
 			childNodes.push(childNode);
 		}
 
 		return childNodes;
 	}
 
-	getAttribute (node, attributeName) {
+	getAttribute(node: ConcreteElementNode|ConcreteAttributeNode, attributeName: string): string {
 		if (node['nodeType'] === 2) {
 			return null;
 		}
 		return node['getAttribute'](attributeName);
 	}
 
-	getAllAttributes (node: Element) {
-		if (node['nodeType'] === 2) {
+	getAllAttributes(node: ConcreteElementNode|ConcreteAttributeNode): ConcreteAttributeNode[] {
+		if (node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE) {
 			return [];
 		}
 
 		return Array.from(node['attributes']);
 	}
 
-	getData (node) {
+	getData(node: Attr | CharacterData) {
 		return node['data'] || '';
 	}
 
-	getRelatedNodes (node, callback) {
+	getRelatedNodes(node, callback) {
 		return callback(node, this);
 	}
 }

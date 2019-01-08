@@ -62,10 +62,9 @@ class QuantifiedExpression extends Expression {
 
 	evaluate(dynamicContext, executionParameters) {
 		let scopingContext = dynamicContext;
-		const evaluatedInClauses = this._inClauseVariableNames.map((variableBinding, i) => {
+		const evaluatedInClauses = this._inClauseVariableNames.map((variableBinding: any, i: string | number) => {
 			const allValuesInInClause = this._inClauseExpressions[i]
 				.evaluateMaybeStatically(scopingContext, executionParameters).getAllValues();
-
 			scopingContext = dynamicContext.scopeWithVariableBindings({
 				[variableBinding]: () => SequenceFactory.create(allValuesInInClause)
 			});

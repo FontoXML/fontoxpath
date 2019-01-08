@@ -15,8 +15,10 @@ import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 import astHelper from '../../parsing/astHelper';
+import MapValue from '../dataTypes/MapValue';
+import Value from '../dataTypes/Value';
 
-let fontoxpathEvaluate: FunctionDefinitionType = function fontoxpathEvaluate (_dynamicContext, executionParameters, staticContext, query, args) {
+const fontoxpathEvaluate: FunctionDefinitionType = function(_dynamicContext, executionParameters, staticContext, query, args) {
 	let resultIterator;
 	let queryString;
 	return SequenceFactory.create({
@@ -27,7 +29,7 @@ let fontoxpathEvaluate: FunctionDefinitionType = function fontoxpathEvaluate (_d
 					return queryValue;
 				}
 				queryString = queryValue.value.value;
-				const variables = (args.first()).keyValuePairs.reduce((expandedArgs, arg) => {
+				const variables = (args.first() as MapValue).keyValuePairs.reduce((expandedArgs, arg) => {
 					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value());
 					return expandedArgs;
 				}, Object.create(null));
@@ -78,7 +80,7 @@ let fontoxpathEvaluate: FunctionDefinitionType = function fontoxpathEvaluate (_d
 	});
 };
 
-let fontoxpathSleep: FunctionDefinitionType = function fontoxpathSleep (_dynamicContext, _executionParameters, _staticContext, val, howLong) {
+const fontoxpathSleep: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, val, howLong) {
 	let doneWithSleep = false;
 	let readyPromise;
 
@@ -108,7 +110,7 @@ let fontoxpathSleep: FunctionDefinitionType = function fontoxpathSleep (_dynamic
 
 declare const VERSION: string | undefined;
 
-let fontoxpathVersion: FunctionDefinitionType = function fontoxpathVersion () {
+const fontoxpathVersion: FunctionDefinitionType = function() {
 	let version;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	if (typeof VERSION === 'undefined') {
@@ -120,7 +122,7 @@ let fontoxpathVersion: FunctionDefinitionType = function fontoxpathVersion () {
 	return SequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 };
 
-let fontoxpathFetch: FunctionDefinitionType = function fontoxpathFetch (_dynamicContext, _executionParameters, _staticContext, url) {
+const fontoxpathFetch: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, url) {
 	let doneWithFetch = false;
 	let result = null;
 	let done = false;

@@ -4,13 +4,8 @@ import { notReady } from './iterators';
 
 import Value from '../dataTypes/Value';
 
-type CallbackType = any;//(Value<any>[]) => Sequence;
+type CallbackType = (values: Array<Value>) => ISequence;
 
-/**
- * @param   {!Array<!Sequence>}  sequences
- * @param   {!function(!Array<!Value>):!Sequence}  callback
- * @return  {!Sequence}
- */
 export default function zipSingleton (sequences: Array<ISequence>, callback: CallbackType): ISequence {
 	const firstValues = sequences.map(seq => seq.tryGetFirst());
 	if (firstValues.every(val => val.ready)) {

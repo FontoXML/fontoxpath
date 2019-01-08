@@ -98,7 +98,7 @@ describe('Value compares', () => {
 		it('does QNames', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('fn:QName("a", "a") eq fn:QName("a","a")'));
 		});
-		it('returns false for unequal qnames: on localPart', () => {
+		it('returns false for unequal qnames: on localName', () => {
 			chai.assert.isFalse(evaluateXPathToBoolean('fn:QName("a", "a") eq fn:QName("a","b")'));
 		});
 		it('returns false for unequal qnames: on uri', () => {
@@ -125,7 +125,7 @@ describe('Value compares', () => {
 			chai.assert.isFalse(evaluateXPathToBoolean('1 ne 1'));
 		});
 
-		it('returns true for unequal qnames: on localPart', () => {
+		it('returns true for unequal qnames: on localName', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('fn:QName("a", "a") ne fn:QName("a","b")'));
 		});
 		it('returns true for unequal qnames: on uri', () => {

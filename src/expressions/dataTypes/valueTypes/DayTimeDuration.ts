@@ -5,7 +5,11 @@ import AbstractDuration from './AbstractDuration';
  */
 class DayTimeDuration extends AbstractDuration {
 	_seconds: number;
-	constructor (seconds) {
+	static fromParts: (days: any, hours: any, minutes: any, seconds: any, secondFraction: any, isPositive: any) => DayTimeDuration;
+	static fromString: (string: any) => DayTimeDuration;
+	static fromTimezoneString: (string: any) => DayTimeDuration;
+	static fromJavascriptDateTimezone: (date: any) => DayTimeDuration;
+	constructor (seconds: number) {
 		super();
 
 		if (seconds > Number.MAX_SAFE_INTEGER || seconds < Number.MIN_SAFE_INTEGER) {
@@ -133,7 +137,7 @@ DayTimeDuration.fromJavascriptDateTimezone = function (date) {
  * @param   {DayTimeDuration}  dayTimeDuration2
  * @return  {boolean}
  */
-export function lessThan (dayTimeDuration1, dayTimeDuration2) {
+export function lessThan (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): boolean {
 	return dayTimeDuration1._seconds < dayTimeDuration2._seconds;
 }
 
@@ -142,7 +146,7 @@ export function lessThan (dayTimeDuration1, dayTimeDuration2) {
  * @param   {DayTimeDuration}  dayTimeDuration2
  * @return  {boolean}
  */
-export function greaterThan (dayTimeDuration1, dayTimeDuration2) {
+export function greaterThan (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): boolean {
 	return dayTimeDuration1._seconds > dayTimeDuration2._seconds;
 }
 
@@ -151,7 +155,7 @@ export function greaterThan (dayTimeDuration1, dayTimeDuration2) {
  * @param   {DayTimeDuration}  dayTimeDuration2
  * @return  {DayTimeDuration}
  */
-export function add (dayTimeDuration1, dayTimeDuration2) {
+export function add (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): DayTimeDuration {
 	return new DayTimeDuration(dayTimeDuration1._seconds + dayTimeDuration2._seconds);
 }
 
@@ -160,7 +164,7 @@ export function add (dayTimeDuration1, dayTimeDuration2) {
  * @param   {DayTimeDuration}  dayTimeDuration2
  * @return  {DayTimeDuration}
  */
-export function subtract (dayTimeDuration1, dayTimeDuration2) {
+export function subtract (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): DayTimeDuration {
 	return new DayTimeDuration(dayTimeDuration1._seconds - dayTimeDuration2._seconds);
 }
 
@@ -169,7 +173,7 @@ export function subtract (dayTimeDuration1, dayTimeDuration2) {
  * @param   {number}           double
  * @return  {DayTimeDuration}
  */
-export function multiply (dayTimeDuration, double) {
+export function multiply (dayTimeDuration: DayTimeDuration, double: number): DayTimeDuration {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot multiply xs:dayTimeDuration by NaN');
 	}
@@ -185,7 +189,7 @@ export function multiply (dayTimeDuration, double) {
  * @param   {number}           double
  * @return  {DayTimeDuration}
  */
-export function divide (dayTimeDuration, double) {
+export function divide (dayTimeDuration: DayTimeDuration, double: number): DayTimeDuration {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot divide xs:dayTimeDuration by NaN');
 	}
@@ -201,7 +205,7 @@ export function divide (dayTimeDuration, double) {
  * @param   {DayTimeDuration}  dayTimeDuration2
  * @return  {number}
  */
-export function divideByDayTimeDuration (dayTimeDuration1, dayTimeDuration2) {
+export function divideByDayTimeDuration (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): number {
 	if (dayTimeDuration2._seconds === 0) {
 		throw new Error('FOAR0001: Division by 0');
 	}

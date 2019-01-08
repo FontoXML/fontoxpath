@@ -116,7 +116,7 @@ function adaptJavaScriptValueToXPathValue(type, value: any): Value | null {
 	}
 }
 
-export default function adaptJavaScriptValueToXPath(value: any, expectedType: string | undefined): ISequence {
+export default function adaptJavaScriptValueToXPath(value: any, expectedType?: string | undefined): ISequence {
 	expectedType = expectedType || 'item()?';
 
 	const parts = expectedType.match(/^([^+?*]*)([\+\*\?])?$/),

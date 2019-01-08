@@ -3,11 +3,15 @@ import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 class NameTest extends TestAbstractExpression {
+	_localName: string;
+	_namespaceURI: string;
+	_prefix: string;
+	_kind: number;
 	/**
 	 * @param  {{prefix:string, namespaceURI: ?string, localName: string}} name
 	 * @param  {{kind: ?number}} [options=]
 	 */
-	constructor (name, options = { kind: null }) {
+	constructor (name: { prefix: string; namespaceURI: string | null; localName: string; }, options: { kind: number | null; } = { kind: null }) {
 		const { prefix, namespaceURI, localName } = name;
 		const specificity = {};
 

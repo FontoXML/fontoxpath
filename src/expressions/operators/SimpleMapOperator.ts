@@ -7,6 +7,8 @@ import DynamicContext from '../DynamicContext';
  * @extends {Expression}
  */
 class SimpleMapOperator extends Expression {
+	_expression1: Expression;
+	_expression2: Expression;
 	/**
 	 * Simple Map operator
 	 * The simple map operator will evaluate expressions given in expression1 and use the results as context for
@@ -16,7 +18,7 @@ class SimpleMapOperator extends Expression {
 	 * @param  {!Expression}  expression1
 	 * @param  {!Expression}  expression2
 	 */
-	constructor (expression1, expression2) {
+	constructor (expression1: Expression, expression2: Expression) {
 		super(
 			new Specificity({}).add(expression1.specificity),
 			[expression1, expression2],

@@ -11,7 +11,7 @@ export default function assertCorrectUpdateList (actual, expected) {
 			case 'rename':
 				chai.assert.equal(actual[i].newName.prefix, expected[i].newName.prefix);
 				chai.assert.equal(actual[i].newName.namespaceURI, expected[i].newName.namespaceURI);
-				chai.assert.equal(actual[i].newName.localPart, expected[i].newName.localPart);
+				chai.assert.equal(actual[i].newName.localName, expected[i].newName.localName);
 				break;
 			case 'replaceNode':
 				actual[i]

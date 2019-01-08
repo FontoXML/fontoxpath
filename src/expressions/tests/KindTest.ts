@@ -3,10 +3,8 @@ import Specificity from '../Specificity';
 
 
 class KindTest extends TestAbstractExpression {
-	/**
-	 * @param  {number}  nodeType
-	 */
-	constructor (nodeType) {
+	_nodeType: number;
+	constructor (nodeType: number) {
 		super(
 			new Specificity({
 			[Specificity.NODETYPE_KIND]: 1

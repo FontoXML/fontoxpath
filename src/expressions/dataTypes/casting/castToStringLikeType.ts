@@ -14,7 +14,7 @@ export default function castToStringLikeType(instanceOf: (string) => boolean) : 
 	if (instanceOf('xs:QName')) {
 		return value => ({
 			successful: true,
-			value: value.prefix ? `${value.prefix}:${value.localPart}` : value.localPart
+			value: value.prefix ? `${value.prefix}:${value.localName}` : value.localName
 		});
 	}
 	if (instanceOf('xs:NOTATION')) {

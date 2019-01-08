@@ -51,13 +51,13 @@ function generateCompareFunction (operator, typeA, typeB, dynamicContext) {
 		if (operator === 'eqOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value.namespaceURI === castB.value.namespaceURI && castA.value.localPart === castB.value.localPart;
+				return castA.value.namespaceURI === castB.value.namespaceURI && castA.value.localName === castB.value.localName;
 			};
 		}
 		if (operator === 'neOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
-				return castA.value.namespaceURI !== castB.value.namespaceURI || castA.value.localPart !== castB.value.localPart;
+				return castA.value.namespaceURI !== castB.value.namespaceURI || castA.value.localName !== castB.value.localName;
 			};
 		}
 		throw new Error('XPTY0004: Only the "eq" and "ne" comparison is defined for xs:QName');

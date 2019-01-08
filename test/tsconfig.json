@@ -7,7 +7,6 @@
 			"fontoxpath/*": ["src/*"],
 			"test-helpers/*": ["test/helpers/*"]
 		},
-		"sourceMap": true,
 		"inlineSourceMap": true,
 		"inlineSources": true
     },

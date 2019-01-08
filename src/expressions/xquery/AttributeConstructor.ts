@@ -3,7 +3,7 @@ import { errXQDY0044 } from './XQueryErrors';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 
-import { evaluateQNameExpression } from './nameExpressions';
+import { evaluateQNameExpression } from './nameExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
@@ -99,7 +99,7 @@ class AttributeConstructor extends Expression {
 					}
 
 					if (name && (name.prefix === 'xmlns' ||
-						(!name.prefix && name.localPart === 'xmlns') ||
+						(!name.prefix && name.localName === 'xmlns') ||
 						name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
 						(name.prefix === 'xml' && name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
 						(name.prefix && name.prefix !== 'xml' && name.namespaceURI === 'http://www.w3.org/XML/1998/namespace'))) {
@@ -108,7 +108,7 @@ class AttributeConstructor extends Expression {
 				}
 
 				if ((this._value as any).valueExprParts) {
-					const valueExprParts = (this._value as any) as Expression[];
+					const valueExprParts = (this._value as any).valueExprParts as Expression[];
 					if (!valueIterator) {
 						valueIterator = concatSequences(
 							valueExprParts

@@ -35,7 +35,7 @@ return $a
 				newName: {
 					prefix: '',
 					namespaceURI: null,
-					localPart: 'renamed'
+					localName: 'renamed'
 				}
 			}
 		]);

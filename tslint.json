@@ -1,5 +1,6 @@
 {
 	"rules": {
+		"array-type": [true, "array"],
 		"class-name": true,
 		"comment-format": [
 			true,
@@ -11,6 +12,7 @@
 			true,
 			"tabs"
 		],
+		"no-unnecessary-type-assertion": true,
 		"member-ordering": [
 			true,
 			{

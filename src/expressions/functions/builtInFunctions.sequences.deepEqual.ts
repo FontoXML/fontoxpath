@@ -19,7 +19,7 @@ import ArrayValue from '../dataTypes/ArrayValue';
 
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
-function asyncGenerateEvery<T>(items: Array<T>, cb: (item: T, index: number, all: Array<T>) => AsyncIterator<boolean>): AsyncIterator<boolean> {
+function asyncGenerateEvery<T>(items: Array<T>, callback: (item: T, index: number, all: Array<T>) => AsyncIterator<boolean>): AsyncIterator<boolean> {
 	let i = 0;
 	const l = items.length;
 	let done = false;
@@ -29,7 +29,7 @@ function asyncGenerateEvery<T>(items: Array<T>, cb: (item: T, index: number, all
 			if (!done) {
 				while (i < l) {
 					if (!filterGenerator) {
-						filterGenerator = cb(items[i], i, items);
+						filterGenerator = callback(items[i], i, items);
 					}
 					const filterResult = filterGenerator.next();
 					if (!filterResult.ready) {
@@ -72,7 +72,7 @@ function anyAtomicTypeDeepEqual (_dynamicContext, _executionParameters, _staticC
 
 	if (isSubtypeOf(item1.type, 'xs:QName') && isSubtypeOf(item2.type, 'xs:QName')) {
 		return item1.value.namespaceURI === item2.value.namespaceURI &&
-			item1.value.localPart === item2.value.localPart;
+			item1.value.localName === item2.value.localName;
 	}
 
 	if ((isSubtypeOf(item1.type, 'xs:dateTime') ||

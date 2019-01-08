@@ -1,20 +1,21 @@
 class QName {
 	namespaceURI: string;
 	prefix: string;
-	localPart: string;
+	localName: string;
+
 	/**
 	 * @param  prefix         The prefix of the QName, empty string if absent
 	 * @param  namespaceURI   The namespaceURI of the QName, empty string if absent
-	 * @param  localPart      The localPart of the QName, contains no colons
+	 * @param  localName      The localName of the QName, contains no colons
 	 */
-	constructor (prefix: string, namespaceURI: string | null, localPart: string) {
+	constructor (prefix: string, namespaceURI: string | null, localName: string) {
 		this.namespaceURI = namespaceURI || null;
 		this.prefix = prefix || '';
-		this.localPart = localPart;
+		this.localName = localName;
 	}
 
-	buildPrefixedName () {
-		return this.prefix ? this.prefix + ':' + this.localPart : this.localPart;
+	buildPrefixedName?  () {
+		return this.prefix ? this.prefix + ':' + this.localName : this.localName;
 	}
 }
 

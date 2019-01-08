@@ -10,10 +10,11 @@ import concatSequences from '../util/concatSequences';
  * @extends {Expression}
  */
 class Union extends Expression {
+	_subExpressions: Expression[];
 	/**
 	 * @param  {!Array<!Expression>}  expressions
 	 */
-	constructor (expressions) {
+	constructor (expressions: Array<Expression>) {
 		const maxSpecificity = expressions.reduce((maxSpecificity, expression) => {
 			if (maxSpecificity.compareTo(expression.specificity) > 0) {
 				return maxSpecificity;

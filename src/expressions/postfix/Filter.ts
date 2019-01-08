@@ -3,15 +3,12 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 import Value from '../dataTypes/Value';
+import ISequence from '../dataTypes/ISequence';
 
 class Filter extends Expression {
 	_filterExpression: Expression;
 	_selector: Expression;
 	
-	/**
-	 * @param  {Expression}    selector
-	 * @param  {Expression}    filterExpression
-	 */
 	constructor (selector: Expression, filterExpression: Expression) {
 		super(
 			selector.specificity.add(filterExpression.specificity),
@@ -32,10 +29,7 @@ class Filter extends Expression {
 	}
 
 	evaluate (dynamicContext, executionParameters) {
-		/**
-		 * @type {!ISequence}
-		 */
-		const valuesToFilter: ISequence = this._selector.evaluateMaybeStatically(dynamicContext, executionParameters);
+		const valuesToFilter = this._selector.evaluateMaybeStatically(dynamicContext, executionParameters);
 
 		if (this._filterExpression.canBeStaticallyEvaluated) {
 			// Shortcut, if this is numeric, all the values are the same numeric value, same for booleans
@@ -46,7 +40,7 @@ class Filter extends Expression {
 
 			const resultValue = result.first();
 			if (isSubtypeOf(resultValue.type, 'xs:numeric')) {
-				let requestedIndex: number = /** @type {number} */ (resultValue.value);
+				let requestedIndex: number = resultValue.value as number;
 				if (!Number.isInteger(requestedIndex)) {
 					// There are only values for integer positions
 					return SequenceFactory.empty();
