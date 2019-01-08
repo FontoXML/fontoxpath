@@ -134,7 +134,7 @@ export default class IteratorBackedSequence implements ISequence {
 				}
 				return ready(callback(value.value, i++, this));
 			}
-		});
+		}, this._length);
 	}
 
 	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence {
@@ -166,6 +166,16 @@ export default class IteratorBackedSequence implements ISequence {
 
 	switchCases(cases: SwitchCasesCases): ISequence {
 		let resultIterator = null;
+
+		const setResultIterator = (resultSequence: ISequence) => {
+			resultIterator = resultSequence.value;
+			// Try to mirror through length;
+			const resultSequenceLength = resultSequence.tryGetLength(true);
+			if (resultSequenceLength.ready && resultSequenceLength.value !== -1) {
+				this._length = resultSequenceLength.value;
+			}
+		};
+
 		return this._sequenceFactory.create({
 			next: () => {
 				if (resultIterator) {
@@ -177,9 +187,9 @@ export default class IteratorBackedSequence implements ISequence {
 					return notReady(isEmpty.promise);
 				}
 				if (isEmpty.value) {
-					resultIterator = cases.empty ?
-						cases.empty(this).value :
-						cases.default(this).value;
+					setResultIterator(cases.empty ?
+						cases.empty(this) :
+						cases.default(this));
 					return resultIterator.next();
 				}
 
@@ -188,15 +198,15 @@ export default class IteratorBackedSequence implements ISequence {
 					return notReady(isSingleton.promise);
 				}
 				if (isSingleton.value) {
-					resultIterator = cases.singleton ?
-						cases.singleton(this).value:
-						cases.default(this).value;
+					setResultIterator(cases.singleton ?
+						cases.singleton(this):
+						cases.default(this));
 					return resultIterator.next();
 				}
 
-				resultIterator = cases.multiple ?
-					cases.multiple(this).value :
-					cases.default(this).value;
+				setResultIterator(cases.multiple ?
+					cases.multiple(this) :
+					cases.default(this));
 				return resultIterator.next();
 			}
 		});

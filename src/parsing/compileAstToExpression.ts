@@ -475,7 +475,7 @@ function typeDeclarationToType(typeDeclarationAst) {
 
     return {
         type: typeName,
-        occurrence: astHelper.getTextContent(occurrence) as ('' | '?' | '+' | '*')
+        occurrence: occurrence ? astHelper.getTextContent(occurrence) as ('' | '?' | '+' | '*') : ''
     } as TypeDeclaration;
 }
 

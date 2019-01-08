@@ -28,7 +28,6 @@ class OrOperator extends Expression {
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.
 		let bucket = undefined;
 		for (let i = 0; i < expressions.length; ++i) {
-			let bucket;
 			if (bucket === undefined) {
 				bucket = expressions[i].getBucket();
 			}

@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
+import * as sinon from 'sinon';
 import {
 	evaluateXPathToBoolean
 } from 'fontoxpath';

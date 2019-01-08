@@ -61,9 +61,9 @@ export default function buildEvaluationContext(
 	options = options || { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1', moduleImports: {} };
 	if (domFacade === null) {
 		domFacade = domBackedDomFacade;
-	} else {
-		domFacade = new DomFacade(domFacade);
 	}
+	// Always wrap in an actual domFacade
+	domFacade = new DomFacade(domFacade);
 
 	expressionString = normalizeEndOfLines(expressionString);
 

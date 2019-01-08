@@ -13,7 +13,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionValue from '../dataTypes/FunctionValue';
 import Value from '../dataTypes/Value';
-import FunctionDefinitionType from'./FunctionDefinitionType';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 function subSequence (sequence, start, length) {
 	// XPath starts from 1
@@ -182,8 +182,7 @@ function fnInsertBefore (_dynamicContext, _executionParameters, _staticContext, 
 	let effectivePosition = position.first().value;
 	if (effectivePosition < 1) {
 		effectivePosition = 1;
-	}
-	else if (effectivePosition > sequenceValue.length) {
+	} else if (effectivePosition > sequenceValue.length) {
 		effectivePosition = sequenceValue.length + 1;
 	}
 

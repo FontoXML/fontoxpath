@@ -122,7 +122,7 @@ function splitType (type: string): TypeDeclaration {
 	const parts = type.match(/^(.*[^+?*])([+*?])?$/);
 	return {
 		type: parts[1],
-		occurrence: parts[2] === '*' ? '*' : null
+		occurrence: (<'?'|'+'|'*'|''>parts[2]) || null
 	};
 }
 

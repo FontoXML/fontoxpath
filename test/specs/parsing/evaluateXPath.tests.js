@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
-import sinon from 'sinon';
+import * as sinon from 'sinon';
 
 import {
 	domFacade,

@@ -5,7 +5,7 @@ import { validatePattern } from '../dataTypes/typeHelpers';
 import zipSingleton from '../util/zipSingleton';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-import FunctionDefinitionType from'./FunctionDefinitionType';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 /**
  * @type {!FunctionDefinitionType}
@@ -18,7 +18,7 @@ function fnQName (_dynamicContext, _executionParameters, _staticContext, paramUR
 		}
 		const uri = uriValue ? uriValue.value || null : null;
 		if (uri === null && lexicalQName.includes(':')) {
-			throw new Error('FOCA0002: The URI of a QNAme may not be empty if a prefix is provided.');
+			throw new Error('FOCA0002: The URI of a QName may not be empty if a prefix is provided.');
 		}
 		// Skip URI validation for now
 
