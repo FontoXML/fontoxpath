@@ -11,7 +11,7 @@ enum RESULT_ORDERINGS {
 	UNSORTED = 'unsorted'
 }
 
-type OptimizationOptions = ({
+export type OptimizationOptions = ({
 	resultOrder?: string;
 	subtree?: boolean;
 	peer?: boolean;
@@ -24,7 +24,7 @@ abstract class Expression {
 	subtree: boolean;
 	peer: boolean;
 	canBeStaticallyEvaluated: boolean;
-	_childExpressions: Array<Expression>;
+	_childExpressions: Expression[];
 	isUpdating: boolean;
 	_eagerlyEvaluatedValue: () => ISequence;
 	expectedResultOrder: string;
@@ -36,7 +36,7 @@ abstract class Expression {
 	 */
 	constructor (
 		specificity: Specificity,
-		childExpressions: Array<Expression>,
+		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions = {
 			resultOrder: RESULT_ORDERINGS.UNSORTED,
 			subtree: false,

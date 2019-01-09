@@ -2,11 +2,7 @@ import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import SequenceFactory from './dataTypes/SequenceFactory';
 import { DONE_TOKEN } from './util/iterators';
-import Value from './dataTypes/Value';
 
-/**
- * @extends {PossiblyUpdatingExpression}
- */
 class ForExpression extends PossiblyUpdatingExpression {
 	_prefix: string;
 	_namespaceURI: string;
@@ -14,11 +10,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 	_variableBindingKey: any;
 	_clauseExpression: Expression;
 	_returnExpression: Expression;
-	/**
-	 * @param  {{prefix:string, namespaceURI:?string, localName: string}}    rangeVariable
-	 * @param  {Expression}  clauseExpression
-	 * @param  {Expression}  returnExpression
-	 */
+
 	constructor (rangeVariable: { prefix: string; namespaceURI: string | null; localName: string; }, clauseExpression: Expression, returnExpression: Expression) {
 		super(
 			clauseExpression.specificity.add(returnExpression.specificity),
@@ -62,7 +54,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 			next: () => {
 				while (!done) {
 					if (returnIterator === null) {
-						var currentClauseValue = clauseIterator.next();
+						const currentClauseValue = clauseIterator.next();
 						if (!currentClauseValue.ready) {
 							return currentClauseValue;
 						}
@@ -72,7 +64,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 						}
 
 						const nestedContext = dynamicContext.scopeWithVariableBindings({
-							[this._variableBindingKey]: () => SequenceFactory.singleton(/** @type {!Value} */(currentClauseValue.value))
+							[this._variableBindingKey]: () => SequenceFactory.singleton((currentClauseValue.value))
 						});
 
 						returnIterator = createReturnExpression(nestedContext).value;

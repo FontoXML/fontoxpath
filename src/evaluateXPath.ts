@@ -140,11 +140,11 @@ export type Options = {
  */
 export default function evaluateXPath(
 	selector: string,
-	contextItem?: Node | any | null,
-	domFacade?: (IDomFacade | null),
-	variables?: (object | null),
-	returnType?: (number | null),
-	options?: (Options | null)
+	contextItem?: any | null,
+	domFacade?: IDomFacade | null,
+	variables?: { [s: string]: any } | null,
+	returnType?: number | null,
+	options?: Options | null
 ): Node[] | Node | any[] | any {
 	returnType = returnType || evaluateXPath.ANY_TYPE;
 	if (!selector || typeof selector !== 'string' ) {
