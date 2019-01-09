@@ -21,7 +21,7 @@ import { PendingUpdate } from './expressions/xquery-update/PendingUpdate';
  * @param  documentWriter     The documentWriter for writing changes.
  */
 export default function executePendingUpdateList(
-	pendingUpdateList: Array<object>,
+	pendingUpdateList: object[],
 	domFacade?: IDomFacade,
 	nodesFactory?: INodesFactory,
 	documentWriter?: IDocumentWriter

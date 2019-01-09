@@ -114,9 +114,8 @@ function transformXPathItemToJavascriptObject (value, dynamicContext) {
 	};
 }
 
-
-type Options = {
-	namespaceResolver?: (string) => string|null;
+export type Options = {
+	namespaceResolver?: (s: string) => string|null;
 	nodesFactory?: INodesFactory;
 	language?: string,
 	moduleImports?: {[s: string]: string},
@@ -139,14 +138,14 @@ type Options = {
  * @param  returnType     One of the return types, indicates the expected type of the XPath query.
  * @param  options        Extra options for evaluating this XPath
  */
-function evaluateXPath(
+export default function evaluateXPath(
 	xpathExpression: string,
 	contextItem?: Node | any | null,
 	domFacade?: (IDomFacade | null),
 	variables?: (object | null),
 	returnType?: (number | null),
 	options?: (Options | null)
-): Array<Node> | Node | Array<any> | any {
+): Node[] | Node | any[] | any {
 	returnType = returnType || evaluateXPath.ANY_TYPE;
 	if (!xpathExpression || typeof xpathExpression !== 'string' ) {
 		throw new TypeError('Failed to execute \'evaluateXPath\': xpathExpression must be a string.');
@@ -470,5 +469,3 @@ evaluateXPath['XQUERY_3_1_LANGUAGE'] = evaluateXPath.XQUERY_3_1_LANGUAGE = 'XQue
  * Can be used to signal an XPath program should executed
  */
 evaluateXPath['XPATH_3_1_LANGUAGE'] = evaluateXPath.XPATH_3_1_LANGUAGE = 'XPath3.1';
-
-export default evaluateXPath;

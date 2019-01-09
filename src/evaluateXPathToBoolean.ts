@@ -1,4 +1,4 @@
-import evaluateXPath from './evaluateXPath';
+import evaluateXPath, { Options } from './evaluateXPath';
 import IDomFacade from './domFacade/IDomFacade';
 
 
@@ -18,7 +18,7 @@ export default function evaluateXPathToBoolean 	(
 	contextNode?: any,
 	domFacade?: IDomFacade,
 	variables?: ({[s: string]: any }),
-	options?: (object)
+	options?: Options
 ): boolean {
 	return evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.BOOLEAN_TYPE, options);
 }

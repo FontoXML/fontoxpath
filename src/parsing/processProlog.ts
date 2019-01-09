@@ -25,7 +25,7 @@ type FunctionDeclaration = {
 	namespaceURI: string,
 	localName: string,
 	arity: number,
-	functionDefinition: Object
+	functionDefinition: object
 };
 
 /**

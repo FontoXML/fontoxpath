@@ -1,17 +1,9 @@
 import QName from '../dataTypes/valueTypes/QName';
 
-/**
- * @abstract
- */
 abstract class PendingUpdate {
-	type: string;
-	constructor(type) {
-		this.type = type;
-	}
+	constructor(protected type: string) {}
 
-	abstract toTransferable(): object
-
-	static fromTransferable(transferable) {
+	static fromTransferable(transferable: object) {
 		switch (transferable['type']) {
 			case 'delete':
 				return new DeletePendingUpdate(transferable['target']);
@@ -38,14 +30,12 @@ abstract class PendingUpdate {
 			default:
 				throw new Error(`Unexpected type "${transferable['type']}" when parsing a transferable pending update.`);
 		}
-	};
+	}
+	abstract toTransferable(): {type: string};
 }
 class DeletePendingUpdate extends PendingUpdate {
-	target: Node;
-	constructor(target) {
+	constructor(readonly target: Node) {
 		super('delete');
-
-		this.target = target;
 	}
 
 	toTransferable() {
@@ -57,12 +47,8 @@ class DeletePendingUpdate extends PendingUpdate {
 }
 
 class InsertPendingUpdate extends PendingUpdate {
-	target: Node;
-	content: Node[];
-	constructor(target, content, type) {
+	constructor(readonly target: Node, readonly content: Node[], type: string) {
 		super(type);
-		this.target = target;
-		this.content = content;
 	}
 
 	toTransferable() {
@@ -75,43 +61,38 @@ class InsertPendingUpdate extends PendingUpdate {
 }
 
 class InsertAfterPendingUpdate extends InsertPendingUpdate {
-	constructor(target, content) {
+	constructor(target: Node, content: Node[]) {
 		super(target, content, 'insertAfter');
 	}
 }
 
 class InsertBeforePendingUpdate extends InsertPendingUpdate {
-	constructor(target, content) {
+	constructor(target: Node, content: Node[]) {
 		super(target, content, 'insertBefore');
 	}
 }
 
 class InsertIntoPendingUpdate extends InsertPendingUpdate {
-	constructor(target, content) {
+	constructor(target: Node, content: Node[]) {
 		super(target, content, 'insertInto');
 	}
 }
 
 class InsertIntoAsFirstPendingUpdate extends InsertPendingUpdate {
-	constructor(target, content) {
+	constructor(target: Node, content: Node[]) {
 		super(target, content, 'insertIntoAsFirst');
 	}
 }
 
 class InsertIntoAsLastPendingUpdate extends InsertPendingUpdate {
-	constructor(target, content) {
+	constructor(target: Node, content: Node[]) {
 		super(target, content, 'insertIntoAsLast');
 	}
 }
 
 class InsertAttributesPendingUpdate extends PendingUpdate {
-	target: Node;
-	content: Attr[];
-	constructor(target, content) {
+	constructor(readonly target: Node, readonly content: Attr[]) {
 		super('insertAttributes');
-		this.target = target;
-
-		this.content = content;
 	}
 
 	toTransferable() {
@@ -124,11 +105,9 @@ class InsertAttributesPendingUpdate extends PendingUpdate {
 }
 
 class RenamePendingUpdate extends PendingUpdate {
-	target: Node;
 	newName: QName;
-	constructor(target, newName) {
+	constructor(readonly target: Node, newName: QName) {
 		super('rename');
-		this.target = target;
 
 		this.newName = newName.buildPrefixedName ?
 			newName :
@@ -149,16 +128,8 @@ class RenamePendingUpdate extends PendingUpdate {
 }
 
 class ReplaceNodePendingUpdate extends PendingUpdate {
-	target: Node;
-	replacement: any;
-	constructor(target, replacement) {
+	constructor(readonly target: Node, readonly replacement: Node[]) {
 		super('replaceNode');
-		this.target = target;
-
-		/**
-		 * @type  {!Array<!Node>}
-		 */
-		this.replacement = replacement;
 	}
 
 	toTransferable() {
@@ -171,16 +142,8 @@ class ReplaceNodePendingUpdate extends PendingUpdate {
 }
 
 class ReplaceValuePendingUpdate extends PendingUpdate {
-	target: Node;
-	stringValue: string;
-	constructor(target, stringValue) {
+	constructor(readonly target: Node, readonly stringValue: string) {
 		super('replaceValue');
-		this.target = target;
-
-		/**
-		 * @type  {string}
-		 */
-		this.stringValue = stringValue;
 	}
 
 	toTransferable() {
@@ -193,15 +156,8 @@ class ReplaceValuePendingUpdate extends PendingUpdate {
 }
 
 class ReplaceElementContentPendingUpdate extends PendingUpdate {
-	target: Node;
-	text: Text;
-	constructor(target, text) {
+	constructor(readonly target: Node, readonly text: Text) {
 		super('replaceElementContent');
-		this.target = target;
-		/**
-		 * @type {!Text}
-		 */
-		this.text = text;
 	}
 
 	toTransferable() {

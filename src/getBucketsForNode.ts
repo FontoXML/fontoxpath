@@ -1,4 +1,4 @@
-export default function getBucketsForNode (node: Node): Array<string> {
+export default function getBucketsForNode (node: Node): string[] {
 	const buckets = [];
 
 	buckets.push('type-' + node.nodeType);

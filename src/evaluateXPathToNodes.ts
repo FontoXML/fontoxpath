@@ -1,4 +1,4 @@
-import evaluateXPath from './evaluateXPath';
+import evaluateXPath, { Options } from './evaluateXPath';
 import IDomFacade from './domFacade/IDomFacade';
 
 /**
@@ -20,7 +20,7 @@ export default function evaluateXPathToNodes (
 	contextNode?: any,
 	domFacade?: IDomFacade,
 	variables?: ({[s: string]: any }),
-	options?: (object)
-): Array<Node> {
+	options?: Options
+): Node[] {
 	return evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.NODES_TYPE, options);
 }

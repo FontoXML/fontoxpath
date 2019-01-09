@@ -18,9 +18,10 @@ import Expression from '../expressions/Expression';
 import builtInFunctions from '../expressions/functions/builtInFunctions';
 import { registerFunction } from '../expressions/functions/functionRegistry';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
+import { Options } from 'src/evaluateXPath';
+import { UpdatingOptions } from 'src/evaluateUpdatingExpression';
 
-
-export const generateGlobalVariableBindingName = variableName => `GLOBAL_${variableName}`;
+export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
 
 // bootstrap builtin functions
 builtInFunctions.forEach(builtInFunction => {
@@ -32,14 +33,14 @@ builtInFunctions.forEach(builtInFunction => {
 		builtInFunction.callFunction);
 });
 
-function createDefaultNamespaceResolver(contextItem: Node | any): (string) => string {
+function createDefaultNamespaceResolver(contextItem: Node | any): (s: string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return (_prefix) => null;
 	}
 	return prefix => (/** @type {Node} */(contextItem)).lookupNamespaceURI(prefix || null);
 }
 
-function normalizeEndOfLines (xpathString) {
+function normalizeEndOfLines (xpathString: string) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xA));
 }
@@ -49,7 +50,7 @@ export default function buildEvaluationContext(
 	contextItem: any,
 	domFacade: IDomFacade | null,
 	variables: object,
-	options: object,
+	options: Options | UpdatingOptions,
 	compilationOptions: {
 		allowXQuery: boolean,
 		allowUpdating: boolean,
@@ -58,7 +59,7 @@ export default function buildEvaluationContext(
 	if (variables === null || variables === undefined) {
 		variables = variables || {};
 	}
-	options = options || { namespaceResolver: null, nodesFactory: null, language: 'XPath3.1', moduleImports: {} };
+	options = options || { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
 	if (domFacade === null) {
 		domFacade = domBackedDomFacade;
 	}
@@ -67,9 +68,9 @@ export default function buildEvaluationContext(
 
 	expressionString = normalizeEndOfLines(expressionString);
 
-	const moduleImports = options['moduleImports'] || Object.create(null);
+	const moduleImports = options.moduleImports || Object.create(null);
 
-	const namespaceResolver = options['namespaceResolver'] || createDefaultNamespaceResolver(contextItem);
+	const namespaceResolver = options.namespaceResolver || createDefaultNamespaceResolver(contextItem);
 	const expression = staticallyCompileXPath(
 		expressionString,
 		compilationOptions,
@@ -79,14 +80,14 @@ export default function buildEvaluationContext(
 
 	const contextSequence = contextItem ? adaptJavaScriptValueToXPathValue(contextItem) : SequenceFactory.empty();
 
-	let nodesFactory: INodesFactory = options['nodesFactory'];
+	let nodesFactory: INodesFactory = options.nodesFactory;
 	if (!nodesFactory && compilationOptions.allowXQuery) {
 		nodesFactory = new DomBackedNodesFactory(contextItem);
 	} else {
 		nodesFactory = wrapExternalNodesFactory(nodesFactory);
 	}
 
-	let documentWriter: IDocumentWriter = options['documentWriter'];
+	let documentWriter: IDocumentWriter = (<UpdatingOptions>options).documentWriter;
 	if (!documentWriter) {
 		documentWriter = domBackedDocumentWriter;
 	} else {

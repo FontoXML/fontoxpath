@@ -1,5 +1,16 @@
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import buildContext from './evaluationUtils/buildContext';
+import IDomFacade from './domFacade/IDomFacade';
+import IDocumentWriter from './documentWriter/IDocumentWriter';
+import INodesFactory from './nodesFactory/INodesFactory';
+
+export type UpdatingOptions = {
+	namespaceResolver?: (s: string) => string|null;
+	documentWriter?: IDocumentWriter
+	nodesFactory?: INodesFactory;
+	moduleImports?: {[s: string]: string},
+	disableCache?: boolean
+};
 
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
@@ -10,9 +21,15 @@ import buildContext from './evaluationUtils/buildContext';
  * @param  variables    Extra variables (name=>value). Values can be number / string or boolean.
  * @param  options      Extra options for evaluating this XPath
  *
- * @return The string result.
+ * @return The query result and pending update list.
  */
-export default async function evaluateUpdatingExpression (updateScript: string, contextItem: any, domFacade: any, variables: Object, options: {disableCache?: boolean}) {
+export default async function evaluateUpdatingExpression(
+	updateScript: string,
+	contextItem?: any,
+	domFacade?: IDomFacade,
+	variables?: { [s: string]: any },
+	options?: UpdatingOptions
+): Promise<{ xdmValue: any[], pendingUpdateList: object[] }> {
 	let {
 		dynamicContext,
 		executionParameters,
@@ -34,7 +51,7 @@ export default async function evaluateUpdatingExpression (updateScript: string, 
 		throw new Error(`The expression ${updateScript} is not updating and can not be executed as an updating expression.`);
 	}
 
-	const resultIterator = (<PossiblyUpdatingExpression> expression).evaluateWithUpdateList(dynamicContext, executionParameters);
+	const resultIterator = (<PossiblyUpdatingExpression>expression).evaluateWithUpdateList(dynamicContext, executionParameters);
 
 	let attempt = resultIterator.next();
 	while (!attempt.ready) {

@@ -1,4 +1,4 @@
-import evaluateXPath from './evaluateXPath';
+import evaluateXPath, { Options } from './evaluateXPath';
 import IDomFacade from './domFacade/IDomFacade';
 
 /**
@@ -17,7 +17,7 @@ export default function evaluateXPathToFirstNode (
 	contextNode?: any,
 	domFacade?: IDomFacade,
 	variables?: ({[s: string]: any }),
-	options?: (object)
+	options?: Options
 ): Node|null {
 	return evaluateXPath(selector, contextNode, domFacade, variables, evaluateXPath.FIRST_NODE_TYPE, options);
 }
