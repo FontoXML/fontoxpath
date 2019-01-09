@@ -25,7 +25,7 @@ import {
 	storeHalfCompiledCompilationResultInCache
 } from './parsing/compiledExpressionCache';
 
-function parseXPath (xpathString) {
+function parseXPath (xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath');
 	if (cachedExpression) {
 		return cachedExpression;

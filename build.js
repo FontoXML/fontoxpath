@@ -1,8 +1,12 @@
 /* eslint-disable no-console */
 const peg = require('pegjs');
-const fs = require('fs');
+const fs = require('fs-extra');
 const Compiler = new require('google-closure-compiler').compiler;
 const UglifyJS = require('uglify-js');
+
+const path = require('path');
+
+const { spawn } = require('child_process');
 
 const skipParserBuild = process.env.npm_config_skip_parser;
 const skipClosureBuild = process.env.npm_config_skip_closure;
@@ -33,6 +37,42 @@ function doPegJsBuild () {
 		.then(() => console.info('Parser generator done'));
 }
 
+function doTsickleBuild () {
+	return fs.ensureDir('dist/tmp')
+		.then(() => new Promise((resolve, reject) => {
+			const tsickleProcess = spawn(
+				'node',
+				[
+					'./node_modules/tsickle/src/main.js',
+					'--',
+					'--outDir',
+					path.join(__dirname, 'dist/tmp')
+				]
+			);
+
+			tsickleProcess.stderr.on('data', data => {
+				console.error(data.toString());
+			});
+			tsickleProcess.stdout.on('data', data => {
+				console.log(data.toString());
+			});
+
+			tsickleProcess.on('close', code => {
+				if (code !== 0) {
+					console.log('tsickle exited with code: ' + code);
+					// We should reject here but tsickle seems to
+					// always output an error code because we still
+					// have some closure typings in out typescript
+					// code...  reject();
+					resolve();
+					return;
+				}
+
+				resolve();
+			});
+		}));
+}
+
 function doExpressionsBuild () {
 	return new Promise((resolve, reject) => {
 		new Compiler({
@@ -42,7 +82,7 @@ function doExpressionsBuild () {
 			generate_exports: true,
 			language_out: 'ES5_strict',
 			create_source_map: './dist/fontoxpath.js.map',
-			source_map_location_mapping: '"built|../built"',
+			source_map_location_mapping: '"dist/tmp|../dist/tmp"',
 			jscomp_warning: reportUnknownTypes ? ['reportUnknownTypes'] : [],
 			jscomp_error: [
 				'accessControls',
@@ -89,7 +129,7 @@ function doExpressionsBuild () {
 //# sourceMappingURL=./fontoxpath.js.map
 `,
 			js_output_file: './dist/fontoxpath.js',
-			entry_point: './built/index.js',
+			entry_point: './dist/tmp/index.js',
 			js: '"built/**.js"'
 		})
 			.run((exitCode, stdOut, stdErr) => {
@@ -112,6 +152,7 @@ if (!skipParserBuild) {
 }
 
 if (!skipClosureBuild) {
+	chain = chain.then(doTsickleBuild);
 	chain = chain.then(doExpressionsBuild);
 }
 

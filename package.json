@@ -8,8 +8,7 @@
 	},
 	"scripts": {
 		"prepare": "npm run build",
-		"build-dist": "node ./build.js",
-		"build": "tsickle -- --outDir built",
+		"build": "node ./build.js",
 		"test": "ts-mocha --require source-map-support/register --paths -p test/tsconfig.json --recursive \"test/specs/**/*.ts\"",
 		"ci-test": "nyc --no-clean ts-mocha --paths test/specs --recursive -p test/tsconfig.json",
 		"integrationtests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/parsing --dist",
@@ -20,7 +19,7 @@
 		"ci-xqutstests": "nyc --no-clean ts-mocha --paths -p test/tsconfig.json test/xqutsTests.js",
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.js",
 		"coverage": "nyc report --reporter=text-lcov | coveralls",
-		"alltests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX",
+		"alltests": "ts-mocha --paths -p test/tsconfig.json test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX",
 		"ts-build": "tslint -p tsconfig.json && tsc"
 	},
 	"repository": {
@@ -61,6 +60,7 @@
 		"@types/sinon": "^7.0.3",
 		"chai": "^4.1.2",
 		"coveralls": "^3.0.2",
+		"fs-extra": "^7.0.1",
 		"google-closure-compiler": "^20181125.0.1",
 		"istanbul": "^0.4.5",
 		"mocha": "^5.2.0",

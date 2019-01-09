@@ -1,8 +1,6 @@
 {
 	"compilerOptions": {
-		"outDir": "./built",
 		"baseUrl": ".",
-		"rootDir": ".",
 		"lib": [
 			"dom",
 			"es6",
@@ -16,7 +14,6 @@
 		"inlineSources": true
 	},
 	"include": [
-		"./demo/**/*",
 		"./src/**/*"
 	]
 }

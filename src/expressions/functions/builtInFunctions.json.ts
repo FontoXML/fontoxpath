@@ -29,14 +29,14 @@ function convert (obj: any): ISequence {
 		case 'string':
 			return SequenceFactory.singleton(createAtomicValue(obj, 'xs:string'));
 		case 'boolean':
-			return obj ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();;
+			return obj ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
 		default:
 			throw new Error('Unexpected type in JSON parse');
 	}
 }
 
 const fnParseJson: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, jsonString) {
-	let jsObject: unknown;
+	let jsObject: any;
 	try {
 		jsObject = JSON.parse(jsonString.first().value);
 	}
@@ -45,7 +45,7 @@ const fnParseJson: FunctionDefinitionType = function(_dynamicContext, _execution
 	}
 
 	return convert(jsObject);
-}
+};
 
 export default {
 	declarations: [
