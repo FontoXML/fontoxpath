@@ -19,19 +19,12 @@ function createAttribute(nodesFactory, name, value) {
 	return attr;
 }
 
-/**
- * @extends {Expression}
- */
 class AttributeConstructor extends Expression {
 	_nameExpr: Expression;
 	name: QName;
 	_value: { value: string; } | { valueExprParts: Expression[]; };
 	_staticContext: StaticContext;
 
-	/**
-	 * @param  {} name
-	 * @param  {!} value
-	 */
 	constructor(
 		name: { expr: Expression } | { prefix: string, namespaceURI: string, localName: string },
 		value: { value: string } | { valueExprParts: Array<Expression> }

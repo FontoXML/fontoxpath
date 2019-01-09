@@ -81,17 +81,11 @@ function evaluateNewName (staticContext, executionParameters, newNameXdmValue, t
 	}
 }
 
-/**
- * @extends     {UpdatingExpression}
- */
 class RenameExpression extends UpdatingExpression {
 	_targetExpression: Expression;
 	_newNameExpression: Expression;
 	_staticContext: any;
-	/**
-	 * @param  {!Expression} targetExpression
-	 * @param  {!Expression} newNameExpression
-	 */
+
 	constructor (targetExpression: Expression, newNameExpression: Expression) {
 		super(
 			new Specificity({}),

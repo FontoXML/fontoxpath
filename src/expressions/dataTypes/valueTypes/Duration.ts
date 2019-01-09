@@ -37,9 +37,6 @@ function computeMaxDays (duration) {
 		maxNumberOfLeapYears * 366 + (years - maxNumberOfLeapYears) * 365;
 }
 
-/**
- * @extends {AbstractDuration}
- */
 class Duration extends AbstractDuration {
 	_yearMonthDuration: YearMonthDuration;
 	_dayTimeDuration: DayTimeDuration;
@@ -155,32 +152,17 @@ class Duration extends AbstractDuration {
 	}
 }
 
-/**
- * @static
- * @param   {string}  string
- * @return  {?Duration}
- */
-Duration.fromString = function (string) {
+Duration.fromString = function (string: string): Duration | null {
 	return new Duration(
 			YearMonthDuration.fromString(string),
 			DayTimeDuration.fromString(string));
 };
 
-/**
- * @static
- * @param   {YearMonthDuration}  yearMonthDuration
- * @return  {Duration}
- */
-Duration.fromYearMonthDuration = function (yearMonthDuration) {
+Duration.fromYearMonthDuration = function (yearMonthDuration: YearMonthDuration): Duration {
 	return new Duration(yearMonthDuration, new DayTimeDuration(yearMonthDuration.isPositive() ? 0 : -0));
 };
 
-/**
- * @static
- * @param   {DayTimeDuration}  dayTimeDuration
- * @return  {Duration}
- */
-Duration.fromDayTimeDuration = function (dayTimeDuration) {
+Duration.fromDayTimeDuration = function (dayTimeDuration: DayTimeDuration): Duration {
 	return new Duration(new YearMonthDuration(dayTimeDuration.isPositive() ? 0 : -0), dayTimeDuration);
 };
 

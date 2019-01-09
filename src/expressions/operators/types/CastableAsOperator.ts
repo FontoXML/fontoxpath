@@ -3,19 +3,11 @@ import Expression from '../../Expression';
 import canCastToType from '../../dataTypes/canCastToType';
 import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 
-/**
- * @extends {Expression}
- */
 class CastableAsOperator extends Expression {
 	_targetType: string;
 	_expression: Expression;
 	_allowsEmptySequence: boolean;
-
-	/**
-	 * @param  {!Expression}  expression
-	 * @param  {{prefix:string, namespaceURI:?string, localName:string}}    targetType
-	 * @param  {!boolean}   allowsEmptySequence
-	 */
+	
 	constructor (expression: Expression, targetType: { prefix: string; namespaceURI: string | null; localName: string; }, allowsEmptySequence: boolean) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 

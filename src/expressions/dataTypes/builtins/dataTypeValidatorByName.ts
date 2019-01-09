@@ -101,10 +101,7 @@ function isValidQName(value: string): boolean {
 	return isValidNCName(parts[0]) && isValidNCName(parts[1]);
 }
 
-/**
- * @param   {string}   value
- * @return  {boolean}
- */// Derived data types from here, should be DEPRECATED once we have (basic) support for patterns
+// Derived data types from here, should be DEPRECATED once we have (basic) support for patterns
 function isValidNormalizedString(value: string): boolean {
 	return !/[\u0009\u000A\u000D]/.test(value);
 }

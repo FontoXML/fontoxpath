@@ -58,8 +58,6 @@ class FunctionValue extends Value {
 
 	/**
 	 * Apply these arguments to curry them into a new function
-	 * @param   {!Array<?Sequence>}  appliedArguments
-	 * @return  {!ISequence}
 	 */
 	applyArguments (appliedArguments) {
 		const fn = this.value;
@@ -102,9 +100,6 @@ class FunctionValue extends Value {
 		return SequenceFactory.singleton(functionItem);
 	}
 
-	/**
-	 * @return {!Array<!TypeDeclaration>}
-	 */
 	getArgumentTypes () {
 		return this._argumentTypes;
 	}

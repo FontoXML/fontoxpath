@@ -2,9 +2,6 @@ import Expression from '../Expression';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import Specificity from '../Specificity';
 
-/**
- * @extends {Expression}
- */
 class ContextItemExpression extends Expression {
 	constructor () {
 		super(

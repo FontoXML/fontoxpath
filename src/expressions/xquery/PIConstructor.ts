@@ -13,16 +13,10 @@ function assertValidTarget (target) {
 	}
 }
 
-/**
- * @extends {Expression}
- */
 class PIConstructor extends Expression {
 	_target: { targetExpr: Expression; targetValue: string; };
 	_dataExpr: Expression;
-	/**
-	 * @param  {!{targetExpr: ?Expression, targetValue: ?string}}  target
-	 * @param  {!Expression}  dataExpr
-	 */
+
 	constructor (target: { targetExpr: Expression | null; targetValue: string | null; }, dataExpr: Expression) {
 		const expressions = target.targetExpr ? [target.targetExpr].concat(dataExpr) : [dataExpr];
 		super(

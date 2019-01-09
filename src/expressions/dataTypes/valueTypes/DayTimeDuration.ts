@@ -1,8 +1,5 @@
 import AbstractDuration from './AbstractDuration';
 
-/**
- * @extends {AbstractDuration}
- */
 class DayTimeDuration extends AbstractDuration {
 	_seconds: number;
 	static fromParts: (days: any, hours: any, minutes: any, seconds: any, secondFraction: any, isPositive: any) => DayTimeDuration;
@@ -62,27 +59,12 @@ class DayTimeDuration extends AbstractDuration {
 	}
 }
 
-/**
- * @static
- * @param   {number}  days
- * @param   {number}  hours
- * @param   {number}  minutes
- * @param   {number}  seconds
- * @param   {number}  secondFraction
- * @param   {boolean} isPositive
- * @return  {DayTimeDuration}
- */
-DayTimeDuration.fromParts = function (days, hours, minutes, seconds, secondFraction, isPositive) {
+DayTimeDuration.fromParts = function (days: number, hours: number, minutes: number, seconds: number, secondFraction: number, isPositive: boolean): DayTimeDuration {
 	const totalSeconds = days * 86400 + hours * 3600 + minutes * 60 + seconds + secondFraction;
 	return new DayTimeDuration(isPositive || totalSeconds === 0 ? totalSeconds : -totalSeconds);
 };
 
-/**
- * @static
- * @param   {string}  string
- * @return  {?DayTimeDuration}
- */
-DayTimeDuration.fromString = function (string) {
+DayTimeDuration.fromString = function (string: string): DayTimeDuration | null {
 	const regex = /^(-)?P(\d+Y)?(\d+M)?(\d+D)?(?:T(\d+H)?(\d+M)?(\d+(\.\d*)?S)?)?$/;
 	const match = regex.exec(string);
 
@@ -100,12 +82,7 @@ DayTimeDuration.fromString = function (string) {
 	return DayTimeDuration.fromParts(days, hours, minutes, seconds, secondFraction, isPositive);
 };
 
-/**
- * @static
- * @param   {string}  string
- * @return  {DayTimeDuration}
- */
-DayTimeDuration.fromTimezoneString = function (string) {
+DayTimeDuration.fromTimezoneString = function (string: string): DayTimeDuration {
 	const regex = /^(Z)|([+-])([01]\d):([0-5]\d)$/;
 	const match = regex.exec(string);
 
@@ -120,59 +97,29 @@ DayTimeDuration.fromTimezoneString = function (string) {
 	return DayTimeDuration.fromParts(0, hours, minutes, 0, 0, isPositive);
 };
 
-/**
- * @static
- * @param   {Date}  date
- * @return  {DayTimeDuration}
- */
-DayTimeDuration.fromJavascriptDateTimezone = function (date) {
+DayTimeDuration.fromJavascriptDateTimezone = function (date: Date): DayTimeDuration {
 	const minutes = date.getTimezoneOffset();
 	const isPositive = minutes > -1;
 
 	return DayTimeDuration.fromParts(0, 0, Math.abs(minutes), 0, 0, isPositive);
 };
 
-/**
- * @param   {DayTimeDuration}  dayTimeDuration1
- * @param   {DayTimeDuration}  dayTimeDuration2
- * @return  {boolean}
- */
 export function lessThan (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): boolean {
 	return dayTimeDuration1._seconds < dayTimeDuration2._seconds;
 }
 
-/**
- * @param   {DayTimeDuration}  dayTimeDuration1
- * @param   {DayTimeDuration}  dayTimeDuration2
- * @return  {boolean}
- */
 export function greaterThan (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): boolean {
 	return dayTimeDuration1._seconds > dayTimeDuration2._seconds;
 }
 
-/**
- * @param   {DayTimeDuration}  dayTimeDuration1
- * @param   {DayTimeDuration}  dayTimeDuration2
- * @return  {DayTimeDuration}
- */
 export function add (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): DayTimeDuration {
 	return new DayTimeDuration(dayTimeDuration1._seconds + dayTimeDuration2._seconds);
 }
 
-/**
- * @param   {DayTimeDuration}  dayTimeDuration1
- * @param   {DayTimeDuration}  dayTimeDuration2
- * @return  {DayTimeDuration}
- */
 export function subtract (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): DayTimeDuration {
 	return new DayTimeDuration(dayTimeDuration1._seconds - dayTimeDuration2._seconds);
 }
 
-/**
- * @param   {DayTimeDuration}  dayTimeDuration
- * @param   {number}           double
- * @return  {DayTimeDuration}
- */
 export function multiply (dayTimeDuration: DayTimeDuration, double: number): DayTimeDuration {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot multiply xs:dayTimeDuration by NaN');
@@ -184,11 +131,6 @@ export function multiply (dayTimeDuration: DayTimeDuration, double: number): Day
 	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
 }
 
-/**
- * @param   {DayTimeDuration}  dayTimeDuration
- * @param   {number}           double
- * @return  {DayTimeDuration}
- */
 export function divide (dayTimeDuration: DayTimeDuration, double: number): DayTimeDuration {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot divide xs:dayTimeDuration by NaN');
@@ -200,11 +142,6 @@ export function divide (dayTimeDuration: DayTimeDuration, double: number): DayTi
 	return new DayTimeDuration(result < Number.MIN_SAFE_INTEGER || Object.is(-0, result) ? 0 : result);
 }
 
-/**
- * @param   {DayTimeDuration}  dayTimeDuration1
- * @param   {DayTimeDuration}  dayTimeDuration2
- * @return  {number}
- */
 export function divideByDayTimeDuration (dayTimeDuration1: DayTimeDuration, dayTimeDuration2: DayTimeDuration): number {
 	if (dayTimeDuration2._seconds === 0) {
 		throw new Error('FOAR0001: Division by 0');

@@ -6,13 +6,8 @@ import Expression from '../Expression';
 
 /**
  * The Sequence selector evaluates its operands and returns them as a single sequence
- *
- * @extends {PossiblyUpdatingExpression}
  */
 class SequenceOperator extends PossiblyUpdatingExpression {
-	/**
-	 * @param  {!Array<!Expression>}  expressions
-	 */
 	constructor(expressions: Array<Expression>) {
 		super(
 			expressions.reduce(function (specificity, selector) {

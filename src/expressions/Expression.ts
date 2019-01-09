@@ -29,11 +29,6 @@ abstract class Expression {
 	_eagerlyEvaluatedValue: () => ISequence;
 	expectedResultOrder: string;
 
-	/**
-	 * @param  specificity
-	 * @param  childExpressions       The logical children of this Expression
-	 * @param  optimizationOptions  Additional information on this expression.
-	 */
 	constructor (
 		specificity: Specificity,
 		childExpressions: Expression[],
@@ -55,20 +50,11 @@ abstract class Expression {
 
 		this.isUpdating = false;
 
-		/**
-		 * Eagerly evaluate
-		 *
-		 * @type {?function():!ISequence}
-		 */
 		this._eagerlyEvaluatedValue = null;
 	}
 
-	static get RESULT_ORDERINGS () {
-		return RESULT_ORDERINGS;
-	}
-	get RESULT_ORDERINGS () {
-		return RESULT_ORDERINGS;
-	}
+	static RESULT_ORDERINGS: typeof RESULT_ORDERINGS = RESULT_ORDERINGS;
+	RESULT_ORDERINGS: typeof RESULT_ORDERINGS = RESULT_ORDERINGS
 
 
 	performStaticEvaluation (staticContext:StaticContext): void {

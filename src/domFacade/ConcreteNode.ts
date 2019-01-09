@@ -10,7 +10,7 @@ export const enum NODE_TYPES {
 	DOCUMENT_FRAGMENT_NODE = 11,
 }
 
-export interface ConcreteTextNode extends CharacterData {
+export class ConcreteTextNode extends CharacterData {
 	nodeType: NODE_TYPES.TEXT_NODE;
 }
 
@@ -18,25 +18,25 @@ export type ConcreteParentNode = (ConcreteElementNode|ConcreteDocumentNode);
 
 export type ConcreteChildNode = (ConcreteElementNode|ConcreteTextNode|ConcreteProcessingInstructionNode|ConcreteCommentNode);
 
-export interface ConcreteElementNode extends Element {
+export class ConcreteElementNode extends Element {
 	nodeType: NODE_TYPES.ELEMENT_NODE;
 }
 
 export type ConcreteCharacterDataNode = (ConcreteTextNode|ConcreteProcessingInstructionNode|ConcreteCommentNode);
 
-export interface ConcreteProcessingInstructionNode extends CharacterData {
+export class ConcreteProcessingInstructionNode extends CharacterData {
 	nodeType: NODE_TYPES.PROCESSING_INSTRUCTION_NODE;
 }
 
-export interface ConcreteCommentNode extends CharacterData {
+export class ConcreteCommentNode extends CharacterData {
 	nodeType: NODE_TYPES.COMMENT_NODE;
 }
 
-export interface ConcreteAttributeNode extends Attr {
+export class ConcreteAttributeNode extends Attr {
 	nodeType: NODE_TYPES.ATTRIBUTE_NODE;
 }
 
-export interface ConcreteDocumentNode extends Document {
+export class ConcreteDocumentNode extends Document {
 	nodeType: NODE_TYPES.DOCUMENT_NODE;
 }
 

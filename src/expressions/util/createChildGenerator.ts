@@ -13,7 +13,7 @@ export default function createChildGenerator (domFacade: IDomFacade, node: Concr
 	const childNodes = domFacade.getChildNodes(node as ConcreteParentNode);
 	let i = 0;
 	const l = childNodes.length;
-	return /** @type {!Iterator<!Node>} */ ({
+	return ({
 		next () {
 			if (i >= l) {
 				return DONE_TOKEN;

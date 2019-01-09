@@ -6,11 +6,11 @@ import ConcreteNode, { ConcreteParentNode, ConcreteElementNode } from '../../dom
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent
  *
- * @param {!IDomFacade}  domFacade The domFacade in which to consider the nodes
- * @param {!Node}       node1     The first node
- * @param {!Node}       node2      The second node
+ * @param  domFacade The domFacade in which to consider the nodes
+ * @param  node1     The first node
+ * @param  node2      The second node
  *
- * @return {number} Returns 0 if node1 equals node2, -1 if node1 precedes node2, and 1 otherwise
+ * @return Returns 0 if node1 equals node2, -1 if node1 precedes node2, and 1 otherwise
  */
 function compareSiblingElements (domFacade: IDomFacade, node1: ConcreteNode, node2: ConcreteNode): number {
 	if (node1 === node2) {
@@ -34,9 +34,9 @@ function compareSiblingElements (domFacade: IDomFacade, node1: ConcreteNode, nod
 /**
  * Find all ancestors of the given node
  *
- * @param	{!IDomFacade}   domFacade  The domFacade to consider relations in
- * @param	{!Node}         node      The node to find all ancestors of
- * @return	{!Array<!Node>}            All of the ancestors of the given node
+ * @param	domFacade  The domFacade to consider relations in
+ * @param	node       The node to find all ancestors of
+ * @return	All of the ancestors of the given node
  */
 function findAllAncestors (domFacade: IDomFacade, node: ConcreteNode): Array<ConcreteNode> {
 	const ancestors: ConcreteNode[] = [];
@@ -50,12 +50,12 @@ function findAllAncestors (domFacade: IDomFacade, node: ConcreteNode): Array<Con
 /**
  * Compares the given positions w.r.t. document order in this state
  *
- * @param {!Array<!Node>} tieBreakerArr  Results of earlier comparisons, used as a tie breaker for compares between documents
- * @param {!IDomFacade}  domFacade        The domFacade in which to consider the nodes
- * @param {!Node}       nodeA
- * @param {!Node}       nodeB
+ * @param tieBreakerArr  Results of earlier comparisons, used as a tie breaker for compares between documents
+ * @param domFacade        The domFacade in which to consider the nodes
+ * @param nodeA
+ * @param nodeB
  *
- * @return {number}     Returns 0 if the positions are equal, -1 if the first position precedes the second,
+ * @return Returns 0 if the positions are equal, -1 if the first position precedes the second,
  *						and 1 otherwise.
  */
 function compareElements (tieBreakerArr: Array<ConcreteNode>, domFacade: IDomFacade, nodeA: ConcreteNode, nodeB: ConcreteNode): number {
@@ -142,12 +142,12 @@ export const compareNodePositions = function (domFacade, node1, node2) {
  * Attributes are placed after their elements, before childnodes.
  * Attributes are sorted alphabetically by their names
  *
- * @param	{!IDomFacade}          domFacade
- * @param	{!Array<!Value>}    nodeValues
+ * @param	domFacade
+ * @param	nodeValues
  *
- * @return  {!Array<!Value>}    The sorted nodes
+ * @return  The sorted nodes
  */
-export const sortNodeValues = function sortNodeValues (domFacade: IDomFacade, nodeValues: Array<Value>): Array<Value> {
+export const sortNodeValues = function sortNodeValues (domFacade: IDomFacade, nodeValues: Value[]): Value[] {
 	return nodeValues
 		.sort(function (node1, node2) {
 			return compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2);

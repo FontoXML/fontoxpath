@@ -3,20 +3,13 @@ import SequenceFactory from '../dataTypes/SequenceFactory';
 
 type InClause = { name: { prefix: string, namespaceURI: string, localName: string }, sourceExpr: Expression };
 
-/**
- * @extends {Expression}
- */
 class QuantifiedExpression extends Expression {
 	_quantifier: string;
 	_inClauseNames: { prefix: string; namespaceURI: string; localName: string; }[];
 	_inClauseExpressions: Expression[];
 	_satisfiesExpr: Expression;
 	_inClauseVariableNames: any;
-	/**
-	 * @param  {string}              quantifier
-	 * @param  {!Array<InClause>}    inClauses
-	 * @param  {!Expression}         satisfiesExpr
-	 */
+
 	constructor(quantifier: string, inClauses: Array<InClause>, satisfiesExpr: Expression) {
 		const inClauseExpressions = inClauses.map(inClause => inClause.sourceExpr);
 		const inClauseNames = inClauses.map(inClause => inClause.name);

@@ -1,19 +1,11 @@
 import DayTimeDuration from './DayTimeDuration';
 import AbstractDuration from './AbstractDuration';
 
-/**
- * @param   {string|undefined}  match
- * @return  {number|null}
- */
-function parseMatch (match) {
+function parseMatch(match: string | undefined): number | null {
 	return match ? parseInt(match, 10) : null;
 }
 
-/**
- * @param   {number}  year
- * @return  {string}
- */
-function convertYearToString (year) {
+function convertYearToString(year: number): string {
 	let string = year + '';
 	const isNegative = string.startsWith('-');
 	if (isNegative) {
@@ -22,20 +14,12 @@ function convertYearToString (year) {
 	return (isNegative ? '-' : '') + string.padStart(4, '0');
 }
 
-/**
- * @param   {number}  value
- * @return  {string}
- */
-function convertToTwoCharString (value) {
+function convertToTwoCharString(value: number): string {
 	const string = value + '';
 	return string.padStart(2, '0');
 }
 
-/**
- * @param   {number}  seconds
- * @return  {string}
- */
-function convertSecondsToString (seconds) {
+function convertSecondsToString(seconds: number): string {
 	let string = seconds + '';
 	if (string.split('.')[0].length === 1) {
 		string = string.padStart(string.length + 1, '0');
@@ -43,19 +27,11 @@ function convertSecondsToString (seconds) {
 	return string;
 }
 
-/**
- * @param   {DayTimeDuration}  timezone
- * @return  {boolean}
- */
-function isUTC (timezone) {
+function isUTC(timezone: DayTimeDuration): boolean {
 	return timezone.getHours() === 0 && timezone.getMinutes() === 0;
 }
 
-/**
- * @param   {DayTimeDuration} timezone
- * @return  {string}
- */
-function timezoneToString (timezone) {
+function timezoneToString(timezone: DayTimeDuration): string {
 	if (isUTC(timezone)) {
 		return 'Z';
 	}
@@ -73,10 +49,10 @@ class DateTime {
 	_minutes: number;
 	_seconds: number;
 	_secondFraction: number;
-	_timezone: number;
+	_timezone: DayTimeDuration;
 	_type: string;
 	static fromString: (string: any) => DateTime;
-	constructor (years, months, days, hours, minutes, seconds, secondFraction, timezone, type = 'xs:dateTime') {
+	constructor(years: number, months: number, days: number, hours: number, minutes: number, seconds: number, secondFraction: number, timezone: DayTimeDuration, type = 'xs:dateTime') {
 		this._years = years;
 		this._months = months;
 		this._days = days + (hours === 24 ? 1 : 0);
@@ -88,47 +64,47 @@ class DateTime {
 		this._type = type;
 	}
 
-	getYear () {
+	getYear() {
 		return this._years;
 	}
 
-	getMonth () {
+	getMonth() {
 		return this._months;
 	}
 
-	getDay () {
+	getDay() {
 		return this._days;
 	}
 
-	getHours () {
+	getHours() {
 		return this._hours;
 	}
 
-	getMinutes () {
+	getMinutes() {
 		return this._minutes;
 	}
 
-	getSeconds () {
+	getSeconds() {
 		return this._seconds;
 	}
 
-	getFullSeconds () {
+	getFullSeconds() {
 		return this._seconds + this._secondFraction;
 	}
 
-	getSecondFraction () {
+	getSecondFraction() {
 		return this._secondFraction;
 	}
 
-	getTimezone () {
+	getTimezone() {
 		return this._timezone;
 	}
 
-	isPositive () {
+	isPositive() {
 		return this._years >= 0;
 	}
 
-	toJavaScriptDate (implicitTimezone = undefined) {
+	toJavaScriptDate(implicitTimezone = undefined): Date {
 		const timezoneToUse = this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
 		return new Date(Date.UTC(
 			this._years,
@@ -140,7 +116,7 @@ class DateTime {
 		);
 	}
 
-	toString () {
+	toString() {
 		switch (this._type) {
 			case 'xs:dateTime':
 				return convertYearToString(this._years) + '-' +
@@ -184,7 +160,7 @@ class DateTime {
 		throw new Error('Unexpected subType');
 	}
 
-	convertToType (type) {
+	convertToType(type) {
 		// xs:date       xxxx-xx-xxT00:00:00
 		// xs:time       1972-12-31Txx:xx:xx
 		// xs:gYearMonth xxxx-xx-01T00:00:00
@@ -223,12 +199,7 @@ class DateTime {
 // gMonthDay   |       --mm-dd            (Z|[+-]hh:mm)
 // gDay        |         ---dd            (Z|[+-]hh:mm)
 // gMonth      |       --mm               (Z|[+-]hh:mm)
-/**
- * @static
- * @param   {string}    string
- * @return  {DateTime}
- */
-DateTime.fromString = function (string) {
+DateTime.fromString = function (string: string): DateTime {
 	const regex = /^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
 	const match = regex.exec(string);
 
@@ -358,14 +329,7 @@ DateTime.fromString = function (string) {
 		'xs:gDay');
 };
 
-
-/**
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {number}
- */
-export function compare (dateTime1, dateTime2, implicitTimezone = undefined) {
+export function compare(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): number {
 	const jsTime1 = dateTime1.toJavaScriptDate(implicitTimezone).getTime();
 	const jsTime2 = dateTime2.toJavaScriptDate(implicitTimezone).getTime();
 
@@ -387,81 +351,35 @@ export function compare (dateTime1, dateTime2, implicitTimezone = undefined) {
 	return -1;
 }
 
-/**
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {boolean}
- */
-export function equal (dateTime1, dateTime2, implicitTimezone = undefined) {
+export function equal(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) === 0;
 }
 
-/**
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {boolean}
- */
-export function lessThan (dateTime1, dateTime2, implicitTimezone = undefined) {
+export function lessThan(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) < 0;
 }
 
-/**
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {boolean}
- */
-export function greaterThan (dateTime1, dateTime2, implicitTimezone = undefined) {
+export function greaterThan(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) > 0;
 }
 
-
-/**
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {DayTimeDuration}
- */
-export function add (dateTime1, dateTime2, implicitTimezone = undefined) {
+export function subtract(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): DayTimeDuration {
 	// Divided by 1000 because date subtraction results in milliseconds
-	const secondsOfDuration = (dateTime1.toJavaScriptDate(implicitTimezone) + dateTime2.toJavaScriptDate(implicitTimezone)) / 1000;
+	const secondsOfDuration = (
+		dateTime1.toJavaScriptDate(implicitTimezone).getTime() -
+		dateTime2.toJavaScriptDate(implicitTimezone).getTime()
+	) / 1000;
 	return new DayTimeDuration(
 		secondsOfDuration
 	);
 }
 
-/**
- * @param   {DateTime}   dateTime1
- * @param   {DateTime}   dateTime2
- * @param   {?DayTimeDuration}  implicitTimezone
- * @return  {DayTimeDuration}
- */
-export function subtract (dateTime1, dateTime2, implicitTimezone = undefined) {
-	// Divided by 1000 because date subtraction results in milliseconds
-	const secondsOfDuration = (dateTime1.toJavaScriptDate(implicitTimezone) - dateTime2.toJavaScriptDate(implicitTimezone)) / 1000;
-	return new DayTimeDuration(
-		secondsOfDuration
-	);
-}
-
-/**
- * @param   {!DateTime}   dateTime
- * @param   {!AbstractDuration}   _duration
- * @return  {!DateTime}
- */
-export function addDuration (dateTime, _duration) {
+export function addDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
 	throw new Error(`Not implemented: adding durations to ${dateTime._type}`);
 }
 
 
-/**
- * @param   {!DateTime}   dateTime
- * @param   {!AbstractDuration}   _duration
- * @return  {!DateTime}
- */
-export function subtractDuration (dateTime, _duration) {
+export function subtractDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
 	throw new Error(`Not implemented: subtracting durations from ${dateTime._type}`);
 }
 

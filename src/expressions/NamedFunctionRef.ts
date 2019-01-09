@@ -14,10 +14,6 @@ class NamedFunctionRef extends Expression {
 	_functionReference: { prefix: string; namespaceURI: string; localName: string; };
 	_functionProperties: any;
 
-	/**
-	 * @param  {{prefix:string, namespaceURI:?string, localName:string}}    functionReference
-	 * @param  {number}    arity
-	 */
 	constructor (functionReference: { prefix: string; namespaceURI: string | null; localName: string; }, arity: number) {
 		super(
 			new Specificity({

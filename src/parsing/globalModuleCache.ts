@@ -1,17 +1,5 @@
-/**
-* @typedef {{functionDeclarations: !Array<!Object>}}
-*/
-let ModuleContents;
-
-/**
- * @dict
- */
 const loadedModulesByNamespaceURI = Object.create(null);
 
-/**
-* @param  {string}          uri
-* @param  {ModuleContents}  moduleContents
-*/
 export const loadModuleFile = function loadModuleFile (uri, moduleContents) {
 	let loadedModuleContents = loadedModulesByNamespaceURI[uri];
 	if (!loadedModuleContents) {

@@ -7,20 +7,13 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import QName from '../dataTypes/valueTypes/QName';
 
-/**
- * @extends Expression
- */
 class InlineFunction extends Expression {
 	_parameterNames: QName[];
 	_parameterTypes: TypeDeclaration[];
 	_parameterBindingNames: any;
 	_returnType: TypeDeclaration;
 	_functionBody: Expression;
-	/**
-	 * @param  {Array<{name:QName, type: TypeDeclaration}>}  paramDescriptions
-	 * @param  {TypeDeclaration}         returnType
-	 * @param  {Expression}              functionBody
-	 */
+
 	constructor (paramDescriptions: Array<{ name: QName; type: TypeDeclaration; }>, returnType: TypeDeclaration, functionBody: Expression) {
 		super(
 			new Specificity({
@@ -61,10 +54,10 @@ class InlineFunction extends Expression {
 
 	evaluate (dynamicContext, executionParameters) {
 		/**
-		 * @param   {DynamicContext}           _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
+		 * @param  _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
 		 *                                                                  This shall not be used
-		 * @param   {...!ISequence}   parameters              The parameters of the function
-		 * @return  {!ISequence}      The result of the function call
+		 * @param  parameters              The parameters of the function
+		 * @return The result of the function call
 		 */
 		const executeFunction = (_unboundDynamicContext, _executionContext, _staticContext, ...parameters) => {
 			// Since functionCall already does typechecking, we do not have to do it here

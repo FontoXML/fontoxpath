@@ -18,9 +18,7 @@ const mapMerge:FunctionDefinitionType = function(dynamicContext, executionParame
 		staticContext,
 		optionMap,
 		duplicateKey);
-	/**
-	 * @type {string}
-	 */
+
 	const duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.first().value;
 	return mapSequence.mapAll(
 		allValues =>

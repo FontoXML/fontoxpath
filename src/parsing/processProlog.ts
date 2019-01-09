@@ -20,7 +20,6 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/2005/xpath-functions/map'
 ];
 
-
 type FunctionDeclaration = {
 	namespaceURI: string,
 	localName: string,
@@ -28,12 +27,6 @@ type FunctionDeclaration = {
 	functionDefinition: object
 };
 
-/**
- * @param   {!AST}            prolog              The prolog of the module to process
- * @param   {!StaticContext}  staticContext
- *
- * @return  {{functionDeclarations: !Array<!FunctionDeclaration>}}
- */
 export default function processProlog(prolog: AST, staticContext: StaticContext): { functionDeclarations: Array<FunctionDeclaration>; } {
 	const staticallyCompilableExpressions = [];
 

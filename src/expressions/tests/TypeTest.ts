@@ -4,9 +4,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 class TypeTest extends TestAbstractExpression {
 	_type: { prefix: string; namespaceURI: string; localName: string; };
-	/**
-	 * @param  {{prefix:string, namespaceURI: ?string, localName: string}} type
-	 */
+
 	constructor (type: { prefix: string; namespaceURI: string | null; localName: string; }) {
 		super(new Specificity({}));
 		this._type = type;

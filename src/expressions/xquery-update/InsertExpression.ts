@@ -100,18 +100,11 @@ function buildPendingUpdates (targetChoice, target, parent, alist, clist) {
 	return updates;
 }
 
-/**
- * @extends     {UpdatingExpression}
- */
 class InsertExpression extends UpdatingExpression {
 	_sourceExpression: Expression;
 	_targetChoice: any;
 	_targetExpression: Expression;
-	/**
-	 * @param  {!Expression}   sourceExpression
-	 * @param  {!TargetChoice} targetChoice
-	 * @param  {!Expression}   targetExpression
-	 */
+
 	constructor (sourceExpression: Expression, targetChoice: TargetChoice, targetExpression: Expression) {
 		super(
 			new Specificity({}),

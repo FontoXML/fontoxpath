@@ -1,19 +1,12 @@
 import Expression from './Expression';
 import Specificity from './Specificity';
 
-/**
- * @extends {Expression}
- */
 class VarRef extends Expression {
 	_variableName: string;
 	_namespaceURI: string;
 	_prefix: string;
 	_variableBindingName: any;
-	/**
-	 * @param  {string}  prefix
-	 * @param  {?string}  namespaceURI
-	 * @param  {string}  variableName
-	 */
+
 	constructor (prefix: string, namespaceURI: string | null, variableName: string) {
 		super(
 			new Specificity({}),

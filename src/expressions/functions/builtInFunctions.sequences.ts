@@ -420,9 +420,6 @@ const fnForEach: FunctionDefinitionType = function(dynamicContext, executionPara
 		return sequence;
 	}
 
-	/**
-	 * @type {FunctionValue}
-	 */
 	const callbackFn = callbackSequence.first() as FunctionValue;
 	const callbackArgumentTypes = callbackFn.getArgumentTypes();
 	if (callbackArgumentTypes.length !== 1) {
@@ -471,9 +468,6 @@ const fnFoldLeft: FunctionDefinitionType = function(dynamicContext, executionPar
 		return sequence;
 	}
 
-	/**
-	 * @type {FunctionValue}
-	 */
 	const callbackFn = callbackSequence.first() as FunctionValue;
 	const callbackArgumentTypes = callbackFn.getArgumentTypes();
 	if (callbackArgumentTypes.length !== 2) {

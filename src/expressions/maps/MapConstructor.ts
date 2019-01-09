@@ -6,15 +6,12 @@ import zipSingleton from '../util/zipSingleton';
 
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
-/**
- * @extends {Expression}
- */
 class MapConstructor extends Expression {
 	_entries: { key: Expression; value: Expression; }[];
 	/**
-	 * @param  {Array<{key: !Expression, value:! Expression}>}  entries  key-value tuples of expressions which will evaluate to key / value pairs
+	 * @param  entries  key-value tuples of expressions which will evaluate to key / value pairs
 	 */
-	constructor (entries: Array<{ key: Expression; value: Expression; }>) {
+	constructor (entries: { key: Expression; value: Expression; }[]) {
 		super(
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1

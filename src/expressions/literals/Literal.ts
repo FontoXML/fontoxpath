@@ -5,16 +5,10 @@ import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 
-/**
- * @extends {Expression}
- */
 class Literal extends Expression {
 	_type: string;
 	_createValueSequence: () => ISequence;
-	/**
-	 * @param  jsValue
-	 * @param  type
-	 */
+
 	constructor (jsValue: string, type: string) {
 		super(
 			new Specificity({}),

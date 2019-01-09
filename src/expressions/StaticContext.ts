@@ -1,10 +1,10 @@
 import Context from './Context';
 
-function createHashKey (namespaceURI, localName) {
+function createHashKey (namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
 }
 
-function lookupInOverrides (overrides, key) {
+function lookupInOverrides (overrides: any[] | { [x: string]: any; }[], key: string) {
 	key = key + '';
 	for (let i = overrides.length - 1; i >= 0; --i) {
 		if (key in overrides[i]) {
@@ -22,8 +22,6 @@ function lookupInOverrides (overrides, key) {
  * It will be overlayed by itself, but overlays the execution context, since that may know of
  * namespaces or variables that are also available in a global scope, but only when the selector uses
  * none.
- *
- * @implements {Context}
  */
 export default class StaticContext {
 	parentContext: Context;
@@ -46,7 +44,7 @@ export default class StaticContext {
 		this._registeredFunctionsByHash = Object.create(null);
 	}
 
-	registerFunctionDefinition (namespaceURI, localName, arity, functionDefinition) {
+	registerFunctionDefinition (namespaceURI: string, localName: string, arity: number, functionDefinition: { callFunction: (dynamicContext: any, executionParameters: any, _staticContext: any, ...parameters: any[]) => import("./dataTypes/ISequence").default; localName: string; namespaceURI: string; argumentTypes: import("./dataTypes/TypeDeclaration").default[]; arity: number; returnType: import("./dataTypes/TypeDeclaration").default; }) {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const duplicateFunction = this._registeredFunctionsByHash[hashKey];
 		if (duplicateFunction) {
@@ -56,7 +54,7 @@ export default class StaticContext {
 		this._registeredFunctionsByHash[hashKey] = functionDefinition;
 	}
 
-	lookupFunction (namespaceURI, localName, arity) {
+	lookupFunction (namespaceURI: string, localName: string, arity: number) {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const foundFunction = this._registeredFunctionsByHash[hashKey];
 		if (foundFunction) {
@@ -75,16 +73,16 @@ export default class StaticContext {
 	 * We need this to separate variable declaration (which is required to be done statically) and
 	 * from when the dynamic context of the variable will be known.
 	 */
-	registerVariable (namespaceURI, localName) {
+	registerVariable (namespaceURI: string, localName: string) {
 		const hash = createHashKey(namespaceURI, localName);
 		return this._registeredVariableBindingByHashKey[this._scopeDepth][hash] = `${hash}[${this._scopeCount}]`;
 	}
 
-	registerNamespace (prefix, namespaceURI) {
+	registerNamespace (prefix: string, namespaceURI: string) {
 		this._registeredNamespaceURIByPrefix[this._scopeDepth][prefix] = namespaceURI;
 	}
 
-	lookupVariable (namespaceURI, localName) {
+	lookupVariable (namespaceURI: string, localName: string) {
 		const hash = createHashKey(namespaceURI, localName);
 		const varNameInCurrentScope = lookupInOverrides(this._registeredVariableBindingByHashKey, hash);
 		if (varNameInCurrentScope) {
@@ -107,7 +105,7 @@ export default class StaticContext {
 		this._scopeDepth--;
 	}
 
-	resolveNamespace (prefix) {
+	resolveNamespace (prefix: string) {
 		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix);
 		if (uri === undefined) {
 			return this.parentContext === null ? undefined : this.parentContext.resolveNamespace(prefix);
@@ -118,10 +116,8 @@ export default class StaticContext {
 	/**
 	 * Make a clone of this static context at the current scope that can be retained for later usage
 	 * (such as dynamic namespace lookups)
-	 *
-	 * @return {StaticContext}
 	 */
-	cloneContext () {
+	cloneContext (): StaticContext {
 		const contextAtThisPoint = new StaticContext(this.parentContext);
 		for (let i = 0; i < this._scopeDepth + 1; ++i) {
 			contextAtThisPoint._registeredNamespaceURIByPrefix = [Object.assign(

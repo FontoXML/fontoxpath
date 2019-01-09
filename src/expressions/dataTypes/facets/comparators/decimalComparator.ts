@@ -1,7 +1,3 @@
-/**
- * @param  {string} fractionString
- * @param  {number} maxLength
- */
 function padFraction (fractionString: string, maxLength: number) {
 	return fractionString.padEnd(maxLength, '0');
 }

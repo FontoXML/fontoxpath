@@ -4,9 +4,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 
 class PITest extends TestAbstractExpression {
 	_target: string;
-	/**
-	 * @param  {string}  target
-	 */
+	
 	constructor (target: string) {
 		super(new Specificity({
 			[Specificity.NODENAME_KIND]: 1

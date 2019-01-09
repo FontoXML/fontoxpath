@@ -1,17 +1,29 @@
 import createChildGenerator from './createChildGenerator';
 import { DONE_TOKEN, ready } from './iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
+import IDomFacade from '../../domFacade/IDomFacade';
+import { ConcreteParentNode, ConcreteChildNode, NODE_TYPES, ConcreteDocumentNode } from '../../domFacade/ConcreteNode';
 
-function findDeepestLastDescendant (node, domFacade) {
-	while (domFacade.getLastChild(node) !== null) {
-		node = domFacade.getLastChild(node);
+function findDeepestLastDescendant (node: ConcreteChildNode|ConcreteDocumentNode, domFacade: IDomFacade): ConcreteChildNode|ConcreteDocumentNode {
+	if (node.nodeType !== NODE_TYPES.ELEMENT_NODE && node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
+		return node;
 	}
-	return node;
+
+	let parentNode: ConcreteParentNode = node;
+	let childNode: ConcreteChildNode = domFacade.getLastChild(node);
+	while (childNode !== null) {
+		if (childNode.nodeType !== NODE_TYPES.ELEMENT_NODE) {
+			return childNode;
+		}
+		parentNode = childNode;
+		childNode = domFacade.getLastChild(parentNode);
+	}
+	return parentNode;
 }
 
-export default function createDescendantGenerator (domFacade, node, returnInReverse = false) {
+export default function createDescendantGenerator (domFacade: IDomFacade, node: ConcreteParentNode, returnInReverse = false) {
 	if (returnInReverse) {
-		let currentNode = node;
+		let currentNode: ConcreteChildNode | ConcreteDocumentNode = node;
 		let isDone = false;
 		return {
 			next: () => {
@@ -28,7 +40,7 @@ export default function createDescendantGenerator (domFacade, node, returnInReve
 					return ready(createNodeValue(currentNode));
 				}
 
-				const previousSibling = domFacade.getPreviousSibling(currentNode);
+				const previousSibling = currentNode.nodeType === NODE_TYPES.DOCUMENT_NODE ? null : domFacade.getPreviousSibling(currentNode);
 				if (previousSibling !== null) {
 					currentNode = findDeepestLastDescendant(previousSibling, domFacade);
 					return ready(createNodeValue(currentNode));
@@ -44,9 +56,6 @@ export default function createDescendantGenerator (domFacade, node, returnInReve
 		};
 	}
 
-	/**
-	 * @type {!Array<!Iterator<!Node>>}
-	 */
 	const descendantIteratorStack = [createChildGenerator(domFacade, node)];
 	return {
 		next: () => {

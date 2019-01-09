@@ -14,9 +14,6 @@ import QName from '../dataTypes/valueTypes/QName';
 import ISequence from '../dataTypes/ISequence';
 import Value from '../dataTypes/Value';
 
-/**
- * @extends {Expression}
- */
 class ElementConstructor extends Expression {
 	_nameExpr: Expression;
 	_name: QName;
@@ -24,12 +21,7 @@ class ElementConstructor extends Expression {
 	_attributes: AttributeConstructor[];
 	_contents: Expression[];
 	_staticContext: any;
-	/**
-	 * @param  {{expr: Expression}|{prefix:string, namespaceURI: ?string, localName: string}} name
-	 * @param  {!Array<!AttributeConstructor>}  attributes
-	 * @param  {!Array<!{prefix: string, uri: string}>}     namespaceDeclarations
-	 * @param  {!Array<!Expression>}  contents  Strings and enclosed expressions
-	 */
+
 	constructor(name: { expr: Expression; } | { prefix: string; namespaceURI: string | null; localName: string; }, attributes: AttributeConstructor[], namespaceDeclarations: { prefix: string; uri: string; }[], contents: Array<Expression>) {
 		super(
 			new Specificity({}),
@@ -45,9 +37,6 @@ class ElementConstructor extends Expression {
 			this._name = new QName((name as any).prefix, (name as any).namespaceURI, (name as any).localName);
 		}
 
-		/**
-		 * @type {!Object<!string, !string>}
-		 */
 		this._namespacesInScope = namespaceDeclarations.reduce(
 			(namespacesInScope, namespaceDecl) => {
 				if (namespaceDecl.prefix in namespacesInScope) {

@@ -34,18 +34,11 @@ function isCreatedNode (node, createdNodes, domFacade) {
 
 type VariableBinding = {varRef: QName, sourceExpr: Expression, registeredVariable?: string}
 
-/**
- * @extends     {UpdatingExpression}
- */
 class TransformExpression extends UpdatingExpression {
 	_variableBindings: any[];
 	_modifyExpr: Expression;
 	_returnExpr: Expression;
-	/**
-	 * @param  {!Array<!VariableBinding>} variableBindings
-	 * @param  {!Expression} modifyExpr
-	 * @param  {!Expression} returnExpr
-	 */
+
 	constructor (variableBindings: Array<VariableBinding>, modifyExpr: Expression, returnExpr: Expression) {
 		super(
 			new Specificity({}),

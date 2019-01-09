@@ -198,9 +198,6 @@ const fnSubstringAfter: FunctionDefinitionType = function (_dynamicContext, _exe
 
 const fnSubstring: FunctionDefinitionType = function (dynamicContext, executionParameters, staticContext, sourceString, start, length) {
 	const roundedStart = fnRound(false, dynamicContext, executionParameters, staticContext, start, null);
-	/**
-	 * @type {?ISequence}
-	 */
 	const roundedLength = length !== null ? fnRound(false, dynamicContext, executionParameters, staticContext, length, null) : null;
 
 	let done = false;

@@ -282,18 +282,11 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 	};
 }
 
-/**
- * @extends     {UpdatingExpression}
- */
 class ReplaceExpression extends UpdatingExpression {
 	_valueOf: boolean;
 	_targetExpression: Expression;
 	_replacementExpression: Expression;
-	/**
-	 * @param  {boolean} valueOf
-	 * @param  {!Expression} targetExpression
-	 * @param  {!Expression} replacementExpression
-	 */
+
 	constructor (valueOf: boolean, targetExpression: Expression, replacementExpression: Expression) {
 		super(
 			new Specificity({}),

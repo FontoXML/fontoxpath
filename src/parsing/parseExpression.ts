@@ -1,8 +1,5 @@
 import { parse, SyntaxError } from './xPathParser';
 
-/**
- * @dict
- */
 const astParseResultCache = Object.create(null);
 
 function storeParseResultInCache (string, language, ast) {

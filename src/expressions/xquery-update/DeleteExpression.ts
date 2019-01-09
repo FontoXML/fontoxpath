@@ -10,14 +10,9 @@ import isSubTypeOf from '../dataTypes/isSubtypeOf';
 
 import { errXUTY0007 } from './XQueryUpdateFacilityErrors';
 
-/**
- * @extends     {UpdatingExpression}
- */
 class DeleteExpression extends UpdatingExpression {
 	_targetExpression: Expression;
-	/**
-	 * @param  {!Expression}   targetExpression
-	 */
+
 	constructor (targetExpression: Expression) {
 		super(
 			new Specificity({}),

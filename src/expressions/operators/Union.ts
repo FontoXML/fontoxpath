@@ -7,13 +7,10 @@ import concatSequences from '../util/concatSequences';
 
 /**
  * The 'union' expression: concats and sorts
- * @extends {Expression}
  */
 class Union extends Expression {
 	_subExpressions: Expression[];
-	/**
-	 * @param  {!Array<!Expression>}  expressions
-	 */
+
 	constructor (expressions: Array<Expression>) {
 		const maxSpecificity = expressions.reduce((maxSpecificity, expression) => {
 			if (maxSpecificity.compareTo(expression.specificity) > 0) {

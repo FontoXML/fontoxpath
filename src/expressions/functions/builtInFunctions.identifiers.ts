@@ -61,15 +61,14 @@ const fnIdref: FunctionDefinitionType = function(_dynamicContext, executionParam
 		return SequenceFactory.empty();
 	}
 	const domFacade = executionParameters.domFacade;
-	/**
-	 * @type {!IObject<string, boolean>}
-	 */
+	
 	const isMatchingIdRefById = idSequence.getAllValues().reduce(function (byId, idValue) {
 			byId[idValue.value] = true;
 			return byId;
 		}, Object.create(null));
 	const documentNode = targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE ?
 		targetNodeValue.value : targetNodeValue.value.ownerDocument;
+	
 	// TODO: Index idrefs to optimize this lookup
 	const matchingNodes = findDescendants(
 			domFacade,

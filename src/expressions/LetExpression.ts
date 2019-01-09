@@ -2,9 +2,6 @@ import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
-/**
- * @extends {PossiblyUpdatingExpression}
- */
 class LetExpression extends PossiblyUpdatingExpression {
 	_prefix: string;
 	_namespaceURI: string;
@@ -12,11 +9,7 @@ class LetExpression extends PossiblyUpdatingExpression {
 	_bindingSequence: Expression;
 	_returnExpression: Expression;
 	_variableBinding: any;
-	/**
-	 * @param  {{prefix:string, namespaceURI:?string, localName: string}}    rangeVariable
-	 * @param  {Expression}  bindingSequence
-	 * @param  {Expression}  returnExpression
-	 */
+
 	constructor (rangeVariable: { prefix: string; namespaceURI: string | null; localName: string; }, bindingSequence: Expression, returnExpression: Expression) {
 		super(
 			bindingSequence.specificity.add(returnExpression.specificity),
