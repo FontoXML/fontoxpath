@@ -243,7 +243,9 @@ function compileTest(ast: Array<any>, compilationOptions: { allowXQuery: boolean
         case 'Wildcard':
             return wildcard(ast, compilationOptions);
         case 'atomicType':
-            return typeTest(ast, compilationOptions);
+			return typeTest(ast, compilationOptions);
+		case 'anyItemType':
+			return anyItemTest();
         default:
             throw new Error('No selector counterpart for: ' + ast[0] + '.');
     }
@@ -537,6 +539,10 @@ function nameTest(ast, _compilationOptions) {
 
 function anyKindTest() {
 	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'node()' });
+}
+
+function anyItemTest() {
+	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'item()' });
 }
 
 

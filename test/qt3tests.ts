@@ -44,7 +44,7 @@ if (indexOfGrep >= 0) {
 } else {
 	shouldRunTestByName = testFs.readFileSync('runnableTestSets.csv')
 		.split(/\r?\n/)
-		.map(line=>line.split(','))
+		.map(line => line.split(','))
 		.reduce((accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }), Object.create(null));
 }
 const unrunnableTestCases = getSkippedTests('unrunnableTestCases.csv');
@@ -55,7 +55,7 @@ const unrunnableTestCasesByName = unrunnableTestCases
 const globalDocument = parser.parseFromString('<xml/>');
 const instantiatedDocumentByAbsolutePath = Object.create(null);
 
-function getFile (fileName) {
+function getFile(fileName) {
 	while (fileName.includes('..')) {
 		const parts = fileName.split('/');
 		fileName = parts.slice(0, parts.indexOf('..') - 1).concat(parts.slice(parts.indexOf('..') + 1)).join('/');
@@ -83,7 +83,7 @@ function getFile (fileName) {
 		parser.parseFromString(content);
 }
 
-function createAsserter (baseUrl, assertNode, language) {
+function createAsserter(baseUrl, assertNode, language) {
 	const nodesFactory = {
 		createElementNS: assertNode.ownerDocument.createElementNS.bind(assertNode.ownerDocument),
 		createTextNode: assertNode.ownerDocument.createTextNode.bind(assertNode.ownerDocument),
@@ -119,8 +119,18 @@ function createAsserter (baseUrl, assertNode, language) {
 		}
 		case 'error': {
 			const errorCode = evaluateXPathToString('@code', assertNode);
-			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
-				chai.assert.throws(() => evaluateXPathToString(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), errorCode === '*' ? null : new RegExp(errorCode), xpath);
+			return (xpath: string, contextNode: Element, variablesInScope: object, namespaceResolver: (string) => string) =>
+				chai.assert.throws(
+					() => {
+						evaluateXPathToString(
+							xpath,
+							contextNode,
+							null,
+							variablesInScope,
+							{ namespaceResolver, nodesFactory, language })
+					},
+					errorCode === '*' ? /.*/ : new RegExp(errorCode),
+					xpath);
 		}
 		case 'assert':
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`let $result := (${xpath}) return ${evaluateXPathToString('.', assertNode)}`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), xpath);
@@ -158,7 +168,7 @@ function createAsserter (baseUrl, assertNode, language) {
 				chai.assert(evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
 					a: result,
 					b: Array.from(parsedFragment.childNodes)
-				}), `Expected XPath ${xpath} to resolve to the given XML. Expected ${result.map(result=>new slimdom.XMLSerializer().serializeToString(result)).join(' ')} to equal ${
+				}), `Expected XPath ${xpath} to resolve to the given XML. Expected ${result.map(result => new slimdom.XMLSerializer().serializeToString(result)).join(' ')} to equal ${
 					parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE ?
 						parsedFragment.childNodes.map(n => new slimdom.XMLSerializer().serializeToString(n)).join(' ') :
 						parsedFragment.innerHTML}`);
@@ -175,14 +185,14 @@ function createAsserter (baseUrl, assertNode, language) {
 	}
 
 }
-function getAsserterForTest (baseUrl, testCase, language) {
+function getAsserterForTest(baseUrl, testCase, language) {
 	return createAsserter(baseUrl, evaluateXPathToFirstNode('./result/*', testCase), language);
 }
 
 const catalog = getFile('catalog.xml');
 const emptyDoc = catalog.implementation.createDocument(null, null);
 
-function createEnvironment (cwd, environmentNode) {
+function createEnvironment(cwd, environmentNode) {
 	const fileName = evaluateXPathToString('source[@role="."]/@file', environmentNode);
 	const variables = evaluateXPathToNodes('source[@role!="."]', environmentNode)
 		.reduce((varsByName, variable) => Object.assign(
@@ -198,16 +208,17 @@ function createEnvironment (cwd, environmentNode) {
 }
 
 const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
-	.reduce((envByName, environmentNode) =>	{
+	.reduce((envByName, environmentNode) => {
 		return Object.assign(
 			envByName,
-			{ [evaluateXPathToString('@name', environmentNode)]: createEnvironment('', environmentNode)
+			{
+				[evaluateXPathToString('@name', environmentNode)]: createEnvironment('', environmentNode)
 			});
 	}, {
-		empty: {
-			contextNode: emptyDoc
-		}
-	});
+			empty: {
+				contextNode: emptyDoc
+			}
+		});
 
 
 const registeredModuleURIByFileName = Object.create(null);

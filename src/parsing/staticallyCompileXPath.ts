@@ -41,12 +41,13 @@ export default function staticallyCompileXPath(xpathString: string, compilationO
 		const ast = parseExpression(xpathString, compilationOptions);
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
-		const prolog = astHelper.getFirstChild(mainModule, 'prolog');
-		const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
-		if (!queryBodyContents) {
+		if (!mainModule) {
 			// This must be a library module
 			throw new Error('Can not execute a library module.');
 		}
+
+		const prolog = astHelper.getFirstChild(mainModule, 'prolog');
+		const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
 
 		if (prolog) {
 			if (!compilationOptions.allowXQuery) {
