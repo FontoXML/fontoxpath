@@ -16,11 +16,11 @@ class DomBackedDomFacade implements IDomFacade {
 	}
 
 	getFirstChild(node: ConcreteParentNode): ConcreteChildNode {
-		return node['firstChild'];
+		return node['firstChild'] as ConcreteChildNode;
 	}
 
 	getLastChild(node: ConcreteParentNode): ConcreteChildNode {
-		return node['lastChild'];
+		return node['lastChild'] as ConcreteChildNode;
 	}
 
 	getNextSibling(node: ConcreteChildNode): ConcreteChildNode {

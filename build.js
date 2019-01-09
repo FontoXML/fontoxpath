@@ -75,6 +75,7 @@ function doTsickleBuild () {
 
 function doExpressionsBuild () {
 	return new Promise((resolve, reject) => {
+		console.log('Starting closure compiler build');
 		new Compiler({
 			assume_function_wrapper: true,
 			debug: !!doDebugBuild,
@@ -130,9 +131,10 @@ function doExpressionsBuild () {
 `,
 			js_output_file: './dist/fontoxpath.js',
 			entry_point: './dist/tmp/index.js',
-			js: '"built/**.js"'
+			js: '"dist/tmp/**.js"'
 		})
 			.run((exitCode, stdOut, stdErr) => {
+				console.log('done');
 				if (exitCode !== 0) {
 					reject(stdErr);
 					return;
@@ -157,6 +159,6 @@ if (!skipClosureBuild) {
 }
 
 chain.catch((err) => {
-	console.error(err);
+	console.error('Err: ' + err);
 	process.exit(1);
 });
