@@ -61,7 +61,7 @@ describe('functions', () => {
 			() => chai.assert.throws(() => evaluateXPathToNumber('number()'), 'XPDY0002'));
 
 		it('As a consequence of the rules given above, a type error occurs if the context item cannot be atomized, or if the result of atomizing the context item is a sequence containing more than one atomic value.',
-			() => chai.assert.throws(() => evaluateXPathToNumber('number(concat#2)', documentNode), 'XPTY0004'));
+			() => chai.assert.throws(() => evaluateXPathToNumber('number(concat#2)', documentNode), 'FOTY0013'));
 		it('allows async input', async () => {
 			chai.assert.equal(await evaluateXPathToAsyncSingleton('number(fontoxpath:sleep(10, 10))'), 10);
 		});

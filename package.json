@@ -7,13 +7,10 @@
 		"test": "test"
 	},
 	"scripts": {
-		"prepare": "npm run build",
+		"prepare": "npm run build",										
 		"build-dist": "node ./build.js",
 		"build": "tsickle -- --outDir built",
-		"test": "ts-mocha --require source-map-support/register --paths -p test/tsconfig.json --recursive test/specs/**/*.ts ",
-		
-		"ttest": "nyc ts-mocha --require source-map-support/register --recursive --paths test/specs/**/*.tests.ts -p test/tsconfig.json",
-		
+		"test": "ts-mocha --require source-map-support/register --paths -p test/tsconfig.json --recursive 'test/specs/**/*.ts'",
 		"ci-test": "nyc --no-clean ts-mocha --paths test/specs --recursive -p test/tsconfig.json",
 		"integrationtests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/parsing --dist",
 		"qt3tests": "ts-mocha --paths -p test/tsconfig.json test/qt3tests.js",

@@ -163,11 +163,12 @@ const fnInsertBefore: FunctionDefinitionType = function(_dynamicContext, _execut
 	}
 	const sequenceValue = sequence.getAllValues();
 
-	let effectivePosition = position.first().value;
-	if (effectivePosition < 1) {
-		effectivePosition = 1;
+	// XPath is 1 based
+	let effectivePosition = position.first().value - 1;
+	if (effectivePosition < 0) {
+		effectivePosition = 0;
 	} else if (effectivePosition > sequenceValue.length) {
-		effectivePosition = sequenceValue.length + 1;
+		effectivePosition = sequenceValue.length;
 	}
 
 	const firstHalve = sequenceValue.slice(0, effectivePosition);

@@ -92,7 +92,7 @@ describe('Data type constructors', () => {
 				chai.assert.isTrue(evaluateXPathToBoolean('<ele xmlns:prefix="XXX">{xs:QName("prefix:abc")}</ele>', documentNode, null, null, { language: 'XQuery3.1' }));
 			});
 			it('xs:QName() with unknown prefix',
-				() => chai.assert.throws(() => evaluateXPathToBoolean('xs:QName("abc:abc") instance of xs:QName', documentNode), 'FORG0001'));
+				() => chai.assert.throws(() => evaluateXPathToBoolean('xs:QName("abc:abc") instance of xs:QName', documentNode), 'FONS0004'));
 			it('xs:QName() without prefix',
 				() => chai.assert.isTrue(evaluateXPathToBoolean('xs:QName("abc") instance of xs:QName', documentNode, null, null, { namespaceResolver: () => 'http://example.com/ns' })));
 		});
