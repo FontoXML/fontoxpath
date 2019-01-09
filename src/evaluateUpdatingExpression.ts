@@ -18,8 +18,8 @@ export type UpdatingOptions = {
  * @param  updateScript The updateScript to execute. Supports XPath 3.1.
  * @param  contextItem  The initial context for the script
  * @param  domFacade    The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  variables    Extra variables (name=>value). Values can be number / string or boolean.
- * @param  options      Extra options for evaluating this XPath
+ * @param  variables    Extra variables (name=>value). Values can be number, string, boolean, nodes or object literals and arrays.
+ * @param  options      Extra options for evaluating this XPath.
  *
  * @return The query result and pending update list.
  */
