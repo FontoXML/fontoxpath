@@ -18,8 +18,8 @@ import Expression from '../expressions/Expression';
 import builtInFunctions from '../expressions/functions/builtInFunctions';
 import { registerFunction } from '../expressions/functions/functionRegistry';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
-import { Options } from 'src/evaluateXPath';
-import { UpdatingOptions } from 'src/evaluateUpdatingExpression';
+import { Options } from '../evaluateXPath';
+import { UpdatingOptions } from '../evaluateUpdatingExpression';
 
 export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
 
