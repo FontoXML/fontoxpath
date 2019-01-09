@@ -113,10 +113,10 @@ describe('functions over nodes', () => {
 
 		it('it returns the empty string for comments', () => {
 			jsonMlMapper.parse(['!', 'some comment'], documentNode);
-			chai.assert.equal(evaluateXPathToStrings('name(.)', documentNode.firstChild), '');
+			chai.assert.equal(evaluateXPathToString('name(.)', documentNode.firstChild), '');
 		});
 
-		it('it returns the empty string for documents', () => chai.assert.equal(evaluateXPathToStrings('name(.)', documentNode), ''));
+		it('it returns the empty string for documents', () => chai.assert.equal(evaluateXPathToString('name(.)', documentNode), ''));
 
 		it('it accepts async parameters', async () => {
 			jsonMlMapper.parse([
@@ -138,13 +138,13 @@ describe('functions over nodes', () => {
 			() => chai.assert.isTrue(evaluateXPathToBoolean(`
 let $element := <root><child><node/></child></root>,
 	$node := $element//node
-return root($node) = $element`, documentNode, null, null, { language: 'XQuery3.1' }), true));
+return root($node) = $element`, documentNode, null, null, { language: 'XQuery3.1' })));
 
 		it('returns the root of the given constructed element from context',
 			() => chai.assert.isTrue(evaluateXPathToBoolean(`
 let $element := <root><child><node/></child></root>,
 	$node := $element//node
-return $node/root() = $element`, documentNode, null, null, { language: 'XQuery3.1' }), true));
+return $node/root() = $element`, documentNode, null, null, { language: 'XQuery3.1' })));
 	});
 
 	describe('outermost()', () => {

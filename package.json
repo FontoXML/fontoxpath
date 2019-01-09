@@ -10,7 +10,10 @@
 		"prepare": "npm run build",
 		"build-dist": "node ./build.js",
 		"build": "tsickle -- --outDir built",
-		"test": "nyc ts-mocha --require source-map-support/register --paths test/specs/**/*.tests.* -p test/tsconfig.json",
+		"test": "ts-mocha --require source-map-support/register --paths -p test/tsconfig.json --recursive test/specs/**/*.ts ",
+		
+		"ttest": "nyc ts-mocha --require source-map-support/register --recursive --paths test/specs/**/*.tests.ts -p test/tsconfig.json",
+		
 		"ci-test": "nyc --no-clean ts-mocha --paths test/specs --recursive -p test/tsconfig.json",
 		"integrationtests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/parsing --dist",
 		"qt3tests": "ts-mocha --paths -p test/tsconfig.json test/qt3tests.js",
@@ -21,8 +24,7 @@
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.js",
 		"coverage": "nyc report --reporter=text-lcov | coveralls",
 		"alltests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX",
-		"ts-build": "tslint -p tsconfig.json && tsc",
-		"ts-debug": ""
+		"ts-build": "tslint -p tsconfig.json && tsc"
 	},
 	"repository": {
 		"type": "git",

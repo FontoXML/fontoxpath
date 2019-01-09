@@ -1,4 +1,4 @@
-import path from 'path';
+import * as path from 'path';
 import { buildTestCase } from './xQueryXUtils';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';

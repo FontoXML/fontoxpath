@@ -56,11 +56,11 @@ describe('ElementConstructor', () => {
 	});
 
 	it('correctly handles multiple textNodes', () => {
-		chai.assert.equal(evaluateXPathToFirstNode('<e>{1}A{1}</e>', documentNode, undefined, {}, { language: 'XQuery3.1' }).outerHTML, '<e>1A1</e>');
+		chai.assert.equal((evaluateXPathToFirstNode('<e>{1}A{1}</e>', documentNode, undefined, {}, { language: 'XQuery3.1' }) as Element).outerHTML, '<e>1A1</e>');
 	});
 
 	it('accepts CDataSections', () => {
-		chai.assert.equal(evaluateXPathToFirstNode('<e><![CDATA[Some CDATA]]></e>', documentNode, undefined, {}, { language: 'XQuery3.1' }).outerHTML, '<e>Some CDATA</e>');
+		chai.assert.equal((evaluateXPathToFirstNode('<e><![CDATA[Some CDATA]]></e>', documentNode, undefined, {}, { language: 'XQuery3.1' }) as Element).outerHTML, '<e>Some CDATA</e>');
 	});
 
 	it('accepts CDataSections with newlines', () => {

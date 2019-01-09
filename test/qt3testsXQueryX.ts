@@ -1,7 +1,7 @@
 import {
 	evaluateXPathToMap
 } from 'fontoxpath';
-import path from 'path';
+import * as path from 'path';
 import { sync } from 'slimdom-sax-parser';
 import { buildTestCase } from './xQueryXUtils';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';

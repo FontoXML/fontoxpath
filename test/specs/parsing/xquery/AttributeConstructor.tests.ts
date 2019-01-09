@@ -13,7 +13,7 @@ beforeEach(() => {
 
 describe('AttributeConstructor', () => {
 	it('can create an attribute', () => {
-		const attribute = evaluateXPathToFirstNode('attribute attr {"val"}', documentNode, undefined, {}, { language: 'XQuery3.1' });
+		const attribute = evaluateXPathToFirstNode('attribute attr {"val"}', documentNode, undefined, {}, { language: 'XQuery3.1' }) as Attr;
 
 		chai.assert.equal(attribute.nodeType, 2);
 		chai.assert.equal(attribute.name, 'attr');

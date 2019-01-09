@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import {
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
@@ -13,14 +13,14 @@ import {
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
-import mocha from 'mocha';
+import * as mocha from 'mocha';
 import { sync, slimdom } from 'slimdom-sax-parser';
 
-global.atob = function (b64Encoded) {
+(global as any).atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
 };
 
-global.btoa = function (str) {
+(global as any).btoa = function (str) {
 	return new Buffer(str, 'binary').toString('base64');
 };
 
@@ -52,13 +52,8 @@ const unrunnableTestCasesByName = unrunnableTestCases
 	.map(line => line.split(','))
 	.reduce((accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }), Object.create(null));
 
-const globalDocument = parser.parseFromString('<xml/>', 'text/xml');
+const globalDocument = parser.parseFromString('<xml/>');
 const instantiatedDocumentByAbsolutePath = Object.create(null);
-// Especially the CI can be slow, up the timeout to 60s.
-
-if (typeof mocha !== 'undefined' && mocha.timeout) {
-	mocha.timeout(60000);
-}
 
 function getFile (fileName) {
 	while (fileName.includes('..')) {
@@ -75,7 +70,7 @@ function getFile (fileName) {
 			content = content.slice(0, -1);
 		}
 		content = `<xml>${content}</xml>`;
-		const parsedContents = Array.from(parser.parseFromString(content, 'text/xml').firstChild.childNodes);
+		const parsedContents = Array.from(parser.parseFromString(content).firstChild.childNodes);
 		const documentFragment = globalDocument.createDocumentFragment(null, null);
 		parsedContents.forEach(node => documentFragment.appendChild(node));
 		return instantiatedDocumentByAbsolutePath[fileName] = documentFragment;
@@ -85,7 +80,7 @@ function getFile (fileName) {
 		return content;
 	}
 	return instantiatedDocumentByAbsolutePath[fileName] =
-		parser.parseFromString(content, 'text/xml');
+		parser.parseFromString(content);
 }
 
 function createAsserter (baseUrl, assertNode, language) {
@@ -125,7 +120,7 @@ function createAsserter (baseUrl, assertNode, language) {
 		case 'error': {
 			const errorCode = evaluateXPathToString('@code', assertNode);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
-				chai.assert.throws(() => evaluateXPathToString(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), errorCode === '*' ? '' : errorCode, xpath);
+				chai.assert.throws(() => evaluateXPathToString(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), errorCode === '*' ? null : new RegExp(errorCode), xpath);
 		}
 		case 'assert':
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => chai.assert.isTrue(evaluateXPathToBoolean(`let $result := (${xpath}) return ${evaluateXPathToString('.', assertNode)}`, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language }), xpath);
@@ -156,7 +151,7 @@ function createAsserter (baseUrl, assertNode, language) {
 			if (evaluateXPathToBoolean('@file', assertNode)) {
 				parsedFragment = getFile(evaluateXPathToString('$baseUrl || "/" || @file', assertNode, null, { baseUrl }));
 			} else {
-				parsedFragment = parser.parseFromString(`<xml>${evaluateXPathToString('.', assertNode)}</xml>`, 'text/xml').documentElement;
+				parsedFragment = parser.parseFromString(`<xml>${evaluateXPathToString('.', assertNode)}</xml>`).documentElement;
 			}
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const result = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope, { namespaceResolver, nodesFactory, language });
@@ -258,7 +253,8 @@ describe('qt3 test set', () => {
 				return;
 			}
 
-			describe(evaluateXPathToString('/test-set/@name || /test-set/description!(if (string()) then "~" || . else "")', testSet), () => {
+			describe(evaluateXPathToString('/test-set/@name || /test-set/description!(if (string()) then "~" || . else "")', testSet), function () {
+				this.timeout(60000);
 				for (const testCase of testCases) {
 					try {
 						const testName = evaluateXPathToString('./@name', testCase);

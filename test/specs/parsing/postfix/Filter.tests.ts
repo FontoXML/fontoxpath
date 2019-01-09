@@ -14,11 +14,11 @@ describe('Filter (predicate)', () => {
 	it('allows spaces',
 		() => chai.assert.equal(evaluateXPathToNumber('(1,2,3)   [. = 2]'), 2));
 	it('returns empty sequence when inputted empty sequence',
-		() => chai.assert.empty(evaluateXPathToNumbers('(1,2,3)[()]')));
+		() => chai.assert.isEmpty(evaluateXPathToNumbers('(1,2,3)[()]')));
 	it('returns the sequence when filtering with a string',
 		() => chai.assert.deepEqual(evaluateXPathToNumbers('(1,2,3,4)["TAKE ME"]'), [1,2,3,4]));
 	it('returns the empty sequence when filtering with an empty string',
-		() => chai.assert.empty(evaluateXPathToNumbers('(1,2,3,4)[""]')));
+		() => chai.assert.isEmpty(evaluateXPathToNumbers('(1,2,3,4)[""]')));
 	it('returns the sequence when filtering asynchronously', async () => {
 		chai.assert.equal(await evaluateXPathToAsyncSingleton('(1,2,3,4)[fontoxpath:sleep(true(), 100)] => count()'), 4);
 	});

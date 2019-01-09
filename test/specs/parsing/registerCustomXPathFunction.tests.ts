@@ -9,6 +9,7 @@ import {
 } from 'fontoxpath';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 
 describe('registerCustomXPath', () => {
 	let documentNode;
@@ -231,7 +232,7 @@ describe('registerCustomXPath', () => {
 	});
 
 	it('', () => {
-		const outerDomFacade = {'this-is-the-outer-one': true};
+		const outerDomFacade = { 'this-is-the-outer-one': true } as unknown as IDomFacade;
 		registerCustomXPathFunction(
 			'test:custom-function-keeps-the-dom-facade',
 			[],

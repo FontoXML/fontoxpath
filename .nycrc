@@ -11,7 +11,7 @@
 	"instrument": true,
 	"sourceMap": true,
 	"include": [
-		"src/**/*@(js|ts)",
-		"test/**/*@(js|ts)"
+		"src/**/*.ts",
+		"test/**/*.ts"
 	]
 }

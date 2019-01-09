@@ -17,7 +17,7 @@ describe('createExpressionFromXPathAsync', () => {
 			.then(function (selector) {
 				// Assume selector to be ok
 				chai.expect(
-					evaluateXPathToNumber(selector, documentNode, null, {}, evaluateXPathToNumber.NUMBER_TYPE)
+					evaluateXPathToNumber(selector, documentNode)
 				).to.equal(2);
 			});
 	}).timeout(10000);

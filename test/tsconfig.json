@@ -1,6 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
+		"outDir": "../blaat",
 		"baseUrl": "..",
 		"paths": {
 			"fontoxpath": [
@@ -22,6 +23,6 @@
 	},
 	"include": [
 		"../src/**/*",
-		"../test/**/*"
+		"**/*"
 	]
 }

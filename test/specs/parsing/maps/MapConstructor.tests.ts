@@ -21,7 +21,7 @@ describe('map constructor', () => {
 	});
 
 	it('can be parsed',
-		() => chai.assert.isOk(evaluateXPathToMap('map {"a": 1, "b":2}', documentNode)), 'It should be able to be parsed');
+		() => chai.assert.isOk(evaluateXPathToMap('map {"a": 1, "b":2}', documentNode), 'It should be able to be parsed'));
 
 	it('creates a map which can be returned by evaluateXPathToMap',
 		() => chai.assert.deepEqual(evaluateXPathToMap('map {"a": 1, "b":2}', documentNode), { a: 1, b: 2 }));

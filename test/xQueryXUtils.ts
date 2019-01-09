@@ -4,7 +4,7 @@ import {
 	evaluateXPathToNodes
 } from 'fontoxpath';
 import { parse } from 'fontoxpath/parsing/xPathParser';
-import chai from 'chai';
+import * as chai from 'chai';
 import { sync, slimdom } from 'slimdom-sax-parser';
 
 /**
@@ -19,7 +19,7 @@ import { sync, slimdom } from 'slimdom-sax-parser';
  *
  * @return  {Node}      The root node of the constructed DOM fragment
  */
-export function parseAst (document, ast, parent) {
+export function parseAst (document, ast, parent?) {
 	if (typeof ast === 'string' || typeof ast === 'number') {
 		return document.createTextNode(ast);
 	}

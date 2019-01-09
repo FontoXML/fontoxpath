@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import {
 	evaluateUpdatingExpression,
 	evaluateXPath,
@@ -11,19 +11,21 @@ import {
 } from 'fontoxpath';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
 import { parseAst } from './xQueryXUtils';
-import path from 'path';
-import mocha from 'mocha';
+import * as path from 'path';
+import * as mocha from 'mocha';
 import { sync, slimdom } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
-global.atob = function (b64Encoded) {
+(global as any).atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
 };
 
-global.btoa = function (str) {
+(global as any).btoa = function (str) {
 	return new Buffer(str, 'binary').toString('base64');
 };
+
+type ExpressionArguments = [string, any, any, Object, {disableCache?: boolean, language?: string}];
 
 const parser = {
 	parseFromString: xmlString => {
@@ -35,11 +37,6 @@ const parser = {
 		}
 	}
 };
-
-// Especially the CI can be slow, up the timeout to 60s.
-if (typeof mocha !== 'undefined' && mocha.timeout) {
-	mocha.timeout(60000);
-}
 
 const unrunnableTestCases = getSkippedTests('unrunnableXQUTSTestCases.csv');
 const unrunnableTestCasesByName = unrunnableTestCases
@@ -83,14 +80,14 @@ function executePul (pul, args) {
 	}
 }
 
-async function assertError (expectedError, args, isUpdating) {
+async function assertError (expectedError, args: ExpressionArguments, isUpdating) {
 	let hasThrown = false;
 	try {
 		if (isUpdating) {
 			const it = await evaluateUpdatingExpression(...args);
 			executePul(it.pendingUpdateList, args);
 		} else {
-			evaluateXPath(...args.slice(0, args.length - 1), null, { language: 'XQuery3.1' });
+			evaluateXPath(args[0], args[1], args[2], args[3], null, args[4]);
 		}
 	} catch (e) {
 		hasThrown = true;
@@ -141,7 +138,7 @@ function assertFragment (actualNodes, expectedString) {
 	assertXml(actual, expected);
 }
 
-async function runAssertions (expectedErrors, outputFiles, args, isUpdating) {
+async function runAssertions (expectedErrors, outputFiles, args: ExpressionArguments, isUpdating) {
 	const failed = [];
 	const catchAssertion = assertion => {
 		try {
@@ -260,7 +257,7 @@ async function runTestCase (testName, testCase) {
 		const outputFiles = state['output-files'];
 		const expectedErrors = state['expected-errors'];
 
-		const args = [query, new slimdom.Document(), null, variables, { language: 'XQuery3.1' }];
+		const args: ExpressionArguments = [query, new slimdom.Document(), null, variables, { language: 'XQuery3.1' }];
 
 		try {
 			const isUpdating = isUpdatingQuery(testName, query);
@@ -288,7 +285,7 @@ async function runTestCase (testName, testCase) {
 }
 
 function buildTestCases (testGroup) {
-	evaluateXPathToNodes('test-group | test-case', testGroup).forEach(test => {
+	(evaluateXPathToNodes('test-group | test-case', testGroup) as Element[]).forEach(test => {
 		switch (test.localName) {
 			case 'test-group': {
 				const groupName = evaluateXPathToString('(@name, string(GroupInfo/title), string(GroupInfo/description))[. != ""][1]', test);
@@ -313,6 +310,9 @@ function buildTestCases (testGroup) {
 const catalog = parser.parseFromString(getFile('XQUTSCatalog.xml'));
 
 describe('xml query update test suite', () => {
+	// Especially the CI can be slow, up the timeout to 60s.
+	this.timeout(60000);
+
 	buildTestCases(evaluateXPathToFirstNode('/test-suite', catalog));
 
 	after(() => {

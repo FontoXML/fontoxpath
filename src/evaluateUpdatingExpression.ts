@@ -12,7 +12,7 @@ import buildContext from './evaluationUtils/buildContext';
  *
  * @return The string result.
  */
-export default async function evaluateUpdatingExpression (updateScript: string, contextItem: any, domFacade: any, variables: Object, options: {disableCache: boolean}) {
+export default async function evaluateUpdatingExpression (updateScript: string, contextItem: any, domFacade: any, variables: Object, options: {disableCache?: boolean}) {
 	let {
 		dynamicContext,
 		executionParameters,

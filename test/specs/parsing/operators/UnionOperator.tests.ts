@@ -54,7 +54,7 @@ describe('union', () => {
 			'someNode',
 			['someChildNode']
 		], documentNode);
-		chai.expect(evaluateXPathToNodes('(//* | //*)', documentNode), [documentNode.firstChild, documentNode.firstChild.firstChild]);
+		chai.assert.deepEqual(evaluateXPathToNodes('(//* | //*)', documentNode), [documentNode.firstChild, documentNode.firstChild.firstChild]);
 	});
 
 	it('throws an error when not passed a node sequence',

@@ -23,8 +23,8 @@ describe('functions', () => {
 			() => chai.assert.equal(evaluateXPathToNumber('(1,2,3)[last()]', documentNode), 3));
 		it('Works with paths', () => {
 			jsonMlMapper.parse([
-				'someParentElement'
-			].concat(new Array(10).fill(['someElement'])), documentNode);
+				'someParentElement',
+				...new Array(10).fill(['someElement'])], documentNode);
 
 			chai.assert.equal(evaluateXPathToString('/descendant::*/(last() - position())!string()=>string-join(",")', documentNode), '10,9,8,7,6,5,4,3,2,1,0');
 		});
@@ -61,7 +61,7 @@ describe('functions', () => {
 			() => chai.assert.throws(() => evaluateXPathToNumber('number()'), 'XPDY0002'));
 
 		it('As a consequence of the rules given above, a type error occurs if the context item cannot be atomized, or if the result of atomizing the context item is a sequence containing more than one atomic value.',
-			() => chai.assert.throws(() => evaluateXPathToNumber('number(concat#2)', documentNode)), 'XPTY0004');
+			() => chai.assert.throws(() => evaluateXPathToNumber('number(concat#2)', documentNode), 'XPTY0004'));
 		it('allows async input', async () => {
 			chai.assert.equal(await evaluateXPathToAsyncSingleton('number(fontoxpath:sleep(10, 10))'), 10);
 		});

@@ -33,5 +33,5 @@ describe('functions over json', () => {
 		() => chai.assert.isTrue(evaluateXPathToBoolean('parse-json("null") => count() eq 0', documentNode, domFacade)));
 
 	it('returns an error for invalid json',
-		() => chai.assert.throws(() => evaluateXPathToBoolean('parse-json("}{") => count() eq 0', documentNode, domFacade)), 'FOJS0001');
+		() => chai.assert.throws(() => evaluateXPathToBoolean('parse-json("}{") => count() eq 0', documentNode, domFacade), 'FOJS0001'));
 });
