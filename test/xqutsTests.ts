@@ -309,7 +309,7 @@ function buildTestCases (testGroup) {
 
 const catalog = parser.parseFromString(getFile('XQUTSCatalog.xml'));
 
-describe('xml query update test suite', () => {
+describe('xml query update test suite', function () {
 	// Especially the CI can be slow, up the timeout to 60s.
 	this.timeout(60000);
 
