@@ -1,6 +1,6 @@
 import ISequence from '../dataTypes/ISequence';
 
-export default function argumentListToString (argumentList: Array<ISequence>) {
+export default function argumentListToString (argumentList: ISequence[]) {
 	return argumentList.map(function (argument) {
 		if (argument === null) {
 			return 'placeholder';

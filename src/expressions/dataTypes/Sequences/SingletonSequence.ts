@@ -43,7 +43,7 @@ export default class SingletonSequence implements ISequence {
 		return this._onlyValue;
 	}
 
-	getAllValues(): Array<Value> {
+	getAllValues(): Value[] {
 		return [this._onlyValue];
 	}
 
@@ -66,7 +66,7 @@ export default class SingletonSequence implements ISequence {
 		return this._sequenceFactory.create(callback(this._onlyValue, 0, this));
 	}
 
-	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence {
+	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
 		return callback([this._onlyValue]);
 	}
 
@@ -77,7 +77,7 @@ export default class SingletonSequence implements ISequence {
 		return (cases.default(this));
 	}
 
-	tryGetAllValues(): AsyncResult<Array<Value>> {
+	tryGetAllValues(): AsyncResult<Value[]> {
 		return ready(this.getAllValues());
 	}
 

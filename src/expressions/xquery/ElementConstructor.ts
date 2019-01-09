@@ -30,7 +30,7 @@ class ElementConstructor extends Expression {
 	 * @param  {!Array<!{prefix: string, uri: string}>}     namespaceDeclarations
 	 * @param  {!Array<!Expression>}  contents  Strings and enclosed expressions
 	 */
-	constructor(name: { expr: Expression; } | { prefix: string; namespaceURI: string | null; localName: string; }, attributes: Array<AttributeConstructor>, namespaceDeclarations: Array<{ prefix: string; uri: string; }>, contents: Array<Expression>) {
+	constructor(name: { expr: Expression; } | { prefix: string; namespaceURI: string | null; localName: string; }, attributes: AttributeConstructor[], namespaceDeclarations: { prefix: string; uri: string; }[], contents: Array<Expression>) {
 		super(
 			new Specificity({}),
 			contents.concat(attributes).concat((name as any).expr || []),
@@ -104,8 +104,8 @@ class ElementConstructor extends Expression {
 		let attributeNodes;
 
 		let childNodesPhaseDone = false;
-		let childNodesSequences: ISequence;
-		let allChildNodes: Value[];
+		let childNodesSequences: ISequence[];
+		let allChildNodes: Value[][];
 
 		let nameIterator;
 
@@ -133,17 +133,19 @@ class ElementConstructor extends Expression {
 				if (!childNodesPhaseDone) {
 					if (!childNodesSequences) {
 						// Accumulate all children
-						childNodesSequences = concatSequences(
-							this._contents.map(
-								contentExpression => contentExpression.evaluateMaybeStatically(dynamicContext, executionParameters)
-									.mapAll(allValues => SequenceFactory.create(allValues))));
+						childNodesSequences = this._contents.map(
+							contentExpression => contentExpression.evaluateMaybeStatically(dynamicContext, executionParameters));
 					}
 
-					const allChildNodesItrResult = childNodesSequences.tryGetAllValues();
-					if (!allChildNodesItrResult.ready) {
-						return allChildNodesItrResult;
+					const childNodes: Value[][] = [];
+					for(let i = 0; i< childNodesSequences.length; i++) {
+						const allValues = childNodesSequences[i].tryGetAllValues();
+						if(!allValues.ready) {
+							return allValues;
+						}
+						childNodes.push(allValues.value);
 					}
-					allChildNodes = allChildNodesItrResult.value;
+					allChildNodes = childNodes;
 					childNodesPhaseDone = true;
 				}
 
@@ -176,7 +178,7 @@ class ElementConstructor extends Expression {
 				});
 
 				// Plonk all childNodes, these are special though
-				const parsedContent = parseContent([allChildNodes], executionParameters, errXQTY0024);
+				const parsedContent = parseContent(allChildNodes, executionParameters, errXQTY0024);
 				parsedContent.attributes.forEach(attrNode => {
 					// The contents may include attributes, 'clone' them and set them on the element
 					if (element.hasAttributeNS(attrNode.namespaceURI, attrNode.localName)) {

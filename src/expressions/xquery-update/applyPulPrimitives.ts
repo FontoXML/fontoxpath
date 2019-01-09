@@ -1,10 +1,10 @@
 import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
 import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
 import QName from '../dataTypes/valueTypes/QName';
-import IDomFacade from 'src/domFacade/IDomFacade';
-import IDocumentWriter from 'src/documentWriter/IDocumentWriter';
-import INodesFactory from 'src/nodesFactory/INodesFactory';
-import ConcreteNode, { NODE_TYPES, ConcreteChildNode, ConcreteAttributeNode, ConcreteElementNode, ConcreteProcessingInstructionNode } from 'src/domFacade/ConcreteNode';
+import IDomFacade from '../../domFacade/IDomFacade';
+import IDocumentWriter from '../../documentWriter/IDocumentWriter';
+import INodesFactory from '../../nodesFactory/INodesFactory';
+import { NODE_TYPES, ConcreteChildNode, ConcreteAttributeNode, ConcreteElementNode, ConcreteProcessingInstructionNode } from '../../domFacade/ConcreteNode';
 
 const ELEMENT_NODE = 1, ATTRIBUTE_NODE = 2, TEXT_NODE = 3, PROCESSING_INSTRUCTION_NODE = 7, COMMENT_NODE = 8;
 

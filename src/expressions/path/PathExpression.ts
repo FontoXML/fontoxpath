@@ -7,7 +7,7 @@ import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrder
 import { AsyncIterator } from '../util/iterators';
 import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 import ISequence from '../dataTypes/ISequence';
-import DomFacade from 'src/domFacade/DomFacade';
+import DomFacade from '../../domFacade/DomFacade';
 
 function isSameNodeValue (a, b) {
 	if (a === null || b === null) {

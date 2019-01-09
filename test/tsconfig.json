@@ -1,17 +1,27 @@
 {
 	"extends": "../tsconfig.json",
-    "compilerOptions": {
+	"compilerOptions": {
 		"baseUrl": "..",
 		"paths": {
-			"fontoxpath": ["src/index.ts"],
-			"fontoxpath/*": ["src/*"],
-			"test-helpers/*": ["test/helpers/*"]
+			"fontoxpath": [
+				"src/index.ts"
+			],
+			"fontoxpath/*": [
+				"src/*"
+			],
+			"test-helpers/*": [
+				"test/helpers/*"
+			]
 		},
 		"inlineSourceMap": true,
-		"inlineSources": true
-    },
-    "include": [
-        "../src/**/*",
+		"inlineSources": true,
+		"types": [
+			"mocha",
+			"node"
+		]
+	},
+	"include": [
+		"../src/**/*",
 		"../test/**/*"
-    ]
+	]
 }

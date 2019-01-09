@@ -10,7 +10,7 @@
 		"prepare": "npm run build",
 		"build-dist": "node ./build.js",
 		"build": "tsickle -- --outDir built",
-		"test": "nyc mocha --compilers ts-node/register --require source-map-support/register --require tsconfig-paths/register specs/parsing/**/*.@(ts|js) -p test/tsconfig.json",
+		"test": "nyc ts-mocha --require source-map-support/register --paths test/specs/**/*.tests.* -p test/tsconfig.json",
 		"ci-test": "nyc --no-clean ts-mocha --paths test/specs --recursive -p test/tsconfig.json",
 		"integrationtests": "ts-mocha --paths --recursive -p test/tsconfig.json test/specs/parsing --dist",
 		"qt3tests": "ts-mocha --paths -p test/tsconfig.json test/qt3tests.js",
@@ -58,6 +58,7 @@
 	"devDependencies": {
 		"@types/chai": "^4.1.7",
 		"@types/mocha": "^5.2.5",
+		"@types/node": "^10.12.18",
 		"@types/sinon": "^7.0.3",
 		"chai": "^4.1.2",
 		"coveralls": "^3.0.2",

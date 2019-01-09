@@ -3,7 +3,7 @@ import SequenceFactory from '../dataTypes/SequenceFactory';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
 import { DONE_TOKEN, ready } from '../util/iterators';
-import DomFacade from 'src/domFacade/DomFacade';
+import DomFacade from '../../domFacade/DomFacade';
 import ISequence from '../dataTypes/ISequence';
 
 function ensureSortedSequence(intersectOrExcept: string, domFacade: DomFacade, sequence: ISequence, expectedResultOrder: any): ISequence {

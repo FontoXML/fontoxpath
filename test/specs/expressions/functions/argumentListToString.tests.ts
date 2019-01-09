@@ -9,20 +9,20 @@ describe('argumentListToString()', () => {
 	});
 
 	it('returns type when given a Sequence with 1 item', () => {
-		var argumentList = [SequenceFactory.create([{ type: 'type' }])];
+		var argumentList = [SequenceFactory.create([{ type: 'type', value: null }])];
 		chai.assert.equal(argumentListToString(argumentList), 'type');
 	});
 
 	it('returns type when given a Sequence with multiple items', () => {
-		var argumentList = [SequenceFactory.create([{ type: 'type' }, { type: 'type' }])];
+		var argumentList = [SequenceFactory.create([{ type: 'type', value: null }, { type: 'type', value: null }])];
 		chai.assert.equal(argumentListToString(argumentList), 'type+');
 	});
 
 	it('returns a type list when given multiple Sequences', () => {
-		var argumentList = [
+		const argumentList = [
 			SequenceFactory.create([]),
-			SequenceFactory.create([{ type: 'type' }]),
-			SequenceFactory.create([{ type: 'type' }, { type: 'type' }])];
+			SequenceFactory.create([{ type: 'type', value: null }]),
+			SequenceFactory.create([{ type: 'type', value: null }, { type: 'type', value: null }])];
 		chai.assert.equal(argumentListToString(argumentList), 'item()?, type, type+');
 	});
 });

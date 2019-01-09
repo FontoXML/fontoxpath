@@ -1,7 +1,7 @@
 import isSubtypeOf from './isSubtypeOf';
 import Value from './Value';
 import IDomFacade from '../../domFacade/IDomFacade';
-import ConcreteNode, { ConcreteParentNode, ConcreteElementNode } from 'src/domFacade/ConcreteNode';
+import ConcreteNode, { ConcreteParentNode, ConcreteElementNode } from '../../domFacade/ConcreteNode';
 
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent

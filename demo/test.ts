@@ -18,4 +18,5 @@ const documentNode = new slimdom.Document();
 
 const docA = sync('<a><b/><c/></a>');
 const docB = sync('<A><B/><C/></A>');
-const result = evaluateXPathToBoolean('let $fn := function ($a as xs:integer){ $a } return $fn("A string")');
+const result = evaluateXPathToFirstNode('<elem>{1,2,3}{4,5,6}</elem>', documentNode, null, null, { language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE }) as Element;
+console.log(result.outerHTML);

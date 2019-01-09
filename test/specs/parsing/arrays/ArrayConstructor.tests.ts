@@ -24,7 +24,7 @@ describe('array constructor', () => {
 
 	describe('curly', () => {
 		it('can be parsed',
-			() => chai.assert.isOk(evaluateXPathToArray('array {1, 2}', documentNode)), 'It should be able to be parsed');
+			() => chai.assert.isOk(evaluateXPathToArray('array {1, 2}', documentNode), 'It should be able to be parsed'));
 		it('can be filled async', async () => {
 			const iterator = evaluateXPathToAsyncIterator('array {(1, 2) => fontoxpath:sleep(1), 3}(1)', documentNode);
 			chai.assert.equal((await iterator.next()).value, 1);
@@ -35,12 +35,12 @@ describe('array constructor', () => {
 
 	describe('square', () => {
 		it('can be parsed',
-			() => chai.assert.isOk(evaluateXPathToArray('[1, 2]', documentNode)), 'It should be able to be parsed');
+			() => chai.assert.isOk(evaluateXPathToArray('[1, 2]', documentNode), 'It should be able to be parsed'));
 		it('can be filled async', async () => {
 			const iterator = evaluateXPathToAsyncIterator('[1 => fontoxpath:sleep(1), 2](1)', documentNode);
 			chai.assert.equal((await iterator.next()).value, 1);
 		});
 		it('does not unfold passed sequences',
-			() => chai.assert.equal(evaluateXPathToString('[("a", "b"), "c"](1)', documentNode), ['a b']));
+			() => chai.assert.equal(evaluateXPathToString('[("a", "b"), "c"](1)', documentNode), 'a b'));
 	});
 });

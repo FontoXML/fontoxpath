@@ -2,7 +2,7 @@ import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import SequenceFactory from '../../dataTypes/SequenceFactory';
 import zipSingleton from '../../util/zipSingleton';
 import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
-import ISequence from 'src/expressions/dataTypes/ISequence';
+import ISequence from '../../dataTypes/ISequence';
 
 export default function nodeCompare(operator: string, domFacade, firstSequence: ISequence, secondSequence: ISequence): ISequence {
 	// https://www.w3.org/TR/xpath-31/#doc-xpath31-NodeComp

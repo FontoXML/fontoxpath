@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const peg = require('pegjs');
 const fs = require('fs');
 const Compiler = new require('google-closure-compiler').compiler;
@@ -19,7 +20,7 @@ function doPegJsBuild () {
 		.then(parserString => {
 			const uglified = UglifyJS.minify(parserString);
 			if (uglified.error) {
-				fs.writeFileSync('./src/parsing/xPathParser.raw.js', parserString);
+				fs.writeFileSync('./src/parsing/xPathParser.raw.ts', parserString);
 				throw uglified.error;
 			}
 			return uglified.code;
@@ -27,7 +28,7 @@ function doPegJsBuild () {
 		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
 		.then(parserString => Promise.all([
 			new Promise((resolve, reject) =>
-						fs.writeFile('./src/parsing/xPathParser.raw.js', parserString, (err) => err ? reject(err) : resolve()))
+						fs.writeFile('./src/parsing/xPathParser.raw.ts', parserString, (err) => err ? reject(err) : resolve()))
 		]))
 		.then(() => console.info('Parser generator done'));
 }

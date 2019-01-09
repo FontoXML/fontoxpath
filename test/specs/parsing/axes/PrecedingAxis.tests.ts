@@ -23,9 +23,9 @@ describe('preceding', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'preceding::someOtherElement',
-				documentNode.documentElement.lastChild).map(node => node.outerHTML), [
-					documentNode.documentElement.firstChild.outerHTML,
-					documentNode.documentElement.firstChild.firstChild.outerHTML
+				documentNode.documentElement.lastChild).map(node => (node as Element).outerHTML), [
+					(documentNode.documentElement.firstChild as Element).outerHTML,
+					(documentNode.documentElement.firstChild.firstChild as Element).outerHTML
 		]);
 	});
 

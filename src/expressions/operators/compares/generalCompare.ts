@@ -4,7 +4,7 @@ import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import castToType from '../../dataTypes/castToType';
 
 import DynamicContext from '../../DynamicContext';
-import ISequence from 'src/expressions/dataTypes/ISequence';
+import ISequence from '../../dataTypes/ISequence';
 
 const OPERATOR_TRANSLATION = {
 	'equalOp': 'eqOp',

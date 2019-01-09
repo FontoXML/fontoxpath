@@ -49,6 +49,6 @@ export interface ConcreteCharacterDataNode extends CharacterData {
 type ConcreteNode = (
 	ConcreteChildNode |
 	ConcreteParentNode |
-	ConcreteAttributeNode)
+	ConcreteAttributeNode);
 
 export default ConcreteNode;

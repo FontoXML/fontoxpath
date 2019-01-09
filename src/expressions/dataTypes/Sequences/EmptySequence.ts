@@ -28,7 +28,7 @@ export default class EmptySequence implements ISequence {
 		return null;
 	}
 
-	getAllValues(): Array<Value> {
+	getAllValues(): Value[] {
 		return [];
 	}
 
@@ -48,7 +48,7 @@ export default class EmptySequence implements ISequence {
 		return this;
 	}
 
-	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence {
+	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
 		return callback([]);
 	}
 
@@ -59,7 +59,7 @@ export default class EmptySequence implements ISequence {
 		return (cases.default(this));
 	}
 
-	tryGetAllValues(): AsyncResult<Array<Value>> {
+	tryGetAllValues(): AsyncResult<Value[]> {
 		return ready(this.getAllValues());
 	}
 

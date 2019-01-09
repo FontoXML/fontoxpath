@@ -5,8 +5,8 @@ import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import createChildGenerator from '../util/createChildGenerator';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
-import IDomFacade from 'src/domFacade/IDomFacade';
-import ConcreteNode, { ConcreteChildNode } from 'src/domFacade/ConcreteNode';
+import IDomFacade from '../../domFacade/IDomFacade';
+import ConcreteNode, { ConcreteChildNode } from '../../domFacade/ConcreteNode';
 
 function createInclusiveDescendantGenerator (domFacade: IDomFacade, node: ConcreteNode) {
 	const descendantIteratorStack: Array<Iterator<ConcreteChildNode>> = [createSingleValueIterator(node)];

@@ -12,7 +12,7 @@ export default class IteratorBackedSequence implements ISequence {
 	value: AsyncIterator<Value>;
 
 	private _cacheAllValues: boolean;
-	private _cachedValues: Array<Value>;
+	private _cachedValues: Value[];
 	private _currentPosition: number;
 	private _length: number;
 
@@ -91,7 +91,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return first.value;
 	}
 
-	getAllValues(): Array<Value> {
+	getAllValues(): Value[] {
 		const values = this.tryGetAllValues();
 		if (!values.ready) {
 			throw new Error('Sequence contains async values.');
@@ -137,7 +137,7 @@ export default class IteratorBackedSequence implements ISequence {
 		}, this._length);
 	}
 
-	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence {
+	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
 		const iterator = this.value;
 		let mappedResultsIterator;
 		const allResults = [];
@@ -212,7 +212,7 @@ export default class IteratorBackedSequence implements ISequence {
 		});
 	}
 
-	tryGetAllValues(): AsyncResult<Array<Value>> {
+	tryGetAllValues(): AsyncResult<Value[]> {
 		if (this._currentPosition > this._cachedValues.length && this._length !== this._cachedValues.length) {
 			throw new Error('Implementation error: Sequence Iterator has progressed.');
 		}

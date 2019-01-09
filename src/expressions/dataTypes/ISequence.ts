@@ -44,5 +44,5 @@ export default interface ISequence {
 	tryGetAllValues(): AsyncResult<Array<Value>>;
 	tryGetEffectiveBooleanValue(): AsyncResult<boolean>;
 	tryGetFirst(): AsyncResult<Value | null>;
-	tryGetLength(onlyIfCheap: boolean): AsyncResult<number>;
+	tryGetLength(onlyIfCheap?: boolean): AsyncResult<number>;
 }

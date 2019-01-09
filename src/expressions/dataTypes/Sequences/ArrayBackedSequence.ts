@@ -12,7 +12,7 @@ export default class ArrayBackedSequence implements ISequence {
 
 	constructor(
 		private readonly _sequenceFactory: typeof SequenceFactory,
-		private readonly _values: Array<Value>) {
+		private readonly _values: Value[]) {
 		let i = -1;
 		this.value = {
 			next: () => {
@@ -55,7 +55,7 @@ export default class ArrayBackedSequence implements ISequence {
 		return this._values[0];
 	}
 
-	getAllValues(): Array<Value> {
+	getAllValues(): Value[] {
 		return this._values;
 	}
 
@@ -86,7 +86,7 @@ export default class ArrayBackedSequence implements ISequence {
 		}, this._values.length);
 	}
 
-	mapAll(callback: (allValues: Array<Value>) => ISequence): ISequence {
+	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
 		return callback(this._values);
 	}
 
@@ -97,7 +97,7 @@ export default class ArrayBackedSequence implements ISequence {
 		return (cases.default(this));
 	}
 
-	tryGetAllValues(): AsyncResult<Array<Value>> {
+	tryGetAllValues(): AsyncResult<Value[]> {
 		return ready(this.getAllValues());
 	}
 
