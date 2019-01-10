@@ -1,5 +1,6 @@
 import { transformArgument } from './argumentHelper';
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -35,7 +36,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 			}),
 			[functionReference].concat(args.filter(arg => !!arg)),
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED,
+				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				peer: false,
 				subtree: false,
 				canBeStaticallyEvaluated: false // args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated

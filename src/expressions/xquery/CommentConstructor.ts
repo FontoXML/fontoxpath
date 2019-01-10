@@ -1,4 +1,4 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
 import castToType from '../dataTypes/castToType';
@@ -13,7 +13,7 @@ class CommentConstructor extends Expression {
 			expr ? [expr] : [],
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED
 			});
 
 		this._expr = expr;

@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import createSingleValueIterator from '../util/createSingleValueIterator';
@@ -39,7 +40,7 @@ class DescendantAxis extends Expression {
 			descendantExpression.specificity,
 			[descendantExpression],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.SORTED,
+				resultOrder: RESULT_ORDERINGS.SORTED,
 				subtree: true,
 				peer: false,
 				canBeStaticallyEvaluated: false

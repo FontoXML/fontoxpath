@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import { DONE_TOKEN, ready, notReady } from '../util/iterators';

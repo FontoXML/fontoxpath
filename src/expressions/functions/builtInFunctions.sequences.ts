@@ -12,7 +12,6 @@ import zipSingleton from '../util/zipSingleton';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionValue from '../dataTypes/FunctionValue';
-import Value from '../dataTypes/Value';
 import FunctionDefinitionType from './FunctionDefinitionType';
 import ISequence from '../dataTypes/ISequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
@@ -26,7 +25,7 @@ function subSequence (sequence: ISequence, start: number, length: number) {
 	let newSequenceLength = null;
 	const startIndex = Math.max(start - 1, 0);
 	if (predictedLength.ready && predictedLength.value !== -1) {
-		let endIndex;
+		let endIndex: number;
 		if (length === null) {
 			endIndex = predictedLength.value;
 		} else {
@@ -70,7 +69,7 @@ function convertItemsToCommonType (items) {
 		// They are all integers, we do not have to convert them to decimals
 		return items;
 	}
-	var commonTypeName = items.map(item => getPrimitiveTypeName(item.type)).reduce((commonTypeName, itemType) => {
+	var commonTypeName = items.map((item: { type: string; }) => getPrimitiveTypeName(item.type)).reduce((commonTypeName, itemType) => {
 		return itemType === commonTypeName ? commonTypeName : null;
 	});
 

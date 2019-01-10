@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { ready } from '../util/iterators';
@@ -36,7 +37,9 @@ abstract class UpdatingExpression extends Expression {
 		throw new Error('Can not execute an updating expression without catching the pending updates');
 	}
 
-	abstract evaluateWithUpdateList (_dynamicContext: DynamicContext | null, _executionParameters: ExecutionParameters): { next: () => any; };
+	abstract evaluateWithUpdateList (
+		_dynamicContext: DynamicContext | null, 
+		_executionParameters: ExecutionParameters): { next: () => any; };
 }
 
 export default UpdatingExpression;

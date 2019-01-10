@@ -1,4 +1,4 @@
-import Expression from '../expressions/Expression';
+import Expression, { RESULT_ORDERINGS } from '../expressions/Expression';
 import TestAbstractExpression from '../expressions/tests/TestAbstractExpression';
 
 import astHelper, { AST } from './astHelper';
@@ -648,7 +648,7 @@ function pathExpr (ast, compilationOptions) {
 	// they already result to a ordered set
 	if (!isAbsolute &&
 		steps.length === 1 &&
-		steps[0].expectedResultOrder === Expression.RESULT_ORDERINGS.SORTED) {
+		steps[0].expectedResultOrder === RESULT_ORDERINGS.SORTED) {
 		return steps[0];
 	}
 

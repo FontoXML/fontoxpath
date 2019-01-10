@@ -1,10 +1,15 @@
 import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import { registerFunction } from './expressions/functions/functionRegistry';
+import IDomFacade from './domFacade/IDomFacade';
+
 import {
 	staticallyKnownNamespaceByPrefix,
 	registerStaticallyKnownNamespace
 } from './expressions/staticallyKnownNamespaces';
+import DynamicContext from './expressions/DynamicContext';
+import IExternalDomFacade from './domFacade/IExternalDomFacade';
+import ExecutionParameters from './expressions/ExecutionParameters';
 
 function adaptXPathValueToJavascriptValue(valueSequence: any, sequenceType: string): any | null | Array<any> {
 	switch (sequenceType[sequenceType.length - 1]) {
@@ -51,6 +56,10 @@ function splitFunctionName(name: string | { namespaceURI; localName; }): { names
 	};
 }
 
+type DomFacadeWrapper = {
+	domFacade: IExternalDomFacade
+};
+
 /**
  * Add a custom test for use in xpath-serialized expressions.
  *
@@ -63,10 +72,10 @@ export default function registerCustomXPathFunction(
 	name: string | { namespaceURI: string; localName: string; },
 	signature: Array<string>,
 	returnType: string,
-	callback: ({domFacade: IDomFacade}, ...any) => any): void {
+	callback: (domFacade: DomFacadeWrapper, ...functionArgs: any[]) => any): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
-	const callFunction = function (_dynamicContext, executionParameters, _staticContext) {
+	const callFunction = function (_dynamicContext: DynamicContext, executionParameters: ExecutionParameters, _staticContext: any) {
 		// Make arguments a read array instead of a array-like object
 		const args = Array.from(arguments);
 

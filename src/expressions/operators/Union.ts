@@ -1,5 +1,6 @@
 import Specificity from '../Specificity';
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';

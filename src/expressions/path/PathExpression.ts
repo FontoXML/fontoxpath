@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import Specificity from '../Specificity';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import createSingleValueIterator from '../util/createSingleValueIterator';
@@ -197,8 +198,8 @@ class PathExpression extends Expression {
 			stepExpressions,
 			{
 				resultOrder: requireSortedResults ?
-					Expression.RESULT_ORDERINGS.SORTED :
-					Expression.RESULT_ORDERINGS.UNSORTED,
+					RESULT_ORDERINGS.SORTED :
+					RESULT_ORDERINGS.UNSORTED,
 				peer: pathResultsInPeerSequence,
 				subtree: pathResultsInSubtreeSequence,
 				canBeStaticallyEvaluated: false
@@ -247,7 +248,7 @@ class PathExpression extends Expression {
 			}
 			else {
 				switch (selector.expectedResultOrder) {
-					case Expression.RESULT_ORDERINGS.REVERSE_SORTED: {
+					case RESULT_ORDERINGS.REVERSE_SORTED: {
 						const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
 						resultValuesInOrderOfEvaluation = {
 							next: () => {
@@ -263,7 +264,7 @@ class PathExpression extends Expression {
 						};
 						// Fallthrough for merges
 					}
-					case Expression.RESULT_ORDERINGS.SORTED:
+					case RESULT_ORDERINGS.SORTED:
 						if (selector.subtree && sequenceHasPeerProperty) {
 							sortedResultSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
 							break;
@@ -271,7 +272,7 @@ class PathExpression extends Expression {
 						// Only locally sorted
 						sortedResultSequence = mergeSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
 						break;
-					case Expression.RESULT_ORDERINGS.UNSORTED: {
+					case RESULT_ORDERINGS.UNSORTED: {
 						// The result should be sorted before we can continue
 						const concattedSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
 						return concattedSequence.mapAll(allValues => SequenceFactory.create(sortResults(executionParameters.domFacade, allValues)));

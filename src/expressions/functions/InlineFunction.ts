@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import DynamicContext from '../DynamicContext';
 import Specificity from '../Specificity';
 import SequenceFactory from '../dataTypes/SequenceFactory';
@@ -23,7 +24,7 @@ class InlineFunction extends Expression {
 			{
 			// inline functions may never be statically evaluated because the domfacade may be used in the function body to resolve dom relations
 			canBeStaticallyEvaluated: false,
-			resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED
 		});
 
 		this._parameterNames = paramDescriptions.map(({ name }) => name);

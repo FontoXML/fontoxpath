@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
@@ -10,7 +11,7 @@ class ChildAxis extends Expression {
 			childExpression.specificity,
 			[childExpression],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.SORTED,
+				resultOrder: RESULT_ORDERINGS.SORTED,
 				subtree: true,
 				peer: true,
 				canBeStaticallyEvaluated: false

@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import Specificity from '../Specificity';
 import createNodeValue from '../dataTypes/createNodeValue';
@@ -10,7 +11,7 @@ class AbsolutePathExpression extends Expression {
 			relativePathExpression ? relativePathExpression.specificity : new Specificity({}),
 			relativePathExpression ? [relativePathExpression] : [],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.SORTED,
+				resultOrder: RESULT_ORDERINGS.SORTED,
 				subtree: false,
 				peer: false,
 				canBeStaticallyEvaluated: false

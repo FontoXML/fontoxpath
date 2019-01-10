@@ -1,4 +1,4 @@
-import Expression from './Expression';
+import Expression, { RESULT_ORDERINGS } from './Expression';
 import Specificity from './Specificity';
 
 class VarRef extends Expression {
@@ -13,7 +13,7 @@ class VarRef extends Expression {
 			[],
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED
 			});
 		if (prefix || namespaceURI) {
 			throw new Error('Not implemented: references to variables with a namespace URI or a prefix.');

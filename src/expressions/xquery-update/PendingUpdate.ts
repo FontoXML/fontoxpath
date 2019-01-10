@@ -150,7 +150,6 @@ class ReplaceValuePendingUpdate extends PendingUpdate {
 		return {
 			'type': this.type,
 			'target': this.target,
-			'string-value': this.stringValue
 		};
 	}
 }

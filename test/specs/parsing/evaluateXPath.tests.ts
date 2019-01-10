@@ -14,7 +14,7 @@ import {
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings
-} from '../../../src';
+} from 'fontoxpath';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
@@ -42,9 +42,9 @@ describe('evaluateXPath', () => {
 		], documentNode);
 		chai.assert.equal(evaluateXPath('//@*', documentNode, domFacade), 'someValue');
 	});
-		it(
-			'throws for async results',
-			() => chai.assert.throws(() => evaluateXPath('fontoxpath:sleep(())', documentNode, domFacade), 'can not be resolved synchronously'));
+	it(
+		'throws for async results',
+		() => chai.assert.throws(() => evaluateXPath('fontoxpath:sleep(())', documentNode, domFacade), 'can not be resolved synchronously'));
 
 	it(
 		'Requires the XPath selector',
@@ -234,10 +234,16 @@ describe('evaluateXPath', () => {
 				createComment: sinon.spy(slimdomDocument, 'createComment').bind(slimdomDocument),
 				createElementNS: sinon.spy(slimdomDocument, 'createElementNS').bind(slimdomDocument),
 				createProcessingInstruction: sinon.spy(slimdomDocument, 'createProcessingInstruction').bind(slimdomDocument),
-				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument)
+				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument),
+				createAttributeNS: sinon.spy(slimdomDocument, 'createAttributeNS').bind(slimdomDocument)
 			};
 
-			evaluateXPathToBoolean('<element>Some text, a <?processing instruction ?> and a <!--comment--></element>', null, null, null, { nodesFactory, language: 'XQuery3.1' });
+			evaluateXPathToBoolean(
+				'<element>Some text, a <?processing instruction ?> and a <!--comment--></element>',
+				null,
+				null,
+				null,
+				{ nodesFactory, language: 'XQuery3.1' });
 
 			chai.assert.isTrue(slimdomDocument.createComment.called, 'nodesFactory.createComment');
 			chai.assert.isTrue(slimdomDocument.createElementNS.called, 'nodesFactory.createElementNS');

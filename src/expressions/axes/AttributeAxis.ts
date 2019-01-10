@@ -1,4 +1,4 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
@@ -14,7 +14,7 @@ class AttributeAxis extends Expression {
 			}),
 			[attributeTestExpression],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED,
+				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				subtree: true,
 				peer: true,
 				canBeStaticallyEvaluated: false

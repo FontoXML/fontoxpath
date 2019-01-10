@@ -1,5 +1,6 @@
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
 class IfExpression extends PossiblyUpdatingExpression {
@@ -12,7 +13,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 			[testExpression, thenExpression, elseExpression],
 			{
 				resultOrder: thenExpression.expectedResultOrder === elseExpression.expectedResultOrder ?
-					thenExpression.expectedResultOrder : PossiblyUpdatingExpression.RESULT_ORDERINGS.UNSORTED,
+					thenExpression.expectedResultOrder : RESULT_ORDERINGS.UNSORTED,
 				peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
 				subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree,
 				canBeStaticallyEvaluated: testExpression.canBeStaticallyEvaluated && thenExpression.canBeStaticallyEvaluated && elseExpression.canBeStaticallyEvaluated

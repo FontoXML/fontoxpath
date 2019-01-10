@@ -20,6 +20,8 @@ import { registerFunction } from '../expressions/functions/functionRegistry';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
 import { Options } from '../evaluateXPath';
 import { UpdatingOptions } from '../evaluateUpdatingExpression';
+import IExternalDomFacade from '../domFacade/IExternalDomFacade';
+import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 
 export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
 
@@ -48,7 +50,7 @@ function normalizeEndOfLines (xpathString: string) {
 export default function buildEvaluationContext(
 	expressionString: string,
 	contextItem: any,
-	domFacade: IDomFacade | null,
+	domFacade: IExternalDomFacade | null,
 	variables: object,
 	options: Options | UpdatingOptions,
 	compilationOptions: {
@@ -60,11 +62,13 @@ export default function buildEvaluationContext(
 		variables = variables || {};
 	}
 	options = options || { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
+	let wrappedDomFacade: IWrappingDomFacade;
 	if (domFacade === null) {
-		domFacade = domBackedDomFacade;
+		wrappedDomFacade = domBackedDomFacade;
+	} else {
+		// Always wrap in an actual domFacade
+		wrappedDomFacade = new DomFacade(domFacade);
 	}
-	// Always wrap in an actual domFacade
-	domFacade = new DomFacade(domFacade);
 
 	expressionString = normalizeEndOfLines(expressionString);
 
@@ -105,7 +109,7 @@ export default function buildEvaluationContext(
 		}, Object.create(null))
 	});
 
-	const executionParameters = new ExecutionParameters(domFacade, nodesFactory, documentWriter);
+	const executionParameters = new ExecutionParameters(wrappedDomFacade, nodesFactory, documentWriter);
 
 	return {
 		executionParameters,

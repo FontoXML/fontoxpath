@@ -9,41 +9,45 @@ import IteratorBackedSequence from './Sequences/IteratorBackedSequence';
 
 const emptySequence = new EmptySequence();
 
-export default class SequenceFactory {
-	static create(value: Value | Array<Value> | AsyncIterator<Value> = null, predictedLength: number = null): ISequence {
-		if (value === null) {
-			return emptySequence;
+function create(value: Value | Value[] | AsyncIterator<Value> = null, predictedLength: number = null): ISequence {
+	if (value === null) {
+		return emptySequence;
+	}
+	if (Array.isArray(value)) {
+		switch (value.length) {
+			case 0:
+				return emptySequence;
+			case 1:
+				return new SingletonSequence(sequenceFactory, value[0]);
+			default:
+				return new ArrayBackedSequence(sequenceFactory, value);
 		}
-		if (Array.isArray(value)) {
-			switch (value.length) {
-				case 0:
-					return emptySequence;
-				case 1:
-					return new SingletonSequence(this, value[0]);
-				default:
-					return new ArrayBackedSequence(this, value);
-			}
-		}
-
-		if ((<AsyncIterator<Value>>value).next) {
-			return new IteratorBackedSequence(this, <AsyncIterator<Value>>value, predictedLength);
-		}
-		return new SingletonSequence(this, (<Value>value));
 	}
 
-	static singleton(value: Value): ISequence {
-		return new SingletonSequence(this, value);
+	if ((<AsyncIterator<Value>>value).next) {
+		return new IteratorBackedSequence(sequenceFactory, <AsyncIterator<Value>>value, predictedLength);
 	}
-
-	static empty() {
-		return this.create();
-	}
-
-	static singletonTrueSequence() {
-		return this.create(trueBoolean);
-	}
-
-	static singletonFalseSequence() {
-		return this.create(falseBoolean);
-	}
+	return new SingletonSequence(sequenceFactory, (<Value>value));
 }
+
+const sequenceFactory = {
+	create: create,
+
+	singleton: (value: Value): ISequence => {
+		return new SingletonSequence(sequenceFactory, value);
+	},
+
+	empty: () => {
+		return create();
+	},
+
+	singletonTrueSequence: () => {
+		return create(trueBoolean);
+	},
+
+	singletonFalseSequence: () => {
+		return create(falseBoolean);
+	}
+};
+
+export default sequenceFactory;

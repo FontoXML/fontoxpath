@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import Specificity from '../Specificity';
 import ArrayValue from '../dataTypes/ArrayValue';
 import SequenceFactory from '../dataTypes/SequenceFactory';

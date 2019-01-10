@@ -1,4 +1,4 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
@@ -28,7 +28,7 @@ class AncestorAxis extends Expression {
 			ancestorExpression.specificity,
 			[ancestorExpression],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.REVERSE_SORTED,
+				resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
 				peer: false,
 				subtree: false,
 				canBeStaticallyEvaluated: false

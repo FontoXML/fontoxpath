@@ -1,10 +1,14 @@
 import IDomFacade from './IDomFacade';
 import ConcreteNode, { ConcreteElementNode, ConcreteParentNode, ConcreteChildNode, NODE_TYPES, ConcreteAttributeNode } from './ConcreteNode';
+import IWrappingDomFacade from './IWrappingDomFacade';
 
-class DomBackedDomFacade implements IDomFacade {
+class DomBackedDomFacade implements IWrappingDomFacade {
 	orderOfDetachedNodes: ConcreteNode[];
 	constructor () {
 		this.orderOfDetachedNodes = [];
+	}
+	unwrap() {
+		return this;
 	}
 
 	getParentNode (node: ConcreteElementNode) : ConcreteParentNode;

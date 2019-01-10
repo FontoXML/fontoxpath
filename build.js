@@ -13,8 +13,13 @@ const skipClosureBuild = process.env.npm_config_skip_closure;
 const doDebugBuild = process.env.npm_config_debug;
 const reportUnknownTypes = process.env.npm_config_report_unknown_types;
 
-function doPegJsBuild () {
-	return new Promise((resolve, reject) => fs.readFile('./src/parsing/xpath.pegjs', 'utf8', (err, file) => err ? reject(err) : resolve(file)))
+function doPegJsBuild() {
+	return new Promise(
+		(resolve, reject) =>
+			fs.readFile(
+				'./src/parsing/xpath.pegjs',
+				'utf8',
+				(err, file) => err ? reject(err) : resolve(file)))
 		.then(pegJsString => peg.generate(pegJsString, {
 			cache: true,
 			output: 'source',
@@ -32,12 +37,15 @@ function doPegJsBuild () {
 		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
 		.then(parserString => Promise.all([
 			new Promise((resolve, reject) =>
-						fs.writeFile('./src/parsing/xPathParser.raw.ts', parserString, (err) => err ? reject(err) : resolve()))
+				fs.writeFile(
+					'./src/parsing/xPathParser.raw.ts',
+					 parserString, 
+					 (err) => err ? reject(err) : resolve()))
 		]))
 		.then(() => console.info('Parser generator done'));
 }
 
-function doTsickleBuild () {
+function doTsickleBuild() {
 	return fs.ensureDir('dist/tmp')
 		.then(() => new Promise((resolve, reject) => {
 			const tsickleProcess = spawn(
@@ -59,12 +67,11 @@ function doTsickleBuild () {
 
 			tsickleProcess.on('close', code => {
 				if (code !== 0) {
-					console.log('tsickle exited with code: ' + code);
 					// We should reject here but tsickle seems to
 					// always output an error code because we still
 					// have some closure typings in out typescript
-					// code...  reject();
-					resolve();
+					// code...
+					reject(`tsickle exited with code: ${code}`);
 					return;
 				}
 
@@ -73,7 +80,7 @@ function doTsickleBuild () {
 		}));
 }
 
-function doExpressionsBuild () {
+function doExpressionsBuild() {
 	return new Promise((resolve, reject) => {
 		console.log('Starting closure compiler build');
 		new Compiler({

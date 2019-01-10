@@ -2,7 +2,8 @@ import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import concatSequences from '../util/concatSequences';
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 
 /**
  * The Sequence selector evaluates its operands and returns them as a single sequence
@@ -15,7 +16,7 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 			}, new Specificity({})),
 			expressions,
 			{
-				resultOrder: PossiblyUpdatingExpression.RESULT_ORDERINGS.UNSORTED,
+				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				canBeStaticallyEvaluated: expressions.every(selector => selector.canBeStaticallyEvaluated)
 			});
 	}

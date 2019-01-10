@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import UpdatingExpression from './UpdatingExpression';
 import Specificity from '../Specificity';
 
@@ -92,7 +93,7 @@ class RenameExpression extends UpdatingExpression {
 			[targetExpression, newNameExpression],
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED
 			});
 
 		this._targetExpression = targetExpression;

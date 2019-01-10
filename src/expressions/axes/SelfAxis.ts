@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
@@ -9,7 +10,7 @@ class SelfAxis extends Expression {
 			selector.specificity,
 			[selector],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.SORTED,
+				resultOrder: RESULT_ORDERINGS.SORTED,
 				subtree: true,
 				peer: true,
 				canBeStaticallyEvaluated: false

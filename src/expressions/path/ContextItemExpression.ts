@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import Specificity from '../Specificity';
 
@@ -8,7 +9,7 @@ class ContextItemExpression extends Expression {
 			new Specificity({}),
 			[],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.SORTED
+				resultOrder: RESULT_ORDERINGS.SORTED
 			}
 		);
 	}

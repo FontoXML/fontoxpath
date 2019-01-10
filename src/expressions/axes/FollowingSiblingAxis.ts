@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
@@ -24,7 +25,7 @@ class FollowingSiblingAxis extends Expression {
 			siblingExpression.specificity,
 			[siblingExpression],
 			{
-				resultOrder: Expression.RESULT_ORDERINGS.SORTED,
+				resultOrder: RESULT_ORDERINGS.SORTED,
 				peer: true,
 				subtree: false,
 				canBeStaticallyEvaluated: false

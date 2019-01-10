@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import UpdatingExpression from './UpdatingExpression';
 import Specificity from '../Specificity';
 
@@ -111,7 +112,7 @@ class InsertExpression extends UpdatingExpression {
 			[sourceExpression, targetExpression],
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED
 			});
 
 		this._sourceExpression = sourceExpression;

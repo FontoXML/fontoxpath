@@ -7,7 +7,7 @@ class CastableAsOperator extends Expression {
 	_targetType: string;
 	_expression: Expression;
 	_allowsEmptySequence: boolean;
-	
+
 	constructor (expression: Expression, targetType: { prefix: string; namespaceURI: string | null; localName: string; }, allowsEmptySequence: boolean) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 

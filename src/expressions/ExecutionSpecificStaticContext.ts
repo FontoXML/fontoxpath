@@ -94,11 +94,11 @@ export default class ExecutionSpecificStaticContext implements Context {
 		return getFunctionByArity(namespaceURI, localName, arity);
 	}
 
-	getReferredNamespaces () {
+	getReferredNamespaces (): string[] {
 		return Object.values(this._referredNamespaceByName);
 	}
 
-	getReferredVariables () {
+	getReferredVariables ():string[] {
 		return Object.values(this._referredVariableByName);
 	}
 }

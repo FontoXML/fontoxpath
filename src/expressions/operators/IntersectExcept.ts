@@ -1,4 +1,5 @@
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
@@ -11,11 +12,11 @@ function ensureSortedSequence(intersectOrExcept: string, domFacade: DomFacade, s
 		if (values.some(value => !isSubtypeOf(value.type, 'node()'))) {
 			throw new Error(`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`);
 		}
-		if (expectedResultOrder === Expression.RESULT_ORDERINGS.SORTED) {
+		if (expectedResultOrder === RESULT_ORDERINGS.SORTED) {
 			return SequenceFactory.create(values);
 
 		}
-		if (expectedResultOrder === Expression.RESULT_ORDERINGS.REVERSE_SORTED) {
+		if (expectedResultOrder === RESULT_ORDERINGS.REVERSE_SORTED) {
 			return SequenceFactory.create(values.reverse());
 		}
 

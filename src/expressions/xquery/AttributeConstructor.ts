@@ -1,6 +1,6 @@
 import { errXPST0081 } from '../XPathErrors';
 import { errXQDY0044 } from './XQueryErrors';
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
 import { evaluateQNameExpression } from './nameExpression';
@@ -36,7 +36,7 @@ class AttributeConstructor extends Expression {
 			childExpressions,
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED
 			});
 
 		if ((name as any).expr) {

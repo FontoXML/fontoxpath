@@ -2,27 +2,34 @@ import Value from './Value';
 import { AsyncIterator, AsyncResult } from '../util/iterators';
 import ExecutionParameters from '../ExecutionParameters';
 
-// https://github.com/Microsoft/TypeScript/issues/14094
-type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
-type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
-export type SwitchCasesCases = XOR<XOR<XOR<
-	{
-		empty: (sequence: ISequence) => ISequence;
-		default: (sequence: ISequence) => ISequence;
-	},
-	{
-		singleton: (sequence: ISequence) => ISequence;
-		default: (sequence: ISequence) => ISequence;
-	}>,
-	{
-		multiple: (sequence: ISequence) => ISequence;
-		default: (sequence: ISequence) => ISequence;
-	}>,
-	{
-		empty: (sequence: ISequence) => ISequence;
-		singleton: (sequence: ISequence) => ISequence;
-		multiple: (sequence: ISequence) => ISequence;
-	}>;
+type SwitchCasesCaseEmpty = {
+	singleton?: undefined;
+	multiple?: undefined;
+	empty: (sequence: ISequence) => ISequence;
+	default: (sequence: ISequence) => ISequence;
+};
+type SwitchCasesCaseSingleton = {
+	empty?: undefined,
+	multiple?: undefined;
+	singleton: (sequence: ISequence) => ISequence;
+	default: (sequence: ISequence) => ISequence;
+};
+
+type SwitchCasesCaseMultiple = {
+	empty?: undefined,
+	singleton?: undefined;
+	multiple: (sequence: ISequence) => ISequence;
+	default: (sequence: ISequence) => ISequence;
+};
+
+type SwitchCasesCaseAll = {
+	default?: undefined;
+	empty: (sequence: ISequence) => ISequence;
+	singleton: (sequence: ISequence) => ISequence;
+	multiple: (sequence: ISequence) => ISequence;
+};
+
+export type SwitchCasesCases = SwitchCasesCaseEmpty | SwitchCasesCaseMultiple | SwitchCasesCaseSingleton | SwitchCasesCaseAll;
 
 export default interface ISequence {
 	value: AsyncIterator<Value>;

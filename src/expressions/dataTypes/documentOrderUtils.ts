@@ -1,7 +1,8 @@
 import isSubtypeOf from './isSubtypeOf';
 import Value from './Value';
 import IDomFacade from '../../domFacade/IDomFacade';
-import ConcreteNode, { ConcreteParentNode, ConcreteElementNode } from '../../domFacade/ConcreteNode';
+import ConcreteNode from '../../domFacade/ConcreteNode';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent
@@ -147,7 +148,7 @@ export const compareNodePositions = function (domFacade, node1, node2) {
  *
  * @return  The sorted nodes
  */
-export const sortNodeValues = function sortNodeValues (domFacade: IDomFacade, nodeValues: Value[]): Value[] {
+export const sortNodeValues = function sortNodeValues (domFacade: IWrappingDomFacade, nodeValues: Value[]): Value[] {
 	return nodeValues
 		.sort(function (node1, node2) {
 			return compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2);

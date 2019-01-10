@@ -1,6 +1,6 @@
 import { errXPST0081 } from '../XPathErrors';
 import { errXQTY0024, errXQDY0025, errXQST0040, errXQDY0096 } from './XQueryErrors';
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
 import { evaluateQNameExpression } from './nameExpression';
@@ -28,7 +28,7 @@ class ElementConstructor extends Expression {
 			contents.concat(attributes).concat((name as any).expr || []),
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED
 			});
 
 		if ((name as any).expr) {

@@ -1,5 +1,6 @@
 import { evaluateNCNameExpression } from './nameExpression';
-import Expression from '../Expression';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+
 import Specificity from '../Specificity';
 
 import { ready } from '../util/iterators';
@@ -26,7 +27,7 @@ class PIConstructor extends Expression {
 			expressions,
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: Expression.RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED
 			});
 
 		this._target = target;

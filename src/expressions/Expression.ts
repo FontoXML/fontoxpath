@@ -5,7 +5,7 @@ import Specificity from './Specificity';
 import ISequence from './dataTypes/ISequence';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
-enum RESULT_ORDERINGS {
+export enum RESULT_ORDERINGS {
 	SORTED = 'sorted',
 	REVERSE_SORTED = 'reverse-sorted',
 	UNSORTED = 'unsorted'
@@ -28,7 +28,7 @@ abstract class Expression {
 	isUpdating: boolean;
 	_eagerlyEvaluatedValue: () => ISequence;
 	expectedResultOrder: string;
-
+	
 	constructor (
 		specificity: Specificity,
 		childExpressions: Expression[],
@@ -52,10 +52,6 @@ abstract class Expression {
 
 		this._eagerlyEvaluatedValue = null;
 	}
-
-	static RESULT_ORDERINGS: typeof RESULT_ORDERINGS = RESULT_ORDERINGS;
-	RESULT_ORDERINGS: typeof RESULT_ORDERINGS = RESULT_ORDERINGS
-
 
 	performStaticEvaluation (staticContext:StaticContext): void {
 		this._childExpressions.forEach(selector => selector.performStaticEvaluation(staticContext));
