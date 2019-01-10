@@ -1,4 +1,11 @@
-import ConcreteNode, { NODE_TYPES, ConcreteElementNode, ConcreteParentNode, ConcreteChildNode, ConcreteAttributeNode, ConcreteCharacterDataNode } from './ConcreteNode';
+import ConcreteNode, {
+	NODE_TYPES,
+	ConcreteElementNode,
+	ConcreteParentNode,
+	ConcreteChildNode,
+	ConcreteAttributeNode,
+	ConcreteCharacterDataNode
+} from './ConcreteNode';
 import IWrappingDomFacade from './IWrappingDomFacade';
 import IDomFacade from './IDomFacade';
 import IExternalDomFacade from './IExternalDomFacade';
@@ -40,7 +47,11 @@ class DomFacade implements IWrappingDomFacade {
 	getChildNodes(node: ConcreteParentNode): ConcreteChildNode[] {
 		const childNodes = [];
 
-		for (let childNode = this.getFirstChild(node); childNode; childNode = this.getNextSibling(childNode)) {
+		for (
+			let childNode = this.getFirstChild(node);
+			childNode;
+			childNode = this.getNextSibling(childNode)
+		) {
 			childNodes.push(childNode);
 		}
 
@@ -75,6 +86,5 @@ class DomFacade implements IWrappingDomFacade {
 	getRelatedNodes(node, callback) {
 		return callback(node, this);
 	}
-
 }
 export default DomFacade;

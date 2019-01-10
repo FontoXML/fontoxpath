@@ -7,7 +7,7 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 import createDescendantGenerator from '../util/createDescendantGenerator';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
-function createPrecedingGenerator (domFacade, node) {
+function createPrecedingGenerator(domFacade, node) {
 	const nodeStack = [];
 
 	for (; node; node = domFacade.getParentNode(node)) {
@@ -28,7 +28,6 @@ function createPrecedingGenerator (domFacade, node) {
 
 				const nephew = nephewGenerator.next();
 
-
 				if (nephew.done) {
 					// We are done with the descendants of the node currently on the stack
 					nephewGenerator = null;
@@ -40,8 +39,7 @@ function createPrecedingGenerator (domFacade, node) {
 						// This is the last sibling, we can continue with a child of the current
 						// node (an uncle of the original node) in the next iteration
 						nodeStack.shift();
-					}
-					else {
+					} else {
 						nodeStack[0] = nextNode;
 					}
 
@@ -56,24 +54,20 @@ function createPrecedingGenerator (domFacade, node) {
 	};
 }
 
-
 class PrecedingAxis extends Expression {
 	_testExpression: TestAbstractExpression;
 	constructor(testExpression: TestAbstractExpression) {
-		super(
-			testExpression.specificity,
-			[testExpression],
-			{
-				resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
-				peer: true,
-				subtree: false,
-				canBeStaticallyEvaluated: false
-			});
+		super(testExpression.specificity, [testExpression], {
+			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
+			peer: true,
+			subtree: false,
+			canBeStaticallyEvaluated: false
+		});
 
 		this._testExpression = testExpression;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
@@ -81,7 +75,9 @@ class PrecedingAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		return SequenceFactory.create(createPrecedingGenerator(domFacade, contextItem.value)).filter(item => {
+		return SequenceFactory.create(
+			createPrecedingGenerator(domFacade, contextItem.value)
+		).filter(item => {
 			return this._testExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

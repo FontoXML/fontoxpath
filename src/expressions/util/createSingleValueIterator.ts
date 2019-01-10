@@ -1,5 +1,5 @@
 import { DONE_TOKEN, ready } from './iterators';
-export default function createSingleValueIterator (onlyValue) {
+export default function createSingleValueIterator(onlyValue) {
 	let hasPassed = false;
 	return {
 		next: () => {

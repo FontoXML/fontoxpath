@@ -4,7 +4,7 @@ import CastResult from './CastResult';
 
 const createIntegerValue = value => createAtomicValue(value, 'xs:integer');
 
-export default function castToInteger(instanceOf: (string) => boolean): (Value) => (CastResult) {
+export default function castToInteger(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:boolean')) {
 		return value => ({
 			successful: true,
@@ -19,13 +19,14 @@ export default function castToInteger(instanceOf: (string) => boolean): (Value) 
 					successful: false,
 					error: new Error(`FOCA0002: can not cast ${value} to xs:integer`)
 				};
-
 			}
 
 			if (!Number.isSafeInteger(integerValue)) {
 				return {
 					successful: false,
-					error: new Error(`FOAR0002: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`)
+					error: new Error(
+						`FOAR0002: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`
+					)
 				};
 			}
 
@@ -47,7 +48,9 @@ export default function castToInteger(instanceOf: (string) => boolean): (Value) 
 			if (!Number.isSafeInteger(integerValue)) {
 				return {
 					successful: false,
-					error: new Error(`FOCA0003: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`)
+					error: new Error(
+						`FOCA0003: can not cast ${value} to xs:integer, it is out of bounds for JavaScript numbers.`
+					)
 				};
 			}
 
@@ -59,6 +62,8 @@ export default function castToInteger(instanceOf: (string) => boolean): (Value) 
 	}
 	return value => ({
 		successful: false,
-		error: new Error('XPTY0004: Casting not supported from given type to xs:integer or any of its derived types.')
+		error: new Error(
+			'XPTY0004: Casting not supported from given type to xs:integer or any of its derived types.'
+		)
 	});
 }

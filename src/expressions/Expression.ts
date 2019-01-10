@@ -11,12 +11,12 @@ export enum RESULT_ORDERINGS {
 	UNSORTED = 'unsorted'
 }
 
-export type OptimizationOptions = ({
+export type OptimizationOptions = {
 	resultOrder?: string;
 	subtree?: boolean;
 	peer?: boolean;
 	canBeStaticallyEvaluated?: boolean;
-});
+};
 
 abstract class Expression {
 	specificity: Specificity;
@@ -28,8 +28,8 @@ abstract class Expression {
 	isUpdating: boolean;
 	_eagerlyEvaluatedValue: () => ISequence;
 	expectedResultOrder: string;
-	
-	constructor (
+
+	constructor(
 		specificity: Specificity,
 		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions = {
@@ -39,7 +39,6 @@ abstract class Expression {
 			canBeStaticallyEvaluated: false
 		}
 	) {
-
 		this.specificity = specificity;
 		this.expectedResultOrder = optimizationOptions.resultOrder || RESULT_ORDERINGS.UNSORTED;
 		this.subtree = !!optimizationOptions.subtree;
@@ -53,7 +52,7 @@ abstract class Expression {
 		this._eagerlyEvaluatedValue = null;
 	}
 
-	performStaticEvaluation (staticContext:StaticContext): void {
+	performStaticEvaluation(staticContext: StaticContext): void {
 		this._childExpressions.forEach(selector => selector.performStaticEvaluation(staticContext));
 	}
 
@@ -64,11 +63,14 @@ abstract class Expression {
 	 * applicable to a given node. Use getBucketsForNode to determine the buckets to consider for a
 	 * given node.
 	 */
-	getBucket ():string|null {
+	getBucket(): string | null {
 		return null;
 	}
 
-	evaluateMaybeStatically (dynamicContext:DynamicContext, executionParameters:ExecutionParameters): ISequence {
+	evaluateMaybeStatically(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
 		if (!dynamicContext || dynamicContext.contextItem === null) {
 			// We must be free of context here. But: this will be memoized / constant folded on a
 			// higher level, so there is no use in keeping these intermediate results
@@ -80,14 +82,19 @@ abstract class Expression {
 		return this.evaluate(dynamicContext, executionParameters);
 	}
 
-	abstract evaluate (_dynamicContext?: DynamicContext, _executionParameters?: ExecutionParameters): ISequence;
+	abstract evaluate(
+		_dynamicContext?: DynamicContext,
+		_executionParameters?: ExecutionParameters
+	): ISequence;
 
-	protected evaluateWithoutFocus (_contextlessDynamicContext: (DynamicContext|null), executionParameters:ExecutionParameters): ISequence {
+	protected evaluateWithoutFocus(
+		_contextlessDynamicContext: DynamicContext | null,
+		executionParameters: ExecutionParameters
+	): ISequence {
 		if (this._eagerlyEvaluatedValue === null) {
-			this._eagerlyEvaluatedValue = createDoublyIterableSequence(this.evaluate(
-				null,
-				executionParameters
-			).expandSequence());
+			this._eagerlyEvaluatedValue = createDoublyIterableSequence(
+				this.evaluate(null, executionParameters).expandSequence()
+			);
 		}
 		return this._eagerlyEvaluatedValue();
 	}

@@ -7,14 +7,20 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 import DomFacade from '../../domFacade/DomFacade';
 import ISequence from '../dataTypes/ISequence';
 
-function ensureSortedSequence(intersectOrExcept: string, domFacade: DomFacade, sequence: ISequence, expectedResultOrder: any): ISequence {
+function ensureSortedSequence(
+	intersectOrExcept: string,
+	domFacade: DomFacade,
+	sequence: ISequence,
+	expectedResultOrder: any
+): ISequence {
 	return sequence.mapAll(values => {
 		if (values.some(value => !isSubtypeOf(value.type, 'node()'))) {
-			throw new Error(`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`);
+			throw new Error(
+				`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`
+			);
 		}
 		if (expectedResultOrder === RESULT_ORDERINGS.SORTED) {
 			return SequenceFactory.create(values);
-
 		}
 		if (expectedResultOrder === RESULT_ORDERINGS.REVERSE_SORTED) {
 			return SequenceFactory.create(values.reverse());
@@ -33,33 +39,33 @@ class IntersectExcept extends Expression {
 	_expression1: Expression;
 	_expression2: Expression;
 	constructor(intersectOrExcept: string, expression1: Expression, expression2: Expression) {
-		const maxSpecificity = expression1.specificity.compareTo(expression2.specificity) > 0 ?
-			expression1.specificity :
-			expression2.specificity;
-		super(
-			maxSpecificity,
-			[expression1, expression2],
-			{
-				canBeStaticallyEvaluated: expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
-			}
-		);
+		const maxSpecificity =
+			expression1.specificity.compareTo(expression2.specificity) > 0
+				? expression1.specificity
+				: expression2.specificity;
+		super(maxSpecificity, [expression1, expression2], {
+			canBeStaticallyEvaluated:
+				expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
+		});
 
 		this._intersectOrExcept = intersectOrExcept;
 		this._expression1 = expression1;
 		this._expression2 = expression2;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		const firstResult = ensureSortedSequence(
 			this._intersectOrExcept,
 			executionParameters.domFacade,
 			this._expression1.evaluateMaybeStatically(dynamicContext, executionParameters),
-			this._expression1.expectedResultOrder);
+			this._expression1.expectedResultOrder
+		);
 		const secondResult = ensureSortedSequence(
 			this._intersectOrExcept,
 			executionParameters.domFacade,
 			this._expression2.evaluateMaybeStatically(dynamicContext, executionParameters),
-			this._expression2.expectedResultOrder);
+			this._expression2.expectedResultOrder
+		);
 
 		const firstIterator = firstResult.value;
 		const secondIterator = secondResult.value;
@@ -109,15 +115,18 @@ class IntersectExcept extends Expression {
 						continue;
 					}
 
-					const comparisonResult = compareNodePositions(executionParameters.domFacade, firstValue, secondValue);
+					const comparisonResult = compareNodePositions(
+						executionParameters.domFacade,
+						firstValue,
+						secondValue
+					);
 					if (comparisonResult < 0) {
 						const toReturn = ready(firstValue);
 						firstValue = null;
 						if (this._intersectOrExcept === 'exceptOp') {
 							return toReturn;
 						}
-					}
-					else {
+					} else {
 						secondValue = null;
 					}
 				}

@@ -11,14 +11,10 @@ import { ready } from '../util/iterators';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import QName from '../dataTypes/valueTypes/QName';
 
-import {
-	errXUTY0012,
-	errXUDY0023,
-	errXUDY0027
-} from './XQueryUpdateFacilityErrors';
+import { errXUTY0012, errXUDY0023, errXUDY0027 } from './XQueryUpdateFacilityErrors';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
-function evaluateTarget (targetXdmValue) {
+function evaluateTarget(targetXdmValue) {
 	// TargetExpr is evaluated and checked as follows:
 
 	// If the result is an empty sequence,
@@ -31,9 +27,11 @@ function evaluateTarget (targetXdmValue) {
 	if (targetXdmValue.length !== 1) {
 		throw errXUTY0012();
 	}
-	if (!isSubTypeOf(targetXdmValue[0].type, 'element()') &&
+	if (
+		!isSubTypeOf(targetXdmValue[0].type, 'element()') &&
 		!isSubTypeOf(targetXdmValue[0].type, 'attribute()') &&
-		!isSubTypeOf(targetXdmValue[0].type, 'processing-instruction()')) {
+		!isSubTypeOf(targetXdmValue[0].type, 'processing-instruction()')
+	) {
 		throw errXUTY0012();
 	}
 
@@ -41,14 +39,18 @@ function evaluateTarget (targetXdmValue) {
 	return targetXdmValue[0];
 }
 
-function evaluateNewName (staticContext, executionParameters, newNameXdmValue, target) {
+function evaluateNewName(staticContext, executionParameters, newNameXdmValue, target) {
 	// NewNameExpr is processed as follows:
 	const nameSequence = SequenceFactory.create(newNameXdmValue);
 
 	switch (target.type) {
 		case 'element()': {
 			// If $target is an element node, let $QName be the result of evaluating NewNameExpr as though it were the name expression of a computed element constructor (see Section 3.9.3.1 Computed Element Constructors XQ30).
-			const qName = evaluateQNameExpression(staticContext, executionParameters, nameSequence).next().value.value;
+			const qName = evaluateQNameExpression(
+				staticContext,
+				executionParameters,
+				nameSequence
+			).next().value.value;
 
 			// If the namespace binding of $QName conflicts with any namespace binding in the namespaces property of $target, a dynamic error is raised [err:XUDY0023].
 			const boundNamespaceURI = target.value.lookupNamespaceURI(qName.prefix);
@@ -58,9 +60,13 @@ function evaluateNewName (staticContext, executionParameters, newNameXdmValue, t
 
 			return qName;
 		}
-		case 'attribute()' : {
+		case 'attribute()': {
 			// If $target is an attribute node, let $QName be the result of evaluating NewNameExpr as though it were the name expression of a computed attribute constructor (see Section 3.9.3.2 Computed Attribute Constructors XQ30).
-			const qName = evaluateQNameExpression(staticContext, executionParameters, nameSequence).next().value.value;
+			const qName = evaluateQNameExpression(
+				staticContext,
+				executionParameters,
+				nameSequence
+			).next().value.value;
 
 			// If $QName has a non-absent namespace URI, and if the namespace binding of $QName conflicts with any namespace binding in the namespaces property of the parent (if any) of $target, a dynamic error is raised [err:XUDY0023].
 			if (qName.namespaceURI) {
@@ -72,9 +78,10 @@ function evaluateNewName (staticContext, executionParameters, newNameXdmValue, t
 
 			return qName;
 		}
-		case 'processing-instruction()' : {
+		case 'processing-instruction()': {
 			// If $target is a processing instruction node, let $NCName be the result of evaluating NewNameExpr as though it were the name expression of a computed processing instruction constructor (see Section 3.9.3.5 Computed Processing Instruction Constructors XQ30),
-			const nCName = evaluateNCNameExpression(executionParameters, nameSequence).next().value.value;
+			const nCName = evaluateNCNameExpression(executionParameters, nameSequence).next().value
+				.value;
 
 			// and let $QName be defined as fn:QName((), $NCName).
 			return new QName('', null, nCName);
@@ -87,28 +94,31 @@ class RenameExpression extends UpdatingExpression {
 	_newNameExpression: Expression;
 	_staticContext: any;
 
-	constructor (targetExpression: Expression, newNameExpression: Expression) {
-		super(
-			new Specificity({}),
-			[targetExpression, newNameExpression],
-			{
-				canBeStaticallyEvaluated: false,
-				resultOrder: RESULT_ORDERINGS.UNSORTED
-			});
+	constructor(targetExpression: Expression, newNameExpression: Expression) {
+		super(new Specificity({}), [targetExpression, newNameExpression], {
+			canBeStaticallyEvaluated: false,
+			resultOrder: RESULT_ORDERINGS.UNSORTED
+		});
 
 		this._targetExpression = targetExpression;
 		this._newNameExpression = newNameExpression;
 		this._staticContext = undefined;
 	}
 
-	performStaticEvaluation (staticContext) {
+	performStaticEvaluation(staticContext) {
 		this._staticContext = staticContext.cloneContext();
 		super.performStaticEvaluation(staticContext);
 	}
 
-	evaluateWithUpdateList (dynamicContext, executionParameters) {
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
-		const newNameValueIterator = super.ensureUpdateListWrapper(this._newNameExpression)(dynamicContext, executionParameters);
+	evaluateWithUpdateList(dynamicContext, executionParameters) {
+		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+			dynamicContext,
+			executionParameters
+		);
+		const newNameValueIterator = super.ensureUpdateListWrapper(this._newNameExpression)(
+			dynamicContext,
+			executionParameters
+		);
 
 		return {
 			next: () => {
@@ -122,12 +132,21 @@ class RenameExpression extends UpdatingExpression {
 				if (!nnv.ready) {
 					return nnv;
 				}
-				const qName = evaluateNewName(this._staticContext, executionParameters, nnv.value.xdmValue, target);
+				const qName = evaluateNewName(
+					this._staticContext,
+					executionParameters,
+					nnv.value.xdmValue,
+					target
+				);
 
 				// The result of the rename expression is an empty XDM instance and a pending update list constructed by merging the pending update lists returned by the NewNameExpr and TargetExpr with the following update primitives using upd:mergeUpdates: upd:rename($target, $QName).
 				return ready({
 					xdmValue: [],
-					pendingUpdateList: mergeUpdates([rename(target.value, qName)], tv.value.pendingUpdateList, nnv.value.pendingUpdateList)
+					pendingUpdateList: mergeUpdates(
+						[rename(target.value, qName)],
+						tv.value.pendingUpdateList,
+						nnv.value.pendingUpdateList
+					)
 				});
 			}
 		};

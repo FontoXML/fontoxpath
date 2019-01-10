@@ -3,7 +3,7 @@ import createAtomicValue from '../createAtomicValue';
 
 import CastResult from './CastResult';
 
-export default function castToFlaot(instanceOf: (string) => boolean): (Value) => (CastResult) {
+export default function castToFlaot(instanceOf: (string) => boolean): (Value) => CastResult {
 	const caster = castToFloatLikeType(instanceOf, 'xs:float');
 	return value => {
 		const castResult = caster(value);

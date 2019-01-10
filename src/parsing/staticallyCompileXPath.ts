@@ -14,7 +14,17 @@ import {
 	storeStaticCompilationResultInCache
 } from './compiledExpressionCache';
 
-export default function staticallyCompileXPath(xpathString: string, compilationOptions: { allowXQuery: (boolean | undefined); disableCache: (boolean | undefined); allowUpdating: (boolean | undefined); }, namespaceResolver: (string) => string|null, variables: object, moduleImports: object): Expression {
+export default function staticallyCompileXPath(
+	xpathString: string,
+	compilationOptions: {
+		allowXQuery: boolean | undefined;
+		disableCache: boolean | undefined;
+		allowUpdating: boolean | undefined;
+	},
+	namespaceResolver: (string) => string | null,
+	variables: object,
+	moduleImports: object
+): Expression {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
 	let fromCache = null;
@@ -24,12 +34,14 @@ export default function staticallyCompileXPath(xpathString: string, compilationO
 			language,
 			namespaceResolver,
 			variables,
-			moduleImports);
+			moduleImports
+		);
 	}
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 		namespaceResolver,
-		variables);
+		variables
+	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
 	let expression;
@@ -51,7 +63,9 @@ export default function staticallyCompileXPath(xpathString: string, compilationO
 
 		if (prolog) {
 			if (!compilationOptions.allowXQuery) {
-				throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+				throw new Error(
+					'XPST0003: Use of XQuery functionality is not allowed in XPath context'
+				);
 			}
 			processProlog(prolog, rootStaticContext);
 		}
@@ -74,7 +88,8 @@ export default function staticallyCompileXPath(xpathString: string, compilationO
 			language,
 			executionSpecificStaticContext,
 			moduleImports,
-			expression);
+			expression
+		);
 	}
 
 	return expression;

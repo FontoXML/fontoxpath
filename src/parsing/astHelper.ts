@@ -1,11 +1,10 @@
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 
-type QName = {prefix: string, namespaceURI: (string|null), localName: string};
+type QName = { prefix: string; namespaceURI: string | null; localName: string };
 
-export class AST extends Array<(string|object|AST)> {
+export class AST extends Array<string | object | AST> {
 	0: string;
 }
-
 
 /**
  * Get the all children with the given name. Automatically skips attributes
@@ -15,7 +14,7 @@ export class AST extends Array<(string|object|AST)> {
  *
  * @return  The matching children
  */
-function getChildren (ast: AST, name: string): Array<AST> {
+function getChildren(ast: AST, name: string): Array<AST> {
 	const children = [];
 	for (let i = 1; i < ast.length; ++i) {
 		if (!Array.isArray(ast[i])) {
@@ -36,7 +35,7 @@ function getChildren (ast: AST, name: string): Array<AST> {
  *
  * @return  The matching child, or null
  */
-function getFirstChild (ast: AST, name: string | Array<string>): AST | null {
+function getFirstChild(ast: AST, name: string | Array<string>): AST | null {
 	if (name !== '*' && !Array.isArray(name)) {
 		name = [name];
 	}
@@ -79,7 +78,7 @@ function getTypeDeclaration(ast: AST): TypeDeclaration {
 		return { type: 'item()', occurrence: '*' };
 	}
 
-	const determineType = (typeAst) => {
+	const determineType = typeAst => {
 		switch (typeAst[0]) {
 			case 'documentTest':
 				return 'document()';
@@ -115,7 +114,11 @@ function getTypeDeclaration(ast: AST): TypeDeclaration {
 			case 'schemaAttributeTest':
 			case 'namespaceNodeTest':
 			default:
-				throw new Error(`Type declaration "${getFirstChild(typeDeclarationAst, '*')[0]}" is not supported.`);
+				throw new Error(
+					`Type declaration "${
+						getFirstChild(typeDeclarationAst, '*')[0]
+					}" is not supported.`
+				);
 		}
 	};
 

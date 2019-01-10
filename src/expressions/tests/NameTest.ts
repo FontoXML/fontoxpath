@@ -7,8 +7,11 @@ class NameTest extends TestAbstractExpression {
 	_namespaceURI: string;
 	_prefix: string;
 	_kind: number;
-	
-	constructor (name: { prefix: string; namespaceURI: string | null; localName: string; }, options: { kind: number | null; } = { kind: null }) {
+
+	constructor(
+		name: { prefix: string; namespaceURI: string | null; localName: string },
+		options: { kind: number | null } = { kind: null }
+	) {
 		const { prefix, namespaceURI, localName } = name;
 		const specificity = {};
 
@@ -27,7 +30,7 @@ class NameTest extends TestAbstractExpression {
 		this._kind = options.kind;
 	}
 
-	performStaticEvaluation (staticContext) {
+	performStaticEvaluation(staticContext) {
 		if (this._namespaceURI === null && this._prefix !== '*') {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '');
 
@@ -37,18 +40,20 @@ class NameTest extends TestAbstractExpression {
 		}
 	}
 
-	evaluateToBoolean (_dynamicContext, node) {
+	evaluateToBoolean(_dynamicContext, node) {
 		const nodeIsElement = isSubtypeOf(node.type, 'element()');
 		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');
 		if (!nodeIsElement && !nodeIsAttribute) {
 			return false;
 		}
-		if (this._kind !== null && ((this._kind === 1 && !nodeIsElement) || this._kind === 2 && !nodeIsAttribute)) {
+		if (
+			this._kind !== null &&
+			((this._kind === 1 && !nodeIsElement) || (this._kind === 2 && !nodeIsAttribute))
+		) {
 			return false;
 		}
 		// Easy cases first
-		if (
-			this._prefix === null && this._namespaceURI !== '' && this._localName === '*') {
+		if (this._prefix === null && this._namespaceURI !== '' && this._localName === '*') {
 			return true;
 		}
 		if (this._prefix === '*') {
@@ -56,7 +61,6 @@ class NameTest extends TestAbstractExpression {
 				return true;
 			}
 			return this._localName === node.value.localName;
-
 		}
 		if (this._localName !== '*') {
 			if (this._localName !== node.value.localName) {
@@ -71,12 +75,10 @@ class NameTest extends TestAbstractExpression {
 			//    otherwise, it has no namespace URI.
 			if (nodeIsElement) {
 				resolvedNamespaceURI = this._namespaceURI || null;
-			}
-			else {
+			} else {
 				resolvedNamespaceURI = null;
 			}
-		}
-		else {
+		} else {
 			// We have a prefixed name test.
 			resolvedNamespaceURI = this._namespaceURI || null;
 		}
@@ -84,7 +86,7 @@ class NameTest extends TestAbstractExpression {
 		return node.value.namespaceURI === resolvedNamespaceURI;
 	}
 
-	getBucket () {
+	getBucket() {
 		if (this._localName === '*') {
 			if (this._kind === null) {
 				return null;

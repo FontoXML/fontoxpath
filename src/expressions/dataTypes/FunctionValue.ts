@@ -8,9 +8,14 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import Value from './Value';
 import RestArgument from './RestArgument';
 
-type FunctionSignature = (DynamicContext, ExecutionParameters, StaticContext, ...Sequence) => ISequence;
+type FunctionSignature = (
+	DynamicContext,
+	ExecutionParameters,
+	StaticContext,
+	...Sequence
+) => ISequence;
 
-function expandRestArgumentToArity (argumentTypes, arity) {
+function expandRestArgumentToArity(argumentTypes, arity) {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
 		if (argumentTypes[i].isRestArgument) {
@@ -19,11 +24,11 @@ function expandRestArgumentToArity (argumentTypes, arity) {
 	}
 
 	if (indexOfRest > -1) {
-		const replacePart = new Array(arity - (argumentTypes.length - 1))
-			.fill(argumentTypes[indexOfRest - 1]);
+		const replacePart = new Array(arity - (argumentTypes.length - 1)).fill(
+			argumentTypes[indexOfRest - 1]
+		);
 
-		return argumentTypes.slice(0, indexOfRest)
-			.concat(replacePart);
+		return argumentTypes.slice(0, indexOfRest).concat(replacePart);
 	}
 	return argumentTypes;
 }
@@ -32,21 +37,26 @@ class FunctionValue extends Value {
 	value: FunctionSignature;
 	private _localName: string;
 	private _namespaceURI: string;
-	private _argumentTypes: Array<TypeDeclaration|RestArgument>;
+	private _argumentTypes: Array<TypeDeclaration | RestArgument>;
 	private _arity: number;
 	private _returnType: TypeDeclaration;
 
-	constructor ({
-		value, localName, namespaceURI, argumentTypes, arity, returnType
+	constructor({
+		value,
+		localName,
+		namespaceURI,
+		argumentTypes,
+		arity,
+		returnType
 	}: {
-		value: FunctionSignature,
-		localName: string,
-		namespaceURI: string,
-		argumentTypes: Array<TypeDeclaration|RestArgument>,
-		arity: number,
-		returnType: TypeDeclaration
+		value: FunctionSignature;
+		localName: string;
+		namespaceURI: string;
+		argumentTypes: Array<TypeDeclaration | RestArgument>;
+		arity: number;
+		returnType: TypeDeclaration;
 	}) {
-		super("function(*)", null);
+		super('function(*)', null);
 
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
@@ -59,7 +69,7 @@ class FunctionValue extends Value {
 	/**
 	 * Apply these arguments to curry them into a new function
 	 */
-	applyArguments (appliedArguments) {
+	applyArguments(appliedArguments) {
 		const fn = this.value;
 
 		const argumentSequenceCreators = appliedArguments.map(arg => {
@@ -70,23 +80,29 @@ class FunctionValue extends Value {
 		});
 
 		// fn (dynamicContext, ...arg)
-		function curriedFunction (dynamicContext, executionParameters, staticContext) {
+		function curriedFunction(dynamicContext, executionParameters, staticContext) {
 			const newArguments = Array.from(arguments).slice(3);
-			const allArguments = argumentSequenceCreators.map(function (createArgumentSequence) {
+			const allArguments = argumentSequenceCreators.map(function(createArgumentSequence) {
 				// If createArgumentSequence === null, it is a placeholder, so use a provided one
 				if (createArgumentSequence === null) {
 					return newArguments.shift();
 				}
 				return createArgumentSequence();
 			});
-			return fn.apply(undefined, [dynamicContext, executionParameters, staticContext].concat(allArguments));
+			return fn.apply(
+				undefined,
+				[dynamicContext, executionParameters, staticContext].concat(allArguments)
+			);
 		}
-	const argumentTypes = appliedArguments.reduce(function (indices, arg, index) {
-			if (arg === null) {
-				indices.push(this._argumentTypes[index]);
-			}
-			return indices;
-		}.bind(this), []);
+		const argumentTypes = appliedArguments.reduce(
+			function(indices, arg, index) {
+				if (arg === null) {
+					indices.push(this._argumentTypes[index]);
+				}
+				return indices;
+			}.bind(this),
+			[]
+		);
 
 		const functionItem = new FunctionValue({
 			value: curriedFunction,
@@ -100,19 +116,19 @@ class FunctionValue extends Value {
 		return SequenceFactory.singleton(functionItem);
 	}
 
-	getArgumentTypes () {
+	getArgumentTypes() {
 		return this._argumentTypes;
 	}
 
-	getReturnType () {
+	getReturnType() {
 		return this._returnType;
 	}
 
-	getArity () {
+	getArity() {
 		return this._arity;
 	}
 
-	getName () {
+	getName() {
 		return this._localName;
 	}
 }

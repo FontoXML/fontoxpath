@@ -2,7 +2,7 @@ import createAtomicValue from '../createAtomicValue';
 
 import CastResult from './CastResult';
 
-export default function castToDecimal (instanceOf: (string) => boolean) : (Value) => CastResult {
+export default function castToDecimal(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:integer')) {
 		return value => ({
 			successful: true,
@@ -11,7 +11,6 @@ export default function castToDecimal (instanceOf: (string) => boolean) : (Value
 	}
 	if (instanceOf('xs:float') || instanceOf('xs:double')) {
 		return value => {
-
 			if (isNaN(value) || !isFinite(value)) {
 				return {
 					successful: false,
@@ -21,7 +20,9 @@ export default function castToDecimal (instanceOf: (string) => boolean) : (Value
 			if (Math.abs(value) > Number.MAX_VALUE) {
 				return {
 					successful: false,
-					error: new Error(`FOAR0002: Can not cast ${value} to xs:decimal, it is out of bounds for JavaScript numbers`)
+					error: new Error(
+						`FOAR0002: Can not cast ${value} to xs:decimal, it is out of bounds for JavaScript numbers`
+					)
 				};
 			}
 			return {
@@ -55,6 +56,8 @@ export default function castToDecimal (instanceOf: (string) => boolean) : (Value
 
 	return () => ({
 		successful: false,
-		error: new Error('XPTY0004: Casting not supported from given type to xs:decimal or any of its derived types.')
+		error: new Error(
+			'XPTY0004: Casting not supported from given type to xs:decimal or any of its derived types.'
+		)
 	});
 }

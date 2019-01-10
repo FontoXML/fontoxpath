@@ -1,6 +1,6 @@
 import nodeValueCache from './nodeValueCache';
 
-function getNodeSubType (node) {
+function getNodeSubType(node) {
 	switch (node.nodeType) {
 		case 2:
 			return 'attribute()';
@@ -20,7 +20,7 @@ function getNodeSubType (node) {
 	}
 }
 
-export default function createFromNode (node) {
+export default function createFromNode(node) {
 	if (nodeValueCache.has(node)) {
 		return nodeValueCache.get(node);
 	}

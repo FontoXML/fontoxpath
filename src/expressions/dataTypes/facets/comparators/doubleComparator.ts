@@ -1,4 +1,4 @@
-export default function doubleComperator (value1, value2) {
+export default function doubleComperator(value1, value2) {
 	if (value1 === 'NaN' || value2 === 'NaN') {
 		return undefined;
 	}
@@ -24,4 +24,4 @@ export default function doubleComperator (value1, value2) {
 	}
 
 	return 0;
-};
+}

@@ -14,20 +14,20 @@ import { errXUTY0007 } from './XQueryUpdateFacilityErrors';
 class DeleteExpression extends UpdatingExpression {
 	_targetExpression: Expression;
 
-	constructor (targetExpression: Expression) {
-		super(
-			new Specificity({}),
-			[targetExpression],
-			{
-				canBeStaticallyEvaluated: false,
-				resultOrder: RESULT_ORDERINGS.UNSORTED
-			});
+	constructor(targetExpression: Expression) {
+		super(new Specificity({}), [targetExpression], {
+			canBeStaticallyEvaluated: false,
+			resultOrder: RESULT_ORDERINGS.UNSORTED
+		});
 
 		this._targetExpression = targetExpression;
 	}
 
-	evaluateWithUpdateList (dynamicContext, executionParameters) {
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
+	evaluateWithUpdateList(dynamicContext, executionParameters) {
+		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+			dynamicContext,
+			executionParameters
+		);
 		const domFacade = executionParameters.domFacade;
 
 		let tlist, tlistUpdates;
@@ -58,7 +58,8 @@ class DeleteExpression extends UpdatingExpression {
 					xdmValue: [],
 					pendingUpdateList: mergeUpdates(
 						tlist.map(node => deletePu(node.value)),
-						tlistUpdates)
+						tlistUpdates
+					)
 				});
 			}
 		};

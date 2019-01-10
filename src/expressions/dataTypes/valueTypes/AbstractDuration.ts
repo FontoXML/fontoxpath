@@ -1,43 +1,45 @@
 abstract class AbstractDuration {
-	getRawMonths () {
+	getRawMonths() {
 		return 0;
 	}
 
-	getRawSeconds () {
+	getRawSeconds() {
 		return 0;
 	}
 
-	getYears () {
+	getYears() {
 		return 0;
 	}
 
-	getMonths () {
+	getMonths() {
 		return 0;
 	}
 
-	getDays () {
+	getDays() {
 		return 0;
 	}
 
-	getHours () {
+	getHours() {
 		return 0;
 	}
 
-	getMinutes () {
+	getMinutes() {
 		return 0;
 	}
 
-	getSeconds () {
+	getSeconds() {
 		return 0;
 	}
 
-	isPositive () {
+	isPositive() {
 		return true;
 	}
 
-	equals (other) {
-		return this.getRawMonths() === other.getRawMonths() &&
-			this.getRawSeconds() === other.getRawSeconds();
+	equals(other) {
+		return (
+			this.getRawMonths() === other.getRawMonths() &&
+			this.getRawSeconds() === other.getRawSeconds()
+		);
 	}
 }
 

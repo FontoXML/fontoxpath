@@ -2,9 +2,17 @@ import createChildGenerator from './createChildGenerator';
 import { DONE_TOKEN, ready } from './iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
 import IDomFacade from '../../domFacade/IDomFacade';
-import { ConcreteParentNode, ConcreteChildNode, NODE_TYPES, ConcreteDocumentNode } from '../../domFacade/ConcreteNode';
+import {
+	ConcreteParentNode,
+	ConcreteChildNode,
+	NODE_TYPES,
+	ConcreteDocumentNode
+} from '../../domFacade/ConcreteNode';
 
-function findDeepestLastDescendant (node: ConcreteChildNode|ConcreteDocumentNode, domFacade: IDomFacade): ConcreteChildNode|ConcreteDocumentNode {
+function findDeepestLastDescendant(
+	node: ConcreteChildNode | ConcreteDocumentNode,
+	domFacade: IDomFacade
+): ConcreteChildNode | ConcreteDocumentNode {
 	if (node.nodeType !== NODE_TYPES.ELEMENT_NODE && node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
 		return node;
 	}
@@ -21,7 +29,11 @@ function findDeepestLastDescendant (node: ConcreteChildNode|ConcreteDocumentNode
 	return parentNode;
 }
 
-export default function createDescendantGenerator (domFacade: IDomFacade, node: ConcreteParentNode, returnInReverse = false) {
+export default function createDescendantGenerator(
+	domFacade: IDomFacade,
+	node: ConcreteParentNode,
+	returnInReverse = false
+) {
 	if (returnInReverse) {
 		let currentNode: ConcreteChildNode | ConcreteDocumentNode = node;
 		let isDone = false;
@@ -40,7 +52,10 @@ export default function createDescendantGenerator (domFacade: IDomFacade, node: 
 					return ready(createNodeValue(currentNode));
 				}
 
-				const previousSibling = currentNode.nodeType === NODE_TYPES.DOCUMENT_NODE ? null : domFacade.getPreviousSibling(currentNode);
+				const previousSibling =
+					currentNode.nodeType === NODE_TYPES.DOCUMENT_NODE
+						? null
+						: domFacade.getPreviousSibling(currentNode);
 				if (previousSibling !== null) {
 					currentNode = findDeepestLastDescendant(previousSibling, domFacade);
 					return ready(createNodeValue(currentNode));
@@ -59,7 +74,6 @@ export default function createDescendantGenerator (domFacade: IDomFacade, node: 
 	const descendantIteratorStack = [createChildGenerator(domFacade, node)];
 	return {
 		next: () => {
-
 			if (!descendantIteratorStack.length) {
 				return DONE_TOKEN;
 			}

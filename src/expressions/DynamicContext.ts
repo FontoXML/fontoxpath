@@ -4,18 +4,31 @@ import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
 import ISequence from './dataTypes/ISequence';
 import Value from './dataTypes/Value';
 
-type TemporalContext = {isInitialized: boolean, currentDateTime: DateTime, implicitTimezone: DayTimeDuration}
+type TemporalContext = {
+	isInitialized: boolean;
+	currentDateTime: DateTime;
+	implicitTimezone: DayTimeDuration;
+};
 
 class DynamicContext {
 	_temporalContext: TemporalContext;
 	contextItemIndex: number;
 	contextSequence: ISequence;
 	contextItem: Value;
-	variableBindings: {[s: string]: () => ISequence};
+	variableBindings: { [s: string]: () => ISequence };
 
 	constructor(
-		context: { contextItem: Value | null; contextItemIndex: number; contextSequence: ISequence; variableBindings: {[s: string]: () => ISequence;}; },
-		temporalContext: TemporalContext | undefined = { isInitialized: false, currentDateTime: null, implicitTimezone: null }
+		context: {
+			contextItem: Value | null;
+			contextItemIndex: number;
+			contextSequence: ISequence;
+			variableBindings: { [s: string]: () => ISequence };
+		},
+		temporalContext: TemporalContext | undefined = {
+			isInitialized: false,
+			currentDateTime: null,
+			implicitTimezone: null
+		}
 	) {
 		this._temporalContext = temporalContext;
 
@@ -36,7 +49,7 @@ class DynamicContext {
 		this.variableBindings = context.variableBindings || Object.create(null);
 	}
 
-	getCurrentDateTime () {
+	getCurrentDateTime() {
 		if (!this._temporalContext.isInitialized) {
 			this._temporalContext.isInitialized = true;
 
@@ -46,7 +59,7 @@ class DynamicContext {
 		return this._temporalContext.currentDateTime;
 	}
 
-	getImplicitTimezone () {
+	getImplicitTimezone() {
 		if (!this._temporalContext.isInitialized) {
 			this._temporalContext.isInitialized = true;
 
@@ -56,7 +69,11 @@ class DynamicContext {
 		return this._temporalContext.implicitTimezone;
 	}
 
-	scopeWithFocus(contextItemIndex: number, contextItem: Value, contextSequence: ISequence): DynamicContext {
+	scopeWithFocus(
+		contextItemIndex: number,
+		contextItem: Value,
+		contextSequence: ISequence
+	): DynamicContext {
 		return new DynamicContext(
 			{
 				contextItemIndex: contextItemIndex,
@@ -64,24 +81,30 @@ class DynamicContext {
 				contextSequence: contextSequence || this.contextSequence,
 				variableBindings: this.variableBindings
 			},
-			this._temporalContext);
+			this._temporalContext
+		);
 	}
 
-	scopeWithVariableBindings(variableBindings: {[s: string]: ISequence}): DynamicContext {
+	scopeWithVariableBindings(variableBindings: { [s: string]: ISequence }): DynamicContext {
 		return new DynamicContext(
 			{
 				contextItemIndex: this.contextItemIndex,
 				contextItem: this.contextItem,
 				contextSequence: this.contextSequence,
-				variableBindings: Object.assign(Object.create(null), this.variableBindings, variableBindings)
+				variableBindings: Object.assign(
+					Object.create(null),
+					this.variableBindings,
+					variableBindings
+				)
 			},
-			this._temporalContext);
+			this._temporalContext
+		);
 	}
 
 	createSequenceIterator(contextSequence: ISequence): AsyncIterator<DynamicContext> {
 		let i = 0;
 		const iterator = contextSequence.value;
-		return ({
+		return {
 			next: () => {
 				const value = iterator.next();
 				if (value.done) {
@@ -92,7 +115,7 @@ class DynamicContext {
 				}
 				return ready(this.scopeWithFocus(i++, value.value, contextSequence));
 			}
-		});
+		};
 	}
 }
 

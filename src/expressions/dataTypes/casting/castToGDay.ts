@@ -5,7 +5,7 @@ import CastResult from './CastResult';
 
 const createGDayValue = value => createAtomicValue(value, 'xs:gDay');
 
-export default function castToGDay(instanceOf: (string) => boolean): (Value) => (CastResult) {
+export default function castToGDay(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
 		return value => ({
 			successful: true,
@@ -20,6 +20,8 @@ export default function castToGDay(instanceOf: (string) => boolean): (Value) => 
 	}
 	return () => ({
 		successful: false,
-		error: new Error('XPTY0004: Casting not supported from given type to xs:gDay or any of its derived types.')
+		error: new Error(
+			'XPTY0004: Casting not supported from given type to xs:gDay or any of its derived types.'
+		)
 	});
 }

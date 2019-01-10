@@ -6,13 +6,24 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnTrace: FunctionDefinitionType = function(_dynamicContext, executionParameters, _staticContext, arg, label) {
+const fnTrace: FunctionDefinitionType = function(
+	_dynamicContext,
+	executionParameters,
+	_staticContext,
+	arg,
+	label
+) {
 	return arg.mapAll(allItems => {
-		const argumentAsStrings = allItems.map(value => castToType(atomize(value, executionParameters), 'xs:string'));
-		console.log.apply(console, label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]);
+		const argumentAsStrings = allItems.map(value =>
+			castToType(atomize(value, executionParameters), 'xs:string')
+		);
+		console.log.apply(
+			console,
+			label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]
+		);
 		return SequenceFactory.create(allItems);
 	});
-}
+};
 
 export default {
 	declarations: [

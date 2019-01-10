@@ -1,6 +1,6 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
 
-export function getPrimitiveTypeName (typeName: string): string | null {
+export function getPrimitiveTypeName(typeName: string): string | null {
 	let type = builtinDataTypesByName[typeName];
 	while (type && type.variety !== 'primitive') {
 		type = type.parent;
@@ -8,7 +8,7 @@ export function getPrimitiveTypeName (typeName: string): string | null {
 	return !type ? null : type.name;
 }
 
-export function normalizeWhitespace (string: string, typeName: string): string {
+export function normalizeWhitespace(string: string, typeName: string): string {
 	const type = builtinDataTypesByName[typeName];
 	const restrictionsByName = type.restrictionsByName;
 	if (!restrictionsByName || !restrictionsByName.whiteSpace) {
@@ -25,12 +25,15 @@ export function normalizeWhitespace (string: string, typeName: string): string {
 			return string.replace(/[\u0009\u000A\u000D]/g, ' ');
 
 		case 'collapse':
-			return string.replace(/[\u0009\u000A\u000D]/g, ' ').replace(/ {2,}/g, ' ').replace(/^ | $/g, '');
+			return string
+				.replace(/[\u0009\u000A\u000D]/g, ' ')
+				.replace(/ {2,}/g, ' ')
+				.replace(/^ | $/g, '');
 	}
 	return string;
 }
 
-export function validatePattern (string: string, typeName: string): boolean {
+export function validatePattern(string: string, typeName: string): boolean {
 	let type = builtinDataTypesByName[typeName];
 	while (type && type.validator === null) {
 		if (type.variety === 'list' || type.variety === 'union') {
@@ -44,7 +47,7 @@ export function validatePattern (string: string, typeName: string): boolean {
 	return type.validator(string);
 }
 
-function getHandlerForFacet (type, facetName) {
+function getHandlerForFacet(type, facetName) {
 	while (type) {
 		if (type.facetHandlers && type.facetHandlers[facetName]) {
 			return type.facetHandlers[facetName];
@@ -54,7 +57,7 @@ function getHandlerForFacet (type, facetName) {
 	return () => true;
 }
 
-export function validateRestrictions (value: string, typeName: string): boolean {
+export function validateRestrictions(value: string, typeName: string): boolean {
 	let type = builtinDataTypesByName[typeName];
 	while (type) {
 		if (!type.restrictionsByName) {

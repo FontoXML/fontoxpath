@@ -14,14 +14,26 @@ import ConcreteNode from '../../domFacade/ConcreteNode';
 
 const fnString = builtinStringFunctions.functions.string;
 
-function contextItemAsFirstArgument (fn, dynamicContext, executionParameters, _staticContext) {
+function contextItemAsFirstArgument(fn, dynamicContext, executionParameters, _staticContext) {
 	if (dynamicContext.contextItem === null) {
-		throw new Error('XPDY0002: The function which was called depends on dynamic context, which is absent.');
+		throw new Error(
+			'XPDY0002: The function which was called depends on dynamic context, which is absent.'
+		);
 	}
-	return fn(dynamicContext, executionParameters, _staticContext, SequenceFactory.singleton(dynamicContext.contextItem));
+	return fn(
+		dynamicContext,
+		executionParameters,
+		_staticContext,
+		SequenceFactory.singleton(dynamicContext.contextItem)
+	);
 }
 
-const fnNodeName: FunctionDefinitionType = function(_dynamicContext, _executionParameters, staticContext, sequence) {
+const fnNodeName: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	staticContext,
+	sequence
+) {
 	return zipSingleton([sequence], ([nodeValue]) => {
 		if (nodeValue === null) {
 			return SequenceFactory.empty();
@@ -30,39 +42,63 @@ const fnNodeName: FunctionDefinitionType = function(_dynamicContext, _executionP
 			case 1:
 			case 2:
 				// element or attribute
-				return SequenceFactory.singleton(createAtomicValue(new QName(nodeValue.value.prefix, nodeValue.value.namespaceURI, nodeValue.value.localName), 'xs:QName'));
+				return SequenceFactory.singleton(
+					createAtomicValue(
+						new QName(
+							nodeValue.value.prefix,
+							nodeValue.value.namespaceURI,
+							nodeValue.value.localName
+						),
+						'xs:QName'
+					)
+				);
 			case 7:
 				// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
-				const processingInstruction = /** @type {ProcessingInstruction} */ (nodeValue.value);
-				return SequenceFactory.singleton(createAtomicValue(new QName('', '', processingInstruction.target), 'xs:QName'));
+				const processingInstruction =
+					/** @type {ProcessingInstruction} */ (nodeValue.value);
+				return SequenceFactory.singleton(
+					createAtomicValue(new QName('', '', processingInstruction.target), 'xs:QName')
+				);
 			default:
 				// All other nodes have no name
 				return SequenceFactory.empty();
 		}
-
 	});
-}
+};
 
-const fnName: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, sequence) {
+const fnName: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	sequence
+) {
 	return sequence.switchCases({
 		empty: () => SequenceFactory.empty(),
-		default: () => fnString(
-			dynamicContext,
-			executionParameters,
-			staticContext,
-			fnNodeName(
+		default: () =>
+			fnString(
 				dynamicContext,
 				executionParameters,
 				staticContext,
-				sequence))
+				fnNodeName(dynamicContext, executionParameters, staticContext, sequence)
+			)
 	});
-}
+};
 
-const fnNamespaceURI: FunctionDefinitionType = function(_dynamicContext, _executionParameters, staticContext, sequence) {
+const fnNamespaceURI: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	staticContext,
+	sequence
+) {
 	return sequence.map(node => createAtomicValue(node.value.namespaceURI || '', 'xs:anyURI'));
-}
+};
 
-const fnLocalName: FunctionDefinitionType = function(_dynamicContext, _executionParameters, staticContext, sequence) {
+const fnLocalName: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	staticContext,
+	sequence
+) {
 	return sequence.switchCases({
 		empty: () => SequenceFactory.singleton(createAtomicValue('', 'xs:string')),
 		default: () => {
@@ -76,9 +112,9 @@ const fnLocalName: FunctionDefinitionType = function(_dynamicContext, _execution
 			});
 		}
 	});
-}
+};
 
-function contains (domFacade: IDomFacade, ancestor: Node, descendant: ConcreteNode): boolean {
+function contains(domFacade: IDomFacade, ancestor: Node, descendant: ConcreteNode): boolean {
 	if (ancestor.nodeType === 2) {
 		return ancestor === descendant;
 	}
@@ -91,59 +127,84 @@ function contains (domFacade: IDomFacade, ancestor: Node, descendant: ConcreteNo
 	return false;
 }
 
-const fnOutermost: FunctionDefinitionType = function(_dynamicContext, executionParameters, _staticContext, nodeSequence) {
+const fnOutermost: FunctionDefinitionType = function(
+	_dynamicContext,
+	executionParameters,
+	_staticContext,
+	nodeSequence
+) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
 			return SequenceFactory.empty();
 		}
 
 		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues).reduce(
-			function (previousNodes, node, i) {
+			function(previousNodes, node, i) {
 				if (i === 0) {
 					previousNodes.push(node);
 					return previousNodes;
 				}
 				// Because the nodes are sorted, the previous node is either a 'previous node', or an ancestor of this node
-				if (contains(executionParameters.domFacade, previousNodes[previousNodes.length - 1].value, node.value)) {
+				if (
+					contains(
+						executionParameters.domFacade,
+						previousNodes[previousNodes.length - 1].value,
+						node.value
+					)
+				) {
 					// The previous node is an ancestor
 					return previousNodes;
 				}
 
 				previousNodes.push(node);
 				return previousNodes;
-			}, []);
+			},
+			[]
+		);
 
 		return SequenceFactory.create(resultNodes);
 	});
-}
+};
 
-const fnInnermost: FunctionDefinitionType = function(_dynamicContext, executionParameters, _staticContext, nodeSequence) {
+const fnInnermost: FunctionDefinitionType = function(
+	_dynamicContext,
+	executionParameters,
+	_staticContext,
+	nodeSequence
+) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
 			return SequenceFactory.empty();
 		}
 
-		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues)
-			.reduceRight(function (followingNodes, node, i, allNodes) {
-				if (i === allNodes.length - 1) {
-					followingNodes.push(node);
-					return followingNodes;
-				}
-				// Because the nodes are sorted, the following node is either a 'following node', or a descendant of this node
-				if (contains(executionParameters.domFacade, node.value, followingNodes[0].value)) {
-					// The previous node is an ancestor
-					return followingNodes;
-				}
-
-				followingNodes.unshift(node);
+		const resultNodes = sortNodeValues(
+			executionParameters.domFacade,
+			allNodeValues
+		).reduceRight(function(followingNodes, node, i, allNodes) {
+			if (i === allNodes.length - 1) {
+				followingNodes.push(node);
 				return followingNodes;
-			}, []);
+			}
+			// Because the nodes are sorted, the following node is either a 'following node', or a descendant of this node
+			if (contains(executionParameters.domFacade, node.value, followingNodes[0].value)) {
+				// The previous node is an ancestor
+				return followingNodes;
+			}
+
+			followingNodes.unshift(node);
+			return followingNodes;
+		}, []);
 
 		return SequenceFactory.create(resultNodes);
 	});
-}
+};
 
-const fnRoot: FunctionDefinitionType = function(_dynamicContext, executionParameters, _staticContext, nodeSequence) {
+const fnRoot: FunctionDefinitionType = function(
+	_dynamicContext,
+	executionParameters,
+	_staticContext,
+	nodeSequence
+) {
 	return nodeSequence.map(node => {
 		if (!isSubtypeOfType(node.type, 'node()')) {
 			throw new Error('XPTY0004 Argument passed to fn:root() should be of the type node()');
@@ -157,7 +218,7 @@ const fnRoot: FunctionDefinitionType = function(_dynamicContext, executionParame
 		}
 		return createFromNode(ancestor);
 	});
-}
+};
 
 export default {
 	declarations: [

@@ -1,3 +1,3 @@
 export default class Value {
-	constructor (public type: string, readonly value: any) {}
+	constructor(public type: string, readonly value: any) {}
 }

@@ -19,7 +19,10 @@ import ArrayValue from '../dataTypes/ArrayValue';
 
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
-function asyncGenerateEvery<T>(items: Array<T>, callback: (item: T, index: number, all: Array<T>) => AsyncIterator<boolean>): AsyncIterator<boolean> {
+function asyncGenerateEvery<T>(
+	items: Array<T>,
+	callback: (item: T, index: number, all: Array<T>) => AsyncIterator<boolean>
+): AsyncIterator<boolean> {
 	let i = 0;
 	const l = items.length;
 	let done = false;
@@ -44,54 +47,69 @@ function asyncGenerateEvery<T>(items: Array<T>, callback: (item: T, index: numbe
 				}
 				done = true;
 				return ready(true);
-
 			}
 			return DONE_TOKEN;
 		}
 	};
 }
 
-function filterElementAndTextNodes (node) {
+function filterElementAndTextNodes(node) {
 	return node.nodeType === node.ELEMENT_NODE || node.nodeType === node.TEXT_NODE;
 }
 
-function anyAtomicTypeDeepEqual (_dynamicContext, _executionParameters, _staticContext, item1, item2) {
-	if ((isSubtypeOf(item1.type, 'xs:decimal') || isSubtypeOf(item1.type, 'xs:float')) &&
-		(isSubtypeOf(item2.type, 'xs:decimal') || isSubtypeOf(item2.type, 'xs:float'))) {
+function anyAtomicTypeDeepEqual(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	item1,
+	item2
+) {
+	if (
+		(isSubtypeOf(item1.type, 'xs:decimal') || isSubtypeOf(item1.type, 'xs:float')) &&
+		(isSubtypeOf(item2.type, 'xs:decimal') || isSubtypeOf(item2.type, 'xs:float'))
+	) {
 		const temp1 = castToType(item1, 'xs:float');
 		const temp2 = castToType(item2, 'xs:float');
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 	if (
-		(isSubtypeOf(item1.type, 'xs:decimal') || isSubtypeOf(item1.type, 'xs:float') || isSubtypeOf(item1.type, 'xs:double')) &&
-			(isSubtypeOf(item2.type, 'xs:decimal') || isSubtypeOf(item2.type, 'xs:float') || isSubtypeOf(item2.type, 'xs:double'))) {
+		(isSubtypeOf(item1.type, 'xs:decimal') ||
+			isSubtypeOf(item1.type, 'xs:float') ||
+			isSubtypeOf(item1.type, 'xs:double')) &&
+		(isSubtypeOf(item2.type, 'xs:decimal') ||
+			isSubtypeOf(item2.type, 'xs:float') ||
+			isSubtypeOf(item2.type, 'xs:double'))
+	) {
 		const temp1 = castToType(item1, 'xs:double'),
-		temp2 = castToType(item2, 'xs:double');
+			temp2 = castToType(item2, 'xs:double');
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 
 	if (isSubtypeOf(item1.type, 'xs:QName') && isSubtypeOf(item2.type, 'xs:QName')) {
-		return item1.value.namespaceURI === item2.value.namespaceURI &&
-			item1.value.localName === item2.value.localName;
+		return (
+			item1.value.namespaceURI === item2.value.namespaceURI &&
+			item1.value.localName === item2.value.localName
+		);
 	}
 
-	if ((isSubtypeOf(item1.type, 'xs:dateTime') ||
+	if (
+		(isSubtypeOf(item1.type, 'xs:dateTime') ||
 			isSubtypeOf(item1.type, 'xs:date') ||
 			isSubtypeOf(item1.type, 'xs:time') ||
 			isSubtypeOf(item1.type, 'xs:gYearMonth') ||
 			isSubtypeOf(item1.type, 'xs:gYear') ||
 			isSubtypeOf(item1.type, 'xs:gMonthDay') ||
 			isSubtypeOf(item1.type, 'xs:gMonth') ||
-			isSubtypeOf(item1.type, 'xs:gDay')
-		) && (
-			isSubtypeOf(item2.type, 'xs:dateTime') ||
+			isSubtypeOf(item1.type, 'xs:gDay')) &&
+		(isSubtypeOf(item2.type, 'xs:dateTime') ||
 			isSubtypeOf(item2.type, 'xs:date') ||
 			isSubtypeOf(item2.type, 'xs:time') ||
 			isSubtypeOf(item2.type, 'xs:gYearMonth') ||
 			isSubtypeOf(item2.type, 'xs:gYear') ||
 			isSubtypeOf(item2.type, 'xs:gMonthDay') ||
 			isSubtypeOf(item2.type, 'xs:gMonth') ||
-			isSubtypeOf(item2.type, 'xs:gDay'))) {
+			isSubtypeOf(item2.type, 'xs:gDay'))
+	) {
 		return equal(item1.value, item2.value);
 	}
 	return item1.value === item2.value;
@@ -102,7 +120,8 @@ function sequenceDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	sequence1: ISequence,
-	sequence2: ISequence): AsyncIterator<boolean> {
+	sequence2: ISequence
+): AsyncIterator<boolean> {
 	const it1 = sequence1.value;
 	const it2 = sequence2.value;
 	let item1 = null;
@@ -139,8 +158,9 @@ function sequenceDeepEqual(
 						dynamicContext,
 						executionParameters,
 						staticContext,
-						/** @type {!Value} */(item1.value),
-						/** @type {!Value} */(item2.value));
+						/** @type {!Value} */ (item1.value),
+						/** @type {!Value} */ (item2.value)
+					);
 				}
 				const comparisonResult = comparisonGenerator.next();
 				if (!comparisonResult.ready) {
@@ -165,19 +185,34 @@ function mapTypeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: MapValue,
-	item2: MapValue): AsyncIterator<boolean> {
+	item2: MapValue
+): AsyncIterator<boolean> {
 	if (item1.keyValuePairs.length !== item2.keyValuePairs.length) {
 		return createSingleValueIterator(false);
 	}
 
 	return asyncGenerateEvery(item1.keyValuePairs, mapEntry1 => {
-		const mapEntry2 = item2.keyValuePairs.find((entry) => anyAtomicTypeDeepEqual(dynamicContext, executionParameters, staticContext, entry.key, mapEntry1.key));
+		const mapEntry2 = item2.keyValuePairs.find(entry =>
+			anyAtomicTypeDeepEqual(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				entry.key,
+				mapEntry1.key
+			)
+		);
 
 		if (!mapEntry2) {
 			return createSingleValueIterator(false);
 		}
 
-		return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, mapEntry1.value(), mapEntry2.value());
+		return sequenceDeepEqual(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			mapEntry1.value(),
+			mapEntry2.value()
+		);
 	});
 }
 
@@ -186,14 +221,21 @@ function arrayTypeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: ArrayValue,
-	item2: ArrayValue): AsyncIterator<boolean> {
+	item2: ArrayValue
+): AsyncIterator<boolean> {
 	if (item1.members.length !== item2.members.length) {
 		return createSingleValueIterator(false);
 	}
 
 	return asyncGenerateEvery<() => ISequence>(item1.members, (arrayEntry1, index) => {
 		const arrayEntry2 = item2.members[index];
-		return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, arrayEntry1(), arrayEntry2());
+		return sequenceDeepEqual(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			arrayEntry1(),
+			arrayEntry2()
+		);
 	});
 }
 
@@ -202,7 +244,8 @@ function nodeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: Value,
-	item2: Value): AsyncIterator<boolean> {
+	item2: Value
+): AsyncIterator<boolean> {
 	let item1Nodes = executionParameters.domFacade.getChildNodes(item1.value);
 	let item2Nodes = executionParameters.domFacade.getChildNodes(item2.value);
 
@@ -212,7 +255,13 @@ function nodeDeepEqual(
 	const item1NodesSeq = SequenceFactory.create(item1Nodes.map(createNodeValue));
 	const item2NodesSeq = SequenceFactory.create(item2Nodes.map(createNodeValue));
 
-	return sequenceDeepEqual(dynamicContext, executionParameters, staticContext, item1NodesSeq, item2NodesSeq);
+	return sequenceDeepEqual(
+		dynamicContext,
+		executionParameters,
+		staticContext,
+		item1NodesSeq,
+		item2NodesSeq
+	);
 }
 
 function elementNodeDeepEqual(
@@ -220,22 +269,42 @@ function elementNodeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: Value,
-	item2: Value): AsyncIterator<boolean> {
+	item2: Value
+): AsyncIterator<boolean> {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
 		staticContext,
-		nodeName(dynamicContext, executionParameters, staticContext, SequenceFactory.singleton(item1)),
-		nodeName(dynamicContext, executionParameters, staticContext, SequenceFactory.singleton(item2)));
-	const nodeDeepEqualGenerator = nodeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2);
-	const attributes1 = executionParameters.domFacade.getAllAttributes(item1.value)
+		nodeName(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			SequenceFactory.singleton(item1)
+		),
+		nodeName(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			SequenceFactory.singleton(item2)
+		)
+	);
+	const nodeDeepEqualGenerator = nodeDeepEqual(
+		dynamicContext,
+		executionParameters,
+		staticContext,
+		item1,
+		item2
+	);
+	const attributes1 = executionParameters.domFacade
+		.getAllAttributes(item1.value)
 		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
-		.sort((attrA, attrB) => attrA.name > attrB.name ? 1 : -1)
+		.sort((attrA, attrB) => (attrA.name > attrB.name ? 1 : -1))
 		.map(attr => createNodeValue(attr));
 
-	const attributes2 = executionParameters.domFacade.getAllAttributes(item2.value)
+	const attributes2 = executionParameters.domFacade
+		.getAllAttributes(item2.value)
 		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
-		.sort((attrA, attrB) => attrA.name > attrB.name ? 1 : -1)
+		.sort((attrA, attrB) => (attrA.name > attrB.name ? 1 : -1))
 		.map(attr => createNodeValue(attr));
 
 	const attributesDeepEqualGenerator = sequenceDeepEqual(
@@ -243,7 +312,8 @@ function elementNodeDeepEqual(
 		executionParameters,
 		staticContext,
 		SequenceFactory.create(attributes1),
-		SequenceFactory.create(attributes2));
+		SequenceFactory.create(attributes2)
+	);
 	let done = false;
 	return {
 		next: () => {
@@ -283,13 +353,25 @@ function atomicTypeNodeDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: Value,
-	item2: Value): AsyncIterator<boolean> {
+	item2: Value
+): AsyncIterator<boolean> {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
 		staticContext,
-		nodeName(dynamicContext, executionParameters, staticContext, SequenceFactory.singleton(item1)),
-		nodeName(dynamicContext, executionParameters, staticContext, SequenceFactory.singleton(item2)));
+		nodeName(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			SequenceFactory.singleton(item1)
+		),
+		nodeName(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			SequenceFactory.singleton(item2)
+		)
+	);
 	let done = false;
 	return {
 		next: () => {
@@ -306,12 +388,15 @@ function atomicTypeNodeDeepEqual(
 					return namesAreEqualResult;
 				}
 			}
-			return ready(anyAtomicTypeDeepEqual(
-				dynamicContext,
-				executionParameters,
-				staticContext,
-				atomize(item1, executionParameters),
-				atomize(item2, executionParameters)));
+			return ready(
+				anyAtomicTypeDeepEqual(
+					dynamicContext,
+					executionParameters,
+					staticContext,
+					atomize(item1, executionParameters),
+					atomize(item2, executionParameters)
+				)
+			);
 		}
 	};
 }
@@ -321,10 +406,16 @@ function itemDeepEqual(
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	item1: Value,
-	item2: Value): AsyncIterator<boolean> {
+	item2: Value
+): AsyncIterator<boolean> {
 	// All atomic types
-	if (isSubtypeOf(item1.type, 'xs:anyAtomicType') && isSubtypeOf(item2.type, 'xs:anyAtomicType')) {
-		return createSingleValueIterator(anyAtomicTypeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2));
+	if (
+		isSubtypeOf(item1.type, 'xs:anyAtomicType') &&
+		isSubtypeOf(item2.type, 'xs:anyAtomicType')
+	) {
+		return createSingleValueIterator(
+			anyAtomicTypeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2)
+		);
 	}
 
 	// Maps
@@ -334,7 +425,8 @@ function itemDeepEqual(
 			executionParameters,
 			staticContext,
 			item1 as MapValue,
-			item2 as MapValue);
+			item2 as MapValue
+		);
 	}
 
 	// Arrays
@@ -344,7 +436,8 @@ function itemDeepEqual(
 			executionParameters,
 			staticContext,
 			item1 as ArrayValue,
-			item2 as ArrayValue);
+			item2 as ArrayValue
+		);
 	}
 
 	// Nodes
@@ -356,23 +449,52 @@ function itemDeepEqual(
 
 		// Element nodes, cannot be compared due to missing schema information
 		if (isSubtypeOf(item1.type, 'element()') && isSubtypeOf(item2.type, 'element()')) {
-			return elementNodeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2);
+			return elementNodeDeepEqual(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				item1,
+				item2
+			);
 		}
 
 		// Attribute nodes
 		if (isSubtypeOf(item1.type, 'attribute()') && isSubtypeOf(item2.type, 'attribute()')) {
-			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2);
+			return atomicTypeNodeDeepEqual(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				item1,
+				item2
+			);
 		}
 
 		// Processing instruction node
-		if (isSubtypeOf(item1.type, 'processing-instruction()') && isSubtypeOf(item2.type, 'processing-instruction()')) {
-			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2);
+		if (
+			isSubtypeOf(item1.type, 'processing-instruction()') &&
+			isSubtypeOf(item2.type, 'processing-instruction()')
+		) {
+			return atomicTypeNodeDeepEqual(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				item1,
+				item2
+			);
 		}
 
 		// Text nodes, or comment nodes
-		if ((isSubtypeOf(item1.type, 'text()') || isSubtypeOf(item1.type, 'comment()')) &&
-			(isSubtypeOf(item2.type, 'text()') || isSubtypeOf(item2.type, 'comment()'))) {
-			return atomicTypeNodeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2);
+		if (
+			(isSubtypeOf(item1.type, 'text()') || isSubtypeOf(item1.type, 'comment()')) &&
+			(isSubtypeOf(item2.type, 'text()') || isSubtypeOf(item2.type, 'comment()'))
+		) {
+			return atomicTypeNodeDeepEqual(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				item1,
+				item2
+			);
 		}
 	}
 

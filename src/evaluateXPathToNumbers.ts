@@ -12,12 +12,19 @@ import IDomFacade from './domFacade/IDomFacade';
  *
  * @return The numerical results.
  */
-export default function evaluateXPathToNumber (
+export default function evaluateXPathToNumber(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
 ): number[] {
-	return evaluateXPath(selector, contextItem, domFacade, variables, evaluateXPath.NUMBERS_TYPE, options);
+	return evaluateXPath(
+		selector,
+		contextItem,
+		domFacade,
+		variables,
+		evaluateXPath.NUMBERS_TYPE,
+		options
+	);
 }

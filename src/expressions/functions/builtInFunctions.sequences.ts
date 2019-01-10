@@ -16,7 +16,7 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 import ISequence from '../dataTypes/ISequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
-function subSequence (sequence: ISequence, start: number, length: number) {
+function subSequence(sequence: ISequence, start: number, length: number) {
 	// XPath starts from 1
 	let i = 1;
 	const iterator = sequence.value;
@@ -33,45 +33,52 @@ function subSequence (sequence: ISequence, start: number, length: number) {
 		}
 		newSequenceLength = Math.max(0, endIndex - startIndex);
 	}
-	return SequenceFactory.create({
-		next: () => {
-			while (i < start) {
+	return SequenceFactory.create(
+		{
+			next: () => {
+				while (i < start) {
+					const val = iterator.next();
+					if (!val.ready) {
+						return val;
+					}
+					i++;
+				}
+				if (length !== null && i >= start + length) {
+					return DONE_TOKEN;
+				}
+
 				const val = iterator.next();
 				if (!val.ready) {
 					return val;
 				}
 				i++;
-			}
-			if (length !== null && i >= start + length) {
-				return DONE_TOKEN;
-			}
 
-			const val = iterator.next();
-			if (!val.ready) {
 				return val;
 			}
-			i++;
-
-			return val;
-		}
-	}, newSequenceLength);
+		},
+		newSequenceLength
+	);
 }
 
 /**
  * Promote all given (numeric) items to single common type
  * https://www.w3.org/TR/xpath-31/#promotion
  */
-function convertItemsToCommonType (items) {
-	if (items.every(function (item) {
-		// xs:integer is the only numeric type with inherits from another numeric type
-		return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:decimal');
-	})) {
+function convertItemsToCommonType(items) {
+	if (
+		items.every(function(item) {
+			// xs:integer is the only numeric type with inherits from another numeric type
+			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:decimal');
+		})
+	) {
 		// They are all integers, we do not have to convert them to decimals
 		return items;
 	}
-	var commonTypeName = items.map((item: { type: string; }) => getPrimitiveTypeName(item.type)).reduce((commonTypeName, itemType) => {
-		return itemType === commonTypeName ? commonTypeName : null;
-	});
+	var commonTypeName = items
+		.map((item: { type: string }) => getPrimitiveTypeName(item.type))
+		.reduce((commonTypeName, itemType) => {
+			return itemType === commonTypeName ? commonTypeName : null;
+		});
 
 	if (commonTypeName !== null) {
 		// All items are already of the same type
@@ -79,35 +86,41 @@ function convertItemsToCommonType (items) {
 	}
 
 	// If each value is an instance of one of the types xs:string or xs:anyURI, then all the values are cast to type xs:string
-	if (items.every(function (item) {
-		return isSubtypeOf(item.type, 'xs:string') ||
-			isSubtypeOf(item.type, 'xs:anyURI');
-	})) {
-		return items.map((item) => castToType(item, 'xs:string'));
+	if (
+		items.every(function(item) {
+			return isSubtypeOf(item.type, 'xs:string') || isSubtypeOf(item.type, 'xs:anyURI');
+		})
+	) {
+		return items.map(item => castToType(item, 'xs:string'));
 	}
 
 	// If each value is an instance of one of the types xs:decimal or xs:float, then all the values are cast to type xs:float.
-	if (items.every(function (item) {
-		return isSubtypeOf(item.type, 'xs:decimal') ||
-			isSubtypeOf(item.type, 'xs:float');
-	})) {
-		return items.map((item) => castToType(item, 'xs:float'));
+	if (
+		items.every(function(item) {
+			return isSubtypeOf(item.type, 'xs:decimal') || isSubtypeOf(item.type, 'xs:float');
+		})
+	) {
+		return items.map(item => castToType(item, 'xs:float'));
 	}
 	// If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all the values are cast to type xs:double.
-	if (items.every(function (item) {
-		return isSubtypeOf(item.type, 'xs:decimal') ||
-			isSubtypeOf(item.type, 'xs:float') ||
-			isSubtypeOf(item.type, 'xs:double');
-	})) {
-		return items.map((item) => castToType(item, 'xs:double'));
+	if (
+		items.every(function(item) {
+			return (
+				isSubtypeOf(item.type, 'xs:decimal') ||
+				isSubtypeOf(item.type, 'xs:float') ||
+				isSubtypeOf(item.type, 'xs:double')
+			);
+		})
+	) {
+		return items.map(item => castToType(item, 'xs:double'));
 	}
 
 	// Otherwise, a type error is raised [err:FORG0006].
 	throw new Error('FORG0006: Incompatible types to be converted to a common type');
 }
 
-function castUntypedItemsToDouble (items) {
-	return items.map(function (item) {
+function castUntypedItemsToDouble(items) {
+	return items.map(function(item) {
 		if (isSubtypeOf(item.type, 'xs:untypedAtomic')) {
 			return castToType(item, 'xs:double');
 		}
@@ -115,44 +128,73 @@ function castUntypedItemsToDouble (items) {
 	});
 }
 
-function castItemsForMinMax (items) {
+function castItemsForMinMax(items) {
 	// Values of type xs:untypedAtomic in $arg are cast to xs:double.
 	items = castUntypedItemsToDouble(items);
 
-	if (items.some(function (item) {
-		return Number.isNaN(item.value);
-	})) {
+	if (
+		items.some(function(item) {
+			return Number.isNaN(item.value);
+		})
+	) {
 		return [createAtomicValue(NaN, 'xs:double')];
 	}
 
 	return convertItemsToCommonType(items);
 }
 
-const fnEmpty: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnEmpty: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	return sequence.switchCases({
 		empty: () => SequenceFactory.singletonTrueSequence(),
 		singleton: () => SequenceFactory.singletonFalseSequence(),
 		multiple: () => SequenceFactory.singletonFalseSequence()
 	});
-}
+};
 
-const fnExists: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnExists: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	return sequence.switchCases({
 		empty: () => SequenceFactory.singletonFalseSequence(),
 		singleton: () => SequenceFactory.singletonTrueSequence(),
 		multiple: () => SequenceFactory.singletonTrueSequence()
 	});
-}
+};
 
-const fnHead: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnHead: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	return subSequence(sequence, 1, 1);
-}
+};
 
-const fnTail: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnTail: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	return subSequence(sequence, 2, null);
-}
+};
 
-const fnInsertBefore: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence, position, inserts) {
+const fnInsertBefore: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence,
+	position,
+	inserts
+) {
 	if (sequence.isEmpty()) {
 		return inserts;
 	}
@@ -174,65 +216,98 @@ const fnInsertBefore: FunctionDefinitionType = function(_dynamicContext, _execut
 	const secondHalve = sequenceValue.slice(effectivePosition);
 
 	return SequenceFactory.create(firstHalve.concat(inserts.getAllValues(), secondHalve));
-}
+};
 
-const fnRemove: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence, position) {
+const fnRemove: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence,
+	position
+) {
 	const effectivePosition = position.first().value;
 	const sequenceValue = sequence.getAllValues();
-	if (!sequenceValue.length || effectivePosition < 1 || effectivePosition > sequenceValue.length) {
+	if (
+		!sequenceValue.length ||
+		effectivePosition < 1 ||
+		effectivePosition > sequenceValue.length
+	) {
 		return SequenceFactory.create(sequenceValue);
 	}
 	sequenceValue.splice(effectivePosition - 1, 1);
 	return SequenceFactory.create(sequenceValue);
-}
+};
 
-const fnReverse: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnReverse: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	return sequence.mapAll(allValues => SequenceFactory.create(allValues.reverse()));
-}
+};
 
-const fnSubsequence: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence, startSequence, lengthSequence) {
-	return zipSingleton(
-		[startSequence, lengthSequence],
-		([startVal, lengthVal]) => {
-			if (startVal.value === Infinity) {
+const fnSubsequence: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence,
+	startSequence,
+	lengthSequence
+) {
+	return zipSingleton([startSequence, lengthSequence], ([startVal, lengthVal]) => {
+		if (startVal.value === Infinity) {
+			return SequenceFactory.empty();
+		}
+		if (startVal.value === -Infinity) {
+			if (lengthVal && lengthVal.value === Infinity) {
 				return SequenceFactory.empty();
 			}
-			if (startVal.value === -Infinity) {
-				if (lengthVal && lengthVal.value === Infinity) {
-					return SequenceFactory.empty();
-				}
-				return sequence;
-			}
-			if (lengthVal) {
-				if (isNaN(lengthVal.value)) {
-					return SequenceFactory.empty();
-				}
-				if (lengthVal.value === Infinity) {
-					lengthVal = null;
-				}
-			}
-			if (isNaN(startVal.value)) {
+			return sequence;
+		}
+		if (lengthVal) {
+			if (isNaN(lengthVal.value)) {
 				return SequenceFactory.empty();
 			}
-			return subSequence(
-				sequence,
-				Math.round(startVal.value),
-				lengthVal ? Math.round(lengthVal.value) : null);
-		});
-}
+			if (lengthVal.value === Infinity) {
+				lengthVal = null;
+			}
+		}
+		if (isNaN(startVal.value)) {
+			return SequenceFactory.empty();
+		}
+		return subSequence(
+			sequence,
+			Math.round(startVal.value),
+			lengthVal ? Math.round(lengthVal.value) : null
+		);
+	});
+};
 
-const fnUnordered: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnUnordered: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	return sequence;
-}
+};
 
-const fnDeepEqual: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, parameter1, parameter2) {
+const fnDeepEqual: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	parameter1,
+	parameter2
+) {
 	let hasPassed = false;
 	const deepEqualityIterator = sequenceDeepEqual(
-			dynamicContext,
-			executionParameters,
-			staticContext,
-			parameter1,
-			parameter2);
+		dynamicContext,
+		executionParameters,
+		staticContext,
+		parameter1,
+		parameter2
+	);
 
 	return SequenceFactory.create({
 		next: () => {
@@ -247,9 +322,14 @@ const fnDeepEqual: FunctionDefinitionType = function(dynamicContext, executionPa
 			return ready(createAtomicValue(result.value, 'xs:boolean'));
 		}
 	});
-}
+};
 
-const fnCount: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnCount: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	let hasPassed = false;
 	return SequenceFactory.create({
 		next: () => {
@@ -264,9 +344,14 @@ const fnCount: FunctionDefinitionType = function(_dynamicContext, _executionPara
 			return ready(createAtomicValue(length.value, 'xs:integer'));
 		}
 	});
-}
+};
 
-const fnAvg: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnAvg: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -278,26 +363,36 @@ const fnAvg: FunctionDefinitionType = function(_dynamicContext, _executionParame
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
-	var resultValue = items.reduce(function (sum, item) {
-		return sum + item.value;
-	}, 0) / items.length;
+	var resultValue =
+		items.reduce(function(sum, item) {
+			return sum + item.value;
+		}, 0) / items.length;
 
-	if (items.every(function (item) {
-		return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
-	})) {
+	if (
+		items.every(function(item) {
+			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
+		})
+	) {
 		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
-	if (items.every(function (item) {
-		return isSubtypeOf(item.type, 'xs:decimal');
-	})) {
+	if (
+		items.every(function(item) {
+			return isSubtypeOf(item.type, 'xs:decimal');
+		})
+	) {
 		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
 
 	return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
-}
+};
 
-const fnMax: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnMax: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -306,12 +401,18 @@ const fnMax: FunctionDefinitionType = function(_dynamicContext, _executionParame
 
 	// Use first element in array as initial value
 	return SequenceFactory.singleton(
-		items.reduce(function (max, item) {
+		items.reduce(function(max, item) {
 			return max.value < item.value ? item : max;
-		}));
-}
+		})
+	);
+};
 
-const fnMin: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnMin: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -320,12 +421,19 @@ const fnMin: FunctionDefinitionType = function(_dynamicContext, _executionParame
 
 	// Use first element in array as initial value
 	return SequenceFactory.singleton(
-		items.reduce(function (min, item) {
+		items.reduce(function(min, item) {
 			return min.value > item.value ? item : min;
-		}));
-}
+		})
+	);
+};
 
-const fnSum: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence, zero) {
+const fnSum: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence,
+	zero
+) {
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	if (sequence.isEmpty()) {
 		return zero;
@@ -337,53 +445,84 @@ const fnSum: FunctionDefinitionType = function(_dynamicContext, _executionParame
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
-	var resultValue = items.reduce(function (sum, item) {
+	var resultValue = items.reduce(function(sum, item) {
 		return sum + item.value;
 	}, 0);
 
-	if (items.every(function (item) {
-		return isSubtypeOf(item.type, 'xs:integer');
-	})) {
+	if (
+		items.every(function(item) {
+			return isSubtypeOf(item.type, 'xs:integer');
+		})
+	) {
 		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:integer'));
 	}
 
-	if (items.every(function (item) {
-		return isSubtypeOf(item.type, 'xs:double');
-	})) {
+	if (
+		items.every(function(item) {
+			return isSubtypeOf(item.type, 'xs:double');
+		})
+	) {
 		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
-	if (items.every(function (item) {
-		return isSubtypeOf(item.type, 'xs:decimal');
-	})) {
+	if (
+		items.every(function(item) {
+			return isSubtypeOf(item.type, 'xs:decimal');
+		})
+	) {
 		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
 
 	return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
-}
+};
 
-const fnZeroOrOne: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arg) {
+const fnZeroOrOne: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arg
+) {
 	if (!arg.isEmpty() && !arg.isSingleton()) {
-		throw new Error('FORG0003: The argument passed to fn:zero-or-one contained more than one item.');
+		throw new Error(
+			'FORG0003: The argument passed to fn:zero-or-one contained more than one item.'
+		);
 	}
 	return arg;
-}
+};
 
-const fnOneOrMore: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arg) {
+const fnOneOrMore: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arg
+) {
 	if (arg.isEmpty()) {
 		throw new Error('FORG0004: The argument passed to fn:one-or-more was empty.');
 	}
 	return arg;
-}
+};
 
-const fnExactlyOne: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arg) {
+const fnExactlyOne: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arg
+) {
 	if (!arg.isSingleton()) {
-		throw new Error('FORG0005: The argument passed to fn:zero-or-one is empty or contained more then one item.');
+		throw new Error(
+			'FORG0005: The argument passed to fn:zero-or-one is empty or contained more then one item.'
+		);
 	}
 	return arg;
-}
+};
 
-const fnFilter: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, sequence, callbackSequence) {
+const fnFilter: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	sequence,
+	callbackSequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -400,21 +539,32 @@ const fnFilter: FunctionDefinitionType = function(dynamicContext, executionParam
 			callbackArgumentTypes[0] as TypeDeclaration,
 			SequenceFactory.singleton(item),
 			executionParameters,
-			'fn:filter');
+			'fn:filter'
+		);
 		const functionCallResult = callbackFn.value.call(
 			undefined,
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			transformedArgument);
-		if (!functionCallResult.isSingleton() || !isSubtypeOf(functionCallResult.first().type, 'xs:boolean')) {
+			transformedArgument
+		);
+		if (
+			!functionCallResult.isSingleton() ||
+			!isSubtypeOf(functionCallResult.first().type, 'xs:boolean')
+		) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
 		return /** @type {boolean} */ (functionCallResult.first().value);
 	});
-}
+};
 
-const fnForEach: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, sequence, callbackSequence) {
+const fnForEach: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	sequence,
+	callbackSequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -439,15 +589,17 @@ const fnForEach: FunctionDefinitionType = function(dynamicContext, executionPara
 
 					const transformedArgument = transformArgument(
 						callbackArgumentTypes[0] as TypeDeclaration,
-						SequenceFactory.singleton(/** @type {!Value} */(item.value)),
+						SequenceFactory.singleton(/** @type {!Value} */ (item.value)),
 						executionParameters,
-						'fn:for-each');
+						'fn:for-each'
+					);
 					const nextSequence = callbackFn.value.call(
 						undefined,
 						dynamicContext,
 						executionParameters,
 						staticContext,
-						transformedArgument);
+						transformedArgument
+					);
 
 					innerIterator = nextSequence.value;
 				}
@@ -460,9 +612,16 @@ const fnForEach: FunctionDefinitionType = function(dynamicContext, executionPara
 			}
 		}
 	});
-}
+};
 
-const fnFoldLeft: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, sequence, zero, callbackSequence) {
+const fnFoldLeft: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	sequence,
+	zero,
+	callbackSequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -479,24 +638,34 @@ const fnFoldLeft: FunctionDefinitionType = function(dynamicContext, executionPar
 				callbackArgumentTypes[0] as TypeDeclaration,
 				previous,
 				executionParameters,
-				'fn:fold-left');
+				'fn:fold-left'
+			);
 			const currentArg = transformArgument(
 				callbackArgumentTypes[1] as TypeDeclaration,
 				SequenceFactory.singleton(current),
 				executionParameters,
-				'fn:fold-left');
+				'fn:fold-left'
+			);
 			return callbackFn.value.call(
 				undefined,
 				dynamicContext,
 				executionParameters,
 				staticContext,
 				previousArg,
-				currentArg);
+				currentArg
+			);
 		}, zero)
 	);
-}
+};
 
-const fnFoldRight: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, sequence, zero, callbackSequence) {
+const fnFoldRight: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	sequence,
+	zero,
+	callbackSequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -513,22 +682,25 @@ const fnFoldRight: FunctionDefinitionType = function(dynamicContext, executionPa
 				callbackArgumentTypes[0] as TypeDeclaration,
 				previous,
 				executionParameters,
-				'fn:fold-right');
+				'fn:fold-right'
+			);
 			const currentArg = transformArgument(
 				callbackArgumentTypes[1] as TypeDeclaration,
 				SequenceFactory.singleton(current),
 				executionParameters,
-				'fn:fold-right');
+				'fn:fold-right'
+			);
 			return callbackFn.value.call(
 				undefined,
 				dynamicContext,
 				executionParameters,
 				staticContext,
 				currentArg,
-				previousArg);
+				previousArg
+			);
 		}, zero)
 	);
-}
+};
 
 export default {
 	declarations: [
@@ -594,7 +766,14 @@ export default {
 			argumentTypes: ['item()*', 'xs:double'],
 			returnType: 'item()*',
 			callFunction: (dynamicContext, executionParameters, _staticContext, sequence, start) =>
-				fnSubsequence(dynamicContext, executionParameters, _staticContext, sequence, start, SequenceFactory.empty())
+				fnSubsequence(
+					dynamicContext,
+					executionParameters,
+					_staticContext,
+					sequence,
+					start,
+					SequenceFactory.empty()
+				)
 		},
 
 		{
@@ -626,7 +805,7 @@ export default {
 			localName: 'deep-equal',
 			argumentTypes: ['item()*', 'item()*', 'xs:string'],
 			returnType: 'xs:boolean',
-			callFunction: function () {
+			callFunction: function() {
 				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
@@ -660,7 +839,7 @@ export default {
 			localName: 'max',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:anyAtomicType?',
-			callFunction: function () {
+			callFunction: function() {
 				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
@@ -678,7 +857,7 @@ export default {
 			localName: 'min',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:anyAtomicType?',
-			callFunction: function () {
+			callFunction: function() {
 				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
@@ -688,8 +867,14 @@ export default {
 			localName: 'sum',
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType',
-			callFunction: function (dynamicContext, executionParameters, _staticContext, sequence) {
-				return fnSum(dynamicContext, executionParameters, _staticContext, sequence, SequenceFactory.singleton(createAtomicValue(0, 'xs:integer')));
+			callFunction: function(dynamicContext, executionParameters, _staticContext, sequence) {
+				return fnSum(
+					dynamicContext,
+					executionParameters,
+					_staticContext,
+					sequence,
+					SequenceFactory.singleton(createAtomicValue(0, 'xs:integer'))
+				);
 			}
 		},
 

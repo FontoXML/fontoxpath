@@ -11,7 +11,10 @@ export default class SingletonSequence implements ISequence {
 
 	private _effectiveBooleanValue: boolean;
 
-	constructor(private readonly _sequenceFactory: typeof SequenceFactory, private readonly _onlyValue: Value) {
+	constructor(
+		private readonly _sequenceFactory: typeof SequenceFactory,
+		private readonly _onlyValue: Value
+	) {
 		let hasPassed = false;
 		this.value = {
 			next: () => {
@@ -34,9 +37,7 @@ export default class SingletonSequence implements ISequence {
 	}
 
 	filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
-		return callback(this._onlyValue, 0, this) ?
-			this :
-			this._sequenceFactory.create();
+		return callback(this._onlyValue, 0, this) ? this : this._sequenceFactory.create();
 	}
 
 	first(): Value | null {
@@ -72,9 +73,9 @@ export default class SingletonSequence implements ISequence {
 
 	switchCases(cases: SwitchCasesCases): ISequence {
 		if (cases.singleton) {
-			return (cases.singleton(this));
+			return cases.singleton(this);
 		}
-		return (cases.default(this));
+		return cases.default(this);
 	}
 
 	tryGetAllValues(): AsyncResult<Value[]> {

@@ -15,12 +15,19 @@ import IDomFacade from './domFacade/IDomFacade';
  *
  * @return All matching Nodes, in the order defined by the XPath.
  */
-export default function evaluateXPathToNodes (
+export default function evaluateXPathToNodes(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
 ): Node[] {
-	return evaluateXPath(selector, contextItem, domFacade, variables, evaluateXPath.NODES_TYPE, options);
+	return evaluateXPath(
+		selector,
+		contextItem,
+		domFacade,
+		variables,
+		evaluateXPath.NODES_TYPE,
+		options
+	);
 }

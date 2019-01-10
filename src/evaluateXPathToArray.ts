@@ -19,5 +19,12 @@ export default function evaluateXPathToArray(
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
 ): any[] {
-	return evaluateXPath(selector, contextItem, domFacade, variables, evaluateXPath.ARRAY_TYPE, options);
+	return evaluateXPath(
+		selector,
+		contextItem,
+		domFacade,
+		variables,
+		evaluateXPath.ARRAY_TYPE,
+		options
+	);
 }

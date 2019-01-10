@@ -1,15 +1,22 @@
-import FunctionValue from "./FunctionValue";
+import FunctionValue from './FunctionValue';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import mapGet from '../functions/builtInFunctions.maps.get';
-import SequenceFactory from "./SequenceFactory";
-import ISequence from "./ISequence";
-import Value from "./Value";
+import SequenceFactory from './SequenceFactory';
+import ISequence from './ISequence';
+import Value from './Value';
 
 class MapValue extends FunctionValue {
-	keyValuePairs: { value: () => ISequence, key: Value }[];
+	keyValuePairs: { value: () => ISequence; key: Value }[];
 	constructor(keyValuePairs) {
 		super({
-			value: (dynamicContext, executionParameters, staticContext, key) => mapGet(dynamicContext, executionParameters, staticContext, SequenceFactory.singleton(this), key),
+			value: (dynamicContext, executionParameters, staticContext, key) =>
+				mapGet(
+					dynamicContext,
+					executionParameters,
+					staticContext,
+					SequenceFactory.singleton(this),
+					key
+				),
 			localName: 'get',
 			namespaceURI: MAP_NAMESPACE_URI,
 			argumentTypes: [{ type: 'item()', isRestArgument: false }],

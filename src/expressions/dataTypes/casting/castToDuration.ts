@@ -5,7 +5,7 @@ import CastResult from './CastResult';
 
 const createDurationValue = value => createAtomicValue(value, 'xs:duration');
 
-export default function castToDuration (instanceOf: (string) => boolean) : (Value) => CastResult {
+export default function castToDuration(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:yearMonthDuration')) {
 		return value => ({
 			successful: true,
@@ -41,6 +41,8 @@ export default function castToDuration (instanceOf: (string) => boolean) : (Valu
 	}
 	return () => ({
 		successful: false,
-		error: new Error('XPTY0004: Casting not supported from given type to xs:duration or any of its derived types.')
+		error: new Error(
+			'XPTY0004: Casting not supported from given type to xs:duration or any of its derived types.'
+		)
 	});
 }

@@ -8,39 +8,53 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from '../dataTypes/ISequence';
 
-function convert (obj: any): ISequence {
+function convert(obj: any): ISequence {
 	switch (typeof obj) {
 		case 'object':
 			if (Array.isArray(obj)) {
-				return SequenceFactory.singleton(new ArrayValue(obj.map(subObject => createDoublyIterableSequence(convert(subObject)))));
+				return SequenceFactory.singleton(
+					new ArrayValue(
+						obj.map(subObject => createDoublyIterableSequence(convert(subObject)))
+					)
+				);
 			}
 			if (obj === null) {
 				return SequenceFactory.empty();
 			}
 			// Normal object
-			return SequenceFactory.singleton(new MapValue(Object.keys((obj as Object)).map(key => {
-				return {
-					key: createAtomicValue(key, 'xs:string'),
-					value: createDoublyIterableSequence(convert((obj as Object)[key]))
-				};
-			})));
+			return SequenceFactory.singleton(
+				new MapValue(
+					Object.keys(obj as Object).map(key => {
+						return {
+							key: createAtomicValue(key, 'xs:string'),
+							value: createDoublyIterableSequence(convert((obj as Object)[key]))
+						};
+					})
+				)
+			);
 		case 'number':
 			return SequenceFactory.singleton(createAtomicValue(obj, 'xs:double'));
 		case 'string':
 			return SequenceFactory.singleton(createAtomicValue(obj, 'xs:string'));
 		case 'boolean':
-			return obj ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
+			return obj
+				? SequenceFactory.singletonTrueSequence()
+				: SequenceFactory.singletonFalseSequence();
 		default:
 			throw new Error('Unexpected type in JSON parse');
 	}
 }
 
-const fnParseJson: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, jsonString) {
+const fnParseJson: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	jsonString
+) {
 	let jsObject: any;
 	try {
 		jsObject = JSON.parse(jsonString.first().value);
-	}
-	catch (_e) {
+	} catch (_e) {
 		throw new Error('FOJS0001: parsed JSON string contains illegal JSON.');
 	}
 

@@ -19,7 +19,8 @@ export default class IteratorBackedSequence implements ISequence {
 	constructor(
 		private readonly _sequenceFactory: typeof SequenceFactory,
 		valueIterator: AsyncIterator<Value>,
-		predictedLength: number = null) {
+		predictedLength: number = null
+	) {
 		this.value = {
 			next: () => {
 				if (this._length !== null && this._currentPosition >= this._length) {
@@ -71,7 +72,7 @@ export default class IteratorBackedSequence implements ISequence {
 					if (!value.ready) {
 						return value;
 					}
-					if (callback(/** @type {!Value} */(value.value), i, this)) {
+					if (callback(/** @type {!Value} */ (value.value), i, this)) {
 						return value;
 					}
 
@@ -126,15 +127,18 @@ export default class IteratorBackedSequence implements ISequence {
 	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
 		let i = 0;
 		const iterator = this.value;
-		return this._sequenceFactory.create({
-			next: () => {
-				const value = iterator.next();
-				if (value.done || !value.ready) {
-					return value;
+		return this._sequenceFactory.create(
+			{
+				next: () => {
+					const value = iterator.next();
+					if (value.done || !value.ready) {
+						return value;
+					}
+					return ready(callback(value.value, i++, this));
 				}
-				return ready(callback(value.value, i++, this));
-			}
-		}, this._length);
+			},
+			this._length
+		);
 	}
 
 	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
@@ -187,9 +191,7 @@ export default class IteratorBackedSequence implements ISequence {
 					return notReady(isEmpty.promise);
 				}
 				if (isEmpty.value) {
-					setResultIterator(cases.empty ?
-						cases.empty(this) :
-						cases.default(this));
+					setResultIterator(cases.empty ? cases.empty(this) : cases.default(this));
 					return resultIterator.next();
 				}
 
@@ -198,22 +200,23 @@ export default class IteratorBackedSequence implements ISequence {
 					return notReady(isSingleton.promise);
 				}
 				if (isSingleton.value) {
-					setResultIterator(cases.singleton ?
-						cases.singleton(this):
-						cases.default(this));
+					setResultIterator(
+						cases.singleton ? cases.singleton(this) : cases.default(this)
+					);
 					return resultIterator.next();
 				}
 
-				setResultIterator(cases.multiple ?
-					cases.multiple(this) :
-					cases.default(this));
+				setResultIterator(cases.multiple ? cases.multiple(this) : cases.default(this));
 				return resultIterator.next();
 			}
 		});
 	}
 
 	tryGetAllValues(): AsyncResult<Value[]> {
-		if (this._currentPosition > this._cachedValues.length && this._length !== this._cachedValues.length) {
+		if (
+			this._currentPosition > this._cachedValues.length &&
+			this._length !== this._cachedValues.length
+		) {
 			throw new Error('Implementation error: Sequence Iterator has progressed.');
 		}
 

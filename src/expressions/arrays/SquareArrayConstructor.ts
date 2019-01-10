@@ -10,20 +10,27 @@ class SquareArrayConstructor extends Expression {
 	constructor(members: Array<Expression>) {
 		super(
 			new Specificity({
-			[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1
 			}),
 			members,
 			{
 				canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
-			});
+			}
+		);
 
 		this._members = members;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		return SequenceFactory.singleton(
 			new ArrayValue(
-				this._members.map(entry => createDoublyIterableSequence(entry.evaluateMaybeStatically(dynamicContext, executionParameters)))));
+				this._members.map(entry =>
+					createDoublyIterableSequence(
+						entry.evaluateMaybeStatically(dynamicContext, executionParameters)
+					)
+				)
+			)
+		);
 	}
 }
 export default SquareArrayConstructor;

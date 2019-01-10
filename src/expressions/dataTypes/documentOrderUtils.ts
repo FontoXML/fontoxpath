@@ -13,7 +13,11 @@ import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
  *
  * @return Returns 0 if node1 equals node2, -1 if node1 precedes node2, and 1 otherwise
  */
-function compareSiblingElements (domFacade: IDomFacade, node1: ConcreteNode, node2: ConcreteNode): number {
+function compareSiblingElements(
+	domFacade: IDomFacade,
+	node1: ConcreteNode,
+	node2: ConcreteNode
+): number {
 	if (node1 === node2) {
 		return 0;
 	}
@@ -39,9 +43,13 @@ function compareSiblingElements (domFacade: IDomFacade, node1: ConcreteNode, nod
  * @param	node       The node to find all ancestors of
  * @return	All of the ancestors of the given node
  */
-function findAllAncestors (domFacade: IDomFacade, node: ConcreteNode): Array<ConcreteNode> {
+function findAllAncestors(domFacade: IDomFacade, node: ConcreteNode): Array<ConcreteNode> {
 	const ancestors: ConcreteNode[] = [];
-	for (let ancestor: ConcreteNode = node; ancestor; ancestor = domFacade.getParentNode(ancestor)) {
+	for (
+		let ancestor: ConcreteNode = node;
+		ancestor;
+		ancestor = domFacade.getParentNode(ancestor)
+	) {
 		ancestors.unshift(ancestor);
 	}
 
@@ -59,7 +67,12 @@ function findAllAncestors (domFacade: IDomFacade, node: ConcreteNode): Array<Con
  * @return Returns 0 if the positions are equal, -1 if the first position precedes the second,
  *						and 1 otherwise.
  */
-function compareElements (tieBreakerArr: Array<ConcreteNode>, domFacade: IDomFacade, nodeA: ConcreteNode, nodeB: ConcreteNode): number {
+function compareElements(
+	tieBreakerArr: Array<ConcreteNode>,
+	domFacade: IDomFacade,
+	nodeA: ConcreteNode,
+	nodeB: ConcreteNode
+): number {
 	if (nodeA === nodeB) {
 		return 0;
 	}
@@ -100,7 +113,7 @@ function compareElements (tieBreakerArr: Array<ConcreteNode>, domFacade: IDomFac
 	// Compare positions under the common ancestor
 	return compareSiblingElements(domFacade, ancestors1[i], ancestors2[i]);
 }
-function compareNodePositionsWithTieBreaker (tieBreakerArr, domFacade, node1, node2) {
+function compareNodePositionsWithTieBreaker(tieBreakerArr, domFacade, node1, node2) {
 	let value1, value2;
 	if (isSubtypeOf(node1.type, 'attribute()') && !isSubtypeOf(node2.type, 'attribute()')) {
 		value1 = domFacade.getParentNode(node1.value);
@@ -109,24 +122,21 @@ function compareNodePositionsWithTieBreaker (tieBreakerArr, domFacade, node1, no
 			// Same element, so A
 			return 1;
 		}
-	}
-	else if (isSubtypeOf(node2.type, 'attribute()') && !isSubtypeOf(node1.type, 'attribute()')) {
+	} else if (isSubtypeOf(node2.type, 'attribute()') && !isSubtypeOf(node1.type, 'attribute()')) {
 		value1 = node1.value;
 		value2 = domFacade.getParentNode(node2.value);
 		if (value1 === value2) {
 			// Same element, so B before A
 			return -1;
 		}
-	}
-	else if (isSubtypeOf(node1.type, 'attribute()') && isSubtypeOf(node2.type, 'attribute()')) {
+	} else if (isSubtypeOf(node1.type, 'attribute()') && isSubtypeOf(node2.type, 'attribute()')) {
 		if (domFacade.getParentNode(node2.value) === domFacade.getParentNode(node1.value)) {
 			// Sort on attributes name
 			return node1.value.localName > node2.value.localName ? 1 : -1;
 		}
 		value1 = domFacade.getParentNode(node1.value);
 		value2 = domFacade.getParentNode(node2.value);
-	}
-	else {
+	} else {
 		value1 = node1.value;
 		value2 = node2.value;
 	}
@@ -134,8 +144,13 @@ function compareNodePositionsWithTieBreaker (tieBreakerArr, domFacade, node1, no
 	return compareElements(tieBreakerArr, domFacade, value1, value2);
 }
 
-export const compareNodePositions = function (domFacade, node1, node2) {
-	return compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2);
+export const compareNodePositions = function(domFacade, node1, node2) {
+	return compareNodePositionsWithTieBreaker(
+		domFacade.orderOfDetachedNodes,
+		domFacade,
+		node1,
+		node2
+	);
 };
 
 /**
@@ -148,12 +163,20 @@ export const compareNodePositions = function (domFacade, node1, node2) {
  *
  * @return  The sorted nodes
  */
-export const sortNodeValues = function sortNodeValues (domFacade: IWrappingDomFacade, nodeValues: Value[]): Value[] {
+export const sortNodeValues = function sortNodeValues(
+	domFacade: IWrappingDomFacade,
+	nodeValues: Value[]
+): Value[] {
 	return nodeValues
-		.sort(function (node1, node2) {
-			return compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2);
+		.sort(function(node1, node2) {
+			return compareNodePositionsWithTieBreaker(
+				domFacade.orderOfDetachedNodes,
+				domFacade,
+				node1,
+				node2
+			);
 		})
-		.filter(function (nodeValue, i, sortedNodes) {
+		.filter(function(nodeValue, i, sortedNodes) {
 			if (i === 0) {
 				return true;
 			}

@@ -1,7 +1,7 @@
 import createAtomicValue from './createAtomicValue';
 import isSubtypeOf from './isSubtypeOf';
 
-export default function promoteToType (value, type) {
+export default function promoteToType(value, type) {
 	if (isSubtypeOf(value.type, 'xs:numeric')) {
 		if (isSubtypeOf(value.type, 'xs:float')) {
 			if (type === 'xs:double') {
@@ -16,7 +16,6 @@ export default function promoteToType (value, type) {
 			if (type === 'xs:double') {
 				return createAtomicValue(value.value, 'xs:double');
 			}
-
 		}
 		return null;
 	}

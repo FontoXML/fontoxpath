@@ -1,6 +1,6 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
 
-function isSubtypeOfType (subType, superType) {
+function isSubtypeOfType(subType, superType) {
 	if (superType.variety === 'union') {
 		// It is a union type, which can only be the topmost types
 		return !!superType.memberTypes.find(memberType => isSubtypeOfType(subType, memberType));

@@ -1,10 +1,9 @@
-function padFraction (fractionString: string, maxLength: number) {
+function padFraction(fractionString: string, maxLength: number) {
 	return fractionString.padEnd(maxLength, '0');
 }
 
-export default function decimalComparator (value1, value2) {
-	if ((value1 === '0' || value1 === '-0') &&
-		(value2 === '0' || value2 === '-0')) {
+export default function decimalComparator(value1, value2) {
+	if ((value1 === '0' || value1 === '-0') && (value2 === '0' || value2 === '-0')) {
 		return 0;
 	}
 

@@ -7,7 +7,7 @@ import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 import createDescendantGenerator from '../util/createDescendantGenerator';
 
-function createFollowingGenerator (domFacade, node) {
+function createFollowingGenerator(domFacade, node) {
 	const nodeStack = [];
 
 	for (; node; node = domFacade.getParentNode(node)) {
@@ -31,8 +31,7 @@ function createFollowingGenerator (domFacade, node) {
 						// This is the last sibling, we can continue with a child of the current
 						// node (an uncle of the original node) in the next iteration
 						nodeStack.shift();
-					}
-					else {
+					} else {
 						nodeStack[0] = nextNode;
 					}
 					return toReturn;
@@ -55,24 +54,20 @@ function createFollowingGenerator (domFacade, node) {
 	};
 }
 
-
 class FollowingAxis extends Expression {
 	_testExpression: TestAbstractExpression;
 	constructor(testExpression: TestAbstractExpression) {
-		super(
-			testExpression.specificity,
-			[testExpression],
-			{
-				resultOrder: RESULT_ORDERINGS.SORTED,
-				peer: true,
-				subtree: false,
-				canBeStaticallyEvaluated: false
-			});
+		super(testExpression.specificity, [testExpression], {
+			resultOrder: RESULT_ORDERINGS.SORTED,
+			peer: true,
+			subtree: false,
+			canBeStaticallyEvaluated: false
+		});
 
 		this._testExpression = testExpression;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
@@ -80,7 +75,9 @@ class FollowingAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		return SequenceFactory.create(createFollowingGenerator(domFacade, contextItem.value)).filter(item => {
+		return SequenceFactory.create(
+			createFollowingGenerator(domFacade, contextItem.value)
+		).filter(item => {
 			return this._testExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

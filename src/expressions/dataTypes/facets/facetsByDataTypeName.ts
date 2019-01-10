@@ -4,47 +4,47 @@ import dateTimeComparator from './comparators/dateTimeComparator';
 import durationComparator from './comparators/durationComparator';
 
 // enumeration
-function validateEnumeration (value, enumeration) {
+function validateEnumeration(value, enumeration) {
 	return enumeration.includes(value);
 }
-function validateEnumerationList (value, enumeration) {
-	return value.split(' ').every(function (val) {
+function validateEnumerationList(value, enumeration) {
+	return value.split(' ').every(function(val) {
 		return enumeration.includes(val);
 	});
 }
 
 // length, minLength, maxLength
-function getStringLength (value) {
+function getStringLength(value) {
 	// String is measured in code points
 	return value.length;
 }
-function getHexBinaryLength (value) {
+function getHexBinaryLength(value) {
 	return value.length / 2;
 }
-function getBase64Length (value) {
-	return Math.floor(value.replace(/[\u0009\u000A\u000D\u0020=]/g, '').length * 3 / 4);
+function getBase64Length(value) {
+	return Math.floor((value.replace(/[\u0009\u000A\u000D\u0020=]/g, '').length * 3) / 4);
 }
-function getListLength (value) {
+function getListLength(value) {
 	return value.split(' ').length;
 }
-function createLengthFacet (getLengthFunction) {
-	return function validateLength (value, length) {
+function createLengthFacet(getLengthFunction) {
+	return function validateLength(value, length) {
 		return getLengthFunction(value) === length;
 	};
 }
-function createMinLengthFacet (getLengthFunction) {
-	return function validateMinLength (value, minLength) {
+function createMinLengthFacet(getLengthFunction) {
+	return function validateMinLength(value, minLength) {
 		return getLengthFunction(value) >= minLength;
 	};
 }
-function createMaxLengthFacet (getLengthFunction) {
-	return function validateMaxLength (value, maxLength) {
+function createMaxLengthFacet(getLengthFunction) {
+	return function validateMaxLength(value, maxLength) {
 		return getLengthFunction(value) <= maxLength;
 	};
 }
 
 // totalDigits
-function validateTotalDigits (value, totalDigits) {
+function validateTotalDigits(value, totalDigits) {
 	var regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/,
 		match = regex.exec(value),
 		total = (match[1] ? match[1].length : 0) + (match[2] ? match[2].length : 0);
@@ -53,7 +53,7 @@ function validateTotalDigits (value, totalDigits) {
 }
 
 // fractionDigits
-function validateFractionDigits (value, fractionDigits) {
+function validateFractionDigits(value, fractionDigits) {
 	const string = value.toString();
 	if (string.indexOf('.') > -1 && fractionDigits === 0) {
 		return false;
@@ -70,28 +70,28 @@ function validateFractionDigits (value, fractionDigits) {
 }
 
 // maxInclusive, maxExclusive, minInclusive, minExclusive
-function createMaxInclusiveFacet (comperator) {
-	return function validateMaxInclusive (value, maxInclusive) {
+function createMaxInclusiveFacet(comperator) {
+	return function validateMaxInclusive(value, maxInclusive) {
 		return comperator(value, maxInclusive) < 1;
 	};
 }
-function createMaxExclusiveFacet (comperator) {
-	return function validateMaxExclusive (value, maxExclusive) {
+function createMaxExclusiveFacet(comperator) {
+	return function validateMaxExclusive(value, maxExclusive) {
 		return comperator(value, maxExclusive) < 0;
 	};
 }
-function createMinInclusiveFacet (comperator) {
-	return function validateMinInclusive (value, minInclusive) {
+function createMinInclusiveFacet(comperator) {
+	return function validateMinInclusive(value, minInclusive) {
 		return comperator(value, minInclusive) > -1;
 	};
 }
-function createMinExclusiveFacet (comperator) {
-	return function validateMinExclusive (value, minExclusive) {
+function createMinExclusiveFacet(comperator) {
+	return function validateMinExclusive(value, minExclusive) {
 		return comperator(value, minExclusive) > 0;
 	};
 }
 
-function validateExplicitTimeZone (value, option) {
+function validateExplicitTimeZone(value, option) {
 	switch (option) {
 		case 'required':
 			return /(Z)|([+-])([01]\d):([0-5]\d)$/.test(value.toString());

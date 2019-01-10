@@ -6,8 +6,8 @@ class InstanceOfOperator extends Expression {
 	_expression: Expression;
 	_typeTest: Expression;
 	_multiplicity: string;
-	
-	constructor (expression: Expression, typeTest: Expression, multiplicity: string) {
+
+	constructor(expression: Expression, typeTest: Expression, multiplicity: string) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 
 		this._expression = expression;
@@ -15,8 +15,11 @@ class InstanceOfOperator extends Expression {
 		this._multiplicity = multiplicity;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
-		const evaluatedExpression = this._expression.evaluateMaybeStatically(dynamicContext, executionParameters);
+	evaluate(dynamicContext, executionParameters) {
+		const evaluatedExpression = this._expression.evaluateMaybeStatically(
+			dynamicContext,
+			executionParameters
+		);
 		return evaluatedExpression.switchCases({
 			empty: () => {
 				if (this._multiplicity === '?' || this._multiplicity === '*') {
@@ -30,7 +33,10 @@ class InstanceOfOperator extends Expression {
 					return sequenceEvery(evaluatedExpression, value => {
 						const contextItem = SequenceFactory.singleton(value);
 						const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
-						return this._typeTest.evaluateMaybeStatically(scopedContext, executionParameters);
+						return this._typeTest.evaluateMaybeStatically(
+							scopedContext,
+							executionParameters
+						);
 					});
 				}
 				return SequenceFactory.singletonFalseSequence();
@@ -39,7 +45,10 @@ class InstanceOfOperator extends Expression {
 				return sequenceEvery(evaluatedExpression, value => {
 					const contextItem = SequenceFactory.singleton(value);
 					const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
-					return this._typeTest.evaluateMaybeStatically(scopedContext, executionParameters);
+					return this._typeTest.evaluateMaybeStatically(
+						scopedContext,
+						executionParameters
+					);
 				});
 			}
 		});

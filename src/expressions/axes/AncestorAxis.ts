@@ -4,7 +4,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
-function generateAncestors (domFacade, contextNode) {
+function generateAncestors(domFacade, contextNode) {
 	let ancestor = contextNode;
 	return {
 		next: () => {
@@ -22,23 +22,23 @@ function generateAncestors (domFacade, contextNode) {
 class AncestorAxis extends Expression {
 	_ancestorExpression: TestAbstractExpression;
 	_isInclusive: boolean;
-	constructor(ancestorExpression: TestAbstractExpression, options: { inclusive: boolean; } | undefined) {
+	constructor(
+		ancestorExpression: TestAbstractExpression,
+		options: { inclusive: boolean } | undefined
+	) {
 		options = options || { inclusive: false };
-		super(
-			ancestorExpression.specificity,
-			[ancestorExpression],
-			{
-				resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
-				peer: false,
-				subtree: false,
-				canBeStaticallyEvaluated: false
-			});
+		super(ancestorExpression.specificity, [ancestorExpression], {
+			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
+			peer: false,
+			subtree: false,
+			canBeStaticallyEvaluated: false
+		});
 
 		this._ancestorExpression = ancestorExpression;
 		this._isInclusive = !!options.inclusive;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
@@ -47,10 +47,14 @@ class AncestorAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		const /** !Node */ contextNode = contextItem.value;
-		return SequenceFactory.create(generateAncestors(domFacade, this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)))
-			.filter(item => {
-				return this._ancestorExpression.evaluateToBoolean(dynamicContext, item);
-			});
+		return SequenceFactory.create(
+			generateAncestors(
+				domFacade,
+				this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)
+			)
+		).filter(item => {
+			return this._ancestorExpression.evaluateToBoolean(dynamicContext, item);
+		});
 	}
 }
 

@@ -3,7 +3,10 @@ import SequenceFactory from '../dataTypes/SequenceFactory';
 import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from './iterators';
 
-export default function sequenceEvery(sequence: ISequence, typeTest: (Value) => ISequence): ISequence {
+export default function sequenceEvery(
+	sequence: ISequence,
+	typeTest: (Value) => ISequence
+): ISequence {
 	const iterator = sequence.value;
 	let typeTestResultIterator = null;
 	let done;

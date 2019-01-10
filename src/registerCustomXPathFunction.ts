@@ -11,7 +11,10 @@ import DynamicContext from './expressions/DynamicContext';
 import IExternalDomFacade from './domFacade/IExternalDomFacade';
 import ExecutionParameters from './expressions/ExecutionParameters';
 
-function adaptXPathValueToJavascriptValue(valueSequence: any, sequenceType: string): any | null | Array<any> {
+function adaptXPathValueToJavascriptValue(
+	valueSequence: any,
+	sequenceType: string
+): any | null | Array<any> {
 	switch (sequenceType[sequenceType.length - 1]) {
 		case '?':
 			if (valueSequence.isEmpty()) {
@@ -21,7 +24,7 @@ function adaptXPathValueToJavascriptValue(valueSequence: any, sequenceType: stri
 
 		case '*':
 		case '+':
-			return valueSequence.getAllValues().map(function (value) {
+			return valueSequence.getAllValues().map(function(value) {
 				if (isSubtypeOf(value.type, 'attribute()')) {
 					throw new Error('Cannot pass attribute nodes to custom functions');
 				}
@@ -33,7 +36,9 @@ function adaptXPathValueToJavascriptValue(valueSequence: any, sequenceType: stri
 	}
 }
 
-function splitFunctionName(name: string | { namespaceURI; localName; }): { namespaceURI: string; localName: string; } {
+function splitFunctionName(
+	name: string | { namespaceURI; localName }
+): { namespaceURI: string; localName: string } {
 	if (typeof name === 'object') {
 		return name;
 	}
@@ -57,7 +62,7 @@ function splitFunctionName(name: string | { namespaceURI; localName; }): { names
 }
 
 type DomFacadeWrapper = {
-	domFacade: IExternalDomFacade
+	domFacade: IExternalDomFacade;
 };
 
 /**
@@ -69,19 +74,24 @@ type DomFacadeWrapper = {
  * @param  callback    The test itself, which gets the dynamicContext and arguments passed
  */
 export default function registerCustomXPathFunction(
-	name: string | { namespaceURI: string; localName: string; },
+	name: string | { namespaceURI: string; localName: string },
 	signature: Array<string>,
 	returnType: string,
-	callback: (domFacade: DomFacadeWrapper, ...functionArgs: any[]) => any): void {
+	callback: (domFacade: DomFacadeWrapper, ...functionArgs: any[]) => any
+): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
-	const callFunction = function (_dynamicContext: DynamicContext, executionParameters: ExecutionParameters, _staticContext: any) {
+	const callFunction = function(
+		_dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters,
+		_staticContext: any
+	) {
 		// Make arguments a read array instead of a array-like object
 		const args = Array.from(arguments);
 
 		args.splice(0, 3);
 
-		const newArguments = args.map(function (argument, index) {
+		const newArguments = args.map(function(argument, index) {
 			return adaptXPathValueToJavascriptValue(argument, signature[index]);
 		});
 

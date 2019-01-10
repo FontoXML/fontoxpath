@@ -10,7 +10,11 @@ class LetExpression extends PossiblyUpdatingExpression {
 	_returnExpression: Expression;
 	_variableBinding: any;
 
-	constructor (rangeVariable: { prefix: string; namespaceURI: string | null; localName: string; }, bindingSequence: Expression, returnExpression: Expression) {
+	constructor(
+		rangeVariable: { prefix: string; namespaceURI: string | null; localName: string },
+		bindingSequence: Expression,
+		returnExpression: Expression
+	) {
 		super(
 			bindingSequence.specificity.add(returnExpression.specificity),
 			[bindingSequence, returnExpression],
@@ -19,7 +23,8 @@ class LetExpression extends PossiblyUpdatingExpression {
 				subtree: returnExpression.subtree,
 				peer: returnExpression.peer,
 				canBeStaticallyEvaluated: false
-			});
+			}
+		);
 
 		if (rangeVariable.prefix || rangeVariable.namespaceURI) {
 			throw new Error('Not implemented: let expressions with namespace usage.');
@@ -35,12 +40,16 @@ class LetExpression extends PossiblyUpdatingExpression {
 		this._variableBinding = null;
 	}
 
-	performStaticEvaluation (staticContext) {
+	performStaticEvaluation(staticContext) {
 		if (this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 
 			if (!this._namespaceURI && this._prefix) {
-				throw new Error(`XPST0081: Could not resolve namespace for prefix ${this._prefix} using in a for expression`);
+				throw new Error(
+					`XPST0081: Could not resolve namespace for prefix ${
+						this._prefix
+					} using in a for expression`
+				);
 			}
 		}
 
@@ -52,9 +61,15 @@ class LetExpression extends PossiblyUpdatingExpression {
 		staticContext.removeScope();
 	}
 
-	performFunctionalEvaluation (dynamicContext, _executionParameters, [createBindingSequence, createReturnExpression]) {
+	performFunctionalEvaluation(
+		dynamicContext,
+		_executionParameters,
+		[createBindingSequence, createReturnExpression]
+	) {
 		const scopedContext = dynamicContext.scopeWithVariableBindings({
-			[this._variableBinding]: createDoublyIterableSequence(createBindingSequence(dynamicContext))
+			[this._variableBinding]: createDoublyIterableSequence(
+				createBindingSequence(dynamicContext)
+			)
 		});
 
 		return createReturnExpression(scopedContext);

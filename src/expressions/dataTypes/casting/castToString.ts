@@ -3,7 +3,7 @@ import createAtomicValue from '../createAtomicValue';
 
 import CastResult from './CastResult';
 
-export default function castToString (instanceOf: (string) => boolean) : (Value) => CastResult {
+export default function castToString(instanceOf: (string) => boolean): (Value) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
 	return value => {
 		const castResult = caster(value);

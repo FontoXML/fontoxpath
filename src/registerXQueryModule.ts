@@ -12,7 +12,7 @@ import processProlog from './parsing/processProlog';
  * @return  The namespace uri of the new module
  */
 export default function registerXQueryModule(moduleString: string): string {
-	const parsedModule = parse(moduleString, { 'xquery': true });
+	const parsedModule = parse(moduleString, { xquery: true });
 
 	const libraryModule = astHelper.getFirstChild(parsedModule, 'libraryModule');
 	if (!libraryModule) {
@@ -24,7 +24,9 @@ export default function registerXQueryModule(moduleString: string): string {
 	const prefixNode = astHelper.getFirstChild(moduleDecl, 'prefix');
 	const moduleTargetPrefix = astHelper.getTextContent(prefixNode);
 
-	const staticContext = new StaticContext(new ExecutionSpecificStaticContext(() => null, Object.create(null)));
+	const staticContext = new StaticContext(
+		new ExecutionSpecificStaticContext(() => null, Object.create(null))
+	);
 
 	staticContext.registerNamespace(moduleTargetPrefix, moduleTargetNamespaceURI);
 
@@ -33,13 +35,14 @@ export default function registerXQueryModule(moduleString: string): string {
 		const moduleDeclaration = processProlog(prolog, staticContext);
 		moduleDeclaration.functionDeclarations.forEach(({ namespaceURI }) => {
 			if (moduleTargetNamespaceURI !== namespaceURI) {
-				throw new Error('XQST0048: Functions and variables declared in a module must reside in the module target namespace.');
+				throw new Error(
+					'XQST0048: Functions and variables declared in a module must reside in the module target namespace.'
+				);
 			}
 		});
 
 		loadModuleFile(moduleTargetNamespaceURI, moduleDeclaration);
-	}
-	else {
+	} else {
 		loadModuleFile(moduleTargetNamespaceURI, { functionDeclarations: [] });
 	}
 

@@ -34,9 +34,7 @@ function adaptItemToXPathValue(value: any): Value | null {
 			}
 			if (Array.isArray(value)) {
 				return new ArrayValue(
-					value
-						.map(
-					arrayItem => {
+					value.map(arrayItem => {
 						if (arrayItem === undefined) {
 							return () => SequenceFactory.empty();
 						}
@@ -48,7 +46,8 @@ function adaptItemToXPathValue(value: any): Value | null {
 							adaptedSequence = SequenceFactory.singleton(adaptedValue);
 						}
 						return () => adaptedSequence;
-					}));
+					})
+				);
 			}
 			// Make it a map
 			return new MapValue(
@@ -62,11 +61,12 @@ function adaptItemToXPathValue(value: any): Value | null {
 						} else {
 							adaptedSequence = SequenceFactory.singleton(adaptedValue);
 						}
-					return {
-						key: createAtomicValue(key, 'xs:string'),
-						value: () => adaptedSequence
-					};
-				}));
+						return {
+							key: createAtomicValue(key, 'xs:string'),
+							value: () => adaptedSequence
+						};
+					})
+			);
 	}
 	throw new Error(`Value ${value} of type "${typeof value}" is not adaptable to an XPath value.`);
 }
@@ -103,7 +103,10 @@ function adaptJavaScriptValueToXPathValue(type, value: any): Value | null {
 		case 'xs:gMonthDay':
 		case 'xs:gMonth':
 		case 'xs:gDay':
-			return createAtomicValue(DateTime.fromString(value.toISOString()).convertToType(type), type);
+			return createAtomicValue(
+				DateTime.fromString(value.toISOString()).convertToType(type),
+				type
+			);
 		case 'node()':
 		case 'element()':
 		case 'text':
@@ -112,11 +115,16 @@ function adaptJavaScriptValueToXPathValue(type, value: any): Value | null {
 		case 'item()':
 			return adaptItemToXPathValue(value);
 		default:
-			throw new Error(`Values of the type "${type}" can not be adapted to equivalent XPath values.`);
+			throw new Error(
+				`Values of the type "${type}" can not be adapted to equivalent XPath values.`
+			);
 	}
 }
 
-export default function adaptJavaScriptValueToXPath(value: any, expectedType?: string | undefined): ISequence {
+export default function adaptJavaScriptValueToXPath(
+	value: any,
+	expectedType?: string | undefined
+): ISequence {
 	expectedType = expectedType || 'item()?';
 
 	const parts = expectedType.match(/^([^+?*]*)([\+\*\?])?$/),
@@ -135,7 +143,8 @@ export default function adaptJavaScriptValueToXPath(value: any, expectedType?: s
 		case '*': {
 			const convertedValues = value.map(adaptJavaScriptValueToXPathValue.bind(null, type));
 			return SequenceFactory.create(
-				convertedValues.filter(convertedValue => convertedValue !== null));
+				convertedValues.filter(convertedValue => convertedValue !== null)
+			);
 		}
 
 		default: {

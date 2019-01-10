@@ -21,10 +21,9 @@ builtinModels.forEach((model, index) => {
 			facetHandlers: facetHandlers,
 			memberTypes: []
 		};
-	}
-	else if (model.variety === 'derived') {
+	} else if (model.variety === 'derived') {
 		const base = builtinDataTypesByName[model.base],
-		validator = dataTypeValidatorByName[name] || null;
+			validator = dataTypeValidatorByName[name] || null;
 		builtinDataTypesByName[name] = {
 			variety: 'derived',
 			name: name,
@@ -34,8 +33,7 @@ builtinModels.forEach((model, index) => {
 			facetHandlers: base.facetHandlers,
 			memberTypes: []
 		};
-	}
-	else if (model.variety === 'list') {
+	} else if (model.variety === 'list') {
 		const type = builtinDataTypesByName[model.type];
 		builtinDataTypesByName[name] = {
 			variety: 'union',
@@ -46,9 +44,10 @@ builtinModels.forEach((model, index) => {
 			facetHandlers: facetHandlersByDataTypeName.list,
 			memberTypes: []
 		};
-	}
-	else if (model.variety === 'union') {
-		const memberTypes = model.memberTypes.map((memberTypeRef) => builtinDataTypesByName[memberTypeRef]);
+	} else if (model.variety === 'union') {
+		const memberTypes = model.memberTypes.map(
+			memberTypeRef => builtinDataTypesByName[memberTypeRef]
+		);
 		builtinDataTypesByName[name] = {
 			variety: 'union',
 			name: name || index,
@@ -60,7 +59,5 @@ builtinModels.forEach((model, index) => {
 		};
 	}
 });
-
-
 
 export default builtinDataTypesByName;

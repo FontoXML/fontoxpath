@@ -1,4 +1,6 @@
-export default function castToStringLikeType(instanceOf: (string) => boolean) : (Value) => ({successful: true, value: any} | {successful: false, error: Error}) {
+export default function castToStringLikeType(
+	instanceOf: (string) => boolean
+): (Value) => { successful: true; value: any } | { successful: false; error: Error } {
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
 		return value => ({
 			successful: true,
@@ -59,14 +61,16 @@ export default function castToStringLikeType(instanceOf: (string) => boolean) : 
 			};
 		}
 	}
-	if (instanceOf('xs:dateTime') ||
+	if (
+		instanceOf('xs:dateTime') ||
 		instanceOf('xs:date') ||
 		instanceOf('xs:time') ||
 		instanceOf('xs:gDay') ||
 		instanceOf('xs:gMonth') ||
 		instanceOf('xs:gMonthDay') ||
 		instanceOf('xs:gYear') ||
-		instanceOf('xs:gYearMonth')) {
+		instanceOf('xs:gYearMonth')
+	) {
 		return value => ({
 			successful: true,
 			value: value.toString()
@@ -96,7 +100,7 @@ export default function castToStringLikeType(instanceOf: (string) => boolean) : 
 			value: value.toUpperCase()
 		});
 	}
-return value => ({
+	return value => ({
 		successful: true,
 		value: value + ''
 	});

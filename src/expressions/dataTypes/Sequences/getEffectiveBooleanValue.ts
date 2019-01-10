@@ -16,9 +16,11 @@ export default function getEffectiveBooleanValue(value: Value) {
 	}
 
 	// If its operand is a singleton value of type xs:string, xs:anyURI, xs:untypedAtomic, or a type derived from one of these, fn:boolean returns false if the operand value has zero length; otherwise it returns true.
-	if (isSubtypeOf(value.type, 'xs:string') ||
+	if (
+		isSubtypeOf(value.type, 'xs:string') ||
 		isSubtypeOf(value.type, 'xs:anyURI') ||
-		isSubtypeOf(value.type, 'xs:untypedAtomic')) {
+		isSubtypeOf(value.type, 'xs:untypedAtomic')
+	) {
 		return jsValue.length !== 0;
 	}
 

@@ -1,9 +1,7 @@
 import Context from './Context';
 import { getFunctionByArity } from './functions/functionRegistry';
 
-import {
-	staticallyKnownNamespaceByPrefix
-} from './staticallyKnownNamespaces';
+import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
 
 export const generateGlobalVariableBindingName = variableName => `GLOBAL_${variableName}`;
 
@@ -26,16 +24,18 @@ export default class ExecutionSpecificStaticContext implements Context {
 	private _referredNamespaceByName: any;
 	private _variableValueByName: any;
 
-	constructor (namespaceResolver, variableByName) {
+	constructor(namespaceResolver, variableByName) {
 		this._namespaceResolver = namespaceResolver;
-		this._variableBindingByName = Object.keys(variableByName)
-			.reduce((bindings, variableName) => {
+		this._variableBindingByName = Object.keys(variableByName).reduce(
+			(bindings, variableName) => {
 				if (variableByName[variableName] === undefined) {
 					return bindings;
 				}
 				bindings[variableName] = generateGlobalVariableBindingName(variableName);
 				return bindings;
-			}, Object.create(null));
+			},
+			Object.create(null)
+		);
 
 		this._referredVariableByName = Object.create(null);
 		this._referredNamespaceByName = Object.create(null);
@@ -49,7 +49,7 @@ export default class ExecutionSpecificStaticContext implements Context {
 		this.executionContextWasRequired = false;
 	}
 
-	resolveNamespace (prefix) {
+	resolveNamespace(prefix) {
 		// See if it 'globally' known:
 		if (staticallyKnownNamespaceByPrefix[prefix]) {
 			return staticallyKnownNamespaceByPrefix[prefix];
@@ -72,7 +72,7 @@ export default class ExecutionSpecificStaticContext implements Context {
 		return uri;
 	}
 
-	lookupVariable (namespaceURI, localName) {
+	lookupVariable(namespaceURI, localName) {
 		this.executionContextWasRequired = true;
 
 		if (namespaceURI) {
@@ -89,16 +89,16 @@ export default class ExecutionSpecificStaticContext implements Context {
 		return bindingName;
 	}
 
-	lookupFunction (namespaceURI, localName, arity) {
+	lookupFunction(namespaceURI, localName, arity) {
 		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
 		return getFunctionByArity(namespaceURI, localName, arity);
 	}
 
-	getReferredNamespaces (): string[] {
+	getReferredNamespaces(): string[] {
 		return Object.values(this._referredNamespaceByName);
 	}
 
-	getReferredVariables ():string[] {
+	getReferredVariables(): string[] {
 		return Object.values(this._referredVariableByName);
 	}
 }

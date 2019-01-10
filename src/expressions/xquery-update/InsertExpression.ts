@@ -37,9 +37,9 @@ export enum TargetChoice {
 	INSERT_INTO = 3,
 	INSERT_INTO_AS_FIRST = 4,
 	INSERT_INTO_AS_LAST = 5
-};
+}
 
-function buildPendingUpdates (targetChoice, target, parent, alist, clist) {
+function buildPendingUpdates(targetChoice, target, parent, alist, clist) {
 	const updates = [];
 	switch (targetChoice) {
 		// a. If as first into is specified, the pending update list includes the following update primitives:
@@ -106,23 +106,30 @@ class InsertExpression extends UpdatingExpression {
 	_targetChoice: any;
 	_targetExpression: Expression;
 
-	constructor (sourceExpression: Expression, targetChoice: TargetChoice, targetExpression: Expression) {
-		super(
-			new Specificity({}),
-			[sourceExpression, targetExpression],
-			{
-				canBeStaticallyEvaluated: false,
-				resultOrder: RESULT_ORDERINGS.UNSORTED
-			});
+	constructor(
+		sourceExpression: Expression,
+		targetChoice: TargetChoice,
+		targetExpression: Expression
+	) {
+		super(new Specificity({}), [sourceExpression, targetExpression], {
+			canBeStaticallyEvaluated: false,
+			resultOrder: RESULT_ORDERINGS.UNSORTED
+		});
 
 		this._sourceExpression = sourceExpression;
 		this._targetChoice = targetChoice;
 		this._targetExpression = targetExpression;
 	}
 
-	evaluateWithUpdateList (dynamicContext, executionParameters) {
-		const sourceValueIterator = super.ensureUpdateListWrapper(this._sourceExpression)(dynamicContext, executionParameters);
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
+	evaluateWithUpdateList(dynamicContext, executionParameters) {
+		const sourceValueIterator = super.ensureUpdateListWrapper(this._sourceExpression)(
+			dynamicContext,
+			executionParameters
+		);
+		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+			dynamicContext,
+			executionParameters
+		);
 
 		let alist, clist, sourceUpdates;
 		let target, targetUpdates, parent;
@@ -135,7 +142,11 @@ class InsertExpression extends UpdatingExpression {
 						return sv;
 					}
 					const allChildNodes = [sv.value.xdmValue];
-					const insertionSequence = parseContent(allChildNodes, executionParameters, errXUTY0004);
+					const insertionSequence = parseContent(
+						allChildNodes,
+						executionParameters,
+						errXUTY0004
+					);
 
 					// Let $alist be the sequence of attribute nodes in the insertion sequence. Let $clist be the remainder of the insertion sequence, in its original order.
 					alist = insertionSequence.attributes;
@@ -160,8 +171,10 @@ class InsertExpression extends UpdatingExpression {
 						if (tv.value.xdmValue.length !== 1) {
 							throw errXUTY0005();
 						}
-						if (!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'document()')) {
+						if (
+							!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
+							!isSubTypeOf(tv.value.xdmValue[0].type, 'document()')
+						) {
 							throw errXUTY0005();
 						}
 					} else {
@@ -169,15 +182,19 @@ class InsertExpression extends UpdatingExpression {
 						if (tv.value.xdmValue.length !== 1) {
 							throw errXUTY0006();
 						}
-						if (!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
+						if (
+							!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
 							!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
 							!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')) {
+							!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
+						) {
 							throw errXUTY0006();
 						}
 
 						// d. If before or after is specified, the node returned by the target expression must have a non-empty parent property [err:XUDY0029].
-						parent = executionParameters.domFacade.getParentNode(tv.value.xdmValue[0].value);
+						parent = executionParameters.domFacade.getParentNode(
+							tv.value.xdmValue[0].value
+						);
 						if (parent === null) {
 							throw errXUDY0029(tv.value.xdmValue[0].value);
 						}
@@ -250,9 +267,16 @@ class InsertExpression extends UpdatingExpression {
 				return ready({
 					xdmValue: [],
 					pendingUpdateList: mergeUpdates(
-						buildPendingUpdates(this._targetChoice, target.value, parent ? parent : null, alist, clist),
+						buildPendingUpdates(
+							this._targetChoice,
+							target.value,
+							parent ? parent : null,
+							alist,
+							clist
+						),
 						sourceUpdates,
-						targetUpdates)
+						targetUpdates
+					)
 				});
 			}
 		};

@@ -18,12 +18,11 @@ class OrOperator extends Expression {
 			return selector.specificity;
 		}, new Specificity({}));
 
-		super(
-			maxSpecificity,
-			expressions,
-			{
-				canBeStaticallyEvaluated: expressions.every(selector => selector.canBeStaticallyEvaluated)
-			});
+		super(maxSpecificity, expressions, {
+			canBeStaticallyEvaluated: expressions.every(
+				selector => selector.canBeStaticallyEvaluated
+			)
+		});
 
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.
 		let bucket = undefined;
@@ -46,7 +45,7 @@ class OrOperator extends Expression {
 		this._subExpressions = expressions;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		let i = 0;
 		let resultSequence = null;
 		let done = false;
@@ -73,7 +72,10 @@ class OrOperator extends Expression {
 									continue;
 								}
 							}
-							resultSequence = subExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
+							resultSequence = subExpression.evaluateMaybeStatically(
+								dynamicContext,
+								executionParameters
+							);
 						}
 						const ebv = resultSequence.tryGetEffectiveBooleanValue();
 						if (!ebv.ready) {
@@ -94,7 +96,7 @@ class OrOperator extends Expression {
 		});
 	}
 
-	getBucket () {
+	getBucket() {
 		return this._bucket;
 	}
 }

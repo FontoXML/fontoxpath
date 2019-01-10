@@ -1,4 +1,9 @@
-import { getPrimitiveTypeName, normalizeWhitespace, validatePattern, validateRestrictions } from '../typeHelpers';
+import {
+	getPrimitiveTypeName,
+	normalizeWhitespace,
+	validatePattern,
+	validateRestrictions
+} from '../typeHelpers';
 
 import isSubtypeOf from '../isSubtypeOf';
 
@@ -29,11 +34,7 @@ import castToYearMonthDuration from './castToYearMonthDuration';
 import CastResult from './CastResult';
 import AtomicValue from '../AtomicValue';
 
-const TREAT_AS_PRIMITIVE = [
-	'xs:integer',
-	'xs:dayTimeDuration',
-	'xs:yearMonthDuration'
-];
+const TREAT_AS_PRIMITIVE = ['xs:integer', 'xs:dayTimeDuration', 'xs:yearMonthDuration'];
 
 function castToPrimitiveType(from: string, to: string): (AtomicValueDataType) => CastResult {
 	const instanceOf = type => isSubtypeOf(from, type);
@@ -100,40 +101,40 @@ function castToPrimitiveType(from: string, to: string): (AtomicValueDataType) =>
 
 const precomputedCastFunctorsByTypeString = Object.create(null);
 
-function createCastingFunction (from, to) {
+function createCastingFunction(from, to) {
 	if (from === 'xs:untypedAtomic' && to === 'xs:string') {
 		return val => ({ successful: true, value: createAtomicValue(val, 'xs:string') });
 	}
 	if (to === 'xs:NOTATION') {
-		return (_val) => ({
+		return _val => ({
 			successful: false,
 			error: new Error('XPST0080: Casting to xs:NOTATION is not permitted.')
 		});
 	}
 
 	if (to === 'xs:error') {
-		return (_val) => ({
+		return _val => ({
 			successful: false,
 			error: new Error('FORG0001: Casting to xs:error is not permitted.')
 		});
 	}
 
 	if (from === 'xs:anySimpleType' || to === 'xs:anySimpleType') {
-		return (_val) => ({
+		return _val => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anySimpleType is not permitted.')
 		});
 	}
 
 	if (from === 'xs:anyAtomicType' || to === 'xs:anyAtomicType') {
-		return (_val) => ({
+		return _val => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anyAtomicType is not permitted.')
 		});
 	}
 
 	if (isSubtypeOf(from, 'function(*)') && to === 'xs:string') {
-		return (_val) => ({
+		return _val => ({
 			successful: false,
 			error: new Error('FOTY0014: Casting from function item to xs:string is not permitted.')
 		});
@@ -143,7 +144,7 @@ function createCastingFunction (from, to) {
 	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
 
 	if (!primitiveTo || !primitiveFrom) {
-		return (_val) => ({
+		return _val => ({
 			successful: false,
 			error: new Error(`XPST0081: Can not cast: type ${primitiveTo ? from : to} is unknown.`)
 		});
@@ -157,7 +158,9 @@ function createCastingFunction (from, to) {
 			if (!validatePattern(strValue, to)) {
 				return {
 					successful: false,
-					error: new Error(`FORG0001: Cannot cast ${value} to ${to}, pattern validation failed.`)
+					error: new Error(
+						`FORG0001: Cannot cast ${value} to ${to}, pattern validation failed.`
+					)
 				};
 			}
 			return {
@@ -180,7 +183,9 @@ function createCastingFunction (from, to) {
 			if (!validatePattern(typedValue, to)) {
 				return {
 					successful: false,
-					error: new Error(`FORG0001: Cannot cast ${typedValue} to ${to}, pattern validation failed.`)
+					error: new Error(
+						`FORG0001: Cannot cast ${typedValue} to ${to}, pattern validation failed.`
+					)
 				};
 			}
 			return {
@@ -193,7 +198,9 @@ function createCastingFunction (from, to) {
 		if (!validateRestrictions(typedValue, to)) {
 			return {
 				successful: false,
-				error: new Error(`FORG0001: Cannot cast "${typedValue}" to ${to}, restriction validation failed.`)
+				error: new Error(
+					`FORG0001: Cannot cast "${typedValue}" to ${to}, restriction validation failed.`
+				)
 			};
 		}
 		return {
@@ -201,7 +208,6 @@ function createCastingFunction (from, to) {
 			value: typedValue
 		};
 	});
-
 
 	// assume we can just use the primitive datatype
 	converters.push(typedValue => ({
@@ -224,11 +230,13 @@ function createCastingFunction (from, to) {
 	};
 }
 
-export default function tryCastToType (valueTuple: AtomicValue, type: string): CastResult {
+export default function tryCastToType(valueTuple: AtomicValue, type: string): CastResult {
 	let prefabConverter = precomputedCastFunctorsByTypeString[`${valueTuple.type}~${type}`];
 
 	if (!prefabConverter) {
-		prefabConverter = precomputedCastFunctorsByTypeString[`${valueTuple.type}~${type}`] = createCastingFunction(valueTuple.type, type);
+		prefabConverter = precomputedCastFunctorsByTypeString[
+			`${valueTuple.type}~${type}`
+		] = createCastingFunction(valueTuple.type, type);
 	}
 	return prefabConverter.call(undefined, valueTuple.value, type);
 }

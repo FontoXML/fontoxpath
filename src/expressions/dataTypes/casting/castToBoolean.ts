@@ -1,7 +1,7 @@
 import { trueBoolean, falseBoolean } from '../createAtomicValue';
 import CastResult from './CastResult';
 
-export default function castToBoolean (instanceOf: (string) => boolean) : (Value) => CastResult {
+export default function castToBoolean(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:numeric')) {
 		return value => ({
 			successful: true,
@@ -26,13 +26,17 @@ export default function castToBoolean (instanceOf: (string) => boolean) : (Value
 				default:
 					return {
 						successful: false,
-						error: new Error('XPTY0004: Casting not supported from given type to xs:boolean or any of its derived types.')
+						error: new Error(
+							'XPTY0004: Casting not supported from given type to xs:boolean or any of its derived types.'
+						)
 					};
 			}
 		};
 	}
 	return () => ({
 		successful: false,
-		error: new Error('XPTY0004: Casting not supported from given type to xs:boolean or any of its derived types.')
+		error: new Error(
+			'XPTY0004: Casting not supported from given type to xs:boolean or any of its derived types.'
+		)
 	});
 }

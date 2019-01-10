@@ -4,15 +4,19 @@ import Specificity from '../Specificity';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
 class UniversalExpression extends Expression {
-	constructor () {
-		super(new Specificity({
+	constructor() {
+		super(
+			new Specificity({
 				[Specificity.UNIVERSAL_KIND]: 1
-		}),[],  {
-			canBeStaticallyEvaluated: true
-		});
+			}),
+			[],
+			{
+				canBeStaticallyEvaluated: true
+			}
+		);
 	}
 
-	evaluate () {
+	evaluate() {
 		return SequenceFactory.singletonTrueSequence();
 	}
 }

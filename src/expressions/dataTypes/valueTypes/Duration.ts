@@ -17,24 +17,30 @@ const MONTHS_TO_MIN_MAX_VALUES = [
 	[365, 366]
 ];
 
-function computeMinDays (duration) {
+function computeMinDays(duration) {
 	const years = Math.abs(duration.getYears());
 	const months = Math.abs(duration.getMonths());
 	const minNumberOfLeapYears = Math.floor(years / 4);
 
-	return Math.abs(duration.getDays()) +
+	return (
+		Math.abs(duration.getDays()) +
 		(months === 0 ? 0 : MONTHS_TO_MIN_MAX_VALUES[months - 1][0]) +
-		minNumberOfLeapYears * 366 + (years - minNumberOfLeapYears) * 365;
+		minNumberOfLeapYears * 366 +
+		(years - minNumberOfLeapYears) * 365
+	);
 }
 
-function computeMaxDays (duration) {
+function computeMaxDays(duration) {
 	const years = Math.abs(duration.getYears());
 	const months = Math.abs(duration.getMonths());
 	const maxNumberOfLeapYears = Math.ceil(years / 4);
 
-	return Math.abs(duration.getDays()) +
+	return (
+		Math.abs(duration.getDays()) +
 		(months === 0 ? 0 : MONTHS_TO_MIN_MAX_VALUES[months - 1][1]) +
-		maxNumberOfLeapYears * 366 + (years - maxNumberOfLeapYears) * 365;
+		maxNumberOfLeapYears * 366 +
+		(years - maxNumberOfLeapYears) * 365
+	);
 }
 
 class Duration extends AbstractDuration {
@@ -43,58 +49,58 @@ class Duration extends AbstractDuration {
 	static fromString: (string: any) => Duration;
 	static fromYearMonthDuration: (yearMonthDuration: any) => Duration;
 	static fromDayTimeDuration: (dayTimeDuration: any) => Duration;
-	constructor (yearMonthDuration, dayTimeDuration) {
+	constructor(yearMonthDuration, dayTimeDuration) {
 		super();
 
 		this._yearMonthDuration = yearMonthDuration;
 		this._dayTimeDuration = dayTimeDuration;
 	}
 
-	getRawMonths () {
+	getRawMonths() {
 		return this._yearMonthDuration.getRawMonths();
 	}
 
-	getRawSeconds () {
+	getRawSeconds() {
 		return this._dayTimeDuration.getRawSeconds();
 	}
 
-	getYearMonthDuration () {
+	getYearMonthDuration() {
 		return this._yearMonthDuration;
 	}
 
-	getDayTimeDuration () {
+	getDayTimeDuration() {
 		return this._dayTimeDuration;
 	}
 
-	getYears () {
+	getYears() {
 		return this._yearMonthDuration.getYears();
 	}
 
-	getMonths () {
+	getMonths() {
 		return this._yearMonthDuration.getMonths();
 	}
 
-	getDays () {
+	getDays() {
 		return this._dayTimeDuration.getDays();
 	}
 
-	getHours () {
+	getHours() {
 		return this._dayTimeDuration.getHours();
 	}
 
-	getMinutes () {
+	getMinutes() {
 		return this._dayTimeDuration.getMinutes();
 	}
 
-	getSeconds () {
+	getSeconds() {
 		return this._dayTimeDuration.getSeconds();
 	}
 
-	isPositive () {
+	isPositive() {
 		return this._yearMonthDuration.isPositive() && this._dayTimeDuration.isPositive();
 	}
 
-	compare (other) {
+	compare(other) {
 		if (this.isPositive() && !other.isPositive()) {
 			return 1;
 		}
@@ -113,8 +119,10 @@ class Duration extends AbstractDuration {
 		const otherMaxDays = computeMaxDays(other);
 
 		if (thisMinDays === otherMinDays && thisMaxDays === otherMaxDays) {
-			const thisSecondsWithoutDays = this.getHours() * 3600 + this.getMinutes() * 60 + this.getSeconds();
-			const otherSecondsWithoutDays = other.getHours() * 3600 + other.getMinutes() * 60 + other.getSeconds();
+			const thisSecondsWithoutDays =
+				this.getHours() * 3600 + this.getMinutes() * 60 + this.getSeconds();
+			const otherSecondsWithoutDays =
+				other.getHours() * 3600 + other.getMinutes() * 60 + other.getSeconds();
 			if (thisSecondsWithoutDays > otherSecondsWithoutDays) {
 				return 1;
 			}
@@ -136,7 +144,7 @@ class Duration extends AbstractDuration {
 		}
 	}
 
-	toString () {
+	toString() {
 		const string = this.isPositive() ? 'P' : '-P';
 		const TYM = this._yearMonthDuration.toStringWithoutP();
 		const TDT = this._dayTimeDuration.toStringWithoutP();
@@ -152,18 +160,22 @@ class Duration extends AbstractDuration {
 	}
 }
 
-Duration.fromString = function (string: string): Duration | null {
+Duration.fromString = function(string: string): Duration | null {
+	return new Duration(YearMonthDuration.fromString(string), DayTimeDuration.fromString(string));
+};
+
+Duration.fromYearMonthDuration = function(yearMonthDuration: YearMonthDuration): Duration {
 	return new Duration(
-			YearMonthDuration.fromString(string),
-			DayTimeDuration.fromString(string));
+		yearMonthDuration,
+		new DayTimeDuration(yearMonthDuration.isPositive() ? 0 : -0)
+	);
 };
 
-Duration.fromYearMonthDuration = function (yearMonthDuration: YearMonthDuration): Duration {
-	return new Duration(yearMonthDuration, new DayTimeDuration(yearMonthDuration.isPositive() ? 0 : -0));
-};
-
-Duration.fromDayTimeDuration = function (dayTimeDuration: DayTimeDuration): Duration {
-	return new Duration(new YearMonthDuration(dayTimeDuration.isPositive() ? 0 : -0), dayTimeDuration);
+Duration.fromDayTimeDuration = function(dayTimeDuration: DayTimeDuration): Duration {
+	return new Duration(
+		new YearMonthDuration(dayTimeDuration.isPositive() ? 0 : -0),
+		dayTimeDuration
+	);
 };
 
 export default Duration;

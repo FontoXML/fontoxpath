@@ -5,7 +5,7 @@ import CastResult from './CastResult';
 
 const createGYearValue = value => createAtomicValue(value, 'xs:gYear');
 
-export default function castToGYear(instanceOf: (string) => boolean): (Value) => (CastResult) {
+export default function castToGYear(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
 		return value => ({
 			successful: true,
@@ -18,8 +18,10 @@ export default function castToGYear(instanceOf: (string) => boolean): (Value) =>
 			value: createGYearValue(DateTime.fromString(value))
 		});
 	}
-    return () => ({
-        successful: false,
-        error: new Error('XPTY0004: Casting not supported from given type to xs:gYear or any of its derived types.')
-    });
+	return () => ({
+		successful: false,
+		error: new Error(
+			'XPTY0004: Casting not supported from given type to xs:gYear or any of its derived types.'
+		)
+	});
 }

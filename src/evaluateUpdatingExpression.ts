@@ -5,11 +5,11 @@ import IDocumentWriter from './documentWriter/IDocumentWriter';
 import INodesFactory from './nodesFactory/INodesFactory';
 
 export type UpdatingOptions = {
-	namespaceResolver?: (s: string) => string|null;
-	documentWriter?: IDocumentWriter
+	namespaceResolver?: (s: string) => string | null;
+	documentWriter?: IDocumentWriter;
 	nodesFactory?: INodesFactory;
-	moduleImports?: {[s: string]: string},
-	disableCache?: boolean
+	moduleImports?: { [s: string]: string };
+	disableCache?: boolean;
 };
 
 /**
@@ -29,12 +29,8 @@ export default async function evaluateUpdatingExpression(
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: UpdatingOptions | null
-): Promise<{ xdmValue: any[], pendingUpdateList: object[] }> {
-	let {
-		dynamicContext,
-		executionParameters,
-		expression
-	} = buildContext(
+): Promise<{ xdmValue: any[]; pendingUpdateList: object[] }> {
+	let { dynamicContext, executionParameters, expression } = buildContext(
 		updateScript,
 		contextItem,
 		domFacade || null,
@@ -48,10 +44,15 @@ export default async function evaluateUpdatingExpression(
 	);
 
 	if (!expression.isUpdating) {
-		throw new Error(`The expression ${updateScript} is not updating and can not be executed as an updating expression.`);
+		throw new Error(
+			`The expression ${updateScript} is not updating and can not be executed as an updating expression.`
+		);
 	}
 
-	const resultIterator = (<PossiblyUpdatingExpression>expression).evaluateWithUpdateList(dynamicContext, executionParameters);
+	const resultIterator = (<PossiblyUpdatingExpression>expression).evaluateWithUpdateList(
+		dynamicContext,
+		executionParameters
+	);
 
 	let attempt = resultIterator.next();
 	while (!attempt.ready) {
@@ -60,7 +61,7 @@ export default async function evaluateUpdatingExpression(
 	}
 
 	return {
-		'xdmValue': attempt.value.xdmValue,
-		'pendingUpdateList': attempt.value.pendingUpdateList.map(update => update.toTransferable())
+		xdmValue: attempt.value.xdmValue,
+		pendingUpdateList: attempt.value.pendingUpdateList.map(update => update.toTransferable())
 	};
 }

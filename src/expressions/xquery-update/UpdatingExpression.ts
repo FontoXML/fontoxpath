@@ -5,15 +5,16 @@ import ExecutionParameters from '../ExecutionParameters';
 import { ready } from '../util/iterators';
 
 abstract class UpdatingExpression extends Expression {
-	constructor (specificity, childExpressions, optimizationOptions) {
+	constructor(specificity, childExpressions, optimizationOptions) {
 		super(specificity, childExpressions, optimizationOptions);
 
 		this.isUpdating = true;
 	}
 
-	ensureUpdateListWrapper (expression) {
+	ensureUpdateListWrapper(expression) {
 		if (expression.isUpdating) {
-			return (dynamicContext, executionParameters) => expression.evaluateWithUpdateList(dynamicContext, executionParameters);
+			return (dynamicContext, executionParameters) =>
+				expression.evaluateWithUpdateList(dynamicContext, executionParameters);
 		}
 
 		return (dynamicContext, executionParameters) => {
@@ -33,13 +34,16 @@ abstract class UpdatingExpression extends Expression {
 		};
 	}
 
-	evaluate (): never {
-		throw new Error('Can not execute an updating expression without catching the pending updates');
+	evaluate(): never {
+		throw new Error(
+			'Can not execute an updating expression without catching the pending updates'
+		);
 	}
 
-	abstract evaluateWithUpdateList (
-		_dynamicContext: DynamicContext | null, 
-		_executionParameters: ExecutionParameters): { next: () => any; };
+	abstract evaluateWithUpdateList(
+		_dynamicContext: DynamicContext | null,
+		_executionParameters: ExecutionParameters
+	): { next: () => any };
 }
 
 export default UpdatingExpression;

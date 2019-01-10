@@ -11,7 +11,7 @@ import QName from '../dataTypes/valueTypes/QName';
 import { errXUTY0013, errXUDY0014, errXUDY0037 } from './XQueryUpdateFacilityErrors';
 import { applyUpdates } from './pulRoutines';
 
-function deepCloneNode (node) {
+function deepCloneNode(node) {
 	// Each copied node receives a new node identity. The parent, children, and attributes properties of the copied nodes are set so as to preserve their inter-node relationships. The parent property of the copy of $node is set to empty. Other properties of the copied nodes are determined as follows:
 
 	// For a copied document node, the document-uri property is set to empty.
@@ -25,7 +25,7 @@ function deepCloneNode (node) {
 	return createNodeValue(node.value.cloneNode(true));
 }
 
-function isCreatedNode (node, createdNodes, domFacade) {
+function isCreatedNode(node, createdNodes, domFacade) {
 	if (createdNodes.includes(node)) {
 		return true;
 	}
@@ -33,38 +33,51 @@ function isCreatedNode (node, createdNodes, domFacade) {
 	return parent ? isCreatedNode(parent, createdNodes, domFacade) : false;
 }
 
-type VariableBinding = {varRef: QName, sourceExpr: Expression, registeredVariable?: string}
+type VariableBinding = { varRef: QName; sourceExpr: Expression; registeredVariable?: string };
 
 class TransformExpression extends UpdatingExpression {
 	_variableBindings: any[];
 	_modifyExpr: Expression;
 	_returnExpr: Expression;
 
-	constructor (variableBindings: Array<VariableBinding>, modifyExpr: Expression, returnExpr: Expression) {
+	constructor(
+		variableBindings: Array<VariableBinding>,
+		modifyExpr: Expression,
+		returnExpr: Expression
+	) {
 		super(
 			new Specificity({}),
-			variableBindings.reduce((childExpressions, variableBinding) => {
-				childExpressions.push(variableBinding.sourceExpr);
-				return childExpressions;
-			}, [modifyExpr, returnExpr]),
+			variableBindings.reduce(
+				(childExpressions, variableBinding) => {
+					childExpressions.push(variableBinding.sourceExpr);
+					return childExpressions;
+				},
+				[modifyExpr, returnExpr]
+			),
 			{
 				canBeStaticallyEvaluated: false,
 				resultOrder: RESULT_ORDERINGS.UNSORTED
-			});
+			}
+		);
 		this._variableBindings = variableBindings;
 		this._modifyExpr = modifyExpr;
 		this._returnExpr = returnExpr;
 	}
 
-	performStaticEvaluation (staticContext) {
+	performStaticEvaluation(staticContext) {
 		staticContext.introduceScope();
-		this._variableBindings.forEach(variableBinding =>
-			variableBinding.registeredVariable = staticContext.registerVariable(variableBinding.varRef.namespaceURI, variableBinding.varRef.localName));
+		this._variableBindings.forEach(
+			variableBinding =>
+				(variableBinding.registeredVariable = staticContext.registerVariable(
+					variableBinding.varRef.namespaceURI,
+					variableBinding.varRef.localName
+				))
+		);
 		super.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
 	}
 
-	evaluateWithUpdateList (dynamicContext, executionParameters) {
+	evaluateWithUpdateList(dynamicContext, executionParameters) {
 		const { domFacade, nodesFactory, documentWriter } = executionParameters;
 
 		const sourceValueIterators = [];
@@ -85,7 +98,11 @@ class TransformExpression extends UpdatingExpression {
 
 						// Each variable binding is processed as follows:
 						if (!sourceValueIterator) {
-							sourceValueIterators[i] = sourceValueIterator = variableBinding.sourceValueIterator = super.ensureUpdateListWrapper(variableBinding.sourceExpr)(dynamicContext, executionParameters);
+							sourceValueIterators[
+								i
+							] = sourceValueIterator = variableBinding.sourceValueIterator = super.ensureUpdateListWrapper(
+								variableBinding.sourceExpr
+							)(dynamicContext, executionParameters);
 						}
 						var sv = sourceValueIterator.next();
 						if (!sv.ready) {
@@ -93,7 +110,10 @@ class TransformExpression extends UpdatingExpression {
 						}
 
 						// The result of evaluating the source expression must be a single node [err:XUTY0013]. Let $node be this single node.
-						if (sv.value.xdmValue.length !== 1 || !isSubTypeOf(sv.value.xdmValue[0].type, 'node()')) {
+						if (
+							sv.value.xdmValue.length !== 1 ||
+							!isSubTypeOf(sv.value.xdmValue[0].type, 'node()')
+						) {
 							throw errXUTY0013();
 						}
 						const node = sv.value.xdmValue[0];
@@ -105,7 +125,8 @@ class TransformExpression extends UpdatingExpression {
 
 						// The variable name is bound to the top-level copied node generated in the previous step. The scope of this variable binding includes all subexpressions of the containing copy modify expression that appear after the variable binding clause, including the source expressions of later variable bindings, but it does not include the source expression to which the current variable name is bound.
 						dynamicContext = dynamicContext.scopeWithVariableBindings({
-							[variableBinding.registeredVariable]: () => SequenceFactory.singleton(copiedNodes)
+							[variableBinding.registeredVariable]: () =>
+								SequenceFactory.singleton(copiedNodes)
 						});
 					}
 				}
@@ -113,7 +134,10 @@ class TransformExpression extends UpdatingExpression {
 				if (!modifyPul) {
 					// The expression in the modify clause is evaluated,
 					if (!modifyValueIterator) {
-						modifyValueIterator = super.ensureUpdateListWrapper(this._modifyExpr)(dynamicContext, executionParameters);
+						modifyValueIterator = super.ensureUpdateListWrapper(this._modifyExpr)(
+							dynamicContext,
+							executionParameters
+						);
 					}
 					const mv = modifyValueIterator.next();
 					if (!mv.ready) {
@@ -140,7 +164,10 @@ class TransformExpression extends UpdatingExpression {
 
 				// The return clause is evaluated, resulting in a pending update list and an XDM instance.
 				if (!returnValueIterator) {
-					returnValueIterator = super.ensureUpdateListWrapper(this._returnExpr)(dynamicContext, executionParameters);
+					returnValueIterator = super.ensureUpdateListWrapper(this._returnExpr)(
+						dynamicContext,
+						executionParameters
+					);
 				}
 				const rv = returnValueIterator.next();
 				if (!rv.ready) {
@@ -150,9 +177,7 @@ class TransformExpression extends UpdatingExpression {
 				//  The result of the copy modify expression is the XDM instance returned, as well as a pending update list constructed by merging the pending update lists returned by any of the copy modify expression's copy or return clause operand expressions using upd:mergeUpdates. During evaluation of the return clause, changes applied to copied nodes by the preceding step are visible.
 				return ready({
 					xdmValue: rv.value.xdmValue,
-					pendingUpdateList: mergeUpdates(
-						rv.value.pendingUpdateList,
-						...toMergePuls)
+					pendingUpdateList: mergeUpdates(rv.value.pendingUpdateList, ...toMergePuls)
 				});
 			}
 		};

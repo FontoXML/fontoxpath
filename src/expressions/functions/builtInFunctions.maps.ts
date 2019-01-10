@@ -10,72 +10,98 @@ import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const mapMerge:FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, mapSequence, optionMap) {
+const mapMerge: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	mapSequence,
+	optionMap
+) {
 	const duplicateKey = SequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
 		executionParameters,
 		staticContext,
 		optionMap,
-		duplicateKey);
+		duplicateKey
+	);
 
-	const duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty() ? 'use-first' : duplicationHandlingValueSequence.first().value;
-	return mapSequence.mapAll(
-		allValues =>
-			SequenceFactory.singleton(new MapValue(allValues.reduce((resultingKeyValuePairs, map) => {
-				(map as MapValue).keyValuePairs.forEach(function (keyValuePair) {
-					const existingPairIndex = resultingKeyValuePairs.findIndex(function (existingPair) {
-						return isSameMapKey(existingPair.key, keyValuePair.key);
-					});
+	const duplicationHandlingStrategy = duplicationHandlingValueSequence.isEmpty()
+		? 'use-first'
+		: duplicationHandlingValueSequence.first().value;
+	return mapSequence.mapAll(allValues =>
+		SequenceFactory.singleton(
+			new MapValue(
+				allValues.reduce((resultingKeyValuePairs, map) => {
+					(map as MapValue).keyValuePairs.forEach(function(keyValuePair) {
+						const existingPairIndex = resultingKeyValuePairs.findIndex(function(
+							existingPair
+						) {
+							return isSameMapKey(existingPair.key, keyValuePair.key);
+						});
 
-					if (existingPairIndex >= 0) {
-						// Duplicate keys, use options to determine what to do
-						switch (duplicationHandlingStrategy) {
-							case 'reject':
-								throw new Error('FOJS0003: Duplicate encountered when merging maps.');
-							case 'use-last':
-								// Use this one
-								resultingKeyValuePairs.splice(existingPairIndex, 1, keyValuePair);
-								return;
-							case 'combine':
-								resultingKeyValuePairs.splice(
-									existingPairIndex,
-									1,
-									{
+						if (existingPairIndex >= 0) {
+							// Duplicate keys, use options to determine what to do
+							switch (duplicationHandlingStrategy) {
+								case 'reject':
+									throw new Error(
+										'FOJS0003: Duplicate encountered when merging maps.'
+									);
+								case 'use-last':
+									// Use this one
+									resultingKeyValuePairs.splice(
+										existingPairIndex,
+										1,
+										keyValuePair
+									);
+									return;
+								case 'combine':
+									resultingKeyValuePairs.splice(existingPairIndex, 1, {
 										key: keyValuePair.key,
-										value: createDoublyIterableSequence(SequenceFactory.create(
-											resultingKeyValuePairs[existingPairIndex].value().getAllValues()
-												.concat(keyValuePair.value().getAllValues())))
+										value: createDoublyIterableSequence(
+											SequenceFactory.create(
+												resultingKeyValuePairs[existingPairIndex]
+													.value()
+													.getAllValues()
+													.concat(keyValuePair.value().getAllValues())
+											)
+										)
 									});
-								return;
-							case 'use-any':
-							case 'use-first':
-							default:
-								return;
+									return;
+								case 'use-any':
+								case 'use-first':
+								default:
+									return;
+							}
 						}
-					}
-					resultingKeyValuePairs.push(keyValuePair);
-				});
-				return resultingKeyValuePairs;
-			}, []))));
-}
+						resultingKeyValuePairs.push(keyValuePair);
+					});
+					return resultingKeyValuePairs;
+				}, [])
+			)
+		)
+	);
+};
 
-const mapPut:FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence, newValueSequence) {
+const mapPut: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	mapSequence,
+	keySequence,
+	newValueSequence
+) {
 	return zipSingleton([mapSequence, keySequence], ([map, newKey]) => {
-
 		const resultingKeyValuePairs = (map as MapValue).keyValuePairs.concat();
-		const indexOfExistingPair = resultingKeyValuePairs.findIndex(function (existingPair) {
+		const indexOfExistingPair = resultingKeyValuePairs.findIndex(function(existingPair) {
 			return isSameMapKey(existingPair.key, newKey);
 		});
 		if (indexOfExistingPair >= 0) {
 			// Duplicate keys, use options to determine what to do
-			resultingKeyValuePairs.splice(
-				indexOfExistingPair,
-				1,
-				{
-					key: newKey,
-					value: createDoublyIterableSequence(newValueSequence)
-				});
+			resultingKeyValuePairs.splice(indexOfExistingPair, 1, {
+				key: newKey,
+				value: createDoublyIterableSequence(newValueSequence)
+			});
 		} else {
 			resultingKeyValuePairs.push({
 				key: newKey,
@@ -84,62 +110,104 @@ const mapPut:FunctionDefinitionType = function(_dynamicContext, _executionParame
 		}
 		return SequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
 	});
-}
+};
 
-const mapEntry:FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, keySequence, value) {
-	return keySequence.map(onlyKey => new MapValue([{ key: onlyKey, value: createDoublyIterableSequence(value) }]));
-}
+const mapEntry: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	keySequence,
+	value
+) {
+	return keySequence.map(
+		onlyKey => new MapValue([{ key: onlyKey, value: createDoublyIterableSequence(value) }])
+	);
+};
 
-const mapSize:FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, mapSequence) {
-	return mapSequence.map(onlyMap => createAtomicValue(
-		(onlyMap as MapValue).keyValuePairs.length,
-		'xs:integer'));
-}
+const mapSize: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	mapSequence
+) {
+	return mapSequence.map(onlyMap =>
+		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, 'xs:integer')
+	);
+};
 
-const mapKeys:FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, mapSequence) {
-	return zipSingleton([mapSequence], ([map]) => SequenceFactory.create((map as MapValue).keyValuePairs.map(pair => pair.key)));
-}
+const mapKeys: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	mapSequence
+) {
+	return zipSingleton([mapSequence], ([map]) =>
+		SequenceFactory.create((map as MapValue).keyValuePairs.map(pair => pair.key))
+	);
+};
 
-const mapContains:FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence) {
+const mapContains: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	mapSequence,
+	keySequence
+) {
 	return zipSingleton([mapSequence, keySequence], ([map, key]) => {
-		const doesContain = (map as MapValue).keyValuePairs.some(pair => isSameMapKey(pair.key, key));
-		return doesContain ? SequenceFactory.singletonTrueSequence() : SequenceFactory.singletonFalseSequence();
+		const doesContain = (map as MapValue).keyValuePairs.some(pair =>
+			isSameMapKey(pair.key, key)
+		);
+		return doesContain
+			? SequenceFactory.singletonTrueSequence()
+			: SequenceFactory.singletonFalseSequence();
 	});
-}
+};
 
-const mapRemove:FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, mapSequence, keySequence) {
+const mapRemove: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	mapSequence,
+	keySequence
+) {
 	return zipSingleton([mapSequence], ([map]) => {
-
 		const resultingKeyValuePairs = (map as MapValue).keyValuePairs.concat();
 		return keySequence.mapAll(keys => {
-			keys.forEach(function (key) {
-				const indexOfExistingPair = resultingKeyValuePairs.findIndex(existingPair => isSameMapKey(existingPair.key, key));
+			keys.forEach(function(key) {
+				const indexOfExistingPair = resultingKeyValuePairs.findIndex(existingPair =>
+					isSameMapKey(existingPair.key, key)
+				);
 				if (indexOfExistingPair >= 0) {
-					resultingKeyValuePairs.splice(
-						indexOfExistingPair,
-						1);
+					resultingKeyValuePairs.splice(indexOfExistingPair, 1);
 				}
 			});
 			return SequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
 		});
 	});
-}
+};
 
-const mapForEach:FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, mapSequence, functionItemSequence) {
-	return zipSingleton(
-		[mapSequence, functionItemSequence],
-		([map, functionItem]) => {
-			return concatSequences((map as MapValue).keyValuePairs.map(function (keyValuePair) {
+const mapForEach: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	mapSequence,
+	functionItemSequence
+) {
+	return zipSingleton([mapSequence, functionItemSequence], ([map, functionItem]) => {
+		return concatSequences(
+			(map as MapValue).keyValuePairs.map(function(keyValuePair) {
 				return functionItem.value.call(
 					undefined,
 					dynamicContext,
 					executionParameters,
 					staticContext,
 					SequenceFactory.singleton(keyValuePair.key),
-					keyValuePair.value());
-			}));
-		});
-	}
+					keyValuePair.value()
+				);
+			})
+		);
+	});
+};
 
 export default {
 	declarations: [
@@ -198,16 +266,24 @@ export default {
 			localName: 'merge',
 			argumentTypes: ['map(*)*'],
 			returnType: 'map(*)',
-			callFunction: function (dynamicContext, executionParameters, staticContext, maps) {
+			callFunction: function(dynamicContext, executionParameters, staticContext, maps) {
 				return mapMerge(
 					dynamicContext,
 					executionParameters,
 					staticContext,
 					maps,
-					SequenceFactory.singleton(new MapValue([{
-						key: createAtomicValue('duplicates', 'xs:string'),
-						value: () => SequenceFactory.singleton(createAtomicValue('use-first', 'xs:string'))
-					}])));
+					SequenceFactory.singleton(
+						new MapValue([
+							{
+								key: createAtomicValue('duplicates', 'xs:string'),
+								value: () =>
+									SequenceFactory.singleton(
+										createAtomicValue('use-first', 'xs:string')
+									)
+							}
+						])
+					)
+				);
 			}
 		},
 
@@ -234,7 +310,6 @@ export default {
 			returnType: 'xs:integer',
 			callFunction: mapSize
 		}
-
 	],
 	functions: {
 		get: mapGet,

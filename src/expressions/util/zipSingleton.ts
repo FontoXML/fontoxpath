@@ -6,7 +6,10 @@ import Value from '../dataTypes/Value';
 
 type CallbackType = (values: Array<Value>) => ISequence;
 
-export default function zipSingleton (sequences: Array<ISequence>, callback: CallbackType): ISequence {
+export default function zipSingleton(
+	sequences: Array<ISequence>,
+	callback: CallbackType
+): ISequence {
 	const firstValues = sequences.map(seq => seq.tryGetFirst());
 	if (firstValues.every(val => val.ready)) {
 		// Skip sequence if we can resolve immediately
@@ -22,7 +25,7 @@ export default function zipSingleton (sequences: Array<ISequence>, callback: Cal
 					if (firstValues[i].ready) {
 						continue;
 					}
-					const val = firstValues[i] = sequences[i].tryGetFirst();
+					const val = (firstValues[i] = sequences[i].tryGetFirst());
 					if (!val.ready) {
 						allReady = false;
 						return notReady(val.promise);

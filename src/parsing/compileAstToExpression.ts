@@ -68,7 +68,7 @@ const COMPILATION_OPTIONS = {
 	XQUERY_UPDATING_MODE: { allowXQuery: true, allowUpdating: true }
 };
 
-function disallowUpdating (compilationOptions) {
+function disallowUpdating(compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		return COMPILATION_OPTIONS.XPATH_MODE;
 	}
@@ -81,7 +81,7 @@ function disallowUpdating (compilationOptions) {
 function compile(ast: Array<any>, compilationOptions): Expression {
 	const name = ast[0];
 	switch (name) {
-			// Operators
+		// Operators
 		case 'andOp':
 			return andOp(ast, compilationOptions);
 		case 'orOp':
@@ -109,7 +109,7 @@ function compile(ast: Array<any>, compilationOptions): Expression {
 		case 'rangeSequenceExpr':
 			return rangeSequenceExpr(ast, compilationOptions);
 
-			// Compares
+		// Compares
 		case 'equalOp':
 		case 'notEqualOp':
 		case 'lessThanOrEqualOp':
@@ -127,13 +127,13 @@ function compile(ast: Array<any>, compilationOptions): Expression {
 		case 'nodeAfterOp':
 			return compare(ast, compilationOptions);
 
-			// Path
+		// Path
 		case 'pathExpr':
 			return pathExpr(ast, compilationOptions);
 		case 'contextItemExpr':
 			return new ContextItemExpression();
 
-			// Functions
+		// Functions
 		case 'functionCallExpr':
 			return functionCall(ast, compilationOptions);
 		case 'inlineFunctionExpr':
@@ -145,7 +145,7 @@ function compile(ast: Array<any>, compilationOptions): Expression {
 		case 'namedFunctionRef':
 			return namedFunctionRef(ast, compilationOptions);
 
-			// Literals
+		// Literals
 		case 'integerConstantExpr':
 			return integerConstantExpr(ast, compilationOptions);
 		case 'stringConstantExpr':
@@ -155,17 +155,17 @@ function compile(ast: Array<any>, compilationOptions): Expression {
 		case 'doubleConstantExpr':
 			return doubleConstantExpr(ast, compilationOptions);
 
-			// Variables
+		// Variables
 		case 'varRef':
 			return varRef(ast, compilationOptions);
 		case 'flworExpr':
 			return flworExpression(ast, compilationOptions);
 
-			// Quantified
+		// Quantified
 		case 'quantifiedExpr':
 			return quantified(ast, compilationOptions);
 
-			// Conditional
+		// Conditional
 		case 'ifThenElseExpr':
 			return IfThenElseExpr(ast, compilationOptions);
 
@@ -185,7 +185,7 @@ function compile(ast: Array<any>, compilationOptions): Expression {
 		case 'arrayConstructor':
 			return arrayConstructor(ast, compilationOptions);
 
-			// XQuery node constructors
+		// XQuery node constructors
 		case 'elementConstructor':
 			return dirElementConstructor(ast, compilationOptions);
 		case 'attributeConstructor':
@@ -201,7 +201,7 @@ function compile(ast: Array<any>, compilationOptions): Expression {
 		case 'CDataSection':
 			return CDataSection(ast, compilationOptions);
 
-			// XQuery update facility
+		// XQuery update facility
 		case 'deleteExpr':
 			return deleteExpression(ast, compilationOptions);
 		case 'insertExpr':
@@ -217,9 +217,12 @@ function compile(ast: Array<any>, compilationOptions): Expression {
 	}
 }
 
-function compileTest(ast: Array<any>, compilationOptions: { allowXQuery: boolean; }): TestAbstractExpression {
+function compileTest(
+	ast: Array<any>,
+	compilationOptions: { allowXQuery: boolean }
+): TestAbstractExpression {
 	switch (ast[0]) {
-			// Tests
+		// Tests
 		case 'nameTest':
 			return nameTest(ast, compilationOptions);
 		case 'piTest':
@@ -235,306 +238,364 @@ function compileTest(ast: Array<any>, compilationOptions: { allowXQuery: boolean
 		case 'elementTest':
 			return elementTest(ast, compilationOptions);
 		case 'anyKindTest':
-            return anyKindTest();
-        case 'anyMapTest':
-            return anyMapTest(ast, compilationOptions);
-        case 'anyArrayTest':
-            return anyArrayTest(ast, compilationOptions);
-        case 'Wildcard':
-            return wildcard(ast, compilationOptions);
-        case 'atomicType':
+			return anyKindTest();
+		case 'anyMapTest':
+			return anyMapTest(ast, compilationOptions);
+		case 'anyArrayTest':
+			return anyArrayTest(ast, compilationOptions);
+		case 'Wildcard':
+			return wildcard(ast, compilationOptions);
+		case 'atomicType':
 			return typeTest(ast, compilationOptions);
 		case 'anyItemType':
 			return anyItemTest();
-        default:
-            throw new Error('No selector counterpart for: ' + ast[0] + '.');
-    }
+		default:
+			throw new Error('No selector counterpart for: ' + ast[0] + '.');
+	}
 }
 
 function arrayConstructor(ast, compilationOptions) {
-    const arrConstructor = astHelper.getFirstChild(ast, '*');
-    const members = astHelper.getChildren(arrConstructor, 'arrayElem')
-        .map(arrayElem => compile(astHelper.getFirstChild(arrayElem, '*'), disallowUpdating(compilationOptions)));
-    switch (arrConstructor[0]) {
-        case 'curlyArray':
-            return new CurlyArrayConstructor(members);
-        case 'squareArray':
-            return new SquareArrayConstructor(members);
-        default:
-            throw new Error('Unrecognized arrayType: ' + arrConstructor[0]);
-    }
+	const arrConstructor = astHelper.getFirstChild(ast, '*');
+	const members = astHelper
+		.getChildren(arrConstructor, 'arrayElem')
+		.map(arrayElem =>
+			compile(astHelper.getFirstChild(arrayElem, '*'), disallowUpdating(compilationOptions))
+		);
+	switch (arrConstructor[0]) {
+		case 'curlyArray':
+			return new CurlyArrayConstructor(members);
+		case 'squareArray':
+			return new SquareArrayConstructor(members);
+		default:
+			throw new Error('Unrecognized arrayType: ' + arrConstructor[0]);
+	}
 }
 
 function mapConstructor(ast, compilationOptions) {
-    return new MapConstructor(
-        astHelper.getChildren(ast, 'mapConstructorEntry')
-            .map(keyValuePair => ({
-                key: compile(astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']), disallowUpdating(compilationOptions)),
-                value: compile(astHelper.followPath(keyValuePair, ['mapValueExpr', '*']), disallowUpdating(compilationOptions))
-            })));
+	return new MapConstructor(
+		astHelper.getChildren(ast, 'mapConstructorEntry').map(keyValuePair => ({
+			key: compile(
+				astHelper.followPath(keyValuePair, ['mapKeyExpr', '*']),
+				disallowUpdating(compilationOptions)
+			),
+			value: compile(
+				astHelper.followPath(keyValuePair, ['mapValueExpr', '*']),
+				disallowUpdating(compilationOptions)
+			)
+		}))
+	);
 }
 
 function unwrapBinaryOperator(operatorName, ast, compilationOptions) {
-    const compiledAstNodes = [];
-    function unwrapInner(ast) {
-        const firstOperand = astHelper.getFirstChild(ast, 'firstOperand')[1];
-        const secondOperand = astHelper.getFirstChild(ast, 'secondOperand')[1];
+	const compiledAstNodes = [];
+	function unwrapInner(ast) {
+		const firstOperand = astHelper.getFirstChild(ast, 'firstOperand')[1];
+		const secondOperand = astHelper.getFirstChild(ast, 'secondOperand')[1];
 
-        if (firstOperand[0] === operatorName) {
-            unwrapInner(firstOperand);
-        } else {
-            compiledAstNodes.push(compile(firstOperand as AST, compilationOptions));
-        }
-        if (secondOperand[0] === operatorName) {
-            unwrapInner(secondOperand);
-        } else {
-            compiledAstNodes.push(compile(secondOperand as AST, compilationOptions));
-        }
-    }
-    unwrapInner(ast);
+		if (firstOperand[0] === operatorName) {
+			unwrapInner(firstOperand);
+		} else {
+			compiledAstNodes.push(compile(firstOperand as AST, compilationOptions));
+		}
+		if (secondOperand[0] === operatorName) {
+			unwrapInner(secondOperand);
+		} else {
+			compiledAstNodes.push(compile(secondOperand as AST, compilationOptions));
+		}
+	}
+	unwrapInner(ast);
 
-    return compiledAstNodes;
+	return compiledAstNodes;
 }
 
 function andOp(ast, compilationOptions) {
-    return new AndOperator(
-        unwrapBinaryOperator('andOp', ast, disallowUpdating(compilationOptions))
-    );
+	return new AndOperator(
+		unwrapBinaryOperator('andOp', ast, disallowUpdating(compilationOptions))
+	);
 }
 
 function orOp(ast, compilationOptions) {
-    return new OrOperator(
-        unwrapBinaryOperator('orOp', ast, disallowUpdating(compilationOptions))
-    );
+	return new OrOperator(unwrapBinaryOperator('orOp', ast, disallowUpdating(compilationOptions)));
 }
 
 function binaryOperator(ast, compilationOptions) {
-    const kind = ast[0];
-    const a = compile(astHelper.followPath(ast, ['firstOperand', '*']), disallowUpdating(compilationOptions));
-    const b = compile(astHelper.followPath(ast, ['secondOperand', '*']), disallowUpdating(compilationOptions));
+	const kind = ast[0];
+	const a = compile(
+		astHelper.followPath(ast, ['firstOperand', '*']),
+		disallowUpdating(compilationOptions)
+	);
+	const b = compile(
+		astHelper.followPath(ast, ['secondOperand', '*']),
+		disallowUpdating(compilationOptions)
+	);
 
-    return new BinaryOperator(kind, a, b);
+	return new BinaryOperator(kind, a, b);
 }
 
 function castAs(ast, compilationOptions) {
-    const expression = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'), disallowUpdating(compilationOptions));
+	const expression = compile(
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
+		disallowUpdating(compilationOptions)
+	);
 
-    const singleType = astHelper.getFirstChild(ast, 'singleType');
-    const targetType = astHelper.getQName(astHelper.getFirstChild(singleType, 'atomicType'));
-    const optional = astHelper.getFirstChild(singleType, 'optional') !== null;
+	const singleType = astHelper.getFirstChild(ast, 'singleType');
+	const targetType = astHelper.getQName(astHelper.getFirstChild(singleType, 'atomicType'));
+	const optional = astHelper.getFirstChild(singleType, 'optional') !== null;
 
-    return new CastAsOperator(expression, targetType, optional);
+	return new CastAsOperator(expression, targetType, optional);
 }
 
 function castableAs(ast, compilationOptions) {
-    const expression = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'), disallowUpdating(compilationOptions));
+	const expression = compile(
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
+		disallowUpdating(compilationOptions)
+	);
 
-    const singleType = astHelper.getFirstChild(ast, 'singleType');
-    const targetType = astHelper.getQName(astHelper.getFirstChild(singleType, 'atomicType'));
-    const optional = astHelper.getFirstChild(singleType, 'optional') !== null;
+	const singleType = astHelper.getFirstChild(ast, 'singleType');
+	const targetType = astHelper.getQName(astHelper.getFirstChild(singleType, 'atomicType'));
+	const optional = astHelper.getFirstChild(singleType, 'optional') !== null;
 
-    return new CastableAsOperator(expression, targetType, optional);
+	return new CastableAsOperator(expression, targetType, optional);
 }
 
 // Binary compare (=, !=, le, is, <<, >>, etc)
 function compare(ast, compilationOptions) {
-    return new Compare(
-        ast[0],
-        compile(astHelper.followPath(ast, ['firstOperand', '*']), disallowUpdating(compilationOptions)),
-        compile(astHelper.followPath(ast, ['secondOperand', '*']), disallowUpdating(compilationOptions)));
+	return new Compare(
+		ast[0],
+		compile(
+			astHelper.followPath(ast, ['firstOperand', '*']),
+			disallowUpdating(compilationOptions)
+		),
+		compile(
+			astHelper.followPath(ast, ['secondOperand', '*']),
+			disallowUpdating(compilationOptions)
+		)
+	);
 }
 
 function IfThenElseExpr(ast, compilationOptions) {
-    return new IfExpression(
-        compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'), disallowUpdating(compilationOptions)),
-        compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'), compilationOptions) as PossiblyUpdatingExpression,
-        compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'), compilationOptions) as PossiblyUpdatingExpression);
+	return new IfExpression(
+		compile(
+			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'ifClause'), '*'),
+			disallowUpdating(compilationOptions)
+		),
+		compile(
+			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'thenClause'), '*'),
+			compilationOptions
+		) as PossiblyUpdatingExpression,
+		compile(
+			astHelper.getFirstChild(astHelper.getFirstChild(ast, 'elseClause'), '*'),
+			compilationOptions
+		) as PossiblyUpdatingExpression
+	);
 }
 
 function flworExpression(ast, compilationOptions) {
-    const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
-    const returnClauseExpression = astHelper.getFirstChild(intermediateClausesAndReturnClause[intermediateClausesAndReturnClause.length - 1], '*');
-    const intermediateClauses = intermediateClausesAndReturnClause.slice(0, -1);
+	const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
+	const returnClauseExpression = astHelper.getFirstChild(
+		intermediateClausesAndReturnClause[intermediateClausesAndReturnClause.length - 1],
+		'*'
+	);
+	const intermediateClauses = intermediateClausesAndReturnClause.slice(0, -1);
 
-    if (intermediateClauses.length) {
-        if (!compilationOptions.allowXQuery) {
-            throw new Error('XPST0003: Use of XQuery FLWOR expressions in XPath is no allowed');
-        }
-        throw new Error('Not implemented: Intermediate clauses in flwor expressions are not implemented yet');
-    }
+	if (intermediateClauses.length) {
+		if (!compilationOptions.allowXQuery) {
+			throw new Error('XPST0003: Use of XQuery FLWOR expressions in XPath is no allowed');
+		}
+		throw new Error(
+			'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'
+		);
+	}
 
-    if (initialClause[0] === 'forClause') {
-        const forClauseItems = astHelper.getChildren(initialClause, '*');
-        return forClauseItems
-            .reduceRight(
-                (returnExpr, forClauseItem) => {
-                    const expression = astHelper.followPath(forClauseItem, ['forExpr', '*']);
-                    return new ForExpression(
-                        astHelper.getQName(astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])),
-                        compile(expression, disallowUpdating(compilationOptions)),
-                        returnExpr);
-                },
-                compile(returnClauseExpression, compilationOptions));
-    }
+	if (initialClause[0] === 'forClause') {
+		const forClauseItems = astHelper.getChildren(initialClause, '*');
+		return forClauseItems.reduceRight((returnExpr, forClauseItem) => {
+			const expression = astHelper.followPath(forClauseItem, ['forExpr', '*']);
+			return new ForExpression(
+				astHelper.getQName(
+					astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])
+				),
+				compile(expression, disallowUpdating(compilationOptions)),
+				returnExpr
+			);
+		}, compile(returnClauseExpression, compilationOptions));
+	}
 
-    if (initialClause[0] === 'letClause') {
-        const letClauseItems = astHelper.getChildren(initialClause, '*');
-        return letClauseItems
-            .reduceRight(
-                (returnExpr, letClauseItem) => {
-                    const expression = astHelper.followPath(letClauseItem, ['letExpr', '*']);
-                    return new LetExpression(
-                        astHelper.getQName(astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])),
-                        compile(expression, disallowUpdating(compilationOptions)),
-                        returnExpr);
-                },
-                compile(returnClauseExpression, compilationOptions));
-    }
+	if (initialClause[0] === 'letClause') {
+		const letClauseItems = astHelper.getChildren(initialClause, '*');
+		return letClauseItems.reduceRight((returnExpr, letClauseItem) => {
+			const expression = astHelper.followPath(letClauseItem, ['letExpr', '*']);
+			return new LetExpression(
+				astHelper.getQName(
+					astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])
+				),
+				compile(expression, disallowUpdating(compilationOptions)),
+				returnExpr
+			);
+		}, compile(returnClauseExpression, compilationOptions));
+	}
 
-    throw new Error(`Not implemented: ${initialClause[0]} is not supported in a flwor expression`);
+	throw new Error(`Not implemented: ${initialClause[0]} is not supported in a flwor expression`);
 }
 
 function functionCall(ast, compilationOptions) {
-    const functionName = astHelper.getFirstChild(ast, 'functionName');
-    const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
-    return new FunctionCall(
-        new NamedFunctionRef(
-            astHelper.getQName(functionName),
-            functionArguments.length),
-        functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
+	const functionName = astHelper.getFirstChild(ast, 'functionName');
+	const functionArguments = astHelper.getChildren(astHelper.getFirstChild(ast, 'arguments'), '*');
+	return new FunctionCall(
+		new NamedFunctionRef(astHelper.getQName(functionName), functionArguments.length),
+		functionArguments.map(arg =>
+			arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)
+		)
+	);
 }
 
 function arrowExpr(ast, compilationOptions) {
-    const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
+	const argExpr = astHelper.followPath(ast, ['argExpr', '*']);
 
-    // Each part an EQName, expression, or arguments passed to the previous part
-    const parts = astHelper.getChildren(ast, '*').slice(1);
+	// Each part an EQName, expression, or arguments passed to the previous part
+	const parts = astHelper.getChildren(ast, '*').slice(1);
 
-    let args = [compile(argExpr, compilationOptions)];
-    for (let i = 0; i < parts.length; i++) {
-        if (parts[i][0] === 'arguments') {
-            continue;
-        }
-        if (parts[i + 1][0] === 'arguments') {
-            const functionArguments = astHelper.getChildren(parts[i + 1], '*');
-            args = args.concat(functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)));
-        }
+	let args = [compile(argExpr, compilationOptions)];
+	for (let i = 0; i < parts.length; i++) {
+		if (parts[i][0] === 'arguments') {
+			continue;
+		}
+		if (parts[i + 1][0] === 'arguments') {
+			const functionArguments = astHelper.getChildren(parts[i + 1], '*');
+			args = args.concat(
+				functionArguments.map(arg =>
+					arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)
+				)
+			);
+		}
 
-        const func = parts[i][0] === 'EQName' ?
-            new NamedFunctionRef(astHelper.getQName(parts[i]), args.length) :
-            compile(parts[i], disallowUpdating(compilationOptions));
-        args = [new FunctionCall(func, args)];
-
-    }
-    return args[0];
+		const func =
+			parts[i][0] === 'EQName'
+				? new NamedFunctionRef(astHelper.getQName(parts[i]), args.length)
+				: compile(parts[i], disallowUpdating(compilationOptions));
+		args = [new FunctionCall(func, args)];
+	}
+	return args[0];
 }
 
 function dynamicFunctionInvocationExpr(ast, compilationOptions) {
-    const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
+	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
 
-    const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
-    let args = [];
-    if (argumentsAst) {
-        const functionArguments = astHelper.getChildren(argumentsAst, '*');
-        args = functionArguments.map(arg => arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions));
-    }
+	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
+	let args = [];
+	if (argumentsAst) {
+		const functionArguments = astHelper.getChildren(argumentsAst, '*');
+		args = functionArguments.map(arg =>
+			arg[0] === 'argumentPlaceholder' ? null : compile(arg, compilationOptions)
+		);
+	}
 
-    return new FunctionCall(
-        compile(functionItemContent, compilationOptions),
-        args);
+	return new FunctionCall(compile(functionItemContent, compilationOptions), args);
 }
 
 function namedFunctionRef(ast, _compilationOptions) {
-    const functionName = astHelper.getFirstChild(ast, 'functionName');
-    const arity = astHelper.getTextContent(astHelper.followPath(ast, ['integerConstantExpr', 'value']));
-    return new NamedFunctionRef(astHelper.getQName(functionName), parseInt(arity, 10));
+	const functionName = astHelper.getFirstChild(ast, 'functionName');
+	const arity = astHelper.getTextContent(
+		astHelper.followPath(ast, ['integerConstantExpr', 'value'])
+	);
+	return new NamedFunctionRef(astHelper.getQName(functionName), parseInt(arity, 10));
 }
 
 function typeDeclarationToType(typeDeclarationAst) {
-    const rawType = astHelper.getFirstChild(typeDeclarationAst, '*');
-    let typeName;
-    switch (rawType[0]) {
-        case 'atomicType': {
-            const returnTypeQName = astHelper.getQName(rawType);
-            typeName = returnTypeQName.prefix ?
-                returnTypeQName.prefix + ':' + returnTypeQName.localName :
-                returnTypeQName.localName;
-            break;
-        }
-        case 'anyKindTest':
-            typeName = 'node()';
-            break;
-        case 'anyItemType':
-            typeName = 'item()';
-            break;
-        case 'textTest':
-            typeName = 'text()';
-            break;
-        default:
-            throw new Error(`Unrecognized type "${rawType[0]}".`);
-    }
-    const occurrence = astHelper.getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
+	const rawType = astHelper.getFirstChild(typeDeclarationAst, '*');
+	let typeName;
+	switch (rawType[0]) {
+		case 'atomicType': {
+			const returnTypeQName = astHelper.getQName(rawType);
+			typeName = returnTypeQName.prefix
+				? returnTypeQName.prefix + ':' + returnTypeQName.localName
+				: returnTypeQName.localName;
+			break;
+		}
+		case 'anyKindTest':
+			typeName = 'node()';
+			break;
+		case 'anyItemType':
+			typeName = 'item()';
+			break;
+		case 'textTest':
+			typeName = 'text()';
+			break;
+		default:
+			throw new Error(`Unrecognized type "${rawType[0]}".`);
+	}
+	const occurrence = astHelper.getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
 
-    return {
-        type: typeName,
-        occurrence: occurrence ? astHelper.getTextContent(occurrence) as ('' | '?' | '+' | '*') : ''
-    } as TypeDeclaration;
+	return {
+		type: typeName,
+		occurrence: occurrence ? (astHelper.getTextContent(occurrence) as '' | '?' | '+' | '*') : ''
+	} as TypeDeclaration;
 }
 
 function inlineFunction(ast, compilationOptions) {
-    const params = astHelper.getChildren(astHelper.getFirstChild(ast, 'paramList'), '*');
-    const returnTypeDecl = astHelper.getFirstChild(ast, 'typeDeclaration');
-    const functionBody = astHelper.followPath(ast, ['functionBody', '*']);
+	const params = astHelper.getChildren(astHelper.getFirstChild(ast, 'paramList'), '*');
+	const returnTypeDecl = astHelper.getFirstChild(ast, 'typeDeclaration');
+	const functionBody = astHelper.followPath(ast, ['functionBody', '*']);
 
-    return new InlineFunction(
-        params.map(param => {
-            const paramTypeDecl = astHelper.getFirstChild(param, 'typeDeclaration');
-            return {
-                name: astHelper.getQName(astHelper.getFirstChild(param, 'varName')),
-                type: paramTypeDecl ? typeDeclarationToType(paramTypeDecl) : { type: 'item()', occurrence: '*' } as TypeDeclaration
-            };
-        }),
-        returnTypeDecl ? typeDeclarationToType(returnTypeDecl) : { type: 'item()', occurrence: '*' },
-        functionBody ? compile(functionBody, compilationOptions) : new SequenceOperator([]));
+	return new InlineFunction(
+		params.map(param => {
+			const paramTypeDecl = astHelper.getFirstChild(param, 'typeDeclaration');
+			return {
+				name: astHelper.getQName(astHelper.getFirstChild(param, 'varName')),
+				type: paramTypeDecl
+					? typeDeclarationToType(paramTypeDecl)
+					: ({ type: 'item()', occurrence: '*' } as TypeDeclaration)
+			};
+		}),
+		returnTypeDecl
+			? typeDeclarationToType(returnTypeDecl)
+			: { type: 'item()', occurrence: '*' },
+		functionBody ? compile(functionBody, compilationOptions) : new SequenceOperator([])
+	);
 }
 
 function instanceOf(ast, compilationOptions) {
-    const expression = compile(astHelper.followPath(ast, ['argExpr', '*']), compilationOptions);
-    const sequenceType = astHelper.followPath(ast, ['sequenceType', '*']);
-    const occurrence = astHelper.followPath(ast, ['sequenceType', 'occurrenceIndicator']);
+	const expression = compile(astHelper.followPath(ast, ['argExpr', '*']), compilationOptions);
+	const sequenceType = astHelper.followPath(ast, ['sequenceType', '*']);
+	const occurrence = astHelper.followPath(ast, ['sequenceType', 'occurrenceIndicator']);
 
-    return new InstanceOfOperator(
-        expression,
-        compile(sequenceType, disallowUpdating(compilationOptions)),
-        occurrence ? astHelper.getTextContent(occurrence) : '');
+	return new InstanceOfOperator(
+		expression,
+		compile(sequenceType, disallowUpdating(compilationOptions)),
+		occurrence ? astHelper.getTextContent(occurrence) : ''
+	);
 }
 
 function integerConstantExpr(ast, _compilationOptions) {
-    return new Literal(
-        astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-        'xs:integer');
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		'xs:integer'
+	);
 }
 
 function stringConstantExpr(ast, _compilationOptions) {
-    return new Literal(
-        astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-        'xs:string');
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		'xs:string'
+	);
 }
 
 function decimalConstantExpr(ast, _compilationOptions) {
-    return new Literal(
-        astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-        'xs:decimal');
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		'xs:decimal'
+	);
 }
 
 function doubleConstantExpr(ast, _compilationOptions) {
-    return new Literal(
-        astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-        'xs:double');
+	return new Literal(
+		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
+		'xs:double'
+	);
 }
 
 function nameTest(ast, _compilationOptions) {
-    return new NameTest(astHelper.getQName(ast));
+	return new NameTest(astHelper.getQName(ast));
 }
 
 function anyKindTest() {
@@ -545,8 +606,7 @@ function anyItemTest() {
 	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'item()' });
 }
 
-
-function pathExpr (ast, compilationOptions) {
+function pathExpr(ast, compilationOptions) {
 	const rawSteps = astHelper.getChildren(ast, 'stepExpr');
 	let hasAxisStep = false;
 	const steps = rawSteps.map(step => {
@@ -627,11 +687,13 @@ function pathExpr (ast, compilationOptions) {
 		if (!predicates) {
 			return stepExpression;
 		}
-		return astHelper.getChildren(predicates, '*')
+		return astHelper
+			.getChildren(predicates, '*')
 			.reduce(
-				(innerStep, predicate) => new Filter(innerStep, compile(predicate, disallowUpdating(compilationOptions))),
-				stepExpression);
-
+				(innerStep, predicate) =>
+					new Filter(innerStep, compile(predicate, disallowUpdating(compilationOptions))),
+				stepExpression
+			);
 	});
 
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
@@ -646,9 +708,11 @@ function pathExpr (ast, compilationOptions) {
 
 	// We do not have to sort the result of steps expressions when
 	// they already result to a ordered set
-	if (!isAbsolute &&
+	if (
+		!isAbsolute &&
 		steps.length === 1 &&
-		steps[0].expectedResultOrder === RESULT_ORDERINGS.SORTED) {
+		steps[0].expectedResultOrder === RESULT_ORDERINGS.SORTED
+	) {
 		return steps[0];
 	}
 
@@ -662,7 +726,7 @@ function pathExpr (ast, compilationOptions) {
 	return pathExpr;
 }
 
-function piTest (ast, _compilationOptions) {
+function piTest(ast, _compilationOptions) {
 	const piTarget = astHelper.getFirstChild(ast, 'piTarget');
 	if (piTarget) {
 		return new PITest(astHelper.getTextContent(piTarget));
@@ -670,69 +734,83 @@ function piTest (ast, _compilationOptions) {
 	return new KindTest(7);
 }
 
-function commentTest (_ast, _compilationOptions) {
+function commentTest(_ast, _compilationOptions) {
 	return new KindTest(8);
 }
 
-function documentTest (_ast, _compilationOptions) {
+function documentTest(_ast, _compilationOptions) {
 	return new KindTest(9);
 }
 
-function elementTest (ast, _compilationOptions) {
+function elementTest(ast, _compilationOptions) {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
 	if (!elementName || star) {
 		return new KindTest(1);
 	}
-	return new NameTest(astHelper.getQName(astHelper.getFirstChild(elementName, 'QName')), { kind: 1 });
+	return new NameTest(astHelper.getQName(astHelper.getFirstChild(elementName, 'QName')), {
+		kind: 1
+	});
 }
 
-function attributeTest (ast, _compilationOptions) {
+function attributeTest(ast, _compilationOptions) {
 	const attributeName = astHelper.getFirstChild(ast, 'attributeName');
 	const star = attributeName && astHelper.getFirstChild(attributeName, 'star');
 	if (!attributeName || star) {
 		return new KindTest(2);
 	}
-	return new NameTest(astHelper.getQName(astHelper.getFirstChild(attributeName, 'QName')), { kind: 2 });
+	return new NameTest(astHelper.getQName(astHelper.getFirstChild(attributeName, 'QName')), {
+		kind: 2
+	});
 }
 
-function textTest (_ast, _compilationOptions) {
+function textTest(_ast, _compilationOptions) {
 	return new KindTest(3);
 }
 
-function quantified (ast, compilationOptions) {
+function quantified(ast, compilationOptions) {
 	const quantifier = astHelper.getTextContent(astHelper.getFirstChild(ast, 'quantifier'));
 	const predicateExpr = astHelper.followPath(ast, ['predicateExpr', '*']);
-	const quantifierInClauses = astHelper.getChildren(ast, 'quantifiedExprInClause')
+	const quantifierInClauses = astHelper
+		.getChildren(ast, 'quantifiedExprInClause')
 		.map(inClause => {
-			const name = astHelper.getQName(astHelper.followPath(inClause, ['typedVariableBinding', 'varName']));
+			const name = astHelper.getQName(
+				astHelper.followPath(inClause, ['typedVariableBinding', 'varName'])
+			);
 			const sourceExpr = astHelper.followPath(inClause, ['sourceExpr', '*']);
 
 			return { name, sourceExpr: compile(sourceExpr, disallowUpdating(compilationOptions)) };
 		});
 
-	return new QuantifiedExpression(quantifier, quantifierInClauses, compile(predicateExpr, disallowUpdating(compilationOptions)));
+	return new QuantifiedExpression(
+		quantifier,
+		quantifierInClauses,
+		compile(predicateExpr, disallowUpdating(compilationOptions))
+	);
 }
 
-function sequence (ast, compilationOptions) {
-	const childExpressions = astHelper.getChildren(ast, '*').map(arg => compile(arg, compilationOptions));
+function sequence(ast, compilationOptions) {
+	const childExpressions = astHelper
+		.getChildren(ast, '*')
+		.map(arg => compile(arg, compilationOptions));
 	if (childExpressions.length === 1) {
 		return childExpressions[0];
 	}
-	return new SequenceOperator(astHelper.getChildren(ast, '*').map(arg => compile(arg, compilationOptions)));
+	return new SequenceOperator(
+		astHelper.getChildren(ast, '*').map(arg => compile(arg, compilationOptions))
+	);
 }
 
-function simpleMap (ast, compilationOptions) {
-	return astHelper.getChildren(ast, '*')
-		.reduce((lhs: Expression, rhs: AST) => {
-			if (lhs === null) {
-				return compile(rhs, disallowUpdating(compilationOptions));
-			}
-			return new SimpleMapOperator(lhs, compile(rhs, disallowUpdating(compilationOptions)));
-		}, null);
+function simpleMap(ast, compilationOptions) {
+	return astHelper.getChildren(ast, '*').reduce((lhs: Expression, rhs: AST) => {
+		if (lhs === null) {
+			return compile(rhs, disallowUpdating(compilationOptions));
+		}
+		return new SimpleMapOperator(lhs, compile(rhs, disallowUpdating(compilationOptions)));
+	}, null);
 }
 
-function stringConcatenateOp (ast, compilationOptions) {
+function stringConcatenateOp(ast, compilationOptions) {
 	const args = [
 		astHelper.getFirstChild(ast, 'firstOperand')[1] as AST,
 		astHelper.getFirstChild(ast, 'secondOperand')[1] as AST
@@ -744,11 +822,13 @@ function stringConcatenateOp (ast, compilationOptions) {
 				prefix: '',
 				localName: 'concat'
 			},
-			args.length),
-		args.map(arg => compile(arg, disallowUpdating(compilationOptions))));
+			args.length
+		),
+		args.map(arg => compile(arg, disallowUpdating(compilationOptions)))
+	);
 }
 
-function rangeSequenceExpr (ast, compilationOptions) {
+function rangeSequenceExpr(ast, compilationOptions) {
 	const args = [
 		astHelper.getFirstChild(ast, 'startExpr')[1] as AST,
 		astHelper.getFirstChild(ast, 'endExpr')[1] as AST
@@ -760,57 +840,73 @@ function rangeSequenceExpr (ast, compilationOptions) {
 			prefix: '',
 			localName: 'to'
 		},
-		args.length);
+		args.length
+	);
 
 	return new FunctionCall(
 		ref,
-		args.map(arg => compile(arg, disallowUpdating(compilationOptions))));
+		args.map(arg => compile(arg, disallowUpdating(compilationOptions)))
+	);
 }
 
-function typeTest (ast, _compilationOptions) {
+function typeTest(ast, _compilationOptions) {
 	const type = astHelper.getQName(ast);
 	return new TypeTest(type);
 }
 
-function anyMapTest (_ast, _compilationOptions) {
+function anyMapTest(_ast, _compilationOptions) {
 	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'map(*)' });
 }
 
-function anyArrayTest (_ast, _compilationOptions) {
+function anyArrayTest(_ast, _compilationOptions) {
 	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'array(*)' });
 }
 
-function unaryPlus (ast, compilationOptions) {
+function unaryPlus(ast, compilationOptions) {
 	const operand = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'operand'), '*');
 	return new Unary('+', compile(operand, compilationOptions));
 }
 
-function unaryMinus (ast, compilationOptions) {
+function unaryMinus(ast, compilationOptions) {
 	const operand = astHelper.getFirstChild(astHelper.getFirstChild(ast, 'operand'), '*');
 	return new Unary('-', compile(operand, compilationOptions));
 }
 
-function unionOp (ast, compilationOptions) {
+function unionOp(ast, compilationOptions) {
 	return new Union([
-		compile(astHelper.followPath(ast, ['firstOperand', '*']), disallowUpdating(compilationOptions)),
-		compile(astHelper.followPath(ast, ['secondOperand', '*']), disallowUpdating(compilationOptions))
+		compile(
+			astHelper.followPath(ast, ['firstOperand', '*']),
+			disallowUpdating(compilationOptions)
+		),
+		compile(
+			astHelper.followPath(ast, ['secondOperand', '*']),
+			disallowUpdating(compilationOptions)
+		)
 	]);
 }
 
-function intersectExcept (ast, compilationOptions) {
+function intersectExcept(ast, compilationOptions) {
 	return new IntersectExcept(
 		ast[0],
-		compile(astHelper.followPath(ast, ['firstOperand', '*']), disallowUpdating(compilationOptions)),
-		compile(astHelper.followPath(ast, ['secondOperand', '*']), disallowUpdating(compilationOptions))
+		compile(
+			astHelper.followPath(ast, ['firstOperand', '*']),
+			disallowUpdating(compilationOptions)
+		),
+		compile(
+			astHelper.followPath(ast, ['secondOperand', '*']),
+			disallowUpdating(compilationOptions)
+		)
 	);
 }
 
-function varRef (ast, _compilationOptions) {
-	const { prefix, namespaceURI, localName } = astHelper.getQName(astHelper.getFirstChild(ast, 'name'));
-	return new VarRef(prefix, namespaceURI, localName );
+function varRef(ast, _compilationOptions) {
+	const { prefix, namespaceURI, localName } = astHelper.getQName(
+		astHelper.getFirstChild(ast, 'name')
+	);
+	return new VarRef(prefix, namespaceURI, localName);
 }
 
-function wildcard (ast, _compilationOptions) {
+function wildcard(ast, _compilationOptions) {
 	if (!astHelper.getFirstChild(ast, 'star')) {
 		return new NameTest({
 			namespaceURI: null,
@@ -832,7 +928,7 @@ function wildcard (ast, _compilationOptions) {
 	if (astHelper.getFirstChild(ast, '*')[0] === 'star') {
 		// The prefix is 'starred'
 		return new NameTest({
-		namespaceURI: null,
+			namespaceURI: null,
 			prefix: '*',
 			localName: astHelper.getTextContent(ncName)
 		});
@@ -847,45 +943,50 @@ function wildcard (ast, _compilationOptions) {
 }
 
 // XQuery Node constructors
-function dirElementConstructor (ast, compilationOptions) {
+function dirElementConstructor(ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 	const name = astHelper.getQName(astHelper.getFirstChild(ast, 'tagName'));
 
 	const attList = astHelper.getFirstChild(ast, 'attributeList');
-	const attributes = attList ? astHelper
-		.getChildren(attList, 'attributeConstructor')
-		.map(attr => compile(attr, disallowUpdating(compilationOptions))) : [];
+	const attributes = attList
+		? astHelper
+				.getChildren(attList, 'attributeConstructor')
+				.map(attr => compile(attr, disallowUpdating(compilationOptions)))
+		: [];
 
-	const namespaceDecls = attList ? astHelper
-		.getChildren(attList, 'namespaceDeclaration')
-		.map(namespaceDecl => {
-			const prefixElement = astHelper.getFirstChild(namespaceDecl, 'prefix');
-			return {
-				prefix: prefixElement ? astHelper.getTextContent(prefixElement) : '',
-				uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
-			};
-		}) : [];
+	const namespaceDecls = attList
+		? astHelper.getChildren(attList, 'namespaceDeclaration').map(namespaceDecl => {
+				const prefixElement = astHelper.getFirstChild(namespaceDecl, 'prefix');
+				return {
+					prefix: prefixElement ? astHelper.getTextContent(prefixElement) : '',
+					uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
+				};
+		  })
+		: [];
 
 	const content = astHelper.getFirstChild(ast, 'elementContent');
-	const contentExpressions = content ?
-		astHelper.getChildren(content, '*').map(child => compile(child, disallowUpdating(compilationOptions))) :
-		[];
+	const contentExpressions = content
+		? astHelper
+				.getChildren(content, '*')
+				.map(child => compile(child, disallowUpdating(compilationOptions)))
+		: [];
 
 	return new ElementConstructor(
 		name,
 		attributes as AttributeConstructor[],
 		namespaceDecls,
-		contentExpressions);
+		contentExpressions
+	);
 }
 
-function CDataSection (ast, _compilationOptions) {
+function CDataSection(ast, _compilationOptions) {
 	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
 	return new Literal(astHelper.getTextContent(ast), 'xs:string');
 }
 
-function attributeConstructor (ast, compilationOptions) {
+function attributeConstructor(ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
@@ -893,62 +994,79 @@ function attributeConstructor (ast, compilationOptions) {
 	const attrValueElement = astHelper.getFirstChild(ast, 'attributeValue');
 	const attrValue = attrValueElement ? astHelper.getTextContent(attrValueElement) : null;
 	const attrValueExprElement = astHelper.getFirstChild(ast, 'attributeValueExpr');
-	const attrValueExpressions = attrValueExprElement ?
-		astHelper
-			.getChildren(attrValueExprElement, '*')
-			.map(expr => compile(expr, disallowUpdating(compilationOptions))) :
-		null;
+	const attrValueExpressions = attrValueExprElement
+		? astHelper
+				.getChildren(attrValueExprElement, '*')
+				.map(expr => compile(expr, disallowUpdating(compilationOptions)))
+		: null;
 	return new AttributeConstructor(attrName, {
 		value: attrValue,
 		valueExprParts: attrValueExpressions
 	});
 }
 
-function computedAttributeConstructor (ast, compilationOptions) {
+function computedAttributeConstructor(ast, compilationOptions) {
 	const tagName = astHelper.getFirstChild(ast, 'tagName');
 	let name;
 	if (tagName) {
 		name = astHelper.getQName(tagName);
 	} else {
 		const tagNameExpr = astHelper.getFirstChild(ast, 'tagNameExpr');
-		name = { expr: compile(astHelper.getFirstChild(tagNameExpr, '*'), disallowUpdating(compilationOptions)) };
+		name = {
+			expr: compile(
+				astHelper.getFirstChild(tagNameExpr, '*'),
+				disallowUpdating(compilationOptions)
+			)
+		};
 	}
 
-	const valueExpr = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'valueExpr'), '*'), disallowUpdating(compilationOptions));
+	const valueExpr = compile(
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'valueExpr'), '*'),
+		disallowUpdating(compilationOptions)
+	);
 
 	return new AttributeConstructor(name, {
 		valueExprParts: [valueExpr]
 	});
 }
 
-function computedCommentConstructor (ast, compilationOptions) {
+function computedCommentConstructor(ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
 	const argExpr = astHelper.getFirstChild(ast, 'argExpr');
-	const expr = argExpr ? compile(astHelper.getFirstChild(argExpr, '*'), disallowUpdating(compilationOptions)) : null;
+	const expr = argExpr
+		? compile(astHelper.getFirstChild(argExpr, '*'), disallowUpdating(compilationOptions))
+		: null;
 	return new CommentConstructor(expr);
 }
 
-function computedElementConstructor (ast, compilationOptions) {
+function computedElementConstructor(ast, compilationOptions) {
 	const tagName = astHelper.getFirstChild(ast, 'tagName');
 	let name;
 	if (tagName) {
 		name = astHelper.getQName(tagName);
 	} else {
 		const tagNameExpr = astHelper.getFirstChild(ast, 'tagNameExpr');
-		name = { expr: compile(astHelper.getFirstChild(tagNameExpr, '*'), disallowUpdating(compilationOptions)) };
+		name = {
+			expr: compile(
+				astHelper.getFirstChild(tagNameExpr, '*'),
+				disallowUpdating(compilationOptions)
+			)
+		};
 	}
 
 	const content = astHelper.getFirstChild(ast, 'contentExpr');
-	const contentExpressions = content ?
-		astHelper.getChildren(content, '*').map(child => compile(child, disallowUpdating(compilationOptions))) :
-		[];
+	const contentExpressions = content
+		? astHelper
+				.getChildren(content, '*')
+				.map(child => compile(child, disallowUpdating(compilationOptions)))
+		: [];
 
 	return new ElementConstructor(name, [], [], contentExpressions);
 }
 
-function computedPIConstructor (ast, compilationOptions) {
+function computedPIConstructor(ast, compilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
@@ -959,23 +1077,29 @@ function computedPIConstructor (ast, compilationOptions) {
 
 	return new PIConstructor(
 		{
-			targetExpr: targetExpr ?
-				compile(astHelper.getFirstChild(targetExpr, '*'), disallowUpdating(compilationOptions)) :
-				null,
+			targetExpr: targetExpr
+				? compile(
+						astHelper.getFirstChild(targetExpr, '*'),
+						disallowUpdating(compilationOptions)
+				  )
+				: null,
 			targetValue: target ? astHelper.getTextContent(target) : null
 		},
-		piValueExpr ?
-			compile(astHelper.getFirstChild(piValueExpr, '*'), disallowUpdating(compilationOptions)) :
-			new SequenceOperator([])
+		piValueExpr
+			? compile(
+					astHelper.getFirstChild(piValueExpr, '*'),
+					disallowUpdating(compilationOptions)
+			  )
+			: new SequenceOperator([])
 	);
 }
 
-function deleteExpression (ast, compilationOptions) {
+function deleteExpression(ast, compilationOptions) {
 	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
 	return new DeleteExpression(targetExpr);
 }
 
-function insertExpression (ast, compilationOptions) {
+function insertExpression(ast, compilationOptions) {
 	const sourceExpr = compile(astHelper.followPath(ast, ['sourceExpr', '*']), compilationOptions);
 	let targetChoice;
 	const insertTargetChoice = astHelper.getChildren(ast, '*')[1];
@@ -989,9 +1113,10 @@ function insertExpression (ast, compilationOptions) {
 		case 'insertInto': {
 			const insertAfterChoice = astHelper.getFirstChild(insertTargetChoice, '*');
 			if (insertAfterChoice) {
-				targetChoice = insertAfterChoice[0] === 'insertAsFirst' ?
-					TargetChoice.INSERT_INTO_AS_FIRST :
-					TargetChoice.INSERT_INTO_AS_LAST;
+				targetChoice =
+					insertAfterChoice[0] === 'insertAsFirst'
+						? TargetChoice.INSERT_INTO_AS_FIRST
+						: TargetChoice.INSERT_INTO_AS_LAST;
 			} else {
 				targetChoice = TargetChoice.INSERT_INTO;
 			}
@@ -999,33 +1124,62 @@ function insertExpression (ast, compilationOptions) {
 		}
 	}
 	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
-	return new InsertExpression(sourceExpr, /** @type {!TargetChoice} */(targetChoice), targetExpr);
+	return new InsertExpression(
+		sourceExpr,
+		/** @type {!TargetChoice} */ (targetChoice),
+		targetExpr
+	);
 }
 
-function renameExpression (ast, compilationOptions) {
+function renameExpression(ast, compilationOptions) {
 	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
-	const newNameExpr = compile(astHelper.followPath(ast, ['newNameExpr', '*']), compilationOptions);
+	const newNameExpr = compile(
+		astHelper.followPath(ast, ['newNameExpr', '*']),
+		compilationOptions
+	);
 	return new RenameExpression(targetExpr, newNameExpr);
 }
 
-function replaceExpression (ast, compilationOptions) {
+function replaceExpression(ast, compilationOptions) {
 	const isReplaceValue = !!astHelper.getFirstChild(ast, 'replaceValue');
 	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
-	const replacementExpr = compile(astHelper.followPath(ast, ['replacementExpr', '*']), compilationOptions);
+	const replacementExpr = compile(
+		astHelper.followPath(ast, ['replacementExpr', '*']),
+		compilationOptions
+	);
 	return new ReplaceExpression(isReplaceValue, targetExpr, replacementExpr);
 }
 
-function transformExpression (ast, compilationOptions) {
-	const transformCopies = astHelper.getChildren(astHelper.getFirstChild(ast, 'transformCopies'), 'transformCopy').map(transformCopy => {
-		const varName = astHelper.getQName(astHelper.getFirstChild(astHelper.getFirstChild(transformCopy, 'varRef'), 'name'));
-		const sourceExpr = compile(astHelper.getFirstChild(astHelper.getFirstChild(transformCopy, 'copySource'), '*'), compilationOptions);
-		return { varRef: new QName(varName.prefix, varName.namespaceURI, varName.localName), sourceExpr };
-	});
-	const modifyExpr = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'modifyExpr'), '*'), compilationOptions);
-	const returnExpr = compile(astHelper.getFirstChild(astHelper.getFirstChild(ast, 'returnExpr'), '*'), compilationOptions);
+function transformExpression(ast, compilationOptions) {
+	const transformCopies = astHelper
+		.getChildren(astHelper.getFirstChild(ast, 'transformCopies'), 'transformCopy')
+		.map(transformCopy => {
+			const varName = astHelper.getQName(
+				astHelper.getFirstChild(astHelper.getFirstChild(transformCopy, 'varRef'), 'name')
+			);
+			const sourceExpr = compile(
+				astHelper.getFirstChild(astHelper.getFirstChild(transformCopy, 'copySource'), '*'),
+				compilationOptions
+			);
+			return {
+				varRef: new QName(varName.prefix, varName.namespaceURI, varName.localName),
+				sourceExpr
+			};
+		});
+	const modifyExpr = compile(
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'modifyExpr'), '*'),
+		compilationOptions
+	);
+	const returnExpr = compile(
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'returnExpr'), '*'),
+		compilationOptions
+	);
 	return new TransformExpression(transformCopies, modifyExpr, returnExpr);
 }
 
-export default function(xPathAst: Array<any>, compilationOptions: { allowXQuery?: boolean; allowUpdating?: boolean; }): Expression {
+export default function(
+	xPathAst: Array<any>,
+	compilationOptions: { allowXQuery?: boolean; allowUpdating?: boolean }
+): Expression {
 	return compile(xPathAst, compilationOptions);
 }

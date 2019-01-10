@@ -1,16 +1,20 @@
 import Expression from '../expressions/Expression';
 
-const compiledExpressionCache: { [s: string]: {[s: string]: Array<CacheEntry> } } = Object.create(null);
+const compiledExpressionCache: { [s: string]: { [s: string]: Array<CacheEntry> } } = Object.create(
+	null
+);
 
-const halfCompiledExpressionCache: { [s: string]: { [s: string]: Expression} } = Object.create(null);
+const halfCompiledExpressionCache: { [s: string]: { [s: string]: Expression } } = Object.create(
+	null
+);
 
 class CacheEntry {
-	referredNamespaces: {namespaceURI: string, prefix: string}[];
-	referredVariables: {name: string}[];
+	referredNamespaces: { namespaceURI: string; prefix: string }[];
+	referredVariables: { name: string }[];
 	compiledExpression: Expression;
-	moduleImports: {prefix: string, namespaceURI: string}[];
+	moduleImports: { prefix: string; namespaceURI: string }[];
 
-	constructor (referredNamespaces, referredVariables, compiledExpression, moduleImports) {
+	constructor(referredNamespaces, referredVariables, compiledExpression, moduleImports) {
 		this.referredNamespaces = referredNamespaces;
 		this.referredVariables = referredVariables;
 		this.compiledExpression = compiledExpression;
@@ -18,7 +22,7 @@ class CacheEntry {
 	}
 }
 
-export function getAnyStaticCompilationResultFromCache (selectorString, language) {
+export function getAnyStaticCompilationResultFromCache(selectorString, language) {
 	const halfCompiledExpressionFromCache = halfCompiledExpressionCache[selectorString];
 	if (halfCompiledExpressionFromCache) {
 		return halfCompiledExpressionFromCache[language] || null;
@@ -38,7 +42,11 @@ export function getAnyStaticCompilationResultFromCache (selectorString, language
 	return cachesForLanguage[0].compiledExpression;
 }
 
-export function storeHalfCompiledCompilationResultInCache (selectorString, language, expressionInstance) {
+export function storeHalfCompiledCompilationResultInCache(
+	selectorString,
+	language,
+	expressionInstance
+) {
 	if (!halfCompiledExpressionCache[selectorString]) {
 		halfCompiledExpressionCache[selectorString] = {
 			[language]: expressionInstance
@@ -48,13 +56,20 @@ export function storeHalfCompiledCompilationResultInCache (selectorString, langu
 	halfCompiledExpressionCache[selectorString][language] = expressionInstance;
 }
 
-export function getStaticCompilationResultFromCache (selectorString, language, namespaceResolver, variables, moduleImports) {
+export function getStaticCompilationResultFromCache(
+	selectorString,
+	language,
+	namespaceResolver,
+	variables,
+	moduleImports
+) {
 	const cachesForExpression = compiledExpressionCache[selectorString];
 
 	if (!cachesForExpression) {
 		const halfCompiledExpressionFromCache = getAnyStaticCompilationResultFromCache(
 			selectorString,
-			language);
+			language
+		);
 		if (halfCompiledExpressionFromCache) {
 			return {
 				requiresStaticCompilation: true,
@@ -68,7 +83,8 @@ export function getStaticCompilationResultFromCache (selectorString, language, n
 	if (!cachesForLanguage) {
 		const halfCompiledExpressionFromCache = getAnyStaticCompilationResultFromCache(
 			selectorString,
-			language);
+			language
+		);
 		if (halfCompiledExpressionFromCache) {
 			return {
 				requiresStaticCompilation: true,
@@ -79,18 +95,21 @@ export function getStaticCompilationResultFromCache (selectorString, language, n
 	}
 
 	const cacheWithCorrectContext = cachesForLanguage.find(
-		cache => cache.referredNamespaces
-			.every(
-				nsRef => namespaceResolver(nsRef.prefix) === nsRef.namespaceURI) &&
-			cache.referredVariables.every(
-				varRef => variables[varRef.name] !== undefined) &&
+		cache =>
+			cache.referredNamespaces.every(
+				nsRef => namespaceResolver(nsRef.prefix) === nsRef.namespaceURI
+			) &&
+			cache.referredVariables.every(varRef => variables[varRef.name] !== undefined) &&
 			cache.moduleImports.every(
-				moduleImport => moduleImports[moduleImport.prefix] === moduleImport.namespaceURI));
+				moduleImport => moduleImports[moduleImport.prefix] === moduleImport.namespaceURI
+			)
+	);
 
 	if (!cacheWithCorrectContext) {
 		const halfCompiledExpressionFromCache = getAnyStaticCompilationResultFromCache(
 			selectorString,
-			language);
+			language
+		);
 		if (halfCompiledExpressionFromCache) {
 			return {
 				requiresStaticCompilation: true,
@@ -106,7 +125,7 @@ export function getStaticCompilationResultFromCache (selectorString, language, n
 	};
 }
 
-function removeHalfCompiledExpression (selectorString, language, compiledExpression) {
+function removeHalfCompiledExpression(selectorString, language, compiledExpression) {
 	const halfCompiledExpressionFromCache = halfCompiledExpressionCache[selectorString];
 	if (halfCompiledExpressionFromCache) {
 		const expression = halfCompiledExpressionFromCache[language];
@@ -116,7 +135,13 @@ function removeHalfCompiledExpression (selectorString, language, compiledExpress
 	}
 }
 
-export function storeStaticCompilationResultInCache (selectorString, language, executionStaticContext, moduleImports, compiledExpression) {
+export function storeStaticCompilationResultInCache(
+	selectorString,
+	language,
+	executionStaticContext,
+	moduleImports,
+	compiledExpression
+) {
 	removeHalfCompiledExpression(selectorString, language, compiledExpression);
 
 	let cachesForExpression = compiledExpressionCache[selectorString];
@@ -129,11 +154,15 @@ export function storeStaticCompilationResultInCache (selectorString, language, e
 		cachesForLanguage = cachesForExpression[language] = [];
 	}
 
-	cachesForLanguage.push(new CacheEntry(
-		executionStaticContext.getReferredNamespaces(),
-		executionStaticContext.getReferredVariables(),
-		compiledExpression,
-		Object.keys(moduleImports)
-			.map(moduleImportPrefix => ({ prefix: moduleImportPrefix, namespaceURI: moduleImports[moduleImportPrefix] }))
-	));
+	cachesForLanguage.push(
+		new CacheEntry(
+			executionStaticContext.getReferredNamespaces(),
+			executionStaticContext.getReferredVariables(),
+			compiledExpression,
+			Object.keys(moduleImports).map(moduleImportPrefix => ({
+				prefix: moduleImportPrefix,
+				namespaceURI: moduleImports[moduleImportPrefix]
+			}))
+		)
+	);
 }

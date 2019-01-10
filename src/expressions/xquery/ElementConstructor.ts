@@ -22,29 +22,43 @@ class ElementConstructor extends Expression {
 	_contents: Expression[];
 	_staticContext: any;
 
-	constructor(name: { expr: Expression; } | { prefix: string; namespaceURI: string | null; localName: string; }, attributes: AttributeConstructor[], namespaceDeclarations: { prefix: string; uri: string; }[], contents: Array<Expression>) {
-		super(
-			new Specificity({}),
-			contents.concat(attributes).concat((name as any).expr || []),
-			{
-				canBeStaticallyEvaluated: false,
-				resultOrder: RESULT_ORDERINGS.UNSORTED
-			});
+	constructor(
+		name:
+			| { expr: Expression }
+			| { prefix: string; namespaceURI: string | null; localName: string },
+		attributes: AttributeConstructor[],
+		namespaceDeclarations: { prefix: string; uri: string }[],
+		contents: Array<Expression>
+	) {
+		super(new Specificity({}), contents.concat(attributes).concat((name as any).expr || []), {
+			canBeStaticallyEvaluated: false,
+			resultOrder: RESULT_ORDERINGS.UNSORTED
+		});
 
 		if ((name as any).expr) {
 			this._nameExpr = (name as any).expr;
 		} else {
-			this._name = new QName((name as any).prefix, (name as any).namespaceURI, (name as any).localName);
+			this._name = new QName(
+				(name as any).prefix,
+				(name as any).namespaceURI,
+				(name as any).localName
+			);
 		}
 
 		this._namespacesInScope = namespaceDeclarations.reduce(
 			(namespacesInScope, namespaceDecl) => {
 				if (namespaceDecl.prefix in namespacesInScope) {
-					throw new Error(`XQST0071: The namespace declaration with the prefix ${namespaceDecl.prefix} has already been declared on the constructed element.`);
+					throw new Error(
+						`XQST0071: The namespace declaration with the prefix ${
+							namespaceDecl.prefix
+						} has already been declared on the constructed element.`
+					);
 				}
 				namespacesInScope[namespaceDecl.prefix] = namespaceDecl.uri;
 				return namespacesInScope;
-			}, {});
+			},
+			{}
+		);
 
 		this._attributes = attributes;
 
@@ -55,15 +69,20 @@ class ElementConstructor extends Expression {
 	performStaticEvaluation(staticContext) {
 		// Register namespace related things
 		staticContext.introduceScope();
-		Object.keys(this._namespacesInScope)
-			.forEach(prefix => staticContext.registerNamespace(prefix, this._namespacesInScope[prefix]));
+		Object.keys(this._namespacesInScope).forEach(prefix =>
+			staticContext.registerNamespace(prefix, this._namespacesInScope[prefix])
+		);
 
-		this._childExpressions.forEach(subselector => subselector.performStaticEvaluation(staticContext));
+		this._childExpressions.forEach(subselector =>
+			subselector.performStaticEvaluation(staticContext)
+		);
 
 		this._attributes.reduce((attributeNames, attribute) => {
 			// We can not throw a static error for computed attribute constructor of which we do not yet know the name
 			if (attribute.name) {
-				const attributeNamespaceURI = attribute.name.namespaceURI || staticContext.resolveNamespace(attribute.name.prefix);
+				const attributeNamespaceURI =
+					attribute.name.namespaceURI ||
+					staticContext.resolveNamespace(attribute.name.prefix);
 				const uriQualifiedName = `Q{${attributeNamespaceURI}}${attribute.name.localName}`;
 				if (attributeNames.includes(uriQualifiedName)) {
 					throw errXQST0040(uriQualifiedName);
@@ -107,8 +126,10 @@ class ElementConstructor extends Expression {
 				if (!attributePhaseDone) {
 					if (!attributesSequence) {
 						attributesSequence = concatSequences(
-							this._attributes
-								.map(attr => attr.evaluateMaybeStatically(dynamicContext, executionParameters)));
+							this._attributes.map(attr =>
+								attr.evaluateMaybeStatically(dynamicContext, executionParameters)
+							)
+						);
 					}
 
 					const allAttributes = attributesSequence.tryGetAllValues();
@@ -122,14 +143,18 @@ class ElementConstructor extends Expression {
 				if (!childNodesPhaseDone) {
 					if (!childNodesSequences) {
 						// Accumulate all children
-						childNodesSequences = this._contents.map(
-							contentExpression => contentExpression.evaluateMaybeStatically(dynamicContext, executionParameters));
+						childNodesSequences = this._contents.map(contentExpression =>
+							contentExpression.evaluateMaybeStatically(
+								dynamicContext,
+								executionParameters
+							)
+						);
 					}
 
 					const childNodes: Value[][] = [];
-					for(let i = 0; i< childNodesSequences.length; i++) {
+					for (let i = 0; i < childNodesSequences.length; i++) {
 						const allValues = childNodesSequences[i].tryGetAllValues();
-						if(!allValues.ready) {
+						if (!allValues.ready) {
 							return allValues;
 						}
 						childNodes.push(allValues.value);
@@ -140,8 +165,15 @@ class ElementConstructor extends Expression {
 
 				if (this._nameExpr) {
 					if (!nameIterator) {
-						const nameSequence = this._nameExpr.evaluate(dynamicContext, executionParameters);
-						nameIterator = evaluateQNameExpression(this._staticContext, executionParameters, nameSequence);
+						const nameSequence = this._nameExpr.evaluate(
+							dynamicContext,
+							executionParameters
+						);
+						nameIterator = evaluateQNameExpression(
+							this._staticContext,
+							executionParameters,
+							nameSequence
+						);
 					}
 					const nv = nameIterator.next();
 					if (!nv.ready) {
@@ -150,16 +182,22 @@ class ElementConstructor extends Expression {
 					this._name = nv.value.value;
 				}
 
-				if (this._name.prefix === 'xmlns' ||
+				if (
+					this._name.prefix === 'xmlns' ||
 					this._name.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
-					(this._name.prefix === 'xml' && this._name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
-					(this._name.prefix && this._name.prefix !== 'xml' && this._name.namespaceURI === 'http://www.w3.org/XML/1998/namespace')) {
+					(this._name.prefix === 'xml' &&
+						this._name.namespaceURI !== 'http://www.w3.org/XML/1998/namespace') ||
+					(this._name.prefix &&
+						this._name.prefix !== 'xml' &&
+						this._name.namespaceURI === 'http://www.w3.org/XML/1998/namespace')
+				) {
 					throw errXQDY0096(this._name);
 				}
 
 				const element = nodesFactory.createElementNS(
 					this._name.namespaceURI,
-					this._name.buildPrefixedName());
+					this._name.buildPrefixedName()
+				);
 
 				// Plonk all attribute on the element
 				attributeNodes.forEach(attr => {
@@ -175,9 +213,11 @@ class ElementConstructor extends Expression {
 					}
 					element.setAttributeNS(
 						attrNode.namespaceURI,
-						attrNode.prefix ?
-							attrNode.prefix + ':' + attrNode.localName : attrNode.localName,
-						attrNode.value);
+						attrNode.prefix
+							? attrNode.prefix + ':' + attrNode.localName
+							: attrNode.localName,
+						attrNode.value
+					);
 				});
 				parsedContent.contentNodes.forEach(childNode => {
 					element.appendChild(childNode);

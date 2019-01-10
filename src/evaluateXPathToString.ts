@@ -12,12 +12,19 @@ import IDomFacade from './domFacade/IDomFacade';
  *
  * @return The string result.
  */
-export default function evaluateXPathToString (
+export default function evaluateXPathToString(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
 ): string {
-	return evaluateXPath(selector, contextItem, domFacade, variables, evaluateXPath.STRING_TYPE, options);
+	return evaluateXPath(
+		selector,
+		contextItem,
+		domFacade,
+		variables,
+		evaluateXPath.STRING_TYPE,
+		options
+	);
 }

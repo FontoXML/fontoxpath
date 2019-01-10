@@ -1,5 +1,7 @@
-export default function castToFloatLikeType (instanceOf: (string) => boolean, to: string) :
-(Value) => ({successful: true, value: any} | {successful: false, error: Error}) {
+export default function castToFloatLikeType(
+	instanceOf: (string) => boolean,
+	to: string
+): (Value) => { successful: true; value: any } | { successful: false; error: Error } {
 	if (instanceOf('xs:numeric')) {
 		return value => ({
 			successful: true,
@@ -58,6 +60,8 @@ export default function castToFloatLikeType (instanceOf: (string) => boolean, to
 	}
 	return () => ({
 		successful: false,
-		error: new Error(`XPTY0004: Casting not supported from given type to ${to} or any of its derived types.`)
+		error: new Error(
+			`XPTY0004: Casting not supported from given type to ${to} or any of its derived types.`
+		)
 	});
 }

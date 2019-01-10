@@ -25,7 +25,7 @@ import {
 	storeHalfCompiledCompilationResultInCache
 } from './parsing/compiledExpressionCache';
 
-function parseXPath (xpathString: string) {
+function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath');
 	if (cachedExpression) {
 		return cachedExpression;
@@ -38,25 +38,25 @@ function parseXPath (xpathString: string) {
 		throw new Error('Library modules do not have a specificity');
 	}
 
-	const expression = compileAstToExpression(
-		queryBody,
-		{ allowXQuery: false, allowUpdating: false });
+	const expression = compileAstToExpression(queryBody, {
+		allowXQuery: false,
+		allowUpdating: false
+	});
 
 	storeHalfCompiledCompilationResultInCache(xpathString, 'XPath', expression);
 
 	return expression;
 }
 
-function getBucketForSelector (xpathString) {
+function getBucketForSelector(xpathString) {
 	return parseXPath(xpathString).getBucket();
 }
 
-function compareSpecificity (xpathStringA, xpathStringB) {
-	return parseXPath(xpathStringA).specificity
-		.compareTo(parseXPath(xpathStringB).specificity);
+function compareSpecificity(xpathStringA, xpathStringB) {
+	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
 }
 
-(function () {
+(function() {
 	/* istanbul ignore next */
 	if (typeof window !== 'undefined') {
 		window['compareSpecificity'] = compareSpecificity;

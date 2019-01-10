@@ -12,10 +12,7 @@ import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import parseContent from '../xquery/ElementConstructorContent';
 
-import {
-	errXQDY0026,
-	errXQDY0072
-} from '../xquery/XQueryErrors';
+import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
 
 import {
 	errXUTY0008,
@@ -27,7 +24,7 @@ import {
 	errXUDY0027
 } from './XQueryUpdateFacilityErrors';
 
-function evaluateReplaceNode (executionParameters, targetValueIterator, replacementValueIterator) {
+function evaluateReplaceNode(executionParameters, targetValueIterator, replacementValueIterator) {
 	let rlist;
 	let rlistUpdates;
 	let parent;
@@ -70,11 +67,13 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 			if (tv.value.xdmValue.length !== 1) {
 				throw errXUTY0008();
 			}
-			if (!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
+			if (
+				!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
 				!isSubTypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
 				!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
 				!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
-				!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')) {
+				!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
+			) {
 				throw errXUTY0008();
 			}
 
@@ -146,13 +145,18 @@ function evaluateReplaceNode (executionParameters, targetValueIterator, replacem
 				pendingUpdateList: mergeUpdates(
 					[replaceNode(target.value, rlist.attributes.concat(rlist.contentNodes))],
 					rlistUpdates,
-					targetUpdates)
+					targetUpdates
+				)
 			});
 		}
 	};
 }
 
-function evaluateReplaceNodeValue (executionParameters, targetValueIterator, replacementValueIterator) {
+function evaluateReplaceNodeValue(
+	executionParameters,
+	targetValueIterator,
+	replacementValueIterator
+) {
 	let target;
 	let targetUpdates;
 	let text;
@@ -177,12 +181,15 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				// The result of this step, in the absence of errors,
 				// is either a single text node or an empty sequence.
 				// Let $text be the result of this step.
-				const atomized = rl.value.xdmValue.map(value => castToType(atomize(value, executionParameters), 'xs:string'));
+				const atomized = rl.value.xdmValue.map(value =>
+					castToType(atomize(value, executionParameters), 'xs:string')
+				);
 
 				const textContent = atomized.map(value => value.value).join(' ');
-				text = textContent.length === 0 ?
-					null :
-					executionParameters.nodesFactory.createTextNode(textContent);
+				text =
+					textContent.length === 0
+						? null
+						: executionParameters.nodesFactory.createTextNode(textContent);
 				rlistUpdates = rl.value.pendingUpdateList;
 			}
 
@@ -205,11 +212,13 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 				if (tv.value.xdmValue.length !== 1) {
 					throw errXUTY0008();
 				}
-				if (!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
+				if (
+					!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
 					!isSubTypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
 					!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
 					!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')) {
+					!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
+				) {
 					throw errXUTY0008();
 				}
 
@@ -233,7 +242,8 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 					pendingUpdateList: mergeUpdates(
 						[replaceElementContent(target.value, text)],
 						rlistUpdates,
-						targetUpdates)
+						targetUpdates
+					)
 				});
 			}
 
@@ -242,16 +252,21 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 			// value of the text node constructed in Step 1. If Step
 			// 1 did not construct a text node, let $string be a
 			// zero-length string. Then:
-			if (isSubTypeOf(target.type, 'attribute()') ||
+			if (
+				isSubTypeOf(target.type, 'attribute()') ||
 				isSubTypeOf(target.type, 'text()') ||
 				isSubTypeOf(target.type, 'comment()') ||
-				isSubTypeOf(target.type, 'processing-instruction()')) {
+				isSubTypeOf(target.type, 'processing-instruction()')
+			) {
 				const string = text ? text.data : '';
 
 				// If $target is a comment node, and $string contains
 				// two adjacent hyphens or ends with a hyphen, a
 				// dynamic error is raised [err:XQDY0072].
-				if (isSubTypeOf(target.type, 'comment()') && (string.includes('--') || string.endsWith('-'))) {
+				if (
+					isSubTypeOf(target.type, 'comment()') &&
+					(string.includes('--') || string.endsWith('-'))
+				) {
 					throw errXQDY0072(string);
 				}
 
@@ -276,7 +291,8 @@ function evaluateReplaceNodeValue (executionParameters, targetValueIterator, rep
 					pendingUpdateList: mergeUpdates(
 						[replaceValue(target.value, string)],
 						rlistUpdates,
-						targetUpdates)
+						targetUpdates
+					)
 				});
 			}
 		}
@@ -288,27 +304,38 @@ class ReplaceExpression extends UpdatingExpression {
 	_targetExpression: Expression;
 	_replacementExpression: Expression;
 
-	constructor (valueOf: boolean, targetExpression: Expression, replacementExpression: Expression) {
-		super(
-			new Specificity({}),
-			[targetExpression, replacementExpression],
-			{
-				canBeStaticallyEvaluated: false,
-				resultOrder: RESULT_ORDERINGS.UNSORTED
-			});
+	constructor(valueOf: boolean, targetExpression: Expression, replacementExpression: Expression) {
+		super(new Specificity({}), [targetExpression, replacementExpression], {
+			canBeStaticallyEvaluated: false,
+			resultOrder: RESULT_ORDERINGS.UNSORTED
+		});
 
 		this._valueOf = valueOf;
 		this._targetExpression = targetExpression;
 		this._replacementExpression = replacementExpression;
 	}
 
-	evaluateWithUpdateList (dynamicContext, executionParameters) {
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
-		const replacementValueIterator = super.ensureUpdateListWrapper(this._replacementExpression)(dynamicContext, executionParameters);
+	evaluateWithUpdateList(dynamicContext, executionParameters) {
+		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+			dynamicContext,
+			executionParameters
+		);
+		const replacementValueIterator = super.ensureUpdateListWrapper(this._replacementExpression)(
+			dynamicContext,
+			executionParameters
+		);
 
-		return this._valueOf ?
-			evaluateReplaceNodeValue(executionParameters, targetValueIterator, replacementValueIterator) :
-			evaluateReplaceNode(executionParameters, targetValueIterator, replacementValueIterator);
+		return this._valueOf
+			? evaluateReplaceNodeValue(
+					executionParameters,
+					targetValueIterator,
+					replacementValueIterator
+			  )
+			: evaluateReplaceNode(
+					executionParameters,
+					targetValueIterator,
+					replacementValueIterator
+			  );
 	}
 }
 

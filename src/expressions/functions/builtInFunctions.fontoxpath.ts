@@ -18,7 +18,13 @@ import astHelper from '../../parsing/astHelper';
 import MapValue from '../dataTypes/MapValue';
 import Value from '../dataTypes/Value';
 
-const fontoxpathEvaluate: FunctionDefinitionType = function(_dynamicContext, executionParameters, staticContext, query, args) {
+const fontoxpathEvaluate: FunctionDefinitionType = function(
+	_dynamicContext,
+	executionParameters,
+	staticContext,
+	query,
+	args
+) {
 	let resultIterator;
 	let queryString;
 	return SequenceFactory.create({
@@ -29,58 +35,81 @@ const fontoxpathEvaluate: FunctionDefinitionType = function(_dynamicContext, exe
 					return queryValue;
 				}
 				queryString = queryValue.value.value;
-				const variables = (args.first() as MapValue).keyValuePairs.reduce((expandedArgs, arg) => {
-					expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value());
-					return expandedArgs;
-				}, Object.create(null));
+				const variables = (args.first() as MapValue).keyValuePairs.reduce(
+					(expandedArgs, arg) => {
+						expandedArgs[arg.key.value] = createDoublyIterableSequence(arg.value());
+						return expandedArgs;
+					},
+					Object.create(null)
+				);
 
 				// Take off the context item
-				const contextItemSequence = variables['.'] ? variables['.']() : SequenceFactory.empty();
+				const contextItemSequence = variables['.']
+					? variables['.']()
+					: SequenceFactory.empty();
 				delete variables['.'];
 
 				const ast = parseExpression(queryString, { allowXQuery: false });
-				const queryBodyContents = astHelper.followPath(ast, ['mainModule', 'queryBody', '*']);
+				const queryBodyContents = astHelper.followPath(ast, [
+					'mainModule',
+					'queryBody',
+					'*'
+				]);
 
-				const selector = compileAstToExpression(queryBodyContents, { allowXQuery: false, allowUpdating: false });
+				const selector = compileAstToExpression(queryBodyContents, {
+					allowXQuery: false,
+					allowUpdating: false
+				});
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 					prefix => staticContext.resolveNamespace(prefix),
-					Object.keys(variables).reduce(
-						(vars, varName) => {
-							vars[varName] = varName;
-							return vars;
-						}, {}));
+					Object.keys(variables).reduce((vars, varName) => {
+						vars[varName] = varName;
+						return vars;
+					}, {})
+				);
 
 				selector.performStaticEvaluation(new StaticContext(executionSpecificStaticContext));
 
-				const variableBindings = Object.keys(variables).reduce((variablesByBindingKey, varName) => {
-						variablesByBindingKey[executionSpecificStaticContext.lookupVariable(null, varName)] =
-							variables[varName];
+				const variableBindings = Object.keys(variables).reduce(
+					(variablesByBindingKey, varName) => {
+						variablesByBindingKey[
+							executionSpecificStaticContext.lookupVariable(null, varName)
+						] = variables[varName];
 						return variablesByBindingKey;
-				}, Object.create(null));
+					},
+					Object.create(null)
+				);
 
-				const context = contextItemSequence.isEmpty() ? {
-					contextItem: null,
-					contextSequence: contextItemSequence,
-					contextItemIndex: -1,
-					variableBindings: variableBindings
-				} : {
-					contextItem: contextItemSequence.first(),
-					contextSequence: contextItemSequence,
-					contextItemIndex: 0,
-					variableBindings: variableBindings
-				};
+				const context = contextItemSequence.isEmpty()
+					? {
+							contextItem: null,
+							contextSequence: contextItemSequence,
+							contextItemIndex: -1,
+							variableBindings: variableBindings
+					  }
+					: {
+							contextItem: contextItemSequence.first(),
+							contextSequence: contextItemSequence,
+							contextItemIndex: 0,
+							variableBindings: variableBindings
+					  };
 
 				const innerDynamicContext = new DynamicContext(context);
 
 				resultIterator = selector.evaluate(innerDynamicContext, executionParameters).value;
 			}
 			return resultIterator.next();
-
 		}
 	});
 };
 
-const fontoxpathSleep: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, val, howLong) {
+const fontoxpathSleep: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	val,
+	howLong
+) {
 	let doneWithSleep = false;
 	let readyPromise;
 
@@ -88,13 +117,14 @@ const fontoxpathSleep: FunctionDefinitionType = function(_dynamicContext, _execu
 	return SequenceFactory.create({
 		next: () => {
 			if (!readyPromise) {
-
-				const time = howLong ? howLong.tryGetFirst() : ready(createAtomicValue(0, 'xs:integer'));
+				const time = howLong
+					? howLong.tryGetFirst()
+					: ready(createAtomicValue(0, 'xs:integer'));
 				if (!time.ready) {
 					return notReady(readyPromise);
 				}
-				readyPromise = new Promise(
-					resolve => setTimeout(() => {
+				readyPromise = new Promise(resolve =>
+					setTimeout(() => {
 						doneWithSleep = true;
 						resolve();
 					}, time.value.value)
@@ -115,14 +145,18 @@ const fontoxpathVersion: FunctionDefinitionType = function() {
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	if (typeof VERSION === 'undefined') {
 		version = 'devbuild';
-	}
-	else {
+	} else {
 		version = VERSION;
 	}
 	return SequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 };
 
-const fontoxpathFetch: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, url) {
+const fontoxpathFetch: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	url
+) {
 	let doneWithFetch = false;
 	let result = null;
 	let done = false;

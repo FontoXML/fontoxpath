@@ -1,10 +1,10 @@
 import Context from './Context';
 
-function createHashKey (namespaceURI: any, localName: any) {
+function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
 }
 
-function lookupInOverrides (overrides: any[] | { [x: string]: any; }[], key: string) {
+function lookupInOverrides(overrides: any[] | { [x: string]: any }[], key: string) {
 	key = key + '';
 	for (let i = overrides.length - 1; i >= 0; --i) {
 		if (key in overrides[i]) {
@@ -31,7 +31,7 @@ export default class StaticContext {
 	_registeredVariableBindingByHashKey: any[];
 	_registeredFunctionsByHash: any;
 
-	constructor (parentContext: Context) {
+	constructor(parentContext: Context) {
 		this.parentContext = parentContext;
 
 		this._scopeDepth = 0;
@@ -44,7 +44,24 @@ export default class StaticContext {
 		this._registeredFunctionsByHash = Object.create(null);
 	}
 
-	registerFunctionDefinition (namespaceURI: string, localName: string, arity: number, functionDefinition: { callFunction: (dynamicContext: any, executionParameters: any, _staticContext: any, ...parameters: any[]) => import("./dataTypes/ISequence").default; localName: string; namespaceURI: string; argumentTypes: import("./dataTypes/TypeDeclaration").default[]; arity: number; returnType: import("./dataTypes/TypeDeclaration").default; }) {
+	registerFunctionDefinition(
+		namespaceURI: string,
+		localName: string,
+		arity: number,
+		functionDefinition: {
+			callFunction: (
+				dynamicContext: any,
+				executionParameters: any,
+				_staticContext: any,
+				...parameters: any[]
+			) => import('./dataTypes/ISequence').default;
+			localName: string;
+			namespaceURI: string;
+			argumentTypes: import('./dataTypes/TypeDeclaration').default[];
+			arity: number;
+			returnType: import('./dataTypes/TypeDeclaration').default;
+		}
+	) {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const duplicateFunction = this._registeredFunctionsByHash[hashKey];
 		if (duplicateFunction) {
@@ -54,17 +71,16 @@ export default class StaticContext {
 		this._registeredFunctionsByHash[hashKey] = functionDefinition;
 	}
 
-	lookupFunction (namespaceURI: string, localName: string, arity: number) {
+	lookupFunction(namespaceURI: string, localName: string, arity: number) {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const foundFunction = this._registeredFunctionsByHash[hashKey];
 		if (foundFunction) {
 			return foundFunction;
 		}
 
-		return this.parentContext === null ? null : this.parentContext.lookupFunction(
-			namespaceURI,
-			localName,
-			arity);
+		return this.parentContext === null
+			? null
+			: this.parentContext.lookupFunction(namespaceURI, localName, arity);
 	}
 
 	/**
@@ -73,25 +89,30 @@ export default class StaticContext {
 	 * We need this to separate variable declaration (which is required to be done statically) and
 	 * from when the dynamic context of the variable will be known.
 	 */
-	registerVariable (namespaceURI: string, localName: string) {
+	registerVariable(namespaceURI: string, localName: string) {
 		const hash = createHashKey(namespaceURI, localName);
-		return this._registeredVariableBindingByHashKey[this._scopeDepth][hash] = `${hash}[${this._scopeCount}]`;
+		return (this._registeredVariableBindingByHashKey[this._scopeDepth][hash] = `${hash}[${
+			this._scopeCount
+		}]`);
 	}
 
-	registerNamespace (prefix: string, namespaceURI: string) {
+	registerNamespace(prefix: string, namespaceURI: string) {
 		this._registeredNamespaceURIByPrefix[this._scopeDepth][prefix] = namespaceURI;
 	}
 
-	lookupVariable (namespaceURI: string, localName: string) {
+	lookupVariable(namespaceURI: string, localName: string) {
 		const hash = createHashKey(namespaceURI, localName);
-		const varNameInCurrentScope = lookupInOverrides(this._registeredVariableBindingByHashKey, hash);
+		const varNameInCurrentScope = lookupInOverrides(
+			this._registeredVariableBindingByHashKey,
+			hash
+		);
 		if (varNameInCurrentScope) {
 			return varNameInCurrentScope;
 		}
 		return this.parentContext.lookupVariable(namespaceURI, localName);
 	}
 
-	introduceScope () {
+	introduceScope() {
 		this._scopeCount++;
 		this._scopeDepth++;
 
@@ -99,16 +120,18 @@ export default class StaticContext {
 		this._registeredVariableBindingByHashKey[this._scopeDepth] = Object.create(null);
 	}
 
-	removeScope () {
+	removeScope() {
 		this._registeredNamespaceURIByPrefix.length = this._scopeDepth;
 		this._registeredVariableBindingByHashKey.length = this._scopeDepth;
 		this._scopeDepth--;
 	}
 
-	resolveNamespace (prefix: string) {
+	resolveNamespace(prefix: string) {
 		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix);
 		if (uri === undefined) {
-			return this.parentContext === null ? undefined : this.parentContext.resolveNamespace(prefix);
+			return this.parentContext === null
+				? undefined
+				: this.parentContext.resolveNamespace(prefix);
 		}
 		return uri;
 	}
@@ -117,17 +140,23 @@ export default class StaticContext {
 	 * Make a clone of this static context at the current scope that can be retained for later usage
 	 * (such as dynamic namespace lookups)
 	 */
-	cloneContext (): StaticContext {
+	cloneContext(): StaticContext {
 		const contextAtThisPoint = new StaticContext(this.parentContext);
 		for (let i = 0; i < this._scopeDepth + 1; ++i) {
-			contextAtThisPoint._registeredNamespaceURIByPrefix = [Object.assign(
-				Object.create(null),
-				contextAtThisPoint._registeredNamespaceURIByPrefix[0],
-				this._registeredNamespaceURIByPrefix[i])];
-			contextAtThisPoint._registeredVariableBindingByHashKey = [Object.assign(
-				Object.create(null),
-				contextAtThisPoint._registeredVariableBindingByHashKey[0],
-				this._registeredVariableBindingByHashKey[i])];
+			contextAtThisPoint._registeredNamespaceURIByPrefix = [
+				Object.assign(
+					Object.create(null),
+					contextAtThisPoint._registeredNamespaceURIByPrefix[0],
+					this._registeredNamespaceURIByPrefix[i]
+				)
+			];
+			contextAtThisPoint._registeredVariableBindingByHashKey = [
+				Object.assign(
+					Object.create(null),
+					contextAtThisPoint._registeredVariableBindingByHashKey[0],
+					this._registeredVariableBindingByHashKey[i]
+				)
+			];
 		}
 
 		return contextAtThisPoint;

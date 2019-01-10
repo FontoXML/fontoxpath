@@ -7,20 +7,17 @@ import TestAbstractExpression from '../tests/TestAbstractExpression';
 class ChildAxis extends Expression {
 	_childExpression: TestAbstractExpression;
 	constructor(childExpression: TestAbstractExpression) {
-		super(
-			childExpression.specificity,
-			[childExpression],
-			{
-				resultOrder: RESULT_ORDERINGS.SORTED,
-				subtree: true,
-				peer: true,
-				canBeStaticallyEvaluated: false
-			});
+		super(childExpression.specificity, [childExpression], {
+			resultOrder: RESULT_ORDERINGS.SORTED,
+			subtree: true,
+			peer: true,
+			canBeStaticallyEvaluated: false
+		});
 
 		this._childExpression = childExpression;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
@@ -30,7 +27,7 @@ class ChildAxis extends Expression {
 		const nodeValues = domFacade.getChildNodes(contextNode).map(createNodeValue);
 		const childContextSequence = SequenceFactory.create(nodeValues);
 		return childContextSequence.filter(item => {
-				return this._childExpression.evaluateToBoolean(dynamicContext, item);
+			return this._childExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}
 }

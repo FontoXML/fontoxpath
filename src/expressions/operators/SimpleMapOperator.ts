@@ -13,20 +13,21 @@ class SimpleMapOperator extends Expression {
 	 * evaluating all expressions in expression2. Returns a sequence with results from the evaluation of expression2.
 	 * Order is undefined.
 	 */
-	constructor (expression1: Expression, expression2: Expression) {
-		super(
-			new Specificity({}).add(expression1.specificity),
-			[expression1, expression2],
-			{
-				canBeStaticallyEvaluated: expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
-			});
+	constructor(expression1: Expression, expression2: Expression) {
+		super(new Specificity({}).add(expression1.specificity), [expression1, expression2], {
+			canBeStaticallyEvaluated:
+				expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
+		});
 
 		this._expression1 = expression1;
 		this._expression2 = expression2;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
-		const sequence = this._expression1.evaluateMaybeStatically(dynamicContext, executionParameters);
+	evaluate(dynamicContext, executionParameters) {
+		const sequence = this._expression1.evaluateMaybeStatically(
+			dynamicContext,
+			executionParameters
+		);
 		const childContextIterator = dynamicContext.createSequenceIterator(sequence);
 		let childContext = null;
 		let sequenceValueIterator = null;
@@ -45,12 +46,14 @@ class SimpleMapOperator extends Expression {
 							childContext = null;
 							return returnableValue;
 						}
-
 					}
 
 					// Now that we have moved an item in the input, start generating mapped items
 					if (!sequenceValueIterator) {
-						sequenceValueIterator = this._expression2.evaluateMaybeStatically(/** @type {!DynamicContext} */(childContext.value), executionParameters);
+						sequenceValueIterator = this._expression2.evaluateMaybeStatically(
+							/** @type {!DynamicContext} */ (childContext.value),
+							executionParameters
+						);
 					}
 					const value = sequenceValueIterator.value.next();
 					if (value.done) {

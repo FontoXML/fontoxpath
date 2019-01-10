@@ -10,14 +10,11 @@ class Literal extends Expression {
 	_type: string;
 	_createValueSequence: () => ISequence;
 
-	constructor (jsValue: string, type: string) {
-		super(
-			new Specificity({}),
-			[],
-			{
-				canBeStaticallyEvaluated: true,
-				resultOrder: RESULT_ORDERINGS.SORTED
-			});
+	constructor(jsValue: string, type: string) {
+		super(new Specificity({}), [], {
+			canBeStaticallyEvaluated: true,
+			resultOrder: RESULT_ORDERINGS.SORTED
+		});
 		this._type = type;
 
 		let value;
@@ -41,7 +38,7 @@ class Literal extends Expression {
 		this._createValueSequence = () => SequenceFactory.singleton(value);
 	}
 
-	evaluate (_dynamicContext) {
+	evaluate(_dynamicContext) {
 		return this._createValueSequence();
 	}
 }

@@ -7,7 +7,7 @@ import atomize from '../dataTypes/atomize';
 import ISequence from '../dataTypes/ISequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
-function mapItem (argumentItem, type, executionParameters, functionName) {
+function mapItem(argumentItem, type, executionParameters, functionName) {
 	if (isSubtypeOf(argumentItem.type, type)) {
 		return argumentItem;
 	}
@@ -24,7 +24,10 @@ function mapItem (argumentItem, type, executionParameters, functionName) {
 		const item = castToType(argumentItem, type);
 		if (!item) {
 			throw new Error(
-				`XPTY0004 Unable to convert ${argumentItem.type} to type ${type} while calling ${functionName}`);
+				`XPTY0004 Unable to convert ${
+					argumentItem.type
+				} to type ${type} while calling ${functionName}`
+			);
 		}
 		return item;
 	}
@@ -33,7 +36,10 @@ function mapItem (argumentItem, type, executionParameters, functionName) {
 	const item = promoteToType(argumentItem, type);
 	if (!item) {
 		throw new Error(
-			`XPTY0004 Unable to cast ${argumentItem.type} to type ${type} while calling ${functionName}`);
+			`XPTY0004 Unable to cast ${
+				argumentItem.type
+			} to type ${type} while calling ${functionName}`
+		);
 	}
 	return item;
 }
@@ -41,32 +47,59 @@ function mapItem (argumentItem, type, executionParameters, functionName) {
 /**
  * Test whether the provided argument is valid to be used as an function argument of the given type
  */
-export const transformArgument = (argumentType: TypeDeclaration, argument: ISequence, executionParameters: ExecutionParameters, functionName: string): ISequence => {
+export const transformArgument = (
+	argumentType: TypeDeclaration,
+	argument: ISequence,
+	executionParameters: ExecutionParameters,
+	functionName: string
+): ISequence => {
 	switch (argumentType.occurrence) {
 		case '?':
 			return argument.switchCases({
-				default: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName)),
+				default: () =>
+					argument.map(value =>
+						mapItem(value, argumentType.type, executionParameters, functionName)
+					),
 				multiple: () => {
-					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${argumentType.occurrence} for ${functionName} is incorrect. Expected "?", but got "+".`);
+					throw new Error(
+						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
+							argumentType.occurrence
+						} for ${functionName} is incorrect. Expected "?", but got "+".`
+					);
 				}
 			});
 		case '+':
 			return argument.switchCases({
 				empty: () => {
-					throw new Error(`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${argumentType.occurrence} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`);
+					throw new Error(
+						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
+							argumentType.occurrence
+						} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
+					);
 				},
-				default: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName))
+				default: () =>
+					argument.map(value =>
+						mapItem(value, argumentType.type, executionParameters, functionName)
+					)
 			});
 		case '*':
-			return argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName));
+			return argument.map(value =>
+				mapItem(value, argumentType.type, executionParameters, functionName)
+			);
 		default:
 			// excactly one
 			return argument.switchCases({
-				singleton: () => argument.map(value => mapItem(value, argumentType.type, executionParameters, functionName)),
+				singleton: () =>
+					argument.map(value =>
+						mapItem(value, argumentType.type, executionParameters, functionName)
+					),
 				default: () => {
 					throw new Error(
-						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${argumentType.occurrence} for ${functionName} is incorrect. Expected exactly one`);
-}
+						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
+							argumentType.occurrence
+						} for ${functionName} is incorrect. Expected exactly one`
+					);
+				}
 			});
 	}
 };

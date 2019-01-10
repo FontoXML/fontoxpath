@@ -10,17 +10,20 @@ const NCNameStartChar = /([A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u03
 const NCNameChar = new RegExp(`(${NCNameStartChar.source}|[-.0-9\xB7\u0300-\u036F\u203F\u2040])`);
 const NCName = new RegExp(`${NCNameStartChar.source}${NCNameChar.source}*`, 'g');
 
-const isValidNCName = (name) => {
+const isValidNCName = name => {
 	const matches = name.match(NCName);
 	return matches ? matches.length === 1 : false;
 };
 
-export function evaluateNCNameExpression (executionParameters, nameSequence) {
+export function evaluateNCNameExpression(executionParameters, nameSequence) {
 	const name = nameSequence.atomize(executionParameters);
 	return name.switchCases({
 		singleton: seq => {
 			const nameValue = seq.first();
-			if (isSubtypeOf(nameValue.type, 'xs:string') || isSubtypeOf(nameValue.type, 'xs:untypedAtomic')) {
+			if (
+				isSubtypeOf(nameValue.type, 'xs:string') ||
+				isSubtypeOf(nameValue.type, 'xs:untypedAtomic')
+			) {
 				if (!isValidNCName(nameValue.value)) {
 					throw errXQDY0041(nameValue.value);
 				}
@@ -34,14 +37,17 @@ export function evaluateNCNameExpression (executionParameters, nameSequence) {
 	}).value;
 }
 
-export function evaluateQNameExpression (staticContext, executionParameters, nameSequence) {
+export function evaluateQNameExpression(staticContext, executionParameters, nameSequence) {
 	const name = nameSequence.atomize(executionParameters);
 	return name.switchCases({
 		singleton: seq => {
 			const nameValue = seq.first();
 			if (isSubtypeOf(nameValue.type, 'xs:QName')) {
 				return SequenceFactory.singleton(nameValue);
-			} else if (isSubtypeOf(nameValue.type, 'xs:string') || isSubtypeOf(nameValue.type, 'xs:untypedAtomic')) {
+			} else if (
+				isSubtypeOf(nameValue.type, 'xs:string') ||
+				isSubtypeOf(nameValue.type, 'xs:untypedAtomic')
+			) {
 				let prefix, namespaceURI, localName;
 				const parts = nameValue.value.split(':');
 				if (parts.length === 1) {

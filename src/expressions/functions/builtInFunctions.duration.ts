@@ -3,47 +3,89 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnYearsFromDuration: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnYearsFromDuration: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getYears(), 'xs:integer'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(sequence.first().value.getYears(), 'xs:integer')
+	);
+};
 
-const fnMonthsFromDuration: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnMonthsFromDuration: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getMonths(), 'xs:integer'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(sequence.first().value.getMonths(), 'xs:integer')
+	);
+};
 
-const fnDaysFromDuration: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnDaysFromDuration: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getDays(), 'xs:integer'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(sequence.first().value.getDays(), 'xs:integer')
+	);
+};
 
-const fnHoursFromDuration: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnHoursFromDuration: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getHours(), 'xs:integer'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(sequence.first().value.getHours(), 'xs:integer')
+	);
+};
 
-const fnMinutesFromDuration: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnMinutesFromDuration: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer')
+	);
+};
 
-const fnSecondsFromDuration: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, sequence) {
+const fnSecondsFromDuration: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence
+) {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(createAtomicValue(sequence.first().value.getSeconds(), 'xs:decimal'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(sequence.first().value.getSeconds(), 'xs:decimal')
+	);
+};
 
 export default {
 	declarations: [

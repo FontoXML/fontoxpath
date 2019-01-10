@@ -36,9 +36,12 @@ function timezoneToString(timezone: DayTimeDuration): string {
 		return 'Z';
 	}
 
-	return (timezone.isPositive() ? '+' : '-') +
-		convertToTwoCharString(Math.abs(timezone.getHours())) + ':' +
-		convertToTwoCharString(Math.abs(timezone.getMinutes()));
+	return (
+		(timezone.isPositive() ? '+' : '-') +
+		convertToTwoCharString(Math.abs(timezone.getHours())) +
+		':' +
+		convertToTwoCharString(Math.abs(timezone.getMinutes()))
+	);
 }
 
 class DateTime {
@@ -52,7 +55,17 @@ class DateTime {
 	_timezone: DayTimeDuration;
 	_type: string;
 	static fromString: (string: any) => DateTime;
-	constructor(years: number, months: number, days: number, hours: number, minutes: number, seconds: number, secondFraction: number, timezone: DayTimeDuration, type = 'xs:dateTime') {
+	constructor(
+		years: number,
+		months: number,
+		days: number,
+		hours: number,
+		minutes: number,
+		seconds: number,
+		secondFraction: number,
+		timezone: DayTimeDuration,
+		type = 'xs:dateTime'
+	) {
 		this._years = years;
 		this._months = months;
 		this._days = days + (hours === 24 ? 1 : 0);
@@ -105,57 +118,87 @@ class DateTime {
 	}
 
 	toJavaScriptDate(implicitTimezone = undefined): Date {
-		const timezoneToUse = this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
-		return new Date(Date.UTC(
-			this._years,
-			this._months - 1,
-			this._days,
-			this._hours - timezoneToUse.getHours(),
-			this._minutes - timezoneToUse.getMinutes(),
-			this._seconds + this._secondFraction)
+		const timezoneToUse =
+			this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
+		return new Date(
+			Date.UTC(
+				this._years,
+				this._months - 1,
+				this._days,
+				this._hours - timezoneToUse.getHours(),
+				this._minutes - timezoneToUse.getMinutes(),
+				this._seconds + this._secondFraction
+			)
 		);
 	}
 
 	toString() {
 		switch (this._type) {
 			case 'xs:dateTime':
-				return convertYearToString(this._years) + '-' +
-					convertToTwoCharString(this._months) + '-' +
-					convertToTwoCharString(this._days) + 'T' +
-					convertToTwoCharString(this._hours) + ':' +
-					convertToTwoCharString(this._minutes) + ':' +
+				return (
+					convertYearToString(this._years) +
+					'-' +
+					convertToTwoCharString(this._months) +
+					'-' +
+					convertToTwoCharString(this._days) +
+					'T' +
+					convertToTwoCharString(this._hours) +
+					':' +
+					convertToTwoCharString(this._minutes) +
+					':' +
 					convertSecondsToString(this._seconds + this._secondFraction) +
-					(this._timezone ? timezoneToString(this._timezone) : '');
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
 			case 'xs:date':
-				return convertYearToString(this._years) + '-' +
-					convertToTwoCharString(this._months) + '-' +
+				return (
+					convertYearToString(this._years) +
+					'-' +
+					convertToTwoCharString(this._months) +
+					'-' +
 					convertToTwoCharString(this._days) +
-					(this._timezone ? timezoneToString(this._timezone) : '');
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
 			case 'xs:time':
-				return convertToTwoCharString(this._hours) + ':' +
-					convertToTwoCharString(this._minutes) + ':' +
+				return (
+					convertToTwoCharString(this._hours) +
+					':' +
+					convertToTwoCharString(this._minutes) +
+					':' +
 					convertSecondsToString(this._seconds + this._secondFraction) +
-					(this._timezone ? timezoneToString(this._timezone) : '');
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
 			case 'xs:gDay':
-				return '---' +
+				return (
+					'---' +
 					convertToTwoCharString(this._days) +
-					(this._timezone ? timezoneToString(this._timezone) : '');
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
 			case 'xs:gMonth':
-				return '--' +
+				return (
+					'--' +
 					convertToTwoCharString(this._months) +
-					(this._timezone ? timezoneToString(this._timezone) : '');
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
 			case 'xs:gMonthDay':
-				return '--' +
-					convertToTwoCharString(this._months) + '-' +
-					convertToTwoCharString(this._days) +
-					(this._timezone ? timezoneToString(this._timezone) : '');
-			case 'xs:gYear':
-				return convertYearToString(this._years) +
-					(this._timezone ? timezoneToString(this._timezone) : '');
-			case 'xs:gYearMonth':
-				return convertYearToString(this._years) + '-' +
+				return (
+					'--' +
 					convertToTwoCharString(this._months) +
-					(this._timezone ? timezoneToString(this._timezone) : '');
+					'-' +
+					convertToTwoCharString(this._days) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:gYear':
+				return (
+					convertYearToString(this._years) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:gYearMonth':
+				return (
+					convertYearToString(this._years) +
+					'-' +
+					convertToTwoCharString(this._months) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
 		}
 		throw new Error('Unexpected subType');
 	}
@@ -177,16 +220,66 @@ class DateTime {
 			case 'xs:gYear':
 				return new DateTime(this._years, 1, 1, 0, 0, 0, 0, this._timezone, 'xs:gYear');
 			case 'xs:gMonthDay':
-				return new DateTime(1972, this._months, this._days, 0, 0, 0, 0, this._timezone, 'xs:gMonthDay');
+				return new DateTime(
+					1972,
+					this._months,
+					this._days,
+					0,
+					0,
+					0,
+					0,
+					this._timezone,
+					'xs:gMonthDay'
+				);
 			case 'xs:gYearMonth':
-				return new DateTime(this._years, this._months, 1, 0, 0, 0, 0, this._timezone, 'xs:gYearMonth');
+				return new DateTime(
+					this._years,
+					this._months,
+					1,
+					0,
+					0,
+					0,
+					0,
+					this._timezone,
+					'xs:gYearMonth'
+				);
 			case 'xs:time':
-				return new DateTime(1972, 12, 31, this._hours, this._minutes, this._seconds, this._secondFraction, this._timezone, 'xs:time');
+				return new DateTime(
+					1972,
+					12,
+					31,
+					this._hours,
+					this._minutes,
+					this._seconds,
+					this._secondFraction,
+					this._timezone,
+					'xs:time'
+				);
 			case 'xs:date':
-				return new DateTime(this._years, this._months, this._days, 0, 0, 0, 0, this._timezone, 'xs:date');
+				return new DateTime(
+					this._years,
+					this._months,
+					this._days,
+					0,
+					0,
+					0,
+					0,
+					this._timezone,
+					'xs:date'
+				);
 			case 'xs:dateTime':
 			default:
-				return new DateTime(this._years, this._months, this._days, this._hours, this._minutes, this._seconds, this._secondFraction, this._timezone, 'xs:dateTime');
+				return new DateTime(
+					this._years,
+					this._months,
+					this._days,
+					this._hours,
+					this._minutes,
+					this._seconds,
+					this._secondFraction,
+					this._timezone,
+					'xs:dateTime'
+				);
 		}
 	}
 }
@@ -199,7 +292,7 @@ class DateTime {
 // gMonthDay   |       --mm-dd            (Z|[+-]hh:mm)
 // gDay        |         ---dd            (Z|[+-]hh:mm)
 // gMonth      |       --mm               (Z|[+-]hh:mm)
-DateTime.fromString = function (string: string): DateTime {
+DateTime.fromString = function(string: string): DateTime {
 	const regex = /^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
 	const match = regex.exec(string);
 
@@ -229,7 +322,8 @@ DateTime.fromString = function (string: string): DateTime {
 			seconds,
 			secondFraction,
 			timezone,
-			'xs:dateTime');
+			'xs:dateTime'
+		);
 	}
 
 	if (hours !== null && minutes !== null && seconds !== null) {
@@ -243,93 +337,44 @@ DateTime.fromString = function (string: string): DateTime {
 			seconds,
 			secondFraction,
 			timezone,
-			'xs:time');
+			'xs:time'
+		);
 	}
 
 	if (years !== null && months !== null && days !== null) {
 		// There is no T separator, but there is a complete date component -> date
-		return new DateTime(
-			years,
-			months,
-			days,
-			0,
-			0,
-			0,
-			0,
-			timezone,
-			'xs:date');
+		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, 'xs:date');
 	}
 
 	if (years !== null && months !== null) {
 		// There is no complete date component, but there is a year and a month -> gYearMonth
-		return new DateTime(
-			years,
-			months,
-			1,
-			0,
-			0,
-			0,
-			0,
-			timezone,
-			'xs:gYearMonth');
+		return new DateTime(years, months, 1, 0, 0, 0, 0, timezone, 'xs:gYearMonth');
 	}
 
 	if (months !== null && days !== null) {
 		// There is no complete date component, but there is a month and a day -> gMonthDay
-		return new DateTime(
-			1972,
-			months,
-			days,
-			0,
-			0,
-			0,
-			0,
-			timezone,
-			'xs:gMonthDay');
+		return new DateTime(1972, months, days, 0, 0, 0, 0, timezone, 'xs:gMonthDay');
 	}
 
 	if (years !== null) {
 		// There is only a year -> gYear
-		return new DateTime(
-			years,
-			1,
-			1,
-			0,
-			0,
-			0,
-			0,
-			timezone,
-			'xs:gYear');
+		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, 'xs:gYear');
 	}
 
 	if (months !== null) {
 		// There is only a month -> gMonth
-		return new DateTime(
-			1972,
-			months,
-			1,
-			0,
-			0,
-			0,
-			0,
-			timezone,
-			'xs:gMonth');
+		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, 'xs:gMonth');
 	}
 
 	// There is only one option left -> gDay
-	return new DateTime(
-		1972,
-		12,
-		days,
-		0,
-		0,
-		0,
-		0,
-		timezone,
-		'xs:gDay');
+	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, 'xs:gDay');
 };
 
-export function compare(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): number {
+export function compare(
+	dateTime1: DateTime,
+	dateTime2: DateTime,
+	implicitTimezone: DayTimeDuration | null = undefined
+): number {
 	const jsTime1 = dateTime1.toJavaScriptDate(implicitTimezone).getTime();
 	const jsTime2 = dateTime2.toJavaScriptDate(implicitTimezone).getTime();
 
@@ -351,33 +396,46 @@ export function compare(dateTime1: DateTime, dateTime2: DateTime, implicitTimezo
 	return -1;
 }
 
-export function equal(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): boolean {
+export function equal(
+	dateTime1: DateTime,
+	dateTime2: DateTime,
+	implicitTimezone: DayTimeDuration | null = undefined
+): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) === 0;
 }
 
-export function lessThan(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): boolean {
+export function lessThan(
+	dateTime1: DateTime,
+	dateTime2: DateTime,
+	implicitTimezone: DayTimeDuration | null = undefined
+): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) < 0;
 }
 
-export function greaterThan(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): boolean {
+export function greaterThan(
+	dateTime1: DateTime,
+	dateTime2: DateTime,
+	implicitTimezone: DayTimeDuration | null = undefined
+): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) > 0;
 }
 
-export function subtract(dateTime1: DateTime, dateTime2: DateTime, implicitTimezone: DayTimeDuration | null = undefined): DayTimeDuration {
+export function subtract(
+	dateTime1: DateTime,
+	dateTime2: DateTime,
+	implicitTimezone: DayTimeDuration | null = undefined
+): DayTimeDuration {
 	// Divided by 1000 because date subtraction results in milliseconds
-	const secondsOfDuration = (
-		dateTime1.toJavaScriptDate(implicitTimezone).getTime() -
-		dateTime2.toJavaScriptDate(implicitTimezone).getTime()
-	) / 1000;
-	return new DayTimeDuration(
-		secondsOfDuration
-	);
+	const secondsOfDuration =
+		(dateTime1.toJavaScriptDate(implicitTimezone).getTime() -
+			dateTime2.toJavaScriptDate(implicitTimezone).getTime()) /
+		1000;
+	return new DayTimeDuration(secondsOfDuration);
 }
 
 export function addDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
 	throw new Error(`Not implemented: adding durations to ${dateTime._type}`);
 }
-
 
 export function subtractDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
 	throw new Error(`Not implemented: subtracting durations from ${dateTime._type}`);

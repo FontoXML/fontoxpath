@@ -4,7 +4,7 @@ import CastResult from './CastResult';
 
 const createDateTimeValue = value => createAtomicValue(value, 'xs:dateTime');
 
-export default function castToDateTime (instanceOf: (string) => boolean) : (Value) => CastResult {
+export default function castToDateTime(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:date')) {
 		return value => ({
 			successful: true,
@@ -19,6 +19,8 @@ export default function castToDateTime (instanceOf: (string) => boolean) : (Valu
 	}
 	return () => ({
 		successful: false,
-		error: new Error('XPTY0004: Casting not supported from given type to xs:dateTime or any of its derived types.')
+		error: new Error(
+			'XPTY0004: Casting not supported from given type to xs:dateTime or any of its derived types.'
+		)
 	});
 }

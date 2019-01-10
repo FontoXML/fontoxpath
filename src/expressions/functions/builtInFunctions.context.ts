@@ -7,48 +7,65 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnLast: FunctionDefinitionType = function(dynamicContext) {
 	if (dynamicContext.contextItem === null) {
-		throw new Error('XPDY0002: The fn:last() function depends on dynamic context, which is absent.');
+		throw new Error(
+			'XPDY0002: The fn:last() function depends on dynamic context, which is absent.'
+		);
 	}
 
 	let done = false;
-	return SequenceFactory.create({
-		next: () => {
-			if (done) {
-				return DONE_TOKEN;
+	return SequenceFactory.create(
+		{
+			next: () => {
+				if (done) {
+					return DONE_TOKEN;
+				}
+				const length = dynamicContext.contextSequence.tryGetLength(false);
+				if (length.ready) {
+					done = true;
+					return ready(createAtomicValue(length.value, 'xs:integer'));
+				}
+				return notReady(length.promise);
 			}
-			const length = dynamicContext.contextSequence.tryGetLength(false);
-			if (length.ready) {
-				done = true;
-				return ready(createAtomicValue(length.value, 'xs:integer'));
-			}
-			return notReady(length.promise);
-		}
-	}, 1);
-}
+		},
+		1
+	);
+};
 
 const fnPosition: FunctionDefinitionType = function(dynamicContext) {
 	if (dynamicContext.contextItem === null) {
-		throw new Error('XPDY0002: The fn:position() function depends on dynamic context, which is absent.');
+		throw new Error(
+			'XPDY0002: The fn:position() function depends on dynamic context, which is absent.'
+		);
 	}
 	// Note: +1 because XPath is one-based
-	return SequenceFactory.singleton(createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer')
+	);
+};
 
 const fnCurrentDateTime: FunctionDefinitionType = function(dynamicContext) {
-	return SequenceFactory.singleton(createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp')
+	);
+};
 
 const fnCurrentDate: FunctionDefinitionType = function(dynamicContext) {
-	return SequenceFactory.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date')
+	);
+};
 
 const fnCurrentTime: FunctionDefinitionType = function(dynamicContext) {
-	return SequenceFactory.singleton(createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time')
+	);
+};
 
 const fnImplicitTimezone: FunctionDefinitionType = function(dynamicContext) {
-	return SequenceFactory.singleton(createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration'));
-}
+	return SequenceFactory.singleton(
+		createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration')
+	);
+};
 
 export default {
 	declarations: [

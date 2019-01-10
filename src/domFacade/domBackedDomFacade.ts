@@ -1,17 +1,23 @@
 import IDomFacade from './IDomFacade';
-import ConcreteNode, { ConcreteElementNode, ConcreteParentNode, ConcreteChildNode, NODE_TYPES, ConcreteAttributeNode } from './ConcreteNode';
+import ConcreteNode, {
+	ConcreteElementNode,
+	ConcreteParentNode,
+	ConcreteChildNode,
+	NODE_TYPES,
+	ConcreteAttributeNode
+} from './ConcreteNode';
 import IWrappingDomFacade from './IWrappingDomFacade';
 
 class DomBackedDomFacade implements IWrappingDomFacade {
 	orderOfDetachedNodes: ConcreteNode[];
-	constructor () {
+	constructor() {
 		this.orderOfDetachedNodes = [];
 	}
 	unwrap() {
 		return this;
 	}
 
-	getParentNode (node: ConcreteElementNode) : ConcreteParentNode;
+	getParentNode(node: ConcreteElementNode): ConcreteParentNode;
 	getParentNode(node: ConcreteNode): ConcreteParentNode {
 		if (node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE) {
 			return node.ownerElement;
@@ -38,23 +44,25 @@ class DomBackedDomFacade implements IWrappingDomFacade {
 	getChildNodes(node: ConcreteParentNode): ConcreteChildNode[] {
 		const childNodes = [];
 
-		for (let childNode: ConcreteChildNode = this.getFirstChild(node);
+		for (
+			let childNode: ConcreteChildNode = this.getFirstChild(node);
 			childNode;
-			childNode = this.getNextSibling(childNode) as ConcreteChildNode) {
+			childNode = this.getNextSibling(childNode) as ConcreteChildNode
+		) {
 			childNodes.push(childNode);
 		}
 
 		return childNodes;
 	}
 
-	getAttribute(node: ConcreteElementNode|ConcreteAttributeNode, attributeName: string): string {
+	getAttribute(node: ConcreteElementNode | ConcreteAttributeNode, attributeName: string): string {
 		if (node['nodeType'] === 2) {
 			return null;
 		}
 		return node['getAttribute'](attributeName);
 	}
 
-	getAllAttributes(node: ConcreteElementNode|ConcreteAttributeNode): ConcreteAttributeNode[] {
+	getAllAttributes(node: ConcreteElementNode | ConcreteAttributeNode): ConcreteAttributeNode[] {
 		if (node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE) {
 			return [];
 		}

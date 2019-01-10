@@ -12,12 +12,19 @@ import IDomFacade from './domFacade/IDomFacade';
  *
  * @return The first matching node, in the order defined by the XPath.
  */
-export default function evaluateXPathToFirstNode (
+export default function evaluateXPathToFirstNode(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
-): Node|null {
-	return evaluateXPath(selector, contextItem, domFacade, variables, evaluateXPath.FIRST_NODE_TYPE, options);
+): Node | null {
+	return evaluateXPath(
+		selector,
+		contextItem,
+		domFacade,
+		variables,
+		evaluateXPath.FIRST_NODE_TYPE,
+		options
+	);
 }

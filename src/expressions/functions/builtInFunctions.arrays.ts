@@ -12,36 +12,61 @@ import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 import ISequence from '../dataTypes/ISequence';
 
-const arraySize: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arraySequence) {
-	return zipSingleton(
-		[arraySequence],
-		([array]) => SequenceFactory.singleton(createAtomicValue((array as ArrayValue).members.length, 'xs:integer')));
-}
+const arraySize: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arraySequence
+) {
+	return zipSingleton([arraySequence], ([array]) =>
+		SequenceFactory.singleton(
+			createAtomicValue((array as ArrayValue).members.length, 'xs:integer')
+		)
+	);
+};
 
-const arrayPut: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arraySequence, positionSequence, itemSequence) {
-	return zipSingleton(
-		[positionSequence, arraySequence],
-		([position, array]) => {
-			const positionValue = position.value;
-			if (positionValue <= 0 || positionValue > (array as ArrayValue).members.length) {
-				throw new Error('FOAY0001: array position out of bounds.');
-			}
-				const newMembers = (array as ArrayValue).members.concat();
-			newMembers.splice(positionValue - 1, 1, createDoublyIterableSequence(itemSequence));
-			return SequenceFactory.singleton(new ArrayValue(newMembers));
-		});
-}
+const arrayPut: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arraySequence,
+	positionSequence,
+	itemSequence
+) {
+	return zipSingleton([positionSequence, arraySequence], ([position, array]) => {
+		const positionValue = position.value;
+		if (positionValue <= 0 || positionValue > (array as ArrayValue).members.length) {
+			throw new Error('FOAY0001: array position out of bounds.');
+		}
+		const newMembers = (array as ArrayValue).members.concat();
+		newMembers.splice(positionValue - 1, 1, createDoublyIterableSequence(itemSequence));
+		return SequenceFactory.singleton(new ArrayValue(newMembers));
+	});
+};
 
-const arrayAppend: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arraySequence, itemSequence) {
-	return zipSingleton(
-		[arraySequence],
-		([array]) => {
-			const newMembers = (array as ArrayValue).members.concat([createDoublyIterableSequence(itemSequence)]);
-			return SequenceFactory.singleton(new ArrayValue(newMembers));
-		});
-}
+const arrayAppend: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arraySequence,
+	itemSequence
+) {
+	return zipSingleton([arraySequence], ([array]) => {
+		const newMembers = (array as ArrayValue).members.concat([
+			createDoublyIterableSequence(itemSequence)
+		]);
+		return SequenceFactory.singleton(new ArrayValue(newMembers));
+	});
+};
 
-const arraySubarray: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arraySequence, startSequence, lengthSequence) {
+const arraySubarray: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arraySequence,
+	startSequence,
+	lengthSequence
+) {
 	return zipSingleton(
 		[arraySequence, startSequence, lengthSequence],
 		([array, start, length]) => {
@@ -60,17 +85,27 @@ const arraySubarray: FunctionDefinitionType = function(_dynamicContext, _executi
 				throw new Error('FOAY0001: subarray start + length out of bounds.');
 			}
 
-			const newMembers = (array as ArrayValue).members.slice(startValue - 1, lengthValue + startValue - 1);
+			const newMembers = (array as ArrayValue).members.slice(
+				startValue - 1,
+				lengthValue + startValue - 1
+			);
 			return SequenceFactory.singleton(new ArrayValue(newMembers));
-		});
-}
+		}
+	);
+};
 
-const arrayRemove: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arraySequence, positionSequence) {
-	return zipSingleton(
-		[arraySequence],
-		([array]) => positionSequence.mapAll(allIndices => {
-			const indicesToRemove = allIndices.map(value => value.value)
-			// Sort them in reverse order, to keep them stable
+const arrayRemove: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arraySequence,
+	positionSequence
+) {
+	return zipSingleton([arraySequence], ([array]) =>
+		positionSequence.mapAll(allIndices => {
+			const indicesToRemove = allIndices
+				.map(value => value.value)
+				// Sort them in reverse order, to keep them stable
 				.sort((a, b) => b - a)
 				.filter((item, i, all) => all[i - 1] !== item);
 
@@ -86,160 +121,264 @@ const arrayRemove: FunctionDefinitionType = function(_dynamicContext, _execution
 			return SequenceFactory.singleton(new ArrayValue(newMembers));
 		})
 	);
-}
+};
 
-const arrayInsertBefore: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arraySequence, positionSequence, itemSequence) {
-	return zipSingleton(
-		[arraySequence, positionSequence],
-		([array, position]) => {
-			const positionValue = position.value;
+const arrayInsertBefore: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arraySequence,
+	positionSequence,
+	itemSequence
+) {
+	return zipSingleton([arraySequence, positionSequence], ([array, position]) => {
+		const positionValue = position.value;
 
-			if (positionValue > (array as ArrayValue).members.length + 1 || positionValue <= 0) {
-				throw new Error('FOAY0001: subarray position out of bounds.');
-			}
+		if (positionValue > (array as ArrayValue).members.length + 1 || positionValue <= 0) {
+			throw new Error('FOAY0001: subarray position out of bounds.');
+		}
 
-			const newMembers = (array as ArrayValue).members.concat();
-			newMembers.splice(positionValue - 1, 0, createDoublyIterableSequence(itemSequence));
-			return SequenceFactory.singleton(new ArrayValue(newMembers));
-		});
-}
+		const newMembers = (array as ArrayValue).members.concat();
+		newMembers.splice(positionValue - 1, 0, createDoublyIterableSequence(itemSequence));
+		return SequenceFactory.singleton(new ArrayValue(newMembers));
+	});
+};
 
-const arrayReverse: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arraySequence) {
-	return zipSingleton(
-		[arraySequence],
-		([array]) => SequenceFactory.singleton(new ArrayValue((array as ArrayValue).members.concat().reverse())));
-}
+const arrayReverse: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arraySequence
+) {
+	return zipSingleton([arraySequence], ([array]) =>
+		SequenceFactory.singleton(new ArrayValue((array as ArrayValue).members.concat().reverse()))
+	);
+};
 
-const arrayJoin: FunctionDefinitionType = function(_dynamicContext, _executionParameters, _staticContext, arraySequence) {
+const arrayJoin: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arraySequence
+) {
 	return arraySequence.mapAll(allArrays => {
 		const newMembers = allArrays.reduce(
 			(joinedMembers, array) => joinedMembers.concat((array as ArrayValue).members),
-			[]);
+			[]
+		);
 		return SequenceFactory.singleton(new ArrayValue(newMembers));
 	});
-}
+};
 
-const arrayForEach: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, arraySequence, functionItemSequence) {
-	return zipSingleton(
-		[arraySequence, functionItemSequence],
-		([array, functionItem]) => {
-			const newMembers = (array as ArrayValue).members.map(function (member) {
-				return createDoublyIterableSequence(
-					functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, member()));
-			});
-			return SequenceFactory.singleton(new ArrayValue(newMembers));
-		});
-}
-
-const arrayFilter: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, arraySequence, functionItemSequence) {
-	return zipSingleton(
-		[arraySequence, functionItemSequence],
-		([array, functionItem]) => {
-			const filterResultSequences: ISequence[] = (array as ArrayValue).members.map(member => functionItem.value.call(
-				undefined,
-				dynamicContext,
-				executionParameters,
-				staticContext,
-				member()));
-			const effectiveBooleanValues = [];
-			let done = false;
-			return SequenceFactory.create({
-				next: () => {
-					if (done) {
-						return DONE_TOKEN;
-					}
-					let allReady = true;
-					for (let i = 0, l = (array as ArrayValue).members.length; i < l; ++i) {
-						if (effectiveBooleanValues[i] && effectiveBooleanValues[i].ready) {
-							continue;
-						}
-						const filterResult = filterResultSequences[i];
-						const ebv = filterResult.tryGetEffectiveBooleanValue();
-						if (!ebv.ready) {
-							allReady = false;
-						}
-						effectiveBooleanValues[i] = ebv;
-					}
-					if (!allReady) {
-						return notReady(Promise.all(effectiveBooleanValues.map(
-							filterResult => filterResult.ready ? Promise.resolve() : filterResult.promise)));
-					}
-					const newMembers = (array as ArrayValue).members
-						.filter((_, i) => effectiveBooleanValues[i].value);
-					done = true;
-					return ready(new ArrayValue(newMembers));
-				}
-			});
-		});
-}
-
-const arrayFoldLeft: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, arraySequence, startSequence, functionItemSequence) {
-	return zipSingleton(
-		[arraySequence, functionItemSequence],
-		([array, functionItem]) => (array as ArrayValue).members.reduce(
-			(accum, member) => functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, accum, member()),
-			startSequence));
-}
-
-const arrayFoldRight: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, arraySequence, startSequence, functionItemSequence) {
-	return zipSingleton(
-		[arraySequence, functionItemSequence],
-		([array, functionItem]) => (array as ArrayValue).members.reduceRight(
-			(accum, member) => functionItem.value.call(undefined, dynamicContext, executionParameters, staticContext, accum, member()),
-			startSequence));
-}
-
-const arrayForEachPair: FunctionDefinitionType = function(dynamicContext, executionParameters, staticContext, arraySequenceA, arraySequenceB, functionItemSequence) {
-	return zipSingleton(
-		[arraySequenceA, arraySequenceB, functionItemSequence],
-		([arrayA, arrayB, functionItem]) => {
-			const newMembers = [];
-			for (let i = 0, l = Math.min(
-				(arrayA as ArrayValue).members.length,
-				(arrayB as ArrayValue).members.length); i < l; ++i) {
-				newMembers[i] = createDoublyIterableSequence(functionItem.value.call(
+const arrayForEach: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	arraySequence,
+	functionItemSequence
+) {
+	return zipSingleton([arraySequence, functionItemSequence], ([array, functionItem]) => {
+		const newMembers = (array as ArrayValue).members.map(function(member) {
+			return createDoublyIterableSequence(
+				functionItem.value.call(
 					undefined,
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					(arrayA as ArrayValue).members[i](),
-					(arrayB as ArrayValue).members[i]()));
+					member()
+				)
+			);
+		});
+		return SequenceFactory.singleton(new ArrayValue(newMembers));
+	});
+};
+
+const arrayFilter: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	arraySequence,
+	functionItemSequence
+) {
+	return zipSingleton([arraySequence, functionItemSequence], ([array, functionItem]) => {
+		const filterResultSequences: ISequence[] = (array as ArrayValue).members.map(member =>
+			functionItem.value.call(
+				undefined,
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				member()
+			)
+		);
+		const effectiveBooleanValues = [];
+		let done = false;
+		return SequenceFactory.create({
+			next: () => {
+				if (done) {
+					return DONE_TOKEN;
+				}
+				let allReady = true;
+				for (let i = 0, l = (array as ArrayValue).members.length; i < l; ++i) {
+					if (effectiveBooleanValues[i] && effectiveBooleanValues[i].ready) {
+						continue;
+					}
+					const filterResult = filterResultSequences[i];
+					const ebv = filterResult.tryGetEffectiveBooleanValue();
+					if (!ebv.ready) {
+						allReady = false;
+					}
+					effectiveBooleanValues[i] = ebv;
+				}
+				if (!allReady) {
+					return notReady(
+						Promise.all(
+							effectiveBooleanValues.map(filterResult =>
+								filterResult.ready ? Promise.resolve() : filterResult.promise
+							)
+						)
+					);
+				}
+				const newMembers = (array as ArrayValue).members.filter(
+					(_, i) => effectiveBooleanValues[i].value
+				);
+				done = true;
+				return ready(new ArrayValue(newMembers));
+			}
+		});
+	});
+};
+
+const arrayFoldLeft: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	arraySequence,
+	startSequence,
+	functionItemSequence
+) {
+	return zipSingleton([arraySequence, functionItemSequence], ([array, functionItem]) =>
+		(array as ArrayValue).members.reduce(
+			(accum, member) =>
+				functionItem.value.call(
+					undefined,
+					dynamicContext,
+					executionParameters,
+					staticContext,
+					accum,
+					member()
+				),
+			startSequence
+		)
+	);
+};
+
+const arrayFoldRight: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	arraySequence,
+	startSequence,
+	functionItemSequence
+) {
+	return zipSingleton([arraySequence, functionItemSequence], ([array, functionItem]) =>
+		(array as ArrayValue).members.reduceRight(
+			(accum, member) =>
+				functionItem.value.call(
+					undefined,
+					dynamicContext,
+					executionParameters,
+					staticContext,
+					accum,
+					member()
+				),
+			startSequence
+		)
+	);
+};
+
+const arrayForEachPair: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	arraySequenceA,
+	arraySequenceB,
+	functionItemSequence
+) {
+	return zipSingleton(
+		[arraySequenceA, arraySequenceB, functionItemSequence],
+		([arrayA, arrayB, functionItem]) => {
+			const newMembers = [];
+			for (
+				let i = 0,
+					l = Math.min(
+						(arrayA as ArrayValue).members.length,
+						(arrayB as ArrayValue).members.length
+					);
+				i < l;
+				++i
+			) {
+				newMembers[i] = createDoublyIterableSequence(
+					functionItem.value.call(
+						undefined,
+						dynamicContext,
+						executionParameters,
+						staticContext,
+						(arrayA as ArrayValue).members[i](),
+						(arrayB as ArrayValue).members[i]()
+					)
+				);
 			}
 
 			return SequenceFactory.singleton(new ArrayValue(newMembers));
-		});
-}
-
-const arraySort: FunctionDefinitionType = function(_dynamicContext, executionParameters, _staticContext, arraySequence) {
-	return zipSingleton(
-		[arraySequence],
-		([array]) => {
-			const atomizedMembers = (array as ArrayValue).members.map(createSequence => createSequence().atomize(executionParameters));
-
-			return zipSingleton(
-				atomizedMembers,
-				atomizedItems => {
-					const permutations = (array as ArrayValue).members
-						.map((_, i) => i)
-						.sort((indexA, indexB) => atomizedItems[indexA].value > atomizedItems[indexB].value ? 1 : -1);
-					return SequenceFactory.singleton(
-						new ArrayValue(permutations.map(i => (array as ArrayValue).members[i]))
-					);
-				});
-		});
-}
-
-const arrayFlatten: FunctionDefinitionType = function(__dynamicContext, _executionParameters, _staticContext, itemSequence) {
-	return itemSequence.mapAll(items => items.reduce(function flattenItem (flattenedItems, item) {
-		if (isSubtypeOf(item.type, 'array(*)')) {
-			return (item as ArrayValue).members.reduce(
-				(flattenedItemsOfMember, member) => member().mapAll(
-					allValues => allValues.reduce(flattenItem, flattenedItemsOfMember)),
-				flattenedItems);
 		}
-		return concatSequences([flattenedItems, SequenceFactory.singleton(item)]);
-	}, SequenceFactory.empty()));
-}
+	);
+};
+
+const arraySort: FunctionDefinitionType = function(
+	_dynamicContext,
+	executionParameters,
+	_staticContext,
+	arraySequence
+) {
+	return zipSingleton([arraySequence], ([array]) => {
+		const atomizedMembers = (array as ArrayValue).members.map(createSequence =>
+			createSequence().atomize(executionParameters)
+		);
+
+		return zipSingleton(atomizedMembers, atomizedItems => {
+			const permutations = (array as ArrayValue).members
+				.map((_, i) => i)
+				.sort((indexA, indexB) =>
+					atomizedItems[indexA].value > atomizedItems[indexB].value ? 1 : -1
+				);
+			return SequenceFactory.singleton(
+				new ArrayValue(permutations.map(i => (array as ArrayValue).members[i]))
+			);
+		});
+	});
+};
+
+const arrayFlatten: FunctionDefinitionType = function(
+	__dynamicContext,
+	_executionParameters,
+	_staticContext,
+	itemSequence
+) {
+	return itemSequence.mapAll(items =>
+		items.reduce(function flattenItem(flattenedItems, item) {
+			if (isSubtypeOf(item.type, 'array(*)')) {
+				return (item as ArrayValue).members.reduce(
+					(flattenedItemsOfMember, member) =>
+						member().mapAll(allValues =>
+							allValues.reduce(flattenItem, flattenedItemsOfMember)
+						),
+					flattenedItems
+				);
+			}
+			return concatSequences([flattenedItems, SequenceFactory.singleton(item)]);
+		}, SequenceFactory.empty())
+	);
+};
 
 export default {
 	declarations: [
@@ -288,17 +427,27 @@ export default {
 			localName: 'subarray',
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'array(*)',
-			callFunction: function (dynamicContext, executionParameters, staticContext, arraySequence, startSequence) {
-				const lengthSequence = SequenceFactory.singleton(createAtomicValue(
-					arraySequence.first().members.length - startSequence.first().value + 1,
-					'xs:integer'));
+			callFunction: function(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				arraySequence,
+				startSequence
+			) {
+				const lengthSequence = SequenceFactory.singleton(
+					createAtomicValue(
+						arraySequence.first().members.length - startSequence.first().value + 1,
+						'xs:integer'
+					)
+				);
 				return arraySubarray(
 					dynamicContext,
 					executionParameters,
 					staticContext,
 					arraySequence,
 					startSequence,
-					lengthSequence);
+					lengthSequence
+				);
 			}
 		},
 
@@ -323,8 +472,19 @@ export default {
 			localName: 'head',
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
-			callFunction: function (dynamicContext, executionParameters, _staticContext, arraySequence) {
-				return arrayGet(dynamicContext, executionParameters, _staticContext, arraySequence, SequenceFactory.singleton(createAtomicValue(1, 'xs:integer')));
+			callFunction: function(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				arraySequence
+			) {
+				return arrayGet(
+					dynamicContext,
+					executionParameters,
+					_staticContext,
+					arraySequence,
+					SequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
+				);
 			}
 		},
 
@@ -333,8 +493,19 @@ export default {
 			localName: 'tail',
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
-			callFunction: function (dynamicContext, executionParameters, _staticContext, arraySequence) {
-				return arrayRemove(dynamicContext, executionParameters, _staticContext, arraySequence, SequenceFactory.singleton(createAtomicValue(1, 'xs:integer')));
+			callFunction: function(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				arraySequence
+			) {
+				return arrayRemove(
+					dynamicContext,
+					executionParameters,
+					_staticContext,
+					arraySequence,
+					SequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
+				);
 			}
 		},
 

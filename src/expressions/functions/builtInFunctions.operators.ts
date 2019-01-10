@@ -4,7 +4,13 @@ import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const opTo: FunctionDefinitionType = function(_dynamicContext, _executionParameters, staticContext, fromSequence, toSequence) {
+const opTo: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	staticContext,
+	fromSequence,
+	toSequence
+) {
 	// shortcut the non-trivial case of both values being known
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
 	const from = fromSequence.tryGetFirst();
@@ -22,9 +28,12 @@ const opTo: FunctionDefinitionType = function(_dynamicContext, _executionParamet
 			return SequenceFactory.empty();
 		}
 		// By providing a length, we do not have to hold an end condition into account
-		return SequenceFactory.create({
-			next: () => ready(createAtomicValue(fromValue++, 'xs:integer'))
-		}, toValue - fromValue + 1);
+		return SequenceFactory.create(
+			{
+				next: () => ready(createAtomicValue(fromValue++, 'xs:integer'))
+			},
+			toValue - fromValue + 1
+		);
 	}
 	return SequenceFactory.create({
 		next: () => {
@@ -54,7 +63,7 @@ const opTo: FunctionDefinitionType = function(_dynamicContext, _executionParamet
 			return ready(createAtomicValue(fromValue++, 'xs:integer'));
 		}
 	});
-}
+};
 
 export default {
 	declarations: [

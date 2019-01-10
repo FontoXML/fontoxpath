@@ -9,8 +9,10 @@ import TestAbstractExpression from '../tests/TestAbstractExpression';
 import IDomFacade from '../../domFacade/IDomFacade';
 import ConcreteNode, { ConcreteChildNode } from '../../domFacade/ConcreteNode';
 
-function createInclusiveDescendantGenerator (domFacade: IDomFacade, node: ConcreteNode) {
-	const descendantIteratorStack: Array<Iterator<ConcreteChildNode>> = [createSingleValueIterator(node)];
+function createInclusiveDescendantGenerator(domFacade: IDomFacade, node: ConcreteNode) {
+	const descendantIteratorStack: Array<Iterator<ConcreteChildNode>> = [
+		createSingleValueIterator(node)
+	];
 	return {
 		next: () => {
 			if (!descendantIteratorStack.length) {
@@ -34,24 +36,23 @@ function createInclusiveDescendantGenerator (domFacade: IDomFacade, node: Concre
 class DescendantAxis extends Expression {
 	_descendantExpression: TestAbstractExpression;
 	_isInclusive: boolean;
-	constructor(descendantExpression: TestAbstractExpression, options: { inclusive: boolean; } | undefined) {
+	constructor(
+		descendantExpression: TestAbstractExpression,
+		options: { inclusive: boolean } | undefined
+	) {
 		options = options || { inclusive: false };
-		super(
-			descendantExpression.specificity,
-			[descendantExpression],
-			{
-				resultOrder: RESULT_ORDERINGS.SORTED,
-				subtree: true,
-				peer: false,
-				canBeStaticallyEvaluated: false
-			});
+		super(descendantExpression.specificity, [descendantExpression], {
+			resultOrder: RESULT_ORDERINGS.SORTED,
+			subtree: true,
+			peer: false,
+			canBeStaticallyEvaluated: false
+		});
 
 		this._descendantExpression = descendantExpression;
 		this._isInclusive = !!options.inclusive;
-
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
@@ -59,7 +60,8 @@ class DescendantAxis extends Expression {
 		const inclusive = this._isInclusive;
 		const iterator = createInclusiveDescendantGenerator(
 			executionParameters.domFacade,
-			dynamicContext.contextItem.value);
+			dynamicContext.contextItem.value
+		);
 		if (!inclusive) {
 			iterator.next();
 		}

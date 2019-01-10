@@ -4,9 +4,19 @@ import QName from '../dataTypes/valueTypes/QName';
 import IDomFacade from '../../domFacade/IDomFacade';
 import IDocumentWriter from '../../documentWriter/IDocumentWriter';
 import INodesFactory from '../../nodesFactory/INodesFactory';
-import { NODE_TYPES, ConcreteChildNode, ConcreteAttributeNode, ConcreteElementNode, ConcreteProcessingInstructionNode } from '../../domFacade/ConcreteNode';
+import {
+	NODE_TYPES,
+	ConcreteChildNode,
+	ConcreteAttributeNode,
+	ConcreteElementNode,
+	ConcreteProcessingInstructionNode
+} from '../../domFacade/ConcreteNode';
 
-const ELEMENT_NODE = 1, ATTRIBUTE_NODE = 2, TEXT_NODE = 3, PROCESSING_INSTRUCTION_NODE = 7, COMMENT_NODE = 8;
+const ELEMENT_NODE = 1,
+	ATTRIBUTE_NODE = 2,
+	TEXT_NODE = 3,
+	PROCESSING_INSTRUCTION_NODE = 7,
+	COMMENT_NODE = 8;
 
 /**
  * Deletes $target.
@@ -15,14 +25,19 @@ const ELEMENT_NODE = 1, ATTRIBUTE_NODE = 2, TEXT_NODE = 3, PROCESSING_INSTRUCTIO
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const deletePu = function (
+export const deletePu = function(
 	target: ConcreteAttributeNode | ConcreteChildNode,
 	domFacade: (IDomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined) {
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	const parent = domFacade.getParentNode(target);
 	if (parent) {
 		if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
-			documentWriter.removeAttributeNS(parent as Element, target.namespaceURI, (target as Attr).name);
+			documentWriter.removeAttributeNS(
+				parent as Element,
+				target.namespaceURI,
+				(target as Attr).name
+			);
 		} else {
 			documentWriter.removeChild(parent as Document | Element, target);
 		}
@@ -37,9 +52,14 @@ export const deletePu = function (
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertAfter = function (target: ConcreteChildNode, content: Array<Node>, domFacade: (IDomFacade | null) | undefined, documentWriter: (IDocumentWriter | null) | undefined) {
+export const insertAfter = function(
+	target: ConcreteChildNode,
+	content: Array<Node>,
+	domFacade: (IDomFacade | null) | undefined,
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	// The parent must exist or an error has been raised.
-	const parent = (/** @type {!Node} */ (domFacade.getParentNode(target)));
+	const parent = /** @type {!Node} */ (domFacade.getParentNode(target));
 	const nextSibling = domFacade.getNextSibling(target);
 
 	content.forEach(node => {
@@ -55,7 +75,12 @@ export const insertAfter = function (target: ConcreteChildNode, content: Array<N
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertBefore = function (target: ConcreteChildNode, content: Array<Node>, domFacade: (IDomFacade | null) | undefined, documentWriter: (IDocumentWriter | null) | undefined) {
+export const insertBefore = function(
+	target: ConcreteChildNode,
+	content: Array<Node>,
+	domFacade: (IDomFacade | null) | undefined,
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNode(target);
 
@@ -71,7 +96,11 @@ export const insertBefore = function (target: ConcreteChildNode, content: Array<
  * @param  content         The content.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertInto = function (target: Element | Document, content: Array<Node>, documentWriter: (IDocumentWriter | null) | undefined) {
+export const insertInto = function(
+	target: Element | Document,
+	content: Array<Node>,
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	insertIntoAsLast(target, content, documentWriter);
 };
 
@@ -83,7 +112,12 @@ export const insertInto = function (target: Element | Document, content: Array<N
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertIntoAsFirst = function (target: Element | Document, content: Array<Node>, domFacade: (IDomFacade | null) | undefined, documentWriter: (IDocumentWriter | null) | undefined) {
+export const insertIntoAsFirst = function(
+	target: Element | Document,
+	content: Array<Node>,
+	domFacade: (IDomFacade | null) | undefined,
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	const firstChild = domFacade.getFirstChild(target);
 	content.forEach(node => {
 		documentWriter.insertBefore(target, node, firstChild);
@@ -97,7 +131,11 @@ export const insertIntoAsFirst = function (target: Element | Document, content: 
  * @param  content         The content.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertIntoAsLast = function (target: Element | Document, content: Array<Node>, documentWriter: (IDocumentWriter | null) | undefined) {
+export const insertIntoAsLast = function(
+	target: Element | Document,
+	content: Array<Node>,
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	content.forEach(node => {
 		documentWriter.insertBefore(target, node, null);
 	});
@@ -111,7 +149,12 @@ export const insertIntoAsLast = function (target: Element | Document, content: A
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertAttributes = function (target: Element, content: Array<Attr>, domFacade: (IDomFacade | null) | undefined, documentWriter: (IDocumentWriter | null) | undefined) {
+export const insertAttributes = function(
+	target: Element,
+	content: Array<Attr>,
+	domFacade: (IDomFacade | null) | undefined,
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	content.forEach(attr => {
 		if (domFacade.getAttribute(target, attr.name)) {
 			throw errXUDY0021(`An attribute ${attr.name} already exists.`);
@@ -129,12 +172,13 @@ export const insertAttributes = function (target: Element, content: Array<Attr>,
  * @param  nodesFactory    The nodesFactory for creating nodes.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const rename = function (
+export const rename = function(
 	target: ConcreteAttributeNode | ConcreteElementNode | ConcreteProcessingInstructionNode,
 	newName: QName | null,
 	domFacade: (IDomFacade | null) | undefined,
 	nodesFactory: (INodesFactory | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined) {
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	if (!nodesFactory) {
 		nodesFactory = new DomBackedNodesFactory(target);
 	}
@@ -145,10 +189,18 @@ export const rename = function (
 		case NODE_TYPES.ELEMENT_NODE: {
 			const attributes = domFacade.getAllAttributes(target as Element);
 			const childNodes = domFacade.getChildNodes(target as Element);
-			replacement = nodesFactory.createElementNS(newName.namespaceURI, newName.buildPrefixedName());
+			replacement = nodesFactory.createElementNS(
+				newName.namespaceURI,
+				newName.buildPrefixedName()
+			);
 
 			attributes.forEach(attribute => {
-				documentWriter.setAttributeNS(replacement as Element, attribute.namespaceURI, attribute.name, attribute.value);
+				documentWriter.setAttributeNS(
+					replacement as Element,
+					attribute.namespaceURI,
+					attribute.name,
+					attribute.value
+				);
 			});
 			childNodes.forEach(childNode => {
 				documentWriter.insertBefore(replacement, childNode, null);
@@ -156,12 +208,18 @@ export const rename = function (
 			break;
 		}
 		case NODE_TYPES.ATTRIBUTE_NODE: {
-			replacement = nodesFactory.createAttributeNS(newName.namespaceURI, newName.buildPrefixedName());
+			replacement = nodesFactory.createAttributeNS(
+				newName.namespaceURI,
+				newName.buildPrefixedName()
+			);
 			replacement.value = (target as Attr).value;
 			break;
 		}
 		case NODE_TYPES.PROCESSING_INSTRUCTION_NODE: {
-			replacement = nodesFactory.createProcessingInstruction(newName.buildPrefixedName(), (target as ProcessingInstruction).data);
+			replacement = nodesFactory.createProcessingInstruction(
+				newName.buildPrefixedName(),
+				(target as ProcessingInstruction).data
+			);
 			break;
 		}
 	}
@@ -181,7 +239,12 @@ export const rename = function (
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const replaceElementContent = function (target: Element | Document, text: Node | null, domFacade: (IDomFacade | null) | undefined, documentWriter: (IDocumentWriter | null) | undefined) {
+export const replaceElementContent = function(
+	target: Element | Document,
+	text: Node | null,
+	domFacade: (IDomFacade | null) | undefined,
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	domFacade.getChildNodes(target).forEach(child => documentWriter.removeChild(target, child));
 	if (text) {
 		documentWriter.insertBefore(target, text, null);
@@ -196,18 +259,21 @@ export const replaceElementContent = function (target: Element | Document, text:
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const replaceNode = function (
+export const replaceNode = function(
 	target: ConcreteAttributeNode | ConcreteChildNode,
 	replacement: Array<ConcreteAttributeNode | ConcreteChildNode>,
 	domFacade: (IDomFacade | null) | undefined,
-	documentWriter: (IDocumentWriter | null) | undefined) {
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNode(target);
 
 	if (target.nodeType === ATTRIBUTE_NODE) {
 		// All replacement must consist of attribute nodes.
 		if (replacement.some(candidate => candidate.nodeType !== ATTRIBUTE_NODE)) {
-			throw new Error('Constraint "If $target is an attribute node, $replacement must consist of zero or more attribute nodes." failed.');
+			throw new Error(
+				'Constraint "If $target is an attribute node, $replacement must consist of zero or more attribute nodes." failed.'
+			);
 		}
 
 		const element: Element = parent as Element;
@@ -221,14 +287,16 @@ export const replaceNode = function (
 		});
 	}
 
-	if (target.nodeType === NODE_TYPES.ELEMENT_NODE ||
+	if (
+		target.nodeType === NODE_TYPES.ELEMENT_NODE ||
 		target.nodeType === NODE_TYPES.TEXT_NODE ||
 		target.nodeType === NODE_TYPES.COMMENT_NODE ||
-		target.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE) {
+		target.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
+	) {
 		const following = domFacade.getNextSibling(target);
-		documentWriter.removeChild(parent as Document|Element, target);
+		documentWriter.removeChild(parent as Document | Element, target);
 		replacement.forEach(newNode => {
-			documentWriter.insertBefore(parent as Document|Element, newNode, following);
+			documentWriter.insertBefore(parent as Document | Element, newNode, following);
 		});
 	}
 };
@@ -241,11 +309,21 @@ export const replaceNode = function (
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const replaceValue = function (target: Element | Attr, stringValue: string, domFacade: (IDomFacade | null) | undefined, documentWriter: (IDocumentWriter | null) | undefined) {
+export const replaceValue = function(
+	target: Element | Attr,
+	stringValue: string,
+	domFacade: (IDomFacade | null) | undefined,
+	documentWriter: (IDocumentWriter | null) | undefined
+) {
 	if (target.nodeType === ATTRIBUTE_NODE) {
 		const element = domFacade.getParentNode(target as Attr) as Element;
 		if (element) {
-			documentWriter.setAttributeNS(element, target.namespaceURI, (target as Attr).name, stringValue);
+			documentWriter.setAttributeNS(
+				element,
+				target.namespaceURI,
+				(target as Attr).name,
+				stringValue
+			);
 		} else {
 			(target as Attr).value = stringValue;
 		}

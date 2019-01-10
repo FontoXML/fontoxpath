@@ -10,23 +10,32 @@ class CurlyArrayConstructor extends Expression {
 	constructor(members: Array<Expression>) {
 		super(
 			new Specificity({
-			[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1
 			}),
 			members,
 			{
 				canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
-			});
+			}
+		);
 
 		this._members = members;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		if (this._members.length === 0) {
 			return SequenceFactory.singleton(new ArrayValue([]));
 		}
-		return this._members[0].evaluateMaybeStatically(dynamicContext, executionParameters)
-			.mapAll(allValues => SequenceFactory.singleton(
-				new ArrayValue(allValues.map(item => createDoublyIterableSequence(SequenceFactory.singleton(item))))));
+		return this._members[0]
+			.evaluateMaybeStatically(dynamicContext, executionParameters)
+			.mapAll(allValues =>
+				SequenceFactory.singleton(
+					new ArrayValue(
+						allValues.map(item =>
+							createDoublyIterableSequence(SequenceFactory.singleton(item))
+						)
+					)
+				)
+			);
 	}
 }
 export default CurlyArrayConstructor;

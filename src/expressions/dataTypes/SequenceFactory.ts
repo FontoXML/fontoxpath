@@ -9,7 +9,10 @@ import IteratorBackedSequence from './Sequences/IteratorBackedSequence';
 
 const emptySequence = new EmptySequence();
 
-function create(value: Value | Value[] | AsyncIterator<Value> = null, predictedLength: number = null): ISequence {
+function create(
+	value: Value | Value[] | AsyncIterator<Value> = null,
+	predictedLength: number = null
+): ISequence {
 	if (value === null) {
 		return emptySequence;
 	}
@@ -25,9 +28,13 @@ function create(value: Value | Value[] | AsyncIterator<Value> = null, predictedL
 	}
 
 	if ((<AsyncIterator<Value>>value).next) {
-		return new IteratorBackedSequence(sequenceFactory, <AsyncIterator<Value>>value, predictedLength);
+		return new IteratorBackedSequence(
+			sequenceFactory,
+			<AsyncIterator<Value>>value,
+			predictedLength
+		);
 	}
-	return new SingletonSequence(sequenceFactory, (<Value>value));
+	return new SingletonSequence(sequenceFactory, <Value>value);
 }
 
 const sequenceFactory = {

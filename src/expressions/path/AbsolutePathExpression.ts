@@ -21,7 +21,7 @@ class AbsolutePathExpression extends Expression {
 		this._relativePathExpression = relativePathExpression;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use paths.');
 		}
@@ -29,11 +29,12 @@ class AbsolutePathExpression extends Expression {
 		const documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;
 		// Assume this is the start, so only one node
 		const contextSequence = SequenceFactory.singleton(createNodeValue(documentNode));
-		return this._relativePathExpression ?
-			this._relativePathExpression.evaluateMaybeStatically(
-				dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence), executionParameters) :
-			contextSequence;
+		return this._relativePathExpression
+			? this._relativePathExpression.evaluateMaybeStatically(
+					dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence),
+					executionParameters
+			  )
+			: contextSequence;
 	}
-
 }
 export default AbsolutePathExpression;

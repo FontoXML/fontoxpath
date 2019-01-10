@@ -9,14 +9,14 @@ type SwitchCasesCaseEmpty = {
 	default: (sequence: ISequence) => ISequence;
 };
 type SwitchCasesCaseSingleton = {
-	empty?: undefined,
+	empty?: undefined;
 	multiple?: undefined;
 	singleton: (sequence: ISequence) => ISequence;
 	default: (sequence: ISequence) => ISequence;
 };
 
 type SwitchCasesCaseMultiple = {
-	empty?: undefined,
+	empty?: undefined;
 	singleton?: undefined;
 	multiple: (sequence: ISequence) => ISequence;
 	default: (sequence: ISequence) => ISequence;
@@ -29,7 +29,11 @@ type SwitchCasesCaseAll = {
 	multiple: (sequence: ISequence) => ISequence;
 };
 
-export type SwitchCasesCases = SwitchCasesCaseEmpty | SwitchCasesCaseMultiple | SwitchCasesCaseSingleton | SwitchCasesCaseAll;
+export type SwitchCasesCases =
+	| SwitchCasesCaseEmpty
+	| SwitchCasesCaseMultiple
+	| SwitchCasesCaseSingleton
+	| SwitchCasesCaseAll;
 
 export default interface ISequence {
 	value: AsyncIterator<Value>;

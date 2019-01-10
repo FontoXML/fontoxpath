@@ -7,5 +7,5 @@ export default class ExecutionParameters {
 		public readonly domFacade: IWrappingDomFacade,
 		public readonly nodesFactory: INodesFactory,
 		public readonly documentWriter: IDocumentWriter
-	) { }
+	) {}
 }

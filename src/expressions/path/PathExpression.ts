@@ -10,7 +10,7 @@ import { ready, notReady, DONE_TOKEN } from '../util/iterators';
 import ISequence from '../dataTypes/ISequence';
 import DomFacade from '../../domFacade/DomFacade';
 
-function isSameNodeValue (a, b) {
+function isSameNodeValue(a, b) {
 	if (a === null || b === null) {
 		return false;
 	}
@@ -29,11 +29,13 @@ function concatSortedSequences(_, sequences: AsyncIterator<ISequence>): ISequenc
 	let currentIterator = null;
 	let previousValue = null;
 	return SequenceFactory.create({
-		next: function () {
+		next: function() {
 			if (!currentSequence.ready) {
-				return notReady(currentSequence.promise.then(() => {
-					currentSequence = sequences.next();
-				}));
+				return notReady(
+					currentSequence.promise.then(() => {
+						currentSequence = sequences.next();
+					})
+				);
 			}
 			if (currentSequence.done) {
 				return currentSequence;
@@ -63,13 +65,16 @@ function concatSortedSequences(_, sequences: AsyncIterator<ISequence>): ISequenc
 	});
 }
 
-function mergeSortedSequences(domFacade: DomFacade, sequences: AsyncIterator<ISequence>): ISequence {
+function mergeSortedSequences(
+	domFacade: DomFacade,
+	sequences: AsyncIterator<ISequence>
+): ISequence {
 	const allIterators = [];
 	// Because the sequences are sorted locally, but unsorted globally, we first need to sort all the iterators.
 	// For that, we need to know all of them
 	let allSequencesLoaded = false;
 	let allSequencesLoadedPromise = null;
-	(function loadSequences () {
+	(function loadSequences() {
 		let val = sequences.next();
 		while (!val.done) {
 			if (!val.ready) {
@@ -93,7 +98,7 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: AsyncIterator<ISe
 
 	let allSequencesAreSorted = false;
 	return SequenceFactory.create({
-		[Symbol.iterator]: function () {
+		[Symbol.iterator]: function() {
 			return this;
 		},
 		next: () => {
@@ -104,12 +109,19 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: AsyncIterator<ISe
 			if (!allSequencesAreSorted) {
 				allSequencesAreSorted = true;
 
-				if (allIterators.every((iterator => isSubtypeOf(iterator.current.value.type, 'node()')))) {
+				if (
+					allIterators.every(iterator =>
+						isSubtypeOf(iterator.current.value.type, 'node()')
+					)
+				) {
 					// Sort the iterators initially. We know these iterators return locally sorted items, but we do not know the inter-ordering of these items.
-					allIterators.sort((iteratorA, iteratorB) => compareNodePositions(
-						domFacade,
-						iteratorA.current.value,
-						iteratorB.current.value));
+					allIterators.sort((iteratorA, iteratorB) =>
+						compareNodePositions(
+							domFacade,
+							iteratorA.current.value,
+							iteratorB.current.value
+						)
+					);
 				}
 			}
 
@@ -140,7 +152,8 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: AsyncIterator<ISe
 						const comparisonResult = compareNodePositions(
 							domFacade,
 							consumedIterator.current.value,
-							otherNode);
+							otherNode
+						);
 						if (comparisonResult === 0) {
 							// The same, this should be 0
 							low = mid;
@@ -162,19 +175,20 @@ function mergeSortedSequences(domFacade: DomFacade, sequences: AsyncIterator<ISe
 	});
 }
 
-function sortResults (domFacade, result) {
+function sortResults(domFacade, result) {
 	let resultContainsNodes = false,
-	resultContainsNonNodes = false;
-	result.forEach(function (resultValue) {
+		resultContainsNonNodes = false;
+	result.forEach(function(resultValue) {
 		if (isSubtypeOf(resultValue.type, 'node()')) {
 			resultContainsNodes = true;
-		}
-		else {
+		} else {
 			resultContainsNonNodes = true;
 		}
 	});
 	if (resultContainsNonNodes && resultContainsNodes) {
-		throw new Error('XPTY0018: The path operator should either return nodes or non-nodes. Mixed sequences are not allowed.');
+		throw new Error(
+			'XPTY0018: The path operator should either return nodes or non-nodes. Mixed sequences are not allowed.'
+		);
 	}
 
 	if (resultContainsNodes) {
@@ -191,39 +205,40 @@ class PathExpression extends Expression {
 		const pathResultsInPeerSequence = stepExpressions.every(selector => selector.peer);
 		const pathResultsInSubtreeSequence = stepExpressions.every(selector => selector.subtree);
 		super(
-			stepExpressions.reduce(function (specificity, selector) {
+			stepExpressions.reduce(function(specificity, selector) {
 				// Implicit AND, so sum
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
 			stepExpressions,
 			{
-				resultOrder: requireSortedResults ?
-					RESULT_ORDERINGS.SORTED :
-					RESULT_ORDERINGS.UNSORTED,
+				resultOrder: requireSortedResults
+					? RESULT_ORDERINGS.SORTED
+					: RESULT_ORDERINGS.UNSORTED,
 				peer: pathResultsInPeerSequence,
 				subtree: pathResultsInSubtreeSequence,
 				canBeStaticallyEvaluated: false
-			});
+			}
+		);
 
 		this._stepExpressions = stepExpressions;
 		this._requireSortedResults = requireSortedResults;
-
 	}
 
-	getBucket () {
+	getBucket() {
 		return this._stepExpressions[0].getBucket();
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		let sequenceHasPeerProperty = true;
 		const result = this._stepExpressions.reduce((intermediateResultNodesSequence, selector) => {
 			let childContextIterator;
 			if (intermediateResultNodesSequence === null) {
 				// first call, we should use the current dynamic context
 				childContextIterator = createSingleValueIterator(dynamicContext);
-			}
-			else {
-				childContextIterator = dynamicContext.createSequenceIterator(intermediateResultNodesSequence);
+			} else {
+				childContextIterator = dynamicContext.createSequenceIterator(
+					intermediateResultNodesSequence
+				);
 			}
 			let resultValuesInOrderOfEvaluation = {
 				next: () => {
@@ -235,18 +250,27 @@ class PathExpression extends Expression {
 					if (childContext.done) {
 						return childContext;
 					}
-					if (childContext.value.contextItem !== null && !isSubtypeOf(childContext.value.contextItem.type, 'node()')) {
-						throw new Error('XPTY0019: The / operator can only be applied to xml/json nodes.');
+					if (
+						childContext.value.contextItem !== null &&
+						!isSubtypeOf(childContext.value.contextItem.type, 'node()')
+					) {
+						throw new Error(
+							'XPTY0019: The / operator can only be applied to xml/json nodes.'
+						);
 					}
-					return ready(selector.evaluateMaybeStatically(childContext.value, executionParameters));
+					return ready(
+						selector.evaluateMaybeStatically(childContext.value, executionParameters)
+					);
 				}
 			};
 			// Assume nicely sorted
 			let sortedResultSequence;
 			if (!this._requireSortedResults) {
-				sortedResultSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
-			}
-			else {
+				sortedResultSequence = concatSortedSequences(
+					executionParameters.domFacade,
+					resultValuesInOrderOfEvaluation
+				);
+			} else {
 				switch (selector.expectedResultOrder) {
 					case RESULT_ORDERINGS.REVERSE_SORTED: {
 						const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
@@ -259,23 +283,40 @@ class PathExpression extends Expression {
 								if (result.done) {
 									return result;
 								}
-								return ready(result.value.mapAll(items => SequenceFactory.create(items.reverse())));
+								return ready(
+									result.value.mapAll(items =>
+										SequenceFactory.create(items.reverse())
+									)
+								);
 							}
 						};
 						// Fallthrough for merges
 					}
 					case RESULT_ORDERINGS.SORTED:
 						if (selector.subtree && sequenceHasPeerProperty) {
-							sortedResultSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
+							sortedResultSequence = concatSortedSequences(
+								executionParameters.domFacade,
+								resultValuesInOrderOfEvaluation
+							);
 							break;
 						}
 						// Only locally sorted
-						sortedResultSequence = mergeSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
+						sortedResultSequence = mergeSortedSequences(
+							executionParameters.domFacade,
+							resultValuesInOrderOfEvaluation
+						);
 						break;
 					case RESULT_ORDERINGS.UNSORTED: {
 						// The result should be sorted before we can continue
-						const concattedSequence = concatSortedSequences(executionParameters.domFacade, resultValuesInOrderOfEvaluation);
-						return concattedSequence.mapAll(allValues => SequenceFactory.create(sortResults(executionParameters.domFacade, allValues)));
+						const concattedSequence = concatSortedSequences(
+							executionParameters.domFacade,
+							resultValuesInOrderOfEvaluation
+						);
+						return concattedSequence.mapAll(allValues =>
+							SequenceFactory.create(
+								sortResults(executionParameters.domFacade, allValues)
+							)
+						);
 					}
 				}
 			}

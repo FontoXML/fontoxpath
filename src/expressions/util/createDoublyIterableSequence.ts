@@ -1,9 +1,9 @@
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
-export default function createDoublyIterableSequence (sequence) {
+export default function createDoublyIterableSequence(sequence) {
 	const savedValues = [];
 	const backingIterator = sequence.value;
-	return function () {
+	return function() {
 		let i = 0;
 		return SequenceFactory.create({
 			next: () => {

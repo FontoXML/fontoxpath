@@ -9,8 +9,8 @@ import ISequence from '../dataTypes/ISequence';
 class Filter extends Expression {
 	_filterExpression: Expression;
 	_selector: Expression;
-	
-	constructor (selector: Expression, filterExpression: Expression) {
+
+	constructor(selector: Expression, filterExpression: Expression) {
 		super(
 			selector.specificity.add(filterExpression.specificity),
 			[selector, filterExpression],
@@ -18,23 +18,31 @@ class Filter extends Expression {
 				resultOrder: selector.expectedResultOrder,
 				peer: selector.peer,
 				subtree: selector.subtree,
-				canBeStaticallyEvaluated: selector.canBeStaticallyEvaluated && filterExpression.canBeStaticallyEvaluated
-			});
+				canBeStaticallyEvaluated:
+					selector.canBeStaticallyEvaluated && filterExpression.canBeStaticallyEvaluated
+			}
+		);
 
 		this._selector = selector;
 		this._filterExpression = filterExpression;
 	}
 
-	getBucket () {
+	getBucket() {
 		return this._selector.getBucket();
 	}
 
-	evaluate (dynamicContext, executionParameters) {
-		const valuesToFilter = this._selector.evaluateMaybeStatically(dynamicContext, executionParameters);
+	evaluate(dynamicContext, executionParameters) {
+		const valuesToFilter = this._selector.evaluateMaybeStatically(
+			dynamicContext,
+			executionParameters
+		);
 
 		if (this._filterExpression.canBeStaticallyEvaluated) {
 			// Shortcut, if this is numeric, all the values are the same numeric value, same for booleans
-			const result = this._filterExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
+			const result = this._filterExpression.evaluateMaybeStatically(
+				dynamicContext,
+				executionParameters
+			);
 			if (result.isEmpty()) {
 				return result;
 			}
@@ -54,7 +62,11 @@ class Filter extends Expression {
 				return SequenceFactory.create({
 					next: () => {
 						if (!done) {
-							for (let value = iterator.next(); !value.done; value = iterator.next()) {
+							for (
+								let value = iterator.next();
+								!value.done;
+								value = iterator.next()
+							) {
 								if (!value.ready) {
 									return value;
 								}
@@ -97,8 +109,13 @@ class Filter extends Expression {
 					}
 					if (!filterResultSequence) {
 						filterResultSequence = this._filterExpression.evaluateMaybeStatically(
-							dynamicContext.scopeWithFocus(i, /** @type {!Value} */(iteratorItem.value), valuesToFilter),
-							executionParameters);
+							dynamicContext.scopeWithFocus(
+								i,
+								/** @type {!Value} */ (iteratorItem.value),
+								valuesToFilter
+							),
+							executionParameters
+						);
 					}
 
 					const first = filterResultSequence.tryGetFirst();
@@ -110,12 +127,10 @@ class Filter extends Expression {
 						// Actually empty, very falsy indeed
 						// Continue to next
 						shouldReturnCurrentValue = false;
-					}
-					else if (isSubtypeOf(first.value.type, 'xs:numeric')) {
+					} else if (isSubtypeOf(first.value.type, 'xs:numeric')) {
 						// Remember: XPath is one-based
 						shouldReturnCurrentValue = first.value.value === i + 1;
-					}
-					else {
+					} else {
 						const ebv = filterResultSequence.tryGetEffectiveBooleanValue();
 						if (!ebv.ready) {
 							return notReady(ebv.promise);

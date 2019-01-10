@@ -7,12 +7,12 @@ import DynamicContext from '../../DynamicContext';
 import ISequence from '../../dataTypes/ISequence';
 
 const OPERATOR_TRANSLATION = {
-	'equalOp': 'eqOp',
-	'notEqualOp': 'neOp',
-	'lessThanOrEqualOp': 'leOp',
-	'lessThanOp': 'ltOp',
-	'greaterThanOrEqualOp': 'geOp',
-	'greaterThanOp': 'gtOp'
+	equalOp: 'eqOp',
+	notEqualOp: 'neOp',
+	lessThanOrEqualOp: 'leOp',
+	lessThanOp: 'ltOp',
+	greaterThanOrEqualOp: 'geOp',
+	greaterThanOp: 'gtOp'
 };
 
 export default function generalCompare(
@@ -24,9 +24,9 @@ export default function generalCompare(
 	// Change operator to equivalent valueCompare operator
 	operator = OPERATOR_TRANSLATION[operator];
 
-	return secondSequence.mapAll(
-		allSecondValues =>
-			firstSequence.filter(firstValue => {
+	return secondSequence.mapAll(allSecondValues =>
+		firstSequence
+			.filter(firstValue => {
 				for (let i = 0, l = allSecondValues.length; i < l; ++i) {
 					// General comapres are value compare, with one difference:
 					// If exactly one of the atomic values is an instance of xs:untypedAtomic, it is
@@ -46,29 +46,23 @@ export default function generalCompare(
 					let secondValue = allSecondValues[i];
 					if (
 						isSubtypeOf(firstValue.type, 'xs:untypedAtomic') ||
-							isSubtypeOf(secondValue.type, 'xs:untypedAtomic')) {
+						isSubtypeOf(secondValue.type, 'xs:untypedAtomic')
+					) {
 						if (isSubtypeOf(firstValue.type, 'xs:numeric')) {
 							secondValue = castToType(secondValue, 'xs:double');
-						}
-						else if (isSubtypeOf(secondValue.type, 'xs:numeric')) {
+						} else if (isSubtypeOf(secondValue.type, 'xs:numeric')) {
 							firstValue = castToType(firstValue, 'xs:double');
-						}
-						else if (isSubtypeOf(firstValue.type, 'xs:dayTimeDuration')) {
+						} else if (isSubtypeOf(firstValue.type, 'xs:dayTimeDuration')) {
 							secondValue = castToType(secondValue, 'xs:dayTimeDuration');
-						}
-						else if (isSubtypeOf(secondValue.type, 'xs:dayTimeDuration')) {
+						} else if (isSubtypeOf(secondValue.type, 'xs:dayTimeDuration')) {
 							firstValue = castToType(firstValue, 'xs:dayTimeDuration');
-						}
-						else if (isSubtypeOf(firstValue.type, 'xs:yearMonthDuration')) {
+						} else if (isSubtypeOf(firstValue.type, 'xs:yearMonthDuration')) {
 							secondValue = castToType(secondValue, 'xs:yearMonthDuration');
-						}
-						else if (isSubtypeOf(secondValue.type, 'xs:yearMonthDuration')) {
+						} else if (isSubtypeOf(secondValue.type, 'xs:yearMonthDuration')) {
 							firstValue = castToType(firstValue, 'xs:yearMonthDuration');
-						}
-						else if (isSubtypeOf(firstValue.type, 'xs:untypedAtomic')) {
+						} else if (isSubtypeOf(firstValue.type, 'xs:untypedAtomic')) {
 							secondValue = castToType(secondValue, firstValue.type);
-						}
-						else if (isSubtypeOf(secondValue.type, 'xs:untypedAtomic')) {
+						} else if (isSubtypeOf(secondValue.type, 'xs:untypedAtomic')) {
 							firstValue = castToType(firstValue, firstValue.type);
 						}
 					}
@@ -78,9 +72,10 @@ export default function generalCompare(
 					}
 				}
 				return false;
-			}).switchCases({
+			})
+			.switchCases({
 				empty: () => SequenceFactory.singletonFalseSequence(),
 				default: () => SequenceFactory.singletonTrueSequence()
-			}));
-
+			})
+	);
 }

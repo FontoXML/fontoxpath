@@ -12,7 +12,7 @@ import IDomFacade from './domFacade/IDomFacade';
  *
  * @return An async iterator to the return values.
  */
-export default function evaluateXPathToAsyncIterator (
+export default function evaluateXPathToAsyncIterator(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,

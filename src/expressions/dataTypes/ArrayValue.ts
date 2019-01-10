@@ -7,15 +7,21 @@ import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 class ArrayValue extends FunctionValue {
 	members: (() => ISequence)[];
 	constructor(members: Array<(() => ISequence)>) {
-		super(
-			{
-				value: (dynamicContext, executionParameters, staticContext, key) => arrayGet(dynamicContext, executionParameters, staticContext, SequenceFactory.singleton(this), key),
-				localName: 'get',
-				namespaceURI: ARRAY_NAMESPACE_URI,
-				argumentTypes: [{ type: 'xs:integer', isRestArgument: false }],
-				arity: 1,
-				returnType: { type: 'item()', occurrence: '*' }
-			});
+		super({
+			value: (dynamicContext, executionParameters, staticContext, key) =>
+				arrayGet(
+					dynamicContext,
+					executionParameters,
+					staticContext,
+					SequenceFactory.singleton(this),
+					key
+				),
+			localName: 'get',
+			namespaceURI: ARRAY_NAMESPACE_URI,
+			argumentTypes: [{ type: 'xs:integer', isRestArgument: false }],
+			arity: 1,
+			returnType: { type: 'item()', occurrence: '*' }
+		});
 		this.type = 'array(*)';
 		this.members = members;
 	}

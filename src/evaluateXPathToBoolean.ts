@@ -10,12 +10,19 @@ import IDomFacade from './domFacade/IDomFacade';
  * @param  variables    Extra variables (name=>value). Values can be number, string, boolean, nodes or object literals and arrays.
  * @param  options      Extra options for evaluating this XPath.
  */
-export default function evaluateXPathToBoolean 	(
+export default function evaluateXPathToBoolean(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
 ): boolean {
-	return evaluateXPath(selector, contextItem, domFacade, variables, evaluateXPath.BOOLEAN_TYPE, options);
+	return evaluateXPath(
+		selector,
+		contextItem,
+		domFacade,
+		variables,
+		evaluateXPath.BOOLEAN_TYPE,
+		options
+	);
 }

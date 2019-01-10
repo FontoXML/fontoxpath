@@ -3,15 +3,15 @@ import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
 
 type FunctionProperties = {
-	localName: string,
-	namespaceURI: string,
-	arity: number,
-	callFunction: (any) => ISequence,
-	argumentTypes: Array<TypeDeclaration | RestArgument>,
-	returnType: TypeDeclaration
+	localName: string;
+	namespaceURI: string;
+	arity: number;
+	callFunction: (any) => ISequence;
+	argumentTypes: Array<TypeDeclaration | RestArgument>;
+	returnType: TypeDeclaration;
 };
 
-const registeredFunctionsByName: { [s: string]: Array<FunctionProperties>; } = Object.create(null);
+const registeredFunctionsByName: { [s: string]: Array<FunctionProperties> } = Object.create(null);
 
 function computeLevenshteinDistance(a, b) {
 	const computedDistances = [];
@@ -42,7 +42,8 @@ function computeLevenshteinDistance(a, b) {
 		const distance = Math.min(
 			computeStep(aLen - 1, bLen) + 1,
 			computeStep(aLen, bLen - 1) + 1,
-			computeStep(aLen - 1, bLen - 1) + cost);
+			computeStep(aLen - 1, bLen - 1) + cost
+		);
 
 		computedDistances[aLen][bLen] = distance;
 		return distance;
@@ -60,18 +61,24 @@ export function getAlternativesAsStringFor(functionName) {
 					name: alternativeName,
 					distance: computeLevenshteinDistance(
 						functionName,
-						alternativeName.slice(alternativeName.lastIndexOf(':') + 1))
+						alternativeName.slice(alternativeName.lastIndexOf(':') + 1)
+					)
 				};
 			})
 			.sort((a, b) => a.distance - b.distance)
 			.slice(0, 5)
 			// If we need to change more than half the string, it cannot be a match
-			.filter(alternativeNameWithScore => alternativeNameWithScore.distance < functionName.length / 2)
-			.reduce((alternatives, alternativeNameWithScore) =>
-				alternatives.concat(registeredFunctionsByName[alternativeNameWithScore.name]), [])
+			.filter(
+				alternativeNameWithScore =>
+					alternativeNameWithScore.distance < functionName.length / 2
+			)
+			.reduce(
+				(alternatives, alternativeNameWithScore) =>
+					alternatives.concat(registeredFunctionsByName[alternativeNameWithScore.name]),
+				[]
+			)
 			.slice(0, 5);
-	}
-	else {
+	} else {
 		alternativeFunctions = registeredFunctionsByName[functionName];
 	}
 
@@ -79,24 +86,41 @@ export function getAlternativesAsStringFor(functionName) {
 		return 'No similar functions found.';
 	}
 
-	return alternativeFunctions.map(functionDeclaration => `"Q{${functionDeclaration.namespaceURI}}${functionDeclaration.localName} (${functionDeclaration.argumentTypes.map(argumentType => argumentType.type + argumentType.occurrence).join(', ')})"`)
-		.reduce((accumulator, functionName, index, array) => {
-			if (index === 0) {
-				return accumulator + functionName;
-			}
-			return accumulator += ((index !== array.length - 1) ? ', ' : ' or ') + functionName;
-		}, 'Did you mean ') + '?';
+	return (
+		alternativeFunctions
+			.map(
+				functionDeclaration =>
+					`"Q{${functionDeclaration.namespaceURI}}${
+						functionDeclaration.localName
+					} (${functionDeclaration.argumentTypes
+						.map(argumentType => argumentType.type + argumentType.occurrence)
+						.join(', ')})"`
+			)
+			.reduce((accumulator, functionName, index, array) => {
+				if (index === 0) {
+					return accumulator + functionName;
+				}
+				return (accumulator += (index !== array.length - 1 ? ', ' : ' or ') + functionName);
+			}, 'Did you mean ') + '?'
+	);
 }
 
-export function getFunctionByArity (functionNamespaceURI: string, functionLocalName: string, arity: number): FunctionProperties | null {
-	const matchingFunctions = registeredFunctionsByName[functionNamespaceURI + ':' + functionLocalName];
+export function getFunctionByArity(
+	functionNamespaceURI: string,
+	functionLocalName: string,
+	arity: number
+): FunctionProperties | null {
+	const matchingFunctions =
+		registeredFunctionsByName[functionNamespaceURI + ':' + functionLocalName];
 
 	if (!matchingFunctions) {
 		return null;
 	}
 
 	const matchingFunction = matchingFunctions.find(functionDeclaration => {
-		const hasRestArgument = functionDeclaration.argumentTypes.some(argument => (argument as RestArgument).isRestArgument);
+		const hasRestArgument = functionDeclaration.argumentTypes.some(
+			argument => (argument as RestArgument).isRestArgument
+		);
 		if (hasRestArgument) {
 			return functionDeclaration.argumentTypes.length - 1 <= arity;
 		}
@@ -117,12 +141,12 @@ export function getFunctionByArity (functionNamespaceURI: string, functionLocalN
 	};
 }
 
-function splitType (type: string): TypeDeclaration {
+function splitType(type: string): TypeDeclaration {
 	// argumentType is something like 'xs:string?' or 'map(*)'
 	const parts = type.match(/^(.*[^+?*])([+*?])?$/);
 	return {
 		type: parts[1],
-		occurrence: (<'?'|'+'|'*'|''>parts[2]) || null
+		occurrence: <'?' | '+' | '*' | ''>parts[2] || null
 	};
 }
 
@@ -134,11 +158,9 @@ export function registerFunction(namespaceURI, localName, argumentTypes, returnT
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
 		localName: localName,
 		namespaceURI: namespaceURI,
-		argumentTypes: argumentTypes
-			.map(
-				argumentType => argumentType === '...' ?
-					REST_ARGUMENT_INSTANCE :
-					splitType(argumentType)),
+		argumentTypes: argumentTypes.map(argumentType =>
+			argumentType === '...' ? REST_ARGUMENT_INSTANCE : splitType(argumentType)
+		),
 		arity: argumentTypes.length,
 		returnType: splitType(returnType),
 		callFunction: callFunction

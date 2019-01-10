@@ -4,34 +4,36 @@ class YearMonthDuration extends AbstractDuration {
 	_months: number;
 	static fromParts: (years: any, months: any, isPositive: any) => YearMonthDuration;
 	static fromString: (string: any) => YearMonthDuration;
-	constructor (months) {
+	constructor(months) {
 		super();
 
 		if (months > Number.MAX_SAFE_INTEGER || months < Number.MIN_SAFE_INTEGER) {
-			throw new Error('FODT0002: Number of months given to construct YearMonthDuration overflows MAX_SAFE_INTEGER or MIN_SAFE_INTEGER');
+			throw new Error(
+				'FODT0002: Number of months given to construct YearMonthDuration overflows MAX_SAFE_INTEGER or MIN_SAFE_INTEGER'
+			);
 		}
 
 		this._months = months;
 	}
 
-	getRawMonths () {
+	getRawMonths() {
 		return this._months;
 	}
 
-	getYears () {
+	getYears() {
 		return Math.trunc(this._months / 12);
 	}
 
-	getMonths () {
+	getMonths() {
 		const result = this._months % 12;
 		return result === 0 ? 0 : result;
 	}
 
-	isPositive () {
+	isPositive() {
 		return Object.is(-0, this._months) ? false : this._months >= 0;
 	}
 
-	toStringWithoutP () {
+	toStringWithoutP() {
 		const years = Math.abs(this.getYears());
 		const months = Math.abs(this.getMonths());
 		const stringValue = `${years ? `${years}Y` : ''}` + `${months ? `${months}M` : ''}`;
@@ -39,12 +41,16 @@ class YearMonthDuration extends AbstractDuration {
 		return stringValue || '0M';
 	}
 
-	toString () {
+	toString() {
 		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
 	}
 }
 
-YearMonthDuration.fromParts = function (years: number, months: number, isPositive: boolean): YearMonthDuration {
+YearMonthDuration.fromParts = function(
+	years: number,
+	months: number,
+	isPositive: boolean
+): YearMonthDuration {
 	const totalMonths = years * 12 + months;
 	if (totalMonths > Number.MAX_SAFE_INTEGER || !Number.isFinite(totalMonths)) {
 		throw new Error('FODT0002: Value overflow while constructing xs:yearMonthDuration');
@@ -52,7 +58,7 @@ YearMonthDuration.fromParts = function (years: number, months: number, isPositiv
 	return new YearMonthDuration(isPositive || totalMonths === 0 ? totalMonths : -totalMonths);
 };
 
-YearMonthDuration.fromString = function (string: string): YearMonthDuration | null {
+YearMonthDuration.fromString = function(string: string): YearMonthDuration | null {
 	const regex = /^(-)?P(\d+Y)?(\d+M)?(\d+D)?(?:T(\d+H)?(\d+M)?(\d+(\.\d*)?S)?)?$/;
 	const match = regex.exec(string);
 
@@ -67,23 +73,35 @@ YearMonthDuration.fromString = function (string: string): YearMonthDuration | nu
 	return YearMonthDuration.fromParts(years, months, isPositive);
 };
 
-export function lessThan (yearMonthDuration1: YearMonthDuration, yearMonthDuration2: YearMonthDuration): boolean {
+export function lessThan(
+	yearMonthDuration1: YearMonthDuration,
+	yearMonthDuration2: YearMonthDuration
+): boolean {
 	return yearMonthDuration1._months < yearMonthDuration2._months;
 }
 
-export function greaterThan (yearMonthDuration1: YearMonthDuration, yearMonthDuration2: YearMonthDuration): boolean {
+export function greaterThan(
+	yearMonthDuration1: YearMonthDuration,
+	yearMonthDuration2: YearMonthDuration
+): boolean {
 	return yearMonthDuration1._months > yearMonthDuration2._months;
 }
 
-export function add (yearMonthDuration1: YearMonthDuration, yearMonthDuration2: YearMonthDuration): YearMonthDuration {
+export function add(
+	yearMonthDuration1: YearMonthDuration,
+	yearMonthDuration2: YearMonthDuration
+): YearMonthDuration {
 	return new YearMonthDuration(yearMonthDuration1._months + yearMonthDuration2._months);
 }
 
-export function subtract (yearMonthDuration1: YearMonthDuration, yearMonthDuration2: YearMonthDuration): YearMonthDuration {
+export function subtract(
+	yearMonthDuration1: YearMonthDuration,
+	yearMonthDuration2: YearMonthDuration
+): YearMonthDuration {
 	return new YearMonthDuration(yearMonthDuration1._months - yearMonthDuration2._months);
 }
 
-export function multiply (yearMonthDuration: YearMonthDuration, double: number): YearMonthDuration {
+export function multiply(yearMonthDuration: YearMonthDuration, double: number): YearMonthDuration {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot multiply xs:yearMonthDuration by NaN');
 	}
@@ -94,7 +112,7 @@ export function multiply (yearMonthDuration: YearMonthDuration, double: number):
 	return new YearMonthDuration(result < Number.MIN_SAFE_INTEGER || result === 0 ? 0 : result);
 }
 
-export function divide (yearMonthDuration: YearMonthDuration, double: number): YearMonthDuration {
+export function divide(yearMonthDuration: YearMonthDuration, double: number): YearMonthDuration {
 	if (isNaN(double)) {
 		throw new Error('FOCA0005: Cannot divide xs:yearMonthDuration by NaN');
 	}
@@ -105,7 +123,10 @@ export function divide (yearMonthDuration: YearMonthDuration, double: number): Y
 	return new YearMonthDuration(result < Number.MIN_SAFE_INTEGER || result === 0 ? 0 : result);
 }
 
-export function divideByYearMonthDuration (yearMonthDuration1: YearMonthDuration, yearMonthDuration2: YearMonthDuration): number {
+export function divideByYearMonthDuration(
+	yearMonthDuration1: YearMonthDuration,
+	yearMonthDuration2: YearMonthDuration
+): number {
 	return yearMonthDuration1._months / yearMonthDuration2._months;
 }
 

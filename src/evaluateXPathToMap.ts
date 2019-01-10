@@ -15,12 +15,19 @@ import IDomFacade from './domFacade/IDomFacade';
  * the JavaScript simple types. See evaluateXPath for more details in
  * mapping types.
  */
-export default function evaluateXPathToMap (
+export default function evaluateXPathToMap(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
-): {[s: string]: any} {
-	return evaluateXPath(selector, contextItem, domFacade, variables, evaluateXPath.MAP_TYPE, options);
+): { [s: string]: any } {
+	return evaluateXPath(
+		selector,
+		contextItem,
+		domFacade,
+		variables,
+		evaluateXPath.MAP_TYPE,
+		options
+	);
 }

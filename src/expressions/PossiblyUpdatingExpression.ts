@@ -12,33 +12,45 @@ import Specificity from './Specificity';
 export class UpdatingExpressionResult {
 	xdmValue: Value[];
 	pendingUpdateList: PendingUpdate[];
-	constructor (values: Value[], pendingUpdateList: PendingUpdate[]) {
+	constructor(values: Value[], pendingUpdateList: PendingUpdate[]) {
 		this.xdmValue = values;
 		this.pendingUpdateList = pendingUpdateList;
 	}
 }
 
 abstract class PossiblyUpdatingExpression extends Expression {
-	constructor (specificity: Specificity, childExpressions: Expression[], optimizationOptions: OptimizationOptions) {
+	constructor(
+		specificity: Specificity,
+		childExpressions: Expression[],
+		optimizationOptions: OptimizationOptions
+	) {
 		super(specificity, childExpressions, optimizationOptions);
 
-		this.isUpdating = this._childExpressions.some(childExpression => childExpression.isUpdating);
+		this.isUpdating = this._childExpressions.some(
+			childExpression => childExpression.isUpdating
+		);
 	}
 
-	abstract performFunctionalEvaluation (
+	abstract performFunctionalEvaluation(
 		_dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		_sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]) : ISequence;
+		_sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
+	): ISequence;
 
-	evaluate (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return this.performFunctionalEvaluation(
 			dynamicContext,
 			executionParameters,
-			this._childExpressions
-				.map(expr => (innerDynamicContext: DynamicContext) => expr.evaluate(innerDynamicContext, executionParameters)));
+			this._childExpressions.map(expr => (innerDynamicContext: DynamicContext) =>
+				expr.evaluate(innerDynamicContext, executionParameters)
+			)
+		);
 	}
 
-	evaluateWithUpdateList (dynamicContext: DynamicContext, executionParameters: ExecutionParameters): AsyncIterator<UpdatingExpressionResult> {
+	evaluateWithUpdateList(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): AsyncIterator<UpdatingExpressionResult> {
 		let updateList = [];
 
 		const sequence = this.performFunctionalEvaluation(
@@ -46,11 +58,15 @@ abstract class PossiblyUpdatingExpression extends Expression {
 			executionParameters,
 			this._childExpressions.map(expr => {
 				if (!expr.isUpdating) {
-					return (innerDynamicContext: DynamicContext) => expr.evaluate(innerDynamicContext, executionParameters);
+					return (innerDynamicContext: DynamicContext) =>
+						expr.evaluate(innerDynamicContext, executionParameters);
 				}
 				return (innerDynamicContext: DynamicContext) => {
 					const updatingExpression = expr as PossiblyUpdatingExpression;
-					const updateListAndValue = updatingExpression.evaluateWithUpdateList(innerDynamicContext, executionParameters);
+					const updateListAndValue = updatingExpression.evaluateWithUpdateList(
+						innerDynamicContext,
+						executionParameters
+					);
 					let values: Value[];
 					let done = false;
 					let i = 0;
@@ -64,7 +80,10 @@ abstract class PossiblyUpdatingExpression extends Expression {
 								if (!attempt.ready) {
 									return attempt;
 								}
-								updateList = mergeUpdates(updateList, ...attempt.value.pendingUpdateList);
+								updateList = mergeUpdates(
+									updateList,
+									...attempt.value.pendingUpdateList
+								);
 								values = attempt.value.xdmValue;
 							}
 

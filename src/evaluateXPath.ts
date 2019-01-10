@@ -12,7 +12,7 @@ import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
 
 import buildContext from './evaluationUtils/buildContext';
 
-function transformMapToObject (map, dynamicContext) {
+function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
 	let i = 0;
 	let done = false;
@@ -24,11 +24,14 @@ function transformMapToObject (map, dynamicContext) {
 			}
 			while (i < map.keyValuePairs.length) {
 				if (!transformedValueIterator) {
-					const val = map.keyValuePairs[i].value()
+					const val = map.keyValuePairs[i]
+						.value()
 						.switchCases({
 							default: seq => seq,
 							multiple: () => {
-								throw new Error('Serialization error: The value of an entry in a map is expected to be a singleton sequence.');
+								throw new Error(
+									'Serialization error: The value of an entry in a map is expected to be a singleton sequence.'
+								);
 							}
 						})
 						.tryGetFirst();
@@ -41,7 +44,10 @@ function transformMapToObject (map, dynamicContext) {
 						continue;
 					}
 
-					transformedValueIterator = transformXPathItemToJavascriptObject(val.value, dynamicContext);
+					transformedValueIterator = transformXPathItemToJavascriptObject(
+						val.value,
+						dynamicContext
+					);
 				}
 				const transformedValue = transformedValueIterator.next();
 				if (!transformedValue.ready) {
@@ -57,7 +63,7 @@ function transformMapToObject (map, dynamicContext) {
 	};
 }
 
-function transformArrayToArray (array, dynamicContext) {
+function transformArrayToArray(array, dynamicContext) {
 	const arr = [];
 	let i = 0;
 	let done = false;
@@ -73,7 +79,9 @@ function transformArrayToArray (array, dynamicContext) {
 						.switchCases({
 							default: seq => seq,
 							multiple: () => {
-								throw new Error('Serialization error: The value of an entry in an array is expected to be a singleton sequence.');
+								throw new Error(
+									'Serialization error: The value of an entry in an array is expected to be a singleton sequence.'
+								);
 							}
 						})
 						.tryGetFirst();
@@ -84,7 +92,10 @@ function transformArrayToArray (array, dynamicContext) {
 						arr[i++] = null;
 						continue;
 					}
-					transformedMemberGenerator = transformXPathItemToJavascriptObject(val.value, dynamicContext);
+					transformedMemberGenerator = transformXPathItemToJavascriptObject(
+						val.value,
+						dynamicContext
+					);
 				}
 				const transformedValue = transformedMemberGenerator.next();
 				if (!transformedValue.ready) {
@@ -99,7 +110,7 @@ function transformArrayToArray (array, dynamicContext) {
 	};
 }
 
-function transformXPathItemToJavascriptObject (value, dynamicContext) {
+function transformXPathItemToJavascriptObject(value, dynamicContext) {
 	if (isSubtypeOf(value.type, 'map(*)')) {
 		return transformMapToObject(value, dynamicContext);
 	}
@@ -107,7 +118,9 @@ function transformXPathItemToJavascriptObject (value, dynamicContext) {
 		return transformArrayToArray(value, dynamicContext);
 	}
 	if (isSubtypeOf(value.type, 'xs:QName')) {
-		return { next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localName}`) };
+		return {
+			next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localName}`)
+		};
 	}
 	return {
 		next: () => ready(value.value)
@@ -115,11 +128,11 @@ function transformXPathItemToJavascriptObject (value, dynamicContext) {
 }
 
 export type Options = {
-	namespaceResolver?: (s: string) => string|null;
+	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
-	language?: string,
-	moduleImports?: {[s: string]: string},
-	disableCache?: boolean
+	language?: string;
+	moduleImports?: { [s: string]: string };
+	disableCache?: boolean;
 };
 
 /**
@@ -147,17 +160,13 @@ export default function evaluateXPath(
 	options?: Options | null
 ): Node[] | Node | any[] | any {
 	returnType = returnType || evaluateXPath.ANY_TYPE;
-	if (!selector || typeof selector !== 'string' ) {
-		throw new TypeError('Failed to execute \'evaluateXPath\': xpathExpression must be a string.');
+	if (!selector || typeof selector !== 'string') {
+		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
 
 	options = options || {};
 
-	const {
-		dynamicContext,
-		executionParameters,
-		expression
-	} = buildContext(
+	const { dynamicContext, executionParameters, expression } = buildContext(
 		selector,
 		contextItem,
 		domFacade || null,
@@ -167,7 +176,8 @@ export default function evaluateXPath(
 			allowXQuery: options.language === 'XQuery3.1',
 			allowUpdating: false,
 			disableCache: options.disableCache
-		});
+		}
+	);
 
 	// Shortcut: if the xpathExpression defines buckets, the
 	// contextItem is a node and we are evaluating to a bucket, we can
@@ -201,7 +211,9 @@ export default function evaluateXPath(
 				return '';
 			}
 			// Atomize to convert (attribute)nodes to be strings
-			return allValues.value.map(value => castToType(atomize(value, executionParameters), 'xs:string').value).join(' ');
+			return allValues.value
+				.map(value => castToType(atomize(value, executionParameters), 'xs:string').value)
+				.join(' ');
 		}
 		case evaluateXPath.STRINGS_TYPE: {
 			const allValues = rawResults.tryGetAllValues();
@@ -212,7 +224,7 @@ export default function evaluateXPath(
 				return [];
 			}
 			// Atomize all parts
-			return allValues.value.map(function (value) {
+			return allValues.value.map(function(value) {
 				return atomize(value, executionParameters).value + '';
 			});
 		}
@@ -239,8 +251,10 @@ export default function evaluateXPath(
 			if (!first.value) {
 				return null;
 			}
-			if (!(isSubtypeOf(first.value.type, 'node()'))) {
-				throw new Error('Expected XPath ' + selector + ' to resolve to Node. Got ' + first.value.type);
+			if (!isSubtypeOf(first.value.type, 'node()')) {
+				throw new Error(
+					'Expected XPath ' + selector + ' to resolve to Node. Got ' + first.value.type
+				);
 			}
 			return first.value.value;
 		}
@@ -251,12 +265,16 @@ export default function evaluateXPath(
 				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
 			}
 
-			if (!allResults.value.every(function (value) {
-				return isSubtypeOf(value.type, 'node()');
-			})) {
-				throw new Error('Expected XPath ' + selector + ' to resolve to a sequence of Nodes.');
+			if (
+				!allResults.value.every(function(value) {
+					return isSubtypeOf(value.type, 'node()');
+				})
+			) {
+				throw new Error(
+					'Expected XPath ' + selector + ' to resolve to a sequence of Nodes.'
+				);
 			}
-			return allResults.value.map(function (nodeValue) {
+			return allResults.value.map(function(nodeValue) {
 				return nodeValue.value;
 			});
 		}
@@ -271,12 +289,14 @@ export default function evaluateXPath(
 				throw new Error('Expected XPath ' + selector + ' to resolve to a single map.');
 			}
 			const first = allValues.value[0];
-			if (!(isSubtypeOf(first.type, 'map(*)'))) {
+			if (!isSubtypeOf(first.type, 'map(*)')) {
 				throw new Error('Expected XPath ' + selector + ' to resolve to a map');
 			}
 			const transformedMap = transformMapToObject(first, dynamicContext).next();
 			if (!transformedMap.ready) {
-				throw new Error('Expected XPath ' + selector + ' to synchronously resolve to a map');
+				throw new Error(
+					'Expected XPath ' + selector + ' to synchronously resolve to a map'
+				);
 			}
 			return transformedMap.value;
 		}
@@ -291,12 +311,14 @@ export default function evaluateXPath(
 				throw new Error('Expected XPath ' + selector + ' to resolve to a single array.');
 			}
 			const first = allValues.value[0];
-			if (!(isSubtypeOf(first.type, 'array(*)'))) {
+			if (!isSubtypeOf(first.type, 'array(*)')) {
 				throw new Error('Expected XPath ' + selector + ' to resolve to an array');
 			}
 			const transformedArray = transformArrayToArray(first, dynamicContext).next();
 			if (!transformedArray.ready) {
-				throw new Error('Expected XPath ' + selector + ' to synchronously resolve to a map');
+				throw new Error(
+					'Expected XPath ' + selector + ' to synchronously resolve to a map'
+				);
 			}
 			return transformedArray.value;
 		}
@@ -306,7 +328,7 @@ export default function evaluateXPath(
 			if (!allValues.ready) {
 				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
 			}
-			return allValues.value.map(function (value) {
+			return allValues.value.map(function(value) {
 				if (!isSubtypeOf(value.type, 'xs:numeric')) {
 					throw new Error('Expected XPath ' + selector + ' to resolve to numbers');
 				}
@@ -318,7 +340,7 @@ export default function evaluateXPath(
 			const it = rawResults.value;
 			let transformedValueGenerator = null;
 			let done = false;
-			function getNextResult () {
+			function getNextResult() {
 				while (!done) {
 					if (!transformedValueGenerator) {
 						const value = it.next();
@@ -329,7 +351,10 @@ export default function evaluateXPath(
 						if (!value.ready) {
 							return value.promise.then(getNextResult);
 						}
-						transformedValueGenerator = transformXPathItemToJavascriptObject(value.value, dynamicContext);
+						transformedValueGenerator = transformXPathItemToJavascriptObject(
+							value.value,
+							dynamicContext
+						);
 					}
 					const transformedValue = transformedValueGenerator.next();
 					if (!transformedValue.ready) {
@@ -344,7 +369,7 @@ export default function evaluateXPath(
 			}
 			if ('asyncIterator' in Symbol) {
 				return {
-					[(/** @type {{asyncIterator:*}} */ (Symbol)).asyncIterator]: function () {
+					[/** @type {{asyncIterator:*}} */ Symbol.asyncIterator]: function() {
 						return this;
 					},
 					next: () => new Promise(resolve => resolve(getNextResult()))
@@ -360,15 +385,14 @@ export default function evaluateXPath(
 			if (!allValues.ready) {
 				throw new Error('The XPath ' + selector + ' can not be resolved synchronously.');
 			}
-			const allValuesAreNodes = allValues.value.every(function (value) {
-				return isSubtypeOf(value.type, 'node()') &&
-					!(isSubtypeOf(value.type, 'attribute()'));
+			const allValuesAreNodes = allValues.value.every(function(value) {
+				return isSubtypeOf(value.type, 'node()') && !isSubtypeOf(value.type, 'attribute()');
 			});
 			if (allValuesAreNodes) {
 				if (allValues.value.length === 1) {
 					return allValues.value[0].value;
 				}
-				return allValues.value.map(function (nodeValue) {
+				return allValues.value.map(function(nodeValue) {
 					return nodeValue.value;
 				});
 			}
@@ -377,14 +401,18 @@ export default function evaluateXPath(
 				if (isSubtypeOf(first.type, 'array(*)')) {
 					const transformedArray = transformArrayToArray(first, dynamicContext).next();
 					if (!transformedArray.ready) {
-						throw new Error('Expected XPath ' + selector + ' to synchronously resolve to an array');
+						throw new Error(
+							'Expected XPath ' + selector + ' to synchronously resolve to an array'
+						);
 					}
 					return transformedArray.value;
 				}
 				if (isSubtypeOf(first.type, 'map(*)')) {
 					const transformedMap = transformMapToObject(first, dynamicContext).next();
 					if (!transformedMap.ready) {
-						throw new Error('Expected XPath ' + selector + ' to synchronously resolve to a map');
+						throw new Error(
+							'Expected XPath ' + selector + ' to synchronously resolve to a map'
+						);
 					}
 					return transformedMap.value;
 				}
@@ -394,9 +422,9 @@ export default function evaluateXPath(
 			return SequenceFactory.create(allValues.value)
 				.atomize(executionParameters)
 				.getAllValues()
-				.map(function (atomizedValue) {
+				.map(function(atomizedValue) {
 					return atomizedValue.value;
-			});
+				});
 		}
 	}
 }

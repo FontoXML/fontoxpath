@@ -10,17 +10,20 @@ class AndOperator extends Expression {
 	_subExpressions: Expression[];
 	constructor(expressions: Array<Expression>) {
 		super(
-			expressions.reduce(function (specificity, selector) {
+			expressions.reduce(function(specificity, selector) {
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
 			expressions,
 			{
-				canBeStaticallyEvaluated: expressions.every(selector => selector.canBeStaticallyEvaluated)
-			});
+				canBeStaticallyEvaluated: expressions.every(
+					selector => selector.canBeStaticallyEvaluated
+				)
+			}
+		);
 		this._subExpressions = expressions;
 	}
 
-	evaluate (dynamicContext, executionParameters) {
+	evaluate(dynamicContext, executionParameters) {
 		let i = 0;
 		let resultSequence = null;
 		let done = false;
@@ -46,7 +49,10 @@ class AndOperator extends Expression {
 									return ready(falseBoolean);
 								}
 							}
-							resultSequence = subExpression.evaluateMaybeStatically(dynamicContext, executionParameters);
+							resultSequence = subExpression.evaluateMaybeStatically(
+								dynamicContext,
+								executionParameters
+							);
 						}
 						const ebv = resultSequence.tryGetEffectiveBooleanValue();
 						if (!ebv.ready) {
@@ -67,7 +73,7 @@ class AndOperator extends Expression {
 		});
 	}
 
-	getBucket () {
+	getBucket() {
 		// Any bucket of our subexpressions should do, and is preferable to no bucket
 		for (let i = 0, l = this._subExpressions.length; i < l; ++i) {
 			let bucket = this._subExpressions[i].getBucket();
