@@ -1,4 +1,4 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Expression from '../Expression';
 
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
