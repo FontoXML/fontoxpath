@@ -4,25 +4,14 @@
 		"outDir": "./built",
 		"baseUrl": "..",
 		"paths": {
-			"fontoxpath": [
-				"src/index.ts"
-			],
-			"fontoxpath/*": [
-				"src/*"
-			],
-			"test-helpers/*": [
-				"test/helpers/*"
-			]
+			"fontoxpath": ["src/index.ts"],
+			"fontoxpath/*": ["src/*"],
+			"test-helpers/*": ["test/helpers/*"]
 		},
 		"inlineSourceMap": true,
 		"inlineSources": true,
-		"types": [
-			"mocha",
-			"node"
-		]
+		"types": ["mocha", "node"]
 	},
-	"include": [
-		"../src/**/*",
-		"**/*"
-	]
+	"include": ["../src/**/*", "**/*"],
+	"exclude": ["./assets", "./built"]
 }

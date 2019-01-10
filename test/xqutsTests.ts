@@ -10,22 +10,28 @@ import {
 	executePendingUpdateList
 } from 'fontoxpath';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
-import { parseAst } from './xQueryXUtils';
+import { parseAst } from '../demo/parseAst';
 import * as path from 'path';
 import * as mocha from 'mocha';
 import { sync, slimdom } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
-(global as any).atob = function (b64Encoded) {
+(global as any).atob = function(b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
 };
 
-(global as any).btoa = function (str) {
+(global as any).btoa = function(str) {
 	return new Buffer(str, 'binary').toString('base64');
 };
 
-type ExpressionArguments = [string, any, any, Object, {disableCache?: boolean, language?: string}];
+type ExpressionArguments = [
+	string,
+	any,
+	any,
+	Object,
+	{ disableCache?: boolean; language?: string }
+];
 
 const parser = {
 	parseFromString: xmlString => {
@@ -39,23 +45,25 @@ const parser = {
 };
 
 const unrunnableTestCases = getSkippedTests('unrunnableXQUTSTestCases.csv');
-const unrunnableTestCasesByName = unrunnableTestCases
-	.map(testCase => testCase.split(',')[0]);
+const unrunnableTestCasesByName = unrunnableTestCases.map(testCase => testCase.split(',')[0]);
 
 const cachedFiles = Object.create(null);
-function getFile (filename) {
+function getFile(filename) {
 	while (filename.includes('..')) {
 		const parts = filename.split('/');
-		filename = parts.slice(0, parts.indexOf('..') - 1).concat(parts.slice(parts.indexOf('..') + 1)).join('/');
+		filename = parts
+			.slice(0, parts.indexOf('..') - 1)
+			.concat(parts.slice(parts.indexOf('..') + 1))
+			.join('/');
 	}
 	if (cachedFiles[filename]) {
 		return cachedFiles[filename];
 	}
 	const content = testFs.readFileSync(path.join('XQUTS', filename));
-	return cachedFiles[filename] = content.replace(/\r\n/g, '\n');
+	return (cachedFiles[filename] = content.replace(/\r\n/g, '\n'));
 }
 
-function isUpdatingQuery (testName, query) {
+function isUpdatingQuery(testName, query) {
 	const ast = parseExpression(query, { allowXQuery: true }); // parse(query);
 	const doc = new slimdom.Document();
 	try {
@@ -65,12 +73,15 @@ function isUpdatingQuery (testName, query) {
 		throw e;
 	}
 	return evaluateXPathToBoolean(
-		'declare namespace xqxuf="http://www.w3.org/2007/xquery-update-10"; exists(//xqxuf:*)', doc,
-		null, null, { language: 'XQuery3.1' }
+		'declare namespace xqxuf="http://www.w3.org/2007/xquery-update-10"; exists(//xqxuf:*)',
+		doc,
+		null,
+		null,
+		{ language: 'XQuery3.1' }
 	);
 }
 
-function executePul (pul, args) {
+function executePul(pul, args) {
 	executePendingUpdateList(pul, null, null, null);
 	const variables = args[3];
 	for (var key in variables) {
@@ -80,7 +91,7 @@ function executePul (pul, args) {
 	}
 }
 
-async function assertError (expectedError, args: ExpressionArguments, isUpdating) {
+async function assertError(expectedError, args: ExpressionArguments, isUpdating) {
 	let hasThrown = false;
 	try {
 		if (isUpdating) {
@@ -100,22 +111,30 @@ async function assertError (expectedError, args: ExpressionArguments, isUpdating
 	}
 }
 
-function assertXml (actual, expected) {
+function assertXml(actual, expected) {
 	// actual.normalize();
 	expected.normalize();
 
-	const actualOuterHTML = actual.nodeType === actual.DOCUMENT_NODE ? actual.documentElement.outerHTML : actual.outerHTML;
-	const expectedOuterHTML = expected.nodeType === expected.DOCUMENT_NODE ? expected.documentElement.outerHTML : expected.outerHTML;
+	const actualOuterHTML =
+		actual.nodeType === actual.DOCUMENT_NODE
+			? actual.documentElement.outerHTML
+			: actual.outerHTML;
+	const expectedOuterHTML =
+		expected.nodeType === expected.DOCUMENT_NODE
+			? expected.documentElement.outerHTML
+			: expected.outerHTML;
 
 	// Try fast string compare
 	if (actualOuterHTML === expectedOuterHTML) {
 		return;
 	}
 
-	if (evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
-		a: actual,
-		b: expected
-	})) {
+	if (
+		evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
+			a: actual,
+			b: expected
+		})
+	) {
 		return;
 	}
 
@@ -123,22 +142,26 @@ function assertXml (actual, expected) {
 	chai.assert.equal(actualOuterHTML, expectedOuterHTML);
 }
 
-function assertFragment (actualNodes, expectedString) {
+function assertFragment(actualNodes, expectedString) {
 	const actual = parser.parseFromString(`<root/>`);
-	actualNodes.map(node => node.cloneNode ? node.cloneNode(true) : actual.createTextNode(node)).forEach(node => {
-		if (node.nodeType === node.DOCUMENT_NODE) {
-			node.childNodes.forEach(childNode => actual.documentElement.appendChild(childNode.cloneNode(true)));
-		} else {
-			actual.documentElement.appendChild(node);
-		}
-	});
+	actualNodes
+		.map(node => (node.cloneNode ? node.cloneNode(true) : actual.createTextNode(node)))
+		.forEach(node => {
+			if (node.nodeType === node.DOCUMENT_NODE) {
+				node.childNodes.forEach(childNode =>
+					actual.documentElement.appendChild(childNode.cloneNode(true))
+				);
+			} else {
+				actual.documentElement.appendChild(node);
+			}
+		});
 
 	const expected = parser.parseFromString(`<root>${expectedString}</root>`);
 
 	assertXml(actual, expected);
 }
 
-async function runAssertions (expectedErrors, outputFiles, args: ExpressionArguments, isUpdating) {
+async function runAssertions(expectedErrors, outputFiles, args: ExpressionArguments, isUpdating) {
 	const failed = [];
 	const catchAssertion = assertion => {
 		try {
@@ -176,15 +199,18 @@ async function runAssertions (expectedErrors, outputFiles, args: ExpressionArgum
 		switch (outputFile.compare) {
 			case 'XML': {
 				const actual = xdmValue ? xdmValue[0].value : evaluateXPathToFirstNode(...args);
-				const expected = actual.nodeType === actual.DOCUMENT_NODE ?
-					parser.parseFromString(expectedString) :
-					parser.parseFromString(expectedString).documentElement;
+				const expected =
+					actual.nodeType === actual.DOCUMENT_NODE
+						? parser.parseFromString(expectedString)
+						: parser.parseFromString(expectedString).documentElement;
 
 				catchAssertion(() => assertXml(actual, expected));
 				break;
 			}
 			case 'Fragment': {
-				const actualNodes = xdmValue ? xdmValue.map(nodeValue => nodeValue.value) : evaluateXPathToNodes(...args);
+				const actualNodes = xdmValue
+					? xdmValue.map(nodeValue => nodeValue.value)
+					: evaluateXPathToNodes(...args);
 
 				catchAssertion(() => assertFragment(actualNodes, expectedString));
 				break;
@@ -209,8 +235,9 @@ async function runAssertions (expectedErrors, outputFiles, args: ExpressionArgum
 	}
 }
 
-async function runTestCase (testName, testCase) {
-	const states = evaluateXPathToAsyncIterator(`declare function local:parse-input($state as element())
+async function runTestCase(testName, testCase) {
+	const states = evaluateXPathToAsyncIterator(
+		`declare function local:parse-input($state as element())
 	{
 		if($state/input-file) then(
 			for $input in $state/input-file
@@ -240,7 +267,12 @@ async function runTestCase (testName, testCase) {
 		"expected-errors": if(expected-error) then(
 				array{for $error in expected-error return string($error)}
 			) else (array{})
-	}`, testCase, null, null, { language: 'XQuery3.1' });
+	}`,
+		testCase,
+		null,
+		null,
+		{ language: 'XQuery3.1' }
+	);
 
 	const loadedInputFiles = {};
 
@@ -250,14 +282,23 @@ async function runTestCase (testName, testCase) {
 		const query = getFile(path.join('Queries', 'XQuery', state.query));
 		const variables = {};
 		state['input-files'].forEach(inputFile => {
-			const xmlDoc = loadedInputFiles[inputFile.file] ||
-				(loadedInputFiles[inputFile.file] = parser.parseFromString(getFile(path.join('TestSources', inputFile.file))));
+			const xmlDoc =
+				loadedInputFiles[inputFile.file] ||
+				(loadedInputFiles[inputFile.file] = parser.parseFromString(
+					getFile(path.join('TestSources', inputFile.file))
+				));
 			variables[inputFile.variable] = xmlDoc;
 		});
 		const outputFiles = state['output-files'];
 		const expectedErrors = state['expected-errors'];
 
-		const args: ExpressionArguments = [query, new slimdom.Document(), null, variables, { language: 'XQuery3.1' }];
+		const args: ExpressionArguments = [
+			query,
+			new slimdom.Document(),
+			null,
+			variables,
+			{ language: 'XQuery3.1' }
+		];
 
 		try {
 			const isUpdating = isUpdatingQuery(testName, query);
@@ -267,14 +308,21 @@ async function runTestCase (testName, testCase) {
 				const it = await evaluateUpdatingExpression(...args);
 				executePul(it.pendingUpdateList, args);
 			} else {
-				throw new Error('A non-updating expression without an expected value is not supported in the test framework.');
+				throw new Error(
+					'A non-updating expression without an expected value is not supported in the test framework.'
+				);
 			}
 		} catch (e) {
 			if (e instanceof TypeError) {
 				throw e;
 			}
 
-			unrunnableTestCases.push(`${testName},${e.toString().replace(/\r?\n/g, ' ').trim()}`);
+			unrunnableTestCases.push(
+				`${testName},${e
+					.toString()
+					.replace(/\r?\n/g, ' ')
+					.trim()}`
+			);
 
 			// And rethrow the error
 			throw e;
@@ -284,11 +332,14 @@ async function runTestCase (testName, testCase) {
 	}
 }
 
-function buildTestCases (testGroup) {
+function buildTestCases(testGroup) {
 	(evaluateXPathToNodes('test-group | test-case', testGroup) as Element[]).forEach(test => {
 		switch (test.localName) {
 			case 'test-group': {
-				const groupName = evaluateXPathToString('(@name, string(GroupInfo/title), string(GroupInfo/description))[. != ""][1]', test);
+				const groupName = evaluateXPathToString(
+					'(@name, string(GroupInfo/title), string(GroupInfo/description))[. != ""][1]',
+					test
+				);
 				describe(groupName, () => buildTestCases(test));
 				break;
 			}
@@ -309,7 +360,7 @@ function buildTestCases (testGroup) {
 
 const catalog = parser.parseFromString(getFile('XQUTSCatalog.xml'));
 
-describe('xml query update test suite', function () {
+describe('xml query update test suite', function() {
 	// Especially the CI can be slow, up the timeout to 60s.
 	this.timeout(60000);
 
