@@ -10,9 +10,7 @@ export const enum NODE_TYPES {
 	DOCUMENT_FRAGMENT_NODE = 11
 }
 
-export class ConcreteTextNode extends CharacterData {
-	nodeType: NODE_TYPES.TEXT_NODE;
-}
+export type ConcreteTextNode = CharacterData & { nodeType: NODE_TYPES.TEXT_NODE };
 
 export type ConcreteParentNode = ConcreteElementNode | ConcreteDocumentNode;
 
@@ -22,30 +20,22 @@ export type ConcreteChildNode =
 	| ConcreteProcessingInstructionNode
 	| ConcreteCommentNode;
 
-export class ConcreteElementNode extends Element {
-	nodeType: NODE_TYPES.ELEMENT_NODE;
-}
+export type ConcreteElementNode = Element & { nodeType: NODE_TYPES.ELEMENT_NODE };
 
 export type ConcreteCharacterDataNode =
 	| ConcreteTextNode
 	| ConcreteProcessingInstructionNode
 	| ConcreteCommentNode;
 
-export class ConcreteProcessingInstructionNode extends CharacterData {
+export type ConcreteProcessingInstructionNode = CharacterData & {
 	nodeType: NODE_TYPES.PROCESSING_INSTRUCTION_NODE;
-}
+};
 
-export class ConcreteCommentNode extends CharacterData {
-	nodeType: NODE_TYPES.COMMENT_NODE;
-}
+export type ConcreteCommentNode = CharacterData & { nodeType: NODE_TYPES.COMMENT_NODE };
 
-export class ConcreteAttributeNode extends Attr {
-	nodeType: NODE_TYPES.ATTRIBUTE_NODE;
-}
+export type ConcreteAttributeNode = Attr & { nodeType: NODE_TYPES.ATTRIBUTE_NODE };
 
-export class ConcreteDocumentNode extends Document {
-	nodeType: NODE_TYPES.DOCUMENT_NODE;
-}
+export type ConcreteDocumentNode = Document & { nodeType: NODE_TYPES.DOCUMENT_NODE };
 
 type ConcreteNode = ConcreteChildNode | ConcreteParentNode | ConcreteAttributeNode;
 
