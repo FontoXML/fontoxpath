@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"outDir": "tmp",
+		"outDir": "./built",
 		"baseUrl": ".",
 		"lib": [
 			"dom",

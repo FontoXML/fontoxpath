@@ -2,7 +2,9 @@
 /node_modules
 /test/assets/QT3TS
 /test/assets/XQUTS
+/test/built
 /built
+/demo/built
 /dist
 /src/parsing/xPathParser.raw.js
 /.nyc_output

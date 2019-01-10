@@ -1,29 +1,31 @@
 import * as fontoxpath from '../src/index';
 import * as parser from '../src/parsing/xPathParser';
+import { AST } from '../src/parsing/astHelper';
+import { parseAst } from './parseAst';
 
-const xmlSource = document.getElementById('xmlSource');
+const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
+const allowXQueryUpdateFacility = document.getElementById('allowXQueryUpdateFacility') as HTMLInputElement;
+const astJsonMl = document.getElementById('astJsonMl');
+const astXml = document.getElementById('astXml');
+const bucketField = document.getElementById('bucketField');
 const log = document.getElementById('log');
 const resultText = document.getElementById('resultText');
 const updateResult = document.getElementById('updateResult');
+const xmlSource = document.getElementById('xmlSource');
 const xpathField = document.getElementById('xpathField');
-const allowXQuery = document.getElementById('allowXQuery');
-const allowXQueryUpdateFacility = document.getElementById('allowXQueryUpdateFacility');
-const bucketField = document.getElementById('bucketField');
-const astJsonMl = document.getElementById('astJsonMl');
-const astXml = document.getElementById('astXml');
 
 const domParser = new DOMParser();
 
-let xmlDoc;
+let xmlDoc: Document;
 
-function setCookie () {
+function setCookie() {
 	const source = encodeURIComponent(xmlSource.innerText);
 	const xpath = encodeURIComponent(xpathField.innerText);
 
 	document.cookie = `xpath-editor-state=${allowXQuery.checked ? 1 : 0}${allowXQueryUpdateFacility.checked ? 1 : 0}${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
 }
 
-function stringifyJsonMl (what, indent, n) {
+function stringifyJsonMl(what: any, indent: number, n: number) {
 	const filler = Array(indent).fill(' ').join('');
 	switch (typeof what) {
 		case 'object': {
@@ -47,95 +49,12 @@ function stringifyJsonMl (what, indent, n) {
 	}
 }
 
-/**
- * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
- * create nodes.
- *
- * JsonML is always expected to be a JavaScript structure. If you have a string of JSON, use JSON.parse first.
- *
- * @param   {Document}  document  The document to use to create nodes
- * @param   {JsonML}    jsonml    The JsonML fragment to parse
- *
- * @return  {Node}      The root node of the constructed DOM fragment
- */
-function parseNode (document, jsonml) {
-	if (typeof jsonml === 'string' || typeof jsonml === 'number') {
-		return document.createTextNode(jsonml);
-	}
-
-	if (!Array.isArray(jsonml)) {
-		throw new TypeError('JsonML element should be an array or string');
-	}
-
-	var name = jsonml[0];
-	let prefix, namespaceUri;
-	switch (name) {
-		case 'copySource':
-		case 'insertAfter':
-		case 'insertAsFirst':
-		case 'insertAsLast':
-		case 'insertBefore':
-		case 'insertInto':
-		case 'modifyExpr':
-		case 'newNameExpr':
-		case 'replacementExpr':
-		case 'replaceValue':
-		case 'returnExpr':
-		case 'sourceExpr':
-		case 'targetExpr':
-		case 'transformCopies':
-		case 'transformCopy':
-			if (parent && parent.prefix === 'xqxuf') {
-				// Elements added in the update facility need to be in a different namespace
-				prefix = 'xqxuf:';
-				namespaceUri = 'http://www.w3.org/2007/xquery-update-10';
-			} else {
-				prefix = 'xqx:';
-				namespaceUri = 'http://www.w3.org/2005/XQueryX';
-			}
-			break;
-		case 'deleteExpr':
-		case 'insertExpr':
-		case 'renameExpr':
-		case 'replaceExpr':
-		case 'transformExpr':
-			// Elements added in the update facility need to be in a different namespace
-			prefix = 'xqxuf:';
-			namespaceUri = 'http://www.w3.org/2007/xquery-update-10';
-			break;
-		default:
-			prefix = 'xqx:';
-			namespaceUri = 'http://www.w3.org/2005/XQueryX';
-			break;
-	}
-
-	// Node must be a normal element
-	var element = document.createElementNS(namespaceUri, prefix + name),
-	firstChild = jsonml[1],
-	firstChildIndex = 1;
-	if ((typeof firstChild === 'object') && !Array.isArray(firstChild)) {
-		for (var attributeName in firstChild) {
-			if (firstChild[attributeName] !== null) {
-				element.setAttributeNS(namespaceUri, prefix + attributeName, firstChild[attributeName]);
-			}
-		}
-		firstChildIndex = 2;
-	}
-	// Parse children
-	for (var i = firstChildIndex, l = jsonml.length; i < l; ++i) {
-		var node = parseNode(document, jsonml[i], element);
-		element.appendChild(node);
-	}
-
-	return element;
-}
-
-function indentXml (document) {
+function indentXml(document: Document): string {
 	let depth = 0;
 	const elements = document.documentElement.outerHTML.split(/></g);
 	const prettiedXml = [];
 	elements.forEach(element => {
-		let indent;
+		let indent: string;
 		let row = '<' + element + '>';
 		if (element === elements[0]) {
 			row = row.substring(1);
@@ -164,7 +83,7 @@ function indentXml (document) {
 	return prettiedXml.join('');
 }
 
-function jsonXmlReplacer (_key, value) {
+function jsonXmlReplacer(_key: string, value: any): any {
 	if (value instanceof Attr) {
 		const attrString = [];
 		if (value.namespaceURI) {
@@ -179,7 +98,7 @@ function jsonXmlReplacer (_key, value) {
 		value;
 }
 
-async function runUpdatingXQuery (script) {
+async function runUpdatingXQuery(script) {
 	const result = await fontoxpath.evaluateUpdatingExpression(
 		script,
 		xmlDoc,
@@ -195,7 +114,7 @@ async function runUpdatingXQuery (script) {
 	updateResult.innerText = new XMLSerializer().serializeToString(xmlDoc);
 }
 
-async function runNormalXPath (script, asXQuery) {
+async function runNormalXPath(script, asXQuery) {
 	const raw = [];
 	const it = fontoxpath.evaluateXPathToAsyncIterator(
 		script,
@@ -214,29 +133,29 @@ async function runNormalXPath (script, asXQuery) {
 	resultText.innerText = JSON.stringify(raw, jsonXmlReplacer, '  ');
 }
 
-async function rerunXPath () {
+async function rerunXPath() {
 	// Clear results from previous run
+	astJsonMl.innerText = '';
+	astXml.innerText = '';
 	log.innerText = '';
 	resultText.innerText = '';
 	updateResult.innerText = '';
-	astJsonMl.innerText = '';
-	astXml.innerText = '';
 
 	const xpath = xpathField.innerText;
 
 	try {
 		// First try to get the AST as it has a higher change of succeeding
-		const ast = parser.parse(xpath);
+		const ast = parser.parse(xpath) as AST;
 		astJsonMl.innerText = stringifyJsonMl(ast, 0, 0);
 
 		const document = new Document();
-		document.appendChild(parseNode(document, ast));
+		document.appendChild(parseAst(document, ast));
 		document.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
 		document.normalize();
 
 		const prettiedXml = indentXml(document);
 		astXml.innerText = prettiedXml;
-		window.hljs.highlightBlock(astXml);
+		(window as any).hljs.highlightBlock(astXml);
 
 		if (allowXQueryUpdateFacility.checked) {
 			await runUpdatingXQuery(xpath);
@@ -244,8 +163,8 @@ async function rerunXPath () {
 			await runNormalXPath(xpath, allowXQuery.checked);
 		}
 
-		window.hljs.highlightBlock(resultText);
-		window.hljs.highlightBlock(updateResult);
+		(window as any).hljs.highlightBlock(resultText);
+		(window as any).hljs.highlightBlock(updateResult);
 	} catch (err) {
 		let errorMessage = err.message;
 		if (err.location) {
@@ -282,7 +201,7 @@ xpathField.oninput = _evt => {
 	}
 };
 
-function loadFromCookie () {
+function loadFromCookie() {
 	const cookie = document.cookie.split(/;\s/g).find(cookie => cookie.startsWith('xpath-editor-state='));
 
 	if (!cookie) {
@@ -291,7 +210,7 @@ function loadFromCookie () {
 	<derp id="durp">derp</derp>
 	<hurr durr="durrdurrdurr">durrrrrr</hurr>
 </xml>`;
-		window.hljs.highlightBlock(xmlSource);
+		(window as any).hljs.highlightBlock(xmlSource);
 		return;
 	}
 
@@ -302,14 +221,14 @@ function loadFromCookie () {
 
 	allowXQueryUpdateFacility.checked = firstPart[1] === '1';
 
-	var sourceLengthString = firstPart.substring(2);
+	const sourceLengthString = firstPart.substring(2);
 
 	const sourceStart = headerPartLength + firstPart.length + 1;
 	const sourceLength = parseInt(sourceLengthString, 10);
 	const source = cookie.substring(sourceStart, sourceStart + sourceLength);
 
 	xmlSource.innerText = decodeURIComponent(source);
-	window.hljs.highlightBlock(xmlSource);
+	(window as any).hljs.highlightBlock(xmlSource);
 	xmlDoc = domParser.parseFromString(decodeURIComponent(source), 'text/xml');
 
 	const xpathStartOffset = sourceStart + sourceLength;

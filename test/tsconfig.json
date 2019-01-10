@@ -1,7 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"outDir": "../blaat",
+		"outDir": "./built",
 		"baseUrl": "..",
 		"paths": {
 			"fontoxpath": [
