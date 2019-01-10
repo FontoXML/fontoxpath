@@ -1,6 +1,7 @@
 import { DONE_TOKEN, ready } from './iterators';
 import IDomFacade from '../../domFacade/IDomFacade';
-import ConcreteNode, {
+import {
+	ConcreteNode,
 	ConcreteChildNode,
 	NODE_TYPES,
 	ConcreteParentNode

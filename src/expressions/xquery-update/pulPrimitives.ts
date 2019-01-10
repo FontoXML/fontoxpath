@@ -12,7 +12,7 @@ import {
 	ReplaceValuePendingUpdate
 } from './PendingUpdate';
 import QName from '../dataTypes/valueTypes/QName';
-import ConcreteNode from 'src/domFacade/ConcreteNode';
+import { ConcreteNode } from '../../domFacade/ConcreteNode';
 
 export const deletePu = function(target: ConcreteNode) {
 	return new DeletePendingUpdate(target);

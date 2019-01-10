@@ -37,6 +37,4 @@ export type ConcreteAttributeNode = Attr & { nodeType: NODE_TYPES.ATTRIBUTE_NODE
 
 export type ConcreteDocumentNode = Document & { nodeType: NODE_TYPES.DOCUMENT_NODE };
 
-type ConcreteNode = ConcreteChildNode | ConcreteParentNode | ConcreteAttributeNode;
-
-export default ConcreteNode;
+export type ConcreteNode = ConcreteChildNode | ConcreteParentNode | ConcreteAttributeNode;

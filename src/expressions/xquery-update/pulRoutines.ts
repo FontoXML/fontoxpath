@@ -14,7 +14,7 @@ import {
 import { errXUDY0015, errXUDY0016, errXUDY0017, errXUDY0024 } from './XQueryUpdateFacilityErrors';
 import QName from '../dataTypes/valueTypes/QName';
 import { PendingUpdate, ReplaceNodePendingUpdate, RenamePendingUpdate } from './PendingUpdate';
-import { NODE_TYPES } from 'src/domFacade/ConcreteNode';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 
 export const applyUpdates = function(
 	pul,

@@ -1,4 +1,10 @@
 {
     "liveshare.features": "experimental",
-    "liveshare.languages.allowGuestCommandControl": true
+    "liveshare.languages.allowGuestCommandControl": true,
+	"files.watcherExclude": {
+		"**/built/**": true,
+		"**/coverage/**": true,
+		"**/dist/**": true
+	},
+	"mocha.enabled": false
 }

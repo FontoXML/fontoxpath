@@ -8,3 +8,4 @@
 /dist
 /src/parsing/xPathParser.raw.js
 /.nyc_output
+/tmp

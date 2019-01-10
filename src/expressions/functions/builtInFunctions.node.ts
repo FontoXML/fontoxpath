@@ -10,7 +10,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createFromNode from '../dataTypes/createNodeValue';
 import IDomFacade from '../../domFacade/IDomFacade';
 import FunctionDefinitionType from './FunctionDefinitionType';
-import ConcreteNode from '../../domFacade/ConcreteNode';
+import { ConcreteNode } from '../../domFacade/ConcreteNode';
 
 const fnString = builtinStringFunctions.functions.string;
 

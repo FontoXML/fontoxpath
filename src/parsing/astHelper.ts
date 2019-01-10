@@ -2,7 +2,7 @@ import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 
 type QName = { prefix: string; namespaceURI: string | null; localName: string };
 
-export class AST extends Array<string | object | AST> {
+export interface AST extends Array<string | object | AST> {
 	0: string;
 }
 

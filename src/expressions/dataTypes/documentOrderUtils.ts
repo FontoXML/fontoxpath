@@ -1,7 +1,7 @@
 import isSubtypeOf from './isSubtypeOf';
 import Value from './Value';
 import IDomFacade from '../../domFacade/IDomFacade';
-import ConcreteNode from '../../domFacade/ConcreteNode';
+import { ConcreteNode } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 
 /**

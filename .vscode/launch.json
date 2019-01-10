@@ -56,7 +56,8 @@
 				"ts-node/register",
 				"--require",
 				"tsconfig-paths/register",
-				"test/specs/**/*.tests.ts"
+				"test/specs/**/*.tests.ts",
+				"--allow-uncaught"
 			],
 			"skipFiles": [
 				"node_modules/**/*.js",

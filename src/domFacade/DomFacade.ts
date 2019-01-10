@@ -1,4 +1,5 @@
-import ConcreteNode, {
+import {
+	ConcreteNode,
 	NODE_TYPES,
 	ConcreteElementNode,
 	ConcreteParentNode,
@@ -14,7 +15,7 @@ import IExternalDomFacade from './IExternalDomFacade';
  * Adapter for the DOM, can be used to use a different DOM implementation
  */
 class DomFacade implements IWrappingDomFacade {
-	orderOfDetachedNodes: Array<ConcreteNode>;
+	orderOfDetachedNodes: ConcreteNode[];
 
 	constructor(private readonly _domFacade: IExternalDomFacade) {
 		/**

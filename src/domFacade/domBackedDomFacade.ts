@@ -1,5 +1,5 @@
-import IDomFacade from './IDomFacade';
-import ConcreteNode, {
+import {
+	ConcreteNode,
 	ConcreteElementNode,
 	ConcreteParentNode,
 	ConcreteChildNode,

@@ -1,5 +1,5 @@
 import QName from '../dataTypes/valueTypes/QName';
-import ConcreteNode from 'src/domFacade/ConcreteNode';
+import { ConcreteNode } from '../../domFacade/ConcreteNode';
 
 abstract class PendingUpdate {
 	public readonly target: ConcreteNode;
