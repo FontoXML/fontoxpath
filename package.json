@@ -11,7 +11,7 @@
 		"build": "node ./build.js",
 		"start": "concurrently --no-color  -k -p \"[{name}]\" -n \"TypeScript,Node\" \"tsc -p ./demo/tsconfig.json -w\" \"ts-node ./demo/server.ts\"",
 		"test": "ts-mocha --require test/testhook.js \"test/specs/**/*.ts\"",
-		"ci-test": "nyc --no-clean ts-mocha --paths test/specs -p test/tsconfig.json",
+		"ci-test": "nyc --no-clean ts-mocha --paths \"test/specs/**/*.ts\" -p test/tsconfig.json",
 		"integrationtests": "ts-mocha --require test/testhook.js \"test/specs/parsing/**/*.ts\" -p test/tsconfig.json",
 		"qt3tests": "ts-mocha --paths -p test/tsconfig.json test/qt3tests.ts",
 		"ci-qt3tests": "nyc --no-clean ts-mocha --paths -p test/tsconfig.json test/qt3tests.ts",
@@ -20,7 +20,7 @@
 		"ci-xqutstests": "nyc --no-clean ts-mocha --paths -p test/tsconfig.json test/xqutsTests.ts",
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.ts",
 		"coverage": "nyc report --reporter=text-lcov | coveralls",
-		"alltests": "ts-mocha --paths -p test/tsconfig.json test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX"
+		"alltests": "ts-mocha --paths -p test/tsconfig.json \"test/specs/**/*.ts\" test/qt3tests.ts test/qt3testsXQueryX.ts test/xqutsTests.ts test/xqutsTestsXQueryX.ts"
 	},
 	"repository": {
 		"type": "git",
