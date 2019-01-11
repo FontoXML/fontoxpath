@@ -11,7 +11,7 @@ before_script:
 script:
     - timeout 600 npm run ci-test -- --reporter dot;
     - timeout 600 npm run ci-qt3tests -- --reporter dot;
-    - timeout 600 npm run integrationtests -- --reporter dot;
+    - timeout 600 npm run integrationtests -- --dist --reporter dot;
     - timeout 600 npm run qt3tests -- --dist --reporter dot;
     - timeout 600 npm run qt3testsxqueryx -- --reporter dot;
     - timeout 600 npm run ci-xqutstests -- --reporter dot;
