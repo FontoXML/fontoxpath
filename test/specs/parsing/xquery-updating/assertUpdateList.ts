@@ -1,9 +1,9 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-export default function assertCorrectUpdateList (actual, expected) {
+export default function assertCorrectUpdateList(actual, expected) {
 	chai.assert.equal(expected.length, actual.length);
-	for (var i = 0, l = expected.length; i < l; ++i) {
+	for (let i = 0, l = expected.length; i < l; ++i) {
 		chai.assert.equal(actual[i].type, expected[i].type);
 		chai.assert.equal(actual[i].target, expected[i].target);
 
@@ -14,9 +14,12 @@ export default function assertCorrectUpdateList (actual, expected) {
 				chai.assert.equal(actual[i].newName.localName, expected[i].newName.localName);
 				break;
 			case 'replaceNode':
-				actual[i]
-					.replacement
-					.forEach((replacement, j) => chai.assert.equal(new slimdom.XMLSerializer().serializeToString(replacement), expected[i].replacementXML[j]));
+				actual[i].replacement.forEach((replacement, j) =>
+					chai.assert.equal(
+						new slimdom.XMLSerializer().serializeToString(replacement),
+						expected[i].replacementXML[j]
+					)
+				);
 				break;
 			case 'replaceElementContent':
 				chai.assert.equal(actual[i].text.data, expected[i].text);

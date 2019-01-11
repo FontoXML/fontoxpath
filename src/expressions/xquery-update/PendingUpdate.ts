@@ -189,7 +189,8 @@ class ReplaceValuePendingUpdate extends PendingUpdate {
 	toTransferable() {
 		return {
 			['type']: this.type,
-			['target']: this.target
+			['target']: this.target,
+			['string-value']: this.stringValue
 		};
 	}
 }
