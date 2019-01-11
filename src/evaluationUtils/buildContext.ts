@@ -40,7 +40,7 @@ function createDefaultNamespaceResolver(contextItem: Node | any): (s: string) =>
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return _prefix => null;
 	}
-	return prefix => /** @type {Node} */ (contextItem).lookupNamespaceURI(prefix || null);
+	return prefix => /** @type {Node} */ (contextItem)['lookupNamespaceURI'](prefix || null);
 }
 
 function normalizeEndOfLines(xpathString: string) {
@@ -53,21 +53,35 @@ export default function buildEvaluationContext(
 	contextItem: any,
 	domFacade: IExternalDomFacade | null,
 	variables: object,
-	options: Options | UpdatingOptions,
+	externalOptions: Options | UpdatingOptions,
 	compilationOptions: {
-		allowXQuery: boolean;
 		allowUpdating: boolean;
+		allowXQuery: boolean;
 		disableCache: boolean;
 	}
 ): {
 	expression: Expression;
-	dynamicContext: DynamicContext;
 	executionParameters: ExecutionParameters;
+	dynamicContext: DynamicContext;
 } {
 	if (variables === null || variables === undefined) {
 		variables = variables || {};
 	}
-	options = options || { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
+	let internalOptions: {
+		 namespaceResolver: (s: string) => string;
+		 nodesFactory: INodesFactory;
+		 moduleImports: {[s: string]: string; } | {};
+	};
+	if (externalOptions) {
+		internalOptions = {
+			namespaceResolver: externalOptions['namespaceResolver'],
+			nodesFactory: externalOptions['nodesFactory'],
+			moduleImports: externalOptions['moduleImports'],
+
+		};
+	} else {
+		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} }
+	};
 	let wrappedDomFacade: IWrappingDomFacade;
 	if (domFacade === null) {
 		wrappedDomFacade = domBackedDomFacade;
@@ -78,10 +92,10 @@ export default function buildEvaluationContext(
 
 	expressionString = normalizeEndOfLines(expressionString);
 
-	const moduleImports = options.moduleImports || Object.create(null);
+	const moduleImports = internalOptions.moduleImports || Object.create(null);
 
 	const namespaceResolver =
-		options.namespaceResolver || createDefaultNamespaceResolver(contextItem);
+		internalOptions.namespaceResolver || createDefaultNamespaceResolver(contextItem);
 	const expression = staticallyCompileXPath(
 		expressionString,
 		compilationOptions,
@@ -94,14 +108,14 @@ export default function buildEvaluationContext(
 		? adaptJavaScriptValueToXPathValue(contextItem)
 		: SequenceFactory.empty();
 
-	let nodesFactory: INodesFactory = options.nodesFactory;
-	if (!nodesFactory && compilationOptions.allowXQuery) {
+	let nodesFactory: INodesFactory = internalOptions.nodesFactory;
+	if (!nodesFactory && compilationOptions['allowXQuery']) {
 		nodesFactory = new DomBackedNodesFactory(contextItem);
 	} else {
 		nodesFactory = wrapExternalNodesFactory(nodesFactory);
 	}
 
-	let documentWriter: IDocumentWriter = (<UpdatingOptions>options).documentWriter;
+	let documentWriter: IDocumentWriter = (internalOptions as UpdatingOptions).documentWriter;
 	if (!documentWriter) {
 		documentWriter = domBackedDocumentWriter;
 	} else {

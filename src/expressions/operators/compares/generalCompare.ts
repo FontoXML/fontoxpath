@@ -1,18 +1,18 @@
+import castToType from '../../dataTypes/castToType';
+import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import SequenceFactory from '../../dataTypes/SequenceFactory';
 import valueCompare from './valueCompare';
-import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import castToType from '../../dataTypes/castToType';
 
-import DynamicContext from '../../DynamicContext';
 import ISequence from '../../dataTypes/ISequence';
+import DynamicContext from '../../DynamicContext';
 
 const OPERATOR_TRANSLATION = {
-	equalOp: 'eqOp',
-	notEqualOp: 'neOp',
-	lessThanOrEqualOp: 'leOp',
-	lessThanOp: 'ltOp',
-	greaterThanOrEqualOp: 'geOp',
-	greaterThanOp: 'gtOp'
+	['equalOp']: 'eqOp',
+	['notEqualOp']: 'neOp',
+	['lessThanOrEqualOp']: 'leOp',
+	['lessThanOp']: 'ltOp',
+	['greaterThanOrEqualOp']: 'geOp',
+	['greaterThanOp']: 'gtOp'
 };
 
 export default function generalCompare(
@@ -74,8 +74,8 @@ export default function generalCompare(
 				return false;
 			})
 			.switchCases({
-				empty: () => SequenceFactory.singletonFalseSequence(),
-				default: () => SequenceFactory.singletonTrueSequence()
+				default: () => SequenceFactory.singletonTrueSequence(),
+				empty: () => SequenceFactory.singletonFalseSequence()
 			})
 	);
 }

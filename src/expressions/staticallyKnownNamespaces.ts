@@ -8,17 +8,17 @@ export const MATH_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions/math';
 export const FONTOXPATH_NAMESPACE_URI = 'http://fontoxml.com/fontoxpath';
 
 export const staticallyKnownNamespaceByPrefix = {
-	xml: XML_NAMESPACE_URI,
-	xs: XMLSCHEMA_NAMESPACE_URI,
-	fn: FUNCTIONS_NAMESPACE_URI,
-	map: MAP_NAMESPACE_URI,
-	array: ARRAY_NAMESPACE_URI,
-	math: MATH_NAMESPACE_URI,
-	fontoxpath: FONTOXPATH_NAMESPACE_URI,
-	local: LOCAL_NAMESPACE_URI
+	['xml']: XML_NAMESPACE_URI,
+	['xs']: XMLSCHEMA_NAMESPACE_URI,
+	['fn']: FUNCTIONS_NAMESPACE_URI,
+	['map']: MAP_NAMESPACE_URI,
+	['array']: ARRAY_NAMESPACE_URI,
+	['math']: MATH_NAMESPACE_URI,
+	['fontoxpath']: FONTOXPATH_NAMESPACE_URI,
+	['local']: LOCAL_NAMESPACE_URI
 };
 
-export function registerStaticallyKnownNamespace(prefix, namespaceURI) {
+export function registerStaticallyKnownNamespace(prefix: string, namespaceURI: string) {
 	if (staticallyKnownNamespaceByPrefix[prefix]) {
 		throw new Error('Prefix already registered: Do not register the same prefix twice.');
 	}

@@ -173,9 +173,9 @@ export default function evaluateXPath(
 		variables || {},
 		options,
 		{
-			allowXQuery: options.language === 'XQuery3.1',
+			allowXQuery: options['language'] === 'XQuery3.1',
 			allowUpdating: false,
-			disableCache: options.disableCache
+			disableCache: options['disableCache']
 		}
 	);
 
