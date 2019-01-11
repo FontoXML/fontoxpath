@@ -4,12 +4,6 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "RUN XPATH",
-			"program": "${workspaceFolder}/src/parsing/runParser.js"
-		},
-		{
-			"type": "node",
-			"request": "launch",
 			"name": "Launch current file w/ mocha",
 			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
 			"env": {
