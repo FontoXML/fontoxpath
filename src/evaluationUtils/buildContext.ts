@@ -60,28 +60,28 @@ export default function buildEvaluationContext(
 		disableCache: boolean;
 	}
 ): {
-	expression: Expression;
-	executionParameters: ExecutionParameters;
 	dynamicContext: DynamicContext;
+	executionParameters: ExecutionParameters;
+	expression: Expression;
 } {
 	if (variables === null || variables === undefined) {
 		variables = variables || {};
 	}
 	let internalOptions: {
+		 moduleImports: {[s: string]: string; } | {};
 		 namespaceResolver: (s: string) => string;
 		 nodesFactory: INodesFactory;
-		 moduleImports: {[s: string]: string; } | {};
 	};
 	if (externalOptions) {
 		internalOptions = {
+			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
 			nodesFactory: externalOptions['nodesFactory'],
-			moduleImports: externalOptions['moduleImports'],
 
 		};
 	} else {
 		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} }
-	};
+	}
 	let wrappedDomFacade: IWrappingDomFacade;
 	if (domFacade === null) {
 		wrappedDomFacade = domBackedDomFacade;
@@ -109,7 +109,7 @@ export default function buildEvaluationContext(
 		: SequenceFactory.empty();
 
 	let nodesFactory: INodesFactory = internalOptions.nodesFactory;
-	if (!nodesFactory && compilationOptions['allowXQuery']) {
+	if (!nodesFactory && compilationOptions.allowXQuery) {
 		nodesFactory = new DomBackedNodesFactory(contextItem);
 	} else {
 		nodesFactory = wrapExternalNodesFactory(nodesFactory);
