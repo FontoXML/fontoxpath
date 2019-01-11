@@ -20,8 +20,7 @@
 		"ci-xqutstests": "nyc --no-clean ts-mocha --paths -p test/tsconfig.json test/xqutsTests.ts",
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.ts",
 		"coverage": "nyc report --reporter=text-lcov | coveralls",
-		"alltests": "ts-mocha --paths -p test/tsconfig.json test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX",
-		"ts-build": "tslint -p tsconfig.json && tsc"
+		"alltests": "ts-mocha --paths -p test/tsconfig.json test/specs/ test/qt3tests test/qt3testsXQueryX test/xqutsTests test/xqutsTestsXQueryX"
 	},
 	"repository": {
 		"type": "git",

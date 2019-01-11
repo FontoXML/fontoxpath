@@ -7,7 +7,7 @@
 	"reporter": [
 		"text-summary",
 		"html"
-    ],
+	],
 	"instrument": true,
 	"sourceMap": true,
 	"include": [
