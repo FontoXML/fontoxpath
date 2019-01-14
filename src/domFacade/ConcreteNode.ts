@@ -10,7 +10,7 @@ export const enum NODE_TYPES {
 	DOCUMENT_FRAGMENT_NODE = 11
 }
 
-export type ConcreteTextNode = CharacterData & { nodeType: NODE_TYPES.TEXT_NODE };
+export type ConcreteTextNode = Text & { nodeType: NODE_TYPES.TEXT_NODE };
 
 export type ConcreteParentNode = ConcreteElementNode | ConcreteDocumentNode;
 
@@ -27,11 +27,11 @@ export type ConcreteCharacterDataNode =
 	| ConcreteProcessingInstructionNode
 	| ConcreteCommentNode;
 
-export type ConcreteProcessingInstructionNode = CharacterData & {
+export type ConcreteProcessingInstructionNode = ProcessingInstruction & {
 	nodeType: NODE_TYPES.PROCESSING_INSTRUCTION_NODE;
 };
 
-export type ConcreteCommentNode = CharacterData & { nodeType: NODE_TYPES.COMMENT_NODE };
+export type ConcreteCommentNode = Comment & { nodeType: NODE_TYPES.COMMENT_NODE };
 
 export type ConcreteAttributeNode = Attr & { nodeType: NODE_TYPES.ATTRIBUTE_NODE };
 

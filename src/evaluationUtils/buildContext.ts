@@ -1,15 +1,12 @@
 import domBackedDocumentWriter from '../documentWriter/domBackedDocumentWriter';
-import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWriter';
 import IDocumentWriter from '../documentWriter/IDocumentWriter';
-
+import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWriter';
 import domBackedDomFacade from '../domFacade/domBackedDomFacade';
 import DomFacade from '../domFacade/DomFacade';
-import IDomFacade from '../domFacade/IDomFacade';
-
-import DomBackedNodesFactory from '../nodesFactory/DomBackedNodesFactory';
-import INodesFactory from '../nodesFactory/INodesFactory';
-import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
-
+import IExternalDomFacade from '../domFacade/IExternalDomFacade';
+import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
+import { UpdatingOptions } from '../evaluateUpdatingExpression';
+import { Options } from '../evaluateXPath';
 import adaptJavaScriptValueToXPathValue from '../expressions/adaptJavaScriptValueToXPathValue';
 import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
 import DynamicContext from '../expressions/DynamicContext';
@@ -17,11 +14,10 @@ import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import builtInFunctions from '../expressions/functions/builtInFunctions';
 import { registerFunction } from '../expressions/functions/functionRegistry';
+import DomBackedNodesFactory from '../nodesFactory/DomBackedNodesFactory';
+import INodesFactory from '../nodesFactory/INodesFactory';
+import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
-import { Options } from '../evaluateXPath';
-import { UpdatingOptions } from '../evaluateUpdatingExpression';
-import IExternalDomFacade from '../domFacade/IExternalDomFacade';
-import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 
 export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
 
@@ -40,7 +36,7 @@ function createDefaultNamespaceResolver(contextItem: Node | any): (s: string) =>
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return _prefix => null;
 	}
-	return prefix => /** @type {Node} */ (contextItem)['lookupNamespaceURI'](prefix || null);
+	return prefix => contextItem['lookupNamespaceURI'](prefix || null);
 }
 
 function normalizeEndOfLines(xpathString: string) {

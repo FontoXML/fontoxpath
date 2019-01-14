@@ -1,16 +1,12 @@
+import IExternalDomFacade from './domFacade/IExternalDomFacade';
+import buildContext from './evaluationUtils/buildContext';
 import atomize from './expressions/dataTypes/atomize';
 import castToType from './expressions/dataTypes/castToType';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import SequenceFactory from './expressions/dataTypes/SequenceFactory';
-
-import IDomFacade from './domFacade/IDomFacade';
-import INodesFactory from './nodesFactory/INodesFactory';
-
+import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
-
-import { DONE_TOKEN, ready, notReady } from './expressions/util/iterators';
-
-import buildContext from './evaluationUtils/buildContext';
+import INodesFactory from './nodesFactory/INodesFactory';
 
 function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
@@ -154,7 +150,7 @@ export type Options = {
 export default function evaluateXPath(
 	selector: string,
 	contextItem?: any | null,
-	domFacade?: IDomFacade | null,
+	domFacade?: IExternalDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	returnType?: number | null,
 	options?: Options | null
@@ -173,8 +169,8 @@ export default function evaluateXPath(
 		variables || {},
 		options,
 		{
-			allowXQuery: options['language'] === 'XQuery3.1',
 			allowUpdating: false,
+			allowXQuery: options['language'] === 'XQuery3.1',
 			disableCache: options['disableCache']
 		}
 	);
