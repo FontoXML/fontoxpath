@@ -1,15 +1,15 @@
-import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
-import buildContext from './evaluationUtils/buildContext';
-import IDomFacade from './domFacade/IDomFacade';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
+import IDomFacade from './domFacade/IDomFacade';
+import buildContext from './evaluationUtils/buildContext';
+import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import INodesFactory from './nodesFactory/INodesFactory';
 
 export type UpdatingOptions = {
-	namespaceResolver?: (s: string) => string | null;
-	documentWriter?: IDocumentWriter;
-	nodesFactory?: INodesFactory;
-	moduleImports?: { [s: string]: string };
 	disableCache?: boolean;
+	documentWriter?: IDocumentWriter;
+	moduleImports?: { [s: string]: string };
+	namespaceResolver?: (s: string) => string | null;
+	nodesFactory?: INodesFactory;
 };
 
 /**
@@ -29,16 +29,16 @@ export default async function evaluateUpdatingExpression(
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: UpdatingOptions | null
-): Promise<{ xdmValue: any[]; pendingUpdateList: object[] }> {
-	let { dynamicContext, executionParameters, expression } = buildContext(
+): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
+	const { dynamicContext, executionParameters, expression } = buildContext(
 		updateScript,
 		contextItem,
 		domFacade || null,
 		variables || {},
 		options || {},
 		{
-			allowXQuery: true,
 			allowUpdating: true,
+			allowXQuery: true,
 			disableCache: options.disableCache
 		}
 	);
@@ -49,7 +49,7 @@ export default async function evaluateUpdatingExpression(
 		);
 	}
 
-	const resultIterator = (<PossiblyUpdatingExpression>expression).evaluateWithUpdateList(
+	const resultIterator = (expression as PossiblyUpdatingExpression).evaluateWithUpdateList(
 		dynamicContext,
 		executionParameters
 	);
@@ -61,7 +61,9 @@ export default async function evaluateUpdatingExpression(
 	}
 
 	return {
-		xdmValue: attempt.value.xdmValue,
-		pendingUpdateList: attempt.value.pendingUpdateList.map(update => update.toTransferable())
+		['pendingUpdateList']: attempt.value.pendingUpdateList.map(update =>
+			update.toTransferable()
+		),
+		['xdmValue']: attempt.value.xdmValue
 	};
 }
