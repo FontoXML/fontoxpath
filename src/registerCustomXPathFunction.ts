@@ -8,8 +8,8 @@ import {
 	registerStaticallyKnownNamespace
 } from './expressions/staticallyKnownNamespaces';
 import DynamicContext from './expressions/DynamicContext';
-import IExternalDomFacade from './domFacade/IExternalDomFacade';
 import ExecutionParameters from './expressions/ExecutionParameters';
+import ExternalDomFacade from './domFacade/ExternalDomFacade';
 
 function adaptXPathValueToJavascriptValue(
 	valueSequence: any,
@@ -62,7 +62,7 @@ function splitFunctionName(
 }
 
 type DomFacadeWrapper = {
-	domFacade: IExternalDomFacade;
+	domFacade: ExternalDomFacade;
 };
 
 /**

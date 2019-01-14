@@ -9,7 +9,7 @@
 	"scripts": {
 		"prepare": "npm run build",
 		"build": "node ./build.js",
-		"start": "concurrently --no-color  -k -p \"[{name}]\" -n \"TypeScript,Node\" \"tsc -p ./demo/tsconfig.json -w\" \"ts-node ./demo/server.ts\"",
+		"start": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" \"tsc -p ./demo/tsconfig.json -w\" \"ts-node ./demo/server.ts --dist\"",
 		"test": "ts-mocha --require test/testhook.js \"test/specs/**/*.ts\"",
 		"ci-test": "nyc --no-clean ts-mocha --paths \"test/specs/**/*.ts\" -p test/tsconfig.json",
 		"integrationtests": "ts-mocha --require test/testhook.js \"test/specs/parsing/**/*.ts\" -p test/tsconfig.json",

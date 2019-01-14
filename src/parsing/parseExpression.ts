@@ -28,7 +28,7 @@ export default function parseExpression(
 		if (cached) {
 			ast = cached;
 		} else {
-			ast = parse(xPathString, { xquery: !!compilationOptions.allowXQuery });
+			ast = parse(xPathString, { ['xquery']: !!compilationOptions.allowXQuery });
 			storeParseResultInCache(xPathString, language, ast);
 		}
 		return ast;

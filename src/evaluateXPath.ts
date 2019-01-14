@@ -1,4 +1,4 @@
-import IExternalDomFacade from './domFacade/IExternalDomFacade';
+import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import buildContext from './evaluationUtils/buildContext';
 import atomize from './expressions/dataTypes/atomize';
 import castToType from './expressions/dataTypes/castToType';
@@ -150,7 +150,7 @@ export type Options = {
 export default function evaluateXPath(
 	selector: string,
 	contextItem?: any | null,
-	domFacade?: IExternalDomFacade | null,
+	domFacade?: ExternalDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	returnType?: number | null,
 	options?: Options | null

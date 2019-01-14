@@ -1,4 +1,4 @@
-import domFacade from './domFacade/externalDomFacade';
+import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import evaluateUpdatingExpression from './evaluateUpdatingExpression';
 import evaluateXPath from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
@@ -54,6 +54,8 @@ function getBucketForSelector(xpathString) {
 function compareSpecificity(xpathStringA, xpathStringB) {
 	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
 }
+
+const domFacade = new ExternalDomFacade();
 
 /* istanbul ignore next */
 if (typeof window !== 'undefined') {

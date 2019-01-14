@@ -3,7 +3,7 @@ import IDocumentWriter from '../documentWriter/IDocumentWriter';
 import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWriter';
 import domBackedDomFacade from '../domFacade/domBackedDomFacade';
 import DomFacade from '../domFacade/DomFacade';
-import IExternalDomFacade from '../domFacade/IExternalDomFacade';
+import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 import { UpdatingOptions } from '../evaluateUpdatingExpression';
 import { Options } from '../evaluateXPath';
@@ -47,7 +47,7 @@ function normalizeEndOfLines(xpathString: string) {
 export default function buildEvaluationContext(
 	expressionString: string,
 	contextItem: any,
-	domFacade: IExternalDomFacade | null,
+	domFacade: ExternalDomFacade | null,
 	variables: object,
 	externalOptions: Options | UpdatingOptions,
 	compilationOptions: {
@@ -64,19 +64,18 @@ export default function buildEvaluationContext(
 		variables = variables || {};
 	}
 	let internalOptions: {
-		 moduleImports: {[s: string]: string; } | {};
-		 namespaceResolver: (s: string) => string;
-		 nodesFactory: INodesFactory;
+		moduleImports: { [s: string]: string } | {};
+		namespaceResolver: (s: string) => string;
+		nodesFactory: INodesFactory;
 	};
 	if (externalOptions) {
 		internalOptions = {
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
-			nodesFactory: externalOptions['nodesFactory'],
-
+			nodesFactory: externalOptions['nodesFactory']
 		};
 	} else {
-		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} }
+		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
 	}
 	let wrappedDomFacade: IWrappingDomFacade;
 	if (domFacade === null) {

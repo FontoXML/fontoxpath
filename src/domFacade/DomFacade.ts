@@ -7,9 +7,9 @@ import {
 	ConcreteAttributeNode,
 	ConcreteCharacterDataNode
 } from './ConcreteNode';
-import IWrappingDomFacade from './IWrappingDomFacade';
+import ExternalDomFacade from './ExternalDomFacade';
 import IDomFacade from './IDomFacade';
-import IExternalDomFacade from './IExternalDomFacade';
+import IWrappingDomFacade from './IWrappingDomFacade';
 
 /**
  * Adapter for the DOM, can be used to use a different DOM implementation
@@ -17,7 +17,7 @@ import IExternalDomFacade from './IExternalDomFacade';
 class DomFacade implements IWrappingDomFacade {
 	orderOfDetachedNodes: ConcreteNode[];
 
-	constructor(private readonly _domFacade: IExternalDomFacade) {
+	constructor(private readonly _domFacade: ExternalDomFacade) {
 		/**
 		 * Defines the ordering of detached nodes, to ensure stable sorting of unrelated nodes.
 		 */
