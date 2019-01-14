@@ -1395,11 +1395,11 @@ WhitespaceCharacter
  / Comment // Note: comments can occur anywhere where whitespace is allowed: https://www.w3.org/TR/xpath-3/#DefaultWhitespaceHandling
 
 // XML Types
-PrefixedName = prefix:XMLPrefix ":" local:localName {return [{prefix: prefix}, local]}
+PrefixedName = prefix:XMLPrefix ":" local:LocalPart {return [{prefix: prefix}, local]}
 
-UnprefixedName = local:localName {return [local]}
+UnprefixedName = local:LocalPart {return [local]}
 
-localName = NCName
+LocalPart = NCName
 
 XMLPrefix = NCName
 
