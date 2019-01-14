@@ -4,17 +4,24 @@ import {
 	ConcreteChildNode,
 	ConcreteElementNode,
 	ConcreteNode,
-	ConcreteParentNode
+	ConcreteParentNode,
+	NODE_TYPES
 } from './ConcreteNode';
 
 import IDomFacade from './IDomFacade';
 
 export default class ExternalDomFacade implements IDomFacade {
 	public ['getAllAttributes'](node: ConcreteElementNode): ConcreteAttributeNode[] {
+		if (node.nodeType !== NODE_TYPES.ELEMENT_NODE) {
+			return [];
+		}
 		return Array.from(node['attributes']);
 	}
-	public ['getAttribute'](node: ConcreteElementNode, attributeName: string): string {
-		return node.getAttribute(attributeName);
+	public ['getAttribute'](node: ConcreteNode, attributeName: string): string {
+		if (node.nodeType !== NODE_TYPES.ELEMENT_NODE) {
+			return null;
+		}
+		return node['getAttribute'](attributeName);
 	}
 	public ['getChildNodes'](node: ConcreteParentNode): ConcreteChildNode[] {
 		return Array.from(node['childNodes']) as ConcreteChildNode[];
@@ -32,6 +39,9 @@ export default class ExternalDomFacade implements IDomFacade {
 		return node['nextSibling'] as ConcreteChildNode;
 	}
 	public ['getParentNode'](node: ConcreteNode): ConcreteParentNode {
+		if (node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE) {
+			return node['ownerElement'];
+		}
 		return node['parentNode'] as ConcreteParentNode;
 	}
 	public ['getPreviousSibling'](node: ConcreteChildNode): ConcreteChildNode {
