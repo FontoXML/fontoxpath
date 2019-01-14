@@ -1,0 +1,15 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"baseUrl": "..",
+		"paths": {
+			"fontoxpath": ["src/index.ts"],
+			"fontoxpath/*": ["src/*"],
+			"test-helpers/*": ["test/helpers/*"]
+		},
+		"inlineSources": true,
+		"types": ["mocha", "node"]
+	},
+	"include": ["../src/**/*", "**/*"],
+	"exclude": ["./assets", "./built"]
+}

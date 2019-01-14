@@ -1,0 +1,15 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./built",
+		"baseUrl": "..",
+		"target": "es2017",
+		"module": "esnext",
+		"inlineSourceMap": true,
+		"inlineSources": true
+	},
+	"include": [
+		"../src/**/*",
+		"**/*"
+	]
+}
