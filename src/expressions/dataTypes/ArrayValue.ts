@@ -1,12 +1,12 @@
+import arrayGet from '../functions/builtInFunctions.arrays.get';
+import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import SequenceFactory from './SequenceFactory';
-import arrayGet from '../functions/builtInFunctions.arrays.get';
-import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 class ArrayValue extends FunctionValue {
-	members: (() => ISequence)[];
-	constructor(members: Array<(() => ISequence)>) {
+	public members: (() => ISequence)[];
+	constructor(members: (() => ISequence)[]) {
 		super({
 			value: (dynamicContext, executionParameters, staticContext, key) =>
 				arrayGet(

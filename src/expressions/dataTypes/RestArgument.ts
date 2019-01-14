@@ -1,5 +1,5 @@
 class RestArgument {
-	isRestArgument: boolean;
+	public isRestArgument: boolean;
 	constructor() {
 		this.isRestArgument = true;
 	}

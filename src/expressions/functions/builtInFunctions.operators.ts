@@ -1,6 +1,6 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import { ready, notReady, DONE_TOKEN } from '../util/iterators';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 

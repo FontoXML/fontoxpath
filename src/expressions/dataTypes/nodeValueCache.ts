@@ -1,5 +1,3 @@
-import Value from './Value';
-
 // This should work for maximal reuse of instances:
 // NodeValue has a strong ref to a Node, but when it's only referenced by this weakmap, it should be eligible for GC
 // When it is collected, the Node may be collected too

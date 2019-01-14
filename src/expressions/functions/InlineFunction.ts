@@ -1,22 +1,21 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import DynamicContext from '../DynamicContext';
-import Specificity from '../Specificity';
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import FunctionValue from '../dataTypes/FunctionValue';
-import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import QName from '../dataTypes/valueTypes/QName';
+import Specificity from '../Specificity';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 class InlineFunction extends Expression {
-	_parameterNames: QName[];
-	_parameterTypes: TypeDeclaration[];
-	_parameterBindingNames: any;
-	_returnType: TypeDeclaration;
-	_functionBody: Expression;
+	private _functionBody: Expression;
+	private _parameterBindingNames: any;
+	private _parameterNames: QName[];
+	private _parameterTypes: TypeDeclaration[];
+	private _returnType: TypeDeclaration;
 
 	constructor(
-		paramDescriptions: Array<{ name: QName; type: TypeDeclaration }>,
+		paramDescriptions: { name: QName; type: TypeDeclaration }[],
 		returnType: TypeDeclaration,
 		functionBody: Expression
 	) {
@@ -40,24 +39,7 @@ class InlineFunction extends Expression {
 		this._functionBody = functionBody;
 	}
 
-	performStaticEvaluation(staticContext) {
-		staticContext.introduceScope();
-		this._parameterBindingNames = this._parameterNames.map(name => {
-			let namespaceURI = name.namespaceURI;
-			const prefix = name.prefix;
-			const localName = name.localName;
-
-			if (!namespaceURI === null && prefix !== '*') {
-				namespaceURI = staticContext.resolveNamespace(prefix);
-			}
-			return staticContext.registerVariable(namespaceURI, localName);
-		});
-
-		this._functionBody.performStaticEvaluation(staticContext);
-		staticContext.removeScope();
-	}
-
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		/**
 		 * @param  _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
 		 *                                                                  This shall not be used
@@ -94,6 +76,23 @@ class InlineFunction extends Expression {
 			returnType: this._returnType
 		});
 		return SequenceFactory.singleton(functionItem);
+	}
+
+	public performStaticEvaluation(staticContext) {
+		staticContext.introduceScope();
+		this._parameterBindingNames = this._parameterNames.map(name => {
+			let namespaceURI = name.namespaceURI;
+			const prefix = name.prefix;
+			const localName = name.localName;
+
+			if (!namespaceURI === null && prefix !== '*') {
+				namespaceURI = staticContext.resolveNamespace(prefix);
+			}
+			return staticContext.registerVariable(namespaceURI, localName);
+		});
+
+		this._functionBody.performStaticEvaluation(staticContext);
+		staticContext.removeScope();
 	}
 }
 

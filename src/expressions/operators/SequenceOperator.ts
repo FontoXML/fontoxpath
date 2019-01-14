@@ -1,14 +1,14 @@
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import concatSequences from '../util/concatSequences';
-import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 /**
  * The Sequence selector evaluates its operands and returns them as a single sequence
  */
 class SequenceOperator extends PossiblyUpdatingExpression {
-	constructor(expressions: Array<Expression>) {
+	constructor(expressions: Expression[]) {
 		super(
 			expressions.reduce(function(specificity, selector) {
 				return specificity.add(selector.specificity);
@@ -23,7 +23,7 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 		);
 	}
 
-	performFunctionalEvaluation(dynamicContext, _executionParameters, sequenceCallbacks) {
+	public performFunctionalEvaluation(dynamicContext, _executionParameters, sequenceCallbacks) {
 		if (!sequenceCallbacks.length) {
 			return SequenceFactory.empty();
 		}

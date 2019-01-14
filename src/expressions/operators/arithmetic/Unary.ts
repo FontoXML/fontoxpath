@@ -1,12 +1,12 @@
+import castToType from '../../dataTypes/castToType';
+import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
-import createAtomicValue from '../../dataTypes/createAtomicValue';
-import castToType from '../../dataTypes/castToType';
 
 class Unary extends Expression {
-	_valueExpr: Expression;
-	_kind: string;
+	private _kind: string;
+	private _valueExpr: Expression;
 
 	/**
 	 * Positivese or negativise a value: +1 = 1, -1 = 0 - 1, -1 + 2 = 1, --1 = 1, etc
@@ -20,7 +20,7 @@ class Unary extends Expression {
 		this._kind = kind;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		return this._valueExpr
 			.evaluateMaybeStatically(dynamicContext, executionParameters)
 			.atomize(executionParameters)

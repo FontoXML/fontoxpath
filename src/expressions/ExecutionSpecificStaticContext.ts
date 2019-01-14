@@ -16,12 +16,12 @@ export const generateGlobalVariableBindingName = variableName => `GLOBAL_${varia
  * will be reused.
  */
 export default class ExecutionSpecificStaticContext implements Context {
-	executionContextWasRequired: boolean;
+	public executionContextWasRequired: boolean;
 
 	private _namespaceResolver: any;
-	private _variableBindingByName: any;
-	private _referredVariableByName: any;
 	private _referredNamespaceByName: any;
+	private _referredVariableByName: any;
+	private _variableBindingByName: any;
 	private _variableValueByName: any;
 
 	constructor(namespaceResolver, variableByName) {
@@ -49,30 +49,20 @@ export default class ExecutionSpecificStaticContext implements Context {
 		this.executionContextWasRequired = false;
 	}
 
-	resolveNamespace(prefix) {
-		// See if it 'globally' known:
-		if (staticallyKnownNamespaceByPrefix[prefix]) {
-			return staticallyKnownNamespaceByPrefix[prefix];
-		}
-		this.executionContextWasRequired = true;
-
-		const uri = this._namespaceResolver(prefix);
-
-		if (!this._referredNamespaceByName[prefix]) {
-			this._referredNamespaceByName[prefix] = {
-				prefix: prefix,
-				namespaceURI: uri
-			};
-		}
-
-		if (uri === undefined && !prefix) {
-			return null;
-		}
-
-		return uri;
+	public getReferredNamespaces(): string[] {
+		return Object.values(this._referredNamespaceByName);
 	}
 
-	lookupVariable(namespaceURI, localName) {
+	public getReferredVariables(): string[] {
+		return Object.values(this._referredVariableByName);
+	}
+
+	public lookupFunction(namespaceURI, localName, arity) {
+		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
+		return getFunctionByArity(namespaceURI, localName, arity);
+	}
+
+	public lookupVariable(namespaceURI, localName) {
 		this.executionContextWasRequired = true;
 
 		if (namespaceURI) {
@@ -89,16 +79,26 @@ export default class ExecutionSpecificStaticContext implements Context {
 		return bindingName;
 	}
 
-	lookupFunction(namespaceURI, localName, arity) {
-		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
-		return getFunctionByArity(namespaceURI, localName, arity);
-	}
+	public resolveNamespace(prefix) {
+		// See if it 'globally' known:
+		if (staticallyKnownNamespaceByPrefix[prefix]) {
+			return staticallyKnownNamespaceByPrefix[prefix];
+		}
+		this.executionContextWasRequired = true;
 
-	getReferredNamespaces(): string[] {
-		return Object.values(this._referredNamespaceByName);
-	}
+		const uri = this._namespaceResolver(prefix);
 
-	getReferredVariables(): string[] {
-		return Object.values(this._referredVariableByName);
+		if (!this._referredNamespaceByName[prefix]) {
+			this._referredNamespaceByName[prefix] = {
+				prefix,
+				namespaceURI: uri
+			};
+		}
+
+		if (uri === undefined && !prefix) {
+			return null;
+		}
+
+		return uri;
 	}
 }

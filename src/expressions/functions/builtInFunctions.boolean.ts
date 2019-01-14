@@ -1,5 +1,5 @@
+import { falseBoolean, trueBoolean } from '../dataTypes/createAtomicValue';
 import SequenceFactory from '../dataTypes/SequenceFactory';
-import { trueBoolean, falseBoolean } from '../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';

@@ -1,11 +1,11 @@
-import QName from '../dataTypes/valueTypes/QName';
 import { ConcreteNode } from '../../domFacade/ConcreteNode';
+import QName from '../dataTypes/valueTypes/QName';
 
 abstract class PendingUpdate {
 	public readonly target: ConcreteNode;
 	constructor(public type: string) {}
 
-	static fromTransferable(transferable: object) {
+	public static fromTransferable(transferable: object) {
 		switch (transferable['type']) {
 			case 'delete':
 				return new DeletePendingUpdate(transferable['target']);
@@ -61,15 +61,15 @@ abstract class PendingUpdate {
 				);
 		}
 	}
-	abstract toTransferable(): { type: string };
+	public abstract toTransferable(): { type: string };
 }
 class DeletePendingUpdate extends PendingUpdate {
-	readonly type: 'delete';
+	public readonly type: 'delete';
 	constructor(readonly target: ConcreteNode) {
 		super('delete');
 	}
 
-	toTransferable() {
+	public toTransferable() {
 		return {
 			['type']: this.type,
 			['target']: this.target
@@ -82,7 +82,7 @@ class InsertPendingUpdate extends PendingUpdate {
 		super(type);
 	}
 
-	toTransferable() {
+	public toTransferable() {
 		return {
 			['type']: this.type,
 			['target']: this.target,
@@ -92,7 +92,7 @@ class InsertPendingUpdate extends PendingUpdate {
 }
 
 class InsertAfterPendingUpdate extends InsertPendingUpdate {
-	readonly type: 'insertAfter';
+	public readonly type: 'insertAfter';
 
 	constructor(target: ConcreteNode, content: ConcreteNode[]) {
 		super(target, content, 'insertAfter');
@@ -100,40 +100,40 @@ class InsertAfterPendingUpdate extends InsertPendingUpdate {
 }
 
 class InsertBeforePendingUpdate extends InsertPendingUpdate {
-	readonly type: 'insertBefore';
+	public readonly type: 'insertBefore';
 	constructor(target: ConcreteNode, content: ConcreteNode[]) {
 		super(target, content, 'insertBefore');
 	}
 }
 
 class InsertIntoPendingUpdate extends InsertPendingUpdate {
-	readonly type: 'insertInto';
+	public readonly type: 'insertInto';
 	constructor(target: ConcreteNode, content: ConcreteNode[]) {
 		super(target, content, 'insertInto');
 	}
 }
 
 class InsertIntoAsFirstPendingUpdate extends InsertPendingUpdate {
-	readonly type: 'insertIntoAsFirst';
+	public readonly type: 'insertIntoAsFirst';
 	constructor(target: ConcreteNode, content: ConcreteNode[]) {
 		super(target, content, 'insertIntoAsFirst');
 	}
 }
 
 class InsertIntoAsLastPendingUpdate extends InsertPendingUpdate {
-	readonly type: 'insertIntoAsLast';
+	public readonly type: 'insertIntoAsLast';
 	constructor(target: ConcreteNode, content: ConcreteNode[]) {
 		super(target, content, 'insertIntoAsLast');
 	}
 }
 
 class InsertAttributesPendingUpdate extends PendingUpdate {
-	readonly type: 'insertAttributes';
+	public readonly type: 'insertAttributes';
 	constructor(readonly target: ConcreteNode, readonly content: Attr[]) {
 		super('insertAttributes');
 	}
 
-	toTransferable() {
+	public toTransferable() {
 		return {
 			['type']: this.type,
 			['target']: this.target,
@@ -143,8 +143,8 @@ class InsertAttributesPendingUpdate extends PendingUpdate {
 }
 
 class RenamePendingUpdate extends PendingUpdate {
-	readonly type: 'rename';
-	newName: QName;
+	public newName: QName;
+	public readonly type: 'rename';
 	constructor(readonly target: ConcreteNode, newName: QName) {
 		super('rename');
 
@@ -153,7 +153,7 @@ class RenamePendingUpdate extends PendingUpdate {
 			: new QName(newName.prefix, newName.namespaceURI, newName.localName);
 	}
 
-	toTransferable() {
+	public toTransferable() {
 		return {
 			['type']: this.type,
 			['target']: this.target,
@@ -171,7 +171,7 @@ class ReplaceNodePendingUpdate extends PendingUpdate {
 		super('replaceNode');
 	}
 
-	toTransferable() {
+	public toTransferable() {
 		return {
 			['type']: this.type,
 			['target']: this.target,
@@ -181,12 +181,12 @@ class ReplaceNodePendingUpdate extends PendingUpdate {
 }
 
 class ReplaceValuePendingUpdate extends PendingUpdate {
-	readonly type: 'replaceValue';
+	public readonly type: 'replaceValue';
 	constructor(readonly target: ConcreteNode, readonly stringValue: string) {
 		super('replaceValue');
 	}
 
-	toTransferable() {
+	public toTransferable() {
 		return {
 			['type']: this.type,
 			['target']: this.target,
@@ -196,12 +196,12 @@ class ReplaceValuePendingUpdate extends PendingUpdate {
 }
 
 class ReplaceElementContentPendingUpdate extends PendingUpdate {
-	readonly type: 'replaceElementContent';
+	public readonly type: 'replaceElementContent';
 	constructor(readonly target: ConcreteNode, readonly text: Text) {
 		super('replaceElementContent');
 	}
 
-	toTransferable() {
+	public toTransferable() {
 		return {
 			['type']: this.type,
 			['target']: this.target,

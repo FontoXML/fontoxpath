@@ -1,18 +1,18 @@
+import Expression from '../Expression';
 import Specificity from '../Specificity';
-import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import concatSequences from '../util/concatSequences';
 
 /**
  * The 'union' expression: concats and sorts
  */
 class Union extends Expression {
-	_subExpressions: Expression[];
+	private _subExpressions: Expression[];
 
-	constructor(expressions: Array<Expression>) {
+	constructor(expressions: Expression[]) {
 		const maxSpecificity = expressions.reduce((maxSpecificity, expression) => {
 			if (maxSpecificity.compareTo(expression.specificity) > 0) {
 				return maxSpecificity;
@@ -28,7 +28,7 @@ class Union extends Expression {
 		this._subExpressions = expressions;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		return concatSequences(
 			this._subExpressions.map(expression =>
 				expression.evaluateMaybeStatically(dynamicContext, executionParameters)

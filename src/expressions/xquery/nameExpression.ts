@@ -1,8 +1,8 @@
-import { errXPTY0004 } from '../XPathErrors';
-import { errXQDY0041, errXQDY0074 } from './XQueryErrors';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
+import { errXPTY0004 } from '../XPathErrors';
+import { errXQDY0041, errXQDY0074 } from './XQueryErrors';
 
 const nameExprErr = () => errXPTY0004('a single xs:string or xs:untypedAtomic');
 

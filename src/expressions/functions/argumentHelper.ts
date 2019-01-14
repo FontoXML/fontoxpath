@@ -1,8 +1,8 @@
-import ExecutionParameters from '../ExecutionParameters';
-import castToType from '../dataTypes/castToType';
-import promoteToType from '../dataTypes/promoteToType';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import atomize from '../dataTypes/atomize';
+import castToType from '../dataTypes/castToType';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import promoteToType from '../dataTypes/promoteToType';
+import ExecutionParameters from '../ExecutionParameters';
 
 import ISequence from '../dataTypes/ISequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';

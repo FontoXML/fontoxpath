@@ -1,13 +1,13 @@
+import {
+	ConcreteChildNode,
+	ConcreteDocumentNode,
+	ConcreteParentNode,
+	NODE_TYPES
+} from '../../domFacade/ConcreteNode';
+import IDomFacade from '../../domFacade/IDomFacade';
+import createNodeValue from '../dataTypes/createNodeValue';
 import createChildGenerator from './createChildGenerator';
 import { DONE_TOKEN, ready } from './iterators';
-import createNodeValue from '../dataTypes/createNodeValue';
-import IDomFacade from '../../domFacade/IDomFacade';
-import {
-	ConcreteParentNode,
-	ConcreteChildNode,
-	NODE_TYPES,
-	ConcreteDocumentNode
-} from '../../domFacade/ConcreteNode';
 
 function findDeepestLastDescendant(
 	node: ConcreteChildNode | ConcreteDocumentNode,

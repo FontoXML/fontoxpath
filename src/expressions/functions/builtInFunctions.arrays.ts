@@ -1,16 +1,16 @@
-import arrayGet from './builtInFunctions.arrays.get';
+import ArrayValue from '../dataTypes/ArrayValue';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import SequenceFactory from '../dataTypes/SequenceFactory';
-import createAtomicValue from '../dataTypes/createAtomicValue';
-import ArrayValue from '../dataTypes/ArrayValue';
-import zipSingleton from '../util/zipSingleton';
 import concatSequences from '../util/concatSequences';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import zipSingleton from '../util/zipSingleton';
+import arrayGet from './builtInFunctions.arrays.get';
 
+import ISequence from '../dataTypes/ISequence';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
-import ISequence from '../dataTypes/ISequence';
 
 const arraySize: FunctionDefinitionType = function(
 	_dynamicContext,
@@ -427,7 +427,7 @@ export default {
 			localName: 'subarray',
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'array(*)',
-			callFunction: function(
+			callFunction(
 				dynamicContext,
 				executionParameters,
 				staticContext,
@@ -472,12 +472,7 @@ export default {
 			localName: 'head',
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
-			callFunction: function(
-				dynamicContext,
-				executionParameters,
-				_staticContext,
-				arraySequence
-			) {
+			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 				return arrayGet(
 					dynamicContext,
 					executionParameters,
@@ -493,12 +488,7 @@ export default {
 			localName: 'tail',
 			argumentTypes: ['array(*)'],
 			returnType: 'item()*',
-			callFunction: function(
-				dynamicContext,
-				executionParameters,
-				_staticContext,
-				arraySequence
-			) {
+			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 				return arrayRemove(
 					dynamicContext,
 					executionParameters,

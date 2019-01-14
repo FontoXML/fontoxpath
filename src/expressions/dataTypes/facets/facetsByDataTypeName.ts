@@ -1,6 +1,6 @@
+import dateTimeComparator from './comparators/dateTimeComparator';
 import decimalComparator from './comparators/decimalComparator';
 import doubleComparator from './comparators/doubleComparator';
-import dateTimeComparator from './comparators/dateTimeComparator';
 import durationComparator from './comparators/durationComparator';
 
 // enumeration
@@ -45,7 +45,7 @@ function createMaxLengthFacet(getLengthFunction) {
 
 // totalDigits
 function validateTotalDigits(value, totalDigits) {
-	var regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/,
+	const regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/,
 		match = regex.exec(value),
 		total = (match[1] ? match[1].length : 0) + (match[2] ? match[2].length : 0);
 
@@ -59,7 +59,7 @@ function validateFractionDigits(value, fractionDigits) {
 		return false;
 	}
 
-	var regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/,
+	const regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/,
 		match = regex.exec(string);
 
 	if (!match[2]) {

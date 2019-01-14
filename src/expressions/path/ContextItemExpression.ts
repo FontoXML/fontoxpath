@@ -10,7 +10,7 @@ class ContextItemExpression extends Expression {
 		});
 	}
 
-	evaluate(dynamicContext, _executionParameters) {
+	public evaluate(dynamicContext, _executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error(
 				'XPDY0002: context is absent, it needs to be present to use the "." operator'

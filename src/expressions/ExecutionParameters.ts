@@ -1,6 +1,6 @@
-import INodesFactory from '../nodesFactory/INodesFactory';
 import IDocumentWriter from '../documentWriter/IDocumentWriter';
 import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
+import INodesFactory from '../nodesFactory/INodesFactory';
 
 export default class ExecutionParameters {
 	constructor(

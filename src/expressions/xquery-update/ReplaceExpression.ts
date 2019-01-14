@@ -1,27 +1,27 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import UpdatingExpression from './UpdatingExpression';
 import Specificity from '../Specificity';
+import UpdatingExpression from './UpdatingExpression';
 
 import { replaceElementContent, replaceNode, replaceValue } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
-import { DONE_TOKEN, ready } from '../util/iterators';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import { DONE_TOKEN, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 
 import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
 
 import {
-	errXUTY0008,
 	errXUDY0009,
-	errXUTY0010,
-	errXUTY0011,
 	errXUDY0023,
 	errXUDY0024,
-	errXUDY0027
+	errXUDY0027,
+	errXUTY0008,
+	errXUTY0010,
+	errXUTY0011
 } from './XQueryUpdateFacilityErrors';
 
 function evaluateReplaceNode(executionParameters, targetValueIterator, replacementValueIterator) {
@@ -300,9 +300,9 @@ function evaluateReplaceNodeValue(
 }
 
 class ReplaceExpression extends UpdatingExpression {
-	_valueOf: boolean;
-	_targetExpression: Expression;
-	_replacementExpression: Expression;
+	private _replacementExpression: Expression;
+	private _targetExpression: Expression;
+	private _valueOf: boolean;
 
 	constructor(valueOf: boolean, targetExpression: Expression, replacementExpression: Expression) {
 		super(new Specificity({}), [targetExpression, replacementExpression], {
@@ -315,7 +315,7 @@ class ReplaceExpression extends UpdatingExpression {
 		this._replacementExpression = replacementExpression;
 	}
 
-	evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(dynamicContext, executionParameters) {
 		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters

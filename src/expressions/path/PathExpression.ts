@@ -1,14 +1,14 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import Specificity from '../Specificity';
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import createSingleValueIterator from '../util/createSingleValueIterator';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
-import { AsyncIterator } from '../util/iterators';
-import { ready, notReady, DONE_TOKEN } from '../util/iterators';
-import ISequence from '../dataTypes/ISequence';
 import DomFacade from '../../domFacade/DomFacade';
+import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
+import ISequence from '../dataTypes/ISequence';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import Specificity from '../Specificity';
+import createSingleValueIterator from '../util/createSingleValueIterator';
+import { AsyncIterator } from '../util/iterators';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 function isSameNodeValue(a, b) {
 	if (a === null || b === null) {
@@ -29,7 +29,7 @@ function concatSortedSequences(_, sequences: AsyncIterator<ISequence>): ISequenc
 	let currentIterator = null;
 	let previousValue = null;
 	return SequenceFactory.create({
-		next: function() {
+		next() {
 			if (!currentSequence.ready) {
 				return notReady(
 					currentSequence.promise.then(() => {
@@ -98,7 +98,7 @@ function mergeSortedSequences(
 
 	let allSequencesAreSorted = false;
 	return SequenceFactory.create({
-		[Symbol.iterator]: function() {
+		[Symbol.iterator]() {
 			return this;
 		},
 		next: () => {
@@ -198,10 +198,10 @@ function sortResults(domFacade, result) {
 }
 
 class PathExpression extends Expression {
-	_stepExpressions: Expression[];
-	_requireSortedResults: boolean;
+	private _requireSortedResults: boolean;
+	private _stepExpressions: Expression[];
 
-	constructor(stepExpressions: Array<Expression>, requireSortedResults) {
+	constructor(stepExpressions: Expression[], requireSortedResults) {
 		const pathResultsInPeerSequence = stepExpressions.every(selector => selector.peer);
 		const pathResultsInSubtreeSequence = stepExpressions.every(selector => selector.subtree);
 		super(
@@ -224,11 +224,7 @@ class PathExpression extends Expression {
 		this._requireSortedResults = requireSortedResults;
 	}
 
-	getBucket() {
-		return this._stepExpressions[0].getBucket();
-	}
-
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		let sequenceHasPeerProperty = true;
 		const result = this._stepExpressions.reduce((intermediateResultNodesSequence, selector) => {
 			let childContextIterator;
@@ -327,6 +323,10 @@ class PathExpression extends Expression {
 		}, null);
 
 		return result;
+	}
+
+	public getBucket() {
+		return this._stepExpressions[0].getBucket();
 	}
 }
 

@@ -1,8 +1,8 @@
 export class IterationResult<T> {
-	done: boolean;
-	value: T | undefined;
-	promise: Promise<void> | undefined;
-	ready: boolean;
+	public done: boolean;
+	public promise: Promise<void> | undefined;
+	public ready: boolean;
+	public value: T | undefined;
 	constructor(
 		done: boolean,
 		value: T | undefined,
@@ -25,7 +25,7 @@ export interface AsyncIterator<T> {
 }
 
 export interface AsyncResult<T> {
-	value: T | undefined;
 	promise: Promise<void> | undefined;
 	ready: boolean;
+	value: T | undefined;
 }

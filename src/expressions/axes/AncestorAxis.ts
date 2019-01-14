@@ -1,8 +1,8 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
-import { DONE_TOKEN, ready } from '../util/iterators';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import { DONE_TOKEN, ready } from '../util/iterators';
 
 function generateAncestors(domFacade, contextNode) {
 	let ancestor = contextNode;
@@ -20,8 +20,8 @@ function generateAncestors(domFacade, contextNode) {
 }
 
 class AncestorAxis extends Expression {
-	_ancestorExpression: TestAbstractExpression;
-	_isInclusive: boolean;
+	private _ancestorExpression: TestAbstractExpression;
+	private _isInclusive: boolean;
 	constructor(
 		ancestorExpression: TestAbstractExpression,
 		options: { inclusive: boolean } | undefined
@@ -38,7 +38,7 @@ class AncestorAxis extends Expression {
 		this._isInclusive = !!options.inclusive;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');

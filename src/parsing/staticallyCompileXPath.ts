@@ -1,8 +1,8 @@
-import parseExpression from './parseExpression';
-import { enhanceStaticContextWithModule } from './globalModuleCache';
-import StaticContext from '../expressions/StaticContext';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
+import StaticContext from '../expressions/StaticContext';
 import compileAstToExpression from './compileAstToExpression';
+import { enhanceStaticContextWithModule } from './globalModuleCache';
+import parseExpression from './parseExpression';
 import processProlog from './processProlog';
 
 import astHelper from './astHelper';
@@ -17,9 +17,9 @@ import {
 export default function staticallyCompileXPath(
 	xpathString: string,
 	compilationOptions: {
+		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
 		disableCache: boolean | undefined;
-		allowUpdating: boolean | undefined;
 	},
 	namespaceResolver: (string) => string | null,
 	variables: object,

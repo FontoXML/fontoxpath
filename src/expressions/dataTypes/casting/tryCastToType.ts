@@ -31,8 +31,8 @@ import castToTime from './castToTime';
 import castToUntypedAtomic from './castToUntypedAtomic';
 import castToYearMonthDuration from './castToYearMonthDuration';
 
-import CastResult from './CastResult';
 import AtomicValue from '../AtomicValue';
+import CastResult from './CastResult';
 
 const TREAT_AS_PRIMITIVE = ['xs:integer', 'xs:dayTimeDuration', 'xs:yearMonthDuration'];
 
@@ -219,7 +219,7 @@ function createCastingFunction(from, to) {
 	}));
 
 	return value => {
-		let result = { successful: true, value: value };
+		let result = { successful: true, value };
 		for (let i = 0, l = converters.length; i < l; ++i) {
 			result = converters[i].call(undefined, result.value);
 			if (result.successful === false) {

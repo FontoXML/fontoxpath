@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import UpdatingExpression from './UpdatingExpression';
 import Specificity from '../Specificity';
+import UpdatingExpression from './UpdatingExpression';
 
 import {
 	insertAfter,
@@ -13,20 +13,20 @@ import {
 } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
-import { ready } from '../util/iterators';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import { ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 
 import {
-	errXUTY0004,
-	errXUTY0005,
-	errXUTY0006,
-	errXUTY0022,
 	errXUDY0023,
 	errXUDY0024,
 	errXUDY0027,
 	errXUDY0029,
-	errXUDY0030
+	errXUDY0030,
+	errXUTY0004,
+	errXUTY0005,
+	errXUTY0006,
+	errXUTY0022
 } from './XQueryUpdateFacilityErrors';
 
 const ELEMENT_NODE = 1;
@@ -102,9 +102,9 @@ function buildPendingUpdates(targetChoice, target, parent, alist, clist) {
 }
 
 class InsertExpression extends UpdatingExpression {
-	_sourceExpression: Expression;
-	_targetChoice: any;
-	_targetExpression: Expression;
+	private _sourceExpression: Expression;
+	private _targetChoice: any;
+	private _targetExpression: Expression;
 
 	constructor(
 		sourceExpression: Expression,
@@ -121,7 +121,7 @@ class InsertExpression extends UpdatingExpression {
 		this._targetExpression = targetExpression;
 	}
 
-	evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(dynamicContext, executionParameters) {
 		const sourceValueIterator = super.ensureUpdateListWrapper(this._sourceExpression)(
 			dynamicContext,
 			executionParameters

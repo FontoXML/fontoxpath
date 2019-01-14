@@ -1,10 +1,9 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import AtomicValue from '../dataTypes/AtomicValue';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import QName from '../dataTypes/valueTypes/QName';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import { validatePattern, normalizeWhitespace } from '../dataTypes/typeHelpers';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import { normalizeWhitespace, validatePattern } from '../dataTypes/typeHelpers';
+import QName from '../dataTypes/valueTypes/QName';
 
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -69,10 +68,10 @@ export default {
 			localName: 'untypedAtomic',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:untypedAtomic?',
-			callFunction: (genericDataTypeConstructor.bind(
+			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:untypedAtomic'
-			) as FunctionDefinitionType) as FunctionDefinitionType
+			) as FunctionDefinitionType
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,

@@ -1,16 +1,16 @@
-import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
-import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
-import QName from '../dataTypes/valueTypes/QName';
-import IDomFacade from '../../domFacade/IDomFacade';
 import IDocumentWriter from '../../documentWriter/IDocumentWriter';
-import INodesFactory from '../../nodesFactory/INodesFactory';
 import {
-	NODE_TYPES,
-	ConcreteChildNode,
 	ConcreteAttributeNode,
+	ConcreteChildNode,
 	ConcreteElementNode,
-	ConcreteProcessingInstructionNode
+	ConcreteProcessingInstructionNode,
+	NODE_TYPES
 } from '../../domFacade/ConcreteNode';
+import IDomFacade from '../../domFacade/IDomFacade';
+import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
+import INodesFactory from '../../nodesFactory/INodesFactory';
+import QName from '../dataTypes/valueTypes/QName';
+import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
 
 const ELEMENT_NODE = 1,
 	ATTRIBUTE_NODE = 2,
@@ -54,7 +54,7 @@ export const deletePu = function(
  */
 export const insertAfter = function(
 	target: ConcreteChildNode,
-	content: Array<Node>,
+	content: Node[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) {
@@ -77,7 +77,7 @@ export const insertAfter = function(
  */
 export const insertBefore = function(
 	target: ConcreteChildNode,
-	content: Array<Node>,
+	content: Node[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) {
@@ -98,7 +98,7 @@ export const insertBefore = function(
  */
 export const insertInto = function(
 	target: Element | Document,
-	content: Array<Node>,
+	content: Node[],
 	documentWriter: (IDocumentWriter | null) | undefined
 ) {
 	insertIntoAsLast(target, content, documentWriter);
@@ -114,7 +114,7 @@ export const insertInto = function(
  */
 export const insertIntoAsFirst = function(
 	target: Element | Document,
-	content: Array<Node>,
+	content: Node[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) {
@@ -133,7 +133,7 @@ export const insertIntoAsFirst = function(
  */
 export const insertIntoAsLast = function(
 	target: Element | Document,
-	content: Array<Node>,
+	content: Node[],
 	documentWriter: (IDocumentWriter | null) | undefined
 ) {
 	content.forEach(node => {
@@ -151,7 +151,7 @@ export const insertIntoAsLast = function(
  */
 export const insertAttributes = function(
 	target: Element,
-	content: Array<Attr>,
+	content: Attr[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) {
@@ -261,7 +261,7 @@ export const replaceElementContent = function(
  */
 export const replaceNode = function(
 	target: ConcreteAttributeNode | ConcreteChildNode,
-	replacement: Array<ConcreteAttributeNode | ConcreteChildNode>,
+	replacement: (ConcreteAttributeNode | ConcreteChildNode)[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) {

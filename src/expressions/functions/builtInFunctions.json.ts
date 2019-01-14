@@ -1,12 +1,12 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import createAtomicValue from '../dataTypes/createAtomicValue';
 import ArrayValue from '../dataTypes/ArrayValue';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-import FunctionDefinitionType from './FunctionDefinitionType';
-import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from '../dataTypes/ISequence';
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 function convert(obj: any): ISequence {
 	switch (typeof obj) {

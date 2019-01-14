@@ -2,10 +2,10 @@ import Expression, { RESULT_ORDERINGS } from './Expression';
 import Specificity from './Specificity';
 
 class VarRef extends Expression {
-	_variableName: string;
-	_namespaceURI: string;
-	_prefix: string;
-	_variableBindingName: any;
+	private _namespaceURI: string;
+	private _prefix: string;
+	private _variableBindingName: any;
+	private _variableName: string;
 
 	constructor(prefix: string, namespaceURI: string | null, variableName: string) {
 		super(new Specificity({}), [], {
@@ -25,7 +25,18 @@ class VarRef extends Expression {
 		this._variableBindingName = null;
 	}
 
-	performStaticEvaluation(staticContext) {
+	public evaluate(dynamicContext, _executionParameters) {
+		const variableBinding = dynamicContext.variableBindings[this._variableBindingName];
+		if (!variableBinding) {
+			throw new Error(
+				'XQDY0054: The variable ' + this._variableName + ' is declared but not in scope.'
+			);
+		}
+
+		return dynamicContext.variableBindings[this._variableBindingName]();
+	}
+
+	public performStaticEvaluation(staticContext) {
 		if (this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 		}
@@ -37,17 +48,6 @@ class VarRef extends Expression {
 		if (!this._variableBindingName) {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
 		}
-	}
-
-	evaluate(dynamicContext, _executionParameters) {
-		const variableBinding = dynamicContext.variableBindings[this._variableBindingName];
-		if (!variableBinding) {
-			throw new Error(
-				'XQDY0054: The variable ' + this._variableName + ' is declared but not in scope.'
-			);
-		}
-
-		return dynamicContext.variableBindings[this._variableBindingName]();
 	}
 }
 

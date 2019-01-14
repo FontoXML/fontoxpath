@@ -1,8 +1,8 @@
 import AtomicValue from '../AtomicValue';
 
 type ErrorResult = {
-	successful: false;
 	error: Error;
+	successful: false;
 };
 type SuccessResult = {
 	successful: true;

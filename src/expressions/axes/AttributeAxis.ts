@@ -1,12 +1,12 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import Specificity from '../Specificity';
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class AttributeAxis extends Expression {
-	_attributeTestExpression: TestAbstractExpression;
+	private _attributeTestExpression: TestAbstractExpression;
 	constructor(attributeTestExpression: TestAbstractExpression) {
 		super(
 			new Specificity({
@@ -24,7 +24,7 @@ class AttributeAxis extends Expression {
 		this._attributeTestExpression = attributeTestExpression;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
@@ -49,7 +49,7 @@ class AttributeAxis extends Expression {
 		return SequenceFactory.create(matchingAttributes);
 	}
 
-	getBucket() {
+	public getBucket() {
 		// The attribute axis is a non-empty sequence for only elements
 		return 'type-1';
 	}

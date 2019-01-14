@@ -3,17 +3,11 @@ import TestAbstractExpression from '../expressions/tests/TestAbstractExpression'
 
 import astHelper, { AST } from './astHelper';
 
-import PathExpression from '../expressions/path/PathExpression';
-import ForExpression from '../expressions/ForExpression';
-import MapConstructor from '../expressions/maps/MapConstructor';
 import CurlyArrayConstructor from '../expressions/arrays/CurlyArrayConstructor';
 import SquareArrayConstructor from '../expressions/arrays/SquareArrayConstructor';
-import AbsolutePathExpression from '../expressions/path/AbsolutePathExpression';
-import Filter from '../expressions/postfix/Filter';
-import AttributeAxis from '../expressions/axes/AttributeAxis';
 import AncestorAxis from '../expressions/axes/AncestorAxis';
+import AttributeAxis from '../expressions/axes/AttributeAxis';
 import ChildAxis from '../expressions/axes/ChildAxis';
-import ContextItemExpression from '../expressions/path/ContextItemExpression';
 import DescendantAxis from '../expressions/axes/DescendantAxis';
 import FollowingAxis from '../expressions/axes/FollowingAxis';
 import FollowingSiblingAxis from '../expressions/axes/FollowingSiblingAxis';
@@ -21,34 +15,40 @@ import ParentAxis from '../expressions/axes/ParentAxis';
 import PrecedingAxis from '../expressions/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../expressions/axes/PrecedingSiblingAxis';
 import SelfExpression from '../expressions/axes/SelfAxis';
-import NameTest from '../expressions/tests/NameTest';
-import KindTest from '../expressions/tests/KindTest';
-import PITest from '../expressions/tests/PITest';
-import TypeTest from '../expressions/tests/TypeTest';
+import IfExpression from '../expressions/conditional/IfExpression';
+import ForExpression from '../expressions/ForExpression';
 import FunctionCall from '../expressions/functions/FunctionCall';
 import InlineFunction from '../expressions/functions/InlineFunction';
+import LetExpression from '../expressions/LetExpression';
+import Literal from '../expressions/literals/Literal';
+import MapConstructor from '../expressions/maps/MapConstructor';
+import NamedFunctionRef from '../expressions/NamedFunctionRef';
+import BinaryOperator from '../expressions/operators/arithmetic/BinaryOperator';
+import Unary from '../expressions/operators/arithmetic/Unary';
 import AndOperator from '../expressions/operators/boolean/AndOperator';
 import OrOperator from '../expressions/operators/boolean/OrOperator';
-import Union from '../expressions/operators/Union';
+import Compare from '../expressions/operators/compares/Compare';
 import IntersectExcept from '../expressions/operators/IntersectExcept';
 import SequenceOperator from '../expressions/operators/SequenceOperator';
 import SimpleMapOperator from '../expressions/operators/SimpleMapOperator';
-import Unary from '../expressions/operators/arithmetic/Unary';
-import BinaryOperator from '../expressions/operators/arithmetic/BinaryOperator';
-import Compare from '../expressions/operators/compares/Compare';
-import InstanceOfOperator from '../expressions/operators/types/InstanceOfOperator';
-import CastAsOperator from '../expressions/operators/types/CastAsOperator';
 import CastableAsOperator from '../expressions/operators/types/CastableAsOperator';
+import CastAsOperator from '../expressions/operators/types/CastAsOperator';
+import InstanceOfOperator from '../expressions/operators/types/InstanceOfOperator';
+import Union from '../expressions/operators/Union';
+import AbsolutePathExpression from '../expressions/path/AbsolutePathExpression';
+import ContextItemExpression from '../expressions/path/ContextItemExpression';
+import PathExpression from '../expressions/path/PathExpression';
+import Filter from '../expressions/postfix/Filter';
 import QuantifiedExpression from '../expressions/quantified/QuantifiedExpression';
-import IfExpression from '../expressions/conditional/IfExpression';
-import Literal from '../expressions/literals/Literal';
-import LetExpression from '../expressions/LetExpression';
-import NamedFunctionRef from '../expressions/NamedFunctionRef';
+import KindTest from '../expressions/tests/KindTest';
+import NameTest from '../expressions/tests/NameTest';
+import PITest from '../expressions/tests/PITest';
+import TypeTest from '../expressions/tests/TypeTest';
 import VarRef from '../expressions/VarRef';
 
-import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
+import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 
 import DeleteExpression from '../expressions/xquery-update/DeleteExpression';
@@ -58,9 +58,9 @@ import RenameExpression from '../expressions/xquery-update/RenameExpression';
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 import TransformExpression from '../expressions/xquery-update/TransformExpression';
 
+import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import PossiblyUpdatingExpression from '../expressions/PossiblyUpdatingExpression';
-import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 
 const COMPILATION_OPTIONS = {
 	XPATH_MODE: { allowXQuery: false, allowUpdating: false },
@@ -78,7 +78,7 @@ function disallowUpdating(compilationOptions) {
 	return COMPILATION_OPTIONS.XQUERY_UPDATING_MODE;
 }
 
-function compile(ast: Array<any>, compilationOptions): Expression {
+function compile(ast: any[], compilationOptions): Expression {
 	const name = ast[0];
 	switch (name) {
 		// Operators
@@ -218,7 +218,7 @@ function compile(ast: Array<any>, compilationOptions): Expression {
 }
 
 function compileTest(
-	ast: Array<any>,
+	ast: any[],
 	compilationOptions: { allowXQuery: boolean }
 ): TestAbstractExpression {
 	switch (ast[0]) {
@@ -1178,8 +1178,8 @@ function transformExpression(ast, compilationOptions) {
 }
 
 export default function(
-	xPathAst: Array<any>,
-	compilationOptions: { allowXQuery?: boolean; allowUpdating?: boolean }
+	xPathAst: any[],
+	compilationOptions: { allowUpdating?: boolean; allowXQuery?: boolean }
 ): Expression {
 	return compile(xPathAst, compilationOptions);
 }

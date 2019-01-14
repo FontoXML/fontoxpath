@@ -3,15 +3,15 @@ import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
 class LetExpression extends PossiblyUpdatingExpression {
-	_prefix: string;
-	_namespaceURI: string;
-	_localName: string;
-	_bindingSequence: Expression;
-	_returnExpression: Expression;
-	_variableBinding: any;
+	public _bindingSequence: Expression;
+	public _localName: string;
+	public _namespaceURI: string;
+	public _prefix: string;
+	public _returnExpression: Expression;
+	public _variableBinding: any;
 
 	constructor(
-		rangeVariable: { prefix: string; namespaceURI: string | null; localName: string },
+		rangeVariable: { localName: string; namespaceURI: string | null; prefix: string },
 		bindingSequence: Expression,
 		returnExpression: Expression
 	) {
@@ -40,7 +40,21 @@ class LetExpression extends PossiblyUpdatingExpression {
 		this._variableBinding = null;
 	}
 
-	performStaticEvaluation(staticContext) {
+	public performFunctionalEvaluation(
+		dynamicContext,
+		_executionParameters,
+		[createBindingSequence, createReturnExpression]
+	) {
+		const scopedContext = dynamicContext.scopeWithVariableBindings({
+			[this._variableBinding]: createDoublyIterableSequence(
+				createBindingSequence(dynamicContext)
+			)
+		});
+
+		return createReturnExpression(scopedContext);
+	}
+
+	public performStaticEvaluation(staticContext) {
 		if (this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 
@@ -59,20 +73,6 @@ class LetExpression extends PossiblyUpdatingExpression {
 		this._variableBinding = staticContext.registerVariable(this._namespaceURI, this._localName);
 		this._returnExpression.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
-	}
-
-	performFunctionalEvaluation(
-		dynamicContext,
-		_executionParameters,
-		[createBindingSequence, createReturnExpression]
-	) {
-		const scopedContext = dynamicContext.scopeWithVariableBindings({
-			[this._variableBinding]: createDoublyIterableSequence(
-				createBindingSequence(dynamicContext)
-			)
-		});
-
-		return createReturnExpression(scopedContext);
 	}
 }
 export default LetExpression;

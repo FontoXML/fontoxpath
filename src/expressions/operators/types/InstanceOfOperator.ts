@@ -3,9 +3,9 @@ import Expression from '../../Expression';
 import sequenceEvery from '../../util/sequenceEvery';
 
 class InstanceOfOperator extends Expression {
-	_expression: Expression;
-	_typeTest: Expression;
-	_multiplicity: string;
+	private _expression: Expression;
+	private _multiplicity: string;
+	private _typeTest: Expression;
 
 	constructor(expression: Expression, typeTest: Expression, multiplicity: string) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
@@ -15,7 +15,7 @@ class InstanceOfOperator extends Expression {
 		this._multiplicity = multiplicity;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const evaluatedExpression = this._expression.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters

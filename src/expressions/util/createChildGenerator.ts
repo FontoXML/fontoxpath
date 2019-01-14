@@ -1,11 +1,6 @@
-import { DONE_TOKEN, ready } from './iterators';
+import { ConcreteChildNode, ConcreteNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
 import IDomFacade from '../../domFacade/IDomFacade';
-import {
-	ConcreteNode,
-	ConcreteChildNode,
-	NODE_TYPES,
-	ConcreteParentNode
-} from '../../domFacade/ConcreteNode';
+import { DONE_TOKEN, ready } from './iterators';
 
 export default function createChildGenerator(
 	domFacade: IDomFacade,
@@ -18,7 +13,7 @@ export default function createChildGenerator(
 			}
 		};
 	}
-	const childNodes = domFacade.getChildNodes(node as ConcreteParentNode);
+	const childNodes = domFacade.getChildNodes(node);
 	let i = 0;
 	const l = childNodes.length;
 	return {

@@ -1,15 +1,15 @@
-import { DONE_TOKEN, ready, notReady, AsyncIterator, AsyncResult } from '../../util/iterators';
-import Value from '../Value';
+import ExecutionParameters from '../../ExecutionParameters';
+import { errFORG0006 } from '../../functions/FunctionOperationErrors';
+import { AsyncIterator, AsyncResult, DONE_TOKEN, notReady, ready } from '../../util/iterators';
+import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
-import { errFORG0006 } from '../../functions/FunctionOperationErrors';
-import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 import SequenceFactory from '../SequenceFactory';
-import ExecutionParameters from '../../ExecutionParameters';
-import atomize from '../atomize';
+import Value from '../Value';
+import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class IteratorBackedSequence implements ISequence {
-	value: AsyncIterator<Value>;
+	public value: AsyncIterator<Value>;
 
 	private _cacheAllValues: boolean;
 	private _cachedValues: Value[];
@@ -52,15 +52,15 @@ export default class IteratorBackedSequence implements ISequence {
 		this._length = predictedLength;
 	}
 
-	atomize(executionParameters: ExecutionParameters): ISequence {
+	public atomize(executionParameters: ExecutionParameters): ISequence {
 		return this.map(value => atomize(value, executionParameters));
 	}
 
-	expandSequence(): ISequence {
+	public expandSequence(): ISequence {
 		return this._sequenceFactory.create(this.getAllValues());
 	}
 
-	filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
+	public filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
 		let i = -1;
 		const iterator = this.value;
 
@@ -84,7 +84,7 @@ export default class IteratorBackedSequence implements ISequence {
 		});
 	}
 
-	first(): Value | null {
+	public first(): Value | null {
 		const first = this.tryGetFirst();
 		if (!first.ready) {
 			throw new Error('First value is async.');
@@ -92,7 +92,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return first.value;
 	}
 
-	getAllValues(): Value[] {
+	public getAllValues(): Value[] {
 		const values = this.tryGetAllValues();
 		if (!values.ready) {
 			throw new Error('Sequence contains async values.');
@@ -100,7 +100,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return values.value;
 	}
 
-	getEffectiveBooleanValue(): boolean {
+	public getEffectiveBooleanValue(): boolean {
 		const effectiveBooleanValue = this.tryGetEffectiveBooleanValue();
 		if (!effectiveBooleanValue.ready) {
 			throw new Error('Sequence contains async values.');
@@ -108,7 +108,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return effectiveBooleanValue.value;
 	}
 
-	isEmpty(): boolean {
+	public isEmpty(): boolean {
 		const isEmpty = this.tryIsEmpty();
 		if (!isEmpty.ready) {
 			throw new Error('First value is async.');
@@ -116,7 +116,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return isEmpty.value;
 	}
 
-	isSingleton(): boolean {
+	public isSingleton(): boolean {
 		const isSingleton = this.tryIsSingleton();
 		if (!isSingleton.ready) {
 			throw new Error('Sequence has async values.');
@@ -124,7 +124,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return isSingleton.value;
 	}
 
-	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
+	public map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
 		let i = 0;
 		const iterator = this.value;
 		return this._sequenceFactory.create(
@@ -141,7 +141,7 @@ export default class IteratorBackedSequence implements ISequence {
 		);
 	}
 
-	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
+	public mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
 		const iterator = this.value;
 		let mappedResultsIterator;
 		const allResults = [];
@@ -168,7 +168,7 @@ export default class IteratorBackedSequence implements ISequence {
 		});
 	}
 
-	switchCases(cases: SwitchCasesCases): ISequence {
+	public switchCases(cases: SwitchCasesCases): ISequence {
 		let resultIterator = null;
 
 		const setResultIterator = (resultSequence: ISequence) => {
@@ -212,7 +212,7 @@ export default class IteratorBackedSequence implements ISequence {
 		});
 	}
 
-	tryGetAllValues(): AsyncResult<Value[]> {
+	public tryGetAllValues(): AsyncResult<Value[]> {
 		if (
 			this._currentPosition > this._cachedValues.length &&
 			this._length !== this._cachedValues.length
@@ -231,7 +231,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return ready(this._cachedValues);
 	}
 
-	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
+	public tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
 		const iterator = this.value;
 		const oldPosition = this._currentPosition;
 
@@ -263,7 +263,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return ready(getEffectiveBooleanValue(firstValue));
 	}
 
-	tryGetFirst(): AsyncResult<Value> {
+	public tryGetFirst(): AsyncResult<Value> {
 		if (this._cachedValues[0] !== undefined) {
 			return ready(this._cachedValues[0]);
 		}
@@ -283,7 +283,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return firstValue;
 	}
 
-	tryGetLength(onlyIfCheap = false): AsyncResult<number> {
+	public tryGetLength(onlyIfCheap = false): AsyncResult<number> {
 		if (this._length !== null) {
 			return ready(this._length);
 		}
@@ -299,6 +299,10 @@ export default class IteratorBackedSequence implements ISequence {
 
 		this.reset(oldPosition);
 		return ready(this._length);
+	}
+
+	private reset(to = 0) {
+		this._currentPosition = to;
 	}
 
 	private tryIsEmpty(): AsyncResult<boolean> {
@@ -337,9 +341,5 @@ export default class IteratorBackedSequence implements ISequence {
 		}
 		this.reset(oldPosition);
 		return ready(secondValue.done);
-	}
-
-	private reset(to = 0) {
-		this._currentPosition = to;
 	}
 }

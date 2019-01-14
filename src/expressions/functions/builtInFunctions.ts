@@ -20,13 +20,13 @@ import builtInFontoxpathFunctions from './builtInFunctions.fontoxpath';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const builtInFunctions: Array<{
+const builtInFunctions: {
+	argumentTypes: string[];
+	callFunction: FunctionDefinitionType;
 	localName: string;
 	namespaceURI: string;
-	argumentTypes: Array<string>;
 	returnType: string;
-	callFunction: FunctionDefinitionType;
-}> = [].concat(
+}[] = [].concat(
 	builtInArrayFunctions.declarations,
 	builtInBooleanFunctions.declarations,
 	builtInContextFunctions.declarations,

@@ -1,21 +1,21 @@
 import {
-	ConcreteNode,
-	ConcreteElementNode,
-	ConcreteChildNode,
-	ConcreteParentNode,
 	ConcreteAttributeNode,
-	ConcreteCharacterDataNode
+	ConcreteCharacterDataNode,
+	ConcreteChildNode,
+	ConcreteElementNode,
+	ConcreteNode,
+	ConcreteParentNode
 } from './ConcreteNode';
 
 export default interface IDomFacade {
-	getParentNode(node: ConcreteNode): ConcreteParentNode;
-	getParentNode(node: ConcreteElementNode): ConcreteParentNode;
+	getAllAttributes(node: ConcreteElementNode): ConcreteAttributeNode[];
+	getAttribute(node: ConcreteElementNode, attributeName: string): string;
+	getChildNodes(node: ConcreteParentNode): ConcreteChildNode[];
+	getData(node: ConcreteAttributeNode | ConcreteCharacterDataNode): string;
 	getFirstChild(node: ConcreteParentNode): ConcreteChildNode;
 	getLastChild(node: ConcreteParentNode): ConcreteChildNode;
 	getNextSibling(node: ConcreteChildNode): ConcreteChildNode;
+	getParentNode(node: ConcreteNode): ConcreteParentNode;
+	getParentNode(node: ConcreteElementNode): ConcreteParentNode;
 	getPreviousSibling(node: ConcreteChildNode): ConcreteChildNode;
-	getChildNodes(node: ConcreteParentNode): ConcreteChildNode[];
-	getAttribute(node: ConcreteElementNode, attributeName: string): string;
-	getAllAttributes(node: ConcreteElementNode): ConcreteAttributeNode[];
-	getData(node: ConcreteAttributeNode | ConcreteCharacterDataNode): string;
 }

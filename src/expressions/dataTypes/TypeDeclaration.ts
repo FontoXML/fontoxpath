@@ -1,6 +1,6 @@
 type TypeDeclaration = {
-	type: string;
 	occurrence: '?' | '+' | '*' | '';
+	type: string;
 };
 
 export default TypeDeclaration;

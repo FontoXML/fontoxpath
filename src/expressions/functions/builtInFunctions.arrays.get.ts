@@ -1,5 +1,5 @@
-import FunctionDefinitionType from './FunctionDefinitionType';
 import ArrayValue from '../dataTypes/ArrayValue';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 const arrayGet: FunctionDefinitionType = function(
 	_dynamicContext,

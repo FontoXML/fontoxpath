@@ -1,12 +1,12 @@
-import SequenceFactory from './dataTypes/SequenceFactory';
-import createAtomicValue from './dataTypes/createAtomicValue';
 import ArrayValue from './dataTypes/ArrayValue';
-import MapValue from './dataTypes/MapValue';
+import createAtomicValue from './dataTypes/createAtomicValue';
+import { falseBoolean, trueBoolean } from './dataTypes/createAtomicValue';
 import createNodeValue from './dataTypes/createNodeValue';
-import { trueBoolean, falseBoolean } from './dataTypes/createAtomicValue';
-import DateTime from './dataTypes/valueTypes/DateTime';
-import Value from './dataTypes/Value';
 import ISequence from './dataTypes/ISequence';
+import MapValue from './dataTypes/MapValue';
+import SequenceFactory from './dataTypes/SequenceFactory';
+import Value from './dataTypes/Value';
+import DateTime from './dataTypes/valueTypes/DateTime';
 
 /**
  * Adapt a JavaScript value to the equivalent in XPath. This dynamically assigns the closest type

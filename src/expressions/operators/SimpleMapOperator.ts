@@ -1,12 +1,11 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Expression from '../Expression';
 
-import Specificity from '../Specificity';
 import SequenceFactory from '../dataTypes/SequenceFactory';
-import DynamicContext from '../DynamicContext';
+import Specificity from '../Specificity';
 
 class SimpleMapOperator extends Expression {
-	_expression1: Expression;
-	_expression2: Expression;
+	private _expression1: Expression;
+	private _expression2: Expression;
 	/**
 	 * Simple Map operator
 	 * The simple map operator will evaluate expressions given in expression1 and use the results as context for
@@ -23,7 +22,7 @@ class SimpleMapOperator extends Expression {
 		this._expression2 = expression2;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const sequence = this._expression1.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters

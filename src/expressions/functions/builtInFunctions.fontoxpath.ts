@@ -1,22 +1,21 @@
-import DynamicContext from '../DynamicContext';
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import createNodeValue from '../dataTypes/createNodeValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import createNodeValue from '../dataTypes/createNodeValue';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import DynamicContext from '../DynamicContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, ready, notReady } from '../util/iterators';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
 
-import StaticContext from '../StaticContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
+import StaticContext from '../StaticContext';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 import astHelper from '../../parsing/astHelper';
 import MapValue from '../dataTypes/MapValue';
-import Value from '../dataTypes/Value';
 
 const fontoxpathEvaluate: FunctionDefinitionType = function(
 	_dynamicContext,
@@ -85,13 +84,13 @@ const fontoxpathEvaluate: FunctionDefinitionType = function(
 							contextItem: null,
 							contextSequence: contextItemSequence,
 							contextItemIndex: -1,
-							variableBindings: variableBindings
+							variableBindings
 					  }
 					: {
 							contextItem: contextItemSequence.first(),
 							contextSequence: contextItemSequence,
 							contextItemIndex: 0,
-							variableBindings: variableBindings
+							variableBindings
 					  };
 
 				const innerDynamicContext = new DynamicContext(context);

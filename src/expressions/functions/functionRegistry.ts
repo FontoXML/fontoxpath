@@ -1,17 +1,17 @@
 import ISequence from '../dataTypes/ISequence';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
+import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
 type FunctionProperties = {
-	localName: string;
-	namespaceURI: string;
+	argumentTypes: (TypeDeclaration | RestArgument)[];
 	arity: number;
 	callFunction: (any) => ISequence;
-	argumentTypes: Array<TypeDeclaration | RestArgument>;
+	localName: string;
+	namespaceURI: string;
 	returnType: TypeDeclaration;
 };
 
-const registeredFunctionsByName: { [s: string]: Array<FunctionProperties> } = Object.create(null);
+const registeredFunctionsByName: { [s: string]: FunctionProperties[] } = Object.create(null);
 
 function computeLevenshteinDistance(a, b) {
 	const computedDistances = [];
@@ -136,7 +136,7 @@ export function getFunctionByArity(
 		localName: functionLocalName,
 		callFunction: matchingFunction.callFunction,
 		argumentTypes: matchingFunction.argumentTypes,
-		arity: arity,
+		arity,
 		returnType: matchingFunction.returnType
 	};
 }
@@ -146,7 +146,7 @@ function splitType(type: string): TypeDeclaration {
 	const parts = type.match(/^(.*[^+?*])([+*?])?$/);
 	return {
 		type: parts[1],
-		occurrence: <'?' | '+' | '*' | ''>parts[2] || null
+		occurrence: (parts[2] as '?' | '+' | '*' | '') || null
 	};
 }
 
@@ -156,19 +156,19 @@ export function registerFunction(namespaceURI, localName, argumentTypes, returnT
 	}
 
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
-		localName: localName,
-		namespaceURI: namespaceURI,
+		localName,
+		namespaceURI,
 		argumentTypes: argumentTypes.map(argumentType =>
 			argumentType === '...' ? REST_ARGUMENT_INSTANCE : splitType(argumentType)
 		),
 		arity: argumentTypes.length,
 		returnType: splitType(returnType),
-		callFunction: callFunction
+		callFunction
 	});
 }
 
 export default {
-	getAlternativesAsStringFor: getAlternativesAsStringFor,
-	getFunctionByArity: getFunctionByArity,
-	registerFunction: registerFunction
+	getAlternativesAsStringFor,
+	getFunctionByArity,
+	registerFunction
 };

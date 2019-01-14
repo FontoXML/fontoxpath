@@ -1,7 +1,7 @@
 import INodesFactory from './INodesFactory';
 
 export default class DomBackedNodesFactory implements INodesFactory {
-	_documentNode: Document | null;
+	private _documentNode: Document | null;
 
 	constructor(contextItem: any) {
 		if (contextItem && 'nodeType' in contextItem) {
@@ -21,7 +21,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 		}
 	}
 
-	createAttributeNS(namespaceURI, name) {
+	public createAttributeNS(namespaceURI, name) {
 		if (!this._documentNode) {
 			throw new Error(
 				'Please pass a node factory if an XQuery script uses node constructors'
@@ -30,16 +30,7 @@ export default class DomBackedNodesFactory implements INodesFactory {
 		return this._documentNode.createAttributeNS(namespaceURI, name);
 	}
 
-	createElementNS(namespaceURI, name) {
-		if (!this._documentNode) {
-			throw new Error(
-				'Please pass a node factory if an XQuery script uses node constructors'
-			);
-		}
-		return this._documentNode.createElementNS(namespaceURI, name);
-	}
-
-	createComment(contents) {
+	public createComment(contents) {
 		if (!this._documentNode) {
 			throw new Error(
 				'Please pass a node factory if an XQuery script uses node constructors'
@@ -48,21 +39,30 @@ export default class DomBackedNodesFactory implements INodesFactory {
 		return this._documentNode.createComment(contents);
 	}
 
-	createTextNode(contents) {
+	public createElementNS(namespaceURI, name) {
 		if (!this._documentNode) {
 			throw new Error(
 				'Please pass a node factory if an XQuery script uses node constructors'
 			);
 		}
-		return this._documentNode.createTextNode(contents);
+		return this._documentNode.createElementNS(namespaceURI, name);
 	}
 
-	createProcessingInstruction(target, data) {
+	public createProcessingInstruction(target, data) {
 		if (!this._documentNode) {
 			throw new Error(
 				'Please pass a node factory if an XQuery script uses node constructors'
 			);
 		}
 		return this._documentNode.createProcessingInstruction(target, data);
+	}
+
+	public createTextNode(contents) {
+		if (!this._documentNode) {
+			throw new Error(
+				'Please pass a node factory if an XQuery script uses node constructors'
+			);
+		}
+		return this._documentNode.createTextNode(contents);
 	}
 }

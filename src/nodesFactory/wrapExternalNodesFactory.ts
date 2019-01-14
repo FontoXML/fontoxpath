@@ -1,30 +1,30 @@
 import INodesFactory from './INodesFactory';
 
 class WrappingNodesFactory implements INodesFactory {
-	_externalNodesFactory: INodesFactory;
+	private _externalNodesFactory: INodesFactory;
 
 	constructor(externalNodesFactory) {
 		this._externalNodesFactory = externalNodesFactory;
 	}
 
-	createAttributeNS(namespaceURI, name) {
+	public createAttributeNS(namespaceURI, name) {
 		return this._externalNodesFactory['createAttributeNS'](namespaceURI, name);
 	}
 
-	createElementNS(namespaceURI, name) {
-		return this._externalNodesFactory['createElementNS'](namespaceURI, name);
-	}
-
-	createComment(contents) {
+	public createComment(contents) {
 		return this._externalNodesFactory['createComment'](contents);
 	}
 
-	createTextNode(contents) {
-		return this._externalNodesFactory['createTextNode'](contents);
+	public createElementNS(namespaceURI, name) {
+		return this._externalNodesFactory['createElementNS'](namespaceURI, name);
 	}
 
-	createProcessingInstruction(target, data) {
+	public createProcessingInstruction(target, data) {
 		return this._externalNodesFactory['createProcessingInstruction'](target, data);
+	}
+
+	public createTextNode(contents) {
+		return this._externalNodesFactory['createTextNode'](contents);
 	}
 }
 

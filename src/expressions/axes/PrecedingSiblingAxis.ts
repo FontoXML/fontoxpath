@@ -1,9 +1,9 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
-import { DONE_TOKEN, ready } from '../util/iterators';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import { DONE_TOKEN, ready } from '../util/iterators';
 
 function createSiblingGenerator(domFacade, node) {
 	return {
@@ -19,7 +19,7 @@ function createSiblingGenerator(domFacade, node) {
 }
 
 class PrecedingSiblingAxis extends Expression {
-	_siblingExpression: TestAbstractExpression;
+	private _siblingExpression: TestAbstractExpression;
 	constructor(siblingExpression: TestAbstractExpression) {
 		super(siblingExpression.specificity, [siblingExpression], {
 			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
@@ -31,7 +31,7 @@ class PrecedingSiblingAxis extends Expression {
 		this._siblingExpression = siblingExpression;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');

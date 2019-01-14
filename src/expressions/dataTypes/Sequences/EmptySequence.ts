@@ -1,10 +1,10 @@
-import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from '../../util/iterators';
+import ExecutionParameters from '../../ExecutionParameters';
+import { AsyncIterator, AsyncResult, DONE_TOKEN, ready } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import Value from '../Value';
-import ExecutionParameters from '../../ExecutionParameters';
 
 export default class EmptySequence implements ISequence {
-	value: AsyncIterator<Value>;
+	public value: AsyncIterator<Value>;
 
 	constructor() {
 		this.value = {
@@ -12,66 +12,66 @@ export default class EmptySequence implements ISequence {
 		};
 	}
 
-	atomize(_executionParameters: ExecutionParameters): ISequence {
+	public atomize(_executionParameters: ExecutionParameters): ISequence {
 		return this;
 	}
 
-	expandSequence(): ISequence {
+	public expandSequence(): ISequence {
 		return this;
 	}
 
-	filter(_callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
+	public filter(_callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
 		return this;
 	}
 
-	first(): Value | null {
+	public first(): Value | null {
 		return null;
 	}
 
-	getAllValues(): Value[] {
+	public getAllValues(): Value[] {
 		return [];
 	}
 
-	getEffectiveBooleanValue(): boolean {
+	public getEffectiveBooleanValue(): boolean {
 		return false;
 	}
 
-	isEmpty(): boolean {
+	public isEmpty(): boolean {
 		return true;
 	}
 
-	isSingleton(): boolean {
+	public isSingleton(): boolean {
 		return false;
 	}
 
-	map(_callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
+	public map(_callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
 		return this;
 	}
 
-	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
+	public mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
 		return callback([]);
 	}
 
-	switchCases(cases: SwitchCasesCases): ISequence {
+	public switchCases(cases: SwitchCasesCases): ISequence {
 		if (cases.empty) {
 			return cases.empty(this);
 		}
 		return cases.default(this);
 	}
 
-	tryGetAllValues(): AsyncResult<Value[]> {
+	public tryGetAllValues(): AsyncResult<Value[]> {
 		return ready(this.getAllValues());
 	}
 
-	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
+	public tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
 		return ready(this.getEffectiveBooleanValue());
 	}
 
-	tryGetFirst(): AsyncResult<Value> {
+	public tryGetFirst(): AsyncResult<Value> {
 		return ready(this.first());
 	}
 
-	tryGetLength(): AsyncResult<number> {
+	public tryGetLength(): AsyncResult<number> {
 		return ready(0);
 	}
 }

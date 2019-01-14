@@ -1,5 +1,5 @@
-import castToFloatLikeType from './castToFloatLikeType';
 import createAtomicValue from '../createAtomicValue';
+import castToFloatLikeType from './castToFloatLikeType';
 
 import CastResult from './CastResult';
 

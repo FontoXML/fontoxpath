@@ -1,14 +1,14 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Expression from '../Expression';
 
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import SequenceFactory from '../dataTypes/SequenceFactory';
-import { DONE_TOKEN, ready, notReady } from '../util/iterators';
 import Value from '../dataTypes/Value';
-import ISequence from '../dataTypes/ISequence';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 class Filter extends Expression {
-	_filterExpression: Expression;
-	_selector: Expression;
+	private _filterExpression: Expression;
+	private _selector: Expression;
 
 	constructor(selector: Expression, filterExpression: Expression) {
 		super(
@@ -27,11 +27,7 @@ class Filter extends Expression {
 		this._filterExpression = filterExpression;
 	}
 
-	getBucket() {
-		return this._selector.getBucket();
-	}
-
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const valuesToFilter = this._selector.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters
@@ -151,6 +147,10 @@ class Filter extends Expression {
 				return iteratorItem;
 			}
 		});
+	}
+
+	public getBucket() {
+		return this._selector.getBucket();
 	}
 }
 

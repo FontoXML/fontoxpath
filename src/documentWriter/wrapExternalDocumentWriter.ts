@@ -1,29 +1,29 @@
 import IDocumentWriter from './IDocumentWriter';
 
 class WrappingDocumentWriter implements IDocumentWriter {
-	_externalDocumentWriter: IDocumentWriter;
+	private _externalDocumentWriter: IDocumentWriter;
 
 	constructor(externalDocumentWriter) {
 		this._externalDocumentWriter = externalDocumentWriter;
 	}
 
-	insertBefore(parent, newNode, referenceNode) {
+	public insertBefore(parent, newNode, referenceNode) {
 		return this._externalDocumentWriter['insertBefore'](parent, newNode, referenceNode);
 	}
 
-	removeAttributeNS(node, namespace, name) {
+	public removeAttributeNS(node, namespace, name) {
 		return this._externalDocumentWriter['removeAttributeNS'](node, namespace, name);
 	}
 
-	removeChild(parent, child) {
+	public removeChild(parent, child) {
 		return this._externalDocumentWriter['removeChild'](parent, child);
 	}
 
-	setAttributeNS(node, namespace, name, value) {
+	public setAttributeNS(node, namespace, name, value) {
 		this._externalDocumentWriter['setAttributeNS'](node, namespace, name, value);
 	}
 
-	setData(node, data) {
+	public setData(node, data) {
 		this._externalDocumentWriter['setData'](node, data);
 	}
 }

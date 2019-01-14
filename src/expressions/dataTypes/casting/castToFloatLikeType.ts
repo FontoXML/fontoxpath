@@ -1,11 +1,11 @@
 export default function castToFloatLikeType(
 	instanceOf: (string) => boolean,
 	to: string
-): (Value) => { successful: true; value: any } | { successful: false; error: Error } {
+): (Value) => { successful: true; value: any } | { error: Error; successful: false } {
 	if (instanceOf('xs:numeric')) {
 		return value => ({
 			successful: true,
-			value: value
+			value
 		});
 	}
 	if (instanceOf('xs:boolean')) {

@@ -1,21 +1,21 @@
-import { ready, AsyncIterator } from './util/iterators';
-import DateTime from './dataTypes/valueTypes/DateTime';
-import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
 import ISequence from './dataTypes/ISequence';
 import Value from './dataTypes/Value';
+import DateTime from './dataTypes/valueTypes/DateTime';
+import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
+import { AsyncIterator, ready } from './util/iterators';
 
 type TemporalContext = {
-	isInitialized: boolean;
 	currentDateTime: DateTime;
 	implicitTimezone: DayTimeDuration;
+	isInitialized: boolean;
 };
 
 class DynamicContext {
-	_temporalContext: TemporalContext;
-	contextItemIndex: number;
-	contextSequence: ISequence;
-	contextItem: Value;
-	variableBindings: { [s: string]: () => ISequence };
+	public contextItem: Value;
+	public contextItemIndex: number;
+	public contextSequence: ISequence;
+	public variableBindings: { [s: string]: () => ISequence };
+	private _temporalContext: TemporalContext;
 
 	constructor(
 		context: {
@@ -49,59 +49,7 @@ class DynamicContext {
 		this.variableBindings = context.variableBindings || Object.create(null);
 	}
 
-	getCurrentDateTime() {
-		if (!this._temporalContext.isInitialized) {
-			this._temporalContext.isInitialized = true;
-
-			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString());
-			this._temporalContext.implicitTimezone = DayTimeDuration.fromString('PT0S');
-		}
-		return this._temporalContext.currentDateTime;
-	}
-
-	getImplicitTimezone() {
-		if (!this._temporalContext.isInitialized) {
-			this._temporalContext.isInitialized = true;
-
-			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString());
-			this._temporalContext.implicitTimezone = DayTimeDuration.fromString('PT0S');
-		}
-		return this._temporalContext.implicitTimezone;
-	}
-
-	scopeWithFocus(
-		contextItemIndex: number,
-		contextItem: Value,
-		contextSequence: ISequence
-	): DynamicContext {
-		return new DynamicContext(
-			{
-				contextItemIndex: contextItemIndex,
-				contextItem: contextItem,
-				contextSequence: contextSequence || this.contextSequence,
-				variableBindings: this.variableBindings
-			},
-			this._temporalContext
-		);
-	}
-
-	scopeWithVariableBindings(variableBindings: { [s: string]: ISequence }): DynamicContext {
-		return new DynamicContext(
-			{
-				contextItemIndex: this.contextItemIndex,
-				contextItem: this.contextItem,
-				contextSequence: this.contextSequence,
-				variableBindings: Object.assign(
-					Object.create(null),
-					this.variableBindings,
-					variableBindings
-				)
-			},
-			this._temporalContext
-		);
-	}
-
-	createSequenceIterator(contextSequence: ISequence): AsyncIterator<DynamicContext> {
+	public createSequenceIterator(contextSequence: ISequence): AsyncIterator<DynamicContext> {
 		let i = 0;
 		const iterator = contextSequence.value;
 		return {
@@ -116,6 +64,58 @@ class DynamicContext {
 				return ready(this.scopeWithFocus(i++, value.value, contextSequence));
 			}
 		};
+	}
+
+	public getCurrentDateTime() {
+		if (!this._temporalContext.isInitialized) {
+			this._temporalContext.isInitialized = true;
+
+			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString());
+			this._temporalContext.implicitTimezone = DayTimeDuration.fromString('PT0S');
+		}
+		return this._temporalContext.currentDateTime;
+	}
+
+	public getImplicitTimezone() {
+		if (!this._temporalContext.isInitialized) {
+			this._temporalContext.isInitialized = true;
+
+			this._temporalContext.currentDateTime = DateTime.fromString(new Date().toISOString());
+			this._temporalContext.implicitTimezone = DayTimeDuration.fromString('PT0S');
+		}
+		return this._temporalContext.implicitTimezone;
+	}
+
+	public scopeWithFocus(
+		contextItemIndex: number,
+		contextItem: Value,
+		contextSequence: ISequence
+	): DynamicContext {
+		return new DynamicContext(
+			{
+				contextItemIndex,
+				contextItem,
+				contextSequence: contextSequence || this.contextSequence,
+				variableBindings: this.variableBindings
+			},
+			this._temporalContext
+		);
+	}
+
+	public scopeWithVariableBindings(variableBindings: { [s: string]: ISequence }): DynamicContext {
+		return new DynamicContext(
+			{
+				contextItemIndex: this.contextItemIndex,
+				contextItem: this.contextItem,
+				contextSequence: this.contextSequence,
+				variableBindings: Object.assign(
+					Object.create(null),
+					this.variableBindings,
+					variableBindings
+				)
+			},
+			this._temporalContext
+		);
 	}
 }
 

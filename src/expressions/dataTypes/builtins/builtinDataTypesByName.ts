@@ -1,6 +1,6 @@
+import facetHandlersByDataTypeName from '../facets/facetsByDataTypeName';
 import builtinModels from './builtinModels';
 import dataTypeValidatorByName from './dataTypeValidatorByName';
-import facetHandlersByDataTypeName from '../facets/facetsByDataTypeName';
 
 const builtinDataTypesByName = Object.create(null);
 
@@ -14,11 +14,11 @@ builtinModels.forEach((model, index) => {
 			facetHandlers = facetHandlersByDataTypeName[name];
 		builtinDataTypesByName[name] = {
 			variety: 'primitive',
-			name: name,
-			restrictionsByName: restrictionsByName,
-			parent: parent,
-			validator: validator,
-			facetHandlers: facetHandlers,
+			name,
+			restrictionsByName,
+			parent,
+			validator,
+			facetHandlers,
 			memberTypes: []
 		};
 	} else if (model.variety === 'derived') {
@@ -26,10 +26,10 @@ builtinModels.forEach((model, index) => {
 			validator = dataTypeValidatorByName[name] || null;
 		builtinDataTypesByName[name] = {
 			variety: 'derived',
-			name: name,
-			restrictionsByName: restrictionsByName,
+			name,
+			restrictionsByName,
 			parent: base,
-			validator: validator,
+			validator,
 			facetHandlers: base.facetHandlers,
 			memberTypes: []
 		};
@@ -37,8 +37,8 @@ builtinModels.forEach((model, index) => {
 		const type = builtinDataTypesByName[model.type];
 		builtinDataTypesByName[name] = {
 			variety: 'union',
-			name: name,
-			restrictionsByName: restrictionsByName,
+			name,
+			restrictionsByName,
 			parent: type,
 			validator: null,
 			facetHandlers: facetHandlersByDataTypeName.list,
@@ -51,11 +51,11 @@ builtinModels.forEach((model, index) => {
 		builtinDataTypesByName[name] = {
 			variety: 'union',
 			name: name || index,
-			restrictionsByName: restrictionsByName,
+			restrictionsByName,
 			parent: null,
 			validator: null,
 			facetHandlers: facetHandlersByDataTypeName.union,
-			memberTypes: memberTypes
+			memberTypes
 		};
 	}
 });

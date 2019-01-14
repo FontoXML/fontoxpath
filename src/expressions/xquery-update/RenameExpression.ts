@@ -1,18 +1,18 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import UpdatingExpression from './UpdatingExpression';
 import Specificity from '../Specificity';
+import UpdatingExpression from './UpdatingExpression';
 
 import { rename } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
-import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
-import { ready } from '../util/iterators';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import QName from '../dataTypes/valueTypes/QName';
+import { ready } from '../util/iterators';
+import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
 
-import { errXUTY0012, errXUDY0023, errXUDY0027 } from './XQueryUpdateFacilityErrors';
 import SequenceFactory from '../dataTypes/SequenceFactory';
+import { errXUDY0023, errXUDY0027, errXUTY0012 } from './XQueryUpdateFacilityErrors';
 
 function evaluateTarget(targetXdmValue) {
 	// TargetExpr is evaluated and checked as follows:
@@ -90,9 +90,9 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 }
 
 class RenameExpression extends UpdatingExpression {
-	_targetExpression: Expression;
-	_newNameExpression: Expression;
-	_staticContext: any;
+	private _newNameExpression: Expression;
+	private _staticContext: any;
+	private _targetExpression: Expression;
 
 	constructor(targetExpression: Expression, newNameExpression: Expression) {
 		super(new Specificity({}), [targetExpression, newNameExpression], {
@@ -105,12 +105,7 @@ class RenameExpression extends UpdatingExpression {
 		this._staticContext = undefined;
 	}
 
-	performStaticEvaluation(staticContext) {
-		this._staticContext = staticContext.cloneContext();
-		super.performStaticEvaluation(staticContext);
-	}
-
-	evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(dynamicContext, executionParameters) {
 		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
@@ -150,6 +145,11 @@ class RenameExpression extends UpdatingExpression {
 				});
 			}
 		};
+	}
+
+	public performStaticEvaluation(staticContext) {
+		this._staticContext = staticContext.cloneContext();
+		super.performStaticEvaluation(staticContext);
 	}
 }
 

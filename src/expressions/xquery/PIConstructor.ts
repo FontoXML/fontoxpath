@@ -1,12 +1,12 @@
-import { evaluateNCNameExpression } from './nameExpression';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
+import { evaluateNCNameExpression } from './nameExpression';
 
 import Specificity from '../Specificity';
 
-import { ready } from '../util/iterators';
+import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import SequenceFactory from '../dataTypes/SequenceFactory';
-import castToType from '../dataTypes/castToType';
+import { ready } from '../util/iterators';
 
 function assertValidTarget(target) {
 	if (/^xml$/i.test(target)) {
@@ -15,8 +15,8 @@ function assertValidTarget(target) {
 }
 
 class PIConstructor extends Expression {
-	_target: { targetExpr: Expression; targetValue: string };
-	_dataExpr: Expression;
+	private _dataExpr: Expression;
+	private _target: { targetExpr: Expression; targetValue: string };
 
 	constructor(
 		target: { targetExpr: Expression | null; targetValue: string | null },
@@ -38,7 +38,7 @@ class PIConstructor extends Expression {
 		this._dataExpr = dataExpr;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 		const dataSequence = this._dataExpr.evaluateMaybeStatically(
 			dynamicContext,

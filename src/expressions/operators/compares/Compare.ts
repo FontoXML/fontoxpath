@@ -5,10 +5,10 @@ import nodeCompare from './nodeCompare';
 import valueCompare from './valueCompare';
 
 class Compare extends Expression {
-	_firstExpression: Expression;
-	_secondExpression: Expression;
-	_operator: string;
-	_compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
+	private _compare: 'generalCompare' | 'valueCompare' | 'nodeCompare';
+	private _firstExpression: Expression;
+	private _operator: string;
+	private _secondExpression: Expression;
 
 	constructor(kind: string, firstExpression: Expression, secondExpression: Expression) {
 		super(
@@ -45,7 +45,7 @@ class Compare extends Expression {
 		this._operator = kind;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const firstSequence = this._firstExpression.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters

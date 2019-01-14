@@ -1,5 +1,5 @@
-import evaluateXPath, { Options } from './evaluateXPath';
 import IDomFacade from './domFacade/IDomFacade';
+import evaluateXPath, { Options } from './evaluateXPath';
 
 /**
  * Evaluates an XPath on the given contextNode. Returns the numeric result.

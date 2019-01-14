@@ -1,5 +1,5 @@
-import isSameMapKey from './isSameMapKey';
 import SequenceFactory from '../dataTypes/SequenceFactory';
+import isSameMapKey from './isSameMapKey';
 
 import zipSingleton from '../util/zipSingleton';
 
@@ -14,7 +14,7 @@ const mapGet: FunctionDefinitionType = function(
 	key
 ) {
 	return zipSingleton([mapSequence, key], ([map, keyValue]) => {
-		var matchingPair = (map as MapValue).keyValuePairs.find(function(keyValuePair) {
+		const matchingPair = (map as MapValue).keyValuePairs.find(function(keyValuePair) {
 			return isSameMapKey(keyValuePair.key, keyValue);
 		});
 

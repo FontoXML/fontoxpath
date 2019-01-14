@@ -20,8 +20,8 @@ export default function createAtomicValue(value: any, type: string): AtomicValue
 	// 	return existingValue;
 	// }
 	return {
-		type: type,
-		value: value
+		type,
+		value
 	};
 }
 

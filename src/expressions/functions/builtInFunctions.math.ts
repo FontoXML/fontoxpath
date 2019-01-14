@@ -1,5 +1,5 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';

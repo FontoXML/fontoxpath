@@ -1,12 +1,12 @@
-import ISequence from './ISequence';
-import SequenceFactory from './SequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
-import TypeDeclaration from './TypeDeclaration';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import Value from './Value';
+import ISequence from './ISequence';
 import RestArgument from './RestArgument';
+import SequenceFactory from './SequenceFactory';
+import TypeDeclaration from './TypeDeclaration';
+import Value from './Value';
 
 type FunctionSignature = (
 	DynamicContext,
@@ -34,11 +34,11 @@ function expandRestArgumentToArity(argumentTypes, arity) {
 }
 
 class FunctionValue extends Value {
-	value: FunctionSignature;
+	public value: FunctionSignature;
+	private _argumentTypes: (TypeDeclaration | RestArgument)[];
+	private _arity: number;
 	private _localName: string;
 	private _namespaceURI: string;
-	private _argumentTypes: Array<TypeDeclaration | RestArgument>;
-	private _arity: number;
 	private _returnType: TypeDeclaration;
 
 	constructor({
@@ -49,12 +49,12 @@ class FunctionValue extends Value {
 		arity,
 		returnType
 	}: {
-		value: FunctionSignature;
+		argumentTypes: (TypeDeclaration | RestArgument)[];
+		arity: number;
 		localName: string;
 		namespaceURI: string;
-		argumentTypes: Array<TypeDeclaration | RestArgument>;
-		arity: number;
 		returnType: TypeDeclaration;
+		value: FunctionSignature;
 	}) {
 		super('function(*)', null);
 
@@ -69,7 +69,7 @@ class FunctionValue extends Value {
 	/**
 	 * Apply these arguments to curry them into a new function
 	 */
-	applyArguments(appliedArguments) {
+	public applyArguments(appliedArguments) {
 		const fn = this.value;
 
 		const argumentSequenceCreators = appliedArguments.map(arg => {
@@ -108,7 +108,7 @@ class FunctionValue extends Value {
 			value: curriedFunction,
 			localName: 'boundFunction',
 			namespaceURI: this._namespaceURI,
-			argumentTypes: argumentTypes,
+			argumentTypes,
 			arity: argumentTypes.length,
 			returnType: this._returnType
 		});
@@ -116,20 +116,20 @@ class FunctionValue extends Value {
 		return SequenceFactory.singleton(functionItem);
 	}
 
-	getArgumentTypes() {
+	public getArgumentTypes() {
 		return this._argumentTypes;
 	}
 
-	getReturnType() {
-		return this._returnType;
-	}
-
-	getArity() {
+	public getArity() {
 		return this._arity;
 	}
 
-	getName() {
+	public getName() {
 		return this._localName;
+	}
+
+	public getReturnType() {
+		return this._returnType;
 	}
 }
 

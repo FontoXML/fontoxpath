@@ -1,14 +1,14 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Expression from '../Expression';
 
-import Specificity from '../Specificity';
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import MapValue from '../dataTypes/MapValue';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import Specificity from '../Specificity';
 import zipSingleton from '../util/zipSingleton';
 
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 class MapConstructor extends Expression {
-	_entries: { key: Expression; value: Expression }[];
+	private _entries: { key: Expression; value: Expression }[];
 	/**
 	 * @param  entries  key-value tuples of expressions which will evaluate to key / value pairs
 	 */
@@ -28,7 +28,7 @@ class MapConstructor extends Expression {
 		this._entries = entries;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const keySequences = this._entries.map(kvp =>
 			kvp.key
 				.evaluateMaybeStatically(dynamicContext, executionParameters)

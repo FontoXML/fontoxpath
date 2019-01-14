@@ -3,20 +3,20 @@ import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 
 import {
 	equal as dateTimeEqual,
-	lessThan as dateTimeLessThan,
-	greaterThan as dateTimeGreaterThan
+	greaterThan as dateTimeGreaterThan,
+	lessThan as dateTimeLessThan
 } from '../../dataTypes/valueTypes/DateTime';
 import {
-	lessThan as yearMonthDurationLessThan,
-	greaterThan as yearMonthDurationGreaterThan
-} from '../../dataTypes/valueTypes/YearMonthDuration';
-import {
-	lessThan as dayTimeDurationLessThan,
-	greaterThan as dayTimeDurationGreaterThan
+	greaterThan as dayTimeDurationGreaterThan,
+	lessThan as dayTimeDurationLessThan
 } from '../../dataTypes/valueTypes/DayTimeDuration';
+import {
+	greaterThan as yearMonthDurationGreaterThan,
+	lessThan as yearMonthDurationLessThan
+} from '../../dataTypes/valueTypes/YearMonthDuration';
 
-import DynamicContext from '../../DynamicContext';
 import AtomicValue from '../../dataTypes/AtomicValue';
+import DynamicContext from '../../DynamicContext';
 
 // Use partial application to get to a comparer faster
 function areBothStringOrAnyURI(a, b) {

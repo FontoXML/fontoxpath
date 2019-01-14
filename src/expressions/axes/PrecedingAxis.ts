@@ -1,11 +1,11 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-import createDescendantGenerator from '../util/createDescendantGenerator';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import createDescendantGenerator from '../util/createDescendantGenerator';
 
 function createPrecedingGenerator(domFacade, node) {
 	const nodeStack = [];
@@ -55,7 +55,7 @@ function createPrecedingGenerator(domFacade, node) {
 }
 
 class PrecedingAxis extends Expression {
-	_testExpression: TestAbstractExpression;
+	private _testExpression: TestAbstractExpression;
 	constructor(testExpression: TestAbstractExpression) {
 		super(testExpression.specificity, [testExpression], {
 			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
@@ -67,7 +67,7 @@ class PrecedingAxis extends Expression {
 		this._testExpression = testExpression;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');

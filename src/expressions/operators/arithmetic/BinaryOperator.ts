@@ -1,29 +1,29 @@
-import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import castToType from '../../dataTypes/castToType';
+import createAtomicValue from '../../dataTypes/createAtomicValue';
+import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
-import createAtomicValue from '../../dataTypes/createAtomicValue';
 
 import {
-	subtract as dateTimeSubtract,
 	addDuration as addDurationToDateTime,
+	subtract as dateTimeSubtract,
 	subtractDuration as subtractDurationFromDateTime
 } from '../../dataTypes/valueTypes/DateTime';
 
 import {
-	add as yearMonthDurationAdd,
-	subtract as yearMonthDurationSubtract,
-	multiply as yearMonthDurationMultiply,
-	divide as yearMonthDurationDivide,
-	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration
-} from '../../dataTypes/valueTypes/YearMonthDuration';
-import {
 	add as dayTimeDurationAdd,
-	subtract as dayTimeDurationSubtract,
-	multiply as dayTimeDurationMultiply,
 	divide as dayTimeDurationDivide,
-	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration
+	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
+	multiply as dayTimeDurationMultiply,
+	subtract as dayTimeDurationSubtract
 } from '../../dataTypes/valueTypes/DayTimeDuration';
+import {
+	add as yearMonthDurationAdd,
+	divide as yearMonthDurationDivide,
+	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
+	multiply as yearMonthDurationMultiply,
+	subtract as yearMonthDurationSubtract
+} from '../../dataTypes/valueTypes/YearMonthDuration';
 
 function generateBinaryOperatorFunction(operator, typeA, typeB) {
 	let castFunctionForValueA = null;
@@ -388,9 +388,9 @@ function generateBinaryOperatorFunction(operator, typeA, typeB) {
 const operatorsByTypingKey = Object.create(null);
 
 class BinaryOperator extends Expression {
-	_firstValueExpr: Expression;
-	_secondValueExpr: Expression;
-	_operator: string;
+	private _firstValueExpr: Expression;
+	private _operator: string;
+	private _secondValueExpr: Expression;
 
 	/**
 	 * @param  operator         One of addOp, substractOp, multiplyOp, divOp, idivOp, modOp
@@ -411,7 +411,7 @@ class BinaryOperator extends Expression {
 		this._operator = operator;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const firstValueSequence = this._firstValueExpr
 			.evaluateMaybeStatically(dynamicContext, executionParameters)
 			.atomize(executionParameters);

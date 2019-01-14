@@ -1,4 +1,4 @@
-import { trueBoolean, falseBoolean } from '../createAtomicValue';
+import { falseBoolean, trueBoolean } from '../createAtomicValue';
 import CastResult from './CastResult';
 
 export default function castToBoolean(instanceOf: (string) => boolean): (Value) => CastResult {

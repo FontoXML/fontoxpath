@@ -1,15 +1,15 @@
-import TestAbstractExpression from './TestAbstractExpression';
-import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import Specificity from '../Specificity';
+import TestAbstractExpression from './TestAbstractExpression';
 
 class NameTest extends TestAbstractExpression {
-	_localName: string;
-	_namespaceURI: string;
-	_prefix: string;
-	_kind: number;
+	public _kind: number;
+	public _localName: string;
+	public _namespaceURI: string;
+	public _prefix: string;
 
 	constructor(
-		name: { prefix: string; namespaceURI: string | null; localName: string },
+		name: { localName: string; namespaceURI: string | null; prefix: string },
 		options: { kind: number | null } = { kind: null }
 	) {
 		const { prefix, namespaceURI, localName } = name;
@@ -30,17 +30,7 @@ class NameTest extends TestAbstractExpression {
 		this._kind = options.kind;
 	}
 
-	performStaticEvaluation(staticContext) {
-		if (this._namespaceURI === null && this._prefix !== '*') {
-			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '');
-
-			if (!this._namespaceURI && this._prefix) {
-				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
-			}
-		}
-	}
-
-	evaluateToBoolean(_dynamicContext, node) {
+	public evaluateToBoolean(_dynamicContext, node) {
 		const nodeIsElement = isSubtypeOf(node.type, 'element()');
 		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');
 		if (!nodeIsElement && !nodeIsAttribute) {
@@ -86,7 +76,7 @@ class NameTest extends TestAbstractExpression {
 		return node.value.namespaceURI === resolvedNamespaceURI;
 	}
 
-	getBucket() {
+	public getBucket() {
 		if (this._localName === '*') {
 			if (this._kind === null) {
 				return null;
@@ -94,6 +84,16 @@ class NameTest extends TestAbstractExpression {
 			return `type-${this._kind}`;
 		}
 		return 'name-' + this._localName;
+	}
+
+	public performStaticEvaluation(staticContext) {
+		if (this._namespaceURI === null && this._prefix !== '*') {
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '');
+
+			if (!this._namespaceURI && this._prefix) {
+				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
+			}
+		}
 	}
 }
 

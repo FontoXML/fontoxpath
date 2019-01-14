@@ -4,7 +4,7 @@ import SequenceFactory from '../dataTypes/SequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class SelfAxis extends Expression {
-	_selector: TestAbstractExpression;
+	private _selector: TestAbstractExpression;
 	constructor(selector: TestAbstractExpression) {
 		super(selector.specificity, [selector], {
 			resultOrder: RESULT_ORDERINGS.SORTED,
@@ -16,7 +16,7 @@ class SelfAxis extends Expression {
 		this._selector = selector;
 	}
 
-	evaluate(dynamicContext, _executionParameters) {
+	public evaluate(dynamicContext, _executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
@@ -30,7 +30,7 @@ class SelfAxis extends Expression {
 			: SequenceFactory.empty();
 	}
 
-	getBucket() {
+	public getBucket() {
 		return this._selector.getBucket();
 	}
 }

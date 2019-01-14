@@ -1,18 +1,16 @@
 import Expression from '../expressions/Expression';
 
-const compiledExpressionCache: { [s: string]: { [s: string]: Array<CacheEntry> } } = Object.create(
-	null
-);
+const compiledExpressionCache: { [s: string]: { [s: string]: CacheEntry[] } } = Object.create(null);
 
 const halfCompiledExpressionCache: { [s: string]: { [s: string]: Expression } } = Object.create(
 	null
 );
 
 class CacheEntry {
-	referredNamespaces: { namespaceURI: string; prefix: string }[];
-	referredVariables: { name: string }[];
-	compiledExpression: Expression;
-	moduleImports: { prefix: string; namespaceURI: string }[];
+	public compiledExpression: Expression;
+	public moduleImports: { namespaceURI: string; prefix: string }[];
+	public referredNamespaces: { namespaceURI: string; prefix: string }[];
+	public referredVariables: { name: string }[];
 
 	constructor(referredNamespaces, referredVariables, compiledExpression, moduleImports) {
 		this.referredNamespaces = referredNamespaces;

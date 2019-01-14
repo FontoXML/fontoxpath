@@ -1,8 +1,8 @@
-import Expression from './Expression';
-import Specificity from './Specificity';
-import SequenceFactory from './dataTypes/SequenceFactory';
-import { getAlternativesAsStringFor } from './functions/functionRegistry';
 import FunctionValue from './dataTypes/FunctionValue';
+import SequenceFactory from './dataTypes/SequenceFactory';
+import Expression from './Expression';
+import { getAlternativesAsStringFor } from './functions/functionRegistry';
+import Specificity from './Specificity';
 import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 
 function buildFormattedFunctionName(functionReference) {
@@ -16,12 +16,12 @@ function buildFormattedFunctionName(functionReference) {
 }
 
 class NamedFunctionRef extends Expression {
-	_arity: number;
-	_functionReference: { prefix: string; namespaceURI: string; localName: string };
-	_functionProperties: any;
+	public _arity: number;
+	public _functionProperties: any;
+	public _functionReference: { localName: string; namespaceURI: string; prefix: string };
 
 	constructor(
-		functionReference: { prefix: string; namespaceURI: string | null; localName: string },
+		functionReference: { localName: string; namespaceURI: string | null; prefix: string },
 		arity: number
 	) {
 		super(
@@ -40,7 +40,19 @@ class NamedFunctionRef extends Expression {
 		this._functionProperties = null;
 	}
 
-	performStaticEvaluation(staticContext) {
+	public evaluate() {
+		const functionItem = new FunctionValue({
+			value: this._functionProperties.callFunction,
+			namespaceURI: this._functionProperties.namespaceURI,
+			localName: this._functionProperties.localName,
+			argumentTypes: this._functionProperties.argumentTypes,
+			arity: this._arity,
+			returnType: this._functionProperties.returnType
+		});
+		return SequenceFactory.singleton(functionItem);
+	}
+
+	public performStaticEvaluation(staticContext) {
 		let namespaceURI = this._functionReference.namespaceURI;
 		if (!namespaceURI) {
 			if (!this._functionReference.prefix) {
@@ -75,18 +87,6 @@ class NamedFunctionRef extends Expression {
 		}
 
 		super.performStaticEvaluation(staticContext);
-	}
-
-	evaluate() {
-		const functionItem = new FunctionValue({
-			value: this._functionProperties.callFunction,
-			namespaceURI: this._functionProperties.namespaceURI,
-			localName: this._functionProperties.localName,
-			argumentTypes: this._functionProperties.argumentTypes,
-			arity: this._arity,
-			returnType: this._functionProperties.returnType
-		});
-		return SequenceFactory.singleton(functionItem);
 	}
 }
 

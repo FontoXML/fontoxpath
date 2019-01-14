@@ -1,11 +1,11 @@
-import { trueBoolean, falseBoolean } from './createAtomicValue';
-import Value from './Value';
 import { AsyncIterator } from '../util/iterators';
-import EmptySequence from './Sequences/EmptySequence';
+import { falseBoolean, trueBoolean } from './createAtomicValue';
 import ISequence from './ISequence';
-import SingletonSequence from './Sequences/SingletonSequence';
 import ArrayBackedSequence from './Sequences/ArrayBackedSequence';
+import EmptySequence from './Sequences/EmptySequence';
 import IteratorBackedSequence from './Sequences/IteratorBackedSequence';
+import SingletonSequence from './Sequences/SingletonSequence';
+import Value from './Value';
 
 const emptySequence = new EmptySequence();
 
@@ -27,18 +27,18 @@ function create(
 		}
 	}
 
-	if ((<AsyncIterator<Value>>value).next) {
+	if ((value as AsyncIterator<Value>).next) {
 		return new IteratorBackedSequence(
 			sequenceFactory,
-			<AsyncIterator<Value>>value,
+			value as AsyncIterator<Value>,
 			predictedLength
 		);
 	}
-	return new SingletonSequence(sequenceFactory, <Value>value);
+	return new SingletonSequence(sequenceFactory, value as Value);
 }
 
 const sequenceFactory = {
-	create: create,
+	create,
 
 	singleton: (value: Value): ISequence => {
 		return new SingletonSequence(sequenceFactory, value);

@@ -1,6 +1,6 @@
 export default function castToStringLikeType(
 	instanceOf: (string) => boolean
-): (Value) => { successful: true; value: any } | { successful: false; error: Error } {
+): (Value) => { successful: true; value: any } | { error: Error; successful: false } {
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
 		return value => ({
 			successful: true,
@@ -10,7 +10,7 @@ export default function castToStringLikeType(
 	if (instanceOf('xs:anyURI')) {
 		return value => ({
 			successful: true,
-			value: value
+			value
 		});
 	}
 	if (instanceOf('xs:QName')) {

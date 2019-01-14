@@ -1,9 +1,9 @@
-import TestAbstractExpression from './TestAbstractExpression';
-import Specificity from '../Specificity';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import Specificity from '../Specificity';
+import TestAbstractExpression from './TestAbstractExpression';
 
 class PITest extends TestAbstractExpression {
-	_target: string;
+	private _target: string;
 
 	constructor(target: string) {
 		super(
@@ -15,15 +15,15 @@ class PITest extends TestAbstractExpression {
 		this._target = target;
 	}
 
-	evaluateToBoolean(_dynamicContext, node) {
+	public evaluateToBoolean(_dynamicContext, node) {
 		// Assume singleton
-		var isMatchingProcessingInstruction =
+		const isMatchingProcessingInstruction =
 			isSubtypeOf(node.type, 'processing-instruction()') &&
 			node.value.target === this._target;
 		return isMatchingProcessingInstruction;
 	}
 
-	getBucket() {
+	public getBucket() {
 		return 'type-7';
 	}
 }

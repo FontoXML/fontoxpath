@@ -1,5 +1,5 @@
-import Specificity from '../Specificity';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
@@ -7,8 +7,8 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 
 class Literal extends Expression {
-	_type: string;
-	_createValueSequence: () => ISequence;
+	private _createValueSequence: () => ISequence;
+	private _type: string;
 
 	constructor(jsValue: string, type: string) {
 		super(new Specificity({}), [], {
@@ -38,7 +38,7 @@ class Literal extends Expression {
 		this._createValueSequence = () => SequenceFactory.singleton(value);
 	}
 
-	evaluate(_dynamicContext) {
+	public evaluate(_dynamicContext) {
 		return this._createValueSequence();
 	}
 }

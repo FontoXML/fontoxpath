@@ -1,13 +1,13 @@
-import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from '../../util/iterators';
-import ISequence, { SwitchCasesCases } from '../ISequence';
-import getEffectiveBooleanValue from './getEffectiveBooleanValue';
-import Value from '../Value';
-import SequenceFactory from '../SequenceFactory';
 import ExecutionParameters from '../../ExecutionParameters';
+import { AsyncIterator, AsyncResult, DONE_TOKEN, ready } from '../../util/iterators';
 import atomize from '../atomize';
+import ISequence, { SwitchCasesCases } from '../ISequence';
+import SequenceFactory from '../SequenceFactory';
+import Value from '../Value';
+import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class SingletonSequence implements ISequence {
-	value: AsyncIterator<Value>;
+	public value: AsyncIterator<Value>;
 
 	private _effectiveBooleanValue: boolean;
 
@@ -28,69 +28,69 @@ export default class SingletonSequence implements ISequence {
 		this._effectiveBooleanValue = null;
 	}
 
-	atomize(executionParameters: ExecutionParameters): ISequence {
+	public atomize(executionParameters: ExecutionParameters): ISequence {
 		return this.map(value => atomize(value, executionParameters));
 	}
 
-	expandSequence(): ISequence {
+	public expandSequence(): ISequence {
 		return this;
 	}
 
-	filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
+	public filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
 		return callback(this._onlyValue, 0, this) ? this : this._sequenceFactory.create();
 	}
 
-	first(): Value | null {
+	public first(): Value | null {
 		return this._onlyValue;
 	}
 
-	getAllValues(): Value[] {
+	public getAllValues(): Value[] {
 		return [this._onlyValue];
 	}
 
-	getEffectiveBooleanValue(): boolean {
+	public getEffectiveBooleanValue(): boolean {
 		if (this._effectiveBooleanValue === null) {
 			this._effectiveBooleanValue = getEffectiveBooleanValue(this._onlyValue);
 		}
 		return this._effectiveBooleanValue;
 	}
 
-	isEmpty(): boolean {
+	public isEmpty(): boolean {
 		return false;
 	}
 
-	isSingleton(): boolean {
+	public isSingleton(): boolean {
 		return true;
 	}
 
-	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
+	public map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
 		return this._sequenceFactory.create(callback(this._onlyValue, 0, this));
 	}
 
-	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
+	public mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
 		return callback([this._onlyValue]);
 	}
 
-	switchCases(cases: SwitchCasesCases): ISequence {
+	public switchCases(cases: SwitchCasesCases): ISequence {
 		if (cases.singleton) {
 			return cases.singleton(this);
 		}
 		return cases.default(this);
 	}
 
-	tryGetAllValues(): AsyncResult<Value[]> {
+	public tryGetAllValues(): AsyncResult<Value[]> {
 		return ready(this.getAllValues());
 	}
 
-	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
+	public tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
 		return ready(this.getEffectiveBooleanValue());
 	}
 
-	tryGetFirst(): AsyncResult<Value> {
+	public tryGetFirst(): AsyncResult<Value> {
 		return ready(this.first());
 	}
 
-	tryGetLength(): AsyncResult<number> {
+	public tryGetLength(): AsyncResult<number> {
 		return ready(1);
 	}
 }

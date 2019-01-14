@@ -1,14 +1,14 @@
-import Specificity from '../../Specificity';
+import getBucketsForNode from '../../../getBucketsForNode';
+import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
+import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
-import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
+import Specificity from '../../Specificity';
 import { DONE_TOKEN, notReady, ready } from '../../util/iterators';
-import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import getBucketsForNode from '../../../getBucketsForNode';
 
 class AndOperator extends Expression {
-	_subExpressions: Expression[];
-	constructor(expressions: Array<Expression>) {
+	private _subExpressions: Expression[];
+	constructor(expressions: Expression[]) {
 		super(
 			expressions.reduce(function(specificity, selector) {
 				return specificity.add(selector.specificity);
@@ -23,7 +23,7 @@ class AndOperator extends Expression {
 		this._subExpressions = expressions;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		let i = 0;
 		let resultSequence = null;
 		let done = false;
@@ -73,10 +73,10 @@ class AndOperator extends Expression {
 		});
 	}
 
-	getBucket() {
+	public getBucket() {
 		// Any bucket of our subexpressions should do, and is preferable to no bucket
 		for (let i = 0, l = this._subExpressions.length; i < l; ++i) {
-			let bucket = this._subExpressions[i].getBucket();
+			const bucket = this._subExpressions[i].getBucket();
 			if (bucket) {
 				return bucket;
 			}

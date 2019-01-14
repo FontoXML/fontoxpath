@@ -1,20 +1,20 @@
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import QName from '../dataTypes/valueTypes/QName';
 import {
 	deletePu,
 	insertAfter,
+	insertAttributes,
 	insertBefore,
 	insertInto,
 	insertIntoAsFirst,
 	insertIntoAsLast,
-	insertAttributes,
 	rename,
 	replaceElementContent,
 	replaceNode,
 	replaceValue
 } from './applyPulPrimitives';
+import { PendingUpdate, RenamePendingUpdate, ReplaceNodePendingUpdate } from './PendingUpdate';
 import { errXUDY0015, errXUDY0016, errXUDY0017, errXUDY0024 } from './XQueryUpdateFacilityErrors';
-import QName from '../dataTypes/valueTypes/QName';
-import { PendingUpdate, ReplaceNodePendingUpdate, RenamePendingUpdate } from './PendingUpdate';
-import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 
 export const applyUpdates = function(
 	pul,

@@ -1,10 +1,10 @@
-import { transformArgument } from './argumentHelper';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
+import { transformArgument } from './argumentHelper';
 
+import FunctionValue from '../dataTypes/FunctionValue';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import FunctionValue from '../dataTypes/FunctionValue';
 
 function transformArgumentList(argumentTypes, argumentList, executionParameters, functionItem) {
 	const transformedArguments = [];
@@ -34,7 +34,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 	 * @param  functionReference  Reference to the function to execute.
 	 * @param  args               The arguments to be evaluated and passed to the function
 	 */
-	constructor(functionReference: Expression, args: Array<Expression | null>) {
+	constructor(functionReference: Expression, args: (Expression | null)[]) {
 		super(
 			new Specificity({
 				[Specificity.EXTERNAL_KIND]: 1
@@ -55,12 +55,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		this._staticContext = null;
 	}
 
-	performStaticEvaluation(staticContext) {
-		this._staticContext = staticContext.cloneContext();
-		super.performStaticEvaluation(staticContext);
-	}
-
-	performFunctionalEvaluation(
+	public performFunctionalEvaluation(
 		dynamicContext,
 		executionParameters,
 		[createFunctionReferenceSequence, ...createArgumentSequences]
@@ -119,6 +114,11 @@ class FunctionCall extends PossiblyUpdatingExpression {
 				});
 			}
 		});
+	}
+
+	public performStaticEvaluation(staticContext) {
+		this._staticContext = staticContext.cloneContext();
+		super.performStaticEvaluation(staticContext);
 	}
 }
 

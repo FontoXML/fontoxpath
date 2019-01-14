@@ -1,9 +1,9 @@
 import AbstractDuration from './AbstractDuration';
 
 class YearMonthDuration extends AbstractDuration {
-	_months: number;
-	static fromParts: (years: any, months: any, isPositive: any) => YearMonthDuration;
-	static fromString: (string: any) => YearMonthDuration;
+	public static fromParts: (years: any, months: any, isPositive: any) => YearMonthDuration;
+	public static fromString: (string: any) => YearMonthDuration;
+	private _months: number;
 	constructor(months) {
 		super();
 
@@ -16,33 +16,33 @@ class YearMonthDuration extends AbstractDuration {
 		this._months = months;
 	}
 
-	getRawMonths() {
-		return this._months;
-	}
-
-	getYears() {
-		return Math.trunc(this._months / 12);
-	}
-
-	getMonths() {
+	public getMonths() {
 		const result = this._months % 12;
 		return result === 0 ? 0 : result;
 	}
 
-	isPositive() {
+	public getRawMonths() {
+		return this._months;
+	}
+
+	public getYears() {
+		return Math.trunc(this._months / 12);
+	}
+
+	public isPositive() {
 		return Object.is(-0, this._months) ? false : this._months >= 0;
 	}
 
-	toStringWithoutP() {
+	public toString() {
+		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
+	}
+
+	public toStringWithoutP() {
 		const years = Math.abs(this.getYears());
 		const months = Math.abs(this.getMonths());
 		const stringValue = `${years ? `${years}Y` : ''}` + `${months ? `${months}M` : ''}`;
 
 		return stringValue || '0M';
-	}
-
-	toString() {
-		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
 	}
 }
 

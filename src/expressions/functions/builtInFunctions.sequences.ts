@@ -1,20 +1,20 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import castToType from '../dataTypes/castToType';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import { transformArgument } from './argumentHelper';
 
-import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
+import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionValue from '../dataTypes/FunctionValue';
-import FunctionDefinitionType from './FunctionDefinitionType';
 import ISequence from '../dataTypes/ISequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 function subSequence(sequence: ISequence, start: number, length: number) {
 	// XPath starts from 1
@@ -74,7 +74,7 @@ function convertItemsToCommonType(items) {
 		// They are all integers, we do not have to convert them to decimals
 		return items;
 	}
-	var commonTypeName = items
+	const commonTypeName = items
 		.map((item: { type: string }) => getPrimitiveTypeName(item.type))
 		.reduce((commonTypeName, itemType) => {
 			return itemType === commonTypeName ? commonTypeName : null;
@@ -357,13 +357,13 @@ const fnAvg: FunctionDefinitionType = function(
 	}
 
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
-	var items = castUntypedItemsToDouble(sequence.getAllValues());
+	let items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
 	if (!items.every(item => isSubtypeOf(item.type, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
-	var resultValue =
+	const resultValue =
 		items.reduce(function(sum, item) {
 			return sum + item.value;
 		}, 0) / items.length;
@@ -397,7 +397,7 @@ const fnMax: FunctionDefinitionType = function(
 		return sequence;
 	}
 
-	var items = castItemsForMinMax(sequence.getAllValues());
+	const items = castItemsForMinMax(sequence.getAllValues());
 
 	// Use first element in array as initial value
 	return SequenceFactory.singleton(
@@ -417,7 +417,7 @@ const fnMin: FunctionDefinitionType = function(
 		return sequence;
 	}
 
-	var items = castItemsForMinMax(sequence.getAllValues());
+	const items = castItemsForMinMax(sequence.getAllValues());
 
 	// Use first element in array as initial value
 	return SequenceFactory.singleton(
@@ -439,13 +439,13 @@ const fnSum: FunctionDefinitionType = function(
 		return zero;
 	}
 
-	var items = castUntypedItemsToDouble(sequence.getAllValues());
+	let items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
 	if (!items.every(item => isSubtypeOf(item.type, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
-	var resultValue = items.reduce(function(sum, item) {
+	const resultValue = items.reduce(function(sum, item) {
 		return sum + item.value;
 	}, 0);
 
@@ -805,7 +805,7 @@ export default {
 			localName: 'deep-equal',
 			argumentTypes: ['item()*', 'item()*', 'xs:string'],
 			returnType: 'xs:boolean',
-			callFunction: function() {
+			callFunction() {
 				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
@@ -839,7 +839,7 @@ export default {
 			localName: 'max',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:anyAtomicType?',
-			callFunction: function() {
+			callFunction() {
 				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
@@ -857,7 +857,7 @@ export default {
 			localName: 'min',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:anyAtomicType?',
-			callFunction: function() {
+			callFunction() {
 				throw new Error('FOCH0002: No collations are supported');
 			}
 		},
@@ -867,7 +867,7 @@ export default {
 			localName: 'sum',
 			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:anyAtomicType',
-			callFunction: function(dynamicContext, executionParameters, _staticContext, sequence) {
+			callFunction(dynamicContext, executionParameters, _staticContext, sequence) {
 				return fnSum(
 					dynamicContext,
 					executionParameters,

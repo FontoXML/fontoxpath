@@ -1,16 +1,16 @@
+import canCastToType from '../../dataTypes/canCastToType';
+import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
-import canCastToType from '../../dataTypes/canCastToType';
-import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 
 class CastableAsOperator extends Expression {
-	_targetType: string;
-	_expression: Expression;
-	_allowsEmptySequence: boolean;
+	public _allowsEmptySequence: boolean;
+	public _expression: Expression;
+	public _targetType: string;
 
 	constructor(
 		expression: Expression,
-		targetType: { prefix: string; namespaceURI: string | null; localName: string },
+		targetType: { localName: string; namespaceURI: string | null; prefix: string },
 		allowsEmptySequence: boolean
 	) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
@@ -36,7 +36,7 @@ class CastableAsOperator extends Expression {
 		this._allowsEmptySequence = allowsEmptySequence;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const evaluatedExpression = this._expression
 			.evaluateMaybeStatically(dynamicContext, executionParameters)
 			.atomize(executionParameters);

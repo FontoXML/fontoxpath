@@ -1,34 +1,34 @@
-import { errXPST0081 } from '../XPathErrors';
-import { errXQTY0024, errXQDY0025, errXQST0040, errXQDY0096 } from './XQueryErrors';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
+import { errXPST0081 } from '../XPathErrors';
+import { errXQDY0025, errXQDY0096, errXQST0040, errXQTY0024 } from './XQueryErrors';
 
-import { evaluateQNameExpression } from './nameExpression';
-import { DONE_TOKEN, ready } from '../util/iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
+import ISequence from '../dataTypes/ISequence';
 import SequenceFactory from '../dataTypes/SequenceFactory';
+import Value from '../dataTypes/Value';
+import QName from '../dataTypes/valueTypes/QName';
 import concatSequences from '../util/concatSequences';
+import { DONE_TOKEN, ready } from '../util/iterators';
 import AttributeConstructor from './AttributeConstructor';
 import parseContent from './ElementConstructorContent';
-import QName from '../dataTypes/valueTypes/QName';
-import ISequence from '../dataTypes/ISequence';
-import Value from '../dataTypes/Value';
+import { evaluateQNameExpression } from './nameExpression';
 
 class ElementConstructor extends Expression {
-	_nameExpr: Expression;
-	_name: QName;
-	_namespacesInScope: {};
-	_attributes: AttributeConstructor[];
-	_contents: Expression[];
-	_staticContext: any;
+	public _attributes: AttributeConstructor[];
+	public _contents: Expression[];
+	public _name: QName;
+	public _nameExpr: Expression;
+	public _namespacesInScope: {};
+	public _staticContext: any;
 
 	constructor(
 		name:
 			| { expr: Expression }
-			| { prefix: string; namespaceURI: string | null; localName: string },
+			| { localName: string; namespaceURI: string | null; prefix: string },
 		attributes: AttributeConstructor[],
 		namespaceDeclarations: { prefix: string; uri: string }[],
-		contents: Array<Expression>
+		contents: Expression[]
 	) {
 		super(new Specificity({}), contents.concat(attributes).concat((name as any).expr || []), {
 			canBeStaticallyEvaluated: false,
@@ -66,45 +66,7 @@ class ElementConstructor extends Expression {
 		this._staticContext = undefined;
 	}
 
-	performStaticEvaluation(staticContext) {
-		// Register namespace related things
-		staticContext.introduceScope();
-		Object.keys(this._namespacesInScope).forEach(prefix =>
-			staticContext.registerNamespace(prefix, this._namespacesInScope[prefix])
-		);
-
-		this._childExpressions.forEach(subselector =>
-			subselector.performStaticEvaluation(staticContext)
-		);
-
-		this._attributes.reduce((attributeNames, attribute) => {
-			// We can not throw a static error for computed attribute constructor of which we do not yet know the name
-			if (attribute.name) {
-				const attributeNamespaceURI =
-					attribute.name.namespaceURI ||
-					staticContext.resolveNamespace(attribute.name.prefix);
-				const uriQualifiedName = `Q{${attributeNamespaceURI}}${attribute.name.localName}`;
-				if (attributeNames.includes(uriQualifiedName)) {
-					throw errXQST0040(uriQualifiedName);
-				}
-				attributeNames.push(uriQualifiedName);
-			}
-			return attributeNames;
-		}, []);
-
-		if (this._name) {
-			const namespaceURI = staticContext.resolveNamespace(this._name.prefix);
-			if (namespaceURI === undefined && this._name.prefix) {
-				throw errXPST0081(this._name.prefix);
-			}
-			this._name.namespaceURI = namespaceURI || null;
-		}
-
-		this._staticContext = staticContext.cloneContext();
-		staticContext.removeScope();
-	}
-
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 
 		let attributePhaseDone = false;
@@ -230,6 +192,44 @@ class ElementConstructor extends Expression {
 				return ready(createNodeValue(element));
 			}
 		});
+	}
+
+	public performStaticEvaluation(staticContext) {
+		// Register namespace related things
+		staticContext.introduceScope();
+		Object.keys(this._namespacesInScope).forEach(prefix =>
+			staticContext.registerNamespace(prefix, this._namespacesInScope[prefix])
+		);
+
+		this._childExpressions.forEach(subselector =>
+			subselector.performStaticEvaluation(staticContext)
+		);
+
+		this._attributes.reduce((attributeNames, attribute) => {
+			// We can not throw a static error for computed attribute constructor of which we do not yet know the name
+			if (attribute.name) {
+				const attributeNamespaceURI =
+					attribute.name.namespaceURI ||
+					staticContext.resolveNamespace(attribute.name.prefix);
+				const uriQualifiedName = `Q{${attributeNamespaceURI}}${attribute.name.localName}`;
+				if (attributeNames.includes(uriQualifiedName)) {
+					throw errXQST0040(uriQualifiedName);
+				}
+				attributeNames.push(uriQualifiedName);
+			}
+			return attributeNames;
+		}, []);
+
+		if (this._name) {
+			const namespaceURI = staticContext.resolveNamespace(this._name.prefix);
+			if (namespaceURI === undefined && this._name.prefix) {
+				throw errXPST0081(this._name.prefix);
+			}
+			this._name.namespaceURI = namespaceURI || null;
+		}
+
+		this._staticContext = staticContext.cloneContext();
+		staticContext.removeScope();
 	}
 }
 

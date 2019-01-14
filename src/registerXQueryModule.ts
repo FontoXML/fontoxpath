@@ -1,7 +1,7 @@
+import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
+import StaticContext from './expressions/StaticContext';
 import astHelper from './parsing/astHelper';
 import { parse } from './parsing/xPathParser';
-import StaticContext from './expressions/StaticContext';
-import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
 
 import { loadModuleFile } from './parsing/globalModuleCache';
 

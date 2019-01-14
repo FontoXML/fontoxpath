@@ -1,11 +1,11 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class ChildAxis extends Expression {
-	_childExpression: TestAbstractExpression;
+	private _childExpression: TestAbstractExpression;
 	constructor(childExpression: TestAbstractExpression) {
 		super(childExpression.specificity, [childExpression], {
 			resultOrder: RESULT_ORDERINGS.SORTED,
@@ -17,7 +17,7 @@ class ChildAxis extends Expression {
 		this._childExpression = childExpression;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');

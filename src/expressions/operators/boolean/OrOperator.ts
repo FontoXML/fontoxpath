@@ -1,16 +1,16 @@
+import getBucketsForNode from '../../../getBucketsForNode';
+import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
+import isSubtypeOf from '../../dataTypes/isSubtypeOf';
+import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
-import SequenceFactory from '../../dataTypes/SequenceFactory';
-import { trueBoolean, falseBoolean } from '../../dataTypes/createAtomicValue';
 import { DONE_TOKEN, notReady, ready } from '../../util/iterators';
-import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import getBucketsForNode from '../../../getBucketsForNode';
 
 class OrOperator extends Expression {
 	private _bucket: string;
 	private _subExpressions: Expression[];
 
-	constructor(expressions: Array<Expression>) {
+	constructor(expressions: Expression[]) {
 		const maxSpecificity = expressions.reduce((maxSpecificity, selector) => {
 			if (maxSpecificity.compareTo(selector.specificity) > 0) {
 				return maxSpecificity;
@@ -25,7 +25,7 @@ class OrOperator extends Expression {
 		});
 
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.
-		let bucket = undefined;
+		let bucket;
 		for (let i = 0; i < expressions.length; ++i) {
 			if (bucket === undefined) {
 				bucket = expressions[i].getBucket();
@@ -45,7 +45,7 @@ class OrOperator extends Expression {
 		this._subExpressions = expressions;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		let i = 0;
 		let resultSequence = null;
 		let done = false;
@@ -96,7 +96,7 @@ class OrOperator extends Expression {
 		});
 	}
 
-	getBucket() {
+	public getBucket() {
 		return this._bucket;
 	}
 }

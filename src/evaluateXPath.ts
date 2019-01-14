@@ -124,11 +124,11 @@ function transformXPathItemToJavascriptObject(value, dynamicContext) {
 }
 
 export type Options = {
-	namespaceResolver?: (s: string) => string | null;
-	nodesFactory?: INodesFactory;
+	disableCache?: boolean;
 	language?: string;
 	moduleImports?: { [s: string]: string };
-	disableCache?: boolean;
+	namespaceResolver?: (s: string) => string | null;
+	nodesFactory?: INodesFactory;
 };
 
 /**
@@ -365,7 +365,7 @@ export default function evaluateXPath(
 			}
 			if ('asyncIterator' in Symbol) {
 				return {
-					[/** @type {{asyncIterator:*}} */ Symbol.asyncIterator]: function() {
+					[/** @type {{asyncIterator:*}} */ Symbol.asyncIterator]() {
 						return this;
 					},
 					next: () => new Promise(resolve => resolve(getNextResult()))

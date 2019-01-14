@@ -1,14 +1,14 @@
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import castToType from '../dataTypes/castToType';
+import AtomicValue from '../dataTypes/AtomicValue';
 import tryCastToType from '../dataTypes/casting/tryCastToType';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
-import AtomicValue from '../dataTypes/AtomicValue';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import { transformArgument } from './argumentHelper';
 
-import { DONE_TOKEN, ready, notReady } from '../util/iterators';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 

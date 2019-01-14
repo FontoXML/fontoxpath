@@ -1,5 +1,5 @@
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import createNodeValue from '../dataTypes/createNodeValue';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -117,7 +117,7 @@ export default {
 			localName: 'id',
 			argumentTypes: ['xs:string*'],
 			returnType: 'element()*',
-			callFunction: function(dynamicContext, executionParameters, _staticContext, strings) {
+			callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 				return fnId(
 					dynamicContext,
 					executionParameters,
@@ -141,7 +141,7 @@ export default {
 			localName: 'idref',
 			argumentTypes: ['xs:string*'],
 			returnType: 'node()*',
-			callFunction: function(dynamicContext, executionParameters, _staticContext, strings) {
+			callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 				return fnIdref(
 					dynamicContext,
 					executionParameters,

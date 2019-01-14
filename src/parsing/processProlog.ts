@@ -2,8 +2,8 @@ import astHelper, { AST } from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
 
 import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
-import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
 import StaticContext from '../expressions/StaticContext';
+import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
 
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 
@@ -21,16 +21,16 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 ];
 
 type FunctionDeclaration = {
-	namespaceURI: string;
-	localName: string;
 	arity: number;
 	functionDefinition: object;
+	localName: string;
+	namespaceURI: string;
 };
 
 export default function processProlog(
 	prolog: AST,
 	staticContext: StaticContext
-): { functionDeclarations: Array<FunctionDeclaration> } {
+): { functionDeclarations: FunctionDeclaration[] } {
 	const staticallyCompilableExpressions = [];
 
 	const compiledFunctionDeclarations = [];
@@ -210,7 +210,7 @@ export default function processProlog(
 			namespaceURI: declarationNamespaceURI,
 			argumentTypes: paramTypes,
 			arity: paramNames.length,
-			returnType: returnType
+			returnType
 		};
 
 		staticContext.registerFunctionDefinition(
@@ -222,7 +222,7 @@ export default function processProlog(
 
 		staticallyCompilableExpressions.push({
 			expression: compiledFunctionBody,
-			staticContextLeaf: staticContextLeaf
+			staticContextLeaf
 		});
 
 		if (isPublicDeclaration) {

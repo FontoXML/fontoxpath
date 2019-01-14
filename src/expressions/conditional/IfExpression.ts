@@ -1,5 +1,5 @@
-import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
@@ -26,7 +26,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 		});
 	}
 
-	performFunctionalEvaluation(dynamicContext, _executionParameters, sequenceCallbacks) {
+	public performFunctionalEvaluation(dynamicContext, _executionParameters, sequenceCallbacks) {
 		let resultIterator = null;
 		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
 		return SequenceFactory.create({

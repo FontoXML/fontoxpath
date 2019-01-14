@@ -1,14 +1,14 @@
-import isSubtypeOf from '../isSubtypeOf';
-import { DONE_TOKEN, ready, AsyncIterator, AsyncResult } from '../../util/iterators';
-import Value from '../Value';
-import ISequence, { SwitchCasesCases } from '../ISequence';
-import { errFORG0006 } from '../../functions/FunctionOperationErrors';
-import SequenceFactory from '../SequenceFactory';
 import ExecutionParameters from '../../ExecutionParameters';
+import { errFORG0006 } from '../../functions/FunctionOperationErrors';
+import { AsyncIterator, AsyncResult, DONE_TOKEN, ready } from '../../util/iterators';
 import atomize from '../atomize';
+import ISequence, { SwitchCasesCases } from '../ISequence';
+import isSubtypeOf from '../isSubtypeOf';
+import SequenceFactory from '../SequenceFactory';
+import Value from '../Value';
 
 export default class ArrayBackedSequence implements ISequence {
-	value: AsyncIterator<Value>;
+	public value: AsyncIterator<Value>;
 
 	constructor(
 		private readonly _sequenceFactory: typeof SequenceFactory,
@@ -26,15 +26,15 @@ export default class ArrayBackedSequence implements ISequence {
 		};
 	}
 
-	atomize(executionParameters: ExecutionParameters): ISequence {
+	public atomize(executionParameters: ExecutionParameters): ISequence {
 		return this.map(value => atomize(value, executionParameters));
 	}
 
-	expandSequence(): ISequence {
+	public expandSequence(): ISequence {
 		return this;
 	}
 
-	filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
+	public filter(callback: (value: Value, i: number, sequence: ISequence) => boolean): ISequence {
 		let i = -1;
 		return this._sequenceFactory.create({
 			next: () => {
@@ -52,15 +52,15 @@ export default class ArrayBackedSequence implements ISequence {
 		});
 	}
 
-	first(): Value | null {
+	public first(): Value | null {
 		return this._values[0];
 	}
 
-	getAllValues(): Value[] {
+	public getAllValues(): Value[] {
 		return this._values;
 	}
 
-	getEffectiveBooleanValue(): boolean {
+	public getEffectiveBooleanValue(): boolean {
 		if (isSubtypeOf(this._values[0].type, 'node()')) {
 			return true;
 		}
@@ -68,15 +68,15 @@ export default class ArrayBackedSequence implements ISequence {
 		throw errFORG0006();
 	}
 
-	isEmpty(): boolean {
+	public isEmpty(): boolean {
 		return false;
 	}
 
-	isSingleton(): boolean {
+	public isSingleton(): boolean {
 		return false;
 	}
 
-	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
+	public map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
 		let i = -1;
 		return this._sequenceFactory.create(
 			{
@@ -90,30 +90,30 @@ export default class ArrayBackedSequence implements ISequence {
 		);
 	}
 
-	mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
+	public mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
 		return callback(this._values);
 	}
 
-	switchCases(cases: SwitchCasesCases): ISequence {
+	public switchCases(cases: SwitchCasesCases): ISequence {
 		if (cases.multiple) {
 			return cases.multiple(this);
 		}
 		return cases.default(this);
 	}
 
-	tryGetAllValues(): AsyncResult<Value[]> {
+	public tryGetAllValues(): AsyncResult<Value[]> {
 		return ready(this.getAllValues());
 	}
 
-	tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
+	public tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
 		return ready(this.getEffectiveBooleanValue());
 	}
 
-	tryGetFirst(): AsyncResult<Value> {
+	public tryGetFirst(): AsyncResult<Value> {
 		return ready(this.first());
 	}
 
-	tryGetLength(): AsyncResult<number> {
+	public tryGetLength(): AsyncResult<number> {
 		return ready(this._values.length);
 	}
 }

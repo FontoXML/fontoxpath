@@ -1,20 +1,20 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Expression from '../Expression';
 
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
 type InClause = {
-	name: { prefix: string; namespaceURI: string; localName: string };
+	name: { localName: string; namespaceURI: string; prefix: string };
 	sourceExpr: Expression;
 };
 
 class QuantifiedExpression extends Expression {
-	_quantifier: string;
-	_inClauseNames: { prefix: string; namespaceURI: string; localName: string }[];
-	_inClauseExpressions: Expression[];
-	_satisfiesExpr: Expression;
-	_inClauseVariableNames: any;
+	public _inClauseExpressions: Expression[];
+	public _inClauseNames: { localName: string; namespaceURI: string; prefix: string }[];
+	public _inClauseVariableNames: any;
+	public _quantifier: string;
+	public _satisfiesExpr: Expression;
 
-	constructor(quantifier: string, inClauses: Array<InClause>, satisfiesExpr: Expression) {
+	constructor(quantifier: string, inClauses: InClause[], satisfiesExpr: Expression) {
 		const inClauseExpressions = inClauses.map(inClause => inClause.sourceExpr);
 		const inClauseNames = inClauses.map(inClause => inClause.name);
 
@@ -34,33 +34,7 @@ class QuantifiedExpression extends Expression {
 		this._inClauseVariableNames = null;
 	}
 
-	performStaticEvaluation(staticContext) {
-		this._inClauseVariableNames = [];
-		for (let i = 0, l = this._inClauseNames.length; i < l; ++i) {
-			const expr = this._inClauseExpressions[i];
-			expr.performStaticEvaluation(staticContext);
-
-			// The existance of this variable should be known for the next expression
-			staticContext.introduceScope();
-			const inClauseName = this._inClauseNames[i];
-			const inClauseNameNamespaceURI = inClauseName.prefix
-				? staticContext.resolveNamespace(inClauseName.prefix)
-				: null;
-			const varBindingName = staticContext.registerVariable(
-				inClauseNameNamespaceURI,
-				inClauseName.localName
-			);
-			this._inClauseVariableNames[i] = varBindingName;
-		}
-
-		this._satisfiesExpr.performStaticEvaluation(staticContext);
-
-		for (let i = 0, l = this._inClauseNames.length; i < l; ++i) {
-			staticContext.removeScope();
-		}
-	}
-
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		let scopingContext = dynamicContext;
 		const evaluatedInClauses = this._inClauseVariableNames.map(
 			(variableBinding: any, i: string | number) => {
@@ -116,6 +90,32 @@ class QuantifiedExpression extends Expression {
 		return this._quantifier === 'every'
 			? SequenceFactory.singletonTrueSequence()
 			: SequenceFactory.singletonFalseSequence();
+	}
+
+	public performStaticEvaluation(staticContext) {
+		this._inClauseVariableNames = [];
+		for (let i = 0, l = this._inClauseNames.length; i < l; ++i) {
+			const expr = this._inClauseExpressions[i];
+			expr.performStaticEvaluation(staticContext);
+
+			// The existance of this variable should be known for the next expression
+			staticContext.introduceScope();
+			const inClauseName = this._inClauseNames[i];
+			const inClauseNameNamespaceURI = inClauseName.prefix
+				? staticContext.resolveNamespace(inClauseName.prefix)
+				: null;
+			const varBindingName = staticContext.registerVariable(
+				inClauseNameNamespaceURI,
+				inClauseName.localName
+			);
+			this._inClauseVariableNames[i] = varBindingName;
+		}
+
+		this._satisfiesExpr.performStaticEvaluation(staticContext);
+
+		for (let i = 0, l = this._inClauseNames.length; i < l; ++i) {
+			staticContext.removeScope();
+		}
 	}
 }
 export default QuantifiedExpression;

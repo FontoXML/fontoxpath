@@ -1,11 +1,11 @@
 export default interface INodesFactory {
 	createAttributeNS(namespaceURI: string, name: string): Attr;
 
-	createElementNS(namespaceURI: string, name: string): Element;
-
 	createComment(contents: string): Comment;
 
-	createTextNode(contents: string): Text;
+	createElementNS(namespaceURI: string, name: string): Element;
 
 	createProcessingInstruction(target: string, data: string): ProcessingInstruction;
+
+	createTextNode(contents: string): Text;
 }

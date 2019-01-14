@@ -14,7 +14,7 @@ export default function doubleComperator(value1, value2) {
 		return -1;
 	}
 
-	var floatValue1 = parseFloat(value1),
+	const floatValue1 = parseFloat(value1),
 		floatValue2 = parseFloat(value2);
 	if (floatValue1 > floatValue2) {
 		return 1;

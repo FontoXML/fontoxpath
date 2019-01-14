@@ -1,7 +1,7 @@
 class QName {
-	namespaceURI: string;
-	prefix: string;
-	localName: string;
+	public localName: string;
+	public namespaceURI: string;
+	public prefix: string;
 
 	/**
 	 * @param  prefix         The prefix of the QName, empty string if absent
@@ -14,7 +14,7 @@ class QName {
 		this.localName = localName;
 	}
 
-	buildPrefixedName?() {
+	public buildPrefixedName?() {
 		return this.prefix ? this.prefix + ':' + this.localName : this.localName;
 	}
 }

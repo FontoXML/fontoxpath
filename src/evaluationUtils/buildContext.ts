@@ -119,7 +119,7 @@ export default function buildEvaluationContext(
 
 	const dynamicContext = new DynamicContext({
 		contextItemIndex: 0,
-		contextSequence: contextSequence,
+		contextSequence,
 		contextItem: contextSequence.first(),
 		variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
 			typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>

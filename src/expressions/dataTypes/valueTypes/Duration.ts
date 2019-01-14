@@ -1,6 +1,6 @@
 import AbstractDuration from './AbstractDuration';
-import YearMonthDuration from './YearMonthDuration';
 import DayTimeDuration from './DayTimeDuration';
+import YearMonthDuration from './YearMonthDuration';
 
 const MONTHS_TO_MIN_MAX_VALUES = [
 	[28, 31],
@@ -44,11 +44,11 @@ function computeMaxDays(duration) {
 }
 
 class Duration extends AbstractDuration {
-	_yearMonthDuration: YearMonthDuration;
-	_dayTimeDuration: DayTimeDuration;
-	static fromString: (string: any) => Duration;
-	static fromYearMonthDuration: (yearMonthDuration: any) => Duration;
-	static fromDayTimeDuration: (dayTimeDuration: any) => Duration;
+	public static fromDayTimeDuration: (dayTimeDuration: any) => Duration;
+	public static fromString: (string: any) => Duration;
+	public static fromYearMonthDuration: (yearMonthDuration: any) => Duration;
+	private _dayTimeDuration: DayTimeDuration;
+	private _yearMonthDuration: YearMonthDuration;
 	constructor(yearMonthDuration, dayTimeDuration) {
 		super();
 
@@ -56,51 +56,7 @@ class Duration extends AbstractDuration {
 		this._dayTimeDuration = dayTimeDuration;
 	}
 
-	getRawMonths() {
-		return this._yearMonthDuration.getRawMonths();
-	}
-
-	getRawSeconds() {
-		return this._dayTimeDuration.getRawSeconds();
-	}
-
-	getYearMonthDuration() {
-		return this._yearMonthDuration;
-	}
-
-	getDayTimeDuration() {
-		return this._dayTimeDuration;
-	}
-
-	getYears() {
-		return this._yearMonthDuration.getYears();
-	}
-
-	getMonths() {
-		return this._yearMonthDuration.getMonths();
-	}
-
-	getDays() {
-		return this._dayTimeDuration.getDays();
-	}
-
-	getHours() {
-		return this._dayTimeDuration.getHours();
-	}
-
-	getMinutes() {
-		return this._dayTimeDuration.getMinutes();
-	}
-
-	getSeconds() {
-		return this._dayTimeDuration.getSeconds();
-	}
-
-	isPositive() {
-		return this._yearMonthDuration.isPositive() && this._dayTimeDuration.isPositive();
-	}
-
-	compare(other) {
+	public compare(other) {
 		if (this.isPositive() && !other.isPositive()) {
 			return 1;
 		}
@@ -144,7 +100,51 @@ class Duration extends AbstractDuration {
 		}
 	}
 
-	toString() {
+	public getDays() {
+		return this._dayTimeDuration.getDays();
+	}
+
+	public getDayTimeDuration() {
+		return this._dayTimeDuration;
+	}
+
+	public getHours() {
+		return this._dayTimeDuration.getHours();
+	}
+
+	public getMinutes() {
+		return this._dayTimeDuration.getMinutes();
+	}
+
+	public getMonths() {
+		return this._yearMonthDuration.getMonths();
+	}
+
+	public getRawMonths() {
+		return this._yearMonthDuration.getRawMonths();
+	}
+
+	public getRawSeconds() {
+		return this._dayTimeDuration.getRawSeconds();
+	}
+
+	public getSeconds() {
+		return this._dayTimeDuration.getSeconds();
+	}
+
+	public getYearMonthDuration() {
+		return this._yearMonthDuration;
+	}
+
+	public getYears() {
+		return this._yearMonthDuration.getYears();
+	}
+
+	public isPositive() {
+		return this._yearMonthDuration.isPositive() && this._dayTimeDuration.isPositive();
+	}
+
+	public toString() {
 		const string = this.isPositive() ? 'P' : '-P';
 		const TYM = this._yearMonthDuration.toStringWithoutP();
 		const TDT = this._dayTimeDuration.toStringWithoutP();

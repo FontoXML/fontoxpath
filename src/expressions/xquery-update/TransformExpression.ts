@@ -1,15 +1,15 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import UpdatingExpression from './UpdatingExpression';
-import Specificity from '../Specificity';
-import { mergeUpdates } from './pulRoutines';
-import { ready } from '../util/iterators';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
-import { errXUTY0013, errXUDY0014, errXUDY0037 } from './XQueryUpdateFacilityErrors';
+import Specificity from '../Specificity';
+import { ready } from '../util/iterators';
+import { mergeUpdates } from './pulRoutines';
 import { applyUpdates } from './pulRoutines';
+import UpdatingExpression from './UpdatingExpression';
+import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
 
 function deepCloneNode(node) {
 	// Each copied node receives a new node identity. The parent, children, and attributes properties of the copied nodes are set so as to preserve their inter-node relationships. The parent property of the copy of $node is set to empty. Other properties of the copied nodes are determined as follows:
@@ -33,15 +33,15 @@ function isCreatedNode(node, createdNodes, domFacade) {
 	return parent ? isCreatedNode(parent, createdNodes, domFacade) : false;
 }
 
-type VariableBinding = { varRef: QName; sourceExpr: Expression; registeredVariable?: string };
+type VariableBinding = { registeredVariable?: string; sourceExpr: Expression; varRef: QName };
 
 class TransformExpression extends UpdatingExpression {
-	_variableBindings: any[];
-	_modifyExpr: Expression;
-	_returnExpr: Expression;
+	public _modifyExpr: Expression;
+	public _returnExpr: Expression;
+	public _variableBindings: any[];
 
 	constructor(
-		variableBindings: Array<VariableBinding>,
+		variableBindings: VariableBinding[],
 		modifyExpr: Expression,
 		returnExpr: Expression
 	) {
@@ -64,20 +64,7 @@ class TransformExpression extends UpdatingExpression {
 		this._returnExpr = returnExpr;
 	}
 
-	performStaticEvaluation(staticContext) {
-		staticContext.introduceScope();
-		this._variableBindings.forEach(
-			variableBinding =>
-				(variableBinding.registeredVariable = staticContext.registerVariable(
-					variableBinding.varRef.namespaceURI,
-					variableBinding.varRef.localName
-				))
-		);
-		super.performStaticEvaluation(staticContext);
-		staticContext.removeScope();
-	}
-
-	evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(dynamicContext, executionParameters) {
 		const { domFacade, nodesFactory, documentWriter } = executionParameters;
 
 		const sourceValueIterators = [];
@@ -104,7 +91,7 @@ class TransformExpression extends UpdatingExpression {
 								variableBinding.sourceExpr
 							)(dynamicContext, executionParameters);
 						}
-						var sv = sourceValueIterator.next();
+						const sv = sourceValueIterator.next();
 						if (!sv.ready) {
 							return sv;
 						}
@@ -181,6 +168,19 @@ class TransformExpression extends UpdatingExpression {
 				});
 			}
 		};
+	}
+
+	public performStaticEvaluation(staticContext) {
+		staticContext.introduceScope();
+		this._variableBindings.forEach(
+			variableBinding =>
+				(variableBinding.registeredVariable = staticContext.registerVariable(
+					variableBinding.varRef.namespaceURI,
+					variableBinding.varRef.localName
+				))
+		);
+		super.performStaticEvaluation(staticContext);
+		staticContext.removeScope();
 	}
 }
 

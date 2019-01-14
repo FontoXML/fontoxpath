@@ -1,8 +1,8 @@
+import { ConcreteNode } from '../../domFacade/ConcreteNode';
+import IDomFacade from '../../domFacade/IDomFacade';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import isSubtypeOf from './isSubtypeOf';
 import Value from './Value';
-import IDomFacade from '../../domFacade/IDomFacade';
-import { ConcreteNode } from '../../domFacade/ConcreteNode';
-import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent
@@ -43,7 +43,7 @@ function compareSiblingElements(
  * @param	node       The node to find all ancestors of
  * @return	All of the ancestors of the given node
  */
-function findAllAncestors(domFacade: IDomFacade, node: ConcreteNode): Array<ConcreteNode> {
+function findAllAncestors(domFacade: IDomFacade, node: ConcreteNode): ConcreteNode[] {
 	const ancestors: ConcreteNode[] = [];
 	for (
 		let ancestor: ConcreteNode = node;
@@ -68,7 +68,7 @@ function findAllAncestors(domFacade: IDomFacade, node: ConcreteNode): Array<Conc
  *						and 1 otherwise.
  */
 function compareElements(
-	tieBreakerArr: Array<ConcreteNode>,
+	tieBreakerArr: ConcreteNode[],
 	domFacade: IDomFacade,
 	nodeA: ConcreteNode,
 	nodeB: ConcreteNode

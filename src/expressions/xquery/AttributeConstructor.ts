@@ -1,17 +1,17 @@
-import { errXPST0081 } from '../XPathErrors';
-import { errXQDY0044 } from './XQueryErrors';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
+import { errXPST0081 } from '../XPathErrors';
+import { errXQDY0044 } from './XQueryErrors';
 
-import { evaluateQNameExpression } from './nameExpression';
-import { DONE_TOKEN, ready } from '../util/iterators';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
+import { DONE_TOKEN, ready } from '../util/iterators';
+import { evaluateQNameExpression } from './nameExpression';
 
-import concatSequences from '../util/concatSequences';
 import StaticContext from '../StaticContext';
+import concatSequences from '../util/concatSequences';
 
 function createAttribute(nodesFactory, name, value) {
 	const attr = nodesFactory.createAttributeNS(name.namespaceURI, name.buildPrefixedName());
@@ -20,14 +20,14 @@ function createAttribute(nodesFactory, name, value) {
 }
 
 class AttributeConstructor extends Expression {
-	_nameExpr: Expression;
-	name: QName;
-	_value: { value: string } | { valueExprParts: Expression[] };
-	_staticContext: StaticContext;
+	public name: QName;
+	private _nameExpr: Expression;
+	private _staticContext: StaticContext;
+	private _value: { value: string } | { valueExprParts: Expression[] };
 
 	constructor(
-		name: { expr: Expression } | { prefix: string; namespaceURI: string; localName: string },
-		value: { value: string } | { valueExprParts: Array<Expression> }
+		name: { expr: Expression } | { localName: string; namespaceURI: string; prefix: string },
+		value: { value: string } | { valueExprParts: Expression[] }
 	) {
 		let childExpressions = (value as any).valueExprParts || [];
 		childExpressions = childExpressions.concat((name as any).expr || []);
@@ -49,21 +49,7 @@ class AttributeConstructor extends Expression {
 		this._staticContext = undefined;
 	}
 
-	performStaticEvaluation(staticContext) {
-		this._staticContext = staticContext.cloneContext();
-		if (this.name) {
-			if (this.name.prefix && !this.name.namespaceURI) {
-				const namespaceURI = staticContext.resolveNamespace(this.name.prefix);
-				if (namespaceURI === undefined && this.name.prefix) {
-					throw errXPST0081(this.name.prefix);
-				}
-				this.name.namespaceURI = namespaceURI || null;
-			}
-		}
-		super.performStaticEvaluation(staticContext);
-	}
-
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 		let nameIterator;
 		let name;
@@ -153,6 +139,20 @@ class AttributeConstructor extends Expression {
 				);
 			}
 		});
+	}
+
+	public performStaticEvaluation(staticContext) {
+		this._staticContext = staticContext.cloneContext();
+		if (this.name) {
+			if (this.name.prefix && !this.name.namespaceURI) {
+				const namespaceURI = staticContext.resolveNamespace(this.name.prefix);
+				if (namespaceURI === undefined && this.name.prefix) {
+					throw errXPST0081(this.name.prefix);
+				}
+				this.name.namespaceURI = namespaceURI || null;
+			}
+		}
+		super.performStaticEvaluation(staticContext);
 	}
 }
 

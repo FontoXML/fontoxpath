@@ -1,6 +1,6 @@
+import ISequence from '../dataTypes/ISequence';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import { DONE_TOKEN } from './iterators';
-import ISequence from '../dataTypes/ISequence';
 
 export default function concatSequences(sequences: ISequence[]): ISequence {
 	let i = 0;

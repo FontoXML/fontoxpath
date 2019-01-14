@@ -1,8 +1,8 @@
+import ISequence from './dataTypes/ISequence';
 import DynamicContext from './DynamicContext';
-import StaticContext from './StaticContext';
 import ExecutionParameters from './ExecutionParameters';
 import Specificity from './Specificity';
-import ISequence from './dataTypes/ISequence';
+import StaticContext from './StaticContext';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
 export enum RESULT_ORDERINGS {
@@ -12,22 +12,22 @@ export enum RESULT_ORDERINGS {
 }
 
 export type OptimizationOptions = {
+	canBeStaticallyEvaluated?: boolean;
+	peer?: boolean;
 	resultOrder?: string;
 	subtree?: boolean;
-	peer?: boolean;
-	canBeStaticallyEvaluated?: boolean;
 };
 
 abstract class Expression {
-	specificity: Specificity;
-	expression: string;
-	subtree: boolean;
-	peer: boolean;
-	canBeStaticallyEvaluated: boolean;
-	_childExpressions: Expression[];
-	isUpdating: boolean;
-	_eagerlyEvaluatedValue: () => ISequence;
-	expectedResultOrder: string;
+	public canBeStaticallyEvaluated: boolean;
+	public expectedResultOrder: string;
+	public expression: string;
+	public isUpdating: boolean;
+	public peer: boolean;
+	public specificity: Specificity;
+	public subtree: boolean;
+	private _childExpressions: Expression[];
+	private _eagerlyEvaluatedValue: () => ISequence;
 
 	constructor(
 		specificity: Specificity,
@@ -52,22 +52,12 @@ abstract class Expression {
 		this._eagerlyEvaluatedValue = null;
 	}
 
-	performStaticEvaluation(staticContext: StaticContext): void {
-		this._childExpressions.forEach(selector => selector.performStaticEvaluation(staticContext));
-	}
+	public abstract evaluate(
+		_dynamicContext?: DynamicContext,
+		_executionParameters?: ExecutionParameters
+	): ISequence;
 
-	/**
-	 * Retrieve the bucket name, if any, in which this selector can be presorted.
-	 *
-	 * Buckets can be used for quickly filtering a set of expressions to only those potentially
-	 * applicable to a given node. Use getBucketsForNode to determine the buckets to consider for a
-	 * given node.
-	 */
-	getBucket(): string | null {
-		return null;
-	}
-
-	evaluateMaybeStatically(
+	public evaluateMaybeStatically(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): ISequence {
@@ -82,10 +72,20 @@ abstract class Expression {
 		return this.evaluate(dynamicContext, executionParameters);
 	}
 
-	abstract evaluate(
-		_dynamicContext?: DynamicContext,
-		_executionParameters?: ExecutionParameters
-	): ISequence;
+	/**
+	 * Retrieve the bucket name, if any, in which this selector can be presorted.
+	 *
+	 * Buckets can be used for quickly filtering a set of expressions to only those potentially
+	 * applicable to a given node. Use getBucketsForNode to determine the buckets to consider for a
+	 * given node.
+	 */
+	public getBucket(): string | null {
+		return null;
+	}
+
+	public performStaticEvaluation(staticContext: StaticContext): void {
+		this._childExpressions.forEach(selector => selector.performStaticEvaluation(staticContext));
+	}
 
 	protected evaluateWithoutFocus(
 		_contextlessDynamicContext: DynamicContext | null,

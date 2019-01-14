@@ -1,8 +1,8 @@
+import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
+import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import SequenceFactory from '../../dataTypes/SequenceFactory';
 import zipSingleton from '../../util/zipSingleton';
-import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
-import ISequence from '../../dataTypes/ISequence';
 
 export default function nodeCompare(
 	operator: string,

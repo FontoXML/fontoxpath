@@ -1,5 +1,5 @@
-import DynamicContext from './DynamicContext';
 import SequenceFactory from './dataTypes/SequenceFactory';
+import DynamicContext from './DynamicContext';
 
 type VariableBindings = { variableBindings: { [s: string]: any } };
 

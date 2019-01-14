@@ -2,11 +2,11 @@ const SPECIFICITY_DIMENSIONS = ['external', 'attribute', 'nodeName', 'nodeType',
 const NUMBER_OF_SPECIFICITY_DIMENSIONS = SPECIFICITY_DIMENSIONS.length;
 
 class Specificity {
-	static EXTERNAL_KIND = 'external';
-	static ATTRIBUTE_KIND = 'attribute';
-	static NODENAME_KIND = 'nodeName';
-	static NODETYPE_KIND = 'nodeType';
-	static UNIVERSAL_KIND = 'universal';
+	public static ATTRIBUTE_KIND = 'attribute';
+	public static EXTERNAL_KIND = 'external';
+	public static NODENAME_KIND = 'nodeName';
+	public static NODETYPE_KIND = 'nodeType';
+	public static UNIVERSAL_KIND = 'universal';
 
 	private _counts: number[];
 
@@ -23,7 +23,7 @@ class Specificity {
 	/**
 	 * @return  new specificity with the combined counts
 	 */
-	add(otherSpecificity: Specificity): Specificity {
+	public add(otherSpecificity: Specificity): Specificity {
 		const sum = SPECIFICITY_DIMENSIONS.reduce((countsByKind, specificityKind, index) => {
 			countsByKind[specificityKind] = this._counts[index] + otherSpecificity._counts[index];
 			return countsByKind;
@@ -35,7 +35,7 @@ class Specificity {
 	/**
 	 * @return  -1 if specificity is less than otherSpecificity, 1 if it is greater, 0 if equal
 	 */
-	compareTo(otherSpecificity: Specificity): -1 | 0 | 1 {
+	public compareTo(otherSpecificity: Specificity): -1 | 0 | 1 {
 		for (let i = 0; i < NUMBER_OF_SPECIFICITY_DIMENSIONS; ++i) {
 			if (otherSpecificity._counts[i] < this._counts[i]) {
 				return 1;

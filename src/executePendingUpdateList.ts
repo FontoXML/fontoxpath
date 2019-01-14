@@ -1,16 +1,16 @@
-import IDomFacade from './domFacade/IDomFacade';
-import DomFacade from './domFacade/DomFacade';
 import domBackedDomFacade from './domFacade/domBackedDomFacade';
+import DomFacade from './domFacade/DomFacade';
+import IDomFacade from './domFacade/IDomFacade';
 
 import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
-import wrapExternalDocumentWriter from './documentWriter/wrapExternalDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
+import wrapExternalDocumentWriter from './documentWriter/wrapExternalDocumentWriter';
 
 import INodesFactory from './nodesFactory/INodesFactory';
 import wrapExternalNodesFactory from './nodesFactory/wrapExternalNodesFactory';
 
-import { applyUpdates } from './expressions/xquery-update/pulRoutines';
 import { PendingUpdate } from './expressions/xquery-update/PendingUpdate';
+import { applyUpdates } from './expressions/xquery-update/pulRoutines';
 
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).

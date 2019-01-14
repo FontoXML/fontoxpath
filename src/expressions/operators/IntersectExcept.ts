@@ -1,11 +1,11 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import { sortNodeValues, compareNodePositions } from '../dataTypes/documentOrderUtils';
-import { DONE_TOKEN, ready } from '../util/iterators';
 import DomFacade from '../../domFacade/DomFacade';
+import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import { DONE_TOKEN, ready } from '../util/iterators';
 
 function ensureSortedSequence(
 	intersectOrExcept: string,
@@ -35,9 +35,9 @@ function ensureSortedSequence(
  * The 'intersect' expression: intersect and except
  */
 class IntersectExcept extends Expression {
-	_intersectOrExcept: string;
-	_expression1: Expression;
-	_expression2: Expression;
+	private _expression1: Expression;
+	private _expression2: Expression;
+	private _intersectOrExcept: string;
 	constructor(intersectOrExcept: string, expression1: Expression, expression2: Expression) {
 		const maxSpecificity =
 			expression1.specificity.compareTo(expression2.specificity) > 0
@@ -53,7 +53,7 @@ class IntersectExcept extends Expression {
 		this._expression2 = expression2;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const firstResult = ensureSortedSequence(
 			this._intersectOrExcept,
 			executionParameters.domFacade,

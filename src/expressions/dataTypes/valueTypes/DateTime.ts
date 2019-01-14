@@ -1,5 +1,5 @@
-import DayTimeDuration from './DayTimeDuration';
 import AbstractDuration from './AbstractDuration';
+import DayTimeDuration from './DayTimeDuration';
 
 function parseMatch(match: string | undefined): number | null {
 	return match ? parseInt(match, 10) : null;
@@ -45,16 +45,16 @@ function timezoneToString(timezone: DayTimeDuration): string {
 }
 
 class DateTime {
-	_years: number;
-	_months: number;
-	_days: number;
-	_hours: number;
-	_minutes: number;
-	_seconds: number;
-	_secondFraction: number;
-	_timezone: DayTimeDuration;
-	_type: string;
-	static fromString: (string: any) => DateTime;
+	public static fromString: (string: any) => DateTime;
+	private _days: number;
+	private _hours: number;
+	private _minutes: number;
+	private _months: number;
+	private _secondFraction: number;
+	private _seconds: number;
+	private _timezone: DayTimeDuration;
+	private _type: string;
+	private _years: number;
 	constructor(
 		years: number,
 		months: number,
@@ -77,133 +77,7 @@ class DateTime {
 		this._type = type;
 	}
 
-	getYear() {
-		return this._years;
-	}
-
-	getMonth() {
-		return this._months;
-	}
-
-	getDay() {
-		return this._days;
-	}
-
-	getHours() {
-		return this._hours;
-	}
-
-	getMinutes() {
-		return this._minutes;
-	}
-
-	getSeconds() {
-		return this._seconds;
-	}
-
-	getFullSeconds() {
-		return this._seconds + this._secondFraction;
-	}
-
-	getSecondFraction() {
-		return this._secondFraction;
-	}
-
-	getTimezone() {
-		return this._timezone;
-	}
-
-	isPositive() {
-		return this._years >= 0;
-	}
-
-	toJavaScriptDate(implicitTimezone = undefined): Date {
-		const timezoneToUse =
-			this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
-		return new Date(
-			Date.UTC(
-				this._years,
-				this._months - 1,
-				this._days,
-				this._hours - timezoneToUse.getHours(),
-				this._minutes - timezoneToUse.getMinutes(),
-				this._seconds + this._secondFraction
-			)
-		);
-	}
-
-	toString() {
-		switch (this._type) {
-			case 'xs:dateTime':
-				return (
-					convertYearToString(this._years) +
-					'-' +
-					convertToTwoCharString(this._months) +
-					'-' +
-					convertToTwoCharString(this._days) +
-					'T' +
-					convertToTwoCharString(this._hours) +
-					':' +
-					convertToTwoCharString(this._minutes) +
-					':' +
-					convertSecondsToString(this._seconds + this._secondFraction) +
-					(this._timezone ? timezoneToString(this._timezone) : '')
-				);
-			case 'xs:date':
-				return (
-					convertYearToString(this._years) +
-					'-' +
-					convertToTwoCharString(this._months) +
-					'-' +
-					convertToTwoCharString(this._days) +
-					(this._timezone ? timezoneToString(this._timezone) : '')
-				);
-			case 'xs:time':
-				return (
-					convertToTwoCharString(this._hours) +
-					':' +
-					convertToTwoCharString(this._minutes) +
-					':' +
-					convertSecondsToString(this._seconds + this._secondFraction) +
-					(this._timezone ? timezoneToString(this._timezone) : '')
-				);
-			case 'xs:gDay':
-				return (
-					'---' +
-					convertToTwoCharString(this._days) +
-					(this._timezone ? timezoneToString(this._timezone) : '')
-				);
-			case 'xs:gMonth':
-				return (
-					'--' +
-					convertToTwoCharString(this._months) +
-					(this._timezone ? timezoneToString(this._timezone) : '')
-				);
-			case 'xs:gMonthDay':
-				return (
-					'--' +
-					convertToTwoCharString(this._months) +
-					'-' +
-					convertToTwoCharString(this._days) +
-					(this._timezone ? timezoneToString(this._timezone) : '')
-				);
-			case 'xs:gYear':
-				return (
-					convertYearToString(this._years) +
-					(this._timezone ? timezoneToString(this._timezone) : '')
-				);
-			case 'xs:gYearMonth':
-				return (
-					convertYearToString(this._years) +
-					'-' +
-					convertToTwoCharString(this._months) +
-					(this._timezone ? timezoneToString(this._timezone) : '')
-				);
-		}
-		throw new Error('Unexpected subType');
-	}
-
-	convertToType(type) {
+	public convertToType(type) {
 		// xs:date       xxxx-xx-xxT00:00:00
 		// xs:time       1972-12-31Txx:xx:xx
 		// xs:gYearMonth xxxx-xx-01T00:00:00
@@ -281,6 +155,132 @@ class DateTime {
 					'xs:dateTime'
 				);
 		}
+	}
+
+	public getDay() {
+		return this._days;
+	}
+
+	public getFullSeconds() {
+		return this._seconds + this._secondFraction;
+	}
+
+	public getHours() {
+		return this._hours;
+	}
+
+	public getMinutes() {
+		return this._minutes;
+	}
+
+	public getMonth() {
+		return this._months;
+	}
+
+	public getSecondFraction() {
+		return this._secondFraction;
+	}
+
+	public getSeconds() {
+		return this._seconds;
+	}
+
+	public getTimezone() {
+		return this._timezone;
+	}
+
+	public getYear() {
+		return this._years;
+	}
+
+	public isPositive() {
+		return this._years >= 0;
+	}
+
+	public toJavaScriptDate(implicitTimezone = undefined): Date {
+		const timezoneToUse =
+			this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
+		return new Date(
+			Date.UTC(
+				this._years,
+				this._months - 1,
+				this._days,
+				this._hours - timezoneToUse.getHours(),
+				this._minutes - timezoneToUse.getMinutes(),
+				this._seconds + this._secondFraction
+			)
+		);
+	}
+
+	public toString() {
+		switch (this._type) {
+			case 'xs:dateTime':
+				return (
+					convertYearToString(this._years) +
+					'-' +
+					convertToTwoCharString(this._months) +
+					'-' +
+					convertToTwoCharString(this._days) +
+					'T' +
+					convertToTwoCharString(this._hours) +
+					':' +
+					convertToTwoCharString(this._minutes) +
+					':' +
+					convertSecondsToString(this._seconds + this._secondFraction) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:date':
+				return (
+					convertYearToString(this._years) +
+					'-' +
+					convertToTwoCharString(this._months) +
+					'-' +
+					convertToTwoCharString(this._days) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:time':
+				return (
+					convertToTwoCharString(this._hours) +
+					':' +
+					convertToTwoCharString(this._minutes) +
+					':' +
+					convertSecondsToString(this._seconds + this._secondFraction) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:gDay':
+				return (
+					'---' +
+					convertToTwoCharString(this._days) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:gMonth':
+				return (
+					'--' +
+					convertToTwoCharString(this._months) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:gMonthDay':
+				return (
+					'--' +
+					convertToTwoCharString(this._months) +
+					'-' +
+					convertToTwoCharString(this._days) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:gYear':
+				return (
+					convertYearToString(this._years) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+			case 'xs:gYearMonth':
+				return (
+					convertYearToString(this._years) +
+					'-' +
+					convertToTwoCharString(this._months) +
+					(this._timezone ? timezoneToString(this._timezone) : '')
+				);
+		}
+		throw new Error('Unexpected subType');
 	}
 }
 

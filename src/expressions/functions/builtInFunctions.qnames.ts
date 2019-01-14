@@ -1,9 +1,9 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import QName from '../dataTypes/valueTypes/QName';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import { validatePattern } from '../dataTypes/typeHelpers';
-import zipSingleton from '../util/zipSingleton';
+import QName from '../dataTypes/valueTypes/QName';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import zipSingleton from '../util/zipSingleton';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 

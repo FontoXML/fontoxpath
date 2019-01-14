@@ -1,27 +1,27 @@
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import ISequence from '../dataTypes/ISequence';
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import createNodeValue from '../dataTypes/createNodeValue';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
-import builtInFunctionsNode from './builtInFunctions.node';
+import createNodeValue from '../dataTypes/createNodeValue';
+import ISequence from '../dataTypes/ISequence';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import createSingleValueIterator from '../util/createSingleValueIterator';
+import builtInFunctionsNode from './builtInFunctions.node';
 
-import { DONE_TOKEN, notReady, ready, AsyncIterator } from '../util/iterators';
 import { equal } from '../dataTypes/valueTypes/DateTime';
+import { AsyncIterator, DONE_TOKEN, notReady, ready } from '../util/iterators';
 
-import Value from '../dataTypes/Value';
-import ExecutionParameters from '../ExecutionParameters';
-import DynamicContext from '../DynamicContext';
-import StaticContext from '../StaticContext';
-import MapValue from '../dataTypes/MapValue';
 import ArrayValue from '../dataTypes/ArrayValue';
+import MapValue from '../dataTypes/MapValue';
+import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import StaticContext from '../StaticContext';
 
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
 function asyncGenerateEvery<T>(
-	items: Array<T>,
-	callback: (item: T, index: number, all: Array<T>) => AsyncIterator<boolean>
+	items: T[],
+	callback: (item: T, index: number, all: T[]) => AsyncIterator<boolean>
 ): AsyncIterator<boolean> {
 	let i = 0;
 	const l = items.length;

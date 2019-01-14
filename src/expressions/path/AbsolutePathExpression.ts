@@ -1,11 +1,11 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
+import createNodeValue from '../dataTypes/createNodeValue';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 import Specificity from '../Specificity';
-import createNodeValue from '../dataTypes/createNodeValue';
 
 class AbsolutePathExpression extends Expression {
-	_relativePathExpression: Expression;
+	private _relativePathExpression: Expression;
 	constructor(relativePathExpression: Expression) {
 		super(
 			relativePathExpression ? relativePathExpression.specificity : new Specificity({}),
@@ -21,7 +21,7 @@ class AbsolutePathExpression extends Expression {
 		this._relativePathExpression = relativePathExpression;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use paths.');
 		}

@@ -1,6 +1,6 @@
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 
-type QName = { prefix: string; namespaceURI: string | null; localName: string };
+type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
 export interface AST extends Array<string | object | AST> {
 	0: string;
@@ -14,7 +14,7 @@ export interface AST extends Array<string | object | AST> {
  *
  * @return  The matching children
  */
-function getChildren(ast: AST, name: string): Array<AST> {
+function getChildren(ast: AST, name: string): AST[] {
 	const children = [];
 	for (let i = 1; i < ast.length; ++i) {
 		if (!Array.isArray(ast[i])) {
@@ -35,7 +35,7 @@ function getChildren(ast: AST, name: string): Array<AST> {
  *
  * @return  The matching child, or null
  */
-function getFirstChild(ast: AST, name: string | Array<string>): AST | null {
+function getFirstChild(ast: AST, name: string | string[]): AST | null {
 	if (name !== '*' && !Array.isArray(name)) {
 		name = [name];
 	}
@@ -139,7 +139,7 @@ function getTypeDeclaration(ast: AST): TypeDeclaration {
 /**
  * Follow a path to an AST node
  */
-function followPath(ast: AST, path: Array<string>): AST | null {
+function followPath(ast: AST, path: string[]): AST | null {
 	return path.reduce(getFirstChild, ast);
 }
 
@@ -170,11 +170,11 @@ function getQName(ast: AST): QName {
 }
 
 export default {
-	followPath: followPath,
-	getChildren: getChildren,
-	getFirstChild: getFirstChild,
-	getTextContent: getTextContent,
-	getTypeDeclaration: getTypeDeclaration,
-	getAttribute: getAttribute,
-	getQName: getQName
+	followPath,
+	getChildren,
+	getFirstChild,
+	getTextContent,
+	getTypeDeclaration,
+	getAttribute,
+	getQName
 };

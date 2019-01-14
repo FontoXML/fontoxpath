@@ -1,16 +1,16 @@
-import builtinStringFunctions from './builtInFunctions.string';
-import SequenceFactory from '../dataTypes/SequenceFactory';
-import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import { sortNodeValues } from '../dataTypes/documentOrderUtils';
+import isSubtypeOfType from '../dataTypes/isSubtypeOf';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import zipSingleton from '../util/zipSingleton';
-import isSubtypeOfType from '../dataTypes/isSubtypeOf';
+import builtinStringFunctions from './builtInFunctions.string';
 
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-import createFromNode from '../dataTypes/createNodeValue';
-import IDomFacade from '../../domFacade/IDomFacade';
-import FunctionDefinitionType from './FunctionDefinitionType';
 import { ConcreteNode } from '../../domFacade/ConcreteNode';
+import IDomFacade from '../../domFacade/IDomFacade';
+import createFromNode from '../dataTypes/createNodeValue';
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnString = builtinStringFunctions.functions.string;
 

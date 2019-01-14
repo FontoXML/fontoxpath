@@ -1,15 +1,15 @@
+import castToType from '../../dataTypes/castToType';
 import SequenceFactory from '../../dataTypes/SequenceFactory';
 import Expression from '../../Expression';
-import castToType from '../../dataTypes/castToType';
 
 class castAsOperator extends Expression {
-	_targetType: string;
-	_expression: Expression;
-	_allowsEmptySequence: boolean;
+	public _allowsEmptySequence: boolean;
+	public _expression: Expression;
+	public _targetType: string;
 
 	constructor(
 		expression: Expression,
-		targetType: { prefix: string; namespaceURI: string | null; localName: string },
+		targetType: { localName: string; namespaceURI: string | null; prefix: string },
 		allowsEmptySequence: boolean
 	) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
@@ -34,7 +34,7 @@ class castAsOperator extends Expression {
 		this._allowsEmptySequence = allowsEmptySequence;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		const evaluatedExpression = this._expression
 			.evaluateMaybeStatically(dynamicContext, executionParameters)
 			.atomize(executionParameters);

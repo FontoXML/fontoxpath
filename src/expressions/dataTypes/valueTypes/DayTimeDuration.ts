@@ -1,8 +1,8 @@
 import AbstractDuration from './AbstractDuration';
 
 class DayTimeDuration extends AbstractDuration {
-	_seconds: number;
-	static fromParts: (
+	public static fromJavascriptDateTimezone: (date: any) => DayTimeDuration;
+	public static fromParts: (
 		days: any,
 		hours: any,
 		minutes: any,
@@ -10,9 +10,9 @@ class DayTimeDuration extends AbstractDuration {
 		secondFraction: any,
 		isPositive: any
 	) => DayTimeDuration;
-	static fromString: (string: any) => DayTimeDuration;
-	static fromTimezoneString: (string: any) => DayTimeDuration;
-	static fromJavascriptDateTimezone: (date: any) => DayTimeDuration;
+	public static fromString: (string: any) => DayTimeDuration;
+	public static fromTimezoneString: (string: any) => DayTimeDuration;
+	private _seconds: number;
 	constructor(seconds: number) {
 		super();
 
@@ -25,32 +25,36 @@ class DayTimeDuration extends AbstractDuration {
 		this._seconds = seconds;
 	}
 
-	getRawSeconds() {
-		return this._seconds;
-	}
-
-	getDays() {
+	public getDays() {
 		return Math.trunc(this._seconds / 86400);
 	}
 
-	getHours() {
+	public getHours() {
 		return Math.trunc((this._seconds % 86400) / 3600);
 	}
 
-	getMinutes() {
+	public getMinutes() {
 		return Math.trunc((this._seconds % 3600) / 60);
 	}
 
-	getSeconds() {
+	public getRawSeconds() {
+		return this._seconds;
+	}
+
+	public getSeconds() {
 		const result = this._seconds % 60;
 		return Object.is(-0, result) ? 0 : result;
 	}
 
-	isPositive() {
+	public isPositive() {
 		return Object.is(-0, this._seconds) ? false : this._seconds >= 0;
 	}
 
-	toStringWithoutP() {
+	public toString() {
+		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
+	}
+
+	public toStringWithoutP() {
 		const days = Math.abs(this.getDays());
 		const hours = Math.abs(this.getHours());
 		const minutes = Math.abs(this.getMinutes());
@@ -62,10 +66,6 @@ class DayTimeDuration extends AbstractDuration {
 			`${seconds ? `${seconds}S` : ''}`;
 
 		return stringValue === 'T' ? 'T0S' : stringValue;
-	}
-
-	toString() {
-		return (this.isPositive() ? 'P' : '-P') + this.toStringWithoutP();
 	}
 }
 

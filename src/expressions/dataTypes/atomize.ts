@@ -1,9 +1,9 @@
-import isSubtypeOf from './isSubtypeOf';
 import createAtomicValue from './createAtomicValue';
+import isSubtypeOf from './isSubtypeOf';
 
-import Value from './Value';
-import AtomicValue from './AtomicValue';
 import ExecutionParameters from '../ExecutionParameters';
+import AtomicValue from './AtomicValue';
+import Value from './Value';
 
 const TEXT_NODE = 3;
 

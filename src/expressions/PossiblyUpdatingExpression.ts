@@ -1,17 +1,17 @@
-import Expression, { OptimizationOptions } from './Expression';
-import { DONE_TOKEN, ready, notReady, AsyncIterator } from './util/iterators';
-import { mergeUpdates } from './xquery-update/pulRoutines';
-import SequenceFactory from './dataTypes/SequenceFactory';
 import ISequence from './dataTypes/ISequence';
+import SequenceFactory from './dataTypes/SequenceFactory';
+import Value from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
-import Value from './dataTypes/Value';
-import { PendingUpdate } from './xquery-update/PendingUpdate';
+import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
+import { AsyncIterator, DONE_TOKEN, notReady, ready } from './util/iterators';
+import { PendingUpdate } from './xquery-update/PendingUpdate';
+import { mergeUpdates } from './xquery-update/pulRoutines';
 
 export class UpdatingExpressionResult {
-	xdmValue: Value[];
-	pendingUpdateList: PendingUpdate[];
+	public pendingUpdateList: PendingUpdate[];
+	public xdmValue: Value[];
 	constructor(values: Value[], pendingUpdateList: PendingUpdate[]) {
 		this.xdmValue = values;
 		this.pendingUpdateList = pendingUpdateList;
@@ -31,13 +31,7 @@ abstract class PossiblyUpdatingExpression extends Expression {
 		);
 	}
 
-	abstract performFunctionalEvaluation(
-		_dynamicContext: DynamicContext,
-		_executionParameters: ExecutionParameters,
-		_sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
-	): ISequence;
-
-	evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		return this.performFunctionalEvaluation(
 			dynamicContext,
 			executionParameters,
@@ -47,7 +41,7 @@ abstract class PossiblyUpdatingExpression extends Expression {
 		);
 	}
 
-	evaluateWithUpdateList(
+	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): AsyncIterator<UpdatingExpressionResult> {
@@ -115,6 +109,12 @@ abstract class PossiblyUpdatingExpression extends Expression {
 			}
 		};
 	}
+
+	public abstract performFunctionalEvaluation(
+		_dynamicContext: DynamicContext,
+		_executionParameters: ExecutionParameters,
+		_sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
+	): ISequence;
 }
 
 export default PossiblyUpdatingExpression;

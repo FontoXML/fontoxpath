@@ -6,7 +6,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import SequenceFactory from '../dataTypes/SequenceFactory';
 
 class CommentConstructor extends Expression {
-	_expr: Expression;
+	private _expr: Expression;
 	constructor(expr: Expression | null) {
 		super(expr ? expr.specificity : new Specificity({}), expr ? [expr] : [], {
 			canBeStaticallyEvaluated: false,
@@ -16,7 +16,7 @@ class CommentConstructor extends Expression {
 		this._expr = expr;
 	}
 
-	evaluate(_dynamicContext, executionParameters) {
+	public evaluate(_dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 		if (!this._expr) {
 			return SequenceFactory.singleton(createNodeValue(nodesFactory.createComment('')));

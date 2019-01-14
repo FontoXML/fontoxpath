@@ -1,8 +1,8 @@
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import atomize from '../dataTypes/atomize';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import SequenceFactory from '../dataTypes/SequenceFactory';
 import zipSingleton from '../util/zipSingleton';
 
 import { DONE_TOKEN, ready } from '../util/iterators';
@@ -581,7 +581,7 @@ export default {
 			localName: 'string-join',
 			argumentTypes: ['xs:string*'],
 			returnType: 'xs:string',
-			callFunction: function(dynamicContext, executionParameters, staticContext, arg1) {
+			callFunction(dynamicContext, executionParameters, staticContext, arg1) {
 				return fnStringJoin(
 					dynamicContext,
 					executionParameters,
@@ -622,7 +622,7 @@ export default {
 			localName: 'tokenize',
 			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
 			returnType: 'xs:string*',
-			callFunction: function(
+			callFunction(
 				_dynamicContext,
 				_executionParameters,
 				_staticContext,
@@ -647,7 +647,7 @@ export default {
 			localName: 'tokenize',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:string*',
-			callFunction: function(dynamicContext, executionParameters, staticContext, input) {
+			callFunction(dynamicContext, executionParameters, staticContext, input) {
 				return fnTokenize(
 					dynamicContext,
 					executionParameters,

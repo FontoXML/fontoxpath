@@ -1,18 +1,18 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import UpdatingExpression from './UpdatingExpression';
 import Specificity from '../Specificity';
+import UpdatingExpression from './UpdatingExpression';
 
 import { deletePu } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
-import { ready } from '../util/iterators';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import { ready } from '../util/iterators';
 
 import { errXUTY0007 } from './XQueryUpdateFacilityErrors';
 
 class DeleteExpression extends UpdatingExpression {
-	_targetExpression: Expression;
+	private _targetExpression: Expression;
 
 	constructor(targetExpression: Expression) {
 		super(new Specificity({}), [targetExpression], {
@@ -23,7 +23,7 @@ class DeleteExpression extends UpdatingExpression {
 		this._targetExpression = targetExpression;
 	}
 
-	evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(dynamicContext, executionParameters) {
 		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters

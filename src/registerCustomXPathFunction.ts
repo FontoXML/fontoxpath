@@ -1,20 +1,19 @@
 import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import { registerFunction } from './expressions/functions/functionRegistry';
-import IDomFacade from './domFacade/IDomFacade';
 
-import {
-	staticallyKnownNamespaceByPrefix,
-	registerStaticallyKnownNamespace
-} from './expressions/staticallyKnownNamespaces';
+import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
-import ExternalDomFacade from './domFacade/ExternalDomFacade';
+import {
+	registerStaticallyKnownNamespace,
+	staticallyKnownNamespaceByPrefix
+} from './expressions/staticallyKnownNamespaces';
 
 function adaptXPathValueToJavascriptValue(
 	valueSequence: any,
 	sequenceType: string
-): any | null | Array<any> {
+): any | null | any[] {
 	switch (sequenceType[sequenceType.length - 1]) {
 		case '?':
 			if (valueSequence.isEmpty()) {
@@ -37,8 +36,8 @@ function adaptXPathValueToJavascriptValue(
 }
 
 function splitFunctionName(
-	name: string | { namespaceURI; localName }
-): { namespaceURI: string; localName: string } {
+	name: string | { localName: string; namespaceURI: string }
+): { localName: string; namespaceURI: string } {
 	if (typeof name === 'object') {
 		return name;
 	}
@@ -57,7 +56,7 @@ function splitFunctionName(
 	// Register this prefix to a random namespace uri
 	return {
 		namespaceURI: namespaceURIForPrefix,
-		localName: localName
+		localName
 	};
 }
 
@@ -74,8 +73,8 @@ type DomFacadeWrapper = {
  * @param  callback    The test itself, which gets the dynamicContext and arguments passed
  */
 export default function registerCustomXPathFunction(
-	name: string | { namespaceURI: string; localName: string },
-	signature: Array<string>,
+	name: string | { localName: string; namespaceURI: string },
+	signature: string[],
 	returnType: string,
 	callback: (domFacade: DomFacadeWrapper, ...functionArgs: any[]) => any
 ): void {

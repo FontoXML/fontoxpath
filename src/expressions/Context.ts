@@ -6,13 +6,6 @@ export default interface Context {
 	 * @return {Object|null}
 	 */
 	lookupFunction(namespaceURI: string, localName: string, arity: number): object | null;
-
-	/**
-	 * @param  {string}  prefix
-	 * @return {?string}
-	 */
-
-	resolveNamespace(prefix: string): string | null;
 	/**
 	 * @param  {string|null}  namespaceURI
 	 * @param  {string}       localName
@@ -20,4 +13,11 @@ export default interface Context {
 	 */
 
 	lookupVariable(namespaceURI: string | null, localName: string): string | null;
+
+	/**
+	 * @param  {string}  prefix
+	 * @return {?string}
+	 */
+
+	resolveNamespace(prefix: string): string | null;
 }

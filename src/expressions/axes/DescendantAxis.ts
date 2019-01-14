@@ -1,13 +1,13 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import { ConcreteChildNode, ConcreteNode } from '../../domFacade/ConcreteNode';
+import IDomFacade from '../../domFacade/IDomFacade';
 import createNodeValue from '../dataTypes/createNodeValue';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
+import createChildGenerator from '../util/createChildGenerator';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, ready } from '../util/iterators';
-import createChildGenerator from '../util/createChildGenerator';
-import TestAbstractExpression from '../tests/TestAbstractExpression';
-import IDomFacade from '../../domFacade/IDomFacade';
-import { ConcreteNode, ConcreteChildNode } from '../../domFacade/ConcreteNode';
 
 function createInclusiveDescendantGenerator(domFacade: IDomFacade, node: ConcreteNode) {
 	const descendantIteratorStack: Iterator<ConcreteChildNode>[] = [
@@ -34,8 +34,8 @@ function createInclusiveDescendantGenerator(domFacade: IDomFacade, node: Concret
 }
 
 class DescendantAxis extends Expression {
-	_descendantExpression: TestAbstractExpression;
-	_isInclusive: boolean;
+	private _descendantExpression: TestAbstractExpression;
+	private _isInclusive: boolean;
 	constructor(
 		descendantExpression: TestAbstractExpression,
 		options: { inclusive: boolean } | undefined
@@ -52,7 +52,7 @@ class DescendantAxis extends Expression {
 		this._isInclusive = !!options.inclusive;
 	}
 
-	evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}

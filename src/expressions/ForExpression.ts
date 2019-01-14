@@ -1,18 +1,18 @@
+import SequenceFactory from './dataTypes/SequenceFactory';
 import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
-import SequenceFactory from './dataTypes/SequenceFactory';
 import { DONE_TOKEN } from './util/iterators';
 
 class ForExpression extends PossiblyUpdatingExpression {
-	_prefix: string;
-	_namespaceURI: string;
-	_localName: string;
-	_variableBindingKey: any;
-	_clauseExpression: Expression;
-	_returnExpression: Expression;
+	private _clauseExpression: Expression;
+	private _localName: string;
+	private _namespaceURI: string;
+	private _prefix: string;
+	private _returnExpression: Expression;
+	private _variableBindingKey: any;
 
 	constructor(
-		rangeVariable: { prefix: string; namespaceURI: string | null; localName: string },
+		rangeVariable: { localName: string; namespaceURI: string | null; prefix: string },
 		clauseExpression: Expression,
 		returnExpression: Expression
 	) {
@@ -34,31 +34,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 		this._returnExpression = returnExpression;
 	}
 
-	performStaticEvaluation(staticContext) {
-		if (this._prefix) {
-			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
-
-			if (!this._namespaceURI && this._prefix) {
-				throw new Error(
-					`XPST0081: Could not resolve namespace for prefix ${
-						this._prefix
-					} using in a for expression`
-				);
-			}
-		}
-
-		this._clauseExpression.performStaticEvaluation(staticContext);
-		staticContext.introduceScope();
-		this._variableBindingKey = staticContext.registerVariable(
-			this._namespaceURI,
-			this._localName
-		);
-
-		this._returnExpression.performStaticEvaluation(staticContext);
-		staticContext.removeScope();
-	}
-
-	performFunctionalEvaluation(
+	public performFunctionalEvaluation(
 		dynamicContext,
 		executionParameters,
 		[_createBindingSequence, createReturnExpression]
@@ -100,6 +76,30 @@ class ForExpression extends PossiblyUpdatingExpression {
 				return DONE_TOKEN;
 			}
 		});
+	}
+
+	public performStaticEvaluation(staticContext) {
+		if (this._prefix) {
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
+
+			if (!this._namespaceURI && this._prefix) {
+				throw new Error(
+					`XPST0081: Could not resolve namespace for prefix ${
+						this._prefix
+					} using in a for expression`
+				);
+			}
+		}
+
+		this._clauseExpression.performStaticEvaluation(staticContext);
+		staticContext.introduceScope();
+		this._variableBindingKey = staticContext.registerVariable(
+			this._namespaceURI,
+			this._localName
+		);
+
+		this._returnExpression.performStaticEvaluation(staticContext);
+		staticContext.removeScope();
 	}
 }
 

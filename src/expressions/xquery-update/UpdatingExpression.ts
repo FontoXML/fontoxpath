@@ -11,7 +11,7 @@ abstract class UpdatingExpression extends Expression {
 		this.isUpdating = true;
 	}
 
-	ensureUpdateListWrapper(expression) {
+	public ensureUpdateListWrapper(expression) {
 		if (expression.isUpdating) {
 			return (dynamicContext, executionParameters) =>
 				expression.evaluateWithUpdateList(dynamicContext, executionParameters);
@@ -34,13 +34,13 @@ abstract class UpdatingExpression extends Expression {
 		};
 	}
 
-	evaluate(): never {
+	public evaluate(): never {
 		throw new Error(
 			'Can not execute an updating expression without catching the pending updates'
 		);
 	}
 
-	abstract evaluateWithUpdateList(
+	public abstract evaluateWithUpdateList(
 		_dynamicContext: DynamicContext | null,
 		_executionParameters: ExecutionParameters
 	): { next: () => any };

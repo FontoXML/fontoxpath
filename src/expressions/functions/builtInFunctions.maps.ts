@@ -1,12 +1,12 @@
-import isSameMapKey from './isSameMapKey';
-import mapGet from './builtInFunctions.maps.get';
-import SequenceFactory from '../dataTypes/SequenceFactory';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
-import zipSingleton from '../util/zipSingleton';
+import SequenceFactory from '../dataTypes/SequenceFactory';
+import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import zipSingleton from '../util/zipSingleton';
+import mapGet from './builtInFunctions.maps.get';
+import isSameMapKey from './isSameMapKey';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -266,7 +266,7 @@ export default {
 			localName: 'merge',
 			argumentTypes: ['map(*)*'],
 			returnType: 'map(*)',
-			callFunction: function(dynamicContext, executionParameters, staticContext, maps) {
+			callFunction(dynamicContext, executionParameters, staticContext, maps) {
 				return mapMerge(
 					dynamicContext,
 					executionParameters,

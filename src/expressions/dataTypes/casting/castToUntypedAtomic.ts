@@ -1,5 +1,5 @@
-import castToStringLikeType from './castToStringLikeType';
 import createAtomicValue from '../createAtomicValue';
+import castToStringLikeType from './castToStringLikeType';
 
 import CastResult from './CastResult';
 
