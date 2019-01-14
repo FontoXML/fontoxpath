@@ -3,7 +3,7 @@
 :+1::tada: First off, thanks for showing interest in contributing to
 FontoXPath!:tada::+1:
 
-The XPath engine is not yet complete, though we are striving to the
+The XPath/XQuery engine is not yet complete, though we are striving to the
 highest grade of usability. This means that functions get to be
 implemented as soon as we want to use them. The [XPath 3.1
 spec](https://www.w3.org/TR/xpath-31/) and the accompanying [XPath
@@ -17,7 +17,8 @@ Here are some important resources:
 - [The XPath functions
   spec](https://www.w3.org/TR/xpath-functions-31/).
 - [The XQuery 3.1 spec](https://www.w3.org/TR/xquery-31/).
-- [The XQuery Update Facility 3.0 spec](https://www.w3.org/TR/xquery-update-30/).
+- [The XQuery Update Facility 3.0
+  spec](https://www.w3.org/TR/xquery-update-30/).
 - [The FontoXPath playground](https://xpath.playground.fontoxml.com/).
 
 ## Creating an issue
@@ -37,16 +38,16 @@ are here to help in any possible way.
 
 ### Setting up a development environment
 
-FontoXPath uses [the Google Closure
+FontoXPath is written in
+[TypeScript](https://www.typescriptlang.org/), which is transformed to
+JavaScript using [tsickle](https://github.com/angular/tsickle) and
+compiled with [the Google Closure
 Compiler](https://github.com/google/closure-compiler) for an optimized
-build. This requires a version of Java to be installed and in the
-path. For more information on installing and running the closure
-compiler, please refer to the
-[documentation](https://developers.google.com/closure/compiler/) of
-the Google Closure Compiler.
+build.
 
-Running the QT3 tests requires a recent version of the QT3 test set to
-be installed at `./test/assets/QT3TS`. The QT3 test set is mirrored
+Running the XML Query Test suite (QT3) requires a recent version of
+the QT3 test set to be installed at `./test/assets/QT3TS`. The QT3
+test set is mirrored
 [here](https://github.com/LeoWoerteler/QT3TS/). Running the tests for
 XQuery Update Facility requires a recent version of the XQUTS test set
 to be installed at `./test/assets/XQUTS`. There exists a mirror
@@ -85,6 +86,16 @@ Remove-Item ./test/assets/QT3TS/xqueryx-extracted
 Remove-Item ./test/assets/XQUTS-extracted
 ```
 
+And to run the tests:
+
+```sh
+npm run test
+# Or
+npm run qt3tests
+# Or
+npm run xqutstests
+```
+
 ### Implementing a missing XPath function
 
 XPath functions are an ideal place to start off as a first pull
@@ -109,24 +120,27 @@ FontoXPath uses lazy evaluation and we are moving towards asynchronous
 evaluation. This means the main datastructure (`Sequence`) is
 basically a generator. It has a number of functions which can easily
 get the first item, all items, the effective boolean value, etc. We
-tend to use the methods like `tryGetFirst()`, the `tryGetLength()`,
-`mapCases()` and the `map()` for new code. The array functions located
-at `src/selectors/functions/builtInFunctions.arrays.js` are a good
+tend to use the methods like `tryGetFirst()`, `tryGetLength()`,
+`mapCases()` and `map()` for new code. The array functions located
+at `src/selectors/functions/builtInFunctions.arrays.ts` are a good
 example for new functions.
 
-An iteration item (obtained by iterating over `Sequence#value()`) can
+An iteration item (obtained by iterating over `Sequence#value`) can
 have three forms:
 
-- `{ ready: false, promise: Promise }`: This means the iteration
+- `{ ready: false, promise: Promise<void> }`: This means the iteration
   result will be available at a later time. This may be the case if
   the iteration requires something asynchronous.
-- `{ ready: true, done: false, value: <Anything> }`: We have a value
-  that can be worked with.
+- `{ ready: true, done: false, value: <any> }`: We have a value that
+  can be worked with.
 - `{ ready: true, done: true }`: We are done iterating.
 
 ### Debugging
 
-We have added a [demo page (http://localhost:8080)](http://localhost:8080) which can be used for debugging. You only have to start the server with `node ./demo/server.js`. The demo page uses the source code without transpilation or compilation, this does require a [browser which supports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Browser_compatibility) `import`.
+You can run a [demo page (http://localhost:8080)](http://localhost:8080)
+which can be used for debugging. You only have to start the server
+with `npm run start`. This script runs the typescript compiler in
+watch mode and serves a simple test application.
 
 ### Running the tests
 
@@ -140,22 +154,33 @@ FontoXPath contains different test sets:
 |The XQUTS tests|`npm run xqutstests`|
 |The XQUTS XQueryX tests|`npm run xqutstestsxqueryx`|
 
-They all run in Node. By running the tests with
-the `--inspect` flag, they can be debugged: `npm run test -- --inspect --inspect-brk`. The tests can also be executed with the built version
-of fontoxpath. Use the `--dist` flag to do so: `npm run qt3test -- --dist`. The unit tests can be executed using `npm run integrationtests`
+They all run in Node. By running the tests with the `--inspect` flag,
+they can be debugged by the browser: `npm run test -- --inspect
+--inspect-brk`. The tests can also be executed with the built version
+of fontoxpath. Use the `--dist` flag to do so: `npm run qt3test --
+--dist`. The unit tests can be executed using `npm run
+integrationtests`
 
 The JavaScript unit tests can be used while developing, since they run
 quite fast. The other tests can be used to verify your implementation
 but they are quite slow. Running all of them will likely take several
 minutes.
 
-New JavaScript tests can be added to a `*.tests.js` file somewhere in
+New JavaScript tests can be added to a `*.tests.ts` file somewhere in
 the `test/specs` folder. Try to add a new test in a file with tests
 about similar functions.
 
-If you expect new tests to succeed run `npm run alltests -- --regenerate`, this will update the csv files which contain failing tests. Use `git` to find differences.
+If you want to create a new test file, it should be placed in
+the`test/specs/expressions` folder if the tests can only be ran
+against the unminified code. If they do not require minified code
+(ie. use only public, external API, they can be placed in the
+`test/specs/parsing` folder.
 
-If you are adding a new feature, edit the file
+If you expect new tests to succeed run `npm run alltests --
+--regenerate`, this will update the csv files which contain failing
+tests. Use `git` to find differences.
+
+If you are adding a new feature, don't forget to edit the file
 `test/runnableTestSets.csv`. This file disables tests for features we
 have not yet implemented.
 
