@@ -1,7 +1,7 @@
 import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import SequenceFactory from '../../dataTypes/sequenceFactory';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import zipSingleton from '../../util/zipSingleton';
 
 export default function nodeCompare(
@@ -31,18 +31,18 @@ export default function nodeCompare(
 						switch (operator) {
 							case 'isOp':
 								return first === second
-									? SequenceFactory.singletonTrueSequence()
-									: SequenceFactory.singletonFalseSequence();
+									? sequenceFactory.singletonTrueSequence()
+									: sequenceFactory.singletonFalseSequence();
 
 							case 'nodeBeforeOp':
 								return compareNodePositions(domFacade, first, second) < 0
-									? SequenceFactory.singletonTrueSequence()
-									: SequenceFactory.singletonFalseSequence();
+									? sequenceFactory.singletonTrueSequence()
+									: sequenceFactory.singletonFalseSequence();
 
 							case 'nodeAfterOp':
 								return compareNodePositions(domFacade, first, second) > 0
-									? SequenceFactory.singletonTrueSequence()
-									: SequenceFactory.singletonFalseSequence();
+									? sequenceFactory.singletonTrueSequence()
+									: sequenceFactory.singletonFalseSequence();
 
 							default:
 								throw new Error('Unexpected operator');

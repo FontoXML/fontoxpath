@@ -2,7 +2,7 @@ import ExecutionParameters from '../../ExecutionParameters';
 import { AsyncIterator, AsyncResult, DONE_TOKEN, ready } from '../../util/iterators';
 import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
-import SequenceFactory from '../sequenceFactory';
+import sequenceFactory from '../sequenceFactory';
 import Value from '../Value';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
@@ -12,7 +12,7 @@ export default class SingletonSequence implements ISequence {
 	private _effectiveBooleanValue: boolean;
 
 	constructor(
-		private readonly _sequenceFactory: typeof SequenceFactory,
+		private readonly _sequenceFactory: typeof sequenceFactory,
 		private readonly _onlyValue: Value
 	) {
 		let hasPassed = false;

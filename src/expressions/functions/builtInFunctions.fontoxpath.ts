@@ -1,6 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
@@ -26,7 +26,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = function(
 ) {
 	let resultIterator;
 	let queryString;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (!resultIterator) {
 				const queryValue = query.value.next();
@@ -45,7 +45,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = function(
 				// Take off the context item
 				const contextItemSequence = variables['.']
 					? variables['.']()
-					: SequenceFactory.empty();
+					: sequenceFactory.empty();
 				delete variables['.'];
 
 				const ast = parseExpression(queryString, { allowXQuery: false });
@@ -113,7 +113,7 @@ const fontoxpathSleep: FunctionDefinitionType = function(
 	let readyPromise;
 
 	const valueIterator = val.value;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (!readyPromise) {
 				const time = howLong
@@ -147,7 +147,7 @@ const fontoxpathVersion: FunctionDefinitionType = function() {
 	} else {
 		version = VERSION;
 	}
-	return SequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
+	return sequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 };
 
 const fontoxpathFetch: FunctionDefinitionType = function(
@@ -161,7 +161,7 @@ const fontoxpathFetch: FunctionDefinitionType = function(
 	let done = false;
 	let readyPromise = null;
 
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (!readyPromise) {
 				const urlValue = url.value.next();

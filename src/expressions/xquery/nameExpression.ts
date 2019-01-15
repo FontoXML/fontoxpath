@@ -1,5 +1,5 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import { errXPTY0004 } from '../XPathErrors';
 import { errXQDY0041, errXQDY0074 } from './XQueryErrors';
@@ -27,7 +27,7 @@ export function evaluateNCNameExpression(executionParameters, nameSequence) {
 				if (!isValidNCName(nameValue.value)) {
 					throw errXQDY0041(nameValue.value);
 				}
-				return SequenceFactory.singleton(nameValue);
+				return sequenceFactory.singleton(nameValue);
 			}
 			throw nameExprErr();
 		},
@@ -43,7 +43,7 @@ export function evaluateQNameExpression(staticContext, executionParameters, name
 		singleton: seq => {
 			const nameValue = seq.first();
 			if (isSubtypeOf(nameValue.type, 'xs:QName')) {
-				return SequenceFactory.singleton(nameValue);
+				return sequenceFactory.singleton(nameValue);
 			} else if (
 				isSubtypeOf(nameValue.type, 'xs:string') ||
 				isSubtypeOf(nameValue.type, 'xs:untypedAtomic')
@@ -63,7 +63,7 @@ export function evaluateQNameExpression(staticContext, executionParameters, name
 				if (prefix && !namespaceURI) {
 					throw errXQDY0074(`${prefix}:${localName}`);
 				}
-				return SequenceFactory.singleton({
+				return sequenceFactory.singleton({
 					type: 'xs:QName',
 					value: new QName(prefix, namespaceURI, localName)
 				});

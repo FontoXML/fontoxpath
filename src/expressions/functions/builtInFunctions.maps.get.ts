@@ -1,4 +1,4 @@
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import isSameMapKey from './isSameMapKey';
 
 import zipSingleton from '../util/zipSingleton';
@@ -19,7 +19,7 @@ const mapGet: FunctionDefinitionType = function(
 		});
 
 		if (!matchingPair) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		return matchingPair.value();
 	});

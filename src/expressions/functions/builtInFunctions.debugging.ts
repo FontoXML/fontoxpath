@@ -1,6 +1,6 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -21,7 +21,7 @@ const fnTrace: FunctionDefinitionType = function(
 			console,
 			label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]
 		);
-		return SequenceFactory.create(allItems);
+		return sequenceFactory.create(allItems);
 	});
 };
 

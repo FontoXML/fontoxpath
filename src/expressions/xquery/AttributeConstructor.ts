@@ -5,7 +5,7 @@ import { errXQDY0044 } from './XQueryErrors';
 
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import { evaluateQNameExpression } from './nameExpression';
@@ -57,7 +57,7 @@ class AttributeConstructor extends Expression {
 		let valueIterator;
 
 		let done = false;
-		return SequenceFactory.create({
+		return sequenceFactory.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;
@@ -109,7 +109,7 @@ class AttributeConstructor extends Expression {
 									.evaluate(dynamicContext, executionParameters)
 									.atomize(executionParameters)
 									.mapAll(allValues =>
-										SequenceFactory.singleton(
+										sequenceFactory.singleton(
 											createAtomicValue(
 												allValues.map(val => val.value).join(' '),
 												'xs:string'
@@ -118,7 +118,7 @@ class AttributeConstructor extends Expression {
 									);
 							})
 						).mapAll(allValueParts =>
-							SequenceFactory.singleton(
+							sequenceFactory.singleton(
 								createNodeValue(
 									createAttribute(
 										nodesFactory,

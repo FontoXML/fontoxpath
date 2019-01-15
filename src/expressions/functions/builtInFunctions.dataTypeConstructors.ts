@@ -1,7 +1,7 @@
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { normalizeWhitespace, validatePattern } from '../dataTypes/typeHelpers';
 import QName from '../dataTypes/valueTypes/QName';
 
@@ -19,7 +19,7 @@ function genericDataTypeConstructor(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(castToType(sequence.first(), dataType));
+	return sequenceFactory.singleton(castToType(sequence.first(), dataType));
 }
 
 const xsQName: FunctionDefinitionType = function(
@@ -45,7 +45,7 @@ const xsQName: FunctionDefinitionType = function(
 	if (!lexicalQName.includes(':')) {
 		// Only a local part
 		const namespaceURI = staticContext.resolveNamespace('');
-		return SequenceFactory.singleton(
+		return sequenceFactory.singleton(
 			createAtomicValue(new QName('', namespaceURI, lexicalQName), 'xs:QName')
 		);
 	}
@@ -56,7 +56,7 @@ const xsQName: FunctionDefinitionType = function(
 			`FONS0004: The value ${lexicalQName} can not be cast to a QName. Did you mean to use fn:QName?`
 		);
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(new QName(prefix, namespaceURI, localName), 'xs:QName')
 	);
 };

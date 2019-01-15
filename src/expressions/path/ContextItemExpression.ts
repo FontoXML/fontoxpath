@@ -1,6 +1,6 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 
 class ContextItemExpression extends Expression {
@@ -16,7 +16,7 @@ class ContextItemExpression extends Expression {
 				'XPDY0002: context is absent, it needs to be present to use the "." operator'
 			);
 		}
-		return SequenceFactory.singleton(dynamicContext.contextItem);
+		return sequenceFactory.singleton(dynamicContext.contextItem);
 	}
 }
 export default ContextItemExpression;

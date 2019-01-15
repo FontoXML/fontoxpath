@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import FunctionValue from '../dataTypes/FunctionValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import QName from '../dataTypes/valueTypes/QName';
 import Specificity from '../Specificity';
@@ -54,7 +54,7 @@ class InlineFunction extends Expression {
 		) => {
 			// Since functionCall already does typechecking, we do not have to do it here
 			const scopedDynamicContext = dynamicContext
-				.scopeWithFocus(-1, null, SequenceFactory.empty())
+				.scopeWithFocus(-1, null, sequenceFactory.empty())
 				.scopeWithVariableBindings(
 					this._parameterBindingNames.reduce((paramByName, bindingName, i) => {
 						paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
@@ -75,7 +75,7 @@ class InlineFunction extends Expression {
 			arity: this._parameterTypes.length,
 			returnType: this._returnType
 		});
-		return SequenceFactory.singleton(functionItem);
+		return sequenceFactory.singleton(functionItem);
 	}
 
 	public performStaticEvaluation(staticContext) {

@@ -1,7 +1,7 @@
 import getBucketsForNode from '../../../getBucketsForNode';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import SequenceFactory from '../../dataTypes/sequenceFactory';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
 import { DONE_TOKEN, notReady, ready } from '../../util/iterators';
@@ -58,7 +58,7 @@ class OrOperator extends Expression {
 			}
 		}
 
-		return SequenceFactory.create({
+		return sequenceFactory.create({
 			next: () => {
 				if (!done) {
 					while (i < this._subExpressions.length) {

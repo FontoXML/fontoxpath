@@ -1,7 +1,7 @@
 import Expression from '../Expression';
 
 import ArrayValue from '../dataTypes/ArrayValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
@@ -22,7 +22,7 @@ class SquareArrayConstructor extends Expression {
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
-		return SequenceFactory.singleton(
+		return sequenceFactory.singleton(
 			new ArrayValue(
 				this._members.map(entry =>
 					createDoublyIterableSequence(

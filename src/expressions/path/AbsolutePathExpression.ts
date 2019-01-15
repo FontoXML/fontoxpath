@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 
 class AbsolutePathExpression extends Expression {
@@ -28,7 +28,7 @@ class AbsolutePathExpression extends Expression {
 		const node = dynamicContext.contextItem.value;
 		const documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;
 		// Assume this is the start, so only one node
-		const contextSequence = SequenceFactory.singleton(createNodeValue(documentNode));
+		const contextSequence = sequenceFactory.singleton(createNodeValue(documentNode));
 		return this._relativePathExpression
 			? this._relativePathExpression.evaluateMaybeStatically(
 					dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence),

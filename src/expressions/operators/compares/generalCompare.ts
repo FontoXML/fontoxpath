@@ -1,6 +1,6 @@
 import castToType from '../../dataTypes/castToType';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import SequenceFactory from '../../dataTypes/sequenceFactory';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import valueCompare from './valueCompare';
 
 import ISequence from '../../dataTypes/ISequence';
@@ -74,8 +74,8 @@ export default function generalCompare(
 				return false;
 			})
 			.switchCases({
-				default: () => SequenceFactory.singletonTrueSequence(),
-				empty: () => SequenceFactory.singletonFalseSequence()
+				default: () => sequenceFactory.singletonTrueSequence(),
+				empty: () => sequenceFactory.singletonFalseSequence()
 			})
 	);
 }

@@ -1,5 +1,5 @@
 import { falseBoolean, trueBoolean } from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -14,11 +14,11 @@ const fnNot: FunctionDefinitionType = function(
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
 		return ebv.value === false
-			? SequenceFactory.singletonTrueSequence()
-			: SequenceFactory.singletonFalseSequence();
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
 	}
 	let done = false;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -42,11 +42,11 @@ const fnBoolean: FunctionDefinitionType = function(
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
 		return ebv.value
-			? SequenceFactory.singletonTrueSequence()
-			: SequenceFactory.singletonFalseSequence();
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
 	}
 	let done = false;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -62,11 +62,11 @@ const fnBoolean: FunctionDefinitionType = function(
 };
 
 const fnTrue: FunctionDefinitionType = function() {
-	return SequenceFactory.singletonTrueSequence();
+	return sequenceFactory.singletonTrueSequence();
 };
 
 const fnFalse: FunctionDefinitionType = function() {
-	return SequenceFactory.singletonFalseSequence();
+	return sequenceFactory.singletonFalseSequence();
 };
 
 export default {

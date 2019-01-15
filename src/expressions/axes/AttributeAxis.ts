@@ -1,6 +1,6 @@
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
@@ -33,7 +33,7 @@ class AttributeAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		if (!isSubtypeOf(contextItem.type, 'element()')) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 
 		// The spec on attributes:
@@ -46,7 +46,7 @@ class AttributeAxis extends Expression {
 			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 			.map(attribute => createNodeValue(attribute))
 			.filter(item => this._attributeTestExpression.evaluateToBoolean(dynamicContext, item));
-		return SequenceFactory.create(matchingAttributes);
+		return sequenceFactory.create(matchingAttributes);
 	}
 
 	public getBucket() {

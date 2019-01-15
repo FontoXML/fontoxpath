@@ -1,7 +1,7 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
@@ -19,7 +19,7 @@ const arraySize: FunctionDefinitionType = function(
 	arraySequence
 ) {
 	return zipSingleton([arraySequence], ([array]) =>
-		SequenceFactory.singleton(
+		sequenceFactory.singleton(
 			createAtomicValue((array as ArrayValue).members.length, 'xs:integer')
 		)
 	);
@@ -40,7 +40,7 @@ const arrayPut: FunctionDefinitionType = function(
 		}
 		const newMembers = (array as ArrayValue).members.concat();
 		newMembers.splice(positionValue - 1, 1, createDoublyIterableSequence(itemSequence));
-		return SequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers));
 	});
 };
 
@@ -55,7 +55,7 @@ const arrayAppend: FunctionDefinitionType = function(
 		const newMembers = (array as ArrayValue).members.concat([
 			createDoublyIterableSequence(itemSequence)
 		]);
-		return SequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers));
 	});
 };
 
@@ -89,7 +89,7 @@ const arraySubarray: FunctionDefinitionType = function(
 				startValue - 1,
 				lengthValue + startValue - 1
 			);
-			return SequenceFactory.singleton(new ArrayValue(newMembers));
+			return sequenceFactory.singleton(new ArrayValue(newMembers));
 		}
 	);
 };
@@ -118,7 +118,7 @@ const arrayRemove: FunctionDefinitionType = function(
 				newMembers.splice(position - 1, 1);
 			}
 
-			return SequenceFactory.singleton(new ArrayValue(newMembers));
+			return sequenceFactory.singleton(new ArrayValue(newMembers));
 		})
 	);
 };
@@ -140,7 +140,7 @@ const arrayInsertBefore: FunctionDefinitionType = function(
 
 		const newMembers = (array as ArrayValue).members.concat();
 		newMembers.splice(positionValue - 1, 0, createDoublyIterableSequence(itemSequence));
-		return SequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers));
 	});
 };
 
@@ -151,7 +151,7 @@ const arrayReverse: FunctionDefinitionType = function(
 	arraySequence
 ) {
 	return zipSingleton([arraySequence], ([array]) =>
-		SequenceFactory.singleton(new ArrayValue((array as ArrayValue).members.concat().reverse()))
+		sequenceFactory.singleton(new ArrayValue((array as ArrayValue).members.concat().reverse()))
 	);
 };
 
@@ -166,7 +166,7 @@ const arrayJoin: FunctionDefinitionType = function(
 			(joinedMembers, array) => joinedMembers.concat((array as ArrayValue).members),
 			[]
 		);
-		return SequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers));
 	});
 };
 
@@ -189,7 +189,7 @@ const arrayForEach: FunctionDefinitionType = function(
 				)
 			);
 		});
-		return SequenceFactory.singleton(new ArrayValue(newMembers));
+		return sequenceFactory.singleton(new ArrayValue(newMembers));
 	});
 };
 
@@ -212,7 +212,7 @@ const arrayFilter: FunctionDefinitionType = function(
 		);
 		const effectiveBooleanValues = [];
 		let done = false;
-		return SequenceFactory.create({
+		return sequenceFactory.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;
@@ -329,7 +329,7 @@ const arrayForEachPair: FunctionDefinitionType = function(
 				);
 			}
 
-			return SequenceFactory.singleton(new ArrayValue(newMembers));
+			return sequenceFactory.singleton(new ArrayValue(newMembers));
 		}
 	);
 };
@@ -351,7 +351,7 @@ const arraySort: FunctionDefinitionType = function(
 				.sort((indexA, indexB) =>
 					atomizedItems[indexA].value > atomizedItems[indexB].value ? 1 : -1
 				);
-			return SequenceFactory.singleton(
+			return sequenceFactory.singleton(
 				new ArrayValue(permutations.map(i => (array as ArrayValue).members[i]))
 			);
 		});
@@ -375,8 +375,8 @@ const arrayFlatten: FunctionDefinitionType = function(
 					flattenedItems
 				);
 			}
-			return concatSequences([flattenedItems, SequenceFactory.singleton(item)]);
-		}, SequenceFactory.empty())
+			return concatSequences([flattenedItems, sequenceFactory.singleton(item)]);
+		}, sequenceFactory.empty())
 	);
 };
 
@@ -434,7 +434,7 @@ export default {
 				arraySequence,
 				startSequence
 			) {
-				const lengthSequence = SequenceFactory.singleton(
+				const lengthSequence = sequenceFactory.singleton(
 					createAtomicValue(
 						arraySequence.first().members.length - startSequence.first().value + 1,
 						'xs:integer'
@@ -478,7 +478,7 @@ export default {
 					executionParameters,
 					_staticContext,
 					arraySequence,
-					SequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
+					sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
 				);
 			}
 		},
@@ -494,7 +494,7 @@ export default {
 					executionParameters,
 					_staticContext,
 					arraySequence,
-					SequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
+					sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
 				);
 			}
 		},

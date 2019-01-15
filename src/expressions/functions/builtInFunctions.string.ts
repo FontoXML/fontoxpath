@@ -2,7 +2,7 @@ import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import zipSingleton from '../util/zipSingleton';
 
 import { DONE_TOKEN, ready } from '../util/iterators';
@@ -29,7 +29,7 @@ function contextItemAsFirstArgument(fn, dynamicContext, executionParameters, _st
 		dynamicContext,
 		executionParameters,
 		_staticContext,
-		SequenceFactory.singleton(dynamicContext.contextItem)
+		sequenceFactory.singleton(dynamicContext.contextItem)
 	);
 }
 
@@ -41,21 +41,21 @@ const fnCompare: FunctionDefinitionType = function(
 	arg2
 ) {
 	if (arg1.isEmpty() || arg2.isEmpty()) {
-		return SequenceFactory.empty();
+		return sequenceFactory.empty();
 	}
 
 	const arg1Value = arg1.first().value,
 		arg2Value = arg2.first().value;
 
 	if (arg1Value > arg2Value) {
-		return SequenceFactory.singleton(createAtomicValue(1, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'));
 	}
 
 	if (arg1Value < arg2Value) {
-		return SequenceFactory.singleton(createAtomicValue(-1, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(-1, 'xs:integer'));
 	}
 
-	return SequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
+	return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
 };
 
 const fnConcat: FunctionDefinitionType = function(
@@ -68,7 +68,7 @@ const fnConcat: FunctionDefinitionType = function(
 		return sequence.atomize(executionParameters);
 	});
 	return zipSingleton(stringSequences, function(stringValues) {
-		return SequenceFactory.singleton(
+		return sequenceFactory.singleton(
 			createAtomicValue(
 				stringValues
 					.map(stringValue =>
@@ -91,18 +91,18 @@ const fnContains: FunctionDefinitionType = function(
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	const contains = !arg2.isEmpty() ? arg2.first().value : '';
 	if (contains.length === 0) {
-		return SequenceFactory.singletonTrueSequence();
+		return sequenceFactory.singletonTrueSequence();
 	}
 
 	if (stringToTest.length === 0) {
-		return SequenceFactory.singletonFalseSequence();
+		return sequenceFactory.singletonFalseSequence();
 	}
 
 	// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
 	if (stringToTest.includes(contains)) {
-		return SequenceFactory.singletonTrueSequence();
+		return sequenceFactory.singletonTrueSequence();
 	}
-	return SequenceFactory.singletonFalseSequence();
+	return sequenceFactory.singletonFalseSequence();
 };
 
 const fnStartsWith: FunctionDefinitionType = function(
@@ -114,17 +114,17 @@ const fnStartsWith: FunctionDefinitionType = function(
 ) {
 	const startsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (startsWith.length === 0) {
-		return SequenceFactory.singletonTrueSequence();
+		return sequenceFactory.singletonTrueSequence();
 	}
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	if (stringToTest.length === 0) {
-		return SequenceFactory.singletonFalseSequence();
+		return sequenceFactory.singletonFalseSequence();
 	}
 	// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
 	if (stringToTest.startsWith(startsWith)) {
-		return SequenceFactory.singletonTrueSequence();
+		return sequenceFactory.singletonTrueSequence();
 	}
-	return SequenceFactory.singletonFalseSequence();
+	return sequenceFactory.singletonFalseSequence();
 };
 
 const fnEndsWith: FunctionDefinitionType = function(
@@ -136,17 +136,17 @@ const fnEndsWith: FunctionDefinitionType = function(
 ) {
 	const endsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (endsWith.length === 0) {
-		return SequenceFactory.singletonTrueSequence();
+		return sequenceFactory.singletonTrueSequence();
 	}
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	if (stringToTest.length === 0) {
-		return SequenceFactory.singletonFalseSequence();
+		return sequenceFactory.singletonFalseSequence();
 	}
 	// TODO: choose a collation, this defines whether eszett (ß) should equal 'ss'
 	if (stringToTest.endsWith(endsWith)) {
-		return SequenceFactory.singletonTrueSequence();
+		return sequenceFactory.singletonTrueSequence();
 	}
-	return SequenceFactory.singletonFalseSequence();
+	return sequenceFactory.singletonFalseSequence();
 };
 
 const fnString: FunctionDefinitionType = function(
@@ -156,7 +156,7 @@ const fnString: FunctionDefinitionType = function(
 	sequence
 ) {
 	return sequence.switchCases({
-		empty: () => SequenceFactory.singleton(createAtomicValue('', 'xs:string')),
+		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string')),
 		default: () =>
 			sequence.map(value => {
 				if (isSubtypeOf(value.type, 'node()')) {
@@ -183,7 +183,7 @@ const fnStringJoin: FunctionDefinitionType = function(
 			const joinedString = allStrings
 				.map(stringValue => castToType(stringValue, 'xs:string').value)
 				.join(separatorString.value);
-			return SequenceFactory.singleton(createAtomicValue(joinedString, 'xs:string'));
+			return sequenceFactory.singleton(createAtomicValue(joinedString, 'xs:string'));
 		})
 	);
 };
@@ -195,11 +195,11 @@ const fnStringLength: FunctionDefinitionType = function(
 	sequence
 ) {
 	if (sequence.isEmpty()) {
-		return SequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
 	}
 	const stringValue = /** @type {string} */ (sequence.first().value);
 	// In ES6, Array.from(💩).length === 1
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(Array.from(stringValue).length, 'xs:integer')
 	);
 };
@@ -225,13 +225,13 @@ const fnSubstringBefore: FunctionDefinitionType = function(
 	}
 
 	if (strArg2 === '') {
-		return SequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
 	const startIndex = strArg1.indexOf(strArg2);
 	if (startIndex === -1) {
-		return SequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(strArg1.substring(0, startIndex), 'xs:string')
 	);
 };
@@ -257,13 +257,13 @@ const fnSubstringAfter: FunctionDefinitionType = function(
 	}
 
 	if (strArg2 === '') {
-		return SequenceFactory.singleton(createAtomicValue(strArg1, 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue(strArg1, 'xs:string'));
 	}
 	const startIndex = strArg1.indexOf(strArg2);
 	if (startIndex === -1) {
-		return SequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(strArg1.substring(startIndex + strArg2.length), 'xs:string')
 	);
 };
@@ -293,7 +293,7 @@ const fnSubstring: FunctionDefinitionType = function(
 	let sourceStringItem = null;
 	let startItem = null;
 	let lengthItem = null;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -357,11 +357,11 @@ const fnTokenize: FunctionDefinitionType = function(
 	pattern
 ) {
 	if (input.isEmpty() || input.first().value.length === 0) {
-		return SequenceFactory.empty();
+		return sequenceFactory.empty();
 	}
 	const string = input.first().value,
 		patternString = pattern.first().value;
-	return SequenceFactory.create(
+	return sequenceFactory.create(
 		string.split(new RegExp(patternString)).map(function(token) {
 			return createAtomicValue(token, 'xs:string');
 		})
@@ -375,7 +375,7 @@ const fnUpperCase: FunctionDefinitionType = function(
 	stringSequence
 ) {
 	if (stringSequence.isEmpty()) {
-		return SequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
 	return stringSequence.map(string => createAtomicValue(string.value.toUpperCase(), 'xs:string'));
 };
@@ -387,7 +387,7 @@ const fnLowerCase: FunctionDefinitionType = function(
 	stringSequence
 ) {
 	if (stringSequence.isEmpty()) {
-		return SequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
 	return stringSequence.map(string => createAtomicValue(string.value.toLowerCase(), 'xs:string'));
 };
@@ -399,10 +399,10 @@ const fnNormalizeSpace: FunctionDefinitionType = function(
 	arg
 ) {
 	if (arg.isEmpty()) {
-		return SequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
 	const string = arg.first().value.trim();
-	return SequenceFactory.singleton(createAtomicValue(string.replace(/\s+/g, ' '), 'xs:string'));
+	return sequenceFactory.singleton(createAtomicValue(string.replace(/\s+/g, ' '), 'xs:string'));
 };
 
 export default {
@@ -587,7 +587,7 @@ export default {
 					executionParameters,
 					staticContext,
 					arg1,
-					SequenceFactory.singleton(createAtomicValue('', 'xs:string'))
+					sequenceFactory.singleton(createAtomicValue('', 'xs:string'))
 				);
 			}
 		},
@@ -653,7 +653,7 @@ export default {
 					executionParameters,
 					staticContext,
 					fnNormalizeSpace(dynamicContext, executionParameters, staticContext, input),
-					SequenceFactory.singleton(createAtomicValue(' ', 'xs:string'))
+					sequenceFactory.singleton(createAtomicValue(' ', 'xs:string'))
 				);
 			}
 		}

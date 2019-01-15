@@ -4,14 +4,14 @@ import { AsyncIterator, AsyncResult, DONE_TOKEN, ready } from '../../util/iterat
 import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
-import SequenceFactory from '../sequenceFactory';
+import sequenceFactory from '../sequenceFactory';
 import Value from '../Value';
 
 export default class ArrayBackedSequence implements ISequence {
 	public value: AsyncIterator<Value>;
 
 	constructor(
-		private readonly _sequenceFactory: typeof SequenceFactory,
+		private readonly _sequenceFactory: typeof sequenceFactory,
 		private readonly _values: Value[]
 	) {
 		let i = -1;

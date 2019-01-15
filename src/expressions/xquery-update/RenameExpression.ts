@@ -11,7 +11,7 @@ import QName from '../dataTypes/valueTypes/QName';
 import { ready } from '../util/iterators';
 import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
 
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { errXUDY0023, errXUDY0027, errXUTY0012 } from './XQueryUpdateFacilityErrors';
 
 function evaluateTarget(targetXdmValue) {
@@ -41,7 +41,7 @@ function evaluateTarget(targetXdmValue) {
 
 function evaluateNewName(staticContext, executionParameters, newNameXdmValue, target) {
 	// NewNameExpr is processed as follows:
-	const nameSequence = SequenceFactory.create(newNameXdmValue);
+	const nameSequence = sequenceFactory.create(newNameXdmValue);
 
 	switch (target.type) {
 		case 'element()': {

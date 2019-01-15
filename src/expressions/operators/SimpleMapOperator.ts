@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 
 class SimpleMapOperator extends Expression {
@@ -31,7 +31,7 @@ class SimpleMapOperator extends Expression {
 		let childContext = null;
 		let sequenceValueIterator = null;
 		let done = false;
-		return SequenceFactory.create({
+		return sequenceFactory.create({
 			next: () => {
 				while (!done) {
 					if (!childContext) {

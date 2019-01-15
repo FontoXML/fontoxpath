@@ -4,7 +4,7 @@ import { AsyncIterator, AsyncResult, DONE_TOKEN, notReady, ready } from '../../u
 import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
-import SequenceFactory from '../sequenceFactory';
+import sequenceFactory from '../sequenceFactory';
 import Value from '../Value';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
@@ -17,7 +17,7 @@ export default class IteratorBackedSequence implements ISequence {
 	private _length: number;
 
 	constructor(
-		private readonly _sequenceFactory: typeof SequenceFactory,
+		private readonly _sequenceFactory: typeof sequenceFactory,
 		valueIterator: AsyncIterator<Value>,
 		predictedLength: number = null
 	) {

@@ -1,6 +1,6 @@
 import { falseBoolean, trueBoolean } from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, notReady, ready } from './iterators';
 
 export default function sequenceEvery(
@@ -10,7 +10,7 @@ export default function sequenceEvery(
 	const iterator = sequence.value;
 	let typeTestResultIterator = null;
 	let done;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			while (!done) {
 				if (!typeTestResultIterator) {

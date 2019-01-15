@@ -1,7 +1,7 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import ISequence from '../dataTypes/ISequence';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -12,17 +12,17 @@ function convert(obj: any): ISequence {
 	switch (typeof obj) {
 		case 'object':
 			if (Array.isArray(obj)) {
-				return SequenceFactory.singleton(
+				return sequenceFactory.singleton(
 					new ArrayValue(
 						obj.map(subObject => createDoublyIterableSequence(convert(subObject)))
 					)
 				);
 			}
 			if (obj === null) {
-				return SequenceFactory.empty();
+				return sequenceFactory.empty();
 			}
 			// Normal object
-			return SequenceFactory.singleton(
+			return sequenceFactory.singleton(
 				new MapValue(
 					Object.keys(obj as Object).map(key => {
 						return {
@@ -33,13 +33,13 @@ function convert(obj: any): ISequence {
 				)
 			);
 		case 'number':
-			return SequenceFactory.singleton(createAtomicValue(obj, 'xs:double'));
+			return sequenceFactory.singleton(createAtomicValue(obj, 'xs:double'));
 		case 'string':
-			return SequenceFactory.singleton(createAtomicValue(obj, 'xs:string'));
+			return sequenceFactory.singleton(createAtomicValue(obj, 'xs:string'));
 		case 'boolean':
 			return obj
-				? SequenceFactory.singletonTrueSequence()
-				: SequenceFactory.singletonFalseSequence();
+				? sequenceFactory.singletonTrueSequence()
+				: sequenceFactory.singletonFalseSequence();
 		default:
 			throw new Error('Unexpected type in JSON parse');
 	}

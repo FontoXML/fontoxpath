@@ -1,7 +1,7 @@
 import Expression from '../Expression';
 
 import ArrayValue from '../dataTypes/ArrayValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
@@ -23,15 +23,15 @@ class CurlyArrayConstructor extends Expression {
 
 	public evaluate(dynamicContext, executionParameters) {
 		if (this._members.length === 0) {
-			return SequenceFactory.singleton(new ArrayValue([]));
+			return sequenceFactory.singleton(new ArrayValue([]));
 		}
 		return this._members[0]
 			.evaluateMaybeStatically(dynamicContext, executionParameters)
 			.mapAll(allValues =>
-				SequenceFactory.singleton(
+				sequenceFactory.singleton(
 					new ArrayValue(
 						allValues.map(item =>
-							createDoublyIterableSequence(SequenceFactory.singleton(item))
+							createDoublyIterableSequence(sequenceFactory.singleton(item))
 						)
 					)
 				)

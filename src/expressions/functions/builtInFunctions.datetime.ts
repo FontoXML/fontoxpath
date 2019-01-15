@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import DateTime from '../dataTypes/valueTypes/DateTime';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -49,7 +49,7 @@ const fnDateTime: FunctionDefinitionType = function(
 		time.getSecondFraction(),
 		timezoneToUse
 	);
-	return SequenceFactory.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
+	return sequenceFactory.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
 };
 
 const fnYearFromDateTime: FunctionDefinitionType = function(
@@ -61,7 +61,7 @@ const fnYearFromDateTime: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getYear(), 'xs:integer')
 	);
 };
@@ -75,7 +75,7 @@ const fnMonthFromDateTime: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getMonth(), 'xs:integer')
 	);
 };
@@ -89,7 +89,7 @@ const fnDayFromDateTime: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getDay(), 'xs:integer')
 	);
 };
@@ -103,7 +103,7 @@ const fnHoursFromDateTime: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getHours(), 'xs:integer')
 	);
 };
@@ -117,7 +117,7 @@ const fnMinutesFromDateTime: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer')
 	);
 };
@@ -131,7 +131,7 @@ const fnSecondsFromDateTime: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getFullSeconds(), 'xs:decimal')
 	);
 };
@@ -147,10 +147,10 @@ const fnTimezoneFromDateTime: FunctionDefinitionType = function(
 
 	const timezone = sequence.first().value.getTimezone();
 	if (!timezone) {
-		return SequenceFactory.empty();
+		return sequenceFactory.empty();
 	}
 
-	return SequenceFactory.singleton(createAtomicValue(timezone, 'xs:dayTimeDuration'));
+	return sequenceFactory.singleton(createAtomicValue(timezone, 'xs:dayTimeDuration'));
 };
 
 export default {

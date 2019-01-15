@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
@@ -75,7 +75,7 @@ class FollowingAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		return SequenceFactory.create(
+		return sequenceFactory.create(
 			createFollowingGenerator(domFacade, contextItem.value)
 		).filter(item => {
 			return this._testExpression.evaluateToBoolean(dynamicContext, item);

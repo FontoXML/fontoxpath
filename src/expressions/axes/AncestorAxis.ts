@@ -1,5 +1,5 @@
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
@@ -47,7 +47,7 @@ class AncestorAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		const /** !Node */ contextNode = contextItem.value;
-		return SequenceFactory.create(
+		return sequenceFactory.create(
 			generateAncestors(
 				domFacade,
 				this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)

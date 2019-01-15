@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { validatePattern } from '../dataTypes/typeHelpers';
 import QName from '../dataTypes/valueTypes/QName';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -28,18 +28,18 @@ const fnQName: FunctionDefinitionType = function(
 		// Skip URI validation for now
 
 		if (paramURI.isEmpty()) {
-			return SequenceFactory.singleton(
+			return sequenceFactory.singleton(
 				createAtomicValue(new QName('', null, lexicalQName), 'xs:QName')
 			);
 		}
 		if (!lexicalQName.includes(':')) {
 			// Only a local part
-			return SequenceFactory.singleton(
+			return sequenceFactory.singleton(
 				createAtomicValue(new QName('', uri, lexicalQName), 'xs:QName')
 			);
 		}
 		const [prefix, localName] = lexicalQName.split(':');
-		return SequenceFactory.singleton(
+		return sequenceFactory.singleton(
 			createAtomicValue(new QName(prefix, uri, localName), 'xs:QName')
 		);
 	});
@@ -53,13 +53,13 @@ const fnPrefixFromQName: FunctionDefinitionType = function(
 ) {
 	return zipSingleton([arg], ([qname]) => {
 		if (qname === null) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		const qnameValue = qname.value;
 		if (!qnameValue.prefix) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
-		return SequenceFactory.singleton(createAtomicValue(qnameValue.prefix, 'xs:NCName'));
+		return sequenceFactory.singleton(createAtomicValue(qnameValue.prefix, 'xs:NCName'));
 	});
 };
 

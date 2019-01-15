@@ -3,7 +3,7 @@ import Specificity from '../Specificity';
 
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 class CommentConstructor extends Expression {
 	private _expr: Expression;
@@ -19,7 +19,7 @@ class CommentConstructor extends Expression {
 	public evaluate(_dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 		if (!this._expr) {
-			return SequenceFactory.singleton(createNodeValue(nodesFactory.createComment('')));
+			return sequenceFactory.singleton(createNodeValue(nodesFactory.createComment('')));
 		}
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
 		return sequence.atomize(executionParameters).mapAll(items => {
@@ -31,7 +31,7 @@ class CommentConstructor extends Expression {
 				);
 			}
 
-			return SequenceFactory.singleton(createNodeValue(nodesFactory.createComment(content)));
+			return sequenceFactory.singleton(createNodeValue(nodesFactory.createComment(content)));
 		});
 	}
 }

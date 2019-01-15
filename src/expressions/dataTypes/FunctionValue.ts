@@ -4,7 +4,7 @@ import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
-import SequenceFactory from './sequenceFactory';
+import sequenceFactory from './sequenceFactory';
 import TypeDeclaration from './TypeDeclaration';
 import Value from './Value';
 
@@ -113,7 +113,7 @@ class FunctionValue extends Value {
 			returnType: this._returnType
 		});
 
-		return SequenceFactory.singleton(functionItem);
+		return sequenceFactory.singleton(functionItem);
 	}
 
 	public getArgumentTypes() {

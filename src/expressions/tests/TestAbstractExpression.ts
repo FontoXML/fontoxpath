@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import AtomicValue from '../dataTypes/AtomicValue';
 import DynamicContext from '../DynamicContext';
@@ -12,8 +12,8 @@ abstract class TestAbstractExpression extends Expression {
 
 	public evaluate(dynamicContext, _executionParameters) {
 		return this.evaluateToBoolean(dynamicContext, dynamicContext.contextItem)
-			? SequenceFactory.singletonTrueSequence()
-			: SequenceFactory.singletonFalseSequence();
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
 	}
 
 	public abstract evaluateToBoolean(dynamicContext: DynamicContext, item: AtomicValue): boolean;

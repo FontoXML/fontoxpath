@@ -3,7 +3,7 @@ import Specificity from '../Specificity';
 
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import concatSequences from '../util/concatSequences';
 
 /**
@@ -38,7 +38,7 @@ class Union extends Expression {
 				throw new Error('XPTY0004: The sequences to union are not of type node()*');
 			}
 			const sortedValues = sortNodeValues(executionParameters.domFacade, allValues);
-			return SequenceFactory.create(sortedValues);
+			return sequenceFactory.create(sortedValues);
 		});
 	}
 }

@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -9,7 +9,7 @@ const mathPi: FunctionDefinitionType = function(
 	_executionParameters,
 	_staticContext
 ) {
-	return SequenceFactory.singleton(createAtomicValue(Math.PI, 'xs:double'));
+	return sequenceFactory.singleton(createAtomicValue(Math.PI, 'xs:double'));
 };
 
 const mathExp: FunctionDefinitionType = function(

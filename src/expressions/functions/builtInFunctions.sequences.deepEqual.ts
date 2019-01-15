@@ -3,7 +3,7 @@ import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import builtInFunctionsNode from './builtInFunctions.node';
 
@@ -252,8 +252,8 @@ function nodeDeepEqual(
 	item1Nodes = item1Nodes.filter(filterElementAndTextNodes);
 	item2Nodes = item2Nodes.filter(filterElementAndTextNodes);
 
-	const item1NodesSeq = SequenceFactory.create(item1Nodes.map(createNodeValue));
-	const item2NodesSeq = SequenceFactory.create(item2Nodes.map(createNodeValue));
+	const item1NodesSeq = sequenceFactory.create(item1Nodes.map(createNodeValue));
+	const item2NodesSeq = sequenceFactory.create(item2Nodes.map(createNodeValue));
 
 	return sequenceDeepEqual(
 		dynamicContext,
@@ -279,13 +279,13 @@ function elementNodeDeepEqual(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			SequenceFactory.singleton(item1)
+			sequenceFactory.singleton(item1)
 		),
 		nodeName(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			SequenceFactory.singleton(item2)
+			sequenceFactory.singleton(item2)
 		)
 	);
 	const nodeDeepEqualGenerator = nodeDeepEqual(
@@ -311,8 +311,8 @@ function elementNodeDeepEqual(
 		dynamicContext,
 		executionParameters,
 		staticContext,
-		SequenceFactory.create(attributes1),
-		SequenceFactory.create(attributes2)
+		sequenceFactory.create(attributes1),
+		sequenceFactory.create(attributes2)
 	);
 	let done = false;
 	return {
@@ -363,13 +363,13 @@ function atomicTypeNodeDeepEqual(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			SequenceFactory.singleton(item1)
+			sequenceFactory.singleton(item1)
 		),
 		nodeName(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			SequenceFactory.singleton(item2)
+			sequenceFactory.singleton(item2)
 		)
 	);
 	let done = false;

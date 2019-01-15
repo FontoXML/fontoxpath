@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class ChildAxis extends Expression {
@@ -25,7 +25,7 @@ class ChildAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 		const /** !Node */ contextNode = contextItem.value;
 		const nodeValues = domFacade.getChildNodes(contextNode).map(createNodeValue);
-		const childContextSequence = SequenceFactory.create(nodeValues);
+		const childContextSequence = sequenceFactory.create(nodeValues);
 		return childContextSequence.filter(item => {
 			return this._childExpression.evaluateToBoolean(dynamicContext, item);
 		});

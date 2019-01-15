@@ -5,7 +5,7 @@ import Specificity from '../Specificity';
 
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { ready } from '../util/iterators';
 
 function assertValidTarget(target) {
@@ -56,7 +56,7 @@ class PIConstructor extends Expression {
 			if (this._target.targetValue !== null) {
 				const target = this._target.targetValue;
 				assertValidTarget(target);
-				return SequenceFactory.singleton(
+				return sequenceFactory.singleton(
 					createNodeValue(nodesFactory.createProcessingInstruction(target, data))
 				);
 			}
@@ -67,7 +67,7 @@ class PIConstructor extends Expression {
 			);
 			const targetIterator = evaluateNCNameExpression(executionParameters, targetSequence);
 
-			return SequenceFactory.create({
+			return sequenceFactory.create({
 				next: () => {
 					const tv = targetIterator.next();
 					if (tv.done || !tv.ready) {

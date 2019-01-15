@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
 import TestAbstractExpression from '../tests/TestAbstractExpression';
@@ -75,7 +75,7 @@ class PrecedingAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		return SequenceFactory.create(
+		return sequenceFactory.create(
 			createPrecedingGenerator(domFacade, contextItem.value)
 		).filter(item => {
 			return this._testExpression.evaluateToBoolean(dynamicContext, item);

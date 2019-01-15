@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 type InClause = {
 	name: { localName: string; namespaceURI: string; prefix: string };
@@ -42,7 +42,7 @@ class QuantifiedExpression extends Expression {
 					.evaluateMaybeStatically(scopingContext, executionParameters)
 					.getAllValues();
 				scopingContext = dynamicContext.scopeWithVariableBindings({
-					[variableBinding]: () => SequenceFactory.create(allValuesInInClause)
+					[variableBinding]: () => sequenceFactory.create(allValuesInInClause)
 				});
 
 				return allValuesInInClause;
@@ -67,7 +67,7 @@ class QuantifiedExpression extends Expression {
 				for (let y = 0; y < indices.length; y++) {
 					const value = evaluatedInClauses[y][indices[y]];
 					variables[this._inClauseVariableNames[y]] = () =>
-						SequenceFactory.singleton(value);
+						sequenceFactory.singleton(value);
 				}
 
 				const context = dynamicContext.scopeWithVariableBindings(variables);
@@ -77,9 +77,9 @@ class QuantifiedExpression extends Expression {
 				);
 
 				if (result.getEffectiveBooleanValue() && this._quantifier === 'some') {
-					return SequenceFactory.singletonTrueSequence();
+					return sequenceFactory.singletonTrueSequence();
 				} else if (!result.getEffectiveBooleanValue() && this._quantifier === 'every') {
-					return SequenceFactory.singletonFalseSequence();
+					return sequenceFactory.singletonFalseSequence();
 				}
 				hasOverflowed = true;
 				break;
@@ -88,8 +88,8 @@ class QuantifiedExpression extends Expression {
 
 		// An every quantifier is true if all items match, a some is false if none of the items match
 		return this._quantifier === 'every'
-			? SequenceFactory.singletonTrueSequence()
-			: SequenceFactory.singletonFalseSequence();
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
 	}
 
 	public performStaticEvaluation(staticContext) {

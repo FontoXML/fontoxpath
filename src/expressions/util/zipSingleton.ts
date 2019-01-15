@@ -1,5 +1,5 @@
 import ISequence from '../dataTypes/ISequence';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { notReady } from './iterators';
 
 import Value from '../dataTypes/Value';
@@ -14,7 +14,7 @@ export default function zipSingleton(sequences: ISequence[], callback: CallbackT
 	}
 
 	let iterator = null;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (iterator === null) {
 				let allReady = true;

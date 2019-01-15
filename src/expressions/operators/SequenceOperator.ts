@@ -1,4 +1,4 @@
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
@@ -25,7 +25,7 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 
 	public performFunctionalEvaluation(dynamicContext, _executionParameters, sequenceCallbacks) {
 		if (!sequenceCallbacks.length) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		return concatSequences(sequenceCallbacks.map(cb => cb(dynamicContext)));
 	}

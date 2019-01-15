@@ -2,7 +2,7 @@ import mapGet from '../functions/builtInFunctions.maps.get';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
-import SequenceFactory from './sequenceFactory';
+import sequenceFactory from './sequenceFactory';
 import Value from './Value';
 
 class MapValue extends FunctionValue {
@@ -14,7 +14,7 @@ class MapValue extends FunctionValue {
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					SequenceFactory.singleton(this),
+					sequenceFactory.singleton(this),
 					key
 				),
 			localName: 'get',

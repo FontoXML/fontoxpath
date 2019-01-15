@@ -1,7 +1,7 @@
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import { transformArgument } from './argumentHelper';
 
@@ -33,7 +33,7 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 		}
 		newSequenceLength = Math.max(0, endIndex - startIndex);
 	}
-	return SequenceFactory.create(
+	return sequenceFactory.create(
 		{
 			next: () => {
 				while (i < start) {
@@ -150,9 +150,9 @@ const fnEmpty: FunctionDefinitionType = function(
 	sequence
 ) {
 	return sequence.switchCases({
-		empty: () => SequenceFactory.singletonTrueSequence(),
-		singleton: () => SequenceFactory.singletonFalseSequence(),
-		multiple: () => SequenceFactory.singletonFalseSequence()
+		empty: () => sequenceFactory.singletonTrueSequence(),
+		singleton: () => sequenceFactory.singletonFalseSequence(),
+		multiple: () => sequenceFactory.singletonFalseSequence()
 	});
 };
 
@@ -163,9 +163,9 @@ const fnExists: FunctionDefinitionType = function(
 	sequence
 ) {
 	return sequence.switchCases({
-		empty: () => SequenceFactory.singletonFalseSequence(),
-		singleton: () => SequenceFactory.singletonTrueSequence(),
-		multiple: () => SequenceFactory.singletonTrueSequence()
+		empty: () => sequenceFactory.singletonFalseSequence(),
+		singleton: () => sequenceFactory.singletonTrueSequence(),
+		multiple: () => sequenceFactory.singletonTrueSequence()
 	});
 };
 
@@ -215,7 +215,7 @@ const fnInsertBefore: FunctionDefinitionType = function(
 	const firstHalve = sequenceValue.slice(0, effectivePosition);
 	const secondHalve = sequenceValue.slice(effectivePosition);
 
-	return SequenceFactory.create(firstHalve.concat(inserts.getAllValues(), secondHalve));
+	return sequenceFactory.create(firstHalve.concat(inserts.getAllValues(), secondHalve));
 };
 
 const fnRemove: FunctionDefinitionType = function(
@@ -232,10 +232,10 @@ const fnRemove: FunctionDefinitionType = function(
 		effectivePosition < 1 ||
 		effectivePosition > sequenceValue.length
 	) {
-		return SequenceFactory.create(sequenceValue);
+		return sequenceFactory.create(sequenceValue);
 	}
 	sequenceValue.splice(effectivePosition - 1, 1);
-	return SequenceFactory.create(sequenceValue);
+	return sequenceFactory.create(sequenceValue);
 };
 
 const fnReverse: FunctionDefinitionType = function(
@@ -244,7 +244,7 @@ const fnReverse: FunctionDefinitionType = function(
 	_staticContext,
 	sequence
 ) {
-	return sequence.mapAll(allValues => SequenceFactory.create(allValues.reverse()));
+	return sequence.mapAll(allValues => sequenceFactory.create(allValues.reverse()));
 };
 
 const fnSubsequence: FunctionDefinitionType = function(
@@ -257,24 +257,24 @@ const fnSubsequence: FunctionDefinitionType = function(
 ) {
 	return zipSingleton([startSequence, lengthSequence], ([startVal, lengthVal]) => {
 		if (startVal.value === Infinity) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		if (startVal.value === -Infinity) {
 			if (lengthVal && lengthVal.value === Infinity) {
-				return SequenceFactory.empty();
+				return sequenceFactory.empty();
 			}
 			return sequence;
 		}
 		if (lengthVal) {
 			if (isNaN(lengthVal.value)) {
-				return SequenceFactory.empty();
+				return sequenceFactory.empty();
 			}
 			if (lengthVal.value === Infinity) {
 				lengthVal = null;
 			}
 		}
 		if (isNaN(startVal.value)) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		return subSequence(
 			sequence,
@@ -309,7 +309,7 @@ const fnDeepEqual: FunctionDefinitionType = function(
 		parameter2
 	);
 
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (hasPassed) {
 				return DONE_TOKEN;
@@ -331,7 +331,7 @@ const fnCount: FunctionDefinitionType = function(
 	sequence
 ) {
 	let hasPassed = false;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (hasPassed) {
 				return DONE_TOKEN;
@@ -373,7 +373,7 @@ const fnAvg: FunctionDefinitionType = function(
 			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
 		})
 	) {
-		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
 	if (
@@ -381,10 +381,10 @@ const fnAvg: FunctionDefinitionType = function(
 			return isSubtypeOf(item.type, 'xs:decimal');
 		})
 	) {
-		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
 
-	return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
+	return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
 };
 
 const fnMax: FunctionDefinitionType = function(
@@ -400,7 +400,7 @@ const fnMax: FunctionDefinitionType = function(
 	const items = castItemsForMinMax(sequence.getAllValues());
 
 	// Use first element in array as initial value
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		items.reduce(function(max, item) {
 			return max.value < item.value ? item : max;
 		})
@@ -420,7 +420,7 @@ const fnMin: FunctionDefinitionType = function(
 	const items = castItemsForMinMax(sequence.getAllValues());
 
 	// Use first element in array as initial value
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		items.reduce(function(min, item) {
 			return min.value > item.value ? item : min;
 		})
@@ -454,7 +454,7 @@ const fnSum: FunctionDefinitionType = function(
 			return isSubtypeOf(item.type, 'xs:integer');
 		})
 	) {
-		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:integer'));
 	}
 
 	if (
@@ -462,7 +462,7 @@ const fnSum: FunctionDefinitionType = function(
 			return isSubtypeOf(item.type, 'xs:double');
 		})
 	) {
-		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
 	}
 
 	if (
@@ -470,10 +470,10 @@ const fnSum: FunctionDefinitionType = function(
 			return isSubtypeOf(item.type, 'xs:decimal');
 		})
 	) {
-		return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
+		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
 	}
 
-	return SequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
+	return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
 };
 
 const fnZeroOrOne: FunctionDefinitionType = function(
@@ -537,7 +537,7 @@ const fnFilter: FunctionDefinitionType = function(
 		// Transform argument
 		const transformedArgument = transformArgument(
 			callbackArgumentTypes[0] as TypeDeclaration,
-			SequenceFactory.singleton(item),
+			sequenceFactory.singleton(item),
 			executionParameters,
 			'fn:filter'
 		);
@@ -577,7 +577,7 @@ const fnForEach: FunctionDefinitionType = function(
 
 	const outerIterator = sequence.value;
 	let innerIterator;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			while (true) {
 				if (!innerIterator) {
@@ -589,7 +589,7 @@ const fnForEach: FunctionDefinitionType = function(
 
 					const transformedArgument = transformArgument(
 						callbackArgumentTypes[0] as TypeDeclaration,
-						SequenceFactory.singleton(/** @type {!Value} */ (item.value)),
+						sequenceFactory.singleton(/** @type {!Value} */ (item.value)),
 						executionParameters,
 						'fn:for-each'
 					);
@@ -642,7 +642,7 @@ const fnFoldLeft: FunctionDefinitionType = function(
 			);
 			const currentArg = transformArgument(
 				callbackArgumentTypes[1] as TypeDeclaration,
-				SequenceFactory.singleton(current),
+				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-left'
 			);
@@ -686,7 +686,7 @@ const fnFoldRight: FunctionDefinitionType = function(
 			);
 			const currentArg = transformArgument(
 				callbackArgumentTypes[1] as TypeDeclaration,
-				SequenceFactory.singleton(current),
+				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-right'
 			);
@@ -772,7 +772,7 @@ export default {
 					_staticContext,
 					sequence,
 					start,
-					SequenceFactory.empty()
+					sequenceFactory.empty()
 				)
 		},
 
@@ -873,7 +873,7 @@ export default {
 					executionParameters,
 					_staticContext,
 					sequence,
-					SequenceFactory.singleton(createAtomicValue(0, 'xs:integer'))
+					sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'))
 				);
 			}
 		},

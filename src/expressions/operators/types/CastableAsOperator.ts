@@ -1,6 +1,6 @@
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
-import SequenceFactory from '../../dataTypes/sequenceFactory';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 
 class CastableAsOperator extends Expression {
@@ -43,9 +43,9 @@ class CastableAsOperator extends Expression {
 		return evaluatedExpression.switchCases({
 			empty: () => {
 				if (!this._allowsEmptySequence) {
-					return SequenceFactory.singletonFalseSequence();
+					return sequenceFactory.singletonFalseSequence();
 				}
-				return SequenceFactory.singletonTrueSequence();
+				return sequenceFactory.singletonTrueSequence();
 			},
 			singleton: () => {
 				return evaluatedExpression.map(value =>
@@ -53,7 +53,7 @@ class CastableAsOperator extends Expression {
 				);
 			},
 			multiple: () => {
-				return SequenceFactory.singletonFalseSequence();
+				return sequenceFactory.singletonFalseSequence();
 			}
 		});
 	}

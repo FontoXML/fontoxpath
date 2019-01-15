@@ -1,4 +1,4 @@
-import SequenceFactory from '../../dataTypes/sequenceFactory';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';
@@ -58,17 +58,17 @@ class Compare extends Expression {
 		return firstSequence.switchCases({
 			empty: () => {
 				if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
-					return SequenceFactory.empty();
+					return sequenceFactory.empty();
 				}
-				return SequenceFactory.singletonFalseSequence();
+				return sequenceFactory.singletonFalseSequence();
 			},
 			default: () =>
 				secondSequence.switchCases({
 					empty: () => {
 						if (this._compare === 'valueCompare' || this._compare === 'nodeCompare') {
-							return SequenceFactory.empty();
+							return sequenceFactory.empty();
 						}
-						return SequenceFactory.singletonFalseSequence();
+						return sequenceFactory.singletonFalseSequence();
 					},
 					default: () => {
 						if (this._compare === 'nodeCompare') {
@@ -96,8 +96,8 @@ class Compare extends Expression {
 														onlySecondValue,
 														dynamicContext
 													)
-														? SequenceFactory.singletonTrueSequence()
-														: SequenceFactory.singletonFalseSequence()
+														? sequenceFactory.singletonTrueSequence()
+														: sequenceFactory.singletonFalseSequence()
 												)
 											),
 										default: () => {

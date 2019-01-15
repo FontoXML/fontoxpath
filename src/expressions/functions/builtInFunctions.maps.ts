@@ -1,6 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -17,7 +17,7 @@ const mapMerge: FunctionDefinitionType = function(
 	mapSequence,
 	optionMap
 ) {
-	const duplicateKey = SequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
+	const duplicateKey = sequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
 		executionParameters,
@@ -30,7 +30,7 @@ const mapMerge: FunctionDefinitionType = function(
 		? 'use-first'
 		: duplicationHandlingValueSequence.first().value;
 	return mapSequence.mapAll(allValues =>
-		SequenceFactory.singleton(
+		sequenceFactory.singleton(
 			new MapValue(
 				allValues.reduce((resultingKeyValuePairs, map) => {
 					(map as MapValue).keyValuePairs.forEach(function(keyValuePair) {
@@ -59,7 +59,7 @@ const mapMerge: FunctionDefinitionType = function(
 									resultingKeyValuePairs.splice(existingPairIndex, 1, {
 										key: keyValuePair.key,
 										value: createDoublyIterableSequence(
-											SequenceFactory.create(
+											sequenceFactory.create(
 												resultingKeyValuePairs[existingPairIndex]
 													.value()
 													.getAllValues()
@@ -108,7 +108,7 @@ const mapPut: FunctionDefinitionType = function(
 				value: createDoublyIterableSequence(newValueSequence)
 			});
 		}
-		return SequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
+		return sequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
 	});
 };
 
@@ -142,7 +142,7 @@ const mapKeys: FunctionDefinitionType = function(
 	mapSequence
 ) {
 	return zipSingleton([mapSequence], ([map]) =>
-		SequenceFactory.create((map as MapValue).keyValuePairs.map(pair => pair.key))
+		sequenceFactory.create((map as MapValue).keyValuePairs.map(pair => pair.key))
 	);
 };
 
@@ -158,8 +158,8 @@ const mapContains: FunctionDefinitionType = function(
 			isSameMapKey(pair.key, key)
 		);
 		return doesContain
-			? SequenceFactory.singletonTrueSequence()
-			: SequenceFactory.singletonFalseSequence();
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
 	});
 };
 
@@ -181,7 +181,7 @@ const mapRemove: FunctionDefinitionType = function(
 					resultingKeyValuePairs.splice(indexOfExistingPair, 1);
 				}
 			});
-			return SequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
+			return sequenceFactory.singleton(new MapValue(resultingKeyValuePairs));
 		});
 	});
 };
@@ -201,7 +201,7 @@ const mapForEach: FunctionDefinitionType = function(
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					SequenceFactory.singleton(keyValuePair.key),
+					sequenceFactory.singleton(keyValuePair.key),
 					keyValuePair.value()
 				);
 			})
@@ -272,12 +272,12 @@ export default {
 					executionParameters,
 					staticContext,
 					maps,
-					SequenceFactory.singleton(
+					sequenceFactory.singleton(
 						new MapValue([
 							{
 								key: createAtomicValue('duplicates', 'xs:string'),
 								value: () =>
-									SequenceFactory.singleton(
+									sequenceFactory.singleton(
 										createAtomicValue('use-first', 'xs:string')
 									)
 							}

@@ -2,7 +2,7 @@ import arrayGet from '../functions/builtInFunctions.arrays.get';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
-import SequenceFactory from './sequenceFactory';
+import sequenceFactory from './sequenceFactory';
 
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];
@@ -13,7 +13,7 @@ class ArrayValue extends FunctionValue {
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					SequenceFactory.singleton(this),
+					sequenceFactory.singleton(this),
 					key
 				),
 			localName: 'get',

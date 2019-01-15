@@ -1,6 +1,6 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class SelfAxis extends Expression {
@@ -26,8 +26,8 @@ class SelfAxis extends Expression {
 			dynamicContext.contextItem
 		);
 		return isMatch
-			? SequenceFactory.singleton(dynamicContext.contextItem)
-			: SequenceFactory.empty();
+			? sequenceFactory.singleton(dynamicContext.contextItem)
+			: sequenceFactory.empty();
 	}
 
 	public getBucket() {

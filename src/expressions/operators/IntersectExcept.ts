@@ -4,7 +4,7 @@ import DomFacade from '../../domFacade/DomFacade';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
 function ensureSortedSequence(
@@ -20,14 +20,14 @@ function ensureSortedSequence(
 			);
 		}
 		if (expectedResultOrder === RESULT_ORDERINGS.SORTED) {
-			return SequenceFactory.create(values);
+			return sequenceFactory.create(values);
 		}
 		if (expectedResultOrder === RESULT_ORDERINGS.REVERSE_SORTED) {
-			return SequenceFactory.create(values.reverse());
+			return sequenceFactory.create(values.reverse());
 		}
 
 		// Unsorted
-		return SequenceFactory.create(sortNodeValues(domFacade, values));
+		return sequenceFactory.create(sortNodeValues(domFacade, values));
 	});
 }
 
@@ -75,7 +75,7 @@ class IntersectExcept extends Expression {
 
 		let done = false;
 		let secondIteratorDone = false;
-		return SequenceFactory.create({
+		return sequenceFactory.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;

@@ -5,7 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { transformArgument } from './argumentHelper';
 
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
@@ -92,7 +92,7 @@ function fnRound(
 	precision
 ) {
 	let done = false;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
@@ -176,16 +176,16 @@ const fnNumber: FunctionDefinitionType = function(
 	sequence
 ) {
 	return sequence.atomize(executionParameters).switchCases({
-		empty: () => SequenceFactory.singleton(createAtomicValue(NaN, 'xs:double')),
+		empty: () => sequenceFactory.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
 			const castResult = tryCastToType(
 				/** @type {!AtomicValue<?>} */ (sequence.first()),
 				'xs:double'
 			);
 			if (castResult.successful) {
-				return SequenceFactory.singleton(castResult.value);
+				return sequenceFactory.singleton(castResult.value);
 			}
-			return SequenceFactory.singleton(createAtomicValue(NaN, 'xs:double'));
+			return sequenceFactory.singleton(createAtomicValue(NaN, 'xs:double'));
 		},
 		multiple: () => {
 			throw new Error('fn:number may only be called with zero or one values');
@@ -205,7 +205,7 @@ const returnRandomItemFromSequence: FunctionDefinitionType = function(
 
 	const sequenceValue = sequence.getAllValues();
 	const index = Math.floor(Math.random() * sequenceValue.length);
-	return SequenceFactory.singleton(sequenceValue[index]);
+	return sequenceFactory.singleton(sequenceValue[index]);
 };
 
 const fnRandomNumberGenerator: FunctionDefinitionType = function(
@@ -215,17 +215,17 @@ const fnRandomNumberGenerator: FunctionDefinitionType = function(
 	_sequence
 ) {
 	// Ignore the optional seed, as Math.random does not support a seed
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		new MapValue([
 			{
 				key: createAtomicValue('number', 'xs:string'),
 				value: () =>
-					SequenceFactory.singleton(createAtomicValue(Math.random(), 'xs:double'))
+					sequenceFactory.singleton(createAtomicValue(Math.random(), 'xs:double'))
 			},
 			{
 				key: createAtomicValue('next', 'xs:string'),
 				value: () =>
-					SequenceFactory.singleton(
+					sequenceFactory.singleton(
 						new FunctionValue({
 							value: fnRandomNumberGenerator,
 							localName: '',
@@ -239,7 +239,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = function(
 			{
 				key: createAtomicValue('permute', 'xs:string'),
 				value: () =>
-					SequenceFactory.singleton(
+					sequenceFactory.singleton(
 						new FunctionValue({
 							value: returnRandomItemFromSequence,
 							localName: '',
@@ -330,7 +330,7 @@ export default {
 					dynamicContext.contextItem &&
 					transformArgument(
 						{ type: 'xs:anyAtomicType', occurrence: '?' },
-						SequenceFactory.singleton(dynamicContext.contextItem),
+						sequenceFactory.singleton(dynamicContext.contextItem),
 						executionParameters,
 						'fn:number'
 					);

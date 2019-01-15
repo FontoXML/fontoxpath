@@ -1,5 +1,5 @@
 import castToType from '../../dataTypes/castToType';
-import SequenceFactory from '../../dataTypes/sequenceFactory';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 
 class CastAsOperator extends Expression {
@@ -45,7 +45,7 @@ class CastAsOperator extends Expression {
 						'XPTY0004: Sequence to cast is empty while target type is singleton.'
 					);
 				}
-				return SequenceFactory.empty();
+				return sequenceFactory.empty();
 			},
 			singleton: () => {
 				return evaluatedExpression.map(value => castToType(value, this._targetType));

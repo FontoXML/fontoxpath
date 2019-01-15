@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 
 class UniversalExpression extends Expression {
@@ -17,7 +17,7 @@ class UniversalExpression extends Expression {
 	}
 
 	public evaluate() {
-		return SequenceFactory.singletonTrueSequence();
+		return sequenceFactory.singletonTrueSequence();
 	}
 }
 export default UniversalExpression;

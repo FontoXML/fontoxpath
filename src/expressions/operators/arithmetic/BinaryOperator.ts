@@ -1,7 +1,7 @@
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
-import SequenceFactory from '../../dataTypes/sequenceFactory';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 
 import {
@@ -419,14 +419,14 @@ class BinaryOperator extends Expression {
 			if (firstValues.length === 0) {
 				// Shortcut, if the first part is empty, we can return empty.
 				// As per spec, we do not have to evaluate the second part, though we could.
-				return SequenceFactory.empty();
+				return sequenceFactory.empty();
 			}
 			const secondValueSequence = this._secondValueExpr
 				.evaluateMaybeStatically(dynamicContext, executionParameters)
 				.atomize(executionParameters);
 			return secondValueSequence.mapAll(secondValues => {
 				if (secondValues.length === 0) {
-					return SequenceFactory.empty();
+					return sequenceFactory.empty();
 				}
 
 				if (firstValues.length > 1 || secondValues.length > 1) {
@@ -451,7 +451,7 @@ class BinaryOperator extends Expression {
 					);
 				}
 
-				return SequenceFactory.singleton(prefabOperator(firstValue, secondValue));
+				return sequenceFactory.singleton(prefabOperator(firstValue, secondValue));
 			});
 		});
 	}

@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class ParentAxis extends Expression {
@@ -27,7 +27,7 @@ class ParentAxis extends Expression {
 		const /** !Node */ contextNode = dynamicContext.contextItem.value;
 		const parentNode = domFacade.getParentNode(contextNode);
 		if (!parentNode) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		const parentNodeValue = createNodeValue(parentNode);
 		const nodeIsMatch = this._parentExpression.evaluateToBoolean(
@@ -35,9 +35,9 @@ class ParentAxis extends Expression {
 			parentNodeValue
 		);
 		if (!nodeIsMatch) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
-		return SequenceFactory.singleton(parentNodeValue);
+		return sequenceFactory.singleton(parentNodeValue);
 	}
 }
 

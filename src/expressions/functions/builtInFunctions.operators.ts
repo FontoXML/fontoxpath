@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -20,22 +20,22 @@ const opTo: FunctionDefinitionType = function(
 
 	if (from.ready && to.ready) {
 		if (from.value === null || to.value === null) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		fromValue = from.value.value;
 		toValue = to.value.value;
 		if (fromValue > toValue) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		// By providing a length, we do not have to hold an end condition into account
-		return SequenceFactory.create(
+		return sequenceFactory.create(
 			{
 				next: () => ready(createAtomicValue(fromValue++, 'xs:integer'))
 			},
 			toValue - fromValue + 1
 		);
 	}
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next: () => {
 			if (fromValue === null) {
 				const from = fromSequence.tryGetFirst();

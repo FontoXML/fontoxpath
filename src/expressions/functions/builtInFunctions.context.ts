@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -13,7 +13,7 @@ const fnLast: FunctionDefinitionType = function(dynamicContext) {
 	}
 
 	let done = false;
-	return SequenceFactory.create(
+	return sequenceFactory.create(
 		{
 			next: () => {
 				if (done) {
@@ -38,31 +38,31 @@ const fnPosition: FunctionDefinitionType = function(dynamicContext) {
 		);
 	}
 	// Note: +1 because XPath is one-based
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer')
 	);
 };
 
 const fnCurrentDateTime: FunctionDefinitionType = function(dynamicContext) {
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp')
 	);
 };
 
 const fnCurrentDate: FunctionDefinitionType = function(dynamicContext) {
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date')
 	);
 };
 
 const fnCurrentTime: FunctionDefinitionType = function(dynamicContext) {
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time')
 	);
 };
 
 const fnImplicitTimezone: FunctionDefinitionType = function(dynamicContext) {
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration')
 	);
 };

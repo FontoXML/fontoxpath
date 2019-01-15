@@ -1,7 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOfType from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import zipSingleton from '../util/zipSingleton';
 import builtinStringFunctions from './builtInFunctions.string';
@@ -24,7 +24,7 @@ function contextItemAsFirstArgument(fn, dynamicContext, executionParameters, _st
 		dynamicContext,
 		executionParameters,
 		_staticContext,
-		SequenceFactory.singleton(dynamicContext.contextItem)
+		sequenceFactory.singleton(dynamicContext.contextItem)
 	);
 }
 
@@ -36,13 +36,13 @@ const fnNodeName: FunctionDefinitionType = function(
 ) {
 	return zipSingleton([sequence], ([nodeValue]) => {
 		if (nodeValue === null) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 		switch (nodeValue.value.nodeType) {
 			case 1:
 			case 2:
 				// element or attribute
-				return SequenceFactory.singleton(
+				return sequenceFactory.singleton(
 					createAtomicValue(
 						new QName(
 							nodeValue.value.prefix,
@@ -56,12 +56,12 @@ const fnNodeName: FunctionDefinitionType = function(
 				// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
 				const processingInstruction =
 					/** @type {ProcessingInstruction} */ (nodeValue.value);
-				return SequenceFactory.singleton(
+				return sequenceFactory.singleton(
 					createAtomicValue(new QName('', '', processingInstruction.target), 'xs:QName')
 				);
 			default:
 				// All other nodes have no name
-				return SequenceFactory.empty();
+				return sequenceFactory.empty();
 		}
 	});
 };
@@ -73,7 +73,7 @@ const fnName: FunctionDefinitionType = function(
 	sequence
 ) {
 	return sequence.switchCases({
-		empty: () => SequenceFactory.empty(),
+		empty: () => sequenceFactory.empty(),
 		default: () =>
 			fnString(
 				dynamicContext,
@@ -100,7 +100,7 @@ const fnLocalName: FunctionDefinitionType = function(
 	sequence
 ) {
 	return sequence.switchCases({
-		empty: () => SequenceFactory.singleton(createAtomicValue('', 'xs:string')),
+		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string')),
 		default: () => {
 			return sequence.map(node => {
 				if (node.value.nodeType === 7) {
@@ -135,7 +135,7 @@ const fnOutermost: FunctionDefinitionType = function(
 ) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 
 		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues).reduce(
@@ -162,7 +162,7 @@ const fnOutermost: FunctionDefinitionType = function(
 			[]
 		);
 
-		return SequenceFactory.create(resultNodes);
+		return sequenceFactory.create(resultNodes);
 	});
 };
 
@@ -174,7 +174,7 @@ const fnInnermost: FunctionDefinitionType = function(
 ) {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
-			return SequenceFactory.empty();
+			return sequenceFactory.empty();
 		}
 
 		const resultNodes = sortNodeValues(
@@ -195,7 +195,7 @@ const fnInnermost: FunctionDefinitionType = function(
 			return followingNodes;
 		}, []);
 
-		return SequenceFactory.create(resultNodes);
+		return sequenceFactory.create(resultNodes);
 	});
 };
 

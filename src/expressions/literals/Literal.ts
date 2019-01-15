@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
@@ -35,7 +35,7 @@ class Literal extends Expression {
 				throw new TypeError('Type ' + type + ' not expected in a literal');
 		}
 
-		this._createValueSequence = () => SequenceFactory.singleton(value);
+		this._createValueSequence = () => sequenceFactory.singleton(value);
 	}
 
 	public evaluate(_dynamicContext) {

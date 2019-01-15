@@ -3,7 +3,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import { ConcreteChildNode, ConcreteNode } from '../../domFacade/ConcreteNode';
 import IDomFacade from '../../domFacade/IDomFacade';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createChildGenerator from '../util/createChildGenerator';
 import createSingleValueIterator from '../util/createSingleValueIterator';
@@ -65,7 +65,7 @@ class DescendantAxis extends Expression {
 		if (!inclusive) {
 			iterator.next();
 		}
-		const descendantSequence = SequenceFactory.create(iterator);
+		const descendantSequence = sequenceFactory.create(iterator);
 		return descendantSequence.filter(item => {
 			return this._descendantExpression.evaluateToBoolean(dynamicContext, item);
 		});

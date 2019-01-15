@@ -1,7 +1,7 @@
 import Expression from '../Expression';
 
 import MapValue from '../dataTypes/MapValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 import zipSingleton from '../util/zipSingleton';
 
@@ -44,7 +44,7 @@ class MapConstructor extends Expression {
 		);
 
 		return zipSingleton(keySequences, keys =>
-			SequenceFactory.singleton(
+			sequenceFactory.singleton(
 				new MapValue(
 					keys.map((key, keyIndex) => ({
 						key,

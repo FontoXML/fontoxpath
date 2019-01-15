@@ -1,6 +1,6 @@
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -26,7 +26,7 @@ const fnId: FunctionDefinitionType = function(
 ) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
-		return SequenceFactory.empty();
+		return sequenceFactory.empty();
 	}
 	const domFacade = executionParameters.domFacade;
 	// TODO: Index ids to optimize this lookup
@@ -59,7 +59,7 @@ const fnId: FunctionDefinitionType = function(
 		isMatchingIdById[idAttribute] = false;
 		return true;
 	});
-	return SequenceFactory.create(matchingNodes.map(createNodeValue));
+	return sequenceFactory.create(matchingNodes.map(createNodeValue));
 };
 
 const fnIdref: FunctionDefinitionType = function(
@@ -71,7 +71,7 @@ const fnIdref: FunctionDefinitionType = function(
 ) {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
-		return SequenceFactory.empty();
+		return sequenceFactory.empty();
 	}
 	const domFacade = executionParameters.domFacade;
 
@@ -99,7 +99,7 @@ const fnIdref: FunctionDefinitionType = function(
 			return isMatchingIdRefById[idRef];
 		});
 	});
-	return SequenceFactory.create(matchingNodes.map(createNodeValue));
+	return sequenceFactory.create(matchingNodes.map(createNodeValue));
 };
 
 export default {
@@ -123,7 +123,7 @@ export default {
 					executionParameters,
 					_staticContext,
 					strings,
-					SequenceFactory.singleton(dynamicContext.contextItem)
+					sequenceFactory.singleton(dynamicContext.contextItem)
 				);
 			}
 		},
@@ -147,7 +147,7 @@ export default {
 					executionParameters,
 					_staticContext,
 					strings,
-					SequenceFactory.singleton(dynamicContext.contextItem)
+					sequenceFactory.singleton(dynamicContext.contextItem)
 				);
 			}
 		}

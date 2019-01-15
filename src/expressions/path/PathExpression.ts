@@ -4,7 +4,7 @@ import DomFacade from '../../domFacade/DomFacade';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import { AsyncIterator } from '../util/iterators';
@@ -24,11 +24,11 @@ function isSameNodeValue(a, b) {
 function concatSortedSequences(_, sequences: AsyncIterator<ISequence>): ISequence {
 	let currentSequence = sequences.next();
 	if (currentSequence.done) {
-		return SequenceFactory.empty();
+		return sequenceFactory.empty();
 	}
 	let currentIterator = null;
 	let previousValue = null;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		next() {
 			if (!currentSequence.ready) {
 				return notReady(
@@ -97,7 +97,7 @@ function mergeSortedSequences(
 	let previousNode = null;
 
 	let allSequencesAreSorted = false;
-	return SequenceFactory.create({
+	return sequenceFactory.create({
 		[Symbol.iterator]() {
 			return this;
 		},
@@ -281,7 +281,7 @@ class PathExpression extends Expression {
 								}
 								return ready(
 									result.value.mapAll(items =>
-										SequenceFactory.create(items.reverse())
+										sequenceFactory.create(items.reverse())
 									)
 								);
 							}
@@ -309,7 +309,7 @@ class PathExpression extends Expression {
 							resultValuesInOrderOfEvaluation
 						);
 						return concattedSequence.mapAll(allValues =>
-							SequenceFactory.create(
+							sequenceFactory.create(
 								sortResults(executionParameters.domFacade, allValues)
 							)
 						);

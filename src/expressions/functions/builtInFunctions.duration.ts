@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -12,7 +12,7 @@ const fnYearsFromDuration: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getYears(), 'xs:integer')
 	);
 };
@@ -26,7 +26,7 @@ const fnMonthsFromDuration: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getMonths(), 'xs:integer')
 	);
 };
@@ -40,7 +40,7 @@ const fnDaysFromDuration: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getDays(), 'xs:integer')
 	);
 };
@@ -54,7 +54,7 @@ const fnHoursFromDuration: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getHours(), 'xs:integer')
 	);
 };
@@ -68,7 +68,7 @@ const fnMinutesFromDuration: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer')
 	);
 };
@@ -82,7 +82,7 @@ const fnSecondsFromDuration: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
-	return SequenceFactory.singleton(
+	return sequenceFactory.singleton(
 		createAtomicValue(sequence.first().value.getSeconds(), 'xs:decimal')
 	);
 };

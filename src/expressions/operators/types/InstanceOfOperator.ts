@@ -1,4 +1,4 @@
-import SequenceFactory from '../../dataTypes/sequenceFactory';
+import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 import sequenceEvery from '../../util/sequenceEvery';
 
@@ -23,15 +23,15 @@ class InstanceOfOperator extends Expression {
 		return evaluatedExpression.switchCases({
 			empty: () => {
 				if (this._multiplicity === '?' || this._multiplicity === '*') {
-					return SequenceFactory.singletonTrueSequence();
+					return sequenceFactory.singletonTrueSequence();
 				}
 				// Disallowed
-				return SequenceFactory.singletonFalseSequence();
+				return sequenceFactory.singletonFalseSequence();
 			},
 			multiple: () => {
 				if (this._multiplicity === '+' || this._multiplicity === '*') {
 					return sequenceEvery(evaluatedExpression, value => {
-						const contextItem = SequenceFactory.singleton(value);
+						const contextItem = sequenceFactory.singleton(value);
 						const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
 						return this._typeTest.evaluateMaybeStatically(
 							scopedContext,
@@ -39,11 +39,11 @@ class InstanceOfOperator extends Expression {
 						);
 					});
 				}
-				return SequenceFactory.singletonFalseSequence();
+				return sequenceFactory.singletonFalseSequence();
 			},
 			singleton: () => {
 				return sequenceEvery(evaluatedExpression, value => {
-					const contextItem = SequenceFactory.singleton(value);
+					const contextItem = sequenceFactory.singleton(value);
 					const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
 					return this._typeTest.evaluateMaybeStatically(
 						scopedContext,

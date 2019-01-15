@@ -1,11 +1,11 @@
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 
 export default function createDoublyIterableSequence(sequence) {
 	const savedValues = [];
 	const backingIterator = sequence.value;
 	return function() {
 		let i = 0;
-		return SequenceFactory.create({
+		return sequenceFactory.create({
 			next: () => {
 				if (savedValues[i] !== undefined) {
 					return savedValues[i++];

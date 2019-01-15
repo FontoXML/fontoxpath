@@ -2,7 +2,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/sequenceFactory';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import Specificity from '../Specificity';
 import { ready } from '../util/iterators';
@@ -113,7 +113,7 @@ class TransformExpression extends UpdatingExpression {
 						// The variable name is bound to the top-level copied node generated in the previous step. The scope of this variable binding includes all subexpressions of the containing copy modify expression that appear after the variable binding clause, including the source expressions of later variable bindings, but it does not include the source expression to which the current variable name is bound.
 						dynamicContext = dynamicContext.scopeWithVariableBindings({
 							[variableBinding.registeredVariable]: () =>
-								SequenceFactory.singleton(copiedNodes)
+								sequenceFactory.singleton(copiedNodes)
 						});
 					}
 				}
