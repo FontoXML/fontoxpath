@@ -1,4 +1,4 @@
-import SequenceFactory from './dataTypes/SequenceFactory';
+import sequenceFactory from './dataTypes/sequenceFactory';
 import DynamicContext from './DynamicContext';
 
 type VariableBindings = { variableBindings: { [s: string]: any } };
@@ -8,7 +8,7 @@ export default class UnfocusableDynamicContext extends DynamicContext {
 		super({
 			contextItem: null,
 			contextItemIndex: -1,
-			contextSequence: SequenceFactory.empty(),
+			contextSequence: sequenceFactory.empty(),
 			variableBindings: bindings.variableBindings
 		});
 	}

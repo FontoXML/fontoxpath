@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';

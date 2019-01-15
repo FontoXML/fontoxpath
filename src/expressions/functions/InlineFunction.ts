@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import FunctionValue from '../dataTypes/FunctionValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import QName from '../dataTypes/valueTypes/QName';
 import Specificity from '../Specificity';

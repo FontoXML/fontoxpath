@@ -5,7 +5,7 @@ import Specificity from '../Specificity';
 
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import { ready } from '../util/iterators';
 
 function assertValidTarget(target) {

@@ -1,6 +1,6 @@
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
-import SequenceFactory from '../../dataTypes/SequenceFactory';
+import SequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 
 class CastableAsOperator extends Expression {

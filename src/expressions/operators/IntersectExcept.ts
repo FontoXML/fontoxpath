@@ -4,7 +4,7 @@ import DomFacade from '../../domFacade/DomFacade';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
 function ensureSortedSequence(

@@ -1,4 +1,4 @@
-import SequenceFactory from '../../dataTypes/SequenceFactory';
+import SequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 import generalCompare from './generalCompare';
 import nodeCompare from './nodeCompare';

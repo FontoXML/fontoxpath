@@ -25,9 +25,9 @@ class DynamicContext {
 			variableBindings: { [s: string]: () => ISequence };
 		},
 		temporalContext: TemporalContext | undefined = {
-			isInitialized: false,
 			currentDateTime: null,
-			implicitTimezone: null
+			implicitTimezone: null,
+			isInitialized: false
 		}
 	) {
 		this._temporalContext = temporalContext;
@@ -93,8 +93,8 @@ class DynamicContext {
 	): DynamicContext {
 		return new DynamicContext(
 			{
-				contextItemIndex,
 				contextItem,
+				contextItemIndex,
 				contextSequence: contextSequence || this.contextSequence,
 				variableBindings: this.variableBindings
 			},
@@ -105,8 +105,8 @@ class DynamicContext {
 	public scopeWithVariableBindings(variableBindings: { [s: string]: ISequence }): DynamicContext {
 		return new DynamicContext(
 			{
-				contextItemIndex: this.contextItemIndex,
 				contextItem: this.contextItem,
+				contextItemIndex: this.contextItemIndex,
 				contextSequence: this.contextSequence,
 				variableBindings: Object.assign(
 					Object.create(null),

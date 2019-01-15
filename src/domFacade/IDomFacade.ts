@@ -16,6 +16,5 @@ export default interface IDomFacade {
 	getLastChild(node: ConcreteParentNode): ConcreteChildNode;
 	getNextSibling(node: ConcreteChildNode): ConcreteChildNode;
 	getParentNode(node: ConcreteNode): ConcreteParentNode;
-	getParentNode(node: ConcreteElementNode): ConcreteParentNode;
 	getPreviousSibling(node: ConcreteChildNode): ConcreteChildNode;
 }

@@ -5,7 +5,7 @@ import { errXQDY0025, errXQDY0096, errXQST0040, errXQTY0024 } from './XQueryErro
 
 import createNodeValue from '../dataTypes/createNodeValue';
 import ISequence from '../dataTypes/ISequence';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import concatSequences from '../util/concatSequences';

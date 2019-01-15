@@ -3,7 +3,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import { ConcreteChildNode, ConcreteNode } from '../../domFacade/ConcreteNode';
 import IDomFacade from '../../domFacade/IDomFacade';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createChildGenerator from '../util/createChildGenerator';
 import createSingleValueIterator from '../util/createSingleValueIterator';

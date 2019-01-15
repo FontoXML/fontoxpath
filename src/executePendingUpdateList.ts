@@ -9,16 +9,17 @@ import wrapExternalDocumentWriter from './documentWriter/wrapExternalDocumentWri
 import INodesFactory from './nodesFactory/INodesFactory';
 import wrapExternalNodesFactory from './nodesFactory/wrapExternalNodesFactory';
 
-import { PendingUpdate } from './expressions/xquery-update/PendingUpdate';
 import { applyUpdates } from './expressions/xquery-update/pulRoutines';
+
+import createPendingUpdateFromTransferable from './expressions/xquery-update/createPendingUpdateFromTransferable';
 
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
  *
- * @param  pendingUpdateList  The updateScript to execute.
- * @param  domFacade          The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  nodesFactory       The nodesFactory for creating nodes.
- * @param  documentWriter     The documentWriter for writing changes.
+ * @param  pendingUpdateList - The updateScript to execute.
+ * @param  domFacade         - The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  nodesFactory      - The nodesFactory for creating nodes.
+ * @param  documentWriter    - The documentWriter for writing changes.
  */
 export default function executePendingUpdateList(
 	pendingUpdateList: object[],
@@ -26,24 +27,14 @@ export default function executePendingUpdateList(
 	nodesFactory?: INodesFactory,
 	documentWriter?: IDocumentWriter
 ): void {
-	if (domFacade) {
-		domFacade = new DomFacade(domFacade);
-	} else {
-		domFacade = domBackedDomFacade;
-	}
+	domFacade = domFacade ? new DomFacade(domFacade) : domBackedDomFacade;
 
-	if (documentWriter) {
-		documentWriter = wrapExternalDocumentWriter(documentWriter);
-	} else {
-		documentWriter = domBackedDocumentWriter;
-	}
+	documentWriter = documentWriter
+		? wrapExternalDocumentWriter(documentWriter)
+		: domBackedDocumentWriter;
 
-	if (nodesFactory) {
-		nodesFactory = wrapExternalNodesFactory(nodesFactory);
-	} else {
-		nodesFactory = null;
-	}
+	nodesFactory = nodesFactory ? (nodesFactory = wrapExternalNodesFactory(nodesFactory)) : null;
 
-	const pul = pendingUpdateList.map(PendingUpdate.fromTransferable);
+	const pul = pendingUpdateList.map(createPendingUpdateFromTransferable);
 	applyUpdates(pul, null, null, domFacade, nodesFactory, documentWriter);
 }

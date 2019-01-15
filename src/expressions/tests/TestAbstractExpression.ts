@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 
 import AtomicValue from '../dataTypes/AtomicValue';
 import DynamicContext from '../DynamicContext';

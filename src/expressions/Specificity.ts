@@ -11,7 +11,7 @@ class Specificity {
 	private _counts: number[];
 
 	constructor(countsByKind: { [s: string]: number }) {
-		this._counts = SPECIFICITY_DIMENSIONS.map(function(specificityKind) {
+		this._counts = SPECIFICITY_DIMENSIONS.map(specificityKind => {
 			return countsByKind[specificityKind] || 0;
 		});
 

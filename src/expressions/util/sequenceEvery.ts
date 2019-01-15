@@ -1,6 +1,6 @@
 import { falseBoolean, trueBoolean } from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, notReady, ready } from './iterators';
 
 export default function sequenceEvery(

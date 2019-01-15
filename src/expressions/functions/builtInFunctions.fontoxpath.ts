@@ -1,6 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';

@@ -2,7 +2,7 @@ import arrayGet from '../functions/builtInFunctions.arrays.get';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
-import SequenceFactory from './SequenceFactory';
+import SequenceFactory from './sequenceFactory';
 
 class ArrayValue extends FunctionValue {
 	public members: (() => ISequence)[];

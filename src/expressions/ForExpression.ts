@@ -1,4 +1,4 @@
-import SequenceFactory from './dataTypes/SequenceFactory';
+import sequenceFactory from './dataTypes/sequenceFactory';
 import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import { DONE_TOKEN } from './util/iterators';
@@ -45,7 +45,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 		).value;
 		let returnIterator = null;
 		let done = false;
-		return SequenceFactory.create({
+		return sequenceFactory.create({
 			next: () => {
 				while (!done) {
 					if (returnIterator === null) {
@@ -60,7 +60,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 
 						const nestedContext = dynamicContext.scopeWithVariableBindings({
 							[this._variableBindingKey]: () =>
-								SequenceFactory.singleton(currentClauseValue.value)
+								sequenceFactory.singleton(currentClauseValue.value)
 						});
 
 						returnIterator = createReturnExpression(nestedContext).value;

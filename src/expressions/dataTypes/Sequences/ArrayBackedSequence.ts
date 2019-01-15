@@ -4,7 +4,7 @@ import { AsyncIterator, AsyncResult, DONE_TOKEN, ready } from '../../util/iterat
 import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
-import SequenceFactory from '../SequenceFactory';
+import SequenceFactory from '../sequenceFactory';
 import Value from '../Value';
 
 export default class ArrayBackedSequence implements ISequence {

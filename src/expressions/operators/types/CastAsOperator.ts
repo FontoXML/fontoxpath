@@ -1,8 +1,8 @@
 import castToType from '../../dataTypes/castToType';
-import SequenceFactory from '../../dataTypes/SequenceFactory';
+import SequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 
-class castAsOperator extends Expression {
+class CastAsOperator extends Expression {
 	public _allowsEmptySequence: boolean;
 	public _expression: Expression;
 	public _targetType: string;
@@ -57,4 +57,4 @@ class castAsOperator extends Expression {
 	}
 }
 
-export default castAsOperator;
+export default CastAsOperator;

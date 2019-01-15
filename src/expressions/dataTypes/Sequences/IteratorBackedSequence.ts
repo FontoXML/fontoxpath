@@ -4,7 +4,7 @@ import { AsyncIterator, AsyncResult, DONE_TOKEN, notReady, ready } from '../../u
 import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
-import SequenceFactory from '../SequenceFactory';
+import SequenceFactory from '../sequenceFactory';
 import Value from '../Value';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 

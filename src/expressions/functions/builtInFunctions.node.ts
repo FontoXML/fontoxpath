@@ -1,14 +1,14 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOfType from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import zipSingleton from '../util/zipSingleton';
 import builtinStringFunctions from './builtInFunctions.string';
 
 import { ConcreteNode } from '../../domFacade/ConcreteNode';
 import IDomFacade from '../../domFacade/IDomFacade';
-import createFromNode from '../dataTypes/createNodeValue';
+import createNodeValue from '../dataTypes/createNodeValue';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -216,7 +216,7 @@ const fnRoot: FunctionDefinitionType = function(
 			ancestor = parent;
 			parent = executionParameters.domFacade.getParentNode(ancestor);
 		}
-		return createFromNode(ancestor);
+		return createNodeValue(ancestor);
 	});
 };
 

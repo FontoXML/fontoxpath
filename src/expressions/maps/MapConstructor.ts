@@ -1,7 +1,7 @@
 import Expression from '../Expression';
 
 import MapValue from '../dataTypes/MapValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 import zipSingleton from '../util/zipSingleton';
 

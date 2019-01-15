@@ -1,5 +1,5 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import { errXPTY0004 } from '../XPathErrors';
 import { errXQDY0041, errXQDY0074 } from './XQueryErrors';

@@ -3,7 +3,7 @@ import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import builtInFunctionsNode from './builtInFunctions.node';
 

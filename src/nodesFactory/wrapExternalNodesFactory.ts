@@ -28,6 +28,6 @@ class WrappingNodesFactory implements INodesFactory {
 	}
 }
 
-export default function wrapExternalDocumentWriter(externalNodesFactory) {
+export default function wrapExternalNodesFactory(externalNodesFactory) {
 	return new WrappingNodesFactory(externalNodesFactory);
 }

@@ -1,7 +1,7 @@
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import { transformArgument } from './argumentHelper';
 

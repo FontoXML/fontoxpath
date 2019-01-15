@@ -12,11 +12,11 @@ import INodesFactory from '../../nodesFactory/INodesFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
 
-const ELEMENT_NODE = 1,
-	ATTRIBUTE_NODE = 2,
-	TEXT_NODE = 3,
-	PROCESSING_INSTRUCTION_NODE = 7,
-	COMMENT_NODE = 8;
+const ELEMENT_NODE = 1;
+const ATTRIBUTE_NODE = 2;
+const TEXT_NODE = 3;
+const PROCESSING_INSTRUCTION_NODE = 7;
+const COMMENT_NODE = 8;
 
 /**
  * Deletes $target.
@@ -25,11 +25,11 @@ const ELEMENT_NODE = 1,
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const deletePu = function(
+export const deletePu = (
 	target: ConcreteAttributeNode | ConcreteChildNode,
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	const parent = domFacade.getParentNode(target);
 	if (parent) {
 		if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
@@ -52,12 +52,12 @@ export const deletePu = function(
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertAfter = function(
+export const insertAfter = (
 	target: ConcreteChildNode,
 	content: Node[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	// The parent must exist or an error has been raised.
 	const parent = /** @type {!Node} */ (domFacade.getParentNode(target));
 	const nextSibling = domFacade.getNextSibling(target);
@@ -75,12 +75,12 @@ export const insertAfter = function(
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertBefore = function(
+export const insertBefore = (
 	target: ConcreteChildNode,
 	content: Node[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNode(target);
 
@@ -96,11 +96,11 @@ export const insertBefore = function(
  * @param  content         The content.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertInto = function(
+export const insertInto = (
 	target: Element | Document,
 	content: Node[],
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	insertIntoAsLast(target, content, documentWriter);
 };
 
@@ -112,12 +112,12 @@ export const insertInto = function(
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertIntoAsFirst = function(
+export const insertIntoAsFirst = (
 	target: Element | Document,
 	content: Node[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	const firstChild = domFacade.getFirstChild(target);
 	content.forEach(node => {
 		documentWriter.insertBefore(target, node, firstChild);
@@ -131,11 +131,11 @@ export const insertIntoAsFirst = function(
  * @param  content         The content.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertIntoAsLast = function(
+export const insertIntoAsLast = (
 	target: Element | Document,
 	content: Node[],
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	content.forEach(node => {
 		documentWriter.insertBefore(target, node, null);
 	});
@@ -149,12 +149,12 @@ export const insertIntoAsLast = function(
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const insertAttributes = function(
+export const insertAttributes = (
 	target: Element,
 	content: Attr[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	content.forEach(attr => {
 		if (domFacade.getAttribute(target, attr.name)) {
 			throw errXUDY0021(`An attribute ${attr.name} already exists.`);
@@ -172,13 +172,13 @@ export const insertAttributes = function(
  * @param  nodesFactory    The nodesFactory for creating nodes.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const rename = function(
+export const rename = (
 	target: ConcreteAttributeNode | ConcreteElementNode | ConcreteProcessingInstructionNode,
 	newName: QName | null,
 	domFacade: (IDomFacade | null) | undefined,
 	nodesFactory: (INodesFactory | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	if (!nodesFactory) {
 		nodesFactory = new DomBackedNodesFactory(target);
 	}
@@ -239,12 +239,12 @@ export const rename = function(
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const replaceElementContent = function(
+export const replaceElementContent = (
 	target: Element | Document,
 	text: Node | null,
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	domFacade.getChildNodes(target).forEach(child => documentWriter.removeChild(target, child));
 	if (text) {
 		documentWriter.insertBefore(target, text, null);
@@ -259,12 +259,12 @@ export const replaceElementContent = function(
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const replaceNode = function(
+export const replaceNode = (
 	target: ConcreteAttributeNode | ConcreteChildNode,
 	replacement: (ConcreteAttributeNode | ConcreteChildNode)[],
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNode(target);
 
@@ -309,12 +309,12 @@ export const replaceNode = function(
  * @param  domFacade       The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  documentWriter  The documentWriter for writing changes.
  */
-export const replaceValue = function(
+export const replaceValue = (
 	target: Element | Attr,
 	stringValue: string,
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
-) {
+) => {
 	if (target.nodeType === ATTRIBUTE_NODE) {
 		const element = domFacade.getParentNode(target as Attr) as Element;
 		if (element) {

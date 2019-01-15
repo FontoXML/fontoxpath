@@ -1,4 +1,4 @@
-import Context from './Context';
+import IContext from './Context';
 
 function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
@@ -24,14 +24,14 @@ function lookupInOverrides(overrides: any[] | { [x: string]: any }[], key: strin
  * none.
  */
 export default class StaticContext {
-	public parentContext: Context;
+	public parentContext: IContext;
 	private _registeredFunctionsByHash: any;
 	private _registeredNamespaceURIByPrefix: any[];
 	private _registeredVariableBindingByHashKey: any[];
 	private _scopeCount: number;
 	private _scopeDepth: number;
 
-	constructor(parentContext: Context) {
+	constructor(parentContext: IContext) {
 		this.parentContext = parentContext;
 
 		this._scopeDepth = 0;

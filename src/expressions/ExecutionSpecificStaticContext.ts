@@ -1,4 +1,4 @@
-import Context from './Context';
+import IContext from './Context';
 import { getFunctionByArity } from './functions/functionRegistry';
 
 import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
@@ -15,7 +15,7 @@ export const generateGlobalVariableBindingName = variableName => `GLOBAL_${varia
  * specific for the evaluation context. If the XPath did not depend on the evaluation context, it
  * will be reused.
  */
-export default class ExecutionSpecificStaticContext implements Context {
+export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
 
 	private _namespaceResolver: any;
@@ -90,8 +90,8 @@ export default class ExecutionSpecificStaticContext implements Context {
 
 		if (!this._referredNamespaceByName[prefix]) {
 			this._referredNamespaceByName[prefix] = {
-				prefix,
-				namespaceURI: uri
+				namespaceURI: uri,
+				prefix
 			};
 		}
 

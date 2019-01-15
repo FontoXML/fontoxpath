@@ -3,7 +3,7 @@ import buildContext from './evaluationUtils/buildContext';
 import atomize from './expressions/dataTypes/atomize';
 import castToType from './expressions/dataTypes/castToType';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
-import SequenceFactory from './expressions/dataTypes/SequenceFactory';
+import SequenceFactory from './expressions/dataTypes/sequenceFactory';
 import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
@@ -140,14 +140,14 @@ export type Options = {
  *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
  *  * Else, the sequence is atomized and returned.
  *
- * @param  selector     The selector to execute. Supports XPath 3.1.
- * @param  contextItem  The node from which to run the XPath.
- * @param  domFacade    The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  variables    Extra variables (name=>value). Values can be number, string, boolean, nodes or object literals and arrays.
- * @param  returnType   One of the return types, indicates the expected type of the XPath query.
- * @param  options      Extra options for evaluating this XPath
+ * @param  selector    - The selector to execute. Supports XPath 3.1.
+ * @param  contextItem - The node from which to run the XPath.
+ * @param  domFacade   - The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param  variables   - Extra variables (name to value). Values can be number, string, boolean, nodes or object literals and arrays.
+ * @param  returnType  - One of the return types, indicates the expected type of the XPath query.
+ * @param  options     - Extra options for evaluating this XPath
  */
-export default function evaluateXPath(
+function evaluateXPath(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: ExternalDomFacade | null,
@@ -220,7 +220,7 @@ export default function evaluateXPath(
 				return [];
 			}
 			// Atomize all parts
-			return allValues.value.map(function(value) {
+			return allValues.value.map(value => {
 				return atomize(value, executionParameters).value + '';
 			});
 		}
@@ -262,7 +262,7 @@ export default function evaluateXPath(
 			}
 
 			if (
-				!allResults.value.every(function(value) {
+				!allResults.value.every(value => {
 					return isSubtypeOf(value.type, 'node()');
 				})
 			) {
@@ -270,7 +270,7 @@ export default function evaluateXPath(
 					'Expected XPath ' + selector + ' to resolve to a sequence of Nodes.'
 				);
 			}
-			return allResults.value.map(function(nodeValue) {
+			return allResults.value.map(nodeValue => {
 				return nodeValue.value;
 			});
 		}
@@ -324,7 +324,7 @@ export default function evaluateXPath(
 			if (!allValues.ready) {
 				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
 			}
-			return allValues.value.map(function(value) {
+			return allValues.value.map(value => {
 				if (!isSubtypeOf(value.type, 'xs:numeric')) {
 					throw new Error('Expected XPath ' + selector + ' to resolve to numbers');
 				}
@@ -381,14 +381,14 @@ export default function evaluateXPath(
 			if (!allValues.ready) {
 				throw new Error('The XPath ' + selector + ' can not be resolved synchronously.');
 			}
-			const allValuesAreNodes = allValues.value.every(function(value) {
+			const allValuesAreNodes = allValues.value.every(value => {
 				return isSubtypeOf(value.type, 'node()') && !isSubtypeOf(value.type, 'attribute()');
 			});
 			if (allValuesAreNodes) {
 				if (allValues.value.length === 1) {
 					return allValues.value[0].value;
 				}
-				return allValues.value.map(function(nodeValue) {
+				return allValues.value.map(nodeValue => {
 					return nodeValue.value;
 				});
 			}
@@ -418,7 +418,7 @@ export default function evaluateXPath(
 			return SequenceFactory.create(allValues.value)
 				.atomize(executionParameters)
 				.getAllValues()
-				.map(function(atomizedValue) {
+				.map(atomizedValue => {
 					return atomizedValue.value;
 				});
 		}
@@ -493,3 +493,5 @@ evaluateXPath['XQUERY_3_1_LANGUAGE'] = evaluateXPath.XQUERY_3_1_LANGUAGE = 'XQue
  * Can be used to signal an XPath program should executed
  */
 evaluateXPath['XPATH_3_1_LANGUAGE'] = evaluateXPath.XPATH_3_1_LANGUAGE = 'XPath3.1';
+
+export default evaluateXPath;

@@ -1,4 +1,4 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import isSameMapKey from './isSameMapKey';
 
 import zipSingleton from '../util/zipSingleton';

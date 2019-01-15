@@ -2,7 +2,7 @@ import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-export interface AST extends Array<string | object | AST> {
+export interface IAST extends Array<string | object | IAST> {
 	0: string;
 }
 
@@ -14,7 +14,7 @@ export interface AST extends Array<string | object | AST> {
  *
  * @return  The matching children
  */
-function getChildren(ast: AST, name: string): AST[] {
+function getChildren(ast: IAST, name: string): IAST[] {
 	const children = [];
 	for (let i = 1; i < ast.length; ++i) {
 		if (!Array.isArray(ast[i])) {
@@ -35,7 +35,7 @@ function getChildren(ast: AST, name: string): AST[] {
  *
  * @return  The matching child, or null
  */
-function getFirstChild(ast: AST, name: string | string[]): AST | null {
+function getFirstChild(ast: IAST, name: string | string[]): IAST | null {
 	if (name !== '*' && !Array.isArray(name)) {
 		name = [name];
 	}
@@ -44,7 +44,7 @@ function getFirstChild(ast: AST, name: string | string[]): AST | null {
 			continue;
 		}
 		if (name === '*' || name.includes(ast[i][0])) {
-			return ast[i] as AST;
+			return ast[i] as IAST;
 		}
 	}
 	return null;
@@ -56,7 +56,7 @@ function getFirstChild(ast: AST, name: string | string[]): AST | null {
  * @param   ast  The parent
  * @return  The string content
  */
-function getTextContent(ast: AST): string {
+function getTextContent(ast: IAST): string {
 	if (ast.length < 2) {
 		return '';
 	}
@@ -72,7 +72,7 @@ function getTextContent(ast: AST): string {
  * @param   ast  The parent
  * @return  The type declaration
  */
-function getTypeDeclaration(ast: AST): TypeDeclaration {
+function getTypeDeclaration(ast: IAST): TypeDeclaration {
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
 		return { type: 'item()', occurrence: '*' };
@@ -131,22 +131,22 @@ function getTypeDeclaration(ast: AST): TypeDeclaration {
 	}
 
 	return {
-		type,
-		occurrence
+		occurrence,
+		type
 	};
 }
 
 /**
  * Follow a path to an AST node
  */
-function followPath(ast: AST, path: string[]): AST | null {
+function followPath(ast: IAST, path: string[]): IAST | null {
 	return path.reduce(getFirstChild, ast);
 }
 
 /**
  * Get the value of the given attribute
  */
-function getAttribute(ast: AST, attributeName: string): string | null {
+function getAttribute(ast: IAST, attributeName: string): string | null {
 	if (!Array.isArray(ast)) {
 		return null;
 	}
@@ -161,20 +161,20 @@ function getAttribute(ast: AST, attributeName: string): string | null {
 /**
  * Get the parts of a QName
  */
-function getQName(ast: AST): QName {
+function getQName(ast: IAST): QName {
 	return {
-		prefix: getAttribute(ast, 'prefix') || '',
+		localName: getTextContent(ast),
 		namespaceURI: getAttribute(ast, 'URI'),
-		localName: getTextContent(ast)
+		prefix: getAttribute(ast, 'prefix') || ''
 	};
 }
 
 export default {
 	followPath,
+	getAttribute,
 	getChildren,
 	getFirstChild,
+	getQName,
 	getTextContent,
-	getTypeDeclaration,
-	getAttribute,
-	getQName
+	getTypeDeclaration
 };

@@ -1,10 +1,9 @@
 import ArrayValue from './dataTypes/ArrayValue';
-import createAtomicValue from './dataTypes/createAtomicValue';
-import { falseBoolean, trueBoolean } from './dataTypes/createAtomicValue';
+import createAtomicValue, { falseBoolean, trueBoolean } from './dataTypes/createAtomicValue';
 import createNodeValue from './dataTypes/createNodeValue';
 import ISequence from './dataTypes/ISequence';
 import MapValue from './dataTypes/MapValue';
-import SequenceFactory from './dataTypes/SequenceFactory';
+import sequenceFactory from './dataTypes/sequenceFactory';
 import Value from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 
@@ -36,15 +35,14 @@ function adaptItemToXPathValue(value: any): Value | null {
 				return new ArrayValue(
 					value.map(arrayItem => {
 						if (arrayItem === undefined) {
-							return () => SequenceFactory.empty();
+							return () => sequenceFactory.empty();
 						}
 						const adaptedValue = adaptItemToXPathValue(arrayItem);
-						let adaptedSequence;
-						if (adaptedValue === null) {
-							adaptedSequence = SequenceFactory.empty();
-						} else {
-							adaptedSequence = SequenceFactory.singleton(adaptedValue);
-						}
+						const adaptedSequence =
+							adaptedValue === null
+								? sequenceFactory.empty()
+								: sequenceFactory.singleton(adaptedValue);
+
 						return () => adaptedSequence;
 					})
 				);
@@ -55,12 +53,11 @@ function adaptItemToXPathValue(value: any): Value | null {
 					.filter(key => value[key] !== undefined)
 					.map(key => {
 						const adaptedValue = adaptItemToXPathValue(value[key]);
-						let adaptedSequence;
-						if (adaptedValue === null) {
-							adaptedSequence = SequenceFactory.empty();
-						} else {
-							adaptedSequence = SequenceFactory.singleton(adaptedValue);
-						}
+						const adaptedSequence =
+							adaptedValue === null
+								? sequenceFactory.empty()
+								: sequenceFactory.singleton(adaptedValue);
+
 						return {
 							key: createAtomicValue(key, 'xs:string'),
 							value: () => adaptedSequence
@@ -77,7 +74,7 @@ function adaptItemToXPathValue(value: any): Value | null {
  * @param  value
  * @return Null if the value is absent and the empty sequence should be outputted instead
  */
-function adaptJavaScriptValueToXPathValue(type, value: any): Value | null {
+function adaptJavaScriptValueToXPath(type, value: any): Value | null {
 	if (value === null) {
 		return null;
 	}
@@ -92,6 +89,7 @@ function adaptJavaScriptValueToXPathValue(type, value: any): Value | null {
 		case 'xs:decimal':
 			return createAtomicValue(+value, 'xs:decimal');
 		case 'xs:integer':
+			// tslint:disable-next-line:no-bitwise
 			return createAtomicValue(value | 0, 'xs:integer');
 		case 'xs:float':
 			return createAtomicValue(+value, 'xs:float');
@@ -121,38 +119,38 @@ function adaptJavaScriptValueToXPathValue(type, value: any): Value | null {
 	}
 }
 
-export default function adaptJavaScriptValueToXPath(
+export default function adaptJavaScriptValueToXPathValue(
 	value: any,
 	expectedType?: string | undefined
 ): ISequence {
 	expectedType = expectedType || 'item()?';
 
-	const parts = expectedType.match(/^([^+?*]*)([\+\*\?])?$/),
-		type = parts[1],
-		multiplicity = parts[2];
+	const parts = expectedType.match(/^([^+?*]*)([\+\*\?])?$/);
+	const type = parts[1];
+	const multiplicity = parts[2];
 
 	switch (multiplicity) {
-		case '?':
-			const adaptedValue = adaptJavaScriptValueToXPathValue(type, value);
+		case '?': {
+			const adaptedValue = adaptJavaScriptValueToXPath(type, value);
 			if (adaptedValue === null) {
-				return SequenceFactory.empty();
+				return sequenceFactory.empty();
 			}
-			return SequenceFactory.singleton(adaptedValue);
-
+			return sequenceFactory.singleton(adaptedValue);
+		}
 		case '+':
 		case '*': {
-			const convertedValues = value.map(adaptJavaScriptValueToXPathValue.bind(null, type));
-			return SequenceFactory.create(
+			const convertedValues = value.map(adaptJavaScriptValueToXPath.bind(null, type));
+			return sequenceFactory.create(
 				convertedValues.filter(convertedValue => convertedValue !== null)
 			);
 		}
 
 		default: {
-			const adaptedValue = adaptJavaScriptValueToXPathValue(type, value);
+			const adaptedValue = adaptJavaScriptValueToXPath(type, value);
 			if (adaptedValue === null) {
-				return SequenceFactory.empty();
+				return sequenceFactory.empty();
 			}
-			return SequenceFactory.singleton(adaptedValue);
+			return sequenceFactory.singleton(adaptedValue);
 		}
 	}
 }

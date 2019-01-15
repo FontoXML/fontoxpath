@@ -1,5 +1,5 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import { validatePattern } from '../dataTypes/typeHelpers';
 import QName from '../dataTypes/valueTypes/QName';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';

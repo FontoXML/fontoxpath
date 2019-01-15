@@ -20,7 +20,7 @@ function getNodeSubType(node) {
 	}
 }
 
-export default function createFromNode(node) {
+export default function createNodeValue(node) {
 	if (nodeValueCache.has(node)) {
 		return nodeValueCache.get(node);
 	}

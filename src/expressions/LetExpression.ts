@@ -19,10 +19,10 @@ class LetExpression extends PossiblyUpdatingExpression {
 			bindingSequence.specificity.add(returnExpression.specificity),
 			[bindingSequence, returnExpression],
 			{
-				resultOrder: returnExpression.expectedResultOrder,
-				subtree: returnExpression.subtree,
+				canBeStaticallyEvaluated: false,
 				peer: returnExpression.peer,
-				canBeStaticallyEvaluated: false
+				resultOrder: returnExpression.expectedResultOrder,
+				subtree: returnExpression.subtree
 			}
 		);
 

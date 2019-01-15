@@ -3,7 +3,7 @@ import Specificity from '../Specificity';
 
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import concatSequences from '../util/concatSequences';
 
 /**

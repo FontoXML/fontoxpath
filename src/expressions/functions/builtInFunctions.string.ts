@@ -2,7 +2,7 @@ import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import zipSingleton from '../util/zipSingleton';
 
 import { DONE_TOKEN, ready } from '../util/iterators';

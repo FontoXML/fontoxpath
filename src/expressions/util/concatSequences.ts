@@ -1,5 +1,5 @@
 import ISequence from '../dataTypes/ISequence';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN } from './iterators';
 
 export default function concatSequences(sequences: ISequence[]): ISequence {

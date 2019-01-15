@@ -1,6 +1,6 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class SelfAxis extends Expression {

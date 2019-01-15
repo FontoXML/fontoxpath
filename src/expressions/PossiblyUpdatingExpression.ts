@@ -1,24 +1,15 @@
 import ISequence from './dataTypes/ISequence';
-import SequenceFactory from './dataTypes/SequenceFactory';
+import sequenceFactory from './dataTypes/sequenceFactory';
 import Value from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
+import UpdatingExpressionResult from './UpdatingExpressionResult';
 import { AsyncIterator, DONE_TOKEN, notReady, ready } from './util/iterators';
-import { PendingUpdate } from './xquery-update/PendingUpdate';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 
-export class UpdatingExpressionResult {
-	public pendingUpdateList: PendingUpdate[];
-	public xdmValue: Value[];
-	constructor(values: Value[], pendingUpdateList: PendingUpdate[]) {
-		this.xdmValue = values;
-		this.pendingUpdateList = pendingUpdateList;
-	}
-}
-
-abstract class PossiblyUpdatingExpression extends Expression {
+export default abstract class PossiblyUpdatingExpression extends Expression {
 	constructor(
 		specificity: Specificity,
 		childExpressions: Expression[],
@@ -62,11 +53,11 @@ abstract class PossiblyUpdatingExpression extends Expression {
 						executionParameters
 					);
 					let values: Value[];
-					let done = false;
+					let doneWithChildExpressions = false;
 					let i = 0;
-					return SequenceFactory.create({
+					return sequenceFactory.create({
 						next: () => {
-							if (done) {
+							if (doneWithChildExpressions) {
 								return DONE_TOKEN;
 							}
 							if (!values) {
@@ -82,7 +73,7 @@ abstract class PossiblyUpdatingExpression extends Expression {
 							}
 
 							if (i >= values.length) {
-								done = true;
+								doneWithChildExpressions = true;
 								return DONE_TOKEN;
 							}
 
@@ -116,5 +107,3 @@ abstract class PossiblyUpdatingExpression extends Expression {
 		_sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
 	): ISequence;
 }
-
-export default PossiblyUpdatingExpression;

@@ -4,7 +4,7 @@ import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
-import SequenceFactory from './SequenceFactory';
+import SequenceFactory from './sequenceFactory';
 import TypeDeclaration from './TypeDeclaration';
 import Value from './Value';
 

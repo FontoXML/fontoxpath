@@ -1,4 +1,4 @@
-export default interface Context {
+export default interface IContext {
 	/**
 	 * @param  {string}       namespaceURI
 	 * @param  {string}       localName

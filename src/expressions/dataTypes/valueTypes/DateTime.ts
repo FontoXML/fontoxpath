@@ -46,15 +46,15 @@ function timezoneToString(timezone: DayTimeDuration): string {
 
 class DateTime {
 	public static fromString: (string: any) => DateTime;
-	private _days: number;
-	private _hours: number;
-	private _minutes: number;
-	private _months: number;
-	private _secondFraction: number;
-	private _seconds: number;
-	private _timezone: DayTimeDuration;
-	private _type: string;
-	private _years: number;
+	protected _days: number;
+	protected _hours: number;
+	protected _minutes: number;
+	protected _months: number;
+	public secondFraction: number;
+	protected _seconds: number;
+	protected _timezone: DayTimeDuration;
+	public type: string;
+	protected _years: number;
 	constructor(
 		years: number,
 		months: number,
@@ -72,9 +72,9 @@ class DateTime {
 		this._hours = hours === 24 ? 0 : hours;
 		this._minutes = minutes;
 		this._seconds = seconds;
-		this._secondFraction = secondFraction;
+		this.secondFraction = secondFraction;
 		this._timezone = timezone;
-		this._type = type;
+		this.type = type;
 	}
 
 	public convertToType(type) {
@@ -125,7 +125,7 @@ class DateTime {
 					this._hours,
 					this._minutes,
 					this._seconds,
-					this._secondFraction,
+					this.secondFraction,
 					this._timezone,
 					'xs:time'
 				);
@@ -150,7 +150,7 @@ class DateTime {
 					this._hours,
 					this._minutes,
 					this._seconds,
-					this._secondFraction,
+					this.secondFraction,
 					this._timezone,
 					'xs:dateTime'
 				);
@@ -162,7 +162,7 @@ class DateTime {
 	}
 
 	public getFullSeconds() {
-		return this._seconds + this._secondFraction;
+		return this._seconds + this.secondFraction;
 	}
 
 	public getHours() {
@@ -178,7 +178,7 @@ class DateTime {
 	}
 
 	public getSecondFraction() {
-		return this._secondFraction;
+		return this.secondFraction;
 	}
 
 	public getSeconds() {
@@ -207,13 +207,13 @@ class DateTime {
 				this._days,
 				this._hours - timezoneToUse.getHours(),
 				this._minutes - timezoneToUse.getMinutes(),
-				this._seconds + this._secondFraction
+				this._seconds + this.secondFraction
 			)
 		);
 	}
 
 	public toString() {
-		switch (this._type) {
+		switch (this.type) {
 			case 'xs:dateTime':
 				return (
 					convertYearToString(this._years) +
@@ -226,7 +226,7 @@ class DateTime {
 					':' +
 					convertToTwoCharString(this._minutes) +
 					':' +
-					convertSecondsToString(this._seconds + this._secondFraction) +
+					convertSecondsToString(this._seconds + this.secondFraction) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
 			case 'xs:date':
@@ -244,7 +244,7 @@ class DateTime {
 					':' +
 					convertToTwoCharString(this._minutes) +
 					':' +
-					convertSecondsToString(this._seconds + this._secondFraction) +
+					convertSecondsToString(this._seconds + this.secondFraction) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
 			case 'xs:gDay':
@@ -380,10 +380,10 @@ export function compare(
 
 	if (jsTime1 === jsTime2) {
 		// We should break the tie on the secondFraction property, which has no counterpart in JS dates
-		if (dateTime1._secondFraction === dateTime2._secondFraction) {
+		if (dateTime1.secondFraction === dateTime2.secondFraction) {
 			return 0;
 		}
-		if (dateTime1._secondFraction > dateTime2._secondFraction) {
+		if (dateTime1.secondFraction > dateTime2.secondFraction) {
 			return 1;
 		}
 		return -1;
@@ -434,11 +434,11 @@ export function subtract(
 }
 
 export function addDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(`Not implemented: adding durations to ${dateTime._type}`);
+	throw new Error(`Not implemented: adding durations to ${dateTime.type}`);
 }
 
 export function subtractDuration(dateTime: DateTime, _duration: AbstractDuration): DateTime {
-	throw new Error(`Not implemented: subtracting durations from ${dateTime._type}`);
+	throw new Error(`Not implemented: subtracting durations from ${dateTime.type}`);
 }
 
 export default DateTime;

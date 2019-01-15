@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 
 class IfExpression extends PossiblyUpdatingExpression {
 	constructor(

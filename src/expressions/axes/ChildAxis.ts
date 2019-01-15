@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class ChildAxis extends Expression {

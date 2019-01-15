@@ -5,7 +5,7 @@ import { errXQDY0044 } from './XQueryErrors';
 
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import { evaluateQNameExpression } from './nameExpression';

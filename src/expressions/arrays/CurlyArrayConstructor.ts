@@ -1,7 +1,7 @@
 import Expression from '../Expression';
 
 import ArrayValue from '../dataTypes/ArrayValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 

@@ -1,6 +1,6 @@
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import TestAbstractExpression from '../tests/TestAbstractExpression';

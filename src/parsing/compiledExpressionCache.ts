@@ -70,8 +70,8 @@ export function getStaticCompilationResultFromCache(
 		);
 		if (halfCompiledExpressionFromCache) {
 			return {
-				requiresStaticCompilation: true,
-				expression: halfCompiledExpressionFromCache
+				expression: halfCompiledExpressionFromCache,
+				requiresStaticCompilation: true
 			};
 		}
 		return null;
@@ -85,8 +85,8 @@ export function getStaticCompilationResultFromCache(
 		);
 		if (halfCompiledExpressionFromCache) {
 			return {
-				requiresStaticCompilation: true,
-				expression: halfCompiledExpressionFromCache
+				expression: halfCompiledExpressionFromCache,
+				requiresStaticCompilation: true
 			};
 		}
 		return null;
@@ -110,16 +110,16 @@ export function getStaticCompilationResultFromCache(
 		);
 		if (halfCompiledExpressionFromCache) {
 			return {
-				requiresStaticCompilation: true,
-				expression: halfCompiledExpressionFromCache
+				expression: halfCompiledExpressionFromCache,
+				requiresStaticCompilation: true
 			};
 		}
 		return null;
 	}
 
 	return {
-		requiresStaticCompilation: false,
-		expression: cacheWithCorrectContext.compiledExpression
+		expression: cacheWithCorrectContext.compiledExpression,
+		requiresStaticCompilation: false
 	};
 }
 
@@ -158,8 +158,8 @@ export function storeStaticCompilationResultInCache(
 			executionStaticContext.getReferredVariables(),
 			compiledExpression,
 			Object.keys(moduleImports).map(moduleImportPrefix => ({
-				prefix: moduleImportPrefix,
-				namespaceURI: moduleImports[moduleImportPrefix]
+				namespaceURI: moduleImports[moduleImportPrefix],
+				prefix: moduleImportPrefix
 			}))
 		)
 	);

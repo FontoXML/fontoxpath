@@ -1,4 +1,4 @@
-import SequenceFactory from '../../dataTypes/SequenceFactory';
+import SequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 import sequenceEvery from '../../util/sequenceEvery';
 

@@ -8,7 +8,7 @@ import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 import { UpdatingOptions } from '../evaluateUpdatingExpression';
 import { Options } from '../evaluateXPath';
 import adaptJavaScriptValueToXPathValue from '../expressions/adaptJavaScriptValueToXPathValue';
-import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
+import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
@@ -63,11 +63,7 @@ export default function buildEvaluationContext(
 	if (variables === null || variables === undefined) {
 		variables = variables || {};
 	}
-	let internalOptions: {
-		moduleImports: { [s: string]: string } | {};
-		namespaceResolver: (s: string) => string;
-		nodesFactory: INodesFactory;
-	};
+	let internalOptions: UpdatingOptions;
 	if (externalOptions) {
 		internalOptions = {
 			moduleImports: externalOptions['moduleImports'],
@@ -77,13 +73,8 @@ export default function buildEvaluationContext(
 	} else {
 		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
 	}
-	let wrappedDomFacade: IWrappingDomFacade;
-	if (domFacade === null) {
-		wrappedDomFacade = domBackedDomFacade;
-	} else {
-		// Always wrap in an actual domFacade
-		wrappedDomFacade = new DomFacade(domFacade);
-	}
+	const wrappedDomFacade: IWrappingDomFacade =
+		domFacade === null ? domBackedDomFacade : new DomFacade(domFacade);
 
 	expressionString = normalizeEndOfLines(expressionString);
 
@@ -101,26 +92,21 @@ export default function buildEvaluationContext(
 
 	const contextSequence = contextItem
 		? adaptJavaScriptValueToXPathValue(contextItem)
-		: SequenceFactory.empty();
+		: sequenceFactory.empty();
 
-	let nodesFactory: INodesFactory = internalOptions.nodesFactory;
-	if (!nodesFactory && compilationOptions.allowXQuery) {
-		nodesFactory = new DomBackedNodesFactory(contextItem);
-	} else {
-		nodesFactory = wrapExternalNodesFactory(nodesFactory);
-	}
+	const nodesFactory: INodesFactory =
+		!internalOptions.nodesFactory && compilationOptions.allowXQuery
+			? new DomBackedNodesFactory(contextItem)
+			: wrapExternalNodesFactory(internalOptions.nodesFactory);
 
-	let documentWriter: IDocumentWriter = (internalOptions as UpdatingOptions).documentWriter;
-	if (!documentWriter) {
-		documentWriter = domBackedDocumentWriter;
-	} else {
-		documentWriter = wrapExternalDocumentWriter(documentWriter);
-	}
+	const documentWriter: IDocumentWriter = internalOptions.documentWriter
+		? wrapExternalDocumentWriter(internalOptions.documentWriter)
+		: domBackedDocumentWriter;
 
 	const dynamicContext = new DynamicContext({
+		contextItem: contextSequence.first(),
 		contextItemIndex: 0,
 		contextSequence,
-		contextItem: contextSequence.first(),
 		variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
 			typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
 				adaptJavaScriptValueToXPathValue(variables[variableName]);
@@ -135,8 +121,8 @@ export default function buildEvaluationContext(
 	);
 
 	return {
-		executionParameters,
 		dynamicContext,
+		executionParameters,
 		expression
 	};
 }

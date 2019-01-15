@@ -1,4 +1,4 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 
 export default function createDoublyIterableSequence(sequence) {
 	const savedValues = [];

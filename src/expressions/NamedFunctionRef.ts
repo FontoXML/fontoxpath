@@ -1,5 +1,5 @@
 import FunctionValue from './dataTypes/FunctionValue';
-import SequenceFactory from './dataTypes/SequenceFactory';
+import sequenceFactory from './dataTypes/sequenceFactory';
 import Expression from './Expression';
 import { getAlternativesAsStringFor } from './functions/functionRegistry';
 import Specificity from './Specificity';
@@ -42,14 +42,14 @@ class NamedFunctionRef extends Expression {
 
 	public evaluate() {
 		const functionItem = new FunctionValue({
-			value: this._functionProperties.callFunction,
-			namespaceURI: this._functionProperties.namespaceURI,
-			localName: this._functionProperties.localName,
 			argumentTypes: this._functionProperties.argumentTypes,
 			arity: this._arity,
-			returnType: this._functionProperties.returnType
+			localName: this._functionProperties.localName,
+			namespaceURI: this._functionProperties.namespaceURI,
+			returnType: this._functionProperties.returnType,
+			value: this._functionProperties.callFunction
 		});
-		return SequenceFactory.singleton(functionItem);
+		return sequenceFactory.singleton(functionItem);
 	}
 
 	public performStaticEvaluation(staticContext) {

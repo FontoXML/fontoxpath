@@ -1,6 +1,6 @@
 const loadedModulesByNamespaceURI = Object.create(null);
 
-export const loadModuleFile = function loadModuleFile(uri, moduleContents) {
+export const loadModuleFile = (uri, moduleContents) => {
 	let loadedModuleContents = loadedModulesByNamespaceURI[uri];
 	if (!loadedModuleContents) {
 		loadedModuleContents = loadedModulesByNamespaceURI[uri] = {
@@ -13,10 +13,7 @@ export const loadModuleFile = function loadModuleFile(uri, moduleContents) {
 	);
 };
 
-export const enhanceStaticContextWithModule = function enhanceStaticContextWithModule(
-	staticContext,
-	uri
-) {
+export const enhanceStaticContextWithModule = (staticContext, uri) => {
 	const moduleContents = loadedModulesByNamespaceURI[uri];
 
 	if (!moduleContents) {

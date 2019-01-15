@@ -1,7 +1,7 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';

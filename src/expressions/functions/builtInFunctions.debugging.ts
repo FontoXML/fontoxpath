@@ -1,6 +1,6 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 

@@ -2,7 +2,7 @@ import Expression from '../Expression';
 
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 

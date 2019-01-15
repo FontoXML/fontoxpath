@@ -1,6 +1,6 @@
 import Expression from '../Expression';
 
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import Specificity from '../Specificity';
 
 class UniversalExpression extends Expression {

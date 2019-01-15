@@ -1,5 +1,5 @@
 import ISequence from '../dataTypes/ISequence';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import { notReady } from './iterators';
 
 import Value from '../dataTypes/Value';

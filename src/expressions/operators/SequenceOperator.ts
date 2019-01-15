@@ -1,4 +1,4 @@
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';

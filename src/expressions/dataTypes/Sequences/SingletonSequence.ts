@@ -2,7 +2,7 @@ import ExecutionParameters from '../../ExecutionParameters';
 import { AsyncIterator, AsyncResult, DONE_TOKEN, ready } from '../../util/iterators';
 import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
-import SequenceFactory from '../SequenceFactory';
+import SequenceFactory from '../sequenceFactory';
 import Value from '../Value';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 

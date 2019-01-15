@@ -1,7 +1,7 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 
 import ISequence from '../dataTypes/ISequence';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';

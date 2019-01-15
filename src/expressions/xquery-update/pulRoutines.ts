@@ -13,17 +13,19 @@ import {
 	replaceNode,
 	replaceValue
 } from './applyPulPrimitives';
-import { PendingUpdate, RenamePendingUpdate, ReplaceNodePendingUpdate } from './PendingUpdate';
+import { IPendingUpdate } from './IPendingUpdate';
+import { RenamePendingUpdate } from './pendingUpdates/RenamePendingUpdate';
+import { ReplaceNodePendingUpdate } from './pendingUpdates/ReplaceNodePendingUpdate';
 import { errXUDY0015, errXUDY0016, errXUDY0017, errXUDY0024 } from './XQueryUpdateFacilityErrors';
 
-export const applyUpdates = function(
+export const applyUpdates = (
 	pul,
 	_revalidationModule,
 	_inheritNamespaces,
 	domFacade,
 	nodesFactory,
 	documentWriter
-) {
+) => {
 	// 1. Checks the update primitives on $pul for compatibility using upd:compatibilityCheck.
 	compatibilityCheck(pul, domFacade);
 
@@ -96,7 +98,7 @@ export const applyUpdates = function(
 	}
 };
 
-const compatibilityCheck = function(pul: PendingUpdate[], domFacade) {
+const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 	function findDuplicateTargets(type, onFoundDuplicate) {
 		const targets = new Set();
 		pul.filter(pu => pu.type === type)
@@ -183,6 +185,6 @@ const compatibilityCheck = function(pul: PendingUpdate[], domFacade) {
 	});
 };
 
-export const mergeUpdates = function(pul1, ...puls) {
+export const mergeUpdates = (pul1, ...puls) => {
 	return pul1.concat(...puls.filter(Boolean));
 };

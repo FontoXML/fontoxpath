@@ -21,7 +21,7 @@ export default function staticallyCompileXPath(
 		allowXQuery: boolean | undefined;
 		disableCache: boolean | undefined;
 	},
-	namespaceResolver: (string) => string | null,
+	namespaceResolver: (namespace: string) => string | null,
 	variables: object,
 	moduleImports: object
 ): Expression {

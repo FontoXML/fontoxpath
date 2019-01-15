@@ -2,12 +2,12 @@ import { parse, SyntaxError } from './xPathParser';
 
 const astParseResultCache = Object.create(null);
 
-function storeParseResultInCache(string, language, ast) {
-	astParseResultCache[`${language}~${string}`] = ast;
+function storeParseResultInCache(input: string, language: string, ast: any) {
+	astParseResultCache[`${language}~${input}`] = ast;
 }
 
-function getParseResultFromCache(string, language) {
-	return astParseResultCache[`${language}~${string}`] || null;
+function getParseResultFromCache(input, language) {
+	return astParseResultCache[`${language}~${input}`] || null;
 }
 
 /**

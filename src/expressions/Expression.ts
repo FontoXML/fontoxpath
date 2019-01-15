@@ -26,17 +26,17 @@ abstract class Expression {
 	public peer: boolean;
 	public specificity: Specificity;
 	public subtree: boolean;
-	private _childExpressions: Expression[];
-	private _eagerlyEvaluatedValue: () => ISequence;
+	protected _childExpressions: Expression[];
+	protected _eagerlyEvaluatedValue: () => ISequence;
 
 	constructor(
 		specificity: Specificity,
 		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions = {
-			resultOrder: RESULT_ORDERINGS.UNSORTED,
-			subtree: false,
+			canBeStaticallyEvaluated: false,
 			peer: false,
-			canBeStaticallyEvaluated: false
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
+			subtree: false
 		}
 	) {
 		this.specificity = specificity;

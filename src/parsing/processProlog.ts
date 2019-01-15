@@ -1,7 +1,7 @@
-import astHelper, { AST } from './astHelper';
+import astHelper, { IAST } from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
 
-import SequenceFactory from '../expressions/dataTypes/SequenceFactory';
+import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
 import StaticContext from '../expressions/StaticContext';
 import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
 
@@ -28,7 +28,7 @@ type FunctionDeclaration = {
 };
 
 export default function processProlog(
-	prolog: AST,
+	prolog: IAST,
 	staticContext: StaticContext
 ): { functionDeclarations: FunctionDeclaration[] } {
 	const staticallyCompilableExpressions = [];
@@ -167,9 +167,9 @@ export default function processProlog(
 			);
 		}
 
-		const compiledFunctionBody = compileAstToExpression(body as AST, {
-			allowXQuery: true,
-			allowUpdating: false
+		const compiledFunctionBody = compileAstToExpression(body as IAST, {
+			allowUpdating: false,
+			allowXQuery: true
 		});
 
 		const staticContextLeaf = new StaticContext(staticContext);
@@ -191,7 +191,7 @@ export default function processProlog(
 			...parameters
 		) => {
 			const scopedDynamicContext = dynamicContext
-				.scopeWithFocus(-1, null, SequenceFactory.empty())
+				.scopeWithFocus(-1, null, sequenceFactory.empty())
 				.scopeWithVariableBindings(
 					parameterBindingNames.reduce((paramByName, bindingName, i) => {
 						paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
@@ -205,11 +205,11 @@ export default function processProlog(
 		};
 
 		const functionDefinition = {
+			argumentTypes: paramTypes,
+			arity: paramNames.length,
 			callFunction: executeFunction,
 			localName: declarationLocalName,
 			namespaceURI: declarationNamespaceURI,
-			argumentTypes: paramTypes,
-			arity: paramNames.length,
 			returnType
 		};
 
@@ -228,10 +228,10 @@ export default function processProlog(
 		if (isPublicDeclaration) {
 			// Only mark the registration as the public API for the module if it's public
 			compiledFunctionDeclarations.push({
-				namespaceURI: declarationNamespaceURI,
-				localName: declarationLocalName,
 				arity: paramNames.length,
-				functionDefinition
+				functionDefinition,
+				localName: declarationLocalName,
+				namespaceURI: declarationNamespaceURI
 			});
 		}
 	});

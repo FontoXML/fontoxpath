@@ -2,7 +2,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import SequenceFactory from '../dataTypes/SequenceFactory';
+import SequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import Specificity from '../Specificity';
 import { ready } from '../util/iterators';
