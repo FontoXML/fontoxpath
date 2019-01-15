@@ -75,11 +75,11 @@ class PrecedingAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		return sequenceFactory.create(
-			createPrecedingGenerator(domFacade, contextItem.value)
-		).filter(item => {
-			return this._testExpression.evaluateToBoolean(dynamicContext, item);
-		});
+		return sequenceFactory
+			.create(createPrecedingGenerator(domFacade, contextItem.value))
+			.filter(item => {
+				return this._testExpression.evaluateToBoolean(dynamicContext, item);
+			});
 	}
 }
 

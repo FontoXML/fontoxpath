@@ -1,4 +1,5 @@
 {
+	"defaultSeverity": "warning",
 	"extends": ["tslint:latest", "tslint-config-prettier"],
 	"rules": {
 		"array-type": [true, "array"],
@@ -7,7 +8,6 @@
 		"interface-name": true,
 		"interface-over-type-literal": false,
 		"match-default-export-name": true,
-		"no-string-literal": false,
 		"member-ordering": [
 			true,
 			{
@@ -15,13 +15,14 @@
 				"order": "fields-first"
 			}
 		],
+		"no-string-literal": false,
 		"no-unnecessary-qualifier": true,
 		"no-unnecessary-type-assertion": true,
 		"no-unused-expression": true,
 		"no-unused-variable": true,
 		"no-var-keyword": true,
+		"prefer-for-of": false,
 		"semicolon": [true, "always", "ignore-bound-class-methods"],
 		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
-	},
-	"tslint.enable": "false"
+	}
 }

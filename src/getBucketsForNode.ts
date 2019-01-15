@@ -1,10 +1,10 @@
 /**
  * Get the buckets that apply to a given node.
- * 
+ *
  * Buckets can be used to pre-filter XPath expressions to exclude those that will never match the given node.
- * 
+ *
  * The bucket for a selector can be retrieved using {@link getBucketForSelector}.
- * 
+ *
  * @param node - The node which buckets should be retrieved
  */
 export default function getBucketsForNode(node: Node): string[] {

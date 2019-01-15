@@ -87,6 +87,9 @@ function doTsickleBuild() {
 }
 
 const apiExtractorConfig = {
+	apiReviewFile: {
+		enabled: false
+	},
 	compiler: {
 		configType: 'tsconfig',
 		rootFolder: process.cwd()

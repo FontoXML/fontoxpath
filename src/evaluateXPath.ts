@@ -415,7 +415,8 @@ function evaluateXPath(
 				return atomize(allValues.value[0], executionParameters).value;
 			}
 
-			return sequenceFactory.create(allValues.value)
+			return sequenceFactory
+				.create(allValues.value)
 				.atomize(executionParameters)
 				.getAllValues()
 				.map(atomizedValue => {

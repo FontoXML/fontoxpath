@@ -38,11 +38,11 @@ class PrecedingSiblingAxis extends Expression {
 		}
 
 		const domFacade = executionParameters.domFacade;
-		return sequenceFactory.create(createSiblingGenerator(domFacade, contextItem.value)).filter(
-			item => {
+		return sequenceFactory
+			.create(createSiblingGenerator(domFacade, contextItem.value))
+			.filter(item => {
 				return this._siblingExpression.evaluateToBoolean(dynamicContext, item);
-			}
-		);
+			});
 	}
 }
 

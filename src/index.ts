@@ -48,7 +48,7 @@ function parseXPath(xpathString: string) {
 }
 
 /**
- * 
+ *
  * @param xpathString The XPath for which a buckets hould be retrieved
  */
 function getBucketForSelector(xpathString) {
@@ -57,17 +57,17 @@ function getBucketForSelector(xpathString) {
 
 /**
  * Compare the specificity of two XPath expressions. This function will return -1 if the second XPath is more specific, 1 if the first one is more specific and 0 if they are equal in specificity.
- * 
+ *
  * @example
  * compareSpecificity('self::a', 'self::a[@b]') === -1;
  * compareSpecificity('self::a', 'self::a and child::b') === -1;
  * compareSpecificity('self::*', 'self::a') === 1;
  * compareSpecificity('self::a', 'self::a') === 0;
- * 
- * @param xpathStringA 
- * @param xpathStringB 
+ *
+ * @param xpathStringA
+ * @param xpathStringB
  */
-function compareSpecificity(xpathStringA, xpathStringB): -1|0|1 {
+function compareSpecificity(xpathStringA, xpathStringB): -1 | 0 | 1 {
 	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
 }
 
