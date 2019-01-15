@@ -1,4 +1,4 @@
-import { AST } from '../src/parsing/astHelper';
+import { IAST } from '../src/parsing/astHelper';
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
@@ -12,7 +12,7 @@ import { AST } from '../src/parsing/astHelper';
  *
  * @return            The root node of the constructed DOM fragment
  */
-export function parseAst (document: Document, ast: AST, parent? : Element): Node {
+export function parseAst(document: Document, ast: IAST, parent?: Element): Node {
 	if (typeof ast === 'string' || typeof ast === 'number') {
 		return document.createTextNode(ast as string);
 	}
@@ -22,7 +22,8 @@ export function parseAst (document: Document, ast: AST, parent? : Element): Node
 	}
 
 	const name = ast[0];
-	let prefix: string, namespaceUri: string;
+	let prefix: string;
+	let namespaceUri: string;
 	switch (name) {
 		case 'copySource':
 		case 'insertAfter':
@@ -67,20 +68,24 @@ export function parseAst (document: Document, ast: AST, parent? : Element): Node
 	if (!(typeof name === 'string')) {
 		console.error(name + ' is not a string. In: "' + JSON.stringify(ast) + '"');
 	}
-	const element = document.createElementNS(namespaceUri, prefix + name),
-		firstChild = ast[1];
+	const element = document.createElementNS(namespaceUri, prefix + name);
+	const firstChild = ast[1];
 	let firstChildIndex = 1;
-	if ((typeof firstChild === 'object') && !Array.isArray(firstChild)) {
+	if (typeof firstChild === 'object' && !Array.isArray(firstChild)) {
 		for (const attributeName in firstChild) {
 			if (firstChild[attributeName] !== null) {
-				element.setAttributeNS(namespaceUri, prefix + attributeName, firstChild[attributeName]);
+				element.setAttributeNS(
+					namespaceUri,
+					prefix + attributeName,
+					firstChild[attributeName]
+				);
 			}
 		}
 		firstChildIndex = 2;
 	}
 	// Parse children
 	for (let i = firstChildIndex, l = ast.length; i < l; ++i) {
-		const node = parseAst(document, ast[i] as AST, element);
+		const node = parseAst(document, ast[i] as IAST, element);
 		element.appendChild(node);
 	}
 

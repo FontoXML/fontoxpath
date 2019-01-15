@@ -1,10 +1,12 @@
 import * as fontoxpath from '../src/index';
+import { IAST } from '../src/parsing/astHelper';
 import * as parser from '../src/parsing/xPathParser';
-import { AST } from '../src/parsing/astHelper';
 import { parseAst } from './parseAst';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
-const allowXQueryUpdateFacility = document.getElementById('allowXQueryUpdateFacility') as HTMLInputElement;
+const allowXQueryUpdateFacility = document.getElementById(
+	'allowXQueryUpdateFacility'
+) as HTMLInputElement;
 const astJsonMl = document.getElementById('astJsonMl');
 const astXml = document.getElementById('astXml');
 const bucketField = document.getElementById('bucketField');
@@ -22,11 +24,15 @@ function setCookie() {
 	const source = encodeURIComponent(xmlSource.innerText);
 	const xpath = encodeURIComponent(xpathField.innerText);
 
-	document.cookie = `xpath-editor-state=${allowXQuery.checked ? 1 : 0}${allowXQueryUpdateFacility.checked ? 1 : 0}${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
+	document.cookie = `xpath-editor-state=${allowXQuery.checked ? 1 : 0}${
+		allowXQueryUpdateFacility.checked ? 1 : 0
+	}${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
 }
 
 function stringifyJsonMl(what: any, indent: number, n: number) {
-	const filler = Array(indent).fill(' ').join('');
+	const filler = Array(indent)
+		.fill(' ')
+		.join('');
 	switch (typeof what) {
 		case 'object': {
 			if (Array.isArray(what)) {
@@ -38,7 +44,9 @@ function stringifyJsonMl(what: any, indent: number, n: number) {
 			if (n !== 1) {
 				console.warn('Attributes at the wrong place!!!');
 			}
-			return Object.keys(what).map(k => `${filler}⤷${k}: ${what[k] === null ? 'null' : `"${what[k]}"`}`).join('\n');
+			return Object.keys(what)
+				.map(k => `${filler}⤷${k}: ${what[k] === null ? 'null' : `"${what[k]}"`}`)
+				.join('\n');
 		}
 		default: {
 			if (n === 0) {
@@ -63,17 +71,25 @@ function indentXml(document: Document): string {
 		}
 
 		if (row.substring(row.length - 2) === '/>') {
-			indent = Array(depth).fill('  ').join('');
+			indent = Array(depth)
+				.fill('  ')
+				.join('');
 		} else {
 			switch (row.search(/<\//g)) {
 				case -1:
-					indent = Array(depth++).fill('  ').join('');
+					indent = Array(depth++)
+						.fill('  ')
+						.join('');
 					break;
 				case 0:
-					indent = Array(--depth).fill('  ').join('');
+					indent = Array(--depth)
+						.fill('  ')
+						.join('');
 					break;
 				default:
-					indent = Array(depth).fill('  ').join('');
+					indent = Array(depth)
+						.fill('  ')
+						.join('');
 					break;
 			}
 		}
@@ -93,21 +109,13 @@ function jsonXmlReplacer(_key: string, value: any): any {
 		return attrString.join('');
 	}
 
-	return value instanceof Node ?
-		new XMLSerializer().serializeToString(value) :
-		value;
+	return value instanceof Node ? new XMLSerializer().serializeToString(value) : value;
 }
 
 async function runUpdatingXQuery(script) {
-	const result = await fontoxpath.evaluateUpdatingExpression(
-		script,
-		xmlDoc,
-		null,
-		null,
-		{
-			disableCache: true
-		}
-	);
+	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
+		disableCache: true
+	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
 	fontoxpath.executePendingUpdateList(result.pendingUpdateList, null, null, null);
@@ -116,16 +124,12 @@ async function runUpdatingXQuery(script) {
 
 async function runNormalXPath(script, asXQuery) {
 	const raw = [];
-	const it = fontoxpath.evaluateXPathToAsyncIterator(
-		script,
-		xmlDoc,
-		null,
-		null,
-		{
-			language: asXQuery ? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE : fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
-			disableCache: true
-		}
-	);
+	const it = fontoxpath.evaluateXPathToAsyncIterator(script, xmlDoc, null, null, {
+		disableCache: true,
+		language: asXQuery
+			? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
+			: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE
+	});
 
 	for (let item = await it.next(); !item.done; item = await it.next()) {
 		raw.push(item.value);
@@ -145,12 +149,16 @@ async function rerunXPath() {
 
 	try {
 		// First try to get the AST as it has a higher change of succeeding
-		const ast = parser.parse(xpath) as AST;
+		const ast = parser.parse(xpath) as IAST;
 		astJsonMl.innerText = stringifyJsonMl(ast, 0, 0);
 
 		const document = new Document();
 		document.appendChild(parseAst(document, ast));
-		document.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2005/XQueryX http://www.w3.org/2005/XQueryX/xqueryx.xsd`);
+		document.documentElement.setAttributeNS(
+			'http://www.w3.org/2001/XMLSchema-instance',
+			'xsi:schemaLocation',
+			`http://www.w3.org/2005/XQueryX http://www.w3.org/2005/XQueryX/xqueryx.xsd`
+		);
 		document.normalize();
 
 		const prettiedXml = indentXml(document);
@@ -176,7 +184,9 @@ async function rerunXPath() {
 		return;
 	}
 
-	bucketField.innerText = allowXQuery.checked ? 'Buckets can not be used in XQuery' : fontoxpath.getBucketForSelector(xpath);
+	bucketField.innerText = allowXQuery.checked
+		? 'Buckets can not be used in XQuery'
+		: fontoxpath.getBucketForSelector(xpath);
 }
 
 xmlSource.oninput = _evt => {
@@ -202,7 +212,7 @@ xpathField.oninput = _evt => {
 };
 
 function loadFromCookie() {
-	const cookie = document.cookie.split(/;\s/g).find(cookie => cookie.startsWith('xpath-editor-state='));
+	const cookie = document.cookie.split(/;\s/g).find(c => c.startsWith('xpath-editor-state='));
 
 	if (!cookie) {
 		xmlSource.innerText = `<xml>
