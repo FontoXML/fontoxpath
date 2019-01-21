@@ -2,10 +2,7 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import {
-	evaluateXPathToNodes,
-	evaluateXPathToMap
-} from 'fontoxpath';
+import { evaluateXPath, evaluateXPathToMap, evaluateXPathToNodes } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -14,12 +11,20 @@ beforeEach(() => {
 
 describe('following', () => {
 	it('returns the next sibling', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement'],
-			['someSiblingElement', ['someSiblingElement']]
-		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('following::someSiblingElement', documentNode.documentElement.firstChild), [documentNode.documentElement.lastChild, documentNode.documentElement.lastChild.lastChild]);
+		jsonMlMapper.parse(
+			['someParentElement', ['someElement'], ['someSiblingElement', ['someSiblingElement']]],
+			documentNode
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'following::someSiblingElement',
+				documentNode.documentElement.firstChild
+			),
+			[
+				documentNode.documentElement.lastChild,
+				documentNode.documentElement.lastChild.lastChild
+			]
+		);
 	});
 
 	it('returns all the following nodes', () => {
@@ -57,7 +62,7 @@ return map{
 			documentNode,
 			null,
 			null,
-			{ language: 'XQuery3.1' }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 		chai.assert.equal(result.got.length, 5);
 		chai.assert.equal(result.expected.length, 5);
@@ -65,20 +70,32 @@ return map{
 	});
 
 	it('does not return non-matching siblings', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement'],
-			['someNonMatchingElement', ['someNonMatchingElement']]
-		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('following::someSiblingElement', documentNode.documentElement.firstChild), []);
+		jsonMlMapper.parse(
+			[
+				'someParentElement',
+				['someElement'],
+				['someNonMatchingElement', ['someNonMatchingElement']]
+			],
+			documentNode
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'following::someSiblingElement',
+				documentNode.documentElement.firstChild
+			),
+			[]
+		);
 	});
 
 	it('does nothing when there are no following siblings', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement']
-		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('following::someSiblingElement', documentNode.documentElement.firstChild), []);
+		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'following::someSiblingElement',
+				documentNode.documentElement.firstChild
+			),
+			[]
+		);
 	});
 
 	it('throws the correct error if context is absent', () => {

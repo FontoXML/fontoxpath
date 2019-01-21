@@ -125,7 +125,7 @@ function transformXPathItemToJavascriptObject(value, dynamicContext) {
 
 export type Options = {
 	disableCache?: boolean;
-	language?: string;
+	language?: Language;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
@@ -152,7 +152,7 @@ function evaluateXPath(
 	contextItem?: any | null,
 	domFacade?: ExternalDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	returnType?: number | null,
+	returnType?: ReturnType | null,
 	options?: Options | null
 ): Node[] | Node | any[] | any {
 	returnType = returnType || evaluateXPath.ANY_TYPE;
@@ -170,7 +170,7 @@ function evaluateXPath(
 		options,
 		{
 			allowUpdating: false,
-			allowXQuery: options['language'] === 'XQuery3.1',
+			allowXQuery: options['language'] === evaluateXPath.XQUERY_3_1_LANGUAGE,
 			disableCache: options['disableCache']
 		}
 	);
@@ -426,31 +426,45 @@ function evaluateXPath(
 	}
 }
 
+enum ReturnType {
+	ANY = 0,
+	NUMBER = 1,
+	STRING = 2,
+	BOOLEAN = 3,
+	NODES = 7,
+	FIST_NODE = 9,
+	STRINGS = 10,
+	MAP = 11,
+	ARRAY = 12,
+	NUMBERS = 13,
+	ASYNC_ITERATOR = 99
+}
+
 /**
  * Returns the result of the query, can be anything depending on the
  * query. Note that the return type is determined dynamically, not
  * statically: XPaths returning empty sequences will return empty
  * arrays and not null, like one might expect.
  */
-evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = 0;
+evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = ReturnType.ANY;
 
 /**
  * Resolve to a number, like count((1,2,3)) resolves to 3.
  */
-evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = 1;
+evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = ReturnType.NUMBER;
 
 /**
  * Resolve to a string, like //someElement[1] resolves to the text
  * content of the first someElement
  */
-evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = 2;
+evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = ReturnType.STRING;
 
 /**
  * Resolves to true or false, uses the effective boolean value to
  * determine the result. count(1) resolves to true, count(())
  * resolves to false
  */
-evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = 3;
+evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN;
 
 /**
  * Resolve to all nodes the XPath resolves to. Returns nodes in the
@@ -458,41 +472,49 @@ evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = 3;
  * followed by all B nodes. //*[self::a or self::b] resolves to A and
  * B nodes in document order.
  */
-evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = 7;
+evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = ReturnType.NODES;
 
 /**
  * Resolves to the first node.NODES_TYPE would have resolved to.
  */
-evaluateXPath['FIRST_NODE_TYPE'] = evaluateXPath.FIRST_NODE_TYPE = 9;
+evaluateXPath['FIRST_NODE_TYPE'] = evaluateXPath.FIRST_NODE_TYPE = ReturnType.FIST_NODE;
 
 /**
  * Resolve to an array of strings
  */
-evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = 10;
+evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = ReturnType.STRINGS;
 
 /**
  * Resolve to an object, as a map
  */
-evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = 11;
+evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = ReturnType.MAP;
 
-evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = 12;
+evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = ReturnType.ARRAY;
 
-evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE = 99;
+evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE =
+	ReturnType.ASYNC_ITERATOR;
 
 /**
  * Resolve to an array of numbers
  */
-evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = 13;
+evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS;
+
+enum Language {
+	XPATH_3_1_LANGUAGE = 'XPath3.1',
+	XQUERY_3_1_LANGUAGE = 'XQuery3.1'
+}
 
 /**
  * Can be used to signal an XQuery program should be executed instead
  * of an XPath
  */
-evaluateXPath['XQUERY_3_1_LANGUAGE'] = evaluateXPath.XQUERY_3_1_LANGUAGE = 'XQuery3.1';
+evaluateXPath['XQUERY_3_1_LANGUAGE'] = evaluateXPath.XQUERY_3_1_LANGUAGE =
+	Language.XQUERY_3_1_LANGUAGE;
 
 /**
  * Can be used to signal an XPath program should executed
  */
-evaluateXPath['XPATH_3_1_LANGUAGE'] = evaluateXPath.XPATH_3_1_LANGUAGE = 'XPath3.1';
+evaluateXPath['XPATH_3_1_LANGUAGE'] = evaluateXPath.XPATH_3_1_LANGUAGE =
+	Language.XPATH_3_1_LANGUAGE;
 
 export default evaluateXPath;
