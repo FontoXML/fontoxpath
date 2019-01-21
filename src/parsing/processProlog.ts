@@ -8,6 +8,8 @@ import createDoublyIterableSequence from '../expressions/util/createDoublyIterab
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 
 import { errXQST0070 } from '../expressions/xquery/XQueryErrors';
+import DynamicContext from 'src/expressions/DynamicContext';
+import ExecutionParameters from 'src/expressions/ExecutionParameters';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -185,9 +187,9 @@ export default function processProlog(
 		});
 
 		const executeFunction = (
-			dynamicContext,
-			executionParameters,
-			_staticContext,
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters,
+			_staticContext: StaticContext,
 			...parameters
 		) => {
 			const scopedDynamicContext = dynamicContext

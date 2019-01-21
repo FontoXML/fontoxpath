@@ -77,7 +77,7 @@ function disallowUpdating(compilationOptions) {
 	return COMPILATION_OPTIONS.XQUERY_UPDATING_MODE;
 }
 
-function compile(ast: any[], compilationOptions): Expression {
+function compile(ast: IAST, compilationOptions: CompilationOptions): Expression {
 	const name = ast[0];
 	switch (name) {
 		// Operators
@@ -216,10 +216,7 @@ function compile(ast: any[], compilationOptions): Expression {
 	}
 }
 
-function compileTest(
-	ast: any[],
-	compilationOptions: { allowXQuery: boolean }
-): TestAbstractExpression {
+function compileTest(ast: IAST, compilationOptions: CompilationOptions): TestAbstractExpression {
 	switch (ast[0]) {
 		// Tests
 		case 'nameTest':
@@ -477,7 +474,7 @@ function arrowExpr(ast, compilationOptions) {
 	return args[0];
 }
 
-function dynamicFunctionInvocationExpr(ast, compilationOptions) {
+function dynamicFunctionInvocationExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const functionItemContent = astHelper.followPath(ast, ['functionItem', '*']);
 
 	const argumentsAst = astHelper.getFirstChild(ast, 'arguments');
@@ -1182,9 +1179,8 @@ function transformExpression(ast, compilationOptions) {
 	return new TransformExpression(transformCopies, modifyExpr, returnExpr);
 }
 
-export default function(
-	xPathAst: any[],
-	compilationOptions: { allowUpdating?: boolean; allowXQuery?: boolean }
-): Expression {
+type CompilationOptions = { allowUpdating?: boolean; allowXQuery?: boolean };
+
+export default function(xPathAst: IAST, compilationOptions: CompilationOptions): Expression {
 	return compile(xPathAst, compilationOptions);
 }
