@@ -6,6 +6,7 @@ import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import Value from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
+import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
 /**
  * Adapt a JavaScript value to the equivalent in XPath. This dynamically assigns the closest type
@@ -43,7 +44,7 @@ function adaptItemToXPathValue(value: any): Value | null {
 								? sequenceFactory.empty()
 								: sequenceFactory.singleton(adaptedValue);
 
-						return () => adaptedSequence;
+						return createDoublyIterableSequence(adaptedSequence);
 					})
 				);
 			}
@@ -60,7 +61,7 @@ function adaptItemToXPathValue(value: any): Value | null {
 
 						return {
 							key: createAtomicValue(key, 'xs:string'),
-							value: () => adaptedSequence
+							value: createDoublyIterableSequence(adaptedSequence)
 						};
 					})
 			);
