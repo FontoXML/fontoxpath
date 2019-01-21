@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import {
+	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
@@ -91,7 +92,7 @@ describe('varRef', () => {
 			);
 		});
 
-		it.only('can read a map value twice from within a function', () =>
+		it('can read a map value twice from within a function', () =>
 			chai.assert.equal(
 				evaluateXPathToArray(
 					`declare function local:func($some-map) {
@@ -101,7 +102,7 @@ describe('varRef', () => {
 					null,
 					null,
 					{ 'my-map': { k: 'val' } },
-					{ language: 'XQuery3.1' }
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 				),
 				['val', 'val']
 			));

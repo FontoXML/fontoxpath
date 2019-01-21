@@ -10,12 +10,11 @@ import {
 	executePendingUpdateList
 } from 'fontoxpath';
 import parseExpression from 'fontoxpath/parsing/parseExpression';
-import { parseAst } from '../demo/parseAst';
 import * as path from 'path';
-import * as mocha from 'mocha';
-import { sync, slimdom } from 'slimdom-sax-parser';
+import { slimdom, sync } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
+import { parseAst } from '../demo/parseAst';
 
 (global as any).atob = function(b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
@@ -30,7 +29,10 @@ type ExpressionArguments = [
 	any,
 	any,
 	Object,
-	{ disableCache?: boolean; language?: string }
+	{
+		disableCache?: boolean;
+		language?: evaluateXPath.XPATH_3_1_LANGUAGE | evaluateXPath.XQUERY_3_1_LANGUAGE;
+	}
 ];
 
 const parser = {
@@ -77,14 +79,14 @@ function isUpdatingQuery(testName, query) {
 		doc,
 		null,
 		null,
-		{ language: 'XQuery3.1' }
+		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 	);
 }
 
 function executePul(pul, args) {
 	executePendingUpdateList(pul, null, null, null);
 	const variables = args[3];
-	for (var key in variables) {
+	for (const key in variables) {
 		if (variables[key].normalize) {
 			variables[key].normalize();
 		}
@@ -271,7 +273,7 @@ async function runTestCase(testName, testCase) {
 		testCase,
 		null,
 		null,
-		{ language: 'XQuery3.1' }
+		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 	);
 
 	const loadedInputFiles = {};
@@ -351,7 +353,7 @@ function buildTestCases(testGroup) {
 					return;
 				}
 
-				it(testName, async () => await runTestCase(testName, test));
+				it(testName, async () => runTestCase(testName, test));
 				break;
 			}
 		}

@@ -3,8 +3,9 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToNodes,
+	evaluateXPath,
 	evaluateXPathToMap,
+	evaluateXPathToNodes,
 	evaluateXPathToString
 } from 'fontoxpath';
 
@@ -15,23 +16,25 @@ beforeEach(() => {
 
 describe('preceding', () => {
 	it('returns the preceding nodes', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someOtherElement', ['someOtherElement']],
-			['someElement']
-		], documentNode);
+		jsonMlMapper.parse(
+			['someParentElement', ['someOtherElement', ['someOtherElement']], ['someElement']],
+			documentNode
+		);
 		chai.assert.deepEqual(
 			evaluateXPathToNodes(
 				'preceding::someOtherElement',
-				documentNode.documentElement.lastChild).map(node => (node as Element).outerHTML), [
-					(documentNode.documentElement.firstChild as Element).outerHTML,
-					(documentNode.documentElement.firstChild.firstChild as Element).outerHTML
-		]);
+				documentNode.documentElement.lastChild
+			).map(node => (node as Element).outerHTML),
+			[
+				(documentNode.documentElement.firstChild as Element).outerHTML,
+				(documentNode.documentElement.firstChild.firstChild as Element).outerHTML
+			]
+		);
 	});
 
 	it('returns all the preceding nodes', () => {
 		const result = evaluateXPathToMap(
-				`
+			`
 let $dom := <element>
 	<uncle expectedPreceding="true">
 		<nephew expectedPreceding="true">
@@ -61,10 +64,10 @@ return map{
 	"expected": array{($dom!descendant-or-self::*[@expectedPreceding])}
 }
 `,
-				documentNode,
-				null,
-				null,
-				{ language: 'XQuery3.1' }
+			documentNode,
+			null,
+			null,
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 		chai.assert.equal(result.got.length, 5);
 		chai.assert.equal(result.expected.length, 5);
@@ -72,32 +75,51 @@ return map{
 	});
 
 	it('does not return non-matching preceding nodes', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someNonMatchingElement', ['someNonMatchingElement']],
-			['someElement']
-		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('preceding::someSiblingElement', documentNode.documentElement.lastChild), []);
+		jsonMlMapper.parse(
+			[
+				'someParentElement',
+				['someNonMatchingElement', ['someNonMatchingElement']],
+				['someElement']
+			],
+			documentNode
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'preceding::someSiblingElement',
+				documentNode.documentElement.lastChild
+			),
+			[]
+		);
 	});
 
 	it('correctly orders its results', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someNonMatchingElement', ['someSiblingElement', { position: 'first' }]],
-			['someNonMatchingElement', ['someSiblingElement', { position: 'second' }]],
-			['someElement']
-		], documentNode);
+		jsonMlMapper.parse(
+			[
+				'someParentElement',
+				['someNonMatchingElement', ['someSiblingElement', { position: 'first' }]],
+				['someNonMatchingElement', ['someSiblingElement', { position: 'second' }]],
+				['someElement']
+			],
+			documentNode
+		);
 		chai.assert.equal(
-			evaluateXPathToString('(preceding::someSiblingElement)[1]/@position', documentNode.documentElement.lastChild),
-			'first');
+			evaluateXPathToString(
+				'(preceding::someSiblingElement)[1]/@position',
+				documentNode.documentElement.lastChild
+			),
+			'first'
+		);
 	});
 
 	it('does nothing when there are no preceding siblings', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement']
-		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('preceding::someSiblingElement', documentNode.documentElement.firstChild), []);
+		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'preceding::someSiblingElement',
+				documentNode.documentElement.firstChild
+			),
+			[]
+		);
 	});
 
 	it('throws the correct error if context is absent', () => {
