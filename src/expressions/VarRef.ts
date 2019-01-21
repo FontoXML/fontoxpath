@@ -1,3 +1,5 @@
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
 import Specificity from './Specificity';
 
@@ -25,7 +27,7 @@ class VarRef extends Expression {
 		this._variableBindingName = null;
 	}
 
-	public evaluate(dynamicContext, _executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, _executionParameters: ExecutionParameters) {
 		const variableBinding = dynamicContext.variableBindings[this._variableBindingName];
 		if (!variableBinding) {
 			throw new Error(
