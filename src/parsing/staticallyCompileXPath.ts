@@ -19,6 +19,7 @@ export default function staticallyCompileXPath(
 	compilationOptions: {
 		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
+		debugMode: boolean | undefined;
 		disableCache: boolean | undefined;
 	},
 	namespaceResolver: (namespace: string) => string | null,

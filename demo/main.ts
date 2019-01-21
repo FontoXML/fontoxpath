@@ -2,6 +2,7 @@ import * as fontoxpath from '../src/index';
 import { IAST } from '../src/parsing/astHelper';
 import * as parser from '../src/parsing/xPathParser';
 import { parseAst } from './parseAst';
+import parseExpression from '../src/parsing/parseExpression';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
@@ -114,6 +115,7 @@ function jsonXmlReplacer(_key: string, value: any): any {
 
 async function runUpdatingXQuery(script) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
+		debugMode: true,
 		disableCache: true
 	});
 
@@ -125,6 +127,7 @@ async function runUpdatingXQuery(script) {
 async function runNormalXPath(script, asXQuery) {
 	const raw = [];
 	const it = fontoxpath.evaluateXPathToAsyncIterator(script, xmlDoc, null, null, {
+		debugMode: true,
 		disableCache: true,
 		language: asXQuery
 			? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
@@ -149,7 +152,10 @@ async function rerunXPath() {
 
 	try {
 		// First try to get the AST as it has a higher change of succeeding
-		const ast = parser.parse(xpath) as IAST;
+		const ast = parseExpression(xpath, {
+			allowXQuery: true,
+			debugMode: false
+		}) as IAST;
 		astJsonMl.innerText = stringifyJsonMl(ast, 0, 0);
 
 		const document = new Document();

@@ -1,10 +1,12 @@
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
+import { Options } from './evaluateXPath';
 import buildContext from './evaluationUtils/buildContext';
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import INodesFactory from './nodesFactory/INodesFactory';
 
 export type UpdatingOptions = {
+	debugMode?: boolean;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	moduleImports?: { [s: string]: string };
@@ -39,7 +41,8 @@ export default async function evaluateUpdatingExpression(
 		{
 			allowUpdating: true,
 			allowXQuery: true,
-			disableCache: options.disableCache
+			debugMode: options['debugMode'],
+			disableCache: options['disableCache']
 		}
 	);
 

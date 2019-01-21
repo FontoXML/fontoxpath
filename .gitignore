@@ -6,6 +6,6 @@
 /built
 /demo/built
 /dist
-/src/parsing/xPathParser.raw.js
+/src/parsing/xPathParser.raw.ts
 /.nyc_output
 /tmp

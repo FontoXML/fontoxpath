@@ -12,7 +12,7 @@ import processProlog from './parsing/processProlog';
  * @return  The namespace uri of the new module
  */
 export default function registerXQueryModule(moduleString: string): string {
-	const parsedModule = parse(moduleString, { xquery: true });
+	const parsedModule = parse(moduleString, { outputDebugInfo: false, xquery: true });
 
 	const libraryModule = astHelper.getFirstChild(parsedModule, 'libraryModule');
 	if (!libraryModule) {

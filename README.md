@@ -73,6 +73,26 @@ console.log(evaluateXPathToFirstNode('<foo>bar</foo>', documentNode, null, null,
 // Outputs: "<foo>bar</foo>"
 ```
 
+### Debugging
+
+FontoXPath can output a basic trace for an error if the `debugMode`
+option is set to `true`. This is disabled by default because of
+performance reasons.
+
+```js
+evaluateXPathToBoolean(`
+if (true()) then
+  zero-or-one((1, 2))
+else
+  (1, 2, 3)
+', null, null, null, {debugMode: true});
+
+// Throws:
+Error: FORG0003: The argument passed to fn:zero-or-one contained more than one item.
+  at <functionCallExpr>:2:3 - 2:22
+  at <ifThenElseExpr>:1:1 - 4:12
+```
+
 ### Modifying XML
 
 Note: the use of XQuery Update Facility 3.0 is in preview and subject to change.

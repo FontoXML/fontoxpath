@@ -18,17 +18,22 @@ function getParseResultFromCache(input, language) {
  */
 export default function parseExpression(
 	xPathString: string,
-	compilationOptions: { allowXQuery?: boolean }
+	compilationOptions: { allowXQuery?: boolean; debugMode?: boolean }
 ) {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
-	const cached = getParseResultFromCache(xPathString, language);
+	const cached = compilationOptions.debugMode
+		? null
+		: getParseResultFromCache(xPathString, language);
 
 	try {
 		let ast;
 		if (cached) {
 			ast = cached;
 		} else {
-			ast = parse(xPathString, { ['xquery']: !!compilationOptions.allowXQuery });
+			ast = parse(xPathString, {
+				['xquery']: !!compilationOptions.allowXQuery,
+				['outputDebugInfo']: !!compilationOptions.debugMode
+			});
 			storeParseResultInCache(xPathString, language, ast);
 		}
 		return ast;

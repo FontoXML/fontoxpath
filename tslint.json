@@ -19,7 +19,6 @@
 		"no-unnecessary-qualifier": true,
 		"no-unnecessary-type-assertion": true,
 		"no-unused-expression": true,
-		"no-unused-variable": true,
 		"no-var-keyword": true,
 		"prefer-for-of": false,
 		"semicolon": [true, "always", "ignore-bound-class-methods"],

@@ -158,6 +158,16 @@ function assertEqualQNames (a, b) {
    }
 }
 
+function wrapInStackTrace (astNode) {
+	if (!options.outputDebugInfo) {
+		return astNode;
+	}
+	return [
+		'x:stackTrace',
+		location(),
+		astNode
+	];
+}
 }
 
 // 1
@@ -370,19 +380,19 @@ Expr
 
 // 40 TODO, fix proper
 ExprSingle
- = FLWORExpr
- / QuantifiedExpr
+ = expr: FLWORExpr {return wrapInStackTrace(expr)}
+ / expr: QuantifiedExpr {return wrapInStackTrace(expr)}
 // / SwitchExpr
 // / TypeswitchExpr
- / IfExpr
+ / expr: IfExpr {return wrapInStackTrace(expr)}
 // / TryCatchExpr
- / InsertExpr
- / DeleteExpr
- / RenameExpr
- / ReplaceExpr
+ / expr: InsertExpr {return wrapInStackTrace(expr)}
+ / expr: DeleteExpr {return wrapInStackTrace(expr)}
+ / expr: RenameExpr {return wrapInStackTrace(expr)}
+ / expr: ReplaceExpr {return wrapInStackTrace(expr)}
 // / UpdatingFunctionCall
- / CopyModifyExpr
- / OrExpr
+ / expr: CopyModifyExpr {return wrapInStackTrace(expr)}
+ / expr: OrExpr {return wrapInStackTrace(expr)}
 
 // 41
 FLWORExpr
@@ -663,13 +673,13 @@ SimpleMapExpr
  = first:PathExpr rest:( _ "!" _ expr:PathExpr {return expr})*
  {
  return rest.length === 0 ?
-    first :
-   [
+    wrapInStackTrace(first) :
+   wrapInStackTrace([
       "simpleMapExpr",
       first[0] === "pathExpr" ? first : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(first)]]]
    ].concat(rest.map(function (item) {
      return item[0] === "pathExpr" ? item : ["pathExpr", ["stepExpr", ["filterExpr", wrapInSequenceExprIfNeeded(item)]]]
-     }))
+     })))
   }
 // === 108 - 110 (simplified for ease of parsing)
 PathExpr
@@ -876,7 +886,8 @@ ContextItemExpr
 FunctionCall
 // Do not match reserved function names as function names, they should be tests or other built-ins.
 // Match the '(' because 'elementWhatever' IS a valid function name
- = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {return ["functionCallExpr", ["functionName"].concat(name), ["arguments"].concat(args)]}
+ = !(ReservedFunctionNames _ "(") name:EQName _ args:ArgumentList {
+ return ["functionCallExpr", ["functionName"].concat(name), ["arguments"].concat(args)]}
 
 // 138
 Argument
