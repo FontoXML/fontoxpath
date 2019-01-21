@@ -93,7 +93,7 @@ describe('varRef', () => {
 		});
 
 		it('can read a map value twice from within a function', () =>
-			chai.assert.equal(
+			chai.assert.deepEqual(
 				evaluateXPathToArray(
 					`declare function local:func($some-map) {
 						[$some-map("k"), $some-map("k")]
