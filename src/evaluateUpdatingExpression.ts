@@ -1,7 +1,13 @@
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
 import buildContext from './evaluationUtils/buildContext';
+import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
+import DynamicContext from './expressions/DynamicContext';
+import ExecutionParameters from './expressions/ExecutionParameters';
+import Expression from './expressions/Expression';
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
+import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
+import { IterationResult } from './expressions/util/iterators';
 import INodesFactory from './nodesFactory/INodesFactory';
 
 export type UpdatingOptions = {
@@ -31,18 +37,29 @@ export default async function evaluateUpdatingExpression(
 	options?: UpdatingOptions | null
 ): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
 	options = options || {};
-	const { dynamicContext, executionParameters, expression } = buildContext(
-		updateScript,
-		contextItem,
-		domFacade || null,
-		variables || {},
-		options || {},
-		{
-			allowUpdating: true,
-			allowXQuery: true,
-			debug: options['debug']
-		}
-	);
+
+	let dynamicContext: DynamicContext;
+	let executionParameters: ExecutionParameters;
+	let expression: Expression;
+	try {
+		const context = buildContext(
+			updateScript,
+			contextItem,
+			domFacade || null,
+			variables || {},
+			options || {},
+			{
+				allowUpdating: true,
+				allowXQuery: true,
+				debug: options['debug']
+			}
+		);
+		dynamicContext = context.dynamicContext;
+		executionParameters = context.executionParameters;
+		expression = context.expression;
+	} catch (error) {
+		printAndRethrowError(updateScript, error);
+	}
 
 	if (!expression.isUpdating) {
 		throw new Error(
@@ -50,15 +67,20 @@ export default async function evaluateUpdatingExpression(
 		);
 	}
 
-	const resultIterator = (expression as PossiblyUpdatingExpression).evaluateWithUpdateList(
-		dynamicContext,
-		executionParameters
-	);
+	let attempt: IterationResult<UpdatingExpressionResult>;
+	try {
+		const resultIterator = (expression as PossiblyUpdatingExpression).evaluateWithUpdateList(
+			dynamicContext,
+			executionParameters
+		);
 
-	let attempt = resultIterator.next();
-	while (!attempt.ready) {
-		await attempt.promise;
 		attempt = resultIterator.next();
+		while (!attempt.ready) {
+			await attempt.promise;
+			attempt = resultIterator.next();
+		}
+	} catch (error) {
+		printAndRethrowError(updateScript, error);
 	}
 
 	return {

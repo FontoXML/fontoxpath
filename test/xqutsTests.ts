@@ -104,9 +104,7 @@ async function assertError(expectedError, args: ExpressionArguments, isUpdating)
 		}
 	} catch (e) {
 		hasThrown = true;
-		if (!e.message.startsWith(expectedError === '*' ? '' : expectedError)) {
-			chai.assert.equal(e.message, expectedError, `Should throw error ${expectedError}.`);
-		}
+		chai.assert.match(e.message, new RegExp(expectedError));
 	}
 	if (!hasThrown) {
 		chai.assert.fail(null, null, `Should throw error ${expectedError}.`);

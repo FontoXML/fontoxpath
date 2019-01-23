@@ -1,9 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	evaluateUpdatingExpression
-} from 'fontoxpath';
+import { evaluateUpdatingExpression } from 'fontoxpath';
 import assertUpdateList from './assertUpdateList';
 
 let documentNode;
@@ -14,12 +12,18 @@ beforeEach(() => {
 describe('TransformExpression', () => {
 	it('merges puls from copy clauses', async () => {
 		const element = documentNode.appendChild(documentNode.createElement('element'));
-		const result = await evaluateUpdatingExpression(`
+		const result = await evaluateUpdatingExpression(
+			`
 copy $a := (element, replace node element with <replacement/>),
      $b := (element, rename node element as "renamed")
 modify replace value of node $a with "content"
 return $a
-`, documentNode, null, {}, {});
+`,
+			documentNode,
+			null,
+			{},
+			{}
+		);
 		chai.assert.equal(result.xdmValue.length, 1);
 		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
 		chai.assert.equal(actualXml, '<element>content</element>');
@@ -43,11 +47,17 @@ return $a
 
 	it('returns pul from return clause', async () => {
 		const element = documentNode.appendChild(documentNode.createElement('element'));
-		const result = await evaluateUpdatingExpression(`
+		const result = await evaluateUpdatingExpression(
+			`
 copy $a := element
 modify replace value of node $a with "content"
 return ($a, replace node element with <replacement/>)
-`, documentNode, null, {}, {});
+`,
+			documentNode,
+			null,
+			{},
+			{}
+		);
 		chai.assert.equal(result.xdmValue.length, 1);
 		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
 		chai.assert.equal(actualXml, '<element>content</element>');
@@ -64,16 +74,18 @@ return ($a, replace node element with <replacement/>)
 		documentNode.appendChild(documentNode.createElement('a'));
 		let error;
 		try {
-			await evaluateUpdatingExpression('copy $newVar := a modify replace node a with <b/> return $newVar', documentNode, null, {}, {});
+			await evaluateUpdatingExpression(
+				'copy $newVar := a modify replace node a with <b/> return $newVar',
+				documentNode,
+				null,
+				{},
+				{}
+			);
 		} catch (err) {
 			error = err;
 		}
 
-		if (error && error.message.startsWith('XUDY0014')) {
-			chai.assert.isOk(error);
-		} else {
-			chai.assert.fail(error, 'XUDY0014', 'should throw a XUDY0014 error.');
-		}
+		chai.assert.match(error.message, new RegExp('XUDY0014'));
 	});
 
 	it('transforms something with something asynchronous', async () => {
@@ -88,7 +100,12 @@ copy $a := fontoxpath:sleep(/element, 100),
 modify (fontoxpath:sleep(replace value of node $a with "content of a", 100),
         fontoxpath:sleep(replace value of node $b with "content of b", 100))
 return fontoxpath:sleep(($a, $b), 100)
-`, documentNode, null, {}, {});
+`,
+			documentNode,
+			null,
+			{},
+			{}
+		);
 
 		chai.assert.equal(result.xdmValue.length, 2);
 		const actualA = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);

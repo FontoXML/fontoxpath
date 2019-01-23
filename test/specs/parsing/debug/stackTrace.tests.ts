@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateXPath } from 'fontoxpath';
+import { evaluateUpdatingExpression, evaluateXPath } from 'fontoxpath';
 import sinon = require('sinon');
 
 describe('showStackTraceOnError', () => {
@@ -49,6 +49,42 @@ Error: FORG0006: A wrong argument type was specified in a function call.
 Error: XPST0008, The variable non-existing-map is not in scope.
   at <pathExpr>:1:1 - 1:25`
 		);
+	});
+
+	it('shows a stack trace for a dynamic error in an updating expression', async () => {
+		try {
+			await evaluateUpdatingExpression('replace node /r with <r/>', null, null, null, {
+				debug: true
+			});
+		} catch (error) {
+			chai.assert.equal(
+				error.message,
+				`1: replace node /r with <r/>
+                ^^
+
+Error: XPDY0002: context is absent, it needs to be present to use paths.
+  at <pathExpr>:1:14 - 1:16
+  at <replaceExpr>:1:1 - 1:26`
+			);
+		}
+	});
+
+	it('shows a stack trace for a static error in an updating expression', async () => {
+		try {
+			await evaluateUpdatingExpression('replace node $node with <r/>', null, null, null, {
+				debug: true
+			});
+		} catch (error) {
+			chai.assert.equal(
+				error.message,
+				`1: replace node $node with <r/>
+                ^^^^^
+
+Error: XPST0008, The variable node is not in scope.
+  at <varRef>:1:14 - 1:19
+  at <replaceExpr>:1:1 - 1:29`
+			);
+		}
 	});
 
 	it('only shows the 2 lines surrounding the error', () => {
