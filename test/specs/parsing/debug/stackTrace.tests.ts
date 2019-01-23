@@ -1,7 +1,18 @@
 import * as chai from 'chai';
 import { evaluateXPath } from 'fontoxpath';
+import sinon = require('sinon');
 
 describe('showStackTraceOnError', () => {
+	let consoleErrorStub: sinon.SinonStub<[any?, ...any[]], void>;
+	after(() => {
+		consoleErrorStub.restore();
+	});
+	before(() => {
+		consoleErrorStub = sinon.stub(console, 'error').callsFake(_message => {
+			// No errors in the console :)
+		});
+	});
+
 	it('shows a stack trace for a dynamic error', () => {
 		chai.assert.throws(
 			() =>
@@ -66,6 +77,41 @@ $map("key")
 
 Error: XPST0008, The variable map is not in scope.
   at <pathExpr>:4:1 - 4:12`
+		);
+	});
+
+	it('prefixes line numbers with 0 so all match in string length', () => {
+		const errorLine = '$map("key")';
+		chai.assert.throws(
+			() => {
+				const lines = Array(10).fill('(::)');
+				lines[6] = errorLine;
+				evaluateXPath(lines.join('\n'), null, null, null, null, { debug: true });
+			},
+			`5: (::)
+6: (::)
+7: $map("key")
+   ^^^^^^^^^^^
+8: (::)
+9: (::)
+
+Error: XPST0008, The variable map is not in scope.
+  at <pathExpr>:7:1 - 7:12`
+		);
+		chai.assert.throws(
+			() => {
+				const lines = Array(10).fill('(::)');
+				lines[8] = errorLine;
+				evaluateXPath(lines.join('\n'), null, null, null, null, { debug: true });
+			},
+			` 7: (::)
+ 8: (::)
+ 9: $map("key")
+    ^^^^^^^^^^^
+10: (::)
+
+Error: XPST0008, The variable map is not in scope.
+  at <pathExpr>:9:1 - 9:12`
 		);
 	});
 });

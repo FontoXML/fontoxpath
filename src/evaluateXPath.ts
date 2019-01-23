@@ -1,16 +1,16 @@
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import buildContext from './evaluationUtils/buildContext';
+import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import atomize from './expressions/dataTypes/atomize';
 import castToType from './expressions/dataTypes/castToType';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import { StackTraceEntry } from './expressions/debug/StackTraceEntry';
-import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
-import getBucketsForNode from './getBucketsForNode';
-import INodesFactory from './nodesFactory/INodesFactory';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
+import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
+import getBucketsForNode from './getBucketsForNode';
+import INodesFactory from './nodesFactory/INodesFactory';
 
 function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
@@ -134,57 +134,6 @@ export type Options = {
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
 };
-
-function printAndRethrowError(selector: string, error: Error): never {
-	if (error instanceof Error) {
-		throw new Error(`Error executing XPath: ${error}`);
-	}
-	// This must be a StackTraceEntry 'error'
-	const stackEntry = error as StackTraceEntry;
-
-	const errorLocation = stackEntry.getErrorLocation();
-	const rawLines = selector.replace('\r', '').split('\n');
-	const lines = rawLines.reduce((markedLines: string[], line, i) => {
-		const lineNumber = i + 1;
-
-		// Only mark 2 lines before and after
-		if (errorLocation.start.line - lineNumber > 2 || lineNumber - errorLocation.end.line > 2) {
-			return markedLines;
-		}
-
-		const prefix = `${Array(rawLines.length.toString().length)
-			.fill(0, 0, lineNumber.toString().length - rawLines.length)
-			.join('')}${lineNumber}: `;
-		markedLines.push(`${prefix}${line}`);
-
-		if (lineNumber >= errorLocation.start.line && lineNumber <= errorLocation.end.line) {
-			const endColumn =
-				lineNumber < errorLocation.end.line
-					? line.length + prefix.length
-					: errorLocation.end.column - 1 + prefix.length;
-			const startColumn =
-				lineNumber > errorLocation.start.line
-					? prefix.length
-					: errorLocation.start.column - 1 + prefix.length;
-			markedLines.push(
-				Array(prefix.length + line.length)
-					.fill(' ', 0, startColumn)
-					.fill('^', startColumn, endColumn)
-					.join('')
-			);
-		}
-
-		return markedLines;
-	}, []);
-
-	const stackTrace = stackEntry.makeStackTrace().join('\n');
-
-	const errorMessage = lines.join('\n') + '\n\n' + stackTrace;
-
-	const newError = new Error(errorMessage);
-	console.error(errorMessage);
-	throw newError;
-}
 
 /**
  * Evaluates an XPath on the given contextItem.
