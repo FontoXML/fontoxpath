@@ -114,8 +114,7 @@ function jsonXmlReplacer(_key: string, value: any): any {
 
 async function runUpdatingXQuery(script: string) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
-		debugMode: true,
-		disableCache: true
+		debug: true
 	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
@@ -126,8 +125,7 @@ async function runUpdatingXQuery(script: string) {
 async function runNormalXPath(script: string, asXQuery: boolean) {
 	const raw = [];
 	const it = fontoxpath.evaluateXPathToAsyncIterator(script, xmlDoc, null, null, {
-		debugMode: true,
-		disableCache: true,
+		debug: true,
 		language: asXQuery
 			? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
 			: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE
@@ -153,7 +151,7 @@ async function rerunXPath() {
 		// First try to get the AST as it has a higher change of succeeding
 		const ast = parseExpression(xpath, {
 			allowXQuery: true,
-			debugMode: false
+			debug: false
 		}) as IAST;
 		astJsonMl.innerText = stringifyJsonMl(ast, 0, 0);
 

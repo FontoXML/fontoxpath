@@ -125,8 +125,7 @@ function transformXPathItemToJavascriptObject(value, dynamicContext) {
 }
 
 export type Options = {
-	debugMode?: boolean;
-	disableCache?: boolean;
+	debug?: boolean;
 	language?: Language;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
@@ -184,8 +183,7 @@ function evaluateXPath(
 		{
 			allowUpdating: false,
 			allowXQuery: options['language'] === evaluateXPath.XQUERY_3_1_LANGUAGE,
-			debugMode: !!options['debugMode'],
-			disableCache: options['disableCache']
+			debug: !!options['debug']
 		}
 	);
 
