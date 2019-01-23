@@ -202,3 +202,16 @@ npm run xqutstestsxqueryx -- --dist
 ```
 
 The build does not have to be checked in.
+
+### Publishing
+
+First and formost, you'll need to have publish access to the
+FontoXPath NPM repository. If you have that, you can publish using the
+following steps:
+
+```sh
+npm version (major|minor|patch|prerelease);
+git push;
+git push --tags;
+npm publish;
+```
