@@ -4,7 +4,7 @@ import atomize from './expressions/dataTypes/atomize';
 import castToType from './expressions/dataTypes/castToType';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import { StackTraceEntry } from './expressions/debug/StackTraceGenerator';
+import { StackTraceEntry } from './expressions/debug/StackTraceEntry';
 import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';

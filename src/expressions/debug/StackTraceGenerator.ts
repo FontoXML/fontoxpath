@@ -4,46 +4,9 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
+import { StackTraceEntry } from './StackTraceEntry';
 
-export class StackTraceEntry {
-	public innerExpressionType: string;
-	public innerTrace: Error | StackTraceEntry;
-	public location: SourceRange;
-
-	constructor(location, innerExpressionType: string, innerTrace: Error | StackTraceEntry) {
-		this.location = location;
-		this.innerExpressionType = innerExpressionType;
-		this.innerTrace = innerTrace;
-	}
-
-	public makeStackTrace(): string[] {
-		const innerStackTrace =
-			this.innerTrace instanceof Error
-				? [this.innerTrace.toString()]
-				: this.innerTrace.makeStackTrace();
-
-		innerStackTrace.push(
-			`  at <${this.innerExpressionType}>:${this.location.start.line}:${
-				this.location.start.column
-			} - ${this.location.end.line}:${this.location.end.column}`
-		);
-
-		return innerStackTrace;
-	}
-}
-
-type Location = {
-	column: number;
-	line: number;
-	offset: number;
-};
-
-type SourceRange = {
-	end: Location;
-	start: Location;
-};
-
-class StackTraceGenerator extends PossiblyUpdatingExpression {
+export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 	private _innerExpressionType: string;
 	private _location: SourceRange;
 
@@ -94,4 +57,13 @@ class StackTraceGenerator extends PossiblyUpdatingExpression {
 	}
 }
 
-export default StackTraceGenerator;
+type Location = {
+	column: number;
+	line: number;
+	offset: number;
+};
+
+export type SourceRange = {
+	end: Location;
+	start: Location;
+};

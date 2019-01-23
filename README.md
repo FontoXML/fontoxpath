@@ -50,6 +50,7 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
     * `evaluateXPath.XPATH_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XPath spec](https://www.w3.org/TR/xpath-31/).
     * `evaluateXPath.XQUERY_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XQuery spec](https://www.w3.org/TR/xquery-31/).
   * `moduleImports` `<Object<string, string>`
+  * `debugMode` `<boolean>` If a debug trace should be tracked, see (debugging)[#] for more information.
 
 ### Example
 
@@ -85,7 +86,7 @@ if (true()) then
   zero-or-one((1, 2))
 else
   (1, 2, 3)
-', null, null, null, {debugMode: true});
+`, null, null, null, {debugMode: true});
 
 // Throws:
 Error: FORG0003: The argument passed to fn:zero-or-one contained more than one item.

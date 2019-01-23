@@ -1,3 +1,4 @@
+import { IAST } from './astHelper';
 import { parse, SyntaxError } from './xPathParser';
 
 const astParseResultCache = Object.create(null);
@@ -26,7 +27,7 @@ export default function parseExpression(
 		: getParseResultFromCache(xPathString, language);
 
 	try {
-		let ast;
+		let ast: IAST;
 		if (cached) {
 			ast = cached;
 		} else {

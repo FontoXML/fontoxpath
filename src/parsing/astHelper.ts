@@ -1,8 +1,9 @@
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
+import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
-export interface IAST extends Array<string | object | IAST> {
+export interface IAST extends Array<string | object | SourceRange | IAST> {
 	0: string;
 }
 

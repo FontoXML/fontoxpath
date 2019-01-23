@@ -1,8 +1,7 @@
 import * as fontoxpath from '../src/index';
 import { IAST } from '../src/parsing/astHelper';
-import * as parser from '../src/parsing/xPathParser';
-import { parseAst } from './parseAst';
 import parseExpression from '../src/parsing/parseExpression';
+import { parseAst } from './parseAst';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
@@ -113,7 +112,7 @@ function jsonXmlReplacer(_key: string, value: any): any {
 	return value instanceof Node ? new XMLSerializer().serializeToString(value) : value;
 }
 
-async function runUpdatingXQuery(script) {
+async function runUpdatingXQuery(script: string) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
 		debugMode: true,
 		disableCache: true
@@ -124,7 +123,7 @@ async function runUpdatingXQuery(script) {
 	updateResult.innerText = new XMLSerializer().serializeToString(xmlDoc);
 }
 
-async function runNormalXPath(script, asXQuery) {
+async function runNormalXPath(script: string, asXQuery: boolean) {
 	const raw = [];
 	const it = fontoxpath.evaluateXPathToAsyncIterator(script, xmlDoc, null, null, {
 		debugMode: true,
