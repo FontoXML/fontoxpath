@@ -5,6 +5,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import { StackTraceEntry } from './StackTraceEntry';
+import StaticContext from '../StaticContext';
 
 export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 	private _innerExpressionType: string;
@@ -52,8 +53,12 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 		});
 	}
 
-	public performStaticEvaluation(staticContext) {
-		super.performStaticEvaluation(staticContext);
+	public performStaticEvaluation(staticContext: StaticContext) {
+		try {
+			super.performStaticEvaluation(staticContext);
+		} catch (error) {
+			throw new StackTraceEntry(this._location, this._innerExpressionType, error);
+		}
 	}
 }
 

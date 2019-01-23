@@ -50,7 +50,7 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
     * `evaluateXPath.XPATH_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XPath spec](https://www.w3.org/TR/xpath-31/).
     * `evaluateXPath.XQUERY_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XQuery spec](https://www.w3.org/TR/xquery-31/).
   * `moduleImports` `<Object<string, string>`
-  * `debugMode` `<boolean>` If a debug trace should be tracked, see (debugging)[#] for more information.
+  * `debug` `<boolean>` If a debug trace should be tracked, see (debugging)[#] for more information.
 
 ### Example
 
@@ -76,7 +76,7 @@ console.log(evaluateXPathToFirstNode('<foo>bar</foo>', documentNode, null, null,
 
 ### Debugging
 
-FontoXPath can output a basic trace for an error if the `debugMode`
+FontoXPath can output a basic trace for an error if the `debug`
 option is set to `true`. This is disabled by default because of
 performance reasons.
 
@@ -89,6 +89,12 @@ else
 `, null, null, null, {debugMode: true});
 
 // Throws:
+1: if (true()) then
+2:   zero-or-one((1, 2))
+     ^^^^^^^^^^^^^^^^^^^
+3: else
+4:   (1, 2, 3)
+
 Error: FORG0003: The argument passed to fn:zero-or-one contained more than one item.
   at <functionCallExpr>:2:3 - 2:22
   at <ifThenElseExpr>:1:1 - 4:12

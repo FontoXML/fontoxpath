@@ -30,7 +30,7 @@ type ExpressionArguments = [
 	any,
 	Object,
 	{
-		disableCache?: boolean;
+		debug?: boolean;
 		language?: evaluateXPath.XPATH_3_1_LANGUAGE | evaluateXPath.XQUERY_3_1_LANGUAGE;
 	}
 ];

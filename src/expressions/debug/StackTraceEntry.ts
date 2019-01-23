@@ -3,6 +3,7 @@ export class StackTraceEntry {
 	public innerExpressionType: string;
 	public innerTrace: Error | StackTraceEntry;
 	public location: SourceRange;
+
 	constructor(
 		location: SourceRange,
 		innerExpressionType: string,
@@ -12,6 +13,13 @@ export class StackTraceEntry {
 		this.innerExpressionType = innerExpressionType;
 		this.innerTrace = innerTrace;
 	}
+
+	public getErrorLocation(): SourceRange {
+		return this.innerTrace instanceof Error
+			? this.location
+			: this.innerTrace.getErrorLocation();
+	}
+
 	public makeStackTrace(): string[] {
 		const innerStackTrace =
 			this.innerTrace instanceof Error

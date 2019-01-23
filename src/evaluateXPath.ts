@@ -8,6 +8,9 @@ import { StackTraceEntry } from './expressions/debug/StackTraceEntry';
 import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
+import DynamicContext from './expressions/DynamicContext';
+import ExecutionParameters from './expressions/ExecutionParameters';
+import Expression from './expressions/Expression';
 
 function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
@@ -132,14 +135,54 @@ export type Options = {
 	nodesFactory?: INodesFactory;
 };
 
-function printAndRethrowError(error: Error): never {
+function printAndRethrowError(selector: string, error: Error): never {
 	if (error instanceof Error) {
 		throw new Error(`Error executing XPath: ${error}`);
 	}
 	// This must be a StackTraceEntry 'error'
-	const errorMessage = (error as StackTraceEntry).makeStackTrace().join('\n');
+	const stackEntry = error as StackTraceEntry;
+
+	const errorLocation = stackEntry.getErrorLocation();
+	const rawLines = selector.replace('\r', '').split('\n');
+	const lines = rawLines.reduce((markedLines: string[], line, i) => {
+		const lineNumber = i + 1;
+
+		// Only mark 2 lines before and after
+		if (errorLocation.start.line - lineNumber > 2 || lineNumber - errorLocation.end.line > 2) {
+			return markedLines;
+		}
+
+		const prefix = `${Array(rawLines.length.toString().length)
+			.fill(0, 0, lineNumber.toString().length - rawLines.length)
+			.join('')}${lineNumber}: `;
+		markedLines.push(`${prefix}${line}`);
+
+		if (lineNumber >= errorLocation.start.line && lineNumber <= errorLocation.end.line) {
+			const endColumn =
+				lineNumber < errorLocation.end.line
+					? line.length + prefix.length
+					: errorLocation.end.column - 1 + prefix.length;
+			const startColumn =
+				lineNumber > errorLocation.start.line
+					? prefix.length
+					: errorLocation.start.column - 1 + prefix.length;
+			markedLines.push(
+				Array(prefix.length + line.length)
+					.fill(' ', 0, startColumn)
+					.fill('^', startColumn, endColumn)
+					.join('')
+			);
+		}
+
+		return markedLines;
+	}, []);
+
+	const stackTrace = stackEntry.makeStackTrace().join('\n');
+
+	const errorMessage = lines.join('\n') + '\n\n' + stackTrace;
+
 	const newError = new Error(errorMessage);
-	console.log(errorMessage);
+	console.error(errorMessage);
 	throw newError;
 }
 
@@ -174,18 +217,28 @@ function evaluateXPath(
 
 	options = options || {};
 
-	const { dynamicContext, executionParameters, expression } = buildContext(
-		selector,
-		contextItem,
-		domFacade || null,
-		variables || {},
-		options,
-		{
-			allowUpdating: false,
-			allowXQuery: options['language'] === evaluateXPath.XQUERY_3_1_LANGUAGE,
-			debug: !!options['debug']
-		}
-	);
+	let dynamicContext: DynamicContext;
+	let executionParameters: ExecutionParameters;
+	let expression: Expression;
+	try {
+		const context = buildContext(
+			selector,
+			contextItem,
+			domFacade || null,
+			variables || {},
+			options,
+			{
+				allowUpdating: false,
+				allowXQuery: options['language'] === evaluateXPath.XQUERY_3_1_LANGUAGE,
+				debug: !!options['debug']
+			}
+		);
+		dynamicContext = context.dynamicContext;
+		executionParameters = context.executionParameters;
+		expression = context.expression;
+	} catch (error) {
+		printAndRethrowError(selector, error);
+	}
 
 	// Shortcut: if the xpathExpression defines buckets, the
 	// contextItem is a node and we are evaluating to a bucket, we can
@@ -391,7 +444,7 @@ function evaluateXPath(
 						},
 						next: () =>
 							new Promise(resolve => resolve(getNextResult())).catch(error => {
-								printAndRethrowError(error);
+								printAndRethrowError(selector, error);
 							})
 					};
 				}
@@ -458,7 +511,7 @@ function evaluateXPath(
 			}
 		}
 	} catch (error) {
-		printAndRethrowError(error);
+		printAndRethrowError(selector, error);
 	}
 }
 
