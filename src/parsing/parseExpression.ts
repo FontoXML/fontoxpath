@@ -1,3 +1,4 @@
+import { IAST } from './astHelper';
 import { parse, SyntaxError } from './xPathParser';
 
 const astParseResultCache = Object.create(null);
@@ -6,7 +7,7 @@ function storeParseResultInCache(input: string, language: string, ast: any) {
 	astParseResultCache[`${language}~${input}`] = ast;
 }
 
-function getParseResultFromCache(input, language) {
+function getParseResultFromCache(input: string, language: string) {
 	return astParseResultCache[`${language}~${input}`] || null;
 }
 
@@ -18,18 +19,23 @@ function getParseResultFromCache(input, language) {
  */
 export default function parseExpression(
 	xPathString: string,
-	compilationOptions: { allowXQuery?: boolean }
+	compilationOptions: { allowXQuery?: boolean; debug?: boolean }
 ) {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
-	const cached = getParseResultFromCache(xPathString, language);
+	const cached = compilationOptions.debug ? null : getParseResultFromCache(xPathString, language);
 
 	try {
-		let ast;
+		let ast: IAST;
 		if (cached) {
 			ast = cached;
 		} else {
-			ast = parse(xPathString, { ['xquery']: !!compilationOptions.allowXQuery });
-			storeParseResultInCache(xPathString, language, ast);
+			ast = parse(xPathString, {
+				['xquery']: !!compilationOptions.allowXQuery,
+				['outputDebugInfo']: !!compilationOptions.debug
+			});
+			if (!compilationOptions.debug) {
+				storeParseResultInCache(xPathString, language, ast);
+			}
 		}
 		return ast;
 	} catch (error) {

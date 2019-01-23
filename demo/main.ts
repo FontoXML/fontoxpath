@@ -1,6 +1,6 @@
 import * as fontoxpath from '../src/index';
 import { IAST } from '../src/parsing/astHelper';
-import * as parser from '../src/parsing/xPathParser';
+import parseExpression from '../src/parsing/parseExpression';
 import { parseAst } from './parseAst';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
@@ -112,9 +112,9 @@ function jsonXmlReplacer(_key: string, value: any): any {
 	return value instanceof Node ? new XMLSerializer().serializeToString(value) : value;
 }
 
-async function runUpdatingXQuery(script) {
+async function runUpdatingXQuery(script: string) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
-		disableCache: true
+		debug: true
 	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
@@ -122,10 +122,10 @@ async function runUpdatingXQuery(script) {
 	updateResult.innerText = new XMLSerializer().serializeToString(xmlDoc);
 }
 
-async function runNormalXPath(script, asXQuery) {
+async function runNormalXPath(script: string, asXQuery: boolean) {
 	const raw = [];
 	const it = fontoxpath.evaluateXPathToAsyncIterator(script, xmlDoc, null, null, {
-		disableCache: true,
+		debug: true,
 		language: asXQuery
 			? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
 			: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE
@@ -149,7 +149,10 @@ async function rerunXPath() {
 
 	try {
 		// First try to get the AST as it has a higher change of succeeding
-		const ast = parser.parse(xpath) as IAST;
+		const ast = parseExpression(xpath, {
+			allowXQuery: true,
+			debug: false
+		}) as IAST;
 		astJsonMl.innerText = stringifyJsonMl(ast, 0, 0);
 
 		const document = new Document();

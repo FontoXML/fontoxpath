@@ -1,9 +1,13 @@
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import buildContext from './evaluationUtils/buildContext';
+import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import atomize from './expressions/dataTypes/atomize';
 import castToType from './expressions/dataTypes/castToType';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
+import DynamicContext from './expressions/DynamicContext';
+import ExecutionParameters from './expressions/ExecutionParameters';
+import Expression from './expressions/Expression';
 import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
@@ -124,7 +128,7 @@ function transformXPathItemToJavascriptObject(value, dynamicContext) {
 }
 
 export type Options = {
-	disableCache?: boolean;
+	debug?: boolean;
 	language?: Language;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
@@ -162,18 +166,28 @@ function evaluateXPath(
 
 	options = options || {};
 
-	const { dynamicContext, executionParameters, expression } = buildContext(
-		selector,
-		contextItem,
-		domFacade || null,
-		variables || {},
-		options,
-		{
-			allowUpdating: false,
-			allowXQuery: options['language'] === evaluateXPath.XQUERY_3_1_LANGUAGE,
-			disableCache: options['disableCache']
-		}
-	);
+	let dynamicContext: DynamicContext;
+	let executionParameters: ExecutionParameters;
+	let expression: Expression;
+	try {
+		const context = buildContext(
+			selector,
+			contextItem,
+			domFacade || null,
+			variables || {},
+			options,
+			{
+				allowUpdating: false,
+				allowXQuery: options['language'] === evaluateXPath.XQUERY_3_1_LANGUAGE,
+				debug: !!options['debug']
+			}
+		);
+		dynamicContext = context.dynamicContext;
+		executionParameters = context.executionParameters;
+		expression = context.expression;
+	} catch (error) {
+		printAndRethrowError(selector, error);
+	}
 
 	// Shortcut: if the xpathExpression defines buckets, the
 	// contextItem is a node and we are evaluating to a bucket, we can
@@ -187,242 +201,266 @@ function evaluateXPath(
 		}
 	}
 
-	const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
+	try {
+		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
 
-	switch (returnType) {
-		case evaluateXPath.BOOLEAN_TYPE: {
-			const ebv = rawResults.tryGetEffectiveBooleanValue();
-			if (!ebv.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-			return ebv.value;
-		}
-
-		case evaluateXPath.STRING_TYPE: {
-			const allValues = rawResults.tryGetAllValues();
-			if (!allValues.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-			if (!allValues.value.length) {
-				return '';
-			}
-			// Atomize to convert (attribute)nodes to be strings
-			return allValues.value
-				.map(value => castToType(atomize(value, executionParameters), 'xs:string').value)
-				.join(' ');
-		}
-		case evaluateXPath.STRINGS_TYPE: {
-			const allValues = rawResults.tryGetAllValues();
-			if (!allValues.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-			if (!allValues.value.length) {
-				return [];
-			}
-			// Atomize all parts
-			return allValues.value.map(value => {
-				return atomize(value, executionParameters).value + '';
-			});
-		}
-
-		case evaluateXPath.NUMBER_TYPE: {
-			const first = rawResults.tryGetFirst();
-			if (!first.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-			if (!first.value) {
-				return NaN;
-			}
-			if (!isSubtypeOf(first.value.type, 'xs:numeric')) {
-				return NaN;
-			}
-			return first.value.value;
-		}
-
-		case evaluateXPath.FIRST_NODE_TYPE: {
-			const first = rawResults.tryGetFirst();
-			if (!first.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-			if (!first.value) {
-				return null;
-			}
-			if (!isSubtypeOf(first.value.type, 'node()')) {
-				throw new Error(
-					'Expected XPath ' + selector + ' to resolve to Node. Got ' + first.value.type
-				);
-			}
-			return first.value.value;
-		}
-
-		case evaluateXPath.NODES_TYPE: {
-			const allResults = rawResults.tryGetAllValues();
-			if (!allResults.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-
-			if (
-				!allResults.value.every(value => {
-					return isSubtypeOf(value.type, 'node()');
-				})
-			) {
-				throw new Error(
-					'Expected XPath ' + selector + ' to resolve to a sequence of Nodes.'
-				);
-			}
-			return allResults.value.map(nodeValue => {
-				return nodeValue.value;
-			});
-		}
-
-		case evaluateXPath.MAP_TYPE: {
-			const allValues = rawResults.tryGetAllValues();
-			if (!allValues.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-
-			if (allValues.value.length !== 1) {
-				throw new Error('Expected XPath ' + selector + ' to resolve to a single map.');
-			}
-			const first = allValues.value[0];
-			if (!isSubtypeOf(first.type, 'map(*)')) {
-				throw new Error('Expected XPath ' + selector + ' to resolve to a map');
-			}
-			const transformedMap = transformMapToObject(first, dynamicContext).next();
-			if (!transformedMap.ready) {
-				throw new Error(
-					'Expected XPath ' + selector + ' to synchronously resolve to a map'
-				);
-			}
-			return transformedMap.value;
-		}
-
-		case evaluateXPath.ARRAY_TYPE: {
-			const allValues = rawResults.tryGetAllValues();
-			if (!allValues.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-
-			if (allValues.value.length !== 1) {
-				throw new Error('Expected XPath ' + selector + ' to resolve to a single array.');
-			}
-			const first = allValues.value[0];
-			if (!isSubtypeOf(first.type, 'array(*)')) {
-				throw new Error('Expected XPath ' + selector + ' to resolve to an array');
-			}
-			const transformedArray = transformArrayToArray(first, dynamicContext).next();
-			if (!transformedArray.ready) {
-				throw new Error(
-					'Expected XPath ' + selector + ' to synchronously resolve to a map'
-				);
-			}
-			return transformedArray.value;
-		}
-
-		case evaluateXPath.NUMBERS_TYPE: {
-			const allValues = rawResults.tryGetAllValues();
-			if (!allValues.ready) {
-				throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
-			}
-			return allValues.value.map(value => {
-				if (!isSubtypeOf(value.type, 'xs:numeric')) {
-					throw new Error('Expected XPath ' + selector + ' to resolve to numbers');
+		switch (returnType) {
+			case evaluateXPath.BOOLEAN_TYPE: {
+				const ebv = rawResults.tryGetEffectiveBooleanValue();
+				if (!ebv.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
 				}
-				return value.value;
-			});
-		}
+				return ebv.value;
+			}
 
-		case evaluateXPath.ASYNC_ITERATOR_TYPE: {
-			const it = rawResults.value;
-			let transformedValueGenerator = null;
-			let done = false;
-			function getNextResult() {
-				while (!done) {
-					if (!transformedValueGenerator) {
-						const value = it.next();
-						if (value.done) {
-							done = true;
-							break;
-						}
-						if (!value.ready) {
-							return value.promise.then(getNextResult);
-						}
-						transformedValueGenerator = transformXPathItemToJavascriptObject(
-							value.value,
-							dynamicContext
-						);
-					}
-					const transformedValue = transformedValueGenerator.next();
-					if (!transformedValue.ready) {
-						return transformedValue.promise.then(getNextResult);
-					}
-					transformedValueGenerator = null;
-					return transformedValue;
+			case evaluateXPath.STRING_TYPE: {
+				const allValues = rawResults.tryGetAllValues();
+				if (!allValues.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
 				}
-				return {
-					done: true
-				};
+				if (!allValues.value.length) {
+					return '';
+				}
+				// Atomize to convert (attribute)nodes to be strings
+				return allValues.value
+					.map(
+						value => castToType(atomize(value, executionParameters), 'xs:string').value
+					)
+					.join(' ');
 			}
-			if ('asyncIterator' in Symbol) {
-				return {
-					[/** @type {{asyncIterator:*}} */ Symbol.asyncIterator]() {
-						return this;
-					},
-					next: () => new Promise(resolve => resolve(getNextResult()))
-				};
+			case evaluateXPath.STRINGS_TYPE: {
+				const allValues = rawResults.tryGetAllValues();
+				if (!allValues.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
+				}
+				if (!allValues.value.length) {
+					return [];
+				}
+				// Atomize all parts
+				return allValues.value.map(value => {
+					return atomize(value, executionParameters).value + '';
+				});
 			}
-			return {
-				next: () => new Promise(resolve => resolve(getNextResult()))
-			};
-		}
 
-		default: {
-			const allValues = rawResults.tryGetAllValues();
-			if (!allValues.ready) {
-				throw new Error('The XPath ' + selector + ' can not be resolved synchronously.');
-			}
-			const allValuesAreNodes = allValues.value.every(value => {
-				return isSubtypeOf(value.type, 'node()') && !isSubtypeOf(value.type, 'attribute()');
-			});
-			if (allValuesAreNodes) {
-				if (allValues.value.length === 1) {
-					return allValues.value[0].value;
+			case evaluateXPath.NUMBER_TYPE: {
+				const first = rawResults.tryGetFirst();
+				if (!first.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
 				}
-				return allValues.value.map(nodeValue => {
+				if (!first.value) {
+					return NaN;
+				}
+				if (!isSubtypeOf(first.value.type, 'xs:numeric')) {
+					return NaN;
+				}
+				return first.value.value;
+			}
+
+			case evaluateXPath.FIRST_NODE_TYPE: {
+				const first = rawResults.tryGetFirst();
+				if (!first.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
+				}
+				if (!first.value) {
+					return null;
+				}
+				if (!isSubtypeOf(first.value.type, 'node()')) {
+					throw new Error(
+						'Expected XPath ' +
+							selector +
+							' to resolve to Node. Got ' +
+							first.value.type
+					);
+				}
+				return first.value.value;
+			}
+
+			case evaluateXPath.NODES_TYPE: {
+				const allResults = rawResults.tryGetAllValues();
+				if (!allResults.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
+				}
+
+				if (
+					!allResults.value.every(value => {
+						return isSubtypeOf(value.type, 'node()');
+					})
+				) {
+					throw new Error(
+						'Expected XPath ' + selector + ' to resolve to a sequence of Nodes.'
+					);
+				}
+				return allResults.value.map(nodeValue => {
 					return nodeValue.value;
 				});
 			}
-			if (allValues.value.length === 1) {
+
+			case evaluateXPath.MAP_TYPE: {
+				const allValues = rawResults.tryGetAllValues();
+				if (!allValues.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
+				}
+
+				if (allValues.value.length !== 1) {
+					throw new Error('Expected XPath ' + selector + ' to resolve to a single map.');
+				}
 				const first = allValues.value[0];
-				if (isSubtypeOf(first.type, 'array(*)')) {
-					const transformedArray = transformArrayToArray(first, dynamicContext).next();
-					if (!transformedArray.ready) {
-						throw new Error(
-							'Expected XPath ' + selector + ' to synchronously resolve to an array'
-						);
-					}
-					return transformedArray.value;
+				if (!isSubtypeOf(first.type, 'map(*)')) {
+					throw new Error('Expected XPath ' + selector + ' to resolve to a map');
 				}
-				if (isSubtypeOf(first.type, 'map(*)')) {
-					const transformedMap = transformMapToObject(first, dynamicContext).next();
-					if (!transformedMap.ready) {
-						throw new Error(
-							'Expected XPath ' + selector + ' to synchronously resolve to a map'
-						);
-					}
-					return transformedMap.value;
+				const transformedMap = transformMapToObject(first, dynamicContext).next();
+				if (!transformedMap.ready) {
+					throw new Error(
+						'Expected XPath ' + selector + ' to synchronously resolve to a map'
+					);
 				}
-				return atomize(allValues.value[0], executionParameters).value;
+				return transformedMap.value;
 			}
 
-			return sequenceFactory
-				.create(allValues.value)
-				.atomize(executionParameters)
-				.getAllValues()
-				.map(atomizedValue => {
-					return atomizedValue.value;
+			case evaluateXPath.ARRAY_TYPE: {
+				const allValues = rawResults.tryGetAllValues();
+				if (!allValues.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
+				}
+
+				if (allValues.value.length !== 1) {
+					throw new Error(
+						'Expected XPath ' + selector + ' to resolve to a single array.'
+					);
+				}
+				const first = allValues.value[0];
+				if (!isSubtypeOf(first.type, 'array(*)')) {
+					throw new Error('Expected XPath ' + selector + ' to resolve to an array');
+				}
+				const transformedArray = transformArrayToArray(first, dynamicContext).next();
+				if (!transformedArray.ready) {
+					throw new Error(
+						'Expected XPath ' + selector + ' to synchronously resolve to a map'
+					);
+				}
+				return transformedArray.value;
+			}
+
+			case evaluateXPath.NUMBERS_TYPE: {
+				const allValues = rawResults.tryGetAllValues();
+				if (!allValues.ready) {
+					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
+				}
+				return allValues.value.map(value => {
+					if (!isSubtypeOf(value.type, 'xs:numeric')) {
+						throw new Error('Expected XPath ' + selector + ' to resolve to numbers');
+					}
+					return value.value;
 				});
+			}
+
+			case evaluateXPath.ASYNC_ITERATOR_TYPE: {
+				const it = rawResults.value;
+				let transformedValueGenerator = null;
+				let done = false;
+				function getNextResult(): Promise<IteratorResult<any>> {
+					while (!done) {
+						if (!transformedValueGenerator) {
+							const value = it.next();
+							if (value.done) {
+								done = true;
+								break;
+							}
+							if (!value.ready) {
+								return value.promise.then(getNextResult);
+							}
+							transformedValueGenerator = transformXPathItemToJavascriptObject(
+								value.value,
+								dynamicContext
+							);
+						}
+						const transformedValue = transformedValueGenerator.next();
+						if (!transformedValue.ready) {
+							return transformedValue.promise.then(getNextResult);
+						}
+						transformedValueGenerator = null;
+						return transformedValue;
+					}
+					return Promise.resolve({
+						done: true,
+						value: null
+					});
+				}
+				if ('asyncIterator' in Symbol) {
+					return {
+						[Symbol.asyncIterator]() {
+							return this;
+						},
+						next: () =>
+							new Promise(resolve => resolve(getNextResult())).catch(error => {
+								printAndRethrowError(selector, error);
+							})
+					};
+				}
+				return {
+					next: () => new Promise(resolve => resolve(getNextResult()))
+				};
+			}
+
+			default: {
+				const allValues = rawResults.tryGetAllValues();
+				if (!allValues.ready) {
+					throw new Error(
+						'The XPath ' + selector + ' can not be resolved synchronously.'
+					);
+				}
+				const allValuesAreNodes = allValues.value.every(value => {
+					return (
+						isSubtypeOf(value.type, 'node()') && !isSubtypeOf(value.type, 'attribute()')
+					);
+				});
+				if (allValuesAreNodes) {
+					if (allValues.value.length === 1) {
+						return allValues.value[0].value;
+					}
+					return allValues.value.map(nodeValue => {
+						return nodeValue.value;
+					});
+				}
+				if (allValues.value.length === 1) {
+					const first = allValues.value[0];
+					if (isSubtypeOf(first.type, 'array(*)')) {
+						const transformedArray = transformArrayToArray(
+							first,
+							dynamicContext
+						).next();
+						if (!transformedArray.ready) {
+							throw new Error(
+								'Expected XPath ' +
+									selector +
+									' to synchronously resolve to an array'
+							);
+						}
+						return transformedArray.value;
+					}
+					if (isSubtypeOf(first.type, 'map(*)')) {
+						const transformedMap = transformMapToObject(first, dynamicContext).next();
+						if (!transformedMap.ready) {
+							throw new Error(
+								'Expected XPath ' + selector + ' to synchronously resolve to a map'
+							);
+						}
+						return transformedMap.value;
+					}
+					return atomize(allValues.value[0], executionParameters).value;
+				}
+
+				return sequenceFactory
+					.create(allValues.value)
+					.atomize(executionParameters)
+					.getAllValues()
+					.map(atomizedValue => {
+						return atomizedValue.value;
+					});
+			}
 		}
+	} catch (error) {
+		printAndRethrowError(selector, error);
 	}
 }
 

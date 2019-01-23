@@ -19,7 +19,7 @@ export default function staticallyCompileXPath(
 	compilationOptions: {
 		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
-		disableCache: boolean | undefined;
+		debug: boolean | undefined;
 	},
 	namespaceResolver: (namespace: string) => string | null,
 	variables: object,
@@ -28,7 +28,7 @@ export default function staticallyCompileXPath(
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
 	let fromCache = null;
-	if (!compilationOptions.disableCache) {
+	if (!compilationOptions.debug) {
 		fromCache = getStaticCompilationResultFromCache(
 			xpathString,
 			language,
@@ -44,7 +44,7 @@ export default function staticallyCompileXPath(
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
-	let expression;
+	let expression: Expression;
 
 	if (fromCache !== null) {
 		expression = fromCache.expression;
@@ -83,13 +83,15 @@ export default function staticallyCompileXPath(
 
 		expression.performStaticEvaluation(rootStaticContext);
 
-		storeStaticCompilationResultInCache(
-			xpathString,
-			language,
-			executionSpecificStaticContext,
-			moduleImports,
-			expression
-		);
+		if (!compilationOptions.debug) {
+			storeStaticCompilationResultInCache(
+				xpathString,
+				language,
+				executionSpecificStaticContext,
+				moduleImports,
+				expression
+			);
+		}
 	}
 
 	return expression;

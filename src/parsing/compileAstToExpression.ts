@@ -16,6 +16,7 @@ import PrecedingAxis from '../expressions/axes/PrecedingAxis';
 import PrecedingSiblingAxis from '../expressions/axes/PrecedingSiblingAxis';
 import SelfAxis from '../expressions/axes/SelfAxis';
 import IfExpression from '../expressions/conditional/IfExpression';
+import StackTraceGenerator, { SourceRange } from '../expressions/debug/StackTraceGenerator';
 import ForExpression from '../expressions/ForExpression';
 import FunctionCall from '../expressions/functions/FunctionCall';
 import InlineFunction from '../expressions/functions/InlineFunction';
@@ -211,6 +212,10 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 			return replaceExpression(ast, compilationOptions);
 		case 'transformExpr':
 			return transformExpression(ast, compilationOptions);
+
+		case 'x:stackTrace':
+			return stackTrace(ast, compilationOptions);
+
 		default:
 			return compileTest(ast, compilationOptions);
 	}
@@ -248,6 +253,22 @@ function compileTest(ast: IAST, compilationOptions: CompilationOptions): TestAbs
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}
+}
+
+function stackTrace(ast: IAST, compilationOptions: CompilationOptions) {
+	const location = ast[1] as SourceRange;
+	const innerExpression = ast[2] as IAST;
+
+	let nextCompilableExpression: IAST = innerExpression;
+	while (nextCompilableExpression[0] === 'x:stackTrace') {
+		nextCompilableExpression = nextCompilableExpression[2] as IAST;
+	}
+
+	return new StackTraceGenerator(
+		location,
+		nextCompilableExpression[0],
+		compile(nextCompilableExpression, compilationOptions)
+	);
 }
 
 function arrayConstructor(ast, compilationOptions) {

@@ -5,7 +5,7 @@ import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression
 import INodesFactory from './nodesFactory/INodesFactory';
 
 export type UpdatingOptions = {
-	disableCache?: boolean;
+	debug?: boolean;
 	documentWriter?: IDocumentWriter;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
@@ -39,7 +39,7 @@ export default async function evaluateUpdatingExpression(
 		{
 			allowUpdating: true,
 			allowXQuery: true,
-			disableCache: options.disableCache
+			debug: options['debug']
 		}
 	);
 
