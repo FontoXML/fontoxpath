@@ -2214,15 +2214,10 @@ FunctionCall-040,Parser resulted in invalid JsonML
 FunctionCall-041,Parser resulted in invalid JsonML
 FunctionCall-042,Parser resulted in invalid JsonML
 FunctionCall-043,Parser resulted in invalid JsonML
-FunctionCall-045,result was not equal
-FunctionCall-046,result was not equal
 FunctionCall-047,Parser resulted in invalid JsonML
 FunctionCall-048,Parser resulted in invalid JsonML
 function-declaration-010,result was not equal
 function-declaration-016,result was not equal
-function-declaration-028,result was not equal
-function-declaration-029,result was not equal
-function-declaration-030,result was not equal
 K2-FunctionProlog-1,result was not equal
 K2-FunctionProlog-14,result was not equal
 K2-FunctionProlog-2,result was not equal
@@ -2244,7 +2239,6 @@ K-CondExpr-3,result was not equal
 K-CondExpr-4,result was not equal
 K-CondExpr-5,result was not equal
 K-CondExpr-6,result was not equal
-inline-fn-007,result was not equal
 inline-fn-012,Parser resulted in invalid JsonML
 inline-fn-012a,Parser resulted in invalid JsonML
 inline-fn-013,Parser resulted in invalid JsonML

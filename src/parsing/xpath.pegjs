@@ -360,7 +360,7 @@ Param
 
 // 35
 FunctionBody
- = EnclosedExpr
+ = expr:EnclosedExpr {return expr ? expr : ["sequenceExpr"]}
 
 // 36
 EnclosedExpr
