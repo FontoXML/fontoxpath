@@ -23,6 +23,7 @@ import parseExpression from './parsing/parseExpression';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
+import IDomFacade from './domFacade/IDomFacade';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath');
@@ -71,7 +72,7 @@ function compareSpecificity(xpathStringA, xpathStringB): -1 | 0 | 1 {
 	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
 }
 
-const domFacade = new ExternalDomFacade();
+const domFacade: IDomFacade = new ExternalDomFacade();
 
 /* istanbul ignore next */
 if (typeof window !== 'undefined') {
@@ -98,6 +99,7 @@ if (typeof window !== 'undefined') {
 }
 
 export {
+	IDomFacade,
 	domFacade,
 	evaluateXPath,
 	evaluateXPathToArray,

@@ -1,50 +1,41 @@
-import {
-	ConcreteAttributeNode,
-	ConcreteCharacterDataNode,
-	ConcreteChildNode,
-	ConcreteElementNode,
-	ConcreteNode,
-	ConcreteParentNode,
-	NODE_TYPES
-} from './ConcreteNode';
-
+import { NODE_TYPES } from './ConcreteNode';
 import IDomFacade from './IDomFacade';
 
 export default class ExternalDomFacade implements IDomFacade {
-	public ['getAllAttributes'](node: ConcreteElementNode): ConcreteAttributeNode[] {
+	public ['getAllAttributes'](node: Node): Attr[] {
 		if (node.nodeType !== NODE_TYPES.ELEMENT_NODE) {
 			return [];
 		}
 		return Array.from(node['attributes']);
 	}
-	public ['getAttribute'](node: ConcreteNode, attributeName: string): string {
+	public ['getAttribute'](node: Node, attributeName: string): string {
 		if (node.nodeType !== NODE_TYPES.ELEMENT_NODE) {
 			return null;
 		}
 		return node['getAttribute'](attributeName);
 	}
-	public ['getChildNodes'](node: ConcreteParentNode): ConcreteChildNode[] {
-		return Array.from(node['childNodes']) as ConcreteChildNode[];
+	public ['getChildNodes'](node: Node): Node[] {
+		return Array.from(node['childNodes']) as Node[];
 	}
-	public ['getData'](node: ConcreteAttributeNode | ConcreteCharacterDataNode): string {
+	public ['getData'](node: Attr | CharacterData): string {
 		return node['data'];
 	}
-	public ['getFirstChild'](node: ConcreteParentNode): ConcreteChildNode {
-		return node['firstChild'] as ConcreteChildNode;
+	public ['getFirstChild'](node: Node): Node {
+		return node['firstChild'] as Node;
 	}
-	public ['getLastChild'](node: ConcreteParentNode): ConcreteChildNode {
-		return node['lastChild'] as ConcreteChildNode;
+	public ['getLastChild'](node: Node): Node {
+		return node['lastChild'] as Node;
 	}
-	public ['getNextSibling'](node: ConcreteChildNode): ConcreteChildNode {
-		return node['nextSibling'] as ConcreteChildNode;
+	public ['getNextSibling'](node: Node): Node {
+		return node['nextSibling'];
 	}
-	public ['getParentNode'](node: ConcreteNode): ConcreteParentNode {
+	public ['getParentNode'](node: Node): Node {
 		if (node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE) {
 			return node['ownerElement'];
 		}
-		return node['parentNode'] as ConcreteParentNode;
+		return node['parentNode'] as Node;
 	}
-	public ['getPreviousSibling'](node: ConcreteChildNode): ConcreteChildNode {
-		return node['previousSibling'] as ConcreteChildNode;
+	public ['getPreviousSibling'](node: Node): Node {
+		return node['previousSibling'];
 	}
 }

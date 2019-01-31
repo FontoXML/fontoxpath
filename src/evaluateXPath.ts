@@ -11,6 +11,7 @@ import Expression from './expressions/Expression';
 import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
+import IDomFacade from './domFacade/IDomFacade';
 
 function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
@@ -154,7 +155,7 @@ export type Options = {
 function evaluateXPath(
 	selector: string,
 	contextItem?: any | null,
-	domFacade?: ExternalDomFacade | null,
+	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	returnType?: ReturnType | null,
 	options?: Options | null

@@ -1,4 +1,9 @@
-import { ConcreteNode } from '../../domFacade/ConcreteNode';
+import {
+	ConcreteNode,
+	NODE_TYPES,
+	ConcreteChildNode,
+	ConcreteAttributeNode
+} from '../../domFacade/ConcreteNode';
 import IDomFacade from '../../domFacade/IDomFacade';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import isSubtypeOf from './isSubtypeOf';
@@ -43,12 +48,15 @@ function compareSiblingElements(
  * @param	node       The node to find all ancestors of
  * @return	All of the ancestors of the given node
  */
-function findAllAncestors(domFacade: IDomFacade, node: ConcreteNode): ConcreteNode[] {
+function findAllAncestors(domFacade: IWrappingDomFacade, node: ConcreteNode): ConcreteNode[] {
 	const ancestors: ConcreteNode[] = [];
 	for (
-		let ancestor: ConcreteNode = node;
+		let ancestor = node;
 		ancestor;
-		ancestor = domFacade.getParentNode(ancestor)
+		ancestor =
+			node.nodeType === NODE_TYPES.DOCUMENT_NODE
+				? null
+				: domFacade.getParentNode(ancestor as ConcreteChildNode | ConcreteAttributeNode)
 	) {
 		ancestors.unshift(ancestor);
 	}
@@ -69,7 +77,7 @@ function findAllAncestors(domFacade: IDomFacade, node: ConcreteNode): ConcreteNo
  */
 function compareElements(
 	tieBreakerArr: ConcreteNode[],
-	domFacade: IDomFacade,
+	domFacade: IWrappingDomFacade,
 	nodeA: ConcreteNode,
 	nodeB: ConcreteNode
 ): number {

@@ -6,8 +6,13 @@ import QName from '../dataTypes/valueTypes/QName';
 import zipSingleton from '../util/zipSingleton';
 import builtinStringFunctions from './builtInFunctions.string';
 
-import { ConcreteNode } from '../../domFacade/ConcreteNode';
-import IDomFacade from '../../domFacade/IDomFacade';
+import {
+	ConcreteNode,
+	NODE_TYPES,
+	ConcreteParentNode,
+	ConcreteChildNode
+} from '../../domFacade/ConcreteNode';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -31,31 +36,28 @@ function contextItemAsFirstArgument(fn, dynamicContext, executionParameters, _st
 const fnNodeName: FunctionDefinitionType = function(
 	_dynamicContext,
 	_executionParameters,
-	staticContext,
+	_staticContext,
 	sequence
 ) {
 	return zipSingleton([sequence], ([nodeValue]) => {
 		if (nodeValue === null) {
 			return sequenceFactory.empty();
 		}
-		switch (nodeValue.value.nodeType) {
-			case 1:
-			case 2:
+
+		const node: ConcreteNode = nodeValue.value;
+		switch (node.nodeType) {
+			case NODE_TYPES.ELEMENT_NODE:
+			case NODE_TYPES.ATTRIBUTE_NODE:
 				// element or attribute
 				return sequenceFactory.singleton(
 					createAtomicValue(
-						new QName(
-							nodeValue.value.prefix,
-							nodeValue.value.namespaceURI,
-							nodeValue.value.localName
-						),
+						new QName(node.prefix, node.namespaceURI, node.localName),
 						'xs:QName'
 					)
 				);
-			case 7:
+			case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
 				// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
-				const processingInstruction =
-					/** @type {ProcessingInstruction} */ (nodeValue.value);
+				const processingInstruction = node;
 				return sequenceFactory.singleton(
 					createAtomicValue(new QName('', '', processingInstruction.target), 'xs:QName')
 				);
@@ -114,15 +116,22 @@ const fnLocalName: FunctionDefinitionType = function(
 	});
 };
 
-function contains(domFacade: IDomFacade, ancestor: Node, descendant: ConcreteNode): boolean {
-	if (ancestor.nodeType === 2) {
+function contains(
+	domFacade: IWrappingDomFacade,
+	ancestor: ConcreteNode,
+	descendant: ConcreteNode
+): boolean {
+	if (ancestor.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
 		return ancestor === descendant;
 	}
 	while (descendant) {
 		if (ancestor === descendant) {
 			return true;
 		}
-		descendant = domFacade.getParentNode(descendant);
+		if (descendant.nodeType === NODE_TYPES.DOCUMENT_NODE) {
+			return false;
+		}
+		descendant = domFacade.getParentNode(descendant as ConcreteChildNode);
 	}
 	return false;
 }

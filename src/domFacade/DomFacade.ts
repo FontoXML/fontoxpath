@@ -7,7 +7,6 @@ import {
 	ConcreteParentNode,
 	NODE_TYPES
 } from './ConcreteNode';
-import ExternalDomFacade from './ExternalDomFacade';
 import IDomFacade from './IDomFacade';
 import IWrappingDomFacade from './IWrappingDomFacade';
 
@@ -17,7 +16,7 @@ import IWrappingDomFacade from './IWrappingDomFacade';
 class DomFacade implements IWrappingDomFacade {
 	public orderOfDetachedNodes: ConcreteNode[];
 
-	constructor(private readonly _domFacade: ExternalDomFacade) {
+	constructor(private readonly _domFacade: IDomFacade) {
 		/**
 		 * Defines the ordering of detached nodes, to ensure stable sorting of unrelated nodes.
 		 */
@@ -59,24 +58,23 @@ class DomFacade implements IWrappingDomFacade {
 	}
 
 	public getFirstChild(node: ConcreteParentNode): ConcreteChildNode {
-		return this._domFacade['getFirstChild'](node);
+		return this._domFacade['getFirstChild'](node) as ConcreteChildNode;
 	}
 
 	public getLastChild(node: ConcreteParentNode): ConcreteChildNode {
-		return this._domFacade['getLastChild'](node);
+		return this._domFacade['getLastChild'](node) as ConcreteChildNode;
 	}
 
 	public getNextSibling(node: ConcreteChildNode): ConcreteChildNode {
-		return this._domFacade['getNextSibling'](node);
+		return this._domFacade['getNextSibling'](node) as ConcreteChildNode;
 	}
 
-	public getParentNode(node: ConcreteElementNode): ConcreteParentNode;
-	public getParentNode(node: ConcreteNode): ConcreteParentNode {
-		return this._domFacade['getParentNode'](node);
+	public getParentNode(node: ConcreteChildNode): ConcreteParentNode {
+		return this._domFacade['getParentNode'](node) as ConcreteParentNode;
 	}
 
 	public getPreviousSibling(node: ConcreteChildNode): ConcreteChildNode {
-		return this._domFacade['getPreviousSibling'](node);
+		return this._domFacade['getPreviousSibling'](node) as ConcreteChildNode;
 	}
 
 	// Can be used to create an extra frame when tracking dependencies
