@@ -29,7 +29,7 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
 
 * `xpathExpression` `<String>` The query to evaluate.
 * `contextNode` `<Node>` The node in which context the `xpathExpression` will be evaluated. Defaults to `null`.
-* `domFacade` `<IDomFacade>` An [IDomFacade](externs/IDomFacade.js) implementation which will be used for querying the DOM. Defaults to an implementation which uses properties and methods on the `contextNode` as described in the [DOM spec](https://dom.spec.whatwg.org/).
+* `domFacade` `<IDomFacade>` An [IDomFacade](src/domFacade/IDomFacade.ts) implementation which will be used for querying the DOM. Defaults to an implementation which uses properties and methods on the `contextNode` as described in the [DOM spec](https://dom.spec.whatwg.org/).
 * `variables` `<Object>` The properties of `variables` are available variables within the `xpathExpression`. Defaults to an empty `Object`.
 * `returnType` `<number>` Determines the type of the result. Defaults to `evaluateXPath.ANY_TYPE`. Possible values:
   * `evaluateXPath.ANY_TYPE` Returns the result of the query, can be anything depending on the query. Note that the return type is determined dynamically, not statically: XPaths returning empty sequences will return empty arrays and not null, like one might expect.
@@ -45,7 +45,7 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
   * `evaluateXPath.NUMBERS_TYPE` Resolve to an array of numbers `number[]`.
 * `options` `<Object>` Options used to modify the behavior. The following options are available:
   * `namespaceResolver` `<function(string):string?>`
-  * `nodesFactory` `INodesFactory` A [INodesFactory](externs/INodesFactory.js) implementation which will be used for creating nodes.
+  * `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts) implementation which will be used for creating nodes.
   * `language` `string` The query language to use. Defaults to `evaluateXPath.XPATH_3_1_LANGUAGE`. Possible values:
     * `evaluateXPath.XPATH_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XPath spec](https://www.w3.org/TR/xpath-31/).
     * `evaluateXPath.XQUERY_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XQuery spec](https://www.w3.org/TR/xquery-31/).
@@ -120,8 +120,8 @@ executePendingUpdateList(pendingUpdateList, domFacade, nodesFactory, documentWri
 
 * `pendingUpdateList` `<Object[]>` The pending update list returned by `evaluateUpdatingExpression`.
 * `domFacade` `<IDomFacade>` See `evaluateXPath`. The default will use nodes from the `pendingUpdateList`.
-* `nodesFactory` `INodesFactory` A [INodesFactory](externs/INodesFactory.js) implementation which will be used for creating nodes. Defaults to an implementation which uses properties and methods of nodes from the `pendingUpdateList`.
-* `documentWriter` `<IDocumentWriter>` An [IDocumentWriter](externs/IDocumentWriter.js) implementation which will be used for modifying a DOM. Defaults to an implementation which uses properties and methods of nodes from the `pendingUpdateList`.
+* `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts) implementation which will be used for creating nodes. Defaults to an implementation which uses properties and methods of nodes from the `pendingUpdateList`.
+* `documentWriter` `<IDocumentWriter>` An [IDocumentWriter](src/documentWriter/IDocumePntWriter.ts) implementation which will be used for modifying a DOM. Defaults to an implementation which uses properties and methods of nodes from the `pendingUpdateList`.
 
 ### Example
 
