@@ -6,7 +6,7 @@ function getNumberStringLength(i: number) {
 
 export function printAndRethrowError(selector: string, error: Error | StackTraceEntry): never {
 	if (error instanceof Error) {
-		throw new Error(`Error executing XPath: ${error}`);
+		throw error;
 	}
 
 	// This must be a StackTraceEntry 'error'

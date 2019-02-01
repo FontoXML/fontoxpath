@@ -11,17 +11,11 @@ declare %public function test:hello($a) {
 };
 `);
 
-		const result = evaluateXPath(
-			'test:hello("World")',
-			null,
-			null,
-			null,
-			null,
-			{
-				moduleImports: {
-					test: 'https://www.example.org/test1'
-				}
-			});
+		const result = evaluateXPath('test:hello("World")', null, null, null, null, {
+			moduleImports: {
+				test: 'https://www.example.org/test1'
+			}
+		});
 
 		chai.assert.equal(result, 'Hello World');
 	});
@@ -36,21 +30,13 @@ declare %public function test:is-even ($n) {
 
 declare %public function test:is-odd ($n) {
   test:is-even($n - 1)
-};
+};`);
 
-`);
-
-		const result = evaluateXPath(
-			'test:is-odd(5)',
-			null,
-			null,
-			null,
-			null,
-			{
-				moduleImports: {
-					test: 'https://www.example.org/test2'
-				}
-			});
+		const result = evaluateXPath('test:is-odd(5)', null, null, null, null, {
+			moduleImports: {
+				test: 'https://www.example.org/test2'
+			}
+		});
 
 		chai.assert.equal(result, true);
 	});
@@ -71,18 +57,25 @@ declare %public function test:hello ($a) {
 };
 `);
 
-		const result = evaluateXPath(
-			'test:hello("World")',
-			null,
-			null,
-			null,
-			null,
-			{
-				moduleImports: {
-					test: 'https://www.example.org/test3/mainModule'
-				}
-			});
+		const result = evaluateXPath('test:hello("World")', null, null, null, null, {
+			moduleImports: {
+				test: 'https://www.example.org/test3/mainModule'
+			}
+		});
 
-			chai.assert.equal(result, 'Hello World!!!');
+		chai.assert.equal(result, 'Hello World!!!');
+	});
+
+	it('Can declare a function without body', () => {
+		const result = evaluateXPath(
+			'declare %public function local:my-func(){};local:my-func()',
+			null,
+			null,
+			null,
+			null,
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+		);
+
+		chai.assert.deepEqual(result, []);
 	});
 });
