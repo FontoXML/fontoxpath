@@ -1,24 +1,24 @@
 import {
-	ConcreteChildNode,
-	ConcreteDocumentNode,
 	ConcreteParentNode,
-	NODE_TYPES
+	NODE_TYPES,
+	ConcreteNode,
+	ConcreteChildNode
 } from '../../domFacade/ConcreteNode';
-import IDomFacade from '../../domFacade/IDomFacade';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import createNodeValue from '../dataTypes/createNodeValue';
 import createChildGenerator from './createChildGenerator';
 import { DONE_TOKEN, ready } from './iterators';
 
 function findDeepestLastDescendant(
-	node: ConcreteChildNode | ConcreteDocumentNode,
-	domFacade: IDomFacade
-): ConcreteChildNode | ConcreteDocumentNode {
+	node: ConcreteNode,
+	domFacade: IWrappingDomFacade
+): ConcreteNode {
 	if (node.nodeType !== NODE_TYPES.ELEMENT_NODE && node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
 		return node;
 	}
 
-	let parentNode: ConcreteParentNode = node;
-	let childNode: ConcreteChildNode = domFacade.getLastChild(node);
+	let parentNode = node;
+	let childNode = domFacade.getLastChild(node);
 	while (childNode !== null) {
 		if (childNode.nodeType !== NODE_TYPES.ELEMENT_NODE) {
 			return childNode;
@@ -30,12 +30,12 @@ function findDeepestLastDescendant(
 }
 
 export default function createDescendantGenerator(
-	domFacade: IDomFacade,
-	node: ConcreteParentNode,
+	domFacade: IWrappingDomFacade,
+	node: ConcreteNode,
 	returnInReverse = false
 ) {
 	if (returnInReverse) {
-		let currentNode: ConcreteChildNode | ConcreteDocumentNode = node;
+		let currentNode: ConcreteNode = node;
 		let isDone = false;
 		return {
 			next: () => {
@@ -53,7 +53,8 @@ export default function createDescendantGenerator(
 				}
 
 				const previousSibling =
-					currentNode.nodeType === NODE_TYPES.DOCUMENT_NODE
+					currentNode.nodeType === NODE_TYPES.DOCUMENT_NODE ||
+					currentNode.nodeType === NODE_TYPES.ATTRIBUTE_NODE
 						? null
 						: domFacade.getPreviousSibling(currentNode);
 				if (previousSibling !== null) {
@@ -61,7 +62,10 @@ export default function createDescendantGenerator(
 					return ready(createNodeValue(currentNode));
 				}
 
-				currentNode = domFacade.getParentNode(currentNode);
+				currentNode =
+					currentNode.nodeType === NODE_TYPES.DOCUMENT_NODE
+						? null
+						: domFacade.getParentNode(currentNode);
 				if (currentNode === node) {
 					isDone = true;
 					return DONE_TOKEN;

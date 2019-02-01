@@ -3,7 +3,7 @@ import IDocumentWriter from '../documentWriter/IDocumentWriter';
 import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWriter';
 import domBackedDomFacade from '../domFacade/domBackedDomFacade';
 import DomFacade from '../domFacade/DomFacade';
-import ExternalDomFacade from '../domFacade/ExternalDomFacade';
+import IDomFacade from '../domFacade/IDomFacade';
 import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 import { UpdatingOptions } from '../evaluateUpdatingExpression';
 import { Options } from '../evaluateXPath';
@@ -47,7 +47,7 @@ function normalizeEndOfLines(xpathString: string) {
 export default function buildEvaluationContext(
 	expressionString: string,
 	contextItem: any,
-	domFacade: ExternalDomFacade | null,
+	domFacade: IDomFacade | null,
 	variables: object,
 	externalOptions: Options | UpdatingOptions,
 	compilationOptions: {

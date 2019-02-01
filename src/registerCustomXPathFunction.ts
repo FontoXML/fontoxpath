@@ -2,7 +2,7 @@ import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValue
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import { registerFunction } from './expressions/functions/functionRegistry';
 
-import ExternalDomFacade from './domFacade/ExternalDomFacade';
+import IDomFacade from './domFacade/IDomFacade';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import {
@@ -55,13 +55,13 @@ function splitFunctionName(
 
 	// Register this prefix to a random namespace uri
 	return {
-		namespaceURI: namespaceURIForPrefix,
-		localName
+		localName,
+		namespaceURI: namespaceURIForPrefix
 	};
 }
 
 type DomFacadeWrapper = {
-	domFacade: ExternalDomFacade;
+	domFacade: IDomFacade;
 };
 
 /**
