@@ -1,9 +1,11 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import Value from '../dataTypes/Value';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import isSubtypeOfType from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import zipSingleton from '../util/zipSingleton';
+import ISequence from '../dataTypes/ISequence';
 import builtinStringFunctions from './builtInFunctions.string';
 
 import {
@@ -19,7 +21,12 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnString = builtinStringFunctions.functions.string;
 
-function contextItemAsFirstArgument(fn, dynamicContext, executionParameters, _staticContext) {
+function contextItemAsFirstArgument(
+	fn: FunctionDefinitionType,
+	dynamicContext,
+	executionParameters,
+	_staticContext
+) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error(
 			'XPDY0002: The function which was called depends on dynamic context, which is absent.'
@@ -83,6 +90,22 @@ const fnName: FunctionDefinitionType = function(
 				staticContext,
 				fnNodeName(dynamicContext, executionParameters, staticContext, sequence)
 			)
+	});
+};
+
+const fnHasChildren: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	nodeSequence: ISequence
+) {
+	return zipSingleton([nodeSequence], ([nodeValue]: (Value | null)[]) => {
+		const node: ConcreteNode = nodeValue ? nodeValue.value : null;
+
+		if (node && node.firstChild) {
+			return sequenceFactory.singletonTrueSequence();
+		}
+		return sequenceFactory.singletonFalseSequence();
 	});
 };
 
@@ -277,6 +300,22 @@ export default {
 			argumentTypes: ['node()*'],
 			returnType: 'node()*',
 			callFunction: fnOutermost
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'has-children',
+			argumentTypes: ['node()?'],
+			returnType: 'xs:boolean',
+			callFunction: fnHasChildren
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'has-children',
+			argumentTypes: [],
+			returnType: 'xs:boolean',
+			callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren)
 		},
 
 		{
