@@ -332,4 +332,26 @@ return $node/root() = $element`,
 			);
 		});
 	});
+
+	describe('has-children()', () => {
+		it('returns true, when the node has one or more child', () => {
+			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
+			chai.assert.deepEqual(evaluateXPathToBoolean("has-children(root)", documentNode), true);
+		});
+
+		it('returns false, when the node has no child', () => {
+			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
+			chai.assert.deepEqual(evaluateXPathToBoolean("has-children(//descendant)", documentNode), false);
+		});
+
+		it('returns false, if the function is run with an empty sequence', () => {
+			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
+			chai.assert.deepEqual(evaluateXPathToBoolean("has-children(())", documentNode), false);
+		});
+
+		it('defaults to the context item (.) and returns true, if the argument is omitted.', () => {
+			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
+			chai.assert.deepEqual(evaluateXPathToBoolean("has-children()", documentNode), true);
+		});
+	});
 });
