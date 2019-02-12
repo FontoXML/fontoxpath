@@ -179,6 +179,23 @@ describe('castToType()', () => {
 			() => chai.assert.deepEqual(
 				castToType(createAtomicValue(1010, 'xs:decimal'), 'xs:string'),
 				createAtomicValue('1010', 'xs:string')));
+		it('from xs:decimal, large ones',
+			() => chai.assert.deepEqual(
+				castToType(createAtomicValue(1e10, 'xs:decimal'), 'xs:string'),
+				createAtomicValue('10000000000', 'xs:string')));
+		it('from xs:decimal, small ones',
+			() => chai.assert.deepEqual(
+				castToType(createAtomicValue(1e-10, 'xs:decimal'), 'xs:string'),
+				createAtomicValue('0.0000000001', 'xs:string')));
+		it('from xs:decimal, normal ones',
+			() => chai.assert.deepEqual(
+				castToType(createAtomicValue(12345.6789, 'xs:decimal'), 'xs:string'),
+				// Note: float precision errors here
+				createAtomicValue('12345.67890000000079', 'xs:string')));
+		it('from xs:decimal, negative ones',
+			() => chai.assert.deepEqual(
+				castToType(createAtomicValue(-100, 'xs:decimal'), 'xs:string'),
+				createAtomicValue('-100', 'xs:string')));
 		it('from xs:integer',
 			() => chai.assert.deepEqual(
 				castToType(createAtomicValue(1010, 'xs:integer'), 'xs:string'),

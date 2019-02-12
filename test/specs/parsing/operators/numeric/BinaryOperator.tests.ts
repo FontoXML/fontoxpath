@@ -16,6 +16,12 @@ beforeEach(() => {
 describe('mathematical operators', () => {
 	it('can evaluate 1 + 1 to 2',
 		() => chai.assert.equal(evaluateXPathToNumber('1 + 1', documentNode), 2));
+	it('can evaluate +0e0 div +0e0 to NaN',
+		() => chai.assert.isNaN(evaluateXPathToNumber('+0e0 div +0e0', documentNode)));
+	it('can evaluate 1.5 + 0.5 to 2.0',
+		() => chai.assert.equal(evaluateXPathToNumber('1.5 + 0.5', documentNode), 2));
+	it('can evaluate 1 + NaN to NaN',
+		() => chai.assert.isNaN(evaluateXPathToNumber('xs:float("NaN") + 1', documentNode)));
 
 	it('can evaluate 1 - 1 to 0',
 		() => chai.assert.equal(evaluateXPathToNumber('1 - 1', documentNode), 0));
