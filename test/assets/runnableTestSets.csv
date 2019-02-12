@@ -96,7 +96,7 @@ fn-function-arity,false
 fn-function-lookup,false
 fn-function-name,false
 fn-generate-id,true
-fn-has-children,false
+fn-has-children,true
 fn-head,true
 fn-hours-from-dateTime,true
 fn-hours-from-duration,true
