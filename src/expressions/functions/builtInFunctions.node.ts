@@ -1,31 +1,34 @@
-import createAtomicValue from '../dataTypes/createAtomicValue';
-import Value from '../dataTypes/Value';
-import { sortNodeValues } from '../dataTypes/documentOrderUtils';
-import isSubtypeOfType from '../dataTypes/isSubtypeOf';
-import sequenceFactory from '../dataTypes/sequenceFactory';
-import QName from '../dataTypes/valueTypes/QName';
-import zipSingleton from '../util/zipSingleton';
-import ISequence from '../dataTypes/ISequence';
-import builtinStringFunctions from './builtInFunctions.string';
-
 import {
+	ConcreteChildNode,
 	ConcreteNode,
-	NODE_TYPES,
 	ConcreteParentNode,
-	ConcreteChildNode
+	ConcreteProcessingInstructionNode,
+	NODE_TYPES
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
+import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
+import { sortNodeValues } from '../dataTypes/documentOrderUtils';
+import ISequence from '../dataTypes/ISequence';
+import isSubtypeOfType from '../dataTypes/isSubtypeOf';
+import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
+import QName from '../dataTypes/valueTypes/QName';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import StaticContext from '../StaticContext';
+import zipSingleton from '../util/zipSingleton';
+import builtinStringFunctions from './builtInFunctions.string';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnString = builtinStringFunctions.functions.string;
 
 function contextItemAsFirstArgument(
 	fn: FunctionDefinitionType,
-	dynamicContext,
-	executionParameters,
-	_staticContext
+	dynamicContext: DynamicContext,
+	executionParameters: ExecutionParameters,
+	staticContext: StaticContext
 ) {
 	if (dynamicContext.contextItem === null) {
 		throw new Error(
@@ -35,7 +38,7 @@ function contextItemAsFirstArgument(
 	return fn(
 		dynamicContext,
 		executionParameters,
-		_staticContext,
+		staticContext,
 		sequenceFactory.singleton(dynamicContext.contextItem)
 	);
 }
@@ -95,14 +98,14 @@ const fnName: FunctionDefinitionType = function(
 
 const fnHasChildren: FunctionDefinitionType = function(
 	_dynamicContext,
-	_executionParameters,
-	_staticContext,
+	executionParameters,
+	staticContext,
 	nodeSequence: ISequence
 ) {
 	return zipSingleton([nodeSequence], ([nodeValue]: (Value | null)[]) => {
-		const node: ConcreteNode = nodeValue ? nodeValue.value : null;
+		const node: ConcreteParentNode = nodeValue ? nodeValue.value : null;
 
-		if (node && node.firstChild) {
+		if (node !== null && executionParameters.domFacade.getFirstChild(node)) {
 			return sequenceFactory.singletonTrueSequence();
 		}
 		return sequenceFactory.singletonFalseSequence();
@@ -112,7 +115,7 @@ const fnHasChildren: FunctionDefinitionType = function(
 const fnNamespaceURI: FunctionDefinitionType = function(
 	_dynamicContext,
 	_executionParameters,
-	staticContext,
+	_staticContext,
 	sequence
 ) {
 	return sequence.map(node => createAtomicValue(node.value.namespaceURI || '', 'xs:anyURI'));
@@ -121,7 +124,7 @@ const fnNamespaceURI: FunctionDefinitionType = function(
 const fnLocalName: FunctionDefinitionType = function(
 	_dynamicContext,
 	_executionParameters,
-	staticContext,
+	_staticContext,
 	sequence
 ) {
 	return sequence.switchCases({
@@ -129,7 +132,7 @@ const fnLocalName: FunctionDefinitionType = function(
 		default: () => {
 			return sequence.map(node => {
 				if (node.value.nodeType === 7) {
-					const pi = /** @type {ProcessingInstruction} */ (node.value);
+					const pi: ConcreteProcessingInstructionNode = node.value;
 					return createAtomicValue(pi.target, 'xs:string');
 				}
 
