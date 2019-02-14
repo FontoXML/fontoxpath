@@ -143,7 +143,7 @@ fn-parse-ietf-date,false
 fn-parse-json,true
 fn-parse-xml,false
 fn-parse-xml-fragment,false
-fn-path,false
+fn-path,true
 fn-position,true
 fn-prefix-from-QName,true
 fn-random-number-generator,false,

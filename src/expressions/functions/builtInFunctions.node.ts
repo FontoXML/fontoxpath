@@ -96,12 +96,12 @@ const fnName: FunctionDefinitionType = function(
 	});
 };
 
-const fnHasChildren: FunctionDefinitionType = function(
+const fnHasChildren: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
-	staticContext,
+	_staticContext,
 	nodeSequence: ISequence
-) {
+) => {
 	return zipSingleton([nodeSequence], ([nodeValue]: (Value | null)[]) => {
 		const node: ConcreteParentNode = nodeValue ? nodeValue.value : null;
 
@@ -109,6 +109,84 @@ const fnHasChildren: FunctionDefinitionType = function(
 			return sequenceFactory.singletonTrueSequence();
 		}
 		return sequenceFactory.singletonFalseSequence();
+	});
+};
+
+const fnPath: FunctionDefinitionType = function(
+	_dynamicContext,
+	executionParameters,
+	_staticContext,
+	nodeSequence: ISequence
+) {
+	return zipSingleton([nodeSequence], ([nodeValue]: (Value | null)[]) => {
+		const node: ConcreteNode = nodeValue ? nodeValue.value : null;
+
+		if (!node) {
+			return sequenceFactory.empty();
+		}
+
+		let result = '';
+
+		function getChildIndex(child: ConcreteChildNode): number {
+			let i = 0;
+			const childNodeType = child.nodeType;
+			const childNodeName = child.nodeName;
+			while (child !== null) {
+				if (childNodeType === child.nodeType && childNodeName === child.nodeName) {
+					i++;
+				}
+				child = executionParameters.domFacade.getPreviousSibling(child);
+			}
+			return i;
+		}
+
+		for (
+			let ancestor: ConcreteNode = node;
+			ancestor;
+			ancestor = executionParameters.domFacade.getParentNode(
+				ancestor as ConcreteChildNode
+			) as ConcreteNode
+		) {
+			if (
+				executionParameters.domFacade.getParentNode(ancestor as ConcreteChildNode) === null
+			) {
+				if (ancestor.nodeType === NODE_TYPES.DOCUMENT_NODE) {
+					return sequenceFactory.create(createAtomicValue(result || '/', 'xs:string'));
+				}
+				return sequenceFactory.create(
+					createAtomicValue(
+						'Q{http://www.w3.org/2005/xpath-functions}root()' + result,
+						'xs:string'
+					)
+				);
+			}
+
+			switch (ancestor.nodeType) {
+				case NODE_TYPES.ELEMENT_NODE:
+					result = `/Q{${ancestor.namespaceURI || ''}}${
+						ancestor.nodeName
+					}[${getChildIndex(ancestor)}]${result}`;
+					break;
+				case NODE_TYPES.ATTRIBUTE_NODE:
+					result =
+						'/@' +
+						(ancestor.namespaceURI ? `Q{${ancestor.namespaceURI}}` : '') +
+						ancestor.localName +
+						result;
+					break;
+				case NODE_TYPES.TEXT_NODE:
+					result = `/text()[${getChildIndex(ancestor)}]${result}`;
+					break;
+				case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
+					result = `/processing-instruction(${ancestor.nodeName})[${getChildIndex(
+						ancestor
+					)}]${result}`;
+					break;
+				case NODE_TYPES.COMMENT_NODE:
+					result = `/comment()[${getChildIndex(ancestor)}]${result}`;
+					break;
+			}
+		}
 	});
 };
 
@@ -319,6 +397,22 @@ export default {
 			argumentTypes: [],
 			returnType: 'xs:boolean',
 			callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren)
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'path',
+			argumentTypes: ['node()?'],
+			returnType: 'xs:string?',
+			callFunction: fnPath
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'path',
+			argumentTypes: [],
+			returnType: 'xs:string?',
+			callFunction: contextItemAsFirstArgument.bind(null, fnPath)
 		},
 
 		{
