@@ -171,11 +171,9 @@ const fnPath: FunctionDefinitionType = (
 					}[${getChildIndex(ancestor)}]${result}`;
 					break;
 				case NODE_TYPES.ATTRIBUTE_NODE:
+					const attributeNameSpace = ancestor.namespaceURI ? `Q{${ancestor.namespaceURI}}` : '';
 					result =
-						'/@' +
-						(ancestor.namespaceURI ? `Q{${ancestor.namespaceURI}}` : '') +
-						ancestor.localName +
-						result;
+						`/@${attributeNameSpace}${ancestor.localName}${result}`;
 					break;
 				case NODE_TYPES.TEXT_NODE:
 					result = `/text()[${getChildIndex(ancestor)}]${result}`;
@@ -191,7 +189,6 @@ const fnPath: FunctionDefinitionType = (
 			}
 		}
 		if (ancestor.nodeType === NODE_TYPES.DOCUMENT_NODE) {
-			result = result || '/';
 			return sequenceFactory.create(createAtomicValue(result || '/', 'xs:string'));
 		}
 		result = 'Q{http://www.w3.org/2005/xpath-functions}root()' + result;
