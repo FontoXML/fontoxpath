@@ -567,5 +567,93 @@ return $node/root() = $element`,
 				[]
 			);
 		});
+
+		it('returns "fn:root()/Q{http://test2}a[1]" for the duplicate namespace URIs', () => {
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $dom := 
+					<xml>
+						<a:a xmlns:a="http://test"/>
+						<a:a xmlns:a="http://test2"/>
+			  		</xml> return fn:path($dom/*:a[2])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test2}a[1]'
+			);
+		});
+
+		it('returns "fn:root()/Q{http://test}a[2]" for the duplicate namespace URIs', () => {
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $dom := 
+					<xml>
+						<a:a xmlns:a="http://test"/>
+						<b:a xmlns:b="http://test"/>
+			  		</xml> return fn:path($dom/*:a[2])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test}a[2]'
+			);
+		});
+
+		it('returns "fn:root()/processing-instruction(stylesheet)[1]" for the processing instruction', () => {
+			documentNode = sync(
+				`<xml>
+				<?TARGET DATA?>
+				<?ANOTHER_TARGET  MORE DATA?>
+				<?canAlsoBeLowerCaps data may contain spaces?>
+				<?etc etc, etc?>
+				</xml>`,
+				documentNode
+			);
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`fn:path(//processing-instruction()[3])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{}xml[1]/processing-instruction(canAlsoBeLowerCaps)[1]'
+			);
+		});
+
+		it('returns "fn:root()/processing-instruction(stylesheet)[1]" for the processing instruction', () => {
+			documentNode = sync(
+				`<xml>
+				<?TARGET DATA?>
+				<?TARGET MORE DATA?>
+				<?TARGET data may contain spaces?>
+				<?TARGET etc, etc?>
+				</xml>`,
+				documentNode
+			);
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`fn:path(//processing-instruction()[3])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{}xml[1]/processing-instruction(TARGET)[3]'
+			);
+		});
 	});
 });
