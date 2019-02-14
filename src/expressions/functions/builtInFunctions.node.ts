@@ -3,7 +3,8 @@ import {
 	ConcreteNode,
 	ConcreteParentNode,
 	ConcreteProcessingInstructionNode,
-	NODE_TYPES
+	NODE_TYPES,
+	ConcreteElementNode
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -112,59 +113,61 @@ const fnHasChildren: FunctionDefinitionType = (
 	});
 };
 
-const fnPath: FunctionDefinitionType = function(
+function areSameNode(nodeA: ConcreteChildNode, nodeB: ConcreteChildNode): boolean {
+	if (nodeA.nodeType !== nodeB.nodeType) {
+		return false;
+	}
+	if (nodeB.nodeType === NODE_TYPES.ELEMENT_NODE) {
+		return (
+			nodeB.localName === (nodeA as ConcreteElementNode).localName &&
+			nodeB.namespaceURI === (nodeA as ConcreteElementNode).namespaceURI
+		);
+	}
+	if (nodeB.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE) {
+		return nodeB.target === (nodeA as ConcreteProcessingInstructionNode).target;
+	}
+
+	return true;
+}
+
+const fnPath: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	nodeSequence: ISequence
-) {
+) => {
 	return zipSingleton([nodeSequence], ([nodeValue]: (Value | null)[]) => {
-		const node: ConcreteNode = nodeValue ? nodeValue.value : null;
-
-		if (!node) {
+		if (nodeValue === null) {
 			return sequenceFactory.empty();
 		}
+
+		const node: ConcreteNode = nodeValue.value;
 
 		let result = '';
 
 		function getChildIndex(child: ConcreteChildNode): number {
 			let i = 0;
-			const childNodeType = child.nodeType;
-			const childNodeName = child.nodeName;
-			while (child !== null) {
-				if (childNodeType === child.nodeType && childNodeName === child.nodeName) {
+			let otherChild = child;
+			while (otherChild !== null) {
+				if (areSameNode(child, otherChild)) {
 					i++;
 				}
-				child = executionParameters.domFacade.getPreviousSibling(child);
+				otherChild = executionParameters.domFacade.getPreviousSibling(otherChild);
 			}
 			return i;
 		}
-
+		let ancestor: ConcreteNode;
 		for (
-			let ancestor: ConcreteNode = node;
-			ancestor;
+			ancestor = node;
+			executionParameters.domFacade.getParentNode(ancestor as ConcreteChildNode) !== null; //look again
 			ancestor = executionParameters.domFacade.getParentNode(
 				ancestor as ConcreteChildNode
 			) as ConcreteNode
 		) {
-			if (
-				executionParameters.domFacade.getParentNode(ancestor as ConcreteChildNode) === null
-			) {
-				if (ancestor.nodeType === NODE_TYPES.DOCUMENT_NODE) {
-					return sequenceFactory.create(createAtomicValue(result || '/', 'xs:string'));
-				}
-				return sequenceFactory.create(
-					createAtomicValue(
-						'Q{http://www.w3.org/2005/xpath-functions}root()' + result,
-						'xs:string'
-					)
-				);
-			}
-
 			switch (ancestor.nodeType) {
 				case NODE_TYPES.ELEMENT_NODE:
 					result = `/Q{${ancestor.namespaceURI || ''}}${
-						ancestor.nodeName
+						ancestor.localName
 					}[${getChildIndex(ancestor)}]${result}`;
 					break;
 				case NODE_TYPES.ATTRIBUTE_NODE:
@@ -187,6 +190,12 @@ const fnPath: FunctionDefinitionType = function(
 					break;
 			}
 		}
+		if (ancestor.nodeType === NODE_TYPES.DOCUMENT_NODE) {
+			result = result || '/';
+			return sequenceFactory.create(createAtomicValue(result || '/', 'xs:string'));
+		}
+		result = 'Q{http://www.w3.org/2005/xpath-functions}root()' + result;
+		return sequenceFactory.create(createAtomicValue(result, 'xs:string'));
 	});
 };
 
