@@ -7,6 +7,8 @@ import {
 	evaluateXPathToStrings
 } from 'fontoxpath';
 
+import { sync } from 'slimdom-sax-parser';
+
 import * as slimdom from 'slimdom';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
@@ -355,6 +357,303 @@ return $node/root() = $element`,
 		it('defaults to the context item (.) and returns true, if the argument is omitted.', () => {
 			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
 			chai.assert.deepEqual(evaluateXPathToBoolean('has-children()', documentNode), true);
+		});
+	});
+
+	describe('path', () => {
+		it('returns "fn:root()" for the root of the document', () => {
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $emp :=
+				<employee xml:id="ID21256">
+				   <empnr>E21256</empnr>
+				   <first>John</first>
+				   <last>Brown</last>
+				</employee> return fn:path($emp)`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'Q{http://www.w3.org/2005/xpath-functions}root()'
+			);
+		});
+
+		it('returns "fn:root()/@Q{http://www.w3.org/XML/1998/namespace}id" for the id attribute of the root of the document', () => {
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $emp :=
+				<employee xml:id="ID21256">
+				   <empnr>E21256</empnr>
+				   <first>John</first>
+				   <last>Brown</last>
+				</employee> return fn:path($emp/@xml:id)`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'Q{http://www.w3.org/2005/xpath-functions}root()/@Q{http://www.w3.org/XML/1998/namespace}id'
+			);
+		});
+
+		it('returns "fn:root()/Q{}empnr[1]" for the <empnr> element of the document', () => {
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $emp :=
+				<employee xml:id="ID21256">
+				   <empnr>E21256</empnr>
+				   <first>John</first>
+				   <last>Brown</last>
+				</employee> return fn:path($emp/empnr)`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{}empnr[1]'
+			);
+		});
+
+		it('returns "/" for the document node', () => {
+			documentNode = sync(
+				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
+				Freude, schöner Götterfunken,<br/>
+				Tochter aus Elysium,<br/>
+				Wir betreten feuertrunken,<br/>
+				Himmlische, dein Heiligtum.</p>`
+			);
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(`let $e := . return fn:path($e)`, documentNode, null, null, {
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE
+				}),
+				'/'
+			);
+		});
+
+		it('returns "/Q{http://example.com/one}p[1]" for the <p> element of the document', () => {
+			documentNode = sync(
+				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
+				Freude, schöner Götterfunken,<br/>
+				Tochter aus Elysium,<br/>
+				Wir betreten feuertrunken,<br/>
+				Himmlische, dein Heiligtum.</p>`
+			);
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $e := . return fn:path($e/*:p)`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{http://example.com/one}p[1]'
+			);
+		});
+
+		it('returns "Q{http://example.com/one}p[1]/@Q{http://www.w3.org/XML/1998/namespace}lang" for the lang attribute of <p> element of the document', () => {
+			documentNode = sync(
+				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
+				Freude, schöner Götterfunken,<br/>
+				Tochter aus Elysium,<br/>
+				Wir betreten feuertrunken,<br/>
+				Himmlische, dein Heiligtum.</p>`,
+				documentNode
+			);
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $e := . return fn:path($e/*:p/@xml:lang)`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{http://example.com/one}p[1]/@Q{http://www.w3.org/XML/1998/namespace}lang'
+			);
+		});
+
+		it('returns "Q{http://example.com/one}p[1]/@author" for the author attribute of <p> element of the document', () => {
+			documentNode = sync(
+				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
+				Freude, schöner Götterfunken,<br/>
+				Tochter aus Elysium,<br/>
+				Wir betreten feuertrunken,<br/>
+				Himmlische, dein Heiligtum.</p>`,
+				documentNode
+			);
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $e := . return fn:path($e/*:p/@author)`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{http://example.com/one}p[1]/@author'
+			);
+		});
+
+		it('returns "/Q{http://example.com/one}p[1]/Q{http://example.com/one}br[2]" for the <br> element of the document', () => {
+			documentNode = sync(
+				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
+				Freude, schöner Götterfunken,<br/>
+				<said></said>
+				Tochter aus Elysium,<br/> <said>
+				blablabla </said>
+				Wir betreten feuertrunken,<br/>
+				Himmlische, dein Heiligtum.</p>`,
+				documentNode
+			);
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $e := . return fn:path($e/*:p/*:br[2])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{http://example.com/one}p[1]/Q{http://example.com/one}br[2]'
+			);
+		});
+
+		it('returns "/Q{http://example.com/one}p[1]/text()[2]" for the text node starting with "Tochter"', () => {
+			documentNode = sync(
+				`<p xmlns="http://example.com/one" xml:lang="de" author="Friedrich von Schiller">
+				Freude, schöner Götterfunken,<br/>
+				Tochter aus Elysium,<br/> <s/>
+				Wir betreten feuertrunken,<br/>
+				Himmlische, dein Heiligtum.</p>`,
+				documentNode
+			);
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $e := . return fn:path($e//text()[starts-with(normalize-space(), 'Tochter')])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{http://example.com/one}p[1]/text()[2]'
+			);
+		});
+
+		it('returns "empty sequence" for no argument', () => {
+			chai.assert.deepEqual(
+				evaluateXPathToStrings(`fn:path(())`, documentNode, null, null, {
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE
+				}),
+				[]
+			);
+		});
+
+		it('returns "fn:root()/Q{http://test2}a[1]" for the duplicate namespace URIs', () => {
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $dom := 
+					<xml>
+						<a:a xmlns:a="http://test"/>
+						<a:a xmlns:a="http://test2"/>
+			  		</xml> return fn:path($dom/*:a[2])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test2}a[1]'
+			);
+		});
+
+		it('returns "fn:root()/Q{http://test}a[2]" for the duplicate namespace URIs', () => {
+
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`let $dom := 
+					<xml>
+						<a:a xmlns:a="http://test"/>
+						<b:a xmlns:b="http://test"/>
+			  		</xml> return fn:path($dom/*:a[2])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test}a[2]'
+			);
+		});
+
+		it('returns "fn:root()/processing-instruction(stylesheet)[1]" for the processing instruction', () => {
+			documentNode = sync(
+				`<xml>
+				<?TARGET DATA?>
+				<?ANOTHER_TARGET  MORE DATA?>
+				<?canAlsoBeLowerCaps data may contain spaces?>
+				<?etc etc, etc?>
+				</xml>`,
+				documentNode
+			);
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`fn:path(//processing-instruction()[3])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{}xml[1]/processing-instruction(canAlsoBeLowerCaps)[1]'
+			);
+		});
+
+		it('returns "fn:root()/processing-instruction(stylesheet)[1]" for the processing instruction', () => {
+			documentNode = sync(
+				`<xml>
+				<?TARGET DATA?>
+				<?TARGET MORE DATA?>
+				<?TARGET data may contain spaces?>
+				<?TARGET etc, etc?>
+				</xml>`,
+				documentNode
+			);
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`fn:path(//processing-instruction()[3])`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'/Q{}xml[1]/processing-instruction(TARGET)[3]'
+			);
 		});
 	});
 });
