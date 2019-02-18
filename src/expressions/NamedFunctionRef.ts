@@ -4,6 +4,7 @@ import Expression from './Expression';
 import { getAlternativesAsStringFor } from './functions/functionRegistry';
 import Specificity from './Specificity';
 import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
+import StaticContext from './StaticContext';
 
 function buildFormattedFunctionName(functionReference) {
 	return `${
@@ -52,7 +53,7 @@ class NamedFunctionRef extends Expression {
 		return sequenceFactory.singleton(functionItem);
 	}
 
-	public performStaticEvaluation(staticContext) {
+	public performStaticEvaluation(staticContext: StaticContext) {
 		let namespaceURI = this._functionReference.namespaceURI;
 		if (!namespaceURI) {
 			if (!this._functionReference.prefix) {

@@ -1,11 +1,11 @@
-import ISequence from '../dataTypes/ISequence';
+import { FunctionSignature } from '../dataTypes/FunctionValue';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
-type FunctionProperties = {
+export type FunctionProperties = {
 	argumentTypes: (TypeDeclaration | RestArgument)[];
 	arity: number;
-	callFunction: (any) => ISequence;
+	callFunction: FunctionSignature
 	localName: string;
 	namespaceURI: string;
 	returnType: TypeDeclaration;

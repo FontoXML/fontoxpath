@@ -8,11 +8,11 @@ import sequenceFactory from './sequenceFactory';
 import TypeDeclaration from './TypeDeclaration';
 import Value from './Value';
 
-type FunctionSignature = (
-	DynamicContext,
-	ExecutionParameters,
-	StaticContext,
-	...Sequence
+export type FunctionSignature = (
+	dynamicContext: DynamicContext,
+	executionParameters: ExecutionParameters,
+	staticContext: StaticContext,
+	...args: ISequence[]
 ) => ISequence;
 
 function expandRestArgumentToArity(argumentTypes, arity) {

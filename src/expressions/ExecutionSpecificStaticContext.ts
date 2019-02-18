@@ -1,9 +1,9 @@
 import IContext from './Context';
-import { getFunctionByArity } from './functions/functionRegistry';
-
+import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
 import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
 
-export const generateGlobalVariableBindingName = variableName => `GLOBAL_${variableName}`;
+
+export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
 
 /**
  * XPaths in FontoXPath know of two separate contexts: the static one and the context at evaluation.
@@ -57,7 +57,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		return Object.values(this._referredVariableByName);
 	}
 
-	public lookupFunction(namespaceURI, localName, arity) {
+	public lookupFunction(namespaceURI, localName, arity): FunctionProperties {
 		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
 		return getFunctionByArity(namespaceURI, localName, arity);
 	}
