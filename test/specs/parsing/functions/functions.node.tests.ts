@@ -716,6 +716,91 @@ return $node/root() = $element`,
 				)
 			);
 		});
+
+		it('returns get for a get function', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`let $week := map{0:"Sonntag", 1:"Montag", 2:"Dienstag", 3:"Mittwoch"} return fn:function-name($week) = fn:QName("http://www.w3.org/2005/xpath-functions/map", "get")`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
+
+		it('returns empty sequence for fn:random-number-generator()("next")', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`fn:function-name(fn:random-number-generator()("next")) => empty()`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
+
+		it('returns empty sequence for fn:random-number-generator()("permute")', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`fn:function-name(fn:random-number-generator()("permute")) => empty()`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
 	})
-	
+
+	describe('function-arity', () => {
+		it('returns 2 for "fn:function-arity(fn:substring#2)"', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`fn:function-arity(fn:substring#2) = 2`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
+
+		it('returns 1 for "fn:function-arity(fn:substring#2)"', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`fn:function-arity(function($node){name($node)}) = 1`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
+
+		it('returns 1 for "let $initial := fn:substring(?, 1, 1) return fn:function-arity($initial)"', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`let $initial := fn:substring(?, 1, 1) return fn:function-arity($initial) = 1`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
+	});
 });

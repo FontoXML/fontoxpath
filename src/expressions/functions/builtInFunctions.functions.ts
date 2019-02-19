@@ -46,6 +46,17 @@ const fnFunctionName: FunctionDefinitionType = function(
 	});
 };
 
+const fnFunctionArity: FunctionDefinitionType = function(
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	functionItem
+) {
+	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
+		return sequenceFactory.singleton(createAtomicValue(functionValue.getArity(), 'xs:integer'));
+	});
+};
+
 export default {
 	declarations: [
 		{
@@ -62,6 +73,14 @@ export default {
 			argumentTypes: ['function(*)'],
 			returnType: 'xs:QName?',
 			callFunction: fnFunctionName
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'function-arity',
+			argumentTypes: ['function(*)'],
+			returnType: 'xs:integer',
+			callFunction: fnFunctionArity
 		}
 	]
 };

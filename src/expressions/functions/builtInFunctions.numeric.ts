@@ -228,6 +228,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = function(
 					sequenceFactory.singleton(
 						new FunctionValue({
 							value: fnRandomNumberGenerator,
+							isAnonymous: true,
 							localName: '',
 							namespaceURI: '',
 							argumentTypes: [],
@@ -242,6 +243,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = function(
 					sequenceFactory.singleton(
 						new FunctionValue({
 							value: returnRandomItemFromSequence,
+							isAnonymous: true,
 							localName: '',
 							namespaceURI: '',
 							argumentTypes: [{ type: 'item()', occurrence: '*' }],
