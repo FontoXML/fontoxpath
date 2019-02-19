@@ -171,9 +171,10 @@ const fnPath: FunctionDefinitionType = (
 					}[${getChildIndex(ancestor)}]${result}`;
 					break;
 				case NODE_TYPES.ATTRIBUTE_NODE:
-					const attributeNameSpace = ancestor.namespaceURI ? `Q{${ancestor.namespaceURI}}` : '';
-					result =
-						`/@${attributeNameSpace}${ancestor.localName}${result}`;
+					const attributeNameSpace = ancestor.namespaceURI
+						? `Q{${ancestor.namespaceURI}}`
+						: '';
+					result = `/@${attributeNameSpace}${ancestor.localName}${result}`;
 					break;
 				case NODE_TYPES.TEXT_NODE:
 					result = `/text()[${getChildIndex(ancestor)}]${result}`;

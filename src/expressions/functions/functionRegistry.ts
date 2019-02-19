@@ -5,7 +5,7 @@ import TypeDeclaration from '../dataTypes/TypeDeclaration';
 export type FunctionProperties = {
 	argumentTypes: (TypeDeclaration | RestArgument)[];
 	arity: number;
-	callFunction: FunctionSignature
+	callFunction: FunctionSignature;
 	localName: string;
 	namespaceURI: string;
 	returnType: TypeDeclaration;

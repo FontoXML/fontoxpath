@@ -79,7 +79,11 @@ export default class StaticContext {
 		this._registeredVariableBindingByHashKey[this._scopeDepth] = Object.create(null);
 	}
 
-	public lookupFunction(namespaceURI: string, localName: string, arity: number): FunctionProperties|null {
+	public lookupFunction(
+		namespaceURI: string,
+		localName: string,
+		arity: number
+	): FunctionProperties | null {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const foundFunction = this._registeredFunctionsByHash[hashKey];
 		if (foundFunction) {

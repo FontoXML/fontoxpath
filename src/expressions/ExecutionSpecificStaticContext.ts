@@ -2,7 +2,6 @@ import IContext from './Context';
 import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
 import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
 
-
 export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
 
 /**
