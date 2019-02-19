@@ -69,6 +69,7 @@ class InlineFunction extends Expression {
 
 		const functionItem = new FunctionValue({
 			value: executeFunction,
+			isAnonymous: true,
 			localName: 'dynamic-function',
 			namespaceURI: '',
 			argumentTypes: this._parameterTypes,

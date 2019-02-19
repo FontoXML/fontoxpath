@@ -656,4 +656,66 @@ return $node/root() = $element`,
 			);
 		});
 	});
+
+	describe('function-lookup', () => {
+		it('returns "bcd"', () => {
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`fn:function-lookup(xs:QName('fn:substring'), 2)('abcd', 2)`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				),
+				'bcd'
+			);
+		});
+	});
+
+	describe('function-name', () => {
+		it('returns "fn:QName("http://www.w3.org/2005/xpath-functions", "fn:substring""', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`fn:function-name(fn:substring#2) = fn:QName("http://www.w3.org/2005/xpath-functions", "substring")`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
+
+		it('returns empty sequence for a dynamic function', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`fn:function-name(function($node){count($node/*)}) => empty()`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
+
+		it('returns empty sequence for a bound function', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`fn:function-name(fn:concat("1","2",?,"3")) => empty()`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
+	})
+	
 });

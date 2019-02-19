@@ -7,6 +7,7 @@ import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
 import TypeDeclaration from './TypeDeclaration';
 import Value from './Value';
+import QName from './valueTypes/QName';
 
 export type FunctionSignature = (
 	dynamicContext: DynamicContext,
@@ -37,12 +38,14 @@ class FunctionValue extends Value {
 	public value: FunctionSignature;
 	private _argumentTypes: (TypeDeclaration | RestArgument)[];
 	private _arity: number;
+	private _isAnonymous: boolean;
 	private _localName: string;
 	private _namespaceURI: string;
 	private _returnType: TypeDeclaration;
 
 	constructor({
 		value,
+		isAnonymous = false,
 		localName,
 		namespaceURI,
 		argumentTypes,
@@ -51,6 +54,7 @@ class FunctionValue extends Value {
 	}: {
 		argumentTypes: (TypeDeclaration | RestArgument)[];
 		arity: number;
+		isAnonymous?: boolean;
 		localName: string;
 		namespaceURI: string;
 		returnType: TypeDeclaration;
@@ -60,6 +64,7 @@ class FunctionValue extends Value {
 
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
+		this._isAnonymous = isAnonymous;
 		this._localName = localName;
 		this._arity = arity;
 		this._returnType = returnType;
@@ -106,6 +111,7 @@ class FunctionValue extends Value {
 
 		const functionItem = new FunctionValue({
 			value: curriedFunction,
+			isAnonymous: true,
 			localName: 'boundFunction',
 			namespaceURI: this._namespaceURI,
 			argumentTypes,
@@ -130,6 +136,14 @@ class FunctionValue extends Value {
 
 	public getReturnType() {
 		return this._returnType;
+	}
+
+	public getQName() {
+		return new QName('', this._namespaceURI, this._localName);
+	}
+
+	public isAnonymous() {
+		return this._isAnonymous;
 	}
 }
 
