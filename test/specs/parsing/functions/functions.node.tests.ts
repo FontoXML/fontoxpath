@@ -569,7 +569,6 @@ return $node/root() = $element`,
 		});
 
 		it('returns "fn:root()/Q{http://test2}a[1]" for the duplicate namespace URIs', () => {
-
 			chai.assert.deepEqual(
 				evaluateXPathToString(
 					`let $dom := 
@@ -589,7 +588,6 @@ return $node/root() = $element`,
 		});
 
 		it('returns "fn:root()/Q{http://test}a[2]" for the duplicate namespace URIs', () => {
-
 			chai.assert.deepEqual(
 				evaluateXPathToString(
 					`let $dom := 
@@ -758,7 +756,7 @@ return $node/root() = $element`,
 				)
 			);
 		});
-	})
+	});
 
 	describe('function-arity', () => {
 		it('returns 2 for "fn:function-arity(fn:substring#2)"', () => {

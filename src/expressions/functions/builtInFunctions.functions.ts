@@ -39,9 +39,9 @@ const fnFunctionName: FunctionDefinitionType = function(
 	functionItem
 ) {
 	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
-        if(functionValue.isAnonymous()){
-            return sequenceFactory.empty();
-        }
+		if (functionValue.isAnonymous()) {
+			return sequenceFactory.empty();
+		}
 		return sequenceFactory.singleton(createAtomicValue(functionValue.getQName(), 'xs:QName'));
 	});
 };
