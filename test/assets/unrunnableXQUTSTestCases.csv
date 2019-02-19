@@ -263,7 +263,7 @@ fn-put-013,Error: A non-updating expression without an expected value is not sup
 fn-put-014,Error: expected 'No selector counterpart for: computedDocumentConstructor.' to match /XUDY0031/
 put-001,Error: A non-updating expression without an expected value is not supported in the test framework.
 fn-put-002,Error: A non-updating expression without an expected value is not supported in the test framework.
-fn-put-010,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*)null, xs:anyAtomicTypenull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*)null, xs:integernull, item()*)"?
+fn-put-010,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*)null, xs:integernull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*)null, xs:anyAtomicTypenull, item()*)"?
 namespace-errors-q9,Error: Should throw error XUDY0024.
 namespace-errors-q10,Error: Should throw error XUDY0024.
 namespace-errors-q14,Error: Should throw error XUDY0024.
@@ -417,11 +417,11 @@ stf-transform-02,Error: Should throw error XUTY0013.
 stf-transform-03,Error: Should throw error XUTY0013.
 complex-replacevalues-q1,Error: XPTY0004 Unable to cast xs:string to type xs:string while calling substring
 fn-put-003,Error: A non-updating expression without an expected value is not supported in the test framework.
-fn-put-003-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*)null, xs:anyAtomicTypenull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*)null, xs:integernull, item()*)"?' to match /FOUP0001/
+fn-put-003-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*)null, xs:integernull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*)null, xs:anyAtomicTypenull, item()*)"?' to match /FOUP0001/
 fn-put-004,Error: A non-updating expression without an expected value is not supported in the test framework.
-fn-put-004-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*)null, xs:anyAtomicTypenull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*)null, xs:integernull, item()*)"?' to match /FOUP0001/
+fn-put-004-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*)null, xs:integernull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*)null, xs:anyAtomicTypenull, item()*)"?' to match /FOUP0001/
 fn-put-005,Error: A non-updating expression without an expected value is not supported in the test framework.
-fn-put-005-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*)null, xs:anyAtomicTypenull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*)null, xs:integernull, item()*)"?' to match /FOUP0001/
+fn-put-005-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*)null, xs:integernull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*)null, xs:anyAtomicTypenull, item()*)"?' to match /FOUP0001/
 fn-put-006,Error: A non-updating expression without an expected value is not supported in the test framework.
 fn-put-006-fail,Error: expected 'No selector counterpart for: computedTextConstructor.' to match /FOUP0001/
 relational-data-q2,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?

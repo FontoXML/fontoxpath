@@ -19,6 +19,10 @@ const fnFunctionLookup: FunctionDefinitionType = function(
 			arity.value
 		);
 
+		if (functionProperties === null) {
+			return sequenceFactory.empty();
+		}
+
 		const functionItem = new FunctionValue({
 			argumentTypes: functionProperties.argumentTypes,
 			arity: arity.value,

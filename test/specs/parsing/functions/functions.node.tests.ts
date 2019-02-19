@@ -670,6 +670,20 @@ return $node/root() = $element`,
 				'bcd'
 			);
 		});
+
+		it('returns an empty sequence if no known function can be identified by name and arity', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`fn:function-lookup(xs:QName('fn:unknownFunction'), 2) => empty()`,
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
+		});
 	});
 
 	describe('function-name', () => {
