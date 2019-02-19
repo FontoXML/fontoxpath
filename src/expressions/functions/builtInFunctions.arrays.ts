@@ -210,7 +210,7 @@ const arrayFilter: FunctionDefinitionType = function(
 				member()
 			)
 		);
-		
+
 		const effectiveBooleanValues = [];
 		let done = false;
 		return sequenceFactory.create({
