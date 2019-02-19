@@ -1,7 +1,7 @@
 import FunctionValue from './dataTypes/FunctionValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import Expression from './Expression';
-import { getAlternativesAsStringFor, FunctionProperties } from './functions/functionRegistry';
+import { FunctionProperties, getAlternativesAsStringFor } from './functions/functionRegistry';
 import Specificity from './Specificity';
 import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 import StaticContext from './StaticContext';
