@@ -28,8 +28,9 @@ describe('evaluateUpdatingExpression', () => {
 		let setDataCalled = false;
 
 		let createAttributeNSCalled = false;
-		let createElementNSCalled = false;
 		let createCommentCalled = false;
+		let createCDATASectionCalled = false;
+		let createElementNSCalled = false;
 		let createProcessingInstructionCalled = false;
 		let createTextNodeCalled = false;
 
@@ -70,6 +71,12 @@ describe('evaluateUpdatingExpression', () => {
 						createAttributeNSCalled = true;
 						return documentNode.createAttributeNS(namespaceURI, localName);
 					},
+
+					createCDATASection: contents => {
+						createCDATASectionCalled = true;
+						return documentNode.createCDATASection(contents);
+					},
+
 					createComment: contents => {
 						createCommentCalled = true;
 						return documentNode.createComment(contents);
