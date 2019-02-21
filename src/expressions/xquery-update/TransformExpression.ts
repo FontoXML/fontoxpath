@@ -1,28 +1,18 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
-import {
-	ConcreteChildNode,
-	ConcreteElementNode,
-	ConcreteNode,
-	ConcreteParentNode,
-	ConcreteProcessingInstructionNode,
-	NODE_TYPES
-} from '../../domFacade/ConcreteNode';
-
+import IDocumentWriter from '../../documentWriter/IDocumentWriter';
+import { ConcreteElementNode, ConcreteNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
+import INodesFactory from '../../nodesFactory/INodesFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
+import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import { ready } from '../util/iterators';
-import { mergeUpdates } from './pulRoutines';
-import { applyUpdates } from './pulRoutines';
+import { applyUpdates, mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
-import ExecutionParameters from '../ExecutionParameters';
-import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
-import INodesFactory from '../../nodesFactory/INodesFactory';
-import IDocumentWriter from '../../documentWriter/IDocumentWriter';
 
 function deepCloneNode(
 	node: ConcreteNode,
@@ -42,7 +32,7 @@ function deepCloneNode(
 
 	switch (node.nodeType) {
 		case NODE_TYPES.ELEMENT_NODE:
-			let cloneElem = nodesFactory.createElementNS(node.namespaceURI, node.nodeName);
+			const cloneElem = nodesFactory.createElementNS(node.namespaceURI, node.nodeName);
 			domFacade
 				.getAllAttributes(node)
 				.forEach(attr =>
@@ -54,13 +44,13 @@ function deepCloneNode(
 					)
 				);
 
-			for (let child of domFacade.getChildNodes(node)) {
+			for (const child of domFacade.getChildNodes(node)) {
 				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
 				documentWriter.insertBefore(cloneElem as ConcreteElementNode, descendant, null);
 			}
 			return cloneElem;
 		case NODE_TYPES.ATTRIBUTE_NODE:
-			let cloneAttr = nodesFactory.createAttributeNS(node.namespaceURI, node.nodeName);
+			const cloneAttr = nodesFactory.createAttributeNS(node.namespaceURI, node.nodeName);
 			cloneAttr.value = node.value;
 			return cloneAttr;
 		case NODE_TYPES.TEXT_NODE:
