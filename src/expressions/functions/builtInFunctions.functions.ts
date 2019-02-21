@@ -1,17 +1,17 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import sequenceFactory from '../dataTypes/sequenceFactory';
-import zipSingleton from '../util/zipSingleton';
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from '../dataTypes/FunctionValue';
+import sequenceFactory from '../dataTypes/sequenceFactory';
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import zipSingleton from '../util/zipSingleton';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnFunctionLookup: FunctionDefinitionType = function(
+const fnFunctionLookup: FunctionDefinitionType = (
 	_dynamicContext,
-	executionParameters,
+	_executionParameters,
 	staticContext,
 	nameSequence,
 	aritySequence
-) {
+) => {
 	return zipSingleton([nameSequence, aritySequence], ([name, arity]) => {
 		const functionProperties = staticContext.lookupFunction(
 			name.value.namespaceURI,
@@ -36,12 +36,12 @@ const fnFunctionLookup: FunctionDefinitionType = function(
 	});
 };
 
-const fnFunctionName: FunctionDefinitionType = function(
+const fnFunctionName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	functionItem
-) {
+) => {
 	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
 		if (functionValue.isAnonymous()) {
 			return sequenceFactory.empty();
@@ -50,12 +50,12 @@ const fnFunctionName: FunctionDefinitionType = function(
 	});
 };
 
-const fnFunctionArity: FunctionDefinitionType = function(
+const fnFunctionArity: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	functionItem
-) {
+) => {
 	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
 		return sequenceFactory.singleton(createAtomicValue(functionValue.getArity(), 'xs:integer'));
 	});
@@ -64,27 +64,27 @@ const fnFunctionArity: FunctionDefinitionType = function(
 export default {
 	declarations: [
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'function-lookup',
 			argumentTypes: ['xs:QName', 'xs:integer'],
-			returnType: 'function(*)?',
-			callFunction: fnFunctionLookup
+			callFunction: fnFunctionLookup,
+			localName: 'function-lookup',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'function(*)?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['function(*)'],
+			callFunction: fnFunctionName,
 			localName: 'function-name',
-			argumentTypes: ['function(*)'],
-			returnType: 'xs:QName?',
-			callFunction: fnFunctionName
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:QName?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'function-arity',
 			argumentTypes: ['function(*)'],
-			returnType: 'xs:integer',
-			callFunction: fnFunctionArity
+			callFunction: fnFunctionArity,
+			localName: 'function-arity',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:integer'
 		}
 	]
 };

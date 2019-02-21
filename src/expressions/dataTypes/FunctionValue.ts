@@ -44,13 +44,13 @@ class FunctionValue extends Value {
 	private _returnType: TypeDeclaration;
 
 	constructor({
-		value,
+		argumentTypes,
+		arity,
 		isAnonymous = false,
 		localName,
 		namespaceURI,
-		argumentTypes,
-		arity,
-		returnType
+		returnType,
+		value
 	}: {
 		argumentTypes: (TypeDeclaration | RestArgument)[];
 		arity: number;
@@ -64,11 +64,11 @@ class FunctionValue extends Value {
 
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
+		this._arity = arity;
 		this._isAnonymous = isAnonymous;
 		this._localName = localName;
-		this._arity = arity;
-		this._returnType = returnType;
 		this._namespaceURI = namespaceURI;
+		this._returnType = returnType;
 	}
 
 	/**
@@ -100,23 +100,23 @@ class FunctionValue extends Value {
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
-			function(indices, arg, index) {
+			((indices, arg, index) => {
 				if (arg === null) {
 					indices.push(this._argumentTypes[index]);
 				}
 				return indices;
-			}.bind(this),
+			}).bind(this),
 			[]
 		);
 
 		const functionItem = new FunctionValue({
-			value: curriedFunction,
+			argumentTypes,
+			arity: argumentTypes.length,
 			isAnonymous: true,
 			localName: 'boundFunction',
 			namespaceURI: this._namespaceURI,
-			argumentTypes,
-			arity: argumentTypes.length,
-			returnType: this._returnType
+			returnType: this._returnType,
+			value: curriedFunction
 		});
 
 		return sequenceFactory.singleton(functionItem);
@@ -134,12 +134,12 @@ class FunctionValue extends Value {
 		return this._localName;
 	}
 
-	public getReturnType() {
-		return this._returnType;
-	}
-
 	public getQName() {
 		return new QName('', this._namespaceURI, this._localName);
+	}
+
+	public getReturnType() {
+		return this._returnType;
 	}
 
 	public isAnonymous() {
