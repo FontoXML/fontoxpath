@@ -11,6 +11,10 @@ class WrappingNodesFactory implements INodesFactory {
 		return this._externalNodesFactory['createAttributeNS'](namespaceURI, name);
 	}
 
+	public createCDATASection(contents) {
+		return this._externalNodesFactory['createCDATASection'](contents);
+	}
+
 	public createComment(contents) {
 		return this._externalNodesFactory['createComment'](contents);
 	}

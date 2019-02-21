@@ -29,6 +29,7 @@
 				"fs.js",
 				"loader.js"
 			],
+			"smartStep": false,
 			"cwd": "${workspaceRoot}",
 			"internalConsoleOptions": "openOnSessionStart"
 		},

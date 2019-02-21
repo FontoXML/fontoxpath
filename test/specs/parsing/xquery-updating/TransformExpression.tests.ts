@@ -1,10 +1,9 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
-
+import { sync, slimdom } from 'slimdom-sax-parser';
 import { evaluateUpdatingExpression } from 'fontoxpath';
 import assertUpdateList from './assertUpdateList';
 
-let documentNode;
+let documentNode: Document;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
@@ -68,6 +67,68 @@ return ($a, replace node element with <replacement/>)
 				replacementXML: ['<replacement/>']
 			}
 		]);
+	});
+
+	it.only('can clone the node with its child nodes', async () => {
+		documentNode = sync(`
+		<xml xmlns:xml="http://www.w3.org/XML/1998/namespace">
+			<?process instruction ?>
+			<!-- comment -->
+			<![CDATA[  <, & and ) *and* %MyParamEnt]]>
+			<parent>
+				<child attribute="uncle"/>
+				<sibling>
+					<nephew>
+						i am baby johnny
+					</nephew>
+				</sibling>
+			</parent>
+		</xml>`);
+
+		const result = await evaluateUpdatingExpression(
+			`copy $a := xml modify () return $a`,
+			documentNode,
+			null,
+			{},
+			{}
+		);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const expectedXml = new slimdom.XMLSerializer().serializeToString(
+			documentNode.documentElement
+		);
+		chai.assert.equal(actualXml, expectedXml);
+		assertUpdateList(result.pendingUpdateList, []);
+	});
+
+	it.only('there is no change in original document', async () => {
+		const xml = `<xml xmlns:xml="http://www.w3.org/XML/1998/namespace">
+		<?process instruction ?>
+		<!-- comment -->
+		<![CDATA[  <, & and ) *and* %MyParamEnt]]>
+		<parent>
+			<child attribute="uncle"/>
+			<sibling>
+				<nephew>
+					i am baby johnny
+				</nephew>
+			</sibling>
+		</parent>
+	</xml>`;
+
+		documentNode = sync(xml);
+
+		const result = await evaluateUpdatingExpression(
+			`copy $a := xml modify () return $a`,
+			documentNode,
+			null,
+			{},
+			{}
+		);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const newlySyncXMLDoc = new slimdom.XMLSerializer().serializeToString(sync(xml));
+		const afterCloneXMLDoc = new slimdom.XMLSerializer().serializeToString(documentNode);
+		chai.assert.equal(newlySyncXMLDoc, afterCloneXMLDoc);
+		assertUpdateList(result.pendingUpdateList, []);
 	});
 
 	it('throws when a target of in the pul of modify is not a clone', async () => {
