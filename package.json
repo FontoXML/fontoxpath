@@ -68,7 +68,7 @@
 		"coveralls": "^3.0.2",
 		"cross-env": "^5.2.0",
 		"fs-extra": "^7.0.1",
-		"google-closure-compiler": "^20190121.0.0",
+		"google-closure-compiler": "^20190215.0.1",
 		"istanbul": "^0.4.5",
 		"mocha": "^5.2.0",
 		"node-static": "^0.7.11",
