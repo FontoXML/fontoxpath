@@ -3,6 +3,7 @@ import { evaluateUpdatingExpression } from 'fontoxpath';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import IDomFacade from '../../../../src/domFacade/IDomFacade';
 import assertUpdateList from './assertUpdateList';
+import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
 
 let documentNode: Document;
 beforeEach(() => {
@@ -142,6 +143,37 @@ return ($a, replace node element with <replacement/>)
 			null,
 			{},
 			{}
+		);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const newlySyncXMLDoc = new slimdom.XMLSerializer().serializeToString(sync(xml));
+		const afterCloneXMLDoc = new slimdom.XMLSerializer().serializeToString(documentNode);
+		chai.assert.equal(newlySyncXMLDoc, afterCloneXMLDoc);
+		assertUpdateList(result.pendingUpdateList, []);
+	});
+
+	it('can use NodesFactory', async () => {
+		const xml = `<xml xmlns:xml="http://www.w3.org/XML/1998/namespace">
+		<?process instruction ?>
+		<!-- comment -->
+		<![CDATA[  <, & and ) *and* %MyParamEnt]]>
+		<parent>
+			<child attribute="uncle"/>
+			<sibling>
+				<nephew>
+					i am baby johnny
+				</nephew>
+			</sibling>
+		</parent>
+	</xml>`;
+
+		documentNode = sync(xml);
+
+		const result = await evaluateUpdatingExpression(
+			`copy $a := . modify () return $a`,
+			documentNode,
+			null,
+			{},
+			{ nodesFactory: new DomBackedNodesFactory(documentNode) }
 		);
 		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
 		const newlySyncXMLDoc = new slimdom.XMLSerializer().serializeToString(sync(xml));
