@@ -15,6 +15,7 @@ import builtInOperatorFunctions from './builtInFunctions.operators';
 import builtInQNameFunctions from './builtInFunctions.qnames';
 import builtInSequencesFunctions from './builtInFunctions.sequences';
 import builtInStringFunctions from './builtInFunctions.string';
+import builtInFunctionsFunctions from './builtInFunctions.functions';
 
 import builtInFontoxpathFunctions from './builtInFunctions.fontoxpath';
 
@@ -44,7 +45,8 @@ const builtInFunctions: {
 	builtInQNameFunctions.declarations,
 	builtInSequencesFunctions.declarations,
 	builtInStringFunctions.declarations,
-	builtInFontoxpathFunctions.declarations
+	builtInFontoxpathFunctions.declarations,
+	builtInFunctionsFunctions.declarations
 );
 
 export default builtInFunctions;

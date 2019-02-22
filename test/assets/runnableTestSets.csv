@@ -93,8 +93,8 @@ fn-format-integer,false
 fn-format-number,false
 fn-format-time,false
 fn-function-arity,false
-fn-function-lookup,false
-fn-function-name,false
+fn-function-lookup,true
+fn-function-name,true
 fn-generate-id,true
 fn-has-children,true
 fn-head,true

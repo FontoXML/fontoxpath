@@ -1,7 +1,7 @@
 import FunctionValue from './dataTypes/FunctionValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
 import Expression from './Expression';
-import { getAlternativesAsStringFor } from './functions/functionRegistry';
+import { FunctionProperties, getAlternativesAsStringFor } from './functions/functionRegistry';
 import Specificity from './Specificity';
 import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 import StaticContext from './StaticContext';
@@ -18,7 +18,7 @@ function buildFormattedFunctionName(functionReference) {
 
 class NamedFunctionRef extends Expression {
 	public _arity: number;
-	public _functionProperties: any;
+	public _functionProperties: FunctionProperties;
 	public _functionReference: { localName: string; namespaceURI: string; prefix: string };
 
 	constructor(

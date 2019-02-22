@@ -7,6 +7,7 @@ import RestArgument from './RestArgument';
 import sequenceFactory from './sequenceFactory';
 import TypeDeclaration from './TypeDeclaration';
 import Value from './Value';
+import QName from './valueTypes/QName';
 
 export type FunctionSignature = (
 	dynamicContext: DynamicContext,
@@ -37,20 +38,23 @@ class FunctionValue extends Value {
 	public value: FunctionSignature;
 	private _argumentTypes: (TypeDeclaration | RestArgument)[];
 	private _arity: number;
+	private _isAnonymous: boolean;
 	private _localName: string;
 	private _namespaceURI: string;
 	private _returnType: TypeDeclaration;
 
 	constructor({
-		value,
-		localName,
-		namespaceURI,
 		argumentTypes,
 		arity,
-		returnType
+		isAnonymous = false,
+		localName,
+		namespaceURI,
+		returnType,
+		value
 	}: {
 		argumentTypes: (TypeDeclaration | RestArgument)[];
 		arity: number;
+		isAnonymous?: boolean;
 		localName: string;
 		namespaceURI: string;
 		returnType: TypeDeclaration;
@@ -60,10 +64,11 @@ class FunctionValue extends Value {
 
 		this.value = value;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
-		this._localName = localName;
 		this._arity = arity;
-		this._returnType = returnType;
+		this._isAnonymous = isAnonymous;
+		this._localName = localName;
 		this._namespaceURI = namespaceURI;
+		this._returnType = returnType;
 	}
 
 	/**
@@ -95,22 +100,23 @@ class FunctionValue extends Value {
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
-			function(indices, arg, index) {
+			((indices, arg, index) => {
 				if (arg === null) {
 					indices.push(this._argumentTypes[index]);
 				}
 				return indices;
-			}.bind(this),
+			}).bind(this),
 			[]
 		);
 
 		const functionItem = new FunctionValue({
-			value: curriedFunction,
-			localName: 'boundFunction',
-			namespaceURI: this._namespaceURI,
 			argumentTypes,
 			arity: argumentTypes.length,
-			returnType: this._returnType
+			isAnonymous: true,
+			localName: 'boundFunction',
+			namespaceURI: this._namespaceURI,
+			returnType: this._returnType,
+			value: curriedFunction
 		});
 
 		return sequenceFactory.singleton(functionItem);
@@ -128,8 +134,16 @@ class FunctionValue extends Value {
 		return this._localName;
 	}
 
+	public getQName() {
+		return new QName('', this._namespaceURI, this._localName);
+	}
+
 	public getReturnType() {
 		return this._returnType;
+	}
+
+	public isAnonymous() {
+		return this._isAnonymous;
 	}
 }
 
