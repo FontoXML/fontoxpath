@@ -19,6 +19,10 @@ class WrappingNodesFactory implements INodesFactory {
 		return this._externalNodesFactory['createComment'](contents);
 	}
 
+	public createDocument() {
+		return this._externalNodesFactory['createDocument']();
+	}
+
 	public createElementNS(namespaceURI, name) {
 		return this._externalNodesFactory['createElementNS'](namespaceURI, name);
 	}

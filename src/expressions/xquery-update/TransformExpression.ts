@@ -1,5 +1,10 @@
 import IDocumentWriter from '../../documentWriter/IDocumentWriter';
-import { ConcreteElementNode, ConcreteNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
+import {
+	ConcreteDocumentNode,
+	ConcreteElementNode,
+	ConcreteNode,
+	NODE_TYPES
+} from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import INodesFactory from '../../nodesFactory/INodesFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
@@ -43,7 +48,6 @@ function deepCloneNode(
 						attr.value
 					)
 				);
-
 			for (const child of domFacade.getChildNodes(node)) {
 				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
 				documentWriter.insertBefore(cloneElem as ConcreteElementNode, descendant, null);
@@ -53,14 +57,21 @@ function deepCloneNode(
 			const cloneAttr = nodesFactory.createAttributeNS(node.namespaceURI, node.nodeName);
 			cloneAttr.value = node.value;
 			return cloneAttr;
-		case NODE_TYPES.TEXT_NODE:
-			return nodesFactory.createTextNode(node.data);
-		case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
-			return nodesFactory.createProcessingInstruction(node.target, node.data);
-		case NODE_TYPES.COMMENT_NODE:
-			return nodesFactory.createComment(node.data);
 		case NODE_TYPES.CDATA_SECTION_NODE:
 			return nodesFactory.createCDATASection(node.data);
+		case NODE_TYPES.COMMENT_NODE:
+			return nodesFactory.createComment(node.data);
+		case NODE_TYPES.DOCUMENT_NODE:
+			const cloneDoc = nodesFactory.createDocument();
+			for (const child of domFacade.getChildNodes(node)) {
+				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
+				documentWriter.insertBefore(cloneDoc as ConcreteDocumentNode, descendant, null);
+			}
+			return cloneDoc;
+		case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
+			return nodesFactory.createProcessingInstruction(node.target, node.data);
+		case NODE_TYPES.TEXT_NODE:
+			return nodesFactory.createTextNode(node.data);
 	}
 }
 

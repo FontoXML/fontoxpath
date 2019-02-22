@@ -5,6 +5,8 @@ export default interface INodesFactory {
 
 	createComment(contents: string): Comment;
 
+	createDocument(): Document;
+
 	createElementNS(namespaceURI: string, name: string): Element;
 
 	createProcessingInstruction(target: string, data: string): ProcessingInstruction;

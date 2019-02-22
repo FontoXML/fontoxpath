@@ -84,7 +84,7 @@ describe('evaluateUpdatingExpression', () => {
 					},
 					createDocument: () => {
 						createDocumentCalled = true;
-						return documentNode.createDocument();
+						return documentNode.implementation.createDocument();
 					},
 					createElementNS: (namespaceURI, localName) => {
 						createElementNSCalled = true;

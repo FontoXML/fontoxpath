@@ -48,6 +48,15 @@ export default class DomBackedNodesFactory implements INodesFactory {
 		return this._documentNode.createComment(contents);
 	}
 
+	public createDocument() {
+		if (!this._documentNode) {
+			throw new Error(
+				'Please pass a node factory if an XQuery script uses node constructors'
+			);
+		}
+		return this._documentNode.implementation.createDocument(null, null, null);
+	}
+
 	public createElementNS(namespaceURI, name) {
 		if (!this._documentNode) {
 			throw new Error(
