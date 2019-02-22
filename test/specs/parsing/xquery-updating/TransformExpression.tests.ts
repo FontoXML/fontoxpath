@@ -70,7 +70,7 @@ return ($a, replace node element with <replacement/>)
 		]);
 	});
 
-	it.only('can clone the node with its child nodes', async () => {
+	it('can clone the node with its child nodes', async () => {
 		documentNode = sync(`
 		<xml xmlns:xml="http://www.w3.org/XML/1998/namespace">
 			<?process instruction ?>
@@ -101,7 +101,7 @@ return ($a, replace node element with <replacement/>)
 		assertUpdateList(result.pendingUpdateList, []);
 	});
 
-	it.skip('can clone the Document with its child nodes', async () => {
+	it('can clone the Document with its child nodes', async () => {
 		documentNode = sync(`
 		<?process instruction ?>
 		<xml xmlns:xml="http://www.w3.org/XML/1998/namespace"/>`);
@@ -119,7 +119,7 @@ return ($a, replace node element with <replacement/>)
 		assertUpdateList(result.pendingUpdateList, []);
 	});
 
-	it.only('there is no change in original document', async () => {
+	it('there is no change in original document', async () => {
 		const xml = `<xml xmlns:xml="http://www.w3.org/XML/1998/namespace">
 		<?process instruction ?>
 		<!-- comment -->
@@ -150,7 +150,7 @@ return ($a, replace node element with <replacement/>)
 		assertUpdateList(result.pendingUpdateList, []);
 	});
 
-	it.only('uses the dom facade', async () => {
+	it('uses the dom facade', async () => {
 		const xml = documentNode.createElement('xml');
 
 		const a = documentNode.createElement('a');

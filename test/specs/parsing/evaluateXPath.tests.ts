@@ -350,20 +350,23 @@ describe('evaluateXPath', () => {
 		it('can use the passed nodesFactory', () => {
 			const slimdomDocument = new slimdom.Document();
 			const nodesFactory = {
+				createAttributeNS: sinon
+					.spy(slimdomDocument, 'createAttributeNS')
+					.bind(slimdomDocument),
 				createCDATASection: sinon
 					.spy(slimdomDocument, 'createCDATASection')
 					.bind(slimdomDocument),
 				createComment: sinon.spy(slimdomDocument, 'createComment').bind(slimdomDocument),
+				createDocument: sinon
+					.spy(slimdomDocument.implementation, 'createDocument')
+					.bind(slimdomDocument.implementation),
 				createElementNS: sinon
 					.spy(slimdomDocument, 'createElementNS')
 					.bind(slimdomDocument),
 				createProcessingInstruction: sinon
 					.spy(slimdomDocument, 'createProcessingInstruction')
 					.bind(slimdomDocument),
-				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument),
-				createAttributeNS: sinon
-					.spy(slimdomDocument, 'createAttributeNS')
-					.bind(slimdomDocument)
+				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument)
 			};
 
 			evaluateXPathToBoolean(
@@ -374,11 +377,15 @@ describe('evaluateXPath', () => {
 				{ nodesFactory, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 			);
 
-			chai.assert.isTrue(
+			chai.assert.isFalse(
 				slimdomDocument.createCDATASection.called,
 				'nodesFactory.createCDATASection'
 			);
 			chai.assert.isTrue(slimdomDocument.createComment.called, 'nodesFactory.createComment');
+			chai.assert.isFalse(
+				slimdomDocument.implementation.createDocument.called,
+				'nodesFactory.createDocument'
+			);
 			chai.assert.isTrue(
 				slimdomDocument.createElementNS.called,
 				'nodesFactory.createElementNS'
@@ -409,10 +416,10 @@ describe('evaluateXPath', () => {
 					null,
 					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 				) as Element).outerHTML,
-				'<element>Some text, a <?processing instruction ?> and a <!--comment--><![CDATA[<,&and)]]></element>'
+				'<element>Some text, a <?processing instruction ?> and a <!--comment-->&lt;,&amp;and)</element>'
 			);
 
-			chai.assert.isTrue(
+			chai.assert.isFalse(
 				slimdomDocument.createCDATASection.called,
 				'nodesFactory.createCDATASection'
 			);

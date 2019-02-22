@@ -100,6 +100,7 @@ function createAsserter(baseUrl, assertNode, language) {
 			assertNode.ownerDocument
 		),
 		createComment: assertNode.ownerDocument.createComment.bind(assertNode.ownerDocument),
+		createDocument: assertNode.ownerDocument.createDocument.bind(),
 		createElementNS: assertNode.ownerDocument.createElementNS.bind(assertNode.ownerDocument),
 		createProcessingInstruction: assertNode.ownerDocument.createProcessingInstruction.bind(
 			assertNode.ownerDocument
