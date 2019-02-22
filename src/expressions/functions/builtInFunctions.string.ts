@@ -405,6 +405,32 @@ const fnNormalizeSpace: FunctionDefinitionType = function(
 	return sequenceFactory.singleton(createAtomicValue(string.replace(/\s+/g, ' '), 'xs:string'));
 };
 
+const fnTranslate: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	arg1,
+	arg2,
+	arg3
+) => {
+	const arr1 = Array.from(arg1.first().value);
+	const arr2 = Array.from(arg2.first().value);
+	const arr3 = Array.from(arg3.first().value);
+
+	const result = arr1.map(e => {
+		if (arr2.includes(e)) {
+			const index = arr2.indexOf(e);
+			if (index <= arr3.length) {
+				return arr3[index];
+			}
+		} else {
+			return e;
+		}
+	});
+
+	return sequenceFactory.singleton(createAtomicValue(result.join(''), 'xs:string'));
+};
+
 export default {
 	declarations: [
 		{
@@ -656,6 +682,14 @@ export default {
 					sequenceFactory.singleton(createAtomicValue(' ', 'xs:string'))
 				);
 			}
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'translate',
+			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
+			returnType: 'xs:string',
+			callFunction: fnTranslate
 		}
 	],
 	functions: {
