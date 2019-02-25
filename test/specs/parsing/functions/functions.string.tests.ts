@@ -357,7 +357,7 @@ describe('functions over strings', () => {
 			chai.assert.equal(evaluateXPathToString('substring-after((),())', documentNode), ''));
 	});
 
-	describe.only('translate()', () => {
+	describe('translate()', () => {
 		it('returns "BAr"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('translate("bar","abc","ABC")', documentNode),
