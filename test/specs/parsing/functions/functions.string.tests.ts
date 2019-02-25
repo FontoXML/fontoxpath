@@ -357,7 +357,7 @@ describe('functions over strings', () => {
 			chai.assert.equal(evaluateXPathToString('substring-after((),())', documentNode), ''));
 	});
 
-	describe('translate()', () => {
+	describe.only('translate()', () => {
 		it('returns "BAr"', () =>
 			chai.assert.equal(
 				evaluateXPathToString('translate("bar","abc","ABC")', documentNode),
@@ -376,6 +376,11 @@ describe('functions over strings', () => {
 		it(' returns ""', () =>
 			chai.assert.equal(
 				evaluateXPathToString('translate("", "abc", "AB")', documentNode),
+				''
+			));
+		it(' returns "" for an empty sequence as an first argument', () =>
+			chai.assert.equal(
+				evaluateXPathToString('translate((), "abc", "AB")', documentNode),
 				''
 			));
 	});
