@@ -29,6 +29,7 @@
 				"fs.js",
 				"loader.js"
 			],
+			// smartStep can be enabled again once [Microsoft/vscode#68616](https://github.com/Microsoft/vscode/issues/68616) is fixed. TLDR; smartStep causes parts of code to not be highlighted when debugging unit tests.
 			"smartStep": false,
 			"cwd": "${workspaceRoot}",
 			"internalConsoleOptions": "openOnSessionStart"
