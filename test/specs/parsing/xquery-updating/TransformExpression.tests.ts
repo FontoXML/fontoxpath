@@ -1,10 +1,11 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
-
 import { evaluateUpdatingExpression } from 'fontoxpath';
+import { slimdom, sync } from 'slimdom-sax-parser';
+import IDomFacade from '../../../../src/domFacade/IDomFacade';
 import assertUpdateList from './assertUpdateList';
+import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
 
-let documentNode;
+let documentNode: Document;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
@@ -29,18 +30,18 @@ return $a
 		chai.assert.equal(actualXml, '<element>content</element>');
 		assertUpdateList(result.pendingUpdateList, [
 			{
-				type: 'replaceNode',
+				replacementXML: ['<replacement/>'],
 				target: element,
-				replacementXML: ['<replacement/>']
+				type: 'replaceNode'
 			},
 			{
-				type: 'rename',
-				target: element,
 				newName: {
-					prefix: '',
+					localName: 'renamed',
 					namespaceURI: null,
-					localName: 'renamed'
-				}
+					prefix: ''
+				},
+				target: element,
+				type: 'rename'
 			}
 		]);
 	});
@@ -68,6 +69,150 @@ return ($a, replace node element with <replacement/>)
 				replacementXML: ['<replacement/>']
 			}
 		]);
+	});
+
+	it('can clone the node with its child nodes', async () => {
+		documentNode = sync(`
+		<xml xmlns:xml="http://www.w3.org/XML/1998/namespace">
+			<?process instruction ?>
+			<!-- comment -->
+			<![CDATA[  <, & and ) *and* %MyParamEnt]]>
+			<parent>
+				<child attribute="uncle"/>
+				<sibling>
+					<nephew>
+						i am baby johnny
+					</nephew>
+				</sibling>
+			</parent>
+		</xml>`);
+
+		const result = await evaluateUpdatingExpression(
+			`copy $a := xml modify () return $a`,
+			documentNode,
+			null,
+			{},
+			{}
+		);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const expectedXml = new slimdom.XMLSerializer().serializeToString(
+			documentNode.documentElement
+		);
+		chai.assert.equal(actualXml, expectedXml);
+		assertUpdateList(result.pendingUpdateList, []);
+	});
+
+	it('can clone the Document with its child nodes', async () => {
+		documentNode = sync(`
+		<?process instruction ?>
+		<xml xmlns:xml="http://www.w3.org/XML/1998/namespace"/>`);
+
+		const result = await evaluateUpdatingExpression(
+			`copy $a := . modify () return $a`,
+			documentNode,
+			null,
+			{},
+			{}
+		);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const expectedXml = new slimdom.XMLSerializer().serializeToString(documentNode);
+		chai.assert.equal(actualXml, expectedXml);
+		assertUpdateList(result.pendingUpdateList, []);
+	});
+
+	it('there is no change in original document', async () => {
+		const xml = `<xml xmlns:xml="http://www.w3.org/XML/1998/namespace">
+		<?process instruction ?>
+		<!-- comment -->
+		<![CDATA[  <, & and ) *and* %MyParamEnt]]>
+		<parent>
+			<child attribute="uncle"/>
+			<sibling>
+				<nephew>
+					i am baby johnny
+				</nephew>
+			</sibling>
+		</parent>
+	</xml>`;
+
+		documentNode = sync(xml);
+
+		const result = await evaluateUpdatingExpression(
+			`copy $a := xml modify () return $a`,
+			documentNode,
+			null,
+			{},
+			{}
+		);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const newlySyncXMLDoc = new slimdom.XMLSerializer().serializeToString(sync(xml));
+		const afterCloneXMLDoc = new slimdom.XMLSerializer().serializeToString(documentNode);
+		chai.assert.equal(newlySyncXMLDoc, afterCloneXMLDoc);
+		assertUpdateList(result.pendingUpdateList, []);
+	});
+
+	it('can use NodesFactory', async () => {
+		const xml = `<xml xmlns:xml="http://www.w3.org/XML/1998/namespace">
+		<?process instruction ?>
+		<!-- comment -->
+		<![CDATA[  <, & and ) *and* %MyParamEnt]]>
+		<parent>
+			<child attribute="uncle"/>
+			<sibling>
+				<nephew>
+					i am baby johnny
+				</nephew>
+			</sibling>
+		</parent>
+	</xml>`;
+
+		documentNode = sync(xml);
+
+		const result = await evaluateUpdatingExpression(
+			`copy $a := . modify () return $a`,
+			documentNode,
+			null,
+			{},
+			{ nodesFactory: new DomBackedNodesFactory(documentNode) }
+		);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const newlySyncXMLDoc = new slimdom.XMLSerializer().serializeToString(sync(xml));
+		const afterCloneXMLDoc = new slimdom.XMLSerializer().serializeToString(documentNode);
+		chai.assert.equal(newlySyncXMLDoc, afterCloneXMLDoc);
+		assertUpdateList(result.pendingUpdateList, []);
+	});
+
+	it('uses the dom facade', async () => {
+		const xml = documentNode.createElement('xml');
+
+		const a = documentNode.createElement('a');
+
+		// <xml><a/></xml>
+		const getChildNode = (node: Node) =>
+			node === documentNode ? xml : node === xml ? a : null;
+		const myDomFacade: IDomFacade = {
+			getAllAttributes: () => [],
+			getAttribute: () => null,
+			getChildNodes: (node: Node) => [getChildNode(node)],
+			getData: () => '',
+			getFirstChild: getChildNode,
+			getLastChild: getChildNode,
+			getNextSibling: () => null,
+			getParentNode: (node: Node) => (node === a ? xml : node === xml ? documentNode : null),
+			getPreviousSibling: () => null
+		};
+
+		const result = await evaluateUpdatingExpression(
+			`copy $a := xml modify () return $a`,
+			documentNode,
+			myDomFacade,
+			{},
+			{}
+		);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const expectedXml = new slimdom.XMLSerializer().serializeToString(sync('<xml><a/></xml>'));
+		chai.assert.equal(actualXml, expectedXml);
+		assertUpdateList(result.pendingUpdateList, []);
 	});
 
 	it('throws when a target of in the pul of modify is not a clone', async () => {

@@ -1,7 +1,11 @@
 export default interface INodesFactory {
 	createAttributeNS(namespaceURI: string, name: string): Attr;
 
+	createCDATASection(contents: string): CDATASection;
+
 	createComment(contents: string): Comment;
+
+	createDocument(): Document;
 
 	createElementNS(namespaceURI: string, name: string): Element;
 

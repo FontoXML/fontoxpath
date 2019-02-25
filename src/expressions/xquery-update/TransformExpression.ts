@@ -1,17 +1,30 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
+import IDocumentWriter from '../../documentWriter/IDocumentWriter';
+import {
+	ConcreteDocumentNode,
+	ConcreteElementNode,
+	ConcreteNode,
+	NODE_TYPES
+} from '../../domFacade/ConcreteNode';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
+import INodesFactory from '../../nodesFactory/INodesFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
+import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import { ready } from '../util/iterators';
-import { mergeUpdates } from './pulRoutines';
-import { applyUpdates } from './pulRoutines';
+import { applyUpdates, mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
 
-function deepCloneNode(node) {
+function deepCloneNode(
+	node: ConcreteNode,
+	domFacade: IWrappingDomFacade,
+	nodesFactory: INodesFactory,
+	documentWriter: IDocumentWriter
+) {
 	// Each copied node receives a new node identity. The parent, children, and attributes properties of the copied nodes are set so as to preserve their inter-node relationships. The parent property of the copy of $node is set to empty. Other properties of the copied nodes are determined as follows:
 
 	// For a copied document node, the document-uri property is set to empty.
@@ -21,8 +34,45 @@ function deepCloneNode(node) {
 	// 	Note:Implementations that store only the typed value of a node are required at this point to convert the typed value to a string form.
 	// If copy-namespaces mode in the static context specifies preserve, all in-scope-namespaces of the original element are retained in the new copy. If copy-namespaces mode specifies no-preserve, the new copy retains only those in-scope namespaces of the original element that are used in the names of the element and its attributes.
 	// All other properties of the copied nodes are preserved.
-	// TODO: Consider doing this with an INodesFactory.
-	return createNodeValue(node.value.cloneNode(true));
+
+	switch (node.nodeType) {
+		case NODE_TYPES.ELEMENT_NODE:
+			const cloneElem = nodesFactory.createElementNS(node.namespaceURI, node.nodeName);
+			domFacade
+				.getAllAttributes(node)
+				.forEach(attr =>
+					documentWriter.setAttributeNS(
+						cloneElem,
+						attr.namespaceURI,
+						attr.name,
+						attr.value
+					)
+				);
+			for (const child of domFacade.getChildNodes(node)) {
+				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
+				documentWriter.insertBefore(cloneElem as ConcreteElementNode, descendant, null);
+			}
+			return cloneElem;
+		case NODE_TYPES.ATTRIBUTE_NODE:
+			const cloneAttr = nodesFactory.createAttributeNS(node.namespaceURI, node.nodeName);
+			cloneAttr.value = node.value;
+			return cloneAttr;
+		case NODE_TYPES.CDATA_SECTION_NODE:
+			return nodesFactory.createCDATASection(node.data);
+		case NODE_TYPES.COMMENT_NODE:
+			return nodesFactory.createComment(node.data);
+		case NODE_TYPES.DOCUMENT_NODE:
+			const cloneDoc = nodesFactory.createDocument();
+			for (const child of domFacade.getChildNodes(node)) {
+				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
+				documentWriter.insertBefore(cloneDoc as ConcreteDocumentNode, descendant, null);
+			}
+			return cloneDoc;
+		case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
+			return nodesFactory.createProcessingInstruction(node.target, node.data);
+		case NODE_TYPES.TEXT_NODE:
+			return nodesFactory.createTextNode(node.data);
+	}
 }
 
 function isCreatedNode(node, createdNodes, domFacade) {
@@ -64,7 +114,7 @@ class TransformExpression extends UpdatingExpression {
 		this._returnExpr = returnExpr;
 	}
 
-	public evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(dynamicContext, executionParameters: ExecutionParameters) {
 		const { domFacade, nodesFactory, documentWriter } = executionParameters;
 
 		const sourceValueIterators = [];
@@ -106,7 +156,9 @@ class TransformExpression extends UpdatingExpression {
 						const node = sv.value.xdmValue[0];
 
 						// A new copy is made of $node and all nodes that have $node as an ancestor, collectively referred to as copied nodes.
-						const copiedNodes = deepCloneNode(node);
+						const copiedNodes = createNodeValue(
+							deepCloneNode(node.value, domFacade, nodesFactory, documentWriter)
+						);
 						createdNodes.push(copiedNodes.value);
 						toMergePuls.push(sv.value.pendingUpdateList);
 

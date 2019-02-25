@@ -350,28 +350,42 @@ describe('evaluateXPath', () => {
 		it('can use the passed nodesFactory', () => {
 			const slimdomDocument = new slimdom.Document();
 			const nodesFactory = {
+				createAttributeNS: sinon
+					.spy(slimdomDocument, 'createAttributeNS')
+					.bind(slimdomDocument),
+				createCDATASection: sinon
+					.spy(slimdomDocument, 'createCDATASection')
+					.bind(slimdomDocument),
 				createComment: sinon.spy(slimdomDocument, 'createComment').bind(slimdomDocument),
+				createDocument: sinon
+					.spy(slimdomDocument.implementation, 'createDocument')
+					.bind(slimdomDocument.implementation),
 				createElementNS: sinon
 					.spy(slimdomDocument, 'createElementNS')
 					.bind(slimdomDocument),
 				createProcessingInstruction: sinon
 					.spy(slimdomDocument, 'createProcessingInstruction')
 					.bind(slimdomDocument),
-				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument),
-				createAttributeNS: sinon
-					.spy(slimdomDocument, 'createAttributeNS')
-					.bind(slimdomDocument)
+				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument)
 			};
 
 			evaluateXPathToBoolean(
-				'<element>Some text, a <?processing instruction ?> and a <!--comment--></element>',
+				'<element>Some text, a <?processing instruction ?> and a <!--comment--><![CDATA[<,&and)]]></element>',
 				null,
 				null,
 				null,
 				{ nodesFactory, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 			);
 
+			chai.assert.isFalse(
+				slimdomDocument.createCDATASection.called,
+				'nodesFactory.createCDATASection'
+			);
 			chai.assert.isTrue(slimdomDocument.createComment.called, 'nodesFactory.createComment');
+			chai.assert.isFalse(
+				slimdomDocument.implementation.createDocument.called,
+				'nodesFactory.createDocument'
+			);
 			chai.assert.isTrue(
 				slimdomDocument.createElementNS.called,
 				'nodesFactory.createElementNS'
@@ -388,6 +402,7 @@ describe('evaluateXPath', () => {
 
 		it('defaults to the passed document', () => {
 			const slimdomDocument = new slimdom.Document();
+			sinon.spy(slimdomDocument, 'createCDATASection').bind(slimdomDocument);
 			sinon.spy(slimdomDocument, 'createComment').bind(slimdomDocument);
 			sinon.spy(slimdomDocument, 'createElementNS').bind(slimdomDocument);
 			sinon.spy(slimdomDocument, 'createProcessingInstruction').bind(slimdomDocument);
@@ -395,15 +410,19 @@ describe('evaluateXPath', () => {
 
 			chai.assert.equal(
 				(evaluateXPathToFirstNode(
-					'<element>Some text, a <?processing instruction ?> and a <!--comment--></element>',
+					'<element>Some text, a <?processing instruction ?> and a <!--comment--><![CDATA[<,&and)]]></element>',
 					slimdomDocument,
 					null,
 					null,
 					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 				) as Element).outerHTML,
-				'<element>Some text, a <?processing instruction ?> and a <!--comment--></element>'
+				'<element>Some text, a <?processing instruction ?> and a <!--comment-->&lt;,&amp;and)</element>'
 			);
 
+			chai.assert.isFalse(
+				slimdomDocument.createCDATASection.called,
+				'nodesFactory.createCDATASection'
+			);
 			chai.assert.isTrue(slimdomDocument.createComment.called, 'createComment');
 			chai.assert.isTrue(slimdomDocument.createElementNS.called, 'createElementNS');
 			chai.assert.isTrue(

@@ -30,6 +30,15 @@ export default class DomBackedNodesFactory implements INodesFactory {
 		return this._documentNode.createAttributeNS(namespaceURI, name);
 	}
 
+	public createCDATASection(contents) {
+		if (!this._documentNode) {
+			throw new Error(
+				'Please pass a node factory if an XQuery script uses node constructors'
+			);
+		}
+		return this._documentNode.createCDATASection(contents);
+	}
+
 	public createComment(contents) {
 		if (!this._documentNode) {
 			throw new Error(
@@ -37,6 +46,15 @@ export default class DomBackedNodesFactory implements INodesFactory {
 			);
 		}
 		return this._documentNode.createComment(contents);
+	}
+
+	public createDocument() {
+		if (!this._documentNode) {
+			throw new Error(
+				'Please pass a node factory if an XQuery script uses node constructors'
+			);
+		}
+		return this._documentNode.implementation.createDocument(null, null, null);
 	}
 
 	public createElementNS(namespaceURI, name) {

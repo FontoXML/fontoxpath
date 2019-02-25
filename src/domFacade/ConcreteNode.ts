@@ -2,7 +2,7 @@ export const enum NODE_TYPES {
 	ELEMENT_NODE = 1,
 	ATTRIBUTE_NODE = 2,
 	TEXT_NODE = 3,
-	CDATA_SECION_NODE = 4,
+	CDATA_SECTION_NODE = 4,
 	PROCESSING_INSTRUCTION_NODE = 7,
 	COMMENT_NODE = 8,
 	DOCUMENT_NODE = 9,
@@ -18,7 +18,8 @@ export type ConcreteChildNode =
 	| ConcreteElementNode
 	| ConcreteTextNode
 	| ConcreteProcessingInstructionNode
-	| ConcreteCommentNode;
+	| ConcreteCommentNode
+	| ConcreteCDATASectionNode;
 
 export type ConcreteElementNode = Element & { nodeType: NODE_TYPES.ELEMENT_NODE };
 
@@ -32,6 +33,8 @@ export type ConcreteProcessingInstructionNode = ProcessingInstruction & {
 };
 
 export type ConcreteCommentNode = Comment & { nodeType: NODE_TYPES.COMMENT_NODE };
+
+export type ConcreteCDATASectionNode = CDATASection & { nodeType: NODE_TYPES.CDATA_SECTION_NODE };
 
 export type ConcreteAttributeNode = Attr & { nodeType: NODE_TYPES.ATTRIBUTE_NODE };
 

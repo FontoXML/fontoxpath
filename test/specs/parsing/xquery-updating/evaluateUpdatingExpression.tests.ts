@@ -28,8 +28,10 @@ describe('evaluateUpdatingExpression', () => {
 		let setDataCalled = false;
 
 		let createAttributeNSCalled = false;
-		let createElementNSCalled = false;
+		let createCDATASectionCalled = false;
 		let createCommentCalled = false;
+		let createDocumentCalled = false;
+		let createElementNSCalled = false;
 		let createProcessingInstructionCalled = false;
 		let createTextNodeCalled = false;
 
@@ -70,9 +72,19 @@ describe('evaluateUpdatingExpression', () => {
 						createAttributeNSCalled = true;
 						return documentNode.createAttributeNS(namespaceURI, localName);
 					},
+
+					createCDATASection: contents => {
+						createCDATASectionCalled = true;
+						return documentNode.createCDATASection(contents);
+					},
+
 					createComment: contents => {
 						createCommentCalled = true;
 						return documentNode.createComment(contents);
+					},
+					createDocument: () => {
+						createDocumentCalled = true;
+						return documentNode.implementation.createDocument();
 					},
 					createElementNS: (namespaceURI, localName) => {
 						createElementNSCalled = true;
@@ -98,7 +110,9 @@ describe('evaluateUpdatingExpression', () => {
 
 		chai.assert.isTrue(createElementNSCalled, 'createElementNSCalled');
 		chai.assert.isFalse(createAttributeNSCalled, 'createAttributeNSCalled');
+		chai.assert.isFalse(createCDATASectionCalled, 'createCDATASectionCalled');
 		chai.assert.isFalse(createCommentCalled, 'createCommentCalled');
+		chai.assert.isFalse(createDocumentCalled, 'createDocumentCalled');
 		chai.assert.isFalse(createProcessingInstructionCalled, 'createProcessingInstructionCalled');
 		chai.assert.isTrue(createTextNodeCalled, 'createTextNodeCalled');
 	});
