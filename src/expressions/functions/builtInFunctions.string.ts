@@ -413,9 +413,9 @@ const fnTranslate: FunctionDefinitionType = (
 	arg2,
 	arg3
 ) => {
-	const arr1 = Array.from(arg1.first().value);
-	const arr2 = Array.from(arg2.first().value);
-	const arr3 = Array.from(arg3.first().value);
+	const arr1 = Array.from(arg1.first() ? arg1.first().value : '');
+	const arr2 = Array.from(arg2.first() ? arg2.first().value : '');
+	const arr3 = Array.from(arg3.first() ? arg3.first().value : '');
 
 	const result = arr1.map(e => {
 		if (arr2.includes(e)) {
