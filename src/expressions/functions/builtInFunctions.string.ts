@@ -415,12 +415,14 @@ const fnTranslate: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([arg1, arg2, arg3], ([str1, str2, str3]) => {
 		const arr1 = Array.from(str1 ? str1.value : '');
+		const arr2 = Array.from(str2.value);
+		const arr3 = Array.from(str3.value);
 
 		const result = arr1.map(e => {
-			if (str2.value.includes(e)) {
-				const index = str2.value.indexOf(e);
-				if (index <= str3.value.length) {
-					return str3.value[index];
+			if (arr2.includes(e)) {
+				const index = arr2.indexOf(e);
+				if (index <= arr3.length) {
+					return arr3[index];
 				}
 			} else {
 				return e;
