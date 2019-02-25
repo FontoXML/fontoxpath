@@ -1,12 +1,14 @@
 import * as chai from 'chai';
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import * as slimdom from 'slimdom';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToNumber,
+	evaluateXPath,
 	evaluateXPathToBoolean,
-	evaluateXPathToStrings,
-	evaluateXPathToString
+	evaluateXPathToNumber,
+	evaluateXPathToNumbers,
+	evaluateXPathToString,
+	evaluateXPathToStrings
 } from 'fontoxpath';
 
 let documentNode;
@@ -383,5 +385,103 @@ describe('functions over strings', () => {
 				evaluateXPathToString('translate((), "abc", "AB")', documentNode),
 				''
 			));
+	});
+
+	describe('codepoints-to-string()', () => {
+		it('Returns "BACH"', () =>
+			chai.assert.equal(
+				evaluateXPathToString('codepoints-to-string((66, 65, 67, 72))', documentNode),
+				'BACH'
+			));
+		it('Returns "अशॊक"', () =>
+			chai.assert.equal(
+				evaluateXPathToString(
+					'codepoints-to-string((2309, 2358, 2378, 2325))',
+					documentNode
+				),
+				'अशॊक'
+			));
+		it('Return the zero length string for an empty sequence', () =>
+			chai.assert.equal(evaluateXPathToString('codepoints-to-string(())', documentNode), ''));
+		it('Return true for a test whose essence is: `codepoints-to-string(1114111) eq "&#1114111;"`', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('codepoints-to-string(1114111) = "\u{10FFFF}"', documentNode)
+			));
+		it('Raises error FOCH0001 for the expression fn:codepoints-to-string(0)', () =>
+			chai.assert.throws(
+				() => evaluateXPathToString('codepoints-to-string(0)', documentNode),
+				Error,
+				'FOCH0001'
+			));
+		it('Raises error FOCH0001 for the expression fn:codepoints-to-string(10000000)', () =>
+			chai.assert.throws(
+				() => evaluateXPathToString('codepoints-to-string(10000000)', documentNode),
+				Error,
+				'FOCH0001'
+			));
+	});
+
+	describe('string-to-codepoints()', () => {
+		it('Returns "(84, 104, 233, 114, 232, 115, 101)"', () =>
+			chai.assert.deepEqual(
+				evaluateXPathToNumbers('string-to-codepoints("Thérèse")', documentNode),
+				[84, 104, 233, 114, 232, 115, 101]
+			));
+		it('Returns empty sequence for a zero length string', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('string-to-codepoints("") => empty()', documentNode)
+			));
+		it('Returns empty sequence for an empty sequence', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('string-to-codepoints(()) => empty()', documentNode)
+			));
+		it('Returns 12 for string-to-codepoints(codepoints-to-string(12))', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPathToNumbers(
+						'string-to-codepoints(codepoints-to-string(12))',
+						documentNode
+					),
+				Error,
+				'FOCH0001'
+			));
+	});
+
+	describe('codepoint-equal()', () => {
+		it('Returns empty sequence for an empty sequence as an first argument', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('codepoint-equal((), "Lady") => empty()', documentNode)
+			));
+		it('Returns empty sequence for an empty sequence as a second argument', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('codepoint-equal("Gentleman", ()) => empty()', documentNode)
+			));
+		it('Returns empty sequence when compared two empty sequences', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('codepoint-equal((), ()) => empty()', documentNode)
+			));
+		it('Returns true() for the expression fn:codepoint-equal("abcd", "abcd") ', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('codepoint-equal("abcd", "abcd")', documentNode)
+			));
+		it('Returns false() for the expression fn:codepoint-equal("abcd", "abcd ")', () =>
+			chai.assert.isFalse(
+				evaluateXPathToBoolean('codepoint-equal("abcd", "abcd ")', documentNode)
+			));
+		it('Returns true() for the expression fn:codepoint-equal("", "")', () =>
+			chai.assert.isTrue(evaluateXPathToBoolean('codepoint-equal("", "")', documentNode)));
+		it('Returns false() for an empty sequence as first argument generated with a function', () =>
+			chai.assert.isFalse(
+				evaluateXPathToBoolean(
+					`declare function local:yes-empty($arg as xs:boolean) as xs:string? { if ($arg) then 'yes' else () };
+			boolean(fn:codepoint-equal( local:yes-empty(fn:false()), local:yes-empty(fn:true()) ) )`,
+					documentNode,
+					undefined,
+					null,
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				)
+			));
+		it('Returns false() for the expression fn:codepoint-equal("a", "b")', () =>
+			chai.assert.isFalse(evaluateXPathToBoolean('codepoint-equal("a","b")', documentNode)));
 	});
 });

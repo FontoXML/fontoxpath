@@ -384,7 +384,7 @@ describe('qt3 test set', () => {
 				`
 /test-set/test-case[
   let $dependencies := (./dependency | ../dependency)
-  return not(
+  return not(exists($dependencies[@type="xml-version" and @value="1.1"])) and not(
      $dependencies/@value/tokenize(.) = (
        "XQ10",
        "XQ20",

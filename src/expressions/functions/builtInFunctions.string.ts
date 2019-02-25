@@ -1,16 +1,13 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import zipSingleton from '../util/zipSingleton';
-
-import { DONE_TOKEN, ready } from '../util/iterators';
-
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-
+import { DONE_TOKEN, ready } from '../util/iterators';
+import zipSingleton from '../util/zipSingleton';
 import builtInNumericFunctions from './builtInFunctions.numeric';
-
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnRound = builtInNumericFunctions.functions.round;
@@ -435,6 +432,83 @@ const fnTranslate: FunctionDefinitionType = (
 	);
 };
 
+const fnCodepointsToString: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	numberSequence: ISequence
+) => {
+	return numberSequence.mapAll(numbers => {
+		const str = numbers
+			.map(num => {
+				const numericValue: number = num.value;
+				if (
+					numericValue === 0x9 ||
+					numericValue === 0xa ||
+					numericValue === 0xd ||
+					(numericValue >= 0x20 && numericValue <= 0xd7ff) ||
+					(numericValue >= 0xe000 && numericValue <= 0xfffd) ||
+					(numericValue >= 0x10000 && numericValue <= 0x10ffff)
+				) {
+					return String.fromCodePoint(numericValue);
+				} else {
+					throw new Error('FOCH0001');
+				}
+			})
+			.join('');
+		return sequenceFactory.singleton(createAtomicValue(str, 'xs:string'));
+	});
+};
+
+const fnStringToCodepoints: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	stringSequence: ISequence
+) => {
+	return zipSingleton([stringSequence], ([str]) => {
+		const characters = str ? (str.value as string).split('') : [];
+		if (characters.length === 0) {
+			return sequenceFactory.empty();
+		}
+
+		return sequenceFactory.create(
+			characters.map(character => createAtomicValue(character.codePointAt(0), 'xs:integer'))
+		);
+	});
+};
+
+const fnCodepointEqual: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	stringSequence1: ISequence,
+	stringSequence2: ISequence
+) => {
+	return zipSingleton([stringSequence1, stringSequence2], ([value1, value2]) => {
+		if (value1 === null || value2 === null) {
+			return sequenceFactory.empty();
+		}
+
+		const string1: string = value1.value;
+		const string2: string = value2.value;
+
+		if (string1.length !== string2.length) {
+			return sequenceFactory.singletonFalseSequence();
+		}
+		const string1Characters = string1.split('');
+		const string2Characters = string2.split('');
+
+		for (let i = 0; i < string1Characters.length; i++) {
+			if (string1Characters[i].codePointAt(0) !== string2Characters[i].codePointAt(0)) {
+				return sequenceFactory.singletonFalseSequence();
+			}
+		}
+
+		return sequenceFactory.singletonTrueSequence();
+	});
+};
+
 export default {
 	declarations: [
 		{
@@ -689,11 +763,35 @@ export default {
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'translate',
 			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
-			returnType: 'xs:string',
-			callFunction: fnTranslate
+			callFunction: fnTranslate,
+			localName: 'translate',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string'
+		},
+
+		{
+			argumentTypes: ['xs:integer*'],
+			callFunction: fnCodepointsToString,
+			localName: 'codepoints-to-string',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string'
+		},
+
+		{
+			argumentTypes: ['xs:string?'],
+			callFunction: fnStringToCodepoints,
+			localName: 'string-to-codepoints',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:integer*'
+		},
+
+		{
+			argumentTypes: ['xs:string?', 'xs:string?'],
+			callFunction: fnCodepointEqual,
+			localName: 'codepoint-equal',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:boolean?'
 		}
 	],
 	functions: {
