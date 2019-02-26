@@ -1,8 +1,8 @@
 import domBackedDocumentWriter from '../documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from '../documentWriter/IDocumentWriter';
 import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWriter';
-import domBackedDomFacade from '../domFacade/domBackedDomFacade';
 import DomFacade from '../domFacade/DomFacade';
+import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
 import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 import { UpdatingOptions } from '../evaluateUpdatingExpression';
@@ -74,7 +74,7 @@ export default function buildEvaluationContext(
 		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
 	}
 	const wrappedDomFacade: IWrappingDomFacade =
-		domFacade === null ? domBackedDomFacade : new DomFacade(domFacade);
+		new DomFacade(domFacade === null ? new ExternalDomFacade() : domFacade);
 
 	expressionString = normalizeEndOfLines(expressionString);
 
