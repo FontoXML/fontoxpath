@@ -1,17 +1,13 @@
-import domBackedDomFacade from './domFacade/domBackedDomFacade';
-import DomFacade from './domFacade/DomFacade';
-import IDomFacade from './domFacade/IDomFacade';
-
 import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import wrapExternalDocumentWriter from './documentWriter/wrapExternalDocumentWriter';
-
+import DomFacade from './domFacade/DomFacade';
+import ExternalDomFacade from './domFacade/ExternalDomFacade';
+import IDomFacade from './domFacade/IDomFacade';
+import createPendingUpdateFromTransferable from './expressions/xquery-update/createPendingUpdateFromTransferable';
+import { applyUpdates } from './expressions/xquery-update/pulRoutines';
 import INodesFactory from './nodesFactory/INodesFactory';
 import wrapExternalNodesFactory from './nodesFactory/wrapExternalNodesFactory';
-
-import { applyUpdates } from './expressions/xquery-update/pulRoutines';
-
-import createPendingUpdateFromTransferable from './expressions/xquery-update/createPendingUpdateFromTransferable';
 
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
@@ -27,7 +23,7 @@ export default function executePendingUpdateList(
 	nodesFactory?: INodesFactory,
 	documentWriter?: IDocumentWriter
 ): void {
-	domFacade = domFacade ? new DomFacade(domFacade) : domBackedDomFacade;
+	domFacade = new DomFacade(domFacade ? domFacade : new ExternalDomFacade());
 
 	documentWriter = documentWriter
 		? wrapExternalDocumentWriter(documentWriter)
