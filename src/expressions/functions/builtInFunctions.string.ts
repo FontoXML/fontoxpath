@@ -409,27 +409,30 @@ const fnTranslate: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
-	arg1,
-	arg2,
-	arg3
+	argSequence,
+	mapStringSequence,
+	transStringSequence
 ) => {
-	return zipSingleton([arg1, arg2, arg3], ([str1, str2, str3]) => {
-		const arr1 = Array.from(str1 ? str1.value : '');
-		const arr2 = Array.from(str2.value);
-		const arr3 = Array.from(str3.value);
+	return zipSingleton(
+		[argSequence, mapStringSequence, transStringSequence],
+		([argValue, mapStringSequenceValue, transStringSequenceValue]) => {
+			const argArr = Array.from(argValue ? argValue.value : '');
+			const mapStringArr = Array.from(mapStringSequenceValue.value);
+			const transStringArr = Array.from(transStringSequenceValue.value);
 
-		const result = arr1.map(e => {
-			if (arr2.includes(e)) {
-				const index = arr2.indexOf(e);
-				if (index <= arr3.length) {
-					return arr3[index];
+			const result = argArr.map(letter => {
+				if (mapStringArr.includes(letter)) {
+					const index = mapStringArr.indexOf(letter);
+					if (index <= transStringArr.length) {
+						return transStringArr[index];
+					}
+				} else {
+					return letter;
 				}
-			} else {
-				return e;
-			}
-		});
-		return sequenceFactory.singleton(createAtomicValue(result.join(''), 'xs:string'));
-	});
+			});
+			return sequenceFactory.singleton(createAtomicValue(result.join(''), 'xs:string'));
+		}
+	);
 };
 
 export default {
