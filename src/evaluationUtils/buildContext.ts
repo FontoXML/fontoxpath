@@ -73,8 +73,9 @@ export default function buildEvaluationContext(
 	} else {
 		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
 	}
-	const wrappedDomFacade: IWrappingDomFacade =
-		new DomFacade(domFacade === null ? new ExternalDomFacade() : domFacade);
+	const wrappedDomFacade: IWrappingDomFacade = new DomFacade(
+		domFacade === null ? new ExternalDomFacade() : domFacade
+	);
 
 	expressionString = normalizeEndOfLines(expressionString);
 
