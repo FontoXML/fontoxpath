@@ -405,6 +405,36 @@ const fnNormalizeSpace: FunctionDefinitionType = function(
 	return sequenceFactory.singleton(createAtomicValue(string.replace(/\s+/g, ' '), 'xs:string'));
 };
 
+const fnTranslate: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	argSequence,
+	mapStringSequence,
+	transStringSequence
+) => {
+	return zipSingleton(
+		[argSequence, mapStringSequence, transStringSequence],
+		([argValue, mapStringSequenceValue, transStringSequenceValue]) => {
+			const argArr = Array.from(argValue ? argValue.value : '');
+			const mapStringArr = Array.from(mapStringSequenceValue.value);
+			const transStringArr = Array.from(transStringSequenceValue.value);
+
+			const result = argArr.map(letter => {
+				if (mapStringArr.includes(letter)) {
+					const index = mapStringArr.indexOf(letter);
+					if (index <= transStringArr.length) {
+						return transStringArr[index];
+					}
+				} else {
+					return letter;
+				}
+			});
+			return sequenceFactory.singleton(createAtomicValue(result.join(''), 'xs:string'));
+		}
+	);
+};
+
 export default {
 	declarations: [
 		{
@@ -656,6 +686,14 @@ export default {
 					sequenceFactory.singleton(createAtomicValue(' ', 'xs:string'))
 				);
 			}
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'translate',
+			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
+			returnType: 'xs:string',
+			callFunction: fnTranslate
 		}
 	],
 	functions: {

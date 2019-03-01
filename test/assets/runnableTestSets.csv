@@ -179,7 +179,7 @@ fn-timezone-from-time,true
 fn-tokenize,false
 fn-trace,false
 fn-transform,false
-fn-translate,false
+fn-translate,true
 fn-true,true
 fn-true,true
 fn-unordered,true

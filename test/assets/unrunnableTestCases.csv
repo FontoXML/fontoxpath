@@ -485,8 +485,6 @@ fn-function-lookup-117,AssertionError: Expected XPath exists(function-lookup(fn:
 fn-function-lookup-118,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-119,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'normalize-unicode'), 2)) to resolve to true: expected false to be true
 fn-function-lookup-120,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
-fn-function-lookup-125,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'translate'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-126,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-130,Error: FOCH0002: No collations are supported
 fn-function-lookup-134,Error: FOCH0002: No collations are supported
 fn-function-lookup-138,Error: FOCH0002: No collations are supported
@@ -1345,6 +1343,7 @@ cbcl-timezone-from-date-004,Error: XPST0017: Function adjust-date-to-timezone wi
 cbcl-timezone-from-date-005,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 cbcl-timezone-from-date-006,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 cbcl-timezone-from-date-007,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
+cbcl-fn-translate-002,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-unordered-mix-args-001,AssertionError: Skipped test, it was a assert-permutation
 fn-unordered-mix-args-002,AssertionError: Skipped test, it was a assert-permutation
 fn-unordered-mix-args-003,AssertionError: Skipped test, it was a assert-permutation
@@ -3177,8 +3176,6 @@ function-literal-117,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-118,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}normalize-unicode with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
 function-literal-119,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}normalize-unicode with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
 function-literal-120,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}normalize-unicode with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
-function-literal-125,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}translate with arity of 3 not registered. No similar functions found.
-function-literal-126,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}translate with arity of 3 not registered. No similar functions found.
 function-literal-130,Error: FOCH0002: No collations are supported
 function-literal-134,Error: FOCH0002: No collations are supported
 function-literal-138,Error: FOCH0002: No collations are supported
@@ -3221,10 +3218,10 @@ function-literal-233,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-234,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 1 not registered. No similar functions found.
 function-literal-235,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 function-literal-236,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
-function-literal-237,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
-function-literal-238,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
-function-literal-239,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
-function-literal-240,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
+function-literal-237,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)" or "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)"?
+function-literal-238,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)" or "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)"?
+function-literal-239,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)" or "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)"?
+function-literal-240,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)" or "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)"?
 function-literal-241,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
 function-literal-242,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
 function-literal-243,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
@@ -4208,10 +4205,6 @@ errors-and-optimization-2,AssertionError: expected [Function] to throw an error
 errors-and-optimization-7,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
 hof-006,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 hof-007,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-hof-018,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-hof-019,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-hof-020,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-hof-021,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 hof-026,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 hof-030,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 hof-034,Error: XPST0003: Unable to parse XPath: "local-name-from-QName(function-name((upper-case#1, lower-case#1)[ordered{.}("Mike") = "MIKE"]))". Expected " ", "!", "!=", "#", "(", "(:", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "]", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "{" found. local-name-from-QName(function-name((upper-case#1, lower-case#1)[ordered[Error is around here]{.}("Mike") = "MIKE"]))
@@ -4219,17 +4212,14 @@ hof-035,Error: XPST0003: Unable to parse XPath: "local-name-from-QName(function-
 hof-037,Error: No selector counterpart for: anyFunctionTest.
 hof-038,Error: No selector counterpart for: typedFunctionTest.
 hof-039,Error: XPST0003: Unable to parse XPath: "       	declare function local:f($x as xs:long, $y as xs:NCName) as element(e)? { <e x="{$x}" y="{$y}"/> };        	local:f#2 instance of function(xs:long, xs:NCName) as element()?,        	local:f#2 instance of function(xs:long, xs:NCName) as element()*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType?)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType?)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:untyped)?       ". Expected " ", "(:", ")", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "?" found.        	declare function local:f($x as xs:long, $y as xs:NCName) as element(e)? { <e x="{$x}" y="{$y}"/> };        	local:f#2 instance of function(xs:long, xs:NCName) as element()?,        	local:f#2 instance of function(xs:long, xs:NCName) as element()*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType[Error is around here]?)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType?)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:untyped)?
-hof-040,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-hof-041,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-hof-042,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 hof-043,Error: XPST0081: Can not cast: type xs:numeric is unknown.
 hof-045,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 hof-052,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 hof-053,Error: XPST0003: Unable to parse XPath: "       	declare function local:f($x as xs:long, $y as xs:NCName) as element(e, xs:anyAtomicType) { <e x="{$x}" y="{$y}"/> };        	local:f#2 instance of function(xs:long, xs:NCName) as element(),        	local:f#2 instance of function(xs:long, xs:NCName) as element()+,        	local:f#2 instance of function(xs:long, xs:NCName) as element()?,        	local:f#2 instance of function(xs:long, xs:NCName) as element()*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType?)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType?)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:untyped)?       ". Expected " ", "(:", ")", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "?" found.        	declare function local:f($x as xs:long, $y as xs:NCName) as element(e, xs:anyAtomicType) { <e x="{$x}" y="{$y}"/> };        	local:f#2 instance of function(xs:long, xs:NCName) as element(),        	local:f#2 instance of function(xs:long, xs:NCName) as element()+,        	local:f#2 instance of function(xs:long, xs:NCName) as element()?,        	local:f#2 instance of function(xs:long, xs:NCName) as element()*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType[Error is around here]?)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType?)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(e, xs:anyType)*,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:anyType)?,        	local:f#2 instance of function(xs:long, xs:NCName) as element(*, xs:untyped)?
 hof-906,AssertionError: expected [Function] to throw error matching /FOTY0013/ but got 'XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?'
 hof-907,AssertionError: expected [Function] to throw an error
-hof-912,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function translate with arity of 3 not registered. No similar functions found.'
-hof-913,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function translate with arity of 3 not registered. No similar functions found.'
+hof-912,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function substring-before with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}substring-before (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}substring-after (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions/array}insert-before (array(*)null, xs:integernull, item()*)", "Q{http://www.w3.org/2005/xpath-functions}insert-before (item()*, xs:integernull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}substring (xs:string?, xs:doublenull)"?'
+hof-913,AssertionError: expected [Function] to throw an error
 hof-918,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Not implemented: only external variable declaration without default value is implemented in XQuery modules'
 hof-919,AssertionError: expected [Function] to throw an error
 function-item-1,Error: No selector counterpart for: anyFunctionTest.
@@ -4266,9 +4256,6 @@ xqhof20,Error: Not implemented: Intermediate clauses in flwor expressions are no
 xqhof21,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'
 xqhof22,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 static-context-1,AssertionError: expected [Function] to throw an error
-surrogates04,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-surrogates05,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-surrogates06,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 surrogates07,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 surrogates08,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 surrogates12,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
@@ -4276,9 +4263,6 @@ surrogates13,Error: XPST0017: Function matches with arity of 2 not registered. N
 surrogates14,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 surrogates15,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 surrogates16,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-surrogates04a,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-surrogates05a,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-surrogates06a,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 surrogates07a,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 surrogates08a,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 surrogates12a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
@@ -4457,14 +4441,6 @@ functx-fn-string-to-codepoints-3,Error: XPST0017: Function string-to-codepoints 
 functx-fn-string-to-codepoints-all,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 functx-fn-sum-3,Error: FORG0006: items passed to fn:sum are not all numeric.
 functx-fn-sum-all,Error: FORG0006: items passed to fn:sum are not all numeric.
-functx-fn-translate-1,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-functx-fn-translate-2,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-functx-fn-translate-3,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-functx-fn-translate-4,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-functx-fn-translate-5,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-functx-fn-translate-6,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-functx-fn-translate-7,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
-functx-fn-translate-all,Error: XPST0017: Function translate with arity of 3 not registered. No similar functions found.
 functx-functx-add-attributes-1,Error: XPST0008, The variable seq is not in scope.
 functx-functx-add-attributes-2,Error: XPST0008, The variable seq is not in scope.
 functx-functx-add-attributes-3,Error: XPST0008, The variable seq is not in scope.
@@ -5036,9 +5012,6 @@ fo-test-fn-codepoint-equal-004,Error: XPST0017: Function fn:codepoint-equal with
 fo-test-fn-codepoint-equal-005,Error: XPST0017: Function fn:codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
 fo-test-fn-string-join-001,Error: XPTY0004 Unable to cast xs:integer to type xs:string while calling string-join
 fo-test-fn-string-join-006,Error: XPTY0004 Unable to cast xs:QName to type xs:string while calling string-join
-fo-test-fn-translate-001,Error: XPST0017: Function fn:translate with arity of 3 not registered. No similar functions found.
-fo-test-fn-translate-002,Error: XPST0017: Function fn:translate with arity of 3 not registered. No similar functions found.
-fo-test-fn-translate-003,Error: XPST0017: Function fn:translate with arity of 3 not registered. No similar functions found.
 fo-test-fn-encode-for-uri-001,Error: XPST0017: Function fn:encode-for-uri with arity of 1 not registered. No similar functions found.
 fo-test-fn-encode-for-uri-002,Error: XPST0017: Function encode-for-uri with arity of 1 not registered. No similar functions found.
 fo-test-fn-encode-for-uri-003,Error: XPST0017: Function encode-for-uri with arity of 1 not registered. No similar functions found.
