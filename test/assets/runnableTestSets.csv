@@ -47,8 +47,8 @@ fn-avg,true
 fn-base-uri,false
 fn-boolean,true
 fn-ceiling,true
-fn-codepoint-equal,false
-fn-codepoints-to-string,false
+fn-codepoint-equal,true
+fn-codepoints-to-string,true
 fn-collation-key,false
 fn-collection,false
 fn-compare,false
@@ -166,7 +166,7 @@ fn-static-base-uri,false
 fn-string,true
 fn-string-join,true
 fn-string-length,true
-fn-string-to-codepoints,false
+fn-string-to-codepoints,true
 fn-subsequence,true
 fn-substring,true
 fn-substring-after,true

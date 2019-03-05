@@ -11,6 +11,8 @@ map-contains-016,Tries to make a map of huge length
 map-get-016,Tries to make a map of huge length
 fold-left-020,Tries to fold sequence of huge length
 fold-right-013,Tries to fold sequence of huge length
+cbcl-codepoints-to-string-021,Tries to make a string of length 65536*65536
+cbcl-codepoints-to-string-022,Tries to make a string of length 65536*65536
 RexParser,Loads missing files...
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 fn-absintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -148,6 +150,10 @@ fn-ceilingnpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:int
 fn-ceilingnni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-ceilingnni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-ceiling-1,Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
+fn-codepoint-equal-22,Error: XPST0017: Function normalize-unicode with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
+cbcl-codepoint-equal-006,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
+cbcl-codepoints-to-string-015,AssertionError: Expected XPath deep-equal( fn:string-to-codepoints(fn:codepoints-to-string(65536 to 66000)), 65536 to 66000 ) to resolve to true: expected false to be true
+cbcl-codepoints-to-string-016,AssertionError: Expected XPath deep-equal( fn:string-to-codepoints(fn:codepoints-to-string(65536 to 100000)), 65536 to 100000 ) to resolve to true: expected false to be true
 fn-concatintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-concatintg2args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-concatintg2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -232,7 +238,6 @@ fn-countnpi1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integ
 fn-countnpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-countnni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-countnni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-Count015,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-current-date-6,Error: Not implemented: adding durations to xs:date
 fn-current-date-7,Error: Not implemented: subtracting durations from xs:date
 fn-current-date-21,Error: Not implemented: subtracting durations from xs:date
@@ -241,14 +246,14 @@ fn-current-datetime-7,Error: Not implemented: subtracting durations from xs:date
 fn-current-dateTime-21,Error: Not implemented: subtracting durations from xs:dateTime
 fn-current-time-6,Error: Not implemented: adding durations to xs:time
 fn-current-time-7,Error: Not implemented: subtracting durations from xs:time
-fn-dateTime-22,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+fn-dateTime-22,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-dateTime-24,Error: Not implemented: adding durations to xs:dateTime
 fn-dateTime-25,Error: Not implemented: adding durations to xs:dateTime
 fn-dateTime-26,Error: Not implemented: subtracting durations from xs:dateTime
 fn-dateTime-27,Error: Not implemented: subtracting durations from xs:dateTime
 cbcl-dateTime-001,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
 cbcl-dateTime-002,AssertionError: expected [Function] to throw error matching /FORG0008/ but got 'XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.'
-fn-day-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+fn-day-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-deep-equalintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-deep-equalintg2args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-deep-equalintg2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -284,8 +289,8 @@ fn-deep-equalnni2args-5,Error: FOCA0003: can not cast 999999999999999999 to xs:i
 fn-deep-equal-mix-args-019,AssertionError: Expected XPath fn:deep-equal( xs:float(1.01) , xs:double(1.01)) to resolve to false: expected true to be false
 fn-deep-equal-maps-13,Error: FOCH0002: No collations are supported
 fn-deep-equal-maps-14,Error: FOCH0002: No collations are supported
-fn-deep-equal-maps-16,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fn-deep-equal-maps-17,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+fn-deep-equal-maps-16,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+fn-deep-equal-maps-17,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 K-SeqDeepEqualFunc-6,Error: FOCH0002: No collations are supported
 K-SeqDeepEqualFunc-32,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
 K-SeqDeepEqualFunc-33,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
@@ -440,7 +445,6 @@ fold-left-021,Error: Not implemented: only external variable declaration without
 fold-left-105,Error: XPST0003: Unable to parse XPath: "deep-equal((         declare function local:fold-left(           $seq as item()*,           $zero as item()*,           $f as function(item()*, item()) as item()*)         as item()* {             if (fn:empty($seq))             then $zero             else fn:fold-left(fn:tail($seq), $f($zero, fn:head($seq)), $f)         };         local:fold-left(1 to 5, (), function($a, $b) {($b, $a)})), (5, 4, 3, 2, 1))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. deep-equal((         declare [Error is around here]function local:fold-left(           $seq as item()*,           $zero as item()*,           $f as function(item()*, item()) as item()*)         as item()* {             if (fn:empty($seq))             then $zero             else fn:fold-left(fn:tail($seq), $f($zero, fn:head($seq)), $f)         };         local:fold-left(1 to 5, (), function($a, $b) {($b, $a)})), (5, 4, 3, 2, 1))
 fold-right-012,AssertionError: expected [Function] to throw an error
 fold-right-105,Error: XPST0003: Unable to parse XPath: "deep-equal((declare function local:fold-right(           $seq as item()*,            $zero as item()*,            $f as function(item(), item()*) as item()*)            as item()* {             if (fn:empty($seq))             then $zero             else $f(fn:head($seq), fn:fold-right(fn:tail($seq), $zero, $f))           };           let $f := function($a, $b){($b, $a)} return local:fold-right(1 to 5, (), $f)), (5,4,3,2,1))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. deep-equal((declare [Error is around here]function local:fold-right(           $seq as item()*,            $zero as item()*,            $f as function(item(), item()*) as item()*)            as item()* {             if (fn:empty($seq))             then $zero             else $f(fn:head($seq), fn:fold-right(fn:tail($seq), $zero, $f))           };           let $f := function($a, $b){($b, $a)} return local:fold-right(1 to 5, (), $f)), (5,4,3,2,1))
-for-each-002,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 for-each-011,Error: Unrecognized type "parenthesizedItemType".
 fn-function-lookup-005,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'nilled'), 0)) to resolve to true: expected false to be true
 fn-function-lookup-006,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
@@ -474,13 +478,7 @@ fn-function-lookup-057,AssertionError: Expected XPath exists(function-lookup(fn:
 fn-function-lookup-058,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-059,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-number'), 3)) to resolve to true: expected false to be true
 fn-function-lookup-060,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
-fn-function-lookup-089,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'codepoints-to-string'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-090,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
-fn-function-lookup-091,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'string-to-codepoints'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-092,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-096,Error: FOCH0002: No collations are supported
-fn-function-lookup-097,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'codepoint-equal'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-098,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-117,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'normalize-unicode'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-118,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-119,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'normalize-unicode'), 2)) to resolve to true: expected false to be true
@@ -708,7 +706,7 @@ fn-has-children-008,AssertionError: Expected executing the XPath "(fn:concat#2)[
 fn-has-children-012,AssertionError: expected [Function] to throw an error
 fn-has-children-013,AssertionError: expected [Function] to throw an error
 fn-has-children-014,AssertionError: expected [Function] to throw an error
-fn-hours-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+fn-hours-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-hours-from-time-4,Error: XPST0017: Function fn:adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 fn-id-2,AssertionError: expected [Function] to throw an error
 fn-id-4,SyntaxError: Expected "!", "!=", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", or "}" but "(" found.
@@ -742,7 +740,7 @@ fn-implicit-timezone-19,Error: Not implemented: subtracting durations from xs:da
 fn-implicit-timezone-20,Error: Not implemented: adding durations to xs:dateTime
 fn-implicit-timezone-21,Error: XPST0017: Function fn:adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 fn-implicit-timezone-22,Error: XPST0017: Function fn:adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
-fn-implicit-timezone-23,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+fn-implicit-timezone-23,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-innermost-008,AssertionError: expected [Function] to throw an error
 fn-innermost-010,AssertionError: expected [Function] to throw an error
 fn-innermost-055,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
@@ -761,9 +759,7 @@ cbcl-last-in-sequence-004,Error: XPST0008, The variable p is not in scope.
 cbcl-last-in-sequence-005,Error: XPST0008, The variable p is not in scope.
 LocalNameFromQNameFunc015a,AssertionError: expected [Function] to throw error matching /XPTY0117/ but got 'Casting to xs:QName is not implemented.'
 LocalNameFromQNameFunc018,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
-fn-lower-case-18,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
-fn-lower-case-19,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
-fn-lower-case-20,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
+fn-lower-case-19,AssertionError: Expected XPath fn:string-to-codepoints(fn:lower-case(fn:codepoints-to-string(880 to 1023))) to (deep equally) resolve to              881, 881, 883, 883, 884, 885, 887, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896,              897, 898, 899, 900, 901, 940, 903, 941, 942, 943, 907, 972, 909, 973, 974, 912, 945,              946, 947, 948, 949, 950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 930,              963, 964, 965, 966, 967, 968, 969, 970, 971, 940, 941, 942, 943, 944, 945, 946, 947,              948, 949, 950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 962, 963, 964,              965, 966, 967, 968, 969, 970, 971, 972, 973, 974, 983, 976, 977, 978, 979, 980, 981,              982, 983, 985, 985, 987, 987, 989, 989, 991, 991, 993, 993, 995, 995, 997, 997, 999,              999, 1001, 1001, 1003, 1003, 1005, 1005, 1007, 1007, 1008, 1009, 1010, 1011, 952, 1013,              1014, 1016, 1016, 1010, 1019, 1019, 1020, 891, 892, 893: expected false to be true
 fn-maxintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-maxintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-maxintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -890,7 +886,7 @@ cbcl-min-007,AssertionError:        	declare function local:f($x as xs:integer) 
 cbcl-min-008,AssertionError: expected [Function] to throw an error
 cbcl-min-016,AssertionError: expected [Function] to throw an error
 cbcl-min-017,AssertionError: expected [Function] to throw an error
-fn-month-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+fn-month-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-name-16,AssertionError: Expected executing the XPath "for $h in (./works/employee[2]) return fn:count(fn:name($h/self::div))" to resolve to one of the expected results, but got AssertionError: for $h in (./works/employee[2]) return fn:count(fn:name($h/self::div)): expected '0' to equal '1', AssertionError: expected [Function] to throw an error.
 K-NameFunc-3,AssertionError: Expected XPath name(()) eq "" to resolve to true: expected false to be true
 NamespaceURIFromQNameFunc015a,AssertionError: expected [Function] to throw error matching /XPTY0117/ but got 'Casting to xs:QName is not implemented.'
@@ -969,7 +965,6 @@ fn-one-or-morenpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs
 fn-one-or-morenni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-one-or-morenni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 K-SeqOneOrMoreFunc-7,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
-K2-SeqOneOrMoreFunc-1,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-outermost-008,AssertionError: expected [Function] to throw an error
 fn-outermost-010,AssertionError: expected [Function] to throw an error
 fn-outermost-055,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
@@ -1005,12 +1000,12 @@ fn-parse-json-042,Error: XPST0017: Function parse-json with arity of 2 not regis
 fn-parse-json-050,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
 fn-parse-json-051,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
 fn-parse-json-052,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
-fn-parse-json-053,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-fn-parse-json-054,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-fn-parse-json-055,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-fn-parse-json-056,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-fn-parse-json-057,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-fn-parse-json-058,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
+fn-parse-json-053,AssertionError: Expected XPath parse-json('"\uFFFF"') to resolve to codepoints-to-string(65533): expected false to be true
+fn-parse-json-054,AssertionError: Expected XPath parse-json('"\uDEAD"') to resolve to codepoints-to-string(65533): expected false to be true
+fn-parse-json-055,AssertionError: Expected XPath parse-json('"\b"') to resolve to codepoints-to-string(65533): expected false to be true
+fn-parse-json-056,AssertionError: Expected XPath parse-json('{"\uFFFF":""}') => map:keys() to resolve to codepoints-to-string(65533): expected false to be true
+fn-parse-json-057,AssertionError: Expected XPath parse-json('{"\uDEAD":""}') => map:keys() to resolve to codepoints-to-string(65533): expected false to be true
+fn-parse-json-058,AssertionError: Expected XPath parse-json('{"\b":""}') => map:keys() to resolve to codepoints-to-string(65533): expected false to be true
 fn-parse-json-059,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
 fn-parse-json-060,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
 fn-parse-json-061,AssertionError: Expected executing the XPath "parse-json('"\b"', map{'fallback':lower-case#1})" to resolve to one of the expected results, but got Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?, Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?.
@@ -1074,7 +1069,6 @@ fn-parse-json-943,AssertionError: expected [Function] to throw error matching /Q
 fn-parse-json-944,AssertionError: expected [Function] to throw error matching /FOJS0001/ but got 'XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?'
 fn-parse-json-945,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?'
 fn-parse-json-946,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
-fn-parse-json-953,AssertionError: expected [Function] to throw error matching /FOJS0001/ but got 'XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.'
 path014,SyntaxError: Expected "!", "!=", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", or "}" but "(" found.
 path017,Error: No selector counterpart for: computedTextConstructor.
 K-ContextPositionFunc-20,Error: No selector counterpart for: treatExpr.
@@ -1199,8 +1193,8 @@ fn-stringnpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:inte
 fn-stringnni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-stringnni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-string-join-29,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
-fn-string-join-31,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 fn-string-length-21,AssertionError: expected [Function] to throw error matching /FOTY0013/ but got 'XPTY0004 Unable to cast function(*) to type xs:string while calling string-length'
+fn-string-to-codepoints-15,AssertionError: Expected XPath fn:deep-equal(fn:string-to-codepoints("𐀁𐀂"), (65537, 65538)) to resolve to true: expected false to be true
 K-SeqSubsequenceFunc-30,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K2-SeqSubsequenceFunc-1,Error: No selector counterpart for: treatExpr.
 fn-substring-after-22,Error: XPST0017: Function substring-after with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}substring-after (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}substring-before (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}substring (xs:string?, xs:doublenull)" or "Q{http://www.w3.org/2005/xpath-functions}substring (xs:string?, xs:doublenull, xs:doublenull)"?
@@ -1343,7 +1337,6 @@ cbcl-timezone-from-date-004,Error: XPST0017: Function adjust-date-to-timezone wi
 cbcl-timezone-from-date-005,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 cbcl-timezone-from-date-006,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 cbcl-timezone-from-date-007,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
-cbcl-fn-translate-002,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 fn-unordered-mix-args-001,AssertionError: Skipped test, it was a assert-permutation
 fn-unordered-mix-args-002,AssertionError: Skipped test, it was a assert-permutation
 fn-unordered-mix-args-003,AssertionError: Skipped test, it was a assert-permutation
@@ -1370,11 +1363,7 @@ fn-unordered-mix-args-023,AssertionError: Skipped test, it was a assert-permutat
 K-SeqUnorderedFunc-8,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 fn-unordered-108,AssertionError: Skipped test, it was a assert-permutation
 fn-unordered-109,AssertionError: Skipped test, it was a assert-permutation
-fn-upper-case-18,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
-fn-upper-case-19,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
-fn-upper-case-20,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
-fn-upper-case-21,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
-fn-upper-case-22,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
+fn-upper-case-19,AssertionError: Expected XPath fn:string-to-codepoints(fn:upper-case(fn:codepoints-to-string(880 to 1023))) to (deep equally) resolve to              880, 880, 882, 882, 884, 885, 886, 886, 888, 889, 890, 1021, 1022, 1023, 894, 895,              896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 921,              776, 769, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927,              928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 902, 904, 905, 906, 933,              776, 769, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927,              928, 929, 931, 931, 932, 933, 934, 935, 936, 937, 938, 939, 908, 910, 911, 975, 914,              920, 978, 979, 980, 934, 928, 975, 984, 984, 986, 986, 988, 988, 990, 990, 992, 992,              994, 994, 996, 996, 998, 998, 1000, 1000, 1002, 1002, 1004, 1004, 1006, 1006, 922, 929,              1017, 1011, 1012, 917, 1014, 1015, 1015, 1017, 1018, 1018, 1020, 1021, 1022, 1023: expected false to be true
 fn-zero-or-oneintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-zero-or-oneintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-zero-or-oneintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1418,7 +1407,7 @@ map-contains-017,AssertionError: Expected XPath map:contains(map{1:"Sunday",2:"M
 map-contains-018,AssertionError: Expected XPath map:contains(map{1:"Sunday",2:"Monday",3:"Tuesday",function-name(abs#1):"Wednesday",5:"Thursday",6:"Friday",7:"Saturday"}, xs:QName('fn:abs')) to resolve to true: expected false to be true
 map-get-017,AssertionError: map:get(map{1:"Sunday",2:"Monday",3:"Tuesday",xs:duration('P1Y'):"Wednesday",5:"Thursday",6:"Friday",7:"Saturday"}, xs:yearMonthDuration('P12M')): expected '' to equal 'Wednesday'
 map-get-018,AssertionError: map:get(map{1:"Sunday",2:"Monday",3:"Tuesday",function-name(abs#1):"Wednesday",5:"Thursday",6:"Friday",7:"Saturday"}, xs:QName('fn:abs')): expected '' to equal 'Wednesday'
-map-get-023,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+map-get-023,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 map-get-024,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 map-entry-001-hof,Error: No selector counterpart for: typedMapTest.
 map-entry-001,Error: No selector counterpart for: typedMapTest.
@@ -1430,7 +1419,7 @@ map-entry-006,Error: XPST0003: Unable to parse XPath: "let $result := (map:entry
 map-entry-007-hof,Error: No selector counterpart for: typedMapTest.
 map-entry-007,Error: No selector counterpart for: typedMapTest.
 map-size-007,AssertionError: expected [Function] to throw an error
-map-size-014,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+map-size-014,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 map-keys-007,AssertionError: expected [Function] to throw an error
 map-put-002-hof,Error: No selector counterpart for: typedMapTest.
 map-put-002,Error: No selector counterpart for: typedMapTest.
@@ -1449,7 +1438,7 @@ map-remove-008,Error: No selector counterpart for: typedMapTest.
 map-remove-009,Error: No selector counterpart for: typedMapTest.
 map-remove-010,Error: No selector counterpart for: typedMapTest.
 map-remove-011,Error: No selector counterpart for: typedMapTest.
-map-remove-014,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+map-remove-014,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 map-remove-016,AssertionError: Expected XPath              map{xs:float('1.0'):0, xs:double('1.00000000001'):1}              => map:remove(xs:decimal('1.0000000000100000000001'))              => map:size()          to resolve to 2: expected false to be true
 map-for-each-007,AssertionError: expected [Function] to throw an error
 array-filter-007,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Atomizing array(*) is not implemented.'
@@ -1490,8 +1479,6 @@ base64-112,AssertionError: xs:hexBinary(xs:base64Binary("AQIDBAUG")): expected '
 base64-113,AssertionError: xs:hexBinary(xs:base64Binary("AQIDBAUGBw==")): expected '1234567' to equal '01020304050607'
 base64-114,AssertionError: xs:hexBinary(xs:base64Binary("AQIDBAUGBwgJCgsMDQ4PEBESExMUFRYXGBkaGxwdHyAhIiMkJSYnKCkqKywtLi8=")): expected '123456789ABCDEF10111213131415161718191A1B1C1D1F202122232425262728292A2B2C2D2E2F' to equal '0102030405060708090A0B0C0D0E0F10111213131415161718191A1B1C1D1F202122232425262728292A2B2C2D2E2F'
 base64-115,AssertionError: xs:hexBinary(xs:base64Binary(" AQIDBAUG BwgJCgsM DQ4PEBES ExMUFRYX   GBkaGxwdH yAhIiMkJ SYnKCkqK y w t L i 8 = ")): expected '123456789ABCDEF10111213131415161718191A1B1C1D1F202122232425262728292A2B2C2D2E2F' to equal '0102030405060708090A0B0C0D0E0F10111213131415161718191A1B1C1D1F202122232425262728292A2B2C2D2E2F'
-base64-908,AssertionError: expected [Function] to throw error matching /FORG0001/ but got 'XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.'
-base64-909,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 xs-double-004,AssertionError: expected [Function] to throw an error
 xs-error-006,Error: No selector counterpart for: typedFunctionTest.
 xs-error-007,Error: No selector counterpart for: typedFunctionTest.
@@ -1575,12 +1562,12 @@ cbcl-date-greater-than-015,Error: XPST0017: Function adjust-date-to-timezone wit
 cbcl-date-greater-than-016,Error: XPST0017: Function adjust-date-to-timezone with arity of 1 not registered. No similar functions found.
 cbcl-date-less-than-015,Error: XPST0017: Function adjust-date-to-timezone with arity of 1 not registered. No similar functions found.
 cbcl-date-less-than-016,Error: XPST0017: Function adjust-date-to-timezone with arity of 1 not registered. No similar functions found.
-cbcl-dateTime-equal-015,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-cbcl-dateTime-equal-016,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-cbcl-dateTime-greater-than-015,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-cbcl-dateTime-greater-than-016,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-cbcl-dateTime-less-than-015,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-cbcl-dateTime-less-than-016,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+cbcl-dateTime-equal-015,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
+cbcl-dateTime-equal-016,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
+cbcl-dateTime-greater-than-015,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
+cbcl-dateTime-greater-than-016,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
+cbcl-dateTime-less-than-015,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
+cbcl-dateTime-less-than-016,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
 op-divide-dayTimeDuration2args-2,AssertionError: xs:dayTimeDuration("P15DT11H59M59S") div xs:double("-1.7976931348623157E308"): expected '-PT7.449541715597465e-303S' to equal 'PT0S'
 op-divide-dayTimeDuration2args-3,AssertionError: xs:dayTimeDuration("P31DT23H59M59S") div xs:double("-1.7976931348623157E308"): expected '-PT1.5379704947317132e-302S' to equal 'PT0S'
 cbcl-divide-dayTimeDuration-002,AssertionError: declare function local:dayTimeDuration($days as xs:integer) as xs:dayTimeDuration { xs:dayTimeDuration(concat("P", $days, "D")) }; local:dayTimeDuration(2) div 1: expected 'P2DT' to equal 'P2D'
@@ -2184,7 +2171,6 @@ K2-Axes-89,Error: Not implemented: only module imports, namespace declarations, 
 K2-Axes-99,AssertionError: Expected executing the XPath "declare function foo() external; 1" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0045/ but got 'XQST0060: Functions declared in a module must reside in a namespace.', AssertionError: expected [Function] to throw error matching /XPST0017/ but got 'XQST0060: Functions declared in a module must reside in a namespace.'.
 K2-Axes-102,Error: XPST0003: Unable to parse XPath: "         for $a in (/) return          for $b in $a/child::site return          for $c in $b/child::people return          for $d in $c/child::person return              if ((some $id in $d/attribute::id satisfies                      typeswitch ($id)                      case $n as node() return $id = "person0"                      default $d return ()))              then $d/child::name              else (),          for $b in /site/people/person where $b/@id="person0" return $b/name,          /site/people/person[@id eq "person0"]/name". Expected "!", "!=", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "(" found.          for $a in (/) return          for $b in $a/child::site return          for $c in $b/child::people return          for $d in $c/child::person return              if ((some $id in $d/attribute::id satisfies                      typeswitch [Error is around here]($id)                      case $n as node() return $id = "person0"                      default $d return ()))              then $d/child::name              else (),          for $b in /site/people/person where $b/@id="person0" return $b/name,          /site/people/person[@id eq "person0"]/name
 abbreviatedSyntax-2,AssertionError: for $h in (/works/employee[2]) return $h/text(): expected '\n    \n    \n    \n    Text data from Employee[2]\n  ' to equal 'Text data from Employee[2]'
-abbreviatedSyntax-26,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 K2-ancestorAxis-5,AssertionError: Expected executing the XPath "empty(document {()}/ancestor::node())" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
 K2-ancestorAxis-6,AssertionError: Expected executing the XPath "empty(document {<e><f/><f/>text</e>}/ancestor::node())" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
 K2-ancestorAxis-17,AssertionError: Expected executing the XPath "document {()}/ancestor::node(), count(document {()}/ancestor::node()), 1" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
@@ -2253,8 +2239,6 @@ CastAs670,AssertionError: Expected executing the XPath "let $d1 := '2006-07-12' 
 CastAs673b,Error: Casting to xs:QName is not implemented.
 CastAs674a,Error: Casting to xs:QName is not implemented.
 CastAs675a,AssertionError: expected [Function] to throw error matching /XPTY0117/ but got 'Casting to xs:QName is not implemented.'
-CastAs677,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-CastAs678,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 CastAsNamespaceSensitiveType-1,AssertionError: expected [Function] to throw error matching /XPTY0117/ but got 'Casting to xs:QName is not implemented.'
 CastAsNamespaceSensitiveType-2,AssertionError: expected [Function] to throw error matching /XPTY0117/ but got 'Casting to xs:QName is not implemented.'
 CastAsNamespaceSensitiveType-4,AssertionError: expected [Function] to throw error matching /XPTY0117/ but got 'XPST0080: Casting to xs:NOTATION is not permitted.'
@@ -2350,7 +2334,7 @@ K2-SeqExprCast-422,AssertionError: expected [Function] to throw an error
 K2-SeqExprCast-423,AssertionError: expected [Function] to throw an error
 K2-SeqExprCast-424,AssertionError: expected [Function] to throw an error
 K2-SeqExprCast-480,AssertionError: xs:untypedAtomic("xs:untypedAtomic"), xs:dateTime("2002-10-10T23:02:12Z"), xs:date("2002-10-10Z"), xs:time("23:02:12Z"),                 xs:duration("P12M"), xs:dayTimeDuration("PT1S"), xs:yearMonthDuration("P1M"), xs:float("3e3"), xs:double("4e4"),                 xs:decimal("2.0"), xs:integer("16"), xs:nonPositiveInteger("0"), xs:negativeInteger("-4"), xs:long("5"),                 xs:int("6"), xs:short("7"), xs:byte("8"), xs:nonNegativeInteger("9"), xs:unsignedLong("10"),                 xs:unsignedInt("11"), xs:unsignedShort("12"), xs:unsignedByte("13"), xs:positiveInteger("14"),                 xs:gYearMonth("1976-02Z"), xs:gYear("2005-12:00"), xs:gMonthDay("--12-25-14:00"),                 xs:gDay("---25-14:00"), xs:gMonth("--12-14:00"), xs:boolean("true"), xs:base64Binary("aaaa"),                 xs:hexBinary("FFFF"), xs:anyURI("http://example.com/"), xs:QName("localName"),                 xs:string("An xs:string"), xs:normalizedString("normalizedString"), xs:token("token"),                 xs:language("language"), xs:NMTOKEN("NMTOKEN"), xs:Name("Name"), xs:NCName("NCName"),                 xs:ID("ID"), xs:IDREF("IDREF"), xs:ENTITY("ENTITY"): expected 'xs:untypedAtomic 2002-10-10T23:02:12Z 2002-10-10Z 23:02:12Z P1Y PT1S P1M 3000 40000 2 16 0 -4 5 6 7 8 9 10 11 12 13 14 1976-02Z 2005-12:00 --12-25-14:00 ---25-14:00 --12-14:00 true aaaa FFFF http://example.com/ localName An xs:string normalizedString token language NMTOKEN Name NCName ID IDREF ENTITY' to equal '\n             xs:untypedAtomic 2002-10-10T23:02:12Z 2002-10-10Z 23:02:12Z P1Y PT1S P1M 3000 40000 2 16 0\n             -4 5 6 7 8 9 10 11 12 13 14 1976-02Z 2005-12:00 --12-25-14:00 ---25-14:00 --12-14:00 true\n             aaaa FFFF http://example.com/ localName An xs:string normalizedString token language\n             NMTOKEN Name NCName ID IDREF ENTITY'
-K2-SeqExprCast-504,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
+K2-SeqExprCast-504,Error: FORG0001: Cannot cast เจมส์ to xs:NCName, pattern validation failed.
 K2-SeqExprCast-505,AssertionError: expected [Function] to throw an error
 cbcl-cast-decimal-001,AssertionError: Expected executing the XPath "1.7976931348623157E+308 cast as xs:decimal" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw an error, AssertionError: 1.7976931348623157E+308 cast as xs:decimal: expected false to be true.
 cbcl-cast-decimal-002,AssertionError: Expected executing the XPath "-1.7976931348623157E+308 cast as xs:decimal" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw an error, AssertionError: -1.7976931348623157E+308 cast as xs:decimal: expected false to be true.
@@ -2508,8 +2492,8 @@ nscons-044,AssertionError: expected [Function] to throw error matching /XPTY0004
 Constr-comppi-data-1,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 Constr-comppi-space-1,AssertionError: Expected XPath processing-instruction pi {' text'} to resolve to the given XML. Expected <?pi  text?> to equal <?pi text?>
 Constr-comppi-space-2,AssertionError: Expected XPath processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'} to resolve to the given XML. Expected <?pi   	text?> to equal <?pi text?>
-Constr-comppi-space-3,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-comppi-space-4,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
+Constr-comppi-space-3,Error: XPTY0004 Unable to cast xs:string to type xs:string while calling string-to-codepoints
+Constr-comppi-space-4,Error: XPTY0004 Unable to cast xs:string to type xs:string while calling string-to-codepoints
 K2-ComputeConPI-3,AssertionError: expected [Function] to throw error matching /XQDY0064/ but got 'InvalidCharacterError: The target is not a valid Name'
 K2-ComputeConPI-4,InvalidCharacterError: InvalidCharacterError: The target is not a valid Name
 K2-ComputeConPI-5,InvalidCharacterError: InvalidCharacterError: The target is not a valid Name
@@ -2658,8 +2642,8 @@ K2-DirectConElemAttr-75,Error: No selector counterpart for: computedTextConstruc
 K2-DirectConElemAttr-76,Error: No selector counterpart for: computedTextConstructor.
 Constr-pi-content-2,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 Constr-pi-content-4,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
-Constr-pi-content-6,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-pi-content-7,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
+Constr-pi-content-6,Error: XPTY0004 Unable to cast xs:string to type xs:string while calling string-to-codepoints
+Constr-pi-content-7,Error: XPTY0004 Unable to cast xs:string to type xs:string while calling string-to-codepoints
 Constr-comment-2,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 Constr-comment-4,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConOther-22,AssertionError: expected [Function] to throw an error
@@ -2668,7 +2652,6 @@ K2-DirectConOther-44,Error: XPST0017: Function data with arity of 1 not register
 K2-DirectConOther-45,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConOther-48,AssertionError: Expected executing the XPath "string(exactly-one(<e xml:id=" ab c d "/>/@*))" to resolve to one of the expected results, but got AssertionError: string(exactly-one(<e xml:id=" ab c d "/>/@*)): expected ' ab c d ' to equal 'ab c d', AssertionError: expected [Function] to throw an error.
 K2-DirectConOther-66,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
-K2-DirectConOther-70,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 K2-DirectConElem-35,AssertionError: expected [Function] to throw an error
 K2-DirectConElem-36,AssertionError: expected [Function] to throw an error
 K2-DirectConElem-37,AssertionError: expected [Function] to throw an error
@@ -2682,15 +2665,6 @@ K2-DirectConElem-51,AssertionError: Expected XPath <e xml:id=" fo"/> to resolve 
 K2-DirectConElem-53a,Error: No selector counterpart for: computedNamespaceConstructor.
 cbcl-directconelem-001,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 cbcl-directconelem-002,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-Constr-cont-eol-1,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-cont-eol-2,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-cont-eol-3,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-cont-eol-4,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-cont-entref-1,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-cont-entref-2,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-cont-entref-3,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-cont-entref-4,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-Constr-cont-entref-5,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 Constr-cont-constrmod-1,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 Constr-cont-constrmod-2,AssertionError: Expected executing the XPath "declare construction preserve; fn:count(fn:data(<elem>{//*:idrefs}</elem>/*))" to resolve to one of the expected results, but got Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules, Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules.
 Constr-cont-constrmod-3,AssertionError: expected [Function] to throw error matching /FORG0001/ but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
@@ -2914,8 +2888,8 @@ ForExprType073,AssertionError: expected [Function] to throw error matching /XPTY
 K2-ForExprWith-1,AssertionError: expected [Function] to throw an error
 FunctionCall-009,Error: XPST0003: Unable to parse XPath: "(         declare function local:f($in as xs:decimal*) as xs:decimal {sum($in, 0.0)};         local:f(xs:NMTOKENS('1 1.2 1.3 1.4')!xs:untypedAtomic(.))       ) instance of xs:decimal". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. (         declare [Error is around here]function local:f($in as xs:decimal*) as xs:decimal {sum($in, 0.0)};         local:f(xs:NMTOKENS('1 1.2 1.3 1.4')!xs:untypedAtomic(.))       ) instance of xs:decimal
 FunctionCall-010,Error: XPST0081: Can not cast: type xs:NMTOKENS is unknown.
-FunctionCall-011,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-FunctionCall-012,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.'
+FunctionCall-011,Error: XPST0081: Can not cast: type xs:NMTOKENS is unknown.
+FunctionCall-012,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0081: Can not cast: type xs:NMTOKENS is unknown.'
 FunctionCall-013,Error: XPST0003: Unable to parse XPath: "(         declare function local:f($a as xs:integer, $b as xs:integer) as xs:integer {           data(<a>{$a}{$b}</a>)         };         local:f(12, 34)       ) instance of xs:integer". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. (         declare [Error is around here]function local:f($a as xs:integer, $b as xs:integer) as xs:integer {           data(<a>{$a}{$b}</a>)         };         local:f(12, 34)       ) instance of xs:integer
 FunctionCall-014,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 FunctionCall-022,Error: XPST0003: Unable to parse XPath: "deep-equal((          declare function local:unique($in as xs:integer*) as xs:boolean { count($in) = count(distinct-values($in)) };          (local:unique([1,2,3,4,5]), local:unique([1,2,3,4,4]))), (true(), false()))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. deep-equal((          declare [Error is around here]function local:unique($in as xs:integer*) as xs:boolean { count($in) = count(distinct-values($in)) };          (local:unique([1,2,3,4,5]), local:unique([1,2,3,4,4]))), (true(), false()))
@@ -2927,7 +2901,6 @@ K-FunctionCallExpr-16a,Error: XPST0017: Function matches with arity of 2 not reg
 K-FunctionCallExpr-17a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 K-FunctionCallExpr-25a,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 K2-FunctionCallExpr-10,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-FunctionCallExpr-11,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 K2-FunctionCallExpr-12,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 cbcl-promotion-002,Error: XPST0008, The variable p is not in scope.
 cbcl-promotion-003,Error: XPST0008, The variable p is not in scope.
@@ -3014,7 +2987,6 @@ K2-GenCompEq-3,Error: Not implemented: only external variable declaration withou
 K2-GenCompEq-4,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 K2-GenCompEq-5,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 K2-GenCompEq-6,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-GenCompEq-7,AssertionError: Expected executing the XPath "let $x := codepoints-to-string(12) return ($x = $x)" to resolve to one of the expected results, but got Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found., AssertionError: expected [Function] to throw error matching /FOCH0001/ but got 'XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.'.
 K2-GenCompEq-8,AssertionError: Expected executing the XPath "empty(for $b in <e/> where $b/@id="person0" return ())" to resolve to one of the expected results, but got Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet, AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'.
 GenCompEq-7,Error: Atomizing array(*) is not implemented.
 GenCompEq-8,Error: Atomizing array(*) is not implemented.
@@ -3122,7 +3094,6 @@ Literals028,AssertionError: 65535.032E2: expected '6553503.2' to equal '6.553503
 Literals068,Error: No selector counterpart for: computedTextConstructor.
 Literals069,Error: No selector counterpart for: computedTextConstructor.
 K-Literals-29,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'Failed to execute \'evaluateXPath\': xpathExpression must be a string.'
-K2-Literals-28,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 MapConstructor-025,Error: XPST0003: Unable to parse XPath: "let $m := map{'a':1} return map:size(map{$m?a:true()}) = 1". Expected " ", "(", "(:", "/", "//", "?", "[", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but ":" found. let $m := map{'a':1} return map:size(map{$m?a[Error is around here]:true()}) = 1
 MapConstructor-035,Error: XPST0003: Unable to parse XPath: "          <e><f>4</f></e>!map{*:*div*,*||*:*}          =>          deep-equal(map{"44":<f>4</f>,"4":1})       ". Expected " ", "!", "!=", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", or "}" but "d" found.           <e><f>4</f></e>!map{*:*[Error is around here]div*,*||*:*}          =>          deep-equal(map{"44":<f>4</f>,"4":1})
 MapConstructor-036,AssertionError: expected [Function] to throw error matching /XQDY0137/ but got 'FOTY0013: Atomization is not supported for map(*).'
@@ -3165,13 +3136,7 @@ function-literal-058,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-059,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-number with arity of 3 not registered. No similar functions found.
 function-literal-060,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-number with arity of 3 not registered. No similar functions found.
 function-literal-064,Error: XPST0017: Function format-number with arity of 2 not registered. No similar functions found.
-function-literal-089,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}codepoints-to-string with arity of 1 not registered. No similar functions found.
-function-literal-090,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}codepoints-to-string with arity of 1 not registered. No similar functions found.
-function-literal-091,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}string-to-codepoints with arity of 1 not registered. No similar functions found.
-function-literal-092,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}string-to-codepoints with arity of 1 not registered. No similar functions found.
 function-literal-096,Error: FOCH0002: No collations are supported
-function-literal-097,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-function-literal-098,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
 function-literal-117,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}normalize-unicode with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
 function-literal-118,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}normalize-unicode with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
 function-literal-119,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}normalize-unicode with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
@@ -3206,10 +3171,10 @@ function-literal-169,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-170,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}iri-to-uri with arity of 1 not registered. No similar functions found.
 function-literal-171,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}escape-html-uri with arity of 1 not registered. No similar functions found.
 function-literal-172,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}escape-html-uri with arity of 1 not registered. No similar functions found.
-function-literal-225,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-function-literal-226,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-function-literal-227,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-function-literal-228,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+function-literal-225,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
+function-literal-226,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
+function-literal-227,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+function-literal-228,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 function-literal-229,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-date-to-timezone with arity of 1 not registered. No similar functions found.
 function-literal-230,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-date-to-timezone with arity of 1 not registered. No similar functions found.
 function-literal-231,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
@@ -3218,10 +3183,10 @@ function-literal-233,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-234,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 1 not registered. No similar functions found.
 function-literal-235,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 function-literal-236,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
-function-literal-237,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)" or "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)"?
-function-literal-238,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)" or "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)"?
-function-literal-239,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)" or "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)"?
-function-literal-240,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)" or "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)"?
+function-literal-237,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
+function-literal-238,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
+function-literal-239,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
+function-literal-240,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-dateTime with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-dateTime ()", "Q{http://www.w3.org/2001/XMLSchema}dateTime (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions}dateTime (xs:date?, xs:time?)"?
 function-literal-241,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
 function-literal-242,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
 function-literal-243,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}format-date with arity of 5 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}current-date ()"?
@@ -3323,7 +3288,7 @@ named-function-ref-reserved-function-names-011,AssertionError: expected [Functio
 named-function-ref-reserved-function-names-012,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'XPST0017: Function schema-attribute with arity of 0 not registered. No similar functions found.'
 named-function-ref-reserved-function-names-013,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'XPST0017: Function schema-element with arity of 0 not registered. No similar functions found.'
 named-function-ref-reserved-function-names-014,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'XPST0017: Function switch with arity of 0 not registered. No similar functions found.'
-named-function-ref-reserved-function-names-015,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'XPST0017: Function text with arity of 0 not registered. Did you mean "Q{http://www.example.com/customFunctionTest}test ()"?'
+named-function-ref-reserved-function-names-015,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'XPST0017: Function text with arity of 0 not registered. No similar functions found.'
 named-function-ref-reserved-function-names-016,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'XPST0017: Function typeswitch with arity of 0 not registered. No similar functions found.'
 named-function-ref-reserved-function-names-017,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'XPST0017: Function array with arity of 0 not registered. No similar functions found.'
 named-function-ref-reserved-function-names-018,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'XPST0017: Function map with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}max (xs:anyAtomicType*)" or "Q{http://www.w3.org/2005/xpath-functions}max (xs:anyAtomicType*, xs:stringnull)"?'
@@ -3608,7 +3573,7 @@ Parenexpr-11,Error: Not implemented: Intermediate clauses in flwor expressions a
 K-ForExprPositionalVar-6,Error: XPST0008, The variable p is not in scope.
 K-ForExprPositionalVar-7,Error: XPST0008, The variable p is not in scope.
 K-ForExprPositionalVar-8,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0008, The variable p is not in scope.'
-K-ForExprPositionalVar-9,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
+K-ForExprPositionalVar-9,Error: XPST0008, The variable p is not in scope.
 K-ForExprPositionalVar-10,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 K-ForExprPositionalVar-11,AssertionError: Expected executing the XPath "empty(for $i at $p in () return $p)" to resolve to one of the expected results, but got Error: XPST0008, The variable p is not in scope., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'XPST0008, The variable p is not in scope.'.
 K-ForExprPositionalVar-12,Error: XPST0008, The variable p is not in scope.
@@ -3829,7 +3794,6 @@ value-comparison-5,Error: Atomizing array(*) is not implemented.
 value-comparison-6,Error: Atomizing array(*) is not implemented.
 value-comparison-7,Error: Atomizing array(*) is not implemented.
 value-comparison-8,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Atomizing array(*) is not implemented.'
-value-comparison-12,AssertionError: Expected XPath //test:comparable[1]/test:int eq //test:comparable[2]/test:int to resolve to true: expected false to be true
 VarDecl001,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 VarDecl002,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 VarDecl003,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
@@ -4098,7 +4062,6 @@ FOCA0002_7,AssertionError: expected [Function] to throw error matching /FOCA0002
 FOCA0002_8,AssertionError: expected [Function] to throw error matching /FOCA0002/ but got 'XPST0017: Function resolve-QName with arity of 2 not registered. No similar functions found.'
 FOCA0002_9,AssertionError: expected [Function] to throw error matching /FOCA0002/ but got 'XPST0017: Function resolve-QName with arity of 2 not registered. No similar functions found.'
 FOCA0003_1,AssertionError: Expected executing the XPath "xs:integer(xs:double(1e308))" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FOCA0003/ but got 'FOAR0002: can not cast 1e+308 to xs:integer, it is out of bounds for JavaScript numbers.', Error: FOAR0002: can not cast 1e+308 to xs:integer, it is out of bounds for JavaScript numbers..
-FOCH0001,AssertionError: expected [Function] to throw error matching /FOCH0001/ but got 'XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.'
 FOCH0002_10,AssertionError: expected [Function] to throw error matching /FOCH0002/ but got 'XPST0017: Function substring-before with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}substring-before (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}substring-after (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions/array}insert-before (array(*)null, xs:integernull, item()*)", "Q{http://www.w3.org/2005/xpath-functions}insert-before (item()*, xs:integernull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}substring (xs:string?, xs:doublenull)"?'
 FOCH0002_3,AssertionError: expected [Function] to throw error matching /FOCH0002/ but got 'XPST0017: Function distinct-values with arity of 2 not registered. No similar functions found.'
 FOCH0002_5,AssertionError: expected [Function] to throw error matching /FOCH0002/ but got 'XPST0017: Function index-of with arity of 3 not registered. No similar functions found.'
@@ -4112,7 +4075,7 @@ FODC0002_4,AssertionError: expected [Function] to throw error matching /FODC0002
 FODC0004,AssertionError: Expected executing the XPath "collection('%gg')" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FODC0004/ but got 'XPST0017: Function collection with arity of 1 not registered. No similar functions found.', AssertionError: expected [Function] to throw error matching /FODC0002/ but got 'XPST0017: Function collection with arity of 1 not registered. No similar functions found.'.
 FODC0005-1,AssertionError: Expected executing the XPath "doc('%gg')" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FODC0005/ but got 'XPST0017: Function doc with arity of 1 not registered. No similar functions found.', AssertionError: expected [Function] to throw error matching /FODC0002/ but got 'XPST0017: Function doc with arity of 1 not registered. No similar functions found.'.
 FODC0005-2,AssertionError: Expected executing the XPath "doc-available('%gg')" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FODC0005/ but got 'XPST0017: Function doc-available with arity of 1 not registered. No similar functions found.', Error: XPST0017: Function doc-available with arity of 1 not registered. No similar functions found..
-FODT0001-1,AssertionError: expected [Function] to throw error matching /FODT0001/ but got 'XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?'
+FODT0001-1,AssertionError: expected [Function] to throw error matching /FODT0001/ but got 'XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.'
 FODT0001-2,AssertionError: expected [Function] to throw error matching /FODT0001/ but got 'XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.'
 FODT0003-1,AssertionError: expected [Function] to throw error matching /FODT0003/ but got 'XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.'
 FODT0003-2,AssertionError: expected [Function] to throw error matching /FODT0003/ but got 'XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.'
@@ -4183,8 +4146,6 @@ XQST0070_2,AssertionError: expected [Function] to throw error matching /XQST0070
 XQST0070_3,SyntaxError: Expected " ", "(:", ";", "\n", "\r", or "\t" but end of input found.
 XQST0076,AssertionError: expected [Function] to throw error matching /XQST0076/ but got 'XPST0003: Unable to parse XPath: "for $x in (\'a\', \'b\', \'c\') order by $x collation \'http://www.w3.org/\' return $x".\nExpected "\'" or "\\"" but " " found.\nfor $x in (\'a\', \'b\', \'c\') order by $x collation[Error is around here] \'http://www.w3.org/\' return $x'
 XQST0085,AssertionError: expected [Function] to throw an error
-XQST0085b,Error: XPST0017: Function in-scope-prefixes with arity of 1 not registered. No similar functions found.
-XQST0085c,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'NamespaceError: Qualified name with prefix can not have a null namespace'
 XQST0087,AssertionError: expected [Function] to throw an error
 XQST0088_1,AssertionError: expected [Function] to throw error matching /XQST0088/ but got 'XQST0051: No modules found with the namespace uri '
 XQST0088_2,Error: XPST0081: The prefix "cheese" could not be resolved
@@ -4256,35 +4217,21 @@ xqhof20,Error: Not implemented: Intermediate clauses in flwor expressions are no
 xqhof21,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'
 xqhof22,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 static-context-1,AssertionError: expected [Function] to throw an error
-surrogates07,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-surrogates08,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
+surrogates07,AssertionError: string-to-codepoints("abc&#x1D156;def"): expected '97 98 99 55348 56662 100 101 102' to equal '97 98 99 119126 100 101 102'
 surrogates12,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 surrogates13,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 surrogates14,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 surrogates15,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
-surrogates16,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-surrogates07a,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-surrogates08a,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
+surrogates07a,AssertionError: string-to-codepoints("abc𝅖def"): expected '97 98 99 55348 56662 100 101 102' to equal '97 98 99 119126 100 101 102'
 surrogates12a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 surrogates13a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 surrogates14a,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 surrogates15a,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
-surrogates16a,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 XML10-4ed-Excluded-char-1,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'InvalidCharacterError: The qualified name is not a valid Name or QName'
 XML10-4ed-Excluded-char-1-new,InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 XML11-1ed-Included-char-1,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'InvalidCharacterError: The qualified name is not a valid Name or QName'
 XML11-1ed-Included-char-1-new,InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-line-ending-Q001,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-Q002,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-Q003,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-Q004,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-Q005,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-Q006,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-Q007,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-Q008,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-Q009,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-line-ending-P002,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-XML11-c0-001,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
+line-ending-P002,AssertionError: Expected XPath deep-equal(string-to-codepoints(' '), (13, 10)) to resolve to true: expected false to be true
 Catalog001,Error: XPST0003: Unable to parse XPath: "(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))),             $tests := $testsets//fots-test-case,             $environments := (//fots:environment | $testsets//fots:environment)[@name],             $refs := $testsets//fots:environment[@ref]             return $refs[not(@ref = $environments/@name)]       ) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))),             $tests := $testsets//fots-test-case,             $environments := (//fots:environment | $testsets//fots:environment)[@name],             $refs := $testsets//fots:environment[@ref]             return $refs[not(@ref = $environments/@name)]       ) => empty()
 Catalog003,Error: XPST0003: Unable to parse XPath: "(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $test in $testsets//fots:test-case[contains(test, "import schema")]         where empty($test/(fots:dependency | ../fots:dependency)[@type='feature' and @value="schemaImport"])          return $test       ) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $test in $testsets//fots:test-case[contains(test, "import schema")]         where empty($test/(fots:dependency | ../fots:dependency)[@type='feature' and @value="schemaImport"])          return $test       ) => empty()
 Catalog004,Error: XPST0003: Unable to parse XPath: "(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $schema in (.|$testsets)//fots:environment/fots:schema         let $targetNamespace := doc(resolve-uri($schema/@file, base-uri($schema)))/*/@targetNamespace         where not($schema/@uri eq $targetNamespace or (empty($targetNamespace) and string(@uri)=''))         return ($schema, <file>{base-uri($schema)}</file>)       ) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $schema in (.|$testsets)//fots:environment/fots:schema         let $targetNamespace := doc(resolve-uri($schema/@file, base-uri($schema)))/*/@targetNamespace         where not($schema/@uri eq $targetNamespace or (empty($targetNamespace) and string(@uri)=''))         return ($schema, <file>{base-uri($schema)}</file>)       ) => empty()
@@ -4306,12 +4253,12 @@ functx-fn-adjust-date-to-timezone-2,Error: XPST0017: Function adjust-date-to-tim
 functx-fn-adjust-date-to-timezone-3,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 functx-fn-adjust-date-to-timezone-4,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 functx-fn-adjust-date-to-timezone-all,Error: XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
-functx-fn-adjust-dateTime-to-timezone-1,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-functx-fn-adjust-dateTime-to-timezone-2,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-functx-fn-adjust-dateTime-to-timezone-3,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-functx-fn-adjust-dateTime-to-timezone-4,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-functx-fn-adjust-dateTime-to-timezone-5,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-functx-fn-adjust-dateTime-to-timezone-all,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+functx-fn-adjust-dateTime-to-timezone-1,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+functx-fn-adjust-dateTime-to-timezone-2,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+functx-fn-adjust-dateTime-to-timezone-3,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+functx-fn-adjust-dateTime-to-timezone-4,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+functx-fn-adjust-dateTime-to-timezone-5,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+functx-fn-adjust-dateTime-to-timezone-all,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 functx-fn-adjust-time-to-timezone-1,Error: XPST0017: Function adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 functx-fn-adjust-time-to-timezone-2,Error: XPST0017: Function adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 functx-fn-adjust-time-to-timezone-3,Error: XPST0017: Function adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
@@ -4323,14 +4270,6 @@ functx-fn-base-uri-1,Error: XPST0017: Function base-uri with arity of 1 not regi
 functx-fn-base-uri-2,Error: XPST0017: Function base-uri with arity of 1 not registered. No similar functions found.
 functx-fn-base-uri-3,Error: XPST0017: Function base-uri with arity of 1 not registered. No similar functions found.
 functx-fn-base-uri-all,Error: XPST0017: Function base-uri with arity of 1 not registered. No similar functions found.
-functx-fn-codepoint-equal-1,Error: XPST0017: Function codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-functx-fn-codepoint-equal-2,Error: XPST0017: Function codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-functx-fn-codepoint-equal-3,Error: XPST0017: Function codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-functx-fn-codepoint-equal-all,Error: XPST0017: Function codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-functx-fn-codepoints-to-string-1,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-functx-fn-codepoints-to-string-2,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-functx-fn-codepoints-to-string-3,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-functx-fn-codepoints-to-string-all,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 functx-fn-count-3,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 functx-fn-count-all,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 functx-fn-data-1,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
@@ -4435,10 +4374,6 @@ functx-fn-resolve-uri-5,AssertionError: Expected executing the XPath "(resolve-u
 functx-fn-resolve-uri-all,Error: XPST0017: Function resolve-uri with arity of 2 not registered. No similar functions found.
 functx-fn-root-1,AssertionError: Expected XPath let $in-xml := <a><x>123</x></a> return (root( (/) //item[1])) to resolve to the given XML. Expected <order num="00299432" date="2006-09-15" cust="0221A">   <item dept="WMN" num="557" quantity="1" color="beige"/>   <item dept="ACC" num="563" quantity="1"/>   <item dept="ACC" num="443" quantity="2"/>   <item dept="MEN" num="784" quantity="1" color="blue/white"/>   <item dept="MEN" num="784" quantity="1" color="blue/red"/>   <item dept="WMN" num="557" quantity="1" color="sage"/> </order> to equal <order num="00299432" date="2006-09-15" cust="0221A">   <item dept="WMN" num="557" quantity="1" color="beige"/>   <item dept="ACC" num="563" quantity="1"/>   <item dept="ACC" num="443" quantity="2"/>   <item dept="MEN" num="784" quantity="1" color="blue/white"/>   <item dept="MEN" num="784" quantity="1" color="blue/red"/>   <item dept="WMN" num="557" quantity="1" color="sage"/> </order>
 functx-fn-root-all,Error: No selector counterpart for: computedDocumentConstructor.
-functx-fn-string-to-codepoints-1,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-functx-fn-string-to-codepoints-2,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-functx-fn-string-to-codepoints-3,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-functx-fn-string-to-codepoints-all,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 functx-fn-sum-3,Error: FORG0006: items passed to fn:sum are not all numeric.
 functx-fn-sum-all,Error: FORG0006: items passed to fn:sum are not all numeric.
 functx-functx-add-attributes-1,Error: XPST0008, The variable seq is not in scope.
@@ -4468,9 +4403,6 @@ functx-functx-change-element-names-deep-1,Error: XPST0017: Function error with a
 functx-functx-change-element-names-deep-2,Error: XPST0017: Function error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 functx-functx-change-element-names-deep-3,Error: XPST0017: Function error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 functx-functx-change-element-names-deep-all,Error: XPST0017: Function error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-functx-functx-chars-1,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-functx-functx-chars-2,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
-functx-functx-chars-all,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 functx-functx-contains-word-1,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 functx-functx-contains-word-2,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 functx-functx-contains-word-3,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
@@ -4610,9 +4542,6 @@ functx-functx-replace-first-4,Error: XPST0017: Function replace with arity of 3 
 functx-functx-replace-first-5,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-replace-first-all,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-replace-multi-1,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
-functx-functx-reverse-string-1,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-functx-functx-reverse-string-2,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
-functx-functx-reverse-string-all,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
 functx-functx-right-trim-1,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-right-trim-2,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-right-trim-3,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
@@ -4882,7 +4811,6 @@ d1e57482,AssertionError: Expected XPath   array:fold-right(["a","b","c"], "", fu
 d1e57493,AssertionError: Expected XPath   array:fold-right(["a","b","c"], "", function($a, $b) { concat($b,$a) }) to (deep equally) resolve to "cba": expected false to be true
 d1e57504,AssertionError: Expected XPath   array:fold-right(["a","b","c"], "x", function($a, $b) { concat($a,',',$b) }) to (deep equally) resolve to "a,b,c,x": expected false to be true
 d1e57515,AssertionError: Expected XPath   array:fold-right( ["a","b","c"], "", concat(?,?) ) to (deep equally) resolve to "abc": expected false to be true
-d1e57818,Error: XPST0017: Function string-to-codepoints with arity of 1 not registered. No similar functions found.
 d1e57961,AssertionError: Skipped test, it was a assert-permutation
 d1e57972,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 d1e60780,Error: XPST0003: Unable to parse XPath: "deep-equal((declare variable $array1 := ["abc","def","ghi"]; declare variable $array2 := ["abc", [10,20]];  array:get($array1,2)), ("def"))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. deep-equal((declare [Error is around here]variable $array1 := ["abc","def","ghi"]; declare variable $array2 := ["abc", [10,20]];  array:get($array1,2)), ("def"))
@@ -4997,19 +4925,9 @@ fo-test-fn-format-number-009,Error: XPST0017: Function format-number with arity 
 fo-test-fn-format-number-010,Error: XPST0017: Function format-number with arity of 3 not registered. No similar functions found.
 fo-test-math-exp-004,AssertionError: Expected XPath          math:exp(2)        to (deep equally) resolve to 7.38905609893065e0: expected false to be true
 fo-test-math-exp-006,AssertionError: Expected XPath          math:exp(math:pi())        to (deep equally) resolve to 23.140692632779267e0: expected false to be true
-fo-test-fn-codepoints-to-string-001,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
-fo-test-fn-codepoints-to-string-002,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
-fo-test-fn-codepoints-to-string-003,Error: XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.
-fo-test-fn-codepoints-to-string-004,AssertionError: expected [Function] to throw error matching /FOCH0001/ but got 'XPST0017: Function fn:codepoints-to-string with arity of 1 not registered. No similar functions found.'
-fo-test-fn-string-to-codepoints-001,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fo-test-fn-compare-002,AssertionError: Expected XPath          fn:compare('Strasse', 'Straße')        to (deep equally) resolve to 0: expected false to be true
 fo-test-fn-compare-003,Error: FOCH0002: No collations are supported
 fo-test-fn-compare-004,AssertionError: Expected XPath          fn:compare('Strassen', 'Straße')        to (deep equally) resolve to 1: expected false to be true
-fo-test-fn-codepoint-equal-001,Error: XPST0017: Function fn:codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-fo-test-fn-codepoint-equal-002,Error: XPST0017: Function fn:codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-fo-test-fn-codepoint-equal-003,Error: XPST0017: Function fn:codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-fo-test-fn-codepoint-equal-004,Error: XPST0017: Function fn:codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
-fo-test-fn-codepoint-equal-005,Error: XPST0017: Function fn:codepoint-equal with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}deep-equal (item()*, item()*, xs:stringnull)"?
 fo-test-fn-string-join-001,Error: XPTY0004 Unable to cast xs:integer to type xs:string while calling string-join
 fo-test-fn-string-join-006,Error: XPTY0004 Unable to cast xs:QName to type xs:string while calling string-join
 fo-test-fn-encode-for-uri-001,Error: XPST0017: Function fn:encode-for-uri with arity of 1 not registered. No similar functions found.
@@ -5066,22 +4984,22 @@ fo-test-fn-contains-token-002,Error: XPST0017: Function fn:contains-token with a
 fo-test-fn-contains-token-003,Error: XPST0017: Function fn:contains-token with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}contains (xs:string?, xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}contains (xs:string?, xs:string?)" or "Q{http://www.w3.org/2005/xpath-functions/map}contains (map(*)null, xs:anyAtomicTypenull)"?
 fo-test-fn-contains-token-004,Error: XPST0017: Function fn:contains-token with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}contains (xs:string?, xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}contains (xs:string?, xs:string?)" or "Q{http://www.w3.org/2005/xpath-functions/map}contains (map(*)null, xs:anyAtomicTypenull)"?
 fo-test-fn-year-from-dateTime-004,AssertionError: Expected XPath          fn:year-from-dateTime(xs:dateTime("1999-12-31T24:00:00"))        to (deep equally) resolve to 2000: expected false to be true
-fo-test-fn-month-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fo-test-fn-day-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fo-test-fn-hours-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+fo-test-fn-month-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+fo-test-fn-day-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+fo-test-fn-hours-from-dateTime-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fo-test-fn-timezone-from-dateTime-001,AssertionError: Expected XPath          fn:timezone-from-dateTime(xs:dateTime("1999-05-31T13:20:00-05:00"))        to (deep equally) resolve to xs:dayTimeDuration("-PT5H"): expected false to be true
 fo-test-fn-timezone-from-dateTime-002,AssertionError: Expected XPath          fn:timezone-from-dateTime(xs:dateTime("2000-06-12T13:20:00Z"))        to (deep equally) resolve to xs:dayTimeDuration("PT0S"): expected false to be true
 fo-test-fn-timezone-from-date-001,AssertionError: Expected XPath          fn:timezone-from-date(xs:date("1999-05-31-05:00"))        to (deep equally) resolve to xs:dayTimeDuration("-PT5H"): expected false to be true
 fo-test-fn-timezone-from-date-002,AssertionError: Expected XPath          fn:timezone-from-date(xs:date("2000-06-12Z"))        to (deep equally) resolve to xs:dayTimeDuration("PT0S"): expected false to be true
 fo-test-fn-hours-from-time-004,Error: XPST0017: Function fn:adjust-time-to-timezone with arity of 2 not registered. No similar functions found.
 fo-test-fn-timezone-from-time-001,AssertionError: Expected XPath          fn:timezone-from-time(xs:time("13:20:00-05:00"))        to (deep equally) resolve to xs:dayTimeDuration("-PT5H"): expected false to be true
-fo-test-fn-adjust-dateTime-to-timezone-002,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 1 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fo-test-fn-adjust-dateTime-to-timezone-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fo-test-fn-adjust-dateTime-to-timezone-004,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fo-test-fn-adjust-dateTime-to-timezone-005,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fo-test-fn-adjust-dateTime-to-timezone-006,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fo-test-fn-adjust-dateTime-to-timezone-007,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
-fo-test-fn-adjust-dateTime-to-timezone-008,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. Did you mean "Q{generated_namespace_uri_test}custom-dateTime-function ()"?
+fo-test-fn-adjust-dateTime-to-timezone-002,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 1 not registered. No similar functions found.
+fo-test-fn-adjust-dateTime-to-timezone-003,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+fo-test-fn-adjust-dateTime-to-timezone-004,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+fo-test-fn-adjust-dateTime-to-timezone-005,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+fo-test-fn-adjust-dateTime-to-timezone-006,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+fo-test-fn-adjust-dateTime-to-timezone-007,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
+fo-test-fn-adjust-dateTime-to-timezone-008,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fo-test-fn-adjust-date-to-timezone-003,Error: XPST0017: Function fn:adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 fo-test-fn-adjust-date-to-timezone-004,Error: XPST0017: Function fn:adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
 fo-test-fn-adjust-date-to-timezone-005,Error: XPST0017: Function fn:adjust-date-to-timezone with arity of 2 not registered. No similar functions found.
@@ -5132,7 +5050,6 @@ fo-test-fn-idref-001,Error: No selector counterpart for: validateExpr.
 fo-test-fn-idref-002,Error: No selector counterpart for: validateExpr.
 fo-test-fn-serialize-001,Error: XPST0017: Function fn:serialize with arity of 2 not registered. No similar functions found.
 fo-test-fn-serialize-002,Error: XPST0017: Function fn:serialize with arity of 2 not registered. No similar functions found.
-fo-test-fn-for-each-002,Error: XPST0017: Function fn:string-to-codepoints with arity of 1 not registered. No similar functions found.
 fo-test-fn-filter-002,Error: XPST0017: Function fn:lang with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
 fo-test-fn-for-each-pair-001,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*)null, array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*)null)" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*)null, function(*)null)"?
 fo-test-fn-for-each-pair-002,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*)null, array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*)null)" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*)null, function(*)null)"?
@@ -5154,7 +5071,7 @@ fo-test-fn-json-to-xml-002,Error: XPST0017: Function json-to-xml with arity of 2
 fo-test-fn-json-to-xml-003,Error: XPST0017: Function json-to-xml with arity of 1 not registered. No similar functions found.
 fo-test-fn-json-to-xml-004,Error: XPST0017: Function json-to-xml with arity of 2 not registered. No similar functions found.
 fo-test-fn-parse-json-004,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
-fo-test-fn-parse-json-005,Error: XPST0017: Function codepoints-to-string with arity of 1 not registered. No similar functions found.
+fo-test-fn-parse-json-005,AssertionError: Expected XPath          parse-json('{"x":"\\", "y":"\u0000"}')        to (deep equally) resolve to map{"x":"\","y":codepoints-to-string(65533)}: expected false to be true
 fo-test-fn-parse-json-006,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
 fo-test-fn-parse-json-007,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:stringnull)"?
 fo-test-array-subarray-002,Error: FOAY0001: subarray start out of bounds.
