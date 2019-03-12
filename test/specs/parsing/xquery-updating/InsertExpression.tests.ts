@@ -44,6 +44,25 @@ describe('InsertExpression', () => {
 		]);
 	});
 
+	it('can insert a node without sideeffects', async () => {
+		const element = documentNode.appendChild(documentNode.createElement('element'));
+
+		const result = await evaluateUpdatingExpression(
+			`insert node <xxx>AAA</xxx> into $node`,
+			documentNode,
+			null,
+			{
+				node: element
+			},
+			{});
+
+		chai.assert.deepEqual(result.xdmValue, []);
+
+		chai.assert.equal(result.pendingUpdateList.length, 1);
+		chai.assert.equal(element.childNodes.length, 0);
+	});
+
+
 	it('allows insert something with something asynchronous', async () => {
 		const element = documentNode.appendChild(documentNode.createElement('element'));
 
