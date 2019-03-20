@@ -2,6 +2,10 @@ language: node_js
 node_js: "node"
 cache: npm
 
+# Greenkeeper wants to install new versions of pckages, often
+# disregarding the package lock. This does not always work with `npm ci`
+install: case $TRAVIS_BRANCH in greenkeeper*) npm i;; *) npm ci;; esac;
+
 before_script:
   - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
   - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
