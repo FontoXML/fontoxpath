@@ -378,24 +378,24 @@ describe('evaluateXPath', () => {
 			);
 
 			chai.assert.isFalse(
-				slimdomDocument.createCDATASection.called,
+				(slimdomDocument.createCDATASection as any).called,
 				'nodesFactory.createCDATASection'
 			);
-			chai.assert.isTrue(slimdomDocument.createComment.called, 'nodesFactory.createComment');
+			chai.assert.isTrue((slimdomDocument.createComment as any).called, 'nodesFactory.createComment');
 			chai.assert.isFalse(
-				slimdomDocument.implementation.createDocument.called,
+				(slimdomDocument.implementation.createDocument as any).called,
 				'nodesFactory.createDocument'
 			);
 			chai.assert.isTrue(
-				slimdomDocument.createElementNS.called,
+				(slimdomDocument.createElementNS as any).called,
 				'nodesFactory.createElementNS'
 			);
 			chai.assert.isTrue(
-				slimdomDocument.createProcessingInstruction.called,
+				(slimdomDocument.createProcessingInstruction as any).called,
 				'nodesFactory.createProcessingInstruction'
 			);
 			chai.assert.isTrue(
-				slimdomDocument.createTextNode.called,
+				(slimdomDocument.createTextNode as any).called,
 				'nodesFactory.createTextNode'
 			);
 		});
@@ -420,16 +420,16 @@ describe('evaluateXPath', () => {
 			);
 
 			chai.assert.isFalse(
-				slimdomDocument.createCDATASection.called,
+				(slimdomDocument.createCDATASection as any).called,
 				'nodesFactory.createCDATASection'
 			);
-			chai.assert.isTrue(slimdomDocument.createComment.called, 'createComment');
-			chai.assert.isTrue(slimdomDocument.createElementNS.called, 'createElementNS');
+			chai.assert.isTrue((slimdomDocument.createComment as any).called, 'createComment');
+			chai.assert.isTrue((slimdomDocument.createElementNS as any).called, 'createElementNS');
 			chai.assert.isTrue(
-				slimdomDocument.createProcessingInstruction.called,
+				(slimdomDocument.createProcessingInstruction as any).called,
 				'createProcessingInstruction'
 			);
-			chai.assert.isTrue(slimdomDocument.createTextNode.called, 'createTextNode');
+			chai.assert.isTrue((slimdomDocument.createTextNode as any).called, 'createTextNode');
 		});
 
 		it('Does not error when passed a non-node with a nodetype but without the constructor functions', () => {

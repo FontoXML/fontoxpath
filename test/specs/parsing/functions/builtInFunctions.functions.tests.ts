@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import { evaluateXPath, evaluateXPathToBoolean, evaluateXPathToString } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
-let documentNode: Document;
+let documentNode: slimdom.Document;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
