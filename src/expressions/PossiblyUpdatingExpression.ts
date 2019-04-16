@@ -6,8 +6,9 @@ import ExecutionParameters from './ExecutionParameters';
 import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
-import { AsyncIterator, DONE_TOKEN, notReady, ready } from './util/iterators';
+import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
+import UpdatingExpression from './xquery-update/UpdatingExpression';
 
 export default abstract class PossiblyUpdatingExpression extends Expression {
 	constructor(
@@ -47,7 +48,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 						expr.evaluate(innerDynamicContext, executionParameters);
 				}
 				return (innerDynamicContext: DynamicContext) => {
-					const updatingExpression = expr as PossiblyUpdatingExpression;
+					const updatingExpression = expr as UpdatingExpression;
 					const updateListAndValue = updatingExpression.evaluateWithUpdateList(
 						innerDynamicContext,
 						executionParameters
@@ -56,12 +57,14 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 					let doneWithChildExpressions = false;
 					let i = 0;
 					return sequenceFactory.create({
-						next: () => {
+						next: (_hint: IterationHint) => {
 							if (doneWithChildExpressions) {
 								return DONE_TOKEN;
 							}
 							if (!values) {
-								const attempt = updateListAndValue.next();
+								// For now we do not support hints in updating expressions as we
+								// retrieve all results at once.
+								const attempt = updateListAndValue.next(IterationHint.NONE);
 								if (!attempt.ready) {
 									return attempt;
 								}
@@ -86,7 +89,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 
 		let done = false;
 		return {
-			next: () => {
+			next: (_hint: IterationHint) => {
 				if (done) {
 					return DONE_TOKEN;
 				}

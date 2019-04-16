@@ -11,10 +11,13 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
+import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
-import { ready } from '../util/iterators';
+import StaticContext from '../StaticContext';
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { AsyncIterator, IterationHint, ready } from '../util/iterators';
 import { applyUpdates, mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
@@ -114,12 +117,15 @@ class TransformExpression extends UpdatingExpression {
 		this._returnExpr = returnExpr;
 	}
 
-	public evaluateWithUpdateList(dynamicContext, executionParameters: ExecutionParameters) {
+	public evaluateWithUpdateList(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): AsyncIterator<UpdatingExpressionResult> {
 		const { domFacade, nodesFactory, documentWriter } = executionParameters;
 
-		const sourceValueIterators = [];
-		let modifyValueIterator;
-		let returnValueIterator;
+		const sourceValueIterators: AsyncIterator<UpdatingExpressionResult>[] = [];
+		let modifyValueIterator: AsyncIterator<UpdatingExpressionResult>;
+		let returnValueIterator: AsyncIterator<UpdatingExpressionResult>;
 
 		let modifyPul;
 		const createdNodes = [];
@@ -131,7 +137,8 @@ class TransformExpression extends UpdatingExpression {
 					// The copy clause contains one or more variable bindings, each of which consists of a variable name and an expression called the source expression.
 					for (let i = createdNodes.length; i < this._variableBindings.length; i++) {
 						const variableBinding = this._variableBindings[i];
-						let sourceValueIterator = sourceValueIterators[i];
+						let sourceValueIterator: AsyncIterator<UpdatingExpressionResult> =
+							sourceValueIterators[i];
 
 						// Each variable binding is processed as follows:
 						if (!sourceValueIterator) {
@@ -141,7 +148,7 @@ class TransformExpression extends UpdatingExpression {
 								variableBinding.sourceExpr
 							)(dynamicContext, executionParameters);
 						}
-						const sv = sourceValueIterator.next();
+						const sv = sourceValueIterator.next(IterationHint.NONE);
 						if (!sv.ready) {
 							return sv;
 						}
@@ -178,7 +185,7 @@ class TransformExpression extends UpdatingExpression {
 							executionParameters
 						);
 					}
-					const mv = modifyValueIterator.next();
+					const mv = modifyValueIterator.next(IterationHint.NONE);
 					if (!mv.ready) {
 						return mv;
 					}
@@ -208,7 +215,7 @@ class TransformExpression extends UpdatingExpression {
 						executionParameters
 					);
 				}
-				const rv = returnValueIterator.next();
+				const rv = returnValueIterator.next(IterationHint.NONE);
 				if (!rv.ready) {
 					return rv;
 				}
@@ -222,7 +229,7 @@ class TransformExpression extends UpdatingExpression {
 		};
 	}
 
-	public performStaticEvaluation(staticContext) {
+	public performStaticEvaluation(staticContext: StaticContext) {
 		staticContext.introduceScope();
 		this._variableBindings.forEach(
 			variableBinding =>

@@ -5,7 +5,7 @@ import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrder
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, ready } from '../util/iterators';
+import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
 function ensureSortedSequence(
 	intersectOrExcept: string,
@@ -76,13 +76,13 @@ class IntersectExcept extends Expression {
 		let done = false;
 		let secondIteratorDone = false;
 		return sequenceFactory.create({
-			next: () => {
+			next: (_hint: IterationHint) => {
 				if (done) {
 					return DONE_TOKEN;
 				}
 				while (!secondIteratorDone) {
 					if (!firstValue) {
-						const itrResult = firstIterator.next();
+						const itrResult = firstIterator.next(IterationHint.NONE);
 						if (!itrResult.ready) {
 							return itrResult;
 						}
@@ -94,7 +94,7 @@ class IntersectExcept extends Expression {
 						firstValue = itrResult.value;
 					}
 					if (!secondValue) {
-						const itrResult = secondIterator.next();
+						const itrResult = secondIterator.next(IterationHint.NONE);
 						if (!itrResult.ready) {
 							return itrResult;
 						}
@@ -139,7 +139,7 @@ class IntersectExcept extends Expression {
 						firstValue = null;
 						return toReturn;
 					}
-					return firstIterator.next();
+					return firstIterator.next(IterationHint.NONE);
 				}
 
 				// Since X ∩ ∅ = ∅, we are done.

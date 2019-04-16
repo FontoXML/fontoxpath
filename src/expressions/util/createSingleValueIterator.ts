@@ -1,5 +1,6 @@
-import { DONE_TOKEN, ready } from './iterators';
-export default function createSingleValueIterator(onlyValue) {
+import { AsyncIterator, DONE_TOKEN, ready } from './iterators';
+
+export default function createSingleValueIterator<T>(onlyValue: T): AsyncIterator<T> {
 	let hasPassed = false;
 	return {
 		next: () => {

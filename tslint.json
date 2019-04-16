@@ -15,6 +15,7 @@
 				"order": "fields-first"
 			}
 		],
+		"no-bitwise": false,
 		"no-string-literal": false,
 		"no-unnecessary-qualifier": true,
 		"no-unnecessary-type-assertion": true,

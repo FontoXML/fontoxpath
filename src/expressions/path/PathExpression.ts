@@ -1,16 +1,25 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import DomFacade from '../../domFacade/DomFacade';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
 import createSingleValueIterator from '../util/createSingleValueIterator';
-import { AsyncIterator } from '../util/iterators';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import {
+	AsyncIterator,
+	DONE_TOKEN,
+	IterationHint,
+	IterationResult,
+	notReady,
+	ready
+} from '../util/iterators';
 
-function isSameNodeValue(a, b) {
+function isSameNodeValue(a: Value, b: Value) {
 	if (a === null || b === null) {
 		return false;
 	}
@@ -21,19 +30,19 @@ function isSameNodeValue(a, b) {
 	return a.value === b.value;
 }
 
-function concatSortedSequences(_, sequences: AsyncIterator<ISequence>): ISequence {
-	let currentSequence = sequences.next();
+function concatSortedSequences(sequences: AsyncIterator<ISequence>): ISequence {
+	let currentSequence = sequences.next(IterationHint.NONE);
 	if (currentSequence.done) {
 		return sequenceFactory.empty();
 	}
-	let currentIterator = null;
-	let previousValue = null;
+	let currentIterator: AsyncIterator<Value> = null;
+	let previousValue: Value = null;
 	return sequenceFactory.create({
-		next() {
+		next(hint: IterationHint) {
 			if (!currentSequence.ready) {
 				return notReady(
 					currentSequence.promise.then(() => {
-						currentSequence = sequences.next();
+						currentSequence = sequences.next(IterationHint.NONE);
 					})
 				);
 			}
@@ -44,15 +53,15 @@ function concatSortedSequences(_, sequences: AsyncIterator<ISequence>): ISequenc
 				currentIterator = currentSequence.value.value;
 			}
 
-			let value;
+			let value: IterationResult<Value>;
 			// Scan to the next value
 			do {
-				value = currentIterator.next();
+				value = currentIterator.next(hint);
 				if (!value.ready) {
 					return value;
 				}
 				if (value.done) {
-					currentSequence = sequences.next();
+					currentSequence = sequences.next(IterationHint.NONE);
 					if (currentSequence.done) {
 						return value;
 					}
@@ -65,31 +74,35 @@ function concatSortedSequences(_, sequences: AsyncIterator<ISequence>): ISequenc
 	});
 }
 
+interface IMappedIterator extends AsyncIterator<Value> {
+	current: IterationResult<Value>;
+}
+
 function mergeSortedSequences(
-	domFacade: DomFacade,
+	domFacade: IWrappingDomFacade,
 	sequences: AsyncIterator<ISequence>
 ): ISequence {
-	const allIterators = [];
+	const allIterators: IMappedIterator[] = [];
 	// Because the sequences are sorted locally, but unsorted globally, we first need to sort all the iterators.
 	// For that, we need to know all of them
 	let allSequencesLoaded = false;
 	let allSequencesLoadedPromise = null;
 	(function loadSequences() {
-		let val = sequences.next();
+		let val = sequences.next(IterationHint.NONE);
 		while (!val.done) {
 			if (!val.ready) {
 				allSequencesLoadedPromise = val.promise.then(loadSequences);
 				return allSequencesLoadedPromise;
 			}
 			const iterator = val.value.value;
-			const mappedIterator = {
-				current: iterator.next(),
-				next: () => iterator.next()
+			const mappedIterator: IMappedIterator = {
+				current: iterator.next(IterationHint.NONE),
+				next: (hint: IterationHint) => iterator.next(hint)
 			};
 			if (!mappedIterator.current.done) {
 				allIterators.push(mappedIterator);
 			}
-			val = sequences.next();
+			val = sequences.next(IterationHint.NONE);
 		}
 		allSequencesLoaded = true;
 		return undefined;
@@ -101,7 +114,7 @@ function mergeSortedSequences(
 		[Symbol.iterator]() {
 			return this;
 		},
-		next: () => {
+		next: (hint: IterationHint) => {
 			if (!allSequencesLoaded) {
 				return notReady(allSequencesLoadedPromise);
 			}
@@ -125,7 +138,7 @@ function mergeSortedSequences(
 				}
 			}
 
-			let consumedValue;
+			let consumedValue: IterationResult<Value>;
 			do {
 				if (!allIterators.length) {
 					return DONE_TOKEN;
@@ -133,7 +146,7 @@ function mergeSortedSequences(
 
 				const consumedIterator = allIterators.shift();
 				consumedValue = consumedIterator.current;
-				consumedIterator.current = consumedIterator.next();
+				consumedIterator.current = consumedIterator.next(IterationHint.NONE);
 				if (!isSubtypeOf(consumedValue.value.type, 'node()')) {
 					// Sorting does not matter
 					return consumedValue;
@@ -175,10 +188,10 @@ function mergeSortedSequences(
 	});
 }
 
-function sortResults(domFacade, result) {
-	let resultContainsNodes = false,
-		resultContainsNonNodes = false;
-	result.forEach(function(resultValue) {
+function sortResults(domFacade: IWrappingDomFacade, result: Value[]) {
+	let resultContainsNodes = false;
+	let resultContainsNonNodes = false;
+	result.forEach(resultValue => {
 		if (isSubtypeOf(resultValue.type, 'node()')) {
 			resultContainsNodes = true;
 		} else {
@@ -201,22 +214,22 @@ class PathExpression extends Expression {
 	private _requireSortedResults: boolean;
 	private _stepExpressions: Expression[];
 
-	constructor(stepExpressions: Expression[], requireSortedResults) {
+	constructor(stepExpressions: Expression[], requireSortedResults: boolean) {
 		const pathResultsInPeerSequence = stepExpressions.every(selector => selector.peer);
 		const pathResultsInSubtreeSequence = stepExpressions.every(selector => selector.subtree);
 		super(
-			stepExpressions.reduce(function(specificity, selector) {
+			stepExpressions.reduce((specificity, selector) => {
 				// Implicit AND, so sum
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
 			stepExpressions,
 			{
+				canBeStaticallyEvaluated: false,
+				peer: pathResultsInPeerSequence,
 				resultOrder: requireSortedResults
 					? RESULT_ORDERINGS.SORTED
 					: RESULT_ORDERINGS.UNSORTED,
-				peer: pathResultsInPeerSequence,
-				subtree: pathResultsInSubtreeSequence,
-				canBeStaticallyEvaluated: false
+				subtree: pathResultsInSubtreeSequence
 			}
 		);
 
@@ -224,103 +237,104 @@ class PathExpression extends Expression {
 		this._requireSortedResults = requireSortedResults;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		let sequenceHasPeerProperty = true;
-		const result = this._stepExpressions.reduce((intermediateResultNodesSequence, selector) => {
-			let childContextIterator;
-			if (intermediateResultNodesSequence === null) {
-				// first call, we should use the current dynamic context
-				childContextIterator = createSingleValueIterator(dynamicContext);
-			} else {
-				childContextIterator = dynamicContext.createSequenceIterator(
-					intermediateResultNodesSequence
-				);
-			}
-			let resultValuesInOrderOfEvaluation = {
-				next: () => {
-					const childContext = childContextIterator.next();
-					if (!childContext.ready) {
-						return childContext;
-					}
-
-					if (childContext.done) {
-						return childContext;
-					}
-					if (
-						childContext.value.contextItem !== null &&
-						!isSubtypeOf(childContext.value.contextItem.type, 'node()')
-					) {
-						throw new Error(
-							'XPTY0019: The / operator can only be applied to xml/json nodes.'
-						);
-					}
-					return ready(
-						selector.evaluateMaybeStatically(childContext.value, executionParameters)
+		const result = this._stepExpressions.reduce<ISequence>(
+			(intermediateResultNodesSequence, selector) => {
+				let childContextIterator: AsyncIterator<DynamicContext>;
+				if (intermediateResultNodesSequence === null) {
+					// first call, we should use the current dynamic context
+					childContextIterator = createSingleValueIterator(dynamicContext);
+				} else {
+					childContextIterator = dynamicContext.createSequenceIterator(
+						intermediateResultNodesSequence
 					);
 				}
-			};
-			// Assume nicely sorted
-			let sortedResultSequence;
-			if (!this._requireSortedResults) {
-				sortedResultSequence = concatSortedSequences(
-					executionParameters.domFacade,
-					resultValuesInOrderOfEvaluation
-				);
-			} else {
-				switch (selector.expectedResultOrder) {
-					case RESULT_ORDERINGS.REVERSE_SORTED: {
-						const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
-						resultValuesInOrderOfEvaluation = {
-							next: () => {
-								const result = resultValuesInReverseOrder.next();
-								if (!result.ready) {
-									return result;
-								}
-								if (result.done) {
-									return result;
-								}
-								return ready(
-									result.value.mapAll(items =>
-										sequenceFactory.create(items.reverse())
-									)
-								);
-							}
-						};
-						// Fallthrough for merges
+				let resultValuesInOrderOfEvaluation = {
+					next: (hint: IterationHint) => {
+						const childContext = childContextIterator.next(hint);
+						if (!childContext.ready) {
+							return childContext;
+						}
+
+						if (childContext.done) {
+							return childContext;
+						}
+						if (
+							childContext.value.contextItem !== null &&
+							!isSubtypeOf(childContext.value.contextItem.type, 'node()')
+						) {
+							throw new Error(
+								'XPTY0019: The / operator can only be applied to xml/json nodes.'
+							);
+						}
+						return ready(
+							selector.evaluateMaybeStatically(
+								childContext.value,
+								executionParameters
+							)
+						);
 					}
-					case RESULT_ORDERINGS.SORTED:
-						if (selector.subtree && sequenceHasPeerProperty) {
-							sortedResultSequence = concatSortedSequences(
+				};
+				// Assume nicely sorted
+				let sortedResultSequence: ISequence;
+				if (!this._requireSortedResults) {
+					sortedResultSequence = concatSortedSequences(resultValuesInOrderOfEvaluation);
+				} else {
+					switch (selector.expectedResultOrder) {
+						case RESULT_ORDERINGS.REVERSE_SORTED: {
+							const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
+							resultValuesInOrderOfEvaluation = {
+								next: (hint: IterationHint) => {
+									const result = resultValuesInReverseOrder.next(hint);
+									if (!result.ready) {
+										return result;
+									}
+									if (result.done) {
+										return result;
+									}
+									return ready(
+										result.value.mapAll(items =>
+											sequenceFactory.create(items.reverse())
+										)
+									);
+								}
+							};
+							// Fallthrough for merges
+						}
+						case RESULT_ORDERINGS.SORTED:
+							if (selector.subtree && sequenceHasPeerProperty) {
+								sortedResultSequence = concatSortedSequences(
+									resultValuesInOrderOfEvaluation
+								);
+								break;
+							}
+							// Only locally sorted
+							sortedResultSequence = mergeSortedSequences(
 								executionParameters.domFacade,
 								resultValuesInOrderOfEvaluation
 							);
 							break;
+						case RESULT_ORDERINGS.UNSORTED: {
+							// The result should be sorted before we can continue
+							const concattedSequence = concatSortedSequences(
+								resultValuesInOrderOfEvaluation
+							);
+							return concattedSequence.mapAll(allValues =>
+								sequenceFactory.create(
+									sortResults(executionParameters.domFacade, allValues)
+								)
+							);
 						}
-						// Only locally sorted
-						sortedResultSequence = mergeSortedSequences(
-							executionParameters.domFacade,
-							resultValuesInOrderOfEvaluation
-						);
-						break;
-					case RESULT_ORDERINGS.UNSORTED: {
-						// The result should be sorted before we can continue
-						const concattedSequence = concatSortedSequences(
-							executionParameters.domFacade,
-							resultValuesInOrderOfEvaluation
-						);
-						return concattedSequence.mapAll(allValues =>
-							sequenceFactory.create(
-								sortResults(executionParameters.domFacade, allValues)
-							)
-						);
 					}
 				}
-			}
-			// If this selector returned non-peers, the sequence could be contaminated with ancestor/descendant nodes
-			// This makes sorting using concat impossible
-			sequenceHasPeerProperty = sequenceHasPeerProperty && selector.peer;
-			return sortedResultSequence;
-		}, null);
+				// If this selector returned non-peers, the sequence could be contaminated with ancestor/descendant nodes
+				// This makes sorting using concat impossible
+				sequenceHasPeerProperty = sequenceHasPeerProperty && selector.peer;
+				return sortedResultSequence;
+			},
+			null
+		);
 
 		return result;
 	}

@@ -2,7 +2,7 @@ import ISequence from './dataTypes/ISequence';
 import Value from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
-import { AsyncIterator, ready } from './util/iterators';
+import { AsyncIterator, IterationHint, ready } from './util/iterators';
 
 type TemporalContext = {
 	currentDateTime: DateTime;
@@ -53,8 +53,8 @@ class DynamicContext {
 		let i = 0;
 		const iterator = contextSequence.value;
 		return {
-			next: () => {
-				const value = iterator.next();
+			next: (hint: IterationHint) => {
+				const value = iterator.next(hint);
 				if (value.done) {
 					return value;
 				}
@@ -102,7 +102,9 @@ class DynamicContext {
 		);
 	}
 
-	public scopeWithVariableBindings(variableBindings: { [s: string]: ISequence }): DynamicContext {
+	public scopeWithVariableBindings(variableBindings: {
+		[s: string]: () => ISequence;
+	}): DynamicContext {
 		return new DynamicContext(
 			{
 				contextItem: this.contextItem,

@@ -13,15 +13,16 @@ export default function createChildGenerator(
 			}
 		};
 	}
-	const childNodes = domFacade.getChildNodes(node);
-	let i = 0;
-	const l = childNodes.length;
+
+	let childNode = domFacade.getFirstChild(node);
 	return {
 		next() {
-			if (i >= l) {
+			if (!childNode) {
 				return DONE_TOKEN;
 			}
-			return ready(childNodes[i++]);
+			const current = childNode;
+			childNode = domFacade.getNextSibling(childNode);
+			return ready(current);
 		}
 	};
 }

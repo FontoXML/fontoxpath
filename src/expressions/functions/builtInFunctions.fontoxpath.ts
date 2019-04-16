@@ -3,7 +3,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from '../util/iterators';
 
 import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -16,20 +16,21 @@ import FunctionDefinitionType from './FunctionDefinitionType';
 
 import astHelper from '../../parsing/astHelper';
 import MapValue from '../dataTypes/MapValue';
+import Value from '../dataTypes/Value';
 
-const fontoxpathEvaluate: FunctionDefinitionType = function(
+const fontoxpathEvaluate: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	staticContext,
 	query,
 	args
-) {
-	let resultIterator;
-	let queryString;
+) => {
+	let resultIterator: AsyncIterator<Value>;
+	let queryString: string;
 	return sequenceFactory.create({
 		next: () => {
 			if (!resultIterator) {
-				const queryValue = query.value.next();
+				const queryValue = query.value.next(IterationHint.NONE);
 				if (!queryValue.ready) {
 					return queryValue;
 				}
@@ -56,8 +57,8 @@ const fontoxpathEvaluate: FunctionDefinitionType = function(
 				]);
 
 				const selector = compileAstToExpression(queryBodyContents, {
-					allowXQuery: false,
-					allowUpdating: false
+					allowUpdating: false,
+					allowXQuery: false
 				});
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 					prefix => staticContext.resolveNamespace(prefix),
@@ -82,14 +83,14 @@ const fontoxpathEvaluate: FunctionDefinitionType = function(
 				const context = contextItemSequence.isEmpty()
 					? {
 							contextItem: null,
-							contextSequence: contextItemSequence,
 							contextItemIndex: -1,
+							contextSequence: contextItemSequence,
 							variableBindings
 					  }
 					: {
 							contextItem: contextItemSequence.first(),
-							contextSequence: contextItemSequence,
 							contextItemIndex: 0,
+							contextSequence: contextItemSequence,
 							variableBindings
 					  };
 
@@ -97,24 +98,24 @@ const fontoxpathEvaluate: FunctionDefinitionType = function(
 
 				resultIterator = selector.evaluate(innerDynamicContext, executionParameters).value;
 			}
-			return resultIterator.next();
+			return resultIterator.next(IterationHint.NONE);
 		}
 	});
 };
 
-const fontoxpathSleep: FunctionDefinitionType = function(
+const fontoxpathSleep: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	val,
 	howLong
-) {
+) => {
 	let doneWithSleep = false;
-	let readyPromise;
+	let readyPromise: Promise<{}>;
 
 	const valueIterator = val.value;
 	return sequenceFactory.create({
-		next: () => {
+		next: (hint: IterationHint) => {
 			if (!readyPromise) {
 				const time = howLong
 					? howLong.tryGetFirst()
@@ -132,15 +133,15 @@ const fontoxpathSleep: FunctionDefinitionType = function(
 			if (!doneWithSleep) {
 				return notReady(readyPromise);
 			}
-			return valueIterator.next();
+			return valueIterator.next(hint);
 		}
 	});
 };
 
 declare const VERSION: string | undefined;
 
-const fontoxpathVersion: FunctionDefinitionType = function() {
-	let version;
+const fontoxpathVersion: FunctionDefinitionType = () => {
+	let version: string;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	if (typeof VERSION === 'undefined') {
 		version = 'devbuild';
@@ -150,12 +151,12 @@ const fontoxpathVersion: FunctionDefinitionType = function() {
 	return sequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 };
 
-const fontoxpathFetch: FunctionDefinitionType = function(
+const fontoxpathFetch: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	url
-) {
+) => {
 	let doneWithFetch = false;
 	let result = null;
 	let done = false;
@@ -164,7 +165,7 @@ const fontoxpathFetch: FunctionDefinitionType = function(
 	return sequenceFactory.create({
 		next: () => {
 			if (!readyPromise) {
-				const urlValue = url.value.next();
+				const urlValue = url.value.next(IterationHint.NONE);
 				if (!urlValue.ready) {
 					return urlValue;
 				}
@@ -191,46 +192,46 @@ const fontoxpathFetch: FunctionDefinitionType = function(
 export default {
 	declarations: [
 		{
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			argumentTypes: ['xs:string', 'map(*)'],
+			callFunction: fontoxpathEvaluate,
 			localName: 'evaluate',
-			argumentTypes: ['xs:string', 'map(*)'],
-			returnType: 'item()*',
-			callFunction: fontoxpathEvaluate
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 		{
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			localName: 'sleep',
 			argumentTypes: ['item()*', 'xs:numeric'],
-			returnType: 'item()*',
-			callFunction: fontoxpathSleep
-		},
-		{
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			callFunction: fontoxpathSleep,
 			localName: 'sleep',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			returnType: 'item()*'
+		},
+		{
 			argumentTypes: ['item()*'],
-			returnType: 'item()*',
-			callFunction: fontoxpathSleep
+			callFunction: fontoxpathSleep,
+			localName: 'sleep',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 		{
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			localName: 'fetch',
 			argumentTypes: ['xs:string', 'map(*)'],
-			returnType: 'item()*',
-			callFunction: fontoxpathFetch
-		},
-		{
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			callFunction: fontoxpathFetch,
 			localName: 'fetch',
-			argumentTypes: ['xs:string'],
-			returnType: 'item()*',
-			callFunction: fontoxpathFetch
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 		{
+			argumentTypes: ['xs:string'],
+			callFunction: fontoxpathFetch,
+			localName: 'fetch',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			localName: 'version',
+			returnType: 'item()*'
+		},
+		{
 			argumentTypes: [],
-			returnType: 'xs:string',
-			callFunction: fontoxpathVersion
+			callFunction: fontoxpathVersion,
+			localName: 'version',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			returnType: 'xs:string'
 		}
 	]
 };

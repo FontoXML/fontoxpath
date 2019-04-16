@@ -1,5 +1,6 @@
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { IterationHint } from './iterators';
 
 export default function createDoublyIterableSequence(sequence: ISequence): () => ISequence {
 	const savedValues = [];
@@ -7,11 +8,11 @@ export default function createDoublyIterableSequence(sequence: ISequence): () =>
 	return () => {
 		let i = 0;
 		return sequenceFactory.create({
-			next: () => {
+			next: (_hint: IterationHint) => {
 				if (savedValues[i] !== undefined) {
 					return savedValues[i++];
 				}
-				const val = backingIterator.next();
+				const val = backingIterator.next(IterationHint.NONE);
 				if (!val.ready) {
 					return val;
 				}

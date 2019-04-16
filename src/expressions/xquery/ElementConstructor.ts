@@ -9,7 +9,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import concatSequences from '../util/concatSequences';
-import { DONE_TOKEN, ready } from '../util/iterators';
+import { AsyncIterator, DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import AttributeConstructor from './AttributeConstructor';
 import parseContent from './ElementConstructorContent';
 import { evaluateQNameExpression } from './nameExpression';
@@ -77,7 +77,7 @@ class ElementConstructor extends Expression {
 		let childNodesSequences: ISequence[];
 		let allChildNodes: Value[][];
 
-		let nameIterator;
+		let nameIterator: AsyncIterator<Value>;
 
 		let done = false;
 		return sequenceFactory.create({
@@ -137,7 +137,7 @@ class ElementConstructor extends Expression {
 							nameSequence
 						);
 					}
-					const nv = nameIterator.next();
+					const nv = nameIterator.next(IterationHint.NONE);
 					if (!nv.ready) {
 						return nv;
 					}

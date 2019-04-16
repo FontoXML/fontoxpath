@@ -722,7 +722,7 @@ function pathExpr(ast, compilationOptions) {
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
 	// If an path has no axis steps, we should skip sorting. The path
 	// is probably a chain of filter expressions or lookups
-	const requireSorting = hasAxisStep || isAbsolute || rawSteps.length > 1;
+	const requireSorting = hasAxisStep || isAbsolute !== null || rawSteps.length > 1;
 
 	// Directly use expressions which are not path expression
 	if (!requireSorting && steps.length === 1) {

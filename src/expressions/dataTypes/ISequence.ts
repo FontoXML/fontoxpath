@@ -1,5 +1,5 @@
 import ExecutionParameters from '../ExecutionParameters';
-import { AsyncIterator, AsyncResult } from '../util/iterators';
+import { AsyncIterator, AsyncResult, IterationHint } from '../util/iterators';
 import Value from './Value';
 
 type SwitchCasesCaseEmpty = {
@@ -49,7 +49,7 @@ export default interface ISequence {
 	isEmpty(): boolean;
 	isSingleton(): boolean;
 	map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence;
-	mapAll(callback: (allValues: Value[]) => ISequence): ISequence;
+	mapAll(callback: (allValues: Value[]) => ISequence, hint?: IterationHint): ISequence;
 	switchCases(cases: SwitchCasesCases): ISequence;
 
 	tryGetAllValues(): AsyncResult<Value[]>;

@@ -6,7 +6,9 @@ import Specificity from '../Specificity';
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { ready } from '../util/iterators';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import { IterationHint, ready } from '../util/iterators';
 
 function assertValidTarget(target) {
 	if (/^xml$/i.test(target)) {
@@ -38,7 +40,7 @@ class PIConstructor extends Expression {
 		this._dataExpr = dataExpr;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 		const dataSequence = this._dataExpr.evaluateMaybeStatically(
 			dynamicContext,
@@ -69,7 +71,7 @@ class PIConstructor extends Expression {
 
 			return sequenceFactory.create({
 				next: () => {
-					const tv = targetIterator.next();
+					const tv = targetIterator.next(IterationHint.NONE);
 					if (tv.done || !tv.ready) {
 						return tv;
 					}
