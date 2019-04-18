@@ -33,7 +33,7 @@ builtInFunctions.forEach(builtInFunction => {
 	);
 });
 
-function createDefaultNamespaceResolver(contextItem: Node | any): (s: string) => string {
+function createDefaultNamespaceResolver(contextItem: Node): (s: string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return _prefix => null;
 	}

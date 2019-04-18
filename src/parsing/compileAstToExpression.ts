@@ -1163,7 +1163,7 @@ function renameExpression(ast, compilationOptions) {
 	return new RenameExpression(targetExpr, newNameExpr);
 }
 
-function replaceExpression(ast, compilationOptions) {
+function replaceExpression(ast: any, compilationOptions) {
 	const isReplaceValue = !!astHelper.getFirstChild(ast, 'replaceValue');
 	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
 	const replacementExpr = compile(

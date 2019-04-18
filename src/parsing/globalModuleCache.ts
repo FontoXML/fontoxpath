@@ -1,6 +1,8 @@
+import StaticContext, { FunctionDefinition } from "src/expressions/StaticContext";
+
 const loadedModulesByNamespaceURI = Object.create(null);
 
-export const loadModuleFile = (uri, moduleContents) => {
+export const loadModuleFile = (uri: string, moduleContents: { functionDeclarations: any; }) => {
 	let loadedModuleContents = loadedModulesByNamespaceURI[uri];
 	if (!loadedModuleContents) {
 		loadedModuleContents = loadedModulesByNamespaceURI[uri] = {
@@ -13,14 +15,14 @@ export const loadModuleFile = (uri, moduleContents) => {
 	);
 };
 
-export const enhanceStaticContextWithModule = (staticContext, uri) => {
+export const enhanceStaticContextWithModule = (staticContext: StaticContext, uri: string) => {
 	const moduleContents = loadedModulesByNamespaceURI[uri];
 
 	if (!moduleContents) {
 		throw new Error(`XQST0051: No modules found with the namespace uri ${uri}`);
 	}
 
-	moduleContents.functionDeclarations.forEach(functionDeclaration =>
+	moduleContents.functionDeclarations.forEach((functionDeclaration: { localName: string; arity: number; functionDefinition: FunctionDefinition; }) =>
 		staticContext.registerFunctionDefinition(
 			uri,
 			functionDeclaration.localName,

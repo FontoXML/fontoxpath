@@ -1,12 +1,17 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
-import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
+import PossiblyUpdatingExpression, { SequenceCallbacks } from '../PossiblyUpdatingExpression';
 
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+<<<<<<< HEAD
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { AsyncIterator, IterationHint, notReady } from '../util/iterators';
+=======
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+>>>>>>> Start on typing variables
 
 class IfExpression extends PossiblyUpdatingExpression {
 	constructor(
@@ -36,7 +41,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 		_executionParameters: ExecutionParameters,
 		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
 	) {
-		let resultIterator: AsyncIterator<Value> = null;
+		let resultIterator: AsyncIterator<Value> | null = null;
 		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
 
 		return sequenceFactory.create({

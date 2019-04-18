@@ -21,9 +21,9 @@ export default function staticallyCompileXPath(
 		allowXQuery: boolean | undefined;
 		debug: boolean | undefined;
 	},
-	namespaceResolver: (namespace: string) => string | null,
+	namespaceResolver: (namespace: string) => (string | null),
 	variables: object,
-	moduleImports: object
+	moduleImports: {[namespaceURI: string]: string}
 ): Expression {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
@@ -59,7 +59,7 @@ export default function staticallyCompileXPath(
 		}
 
 		const prolog = astHelper.getFirstChild(mainModule, 'prolog');
-		const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
+		const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*'])!;
 
 		if (prolog) {
 			if (!compilationOptions.allowXQuery) {

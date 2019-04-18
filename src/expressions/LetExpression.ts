@@ -41,9 +41,9 @@ class LetExpression extends PossiblyUpdatingExpression {
 	}
 
 	public performFunctionalEvaluation(
-		dynamicContext,
-		_executionParameters,
-		[createBindingSequence, createReturnExpression]
+		dynamicContext: DynamicContext,
+		_executionParameters: ExecutionParameters,
+		[_createBindingSequence, createReturnExpression]: SequenceCallbacks
 	) {
 		const scopedContext = dynamicContext.scopeWithVariableBindings({
 			[this._variableBinding]: createDoublyIterableSequence(

@@ -10,6 +10,7 @@ import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from './uti
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
 
+export type SequenceCallbacks = ((dynamicContext: DynamicContext) => ISequence)[];
 export default abstract class PossiblyUpdatingExpression extends Expression {
 	constructor(
 		specificity: Specificity,
@@ -107,6 +108,6 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 	public abstract performFunctionalEvaluation(
 		_dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		_sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
+		_sequenceCallbacks: SequenceCallbacks
 	): ISequence;
 }

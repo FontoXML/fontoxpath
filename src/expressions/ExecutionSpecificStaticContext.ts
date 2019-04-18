@@ -17,13 +17,13 @@ export const generateGlobalVariableBindingName = (variableName: string) => `GLOB
 export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
 
-	private _namespaceResolver: any;
-	private _referredNamespaceByName: any;
-	private _referredVariableByName: any;
-	private _variableBindingByName: any;
+	private _namespaceResolver: (namespaceURI: string) => null | string;
+	private _referredNamespaceByName: {[prefix: string]: {localName: string; namespaceURI: string}};
+	private _referredVariableByName: {[variable: string]: {localName: string; namespaceURI: string}};
+	private _variableBindingByName: {[variableName: string]: string};
 	private _variableValueByName: any;
 
-	constructor(namespaceResolver, variableByName) {
+	constructor(namespaceResolver: (prefix: string) => string | null, variableByName: object) {
 		this._namespaceResolver = namespaceResolver;
 		this._variableBindingByName = Object.keys(variableByName).reduce(
 			(bindings, variableName) => {
@@ -48,11 +48,11 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		this.executionContextWasRequired = false;
 	}
 
-	public getReferredNamespaces(): string[] {
+	public getReferredNamespaces(): {localName: string; namespaceURI: string}[] {
 		return Object.values(this._referredNamespaceByName);
 	}
 
-	public getReferredVariables(): string[] {
+	public getReferredVariables(): {localName: string; namespaceURI: string}[] {
 		return Object.values(this._referredVariableByName);
 	}
 

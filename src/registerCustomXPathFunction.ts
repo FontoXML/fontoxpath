@@ -9,9 +9,10 @@ import {
 	registerStaticallyKnownNamespace,
 	staticallyKnownNamespaceByPrefix
 } from './expressions/staticallyKnownNamespaces';
+import ISequence from './expressions/dataTypes/ISequence';
 
 function adaptXPathValueToJavascriptValue(
-	valueSequence: any,
+	valueSequence: ISequence,
 	sequenceType: string
 ): any | null | any[] {
 	switch (sequenceType[sequenceType.length - 1]) {
@@ -19,7 +20,7 @@ function adaptXPathValueToJavascriptValue(
 			if (valueSequence.isEmpty()) {
 				return null;
 			}
-			return valueSequence.first().value;
+			return valueSequence.first()!.value;
 
 		case '*':
 		case '+':
@@ -31,7 +32,7 @@ function adaptXPathValueToJavascriptValue(
 			});
 
 		default:
-			return valueSequence.first().value;
+			return valueSequence.first()!.value;
 	}
 }
 
@@ -94,10 +95,11 @@ export default function registerCustomXPathFunction(
 
 		// Adapt the domFacade into another object to prevent passing everything. The closure compiler might rename some variables otherwise.
 		// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
-		const dynamicContextAdapter = {};
-		dynamicContextAdapter['domFacade'] = executionParameters.domFacade.unwrap();
+		const dynamicContextAdapter: DomFacadeWrapper = {
+			['domFacade']: executionParameters.domFacade.unwrap()
+		};
 
-		const jsResult = callback.apply(undefined, [dynamicContextAdapter].concat(newArguments));
+		const jsResult = callback.apply(undefined, [dynamicContextAdapter, ...newArguments]);
 		const xpathResult = adaptJavaScriptValueToXPathValue(jsResult, returnType);
 
 		return xpathResult;

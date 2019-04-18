@@ -1,5 +1,7 @@
 import IContext from './Context';
 import { FunctionProperties } from './functions/functionRegistry';
+import TypeDeclaration from './dataTypes/TypeDeclaration';
+import FunctionDefinitionType from './functions/FunctionDefinitionType';
 
 function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
@@ -14,6 +16,15 @@ function lookupInOverrides(overrides: any[] | { [x: string]: any }[], key: strin
 	}
 
 	return undefined;
+}
+
+export type FunctionDefinition = {
+	argumentTypes: TypeDeclaration[];
+	arity: number;
+	callFunction: FunctionDefinitionType
+	localName: string;
+	namespaceURI: string;
+	returnType: TypeDeclaration;
 }
 
 /**
@@ -111,19 +122,7 @@ export default class StaticContext {
 		namespaceURI: string,
 		localName: string,
 		arity: number,
-		functionDefinition: {
-			argumentTypes: import('./dataTypes/TypeDeclaration').default[];
-			arity: number;
-			callFunction: (
-				dynamicContext: any,
-				executionParameters: any,
-				_staticContext: any,
-				...parameters: any[]
-			) => import('./dataTypes/ISequence').default;
-			localName: string;
-			namespaceURI: string;
-			returnType: import('./dataTypes/TypeDeclaration').default;
-		}
+		functionDefinition: FunctionDefinition
 	) {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const duplicateFunction = this._registeredFunctionsByHash[hashKey];
@@ -144,8 +143,8 @@ export default class StaticContext {
 	 * We need this to separate variable declaration (which is required to be done statically) and
 	 * from when the dynamic context of the variable will be known.
 	 */
-	public registerVariable(namespaceURI: string, localName: string) {
-		const hash = createHashKey(namespaceURI, localName);
+	public registerVariable(namespaceURI: string|null, localName: string) {
+		const hash = createHashKey(namespaceURI || '', localName);
 		return (this._registeredVariableBindingByHashKey[this._scopeDepth][hash] = `${hash}[${
 			this._scopeCount
 		}]`);
