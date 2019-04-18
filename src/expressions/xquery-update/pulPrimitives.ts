@@ -11,6 +11,7 @@ import { RenamePendingUpdate } from './pendingUpdates/RenamePendingUpdate';
 import { ReplaceElementContentPendingUpdate } from './pendingUpdates/ReplaceElementContentPendingUpdate';
 import { ReplaceNodePendingUpdate } from './pendingUpdates/ReplaceNodePendingUpdate';
 import { ReplaceValuePendingUpdate } from './pendingUpdates/ReplaceValuePendingUpdate';
+import { Element, Text, Attr } from '../../types/Types';
 
 export const deletePu = (target: ConcreteNode) => {
 	return new DeletePendingUpdate(target);

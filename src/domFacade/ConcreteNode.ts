@@ -1,3 +1,13 @@
+import {
+	Attr,
+	CDATASection,
+	Comment,
+	Document,
+	Element,
+	ProcessingInstruction,
+	Text
+} from '../types/Types';
+
 export const enum NODE_TYPES {
 	ELEMENT_NODE = 1,
 	ATTRIBUTE_NODE = 2,

@@ -83,6 +83,8 @@ function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 
  */
 const domFacade = new ExternalDomFacade() as IDomFacade;
 
+declare var window;
+
 /* istanbul ignore next */
 if (typeof window !== 'undefined') {
 	window['compareSpecificity'] = compareSpecificity;

@@ -1,4 +1,5 @@
 import { NODE_TYPES } from './domFacade/ConcreteNode';
+import { Element } from './types/Types';
 
 /**
  * Get the buckets that apply to a given node.

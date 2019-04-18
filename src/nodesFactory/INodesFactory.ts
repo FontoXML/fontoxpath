@@ -1,6 +1,16 @@
 /**
  * @public
  */
+import {
+	Attr,
+	CDATASection,
+	Comment,
+	Document,
+	Element,
+	ProcessingInstruction,
+	Text
+} from '../types/Types';
+
 export default interface INodesFactory {
 	createAttributeNS(namespaceURI: string, name: string): Attr;
 

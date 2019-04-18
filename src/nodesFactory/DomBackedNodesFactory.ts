@@ -1,3 +1,4 @@
+import { Document } from '../types/Types';
 import INodesFactory from './INodesFactory';
 
 export default class DomBackedNodesFactory implements INodesFactory {

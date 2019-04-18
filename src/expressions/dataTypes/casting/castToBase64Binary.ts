@@ -11,6 +11,8 @@ function hexToString(hex) {
 	return string;
 }
 
+declare var btoa;
+
 export default function castToBase64Binary(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:hexBinary')) {
 		return value => ({

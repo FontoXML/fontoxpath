@@ -12,6 +12,8 @@ function stringToHex(string) {
 	return hex.toUpperCase();
 }
 
+declare var atob;
+
 export default function castToGDay(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:base64Binary')) {
 		return value => ({

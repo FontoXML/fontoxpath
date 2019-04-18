@@ -151,7 +151,11 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 	return sequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 };
 
-const fontoxpathFetch: FunctionDefinitionType = (
+// TODO: implement a domparser instead of using the global one from the browser
+declare var DOMParser;
+declare var fetch;
+
+const fontoxpathFetch: FunctionDefinitionType = function(
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -169,6 +173,8 @@ const fontoxpathFetch: FunctionDefinitionType = (
 				if (!urlValue.ready) {
 					return urlValue;
 				}
+
+
 				readyPromise = fetch(urlValue.value.value)
 					.then(response => response.text())
 					.then(text => new DOMParser().parseFromString(text, 'application/xml'))

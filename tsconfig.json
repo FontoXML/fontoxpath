@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"outDir": "./built",
 		"baseUrl": ".",
-		"lib": ["dom", "es6", "es2017", "esnext.asynciterable"],
+		"lib": ["es6", "es2017", "esnext.asynciterable"],
 		"target": "es2017",
 		"module": "commonjs",
 		"inlineSourceMap": true,

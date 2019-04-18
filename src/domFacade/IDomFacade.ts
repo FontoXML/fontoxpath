@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 /**
  * The base interface of a dom facade
  *
  * @public
  */
+=======
+import { Attr, CharacterData, Element, Node } from '../types/Types';
+
+>>>>>>> Add a minimal node type for better typescript integration
 export default interface IDomFacade {
 	getAllAttributes(node: Element): Attr[];
 	getAttribute(node: Element, attributeName: string): string | null;
