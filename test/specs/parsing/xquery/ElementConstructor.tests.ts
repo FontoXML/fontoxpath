@@ -159,26 +159,26 @@ describe('ElementConstructor', () => {
 
 	it('correctly handles multiple textNodes', () => {
 		chai.assert.equal(
-			(evaluateXPathToFirstNode(
+			evaluateXPathToFirstNode<slimdom.Element>(
 				'<e>{1}A{1}</e>',
 				documentNode,
 				undefined,
 				{},
 				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			) as Element).outerHTML,
+			).outerHTML,
 			'<e>1A1</e>'
 		);
 	});
 
 	it('accepts CDataSections', () => {
 		chai.assert.equal(
-			(evaluateXPathToFirstNode(
+			evaluateXPathToFirstNode<slimdom.Element>(
 				'<e><![CDATA[Some CDATA]]></e>',
 				documentNode,
 				undefined,
 				{},
 				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			) as Element).outerHTML,
+			).outerHTML,
 			'<e>Some CDATA</e>'
 		);
 	});

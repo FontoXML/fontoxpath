@@ -148,9 +148,9 @@ function createAsserter(baseUrl, assertNode, language) {
 			const errorCode = evaluateXPathToString('@code', assertNode);
 			return (
 				xpath: string,
-				contextNode: Element,
+				contextNode: slimdom.Element,
 				variablesInScope: object,
-				namespaceResolver: (string) => string
+				namespaceResolver: (str: string) => string
 			) =>
 				chai.assert.throws(
 					() => {

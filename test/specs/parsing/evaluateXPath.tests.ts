@@ -415,7 +415,7 @@ describe('evaluateXPath', () => {
 					null,
 					null,
 					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-				) as Element).outerHTML,
+				) as slimdom.Element).outerHTML,
 				'<element>Some text, a <?processing instruction ?> and a <!--comment-->&lt;,&amp;and)</element>'
 			);
 

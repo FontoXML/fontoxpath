@@ -1,6 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
+		"lib": ["dom"],
 		"outDir": "./built",
 		"baseUrl": "..",
 		"target": "es2017",

@@ -15,7 +15,7 @@ export function buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests,
 
 		let jsonMl;
 		try {
-			jsonMl = parse(xQuery);
+			jsonMl = parse(xQuery, { xquery: true, outputDebugInfo: false });
 		} catch (err) {
 			if (err.location) {
 				const start = err.location.start.offset;
@@ -50,7 +50,7 @@ export function buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests,
 			skippableTests.push(`${testCase},Expected XML could not be parsed`);
 			throw e;
 		}
-		const nonSignificantWhitespace = evaluateXPathToNodes(
+		const nonSignificantWhitespace = evaluateXPathToNodes<slimdom.Node>(
 			'//*/text()[starts-with(., "&#xA;") and normalize-space(.)=""]',
 			expected,
 			null,

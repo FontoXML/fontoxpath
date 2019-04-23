@@ -11,13 +11,13 @@ beforeEach(() => {
 
 describe('AttributeConstructor', () => {
 	it('can create an attribute', () => {
-		const attribute = evaluateXPathToFirstNode(
+		const attribute = evaluateXPathToFirstNode<slimdom.Attr>(
 			'attribute attr {"val"}',
 			documentNode,
 			undefined,
 			{},
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-		) as Attr;
+		);
 
 		chai.assert.equal(attribute.nodeType, 2);
 		chai.assert.equal(attribute.name, 'attr');

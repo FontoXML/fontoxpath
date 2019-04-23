@@ -5,6 +5,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import {
 	evaluateXPathToNodes
 } from 'fontoxpath';
+import { Element } from 'fontoxpath/types/Types';
 
 let documentNode;
 beforeEach(() => {
@@ -68,7 +69,7 @@ describe('descendant-or-self', () => {
 			['a', ['a-a'], ['a-b']],
 			['b', ['b-a'], ['b-b']]
 		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('//*[name() = "root" or name() => starts-with("a") or name() => starts-with("b")]', documentNode).map(node => node.nodeName), ['root', 'a', 'a-a', 'a-b', 'b', 'b-a', 'b-b']);
+		chai.assert.deepEqual(evaluateXPathToNodes('//*[name() = "root" or name() => starts-with("a") or name() => starts-with("b")]', documentNode).map((node: Element) => node.localName), ['root', 'a', 'a-a', 'a-b', 'b', 'b-a', 'b-b']);
 	});
 
 	it('throws the correct error if context is absent', () => {
