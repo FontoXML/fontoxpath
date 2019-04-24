@@ -10,7 +10,7 @@ import INodesFactory from './nodesFactory/INodesFactory';
 import wrapExternalNodesFactory from './nodesFactory/wrapExternalNodesFactory';
 
 /**
- * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
+ * @public
  *
  * @param  pendingUpdateList - The updateScript to execute.
  * @param  domFacade         - The domFacade (or DomFacade like interface) for retrieving relations.
