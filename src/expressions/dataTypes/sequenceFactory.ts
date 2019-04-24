@@ -1,4 +1,4 @@
-import { AsyncIterator } from '../util/iterators';
+import { IAsyncIterator } from '../util/iterators';
 import { falseBoolean, trueBoolean } from './createAtomicValue';
 import ISequence from './ISequence';
 import ArrayBackedSequence from './Sequences/ArrayBackedSequence';
@@ -10,8 +10,8 @@ import Value from './Value';
 const emptySequence = new EmptySequence();
 
 function create(
-	value: Value | Value[] | AsyncIterator<Value> = null,
-	predictedLength: number = null
+	value: Value | Value[] | IAsyncIterator<Value> | null = null,
+	predictedLength: number | null | undefined = null
 ): ISequence {
 	if (value === null) {
 		return emptySequence;
@@ -27,10 +27,10 @@ function create(
 		}
 	}
 
-	if ((value as AsyncIterator<Value>).next) {
+	if ((value as IAsyncIterator<Value>).next) {
 		return new IteratorBackedSequence(
 			sequenceFactory,
-			value as AsyncIterator<Value>,
+			value as IAsyncIterator<Value>,
 			predictedLength
 		);
 	}

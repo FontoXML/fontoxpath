@@ -1,14 +1,17 @@
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 import Expression from './Expression';
-import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
+import PossiblyUpdatingExpression, { SequenceCallbacks } from './PossiblyUpdatingExpression';
+import StaticContext from './StaticContext';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
 class LetExpression extends PossiblyUpdatingExpression {
 	public _bindingSequence: Expression;
 	public _localName: string;
-	public _namespaceURI: string;
+	public _namespaceURI: string|null;
 	public _prefix: string;
 	public _returnExpression: Expression;
-	public _variableBinding: any;
+	public _variableBinding:  string|null;
 
 	constructor(
 		rangeVariable: { localName: string; namespaceURI: string | null; prefix: string },
@@ -43,10 +46,10 @@ class LetExpression extends PossiblyUpdatingExpression {
 	public performFunctionalEvaluation(
 		dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		[_createBindingSequence, createReturnExpression]: SequenceCallbacks
+		[createBindingSequence, createReturnExpression]: SequenceCallbacks
 	) {
 		const scopedContext = dynamicContext.scopeWithVariableBindings({
-			[this._variableBinding]: createDoublyIterableSequence(
+			[this._variableBinding!]: createDoublyIterableSequence(
 				createBindingSequence(dynamicContext)
 			)
 		});
@@ -54,7 +57,7 @@ class LetExpression extends PossiblyUpdatingExpression {
 		return createReturnExpression(scopedContext);
 	}
 
-	public performStaticEvaluation(staticContext) {
+	public performStaticEvaluation(staticContext: StaticContext) {
 		if (this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 

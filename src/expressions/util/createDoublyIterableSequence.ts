@@ -1,9 +1,10 @@
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { IterationHint } from './iterators';
+import Value from '../dataTypes/Value';
+import { IterationHint, IterationResult } from './iterators';
 
 export default function createDoublyIterableSequence(sequence: ISequence): () => ISequence {
-	const savedValues = [];
+	const savedValues: IterationResult<Value>[] = [];
 	const backingIterator = sequence.value;
 	return () => {
 		let i = 0;

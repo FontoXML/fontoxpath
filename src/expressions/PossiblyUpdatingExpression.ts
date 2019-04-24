@@ -6,7 +6,11 @@ import ExecutionParameters from './ExecutionParameters';
 import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
+<<<<<<< HEAD
 import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from './util/iterators';
+=======
+import { DONE_TOKEN, IAsyncIterator, notReady, ready } from './util/iterators';
+>>>>>>> Start on fixing tests
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
 
@@ -37,7 +41,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): AsyncIterator<UpdatingExpressionResult> {
+	): IAsyncIterator<UpdatingExpressionResult> {
 		let updateList = [];
 
 		const sequence = this.performFunctionalEvaluation(

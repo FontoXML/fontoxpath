@@ -1,5 +1,5 @@
 import ExecutionParameters from '../ExecutionParameters';
-import { AsyncIterator, AsyncResult, IterationHint } from '../util/iterators';
+import { IAsyncIterator, IAsyncResult, IterationHint } from '../util/iterators';
 import Value from './Value';
 
 type SwitchCasesCaseEmpty = {
@@ -36,7 +36,7 @@ export type SwitchCasesCases =
 	| SwitchCasesCaseAll;
 
 export default interface ISequence {
-	value: AsyncIterator<Value>;
+	value: IAsyncIterator<Value>;
 
 	atomize(executionParameters: ExecutionParameters): ISequence;
 	expandSequence(): ISequence;
@@ -52,8 +52,8 @@ export default interface ISequence {
 	mapAll(callback: (allValues: Value[]) => ISequence, hint?: IterationHint): ISequence;
 	switchCases(cases: SwitchCasesCases): ISequence;
 
-	tryGetAllValues(): AsyncResult<Value[]>;
-	tryGetEffectiveBooleanValue(): AsyncResult<boolean>;
-	tryGetFirst(): AsyncResult<Value | null>;
-	tryGetLength(onlyIfCheap?: boolean): AsyncResult<number>;
+	tryGetAllValues(): IAsyncResult<Value[]>;
+	tryGetEffectiveBooleanValue(): IAsyncResult<boolean>;
+	tryGetFirst(): IAsyncResult<Value | null>;
+	tryGetLength(onlyIfCheap?: boolean): IAsyncResult<number>;
 }

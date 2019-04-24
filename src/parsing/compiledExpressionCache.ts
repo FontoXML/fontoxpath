@@ -1,5 +1,5 @@
-import Expression from '../expressions/Expression';
 import ExecutionSpecificStaticContext from 'src/expressions/ExecutionSpecificStaticContext';
+import Expression from '../expressions/Expression';
 
 const compiledExpressionCache: { [s: string]: { [s: string]: CacheEntry[] } } = Object.create(null);
 

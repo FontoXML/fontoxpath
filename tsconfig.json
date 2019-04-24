@@ -7,7 +7,7 @@
 		"module": "commonjs",
 		"inlineSourceMap": true,
 		"declaration": true,
-		"strict": true,
+		"strict": false,
 		"inlineSources": true
 	},
 	"include": ["./src/**/*"]

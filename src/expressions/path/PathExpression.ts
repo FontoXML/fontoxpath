@@ -10,6 +10,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
 import createSingleValueIterator from '../util/createSingleValueIterator';
+<<<<<<< HEAD
 import {
 	AsyncIterator,
 	DONE_TOKEN,
@@ -18,6 +19,9 @@ import {
 	notReady,
 	ready
 } from '../util/iterators';
+=======
+import { DONE_TOKEN, IAsyncIterator, notReady, ready } from '../util/iterators';
+>>>>>>> Start on fixing tests
 
 function isSameNodeValue(a: Value, b: Value) {
 	if (a === null || b === null) {
@@ -30,8 +34,13 @@ function isSameNodeValue(a: Value, b: Value) {
 	return a.value === b.value;
 }
 
+<<<<<<< HEAD
 function concatSortedSequences(sequences: AsyncIterator<ISequence>): ISequence {
 	let currentSequence = sequences.next(IterationHint.NONE);
+=======
+function concatSortedSequences(_, sequences: IAsyncIterator<ISequence>): ISequence {
+	let currentSequence = sequences.next();
+>>>>>>> Start on fixing tests
 	if (currentSequence.done) {
 		return sequenceFactory.empty();
 	}
@@ -79,8 +88,13 @@ interface IMappedIterator extends AsyncIterator<Value> {
 }
 
 function mergeSortedSequences(
+<<<<<<< HEAD
 	domFacade: IWrappingDomFacade,
 	sequences: AsyncIterator<ISequence>
+=======
+	domFacade: DomFacade,
+	sequences: IAsyncIterator<ISequence>
+>>>>>>> Start on fixing tests
 ): ISequence {
 	const allIterators: IMappedIterator[] = [];
 	// Because the sequences are sorted locally, but unsorted globally, we first need to sort all the iterators.
@@ -188,10 +202,17 @@ function mergeSortedSequences(
 	});
 }
 
+<<<<<<< HEAD
 function sortResults(domFacade: IWrappingDomFacade, result: Value[]) {
 	let resultContainsNodes = false;
 	let resultContainsNonNodes = false;
 	result.forEach(resultValue => {
+=======
+function sortResults(domFacade, result) {
+	let resultContainsNodes = false;
+	let resultContainsNonNodes = false;
+	result.forEach((resultValue) => {
+>>>>>>> Start on fixing tests
 		if (isSubtypeOf(resultValue.type, 'node()')) {
 			resultContainsNodes = true;
 		} else {
@@ -229,7 +250,11 @@ class PathExpression extends Expression {
 				resultOrder: requireSortedResults
 					? RESULT_ORDERINGS.SORTED
 					: RESULT_ORDERINGS.UNSORTED,
+<<<<<<< HEAD
 				subtree: pathResultsInSubtreeSequence
+=======
+				subtree: pathResultsInSubtreeSequence,
+>>>>>>> Start on fixing tests
 			}
 		);
 
