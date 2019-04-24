@@ -58,10 +58,10 @@ class PrecedingAxis extends Expression {
 	private _testExpression: TestAbstractExpression;
 	constructor(testExpression: TestAbstractExpression) {
 		super(testExpression.specificity, [testExpression], {
-			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
+			canBeStaticallyEvaluated: false,
 			peer: true,
-			subtree: false,
-			canBeStaticallyEvaluated: false
+			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
+			subtree: false
 		});
 
 		this._testExpression = testExpression;

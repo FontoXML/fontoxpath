@@ -4,11 +4,11 @@ import CastResult from './CastResult';
 const createBase64BinaryValue = value => createAtomicValue(value, 'xs:base64Binary');
 
 function hexToString(hex) {
-	let string = '';
+	let text = '';
 	for (let i = 0; i < hex.length; i += 2) {
-		string += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+		text += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
 	}
-	return string;
+	return text;
 }
 
 declare var btoa;

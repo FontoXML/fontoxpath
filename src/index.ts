@@ -1,8 +1,13 @@
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
+<<<<<<< HEAD
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateXPath, { Language, Options, ReturnType } from './evaluateXPath';
+=======
+import evaluateUpdatingExpression from './evaluateUpdatingExpression';
+import evaluateXPath from './evaluateXPath';
+>>>>>>> Fix tslint warnings
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';

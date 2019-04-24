@@ -9,9 +9,9 @@ import {
 import IDomFacade from '../../domFacade/IDomFacade';
 import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
 import INodesFactory from '../../nodesFactory/INodesFactory';
+import { Attr, Document, Element, Node, ProcessingInstruction } from '../../types/Types';
 import QName from '../dataTypes/valueTypes/QName';
 import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
-import { Attr, Element, Document, Node, ProcessingInstruction } from '../../types/Types';
 
 /**
  * Deletes $target.

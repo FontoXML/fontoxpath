@@ -25,8 +25,13 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 	query,
 	args
 ) => {
+<<<<<<< HEAD
 	let resultIterator: AsyncIterator<Value>;
 	let queryString: string;
+=======
+	let resultIterator;
+	let queryString;
+>>>>>>> Fix tslint warnings
 	return sequenceFactory.create({
 		next: () => {
 			if (!resultIterator) {
@@ -143,11 +148,7 @@ declare const VERSION: string | undefined;
 const fontoxpathVersion: FunctionDefinitionType = () => {
 	let version: string;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
-	if (typeof VERSION === 'undefined') {
-		version = 'devbuild';
-	} else {
-		version = VERSION;
-	}
+	version = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
 	return sequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 };
 
@@ -155,7 +156,7 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 declare var DOMParser;
 declare var fetch;
 
-const fontoxpathFetch: FunctionDefinitionType = function(
+const fontoxpathFetch: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -216,7 +217,11 @@ export default {
 			callFunction: fontoxpathSleep,
 			localName: 'sleep',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+<<<<<<< HEAD
 			returnType: 'item()*'
+=======
+			returnType: 'item()*',
+>>>>>>> Fix tslint warnings
 		},
 		{
 			argumentTypes: ['xs:string', 'map(*)'],

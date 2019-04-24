@@ -1,6 +1,6 @@
 import { ConcreteNode } from '../../../domFacade/ConcreteNode';
-import { IPendingUpdate } from '../IPendingUpdate';
 import { Text } from '../../../types/Types';
+import { IPendingUpdate } from '../IPendingUpdate';
 
 export class ReplaceElementContentPendingUpdate extends IPendingUpdate {
 	public readonly type: 'replaceElementContent';

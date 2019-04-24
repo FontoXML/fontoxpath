@@ -12,9 +12,7 @@ import Expression from './expressions/Expression';
 import { DONE_TOKEN, IterationHint, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
-import IDomFacade from './domFacade/IDomFacade';
 import { Node } from './types/Types';
-import xPathParserRaw from './parsing/xPathParser.raw';
 
 function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
@@ -156,18 +154,18 @@ enum ReturnType {
 	ASYNC_ITERATOR = 99
 }
 
-interface ReturnTypes {
-	[ReturnType.ANY]: any,
-	[ReturnType.NUMBER]: number,
-	[ReturnType.STRING]: string,
-	[ReturnType.BOOLEAN]: boolean,
-	[ReturnType.NODES]: Node[],
-	[ReturnType.FIRST_NODE]: Node,
-	[ReturnType.STRINGS]: string[],
-	[ReturnType.MAP]: { [s: string]: any },
-	[ReturnType.ARRAY]: any[],
-	[ReturnType.NUMBERS]: number[],
-	[ReturnType.ASYNC_ITERATOR]: AsyncIterator<any>
+interface IReturnTypes {
+	[ReturnType.ANY]: any;
+	[ReturnType.NUMBER]: number;
+	[ReturnType.STRING]: string;
+	[ReturnType.BOOLEAN]: boolean;
+	[ReturnType.NODES]: Node[];
+	[ReturnType.FIRST_NODE]: Node;
+	[ReturnType.STRINGS]: string[];
+	[ReturnType.MAP]: { [s: string]: any };
+	[ReturnType.ARRAY]: any[];
+	[ReturnType.NUMBERS]: number[];
+	[ReturnType.ASYNC_ITERATOR]: AsyncIterator<any>;
 }
 
 
@@ -192,14 +190,14 @@ interface ReturnTypes {
  *
  * @returns The result of executing this XPath
  */
-const evaluateXPath = function evaluateXPath<T extends Node, TReturnType extends keyof ReturnTypes>(
+const evaluateXPath = function evaluateXPath<T extends Node, TReturnType extends keyof IReturnTypes>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	returnType?: TReturnType,
 	options?: Options | null
-): ReturnTypes[TReturnType] {
+): IReturnTypes[TReturnType] {
 	returnType = returnType || ReturnType.ANY as any;
 	if (!selector || typeof selector !== 'string') {
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
@@ -426,7 +424,7 @@ const evaluateXPath = function evaluateXPath<T extends Node, TReturnType extends
 						done: true,
 						value: null
 					});
-				}
+				};
 				if ('asyncIterator' in Symbol) {
 					return {
 						[Symbol.asyncIterator]() {
@@ -503,7 +501,7 @@ const evaluateXPath = function evaluateXPath<T extends Node, TReturnType extends
 	} catch (error) {
 		printAndRethrowError(selector, error);
 	}
-}
+};
 
 /**
  * @public

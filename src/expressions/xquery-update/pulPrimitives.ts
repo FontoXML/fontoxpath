@@ -1,4 +1,5 @@
 import { ConcreteNode } from '../../domFacade/ConcreteNode';
+import { Attr, Element, Text } from '../../types/Types';
 import QName from '../dataTypes/valueTypes/QName';
 import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';
 import { InsertAfterPendingUpdate } from './pendingUpdates/InsertAfterPendingUpdate';
@@ -11,7 +12,6 @@ import { RenamePendingUpdate } from './pendingUpdates/RenamePendingUpdate';
 import { ReplaceElementContentPendingUpdate } from './pendingUpdates/ReplaceElementContentPendingUpdate';
 import { ReplaceNodePendingUpdate } from './pendingUpdates/ReplaceNodePendingUpdate';
 import { ReplaceValuePendingUpdate } from './pendingUpdates/ReplaceValuePendingUpdate';
-import { Element, Text, Attr } from '../../types/Types';
 
 export const deletePu = (target: ConcreteNode) => {
 	return new DeletePendingUpdate(target);
