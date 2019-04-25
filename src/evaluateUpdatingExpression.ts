@@ -7,7 +7,7 @@ import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
-import { IterationResult } from './expressions/util/iterators';
+import { IterationHint, IterationResult } from './expressions/util/iterators';
 import INodesFactory from './nodesFactory/INodesFactory';
 
 export type UpdatingOptions = {
@@ -74,10 +74,10 @@ export default async function evaluateUpdatingExpression(
 			executionParameters
 		);
 
-		attempt = resultIterator.next();
+		attempt = resultIterator.next(IterationHint.NONE);
 		while (!attempt.ready) {
 			await attempt.promise;
-			attempt = resultIterator.next();
+			attempt = resultIterator.next(IterationHint.NONE);
 		}
 	} catch (error) {
 		printAndRethrowError(updateScript, error);

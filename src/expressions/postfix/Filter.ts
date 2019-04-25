@@ -1,10 +1,9 @@
-import Expression from '../Expression';
-
-import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import Expression from '../Expression';
+import { DONE_TOKEN, IterationHint, notReady, ready } from '../util/iterators';
 
 class Filter extends Expression {
 	private _filterExpression: Expression;
@@ -15,11 +14,11 @@ class Filter extends Expression {
 			selector.specificity.add(filterExpression.specificity),
 			[selector, filterExpression],
 			{
-				resultOrder: selector.expectedResultOrder,
-				peer: selector.peer,
-				subtree: selector.subtree,
 				canBeStaticallyEvaluated:
-					selector.canBeStaticallyEvaluated && filterExpression.canBeStaticallyEvaluated
+					selector.canBeStaticallyEvaluated && filterExpression.canBeStaticallyEvaluated,
+				peer: selector.peer,
+				resultOrder: selector.expectedResultOrder,
+				subtree: selector.subtree
 			}
 		);
 
@@ -27,7 +26,7 @@ class Filter extends Expression {
 		this._filterExpression = filterExpression;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const valuesToFilter = this._selector.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters
@@ -56,12 +55,12 @@ class Filter extends Expression {
 				// TODO: implement Sequence.itemAt(i), which is a no-op for empty sequences, a O(1) op for array backed sequence / singleton sequences and a O(n) for normal sequences.
 				// If we move sorting to sequences, this will be even faster, since a select is faster than a sort.
 				return sequenceFactory.create({
-					next: () => {
+					next: (_hint: IterationHint) => {
 						if (!done) {
 							for (
-								let value = iterator.next();
+								let value = iterator.next(IterationHint.NONE);
 								!value.done;
-								value = iterator.next()
+								value = iterator.next(IterationHint.NONE)
 							) {
 								if (!value.ready) {
 									return value;
@@ -90,10 +89,15 @@ class Filter extends Expression {
 		let i = 0;
 		let filterResultSequence = null;
 		return sequenceFactory.create({
-			next: () => {
+			next: (hint: IterationHint) => {
+				// We should only apply the hint the first time we call the nested iterator
+				let isHintApplied = false;
 				while (!iteratorItem || !iteratorItem.done) {
 					if (!iteratorItem) {
-						iteratorItem = iteratorToFilter.next();
+						iteratorItem = iteratorToFilter.next(
+							isHintApplied ? IterationHint.NONE : hint
+						);
+						isHintApplied = true;
 					}
 					if (iteratorItem.done) {
 						return iteratorItem;

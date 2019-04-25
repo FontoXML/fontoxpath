@@ -19,6 +19,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
+import { IterationHint } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import builtinStringFunctions from './builtInFunctions.string';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -247,19 +248,19 @@ function contains(
 	return false;
 }
 
-const fnOutermost: FunctionDefinitionType = function(
+const fnOutermost: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	nodeSequence
-) {
+) => {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
 			return sequenceFactory.empty();
 		}
 
 		const resultNodes = sortNodeValues(executionParameters.domFacade, allNodeValues).reduce(
-			function(previousNodes, node, i) {
+			(previousNodes, node, i) => {
 				if (i === 0) {
 					previousNodes.push(node);
 					return previousNodes;
@@ -283,7 +284,7 @@ const fnOutermost: FunctionDefinitionType = function(
 		);
 
 		return sequenceFactory.create(resultNodes);
-	});
+	}, IterationHint.SKIP_DESCENDANTS);
 };
 
 const fnInnermost: FunctionDefinitionType = function(

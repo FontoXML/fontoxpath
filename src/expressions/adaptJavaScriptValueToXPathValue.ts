@@ -90,7 +90,6 @@ function adaptJavaScriptValueToXPath(type, value: any): Value | null {
 		case 'xs:decimal':
 			return createAtomicValue(+value, 'xs:decimal');
 		case 'xs:integer':
-			// tslint:disable-next-line:no-bitwise
 			return createAtomicValue(value | 0, 'xs:integer');
 		case 'xs:float':
 			return createAtomicValue(+value, 'xs:float');

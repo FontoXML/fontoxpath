@@ -1,7 +1,12 @@
+import ISequence from './dataTypes/ISequence';
 import sequenceFactory from './dataTypes/sequenceFactory';
+import Value from './dataTypes/Value';
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
-import { DONE_TOKEN } from './util/iterators';
+import StaticContext from './StaticContext';
+import { AsyncIterator, DONE_TOKEN, IterationHint } from './util/iterators';
 
 class ForExpression extends PossiblyUpdatingExpression {
 	private _clauseExpression: Expression;
@@ -9,7 +14,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 	private _namespaceURI: string;
 	private _prefix: string;
 	private _returnExpression: Expression;
-	private _variableBindingKey: any;
+	private _variableBindingKey: string | null;
 
 	constructor(
 		rangeVariable: { localName: string; namespaceURI: string | null; prefix: string },
@@ -35,21 +40,23 @@ class ForExpression extends PossiblyUpdatingExpression {
 	}
 
 	public performFunctionalEvaluation(
-		dynamicContext,
-		executionParameters,
-		[_createBindingSequence, createReturnExpression]
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters,
+		[_createBindingSequence, createReturnExpression]: ((
+			dynamicContext: DynamicContext
+		) => ISequence)[]
 	) {
 		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters
 		).value;
-		let returnIterator = null;
+		let returnIterator: AsyncIterator<Value> | null = null;
 		let done = false;
 		return sequenceFactory.create({
-			next: () => {
+			next: (hint: IterationHint) => {
 				while (!done) {
 					if (returnIterator === null) {
-						const currentClauseValue = clauseIterator.next();
+						const currentClauseValue = clauseIterator.next(IterationHint.NONE);
 						if (!currentClauseValue.ready) {
 							return currentClauseValue;
 						}
@@ -65,7 +72,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 
 						returnIterator = createReturnExpression(nestedContext).value;
 					}
-					const returnValue = returnIterator.next();
+					const returnValue = returnIterator.next(hint);
 					if (returnValue.done) {
 						returnIterator = null;
 						// Get the next one
@@ -78,7 +85,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 		});
 	}
 
-	public performStaticEvaluation(staticContext) {
+	public performStaticEvaluation(staticContext: StaticContext) {
 		if (this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 

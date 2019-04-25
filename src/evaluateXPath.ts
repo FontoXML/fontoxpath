@@ -1,4 +1,5 @@
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
+import IDomFacade from './domFacade/IDomFacade';
 import buildContext from './evaluationUtils/buildContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import atomize from './expressions/dataTypes/atomize';
@@ -8,10 +9,9 @@ import sequenceFactory from './expressions/dataTypes/sequenceFactory';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
-import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
+import { DONE_TOKEN, IterationHint, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
-import IDomFacade from './domFacade/IDomFacade';
 
 function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
@@ -362,7 +362,7 @@ function evaluateXPath(
 				function getNextResult(): Promise<IteratorResult<any>> {
 					while (!done) {
 						if (!transformedValueGenerator) {
-							const value = it.next();
+							const value = it.next(IterationHint.NONE);
 							if (value.done) {
 								done = true;
 								break;

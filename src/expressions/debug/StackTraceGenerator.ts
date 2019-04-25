@@ -4,8 +4,9 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
-import { StackTraceEntry } from './StackTraceEntry';
 import StaticContext from '../StaticContext';
+import { IterationHint } from '../util/iterators';
+import { StackTraceEntry } from './StackTraceEntry';
 
 export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 	private _innerExpressionType: string;
@@ -43,9 +44,9 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 		}
 
 		return sequenceFactory.create({
-			next: () => {
+			next: (hint: IterationHint) => {
 				try {
-					return innerSequence.value.next();
+					return innerSequence.value.next(hint);
 				} catch (error) {
 					throw new StackTraceEntry(this._location, this._innerExpressionType, error);
 				}

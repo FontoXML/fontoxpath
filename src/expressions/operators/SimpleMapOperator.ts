@@ -1,7 +1,10 @@
-import Expression from '../Expression';
-
+import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import Expression from '../Expression';
 import Specificity from '../Specificity';
+import { IterationHint } from '../util/iterators';
 
 class SimpleMapOperator extends Expression {
 	private _expression1: Expression;
@@ -22,20 +25,20 @@ class SimpleMapOperator extends Expression {
 		this._expression2 = expression2;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const sequence = this._expression1.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters
 		);
 		const childContextIterator = dynamicContext.createSequenceIterator(sequence);
 		let childContext = null;
-		let sequenceValueIterator = null;
+		let sequenceValueIterator: ISequence = null;
 		let done = false;
 		return sequenceFactory.create({
-			next: () => {
+			next: (hint: IterationHint) => {
 				while (!done) {
 					if (!childContext) {
-						childContext = childContextIterator.next();
+						childContext = childContextIterator.next(hint);
 						if (childContext.done) {
 							done = true;
 							return childContext;
@@ -54,7 +57,7 @@ class SimpleMapOperator extends Expression {
 							executionParameters
 						);
 					}
-					const value = sequenceValueIterator.value.next();
+					const value = sequenceValueIterator.value.next(hint);
 					if (value.done) {
 						sequenceValueIterator = null;
 						// Move to next

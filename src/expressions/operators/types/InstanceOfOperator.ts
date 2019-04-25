@@ -1,4 +1,6 @@
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import sequenceEvery from '../../util/sequenceEvery';
 
@@ -15,7 +17,7 @@ class InstanceOfOperator extends Expression {
 		this._multiplicity = multiplicity;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const evaluatedExpression = this._expression.evaluateMaybeStatically(
 			dynamicContext,
 			executionParameters

@@ -1,19 +1,17 @@
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import sequenceFactory from '../dataTypes/sequenceFactory';
-import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
-import { transformArgument } from './argumentHelper';
-
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
-import zipSingleton from '../util/zipSingleton';
-import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
-
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
+import Value from '../dataTypes/Value';
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from '../util/iterators';
+import zipSingleton from '../util/zipSingleton';
+import { transformArgument } from './argumentHelper';
+import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function subSequence(sequence: ISequence, start: number, length: number) {
@@ -25,19 +23,17 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 	let newSequenceLength = null;
 	const startIndex = Math.max(start - 1, 0);
 	if (predictedLength.ready && predictedLength.value !== -1) {
-		let endIndex: number;
-		if (length === null) {
-			endIndex = predictedLength.value;
-		} else {
-			endIndex = Math.max(0, Math.min(predictedLength.value, length + (start - 1)));
-		}
+		const endIndex =
+			length === null
+				? predictedLength.value
+				: Math.max(0, Math.min(predictedLength.value, length + (start - 1)));
 		newSequenceLength = Math.max(0, endIndex - startIndex);
 	}
 	return sequenceFactory.create(
 		{
-			next: () => {
+			next: (hint: IterationHint) => {
 				while (i < start) {
-					const val = iterator.next();
+					const val = iterator.next(hint);
 					if (!val.ready) {
 						return val;
 					}
@@ -47,7 +43,7 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 					return DONE_TOKEN;
 				}
 
-				const val = iterator.next();
+				const val = iterator.next(hint);
 				if (!val.ready) {
 					return val;
 				}
@@ -284,22 +280,22 @@ const fnSubsequence: FunctionDefinitionType = function(
 	});
 };
 
-const fnUnordered: FunctionDefinitionType = function(
+const fnUnordered: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence;
 };
 
-const fnDeepEqual: FunctionDefinitionType = function(
+const fnDeepEqual: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	parameter1,
 	parameter2
-) {
+) => {
 	let hasPassed = false;
 	const deepEqualityIterator = sequenceDeepEqual(
 		dynamicContext,
@@ -310,11 +306,11 @@ const fnDeepEqual: FunctionDefinitionType = function(
 	);
 
 	return sequenceFactory.create({
-		next: () => {
+		next: (_hint: IterationHint) => {
 			if (hasPassed) {
 				return DONE_TOKEN;
 			}
-			const result = deepEqualityIterator.next();
+			const result = deepEqualityIterator.next(IterationHint.NONE);
 			if (!result.ready || result.done) {
 				return result;
 			}
@@ -558,13 +554,13 @@ const fnFilter: FunctionDefinitionType = function(
 	});
 };
 
-const fnForEach: FunctionDefinitionType = function(
+const fnForEach: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	sequence,
 	callbackSequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -576,12 +572,12 @@ const fnForEach: FunctionDefinitionType = function(
 	}
 
 	const outerIterator = sequence.value;
-	let innerIterator;
+	let innerIterator: AsyncIterator<Value>;
 	return sequenceFactory.create({
-		next: () => {
+		next: (hint: IterationHint) => {
 			while (true) {
 				if (!innerIterator) {
-					const item = outerIterator.next();
+					const item = outerIterator.next(IterationHint.NONE);
 
 					if (!item.ready || item.done) {
 						return item;
@@ -604,7 +600,7 @@ const fnForEach: FunctionDefinitionType = function(
 					innerIterator = nextSequence.value;
 				}
 
-				const entry = innerIterator.next();
+				const entry = innerIterator.next(hint);
 				if (!entry.done) {
 					return entry;
 				}

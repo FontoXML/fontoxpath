@@ -14,7 +14,7 @@ export default function getBucketsForNode(
 	node:
 		| {
 				nodeType: NODE_TYPES;
-		}
+		  }
 		| { localName: string; nodeType: NODE_TYPES.ELEMENT_NODE | NODE_TYPES.ATTRIBUTE_NODE }
 ): string[] {
 	const buckets = [];
