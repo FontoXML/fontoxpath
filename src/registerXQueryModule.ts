@@ -8,8 +8,10 @@ import { loadModuleFile } from './parsing/globalModuleCache';
 import processProlog from './parsing/processProlog';
 
 /**
- * @param   moduleString
- * @return  The namespace uri of the new module
+ * Register an XQuery module
+ * @public
+ * @param   moduleString - The string contents of the module
+ * @returns  The namespace uri of the new module
  */
 export default function registerXQueryModule(moduleString: string): string {
 	const parsedModule = parse(moduleString, { outputDebugInfo: false, xquery: true });

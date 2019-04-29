@@ -1,6 +1,6 @@
 import IDocumentWriter from './IDocumentWriter';
 
-export default new class DomBackedDocumentWriter implements IDocumentWriter {
+class DomBackedDocumentWriter implements IDocumentWriter {
 	public insertBefore(parent, newNode, referenceNode) {
 		return parent['insertBefore'](newNode, referenceNode);
 	}
@@ -20,4 +20,6 @@ export default new class DomBackedDocumentWriter implements IDocumentWriter {
 	public setData(node, data) {
 		node['data'] = data;
 	}
-}();
+}
+
+export default new DomBackedDocumentWriter();
