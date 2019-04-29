@@ -52,9 +52,9 @@ function parseXPath(xpathString: string) {
 
 /**
  * @public
- * @param xpathString - The XPath for which a buckets hould be retrieved
+ * @param xpathString - The XPath for which a bucket should be retrieved
  */
-function getBucketForSelector(xpathString) {
+function getBucketForSelector(xpathString: string) {
 	return parseXPath(xpathString).getBucket();
 }
 
@@ -74,7 +74,7 @@ function getBucketForSelector(xpathString) {
  *
  * @returns Either 1, 0, or -1
  */
-function compareSpecificity(xpathStringA, xpathStringB): -1 | 0 | 1 {
+function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 | 1 {
 	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
 }
 
