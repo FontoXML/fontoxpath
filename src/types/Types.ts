@@ -51,7 +51,6 @@ export type Document = Node & {
  * @public
  */
 export type Element = Node & {
-	data: string;
 	localName: string;
 	namespaceURI: string;
 	nodeName: string;

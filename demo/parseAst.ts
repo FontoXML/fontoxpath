@@ -1,9 +1,4 @@
 import { IAST } from '../src/parsing/astHelper';
-// import {
-// 	Document,
-// 	Element,
-// 	Node
-// } from '../src/types/Types';
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
