@@ -1,4 +1,15 @@
 import { IAST } from '../src/parsing/astHelper';
+import { Element, Node, Text } from '../src/types/Types';
+
+type DemoDocument = {
+	createElementNS: (namespaceURI: string, prefix: string) => DemoElement,
+	createTextNode: (data: string) => Text
+};
+
+type DemoElement = Element & {
+	appendChild: any,
+	setAttributeNS: any
+};
 
 /**
  * Transform the given JsonML fragment into the corresponding DOM structure, using the given document to
@@ -12,7 +23,7 @@ import { IAST } from '../src/parsing/astHelper';
  *
  * @return            The root node of the constructed DOM fragment
  */
-export function parseAst(document: Document, ast: IAST, parent?: Element): Node {
+export function parseAst(document: DemoDocument, ast: IAST, parent?: DemoElement): Node {
 	if (typeof ast === 'string' || typeof ast === 'number') {
 		return document.createTextNode(ast as string);
 	}
