@@ -1,9 +1,9 @@
 import ExecutionParameters from '../../ExecutionParameters';
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import {
-	AsyncResult,
 	DONE_TOKEN,
 	IAsyncIterator,
+	IAsyncResult,
 	IterationHint,
 	notReady,
 	ready
@@ -150,7 +150,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 	public mapAll(callback: (allValues: Value[]) => ISequence, hint: IterationHint): ISequence {
 		const iterator = this.value;
-		let mappedResultsIterator: AsyncIterator<Value>;
+		let mappedResultsIterator: IAsyncIterator<Value>;
 		const allResults: Value[] = [];
 		let isReady = false;
 		let readyPromise = null;
@@ -176,13 +176,13 @@ export default class IteratorBackedSequence implements ISequence {
 				if (!isReady) {
 					return notReady(readyPromise);
 				}
-				return mappedResultsIterator.next(IterationHint.NONE);
+				return mappedResultsIterator.next(hint);
 			}
 		});
 	}
 
 	public switchCases(cases: SwitchCasesCases): ISequence {
-		let resultIterator: AsyncIterator<Value> = null;
+		let resultIterator: IAsyncIterator<Value> = null;
 
 		const setResultIterator = (resultSequence: ISequence) => {
 			resultIterator = resultSequence.value;

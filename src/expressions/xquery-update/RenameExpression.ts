@@ -8,7 +8,7 @@ import { mergeUpdates } from './pulRoutines';
 
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import QName from '../dataTypes/valueTypes/QName';
-import { AsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
 import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
 
 import sequenceFactory from '../dataTypes/sequenceFactory';
@@ -112,7 +112,7 @@ class RenameExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): AsyncIterator<UpdatingExpressionResult> {
+	): IAsyncIterator<UpdatingExpressionResult> {
 		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters

@@ -140,7 +140,10 @@ export type Options = {
 	nodesFactory?: INodesFactory;
 };
 
-enum ReturnType {
+/**
+ * @public
+ */
+export enum ReturnType {
 	ANY = 0,
 	NUMBER = 1,
 	STRING = 2,
@@ -190,7 +193,7 @@ interface IReturnTypes {
  *
  * @returns The result of executing this XPath
  */
-const evaluateXPath = function evaluateXPath<T extends Node, TReturnType extends keyof IReturnTypes>(
+const evaluateXPath = function _evaluateXPath<T extends Node, TReturnType extends keyof IReturnTypes>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
@@ -200,7 +203,7 @@ const evaluateXPath = function evaluateXPath<T extends Node, TReturnType extends
 ): IReturnTypes[TReturnType] {
 	returnType = returnType || ReturnType.ANY as any;
 	if (!selector || typeof selector !== 'string') {
-		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
+		throw new TypeError("Failed to execute '_': xpathExpression must be a string.");
 	}
 
 	options = options || {};
@@ -502,23 +505,6 @@ const evaluateXPath = function evaluateXPath<T extends Node, TReturnType extends
 		printAndRethrowError(selector, error);
 	}
 };
-
-/**
- * @public
- */
-export enum ReturnType {
-	ANY = 0,
-	NUMBER = 1,
-	STRING = 2,
-	BOOLEAN = 3,
-	NODES = 7,
-	FIST_NODE = 9,
-	STRINGS = 10,
-	MAP = 11,
-	ARRAY = 12,
-	NUMBERS = 13,
-	ASYNC_ITERATOR = 99
-}
 
 /**
  * Returns the result of the query, can be anything depending on the

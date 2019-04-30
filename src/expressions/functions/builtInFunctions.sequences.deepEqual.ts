@@ -8,18 +8,14 @@ import createSingleValueIterator from '../util/createSingleValueIterator';
 import builtInFunctionsNode from './builtInFunctions.node';
 
 import { equal } from '../dataTypes/valueTypes/DateTime';
-<<<<<<< HEAD
 import {
-	AsyncIterator,
 	DONE_TOKEN,
+	IAsyncIterator,
 	IterationHint,
 	IterationResult,
 	notReady,
 	ready
 } from '../util/iterators';
-=======
-import { IAsyncIterator, DONE_TOKEN, notReady, ready } from '../util/iterators';
->>>>>>> Start on fixing tests
 
 import ArrayValue from '../dataTypes/ArrayValue';
 import MapValue from '../dataTypes/MapValue';
@@ -37,7 +33,7 @@ function asyncGenerateEvery<T>(
 	let i = 0;
 	const l = items.length;
 	let done = false;
-	let filterGenerator: AsyncIterator<boolean> = null;
+	let filterGenerator: IAsyncIterator<boolean> = null;
 	return {
 		next: () => {
 			if (!done) {
@@ -137,7 +133,7 @@ function sequenceDeepEqual(
 	const it2 = sequence2.value;
 	let item1: IterationResult<Value> = null;
 	let item2: IterationResult<Value> = null;
-	let comparisonGenerator: AsyncIterator<boolean> = null;
+	let comparisonGenerator: IAsyncIterator<boolean> = null;
 	let done: boolean;
 	return {
 		next: (_hint: IterationHint) => {

@@ -3,7 +3,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { OptimizationOptions } from '../Expression';
 import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { AsyncIterator, notReady, ready } from '../util/iterators';
+import { IAsyncIterator, notReady, ready } from '../util/iterators';
 
 abstract class UpdatingExpression extends Expression {
 	constructor(
@@ -21,7 +21,7 @@ abstract class UpdatingExpression extends Expression {
 	): (
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	) => AsyncIterator<UpdatingExpressionResult> {
+	) => IAsyncIterator<UpdatingExpressionResult> {
 		if (expression.isUpdating) {
 			const updatingExpression = expression as UpdatingExpression;
 			return (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) =>
@@ -54,7 +54,7 @@ abstract class UpdatingExpression extends Expression {
 	public abstract evaluateWithUpdateList(
 		_dynamicContext: DynamicContext | null,
 		_executionParameters: ExecutionParameters
-	): AsyncIterator<UpdatingExpressionResult>;
+	): IAsyncIterator<UpdatingExpressionResult>;
 }
 
 export default UpdatingExpression;

@@ -3,13 +3,17 @@ import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import { registerFunction } from './expressions/functions/functionRegistry';
 
 import IDomFacade from './domFacade/IDomFacade';
+import ISequence from './expressions/dataTypes/ISequence';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import {
 	registerStaticallyKnownNamespace,
 	staticallyKnownNamespaceByPrefix
 } from './expressions/staticallyKnownNamespaces';
-import ISequence from './expressions/dataTypes/ISequence';
+
+type DomFacadeWrapper = {
+    domFacade: IDomFacade;
+};
 
 function adaptXPathValueToJavascriptValue(
 	valueSequence: ISequence,

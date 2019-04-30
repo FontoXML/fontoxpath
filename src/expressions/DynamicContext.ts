@@ -102,13 +102,9 @@ class DynamicContext {
 		);
 	}
 
-<<<<<<< HEAD
 	public scopeWithVariableBindings(variableBindings: {
 		[s: string]: () => ISequence;
 	}): DynamicContext {
-=======
-	public scopeWithVariableBindings(variableBindings: { [s: string]: () => ISequence }): DynamicContext {
->>>>>>> Start on fixing tests
 		return new DynamicContext(
 			{
 				contextItem: this.contextItem,

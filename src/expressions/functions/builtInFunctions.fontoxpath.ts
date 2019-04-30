@@ -3,7 +3,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 
 import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -25,13 +25,8 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 	query,
 	args
 ) => {
-<<<<<<< HEAD
-	let resultIterator: AsyncIterator<Value>;
+	let resultIterator: IAsyncIterator<Value>;
 	let queryString: string;
-=======
-	let resultIterator;
-	let queryString;
->>>>>>> Fix tslint warnings
 	return sequenceFactory.create({
 		next: () => {
 			if (!resultIterator) {
@@ -217,11 +212,7 @@ export default {
 			callFunction: fontoxpathSleep,
 			localName: 'sleep',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-<<<<<<< HEAD
 			returnType: 'item()*'
-=======
-			returnType: 'item()*',
->>>>>>> Fix tslint warnings
 		},
 		{
 			argumentTypes: ['xs:string', 'map(*)'],

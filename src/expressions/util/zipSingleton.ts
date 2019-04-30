@@ -1,6 +1,6 @@
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { AsyncIterator, IterationHint, notReady } from './iterators';
+import { IAsyncIterator, IterationHint, notReady } from './iterators';
 
 import Value from '../dataTypes/Value';
 
@@ -13,7 +13,7 @@ export default function zipSingleton(sequences: ISequence[], callback: CallbackT
 		return callback(firstValues.map(seq => seq.value));
 	}
 
-	let iterator: AsyncIterator<Value> = null;
+	let iterator: IAsyncIterator<Value> = null;
 	return sequenceFactory.create({
 		next: (hint: IterationHint) => {
 			if (iterator === null) {

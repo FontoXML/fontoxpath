@@ -29,7 +29,7 @@ export function ready<T>(value: T) {
 }
 
 export interface IAsyncIterator<T> {
-	next(): IterationResult<T>;
+	next(hint: IterationHint): IterationResult<T>;
 }
 
 export interface IAsyncResult<T> {

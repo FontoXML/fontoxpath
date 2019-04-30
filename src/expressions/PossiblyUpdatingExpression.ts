@@ -6,11 +6,7 @@ import ExecutionParameters from './ExecutionParameters';
 import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
-<<<<<<< HEAD
-import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from './util/iterators';
-=======
-import { DONE_TOKEN, IAsyncIterator, notReady, ready } from './util/iterators';
->>>>>>> Start on fixing tests
+import { IAsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
 

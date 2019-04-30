@@ -14,7 +14,7 @@ import {
 import { mergeUpdates } from './pulRoutines';
 
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import { AsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 
 import DynamicContext from '../DynamicContext';
@@ -127,7 +127,7 @@ class InsertExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): AsyncIterator<UpdatingExpressionResult> {
+	): IAsyncIterator<UpdatingExpressionResult> {
 		const sourceValueIterator = super.ensureUpdateListWrapper(this._sourceExpression)(
 			dynamicContext,
 			executionParameters
