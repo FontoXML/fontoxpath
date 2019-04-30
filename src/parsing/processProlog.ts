@@ -7,12 +7,12 @@ import createDoublyIterableSequence from '../expressions/util/createDoublyIterab
 
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 
+import ISequence from '../expressions/dataTypes/ISequence';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
-import { errXQST0070 } from '../expressions/xquery/XQueryErrors';
 import Expression from '../expressions/Expression';
-import FunctionDefinitionType from 'src/expressions/functions/FunctionDefinitionType';
-import ISequence from 'src/expressions/dataTypes/ISequence';
+import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
+import { errXQST0070 } from '../expressions/xquery/XQueryErrors';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -116,7 +116,7 @@ export default function processProlog(
 	});
 
 	astHelper.getChildren(prolog, 'functionDecl').forEach(declaration => {
-		const functionName = astHelper.getFirstChild(declaration, 'functionName')!;
+		const functionName = astHelper.getFirstChild(declaration, 'functionName');
 		const declarationPrefix = astHelper.getAttribute(functionName, 'prefix');
 		let declarationNamespaceURI = astHelper.getAttribute(functionName, 'URI');
 		const declarationLocalName = astHelper.getTextContent(functionName);
@@ -131,7 +131,7 @@ export default function processProlog(
 			}
 		}
 
-		if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)!) {
+		if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
 			throw new Error(
 				'XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.'
 			);
@@ -140,7 +140,7 @@ export default function processProlog(
 		// Functions are public unless they're private
 		const isPublicDeclaration = astHelper
 			.getChildren(declaration, 'annotation')
-			.map(annotation => astHelper.getFirstChild(annotation, 'annotationName')!)
+			.map(annotation => astHelper.getFirstChild(annotation, 'annotationName'))
 			.every(
 				annotationName =>
 					!astHelper.getAttribute(annotationName, 'URI') &&
@@ -152,14 +152,14 @@ export default function processProlog(
 		}
 
 		// functionBody always has a single expression
-		const body = astHelper.getFirstChild(declaration, 'functionBody')![1];
+		const body = astHelper.getFirstChild(declaration, 'functionBody')[1];
 		const returnType = astHelper.getTypeDeclaration(declaration);
 		const params = astHelper.getChildren(
-			astHelper.getFirstChild(declaration, 'paramList')!,
+			astHelper.getFirstChild(declaration, 'paramList'),
 			'param'
 		);
-		const paramNames = params.map(param => astHelper.getFirstChild(param, 'varName')!);
-		const paramTypes = params.map(param => astHelper.getTypeDeclaration(param)!);
+		const paramNames = params.map(param => astHelper.getFirstChild(param, 'varName'));
+		const paramTypes = params.map(param => astHelper.getTypeDeclaration(param));
 
 		if (
 			staticContext.lookupFunction(
@@ -244,9 +244,9 @@ export default function processProlog(
 		}
 	});
 
-	const registeredVariables: { namespaceURI: null | string; localName: string }[] = [];
+	const registeredVariables: { localName: string; namespaceURI: null | string }[] = [];
 	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
-		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName')!)!;
+		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		const external = astHelper.getFirstChild(varDecl, 'external');
 		if (!external || astHelper.getFirstChild(external, 'varValue')) {
 			throw new Error(

@@ -8,10 +8,10 @@ import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 class LetExpression extends PossiblyUpdatingExpression {
 	public _bindingSequence: Expression;
 	public _localName: string;
-	public _namespaceURI: string|null;
+	public _namespaceURI: string | null;
 	public _prefix: string;
 	public _returnExpression: Expression;
-	public _variableBinding:  string|null;
+	public _variableBinding: string | null;
 
 	constructor(
 		rangeVariable: { localName: string; namespaceURI: string | null; prefix: string },
@@ -49,7 +49,7 @@ class LetExpression extends PossiblyUpdatingExpression {
 		[createBindingSequence, createReturnExpression]: SequenceCallbacks
 	) {
 		const scopedContext = dynamicContext.scopeWithVariableBindings({
-			[this._variableBinding!]: createDoublyIterableSequence(
+			[this._variableBinding]: createDoublyIterableSequence(
 				createBindingSequence(dynamicContext)
 			)
 		});

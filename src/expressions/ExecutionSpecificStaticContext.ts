@@ -18,9 +18,13 @@ export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
 
 	private _namespaceResolver: (namespaceURI: string) => null | string;
-	private _referredNamespaceByName: {[prefix: string]: {localName: string; namespaceURI: string}};
-	private _referredVariableByName: {[variable: string]: {localName: string; namespaceURI: string}};
-	private _variableBindingByName: {[variableName: string]: string};
+	private _referredNamespaceByName: {
+		[prefix: string]: { localName: string; namespaceURI: string };
+	};
+	private _referredVariableByName: {
+		[variable: string]: { localName: string; namespaceURI: string };
+	};
+	private _variableBindingByName: { [variableName: string]: string };
 	private _variableValueByName: any;
 
 	constructor(namespaceResolver: (prefix: string) => string | null, variableByName: object) {
@@ -48,11 +52,11 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		this.executionContextWasRequired = false;
 	}
 
-	public getReferredNamespaces(): {localName: string; namespaceURI: string}[] {
+	public getReferredNamespaces(): { localName: string; namespaceURI: string }[] {
 		return Object.values(this._referredNamespaceByName);
 	}
 
-	public getReferredVariables(): {localName: string; namespaceURI: string}[] {
+	public getReferredVariables(): { localName: string; namespaceURI: string }[] {
 		return Object.values(this._referredVariableByName);
 	}
 

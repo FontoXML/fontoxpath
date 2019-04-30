@@ -88,7 +88,7 @@ class DynamicContext {
 
 	public scopeWithFocus(
 		contextItemIndex: number,
-		contextItem: Value|null,
+		contextItem: Value | null,
 		contextSequence: ISequence
 	): DynamicContext {
 		return new DynamicContext(

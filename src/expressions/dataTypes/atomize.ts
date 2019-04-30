@@ -64,7 +64,7 @@ export default function atomize(
 
 		return createAtomicValue(
 			allTextNodes
-				.map((textNode) => {
+				.map(textNode => {
 					return executionParameters.domFacade.getData(textNode);
 				})
 				.join(''),

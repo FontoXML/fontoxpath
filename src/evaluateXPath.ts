@@ -171,7 +171,6 @@ interface IReturnTypes {
 	[ReturnType.ASYNC_ITERATOR]: AsyncIterator<any>;
 }
 
-
 /**
  * Evaluates an XPath on the given contextItem.
  *
@@ -193,7 +192,10 @@ interface IReturnTypes {
  *
  * @returns The result of executing this XPath
  */
-const evaluateXPath = function _evaluateXPath<T extends Node, TReturnType extends keyof IReturnTypes>(
+const evaluateXPath = function _evaluateXPath<
+	T extends Node,
+	TReturnType extends keyof IReturnTypes
+>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
@@ -201,7 +203,7 @@ const evaluateXPath = function _evaluateXPath<T extends Node, TReturnType extend
 	returnType?: TReturnType,
 	options?: Options | null
 ): IReturnTypes[TReturnType] {
-	returnType = returnType || ReturnType.ANY as any;
+	returnType = returnType || (ReturnType.ANY as any);
 	if (!selector || typeof selector !== 'string') {
 		throw new TypeError("Failed to execute '_': xpathExpression must be a string.");
 	}
@@ -309,9 +311,9 @@ const evaluateXPath = function _evaluateXPath<T extends Node, TReturnType extend
 				if (!isSubtypeOf(first.value.type, 'node()')) {
 					throw new Error(
 						'Expected XPath ' +
-						selector +
-						' to resolve to Node. Got ' +
-						first.value.type
+							selector +
+							' to resolve to Node. Got ' +
+							first.value.type
 					);
 				}
 				return first.value.value;
@@ -474,8 +476,8 @@ const evaluateXPath = function _evaluateXPath<T extends Node, TReturnType extend
 						if (!transformedArray.ready) {
 							throw new Error(
 								'Expected XPath ' +
-								selector +
-								' to synchronously resolve to an array'
+									selector +
+									' to synchronously resolve to an array'
 							);
 						}
 						return transformedArray.value;

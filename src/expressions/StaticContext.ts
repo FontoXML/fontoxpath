@@ -1,7 +1,7 @@
 import IContext from './Context';
-import { FunctionProperties } from './functions/functionRegistry';
 import TypeDeclaration from './dataTypes/TypeDeclaration';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
+import { FunctionProperties } from './functions/functionRegistry';
 
 function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
@@ -21,11 +21,11 @@ function lookupInOverrides(overrides: any[] | { [x: string]: any }[], key: strin
 export type FunctionDefinition = {
 	argumentTypes: TypeDeclaration[];
 	arity: number;
-	callFunction: FunctionDefinitionType
+	callFunction: FunctionDefinitionType;
 	localName: string;
 	namespaceURI: string;
 	returnType: TypeDeclaration;
-}
+};
 
 /**
  * The static context consists of all information that is available at compile time: the globally
@@ -143,7 +143,7 @@ export default class StaticContext {
 	 * We need this to separate variable declaration (which is required to be done statically) and
 	 * from when the dynamic context of the variable will be known.
 	 */
-	public registerVariable(namespaceURI: string|null, localName: string) {
+	public registerVariable(namespaceURI: string | null, localName: string) {
 		const hash = createHashKey(namespaceURI || '', localName);
 		return (this._registeredVariableBindingByHashKey[this._scopeDepth][hash] = `${hash}[${
 			this._scopeCount

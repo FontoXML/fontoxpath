@@ -313,12 +313,7 @@ export const replaceValue = (
 	if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
 		const element = domFacade.getParentNode(target) as Element;
 		if (element) {
-			documentWriter.setAttributeNS(
-				element,
-				target.namespaceURI,
-				target.name,
-				stringValue
-			);
+			documentWriter.setAttributeNS(element, target.namespaceURI, target.name, stringValue);
 		} else {
 			target.value = stringValue;
 		}

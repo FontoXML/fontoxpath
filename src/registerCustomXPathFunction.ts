@@ -12,7 +12,7 @@ import {
 } from './expressions/staticallyKnownNamespaces';
 
 type DomFacadeWrapper = {
-    domFacade: IDomFacade;
+	domFacade: IDomFacade;
 };
 
 function adaptXPathValueToJavascriptValue(

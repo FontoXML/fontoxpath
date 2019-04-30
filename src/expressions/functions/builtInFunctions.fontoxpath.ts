@@ -170,7 +170,6 @@ const fontoxpathFetch: FunctionDefinitionType = (
 					return urlValue;
 				}
 
-
 				readyPromise = fetch(urlValue.value.value)
 					.then(response => response.text())
 					.then(text => new DOMParser().parseFromString(text, 'application/xml'))
