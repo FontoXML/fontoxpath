@@ -33,11 +33,11 @@ builtInFunctions.forEach(builtInFunction => {
 	);
 });
 
-function createDefaultNamespaceResolver(contextItem: Node): (s: string) => string {
+function createDefaultNamespaceResolver(contextItem: any): (s: string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return _prefix => null;
 	}
-	return prefix => contextItem['lookupNamespaceURI'](prefix || null);
+	return prefix => (contextItem as Node)['lookupNamespaceURI'](prefix || null);
 }
 
 function normalizeEndOfLines(xpathString: string) {

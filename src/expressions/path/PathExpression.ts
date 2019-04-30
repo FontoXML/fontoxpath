@@ -250,11 +250,11 @@ class PathExpression extends Expression {
 						intermediateResultNodesSequence
 					);
 				}
-				let resultValuesInOrderOfEvaluation = {
+				let resultValuesInOrderOfEvaluation: IAsyncIterator<ISequence> = {
 					next: (hint: IterationHint) => {
 						const childContext = childContextIterator.next(hint);
 						if (!childContext.ready) {
-							return childContext;
+							return notReady(childContext.promise);
 						}
 
 						if (childContext.done) {
@@ -286,15 +286,15 @@ class PathExpression extends Expression {
 							const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
 							resultValuesInOrderOfEvaluation = {
 								next: (hint: IterationHint) => {
-									const result = resultValuesInReverseOrder.next(hint);
-									if (!result.ready) {
-										return result;
+									const res = resultValuesInReverseOrder.next(hint);
+									if (!res.ready) {
+										return res;
 									}
-									if (result.done) {
-										return result;
+									if (res.done) {
+										return res;
 									}
 									return ready(
-										result.value.mapAll(items =>
+										res.value.mapAll(items =>
 											sequenceFactory.create(items.reverse())
 										)
 									);

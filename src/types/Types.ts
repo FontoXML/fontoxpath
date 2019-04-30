@@ -1,7 +1,13 @@
+/**
+ * @public
+ */
 export type Node = {
 	nodeType: number;
 };
 
+/**
+ * @public
+ */
 export type Attr = Node & {
 	localName: string;
 	name: string;
@@ -11,12 +17,24 @@ export type Attr = Node & {
 	value: string;
 };
 
+/**
+ * @public
+ */
 export type CharacterData = Node & { data: string };
 
+/**
+ * @public
+ */
 export type CDATASection = CharacterData;
 
+/**
+ * @public
+ */
 export type Comment = CharacterData;
 
+/**
+ * @public
+ */
 export type Document = Node & {
 	implementation: {
 		createDocument(namespaceURI: null, qualifiedNameStr: null, documentType: null): Document;
@@ -29,6 +47,9 @@ export type Document = Node & {
 	createTextNode(data: string): Text;
 };
 
+/**
+ * @public
+ */
 export type Element = Node & {
 	data: string;
 	localName: string;
@@ -37,9 +58,15 @@ export type Element = Node & {
 	prefix: string;
 };
 
+/**
+ * @public
+ */
 export type ProcessingInstruction = CharacterData & {
 	nodeName: string;
 	target: string;
 };
 
+/**
+ * @public
+ */
 export type Text = CharacterData;

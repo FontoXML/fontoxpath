@@ -18,11 +18,14 @@ export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
 
 	private _namespaceResolver: (namespaceURI: string) => null | string;
+
+	// The static compilation step depends on the prefix -> namespaceURI pairs in the namespace resolver
 	private _referredNamespaceByName: {
-		[prefix: string]: { localName: string; namespaceURI: string };
+		[prefix: string]: { namespaceURI: string; prefix: string };
 	};
+	// And the ABSENCE of variables: a statically compiled XPath does not compile the same when external variables are absent in the calling code.
 	private _referredVariableByName: {
-		[variable: string]: { localName: string; namespaceURI: string };
+		[variable: string]: { name: string };
 	};
 	private _variableBindingByName: { [variableName: string]: string };
 	private _variableValueByName: any;
@@ -52,11 +55,11 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		this.executionContextWasRequired = false;
 	}
 
-	public getReferredNamespaces(): { localName: string; namespaceURI: string }[] {
+	public getReferredNamespaces(): { namespaceURI: string; prefix: string }[] {
 		return Object.values(this._referredNamespaceByName);
 	}
 
-	public getReferredVariables(): { localName: string; namespaceURI: string }[] {
+	public getReferredVariables(): { name: string }[] {
 		return Object.values(this._referredVariableByName);
 	}
 
@@ -65,7 +68,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		return getFunctionByArity(namespaceURI, localName, arity);
 	}
 
-	public lookupVariable(namespaceURI, localName) {
+	public lookupVariable(namespaceURI: string, localName: string) {
 		this.executionContextWasRequired = true;
 
 		if (namespaceURI) {
@@ -75,14 +78,13 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		const bindingName = this._variableBindingByName[localName];
 		if (!this._referredVariableByName[localName]) {
 			this._referredVariableByName[localName] = {
-				name: localName,
-				value: this._variableValueByName[localName]
+				name: localName
 			};
 		}
 		return bindingName;
 	}
 
-	public resolveNamespace(prefix) {
+	public resolveNamespace(prefix: string) {
 		// See if it 'globally' known:
 		if (staticallyKnownNamespaceByPrefix[prefix]) {
 			return staticallyKnownNamespaceByPrefix[prefix];

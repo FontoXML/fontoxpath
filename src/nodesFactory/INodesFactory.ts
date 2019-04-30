@@ -1,6 +1,3 @@
-/**
- * @public
- */
 import {
 	Attr,
 	CDATASection,
@@ -11,6 +8,9 @@ import {
 	Text
 } from '../types/Types';
 
+/**
+ * @public
+ */
 export default interface INodesFactory {
 	createAttributeNS(namespaceURI: string, name: string): Attr;
 

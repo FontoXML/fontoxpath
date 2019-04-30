@@ -157,7 +157,10 @@ export enum ReturnType {
 	ASYNC_ITERATOR = 99
 }
 
-interface IReturnTypes {
+/**
+ * @public
+ */
+export interface IReturnTypes {
 	[ReturnType.ANY]: any;
 	[ReturnType.NUMBER]: number;
 	[ReturnType.STRING]: string;

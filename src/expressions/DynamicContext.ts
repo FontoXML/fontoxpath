@@ -2,7 +2,7 @@ import ISequence from './dataTypes/ISequence';
 import Value from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
-import { IAsyncIterator, IterationHint, ready } from './util/iterators';
+import { IAsyncIterator, IterationHint, notReady, ready } from './util/iterators';
 
 type TemporalContext = {
 	currentDateTime: DateTime | null;
@@ -59,7 +59,7 @@ class DynamicContext {
 					return value;
 				}
 				if (!value.ready) {
-					return value;
+					return notReady(value.promise);
 				}
 				return ready(this.scopeWithFocus(i++, value.value, contextSequence));
 			}

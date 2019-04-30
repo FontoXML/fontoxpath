@@ -1,5 +1,5 @@
 import { NODE_TYPES } from './domFacade/ConcreteNode';
-import { Element } from './types/Types';
+import { Attr, Element, Node } from './types/Types';
 
 /**
  * Get the buckets that apply to a given node.
@@ -13,19 +13,14 @@ import { Element } from './types/Types';
  * @param node - The node which buckets should be retrieved
  */
 export default function getBucketsForNode(
-	// TODO: Use the internal Node type for this parameter when we create one
-	node:
-		| {
-				nodeType: number;
-		  }
-		| { localName: string; nodeType: 1 | 2 }
+	node: Node
 ): string[] {
 	const buckets = [];
 
 	buckets.push('type-' + node.nodeType);
 
-	if (node.nodeType === 1 || node.nodeType === 2) {
-		buckets.push('name-' + (node as Element).localName);
+	if (node.nodeType === NODE_TYPES.ATTRIBUTE_NODE || node.nodeType === NODE_TYPES.ELEMENT_NODE) {
+		buckets.push('name-' + (node as (Attr|Element)).localName);
 	}
 
 	return buckets;

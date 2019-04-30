@@ -111,7 +111,7 @@ const fontoxpathSleep: FunctionDefinitionType = (
 	howLong
 ) => {
 	let doneWithSleep = false;
-	let readyPromise: Promise<{}>;
+	let readyPromise: Promise<void>;
 
 	const valueIterator = val.value;
 	return sequenceFactory.create({
