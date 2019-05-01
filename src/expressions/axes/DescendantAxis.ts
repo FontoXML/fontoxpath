@@ -16,7 +16,7 @@ function createInclusiveDescendantGenerator(
 	domFacade: IDomFacade,
 	node: ConcreteChildNode
 ): IAsyncIterator<Value> {
-	const descendantIteratorStack: Iterator<ConcreteChildNode>[] = [
+	const descendantIteratorStack: IAsyncIterator<ConcreteChildNode>[] = [
 		createSingleValueIterator(node)
 	];
 	return {
