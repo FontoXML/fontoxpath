@@ -82,7 +82,7 @@
 		"ts-mocha": "^2.0.0",
 		"ts-node": "^8.1.0",
 		"tsconfig-paths": "^3.8.0",
-		"tsickle": "^0.34.3",
+		"tsickle": "^0.35.0",
 		"tslint": "^5.16.0",
 		"tslint-config-prettier": "^1.18.0",
 		"typescript": "^3.4.4",
