@@ -160,13 +160,13 @@ export enum ReturnType {
 /**
  * @public
  */
-export interface IReturnTypes {
+export interface IReturnTypes<T extends Node> {
 	[ReturnType.ANY]: any;
 	[ReturnType.NUMBER]: number;
 	[ReturnType.STRING]: string;
 	[ReturnType.BOOLEAN]: boolean;
-	[ReturnType.NODES]: Node[];
-	[ReturnType.FIRST_NODE]: Node;
+	[ReturnType.NODES]: T[];
+	[ReturnType.FIRST_NODE]: T|null;
 	[ReturnType.STRINGS]: string[];
 	[ReturnType.MAP]: { [s: string]: any };
 	[ReturnType.ARRAY]: any[];
@@ -195,14 +195,14 @@ export interface IReturnTypes {
  *
  * @returns The result of executing this XPath
  */
-function evaluateXPath<TReturnType extends keyof IReturnTypes> (
+function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>> (
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	returnType?: TReturnType,
 	options?: Options | null
-): IReturnTypes[TReturnType] {
+): IReturnTypes<TNode>[TReturnType] {
 	returnType = returnType || (ReturnType.ANY as any);
 	if (!selector || typeof selector !== 'string') {
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
@@ -514,25 +514,25 @@ function evaluateXPath<TReturnType extends keyof IReturnTypes> (
  * statically: XPaths returning empty sequences will return empty
  * arrays and not null, like one might expect.
  */
-evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = ReturnType.ANY;
+evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = ReturnType.ANY as ReturnType.ANY;
 
 /**
  * Resolve to a number, like count((1,2,3)) resolves to 3.
  */
-evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = ReturnType.NUMBER;
+evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = ReturnType.NUMBER as ReturnType.NUMBER;
 
 /**
  * Resolve to a string, like //someElement[1] resolves to the text
  * content of the first someElement
  */
-evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = ReturnType.STRING;
+evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = ReturnType.STRING as ReturnType.STRING;
 
 /**
  * Resolves to true or false, uses the effective boolean value to
  * determine the result. count(1) resolves to true, count(())
  * resolves to false
  */
-evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN;
+evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN as ReturnType.BOOLEAN;
 
 /**
  * Resolve to all nodes the XPath resolves to. Returns nodes in the
@@ -540,32 +540,32 @@ evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN;
  * followed by all B nodes. //*[self::a or self::b] resolves to A and
  * B nodes in document order.
  */
-evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = ReturnType.NODES;
+evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = ReturnType.NODES as ReturnType.NODES;
 
 /**
  * Resolves to the first node.NODES_TYPE would have resolved to.
  */
-evaluateXPath['FIRST_NODE_TYPE'] = evaluateXPath.FIRST_NODE_TYPE = ReturnType.FIRST_NODE;
+evaluateXPath['FIRST_NODE_TYPE'] = evaluateXPath.FIRST_NODE_TYPE = ReturnType.FIRST_NODE as ReturnType.FIRST_NODE;
 
 /**
  * Resolve to an array of strings
  */
-evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = ReturnType.STRINGS;
+evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = ReturnType.STRINGS as ReturnType.STRINGS;
 
 /**
  * Resolve to an object, as a map
  */
-evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = ReturnType.MAP;
+evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = ReturnType.MAP as ReturnType.MAP;
 
-evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = ReturnType.ARRAY;
+evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = ReturnType.ARRAY as ReturnType.ARRAY;
 
 evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE =
-	ReturnType.ASYNC_ITERATOR;
+	ReturnType.ASYNC_ITERATOR as ReturnType.ASYNC_ITERATOR;
 
 /**
  * Resolve to an array of numbers
  */
-evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS;
+evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS as ReturnType.NUMBERS;
 
 /**
  * @public
