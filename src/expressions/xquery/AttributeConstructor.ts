@@ -6,8 +6,9 @@ import { errXQDY0044 } from './XQueryErrors';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
-import { DONE_TOKEN, ready } from '../util/iterators';
+import { AsyncIterator, DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import { evaluateQNameExpression } from './nameExpression';
 
 import StaticContext from '../StaticContext';
@@ -51,10 +52,10 @@ class AttributeConstructor extends Expression {
 
 	public evaluate(dynamicContext, executionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
-		let nameIterator;
-		let name;
+		let nameIterator: AsyncIterator<Value>;
+		let name: QName;
 
-		let valueIterator;
+		let valueIterator: AsyncIterator<Value>;
 
 		let done = false;
 		return sequenceFactory.create({
@@ -76,7 +77,7 @@ class AttributeConstructor extends Expression {
 								nameSequence
 							);
 						}
-						const nv = nameIterator.next();
+						const nv = nameIterator.next(IterationHint.NONE);
 						if (!nv.ready) {
 							return nv;
 						}
@@ -129,7 +130,7 @@ class AttributeConstructor extends Expression {
 							)
 						).value;
 					}
-					return valueIterator.next();
+					return valueIterator.next(IterationHint.NONE);
 				}
 
 				done = true;

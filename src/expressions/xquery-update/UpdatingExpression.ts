@@ -1,29 +1,40 @@
-import Expression from '../Expression';
-
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
-import { ready } from '../util/iterators';
+import Expression, { OptimizationOptions } from '../Expression';
+import Specificity from '../Specificity';
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { AsyncIterator, notReady, ready } from '../util/iterators';
 
 abstract class UpdatingExpression extends Expression {
-	constructor(specificity, childExpressions, optimizationOptions) {
+	constructor(
+		specificity: Specificity,
+		childExpressions: Expression[],
+		optimizationOptions: OptimizationOptions
+	) {
 		super(specificity, childExpressions, optimizationOptions);
 
 		this.isUpdating = true;
 	}
 
-	public ensureUpdateListWrapper(expression) {
+	public ensureUpdateListWrapper(
+		expression: Expression
+	): (
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	) => AsyncIterator<UpdatingExpressionResult> {
 		if (expression.isUpdating) {
-			return (dynamicContext, executionParameters) =>
-				expression.evaluateWithUpdateList(dynamicContext, executionParameters);
+			const updatingExpression = expression as UpdatingExpression;
+			return (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) =>
+				updatingExpression.evaluateWithUpdateList(dynamicContext, executionParameters);
 		}
 
-		return (dynamicContext, executionParameters) => {
+		return (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) => {
 			const sequence = expression.evaluate(dynamicContext, executionParameters);
 			return {
 				next: () => {
 					const allValues = sequence.tryGetAllValues();
 					if (!allValues.ready) {
-						return allValues;
+						return notReady(allValues.promise);
 					}
 					return ready({
 						pendingUpdateList: [],
@@ -43,7 +54,7 @@ abstract class UpdatingExpression extends Expression {
 	public abstract evaluateWithUpdateList(
 		_dynamicContext: DynamicContext | null,
 		_executionParameters: ExecutionParameters
-	): { next: () => any };
+	): AsyncIterator<UpdatingExpressionResult>;
 }
 
 export default UpdatingExpression;

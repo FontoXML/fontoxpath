@@ -1,6 +1,13 @@
 import ExecutionParameters from '../../ExecutionParameters';
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
-import { AsyncIterator, AsyncResult, DONE_TOKEN, notReady, ready } from '../../util/iterators';
+import {
+	AsyncIterator,
+	AsyncResult,
+	DONE_TOKEN,
+	IterationHint,
+	notReady,
+	ready
+} from '../../util/iterators';
 import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
@@ -22,14 +29,14 @@ export default class IteratorBackedSequence implements ISequence {
 		predictedLength: number = null
 	) {
 		this.value = {
-			next: () => {
+			next: (hint: IterationHint) => {
 				if (this._length !== null && this._currentPosition >= this._length) {
 					return DONE_TOKEN;
 				}
 				if (this._cachedValues[this._currentPosition] !== undefined) {
 					return ready(this._cachedValues[this._currentPosition++]);
 				}
-				const value = valueIterator.next();
+				const value = valueIterator.next(hint);
 				if (!value.ready) {
 					return value;
 				}
@@ -65,9 +72,9 @@ export default class IteratorBackedSequence implements ISequence {
 		const iterator = this.value;
 
 		return this._sequenceFactory.create({
-			next: () => {
+			next: (hint: IterationHint) => {
 				i++;
-				let value = iterator.next();
+				let value = iterator.next(hint);
 				while (!value.done) {
 					if (!value.ready) {
 						return value;
@@ -77,7 +84,7 @@ export default class IteratorBackedSequence implements ISequence {
 					}
 
 					i++;
-					value = iterator.next();
+					value = iterator.next(hint);
 				}
 				return value;
 			}
@@ -129,8 +136,8 @@ export default class IteratorBackedSequence implements ISequence {
 		const iterator = this.value;
 		return this._sequenceFactory.create(
 			{
-				next: () => {
-					const value = iterator.next();
+				next: (hint: IterationHint) => {
+					const value = iterator.next(hint);
 					if (value.done || !value.ready) {
 						return value;
 					}
@@ -141,35 +148,41 @@ export default class IteratorBackedSequence implements ISequence {
 		);
 	}
 
-	public mapAll(callback: (allValues: Value[]) => ISequence): ISequence {
+	public mapAll(callback: (allValues: Value[]) => ISequence, hint: IterationHint): ISequence {
 		const iterator = this.value;
-		let mappedResultsIterator;
-		const allResults = [];
+		let mappedResultsIterator: AsyncIterator<Value>;
+		const allResults: Value[] = [];
 		let isReady = false;
 		let readyPromise = null;
+		let isFirst = true;
 		(function processNextResult() {
-			for (let value = iterator.next(); !value.done; value = iterator.next()) {
+			for (
+				let value = iterator.next(isFirst ? IterationHint.NONE : hint);
+				!value.done;
+				value = iterator.next(hint)
+			) {
 				if (!value.ready) {
 					readyPromise = value.promise.then(processNextResult);
 					return;
 				}
+				isFirst = false;
 				allResults.push(value.value);
 			}
 			mappedResultsIterator = callback(allResults).value;
 			isReady = true;
 		})();
 		return this._sequenceFactory.create({
-			next: () => {
+			next: (_hint: IterationHint) => {
 				if (!isReady) {
 					return notReady(readyPromise);
 				}
-				return mappedResultsIterator.next();
+				return mappedResultsIterator.next(IterationHint.NONE);
 			}
 		});
 	}
 
 	public switchCases(cases: SwitchCasesCases): ISequence {
-		let resultIterator = null;
+		let resultIterator: AsyncIterator<Value> = null;
 
 		const setResultIterator = (resultSequence: ISequence) => {
 			resultIterator = resultSequence.value;
@@ -181,9 +194,9 @@ export default class IteratorBackedSequence implements ISequence {
 		};
 
 		return this._sequenceFactory.create({
-			next: () => {
+			next: (hint: IterationHint) => {
 				if (resultIterator) {
-					return resultIterator.next();
+					return resultIterator.next(hint);
 				}
 
 				const isEmpty = this.tryIsEmpty();
@@ -192,7 +205,7 @@ export default class IteratorBackedSequence implements ISequence {
 				}
 				if (isEmpty.value) {
 					setResultIterator(cases.empty ? cases.empty(this) : cases.default(this));
-					return resultIterator.next();
+					return resultIterator.next(hint);
 				}
 
 				const isSingleton = this.tryIsSingleton();
@@ -203,11 +216,11 @@ export default class IteratorBackedSequence implements ISequence {
 					setResultIterator(
 						cases.singleton ? cases.singleton(this) : cases.default(this)
 					);
-					return resultIterator.next();
+					return resultIterator.next(hint);
 				}
 
 				setResultIterator(cases.multiple ? cases.multiple(this) : cases.default(this));
-				return resultIterator.next();
+				return resultIterator.next(hint);
 			}
 		});
 	}
@@ -222,7 +235,11 @@ export default class IteratorBackedSequence implements ISequence {
 
 		const iterator = this.value;
 		this._cacheAllValues = true;
-		for (let val = iterator.next(); !val.done; val = iterator.next()) {
+		for (
+			let val = iterator.next(IterationHint.NONE);
+			!val.done;
+			val = iterator.next(IterationHint.NONE)
+		) {
 			if (!val.ready) {
 				return notReady(val.promise);
 			}
@@ -236,7 +253,7 @@ export default class IteratorBackedSequence implements ISequence {
 		const oldPosition = this._currentPosition;
 
 		this.reset();
-		const it = iterator.next();
+		const it = iterator.next(IterationHint.NONE);
 		if (!it.ready) {
 			return notReady(it.promise);
 		}
@@ -251,7 +268,7 @@ export default class IteratorBackedSequence implements ISequence {
 			return ready(true);
 		}
 
-		const secondValue = iterator.next();
+		const secondValue = iterator.next(IterationHint.NONE);
 		if (!secondValue.ready) {
 			return notReady(secondValue.promise);
 		}
@@ -270,7 +287,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 		const iterator = this.value;
 		// No first cache value, the current position must have been 0
-		const firstValue = iterator.next();
+		const firstValue = iterator.next(IterationHint.NONE);
 		if (!firstValue.ready) {
 			return firstValue;
 		}
@@ -326,7 +343,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 		// Check there is at least one value
 		this.reset();
-		const it = iterator.next();
+		const it = iterator.next(IterationHint.NONE);
 		if (!it.ready) {
 			return notReady(it.promise);
 		}
@@ -335,7 +352,7 @@ export default class IteratorBackedSequence implements ISequence {
 			return ready(false);
 		}
 
-		const secondValue = iterator.next();
+		const secondValue = iterator.next(IterationHint.NONE);
 		if (!secondValue.ready) {
 			return notReady(secondValue.promise);
 		}

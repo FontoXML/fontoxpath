@@ -1,3 +1,6 @@
+/**
+ * @public
+ */
 export default interface INodesFactory {
 	createAttributeNS(namespaceURI: string, name: string): Attr;
 

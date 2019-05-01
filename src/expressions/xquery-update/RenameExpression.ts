@@ -8,10 +8,13 @@ import { mergeUpdates } from './pulRoutines';
 
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import QName from '../dataTypes/valueTypes/QName';
-import { ready } from '../util/iterators';
+import { AsyncIterator, IterationHint, ready } from '../util/iterators';
 import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
 
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { errXUDY0023, errXUDY0027, errXUTY0012 } from './XQueryUpdateFacilityErrors';
 
 function evaluateTarget(targetXdmValue) {
@@ -50,7 +53,7 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 				staticContext,
 				executionParameters,
 				nameSequence
-			).next().value.value;
+			).next(IterationHint.NONE).value.value;
 
 			// If the namespace binding of $QName conflicts with any namespace binding in the namespaces property of $target, a dynamic error is raised [err:XUDY0023].
 			const boundNamespaceURI = target.value.lookupNamespaceURI(qName.prefix);
@@ -66,7 +69,7 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 				staticContext,
 				executionParameters,
 				nameSequence
-			).next().value.value;
+			).next(IterationHint.NONE).value.value;
 
 			// If $QName has a non-absent namespace URI, and if the namespace binding of $QName conflicts with any namespace binding in the namespaces property of the parent (if any) of $target, a dynamic error is raised [err:XUDY0023].
 			if (qName.namespaceURI) {
@@ -80,8 +83,9 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 		}
 		case 'processing-instruction()': {
 			// If $target is a processing instruction node, let $NCName be the result of evaluating NewNameExpr as though it were the name expression of a computed processing instruction constructor (see Section 3.9.3.5 Computed Processing Instruction Constructors XQ30),
-			const nCName = evaluateNCNameExpression(executionParameters, nameSequence).next().value
-				.value;
+			const nCName = evaluateNCNameExpression(executionParameters, nameSequence).next(
+				IterationHint.NONE
+			).value.value;
 
 			// and let $QName be defined as fn:QName((), $NCName).
 			return new QName('', null, nCName);
@@ -105,7 +109,10 @@ class RenameExpression extends UpdatingExpression {
 		this._staticContext = undefined;
 	}
 
-	public evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): AsyncIterator<UpdatingExpressionResult> {
 		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
@@ -117,13 +124,13 @@ class RenameExpression extends UpdatingExpression {
 
 		return {
 			next: () => {
-				const tv = targetValueIterator.next();
+				const tv = targetValueIterator.next(IterationHint.NONE);
 				if (!tv.ready) {
 					return tv;
 				}
 				const target = evaluateTarget(tv.value.xdmValue);
 
-				const nnv = newNameValueIterator.next();
+				const nnv = newNameValueIterator.next(IterationHint.NONE);
 				if (!nnv.ready) {
 					return nnv;
 				}

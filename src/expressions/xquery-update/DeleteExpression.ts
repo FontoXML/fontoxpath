@@ -7,8 +7,13 @@ import { deletePu } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import { ready } from '../util/iterators';
+import { AsyncIterator, IterationHint, ready } from '../util/iterators';
 
+import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { IPendingUpdate } from './IPendingUpdate';
 import { errXUTY0007 } from './XQueryUpdateFacilityErrors';
 
 class DeleteExpression extends UpdatingExpression {
@@ -23,19 +28,25 @@ class DeleteExpression extends UpdatingExpression {
 		this._targetExpression = targetExpression;
 	}
 
-	public evaluateWithUpdateList(dynamicContext, executionParameters) {
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+	public evaluateWithUpdateList(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): AsyncIterator<UpdatingExpressionResult> {
+		const targetValueIterator: AsyncIterator<
+			UpdatingExpressionResult
+		> = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
 		);
 		const domFacade = executionParameters.domFacade;
 
-		let tlist, tlistUpdates;
+		let tlist: Value[];
+		let tlistUpdates: IPendingUpdate[];
 		return {
 			next: () => {
 				if (!tlist) {
 					// 1. TargetExpr is evaluated.
-					const tv = targetValueIterator.next();
+					const tv = targetValueIterator.next(IterationHint.NONE);
 					if (!tv.ready) {
 						return tv;
 					}
@@ -55,11 +66,11 @@ class DeleteExpression extends UpdatingExpression {
 
 				// 3. A new pending update list is created. For each node $tnode in $tlist, the following update primitive is appended to the pending update list: upd:delete($tnode). The resulting pending update list is merged with the pending update list returned by the TargetExpr using upd:mergeUpdates, and together with an empty XDM instance forms the result of the delete expression.
 				return ready({
-					xdmValue: [],
 					pendingUpdateList: mergeUpdates(
 						tlist.map(node => deletePu(node.value)),
 						tlistUpdates
-					)
+					),
+					xdmValue: []
 				});
 			}
 		};

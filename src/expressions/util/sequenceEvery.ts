@@ -1,20 +1,21 @@
 import { falseBoolean, trueBoolean } from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, notReady, ready } from './iterators';
+import Value from '../dataTypes/Value';
+import { DONE_TOKEN, IterationHint, notReady, ready } from './iterators';
 
 export default function sequenceEvery(
 	sequence: ISequence,
-	typeTest: (Value) => ISequence
+	typeTest: (value: Value) => ISequence
 ): ISequence {
 	const iterator = sequence.value;
-	let typeTestResultIterator = null;
-	let done;
+	let typeTestResultIterator: ISequence | null = null;
+	let done = false;
 	return sequenceFactory.create({
-		next: () => {
+		next: (_hint: IterationHint) => {
 			while (!done) {
 				if (!typeTestResultIterator) {
-					const value = iterator.next();
+					const value = iterator.next(IterationHint.NONE);
 					if (!value.ready) {
 						return value;
 					}

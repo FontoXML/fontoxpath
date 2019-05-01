@@ -9,11 +9,14 @@ import { mergeUpdates } from './pulRoutines';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import { DONE_TOKEN, ready } from '../util/iterators';
+import { AsyncIterator, DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 
 import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
 
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import {
 	errXUDY0009,
 	errXUDY0023,
@@ -24,7 +27,11 @@ import {
 	errXUTY0011
 } from './XQueryUpdateFacilityErrors';
 
-function evaluateReplaceNode(executionParameters, targetValueIterator, replacementValueIterator) {
+function evaluateReplaceNode(
+	executionParameters: ExecutionParameters,
+	targetValueIterator: AsyncIterator<UpdatingExpressionResult>,
+	replacementValueIterator: AsyncIterator<UpdatingExpressionResult>
+) {
 	let rlist;
 	let rlistUpdates;
 	let parent;
@@ -36,7 +43,7 @@ function evaluateReplaceNode(executionParameters, targetValueIterator, replaceme
 				// expression in an element constructor (see Rule
 				// 1e in Section 3.9.1.3 Content XQ30).
 
-				const rl = replacementValueIterator.next();
+				const rl = replacementValueIterator.next(IterationHint.NONE);
 				if (!rl.ready) {
 					return rl;
 				}
@@ -50,7 +57,7 @@ function evaluateReplaceNode(executionParameters, targetValueIterator, replaceme
 			}
 
 			// TargetExpr is evaluated and checked as follows:
-			const tv = targetValueIterator.next();
+			const tv = targetValueIterator.next(IterationHint.NONE);
 			if (!tv.ready) {
 				return tv;
 			}
@@ -153,9 +160,9 @@ function evaluateReplaceNode(executionParameters, targetValueIterator, replaceme
 }
 
 function evaluateReplaceNodeValue(
-	executionParameters,
-	targetValueIterator,
-	replacementValueIterator
+	executionParameters: ExecutionParameters,
+	targetValueIterator: AsyncIterator<UpdatingExpressionResult>,
+	replacementValueIterator: AsyncIterator<UpdatingExpressionResult>
 ) {
 	let target;
 	let targetUpdates;
@@ -174,7 +181,7 @@ function evaluateReplaceNodeValue(
 				// of a text node constructor (see Section 3.7.3.4 of
 				// [XQuery 3.0: An XML Query Language].)
 
-				const rl = replacementValueIterator.next();
+				const rl = replacementValueIterator.next(IterationHint.NONE);
 				if (!rl.ready) {
 					return rl;
 				}
@@ -195,7 +202,7 @@ function evaluateReplaceNodeValue(
 
 			if (!target) {
 				// TargetExpr is evaluated and checked as follows:
-				const tv = targetValueIterator.next();
+				const tv = targetValueIterator.next(IterationHint.NONE);
 				if (!tv.ready) {
 					return tv;
 				}
@@ -315,7 +322,10 @@ class ReplaceExpression extends UpdatingExpression {
 		this._replacementExpression = replacementExpression;
 	}
 
-	public evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): AsyncIterator<UpdatingExpressionResult> {
 		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters

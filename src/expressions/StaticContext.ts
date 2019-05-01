@@ -157,7 +157,7 @@ export default class StaticContext {
 		this._scopeDepth--;
 	}
 
-	public resolveNamespace(prefix: string) {
+	public resolveNamespace(prefix: string): string {
 		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix);
 		if (uri === undefined) {
 			return this.parentContext === null

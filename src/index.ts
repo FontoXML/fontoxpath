@@ -1,6 +1,8 @@
+import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
-import evaluateUpdatingExpression from './evaluateUpdatingExpression';
-import evaluateXPath from './evaluateXPath';
+import IDomFacade from './domFacade/IDomFacade';
+import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
+import evaluateXPath, { Language, Options, ReturnType } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -13,6 +15,7 @@ import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import getBucketsForNode from './getBucketsForNode';
+import INodesFactory from './nodesFactory/INodesFactory';
 import astHelper from './parsing/astHelper';
 import compileAstToExpression from './parsing/compileAstToExpression';
 import {
@@ -23,7 +26,6 @@ import parseExpression from './parsing/parseExpression';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
-import IDomFacade from './domFacade/IDomFacade';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath');
@@ -49,30 +51,37 @@ function parseXPath(xpathString: string) {
 }
 
 /**
- *
- * @param xpathString The XPath for which a buckets hould be retrieved
+ * @public
+ * @param xpathString - The XPath for which a bucket should be retrieved
  */
-function getBucketForSelector(xpathString) {
+function getBucketForSelector(xpathString: string) {
 	return parseXPath(xpathString).getBucket();
 }
 
 /**
  * Compare the specificity of two XPath expressions. This function will return -1 if the second XPath is more specific, 1 if the first one is more specific and 0 if they are equal in specificity.
  *
+ * @public
+ *
  * @example
- * compareSpecificity('self::a', 'self::a[@b]') === -1;
+ * compareSpecificity('self::a', 'self::a[\@b]') === -1;
  * compareSpecificity('self::a', 'self::a and child::b') === -1;
  * compareSpecificity('self::*', 'self::a') === 1;
  * compareSpecificity('self::a', 'self::a') === 0;
  *
- * @param xpathStringA
- * @param xpathStringB
+ * @param xpathStringA - The first XPath to compare
+ * @param xpathStringB - The XPath to compare to
+ *
+ * @returns Either 1, 0, or -1
  */
-function compareSpecificity(xpathStringA, xpathStringB): -1 | 0 | 1 {
+function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 | 1 {
 	return parseXPath(xpathStringA).specificity.compareTo(parseXPath(xpathStringB).specificity);
 }
 
-const domFacade: IDomFacade = new ExternalDomFacade();
+/**
+ * @public
+ */
+const domFacade = new ExternalDomFacade() as IDomFacade;
 
 /* istanbul ignore next */
 if (typeof window !== 'undefined') {
@@ -93,31 +102,39 @@ if (typeof window !== 'undefined') {
 	window['executePendingUpdateList'] = executePendingUpdateList;
 	window['getBucketForSelector'] = getBucketForSelector;
 	window['getBucketsForNode'] = getBucketsForNode;
+	/** @suppress {deprecated} */
+	// @ts-ignore We still need to expose this deprecated API
 	window['precompileXPath'] = precompileXPath;
 	window['registerXQueryModule'] = registerXQueryModule;
 	window['registerCustomXPathFunction'] = registerCustomXPathFunction;
 }
 
 export {
+	IDocumentWriter,
 	IDomFacade,
+	INodesFactory,
+	Language,
+	Options,
+	ReturnType,
+	UpdatingOptions,
+	compareSpecificity,
 	domFacade,
+	evaluateUpdatingExpression,
 	evaluateXPath,
 	evaluateXPathToArray,
-	evaluateXPathToBoolean,
 	evaluateXPathToAsyncIterator,
+	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToMap,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
-	evaluateXPathToStrings,
-	evaluateUpdatingExpression,
-	executePendingUpdateList,
-	precompileXPath,
-	registerXQueryModule,
 	evaluateXPathToString,
-	registerCustomXPathFunction,
-	getBucketsForNode,
+	evaluateXPathToStrings,
+	executePendingUpdateList,
 	getBucketForSelector,
-	compareSpecificity
+	getBucketsForNode,
+	precompileXPath,
+	registerCustomXPathFunction,
+	registerXQueryModule
 };

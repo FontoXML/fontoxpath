@@ -8,7 +8,14 @@ import createSingleValueIterator from '../util/createSingleValueIterator';
 import builtInFunctionsNode from './builtInFunctions.node';
 
 import { equal } from '../dataTypes/valueTypes/DateTime';
-import { AsyncIterator, DONE_TOKEN, notReady, ready } from '../util/iterators';
+import {
+	AsyncIterator,
+	DONE_TOKEN,
+	IterationHint,
+	IterationResult,
+	notReady,
+	ready
+} from '../util/iterators';
 
 import ArrayValue from '../dataTypes/ArrayValue';
 import MapValue from '../dataTypes/MapValue';
@@ -26,7 +33,7 @@ function asyncGenerateEvery<T>(
 	let i = 0;
 	const l = items.length;
 	let done = false;
-	let filterGenerator = null;
+	let filterGenerator: AsyncIterator<boolean> = null;
 	return {
 		next: () => {
 			if (!done) {
@@ -34,7 +41,7 @@ function asyncGenerateEvery<T>(
 					if (!filterGenerator) {
 						filterGenerator = callback(items[i], i, items);
 					}
-					const filterResult = filterGenerator.next();
+					const filterResult = filterGenerator.next(IterationHint.NONE);
 					if (!filterResult.ready) {
 						return filterResult;
 					}
@@ -80,8 +87,8 @@ function anyAtomicTypeDeepEqual(
 			isSubtypeOf(item2.type, 'xs:float') ||
 			isSubtypeOf(item2.type, 'xs:double'))
 	) {
-		const temp1 = castToType(item1, 'xs:double'),
-			temp2 = castToType(item2, 'xs:double');
+		const temp1 = castToType(item1, 'xs:double');
+		const temp2 = castToType(item2, 'xs:double');
 		return temp1.value === temp2.value || (isNaN(item1.value) && isNaN(item2.value));
 	}
 
@@ -124,18 +131,18 @@ function sequenceDeepEqual(
 ): AsyncIterator<boolean> {
 	const it1 = sequence1.value;
 	const it2 = sequence2.value;
-	let item1 = null;
-	let item2 = null;
-	let comparisonGenerator = null;
-	let done;
+	let item1: IterationResult<Value> = null;
+	let item2: IterationResult<Value> = null;
+	let comparisonGenerator: AsyncIterator<boolean> = null;
+	let done: boolean;
 	return {
-		next: () => {
+		next: (_hint: IterationHint) => {
 			while (!done) {
 				if (!item1) {
-					item1 = it1.next();
+					item1 = it1.next(IterationHint.NONE);
 				}
 				if (!item2) {
-					item2 = it2.next();
+					item2 = it2.next(IterationHint.NONE);
 				}
 
 				if (!item1.ready) {
@@ -158,11 +165,11 @@ function sequenceDeepEqual(
 						dynamicContext,
 						executionParameters,
 						staticContext,
-						/** @type {!Value} */ (item1.value),
-						/** @type {!Value} */ (item2.value)
+						item1.value,
+						item2.value
 					);
 				}
-				const comparisonResult = comparisonGenerator.next();
+				const comparisonResult = comparisonGenerator.next(IterationHint.NONE);
 				if (!comparisonResult.ready) {
 					return comparisonResult;
 				}
@@ -316,11 +323,11 @@ function elementNodeDeepEqual(
 	);
 	let done = false;
 	return {
-		next: () => {
+		next: (_hint: IterationHint) => {
 			if (done) {
 				return DONE_TOKEN;
 			}
-			const namesAreEqualResult = namesAreEqualResultGenerator.next();
+			const namesAreEqualResult = namesAreEqualResultGenerator.next(IterationHint.NONE);
 			if (!namesAreEqualResult.ready) {
 				return namesAreEqualResult;
 			}
@@ -329,7 +336,7 @@ function elementNodeDeepEqual(
 				return namesAreEqualResult;
 			}
 
-			const attributesEqualResult = attributesDeepEqualGenerator.next();
+			const attributesEqualResult = attributesDeepEqualGenerator.next(IterationHint.NONE);
 			if (!attributesEqualResult.ready) {
 				return attributesEqualResult;
 			}
@@ -338,7 +345,7 @@ function elementNodeDeepEqual(
 				return attributesEqualResult;
 			}
 
-			const contentsEqualResult = nodeDeepEqualGenerator.next();
+			const contentsEqualResult = nodeDeepEqualGenerator.next(IterationHint.NONE);
 			if (!contentsEqualResult.ready) {
 				return contentsEqualResult;
 			}
@@ -374,11 +381,11 @@ function atomicTypeNodeDeepEqual(
 	);
 	let done = false;
 	return {
-		next: () => {
+		next: (_hint: IterationHint) => {
 			if (done) {
 				return DONE_TOKEN;
 			}
-			const namesAreEqualResult = namesAreEqualResultGenerator.next();
+			const namesAreEqualResult = namesAreEqualResultGenerator.next(IterationHint.NONE);
 			if (!namesAreEqualResult.ready) {
 				return namesAreEqualResult;
 			}

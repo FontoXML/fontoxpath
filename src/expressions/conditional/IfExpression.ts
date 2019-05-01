@@ -1,7 +1,12 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 
+import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import { AsyncIterator, IterationHint, notReady } from '../util/iterators';
 
 class IfExpression extends PossiblyUpdatingExpression {
 	constructor(
@@ -26,23 +31,28 @@ class IfExpression extends PossiblyUpdatingExpression {
 		});
 	}
 
-	public performFunctionalEvaluation(dynamicContext, _executionParameters, sequenceCallbacks) {
-		let resultIterator = null;
+	public performFunctionalEvaluation(
+		dynamicContext: DynamicContext,
+		_executionParameters: ExecutionParameters,
+		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
+	) {
+		let resultIterator: AsyncIterator<Value> = null;
 		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
+
 		return sequenceFactory.create({
-			next: () => {
+			next: (hint: IterationHint) => {
 				if (!resultIterator) {
 					const ifExpressionResult = ifExpressionResultSequence.tryGetEffectiveBooleanValue();
 
 					if (!ifExpressionResult.ready) {
-						return ifExpressionResult;
+						return notReady(ifExpressionResult.promise);
 					}
 					const resultSequence = ifExpressionResult.value
 						? sequenceCallbacks[1](dynamicContext)
 						: sequenceCallbacks[2](dynamicContext);
 					resultIterator = resultSequence.value;
 				}
-				return resultIterator.next();
+				return resultIterator.next(hint);
 			}
 		});
 	}

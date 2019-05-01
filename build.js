@@ -8,7 +8,7 @@ const path = require('path');
 
 const { spawn } = require('child_process');
 
-const { Extractor } = require('@microsoft/api-extractor');
+const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor');
 
 const skipParserBuild = process.env.npm_config_skip_parser;
 const skipClosureBuild = process.env.npm_config_skip_closure;
@@ -86,27 +86,13 @@ function doTsickleBuild() {
 	);
 }
 
-const apiExtractorConfig = {
-	apiReviewFile: {
-		enabled: false
-	},
-	compiler: {
-		configType: 'tsconfig',
-		rootFolder: process.cwd()
-	},
-	project: {
-		entryPointSourceFile: 'dist/tmp/index.d.ts'
-	},
-	dtsRollup: {
-		enabled: true,
-		trimming: false
-	}
-};
-
 function outputDeclarations() {
 	console.log('Starting generation of typings');
-	const extractor = new Extractor(apiExtractorConfig, {});
-	extractor.analyzeProject();
+	const apiExtractorConfig = ExtractorConfig.loadFileAndPrepare('./api-extractor.json');
+	const extractorResult = Extractor.invoke(apiExtractorConfig, {});
+	if (!extractorResult.succeeded) {
+		throw new Error('Typing extraction failed');
+	}
 	console.log('Typings generated');
 }
 

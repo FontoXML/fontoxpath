@@ -14,9 +14,12 @@ import {
 import { mergeUpdates } from './pulRoutines';
 
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import { ready } from '../util/iterators';
+import { AsyncIterator, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import {
 	errXUDY0023,
 	errXUDY0024,
@@ -121,7 +124,10 @@ class InsertExpression extends UpdatingExpression {
 		this._targetExpression = targetExpression;
 	}
 
-	public evaluateWithUpdateList(dynamicContext, executionParameters) {
+	public evaluateWithUpdateList(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): AsyncIterator<UpdatingExpressionResult> {
 		const sourceValueIterator = super.ensureUpdateListWrapper(this._sourceExpression)(
 			dynamicContext,
 			executionParameters
@@ -131,13 +137,18 @@ class InsertExpression extends UpdatingExpression {
 			executionParameters
 		);
 
-		let alist, clist, sourceUpdates;
-		let target, targetUpdates, parent;
+		let alist;
+		let clist;
+		let sourceUpdates;
+
+		let target;
+		let targetUpdates;
+		let parent;
 		return {
 			next: () => {
 				if (!alist) {
 					// 1. SourceExpr is evaluated as though it were an enclosed expression in an element constructor (see Rule 1e in Section 3.9.1.3 Content XQ30). The result of this step is either an error or a sequence of nodes to be inserted, called the insertion sequence. If the insertion sequence contains a document node, the document node is replaced in the insertion sequence by its children. If the insertion sequence contains an attribute node following a node that is not an attribute node, a type error is raised [err:XUTY0004].
-					const sv = sourceValueIterator.next();
+					const sv = sourceValueIterator.next(IterationHint.NONE);
 					if (!sv.ready) {
 						return sv;
 					}
@@ -156,7 +167,7 @@ class InsertExpression extends UpdatingExpression {
 
 				if (!target) {
 					// 2. TargetExpr is evaluated and checked as follows:
-					const tv = targetValueIterator.next();
+					const tv = targetValueIterator.next(IterationHint.NONE);
 					if (!tv.ready) {
 						return tv;
 					}

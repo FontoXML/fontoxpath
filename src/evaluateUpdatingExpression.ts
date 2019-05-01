@@ -7,9 +7,12 @@ import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
-import { IterationResult } from './expressions/util/iterators';
+import { IterationHint, IterationResult } from './expressions/util/iterators';
 import INodesFactory from './nodesFactory/INodesFactory';
 
+/**
+ * @public
+ */
 export type UpdatingOptions = {
 	debug?: boolean;
 	documentWriter?: IDocumentWriter;
@@ -21,13 +24,15 @@ export type UpdatingOptions = {
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
  *
- * @param  updateScript The updateScript to execute. Supports XPath 3.1.
- * @param  contextItem  The initial context for the script.
- * @param  domFacade    The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  variables    Extra variables (name to value). Values can be number, string, boolean, nodes or object literals and arrays.
- * @param  options      Extra options for evaluating this XPath.
+ * @public
  *
- * @return The query result and pending update list.
+ * @param updateScript - The update script to execute. Supports XPath 3.1.
+ * @param contextItem  - The node from which to run the XPath.
+ * @param domFacade    - The domFacade (or DomFacade like interface) for retrieving relations.
+ * @param variables    - Extra variables (name to value). Values can be number, string, boolean, nodes or object literals and arrays.
+ * @param options      - Extra options for evaluating this XPath.
+ *
+ * @returns The query result and pending update list.
  */
 export default async function evaluateUpdatingExpression(
 	updateScript: string,
@@ -74,10 +79,10 @@ export default async function evaluateUpdatingExpression(
 			executionParameters
 		);
 
-		attempt = resultIterator.next();
+		attempt = resultIterator.next(IterationHint.NONE);
 		while (!attempt.ready) {
 			await attempt.promise;
-			attempt = resultIterator.next();
+			attempt = resultIterator.next(IterationHint.NONE);
 		}
 	} catch (error) {
 		printAndRethrowError(updateScript, error);

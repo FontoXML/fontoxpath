@@ -1,4 +1,5 @@
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
+import IDomFacade from './domFacade/IDomFacade';
 import buildContext from './evaluationUtils/buildContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import atomize from './expressions/dataTypes/atomize';
@@ -8,10 +9,9 @@ import sequenceFactory from './expressions/dataTypes/sequenceFactory';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
-import { DONE_TOKEN, notReady, ready } from './expressions/util/iterators';
+import { DONE_TOKEN, IterationHint, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
-import IDomFacade from './domFacade/IDomFacade';
 
 function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
@@ -128,6 +128,9 @@ function transformXPathItemToJavascriptObject(value, dynamicContext) {
 	};
 }
 
+/**
+ * @public
+ */
 export type Options = {
 	debug?: boolean;
 	language?: Language;
@@ -145,12 +148,16 @@ export type Options = {
  *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
  *  * Else, the sequence is atomized and returned.
  *
+ * @public
+ *
  * @param  selector    - The selector to execute. Supports XPath 3.1.
  * @param  contextItem - The node from which to run the XPath.
  * @param  domFacade   - The domFacade (or DomFacade like interface) for retrieving relations.
  * @param  variables   - Extra variables (name to value). Values can be number, string, boolean, nodes or object literals and arrays.
  * @param  returnType  - One of the return types, indicates the expected type of the XPath query.
  * @param  options     - Extra options for evaluating this XPath
+ *
+ * @returns The result of executing this XPath
  */
 function evaluateXPath(
 	selector: string,
@@ -362,7 +369,7 @@ function evaluateXPath(
 				function getNextResult(): Promise<IteratorResult<any>> {
 					while (!done) {
 						if (!transformedValueGenerator) {
-							const value = it.next();
+							const value = it.next(IterationHint.NONE);
 							if (value.done) {
 								done = true;
 								break;
@@ -465,7 +472,10 @@ function evaluateXPath(
 	}
 }
 
-enum ReturnType {
+/**
+ * @public
+ */
+export enum ReturnType {
 	ANY = 0,
 	NUMBER = 1,
 	STRING = 2,
@@ -538,7 +548,10 @@ evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE =
  */
 evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS;
 
-enum Language {
+/**
+ * @public
+ */
+export enum Language {
 	XPATH_3_1_LANGUAGE = 'XPath3.1',
 	XQUERY_3_1_LANGUAGE = 'XQuery3.1'
 }

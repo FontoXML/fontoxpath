@@ -1,6 +1,11 @@
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
+import ExecutionParameters from '../ExecutionParameters';
+import StaticContext from '../StaticContext';
+import { AsyncIterator } from '../util/iterators';
 import { errXPTY0004 } from '../XPathErrors';
 import { errXQDY0041, errXQDY0074 } from './XQueryErrors';
 
@@ -15,7 +20,10 @@ const isValidNCName = name => {
 	return matches ? matches.length === 1 : false;
 };
 
-export function evaluateNCNameExpression(executionParameters, nameSequence) {
+export function evaluateNCNameExpression(
+	executionParameters: ExecutionParameters,
+	nameSequence: ISequence
+): AsyncIterator<Value> {
 	const name = nameSequence.atomize(executionParameters);
 	return name.switchCases({
 		singleton: seq => {
@@ -37,7 +45,11 @@ export function evaluateNCNameExpression(executionParameters, nameSequence) {
 	}).value;
 }
 
-export function evaluateQNameExpression(staticContext, executionParameters, nameSequence) {
+export function evaluateQNameExpression(
+	staticContext: StaticContext,
+	executionParameters: ExecutionParameters,
+	nameSequence: ISequence
+): AsyncIterator<Value> {
 	const name = nameSequence.atomize(executionParameters);
 	return name.switchCases({
 		singleton: seq => {
@@ -48,7 +60,9 @@ export function evaluateQNameExpression(staticContext, executionParameters, name
 				isSubtypeOf(nameValue.type, 'xs:string') ||
 				isSubtypeOf(nameValue.type, 'xs:untypedAtomic')
 			) {
-				let prefix, namespaceURI, localName;
+				let prefix: string;
+				let namespaceURI: string;
+				let localName: string;
 				const parts = nameValue.value.split(':');
 				if (parts.length === 1) {
 					localName = parts[0];
