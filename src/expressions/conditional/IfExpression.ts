@@ -1,5 +1,5 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
-import PossiblyUpdatingExpression, { SequenceCallbacks } from '../PossiblyUpdatingExpression';
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';

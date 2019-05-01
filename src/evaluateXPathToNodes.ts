@@ -18,7 +18,7 @@ import { Node } from './types/Types';
  *
  * @returns All matching Nodes, in the order defined by the XPath.
  */
-export default function evaluateXPathToNodes<T extends Node = Node>(
+export default function evaluateXPathToNodes<T extends Node>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,

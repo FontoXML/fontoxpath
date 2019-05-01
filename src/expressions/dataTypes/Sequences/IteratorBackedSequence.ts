@@ -176,7 +176,7 @@ export default class IteratorBackedSequence implements ISequence {
 				if (!isReady) {
 					return notReady(readyPromise);
 				}
-				return mappedResultsIterator.next(hint);
+				return mappedResultsIterator.next(IterationHint.NONE);
 			}
 		});
 	}

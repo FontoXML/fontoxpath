@@ -11,7 +11,8 @@ function hexToString(hex) {
 	return text;
 }
 
-declare var btoa;
+// This declaration is needed, as we don't depend anymore on lib.dom.
+declare var btoa: ((s: string) => string);
 
 export default function castToBase64Binary(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:hexBinary')) {
@@ -27,9 +28,9 @@ export default function castToBase64Binary(instanceOf: (string) => boolean): (Va
 		});
 	}
 	return () => ({
-		successful: false,
 		error: new Error(
 			'XPTY0004: Casting not supported from given type to xs:base64Binary or any of its derived types.'
-		)
+		),
+		successful: false
 	});
 }

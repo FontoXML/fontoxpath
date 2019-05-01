@@ -195,10 +195,7 @@ export interface IReturnTypes {
  *
  * @returns The result of executing this XPath
  */
-const evaluateXPath = function _evaluateXPath<
-	T extends Node,
-	TReturnType extends keyof IReturnTypes
->(
+function evaluateXPath<TReturnType extends keyof IReturnTypes> (
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
@@ -208,7 +205,7 @@ const evaluateXPath = function _evaluateXPath<
 ): IReturnTypes[TReturnType] {
 	returnType = returnType || (ReturnType.ANY as any);
 	if (!selector || typeof selector !== 'string') {
-		throw new TypeError("Failed to execute '_': xpathExpression must be a string.");
+		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
 
 	options = options || {};

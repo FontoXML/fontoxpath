@@ -12,7 +12,8 @@ function stringToHex(string) {
 	return hex.toUpperCase();
 }
 
-declare var atob;
+// This declaration is needed, as we don't depend anymore on lib.dom.
+declare var atob: ((s: string) => string);
 
 export default function castToGDay(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:base64Binary')) {
