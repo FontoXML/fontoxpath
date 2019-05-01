@@ -2980,7 +2980,6 @@ K-GenCompEq-16,AssertionError: expected [Function] to throw error matching /FOER
 K-GenCompEq-17,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K-GenCompEq-18,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K-GenCompEq-19,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
-K-GenCompEq-54,AssertionError: expected [Function] to throw an error
 K2-GenCompEq-1,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 K2-GenCompEq-2,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 K2-GenCompEq-3,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
@@ -2988,6 +2987,7 @@ K2-GenCompEq-4,Error: Not implemented: only external variable declaration withou
 K2-GenCompEq-5,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 K2-GenCompEq-6,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
 K2-GenCompEq-8,AssertionError: Expected executing the XPath "empty(for $b in <e/> where $b/@id="person0" return ())" to resolve to one of the expected results, but got Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet, AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'.
+GenCompEq-2,Error: FORG0001: Cannot cast 1 to xs:NCName, pattern validation failed.
 GenCompEq-7,Error: Atomizing array(*) is not implemented.
 GenCompEq-8,Error: Atomizing array(*) is not implemented.
 GenCompEq-9,Error: Atomizing array(*) is not implemented.
@@ -3008,7 +3008,6 @@ GenCompEq-23,Error: Not implemented: only external variable declaration without 
 GenCompLT-9,Error: Atomizing array(*) is not implemented.
 GenCompLT-10,Error: Atomizing array(*) is not implemented.
 GenCompLT-11,Error: Atomizing array(*) is not implemented.
-K-GenCompNE-35,AssertionError: expected [Function] to throw an error
 CondExpr017,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 CondExpr018,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 CondExpr20,Error: XPST0003: Unable to parse XPath: "if( false() ) then /Folder[1] cast as xs:double ? else 10 cast as xs:double ? = 10". Expected " ", "!=", "(:", "*", "+", "-", "<", "<<", "<=", "=", ">", ">=", ">>", "\n", "\r", "\t", "and", "castable", "div", "else", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "?" found. if( false() ) then /Folder[1] cast as xs:double [Error is around here]? else 10 cast as xs:double ? = 10

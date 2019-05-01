@@ -61,9 +61,9 @@ export default function generalCompare(
 						} else if (isSubtypeOf(secondValue.type, 'xs:yearMonthDuration')) {
 							firstValue = castToType(firstValue, 'xs:yearMonthDuration');
 						} else if (isSubtypeOf(firstValue.type, 'xs:untypedAtomic')) {
-							secondValue = castToType(secondValue, firstValue.type);
+							firstValue = castToType(firstValue, secondValue.type);
 						} else if (isSubtypeOf(secondValue.type, 'xs:untypedAtomic')) {
-							firstValue = castToType(firstValue, firstValue.type);
+							secondValue = castToType(secondValue, firstValue.type);
 						}
 					}
 
