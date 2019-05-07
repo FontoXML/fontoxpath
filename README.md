@@ -165,7 +165,9 @@ registerCustomXPathFunction(name, signature, returnType, callback);
 
 ### Typescript
 
-We support [TypeScript](https://github.com/Microsoft/TypeScript); e.g. expose a minimal Node type. You can use generic types to get your type, without casting.
+We support [TypeScript](https://github.com/Microsoft/TypeScript); and expose a minimal Node type.
+You can use generic types to get the type of the DOM implementation you are using without having to
+cast it.
 
 ```ts
 const myNodes = evaluateXPathToNodes<slimdom.Node>(
