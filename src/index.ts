@@ -84,6 +84,7 @@ function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 
  */
 const domFacade = new ExternalDomFacade() as IDomFacade;
 
+// This declaration is needed, as we don't depend anymore on lib.dom.
 declare var window;
 
 /* istanbul ignore next */
