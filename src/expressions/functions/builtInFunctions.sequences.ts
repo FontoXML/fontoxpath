@@ -8,7 +8,7 @@ import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import Value from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { transformArgument } from './argumentHelper';
 import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
@@ -572,7 +572,7 @@ const fnForEach: FunctionDefinitionType = (
 	}
 
 	const outerIterator = sequence.value;
-	let innerIterator: AsyncIterator<Value>;
+	let innerIterator: IAsyncIterator<Value>;
 	return sequenceFactory.create({
 		next: (hint: IterationHint) => {
 			while (true) {

@@ -7,6 +7,7 @@
 			"fontoxpath/*": ["src/*"],
 			"test-helpers/*": ["test/helpers/*"]
 		},
+		"strict": false,
 		"inlineSources": true,
 		"types": ["mocha", "node"]
 	},

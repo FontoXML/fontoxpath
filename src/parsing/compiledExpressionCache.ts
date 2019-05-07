@@ -1,3 +1,4 @@
+import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
 import Expression from '../expressions/Expression';
 
 const compiledExpressionCache: { [s: string]: { [s: string]: CacheEntry[] } } = Object.create(null);
@@ -12,7 +13,14 @@ class CacheEntry {
 	public referredNamespaces: { namespaceURI: string; prefix: string }[];
 	public referredVariables: { name: string }[];
 
-	constructor(referredNamespaces, referredVariables, compiledExpression, moduleImports) {
+	constructor(
+		referredNamespaces: { namespaceURI: string; prefix: string }[],
+		referredVariables: { name: string }[],
+		compiledExpression: Expression,
+		moduleImports:
+			| { namespaceURI: any; prefix: string }[]
+			| { namespaceURI: string; prefix: string }[]
+	) {
 		this.referredNamespaces = referredNamespaces;
 		this.referredVariables = referredVariables;
 		this.compiledExpression = compiledExpression;
@@ -20,7 +28,7 @@ class CacheEntry {
 	}
 }
 
-export function getAnyStaticCompilationResultFromCache(selectorString, language) {
+export function getAnyStaticCompilationResultFromCache(selectorString: string, language: string) {
 	const halfCompiledExpressionFromCache = halfCompiledExpressionCache[selectorString];
 	if (halfCompiledExpressionFromCache) {
 		return halfCompiledExpressionFromCache[language] || null;
@@ -41,9 +49,9 @@ export function getAnyStaticCompilationResultFromCache(selectorString, language)
 }
 
 export function storeHalfCompiledCompilationResultInCache(
-	selectorString,
-	language,
-	expressionInstance
+	selectorString: string,
+	language: string,
+	expressionInstance: Expression
 ) {
 	if (!halfCompiledExpressionCache[selectorString]) {
 		halfCompiledExpressionCache[selectorString] = {
@@ -55,11 +63,11 @@ export function storeHalfCompiledCompilationResultInCache(
 }
 
 export function getStaticCompilationResultFromCache(
-	selectorString,
-	language,
-	namespaceResolver,
-	variables,
-	moduleImports
+	selectorString: string,
+	language: string,
+	namespaceResolver: (namespace: string) => string | null,
+	variables: object,
+	moduleImports: { [x: string]: string }
 ) {
 	const cachesForExpression = compiledExpressionCache[selectorString];
 
@@ -123,7 +131,11 @@ export function getStaticCompilationResultFromCache(
 	};
 }
 
-function removeHalfCompiledExpression(selectorString, language, compiledExpression) {
+function removeHalfCompiledExpression(
+	selectorString: string,
+	language: string,
+	compiledExpression: Expression
+) {
 	const halfCompiledExpressionFromCache = halfCompiledExpressionCache[selectorString];
 	if (halfCompiledExpressionFromCache) {
 		const expression = halfCompiledExpressionFromCache[language];
@@ -134,11 +146,11 @@ function removeHalfCompiledExpression(selectorString, language, compiledExpressi
 }
 
 export function storeStaticCompilationResultInCache(
-	selectorString,
-	language,
-	executionStaticContext,
-	moduleImports,
-	compiledExpression
+	selectorString: string,
+	language: string,
+	executionStaticContext: ExecutionSpecificStaticContext,
+	moduleImports: { [x: string]: any },
+	compiledExpression: Expression
 ) {
 	removeHalfCompiledExpression(selectorString, language, compiledExpression);
 

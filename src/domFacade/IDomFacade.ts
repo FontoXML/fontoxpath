@@ -1,3 +1,5 @@
+import { Attr, CharacterData, Element, Node } from '../types/Types';
+
 /**
  * The base interface of a dom facade
  *

@@ -11,8 +11,8 @@ import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import {
-	AsyncIterator,
 	DONE_TOKEN,
+	IAsyncIterator,
 	IterationHint,
 	IterationResult,
 	notReady,
@@ -30,12 +30,12 @@ function isSameNodeValue(a: Value, b: Value) {
 	return a.value === b.value;
 }
 
-function concatSortedSequences(sequences: AsyncIterator<ISequence>): ISequence {
+function concatSortedSequences(sequences: IAsyncIterator<ISequence>): ISequence {
 	let currentSequence = sequences.next(IterationHint.NONE);
 	if (currentSequence.done) {
 		return sequenceFactory.empty();
 	}
-	let currentIterator: AsyncIterator<Value> = null;
+	let currentIterator: IAsyncIterator<Value> = null;
 	let previousValue: Value = null;
 	return sequenceFactory.create({
 		next(hint: IterationHint) {
@@ -74,13 +74,13 @@ function concatSortedSequences(sequences: AsyncIterator<ISequence>): ISequence {
 	});
 }
 
-interface IMappedIterator extends AsyncIterator<Value> {
+interface IMappedIterator extends IAsyncIterator<Value> {
 	current: IterationResult<Value>;
 }
 
 function mergeSortedSequences(
 	domFacade: IWrappingDomFacade,
-	sequences: AsyncIterator<ISequence>
+	sequences: IAsyncIterator<ISequence>
 ): ISequence {
 	const allIterators: IMappedIterator[] = [];
 	// Because the sequences are sorted locally, but unsorted globally, we first need to sort all the iterators.
@@ -241,7 +241,7 @@ class PathExpression extends Expression {
 		let sequenceHasPeerProperty = true;
 		const result = this._stepExpressions.reduce<ISequence>(
 			(intermediateResultNodesSequence, selector) => {
-				let childContextIterator: AsyncIterator<DynamicContext>;
+				let childContextIterator: IAsyncIterator<DynamicContext>;
 				if (intermediateResultNodesSequence === null) {
 					// first call, we should use the current dynamic context
 					childContextIterator = createSingleValueIterator(dynamicContext);
@@ -250,11 +250,11 @@ class PathExpression extends Expression {
 						intermediateResultNodesSequence
 					);
 				}
-				let resultValuesInOrderOfEvaluation = {
+				let resultValuesInOrderOfEvaluation: IAsyncIterator<ISequence> = {
 					next: (hint: IterationHint) => {
 						const childContext = childContextIterator.next(hint);
 						if (!childContext.ready) {
-							return childContext;
+							return notReady(childContext.promise);
 						}
 
 						if (childContext.done) {
@@ -286,15 +286,15 @@ class PathExpression extends Expression {
 							const resultValuesInReverseOrder = resultValuesInOrderOfEvaluation;
 							resultValuesInOrderOfEvaluation = {
 								next: (hint: IterationHint) => {
-									const result = resultValuesInReverseOrder.next(hint);
-									if (!result.ready) {
-										return result;
+									const res = resultValuesInReverseOrder.next(hint);
+									if (!res.ready) {
+										return res;
 									}
-									if (result.done) {
-										return result;
+									if (res.done) {
+										return res;
 									}
 									return ready(
-										result.value.mapAll(items =>
+										res.value.mapAll(items =>
 											sequenceFactory.create(items.reverse())
 										)
 									);

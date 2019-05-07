@@ -2,7 +2,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, ready } from '../util/iterators';
+import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createDescendantGenerator from '../util/createDescendantGenerator';
@@ -26,7 +26,7 @@ function createPrecedingGenerator(domFacade, node) {
 					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0], true);
 				}
 
-				const nephew = nephewGenerator.next();
+				const nephew = nephewGenerator.next(IterationHint.NONE);
 
 				if (nephew.done) {
 					// We are done with the descendants of the node currently on the stack
@@ -58,10 +58,10 @@ class PrecedingAxis extends Expression {
 	private _testExpression: TestAbstractExpression;
 	constructor(testExpression: TestAbstractExpression) {
 		super(testExpression.specificity, [testExpression], {
-			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
+			canBeStaticallyEvaluated: false,
 			peer: true,
-			subtree: false,
-			canBeStaticallyEvaluated: false
+			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
+			subtree: false
 		});
 
 		this._testExpression = testExpression;

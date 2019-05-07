@@ -236,7 +236,7 @@ const arrayFilter: FunctionDefinitionType = function(
 							effectiveBooleanValues.map(filterResult =>
 								filterResult.ready ? Promise.resolve() : filterResult.promise
 							)
-						)
+						).then(_ => undefined)
 					);
 				}
 				const newMembers = (array as ArrayValue).members.filter(

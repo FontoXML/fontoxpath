@@ -1,4 +1,5 @@
 import { ConcreteNode } from '../../domFacade/ConcreteNode';
+import { Attr, Element, Text } from '../../types/Types';
 import QName from '../dataTypes/valueTypes/QName';
 import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';
 import { InsertAfterPendingUpdate } from './pendingUpdates/InsertAfterPendingUpdate';

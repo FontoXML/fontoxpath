@@ -18,6 +18,7 @@ import DomBackedNodesFactory from '../nodesFactory/DomBackedNodesFactory';
 import INodesFactory from '../nodesFactory/INodesFactory';
 import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
+import { Node } from '../types/Types';
 
 export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
 
@@ -32,11 +33,11 @@ builtInFunctions.forEach(builtInFunction => {
 	);
 });
 
-function createDefaultNamespaceResolver(contextItem: Node | any): (s: string) => string {
+function createDefaultNamespaceResolver(contextItem: any): (s: string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
 		return _prefix => null;
 	}
-	return prefix => contextItem['lookupNamespaceURI'](prefix || null);
+	return prefix => (contextItem as Node)['lookupNamespaceURI'](prefix || null);
 }
 
 function normalizeEndOfLines(xpathString: string) {

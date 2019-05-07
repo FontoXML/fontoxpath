@@ -1,3 +1,5 @@
+import { Document, Element, Node } from '../types/Types';
+
 /**
  * @public
  */

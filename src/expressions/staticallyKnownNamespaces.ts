@@ -7,7 +7,7 @@ export const MAP_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions/map';
 export const MATH_NAMESPACE_URI = 'http://www.w3.org/2005/xpath-functions/math';
 export const FONTOXPATH_NAMESPACE_URI = 'http://fontoxml.com/fontoxpath';
 
-export const staticallyKnownNamespaceByPrefix = {
+export const staticallyKnownNamespaceByPrefix: { [prefix: string]: string } = {
 	['xml']: XML_NAMESPACE_URI,
 	['xs']: XMLSCHEMA_NAMESPACE_URI,
 	['fn']: FUNCTIONS_NAMESPACE_URI,

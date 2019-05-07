@@ -6,10 +6,11 @@ import ExecutionParameters from './ExecutionParameters';
 import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
-import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from './util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
 
+export type SequenceCallbacks = ((dynamicContext: DynamicContext) => ISequence)[];
 export default abstract class PossiblyUpdatingExpression extends Expression {
 	constructor(
 		specificity: Specificity,
@@ -36,7 +37,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): AsyncIterator<UpdatingExpressionResult> {
+	): IAsyncIterator<UpdatingExpressionResult> {
 		let updateList = [];
 
 		const sequence = this.performFunctionalEvaluation(
@@ -107,6 +108,6 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 	public abstract performFunctionalEvaluation(
 		_dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,
-		_sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
+		_sequenceCallbacks: SequenceCallbacks
 	): ISequence;
 }

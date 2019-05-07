@@ -163,6 +163,24 @@ registerCustomXPathFunction(name, signature, returnType, callback);
 * `returnType` `string` The return type of the function.
 * `callback` `function` The function itself.
 
+### Typescript
+
+We support [TypeScript](https://github.com/Microsoft/TypeScript); and expose a minimal Node type.
+You can use generic types to get the type of the DOM implementation you are using without having to
+cast it.
+
+```ts
+const myNodes = evaluateXPathToNodes<slimdom.Node>(
+  '<foo>bar</foo>',
+  null,
+  null,
+  null,
+  {language: evaluateXPath.XQUERY_3_1_LANGUAGE}
+);
+
+// Type of myNodes is: slimdom.Node[] .
+```
+
 ## Features
 
 Note that this engine assumes [XPath 1.0 compatibility

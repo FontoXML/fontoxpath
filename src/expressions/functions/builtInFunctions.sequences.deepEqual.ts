@@ -9,8 +9,8 @@ import builtInFunctionsNode from './builtInFunctions.node';
 
 import { equal } from '../dataTypes/valueTypes/DateTime';
 import {
-	AsyncIterator,
 	DONE_TOKEN,
+	IAsyncIterator,
 	IterationHint,
 	IterationResult,
 	notReady,
@@ -28,12 +28,12 @@ const nodeName = builtInFunctionsNode.functions.nodeName;
 
 function asyncGenerateEvery<T>(
 	items: T[],
-	callback: (item: T, index: number, all: T[]) => AsyncIterator<boolean>
-): AsyncIterator<boolean> {
+	callback: (item: T, index: number, all: T[]) => IAsyncIterator<boolean>
+): IAsyncIterator<boolean> {
 	let i = 0;
 	const l = items.length;
 	let done = false;
-	let filterGenerator: AsyncIterator<boolean> = null;
+	let filterGenerator: IAsyncIterator<boolean> = null;
 	return {
 		next: () => {
 			if (!done) {
@@ -128,12 +128,12 @@ function sequenceDeepEqual(
 	staticContext: StaticContext,
 	sequence1: ISequence,
 	sequence2: ISequence
-): AsyncIterator<boolean> {
+): IAsyncIterator<boolean> {
 	const it1 = sequence1.value;
 	const it2 = sequence2.value;
 	let item1: IterationResult<Value> = null;
 	let item2: IterationResult<Value> = null;
-	let comparisonGenerator: AsyncIterator<boolean> = null;
+	let comparisonGenerator: IAsyncIterator<boolean> = null;
 	let done: boolean;
 	return {
 		next: (_hint: IterationHint) => {
@@ -193,7 +193,7 @@ function mapTypeDeepEqual(
 	staticContext: StaticContext,
 	item1: MapValue,
 	item2: MapValue
-): AsyncIterator<boolean> {
+): IAsyncIterator<boolean> {
 	if (item1.keyValuePairs.length !== item2.keyValuePairs.length) {
 		return createSingleValueIterator(false);
 	}
@@ -229,7 +229,7 @@ function arrayTypeDeepEqual(
 	staticContext: StaticContext,
 	item1: ArrayValue,
 	item2: ArrayValue
-): AsyncIterator<boolean> {
+): IAsyncIterator<boolean> {
 	if (item1.members.length !== item2.members.length) {
 		return createSingleValueIterator(false);
 	}
@@ -252,7 +252,7 @@ function nodeDeepEqual(
 	staticContext: StaticContext,
 	item1: Value,
 	item2: Value
-): AsyncIterator<boolean> {
+): IAsyncIterator<boolean> {
 	let item1Nodes = executionParameters.domFacade.getChildNodes(item1.value);
 	let item2Nodes = executionParameters.domFacade.getChildNodes(item2.value);
 
@@ -277,7 +277,7 @@ function elementNodeDeepEqual(
 	staticContext: StaticContext,
 	item1: Value,
 	item2: Value
-): AsyncIterator<boolean> {
+): IAsyncIterator<boolean> {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
@@ -361,7 +361,7 @@ function atomicTypeNodeDeepEqual(
 	staticContext: StaticContext,
 	item1: Value,
 	item2: Value
-): AsyncIterator<boolean> {
+): IAsyncIterator<boolean> {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
@@ -414,7 +414,7 @@ function itemDeepEqual(
 	staticContext: StaticContext,
 	item1: Value,
 	item2: Value
-): AsyncIterator<boolean> {
+): IAsyncIterator<boolean> {
 	// All atomic types
 	if (
 		isSubtypeOf(item1.type, 'xs:anyAtomicType') &&

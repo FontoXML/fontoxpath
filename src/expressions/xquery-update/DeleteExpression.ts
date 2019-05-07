@@ -7,7 +7,7 @@ import { deletePu } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import { AsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
 
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -31,8 +31,8 @@ class DeleteExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): AsyncIterator<UpdatingExpressionResult> {
-		const targetValueIterator: AsyncIterator<
+	): IAsyncIterator<UpdatingExpressionResult> {
+		const targetValueIterator: IAsyncIterator<
 			UpdatingExpressionResult
 		> = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,

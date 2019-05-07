@@ -9,7 +9,7 @@ import { mergeUpdates } from './pulRoutines';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import { AsyncIterator, DONE_TOKEN, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 
 import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
@@ -29,8 +29,8 @@ import {
 
 function evaluateReplaceNode(
 	executionParameters: ExecutionParameters,
-	targetValueIterator: AsyncIterator<UpdatingExpressionResult>,
-	replacementValueIterator: AsyncIterator<UpdatingExpressionResult>
+	targetValueIterator: IAsyncIterator<UpdatingExpressionResult>,
+	replacementValueIterator: IAsyncIterator<UpdatingExpressionResult>
 ) {
 	let rlist;
 	let rlistUpdates;
@@ -161,8 +161,8 @@ function evaluateReplaceNode(
 
 function evaluateReplaceNodeValue(
 	executionParameters: ExecutionParameters,
-	targetValueIterator: AsyncIterator<UpdatingExpressionResult>,
-	replacementValueIterator: AsyncIterator<UpdatingExpressionResult>
+	targetValueIterator: IAsyncIterator<UpdatingExpressionResult>,
+	replacementValueIterator: IAsyncIterator<UpdatingExpressionResult>
 ) {
 	let target;
 	let targetUpdates;
@@ -325,7 +325,7 @@ class ReplaceExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): AsyncIterator<UpdatingExpressionResult> {
+	): IAsyncIterator<UpdatingExpressionResult> {
 		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters

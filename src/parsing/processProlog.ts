@@ -7,8 +7,11 @@ import createDoublyIterableSequence from '../expressions/util/createDoublyIterab
 
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 
+import ISequence from '../expressions/dataTypes/ISequence';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
+import Expression from '../expressions/Expression';
+import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
 import { errXQST0070 } from '../expressions/xquery/XQueryErrors';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
@@ -33,9 +36,12 @@ export default function processProlog(
 	prolog: IAST,
 	staticContext: StaticContext
 ): { functionDeclarations: FunctionDeclaration[] } {
-	const staticallyCompilableExpressions = [];
+	const staticallyCompilableExpressions: {
+		expression: Expression;
+		staticContextLeaf: StaticContext;
+	}[] = [];
 
-	const compiledFunctionDeclarations = [];
+	const compiledFunctionDeclarations: FunctionDeclaration[] = [];
 
 	astHelper.getChildren(prolog, '*').forEach(feature => {
 		switch (feature[0]) {
@@ -186,11 +192,11 @@ export default function processProlog(
 			return staticContextLeaf.registerVariable(namespaceURI, localName);
 		});
 
-		const executeFunction = (
+		const executeFunction: FunctionDefinitionType = (
 			dynamicContext: DynamicContext,
 			executionParameters: ExecutionParameters,
 			_staticContext: StaticContext,
-			...parameters
+			...parameters: ISequence[]
 		) => {
 			const scopedDynamicContext = dynamicContext
 				.scopeWithFocus(-1, null, sequenceFactory.empty())
@@ -238,7 +244,7 @@ export default function processProlog(
 		}
 	});
 
-	const registeredVariables = [];
+	const registeredVariables: { localName: string; namespaceURI: null | string }[] = [];
 	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		const external = astHelper.getFirstChild(varDecl, 'external');
@@ -261,8 +267,8 @@ export default function processProlog(
 				}${varName.localName} has already been declared.`
 			);
 		}
-		if (!staticContext.lookupVariable(varName.namespaceURI, varName.localName)) {
-			staticContext.registerVariable(varName.namespaceURI, varName.localName);
+		if (!staticContext.lookupVariable(varName.namespaceURI || '', varName.localName)) {
+			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);
 		}
 		registeredVariables.push(varName);
 	});

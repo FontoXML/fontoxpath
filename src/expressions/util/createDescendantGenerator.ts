@@ -1,13 +1,13 @@
 import {
-	ConcreteParentNode,
-	NODE_TYPES,
+	ConcreteChildNode,
 	ConcreteNode,
-	ConcreteChildNode
+	ConcreteParentNode,
+	NODE_TYPES
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import createNodeValue from '../dataTypes/createNodeValue';
 import createChildGenerator from './createChildGenerator';
-import { DONE_TOKEN, ready } from './iterators';
+import { DONE_TOKEN, IterationHint, ready } from './iterators';
 
 function findDeepestLastDescendant(
 	node: ConcreteNode,
@@ -81,13 +81,13 @@ export default function createDescendantGenerator(
 			if (!descendantIteratorStack.length) {
 				return DONE_TOKEN;
 			}
-			let value = descendantIteratorStack[0].next();
+			let value = descendantIteratorStack[0].next(IterationHint.NONE);
 			while (value.done) {
 				descendantIteratorStack.shift();
 				if (!descendantIteratorStack.length) {
 					return DONE_TOKEN;
 				}
-				value = descendantIteratorStack[0].next();
+				value = descendantIteratorStack[0].next(IterationHint.NONE);
 			}
 			// Iterator over these children next
 			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value));

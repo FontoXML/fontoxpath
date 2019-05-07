@@ -38,7 +38,7 @@ import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTime
 
 describe('castToType()', () => {
 	before(() => {
-		if (typeof atob === 'undefined') {
+		if (typeof (global as any).atob === 'undefined') {
 			(global as any).atob = function (b64Encoded) {
 				return new Buffer(b64Encoded, 'base64').toString();
 			};

@@ -23,7 +23,7 @@ export default function staticallyCompileXPath(
 	},
 	namespaceResolver: (namespace: string) => string | null,
 	variables: object,
-	moduleImports: object
+	moduleImports: { [namespaceURI: string]: string }
 ): Expression {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 

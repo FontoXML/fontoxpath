@@ -1,9 +1,9 @@
 import ExecutionParameters from '../../ExecutionParameters';
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import {
-	AsyncIterator,
-	AsyncResult,
 	DONE_TOKEN,
+	IAsyncIterator,
+	IAsyncResult,
 	IterationHint,
 	notReady,
 	ready
@@ -16,7 +16,7 @@ import Value from '../Value';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class IteratorBackedSequence implements ISequence {
-	public value: AsyncIterator<Value>;
+	public value: IAsyncIterator<Value>;
 
 	private _cacheAllValues: boolean;
 	private _cachedValues: Value[];
@@ -25,7 +25,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 	constructor(
 		private readonly _sequenceFactory: typeof sequenceFactory,
-		valueIterator: AsyncIterator<Value>,
+		valueIterator: IAsyncIterator<Value>,
 		predictedLength: number = null
 	) {
 		this.value = {
@@ -150,7 +150,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 	public mapAll(callback: (allValues: Value[]) => ISequence, hint: IterationHint): ISequence {
 		const iterator = this.value;
-		let mappedResultsIterator: AsyncIterator<Value>;
+		let mappedResultsIterator: IAsyncIterator<Value>;
 		const allResults: Value[] = [];
 		let isReady = false;
 		let readyPromise = null;
@@ -182,7 +182,7 @@ export default class IteratorBackedSequence implements ISequence {
 	}
 
 	public switchCases(cases: SwitchCasesCases): ISequence {
-		let resultIterator: AsyncIterator<Value> = null;
+		let resultIterator: IAsyncIterator<Value> = null;
 
 		const setResultIterator = (resultSequence: ISequence) => {
 			resultIterator = resultSequence.value;
@@ -225,7 +225,7 @@ export default class IteratorBackedSequence implements ISequence {
 		});
 	}
 
-	public tryGetAllValues(): AsyncResult<Value[]> {
+	public tryGetAllValues(): IAsyncResult<Value[]> {
 		if (
 			this._currentPosition > this._cachedValues.length &&
 			this._length !== this._cachedValues.length
@@ -248,7 +248,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return ready(this._cachedValues);
 	}
 
-	public tryGetEffectiveBooleanValue(): AsyncResult<boolean> {
+	public tryGetEffectiveBooleanValue(): IAsyncResult<boolean> {
 		const iterator = this.value;
 		const oldPosition = this._currentPosition;
 
@@ -280,7 +280,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return ready(getEffectiveBooleanValue(firstValue));
 	}
 
-	public tryGetFirst(): AsyncResult<Value> {
+	public tryGetFirst(): IAsyncResult<Value> {
 		if (this._cachedValues[0] !== undefined) {
 			return ready(this._cachedValues[0]);
 		}
@@ -300,7 +300,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return firstValue;
 	}
 
-	public tryGetLength(onlyIfCheap = false): AsyncResult<number> {
+	public tryGetLength(onlyIfCheap = false): IAsyncResult<number> {
 		if (this._length !== null) {
 			return ready(this._length);
 		}
@@ -322,7 +322,7 @@ export default class IteratorBackedSequence implements ISequence {
 		this._currentPosition = to;
 	}
 
-	private tryIsEmpty(): AsyncResult<boolean> {
+	private tryIsEmpty(): IAsyncResult<boolean> {
 		if (this._length === 0) {
 			return ready(true);
 		}
@@ -333,7 +333,7 @@ export default class IteratorBackedSequence implements ISequence {
 		return ready(firstValue.value === null);
 	}
 
-	private tryIsSingleton(): AsyncResult<boolean> {
+	private tryIsSingleton(): IAsyncResult<boolean> {
 		if (this._length !== null) {
 			return ready(this._length === 1);
 		}

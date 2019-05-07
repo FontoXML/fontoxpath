@@ -10,13 +10,13 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createChildGenerator from '../util/createChildGenerator';
 import createSingleValueIterator from '../util/createSingleValueIterator';
-import { AsyncIterator, DONE_TOKEN, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
 
 function createInclusiveDescendantGenerator(
 	domFacade: IDomFacade,
 	node: ConcreteChildNode
-): AsyncIterator<Value> {
-	const descendantIteratorStack: Iterator<ConcreteChildNode>[] = [
+): IAsyncIterator<Value> {
+	const descendantIteratorStack: IAsyncIterator<ConcreteChildNode>[] = [
 		createSingleValueIterator(node)
 	];
 	return {
@@ -32,13 +32,13 @@ function createInclusiveDescendantGenerator(
 			if (!descendantIteratorStack.length) {
 				return DONE_TOKEN;
 			}
-			let value = descendantIteratorStack[0].next();
+			let value = descendantIteratorStack[0].next(IterationHint.NONE);
 			while (value.done) {
 				descendantIteratorStack.shift();
 				if (!descendantIteratorStack.length) {
 					return DONE_TOKEN;
 				}
-				value = descendantIteratorStack[0].next();
+				value = descendantIteratorStack[0].next(IterationHint.NONE);
 			}
 			// Iterator over these children next
 			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value));

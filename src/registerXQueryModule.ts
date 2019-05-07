@@ -20,10 +20,10 @@ export default function registerXQueryModule(moduleString: string): string {
 	if (!libraryModule) {
 		throw new Error('XQuery module must be declared in a library module.');
 	}
-	const moduleDecl = astHelper.getFirstChild(libraryModule, 'moduleDecl');
-	const uriNode = astHelper.getFirstChild(moduleDecl, 'uri');
+	const moduleDecl = astHelper.getFirstChild(libraryModule, 'moduleDecl')!;
+	const uriNode = astHelper.getFirstChild(moduleDecl, 'uri')!;
 	const moduleTargetNamespaceURI = astHelper.getTextContent(uriNode);
-	const prefixNode = astHelper.getFirstChild(moduleDecl, 'prefix');
+	const prefixNode = astHelper.getFirstChild(moduleDecl, 'prefix')!;
 	const moduleTargetPrefix = astHelper.getTextContent(prefixNode);
 
 	const staticContext = new StaticContext(

@@ -4,6 +4,7 @@ import { slimdom, sync } from 'slimdom-sax-parser';
 import IDomFacade from '../../../../src/domFacade/IDomFacade';
 import assertUpdateList from './assertUpdateList';
 import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
+import { Document } from 'slimdom';
 
 let documentNode: Document;
 beforeEach(() => {
@@ -188,17 +189,17 @@ return ($a, replace node element with <replacement/>)
 		const a = documentNode.createElement('a');
 
 		// <xml><a/></xml>
-		const getChildNode = (node: Node) =>
+		const getChildNode = (node: slimdom.Node) =>
 			node === documentNode ? xml : node === xml ? a : null;
 		const myDomFacade: IDomFacade = {
 			getAllAttributes: () => [],
 			getAttribute: () => null,
-			getChildNodes: (node: Node) => [getChildNode(node)],
+			getChildNodes: (node: slimdom.Node) => [getChildNode(node)],
 			getData: () => '',
 			getFirstChild: getChildNode,
 			getLastChild: getChildNode,
 			getNextSibling: () => null,
-			getParentNode: (node: Node) => (node === a ? xml : node === xml ? documentNode : null),
+			getParentNode: (node: slimdom.Node) => (node === a ? xml : node === xml ? documentNode : null),
 			getPreviousSibling: () => null
 		};
 
@@ -217,7 +218,7 @@ return ($a, replace node element with <replacement/>)
 
 	it('throws when a target of in the pul of modify is not a clone', async () => {
 		documentNode.appendChild(documentNode.createElement('a'));
-		let error;
+		let error: Error|null;
 		try {
 			await evaluateUpdatingExpression(
 				'copy $newVar := a modify replace node a with <b/> return $newVar',
@@ -230,7 +231,7 @@ return ($a, replace node element with <replacement/>)
 			error = err;
 		}
 
-		chai.assert.match(error.message, new RegExp('XUDY0014'));
+		chai.assert.match(error!.message, new RegExp('XUDY0014'));
 	});
 
 	it('transforms something with something asynchronous', async () => {

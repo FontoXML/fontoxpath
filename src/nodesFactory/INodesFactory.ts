@@ -1,3 +1,13 @@
+import {
+	Attr,
+	CDATASection,
+	Comment,
+	Document,
+	Element,
+	ProcessingInstruction,
+	Text
+} from '../types/Types';
+
 /**
  * @public
  */

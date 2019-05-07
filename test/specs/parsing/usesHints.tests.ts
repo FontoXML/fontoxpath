@@ -19,63 +19,63 @@ beforeEach(() => {
  * @param  shouldNotBeTraversed  These nodes and their descendants should never be traversed.
  */
 function buildDomFacade(...shouldNotBeTraversed: slimdom.Node[]): IDomFacade {
-	const externalDomFacde = new ExternalDomFacade();
+	const externalDomFacade = new ExternalDomFacade();
 
-	const throwIfShouldNotTraversed = (node: Node) => {
-		const slimdomNode = (node as any) as slimdom.Node;
-
-		if (slimdomNode === null) {
+	const throwIfShouldNotTraversed = (node: slimdom.Node) => {
+		if (node === null) {
 			return;
 		}
-		if (shouldNotBeTraversed.includes(slimdomNode)) {
+		if (shouldNotBeTraversed.includes(node)) {
 			throw new Error(
 				`The node ${new slimdom.XMLSerializer().serializeToString(
-					slimdomNode
+					node
 				)} should not be traversed.`
 			);
 		}
 		throwIfShouldNotTraversed(node.parentNode);
 	};
 
-	const domFacade: IDomFacade = {
-		getAllAttributes: node => {
+	class ThrowingDomFacade implements IDomFacade {
+		public getAllAttributes(node: slimdom.Element) {
 			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getAllAttributes(node);
-		},
-		getAttribute: (node, attributeName) => {
-			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getAttribute(node, attributeName);
-		},
-		getChildNodes: node => {
-			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getChildNodes(node);
-		},
-		getData: node => {
-			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getData(node);
-		},
-		getFirstChild: node => {
-			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getFirstChild(node);
-		},
-		getLastChild: node => {
-			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getLastChild(node);
-		},
-		getNextSibling: node => {
-			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getNextSibling(node);
-		},
-		getParentNode: node => {
-			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getParentNode(node);
-		},
-		getPreviousSibling: node => {
-			throwIfShouldNotTraversed(node);
-			return externalDomFacde.getPreviousSibling(node);
+			return externalDomFacade.getAllAttributes(node);
 		}
-	};
-	return domFacade;
+		public getAttribute(node: slimdom.Element, attributeName: string): string {
+			throwIfShouldNotTraversed(node);
+			return externalDomFacade.getAttribute(node, attributeName);
+		}
+		public getChildNodes(node: slimdom.Node){
+			throwIfShouldNotTraversed(node);
+			return externalDomFacade.getChildNodes(node);
+		}
+		public getData(node: slimdom.Attr | slimdom.CharacterData): string {
+			throwIfShouldNotTraversed(node);
+			return externalDomFacade.getData(node);
+		}
+		public getFirstChild(node: slimdom.Node) {
+			throwIfShouldNotTraversed(node);
+			return externalDomFacade.getFirstChild(node);
+
+		}
+		public getLastChild(node: slimdom.Node) {
+			throwIfShouldNotTraversed(node);
+			return externalDomFacade.getLastChild(node);
+		}
+		public getNextSibling(node: slimdom.Node) {
+			throwIfShouldNotTraversed(node);
+			return externalDomFacade.getNextSibling(node);
+		}
+		public getParentNode(node: slimdom.Node) {
+			throwIfShouldNotTraversed(node);
+			return externalDomFacade.getParentNode(node);
+		}
+		public getPreviousSibling(node: slimdom.Node) {
+			throwIfShouldNotTraversed(node);
+			return externalDomFacade.getPreviousSibling(node);
+		}
+	}
+
+	return new ThrowingDomFacade();
 }
 
 describe('uses hints', () => {
@@ -83,13 +83,13 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(descendant::foo)',
 			documentNode,
 			buildDomFacade(descendant)
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -98,13 +98,13 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(root/descendant::foo)',
 			documentNode,
 			buildDomFacade(descendant)
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -113,13 +113,13 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(descendant::foo!.)',
 			documentNode,
 			buildDomFacade(descendant)
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -129,7 +129,7 @@ describe('uses hints', () => {
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 
 		// It is successful when the dom facade does not throw
-		let nodes = evaluateXPathToNodes(
+		let nodes = evaluateXPathToNodes<slimdom.Element>(
 			'outermost((descendant::foo, <bar/>))',
 			documentNode,
 			buildDomFacade(descendant),
@@ -139,7 +139,7 @@ describe('uses hints', () => {
 
 		nodes.sort(node => node.nodeName === 'bar' ? 1 : -1);
 
-		chai.assert.deepEqual(nodes, evaluateXPathToNodes(
+		chai.assert.deepEqual(nodes, evaluateXPathToNodes<slimdom.Element>(
 			'(root/foo, <bar/>)',
 			documentNode,
 			null,
@@ -148,7 +148,7 @@ describe('uses hints', () => {
 		));
 
 		// It is successful when the dom facade does not throw
-		nodes = evaluateXPathToNodes(
+		nodes = evaluateXPathToNodes<slimdom.Element>(
 			'outermost((<bar/>, descendant::foo))',
 			documentNode,
 			buildDomFacade(descendant),
@@ -158,7 +158,7 @@ describe('uses hints', () => {
 
 		nodes.sort(node => node.nodeName === 'bar' ? 1 : -1);
 
-		chai.assert.deepEqual(nodes, evaluateXPathToNodes(
+		chai.assert.deepEqual(nodes, evaluateXPathToNodes<slimdom.Element>(
 			'(root/foo, <bar/>)',
 			documentNode,
 			null,
@@ -184,7 +184,7 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(for $i in 1 return descendant::foo)',
 			documentNode,
 			buildDomFacade(descendant),
@@ -192,7 +192,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -201,7 +201,7 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(descendant::element()[name() eq "foo"])',
 			documentNode,
 			buildDomFacade(descendant),
@@ -209,7 +209,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -218,7 +218,7 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(tail(descendant::node()))',
 			documentNode,
 			buildDomFacade(descendant),
@@ -226,7 +226,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -235,7 +235,7 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(subsequence(descendant::node(), 2))',
 			documentNode,
 			buildDomFacade(descendant),
@@ -243,7 +243,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -265,7 +265,7 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(for-each(root, function($node){$node/descendant::node()}))',
 			documentNode,
 			buildDomFacade(descendant),
@@ -273,7 +273,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -326,7 +326,7 @@ describe('uses hints', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;
 		// It is successful when the dom facade does not throw
-		const nodes = evaluateXPathToNodes(
+		const nodes = evaluateXPathToNodes<slimdom.Node>(
 			'outermost(if (true()) then descendant::foo else root)',
 			documentNode,
 			buildDomFacade(descendant),
@@ -334,7 +334,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});
@@ -373,7 +373,7 @@ describe('uses hints', () => {
 			}
 		);
 
-		chai.assert.deepEqual((nodes as any) as slimdom.Node[], [
+		chai.assert.deepEqual(nodes, [
 			documentNode.documentElement.firstChild
 		]);
 	});

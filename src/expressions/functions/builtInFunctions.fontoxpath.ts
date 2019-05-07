@@ -3,7 +3,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { AsyncIterator, DONE_TOKEN, IterationHint, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 
 import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -25,7 +25,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 	query,
 	args
 ) => {
-	let resultIterator: AsyncIterator<Value>;
+	let resultIterator: IAsyncIterator<Value>;
 	let queryString: string;
 	return sequenceFactory.create({
 		next: () => {
@@ -111,7 +111,7 @@ const fontoxpathSleep: FunctionDefinitionType = (
 	howLong
 ) => {
 	let doneWithSleep = false;
-	let readyPromise: Promise<{}>;
+	let readyPromise: Promise<void>;
 
 	const valueIterator = val.value;
 	return sequenceFactory.create({
@@ -143,13 +143,13 @@ declare const VERSION: string | undefined;
 const fontoxpathVersion: FunctionDefinitionType = () => {
 	let version: string;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
-	if (typeof VERSION === 'undefined') {
-		version = 'devbuild';
-	} else {
-		version = VERSION;
-	}
+	version = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
 	return sequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 };
+
+// TODO: implement a domparser instead of using the global one from the browser
+declare var DOMParser;
+declare var fetch;
 
 const fontoxpathFetch: FunctionDefinitionType = (
 	_dynamicContext,
@@ -169,6 +169,7 @@ const fontoxpathFetch: FunctionDefinitionType = (
 				if (!urlValue.ready) {
 					return urlValue;
 				}
+
 				readyPromise = fetch(urlValue.value.value)
 					.then(response => response.text())
 					.then(text => new DOMParser().parseFromString(text, 'application/xml'))

@@ -2,7 +2,7 @@ import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
-import evaluateXPath, { Language, Options, ReturnType } from './evaluateXPath';
+import evaluateXPath, { IReturnTypes, Language, Options, ReturnType } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -26,6 +26,7 @@ import parseExpression from './parsing/parseExpression';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
+import { Attr, CDATASection, CharacterData, Comment, Document, Element, Node, ProcessingInstruction, Text } from './types/Types';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath');
@@ -83,6 +84,9 @@ function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 
  */
 const domFacade = new ExternalDomFacade() as IDomFacade;
 
+// This declaration is needed, as we don't depend anymore on lib.dom.
+declare var window;
+
 /* istanbul ignore next */
 if (typeof window !== 'undefined') {
 	window['compareSpecificity'] = compareSpecificity;
@@ -110,15 +114,12 @@ if (typeof window !== 'undefined') {
 }
 
 export {
-	IDocumentWriter,
-	IDomFacade,
-	INodesFactory,
-	Language,
-	Options,
-	ReturnType,
-	UpdatingOptions,
-	compareSpecificity,
-	domFacade,
+	Attr,
+	CDATASection,
+	CharacterData,
+	Comment,
+	Element,
+	Document,
 	evaluateUpdatingExpression,
 	evaluateXPath,
 	evaluateXPathToArray,
@@ -134,6 +135,19 @@ export {
 	executePendingUpdateList,
 	getBucketForSelector,
 	getBucketsForNode,
+	IDocumentWriter,
+	IDomFacade,
+	INodesFactory,
+	IReturnTypes,
+	Language,
+	Node,
+	ProcessingInstruction,
+	Text,
+	ReturnType,
+	UpdatingOptions,
+	compareSpecificity,
+	domFacade,
+	Options,
 	precompileXPath,
 	registerCustomXPathFunction,
 	registerXQueryModule

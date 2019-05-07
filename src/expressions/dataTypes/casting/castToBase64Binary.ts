@@ -4,12 +4,15 @@ import CastResult from './CastResult';
 const createBase64BinaryValue = value => createAtomicValue(value, 'xs:base64Binary');
 
 function hexToString(hex) {
-	let string = '';
+	let text = '';
 	for (let i = 0; i < hex.length; i += 2) {
-		string += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+		text += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
 	}
-	return string;
+	return text;
 }
+
+// This declaration is needed, as we don't depend anymore on lib.dom.
+declare var btoa: ((s: string) => string);
 
 export default function castToBase64Binary(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:hexBinary')) {
@@ -25,9 +28,9 @@ export default function castToBase64Binary(instanceOf: (string) => boolean): (Va
 		});
 	}
 	return () => ({
-		successful: false,
 		error: new Error(
 			'XPTY0004: Casting not supported from given type to xs:base64Binary or any of its derived types.'
-		)
+		),
+		successful: false
 	});
 }

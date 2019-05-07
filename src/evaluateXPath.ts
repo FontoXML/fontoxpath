@@ -12,6 +12,7 @@ import Expression from './expressions/Expression';
 import { DONE_TOKEN, IterationHint, notReady, ready } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
+import { Node } from './types/Types';
 
 function transformMapToObject(map, dynamicContext) {
 	const mapObj = {};
@@ -140,7 +141,42 @@ export type Options = {
 };
 
 /**
+ * @public
+ */
+export enum ReturnType {
+	ANY = 0,
+	NUMBER = 1,
+	STRING = 2,
+	BOOLEAN = 3,
+	NODES = 7,
+	FIRST_NODE = 9,
+	STRINGS = 10,
+	MAP = 11,
+	ARRAY = 12,
+	NUMBERS = 13,
+	ASYNC_ITERATOR = 99
+}
+
+/**
+ * @public
+ */
+export interface IReturnTypes<T extends Node> {
+	[ReturnType.ANY]: any;
+	[ReturnType.NUMBER]: number;
+	[ReturnType.STRING]: string;
+	[ReturnType.BOOLEAN]: boolean;
+	[ReturnType.NODES]: T[];
+	[ReturnType.FIRST_NODE]: T|null;
+	[ReturnType.STRINGS]: string[];
+	[ReturnType.MAP]: { [s: string]: any };
+	[ReturnType.ARRAY]: any[];
+	[ReturnType.NUMBERS]: number[];
+	[ReturnType.ASYNC_ITERATOR]: AsyncIterator<any>;
+}
+
+/**
  * Evaluates an XPath on the given contextItem.
+ *
  * If the return type is ANY_TYPE, the returned value depends on the result of the XPath:
  *  * If the XPath evaluates to the empty sequence, an empty array is returned.
  *  * If the XPath evaluates to a singleton node, that node is returned.
@@ -159,15 +195,15 @@ export type Options = {
  *
  * @returns The result of executing this XPath
  */
-function evaluateXPath(
+function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>> (
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	returnType?: ReturnType | null,
+	returnType?: TReturnType,
 	options?: Options | null
-): Node[] | Node | any[] | any {
-	returnType = returnType || evaluateXPath.ANY_TYPE;
+): IReturnTypes<TNode>[TReturnType] {
+	returnType = returnType || (ReturnType.ANY as any);
 	if (!selector || typeof selector !== 'string') {
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
@@ -186,7 +222,7 @@ function evaluateXPath(
 			options,
 			{
 				allowUpdating: false,
-				allowXQuery: options['language'] === evaluateXPath.XQUERY_3_1_LANGUAGE,
+				allowXQuery: options['language'] === Language.XQUERY_3_1_LANGUAGE,
 				debug: !!options['debug']
 			}
 		);
@@ -200,7 +236,7 @@ function evaluateXPath(
 	// Shortcut: if the xpathExpression defines buckets, the
 	// contextItem is a node and we are evaluating to a bucket, we can
 	// use it to return false if we are sure it won't match.
-	if (returnType === evaluateXPath.BOOLEAN_TYPE && contextItem && 'nodeType' in contextItem) {
+	if (returnType === ReturnType.BOOLEAN && contextItem && 'nodeType' in contextItem) {
 		const selectorBucket = expression.getBucket();
 		const bucketsForNode = getBucketsForNode(contextItem);
 		if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {
@@ -213,7 +249,7 @@ function evaluateXPath(
 		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
 
 		switch (returnType) {
-			case evaluateXPath.BOOLEAN_TYPE: {
+			case ReturnType.BOOLEAN: {
 				const ebv = rawResults.tryGetEffectiveBooleanValue();
 				if (!ebv.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -221,7 +257,7 @@ function evaluateXPath(
 				return ebv.value;
 			}
 
-			case evaluateXPath.STRING_TYPE: {
+			case ReturnType.STRING: {
 				const allValues = rawResults.tryGetAllValues();
 				if (!allValues.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -236,7 +272,7 @@ function evaluateXPath(
 					)
 					.join(' ');
 			}
-			case evaluateXPath.STRINGS_TYPE: {
+			case ReturnType.STRINGS: {
 				const allValues = rawResults.tryGetAllValues();
 				if (!allValues.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -250,7 +286,7 @@ function evaluateXPath(
 				});
 			}
 
-			case evaluateXPath.NUMBER_TYPE: {
+			case ReturnType.NUMBER: {
 				const first = rawResults.tryGetFirst();
 				if (!first.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -264,7 +300,7 @@ function evaluateXPath(
 				return first.value.value;
 			}
 
-			case evaluateXPath.FIRST_NODE_TYPE: {
+			case ReturnType.FIRST_NODE: {
 				const first = rawResults.tryGetFirst();
 				if (!first.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -283,7 +319,7 @@ function evaluateXPath(
 				return first.value.value;
 			}
 
-			case evaluateXPath.NODES_TYPE: {
+			case ReturnType.NODES: {
 				const allResults = rawResults.tryGetAllValues();
 				if (!allResults.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -303,7 +339,7 @@ function evaluateXPath(
 				});
 			}
 
-			case evaluateXPath.MAP_TYPE: {
+			case ReturnType.MAP: {
 				const allValues = rawResults.tryGetAllValues();
 				if (!allValues.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -325,7 +361,7 @@ function evaluateXPath(
 				return transformedMap.value;
 			}
 
-			case evaluateXPath.ARRAY_TYPE: {
+			case ReturnType.ARRAY: {
 				const allValues = rawResults.tryGetAllValues();
 				if (!allValues.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -349,7 +385,7 @@ function evaluateXPath(
 				return transformedArray.value;
 			}
 
-			case evaluateXPath.NUMBERS_TYPE: {
+			case ReturnType.NUMBERS: {
 				const allValues = rawResults.tryGetAllValues();
 				if (!allValues.ready) {
 					throw new Error(`The XPath ${selector} can not be resolved synchronously.`);
@@ -362,11 +398,11 @@ function evaluateXPath(
 				});
 			}
 
-			case evaluateXPath.ASYNC_ITERATOR_TYPE: {
+			case ReturnType.ASYNC_ITERATOR: {
 				const it = rawResults.value;
 				let transformedValueGenerator = null;
 				let done = false;
-				function getNextResult(): Promise<IteratorResult<any>> {
+				const getNextResult = () => {
 					while (!done) {
 						if (!transformedValueGenerator) {
 							const value = it.next(IterationHint.NONE);
@@ -393,7 +429,7 @@ function evaluateXPath(
 						done: true,
 						value: null
 					});
-				}
+				};
 				if ('asyncIterator' in Symbol) {
 					return {
 						[Symbol.asyncIterator]() {
@@ -470,24 +506,7 @@ function evaluateXPath(
 	} catch (error) {
 		printAndRethrowError(selector, error);
 	}
-}
-
-/**
- * @public
- */
-export enum ReturnType {
-	ANY = 0,
-	NUMBER = 1,
-	STRING = 2,
-	BOOLEAN = 3,
-	NODES = 7,
-	FIST_NODE = 9,
-	STRINGS = 10,
-	MAP = 11,
-	ARRAY = 12,
-	NUMBERS = 13,
-	ASYNC_ITERATOR = 99
-}
+};
 
 /**
  * Returns the result of the query, can be anything depending on the
@@ -495,25 +514,25 @@ export enum ReturnType {
  * statically: XPaths returning empty sequences will return empty
  * arrays and not null, like one might expect.
  */
-evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = ReturnType.ANY;
+evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = ReturnType.ANY as ReturnType.ANY;
 
 /**
  * Resolve to a number, like count((1,2,3)) resolves to 3.
  */
-evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = ReturnType.NUMBER;
+evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = ReturnType.NUMBER as ReturnType.NUMBER;
 
 /**
  * Resolve to a string, like //someElement[1] resolves to the text
  * content of the first someElement
  */
-evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = ReturnType.STRING;
+evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = ReturnType.STRING as ReturnType.STRING;
 
 /**
  * Resolves to true or false, uses the effective boolean value to
  * determine the result. count(1) resolves to true, count(())
  * resolves to false
  */
-evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN;
+evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN as ReturnType.BOOLEAN;
 
 /**
  * Resolve to all nodes the XPath resolves to. Returns nodes in the
@@ -521,32 +540,32 @@ evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN;
  * followed by all B nodes. //*[self::a or self::b] resolves to A and
  * B nodes in document order.
  */
-evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = ReturnType.NODES;
+evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = ReturnType.NODES as ReturnType.NODES;
 
 /**
  * Resolves to the first node.NODES_TYPE would have resolved to.
  */
-evaluateXPath['FIRST_NODE_TYPE'] = evaluateXPath.FIRST_NODE_TYPE = ReturnType.FIST_NODE;
+evaluateXPath['FIRST_NODE_TYPE'] = evaluateXPath.FIRST_NODE_TYPE = ReturnType.FIRST_NODE as ReturnType.FIRST_NODE;
 
 /**
  * Resolve to an array of strings
  */
-evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = ReturnType.STRINGS;
+evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = ReturnType.STRINGS as ReturnType.STRINGS;
 
 /**
  * Resolve to an object, as a map
  */
-evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = ReturnType.MAP;
+evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = ReturnType.MAP as ReturnType.MAP;
 
-evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = ReturnType.ARRAY;
+evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = ReturnType.ARRAY as ReturnType.ARRAY;
 
 evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE =
-	ReturnType.ASYNC_ITERATOR;
+	ReturnType.ASYNC_ITERATOR as ReturnType.ASYNC_ITERATOR;
 
 /**
  * Resolve to an array of numbers
  */
-evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS;
+evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS as ReturnType.NUMBERS;
 
 /**
  * @public

@@ -1,3 +1,4 @@
+import { Node } from '../types/Types';
 import {
 	ConcreteAttributeNode,
 	ConcreteCharacterDataNode,

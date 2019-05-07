@@ -9,14 +9,9 @@ import {
 import IDomFacade from '../../domFacade/IDomFacade';
 import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
 import INodesFactory from '../../nodesFactory/INodesFactory';
+import { Attr, Document, Element, Node, ProcessingInstruction } from '../../types/Types';
 import QName from '../dataTypes/valueTypes/QName';
 import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
-
-const ELEMENT_NODE = 1;
-const ATTRIBUTE_NODE = 2;
-const TEXT_NODE = 3;
-const PROCESSING_INSTRUCTION_NODE = 7;
-const COMMENT_NODE = 8;
 
 /**
  * Deletes $target.
@@ -268,9 +263,9 @@ export const replaceNode = (
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNode(target);
 
-	if (target.nodeType === ATTRIBUTE_NODE) {
+	if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
 		// All replacement must consist of attribute nodes.
-		if (replacement.some(candidate => candidate.nodeType !== ATTRIBUTE_NODE)) {
+		if (replacement.some(candidate => candidate.nodeType !== NODE_TYPES.ATTRIBUTE_NODE)) {
 			throw new Error(
 				'Constraint "If $target is an attribute node, $replacement must consist of zero or more attribute nodes." failed.'
 			);
@@ -310,22 +305,17 @@ export const replaceNode = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const replaceValue = (
-	target: Element | Attr,
+	target: ConcreteElementNode | ConcreteAttributeNode,
 	stringValue: string,
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	if (target.nodeType === ATTRIBUTE_NODE) {
-		const element = domFacade.getParentNode(target as Attr) as Element;
+	if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
+		const element = domFacade.getParentNode(target) as Element;
 		if (element) {
-			documentWriter.setAttributeNS(
-				element,
-				target.namespaceURI,
-				(target as Attr).name,
-				stringValue
-			);
+			documentWriter.setAttributeNS(element, target.namespaceURI, target.name, stringValue);
 		} else {
-			(target as Attr).value = stringValue;
+			target.value = stringValue;
 		}
 	} else {
 		documentWriter.setData(target, stringValue);

@@ -3,7 +3,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
-import { DONE_TOKEN, ready } from '../util/iterators';
+import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
 import createDescendantGenerator from '../util/createDescendantGenerator';
 
@@ -37,7 +37,7 @@ function createFollowingGenerator(domFacade, node) {
 					return toReturn;
 				}
 
-				const nephew = nephewGenerator.next();
+				const nephew = nephewGenerator.next(IterationHint.NONE);
 
 				if (nephew.done) {
 					// We are done with the descendants of the node currently on the stack

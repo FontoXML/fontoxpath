@@ -17,7 +17,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { AsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
 import { applyUpdates, mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
@@ -120,12 +120,12 @@ class TransformExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): AsyncIterator<UpdatingExpressionResult> {
+	): IAsyncIterator<UpdatingExpressionResult> {
 		const { domFacade, nodesFactory, documentWriter } = executionParameters;
 
-		const sourceValueIterators: AsyncIterator<UpdatingExpressionResult>[] = [];
-		let modifyValueIterator: AsyncIterator<UpdatingExpressionResult>;
-		let returnValueIterator: AsyncIterator<UpdatingExpressionResult>;
+		const sourceValueIterators: IAsyncIterator<UpdatingExpressionResult>[] = [];
+		let modifyValueIterator: IAsyncIterator<UpdatingExpressionResult>;
+		let returnValueIterator: IAsyncIterator<UpdatingExpressionResult>;
 
 		let modifyPul;
 		const createdNodes = [];
@@ -137,7 +137,7 @@ class TransformExpression extends UpdatingExpression {
 					// The copy clause contains one or more variable bindings, each of which consists of a variable name and an expression called the source expression.
 					for (let i = createdNodes.length; i < this._variableBindings.length; i++) {
 						const variableBinding = this._variableBindings[i];
-						let sourceValueIterator: AsyncIterator<UpdatingExpressionResult> =
+						let sourceValueIterator: IAsyncIterator<UpdatingExpressionResult> =
 							sourceValueIterators[i];
 
 						// Each variable binding is processed as follows:

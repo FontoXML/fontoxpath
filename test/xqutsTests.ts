@@ -333,7 +333,7 @@ async function runTestCase(testName, testCase) {
 }
 
 function buildTestCases(testGroup) {
-	(evaluateXPathToNodes('test-group | test-case', testGroup) as Element[]).forEach(test => {
+	(evaluateXPathToNodes('test-group | test-case', testGroup) as slimdom.Element[]).forEach(test => {
 		switch (test.localName) {
 			case 'test-group': {
 				const groupName = evaluateXPathToString(

@@ -156,7 +156,7 @@ async function rerunXPath() {
 		astJsonMl.innerText = stringifyJsonMl(ast, 0, 0);
 
 		const document = new Document();
-		document.appendChild(parseAst(document, ast));
+		document.appendChild(parseAst(document, ast) as Node);
 		document.documentElement.setAttributeNS(
 			'http://www.w3.org/2001/XMLSchema-instance',
 			'xsi:schemaLocation',

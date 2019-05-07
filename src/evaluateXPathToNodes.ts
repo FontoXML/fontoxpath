@@ -1,5 +1,6 @@
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateXPath, { Options } from './evaluateXPath';
+import { Node } from './types/Types';
 
 /**
  * Evaluates an XPath on the given contextNode. Returns the first node result.
@@ -17,14 +18,14 @@ import evaluateXPath, { Options } from './evaluateXPath';
  *
  * @returns All matching Nodes, in the order defined by the XPath.
  */
-export default function evaluateXPathToNodes(
+export default function evaluateXPathToNodes<T extends Node>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
-): Node[] {
-	return evaluateXPath(
+): T[] {
+	return evaluateXPath<T, evaluateXPath.NODES_TYPE>(
 		selector,
 		contextItem,
 		domFacade,

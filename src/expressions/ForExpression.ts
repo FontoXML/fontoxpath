@@ -6,7 +6,7 @@ import ExecutionParameters from './ExecutionParameters';
 import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import StaticContext from './StaticContext';
-import { AsyncIterator, DONE_TOKEN, IterationHint } from './util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint } from './util/iterators';
 
 class ForExpression extends PossiblyUpdatingExpression {
 	private _clauseExpression: Expression;
@@ -50,7 +50,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 			dynamicContext,
 			executionParameters
 		).value;
-		let returnIterator: AsyncIterator<Value> | null = null;
+		let returnIterator: IAsyncIterator<Value> | null = null;
 		let done = false;
 		return sequenceFactory.create({
 			next: (hint: IterationHint) => {

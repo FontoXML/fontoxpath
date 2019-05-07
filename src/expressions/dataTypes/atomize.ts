@@ -52,19 +52,19 @@ export default function atomize(
 		// This is an element or a document node. Because we do not know the specific type of this element.
 		// Documents should always be an untypedAtomic, of elements, we do not know the type, so they are untypedAtomic too
 		const allTextNodes = [];
-		(function getTextNodes(node) {
-			if (node.nodeType === TEXT_NODE || node.nodeType === 4) {
-				allTextNodes.push(node);
+		(function getTextNodes(aNode) {
+			if (aNode.nodeType === TEXT_NODE || aNode.nodeType === 4) {
+				allTextNodes.push(aNode);
 				return;
 			}
-			executionParameters.domFacade.getChildNodes(node).forEach(function(childNode) {
+			executionParameters.domFacade.getChildNodes(aNode).forEach(function(childNode) {
 				getTextNodes(childNode);
 			});
 		})(node);
 
 		return createAtomicValue(
 			allTextNodes
-				.map(function(textNode) {
+				.map(textNode => {
 					return executionParameters.domFacade.getData(textNode);
 				})
 				.join(''),

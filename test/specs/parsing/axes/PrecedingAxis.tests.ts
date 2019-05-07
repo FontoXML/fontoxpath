@@ -24,10 +24,10 @@ describe('preceding', () => {
 			evaluateXPathToNodes(
 				'preceding::someOtherElement',
 				documentNode.documentElement.lastChild
-			).map(node => (node as Element).outerHTML),
+			).map(node => (node as slimdom.Element).outerHTML),
 			[
-				(documentNode.documentElement.firstChild as Element).outerHTML,
-				(documentNode.documentElement.firstChild.firstChild as Element).outerHTML
+				(documentNode.documentElement.firstChild as slimdom.Element).outerHTML,
+				(documentNode.documentElement.firstChild.firstChild as slimdom.Element).outerHTML
 			]
 		);
 	});

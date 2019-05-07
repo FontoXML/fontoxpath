@@ -1,3 +1,4 @@
+import { Attr, CharacterData, Node } from '../types/Types';
 import { NODE_TYPES } from './ConcreteNode';
 import IDomFacade from './IDomFacade';
 
@@ -15,7 +16,7 @@ export default class ExternalDomFacade implements IDomFacade {
 		return node['getAttribute'](attributeName);
 	}
 	public ['getChildNodes'](node: Node): Node[] {
-		return Array.from(node['childNodes']) as Node[];
+		return Array.from(node['childNodes']);
 	}
 	public ['getData'](node: Attr | CharacterData): string {
 		return node['data'];
