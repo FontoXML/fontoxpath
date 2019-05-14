@@ -7,11 +7,11 @@ import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createDescendantGenerator from '../util/createDescendantGenerator';
 
-function createPrecedingGenerator(domFacade, node) {
+function createPrecedingGenerator(domFacade, node, bucket) {
 	const nodeStack = [];
 
-	for (; node; node = domFacade.getParentNode(node)) {
-		const previousSibling = domFacade.getPreviousSibling(node);
+	for (; node; node = domFacade.getParentNode(node, bucket)) {
+		const previousSibling = domFacade.getPreviousSibling(node, bucket);
 		if (previousSibling === null) {
 			continue;
 		}
@@ -23,7 +23,7 @@ function createPrecedingGenerator(domFacade, node) {
 		next: () => {
 			while (nephewGenerator || nodeStack.length) {
 				if (!nephewGenerator) {
-					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0], true);
+					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0], true, bucket);
 				}
 
 				const nephew = nephewGenerator.next(IterationHint.NONE);
@@ -76,7 +76,7 @@ class PrecedingAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		return sequenceFactory
-			.create(createPrecedingGenerator(domFacade, contextItem.value))
+			.create(createPrecedingGenerator(domFacade, contextItem.value, this._testExpression.getBucket()))
 			.filter(item => {
 				return this._testExpression.evaluateToBoolean(dynamicContext, item);
 			});

@@ -4,7 +4,9 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
 	evaluateXPathToNodes,
-	evaluateXPathToStrings
+	evaluateXPathToStrings,
+	IDomFacade,
+	getBucketsForNode
 } from 'fontoxpath';
 
 let documentNode;
@@ -27,6 +29,26 @@ describe('ancestor', () => {
 			['someElement', { someAttribute: 'someValue' }]
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToStrings('ancestor-or-self::*/position()', documentNode.documentElement.firstChild), ['1', '2']);
+	});
+
+	it('passes buckets for ancestor', () => {
+		jsonMlMapper.parse([
+			'parentElement',
+			['childElement']
+		], documentNode);
+
+		const parentNode = documentNode.firstChild;
+		const childNode = documentNode.firstChild.firstChild;
+
+		const testDomFacade: IDomFacade = {
+			getParentNode: (node, bucket) => {
+				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
+				return getBucketsForNode(node.parentNode).includes(bucket) ? node.parentNode : null;
+			}
+		} as any;
+
+		const results = evaluateXPathToNodes('ancestor::parentElement', childNode, testDomFacade);
+		chai.assert.sameDeepMembers(results, [parentNode], 'ancestors');
 	});
 });
 

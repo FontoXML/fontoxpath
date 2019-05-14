@@ -4,7 +4,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-function generateAncestors(domFacade, contextNode) {
+function generateAncestors(domFacade, contextNode, bucket) {
 	let ancestor = contextNode;
 	return {
 		next: () => {
@@ -12,7 +12,7 @@ function generateAncestors(domFacade, contextNode) {
 				return DONE_TOKEN;
 			}
 			const previousAncestor = ancestor;
-			ancestor = previousAncestor && domFacade.getParentNode(previousAncestor);
+			ancestor = previousAncestor && domFacade.getParentNode(previousAncestor, bucket);
 
 			return ready(createNodeValue(previousAncestor));
 		}
@@ -51,7 +51,8 @@ class AncestorAxis extends Expression {
 			.create(
 				generateAncestors(
 					domFacade,
-					this._isInclusive ? contextNode : domFacade.getParentNode(contextNode)
+					this._isInclusive ? contextNode : domFacade.getParentNode(contextNode, this._ancestorExpression.getBucket()),
+					this._ancestorExpression.getBucket()
 				)
 			)
 			.filter(item => {

@@ -107,7 +107,7 @@ const fnHasChildren: FunctionDefinitionType = (
 	return zipSingleton([nodeSequence], ([nodeValue]: (Value | null)[]) => {
 		const node: ConcreteParentNode = nodeValue ? nodeValue.value : null;
 
-		if (node !== null && executionParameters.domFacade.getFirstChild(node)) {
+		if (node !== null && executionParameters.domFacade.getFirstChild(node, null)) {
 			return sequenceFactory.singletonTrueSequence();
 		}
 		return sequenceFactory.singletonFalseSequence();
@@ -153,16 +153,17 @@ const fnPath: FunctionDefinitionType = (
 				if (areSameNode(child, otherChild)) {
 					i++;
 				}
-				otherChild = executionParameters.domFacade.getPreviousSibling(otherChild);
+				otherChild = executionParameters.domFacade.getPreviousSibling(otherChild, null);
 			}
 			return i;
 		}
 		let ancestor: ConcreteNode;
 		for (
 			ancestor = node;
-			executionParameters.domFacade.getParentNode(ancestor as ConcreteChildNode) !== null;
+			executionParameters.domFacade.getParentNode(ancestor as ConcreteChildNode, null) !== null;
 			ancestor = executionParameters.domFacade.getParentNode(
-				ancestor as ConcreteChildNode
+				ancestor as ConcreteChildNode,
+				null
 			) as ConcreteNode
 		) {
 			switch (ancestor.nodeType) {
@@ -243,7 +244,7 @@ function contains(
 		if (descendant.nodeType === NODE_TYPES.DOCUMENT_NODE) {
 			return false;
 		}
-		descendant = domFacade.getParentNode(descendant as ConcreteChildNode);
+		descendant = domFacade.getParentNode(descendant as ConcreteChildNode, null);
 	}
 	return false;
 }
@@ -335,7 +336,7 @@ const fnRoot: FunctionDefinitionType = function(
 		let parent = node.value;
 		while (parent) {
 			ancestor = parent;
-			parent = executionParameters.domFacade.getParentNode(ancestor);
+			parent = executionParameters.domFacade.getParentNode(ancestor, null);
 		}
 		return createNodeValue(ancestor);
 	});

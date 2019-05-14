@@ -42,7 +42,7 @@ function deepCloneNode(
 		case NODE_TYPES.ELEMENT_NODE:
 			const cloneElem = nodesFactory.createElementNS(node.namespaceURI, node.nodeName);
 			domFacade
-				.getAllAttributes(node)
+				.getAllAttributes(node, null)
 				.forEach(attr =>
 					documentWriter.setAttributeNS(
 						cloneElem,
@@ -51,7 +51,7 @@ function deepCloneNode(
 						attr.value
 					)
 				);
-			for (const child of domFacade.getChildNodes(node)) {
+			for (const child of domFacade.getChildNodes(node, null)) {
 				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
 				documentWriter.insertBefore(cloneElem as ConcreteElementNode, descendant, null);
 			}
@@ -66,7 +66,7 @@ function deepCloneNode(
 			return nodesFactory.createComment(node.data);
 		case NODE_TYPES.DOCUMENT_NODE:
 			const cloneDoc = nodesFactory.createDocument();
-			for (const child of domFacade.getChildNodes(node)) {
+			for (const child of domFacade.getChildNodes(node, null)) {
 				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
 				documentWriter.insertBefore(cloneDoc as ConcreteDocumentNode, descendant, null);
 			}

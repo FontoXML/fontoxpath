@@ -253,8 +253,8 @@ function nodeDeepEqual(
 	item1: Value,
 	item2: Value
 ): IAsyncIterator<boolean> {
-	let item1Nodes = executionParameters.domFacade.getChildNodes(item1.value);
-	let item2Nodes = executionParameters.domFacade.getChildNodes(item2.value);
+	let item1Nodes = executionParameters.domFacade.getChildNodes(item1.value, null);
+	let item2Nodes = executionParameters.domFacade.getChildNodes(item2.value, null);
 
 	item1Nodes = item1Nodes.filter(filterElementAndTextNodes);
 	item2Nodes = item2Nodes.filter(filterElementAndTextNodes);
@@ -303,13 +303,13 @@ function elementNodeDeepEqual(
 		item2
 	);
 	const attributes1 = executionParameters.domFacade
-		.getAllAttributes(item1.value)
+		.getAllAttributes(item1.value, null)
 		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 		.sort((attrA, attrB) => (attrA.name > attrB.name ? 1 : -1))
 		.map(attr => createNodeValue(attr));
 
 	const attributes2 = executionParameters.domFacade
-		.getAllAttributes(item2.value)
+		.getAllAttributes(item2.value, null)
 		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 		.sort((attrA, attrB) => (attrA.name > attrB.name ? 1 : -1))
 		.map(attr => createNodeValue(attr));

@@ -14,7 +14,8 @@ import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterat
 
 function createInclusiveDescendantGenerator(
 	domFacade: IDomFacade,
-	node: ConcreteChildNode
+	node: ConcreteChildNode,
+	bucket: string
 ): IAsyncIterator<Value> {
 	const descendantIteratorStack: IAsyncIterator<ConcreteChildNode>[] = [
 		createSingleValueIterator(node)
@@ -41,7 +42,7 @@ function createInclusiveDescendantGenerator(
 				value = descendantIteratorStack[0].next(IterationHint.NONE);
 			}
 			// Iterator over these children next
-			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value));
+			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value, bucket));
 			return ready(createNodeValue(value.value));
 		}
 	};
@@ -77,7 +78,8 @@ class DescendantAxis extends Expression {
 		const inclusive = this._isInclusive;
 		const iterator = createInclusiveDescendantGenerator(
 			executionParameters.domFacade,
-			dynamicContext.contextItem.value
+			dynamicContext.contextItem.value,
+			this._descendantExpression.getBucket()
 		);
 		if (!inclusive) {
 			iterator.next(IterationHint.NONE);

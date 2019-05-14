@@ -3,7 +3,7 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToFirstNode
+	evaluateXPathToFirstNode, IDomFacade, getBucketsForNode, evaluateXPathToNodes
 } from 'fontoxpath';
 
 let documentNode;
@@ -47,6 +47,28 @@ describe('child', () => {
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToFirstNode('someParentElement/child::*[last()]', documentNode), documentNode.documentElement.lastChild);
 	});
+
+	it('passes buckets for getChildNodes', () => {
+		jsonMlMapper.parse([
+			'parentElement',
+			['childElement']
+		], documentNode);
+
+		const parent = documentNode.firstChild;
+
+		const testDomFacade: IDomFacade = {
+			getChildNodes: (node, bucket) => {
+				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
+				return node.childNodes
+					.filter(childNode => getBucketsForNode(childNode).includes(bucket));
+			}
+
+		} as any;
+
+		const results = evaluateXPathToNodes('child::childElement', parent, testDomFacade);
+		chai.assert.sameOrderedMembers(results, parent.childNodes, 'child nodes');
+	});
+
 	it('throws the correct error if context is absent', () => {
 		chai.assert.throws(() => evaluateXPathToFirstNode('*', null), 'XPDY0002');
 	});

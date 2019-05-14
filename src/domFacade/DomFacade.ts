@@ -23,8 +23,8 @@ class DomFacade implements IWrappingDomFacade {
 		this.orderOfDetachedNodes = [];
 	}
 
-	public getAllAttributes(node: ConcreteElementNode): ConcreteAttributeNode[] {
-		return this._domFacade['getAllAttributes'](node);
+	public getAllAttributes(node: ConcreteElementNode, bucket: string): ConcreteAttributeNode[] {
+		return this._domFacade['getAllAttributes'](node, bucket);
 	}
 
 	public getAttribute(node: ConcreteElementNode, attributeName: string): string {
@@ -35,18 +35,8 @@ class DomFacade implements IWrappingDomFacade {
 		return value;
 	}
 
-	public getChildNodes(node: ConcreteParentNode): ConcreteChildNode[] {
-		const childNodes = [];
-
-		for (
-			let childNode = this.getFirstChild(node);
-			childNode;
-			childNode = this.getNextSibling(childNode)
-		) {
-			childNodes.push(childNode);
-		}
-
-		return childNodes;
+	public getChildNodes(node: ConcreteParentNode, bucket: string): ConcreteChildNode[] {
+		return this._domFacade['getChildNodes'](node, bucket) as ConcreteChildNode[];
 	}
 
 	public getData(node: ConcreteAttributeNode | ConcreteCharacterDataNode): string {
@@ -57,24 +47,24 @@ class DomFacade implements IWrappingDomFacade {
 		return this._domFacade['getData'](node) || '';
 	}
 
-	public getFirstChild(node: ConcreteParentNode): ConcreteChildNode {
-		return this._domFacade['getFirstChild'](node) as ConcreteChildNode;
+	public getFirstChild(node: ConcreteParentNode, bucket: string): ConcreteChildNode {
+		return this._domFacade['getFirstChild'](node, bucket) as ConcreteChildNode;
 	}
 
-	public getLastChild(node: ConcreteParentNode): ConcreteChildNode {
-		return this._domFacade['getLastChild'](node) as ConcreteChildNode;
+	public getLastChild(node: ConcreteParentNode, bucket: string): ConcreteChildNode {
+		return this._domFacade['getLastChild'](node, bucket) as ConcreteChildNode;
 	}
 
-	public getNextSibling(node: ConcreteChildNode): ConcreteChildNode {
-		return this._domFacade['getNextSibling'](node) as ConcreteChildNode;
+	public getNextSibling(node: ConcreteChildNode, bucket: string): ConcreteChildNode {
+		return this._domFacade['getNextSibling'](node, bucket) as ConcreteChildNode;
 	}
 
-	public getParentNode(node: ConcreteChildNode): ConcreteParentNode {
-		return this._domFacade['getParentNode'](node) as ConcreteParentNode;
+	public getParentNode(node: ConcreteChildNode, bucket: string): ConcreteParentNode {
+		return this._domFacade['getParentNode'](node, bucket) as ConcreteParentNode;
 	}
 
-	public getPreviousSibling(node: ConcreteChildNode): ConcreteChildNode {
-		return this._domFacade['getPreviousSibling'](node) as ConcreteChildNode;
+	public getPreviousSibling(node: ConcreteChildNode, bucket: string): ConcreteChildNode {
+		return this._domFacade['getPreviousSibling'](node, bucket) as ConcreteChildNode;
 	}
 
 	// Can be used to create an extra frame when tracking dependencies

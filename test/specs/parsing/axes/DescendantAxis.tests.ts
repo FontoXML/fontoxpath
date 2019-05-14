@@ -3,7 +3,7 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToNodes
+	evaluateXPathToNodes, IDomFacade, getBucketsForNode
 } from 'fontoxpath';
 import { Element } from 'fontoxpath/types/Types';
 
@@ -19,6 +19,33 @@ describe('descendant', () => {
 			['someElement']
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('descendant::someElement', documentNode), [documentNode.firstChild.firstChild]);
+	});
+
+	it('passes buckets for descendant', () => {
+		jsonMlMapper.parse([
+			'parentElement',
+			['childElement']
+		], documentNode);
+
+		const childNode = documentNode.firstChild.firstChild;
+
+		const testDomFacade: IDomFacade = {
+			getFirstChild: (node, bucket) => {
+				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
+				return node.firstChild ?
+					(getBucketsForNode(node.firstChild).includes(bucket) ? node.firstChild : null) :
+					null;
+			},
+			getNextSibling: (node, bucket) => {
+				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
+				return node.nextSibling ?
+					(getBucketsForNode(node.nextSibling).includes(bucket) ? node.nextSibling : null) :
+					null;
+			}
+		} as any;
+
+		const results = evaluateXPathToNodes('descendant::childElement', documentNode.firstChild, testDomFacade);
+		chai.assert.deepEqual(results, [childNode], 'ancestors');
 	});
 });
 

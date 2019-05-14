@@ -4,8 +4,11 @@ import * as slimdom from 'slimdom';
 import {
 	evaluateXPathToStrings,
 	evaluateXPathToString,
-	evaluateXPathToBoolean
+	evaluateXPathToBoolean,
+	IDomFacade,
+	getBucketsForNode
 } from 'fontoxpath';
+import DomFacade from 'fontoxpath/domFacade/DomFacade';
 
 let documentNode;
 beforeEach(() => {
@@ -97,5 +100,21 @@ describe('attribute', () => {
 
 	it('throws the correct error if context is absent', () => {
 		chai.assert.throws(() => evaluateXPathToBoolean('@*', null), 'XPDY0002');
+	});
+
+	it('passes buckets', () => {
+		const element = documentNode.createElement('someElement');
+		const attr = element.setAttribute('xxx', 'yyy');
+
+		const testDomFacade: IDomFacade = {
+			getAllAttributes: (node: Element, bucket: string): Attr[] => {
+				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
+				return Array.from(node.attributes)
+					.filter(attribute => getBucketsForNode(attribute).includes(bucket));
+			}
+		} as any;
+
+		const result = evaluateXPathToString('@xxx', element, testDomFacade);
+		chai.assert.equal(result, 'yyy', 'value of attribute');
 	});
 });

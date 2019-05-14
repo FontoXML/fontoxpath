@@ -86,7 +86,7 @@ function evaluateReplaceNode(
 
 			// If the result consists of a node whose parent
 			// property is empty, [err:XUDY0009] is raised.
-			parent = executionParameters.domFacade.getParentNode(tv.value.xdmValue[0].value);
+			parent = executionParameters.domFacade.getParentNode(tv.value.xdmValue[0].value, null);
 			if (parent === null) {
 				throw errXUDY0009(tv.value.xdmValue[0].value);
 			}

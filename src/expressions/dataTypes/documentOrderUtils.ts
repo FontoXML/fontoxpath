@@ -27,8 +27,8 @@ function compareSiblingElements(
 		return 0;
 	}
 
-	const parentNode = domFacade.getParentNode(node1);
-	const childNodes = domFacade.getChildNodes(parentNode);
+	const parentNode = domFacade.getParentNode(node1, null);
+	const childNodes = domFacade.getChildNodes(parentNode, null);
 	for (let i = 0, l = childNodes.length; i < l; ++i) {
 		const childNode = childNodes[i];
 		if (childNode === node1) {
@@ -56,7 +56,7 @@ function findAllAncestors(domFacade: IWrappingDomFacade, node: ConcreteNode): Co
 		ancestor =
 			node.nodeType === NODE_TYPES.DOCUMENT_NODE
 				? null
-				: domFacade.getParentNode(ancestor as ConcreteChildNode | ConcreteAttributeNode)
+				: domFacade.getParentNode(ancestor as ConcreteChildNode | ConcreteAttributeNode, null)
 	) {
 		ancestors.unshift(ancestor);
 	}
