@@ -98,7 +98,7 @@ return map{
 		);
 	});
 
-	it.only('passes buckets for following', () => {
+	it('passes buckets for following', () => {
 		jsonMlMapper.parse([
 			'parentElement',
 			['firstChildElement'],

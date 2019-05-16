@@ -3,7 +3,7 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToNodes
+	evaluateXPathToNodes, IDomFacade, getBucketsForNode
 } from 'fontoxpath';
 
 let documentNode;
@@ -28,6 +28,38 @@ describe('preceding-sibling', () => {
 			['someElement']
 		], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('preceding-sibling::someSiblingElement', documentNode.documentElement.lastChild), []);
+	});
+
+	it('passes buckets for preceding-sibling', () => {
+		jsonMlMapper.parse([
+			'parentElement',
+			['firstChildElement'],
+			['secondChildElement']
+		], documentNode);
+
+		const secondChildNode = documentNode.firstChild.lastChild;
+
+		const testDomFacade: IDomFacade = {
+			getPreviousSibling: (node, bucket) => {
+				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
+				return node.previousSibling ?
+					(getBucketsForNode(node.previousSibling).includes(bucket) ? node.previousSibling : null) :
+					null;
+			},
+			getParentNode: (node, bucket) => {
+				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
+				return node.parentNode
+			},
+			getLastChild: (node, bucket) => {
+				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
+				return node.lastChild ?
+					(getBucketsForNode(node.lastChild).includes(bucket) ? node.lastChild : null) :
+					null;
+			}
+		} as any;
+
+		const results = evaluateXPathToNodes('preceding-sibling::firstChildElement', secondChildNode, testDomFacade);
+		chai.assert.deepEqual(results, [secondChildNode.previousSibling], 'following');
 	});
 
 	it('throws the correct error if context is absent', () => {

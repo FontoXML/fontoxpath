@@ -33,7 +33,7 @@ function createPrecedingGenerator(domFacade, node, bucket) {
 					nephewGenerator = null;
 
 					// Set the focus to the concurrent sibling of this node
-					const nextNode = domFacade.getPreviousSibling(nodeStack[0]);
+					const nextNode = domFacade.getPreviousSibling(nodeStack[0], bucket);
 					const toReturn = ready(createNodeValue(nodeStack[0]));
 					if (nextNode === null) {
 						// This is the last sibling, we can continue with a child of the current
