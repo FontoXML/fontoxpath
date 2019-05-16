@@ -133,6 +133,7 @@ function transformXPathItemToJavascriptObject(value, dynamicContext) {
  * @public
  */
 export type Options = {
+	currentContext?: any;
 	debug?: boolean;
 	language?: Language;
 	moduleImports?: { [s: string]: string };

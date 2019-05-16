@@ -11,7 +11,8 @@ import {
 	staticallyKnownNamespaceByPrefix
 } from './expressions/staticallyKnownNamespaces';
 
-type DomFacadeWrapper = {
+type DynamicContextAdapter = {
+	currentContext: any;
 	domFacade: IDomFacade;
 };
 
@@ -79,7 +80,7 @@ export default function registerCustomXPathFunction(
 	name: string | { localName: string; namespaceURI: string },
 	signature: string[],
 	returnType: string,
-	callback: (domFacade: { domFacade: IDomFacade }, ...functionArgs: any[]) => any
+	callback: (domFacade: { currentContext: any; domFacade: IDomFacade; }, ...functionArgs: any[]) => any
 ): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
@@ -99,7 +100,8 @@ export default function registerCustomXPathFunction(
 
 		// Adapt the domFacade into another object to prevent passing everything. The closure compiler might rename some variables otherwise.
 		// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
-		const dynamicContextAdapter: DomFacadeWrapper = {
+		const dynamicContextAdapter: DynamicContextAdapter = {
+			['currentContext']: executionParameters.currentContext,
 			['domFacade']: executionParameters.domFacade.unwrap()
 		};
 

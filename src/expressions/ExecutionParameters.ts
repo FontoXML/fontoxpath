@@ -6,6 +6,7 @@ export default class ExecutionParameters {
 	constructor(
 		public readonly domFacade: IWrappingDomFacade,
 		public readonly nodesFactory: INodesFactory,
-		public readonly documentWriter: IDocumentWriter
+		public readonly documentWriter: IDocumentWriter,
+		public readonly currentContext: any
 	) {}
 }

@@ -119,7 +119,8 @@ export default function buildEvaluationContext(
 	const executionParameters = new ExecutionParameters(
 		wrappedDomFacade,
 		nodesFactory,
-		documentWriter
+		documentWriter,
+		externalOptions['currentContext']
 	);
 
 	return {

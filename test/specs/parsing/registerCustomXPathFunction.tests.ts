@@ -182,10 +182,16 @@ describe('registerCustomXPath', () => {
 			function (dynamicContext) {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has been passed');
+				chai.assert.equal(dynamicContext.currentContext.nodeId, '123456789');
 
 				return true;
 			});
-		chai.assert.isTrue(evaluateXPathToBoolean(`Q{${namespaceURI}}test()`, null), 'Attempt to access the function using the namespace uri');
+		const options = {
+			currentContext: {
+				nodeId: '123456789'
+			}
+		}
+		chai.assert.isTrue(evaluateXPathToBoolean(`Q{${namespaceURI}}test()`, null, null, null, options), 'Attempt to access the function using the namespace uri');
 	});
 
 	it('disallows attributes as parameters', () => {
