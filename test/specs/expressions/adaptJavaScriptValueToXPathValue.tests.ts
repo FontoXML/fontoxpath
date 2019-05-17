@@ -146,7 +146,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 		it('can automatically convert numbers', () => {
 			const xpathSequence = adaptJavaScriptValueToXPathValue(1.0, 'item()');
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
-			chai.assert(xpathSequence.first().type === ('xs:decimal'), 'is a decimal');
+			chai.assert(xpathSequence.first().type === ('xs:double'), 'is a double');
 			chai.assert.equal(xpathSequence.first().value, 1.0, 'is 1.0');
 		});
 
