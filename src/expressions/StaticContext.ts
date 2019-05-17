@@ -77,6 +77,10 @@ export default class StaticContext {
 					this._registeredVariableBindingByHashKey[i]
 				)
 			];
+			contextAtThisPoint._registeredFunctionsByHash = Object.assign(
+				Object.create(null),
+				this._registeredFunctionsByHash
+			);
 		}
 
 		return contextAtThisPoint;
