@@ -24,7 +24,7 @@ function adaptItemToXPathValue(value: any): Value | null {
 		case 'boolean':
 			return value ? trueBoolean : falseBoolean;
 		case 'number':
-			return createAtomicValue(value, 'xs:decimal');
+			return createAtomicValue(value, 'xs:double');
 		case 'string':
 			return createAtomicValue(value, 'xs:string');
 		case 'object':
