@@ -8,7 +8,7 @@ import {
 	IDomFacade,
 	getBucketsForNode
 } from 'fontoxpath';
-import DomFacade from 'fontoxpath/domFacade/DomFacade';
+import { Attr, Element } from 'fontoxpath/types/Types';
 
 let documentNode;
 beforeEach(() => {
@@ -107,9 +107,9 @@ describe('attribute', () => {
 		const attr = element.setAttribute('xxx', 'yyy');
 
 		const testDomFacade: IDomFacade = {
-			getAllAttributes: (node: Element, bucket: string): Attr[] => {
+			getAllAttributes: (node, bucket) => {
 				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return Array.from(node.attributes)
+				return node.attributes
 					.filter(attribute => getBucketsForNode(attribute).includes(bucket));
 			}
 		} as any;
