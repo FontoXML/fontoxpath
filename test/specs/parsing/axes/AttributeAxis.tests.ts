@@ -8,7 +8,6 @@ import {
 	IDomFacade,
 	getBucketsForNode
 } from 'fontoxpath';
-import { Attr, Element } from 'fontoxpath/types/Types';
 
 let documentNode;
 beforeEach(() => {
