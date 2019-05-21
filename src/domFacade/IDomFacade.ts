@@ -6,13 +6,13 @@ import { Attr, CharacterData, Element, Node } from '../types/Types';
  * @public
  */
 export default interface IDomFacade {
-	getAllAttributes(node: Element, bucket: string): Attr[];
+	getAllAttributes(node: Element, bucket: string|null): Attr[];
 	getAttribute(node: Element, attributeName: string): string | null;
-	getChildNodes(node: Node, bucket: string): Node[];
+	getChildNodes(node: Node, bucket: string|null): Node[];
 	getData(node: Attr | CharacterData): string;
-	getFirstChild(node: Node, bucket: string): Node | null;
-	getLastChild(node: Node, bucket: string): Node | null;
-	getNextSibling(node: Node, bucket: string): Node | null;
-	getParentNode(node: Node, bucket: string): Node | null;
-	getPreviousSibling(node: Node, bucket: string): Node | null;
+	getFirstChild(node: Node, bucket: string|null): Node | null;
+	getLastChild(node: Node, bucket: string|null): Node | null;
+	getNextSibling(node: Node, bucket: string|null): Node | null;
+	getParentNode(node: Node, bucket: string|null): Node | null;
+	getPreviousSibling(node: Node, bucket: string|null): Node | null;
 }

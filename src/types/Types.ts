@@ -52,9 +52,9 @@ export type Document = Node & {
  */
 export type Element = Node & {
 	localName: string;
-	namespaceURI: string;
+	namespaceURI: string | null;
 	nodeName: string;
-	prefix: string;
+	prefix: string | null;
 };
 
 /**
