@@ -7,8 +7,8 @@ import {
 	evaluateXPathToMap,
 	evaluateXPathToNodes,
 	evaluateXPathToString,
-	IDomFacade,
-	getBucketsForNode
+	getBucketsForNode,
+	IDomFacade
 } from 'fontoxpath';
 
 let documentNode;
@@ -125,35 +125,31 @@ return map{
 	});
 
 	it('passes buckets for preceding', () => {
-		jsonMlMapper.parse([
-			'parentElement',
-			['firstChildElement'],
-			['secondChildElement']
-		], documentNode);
+		jsonMlMapper.parse(
+			['parentElement', ['firstChildElement'], ['secondChildElement']],
+			documentNode
+		);
 
 		const secondChildNode = documentNode.firstChild.lastChild;
 
 		const testDomFacade: IDomFacade = {
-			getPreviousSibling: (node, bucket) => {
-				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return node.previousSibling ?
-					(getBucketsForNode(node.previousSibling).includes(bucket) ? node.previousSibling : null) :
-					null;
+			getLastChild: (node: slimdom.Node, bucket: string|null) => {
+				return null;
 			},
-			getParentNode: (node, bucket) => {
-				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return node.parentNode
+			getParentNode: (node: slimdom.Node, bucket: string|null) => {
+				return null;
 			},
-			getLastChild: (node, bucket) => {
-				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return node.lastChild ?
-					(getBucketsForNode(node.lastChild).includes(bucket) ? node.lastChild : null) :
-					null;
+			getPreviousSibling: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.include(getBucketsForNode(node.previousSibling), bucket, 'It includes bucket');
+				return null;
 			}
 		} as any;
 
-		const results = evaluateXPathToNodes('preceding::firstChildElement', secondChildNode, testDomFacade);
-		chai.assert.deepEqual(results, [secondChildNode.previousSibling], 'following');
+		evaluateXPathToNodes(
+			'preceding::firstChildElement',
+			secondChildNode,
+			testDomFacade
+		);
 	});
 
 	it('throws the correct error if context is absent', () => {

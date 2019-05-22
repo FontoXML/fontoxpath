@@ -1,17 +1,25 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
+import { ConcreteChildNode, ConcreteDocumentNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
-
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createDescendantGenerator from '../util/createDescendantGenerator';
+import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
-function createPrecedingGenerator(domFacade, node, bucket) {
+function createPrecedingGenerator(
+	domFacade: IWrappingDomFacade,
+	node: ConcreteChildNode,
+	bucket: string | null
+) {
 	const nodeStack = [];
 
-	for (; node; node = domFacade.getParentNode(node, bucket)) {
-		const previousSibling = domFacade.getPreviousSibling(node, bucket);
+	for (
+		let ancestorNode: ConcreteChildNode | ConcreteDocumentNode = node;
+		ancestorNode && ancestorNode.nodeType !== NODE_TYPES.DOCUMENT_NODE;
+		ancestorNode = domFacade.getParentNode(ancestorNode, bucket)
+	) {
+		const previousSibling = domFacade.getPreviousSibling(ancestorNode, bucket);
 		if (previousSibling === null) {
 			continue;
 		}
@@ -23,7 +31,12 @@ function createPrecedingGenerator(domFacade, node, bucket) {
 		next: () => {
 			while (nephewGenerator || nodeStack.length) {
 				if (!nephewGenerator) {
-					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0], true, bucket);
+					nephewGenerator = createDescendantGenerator(
+						domFacade,
+						nodeStack[0],
+						true,
+						bucket
+					);
 				}
 
 				const nephew = nephewGenerator.next(IterationHint.NONE);
@@ -76,7 +89,13 @@ class PrecedingAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		return sequenceFactory
-			.create(createPrecedingGenerator(domFacade, contextItem.value, this._testExpression.getBucket()))
+			.create(
+				createPrecedingGenerator(
+					domFacade,
+					contextItem.value,
+					this._testExpression.getBucket()
+				)
+			)
 			.filter(item => {
 				return this._testExpression.evaluateToBoolean(dynamicContext, item);
 			});

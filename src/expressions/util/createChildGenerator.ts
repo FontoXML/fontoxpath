@@ -5,7 +5,7 @@ import { DONE_TOKEN, IAsyncIterator, ready } from './iterators';
 export default function createChildGenerator(
 	domFacade: IDomFacade,
 	node: ConcreteNode,
-	bucket: string
+	bucket: string|null
 ): IAsyncIterator<ConcreteChildNode> {
 	if (node.nodeType !== NODE_TYPES.ELEMENT_NODE && node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
 		return {

@@ -1,17 +1,26 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
+import { ConcreteChildNode, ConcreteDocumentNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import createDescendantGenerator from '../util/createDescendantGenerator';
 
-function createFollowingGenerator(domFacade, node, bucket) {
+function createFollowingGenerator(
+	domFacade: IWrappingDomFacade,
+	node: ConcreteChildNode,
+	bucket: string|null
+	) {
 	const nodeStack = [];
 
-	for (; node; node = domFacade.getParentNode(node, bucket)) {
-		const previousSibling = domFacade.getNextSibling(node, bucket);
+	for (
+		let ancestorNode: ConcreteChildNode | ConcreteDocumentNode = node;
+		ancestorNode && ancestorNode.nodeType !== NODE_TYPES.DOCUMENT_NODE;
+		ancestorNode = domFacade.getParentNode(ancestorNode, bucket)
+		) {
+		const previousSibling = domFacade.getNextSibling(ancestorNode, bucket);
 		if (previousSibling) {
 			nodeStack.push(previousSibling);
 		}

@@ -3,7 +3,10 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToNodes, getBucketsForNode, IDomFacade, evaluateXPathToFirstNode
+	evaluateXPathToFirstNode,
+	evaluateXPathToNodes,
+	getBucketsForNode,
+	IDomFacade
 } from 'fontoxpath';
 
 let documentNode;
@@ -13,39 +16,41 @@ beforeEach(() => {
 
 describe('parent', () => {
 	it('returns the parentNode', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement', { someAttribute: 'someValue' }]
-		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToNodes('parent::someParentElement', documentNode.documentElement.firstChild), [documentNode.documentElement]);
+		jsonMlMapper.parse(
+			['someParentElement', ['someElement', { someAttribute: 'someValue' }]],
+			documentNode
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'parent::someParentElement',
+				documentNode.documentElement.firstChild
+			),
+			[documentNode.documentElement]
+		);
 	});
 
 	it('returns nothing for root nodes', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement', { someAttribute: 'someValue' }]
-		], documentNode);
+		jsonMlMapper.parse(
+			['someParentElement', ['someElement', { someAttribute: 'someValue' }]],
+			documentNode
+		);
 		chai.assert.deepEqual(evaluateXPathToNodes('parent::node()', documentNode), []);
 	});
 
 	it('passes buckets for getParentNode', () => {
-		jsonMlMapper.parse([
-			'parentElement',
-			['childElement']
-		], documentNode);
+		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
 		const parentNode = documentNode.firstChild;
 		const childNode = documentNode.firstChild.firstChild;
 
 		const testDomFacade: IDomFacade = {
-			getParentNode: (node, bucket) => {
-				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return getBucketsForNode(node.parentNode).includes(bucket) ? node.parentNode : null;
+			getParentNode: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.include(getBucketsForNode(node.parentNode), bucket, 'It includes bucket');
+				return null;
 			}
 		} as any;
 
-		const result = evaluateXPathToFirstNode('parent::parentElement', childNode, testDomFacade);
-		chai.assert.equal(result, parentNode, 'parent node');
+		evaluateXPathToFirstNode('parent::parentElement', childNode, testDomFacade);
 	});
 
 	it('throws the correct error if context is absent', () => {

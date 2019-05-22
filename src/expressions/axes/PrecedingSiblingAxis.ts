@@ -1,3 +1,5 @@
+import IDomFacade from '../../domFacade/IDomFacade';
+import { Node } from '../../types/Types';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
@@ -5,7 +7,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-function createSiblingGenerator(domFacade, node, bucket) {
+function createSiblingGenerator(domFacade: IDomFacade, node: Node, bucket: string|null) {
 	return {
 		next: () => {
 			node = node && domFacade.getPreviousSibling(node, bucket);

@@ -1,10 +1,12 @@
+import IDomFacade from '../../domFacade/IDomFacade';
+import { Node } from '../../types/Types';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-function generateAncestors(domFacade, contextNode, bucket) {
+function generateAncestors(domFacade: IDomFacade, contextNode: Node, bucket: string|null) {
 	let ancestor = contextNode;
 	return {
 		next: () => {
@@ -46,13 +48,14 @@ class AncestorAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		const /** !Node */ contextNode = contextItem.value;
+		const contextNode = contextItem.value;
+		const ancestorExpressionBucket = this._ancestorExpression.getBucket();
 		return sequenceFactory
 			.create(
 				generateAncestors(
 					domFacade,
-					this._isInclusive ? contextNode : domFacade.getParentNode(contextNode, this._ancestorExpression.getBucket()),
-					this._ancestorExpression.getBucket()
+					this._isInclusive ? contextNode : domFacade.getParentNode(contextNode, ancestorExpressionBucket),
+					ancestorExpressionBucket
 				)
 			)
 			.filter(item => {

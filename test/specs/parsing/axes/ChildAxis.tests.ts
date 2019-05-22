@@ -3,7 +3,10 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToFirstNode, IDomFacade, getBucketsForNode, evaluateXPathToNodes
+	evaluateXPathToFirstNode,
+	evaluateXPathToNodes,
+	getBucketsForNode,
+	IDomFacade
 } from 'fontoxpath';
 
 let documentNode;
@@ -13,60 +16,62 @@ beforeEach(() => {
 
 describe('child', () => {
 	it('parses child::', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement']
-		], documentNode);
-		chai.assert(evaluateXPathToFirstNode('child::someElement', documentNode.documentElement) === documentNode.documentElement.firstChild);
+		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
+		chai.assert(
+			evaluateXPathToFirstNode('child::someElement', documentNode.documentElement) ===
+				documentNode.documentElement.firstChild
+		);
 	});
 
-	it('is added implicitly', () =>{
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement']
-		], documentNode);
-		chai.assert(evaluateXPathToFirstNode('someElement', documentNode.documentElement) === documentNode.documentElement.firstChild);
+	it('is added implicitly', () => {
+		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
+		chai.assert(
+			evaluateXPathToFirstNode('someElement', documentNode.documentElement) ===
+				documentNode.documentElement.firstChild
+		);
 	});
 
 	it('An attribute has no children', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			{
-				someAttribute: 'someValue'
-			},
-			['someElement']
-		], documentNode);
-		chai.assert(evaluateXPathToFirstNode('/attribute::someAttribute/child::node()', documentNode) === null);
+		jsonMlMapper.parse(
+			[
+				'someParentElement',
+				{
+					someAttribute: 'someValue'
+				},
+				['someElement']
+			],
+			documentNode
+		);
+		chai.assert(
+			evaluateXPathToFirstNode('/attribute::someAttribute/child::node()', documentNode) ===
+				null
+		);
 	});
 
 	it('sets the context sequence', () => {
-		jsonMlMapper.parse([
-			'someParentElement',
-			['someElement'],
-			['someOtherElement']
-		], documentNode);
-		chai.assert.deepEqual(evaluateXPathToFirstNode('someParentElement/child::*[last()]', documentNode), documentNode.documentElement.lastChild);
+		jsonMlMapper.parse(
+			['someParentElement', ['someElement'], ['someOtherElement']],
+			documentNode
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToFirstNode('someParentElement/child::*[last()]', documentNode),
+			documentNode.documentElement.lastChild
+		);
 	});
 
 	it('passes buckets for getChildNodes', () => {
-		jsonMlMapper.parse([
-			'parentElement',
-			['childElement']
-		], documentNode);
+		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
 		const parent = documentNode.firstChild;
 
 		const testDomFacade: IDomFacade = {
-			getChildNodes: (node, bucket) => {
-				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return node.childNodes
-					.filter(childNode => getBucketsForNode(childNode).includes(bucket));
+			getChildNodes: (node, bucket: string|null) => {
+				chai.assert.include(getBucketsForNode(node.childNodes[0]), bucket, 'It includes bucket');
+				return [];
 			}
-
 		} as any;
 
-		const results = evaluateXPathToNodes('child::childElement', parent, testDomFacade);
-		chai.assert.sameOrderedMembers(results, parent.childNodes, 'child nodes');
+		evaluateXPathToNodes('child::childElement', parent, testDomFacade);
 	});
 
 	it('throws the correct error if context is absent', () => {

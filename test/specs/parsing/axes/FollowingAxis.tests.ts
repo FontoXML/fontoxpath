@@ -2,7 +2,13 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import { evaluateXPath, evaluateXPathToMap, evaluateXPathToNodes, IDomFacade, getBucketsForNode } from 'fontoxpath';
+import {
+	evaluateXPath,
+	evaluateXPathToMap,
+	evaluateXPathToNodes,
+	getBucketsForNode,
+	IDomFacade
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -99,35 +105,31 @@ return map{
 	});
 
 	it('passes buckets for following', () => {
-		jsonMlMapper.parse([
-			'parentElement',
-			['firstChildElement'],
-			['secondChildElement']
-		], documentNode);
+		jsonMlMapper.parse(
+			['parentElement', ['firstChildElement'], ['secondChildElement']],
+			documentNode
+		);
 
 		const firstChildNode = documentNode.firstChild.firstChild;
 
 		const testDomFacade: IDomFacade = {
-			getNextSibling: (node, bucket) => {
-				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return node.nextSibling ?
-					(getBucketsForNode(node.nextSibling).includes(bucket) ? node.nextSibling : null) :
-					null;
+			getFirstChild: (node: slimdom.Node, bucket: string|null) => {
+				return null;
 			},
-			getParentNode: (node, bucket) => {
-				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return node.parentNode
+			getNextSibling: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.include(getBucketsForNode(node.nextSibling), bucket, 'It includes bucket');
+				return null;
 			},
-			getFirstChild: (node, bucket) => {
-				chai.assert.notEqual(bucket, null, 'There must be a bucket passed!');
-				return node.firstChild ?
-					(getBucketsForNode(node.firstChild).includes(bucket) ? node.firstChild : null) :
-					null;
+			getParentNode: (node: slimdom.Node, bucket: string|null) => {
+				return null;
 			}
 		} as any;
 
-		const results = evaluateXPathToNodes('following::secondChildElement', firstChildNode, testDomFacade);
-		chai.assert.deepEqual(results, [firstChildNode.nextSibling], 'following');
+		evaluateXPathToNodes(
+			'following::secondChildElement',
+			firstChildNode,
+			testDomFacade
+		);
 	});
 
 	it('throws the correct error if context is absent', () => {

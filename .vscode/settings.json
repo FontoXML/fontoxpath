@@ -6,8 +6,5 @@
 		"**/coverage/**": true,
 		"**/dist/**": true
 	},
-	"mocha.enabled": false,
-	"cSpell.words": [
-		"bucket"
-	]
+	"mocha.enabled": false
 }

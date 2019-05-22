@@ -12,7 +12,7 @@ import { DONE_TOKEN, IterationHint, ready } from './iterators';
 function findDeepestLastDescendant(
 	node: ConcreteNode,
 	domFacade: IWrappingDomFacade,
-	bucket
+	bucket: string|null
 ): ConcreteNode {
 	if (node.nodeType !== NODE_TYPES.ELEMENT_NODE && node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
 		return node;
@@ -34,7 +34,7 @@ export default function createDescendantGenerator(
 	domFacade: IWrappingDomFacade,
 	node: ConcreteNode,
 	returnInReverse = false,
-	bucket
+	bucket: string|null
 ) {
 	if (returnInReverse) {
 		let currentNode: ConcreteNode = node;
