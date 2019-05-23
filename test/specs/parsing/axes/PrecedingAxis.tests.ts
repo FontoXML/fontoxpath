@@ -6,7 +6,9 @@ import {
 	evaluateXPath,
 	evaluateXPathToMap,
 	evaluateXPathToNodes,
-	evaluateXPathToString
+	evaluateXPathToString,
+	getBucketForSelector,
+	IDomFacade
 } from 'fontoxpath';
 
 let documentNode;
@@ -119,6 +121,37 @@ return map{
 				documentNode.documentElement.firstChild
 			),
 			[]
+		);
+	});
+
+	it('passes buckets for preceding', () => {
+		jsonMlMapper.parse(
+			['parentElement', ['firstChildElement'], ['secondChildElement']],
+			documentNode
+		);
+
+		const secondChildNode = documentNode.firstChild.lastChild;
+		const expectedBucket = getBucketForSelector('self::firstChildElement');
+
+		const testDomFacade: IDomFacade = {
+			getLastChild: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return node.lastChild;
+			},
+			getParentNode: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return node.parentNode;
+			},
+			getPreviousSibling: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return node.previousSibling;
+			}
+		} as any;
+
+		evaluateXPathToNodes(
+			'preceding::firstChildElement',
+			secondChildNode,
+			testDomFacade
 		);
 	});
 

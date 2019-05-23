@@ -1,3 +1,5 @@
+import IDomFacade from '../../domFacade/IDomFacade';
+import { Node } from '../../types/Types';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import createNodeValue from '../dataTypes/createNodeValue';
@@ -5,10 +7,10 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-function createSiblingGenerator(domFacade, node) {
+function createSiblingGenerator(domFacade: IDomFacade, node: Node, bucket: string|null) {
 	return {
 		next: () => {
-			node = node && domFacade.getPreviousSibling(node);
+			node = node && domFacade.getPreviousSibling(node, bucket);
 			if (!node) {
 				return DONE_TOKEN;
 			}
@@ -39,7 +41,7 @@ class PrecedingSiblingAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 		return sequenceFactory
-			.create(createSiblingGenerator(domFacade, contextItem.value))
+			.create(createSiblingGenerator(domFacade, contextItem.value, this._siblingExpression.getBucket()))
 			.filter(item => {
 				return this._siblingExpression.evaluateToBoolean(dynamicContext, item);
 			});

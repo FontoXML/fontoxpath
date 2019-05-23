@@ -11,20 +11,21 @@ import { DONE_TOKEN, IterationHint, ready } from './iterators';
 
 function findDeepestLastDescendant(
 	node: ConcreteNode,
-	domFacade: IWrappingDomFacade
+	domFacade: IWrappingDomFacade,
+	bucket: string|null
 ): ConcreteNode {
 	if (node.nodeType !== NODE_TYPES.ELEMENT_NODE && node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
 		return node;
 	}
 
 	let parentNode = node;
-	let childNode = domFacade.getLastChild(node);
+	let childNode = domFacade.getLastChild(node, bucket);
 	while (childNode !== null) {
 		if (childNode.nodeType !== NODE_TYPES.ELEMENT_NODE) {
 			return childNode;
 		}
 		parentNode = childNode;
-		childNode = domFacade.getLastChild(parentNode);
+		childNode = domFacade.getLastChild(parentNode, bucket);
 	}
 	return parentNode;
 }
@@ -32,7 +33,8 @@ function findDeepestLastDescendant(
 export default function createDescendantGenerator(
 	domFacade: IWrappingDomFacade,
 	node: ConcreteNode,
-	returnInReverse = false
+	returnInReverse = false,
+	bucket: string|null
 ) {
 	if (returnInReverse) {
 		let currentNode: ConcreteNode = node;
@@ -44,7 +46,7 @@ export default function createDescendantGenerator(
 				}
 
 				if (currentNode === node) {
-					currentNode = findDeepestLastDescendant(node, domFacade);
+					currentNode = findDeepestLastDescendant(node, domFacade, bucket);
 					if (currentNode === node) {
 						isDone = true;
 						return DONE_TOKEN;
@@ -56,16 +58,16 @@ export default function createDescendantGenerator(
 					currentNode.nodeType === NODE_TYPES.DOCUMENT_NODE ||
 					currentNode.nodeType === NODE_TYPES.ATTRIBUTE_NODE
 						? null
-						: domFacade.getPreviousSibling(currentNode);
+						: domFacade.getPreviousSibling(currentNode, bucket);
 				if (previousSibling !== null) {
-					currentNode = findDeepestLastDescendant(previousSibling, domFacade);
+					currentNode = findDeepestLastDescendant(previousSibling, domFacade, bucket);
 					return ready(createNodeValue(currentNode));
 				}
 
 				currentNode =
 					currentNode.nodeType === NODE_TYPES.DOCUMENT_NODE
 						? null
-						: domFacade.getParentNode(currentNode);
+						: domFacade.getParentNode(currentNode, bucket);
 				if (currentNode === node) {
 					isDone = true;
 					return DONE_TOKEN;
@@ -75,7 +77,7 @@ export default function createDescendantGenerator(
 		};
 	}
 
-	const descendantIteratorStack = [createChildGenerator(domFacade, node)];
+	const descendantIteratorStack = [createChildGenerator(domFacade, node, bucket)];
 	return {
 		next: () => {
 			if (!descendantIteratorStack.length) {
@@ -90,7 +92,7 @@ export default function createDescendantGenerator(
 				value = descendantIteratorStack[0].next(IterationHint.NONE);
 			}
 			// Iterator over these children next
-			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value));
+			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value, bucket));
 			return ready(createNodeValue(value.value));
 		}
 	};

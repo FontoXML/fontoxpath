@@ -42,7 +42,7 @@ class AttributeAxis extends Expression {
 		// This includes all of the "special" attributes (xml:lang, xml:space, xsi:type, etc.)
 		// but does not include namespace declarations (because they are not attributes).
 		const matchingAttributes = domFacade
-			.getAllAttributes(contextItem.value)
+			.getAllAttributes(contextItem.value, this._attributeTestExpression.getBucket())
 			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 			.map(attribute => createNodeValue(attribute))
 			.filter(item => this._attributeTestExpression.evaluateToBoolean(dynamicContext, item));

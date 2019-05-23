@@ -204,7 +204,8 @@ class InsertExpression extends UpdatingExpression {
 
 						// d. If before or after is specified, the node returned by the target expression must have a non-empty parent property [err:XUDY0029].
 						parent = executionParameters.domFacade.getParentNode(
-							tv.value.xdmValue[0].value
+							tv.value.xdmValue[0].value,
+							null
 						);
 						if (parent === null) {
 							throw errXUDY0029(tv.value.xdmValue[0].value);

@@ -194,7 +194,8 @@ return ($a, replace node element with <replacement/>)
 		const myDomFacade: IDomFacade = {
 			getAllAttributes: () => [],
 			getAttribute: () => null,
-			getChildNodes: (node: slimdom.Node) => [getChildNode(node)],
+			getChildNodes: (node: slimdom.Node) =>
+				getChildNode(node) ? [getChildNode(node)] : [],
 			getData: () => '',
 			getFirstChild: getChildNode,
 			getLastChild: getChildNode,

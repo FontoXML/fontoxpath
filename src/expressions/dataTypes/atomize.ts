@@ -57,7 +57,7 @@ export default function atomize(
 				allTextNodes.push(aNode);
 				return;
 			}
-			executionParameters.domFacade.getChildNodes(aNode).forEach(function(childNode) {
+			executionParameters.domFacade.getChildNodes(aNode, null).forEach(function(childNode) {
 				getTextNodes(childNode);
 			});
 		})(node);

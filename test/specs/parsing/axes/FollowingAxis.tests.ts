@@ -2,7 +2,13 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import { evaluateXPath, evaluateXPathToMap, evaluateXPathToNodes } from 'fontoxpath';
+import {
+	evaluateXPath,
+	evaluateXPathToMap,
+	evaluateXPathToNodes,
+	getBucketForSelector,
+	IDomFacade
+} from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -95,6 +101,37 @@ return map{
 				documentNode.documentElement.firstChild
 			),
 			[]
+		);
+	});
+
+	it('passes buckets for following', () => {
+		jsonMlMapper.parse(
+			['parentElement', ['firstChildElement'], ['secondChildElement']],
+			documentNode
+		);
+
+		const firstChildNode = documentNode.firstChild.firstChild;
+		const expectedBucket = getBucketForSelector('self::secondChildElement');
+
+		const testDomFacade: IDomFacade = {
+			getFirstChild: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return node.firstChild;
+			},
+			getNextSibling: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return node.nextSibling;
+			},
+			getParentNode: (node: slimdom.Node, bucket: string|null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return node.parentNode;
+			}
+		} as any;
+
+		evaluateXPathToNodes(
+			'following::secondChildElement',
+			firstChildNode,
+			testDomFacade
 		);
 	});
 

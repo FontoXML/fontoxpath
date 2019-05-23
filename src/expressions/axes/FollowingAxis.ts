@@ -1,17 +1,26 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
+import { ConcreteChildNode, ConcreteDocumentNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
+import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import createDescendantGenerator from '../util/createDescendantGenerator';
 
-function createFollowingGenerator(domFacade, node) {
+function createFollowingGenerator(
+	domFacade: IWrappingDomFacade,
+	node: ConcreteChildNode,
+	bucket: string|null
+	) {
 	const nodeStack = [];
 
-	for (; node; node = domFacade.getParentNode(node)) {
-		const previousSibling = domFacade.getNextSibling(node);
+	for (
+		let ancestorNode: ConcreteChildNode | ConcreteDocumentNode = node;
+		ancestorNode && ancestorNode.nodeType !== NODE_TYPES.DOCUMENT_NODE;
+		ancestorNode = domFacade.getParentNode(ancestorNode, bucket)
+		) {
+		const previousSibling = domFacade.getNextSibling(ancestorNode, bucket);
 		if (previousSibling) {
 			nodeStack.push(previousSibling);
 		}
@@ -22,11 +31,11 @@ function createFollowingGenerator(domFacade, node) {
 		next: () => {
 			while (nephewGenerator || nodeStack.length) {
 				if (!nephewGenerator) {
-					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0]);
+					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0], null, bucket);
 
 					const toReturn = ready(createNodeValue(nodeStack[0]));
 					// Set the focus to the concurrent sibling of this node
-					const nextNode = domFacade.getNextSibling(nodeStack[0]);
+					const nextNode = domFacade.getNextSibling(nodeStack[0], bucket);
 					if (!nextNode) {
 						// This is the last sibling, we can continue with a child of the current
 						// node (an uncle of the original node) in the next iteration
@@ -76,7 +85,7 @@ class FollowingAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		return sequenceFactory
-			.create(createFollowingGenerator(domFacade, contextItem.value))
+			.create(createFollowingGenerator(domFacade, contextItem.value, this._testExpression.getBucket()))
 			.filter(item => {
 				return this._testExpression.evaluateToBoolean(dynamicContext, item);
 			});

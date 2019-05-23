@@ -4,7 +4,8 @@ import { DONE_TOKEN, IAsyncIterator, ready } from './iterators';
 
 export default function createChildGenerator(
 	domFacade: IDomFacade,
-	node: ConcreteNode
+	node: ConcreteNode,
+	bucket: string|null
 ): IAsyncIterator<ConcreteChildNode> {
 	if (node.nodeType !== NODE_TYPES.ELEMENT_NODE && node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
 		return {
@@ -14,14 +15,14 @@ export default function createChildGenerator(
 		};
 	}
 
-	let childNode = domFacade.getFirstChild(node);
+	let childNode = domFacade.getFirstChild(node, bucket);
 	return {
 		next() {
 			if (!childNode) {
 				return DONE_TOKEN;
 			}
 			const current = childNode;
-			childNode = domFacade.getNextSibling(childNode);
+			childNode = domFacade.getNextSibling(childNode, bucket);
 			return ready(current);
 		}
 	};
