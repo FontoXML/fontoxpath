@@ -5,7 +5,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
-	getBucketsForNode,
+	getBucketForSelector,
 	IDomFacade
 } from 'fontoxpath';
 
@@ -63,10 +63,11 @@ describe('child', () => {
 		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
 		const parent = documentNode.firstChild;
+		const expectedBucket = getBucketForSelector('self::childElement');
 
 		const testDomFacade: IDomFacade = {
 			getChildNodes: (node, bucket: string|null) => {
-				chai.assert.include(getBucketsForNode(node.childNodes[0]), bucket, 'It includes bucket');
+				chai.assert.equal(expectedBucket, bucket);
 				return [];
 			}
 		} as any;

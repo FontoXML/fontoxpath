@@ -7,6 +7,7 @@ import {
 	evaluateXPathToMap,
 	evaluateXPathToNodes,
 	evaluateXPathToString,
+	getBucketForSelector,
 	IDomFacade
 } from 'fontoxpath';
 
@@ -130,18 +131,19 @@ return map{
 		);
 
 		const secondChildNode = documentNode.firstChild.lastChild;
+		const expectedBucket = getBucketForSelector('self::firstChildElement');
 
 		const testDomFacade: IDomFacade = {
 			getLastChild: (node: slimdom.Node, bucket: string|null) => {
-				chai.assert.isNotNull(bucket, 'It has bucket');
+				chai.assert.equal(expectedBucket, bucket);
 				return node.lastChild;
 			},
 			getParentNode: (node: slimdom.Node, bucket: string|null) => {
-				chai.assert.isNotNull(bucket, 'It has bucket');
+				chai.assert.equal(expectedBucket, bucket);
 				return node.parentNode;
 			},
 			getPreviousSibling: (node: slimdom.Node, bucket: string|null) => {
-				chai.assert.isNotNull(bucket, 'It has bucket');
+				chai.assert.equal(expectedBucket, bucket);
 				return node.previousSibling;
 			}
 		} as any;

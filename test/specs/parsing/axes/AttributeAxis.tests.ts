@@ -5,7 +5,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
-	getBucketsForNode,
+	getBucketForSelector,
 	IDomFacade
 } from 'fontoxpath';
 
@@ -157,11 +157,12 @@ describe('attribute', () => {
 	it('passes buckets', () => {
 		const element = documentNode.createElement('someElement');
 		const attr = element.setAttribute('xxx', 'yyy');
+		const expectedBucket = getBucketForSelector('self::xxx');
 
 		const testDomFacade: IDomFacade = {
 			getAllAttributes: (node, bucket: string|null) => {
-				chai.assert.include(getBucketsForNode(node.attributes[0]), bucket, 'It includes bucket');
-				return [];
+				chai.assert.equal(bucket, expectedBucket);
+				return node.attributes;
 			}
 		} as any;
 

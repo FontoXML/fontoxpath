@@ -48,10 +48,11 @@ describe('ancestor', () => {
 		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
 		const childNode = documentNode.firstChild.firstChild;
+		const expectedBucket = getBucketForSelector('self::parentElement');
 
 		const testDomFacade: IDomFacade = {
 			getParentNode: (node: slimdom.Node, bucket: string | null) => {
-				chai.assert.include(getBucketsForNode(node.parentNode), bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return null;
 			}
 		} as any;

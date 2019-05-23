@@ -5,7 +5,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
-	getBucketsForNode,
+	getBucketForSelector,
 	IDomFacade
 } from 'fontoxpath';
 
@@ -40,12 +40,12 @@ describe('parent', () => {
 	it('passes buckets for getParentNode', () => {
 		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
-		const parentNode = documentNode.firstChild;
 		const childNode = documentNode.firstChild.firstChild;
+		const expectedBucket = getBucketForSelector('self::parentElement');
 
 		const testDomFacade: IDomFacade = {
 			getParentNode: (node: slimdom.Node, bucket: string|null) => {
-				chai.assert.include(getBucketsForNode(node.parentNode), bucket, 'It includes bucket');
+				chai.assert.equal(expectedBucket, bucket);
 				return null;
 			}
 		} as any;

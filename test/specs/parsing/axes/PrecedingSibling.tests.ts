@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import { evaluateXPathToNodes, IDomFacade } from 'fontoxpath';
+import { evaluateXPathToNodes, getBucketForSelector, IDomFacade } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -45,18 +45,19 @@ describe('preceding-sibling', () => {
 		);
 
 		const secondChildNode = documentNode.firstChild.lastChild;
+		const expectedBucket = getBucketForSelector('self::firstChildElement');
 
 		const testDomFacade: IDomFacade = {
 			getLastChild: (node: slimdom.Node, bucket: string|null) => {
-				chai.assert.isNotNull(bucket, 'It has bucket');
+				chai.assert.equal(bucket, expectedBucket);
 				return node.lastChild;
 			},
 			getParentNode: (node: slimdom.Node, bucket: string|null) => {
-				chai.assert.isNotNull(bucket, 'It has bucket');
+				chai.assert.equal(bucket, expectedBucket);
 				return node.parentNode;
 			},
 			getPreviousSibling: (node: slimdom.Node, bucket: string|null) => {
-				chai.assert.isNotNull(bucket, 'It has bucket');
+				chai.assert.equal(bucket, expectedBucket);
 				return node.previousSibling;
 			}
 		} as any;
