@@ -11,9 +11,9 @@ export type Node = {
 export type Attr = Node & {
 	localName: string;
 	name: string;
-	namespaceURI: string | null;
+	namespaceURI: string;
 	nodeName: string;
-	prefix: string | null;
+	prefix: string;
 	value: string;
 };
 
@@ -52,9 +52,9 @@ export type Document = Node & {
  */
 export type Element = Node & {
 	localName: string;
-	namespaceURI: string | null;
+	namespaceURI: string;
 	nodeName: string;
-	prefix: string | null;
+	prefix: string;
 };
 
 /**

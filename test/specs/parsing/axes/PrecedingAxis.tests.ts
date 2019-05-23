@@ -7,7 +7,6 @@ import {
 	evaluateXPathToMap,
 	evaluateXPathToNodes,
 	evaluateXPathToString,
-	getBucketsForNode,
 	IDomFacade
 } from 'fontoxpath';
 
@@ -134,14 +133,16 @@ return map{
 
 		const testDomFacade: IDomFacade = {
 			getLastChild: (node: slimdom.Node, bucket: string|null) => {
-				return null;
+				chai.assert.isNotNull(bucket, 'It has bucket');
+				return node.lastChild;
 			},
 			getParentNode: (node: slimdom.Node, bucket: string|null) => {
-				return null;
+				chai.assert.isNotNull(bucket, 'It has bucket');
+				return node.parentNode;
 			},
 			getPreviousSibling: (node: slimdom.Node, bucket: string|null) => {
-				chai.assert.include(getBucketsForNode(node.previousSibling), bucket, 'It includes bucket');
-				return null;
+				chai.assert.isNotNull(bucket, 'It has bucket');
+				return node.previousSibling;
 			}
 		} as any;
 
