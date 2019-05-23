@@ -11,7 +11,7 @@ export type Node = {
 export type Attr = Node & {
 	localName: string;
 	name: string;
-	namespaceURI: string|null;
+	namespaceURI: string | null;
 	nodeName: string;
 	prefix: string | null;
 	value: string;
