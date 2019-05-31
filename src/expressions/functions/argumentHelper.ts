@@ -63,7 +63,7 @@ export const transformArgument = (
 				multiple: () => {
 					throw new Error(
 						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
-							argumentType.occurrence
+							argumentType.occurrence || ''
 						} for ${functionName} is incorrect. Expected "?", but got "+".`
 					);
 				}
@@ -73,7 +73,7 @@ export const transformArgument = (
 				empty: () => {
 					throw new Error(
 						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
-							argumentType.occurrence
+							argumentType.occurrence || ''
 						} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
 					);
 				},
@@ -96,7 +96,7 @@ export const transformArgument = (
 				default: () => {
 					throw new Error(
 						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
-							argumentType.occurrence
+							argumentType.occurrence || ''
 						} for ${functionName} is incorrect. Expected exactly one`
 					);
 				}
