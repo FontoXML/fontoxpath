@@ -55,6 +55,7 @@ export default function buildEvaluationContext(
 		allowUpdating: boolean;
 		allowXQuery: boolean;
 		debug: boolean;
+		disableCache: boolean;
 	}
 ): {
 	dynamicContext: DynamicContext;

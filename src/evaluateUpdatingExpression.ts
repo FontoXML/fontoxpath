@@ -15,6 +15,7 @@ import INodesFactory from './nodesFactory/INodesFactory';
  */
 export type UpdatingOptions = {
 	debug?: boolean;
+	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
@@ -56,7 +57,8 @@ export default async function evaluateUpdatingExpression(
 			{
 				allowUpdating: true,
 				allowXQuery: true,
-				debug: options['debug']
+				debug: !!options['debug'],
+				disableCache: !!options['disableCache']
 			}
 		);
 		dynamicContext = context.dynamicContext;
