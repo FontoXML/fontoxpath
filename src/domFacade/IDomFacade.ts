@@ -13,7 +13,7 @@ export default interface IDomFacade {
 	 * @param  node -
 	 * @param  bucket - The bucket that matches the attribute that will be used.
 	 */
-	getAllAttributes(node: Element, bucket: string | null): Attr[];
+	getAllAttributes(node: Element, bucket?: string | null): Attr[];
 
 	/**
 	 * Get the value of specified attribute of this element.
@@ -30,7 +30,7 @@ export default interface IDomFacade {
 	 * @param  node -
 	 * @param  bucket - The bucket that matches the attribute that will be used.
 	 */
-	getChildNodes(node: Node, bucket: string | null): Node[];
+	getChildNodes(node: Node, bucket?: string | null): Node[];
 
 	/**
 	 * Get the data of this element.
@@ -46,7 +46,7 @@ export default interface IDomFacade {
 	 * @param  node -
 	 * @param  bucket - The bucket that matches the attribute that will be used.
 	 */
-	getFirstChild(node: Node, bucket: string | null): Node | null;
+	getFirstChild(node: Node, bucket?: string | null): Node | null;
 
 	/**
 	 * Get the last child of this element.
@@ -55,7 +55,7 @@ export default interface IDomFacade {
 	 * @param  node -
 	 * @param  bucket - The bucket that matches the attribute that will be used.
 	 */
-	getLastChild(node: Node, bucket: string | null): Node | null;
+	getLastChild(node: Node, bucket?: string | null): Node | null;
 
 	/**
 	 * Get the next sibling of this node
@@ -64,7 +64,7 @@ export default interface IDomFacade {
 	 * @param  node -
 	 * @param  bucket - The bucket that matches the nextSibling that is requested.
 	 */
-	getNextSibling(node: Node, bucket: string | null): Node | null;
+	getNextSibling(node: Node, bucket?: string | null): Node | null;
 
 	/**
 	 * Get the parent of this element.
@@ -73,7 +73,7 @@ export default interface IDomFacade {
 	 * @param  node -
 	 * @param  bucket - The bucket that matches the attribute that will be used.
 	 */
-	getParentNode(node: Node, bucket: string | null): Node | null;
+	getParentNode(node: Node, bucket?: string | null): Node | null;
 
 	/**
 	 * Get the previous sibling of this element.
@@ -82,5 +82,5 @@ export default interface IDomFacade {
 	 * @param  node -
 	 * @param  bucket - The bucket that matches the attribute that will be used.
 	 */
-	getPreviousSibling(node: Node, bucket: string | null): Node | null;
+	getPreviousSibling(node: Node, bucket?: string | null): Node | null;
 }

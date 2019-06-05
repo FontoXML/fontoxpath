@@ -25,7 +25,7 @@ export const deletePu = (
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	const parent = domFacade.getParentNode(target, null);
+	const parent = domFacade.getParentNode(target);
 	if (parent) {
 		if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
 			documentWriter.removeAttributeNS(
@@ -54,8 +54,8 @@ export const insertAfter = (
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	// The parent must exist or an error has been raised.
-	const parent = /** @type {!Node} */ (domFacade.getParentNode(target, null));
-	const nextSibling = domFacade.getNextSibling(target, null);
+	const parent = /** @type {!Node} */ (domFacade.getParentNode(target));
+	const nextSibling = domFacade.getNextSibling(target);
 
 	content.forEach(node => {
 		documentWriter.insertBefore(parent as Element, node, nextSibling);
@@ -77,7 +77,7 @@ export const insertBefore = (
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	// The parent must exist or an error has been raised.
-	const parent = domFacade.getParentNode(target, null);
+	const parent = domFacade.getParentNode(target);
 
 	content.forEach(node => {
 		documentWriter.insertBefore(parent as Element, node, target);
@@ -113,7 +113,7 @@ export const insertIntoAsFirst = (
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	const firstChild = domFacade.getFirstChild(target, null);
+	const firstChild = domFacade.getFirstChild(target);
 	content.forEach(node => {
 		documentWriter.insertBefore(target, node, firstChild);
 	});
@@ -182,8 +182,8 @@ export const rename = (
 
 	switch (target.nodeType) {
 		case NODE_TYPES.ELEMENT_NODE: {
-			const attributes = domFacade.getAllAttributes(target as Element, null);
-			const childNodes = domFacade.getChildNodes(target as Element, null);
+			const attributes = domFacade.getAllAttributes(target as Element);
+			const childNodes = domFacade.getChildNodes(target as Element);
 			replacement = nodesFactory.createElementNS(
 				newName.namespaceURI,
 				newName.buildPrefixedName()
@@ -219,7 +219,7 @@ export const rename = (
 		}
 	}
 
-	if (!domFacade.getParentNode(target, null)) {
+	if (!domFacade.getParentNode(target)) {
 		throw new Error('Not supported: renaming detached nodes.');
 	}
 
@@ -240,7 +240,7 @@ export const replaceElementContent = (
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	domFacade.getChildNodes(target, null).forEach(child => documentWriter.removeChild(target, child));
+	domFacade.getChildNodes(target).forEach(child => documentWriter.removeChild(target, child));
 	if (text) {
 		documentWriter.insertBefore(target, text, null);
 	}
@@ -261,7 +261,7 @@ export const replaceNode = (
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	// The parent must exist or an error has been raised.
-	const parent = domFacade.getParentNode(target, null);
+	const parent = domFacade.getParentNode(target);
 
 	if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
 		// All replacement must consist of attribute nodes.
@@ -288,7 +288,7 @@ export const replaceNode = (
 		target.nodeType === NODE_TYPES.COMMENT_NODE ||
 		target.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
 	) {
-		const following = domFacade.getNextSibling(target, null);
+		const following = domFacade.getNextSibling(target);
 		documentWriter.removeChild(parent as Document | Element, target);
 		replacement.forEach(newNode => {
 			documentWriter.insertBefore(parent as Document | Element, newNode, following);
@@ -311,7 +311,7 @@ export const replaceValue = (
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
-		const element = domFacade.getParentNode(target, null) as Element;
+		const element = domFacade.getParentNode(target) as Element;
 		if (element) {
 			documentWriter.setAttributeNS(element, target.namespaceURI, target.name, stringValue);
 		} else {

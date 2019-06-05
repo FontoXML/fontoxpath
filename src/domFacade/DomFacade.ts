@@ -25,7 +25,7 @@ class DomFacade implements IWrappingDomFacade {
 
 	public getAllAttributes(
 		node: ConcreteElementNode,
-		bucket: string | null
+		bucket: string | null = null
 	): ConcreteAttributeNode[] {
 		return this._domFacade['getAllAttributes'](node, bucket);
 	}
@@ -38,7 +38,10 @@ class DomFacade implements IWrappingDomFacade {
 		return value;
 	}
 
-	public getChildNodes(node: ConcreteParentNode, bucket: string | null): ConcreteChildNode[] {
+	public getChildNodes(
+		node: ConcreteParentNode,
+		bucket: string | null = null
+	): ConcreteChildNode[] {
 		return this._domFacade['getChildNodes'](node, bucket) as ConcreteChildNode[];
 	}
 
@@ -50,23 +53,35 @@ class DomFacade implements IWrappingDomFacade {
 		return this._domFacade['getData'](node) || '';
 	}
 
-	public getFirstChild(node: ConcreteParentNode, bucket: string | null): ConcreteChildNode {
+	public getFirstChild(
+		node: ConcreteParentNode,
+		bucket: string | null = null
+	): ConcreteChildNode {
 		return this._domFacade['getFirstChild'](node, bucket) as ConcreteChildNode;
 	}
 
-	public getLastChild(node: ConcreteParentNode, bucket: string | null): ConcreteChildNode {
+	public getLastChild(node: ConcreteParentNode, bucket: string | null = null): ConcreteChildNode {
 		return this._domFacade['getLastChild'](node, bucket) as ConcreteChildNode;
 	}
 
-	public getNextSibling(node: ConcreteChildNode, bucket: string | null): ConcreteChildNode {
+	public getNextSibling(
+		node: ConcreteChildNode,
+		bucket: string | null = null
+	): ConcreteChildNode {
 		return this._domFacade['getNextSibling'](node, bucket) as ConcreteChildNode;
 	}
 
-	public getParentNode(node: ConcreteChildNode, bucket: string | null): ConcreteParentNode {
+	public getParentNode(
+		node: ConcreteChildNode,
+		bucket: string | null = null
+	): ConcreteParentNode {
 		return this._domFacade['getParentNode'](node, bucket) as ConcreteParentNode;
 	}
 
-	public getPreviousSibling(node: ConcreteChildNode, bucket: string | null): ConcreteChildNode {
+	public getPreviousSibling(
+		node: ConcreteChildNode,
+		bucket: string | null = null
+	): ConcreteChildNode {
 		return this._domFacade['getPreviousSibling'](node, bucket) as ConcreteChildNode;
 	}
 
