@@ -550,7 +550,7 @@ const fnFilter: FunctionDefinitionType = function(
 		) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
-		return /** @type {boolean} */ (functionCallResult.first().value);
+		return functionCallResult.first().value;
 	});
 };
 
@@ -585,7 +585,7 @@ const fnForEach: FunctionDefinitionType = (
 
 					const transformedArgument = transformArgument(
 						callbackArgumentTypes[0] as TypeDeclaration,
-						sequenceFactory.singleton(/** @type {!Value} */ (item.value)),
+						sequenceFactory.singleton(item.value),
 						executionParameters,
 						'fn:for-each'
 					);

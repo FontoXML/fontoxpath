@@ -24,9 +24,7 @@ function mapItem(argumentItem, type, executionParameters, functionName) {
 		const item = castToType(argumentItem, type);
 		if (!item) {
 			throw new Error(
-				`XPTY0004 Unable to convert ${
-					argumentItem.type
-				} to type ${type} while calling ${functionName}`
+				`XPTY0004 Unable to convert ${argumentItem.type} to type ${type} while calling ${functionName}`
 			);
 		}
 		return item;
@@ -36,9 +34,7 @@ function mapItem(argumentItem, type, executionParameters, functionName) {
 	const item = promoteToType(argumentItem, type);
 	if (!item) {
 		throw new Error(
-			`XPTY0004 Unable to cast ${
-				argumentItem.type
-			} to type ${type} while calling ${functionName}`
+			`XPTY0004 Unable to cast ${argumentItem.type} to type ${type} while calling ${functionName}`
 		);
 	}
 	return item;
@@ -62,9 +58,10 @@ export const transformArgument = (
 					),
 				multiple: () => {
 					throw new Error(
-						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
-							argumentType.occurrence || ''
-						} for ${functionName} is incorrect. Expected "?", but got "+".`
+						`XPTY0004: Multiplicity of function argument of type ${
+							argumentType.type
+						}${argumentType.occurrence ||
+							''} for ${functionName} is incorrect. Expected "?", but got "+".`
 					);
 				}
 			});
@@ -72,9 +69,10 @@ export const transformArgument = (
 			return argument.switchCases({
 				empty: () => {
 					throw new Error(
-						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
-							argumentType.occurrence || ''
-						} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
+						`XPTY0004: Multiplicity of function argument of type ${
+							argumentType.type
+						}${argumentType.occurrence ||
+							''} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
 					);
 				},
 				default: () =>
@@ -95,9 +93,10 @@ export const transformArgument = (
 					),
 				default: () => {
 					throw new Error(
-						`XPTY0004: Multiplicity of function argument of type ${argumentType.type}${
-							argumentType.occurrence || ''
-						} for ${functionName} is incorrect. Expected exactly one`
+						`XPTY0004: Multiplicity of function argument of type ${
+							argumentType.type
+						}${argumentType.occurrence ||
+							''} for ${functionName} is incorrect. Expected exactly one`
 					);
 				}
 			});

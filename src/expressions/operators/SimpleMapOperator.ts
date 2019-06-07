@@ -53,7 +53,7 @@ class SimpleMapOperator extends Expression {
 					// Now that we have moved an item in the input, start generating mapped items
 					if (!sequenceValueIterator) {
 						sequenceValueIterator = this._expression2.evaluateMaybeStatically(
-							/** @type {!DynamicContext} */ (childContext.value),
+							childContext.value,
 							executionParameters
 						);
 					}

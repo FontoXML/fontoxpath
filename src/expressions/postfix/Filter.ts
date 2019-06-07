@@ -109,11 +109,7 @@ class Filter extends Expression {
 					}
 					if (!filterResultSequence) {
 						filterResultSequence = this._filterExpression.evaluateMaybeStatically(
-							dynamicContext.scopeWithFocus(
-								i,
-								/** @type {!Value} */ (iteratorItem.value),
-								valuesToFilter
-							),
+							dynamicContext.scopeWithFocus(i, iteratorItem.value, valuesToFilter),
 							executionParameters
 						);
 					}

@@ -62,9 +62,7 @@ class NamedFunctionRef extends Expression {
 				namespaceURI = staticContext.resolveNamespace(this._functionReference.prefix);
 				if (namespaceURI === null) {
 					throw new Error(
-						`XPST0017: There is no uri registered for prefix ${
-							this._functionReference.prefix
-						}.`
+						`XPST0017: There is no uri registered for prefix ${this._functionReference.prefix}.`
 					);
 				}
 			}

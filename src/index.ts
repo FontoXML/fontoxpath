@@ -26,7 +26,17 @@ import parseExpression from './parsing/parseExpression';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
-import { Attr, CDATASection, CharacterData, Comment, Document, Element, Node, ProcessingInstruction, Text } from './types/Types';
+import {
+	Attr,
+	CDATASection,
+	CharacterData,
+	Comment,
+	Document,
+	Element,
+	Node,
+	ProcessingInstruction,
+	Text
+} from './types/Types';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);

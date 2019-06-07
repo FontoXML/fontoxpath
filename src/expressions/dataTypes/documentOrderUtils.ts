@@ -56,7 +56,10 @@ function findAllAncestors(domFacade: IWrappingDomFacade, node: ConcreteNode): Co
 		ancestor =
 			node.nodeType === NODE_TYPES.DOCUMENT_NODE
 				? null
-				: domFacade.getParentNode(ancestor as ConcreteChildNode | ConcreteAttributeNode, null)
+				: domFacade.getParentNode(
+						ancestor as ConcreteChildNode | ConcreteAttributeNode,
+						null
+				  )
 	) {
 		ancestors.unshift(ancestor);
 	}

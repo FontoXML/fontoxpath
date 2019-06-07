@@ -168,7 +168,7 @@ export interface IReturnTypes<T extends Node> {
 	[ReturnType.STRING]: string;
 	[ReturnType.BOOLEAN]: boolean;
 	[ReturnType.NODES]: T[];
-	[ReturnType.FIRST_NODE]: T|null;
+	[ReturnType.FIRST_NODE]: T | null;
 	[ReturnType.STRINGS]: string[];
 	[ReturnType.MAP]: { [s: string]: any };
 	[ReturnType.ARRAY]: any[];
@@ -197,7 +197,7 @@ export interface IReturnTypes<T extends Node> {
  *
  * @returns The result of executing this XPath
  */
-function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>> (
+function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
@@ -509,7 +509,7 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 	} catch (error) {
 		printAndRethrowError(selector, error);
 	}
-};
+}
 
 /**
  * Returns the result of the query, can be anything depending on the
@@ -535,7 +535,9 @@ evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = ReturnType.STRING as 
  * determine the result. count(1) resolves to true, count(())
  * resolves to false
  */
-evaluateXPath['BOOLEAN_TYPE'] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN as ReturnType.BOOLEAN;
+evaluateXPath[
+	'BOOLEAN_TYPE'
+] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN as ReturnType.BOOLEAN;
 
 /**
  * Resolve to all nodes the XPath resolves to. Returns nodes in the
@@ -548,12 +550,16 @@ evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = ReturnType.NODES as Ret
 /**
  * Resolves to the first node.NODES_TYPE would have resolved to.
  */
-evaluateXPath['FIRST_NODE_TYPE'] = evaluateXPath.FIRST_NODE_TYPE = ReturnType.FIRST_NODE as ReturnType.FIRST_NODE;
+evaluateXPath[
+	'FIRST_NODE_TYPE'
+] = evaluateXPath.FIRST_NODE_TYPE = ReturnType.FIRST_NODE as ReturnType.FIRST_NODE;
 
 /**
  * Resolve to an array of strings
  */
-evaluateXPath['STRINGS_TYPE'] = evaluateXPath.STRINGS_TYPE = ReturnType.STRINGS as ReturnType.STRINGS;
+evaluateXPath[
+	'STRINGS_TYPE'
+] = evaluateXPath.STRINGS_TYPE = ReturnType.STRINGS as ReturnType.STRINGS;
 
 /**
  * Resolve to an object, as a map
@@ -562,13 +568,16 @@ evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = ReturnType.MAP as ReturnTyp
 
 evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = ReturnType.ARRAY as ReturnType.ARRAY;
 
-evaluateXPath['ASYNC_ITERATOR_TYPE'] = evaluateXPath.ASYNC_ITERATOR_TYPE =
-	ReturnType.ASYNC_ITERATOR as ReturnType.ASYNC_ITERATOR;
+evaluateXPath[
+	'ASYNC_ITERATOR_TYPE'
+] = evaluateXPath.ASYNC_ITERATOR_TYPE = ReturnType.ASYNC_ITERATOR as ReturnType.ASYNC_ITERATOR;
 
 /**
  * Resolve to an array of numbers
  */
-evaluateXPath['NUMBERS_TYPE'] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS as ReturnType.NUMBERS;
+evaluateXPath[
+	'NUMBERS_TYPE'
+] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS as ReturnType.NUMBERS;
 
 /**
  * @public

@@ -26,9 +26,7 @@ export class StackTraceEntry {
 				? [this.innerTrace.toString()]
 				: this.innerTrace.makeStackTrace();
 		innerStackTrace.push(
-			`  at <${this.innerExpressionType}>:${this.location.start.line}:${
-				this.location.start.column
-			} - ${this.location.end.line}:${this.location.end.column}`
+			`  at <${this.innerExpressionType}>:${this.location.start.line}:${this.location.start.column} - ${this.location.end.line}:${this.location.end.column}`
 		);
 		return innerStackTrace;
 	}

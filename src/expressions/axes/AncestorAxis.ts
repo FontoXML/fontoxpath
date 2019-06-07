@@ -6,7 +6,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-function generateAncestors(domFacade: IDomFacade, contextNode: Node, bucket: string|null) {
+function generateAncestors(domFacade: IDomFacade, contextNode: Node, bucket: string | null) {
 	let ancestor = contextNode;
 	return {
 		next: () => {
@@ -54,7 +54,9 @@ class AncestorAxis extends Expression {
 			.create(
 				generateAncestors(
 					domFacade,
-					this._isInclusive ? contextNode : domFacade.getParentNode(contextNode, ancestorExpressionBucket),
+					this._isInclusive
+						? contextNode
+						: domFacade.getParentNode(contextNode, ancestorExpressionBucket),
 					ancestorExpressionBucket
 				)
 			)

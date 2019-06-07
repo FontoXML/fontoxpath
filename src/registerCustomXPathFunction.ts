@@ -80,7 +80,10 @@ export default function registerCustomXPathFunction(
 	name: string | { localName: string; namespaceURI: string },
 	signature: string[],
 	returnType: string,
-	callback: (domFacade: { currentContext: any; domFacade: IDomFacade; }, ...functionArgs: any[]) => any
+	callback: (
+		domFacade: { currentContext: any; domFacade: IDomFacade },
+		...functionArgs: any[]
+	) => any
 ): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
 

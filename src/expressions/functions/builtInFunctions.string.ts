@@ -194,7 +194,7 @@ const fnStringLength: FunctionDefinitionType = function(
 	if (sequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
 	}
-	const stringValue = /** @type {string} */ (sequence.first().value);
+	const stringValue = sequence.first().value;
 	// In ES6, Array.from(💩).length === 1
 	return sequenceFactory.singleton(
 		createAtomicValue(Array.from(stringValue).length, 'xs:integer')
@@ -330,7 +330,7 @@ const fnSubstring: FunctionDefinitionType = function(
 
 			done = true;
 
-			const strValue = /** @type {string} */ (sourceStringItem.value.value);
+			const strValue = sourceStringItem.value.value;
 			return ready(
 				createAtomicValue(
 					Array.from(strValue)

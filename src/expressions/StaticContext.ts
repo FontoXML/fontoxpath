@@ -149,9 +149,9 @@ export default class StaticContext {
 	 */
 	public registerVariable(namespaceURI: string | null, localName: string) {
 		const hash = createHashKey(namespaceURI || '', localName);
-		return (this._registeredVariableBindingByHashKey[this._scopeDepth][hash] = `${hash}[${
-			this._scopeCount
-		}]`);
+		return (this._registeredVariableBindingByHashKey[this._scopeDepth][
+			hash
+		] = `${hash}[${this._scopeCount}]`);
 	}
 
 	public removeScope() {

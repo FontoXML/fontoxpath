@@ -15,7 +15,7 @@ import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterat
 function createInclusiveDescendantGenerator(
 	domFacade: IDomFacade,
 	node: ConcreteChildNode,
-	bucket: string|null
+	bucket: string | null
 ): IAsyncIterator<Value> {
 	const descendantIteratorStack: IAsyncIterator<ConcreteChildNode>[] = [
 		createSingleValueIterator(node)

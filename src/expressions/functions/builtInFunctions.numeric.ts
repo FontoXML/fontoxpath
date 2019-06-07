@@ -138,10 +138,7 @@ function fnRound(
 					return isSubtypeOf(item.type, type);
 				}
 			);
-			const itemAsDecimal = /** @type {AtomicValue<number>} */ (castToType(
-				item,
-				'xs:decimal'
-			));
+			const itemAsDecimal = castToType(item, 'xs:decimal');
 			const scaling = Math.pow(10, scalingPrecision);
 			let roundedNumber = 0;
 
@@ -178,10 +175,7 @@ const fnNumber: FunctionDefinitionType = function(
 	return sequence.atomize(executionParameters).switchCases({
 		empty: () => sequenceFactory.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
-			const castResult = tryCastToType(
-				/** @type {!AtomicValue<?>} */ (sequence.first()),
-				'xs:double'
-			);
+			const castResult = tryCastToType(sequence.first(), 'xs:double');
 			if (castResult.successful) {
 				return sequenceFactory.singleton(castResult.value);
 			}
@@ -287,7 +281,7 @@ export default {
 			localName: 'round',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric',
-			callFunction: /** @type {FunctionDefinitionType} */ (fnRound.bind(null, false))
+			callFunction: fnRound.bind(null, false)
 		},
 
 		{
@@ -295,7 +289,7 @@ export default {
 			localName: 'round',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric',
-			callFunction: /** @type {FunctionDefinitionType} */ (fnRound.bind(null, false))
+			callFunction: fnRound.bind(null, false)
 		},
 
 		{
@@ -303,7 +297,7 @@ export default {
 			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric',
-			callFunction: /** @type {FunctionDefinitionType} */ (fnRound.bind(null, true))
+			callFunction: fnRound.bind(null, true)
 		},
 
 		{
@@ -311,7 +305,7 @@ export default {
 			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric',
-			callFunction: /** @type {FunctionDefinitionType} */ (fnRound.bind(null, true))
+			callFunction: fnRound.bind(null, true)
 		},
 
 		{

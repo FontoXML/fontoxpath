@@ -55,9 +55,7 @@ export default function fromTransferable(transferable: object): IPendingUpdate {
 			);
 		default:
 			throw new Error(
-				`Unexpected type "${
-					transferable['type']
-				}" when parsing a transferable pending update.`
+				`Unexpected type "${transferable['type']}" when parsing a transferable pending update.`
 			);
 	}
 }

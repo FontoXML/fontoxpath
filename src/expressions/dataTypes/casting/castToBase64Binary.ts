@@ -12,7 +12,7 @@ function hexToString(hex) {
 }
 
 // This declaration is needed, as we don't depend anymore on lib.dom.
-declare var btoa: ((s: string) => string);
+declare var btoa: (s: string) => string;
 
 export default function castToBase64Binary(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:hexBinary')) {

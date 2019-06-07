@@ -11,15 +11,15 @@ import createDescendantGenerator from '../util/createDescendantGenerator';
 function createFollowingGenerator(
 	domFacade: IWrappingDomFacade,
 	node: ConcreteChildNode,
-	bucket: string|null
-	) {
+	bucket: string | null
+) {
 	const nodeStack = [];
 
 	for (
 		let ancestorNode: ConcreteChildNode | ConcreteDocumentNode = node;
 		ancestorNode && ancestorNode.nodeType !== NODE_TYPES.DOCUMENT_NODE;
 		ancestorNode = domFacade.getParentNode(ancestorNode, bucket)
-		) {
+	) {
 		const previousSibling = domFacade.getNextSibling(ancestorNode, bucket);
 		if (previousSibling) {
 			nodeStack.push(previousSibling);
@@ -31,7 +31,12 @@ function createFollowingGenerator(
 		next: () => {
 			while (nephewGenerator || nodeStack.length) {
 				if (!nephewGenerator) {
-					nephewGenerator = createDescendantGenerator(domFacade, nodeStack[0], null, bucket);
+					nephewGenerator = createDescendantGenerator(
+						domFacade,
+						nodeStack[0],
+						null,
+						bucket
+					);
 
 					const toReturn = ready(createNodeValue(nodeStack[0]));
 					// Set the focus to the concurrent sibling of this node
@@ -85,7 +90,13 @@ class FollowingAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		return sequenceFactory
-			.create(createFollowingGenerator(domFacade, contextItem.value, this._testExpression.getBucket()))
+			.create(
+				createFollowingGenerator(
+					domFacade,
+					contextItem.value,
+					this._testExpression.getBucket()
+				)
+			)
 			.filter(item => {
 				return this._testExpression.evaluateToBoolean(dynamicContext, item);
 			});

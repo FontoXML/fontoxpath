@@ -22,7 +22,7 @@ function parseChildNodes(
 				throw attributeError(childNode.value);
 			}
 
-			const attrNode = /** @type {!Attr} */ (childNode.value);
+			const attrNode = childNode.value;
 			attributes.push(attrNode);
 			return;
 		}

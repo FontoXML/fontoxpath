@@ -91,9 +91,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 
 			if (!this._namespaceURI && this._prefix) {
 				throw new Error(
-					`XPST0081: Could not resolve namespace for prefix ${
-						this._prefix
-					} using in a for expression`
+					`XPST0081: Could not resolve namespace for prefix ${this._prefix} using in a for expression`
 				);
 			}
 		}

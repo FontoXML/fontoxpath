@@ -54,7 +54,7 @@ export const insertAfter = (
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	// The parent must exist or an error has been raised.
-	const parent = /** @type {!Node} */ (domFacade.getParentNode(target));
+	const parent = domFacade.getParentNode(target);
 	const nextSibling = domFacade.getNextSibling(target);
 
 	content.forEach(node => {

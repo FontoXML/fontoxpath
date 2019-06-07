@@ -79,7 +79,7 @@ export default class IteratorBackedSequence implements ISequence {
 					if (!value.ready) {
 						return value;
 					}
-					if (callback(/** @type {!Value} */ (value.value), i, this)) {
+					if (callback(value.value, i, this)) {
 						return value;
 					}
 

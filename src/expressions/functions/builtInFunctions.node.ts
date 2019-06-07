@@ -160,7 +160,8 @@ const fnPath: FunctionDefinitionType = (
 		let ancestor: ConcreteNode;
 		for (
 			ancestor = node;
-			executionParameters.domFacade.getParentNode(ancestor as ConcreteChildNode, null) !== null;
+			executionParameters.domFacade.getParentNode(ancestor as ConcreteChildNode, null) !==
+			null;
 			ancestor = executionParameters.domFacade.getParentNode(
 				ancestor as ConcreteChildNode,
 				null

@@ -1147,11 +1147,7 @@ function insertExpression(ast, compilationOptions) {
 		}
 	}
 	const targetExpr = compile(astHelper.followPath(ast, ['targetExpr', '*']), compilationOptions);
-	return new InsertExpression(
-		sourceExpr,
-		/** @type {!TargetChoice} */ (targetChoice),
-		targetExpr
-	);
+	return new InsertExpression(sourceExpr, targetChoice, targetExpr);
 }
 
 function renameExpression(ast, compilationOptions) {
