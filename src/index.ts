@@ -29,7 +29,7 @@ import registerXQueryModule from './registerXQueryModule';
 import { Attr, CDATASection, CharacterData, Comment, Document, Element, Node, ProcessingInstruction, Text } from './types/Types';
 
 function parseXPath(xpathString: string) {
-	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath');
+	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
 	if (cachedExpression) {
 		return cachedExpression;
 	}
@@ -46,7 +46,7 @@ function parseXPath(xpathString: string) {
 		allowXQuery: false
 	});
 
-	storeHalfCompiledCompilationResultInCache(xpathString, 'XPath', expression);
+	storeHalfCompiledCompilationResultInCache(xpathString, 'XPath', expression, false);
 
 	return expression;
 }

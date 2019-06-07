@@ -21,17 +21,26 @@ class CacheEntry {
 			| { namespaceURI: any; prefix: string }[]
 			| { namespaceURI: string; prefix: string }[]
 	) {
-		this.referredNamespaces = referredNamespaces;
-		this.referredVariables = referredVariables;
 		this.compiledExpression = compiledExpression;
 		this.moduleImports = moduleImports;
+		this.referredNamespaces = referredNamespaces;
+		this.referredVariables = referredVariables;
 	}
 }
 
-export function getAnyStaticCompilationResultFromCache(selectorString: string, language: string) {
+function generateLanguageKey(language: string, debug: boolean): string {
+	return language + (debug ? '_DEBUG' : '');
+}
+
+export function getAnyStaticCompilationResultFromCache(
+	selectorString: string,
+	language: string,
+	debug: boolean
+) {
+	const languageKey = generateLanguageKey(language, debug);
 	const halfCompiledExpressionFromCache = halfCompiledExpressionCache[selectorString];
 	if (halfCompiledExpressionFromCache) {
-		return halfCompiledExpressionFromCache[language] || null;
+		return halfCompiledExpressionFromCache[languageKey] || null;
 	}
 
 	const cachesForExpression = compiledExpressionCache[selectorString];
@@ -40,7 +49,7 @@ export function getAnyStaticCompilationResultFromCache(selectorString: string, l
 		return null;
 	}
 
-	const cachesForLanguage = cachesForExpression[language];
+	const cachesForLanguage = cachesForExpression[languageKey];
 	if (!cachesForLanguage || cachesForLanguage.length === 0) {
 		return null;
 	}
@@ -51,15 +60,17 @@ export function getAnyStaticCompilationResultFromCache(selectorString: string, l
 export function storeHalfCompiledCompilationResultInCache(
 	selectorString: string,
 	language: string,
-	expressionInstance: Expression
+	expressionInstance: Expression,
+	debug: boolean
 ) {
+	const languageKey = generateLanguageKey(language, debug);
 	if (!halfCompiledExpressionCache[selectorString]) {
 		halfCompiledExpressionCache[selectorString] = {
-			[language]: expressionInstance
+			[languageKey]: expressionInstance
 		};
 		return;
 	}
-	halfCompiledExpressionCache[selectorString][language] = expressionInstance;
+	halfCompiledExpressionCache[selectorString][languageKey] = expressionInstance;
 }
 
 export function getStaticCompilationResultFromCache(
@@ -67,14 +78,16 @@ export function getStaticCompilationResultFromCache(
 	language: string,
 	namespaceResolver: (namespace: string) => string | null,
 	variables: object,
-	moduleImports: { [x: string]: string }
+	moduleImports: { [x: string]: string },
+	debug: boolean
 ) {
 	const cachesForExpression = compiledExpressionCache[selectorString];
 
 	if (!cachesForExpression) {
 		const halfCompiledExpressionFromCache = getAnyStaticCompilationResultFromCache(
 			selectorString,
-			language
+			language,
+			debug
 		);
 		if (halfCompiledExpressionFromCache) {
 			return {
@@ -84,12 +97,13 @@ export function getStaticCompilationResultFromCache(
 		}
 		return null;
 	}
-
-	const cachesForLanguage = cachesForExpression[language];
+	const languageKey = generateLanguageKey(language, debug);
+	const cachesForLanguage = cachesForExpression[languageKey];
 	if (!cachesForLanguage) {
 		const halfCompiledExpressionFromCache = getAnyStaticCompilationResultFromCache(
 			selectorString,
-			language
+			language,
+			debug
 		);
 		if (halfCompiledExpressionFromCache) {
 			return {
@@ -114,7 +128,8 @@ export function getStaticCompilationResultFromCache(
 	if (!cacheWithCorrectContext) {
 		const halfCompiledExpressionFromCache = getAnyStaticCompilationResultFromCache(
 			selectorString,
-			language
+			language,
+			debug
 		);
 		if (halfCompiledExpressionFromCache) {
 			return {
@@ -134,13 +149,15 @@ export function getStaticCompilationResultFromCache(
 function removeHalfCompiledExpression(
 	selectorString: string,
 	language: string,
+	debug: boolean,
 	compiledExpression: Expression
 ) {
+	const languageKey = generateLanguageKey(language, debug);
 	const halfCompiledExpressionFromCache = halfCompiledExpressionCache[selectorString];
 	if (halfCompiledExpressionFromCache) {
-		const expression = halfCompiledExpressionFromCache[language];
+		const expression = halfCompiledExpressionFromCache[languageKey];
 		if (expression && expression === compiledExpression) {
-			delete halfCompiledExpressionFromCache[language];
+			delete halfCompiledExpressionFromCache[languageKey];
 		}
 	}
 }
@@ -150,18 +167,20 @@ export function storeStaticCompilationResultInCache(
 	language: string,
 	executionStaticContext: ExecutionSpecificStaticContext,
 	moduleImports: { [x: string]: any },
-	compiledExpression: Expression
+	compiledExpression: Expression,
+	debug: boolean
 ) {
-	removeHalfCompiledExpression(selectorString, language, compiledExpression);
+	removeHalfCompiledExpression(selectorString, language, debug, compiledExpression);
 
 	let cachesForExpression = compiledExpressionCache[selectorString];
 	if (!cachesForExpression) {
 		cachesForExpression = compiledExpressionCache[selectorString] = Object.create(null);
 	}
 
-	let cachesForLanguage = cachesForExpression[language];
+	const languageKey = generateLanguageKey(language, debug);
+	let cachesForLanguage = cachesForExpression[languageKey];
 	if (!cachesForLanguage) {
-		cachesForLanguage = cachesForExpression[language] = [];
+		cachesForLanguage = cachesForExpression[languageKey] = [];
 	}
 
 	cachesForLanguage.push(
