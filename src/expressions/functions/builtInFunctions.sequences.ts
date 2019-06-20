@@ -10,7 +10,7 @@ import Value from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
-import { transformArgument } from './argumentHelper';
+import { performFunctionConversion } from './argumentHelper';
 import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -531,11 +531,12 @@ const fnFilter: FunctionDefinitionType = function(
 
 	return sequence.filter(item => {
 		// Transform argument
-		const transformedArgument = transformArgument(
+		const transformedArgument = performFunctionConversion(
 			callbackArgumentTypes[0] as TypeDeclaration,
 			sequenceFactory.singleton(item),
 			executionParameters,
-			'fn:filter'
+			'fn:filter',
+			false
 		);
 		const functionCallResult = callbackFn.value.call(
 			undefined,
@@ -583,11 +584,11 @@ const fnForEach: FunctionDefinitionType = (
 						return item;
 					}
 
-					const transformedArgument = transformArgument(
+					const transformedArgument = performFunctionConversion(
 						callbackArgumentTypes[0] as TypeDeclaration,
 						sequenceFactory.singleton(item.value),
 						executionParameters,
-						'fn:for-each'
+						'fn:for-each', false
 					);
 					const nextSequence = callbackFn.value.call(
 						undefined,
@@ -630,17 +631,17 @@ const fnFoldLeft: FunctionDefinitionType = function(
 
 	return sequence.mapAll(values =>
 		values.reduce((previous, current) => {
-			const previousArg = transformArgument(
+			const previousArg = performFunctionConversion(
 				callbackArgumentTypes[0] as TypeDeclaration,
 				previous,
 				executionParameters,
-				'fn:fold-left'
+				'fn:fold-left', false
 			);
-			const currentArg = transformArgument(
+			const currentArg = performFunctionConversion(
 				callbackArgumentTypes[1] as TypeDeclaration,
 				sequenceFactory.singleton(current),
 				executionParameters,
-				'fn:fold-left'
+				'fn:fold-left', false
 			);
 			return callbackFn.value.call(
 				undefined,
@@ -674,17 +675,17 @@ const fnFoldRight: FunctionDefinitionType = function(
 
 	return sequence.mapAll(values =>
 		values.reduceRight((previous, current) => {
-			const previousArg = transformArgument(
+			const previousArg = performFunctionConversion(
 				callbackArgumentTypes[0] as TypeDeclaration,
 				previous,
 				executionParameters,
-				'fn:fold-right'
+				'fn:fold-right', false
 			);
-			const currentArg = transformArgument(
+			const currentArg = performFunctionConversion(
 				callbackArgumentTypes[1] as TypeDeclaration,
 				sequenceFactory.singleton(current),
 				executionParameters,
-				'fn:fold-right'
+				'fn:fold-right', false
 			);
 			return callbackFn.value.call(
 				undefined,

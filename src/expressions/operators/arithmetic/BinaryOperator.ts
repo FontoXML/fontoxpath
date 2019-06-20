@@ -25,6 +25,19 @@ import {
 	subtract as yearMonthDurationSubtract
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 
+function determineReturnType(typeA: string, typeB: string): string {
+	if (isSubtypeOf(typeA, 'xs:integer') && isSubtypeOf(typeB, 'xs:integer')) {
+		return 'xs:integer';
+	}
+	if (isSubtypeOf(typeA, 'xs:decimal') && isSubtypeOf(typeB, 'xs:decimal')) {
+		return 'xs:decimal';
+	}
+	if (isSubtypeOf(typeA, 'xs:float') && isSubtypeOf(typeB, 'xs:float')) {
+		return 'xs:float';
+	}
+	return 'xs:double';
+}
+
 function generateBinaryOperatorFunction(operator, typeA, typeB) {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
@@ -47,35 +60,37 @@ function generateBinaryOperatorFunction(operator, typeA, typeB) {
 
 	if (isSubtypeOf(typeA, 'xs:numeric') && isSubtypeOf(typeB, 'xs:numeric')) {
 		switch (operator) {
-			case 'addOp':
+			case 'addOp': {
+				const returnType = determineReturnType(typeA, typeB);
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(
-						castA.value + castB.value,
-						typeA === typeB ? typeA : 'xs:decimal'
-					);
+					return createAtomicValue(castA.value + castB.value, returnType);
 				};
-			case 'subtractOp':
+			}
+			case 'subtractOp': {
+				const returnType = determineReturnType(typeA, typeB);
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(
-						castA.value - castB.value,
-						typeA === typeB ? typeA : 'xs:decimal'
-					);
+					return createAtomicValue(castA.value - castB.value, returnType);
 				};
-			case 'multiplyOp':
+			}
+			case 'multiplyOp': {
+				const returnType = determineReturnType(typeA, typeB);
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(
-						castA.value * castB.value,
-						typeA === typeB ? typeA : 'xs:decimal'
-					);
+					return createAtomicValue(castA.value * castB.value, returnType);
 				};
-			case 'divOp':
+			}
+			case 'divOp': {
+				let returnType = determineReturnType(typeA, typeB);
+				if (returnType === 'xs:integer') {
+					returnType = 'xs:decimal';
+				}
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(castA.value / castB.value, 'xs:decimal');
+					return createAtomicValue(castA.value / castB.value, returnType);
 				};
+			}
 			case 'idivOp':
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
@@ -96,11 +111,14 @@ function generateBinaryOperatorFunction(operator, typeA, typeB) {
 					}
 					return createAtomicValue(Math.trunc(castA.value / castB.value), 'xs:integer');
 				};
-			case 'modOp':
+			case 'modOp': {
+				const returnType = determineReturnType(typeA, typeB);
+
 				return (a, b) => {
 					const { castA, castB } = applyCastFunctions(a, b);
-					return createAtomicValue(castA.value % castB.value, 'xs:decimal');
+					return createAtomicValue(castA.value % castB.value, returnType);
 				};
+			}
 		}
 	}
 
@@ -127,7 +145,7 @@ function generateBinaryOperatorFunction(operator, typeA, typeB) {
 					const { castA, castB } = applyCastFunctions(a, b);
 					return createAtomicValue(
 						yearMonthDurationDivideByYearMonthDuration(castA.value, castB.value),
-						'xs:double'
+						'xs:decimal'
 					);
 				};
 		}

@@ -1,5 +1,5 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
-import { transformArgument } from './argumentHelper';
+import { performFunctionConversion } from './argumentHelper';
 
 import FunctionValue from '../dataTypes/FunctionValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -14,11 +14,12 @@ function transformArgumentList(argumentTypes, argumentList, executionParameters,
 			transformedArguments.push(null);
 			continue;
 		}
-		const transformedArgument = transformArgument(
+		const transformedArgument = performFunctionConversion(
 			argumentTypes[i],
 			argumentList[i],
 			executionParameters,
-			functionItem
+			functionItem,
+			false
 		);
 		transformedArguments.push(transformedArgument);
 	}
@@ -105,11 +106,19 @@ class FunctionCall extends PossiblyUpdatingExpression {
 						return functionItem.applyArguments(transformedArguments);
 					}
 
-					return functionItem.value.apply(
+					const toReturn = functionItem.value.apply(
 						undefined,
 						[dynamicContext, executionParameters, this._staticContext].concat(
 							transformedArguments
 						)
+					);
+
+					return performFunctionConversion(
+						functionItem.getReturnType(),
+						toReturn,
+						executionParameters,
+						functionItem.getName(),
+						true
 					);
 				});
 			}

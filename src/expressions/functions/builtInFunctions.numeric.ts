@@ -6,7 +6,7 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { transformArgument } from './argumentHelper';
+import { performFunctionConversion } from './argumentHelper';
 
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
@@ -280,7 +280,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'round',
 			argumentTypes: ['xs:numeric?'],
-			returnType: 'xs:numeric',
+			returnType: 'xs:numeric?',
 			callFunction: fnRound.bind(null, false)
 		},
 
@@ -288,7 +288,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'round',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
-			returnType: 'xs:numeric',
+			returnType: 'xs:numeric?',
 			callFunction: fnRound.bind(null, false)
 		},
 
@@ -296,7 +296,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?'],
-			returnType: 'xs:numeric',
+			returnType: 'xs:numeric?',
 			callFunction: fnRound.bind(null, true)
 		},
 
@@ -304,7 +304,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
-			returnType: 'xs:numeric',
+			returnType: 'xs:numeric?',
 			callFunction: fnRound.bind(null, true)
 		},
 
@@ -324,11 +324,12 @@ export default {
 			callFunction: (dynamicContext, executionParameters, staticContext) => {
 				const atomizedContextItem =
 					dynamicContext.contextItem &&
-					transformArgument(
+					performFunctionConversion(
 						{ type: 'xs:anyAtomicType', occurrence: '?' },
 						sequenceFactory.singleton(dynamicContext.contextItem),
 						executionParameters,
-						'fn:number'
+						'fn:number',
+						false
 					);
 				if (!atomizedContextItem) {
 					throw new Error('XPDY0002: fn:number needs an atomizable context item.');
