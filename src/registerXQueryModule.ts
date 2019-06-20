@@ -1,20 +1,25 @@
 import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
 import StaticContext from './expressions/StaticContext';
 import astHelper from './parsing/astHelper';
-import { parse } from './parsing/xPathParser';
-
 import { loadModuleFile } from './parsing/globalModuleCache';
-
+import parseExpression from './parsing/parseExpression';
 import processProlog from './parsing/processProlog';
 
 /**
  * Register an XQuery module
  * @public
  * @param   moduleString - The string contents of the module
+ * @param   options - Additional compilation options
  * @returns  The namespace uri of the new module
  */
-export default function registerXQueryModule(moduleString: string): string {
-	const parsedModule = parse(moduleString, { outputDebugInfo: false, xquery: true });
+export default function registerXQueryModule(
+	moduleString: string,
+	options: { debug: boolean } = { debug: false }
+): string {
+	const parsedModule = parseExpression(moduleString, {
+		debug: options['debug'],
+		allowXQuery: true
+	});
 
 	const libraryModule = astHelper.getFirstChild(parsedModule, 'libraryModule');
 	if (!libraryModule) {
