@@ -4,7 +4,7 @@ cache: npm
 
 # Greenkeeper wants to install new versions of pckages, often
 # disregarding the package lock. This does not always work with `npm ci`
-install: case $TRAVIS_BRANCH in greenkeeper*) npm i;; *) npm ci;; esac;
+install: case $TRAVIS_BRANCH in greenkeeper*) npm i;; *) npm ci;; esac; travis_wait mvn install;
 
 before_script:
   - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
