@@ -65,7 +65,7 @@
 		"@types/sinon": "^7.0.12",
 		"chai": "^4.2.0",
 		"concurrently": "^4.1.0",
-		"coveralls": "^3.0.4",
+		"coveralls": "^3.0.5",
 		"cross-env": "^5.2.0",
 		"fs-extra": "^8.1.0",
 		"google-closure-compiler": "^20190528.0.0",
