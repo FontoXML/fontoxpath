@@ -21,14 +21,16 @@ describe('descendant', () => {
 	it('passes buckets for descendant', () => {
 		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
-		const expectedBucket = getBucketForSelector('self::childElement');
+		const expectedBucket = null;
 
 		const testDomFacade: IDomFacade = {
-			getFirstChild: (node: slimdom.Node, bucket: string|null) => {
+			getFirstChild: (node: slimdom.Node, bucket: string | null) => {
+				console.log(node.nodeName);
 				chai.assert.equal(expectedBucket, bucket);
 				return node.firstChild;
 			},
-			getNextSibling: (node: slimdom.Node, bucket: string|null) => {
+			getNextSibling: (node: slimdom.Node, bucket: string | null) => {
+				console.log(node.nodeName);
 				chai.assert.equal(expectedBucket, bucket);
 				return node.nextSibling;
 			}

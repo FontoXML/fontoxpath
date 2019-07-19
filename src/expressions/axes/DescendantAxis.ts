@@ -79,7 +79,7 @@ class DescendantAxis extends Expression {
 		const iterator = createInclusiveDescendantGenerator(
 			executionParameters.domFacade,
 			dynamicContext.contextItem.value,
-			this._descendantExpression.getBucket()
+			null
 		);
 		if (!inclusive) {
 			iterator.next(IterationHint.NONE);
