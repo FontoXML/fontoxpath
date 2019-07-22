@@ -13,12 +13,12 @@ before_script:
   - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
 
 script:
-    - timeout 600 npm run ci-test -- --reporter dot;
-    - timeout 600 npm run ci-qt3tests -- --reporter dot;
-    - timeout 600 npm run integrationtests -- --dist --reporter dot;
-    - timeout 600 npm run qt3tests -- --dist --reporter dot;
-    - timeout 600 npm run qt3testsxqueryx -- --reporter dot;
-    - timeout 600 npm run ci-xqutstests -- --reporter dot;
-    - timeout 600 npm run xqutstestsxqueryx -- --reporter dot;
+    - travis_wait timeout 600 npm run ci-test -- --reporter dot;
+    - travis_wait timeout 600 npm run ci-qt3tests -- --reporter dot;
+    - travis_wait timeout 600 npm run integrationtests -- --dist --reporter dot;
+    - travis_wait timeout 600 npm run qt3tests -- --dist --reporter dot;
+    - travis_wait timeout 600 npm run qt3testsxqueryx -- --reporter dot;
+    - travis_wait timeout 600 npm run ci-xqutstests -- --reporter dot;
+    - travis_wait timeout 600 npm run xqutstestsxqueryx -- --reporter dot;
 
 after_success: npm run coverage
