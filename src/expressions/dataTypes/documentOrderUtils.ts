@@ -1,8 +1,8 @@
 import {
-	ConcreteNode,
-	NODE_TYPES,
+	ConcreteAttributeNode,
 	ConcreteChildNode,
-	ConcreteAttributeNode
+	ConcreteNode,
+	NODE_TYPES
 } from '../../domFacade/ConcreteNode';
 import IDomFacade from '../../domFacade/IDomFacade';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';

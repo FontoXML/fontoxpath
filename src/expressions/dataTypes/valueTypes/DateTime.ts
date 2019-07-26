@@ -46,14 +46,14 @@ function timezoneToString(timezone: DayTimeDuration): string {
 
 class DateTime {
 	public static fromString: (string: any) => DateTime;
+	public secondFraction: number;
+	public type: string;
 	protected _days: number;
 	protected _hours: number;
 	protected _minutes: number;
 	protected _months: number;
-	public secondFraction: number;
 	protected _seconds: number;
 	protected _timezone: DayTimeDuration;
-	public type: string;
 	protected _years: number;
 	constructor(
 		years: number,

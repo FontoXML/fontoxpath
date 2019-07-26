@@ -8,7 +8,7 @@ import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
-import { IAsyncIterator, DONE_TOKEN, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
 import { evaluateQNameExpression } from './nameExpression';
 
 import StaticContext from '../StaticContext';

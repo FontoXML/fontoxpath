@@ -22,7 +22,7 @@
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.ts",
 		"coverage": "nyc report --reporter=text-lcov | coveralls",
 		"alltests": "ts-mocha --paths -p test/tsconfig.json \"test/specs/**/*.ts\" test/qt3tests.ts test/qt3testsXQueryX.ts test/xqutsTests.ts test/xqutsTestsXQueryX.ts",
-		"lint": "tslint src/**/*.ts --project . && prettier ./src/**/*.ts --list-different"
+		"lint": "tslint \"./src/**/*.ts\" --project . && prettier \"./src/**/*.ts\" --list-different"
 	},
 	"repository": {
 		"type": "git",

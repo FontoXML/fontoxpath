@@ -5,6 +5,7 @@ import builtInDataTypeConstructors from './builtInFunctions.dataTypeConstructors
 import builtInDatetimeFunctions from './builtInFunctions.datetime';
 import builtInDebuggingFunctions from './builtInFunctions.debugging';
 import builtInDurationFunctions from './builtInFunctions.duration';
+import builtInFunctionsFunctions from './builtInFunctions.functions';
 import builtInIdentifierFunctions from './builtInFunctions.identifiers';
 import builtInJsonFunctions from './builtInFunctions.json';
 import builtInMapFunctions from './builtInFunctions.maps';
@@ -15,7 +16,6 @@ import builtInOperatorFunctions from './builtInFunctions.operators';
 import builtInQNameFunctions from './builtInFunctions.qnames';
 import builtInSequencesFunctions from './builtInFunctions.sequences';
 import builtInStringFunctions from './builtInFunctions.string';
-import builtInFunctionsFunctions from './builtInFunctions.functions';
 
 import builtInFontoxpathFunctions from './builtInFunctions.fontoxpath';
 
