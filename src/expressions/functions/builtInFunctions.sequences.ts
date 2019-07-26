@@ -588,7 +588,8 @@ const fnForEach: FunctionDefinitionType = (
 						callbackArgumentTypes[0] as TypeDeclaration,
 						sequenceFactory.singleton(item.value),
 						executionParameters,
-						'fn:for-each', false
+						'fn:for-each',
+						false
 					);
 					const nextSequence = callbackFn.value.call(
 						undefined,
@@ -635,13 +636,15 @@ const fnFoldLeft: FunctionDefinitionType = function(
 				callbackArgumentTypes[0] as TypeDeclaration,
 				previous,
 				executionParameters,
-				'fn:fold-left', false
+				'fn:fold-left',
+				false
 			);
 			const currentArg = performFunctionConversion(
 				callbackArgumentTypes[1] as TypeDeclaration,
 				sequenceFactory.singleton(current),
 				executionParameters,
-				'fn:fold-left', false
+				'fn:fold-left',
+				false
 			);
 			return callbackFn.value.call(
 				undefined,
@@ -679,13 +682,15 @@ const fnFoldRight: FunctionDefinitionType = function(
 				callbackArgumentTypes[0] as TypeDeclaration,
 				previous,
 				executionParameters,
-				'fn:fold-right', false
+				'fn:fold-right',
+				false
 			);
 			const currentArg = performFunctionConversion(
 				callbackArgumentTypes[1] as TypeDeclaration,
 				sequenceFactory.singleton(current),
 				executionParameters,
-				'fn:fold-right', false
+				'fn:fold-right',
+				false
 			);
 			return callbackFn.value.call(
 				undefined,
