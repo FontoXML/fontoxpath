@@ -349,7 +349,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'name',
 			argumentTypes: ['node()?'],
-			returnType: 'xs:string',
+			returnType: 'xs:string?',
 			callFunction: fnName
 		},
 

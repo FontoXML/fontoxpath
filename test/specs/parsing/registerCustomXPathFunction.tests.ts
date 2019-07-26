@@ -237,7 +237,7 @@ describe('registerCustomXPath', () => {
 		chai.assert.equal(evaluateXPathToString('test:custom-gDay-function()', documentNode), '---22Z');
 	});
 
-	it('', () => {
+	it('keeps domFacades intact', () => {
 		const outerDomFacade = { 'this-is-the-outer-one': true } as unknown as IDomFacade;
 		registerCustomXPathFunction(
 			'test:custom-function-keeps-the-dom-facade',
@@ -249,6 +249,5 @@ describe('registerCustomXPath', () => {
 			});
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('test:custom-function-keeps-the-dom-facade()', documentNode, outerDomFacade));
-
 	});
 });

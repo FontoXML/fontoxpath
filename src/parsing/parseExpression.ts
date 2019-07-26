@@ -41,7 +41,7 @@ export default function parseExpression(
 	} catch (error) {
 		if (error instanceof SyntaxError) {
 			throw new Error(
-				`XPST0003: Unable to parse XPath: "${xPathString}".\n${
+				`XPST0003: Unable to parse: "${xPathString}".\n${
 					error.message
 				}\n${xPathString.slice(0, error['location']['start']['offset']) +
 					'[Error is around here]' +

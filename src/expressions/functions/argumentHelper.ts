@@ -7,7 +7,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import ISequence from '../dataTypes/ISequence';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
-function mapItem(argumentItem, type, executionParameters, functionName) {
+function mapItem(argumentItem, type, executionParameters, functionName, isReturn) {
 	if (isSubtypeOf(argumentItem.type, type)) {
 		return argumentItem;
 	}
@@ -15,6 +15,12 @@ function mapItem(argumentItem, type, executionParameters, functionName) {
 	if (isSubtypeOf(argumentItem.type, 'node()')) {
 		argumentItem = atomize(argumentItem, executionParameters);
 	}
+
+	// Maybe after atomization, we have the correct type
+	if (isSubtypeOf(argumentItem.type, type)) {
+		return argumentItem;
+	}
+
 	// Everything is an anyAtomicType, so no casting necessary.
 	if (type === 'xs:anyAtomicType') {
 		return argumentItem;
@@ -24,7 +30,7 @@ function mapItem(argumentItem, type, executionParameters, functionName) {
 		const item = castToType(argumentItem, type);
 		if (!item) {
 			throw new Error(
-				`XPTY0004 Unable to convert ${argumentItem.type} to type ${type} while calling ${functionName}`
+				`XPTY0004 Unable to convert ${isReturn ? 'return' : 'argument'} of type ${argumentItem.type} to type ${type} while calling ${functionName}`
 			);
 		}
 		return item;
@@ -34,7 +40,7 @@ function mapItem(argumentItem, type, executionParameters, functionName) {
 	const item = promoteToType(argumentItem, type);
 	if (!item) {
 		throw new Error(
-			`XPTY0004 Unable to cast ${argumentItem.type} to type ${type} while calling ${functionName}`
+			`XPTY0004 Unable to cast ${isReturn ? 'return' : 'argument'} of type ${argumentItem.type} to type ${type} while calling ${functionName}`
 		);
 	}
 	return item;
@@ -43,22 +49,23 @@ function mapItem(argumentItem, type, executionParameters, functionName) {
 /**
  * Test whether the provided argument is valid to be used as an function argument of the given type
  */
-export const transformArgument = (
+export const performFunctionConversion = (
 	argumentType: TypeDeclaration,
 	argument: ISequence,
 	executionParameters: ExecutionParameters,
-	functionName: string
+	functionName: string,
+	isReturn: boolean
 ): ISequence => {
 	switch (argumentType.occurrence) {
 		case '?':
 			return argument.switchCases({
 				default: () =>
 					argument.map(value =>
-						mapItem(value, argumentType.type, executionParameters, functionName)
+								 mapItem(value, argumentType.type, executionParameters, functionName, isReturn)
 					),
 				multiple: () => {
 					throw new Error(
-						`XPTY0004: Multiplicity of function argument of type ${
+						`XPTY0004: Multiplicity of ${isReturn ? "function return value" : "function argument"} of type ${
 							argumentType.type
 						}${argumentType.occurrence ||
 							''} for ${functionName} is incorrect. Expected "?", but got "+".`
@@ -69,7 +76,7 @@ export const transformArgument = (
 			return argument.switchCases({
 				empty: () => {
 					throw new Error(
-						`XPTY0004: Multiplicity of function argument of type ${
+						`XPTY0004: Multiplicity of ${isReturn ? "function return value" : "function argument"} of type ${
 							argumentType.type
 						}${argumentType.occurrence ||
 							''} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
@@ -77,23 +84,23 @@ export const transformArgument = (
 				},
 				default: () =>
 					argument.map(value =>
-						mapItem(value, argumentType.type, executionParameters, functionName)
+								 mapItem(value, argumentType.type, executionParameters, functionName, isReturn)
 					)
 			});
 		case '*':
 			return argument.map(value =>
-				mapItem(value, argumentType.type, executionParameters, functionName)
+								mapItem(value, argumentType.type, executionParameters, functionName, isReturn)
 			);
 		default:
 			// excactly one
 			return argument.switchCases({
 				singleton: () =>
 					argument.map(value =>
-						mapItem(value, argumentType.type, executionParameters, functionName)
+								 mapItem(value, argumentType.type, executionParameters, functionName, isReturn)
 					),
 				default: () => {
 					throw new Error(
-						`XPTY0004: Multiplicity of function argument of type ${
+						`XPTY0004: Multiplicity of ${isReturn ? "function return value" : "function argument"} of type ${
 							argumentType.type
 						}${argumentType.occurrence ||
 							''} for ${functionName} is incorrect. Expected exactly one`
