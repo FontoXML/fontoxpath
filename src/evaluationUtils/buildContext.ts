@@ -106,23 +106,11 @@ export default function buildEvaluationContext(
 		? wrapExternalDocumentWriter(internalOptions.documentWriter)
 		: domBackedDocumentWriter;
 
-const variableBindings = Object.keys(variables).reduce((typedVariableByName, variableName) => {
-	typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
-		adaptJavaScriptValueToXPathValue(variables[variableName]);
-	return typedVariableByName;
-}, Object.create(null));
-
-for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
-	variableBindings[binding] = expressionAndStaticContext.staticContext.getVariableDeclaration(binding);
-}
-
-	const dynamicContext = new DynamicContext({
-		contextItem: contextSequence.first(),
-		contextItemIndex: 0,
-		contextSequence,
-		variableBindings
-	});
-
+	const variableBindings = Object.keys(variables).reduce((typedVariableByName, variableName) => {
+		typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
+			adaptJavaScriptValueToXPathValue(variables[variableName]);
+		return typedVariableByName;
+	}, Object.create(null));
 	const executionParameters = new ExecutionParameters(
 		wrappedDomFacade,
 		nodesFactory,
@@ -130,10 +118,25 @@ for (const binding of expressionAndStaticContext.staticContext.getVariableBindin
 		externalOptions['currentContext']
 	);
 
+	let dynamicContext;
+	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
+		variableBindings[binding] = () =>
+			expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
+				dynamicContext,
+				executionParameters
+			);
+	}
+
+	dynamicContext = new DynamicContext({
+		contextItem: contextSequence.first(),
+		contextItemIndex: 0,
+		contextSequence,
+		variableBindings
+	});
+
 	return {
 		dynamicContext,
 		executionParameters,
-		expression: 
-		expressionAndStaticContext.expression
+		expression: expressionAndStaticContext.expression
 	};
 }

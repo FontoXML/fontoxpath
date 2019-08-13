@@ -14,7 +14,6 @@ import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
 import { errXQST0070 } from '../expressions/xquery/XQueryErrors';
 
-
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
 	'http://www.w3.org/2001/XMLSchema',
@@ -243,22 +242,21 @@ export default function processProlog(
 		}
 	});
 
-	const registeredVariables: { localName: string; namespaceURI: null | string; }[] = [];
+	const registeredVariables: { localName: string; namespaceURI: null | string }[] = [];
 	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		const external = astHelper.getFirstChild(varDecl, 'external');
-		const varValue = astHelper.getFirstChild(astHelper.getFirstChild(varDecl, 'varValue'),'*');
+		const varValue = astHelper.getFirstChild(astHelper.getFirstChild(varDecl, 'varValue'), '*');
 		const compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
 			allowUpdating: false,
 			allowXQuery: true
 		});
-		
 
 		if (
 			registeredVariables.some(
 				registered =>
 					registered.namespaceURI === varName.namespaceURI &&
-					registered.localName === varName.localName 
+					registered.localName === varName.localName
 			)
 		) {
 			throw new Error(
@@ -268,12 +266,22 @@ export default function processProlog(
 			);
 		}
 		if (!staticContext.lookupVariable(varName.namespaceURI || '', varName.localName)) {
-			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);		
+			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);
 		}
 		if (!staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)) {
-			staticContext.registerVariableDeclaration(varName.namespaceURI, varName.localName, () => compiledFunctionAsExpression.evaluate());
+			staticContext.registerVariableDeclaration(
+				varName.namespaceURI,
+				varName.localName,
+				(dynamicContext, executionParameters) =>
+					compiledFunctionAsExpression.evaluate(dynamicContext, executionParameters)
+			);
 		}
-		
+
+		staticallyCompilableExpressions.push({
+			expression: compiledFunctionAsExpression,
+			staticContextLeaf: staticContext
+		});
+
 		registeredVariables.push(varName);
 	});
 

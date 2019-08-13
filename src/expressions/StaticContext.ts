@@ -1,6 +1,8 @@
 import IContext from './Context';
 import ISequence from './dataTypes/ISequence';
 import TypeDeclaration from './dataTypes/TypeDeclaration';
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
 import { FunctionProperties } from './functions/functionRegistry';
 
@@ -80,8 +82,8 @@ export default class StaticContext {
 					this._registeredVariableBindingByHashKey[i]
 				)
 			];
-			// should we need to store here the global _registeredVariableDeclarationByHashKey too?
-			// I think is not needed because it is global, is it?
+
+
 			contextAtThisPoint._registeredFunctionsByHash = Object.assign(
 				Object.create(null),
 				this._registeredFunctionsByHash
@@ -97,7 +99,9 @@ export default class StaticContext {
 		return Object.keys(this._registeredVariableDeclarationByHashKey);
 	}
 
-	public getVariableDeclaration (hashKey: string) :  () => ISequence {
+	public getVariableDeclaration(
+		hashKey: string
+	): (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) => ISequence {
 		return this._registeredVariableDeclarationByHashKey[hashKey];
 	}
 
@@ -149,7 +153,6 @@ export default class StaticContext {
 		return null;
 	}
 
-
 	public registerFunctionDefinition(
 		namespaceURI: string,
 		localName: string,
@@ -182,11 +185,17 @@ export default class StaticContext {
 		] = `${hash}[${this._scopeCount}]`);
 	}
 
-	public registerVariableDeclaration(namespaceURI: string, localName: string, createValue: () => ISequence) {
+	public registerVariableDeclaration(
+		namespaceURI: string,
+		localName: string,
+		createValue: (
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters
+		) => ISequence
+	) {
 		const hash = `${createHashKey(namespaceURI || '', localName)}[${this._scopeCount}]`;
 		this._registeredVariableDeclarationByHashKey[hash] = createValue;
 	}
-
 
 	public removeScope() {
 		this._registeredNamespaceURIByPrefix.length = this._scopeDepth;
