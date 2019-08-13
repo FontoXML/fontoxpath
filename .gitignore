@@ -9,3 +9,5 @@
 /src/parsing/xPathParser.raw.ts
 /.nyc_output
 /tmp
+.idea
+.vscode
