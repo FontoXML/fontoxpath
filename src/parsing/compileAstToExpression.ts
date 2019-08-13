@@ -51,6 +51,7 @@ import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
 import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
+import TypeSwitchExpr from '../expressions/xquery/TypeSwitchExpression';
 
 import DeleteExpression from '../expressions/xquery-update/DeleteExpression';
 import InsertExpression, { TargetChoice } from '../expressions/xquery-update/InsertExpression';
@@ -184,6 +185,9 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 
 		case 'arrayConstructor':
 			return arrayConstructor(ast, compilationOptions);
+
+		case 'typeswitchExpr':
+			return typeswitchExpr(ast, compilationOptions);
 
 		// XQuery node constructors
 		case 'elementConstructor':
@@ -1194,6 +1198,62 @@ function transformExpression(ast, compilationOptions) {
 		compilationOptions
 	);
 	return new TransformExpression(transformCopies, modifyExpr, returnExpr);
+}
+
+function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	}
+
+	const argExpr = compile(
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
+		compilationOptions
+	);
+
+	const caseClause = astHelper.getChildren(ast, 'typeswitchExprCaseClause');
+
+	const caseClauseExpressions = caseClause.map(caseClauseExpression => {
+		let sequenceTypesAstNodes;
+		if (astHelper.getChildren(caseClauseExpression, 'sequenceTypeUnion').length === 0) {
+			sequenceTypesAstNodes = [astHelper.getFirstChild(caseClauseExpression, 'sequenceType')];
+		} else {
+			sequenceTypesAstNodes = astHelper.getChildren(
+				astHelper.getFirstChild(caseClauseExpression, 'sequenceTypeUnion'),
+				'sequenceType'
+			);
+		}
+
+		const resultExpression = compile(
+			astHelper.followPath(caseClauseExpression, ['resultExpr', '*']),
+			compilationOptions
+		) as PossiblyUpdatingExpression;
+
+		return {
+			caseClauseExpression: resultExpression,
+			typeTests: sequenceTypesAstNodes.map(sequenceTypeAstNode => {
+				const occurrenceIndicator = astHelper.getFirstChild(
+					sequenceTypeAstNode,
+					'occurrenceIndicator'
+				);
+				return {
+					occurrenceIndicator: occurrenceIndicator
+						? astHelper.getTextContent(occurrenceIndicator)
+						: '',
+					typeTest: compile(
+						astHelper.getFirstChild(sequenceTypeAstNode, '*'),
+						compilationOptions
+					)
+				};
+			})
+		};
+	});
+
+	const defaultExpression = compile(
+		astHelper.followPath(ast, ['typeswitchExprDefaultClause', 'resultExpr', '*']),
+		compilationOptions
+	) as PossiblyUpdatingExpression;
+
+	return new TypeSwitchExpr(argExpr, caseClauseExpressions, defaultExpression);
 }
 
 type CompilationOptions = { allowUpdating?: boolean; allowXQuery?: boolean };

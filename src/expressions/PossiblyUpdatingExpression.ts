@@ -11,6 +11,7 @@ import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
 
 export type SequenceCallbacks = ((dynamicContext: DynamicContext) => ISequence)[];
+
 export default abstract class PossiblyUpdatingExpression extends Expression {
 	constructor(
 		specificity: Specificity,
@@ -105,6 +106,12 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		};
 	}
 
+	/**
+	 *
+	 * @param _dynamicContext       The context at this point, containing the context item and variable bindings
+	 * @param _executionParameters
+	 * @param _sequenceCallbacks    Callbacks to the Expression#evaluate methods of the childExpressions. The order is the same as the childExpressions passed in the constructor of this class
+	 */
 	public abstract performFunctionalEvaluation(
 		_dynamicContext: DynamicContext,
 		_executionParameters: ExecutionParameters,

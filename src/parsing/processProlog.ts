@@ -288,7 +288,7 @@ export default function processProlog(
 		) {
 			throw new Error(
 				`XQST0049: The variable ${
-					varName.namespaceURI ? `Q{${varName.namespaceURI}}` : ''
+				varName.namespaceURI ? `Q{${varName.namespaceURI}}` : ''
 				}${varName.localName} has already been declared.`
 			);
 		}
