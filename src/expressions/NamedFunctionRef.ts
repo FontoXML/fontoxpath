@@ -11,9 +11,9 @@ function buildFormattedFunctionName(functionReference) {
 		functionReference.namespaceURI
 			? `Q{${functionReference.namespaceURI}}`
 			: functionReference.prefix
-			? `${functionReference.prefix}:`
-			: ''
-	}${functionReference.localName}`;
+				? `${functionReference.prefix}:`
+				: ''
+		}${functionReference.localName}`;
 }
 
 class NamedFunctionRef extends Expression {
@@ -57,7 +57,7 @@ class NamedFunctionRef extends Expression {
 		let namespaceURI = this._functionReference.namespaceURI;
 		if (!namespaceURI) {
 			if (!this._functionReference.prefix) {
-				namespaceURI = FUNCTIONS_NAMESPACE_URI;
+				namespaceURI = staticContext.getDefaultFunctionNamespace();
 			} else {
 				namespaceURI = staticContext.resolveNamespace(this._functionReference.prefix);
 				if (namespaceURI === null) {

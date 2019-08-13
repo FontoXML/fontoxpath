@@ -37,6 +37,7 @@ export type FunctionDefinition = {
  */
 export default class StaticContext {
 	public parentContext: IContext;
+	private _registeredDefaultFunctionNamespace: string = 'http://www.w3.org/2005/xpath-functions';
 	private _registeredFunctionsByHash: any;
 	private _registeredNamespaceURIByPrefix: any[];
 	private _registeredVariableBindingByHashKey: any[];
@@ -81,6 +82,7 @@ export default class StaticContext {
 				Object.create(null),
 				this._registeredFunctionsByHash
 			);
+			contextAtThisPoint._registeredDefaultFunctionNamespace = this._registeredDefaultFunctionNamespace;
 		}
 
 		return contextAtThisPoint;
@@ -168,5 +170,12 @@ export default class StaticContext {
 				: this.parentContext.resolveNamespace(prefix);
 		}
 		return uri;
+	}
+	public getDefaultFunctionNamespace(): string {
+		return this._registeredDefaultFunctionNamespace;
+	}
+
+	public setDefaultFunctionNamespace(namespaceURI: string) {
+		this._registeredDefaultFunctionNamespace = namespaceURI;
 	}
 }
