@@ -10,8 +10,6 @@
 				"TS_NODE_PROJECT": "test/tsconfig.json"
 			},
 			"args": [
-				"--ui",
-				"tdd",
 				"--timeout",
 				"4000",
 				"--colors",
@@ -43,8 +41,6 @@
 				"TS_NODE_PROJECT": "test/tsconfig.json"
 			},
 			"args": [
-				"--ui",
-				"tdd",
 				"--timeout",
 				"4000",
 				"--colors",

@@ -2,6 +2,7 @@ import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
 import Specificity from './Specificity';
+import StaticContext from './StaticContext';
 
 class VarRef extends Expression {
 	private _namespaceURI: string;
@@ -38,7 +39,7 @@ class VarRef extends Expression {
 		return dynamicContext.variableBindings[this._variableBindingName]();
 	}
 
-	public performStaticEvaluation(staticContext) {
+	public performStaticEvaluation(staticContext: StaticContext) {
 		if (this._prefix) {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix);
 		}

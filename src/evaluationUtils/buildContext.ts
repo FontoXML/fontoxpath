@@ -20,7 +20,7 @@ import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
 import { Node } from '../types/Types';
 
-export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
+const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
 // bootstrap builtin functions
 builtInFunctions.forEach(builtInFunction => {
@@ -85,7 +85,7 @@ export default function buildEvaluationContext(
 
 	const namespaceResolver =
 		internalOptions.namespaceResolver || createDefaultNamespaceResolver(contextItem);
-	const expression = staticallyCompileXPath(
+	const expressionAndStaticContext = staticallyCompileXPath(
 		expressionString,
 		compilationOptions,
 		namespaceResolver,
@@ -106,17 +106,11 @@ export default function buildEvaluationContext(
 		? wrapExternalDocumentWriter(internalOptions.documentWriter)
 		: domBackedDocumentWriter;
 
-	const dynamicContext = new DynamicContext({
-		contextItem: contextSequence.first(),
-		contextItemIndex: 0,
-		contextSequence,
-		variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
-			typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
-				adaptJavaScriptValueToXPathValue(variables[variableName]);
-			return typedVariableByName;
-		}, Object.create(null))
-	});
-
+	const variableBindings = Object.keys(variables).reduce((typedVariableByName, variableName) => {
+		typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
+			adaptJavaScriptValueToXPathValue(variables[variableName]);
+		return typedVariableByName;
+	}, Object.create(null));
 	const executionParameters = new ExecutionParameters(
 		wrappedDomFacade,
 		nodesFactory,
@@ -124,9 +118,27 @@ export default function buildEvaluationContext(
 		externalOptions['currentContext']
 	);
 
+	let dynamicContext;
+	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
+		if (!variableBindings[binding]) {
+			variableBindings[binding] = () =>
+				expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
+					dynamicContext,
+					executionParameters
+				);
+		}
+	}
+
+	dynamicContext = new DynamicContext({
+		contextItem: contextSequence.first(),
+		contextItemIndex: 0,
+		contextSequence,
+		variableBindings
+	});
+
 	return {
 		dynamicContext,
 		executionParameters,
-		expression
+		expression: expressionAndStaticContext.expression
 	};
 }
