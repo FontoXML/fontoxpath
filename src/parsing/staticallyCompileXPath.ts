@@ -96,5 +96,5 @@ export default function staticallyCompileXPath(
 		}
 	}
 
-	return 	{ expression, staticContext: rootStaticContext };
+	return { expression, staticContext: rootStaticContext };
 }

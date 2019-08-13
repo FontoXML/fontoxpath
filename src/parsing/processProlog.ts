@@ -261,18 +261,30 @@ export default function processProlog(
 	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		const external = astHelper.getFirstChild(varDecl, 'external');
-		const varValue = astHelper.getFirstChild(astHelper.getFirstChild(varDecl, 'varValue'),'*');
-		const compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
-			allowUpdating: false,
-			allowXQuery: true
-		});
-		
+		const getVarValue = astHelper.getFirstChild(varDecl, 'varValue');
+		let varValue, compiledFunctionAsExpression;
+
+		if (external !== null) {
+			const varDefaultValue = astHelper.getFirstChild(external, 'varValue');
+			if (varDefaultValue !== null) {
+				varValue = astHelper.getFirstChild(varDefaultValue, '*');
+			}
+		} else if (getVarValue !== null) {
+			varValue = astHelper.getFirstChild(getVarValue, '*');
+		}
+
+		if (varValue) {
+			compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
+				allowUpdating: false,
+				allowXQuery: true
+			});
+		}
 
 		if (
 			registeredVariables.some(
 				registered =>
 					registered.namespaceURI === varName.namespaceURI &&
-					registered.localName === varName.localName 
+					registered.localName === varName.localName
 			)
 		) {
 			throw new Error(
@@ -282,12 +294,26 @@ export default function processProlog(
 			);
 		}
 		if (!staticContext.lookupVariable(varName.namespaceURI || '', varName.localName)) {
-			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);		
+			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);
 		}
-		if (!staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)) {
-			staticContext.registerVariableDeclaration(varName.namespaceURI, varName.localName, () => compiledFunctionAsExpression.evaluate());
+		if (
+			varValue &&
+			!staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)
+		) {
+		    //TODO staticContext.registerVariableDeclaration(varName.namespaceURI, varName.localName, () => compiledFunctionAsExpression.evaluate());
+			staticContext.registerVariableDeclaration(
+				varName.namespaceURI,
+				varName.localName,
+				(dynamicContext, executionParameters) =>
+					compiledFunctionAsExpression.evaluate(dynamicContext, executionParameters)
+			);
+
+			staticallyCompilableExpressions.push({
+				expression: compiledFunctionAsExpression,
+				staticContextLeaf: staticContext
+			});
 		}
-		
+
 		registeredVariables.push(varName);
 	});
 

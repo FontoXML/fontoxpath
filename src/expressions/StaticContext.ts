@@ -1,6 +1,8 @@
 import IContext from './Context';
 import ISequence from './dataTypes/ISequence';
 import TypeDeclaration from './dataTypes/TypeDeclaration';
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
 import { FunctionProperties } from './functions/functionRegistry';
 
@@ -96,7 +98,10 @@ export default class StaticContext {
 		return Object.keys(this._registeredVariableDeclarationByHashKey);
 	}
 
-	public getVariableDeclaration (hashKey: string) :  () => ISequence {
+	//TODO public getVariableDeclaration (hashKey: string) :  () => ISequence {
+	public getVariableDeclaration(
+		hashKey: string
+	): (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) => ISequence {
 		return this._registeredVariableDeclarationByHashKey[hashKey];
 	}
 
@@ -148,7 +153,6 @@ export default class StaticContext {
 		return null;
 	}
 
-
 	public registerFunctionDefinition(
 		namespaceURI: string,
 		localName: string,
@@ -181,11 +185,24 @@ export default class StaticContext {
 		] = `${hash}[${this._scopeCount}]`);
 	}
 
-	public registerVariableDeclaration(namespaceURI: string, localName: string, createValue: () => ISequence) {
+	//TODO
+	// public registerVariableDeclaration(namespaceURI: string, localName: string, createValue: () => ISequence) {
+	// 	const hash = `${createHashKey(namespaceURI || '', localName)}[${this._scopeCount}]`;
+	// 	this._registeredVariableDeclarationByHashKey[hash] = createValue;
+	// }
+
+
+	public registerVariableDeclaration(
+		namespaceURI: string,
+		localName: string,
+		createValue: (
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters
+		) => ISequence
+	) {
 		const hash = `${createHashKey(namespaceURI || '', localName)}[${this._scopeCount}]`;
 		this._registeredVariableDeclarationByHashKey[hash] = createValue;
 	}
-
 
 	public removeScope() {
 		this._registeredNamespaceURIByPrefix.length = this._scopeDepth;
