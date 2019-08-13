@@ -83,7 +83,6 @@ export default class StaticContext {
 				)
 			];
 
-
 			contextAtThisPoint._registeredFunctionsByHash = Object.assign(
 				Object.create(null),
 				this._registeredFunctionsByHash
