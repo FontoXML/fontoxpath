@@ -8,7 +8,7 @@ beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe.only('DefaultFunctionDeclaration', () => {
+describe('DefaultFunctionDeclaration', () => {
 	it('Can create a default namespace with PI', () => {
 		chai.assert.equal(
 			evaluateXPathToNumber(
