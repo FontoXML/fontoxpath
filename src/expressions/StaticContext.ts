@@ -88,6 +88,10 @@ export default class StaticContext {
 		return contextAtThisPoint;
 	}
 
+	public getDefaultFunctionNamespace(): string {
+		return this._registeredDefaultFunctionNamespace;
+	}
+
 	public introduceScope() {
 		this._scopeCount++;
 		this._scopeDepth++;
@@ -170,9 +174,6 @@ export default class StaticContext {
 				: this.parentContext.resolveNamespace(prefix);
 		}
 		return uri;
-	}
-	public getDefaultFunctionNamespace(): string {
-		return this._registeredDefaultFunctionNamespace;
 	}
 
 	public setDefaultFunctionNamespace(namespaceURI: string) {

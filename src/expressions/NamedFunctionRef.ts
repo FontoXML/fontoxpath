@@ -3,7 +3,6 @@ import sequenceFactory from './dataTypes/sequenceFactory';
 import Expression from './Expression';
 import { FunctionProperties, getAlternativesAsStringFor } from './functions/functionRegistry';
 import Specificity from './Specificity';
-import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 import StaticContext from './StaticContext';
 
 function buildFormattedFunctionName(functionReference) {
@@ -11,9 +10,9 @@ function buildFormattedFunctionName(functionReference) {
 		functionReference.namespaceURI
 			? `Q{${functionReference.namespaceURI}}`
 			: functionReference.prefix
-				? `${functionReference.prefix}:`
-				: ''
-		}${functionReference.localName}`;
+			? `${functionReference.prefix}:`
+			: ''
+	}${functionReference.localName}`;
 }
 
 class NamedFunctionRef extends Expression {

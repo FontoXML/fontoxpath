@@ -92,9 +92,7 @@ export default function processProlog(
 		const namespaceURI = astHelper.getTextContent(
 			astHelper.getFirstChild(defaultNamespaceDecl, 'uri')
 		);
-		staticContext.setDefaultFunctionNamespace(
-			namespaceURI
-		);
+		staticContext.setDefaultFunctionNamespace(namespaceURI);
 	});
 
 	astHelper.getChildren(prolog, 'moduleSettings').forEach(moduleSetting => {
@@ -130,7 +128,10 @@ export default function processProlog(
 		const declarationLocalName = astHelper.getTextContent(functionName);
 
 		if (declarationNamespaceURI === null) {
-			declarationNamespaceURI = (declarationPrefix === null) ? staticContext.getDefaultFunctionNamespace() : staticContext.resolveNamespace(declarationPrefix);
+			declarationNamespaceURI =
+				declarationPrefix === null
+					? staticContext.getDefaultFunctionNamespace()
+					: staticContext.resolveNamespace(declarationPrefix);
 
 			if (!declarationNamespaceURI && declarationPrefix) {
 				throw new Error(
@@ -269,7 +270,7 @@ export default function processProlog(
 		) {
 			throw new Error(
 				`XQST0049: The variable ${
-				varName.namespaceURI ? `Q{${varName.namespaceURI}}` : ''
+					varName.namespaceURI ? `Q{${varName.namespaceURI}}` : ''
 				}${varName.localName} has already been declared.`
 			);
 		}
