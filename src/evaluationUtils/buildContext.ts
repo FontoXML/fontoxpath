@@ -85,7 +85,7 @@ export default function buildEvaluationContext(
 
 	const namespaceResolver =
 		internalOptions.namespaceResolver || createDefaultNamespaceResolver(contextItem);
-	const expression = staticallyCompileXPath(
+	const expressionAndStaticContext = staticallyCompileXPath(
 		expressionString,
 		compilationOptions,
 		namespaceResolver,
@@ -106,15 +106,21 @@ export default function buildEvaluationContext(
 		? wrapExternalDocumentWriter(internalOptions.documentWriter)
 		: domBackedDocumentWriter;
 
+const variableBindings = Object.keys(variables).reduce((typedVariableByName, variableName) => {
+	typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
+		adaptJavaScriptValueToXPathValue(variables[variableName]);
+	return typedVariableByName;
+}, Object.create(null));
+
+for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
+	variableBindings[binding] = expressionAndStaticContext.staticContext.getVariableDeclaration(binding);
+}
+
 	const dynamicContext = new DynamicContext({
 		contextItem: contextSequence.first(),
 		contextItemIndex: 0,
 		contextSequence,
-		variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
-			typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
-				adaptJavaScriptValueToXPathValue(variables[variableName]);
-			return typedVariableByName;
-		}, Object.create(null))
+		variableBindings
 	});
 
 	const executionParameters = new ExecutionParameters(
@@ -127,6 +133,7 @@ export default function buildEvaluationContext(
 	return {
 		dynamicContext,
 		executionParameters,
-		expression
+		expression: 
+		expressionAndStaticContext.expression
 	};
 }
