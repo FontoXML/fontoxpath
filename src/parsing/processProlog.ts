@@ -246,7 +246,15 @@ export default function processProlog(
 	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		const external = astHelper.getFirstChild(varDecl, 'external');
-		const varValue = astHelper.getFirstChild(astHelper.getFirstChild(varDecl, 'varValue'), '*');
+		const getVarValue = astHelper.getFirstChild(varDecl, 'varValue');
+		let varValue;
+
+		if (external !== null) {
+			varValue = astHelper.getFirstChild(astHelper.getFirstChild(external, 'varValue'), '*');
+		} else if (getVarValue !== null){
+			varValue = astHelper.getFirstChild(getVarValue, '*');
+		}
+
 		const compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
 			allowUpdating: false,
 			allowXQuery: true

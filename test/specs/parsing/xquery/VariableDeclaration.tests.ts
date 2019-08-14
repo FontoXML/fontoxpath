@@ -9,7 +9,7 @@ beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe('VariableDeclaration', () => {
+describe.only('VariableDeclaration', () => {
     it('create a variable declaration', () => {
         chai.assert.isTrue(
             evaluateXPathToBoolean(
@@ -56,5 +56,39 @@ describe('VariableDeclaration', () => {
                 undefined,
                 {},
                 { language: evaluateXPath.XQUERY_3_1_LANGUAGE }), 'hello');
+    });
+
+    it('allows external variables with defaults', () => {
+    chai.assert.equal(
+            evaluateXPathToString(
+                `declare variable $nx as xs:integer external := 12; 
+                <out>{$nx}</out>`,
+                documentNode,
+                undefined,
+                {},
+                { language: evaluateXPath.XQUERY_3_1_LANGUAGE }), '12');
+    });
+
+    it('allows external variables with defaults (using the same variable)', () => {
+        // we are checking that the var is not cached from the previous test
+        chai.assert.equal(
+            evaluateXPathToString(
+                `declare variable $nx as xs:integer external := 12; 
+                <out>{$nx}</out>`,
+                documentNode,
+                undefined,
+                {nx:44},
+                { language: evaluateXPath.XQUERY_3_1_LANGUAGE }), '44');
+    });
+
+    it('allows external variables with defaults and external parameters', () => {
+        chai.assert.equal(
+            evaluateXPathToString(
+                `declare variable $nxa as xs:integer external := 10; 
+                <out>{$nxa}</out>`,
+                documentNode,
+                undefined,
+                {nxa:33},
+                { language: evaluateXPath.XQUERY_3_1_LANGUAGE }), '33');
     });
 });

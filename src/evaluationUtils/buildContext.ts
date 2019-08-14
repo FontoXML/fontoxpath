@@ -20,7 +20,7 @@ import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
 import { Node } from '../types/Types';
 
-export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
+export const generateGlobalVariableBindingName = (variableName: string) =>  `Q{}${variableName}[0]`;
 
 // bootstrap builtin functions
 builtInFunctions.forEach(builtInFunction => {
@@ -120,11 +120,13 @@ export default function buildEvaluationContext(
 
 	let dynamicContext;
 	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
-		variableBindings[binding] = () =>
-			expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
-				dynamicContext,
-				executionParameters
-			);
+		if (!variableBindings[binding]) {
+			variableBindings[binding] = () =>
+				expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
+					dynamicContext,
+					executionParameters
+				);
+		}
 	}
 
 	dynamicContext = new DynamicContext({
