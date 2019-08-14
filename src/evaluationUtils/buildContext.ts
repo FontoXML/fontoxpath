@@ -20,7 +20,7 @@ import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
 import { Node } from '../types/Types';
 
-export const generateGlobalVariableBindingName = (variableName: string) =>  `Q{}${variableName}[0]`;
+export const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
 // bootstrap builtin functions
 builtInFunctions.forEach(builtInFunction => {

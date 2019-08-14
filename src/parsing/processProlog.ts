@@ -251,11 +251,10 @@ export default function processProlog(
 
 		if (external !== null) {
 			const varDefaultValue = astHelper.getFirstChild(external, 'varValue');
-			if (varDefaultValue !== null){
+			if (varDefaultValue !== null) {
 				varValue = astHelper.getFirstChild(varDefaultValue, '*');
 			}
-
-		} else if (getVarValue !== null){
+		} else if (getVarValue !== null) {
 			varValue = astHelper.getFirstChild(getVarValue, '*');
 		}
 
@@ -282,7 +281,10 @@ export default function processProlog(
 		if (!staticContext.lookupVariable(varName.namespaceURI || '', varName.localName)) {
 			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);
 		}
-		if (varValue && !staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)) {
+		if (
+			varValue &&
+			!staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)
+		) {
 			staticContext.registerVariableDeclaration(
 				varName.namespaceURI,
 				varName.localName,
@@ -295,8 +297,6 @@ export default function processProlog(
 				staticContextLeaf: staticContext
 			});
 		}
-
-
 
 		registeredVariables.push(varName);
 	});
