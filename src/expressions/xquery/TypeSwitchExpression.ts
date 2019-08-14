@@ -6,29 +6,35 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Specificity from '../Specificity';
+import StaticContext from '../StaticContext';
 import { IAsyncIterator, IterationHint, notReady } from '../util/iterators';
 
-class IfExpression extends PossiblyUpdatingExpression {
+class TypeSwitchExpression extends PossiblyUpdatingExpression {
 	constructor(
-		testExpression: Expression,
-		thenExpression: PossiblyUpdatingExpression,
-		elseExpression: PossiblyUpdatingExpression
+		argExpression: Expression,
+		// caseClauseTypeTests: Expression[],
+		caseClauseExpressions: PossiblyUpdatingExpression[],
+		defaultExpression: PossiblyUpdatingExpression
 	) {
-		const specificity = testExpression.specificity
-			.add(thenExpression.specificity)
-			.add(elseExpression.specificity);
-		super(specificity, [testExpression, thenExpression, elseExpression], {
-			canBeStaticallyEvaluated:
-				testExpression.canBeStaticallyEvaluated &&
-				thenExpression.canBeStaticallyEvaluated &&
-				elseExpression.canBeStaticallyEvaluated,
-			peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
-			resultOrder:
-				thenExpression.expectedResultOrder === elseExpression.expectedResultOrder
-					? thenExpression.expectedResultOrder
-					: RESULT_ORDERINGS.UNSORTED,
-			subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree
+		const specificity = new Specificity({});
+
+		super(specificity, [argExpression, ...caseClauseExpressions, defaultExpression], {
+			canBeStaticallyEvaluated: false,
+			peer: false,
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
+			subtree: false
 		});
+	}
+
+	public evaluateToBoolean(_dynamicContext, node) {
+		// TODO: make MArtin figure out WTF
+		return true;
+	}
+
+	public performStaticEvaluation() {
+		// TODO: Static evaluateion is where we need to declare the variables for each caseClause, if needed
+		// Look at LetExpression for inspiration.
 	}
 
 	public performFunctionalEvaluation(
@@ -36,6 +42,9 @@ class IfExpression extends PossiblyUpdatingExpression {
 		_executionParameters: ExecutionParameters,
 		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
 	) {
+		const [getArgExpressionSequence, ...caseClauseExpressionsAndDefault] = sequenceCallbacks;
+		const [getCaseClaseSequences, getDefaultSequence] = sequenceCallbacks;
+
 		let resultIterator: IAsyncIterator<Value> | null = null;
 		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
 
@@ -58,4 +67,4 @@ class IfExpression extends PossiblyUpdatingExpression {
 	}
 }
 
-export default IfExpression;
+export default TypeSwitchExpression;

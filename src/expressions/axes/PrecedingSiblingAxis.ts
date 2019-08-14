@@ -24,10 +24,10 @@ class PrecedingSiblingAxis extends Expression {
 	private _siblingExpression: TestAbstractExpression;
 	constructor(siblingExpression: TestAbstractExpression) {
 		super(siblingExpression.specificity, [siblingExpression], {
-			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
-			subtree: false,
+			canBeStaticallyEvaluated: false,
 			peer: true,
-			canBeStaticallyEvaluated: false
+			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
+			subtree: false
 		});
 
 		this._siblingExpression = siblingExpression;
