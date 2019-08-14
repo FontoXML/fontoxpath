@@ -9,7 +9,7 @@ beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe.only('VariableDeclaration', () => {
+describe('VariableDeclaration', () => {
     it('create a variable declaration', () => {
         chai.assert.isTrue(
             evaluateXPathToBoolean(
