@@ -1,4 +1,4 @@
-import {generateGlobalVariableBindingName} from "../evaluationUtils/buildContext";
+import { generateGlobalVariableBindingName } from '../evaluationUtils/buildContext';
 import IContext from './Context';
 import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
 import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
