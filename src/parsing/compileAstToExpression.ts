@@ -51,6 +51,7 @@ import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
 import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
+import TypeSwitchExpr from '../expressions/xquery/TypeSwitchExpression';
 
 import DeleteExpression from '../expressions/xquery-update/DeleteExpression';
 import InsertExpression, { TargetChoice } from '../expressions/xquery-update/InsertExpression';
@@ -250,6 +251,8 @@ function compileTest(ast: IAST, compilationOptions: CompilationOptions): TestAbs
 			return typeTest(ast, compilationOptions);
 		case 'anyItemType':
 			return anyItemTest();
+		case 'typeswitchExpr':
+			return typeswitchExpr(ast, compilationOptions);
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}
@@ -1194,6 +1197,50 @@ function transformExpression(ast, compilationOptions) {
 		compilationOptions
 	);
 	return new TransformExpression(transformCopies, modifyExpr, returnExpr);
+}
+
+function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	const argExpr = compile(
+		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
+		compilationOptions
+	);
+
+	const caseClause = astHelper.getChildren(ast, 'typeswitchExprCaseClause');
+
+	const caseClauseExpressions = caseClause.map(X => {
+		let sequenceTypesAstNodes;
+		if (astHelper.getChildren(X, 'sequenceTypeUnion').length !== 0) {
+			sequenceTypesAstNodes = astHelper.getChildren(
+				astHelper.getFirstChild(X, 'sequenceTypeUnion'),
+				'sequenceType'
+			);
+		} else {
+			sequenceTypesAstNodes = [astHelper.getFirstChild(X, 'sequenceType')];
+		}
+
+		return sequenceTypesAstNodes.map(sequenceTypeAstNode => {
+			const occurenceIndicator = astHelper.getFirstChild(
+				sequenceTypeAstNode,
+				'occurenceIndicator'
+			);
+			return {
+				occurrenceIndicator: occurenceIndicator
+					? astHelper.getTextContent(occurenceIndicator)
+					: '',
+				typeTest: compile(
+					astHelper.getFirstChild(sequenceTypeAstNode, '*'),
+					compilationOptions
+				)
+			};
+		}) as PossiblyUpdatingExpression;
+	});
+
+	const defaultExpression = compile(
+		astHelper.followPath(ast, ['typeswitchExprDefaultClause', 'resultExpr', '*']),
+		compilationOptions
+	) as PossiblyUpdatingExpression;
+
+	return new TypeSwitchExpr(argExpr, caseClauseExpressions, defaultExpression);
 }
 
 type CompilationOptions = { allowUpdating?: boolean; allowXQuery?: boolean };

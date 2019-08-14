@@ -294,7 +294,7 @@ ModuleImport
  = "import" S "module"
    prefix:(S "namespace" S prefix:$NCName _ "=" {return prefix})?
   // TODO: The URILiteral should be preceded with whitespace if the no prefix is set
-   _ uri:URILiteral (S "at" URILiteral (_ "," _ URILiteral)*)?
+   _ uri:URILiteral (S "at" S URILiteral (_ "," _ URILiteral)*)?
    {return ["moduleImport", ["namespacePrefix", prefix], ["targetNamespace", uri]]}
 
 // 24
@@ -384,7 +384,7 @@ ExprSingle
  = expr: FLWORExpr {return wrapInStackTrace(expr)}
  / expr: QuantifiedExpr {return wrapInStackTrace(expr)}
 // / SwitchExpr
-// / TypeswitchExpr
+ / expr: TypeswitchExpr {return wrapInStackTrace(expr)}
  / expr: IfExpr {return wrapInStackTrace(expr)}
 // / TryCatchExpr
  / expr: InsertExpr {return wrapInStackTrace(expr)}
@@ -531,6 +531,33 @@ quantifiedExprInClause
      ]
    }
 
+// 74 
+TypeswitchExpr
+ = "typeswitch" _ "(" expr:Expr ")" _ clauses:(c:CaseClause _ {return c})+ "default" S varName:("$" v:VarName {return v})? "return" S predicateExpr:ExprSingle
+ {
+	 return ["typeswitchExpr", ["argExpr", expr]]
+	 	.concat(clauses)
+		.concat([["typeswitchExprDefaultClause"].concat(varName || []).concat([["resultExpr", predicateExpr]])])
+}; 
+
+// 75
+CaseClause
+ = "case" _ varName:("$" v:VarName S "as" {return v})? _ sequence:SequenceTypeUnion S "return" S expr:ExprSingle
+ {
+	 return ["typeswitchExprCaseClause"]
+		.concat(varName ? [["variableBinding"].concat(varName)] : [])
+		.concat(sequence)
+		.concat([["resultExpr", expr]]);
+ }
+
+// 76
+SequenceTypeUnion
+ = first:SequenceType rest:(_ "|" _ st:SequenceType {return st})*
+ {
+	 return rest.length 
+	 ? [["sequenceTypeUnion", ["sequenceType"].concat(first)].concat(rest.map(function(st) {return ["sequenceType"].concat(st)}))] 
+	 : [["sequenceType"].concat(first)];
+}
 
 // 77
 IfExpr
