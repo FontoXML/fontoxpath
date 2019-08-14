@@ -247,18 +247,24 @@ export default function processProlog(
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		const external = astHelper.getFirstChild(varDecl, 'external');
 		const getVarValue = astHelper.getFirstChild(varDecl, 'varValue');
-		let varValue;
+		let varValue, compiledFunctionAsExpression;
 
 		if (external !== null) {
-			varValue = astHelper.getFirstChild(astHelper.getFirstChild(external, 'varValue'), '*');
+			const varDefaultValue = astHelper.getFirstChild(external, 'varValue');
+			if (varDefaultValue !== null){
+				varValue = astHelper.getFirstChild(varDefaultValue, '*');
+			}
+
 		} else if (getVarValue !== null){
 			varValue = astHelper.getFirstChild(getVarValue, '*');
 		}
 
-		const compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
-			allowUpdating: false,
-			allowXQuery: true
-		});
+		if (varValue) {
+			compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
+				allowUpdating: false,
+				allowXQuery: true
+			});
+		}
 
 		if (
 			registeredVariables.some(
@@ -276,19 +282,21 @@ export default function processProlog(
 		if (!staticContext.lookupVariable(varName.namespaceURI || '', varName.localName)) {
 			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);
 		}
-		if (!staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)) {
+		if (varValue && !staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)) {
 			staticContext.registerVariableDeclaration(
 				varName.namespaceURI,
 				varName.localName,
 				(dynamicContext, executionParameters) =>
 					compiledFunctionAsExpression.evaluate(dynamicContext, executionParameters)
 			);
+
+			staticallyCompilableExpressions.push({
+				expression: compiledFunctionAsExpression,
+				staticContextLeaf: staticContext
+			});
 		}
 
-		staticallyCompilableExpressions.push({
-			expression: compiledFunctionAsExpression,
-			staticContextLeaf: staticContext
-		});
+
 
 		registeredVariables.push(varName);
 	});

@@ -91,4 +91,16 @@ describe.only('VariableDeclaration', () => {
                 {nxa:33},
                 { language: evaluateXPath.XQUERY_3_1_LANGUAGE }), '33');
     });
+
+    it('Inline function accessing global variable in XQuery', () => {
+        chai.assert.equal(
+            evaluateXPathToNumber(
+                ` declare variable $p as xs:integer external;
+                 declare variable $f := function($a) {$a + $p};
+                 $f(12)`,
+                documentNode,
+                undefined,
+                {p:7},
+                { language: evaluateXPath.XQUERY_3_1_LANGUAGE }), 19);
+    });
 });
