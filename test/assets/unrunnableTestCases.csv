@@ -108,7 +108,7 @@ fn-avg-6,Error: FORG0006: items passed to fn:avg are not all numeric.
 fn-avg-10,Error: FORG0006: items passed to fn:avg are not all numeric.
 cbcl-avg-004,Error: FORG0006: items passed to fn:avg are not all numeric.
 cbcl-avg-006,Error: FORG0006: items passed to fn:avg are not all numeric.
-cbcl-avg-008,Error: XPST0003: Unable to parse XPath: "typeswitch (fn:avg((xs:float(1), xs:double(2), xs:float(3)))) case $x as xs:double return $x default return "FAIL"". Expected "!", "!=", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", or end of input but "(" found. typeswitch [Error is around here](fn:avg((xs:float(1), xs:double(2), xs:float(3)))) case $x as xs:double return $x default return "FAIL"
+cbcl-avg-008,Error: XPST0003: Unable to parse: "typeswitch (fn:avg((xs:float(1), xs:double(2), xs:float(3)))) case $x as xs:double return $x default return "FAIL"". Expected "!", "!=", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", or end of input but "(" found. typeswitch [Error is around here](fn:avg((xs:float(1), xs:double(2), xs:float(3)))) case $x as xs:double return $x default return "FAIL"
 fn-booleanintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-booleanintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-booleanintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -312,20 +312,15 @@ K-SeqDeepEqualFunc-68,Error: FOCH0002: No collations are supported
 K-SeqDeepEqualFunc-69,Error: FOCH0002: No collations are supported
 K-SeqDeepEqualFunc-70,Error: FOCH0002: No collations are supported
 K-SeqDeepEqualFunc-71,Error: FOCH0002: No collations are supported
-K2-SeqDeepEqualFunc-14,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-SeqDeepEqualFunc-15,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-SeqDeepEqualFunc-16,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-SeqDeepEqualFunc-17,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-SeqDeepEqualFunc-20,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-SeqDeepEqualFunc-21,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-SeqDeepEqualFunc-22,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
-K2-SeqDeepEqualFunc-23,Error: Not implemented: only external variable declaration without default value is implemented in XQuery modules
+K2-SeqDeepEqualFunc-14,Error: No selector counterpart for: computedDocumentConstructor.
+K2-SeqDeepEqualFunc-15,Error: No selector counterpart for: computedDocumentConstructor.
+K2-SeqDeepEqualFunc-16,Error: No selector counterpart for: computedDocumentConstructor.
+K2-SeqDeepEqualFunc-17,Error: No selector counterpart for: computedDocumentConstructor.
 K2-SeqDeepEqualFunc-40,Error: Not implemented: subtracting durations from xs:dateTime
 cbcl-deep-equal-001,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 cbcl-deep-equal-002,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 cbcl-deep-equal-003,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 cbcl-deep-equal-004,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
-
 cbcl-deep-equal-005,Error: XPST0003: Unable to parse: "declare function local:f($x as xs:integer)as xs:integer* { 1 to $x }; deep-equal((local:f(3), 2, local:f(1)), (local:f(3), 2))". Expected " ", "(:", "\n", "\r", "\t", "external", or "{" but "a" found. declare function local:f($x as xs:integer)[Error is around here]as xs:integer* { 1 to $x }; deep-equal((local:f(3), 2, local:f(1)), (local:f(3), 2))
 fn-emptyintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-emptyintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -611,7 +606,7 @@ fn-function-lookup-432,Error: XPTY0004: expected base expression to evaluate to 
 fn-function-lookup-524,Error: XPST0081: Can not cast: type xs:IDREFS is unknown.
 fn-function-lookup-526,Error: XPST0081: Can not cast: type xs:NMTOKENS is unknown.
 fn-function-lookup-528,Error: XPST0081: Can not cast: type xs:ENTITIES is unknown.
-fn-function-lookup-613,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Cannot read property \'length\' of null'
+fn-function-lookup-613,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
 fn-function-lookup-713,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'FOTY0013: Atomization is not supported for function(*).'
 fn-function-lookup-715,Error: No selector counterpart for: anyFunctionTest.
 fn-function-lookup-720,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'parse-ietf-date'), 1)) to resolve to true: expected false to be true
@@ -2011,7 +2006,22 @@ combiningnodeseqhc9,Error: Not implemented: Intermediate clauses in flwor expres
 combiningnodeseqhc10,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 cbcl-fn-union-001,AssertionError: Expected executing the XPath "         declare variable $x := <b/>;         declare variable $y := <a/>;         ($x union $y) union $x, ($x intersect $y) union $x, ($x except $y) union $x, ($y except $x) union $x, $x union ($x union $y), $x union ($x intersect $y), $x union ($x except $y), $x union ($y except $x)" to resolve to one of the expected results, but got AssertionError: Expected XPath          declare variable $x := <b/>;         declare variable $y := <a/>;         ($x union $y) union $x, ($x intersect $y) union $x, ($x except $y) union $x, ($y except $x) union $x, $x union ($x union $y), $x union ($x intersect $y), $x union ($x except $y), $x union ($y except $x) to resolve to the given XML. Expected <b/> <a/> <b/> <b/> <b/> <b/> <a/> <b/> <b/> <a/> <b/> <b/> <b/> <b/> <a/> <b/> to equal <b/><a/><b/><b/><b/><a/><b/><a/><b/><b/><b/><a/>, Error: XPST0008, The variable x is not in scope..
 cbcl-fn-union-002,AssertionError: Expected XPath          declare variable $doc := <root><test><x/><y/></test></root>;         $doc/test[x] union $doc/test[y] to resolve to the given XML. Expected <test><x/><y/></test> <test><x/><y/></test> to equal <test><x/><y/></test>
-outer-013,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'length\' of null'
+outer-002,AssertionError: Expected XPath          declare variable $n as xs:integer external := 0;          <out>{ for $x allowing empty in 1 to $n return <a>{$x}</a> }</out>        to resolve to the given XML. Expected <out/> to equal <out><a/></out>
+outer-003,Error: XPST0008, The variable p is not in scope.
+outer-004,Error: XPST0008, The variable p is not in scope.
+outer-006,AssertionError: Expected XPath          declare variable $n as xs:integer external := 0;          <out>{ string-join(for $x allowing empty in 1 to $n return concat('[',$x,']'), '|') }</out>        to resolve to the given XML. Expected <out/> to equal <out>[]</out>
+outer-007,Error: XPST0008, The variable p is not in scope.
+outer-008,Error: XPST0008, The variable p is not in scope.
+outer-009,Error: XPST0008, The variable p is not in scope.
+outer-010,Error: XPST0008, The variable p is not in scope.
+outer-011,Error: XPST0008, The variable p is not in scope.
+outer-012,Error: XPST0008, The variable p is not in scope.
+outer-013,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0008, The variable p is not in scope.'
+outer-014,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
+outer-015,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
+outer-016,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
+outer-017,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
+outer-018,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 outer-019,AssertionError: expected [Function] to throw an error
 annotation-4,Error: Expected XPath           declare namespace java = "http://example.com";           declare %java:variable("java.lang.Integer.MAX_VALUE") variable $max := 0;           declare %java:method("java.lang.Math.sin") function local:sin($arg) { 0 };            local:sin($max)        to resolve to a sequence of Nodes.
 annotation-5,Error: Expected XPath           declare namespace eg = "http://example.com";           declare %eg:integer(1234) variable $foo := 0;           declare %eg:integer(1234) function local:foo($arg) { $arg };            local:foo($foo)        to resolve to a sequence of Nodes.
@@ -2450,7 +2460,8 @@ K-ConstructionProlog-1,Error: Not implemented: only module imports, namespace de
 K-ConstructionProlog-3,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K-ConstructionProlog-4,AssertionError: expected [Function] to throw error matching /XQST0067/ but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 contextDecl-014,Error: XPDY0002: context is absent, it needs to be present to use the "." operator
-contextDecl-015,AssertionError: Expected executing the XPath "         declare variable $y := /works/employee;         declare context item := $y[9];         declare variable $x external := if (./*) then fn:position() else 0;         ($x, $y)       " to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'length\' of null', AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Cannot read property \'length\' of null'.
+contextDecl-016,Error: XPDY0002: The fn:position() function depends on dynamic context, which is absent.
+contextDecl-017,Error: XPDY0002: The fn:last() function depends on dynamic context, which is absent.
 contextDecl-020,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0003: Unable to parse: " declare context item as xs:integer external; . ".\nExpected "%", "(", "Q", "array", "attribute(", "attribute()", "comment()", "document-node(", "element", "function", "item()", "map", "namespace-node()", "node()", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element", "text()", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], or [�-�] but " " found.\n declare context item as[Error is around here] xs:integer external; . '
 contextDecl-021,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0003: Unable to parse: " declare context item as xs:integer := \'London\'; . ".\nExpected "%", "(", "Q", "array", "attribute(", "attribute()", "comment()", "document-node(", "element", "function", "item()", "map", "namespace-node()", "node()", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element", "text()", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], or [�-�] but " " found.\n declare context item as[Error is around here] xs:integer := \'London\'; . '
 contextDecl-022,AssertionError: Expected executing the XPath " declare context item as xs:string := 2; . " to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0003: Unable to parse: " declare context item as xs:string := 2; . ".\nExpected "%", "(", "Q", "array", "attribute(", "attribute()", "comment()", "document-node(", "element", "function", "item()", "map", "namespace-node()", "node()", "processing-instruction(", "processing-instruction()", "schema-attribute(", "schema-element", "text()", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], or [�-�] but " " found.\n declare context item as[Error is around here] xs:string := 2; . '.
@@ -2732,6 +2743,7 @@ ForExpr023,Error: XPST0008, The variable pos is not in scope.
 ForExpr024,AssertionError: expected [Function] to throw an error
 ForExpr029,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 ForExpr031,AssertionError: expected [Function] to throw an error
+ForExpr032,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 K-ForExprWithout-24,Error: Not implemented: references to variables with a namespace URI or a prefix.
 K-ForExprWithout-25,Error: Not implemented: references to variables with a namespace URI or a prefix.
 K-ForExprWithout-27,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
@@ -2855,6 +2867,7 @@ GenCompEq-2,Error: FORG0001: Cannot cast 1 to xs:NCName, pattern validation fail
 GenCompEq-7,Error: Atomizing array(*) is not implemented.
 GenCompEq-8,Error: Atomizing array(*) is not implemented.
 GenCompEq-9,Error: Atomizing array(*) is not implemented.
+GenCompEq-22,Error: Casting to xs:QName is not implemented.
 GenCompLT-9,Error: Atomizing array(*) is not implemented.
 GenCompLT-10,Error: Atomizing array(*) is not implemented.
 GenCompLT-11,Error: Atomizing array(*) is not implemented.
@@ -3630,19 +3643,20 @@ K-InternalVariablesWith-18a,AssertionError: expected [Function] to throw error m
 K-InternalVariablesWith-19a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'No selector counterpart for: treatExpr.'
 K-InternalVariablesWith-20a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
 K2-InternalVariablesWith-1,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: treatExpr.'
+extvardeclwithouttype-6,AssertionError: Expected executing the XPath "declare variable $x external; xs:float($x)" to resolve to one of the expected results, but got AssertionError: declare variable $x external; xs:float($x): expected '125000000000' to equal '1.25E11', AssertionError: expected [Function] to throw an error.
 extvardeclwithouttype-18,Error: XPST0003: Unable to parse: "let $result := (declare variable $x external; $x) return $result ge 2.33333333333333". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. let $result := (declare [Error is around here]variable $x external; $x) return $result ge 2.33333333333333
-extvardeclwithouttype-19,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'length\' of null'
-extvardeclwithouttype-23,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'length\' of null'
-K2-ExternalVariablesWithout-1,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'Cannot read property \'length\' of null'
-K2-ExternalVariablesWithout-2,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'Cannot read property \'length\' of null'
+extvardeclwithouttype-23,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XPST0008, The variable x is not in scope.'
+extvardeclwithouttype-24,Error: Not implemented: references to variables with a namespace URI or a prefix.
 K2-ExternalVariablesWithout-3,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
-K2-ExternalVariablesWithout-4,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'length\' of null'
-K2-ExternalVariablesWithout-5,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'length\' of null'
+K2-ExternalVariablesWithout-4,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XQDY0054: The variable exampleComThisVarIsNotRecognized is declared but not in scope.'
+K2-ExternalVariablesWithout-5,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
 K2-ExternalVariablesWithout-8,Error: XPST0003: Unable to parse: "declare variable $ name := 3; $ name = 3". Expected "Q", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], or [�-�] but " " found. declare variable $ name := 3; $[Error is around here] name = 3
 K2-ExternalVariablesWithout-10,AssertionError: Expected XPath declare variable $e := <e> <a/> </e>; declare variable $f := $e; <r> { $e is $e, $f is $e, $e, $f } </r> to resolve to the given XML. Expected <r>false false<e><a/></e><e><a/></e></r> to equal <r>true true<e><a/></e><e><a/></e></r>
-extvardeclwithtype-19,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'length\' of null'
-K2-ExternalVariablesWith-1,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'Cannot read property \'length\' of null'
-K2-ExternalVariablesWith-2,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'Cannot read property \'length\' of null'
+extvardeclwithtype-2,Error: FOTY0014: Casting from function item to xs:string is not permitted.
+extvardeclwithtype-6,AssertionError: Expected executing the XPath "declare variable $x as xs:float external; $x" to resolve to one of the expected results, but got AssertionError: declare variable $x as xs:float external; $x: expected '1267432330000000' to equal '1.2674323E15', AssertionError: declare variable $x as xs:float external; $x: expected '1267432330000000' to equal '1.2674324E15'.
+extvardeclwithtype-18,AssertionError: Expected executing the XPath "declare variable $x as xs:float external; $x" to resolve to one of the expected results, but got AssertionError: declare variable $x as xs:float external; $x: expected '2.3333333333333335' to equal '2.3333333', AssertionError: declare variable $x as xs:float external; $x: expected '2.3333333333333335' to equal '2.33333'.
+extvardeclwithtype-19,AssertionError: expected [Function] to throw an error
+extvardeclwithtype-24,Error: Not implemented: references to variables with a namespace URI or a prefix.
 K2-ExternalVariablesWith-3,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'XPST0003: Unable to parse: "declare variable $input-context as item()* external ; declare variable $input-context as item()*external ; 1".\nExpected " ", "(:", ":=", "\\n", "\\r", or "\\t" but "e" found.\ndeclare variable $input-context as item()* external ; declare variable $input-context as item()*[Error is around here]external ; 1'
 K2-ExternalVariablesWith-4,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'XPST0003: Unable to parse: "declare variable $input-context as item()* external ; declare variable $input-context as item()*external ; $input-context".\nExpected " ", "(:", ":=", "\\n", "\\r", or "\\t" but "e" found.\ndeclare variable $input-context as item()* external ; declare variable $input-context as item()*[Error is around here]external ; $input-context'
 K2-ExternalVariablesWith-5,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'XPST0003: Unable to parse: "declare variable $input-context as item()* external; declare variable $input-context as item()*external; 1".\nExpected " ", "(:", ":=", "\\n", "\\r", or "\\t" but "e" found.\ndeclare variable $input-context as item()* external; declare variable $input-context as item()*[Error is around here]external; 1'
@@ -3657,17 +3671,17 @@ K2-ExternalVariablesWith-16,AssertionError: expected [Function] to throw an erro
 K2-ExternalVariablesWith-17,AssertionError: expected [Function] to throw an error
 K2-ExternalVariablesWith-18,AssertionError: expected [Function] to throw an error
 K2-ExternalVariablesWith-19,AssertionError: expected [Function] to throw an error
-K2-ExternalVariablesWith-20,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'Cannot read property \'length\' of null'
-K2-ExternalVariablesWith-21,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'Cannot read property \'length\' of null'
 K2-ExternalVariablesWith-22,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0003: Unable to parse: "declare variable $v as element(*, xs:untyped?)+ := <e/>; exists($v/*)".\nExpected " ", "(:", ")", "\\n", "\\r", "\\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\\-.0-9·̀-ͯ‿⁀], or [�-�] but "?" found.\ndeclare variable $v as element(*, xs:untyped[Error is around here]?)+ := <e/>; exists($v/*)'
 K2-ExternalVariablesWith-22a,Error: XPST0003: Unable to parse: "declare variable $v as element(*, xs:untyped?)+ := <e/>; exists($v/*)". Expected " ", "(:", ")", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "?" found. declare variable $v as element(*, xs:untyped[Error is around here]?)+ := <e/>; exists($v/*)
 K2-ExternalVariablesWith-23,Error: XPST0003: Unable to parse: "declare variable $v as element(elementName, xs:anyType?)+ := <elementName/>; 1 = 1". Expected " ", "(:", ")", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "?" found. declare variable $v as element(elementName, xs:anyType[Error is around here]?)+ := <elementName/>; 1 = 1
-extvardef-002b,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'length\' of null'
-extvardef-008,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'length\' of null'
-extvardef-011,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Cannot read property \'length\' of null'
-extvardef-011a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Cannot read property \'length\' of null'
-extvardef-015,AssertionError: Expected executing the XPath "         declare variable $y := /works/employee;         declare context item := $y[9];         declare variable $x external := fn:position();         $x       " to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'length\' of null', AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Cannot read property \'length\' of null'.
-extvardef-018,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'Cannot read property \'length\' of null'
+extvardef-002b,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'FOTY0013: Atomization is not supported for map(*).'
+extvardef-003a,Error: FORG0006: items passed to fn:sum are not all numeric.
+extvardef-007,Error: Not implemented: adding durations to xs:date
+extvardef-008,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XPST0008, The variable x is not in scope.'
+extvardef-011,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+extvardef-011a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+extvardef-016a,Error: XPST0008, The variable x is not in scope.
+extvardef-016b,Error: XPST0008, The variable x is not in scope.
 version_declaration-007,AssertionError: expected [Function] to throw an error
 version_declaration-008,AssertionError: expected [Function] to throw an error
 version_declaration-010-v3,AssertionError: expected [Function] to throw an error
@@ -3723,7 +3737,7 @@ FOER0000,AssertionError: expected [Function] to throw error matching /FOER0000/ 
 FONS0004-1,AssertionError: expected [Function] to throw error matching /FONS0004/ but got 'XPST0017: Function resolve-QName with arity of 2 not registered. No similar functions found.'
 FORG0002,AssertionError: expected [Function] to throw error matching /FORG0002/ but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 FORG0009,AssertionError: expected [Function] to throw error matching /FORG0002/ but got 'XPST0017: Function resolve-uri with arity of 2 not registered. No similar functions found.'
-XPDY0002_02,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'length\' of null'
+XPDY0002_02,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XQDY0054: The variable variable is declared but not in scope.'
 XPDY0050,AssertionError: expected [Function] to throw error matching /XPDY0050/ but got 'No selector counterpart for: treatExpr.'
 XPTY0019_2,AssertionError: expected [Function] to throw error matching /XPTY0019/ but got 'XPTY0018: The path operator should either return nodes or non-nodes. Mixed sequences are not allowed.'
 XPTY0019_3,AssertionError: expected [Function] to throw error matching /XPTY0019/ but got 'XPTY0018: The path operator should either return nodes or non-nodes. Mixed sequences are not allowed.'
@@ -3766,7 +3780,6 @@ XQST0046_11,AssertionError: Expected executing the XPath "import module "http://
 XQST0046_12,AssertionError: Expected executing the XPath "for $x in ("a", "a", "a") order by $x collation "%gg" return $x" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'XPST0003: Unable to parse: "for $x in ("a", "a", "a") order by $x collation "%gg" return $x".\nExpected "\'" or "\\"" but " " found.\nfor $x in ("a", "a", "a") order by $x collation[Error is around here] "%gg" return $x', AssertionError: expected [Function] to throw error matching /XQST0076/ but got 'XPST0003: Unable to parse: "for $x in ("a", "a", "a") order by $x collation "%gg" return $x".\nExpected "\'" or "\\"" but " " found.\nfor $x in ("a", "a", "a") order by $x collation[Error is around here] "%gg" return $x', Error: XPST0003: Unable to parse: "for $x in ("a", "a", "a") order by $x collation "%gg" return $x". Expected "'" or "\"" but " " found. for $x in ("a", "a", "a") order by $x collation[Error is around here] "%gg" return $x.
 XQST0047,AssertionError: expected [Function] to throw error matching /XQST0047/ but got 'Duplicate function registration'
 XQST0048,Error: XQST0048: Functions and variables declared in a module must reside in the module target namespace.
-XQST0049,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'Cannot read property \'length\' of null'
 XQST0055,AssertionError: expected [Function] to throw error matching /XQST0055/ but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 XQST0057,AssertionError: expected [Function] to throw error matching /XQST0057/ but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 XQST0059_2,AssertionError: expected [Function] to throw error matching /XQST0059/ but got 'XPST0003: Unable to parse: "import module namespace foo = "http://www.w3.org/" at "DoesNotExist.xq"; 1".\nExpected "\'" or "\\"" but " " found.\nimport module namespace foo = "http://www.w3.org/" at[Error is around here] "DoesNotExist.xq"; 1'
