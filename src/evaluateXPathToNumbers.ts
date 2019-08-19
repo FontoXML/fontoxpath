@@ -14,7 +14,7 @@ import evaluateXPath, { Options } from './evaluateXPath';
  *
  * @returns The numerical results.
  */
-export default function evaluateXPathToNumber(
+export default function evaluateXPathToNumbers(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
