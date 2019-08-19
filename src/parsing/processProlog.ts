@@ -92,7 +92,7 @@ export default function processProlog(
 		const namespaceURI = astHelper.getTextContent(
 			astHelper.getFirstChild(defaultNamespaceDecl, 'uri')
 		);
-		staticContext.setDefaultFunctionNamespace(namespaceURI);
+		staticContext._registeredDefaultFunctionNamespace = namespaceURI;
 	});
 
 	astHelper.getChildren(prolog, 'moduleSettings').forEach(moduleSetting => {
@@ -130,7 +130,7 @@ export default function processProlog(
 		if (declarationNamespaceURI === null) {
 			declarationNamespaceURI =
 				declarationPrefix === null
-					? staticContext.getDefaultFunctionNamespace()
+					? staticContext._registeredDefaultFunctionNamespace
 					: staticContext.resolveNamespace(declarationPrefix);
 
 			if (!declarationNamespaceURI && declarationPrefix) {
