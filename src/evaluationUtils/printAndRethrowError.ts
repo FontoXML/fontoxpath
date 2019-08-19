@@ -1,4 +1,5 @@
 import { StackTraceEntry } from '../expressions/debug/StackTraceEntry';
+import { PositionedError } from './PositionedError';
 
 function getNumberStringLength(i: number) {
 	return Math.floor(Math.log10(i)) + 1;
@@ -52,7 +53,7 @@ export function printAndRethrowError(selector: string, error: Error | StackTrace
 
 	const stackTrace = stackEntry.makeStackTrace().join('\n');
 	const errorMessage = lines.join('\n') + '\n\n' + stackTrace;
-	const newError = new Error(errorMessage);
+	const newError = new PositionedError(errorMessage, errorLocation);
 	// tslint:disable-next-line:no-console We do want to write these to error.
 	console.error(errorMessage);
 	throw newError;
