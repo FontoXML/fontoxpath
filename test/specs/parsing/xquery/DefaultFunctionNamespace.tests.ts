@@ -22,17 +22,14 @@ describe('DefaultFunctionDeclaration', () => {
 		);
 	});
 	it('Can create a default namespace and a function', () => {
-		chai.assert.equal(
+		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				'declare default function namespace "http://example.com"; declare %private function lt() as item()*{ true() }; Q{http://example.com}lt()',
 				documentNode,
 				undefined,
 				{},
 				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			),
-			true
+			)
 		);
 	});
-
-
 });
