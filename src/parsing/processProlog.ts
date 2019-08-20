@@ -91,17 +91,18 @@ export default function processProlog(
 	});
 
 	// Default function namespace declaration
-	const defaultNamespaceFunctionDecl = astHelper.getChildren(prolog, 'defaultNamespaceDecl').filter(x => {
-		return astHelper.getTextContent(
-			astHelper.getFirstChild(x, 'defaultNamespaceCategory')) === 'function';
-	});
+	const defaultNamespaceFunctionDecl = astHelper
+		.getChildren(prolog, 'defaultNamespaceDecl')
+		.filter(x => {
+			return (
+				astHelper.getTextContent(astHelper.getFirstChild(x, 'defaultNamespaceCategory')) ===
+				'function'
+			);
+		});
 
 	if (defaultNamespaceFunctionDecl.length === 1) {
 		const namespaceURI = astHelper.getTextContent(
-			astHelper.getFirstChild(
-				astHelper.getFirstChild(prolog, 'defaultNamespaceDecl'),
-				'uri'
-			)
+			astHelper.getFirstChild(astHelper.getFirstChild(prolog, 'defaultNamespaceDecl'), 'uri')
 		);
 
 		if (!namespaceURI) {
