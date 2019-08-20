@@ -25,6 +25,10 @@ export const errXQDY0044 = qName =>
 	new Error(
 		`XQDY0044: The node name "${qName.buildPrefixedName()}" is invalid for a computed attribute constructor.`
 	);
+export const errXQST0066 = () =>
+	new Error(
+		'XQST0066: A Prolog may contain at most one default function namespace declaration.'
+	);
 export const errXQST0070 = () =>
 	new Error(
 		'XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.'

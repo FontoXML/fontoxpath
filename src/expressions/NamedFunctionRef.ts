@@ -56,7 +56,7 @@ class NamedFunctionRef extends Expression {
 		let namespaceURI = this._functionReference.namespaceURI;
 		if (!namespaceURI) {
 			if (!this._functionReference.prefix) {
-				namespaceURI = staticContext._registeredDefaultFunctionNamespace;
+				namespaceURI = staticContext.registeredDefaultFunctionNamespace;
 			} else {
 				namespaceURI = staticContext.resolveNamespace(this._functionReference.prefix);
 				if (namespaceURI === null) {

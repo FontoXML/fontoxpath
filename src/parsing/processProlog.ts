@@ -12,7 +12,7 @@ import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
-import { errXQST0070 } from '../expressions/xquery/XQueryErrors';
+import { errXQST0066, errXQST0070 } from '../expressions/xquery/XQueryErrors';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -69,6 +69,7 @@ export default function processProlog(
 		staticContext.registerNamespace(moduleImportPrefix, moduleImportNamespaceURI);
 		enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
 	});
+
 	astHelper.getChildren(prolog, 'namespaceDecl').forEach(namespaceDecl => {
 		const prefix = astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'prefix'));
 		const namespaceURI = astHelper.getTextContent(
@@ -88,12 +89,36 @@ export default function processProlog(
 
 		staticContext.registerNamespace(prefix, namespaceURI);
 	});
-	astHelper.getChildren(prolog, 'defaultNamespaceDecl').forEach(defaultNamespaceDecl => {
-		const namespaceURI = astHelper.getTextContent(
-			astHelper.getFirstChild(defaultNamespaceDecl, 'uri')
-		);
-		staticContext._registeredDefaultFunctionNamespace = namespaceURI;
+
+	// Default function namespace declaration
+	const defaultNamespaceFunctionDecl = astHelper.getChildren(prolog, 'defaultNamespaceDecl').filter(x => {
+		return astHelper.getTextContent(
+			astHelper.getFirstChild(x, 'defaultNamespaceCategory')) === 'function';
 	});
+
+	if (defaultNamespaceFunctionDecl.length === 1) {
+		const namespaceURI = astHelper.getTextContent(
+			astHelper.getFirstChild(
+				astHelper.getFirstChild(prolog, 'defaultNamespaceDecl'),
+				'uri'
+			)
+		);
+
+		if (!namespaceURI) {
+			throw errXQST0070();
+		} else {
+			if (
+				namespaceURI === 'http://www.w3.org/XML/1998/namespace' ||
+				namespaceURI === 'http://www.w3.org/2000/xmlns/'
+			) {
+				throw errXQST0070();
+			}
+
+			staticContext.registeredDefaultFunctionNamespace = namespaceURI;
+		}
+	} else if (defaultNamespaceFunctionDecl.length > 1) {
+		throw errXQST0066();
+	}
 
 	astHelper.getChildren(prolog, 'moduleSettings').forEach(moduleSetting => {
 		const type = moduleSetting['type'];
@@ -130,7 +155,7 @@ export default function processProlog(
 		if (declarationNamespaceURI === null) {
 			declarationNamespaceURI =
 				declarationPrefix === null
-					? staticContext._registeredDefaultFunctionNamespace
+					? staticContext.registeredDefaultFunctionNamespace
 					: staticContext.resolveNamespace(declarationPrefix);
 
 			if (!declarationNamespaceURI && declarationPrefix) {
