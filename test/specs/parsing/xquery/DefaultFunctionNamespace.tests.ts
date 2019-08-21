@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import { evaluateXPath, evaluateXPathToBoolean, evaluateXPathToNumber } from 'fontoxpath';
+import { errXQST0066, errXQST0070 } from '../../../../src/expressions/xquery/XQueryErrors';
 
 let documentNode;
 beforeEach(() => {
@@ -30,6 +31,32 @@ describe('DefaultFunctionDeclaration', () => {
 				{},
 				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 			)
+		);
+	});
+	it('Cannot create a default namespace with a forbidden url', () => {
+		chai.assert.throws(
+			() =>
+				evaluateXPathToBoolean(
+					'declare default function namespace "http://www.w3.org/XML/1998/namespace"; declare %private function lt() as item()*{ true() }; Q{"http://www.w3.org/XML/1998/namespace"}lt()',
+					documentNode,
+					undefined,
+					{},
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				),
+			'XQST0070: The prefixes xml and xmlns may not be used in a namespace declaration or be bound to another namespaceURI.'
+		);
+	});
+	it('Cannot create a default namespace with two functions namespace', () => {
+		chai.assert.throws(
+			() =>
+				evaluateXPathToBoolean(
+					'declare default function namespace "http://example.com"; declare default function namespace "http://example.com"; declare %private function lt() as item()*{ true() }; Q{http://example.com}lt()',
+					documentNode,
+					undefined,
+					{},
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				),
+			'XQST0066: A Prolog may contain at most one default function namespace declaration.'
 		);
 	});
 });
