@@ -12,7 +12,7 @@ import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
-import { errXQST0066, errXQST0070 } from '../expressions/xquery/XQueryErrors';
+import { errXQST0060, errXQST0066, errXQST0070 } from '../expressions/xquery/XQueryErrors';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -106,17 +106,17 @@ export default function processProlog(
 		);
 
 		if (!namespaceURI) {
-			throw errXQST0070();
-		} else {
-			if (
-				namespaceURI === 'http://www.w3.org/XML/1998/namespace' ||
-				namespaceURI === 'http://www.w3.org/2000/xmlns/'
-			) {
-				throw errXQST0070();
-			}
-
-			staticContext.registeredDefaultFunctionNamespace = namespaceURI;
+			throw errXQST0060();
 		}
+
+		if (
+			namespaceURI === 'http://www.w3.org/XML/1998/namespace' ||
+			namespaceURI === 'http://www.w3.org/2000/xmlns/'
+		) {
+			throw errXQST0070();
+		}
+
+		staticContext.registeredDefaultFunctionNamespace = namespaceURI;
 	} else if (defaultNamespaceFunctionDecl.length > 1) {
 		throw errXQST0066();
 	}
@@ -183,7 +183,7 @@ export default function processProlog(
 			);
 
 		if (!declarationNamespaceURI) {
-			throw new Error('XQST0060: Functions declared in a module must reside in a namespace.');
+			throw errXQST0060();
 		}
 
 		// functionBody always has a single expression
