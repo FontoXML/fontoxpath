@@ -186,6 +186,9 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 		case 'arrayConstructor':
 			return arrayConstructor(ast, compilationOptions);
 
+		case 'typeswitchExpr':
+			return typeswitchExpr(ast, compilationOptions);
+
 		// XQuery node constructors
 		case 'elementConstructor':
 			return dirElementConstructor(ast, compilationOptions);
@@ -251,8 +254,6 @@ function compileTest(ast: IAST, compilationOptions: CompilationOptions): TestAbs
 			return typeTest(ast, compilationOptions);
 		case 'anyItemType':
 			return anyItemTest();
-		case 'typeswitchExpr':
-			return typeswitchExpr(ast, compilationOptions);
 		default:
 			throw new Error('No selector counterpart for: ' + ast[0] + '.');
 	}

@@ -6,7 +6,6 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
-import StaticContext from '../StaticContext';
 
 type TypeTest = {
 	occurrenceIndicator: '*' | '?' | '+';
@@ -46,11 +45,6 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 
 		this._amountOfCases = caseClauses.length;
 		this._typeTestsByCase = caseClauses.map(clause => clause.typeTests);
-	}
-
-	// Do not remove. Must be implemented.
-	public evaluateToBoolean(_dynamicContext, node) {
-		return true;
 	}
 
 	public performFunctionalEvaluation(
@@ -108,10 +102,6 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 			// If none of the case clauses are satisfied, return the default clause.
 			return sequenceCallbacks[this._amountOfCases + 1](dynamicContext);
 		});
-	}
-
-	public performStaticEvaluation(staticContext: StaticContext) {
-		return;
 	}
 }
 
