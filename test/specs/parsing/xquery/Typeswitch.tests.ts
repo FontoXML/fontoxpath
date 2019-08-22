@@ -26,7 +26,7 @@ describe.only('Typeswitch', () => {
 	it.only('runs typeswitch and returns a string', () => chai.assert.equal(
 		evaluateXPathToString(
 			`typeswitch(("Hello", "Hi")) 
-			case xs:integer return "Hey"
+			case xs:integer? return "Hey"
 			case xs:string+ return "Good morning"
 			case xs:float return "Good afternoon"
 			case xs:integer* return "Good evening"
