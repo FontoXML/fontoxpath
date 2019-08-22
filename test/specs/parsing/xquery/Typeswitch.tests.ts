@@ -1,27 +1,41 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { evaluateXPath, evaluateXPathToBoolean, evaluateXPathToNumber } from 'fontoxpath';
+import { evaluateXPath, evaluateXPathToNumber, evaluateXPathToString } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe.only('Test', () => {
-	it.only('works', () =>
-		evaluateXPath(
-			`typeswitch(3) 
+describe.only('Typeswitch', () => {
+	it.only('runs typeswitch and returns an integer', () => chai.assert.equal(
+		evaluateXPathToNumber(
+			`typeswitch((1,2)) 
 			case xs:integer return 1
-			case $i as xs:string return $i
-			case xs:float | xs:double return 3443
+			case xs:string+ return 42
+			case xs:float | xs:string return 27
+			case xs:integer* return 2828
 			default return 2`,
 			null,
 			null,
 			null,
+			{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+		), 2828));
+
+	it.only('runs typeswitch and returns a string', () => chai.assert.equal(
+		evaluateXPathToString(
+			`typeswitch(("Hello", "Hi")) 
+			case xs:integer return "Hey"
+			case xs:string+ return "Good morning"
+			case xs:float return "Good afternoon"
+			case xs:integer* return "Good evening"
+			default return "Bye"`,
+			null,
+			null,
 			null,
 			{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-		));
+		), "Good morning"));
 
 	it('Doing stuff', () => {
 		evaluateXPath(

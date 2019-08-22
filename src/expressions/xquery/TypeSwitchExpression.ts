@@ -3,38 +3,51 @@ import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
-import { IAsyncIterator, IterationHint, notReady } from '../util/iterators';
+
+type TypeTest = {
+	occurrenceIndicator: '*' | '?' | '+',
+	typeTest: Expression
+};
+
+export type TypeSwitchCaseClause = {
+	caseClauseExpression: PossiblyUpdatingExpression,
+	typeTests: TypeTest[]
+};
 
 class TypeSwitchExpression extends PossiblyUpdatingExpression {
+	private _amountOfCases: number;
+	private _typeTestsByCase: TypeTest[][];
 	constructor(
 		argExpression: Expression,
-		// caseClauseTypeTests: Expression[],
-		caseClauseExpressions: PossiblyUpdatingExpression[],
+		caseClauses: TypeSwitchCaseClause[],
 		defaultExpression: PossiblyUpdatingExpression
 	) {
 		const specificity = new Specificity({});
+		super(
+			specificity,
+			[
+				argExpression,
+				...caseClauses.map(clause => clause.caseClauseExpression),
+				defaultExpression
+			].concat(...caseClauses.map(clause => clause.typeTests.map(typetest => typetest.typeTest))),
+			{
+				canBeStaticallyEvaluated: false,
+				peer: false,
+				resultOrder: RESULT_ORDERINGS.UNSORTED,
+				subtree: false
+			});
 
-		super(specificity, [argExpression, ...caseClauseExpressions, defaultExpression], {
-			canBeStaticallyEvaluated: false,
-			peer: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED,
-			subtree: false
-		});
+		this._amountOfCases = caseClauses.length;
+		this._typeTestsByCase = caseClauses.map(clause => clause.typeTests);
 	}
 
+	// Do not remove. Must be implemented. 
 	public evaluateToBoolean(_dynamicContext, node) {
-		// TODO: make MArtin figure out WTF
 		return true;
-	}
-
-	public performStaticEvaluation() {
-		// TODO: Static evaluateion is where we need to declare the variables for each caseClause, if needed
-		// Look at LetExpression for inspiration.
 	}
 
 	public performFunctionalEvaluation(
@@ -42,28 +55,52 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 		_executionParameters: ExecutionParameters,
 		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
 	) {
-		const [getArgExpressionSequence, ...caseClauseExpressionsAndDefault] = sequenceCallbacks;
-		const [getCaseClaseSequences, getDefaultSequence] = sequenceCallbacks;
+		// Pick the argumentExpression.
+		const evaluatedExpression = sequenceCallbacks[0](dynamicContext);
 
-		let resultIterator: IAsyncIterator<Value> | null = null;
-		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
-
-		return sequenceFactory.create({
-			next: (hint: IterationHint) => {
-				if (!resultIterator) {
-					const ifExpressionResult = ifExpressionResultSequence.tryGetEffectiveBooleanValue();
-
-					if (!ifExpressionResult.ready) {
-						return notReady(ifExpressionResult.promise);
+		// Map over all values the type test, and return the result.
+		return evaluatedExpression.mapAll(allValues => {
+			for (let i = 0; i < this._amountOfCases; i++) {
+				const typeTests = this._typeTestsByCase[i];
+				// First, we check if the multiplicity is correct. 
+				// By default, we assume that "no explicit multiplicity == one element". 
+				if (typeTests.some(typeTest => {
+					switch (typeTest.occurrenceIndicator) {
+						case '?':
+							if (allValues.length > 1) {
+								return false;
+							}
+							break;
+						case '*':
+							break;
+						case '+':
+							if (allValues.length < 1) {
+								return false;
+							}
+							break;
+						default:
+							if (allValues.length !== 1) {
+								return false;
+							}
 					}
-					const resultSequence = ifExpressionResult.value
-						? sequenceCallbacks[1](dynamicContext)
-						: sequenceCallbacks[2](dynamicContext);
-					resultIterator = resultSequence.value;
+					// Once we have checked the multiplicity, let's check the types. 
+					const contextItems = sequenceFactory.create(allValues);
+					return allValues.every((value, j) => {
+						const scopedContext = dynamicContext.scopeWithFocus(j, value, contextItems);
+						return typeTest.typeTest.evaluateMaybeStatically(scopedContext, _executionParameters).getEffectiveBooleanValue();
+					});
+				})) {
+					// If the condition is satisfied, return the correspondent sequence.
+					return sequenceCallbacks[i + 1](dynamicContext);
 				}
-				return resultIterator.next(hint);
 			}
+			// If none of the case clauses are satisfied, return the default clause.
+			return sequenceCallbacks[this._amountOfCases + 1](dynamicContext);
 		});
+	}
+
+	public performStaticEvaluation(staticContext: StaticContext) {
+		return;
 	}
 }
 
