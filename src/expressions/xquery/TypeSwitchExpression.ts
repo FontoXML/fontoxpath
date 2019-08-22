@@ -9,13 +9,13 @@ import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 
 type TypeTest = {
-	occurrenceIndicator: '*' | '?' | '+',
-	typeTest: Expression
+	occurrenceIndicator: '*' | '?' | '+';
+	typeTest: Expression;
 };
 
 export type TypeSwitchCaseClause = {
-	caseClauseExpression: PossiblyUpdatingExpression,
-	typeTests: TypeTest[]
+	caseClauseExpression: PossiblyUpdatingExpression;
+	typeTests: TypeTest[];
 };
 
 class TypeSwitchExpression extends PossiblyUpdatingExpression {
@@ -33,19 +33,22 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 				argExpression,
 				...caseClauses.map(clause => clause.caseClauseExpression),
 				defaultExpression
-			].concat(...caseClauses.map(clause => clause.typeTests.map(typetest => typetest.typeTest))),
+			].concat(
+				...caseClauses.map(clause => clause.typeTests.map(typetest => typetest.typeTest))
+			),
 			{
 				canBeStaticallyEvaluated: false,
 				peer: false,
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				subtree: false
-			});
+			}
+		);
 
 		this._amountOfCases = caseClauses.length;
 		this._typeTestsByCase = caseClauses.map(clause => clause.typeTests);
 	}
 
-	// Do not remove. Must be implemented. 
+	// Do not remove. Must be implemented.
 	public evaluateToBoolean(_dynamicContext, node) {
 		return true;
 	}
@@ -62,34 +65,42 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 		return evaluatedExpression.mapAll(allValues => {
 			for (let i = 0; i < this._amountOfCases; i++) {
 				const typeTests = this._typeTestsByCase[i];
-				// First, we check if the multiplicity is correct. 
-				// By default, we assume that "no explicit multiplicity == one element". 
-				if (typeTests.some(typeTest => {
-					switch (typeTest.occurrenceIndicator) {
-						case '?':
-							if (allValues.length > 1) {
-								return false;
-							}
-							break;
-						case '*':
-							break;
-						case '+':
-							if (allValues.length < 1) {
-								return false;
-							}
-							break;
-						default:
-							if (allValues.length !== 1) {
-								return false;
-							}
-					}
-					// Once we have checked the multiplicity, let's check the types. 
-					const contextItems = sequenceFactory.create(allValues);
-					return allValues.every((value, j) => {
-						const scopedContext = dynamicContext.scopeWithFocus(j, value, contextItems);
-						return typeTest.typeTest.evaluateMaybeStatically(scopedContext, _executionParameters).getEffectiveBooleanValue();
-					});
-				})) {
+				// First, we check if the multiplicity is correct.
+				// By default, we assume that "no explicit multiplicity == one element".
+				if (
+					typeTests.some(typeTest => {
+						switch (typeTest.occurrenceIndicator) {
+							case '?':
+								if (allValues.length > 1) {
+									return false;
+								}
+								break;
+							case '*':
+								break;
+							case '+':
+								if (allValues.length < 1) {
+									return false;
+								}
+								break;
+							default:
+								if (allValues.length !== 1) {
+									return false;
+								}
+						}
+						// Once we have checked the multiplicity, let's check the types.
+						const contextItems = sequenceFactory.create(allValues);
+						return allValues.every((value, j) => {
+							const scopedContext = dynamicContext.scopeWithFocus(
+								j,
+								value,
+								contextItems
+							);
+							return typeTest.typeTest
+								.evaluateMaybeStatically(scopedContext, _executionParameters)
+								.getEffectiveBooleanValue();
+						});
+					})
+				) {
 					// If the condition is satisfied, return the correspondent sequence.
 					return sequenceCallbacks[i + 1](dynamicContext);
 				}

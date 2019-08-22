@@ -37,9 +37,9 @@ export type SwitchCasesCases =
 
 /**
  * A sequence is the central dataType in (Fonto)XPath: an ordered set of 'things'.
- * 
+ *
  * It is usually consumed lazily: only when needed. It may also generate its items asynchronously. See the IAsyncResult type for more information.
- * 
+ *
  * @see IAsyncResult
  * @see sequenceFactory to create Sequences.
  */
@@ -60,8 +60,8 @@ export default interface ISequence {
 	first(): Value | null;
 
 	/**
- 	* Synchronously get all valuea of this sequence. Prefer to use the tryGet* functions
- 	*/
+	 * Synchronously get all valuea of this sequence. Prefer to use the tryGet* functions
+	 */
 	getAllValues(): Value[];
 
 	/**
@@ -85,19 +85,19 @@ export default interface ISequence {
 
 	/**
 	 * Map all items of this sequences to a new sequence. This functions waits for all items to be available before calling the callback.
-	 * 
+	 *
 	 * This can be used when ALL items are needed of this sequence before we can 'continue' with it.
-	 * 
+	 *
 	 * @param callback Called with all values in this Sequence, as a single array
 	 * @param hint     Optional hint for optimization purposes
-	 * 
+	 *
 	 * @return A sequence that will yield all items of the sequence returned in the callback.
 	 */
 	mapAll(callback: (allValues: Value[]) => ISequence, hint?: IterationHint): ISequence;
 
 	/**
 	 * Determine the 'kind' of sequence this is: empty, singleton, or 'multiple' and call the related callback
-	 * 
+	 *
 	 * @return A sequence that will yield all items of the sequence returned in the called callback.
 	 */
 	switchCases(cases: SwitchCasesCases): ISequence;
@@ -113,7 +113,7 @@ export default interface ISequence {
 	tryGetFirst(): IAsyncResult<Value | null>;
 	/**
 	 * Try to get the length of this sequence. If it is not ready, a notReady() token will be returned. Pass this along to the calling code.
-	 * 
+	 *
 	 * @param onlyIfCheap In some cases, the length of a sequence is known. This can be used for optimization purposes.
 	 */
 	tryGetLength(onlyIfCheap?: boolean): IAsyncResult<number>;
