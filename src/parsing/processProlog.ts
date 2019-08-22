@@ -93,11 +93,16 @@ export default function processProlog(
 	// Default function namespace declaration
 	const defaultNamespaceFunctionDecl = astHelper
 		.getChildren(prolog, 'defaultNamespaceDecl')
-		.filter(x => {
-			return (
-				astHelper.getTextContent(astHelper.getFirstChild(x, 'defaultNamespaceCategory')) ===
-				'function'
+		.filter(child => {
+			const type = astHelper.getTextContent(
+				astHelper.getFirstChild(child, 'defaultNamespaceCategory')
 			);
+
+			if (type === 'function') {
+				return type;
+			} else if (type === 'element') {
+				throw new Error('Not Implemented: default namespace element.');
+			}
 		});
 
 	if (defaultNamespaceFunctionDecl.length === 1) {

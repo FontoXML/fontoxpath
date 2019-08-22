@@ -2,7 +2,6 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import { evaluateXPath, evaluateXPathToBoolean, evaluateXPathToNumber } from 'fontoxpath';
-import { errXQST0066, errXQST0070 } from '../../../../src/expressions/xquery/XQueryErrors';
 
 let documentNode;
 beforeEach(() => {
@@ -57,6 +56,19 @@ describe('DefaultFunctionDeclaration', () => {
 					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 				),
 			'XQST0066: A Prolog may contain at most one default function namespace declaration.'
+		);
+	});
+	it('Cannot create a default element namespace', () => {
+		chai.assert.throws(
+			() =>
+				evaluateXPathToBoolean(
+					'declare default element namespace "http://example.com"; declare default function namespace "http://example.com"; declare %private function lt() as item()*{ true() }; Q{http://example.com}lt()',
+					documentNode,
+					undefined,
+					{},
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				),
+			'Not Implemented: default namespace element.'
 		);
 	});
 });
