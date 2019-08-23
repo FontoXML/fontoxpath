@@ -1208,19 +1208,19 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 	const caseClause = astHelper.getChildren(ast, 'typeswitchExprCaseClause');
 
-	const caseClauseExpressions = caseClause.map(X => {
+	const caseClauseExpressions = caseClause.map(caseClauseExpression => {
 		let sequenceTypesAstNodes;
-		if (astHelper.getChildren(X, 'sequenceTypeUnion').length !== 0) {
+		if (astHelper.getChildren(caseClauseExpression, 'sequenceTypeUnion').length === 0) {
+			sequenceTypesAstNodes = [astHelper.getFirstChild(caseClauseExpression, 'sequenceType')];
+		} else {
 			sequenceTypesAstNodes = astHelper.getChildren(
-				astHelper.getFirstChild(X, 'sequenceTypeUnion'),
+				astHelper.getFirstChild(caseClauseExpression, 'sequenceTypeUnion'),
 				'sequenceType'
 			);
-		} else {
-			sequenceTypesAstNodes = [astHelper.getFirstChild(X, 'sequenceType')];
 		}
 
 		const resultExpression = compile(
-			astHelper.followPath(X, ['resultExpr', '*']),
+			astHelper.followPath(caseClauseExpression, ['resultExpr', '*']),
 			compilationOptions
 		) as PossiblyUpdatingExpression;
 
