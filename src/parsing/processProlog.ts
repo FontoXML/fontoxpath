@@ -12,7 +12,7 @@ import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
-import { errXQST0070 } from '../expressions/xquery/XQueryErrors';
+import { errXQST0060, errXQST0066, errXQST0070 } from '../expressions/xquery/XQueryErrors';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -42,11 +42,11 @@ export default function processProlog(
 	}[] = [];
 
 	const compiledFunctionDeclarations: FunctionDeclaration[] = [];
-
 	astHelper.getChildren(prolog, '*').forEach(feature => {
 		switch (feature[0]) {
 			case 'moduleImport':
 			case 'namespaceDecl':
+			case 'defaultNamespaceDecl':
 			case 'functionDecl':
 			case 'varDecl':
 				break;
@@ -69,6 +69,7 @@ export default function processProlog(
 		staticContext.registerNamespace(moduleImportPrefix, moduleImportNamespaceURI);
 		enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
 	});
+
 	astHelper.getChildren(prolog, 'namespaceDecl').forEach(namespaceDecl => {
 		const prefix = astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'prefix'));
 		const namespaceURI = astHelper.getTextContent(
@@ -89,31 +90,41 @@ export default function processProlog(
 		staticContext.registerNamespace(prefix, namespaceURI);
 	});
 
-	astHelper.getChildren(prolog, 'moduleSettings').forEach(moduleSetting => {
-		const type = moduleSetting['type'];
-		switch (type) {
-			case 'moduleImport': {
-				const moduleImportPrefix = moduleSetting['prefix'];
-				const moduleImportNamespaceURI = moduleSetting['namespaceURI'];
+	// Default function namespace declaration
+	const defaultNamespaceFunctionDecl = astHelper
+		.getChildren(prolog, 'defaultNamespaceDecl')
+		.filter(child => {
+			const type = astHelper.getTextContent(
+				astHelper.getFirstChild(child, 'defaultNamespaceCategory')
+			);
 
-				staticContext.registerNamespace(moduleImportPrefix, moduleImportNamespaceURI);
+			if (type === 'function') {
+				return type;
+			} else if (type === 'element') {
+				throw new Error('Not Implemented: default namespace element.');
+			}
+		});
 
-				enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
-				break;
-			}
-			case 'namespaceDecl': {
-				staticContext.registerNamespace(
-					moduleSetting['prefix'],
-					moduleSetting['namespaceURI']
-				);
-				break;
-			}
-			default:
-				throw new Error(
-					'Not implemented: only module imports and function declarations are implemented in XQuery modules'
-				);
+	if (defaultNamespaceFunctionDecl.length === 1) {
+		const namespaceURI = astHelper.getTextContent(
+			astHelper.getFirstChild(astHelper.getFirstChild(prolog, 'defaultNamespaceDecl'), 'uri')
+		);
+
+		if (!namespaceURI) {
+			throw errXQST0060();
 		}
-	});
+
+		if (
+			namespaceURI === 'http://www.w3.org/XML/1998/namespace' ||
+			namespaceURI === 'http://www.w3.org/2000/xmlns/'
+		) {
+			throw errXQST0070();
+		}
+
+		staticContext.registeredDefaultFunctionNamespace = namespaceURI;
+	} else if (defaultNamespaceFunctionDecl.length > 1) {
+		throw errXQST0066();
+	}
 
 	astHelper.getChildren(prolog, 'functionDecl').forEach(declaration => {
 		const functionName = astHelper.getFirstChild(declaration, 'functionName');
@@ -122,7 +133,10 @@ export default function processProlog(
 		const declarationLocalName = astHelper.getTextContent(functionName);
 
 		if (declarationNamespaceURI === null) {
-			declarationNamespaceURI = staticContext.resolveNamespace(declarationPrefix || '');
+			declarationNamespaceURI =
+				declarationPrefix === null
+					? staticContext.registeredDefaultFunctionNamespace
+					: staticContext.resolveNamespace(declarationPrefix);
 
 			if (!declarationNamespaceURI && declarationPrefix) {
 				throw new Error(
@@ -148,7 +162,7 @@ export default function processProlog(
 			);
 
 		if (!declarationNamespaceURI) {
-			throw new Error('XQST0060: Functions declared in a module must reside in a namespace.');
+			throw errXQST0060();
 		}
 
 		// functionBody always has a single expression

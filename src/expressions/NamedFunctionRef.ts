@@ -3,7 +3,6 @@ import sequenceFactory from './dataTypes/sequenceFactory';
 import Expression from './Expression';
 import { FunctionProperties, getAlternativesAsStringFor } from './functions/functionRegistry';
 import Specificity from './Specificity';
-import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 import StaticContext from './StaticContext';
 
 function buildFormattedFunctionName(functionReference) {
@@ -57,7 +56,7 @@ class NamedFunctionRef extends Expression {
 		let namespaceURI = this._functionReference.namespaceURI;
 		if (!namespaceURI) {
 			if (!this._functionReference.prefix) {
-				namespaceURI = FUNCTIONS_NAMESPACE_URI;
+				namespaceURI = staticContext.registeredDefaultFunctionNamespace;
 			} else {
 				namespaceURI = staticContext.resolveNamespace(this._functionReference.prefix);
 				if (namespaceURI === null) {

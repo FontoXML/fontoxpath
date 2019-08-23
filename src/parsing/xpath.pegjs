@@ -370,6 +370,7 @@ EnclosedExpr
 OptionDecl
  = "declare" S  "option" S EQName S StringLiteral {return {type: 'optionDecl'}}
 
+// 38
 QueryBody
  = expr:Expr {return ["queryBody", expr]}
 
