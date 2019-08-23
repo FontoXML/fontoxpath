@@ -32,6 +32,21 @@ describe('DefaultFunctionDeclaration', () => {
 			)
 		);
 	});
+	it('Can create a default namespace, a function and declare a normal prefix', () => {
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`declare default function namespace "http://example.com";
+declare namespace XXX = "http://example.com";
+declare %private function lt() as item()*{ true() };
+Q{http://example.com}lt() and XXX:lt() and lt()`,
+				documentNode,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			)
+		);
+	});
+
 	it('Cannot create a default namespace with a forbidden url', () => {
 		chai.assert.throws(
 			() =>

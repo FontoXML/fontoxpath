@@ -126,32 +126,6 @@ export default function processProlog(
 		throw errXQST0066();
 	}
 
-	astHelper.getChildren(prolog, 'moduleSettings').forEach(moduleSetting => {
-		const type = moduleSetting['type'];
-		switch (type) {
-			case 'moduleImport': {
-				const moduleImportPrefix = moduleSetting['prefix'];
-				const moduleImportNamespaceURI = moduleSetting['namespaceURI'];
-
-				staticContext.registerNamespace(moduleImportPrefix, moduleImportNamespaceURI);
-
-				enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
-				break;
-			}
-			case 'namespaceDecl': {
-				staticContext.registerNamespace(
-					moduleSetting['prefix'],
-					moduleSetting['namespaceURI']
-				);
-				break;
-			}
-			default:
-				throw new Error(
-					'Not implemented: only module imports and function declarations are implemented in XQuery modules'
-				);
-		}
-	});
-
 	astHelper.getChildren(prolog, 'functionDecl').forEach(declaration => {
 		const functionName = astHelper.getFirstChild(declaration, 'functionName');
 		const declarationPrefix = astHelper.getAttribute(functionName, 'prefix');
