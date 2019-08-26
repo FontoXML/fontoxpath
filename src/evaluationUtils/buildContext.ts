@@ -112,7 +112,6 @@ export default function buildEvaluationContext(
 		return typedVariableByName;
 	}, Object.create(null));
 
-
 	let dynamicContext;
 	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
 		if (!variableBindings[binding]) {
