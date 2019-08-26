@@ -112,21 +112,6 @@ export default function buildEvaluationContext(
 		return typedVariableByName;
 	}, Object.create(null));
 
-    // TODO
-	// for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
-    //     variableBindings[binding] = expressionAndStaticContext.staticContext.getVariableDeclaration(binding);
-    // }
-    //
-	// const dynamicContext = new DynamicContext({
-	// 	contextItem: contextSequence.first(),
-	// 	contextItemIndex: 0,
-	// 	contextSequence,
-	// 	variableBindings: Object.keys(variables).reduce((typedVariableByName, variableName) => {
-	// 		typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
-	// 			adaptJavaScriptValueToXPathValue(variables[variableName]);
-	// 		return typedVariableByName;
-	// 	}, Object.create(null))
-	// });
 
 	let dynamicContext;
 	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {

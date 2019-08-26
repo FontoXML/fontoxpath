@@ -98,7 +98,6 @@ export default class StaticContext {
 		return Object.keys(this._registeredVariableDeclarationByHashKey);
 	}
 
-	//TODO public getVariableDeclaration (hashKey: string) :  () => ISequence {
 	public getVariableDeclaration(
 		hashKey: string
 	): (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) => ISequence {
@@ -184,13 +183,6 @@ export default class StaticContext {
 			hash
 		] = `${hash}[${this._scopeCount}]`);
 	}
-
-	//TODO
-	// public registerVariableDeclaration(namespaceURI: string, localName: string, createValue: () => ISequence) {
-	// 	const hash = `${createHashKey(namespaceURI || '', localName)}[${this._scopeCount}]`;
-	// 	this._registeredVariableDeclarationByHashKey[hash] = createValue;
-	// }
-
 
 	public registerVariableDeclaration(
 		namespaceURI: string,

@@ -14,7 +14,6 @@ import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
 import { errXQST0060, errXQST0066, errXQST0070 } from '../expressions/xquery/XQueryErrors';
 
-
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
 	'http://www.w3.org/2001/XMLSchema',
@@ -257,7 +256,7 @@ export default function processProlog(
 		}
 	});
 
-	const registeredVariables: { localName: string; namespaceURI: null | string; }[] = [];
+	const registeredVariables: { localName: string; namespaceURI: null | string }[] = [];
 	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		const external = astHelper.getFirstChild(varDecl, 'external');
@@ -300,7 +299,6 @@ export default function processProlog(
 			varValue &&
 			!staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)
 		) {
-		    //TODO staticContext.registerVariableDeclaration(varName.namespaceURI, varName.localName, () => compiledFunctionAsExpression.evaluate());
 			staticContext.registerVariableDeclaration(
 				varName.namespaceURI,
 				varName.localName,
