@@ -63,6 +63,7 @@ import TransformExpression from '../expressions/xquery-update/TransformExpressio
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import PossiblyUpdatingExpression from '../expressions/PossiblyUpdatingExpression';
+import WhereExpression from '../expressions/WhereExpression';
 
 const COMPILATION_OPTIONS = {
 	XPATH_MODE: { allowXQuery: false, allowUpdating: false },
@@ -414,52 +415,115 @@ function IfThenElseExpr(ast, compilationOptions) {
 	);
 }
 
-function flworExpression(ast, compilationOptions) {
-	const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
+function forClause(
+	expressionClause: IAST,
+	compilationOptions: CompilationOptions,
+	returnClauseExpression: Expression
+): Expression {
+	const forClauseItems = astHelper.getChildren(expressionClause, '*');
+	return forClauseItems.reduceRight((returnExpr, forClauseItem) => {
+		const expression = astHelper.followPath(forClauseItem, ['forExpr', '*']);
+		return new ForExpression(
+			astHelper.getQName(
+				astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])
+			),
+			compile(expression, disallowUpdating(compilationOptions)),
+			returnExpr
+		);
+	}, returnClauseExpression);
+}
+
+function letClause(
+	expressionClause: IAST,
+	compilationOptions: CompilationOptions,
+	returnClauseExpression: Expression
+): Expression {
+	const letClauseItems = astHelper.getChildren(expressionClause, '*');
+	return letClauseItems.reduceRight((returnExpr, letClauseItem) => {
+		const expression = astHelper.followPath(letClauseItem, ['letExpr', '*']);
+		return new LetExpression(
+			astHelper.getQName(
+				astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])
+			),
+			compile(expression, disallowUpdating(compilationOptions)),
+			returnExpr
+		);
+	}, returnClauseExpression);
+}
+
+function whereClause(
+	expressionClause: IAST,
+	compilationOptions: CompilationOptions,
+	returnClauseExpression: Expression
+): Expression {
+	const whereClauseItems = astHelper.getChildren(expressionClause, '*');
+	return whereClauseItems.reduceRight((returnExpr, whereClauseItem) => {
+		return new WhereExpression(compile(whereClauseItem, compilationOptions), returnExpr);
+	}, returnClauseExpression);
+}
+
+function flworExpression(ast: IAST, compilationOptions: CompilationOptions) {
+	const clausesAndReturnClause = astHelper.getChildren(ast, '*');
 	const returnClauseExpression = astHelper.getFirstChild(
-		intermediateClausesAndReturnClause[intermediateClausesAndReturnClause.length - 1],
+		clausesAndReturnClause[clausesAndReturnClause.length - 1],
 		'*'
 	);
-	const intermediateClauses = intermediateClausesAndReturnClause.slice(0, -1);
 
-	if (intermediateClauses.length) {
+	// Return intermediate and initial clauses handling
+	const clauses = clausesAndReturnClause.slice(0, -1);
+
+	// We have to check if there are any intermediate clauses before compiling them.
+	if (clauses.length > 1) {
 		if (!compilationOptions.allowXQuery) {
 			throw new Error('XPST0003: Use of XQuery FLWOR expressions in XPath is no allowed');
 		}
-		throw new Error(
-			'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'
-		);
 	}
 
-	if (initialClause[0] === 'forClause') {
-		const forClauseItems = astHelper.getChildren(initialClause, '*');
-		return forClauseItems.reduceRight((returnExpr, forClauseItem) => {
-			const expression = astHelper.followPath(forClauseItem, ['forExpr', '*']);
-			return new ForExpression(
-				astHelper.getQName(
-					astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])
-				),
-				compile(expression, disallowUpdating(compilationOptions)),
-				returnExpr
-			);
-		}, compile(returnClauseExpression, compilationOptions));
-	}
-
-	if (initialClause[0] === 'letClause') {
-		const letClauseItems = astHelper.getChildren(initialClause, '*');
-		return letClauseItems.reduceRight((returnExpr, letClauseItem) => {
-			const expression = astHelper.followPath(letClauseItem, ['letExpr', '*']);
-			return new LetExpression(
-				astHelper.getQName(
-					astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])
-				),
-				compile(expression, disallowUpdating(compilationOptions)),
-				returnExpr
-			);
-		}, compile(returnClauseExpression, compilationOptions));
-	}
-
-	throw new Error(`Not implemented: ${initialClause[0]} is not supported in a flwor expression`);
+	return clauses.reduceRight(
+		(returnOfPreviousExpression: Expression, flworExpressionClause: IAST) => {
+			switch (flworExpressionClause[0]) {
+				case 'forClause':
+					return forClause(
+						flworExpressionClause,
+						compilationOptions,
+						returnOfPreviousExpression
+					);
+				case 'letClause':
+					return letClause(
+						flworExpressionClause,
+						compilationOptions,
+						returnOfPreviousExpression
+					);
+				case 'whereClause':
+					return whereClause(
+						flworExpressionClause,
+						compilationOptions,
+						returnOfPreviousExpression
+					);
+				case 'windowClause':
+					throw new Error(
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
+					);
+				case 'groupByClause':
+					throw new Error(
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
+					);
+				case 'orderByClause':
+					throw new Error(
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
+					);
+				case 'countClause':
+					throw new Error(
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
+					);
+				default:
+					throw new Error(
+						`Not implemented: ${flworExpressionClause[0]} is not supported in a flwor expression`
+					);
+			}
+		},
+		compile(returnClauseExpression, compilationOptions)
+	);
 }
 
 function functionCall(ast, compilationOptions) {
@@ -982,25 +1046,25 @@ function dirElementConstructor(ast, compilationOptions) {
 	const attList = astHelper.getFirstChild(ast, 'attributeList');
 	const attributes = attList
 		? astHelper
-				.getChildren(attList, 'attributeConstructor')
-				.map(attr => compile(attr, disallowUpdating(compilationOptions)))
+			.getChildren(attList, 'attributeConstructor')
+			.map(attr => compile(attr, disallowUpdating(compilationOptions)))
 		: [];
 
 	const namespaceDecls = attList
 		? astHelper.getChildren(attList, 'namespaceDeclaration').map(namespaceDecl => {
-				const prefixElement = astHelper.getFirstChild(namespaceDecl, 'prefix');
-				return {
-					prefix: prefixElement ? astHelper.getTextContent(prefixElement) : '',
-					uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
-				};
-		  })
+			const prefixElement = astHelper.getFirstChild(namespaceDecl, 'prefix');
+			return {
+				prefix: prefixElement ? astHelper.getTextContent(prefixElement) : '',
+				uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
+			};
+		})
 		: [];
 
 	const content = astHelper.getFirstChild(ast, 'elementContent');
 	const contentExpressions = content
 		? astHelper
-				.getChildren(content, '*')
-				.map(child => compile(child, disallowUpdating(compilationOptions)))
+			.getChildren(content, '*')
+			.map(child => compile(child, disallowUpdating(compilationOptions)))
 		: [];
 
 	return new ElementConstructor(
@@ -1026,8 +1090,8 @@ function attributeConstructor(ast, compilationOptions) {
 	const attrValueExprElement = astHelper.getFirstChild(ast, 'attributeValueExpr');
 	const attrValueExpressions = attrValueExprElement
 		? astHelper
-				.getChildren(attrValueExprElement, '*')
-				.map(expr => compile(expr, disallowUpdating(compilationOptions)))
+			.getChildren(attrValueExprElement, '*')
+			.map(expr => compile(expr, disallowUpdating(compilationOptions)))
 		: null;
 	return new AttributeConstructor(attrName, {
 		value: attrValue,
@@ -1100,8 +1164,8 @@ function computedElementConstructor(ast, compilationOptions) {
 	const content = astHelper.getFirstChild(ast, 'contentExpr');
 	const contentExpressions = content
 		? astHelper
-				.getChildren(content, '*')
-				.map(child => compile(child, disallowUpdating(compilationOptions)))
+			.getChildren(content, '*')
+			.map(child => compile(child, disallowUpdating(compilationOptions)))
 		: [];
 
 	return new ElementConstructor(name, [], [], contentExpressions);
@@ -1120,17 +1184,17 @@ function computedPIConstructor(ast, compilationOptions) {
 		{
 			targetExpr: targetExpr
 				? compile(
-						astHelper.getFirstChild(targetExpr, '*'),
-						disallowUpdating(compilationOptions)
-				  )
+					astHelper.getFirstChild(targetExpr, '*'),
+					disallowUpdating(compilationOptions)
+				)
 				: null,
 			targetValue: target ? astHelper.getTextContent(target) : null
 		},
 		piValueExpr
 			? compile(
-					astHelper.getFirstChild(piValueExpr, '*'),
-					disallowUpdating(compilationOptions)
-			  )
+				astHelper.getFirstChild(piValueExpr, '*'),
+				disallowUpdating(compilationOptions)
+			)
 			: new SequenceOperator([])
 	);
 }
@@ -1272,6 +1336,6 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 type CompilationOptions = { allowUpdating?: boolean; allowXQuery?: boolean };
 
-export default function(xPathAst: IAST, compilationOptions: CompilationOptions): Expression {
+export default function (xPathAst: IAST, compilationOptions: CompilationOptions): Expression {
 	return compile(xPathAst, compilationOptions);
 }
