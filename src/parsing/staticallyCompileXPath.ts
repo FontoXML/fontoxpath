@@ -25,7 +25,7 @@ export default function staticallyCompileXPath(
 	namespaceResolver: (namespace: string) => string | null,
 	variables: object,
 	moduleImports: { [namespaceURI: string]: string }
-): Expression {
+): { expression: Expression; staticContext: StaticContext } {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
 	const fromCache = compilationOptions.disableCache
@@ -96,5 +96,5 @@ export default function staticallyCompileXPath(
 		}
 	}
 
-	return expression;
+	return { expression, staticContext: rootStaticContext };
 }

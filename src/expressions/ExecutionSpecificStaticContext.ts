@@ -2,7 +2,7 @@ import IContext from './Context';
 import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
 import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
 
-export const generateGlobalVariableBindingName = (variableName: string) => `GLOBAL_${variableName}`;
+const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
 /**
  * XPaths in FontoXPath know of two separate contexts: the static one and the context at evaluation.

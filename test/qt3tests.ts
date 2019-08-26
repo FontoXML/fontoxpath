@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import {
+	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
@@ -339,6 +340,17 @@ function createEnvironment(cwd, environmentNode) {
 			}),
 		{}
 	);
+
+	// Params area also variables. But different
+	evaluateXPathToNodes(
+		'param',
+		environmentNode)
+		.forEach(paramNode=> {
+			variables[evaluateXPathToString('@name', paramNode)] =
+				evaluateXPath(evaluateXPathToString('@select', paramNode));
+			console.log(variables)
+});
+
 	const namespaces = evaluateXPathToMap(
 		'(namespace!map:entry(@prefix/string(), @uri/string())) => map:merge()',
 		environmentNode

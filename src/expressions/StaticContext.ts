@@ -1,5 +1,8 @@
 import IContext from './Context';
+import ISequence from './dataTypes/ISequence';
 import TypeDeclaration from './dataTypes/TypeDeclaration';
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
 import { FunctionProperties } from './functions/functionRegistry';
 
@@ -41,6 +44,7 @@ export default class StaticContext {
 	private _registeredFunctionsByHash: any;
 	private _registeredNamespaceURIByPrefix: any[];
 	private _registeredVariableBindingByHashKey: any[];
+	private _registeredVariableDeclarationByHashKey: any[];
 	private _scopeCount: number;
 	private _scopeDepth: number;
 
@@ -52,6 +56,7 @@ export default class StaticContext {
 
 		this._registeredNamespaceURIByPrefix = [Object.create(null)];
 		this._registeredVariableBindingByHashKey = [Object.create(null)];
+		this._registeredVariableDeclarationByHashKey = [Object.create(null)];
 
 		// Functions may never be added for only a closure
 		this._registeredFunctionsByHash = Object.create(null);
@@ -82,10 +87,21 @@ export default class StaticContext {
 				Object.create(null),
 				this._registeredFunctionsByHash
 			);
+			contextAtThisPoint._registeredVariableDeclarationByHashKey = this._registeredVariableDeclarationByHashKey;
 			contextAtThisPoint.registeredDefaultFunctionNamespace = this.registeredDefaultFunctionNamespace;
 		}
 
 		return contextAtThisPoint;
+	}
+
+	public getVariableBindings(): string[] {
+		return Object.keys(this._registeredVariableDeclarationByHashKey);
+	}
+
+	public getVariableDeclaration(
+		hashKey: string
+	): (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) => ISequence {
+		return this._registeredVariableDeclarationByHashKey[hashKey];
 	}
 
 	public introduceScope() {
@@ -112,7 +128,7 @@ export default class StaticContext {
 			: this.parentContext.lookupFunction(namespaceURI, localName, arity);
 	}
 
-	public lookupVariable(namespaceURI: string, localName: string) {
+	public lookupVariable(namespaceURI: string, localName: string): string {
 		const hash = createHashKey(namespaceURI, localName);
 		const varNameInCurrentScope = lookupInOverrides(
 			this._registeredVariableBindingByHashKey,
@@ -122,6 +138,18 @@ export default class StaticContext {
 			return varNameInCurrentScope;
 		}
 		return this.parentContext.lookupVariable(namespaceURI, localName);
+	}
+
+	public lookupVariableValue(namespaceURI: string, localName: string) {
+		const hash = createHashKey(namespaceURI, localName);
+		const varNameInCurrentScope = lookupInOverrides(
+			this._registeredVariableDeclarationByHashKey,
+			hash
+		);
+		if (varNameInCurrentScope) {
+			return varNameInCurrentScope;
+		}
+		return null;
 	}
 
 	public registerFunctionDefinition(
@@ -154,6 +182,18 @@ export default class StaticContext {
 		return (this._registeredVariableBindingByHashKey[this._scopeDepth][
 			hash
 		] = `${hash}[${this._scopeCount}]`);
+	}
+
+	public registerVariableDeclaration(
+		namespaceURI: string,
+		localName: string,
+		createValue: (
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters
+		) => ISequence
+	) {
+		const hash = `${createHashKey(namespaceURI || '', localName)}[${this._scopeCount}]`;
+		this._registeredVariableDeclarationByHashKey[hash] = createValue;
 	}
 
 	public removeScope() {

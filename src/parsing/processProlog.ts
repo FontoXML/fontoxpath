@@ -260,10 +260,23 @@ export default function processProlog(
 	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		const external = astHelper.getFirstChild(varDecl, 'external');
-		if (!external || astHelper.getFirstChild(external, 'varValue')) {
-			throw new Error(
-				'Not implemented: only external variable declaration without default value is implemented in XQuery modules'
-			);
+		const getVarValue = astHelper.getFirstChild(varDecl, 'varValue');
+		let varValue, compiledFunctionAsExpression;
+
+		if (external !== null) {
+			const varDefaultValue = astHelper.getFirstChild(external, 'varValue');
+			if (varDefaultValue !== null) {
+				varValue = astHelper.getFirstChild(varDefaultValue, '*');
+			}
+		} else if (getVarValue !== null) {
+			varValue = astHelper.getFirstChild(getVarValue, '*');
+		}
+
+		if (varValue) {
+			compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
+				allowUpdating: false,
+				allowXQuery: true
+			});
 		}
 
 		if (
@@ -282,6 +295,23 @@ export default function processProlog(
 		if (!staticContext.lookupVariable(varName.namespaceURI || '', varName.localName)) {
 			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);
 		}
+		if (
+			varValue &&
+			!staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)
+		) {
+			staticContext.registerVariableDeclaration(
+				varName.namespaceURI,
+				varName.localName,
+				(dynamicContext, executionParameters) =>
+					compiledFunctionAsExpression.evaluate(dynamicContext, executionParameters)
+			);
+
+			staticallyCompilableExpressions.push({
+				expression: compiledFunctionAsExpression,
+				staticContextLeaf: staticContext
+			});
+		}
+
 		registeredVariables.push(varName);
 	});
 
