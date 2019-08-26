@@ -407,6 +407,39 @@ function IfThenElseExpr(ast, compilationOptions) {
 	);
 }
 
+function forClause(expressionClause, compilationOptions, returnClauseExpression) {
+	const forClauseItems = astHelper.getChildren(expressionClause, '*');
+	return forClauseItems.reduceRight((returnExpr, forClauseItem) => {
+		const expression = astHelper.followPath(forClauseItem, ['forExpr', '*']);
+		return new ForExpression(
+			astHelper.getQName(
+				astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])
+			),
+			compile(expression, disallowUpdating(compilationOptions)),
+			returnExpr
+		);
+	}, compile(returnClauseExpression, compilationOptions));
+}
+
+function letClause(expressionClause, compilationOptions, returnClauseExpression){
+	const letClauseItems = astHelper.getChildren(expressionClause, '*');
+	return letClauseItems.reduceRight((returnExpr, letClauseItem) => {
+		const expression = astHelper.followPath(letClauseItem, ['letExpr', '*']);
+		return new LetExpression(
+			astHelper.getQName(
+				astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])
+			),
+			compile(expression, disallowUpdating(compilationOptions)),
+			returnExpr
+		);
+	}, compile(returnClauseExpression, compilationOptions));
+}
+
+function whereClause(expressionClause, compilationOptions, returnClauseExpression) {
+	const whereClauseItems = astHelper.getChildren(expressionClause, '*');
+	return whereClauseItems;
+}
+
 function flworExpression(ast, compilationOptions) {
 	const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
 	const returnClauseExpression = astHelper.getFirstChild(
@@ -415,44 +448,114 @@ function flworExpression(ast, compilationOptions) {
 	);
 	const intermediateClauses = intermediateClausesAndReturnClause.slice(0, -1);
 
+	const returnExpressions = [];
+
+	// Initial clause handling.
+	// switch (initialClause[0]) {
+	// 	case 'forClause':
+	// 		const forClauses = forClause(initialClause, compilationOptions, returnClauseExpression);
+	// 		returnExpressions.push(forClauses);
+	// 		break;
+	// 	case 'letClause':
+	// 		const letClauses = letClause(initialClause, compilationOptions, returnClauseExpression);
+	// 		returnExpressions.push(letClauses);
+	// 		break;
+	// 	case 'windowClause':
+	// 		throw new Error(`Not implemented: ${initialClause[0]} is not implemented yet.`);
+	// 	default:
+	// 		throw new Error(
+	// 			`Not implemented: ${initialClause[0]} is not supported in a flwor expression`
+	// 		);
+	// }
+
+	// We have to check if there are any intermediate clauses before compiling them. 
 	if (intermediateClauses.length) {
 		if (!compilationOptions.allowXQuery) {
 			throw new Error('XPST0003: Use of XQuery FLWOR expressions in XPath is no allowed');
 		}
-		throw new Error(
-			'Not implemented: Intermediate clauses in flwor expressions are not implemented yet'
-		);
+
+		// Intermediate clauses handling. 
+		// intermediateClauses.forEach(intermediateClause => {
+		// 	switch (intermediateClause[0]) {
+		// 		case 'forClause':
+		// 			const forClauses = forClause(intermediateClause, compilationOptions, returnClauseExpression);
+		// 			returnExpressions.push(forClauses);
+		// 			break; 
+		// 		case 'letClause': 
+		// 			const letClauses = letClause(intermediateClause, compilationOptions, returnClauseExpression);
+		// 			returnExpressions.push(letClauses);
+		// 			break;
+		// 		case 'whereClause':
+		// 			const whereClauses = whereClause(intermediateClause, compilationOptions, returnClauseExpression);
+		// 			returnExpressions.push(whereClauses);
+		// 			break;
+		// 		case 'groupByClause':
+		// 			throw new Error(`Not implemented: ${intermediateClause[0]} is not implemented yet.`);
+		// 		case 'orderByClause':
+		// 			throw new Error(`Not implemented: ${intermediateClause[0]} is not implemented yet.`);
+		// 		case 'countClause':
+		// 			throw new Error(`Not implemented: ${intermediateClause[0]} is not implemented yet.`);
+		// 		default: 
+		// 			throw new Error(`Not implemented: ${intermediateClause[0]} is not supported in a flwor expression`);
+		// 	}
+		// });
 	}
 
-	if (initialClause[0] === 'forClause') {
-		const forClauseItems = astHelper.getChildren(initialClause, '*');
-		return forClauseItems.reduceRight((returnExpr, forClauseItem) => {
-			const expression = astHelper.followPath(forClauseItem, ['forExpr', '*']);
-			return new ForExpression(
-				astHelper.getQName(
-					astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])
-				),
-				compile(expression, disallowUpdating(compilationOptions)),
-				returnExpr
-			);
-		}, compile(returnClauseExpression, compilationOptions));
-	}
+	// Return clauses handling
 
-	if (initialClause[0] === 'letClause') {
-		const letClauseItems = astHelper.getChildren(initialClause, '*');
-		return letClauseItems.reduceRight((returnExpr, letClauseItem) => {
-			const expression = astHelper.followPath(letClauseItem, ['letExpr', '*']);
-			return new LetExpression(
-				astHelper.getQName(
-					astHelper.followPath(letClauseItem, ['typedVariableBinding', 'varName'])
-				),
-				compile(expression, disallowUpdating(compilationOptions)),
-				returnExpr
-			);
-		}, compile(returnClauseExpression, compilationOptions));
-	}
+	const clauses = astHelper.getChildren(ast, '*');
 
-	throw new Error(`Not implemented: ${initialClause[0]} is not supported in a flwor expression`);
+	clauses.reduceRight((acc, lastElement) => {
+		switch (lastElement[0]) {
+			case 'forClause':
+				return forClause(lastElement, compilationOptions, acc);
+			case 'letClause':
+				return letClause(lastElement, compilationOptions, acc);
+			case 'windowClause':
+				throw new Error(`Not implemented: ${lastElement[0]} is not implemented yet.`);
+			case 'whereClause':
+				return whereClause(lastElement, compilationOptions, acc);
+			case 'groupByClause':
+				throw new Error(`Not implemented: ${lastElement[0]} is not implemented yet.`);
+			case 'orderByClause':
+				throw new Error(`Not implemented: ${lastElement[0]} is not implemented yet.`);
+			case 'countClause':
+				throw new Error(`Not implemented: ${lastElement[0]} is not implemented yet.`);
+			default:
+				throw new Error(
+					`Not implemented: ${lastElement[0]} is not supported in a flwor expression`
+				);
+		}
+	});
+
+
+	return null;
+	/**
+	 * Encapsulate for clause and call it on initial/intermediate Clauses
+	 * Encapsulate let clause and call it on initial/intermediate Clauses
+	 * Handle initial/intermediate clauses.
+	 * 
+	 * Implement where clause   (if they're needed for XQDoc, we should make this a separate story) 
+	 * :+1: I'm going to create it after that
+	 * 
+	 * Insert the initial/intermediate return expresions on [], reduce all the expressions and return it at the end (?)
+	 *
+	 * So we have two approaches:
+	 * 
+	 * A: We can make them behave the same as XPaths: introduce the nesting    <--- I prefer this one: less work
+	 * B: We can support the FLWOR expressions like in XQuery: rebuild all of it
+	 * What would we have to do in each case? I don't want to miss anything
+	 * 
+	 * Sure:
+	 * A: adapt the compiler to walk over the intermeiate clauses and compile them as such
+	 * PRO: less work
+	 * CON: the window expressions are harder, they will iterate over many items in a set, but we don't need them yet
+	 * 
+	 * B: Restructure the FLWOR expressions to accept an array of 'partial' expressions, which get new results. 
+	 * This is like how (from memory) the every and some quatified expressions work
+	 * CON: Way more work
+	 * 
+	 */
 }
 
 function functionCall(ast, compilationOptions) {
