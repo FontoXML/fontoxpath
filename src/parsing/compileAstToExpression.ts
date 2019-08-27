@@ -49,6 +49,7 @@ import VarRef from '../expressions/VarRef';
 
 import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
+import CompTextConstructor from '../expressions/xquery/CompTextConstructor';
 import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 import TextConstructor from '../expressions/xquery/TextConstructor';
