@@ -49,6 +49,7 @@ import VarRef from '../expressions/VarRef';
 
 import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
+import CompTextConstructor from '../expressions/xquery/CompTextConstructor';
 import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
 
@@ -194,6 +195,8 @@ function compile(ast: IAST, compilationOptions: CompilationOptions): Expression 
 			return computedAttributeConstructor(ast, compilationOptions);
 		case 'computedCommentConstructor':
 			return computedCommentConstructor(ast, compilationOptions);
+		case 'computedTextConstructor':
+			return computedTextConstructor(ast, compilationOptions);
 		case 'computedElementConstructor':
 			return computedElementConstructor(ast, compilationOptions);
 		case 'computedPIConstructor':
@@ -765,6 +768,10 @@ function documentTest(_ast, _compilationOptions) {
 	return new KindTest(9);
 }
 
+function computedTextTest(_ast, _compilationOptions) {
+	return new KindTest(3);
+}
+
 function elementTest(ast, _compilationOptions) {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
@@ -1062,6 +1069,17 @@ function computedCommentConstructor(ast, compilationOptions) {
 		? compile(astHelper.getFirstChild(argExpr, '*'), disallowUpdating(compilationOptions))
 		: null;
 	return new CommentConstructor(expr);
+}
+
+function computedTextConstructor(ast, compilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	}
+	const argExpr = astHelper.getFirstChild(ast, 'argExpr');
+	const expr = argExpr
+		? compile(astHelper.getFirstChild(argExpr, '*'), disallowUpdating(compilationOptions))
+		: null;
+	return new CompTextConstructor(expr);
 }
 
 function computedElementConstructor(ast, compilationOptions) {
