@@ -2,6 +2,7 @@ import IContext from './Context';
 import TypeDeclaration from './dataTypes/TypeDeclaration';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
 import { FunctionProperties } from './functions/functionRegistry';
+import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 
 function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
@@ -37,7 +38,7 @@ export type FunctionDefinition = {
  */
 export default class StaticContext {
 	public parentContext: IContext;
-	public registeredDefaultFunctionNamespace: string = 'http://www.w3.org/2005/xpath-functions';
+	public registeredDefaultFunctionNamespace: string = FUNCTIONS_NAMESPACE_URI;
 	private _registeredFunctionsByHash: any;
 	private _registeredNamespaceURIByPrefix: any[];
 	private _registeredVariableBindingByHashKey: any[];

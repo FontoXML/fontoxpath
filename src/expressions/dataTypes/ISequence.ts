@@ -60,7 +60,7 @@ export default interface ISequence {
 	first(): Value | null;
 
 	/**
-	 * Synchronously get all valuea of this sequence. Prefer to use the tryGet* functions
+	 * Synchronously get all values of this sequence. Prefer to use the tryGet* functions
 	 */
 	getAllValues(): Value[];
 

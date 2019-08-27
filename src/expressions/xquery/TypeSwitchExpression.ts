@@ -49,7 +49,7 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 
 	public performFunctionalEvaluation(
 		dynamicContext: DynamicContext,
-		_executionParameters: ExecutionParameters,
+		executionParameters: ExecutionParameters,
 		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
 	) {
 		// Pick the argumentExpression.
@@ -90,7 +90,7 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 								contextItems
 							);
 							return typeTest.typeTest
-								.evaluateMaybeStatically(scopedContext, _executionParameters)
+								.evaluateMaybeStatically(scopedContext, executionParameters)
 								.getEffectiveBooleanValue();
 						});
 					})
