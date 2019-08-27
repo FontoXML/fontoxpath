@@ -1201,6 +1201,10 @@ function transformExpression(ast, compilationOptions) {
 }
 
 function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
+	if (!compilationOptions.allowXQuery) {
+		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
+	}
+
 	const argExpr = compile(
 		astHelper.getFirstChild(astHelper.getFirstChild(ast, 'argExpr'), '*'),
 		compilationOptions
