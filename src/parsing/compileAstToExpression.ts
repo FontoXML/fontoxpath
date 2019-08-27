@@ -480,6 +480,10 @@ function flworExpression(ast: IAST, compilationOptions: CompilationOptions) {
 					throw new Error(
 						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
 					);
+				case 'whereClause':
+					throw new Error(
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
+					);
 				case 'groupByClause':
 					throw new Error(
 						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
