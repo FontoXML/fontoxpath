@@ -131,8 +131,6 @@ fn-boolean-mixed-args-037,Error: FOCA0003: can not cast 99999999999999999 to xs:
 fn-boolean-mixed-args-039,Error: FOCA0003: can not cast 9223372036854775807 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-boolean-mixed-args-040,Error: FOCA0003: can not cast -9223372036854775808 to xs:integer, it is out of bounds for JavaScript numbers.
 K-SeqBooleanFunc-16,Error: No selector counterpart for: treatExpr.
-cbcl-boolean-005,Error: No selector counterpart for: computedTextConstructor.
-cbcl-boolean-006,Error: No selector counterpart for: computedTextConstructor.
 fn-ceilingintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-ceilingintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-ceilingintg1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -338,7 +336,6 @@ fn-emptynpi1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integ
 fn-emptynpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-emptynni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-emptynni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-cbcl-empty-func-004,Error: No selector counterpart for: computedTextConstructor.
 fn-ends-with-17,Error: FOCH0002: No collations are supported
 fn-ends-with-18,Error: FOCH0002: No collations are supported
 fn-ends-with-19,Error: FOCH0002: No collations are supported
@@ -401,7 +398,6 @@ fn-existsnpi1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:inte
 fn-existsnpi1args-2,Error: FOCA0003: can not cast -475688437271870490 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-existsnni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-existsnni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-cbcl-exists-003,Error: No selector counterpart for: computedTextConstructor.
 filter-003,Error: Unrecognized type "elementTest".
 filter-006,Error: XPTY0004: signature of function passed to fn:filter is incompatible.
 fn-filter-006,AssertionError: expected [Function] to throw an error
@@ -891,10 +887,6 @@ fn-node-name-14,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-15,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-16,Error: No selector counterpart for: computedDocumentConstructor.
 fn-node-name-17,Error: No selector counterpart for: computedDocumentConstructor.
-fn-node-name-18,Error: No selector counterpart for: computedTextConstructor.
-fn-node-name-19,Error: No selector counterpart for: computedTextConstructor.
-fn-node-name-20,Error: No selector counterpart for: computedTextConstructor.
-fn-node-name-21,Error: No selector counterpart for: computedTextConstructor.
 fn-node-name-28,Error: No selector counterpart for: computedNamespaceConstructor.
 fn-node-name-30,AssertionError: expected [Function] to throw an error
 fn-node-name-31,AssertionError: expected [Function] to throw an error
@@ -1095,11 +1087,6 @@ fn-root-12,Error: No selector counterpart for: computedDocumentConstructor.
 fn-root-13,Error: No selector counterpart for: computedDocumentConstructor.
 fn-root-14,AssertionError: Expected XPath fn:root(fn:exactly-one(/langs[1]/para[1])) to resolve to the given XML. Expected <langs>  <para xml:lang="en"/>  <div xml:lang="en"><para>And now, and forever!</para></div>  <para xml:lang="EN"/>  <para xml:lang="en-us"/>  <para xml:lang="de-DE-1996">New German Orthography</para> </langs> to equal <langs>  <para xml:lang="en"/>  <div xml:lang="en"><para>And now, and forever!</para></div>  <para xml:lang="EN"/>  <para xml:lang="en-us"/>  <para xml:lang="de-DE-1996">New German Orthography</para> </langs>
 fn-root-15,AssertionError: Expected XPath fn:root(/langs[1]/para[1]/@xml:lang) to resolve to the given XML. Expected <langs>  <para xml:lang="en"/>  <div xml:lang="en"><para>And now, and forever!</para></div>  <para xml:lang="EN"/>  <para xml:lang="en-us"/>  <para xml:lang="de-DE-1996">New German Orthography</para> </langs> to equal <langs>  <para xml:lang="en"/>  <div xml:lang="en"><para>And now, and forever!</para></div>  <para xml:lang="EN"/>  <para xml:lang="en-us"/>  <para xml:lang="de-DE-1996">New German Orthography</para> </langs>
-fn-root-16,Error: No selector counterpart for: computedTextConstructor.
-fn-root-17,Error: No selector counterpart for: computedTextConstructor.
-fn-root-23,Error: No selector counterpart for: computedTextConstructor.
-K2-NodeRootFunc-6,Error: No selector counterpart for: computedTextConstructor.
-K2-NodeRootFunc-7,Error: No selector counterpart for: computedTextConstructor.
 K2-NodeRootFunc-8,Error: No selector counterpart for: computedDocumentConstructor.
 fn-roundintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-roundintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1565,13 +1552,11 @@ op-divide-dayTimeDuration-by-dTD-1,AssertionError: Expected executing the XPath 
 cbcl-divide-yearMonthDuration-by-yearMonthDuration-001,AssertionError: expected [Function] to throw an error
 distinct-duration-equal-1,AssertionError: Expected executing the XPath "fn:distinct-values((xs:yearMonthDuration('P0Y'), xs:dayTimeDuration('P0D')))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found..
 distinct-duration-equal-2,AssertionError: Expected executing the XPath "fn:distinct-values((xs:yearMonthDuration('P1Y'), xs:dayTimeDuration('P365D')))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found..
-K2-SeqExcept-25,Error: No selector counterpart for: computedTextConstructor.
 combiningnodeseqexcepthc4,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 combiningnodeseqexcepthc5,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 combiningnodeseqexcepthc6,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 K-HexBinaryEQ-1,AssertionError: Expected XPath xs:hexBinary("FF") eq xs:hexBinary("ff") to resolve to true: expected false to be true
 K-HexBinaryEQ-4,AssertionError: Expected XPath xs:hexBinary(xs:base64Binary(xs:hexBinary("03"))) eq xs:hexBinary("03") to resolve to true: expected false to be true
-K2-SeqIntersect-25,Error: No selector counterpart for: computedTextConstructor.
 K2-SeqIntersect-42,Error: No selector counterpart for: computedDocumentConstructor.
 combiningnodeseqintersecthc3,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 combiningnodeseqintersecthc4,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
@@ -1690,8 +1675,8 @@ op-numeric-equalnni2args-7,Error: FOCA0003: can not cast 303884545991464527 to x
 op-numeric-equalnni2args-8,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-equalnni2args-9,Error: FOCA0003: can not cast 303884545991464527 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-equalnni2args-10,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
-K2-NumericEqual-5,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: computedTextConstructor.'
-K2-NumericEqual-6,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: computedTextConstructor.'
+K2-NumericEqual-5,AssertionError: expected [Function] to throw an error
+K2-NumericEqual-6,AssertionError: expected [Function] to throw an error
 op-numeric-divideintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 op-numeric-divideintg2args-2,AssertionError: Expected executing the XPath "fn:round-half-to-even((xs:integer("830993497117024304") div xs:integer("-999999999999999999")),18)" to resolve to one of the expected results, but got Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers., Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers..
 op-numeric-divideintg2args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1992,7 +1977,6 @@ rangeExpr-31,AssertionError: Expected executing the XPath "((2844674407370955161
 rangeExpr-32,AssertionError: Expected executing the XPath "reverse(28446744073709551616 to 28446744073709551620)" to resolve to one of the expected results, but got AssertionError: reverse(28446744073709551616 to 28446744073709551620): expected '28446744073709550000' to equal '28446744073709551620 28446744073709551619 28446744073709551618 28446744073709551617 28446744073709551616', AssertionError: expected [Function] to throw an error.
 K-RangeExpr-31,Error: No selector counterpart for: treatExpr.
 K-RangeExpr-32,Error: No selector counterpart for: treatExpr.
-K2-SeqUnion-29,Error: No selector counterpart for: computedTextConstructor.
 combiningnodeseqhc1,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 combiningnodeseqhc2,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 combiningnodeseqhc3,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
@@ -2084,7 +2068,6 @@ Axes117,Error: No selector counterpart for: computedNamespaceConstructor.
 axis-err-1,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'Cannot convert undefined or null to object'
 K2-Axes-1,Error: No selector counterpart for: computedDocumentConstructor.
 K2-Axes-2,AssertionError: expected [Function] to throw an error
-K2-Axes-18,Error: No selector counterpart for: computedTextConstructor.
 K2-Axes-33,AssertionError: Expected executing the XPath "declare variable $myVar := document { <e/>}; empty($myVar/(/)/..)" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
 K2-Axes-38,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'XPTY0019: The / operator can only be applied to xml/json nodes.'
 K2-Axes-39,AssertionError: expected [Function] to throw error matching /XPTY0020/ but got 'Cannot convert undefined or null to object'
@@ -2102,9 +2085,7 @@ abbreviatedSyntax-2,AssertionError: for $h in (/works/employee[2]) return $h/tex
 K2-ancestorAxis-5,AssertionError: Expected executing the XPath "empty(document {()}/ancestor::node())" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
 K2-ancestorAxis-6,AssertionError: Expected executing the XPath "empty(document {<e><f/><f/>text</e>}/ancestor::node())" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
 K2-ancestorAxis-17,AssertionError: Expected executing the XPath "document {()}/ancestor::node(), count(document {()}/ancestor::node()), 1" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
-K2-ancestorAxis-18,Error: No selector counterpart for: computedTextConstructor.
 K2-ancestor-or-selfAxis-5,Error: No selector counterpart for: computedDocumentConstructor.
-K2-ancestor-or-selfAxis-6,Error: No selector counterpart for: computedTextConstructor.
 K2-preceding-siblingAxis-4,Error: XPST0008, The variable i is not in scope.
 unabbreviatedSyntax-3,AssertionError: for $h in (/works[1]/employee[2]) return $h/child::text(): expected '\n    \n    \n    \n    Text data from Employee[2]\n  ' to equal 'Text data from Employee[2]'
 CastableAs647,Error: Casting to xs:QName is not implemented.
@@ -2398,7 +2379,8 @@ nscons-043,AssertionError: expected [Function] to throw error matching /XPTY0004
 nscons-044,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: computedNamespaceConstructor.'
 Constr-comppi-data-1,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 Constr-comppi-space-1,AssertionError: Expected XPath processing-instruction pi {' text'} to resolve to the given XML. Expected <?pi  text?> to equal <?pi text?>
-Constr-comppi-space-2,AssertionError: Expected XPath processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'} to resolve to the given XML. Expected <?pi   	text?> to equal <?pi text?>
+Constr-comppi-space-2,AssertionError: Expected XPath processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'} to resolve to the given XML. Expected <?pi   
+	text?> to equal <?pi text?>
 Constr-comppi-space-3,AssertionError: string-to-codepoints(processing-instruction pi {' text'}): expected '32 116 101 120 116' to equal '116 101 120 116'
 Constr-comppi-space-4,AssertionError: string-to-codepoints(processing-instruction pi {'&#x20;&#x0A;&#x0D;&#x09;text'}): expected '32 10 13 9 116 101 120 116' to equal '116 101 120 116'
 K2-ComputeConPI-3,AssertionError: expected [Function] to throw error matching /XQDY0064/ but got 'InvalidCharacterError: The target is not a valid Name'
@@ -2407,32 +2389,12 @@ K2-ComputeConPI-5,InvalidCharacterError: InvalidCharacterError: The target is no
 K2-ComputeConPI-6,AssertionError: expected [Function] to throw error matching /XQDY0041/ but got 'InvalidCharacterError: The target is not a valid Name'
 K2-ComputeConPI-10,AssertionError: Expected XPath processing-instruction name {" "} eq "" to resolve to true: expected false to be true
 K2-ComputeConPI-11,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
-Constr-text-enclexpr-1,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-enclexpr-2,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-enclexpr-3,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-enclexpr-4,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-enclexpr-5,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-doc-1,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-parent-1,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-string-1,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-data-1,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-count-1,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-count-2,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-count-3,Error: No selector counterpart for: computedTextConstructor.
+Constr-text-data-1,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 Constr-text-count-4,AssertionError: Expected executing the XPath "count(document {text {''}}/text())" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
-Constr-text-count-5,Error: No selector counterpart for: computedTextConstructor.
 Constr-text-count-6,AssertionError: Expected executing the XPath "count(document {text {''},<b/>,text {''},<b/>,text {''}}/text())" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
-Constr-text-adjtext-1,Error: No selector counterpart for: computedTextConstructor.
 Constr-text-adjtext-2,Error: No selector counterpart for: computedDocumentConstructor.
-Constr-text-nested-1,Error: No selector counterpart for: computedTextConstructor.
-Constr-text-nested-2,Error: No selector counterpart for: computedTextConstructor.
 Constr-text-nested-3,Error: No selector counterpart for: computedDocumentConstructor.
-K2-ConText-3,Error: No selector counterpart for: computedTextConstructor.
-K2-ConText-4,Error: No selector counterpart for: computedTextConstructor.
-K2-ConText-5a,Error: No selector counterpart for: computedTextConstructor.
-K2-ConText-6,Error: No selector counterpart for: computedTextConstructor.
-K2-ConText-14,Error: No selector counterpart for: computedTextConstructor.
-K2-ConText-15,Error: No selector counterpart for: computedTextConstructor.
+K2-ConText-6,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 constprolog-1,AssertionError: expected [Function] to throw error matching /XQST0067/ but got 'Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules'
 constprolog-2,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 constprolog-3,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -2543,8 +2505,6 @@ K2-DirectConElemAttr-47,Error: XPST0017: Function data with arity of 1 not regis
 K2-DirectConElemAttr-70,Error: Not Implemented: default namespace element.
 K2-DirectConElemAttr-71,Error: Not Implemented: default namespace element.
 K2-DirectConElemAttr-73,Error: Not Implemented: default namespace element.
-K2-DirectConElemAttr-75,Error: No selector counterpart for: computedTextConstructor.
-K2-DirectConElemAttr-76,Error: No selector counterpart for: computedTextConstructor.
 Constr-pi-content-2,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 Constr-pi-content-4,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 Constr-comment-2,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
@@ -2602,14 +2562,12 @@ K2-DirectConElemContent-9,Error: XPST0017: Function data with arity of 1 not reg
 K2-DirectConElemContent-10,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConElemContent-14,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConElemContent-15,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
-K2-DirectConElemContent-29,Error: No selector counterpart for: computedTextConstructor.
+K2-DirectConElemContent-29,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConElemContent-32,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConElemContent-33,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 K2-DirectConElemContent-35a,AssertionError: Expected XPath <e/> instance of element(*, xs:untyped) to resolve to false: expected true to be false
 K2-DirectConElemContent-36,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-DirectConElemContent-38,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-K2-DirectConElemContent-46,Error: No selector counterpart for: computedTextConstructor.
-K2-DirectConElemContent-47,Error: No selector counterpart for: computedTextConstructor.
 K2-DirectConElemContent-48,Error: No selector counterpart for: computedDocumentConstructor.
 cbcl-ns-fixup-1,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 ElemContentArray-001,Error: Atomizing array(*) is not implemented.
@@ -2831,10 +2789,8 @@ K2-FunctionProlog-2,Error: No selector counterpart for: treatExpr.
 K2-FunctionProlog-3,Error: No selector counterpart for: treatExpr.
 K2-FunctionProlog-4,Error: No selector counterpart for: treatExpr.
 K2-FunctionProlog-19,Error: No selector counterpart for: computedDocumentConstructor.
-K2-FunctionProlog-22,Error: No selector counterpart for: computedTextConstructor.
 K2-FunctionProlog-25,Error: No selector counterpart for: treatExpr.
 K2-FunctionProlog-26,AssertionError: expected [Function] to throw an error
-K2-FunctionProlog-38,AssertionError: expected [Function] to throw error matching /XPST0017/ but got 'No selector counterpart for: computedTextConstructor.'
 K-GenCompEq-16,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K-GenCompEq-17,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K-GenCompEq-18,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
@@ -2928,8 +2884,6 @@ Literals017,AssertionError: 65535.032e2: expected '6553503.2' to equal '6.553503
 Literals025,AssertionError: -65535.032e2: expected '-6553503.2' to equal '-6.5535032E6'
 Literals027,AssertionError: 65535032E2: expected '6553503200' to equal '6.5535032E9'
 Literals028,AssertionError: 65535.032E2: expected '6553503.2' to equal '6.5535032E6'
-Literals068,Error: No selector counterpart for: computedTextConstructor.
-Literals069,Error: No selector counterpart for: computedTextConstructor.
 K-Literals-29,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'Failed to execute \'evaluateXPath\': xpathExpression must be a string.'
 MapConstructor-025,Error: XPST0003: Unable to parse: "let $m := map{'a':1} return map:size(map{$m?a:true()}) = 1". Expected " ", "(", "(:", "/", "//", "?", "[", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but ":" found. let $m := map{'a':1} return map:size(map{$m?a[Error is around here]:true()}) = 1
 MapConstructor-035,Error: XPST0003: Unable to parse: "          <e><f>4</f></e>!map{*:*div*,*||*:*}          =>          deep-equal(map{"44":<f>4</f>,"4":1})       ". Expected " ", "!", "!=", "(:", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", or "}" but "d" found.           <e><f>4</f></e>!map{*:*[Error is around here]div*,*||*:*}          =>          deep-equal(map{"44":<f>4</f>,"4":1})
@@ -3461,7 +3415,6 @@ K2-Steps-16,Error: Not implemented: Intermediate clauses in flwor expressions ar
 K2-Steps-17,Error: Not implemented: Intermediate clauses in flwor expressions are not implemented yet
 K2-Steps-31,AssertionError: Expected XPath declare variable $root := <root><c/></root>; declare function local:function($arg) { $root[$arg] }; $root//local:function(.) to resolve to the given XML. Expected <root><c/></root> <root><c/></root> to equal <root><c/></root>
 K2-Steps-32,AssertionError: Expected XPath declare variable $root := <root/>; declare function local:function($arg, $count as xs:integer) { $arg, $root, if($count eq 2) then $root else local:function($arg, $count + 1) }; $root/local:function(., 1) to resolve to the given XML. Expected <root/> <root/> <root/> <root/> to equal <root/>
-K2-Steps-35,Error: No selector counterpart for: computedTextConstructor.
 Steps-leading-lone-slash-1a,Error: No selector counterpart for: computedDocumentConstructor.
 Steps-leading-lone-slash-2a,Error: No selector counterpart for: computedDocumentConstructor.
 Steps-leading-lone-slash-3a,Error: No selector counterpart for: computedDocumentConstructor.
@@ -3867,7 +3820,8 @@ XML10-4ed-Excluded-char-1,AssertionError: expected [Function] to throw error mat
 XML10-4ed-Excluded-char-1-new,InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 XML11-1ed-Included-char-1,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'InvalidCharacterError: The qualified name is not a valid Name or QName'
 XML11-1ed-Included-char-1-new,InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-line-ending-P002,AssertionError: Expected XPath deep-equal(string-to-codepoints(' '), (13, 10)) to resolve to true: expected false to be true
+line-ending-P002,AssertionError: Expected XPath deep-equal(string-to-codepoints('
+ '), (13, 10)) to resolve to true: expected false to be true
 Catalog001,Error: XPST0003: Unable to parse: "(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))),             $tests := $testsets//fots-test-case,             $environments := (//fots:environment | $testsets//fots:environment)[@name],             $refs := $testsets//fots:environment[@ref]             return $refs[not(@ref = $environments/@name)]       ) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..))),             $tests := $testsets//fots-test-case,             $environments := (//fots:environment | $testsets//fots:environment)[@name],             $refs := $testsets//fots:environment[@ref]             return $refs[not(@ref = $environments/@name)]       ) => empty()
 Catalog003,Error: XPST0003: Unable to parse: "(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $test in $testsets//fots:test-case[contains(test, "import schema")]         where empty($test/(fots:dependency | ../fots:dependency)[@type='feature' and @value="schemaImport"])          return $test       ) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $test in $testsets//fots:test-case[contains(test, "import schema")]         where empty($test/(fots:dependency | ../fots:dependency)[@type='feature' and @value="schemaImport"])          return $test       ) => empty()
 Catalog004,Error: XPST0003: Unable to parse: "(         declare namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $schema in (.|$testsets)//fots:environment/fots:schema         let $targetNamespace := doc(resolve-uri($schema/@file, base-uri($schema)))/*/@targetNamespace         where not($schema/@uri eq $targetNamespace or (empty($targetNamespace) and string(@uri)=''))         return ($schema, <file>{base-uri($schema)}</file>)       ) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. (         declare [Error is around here]namespace fots = "http://www.w3.org/2010/09/qt-fots-catalog";         let $testsets := //fots:test-set/@file/doc(resolve-uri(., base-uri(..)))         for $schema in (.|$testsets)//fots:environment/fots:schema         let $targetNamespace := doc(resolve-uri($schema/@file, base-uri($schema)))/*/@targetNamespace         where not($schema/@uri eq $targetNamespace or (empty($targetNamespace) and string(@uri)=''))         return ($schema, <file>{base-uri($schema)}</file>)       ) => empty()
