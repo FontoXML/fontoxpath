@@ -409,7 +409,7 @@ function IfThenElseExpr(ast, compilationOptions) {
 
 function forClause(
 	expressionClause: IAST,
-	compilationOptions,
+	compilationOptions: CompilationOptions,
 	returnClauseExpression: Expression
 ): Expression {
 	const forClauseItems = astHelper.getChildren(expressionClause, '*');
@@ -427,7 +427,7 @@ function forClause(
 
 function letClause(
 	expressionClause: IAST,
-	compilationOptions,
+	compilationOptions: CompilationOptions,
 	returnClauseExpression: Expression
 ): Expression {
 	const letClauseItems = astHelper.getChildren(expressionClause, '*');
@@ -443,17 +443,8 @@ function letClause(
 	}, returnClauseExpression);
 }
 
-function whereClause(
-	expressionClause: IAST,
-	compilationOptions: any,
-	returnClauseExpression: Expression
-): Expression {
-	// TODO
-	const whereClauseItems = astHelper.getChildren(expressionClause, '*');
-	return null;
-}
 
-function flworExpression(ast: IAST, compilationOptions) {
+function flworExpression(ast: IAST, compilationOptions: CompilationOptions) {
 	const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
 	const returnClauseExpression = astHelper.getFirstChild(
 		intermediateClausesAndReturnClause[intermediateClausesAndReturnClause.length - 1],
@@ -472,45 +463,39 @@ function flworExpression(ast: IAST, compilationOptions) {
 	const clauses = astHelper.getChildren(ast, '*').slice(0, -1);
 
 	return clauses.reduceRight(
-		(returnOfPreviousExpression: Expression, flowExpressionClause: IAST) => {
-			switch (flowExpressionClause[0]) {
+		(returnOfPreviousExpression: Expression, flworExpressionClause: IAST) => {
+			switch (flworExpressionClause[0]) {
 				case 'forClause':
 					return forClause(
-						flowExpressionClause,
+						flworExpressionClause,
 						compilationOptions,
 						returnOfPreviousExpression
 					);
 				case 'letClause':
 					return letClause(
-						flowExpressionClause,
+						flworExpressionClause,
 						compilationOptions,
 						returnOfPreviousExpression
 					);
 				case 'windowClause':
 					throw new Error(
-						`Not implemented: ${flowExpressionClause[0]} is not implemented yet.`
-					);
-				case 'whereClause':
-					return whereClause(
-						flowExpressionClause,
-						compilationOptions,
-						returnOfPreviousExpression
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
 					);
 				case 'groupByClause':
 					throw new Error(
-						`Not implemented: ${flowExpressionClause[0]} is not implemented yet.`
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
 					);
 				case 'orderByClause':
 					throw new Error(
-						`Not implemented: ${flowExpressionClause[0]} is not implemented yet.`
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
 					);
 				case 'countClause':
 					throw new Error(
-						`Not implemented: ${flowExpressionClause[0]} is not implemented yet.`
+						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
 					);
 				default:
 					throw new Error(
-						`Not implemented: ${flowExpressionClause[0]} is not supported in a flwor expression`
+						`Not implemented: ${flworExpressionClause[0]} is not supported in a flwor expression`
 					);
 			}
 		},
