@@ -443,7 +443,6 @@ function letClause(
 	}, returnClauseExpression);
 }
 
-
 function flworExpression(ast: IAST, compilationOptions: CompilationOptions) {
 	const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
 	const returnClauseExpression = astHelper.getFirstChild(
