@@ -768,10 +768,6 @@ function documentTest(_ast, _compilationOptions) {
 	return new KindTest(9);
 }
 
-function computedTextTest(_ast, _compilationOptions) {
-	return new KindTest(3);
-}
-
 function elementTest(ast, _compilationOptions) {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
