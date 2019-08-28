@@ -61,6 +61,7 @@ import TransformExpression from '../expressions/xquery-update/TransformExpressio
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import PossiblyUpdatingExpression from '../expressions/PossiblyUpdatingExpression';
+import WhereExpression from '../expressions/whereExpression';
 
 const COMPILATION_OPTIONS = {
 	XPATH_MODE: { allowXQuery: false, allowUpdating: false },
@@ -443,6 +444,17 @@ function letClause(
 	}, returnClauseExpression);
 }
 
+function whereClause(
+	expressionClause: IAST,
+	compilationOptions: CompilationOptions,
+	returnClauseExpression: Expression
+): Expression {
+	const whereClauseItems = astHelper.getChildren(expressionClause, '*');
+	return whereClauseItems.reduceRight((returnExpr, whereClauseItem) => {
+		return new WhereExpression(compile(whereClauseItem, compilationOptions), returnExpr);
+	}, returnClauseExpression);
+}
+
 function flworExpression(ast: IAST, compilationOptions: CompilationOptions) {
 	const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
 	const returnClauseExpression = astHelper.getFirstChild(
@@ -476,11 +488,13 @@ function flworExpression(ast: IAST, compilationOptions: CompilationOptions) {
 						compilationOptions,
 						returnOfPreviousExpression
 					);
-				case 'windowClause':
-					throw new Error(
-						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
-					);
 				case 'whereClause':
+					return whereClause(
+						flworExpressionClause,
+						compilationOptions,
+						returnOfPreviousExpression
+					);
+				case 'windowClause':
 					throw new Error(
 						`Not implemented: ${flworExpressionClause[0]} is not implemented yet.`
 					);
