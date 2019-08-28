@@ -17,15 +17,15 @@ class CompTextConstructor extends Expression {
 	}
 
 	public evaluate(_dynamicContext, executionParameters) {
-        const nodesFactory = executionParameters.nodesFactory;
-		if (!this._expr) { 
-			return sequenceFactory.empty(); 
+		const nodesFactory = executionParameters.nodesFactory;
+		if (!this._expr) {
+			return sequenceFactory.empty();
 		}
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
 		return sequence.atomize(executionParameters).mapAll(items => {
-            if (items.length === 0) {
-                return sequenceFactory.empty();
-            } 
+			if (items.length === 0) {
+				return sequenceFactory.empty();
+			}
 			const content = items.map(item => castToType(item, 'xs:string').value).join(' ');
 
 			return sequenceFactory.singleton(createNodeValue(nodesFactory.createTextNode(content)));
