@@ -1,4 +1,4 @@
-export const errXQTY0024 = function (node) {
+export const errXQTY0024 = function(node) {
 	const nodeString =
 		node.nodeType === node.ATTRIBUTE_NODE ? `${node.name}="${node.value}"` : node.outerHTML;
 	return new Error(
