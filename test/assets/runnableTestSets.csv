@@ -411,7 +411,7 @@ prod-StringConstructor,true
 prod-SwitchExpr,false
 prod-TreatExpr,false
 prod-TryCatchExpr,false
-prod-TypeswitchExpr,false
+prod-TypeswitchExpr,true
 prod-UnaryLookup,true
 prod-UnorderedExpr,true
 prod-ValidateExpr,false

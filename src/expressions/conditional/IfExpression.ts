@@ -18,16 +18,16 @@ class IfExpression extends PossiblyUpdatingExpression {
 			.add(thenExpression.specificity)
 			.add(elseExpression.specificity);
 		super(specificity, [testExpression, thenExpression, elseExpression], {
+			canBeStaticallyEvaluated:
+				testExpression.canBeStaticallyEvaluated &&
+				thenExpression.canBeStaticallyEvaluated &&
+				elseExpression.canBeStaticallyEvaluated,
+			peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
 			resultOrder:
 				thenExpression.expectedResultOrder === elseExpression.expectedResultOrder
 					? thenExpression.expectedResultOrder
 					: RESULT_ORDERINGS.UNSORTED,
-			peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
-			subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree,
-			canBeStaticallyEvaluated:
-				testExpression.canBeStaticallyEvaluated &&
-				thenExpression.canBeStaticallyEvaluated &&
-				elseExpression.canBeStaticallyEvaluated
+			subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree
 		});
 	}
 
