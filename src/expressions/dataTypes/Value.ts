@@ -1,3 +1,38 @@
 export default class Value {
-	constructor(public type: string, readonly value: any) {}
+	constructor(public type: ValueType, readonly value: any) {}
 }
+
+export type ValueType =
+	| 'xs:boolean'
+	| 'xs:string'
+	| 'xs:numeric'
+	| 'xs:double'
+	| 'xs:decimal'
+	| 'xs:integer'
+	| 'xs:float'
+	| 'xs:date'
+	| 'xs:time'
+	| 'xs:dateTime'
+	| 'xs:dateTimeStamp'
+	| 'xs:gYearMonth'
+	| 'xs:gYear'
+	| 'xs:gMonthDay'
+	| 'xs:gMonth'
+	| 'xs:gDay'
+	| 'xs:yearMonthDuration'
+	| 'xs:dayTimeDuration'
+	| 'xs:duration'
+	| 'xs:untypedAtomic'
+	| 'xs:anyURI'
+	| 'xs:base64Binary'
+	| 'xs:hexBinary'
+	| 'xs:QName'
+	| 'xs:NCName'
+	| 'node()'
+	| 'element()'
+	| 'text'
+	| 'comment()'
+	| 'item()'
+	| 'function(*)'
+	| 'map(*)'
+	| 'array(*)';

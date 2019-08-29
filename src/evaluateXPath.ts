@@ -1,4 +1,3 @@
-import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import buildContext from './evaluationUtils/buildContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
@@ -9,125 +8,16 @@ import sequenceFactory from './expressions/dataTypes/sequenceFactory';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
-import { DONE_TOKEN, IterationHint, notReady, ready } from './expressions/util/iterators';
+import { IterationHint } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
 import { Node } from './types/Types';
-
-function transformMapToObject(map, dynamicContext) {
-	const mapObj = {};
-	let i = 0;
-	let done = false;
-	let transformedValueIterator = null;
-	return {
-		next: () => {
-			if (done) {
-				return DONE_TOKEN;
-			}
-			while (i < map.keyValuePairs.length) {
-				if (!transformedValueIterator) {
-					const val = map.keyValuePairs[i]
-						.value()
-						.switchCases({
-							default: seq => seq,
-							multiple: () => {
-								throw new Error(
-									'Serialization error: The value of an entry in a map is expected to be a singleton sequence.'
-								);
-							}
-						})
-						.tryGetFirst();
-					if (!val.ready) {
-						return notReady(val.promise);
-					}
-					if (val.value === null) {
-						mapObj[map.keyValuePairs[i].key.value] = null;
-						i++;
-						continue;
-					}
-
-					transformedValueIterator = transformXPathItemToJavascriptObject(
-						val.value,
-						dynamicContext
-					);
-				}
-				const transformedValue = transformedValueIterator.next();
-				if (!transformedValue.ready) {
-					return transformedValue;
-				}
-				transformedValueIterator = null;
-				mapObj[map.keyValuePairs[i].key.value] = transformedValue.value;
-				i++;
-			}
-			done = true;
-			return ready(mapObj);
-		}
-	};
-}
-
-function transformArrayToArray(array, dynamicContext) {
-	const arr = [];
-	let i = 0;
-	let done = false;
-	let transformedMemberGenerator = null;
-	return {
-		next: () => {
-			if (done) {
-				return DONE_TOKEN;
-			}
-			while (i < array.members.length) {
-				if (!transformedMemberGenerator) {
-					const val = array.members[i]()
-						.switchCases({
-							default: seq => seq,
-							multiple: () => {
-								throw new Error(
-									'Serialization error: The value of an entry in an array is expected to be a singleton sequence.'
-								);
-							}
-						})
-						.tryGetFirst();
-					if (!val.ready) {
-						return notReady(val.promise);
-					}
-					if (val.value === null) {
-						arr[i++] = null;
-						continue;
-					}
-					transformedMemberGenerator = transformXPathItemToJavascriptObject(
-						val.value,
-						dynamicContext
-					);
-				}
-				const transformedValue = transformedMemberGenerator.next();
-				if (!transformedValue.ready) {
-					return transformedValue;
-				}
-				transformedMemberGenerator = null;
-				arr[i++] = transformedValue.value;
-			}
-			done = true;
-			return ready(arr);
-		}
-	};
-}
-
-function transformXPathItemToJavascriptObject(value, dynamicContext) {
-	if (isSubtypeOf(value.type, 'map(*)')) {
-		return transformMapToObject(value, dynamicContext);
-	}
-	if (isSubtypeOf(value.type, 'array(*)')) {
-		return transformArrayToArray(value, dynamicContext);
-	}
-	if (isSubtypeOf(value.type, 'xs:QName')) {
-		return {
-			next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localName}`)
-		};
-	}
-	return {
-		next: () => ready(value.value)
-	};
-}
+import transformXPathItemToJavascriptObject, {
+	transformMapToObject,
+	transformArrayToArray
+} from './transformXPathItemToJavascriptObject';
+import MapValue from './expressions/dataTypes/MapValue';
+import ArrayValue from './expressions/dataTypes/ArrayValue';
 
 /**
  * @public
@@ -355,7 +245,9 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 				if (!isSubtypeOf(first.type, 'map(*)')) {
 					throw new Error('Expected XPath ' + selector + ' to resolve to a map');
 				}
-				const transformedMap = transformMapToObject(first, dynamicContext).next();
+				const transformedMap = transformMapToObject(first as MapValue).next(
+					IterationHint.NONE
+				);
 				if (!transformedMap.ready) {
 					throw new Error(
 						'Expected XPath ' + selector + ' to synchronously resolve to a map'
@@ -379,7 +271,9 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 				if (!isSubtypeOf(first.type, 'array(*)')) {
 					throw new Error('Expected XPath ' + selector + ' to resolve to an array');
 				}
-				const transformedArray = transformArrayToArray(first, dynamicContext).next();
+				const transformedArray = transformArrayToArray(first as ArrayValue).next(
+					IterationHint.NONE
+				);
 				if (!transformedArray.ready) {
 					throw new Error(
 						'Expected XPath ' + selector + ' to synchronously resolve to a map'
@@ -417,8 +311,7 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 								return value.promise.then(getNextResult);
 							}
 							transformedValueGenerator = transformXPathItemToJavascriptObject(
-								value.value,
-								dynamicContext
+								value.value
 							);
 						}
 						const transformedValue = transformedValueGenerator.next();
@@ -472,10 +365,9 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 				if (allValues.value.length === 1) {
 					const first = allValues.value[0];
 					if (isSubtypeOf(first.type, 'array(*)')) {
-						const transformedArray = transformArrayToArray(
-							first,
-							dynamicContext
-						).next();
+						const transformedArray = transformArrayToArray(first as ArrayValue).next(
+							IterationHint.NONE
+						);
 						if (!transformedArray.ready) {
 							throw new Error(
 								'Expected XPath ' +
@@ -486,7 +378,9 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 						return transformedArray.value;
 					}
 					if (isSubtypeOf(first.type, 'map(*)')) {
-						const transformedMap = transformMapToObject(first, dynamicContext).next();
+						const transformedMap = transformMapToObject(first as MapValue).next(
+							IterationHint.NONE
+						);
 						if (!transformedMap.ready) {
 							throw new Error(
 								'Expected XPath ' + selector + ' to synchronously resolve to a map'
