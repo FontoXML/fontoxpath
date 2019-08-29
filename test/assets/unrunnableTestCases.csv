@@ -14,6 +14,7 @@ fold-right-013,Tries to fold sequence of huge length
 cbcl-codepoints-to-string-021,Tries to make a string of length 65536*65536
 cbcl-codepoints-to-string-022,Tries to make a string of length 65536*65536
 RexParser,Loads missing files...
+XMark-Q4, Quantified expressions error
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 fn-absintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-absintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
