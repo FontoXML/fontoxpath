@@ -8,7 +8,7 @@ beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe.only('FLWOR', () => {
+describe('FLWOR', () => {
 	it('runs basic flwor expression', () =>
 		chai.assert.equal(
 			evaluateXPathToString(
