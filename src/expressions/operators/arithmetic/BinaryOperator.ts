@@ -24,8 +24,9 @@ import {
 	multiply as yearMonthDurationMultiply,
 	subtract as yearMonthDurationSubtract
 } from '../../dataTypes/valueTypes/YearMonthDuration';
+import { ValueType } from '../../../expressions/dataTypes/Value';
 
-function determineReturnType(typeA: string, typeB: string): string {
+function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	if (isSubtypeOf(typeA, 'xs:integer') && isSubtypeOf(typeB, 'xs:integer')) {
 		return 'xs:integer';
 	}
@@ -38,7 +39,7 @@ function determineReturnType(typeA: string, typeB: string): string {
 	return 'xs:double';
 }
 
-function generateBinaryOperatorFunction(operator, typeA, typeB) {
+function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: ValueType) {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
