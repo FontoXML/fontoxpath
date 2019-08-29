@@ -49,9 +49,9 @@ import VarRef from '../expressions/VarRef';
 
 import AttributeConstructor from '../expressions/xquery/AttributeConstructor';
 import CommentConstructor from '../expressions/xquery/CommentConstructor';
-import CompTextConstructor from '../expressions/xquery/CompTextConstructor';
 import ElementConstructor from '../expressions/xquery/ElementConstructor';
 import PIConstructor from '../expressions/xquery/PIConstructor';
+import TextConstructor from '../expressions/xquery/TextConstructor';
 
 import DeleteExpression from '../expressions/xquery-update/DeleteExpression';
 import InsertExpression, { TargetChoice } from '../expressions/xquery-update/InsertExpression';
@@ -1067,7 +1067,7 @@ function computedCommentConstructor(ast, compilationOptions) {
 	return new CommentConstructor(expr);
 }
 
-function computedTextConstructor(ast, compilationOptions) {
+function computedTextConstructor(ast: IAST, compilationOptions: CompilationOptions) {
 	if (!compilationOptions.allowXQuery) {
 		throw new Error('XPST0003: Use of XQuery functionality is not allowed in XPath context');
 	}
@@ -1075,7 +1075,7 @@ function computedTextConstructor(ast, compilationOptions) {
 	const expr = argExpr
 		? compile(astHelper.getFirstChild(argExpr, '*'), disallowUpdating(compilationOptions))
 		: null;
-	return new CompTextConstructor(expr);
+	return new TextConstructor(expr);
 }
 
 function computedElementConstructor(ast, compilationOptions) {

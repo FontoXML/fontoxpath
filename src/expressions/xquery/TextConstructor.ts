@@ -4,8 +4,10 @@ import Specificity from '../Specificity';
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 
-class CompTextConstructor extends Expression {
+class TextConstructor extends Expression {
 	private _expr: Expression;
 	constructor(expr: Expression | null) {
 		super(expr ? expr.specificity : new Specificity({}), expr ? [expr] : [], {
@@ -16,12 +18,12 @@ class CompTextConstructor extends Expression {
 		this._expr = expr;
 	}
 
-	public evaluate(_dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const nodesFactory = executionParameters.nodesFactory;
 		if (!this._expr) {
 			return sequenceFactory.empty();
 		}
-		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
+		const sequence = this._expr.evaluateMaybeStatically(dynamicContext, executionParameters);
 		return sequence.atomize(executionParameters).mapAll(items => {
 			if (items.length === 0) {
 				return sequenceFactory.empty();
@@ -33,4 +35,4 @@ class CompTextConstructor extends Expression {
 	}
 }
 
-export default CompTextConstructor;
+export default TextConstructor;
