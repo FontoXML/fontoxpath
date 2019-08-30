@@ -678,8 +678,8 @@ generate-id-018,Error: XPST0017: Function generate-id with arity of 1 not regist
 generate-id-019,Error: XPST0017: Function generate-id with arity of 0 not registered. No similar functions found.
 generate-id-020,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 generate-id-021,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
-generate-id-022,Error: No selector counterpart for: computedTextConstructor.
-generate-id-023,Error: No selector counterpart for: computedTextConstructor.
+generate-id-022,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
+generate-id-023,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 generate-id-901,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XPST0017: Function generate-id with arity of 0 not registered. No similar functions found.'
 generate-id-902,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.'
 generate-id-903,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.'
@@ -1544,7 +1544,6 @@ op-divide-dayTimeDuration-by-dTD-1,AssertionError: Expected executing the XPath 
 cbcl-divide-yearMonthDuration-by-yearMonthDuration-001,AssertionError: expected [Function] to throw an error
 distinct-duration-equal-1,AssertionError: Expected executing the XPath "fn:distinct-values((xs:yearMonthDuration('P0Y'), xs:dayTimeDuration('P0D')))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found..
 distinct-duration-equal-2,AssertionError: Expected executing the XPath "fn:distinct-values((xs:yearMonthDuration('P1Y'), xs:dayTimeDuration('P365D')))" to resolve to one of the expected results, but got Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found., Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found..
-K2-SeqExcept-25,Error: No selector counterpart for: computedTextConstructor.
 combiningnodeseqexcepthc4,Error: Not implemented: orderByClause is not implemented yet.
 combiningnodeseqexcepthc5,Error: Not implemented: orderByClause is not implemented yet.
 combiningnodeseqexcepthc6,Error: Not implemented: orderByClause is not implemented yet.
@@ -1969,7 +1968,6 @@ rangeExpr-31,AssertionError: Expected executing the XPath "((2844674407370955161
 rangeExpr-32,AssertionError: Expected executing the XPath "reverse(28446744073709551616 to 28446744073709551620)" to resolve to one of the expected results, but got AssertionError: reverse(28446744073709551616 to 28446744073709551620): expected '28446744073709550000' to equal '28446744073709551620 28446744073709551619 28446744073709551618 28446744073709551617 28446744073709551616', AssertionError: expected [Function] to throw an error.
 K-RangeExpr-31,Error: No selector counterpart for: treatExpr.
 K-RangeExpr-32,Error: No selector counterpart for: treatExpr.
-K2-SeqUnion-29,Error: No selector counterpart for: computedTextConstructor.
 combiningnodeseqhc1,Error: Not implemented: orderByClause is not implemented yet.
 combiningnodeseqhc2,Error: Not implemented: orderByClause is not implemented yet.
 combiningnodeseqhc3,Error: Not implemented: orderByClause is not implemented yet.
