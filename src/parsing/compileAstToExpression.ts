@@ -61,7 +61,7 @@ import TransformExpression from '../expressions/xquery-update/TransformExpressio
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import PossiblyUpdatingExpression from '../expressions/PossiblyUpdatingExpression';
-import WhereExpression from '../expressions/whereExpression';
+import WhereExpression from '../expressions/WhereExpression';
 
 const COMPILATION_OPTIONS = {
 	XPATH_MODE: { allowXQuery: false, allowUpdating: false },
@@ -456,22 +456,21 @@ function whereClause(
 }
 
 function flworExpression(ast: IAST, compilationOptions: CompilationOptions) {
-	const [initialClause, ...intermediateClausesAndReturnClause] = astHelper.getChildren(ast, '*');
+	const clausesAndReturnClause = astHelper.getChildren(ast, '*');
 	const returnClauseExpression = astHelper.getFirstChild(
-		intermediateClausesAndReturnClause[intermediateClausesAndReturnClause.length - 1],
+		clausesAndReturnClause[clausesAndReturnClause.length - 1],
 		'*'
 	);
-	const intermediateClauses = intermediateClausesAndReturnClause.slice(0, -1);
+
+	// Return intermediate and initial clauses handling
+	const clauses = clausesAndReturnClause.slice(0, -1);
 
 	// We have to check if there are any intermediate clauses before compiling them.
-	if (intermediateClauses.length) {
+	if (clauses.length > 1) {
 		if (!compilationOptions.allowXQuery) {
 			throw new Error('XPST0003: Use of XQuery FLWOR expressions in XPath is no allowed');
 		}
 	}
-
-	// Return clauses handling
-	const clauses = astHelper.getChildren(ast, '*').slice(0, -1);
 
 	return clauses.reduceRight(
 		(returnOfPreviousExpression: Expression, flworExpressionClause: IAST) => {
