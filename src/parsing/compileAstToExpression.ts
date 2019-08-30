@@ -1046,25 +1046,25 @@ function dirElementConstructor(ast, compilationOptions) {
 	const attList = astHelper.getFirstChild(ast, 'attributeList');
 	const attributes = attList
 		? astHelper
-			.getChildren(attList, 'attributeConstructor')
-			.map(attr => compile(attr, disallowUpdating(compilationOptions)))
+				.getChildren(attList, 'attributeConstructor')
+				.map(attr => compile(attr, disallowUpdating(compilationOptions)))
 		: [];
 
 	const namespaceDecls = attList
 		? astHelper.getChildren(attList, 'namespaceDeclaration').map(namespaceDecl => {
-			const prefixElement = astHelper.getFirstChild(namespaceDecl, 'prefix');
-			return {
-				prefix: prefixElement ? astHelper.getTextContent(prefixElement) : '',
-				uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
-			};
-		})
+				const prefixElement = astHelper.getFirstChild(namespaceDecl, 'prefix');
+				return {
+					prefix: prefixElement ? astHelper.getTextContent(prefixElement) : '',
+					uri: astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'uri'))
+				};
+		  })
 		: [];
 
 	const content = astHelper.getFirstChild(ast, 'elementContent');
 	const contentExpressions = content
 		? astHelper
-			.getChildren(content, '*')
-			.map(child => compile(child, disallowUpdating(compilationOptions)))
+				.getChildren(content, '*')
+				.map(child => compile(child, disallowUpdating(compilationOptions)))
 		: [];
 
 	return new ElementConstructor(
@@ -1090,8 +1090,8 @@ function attributeConstructor(ast, compilationOptions) {
 	const attrValueExprElement = astHelper.getFirstChild(ast, 'attributeValueExpr');
 	const attrValueExpressions = attrValueExprElement
 		? astHelper
-			.getChildren(attrValueExprElement, '*')
-			.map(expr => compile(expr, disallowUpdating(compilationOptions)))
+				.getChildren(attrValueExprElement, '*')
+				.map(expr => compile(expr, disallowUpdating(compilationOptions)))
 		: null;
 	return new AttributeConstructor(attrName, {
 		value: attrValue,
@@ -1164,8 +1164,8 @@ function computedElementConstructor(ast, compilationOptions) {
 	const content = astHelper.getFirstChild(ast, 'contentExpr');
 	const contentExpressions = content
 		? astHelper
-			.getChildren(content, '*')
-			.map(child => compile(child, disallowUpdating(compilationOptions)))
+				.getChildren(content, '*')
+				.map(child => compile(child, disallowUpdating(compilationOptions)))
 		: [];
 
 	return new ElementConstructor(name, [], [], contentExpressions);
@@ -1184,17 +1184,17 @@ function computedPIConstructor(ast, compilationOptions) {
 		{
 			targetExpr: targetExpr
 				? compile(
-					astHelper.getFirstChild(targetExpr, '*'),
-					disallowUpdating(compilationOptions)
-				)
+						astHelper.getFirstChild(targetExpr, '*'),
+						disallowUpdating(compilationOptions)
+				  )
 				: null,
 			targetValue: target ? astHelper.getTextContent(target) : null
 		},
 		piValueExpr
 			? compile(
-				astHelper.getFirstChild(piValueExpr, '*'),
-				disallowUpdating(compilationOptions)
-			)
+					astHelper.getFirstChild(piValueExpr, '*'),
+					disallowUpdating(compilationOptions)
+			  )
 			: new SequenceOperator([])
 	);
 }
@@ -1336,6 +1336,6 @@ function typeswitchExpr(ast: IAST, compilationOptions: CompilationOptions) {
 
 type CompilationOptions = { allowUpdating?: boolean; allowXQuery?: boolean };
 
-export default function (xPathAst: IAST, compilationOptions: CompilationOptions): Expression {
+export default function(xPathAst: IAST, compilationOptions: CompilationOptions): Expression {
 	return compile(xPathAst, compilationOptions);
 }
