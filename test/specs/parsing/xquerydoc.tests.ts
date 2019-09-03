@@ -9,8 +9,8 @@ beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe('xquerydoc', () => {
-	it.only('run xQueryDoc file', () => {
+describe.only('xquerydoc', () => {
+	it('run xQueryDoc file', () => {
 		// xQueryML30
 		registerXQueryModule(
 			fs.readFileSync('test/specs/parsing/xquerydocument/XQueryML30.xq', 'utf8')

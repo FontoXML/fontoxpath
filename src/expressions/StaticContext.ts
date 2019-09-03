@@ -61,6 +61,12 @@ export default class StaticContext {
 
 		// Functions may never be added for only a closure
 		this._registeredFunctionsByHash = Object.create(null);
+		// We need to add this field to the IContext class, and default it properly there/at other places
+		if (parentContext instanceof StaticContext) {
+			// hack, for now
+			this.registeredDefaultFunctionNamespace = parentContext.registeredDefaultFunctionNamespace;
+		}
+		// NO, it is NOT here!!!!!!!!
 	}
 
 	/**

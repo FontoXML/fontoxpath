@@ -192,7 +192,8 @@ export default function processProlog(
 			allowXQuery: true
 		});
 
-		const staticContextLeaf = new StaticContext(staticContext);
+		// Or do this:
+		const staticContextLeaf = staticContext.cloneContext();
 		const parameterBindingNames = paramNames.map(param => {
 			let namespaceURI = astHelper.getAttribute(param, 'URI');
 			const prefix = astHelper.getAttribute(param, 'prefix');
@@ -304,7 +305,7 @@ export default function processProlog(
 		) {
 			throw new Error(
 				`XQST0049: The variable ${
-					declarationNamespaceURI ? `Q{${declarationNamespaceURI}}` : ''
+				declarationNamespaceURI ? `Q{${declarationNamespaceURI}}` : ''
 				}${varName.localName} has already been declared.`
 			);
 		}
