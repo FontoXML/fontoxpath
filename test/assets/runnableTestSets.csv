@@ -105,7 +105,7 @@ fn-id,true
 fn-idref,true
 fn-implicit-timezone,true
 fn-in-scope-prefixes,false
-fn-index-of,false
+fn-index-of,true
 fn-innermost,true
 fn-insert-before,true
 fn-iri-to-uri,false

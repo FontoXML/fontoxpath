@@ -7,6 +7,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import Value from '../dataTypes/Value';
+import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -287,6 +288,23 @@ const fnUnordered: FunctionDefinitionType = (
 	sequence
 ) => {
 	return sequence;
+};
+
+const fnIndexOf: FunctionDefinitionType = (
+	dynamicContext,
+	_executionParameters,
+	_staticContext,
+	sequence,
+	search
+) => {
+	// This should work
+	// I've a question, can we enable the index-of tests on the runnableTestSets file? yeah!
+
+	return search.mapAll(([onlySearchValue]) => sequence.map((element, i) => {
+		return valueCompare('eqOp', element, onlySearchValue, dynamicContext) ? createAtomicValue(i + 1, 'xs:integer') : createAtomicValue(-1, 'xs:integer');
+	}).filter((indexValue) => {
+		return indexValue.value !== -1;
+	}));
 };
 
 const fnDeepEqual: FunctionDefinitionType = (
@@ -792,6 +810,24 @@ export default {
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
 			callFunction: fnUnordered
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'index-of',
+			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType'],
+			returnType: 'xs:integer*',
+			callFunction: fnIndexOf
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'index-of',
+			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType', 'xs:string'],
+			returnType: 'xs:integer*',
+			callFunction() {
+				throw new Error('FOCH0002: No collations are supported');
+			}
 		},
 
 		{

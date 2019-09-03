@@ -107,7 +107,7 @@ describe('varRef', () => {
 				['val', 'val']
 			));
 
-		it.only('can read variables with namespaces in a prolog', () =>
+		it('can read variables with namespaces in a prolog', () =>
 			chai.assert.deepEqual(
 				evaluateXPathToString(
 					`declare namespace XXX = "YYY";

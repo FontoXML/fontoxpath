@@ -10,7 +10,7 @@ beforeEach(() => {
 });
 
 describe('xquerydoc', () => {
-	it('Doing stuff', () => {
+	it.only('run xQueryDoc file', () => {
 		// xQueryML30
 		registerXQueryModule(
 			fs.readFileSync('test/specs/parsing/xquerydocument/XQueryML30.xq', 'utf8')
@@ -187,7 +187,7 @@ describe('xquerydoc', () => {
 			`);
 
 		evaluateXPath(
-			`import module xquery-docs = ""; xquegenerate-docs("let $a := 4;")`,
+			`import module xquery-docs = "http://github.com/xquery/xquerydoc"; xquery-docs:generate-docs("let $a := 4 return $a")`,
 			null,
 			null,
 			null,

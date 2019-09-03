@@ -150,7 +150,7 @@ fn-ceilingnni1args-2,Error: FOCA0003: can not cast 303884545991464527 to xs:inte
 fn-ceilingnni1args-3,Error: FOCA0003: can not cast 999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-ceiling-1,Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 fn-codepoint-equal-22,Error: XPST0017: Function normalize-unicode with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}normalize-space (xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}normalize-space ()" or "Q{http://www.w3.org/2001/XMLSchema}normalizedString (xs:anyAtomicType?)"?
-cbcl-codepoint-equal-006,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
+cbcl-codepoint-equal-006,Error: XPTY0004: eq not available for xs:boolean and xs:boolean
 cbcl-codepoints-to-string-015,AssertionError: Expected XPath deep-equal( fn:string-to-codepoints(fn:codepoints-to-string(65536 to 66000)), 65536 to 66000 ) to resolve to true: expected false to be true
 cbcl-codepoints-to-string-016,AssertionError: Expected XPath deep-equal( fn:string-to-codepoints(fn:codepoints-to-string(65536 to 100000)), 65536 to 100000 ) to resolve to true: expected false to be true
 fn-concatintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -216,7 +216,7 @@ K2-ContainsFunc-5,Error: No selector counterpart for: treatExpr.
 K2-ContainsFunc-6,Error: No selector counterpart for: treatExpr.
 cbcl-contains-001,Error: FOCH0002: No collations are supported
 cbcl-contains-002,Error: FOCH0002: No collations are supported
-cbcl-contains-003,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
+cbcl-contains-003,Error: FOCH0002: No collations are supported
 liam-contains-001,Error: FOCH0002: No collations are supported
 liam-contains-002,Error: FOCH0002: No collations are supported
 liam-contains-003,Error: FOCH0002: No collations are supported
@@ -250,8 +250,8 @@ fn-dateTime-24,Error: Not implemented: adding durations to xs:dateTime
 fn-dateTime-25,Error: Not implemented: adding durations to xs:dateTime
 fn-dateTime-26,Error: Not implemented: subtracting durations from xs:dateTime
 fn-dateTime-27,Error: Not implemented: subtracting durations from xs:dateTime
-cbcl-dateTime-001,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
-cbcl-dateTime-002,AssertionError: expected [Function] to throw error matching /FORG0008/ but got 'XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.'
+cbcl-dateTime-001,Error: XPTY0004: eq not available for xs:string and xs:dateTime
+cbcl-dateTime-002,AssertionError: expected [Function] to throw error matching /FORG0008/ but got 'XPST0017: Function adjust-date-to-timezone with arity of 2 not registered. No similar functions found.'
 fn-day-from-dateTime-3,Error: XPST0017: Function fn:adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-deep-equalintg2args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-deep-equalintg2args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -291,10 +291,10 @@ fn-deep-equal-maps-14,Error: FOCH0002: No collations are supported
 fn-deep-equal-maps-16,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 fn-deep-equal-maps-17,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 K-SeqDeepEqualFunc-6,Error: FOCH0002: No collations are supported
-K-SeqDeepEqualFunc-32,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-K-SeqDeepEqualFunc-33,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-K-SeqDeepEqualFunc-34,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-K-SeqDeepEqualFunc-35,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
+K-SeqDeepEqualFunc-32,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqDeepEqualFunc-33,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqDeepEqualFunc-34,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqDeepEqualFunc-35,Error: XPTY0004: eq not available for xs:integer and xs:integer
 K-SeqDeepEqualFunc-56,Error: FOCH0002: No collations are supported
 K-SeqDeepEqualFunc-57,Error: FOCH0002: No collations are supported
 K-SeqDeepEqualFunc-58,Error: FOCH0002: No collations are supported
@@ -537,10 +537,8 @@ fn-function-lookup-315,AssertionError: Expected XPath exists(function-lookup(fn:
 fn-function-lookup-316,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-317,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'distinct-values'), 2)) to resolve to true: expected false to be true
 fn-function-lookup-318,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
-fn-function-lookup-319,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'index-of'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-320,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
-fn-function-lookup-321,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'index-of'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-322,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-320,Error: XPTY0004: eq not available for xs:integer and xs:string
+fn-function-lookup-322,Error: FOCH0002: No collations are supported
 fn-function-lookup-326,Error: FOCH0002: No collations are supported
 fn-function-lookup-340,Error: FOCH0002: No collations are supported
 fn-function-lookup-344,Error: FOCH0002: No collations are supported
@@ -636,7 +634,7 @@ fn-function-lookup-759,AssertionError: Expected XPath exists(function-lookup(fn:
 fn-function-lookup-760,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-761,AssertionError: expected [Function] to throw error matching /FOQM0006/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
 fn-function-lookup-762,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'load-xquery-module'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-763,Error: Not implemented: references to variables with a namespace URI or a prefix.
+fn-function-lookup-763,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
 fn-function-lookup-764,AssertionError: expected [Function] to throw error matching /FOQM0006/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
 fn-function-lookup-765,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'transform'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-766a,Error: XPST0017: Function doc with arity of 1 not registered. No similar functions found.
@@ -729,6 +727,49 @@ fn-innermost-008,AssertionError: expected [Function] to throw an error
 fn-innermost-010,AssertionError: expected [Function] to throw an error
 fn-innermost-055,Error: Not implemented: orderByClause is not implemented yet.
 fn-innermost-056,Error: Not implemented: orderByClause is not implemented yet.
+fn-indexof-mix-args-001,Error: XPTY0004: eq not available for xs:integer and xs:integer
+fn-indexof-mix-args-002,Error: XPTY0004: eq not available for xs:integer and xs:integer
+fn-indexof-mix-args-003,Error: XPTY0004: eq not available for xs:string and xs:string
+fn-indexof-mix-args-004,Error: XPTY0004: eq not available for xs:string and xs:string
+fn-indexof-mix-args-006,Error: XPTY0004: eq not available for xs:string and xs:string
+fn-indexof-mix-args-008,Error: XPTY0004: eq not available for xs:float and xs:float
+fn-indexof-mix-args-009,Error: XPTY0004: eq not available for xs:double and xs:double
+fn-indexof-mix-args-010,Error: XPTY0004: eq not available for xs:double and xs:double
+fn-indexof-mix-args-011,Error: XPTY0004: eq not available for xs:double and xs:double
+fn-indexof-mix-args-012,Error: XPTY0004: eq not available for xs:decimal and xs:decimal
+fn-indexof-mix-args-013,Error: XPTY0004: eq not available for xs:decimal and xs:decimal
+fn-indexof-mix-args-014,Error: XPTY0004: eq not available for xs:positiveInteger and xs:positiveInteger
+fn-indexof-mix-args-015,Error: XPTY0004: eq not available for xs:negativeInteger and xs:negativeInteger
+fn-indexof-mix-args-016,Error: XPTY0004: eq not available for xs:integer and xs:integer
+fn-indexof-mix-args-017,Error: XPTY0004: eq not available for xs:integer and xs:integer
+fn-indexof-mix-args-018,Error: XPTY0004: eq not available for xs:string and xs:string
+fn-indexof-mix-args-019,Error: XPTY0004: eq not available for xs:string and xs:string
+fn-indexof-mix-args-020,Error: XPTY0004: eq not available for xs:string and xs:string
+fn-indexof-mix-args-021,Error: XPTY0004: eq not available for xs:string and xs:string
+K-SeqIndexOfFunc-6,Error: FOCH0002: No collations are supported
+K-SeqIndexOfFunc-7,Error: XPTY0004: eq not available for xs:double and xs:float
+K-SeqIndexOfFunc-8,Error: XPTY0004: eq not available for xs:float and xs:double
+K-SeqIndexOfFunc-9,Error: XPTY0004: eq not available for xs:float and xs:float
+K-SeqIndexOfFunc-10,Error: XPTY0004: eq not available for xs:double and xs:double
+K-SeqIndexOfFunc-11,Error: XPTY0004: eq not available for xs:integer and xs:string
+K-SeqIndexOfFunc-12,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-14,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-15,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-16,Error: XPTY0004: eq not available for xs:anyURI and xs:hexBinary
+K-SeqIndexOfFunc-17,Error: XPTY0004: eq not available for xs:anyURI and xs:anyURI
+K-SeqIndexOfFunc-18,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-19,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-20,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-21,Error: XPTY0004: eq not available for xs:string and xs:string
+K-SeqIndexOfFunc-22,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-23,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-24,Error: XPTY0004: eq not available for xs:integer and xs:integer
+K-SeqIndexOfFunc-25,Error: XPTY0004: eq not available for xs:integer and xs:integer
+cbcl-fn-indexof-1,Error: XPTY0004: eq not available for xs:integer and xs:integer
+cbcl-fn-indexof-2,Error: XPTY0004: eq not available for xs:integer and xs:integer
+cbcl-fn-indexof-3,Error: XPTY0004: eq not available for xs:integer and xs:integer
+cbcl-fn-indexof-4,Error: XPTY0004: eq not available for xs:integer and xs:integer
+cbcl-fn-indexof-5,Error: XPTY0004: eq not available for xs:integer and xs:integer
 K-SeqInsertBeforeFunc-16,AssertionError: Expected executing the XPath "count(insert-before((error(), 1), 1, (1, "two", 3))) > 1" to resolve to one of the expected results, but got Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?, AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
 K-SeqInsertBeforeFunc-17,Error: No selector counterpart for: treatExpr.
 K-SeqInsertBeforeFunc-18,Error: No selector counterpart for: treatExpr.
@@ -2234,9 +2275,6 @@ cbcl-cast-gYearMonth-003,AssertionError: expected [Function] to throw an error
 XQueryComment014,Error: XPST0003: Unable to parse: "(: Name: XQueryComment014 :) (: Description: Comments inside a cast expression :)   "10" cast as (: type comment :) xs:integer ?   = 10". Expected " ", "!=", "(:", "*", "+", ",", "-", "<", "<<", "<=", "=", ">", ">=", ">>", "\n", "\r", "\t", "and", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", or end of input but "?" found. (: Name: XQueryComment014 :) (: Description: Comments inside a cast expression :)   "10" cast as (: type comment :) xs:integer [Error is around here]?   = 10
 Constr-compattr-data-1,Error: XPST0017: Function fn:data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
 Constr-compattr-id-2,AssertionError: Expected executing the XPath "element elem {attribute xml:id {" ab c d "}}" to resolve to one of the expected results, but got AssertionError: Expected XPath element elem {attribute xml:id {" ab c d "}} to resolve to the given XML. Expected <elem xml:id=" ab c d "/> to equal <elem xml:id="ab c d"/>, AssertionError: expected [Function] to throw an error.
-K2-ComputeConAttr-28,AssertionError: expected [Function] to throw error matching /XQTY0024/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-ComputeConAttr-29,AssertionError: expected [Function] to throw error matching /XQTY0024/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-ComputeConAttr-30,Error: Not implemented: references to variables with a namespace URI or a prefix.
 K2-ComputeConAttr-34,AssertionError: Expected XPath <e> { attribute name {xs:hexBinary("ff")}, attribute name2 {"content"} } </e> to resolve to the given XML. Expected <e name="ff" name2="content"/> to equal <e name="FF" name2="content"/>
 K2-ComputeConAttr-46,AssertionError: expected [Function] to throw error matching /XQDY0044/ but got 'Not Implemented: default namespace element.'
 K2-ComputeConAttr-47,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
@@ -2577,7 +2615,7 @@ K2-DirectConElemNamespace-29,Error: XPST0081: The type p:integer could not be fo
 K2-DirectConElemNamespace-30,Error: No selector counterpart for: treatExpr.
 K2-DirectConElemNamespace-31,Error: XPST0081: Can not cast: type p:string is unknown.
 K2-DirectConElemNamespace-32,AssertionError: Expected XPath <e a="{1 castable as p:string}" xmlns:p="http://www.w3.org/2001/XMLSchema"/> to resolve to the given XML. Expected <e a="false"/> to equal <e xmlns:p="http://www.w3.org/2001/XMLSchema" a="true"/>
-K2-DirectConElemNamespace-33,Error: Not implemented: references to variables with a namespace URI or a prefix.
+K2-DirectConElemNamespace-33,Error: Not implemented: let expressions with namespace usage.
 K2-DirectConElemNamespace-39,Error: No selector counterpart for: computedDocumentConstructor.
 K2-DirectConElemNamespace-41,Error: Not implemented: orderByClause is not implemented yet.
 K2-DirectConElemNamespace-49,Error: Not Implemented: default namespace element.
@@ -2656,20 +2694,17 @@ K2-DirectConElemWhitespace-5,Error: Not implemented: only module imports, namesp
 K2-DirectConElemWhitespace-6,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-DirectConElemWhitespace-7,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-DirectConElemWhitespace-8,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-eqname-002,Error: Not implemented: references to variables with a namespace URI or a prefix.
 eqname-004,Error: XPST0081: The type :integer could not be found.
 eqname-006,Error: No selector counterpart for: extensionExpr.
 eqname-007,Error: XPST0003: Unable to parse: "         declare decimal-format Q{http://www.example.com/ns}format grouping-separator="'";          <a xmlns:ex="http://www.example.com/ns">{format-number(1e9, "#'###'###'##0.00", 'ex:format')}</a>       ". Expected " ", "(:", "\n", "\r", or "\t" but "=" found.          declare decimal-format Q{http://www.example.com/ns}format grouping-separator[Error is around here]="'";          <a xmlns:ex="http://www.example.com/ns">{format-number(1e9, "#'###'###'##0.00", 'ex:format')}</a>
 eqname-008,AssertionError: Expected XPath <out>{ (<a xmlns:ex="http://www.example.com/ns"><ex:b>93.7</ex:b></a>) /Q{http://www&#x2e;example&#x2E;com/ns}b }</out> to resolve to the given XML. Expected <out/> to equal <out><ex:b xmlns:ex="http://www.example.com/ns">93.7</ex:b></out>
-eqname-015,Error: Not implemented: references to variables with a namespace URI or a prefix.
 eqname-017,AssertionError: Expected XPath string-join(<a foo="3" bar="5" xml:space="preserve"/> / @Q{http://www.w3.org/XML/1998/namespace}*, '.') to resolve to "preserve": expected false to be true
-eqname-024,Error: Not implemented: references to variables with a namespace URI or a prefix.
+eqname-024,Error: XPST0008, The variable x is not in scope.
 eqname-029,Error: XPST0017: Function Q{http:&#x2F;&#x2F;www.w3.org&#x2F;2005&#x2F;xpath-functions&#x2F;math}pi with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/math}pi ()"?
-eqname-030,Error: Not implemented: references to variables with a namespace URI or a prefix.
-eqname-031,Error: Not implemented: references to variables with a namespace URI or a prefix.
-eqname-032,Error: Not implemented: references to variables with a namespace URI or a prefix.
-eqname-033,Error: Not implemented: references to variables with a namespace URI or a prefix.
-eqname-034,AssertionError: Expected executing the XPath "          let $Q{$Q}a := 12, $Q{//}a := 13, $Q{*}a := 14          return $Q{$Q}a + $Q{//}a + $Q{*}a       " to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'Not implemented: references to variables with a namespace URI or a prefix.', Error: Not implemented: references to variables with a namespace URI or a prefix..
+eqname-031,Error: Not implemented: let expressions with namespace usage.
+eqname-032,Error: Not implemented: let expressions with namespace usage.
+eqname-033,Error: Not implemented: let expressions with namespace usage.
+eqname-034,AssertionError: Expected executing the XPath "          let $Q{$Q}a := 12, $Q{//}a := 13, $Q{*}a := 14          return $Q{$Q}a + $Q{//}a + $Q{*}a       " to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'Not implemented: let expressions with namespace usage.', Error: Not implemented: let expressions with namespace usage..
 eqname-910,AssertionError: expected [Function] to throw an error
 eqname-913,AssertionError: expected [Function] to throw an error
 ForExpr006,Error: XPST0017: Function data with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}date (xs:anyAtomicType?)"?
@@ -2678,15 +2713,9 @@ ForExpr023,Error: XPST0008, The variable pos is not in scope.
 ForExpr024,AssertionError: expected [Function] to throw an error
 ForExpr031,AssertionError: expected [Function] to throw an error
 ForExpr032,Error: XPST0008, The variable i is not in scope.
-K-ForExprWithout-24,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-ForExprWithout-25,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-ForExprWithout-27,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-28,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-30,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-31,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-33,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-34,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-ForExprWithout-51,Error: Not implemented: references to variables with a namespace URI or a prefix.
+K-ForExprWithout-27,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0008, The variable NOTEXIST is not in scope.'
+K-ForExprWithout-30,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0008, The variable NOTEXIST is not in scope.'
+K-ForExprWithout-33,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0008, The variable NOTEXIST is not in scope.'
 K2-ForExprWithout-9,Error: XPST0008, The variable pos1 is not in scope.
 K2-ForExprWithout-10,AssertionError: Expected executing the XPath "         for $a in (3, 2, 1)          for $b in (6, 5, 4)          let $c := $a + $b          let $d := $a - $b          let $e := () stable order by $a ascending, $b descending, $d empty greatest, $e empty least, $c descending empty greatest, $d ascending empty greatest, $e descending empty least, $b ascending empty least          return $a" to resolve to one of the expected results, but got Error: Not implemented: orderByClause is not implemented yet., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'Not implemented: orderByClause is not implemented yet.'.
 K2-ForExprWithout-11,Error: Not implemented: orderByClause is not implemented yet.
@@ -2740,10 +2769,8 @@ K2-FunctionCallExpr-12,Error: XPST0017: Function matches with arity of 2 not reg
 cbcl-promotion-002,Error: XPST0008, The variable p is not in scope.
 cbcl-promotion-003,Error: XPST0008, The variable p is not in scope.
 cbcl-promotion-005,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0008, The variable p is not in scope.'
-cbcl-promotion-006,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function index-of with arity of 2 not registered. No similar functions found.'
 function-call-reserved-function-names-034,AssertionError: expected [Function] to throw error matching /XPST0017/ but got 'XPST0003: Unable to parse: "\n\tnamespace-node(1)\n      ".\nExpected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.\n\n\tnamespace-node[Error is around here](1)\n      '
 function-declaration-004,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
-function-declaration-008,Error: Not implemented: references to variables with a namespace URI or a prefix.
 function-declaration-017,Error: Not Implemented: default namespace element.
 function-declaration-018,Error: Not Implemented: default namespace element.
 function-declaration-019,Error: Not Implemented: default namespace element.
@@ -2751,20 +2778,15 @@ function-declaration-022,AssertionError: expected [Function] to throw error matc
 function-declaration-024,AssertionError: expected [Function] to throw an error
 function-declaration-028,Error: XPST0003: Unable to parse: "(          declare function local:function() { };          local:function()) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. (          declare [Error is around here]function local:function() { };          local:function()) => empty()
 function-declaration-029,Error: XPST0003: Unable to parse: "(          declare function local:function($x) { (:there is nothing here:) };          local:function(3)) => empty()". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. (          declare [Error is around here]function local:function($x) { (:there is nothing here:) };          local:function(3)) => empty()
-K-FunctionProlog-25,Error: Not implemented: references to variables with a namespace URI or a prefix.
 K-FunctionProlog-26,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w3.org/2005/xquery-local-functions}myName#0 has already been declared.'
 K-FunctionProlog-27,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w3.org/2005/xquery-local-functions}myName#0 has already been declared.'
 K-FunctionProlog-28,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w3.org/2005/xquery-local-functions}myName#1 has already been declared.'
 K-FunctionProlog-29,AssertionError: expected [Function] to throw error matching /XQST0034/ but got 'XQST0049: The function Q{http://www.w3.org/2005/xquery-local-functions}myName#1 has already been declared.'
-K-FunctionProlog-39,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-FunctionProlog-40,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-FunctionProlog-41,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K-FunctionProlog-42,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
 K-FunctionProlog-46,AssertionError: Expected executing the XPath "         declare function local:myFunction($arg as empty-sequence()) { $arg };         local:myFunction(1)" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw an error, AssertionError: expected [Function] to throw an error.
 K-FunctionProlog-50,AssertionError: expected [Function] to throw an error
 K-FunctionProlog-52,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function fn:error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
-K-FunctionProlog-53,AssertionError: Expected executing the XPath "declare namespace my = "http://example.com/MyNamespace/";         declare variable $my:error-qname := QName("http:example.org/", "prefix:ncname");         declare function my:error($choice, $msg as xs:string) as empty-sequence() { if($choice) then error($my:error-qname, concat('No luck: ', $msg)) else () };         empty((my:error(false(), "msg"), my:error(false(), "The message")))" to resolve to one of the expected results, but got Error: Not implemented: references to variables with a namespace URI or a prefix., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'.
-K-FunctionProlog-56,AssertionError: Expected executing the XPath "declare namespace my = "http://example.com/MyNamespace/";         declare variable $my:error-qname := QName("http://example.com/MyErrorNS", "my:qName");         declare function my:error($choice, $msg as xs:string) as empty-sequence() { if($choice) then error($my:error-qname, concat('No luck: ', $msg)) else () };         empty((my:error(false(), "msg"), my:error(false(), "The message")))" to resolve to one of the expected results, but got Error: Not implemented: references to variables with a namespace URI or a prefix., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'.
+K-FunctionProlog-53,AssertionError: Expected executing the XPath "declare namespace my = "http://example.com/MyNamespace/";         declare variable $my:error-qname := QName("http:example.org/", "prefix:ncname");         declare function my:error($choice, $msg as xs:string) as empty-sequence() { if($choice) then error($my:error-qname, concat('No luck: ', $msg)) else () };         empty((my:error(false(), "msg"), my:error(false(), "The message")))" to resolve to one of the expected results, but got Error: XPST0017: Function error with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?, AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'XPST0017: Function error with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
+K-FunctionProlog-56,AssertionError: Expected executing the XPath "declare namespace my = "http://example.com/MyNamespace/";         declare variable $my:error-qname := QName("http://example.com/MyErrorNS", "my:qName");         declare function my:error($choice, $msg as xs:string) as empty-sequence() { if($choice) then error($my:error-qname, concat('No luck: ', $msg)) else () };         empty((my:error(false(), "msg"), my:error(false(), "The message")))" to resolve to one of the expected results, but got Error: XPST0017: Function error with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?, AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'XPST0017: Function error with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
 K-FunctionProlog-57,AssertionError: expected [Function] to throw error matching /XPST0051/ but got 'XPST0081: The type :none could not be found.'
 K-FunctionProlog-65,AssertionError: Expected executing the XPath "         declare function local:myFunction() as empty-sequence() { fn:error() };         QName("http://example.com/ANamespace", local:myFunction())" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function fn:error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?', AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function fn:error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
 K-FunctionProlog-66,AssertionError: Expected executing the XPath "         declare function local:myFunction() { fn:error() };         QName("http://example.com/ANamespace", local:myFunction())" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function fn:error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?', AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function fn:error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
@@ -2977,10 +2999,8 @@ function-literal-315,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-fu
 function-literal-316,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}distinct-values with arity of 1 not registered. No similar functions found.
 function-literal-317,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}distinct-values with arity of 2 not registered. No similar functions found.
 function-literal-318,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}distinct-values with arity of 2 not registered. No similar functions found.
-function-literal-319,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}index-of with arity of 2 not registered. No similar functions found.
-function-literal-320,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}index-of with arity of 2 not registered. No similar functions found.
-function-literal-321,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}index-of with arity of 3 not registered. No similar functions found.
-function-literal-322,Error: XPST0017: Function Q{http://www.w3.org/2005/xpath-functions}index-of with arity of 3 not registered. No similar functions found.
+function-literal-320,Error: XPTY0004: eq not available for xs:integer and xs:string
+function-literal-322,Error: FOCH0002: No collations are supported
 function-literal-326,Error: FOCH0002: No collations are supported
 function-literal-340,Error: FOCH0002: No collations are supported
 function-literal-344,Error: FOCH0002: No collations are supported
@@ -3362,10 +3382,6 @@ cbcl-first-in-sequence-004,Error: XPST0008, The variable p is not in scope.
 cbcl-first-in-sequence-005,Error: XPST0008, The variable p is not in scope.
 K-QuantExprWithout-7,Error: No selector counterpart for: treatExpr.
 K-QuantExprWithout-8,Error: No selector counterpart for: treatExpr.
-K-QuantExprWithout-56,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-QuantExprWithout-57,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-QuantExprWithout-58,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K-QuantExprWithout-59,Error: Not implemented: references to variables with a namespace URI or a prefix.
 K-QuantExprWith-9,AssertionError: expected [Function] to throw an error
 K-QuantExprWith-10,AssertionError: expected [Function] to throw an error
 K-QuantExprWith-11,AssertionError: expected [Function] to throw an error
@@ -3528,24 +3544,19 @@ VarDecl046,Error: Not implemented: adding durations to xs:date
 VarDecl048,Error: Not implemented: adding durations to xs:time
 VarDecl059,Error: No selector counterpart for: computedDocumentConstructor.
 vardeclerr-1,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
-K2-InternalVariablesWithout-1a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-1b,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K2-InternalVariablesWithout-1c,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-2a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-3a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-4a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-5a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-6a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-7a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-8a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-9a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-K2-InternalVariablesWithout-10,Error: Not implemented: references to variables with a namespace URI or a prefix.
-K2-InternalVariablesWithout-13,Error: Not implemented: references to variables with a namespace URI or a prefix.
+K2-InternalVariablesWithout-1a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+K2-InternalVariablesWithout-1c,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+K2-InternalVariablesWithout-2a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+K2-InternalVariablesWithout-3a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+K2-InternalVariablesWithout-5a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+K2-InternalVariablesWithout-6a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+K2-InternalVariablesWithout-7a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+K2-InternalVariablesWithout-8a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
+K2-InternalVariablesWithout-9a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
 vardeclwithtype-6,AssertionError: declare variable $var as xs:float := xs:float(12.5E10); $var: expected '125000000000' to equal '1.25E11'
 vardeclwithtype-7,AssertionError: declare variable $var as xs:double := xs:double(1267.43233E12); $var: expected '1267432330000000' to equal '1.26743233E15'
 vardeclwithtype-13,AssertionError: expected [Function] to throw an error
-vardeclwithtype-16,Error: Not implemented: references to variables with a namespace URI or a prefix.
-vardeclwithtype-17,Error: XQST0049: The variable var has already been declared.
+vardeclwithtype-18,AssertionError: expected [Function] to throw an error
 internalvar-1,Error: XPST0003: Unable to parse: "declare(::)variable(::)$var(::)as(::)item((: :))*(::):=(::)1(::);(::) 1(::)eq(::)1(::)". Expected " ", "(:", "*", "+", ":", ":=", "?", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "(" found. declare(::)variable(::)$var(::)as(::)item[Error is around here]((: :))*(::):=(::)1(::);(::) 1(::)eq(::)1(::)
 K-InternalVariablesWith-1,Error: XPST0003: Unable to parse: "declare(::)variable(::)$local:var(::)as(::)item((: :))* :=3(::);(::)1(::)eq(::)1". Expected " ", "(:", "*", "+", ":", ":=", "?", "\n", "\r", "\t", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "(" found. declare(::)variable(::)$local:var(::)as(::)item[Error is around here]((: :))* :=3(::);(::)1(::)eq(::)1
 K-InternalVariablesWith-5,AssertionError: expected [Function] to throw an error
@@ -3561,17 +3572,17 @@ K2-InternalVariablesWith-1,AssertionError: expected [Function] to throw error ma
 extvardeclwithouttype-6,AssertionError: Expected executing the XPath "declare variable $x external; xs:float($x)" to resolve to one of the expected results, but got AssertionError: declare variable $x external; xs:float($x): expected '125000000000' to equal '1.25E11', AssertionError: expected [Function] to throw an error.
 extvardeclwithouttype-18,Error: XPST0003: Unable to parse: "let $result := (declare variable $x external; $x) return $result ge 2.33333333333333". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. let $result := (declare [Error is around here]variable $x external; $x) return $result ge 2.33333333333333
 extvardeclwithouttype-23,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XPST0008, The variable x is not in scope.'
-extvardeclwithouttype-24,Error: Not implemented: references to variables with a namespace URI or a prefix.
+extvardeclwithouttype-24,Error: XQDY0054: The variable x is declared but not in scope.
 K2-ExternalVariablesWithout-3,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not Implemented: default namespace element.'
 K2-ExternalVariablesWithout-4,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XQDY0054: The variable exampleComThisVarIsNotRecognized is declared but not in scope.'
-K2-ExternalVariablesWithout-5,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
+K2-ExternalVariablesWithout-5,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XQDY0054: The variable exampleComThisVarIsNotRecognized is declared but not in scope.'
 K2-ExternalVariablesWithout-8,Error: XPST0003: Unable to parse: "declare variable $ name := 3; $ name = 3". Expected "Q", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], or [�-�] but " " found. declare variable $ name := 3; $[Error is around here] name = 3
 K2-ExternalVariablesWithout-10,AssertionError: Expected XPath declare variable $e := <e> <a/> </e>; declare variable $f := $e; <r> { $e is $e, $f is $e, $e, $f } </r> to resolve to the given XML. Expected <r>false false<e><a/></e><e><a/></e></r> to equal <r>true true<e><a/></e><e><a/></e></r>
 extvardeclwithtype-2,Error: FOTY0014: Casting from function item to xs:string is not permitted.
 extvardeclwithtype-6,AssertionError: Expected executing the XPath "declare variable $x as xs:float external; $x" to resolve to one of the expected results, but got AssertionError: declare variable $x as xs:float external; $x: expected '1267432330000000' to equal '1.2674323E15', AssertionError: declare variable $x as xs:float external; $x: expected '1267432330000000' to equal '1.2674324E15'.
 extvardeclwithtype-18,AssertionError: Expected executing the XPath "declare variable $x as xs:float external; $x" to resolve to one of the expected results, but got AssertionError: declare variable $x as xs:float external; $x: expected '2.3333333333333335' to equal '2.3333333', AssertionError: declare variable $x as xs:float external; $x: expected '2.3333333333333335' to equal '2.33333'.
 extvardeclwithtype-19,AssertionError: expected [Function] to throw an error
-extvardeclwithtype-24,Error: Not implemented: references to variables with a namespace URI or a prefix.
+extvardeclwithtype-24,Error: XQDY0054: The variable x is declared but not in scope.
 K2-ExternalVariablesWith-3,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'XPST0003: Unable to parse: "declare variable $input-context as item()* external ; declare variable $input-context as item()*external ; 1".\nExpected " ", "(:", ":=", "\\n", "\\r", or "\\t" but "e" found.\ndeclare variable $input-context as item()* external ; declare variable $input-context as item()*[Error is around here]external ; 1'
 K2-ExternalVariablesWith-4,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'XPST0003: Unable to parse: "declare variable $input-context as item()* external ; declare variable $input-context as item()*external ; $input-context".\nExpected " ", "(:", ":=", "\\n", "\\r", or "\\t" but "e" found.\ndeclare variable $input-context as item()* external ; declare variable $input-context as item()*[Error is around here]external ; $input-context'
 K2-ExternalVariablesWith-5,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'XPST0003: Unable to parse: "declare variable $input-context as item()* external; declare variable $input-context as item()*external; 1".\nExpected " ", "(:", ":=", "\\n", "\\r", or "\\t" but "e" found.\ndeclare variable $input-context as item()* external; declare variable $input-context as item()*[Error is around here]external; 1'
@@ -3633,7 +3644,6 @@ FOCA0002_9,AssertionError: expected [Function] to throw error matching /FOCA0002
 FOCA0003_1,AssertionError: Expected executing the XPath "xs:integer(xs:double(1e308))" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FOCA0003/ but got 'FOAR0002: can not cast 1e+308 to xs:integer, it is out of bounds for JavaScript numbers.', Error: FOAR0002: can not cast 1e+308 to xs:integer, it is out of bounds for JavaScript numbers..
 FOCH0002_10,AssertionError: expected [Function] to throw error matching /FOCH0002/ but got 'XPST0017: Function substring-before with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}substring-before (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}substring-after (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions/array}insert-before (array(*)null, xs:integernull, item()*)", "Q{http://www.w3.org/2005/xpath-functions}insert-before (item()*, xs:integernull, item()*)" or "Q{http://www.w3.org/2005/xpath-functions}substring (xs:string?, xs:doublenull)"?'
 FOCH0002_3,AssertionError: expected [Function] to throw error matching /FOCH0002/ but got 'XPST0017: Function distinct-values with arity of 2 not registered. No similar functions found.'
-FOCH0002_5,AssertionError: expected [Function] to throw error matching /FOCH0002/ but got 'XPST0017: Function index-of with arity of 3 not registered. No similar functions found.'
 FOCH0002_9,AssertionError: expected [Function] to throw error matching /FOCH0002/ but got 'XPST0017: Function substring-after with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}substring-after (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}substring-before (xs:string?, xs:string?)", "Q{http://www.w3.org/2005/xpath-functions}substring (xs:string?, xs:doublenull)" or "Q{http://www.w3.org/2005/xpath-functions}substring (xs:string?, xs:doublenull, xs:doublenull)"?'
 FODC0001_1,AssertionError: expected [Function] to throw an error
 FODC0001_2,AssertionError: expected [Function] to throw an error
@@ -3725,7 +3735,7 @@ annex-6,Error: XPST0008, The variable i is not in scope.
 annex-8,Error: XPST0008, The variable apos is not in scope.
 errors-and-optimization-1,Error: XPST0017: Function error with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 errors-and-optimization-2,AssertionError: expected [Function] to throw an error
-errors-and-optimization-7,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
+errors-and-optimization-7,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: let expressions with namespace usage.'
 hof-034,Error: XPST0003: Unable to parse: "local-name-from-QName(function-name((upper-case#1, lower-case#1)[ordered{.}("Mike") = "MIKE"]))". Expected " ", "!", "!=", "#", "(", "(:", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "]", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "{" found. local-name-from-QName(function-name((upper-case#1, lower-case#1)[ordered[Error is around here]{.}("Mike") = "MIKE"]))
 hof-035,Error: XPST0003: Unable to parse: "local-name-from-QName(function-name((upper-case#1, lower-case#1)[ordered{.}("Mike") = "MIKE"]))". Expected " ", "!", "!=", "#", "(", "(:", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "]", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], or [�-�] but "{" found. local-name-from-QName(function-name((upper-case#1, lower-case#1)[ordered[Error is around here]{.}("Mike") = "MIKE"]))
 hof-037,Error: No selector counterpart for: anyFunctionTest.
@@ -3752,10 +3762,9 @@ inline-function-7,Error: No selector counterpart for: typedFunctionTest.
 inline-function-8,Error: No selector counterpart for: typedFunctionTest.
 inline-function-9,Error: No selector counterpart for: typedFunctionTest.
 inline-function-12a,AssertionError: expected [Function] to throw an error
-inline-function-13,AssertionError: expected [Function] to throw error matching /XQST0039/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-inline-function-14,Error: Not implemented: references to variables with a namespace URI or a prefix.
-inline-function-15,AssertionError: expected [Function] to throw error matching /XQST0039/ but got 'Not implemented: references to variables with a namespace URI or a prefix.'
-inline-function-16,Error: Not implemented: references to variables with a namespace URI or a prefix.
+inline-function-13,AssertionError: expected [Function] to throw error matching /XQST0039/ but got 'XPST0008, The variable foo is not in scope.'
+inline-function-14,Error: XPST0008, The variable foo is not in scope.
+inline-function-15,AssertionError: expected [Function] to throw an error
 xqhof1,Error: XPST0003: Unable to parse: " declare namespace map = "http://snelson.org.uk/functions/map";  declare function map:key($pair as function() as item()+) as item() {   $pair()[1] };  declare function map:value($pair as function() as item()+) as item()* {   subsequence($pair(), 2) };  declare function map:contains($map as (function() as item()+)*, $key as item())   as xs:boolean {   map:process($map, $key, function($a) { true() }, false(),     function($a) { () }) };  declare function map:get($map as (function() as item()+)*, $key as item())   as item()* {   map:process($map, $key, map:value#1, (), function($a) { () }) };  declare function map:process(   $map as (function() as item()+)*,   $key as item(),   $found as function(function() as item()+) as item()*,   $notfound as item()*,   $unused as function((function() as item()+)*) as item()* ) as item()* {   if(empty($map)) then $notfound   else    let $length := count($map)   let $middle := $length idiv 2 + 1   let $pair := $map[$middle]   let $pair_key := $pair()[1]   return     if($pair_key eq $key) then (       $unused(subsequence($map, 1, $middle - 1)),       $found($pair),       $unused(subsequence($map, $middle + 1))     )     else if($pair_key gt $key) then (       map:process(subsequence($map, 1, $middle - 1), $key,         $found, $notfound, $unused),       $unused(subsequence($map, $middle))     )     else (       $unused(subsequence($map, 1, $middle)),       map:process(subsequence($map, $middle + 1), $key,         $found, $notfound, $unused)     ) };  declare function map:pair($key as item(), $value as item()*)   as function() as item()+ {   function() { $key, $value } };  declare function map:put(   $map as (function() as item()+)*,   $key as item(),   $value as item()* ) as (function() as item()+)+ {   let $pair := map:pair($key, $value)   return     map:process($map, $key, function($a) { $pair }, $pair,       function($a) { $a }) };  string-join(let $map := map:put(map:put(map:put(map:put(map:put(map:put((),   "a", "aardvark"),   "z", "zebra"),   "e", ("elephant", "eagle")),   "o", "osterich"),   "t", "terrapin"),   "a", "antelope") return (   map:get($map, "o"),    for $m in $map   return concat("key: ", map:key($m), ", value: (",     string-join(map:value($m), ", "), ")")) , " ")  = "osterich key: a, value: (antelope) key: e, value: (elephant, eagle) key: o, value: (osterich) key: t, value: (terrapin) key: z, value: (zebra)"". Expected " ", "(:", "\n", "\r", or "\t" but "m" found.  declare namespace map = "http://snelson.org.uk/functions/map";  declare function [Error is around here]map:key($pair as function() as item()+) as item() {   $pair()[1] };  declare function map:value($pair as function() as item()+) as item()* {   subsequence($pair(), 2) };  declare function map:contains($map as (function() as item()+)*, $key as item())   as xs:boolean {   map:process($map, $key, function($a) { true() }, false(),     function($a) { () }) };  declare function map:get($map as (function() as item()+)*, $key as item())   as item()* {   map:process($map, $key, map:value#1, (), function($a) { () }) };  declare function map:process(   $map as (function() as item()+)*,   $key as item(),   $found as function(function() as item()+) as item()*,   $notfound as item()*,   $unused as function((function() as item()+)*) as item()* ) as item()* {   if(empty($map)) then $notfound   else    let $length := count($map)   let $middle := $length idiv 2 + 1   let $pair := $map[$middle]   let $pair_key := $pair()[1]   return     if($pair_key eq $key) then (       $unused(subsequence($map, 1, $middle - 1)),       $found($pair),       $unused(subsequence($map, $middle + 1))     )     else if($pair_key gt $key) then (       map:process(subsequence($map, 1, $middle - 1), $key,         $found, $notfound, $unused),       $unused(subsequence($map, $middle))     )     else (       $unused(subsequence($map, 1, $middle)),       map:process(subsequence($map, $middle + 1), $key,         $found, $notfound, $unused)     ) };  declare function map:pair($key as item(), $value as item()*)   as function() as item()+ {   function() { $key, $value } };  declare function map:put(   $map as (function() as item()+)*,   $key as item(),   $value as item()* ) as (function() as item()+)+ {   let $pair := map:pair($key, $value)   return     map:process($map, $key, function($a) { $pair }, $pair,       function($a) { $a }) };  string-join(let $map := map:put(map:put(map:put(map:put(map:put(map:put((),   "a", "aardvark"),   "z", "zebra"),   "e", ("elephant", "eagle")),   "o", "osterich"),   "t", "terrapin"),   "a", "antelope") return (   map:get($map, "o"),    for $m in $map   return concat("key: ", map:key($m), ", value: (",     string-join(map:value($m), ", "), ")")) , " ")  = "osterich key: a, value: (antelope) key: e, value: (elephant, eagle) key: o, value: (osterich) key: t, value: (terrapin) key: z, value: (zebra)"
 xqhof2,Error: XPST0017: Function iterate with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}trace (item()*)" or "Q{http://www.w3.org/2005/xpath-functions}trace (item()*, xs:stringnull)"?
 xqhof3,Error: XPST0017: Function iterate with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}trace (item()*)" or "Q{http://www.w3.org/2005/xpath-functions}trace (item()*, xs:stringnull)"?
@@ -3845,14 +3854,13 @@ functx-fn-encode-for-uri-all,Error: XPST0017: Function encode-for-uri with arity
 functx-fn-escape-html-uri-1,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
 functx-fn-escape-html-uri-2,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
 functx-fn-escape-html-uri-all,Error: XPST0017: Function escape-html-uri with arity of 1 not registered. No similar functions found.
-functx-fn-index-of-1,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-functx-fn-index-of-2,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-functx-fn-index-of-3,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-functx-fn-index-of-4,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-functx-fn-index-of-5,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-functx-fn-index-of-6,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-functx-fn-index-of-7,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
-functx-fn-index-of-all,Error: XPST0017: Function index-of with arity of 2 not registered. No similar functions found.
+functx-fn-index-of-1,Error: XPTY0004: eq not available for xs:string and xs:string
+functx-fn-index-of-2,Error: XPTY0004: eq not available for xs:string and xs:string
+functx-fn-index-of-3,Error: XPTY0004: eq not available for xs:integer and xs:integer
+functx-fn-index-of-4,Error: XPTY0004: eq not available for xs:integer and xs:decimal
+functx-fn-index-of-5,Error: XPTY0004: eq not available for xs:string and xs:string
+functx-fn-index-of-7,Error: XPTY0004: eq not available for xs:string and xs:string
+functx-fn-index-of-all,Error: XPTY0004: eq not available for xs:string and xs:string
 functx-fn-iri-to-uri-1,Error: XPST0017: Function iri-to-uri with arity of 1 not registered. No similar functions found.
 functx-fn-lang-1,Error: XPST0017: Function lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
 functx-fn-lang-2,Error: XPST0017: Function lang with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}long (xs:anyAtomicType?)"?
@@ -4236,7 +4244,7 @@ xmp-queries-results-q4,Error: Not implemented: orderByClause is not implemented 
 xmp-queries-results-q7,Error: Not implemented: orderByClause is not implemented yet.
 xmp-queries-results-q10,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 xmp-queries-results-q12,Error: Not implemented: orderByClause is not implemented yet.
-d1e11215,Error: XPST0017: Function sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
+d1e11215,Error: XPST0017: Function sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
 d1e13048,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 d1e20420,Error: XPST0003: Unable to parse: "deep-equal((  xquery version "3.1" encoding "UTF-8"; "inserted for testing prolog only examples"), ("inserted for testing prolog only examples"))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. deep-equal((  xquery [Error is around here]version "3.1" encoding "UTF-8"; "inserted for testing prolog only examples"), ("inserted for testing prolog only examples"))
 d1e41029,Error: XPST0017: Function doc with arity of 1 not registered. No similar functions found.
@@ -4347,13 +4355,13 @@ d1e71531,Error: XPST0003: Unable to parse: "deep-equal((declare variable $array1
 d1e71542,Error: XPST0003: Unable to parse: "deep-equal((declare variable $array1 := ["abc","def","ghi","jkl"];  array:remove(["abc"],1)), ([ ]))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. deep-equal((declare [Error is around here]variable $array1 := ["abc","def","ghi","jkl"];  array:remove(["abc"],1)), ([ ]))
 d1e74388,Error: XPST0003: Unable to parse: "deep-equal((declare variable $map1 := map {1:"first", 2:"second"}; declare variable $map2 := map {};  map:size( $map1 )), (2))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. deep-equal((declare [Error is around here]variable $map1 := map {1:"first", 2:"second"}; declare variable $map2 := map {};  map:size( $map1 )), (2))
 d1e74399,Error: XPST0003: Unable to parse: "deep-equal((declare variable $map1 := map {1:"first", 2:"second"}; declare variable $map2 := map {};  map:size( $map2 )), (0))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. deep-equal((declare [Error is around here]variable $map1 := map {1:"first", 2:"second"}; declare variable $map2 := map {};  map:size( $map2 )), (0))
-d1e74563,Error: XPST0017: Function sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
-d1e74585,Error: XPST0017: Function sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
-d1e74596,Error: XPST0017: Function sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
-d1e74610,Error: XPST0017: Function sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
-d1e74627,Error: XPST0017: Function sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
+d1e74563,Error: XPST0017: Function sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+d1e74585,Error: XPST0017: Function sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+d1e74596,Error: XPST0017: Function sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+d1e74610,Error: XPST0017: Function sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+d1e74627,Error: XPST0017: Function sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
 d1e74809,AssertionError: Expected XPath   array:sort([("a","c","b"), ("a","b","f")]) to (deep equally) resolve to [("a","b","f"), ("a","c","b")]: expected false to be true
-d1e74820,Error: XPST0017: Function array:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
+d1e74820,Error: XPST0017: Function array:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
 d1e76034,Error: XPST0003: Unable to parse: "deep-equal((declare variable $array1 := ["abc","def","ghi","jkl"];  array:subarray($array1,2)), (["def","ghi","jkl"]))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. deep-equal((declare [Error is around here]variable $array1 := ["abc","def","ghi","jkl"];  array:subarray($array1,2)), (["def","ghi","jkl"]))
 d1e76045,Error: XPST0003: Unable to parse: "deep-equal((declare variable $array1 := ["abc","def","ghi","jkl"];  array:subarray($array1,2,2)), (["def","ghi"]))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. deep-equal((declare [Error is around here]variable $array1 := ["abc","def","ghi","jkl"];  array:subarray($array1,2,2)), (["def","ghi"]))
 d1e76056,Error: XPST0003: Unable to parse: "deep-equal((declare variable $array1 := ["abc","def","ghi","jkl"];  array:subarray($array1,2,1)), (["def"]))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. deep-equal((declare [Error is around here]variable $array1 := ["abc","def","ghi","jkl"];  array:subarray($array1,2,1)), (["def"]))
@@ -4496,11 +4504,11 @@ fo-test-fn-path-003,Error: No selector counterpart for: computedDocumentConstruc
 fo-test-fn-path-004,Error: No selector counterpart for: computedDocumentConstructor.
 fo-test-fn-path-005,Error: No selector counterpart for: computedDocumentConstructor.
 fo-test-fn-path-006,Error: No selector counterpart for: computedDocumentConstructor.
-fo-test-fn-index-of-001,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
-fo-test-fn-index-of-002,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
-fo-test-fn-index-of-003,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
-fo-test-fn-index-of-004,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
-fo-test-fn-index-of-005,Error: XPST0017: Function fn:index-of with arity of 2 not registered. No similar functions found.
+fo-test-fn-index-of-001,Error: XPTY0004: eq not available for xs:integer and xs:integer
+fo-test-fn-index-of-002,Error: XPTY0004: eq not available for xs:integer and xs:integer
+fo-test-fn-index-of-003,Error: XPTY0004: eq not available for xs:string and xs:string
+fo-test-fn-index-of-004,Error: XPTY0004: eq not available for xs:date and xs:integer
+fo-test-fn-index-of-005,Error: XPTY0004: eq not available for array(*) and xs:integer
 fo-test-fn-distinct-values-001,AssertionError: Skipped test, it was a assert-permutation
 fo-test-fn-distinct-values-002,AssertionError: Skipped test, it was a assert-permutation
 fo-test-fn-unordered-001,AssertionError: Skipped test, it was a assert-permutation
@@ -4524,8 +4532,8 @@ fo-test-fn-filter-002,Error: XPST0017: Function fn:lang with arity of 2 not regi
 fo-test-fn-for-each-pair-001,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*)null, array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*)null)" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*)null, function(*)null)"?
 fo-test-fn-for-each-pair-002,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*)null, array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*)null)" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*)null, function(*)null)"?
 fo-test-fn-for-each-pair-003,Error: XPST0017: Function fn:for-each-pair with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}for-each-pair (array(*)null, array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions/array}for-each (array(*)null, function(*)null)", "Q{http://www.w3.org/2005/xpath-functions}for-each (item()*, function(*)null)" or "Q{http://www.w3.org/2005/xpath-functions/map}for-each (map(*)null, function(*)null)"?
-fo-test-fn-sort-001,Error: XPST0017: Function fn:sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
-fo-test-fn-sort-002,Error: XPST0017: Function fn:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
+fo-test-fn-sort-001,Error: XPST0017: Function fn:sort with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+fo-test-fn-sort-002,Error: XPST0017: Function fn:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
 fo-test-fn-apply-001,Error: XPST0017: Function fn:apply with arity of 2 not registered. No similar functions found.
 fo-test-map-keys-001,AssertionError: Skipped test, it was a assert-permutation
 fo-test-map-find-001,Error: XPST0017: Function map:find with arity of 2 not registered. No similar functions found.
@@ -4548,5 +4556,5 @@ fo-test-array-subarray-002,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-subarray-006,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-subarray-007,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-fold-right-003,AssertionError: Expected XPath          array:fold-right([1,2,3], [], function($x, $y){[$x, $y]})        to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
-fo-test-array-sort-002,Error: XPST0017: Function array:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)" or "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)"?
+fo-test-array-sort-002,Error: XPST0017: Function array:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*)null)", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
 fo-test-array-sort-003,AssertionError: Expected XPath          array:sort([(1,0), (1,1), (0,1), (0,0)])        to (deep equally) resolve to [(0,0), (0,1), (1,0), (1,1)]: expected false to be true
