@@ -15,14 +15,9 @@ class VarRef extends Expression {
 			canBeStaticallyEvaluated: false,
 			resultOrder: RESULT_ORDERINGS.UNSORTED
 		});
-		if (prefix || namespaceURI) {
-			throw new Error(
-				'Not implemented: references to variables with a namespace URI or a prefix.'
-			);
-		}
 
 		this._variableName = variableName;
-		this._namespaceURI = namespaceURI;
+		this._namespaceURI = namespaceURI || undefined;
 		this._prefix = prefix;
 
 		this._variableBindingName = null;
@@ -45,7 +40,7 @@ class VarRef extends Expression {
 		}
 
 		this._variableBindingName = staticContext.lookupVariable(
-			this._namespaceURI,
+			this._namespaceURI || undefined,
 			this._variableName
 		);
 		if (!this._variableBindingName) {

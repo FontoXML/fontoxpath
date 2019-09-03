@@ -106,5 +106,20 @@ describe('varRef', () => {
 				),
 				['val', 'val']
 			));
+
+		it.only('can read variables with namespaces in a prolog', () =>
+			chai.assert.deepEqual(
+				evaluateXPathToString(
+					`declare namespace XXX = "YYY";
+				declare variable $XXX:YYY := "ABC";
+				declare variable $Q{YYY2}YYY := "ABC";
+				$XXX:YYY || "-" || $Q{YYY}YYY || "-" || $Q{YYY2}YYY`,
+					null,
+					null,
+					{},
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				),
+				'ABC-ABC-ABC'
+			));
 	});
 });
