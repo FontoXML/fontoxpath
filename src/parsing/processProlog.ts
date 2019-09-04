@@ -193,7 +193,7 @@ export default function processProlog(
 		});
 
 		// Or do this:
-		const staticContextLeaf = staticContext.cloneContext();
+		const staticContextLeaf = new StaticContext(staticContext);
 		const parameterBindingNames = paramNames.map(param => {
 			let namespaceURI = astHelper.getAttribute(param, 'URI');
 			const prefix = astHelper.getAttribute(param, 'prefix');

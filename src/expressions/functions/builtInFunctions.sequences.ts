@@ -297,14 +297,17 @@ const fnIndexOf: FunctionDefinitionType = (
 	sequence,
 	search
 ) => {
-	// This should work
-	// I've a question, can we enable the index-of tests on the runnableTestSets file? yeah!
-
-	return search.mapAll(([onlySearchValue]) => sequence.map((element, i) => {
-		return valueCompare('eqOp', element, onlySearchValue, dynamicContext) ? createAtomicValue(i + 1, 'xs:integer') : createAtomicValue(-1, 'xs:integer');
-	}).filter((indexValue) => {
-		return indexValue.value !== -1;
-	}));
+	return search.mapAll(([onlySearchValue]) =>
+		sequence
+			.map((element, i) => {
+				return valueCompare('eqOp', element, onlySearchValue, dynamicContext)
+					? createAtomicValue(i + 1, 'xs:integer')
+					: createAtomicValue(-1, 'xs:integer');
+			})
+			.filter(indexValue => {
+				return indexValue.value !== -1;
+			})
+	);
 };
 
 const fnDeepEqual: FunctionDefinitionType = (

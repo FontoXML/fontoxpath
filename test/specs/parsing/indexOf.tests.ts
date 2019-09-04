@@ -34,10 +34,4 @@ describe('indexOf', () => {
 			),
 			2
 		));
-
-	// let's run it
-	// I'll run the qt3 tests
-	// sure
-	// My machine is way faster than David's, so it won't take long. A couple of minutes or so
-	// Yup, working. Let me deactivate the other one. 
 });
