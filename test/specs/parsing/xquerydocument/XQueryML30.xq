@@ -30584,12 +30584,10 @@ declare function p:memoize($backtrack as item()+,
  :)
 declare function p:memoized($state as item()+, $i as xs:integer) as item()+
 {
-  let $value := data($state[$p:memo]/value[@key = $state[$p:e0] * 1 + $i])
+  let $value := 1
   return
-  (
     if ($value) then $value else 0,
     subsequence($state, $p:lk + 1)
-  )
 };
 
 (:~
