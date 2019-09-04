@@ -7,11 +7,13 @@ import {
 	NODE_TYPES
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
+import ArrayValue from '../dataTypes/ArrayValue';
+import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
-import isSubtypeOfType from '../dataTypes/isSubtypeOf';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
@@ -95,6 +97,41 @@ const fnName: FunctionDefinitionType = function(
 				staticContext,
 				fnNodeName(dynamicContext, executionParameters, staticContext, sequence)
 			)
+	});
+};
+
+const fnData: FunctionDefinitionType = function(
+	dynamicContext,
+	executionParameters,
+	staticContext,
+	sequence
+) {
+	function getDataFromValues(allValues: Value[]): Value[] {
+		let returnItems = [];
+		for (const value of allValues) {
+			if (isSubtypeOf(value.type, 'xs:anyAtomicType')) {
+				returnItems.push(value);
+				continue;
+			}
+			if (isSubtypeOf(value.type, 'node()')) {
+				returnItems.push(atomize(value, executionParameters));
+				continue;
+			}
+			if (isSubtypeOf(value.type, 'array()')) {
+				returnItems = returnItems.concat(
+					getDataFromValues(
+						(value as ArrayValue)
+							.members
+							.map(getMember => getMember().getAllValues())
+							.reduce((allMembers: Value[], member: Value[]) => {
+								return allMembers.concat(member);
+							}, [])));
+			}
+		}
+		return returnItems;
+	}
+	return sequence.mapAll(allValues => {
+		return sequenceFactory.create(getDataFromValues(allValues).reduce((allValues: Value[], values: Value) => allValues.concat(values), []));
 	});
 };
 
@@ -329,7 +366,7 @@ const fnRoot: FunctionDefinitionType = function(
 	nodeSequence
 ) {
 	return nodeSequence.map(node => {
-		if (!isSubtypeOfType(node.type, 'node()')) {
+		if (!isSubtypeOf(node.type, 'node()')) {
 			throw new Error('XPTY0004 Argument passed to fn:root() should be of the type node()');
 		}
 
@@ -471,7 +508,23 @@ export default {
 			argumentTypes: [],
 			returnType: 'node()?',
 			callFunction: contextItemAsFirstArgument.bind(null, fnRoot)
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'data',
+			argumentTypes: [],
+			returnType: 'xs:anyAtomicType*',
+			callFunction: contextItemAsFirstArgument.bind(null, fnData)
+		},
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'data',
+			argumentTypes: ['item()*'],
+			returnType: 'xs:anyAtomicType*',
+			callFunction: fnData
 		}
+
 	],
 	functions: {
 		name: fnName,
