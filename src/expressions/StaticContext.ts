@@ -45,7 +45,12 @@ export default class StaticContext {
 	private _registeredFunctionsByHash: any;
 	private _registeredNamespaceURIByPrefix: any[];
 	private _registeredVariableBindingByHashKey: any[];
-	private _registeredVariableDeclarationByHashKey: any[];
+	private _registeredVariableDeclarationByHashKey: {
+		[hashKey: string]: (
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters
+		) => ISequence
+	};
 	private _scopeCount: number;
 	private _scopeDepth: number;
 
@@ -57,7 +62,7 @@ export default class StaticContext {
 
 		this._registeredNamespaceURIByPrefix = [Object.create(null)];
 		this._registeredVariableBindingByHashKey = [Object.create(null)];
-		this._registeredVariableDeclarationByHashKey = [Object.create(null)];
+		this._registeredVariableDeclarationByHashKey = Object.create(null);
 
 		// Functions may never be added for only a closure
 		this._registeredFunctionsByHash = Object.create(null);
@@ -65,6 +70,8 @@ export default class StaticContext {
 		if (parentContext instanceof StaticContext) {
 			this.registeredDefaultFunctionNamespace =
 				parentContext.registeredDefaultFunctionNamespace;
+			this._registeredVariableDeclarationByHashKey = parentContext._registeredVariableDeclarationByHashKey;
+			this._registeredVariableBindingByHashKey = parentContext._registeredVariableBindingByHashKey;
 		}
 	}
 
@@ -148,10 +155,7 @@ export default class StaticContext {
 
 	public lookupVariableValue(namespaceURI: string, localName: string) {
 		const hash = createHashKey(namespaceURI, localName);
-		const varNameInCurrentScope = lookupInOverrides(
-			this._registeredVariableDeclarationByHashKey,
-			hash
-		);
+		const varNameInCurrentScope = this._registeredVariableDeclarationByHashKey[hash];
 		if (varNameInCurrentScope) {
 			return varNameInCurrentScope;
 		}

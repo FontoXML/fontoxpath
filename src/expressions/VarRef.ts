@@ -1,3 +1,4 @@
+import ISequence from './dataTypes/ISequence';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
@@ -7,6 +8,10 @@ import StaticContext from './StaticContext';
 class VarRef extends Expression {
 	private _namespaceURI: string;
 	private _prefix: string;
+	private _staticallyBoundVariableValue: (
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	) => ISequence;
 	private _variableBindingName: any;
 	private _variableName: string;
 
@@ -23,7 +28,10 @@ class VarRef extends Expression {
 		this._variableBindingName = null;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, _executionParameters: ExecutionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+		if (this._staticallyBoundVariableValue) {
+			return this._staticallyBoundVariableValue(dynamicContext, executionParameters);
+		}
 		const variableBinding = dynamicContext.variableBindings[this._variableBindingName];
 		if (!variableBinding) {
 			throw new Error(
@@ -45,6 +53,12 @@ class VarRef extends Expression {
 		);
 		if (!this._variableBindingName) {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
+		}
+
+		const staticallyBoundVariableBinding = staticContext.getVariableDeclaration(this._variableBindingName);
+
+		if (staticallyBoundVariableBinding) {
+			this._staticallyBoundVariableValue = staticallyBoundVariableBinding;
 		}
 	}
 }

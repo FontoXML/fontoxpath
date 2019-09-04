@@ -305,7 +305,7 @@ export default function processProlog(
 		) {
 			throw new Error(
 				`XQST0049: The variable ${
-				declarationNamespaceURI ? `Q{${declarationNamespaceURI}}` : ''
+					declarationNamespaceURI ? `Q{${declarationNamespaceURI}}` : ''
 				}${varName.localName} has already been declared.`
 			);
 		}
