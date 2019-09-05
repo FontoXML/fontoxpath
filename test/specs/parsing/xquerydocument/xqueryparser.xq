@@ -14,37 +14,38 @@ xquery version "1.0";
  : limitations under the License.
  :)
 
-(:~ 
+(:~
  : <h1>xqueryparser.xq</h1>
  : <p>A parser for XQuery 3.0, XQuery Update, XQuery Full Text, and MarkLogic XQuery extensions.</p>
- : 
+ :
  :  @author John Snelson
  :  @since Feb 17, 2012
  :  @version 0.2
  :)
 module namespace xqp="http://github.com/jpcs/xqueryparser.xq";
 declare default function namespace "http://github.com/jpcs/xqueryparser.xq";
-declare namespace fontoxpath-functions = "http://fontoxml.com/fontoxpath";
 
-(:~ 
+import module namespace p="XQueryML30" at "XQueryML30.xq";
+
+(:~
  : Parses the XQuery module in the string argument. The module string
  : is returned marked up in elements, with attributes adding statically
  : analysed values like unescaped string values, and lexical QNames
  : resolved to expanded QNames.
  :
  : @param $module: XQuery module passed as a string
- : 
+ :
  : @return A marked up copy of the XQuery module, or an error element
  : detailing the parse error encountered.
  :)
 declare function parse($module as xs:string) as element()
 {
-  let $markup := fontoxpath-functions:parse($module)
-  let $markup := _simplify($markup)
+  let $markup := fn:trace(p:parse-XQuery($module), "parsed")
+  let $markup := _simplify($markup) => fn:trace("simplified" || $markup/fn:name())
   (: let $markup := _combine($markup,()) :) (: Causes stack overflow - jpcs :)
-  let $ns := _build_namespaces($markup)
-  let $markup := _analyze($markup,$ns)
-  return $markup
+  let $ns := _build_namespaces($markup) => fn:trace("namespaces")
+  let $markup := _analyze($markup,$ns) => fn:trace("analyzed")
+  return fn:trace($markup, "done")
 };
 
 (:~ Simplify the markup to remove unneeded elements :)
@@ -191,7 +192,7 @@ declare (: private :) function _combine_group($group)
 (:~ Build the namespace map :)
 declare (: private :) function _build_namespaces($n)
 {
-  let $marklogic := fn:contains($n/Module/VersionDecl/StringLiteral[1],"-ml")
+  let $marklogic := fn:false()
   let $ns := (
     (: Pre-declared bindings :)
     <ns prefix="xml" uri="http://www.w3.org/XML/1998/namespace"/>,

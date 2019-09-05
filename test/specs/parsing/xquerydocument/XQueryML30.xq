@@ -30603,7 +30603,6 @@ declare function p:memoized($state as item()+, $i as xs:integer) as item()+
  :)
 declare function p:parse-XQuery($s as xs:string) as item()*
 {
-	trace("starting"),
   let $state := p:parse-XQuery($s, (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, false(), <memo/>))
   let $error := $state[$p:error]
   return

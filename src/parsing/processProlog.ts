@@ -183,7 +183,9 @@ export default function processProlog(
 			)
 		) {
 			throw new Error(
-				`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${paramTypes.length} has already been declared.`
+				`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${
+					paramTypes.length
+				} has already been declared.`
 			);
 		}
 
@@ -316,11 +318,20 @@ export default function processProlog(
 			varValue &&
 			!staticContext.lookupVariableValue(declarationNamespaceURI || '', varName.localName)
 		) {
+			let cachedVariableValue: () => ISequence | null = null;
 			staticContext.registerVariableDeclaration(
 				declarationNamespaceURI,
 				varName.localName,
-				(dynamicContext, executionParameters) =>
-					compiledFunctionAsExpression.evaluate(dynamicContext, executionParameters)
+				(dynamicContext, executionParameters) => {
+					if (cachedVariableValue) {
+						return cachedVariableValue();
+					}
+					cachedVariableValue = createDoublyIterableSequence(
+						compiledFunctionAsExpression.evaluate(dynamicContext, executionParameters)
+					);
+
+					return cachedVariableValue();
+				}
 			);
 
 			staticallyCompilableExpressions.push({

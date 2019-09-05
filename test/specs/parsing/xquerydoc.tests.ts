@@ -41,14 +41,14 @@ describe.only('xquerydoc', () => {
 		);
 	});
 
-	it.only('run xQueryDoc file without imports, comparing output', () => {
+	it('run xQueryDoc file without imports, comparing output', () => {
 		chai.assert.equal(
 			evaluateXPathToString(
 				`
 				xquery version "1.0" encoding "UTF-8";
 
 				import module namespace xqdoc="http://github.com/xquery/xquerydoc" at "xquerydoc.xq";
-				xqdoc:parse("let $a := 4 return $a") 
+				xqdoc:parse("let $a := 4 return $a")
 
 				`,
 				documentNode,
@@ -90,7 +90,7 @@ describe.only('xquerydoc', () => {
 				xquery version "1.0" encoding "UTF-8";
 
 				import module namespace p="XQueryML30" at "XQueryML30.xq";
-				p:parse-XQuery("let $a := 4 return $a") 
+				p:parse-XQuery("let $a := 4 return $a")
 
 				`,
 				documentNode,
@@ -119,7 +119,7 @@ describe.only('xquerydoc', () => {
 	});
 
 
-	it('can parse the example from the existDB docs', () => {
+	it.only('can parse the example from the existDB docs', () => {
 		const example = `xquery version "1.0";
 
 		(:~
@@ -127,7 +127,7 @@ describe.only('xquerydoc', () => {
 
 		:)
 		module namespace simple = "http://simple.example.com";
-		
+
 		declare function simple:add($first as xs:integer, $second as xs:integer) as xs:integer {
 		   $first + $second
 		};`;
@@ -137,7 +137,7 @@ describe.only('xquerydoc', () => {
 				xquery version "1.0" encoding "UTF-8";
 
 				import module namespace xqdoc="http://github.com/xquery/xquerydoc" at "xquerydoc.xq";
-				xqdoc:parse($module) 
+				xqdoc:parse($module)
 
 			`,
 			documentNode,
@@ -157,16 +157,16 @@ describe.only('xquerydoc', () => {
 		<xqdoc:module type="library">
 			<xqdoc:uri>http://simple.example.com</xqdoc:uri>
 			<xqdoc:name>/db/Wiki/eXist/xqdoc/test.xqm</xqdoc:name>
-	
+
 			<xqdoc:comment>
 				<xqdoc:description> This is a simple module which contains a single function</xqdoc:description>
 				<xqdoc:author> Dan McCreary</xqdoc:author>
 				<xqdoc:version> 1.0</xqdoc:version>
 				<xqdoc:see> http://xqdoc.org</xqdoc:see>
-	
+
 			</xqdoc:comment>
 			<xqdoc:body xml:space="preserve">xquery version "1.0";
-	
+
 	(:~
 	: This is a simple module which contains a single function
 	:)
@@ -181,13 +181,13 @@ describe.only('xquerydoc', () => {
 			<xqdoc:function>
 				<xqdoc:comment>
 					<xqdoc:description> this function accepts  two integers and returns the sum</xqdoc:description>
-	
+
 					<xqdoc:author> Dan McCreary</xqdoc:author>
 					<xqdoc:param> $first - the first number </xqdoc:param>
 					<xqdoc:param> $second - the second number</xqdoc:param>
 					<xqdoc:return> the sum of $first and $second</xqdoc:return>
 					<xqdoc:since> 1.1 </xqdoc:since>
-	
+
 				</xqdoc:comment>
 				<xqdoc:name>add</xqdoc:name>
 				<xqdoc:signature>add($first as xs:integer, $second as xs:integer) as xs:integer</xqdoc:signature>
