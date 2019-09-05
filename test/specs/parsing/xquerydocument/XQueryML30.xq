@@ -2736,10 +2736,10 @@ declare function p:transition($input as xs:string,
                               $current-state as xs:integer,
                               $previous-state as xs:integer) as xs:integer+
 {
-  if ($current-state = 0) then
+  if (trace($current-state, "transitioning") = 0) then
     let $result := $result idiv 4096
     return
-      if ($result != 0) then
+      if (trace($result, "result") != 0) then
       (
         $result mod 512 - 1,
         $begin,
@@ -2755,7 +2755,7 @@ declare function p:transition($input as xs:string,
     let $c0 := (string-to-codepoints(substring($input, $current, 1)), 0)[1]
     let $c1 :=
       if ($c0 < 128) then
-        $p:MAP0[1 + $c0]
+        $p:MAP0[1 + $c0] => trace()
       else if ($c0 < 55296) then
         let $c1 := $c0 idiv 16
         let $c2 := $c1 idiv 32
@@ -2763,14 +2763,16 @@ declare function p:transition($input as xs:string,
       else
         p:map2($c0, 1, 6)
     let $current := $current + 1
-    let $i0 := 4096 * $c1 + $current-state - 1
+    let $i0 := 4096 * $c1 + $current-state - 1 => trace("i0")
     let $i1 := $i0 idiv 16
-    let $next-state := $p:TRANSITION[$i0 mod 16 + $p:TRANSITION[$i1 + 1] + 1]
+	let $XXX := $p:TRANSITION[$i1 + 1]
+	let $stateIndex := $i0 mod 16 + $XXX + 1
+    let $next-state := $p:TRANSITION[$stateIndex]
     return
       if ($next-state > 4095) then
-        p:transition($input, $begin, $current, $current, $next-state, $next-state mod 4096, $current-state)
+        p:transition($input, $begin, $current, $current, $next-state, $next-state mod 4096, $current-state) => trace("return A")
       else
-        p:transition($input, $begin, $current, $end, $result, $next-state, $current-state)
+        p:transition($input, $begin, $current, $end, $result, $next-state, $current-state) => trace("return B")
 };
 
 (:~
@@ -2812,7 +2814,10 @@ declare function p:expected-token-set($state as xs:integer) as xs:string*
     let $i1 := $i0 idiv 2
     let $i2 := $i1 idiv 4
     let $i3 := $i2 idiv 4
-    return p:token((), $p:EXPECTED[$i0 mod 2 + $p:EXPECTED[$i1 mod 4 + $p:EXPECTED[$i2 mod 4 + $p:EXPECTED[$i3 + 1] + 1] + 1] + 1], $t * 32 + 1)
+	let $c := $i2 mod 4 + $p:EXPECTED[$i3 + 1] + 1
+	let $b := $i1 mod 4 + $p:EXPECTED[$c] + 1
+	let $a := $i0 mod 2 + $p:EXPECTED[$b] + 1
+    return p:token((), $p:EXPECTED[$a], $t * 32 + 1)
   else
     ()
 };
@@ -30598,13 +30603,14 @@ declare function p:memoized($state as item()+, $i as xs:integer) as item()+
  :)
 declare function p:parse-XQuery($s as xs:string) as item()*
 {
+	trace("starting"),
   let $state := p:parse-XQuery($s, (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, false(), <memo/>))
   let $error := $state[$p:error]
   return
     if ($error) then
       element ERROR {$error/@*, p:error-message($s, $error)}
     else
-      subsequence($state, $p:result)
+      trace(subsequence($state, $p:result), "done")
 };
 
 (: End :)
