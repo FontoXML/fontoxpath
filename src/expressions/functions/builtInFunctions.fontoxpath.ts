@@ -18,6 +18,10 @@ import astHelper from '../../parsing/astHelper';
 import MapValue from '../dataTypes/MapValue';
 import Value from '../dataTypes/Value';
 
+// Meh, let's move the file later on, but it's ok for now. we'll need to use the NodesFactory when we are actually gonna use it
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
+import { Document } from 'slimdom';
+
 const fontoxpathEvaluate: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
@@ -100,6 +104,39 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 			}
 			return resultIterator.next(IterationHint.NONE);
 		}
+	});
+};
+
+const fontoxpathParse: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	query
+) => {
+	// Got it from fontoxpathEvaluate, removed evaluation part.
+	let queryString: string;
+	const documentNode = new Document();
+
+	// I'll use the map then. Agreed, easier code is better code, and it dows not matter for singleton input -> singleton result queries
+	// Do you think this code should work already? To return the xml at least
+	// maybe. The import from jsonMlMapper is finniky. I would copy it over to here, as we need to change it anyway
+	// We need to use the NodesFactory
+	//const nodesFactory = _executionParameters.nodesFactory;
+	//const toReturnExample = nodesFactory.createElementNS('<namespace uri of XQueryX>', 'the name from the JsonMl element');
+	// 													^^^^^^^^^^^^^^^^^^^^^^^^^^^^ not sure what's this. And why do we have to create the element
+	// using the nodesFactory.
+
+	// So, redefine the whole functionality in this file? yeah
+
+	return query.mapAll(([onlyQueryValue]) => {
+		queryString = onlyQueryValue.value;
+		// Get JsonML
+		const ast = parseExpression(queryString, { allowXQuery: false });
+		// Convert to XML
+		const parsedNode = jsonMlMapper.parseNode(documentNode, ast);
+
+		// Return value
+		return sequenceFactory.create(createNodeValue(parsedNode));
 	});
 };
 
@@ -233,6 +270,13 @@ export default {
 			localName: 'version',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
 			returnType: 'xs:string'
+		},
+		{
+			argumentTypes: ['xs:string'],
+			callFunction: fontoxpathParse,
+			localName: 'parse',
+			namespaceURI: FONTOXPATH_NAMESPACE_URI,
+			returnType: 'element()'
 		}
 	]
 };

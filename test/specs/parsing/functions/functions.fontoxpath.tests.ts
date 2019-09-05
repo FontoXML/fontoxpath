@@ -21,7 +21,7 @@ describe('extension functions', () => {
 			catch (_error) {
 				chai.assert.match(
 					evaluateXPathToString('fontoxpath:version()'),
-						/\d+\.\d+\.\d+/);
+					/\d+\.\d+\.\d+/);
 			}
 		});
 	});

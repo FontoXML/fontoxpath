@@ -49,7 +49,7 @@ export default class StaticContext {
 		[hashKey: string]: (
 			dynamicContext: DynamicContext,
 			executionParameters: ExecutionParameters
-		) => ISequence
+		) => ISequence;
 	};
 	private _scopeCount: number;
 	private _scopeDepth: number;
@@ -70,8 +70,10 @@ export default class StaticContext {
 		if (parentContext instanceof StaticContext) {
 			this.registeredDefaultFunctionNamespace =
 				parentContext.registeredDefaultFunctionNamespace;
-			this._registeredVariableDeclarationByHashKey = parentContext._registeredVariableDeclarationByHashKey;
-			this._registeredVariableBindingByHashKey = parentContext._registeredVariableBindingByHashKey;
+			this._registeredVariableDeclarationByHashKey =
+				parentContext._registeredVariableDeclarationByHashKey;
+			this._registeredVariableBindingByHashKey =
+				parentContext._registeredVariableBindingByHashKey;
 		}
 	}
 

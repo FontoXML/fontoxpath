@@ -55,7 +55,9 @@ class VarRef extends Expression {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
 		}
 
-		const staticallyBoundVariableBinding = staticContext.getVariableDeclaration(this._variableBindingName);
+		const staticallyBoundVariableBinding = staticContext.getVariableDeclaration(
+			this._variableBindingName
+		);
 
 		if (staticallyBoundVariableBinding) {
 			this._staticallyBoundVariableValue = staticallyBoundVariableBinding;

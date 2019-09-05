@@ -24,8 +24,7 @@ xquery version "1.0";
  :)
 module namespace xqp="http://github.com/jpcs/xqueryparser.xq";
 declare default function namespace "http://github.com/jpcs/xqueryparser.xq";
-
-import module namespace p="XQueryML30" at "XQueryML30.xq";
+declare namespace fontoxpath-functions = "http://fontoxml.com/fontoxpath";
 
 (:~ 
  : Parses the XQuery module in the string argument. The module string
@@ -40,7 +39,7 @@ import module namespace p="XQueryML30" at "XQueryML30.xq";
  :)
 declare function parse($module as xs:string) as element()
 {
-  let $markup := p:parse-XQuery($module)
+  let $markup := fontoxpath-functions:parse($module)
   let $markup := _simplify($markup)
   (: let $markup := _combine($markup,()) :) (: Causes stack overflow - jpcs :)
   let $ns := _build_namespaces($markup)

@@ -39,54 +39,19 @@ describe.only('xquerydoc', () => {
 		registerXQueryModule(
 			fs.readFileSync('test/specs/parsing/xquerydocument/xquerydoc.xq', 'utf8'), { debug: true }
 		);
-	})
-	it('run xQueryDoc file', () => {
-
-		evaluateXPath(
-			`
-			import module namespace xqd="http://github.com/xquery/xquerydoc";
-			xqd:generate-docs("xqdoc", "let $a := 4 return $a")
-			`,
-			null,
-			null,
-			null,
-			null,
-			{
-				debug: true,
-				language: evaluateXPath.XQUERY_3_1_LANGUAGE
-			}
-		);
-	})
-
-	it('run xQueryDoc file without imports 1', () => {
-		evaluateXPath(
-			`
-			import module namespace xqd="http://github.com/xquery/xquerydoc";
-			xqd:generate-docs("xqdoc", "let $a := 4 return $a")
-			`,
-			null,
-			null,
-			null,
-			null,
-			{
-				debug: true,
-				language: evaluateXPath.XQUERY_3_1_LANGUAGE
-			}
-		);
 	});
 
-	it('run xQueryDoc file without imports, comparing output', () => {
+	it.only('run xQueryDoc file without imports, comparing output', () => {
 		chai.assert.equal(
 			evaluateXPathToString(
 				`
 				xquery version "1.0" encoding "UTF-8";
 
 				import module namespace xqdoc="http://github.com/xquery/xquerydoc" at "xquerydoc.xq";
-
 				xqdoc:parse("let $a := 4 return $a") 
 
 				`,
-				null,
+				documentNode,
 				null,
 				null,
 				{
@@ -97,8 +62,51 @@ describe.only('xquerydoc', () => {
 		);
 	});
 
+	it('run xQueryDoc parser over comments', () => {
+		chai.assert.equal(
+			evaluateXPathToString(
+				`
+				xquery version "1.0" encoding "UTF-8";
+
+				import module namespace xqdoc="XQDocComments" at "XQDocComments.xq";
+				xqdoc:parse-Comments("(: a :)")
+
+				`,
+				documentNode,
+				null,
+				null,
+				{
+					debug: true,
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE
+				}
+			), "(: a :)"
+		);
+	});
+
+	it('run parse-XQuery from ML30 file', () => {
+		chai.assert.equal(
+			evaluateXPathToString(
+				`
+				xquery version "1.0" encoding "UTF-8";
+
+				import module namespace p="XQueryML30" at "XQueryML30.xq";
+				p:parse-XQuery("let $a := 4 return $a") 
+
+				`,
+				documentNode,
+				null,
+				null,
+				{
+					debug: true,
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE
+				}
+			), "aa"
+		);
+	});
+
+
 	it('can create a variable', () => {
-		// This seems to be the minimal repro!
+		// This seems to be the minimal repro
 		registerXQueryModule(
 			`
 			module namespace p="123";
@@ -110,28 +118,16 @@ describe.only('xquerydoc', () => {
 		chai.assert.equal(result, 'a');
 	});
 
-	it.only('can parse the example from the existDB docs', () => {
+
+	it('can parse the example from the existDB docs', () => {
 		const example = `xquery version "1.0";
 
 		(:~
 		: This is a simple module which contains a single function
-		: @author Dan McCreary
-		: @version 1.0
-		: @see http://xqdoc.org
-		:
+
 		:)
 		module namespace simple = "http://simple.example.com";
 		
-		(:~
-		 : this function accepts  two integers and returns the sum
-		 :
-		 : @param $first - the first number 
-		 : @param $second - the second number
-		 : @return the sum of $first and $second
-		 : @author Dan McCreary
-		 : @since 1.1
-		 : 
-		:)
 		declare function simple:add($first as xs:integer, $second as xs:integer) as xs:integer {
 		   $first + $second
 		};`;
@@ -143,8 +139,8 @@ describe.only('xquerydoc', () => {
 				import module namespace xqdoc="http://github.com/xquery/xquerydoc" at "xquerydoc.xq";
 				xqdoc:parse($module) 
 
-				`,
-			new slimdom.Document(),
+			`,
+			documentNode,
 			null,
 			{ module: example },
 			{
@@ -152,8 +148,6 @@ describe.only('xquerydoc', () => {
 				language: evaluateXPath.XQUERY_3_1_LANGUAGE
 			}
 		);
-
-		console.log(result);
 
 		chai.assert.equal((result[0] as slimdom.Element).outerHTML, `<xqdoc:xqdoc xmlns:xqdoc="http://www.xqdoc.org/1.0">
 		<xqdoc:control>
@@ -175,23 +169,9 @@ describe.only('xquerydoc', () => {
 	
 	(:~
 	: This is a simple module which contains a single function
-	: @author Dan McCreary
-	: @version 1.0
-	: @see http://xqdoc.org
-	:
 	:)
 	module namespace simple = "http://simple.example.com";
-	
-	(:~
-	 : this function accepts  two integers and returns the sum
-	 :
-	 : @param $first - the first number 
-	 : @param $second - the second number
-	 : @return the sum of $first and $second
-	 : @author Dan McCreary
-	 : @since 1.1
-	 : 
-	:)
+
 	declare function simple:add($first as xs:integer, $second as xs:integer) as xs:integer {
 	   $first + $second
 	};

@@ -101,9 +101,9 @@ const fnName: FunctionDefinitionType = function(
 };
 
 const fnData: FunctionDefinitionType = function(
-	dynamicContext,
+	_dynamicContext,
 	executionParameters,
-	staticContext,
+	_staticContext,
 	sequence
 ) {
 	function getDataFromValues(allValues: Value[]): Value[] {
@@ -120,18 +120,24 @@ const fnData: FunctionDefinitionType = function(
 			if (isSubtypeOf(value.type, 'array()')) {
 				returnItems = returnItems.concat(
 					getDataFromValues(
-						(value as ArrayValue)
-							.members
+						(value as ArrayValue).members
 							.map(getMember => getMember().getAllValues())
 							.reduce((allMembers: Value[], member: Value[]) => {
 								return allMembers.concat(member);
-							}, [])));
+							}, [])
+					)
+				);
 			}
 		}
 		return returnItems;
 	}
 	return sequence.mapAll(allValues => {
-		return sequenceFactory.create(getDataFromValues(allValues).reduce((allValues: Value[], values: Value) => allValues.concat(values), []));
+		return sequenceFactory.create(
+			getDataFromValues(allValues).reduce(
+				(allValues: Value[], values: Value) => allValues.concat(values),
+				[]
+			)
+		);
 	});
 };
 
@@ -524,7 +530,6 @@ export default {
 			returnType: 'xs:anyAtomicType*',
 			callFunction: fnData
 		}
-
 	],
 	functions: {
 		name: fnName,

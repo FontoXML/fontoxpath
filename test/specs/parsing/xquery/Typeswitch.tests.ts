@@ -17,11 +17,11 @@ describe('Typeswitch', () => {
 		chai.assert.equal(
 			evaluateXPathToNumber(
 				`typeswitch((1,2))
-			case xs:integer return 1
-			case xs:string+ return 42
-			case xs:float | xs:string return 27
-			case xs:integer* return 2828
-			default return 2`,
+				case xs:integer return 1
+				case xs:string+ return 42
+				case xs:float | xs:string return 27
+				case xs:integer* return 2828
+				default return 2`,
 				null,
 				null,
 				null,
@@ -34,11 +34,11 @@ describe('Typeswitch', () => {
 		chai.assert.equal(
 			evaluateXPathToString(
 				`typeswitch(("Hello", "Hi"))
-			case xs:integer? return "Hey"
-			case xs:string+ return "Good morning"
-			case xs:float return "Good afternoon"
-			case xs:integer* return "Good evening"
-			default return "Bye"`,
+				case xs:integer? return "Hey"
+				case xs:string+ return "Good morning"
+				case xs:float return "Good afternoon"
+				case xs:integer* return "Good evening"
+				default return "Bye"`,
 				null,
 				null,
 				null,

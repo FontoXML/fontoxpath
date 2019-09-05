@@ -102,8 +102,6 @@ export default function buildEvaluationContext(
 			? new DomBackedNodesFactory(contextItem)
 			: wrapExternalNodesFactory(internalOptions.nodesFactory);
 
-	console.log(nodesFactory);
-
 	const documentWriter: IDocumentWriter = internalOptions.documentWriter
 		? wrapExternalDocumentWriter(internalOptions.documentWriter)
 		: domBackedDocumentWriter;
