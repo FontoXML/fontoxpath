@@ -40,12 +40,12 @@ import module namespace p="XQueryML30" at "XQueryML30.xq";
  :)
 declare function parse($module as xs:string) as element()
 {
-  let $markup := fn:trace(p:parse-XQuery($module), "parsed")
-  let $markup := _simplify($markup) => fn:trace("simplified" || $markup/fn:name())
+  let $markup := p:parse-XQuery($module)
+  let $markup := _simplify($markup)
   (: let $markup := _combine($markup,()) :) (: Causes stack overflow - jpcs :)
-  let $ns := _build_namespaces($markup) => fn:trace("namespaces")
-  let $markup := _analyze($markup,$ns) => fn:trace("analyzed")
-  return fn:trace($markup, "done")
+  let $ns := _build_namespaces($markup)
+  let $markup := _analyze($markup,$ns)
+  return $markup
 };
 
 (:~ Simplify the markup to remove unneeded elements :)

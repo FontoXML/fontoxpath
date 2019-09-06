@@ -24,7 +24,7 @@ describe('DefaultFunctionDeclaration', () => {
 	it('Can create a default namespace and a function', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
-				'declare default function namespace "http://example.com"; declare %private function lt() as item()*{ true() }; Q{http://example.com}lt()',
+				'declare default function namespace "http://example.com"; declare %private function lt() as item()*{ fn:true() }; Q{http://example.com}lt()',
 				documentNode,
 				undefined,
 				{},
@@ -36,9 +36,9 @@ describe('DefaultFunctionDeclaration', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
 				`declare default function namespace "http://example.com";
-declare namespace XXX = "http://example.com";
-declare %private function lt() as item()*{ true() };
-Q{http://example.com}lt() and XXX:lt() and lt()`,
+				declare namespace XXX = "http://example.com";
+				declare %private function lt() as item()*{ fn:true() };
+				Q{http://example.com}lt() and XXX:lt() and lt()`,
 				documentNode,
 				undefined,
 				{},

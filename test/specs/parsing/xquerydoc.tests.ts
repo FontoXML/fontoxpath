@@ -9,7 +9,7 @@ beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe.only('xquerydoc', () => {
+describe.skip('xquerydoc', () => {
 	before(function () {
 		this.timeout(60000);
 
@@ -53,7 +53,7 @@ describe.only('xquerydoc', () => {
 	});
 
 
-	it.only('run xQueryDoc parser over simple XQuery', () => {
+	it('run xQueryDoc parser over simple XQuery', () => {
 		const result = evaluateXPathToNodes(
 			`
 			xquery version "1.0" encoding "UTF-8";
@@ -103,7 +103,7 @@ describe.only('xquerydoc', () => {
 				}
 			), "(: a :)"
 		);
-	});
+	}).timeout(60000);
 
 	it('run XQuery parser over example from the existDB docs', () => {
 		const example = `
