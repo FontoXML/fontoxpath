@@ -111,9 +111,9 @@ describe('varRef', () => {
 			chai.assert.deepEqual(
 				evaluateXPathToString(
 					`declare namespace XXX = "YYY";
-				declare variable $XXX:YYY := "ABC";
-				declare variable $Q{YYY2}YYY := "ABC";
-				$XXX:YYY || "-" || $Q{YYY}YYY || "-" || $Q{YYY2}YYY`,
+					declare variable $XXX:YYY := "ABC";
+					declare variable $Q{YYY2}YYY := "ABC";
+					$XXX:YYY || "-" || $Q{YYY}YYY || "-" || $Q{YYY2}YYY`,
 					null,
 					null,
 					{},
