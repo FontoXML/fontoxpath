@@ -57,7 +57,6 @@ describe('VariableDeclaration', () => {
 				{},
 				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), 'hello');
 	});
-
 	it('allows external variables with defaults', () => {
 		chai.assert.equal(
 			evaluateXPathToString(
@@ -70,7 +69,7 @@ describe('VariableDeclaration', () => {
 	});
 
 	it('allows external variables with defaults (using the same variable)', () => {
-		// we are checking that the var is not cached from the previous test
+		// We are checking that the var is not cached from the previous test
 		chai.assert.equal(
 			evaluateXPathToString(
 				`declare variable $nx as xs:integer external := 12; 

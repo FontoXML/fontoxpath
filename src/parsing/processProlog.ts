@@ -325,20 +325,21 @@ export default function processProlog(
 						return cachedVariableValue();
 					}
 					cachedVariableValue = createDoublyIterableSequence(
-						compiledFunctionAsExpression.evaluate(dynamicContext, executionParameters)
+						compiledFunctionAsExpression.evaluateMaybeStatically(
+							dynamicContext,
+							executionParameters
+						)
 					);
-
 					return cachedVariableValue();
 				}
 			);
-
 			staticallyCompilableExpressions.push({
 				expression: compiledFunctionAsExpression,
 				staticContextLeaf: staticContext
 			});
-		}
 
-		registeredVariables.push(varName);
+			registeredVariables.push(varName);
+		}
 	});
 
 	staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {

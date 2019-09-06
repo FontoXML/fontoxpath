@@ -29,11 +29,12 @@ class VarRef extends Expression {
 	}
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
-		if (this._staticallyBoundVariableValue) {
-			return this._staticallyBoundVariableValue(dynamicContext, executionParameters);
-		}
 		const variableBinding = dynamicContext.variableBindings[this._variableBindingName];
+		// Make dynamic variables take precedence
 		if (!variableBinding) {
+			if (this._staticallyBoundVariableValue) {
+				return this._staticallyBoundVariableValue(dynamicContext, executionParameters);
+			}
 			throw new Error(
 				'XQDY0054: The variable ' + this._variableName + ' is declared but not in scope.'
 			);
