@@ -102,4 +102,34 @@ describe('VariableDeclaration', () => {
 				{ p: 7 },
 				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), 19);
 	});
+
+	it('Test node operations and variable declaration scope', () =>
+		chai.assert.equal(
+			evaluateXPathToNumber(
+				`
+				declare variable $x := 1;
+				$x	
+			`,
+				documentNode,
+				null,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			1
+		));
+
+	it('Test node operations and variable declaration scope - 2', () =>
+		chai.assert.equal(
+			evaluateXPathToNumber(
+				`
+					declare variable $x := 1;
+					$x	
+				`,
+				documentNode,
+				null,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			1
+		));
 });

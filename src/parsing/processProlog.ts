@@ -309,9 +309,9 @@ export default function processProlog(
 				}${varName.localName} has already been declared.`
 			);
 		}
-		if (!staticContext.lookupVariable(declarationNamespaceURI || '', varName.localName)) {
-			staticContext.registerVariable(declarationNamespaceURI || '', varName.localName);
-		}
+
+		staticContext.registerVariable(declarationNamespaceURI || '', varName.localName);
+
 		if (
 			varValue &&
 			!staticContext.lookupVariableValue(declarationNamespaceURI || '', varName.localName)

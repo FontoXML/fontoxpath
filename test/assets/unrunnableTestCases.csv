@@ -2089,7 +2089,6 @@ K2-ancestorAxis-5,AssertionError: Expected executing the XPath "empty(document {
 K2-ancestorAxis-6,AssertionError: Expected executing the XPath "empty(document {<e><f/><f/>text</e>}/ancestor::node())" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
 K2-ancestorAxis-17,AssertionError: Expected executing the XPath "document {()}/ancestor::node(), count(document {()}/ancestor::node()), 1" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
 K2-ancestor-or-selfAxis-5,Error: No selector counterpart for: computedDocumentConstructor.
-K2-preceding-siblingAxis-4,Error: XPST0008, The variable i is not in scope.
 unabbreviatedSyntax-3,AssertionError: for $h in (/works[1]/employee[2]) return $h/child::text(): expected '\n    \n    \n    \n    Text data from Employee[2]\n  ' to equal 'Text data from Employee[2]'
 CastableAs647,Error: Casting to xs:QName is not implemented.
 CastableAs648a,Error: Casting to xs:QName is not implemented.
@@ -3036,7 +3035,6 @@ K2-NameTest-39,AssertionError: expected [Function] to throw error matching /XPST
 K2-NameTest-40,AssertionError: expected [Function] to throw error matching /XPST0008/ but got 'No selector counterpart for: schemaAttributeTest.'
 K2-NameTest-47,NamespaceError: NamespaceError: xmlns prefix or qualifiedName must use the XMLNS namespace
 K2-NameTest-50,AssertionError: Expected executing the XPath "declare namespace p = "http://example.com/"; <a>{document {<p:e/>}/@p:*}</a>" to resolve to one of the expected results, but got Error: No selector counterpart for: computedDocumentConstructor., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'No selector counterpart for: computedDocumentConstructor.'.
-K2-NameTest-57,AssertionError: Expected executing the XPath "declare variable $a := <e><a/><b/><c/></e>; <a>{$a/*:ncname eq 1}</a>" to resolve to one of the expected results, but got Error: XPST0008, The variable a is not in scope., AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0008, The variable a is not in scope.'.
 K2-NameTest-67,AssertionError: expected [Function] to throw an error
 K2-NameTest-68,AssertionError: Expected executing the XPath "<e>{<e foo="1"/>/attribute(foo, xs:integer)}</e>" to resolve to one of the expected results, but got AssertionError: Expected XPath <e>{<e foo="1"/>/attribute(foo, xs:integer)}</e> to resolve to the given XML. Expected <e foo="1"/> to equal <e/>, AssertionError: expected [Function] to throw an error.
 K2-NameTest-69,AssertionError: expected [Function] to throw an error
@@ -3500,7 +3498,7 @@ K-InternalVariablesWith-20a,AssertionError: expected [Function] to throw error m
 K2-InternalVariablesWith-1,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'No selector counterpart for: treatExpr.'
 extvardeclwithouttype-6,AssertionError: Expected executing the XPath "declare variable $x external; xs:float($x)" to resolve to one of the expected results, but got AssertionError: declare variable $x external; xs:float($x): expected '125000000000' to equal '1.25E11', AssertionError: expected [Function] to throw an error.
 extvardeclwithouttype-18,Error: XPST0003: Unable to parse: "let $result := (declare variable $x external; $x) return $result ge 2.33333333333333". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "v" found. let $result := (declare [Error is around here]variable $x external; $x) return $result ge 2.33333333333333
-extvardeclwithouttype-23,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XPST0008, The variable x is not in scope.'
+extvardeclwithouttype-23,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XQDY0054: The variable x is declared but not in scope.'
 extvardeclwithouttype-24,Error: XQDY0054: The variable x is declared but not in scope.
 K2-ExternalVariablesWithout-1,AssertionError: expected [Function] to throw an error
 K2-ExternalVariablesWithout-2,AssertionError: expected [Function] to throw error matching /XQST0049/ but got 'XQDY0054: The variable input-context is declared but not in scope.'
@@ -3537,11 +3535,11 @@ K2-ExternalVariablesWith-23,Error: XPST0003: Unable to parse: "declare variable 
 extvardef-002b,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'FOTY0013: Atomization is not supported for map(*).'
 extvardef-003a,Error: FORG0006: items passed to fn:sum are not all numeric.
 extvardef-007,Error: Not implemented: adding durations to xs:date
-extvardef-008,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XPST0008, The variable x is not in scope.'
+extvardef-008,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'XQDY0054: The variable x is declared but not in scope.'
 extvardef-011,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
 extvardef-011a,AssertionError: expected [Function] to throw error matching /XQDY0054/ but got 'Maximum call stack size exceeded'
-extvardef-016a,Error: XPST0008, The variable x is not in scope.
-extvardef-016b,Error: XPST0008, The variable x is not in scope.
+extvardef-016a,Error: XPDY0002: The fn:position() function depends on dynamic context, which is absent.
+extvardef-016b,Error: XPDY0002: The fn:last() function depends on dynamic context, which is absent.
 version_declaration-007,AssertionError: expected [Function] to throw an error
 version_declaration-008,AssertionError: expected [Function] to throw an error
 version_declaration-010-v3,AssertionError: expected [Function] to throw an error
