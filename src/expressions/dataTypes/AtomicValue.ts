@@ -1,5 +1,7 @@
+import { ValueType } from './Value';
+
 type AtomicValue = {
-	type: string;
+	type: ValueType;
 	value: any;
 };
 

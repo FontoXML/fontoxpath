@@ -1,8 +1,9 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
 
 import AtomicValue from './AtomicValue';
+import { ValueType } from './Value';
 
-export default function createAtomicValue(value: any, type: string): AtomicValue {
+export default function createAtomicValue(value: any, type: ValueType): AtomicValue {
 	if (!builtinDataTypesByName[type]) {
 		throw new Error('Unknown type');
 	}

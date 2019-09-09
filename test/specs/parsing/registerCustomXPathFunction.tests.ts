@@ -261,11 +261,7 @@ describe('registerCustomXPath', () => {
 				['xs:date'],
 				'xs:date',
 				function (dynamicContext, date) {
-					chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
-					chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
-	
 					chai.assert.isTrue(date instanceof Date, 'Parameter is not of type javascript date')
-	
 					return date;
 				});
 
@@ -274,22 +270,15 @@ describe('registerCustomXPath', () => {
 				['xs:date?'],
 				'xs:date?',
 				function (dynamicContext, date) {
-					chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
-					chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
-	
 					chai.assert.isTrue(date === null || date instanceof Date, 'Parameter is not null or of type javascript date')
-	
 					return date;
 				});
 
 			registerCustomXPathFunction(
-				'test:custom-date-function-multiple-param',
+				'test:custom-date-function-zero-to-many-param',
 				['xs:date*'],
 				'xs:date*',
 				function (dynamicContext, dates) {
-					chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
-					chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
-	
 					chai.assert.isTrue(Array.isArray(dates), "Parameter is not an array");
 
 					for (const date of dates) {
@@ -298,15 +287,115 @@ describe('registerCustomXPath', () => {
 					return dates;
 				});
 
+			registerCustomXPathFunction(
+				'test:custom-date-function-one-to-many-param',
+				['xs:date+'],
+				'xs:date*',
+				function (dynamicContext, dates) {
+					chai.assert.isTrue(Array.isArray(dates), "Parameter is not an array");
+
+					for (const date of dates) {
+						chai.assert.isTrue(date instanceof Date, 'Parameter is not of type javascript date')
+					}	
+					return dates;
+				});
+
+			registerCustomXPathFunction(
+				'test:custom-time-param-function',
+				['xs:time'],
+				'xs:time',
+				function (dynamicContext, time) {
+					chai.assert.isTrue(time instanceof Date, 'Parameter is not of type javascript date')
+					return time;
+				});
+	
+			registerCustomXPathFunction(
+				'test:custom-dateTime-param-function',
+				['xs:dateTime'],
+				'xs:dateTime',
+				function (dynamicContext, dateTime) {
+					chai.assert.isTrue(dateTime instanceof Date, 'Parameter is not of type javascript date')
+					return dateTime;
+				});
+	
+			registerCustomXPathFunction(
+				'test:custom-gYearMonth-param-function',
+				['xs:gYearMonth'],
+				'xs:gYearMonth',
+				function (dynamicContext, gYearMonth) {
+					chai.assert.isTrue(gYearMonth instanceof Date, 'Parameter is not of type javascript date')
+					return gYearMonth;
+				});
+	
+			registerCustomXPathFunction(
+				'test:custom-gYear-param-function',
+				['xs:gYear'],
+				'xs:gYear',
+				function (dynamicContext, gYear) {
+					chai.assert.isTrue(gYear instanceof Date, 'Parameter is not of type javascript date')
+					return gYear;
+				});
+	
+			registerCustomXPathFunction(
+				'test:custom-gMonthDay-param-function',
+				['xs:gMonthDay'],
+				'xs:gMonthDay',
+				function (dynamicContext, gMonthDay) {
+					chai.assert.isTrue(gMonthDay instanceof Date, 'Parameter is not of type javascript date')
+					return gMonthDay;
+				});
+	
+			registerCustomXPathFunction(
+				'test:custom-gMonth-param-function',
+				['xs:gMonth'],
+				'xs:gMonth',
+				function (dynamicContext, gMonth) {
+					chai.assert.isTrue(gMonth instanceof Date, 'Parameter is not of type javascript date')
+					return gMonth;
+				});
+	
+			registerCustomXPathFunction(
+				'test:custom-gDay-param-function',
+				['xs:gDay'],
+				'xs:gDay',
+				function (dynamicContext, gDay) {
+					chai.assert.isTrue(gDay instanceof Date, 'Parameter is not of type javascript date')
+					return gDay;
+				});
+
 		})
-		it('Passes a javascript date to the custom function', () => {
-			chai.assert.equal(evaluateXPathToString('test:custom-date-function-param(xs:date("2019-08-29"))', documentNode), '2019-08-29Z');
+		it('Passes xs:date as a javascript date when the param cardinality is 1', () => {
+			evaluateXPath('test:custom-date-function-param(xs:date("2019-08-29"))');
 		})
-		it('Passess null to the custom function', () => {
-			chai.assert.equal(evaluateXPathToString('test:custom-date-function-optional-param(())', documentNode), '');
+		it('Passes xs:date as a javascript date when the param cardinality is 0-1', () => {
+			evaluateXPath('test:custom-date-function-optional-param(xs:date("2019-08-29"))');
 		})
-		it('Passes an array of javascript dates to the function', () => {
-			chai.assert.deepEqual(evaluateXPathToStrings('test:custom-date-function-multiple-param((xs:date("2019-08-29"), xs:date("2019-08-31")))', documentNode), ['2019-08-29Z', '2019-08-31Z']);
+		it('Passes an array of xs:date as a javascript array of date when the param cardinality is 0 to many', () => {
+			evaluateXPath('test:custom-date-function-zero-to-many-param((xs:date("2019-08-29"), xs:date("2019-08-31")))');
+		})
+		it('Passes an array of xs:date as a javascript array of date when the param cardinality is 1 to many', () => {
+			evaluateXPath('test:custom-date-function-one-to-many-param((xs:date("2019-08-29"), xs:date("2019-08-31")))');
+		})
+		it('Passes xs:time as a javascript date' , () => {
+			evaluateXPath('test:custom-time-param-function(xs:time("12:00:00"))');
+		})
+		it('Passes xs:dateTime as a javascript date' , () => {
+			evaluateXPath('test:custom-dateTime-param-function(xs:dateTime("2019-08-29T12:00:00"))');
+		})
+		it('Passes xs:gYearMonth as a javascript date' , () => {
+			evaluateXPath('test:custom-gYearMonth-param-function(xs:gYearMonth("2019-08"))');
+		})
+		it('Passes xs:gYear as a javascript date' , () => {
+			evaluateXPath('test:custom-gYear-param-function(xs:gYear("2019"))');
+		})
+		it('Passes xs:gMonthDay as a javascript date' , () => {
+			evaluateXPath('test:custom-gMonthDay-param-function(xs:gMonthDay("--08-29"))');
+		})
+		it('Passes xs:gMonth as a javascript date' , () => {
+			evaluateXPath('test:custom-gMonth-param-function(xs:gMonth("--08"))');
+		})
+		it('Passes xs:gDay as a javascript date' , () => {
+			evaluateXPath('test:custom-gDay-param-function(xs:gDay("---29"))');
 		})
 	})
 });

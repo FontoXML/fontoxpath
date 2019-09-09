@@ -109,13 +109,23 @@ export default function transformXPathItemToJavascriptObject(value: Value): IAsy
 			next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localName}`)
 		};
 	}
-	if (isSubtypeOf(value.type, 'xs:date')) {
-		return {
-			next: () => ready(value.value.toJavaScriptDate())
-		}
-	}
 
-	return {
-		next: () => ready(value.value)
-	};
+	switch (value.type) {
+		case 'xs:date':
+		case 'xs:time':
+		case 'xs:dateTime':
+		case 'xs:gYearMonth':
+		case 'xs:gYear':
+		case 'xs:gMonthDay':
+		case 'xs:gMonth':
+		case 'xs:gDay':
+			return {
+				next: () => ready(value.value.toJavaScriptDate())
+			};
+
+		default:
+			return {
+				next: () => ready(value.value)
+			};
+	}
 }
