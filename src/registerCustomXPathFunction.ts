@@ -10,6 +10,8 @@ import {
 	registerStaticallyKnownNamespace,
 	staticallyKnownNamespaceByPrefix
 } from './expressions/staticallyKnownNamespaces';
+import transformXPathItemToJavascriptObject from './transformXPathItemToJavascriptObject';
+import { IterationHint } from './expressions/util/iterators';
 
 type DynamicContextAdapter = {
 	currentContext: any;
@@ -25,7 +27,9 @@ function adaptXPathValueToJavascriptValue(
 			if (valueSequence.isEmpty()) {
 				return null;
 			}
-			return valueSequence.first()!.value;
+			return transformXPathItemToJavascriptObject(valueSequence.first()).next(
+				IterationHint.NONE
+			).value;
 
 		case '*':
 		case '+':
@@ -33,11 +37,13 @@ function adaptXPathValueToJavascriptValue(
 				if (isSubtypeOf(value.type, 'attribute()')) {
 					throw new Error('Cannot pass attribute nodes to custom functions');
 				}
-				return value.value;
+				return transformXPathItemToJavascriptObject(value).next(IterationHint.NONE).value;
 			});
 
 		default:
-			return valueSequence.first()!.value;
+			return transformXPathItemToJavascriptObject(valueSequence.first()).next(
+				IterationHint.NONE
+			).value;
 	}
 }
 
