@@ -10,11 +10,12 @@ map-remove-012,Tries to make a map of length 500K
 map-contains-016,Tries to make a map of huge length
 map-get-016,Tries to make a map of huge length
 fold-left-020,Tries to fold sequence of huge length
+fold-left-021,RangeError: Maximum call stack size exceeded. Can be removed once https://github.com/FontoXML/fontoxpath/issues/167 is solved
 fold-right-013,Tries to fold sequence of huge length
 cbcl-codepoints-to-string-021,Tries to make a string of length 65536*65536
 cbcl-codepoints-to-string-022,Tries to make a string of length 65536*65536
 RexParser,Loads missing files...
-XMark-Q4, Quantified expressions error. Can be removed once https://github.com/FontoXML/fontoxpath/issues/160 is solved. 
+XMark-Q4, Quantified expressions error. Can be removed once https://github.com/FontoXML/fontoxpath/issues/160 is solved.
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 fn-absintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-absintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -448,7 +449,6 @@ fold-left-011,AssertionError: expected [Function] to throw an error
 fold-left-013,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Unrecognized type "elementTest".'
 fold-left-014,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Unrecognized type "elementTest".'
 fold-left-016,Error: XPST0008, The variable a is not in scope.
-fold-left-021,RangeError: Maximum call stack size exceeded
 fold-left-105,Error: XPST0003: Unable to parse: "deep-equal((         declare function local:fold-left(           $seq as item()*,           $zero as item()*,           $f as function(item()*, item()) as item()*)         as item()* {             if (fn:empty($seq))             then $zero             else fn:fold-left(fn:tail($seq), $f($zero, fn:head($seq)), $f)         };         local:fold-left(1 to 5, (), function($a, $b) {($b, $a)})), (5, 4, 3, 2, 1))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. deep-equal((         declare [Error is around here]function local:fold-left(           $seq as item()*,           $zero as item()*,           $f as function(item()*, item()) as item()*)         as item()* {             if (fn:empty($seq))             then $zero             else fn:fold-left(fn:tail($seq), $f($zero, fn:head($seq)), $f)         };         local:fold-left(1 to 5, (), function($a, $b) {($b, $a)})), (5, 4, 3, 2, 1))
 fold-right-012,AssertionError: expected [Function] to throw an error
 fold-right-105,Error: XPST0003: Unable to parse: "deep-equal((declare function local:fold-right(           $seq as item()*,            $zero as item()*,            $f as function(item(), item()*) as item()*)            as item()* {             if (fn:empty($seq))             then $zero             else $f(fn:head($seq), fn:fold-right(fn:tail($seq), $zero, $f))           };           let $f := function($a, $b){($b, $a)} return local:fold-right(1 to 5, (), $f)), (5,4,3,2,1))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. deep-equal((declare [Error is around here]function local:fold-right(           $seq as item()*,            $zero as item()*,            $f as function(item(), item()*) as item()*)            as item()* {             if (fn:empty($seq))             then $zero             else $f(fn:head($seq), fn:fold-right(fn:tail($seq), $zero, $f))           };           let $f := function($a, $b){($b, $a)} return local:fold-right(1 to 5, (), $f)), (5,4,3,2,1))
