@@ -1,4 +1,4 @@
-export const errXQTY0024 = function(node) {
+export const errXQTY0024 = node => {
 	const nodeString =
 		node.nodeType === node.ATTRIBUTE_NODE ? `${node.name}="${node.value}"` : node.outerHTML;
 	return new Error(
@@ -25,6 +25,10 @@ export const errXQDY0044 = qName =>
 	new Error(
 		`XQDY0044: The node name "${qName.buildPrefixedName()}" is invalid for a computed attribute constructor.`
 	);
+export const errXQST0045 = () =>
+	new Error(
+		'XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.'
+	);
 export const errXQST0060 = () =>
 	new Error('XQST0060: Functions declared in a module must reside in a namespace.');
 export const errXQST0066 = () =>
@@ -41,6 +45,8 @@ export const errXQDY0074 = name =>
 	new Error(
 		`XQDY0074: The value "${name}" of a name expressions cannot be converted to an expanded QName.`
 	);
+export const errXPST0081 = prefix =>
+	new Error(`XPST0081: The prefix "${prefix}" could not be resolved`);
 export const errXQDY0096 = qName =>
 	new Error(
 		`XQDY0096: The node name "${qName.buildPrefixedName()}" is invalid for a computed element constructor.`

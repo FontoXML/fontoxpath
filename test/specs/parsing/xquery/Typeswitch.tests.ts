@@ -1,16 +1,6 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
 
-import {
-	evaluateXPath,
-	evaluateXPathToNumber,
-	evaluateXPathToString,
-} from 'fontoxpath';
-
-let documentNode;
-beforeEach(() => {
-	documentNode = new slimdom.Document();
-});
+import { evaluateXPath, evaluateXPathToNumber, evaluateXPathToString } from 'fontoxpath';
 
 describe('Typeswitch', () => {
 	it('runs typeswitch and returns an integer', () =>

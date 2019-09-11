@@ -1,6 +1,9 @@
 import { FunctionProperties } from './functions/functionRegistry';
 
 export default interface IContext {
+	registeredDefaultFunctionNamespace: string;
+	registeredVariableBindingByHashKey: any[];
+	registeredVariableDeclarationByHashKey: any;
 	lookupFunction(
 		namespaceURI: string,
 		localName: string,

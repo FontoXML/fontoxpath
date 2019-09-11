@@ -16,6 +16,9 @@ const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variab
  */
 export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
+	public registeredDefaultFunctionNamespace: string;
+	public registeredVariableBindingByHashKey: any[];
+	public registeredVariableDeclarationByHashKey: any;
 
 	private _namespaceResolver: (namespaceURI: string) => null | string;
 

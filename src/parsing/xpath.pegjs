@@ -1318,7 +1318,7 @@ StringLiteral
 URIQualifiedName = uri:BracedURILiteral localName:NCName {return [uri, localName]}
 
 // 224
-BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').trim()}
+BracedURILiteral = "Q" _ "{" uri:[^{}]* "}" {return uri.join('').replace(/\s+/g, ' ').trim()}
 
 // 225
 PredefinedEntityRef

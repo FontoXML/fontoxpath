@@ -12,7 +12,13 @@ import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
-import { errXQST0060, errXQST0066, errXQST0070 } from '../expressions/xquery/XQueryErrors';
+import {
+	errXPST0081,
+	errXQST0045,
+	errXQST0060,
+	errXQST0066,
+	errXQST0070
+} from '../expressions/xquery/XQueryErrors';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -139,16 +145,12 @@ export default function processProlog(
 					: staticContext.resolveNamespace(declarationPrefix);
 
 			if (!declarationNamespaceURI && declarationPrefix) {
-				throw new Error(
-					`XPST0081: The prefix "${declarationPrefix}" could not be resolved`
-				);
+				throw errXPST0081(declarationPrefix);
 			}
 		}
 
 		if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
-			throw new Error(
-				'XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.'
-			);
+			throw errXQST0045();
 		}
 
 		// Functions are public unless they're private
@@ -192,7 +194,6 @@ export default function processProlog(
 			allowXQuery: true
 		});
 
-		// Or do this:
 		const staticContextLeaf = new StaticContext(staticContext);
 		const parameterBindingNames = paramNames.map(param => {
 			let namespaceURI = astHelper.getAttribute(param, 'URI');
@@ -265,14 +266,12 @@ export default function processProlog(
 			declarationNamespaceURI = staticContext.resolveNamespace(varName.prefix);
 
 			if (!declarationNamespaceURI && varName.prefix) {
-				throw new Error(`XPST0081: The prefix "${varName.prefix}" could not be resolved`);
+				throw errXPST0081(varName.prefix);
 			}
 		}
 
 		if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
-			throw new Error(
-				'XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.'
-			);
+			throw errXQST0045();
 		}
 		const external = astHelper.getFirstChild(varDecl, 'external');
 		const getVarValue = astHelper.getFirstChild(varDecl, 'varValue');
