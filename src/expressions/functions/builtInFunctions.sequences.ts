@@ -293,14 +293,14 @@ const fnUnordered: FunctionDefinitionType = (
 
 const fnIndexOf: FunctionDefinitionType = (
 	dynamicContext,
-	_executionParameters,
+	executionParameters,
 	_staticContext,
 	sequence,
 	search
 ) => {
 	return search.mapAll(([onlySearchValue]) =>
 		sequence
-			.atomize(_executionParameters)
+			.atomize(executionParameters)
 			.map((element, i) => {
 				return valueCompare('eqOp', element, onlySearchValue, dynamicContext)
 					? createAtomicValue(i + 1, 'xs:integer')
