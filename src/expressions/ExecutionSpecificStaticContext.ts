@@ -1,6 +1,9 @@
 import IContext from './Context';
 import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
-import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
+import {
+	FUNCTIONS_NAMESPACE_URI,
+	staticallyKnownNamespaceByPrefix
+} from './staticallyKnownNamespaces';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
@@ -16,7 +19,7 @@ const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variab
  */
 export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
-	public registeredDefaultFunctionNamespace: string;
+	public registeredDefaultFunctionNamespace: string = FUNCTIONS_NAMESPACE_URI;
 	public registeredVariableBindingByHashKey: any[];
 	public registeredVariableDeclarationByHashKey: any;
 

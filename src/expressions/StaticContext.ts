@@ -43,7 +43,12 @@ export default class StaticContext implements IContext {
 	public parentContext: IContext;
 	public registeredDefaultFunctionNamespace: string = FUNCTIONS_NAMESPACE_URI;
 	public registeredVariableBindingByHashKey: any[];
-	public registeredVariableDeclarationByHashKey: any[];
+	public registeredVariableDeclarationByHashKey: {
+		[hash: string]: (
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters
+		) => ISequence;
+	};
 	private _registeredFunctionsByHash: any;
 	private _registeredNamespaceURIByPrefix: any[];
 	private _scopeCount: number;
@@ -61,15 +66,6 @@ export default class StaticContext implements IContext {
 
 		// Functions may never be added for only a closure
 		this._registeredFunctionsByHash = Object.create(null);
-		// We need to add this field to the IContext class, and default it properly there/at other places
-		if (parentContext instanceof StaticContext) {
-			this.registeredDefaultFunctionNamespace =
-				parentContext.registeredDefaultFunctionNamespace;
-			this.registeredVariableDeclarationByHashKey =
-				parentContext.registeredVariableDeclarationByHashKey;
-			this.registeredVariableBindingByHashKey =
-				parentContext.registeredVariableBindingByHashKey;
-		}
 	}
 
 	/**
