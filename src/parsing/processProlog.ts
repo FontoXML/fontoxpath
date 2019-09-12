@@ -12,7 +12,13 @@ import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
-import { errXQST0060, errXQST0066, errXQST0070 } from '../expressions/xquery/XQueryErrors';
+import {
+	errXPST0081,
+	errXQST0045,
+	errXQST0060,
+	errXQST0066,
+	errXQST0070
+} from '../expressions/xquery/XQueryErrors';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -139,16 +145,12 @@ export default function processProlog(
 					: staticContext.resolveNamespace(declarationPrefix);
 
 			if (!declarationNamespaceURI && declarationPrefix) {
-				throw new Error(
-					`XPST0081: The prefix "${declarationPrefix}" could not be resolved`
-				);
+				throw errXPST0081(declarationPrefix);
 			}
 		}
 
 		if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
-			throw new Error(
-				'XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.'
-			);
+			throw errXQST0045();
 		}
 
 		// Functions are public unless they're private
@@ -259,9 +261,23 @@ export default function processProlog(
 	const registeredVariables: { localName: string; namespaceURI: null | string }[] = [];
 	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
+		let declarationNamespaceURI = varName.namespaceURI;
+		if (declarationNamespaceURI === null) {
+			declarationNamespaceURI = staticContext.resolveNamespace(varName.prefix);
+
+			if (!declarationNamespaceURI && varName.prefix) {
+				throw errXPST0081(varName.prefix);
+			}
+		}
+
+		if (RESERVED_FUNCTION_NAMESPACE_URIS.includes(declarationNamespaceURI)) {
+			throw errXQST0045();
+		}
 		const external = astHelper.getFirstChild(varDecl, 'external');
 		const getVarValue = astHelper.getFirstChild(varDecl, 'varValue');
-		let varValue, compiledFunctionAsExpression;
+
+		let varValue: IAST;
+		let compiledFunctionAsExpression: Expression;
 
 		if (external !== null) {
 			const varDefaultValue = astHelper.getFirstChild(external, 'varValue');
@@ -282,37 +298,47 @@ export default function processProlog(
 		if (
 			registeredVariables.some(
 				registered =>
-					registered.namespaceURI === varName.namespaceURI &&
+					registered.namespaceURI === declarationNamespaceURI &&
 					registered.localName === varName.localName
 			)
 		) {
 			throw new Error(
 				`XQST0049: The variable ${
-					varName.namespaceURI ? `Q{${varName.namespaceURI}}` : ''
+					declarationNamespaceURI ? `Q{${declarationNamespaceURI}}` : ''
 				}${varName.localName} has already been declared.`
 			);
 		}
-		if (!staticContext.lookupVariable(varName.namespaceURI || '', varName.localName)) {
-			staticContext.registerVariable(varName.namespaceURI || '', varName.localName);
-		}
+
+		staticContext.registerVariable(declarationNamespaceURI || '', varName.localName);
+
 		if (
 			varValue &&
-			!staticContext.lookupVariableValue(varName.namespaceURI || '', varName.localName)
+			!staticContext.lookupVariableValue(declarationNamespaceURI || '', varName.localName)
 		) {
+			let cachedVariableValue: () => ISequence | null = null;
 			staticContext.registerVariableDeclaration(
-				varName.namespaceURI,
+				declarationNamespaceURI,
 				varName.localName,
-				(dynamicContext, executionParameters) =>
-					compiledFunctionAsExpression.evaluate(dynamicContext, executionParameters)
+				(dynamicContext, executionParameters) => {
+					if (cachedVariableValue) {
+						return cachedVariableValue();
+					}
+					cachedVariableValue = createDoublyIterableSequence(
+						compiledFunctionAsExpression.evaluateMaybeStatically(
+							dynamicContext,
+							executionParameters
+						)
+					);
+					return cachedVariableValue();
+				}
 			);
-
 			staticallyCompilableExpressions.push({
 				expression: compiledFunctionAsExpression,
 				staticContextLeaf: staticContext
 			});
-		}
 
-		registeredVariables.push(varName);
+			registeredVariables.push(varName);
+		}
 	});
 
 	staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {

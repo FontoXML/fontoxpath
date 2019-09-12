@@ -7,11 +7,13 @@ import {
 	NODE_TYPES
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
+import ArrayValue from '../dataTypes/ArrayValue';
+import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
-import isSubtypeOfType from '../dataTypes/isSubtypeOf';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
@@ -45,12 +47,12 @@ function contextItemAsFirstArgument(
 	);
 }
 
-const fnNodeName: FunctionDefinitionType = function(
+const fnNodeName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return zipSingleton([sequence], ([nodeValue]) => {
 		if (nodeValue === null) {
 			return sequenceFactory.empty();
@@ -80,21 +82,64 @@ const fnNodeName: FunctionDefinitionType = function(
 	});
 };
 
-const fnName: FunctionDefinitionType = function(
+const fnName: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	sequence
-) {
+) => {
 	return sequence.switchCases({
-		empty: () => sequenceFactory.empty(),
 		default: () =>
 			fnString(
 				dynamicContext,
 				executionParameters,
 				staticContext,
 				fnNodeName(dynamicContext, executionParameters, staticContext, sequence)
+			),
+		empty: () => sequenceFactory.empty()
+	});
+};
+
+const fnData: FunctionDefinitionType = (
+	_dynamicContext,
+	executionParameters,
+	_staticContext,
+	sequence
+) => {
+	function getDataFromValues(allValues: Value[]): Value[] {
+		let returnItems = [];
+		for (const value of allValues) {
+			if (isSubtypeOf(value.type, 'xs:anyAtomicType')) {
+				returnItems.push(value);
+				continue;
+			} else if (isSubtypeOf(value.type, 'node()')) {
+				returnItems.push(atomize(value, executionParameters));
+				continue;
+			} else if (isSubtypeOf(value.type, 'array(*)')) {
+				returnItems = returnItems.concat(
+					getDataFromValues(
+						(value as ArrayValue).members
+							.map(getMember => getMember().getAllValues())
+							.reduce((allMembers: Value[], member: Value[]) => {
+								return allMembers.concat(member);
+							}, [])
+					)
+				);
+			} else {
+				throw new Error(
+					'FOTY0013: An item in the sequence is a function item other than an array'
+				);
+			}
+		}
+		return returnItems;
+	}
+	return sequence.mapAll(allValues => {
+		return sequenceFactory.create(
+			getDataFromValues(allValues).reduce(
+				(valueList: Value[], values: Value) => valueList.concat(values),
+				[]
 			)
+		);
 	});
 };
 
@@ -200,23 +245,22 @@ const fnPath: FunctionDefinitionType = (
 	});
 };
 
-const fnNamespaceURI: FunctionDefinitionType = function(
+const fnNamespaceURI: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.map(node => createAtomicValue(node.value.namespaceURI || '', 'xs:anyURI'));
 };
 
-const fnLocalName: FunctionDefinitionType = function(
+const fnLocalName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.switchCases({
-		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string')),
 		default: () => {
 			return sequence.map(node => {
 				if (node.value.nodeType === 7) {
@@ -226,7 +270,8 @@ const fnLocalName: FunctionDefinitionType = function(
 
 				return createAtomicValue(node.value.localName || '', 'xs:string');
 			});
-		}
+		},
+		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string'))
 	});
 };
 
@@ -289,12 +334,12 @@ const fnOutermost: FunctionDefinitionType = (
 	}, IterationHint.SKIP_DESCENDANTS);
 };
 
-const fnInnermost: FunctionDefinitionType = function(
+const fnInnermost: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	nodeSequence
-) {
+) => {
 	return nodeSequence.mapAll(allNodeValues => {
 		if (!allNodeValues.length) {
 			return sequenceFactory.empty();
@@ -303,7 +348,7 @@ const fnInnermost: FunctionDefinitionType = function(
 		const resultNodes = sortNodeValues(
 			executionParameters.domFacade,
 			allNodeValues
-		).reduceRight(function(followingNodes, node, i, allNodes) {
+		).reduceRight((followingNodes, node, i, allNodes) => {
 			if (i === allNodes.length - 1) {
 				followingNodes.push(node);
 				return followingNodes;
@@ -322,14 +367,14 @@ const fnInnermost: FunctionDefinitionType = function(
 	});
 };
 
-const fnRoot: FunctionDefinitionType = function(
+const fnRoot: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	nodeSequence
-) {
+) => {
 	return nodeSequence.map(node => {
-		if (!isSubtypeOfType(node.type, 'node()')) {
+		if (!isSubtypeOf(node.type, 'node()')) {
 			throw new Error('XPTY0004 Argument passed to fn:root() should be of the type node()');
 		}
 
@@ -346,131 +391,146 @@ const fnRoot: FunctionDefinitionType = function(
 export default {
 	declarations: [
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'name',
 			argumentTypes: ['node()?'],
-			returnType: 'xs:string?',
-			callFunction: fnName
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			callFunction: fnName,
 			localName: 'name',
-			argumentTypes: [],
-			returnType: 'xs:string',
-			callFunction: contextItemAsFirstArgument.bind(null, fnName)
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string?'
 		},
 
 		{
+			argumentTypes: [],
+			callFunction: contextItemAsFirstArgument.bind(null, fnName),
+			localName: 'name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'namespace-uri',
+			returnType: 'xs:string'
+		},
+
+		{
 			argumentTypes: ['node()'],
-			returnType: 'xs:anyURI',
-			callFunction: fnNamespaceURI
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			callFunction: fnNamespaceURI,
 			localName: 'namespace-uri',
-			argumentTypes: [],
-			returnType: 'xs:anyURI',
-			callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI)
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyURI'
 		},
 
 		{
+			argumentTypes: [],
+			callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI),
+			localName: 'namespace-uri',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyURI'
+		},
+
+		{
+			argumentTypes: ['node()*'],
+			callFunction: fnInnermost,
 			localName: 'innermost',
-			argumentTypes: ['node()*'],
-			returnType: 'node()*',
-			callFunction: fnInnermost
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'node()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['node()*'],
+			callFunction: fnOutermost,
 			localName: 'outermost',
-			argumentTypes: ['node()*'],
-			returnType: 'node()*',
-			callFunction: fnOutermost
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'node()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['node()?'],
+			callFunction: fnHasChildren,
 			localName: 'has-children',
-			argumentTypes: ['node()?'],
-			returnType: 'xs:boolean',
-			callFunction: fnHasChildren
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:boolean'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: [],
+			callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren),
 			localName: 'has-children',
-			argumentTypes: [],
-			returnType: 'xs:boolean',
-			callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren)
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:boolean'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['node()?'],
+			callFunction: fnPath,
 			localName: 'path',
-			argumentTypes: ['node()?'],
-			returnType: 'xs:string?',
-			callFunction: fnPath
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: [],
+			callFunction: contextItemAsFirstArgument.bind(null, fnPath),
 			localName: 'path',
-			argumentTypes: [],
-			returnType: 'xs:string?',
-			callFunction: contextItemAsFirstArgument.bind(null, fnPath)
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['node()?'],
+			callFunction: fnNodeName,
 			localName: 'node-name',
-			argumentTypes: ['node()?'],
-			returnType: 'xs:QName?',
-			callFunction: fnNodeName
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:QName?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: [],
+			callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
 			localName: 'node-name',
-			argumentTypes: [],
-			returnType: 'xs:QName?',
-			callFunction: contextItemAsFirstArgument.bind(null, fnNodeName)
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:QName?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'local-name',
 			argumentTypes: ['node()?'],
-			returnType: 'xs:string',
-			callFunction: fnLocalName
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			callFunction: fnLocalName,
 			localName: 'local-name',
-			argumentTypes: [],
-			returnType: 'xs:string',
-			callFunction: contextItemAsFirstArgument.bind(null, fnLocalName)
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string'
 		},
 
 		{
+			argumentTypes: [],
+			callFunction: contextItemAsFirstArgument.bind(null, fnLocalName),
+			localName: 'local-name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'root',
+			returnType: 'xs:string'
+		},
+
+		{
 			argumentTypes: ['node()?'],
-			returnType: 'node()?',
-			callFunction: fnRoot
+			callFunction: fnRoot,
+			localName: 'root',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'node()?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'root',
 			argumentTypes: [],
-			returnType: 'node()?',
-			callFunction: contextItemAsFirstArgument.bind(null, fnRoot)
+			callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
+			localName: 'root',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'node()?'
+		},
+
+		{
+			argumentTypes: [],
+			callFunction: contextItemAsFirstArgument.bind(null, fnData),
+			localName: 'data',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType*'
+		},
+		{
+			argumentTypes: ['item()*'],
+			callFunction: fnData,
+			localName: 'data',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType*'
 		}
 	],
 	functions: {

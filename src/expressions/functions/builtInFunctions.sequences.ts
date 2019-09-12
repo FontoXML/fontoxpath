@@ -1,3 +1,4 @@
+import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
@@ -7,6 +8,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import Value from '../dataTypes/Value';
+import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -62,7 +64,7 @@ function subSequence(sequence: ISequence, start: number, length: number) {
  */
 function convertItemsToCommonType(items) {
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			// xs:integer is the only numeric type with inherits from another numeric type
 			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:decimal');
 		})
@@ -83,7 +85,7 @@ function convertItemsToCommonType(items) {
 
 	// If each value is an instance of one of the types xs:string or xs:anyURI, then all the values are cast to type xs:string
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			return isSubtypeOf(item.type, 'xs:string') || isSubtypeOf(item.type, 'xs:anyURI');
 		})
 	) {
@@ -92,7 +94,7 @@ function convertItemsToCommonType(items) {
 
 	// If each value is an instance of one of the types xs:decimal or xs:float, then all the values are cast to type xs:float.
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			return isSubtypeOf(item.type, 'xs:decimal') || isSubtypeOf(item.type, 'xs:float');
 		})
 	) {
@@ -100,7 +102,7 @@ function convertItemsToCommonType(items) {
 	}
 	// If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all the values are cast to type xs:double.
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			return (
 				isSubtypeOf(item.type, 'xs:decimal') ||
 				isSubtypeOf(item.type, 'xs:float') ||
@@ -116,7 +118,7 @@ function convertItemsToCommonType(items) {
 }
 
 function castUntypedItemsToDouble(items) {
-	return items.map(function(item) {
+	return items.map(item => {
 		if (isSubtypeOf(item.type, 'xs:untypedAtomic')) {
 			return castToType(item, 'xs:double');
 		}
@@ -129,7 +131,7 @@ function castItemsForMinMax(items) {
 	items = castUntypedItemsToDouble(items);
 
 	if (
-		items.some(function(item) {
+		items.some(item => {
 			return Number.isNaN(item.value);
 		})
 	) {
@@ -139,58 +141,58 @@ function castItemsForMinMax(items) {
 	return convertItemsToCommonType(items);
 }
 
-const fnEmpty: FunctionDefinitionType = function(
+const fnEmpty: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.switchCases({
 		empty: () => sequenceFactory.singletonTrueSequence(),
-		singleton: () => sequenceFactory.singletonFalseSequence(),
-		multiple: () => sequenceFactory.singletonFalseSequence()
+		multiple: () => sequenceFactory.singletonFalseSequence(),
+		singleton: () => sequenceFactory.singletonFalseSequence()
 	});
 };
 
-const fnExists: FunctionDefinitionType = function(
+const fnExists: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.switchCases({
 		empty: () => sequenceFactory.singletonFalseSequence(),
-		singleton: () => sequenceFactory.singletonTrueSequence(),
-		multiple: () => sequenceFactory.singletonTrueSequence()
+		multiple: () => sequenceFactory.singletonTrueSequence(),
+		singleton: () => sequenceFactory.singletonTrueSequence()
 	});
 };
 
-const fnHead: FunctionDefinitionType = function(
+const fnHead: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return subSequence(sequence, 1, 1);
 };
 
-const fnTail: FunctionDefinitionType = function(
+const fnTail: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return subSequence(sequence, 2, null);
 };
 
-const fnInsertBefore: FunctionDefinitionType = function(
+const fnInsertBefore: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence,
 	position,
 	inserts
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return inserts;
 	}
@@ -214,13 +216,13 @@ const fnInsertBefore: FunctionDefinitionType = function(
 	return sequenceFactory.create(firstHalve.concat(inserts.getAllValues(), secondHalve));
 };
 
-const fnRemove: FunctionDefinitionType = function(
+const fnRemove: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence,
 	position
-) {
+) => {
 	const effectivePosition = position.first().value;
 	const sequenceValue = sequence.getAllValues();
 	if (
@@ -234,23 +236,23 @@ const fnRemove: FunctionDefinitionType = function(
 	return sequenceFactory.create(sequenceValue);
 };
 
-const fnReverse: FunctionDefinitionType = function(
+const fnReverse: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.mapAll(allValues => sequenceFactory.create(allValues.reverse()));
 };
 
-const fnSubsequence: FunctionDefinitionType = function(
+const fnSubsequence: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence,
 	startSequence,
 	lengthSequence
-) {
+) => {
 	return zipSingleton([startSequence, lengthSequence], ([startVal, lengthVal]) => {
 		if (startVal.value === Infinity) {
 			return sequenceFactory.empty();
@@ -289,6 +291,27 @@ const fnUnordered: FunctionDefinitionType = (
 	return sequence;
 };
 
+const fnIndexOf: FunctionDefinitionType = (
+	dynamicContext,
+	executionParameters,
+	_staticContext,
+	sequence,
+	search
+) => {
+	return search.mapAll(([onlySearchValue]) =>
+		sequence
+			.atomize(executionParameters)
+			.map((element, i) => {
+				return valueCompare('eqOp', element, onlySearchValue, dynamicContext)
+					? createAtomicValue(i + 1, 'xs:integer')
+					: createAtomicValue(-1, 'xs:integer');
+			})
+			.filter(indexValue => {
+				return indexValue.value !== -1;
+			})
+	);
+};
+
 const fnDeepEqual: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
@@ -320,12 +343,12 @@ const fnDeepEqual: FunctionDefinitionType = (
 	});
 };
 
-const fnCount: FunctionDefinitionType = function(
+const fnCount: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	let hasPassed = false;
 	return sequenceFactory.create({
 		next: () => {
@@ -342,12 +365,12 @@ const fnCount: FunctionDefinitionType = function(
 	});
 };
 
-const fnAvg: FunctionDefinitionType = function(
+const fnAvg: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -360,12 +383,12 @@ const fnAvg: FunctionDefinitionType = function(
 	}
 
 	const resultValue =
-		items.reduce(function(sum, item) {
+		items.reduce((sum, item) => {
 			return sum + item.value;
 		}, 0) / items.length;
 
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
 		})
 	) {
@@ -373,7 +396,7 @@ const fnAvg: FunctionDefinitionType = function(
 	}
 
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			return isSubtypeOf(item.type, 'xs:decimal');
 		})
 	) {
@@ -383,12 +406,12 @@ const fnAvg: FunctionDefinitionType = function(
 	return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
 };
 
-const fnMax: FunctionDefinitionType = function(
+const fnMax: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -397,18 +420,18 @@ const fnMax: FunctionDefinitionType = function(
 
 	// Use first element in array as initial value
 	return sequenceFactory.singleton(
-		items.reduce(function(max, item) {
+		items.reduce((max, item) => {
 			return max.value < item.value ? item : max;
 		})
 	);
 };
 
-const fnMin: FunctionDefinitionType = function(
+const fnMin: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -417,19 +440,19 @@ const fnMin: FunctionDefinitionType = function(
 
 	// Use first element in array as initial value
 	return sequenceFactory.singleton(
-		items.reduce(function(min, item) {
+		items.reduce((min, item) => {
 			return min.value > item.value ? item : min;
 		})
 	);
 };
 
-const fnSum: FunctionDefinitionType = function(
+const fnSum: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence,
 	zero
-) {
+) => {
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	if (sequence.isEmpty()) {
 		return zero;
@@ -441,12 +464,12 @@ const fnSum: FunctionDefinitionType = function(
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
-	const resultValue = items.reduce(function(sum, item) {
+	const resultValue = items.reduce((sum, item) => {
 		return sum + item.value;
 	}, 0);
 
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			return isSubtypeOf(item.type, 'xs:integer');
 		})
 	) {
@@ -454,7 +477,7 @@ const fnSum: FunctionDefinitionType = function(
 	}
 
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			return isSubtypeOf(item.type, 'xs:double');
 		})
 	) {
@@ -462,7 +485,7 @@ const fnSum: FunctionDefinitionType = function(
 	}
 
 	if (
-		items.every(function(item) {
+		items.every(item => {
 			return isSubtypeOf(item.type, 'xs:decimal');
 		})
 	) {
@@ -472,12 +495,12 @@ const fnSum: FunctionDefinitionType = function(
 	return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
 };
 
-const fnZeroOrOne: FunctionDefinitionType = function(
+const fnZeroOrOne: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
-) {
+) => {
 	if (!arg.isEmpty() && !arg.isSingleton()) {
 		throw new Error(
 			'FORG0003: The argument passed to fn:zero-or-one contained more than one item.'
@@ -486,24 +509,24 @@ const fnZeroOrOne: FunctionDefinitionType = function(
 	return arg;
 };
 
-const fnOneOrMore: FunctionDefinitionType = function(
+const fnOneOrMore: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
-) {
+) => {
 	if (arg.isEmpty()) {
 		throw new Error('FORG0004: The argument passed to fn:one-or-more was empty.');
 	}
 	return arg;
 };
 
-const fnExactlyOne: FunctionDefinitionType = function(
+const fnExactlyOne: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
-) {
+) => {
 	if (!arg.isSingleton()) {
 		throw new Error(
 			'FORG0005: The argument passed to fn:zero-or-one is empty or contained more then one item.'
@@ -512,13 +535,13 @@ const fnExactlyOne: FunctionDefinitionType = function(
 	return arg;
 };
 
-const fnFilter: FunctionDefinitionType = function(
+const fnFilter: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	sequence,
 	callbackSequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -612,14 +635,14 @@ const fnForEach: FunctionDefinitionType = (
 	});
 };
 
-const fnFoldLeft: FunctionDefinitionType = function(
+const fnFoldLeft: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	sequence,
 	zero,
 	callbackSequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -658,14 +681,14 @@ const fnFoldLeft: FunctionDefinitionType = function(
 	);
 };
 
-const fnFoldRight: FunctionDefinitionType = function(
+const fnFoldRight: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	sequence,
 	zero,
 	callbackSequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -707,66 +730,63 @@ const fnFoldRight: FunctionDefinitionType = function(
 export default {
 	declarations: [
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*'],
+			callFunction: fnEmpty,
 			localName: 'empty',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:boolean',
-			callFunction: fnEmpty
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:boolean'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*'],
+			callFunction: fnExists,
 			localName: 'exists',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:boolean',
-			callFunction: fnExists
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:boolean'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*'],
+			callFunction: fnHead,
 			localName: 'head',
-			argumentTypes: ['item()*'],
-			returnType: 'item()?',
-			callFunction: fnHead
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*'],
+			callFunction: fnTail,
 			localName: 'tail',
-			argumentTypes: ['item()*'],
-			returnType: 'item()*',
-			callFunction: fnTail
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'insert-before',
 			argumentTypes: ['item()*', 'xs:integer', 'item()*'],
-			returnType: 'item()*',
-			callFunction: fnInsertBefore
+			callFunction: fnInsertBefore,
+			localName: 'insert-before',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'remove',
 			argumentTypes: ['item()*', 'xs:integer'],
-			returnType: 'item()*',
-			callFunction: fnRemove
+			callFunction: fnRemove,
+			localName: 'remove',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'reverse',
 			argumentTypes: ['item()*'],
-			returnType: 'item()*',
-			callFunction: fnReverse
+			callFunction: fnReverse,
+			localName: 'reverse',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'subsequence',
 			argumentTypes: ['item()*', 'xs:double'],
-			returnType: 'item()*',
 			callFunction: (dynamicContext, executionParameters, _staticContext, sequence, start) =>
 				fnSubsequence(
 					dynamicContext,
@@ -775,100 +795,118 @@ export default {
 					sequence,
 					start,
 					sequenceFactory.empty()
-				)
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+				),
 			localName: 'subsequence',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
+		},
+
+		{
 			argumentTypes: ['item()*', 'xs:double', 'xs:double'],
-			returnType: 'item()*',
-			callFunction: fnSubsequence
+			callFunction: fnSubsequence,
+			localName: 'subsequence',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*'],
+			callFunction: fnUnordered,
 			localName: 'unordered',
-			argumentTypes: ['item()*'],
-			returnType: 'item()*',
-			callFunction: fnUnordered
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
+			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType'],
+			callFunction: fnIndexOf,
+			localName: 'index-of',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'deep-equal',
+			returnType: 'xs:integer*'
+		},
+
+		{
+			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType', 'xs:string'],
+			callFunction() {
+				throw new Error('FOCH0002: No collations are supported');
+			},
+			localName: 'index-of',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:integer*'
+		},
+
+		{
 			argumentTypes: ['item()*', 'item()*'],
-			returnType: 'xs:boolean',
-			callFunction: fnDeepEqual
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			callFunction: fnDeepEqual,
 			localName: 'deep-equal',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:boolean'
+		},
+
+		{
 			argumentTypes: ['item()*', 'item()*', 'xs:string'],
-			returnType: 'xs:boolean',
 			callFunction() {
 				throw new Error('FOCH0002: No collations are supported');
-			}
+			},
+			localName: 'deep-equal',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:boolean'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'count',
 			argumentTypes: ['item()*'],
-			returnType: 'xs:integer',
-			callFunction: fnCount
+			callFunction: fnCount,
+			localName: 'count',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:integer'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['xs:anyAtomicType*'],
+			callFunction: fnAvg,
 			localName: 'avg',
-			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnAvg
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'max',
 			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnMax
+			callFunction: fnMax,
+			localName: 'max',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'max',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
-			returnType: 'xs:anyAtomicType?',
 			callFunction() {
 				throw new Error('FOCH0002: No collations are supported');
-			}
+			},
+			localName: 'max',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'min',
 			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnMin
+			callFunction: fnMin,
+			localName: 'min',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'min',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
-			returnType: 'xs:anyAtomicType?',
 			callFunction() {
 				throw new Error('FOCH0002: No collations are supported');
-			}
+			},
+			localName: 'min',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'sum',
 			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:anyAtomicType',
 			callFunction(dynamicContext, executionParameters, _staticContext, sequence) {
 				return fnSum(
 					dynamicContext,
@@ -877,71 +915,74 @@ export default {
 					sequence,
 					sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'))
 				);
-			}
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			},
 			localName: 'sum',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType'
+		},
+
+		{
 			argumentTypes: ['xs:anyAtomicType*', 'xs:anyAtomicType?'],
-			returnType: 'xs:anyAtomicType?',
-			callFunction: fnSum
+			callFunction: fnSum,
+			localName: 'sum',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:anyAtomicType?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*'],
+			callFunction: fnZeroOrOne,
 			localName: 'zero-or-one',
-			argumentTypes: ['item()*'],
-			returnType: 'item()?',
-			callFunction: fnZeroOrOne
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()?'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*'],
+			callFunction: fnOneOrMore,
 			localName: 'one-or-more',
-			argumentTypes: ['item()*'],
-			returnType: 'item()+',
-			callFunction: fnOneOrMore
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()+'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*'],
+			callFunction: fnExactlyOne,
 			localName: 'exactly-one',
-			argumentTypes: ['item()*'],
-			returnType: 'item()',
-			callFunction: fnExactlyOne
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*', 'function(*)'],
+			callFunction: fnFilter,
 			localName: 'filter',
-			argumentTypes: ['item()*', 'function(*)'],
-			returnType: 'item()*',
-			callFunction: fnFilter
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*', 'function(*)'],
+			callFunction: fnForEach,
 			localName: 'for-each',
-			argumentTypes: ['item()*', 'function(*)'],
-			returnType: 'item()*',
-			callFunction: fnForEach
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			argumentTypes: ['item()*', 'item()*', 'function(*)'],
+			callFunction: fnFoldLeft,
 			localName: 'fold-left',
-			argumentTypes: ['item()*', 'item()*', 'function(*)'],
-			returnType: 'item()*',
-			callFunction: fnFoldLeft
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'fold-right',
 			argumentTypes: ['item()*', 'item()*', 'function(*)'],
-			returnType: 'item()*',
-			callFunction: fnFoldRight
+			callFunction: fnFoldRight,
+			localName: 'fold-right',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		}
 	],
 	functions: {

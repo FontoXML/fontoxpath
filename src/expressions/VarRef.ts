@@ -1,3 +1,4 @@
+import ISequence from './dataTypes/ISequence';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
@@ -7,6 +8,10 @@ import StaticContext from './StaticContext';
 class VarRef extends Expression {
 	private _namespaceURI: string;
 	private _prefix: string;
+	private _staticallyBoundVariableValue: (
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	) => ISequence;
 	private _variableBindingName: any;
 	private _variableName: string;
 
@@ -15,22 +20,21 @@ class VarRef extends Expression {
 			canBeStaticallyEvaluated: false,
 			resultOrder: RESULT_ORDERINGS.UNSORTED
 		});
-		if (prefix || namespaceURI) {
-			throw new Error(
-				'Not implemented: references to variables with a namespace URI or a prefix.'
-			);
-		}
 
 		this._variableName = variableName;
-		this._namespaceURI = namespaceURI;
+		this._namespaceURI = namespaceURI || undefined;
 		this._prefix = prefix;
 
 		this._variableBindingName = null;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, _executionParameters: ExecutionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const variableBinding = dynamicContext.variableBindings[this._variableBindingName];
+		// Make dynamic variables take precedence
 		if (!variableBinding) {
+			if (this._staticallyBoundVariableValue) {
+				return this._staticallyBoundVariableValue(dynamicContext, executionParameters);
+			}
 			throw new Error(
 				'XQDY0054: The variable ' + this._variableName + ' is declared but not in scope.'
 			);
@@ -45,11 +49,19 @@ class VarRef extends Expression {
 		}
 
 		this._variableBindingName = staticContext.lookupVariable(
-			this._namespaceURI,
+			this._namespaceURI || undefined,
 			this._variableName
 		);
 		if (!this._variableBindingName) {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
+		}
+
+		const staticallyBoundVariableBinding = staticContext.getVariableDeclaration(
+			this._variableBindingName
+		);
+
+		if (staticallyBoundVariableBinding) {
+			this._staticallyBoundVariableValue = staticallyBoundVariableBinding;
 		}
 	}
 }

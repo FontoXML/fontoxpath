@@ -59,7 +59,7 @@ fn-count,true
 fn-current-date,true
 fn-current-dateTime,true
 fn-current-time,true
-fn-data,false
+fn-data,true
 fn-dateTime,true
 fn-day-from-date,true
 fn-day-from-dateTime,true
@@ -105,7 +105,7 @@ fn-id,true
 fn-idref,true
 fn-implicit-timezone,true
 fn-in-scope-prefixes,false
-fn-index-of,false
+fn-index-of,true
 fn-innermost,true
 fn-insert-before,true
 fn-iri-to-uri,false

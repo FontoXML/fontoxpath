@@ -26,7 +26,12 @@ function areBothStringOrAnyURI(a, b) {
 	);
 }
 
-function generateCompareFunction(operator, typeA, typeB, dynamicContext) {
+function generateCompareFunction(
+	operator: string,
+	typeA: string,
+	typeB: string,
+	dynamicContext: DynamicContext
+): (valA: any, valB: any) => boolean {
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
@@ -312,12 +317,12 @@ function generateCompareFunction(operator, typeA, typeB, dynamicContext) {
 
 const comparatorsByTypingKey = Object.create(null);
 
-export default function valueCompare(
+export default function(
 	operator: string,
 	valueA: AtomicValue,
 	valueB: AtomicValue,
 	dynamicContext: DynamicContext
-) {
+): boolean {
 	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
 	const typingKey = `${valueA.type}~${valueB.type}~${operator}`;
 	let prefabComparator = comparatorsByTypingKey[typingKey];
