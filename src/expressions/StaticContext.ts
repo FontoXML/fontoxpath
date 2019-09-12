@@ -5,7 +5,6 @@ import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
 import { FunctionProperties } from './functions/functionRegistry';
-import { FUNCTIONS_NAMESPACE_URI } from './staticallyKnownNamespaces';
 
 function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
@@ -41,7 +40,7 @@ export type FunctionDefinition = {
  */
 export default class StaticContext implements IContext {
 	public parentContext: IContext;
-	public registeredDefaultFunctionNamespace: string = FUNCTIONS_NAMESPACE_URI;
+	public registeredDefaultFunctionNamespace: string;
 	public registeredVariableBindingByHashKey: any[];
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
@@ -61,11 +60,15 @@ export default class StaticContext implements IContext {
 		this._scopeCount = 0;
 
 		this._registeredNamespaceURIByPrefix = [Object.create(null)];
-		this.registeredVariableBindingByHashKey = [Object.create(null)];
-		this.registeredVariableDeclarationByHashKey = Object.create(null);
 
 		// Functions may never be added for only a closure
 		this._registeredFunctionsByHash = Object.create(null);
+
+		this.registeredDefaultFunctionNamespace = parentContext.registeredDefaultFunctionNamespace;
+		this.registeredVariableDeclarationByHashKey =
+			parentContext.registeredVariableDeclarationByHashKey;
+		this.registeredVariableBindingByHashKey = parentContext.registeredVariableBindingByHashKey;
+		// }
 	}
 
 	/**

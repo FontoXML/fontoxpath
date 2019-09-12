@@ -1,4 +1,7 @@
 import IContext from './Context';
+import ISequence from './dataTypes/ISequence';
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
 import {
 	FUNCTIONS_NAMESPACE_URI,
@@ -20,8 +23,13 @@ const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variab
 export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
 	public registeredDefaultFunctionNamespace: string = FUNCTIONS_NAMESPACE_URI;
-	public registeredVariableBindingByHashKey: any[];
-	public registeredVariableDeclarationByHashKey: any;
+	public registeredVariableBindingByHashKey: any[] = [Object.create(null)];
+	public registeredVariableDeclarationByHashKey: {
+		[hash: string]: (
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters
+		) => ISequence;
+	} = Object.create(null);
 
 	private _namespaceResolver: (namespaceURI: string) => null | string;
 

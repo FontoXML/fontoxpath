@@ -1,9 +1,17 @@
+import ISequence from './dataTypes/ISequence';
+import DynamicContext from './DynamicContext';
+import ExecutionParameters from './ExecutionParameters';
 import { FunctionProperties } from './functions/functionRegistry';
 
 export default interface IContext {
 	registeredDefaultFunctionNamespace: string;
 	registeredVariableBindingByHashKey: any[];
-	registeredVariableDeclarationByHashKey: any;
+	registeredVariableDeclarationByHashKey: {
+		[hash: string]: (
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters
+		) => ISequence;
+	};
 	lookupFunction(
 		namespaceURI: string,
 		localName: string,
