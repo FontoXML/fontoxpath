@@ -68,7 +68,6 @@ export default class StaticContext implements IContext {
 		this.registeredVariableDeclarationByHashKey =
 			parentContext.registeredVariableDeclarationByHashKey;
 		this.registeredVariableBindingByHashKey = parentContext.registeredVariableBindingByHashKey;
-		// }
 	}
 
 	/**
