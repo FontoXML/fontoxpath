@@ -6,7 +6,8 @@ import {
 	evaluateXPath,
 	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
-	evaluateXPathToNumber
+	evaluateXPathToNumber,
+	evaluateXPathToNumbers
 } from 'fontoxpath';
 
 let documentNode;
@@ -36,6 +37,12 @@ describe('for expressions', () => {
 				documentNode
 			),
 			220
+		);
+	});
+	it('supports positionalVariableBindings', () => {
+		chai.assert.deepEqual(
+			evaluateXPathToNumbers('for $item at $index in (4,5,6) return ($item, $index)'),
+			[4, 1, 5, 2, 6, 3]
 		);
 	});
 	it('can be multiple times over nodes, without deduplication, sorting, or whatever', () => {
