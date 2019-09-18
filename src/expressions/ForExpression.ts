@@ -12,15 +12,15 @@ class ForExpression extends PossiblyUpdatingExpression {
 	private _clauseExpression: Expression;
 	private _localName: string;
 	private _namespaceURI: string;
-	private _prefix: string;
 	private _positionalVariableBinding: {
 		localName: string;
 		namespaceURI: string | null;
 		prefix: string;
 	} | null;
+	private _positionalVariableBindingKey: string | null;
+	private _prefix: string;
 	private _returnExpression: Expression;
 	private _variableBindingKey: string | null;
-	private _positionalVariableBindingKey: string | null;
 
 	constructor(
 		rangeVariable: { localName: string; namespaceURI: string | null; prefix: string },
