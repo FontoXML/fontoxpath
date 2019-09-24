@@ -423,11 +423,16 @@ function forClause(
 	const forClauseItems = astHelper.getChildren(expressionClause, '*');
 	return forClauseItems.reduceRight((returnExpr, forClauseItem) => {
 		const expression = astHelper.followPath(forClauseItem, ['forExpr', '*']);
+		const positionalVariableBinding = astHelper.getFirstChild(
+			forClauseItem,
+			'positionalVariableBinding'
+		);
 		return new ForExpression(
 			astHelper.getQName(
 				astHelper.followPath(forClauseItem, ['typedVariableBinding', 'varName'])
 			),
 			compile(expression, disallowUpdating(compilationOptions)),
+			positionalVariableBinding ? astHelper.getQName(positionalVariableBinding) : null,
 			returnExpr
 		);
 	}, returnClauseExpression);

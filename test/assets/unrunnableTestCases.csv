@@ -753,8 +753,6 @@ K-ContextLastFunc-24,Error: No selector counterpart for: treatExpr.
 K-ContextLastFunc-25,Error: No selector counterpart for: treatExpr.
 K-ContextLastFunc-26,Error: No selector counterpart for: treatExpr.
 K-ContextLastFunc-27,Error: No selector counterpart for: treatExpr.
-cbcl-last-in-sequence-004,Error: XPST0008, The variable p is not in scope.
-cbcl-last-in-sequence-005,Error: XPST0008, The variable p is not in scope.
 LocalNameFromQNameFunc015a,AssertionError: expected [Function] to throw error matching /XPTY0117/ but got 'Casting to xs:QName is not implemented.'
 fn-lower-case-19,AssertionError: Expected XPath fn:string-to-codepoints(fn:lower-case(fn:codepoints-to-string(880 to 1023))) to (deep equally) resolve to              881, 881, 883, 883, 884, 885, 887, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896,              897, 898, 899, 900, 901, 940, 903, 941, 942, 943, 907, 972, 909, 973, 974, 912, 945,              946, 947, 948, 949, 950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 930,              963, 964, 965, 966, 967, 968, 969, 970, 971, 940, 941, 942, 943, 944, 945, 946, 947,              948, 949, 950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 962, 963, 964,              965, 966, 967, 968, 969, 970, 971, 972, 973, 974, 983, 976, 977, 978, 979, 980, 981,              982, 983, 985, 985, 987, 987, 989, 989, 991, 991, 993, 993, 995, 995, 997, 997, 999,              999, 1001, 1001, 1003, 1003, 1005, 1005, 1007, 1007, 1008, 1009, 1010, 1011, 952, 1013,              1014, 1016, 1016, 1010, 1019, 1019, 1020, 891, 892, 893: expected false to be true
 fn-maxintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -1989,21 +1987,17 @@ combiningnodeseqhc8,Error: Not implemented: orderByClause is not implemented yet
 combiningnodeseqhc9,Error: Not implemented: orderByClause is not implemented yet.
 combiningnodeseqhc10,Error: Not implemented: orderByClause is not implemented yet.
 outer-002,AssertionError: Expected XPath          declare variable $n as xs:integer external := 0;          <out>{ for $x allowing empty in 1 to $n return <a>{$x}</a> }</out>        to resolve to the given XML. Expected <out/> to equal <out><a/></out>
-outer-003,Error: XPST0008, The variable p is not in scope.
-outer-004,Error: XPST0008, The variable p is not in scope.
+outer-004,AssertionError: Expected XPath          declare variable $n as xs:integer external := 0;          <out>{ for $x allowing empty at $p in 1 to $n return <a position="{$p}">{$x}</a> }</out>        to resolve to the given XML. Expected <out/> to equal <out><a position="0"/></out>
 outer-006,AssertionError: Expected XPath          declare variable $n as xs:integer external := 0;          <out>{ string-join(for $x allowing empty in 1 to $n return concat('[',$x,']'), '|') }</out>        to resolve to the given XML. Expected <out/> to equal <out>[]</out>
-outer-007,Error: XPST0008, The variable p is not in scope.
-outer-008,Error: XPST0008, The variable p is not in scope.
-outer-009,Error: XPST0008, The variable p is not in scope.
-outer-010,Error: XPST0008, The variable p is not in scope.
-outer-011,Error: XPST0008, The variable p is not in scope.
-outer-012,Error: XPST0008, The variable p is not in scope.
-outer-013,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0008, The variable p is not in scope.'
-outer-014,Error: XPST0008, The variable p is not in scope.
-outer-015,Error: XPST0008, The variable p is not in scope.
-outer-016,Error: XPST0008, The variable p is not in scope.
-outer-017,Error: XPST0008, The variable p is not in scope.
-outer-018,Error: XPST0008, The variable p is not in scope.
+outer-008,AssertionError: Expected XPath          declare variable $m as xs:integer external := 5;          declare variable $n as xs:integer external := 0;          <out>{ for $x allowing empty at $p in 1 to $m, $y allowing empty at $q in 1 to $n return <a p="{$p}" q="{$q}">{$x},{$y}</a> }</out>        to resolve to the given XML. Expected <out/> to equal <out><a p="1" q="0">1,</a><a p="2" q="0">2,</a><a p="3" q="0">3,</a><a p="4" q="0">4,</a><a p="5" q="0">5,</a></out>
+outer-009,AssertionError: Expected XPath          declare variable $m as xs:integer external := 0;          declare variable $n as xs:integer external := 5;          <out>{ for $x allowing empty at $p in 1 to $m, $y at $q in 1 to $n return <a p="{$p}" q="{$q}">{$x},{$y}</a> }</out> to resolve to the given XML. Expected <out/> to equal <out><a p="0" q="1">,1</a><a p="0" q="2">,2</a><a p="0" q="3">,3</a><a p="0" q="4">,4</a><a p="0" q="5">,5</a></out>
+outer-010,AssertionError: Expected XPath          declare variable $m as xs:integer external := 0;          declare variable $n as xs:integer external := 0;          <out>{ for $x allowing empty at $p in 1 to $m,                     $y allowing empty at $q in 1 to $n return <a p="{$p}" q="{$q}">{$x},{$y}</a> }</out>        to resolve to the given XML. Expected <out/> to equal <out><a p="0" q="0">,</a></out>
+outer-011,AssertionError: Expected XPath          declare variable $n as xs:integer external := 5;          <out>{ for $x allowing empty at $p in 1 to $n, $y allowing empty at $q in ($x+1) to $n return <a p="{$p}" q="{$q}">{$x},{$y}</a> }</out>        to resolve to the given XML. Expected <out><a p="1" q="1">1,2</a><a p="1" q="2">1,3</a><a p="1" q="3">1,4</a><a p="1" q="4">1,5</a><a p="2" q="1">2,3</a><a p="2" q="2">2,4</a><a p="2" q="3">2,5</a><a p="3" q="1">3,4</a><a p="3" q="2">3,5</a><a p="4" q="1">4,5</a></out> to equal <out><a p="1" q="1">1,2</a><a p="1" q="2">1,3</a><a p="1" q="3">1,4</a><a p="1" q="4">1,5</a><a p="2" q="1">2,3</a><a p="2" q="2">2,4</a><a p="2" q="3">2,5</a><a p="3" q="1">3,4</a><a p="3" q="2">3,5</a><a p="4" q="1">4,5</a><a p="5" q="0">5,</a></out>
+outer-012,AssertionError: Expected XPath          declare variable $n as xs:integer external := 5;          <out>{              for $x as xs:integer allowing empty at $p in 1 to $n,                  $y as xs:integer? allowing empty at $q in ($x+1) to $n              return <a p="{$p}" q="{$q}">{$x},{$y}</a> }</out>        to resolve to the given XML. Expected <out><a p="1" q="1">1,2</a><a p="1" q="2">1,3</a><a p="1" q="3">1,4</a><a p="1" q="4">1,5</a><a p="2" q="1">2,3</a><a p="2" q="2">2,4</a><a p="2" q="3">2,5</a><a p="3" q="1">3,4</a><a p="3" q="2">3,5</a><a p="4" q="1">4,5</a></out> to equal <out><a p="1" q="1">1,2</a><a p="1" q="2">1,3</a><a p="1" q="3">1,4</a><a p="1" q="4">1,5</a><a p="2" q="1">2,3</a><a p="2" q="2">2,4</a><a p="2" q="3">2,5</a><a p="3" q="1">3,4</a><a p="3" q="2">3,5</a><a p="4" q="1">4,5</a><a p="5" q="0">5,</a></out>
+outer-013,AssertionError: expected [Function] to throw an error
+outer-014,AssertionError: Expected XPath          declare variable $n as xs:integer external := 5;          <out>{ for $x as xs:integer at $p in 1 to $n                 for $y as xs:integer? allowing empty at $q in ($x+1) to $n                 return <a p="{$p}" q="{$q}">{$x},{$y}</a> }</out>        to resolve to the given XML. Expected <out><a p="1" q="1">1,2</a><a p="1" q="2">1,3</a><a p="1" q="3">1,4</a><a p="1" q="4">1,5</a><a p="2" q="1">2,3</a><a p="2" q="2">2,4</a><a p="2" q="3">2,5</a><a p="3" q="1">3,4</a><a p="3" q="2">3,5</a><a p="4" q="1">4,5</a></out> to equal <out><a p="1" q="1">1,2</a><a p="1" q="2">1,3</a><a p="1" q="3">1,4</a><a p="1" q="4">1,5</a><a p="2" q="1">2,3</a><a p="2" q="2">2,4</a><a p="2" q="3">2,5</a><a p="3" q="1">3,4</a><a p="3" q="2">3,5</a><a p="4" q="1">4,5</a><a p="5" q="0">5,</a></out>
+outer-016,AssertionError: Expected XPath          declare variable $n as xs:integer external := 0;          <out>{ for $x as xs:integer? allowing empty at $p in 1 to $n                 for $y as xs:integer at $q in (if (empty($x)) then 0 else (1 to $x))                 return <a p="{$p}" q="{$q}">{$x},{$y}</a> }</out>        to resolve to the given XML. Expected <out/> to equal <out><a p="0" q="1">,0</a></out>
+outer-018,AssertionError: Expected XPath          declare variable $n as xs:integer external := 0;          <out>{ for $x as xs:integer? allowing empty at $p in 1 to $n                 for $y as xs:integer? allowing empty at $q in (if (empty($x)) then () else (1 to $x))                 where deep-equal($x,$y) return <a p="{$p}" q="{$q}">{$x},{$y}</a> }</out>        to resolve to the given XML. Expected <out/> to equal <out><a p="0" q="0">,</a></out>
 outer-019,AssertionError: expected [Function] to throw an error
 annotation-4,Error: Expected XPath           declare namespace java = "http://example.com";           declare %java:variable("java.lang.Integer.MAX_VALUE") variable $max := 0;           declare %java:method("java.lang.Math.sin") function local:sin($arg) { 0 };            local:sin($max)        to resolve to a sequence of Nodes.
 annotation-5,Error: Expected XPath           declare namespace eg = "http://example.com";           declare %eg:integer(1234) variable $foo := 0;           declare %eg:integer(1234) function local:foo($arg) { $arg };            local:foo($foo)        to resolve to a sequence of Nodes.
@@ -2641,15 +2635,11 @@ eqname-033,Error: Not implemented: let expressions with namespace usage.
 eqname-034,AssertionError: Expected executing the XPath "          let $Q{$Q}a := 12, $Q{//}a := 13, $Q{*}a := 14          return $Q{$Q}a + $Q{//}a + $Q{*}a       " to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XQST0046/ but got 'Not implemented: let expressions with namespace usage.', Error: Not implemented: let expressions with namespace usage..
 eqname-910,AssertionError: expected [Function] to throw an error
 eqname-913,AssertionError: expected [Function] to throw an error
-ForExpr022,Error: XPST0008, The variable pos is not in scope.
-ForExpr023,Error: XPST0008, The variable pos is not in scope.
-ForExpr024,AssertionError: expected [Function] to throw an error
+ForExpr024,AssertionError: expected [Function] to throw error matching /XQST0089/ but got 'XPTY0019: The / operator can only be applied to xml/json nodes.'
 ForExpr031,AssertionError: expected [Function] to throw an error
-ForExpr032,Error: XPST0008, The variable i is not in scope.
 K-ForExprWithout-27,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0008, The variable NOTEXIST is not in scope.'
 K-ForExprWithout-30,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0008, The variable NOTEXIST is not in scope.'
 K-ForExprWithout-33,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'XPST0008, The variable NOTEXIST is not in scope.'
-K2-ForExprWithout-9,Error: XPST0008, The variable pos1 is not in scope.
 K2-ForExprWithout-10,AssertionError: Expected executing the XPath "         for $a in (3, 2, 1)          for $b in (6, 5, 4)          let $c := $a + $b          let $d := $a - $b          let $e := () stable order by $a ascending, $b descending, $d empty greatest, $e empty least, $c descending empty greatest, $d ascending empty greatest, $e descending empty least, $b ascending empty least          return $a" to resolve to one of the expected results, but got Error: Not implemented: orderByClause is not implemented yet., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'Not implemented: orderByClause is not implemented yet.'.
 K2-ForExprWithout-11,Error: Not implemented: orderByClause is not implemented yet.
 K2-ForExprWithout-12,Error: Not implemented: orderByClause is not implemented yet.
@@ -2695,9 +2685,6 @@ K-FunctionCallExpr-16a,Error: XPST0017: Function matches with arity of 2 not reg
 K-FunctionCallExpr-17a,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
 K-FunctionCallExpr-25a,Error: XPST0017: Function generate-id with arity of 1 not registered. No similar functions found.
 K2-FunctionCallExpr-12,Error: XPST0017: Function matches with arity of 2 not registered. No similar functions found.
-cbcl-promotion-002,Error: XPST0008, The variable p is not in scope.
-cbcl-promotion-003,Error: XPST0008, The variable p is not in scope.
-cbcl-promotion-005,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0008, The variable p is not in scope.'
 function-call-reserved-function-names-034,AssertionError: expected [Function] to throw error matching /XPST0017/ but got 'XPST0003: Unable to parse: "\n\tnamespace-node(1)\n      ".\nExpected "!", "!=", "#", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "(" found.\n\n\tnamespace-node[Error is around here](1)\n      '
 function-declaration-004,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 function-declaration-017,Error: Not Implemented: default namespace element.
@@ -3260,35 +3247,7 @@ K2-OrderbyExprWithout-47,Error: Not implemented: orderByClause is not implemente
 K2-OrderbyExprWithout-48,Error: Not implemented: orderByClause is not implemented yet.
 K2-OrderbyExprWithout-49,Error: Not implemented: orderByClause is not implemented yet.
 Parenexpr-11,Error: Not implemented: orderByClause is not implemented yet.
-K-ForExprPositionalVar-6,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-7,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-8,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0008, The variable p is not in scope.'
-K-ForExprPositionalVar-9,Error: XPST0008, The variable p is not in scope.
 K-ForExprPositionalVar-10,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
-K-ForExprPositionalVar-11,AssertionError: Expected executing the XPath "empty(for $i at $p in () return $p)" to resolve to one of the expected results, but got Error: XPST0008, The variable p is not in scope., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'XPST0008, The variable p is not in scope.'.
-K-ForExprPositionalVar-12,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-13,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-14,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-15,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-16,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-17,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-18,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-19,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-20,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-21,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-22,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-23,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-24,AssertionError: Expected executing the XPath "empty(for $i at $p in subsequence((1, 2, 3, current-time()), 5) return $p)" to resolve to one of the expected results, but got Error: XPST0008, The variable p is not in scope., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'XPST0008, The variable p is not in scope.'.
-K-ForExprPositionalVar-25,AssertionError: Expected executing the XPath "empty(for $i at $p in subsequence((1, 2, 3, current-time()), 5, 8) return $p)" to resolve to one of the expected results, but got Error: XPST0008, The variable p is not in scope., AssertionError: expected [Function] to throw error matching /XPST0005/ but got 'XPST0008, The variable p is not in scope.'.
-K-ForExprPositionalVar-26,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-27,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-28,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-29,Error: XPST0008, The variable p is not in scope.
-K-ForExprPositionalVar-30,Error: XPST0008, The variable p is not in scope.
-K2-ForExprPositionalVar-1,Error: XPST0008, The variable p is not in scope.
-K2-ForExprPositionalVar-2,AssertionError: Expected executing the XPath "let $tree := <e> <a id="1"/> <a id="2"/> <a id="3"/> </e> for $i at $pos in ("a", "b", "c") return ($tree/@id eq $pos, $pos)" to resolve to one of the expected results, but got Error: XPST0008, The variable pos is not in scope., AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0008, The variable pos is not in scope.'.
-K2-ForExprPositionalVar-3,Error: XPST0008, The variable pos is not in scope.
-K2-ForExprPositionalVar-4,Error: XPST0008, The variable pos is not in scope.
 K-FilterExpr-51,AssertionError: Expected executing the XPath "((0, 1, 2, "a", "b", "c")[. instance of xs:string][. treat as xs:string eq "c"] treat as xs:string) eq "c"" to resolve to one of the expected results, but got Error: No selector counterpart for: treatExpr., AssertionError: expected [Function] to throw error matching /XPDY0050/ but got 'No selector counterpart for: treatExpr.'.
 K-FilterExpr-52,AssertionError: Expected executing the XPath "((0, 1, 2, "a", "b", "c")[. instance of xs:integer][. treat as xs:integer eq 0] treat as xs:integer) eq 0" to resolve to one of the expected results, but got Error: No selector counterpart for: treatExpr., AssertionError: expected [Function] to throw error matching /XPDY0050/ but got 'No selector counterpart for: treatExpr.'.
 K-FilterExpr-92,AssertionError: expected [Function] to throw an error
@@ -3299,8 +3258,6 @@ K2-FilterExpr-6,Error: No selector counterpart for: computedDocumentConstructor.
 K2-FilterExpr-8,AssertionError: expected [Function] to throw error matching /XPDY0050/ but got 'No selector counterpart for: treatExpr.'
 predicates-29,AssertionError: expected [Function] to throw an error
 K2-Predicates-1,Error: No selector counterpart for: treatExpr.
-cbcl-first-in-sequence-004,Error: XPST0008, The variable p is not in scope.
-cbcl-first-in-sequence-005,Error: XPST0008, The variable p is not in scope.
 K-QuantExprWithout-7,Error: No selector counterpart for: treatExpr.
 K-QuantExprWithout-8,Error: No selector counterpart for: treatExpr.
 K-QuantExprWith-9,AssertionError: expected [Function] to throw an error
@@ -3311,7 +3268,6 @@ K-QuantExprWith-13,AssertionError: expected [Function] to throw an error
 K-QuantExprWith-14,AssertionError: expected [Function] to throw an error
 K-QuantExprWith-15,AssertionError: expected [Function] to throw an error
 K-QuantExprWith-16,AssertionError: expected [Function] to throw an error
-ReturnExpr016,Error: XPST0008, The variable offset is not in scope.
 SquareArray-001,Error: No selector counterpart for: typedArrayTest.
 SquareArray-005,Error: XPST0003: Unable to parse: "(declare function local:fun() {1 to 5}; array:size([local:fun()])) instance of xs:integer". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. (declare [Error is around here]function local:fun() {1 to 5}; array:size([local:fun()])) instance of xs:integer
 SquareArray-007,Error: XPST0003: Unable to parse: "deep-equal((declare function local:fun() {1 to 5}; [local:fun()](1)), ((1, 2, 3, 4, 5)))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. deep-equal((declare [Error is around here]function local:fun() {1 to 5}; [local:fun()](1)), ((1, 2, 3, 4, 5)))
@@ -3653,8 +3609,6 @@ typeswitch-in-xpath,AssertionError: expected [Function] to throw an error
 annex-3,Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found.
 annex-4,AssertionError: Expected executing the XPath "declare namespace eg = "http://example.org"; declare function eg:value-intersect ( $arg1 as xs:anyAtomicType*, $arg2 as xs:anyAtomicType* ) as xs:anyAtomicType* { fn:distinct-values($arg1[.=$arg2]) }; let $arg1 as xs:anyAtomicType := 1 let $arg2 as xs:anyAtomicType := 1 return eg:value-intersect($arg1,$arg2)" to resolve to one of the expected results, but got Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found., AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found.'.
 annex-5,AssertionError: Expected executing the XPath "declare namespace eg = "http://example.org"; declare function eg:value-except ( $arg1 as xs:anyAtomicType*, $arg2 as xs:anyAtomicType*) as xs:anyAtomicType* { fn:distinct-values($arg1[not(.=$arg2)]) }; let $arg1 as xs:anyAtomicType := 1 let $arg2 as xs:anyAtomicType := 2 return eg:value-except($arg1,$arg2)" to resolve to one of the expected results, but got Error: XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found., AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function fn:distinct-values with arity of 1 not registered. No similar functions found.'.
-annex-6,Error: XPST0008, The variable i is not in scope.
-annex-8,Error: XPST0008, The variable apos is not in scope.
 errors-and-optimization-1,Error: XPST0017: Function error with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 errors-and-optimization-2,AssertionError: expected [Function] to throw an error
 errors-and-optimization-7,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Not implemented: let expressions with namespace usage.'
@@ -3846,22 +3800,10 @@ functx-fn-root-1,AssertionError: Expected XPath let $in-xml := <a><x>123</x></a>
 functx-fn-root-all,Error: No selector counterpart for: computedDocumentConstructor.
 functx-fn-sum-3,Error: FORG0006: items passed to fn:sum are not all numeric.
 functx-fn-sum-all,Error: FORG0006: items passed to fn:sum are not all numeric.
-functx-functx-add-attributes-1,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-attributes-2,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-attributes-3,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-attributes-4,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-attributes-5,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-attributes-all,Error: XPST0008, The variable seq is not in scope.
 functx-functx-add-months-1,Error: Not implemented: adding durations to xs:date
 functx-functx-add-months-2,Error: Not implemented: adding durations to xs:date
 functx-functx-add-months-3,Error: Not implemented: adding durations to xs:date
 functx-functx-add-months-all,Error: Not implemented: adding durations to xs:date
-functx-functx-add-or-update-attributes-1,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-or-update-attributes-2,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-or-update-attributes-3,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-or-update-attributes-4,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-or-update-attributes-5,Error: XPST0008, The variable seq is not in scope.
-functx-functx-add-or-update-attributes-all,Error: XPST0008, The variable seq is not in scope.
 functx-functx-are-distinct-values-1,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 functx-functx-are-distinct-values-2,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 functx-functx-are-distinct-values-3,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
@@ -3980,9 +3922,6 @@ functx-functx-replace-beginning-2,Error: XPST0017: Function replace with arity o
 functx-functx-replace-beginning-3,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-replace-beginning-4,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-replace-beginning-all,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
-functx-functx-replace-element-values-1,Error: XPST0008, The variable seq is not in scope.
-functx-functx-replace-element-values-2,Error: XPST0008, The variable seq is not in scope.
-functx-functx-replace-element-values-all,Error: XPST0008, The variable seq is not in scope.
 functx-functx-replace-first-1,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-replace-first-2,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-replace-first-3,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
@@ -4046,11 +3985,6 @@ functx-functx-trim-1,Error: XPST0017: Function replace with arity of 3 not regis
 functx-functx-trim-2,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-trim-3,Error: XPST0017: Function replace with arity of 3 not registered. No similar functions found.
 functx-functx-trim-all,Error: XPST0003: Unable to parse: "deep-equal((declare namespace functx = "http://www.example.com/";                     (:~ : Trims leading and trailing whitespace : : @author Priscilla Walmsley, Datypic : @version 1.0 : @see http://www.xqueryfunctions.com/xq/functx_trim.html : @param $arg the string to trim :)          declare function functx:trim ( $arg as xs:string? ) as xs:string { replace(replace($arg,'\s+$',''),'^\s+','') } ;                     (functx:trim(' xyz '), functx:trim(' xyz'), functx:trim('x   xyz '))), ("xyz", "xyz",  "x   xyz"))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "n" found. deep-equal((declare [Error is around here]namespace functx = "http://www.example.com/";                     (:~ : Trims leading and trailing whitespace : : @author Priscilla Walmsley, Datypic : @version 1.0 : @see http://www.xqueryfunctions.com/xq/functx_trim.html : @param $arg the string to trim :)          declare function functx:trim ( $arg as xs:string? ) as xs:string { replace(replace($arg,'\s+$',''),'^\s+','') } ;                     (functx:trim(' xyz '), functx:trim(' xyz'), functx:trim('x   xyz '))), ("xyz", "xyz",  "x   xyz"))
-functx-functx-update-attributes-1,Error: XPST0008, The variable seq is not in scope.
-functx-functx-update-attributes-2,Error: XPST0008, The variable seq is not in scope.
-functx-functx-update-attributes-3,Error: XPST0008, The variable seq is not in scope.
-functx-functx-update-attributes-4,Error: XPST0008, The variable seq is not in scope.
-functx-functx-update-attributes-all,Error: XPST0008, The variable seq is not in scope.
 functx-functx-value-except-1,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 functx-functx-value-except-2,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
 functx-functx-value-except-3,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
