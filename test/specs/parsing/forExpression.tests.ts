@@ -45,6 +45,18 @@ describe('for expressions', () => {
 			[4, 1, 5, 2, 6, 3]
 		);
 	});
+	it('supports variableBindings and positionalVariableBindings with namespaces', () => {
+		chai.assert.deepEqual(
+			evaluateXPathToNumbers(
+				'declare namespace prefix = "URI"; for $prefix:item at $prefix:index in (4,5,6) return ($Q{URI}item, $Q{URI}index)',
+				null,
+				null,
+				null,
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			[4, 1, 5, 2, 6, 3]
+		);
+	});
 	it('can be multiple times over nodes, without deduplication, sorting, or whatever', () => {
 		jsonMlMapper.parse(
 			[
