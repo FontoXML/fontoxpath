@@ -63,7 +63,9 @@ class LetExpression extends PossiblyUpdatingExpression {
 
 			if (!this._namespaceURI && this._prefix) {
 				throw new Error(
-					`XPST0081: Could not resolve namespace for prefix ${this._prefix} using in a for expression`
+					`XPST0081: Could not resolve namespace for prefix ${
+						this._prefix
+					} using in a for expression`
 				);
 			}
 		}
@@ -74,6 +76,8 @@ class LetExpression extends PossiblyUpdatingExpression {
 		this._variableBinding = staticContext.registerVariable(this._namespaceURI, this._localName);
 		this._returnExpression.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
+
+		this.determineUpdatingness();
 	}
 }
 export default LetExpression;

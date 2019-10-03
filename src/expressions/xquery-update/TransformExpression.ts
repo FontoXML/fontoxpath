@@ -8,18 +8,20 @@ import {
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import INodesFactory from '../../nodesFactory/INodesFactory';
 import createNodeValue from '../dataTypes/createNodeValue';
-import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import Value from '../dataTypes/Value';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import { applyUpdates, mergeUpdates } from './pulRoutines';
-import UpdatingExpression from './UpdatingExpression';
+import { ensureUpdateListWrapper } from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
 
 function deepCloneNode(
@@ -88,10 +90,10 @@ function isCreatedNode(node, createdNodes, domFacade) {
 
 type VariableBinding = { registeredVariable?: string; sourceExpr: Expression; varRef: QName };
 
-class TransformExpression extends UpdatingExpression {
+class TransformExpression extends PossiblyUpdatingExpression {
 	public _modifyExpr: Expression;
 	public _returnExpr: Expression;
-	public _variableBindings: any[];
+	public _variableBindings: VariableBinding[];
 
 	constructor(
 		variableBindings: VariableBinding[],
@@ -144,7 +146,7 @@ class TransformExpression extends UpdatingExpression {
 						if (!sourceValueIterator) {
 							sourceValueIterators[
 								i
-							] = sourceValueIterator = variableBinding.sourceValueIterator = super.ensureUpdateListWrapper(
+							] = sourceValueIterator = variableBinding.sourceValueIterator = ensureUpdateListWrapper(
 								variableBinding.sourceExpr
 							)(dynamicContext, executionParameters);
 						}
@@ -156,7 +158,7 @@ class TransformExpression extends UpdatingExpression {
 						// The result of evaluating the source expression must be a single node [err:XUTY0013]. Let $node be this single node.
 						if (
 							sv.value.xdmValue.length !== 1 ||
-							!isSubTypeOf(sv.value.xdmValue[0].type, 'node()')
+							!isSubtypeOf(sv.value.xdmValue[0].type, 'node()')
 						) {
 							throw errXUTY0013();
 						}
@@ -180,7 +182,7 @@ class TransformExpression extends UpdatingExpression {
 				if (!modifyPul) {
 					// The expression in the modify clause is evaluated,
 					if (!modifyValueIterator) {
-						modifyValueIterator = super.ensureUpdateListWrapper(this._modifyExpr)(
+						modifyValueIterator = ensureUpdateListWrapper(this._modifyExpr)(
 							dynamicContext,
 							executionParameters
 						);
@@ -210,7 +212,7 @@ class TransformExpression extends UpdatingExpression {
 
 				// The return clause is evaluated, resulting in a pending update list and an XDM instance.
 				if (!returnValueIterator) {
-					returnValueIterator = super.ensureUpdateListWrapper(this._returnExpr)(
+					returnValueIterator = ensureUpdateListWrapper(this._returnExpr)(
 						dynamicContext,
 						executionParameters
 					);
@@ -240,6 +242,45 @@ class TransformExpression extends UpdatingExpression {
 		);
 		super.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
+
+		// If all of the copy modify expression's copy and return clauses have operand expressions
+		// that are simple expressions, then the copy modify expression is a simple expression.
+
+		// If any of the copy modify expression's copy or return clauses have operand expressions
+		// that are updating expressions, then the copy modify expression is a updating expression.
+		this.isUpdating =
+			this._variableBindings.some(varBinding => varBinding.sourceExpr.isUpdating) ||
+			this._returnExpr.isUpdating;
+	}
+
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+		// If we were updating, the calling code would have called the evaluateWithUpdateList
+		// method. We can assume we're not actually updating
+		const pendingUpdateIterator = this.evaluateWithUpdateList(
+			dynamicContext,
+			executionParameters
+		);
+		let isDone = false;
+		let xdmValues: Value[];
+		let i = 0;
+		return sequenceFactory.create({
+			next: () => {
+				while (!isDone) {
+					if (!xdmValues) {
+						let iteratorValue = pendingUpdateIterator.next(IterationHint.NONE);
+						if (!iteratorValue.ready) {
+							return notReady(iteratorValue.promise);
+						}
+						xdmValues = iteratorValue.value.xdmValue;
+					}
+					if (i + 1 >= xdmValues.length) {
+						isDone = true;
+					}
+					return ready(xdmValues[i++]);
+				}
+				return DONE_TOKEN;
+			}
+		});
 	}
 }
 

@@ -43,6 +43,7 @@ class NamedFunctionRef extends Expression {
 	public evaluate() {
 		const functionItem = new FunctionValue({
 			argumentTypes: this._functionProperties.argumentTypes,
+			isUpdating: this._functionProperties.isUpdating,
 			arity: this._arity,
 			localName: this._functionProperties.localName,
 			namespaceURI: this._functionProperties.namespaceURI,

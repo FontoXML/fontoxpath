@@ -9,9 +9,50 @@ import UpdatingExpressionResult from './UpdatingExpressionResult';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
+import { IPendingUpdate } from './xquery-update/IPendingUpdate';
+import StaticContext from './StaticContext';
 
 export type SequenceCallbacks = ((dynamicContext: DynamicContext) => ISequence)[];
 
+/**
+ * Separate the XDMValue of an updatingExpressionResultIterator to a Sequence and output the PUL in
+ * the callback.  The sequence will only continue when the updatingExpressionResultIterator has
+ * reached the 'DONE' state, and the full PUL is known
+ *
+ * @param updatingExpressionResultIterator An AsyncIterator to an UpdatingExpressionResult
+ *
+ * @param outputPUL Will be called with the PUL part of the AsyncIterator, as soon as it is known
+ *
+ * @return The XDMValue, as an ISequence
+ */
+export function separateXDMValueFromUpdatingExpressionResult(
+	updatingExpressionResultIterator: IAsyncIterator<UpdatingExpressionResult>,
+	outputPUL: (updates: IPendingUpdate[]) => void
+): ISequence {
+	let allValues: Value[];
+	let i = 0;
+	return sequenceFactory.create({
+		next: () => {
+			if (!allValues) {
+				const itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
+				if (!itResult.ready) {
+					return notReady(itResult.promise);
+				}
+				outputPUL(itResult.value.pendingUpdateList);
+				allValues = itResult.value.xdmValue;
+			}
+			if (i >= allValues.length) {
+				return DONE_TOKEN;
+			}
+			return ready(allValues[i++]);
+		}
+	});
+}
+
+/**
+ * Base class for All XQuery expressions that _may_ be updating, such as FunctionCalls,
+ * SequenceExpressions, etc.
+ */
 export default abstract class PossiblyUpdatingExpression extends Expression {
 	constructor(
 		specificity: Specificity,
@@ -55,36 +96,10 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 						innerDynamicContext,
 						executionParameters
 					);
-					let values: Value[];
-					let doneWithChildExpressions = false;
-					let i = 0;
-					return sequenceFactory.create({
-						next: (_hint: IterationHint) => {
-							if (doneWithChildExpressions) {
-								return DONE_TOKEN;
-							}
-							if (!values) {
-								// For now we do not support hints in updating expressions as we
-								// retrieve all results at once.
-								const attempt = updateListAndValue.next(IterationHint.NONE);
-								if (!attempt.ready) {
-									return attempt;
-								}
-								updateList = mergeUpdates(
-									updateList,
-									...attempt.value.pendingUpdateList
-								);
-								values = attempt.value.xdmValue;
-							}
-
-							if (i >= values.length) {
-								doneWithChildExpressions = true;
-								return DONE_TOKEN;
-							}
-
-							return ready(values[i++]);
-						}
-					});
+					return separateXDMValueFromUpdatingExpressionResult(
+						updateListAndValue,
+						pendingUpdates => (updateList = mergeUpdates(updateList, pendingUpdates))
+					);
 				};
 			})
 		);
@@ -95,7 +110,8 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 				if (done) {
 					return DONE_TOKEN;
 				}
-				// Ensure we fully exhaust the inner expression so that the pending update list is filled
+				// Ensure we fully exhaust the inner expression so that the pending update list is
+				// filled
 				const allValues = sequence.tryGetAllValues();
 				if (!allValues.ready) {
 					return notReady(allValues.promise);
@@ -117,4 +133,18 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		_executionParameters: ExecutionParameters,
 		_sequenceCallbacks: SequenceCallbacks
 	): ISequence;
+
+	/**
+	 * Some expressions (mainly function calls) determine their updatingness during static
+	 * evaluation. Propagate this
+	 */
+	protected determineUpdatingness() {
+		if (this._childExpressions.some(expr => expr.isUpdating)) {
+			this.isUpdating = true;
+		}
+	}
+	public performStaticEvaluation(staticContext: StaticContext): void {
+		super.performStaticEvaluation(staticContext);
+		this.determineUpdatingness();
+	}
 }

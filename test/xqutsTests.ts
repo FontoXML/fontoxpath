@@ -190,15 +190,15 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 				executePul(it.pendingUpdateList, args);
 			}
 			xdmValue.forEach(nodeValue => {
-				if (nodeValue.value.normalize) {
-					nodeValue.value.normalize();
+				if (nodeValue.normalize) {
+					nodeValue.normalize();
 				}
 			});
 		}
 
 		switch (outputFile.compare) {
 			case 'XML': {
-				const actual = xdmValue ? xdmValue[0].value : evaluateXPathToFirstNode(...args);
+				const actual = xdmValue ? xdmValue[0] : evaluateXPathToFirstNode(...args);
 				const expected =
 					actual.nodeType === actual.DOCUMENT_NODE
 						? parser.parseFromString(expectedString)
@@ -208,9 +208,7 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 				break;
 			}
 			case 'Fragment': {
-				const actualNodes = xdmValue
-					? xdmValue.map(nodeValue => nodeValue.value)
-					: evaluateXPathToNodes(...args);
+				const actualNodes = xdmValue ? xdmValue : evaluateXPathToNodes(...args);
 
 				catchAssertion(() => assertFragment(actualNodes, expectedString));
 				break;
@@ -333,29 +331,34 @@ async function runTestCase(testName, testCase) {
 }
 
 function buildTestCases(testGroup) {
-	(evaluateXPathToNodes('test-group | test-case', testGroup) as slimdom.Element[]).forEach(test => {
-		switch (test.localName) {
-			case 'test-group': {
-				const groupName = evaluateXPathToString(
-					'(@name, string(GroupInfo/title), string(GroupInfo/description))[. != ""][1]',
-					test
-				);
-				describe(groupName, () => buildTestCases(test));
-				break;
-			}
-			case 'test-case': {
-				const testName = evaluateXPathToString('(@name, description)[. != ""][1]', test);
-
-				if (unrunnableTestCasesByName.includes(testName)) {
-					it.skip(testName);
-					return;
+	(evaluateXPathToNodes('test-group | test-case', testGroup) as slimdom.Element[]).forEach(
+		test => {
+			switch (test.localName) {
+				case 'test-group': {
+					const groupName = evaluateXPathToString(
+						'(@name, string(GroupInfo/title), string(GroupInfo/description))[. != ""][1]',
+						test
+					);
+					describe(groupName, () => buildTestCases(test));
+					break;
 				}
+				case 'test-case': {
+					const testName = evaluateXPathToString(
+						'(@name, description)[. != ""][1]',
+						test
+					);
 
-				it(testName, async () => runTestCase(testName, test));
-				break;
+					if (unrunnableTestCasesByName.includes(testName)) {
+						it.skip(testName);
+						return;
+					}
+
+					it(testName, async () => runTestCase(testName, test));
+					break;
+				}
 			}
 		}
-	});
+	);
 }
 
 const catalog = parser.parseFromString(getFile('XQUTSCatalog.xml'));

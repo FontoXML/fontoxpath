@@ -1,11 +1,13 @@
 import { FunctionSignature } from '../dataTypes/FunctionValue';
+import ISequence from '../dataTypes/ISequence';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 
 export type FunctionProperties = {
 	argumentTypes: (TypeDeclaration | RestArgument)[];
 	arity: number;
-	callFunction: FunctionSignature;
+	callFunction: FunctionSignature<ISequence>;
+	isUpdating: boolean;
 	localName: string;
 	namespaceURI: string;
 	returnType: TypeDeclaration;
@@ -50,8 +52,8 @@ function computeLevenshteinDistance(a, b) {
 	})(a.length, b.length);
 }
 
-export function getAlternativesAsStringFor(functionName) {
-	let alternativeFunctions;
+export function getAlternativesAsStringFor(functionName: string): string {
+	let alternativeFunctions: FunctionProperties[];
 	if (!registeredFunctionsByName[functionName]) {
 		// Get closest functions by levenstein distance
 		alternativeFunctions = Object.keys(registeredFunctionsByName)
@@ -93,7 +95,12 @@ export function getAlternativesAsStringFor(functionName) {
 					`"Q{${functionDeclaration.namespaceURI}}${
 						functionDeclaration.localName
 					} (${functionDeclaration.argumentTypes
-						.map(argumentType => argumentType.type + argumentType.occurrence)
+						.map(argumentType =>
+							(argumentType as RestArgument).isRestArgument
+								? '...'
+								: (argumentType as TypeDeclaration).type +
+								  (argumentType as TypeDeclaration).occurrence
+						)
 						.join(', ')})"`
 			)
 			.reduce((accumulator, functionName, index, array) => {
@@ -132,11 +139,12 @@ export function getFunctionByArity(
 	}
 
 	return {
-		namespaceURI: functionNamespaceURI,
-		localName: functionLocalName,
-		callFunction: matchingFunction.callFunction,
 		argumentTypes: matchingFunction.argumentTypes,
 		arity,
+		callFunction: matchingFunction.callFunction,
+		isUpdating: matchingFunction.isUpdating,
+		localName: functionLocalName,
+		namespaceURI: functionNamespaceURI,
 		returnType: matchingFunction.returnType
 	};
 }
@@ -156,14 +164,15 @@ export function registerFunction(namespaceURI, localName, argumentTypes, returnT
 	}
 
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
-		localName,
-		namespaceURI,
-		argumentTypes: argumentTypes.map(argumentType =>
+		argumentTypes: argumentTypes.map((argumentType: string) =>
 			argumentType === '...' ? REST_ARGUMENT_INSTANCE : splitType(argumentType)
 		),
 		arity: argumentTypes.length,
-		returnType: splitType(returnType),
-		callFunction
+		callFunction,
+		isUpdating: false,
+		localName,
+		namespaceURI,
+		returnType: splitType(returnType)
 	});
 }
 

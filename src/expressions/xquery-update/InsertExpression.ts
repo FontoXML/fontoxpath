@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import Specificity from '../Specificity';
-import UpdatingExpression from './UpdatingExpression';
+import UpdatingExpression, { ensureUpdateListWrapper } from './UpdatingExpression';
 
 import {
 	insertAfter,
@@ -128,11 +128,11 @@ class InsertExpression extends UpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IAsyncIterator<UpdatingExpressionResult> {
-		const sourceValueIterator = super.ensureUpdateListWrapper(this._sourceExpression)(
+		const sourceValueIterator = ensureUpdateListWrapper(this._sourceExpression)(
 			dynamicContext,
 			executionParameters
 		);
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+		const targetValueIterator = ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
 		);

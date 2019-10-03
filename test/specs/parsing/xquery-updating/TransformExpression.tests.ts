@@ -1,10 +1,10 @@
 import * as chai from 'chai';
-import { evaluateUpdatingExpression } from 'fontoxpath';
+import { evaluateUpdatingExpression, evaluateXPath, Language, ReturnType } from 'fontoxpath';
+import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
+import { Document } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import IDomFacade from '../../../../src/domFacade/IDomFacade';
 import assertUpdateList from './assertUpdateList';
-import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
-import { Document } from 'slimdom';
 
 let documentNode: Document;
 beforeEach(() => {
@@ -24,10 +24,10 @@ return $a
 			documentNode,
 			null,
 			{},
-			{}
+			{ returnType: ReturnType.NODES }
 		);
 		chai.assert.equal(result.xdmValue.length, 1);
-		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
 		chai.assert.equal(actualXml, '<element>content</element>');
 		assertUpdateList(result.pendingUpdateList, [
 			{
@@ -58,10 +58,12 @@ return ($a, replace node element with <replacement/>)
 			documentNode,
 			null,
 			{},
-			{}
+			{
+				returnType: ReturnType.NODES
+			}
 		);
 		chai.assert.equal(result.xdmValue.length, 1);
-		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
 		chai.assert.equal(actualXml, '<element>content</element>');
 		assertUpdateList(result.pendingUpdateList, [
 			{
@@ -70,6 +72,27 @@ return ($a, replace node element with <replacement/>)
 				replacementXML: ['<replacement/>']
 			}
 		]);
+	});
+
+	it('can be used in evaluateXPath', async () => {
+		const element = documentNode.appendChild(documentNode.createElement('element'));
+		const result = await evaluateXPath(
+			`
+copy $a := element
+modify replace value of node $a with "content"
+return ($a)
+`,
+			documentNode,
+			null,
+			{},
+			ReturnType.NODES,
+			{
+				language: Language.XQUERY_UPDATE_3_1_LANGUAGE
+			}
+		);
+		chai.assert.equal(result.length, 1);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result[0]);
+		chai.assert.equal(actualXml, '<element>content</element>');
 	});
 
 	it('can clone the node with its child nodes', async () => {
@@ -95,7 +118,7 @@ return ($a, replace node element with <replacement/>)
 			{},
 			{}
 		);
-		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
 		const expectedXml = new slimdom.XMLSerializer().serializeToString(
 			documentNode.documentElement
 		);
@@ -115,7 +138,7 @@ return ($a, replace node element with <replacement/>)
 			{},
 			{}
 		);
-		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
 		const expectedXml = new slimdom.XMLSerializer().serializeToString(documentNode);
 		chai.assert.equal(actualXml, expectedXml);
 		assertUpdateList(result.pendingUpdateList, []);
@@ -145,7 +168,7 @@ return ($a, replace node element with <replacement/>)
 			{},
 			{}
 		);
-		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
 		const newlySyncXMLDoc = new slimdom.XMLSerializer().serializeToString(sync(xml));
 		const afterCloneXMLDoc = new slimdom.XMLSerializer().serializeToString(documentNode);
 		chai.assert.equal(newlySyncXMLDoc, afterCloneXMLDoc);
@@ -176,7 +199,7 @@ return ($a, replace node element with <replacement/>)
 			{},
 			{ nodesFactory: new DomBackedNodesFactory(documentNode) }
 		);
-		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
 		const newlySyncXMLDoc = new slimdom.XMLSerializer().serializeToString(sync(xml));
 		const afterCloneXMLDoc = new slimdom.XMLSerializer().serializeToString(documentNode);
 		chai.assert.equal(newlySyncXMLDoc, afterCloneXMLDoc);
@@ -194,13 +217,13 @@ return ($a, replace node element with <replacement/>)
 		const myDomFacade: IDomFacade = {
 			getAllAttributes: () => [],
 			getAttribute: () => null,
-			getChildNodes: (node: slimdom.Node) =>
-				getChildNode(node) ? [getChildNode(node)] : [],
+			getChildNodes: (node: slimdom.Node) => (getChildNode(node) ? [getChildNode(node)] : []),
 			getData: () => '',
 			getFirstChild: getChildNode,
 			getLastChild: getChildNode,
 			getNextSibling: () => null,
-			getParentNode: (node: slimdom.Node) => (node === a ? xml : node === xml ? documentNode : null),
+			getParentNode: (node: slimdom.Node) =>
+				node === a ? xml : node === xml ? documentNode : null,
 			getPreviousSibling: () => null
 		};
 
@@ -211,7 +234,7 @@ return ($a, replace node element with <replacement/>)
 			{},
 			{}
 		);
-		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
+		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
 		const expectedXml = new slimdom.XMLSerializer().serializeToString(sync('<xml><a/></xml>'));
 		chai.assert.equal(actualXml, expectedXml);
 		assertUpdateList(result.pendingUpdateList, []);
@@ -219,7 +242,7 @@ return ($a, replace node element with <replacement/>)
 
 	it('throws when a target of in the pul of modify is not a clone', async () => {
 		documentNode.appendChild(documentNode.createElement('a'));
-		let error: Error|null;
+		let error: Error | null;
 		try {
 			await evaluateUpdatingExpression(
 				'copy $newVar := a modify replace node a with <b/> return $newVar',
@@ -255,8 +278,8 @@ return fontoxpath:sleep(($a, $b), 100)
 		);
 
 		chai.assert.equal(result.xdmValue.length, 2);
-		const actualA = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0].value);
-		const actualB = new slimdom.XMLSerializer().serializeToString(result.xdmValue[1].value);
+		const actualA = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
+		const actualB = new slimdom.XMLSerializer().serializeToString(result.xdmValue[1]);
 		chai.assert.equal(actualA, '<element>content of a</element>');
 		chai.assert.equal(actualB, '<element>content of b</element>');
 		assertUpdateList(result.pendingUpdateList, []);

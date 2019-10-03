@@ -2,6 +2,7 @@ import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
+import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
 import evaluateXPath, { IReturnTypes, Language, Options, ReturnType } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
@@ -113,6 +114,7 @@ if (typeof window !== 'undefined') {
 	window['evaluateXPathToString'] = evaluateXPathToString;
 	window['evaluateXPathToStrings'] = evaluateXPathToStrings;
 	window['evaluateUpdatingExpression'] = evaluateUpdatingExpression;
+	window['evaluateUpdatingExpressionSync'] = evaluateUpdatingExpressionSync;
 	window['executePendingUpdateList'] = executePendingUpdateList;
 	window['getBucketForSelector'] = getBucketForSelector;
 	window['getBucketsForNode'] = getBucketsForNode;
@@ -131,6 +133,7 @@ export {
 	Element,
 	Document,
 	evaluateUpdatingExpression,
+	evaluateUpdatingExpressionSync,
 	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToAsyncIterator,

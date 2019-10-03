@@ -13,8 +13,12 @@ import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
+import ISequence from '../dataTypes/ISequence';
+import StaticContext from '../StaticContext';
+import ExecutionParameters from '../ExecutionParameters';
+import DynamicContext from '../DynamicContext';
 
-function createValidNumericType(type, transformedValue) {
+function createValidNumericType(type: string, transformedValue: number) {
 	if (isSubtypeOf(type, 'xs:integer')) {
 		return createAtomicValue(transformedValue, 'xs:integer');
 	}
@@ -61,11 +65,11 @@ const fnFloor: FunctionDefinitionType = function(
 	);
 };
 
-function isHalf(value, scaling) {
+function isHalf(value: number, scaling: number) {
 	return ((value * scaling) % 1) % 0.5 === 0;
 }
 
-function getNumberOfDecimalDigits(value) {
+function getNumberOfDecimalDigits(value: number) {
 	if (Math.floor(value) === value || isNaN(value)) {
 		return 0;
 	}
@@ -84,13 +88,13 @@ function getNumberOfDecimalDigits(value) {
 }
 
 function fnRound(
-	halfToEven,
-	_dynamicContext,
-	_executionParameters,
-	_staticContext,
-	sequence,
-	precision
-) {
+	halfToEven: boolean,
+	_dynamicContext: DynamicContext,
+	_executionParameters: ExecutionParameters,
+	_staticContext: StaticContext,
+	sequence: ISequence,
+	precision: ISequence
+): ISequence {
 	let done = false;
 	return sequenceFactory.create({
 		next: () => {

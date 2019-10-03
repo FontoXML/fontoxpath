@@ -6,9 +6,10 @@ import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import QName from '../dataTypes/valueTypes/QName';
 import Specificity from '../Specificity';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 
 class InlineFunction extends Expression {
-	private _functionBody: Expression;
+	private _functionBody: PossiblyUpdatingExpression;
 	private _parameterBindingNames: any;
 	private _parameterNames: QName[];
 	private _parameterTypes: TypeDeclaration[];
@@ -17,7 +18,7 @@ class InlineFunction extends Expression {
 	constructor(
 		paramDescriptions: { name: QName; type: TypeDeclaration }[],
 		returnType: TypeDeclaration,
-		functionBody: Expression
+		functionBody: PossiblyUpdatingExpression
 	) {
 		super(
 			new Specificity({
@@ -68,13 +69,14 @@ class InlineFunction extends Expression {
 		};
 
 		const functionItem = new FunctionValue({
-			value: executeFunction,
-			isAnonymous: true,
-			localName: 'dynamic-function',
-			namespaceURI: '',
 			argumentTypes: this._parameterTypes,
 			arity: this._parameterTypes.length,
-			returnType: this._returnType
+			isAnonymous: true,
+			isUpdating: this._functionBody.isUpdating,
+			localName: 'dynamic-function',
+			namespaceURI: '',
+			returnType: this._returnType,
+			value: executeFunction
 		});
 		return sequenceFactory.singleton(functionItem);
 	}

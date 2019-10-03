@@ -11,7 +11,7 @@
 		"prepare": "npm run build",
 		"build": "npm run lint && node ./build.js",
 		"start": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" \"tsc -p ./demo/tsconfig.json -w\" \"ts-node ./demo/server.ts --dist\"",
-		"test": "ts-mocha --require test/testhook.js \"test/specs/**/*.ts\"",
+		"test": "ts-mocha --require test/testhook.js \"test/specs/**/*.ts\" --extension ts",
 		"ci-test": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc --no-clean --require ts-node/register --require tsconfig-paths/register mocha \"test/specs/**/*.ts\" -p test/tsconfig.json",
 		"integrationtests": "ts-mocha --require test/testhook.js \"test/specs/parsing/**/*.ts\" -p test/tsconfig.json",
 		"qt3tests": "ts-mocha --paths -p test/tsconfig.json test/qt3tests.ts",

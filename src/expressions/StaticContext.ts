@@ -5,6 +5,7 @@ import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
 import { FunctionProperties } from './functions/functionRegistry';
+import UpdatingFunctionDefinitionType from './xquery-update/UpdatingFunctionDefinitionType';
 
 function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
@@ -21,14 +22,20 @@ function lookupInOverrides(overrides: any[] | { [x: string]: any }[], key: strin
 	return undefined;
 }
 
-export type FunctionDefinition = {
+export type GenericFunctionDefinition<isUpdating, callFunctionType> = {
 	argumentTypes: TypeDeclaration[];
 	arity: number;
-	callFunction: FunctionDefinitionType;
+	callFunction: callFunctionType;
+	isUpdating: isUpdating;
 	localName: string;
 	namespaceURI: string;
 	returnType: TypeDeclaration;
 };
+export type FunctionDefinition = GenericFunctionDefinition<false, FunctionDefinitionType>;
+export type UpdatingFunctionDefinition = GenericFunctionDefinition<
+	true,
+	UpdatingFunctionDefinitionType
+>;
 
 /**
  * The static context consists of all information that is available at compile time: the globally
@@ -161,7 +168,7 @@ export default class StaticContext implements IContext {
 		namespaceURI: string,
 		localName: string,
 		arity: number,
-		functionDefinition: FunctionDefinition
+		functionDefinition: FunctionDefinition | UpdatingFunctionDefinition
 	) {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const duplicateFunction = this._registeredFunctionsByHash[hashKey];
