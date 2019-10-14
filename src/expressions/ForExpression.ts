@@ -114,9 +114,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 
 			if (!this._namespaceURI && this._prefix) {
 				throw new Error(
-					`XPST0081: Could not resolve namespace for prefix ${
-						this._prefix
-					} in a for expression`
+					`XPST0081: Could not resolve namespace for prefix ${this._prefix} in a for expression`
 				);
 			}
 		}
@@ -139,9 +137,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 					this._positionalVariableBinding.prefix
 				) {
 					throw new Error(
-						`XPST0081: Could not resolve namespace for prefix ${
-							this._prefix
-						} in the positionalVariableBinding in a for expression`
+						`XPST0081: Could not resolve namespace for prefix ${this._prefix} in the positionalVariableBinding in a for expression`
 					);
 				}
 			}
