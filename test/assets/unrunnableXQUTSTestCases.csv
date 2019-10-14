@@ -127,7 +127,6 @@ id-conditional-expr-023,Error: Should throw error XUST0001.
 id-conditional-expr-024,Error: expected 'XUDY0027: The target for an insert, replace, or rename expression expression should not be empty.' to match /XUST0001/
 id-conditional-expr-027,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 id-conditional-expr-028,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
-id-conditional-expr-031,Error: Not yet supported: Updating query with text assertion.
 id-conditional-expr-032,Error: Should throw error XUST0001.
 id-comma-expr-04,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 id-comma-expr-05,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
@@ -143,6 +142,8 @@ id-comma-expr-027,Error: Should throw error XUST0001.
 id-comma-expr-028,Error: Should throw error XUST0001.
 id-comma-expr-032,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 id-comma-expr-033,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
+id-comma-expr-034,Error: expected '<root>\n    Jones\n    \n  3</root>' to equal '<root><employee dept="Toys">\n    <name>Jones</name>\n    \n  </employee>3</root>'
+id-comma-expr-035,Error: expected '<root>3\n    Roberts\n    \n  </root>' to equal '<root>3<employee dept="Shoes" mgr="true">\n    <name>Roberts</name>\n    \n  </employee></root>'
 id-comma-expr-038,Error: Should throw error XUST0001.
 id-function-call-01,Error: expected 'XPTY0004: Multiplicity of function argument of type xs:anyAtomicType for insertFunction is incorrect. Expected exactly one' to match /XUST0001/
 id-function-call-02,Error: expected 'XPTY0004: Multiplicity of function argument of type xs:anyAtomicType for insertFunction is incorrect. Expected exactly one' to match /XUST0001/
