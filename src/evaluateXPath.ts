@@ -1,23 +1,14 @@
+import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
 import buildContext from './evaluationUtils/buildContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
-import atomize from './expressions/dataTypes/atomize';
-import castToType from './expressions/dataTypes/castToType';
-import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
-import sequenceFactory from './expressions/dataTypes/sequenceFactory';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
-import { IterationHint } from './expressions/util/iterators';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
+import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import { Node } from './types/Types';
-import transformXPathItemToJavascriptObject, {
-	transformMapToObject,
-	transformArrayToArray
-} from './transformXPathItemToJavascriptObject';
-import ArrayValue from './expressions/dataTypes/ArrayValue';
-import convertXDMReturnValue from './parsing/convertXDMReturnValue';
 
 /**
  * @public
@@ -25,46 +16,13 @@ import convertXDMReturnValue from './parsing/convertXDMReturnValue';
 export type Options = {
 	currentContext?: any;
 	debug?: boolean;
+	documentWriter?: IDocumentWriter;
 	disableCache?: boolean;
 	language?: Language;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
 };
-
-/**
- * @public
- */
-export enum ReturnType {
-	ANY = 0,
-	NUMBER = 1,
-	STRING = 2,
-	BOOLEAN = 3,
-	NODES = 7,
-	FIRST_NODE = 9,
-	STRINGS = 10,
-	MAP = 11,
-	ARRAY = 12,
-	NUMBERS = 13,
-	ASYNC_ITERATOR = 99
-}
-
-/**
- * @public
- */
-export interface IReturnTypes<T extends Node> {
-	[ReturnType.ANY]: any;
-	[ReturnType.NUMBER]: number;
-	[ReturnType.STRING]: string;
-	[ReturnType.BOOLEAN]: boolean;
-	[ReturnType.NODES]: T[] | undefined[];
-	[ReturnType.FIRST_NODE]: T | null;
-	[ReturnType.STRINGS]: string[];
-	[ReturnType.MAP]: { [s: string]: any };
-	[ReturnType.ARRAY]: any[];
-	[ReturnType.NUMBERS]: number[];
-	[ReturnType.ASYNC_ITERATOR]: AsyncIterableIterator<any>;
-}
 
 /**
  * Evaluates an XPath on the given contextItem.

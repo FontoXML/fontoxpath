@@ -3,7 +3,7 @@ import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
-import evaluateXPath, { IReturnTypes, Language, Options, ReturnType } from './evaluateXPath';
+import evaluateXPath, { Language, Options } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -38,6 +38,7 @@ import {
 	ProcessingInstruction,
 	Text
 } from './types/Types';
+import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
@@ -130,8 +131,21 @@ export {
 	CDATASection,
 	CharacterData,
 	Comment,
-	Element,
 	Document,
+	Element,
+	IDocumentWriter,
+	IDomFacade,
+	INodesFactory,
+	IReturnTypes,
+	Language,
+	Node,
+	Options,
+	ProcessingInstruction,
+	ReturnType,
+	Text,
+	UpdatingOptions,
+	compareSpecificity,
+	domFacade,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,
 	evaluateXPath,
@@ -148,19 +162,6 @@ export {
 	executePendingUpdateList,
 	getBucketForSelector,
 	getBucketsForNode,
-	IDocumentWriter,
-	IDomFacade,
-	INodesFactory,
-	IReturnTypes,
-	Language,
-	Node,
-	ProcessingInstruction,
-	Text,
-	ReturnType,
-	UpdatingOptions,
-	compareSpecificity,
-	domFacade,
-	Options,
 	precompileXPath,
 	registerCustomXPathFunction,
 	registerXQueryModule

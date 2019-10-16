@@ -5,6 +5,7 @@ import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { IAsyncIterator, notReady, ready } from '../util/iterators';
 import { errXUST0001 } from './XQueryUpdateFacilityErrors';
+import ISequence from '../dataTypes/ISequence';
 
 export function ensureUpdateListWrapper(
 	expression: Expression
@@ -46,7 +47,10 @@ abstract class UpdatingExpression extends Expression {
 		this.isUpdating = true;
 	}
 
-	public evaluate(): never {
+	public evaluate(
+		_dynamicContext: DynamicContext,
+		_executionParameters: ExecutionParameters
+	): ISequence {
 		throw errXUST0001();
 	}
 

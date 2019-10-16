@@ -1,7 +1,8 @@
 import IDomFacade from './domFacade/IDomFacade';
-import { convertUpdateResultToTransferable, UpdatingOptions } from './evaluateUpdatingExpression';
-import evaluateXPath, { IReturnTypes } from './evaluateXPath';
+import { UpdatingOptions } from './evaluateUpdatingExpression';
+import evaluateXPath from './evaluateXPath';
 import buildContext from './evaluationUtils/buildContext';
+import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
@@ -10,6 +11,7 @@ import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import { Node } from './types/Types';
+import { IReturnTypes } from './parsing/convertXDMReturnValue';
 
 /**
  * Evaluates an update script to a pending update list. See
@@ -33,7 +35,7 @@ export default function evaluateUpdatingExpressionSync<
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: UpdatingOptions<TReturnType> | null
+	options?: UpdatingOptions | null
 ): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
 	options = options || {};
 
@@ -72,7 +74,7 @@ export default function evaluateUpdatingExpressionSync<
 				contextItem,
 				domFacade,
 				variables,
-				options.returnType,
+				options.returnType as any,
 				options
 			)
 		};
@@ -86,7 +88,7 @@ export default function evaluateUpdatingExpressionSync<
 		);
 
 		attempt = resultIterator.next(IterationHint.NONE);
-		while (!attempt.ready) {
+		if (!attempt.ready) {
 			throw new Error('This script could not be evaluated in a not synchronous manner');
 		}
 	} catch (error) {

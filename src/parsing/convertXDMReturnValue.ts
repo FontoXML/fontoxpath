@@ -1,5 +1,4 @@
-import { printAndRethrowError } from 'src/evaluationUtils/printAndRethrowError';
-import { ReturnType, IReturnTypes } from '../evaluateXPath';
+import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
 import ArrayValue from '../expressions/dataTypes/ArrayValue';
 import atomize from '../expressions/dataTypes/atomize';
 import castToType from '../expressions/dataTypes/castToType';
@@ -14,6 +13,40 @@ import transformXPathItemToJavascriptObject, {
 	transformMapToObject
 } from '../transformXPathItemToJavascriptObject';
 import { Node } from '../types/Types';
+
+/**
+ * @public
+ */
+export enum ReturnType {
+	ANY = 0,
+	NUMBER = 1,
+	STRING = 2,
+	BOOLEAN = 3,
+	NODES = 7,
+	FIRST_NODE = 9,
+	STRINGS = 10,
+	MAP = 11,
+	ARRAY = 12,
+	NUMBERS = 13,
+	ASYNC_ITERATOR = 99
+}
+
+/**
+ * @public
+ */
+export interface IReturnTypes<T extends Node> {
+	[ReturnType.ANY]: any;
+	[ReturnType.NUMBER]: number;
+	[ReturnType.STRING]: string;
+	[ReturnType.BOOLEAN]: boolean;
+	[ReturnType.NODES]: T[] | undefined[];
+	[ReturnType.FIRST_NODE]: T | null;
+	[ReturnType.STRINGS]: string[];
+	[ReturnType.MAP]: { [s: string]: any };
+	[ReturnType.ARRAY]: any[];
+	[ReturnType.NUMBERS]: number[];
+	[ReturnType.ASYNC_ITERATOR]: AsyncIterableIterator<any>;
+}
 
 export default function convertXDMReturnValue<
 	TNode extends Node,
@@ -30,7 +63,7 @@ export default function convertXDMReturnValue<
 			if (!ebv.ready) {
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
-			return ebv.value;
+			return ebv.value as IReturnTypes<TNode>[ReturnType.BOOLEAN];
 		}
 
 		case ReturnType.STRING: {

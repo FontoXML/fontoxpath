@@ -15,14 +15,15 @@ import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
-import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import { applyUpdates, mergeUpdates } from './pulRoutines';
-import { ensureUpdateListWrapper } from './UpdatingExpression';
+import UpdatingExpression, { ensureUpdateListWrapper } from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
+import { IPendingUpdate } from './IPendingUpdate';
+import ISequence from '../dataTypes/ISequence';
 
 function deepCloneNode(
 	node: ConcreteNode,
@@ -90,7 +91,7 @@ function isCreatedNode(node, createdNodes, domFacade) {
 
 type VariableBinding = { registeredVariable?: string; sourceExpr: Expression; varRef: QName };
 
-class TransformExpression extends PossiblyUpdatingExpression {
+class TransformExpression extends UpdatingExpression {
 	public _modifyExpr: Expression;
 	public _returnExpr: Expression;
 	public _variableBindings: VariableBinding[];
@@ -129,7 +130,7 @@ class TransformExpression extends PossiblyUpdatingExpression {
 		let modifyValueIterator: IAsyncIterator<UpdatingExpressionResult>;
 		let returnValueIterator: IAsyncIterator<UpdatingExpressionResult>;
 
-		let modifyPul;
+		let modifyPul: IPendingUpdate[];
 		const createdNodes = [];
 		const toMergePuls = [];
 
@@ -144,9 +145,7 @@ class TransformExpression extends PossiblyUpdatingExpression {
 
 						// Each variable binding is processed as follows:
 						if (!sourceValueIterator) {
-							sourceValueIterators[
-								i
-							] = sourceValueIterator = variableBinding.sourceValueIterator = ensureUpdateListWrapper(
+							sourceValueIterators[i] = sourceValueIterator = ensureUpdateListWrapper(
 								variableBinding.sourceExpr
 							)(dynamicContext, executionParameters);
 						}
@@ -253,7 +252,10 @@ class TransformExpression extends PossiblyUpdatingExpression {
 			this._returnExpr.isUpdating;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
 		// If we were updating, the calling code would have called the evaluateWithUpdateList
 		// method. We can assume we're not actually updating
 		const pendingUpdateIterator = this.evaluateWithUpdateList(

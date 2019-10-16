@@ -1,10 +1,10 @@
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
-import { IReturnTypes, Language, ReturnType } from './evaluateXPath';
+import { Language } from './evaluateXPath';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import buildContext from './evaluationUtils/buildContext';
+import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
-import sequenceFactory from './expressions/dataTypes/sequenceFactory';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
@@ -12,45 +12,25 @@ import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import INodesFactory from './nodesFactory/INodesFactory';
-import convertXDMReturnValue from './parsing/convertXDMReturnValue';
-import { Node } from './types/Types';
+import { ReturnType } from './parsing/convertXDMReturnValue';
 
 /**
  * @public
  */
-export type UpdatingOptions<TReturnType> = {
+export type UpdatingOptions = {
 	debug?: boolean;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
-	returnType?: TReturnType;
+	returnType?: ReturnType;
 };
 
-export function convertUpdateResultToTransferable<
-	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
->(
-	result: UpdatingExpressionResult,
-	script: string,
-	returnType: TReturnType,
-	executionParameters: ExecutionParameters
-): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
-	return {
-		['pendingUpdateList']: result.pendingUpdateList.map(update => update.toTransferable()),
-		['xdmValue']: convertXDMReturnValue(
-			script,
-			sequenceFactory.create(result.xdmValue),
-			returnType,
-			executionParameters
-		)
-	};
-}
 /**
  * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
  *
- * @xdpublic
+ * @public
  *
  * @param updateScript - The update script to execute. Supports XPath 3.1.
  * @param contextItem  - The node from which to run the XPath.
@@ -60,16 +40,13 @@ export function convertUpdateResultToTransferable<
  *
  * @returns The query result and pending update list.
  */
-export default async function evaluateUpdatingExpression<
-	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
->(
+export default async function evaluateUpdatingExpression(
 	updateScript: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
-	options?: UpdatingOptions<TReturnType> | null
-): Promise<{ pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] }> {
+	options?: UpdatingOptions | null
+): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
 	options = options || {};
 
 	let dynamicContext: DynamicContext;
@@ -101,19 +78,17 @@ export default async function evaluateUpdatingExpression<
 		// scripts. Copy/modify/transform expressions are examples of updating expressions that are
 		// not really updating
 		const resultItems = [];
-		for await (const resultItem of evaluateXPathToAsyncIterator(
-			updateScript,
-			contextItem,
-			domFacade,
-			variables,
-			{ ...options, language: Language.XQUERY_3_1_LANGUAGE }
-		)) {
-			resultItems.push(resultItem);
+		let it = evaluateXPathToAsyncIterator(updateScript, contextItem, domFacade, variables, {
+			...options,
+			language: Language.XQUERY_3_1_LANGUAGE
+		});
+		for (let item = await it.next(); !item.done; item = await it.next()) {
+			resultItems.push(item.value);
 		}
-		return {
+		return Promise.resolve({
 			['pendingUpdateList']: [],
 			['xdmValue']: resultItems
-		};
+		});
 	}
 
 	let attempt: IterationResult<UpdatingExpressionResult>;
