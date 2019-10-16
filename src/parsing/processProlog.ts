@@ -167,8 +167,15 @@ export default function processProlog(
 			throw errXQST0060();
 		}
 
-		// functionBody always has a single expression
-		const body = astHelper.getFirstChild(declaration, 'functionBody')[1];
+		const functionBody = astHelper.getFirstChild(declaration, 'functionBody');
+		if (!functionBody) {
+			// This function will be declared as a registerCustomXPathFunction, making it globally
+			// available later on. We do not need to export it here
+			return;
+		}
+
+		// functionBody usually has a single expression
+		const body = functionBody[1];
 		const returnType = astHelper.getTypeDeclaration(declaration);
 		const params = astHelper.getChildren(
 			astHelper.getFirstChild(declaration, 'paramList'),

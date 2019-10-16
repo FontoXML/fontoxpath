@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { registerXQueryModule, evaluateXPath } from 'fontoxpath';
+import { evaluateXPath, registerXQueryModule } from 'fontoxpath';
 
 describe('registerXQueryModule', () => {
 	it('Can declare a function in a module and use the module from an XPath', () => {
@@ -77,5 +77,13 @@ declare %public function test:hello ($a) {
 		);
 
 		chai.assert.deepEqual(result, []);
+	});
+
+	it('can register a large module with an external function declaration', () => {
+		registerXQueryModule(`
+module namespace x = 'http://www.example.com';
+
+
+declare function x:fn () external;`);
 	});
 });
