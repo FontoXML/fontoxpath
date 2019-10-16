@@ -78,4 +78,12 @@ declare %public function test:hello ($a) {
 
 		chai.assert.deepEqual(result, []);
 	});
+
+	it('can register a large module with an external function declaration', () => {
+		registerXQueryModule(`
+module namespace x = 'http://www.example.com';
+
+
+declare function x:fn () external;`);
+	});
 });
