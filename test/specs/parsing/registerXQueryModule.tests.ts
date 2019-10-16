@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { registerXQueryModule, evaluateXPath } from 'fontoxpath';
+import { evaluateXPath, registerXQueryModule } from 'fontoxpath';
 
 describe('registerXQueryModule', () => {
 	it('Can declare a function in a module and use the module from an XPath', () => {
