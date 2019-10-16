@@ -186,6 +186,9 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 		if (isUpdating) {
 			const it = await evaluateUpdatingExpression(...args);
 			xdmValue = it.xdmValue;
+			if (!Array.isArray(xdmValue)) {
+				xdmValue = [xdmValue];
+			}
 			if (it.pendingUpdateList) {
 				executePul(it.pendingUpdateList, args);
 			}

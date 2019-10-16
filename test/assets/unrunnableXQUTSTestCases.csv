@@ -127,6 +127,7 @@ id-conditional-expr-023,Error: Should throw error XUST0001.
 id-conditional-expr-024,Error: expected 'XUDY0027: The target for an insert, replace, or rename expression expression should not be empty.' to match /XUST0001/
 id-conditional-expr-027,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 id-conditional-expr-028,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
+id-conditional-expr-031,Error: Not yet supported: Updating query with text assertion.
 id-conditional-expr-032,Error: Should throw error XUST0001.
 id-comma-expr-04,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 id-comma-expr-05,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/

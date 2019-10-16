@@ -116,7 +116,7 @@ describe('evaluateUpdatingExpression', () => {
 			documentNode
 		);
 
-		chai.assert.deepEqual(result.xdmValue, 1);
+		chai.assert.deepEqual(result.xdmValue as any, 1);
 	});
 
 	it('properly returns the xdmValue for non-updating expressions', async () => {
