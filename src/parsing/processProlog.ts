@@ -192,9 +192,7 @@ export default function processProlog(
 			)
 		) {
 			throw new Error(
-				`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${
-					paramTypes.length
-				} has already been declared.`
+				`XQST0049: The function Q{${declarationNamespaceURI}}${declarationLocalName}#${paramTypes.length} has already been declared.`
 			);
 		}
 
