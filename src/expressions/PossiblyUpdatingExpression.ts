@@ -31,12 +31,23 @@ export function separateXDMValueFromUpdatingExpressionResult(
 ): ISequence {
 	let allValues: Value[];
 	let i = 0;
+	let itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
+	// Shortcut for synchronous values. Forces the PUL to be immediately available
+	if (itResult.ready) {
+		outputPUL(itResult.value.pendingUpdateList);
+		allValues = itResult.value.xdmValue;
+		return sequenceFactory.create(allValues);
+	}
 	return sequenceFactory.create({
 		next: () => {
 			if (!allValues) {
-				const itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
+				if (!itResult) {
+					itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
+				}
 				if (!itResult.ready) {
-					return notReady(itResult.promise);
+					const toReturn = notReady(itResult.promise);
+					itResult = null;
+					return toReturn;
 				}
 				outputPUL(itResult.value.pendingUpdateList);
 				allValues = itResult.value.xdmValue;

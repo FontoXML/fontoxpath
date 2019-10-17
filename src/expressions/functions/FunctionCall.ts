@@ -1,7 +1,6 @@
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -13,12 +12,12 @@ import PossiblyUpdatingExpression, {
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, notReady, ready } from '../util/iterators';
+import { errXPTY0004 } from '../XPathErrors';
 import { IPendingUpdate } from '../xquery-update/IPendingUpdate';
+import { mergeUpdates } from '../xquery-update/pulRoutines';
 import UpdatingFunctionValue from '../xquery-update/UpdatingFunctionValue';
 import { performFunctionConversion } from './argumentHelper';
-import { errXPTY0004 } from '../XPathErrors';
-import { mergeUpdates } from '../xquery-update/pulRoutines';
 
 const functionXPTY0004 = () =>
 	errXPTY0004(
@@ -151,8 +150,10 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IAsyncIterator<UpdatingExpressionResult> {
-		if (!this._functionReference) {
-			throw new Error('Not implemented: calling dynamic updating functions');
+		if (!this._functionReference || !this._functionReference.isUpdating) {
+			// The function reference can not be updating at this point
+			// We need to call the performFunctionalEvaluation, using the base implementation of evaluateWithUpdateList
+			return super.evaluateWithUpdateList(dynamicContext, executionParameters);
 		}
 		let pendingUpdateList: IPendingUpdate[] = [];
 		const functionCall = (
@@ -161,15 +162,6 @@ class FunctionCall extends PossiblyUpdatingExpression {
 			staticContext: StaticContext,
 			...args: ISequence[]
 		) => {
-			if (!this._functionReference.isUpdating) {
-				return (this._functionReference as FunctionValue).value(
-					dynamicContext,
-					executionParameters,
-					staticContext,
-					...args
-				);
-			}
-
 			return separateXDMValueFromUpdatingExpressionResult(
 				(this._functionReference as UpdatingFunctionValue).value(
 					dynamicContext,
@@ -255,6 +247,10 @@ class FunctionCall extends PossiblyUpdatingExpression {
 			singleton: () => {
 				return sequence.mapAll(([item]) => {
 					const functionItem = validateFunctionItem(item, this._callArity);
+					if (functionItem.isUpdating) {
+						// dynamic function invocations cal not be updating
+						throw errXUDY0038();
+					}
 					return callFunction(
 						functionItem,
 						functionItem.value,

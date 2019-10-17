@@ -2,7 +2,9 @@ export const errXUST0001 = () =>
 	new Error(`XUST0001: Can not execute an updating expression in a non-updating context.`);
 export const errXUTY0004 = node =>
 	new Error(
-		`XUTY0004: The attribute ${node.name}="${node.value}" follows a node that is not an attribute node.`
+		`XUTY0004: The attribute ${node.name}="${
+			node.value
+		}" follows a node that is not an attribute node.`
 	);
 export const errXUTY0005 = () =>
 	new Error(
@@ -52,7 +54,9 @@ export const errXUDY0016 = target =>
 	);
 export const errXUDY0017 = target =>
 	new Error(
-		`XUDY0017: The target ${target.outerHTML} is used in more than one replace value of expression.`
+		`XUDY0017: The target ${
+			target.outerHTML
+		} is used in more than one replace value of expression.`
 	);
 export const errXUDY0021 = constraint =>
 	new Error(
@@ -72,7 +76,9 @@ export const errXUDY0027 = () =>
 	);
 export const errXUDY0029 = target =>
 	new Error(
-		`XUDY0029: The target ${target.outerHTML} for inserting a node before or after must have a parent.`
+		`XUDY0029: The target ${
+			target.outerHTML
+		} for inserting a node before or after must have a parent.`
 	);
 export const errXUDY0030 = () =>
 	new Error(
@@ -82,3 +88,8 @@ export const errXUDY0037 = () =>
 	new Error(
 		'XUDY0037: The modify expression of a copy modify expression can not contain a fn:put.'
 	);
+export const errXUDY0038 = () => {
+	new Error(
+		'XUDY0038: The function returned by the PrimaryExpr of a dynamic function invocation can not be an updating function'
+	);
+};
