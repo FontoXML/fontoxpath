@@ -86,6 +86,12 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 		printAndRethrowError(selector, error);
 	}
 
+	if (expression.isUpdating) {
+		throw new Error(
+			'XUST0001: Updating expressions should be evaluated as updating expressions'
+		);
+	}
+
 	// Shortcut: if the xpathExpression defines buckets, the
 	// contextItem is a node and we are evaluating to a bucket, we can
 	// use it to return false if we are sure it won't match.

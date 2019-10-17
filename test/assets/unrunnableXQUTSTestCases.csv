@@ -20,14 +20,15 @@ id-transform-expr-018,Error XUST0002 is no longer available in version 3.0.
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 id-function-declaration-03,Error: A non-updating expression without an expected value is not supported in the test framework.
 id-function-declaration-04,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
-id-function-declaration-05,Error: expected 'XPTY0004: Multiplicity of function argument of type xs:integer for insertFunction is incorrect. Expected exactly one' to match /XUST0002/
+id-function-declaration-05,Error: expected 'XUST0001: Updating expressions should be evaluated as updating expressions' to match /XUST0002/
 id-function-declaration-012,Error: Should throw error XUST0002.
 id-function-declaration-014,Error: Should throw error XUST0028. or Should throw error XUST0002.
 id-function-declaration-015,Error: expected 'XPTY0004: Multiplicity of function argument of type element() for insertFunction is incorrect. Expected exactly one' to match /XUST0001/
 id-function-declaration-016,Error: expected 'XPTY0004: Multiplicity of function argument of type element() for insertFunction is incorrect. Expected exactly one' to match /XUST0001/
 id-function-declaration-017,Error: Error: an XML declaration must be at the start of the document.
 function-declaration-02,Error: expected 'XPTY0004: Multiplicity of function return value of type xs:integer for test is incorrect. Expected exactly one' to match /XUST0028/
-function-declaration-03,Error: expected 'compiledFunctionBody.evaluateWithUpdateList is not a function' to match /XUST0002/
+function-declaration-03,Error: expected 'XUST0001: Updating expressions should be evaluated as updating expressions' to match /XUST0002/
+function-declaration-04,Error: XUST0001: Updating expressions should be evaluated as updating expressions
 id-insert-expr-081,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-insert-expr-082,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-insert-expr-083,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules

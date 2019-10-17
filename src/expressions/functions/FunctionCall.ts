@@ -151,11 +151,8 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IAsyncIterator<UpdatingExpressionResult> {
-		if (!this.isUpdating) {
-			throw new Error('idk? something about calling normal functions as updating?');
-		}
 		if (!this._functionReference) {
-			throw new Error('Not implemented: calling dynamic updating functions!');
+			throw new Error('Not implemented: calling dynamic updating functions');
 		}
 		let pendingUpdateList: IPendingUpdate[] = [];
 		const functionCall = (
