@@ -80,7 +80,7 @@ export default async function evaluateUpdatingExpression(
 		const resultItems = [];
 		let it = evaluateXPathToAsyncIterator(updateScript, contextItem, domFacade, variables, {
 			...options,
-			language: Language.XQUERY_3_1_LANGUAGE
+			language: Language.XQUERY_UPDATE_3_1_LANGUAGE
 		});
 		for (let item = await it.next(); !item.done; item = await it.next()) {
 			resultItems.push(item.value);

@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateUpdatingExpression, evaluateXPath, Language, ReturnType } from 'fontoxpath';
+import { evaluateUpdatingExpression, evaluateXPath, Language } from 'fontoxpath';
 import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
 import { Document } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
@@ -24,7 +24,7 @@ return $a
 			documentNode,
 			null,
 			{},
-			{ returnType: ReturnType.NODES }
+			{ returnType: evaluateXPath.NODES_TYPE }
 		);
 		chai.assert.equal(result.xdmValue.length, 1);
 		const actualXml = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
@@ -59,7 +59,7 @@ return ($a, replace node element with <replacement/>)
 			null,
 			{},
 			{
-				returnType: ReturnType.NODES
+				returnType: evaluateXPath.NODES_TYPE
 			}
 		);
 		chai.assert.equal(result.xdmValue.length, 1);
@@ -85,9 +85,9 @@ return ($a)
 			documentNode,
 			null,
 			{},
-			ReturnType.NODES,
+			evaluateXPath.NODES_TYPE,
 			{
-				language: Language.XQUERY_UPDATE_3_1_LANGUAGE
+				language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE
 			}
 		);
 		chai.assert.equal(result.length, 1);

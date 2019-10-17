@@ -194,8 +194,8 @@ export enum Language {
  *
  * To catch pending updates, use {@link evaluateUpdatingExpression}
  */
-evaluateXPath['XQUERY_3_1_LANGUAGE'] = evaluateXPath.XQUERY_3_1_LANGUAGE =
-	Language.XQUERY_3_1_LANGUAGE;
+evaluateXPath['XQUERY_UPDATE_3_1_LANGUAGE'] = evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE =
+	Language.XQUERY_UPDATE_3_1_LANGUAGE;
 
 /**
  * Can be used to signal an XQuery program should be executed instead

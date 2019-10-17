@@ -1,8 +1,6 @@
 import * as chai from 'chai';
+import { evaluateUpdatingExpression, evaluateXPath, executePendingUpdateList } from 'fontoxpath';
 import * as slimdom from 'slimdom';
-
-import { evaluateUpdatingExpression, executePendingUpdateList, ReturnType } from 'fontoxpath';
-import assertUpdateList from './assertUpdateList';
 
 let documentNode;
 beforeEach(() => {
@@ -103,7 +101,7 @@ describe('evaluateUpdatingExpression', () => {
 			documentNode,
 			null,
 			null,
-			{ returnType: ReturnType.NODES }
+			{ returnType: evaluateXPath.NODES_TYPE }
 		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
