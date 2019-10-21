@@ -1,10 +1,10 @@
+import { Attr } from '../../types/Types';
+
 export const errXUST0001 = () =>
 	new Error(`XUST0001: Can not execute an updating expression in a non-updating context.`);
-export const errXUTY0004 = node =>
+export const errXUTY0004 = (node: Attr) =>
 	new Error(
-		`XUTY0004: The attribute ${node.name}="${
-			node.value
-		}" follows a node that is not an attribute node.`
+		`XUTY0004: The attribute ${node.name}="${node.value}" follows a node that is not an attribute node.`
 	);
 export const errXUTY0005 = () =>
 	new Error(
@@ -54,9 +54,7 @@ export const errXUDY0016 = target =>
 	);
 export const errXUDY0017 = target =>
 	new Error(
-		`XUDY0017: The target ${
-			target.outerHTML
-		} is used in more than one replace value of expression.`
+		`XUDY0017: The target ${target.outerHTML} is used in more than one replace value of expression.`
 	);
 export const errXUDY0021 = constraint =>
 	new Error(
@@ -66,9 +64,9 @@ export const errXUTY0022 = () =>
 	new Error(
 		'XUTY0022: An insert expression specifies the insertion of an attribute node into a document node.'
 	);
-export const errXUDY0023 = namespaceURI =>
+export const errXUDY0023 = (namespaceURI: string) =>
 	new Error(`XUDY0023: The namespace binding ${namespaceURI} is conflicting.`);
-export const errXUDY0024 = namespaceURI =>
+export const errXUDY0024 = (namespaceURI: string) =>
 	new Error(`XUDY0024: The namespace binding ${namespaceURI} is conflicting.`);
 export const errXUDY0027 = () =>
 	new Error(
@@ -76,9 +74,7 @@ export const errXUDY0027 = () =>
 	);
 export const errXUDY0029 = target =>
 	new Error(
-		`XUDY0029: The target ${
-			target.outerHTML
-		} for inserting a node before or after must have a parent.`
+		`XUDY0029: The target ${target.outerHTML} for inserting a node before or after must have a parent.`
 	);
 export const errXUDY0030 = () =>
 	new Error(

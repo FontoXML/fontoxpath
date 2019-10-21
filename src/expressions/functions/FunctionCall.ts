@@ -17,6 +17,7 @@ import { errXPTY0004 } from '../XPathErrors';
 import { IPendingUpdate } from '../xquery-update/IPendingUpdate';
 import { mergeUpdates } from '../xquery-update/pulRoutines';
 import UpdatingFunctionValue from '../xquery-update/UpdatingFunctionValue';
+import { errXUDY0038 } from '../xquery-update/XQueryUpdateFacilityErrors';
 import { performFunctionConversion } from './argumentHelper';
 
 const functionXPTY0004 = () =>
