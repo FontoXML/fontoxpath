@@ -55,6 +55,31 @@ describe('evaluateXPath', () => {
 			() => evaluateXPath('fontoxpath:sleep(())', documentNode, domFacade),
 			'can not be resolved synchronously'
 		));
+	it('Can not evaluate updating expressions', () =>
+		chai.assert.throws(
+			() =>
+				evaluateXPath(
+					'insert node <element/> into .',
+					documentNode,
+					domFacade,
+					null,
+					null,
+					{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
+				),
+			'XUST0001'
+		));
+	it('Can evaluate intermediately updating expressions', () =>
+		chai.assert.equal(
+			evaluateXPath<slimdom.Element, evaluateXPath.FIRST_NODE_TYPE>(
+				'copy $ele := <element /> modify insert node text{"test"} into $ele return $ele',
+				documentNode,
+				domFacade,
+				null,
+				evaluateXPath.FIRST_NODE_TYPE,
+				{ language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
+			).outerHTML,
+			'<element>test</element>'
+		));
 
 	it('Requires the XPath selector', () =>
 		chai.assert.throws(() => (evaluateXPath as any)(), 'xpathExpression must be a string'));
@@ -381,7 +406,10 @@ describe('evaluateXPath', () => {
 				(slimdomDocument.createCDATASection as any).called,
 				'nodesFactory.createCDATASection'
 			);
-			chai.assert.isTrue((slimdomDocument.createComment as any).called, 'nodesFactory.createComment');
+			chai.assert.isTrue(
+				(slimdomDocument.createComment as any).called,
+				'nodesFactory.createComment'
+			);
 			chai.assert.isFalse(
 				(slimdomDocument.implementation.createDocument as any).called,
 				'nodesFactory.createDocument'
