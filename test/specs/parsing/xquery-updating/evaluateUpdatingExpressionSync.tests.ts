@@ -1,13 +1,14 @@
 import * as chai from 'chai';
-import { evaluateUpdatingExpression, evaluateXPath, executePendingUpdateList } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
-let documentNode;
+import { evaluateUpdatingExpressionSync, executePendingUpdateList } from 'fontoxpath';
+
+let documentNode: slimdom.Document;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe('evaluateUpdatingExpression', () => {
+describe('evaluateUpdatingExpressionSync', () => {
 	let insertBeforeCalled = false;
 	let removeChildCalled = false;
 	let removeAttributeNSCalled = false;
@@ -62,7 +63,7 @@ describe('evaluateUpdatingExpression', () => {
 		},
 		createDocument: () => {
 			createDocumentCalled = true;
-			return documentNode.implementation.createDocument();
+			return documentNode.implementation.createDocument(null, null);
 		},
 		createElementNS: (namespaceURI, localName) => {
 			createElementNSCalled = true;
@@ -96,38 +97,32 @@ describe('evaluateUpdatingExpression', () => {
 
 	it('can evaluate an expression without any of the optional parameters set', async () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
-		const result = await evaluateUpdatingExpression(
-			'replace node ele with <ele/>',
-			documentNode,
-			null,
-			null,
-			{ returnType: evaluateXPath.NODES_TYPE }
-		);
+		const result = evaluateUpdatingExpressionSync('replace node ele with <ele/>', documentNode);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 	});
 
 	it('properly returns the xdmValue for updating expressions', async () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
-		const result = await evaluateUpdatingExpression(
+		const result = evaluateUpdatingExpressionSync(
 			'(replace node ele with <ele/>, 1)',
 			documentNode
 		);
 
-		chai.assert.deepEqual(result.xdmValue as any, 1);
+		chai.assert.deepEqual(result.xdmValue, 1);
 	});
 
 	it('properly returns the xdmValue for non-updating expressions', async () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
-		const result = await evaluateUpdatingExpression('(1)', documentNode);
+		const result = evaluateUpdatingExpressionSync('(1)', documentNode);
 
-		chai.assert.deepEqual(result.xdmValue, [1]);
+		chai.assert.deepEqual(result.xdmValue, 1);
 	});
 
 	it('uses the passed documentWriter for replacements', async () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 
-		await evaluateUpdatingExpression(
+		evaluateUpdatingExpressionSync(
 			'replace node $doc/ele with <ele>text</ele>',
 			null,
 			null,
@@ -158,7 +153,7 @@ describe('evaluateUpdatingExpression', () => {
 	it('uses the passed documentWriter for insert into', async () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 
-		const result = await evaluateUpdatingExpression(
+		const result = evaluateUpdatingExpressionSync(
 			'insert node <xxx attr="attr">PRRT<!--yyy--><?pi target?></xxx> into $doc/ele',
 			null,
 			null,

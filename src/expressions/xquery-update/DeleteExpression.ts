@@ -34,7 +34,7 @@ class DeleteExpression extends UpdatingExpression {
 	): IAsyncIterator<UpdatingExpressionResult> {
 		const targetValueIterator: IAsyncIterator<
 			UpdatingExpressionResult
-		> = super.ensureUpdateListWrapper(this._targetExpression)(
+		> = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
 		);

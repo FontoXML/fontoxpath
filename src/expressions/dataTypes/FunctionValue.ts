@@ -8,13 +8,14 @@ import sequenceFactory from './sequenceFactory';
 import TypeDeclaration from './TypeDeclaration';
 import Value from './Value';
 import QName from './valueTypes/QName';
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
 
-export type FunctionSignature = (
+export type FunctionSignature<T> = (
 	dynamicContext: DynamicContext,
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
 	...args: ISequence[]
-) => ISequence;
+) => T;
 
 function expandRestArgumentToArity(argumentTypes, arity) {
 	let indexOfRest = -1;
@@ -34,19 +35,21 @@ function expandRestArgumentToArity(argumentTypes, arity) {
 	return argumentTypes;
 }
 
-class FunctionValue extends Value {
-	public value: FunctionSignature;
-	private _argumentTypes: (TypeDeclaration | RestArgument)[];
-	private _arity: number;
-	private _isAnonymous: boolean;
-	private _localName: string;
-	private _namespaceURI: string;
-	private _returnType: TypeDeclaration;
+class FunctionValue<T = ISequence> extends Value {
+	public readonly value: FunctionSignature<T>;
+	public readonly isUpdating: boolean;
+	private readonly _argumentTypes: (TypeDeclaration | RestArgument)[];
+	private readonly _arity: number;
+	private readonly _isAnonymous: boolean;
+	private readonly _localName: string;
+	private readonly _namespaceURI: string;
+	private readonly _returnType: TypeDeclaration;
 
 	constructor({
 		argumentTypes,
 		arity,
 		isAnonymous = false,
+		isUpdating = false,
 		localName,
 		namespaceURI,
 		returnType,
@@ -55,14 +58,16 @@ class FunctionValue extends Value {
 		argumentTypes: (TypeDeclaration | RestArgument)[];
 		arity: number;
 		isAnonymous?: boolean;
+		isUpdating?: boolean;
 		localName: string;
 		namespaceURI: string;
 		returnType: TypeDeclaration;
-		value: FunctionSignature;
+		value: FunctionSignature<T>;
 	}) {
 		super('function(*)', null);
 
 		this.value = value;
+		this.isUpdating = isUpdating;
 		this._argumentTypes = expandRestArgumentToArity(argumentTypes, arity);
 		this._arity = arity;
 		this._isAnonymous = isAnonymous;
@@ -113,6 +118,7 @@ class FunctionValue extends Value {
 			argumentTypes,
 			arity: argumentTypes.length,
 			isAnonymous: true,
+			isUpdating: this.isUpdating,
 			localName: 'boundFunction',
 			namespaceURI: this._namespaceURI,
 			returnType: this._returnType,

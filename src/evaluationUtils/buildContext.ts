@@ -5,7 +5,6 @@ import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
 import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
-import { UpdatingOptions } from '../evaluateUpdatingExpression';
 import { Options } from '../evaluateXPath';
 import adaptJavaScriptValueToXPathValue from '../expressions/adaptJavaScriptValueToXPathValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
@@ -50,7 +49,7 @@ export default function buildEvaluationContext(
 	contextItem: any,
 	domFacade: IDomFacade | null,
 	variables: object,
-	externalOptions: Options | UpdatingOptions,
+	externalOptions: Options,
 	compilationOptions: {
 		allowUpdating: boolean;
 		allowXQuery: boolean;
@@ -65,7 +64,7 @@ export default function buildEvaluationContext(
 	if (variables === null || variables === undefined) {
 		variables = variables || {};
 	}
-	let internalOptions: UpdatingOptions;
+	let internalOptions: Options;
 	if (externalOptions) {
 		internalOptions = {
 			moduleImports: externalOptions['moduleImports'],

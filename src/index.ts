@@ -2,7 +2,8 @@ import IDocumentWriter from './documentWriter/IDocumentWriter';
 import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
-import evaluateXPath, { IReturnTypes, Language, Options, ReturnType } from './evaluateXPath';
+import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
+import evaluateXPath, { Language, Options } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -37,6 +38,7 @@ import {
 	ProcessingInstruction,
 	Text
 } from './types/Types';
+import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
@@ -113,6 +115,7 @@ if (typeof window !== 'undefined') {
 	window['evaluateXPathToString'] = evaluateXPathToString;
 	window['evaluateXPathToStrings'] = evaluateXPathToStrings;
 	window['evaluateUpdatingExpression'] = evaluateUpdatingExpression;
+	window['evaluateUpdatingExpressionSync'] = evaluateUpdatingExpressionSync;
 	window['executePendingUpdateList'] = executePendingUpdateList;
 	window['getBucketForSelector'] = getBucketForSelector;
 	window['getBucketsForNode'] = getBucketsForNode;
@@ -128,9 +131,23 @@ export {
 	CDATASection,
 	CharacterData,
 	Comment,
-	Element,
 	Document,
+	Element,
+	IDocumentWriter,
+	IDomFacade,
+	INodesFactory,
+	IReturnTypes,
+	Language,
+	Node,
+	Options,
+	ProcessingInstruction,
+	ReturnType,
+	Text,
+	UpdatingOptions,
+	compareSpecificity,
+	domFacade,
 	evaluateUpdatingExpression,
+	evaluateUpdatingExpressionSync,
 	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToAsyncIterator,
@@ -145,19 +162,6 @@ export {
 	executePendingUpdateList,
 	getBucketForSelector,
 	getBucketsForNode,
-	IDocumentWriter,
-	IDomFacade,
-	INodesFactory,
-	IReturnTypes,
-	Language,
-	Node,
-	ProcessingInstruction,
-	Text,
-	ReturnType,
-	UpdatingOptions,
-	compareSpecificity,
-	domFacade,
-	Options,
 	precompileXPath,
 	registerCustomXPathFunction,
 	registerXQueryModule

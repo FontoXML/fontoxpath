@@ -4,6 +4,8 @@ import Expression, { OptimizationOptions } from '../Expression';
 import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { IAsyncIterator, notReady, ready } from '../util/iterators';
+import { errXUST0001 } from './XQueryUpdateFacilityErrors';
+import ISequence from '../dataTypes/ISequence';
 
 abstract class UpdatingExpression extends Expression {
 	constructor(
@@ -16,7 +18,14 @@ abstract class UpdatingExpression extends Expression {
 		this.isUpdating = true;
 	}
 
-	public ensureUpdateListWrapper(
+	public evaluate(
+		_dynamicContext: DynamicContext,
+		_executionParameters: ExecutionParameters
+	): ISequence {
+		throw errXUST0001();
+	}
+
+	protected ensureUpdateListWrapper(
 		expression: Expression
 	): (
 		dynamicContext: DynamicContext,
@@ -43,12 +52,6 @@ abstract class UpdatingExpression extends Expression {
 				}
 			};
 		};
-	}
-
-	public evaluate(): never {
-		throw new Error(
-			'Can not execute an updating expression without catching the pending updates'
-		);
 	}
 
 	public abstract evaluateWithUpdateList(

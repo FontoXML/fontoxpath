@@ -1,7 +1,6 @@
-import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
-import { Language } from './evaluateXPath';
-import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
+import { UpdatingOptions } from './evaluateUpdatingExpression';
+import evaluateXPath from './evaluateXPath';
 import buildContext from './evaluationUtils/buildContext';
 import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
@@ -11,24 +10,12 @@ import Expression from './expressions/Expression';
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
-import INodesFactory from './nodesFactory/INodesFactory';
-import { ReturnType } from './parsing/convertXDMReturnValue';
+import { Node } from './types/Types';
+import { IReturnTypes } from './parsing/convertXDMReturnValue';
 
 /**
- * @public
- */
-export type UpdatingOptions = {
-	debug?: boolean;
-	disableCache?: boolean;
-	documentWriter?: IDocumentWriter;
-	moduleImports?: { [s: string]: string };
-	namespaceResolver?: (s: string) => string | null;
-	nodesFactory?: INodesFactory;
-	returnType?: ReturnType;
-};
-
-/**
- * Evaluates an XPath on the given contextItem. Returns the string result as if the XPath is wrapped in string(...).
+ * Evaluates an update script to a pending update list. See
+ * [XQUF](https://www.w3.org/TR/xquery-update-30/) for more information on XQuery Update Facility.
  *
  * @public
  *
@@ -40,13 +27,16 @@ export type UpdatingOptions = {
  *
  * @returns The query result and pending update list.
  */
-export default async function evaluateUpdatingExpression(
+export default function evaluateUpdatingExpressionSync<
+	TNode extends Node,
+	TReturnType extends keyof IReturnTypes<TNode>
+>(
 	updateScript: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: UpdatingOptions | null
-): Promise<{ pendingUpdateList: object[]; xdmValue: any[] }> {
+): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
 	options = options || {};
 
 	let dynamicContext: DynamicContext;
@@ -77,18 +67,17 @@ export default async function evaluateUpdatingExpression(
 		// Non updating expressions should also be allowed to be executed as updating
 		// scripts. Copy/modify/transform expressions are examples of updating expressions that are
 		// not really updating
-		const resultItems = [];
-		let it = evaluateXPathToAsyncIterator(updateScript, contextItem, domFacade, variables, {
-			...options,
-			language: Language.XQUERY_UPDATE_3_1_LANGUAGE
-		});
-		for (let item = await it.next(); !item.done; item = await it.next()) {
-			resultItems.push(item.value);
-		}
-		return Promise.resolve({
+		return {
 			['pendingUpdateList']: [],
-			['xdmValue']: resultItems
-		});
+			['xdmValue']: evaluateXPath<TNode, TReturnType>(
+				updateScript,
+				contextItem,
+				domFacade,
+				variables,
+				options.returnType as any,
+				options
+			)
+		};
 	}
 
 	let attempt: IterationResult<UpdatingExpressionResult>;
@@ -99,9 +88,8 @@ export default async function evaluateUpdatingExpression(
 		);
 
 		attempt = resultIterator.next(IterationHint.NONE);
-		while (!attempt.ready) {
-			await attempt.promise;
-			attempt = resultIterator.next(IterationHint.NONE);
+		if (!attempt.ready) {
+			throw new Error('This script could not be evaluated in a not synchronous manner');
 		}
 	} catch (error) {
 		printAndRethrowError(updateScript, error);

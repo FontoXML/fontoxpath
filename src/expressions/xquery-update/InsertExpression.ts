@@ -128,11 +128,11 @@ class InsertExpression extends UpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IAsyncIterator<UpdatingExpressionResult> {
-		const sourceValueIterator = super.ensureUpdateListWrapper(this._sourceExpression)(
+		const sourceValueIterator = this.ensureUpdateListWrapper(this._sourceExpression)(
 			dynamicContext,
 			executionParameters
 		);
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
 		);

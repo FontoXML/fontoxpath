@@ -20,7 +20,7 @@ export default function evaluateXPathToAsyncIterator(
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
-): AsyncIterator<any> {
+): AsyncIterableIterator<any> {
 	return evaluateXPath(
 		selector,
 		contextItem,

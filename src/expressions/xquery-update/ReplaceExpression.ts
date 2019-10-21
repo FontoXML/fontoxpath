@@ -326,11 +326,11 @@ class ReplaceExpression extends UpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IAsyncIterator<UpdatingExpressionResult> {
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
 		);
-		const replacementValueIterator = super.ensureUpdateListWrapper(this._replacementExpression)(
+		const replacementValueIterator = this.ensureUpdateListWrapper(this._replacementExpression)(
 			dynamicContext,
 			executionParameters
 		);

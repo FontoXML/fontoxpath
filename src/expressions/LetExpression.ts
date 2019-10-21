@@ -74,6 +74,8 @@ class LetExpression extends PossiblyUpdatingExpression {
 		this._variableBinding = staticContext.registerVariable(this._namespaceURI, this._localName);
 		this._returnExpression.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
+
+		this.determineUpdatingness();
 	}
 }
 export default LetExpression;

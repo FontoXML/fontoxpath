@@ -113,11 +113,11 @@ class RenameExpression extends UpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IAsyncIterator<UpdatingExpressionResult> {
-		const targetValueIterator = super.ensureUpdateListWrapper(this._targetExpression)(
+		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
 		);
-		const newNameValueIterator = super.ensureUpdateListWrapper(this._newNameExpression)(
+		const newNameValueIterator = this.ensureUpdateListWrapper(this._newNameExpression)(
 			dynamicContext,
 			executionParameters
 		);

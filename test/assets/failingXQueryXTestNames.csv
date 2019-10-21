@@ -220,10 +220,8 @@ array-sort-collation-6,XQuery script could not be found
 array-sort-collation-7,XQuery script could not be found
 array-sort-collation-8,XQuery script could not be found
 fn-apply-09,result was not equal
-cbcl-avg-008,Parse error
 K2-BaseURIFunc-19,result was not equal
 K2-BaseURIFunc-20,result was not equal
-K2-BaseURIFunc-21,Parse error
 fn-base-uri-24,result was not equal
 fn-base-uri-25,result was not equal
 fn-base-uri-26,result was not equal
@@ -244,7 +242,6 @@ fn-base-uri-40,result was not equal
 fn-base-uri-41,result was not equal
 fn-base-uri-43,result was not equal
 K-CodepointToStringFunc-10,result was not equal
-K-CodepointToStringFunc-13,result was not equal
 collation-key-105,Parse error
 collation-key-206,Parse error
 K2-CompareFunc-4,result was not equal
@@ -364,7 +361,6 @@ K2-SeqDeepEqualFunc-37,result was not equal
 cbcl-deep-equal-005,Parse error
 default-language-004,result was not equal
 fn-doc-39,result was not equal
-K2-DocumentURIFunc-11,Parse error
 fn-document-uri-22,result was not equal
 fn-document-uri-23,result was not equal
 fn-document-uri-24,result was not equal
@@ -617,7 +613,6 @@ fn-insert-before-mix-args-019,XQuery script could not be found
 fn-insert-before-mix-args-020,XQuery script could not be found
 K-IRIToURIfunc-4,result was not equal
 K2-IRIToURIfunc-8,result was not equal
-fn-iri-to-uri-18,result was not equal
 json-doc-010,Parse error
 json-doc-011,Parse error
 json-doc-012,Parse error
@@ -667,29 +662,19 @@ fn-load-xquery-module-038,result was not equal
 fn-load-xquery-module-043,result was not equal
 fn-load-xquery-module-044,result was not equal
 fn-load-xquery-module-060,result was not equal
-cbcl-matches-006,result was not equal
-cbcl-matches-037,result was not equal
-cbcl-matches-041,result was not equal
-cbcl-matches-047,result was not equal
-cbcl-matches-048,result was not equal
-cbcl-matches-051,result was not equal
-cbcl-matches-052,result was not equal
 fn-matches-50,Parse error
 re00077,result was not equal
 re00109,result was not equal
-re00127a,result was not equal
-re00129a,result was not equal
-re00130a,result was not equal
 cbcl-max-009,result was not equal
 cbcl-max-010,result was not equal
 cbcl-max-011,result was not equal
 cbcl-max-012,result was not equal
-fn-max-10,Parse error
+fn-max-10,result was not equal
 cbcl-min-009,result was not equal
 cbcl-min-010,result was not equal
 cbcl-min-011,result was not equal
 cbcl-min-012,result was not equal
-fn-min-10,Parse error
+fn-min-10,result was not equal
 fn-nilled-27,result was not equal
 fn-nilled-28,result was not equal
 fn-nilled-40,Parse error
@@ -1067,9 +1052,6 @@ xml-to-json-039,result was not equal
 xml-to-json-040,result was not equal
 xml-to-json-041,result was not equal
 xml-to-json-042,result was not equal
-xml-to-json-049,result was not equal
-xml-to-json-051,result was not equal
-xml-to-json-054,result was not equal
 map-contains-001,XQuery script could not be found
 map-contains-002,XQuery script could not be found
 map-contains-003,XQuery script could not be found
@@ -1392,12 +1374,12 @@ XQST0022_2,Parser related error
 XQST0046_02,result was not equal
 XQST0046_09,Parser resulted in invalid JsonML
 XQST0046_10,result was not equal
-XQST0046_11,Parse error
+XQST0046_11,result was not equal
 XQST0046_12,Parse error
 XQST0047,result was not equal
 XQST0057,Parser resulted in invalid JsonML
 XQST0059_1,result was not equal
-XQST0059_2,Parse error
+XQST0059_2,result was not equal
 XQST0059_6,result was not equal
 XQST0068,Expected XML could not be parsed
 XQST0069,result was not equal
@@ -1438,21 +1420,6 @@ xqhof1,Parse error
 xqhof12,result was not equal
 xqhof3,result was not equal
 xqhof6,result was not equal
-surrogates01,result was not equal
-surrogates02,result was not equal
-surrogates03,result was not equal
-surrogates04,result was not equal
-surrogates05,result was not equal
-surrogates06,result was not equal
-surrogates07,result was not equal
-surrogates09,result was not equal
-surrogates10,result was not equal
-surrogates11,result was not equal
-surrogates12,result was not equal
-surrogates13,result was not equal
-surrogates14,result was not equal
-surrogates15,result was not equal
-surrogates16,result was not equal
 XML10-3ed-Mixed-content,result was not equal
 XML11-c0-001,Expected XML could not be parsed
 line-ending-Q001,result was not equal
@@ -1621,8 +1588,7 @@ ArrowPostfix-028,result was not equal
 ArrowPostfix-101,result was not equal
 ArrowPostfix-102,result was not equal
 ArrowPostfix-103,result was not equal
-Axes089,result was not equal
-K2-Axes-102,Parse error
+K2-Axes-102,result was not equal
 K2-Axes-3,result was not equal
 K2-Axes-38,result was not equal
 K2-Axes-39,result was not equal
@@ -1697,10 +1663,7 @@ cbcl-cast-nmtoken-001,result was not equal
 cbcl-cast-normalizedString-001,result was not equal
 cbcl-cast-token-001,result was not equal
 CastAs-UnionType-33,result was not equal
-cbcl-castable-nmtoken-002,result was not equal
 XQueryComment014,Parse error
-Constr-compcomment-dash-3,result was not equal
-Constr-compcomment-doubledash-3,result was not equal
 Constr-compcomment-enclexpr-2,result was not equal
 Constr-compcomment-parent-1,result was not equal
 K2-ComputeConComment-4a,result was not equal
@@ -1748,10 +1711,6 @@ Constr-comppi-compname-21,result was not equal
 Constr-comppi-compname-22,result was not equal
 Constr-comppi-enclexpr-2,result was not equal
 Constr-comppi-parent-1,result was not equal
-Constr-comppi-space-2,result was not equal
-Constr-comppi-space-4,result was not equal
-cbcl-constr-comppi-001,result was not equal
-cbcl-constr-comppi-002,result was not equal
 Constr-text-enclexpr-2,result was not equal
 Constr-text-parent-1,result was not equal
 K2-ConText-10,result was not equal
@@ -1867,22 +1826,13 @@ default_namespace-010,result was not equal
 default_namespace-016,result was not equal
 defaultnamespacedeclerr-7,result was not equal
 defaultnamespacedeclerr-8,result was not equal
-Constr-attr-charref-1,result was not equal
 Constr-attr-enclexpr-2,result was not equal
-Constr-attr-entref-1,result was not equal
 Constr-attr-entref-2,result was not equal
 Constr-attr-nsdecl-1,result was not equal
 Constr-attr-nsdecl-2,result was not equal
-Constr-attr-ws-3,result was not equal
 Constr-attr-ws-4,result was not equal
-Constr-attr-ws-5,result was not equal
-K2-DirectConElemAttr-74,result was not equal
-Constr-elem-curlybr-3,result was not equal
-Constr-elem-curlybr-4,result was not equal
 Constr-elem-empty-3,result was not equal
 Constr-elem-empty-4,result was not equal
-K2-DirectConElem-47,result was not equal
-K2-DirectConElem-52,result was not equal
 cbcl-directconelem-001,result was not equal
 cbcl-directconelem-002,result was not equal
 Constr-cont-adjtext-1,result was not equal
@@ -1891,21 +1841,12 @@ Constr-cont-adjtext-3,result was not equal
 Constr-cont-adjtext-4,result was not equal
 Constr-cont-baseuri-2,result was not equal
 Constr-cont-cdata-1,result was not equal
-Constr-cont-charref-1,result was not equal
 Constr-cont-constrmod-5,result was not equal
 Constr-cont-constrmod-6,result was not equal
 Constr-cont-constrmod-7,result was not equal
 Constr-cont-constrmod-8,result was not equal
 Constr-cont-enclexpr-1,result was not equal
 Constr-cont-enclexpr-2,result was not equal
-Constr-cont-entref-1,result was not equal
-Constr-cont-entref-2,result was not equal
-Constr-cont-entref-3,result was not equal
-Constr-cont-entref-4,result was not equal
-Constr-cont-entref-5,result was not equal
-Constr-cont-eol-2,result was not equal
-Constr-cont-eol-3,result was not equal
-Constr-cont-eol-4,result was not equal
 Constr-cont-nested-2,result was not equal
 Constr-cont-nested-4,result was not equal
 Constr-cont-parent-1,result was not equal
@@ -1997,7 +1938,6 @@ Constr-ws-tag-9,result was not equal
 Constr-ws-xmlspace-1,result was not equal
 Constr-ws-xmlspace-2,result was not equal
 K2-DirectConElemWhitespace-1,result was not equal
-K2-DirectConElemWhitespace-10,result was not equal
 K2-DirectConElemWhitespace-11,result was not equal
 K2-DirectConElemWhitespace-18,result was not equal
 K2-DirectConElemWhitespace-23,result was not equal
@@ -2008,14 +1948,9 @@ K2-DirectConElemWhitespace-5,result was not equal
 K2-DirectConElemWhitespace-6,result was not equal
 K2-DirectConElemWhitespace-7,result was not equal
 K2-DirectConElemWhitespace-8,result was not equal
-K2-DirectConOther-1,result was not equal
 K2-DirectConOther-29,Parse error
-K2-DirectConOther-35,result was not equal
-K2-DirectConOther-41,result was not equal
-K2-DirectConOther-49,result was not equal
 K2-DirectConOther-50,result was not equal
 K2-DirectConOther-51,result was not equal
-K2-DirectConOther-70,result was not equal
 eqname-001,result was not equal
 eqname-005,result was not equal
 eqname-006,Parser resulted in invalid JsonML
@@ -2191,7 +2126,7 @@ ForExprType072,result was not equal
 ForExprType073,result was not equal
 K2-ForExprWith-1,result was not equal
 K2-ForExprWithout-10,Parser resulted in invalid JsonML
-K2-ForExprWithout-8,Parse error
+K2-ForExprWithout-8,result was not equal
 FunctionCall-003,result was not equal
 FunctionCall-005,result was not equal
 FunctionCall-006,Parser resulted in invalid JsonML
@@ -2251,20 +2186,9 @@ K2-SeqExprInstanceOf-99,result was not equal
 instanceof132,result was not equal
 instanceof133,result was not equal
 instanceof134,result was not equal
-letexprwith-24,Parse error
-K-Literals-46,result was not equal
-K-Literals-47,result was not equal
-K-Literals-49,result was not equal
-K2-Literals-1,Expected XML could not be parsed
-K2-Literals-3,result was not equal
-Literals056,result was not equal
-Literals057,result was not equal
-Literals058,result was not equal
-Literals059,result was not equal
-Literals060,result was not equal
-Literals061,result was not equal
-cbcl-literals-004,Expected XML could not be parsed
-cbcl-literals-008,Expected XML could not be parsed
+K2-Literals-1,Parser related error
+cbcl-literals-004,Parser related error
+cbcl-literals-008,Parser related error
 Lookup-001,Parse error
 Lookup-002,Parse error
 Lookup-003,Parse error
@@ -2369,7 +2293,7 @@ MapTest-052,Parser resulted in invalid JsonML
 MapTest-053,Parser resulted in invalid JsonML
 MapTest-054,Parser resulted in invalid JsonML
 K-ModuleImport-1,result was not equal
-K-ModuleImport-2,Parse error
+K-ModuleImport-2,result was not equal
 module-URIs-11,result was not equal
 module-URIs-12,result was not equal
 module-URIs-17,result was not equal
@@ -2826,72 +2750,29 @@ try-catch-variable-binding-outside-3,Parse error
 try-catch-variable-binding-outside-4,Parse error
 try-catch-variable-binding-outside-5,Parse error
 try-catch-variable-binding-outside-6,Parse error
-K-sequenceExprTypeswitch-1,Parse error
-K-sequenceExprTypeswitch-2,Parse error
-K-sequenceExprTypeswitch-3,Parse error
-K-sequenceExprTypeswitch-4,Parse error
-K-sequenceExprTypeswitch-5,Parse error
-K-sequenceExprTypeswitch-6,Parse error
-K-sequenceExprTypeswitch-7,Parse error
-K-sequenceExprTypeswitch-8,Parse error
-K2-sequenceExprTypeswitch-1,Parse error
-K2-sequenceExprTypeswitch-10,Parse error
-K2-sequenceExprTypeswitch-11,Parse error
-K2-sequenceExprTypeswitch-12,Parse error
-K2-sequenceExprTypeswitch-13,Parse error
-K2-sequenceExprTypeswitch-14,Parse error
-K2-sequenceExprTypeswitch-15,Parse error
-K2-sequenceExprTypeswitch-16,Parse error
-K2-sequenceExprTypeswitch-4,Parse error
-K2-sequenceExprTypeswitch-5,Parse error
-K2-sequenceExprTypeswitch-6,Parse error
-K2-sequenceExprTypeswitch-7,Parse error
-K2-sequenceExprTypeswitch-9,Parse error
-cbcl-typeswitch-001,Parse error
-cbcl-typeswitch-002,Parse error
-cbcl-typeswitch-003,Parse error
-cbcl-typeswitch-004,Parse error
-typeswitch-112,Parse error
-typeswitch-113,Parse error
-typeswitch-114,Parse error
-typeswitch-115,Parse error
-typeswitch-116,Parse error
+K-sequenceExprTypeswitch-5,result was not equal
+K2-sequenceExprTypeswitch-11,result was not equal
+K2-sequenceExprTypeswitch-12,result was not equal
+K2-sequenceExprTypeswitch-13,result was not equal
+K2-sequenceExprTypeswitch-15,result was not equal
+K2-sequenceExprTypeswitch-7,result was not equal
+K2-sequenceExprTypeswitch-9,result was not equal
+typeswitch-112,result was not equal
+typeswitch-113,result was not equal
+typeswitch-114,result was not equal
+typeswitch-115,result was not equal
+typeswitch-116,result was not equal
 typeswitch-117,Parse error
-typeswitch-118,Parse error
-typeswitch-union-branch-1-dup,Parse error
-typeswitch-union-branch-1,Parse error
-typeswitch-union-branch-2-dup,Parse error
-typeswitch-union-branch-2,Parse error
-typeswitch-union-branch-both-dup,Parse error
-typeswitch-union-branch-both,Parse error
-typeswitch-union-multi,Parse error
-typeswitch-union-nomatch-2,Parse error
-typeswitch-union-nomatch,Parse error
-typeswitchhc1,Parse error
-typeswitchhc10,Parse error
-typeswitchhc11,Parse error
-typeswitchhc12,Parse error
-typeswitchhc13,Parse error
-typeswitchhc14,Parse error
-typeswitchhc15,Parse error
+typeswitch-union-branch-1-dup,result was not equal
+typeswitch-union-branch-1,result was not equal
+typeswitch-union-branch-2-dup,result was not equal
+typeswitch-union-branch-2,result was not equal
+typeswitch-union-branch-both-dup,result was not equal
+typeswitch-union-branch-both,result was not equal
+typeswitch-union-multi,result was not equal
+typeswitch-union-nomatch-2,result was not equal
+typeswitch-union-nomatch,result was not equal
 typeswitchhc16,Parse error
-typeswitchhc17,Parse error
-typeswitchhc18,Parse error
-typeswitchhc19,Parse error
-typeswitchhc2,Parse error
-typeswitchhc20,Parse error
-typeswitchhc21,Parse error
-typeswitchhc22,Parse error
-typeswitchhc23,Parse error
-typeswitchhc24,Parse error
-typeswitchhc25,Parse error
-typeswitchhc3,Parse error
-typeswitchhc4,Parse error
-typeswitchhc5,Parse error
-typeswitchhc6,Parse error
-typeswitchhc7,Parse error
-typeswitchhc8,Parse error
-typeswitchhc9,Parse error
 UnaryLookup-001,Parse error
 UnaryLookup-002,Parse error
 UnaryLookup-003,Parse error
@@ -2959,12 +2840,10 @@ validate-as-91011,result was not equal
 validate-as-91014,result was not equal
 validate-as-91015,result was not equal
 validate-as-91016,result was not equal
-validateexpr-20,Parse error
 validateexpr-38,result was not equal
 validateexpr-39,result was not equal
 validateexpr-40,result was not equal
 K-InternalVariablesWith-1,Parse error
-VarDecl009,result was not equal
 VarDecl059,result was not equal
 internalvar-1,Parse error
 K2-ExternalVariablesWith-22,Parse error
@@ -3000,7 +2879,6 @@ WhereExpr023,Parse error
 WhereExpr026,Parse error
 cbcl-hash-join-005,result was not equal
 cbcl-left-outer-join-004,result was not equal
-whereClause-5,Parse error
 SlidingWindowExpr501,Parse error
 SlidingWindowExpr502,Parse error
 SlidingWindowExpr503,Parse error
@@ -3407,10 +3285,6 @@ K2-Serialization-7a,XQuery script could not be found
 K2-Serialization-8,XQuery script could not be found
 K2-Serialization-8a,XQuery script could not be found
 K2-Serialization-9,XQuery script could not be found
-cbcl-anyURI-004,result was not equal
-cbcl-anyURI-006,result was not equal
-cbcl-anyURI-009,result was not equal
-cbcl-anyURI-012,result was not equal
 xs-error-001,XQuery script could not be found
 xs-error-002,XQuery script could not be found
 xs-error-003,XQuery script could not be found
@@ -3464,8 +3338,4 @@ xs-error-050,XQuery script could not be found
 xs-error-051,XQuery script could not be found
 xs-error-052,XQuery script could not be found
 xs-error-053,XQuery script could not be found
-cbcl-normalizedstring-002,result was not equal
-cbcl-normalizedstring-004,result was not equal
 xs-numeric-019,Parser resulted in invalid JsonML
-cbcl-token-002,result was not equal
-cbcl-token-004,result was not equal

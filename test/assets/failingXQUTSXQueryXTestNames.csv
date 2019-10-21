@@ -18,71 +18,33 @@ id-comma-expr-011-test,XQuery script could not be found
 id-comma-expr-012-test,XQuery script could not be found
 id-comma-expr-018-test,XQuery script could not be found
 id-conditional-expr-035-test,XQuery script could not be found
-id-function-declaration-01,Parse error
-id-function-declaration-010,Parse error
-id-function-declaration-012,Parse error
+id-function-declaration-01,result was not equal
+id-function-declaration-010,result was not equal
+id-function-declaration-012,result was not equal
 id-function-declaration-013-test,XQuery script could not be found
-id-function-declaration-014,Parse error
-id-function-declaration-015,Parse error
-id-function-declaration-016,Parse error
-id-function-declaration-017,Parse error
-id-function-declaration-03,Parse error
-id-function-declaration-04,Parse error
-id-function-declaration-05,Parse error
-id-function-declaration-06,Parse error
-id-function-declaration-08,Parse error
-function-declaration-02,Parse error
-function-declaration-03,Parse error
-function-declaration-04,Parse error
+id-function-declaration-014,result was not equal
+id-function-declaration-015,result was not equal
+id-function-declaration-016,result was not equal
+id-function-declaration-017,result was not equal
+id-function-declaration-03,result was not equal
+id-function-declaration-04,result was not equal
+id-function-declaration-05,result was not equal
+id-function-declaration-06,result was not equal
+id-function-declaration-08,result was not equal
+function-declaration-02,result was not equal
+function-declaration-03,result was not equal
+function-declaration-04,result was not equal
 revalidation-declaration-01,Parse error
 revalidation-declaration-02,Parse error
 revalidation-declaration-03,Parse error
 revalidation-declaration-04,Parse error
 revalidation-declaration-05,Parse error
 revalidation-declaration-06,Parse error
-fn-put-007,result was not equal
 id-replace-expr-022-test,XQuery script could not be found
-id-typeswitch-expr-01,Parse error
-id-typeswitch-expr-010,Parse error
-id-typeswitch-expr-011,Parse error
 id-typeswitch-expr-012-test,XQuery script could not be found
-id-typeswitch-expr-012,Parse error
-id-typeswitch-expr-013,Parse error
-id-typeswitch-expr-014,Parse error
-id-typeswitch-expr-015,Parse error
-id-typeswitch-expr-016,Parse error
-id-typeswitch-expr-017,Parse error
-id-typeswitch-expr-018,Parse error
-id-typeswitch-expr-019,Parse error
-id-typeswitch-expr-02,Parse error
-id-typeswitch-expr-020,Parse error
-id-typeswitch-expr-021,Parse error
-id-typeswitch-expr-022,Parse error
-id-typeswitch-expr-023,Parse error
-id-typeswitch-expr-024,Parse error
-id-typeswitch-expr-025,Parse error
 id-typeswitch-expr-026-test,XQuery script could not be found
-id-typeswitch-expr-026,Parse error
-id-typeswitch-expr-027,Parse error
-id-typeswitch-expr-028,Parse error
-id-typeswitch-expr-029,Parse error
-id-typeswitch-expr-03,Parse error
-id-typeswitch-expr-030,Parse error
-id-typeswitch-expr-031,Parse error
-id-typeswitch-expr-032,Parse error
-id-typeswitch-expr-033,Parse error
-id-typeswitch-expr-034,Parse error
-id-typeswitch-expr-035,Parse error
-id-typeswitch-expr-036,Parse error
-id-typeswitch-expr-037,Parse error
-id-typeswitch-expr-038,Parse error
-id-typeswitch-expr-04,Parse error
+id-typeswitch-expr-029,result was not equal
 id-typeswitch-expr-05-test,XQuery script could not be found
-id-typeswitch-expr-05,Parse error
-id-typeswitch-expr-06,Parse error
-id-typeswitch-expr-07,Parse error
-id-typeswitch-expr-08,Parse error
-id-typeswitch-expr-09,Parse error
 applyUpdates-023-test,XQuery script could not be found
 applyUpdates-024-test,XQuery script could not be found
 propagateNamespaces01,result was not equal
@@ -93,7 +55,7 @@ propagateNamespaces05,result was not equal
 propagateNamespaces06,result was not equal
 namespace-q1-test,XQuery script could not be found
 nil-q1-test,XQuery script could not be found
-parts-q3-2,Parse error
+parts-q3-2,result was not equal
 relational-data-q5-test,XQuery script could not be found
 relational-data-q5,XQuery script could not be found
 revalidate-vallax-del-002-test,Parse error

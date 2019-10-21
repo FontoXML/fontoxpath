@@ -447,161 +447,161 @@ fold-right-012,AssertionError: expected [Function] to throw an error
 fold-right-105,Error: XPST0003: Unable to parse: "deep-equal((declare function local:fold-right(           $seq as item()*,            $zero as item()*,            $f as function(item(), item()*) as item()*)            as item()* {             if (fn:empty($seq))             then $zero             else $f(fn:head($seq), fn:fold-right(fn:tail($seq), $zero, $f))           };           let $f := function($a, $b){($b, $a)} return local:fold-right(1 to 5, (), $f)), (5,4,3,2,1))". Expected " ", "!", "!=", "(", "(:", ")", "*", "+", ",", "-", "/", "//", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "f" found. deep-equal((declare [Error is around here]function local:fold-right(           $seq as item()*,            $zero as item()*,            $f as function(item(), item()*) as item()*)            as item()* {             if (fn:empty($seq))             then $zero             else $f(fn:head($seq), fn:fold-right(fn:tail($seq), $zero, $f))           };           let $f := function($a, $b){($b, $a)} return local:fold-right(1 to 5, (), $f)), (5,4,3,2,1))
 for-each-011,Error: Unrecognized type "parenthesizedItemType".
 fn-function-lookup-005,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'nilled'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-006,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-006,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-007,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'nilled'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-008,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-008,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-017,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'base-uri'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-018,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-018,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-019,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'base-uri'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-020,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-020,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-021,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'document-uri'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-022,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-022,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-023,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'document-uri'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-024,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-024,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-025,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'error'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-026,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-026,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-027,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'error'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-028,AssertionError: expected [Function] to throw error matching /XXXX0000/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-028,AssertionError: expected [Function] to throw error matching /XXXX0000/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-029,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'error'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-030,AssertionError: expected [Function] to throw error matching /XXXX0000/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-030,AssertionError: expected [Function] to throw error matching /XXXX0000/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-031,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'error'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-032,AssertionError: expected [Function] to throw error matching /XXXX0000/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-032,AssertionError: expected [Function] to throw error matching /XXXX0000/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-053,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-integer'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-054,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-054,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-055,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-integer'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-056,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-056,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-057,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-number'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-058,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-058,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-059,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-number'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-060,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-060,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-096,Error: FOCH0002: No collations are supported
 fn-function-lookup-117,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'normalize-unicode'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-118,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-118,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-119,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'normalize-unicode'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-120,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-120,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-130,Error: FOCH0002: No collations are supported
 fn-function-lookup-134,Error: FOCH0002: No collations are supported
 fn-function-lookup-138,Error: FOCH0002: No collations are supported
 fn-function-lookup-141,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'substring-before'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-142,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-142,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-145,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'substring-after'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-146,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-146,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-147,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'matches'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-148,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-148,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-149,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'matches'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-150,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-150,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-151,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'replace'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-152,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-152,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-153,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'replace'), 4)) to resolve to true: expected false to be true
-fn-function-lookup-154,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-154,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-158,Error: Not implemented: Using flags in tokenize is not supported
 fn-function-lookup-159,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'analyze-string'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-160,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-160,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-161,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'analyze-string'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-162,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-162,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-163,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'resolve-uri'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-164,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-164,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-165,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'resolve-uri'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-166,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-166,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-167,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'encode-for-uri'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-168,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-168,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-169,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'iri-to-uri'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-170,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-170,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-171,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'escape-html-uri'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-172,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-172,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-225,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'adjust-dateTime-to-timezone'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-226,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-226,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-227,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'adjust-dateTime-to-timezone'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-228,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-228,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-229,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'adjust-date-to-timezone'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-230,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-230,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-231,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'adjust-date-to-timezone'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-232,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-232,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-233,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'adjust-time-to-timezone'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-234,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-234,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-235,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'adjust-time-to-timezone'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-236,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-236,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-237,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-dateTime'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-238,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-238,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-239,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-dateTime'), 5)) to resolve to true: expected false to be true
-fn-function-lookup-240,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-240,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-241,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-date'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-242,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-242,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-243,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-date'), 5)) to resolve to true: expected false to be true
-fn-function-lookup-244,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-244,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-245,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-time'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-246,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-246,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-247,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'format-time'), 5)) to resolve to true: expected false to be true
-fn-function-lookup-248,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-248,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-249,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'resolve-QName'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-250,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-250,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-259,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'namespace-uri-for-prefix'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-260,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-260,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-261,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'in-scope-prefixes'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-262,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-262,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-275,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'lang'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-276,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-276,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-277,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'lang'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-278,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-278,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-315,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'distinct-values'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-316,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-316,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-317,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'distinct-values'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-318,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-318,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-320,Error: XPTY0004: eqOp not available for xs:integer and xs:string
 fn-function-lookup-322,Error: FOCH0002: No collations are supported
 fn-function-lookup-326,Error: FOCH0002: No collations are supported
 fn-function-lookup-340,Error: FOCH0002: No collations are supported
 fn-function-lookup-344,Error: FOCH0002: No collations are supported
 fn-function-lookup-353,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'element-with-id'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-354,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-354,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-355,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'element-with-id'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-356,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-356,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-361,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'generate-id'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-362,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-362,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-363,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'generate-id'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-364,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-364,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-365,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'doc'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-366,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-366,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-367,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'doc-available'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-368,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-368,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-369,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'collection'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-370,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-370,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-371,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'collection'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-372,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-372,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-373,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'uri-collection'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-374,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-374,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-375,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'uri-collection'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-376,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-376,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-377,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'unparsed-text'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-378,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-378,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-379,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'unparsed-text'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-380,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-380,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-381,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'unparsed-text-lines'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-382,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-382,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-383,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'unparsed-text-lines'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-384,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-384,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-385,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'unparsed-text-available'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-386,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-386,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-387,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'unparsed-text-available'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-388,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-388,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-389,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'environment-variable'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-390,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-390,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-391,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'available-environment-variables'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-392,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-392,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-393,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'parse-xml'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-394,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-394,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-395,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'parse-xml-fragment'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-396,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-396,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-397,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'serialize'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-398,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-398,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-399,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'serialize'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-400,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-400,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-413,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'default-collation'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-414,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-414,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-415,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'static-base-uri'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-416,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-416,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-431,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'for-each-pair'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-432,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-432,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-524,Error: XPST0081: Can not cast: type xs:IDREFS is unknown.
 fn-function-lookup-526,Error: XPST0081: Can not cast: type xs:NMTOKENS is unknown.
 fn-function-lookup-528,Error: XPST0081: Can not cast: type xs:ENTITIES is unknown.
@@ -609,29 +609,29 @@ fn-function-lookup-613,AssertionError: expected [Function] to throw error matchi
 fn-function-lookup-713,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'FOTY0013: Atomization is not supported for function(*).'
 fn-function-lookup-715,Error: No selector counterpart for: anyFunctionTest.
 fn-function-lookup-720,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'parse-ietf-date'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-721,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-721,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-724,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'apply'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-725,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-725,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-726,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'sort'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-727,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-727,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-728,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'sort'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-729,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-729,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-730,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'sort'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-731,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-731,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-732,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'contains-token'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-733,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-733,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-734,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'default-language'), 0)) to resolve to true: expected false to be true
-fn-function-lookup-735,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-735,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-736,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'json-doc'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-737,AssertionError: expected [Function] to throw error matching /FOUT1170/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-737,AssertionError: expected [Function] to throw error matching /FOUT1170/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-738,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'json-doc'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-739,AssertionError: expected [Function] to throw error matching /FOUT1170/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-739,AssertionError: expected [Function] to throw error matching /FOUT1170/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-740,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'json-to-xml'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-741,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-741,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-742,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'json-to-xml'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-743,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-743,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-746,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'parse-json'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-747,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-747,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-748,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'collation-key'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-749,Error: XPST0017: Function fn:collation-key with arity of 1 not registered. No similar functions found.
 fn-function-lookup-750,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'collation-key'), 2)) to resolve to true: expected false to be true
@@ -641,21 +641,21 @@ fn-function-lookup-755,Error: XPST0017: Function fn:collation-key with arity of 
 fn-function-lookup-757,Error: No selector counterpart for: typedMapTest.
 fn-function-lookup-758,Error: Not implemented: Specifying a seed is not supported
 fn-function-lookup-759,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'load-xquery-module'), 1)) to resolve to true: expected false to be true
-fn-function-lookup-760,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
-fn-function-lookup-761,AssertionError: expected [Function] to throw error matching /FOQM0006/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-760,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
+fn-function-lookup-761,AssertionError: expected [Function] to throw error matching /FOQM0006/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-762,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'load-xquery-module'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-763,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
-fn-function-lookup-764,AssertionError: expected [Function] to throw error matching /FOQM0006/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-763,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
+fn-function-lookup-764,AssertionError: expected [Function] to throw error matching /FOQM0006/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-765,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions', 'transform'), 1)) to resolve to true: expected false to be true
 fn-function-lookup-766a,Error: XPST0017: Function doc with arity of 1 not registered. No similar functions found.
-fn-function-lookup-766b,AssertionError: expected [Function] to throw error matching /FOXT0004/ but got 'XPTY0004: expected base expression to evaluate to a sequence with a single item'
+fn-function-lookup-766b,AssertionError: expected [Function] to throw error matching /FOXT0004/ but got 'XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item'
 fn-function-lookup-799,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions/array', 'sort'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-800,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-800,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-801,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions/array', 'sort'), 3)) to resolve to true: expected false to be true
-fn-function-lookup-802,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-802,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-812,Error: No selector counterpart for: typedMapTest.
 fn-function-lookup-813,AssertionError: Expected XPath exists(function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions/map', 'find'), 2)) to resolve to true: expected false to be true
-fn-function-lookup-814,Error: XPTY0004: expected base expression to evaluate to a sequence with a single item
+fn-function-lookup-814,Error: XPTY0004: Expected base expression of a function call to evaluate to a sequence of single function item
 fn-function-lookup-822,Error: No selector counterpart for: typedMapTest.
 fn-function-lookup-824,Error: No selector counterpart for: typedMapTest.
 fn-function-lookup-826,Error: No selector counterpart for: typedMapTest.
@@ -1431,7 +1431,7 @@ array-flatten-010,Error: Atomizing array(*) is not implemented.
 array-fold-right-002,Error: XPTY0004 Unable to cast argument of type xs:integer to type array(*) while calling size
 array-fold-right-003,AssertionError: Expected XPath array:fold-right(["the cat", "sat", "on the mat"], "", function($a,$z){concat($a, " ", $z)}) to (deep equally) resolve to "the cat sat on the mat ": expected false to be true
 array-fold-right-004,AssertionError: Expected XPath array:fold-right(["+2", "*3"], "10", function($a,$z){concat("(", $z, $a, ")")}) to (deep equally) resolve to "((10*3)+2)": expected false to be true
-array-fold-right-005,Error: XPTY0004: expected base expression to evaluate to a function item
+array-fold-right-005,Error: XPTY0004: Expected base expression to evaluate to a function item
 array-fold-right-006,AssertionError: Expected XPath array:fold-right([" opened the door", " went up stairs"], "Bob", function($a,$z){concat($z, $a)}) to (deep equally) resolve to "Bob went up stairs opened the door": expected false to be true
 array-fold-right-009,AssertionError: Expected XPath array:fold-right([1,2,3], [], function($x, $y){[$x, $y]}) to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
 array-for-each-006,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'first\' of undefined'

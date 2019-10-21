@@ -92,23 +92,6 @@ describe('ReplaceExpression', () => {
 		]);
 	});
 
-	it('disallows executing non-updating expressions', async () => {
-		let error;
-		try {
-			await evaluateUpdatingExpression('()', documentNode, null, {}, {});
-		} catch (err) {
-			error = err;
-		}
-
-		chai.assert.throws(() => {
-			if (error) {
-				throw error;
-			} else {
-				return null;
-			}
-		}, 'is not updating and can not be executed as an updating expression.');
-	});
-
 	it('disallows replacing the empty sequence', async () => {
 		let error;
 		try {

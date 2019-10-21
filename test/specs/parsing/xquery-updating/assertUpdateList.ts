@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 export default function assertCorrectUpdateList(actual, expected) {
-	chai.assert.equal(expected.length, actual.length);
+	chai.assert.equal(actual.length, expected.length, 'pendingUpdates.length');
 	for (let i = 0, l = expected.length; i < l; ++i) {
 		chai.assert.equal(actual[i].type, expected[i].type);
 		chai.assert.equal(actual[i].target, expected[i].target);

@@ -150,6 +150,8 @@ class ForExpression extends PossiblyUpdatingExpression {
 
 		this._returnExpression.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
+
+		this.determineUpdatingness();
 	}
 }
 

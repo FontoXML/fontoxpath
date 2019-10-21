@@ -309,9 +309,12 @@ DefaultNamespaceDecl
 
 // 26
 AnnotatedDecl
- = "declare" S annotations:(a:Annotation S {return a})* decl:(VarDecl / FunctionDecl)
+ = "declare" S annotations:(a:(Annotation / CompatibilityAnnotation) S {return a})* decl:(VarDecl / FunctionDecl)
    {return [decl[0]].concat(annotations).concat(decl.slice(1))}
 
+// 27 in XQuery Update Facility
+CompatibilityAnnotation
+	= "updating" {return ["annotation", ["annotationName", "updating"]]}
 // 27
 Annotation
  = "%" _ annotation:EQName params:(_ "(" _ lhs:Literal rhs:(_ "," _ part:Literal {return part})* _")" {return lhs.concat(rhs)})?
@@ -531,14 +534,14 @@ quantifiedExprInClause
      ]
    }
 
-// 74 
+// 74
 TypeswitchExpr
  = "typeswitch" _ "(" expr:Expr ")" _ clauses:(c:CaseClause _ {return c})+ "default" S varName:("$" v:VarName S {return v})? "return" S resultExpr:ExprSingle
  {
 	 return ["typeswitchExpr", ["argExpr", expr]]
 	 	.concat(clauses)
 		.concat([["typeswitchExprDefaultClause"].concat(varName || []).concat([["resultExpr", resultExpr]])])
-}; 
+};
 
 // 75
 CaseClause
@@ -554,8 +557,8 @@ CaseClause
 SequenceTypeUnion
  = first:SequenceType rest:(_ "|" _ st:SequenceType {return st})*
  {
-	 return rest.length 
-	 ? [["sequenceTypeUnion", ["sequenceType"].concat(first)].concat(rest.map(function(st) {return ["sequenceType"].concat(st)}))] 
+	 return rest.length
+	 ? [["sequenceTypeUnion", ["sequenceType"].concat(first)].concat(rest.map(function(st) {return ["sequenceType"].concat(st)}))]
 	 : [["sequenceType"].concat(first)];
 }
 

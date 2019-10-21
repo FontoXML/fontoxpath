@@ -1,4 +1,7 @@
+import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
@@ -23,7 +26,11 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 		);
 	}
 
-	public performFunctionalEvaluation(dynamicContext, _executionParameters, sequenceCallbacks) {
+	public performFunctionalEvaluation(
+		dynamicContext: DynamicContext,
+		_executionParameters: ExecutionParameters,
+		sequenceCallbacks: ((innerDynamicContext: DynamicContext) => ISequence)[]
+	) {
 		if (!sequenceCallbacks.length) {
 			return sequenceFactory.empty();
 		}

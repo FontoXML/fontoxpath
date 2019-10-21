@@ -2,7 +2,7 @@ import astHelper, { IAST } from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
 
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import StaticContext from '../expressions/StaticContext';
+import StaticContext, { GenericFunctionDefinition } from '../expressions/StaticContext';
 import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
 
 import { enhanceStaticContextWithModule } from './globalModuleCache';
@@ -19,6 +19,8 @@ import {
 	errXQST0066,
 	errXQST0070
 } from '../expressions/xquery/XQueryErrors';
+import UpdatingExpression from '../expressions/xquery-update/UpdatingExpression';
+import UpdatingFunctionDefinitionType from '../expressions/xquery-update/UpdatingFunctionDefinitionType';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -154,14 +156,19 @@ export default function processProlog(
 		}
 
 		// Functions are public unless they're private
-		const isPublicDeclaration = astHelper
+		const annotations = astHelper
 			.getChildren(declaration, 'annotation')
-			.map(annotation => astHelper.getFirstChild(annotation, 'annotationName'))
-			.every(
-				annotationName =>
-					!astHelper.getAttribute(annotationName, 'URI') &&
-					astHelper.getTextContent(annotationName) !== 'private'
-			);
+			.map(annotation => astHelper.getFirstChild(annotation, 'annotationName'));
+		const isPublicDeclaration = annotations.every(
+			annotationName =>
+				!astHelper.getAttribute(annotationName, 'URI') &&
+				astHelper.getTextContent(annotationName) !== 'private'
+		);
+		const isUpdatingFunction = annotations.some(
+			annotationName =>
+				!astHelper.getAttribute(annotationName, 'URI') &&
+				astHelper.getTextContent(annotationName) === 'updating'
+		);
 
 		if (!declarationNamespaceURI) {
 			throw errXQST0060();
@@ -213,34 +220,68 @@ export default function processProlog(
 			return staticContextLeaf.registerVariable(namespaceURI, localName);
 		});
 
-		const executeFunction: FunctionDefinitionType = (
-			dynamicContext: DynamicContext,
-			executionParameters: ExecutionParameters,
-			_staticContext: StaticContext,
-			...parameters: ISequence[]
-		) => {
-			const scopedDynamicContext = dynamicContext
-				.scopeWithFocus(-1, null, sequenceFactory.empty())
-				.scopeWithVariableBindings(
-					parameterBindingNames.reduce((paramByName, bindingName, i) => {
-						paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
-						return paramByName;
-					}, Object.create(null))
+		let functionDefinition: GenericFunctionDefinition<any, any>;
+		if (isUpdatingFunction) {
+			const executeFunction: UpdatingFunctionDefinitionType = (
+				dynamicContext: DynamicContext,
+				executionParameters: ExecutionParameters,
+				_staticContext: StaticContext,
+				...parameters: ISequence[]
+			) => {
+				const scopedDynamicContext = dynamicContext
+					.scopeWithFocus(-1, null, sequenceFactory.empty())
+					.scopeWithVariableBindings(
+						parameterBindingNames.reduce((paramByName, bindingName, i) => {
+							paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
+							return paramByName;
+						}, Object.create(null))
+					);
+				return (compiledFunctionBody as UpdatingExpression).evaluateWithUpdateList(
+					scopedDynamicContext,
+					executionParameters
 				);
-			return compiledFunctionBody.evaluateMaybeStatically(
-				scopedDynamicContext,
-				executionParameters
-			);
-		};
+			};
 
-		const functionDefinition = {
-			argumentTypes: paramTypes,
-			arity: paramNames.length,
-			callFunction: executeFunction,
-			localName: declarationLocalName,
-			namespaceURI: declarationNamespaceURI,
-			returnType
-		};
+			functionDefinition = {
+				argumentTypes: paramTypes,
+				arity: paramNames.length,
+				callFunction: executeFunction,
+				isUpdating: true,
+				localName: declarationLocalName,
+				namespaceURI: declarationNamespaceURI,
+				returnType
+			};
+		} else {
+			const executeFunction: FunctionDefinitionType = (
+				dynamicContext: DynamicContext,
+				executionParameters: ExecutionParameters,
+				_staticContext: StaticContext,
+				...parameters: ISequence[]
+			): ISequence => {
+				const scopedDynamicContext = dynamicContext
+					.scopeWithFocus(-1, null, sequenceFactory.empty())
+					.scopeWithVariableBindings(
+						parameterBindingNames.reduce((paramByName, bindingName, i) => {
+							paramByName[bindingName] = createDoublyIterableSequence(parameters[i]);
+							return paramByName;
+						}, Object.create(null))
+					);
+				return compiledFunctionBody.evaluateMaybeStatically(
+					scopedDynamicContext,
+					executionParameters
+				);
+			};
+
+			functionDefinition = {
+				argumentTypes: paramTypes,
+				arity: paramNames.length,
+				callFunction: executeFunction,
+				isUpdating: false,
+				localName: declarationLocalName,
+				namespaceURI: declarationNamespaceURI,
+				returnType
+			};
+		}
 
 		staticContext.registerFunctionDefinition(
 			declarationNamespaceURI,
@@ -248,7 +289,6 @@ export default function processProlog(
 			paramNames.length,
 			functionDefinition
 		);
-
 		staticallyCompilableExpressions.push({
 			expression: compiledFunctionBody,
 			staticContextLeaf

@@ -5,10 +5,14 @@ import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
 import Value from './Value';
 
-class MapValue extends FunctionValue {
+class MapValue extends FunctionValue<ISequence> {
 	public keyValuePairs: { key: Value; value: () => ISequence }[];
-	constructor(keyValuePairs) {
+	constructor(keyValuePairs: { key: Value; value: () => ISequence }[]) {
 		super({
+			argumentTypes: [{ type: 'item()', isRestArgument: false }],
+			arity: 1,
+			localName: 'get',
+			namespaceURI: MAP_NAMESPACE_URI,
 			value: (dynamicContext, executionParameters, staticContext, key) =>
 				mapGet(
 					dynamicContext,
@@ -17,10 +21,6 @@ class MapValue extends FunctionValue {
 					sequenceFactory.singleton(this),
 					key
 				),
-			localName: 'get',
-			namespaceURI: MAP_NAMESPACE_URI,
-			argumentTypes: [{ type: 'item()', isRestArgument: false }],
-			arity: 1,
 			returnType: { type: 'item()', occurrence: '*' }
 		});
 		this.type = 'map(*)';

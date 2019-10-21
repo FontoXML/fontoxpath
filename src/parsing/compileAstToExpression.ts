@@ -649,7 +649,9 @@ function inlineFunction(ast, compilationOptions) {
 		returnTypeDecl
 			? typeDeclarationToType(returnTypeDecl)
 			: { type: 'item()', occurrence: '*' },
-		functionBody ? compile(functionBody, compilationOptions) : new SequenceOperator([])
+		functionBody
+			? (compile(functionBody, compilationOptions) as PossiblyUpdatingExpression)
+			: new SequenceOperator([])
 	);
 }
 
