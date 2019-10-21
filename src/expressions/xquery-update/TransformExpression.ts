@@ -24,6 +24,7 @@ import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
 import { IPendingUpdate } from './IPendingUpdate';
 import ISequence from '../dataTypes/ISequence';
+import { separateXDMValueFromUpdatingExpressionResult } from '../PossiblyUpdatingExpression';
 
 function deepCloneNode(
 	node: ConcreteNode,
@@ -264,27 +265,7 @@ class TransformExpression extends UpdatingExpression {
 			dynamicContext,
 			executionParameters
 		);
-		let isDone = false;
-		let xdmValues: Value[];
-		let i = 0;
-		return sequenceFactory.create({
-			next: () => {
-				while (!isDone) {
-					if (!xdmValues) {
-						let iteratorValue = pendingUpdateIterator.next(IterationHint.NONE);
-						if (!iteratorValue.ready) {
-							return notReady(iteratorValue.promise);
-						}
-						xdmValues = iteratorValue.value.xdmValue;
-					}
-					if (i + 1 >= xdmValues.length) {
-						isDone = true;
-					}
-					return ready(xdmValues[i++]);
-				}
-				return DONE_TOKEN;
-			}
-		});
+		return separateXDMValueFromUpdatingExpressionResult(pendingUpdateIterator, _pul => {});
 	}
 }
 

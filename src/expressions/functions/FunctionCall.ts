@@ -249,7 +249,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 				return sequence.mapAll(([item]) => {
 					const functionItem = validateFunctionItem(item, this._callArity);
 					if (functionItem.isUpdating) {
-						// dynamic function invocations cal not be updating
+						// dynamic function invocations can not be updating
 						throw errXUDY0038();
 					}
 					return callFunction(
