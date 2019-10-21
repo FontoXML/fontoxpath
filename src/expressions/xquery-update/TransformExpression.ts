@@ -20,7 +20,7 @@ import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import { applyUpdates, mergeUpdates } from './pulRoutines';
-import UpdatingExpression, { ensureUpdateListWrapper } from './UpdatingExpression';
+import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
 import { IPendingUpdate } from './IPendingUpdate';
 import ISequence from '../dataTypes/ISequence';
@@ -145,7 +145,9 @@ class TransformExpression extends UpdatingExpression {
 
 						// Each variable binding is processed as follows:
 						if (!sourceValueIterator) {
-							sourceValueIterators[i] = sourceValueIterator = ensureUpdateListWrapper(
+							sourceValueIterators[
+								i
+							] = sourceValueIterator = this.ensureUpdateListWrapper(
 								variableBinding.sourceExpr
 							)(dynamicContext, executionParameters);
 						}
@@ -181,7 +183,7 @@ class TransformExpression extends UpdatingExpression {
 				if (!modifyPul) {
 					// The expression in the modify clause is evaluated,
 					if (!modifyValueIterator) {
-						modifyValueIterator = ensureUpdateListWrapper(this._modifyExpr)(
+						modifyValueIterator = this.ensureUpdateListWrapper(this._modifyExpr)(
 							dynamicContext,
 							executionParameters
 						);
@@ -211,7 +213,7 @@ class TransformExpression extends UpdatingExpression {
 
 				// The return clause is evaluated, resulting in a pending update list and an XDM instance.
 				if (!returnValueIterator) {
-					returnValueIterator = ensureUpdateListWrapper(this._returnExpr)(
+					returnValueIterator = this.ensureUpdateListWrapper(this._returnExpr)(
 						dynamicContext,
 						executionParameters
 					);

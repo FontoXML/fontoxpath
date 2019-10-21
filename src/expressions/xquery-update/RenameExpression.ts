@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import Specificity from '../Specificity';
-import UpdatingExpression, { ensureUpdateListWrapper } from './UpdatingExpression';
+import UpdatingExpression from './UpdatingExpression';
 
 import { rename } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
@@ -113,11 +113,11 @@ class RenameExpression extends UpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IAsyncIterator<UpdatingExpressionResult> {
-		const targetValueIterator = ensureUpdateListWrapper(this._targetExpression)(
+		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters
 		);
-		const newNameValueIterator = ensureUpdateListWrapper(this._newNameExpression)(
+		const newNameValueIterator = this.ensureUpdateListWrapper(this._newNameExpression)(
 			dynamicContext,
 			executionParameters
 		);

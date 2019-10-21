@@ -1,5 +1,3 @@
-import TypeDeclaration from './TypeDeclaration';
-
 class RestArgument {
 	public isRestArgument: boolean;
 	constructor() {

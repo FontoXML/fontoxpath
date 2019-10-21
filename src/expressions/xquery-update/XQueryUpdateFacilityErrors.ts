@@ -84,8 +84,7 @@ export const errXUDY0037 = () =>
 	new Error(
 		'XUDY0037: The modify expression of a copy modify expression can not contain a fn:put.'
 	);
-export const errXUDY0038 = () => {
+export const errXUDY0038 = () =>
 	new Error(
 		'XUDY0038: The function returned by the PrimaryExpr of a dynamic function invocation can not be an updating function'
 	);
-};

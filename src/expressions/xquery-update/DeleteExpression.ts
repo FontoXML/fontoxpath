@@ -1,7 +1,7 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
 import Specificity from '../Specificity';
-import UpdatingExpression, { ensureUpdateListWrapper } from './UpdatingExpression';
+import UpdatingExpression from './UpdatingExpression';
 
 import { deletePu } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
@@ -34,7 +34,10 @@ class DeleteExpression extends UpdatingExpression {
 	): IAsyncIterator<UpdatingExpressionResult> {
 		const targetValueIterator: IAsyncIterator<
 			UpdatingExpressionResult
-		> = ensureUpdateListWrapper(this._targetExpression)(dynamicContext, executionParameters);
+		> = this.ensureUpdateListWrapper(this._targetExpression)(
+			dynamicContext,
+			executionParameters
+		);
 		const domFacade = executionParameters.domFacade;
 
 		let tlist: Value[];

@@ -9,7 +9,7 @@ beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
 
-describe.only('Updating functions', () => {
+describe('Updating functions', () => {
 	it('allows functions to return a PUL', () => {
 		const result = evaluateUpdatingExpressionSync(
 			`
