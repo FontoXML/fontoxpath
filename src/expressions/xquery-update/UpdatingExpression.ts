@@ -13,7 +13,7 @@ abstract class UpdatingExpression extends Expression {
 		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions
 	) {
-		super(specificity, childExpressions, optimizationOptions);
+		super(specificity, childExpressions, optimizationOptions, true);
 
 		this.isUpdating = true;
 	}

@@ -20,7 +20,7 @@ function getParseResultFromCache(input: string, language: string) {
 export default function parseExpression(
 	xPathString: string,
 	compilationOptions: { allowXQuery?: boolean; debug?: boolean }
-) {
+): IAST {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 	const cached = compilationOptions.debug ? null : getParseResultFromCache(xPathString, language);
 

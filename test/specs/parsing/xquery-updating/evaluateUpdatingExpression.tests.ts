@@ -124,6 +124,17 @@ describe('evaluateUpdatingExpression', () => {
 		chai.assert.deepEqual(result.xdmValue, [1]);
 	});
 
+	it('properly throws dynamic errors', async () => {
+		documentNode.appendChild(documentNode.createElement('ele'));
+		try {
+			await evaluateUpdatingExpression('delete node ("Not a node")', documentNode);
+			chai.assert.fail('This should have thrown a dynamic error');
+		} catch (err) {
+			chai.assert.match(err, /XUTY0007/);
+			return;
+		}
+	});
+
 	it('uses the passed documentWriter for replacements', async () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 

@@ -99,7 +99,7 @@ export function getAlternativesAsStringFor(functionName: string): string {
 							(argumentType as RestArgument).isRestArgument
 								? '...'
 								: (argumentType as TypeDeclaration).type +
-										(argumentType as TypeDeclaration).occurrence || ''
+								  ((argumentType as TypeDeclaration).occurrence || '')
 						)
 						.join(', ')})"`
 			)

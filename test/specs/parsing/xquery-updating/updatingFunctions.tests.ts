@@ -119,6 +119,28 @@ return $xxx(insert node <a>I've been inserted.</a> into /)
 		]);
 	});
 
+	it('disallows updating functions in non-updating context', () => {
+		chai.assert.throws(
+			() =>
+				evaluateUpdatingExpressionSync(
+					`
+declare default function namespace "xxx";
+
+declare updating function xxx ($root) {
+  insert node <ele/> into $root
+};
+
+if (xxx(.)) then fn:true() else fn:false()
+`,
+					documentNode,
+					null,
+					{},
+					{}
+				),
+			'XUST0001'
+		);
+	});
+
 	it('disallows updating dynamic functions to have updating arguments', () => {
 		chai.assert.throws(
 			() =>

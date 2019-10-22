@@ -1,16 +1,19 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import FunctionValue from '../dataTypes/FunctionValue';
+import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import QName from '../dataTypes/valueTypes/QName';
-import Specificity from '../Specificity';
-import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
+import Specificity from '../Specificity';
+import StaticContext from '../StaticContext';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 
 class InlineFunction extends Expression {
 	private _functionBody: PossiblyUpdatingExpression;
-	private _parameterBindingNames: any;
+	private _parameterBindingNames: string[];
 	private _parameterNames: QName[];
 	private _parameterTypes: TypeDeclaration[];
 	private _returnType: TypeDeclaration;
@@ -48,10 +51,10 @@ class InlineFunction extends Expression {
 		 * @return The result of the function call
 		 */
 		const executeFunction = (
-			_unboundDynamicContext,
-			_executionContext,
-			_staticContext,
-			...parameters
+			_unboundDynamicContext: DynamicContext,
+			_executionParameters: ExecutionParameters,
+			_staticContext: StaticContext,
+			...parameters: ISequence[]
 		) => {
 			// Since functionCall already does typechecking, we do not have to do it here
 			const scopedDynamicContext = dynamicContext
@@ -81,7 +84,7 @@ class InlineFunction extends Expression {
 		return sequenceFactory.singleton(functionItem);
 	}
 
-	public performStaticEvaluation(staticContext) {
+	public performStaticEvaluation(staticContext: StaticContext) {
 		staticContext.introduceScope();
 		this._parameterBindingNames = this._parameterNames.map(name => {
 			let namespaceURI = name.namespaceURI;
@@ -96,6 +99,10 @@ class InlineFunction extends Expression {
 
 		this._functionBody.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
+
+		if (this._functionBody.isUpdating) {
+			throw new Error('Not implemented: inline functions can not yet be updating.');
+		}
 	}
 }
 

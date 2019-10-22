@@ -7,6 +7,7 @@ import Expression from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import StaticContext from './StaticContext';
 import { DONE_TOKEN, IAsyncIterator, IterationHint } from './util/iterators';
+import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
 class ForExpression extends PossiblyUpdatingExpression {
 	private _clauseExpression: Expression;
@@ -152,6 +153,10 @@ class ForExpression extends PossiblyUpdatingExpression {
 		staticContext.removeScope();
 
 		this.determineUpdatingness();
+
+		if (this._clauseExpression.isUpdating) {
+			throw errXUST0001();
+		}
 	}
 }
 

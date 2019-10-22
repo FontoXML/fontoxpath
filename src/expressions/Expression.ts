@@ -4,6 +4,7 @@ import ExecutionParameters from './ExecutionParameters';
 import Specificity from './Specificity';
 import StaticContext from './StaticContext';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
+import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
 export enum RESULT_ORDERINGS {
 	SORTED = 'sorted',
@@ -26,6 +27,7 @@ abstract class Expression {
 	public peer: boolean;
 	public specificity: Specificity;
 	public subtree: boolean;
+	private _canBeUpdating: boolean;
 	protected _childExpressions: Expression[];
 	protected _eagerlyEvaluatedValue: () => ISequence;
 
@@ -37,7 +39,8 @@ abstract class Expression {
 			peer: false,
 			resultOrder: RESULT_ORDERINGS.UNSORTED,
 			subtree: false
-		}
+		},
+		canBeUpdating: boolean = false
 	) {
 		this.specificity = specificity;
 		this.expectedResultOrder = optimizationOptions.resultOrder || RESULT_ORDERINGS.UNSORTED;
@@ -50,6 +53,8 @@ abstract class Expression {
 		this.isUpdating = false;
 
 		this._eagerlyEvaluatedValue = null;
+
+		this._canBeUpdating = canBeUpdating;
 	}
 
 	public abstract evaluate(
@@ -85,6 +90,12 @@ abstract class Expression {
 
 	public performStaticEvaluation(staticContext: StaticContext): void {
 		this._childExpressions.forEach(selector => selector.performStaticEvaluation(staticContext));
+		if (
+			!this._canBeUpdating &&
+			this._childExpressions.some(childExpression => childExpression.isUpdating)
+		) {
+			throw errXUST0001();
+		}
 	}
 
 	protected evaluateWithoutFocus(

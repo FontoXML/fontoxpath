@@ -4,6 +4,7 @@ import Expression from './Expression';
 import PossiblyUpdatingExpression, { SequenceCallbacks } from './PossiblyUpdatingExpression';
 import StaticContext from './StaticContext';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
+import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
 class LetExpression extends PossiblyUpdatingExpression {
 	public _bindingSequence: Expression;
@@ -76,6 +77,10 @@ class LetExpression extends PossiblyUpdatingExpression {
 		staticContext.removeScope();
 
 		this.determineUpdatingness();
+
+		if (this._bindingSequence.isUpdating) {
+			throw errXUST0001();
+		}
 	}
 }
 export default LetExpression;

@@ -6,9 +6,13 @@ import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Specificity from './Specificity';
+import StaticContext from './StaticContext';
 import { IAsyncIterator, IterationHint, notReady } from './util/iterators';
+import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
 class WhereExpression extends PossiblyUpdatingExpression {
+	private _testExpression: Expression;
+
 	constructor(testExpression: Expression, returnExpression: Expression) {
 		const specificity = new Specificity({});
 		super(specificity, [testExpression, returnExpression], {
@@ -17,6 +21,8 @@ class WhereExpression extends PossiblyUpdatingExpression {
 			resultOrder: RESULT_ORDERINGS.UNSORTED,
 			subtree: false
 		});
+
+		this._testExpression = testExpression;
 	}
 
 	public performFunctionalEvaluation(
@@ -44,6 +50,14 @@ class WhereExpression extends PossiblyUpdatingExpression {
 				return resultIterator.next(hint);
 			}
 		});
+	}
+
+	public performStaticEvaluation(staticContext: StaticContext) {
+		super.performStaticEvaluation(staticContext);
+
+		if (this._testExpression.isUpdating) {
+			throw errXUST0001();
+		}
 	}
 }
 
