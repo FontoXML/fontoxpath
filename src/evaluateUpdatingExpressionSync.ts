@@ -75,7 +75,7 @@ export default function evaluateUpdatingExpressionSync<
 				domFacade,
 				variables,
 				options.returnType as any,
-				options
+				{ ...options, ['language']: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
 			)
 		};
 	}

@@ -119,6 +119,16 @@ describe('evaluateUpdatingExpressionSync', () => {
 		chai.assert.deepEqual(result.xdmValue, 1);
 	});
 
+	it('properly returns the xdmValue for non-updating xquery scripts', async () => {
+		documentNode.appendChild(documentNode.createElement('ele'));
+		const result = evaluateUpdatingExpressionSync(
+			'copy $a := . modify rename node $a/ele as "renamed" return name($a/*)',
+			documentNode
+		);
+
+		chai.assert.deepEqual(result.xdmValue, 'renamed');
+	});
+
 	it('uses the passed documentWriter for replacements', async () => {
 		documentNode.appendChild(documentNode.createElement('ele'));
 
