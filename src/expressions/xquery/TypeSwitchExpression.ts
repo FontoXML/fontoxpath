@@ -1,11 +1,12 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
-
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
+import StaticContext from '../StaticContext';
+import { errXUST0001 } from '../xquery-update/XQueryUpdateFacilityErrors';
 
 type TypeTest = {
 	occurrenceIndicator: '*' | '?' | '+';
@@ -20,6 +21,8 @@ export type TypeSwitchCaseClause = {
 class TypeSwitchExpression extends PossiblyUpdatingExpression {
 	private _amountOfCases: number;
 	private _typeTestsByCase: TypeTest[][];
+	private _argExpression: Expression;
+
 	constructor(
 		argExpression: Expression,
 		caseClauses: TypeSwitchCaseClause[],
@@ -42,7 +45,7 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 				subtree: false
 			}
 		);
-
+		this._argExpression = argExpression;
 		this._amountOfCases = caseClauses.length;
 		this._typeTestsByCase = caseClauses.map(clause => clause.typeTests);
 	}
@@ -102,6 +105,14 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 			// If none of the case clauses are satisfied, return the default clause.
 			return sequenceCallbacks[this._amountOfCases + 1](dynamicContext);
 		});
+	}
+
+	public performStaticEvaluation(staticContext: StaticContext) {
+		super.performStaticEvaluation(staticContext);
+
+		if (this._argExpression.isUpdating) {
+			throw errXUST0001();
+		}
 	}
 }
 

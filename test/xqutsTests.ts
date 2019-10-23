@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import {
-	evaluateUpdatingExpression,
+	evaluateUpdatingExpressionSync,
 	evaluateXPath,
 	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
@@ -9,12 +9,10 @@ import {
 	evaluateXPathToString,
 	executePendingUpdateList
 } from 'fontoxpath';
-import parseExpression from 'fontoxpath/parsing/parseExpression';
 import * as path from 'path';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
-import { parseAst } from '../demo/parseAst';
 
 (global as any).atob = function(b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
@@ -31,6 +29,7 @@ type ExpressionArguments = [
 	Object,
 	{
 		debug?: boolean;
+		returnType?: any;
 		language?: evaluateXPath.XPATH_3_1_LANGUAGE | evaluateXPath.XQUERY_3_1_LANGUAGE;
 	}
 ];
@@ -66,21 +65,7 @@ function getFile(filename) {
 }
 
 function isUpdatingQuery(testName, query) {
-	const ast = parseExpression(query, { allowXQuery: true }); // parse(query);
-	const doc = new slimdom.Document();
-	try {
-		doc.appendChild(parseAst(doc, ast));
-	} catch (e) {
-		unrunnableTestCases.push(`${testName},Parser resulted in invalid JsonML`);
-		throw e;
-	}
-	return evaluateXPathToBoolean(
-		'declare namespace xqxuf="http://www.w3.org/2007/xquery-update-10"; exists(//xqxuf:*)',
-		doc,
-		null,
-		null,
-		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-	);
+	return true;
 }
 
 function executePul(pul, args) {
@@ -97,7 +82,7 @@ async function assertError(expectedError, args: ExpressionArguments, isUpdating)
 	let hasThrown = false;
 	try {
 		if (isUpdating) {
-			const it = await evaluateUpdatingExpression(...args);
+			const it = evaluateUpdatingExpressionSync(...args);
 			executePul(it.pendingUpdateList, args);
 		} else {
 			evaluateXPath(args[0], args[1], args[2], args[3], null, args[4]);
@@ -112,7 +97,7 @@ async function assertError(expectedError, args: ExpressionArguments, isUpdating)
 }
 
 function assertXml(actual, expected) {
-	// actual.normalize();
+	actual.normalize();
 	expected.normalize();
 
 	const actualOuterHTML =
@@ -183,25 +168,32 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 		const expectedString = getFile(path.join('ExpectedTestResults', outputFile.file));
 
 		let xdmValue;
-		if (isUpdating) {
-			const it = await evaluateUpdatingExpression(...args);
+		function runQuery(returnType) {
+			const it = evaluateUpdatingExpressionSync(args[0], args[1], args[2], args[3], {
+				...args[4],
+				returnType
+			});
 			xdmValue = it.xdmValue;
-			if (!Array.isArray(xdmValue)) {
-				xdmValue = [xdmValue];
-			}
 			if (it.pendingUpdateList) {
 				executePul(it.pendingUpdateList, args);
 			}
-			xdmValue.forEach(nodeValue => {
-				if (nodeValue.normalize) {
-					nodeValue.normalize();
-				}
-			});
+			if (Array.isArray(xdmValue)) {
+				xdmValue.forEach(nodeValue => {
+					if (nodeValue.normalize) {
+						nodeValue.normalize();
+					}
+				});
+			}
+			if (xdmValue.normalize) {
+				xdmValue.normalize();
+			}
+
+			return xdmValue;
 		}
 
 		switch (outputFile.compare) {
 			case 'XML': {
-				const actual = xdmValue ? xdmValue[0] : evaluateXPathToFirstNode(...args);
+				const actual = runQuery(evaluateXPath.FIRST_NODE_TYPE);
 				const expected =
 					actual.nodeType === actual.DOCUMENT_NODE
 						? parser.parseFromString(expectedString)
@@ -211,16 +203,13 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 				break;
 			}
 			case 'Fragment': {
-				const actualNodes = xdmValue ? xdmValue : evaluateXPathToNodes(...args);
+				const actualNodes = runQuery(evaluateXPath.NODES_TYPE);
 
 				catchAssertion(() => assertFragment(actualNodes, expectedString));
 				break;
 			}
 			case 'Text': {
-				if (xdmValue) {
-					throw new Error('Not yet supported: Updating query with text assertion.');
-				}
-				const actual = evaluateXPathToString(...args);
+				const actual = runQuery(evaluateXPath.STRING_TYPE);
 				const actualNodes = [new slimdom.Document().createTextNode(actual)];
 
 				catchAssertion(() => assertFragment(actualNodes, expectedString));
@@ -298,7 +287,7 @@ async function runTestCase(testName, testCase) {
 			new slimdom.Document(),
 			null,
 			variables,
-			{ language: 'XQuery3.1' }
+			{ language: 'XQuery3.1', returnType: evaluateXPath.STRING_TYPE }
 		];
 
 		try {
@@ -306,7 +295,7 @@ async function runTestCase(testName, testCase) {
 			if (expectedErrors.length || outputFiles.length) {
 				await runAssertions(expectedErrors, outputFiles, args, isUpdating);
 			} else if (isUpdating) {
-				const it = await evaluateUpdatingExpression(...args);
+				const it = evaluateUpdatingExpressionSync(...args);
 				executePul(it.pendingUpdateList, args);
 			} else {
 				throw new Error(

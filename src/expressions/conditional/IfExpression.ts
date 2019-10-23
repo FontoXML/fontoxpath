@@ -1,14 +1,17 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
-
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
+import StaticContext from '../StaticContext';
 import { IAsyncIterator, IterationHint, notReady } from '../util/iterators';
+import { errXUST0001 } from '../xquery-update/XQueryUpdateFacilityErrors';
 
 class IfExpression extends PossiblyUpdatingExpression {
+	private _testExpression: Expression;
+
 	constructor(
 		testExpression: Expression,
 		thenExpression: PossiblyUpdatingExpression,
@@ -29,6 +32,8 @@ class IfExpression extends PossiblyUpdatingExpression {
 					: RESULT_ORDERINGS.UNSORTED,
 			subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree
 		});
+
+		this._testExpression = testExpression;
 	}
 
 	public performFunctionalEvaluation(
@@ -55,6 +60,14 @@ class IfExpression extends PossiblyUpdatingExpression {
 				return resultIterator.next(hint);
 			}
 		});
+	}
+
+	public performStaticEvaluation(staticContext: StaticContext) {
+		super.performStaticEvaluation(staticContext);
+
+		if (this._testExpression.isUpdating) {
+			throw errXUST0001();
+		}
 	}
 }
 

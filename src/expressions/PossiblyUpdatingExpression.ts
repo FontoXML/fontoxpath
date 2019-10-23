@@ -70,7 +70,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions
 	) {
-		super(specificity, childExpressions, optimizationOptions);
+		super(specificity, childExpressions, optimizationOptions, true);
 
 		this.isUpdating = this._childExpressions.some(
 			childExpression => childExpression.isUpdating

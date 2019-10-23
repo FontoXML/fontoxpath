@@ -224,6 +224,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		[createFunctionReferenceSequence, ...createArgumentSequences]
 	) {
 		if (this._functionReference) {
+			// We can assume this function is not updating
 			return callFunction(
 				this._functionReference,
 				(dynamicContext, executionParameters, staticContext, ...args) =>
