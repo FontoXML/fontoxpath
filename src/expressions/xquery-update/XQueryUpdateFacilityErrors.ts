@@ -1,7 +1,8 @@
 import { Attr } from '../../types/Types';
 
-export const errXUST0001 = () =>
-	new Error(`XUST0001: Can not execute an updating expression in a non-updating context.`);
+export const errXUST0001 = (
+	message = 'Can not execute an updating expression in a non-updating context.'
+) => new Error(`XUST0001: ${message}`);
 export const errXUTY0004 = (node: Attr) =>
 	new Error(
 		`XUTY0004: The attribute ${node.name}="${node.value}" follows a node that is not an attribute node.`

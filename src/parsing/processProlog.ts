@@ -1,17 +1,14 @@
-import astHelper, { IAST } from './astHelper';
-import compileAstToExpression from './compileAstToExpression';
-
-import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
-import StaticContext, { GenericFunctionDefinition } from '../expressions/StaticContext';
-import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
-
-import { enhanceStaticContextWithModule } from './globalModuleCache';
-
 import ISequence from '../expressions/dataTypes/ISequence';
+import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
+import StaticContext, { GenericFunctionDefinition } from '../expressions/StaticContext';
+import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
+import UpdatingExpression from '../expressions/xquery-update/UpdatingExpression';
+import UpdatingFunctionDefinitionType from '../expressions/xquery-update/UpdatingFunctionDefinitionType';
+import { errXUST0001 } from '../expressions/xquery-update/XQueryUpdateFacilityErrors';
 import {
 	errXPST0081,
 	errXQST0045,
@@ -19,8 +16,9 @@ import {
 	errXQST0066,
 	errXQST0070
 } from '../expressions/xquery/XQueryErrors';
-import UpdatingExpression from '../expressions/xquery-update/UpdatingExpression';
-import UpdatingFunctionDefinitionType from '../expressions/xquery-update/UpdatingFunctionDefinitionType';
+import astHelper, { IAST } from './astHelper';
+import compileAstToExpression from './compileAstToExpression';
+import { enhanceStaticContextWithModule } from './globalModuleCache';
 
 const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/XML/1998/namespace',
@@ -35,9 +33,13 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 
 type FunctionDeclaration = {
 	arity: number;
-	functionDefinition: object;
+	functionDefinition: GenericFunctionDefinition<
+		boolean,
+		FunctionDefinitionType | UpdatingFunctionDefinitionType
+	>;
 	localName: string;
 	namespaceURI: string;
+	expression: Expression;
 };
 
 export default function processProlog(
@@ -298,6 +300,7 @@ export default function processProlog(
 			// Only mark the registration as the public API for the module if it's public
 			compiledFunctionDeclarations.push({
 				arity: paramNames.length,
+				expression: compiledFunctionBody,
 				functionDefinition,
 				localName: declarationLocalName,
 				namespaceURI: declarationNamespaceURI
@@ -390,6 +393,17 @@ export default function processProlog(
 
 	staticallyCompilableExpressions.forEach(({ expression, staticContextLeaf }) => {
 		expression.performStaticEvaluation(staticContextLeaf);
+	});
+
+	compiledFunctionDeclarations.forEach(compiledFunctionDeclaration => {
+		if (
+			!compiledFunctionDeclaration.functionDefinition.isUpdating &&
+			compiledFunctionDeclaration.expression.isUpdating
+		) {
+			throw errXUST0001(
+				`The function Q{${compiledFunctionDeclaration.namespaceURI}}${compiledFunctionDeclaration.localName} is updating but the %updating annotation is missing.`
+			);
+		}
 	});
 
 	return {
