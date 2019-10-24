@@ -21,10 +21,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 			.add(thenExpression.specificity)
 			.add(elseExpression.specificity);
 		super(specificity, [testExpression, thenExpression, elseExpression], {
-			canBeStaticallyEvaluated:
-				testExpression.canBeStaticallyEvaluated &&
-				thenExpression.canBeStaticallyEvaluated &&
-				elseExpression.canBeStaticallyEvaluated,
+			canBeStaticallyEvaluated: true,
 			peer: thenExpression.peer === elseExpression.peer && thenExpression.peer,
 			resultOrder:
 				thenExpression.expectedResultOrder === elseExpression.expectedResultOrder

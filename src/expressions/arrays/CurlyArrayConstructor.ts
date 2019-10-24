@@ -14,7 +14,7 @@ class CurlyArrayConstructor extends Expression {
 			}),
 			members,
 			{
-				canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
+				canBeStaticallyEvaluated: true
 			}
 		);
 

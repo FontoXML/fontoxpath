@@ -7,6 +7,7 @@ import IDomFacade from '../domFacade/IDomFacade';
 import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 import { Options } from '../evaluateXPath';
 import adaptJavaScriptValueToXPathValue from '../expressions/adaptJavaScriptValueToXPathValue';
+import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
@@ -105,20 +106,21 @@ export default function buildEvaluationContext(
 		? wrapExternalDocumentWriter(internalOptions.documentWriter)
 		: domBackedDocumentWriter;
 
-	const variableBindings = Object.keys(variables).reduce((typedVariableByName, variableName) => {
+	const variableBindings: { [variableName: string]: () => ISequence } = Object.keys(
+		variables
+	).reduce((typedVariableByName, variableName) => {
 		typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
 			adaptJavaScriptValueToXPathValue(variables[variableName]);
 		return typedVariableByName;
 	}, Object.create(null));
 
-	let dynamicContext;
+	let dynamicContext: DynamicContext;
 	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
 		if (!variableBindings[binding]) {
 			variableBindings[binding] = () =>
-				expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
-					dynamicContext,
-					executionParameters
-				);
+				expressionAndStaticContext.staticContext
+					.getVariableExpression(binding)
+					.evaluateMaybeStatically(dynamicContext, executionParameters);
 		}
 	}
 

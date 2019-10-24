@@ -19,9 +19,7 @@ class OrOperator extends Expression {
 		}, new Specificity({}));
 
 		super(maxSpecificity, expressions, {
-			canBeStaticallyEvaluated: expressions.every(
-				selector => selector.canBeStaticallyEvaluated
-			)
+			canBeStaticallyEvaluated: true
 		});
 
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.

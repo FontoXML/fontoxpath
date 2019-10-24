@@ -8,10 +8,7 @@ import StaticContext from './StaticContext';
 class VarRef extends Expression {
 	private _namespaceURI: string;
 	private _prefix: string;
-	private _staticallyBoundVariableValue: (
-		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
-	) => ISequence;
+	private _staticallyBoundVariableValue: Expression;
 	private _variableBindingName: any;
 	private _variableName: string;
 
@@ -29,12 +26,18 @@ class VarRef extends Expression {
 	}
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
-		const variableBinding = dynamicContext.variableBindings[this._variableBindingName];
+		const variableBinding =
+			!this.canBeStaticallyEvaluated() &&
+			dynamicContext.variableBindings[this._variableBindingName];
 		// Make dynamic variables take precedence
 		if (!variableBinding) {
 			if (this._staticallyBoundVariableValue) {
-				return this._staticallyBoundVariableValue(dynamicContext, executionParameters);
+				return this._staticallyBoundVariableValue.evaluateMaybeStatically(
+					dynamicContext,
+					executionParameters
+				);
 			}
+
 			throw new Error(
 				'XQDY0054: The variable ' + this._variableName + ' is declared but not in scope.'
 			);
@@ -56,12 +59,15 @@ class VarRef extends Expression {
 			throw new Error('XPST0008, The variable ' + this._variableName + ' is not in scope.');
 		}
 
-		const staticallyBoundVariableBinding = staticContext.getVariableDeclaration(
+		const staticallyBoundVariableBinding = staticContext.getVariableExpression(
 			this._variableBindingName
 		);
 
 		if (staticallyBoundVariableBinding) {
 			this._staticallyBoundVariableValue = staticallyBoundVariableBinding;
+			if (this._staticallyBoundVariableValue.canBeStaticallyEvaluated()) {
+				this._canBeStaticallyEvaluated = true;
+			}
 		}
 	}
 }

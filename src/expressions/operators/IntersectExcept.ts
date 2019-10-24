@@ -44,8 +44,7 @@ class IntersectExcept extends Expression {
 				? expression1.specificity
 				: expression2.specificity;
 		super(maxSpecificity, [expression1, expression2], {
-			canBeStaticallyEvaluated:
-				expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
+			canBeStaticallyEvaluated: true
 		});
 
 		this._intersectOrExcept = intersectOrExcept;

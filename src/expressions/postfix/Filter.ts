@@ -14,8 +14,7 @@ class Filter extends Expression {
 			selector.specificity.add(filterExpression.specificity),
 			[selector, filterExpression],
 			{
-				canBeStaticallyEvaluated:
-					selector.canBeStaticallyEvaluated && filterExpression.canBeStaticallyEvaluated,
+				canBeStaticallyEvaluated: true,
 				peer: selector.peer,
 				resultOrder: selector.expectedResultOrder,
 				subtree: selector.subtree
@@ -32,7 +31,7 @@ class Filter extends Expression {
 			executionParameters
 		);
 
-		if (this._filterExpression.canBeStaticallyEvaluated) {
+		if (this._filterExpression.canBeStaticallyEvaluated()) {
 			// Shortcut, if this is numeric, all the values are the same numeric value, same for booleans
 			const result = this._filterExpression.evaluateMaybeStatically(
 				dynamicContext,
@@ -49,30 +48,23 @@ class Filter extends Expression {
 					// There are only values for integer positions
 					return sequenceFactory.empty();
 				}
-				const iterator = valuesToFilter.value;
+
 				let done = false;
-				// Note that using filter here is a bad choice, because we only want one item.
-				// TODO: implement Sequence.itemAt(i), which is a no-op for empty sequences, a O(1) op for array backed sequence / singleton sequences and a O(n) for normal sequences.
-				// If we move sorting to sequences, this will be even faster, since a select is faster than a sort.
+
 				return sequenceFactory.create({
 					next: (_hint: IterationHint) => {
-						if (!done) {
-							for (
-								let value = iterator.next(IterationHint.NONE);
-								!value.done;
-								value = iterator.next(IterationHint.NONE)
-							) {
-								if (!value.ready) {
-									return value;
-								}
-								if (requestedIndex-- === 1) {
-									done = true;
-									return value;
-								}
-							}
-							done = true;
+						if (done) {
+							return DONE_TOKEN;
 						}
-						return DONE_TOKEN;
+						const attempt = valuesToFilter.tryGetItemAt(requestedIndex - 1);
+						if (attempt.ready) {
+							if (attempt.value === null) {
+								done = true;
+								return DONE_TOKEN;
+							}
+							return ready(attempt.value);
+						}
+						return notReady(attempt.promise);
 					}
 				});
 			}

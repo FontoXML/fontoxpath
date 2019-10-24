@@ -17,6 +17,7 @@ import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class IteratorBackedSequence implements ISequence {
 	public value: IAsyncIterator<Value>;
+	public canBeSafelyAdvanced = false;
 
 	private _cacheAllValues: boolean;
 	private _cachedValues: Value[];
@@ -358,5 +359,22 @@ export default class IteratorBackedSequence implements ISequence {
 		}
 		this.reset(oldPosition);
 		return ready(secondValue.done);
+	}
+
+	public tryGetItemAt(index: number): IAsyncResult<Value | null> {
+		const iterator = this.value;
+		for (
+			let value = iterator.next(IterationHint.NONE);
+			!value.done;
+			value = iterator.next(IterationHint.NONE)
+		) {
+			if (!value.ready) {
+				return value;
+			}
+			if (index-- === 1) {
+				return value;
+			}
+		}
+		return ready(null);
 	}
 }

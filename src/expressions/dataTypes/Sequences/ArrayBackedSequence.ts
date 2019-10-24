@@ -9,6 +9,7 @@ import Value from '../Value';
 
 export default class ArrayBackedSequence implements ISequence {
 	public value: IAsyncIterator<Value>;
+	public canBeSafelyAdvanced = true;
 
 	constructor(
 		private readonly _sequenceFactory: typeof sequenceFactory,
@@ -115,5 +116,9 @@ export default class ArrayBackedSequence implements ISequence {
 
 	public tryGetLength(): IAsyncResult<number> {
 		return ready(this._values.length);
+	}
+
+	public tryGetItemAt(index: number): IAsyncResult<any> {
+		return ready(this._values.length <= index ? null : this._values[index]);
 	}
 }

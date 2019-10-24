@@ -6,6 +6,7 @@ import ExecutionParameters from './ExecutionParameters';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
 import { FunctionProperties } from './functions/functionRegistry';
 import UpdatingFunctionDefinitionType from './xquery-update/UpdatingFunctionDefinitionType';
+import Expression from './Expression';
 
 function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
@@ -46,14 +47,17 @@ export type UpdatingFunctionDefinition = GenericFunctionDefinition<
  * none.
  */
 export default class StaticContext implements IContext {
-	public parentContext: IContext;
-	public registeredDefaultFunctionNamespace: string;
-	public registeredVariableBindingByHashKey: any[];
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,
 			executionParameters: ExecutionParameters
 		) => ISequence;
+	};
+	public parentContext: IContext;
+	public registeredDefaultFunctionNamespace: string;
+	public registeredVariableBindingByHashKey: any[];
+	public registeredVariableExpressionByHashKey: {
+		[hash: string]: Expression;
 	};
 	private _registeredFunctionsByHash: any;
 	private _registeredNamespaceURIByPrefix: any[];
@@ -72,6 +76,8 @@ export default class StaticContext implements IContext {
 		this._registeredFunctionsByHash = Object.create(null);
 
 		this.registeredDefaultFunctionNamespace = parentContext.registeredDefaultFunctionNamespace;
+		this.registeredVariableExpressionByHashKey =
+			parentContext.registeredVariableExpressionByHashKey;
 		this.registeredVariableDeclarationByHashKey =
 			parentContext.registeredVariableDeclarationByHashKey;
 		this.registeredVariableBindingByHashKey = parentContext.registeredVariableBindingByHashKey;
@@ -102,7 +108,7 @@ export default class StaticContext implements IContext {
 				Object.create(null),
 				this._registeredFunctionsByHash
 			);
-			contextAtThisPoint.registeredVariableDeclarationByHashKey = this.registeredVariableDeclarationByHashKey;
+			contextAtThisPoint.registeredVariableExpressionByHashKey = this.registeredVariableExpressionByHashKey;
 			contextAtThisPoint.registeredDefaultFunctionNamespace = this.registeredDefaultFunctionNamespace;
 		}
 
@@ -110,13 +116,11 @@ export default class StaticContext implements IContext {
 	}
 
 	public getVariableBindings(): string[] {
-		return Object.keys(this.registeredVariableDeclarationByHashKey);
+		return Object.keys(this.registeredVariableExpressionByHashKey);
 	}
 
-	public getVariableDeclaration(
-		hashKey: string
-	): (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) => ISequence {
-		return this.registeredVariableDeclarationByHashKey[hashKey];
+	public getVariableExpression(hashKey: string): Expression {
+		return this.registeredVariableExpressionByHashKey[hashKey];
 	}
 
 	public introduceScope() {
@@ -157,7 +161,7 @@ export default class StaticContext implements IContext {
 
 	public lookupVariableValue(namespaceURI: string, localName: string) {
 		const hash = createHashKey(namespaceURI, localName);
-		const varNameInCurrentScope = this.registeredVariableDeclarationByHashKey[hash];
+		const varNameInCurrentScope = this.registeredVariableExpressionByHashKey[hash];
 		if (varNameInCurrentScope) {
 			return varNameInCurrentScope;
 		}
@@ -196,16 +200,16 @@ export default class StaticContext implements IContext {
 		] = `${hash}[${this._scopeCount}]`);
 	}
 
+	/**
+	 * Register to where the variable points, as an expression
+	 */
 	public registerVariableDeclaration(
 		namespaceURI: string,
 		localName: string,
-		createValue: (
-			dynamicContext: DynamicContext,
-			executionParameters: ExecutionParameters
-		) => ISequence
+		expression: Expression
 	) {
 		const hash = `${createHashKey(namespaceURI || '', localName)}[${this._scopeCount}]`;
-		this.registeredVariableDeclarationByHashKey[hash] = createValue;
+		this.registeredVariableExpressionByHashKey[hash] = expression;
 	}
 
 	public removeScope() {

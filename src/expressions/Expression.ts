@@ -20,7 +20,6 @@ export type OptimizationOptions = {
 };
 
 abstract class Expression {
-	public canBeStaticallyEvaluated: boolean;
 	public expectedResultOrder: string;
 	public expression: string;
 	public isUpdating: boolean;
@@ -28,6 +27,7 @@ abstract class Expression {
 	public specificity: Specificity;
 	public subtree: boolean;
 	private _canBeUpdating: boolean;
+	protected _canBeStaticallyEvaluated: boolean;
 	protected _childExpressions: Expression[];
 	protected _eagerlyEvaluatedValue: () => ISequence;
 
@@ -46,7 +46,7 @@ abstract class Expression {
 		this.expectedResultOrder = optimizationOptions.resultOrder || RESULT_ORDERINGS.UNSORTED;
 		this.subtree = !!optimizationOptions.subtree;
 		this.peer = !!optimizationOptions.peer;
-		this.canBeStaticallyEvaluated = !!optimizationOptions.canBeStaticallyEvaluated;
+		this._canBeStaticallyEvaluated = !!optimizationOptions.canBeStaticallyEvaluated;
 
 		this._childExpressions = childExpressions;
 
@@ -55,6 +55,15 @@ abstract class Expression {
 		this._eagerlyEvaluatedValue = null;
 
 		this._canBeUpdating = canBeUpdating;
+	}
+
+	public canBeStaticallyEvaluated() {
+		const canBeStaticallyEvaluated =
+			this._canBeStaticallyEvaluated &&
+			this._childExpressions.every(child => child.canBeStaticallyEvaluated());
+		this._canBeStaticallyEvaluated = canBeStaticallyEvaluated;
+
+		return canBeStaticallyEvaluated;
 	}
 
 	public abstract evaluate(

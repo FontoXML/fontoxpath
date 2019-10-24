@@ -1,11 +1,15 @@
-import ISequence from './dataTypes/ISequence';
-import DynamicContext from './DynamicContext';
-import ExecutionParameters from './ExecutionParameters';
+import Expression from './Expression';
 import { FunctionProperties } from './functions/functionRegistry';
+import ISequence from './dataTypes/ISequence';
+import ExecutionParameters from './ExecutionParameters';
+import DynamicContext from './DynamicContext';
 
 export default interface IContext {
 	registeredDefaultFunctionNamespace: string;
 	registeredVariableBindingByHashKey: any[];
+	registeredVariableExpressionByHashKey: {
+		[hash: string]: Expression;
+	};
 	registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,

@@ -19,9 +19,7 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 			expressions,
 			{
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
-				canBeStaticallyEvaluated: expressions.every(
-					selector => selector.canBeStaticallyEvaluated
-				)
+				canBeStaticallyEvaluated: true
 			}
 		);
 	}

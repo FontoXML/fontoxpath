@@ -5,6 +5,7 @@ import Value from '../Value';
 
 export default class EmptySequence implements ISequence {
 	public value: IAsyncIterator<Value>;
+	public canBeSafelyAdvanced = true;
 
 	constructor() {
 		this.value = {
@@ -73,5 +74,9 @@ export default class EmptySequence implements ISequence {
 
 	public tryGetLength(): IAsyncResult<number> {
 		return ready(0);
+	}
+
+	public tryGetItemAt(index: number): IAsyncResult<any> {
+		return ready(null);
 	}
 }

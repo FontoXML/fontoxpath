@@ -4,6 +4,9 @@ import Value from '../dataTypes/Value';
 import { IterationHint, IterationResult } from './iterators';
 
 export default function createDoublyIterableSequence(sequence: ISequence): () => ISequence {
+	if (sequence.canBeSafelyAdvanced) {
+		return () => sequence;
+	}
 	const savedValues: IterationResult<Value>[] = [];
 	const backingIterator = sequence.value;
 	return () => {

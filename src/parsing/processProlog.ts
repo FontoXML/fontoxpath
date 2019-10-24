@@ -362,22 +362,10 @@ export default function processProlog(
 			varValue &&
 			!staticContext.lookupVariableValue(declarationNamespaceURI || '', varName.localName)
 		) {
-			let cachedVariableValue: () => ISequence | null = null;
 			staticContext.registerVariableDeclaration(
 				declarationNamespaceURI,
 				varName.localName,
-				(dynamicContext, executionParameters) => {
-					if (cachedVariableValue) {
-						return cachedVariableValue();
-					}
-					cachedVariableValue = createDoublyIterableSequence(
-						compiledFunctionAsExpression.evaluateMaybeStatically(
-							dynamicContext,
-							executionParameters
-						)
-					);
-					return cachedVariableValue();
-				}
+				compiledFunctionAsExpression
 			);
 			staticallyCompilableExpressions.push({
 				expression: compiledFunctionAsExpression,

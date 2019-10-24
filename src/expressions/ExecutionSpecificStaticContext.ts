@@ -7,6 +7,7 @@ import {
 	FUNCTIONS_NAMESPACE_URI,
 	staticallyKnownNamespaceByPrefix
 } from './staticallyKnownNamespaces';
+import Expression from './Expression';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
@@ -24,6 +25,10 @@ export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
 	public registeredDefaultFunctionNamespace: string = FUNCTIONS_NAMESPACE_URI;
 	public registeredVariableBindingByHashKey: any[] = [Object.create(null)];
+	public registeredVariableExpressionByHashKey: {
+		[hash: string]: Expression;
+	} = Object.create(null);
+
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
 			dynamicContext: DynamicContext,

@@ -46,6 +46,8 @@ export type SwitchCasesCases =
 export default interface ISequence {
 	value: IAsyncIterator<Value>;
 
+	canBeSafelyAdvanced: boolean;
+
 	atomize(executionParameters: ExecutionParameters): ISequence;
 	expandSequence(): ISequence;
 
@@ -117,4 +119,9 @@ export default interface ISequence {
 	 * @param onlyIfCheap In some cases, the length of a sequence is known. This can be used for optimization purposes.
 	 */
 	tryGetLength(onlyIfCheap?: boolean): IAsyncResult<number>;
+
+	/**
+	 * Try to get an item at a specific index. In some cases, this can be optimized.
+	 */
+	tryGetItemAt(index: number): IAsyncResult<Value | null>;
 }

@@ -17,8 +17,7 @@ class SimpleMapOperator extends Expression {
 	 */
 	constructor(expression1: Expression, expression2: Expression) {
 		super(new Specificity({}).add(expression1.specificity), [expression1, expression2], {
-			canBeStaticallyEvaluated:
-				expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
+			canBeStaticallyEvaluated: true
 		});
 
 		this._expression1 = expression1;

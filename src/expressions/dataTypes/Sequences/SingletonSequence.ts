@@ -8,6 +8,7 @@ import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class SingletonSequence implements ISequence {
 	public value: IAsyncIterator<Value>;
+	public canBeSafelyAdvanced = true;
 
 	private _effectiveBooleanValue: boolean;
 
@@ -92,5 +93,9 @@ export default class SingletonSequence implements ISequence {
 
 	public tryGetLength(): IAsyncResult<number> {
 		return ready(1);
+	}
+
+	public tryGetItemAt(index: number): IAsyncResult<any> {
+		return index > 0 ? ready(null) : ready(this._onlyValue);
 	}
 }

@@ -20,9 +20,7 @@ class Union extends Expression {
 			return expression.specificity;
 		}, new Specificity({}));
 		super(maxSpecificity, expressions, {
-			canBeStaticallyEvaluated: expressions.every(
-				expression => expression.canBeStaticallyEvaluated
-			)
+			canBeStaticallyEvaluated: true
 		});
 
 		this._subExpressions = expressions;

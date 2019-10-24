@@ -15,9 +15,7 @@ class AndOperator extends Expression {
 			}, new Specificity({})),
 			expressions,
 			{
-				canBeStaticallyEvaluated: expressions.every(
-					selector => selector.canBeStaticallyEvaluated
-				)
+				canBeStaticallyEvaluated: true
 			}
 		);
 		this._subExpressions = expressions;
