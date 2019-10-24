@@ -192,4 +192,17 @@ test:xxx(/)
 			}
 		]);
 	});
+
+	it('Detects updating functions that are not marked as such', () => {
+		chai.assert.throws(
+			() =>
+				registerXQueryModule(
+					`module namespace test="http://www.example.com/ns";
+declare function test:xxx ($root) {
+  insert node <a>I've been inserted.</a> into $root
+};`
+				),
+			'XUST0001'
+		);
+	});
 });
