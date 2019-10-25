@@ -82,7 +82,7 @@ describe('quantified expressions', () => {
 			it('returns false if none the satisfies options returns true',
 				() => chai.assert(evaluateXPathToBoolean('(some $x in false(), $y in true() satisfies $x = $y) = false()', documentNode)));
 
-			it.only('return false if one the satisfies option is empty', () =>
+			it('return false if one the satisfies option is empty', () =>
 				chai.assert(evaluateXPathToBoolean('(some $x in (1, 2, 3), $y in () satisfies (fn:exactly-one($x) and fn:exactly-one($y))) = false()', documentNode)));
 		});
 	});
