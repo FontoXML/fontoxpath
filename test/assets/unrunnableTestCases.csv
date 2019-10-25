@@ -15,7 +15,6 @@ fold-right-013,Tries to fold sequence of huge length
 cbcl-codepoints-to-string-021,Tries to make a string of length 65536*65536
 cbcl-codepoints-to-string-022,Tries to make a string of length 65536*65536
 RexParser,Loads missing files...
-XMark-Q4, Quantified expressions error. Can be removed once https://github.com/FontoXML/fontoxpath/issues/160 is solved.
 =====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
 fn-absintg1args-1,Error: FOCA0003: can not cast -999999999999999999 to xs:integer, it is out of bounds for JavaScript numbers.
 fn-absintg1args-2,Error: FOCA0003: can not cast 830993497117024304 to xs:integer, it is out of bounds for JavaScript numbers.
@@ -2628,6 +2627,7 @@ eqname-006,Error: No selector counterpart for: extensionExpr.
 eqname-007,Error: XPST0003: Unable to parse: "         declare decimal-format Q{http://www.example.com/ns}format grouping-separator="'";          <a xmlns:ex="http://www.example.com/ns">{format-number(1e9, "#'###'###'##0.00", 'ex:format')}</a>       ". Expected " ", "(:", "\n", "\r", or "\t" but "=" found.          declare decimal-format Q{http://www.example.com/ns}format grouping-separator[Error is around here]="'";          <a xmlns:ex="http://www.example.com/ns">{format-number(1e9, "#'###'###'##0.00", 'ex:format')}</a>
 eqname-008,AssertionError: Expected XPath <out>{ (<a xmlns:ex="http://www.example.com/ns"><ex:b>93.7</ex:b></a>) /Q{http://www&#x2e;example&#x2E;com/ns}b }</out> to resolve to the given XML. Expected <out/> to equal <out><ex:b xmlns:ex="http://www.example.com/ns">93.7</ex:b></out>
 eqname-017,AssertionError: Expected XPath string-join(<a foo="3" bar="5" xml:space="preserve"/> / @Q{http://www.w3.org/XML/1998/namespace}*, '.') to resolve to "preserve": expected false to be true
+eqname-024,Error: XPST0008, The variable x is not in scope.
 eqname-029,Error: XPST0017: Function Q{http:&#x2F;&#x2F;www.w3.org&#x2F;2005&#x2F;xpath-functions&#x2F;math}pi with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/math}pi ()"?
 eqname-031,Error: Not implemented: let expressions with namespace usage.
 eqname-032,Error: Not implemented: let expressions with namespace usage.

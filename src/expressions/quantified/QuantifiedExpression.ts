@@ -49,6 +49,15 @@ class QuantifiedExpression extends Expression {
 			}
 		);
 
+		// If any item of evaluatedInClauses is empty stop
+		if (evaluatedInClauses.some(items => {
+			return items.length === 0;
+		})) {
+			 return this._quantifier === 'every'
+					? sequenceFactory.singletonTrueSequence()
+					: sequenceFactory.singletonFalseSequence();
+		}
+
 		const indices = new Array(evaluatedInClauses.length).fill(0);
 		indices[0] = -1;
 
