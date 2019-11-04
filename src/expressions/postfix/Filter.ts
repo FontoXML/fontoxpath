@@ -58,8 +58,8 @@ class Filter extends Expression {
 						}
 						const attempt = valuesToFilter.tryGetItemAt(requestedIndex - 1);
 						if (attempt.ready) {
+							done = true;
 							if (attempt.value === null) {
-								done = true;
 								return DONE_TOKEN;
 							}
 							return ready(attempt.value);

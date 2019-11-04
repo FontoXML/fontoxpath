@@ -101,7 +101,7 @@ function doExpressionsBuild() {
 		console.log('Starting closure compiler build');
 		new Compiler({
 			assume_function_wrapper: true,
-			debug: !!doDebugBuild,
+			debug: !!true,
 			language_in: 'stable',
 			rewrite_polyfills: false,
 			generate_exports: true,
@@ -169,7 +169,7 @@ function doExpressionsBuild() {
 	});
 }
 
-var chain = Promise.resolve();
+let chain = Promise.resolve();
 if (!skipParserBuild) {
 	chain = chain.then(doPegJsBuild);
 }

@@ -55,7 +55,7 @@ describe('Dynamic function call', () => {
 		chai.assert.equal((await it.next()).done, true);
 	});
 
-	it('Fibonacci', async () => {
+	it.skip('Fibonacci', async () => {
 		const it = evaluateXPathToAsyncIterator(
 			`
 let $fib := function ($recurse, $a, $b) {

@@ -27,9 +27,11 @@ abstract class Expression {
 	public specificity: Specificity;
 	public subtree: boolean;
 	private _canBeUpdating: boolean;
+	private _canBeRecursivelyStaticlyEvaluated: boolean | null;
 	protected _canBeStaticallyEvaluated: boolean;
 	protected _childExpressions: Expression[];
 	protected _eagerlyEvaluatedValue: () => ISequence;
+	private _isStaticallyEvaluating: boolean = false;
 
 	constructor(
 		specificity: Specificity,
@@ -55,13 +57,17 @@ abstract class Expression {
 		this._eagerlyEvaluatedValue = null;
 
 		this._canBeUpdating = canBeUpdating;
+		this._canBeRecursivelyStaticlyEvaluated = null;
 	}
 
 	public canBeStaticallyEvaluated() {
+		if (this._canBeRecursivelyStaticlyEvaluated !== null) {
+			return this._canBeRecursivelyStaticlyEvaluated;
+		}
 		const canBeStaticallyEvaluated =
 			this._canBeStaticallyEvaluated &&
 			this._childExpressions.every(child => child.canBeStaticallyEvaluated());
-		this._canBeStaticallyEvaluated = canBeStaticallyEvaluated;
+		this._canBeRecursivelyStaticlyEvaluated = canBeStaticallyEvaluated;
 
 		return canBeStaticallyEvaluated;
 	}
@@ -76,12 +82,18 @@ abstract class Expression {
 		executionParameters: ExecutionParameters
 	): ISequence {
 		if (!dynamicContext || dynamicContext.contextItem === null) {
+			if (this._isStaticallyEvaluating) {
+				throw new Error('RECURSING');
+			}
 			// We must be free of context here. But: this will be memoized / constant folded on a
 			// higher level, so there is no use in keeping these intermediate results
 			return this.evaluate(dynamicContext, executionParameters);
 		}
-		if (this.canBeStaticallyEvaluated) {
-			return this.evaluateWithoutFocus(dynamicContext, executionParameters);
+		if (this.canBeStaticallyEvaluated()) {
+			this._isStaticallyEvaluating = true;
+			const toReturn = this.evaluateWithoutFocus(dynamicContext, executionParameters);
+			this._isStaticallyEvaluating = false;
+			return toReturn;
 		}
 		return this.evaluate(dynamicContext, executionParameters);
 	}

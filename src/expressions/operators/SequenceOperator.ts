@@ -32,7 +32,11 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 		if (!sequenceCallbacks.length) {
 			return sequenceFactory.empty();
 		}
-		return concatSequences(sequenceCallbacks.map(cb => cb(dynamicContext)));
+		const sequence = concatSequences(sequenceCallbacks.map(cb => cb(dynamicContext)));
+		if (this.canBeStaticallyEvaluated()) {
+			return sequenceFactory.create(sequence.getAllValues());
+		}
+		return sequence;
 	}
 }
 

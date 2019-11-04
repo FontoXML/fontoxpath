@@ -371,7 +371,7 @@ export default class IteratorBackedSequence implements ISequence {
 			if (!value.ready) {
 				return value;
 			}
-			if (index-- === 1) {
+			if (index-- === 0) {
 				return value;
 			}
 		}

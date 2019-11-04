@@ -10,13 +10,13 @@ describe('Filter (predicate)', () => {
 	it('allows spaces', () => chai.assert.equal(evaluateXPathToNumber('(1,2,3)   [. = 2]'), 2));
 	it('returns empty sequence when inputted empty sequence', () =>
 		chai.assert.isEmpty(evaluateXPathToNumbers('(1,2,3)[()]')));
-	it.only('does not blow up when going over a large set multiple times', () =>
+	it('does not blow up when going over a large set multiple times', () =>
 		// This tests a common cause of slowness for the XQuery parser
 		chai.assert.equal(
 			evaluateXPathToNumber(
 				`declare variable $arr := (${new Array(10000)
 					.fill(0)
-					.map((_, i) => i + 1)
+					.map((_, i) => i)
 					.join(',')});
  $arr[$arr[$arr[$arr[10000]]]]`,
 				null,

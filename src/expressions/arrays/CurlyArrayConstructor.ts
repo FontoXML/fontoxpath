@@ -14,7 +14,7 @@ class CurlyArrayConstructor extends Expression {
 			}),
 			members,
 			{
-				canBeStaticallyEvaluated: true
+				canBeStaticallyEvaluated: false
 			}
 		);
 

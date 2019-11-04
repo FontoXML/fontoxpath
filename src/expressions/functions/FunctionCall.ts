@@ -273,7 +273,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		super.performStaticEvaluation(staticContext);
 
 		// Try to get hold of the function reference, to see whether it is updating or not
-		if (this._functionReferenceExpression.canBeStaticallyEvaluated) {
+		if (this._functionReferenceExpression.canBeStaticallyEvaluated()) {
 			const functionRefSequence = this._functionReferenceExpression.evaluateMaybeStatically(
 				null,
 				null

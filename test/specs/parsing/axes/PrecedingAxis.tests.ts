@@ -134,25 +134,21 @@ return map{
 		const expectedBucket = getBucketForSelector('self::firstChildElement');
 
 		const testDomFacade: IDomFacade = {
-			getLastChild: (node: slimdom.Node, bucket: string|null) => {
+			getLastChild: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return node.lastChild;
 			},
-			getParentNode: (node: slimdom.Node, bucket: string|null) => {
+			getParentNode: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return node.parentNode;
 			},
-			getPreviousSibling: (node: slimdom.Node, bucket: string|null) => {
+			getPreviousSibling: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return node.previousSibling;
 			}
 		} as any;
 
-		evaluateXPathToNodes(
-			'preceding::firstChildElement',
-			secondChildNode,
-			testDomFacade
-		);
+		evaluateXPathToNodes('preceding::firstChildElement', secondChildNode, testDomFacade);
 	});
 
 	it('throws the correct error if context is absent', () => {

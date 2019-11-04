@@ -9,6 +9,11 @@ export default function createDoublyIterableSequence(sequence: ISequence): () =>
 	}
 	const savedValues: IterationResult<Value>[] = [];
 	const backingIterator = sequence.value;
+	const allValues = sequence.tryGetAllValues();
+	if (allValues.ready) {
+		const arraySequence = sequenceFactory.create(allValues.value);
+		return () => arraySequence;
+	}
 	return () => {
 		let i = 0;
 		return sequenceFactory.create({

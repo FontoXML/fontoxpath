@@ -1,4 +1,3 @@
-import ISequence from './dataTypes/ISequence';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
@@ -26,11 +25,11 @@ class VarRef extends Expression {
 	}
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
-		const variableBinding =
-			!this.canBeStaticallyEvaluated() &&
-			dynamicContext.variableBindings[this._variableBindingName];
 		// Make dynamic variables take precedence
-		if (!variableBinding) {
+		if (
+			this.canBeStaticallyEvaluated() ||
+			!dynamicContext.variableBindings[this._variableBindingName]
+		) {
 			if (this._staticallyBoundVariableValue) {
 				return this._staticallyBoundVariableValue.evaluateMaybeStatically(
 					dynamicContext,
