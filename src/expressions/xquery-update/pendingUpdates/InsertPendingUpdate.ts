@@ -1,7 +1,11 @@
-import { ConcreteNode } from '../../../domFacade/ConcreteNode';
+import { ConcreteChildNode, ConcreteNode } from '../../../domFacade/ConcreteNode';
 import { IPendingUpdate } from '../IPendingUpdate';
 export class InsertPendingUpdate extends IPendingUpdate {
-	constructor(readonly target: ConcreteNode, readonly content: ConcreteNode[], type: string) {
+	constructor(
+		readonly target: ConcreteNode,
+		readonly content: ConcreteChildNode[],
+		type: string
+	) {
 		super(type);
 	}
 	public toTransferable() {

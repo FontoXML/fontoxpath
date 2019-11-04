@@ -1,8 +1,8 @@
-import { ConcreteNode } from '../../../domFacade/ConcreteNode';
+import { ConcreteAttributeNode, ConcreteChildNode } from '../../../domFacade/ConcreteNode';
 import { IPendingUpdate } from '../IPendingUpdate';
 export class DeletePendingUpdate extends IPendingUpdate {
 	public readonly type: 'delete';
-	constructor(readonly target: ConcreteNode) {
+	constructor(readonly target: ConcreteAttributeNode | ConcreteChildNode) {
 		super('delete');
 	}
 	public toTransferable() {
