@@ -1,10 +1,10 @@
-import { ConcreteNode } from '../../../domFacade/ConcreteNode';
+import { ConcreteElementNode } from '../../../domFacade/ConcreteNode';
 import QName from '../../dataTypes/valueTypes/QName';
 import { IPendingUpdate } from '../IPendingUpdate';
 export class RenamePendingUpdate extends IPendingUpdate {
 	public newName: QName;
 	public readonly type: 'rename';
-	constructor(readonly target: ConcreteNode, newName: QName) {
+	constructor(readonly target: ConcreteElementNode, newName: QName) {
 		super('rename');
 		this.newName = newName.buildPrefixedName
 			? newName

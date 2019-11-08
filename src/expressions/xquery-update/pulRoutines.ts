@@ -1,3 +1,6 @@
+import IDocumentWriter from '../../documentWriter/IDocumentWriter';
+import IDomFacade from '../../domFacade/IDomFacade';
+import INodesFactory from '../../nodesFactory/INodesFactory';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import QName from '../dataTypes/valueTypes/QName';
 import {
@@ -14,17 +17,26 @@ import {
 	replaceValue
 } from './applyPulPrimitives';
 import { IPendingUpdate } from './IPendingUpdate';
+import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';
+import { InsertAfterPendingUpdate } from './pendingUpdates/InsertAfterPendingUpdate';
+import { InsertAttributesPendingUpdate } from './pendingUpdates/InsertAttributesPendingUpdate';
+import { InsertBeforePendingUpdate } from './pendingUpdates/InsertBeforePendingUpdate';
+import { InsertIntoAsFirstPendingUpdate } from './pendingUpdates/InsertIntoAsFirstPendingUpdate';
+import { InsertIntoAsLastPendingUpdate } from './pendingUpdates/InsertIntoAsLastPendingUpdate';
 import { RenamePendingUpdate } from './pendingUpdates/RenamePendingUpdate';
+import { ReplaceElementContentPendingUpdate } from './pendingUpdates/ReplaceElementContentPendingUpdate';
 import { ReplaceNodePendingUpdate } from './pendingUpdates/ReplaceNodePendingUpdate';
+import { ReplaceValuePendingUpdate } from './pendingUpdates/ReplaceValuePendingUpdate';
 import { errXUDY0015, errXUDY0016, errXUDY0017, errXUDY0024 } from './XQueryUpdateFacilityErrors';
+import { InsertIntoPendingUpdate } from './pendingUpdates/InsertIntoPendingUpdate';
 
 export const applyUpdates = (
-	pul,
+	pul: IPendingUpdate[],
 	_revalidationModule,
 	_inheritNamespaces,
-	domFacade,
-	nodesFactory,
-	documentWriter
+	domFacade: IDomFacade,
+	nodesFactory: INodesFactory,
+	documentWriter: IDocumentWriter
 ) => {
 	// 1. Checks the update primitives on $pul for compatibility using upd:compatibilityCheck.
 	compatibilityCheck(pul, domFacade);
@@ -36,16 +48,30 @@ export const applyUpdates = (
 	).forEach(pu => {
 		switch (pu.type) {
 			case 'insertInto':
-				insertInto(pu.target, pu.content, documentWriter);
+				const insertPu = pu as InsertIntoPendingUpdate;
+				insertInto(insertPu.target, insertPu.content, documentWriter);
 				break;
 			case 'insertAttributes':
-				insertAttributes(pu.target, pu.content, domFacade, documentWriter);
+				const insertAttributesPu = pu as InsertAttributesPendingUpdate;
+				insertAttributes(
+					insertAttributesPu.target,
+					insertAttributesPu.content,
+					domFacade,
+					documentWriter
+				);
 				break;
 			case 'rename':
-				rename(pu.target, pu.newName, domFacade, nodesFactory, documentWriter);
+				const renamePu = pu as RenamePendingUpdate;
+				rename(renamePu.target, renamePu.newName, domFacade, nodesFactory, documentWriter);
 				break;
 			case 'replaceValue':
-				replaceValue(pu.target, pu.stringValue, domFacade, documentWriter);
+				const replaceValuePu = pu as ReplaceValuePendingUpdate;
+				replaceValue(
+					replaceValuePu.target,
+					replaceValuePu.stringValue,
+					domFacade,
+					documentWriter
+				);
 				break;
 		}
 	});
@@ -59,33 +85,50 @@ export const applyUpdates = (
 	).forEach(pu => {
 		switch (pu.type) {
 			case 'insertAfter':
-				insertAfter(pu.target, pu.content, domFacade, documentWriter);
+				const insertAfterPu = pu as InsertAfterPendingUpdate;
+				insertAfter(insertAfterPu.target, insertAfterPu.content, domFacade, documentWriter);
 				break;
 			case 'insertBefore':
-				insertBefore(pu.target, pu.content, domFacade, documentWriter);
+				const insertBeforePu = pu as InsertBeforePendingUpdate;
+				insertBefore(
+					insertBeforePu.target,
+					insertBeforePu.content,
+					domFacade,
+					documentWriter
+				);
 				break;
 			case 'insertIntoAsFirst':
-				insertIntoAsFirst(pu.target, pu.content, domFacade, documentWriter);
+				const insertAsFirstPu = pu as InsertIntoAsFirstPendingUpdate;
+				insertIntoAsFirst(
+					insertAsFirstPu.target,
+					insertAsFirstPu.content,
+					domFacade,
+					documentWriter
+				);
 				break;
 			case 'insertIntoAsLast':
-				insertIntoAsLast(pu.target, pu.content, documentWriter);
+				const insertAsLastPu = pu as InsertIntoAsLastPendingUpdate;
+				insertIntoAsLast(insertAsLastPu.target, insertAsLastPu.content, documentWriter);
 				break;
 		}
 	});
 
 	// c. Next, all upd:replaceNode primitives are applied.
 	pul.filter(pu => pu.type === 'replaceNode').forEach(pu => {
-		replaceNode(pu.target, pu.replacement, domFacade, documentWriter);
+		const replacePu = pu as ReplaceNodePendingUpdate;
+		replaceNode(replacePu.target, replacePu.replacement, domFacade, documentWriter);
 	});
 
 	// d. Next, all upd:replaceElementContent primitives are applied.
 	pul.filter(pu => pu.type === 'replaceElementContent').forEach(pu => {
-		replaceElementContent(pu.target, pu.text, domFacade, documentWriter);
+		const replacePu = pu as ReplaceElementContentPendingUpdate;
+		replaceElementContent(replacePu.target, replacePu.text, domFacade, documentWriter);
 	});
 
 	// e. Next, all upd:delete primitives are applied.
 	pul.filter(pu => pu.type === 'delete').forEach(pu => {
-		deletePu(pu.target, domFacade, documentWriter);
+		const deletePendingUpdate = pu as DeletePendingUpdate;
+		deletePu(deletePendingUpdate.target, domFacade, documentWriter);
 	});
 
 	// Point 3. to 7. are either not necessary or should be done by the caller.
@@ -185,6 +228,6 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 	});
 };
 
-export const mergeUpdates = (pul1, ...puls) => {
+export const mergeUpdates = (pul1: IPendingUpdate[], ...puls: IPendingUpdate[][]) => {
 	return pul1.concat(...puls.filter(Boolean));
 };

@@ -1,12 +1,10 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	evaluateUpdatingExpression
-} from 'fontoxpath';
+import { evaluateUpdatingExpression, executePendingUpdateList } from 'fontoxpath';
 import assertUpdateList from './assertUpdateList';
 
-let documentNode;
+let documentNode: slimdom.Document;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
@@ -22,7 +20,8 @@ describe('InsertExpression', () => {
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [
@@ -54,7 +53,8 @@ describe('InsertExpression', () => {
 			{
 				node: element
 			},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 
@@ -62,6 +62,29 @@ describe('InsertExpression', () => {
 		chai.assert.equal(element.childNodes.length, 0);
 	});
 
+	it('can insert attribute nodes in the null namespace', async () => {
+		const element = documentNode.appendChild(
+			documentNode.createElementNS('http://www.example.com/ns', 'element')
+		);
+
+		const result = await evaluateUpdatingExpression(
+			`insert node attribute abc {"value"} into $node`,
+			documentNode,
+			null,
+			{
+				node: element
+			},
+			{}
+		);
+
+		chai.assert.deepEqual(result.xdmValue, []);
+
+		chai.assert.equal(result.pendingUpdateList.length, 1);
+
+		executePendingUpdateList(result.pendingUpdateList);
+
+		chai.assert.equal(element.getAttribute('abc'), 'value');
+	});
 
 	it('allows insert something with something asynchronous', async () => {
 		const element = documentNode.appendChild(documentNode.createElement('element'));
@@ -75,7 +98,8 @@ insert node fontoxpath:sleep(/element, 100) into fontoxpath:sleep(/element, 1)
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [

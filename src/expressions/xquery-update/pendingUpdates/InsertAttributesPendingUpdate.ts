@@ -1,10 +1,10 @@
-import { ConcreteNode } from '../../../domFacade/ConcreteNode';
+import { ConcreteElementNode } from '../../../domFacade/ConcreteNode';
 import { Attr } from '../../../types/Types';
 import { IPendingUpdate } from '../IPendingUpdate';
 
 export class InsertAttributesPendingUpdate extends IPendingUpdate {
 	public readonly type: 'insertAttributes';
-	constructor(readonly target: ConcreteNode, readonly content: Attr[]) {
+	constructor(readonly target: ConcreteElementNode, readonly content: Attr[]) {
 		super('insertAttributes');
 	}
 	public toTransferable() {

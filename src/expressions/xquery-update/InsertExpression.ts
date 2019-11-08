@@ -1,8 +1,15 @@
+import { ConcreteChildNode, ConcreteNode } from '../../domFacade/ConcreteNode';
+import { Attr, Element } from '../../types/Types';
+import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import Specificity from '../Specificity';
-import UpdatingExpression from './UpdatingExpression';
-
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import parseContent from '../xquery/ElementConstructorContent';
+import { IPendingUpdate } from './IPendingUpdate';
 import {
 	insertAfter,
 	insertAttributes,
@@ -12,14 +19,7 @@ import {
 	insertIntoAsLast
 } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
-
-import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
-import parseContent from '../xquery/ElementConstructorContent';
-
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
-import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import UpdatingExpression from './UpdatingExpression';
 import {
 	errXUDY0023,
 	errXUDY0024,
@@ -31,7 +31,6 @@ import {
 	errXUTY0006,
 	errXUTY0022
 } from './XQueryUpdateFacilityErrors';
-
 const ELEMENT_NODE = 1;
 
 export enum TargetChoice {
@@ -42,7 +41,30 @@ export enum TargetChoice {
 	INSERT_INTO_AS_LAST = 5
 }
 
-function buildPendingUpdates(targetChoice, target, parent, alist, clist) {
+function testNamespaceURIForAttribute(targetElement, attributeNode: Attr, namespaceBindings): void {
+	const prefix = attributeNode.prefix || '';
+
+	// b. No attribute node in $alist may have a QName whose implied namespace binding conflicts with a namespace binding in the "namespaces" property of $target [err:XUDY0023].
+	const boundNamespaceURI = prefix ? targetElement.lookupNamespaceURI(prefix) : null;
+	if (boundNamespaceURI && boundNamespaceURI !== attributeNode.namespaceURI) {
+		throw errXUDY0023(attributeNode.namespaceURI);
+	}
+	// c. Multiple attribute nodes in $alist may not have QNames whose implied namespace bindings conflict with each other [err:XUDY0024].
+	const alreadyDeclaredNamespace = namespaceBindings[prefix];
+	if (alreadyDeclaredNamespace) {
+		if (attributeNode.namespaceURI !== alreadyDeclaredNamespace) {
+			throw errXUDY0024(attributeNode.namespaceURI);
+		}
+	}
+}
+
+function buildPendingUpdates(
+	targetChoice: TargetChoice,
+	target: Element,
+	parent: Element,
+	alist: Attr[],
+	clist: ConcreteChildNode[]
+) {
 	const updates = [];
 	switch (targetChoice) {
 		// a. If as first into is specified, the pending update list includes the following update primitives:
@@ -106,7 +128,7 @@ function buildPendingUpdates(targetChoice, target, parent, alist, clist) {
 
 class InsertExpression extends UpdatingExpression {
 	private _sourceExpression: Expression;
-	private _targetChoice: any;
+	private _targetChoice: TargetChoice;
 	private _targetExpression: Expression;
 
 	constructor(
@@ -137,12 +159,12 @@ class InsertExpression extends UpdatingExpression {
 			executionParameters
 		);
 
-		let alist;
-		let clist;
-		let sourceUpdates;
+		let alist: Attr[];
+		let clist: ConcreteChildNode[];
+		let sourceUpdates: IPendingUpdate[];
 
-		let target;
-		let targetUpdates;
+		let target: Value;
+		let targetUpdates: IPendingUpdate[];
 		let parent;
 		return {
 			next: () => {
@@ -218,57 +240,27 @@ class InsertExpression extends UpdatingExpression {
 				}
 
 				// 3. If $alist is not empty and any form of into is specified, the following checks are performed:
-				if (alist.length && this._targetChoice >= TargetChoice.INSERT_INTO) {
-					// a. $target must be an element node [err:XUTY0022].
-					if (!isSubTypeOf(target.type, 'element()')) {
-						throw errXUTY0022();
+				if (alist.length) {
+					if (this._targetChoice >= TargetChoice.INSERT_INTO) {
+						// a. $target must be an element node [err:XUTY0022].
+						if (!isSubTypeOf(target.type, 'element()')) {
+							throw errXUTY0022();
+						}
+					} else {
+						// a. parent($target) must be an element node [err:XUDY0030].
+						if (parent.nodeType !== ELEMENT_NODE) {
+							throw errXUDY0030();
+						}
 					}
 
 					alist.reduce((namespaceBindings, attributeNode) => {
 						const prefix = attributeNode.prefix || '';
 
-						// b. No attribute node in $alist may have a QName whose implied namespace binding conflicts with a namespace binding in the "namespaces" property of $target [err:XUDY0023].
-						const boundNamespaceURI = target.value.lookupNamespaceURI(prefix);
-						if (boundNamespaceURI && boundNamespaceURI !== attributeNode.namespaceURI) {
-							throw errXUDY0023(attributeNode.namespaceURI);
-						}
-
-						// c. Multiple attribute nodes in $alist may not have QNames whose implied namespace bindings conflict with each other [err:XUDY0024].
-						const alreadyDeclaredNamespace = namespaceBindings[prefix];
-						if (alreadyDeclaredNamespace) {
-							if (attributeNode.namespaceURI !== alreadyDeclaredNamespace) {
-								throw errXUDY0024(attributeNode.namespaceURI);
-							}
-						}
-
-						namespaceBindings[prefix] = attributeNode.namespaceURI;
-						return namespaceBindings;
-					}, []);
-				}
-
-				// 4. If $alist is not empty and before or after is specified, the following checks are performed:
-				if (alist.length && this._targetChoice < TargetChoice.INSERT_INTO) {
-					// a. parent($target) must be an element node [err:XUDY0030].
-					if (parent.nodeType !== ELEMENT_NODE) {
-						throw errXUDY0030();
-					}
-
-					alist.reduce((namespaceBindings, attributeNode) => {
-						const prefix = attributeNode.prefix || '';
-
-						// b. No attribute node in $alist may have a QName whose implied namespace binding conflicts with a namespace binding in the "namespaces" property of parent($target) [err:XUDY0023].
-						const boundNamespaceURI = parent.lookupNamespaceURI(prefix);
-						if (boundNamespaceURI && boundNamespaceURI !== attributeNode.namespaceURI) {
-							throw errXUDY0023(attributeNode.namespaceURI);
-						}
-
-						// c. Multiple attribute nodes in $alist may not have QNames whose implied namespace bindings conflict with each other [err:XUDY0024].
-						const alreadyDeclaredNamespace = namespaceBindings[prefix];
-						if (alreadyDeclaredNamespace) {
-							if (attributeNode.namespaceURI !== alreadyDeclaredNamespace) {
-								throw errXUDY0024(attributeNode.namespaceURI);
-							}
-						}
+						testNamespaceURIForAttribute(
+							target.value,
+							attributeNode,
+							namespaceBindings
+						);
 
 						namespaceBindings[prefix] = attributeNode.namespaceURI;
 						return namespaceBindings;

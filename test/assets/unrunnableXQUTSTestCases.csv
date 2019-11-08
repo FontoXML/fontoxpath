@@ -69,7 +69,6 @@ id-insert-expr-083-no-inherit,Error: Not implemented: only module imports, names
 id-insert-expr-084-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-insert-expr-085-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-insert-expr-086-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-id-insert-expr-094,Error: XUDY0023: The namespace binding null is conflicting.
 complex-deletes-q12,Error: Not implemented: orderByClause is not implemented yet.
 id-replace-expr-045,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-replace-expr-045-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules

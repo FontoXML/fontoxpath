@@ -1,5 +1,10 @@
-import { ConcreteNode } from '../../domFacade/ConcreteNode';
-import { Attr, Element, Text } from '../../types/Types';
+import {
+	ConcreteAttributeNode,
+	ConcreteChildNode,
+	ConcreteDocumentNode,
+	ConcreteElementNode,
+	ConcreteTextNode
+} from '../../domFacade/ConcreteNode';
 import QName from '../dataTypes/valueTypes/QName';
 import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';
 import { InsertAfterPendingUpdate } from './pendingUpdates/InsertAfterPendingUpdate';
@@ -13,46 +18,64 @@ import { ReplaceElementContentPendingUpdate } from './pendingUpdates/ReplaceElem
 import { ReplaceNodePendingUpdate } from './pendingUpdates/ReplaceNodePendingUpdate';
 import { ReplaceValuePendingUpdate } from './pendingUpdates/ReplaceValuePendingUpdate';
 
-export const deletePu = (target: ConcreteNode) => {
+export const deletePu = (target: ConcreteAttributeNode | ConcreteChildNode) => {
 	return new DeletePendingUpdate(target);
 };
 
-export const insertAfter = (target: ConcreteNode, content: ConcreteNode[]) => {
+export const insertAfter = (target: ConcreteChildNode, content: ConcreteChildNode[]) => {
 	return new InsertAfterPendingUpdate(target, content);
 };
 
-export const insertBefore = (target: ConcreteNode, content: ConcreteNode[]) => {
+export const insertBefore = (
+	target: ConcreteElementNode | import('../../domFacade/ConcreteNode').ConcreteDocumentNode,
+	content: ConcreteChildNode[]
+) => {
 	return new InsertBeforePendingUpdate(target, content);
 };
 
-export const insertInto = (target: ConcreteNode, content: ConcreteNode[]) => {
+export const insertInto = (target: ConcreteElementNode, content: ConcreteChildNode[]) => {
 	return new InsertIntoPendingUpdate(target, content);
 };
 
-export const insertIntoAsFirst = (target: ConcreteNode, content: ConcreteNode[]) => {
+export const insertIntoAsFirst = (
+	target: ConcreteElementNode | import('../../domFacade/ConcreteNode').ConcreteDocumentNode,
+	content: ConcreteChildNode[]
+) => {
 	return new InsertIntoAsFirstPendingUpdate(target, content);
 };
 
-export const insertIntoAsLast = (target: ConcreteNode, content: ConcreteNode[]) => {
+export const insertIntoAsLast = (
+	target: ConcreteElementNode | ConcreteDocumentNode,
+	content: ConcreteChildNode[]
+) => {
 	return new InsertIntoAsLastPendingUpdate(target, content);
 };
 
-export const insertAttributes = (target: Element, content: Attr[]) => {
+export const insertAttributes = (target: ConcreteElementNode, content: ConcreteAttributeNode[]) => {
 	return new InsertAttributesPendingUpdate(target, content);
 };
 
-export const rename = (target: ConcreteNode, newName: QName) => {
+export const rename = (target, newName: QName) => {
 	return new RenamePendingUpdate(target, newName);
 };
 
-export const replaceElementContent = (target: Element, text: Text | null) => {
+export const replaceElementContent = (
+	target: ConcreteElementNode,
+	text: ConcreteTextNode | null
+) => {
 	return new ReplaceElementContentPendingUpdate(target, text);
 };
 
-export const replaceNode = (target: ConcreteNode, replacement: ConcreteNode[]) => {
+export const replaceNode = (
+	target: ConcreteAttributeNode | ConcreteChildNode,
+	replacement: (ConcreteAttributeNode | ConcreteChildNode)[]
+) => {
 	return new ReplaceNodePendingUpdate(target, replacement);
 };
 
-export const replaceValue = (target: ConcreteNode, stringValue: string) => {
+export const replaceValue = (
+	target: ConcreteElementNode | ConcreteAttributeNode,
+	stringValue: string
+) => {
 	return new ReplaceValuePendingUpdate(target, stringValue);
 };
