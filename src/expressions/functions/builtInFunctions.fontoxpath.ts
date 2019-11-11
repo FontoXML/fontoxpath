@@ -1,22 +1,19 @@
-import createAtomicValue from '../dataTypes/createAtomicValue';
-import createNodeValue from '../dataTypes/createNodeValue';
-import sequenceFactory from '../dataTypes/sequenceFactory';
-import DynamicContext from '../DynamicContext';
-import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
-
-import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-
+import astHelper from '../../parsing/astHelper';
 import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
-
-import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
-import StaticContext from '../StaticContext';
-import FunctionDefinitionType from './FunctionDefinitionType';
-
-import astHelper from '../../parsing/astHelper';
+import processProlog from '../../parsing/processProlog';
+import createAtomicValue from '../dataTypes/createAtomicValue';
+import createNodeValue from '../dataTypes/createNodeValue';
 import MapValue from '../dataTypes/MapValue';
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
+import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import StaticContext from '../StaticContext';
+import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fontoxpathEvaluate: FunctionDefinitionType = (
 	_dynamicContext,
@@ -49,7 +46,21 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 					: sequenceFactory.empty();
 				delete variables['.'];
 
+				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
+					prefix => staticContext.resolveNamespace(prefix),
+					Object.keys(variables).reduce((vars, varName) => {
+						vars[varName] = varName;
+						return vars;
+					}, {})
+				);
+				const innerStaticContext = new StaticContext(executionSpecificStaticContext);
+
 				const ast = parseExpression(queryString, { allowXQuery: false });
+
+				const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
+				if (prolog) {
+					processProlog(prolog, innerStaticContext);
+				}
 				const queryBodyContents = astHelper.followPath(ast, [
 					'mainModule',
 					'queryBody',
@@ -58,17 +69,10 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 
 				const selector = compileAstToExpression(queryBodyContents, {
 					allowUpdating: false,
-					allowXQuery: false
+					allowXQuery: true
 				});
-				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
-					prefix => staticContext.resolveNamespace(prefix),
-					Object.keys(variables).reduce((vars, varName) => {
-						vars[varName] = varName;
-						return vars;
-					}, {})
-				);
 
-				selector.performStaticEvaluation(new StaticContext(executionSpecificStaticContext));
+				selector.performStaticEvaluation(innerStaticContext);
 
 				const variableBindings = Object.keys(variables).reduce(
 					(variablesByBindingKey, varName) => {
