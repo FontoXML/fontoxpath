@@ -1,11 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	getBucketForSelector,
-	evaluateXPathToBoolean,
-	evaluateXPathToFirstNode
-} from 'fontoxpath';
+import { getBucketForSelector, evaluateXPathToBoolean, evaluateXPathToFirstNode } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -25,37 +21,55 @@ describe('nameTests', () => {
 
 	it('allows wildcards for just the localName part', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'ns:someElement');
-		chai.assert.isTrue(evaluateXPathToBoolean('self::someNs:*', element, null, null, {
-			namespaceResolver: () => 'http://fontoxml.com/ns/'
-		}));
+		chai.assert.isTrue(
+			evaluateXPathToBoolean('self::someNs:*', element, null, null, {
+				namespaceResolver: () => 'http://fontoxml.com/ns/'
+			})
+		);
 	});
 
 	it('allows wildcards for just the namespace part', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'ns:someElement');
-		chai.assert.isTrue(evaluateXPathToBoolean('self::*:someElement', element, null, null, {
-			namespaceResolver: () => 'http://fontoxml.com/ns/'
-		}));
+		chai.assert.isTrue(
+			evaluateXPathToBoolean('self::*:someElement', element, null, null, {
+				namespaceResolver: () => 'http://fontoxml.com/ns/'
+			})
+		);
 	});
 
 	it('allows nodeNames containing namespaces', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
-		chai.assert.equal(evaluateXPathToFirstNode('self::someNamespace:someElement', element, null, null, { namespaceResolver: () => 'http://fontoxml.com/ns/' }), element);
+		chai.assert.equal(
+			evaluateXPathToFirstNode('self::someNamespace:someElement', element, null, null, {
+				namespaceResolver: () => 'http://fontoxml.com/ns/'
+			}),
+			element
+		);
 	});
 
 	it('allows nodeNames containing namespace URIs', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
-		chai.assert.equal(evaluateXPathToFirstNode('self::Q{http://fontoxml.com/ns/}someElement', element), element);
+		chai.assert.equal(
+			evaluateXPathToFirstNode('self::Q{http://fontoxml.com/ns/}someElement', element),
+			element
+		);
 	});
 
 	it('allows wildcard tests with a namespace URI', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
-		chai.assert.equal(evaluateXPathToFirstNode('self::Q{http://fontoxml.com/ns/}*', element), element);
+		chai.assert.equal(
+			evaluateXPathToFirstNode('self::Q{http://fontoxml.com/ns/}*', element),
+			element
+		);
 	});
 
 	it('allows wildcard tests with an empty namespace URI', () => {
 		const element = documentNode.createElementNS('', 'someElement');
 		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}*', element), element);
-		const elementWithNamespace = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
+		const elementWithNamespace = documentNode.createElementNS(
+			'http://fontoxml.com/ns/',
+			'someElement'
+		);
 		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}*', elementWithNamespace), null);
 	});
 
@@ -63,13 +77,23 @@ describe('nameTests', () => {
 		const element = documentNode.createElement('someElement');
 		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}someElement', element), element);
 
-		const elementWithNamespace = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
-		chai.assert.equal(evaluateXPathToFirstNode('self::Q{}someElement', elementWithNamespace), null, 'Empty namespace should not match non-absent namespace.');
+		const elementWithNamespace = documentNode.createElementNS(
+			'http://fontoxml.com/ns/',
+			'someElement'
+		);
+		chai.assert.equal(
+			evaluateXPathToFirstNode('self::Q{}someElement', elementWithNamespace),
+			null,
+			'Empty namespace should not match non-absent namespace.'
+		);
 	});
 
 	it('throws when seeing undeclared prefixes', () => {
 		documentNode.appendChild(documentNode.createElement('someElement'));
-		chai.assert.throws(() => evaluateXPathToBoolean('//someNonExistingNS:*', documentNode), 'XPST0081');
+		chai.assert.throws(
+			() => evaluateXPathToBoolean('//someNonExistingNS:*', documentNode),
+			'XPST0081'
+		);
 	});
 
 	describe('bucketing', () => {

@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import { evaluateXPath, evaluateXPathToBoolean } from 'fontoxpath';
 import evaluateXPathToNumber from 'fontoxpath/evaluateXPathToNumber';
-import evaluateXPathToString from "fontoxpath/evaluateXPathToString";
+import evaluateXPathToString from 'fontoxpath/evaluateXPathToString';
 import * as slimdom from 'slimdom';
 
 let documentNode;
@@ -19,7 +19,8 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE })
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			)
 		);
 	});
 	it('create a more complex variable declaration', () => {
@@ -31,7 +32,10 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), 7);
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			7
+		);
 	});
 
 	it('create a more complex variable declaration using variables', () => {
@@ -44,7 +48,10 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), 2);
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			2
+		);
 	});
 	it('create a more complex variable declaration using variables', () => {
 		chai.assert.equal(
@@ -55,7 +62,10 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), 'hello');
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'hello'
+		);
 	});
 	it('allows external variables with defaults', () => {
 		chai.assert.equal(
@@ -65,7 +75,10 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), '12');
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'12'
+		);
 	});
 
 	it('allows external variables with defaults (using the same variable)', () => {
@@ -77,7 +90,10 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{ nx: 44 },
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), '44');
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'44'
+		);
 	});
 
 	it('allows external variables with defaults and external parameters', () => {
@@ -88,7 +104,10 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{ nxa: 33 },
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), '33');
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'33'
+		);
 	});
 
 	it('Inline function accessing global variable in XQuery', () => {
@@ -100,7 +119,10 @@ describe('VariableDeclaration', () => {
 				documentNode,
 				undefined,
 				{ p: 7 },
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }), 19);
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			19
+		);
 	});
 
 	it('Test node operations and variable declaration scope', () =>

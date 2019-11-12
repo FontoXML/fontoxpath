@@ -14,7 +14,12 @@ describe('argumentListToString()', () => {
 	});
 
 	it('returns type when given a Sequence with multiple items', () => {
-		var argumentList = [sequenceFactory.create([{ type: 'xs:anyAtomicType', value: null }, { type: 'xs:anyAtomicType', value: null }])];
+		var argumentList = [
+			sequenceFactory.create([
+				{ type: 'xs:anyAtomicType', value: null },
+				{ type: 'xs:anyAtomicType', value: null }
+			])
+		];
 		chai.assert.equal(argumentListToString(argumentList), 'xs:anyAtomicType+');
 	});
 
@@ -22,7 +27,14 @@ describe('argumentListToString()', () => {
 		const argumentList = [
 			sequenceFactory.create([]),
 			sequenceFactory.create([{ type: 'xs:anyAtomicType', value: null }]),
-			sequenceFactory.create([{ type: 'xs:anyAtomicType', value: null }, { type: 'xs:anyAtomicType', value: null }])];
-		chai.assert.equal(argumentListToString(argumentList), 'item()?, xs:anyAtomicType, xs:anyAtomicType+');
+			sequenceFactory.create([
+				{ type: 'xs:anyAtomicType', value: null },
+				{ type: 'xs:anyAtomicType', value: null }
+			])
+		];
+		chai.assert.equal(
+			argumentListToString(argumentList),
+			'item()?, xs:anyAtomicType, xs:anyAtomicType+'
+		);
 	});
 });

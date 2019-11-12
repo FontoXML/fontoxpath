@@ -48,15 +48,15 @@ describe('preceding-sibling', () => {
 		const expectedBucket = getBucketForSelector('self::firstChildElement');
 
 		const testDomFacade: IDomFacade = {
-			getLastChild: (node: slimdom.Node, bucket: string|null) => {
+			getLastChild: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(bucket, expectedBucket);
 				return node.lastChild;
 			},
-			getParentNode: (node: slimdom.Node, bucket: string|null) => {
+			getParentNode: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(bucket, expectedBucket);
 				return node.parentNode;
 			},
-			getPreviousSibling: (node: slimdom.Node, bucket: string|null) => {
+			getPreviousSibling: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(bucket, expectedBucket);
 				return node.previousSibling;
 			}

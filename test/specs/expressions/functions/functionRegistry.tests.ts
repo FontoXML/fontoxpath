@@ -4,31 +4,28 @@ import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry'
 
 describe('functionRegistry.getFunctionByArity', () => {
 	before(() => {
-		registerCustomXPathFunction(
-			'fonto:functionName',
-			[],
-			'xs:boolean',
-			function () {});
+		registerCustomXPathFunction('fonto:functionName', [], 'xs:boolean', function() {});
 
 		registerCustomXPathFunction(
 			'fonto:functionName',
 			['xs:boolean'],
 			'xs:boolean',
-			function () {});
+			function() {}
+		);
 
-		registerCustomXPathFunction(
-			'fonto:otherFunctionName',
-			[],
-			'xs:boolean',
-			function () {});
+		registerCustomXPathFunction('fonto:otherFunctionName', [], 'xs:boolean', function() {});
 	});
 
 	it('return null if a custom function cannot be found', () => {
-		chai.assert.isNull(functionRegistry.getFunctionByArity('fonto:bla', 'functionLocalName', 0));
+		chai.assert.isNull(
+			functionRegistry.getFunctionByArity('fonto:bla', 'functionLocalName', 0)
+		);
 	});
 
 	it('return null if a custom function with a given arity cannot be found', () => {
-		chai.assert.isNull(functionRegistry.getFunctionByArity('fonto:functionName', 'functionLocalName', 3));
+		chai.assert.isNull(
+			functionRegistry.getFunctionByArity('fonto:functionName', 'functionLocalName', 3)
+		);
 	});
 
 	it('return null if a built in function cannot be found', () => {

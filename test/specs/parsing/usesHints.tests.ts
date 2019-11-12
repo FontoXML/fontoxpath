@@ -44,7 +44,7 @@ function buildDomFacade(...shouldNotBeTraversed: slimdom.Node[]): IDomFacade {
 			throwIfShouldNotTraversed(node);
 			return externalDomFacade.getAttribute(node, attributeName);
 		}
-		public getChildNodes(node: slimdom.Node){
+		public getChildNodes(node: slimdom.Node) {
 			throwIfShouldNotTraversed(node);
 			return externalDomFacade.getChildNodes(node);
 		}
@@ -55,7 +55,6 @@ function buildDomFacade(...shouldNotBeTraversed: slimdom.Node[]): IDomFacade {
 		public getFirstChild(node: slimdom.Node) {
 			throwIfShouldNotTraversed(node);
 			return externalDomFacade.getFirstChild(node);
-
 		}
 		public getLastChild(node: slimdom.Node) {
 			throwIfShouldNotTraversed(node);
@@ -89,9 +88,7 @@ describe('uses hints', () => {
 			buildDomFacade(descendant)
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('skips the subtree for outermost() with child step expression', () => {
@@ -104,9 +101,7 @@ describe('uses hints', () => {
 			buildDomFacade(descendant)
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('skips the subtree for outermost() with simple map operator', () => {
@@ -119,9 +114,7 @@ describe('uses hints', () => {
 			buildDomFacade(descendant)
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('skips the subtree for outermost() with sequence expression', () => {
@@ -137,15 +130,14 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		nodes.sort(node => node.nodeName === 'bar' ? 1 : -1);
+		nodes.sort(node => (node.nodeName === 'bar' ? 1 : -1));
 
-		chai.assert.deepEqual(nodes, evaluateXPathToNodes<slimdom.Element>(
-			'(root/foo, <bar/>)',
-			documentNode,
-			null,
-			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-		));
+		chai.assert.deepEqual(
+			nodes,
+			evaluateXPathToNodes<slimdom.Element>('(root/foo, <bar/>)', documentNode, null, null, {
+				language: evaluateXPath.XQUERY_3_1_LANGUAGE
+			})
+		);
 
 		// It is successful when the dom facade does not throw
 		nodes = evaluateXPathToNodes<slimdom.Element>(
@@ -156,15 +148,14 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		nodes.sort(node => node.nodeName === 'bar' ? 1 : -1);
+		nodes.sort(node => (node.nodeName === 'bar' ? 1 : -1));
 
-		chai.assert.deepEqual(nodes, evaluateXPathToNodes<slimdom.Element>(
-			'(root/foo, <bar/>)',
-			documentNode,
-			null,
-			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-		));
+		chai.assert.deepEqual(
+			nodes,
+			evaluateXPathToNodes<slimdom.Element>('(root/foo, <bar/>)', documentNode, null, null, {
+				language: evaluateXPath.XQUERY_3_1_LANGUAGE
+			})
+		);
 	});
 
 	it('does not skip the subtree in for loop binding for outermost()', () => {
@@ -192,9 +183,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('skips the subtree for outermost() with filter', () => {
@@ -209,9 +198,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('skips the subtree for outermost() with tail', () => {
@@ -226,9 +213,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('skips the subtree for outermost() with subsequence', () => {
@@ -243,9 +228,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('does not skip the subtree in for-each binding for outermost()', () => {
@@ -273,9 +256,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('does not skip the subtree for outermost() with except', () => {
@@ -334,9 +315,7 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
 	it('skips the subtree for outermost() with async', async () => {
@@ -373,8 +352,6 @@ describe('uses hints', () => {
 			}
 		);
 
-		chai.assert.deepEqual(nodes, [
-			documentNode.documentElement.firstChild
-		]);
+		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 });

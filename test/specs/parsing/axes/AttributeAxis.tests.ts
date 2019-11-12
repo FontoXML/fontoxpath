@@ -160,7 +160,7 @@ describe('attribute', () => {
 		const expectedBucket = getBucketForSelector('self::xxx');
 
 		const testDomFacade: IDomFacade = {
-			getAllAttributes: (node, bucket: string|null) => {
+			getAllAttributes: (node, bucket: string | null) => {
 				chai.assert.equal(bucket, expectedBucket);
 				return node.attributes;
 			}

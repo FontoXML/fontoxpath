@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import { evaluateXPathToAsyncIterator } from 'fontoxpath';
-export default async function evaluateXPathToAsyncSingleton (...args) {
+export default async function evaluateXPathToAsyncSingleton(...args) {
 	const iterator = evaluateXPathToAsyncIterator.apply(null, args);
 	const first = await iterator.next();
 	if (first.done) {

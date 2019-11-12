@@ -7,7 +7,7 @@ if (!fs.promises) {
 	};
 }
 
-function createAssetPath (assetPath) {
+function createAssetPath(assetPath) {
 	return path.join('test', 'assets', assetPath);
 }
 
@@ -15,20 +15,20 @@ function createAssetPath (assetPath) {
  * @class
  * Wrapper for fs for reading test assets
  */
-export default new class testFs {
-	lstatSync (assetPath) {
+export default new (class testFs {
+	lstatSync(assetPath) {
 		return fs.lstatSync(createAssetPath(assetPath));
 	}
 
-	existsSync (assetPath) {
+	existsSync(assetPath) {
 		return fs.existsSync(createAssetPath(assetPath));
 	}
 
-	readdirSync (dirPath) {
+	readdirSync(dirPath) {
 		return fs.readdirSync(createAssetPath(dirPath));
 	}
 
-	async readFile (filePath) {
+	async readFile(filePath) {
 		const overridePath = path.join('overrides', filePath);
 		if (this.existsSync(overridePath)) {
 			filePath = overridePath;
@@ -36,7 +36,7 @@ export default new class testFs {
 		return await fs.promises.readFile(createAssetPath(filePath), 'utf-8');
 	}
 
-	readFileSync (filePath) {
+	readFileSync(filePath) {
 		const overridePath = path.join('overrides', filePath);
 		if (this.existsSync(overridePath)) {
 			filePath = overridePath;
@@ -44,7 +44,7 @@ export default new class testFs {
 		return fs.readFileSync(createAssetPath(filePath), 'utf-8');
 	}
 
-	writeFileSync (filePath, content) {
+	writeFileSync(filePath, content) {
 		return fs.writeFileSync(createAssetPath(filePath), content);
 	}
-}();
+})();

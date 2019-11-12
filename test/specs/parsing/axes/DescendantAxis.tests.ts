@@ -36,11 +36,7 @@ describe('descendant', () => {
 			}
 		} as any;
 
-		evaluateXPathToNodes(
-			'descendant::childElement',
-			documentNode.firstChild,
-			testDomFacade
-		);
+		evaluateXPathToNodes('descendant::childElement', documentNode.firstChild, testDomFacade);
 	});
 });
 

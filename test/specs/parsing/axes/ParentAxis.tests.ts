@@ -44,7 +44,7 @@ describe('parent', () => {
 		const expectedBucket = getBucketForSelector('self::parentElement');
 
 		const testDomFacade: IDomFacade = {
-			getParentNode: (node: slimdom.Node, bucket: string|null) => {
+			getParentNode: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return null;
 			}

@@ -1,9 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	evaluateUpdatingExpression
-} from 'fontoxpath';
+import { evaluateUpdatingExpression } from 'fontoxpath';
 import assertUpdateList from './assertUpdateList';
 
 let documentNode;
@@ -21,7 +19,8 @@ describe('DeleteExpression', () => {
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [
@@ -48,7 +47,8 @@ delete node fontoxpath:sleep(/element, 100)
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [

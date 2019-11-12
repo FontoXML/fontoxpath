@@ -1,9 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	evaluateXPathToFirstNode
-} from 'fontoxpath';
+import { evaluateXPathToFirstNode } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {

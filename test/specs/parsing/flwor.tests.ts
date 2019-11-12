@@ -50,6 +50,7 @@ describe('FLWOR', () => {
 				null,
 				null,
 				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			), 3
+			),
+			3
 		));
 });

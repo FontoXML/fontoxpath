@@ -25,15 +25,17 @@ describe('PIConstructor', () => {
 
 	it('can create a PI with asynchronous', async () => {
 		chai.assert.equal(
-			(await evaluateXPathToAsyncSingleton(
-				`
+			(
+				await evaluateXPathToAsyncSingleton(
+					`
 		declare namespace fontoxpath="http://fontoxml.com/fontoxpath";
 		processing-instruction {fontoxpath:sleep("my-pi",100)} {fontoxpath:sleep("data", 100)}`,
-				documentNode,
-				undefined,
-				{},
-				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			)).nodeType,
+					documentNode,
+					undefined,
+					{},
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				)
+			).nodeType,
 			7
 		);
 	});

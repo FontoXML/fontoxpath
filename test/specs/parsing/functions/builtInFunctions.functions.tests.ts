@@ -25,18 +25,20 @@ describe('functions over functions', () => {
 		});
 
 		it('can look up a function that is declared locally', () => {
-			chai.assert.isTrue(evaluateXPathToBoolean(
-				`
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					`
 declare function Q{ns}myFunc() as xs:integer {1};
 
 function-lookup(QName("ns", "myFunc"), 0) => exists()`,
-				documentNode,
-				null,
-				null,
-				{
-
-					language: evaluateXPath.XQUERY_3_1_LANGUAGE
-				}));
+					documentNode,
+					null,
+					null,
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					}
+				)
+			);
 		});
 
 		it('returns an empty sequence if no known function can be identified by name and arity', () => {

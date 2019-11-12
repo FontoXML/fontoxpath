@@ -1,9 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	evaluateUpdatingExpression
-} from 'fontoxpath';
+import { evaluateUpdatingExpression } from 'fontoxpath';
 import assertUpdateList from './assertUpdateList';
 
 let documentNode;
@@ -20,7 +18,8 @@ describe('RenameExpression', () => {
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [
@@ -40,7 +39,8 @@ describe('RenameExpression', () => {
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [
@@ -76,7 +76,8 @@ rename node fontoxpath:sleep(/element/@attr, 100) as fontoxpath:sleep("at", 1)
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [
@@ -100,7 +101,8 @@ rename node fontoxpath:sleep(/element, 100) as fontoxpath:sleep("elem", 1)
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [
@@ -113,7 +115,9 @@ rename node fontoxpath:sleep(/element, 100) as fontoxpath:sleep("elem", 1)
 	});
 
 	it('allows rename processing instruction with something asynchronous', async () => {
-		const element = documentNode.appendChild(documentNode.createProcessingInstruction('my-pi', 'data'));
+		const element = documentNode.appendChild(
+			documentNode.createProcessingInstruction('my-pi', 'data')
+		);
 
 		const result = await evaluateUpdatingExpression(
 			`
@@ -124,7 +128,8 @@ rename node fontoxpath:sleep(/processing-instruction(), 100) as fontoxpath:sleep
 			documentNode,
 			null,
 			{},
-			{});
+			{}
+		);
 
 		chai.assert.deepEqual(result.xdmValue, []);
 		assertUpdateList(result.pendingUpdateList, [

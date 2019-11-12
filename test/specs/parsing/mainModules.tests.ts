@@ -21,7 +21,8 @@ test:hello("World")
 			null,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE });
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+		);
 
 		chai.assert.equal(result, 'Hello World');
 	});
@@ -37,9 +38,9 @@ prrt:true()
 			null,
 			null,
 			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE });
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+		);
 
 		chai.assert.equal(result, true);
-
 	});
 });

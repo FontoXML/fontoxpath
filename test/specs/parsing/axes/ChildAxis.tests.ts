@@ -66,7 +66,7 @@ describe('child', () => {
 		const expectedBucket = getBucketForSelector('self::childElement');
 
 		const testDomFacade: IDomFacade = {
-			getChildNodes: (node, bucket: string|null) => {
+			getChildNodes: (node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return [];
 			}

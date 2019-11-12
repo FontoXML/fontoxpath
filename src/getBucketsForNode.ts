@@ -18,7 +18,7 @@ export default function getBucketsForNode(node: Node): string[] {
 	buckets.push('type-' + node.nodeType);
 
 	if (node.nodeType === NODE_TYPES.ATTRIBUTE_NODE || node.nodeType === NODE_TYPES.ELEMENT_NODE) {
-		buckets.push('name-' + (node as (Attr | Element)).localName);
+		buckets.push('name-' + (node as Attr | Element).localName);
 	}
 
 	return buckets;

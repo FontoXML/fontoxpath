@@ -1,7 +1,5 @@
 import * as chai from 'chai';
-import {
-	evaluateXPathToBoolean
-} from 'fontoxpath';
+import { evaluateXPathToBoolean } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
@@ -18,13 +16,17 @@ describe('and operator', () => {
 	});
 
 	it('can optimize an and expression with buckets, inside a not()', () => {
-		chai.assert.isTrue(evaluateXPathToBoolean('not(self::p and true())', new slimdom.Document()));
+		chai.assert.isTrue(
+			evaluateXPathToBoolean('not(self::p and true())', new slimdom.Document())
+		);
 	});
 
-	it('can parse a concatenation of ands',
-		() => chai.assert.isFalse(evaluateXPathToBoolean('true() and true() and true() and false()')));
+	it('can parse a concatenation of ands', () =>
+		chai.assert.isFalse(evaluateXPathToBoolean('true() and true() and true() and false()')));
 
 	it('works with async params', async () => {
-		chai.assert.isTrue(await evaluateXPathToAsyncSingleton('true() => fontoxpath:sleep() and true()'));
+		chai.assert.isTrue(
+			await evaluateXPathToAsyncSingleton('true() => fontoxpath:sleep() and true()')
+		);
 	});
 });

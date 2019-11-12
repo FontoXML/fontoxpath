@@ -3,25 +3,25 @@ import { buildTestCase } from './xQueryXUtils';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
-function run () {
+function run() {
 	const skippableTests = getSkippedTests('failingXQUTSXQueryXTestNames.csv');
 	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
 
 	const baseDir = path.join('XQUTS', 'Queries');
 
-	function normalizeEndOfLines (xpathString) {
+	function normalizeEndOfLines(xpathString) {
 		// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
-		return xpathString.replace(/(\x0D+\x0A)|(\x0D+(?!\x0A))/g, String.fromCharCode(0xA));
+		return xpathString.replace(/(\x0D+\x0A)|(\x0D+(?!\x0A))/g, String.fromCharCode(0xa));
 	}
 
-	function buildTestCases (testPath) {
+	function buildTestCases(testPath) {
 		const xQueryXPath = path.join(baseDir, 'XQueryX', ...testPath);
 
 		testFs.readdirSync(xQueryXPath).forEach(candidate => {
 			const candidatePath = path.join(xQueryXPath, candidate);
 			if (testFs.lstatSync(candidatePath).isDirectory()) {
 				testPath.push(candidate);
-				describe(candidate, function () {
+				describe(candidate, function() {
 					buildTestCases(testPath);
 				});
 				testPath.pop();
@@ -42,11 +42,16 @@ function run () {
 					}
 					return await testFs.readFile(xQueryPath);
 				};
-				const loadXQueryX = async () => normalizeEndOfLines(await testFs.readFile(xQueryXPath));
+				const loadXQueryX = async () =>
+					normalizeEndOfLines(await testFs.readFile(xQueryXPath));
 
 				buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, actual => {
-					actual.documentElement.setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation', `http://www.w3.org/2007/xquery-update-10
-                                http://www.w3.org/2007/xquery-update-10/xquery-update-10-xqueryx.xsd`);
+					actual.documentElement.setAttributeNS(
+						'http://www.w3.org/2001/XMLSchema-instance',
+						'xsi:schemaLocation',
+						`http://www.w3.org/2007/xquery-update-10
+                                http://www.w3.org/2007/xquery-update-10/xquery-update-10-xqueryx.xsd`
+					);
 				});
 			}
 		});
@@ -56,7 +61,10 @@ function run () {
 
 	after(() => {
 		console.log(`Marking ${skippableTests.length} tests as known to fail`);
-		testFs.writeFileSync('failingXQUTSXQueryXTestNames.csv', skippableTests.join('\n').trim() + '\n');
+		testFs.writeFileSync(
+			'failingXQUTSXQueryXTestNames.csv',
+			skippableTests.join('\n').trim() + '\n'
+		);
 	});
 }
 
