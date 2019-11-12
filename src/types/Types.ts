@@ -69,3 +69,5 @@ export type ProcessingInstruction = CharacterData & {
  * @public
  */
 export type Text = CharacterData;
+
+export type DocumentTypeNode = Node;

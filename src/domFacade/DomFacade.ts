@@ -42,7 +42,13 @@ class DomFacade implements IWrappingDomFacade {
 		node: ConcreteParentNode,
 		bucket: string | null = null
 	): ConcreteChildNode[] {
-		return this._domFacade['getChildNodes'](node, bucket) as ConcreteChildNode[];
+		const childNodes = this._domFacade['getChildNodes'](node, bucket);
+		if (node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
+			return childNodes as ConcreteChildNode[];
+		}
+		return childNodes.filter(
+			childNode => childNode.nodeType !== NODE_TYPES.DOCUMENT_TYPE_NODE
+		) as ConcreteChildNode[];
 	}
 
 	public getData(node: ConcreteAttributeNode | ConcreteCharacterDataNode): string {
@@ -57,18 +63,42 @@ class DomFacade implements IWrappingDomFacade {
 		node: ConcreteParentNode,
 		bucket: string | null = null
 	): ConcreteChildNode {
-		return this._domFacade['getFirstChild'](node, bucket) as ConcreteChildNode;
+		const firstChild = this._domFacade['getFirstChild'](node, bucket);
+		if (!firstChild) {
+			return null;
+		}
+		if (firstChild.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
+			return this.getNextSibling(firstChild as any);
+		}
+		return firstChild as ConcreteChildNode;
 	}
 
 	public getLastChild(node: ConcreteParentNode, bucket: string | null = null): ConcreteChildNode {
-		return this._domFacade['getLastChild'](node, bucket) as ConcreteChildNode;
+		const lastChild = this._domFacade['getLastChild'](node, bucket);
+		if (!lastChild) {
+			return null;
+		}
+		if (lastChild.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
+			return this.getPreviousSibling(lastChild as any);
+		}
+		return lastChild as ConcreteChildNode;
 	}
 
 	public getNextSibling(
 		node: ConcreteChildNode,
 		bucket: string | null = null
 	): ConcreteChildNode {
-		return this._domFacade['getNextSibling'](node, bucket) as ConcreteChildNode;
+		for (
+			let node2 = this._domFacade['getNextSibling'](node, bucket);
+			node2;
+			node2 = this._domFacade['getNextSibling'](node2, bucket)
+		) {
+			if (node2.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
+				continue;
+			}
+			return node2 as ConcreteChildNode;
+		}
+		return null;
 	}
 
 	public getParentNode(
@@ -82,7 +112,17 @@ class DomFacade implements IWrappingDomFacade {
 		node: ConcreteChildNode,
 		bucket: string | null = null
 	): ConcreteChildNode {
-		return this._domFacade['getPreviousSibling'](node, bucket) as ConcreteChildNode;
+		for (
+			let node2 = this._domFacade['getPreviousSibling'](node, bucket);
+			node2;
+			node2 = this._domFacade['getPreviousSibling'](node2, bucket)
+		) {
+			if (node2.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
+				continue;
+			}
+			return node2 as ConcreteChildNode;
+		}
+		return null;
 	}
 
 	// Can be used to create an extra frame when tracking dependencies
