@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateUpdatingExpression, evaluateXPath } from 'fontoxpath';
+import { evaluateUpdatingExpression, evaluateXPath, registerXQueryModule } from 'fontoxpath';
 import sinon = require('sinon');
 
 describe('showStackTraceOnError', () => {
@@ -85,6 +85,28 @@ Error: XPST0008, The variable node is not in scope.
   at <replaceExpr>:1:1 - 1:29`
 			);
 		}
+	});
+
+	it('shows a stack trace for when registering an XQuery module', () => {
+		chai.assert.throws(
+			() =>
+				registerXQueryModule(
+					`module namespace my-ns="http://www.dita-example-editor.com/hooks";
+
+declare %public %updating function my-ns:my-func ($node as node()) as xs:integer {
+    $node/descendant::p ! (replace value of node . with "steve"), 1
+};`,
+					{ debug: true }
+				),
+			`2:${' '}
+3: declare %public %updating function my-ns:my-func ($node as node()) as xs:integer {
+4:     $node/descendant::p ! (replace value of node . with "steve"), 1
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: };
+
+Error: XUST0001: Can not execute an updating expression in a non-updating context.
+  at <simpleMapExpr>:4:5 - 4:65`
+		);
 	});
 
 	it('only shows the 2 lines surrounding the error', () => {

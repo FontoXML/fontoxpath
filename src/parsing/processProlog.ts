@@ -31,15 +31,15 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/2005/xpath-functions/map'
 ];
 
-type FunctionDeclaration = {
+export type FunctionDeclaration = {
 	arity: number;
+	expression: Expression;
 	functionDefinition: GenericFunctionDefinition<
 		boolean,
 		FunctionDefinitionType | UpdatingFunctionDefinitionType
 	>;
 	localName: string;
 	namespaceURI: string;
-	expression: Expression;
 };
 
 export default function processProlog(

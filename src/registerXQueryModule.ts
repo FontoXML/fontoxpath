@@ -1,9 +1,10 @@
+import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
 import StaticContext from './expressions/StaticContext';
 import astHelper from './parsing/astHelper';
 import { loadModuleFile } from './parsing/globalModuleCache';
 import parseExpression from './parsing/parseExpression';
-import processProlog from './parsing/processProlog';
+import processProlog, { FunctionDeclaration } from './parsing/processProlog';
 
 /**
  * Register an XQuery module
@@ -17,8 +18,8 @@ export default function registerXQueryModule(
 	options: { debug: boolean } = { debug: false }
 ): string {
 	const parsedModule = parseExpression(moduleString, {
-		debug: options['debug'],
-		allowXQuery: true
+		allowXQuery: true,
+		debug: options['debug']
 	});
 
 	const libraryModule = astHelper.getFirstChild(parsedModule, 'libraryModule');
@@ -39,7 +40,14 @@ export default function registerXQueryModule(
 
 	const prolog = astHelper.getFirstChild(libraryModule, 'prolog');
 	if (prolog !== null) {
-		const moduleDeclaration = processProlog(prolog, staticContext);
+		let moduleDeclaration: {
+			functionDeclarations: FunctionDeclaration[];
+		};
+		try {
+			moduleDeclaration = processProlog(prolog, staticContext);
+		} catch (error) {
+			printAndRethrowError(moduleString, error);
+		}
 		moduleDeclaration.functionDeclarations.forEach(({ namespaceURI }) => {
 			if (moduleTargetNamespaceURI !== namespaceURI) {
 				throw new Error(
