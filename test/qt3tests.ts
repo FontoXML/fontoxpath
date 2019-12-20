@@ -356,8 +356,8 @@ function createEnvironment(cwd, environmentNode) {
 
 	return {
 		contextNode: fileName ? getFile((cwd ? cwd + '/' : '') + fileName) : null,
-		variables,
-		namespaceResolver: Object.keys(namespaces).length ? prefix => namespaces[prefix] : null
+		namespaceResolver: Object.keys(namespaces).length ? prefix => namespaces[prefix] : null,
+		variables
 	};
 }
 
@@ -468,7 +468,10 @@ describe('qt3 test set', () => {
 									testQuery = evaluateXPathToString('./test', testCase);
 								}
 								const language = evaluateXPathToString(
-									'if (((dependency | ../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31")) then "XQuery3.1" else "XPath3.1"',
+									`if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31")) 
+										then "XQuery3.1" else if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XP20", "XP20+", "XP30", "XP30+")) 
+										then "XPath3.1"	else if (((../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31")) 
+										then "XQuery3.1" else "XPath3.1"`,
 									testCase
 								);
 								const namespaces = evaluateXPathToMap(
@@ -480,7 +483,7 @@ describe('qt3 test set', () => {
 									? prefix => namespaces[prefix]
 									: null;
 								let namespaceResolver = localNamespaceResolver;
-								let variablesInScope = undefined;
+								let variablesInScope;
 								const environmentNode = evaluateXPathToFirstNode(
 									'let $ref := ./environment/@ref return if ($ref) then /test-set/environment[@name = $ref] else ./environment',
 									testCase,
