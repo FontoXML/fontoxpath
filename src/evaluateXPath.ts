@@ -100,7 +100,7 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 		const bucketsForNode = getBucketsForNode(contextItem);
 		if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {
 			// We are sure that this selector will never match, without even running it
-			return false;
+			return false as any;
 		}
 	}
 

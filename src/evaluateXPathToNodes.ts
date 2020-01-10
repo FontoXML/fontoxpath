@@ -25,7 +25,7 @@ export default function evaluateXPathToNodes<T extends Node>(
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
 ): T[] {
-	return evaluateXPath<T, evaluateXPath.NODES_TYPE>(
+	return evaluateXPath<T, 7>(
 		selector,
 		contextItem,
 		domFacade,

@@ -63,7 +63,7 @@ export default function convertXDMReturnValue<
 			if (!ebv.ready) {
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
-			return ebv.value as IReturnTypes<TNode>[ReturnType.BOOLEAN];
+			return ebv.value as any;
 		}
 
 		case ReturnType.STRING: {
@@ -72,12 +72,12 @@ export default function convertXDMReturnValue<
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
 			if (!allValues.value.length) {
-				return '';
+				return '' as any;
 			}
 			// Atomize to convert (attribute)nodes to be strings
 			return allValues.value
 				.map(value => castToType(atomize(value, executionParameters), 'xs:string').value)
-				.join(' ');
+				.join(' ') as any;
 		}
 		case ReturnType.STRINGS: {
 			const allValues = rawResults.tryGetAllValues();
@@ -85,12 +85,12 @@ export default function convertXDMReturnValue<
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
 			if (!allValues.value.length) {
-				return [];
+				return [] as any;
 			}
 			// Atomize all parts
 			return allValues.value.map(value => {
 				return atomize(value, executionParameters).value + '';
-			});
+			}) as any;
 		}
 
 		case ReturnType.NUMBER: {
@@ -99,10 +99,10 @@ export default function convertXDMReturnValue<
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
 			if (!first.value) {
-				return NaN;
+				return NaN as any;
 			}
 			if (!isSubtypeOf(first.value.type, 'xs:numeric')) {
-				return NaN;
+				return NaN as any;
 			}
 			return first.value.value;
 		}
@@ -140,7 +140,7 @@ export default function convertXDMReturnValue<
 			}
 			return allResults.value.map(nodeValue => {
 				return nodeValue.value;
-			});
+			}) as any;
 		}
 
 		case ReturnType.MAP: {
@@ -162,7 +162,7 @@ export default function convertXDMReturnValue<
 					'Expected XPath ' + expression + ' to synchronously resolve to a map'
 				);
 			}
-			return transformedMap.value;
+			return transformedMap.value as any;
 		}
 
 		case ReturnType.ARRAY: {
@@ -186,7 +186,7 @@ export default function convertXDMReturnValue<
 					'Expected XPath ' + expression + ' to synchronously resolve to a map'
 				);
 			}
-			return transformedArray.value;
+			return transformedArray.value as any;
 		}
 
 		case ReturnType.NUMBERS: {
@@ -199,7 +199,7 @@ export default function convertXDMReturnValue<
 					throw new Error('Expected XPath ' + expression + ' to resolve to numbers');
 				}
 				return value.value;
-			});
+			}) as any;
 		}
 
 		case ReturnType.ASYNC_ITERATOR: {
@@ -252,7 +252,7 @@ export default function convertXDMReturnValue<
 					next: () => new Promise(resolve => resolve(getNextResult()))
 				} as AsyncIterableIterator<any>;
 			}
-			return toReturn;
+			return toReturn as any;
 		}
 
 		default: {
@@ -269,7 +269,7 @@ export default function convertXDMReturnValue<
 				}
 				return allValues.value.map(nodeValue => {
 					return nodeValue.value;
-				});
+				}) as any;
 			}
 			if (allValues.value.length === 1) {
 				const first = allValues.value[0];
@@ -282,7 +282,7 @@ export default function convertXDMReturnValue<
 							'Expected XPath ' + expression + ' to synchronously resolve to an array'
 						);
 					}
-					return transformedArray.value;
+					return transformedArray.value as any;
 				}
 				if (isSubtypeOf(first.type, 'map(*)')) {
 					const transformedMap = transformMapToObject(first as MapValue).next(
@@ -293,7 +293,7 @@ export default function convertXDMReturnValue<
 							'Expected XPath ' + expression + ' to synchronously resolve to a map'
 						);
 					}
-					return transformedMap.value;
+					return transformedMap.value as any;
 				}
 				return atomize(allValues.value[0], executionParameters).value;
 			}
@@ -304,7 +304,7 @@ export default function convertXDMReturnValue<
 				.getAllValues()
 				.map(atomizedValue => {
 					return atomizedValue.value;
-				});
+				}) as any;
 		}
 	}
 }
