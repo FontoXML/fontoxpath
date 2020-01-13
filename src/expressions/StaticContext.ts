@@ -6,6 +6,7 @@ import ExecutionParameters from './ExecutionParameters';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
 import { FunctionProperties } from './functions/functionRegistry';
 import UpdatingFunctionDefinitionType from './xquery-update/UpdatingFunctionDefinitionType';
+import { errXQST0049 } from './xquery/XQueryErrors';
 
 function createHashKey(namespaceURI: any, localName: any) {
 	return `Q{${namespaceURI || ''}}${localName}`;
@@ -173,7 +174,7 @@ export default class StaticContext implements IContext {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const duplicateFunction = this._registeredFunctionsByHash[hashKey];
 		if (duplicateFunction) {
-			throw new Error('Duplicate function registration');
+			throw errXQST0049(namespaceURI, localName);
 		}
 
 		this._registeredFunctionsByHash[hashKey] = functionDefinition;

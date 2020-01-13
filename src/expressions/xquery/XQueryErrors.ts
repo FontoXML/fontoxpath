@@ -29,6 +29,12 @@ export const errXQST0045 = () =>
 	new Error(
 		'XQST0045: Functions and variables may not be declared in one of the reserved namespace URIs.'
 	);
+export const errXQST0047 = namespaceURI =>
+	new Error(`XQST0047: The namespace "${namespaceURI}" is imported more than once.`);
+export const errXQST0049 = (namespaceURI, localName) =>
+	new Error(
+		`XQST0049: The function or variable "Q{${namespaceURI}}${localName}" is declared more than once.`
+	);
 export const errXQST0060 = () =>
 	new Error('XQST0060: Functions declared in a module must reside in a namespace.');
 export const errXQST0066 = () =>

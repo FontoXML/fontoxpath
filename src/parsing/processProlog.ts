@@ -12,6 +12,7 @@ import { errXUST0001 } from '../expressions/xquery-update/XQueryUpdateFacilityEr
 import {
 	errXPST0081,
 	errXQST0045,
+	errXQST0047,
 	errXQST0060,
 	errXQST0066,
 	errXQST0070
@@ -68,6 +69,7 @@ export default function processProlog(
 	});
 
 	// First, let's import modules
+	const importedModuleNamespaces = new Set<string>();
 	astHelper.getChildren(prolog, 'moduleImport').forEach(moduleImport => {
 		const moduleImportPrefix = astHelper.getTextContent(
 			astHelper.getFirstChild(moduleImport, 'namespacePrefix')
@@ -75,6 +77,11 @@ export default function processProlog(
 		const moduleImportNamespaceURI = astHelper.getTextContent(
 			astHelper.getFirstChild(moduleImport, 'targetNamespace')
 		);
+
+		if (importedModuleNamespaces.has(moduleImportNamespaceURI)) {
+			throw errXQST0047(moduleImportNamespaceURI);
+		}
+		importedModuleNamespaces.add(moduleImportNamespaceURI);
 
 		staticContext.registerNamespace(moduleImportPrefix, moduleImportNamespaceURI);
 		enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
