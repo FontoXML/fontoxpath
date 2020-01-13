@@ -16,9 +16,10 @@ import { Node } from './types/Types';
 export type Options = {
 	currentContext?: any;
 	debug?: boolean;
-	documentWriter?: IDocumentWriter;
 	disableCache?: boolean;
+	documentWriter?: IDocumentWriter;
 	language?: Language;
+	logOutput?: (message: string) => void;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;

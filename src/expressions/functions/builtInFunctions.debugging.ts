@@ -6,22 +6,32 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnTrace: FunctionDefinitionType = function(
+const fnTrace: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	arg,
 	label
-) {
+) => {
 	return arg.mapAll(allItems => {
 		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
 			.map(value => castToType(value, 'xs:string'))
 			.getAllValues();
 
-		console.log.apply(
-			console,
-			label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]
-		);
+		let newMessage = '';
+		for (let i = 0; i < argumentAsStrings.length; i++) {
+			newMessage +=
+				'{type: ' +
+				argumentAsStrings[i].type +
+				', value: ' +
+				argumentAsStrings[i].value +
+				'}\n';
+		}
+		if (label !== undefined) {
+			newMessage += label.first().value;
+		}
+		executionParameters.logOutput(newMessage);
+
 		// Note: rewrap here to prevent double iterations of the input
 		return sequenceFactory.create(allItems);
 	});
@@ -30,18 +40,18 @@ const fnTrace: FunctionDefinitionType = function(
 export default {
 	declarations: [
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'trace',
 			argumentTypes: ['item()*'],
-			returnType: 'item()*',
-			callFunction: fnTrace
+			callFunction: fnTrace,
+			localName: 'trace',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		},
 		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'trace',
 			argumentTypes: ['item()*', 'xs:string'],
-			returnType: 'item()*',
-			callFunction: fnTrace
+			callFunction: fnTrace,
+			localName: 'trace',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'item()*'
 		}
 	]
 };

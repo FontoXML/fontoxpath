@@ -7,6 +7,7 @@ export default class ExecutionParameters {
 		public readonly domFacade: IWrappingDomFacade,
 		public readonly nodesFactory: INodesFactory,
 		public readonly documentWriter: IDocumentWriter,
-		public readonly currentContext: any
+		public readonly currentContext: any,
+		public readonly logOutput?: (message: string) => void
 	) {}
 }

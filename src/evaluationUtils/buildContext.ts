@@ -67,12 +67,20 @@ export default function buildEvaluationContext(
 	let internalOptions: Options;
 	if (externalOptions) {
 		internalOptions = {
+			// tslint:disable-next-line:no-console
+			logOutput: externalOptions['logOutput'] || console.log.bind(console),
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
 			nodesFactory: externalOptions['nodesFactory']
 		};
 	} else {
-		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
+		internalOptions = {
+			// tslint:disable-next-line:no-console
+			logOutput: console.log.bind(console),
+			moduleImports: {},
+			namespaceResolver: null,
+			nodesFactory: null
+		};
 	}
 	const wrappedDomFacade: IWrappingDomFacade = new DomFacade(
 		domFacade === null ? new ExternalDomFacade() : domFacade
@@ -133,7 +141,8 @@ export default function buildEvaluationContext(
 		wrappedDomFacade,
 		nodesFactory,
 		documentWriter,
-		externalOptions['currentContext']
+		externalOptions['currentContext'],
+		internalOptions.logOutput
 	);
 
 	return {

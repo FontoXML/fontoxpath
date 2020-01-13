@@ -21,6 +21,7 @@ export type UpdatingOptions = {
 	debug?: boolean;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
+	logOutput?: (message: string) => void;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
