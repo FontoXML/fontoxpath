@@ -71,5 +71,3 @@ export type ProcessingInstruction = CharacterData & {
 export type Text = CharacterData;
 
 export type DocumentTypeNode = Node;
-
-export function prrt() {}

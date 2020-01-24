@@ -193,7 +193,7 @@ let evaluateXPath = function evaluateXPath<
 		const bucketsForNode = getBucketsForNode(contextItem);
 		if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {
 			// We are sure that this selector will never match, without even running it
-			return false as any;
+			return false as IReturnTypes<TNode>[TReturnType];
 		}
 	}
 
@@ -213,6 +213,7 @@ export enum Language {
 	XQUERY_3_1_LANGUAGE = 'XQuery3.1',
 	XQUERY_UPDATE_3_1_LANGUAGE = 'XQueryUpdate3.1'
 }
+
 evaluateXPath = Object.assign(evaluateXPath, {
 	ANY_TYPE: ReturnType.ANY,
 	NUMBER_TYPE: ReturnType.NUMBER,
@@ -228,6 +229,24 @@ evaluateXPath = Object.assign(evaluateXPath, {
 	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE,
 	XQUERY_3_1_LANGUAGE: Language.XQUERY_3_1_LANGUAGE,
 	XPATH_3_1_LANGUAGE: Language.XPATH_3_1_LANGUAGE
+});
+
+// Set all of the properties a second time to prevent closure renames
+evaluateXPath = Object.assign(evaluateXPath, {
+	['ANY_TYPE']: ReturnType.ANY,
+	['NUMBER_TYPE']: ReturnType.NUMBER,
+	['STRING_TYPE']: ReturnType.STRING,
+	['BOOLEAN_TYPE']: ReturnType.BOOLEAN,
+	['NODES_TYPE']: ReturnType.NODES,
+	['FIRST_NODE_TYPE']: ReturnType.FIRST_NODE,
+	['STRINGS_TYPE']: ReturnType.STRINGS,
+	['MAP_TYPE']: ReturnType.MAP,
+	['ARRAY_TYPE']: ReturnType.ARRAY,
+	['ASYNC_ITERATOR_TYPE']: ReturnType.ASYNC_ITERATOR,
+	['NUMBERS_TYPE']: ReturnType.NUMBERS,
+	['XQUERY_UPDATE_3_1_LANGUAGE']: Language.XQUERY_UPDATE_3_1_LANGUAGE,
+	['XQUERY_3_1_LANGUAGE']: Language.XQUERY_3_1_LANGUAGE,
+	['XPATH_3_1_LANGUAGE']: Language.XPATH_3_1_LANGUAGE
 });
 
 export default evaluateXPath as EvaluateXPath;
