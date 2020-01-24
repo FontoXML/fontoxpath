@@ -97,8 +97,7 @@ function run() {
 						actual.documentElement.setAttributeNS(
 							'http://www.w3.org/2001/XMLSchema-instance',
 							'xsi:schemaLocation',
-							`http://www.w3.org/2005/XQueryX
-                                http://www.w3.org/2005/XQueryX/xqueryx.xsd`
+							'http://www.w3.org/2005/XQueryX                                 http://www.w3.org/2005/XQueryX/xqueryx.xsd'
 						);
 					});
 				});
