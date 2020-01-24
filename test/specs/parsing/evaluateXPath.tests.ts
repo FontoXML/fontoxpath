@@ -19,7 +19,7 @@ import {
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 describe('evaluateXPath', () => {
-	let documentNode;
+	let documentNode: slimdom.Document;
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
 	});
@@ -70,7 +70,7 @@ describe('evaluateXPath', () => {
 		));
 	it('Can evaluate intermediately updating expressions', () =>
 		chai.assert.equal(
-			evaluateXPath<slimdom.Element, evaluateXPath.FIRST_NODE_TYPE>(
+			evaluateXPath<slimdom.Element, typeof evaluateXPath.FIRST_NODE_TYPE>(
 				'copy $ele := <element /> modify insert node text{"test"} into $ele return $ele',
 				documentNode,
 				domFacade,

@@ -25,27 +25,120 @@ export type Options = {
 };
 
 /**
- * Evaluates an XPath on the given contextItem.
- *
- * If the return type is ANY_TYPE, the returned value depends on the result of the XPath:
- *  * If the XPath evaluates to the empty sequence, an empty array is returned.
- *  * If the XPath evaluates to a singleton node, that node is returned.
- *  * If the XPath evaluates to a singleton value, that value is atomized and returned.
- *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
- *  * Else, the sequence is atomized and returned.
- *
  * @public
- *
- * @param  selector    - The selector to execute. Supports XPath 3.1.
- * @param  contextItem - The node from which to run the XPath.
- * @param  domFacade   - The domFacade (or DomFacade like interface) for retrieving relations.
- * @param  variables   - Extra variables (name to value). Values can be number, string, boolean, nodes or object literals and arrays.
- * @param  returnType  - One of the return types, indicates the expected type of the XPath query.
- * @param  options     - Extra options for evaluating this XPath
- *
- * @returns The result of executing this XPath
  */
-function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
+export type EvaluateXPath = {
+	/**
+	 * Evaluates an XPath on the given contextItem.
+	 *
+	 * If the return type is ANY_TYPE, the returned value depends on the result of the XPath:
+	 *  * If the XPath evaluates to the empty sequence, an empty array is returned.
+	 *  * If the XPath evaluates to a singleton node, that node is returned.
+	 *  * If the XPath evaluates to a singleton value, that value is atomized and returned.
+	 *  * If the XPath evaluates to a sequence of nodes, those nodes are returned.
+	 *  * Else, the sequence is atomized and returned.
+	 *
+	 * @public
+	 *
+	 * @param  selector    - The selector to execute. Supports XPath 3.1.
+	 * @param  contextItem - The node from which to run the XPath.
+	 * @param  domFacade   - The domFacade (or DomFacade like interface) for retrieving relations.
+	 * @param  variables   - Extra variables (name to value). Values can be number, string, boolean, nodes or object literals and arrays.
+	 * @param  returnType  - One of the return types, indicates the expected type of the XPath query.
+	 * @param  options     - Extra options for evaluating this XPath
+	 *
+	 * @returns The result of executing this XPath
+	 */
+	<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
+		selector: string,
+		contextItem?: any | null,
+		domFacade?: IDomFacade | null,
+		variables?: { [s: string]: any } | null,
+		returnType?: TReturnType,
+		options?: Options | null
+	): IReturnTypes<TNode>[TReturnType];
+
+	/**
+	 * Can be used to signal an XPath program should executed
+	 */
+	XPATH_3_1_LANGUAGE: Language.XPATH_3_1_LANGUAGE;
+
+	/**
+	 * Can be used to signal an XQuery program should be executed instead
+	 * of an XPath
+	 */
+	XQUERY_3_1_LANGUAGE: Language.XQUERY_3_1_LANGUAGE;
+
+	/**
+	 * Can be used to signal Update facility can be used.
+	 *
+	 * To catch pending updates, use {@link evaluateUpdatingExpression}
+	 */
+	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE;
+
+	/**
+	 * Returns the result of the query, can be anything depending on the
+	 * query. Note that the return type is determined dynamically, not
+	 * statically: XPaths returning empty sequences will return empty
+	 * arrays and not null, like one might expect.
+	 */
+	ANY_TYPE: ReturnType.ANY;
+
+	/**
+	 * Resolve to a number, like count((1,2,3)) resolves to 3.
+	 */
+	NUMBER_TYPE: ReturnType.NUMBER;
+
+	/**
+	 * Resolve to a string, like //someElement[1] resolves to the text
+	 * content of the first someElement
+	 */
+	STRING_TYPE: ReturnType.STRING;
+
+	/**
+	 * Resolves to true or false, uses the effective boolean value to
+	 * determine the result. count(1) resolves to true, count(())
+	 * resolves to false
+	 */
+	BOOLEAN_TYPE: ReturnType.BOOLEAN;
+
+	/**
+	 * Resolve to all nodes the XPath resolves to. Returns nodes in the
+	 * order the XPath would. Meaning (//a, //b) resolves to all A nodes,
+	 * followed by all B nodes. //*[self::a or self::b] resolves to A and
+	 * B nodes in document order.
+	 */
+	NODES_TYPE: ReturnType.NODES;
+
+	/**
+	 * Resolves to the first node.NODES_TYPE would have resolved to.
+	 */
+	FIRST_NODE_TYPE: ReturnType.FIRST_NODE;
+
+	/**
+	 * Resolve to an array of strings
+	 */
+	STRINGS_TYPE: ReturnType.STRINGS;
+
+	/**
+	 * Resolve to an object, as a map
+	 */
+	MAP_TYPE: ReturnType.MAP;
+
+	ARRAY_TYPE: ReturnType.ARRAY;
+
+	ASYNC_ITERATOR_TYPE: ReturnType.ASYNC_ITERATOR;
+
+	/**
+
+	 * Resolve to an array of numbers
+	 */
+	NUMBERS_TYPE: ReturnType.NUMBERS;
+};
+let evaluateXPath = function evaluateXPath<
+	TNode extends Node,
+	TReturnType extends keyof IReturnTypes<TNode>
+>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
@@ -110,75 +203,7 @@ function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnType
 	} catch (error) {
 		printAndRethrowError(selector, error);
 	}
-}
-
-/**
- * Returns the result of the query, can be anything depending on the
- * query. Note that the return type is determined dynamically, not
- * statically: XPaths returning empty sequences will return empty
- * arrays and not null, like one might expect.
- */
-evaluateXPath['ANY_TYPE'] = evaluateXPath.ANY_TYPE = ReturnType.ANY as ReturnType.ANY;
-
-/**
- * Resolve to a number, like count((1,2,3)) resolves to 3.
- */
-evaluateXPath['NUMBER_TYPE'] = evaluateXPath.NUMBER_TYPE = ReturnType.NUMBER as ReturnType.NUMBER;
-
-/**
- * Resolve to a string, like //someElement[1] resolves to the text
- * content of the first someElement
- */
-evaluateXPath['STRING_TYPE'] = evaluateXPath.STRING_TYPE = ReturnType.STRING as ReturnType.STRING;
-
-/**
- * Resolves to true or false, uses the effective boolean value to
- * determine the result. count(1) resolves to true, count(())
- * resolves to false
- */
-evaluateXPath[
-	'BOOLEAN_TYPE'
-] = evaluateXPath.BOOLEAN_TYPE = ReturnType.BOOLEAN as ReturnType.BOOLEAN;
-
-/**
- * Resolve to all nodes the XPath resolves to. Returns nodes in the
- * order the XPath would. Meaning (//a, //b) resolves to all A nodes,
- * followed by all B nodes. //*[self::a or self::b] resolves to A and
- * B nodes in document order.
- */
-evaluateXPath['NODES_TYPE'] = evaluateXPath.NODES_TYPE = ReturnType.NODES as ReturnType.NODES;
-
-/**
- * Resolves to the first node.NODES_TYPE would have resolved to.
- */
-evaluateXPath[
-	'FIRST_NODE_TYPE'
-] = evaluateXPath.FIRST_NODE_TYPE = ReturnType.FIRST_NODE as ReturnType.FIRST_NODE;
-
-/**
- * Resolve to an array of strings
- */
-evaluateXPath[
-	'STRINGS_TYPE'
-] = evaluateXPath.STRINGS_TYPE = ReturnType.STRINGS as ReturnType.STRINGS;
-
-/**
- * Resolve to an object, as a map
- */
-evaluateXPath['MAP_TYPE'] = evaluateXPath.MAP_TYPE = ReturnType.MAP as ReturnType.MAP;
-
-evaluateXPath['ARRAY_TYPE'] = evaluateXPath.ARRAY_TYPE = ReturnType.ARRAY as ReturnType.ARRAY;
-
-evaluateXPath[
-	'ASYNC_ITERATOR_TYPE'
-] = evaluateXPath.ASYNC_ITERATOR_TYPE = ReturnType.ASYNC_ITERATOR as ReturnType.ASYNC_ITERATOR;
-
-/**
- * Resolve to an array of numbers
- */
-evaluateXPath[
-	'NUMBERS_TYPE'
-] = evaluateXPath.NUMBERS_TYPE = ReturnType.NUMBERS as ReturnType.NUMBERS;
+};
 
 /**
  * @public
@@ -188,26 +213,21 @@ export enum Language {
 	XQUERY_3_1_LANGUAGE = 'XQuery3.1',
 	XQUERY_UPDATE_3_1_LANGUAGE = 'XQueryUpdate3.1'
 }
+evaluateXPath = Object.assign(evaluateXPath, {
+	ANY_TYPE: ReturnType.ANY,
+	NUMBER_TYPE: ReturnType.NUMBER,
+	STRING_TYPE: ReturnType.STRING,
+	BOOLEAN_TYPE: ReturnType.BOOLEAN,
+	NODES_TYPE: ReturnType.NODES,
+	FIRST_NODE_TYPE: ReturnType.FIRST_NODE,
+	STRINGS_TYPE: ReturnType.STRINGS,
+	MAP_TYPE: ReturnType.MAP,
+	ARRAY_TYPE: ReturnType.ARRAY,
+	ASYNC_ITERATOR_TYPE: ReturnType.ASYNC_ITERATOR,
+	NUMBERS_TYPE: ReturnType.NUMBERS,
+	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE,
+	XQUERY_3_1_LANGUAGE: Language.XQUERY_3_1_LANGUAGE,
+	XPATH_3_1_LANGUAGE: Language.XPATH_3_1_LANGUAGE
+});
 
-/**
- * Can be used to signal Update facility can be used.
- *
- * To catch pending updates, use {@link evaluateUpdatingExpression}
- */
-evaluateXPath['XQUERY_UPDATE_3_1_LANGUAGE'] = evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE =
-	Language.XQUERY_UPDATE_3_1_LANGUAGE;
-
-/**
- * Can be used to signal an XQuery program should be executed instead
- * of an XPath
- */
-evaluateXPath['XQUERY_3_1_LANGUAGE'] = evaluateXPath.XQUERY_3_1_LANGUAGE =
-	Language.XQUERY_3_1_LANGUAGE;
-
-/**
- * Can be used to signal an XPath program should executed
- */
-evaluateXPath['XPATH_3_1_LANGUAGE'] = evaluateXPath.XPATH_3_1_LANGUAGE =
-	Language.XPATH_3_1_LANGUAGE;
-
-export default evaluateXPath;
+export default evaluateXPath as EvaluateXPath;

@@ -1,6 +1,7 @@
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateXPath, { Options } from './evaluateXPath';
 import { Node } from './types/Types';
+import { ReturnType } from './parsing/convertXDMReturnValue';
 
 /**
  * Evaluates an XPath on the given contextNode. Returns the first node result.
@@ -22,7 +23,7 @@ export default function evaluateXPathToFirstNode<T extends Node>(
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
 ): T | null {
-	return evaluateXPath<T, 9>(
+	return evaluateXPath<T, ReturnType.FIRST_NODE>(
 		selector,
 		contextItem,
 		domFacade,

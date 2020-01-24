@@ -3,7 +3,7 @@ import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
-import evaluateXPath, { Language, Options } from './evaluateXPath';
+import evaluateXPath, { Language, Options, EvaluateXPath } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -148,6 +148,7 @@ export {
 	domFacade,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,
+	EvaluateXPath,
 	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToAsyncIterator,
