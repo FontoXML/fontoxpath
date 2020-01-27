@@ -1,6 +1,7 @@
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateXPath, { Options } from './evaluateXPath';
 import { Node } from './types/Types';
+import { ReturnType } from './parsing/convertXDMReturnValue';
 
 /**
  * Evaluates an XPath on the given contextNode. Returns the first node result.
@@ -25,7 +26,7 @@ export default function evaluateXPathToNodes<T extends Node>(
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
 ): T[] {
-	return evaluateXPath<T, evaluateXPath.NODES_TYPE>(
+	return evaluateXPath<T, ReturnType.NODES>(
 		selector,
 		contextItem,
 		domFacade,

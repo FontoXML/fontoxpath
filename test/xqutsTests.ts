@@ -7,7 +7,8 @@ import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	evaluateXPathToString,
-	executePendingUpdateList
+	executePendingUpdateList,
+	EvaluateXPath
 } from 'fontoxpath';
 import * as path from 'path';
 import { slimdom, sync } from 'slimdom-sax-parser';
@@ -30,7 +31,7 @@ type ExpressionArguments = [
 	{
 		debug?: boolean;
 		returnType?: any;
-		language?: evaluateXPath.XPATH_3_1_LANGUAGE | evaluateXPath.XQUERY_3_1_LANGUAGE;
+		language?: EvaluateXPath['XPATH_3_1_LANGUAGE'] | EvaluateXPath['XQUERY_3_1_LANGUAGE'];
 	}
 ];
 
@@ -287,7 +288,7 @@ async function runTestCase(testName, testCase) {
 			new slimdom.Document(),
 			null,
 			variables,
-			{ language: 'XQuery3.1', returnType: evaluateXPath.STRING_TYPE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, returnType: evaluateXPath.STRING_TYPE }
 		];
 
 		try {

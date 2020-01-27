@@ -32,12 +32,9 @@ class DeleteExpression extends UpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
 	): IAsyncIterator<UpdatingExpressionResult> {
-		const targetValueIterator: IAsyncIterator<
-			UpdatingExpressionResult
-		> = this.ensureUpdateListWrapper(this._targetExpression)(
-			dynamicContext,
-			executionParameters
-		);
+		const targetValueIterator: IAsyncIterator<UpdatingExpressionResult> = this.ensureUpdateListWrapper(
+			this._targetExpression
+		)(dynamicContext, executionParameters);
 		const domFacade = executionParameters.domFacade;
 
 		let tlist: Value[];

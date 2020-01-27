@@ -9,7 +9,7 @@
 	"docModel": {
 		"enabled": false
 	},
-	"mainEntryPointFilePath": "dist/tmp/index.d.ts",
+	"mainEntryPointFilePath": "built/index.d.ts",
 	"dtsRollup": {
 		"enabled": true,
 		"untrimmedFilePath": "dist/fontoxpath.d.ts"

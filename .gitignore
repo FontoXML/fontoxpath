@@ -9,3 +9,4 @@
 /src/parsing/xPathParser.raw.ts
 /.nyc_output
 /tmp
+/.tscc_temp
