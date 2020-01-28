@@ -56,8 +56,9 @@ export default function evaluateUpdatingExpressionSync<
 				disableCache: !!options['disableCache']
 			}
 		);
-		dynamicContext = context.dynamicContext;
-		executionParameters = context.executionParameters;
+		const dynamicContextAndExecutionParameters = context.buildDynamicContextAndExecutionParameters();
+		dynamicContext = dynamicContextAndExecutionParameters.dynamicContext;
+		executionParameters = dynamicContextAndExecutionParameters.executionParameters;
 		expression = context.expression;
 	} catch (error) {
 		printAndRethrowError(updateScript, error);

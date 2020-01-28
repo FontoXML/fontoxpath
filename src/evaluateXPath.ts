@@ -11,16 +11,67 @@ import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/conve
 import { Node } from './types/Types';
 
 /**
+ * Describes additional options for evaluateXPath and related functions
+ *
  * @public
  */
 export type Options = {
+	/**
+	 * The 'context' of this expression. This can be used for example to pass information around
+	 * from the call to 'evaluateXPath' to external functions.
+	 *
+	 * Note: not the same as the 'contextItem' in evaluateXPath.
+	 *
+	 * Defaults to `undefined`
+	 */
 	currentContext?: any;
+	/**
+	 * Setting 'debug' to true introduces better stack traces at the cost of some performance. Set
+	 * this to `true` when debugging and to `false` when deploying this.
+	 *
+	 * Defaults to `false`
+	 */
 	debug?: boolean;
-	documentWriter?: IDocumentWriter;
+	/**
+	 * Disable the selector cache, causing the parser to be used for every new selector.
+	 *
+	 * @internal
+	 */
 	disableCache?: boolean;
+	/**
+	 * Used to move nodes around. This is normally used to create a DOM tree. Default to using
+	 * methods like 'appendChild' on the nodes that are to be moved around.
+	 *
+	 * Observe that this will only be used for _new_ subtrees created using node
+	 * constructors. Existing nodes can only be mutated using XQuery Update Facility when calling
+	 * the {@link executePendingUpdateList} function.
+	 */
+	documentWriter?: IDocumentWriter;
+	/**
+	 * The Language used in the expression. Defaults to {@link EvaluateXPath.XPATH_3_1_LANGUAGE}.
+	 */
 	language?: Language;
+	/**
+	 * Additional modules to import. Register modules with {@link registerXQueryModule}. Defaults to no
+	 * modules being imported.
+	 */
 	moduleImports?: { [s: string]: string };
-	namespaceResolver?: (s: string) => string | null;
+	/**
+	 * Provides a mapping from prefixes used in the expression to their namespace URIs.
+	 *
+	 * Can be an object or a function. When an object is provided it may never change as cached
+	 * expressions will be used if possible. For example the semantics of a selector like `self::p`
+	 * change when using a different namespace resolver. When a function is provided all used
+	 * prefixes will be tested before using cached expressions.
+	 *
+	 * Defaults to using the namespaces that are in scope of the context item, meaning that
+	 * namespaces used in the input document will be used to resolve namespaces in the document.
+	 */
+	namespaceResolver?: { [s: string]: string | null } | ((s: string) => string | null);
+	/**
+	 * Used to create new nodes. Defaults to using the constructor functions on the ownerDocument of
+	 * the passed context node if absent.
+	 */
 	nodesFactory?: INodesFactory;
 };
 
@@ -59,6 +110,69 @@ export type EvaluateXPath = {
 	): IReturnTypes<TNode>[TReturnType];
 
 	/**
+	 * Returns the result of the query, can be anything depending on the
+	 * query. Note that the return type is determined dynamically, not
+	 * statically: XPaths returning empty sequences will return empty
+	 * arrays and not null, like one might expect.
+	 */
+	ANY_TYPE: ReturnType.ANY;
+
+	/**
+	 * Resolve to an array of values
+	 */
+	ARRAY_TYPE: ReturnType.ARRAY;
+
+	/**
+	 * Resolves to an async iterator of values. Can be used to 'stream' out a big set of items
+	 */
+	ASYNC_ITERATOR_TYPE: ReturnType.ASYNC_ITERATOR;
+
+	/**
+	 * Resolves to true or false, uses the effective boolean value to
+	 * determine the result. count(1) resolves to true, count(())
+	 * resolves to false
+	 */
+	BOOLEAN_TYPE: ReturnType.BOOLEAN;
+	/**
+	 * Resolves to the first node.NODES_TYPE would have resolved to.
+	 */
+	FIRST_NODE_TYPE: ReturnType.FIRST_NODE;
+
+	/**
+	 * Resolve to an object, as a map
+	 */
+	MAP_TYPE: ReturnType.MAP;
+
+	/**
+	 * Resolve to all nodes the XPath resolves to. Returns nodes in the
+	 * order the XPath would. Meaning (//a, //b) resolves to all A nodes,
+	 * followed by all B nodes. //*[self::a or self::b] resolves to A and
+	 * B nodes in document order.
+	 */
+	NODES_TYPE: ReturnType.NODES;
+
+	/**
+	 * Resolve to a number, like count((1,2,3)) resolves to 3.
+	 */
+	NUMBER_TYPE: ReturnType.NUMBER;
+
+	/**
+	 * Resolve to an array of numbers
+	 */
+	NUMBERS_TYPE: ReturnType.NUMBERS;
+
+	/**
+	 * Resolve to a string, like //someElement[1] resolves to the text
+	 * content of the first someElement
+	 */
+	STRING_TYPE: ReturnType.STRING;
+
+	/**
+	 * Resolve to an array of strings
+	 */
+	STRINGS_TYPE: ReturnType.STRINGS;
+
+	/**
 	 * Can be used to signal an XPath program should executed
 	 */
 	XPATH_3_1_LANGUAGE: Language.XPATH_3_1_LANGUAGE;
@@ -75,70 +189,9 @@ export type EvaluateXPath = {
 	 * To catch pending updates, use {@link evaluateUpdatingExpression}
 	 */
 	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE;
-
-	/**
-	 * Returns the result of the query, can be anything depending on the
-	 * query. Note that the return type is determined dynamically, not
-	 * statically: XPaths returning empty sequences will return empty
-	 * arrays and not null, like one might expect.
-	 */
-	ANY_TYPE: ReturnType.ANY;
-
-	/**
-	 * Resolve to a number, like count((1,2,3)) resolves to 3.
-	 */
-	NUMBER_TYPE: ReturnType.NUMBER;
-
-	/**
-	 * Resolve to a string, like //someElement[1] resolves to the text
-	 * content of the first someElement
-	 */
-	STRING_TYPE: ReturnType.STRING;
-
-	/**
-	 * Resolves to true or false, uses the effective boolean value to
-	 * determine the result. count(1) resolves to true, count(())
-	 * resolves to false
-	 */
-	BOOLEAN_TYPE: ReturnType.BOOLEAN;
-
-	/**
-	 * Resolve to all nodes the XPath resolves to. Returns nodes in the
-	 * order the XPath would. Meaning (//a, //b) resolves to all A nodes,
-	 * followed by all B nodes. //*[self::a or self::b] resolves to A and
-	 * B nodes in document order.
-	 */
-	NODES_TYPE: ReturnType.NODES;
-
-	/**
-	 * Resolves to the first node.NODES_TYPE would have resolved to.
-	 */
-	FIRST_NODE_TYPE: ReturnType.FIRST_NODE;
-
-	/**
-	 * Resolve to an array of strings
-	 */
-	STRINGS_TYPE: ReturnType.STRINGS;
-
-	/**
-	 * Resolve to an object, as a map
-	 */
-	MAP_TYPE: ReturnType.MAP;
-
-	ARRAY_TYPE: ReturnType.ARRAY;
-
-	ASYNC_ITERATOR_TYPE: ReturnType.ASYNC_ITERATOR;
-
-	/**
-
-	 * Resolve to an array of numbers
-	 */
-	NUMBERS_TYPE: ReturnType.NUMBERS;
 };
-let evaluateXPath = function evaluateXPath<
-	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
->(
+
+function evaluateXPath<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
@@ -153,33 +206,27 @@ let evaluateXPath = function evaluateXPath<
 
 	options = options || {};
 
-	let dynamicContext: DynamicContext;
-	let executionParameters: ExecutionParameters;
-	let expression: Expression;
+	let context: {
+		buildDynamicContextAndExecutionParameters: () => {
+			dynamicContext: DynamicContext;
+			executionParameters: ExecutionParameters;
+		};
+		expression?: Expression;
+	};
 	try {
-		const context = buildContext(
-			selector,
-			contextItem,
-			domFacade || null,
-			variables || {},
-			options,
-			{
-				allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-				allowXQuery:
-					options['language'] === Language.XQUERY_3_1_LANGUAGE ||
-					options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-				debug: !!options['debug'],
-				disableCache: !!options['disableCache']
-			}
-		);
-		dynamicContext = context.dynamicContext;
-		executionParameters = context.executionParameters;
-		expression = context.expression;
+		context = buildContext(selector, contextItem, domFacade || null, variables || {}, options, {
+			allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+			allowXQuery:
+				options['language'] === Language.XQUERY_3_1_LANGUAGE ||
+				options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+			debug: !!options['debug'],
+			disableCache: !!options['disableCache']
+		});
 	} catch (error) {
 		printAndRethrowError(selector, error);
 	}
 
-	if (expression.isUpdating) {
+	if (context.expression.isUpdating) {
 		throw new Error(
 			'XUST0001: Updating expressions should be evaluated as updating expressions'
 		);
@@ -189,7 +236,7 @@ let evaluateXPath = function evaluateXPath<
 	// contextItem is a node and we are evaluating to a bucket, we can
 	// use it to return false if we are sure it won't match.
 	if (returnType === ReturnType.BOOLEAN && contextItem && 'nodeType' in contextItem) {
-		const selectorBucket = expression.getBucket();
+		const selectorBucket = context.expression.getBucket();
 		const bucketsForNode = getBucketsForNode(contextItem);
 		if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {
 			// We are sure that this selector will never match, without even running it
@@ -197,13 +244,21 @@ let evaluateXPath = function evaluateXPath<
 		}
 	}
 
+	const {
+		executionParameters,
+		dynamicContext
+	} = context.buildDynamicContextAndExecutionParameters();
+
 	try {
-		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
+		const rawResults = context.expression.evaluateMaybeStatically(
+			dynamicContext,
+			executionParameters
+		);
 		return convertXDMReturnValue(selector, rawResults, returnType, executionParameters);
 	} catch (error) {
 		printAndRethrowError(selector, error);
 	}
-};
+}
 
 /**
  * @public
@@ -214,7 +269,7 @@ export enum Language {
 	XQUERY_UPDATE_3_1_LANGUAGE = 'XQueryUpdate3.1'
 }
 
-evaluateXPath = Object.assign(evaluateXPath, {
+Object.assign(evaluateXPath, {
 	ANY_TYPE: ReturnType.ANY,
 	NUMBER_TYPE: ReturnType.NUMBER,
 	STRING_TYPE: ReturnType.STRING,
@@ -232,7 +287,7 @@ evaluateXPath = Object.assign(evaluateXPath, {
 });
 
 // Set all of the properties a second time to prevent closure renames
-evaluateXPath = Object.assign(evaluateXPath, {
+Object.assign(evaluateXPath, {
 	['ANY_TYPE']: ReturnType.ANY,
 	['NUMBER_TYPE']: ReturnType.NUMBER,
 	['STRING_TYPE']: ReturnType.STRING,

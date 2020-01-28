@@ -1,6 +1,8 @@
 # fontoxpath [![Build Status](https://travis-ci.org/FontoXML/fontoxpath.svg?branch=master)](https://travis-ci.org/FontoXML/fontoxpath) [![devDependency Status](https://david-dm.org/FontoXML/fontoxpath/dev-status.svg)](https://david-dm.org/FontoXML/fontoxpath#info=devDependencies) [![NPM version](https://badge.fury.io/js/fontoxpath.svg)](http://badge.fury.io/js/fontoxpath) [![Greenkeeper badge](https://badges.greenkeeper.io/FontoXML/fontoxpath.svg)](https://greenkeeper.io/) [![install size](https://packagephobia.now.sh/badge?p=fontoxpath)](https://packagephobia.now.sh/result?p=fontoxpath) [![Coverage Status](https://coveralls.io/repos/github/FontoXML/fontoxpath/badge.svg?branch=master)](https://coveralls.io/github/FontoXML/fontoxpath?branch=master)
 
-A minimalistic [XPath 3.1](https://www.w3.org/TR/xpath-31/) and [XQuery 3.1](https://www.w3.org/TR/xquery-31/) engine for (XML) nodes with [XQuery Update Facility 3.0](https://www.w3.org/TR/xquery-update-30/#id-update-primitives) support.
+A minimalistic [XPath 3.1](https://www.w3.org/TR/xpath-31/) and [XQuery
+3.1](https://www.w3.org/TR/xquery-31/) engine for (XML) nodes with [XQuery Update Facility
+3.0](https://www.w3.org/TR/xquery-update-30/#id-update-primitives) support.
 
 [Demo page](https://xpath.playground.fontoxml.com)
 
@@ -28,15 +30,26 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
 ```
 
 * `xpathExpression` `<String>` The query to evaluate.
-* `contextNode` `<Node>` The node in which context the `xpathExpression` will be evaluated. Defaults to `null`.
-* `domFacade` `<IDomFacade>` An [IDomFacade](src/domFacade/IDomFacade.ts) implementation which will be used for querying the DOM. Defaults to an implementation which uses properties and methods on the `contextNode` as described in the [DOM spec](https://dom.spec.whatwg.org/).
-* `variables` `<Object>` The properties of `variables` are available variables within the `xpathExpression`. Defaults to an empty `Object`.
-* `returnType` `<number>` Determines the type of the result. Defaults to `evaluateXPath.ANY_TYPE`. Possible values:
-  * `evaluateXPath.ANY_TYPE` Returns the result of the query, can be anything depending on the query. Note that the return type is determined dynamically, not statically: XPaths returning empty sequences will return empty arrays and not null, like one might expect.
+* `contextNode` `<Node>` The node in which context the `xpathExpression` will be evaluated. Defaults
+  to `null`.
+* `domFacade` `<IDomFacade>` An [IDomFacade](src/domFacade/IDomFacade.ts) implementation which will
+  be used for querying the DOM. Defaults to an implementation which uses properties and methods on
+  the `contextNode` as described in the [DOM spec](https://dom.spec.whatwg.org/).
+* `variables` `<Object>` The properties of `variables` are available variables within the
+  `xpathExpression`. Defaults to an empty `Object`.
+* `returnType` `<number>` Determines the type of the result. Defaults to
+  `evaluateXPath.ANY_TYPE`. Possible values:
+  * `evaluateXPath.ANY_TYPE` Returns the result of the query, can be anything depending on the
+    query. Note that the return type is determined dynamically, not statically: XPaths returning
+    empty sequences will return empty arrays and not null, like one might expect.
   * `evaluateXPath.NUMBER_TYPE` Resolve to a `number`, like count((1,2,3)) resolves to 3.
-  * `evaluateXPath.STRING_TYPE` Resolve to a `string`, like //someElement[1] resolves to the text content of the first someElement.
-  * `evaluateXPath.BOOLEAN_TYPE` Resolves to a `boolean` true or false, uses the effective boolean value to determine the result. count(1) resolves to true, count(()) resolves to false.
-  * `evaluateXPath.NODES_TYPE` Resolve to all nodes `Node[]` the XPath resolves to. Returns nodes in the order the XPath would. Meaning (//a, //b) resolves to all A nodes, followed by all B nodes. //*[self::a or self::b] resolves to A and B nodes in document order.
+  * `evaluateXPath.STRING_TYPE` Resolve to a `string`, like //someElement[1] resolves to the text
+    content of the first someElement.
+  * `evaluateXPath.BOOLEAN_TYPE` Resolves to a `boolean` true or false, uses the effective boolean
+    value to determine the result. count(1) resolves to true, count(()) resolves to false.
+  * `evaluateXPath.NODES_TYPE` Resolve to all nodes `Node[]` the XPath resolves to. Returns nodes in
+    the order the XPath would. Meaning (//a, //b) resolves to all A nodes, followed by all B
+    nodes. //*[self::a or self::b] resolves to A and B nodes in document order.
   * `evaluateXPath.FIRST_NODE_TYPE` Resolves to the first `Node` node.NODES_TYPE would have resolved to.
   * `evaluateXPath.STRINGS_TYPE` Resolve to an array of strings `string[]`.
   * `evaluateXPath.MAP_TYPE` Resolve to an `Object`, as a map.
@@ -44,11 +57,19 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
   * `evaluateXPath.ASYNC_ITERATOR_TYPE`
   * `evaluateXPath.NUMBERS_TYPE` Resolve to an array of numbers `number[]`.
 * `options` `<Object>` Options used to modify the behavior. The following options are available:
-  * `namespaceResolver` `<function(string):string?>`
-  * `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts) implementation which will be used for creating nodes.
-  * `language` `string` The query language to use. Defaults to `evaluateXPath.XPATH_3_1_LANGUAGE`. Possible values:
-    * `evaluateXPath.XPATH_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XPath spec](https://www.w3.org/TR/xpath-31/).
-    * `evaluateXPath.XQUERY_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XQuery spec](https://www.w3.org/TR/xquery-31/).
+  * `namespaceResolver` Either a function that accepts a prefix string and returns null or
+    undefined, or an object that keys prefixes to namespace URIs. The Object is expected to be
+    frozen. For performance, it is better to use an object since FontoXPath has an easier time
+    figuring out whether an earlier compiled selector can be re-used or whether it needs to be
+    recompiled.
+  * `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts)
+    implementation which will be used for creating nodes.
+  * `language` `string` The query language to use. Defaults to
+    `evaluateXPath.XPATH_3_1_LANGUAGE`. Possible values:
+    * `evaluateXPath.XPATH_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XPath
+      spec](https://www.w3.org/TR/xpath-31/).
+    * `evaluateXPath.XQUERY_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XQuery
+      spec](https://www.w3.org/TR/xquery-31/).
   * `moduleImports` `<Object<string, string>`
   * `debug` `<boolean>` If a debug trace should be tracked, see (debugging)[#] for more information.
 
@@ -102,15 +123,25 @@ Error: FORG0003: The argument passed to fn:zero-or-one contained more than one i
 
 ### Modifying XML
 
-Note: the use of XQuery Update Facility 3.0 is in preview and subject to change.
-
-To modify XML you can use [XQuery Update Facility 3.0](https://www.w3.org/TR/xquery-update-30/) as following
+To modify XML you can use [XQuery Update Facility 3.0](https://www.w3.org/TR/xquery-update-30/) as
+following
 
 ```js
 evaluateUpdatingExpression(xpathExpression, contextNode, domFacade, variables, options);
 ```
 
-The arguments are the same as `evaluateXPath`. This returns a `Promise<Object>`, the object has a `xdmValue` and `pendingUpdateList`. The `xdmValue` is the result of query as if it was run using `evaluateXPath` with `evaluateXPath.ANY_TYPE` as `returnType`. The `pendingUpdateList` is an `<Object[]>` in which each entry represents an [update primitive](https://www.w3.org/TR/xquery-update-30/#id-update-primitives) where the `type` identifies the update primitive.
+or
+
+```js
+evaluateUpdatingExpressionSync(xpathExpression, contextNode, domFacade, variables, options);
+```
+
+The arguments are the same as `evaluateXPath`. This returns a `Promise<Object>`, or an object
+directly. The object has a `xdmValue` and `pendingUpdateList`. The `xdmValue` is the result of query
+as if it was run using `evaluateXPath` with `evaluateXPath.ANY_TYPE` as `returnType`. The
+`pendingUpdateList` is an `<Object[]>` in which each entry represents an [update
+primitive](https://www.w3.org/TR/xquery-update-30/#id-update-primitives) where the `type` identifies
+the update primitive.
 
 The pending update list can be executed using
 
@@ -120,8 +151,12 @@ executePendingUpdateList(pendingUpdateList, domFacade, nodesFactory, documentWri
 
 * `pendingUpdateList` `<Object[]>` The pending update list returned by `evaluateUpdatingExpression`.
 * `domFacade` `<IDomFacade>` See `evaluateXPath`. The default will use nodes from the `pendingUpdateList`.
-* `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts) implementation which will be used for creating nodes. Defaults to an implementation which uses properties and methods of nodes from the `pendingUpdateList`.
-* `documentWriter` `<IDocumentWriter>` An [IDocumentWriter](src/documentWriter/IDocumePntWriter.ts) implementation which will be used for modifying a DOM. Defaults to an implementation which uses properties and methods of nodes from the `pendingUpdateList`.
+* `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts) implementation
+  which will be used for creating nodes. Defaults to an implementation which uses properties and
+  methods of nodes from the `pendingUpdateList`.
+* `documentWriter` `<IDocumentWriter>` An [IDocumentWriter](src/documentWriter/IDocumePntWriter.ts)
+  implementation which will be used for modifying a DOM. Defaults to an implementation which uses
+  properties and methods of nodes from the `pendingUpdateList`.
 
 ### Example
 
@@ -142,7 +177,9 @@ evaluateUpdatingExpression('replace node /xml with <foo/>', documentNode)
 
 ### Pre compilation
 
-Precompile an XPath expression for future use. This uses a webworker to populate an IndexedDB database so that the XPath is available for future use. This is a no-op on systems without indexedDB.
+Precompile an XPath expression for future use. This uses a webworker to populate an IndexedDB
+database so that the XPath is available for future use. This is a no-op on systems without
+indexedDB.
 
 ```js
 precompileXPath(xpathExpression);
@@ -189,8 +226,8 @@ mode](https://www.w3.org/TR/xpath-31/#id-backwards-compatibility) turned off.
 Not all [XPath 3.1 functions](https://www.w3.org/TR/xpath-functions-31/) are implemented yet. We
 accept pull requests for missing features.
 
-The following features are unavailable at this moment, but will be implemented at some point in time ([and even
-sooner if you can help!](./CONTRIBUTING.md)):
+The following features are unavailable at this moment, but will be implemented at some point in time
+([and even sooner if you can help!](./CONTRIBUTING.md)):
 
 * Some DateTime related functions
 * Collation related functions (`fn:compare#3`)

@@ -9,11 +9,13 @@ import { IterationHint } from '../util/iterators';
 import { StackTraceEntry } from './StackTraceEntry';
 
 export default class StackTraceGenerator extends PossiblyUpdatingExpression {
-	private _innerExpressionType: string;
-	private _location: SourceRange;
+	private readonly _innerExpression: Expression;
+	private readonly _innerExpressionType: string;
+	private readonly _location: SourceRange;
 
 	constructor(location: SourceRange, innerExpressionType: string, innerExpression: Expression) {
 		super(innerExpression.specificity, [innerExpression], {});
+		this._innerExpression = innerExpression;
 
 		this._innerExpressionType = innerExpressionType;
 
@@ -29,6 +31,10 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 				offset: location['start']['offset']
 			}
 		};
+	}
+
+	public getBucket() {
+		return this._innerExpression.getBucket();
 	}
 
 	public performFunctionalEvaluation(

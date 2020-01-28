@@ -22,7 +22,7 @@ export default function staticallyCompileXPath(
 		debug: boolean | undefined;
 		disableCache: boolean | undefined;
 	},
-	namespaceResolver: (namespace: string) => string | null,
+	namespaceResolver: { [prefix: string]: string | null } | ((prefix: string) => string | null),
 	variables: object,
 	moduleImports: { [namespaceURI: string]: string }
 ): { expression: Expression; staticContext: StaticContext } {
@@ -39,8 +39,13 @@ export default function staticallyCompileXPath(
 				compilationOptions.debug
 		  );
 
+	const namespaceResolverAsFunction: (prefix: string) => string | null =
+		typeof namespaceResolver === 'function'
+			? (namespaceResolver as (prefix: string) => string | null)
+			: prefix => namespaceResolver[prefix];
+
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
-		namespaceResolver,
+		namespaceResolverAsFunction,
 		variables
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
@@ -87,6 +92,7 @@ export default function staticallyCompileXPath(
 		if (!compilationOptions.disableCache) {
 			storeStaticCompilationResultInCache(
 				xpathString,
+				namespaceResolver,
 				language,
 				executionSpecificStaticContext,
 				moduleImports,

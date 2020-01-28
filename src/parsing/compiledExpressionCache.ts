@@ -9,22 +9,23 @@ const halfCompiledExpressionCache: { [s: string]: { [s: string]: Expression } } 
 
 class CacheEntry {
 	public compiledExpression: Expression;
-	public moduleImports: { namespaceURI: string; prefix: string }[];
-	public referredNamespaces: { namespaceURI: string; prefix: string }[];
-	public referredVariables: { name: string }[];
+	public moduleImports: { namespaceURI: string; prefix: string }[] | null;
+	public referredNamespaces: { namespaceURI: string; prefix: string }[] | null;
+	public referredVariables: { name: string }[] | null;
+	public usedNamespaceResolver: { [prefix: string]: string } | null;
 
 	constructor(
-		referredNamespaces: { namespaceURI: string; prefix: string }[],
-		referredVariables: { name: string }[],
+		referredNamespaces: { namespaceURI: string; prefix: string }[] | null,
+		usedNamespaceResolver: { [prefix: string]: string } | null,
+		referredVariables: { name: string }[] | null,
 		compiledExpression: Expression,
-		moduleImports:
-			| { namespaceURI: any; prefix: string }[]
-			| { namespaceURI: string; prefix: string }[]
+		moduleImports: { namespaceURI: string; prefix: string }[] | null
 	) {
 		this.compiledExpression = compiledExpression;
 		this.moduleImports = moduleImports;
 		this.referredNamespaces = referredNamespaces;
 		this.referredVariables = referredVariables;
+		this.usedNamespaceResolver = usedNamespaceResolver;
 	}
 }
 
@@ -73,10 +74,34 @@ export function storeHalfCompiledCompilationResultInCache(
 	halfCompiledExpressionCache[selectorString][languageKey] = expressionInstance;
 }
 
+function areNamespaceResolversEqual(
+	cache: CacheEntry,
+	namespaceResolverB: { [prefix: string]: string } | ((prefix: string) => string)
+) {
+	const namespaceResolverA = cache.usedNamespaceResolver;
+	const isFunctionA = namespaceResolverA === null;
+	const isFunctionB = typeof namespaceResolverB === 'function';
+
+	if (isFunctionA !== isFunctionB) {
+		return false;
+	}
+
+	if (!isFunctionA && !isFunctionA) {
+		// We can assume that two equal objects are the 'same' namespace resolver
+		return namespaceResolverA === namespaceResolverB;
+	}
+
+	// Both functions
+	return cache.referredNamespaces.every(
+		nsRef =>
+			(namespaceResolverB as (prefix: string) => string)(nsRef.prefix) === nsRef.namespaceURI
+	);
+}
+
 export function getStaticCompilationResultFromCache(
 	selectorString: string,
 	language: string,
-	namespaceResolver: (namespace: string) => string | null,
+	namespaceResolver: { [prefix: string]: string | null } | ((prefix: string) => string | null),
 	variables: object,
 	moduleImports: { [x: string]: string },
 	debug: boolean
@@ -116,10 +141,9 @@ export function getStaticCompilationResultFromCache(
 
 	const cacheWithCorrectContext = cachesForLanguage.find(
 		cache =>
-			cache.referredNamespaces.every(
-				nsRef => namespaceResolver(nsRef.prefix) === nsRef.namespaceURI
-			) &&
-			cache.referredVariables.every(varRef => variables[varRef.name] !== undefined) &&
+			areNamespaceResolversEqual(cache, namespaceResolver) &&
+			(cache.referredVariables === null ||
+				cache.referredVariables.every(varRef => variables[varRef.name] !== undefined)) &&
 			cache.moduleImports.every(
 				moduleImport => moduleImports[moduleImport.prefix] === moduleImport.namespaceURI
 			)
@@ -164,6 +188,7 @@ function removeHalfCompiledExpression(
 
 export function storeStaticCompilationResultInCache(
 	selectorString: string,
+	namespaceResolver: { [prefix: string]: string } | ((prefix: string) => string),
 	language: string,
 	executionStaticContext: ExecutionSpecificStaticContext,
 	moduleImports: { [x: string]: any },
@@ -186,6 +211,9 @@ export function storeStaticCompilationResultInCache(
 	cachesForLanguage.push(
 		new CacheEntry(
 			executionStaticContext.getReferredNamespaces(),
+			typeof namespaceResolver === 'function'
+				? null
+				: (namespaceResolver as { [prefix: string]: string }),
 			executionStaticContext.getReferredVariables(),
 			compiledExpression,
 			Object.keys(moduleImports).map(moduleImportPrefix => ({

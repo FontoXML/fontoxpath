@@ -70,7 +70,7 @@ describe('VariableDeclaration', () => {
 	it('allows external variables with defaults', () => {
 		chai.assert.equal(
 			evaluateXPathToString(
-				`declare variable $nx as xs:integer external := 12; 
+				`declare variable $nx as xs:integer external := 12;
                 <out>{$nx}</out>`,
 				documentNode,
 				undefined,
@@ -85,7 +85,7 @@ describe('VariableDeclaration', () => {
 		// We are checking that the var is not cached from the previous test
 		chai.assert.equal(
 			evaluateXPathToString(
-				`declare variable $nx as xs:integer external := 12; 
+				`declare variable $nx as xs:integer external := 12;
                 <out>{$nx}</out>`,
 				documentNode,
 				undefined,
@@ -99,7 +99,7 @@ describe('VariableDeclaration', () => {
 	it('allows external variables with defaults and external parameters', () => {
 		chai.assert.equal(
 			evaluateXPathToString(
-				`declare variable $nxa as xs:integer external := 10; 
+				`declare variable $nxa as xs:integer external := 10;
                 <out>{$nxa}</out>`,
 				documentNode,
 				undefined,
@@ -130,7 +130,7 @@ describe('VariableDeclaration', () => {
 			evaluateXPathToNumber(
 				`
 				declare variable $x := 1;
-				$x	
+				$x
 			`,
 				documentNode,
 				null,
@@ -145,7 +145,7 @@ describe('VariableDeclaration', () => {
 			evaluateXPathToNumber(
 				`
 					declare variable $x := 1;
-					$x	
+					$x
 				`,
 				documentNode,
 				null,

@@ -44,7 +44,7 @@ function normalizeEndOfLines(xpathString: string) {
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xa));
 }
 
-export default function buildEvaluationContext(
+export default function buildContext(
 	expressionString: string,
 	contextItem: any,
 	domFacade: IDomFacade | null,
@@ -57,8 +57,10 @@ export default function buildEvaluationContext(
 		disableCache: boolean;
 	}
 ): {
-	dynamicContext: DynamicContext;
-	executionParameters: ExecutionParameters;
+	buildDynamicContextAndExecutionParameters: () => {
+		dynamicContext: DynamicContext;
+		executionParameters: ExecutionParameters;
+	};
 	expression: Expression;
 } {
 	if (variables === null || variables === undefined) {
@@ -74,10 +76,6 @@ export default function buildEvaluationContext(
 	} else {
 		internalOptions = { namespaceResolver: null, nodesFactory: null, moduleImports: {} };
 	}
-	const wrappedDomFacade: IWrappingDomFacade = new DomFacade(
-		domFacade === null ? new ExternalDomFacade() : domFacade
-	);
-
 	expressionString = normalizeEndOfLines(expressionString);
 
 	const moduleImports = internalOptions.moduleImports || Object.create(null);
@@ -92,53 +90,64 @@ export default function buildEvaluationContext(
 		moduleImports
 	);
 
-	const contextSequence = contextItem
-		? adaptJavaScriptValueToXPathValue(contextItem)
-		: sequenceFactory.empty();
-
-	const nodesFactory: INodesFactory =
-		!internalOptions.nodesFactory && compilationOptions.allowXQuery
-			? new DomBackedNodesFactory(contextItem)
-			: wrapExternalNodesFactory(internalOptions.nodesFactory);
-
-	const documentWriter: IDocumentWriter = internalOptions.documentWriter
-		? wrapExternalDocumentWriter(internalOptions.documentWriter)
-		: domBackedDocumentWriter;
-
-	const variableBindings = Object.keys(variables).reduce((typedVariableByName, variableName) => {
-		typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
-			adaptJavaScriptValueToXPathValue(variables[variableName]);
-		return typedVariableByName;
-	}, Object.create(null));
-
-	let dynamicContext;
-	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
-		if (!variableBindings[binding]) {
-			variableBindings[binding] = () =>
-				expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
-					dynamicContext,
-					executionParameters
-				);
-		}
-	}
-
-	dynamicContext = new DynamicContext({
-		contextItem: contextSequence.first(),
-		contextItemIndex: 0,
-		contextSequence,
-		variableBindings
-	});
-
-	const executionParameters = new ExecutionParameters(
-		wrappedDomFacade,
-		nodesFactory,
-		documentWriter,
-		externalOptions['currentContext']
-	);
-
 	return {
-		dynamicContext,
-		executionParameters,
-		expression: expressionAndStaticContext.expression
+		// Separate out the expression / other stuff. Some expressions can determine their result
+		// fully statically using buckets, without even starting to evaluate the expression
+		expression: expressionAndStaticContext.expression,
+		buildDynamicContextAndExecutionParameters: () => {
+			const contextSequence = contextItem
+				? adaptJavaScriptValueToXPathValue(contextItem)
+				: sequenceFactory.empty();
+
+			const nodesFactory: INodesFactory =
+				!internalOptions.nodesFactory && compilationOptions.allowXQuery
+					? new DomBackedNodesFactory(contextItem)
+					: wrapExternalNodesFactory(internalOptions.nodesFactory);
+
+			const documentWriter: IDocumentWriter = internalOptions.documentWriter
+				? wrapExternalDocumentWriter(internalOptions.documentWriter)
+				: domBackedDocumentWriter;
+
+			const variableBindings = Object.keys(variables).reduce(
+				(typedVariableByName, variableName) => {
+					typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
+						adaptJavaScriptValueToXPathValue(variables[variableName]);
+					return typedVariableByName;
+				},
+				Object.create(null)
+			);
+
+			let dynamicContext: DynamicContext;
+			for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
+				if (!variableBindings[binding]) {
+					variableBindings[binding] = () =>
+						expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
+							dynamicContext,
+							executionParameters
+						);
+				}
+			}
+
+			dynamicContext = new DynamicContext({
+				contextItem: contextSequence.first(),
+				contextItemIndex: 0,
+				contextSequence,
+				variableBindings
+			});
+			const wrappedDomFacade: IWrappingDomFacade = new DomFacade(
+				domFacade === null ? new ExternalDomFacade() : domFacade
+			);
+
+			const executionParameters = new ExecutionParameters(
+				wrappedDomFacade,
+				nodesFactory,
+				documentWriter,
+				externalOptions['currentContext']
+			);
+			return {
+				dynamicContext,
+				executionParameters
+			};
+		}
 	};
 }

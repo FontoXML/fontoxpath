@@ -42,7 +42,6 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		[variable: string]: { name: string };
 	};
 	private _variableBindingByName: { [variableName: string]: string };
-	private _variableValueByName: any;
 
 	constructor(namespaceResolver: (prefix: string) => string | null, variableByName: object) {
 		this._namespaceResolver = namespaceResolver;
@@ -60,8 +59,6 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		this._referredVariableByName = Object.create(null);
 		this._referredNamespaceByName = Object.create(null);
 
-		this._variableValueByName = variableByName;
-
 		/**
 		 * This flag will be set to true if this EvaluationContext was used while statically
 		 * compiling a Expression
@@ -69,15 +66,23 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		this.executionContextWasRequired = false;
 	}
 
-	public getReferredNamespaces(): { namespaceURI: string; prefix: string }[] {
+	public getReferredNamespaces(): { namespaceURI: string; prefix: string }[] | null {
 		return Object.values(this._referredNamespaceByName);
 	}
 
-	public getReferredVariables(): { name: string }[] {
-		return Object.values(this._referredVariableByName);
+	public getReferredVariables(): { name: string }[] | null {
+		const values = Object.values(this._referredVariableByName);
+		if (values.length === 0) {
+			return null;
+		}
+		return values;
 	}
 
-	public lookupFunction(namespaceURI, localName, arity): FunctionProperties {
+	public lookupFunction(
+		namespaceURI: string,
+		localName: string,
+		arity: number
+	): FunctionProperties {
 		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
 		return getFunctionByArity(namespaceURI, localName, arity);
 	}

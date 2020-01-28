@@ -358,14 +358,175 @@ describe('evaluateXPath', () => {
 			);
 		});
 
-		it('can resolve using the passed resolver', () => {
+		describe('function overload', () => {
+			it('can resolve using the passed resolver: prefixes', () => {
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						'xs:QName("xxx:yyy") => namespace-uri-from-QName() eq "http://example.com/ns"',
+						null,
+						null,
+						null,
+						{ namespaceResolver: () => 'http://example.com/ns' }
+					)
+				);
+			});
+
+			it('can resolve using the passed resolver: null namespace', () => {
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						'xs:QName("yyy") => namespace-uri-from-QName() eq ""',
+						null,
+						null,
+						null,
+						{ namespaceResolver: () => null }
+					)
+				);
+			});
+
+			it('does not incorrectly cache results with other namespace bindings', () => {
+				debugger;
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						'xs:QName("xxx:very-special-element") => namespace-uri-from-QName() eq "http://example.com/ns"',
+						null,
+						null,
+						null,
+						{ namespaceResolver: { xxx: 'http://example.com/ns' } }
+					)
+				);
+				// If the expression would be cached, it would've been statically compiled with xxx
+				// bound to 'http://example.com/ns'
+				chai.assert.isFalse(
+					evaluateXPathToBoolean(
+						'xs:QName("xxx:very-special-element") => namespace-uri-from-QName() eq "http://example.com/ns"',
+						null,
+						null,
+						null,
+						{ namespaceResolver: { xxx: 'http://example.com/ns2' } }
+					)
+				);
+			});
+		});
+		describe('object overload', () => {
+			it('accepts the object-based overload', () => {
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						'xs:QName("zzz:yyy") => namespace-uri-from-QName() eq "http://example.com/ns"',
+						null,
+						null,
+						null,
+						{ namespaceResolver: { zzz: 'http://example.com/ns' } }
+					)
+				);
+			});
+
+			it('can resolve using the passed resolver: null namespace', () => {
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						'xs:QName("yyy") => namespace-uri-from-QName() eq ""',
+						null,
+						null,
+						null,
+						{ namespaceResolver: { '': null } }
+					)
+				);
+			});
+
+			it('does not incorrectly cache results with other namespace bindings', () => {
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						'xs:QName("xxx:very-special-element") => namespace-uri-from-QName() eq "http://example.com/ns"',
+						null,
+						null,
+						null,
+						{ namespaceResolver: { xxx: 'http://example.com/ns' } }
+					)
+				);
+				// If the expression would be cached, it would've been statically compiled with xxx
+				//  bound to 'http://example.com/ns'
+				chai.assert.isFalse(
+					evaluateXPathToBoolean(
+						'xs:QName("xxx:very-special-element") => namespace-uri-from-QName() eq "http://example.com/ns"',
+						null,
+						null,
+						null,
+						{ namespaceResolver: { xxx: 'http://example.com/ns2' } }
+					)
+				);
+			});
+
+			it('can cache XPaths if the namespace resolvers are equal', () => {
+				const namespaceResolver = { xxx: 'http://example.com/ns' };
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						'xs:QName("xxx:very-special-element") => namespace-uri-from-QName() eq "http://example.com/ns"',
+						null,
+						null,
+						null,
+						{ namespaceResolver }
+					)
+				);
+				chai.assert.isTrue(
+					evaluateXPathToBoolean(
+						'xs:QName("xxx:very-special-element") => namespace-uri-from-QName() eq "http://example.com/ns"',
+						null,
+						null,
+						null,
+						{ namespaceResolver }
+					)
+				);
+			});
+
+			it('accepts XPaths using no namespaces at all', () => {
+				chai.assert.isTrue(
+					evaluateXPathToBoolean('1', null, null, null, { namespaceResolver: {} })
+				);
+
+				chai.assert.isTrue(
+					evaluateXPathToBoolean('1', null, null, null, { namespaceResolver: {} })
+				);
+			});
+		});
+		it('allows mixed usage of object and function style namespace resolvers. Object first', () => {
+			const namespaceResolver = { xxx: 'http://example.com/ns' };
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
-					'xs:QName("xxx:yyy") => namespace-uri-from-QName() eq "http://example.com/ns"',
+					'xs:QName("xxx:mixed-objects-and-functions") => namespace-uri-from-QName() eq "http://example.com/ns"',
 					null,
 					null,
 					null,
-					{ namespaceResolver: () => 'http://example.com/ns' }
+					{ namespaceResolver }
+				)
+			);
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					'xs:QName("xxx:mixed-objects-and-functions") => namespace-uri-from-QName() eq "http://example.com/ns"',
+					null,
+					null,
+					null,
+					{ namespaceResolver: prefix => namespaceResolver[prefix] }
+				)
+			);
+		});
+
+		it('allows mixed usage of object and function style namespace resolvers. Function first', () => {
+			const namespaceResolver = { xxx: 'http://example.com/ns' };
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					'xs:QName("xxx:mixed-functions-and-objects") => namespace-uri-from-QName() eq "http://example.com/ns"',
+					null,
+					null,
+					null,
+					{ namespaceResolver: prefix => namespaceResolver[prefix] }
+				)
+			);
+			chai.assert.isTrue(
+				evaluateXPathToBoolean(
+					'xs:QName("xxx:mixed-functions-and-objects") => namespace-uri-from-QName() eq "http://example.com/ns"',
+					null,
+					null,
+					null,
+					{ namespaceResolver }
 				)
 			);
 		});
