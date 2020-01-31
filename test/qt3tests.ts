@@ -468,9 +468,9 @@ describe('qt3 test set', () => {
 									testQuery = evaluateXPathToString('./test', testCase);
 								}
 								const language = evaluateXPathToString(
-									`if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31")) 
-										then "XQuery3.1" else if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XP20", "XP20+", "XP30", "XP30+")) 
-										then "XPath3.1"	else if (((../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31")) 
+									`if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31"))
+										then "XQuery3.1" else if (((dependency)[@type = "spec"]/@value)!tokenize(.) = ("XP20", "XP20+", "XP30", "XP30+"))
+										then "XPath3.1"	else if (((../dependency)[@type = "spec"]/@value)!tokenize(.) = ("XQ10+", "XQ30+", "XQ31+", "XQ31"))
 										then "XQuery3.1" else "XPath3.1"`,
 									testCase
 								);

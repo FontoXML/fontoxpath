@@ -1,3 +1,4 @@
+export const errXPTY0004 = (message: string) => new Error(`XPTY0004: ${message}`);
 export const errXQTY0024 = node => {
 	const nodeString =
 		node.nodeType === node.ATTRIBUTE_NODE ? `${node.name}="${node.value}"` : node.outerHTML;
