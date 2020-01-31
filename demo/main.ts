@@ -109,7 +109,14 @@ function jsonXmlReplacer(_key: string, value: any): any {
 		return attrString.join('');
 	}
 
-	return value instanceof Node ? new XMLSerializer().serializeToString(value) : value;
+	if (value instanceof Node) {
+		return new XMLSerializer().serializeToString(value);
+	}
+	if (value instanceof Function) {
+		return `function: "${value.name}"`;
+	}
+
+	return value;
 }
 
 async function runUpdatingXQuery(script: string) {

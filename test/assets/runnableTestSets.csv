@@ -384,7 +384,7 @@ prod-InlineFunctionExpr,true
 prod-InstanceofExpr,true
 prod-LetClause,true
 prod-Literal,true
-prod-Lookup,false
+prod-Lookup,true
 prod-MapConstructor,true
 prod-MapTest,false
 prod-ModuleImport,false

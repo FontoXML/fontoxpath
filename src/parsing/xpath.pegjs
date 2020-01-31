@@ -768,29 +768,60 @@ PostfixExprWithStep
    )* {
 var toWrap = expr;
 
+var isFilterExpr = false;
 var predicates = [];
+var filters = [];
+
+var allowSinglePredicate = false;
+function flushPredicates() {
+  if(allowSinglePredicate && predicates.length === 1) {
+    filters.push(["predicate", predicates[0]]);
+  } else if (predicates.length !== 0) {
+    filters.push(["predicates"].concat(predicates));
+  }
+  predicates.length = 0;
+}
+
+function flushFilters(ensureFilter) {
+  flushPredicates();
+  if(filters.length !== 0) {
+    if(toWrap[0] === "sequenceExpr" && toWrap.length > 2) {
+      // Double wrap sequenceExpr because the XQueryX tests like it
+      toWrap = ["sequenceExpr", toWrap];
+    }
+    toWrap = [["filterExpr", toWrap]].concat(filters);
+  } else if(ensureFilter) {
+    toWrap = [["filterExpr", toWrap]];
+  } else {
+    toWrap = [toWrap];
+  }
+  filters.length = 0;
+}
+
 postfixExpr.forEach(function (postFix) {
   if (postFix[0] === "predicate") {
     predicates.push(postFix[1]);
-  }
-  else if (postFix[0] === "argumentList") {
-    if (predicates.length) {
-      // Wrap in pathExpr to fit the predicates
-      toWrap = ["pathExpr", ["stepExpr", ["filterExpr", toWrap], ["predicates"].concat(predicates)]];
-      predicates = [];
+  } else if (postFix[0] === "lookup") {
+    allowSinglePredicate = true;
+    flushPredicates();
+    filters.push(postFix);
+  } else if (postFix[0] === "argumentList") {
+    flushFilters(false);
+    if(toWrap.length > 1) {
+      toWrap = [["sequenceExpr", ["pathExpr", ["stepExpr"].concat(toWrap)]]]
     }
-    toWrap = ["dynamicFunctionInvocationExpr", ["functionItem", toWrap]].concat(postFix[1].length ? [["arguments"].concat(postFix[1])] : []);
+    toWrap = ["dynamicFunctionInvocationExpr", ["functionItem"].concat(toWrap)].concat(postFix[1].length ? [["arguments"].concat(postFix[1])] : []);
   }
 });
 
-return predicates.length ?
-  [["filterExpr", toWrap], ["predicates"].concat(predicates)] :
-  [["filterExpr", toWrap]];
+flushFilters(true);
+
+return toWrap;
 }
 
 // Expression is not in a step expression, i.e. can not have predicates and does not need filterExpr wrapper
 PostfixExprWithoutStep
- = expr:PrimaryExpr !(_ Predicate / _ ArgumentList) {return expr}
+ = expr:PrimaryExpr !(_ Predicate / _ ArgumentList / _ Lookup) {return expr}
 
 
 // === end of changes ===
@@ -864,7 +895,7 @@ Predicate
 
 // 125
 Lookup
- = "?" _ KeySpecifier
+ = "?" _ keySpecifier:KeySpecifier {return keySpecifier === "*" ? ["lookup", ["star"]] : typeof keySpecifier === "string" ? ["lookup", ["NCName", keySpecifier]] : ["lookup", keySpecifier]}
 
 KeySpecifier
  = NCName / IntegerLiteral / ParenthesizedExpr / "*"
@@ -886,7 +917,7 @@ PrimaryExpr
  / MapConstructor
  / ArrayConstructor
 // / StringConstructor
-// / UnaryLookup
+ / UnaryLookup
 
 // 129
 Literal
@@ -922,8 +953,8 @@ FunctionCall
 
 // 138
 Argument
- = ArgumentPlaceholder
- / ExprSingle
+ = ExprSingle
+ / ArgumentPlaceholder
 
 // 139
 ArgumentPlaceholder
@@ -1146,6 +1177,17 @@ SquareArrayConstructor
 // 176
 CurlyArrayConstructor
  = "array" _ e:EnclosedExpr {return ["curlyArray"].concat(e ? [["arrayElem", e]] : [])}
+
+// 181
+UnaryLookup
+ = "?" _ keySpecifier:KeySpecifier {
+	 return keySpecifier === "*" ?
+	 	["unaryLookup", ["star"]] :
+		typeof keySpecifier === "string" ?
+			["unaryLookup", ["NCName", keySpecifier]] :
+			["unaryLookup", keySpecifier]
+	 }
+
 
 // 182
 SingleType
