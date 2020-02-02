@@ -812,7 +812,6 @@ fn-max-8,AssertionError: Expected executing the XPath "max((xs:yearMonthDuration
 fn-max-9,AssertionError: Expected executing the XPath "max(xs:duration("P1Y1M1D"))" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw an error, AssertionError: expected [Function] to throw an error.
 fn-max-10,Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 fn-max-18,AssertionError: Expected XPath max((xs:token("zither"), xs:anyURI("http://b.com"))) to resolve to something of type xs:token: expected false to be true
-fn-max-19,Error: Atomizing array(*) is not implemented.
 cbcl-max-007,AssertionError:        	declare function local:f($x as xs:integer) {        		if ($x = 2) then xs:dayTimeDuration("P1D") else xs:dayTimeDuration("PT3S")        	};        	max(for $x in (1,2,3) return local:f($x))       : expected 'PT3S' to equal 'P1D'
 cbcl-max-008,AssertionError: expected [Function] to throw an error
 cbcl-max-016,AssertionError: expected [Function] to throw an error
@@ -875,7 +874,6 @@ fn-min-8,AssertionError: Expected executing the XPath "min((xs:yearMonthDuration
 fn-min-9,AssertionError: Expected executing the XPath "min(xs:duration("P1Y1M1D"))" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw an error, AssertionError: expected [Function] to throw an error.
 fn-min-10,Error: XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 fn-min-18,AssertionError: Expected XPath min((xs:token("http"), xs:anyURI("http://b.com"))) to resolve to something of type xs:token: expected false to be true
-fn-min-19,Error: Atomizing array(*) is not implemented.
 cbcl-min-007,AssertionError:        	declare function local:f($x as xs:integer) { if ($x = 2) then xs:dayTimeDuration("P1D") else xs:dayTimeDuration("PT3S") };        	min(for $x in (1,2,3) return local:f($x))       : expected 'P1DT' to equal 'PT3S'
 cbcl-min-008,AssertionError: expected [Function] to throw an error
 cbcl-min-016,AssertionError: expected [Function] to throw an error
@@ -1017,7 +1015,7 @@ fn-parse-json-834,AssertionError: Expected executing the XPath "parse-json('[1.2
 fn-parse-json-835,AssertionError: Expected executing the XPath "parse-json("['wrong']", map{'liberal':true()})" to resolve to one of the expected results, but got Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:string)"?, AssertionError: expected [Function] to throw error matching /FOJS0001/ but got 'XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:string)"?'.
 fn-parse-json-839,AssertionError: Expected executing the XPath "parse-json('', map{'liberal':true()})" to resolve to one of the expected results, but got Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:string)"?, AssertionError: expected [Function] to throw error matching /FOJS0001/ but got 'XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:string)"?'.
 fn-parse-json-840,AssertionError: Expected executing the XPath "parse-json('{"'||codepoints-to-string((10, 37))||'":"x", "yyy":"y"}', map{'liberal':true()})" to resolve to one of the expected results, but got Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:string)"?, AssertionError: expected [Function] to throw error matching /FOJS0001/ but got 'XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:string)"?'.
-fn-parse-json-919,AssertionError: Expected executing the XPath "parse-json('["\b"]')" to resolve to one of the expected results, but got AssertionError: Expected XPath parse-json('["\b"]') to (deep equally) resolve to ['�']: expected false to be true, AssertionError: expected [Function] to throw error matching /FOJS0001/ but got 'Atomizing array(*) is not implemented.'.
+fn-parse-json-919,AssertionError: Expected executing the XPath "parse-json('["\b"]')" to resolve to one of the expected results, but got AssertionError: Expected XPath parse-json('["\b"]') to (deep equally) resolve to ['�']: expected false to be true, AssertionError: expected [Function] to throw an error.
 fn-parse-json-922,AssertionError: Expected XPath parse-json('["\uD834"]') to (deep equally) resolve to ['�']: expected false to be true
 fn-parse-json-923,AssertionError: Expected XPath parse-json('["\udD1E"]') to (deep equally) resolve to ['�']: expected false to be true
 fn-parse-json-924,Error: XPST0017: Function parse-json with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions}parse-json (xs:string)"?
@@ -1399,7 +1397,7 @@ map-remove-011,Error: No selector counterpart for: typedMapTest.
 map-remove-014,Error: XPST0017: Function adjust-dateTime-to-timezone with arity of 2 not registered. No similar functions found.
 map-remove-016,AssertionError: Expected XPath              map{xs:float('1.0'):0, xs:double('1.00000000001'):1}              => map:remove(xs:decimal('1.0000000000100000000001'))              => map:size()          to resolve to 2: expected false to be true
 map-for-each-007,AssertionError: expected [Function] to throw an error
-array-filter-007,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Atomizing array(*) is not implemented.'
+array-filter-007,AssertionError: expected [Function] to throw an error
 array-filter-008,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'isEmpty\' of undefined'
 array-filter-009,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'strArg1.indexOf is not a function'
 array-flatten-010,Error: Atomizing array(*) is not implemented.
@@ -1410,9 +1408,9 @@ array-fold-right-005,Error: XPTY0004: Expected base expression to evaluate to a 
 array-fold-right-006,AssertionError: Expected XPath array:fold-right([" opened the door", " went up stairs"], "Bob", function($a,$z){concat($z, $a)}) to (deep equally) resolve to "Bob went up stairs opened the door": expected false to be true
 array-fold-right-009,AssertionError: Expected XPath array:fold-right([1,2,3], [], function($x, $y){[$x, $y]}) to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
 array-for-each-006,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'first\' of undefined'
-array-for-each-007,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Atomizing array(*) is not implemented.'
-array-for-each-pair-308,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Atomizing array(*) is not implemented.'
-array-for-each-pair-309,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Atomizing array(*) is not implemented.'
+array-for-each-007,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'string.value.toUpperCase is not a function'
+array-for-each-pair-308,AssertionError: expected [Function] to throw an error
+array-for-each-pair-309,AssertionError: expected [Function] to throw an error
 array-head-607,Error: XPTY0004: The provided context item is not a map or an array.
 array-insert-before-508,AssertionError:                   let $x := <x/>         	  let $array := [<e/>, <f/>, <g/>]            	  for $i in 1 to array:size($array) + 1               return         	     array:insert-before($array, $i, $x)          : expected false to be true
 array-insert-before-510,Error: Not implemented: orderByClause is not implemented yet.
@@ -2701,13 +2699,7 @@ K2-GenCompEq-4,Error: No selector counterpart for: treatExpr.
 K2-GenCompEq-5,Error: No selector counterpart for: treatExpr.
 K2-GenCompEq-6,Error: No selector counterpart for: treatExpr.
 GenCompEq-2,Error: FORG0001: Cannot cast 1 to xs:NCName, pattern validation failed.
-GenCompEq-7,Error: Atomizing array(*) is not implemented.
-GenCompEq-8,Error: Atomizing array(*) is not implemented.
-GenCompEq-9,Error: Atomizing array(*) is not implemented.
 GenCompEq-22,Error: Casting to xs:QName is not implemented.
-GenCompLT-9,Error: Atomizing array(*) is not implemented.
-GenCompLT-10,Error: Atomizing array(*) is not implemented.
-GenCompLT-11,Error: Atomizing array(*) is not implemented.
 CondExpr20,Error: XPST0003: Unable to parse: "if( false() ) then /Folder[1] cast as xs:double ? else 10 cast as xs:double ? = 10". Expected " ", "!=", "(:", "*", "+", "-", "<", "<<", "<=", "=", ">", ">=", ">>", "\n", "\r", "\t", "and", "castable", "div", "else", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "?" found. if( false() ) then /Folder[1] cast as xs:double [Error is around here]? else 10 cast as xs:double ? = 10
 CondExpr21,Error: XPST0003: Unable to parse: "if( true() ) then 10 cast as xs:double ? else /Folder[1] cast as xs:double ? = 10". Expected " ", "!=", "(:", "*", "+", "-", "<", "<<", "<=", "=", ">", ">=", ">>", "\n", "\r", "\t", "and", "castable", "div", "else", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", or "||" but "?" found. if( true() ) then 10 cast as xs:double [Error is around here]? else /Folder[1] cast as xs:double ? = 10
 CondExpr022,Error: XPST0017: Function doc-available with arity of 1 not registered. No similar functions found.
@@ -2772,11 +2764,9 @@ Literals025,AssertionError: -65535.032e2: expected '-6553503.2' to equal '-6.553
 Literals027,AssertionError: 65535032E2: expected '6553503200' to equal '6.5535032E9'
 Literals028,AssertionError: 65535.032E2: expected '6553503.2' to equal '6.5535032E6'
 K-Literals-29,AssertionError: expected [Function] to throw error matching /XPST0003/ but got 'Failed to execute \'evaluateXPath\': xpathExpression must be a string.'
-Lookup-015,Error: Atomizing array(*) is not implemented.
 Lookup-016,Error: FOCH0002: No collations are supported
 Lookup-021,Error: XPTY0004: The key specifier is not an integer.
 Lookup-022,AssertionError: Expected XPath [['a', 'b', 'c'], ['b', 'c', 'd'], ['e', 'f', 'b']]?*[.?1 = 'a'] to (deep equally) resolve to ['a', 'b', 'c']: expected false to be true
-Lookup-115,Error: Atomizing array(*) is not implemented.
 Lookup-121,Error: XPTY0004: The key specifier is not an integer.
 Lookup-145,AssertionError: Skipped test, it was a assert-permutation
 Lookup-154,AssertionError: Skipped test, it was a assert-permutation
@@ -3338,7 +3328,6 @@ K-OrderExpr-2a,Error: XPST0003: Unable to parse: "(unordered{}) => empty()". Exp
 K-OrderExpr-3,Error: XPST0003: Unable to parse: "ordered{true()}". Expected " ", "!", "!=", "#", "(", "(:", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "{" found. ordered[Error is around here]{true()}
 K-OrderExpr-4,Error: XPST0003: Unable to parse: "unordered{true()}". Expected " ", "!", "!=", "#", "(", "(:", "*", "+", ",", "-", "/", "//", ":", ":*", "<", "<<", "<=", "=", "=>", ">", ">=", ">>", "[", "\n", "\r", "\t", "and", "cast", "castable", "div", "eq", "except", "ge", "gt", "idiv", "instance", "intersect", "is", "le", "lt", "mod", "ne", "or", "to", "treat", "union", "|", "||", [A-Z_a-zÀ-ÖØ-öø-˿Ͱ-ͽͿ-῿‌‍⁰-↏Ⰰ-⿯、-퟿豈-﷏ﷰ-�], [\-.0-9·̀-ͯ‿⁀], [�-�], or end of input but "{" found. unordered[Error is around here]{true()}
 UnaryLookup-011,AssertionError: expected [Function] to throw error matching /XPDY0002/ but got 'Cannot read property \'type\' of null'
-UnaryLookup-015,Error: Atomizing array(*) is not implemented.
 UnaryLookup-016,Error: FOCH0002: No collations are supported
 UnaryLookup-021,Error: XPTY0004: The key specifier is not an integer.
 UnaryLookup-022,AssertionError: Expected XPath [['a', 'b', 'c'], ['b', 'c', 'd'], ['e', 'f', 'b']]?*[?1 = 'a'] to (deep equally) resolve to ['a', 'b', 'c']: expected false to be true
@@ -3363,10 +3352,7 @@ K-ValCompTypeChecking-38,AssertionError: expected [Function] to throw error matc
 K-ValCompTypeChecking-39,AssertionError: Expected executing the XPath "3 eq (3, error())" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?', AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
 K-ValCompTypeChecking-40,AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'
 K-ValCompTypeChecking-41,AssertionError: Expected executing the XPath "(3, error()) eq 3" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /FOER0000/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?', AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0017: Function error with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?'.
-value-comparison-5,Error: Atomizing array(*) is not implemented.
-value-comparison-6,Error: Atomizing array(*) is not implemented.
-value-comparison-7,Error: Atomizing array(*) is not implemented.
-value-comparison-8,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Atomizing array(*) is not implemented.'
+value-comparison-7,Error: XPTY0004: Sequences to compare are not singleton.
 VarDecl020,AssertionError: declare variable $x := 9.999999999999999; $x: expected '9.999999999999998' to equal '9.999999999999999'
 VarDecl046,Error: Not implemented: adding durations to xs:date
 VarDecl048,Error: Not implemented: adding durations to xs:time
@@ -4271,7 +4257,6 @@ fo-test-fn-path-004,Error: No selector counterpart for: computedDocumentConstruc
 fo-test-fn-path-005,Error: No selector counterpart for: computedDocumentConstructor.
 fo-test-fn-path-006,Error: No selector counterpart for: computedDocumentConstructor.
 fo-test-fn-index-of-004,Error: XPTY0004: eqOp not available for xs:date and xs:integer
-fo-test-fn-index-of-005,Error: Atomizing array(*) is not implemented.
 fo-test-fn-distinct-values-001,AssertionError: Skipped test, it was a assert-permutation
 fo-test-fn-distinct-values-002,AssertionError: Skipped test, it was a assert-permutation
 fo-test-fn-unordered-001,AssertionError: Skipped test, it was a assert-permutation

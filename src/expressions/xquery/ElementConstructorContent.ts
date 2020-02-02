@@ -1,9 +1,9 @@
-import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
+import { atomizeSingleValue } from '../dataTypes/atomize';
 
 function parseChildNodes(
 	childNodes: Value[],
@@ -28,8 +28,10 @@ function parseChildNodes(
 		}
 
 		if (isSubtypeOf(childNode.type, 'xs:anyAtomicType')) {
-			const atomizedValue = castToType(atomize(childNode, executionParameters), 'xs:string')
-				.value;
+			const atomizedValue = castToType(
+				atomizeSingleValue(childNode, executionParameters).first(),
+				'xs:string'
+			).value;
 			if (i !== 0 && isSubtypeOf(childNodes[i - 1].type, 'xs:anyAtomicType')) {
 				contentNodes.push(nodesFactory.createTextNode(' ' + atomizedValue));
 				attributesDone = true;

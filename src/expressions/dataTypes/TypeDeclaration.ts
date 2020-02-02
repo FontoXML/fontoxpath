@@ -1,6 +1,8 @@
+import { ValueType } from './Value';
+
 type TypeDeclaration = {
 	occurrence: '?' | '+' | '*' | '';
-	type: string;
+	type: ValueType;
 };
 
 export default TypeDeclaration;

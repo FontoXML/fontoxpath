@@ -1,22 +1,17 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
-import Specificity from '../Specificity';
-import UpdatingExpression from './UpdatingExpression';
-
-import { replaceElementContent, replaceNode, replaceValue } from './pulPrimitives';
-import { mergeUpdates } from './pulRoutines';
-
-import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
-import parseContent from '../xquery/ElementConstructorContent';
-
-import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
-
+import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import parseContent from '../xquery/ElementConstructorContent';
+import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
+import { replaceElementContent, replaceNode, replaceValue } from './pulPrimitives';
+import { mergeUpdates } from './pulRoutines';
+import UpdatingExpression from './UpdatingExpression';
 import {
 	errXUDY0009,
 	errXUDY0023,
@@ -188,11 +183,15 @@ function evaluateReplaceNodeValue(
 				// The result of this step, in the absence of errors,
 				// is either a single text node or an empty sequence.
 				// Let $text be the result of this step.
-				const atomized = rl.value.xdmValue.map(value =>
-					castToType(atomize(value, executionParameters), 'xs:string')
-				);
+				const atomized = sequenceFactory
+					.create(rl.value.xdmValue)
+					.atomize(executionParameters)
+					.map(value => castToType(value, 'xs:string'));
 
-				const textContent = atomized.map(value => value.value).join(' ');
+				const textContent = atomized
+					.getAllValues()
+					.map(value => value.value)
+					.join(' ');
 				text =
 					textContent.length === 0
 						? null

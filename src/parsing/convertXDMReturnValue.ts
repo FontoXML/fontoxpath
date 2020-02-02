@@ -1,6 +1,6 @@
 import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
 import ArrayValue from '../expressions/dataTypes/ArrayValue';
-import atomize from '../expressions/dataTypes/atomize';
+import atomize, { atomizeSingleValue } from '../expressions/dataTypes/atomize';
 import castToType from '../expressions/dataTypes/castToType';
 import ISequence from '../expressions/dataTypes/ISequence';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
@@ -67,7 +67,7 @@ export default function convertXDMReturnValue<
 		}
 
 		case ReturnType.STRING: {
-			const allValues = rawResults.tryGetAllValues();
+			const allValues = rawResults.atomize(executionParameters).tryGetAllValues();
 			if (!allValues.ready) {
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
@@ -76,11 +76,11 @@ export default function convertXDMReturnValue<
 			}
 			// Atomize to convert (attribute)nodes to be strings
 			return allValues.value
-				.map(value => castToType(atomize(value, executionParameters), 'xs:string').value)
+				.map(value => castToType(value, 'xs:string').value)
 				.join(' ') as IReturnTypes<TNode>[TReturnType];
 		}
 		case ReturnType.STRINGS: {
-			const allValues = rawResults.tryGetAllValues();
+			const allValues = rawResults.atomize(executionParameters).tryGetAllValues();
 			if (!allValues.ready) {
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
@@ -89,7 +89,7 @@ export default function convertXDMReturnValue<
 			}
 			// Atomize all parts
 			return allValues.value.map(value => {
-				return atomize(value, executionParameters).value + '';
+				return value.value + '';
 			}) as IReturnTypes<TNode>[TReturnType];
 		}
 
@@ -295,7 +295,7 @@ export default function convertXDMReturnValue<
 					}
 					return transformedMap.value as IReturnTypes<TNode>[TReturnType];
 				}
-				return atomize(allValues.value[0], executionParameters).value;
+				return atomizeSingleValue(first, executionParameters).first().value;
 			}
 
 			return sequenceFactory

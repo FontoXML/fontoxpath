@@ -1,13 +1,12 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
-
 import {
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
+	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings
 } from 'fontoxpath';
-
+import * as slimdom from 'slimdom';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
@@ -758,6 +757,15 @@ array:for-each-pair(
 				),
 				'1234567'
 			));
+	});
+
+	describe('atomizing arrays', () => {
+		it('can atomize arrays', () => {
+			chai.assert.deepEqual(
+				evaluateXPathToNumbers('fn:index-of([1, [5, 6], [6, 7]], 6)', documentNode),
+				[3, 4]
+			);
+		});
 	});
 
 	describe('complex queries', () => {

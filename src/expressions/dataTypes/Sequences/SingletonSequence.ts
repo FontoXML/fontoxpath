@@ -29,7 +29,7 @@ export default class SingletonSequence implements ISequence {
 	}
 
 	public atomize(executionParameters: ExecutionParameters): ISequence {
-		return this.map(value => atomize(value, executionParameters));
+		return atomize(this, executionParameters);
 	}
 
 	public expandSequence(): ISequence {

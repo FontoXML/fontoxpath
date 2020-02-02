@@ -1,4 +1,4 @@
-import atomize from '../dataTypes/atomize';
+import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
@@ -157,7 +157,10 @@ const fnString: FunctionDefinitionType = function(
 		default: () =>
 			sequence.map(value => {
 				if (isSubtypeOf(value.type, 'node()')) {
-					const stringValue = atomize(value, executionParameters);
+					const stringValueSequence = atomizeSingleValue(value, executionParameters);
+					// Assume here that a node always atomizes to a singlevalue. This will not work
+					// anymore when schema support will be imlemented.
+					const stringValue = stringValueSequence.first();
 					if (isSubtypeOf(value.type, 'attribute()')) {
 						return castToType(stringValue, 'xs:string');
 					}

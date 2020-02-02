@@ -1,16 +1,18 @@
-import createAtomicValue from './createAtomicValue';
-import isSubtypeOf from './isSubtypeOf';
-
 import ExecutionParameters from '../ExecutionParameters';
-import AtomicValue from './AtomicValue';
+import concatSequences from '../util/concatSequences';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady } from '../util/iterators';
+import ArrayValue from './ArrayValue';
+import createAtomicValue from './createAtomicValue';
+import ISequence from './ISequence';
+import isSubtypeOf from './isSubtypeOf';
+import sequenceFactory from './sequenceFactory';
 import Value from './Value';
+import { NODE_TYPES } from 'src/domFacade/ConcreteNode';
 
-const TEXT_NODE = 3;
-
-export default function atomize(
+export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters
-): AtomicValue {
+): ISequence {
 	if (
 		isSubtypeOf(value.type, 'xs:anyAtomicType') ||
 		isSubtypeOf(value.type, 'xs:untypedAtomic') ||
@@ -23,7 +25,7 @@ export default function atomize(
 		isSubtypeOf(value.type, 'xs:QName') ||
 		isSubtypeOf(value.type, 'xs:string')
 	) {
-		return value;
+		return sequenceFactory.create(value);
 	}
 
 	if (isSubtypeOf(value.type, 'node()')) {
@@ -31,14 +33,13 @@ export default function atomize(
 
 		// TODO: Mix in types, by default get string value
 		if (isSubtypeOf(value.type, 'attribute()')) {
-			return createAtomicValue(node.value, 'xs:untypedAtomic');
+			return sequenceFactory.create(createAtomicValue(node.value, 'xs:untypedAtomic'));
 		}
 
 		// Text nodes and documents should return their text, as untyped atomic
 		if (isSubtypeOf(value.type, 'text()')) {
-			return createAtomicValue(
-				executionParameters.domFacade.getData(node),
-				'xs:untypedAtomic'
+			return sequenceFactory.create(
+				createAtomicValue(executionParameters.domFacade.getData(node), 'xs:untypedAtomic')
 			);
 		}
 		// comments and PIs are string
@@ -46,29 +47,36 @@ export default function atomize(
 			isSubtypeOf(value.type, 'comment()') ||
 			isSubtypeOf(value.type, 'processing-instruction()')
 		) {
-			return createAtomicValue(executionParameters.domFacade.getData(node), 'xs:string');
+			return sequenceFactory.create(
+				createAtomicValue(executionParameters.domFacade.getData(node), 'xs:string')
+			);
 		}
 
 		// This is an element or a document node. Because we do not know the specific type of this element.
 		// Documents should always be an untypedAtomic, of elements, we do not know the type, so they are untypedAtomic too
 		const allTextNodes = [];
 		(function getTextNodes(aNode) {
-			if (aNode.nodeType === TEXT_NODE || aNode.nodeType === 4) {
+			if (
+				aNode.nodeType === NODE_TYPES.TEXT_NODE ||
+				aNode.nodeType === NODE_TYPES.CDATA_SECTION_NODE
+			) {
 				allTextNodes.push(aNode);
 				return;
 			}
-			executionParameters.domFacade.getChildNodes(aNode, null).forEach(function(childNode) {
+			executionParameters.domFacade.getChildNodes(aNode, null).forEach(childNode => {
 				getTextNodes(childNode);
 			});
 		})(node);
 
-		return createAtomicValue(
-			allTextNodes
-				.map(textNode => {
-					return executionParameters.domFacade.getData(textNode);
-				})
-				.join(''),
-			'xs:untypedAtomic'
+		return sequenceFactory.create(
+			createAtomicValue(
+				allTextNodes
+					.map(textNode => {
+						return executionParameters.domFacade.getData(textNode);
+					})
+					.join(''),
+				'xs:untypedAtomic'
+			)
 		);
 	}
 
@@ -76,5 +84,55 @@ export default function atomize(
 	if (isSubtypeOf(value.type, 'function(*)') && !isSubtypeOf(value.type, 'array(*)')) {
 		throw new Error(`FOTY0013: Atomization is not supported for ${value.type}.`);
 	}
+
+	if (isSubtypeOf(value.type, 'array(*)')) {
+		const arrayValue = value as ArrayValue;
+		return concatSequences(
+			arrayValue.members.map(getMemberSequence =>
+				getMemberSequence().atomize(executionParameters)
+			)
+		);
+	}
 	throw new Error(`Atomizing ${value.type} is not implemented.`);
+}
+
+export default function atomize(
+	sequence: ISequence,
+	executionParameters: ExecutionParameters
+): ISequence {
+	// Generate the atomized items one by one to prevent getting all items
+	let done = false;
+	const it = sequence.value;
+	let currentOutput: IAsyncIterator<Value> = null;
+	return sequenceFactory.create({
+		next: () => {
+			while (!done) {
+				if (!currentOutput) {
+					const inputItem = it.next(IterationHint.NONE);
+					if (!inputItem.ready) {
+						return notReady(inputItem.promise);
+					}
+					if (inputItem.done) {
+						done = true;
+						break;
+					}
+					const outputSequence = atomizeSingleValue(inputItem.value, executionParameters);
+					currentOutput = outputSequence.value;
+				}
+
+				const itemToOutput = currentOutput.next(IterationHint.NONE);
+				if (!itemToOutput.ready) {
+					return notReady(itemToOutput.promise);
+				}
+				if (itemToOutput.done) {
+					currentOutput = null;
+					continue;
+				}
+
+				return itemToOutput;
+			}
+
+			return DONE_TOKEN;
+		}
+	});
 }
