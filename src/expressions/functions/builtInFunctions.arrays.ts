@@ -1,15 +1,15 @@
 import ArrayValue from '../dataTypes/ArrayValue';
+import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import arrayGet from './builtInFunctions.arrays.get';
-
-import ISequence from '../dataTypes/ISequence';
-import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const arraySize: FunctionDefinitionType = function(
@@ -343,7 +343,7 @@ const arraySort: FunctionDefinitionType = function(
 ) {
 	return zipSingleton([arraySequence], ([array]) => {
 		const atomizedMembers = (array as ArrayValue).members.map(createSequence =>
-			createSequence().atomize(executionParameters)
+			atomize(createSequence(), executionParameters)
 		);
 
 		return zipSingleton(atomizedMembers, atomizedItems => {

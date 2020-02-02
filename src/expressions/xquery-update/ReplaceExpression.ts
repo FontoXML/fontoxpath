@@ -1,3 +1,4 @@
+import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
@@ -183,10 +184,10 @@ function evaluateReplaceNodeValue(
 				// The result of this step, in the absence of errors,
 				// is either a single text node or an empty sequence.
 				// Let $text be the result of this step.
-				const atomized = sequenceFactory
-					.create(rl.value.xdmValue)
-					.atomize(executionParameters)
-					.map(value => castToType(value, 'xs:string'));
+				const atomized = atomize(
+					sequenceFactory.create(rl.value.xdmValue),
+					executionParameters
+				).map(value => castToType(value, 'xs:string'));
 
 				const textContent = atomized
 					.getAllValues()

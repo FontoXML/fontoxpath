@@ -1,4 +1,4 @@
-import { atomizeSingleValue } from '../dataTypes/atomize';
+import atomize, { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
@@ -62,7 +62,7 @@ const fnConcat: FunctionDefinitionType = function(
 ) {
 	let stringSequences = Array.from(arguments).slice(3);
 	stringSequences = stringSequences.map(function(sequence) {
-		return sequence.atomize(executionParameters);
+		return atomize(sequence, executionParameters);
 	});
 	return zipSingleton(stringSequences, function(stringValues) {
 		return sequenceFactory.singleton(

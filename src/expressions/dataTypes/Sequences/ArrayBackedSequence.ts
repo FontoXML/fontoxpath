@@ -26,10 +26,6 @@ export default class ArrayBackedSequence implements ISequence {
 		};
 	}
 
-	public atomize(executionParameters: ExecutionParameters): ISequence {
-		return atomize(this, executionParameters);
-	}
-
 	public expandSequence(): ISequence {
 		return this;
 	}

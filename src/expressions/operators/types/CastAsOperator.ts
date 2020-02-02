@@ -1,3 +1,4 @@
+import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
@@ -35,9 +36,10 @@ class CastAsOperator extends Expression {
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
-		const evaluatedExpression = this._expression
-			.evaluateMaybeStatically(dynamicContext, executionParameters)
-			.atomize(executionParameters);
+		const evaluatedExpression = atomize(
+			this._expression.evaluateMaybeStatically(dynamicContext, executionParameters),
+			executionParameters
+		);
 		return evaluatedExpression.switchCases({
 			empty: () => {
 				if (!this._allowsEmptySequence) {

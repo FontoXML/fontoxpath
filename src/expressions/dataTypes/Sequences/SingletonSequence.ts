@@ -28,10 +28,6 @@ export default class SingletonSequence implements ISequence {
 		this._effectiveBooleanValue = null;
 	}
 
-	public atomize(executionParameters: ExecutionParameters): ISequence {
-		return atomize(this, executionParameters);
-	}
-
 	public expandSequence(): ISequence {
 		return this;
 	}

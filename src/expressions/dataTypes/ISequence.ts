@@ -46,7 +46,6 @@ export type SwitchCasesCases =
 export default interface ISequence {
 	value: IAsyncIterator<Value>;
 
-	atomize(executionParameters: ExecutionParameters): ISequence;
 	expandSequence(): ISequence;
 
 	/**

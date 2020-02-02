@@ -1,18 +1,17 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import Specificity from '../Specificity';
-import { errXPST0081 } from '../XPathErrors';
-import { errXQDY0044 } from './XQueryErrors';
-
+import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
-import { evaluateQNameExpression } from './nameExpression';
-
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { errXPST0081 } from '../XPathErrors';
+import { evaluateQNameExpression } from './nameExpression';
+import { errXQDY0044 } from './XQueryErrors';
 
 function createAttribute(nodesFactory, name, value) {
 	const attr = nodesFactory.createAttributeNS(name.namespaceURI, name.buildPrefixedName());
@@ -106,17 +105,17 @@ class AttributeConstructor extends Expression {
 					if (!valueIterator) {
 						valueIterator = concatSequences(
 							valueExprParts.map(expr => {
-								return expr
-									.evaluate(dynamicContext, executionParameters)
-									.atomize(executionParameters)
-									.mapAll(allValues =>
-										sequenceFactory.singleton(
-											createAtomicValue(
-												allValues.map(val => val.value).join(' '),
-												'xs:string'
-											)
+								return atomize(
+									expr.evaluate(dynamicContext, executionParameters),
+									executionParameters
+								).mapAll(allValues =>
+									sequenceFactory.singleton(
+										createAtomicValue(
+											allValues.map(val => val.value).join(' '),
+											'xs:string'
 										)
-									);
+									)
+								);
 							})
 						).mapAll(allValueParts =>
 							sequenceFactory.singleton(

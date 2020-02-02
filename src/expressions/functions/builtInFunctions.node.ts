@@ -7,6 +7,7 @@ import {
 	NODE_TYPES
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
+import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
@@ -104,7 +105,7 @@ const fnData: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.atomize(executionParameters);
+	return atomize(sequence, executionParameters);
 };
 
 const fnHasChildren: FunctionDefinitionType = (

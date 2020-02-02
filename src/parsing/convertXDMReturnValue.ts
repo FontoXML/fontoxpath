@@ -67,7 +67,7 @@ export default function convertXDMReturnValue<
 		}
 
 		case ReturnType.STRING: {
-			const allValues = rawResults.atomize(executionParameters).tryGetAllValues();
+			const allValues = atomize(rawResults, executionParameters).tryGetAllValues();
 			if (!allValues.ready) {
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
@@ -80,7 +80,7 @@ export default function convertXDMReturnValue<
 				.join(' ') as IReturnTypes<TNode>[TReturnType];
 		}
 		case ReturnType.STRINGS: {
-			const allValues = rawResults.atomize(executionParameters).tryGetAllValues();
+			const allValues = atomize(rawResults, executionParameters).tryGetAllValues();
 			if (!allValues.ready) {
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
@@ -298,9 +298,7 @@ export default function convertXDMReturnValue<
 				return atomizeSingleValue(first, executionParameters).first().value;
 			}
 
-			return sequenceFactory
-				.create(allValues.value)
-				.atomize(executionParameters)
+			return atomize(sequenceFactory.create(allValues.value), executionParameters)
 				.getAllValues()
 				.map(atomizedValue => {
 					return atomizedValue.value;

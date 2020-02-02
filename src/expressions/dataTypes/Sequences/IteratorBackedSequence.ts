@@ -59,10 +59,6 @@ export default class IteratorBackedSequence implements ISequence {
 		this._length = predictedLength;
 	}
 
-	public atomize(executionParameters: ExecutionParameters): ISequence {
-		return atomize(this, executionParameters);
-	}
-
 	public expandSequence(): ISequence {
 		return this._sequenceFactory.create(this.getAllValues());
 	}

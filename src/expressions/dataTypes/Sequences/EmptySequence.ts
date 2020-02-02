@@ -12,10 +12,6 @@ export default class EmptySequence implements ISequence {
 		};
 	}
 
-	public atomize(_executionParameters: ExecutionParameters): ISequence {
-		return this;
-	}
-
 	public expandSequence(): ISequence {
 		return this;
 	}

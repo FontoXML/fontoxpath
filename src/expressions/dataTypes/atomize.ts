@@ -1,3 +1,4 @@
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import ExecutionParameters from '../ExecutionParameters';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady } from '../util/iterators';
@@ -7,7 +8,6 @@ import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
 import Value from './Value';
-import { NODE_TYPES } from 'src/domFacade/ConcreteNode';
 
 export function atomizeSingleValue(
 	value: Value,
@@ -89,7 +89,7 @@ export function atomizeSingleValue(
 		const arrayValue = value as ArrayValue;
 		return concatSequences(
 			arrayValue.members.map(getMemberSequence =>
-				getMemberSequence().atomize(executionParameters)
+				atomize(getMemberSequence(), executionParameters)
 			)
 		);
 	}

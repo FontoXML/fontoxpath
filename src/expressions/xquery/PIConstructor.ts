@@ -1,14 +1,13 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import { evaluateNCNameExpression } from './nameExpression';
-
-import Specificity from '../Specificity';
-
+import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import { IterationHint, ready } from '../util/iterators';
+import { evaluateNCNameExpression } from './nameExpression';
 
 function assertValidTarget(target) {
 	if (/^xml$/i.test(target)) {
@@ -46,7 +45,7 @@ class PIConstructor extends Expression {
 			dynamicContext,
 			executionParameters
 		);
-		return dataSequence.atomize(executionParameters).mapAll(items => {
+		return atomize(dataSequence, executionParameters).mapAll(items => {
 			const data = items.map(item => castToType(item, 'xs:string').value).join(' ');
 
 			if (data.indexOf('?>') !== -1) {

@@ -299,8 +299,7 @@ const fnIndexOf: FunctionDefinitionType = (
 	search
 ) => {
 	return search.mapAll(([onlySearchValue]) =>
-		sequence
-			.atomize(executionParameters)
+		atomize(sequence, executionParameters)
 			.map((element, i) => {
 				return valueCompare('eqOp', element, onlySearchValue, dynamicContext)
 					? createAtomicValue(i + 1, 'xs:integer')

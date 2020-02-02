@@ -1,22 +1,19 @@
-import AtomicValue from '../dataTypes/AtomicValue';
+import atomize from '../dataTypes/atomize';
 import tryCastToType from '../dataTypes/casting/tryCastToType';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { performFunctionConversion } from './argumentHelper';
-
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
-
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-
-import FunctionDefinitionType from './FunctionDefinitionType';
-import ISequence from '../dataTypes/ISequence';
-import StaticContext from '../StaticContext';
-import ExecutionParameters from '../ExecutionParameters';
 import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import StaticContext from '../StaticContext';
+import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import { performFunctionConversion } from './argumentHelper';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 function createValidNumericType(type: string, transformedValue: number) {
 	if (isSubtypeOf(type, 'xs:integer')) {
@@ -176,7 +173,7 @@ const fnNumber: FunctionDefinitionType = function(
 	_staticContext,
 	sequence
 ) {
-	return sequence.atomize(executionParameters).switchCases({
+	return atomize(sequence, executionParameters).switchCases({
 		empty: () => sequenceFactory.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
 			const castResult = tryCastToType(sequence.first(), 'xs:double');

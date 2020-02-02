@@ -1,11 +1,10 @@
-import Expression from '../Expression';
-
+import atomize from '../dataTypes/atomize';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Expression from '../Expression';
 import Specificity from '../Specificity';
-import zipSingleton from '../util/zipSingleton';
-
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import zipSingleton from '../util/zipSingleton';
 
 class MapConstructor extends Expression {
 	private _entries: { key: Expression; value: Expression }[];
@@ -30,17 +29,17 @@ class MapConstructor extends Expression {
 
 	public evaluate(dynamicContext, executionParameters) {
 		const keySequences = this._entries.map(kvp =>
-			kvp.key
-				.evaluateMaybeStatically(dynamicContext, executionParameters)
-				.atomize(executionParameters)
-				.switchCases({
-					default: () => {
-						throw new Error(
-							'XPTY0004: A key of a map should be a single atomizable value.'
-						);
-					},
-					singleton: seq => seq
-				})
+			atomize(
+				kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters),
+				executionParameters
+			).switchCases({
+				default: () => {
+					throw new Error(
+						'XPTY0004: A key of a map should be a single atomizable value.'
+					);
+				},
+				singleton: seq => seq
+			})
 		);
 
 		return zipSingleton(keySequences, keys =>

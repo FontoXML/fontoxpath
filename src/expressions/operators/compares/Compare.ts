@@ -1,3 +1,4 @@
+import atomize from '../../dataTypes/atomize';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 import generalCompare from './generalCompare';
@@ -79,9 +80,10 @@ class Compare extends Expression {
 								secondSequence
 							);
 						}
+
 						// Atomize both sequences
-						const firstAtomizedSequence = firstSequence.atomize(executionParameters);
-						const secondAtomizedSequence = secondSequence.atomize(executionParameters);
+						const firstAtomizedSequence = atomize(firstSequence, executionParameters);
+						const secondAtomizedSequence = atomize(secondSequence, executionParameters);
 
 						if (this._compare === 'valueCompare') {
 							return firstAtomizedSequence.switchCases({

@@ -1,15 +1,14 @@
+import atomize from '../../dataTypes/atomize';
+import { ValueType } from '../../dataTypes/Value';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import Expression from '../../Expression';
-
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,
 	subtractDuration as subtractDurationFromDateTime
 } from '../../dataTypes/valueTypes/DateTime';
-
 import {
 	add as dayTimeDurationAdd,
 	divide as dayTimeDurationDivide,
@@ -24,7 +23,7 @@ import {
 	multiply as yearMonthDurationMultiply,
 	subtract as yearMonthDurationSubtract
 } from '../../dataTypes/valueTypes/YearMonthDuration';
-import { ValueType } from '../../../expressions/dataTypes/Value';
+import Expression from '../../Expression';
 
 function determineReturnType(typeA: ValueType, typeB: ValueType): ValueType {
 	if (isSubtypeOf(typeA, 'xs:integer') && isSubtypeOf(typeB, 'xs:integer')) {
@@ -431,18 +430,20 @@ class BinaryOperator extends Expression {
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
-		const firstValueSequence = this._firstValueExpr
-			.evaluateMaybeStatically(dynamicContext, executionParameters)
-			.atomize(executionParameters);
+		const firstValueSequence = atomize(
+			this._firstValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
+			executionParameters
+		);
 		return firstValueSequence.mapAll(firstValues => {
 			if (firstValues.length === 0) {
 				// Shortcut, if the first part is empty, we can return empty.
 				// As per spec, we do not have to evaluate the second part, though we could.
 				return sequenceFactory.empty();
 			}
-			const secondValueSequence = this._secondValueExpr
-				.evaluateMaybeStatically(dynamicContext, executionParameters)
-				.atomize(executionParameters);
+			const secondValueSequence = atomize(
+				this._secondValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
+				executionParameters
+			);
 			return secondValueSequence.mapAll(secondValues => {
 				if (secondValues.length === 0) {
 					return sequenceFactory.empty();
