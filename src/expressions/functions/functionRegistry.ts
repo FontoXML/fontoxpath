@@ -2,6 +2,7 @@ import { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import { ValueType } from '../dataTypes/Value';
 
 export type FunctionProperties = {
 	argumentTypes: (TypeDeclaration | RestArgument)[];
@@ -153,7 +154,7 @@ function splitType(type: string): TypeDeclaration {
 	// argumentType is something like 'xs:string?' or 'map(*)'
 	const parts = type.match(/^(.*[^+?*])([+*?])?$/);
 	return {
-		type: parts[1],
+		type: parts[1] as ValueType,
 		occurrence: (parts[2] as '?' | '+' | '*' | '') || null
 	};
 }
