@@ -30,9 +30,8 @@ const fnTrace: FunctionDefinitionType = (
 		if (label !== undefined) {
 			newMessage += label.first().value;
 		}
-		executionParameters.logOutput(newMessage);
+		executionParameters.logger.trace(newMessage);
 
-		// Note: rewrap here to prevent double iterations of the input
 		return sequenceFactory.create(allItems);
 	});
 };

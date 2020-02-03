@@ -15,6 +15,7 @@ const resultText = document.getElementById('resultText');
 const updateResult = document.getElementById('updateResult');
 const xmlSource = document.getElementById('xmlSource');
 const xpathField = document.getElementById('xpathField');
+const traceOutput = document.getElementById('traceOutput');
 
 const domParser = new DOMParser();
 
@@ -123,8 +124,11 @@ async function runUpdatingXQuery(script: string) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
 		debug: true,
 		disableCache: true,
-		logOutput: m => {
-			console.log(m);
+		logger: {
+			trace: m => {
+				traceOutput.textContent = m;
+				console.log(m);
+			}
 		}
 	});
 
@@ -141,8 +145,11 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 		language: asXQuery
 			? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
 			: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
-		logOutput: m => {
-			console.log(m);
+		logger: {
+			trace: m => {
+				traceOutput.textContent = m;
+				console.log(m);
+			}
 		}
 	});
 
@@ -159,6 +166,7 @@ async function rerunXPath() {
 	log.innerText = '';
 	resultText.innerText = '';
 	updateResult.innerText = '';
+	traceOutput.innerText = '';
 
 	const xpath = xpathField.innerText;
 

@@ -1,6 +1,7 @@
 import IDocumentWriter from '../documentWriter/IDocumentWriter';
 import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 import INodesFactory from '../nodesFactory/INodesFactory';
+import { Logger } from '../evaluateXPath';
 
 export default class ExecutionParameters {
 	constructor(
@@ -8,6 +9,6 @@ export default class ExecutionParameters {
 		public readonly nodesFactory: INodesFactory,
 		public readonly documentWriter: IDocumentWriter,
 		public readonly currentContext: any,
-		public readonly logOutput?: (message: string) => void
+		public readonly logger?: Logger
 	) {}
 }

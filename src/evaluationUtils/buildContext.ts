@@ -68,7 +68,7 @@ export default function buildEvaluationContext(
 	if (externalOptions) {
 		internalOptions = {
 			// tslint:disable-next-line:no-console
-			logOutput: externalOptions['logOutput'] || console.log.bind(console),
+			logger: externalOptions['logger'] || { trace: console.log.bind(console) },
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
 			nodesFactory: externalOptions['nodesFactory']
@@ -76,7 +76,7 @@ export default function buildEvaluationContext(
 	} else {
 		internalOptions = {
 			// tslint:disable-next-line:no-console
-			logOutput: console.log.bind(console),
+			logger: { trace: console.log.bind(console) },
 			moduleImports: {},
 			namespaceResolver: null,
 			nodesFactory: null
@@ -142,7 +142,7 @@ export default function buildEvaluationContext(
 		nodesFactory,
 		documentWriter,
 		externalOptions['currentContext'],
-		internalOptions.logOutput
+		internalOptions.logger
 	);
 
 	return {

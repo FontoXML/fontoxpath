@@ -1,6 +1,6 @@
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
-import { Language } from './evaluateXPath';
+import { Language, Logger } from './evaluateXPath';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import buildContext from './evaluationUtils/buildContext';
 import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
@@ -21,7 +21,7 @@ export type UpdatingOptions = {
 	debug?: boolean;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
-	logOutput?: (message: string) => void;
+	logger?: Logger;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;
