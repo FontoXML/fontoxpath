@@ -529,7 +529,7 @@ const fnExactlyOne: FunctionDefinitionType = (
 ) => {
 	if (!arg.isSingleton()) {
 		throw new Error(
-			'FORG0005: The argument passed to fn:zero-or-one is empty or contained more then one item.'
+			'FORG0005: The argument passed to fn:exactly-one is empty or contained more then one item.'
 		);
 	}
 	return arg;
