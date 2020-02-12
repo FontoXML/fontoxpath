@@ -53,8 +53,5 @@ export function printAndRethrowError(selector: string, error: Error | StackTrace
 
 	const stackTrace = stackEntry.makeStackTrace().join('\n');
 	const errorMessage = lines.join('\n') + '\n\n' + stackTrace;
-	const newError = new PositionedError(errorMessage, errorLocation);
-	// tslint:disable-next-line:no-console We do want to write these to error.
-	console.error(errorMessage);
-	throw newError;
+	throw new PositionedError(errorMessage, errorLocation);
 }
