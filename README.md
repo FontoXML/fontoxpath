@@ -140,16 +140,6 @@ evaluateUpdatingExpression('replace node /xml with <foo/>', documentNode)
 	});
 ```
 
-### Pre compilation
-
-Precompile an XPath expression for future use. This uses a webworker to populate an IndexedDB database so that the XPath is available for future use. This is a no-op on systems without indexedDB.
-
-```js
-precompileXPath(xpathExpression);
-```
-
-* `xpathExpression` `<String>` The XPath expression.
-
 ### Global functions
 
 To register custom functions. They are registered globally.
@@ -158,7 +148,7 @@ To register custom functions. They are registered globally.
 registerCustomXPathFunction(name, signature, returnType, callback);
 ```
 
-* `name` `<String>` The function name.
+* `name` `<string>` The function name.
 * `signature` `string[]` The arguments of the function.
 * `returnType` `string` The return type of the function.
 * `callback` `function` The function itself.
@@ -200,7 +190,7 @@ sooner if you can help!](./CONTRIBUTING.md)):
 * XML parsing
 * The `treat as` operator
 
-For all available features, see the unit tests.
+For all available features, see the unit tests, or just try it out on the [Demo page](https://xpath.playground.fontoxml.com).
 
 ## Compatibility
 
@@ -211,4 +201,6 @@ including namespaces.
 
 ## Contribution
 
-Please refer to the [Contribution Guide](./CONTRIBUTING.md).
+If you have any questions on how to use FontoXPath, or if you are running into problems, just file a
+github issue! If you are looking to contribute, we have a [Contribution Guide](./CONTRIBUTING.md)
+that should help you in getting your development environment set up.
