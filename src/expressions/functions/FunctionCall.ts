@@ -25,12 +25,12 @@ const functionXPTY0004 = () =>
 		'Expected base expression of a function call to evaluate to a sequence of single function item'
 	);
 
-function transformArgumentList(
+export function transformArgumentList(
 	argumentTypes: TypeDeclaration[],
 	argumentList: ISequence[],
 	executionParameters: ExecutionParameters,
 	functionItem: string
-) {
+): ISequence[] {
 	const transformedArguments = [];
 	for (let i = 0; i < argumentList.length; ++i) {
 		if (argumentList[i] === null) {
@@ -97,10 +97,12 @@ function callFunction(
 		return functionItem.applyArguments(transformedArguments);
 	}
 
-	const toReturn = callFunction.apply(
-		undefined,
-		[dynamicContext, executionParameters, staticContext].concat(transformedArguments)
-	);
+	const toReturn = callFunction.apply(undefined, [
+		dynamicContext,
+		executionParameters,
+		staticContext,
+		...transformedArguments
+	]);
 
 	return performFunctionConversion(
 		functionItem.getReturnType(),
@@ -112,12 +114,12 @@ function callFunction(
 }
 
 class FunctionCall extends PossiblyUpdatingExpression {
+	private _argumentExpressions: Expression[];
 	private _callArity: number;
-	private _isGapByOffset: boolean[];
-	private _functionReferenceExpression: Expression;
 	private _functionReference: FunctionValue | UpdatingFunctionValue | null;
+	private _functionReferenceExpression: Expression;
+	private _isGapByOffset: boolean[];
 	private _staticContext: StaticContext | null;
-	_argumentExpressions: Expression[];
 
 	/**
 	 * @param  functionReference  Reference to the function to execute.

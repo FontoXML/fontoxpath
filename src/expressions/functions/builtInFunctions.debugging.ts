@@ -23,7 +23,7 @@ const fnTrace: FunctionDefinitionType = function(
 			console,
 			label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]
 		);
-		// Note: reqrap here to prevent double iterations of the input
+		// Note: rewrap here to prevent double iterations of the input
 		return sequenceFactory.create(allItems);
 	});
 };

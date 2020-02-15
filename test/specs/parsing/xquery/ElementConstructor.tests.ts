@@ -170,6 +170,32 @@ describe('ElementConstructor', () => {
 		);
 	});
 
+	it('correctly handles arrays', () => {
+		chai.assert.equal(
+			evaluateXPathToFirstNode<slimdom.Element>(
+				'<e>{[1,["a", 2], 3]}</e>',
+				documentNode,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			).outerHTML,
+			'<e>1 a 2 3</e>'
+		);
+	});
+
+	it('correctly handles arrays with elements', () => {
+		chai.assert.equal(
+			evaluateXPathToFirstNode<slimdom.Element>(
+				'<e>{[<a/>, <b/>, <c/>]}</e>',
+				documentNode,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			).outerHTML,
+			'<e><a/><b/><c/></e>'
+		);
+	});
+
 	it('accepts CDataSections', () => {
 		chai.assert.equal(
 			evaluateXPathToFirstNode<slimdom.Element>(

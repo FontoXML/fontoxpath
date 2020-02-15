@@ -1398,19 +1398,12 @@ map-remove-014,Error: XPST0017: Function adjust-dateTime-to-timezone with arity 
 map-remove-016,AssertionError: Expected XPath              map{xs:float('1.0'):0, xs:double('1.00000000001'):1}              => map:remove(xs:decimal('1.0000000000100000000001'))              => map:size()          to resolve to 2: expected false to be true
 map-for-each-007,AssertionError: expected [Function] to throw an error
 array-filter-007,AssertionError: expected [Function] to throw an error
-array-filter-008,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'isEmpty\' of undefined'
-array-filter-009,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'strArg1.indexOf is not a function'
-array-flatten-010,Error: Atomizing array(*) is not implemented.
 array-fold-right-002,Error: XPTY0004 Unable to cast argument of type xs:integer to type array(*) while calling size
 array-fold-right-003,AssertionError: Expected XPath array:fold-right(["the cat", "sat", "on the mat"], "", function($a,$z){concat($a, " ", $z)}) to (deep equally) resolve to "the cat sat on the mat ": expected false to be true
 array-fold-right-004,AssertionError: Expected XPath array:fold-right(["+2", "*3"], "10", function($a,$z){concat("(", $z, $a, ")")}) to (deep equally) resolve to "((10*3)+2)": expected false to be true
 array-fold-right-005,Error: XPTY0004: Expected base expression to evaluate to a function item
 array-fold-right-006,AssertionError: Expected XPath array:fold-right([" opened the door", " went up stairs"], "Bob", function($a,$z){concat($z, $a)}) to (deep equally) resolve to "Bob went up stairs opened the door": expected false to be true
 array-fold-right-009,AssertionError: Expected XPath array:fold-right([1,2,3], [], function($x, $y){[$x, $y]}) to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
-array-for-each-006,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'Cannot read property \'first\' of undefined'
-array-for-each-007,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'string.value.toUpperCase is not a function'
-array-for-each-pair-308,AssertionError: expected [Function] to throw an error
-array-for-each-pair-309,AssertionError: expected [Function] to throw an error
 array-head-607,Error: XPTY0004: The provided context item is not a map or an array.
 array-insert-before-508,AssertionError:                   let $x := <x/>         	  let $array := [<e/>, <f/>, <g/>]            	  for $i in 1 to array:size($array) + 1               return         	     array:insert-before($array, $i, $x)          : expected false to be true
 array-insert-before-510,Error: Not implemented: orderByClause is not implemented yet.
@@ -2496,8 +2489,6 @@ K2-DirectConElemContent-36,Error: Not implemented: only module imports, namespac
 K2-DirectConElemContent-38,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 K2-DirectConElemContent-48,Error: No selector counterpart for: computedDocumentConstructor.
 cbcl-ns-fixup-1,Error: XPST0017: Function distinct-values with arity of 1 not registered. No similar functions found.
-ElemContentArray-001,Error: Atomizing array(*) is not implemented.
-ElemContentArray-002,Error: Atomizing array(*) is not implemented.
 Constr-namespace-6,AssertionError: expected [Function] to throw an error
 Constr-namespace-7,AssertionError: expected [Function] to throw an error
 Constr-namespace-14,AssertionError: Expected executing the XPath "<foo:elem xmlns:foo="http://www.example.com/parent"><child xmlns:foo=""><foo:grand-child/></child></foo:elem>" to resolve to one of the expected results, but got AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'NamespaceError: Qualified name with prefix can not have a null namespace', AssertionError: expected [Function] to throw error matching /XQST0085/ but got 'NamespaceError: Qualified name with prefix can not have a null namespace'.

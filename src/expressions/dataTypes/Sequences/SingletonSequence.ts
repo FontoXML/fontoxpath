@@ -1,6 +1,4 @@
-import ExecutionParameters from '../../ExecutionParameters';
 import { DONE_TOKEN, IAsyncIterator, IAsyncResult, ready } from '../../util/iterators';
-import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import sequenceFactory from '../sequenceFactory';
 import Value from '../Value';

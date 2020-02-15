@@ -1,4 +1,3 @@
-import ExecutionParameters from '../ExecutionParameters';
 import { IAsyncIterator, IAsyncResult, IterationHint } from '../util/iterators';
 import Value from './Value';
 

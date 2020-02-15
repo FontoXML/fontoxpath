@@ -1,4 +1,3 @@
-import ExecutionParameters from '../../ExecutionParameters';
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import {
 	DONE_TOKEN,
@@ -8,7 +7,6 @@ import {
 	notReady,
 	ready
 } from '../../util/iterators';
-import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
