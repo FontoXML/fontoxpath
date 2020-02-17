@@ -11,6 +11,17 @@ describe('and operator', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('true() and true()'));
 	});
 
+	it('can not compute the ebv of a sequence with 2 items', () => {
+		chai.assert.throws(
+			() => evaluateXPathToBoolean('(false(), false()) and (false(), false())'),
+			'FORG0006'
+		);
+	});
+
+	it('can turns non-empty nodes sequences into "true"', () => {
+		chai.assert.isTrue(evaluateXPathToBoolean('true() and (.,.)', new slimdom.Document()));
+	});
+
 	it('can optimize an and expression with buckets', () => {
 		chai.assert.isFalse(evaluateXPathToBoolean('self::p and true()', new slimdom.Document()));
 	});

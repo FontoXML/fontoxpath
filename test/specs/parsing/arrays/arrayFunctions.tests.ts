@@ -519,6 +519,15 @@ describe('functions over arrays', () => {
 				),
 				'11'
 			));
+
+		it('can be called with a callback which returns async with extra delay', async () =>
+			chai.assert.equal(
+				await evaluateXPathToAsyncSingleton(
+					'array:filter([1,0,1,0], function ($a) { fontoxpath:sleep($a = 1, $a + 1)}) => array:fold-left("", concat#2)',
+					documentNode
+				),
+				'11'
+			));
 	});
 
 	describe('array:fold-left', () => {
@@ -529,6 +538,16 @@ describe('functions over arrays', () => {
 					documentNode
 				),
 				'abcdef'
+			));
+
+		it('throws when passed a function with the wrong arity', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPathToString(
+						'array:fold-left(["a","b","c","d","e","f"], "", true#0)',
+						documentNode
+					),
+				'XPTY0004'
 			));
 
 		it('passes $zero in the inner call', () =>
@@ -591,6 +610,16 @@ describe('functions over arrays', () => {
 					documentNode
 				),
 				'fedcba'
+			));
+
+		it('throws when passed a function with the wrong arity', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPathToString(
+						'array:fold-right(["a","b","c","d","e","f"], "", true#0)',
+						documentNode
+					),
+				'XPTY0004'
 			));
 
 		it('passes $zero in the inner call', () =>

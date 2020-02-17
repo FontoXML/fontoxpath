@@ -14,10 +14,9 @@ const fnTrace: FunctionDefinitionType = function(
 	label
 ) {
 	return arg.mapAll(allItems => {
-		const argumentAsStrings = atomize(
-			sequenceFactory.create(allItems),
-			executionParameters
-		).map(value => castToType(value, 'xs:string'));
+		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
+			.map(value => castToType(value, 'xs:string'))
+			.getAllValues();
 
 		console.log.apply(
 			console,
