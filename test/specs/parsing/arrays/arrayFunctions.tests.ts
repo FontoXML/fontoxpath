@@ -1,13 +1,12 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
-
 import {
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
+	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings
 } from 'fontoxpath';
-
+import * as slimdom from 'slimdom';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
@@ -520,6 +519,15 @@ describe('functions over arrays', () => {
 				),
 				'11'
 			));
+
+		it('can be called with a callback which returns async with extra delay', async () =>
+			chai.assert.equal(
+				await evaluateXPathToAsyncSingleton(
+					'array:filter([1,0,1,0], function ($a) { fontoxpath:sleep($a = 1, $a + 1)}) => array:fold-left("", concat#2)',
+					documentNode
+				),
+				'11'
+			));
 	});
 
 	describe('array:fold-left', () => {
@@ -530,6 +538,16 @@ describe('functions over arrays', () => {
 					documentNode
 				),
 				'abcdef'
+			));
+
+		it('throws when passed a function with the wrong arity', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPathToString(
+						'array:fold-left(["a","b","c","d","e","f"], "", true#0)',
+						documentNode
+					),
+				'XPTY0004'
 			));
 
 		it('passes $zero in the inner call', () =>
@@ -592,6 +610,16 @@ describe('functions over arrays', () => {
 					documentNode
 				),
 				'fedcba'
+			));
+
+		it('throws when passed a function with the wrong arity', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPathToString(
+						'array:fold-right(["a","b","c","d","e","f"], "", true#0)',
+						documentNode
+					),
+				'XPTY0004'
 			));
 
 		it('passes $zero in the inner call', () =>
@@ -758,6 +786,15 @@ array:for-each-pair(
 				),
 				'1234567'
 			));
+	});
+
+	describe('atomizing arrays', () => {
+		it('can atomize arrays', () => {
+			chai.assert.deepEqual(
+				evaluateXPathToNumbers('fn:index-of([1, [5, 6], [6, 7]], 6)', documentNode),
+				[3, 4]
+			);
+		});
 	});
 
 	describe('complex queries', () => {

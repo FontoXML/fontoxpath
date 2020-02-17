@@ -1,3 +1,4 @@
+import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
@@ -21,65 +22,65 @@ class Unary extends Expression {
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
-		return this._valueExpr
-			.evaluateMaybeStatically(dynamicContext, executionParameters)
-			.atomize(executionParameters)
-			.mapAll(atomizedValues => {
-				if (atomizedValues.length === 0) {
-					// Return the empty sequence when inputted the empty sequence
-					return sequenceFactory.empty();
-				}
+		return atomize(
+			this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
+			executionParameters
+		).mapAll(atomizedValues => {
+			if (atomizedValues.length === 0) {
+				// Return the empty sequence when inputted the empty sequence
+				return sequenceFactory.empty();
+			}
 
-				if (atomizedValues.length > 1) {
-					throw new Error(
-						'XPTY0004: The operand to a unary operator must be a sequence with a length less than one'
-					);
-				}
+			if (atomizedValues.length > 1) {
+				throw new Error(
+					'XPTY0004: The operand to a unary operator must be a sequence with a length less than one'
+				);
+			}
 
-				const value = atomizedValues[0];
+			const value = atomizedValues[0];
 
-				if (isSubtypeOf(value.type, 'xs:untypedAtomic')) {
-					const castValue = castToType(value, 'xs:double').value as number;
-					return sequenceFactory.singleton(
-						createAtomicValue(this._kind === '+' ? castValue : -castValue, 'xs:double')
-					);
-				}
+			if (isSubtypeOf(value.type, 'xs:untypedAtomic')) {
+				const castValue = castToType(value, 'xs:double').value as number;
+				return sequenceFactory.singleton(
+					createAtomicValue(this._kind === '+' ? castValue : -castValue, 'xs:double')
+				);
+			}
 
-				if (this._kind === '+') {
-					if (
-						isSubtypeOf(value.type, 'xs:decimal') ||
-						isSubtypeOf(value.type, 'xs:double') ||
-						isSubtypeOf(value.type, 'xs:float') ||
-						isSubtypeOf(value.type, 'xs:integer')
-					) {
-						return sequenceFactory.singleton(atomizedValues[0]);
-					}
-					return sequenceFactory.singleton(createAtomicValue(Number.NaN, 'xs:double'));
+			if (this._kind === '+') {
+				if (
+					isSubtypeOf(value.type, 'xs:decimal') ||
+					isSubtypeOf(value.type, 'xs:double') ||
+					isSubtypeOf(value.type, 'xs:float') ||
+					isSubtypeOf(value.type, 'xs:integer')
+				) {
+					return sequenceFactory.singleton(atomizedValues[0]);
 				}
-
-				if (isSubtypeOf(value.type, 'xs:integer')) {
-					return sequenceFactory.singleton(
-						createAtomicValue((value.value as number) * -1, 'xs:integer')
-					);
-				}
-				if (isSubtypeOf(value.type, 'xs:decimal')) {
-					return sequenceFactory.singleton(
-						createAtomicValue((value.value as number) * -1, 'xs:decimal')
-					);
-				}
-				if (isSubtypeOf(value.type, 'xs:double')) {
-					return sequenceFactory.singleton(
-						createAtomicValue((value.value as number) * -1, 'xs:double')
-					);
-				}
-				if (isSubtypeOf(value.type, 'xs:float')) {
-					return sequenceFactory.singleton(
-						createAtomicValue((value.value as number) * -1, 'xs:float')
-					);
-				}
-
 				return sequenceFactory.singleton(createAtomicValue(Number.NaN, 'xs:double'));
-			});
+			}
+
+			if (isSubtypeOf(value.type, 'xs:integer')) {
+				return sequenceFactory.singleton(
+					createAtomicValue((value.value as number) * -1, 'xs:integer')
+				);
+			}
+			if (isSubtypeOf(value.type, 'xs:decimal')) {
+				return sequenceFactory.singleton(
+					createAtomicValue((value.value as number) * -1, 'xs:decimal')
+				);
+			}
+			if (isSubtypeOf(value.type, 'xs:double')) {
+				return sequenceFactory.singleton(
+					createAtomicValue((value.value as number) * -1, 'xs:double')
+				);
+			}
+			if (isSubtypeOf(value.type, 'xs:float')) {
+				return sequenceFactory.singleton(
+					createAtomicValue((value.value as number) * -1, 'xs:float')
+				);
+			}
+
+			return sequenceFactory.singleton(createAtomicValue(Number.NaN, 'xs:double'));
+		});
 	}
 }
 

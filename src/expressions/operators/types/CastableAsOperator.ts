@@ -1,3 +1,4 @@
+import atomize from '../../dataTypes/atomize';
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
@@ -37,9 +38,10 @@ class CastableAsOperator extends Expression {
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
-		const evaluatedExpression = this._expression
-			.evaluateMaybeStatically(dynamicContext, executionParameters)
-			.atomize(executionParameters);
+		const evaluatedExpression = atomize(
+			this._expression.evaluateMaybeStatically(dynamicContext, executionParameters),
+			executionParameters
+		);
 		return evaluatedExpression.switchCases({
 			empty: () => {
 				if (!this._allowsEmptySequence) {

@@ -1,11 +1,11 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import Specificity from '../Specificity';
-
+import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 
 class TextConstructor extends Expression {
 	private _expr: Expression;
@@ -24,7 +24,7 @@ class TextConstructor extends Expression {
 			return sequenceFactory.empty();
 		}
 		const sequence = this._expr.evaluateMaybeStatically(dynamicContext, executionParameters);
-		return sequence.atomize(executionParameters).mapAll(items => {
+		return atomize(sequence, executionParameters).mapAll(items => {
 			if (items.length === 0) {
 				return sequenceFactory.empty();
 			}

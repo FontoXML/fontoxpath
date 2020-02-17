@@ -1,9 +1,9 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import Specificity from '../Specificity';
-
+import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 
 class CommentConstructor extends Expression {
 	private _expr: Expression;
@@ -22,7 +22,7 @@ class CommentConstructor extends Expression {
 			return sequenceFactory.singleton(createNodeValue(nodesFactory.createComment('')));
 		}
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
-		return sequence.atomize(executionParameters).mapAll(items => {
+		return atomize(sequence, executionParameters).mapAll(items => {
 			const content = items.map(item => castToType(item, 'xs:string').value).join(' ');
 
 			if (content.indexOf('-->') !== -1) {

@@ -1,4 +1,3 @@
-import ExecutionParameters from '../../ExecutionParameters';
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import {
 	DONE_TOKEN,
@@ -8,7 +7,6 @@ import {
 	notReady,
 	ready
 } from '../../util/iterators';
-import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
@@ -57,10 +55,6 @@ export default class IteratorBackedSequence implements ISequence {
 		this._cachedValues = [];
 		this._currentPosition = 0;
 		this._length = predictedLength;
-	}
-
-	public atomize(executionParameters: ExecutionParameters): ISequence {
-		return this.map(value => atomize(value, executionParameters));
 	}
 
 	public expandSequence(): ISequence {

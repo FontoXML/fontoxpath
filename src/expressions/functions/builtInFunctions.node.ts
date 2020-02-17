@@ -7,7 +7,6 @@ import {
 	NODE_TYPES
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
-import ArrayValue from '../dataTypes/ArrayValue';
 import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createNodeValue from '../dataTypes/createNodeValue';
@@ -106,41 +105,7 @@ const fnData: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	function getDataFromValues(allValues: Value[]): Value[] {
-		let returnItems = [];
-		for (const value of allValues) {
-			if (isSubtypeOf(value.type, 'xs:anyAtomicType')) {
-				returnItems.push(value);
-				continue;
-			} else if (isSubtypeOf(value.type, 'node()')) {
-				returnItems.push(atomize(value, executionParameters));
-				continue;
-			} else if (isSubtypeOf(value.type, 'array(*)')) {
-				returnItems = returnItems.concat(
-					getDataFromValues(
-						(value as ArrayValue).members
-							.map(getMember => getMember().getAllValues())
-							.reduce((allMembers: Value[], member: Value[]) => {
-								return allMembers.concat(member);
-							}, [])
-					)
-				);
-			} else {
-				throw new Error(
-					'FOTY0013: An item in the sequence is a function item other than an array'
-				);
-			}
-		}
-		return returnItems;
-	}
-	return sequence.mapAll(allValues => {
-		return sequenceFactory.create(
-			getDataFromValues(allValues).reduce(
-				(valueList: Value[], values: Value) => valueList.concat(values),
-				[]
-			)
-		);
-	});
+	return atomize(sequence, executionParameters);
 };
 
 const fnHasChildren: FunctionDefinitionType = (

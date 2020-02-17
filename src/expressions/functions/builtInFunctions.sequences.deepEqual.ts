@@ -1,13 +1,17 @@
-import atomize from '../dataTypes/atomize';
+import ArrayValue from '../dataTypes/ArrayValue';
+import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createNodeValue from '../dataTypes/createNodeValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import createSingleValueIterator from '../util/createSingleValueIterator';
-import builtInFunctionsNode from './builtInFunctions.node';
-
+import Value from '../dataTypes/Value';
 import { equal } from '../dataTypes/valueTypes/DateTime';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import StaticContext from '../StaticContext';
+import createSingleValueIterator from '../util/createSingleValueIterator';
 import {
 	DONE_TOKEN,
 	IAsyncIterator,
@@ -16,13 +20,7 @@ import {
 	notReady,
 	ready
 } from '../util/iterators';
-
-import ArrayValue from '../dataTypes/ArrayValue';
-import MapValue from '../dataTypes/MapValue';
-import Value from '../dataTypes/Value';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
-import StaticContext from '../StaticContext';
+import builtInFunctionsNode from './builtInFunctions.node';
 
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
@@ -395,13 +393,16 @@ function atomicTypeNodeDeepEqual(
 					return namesAreEqualResult;
 				}
 			}
+			// Assume here that a node always atomizes to a singlevalue. This will not work
+			// anymore when schema support will be imlemented.
+
 			return ready(
 				anyAtomicTypeDeepEqual(
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					atomize(item1, executionParameters),
-					atomize(item2, executionParameters)
+					atomizeSingleValue(item1, executionParameters).first(),
+					atomizeSingleValue(item2, executionParameters).first()
 				)
 			);
 		}

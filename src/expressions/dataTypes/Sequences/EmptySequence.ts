@@ -1,4 +1,3 @@
-import ExecutionParameters from '../../ExecutionParameters';
 import { DONE_TOKEN, IAsyncIterator, IAsyncResult, ready } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import Value from '../Value';
@@ -10,10 +9,6 @@ export default class EmptySequence implements ISequence {
 		this.value = {
 			next: () => DONE_TOKEN
 		};
-	}
-
-	public atomize(_executionParameters: ExecutionParameters): ISequence {
-		return this;
 	}
 
 	public expandSequence(): ISequence {

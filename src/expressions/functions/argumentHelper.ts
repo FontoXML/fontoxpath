@@ -1,19 +1,27 @@
-import atomize from '../dataTypes/atomize';
+import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
+import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import Value, { ValueType } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 
-import ISequence from '../dataTypes/ISequence';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
-
-function mapItem(argumentItem, type, executionParameters, functionName, isReturn) {
+function mapItem(
+	argumentItem: Value,
+	type: ValueType,
+	executionParameters: ExecutionParameters,
+	functionName: string,
+	isReturn: boolean
+) {
 	if (isSubtypeOf(argumentItem.type, type)) {
 		return argumentItem;
 	}
 
 	if (isSubtypeOf(argumentItem.type, 'node()')) {
-		argumentItem = atomize(argumentItem, executionParameters);
+		// Assume here that a node always atomizes to a singlevalue. This will not work
+		// anymore when schema support will be imlemented.
+		argumentItem = atomizeSingleValue(argumentItem, executionParameters).first();
 	}
 
 	// Maybe after atomization, we have the correct type

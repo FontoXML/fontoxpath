@@ -1,7 +1,5 @@
-import ExecutionParameters from '../../ExecutionParameters';
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
 import { DONE_TOKEN, IAsyncIterator, IAsyncResult, ready } from '../../util/iterators';
-import atomize from '../atomize';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
@@ -24,10 +22,6 @@ export default class ArrayBackedSequence implements ISequence {
 				return ready(_values[i]);
 			}
 		};
-	}
-
-	public atomize(executionParameters: ExecutionParameters): ISequence {
-		return this.map(value => atomize(value, executionParameters));
 	}
 
 	public expandSequence(): ISequence {

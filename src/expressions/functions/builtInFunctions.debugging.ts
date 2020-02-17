@@ -14,13 +14,15 @@ const fnTrace: FunctionDefinitionType = function(
 	label
 ) {
 	return arg.mapAll(allItems => {
-		const argumentAsStrings = allItems.map(value =>
-			castToType(atomize(value, executionParameters), 'xs:string')
-		);
+		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
+			.map(value => castToType(value, 'xs:string'))
+			.getAllValues();
+
 		console.log.apply(
 			console,
 			label ? [argumentAsStrings, label.first().value] : [argumentAsStrings]
 		);
+		// Note: rewrap here to prevent double iterations of the input
 		return sequenceFactory.create(allItems);
 	});
 };

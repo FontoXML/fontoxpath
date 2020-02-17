@@ -1,4 +1,4 @@
-import atomize from '../dataTypes/atomize';
+import atomize, { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
@@ -62,7 +62,7 @@ const fnConcat: FunctionDefinitionType = function(
 ) {
 	let stringSequences = Array.from(arguments).slice(3);
 	stringSequences = stringSequences.map(function(sequence) {
-		return sequence.atomize(executionParameters);
+		return atomize(sequence, executionParameters);
 	});
 	return zipSingleton(stringSequences, function(stringValues) {
 		return sequenceFactory.singleton(
@@ -157,7 +157,10 @@ const fnString: FunctionDefinitionType = function(
 		default: () =>
 			sequence.map(value => {
 				if (isSubtypeOf(value.type, 'node()')) {
-					const stringValue = atomize(value, executionParameters);
+					const stringValueSequence = atomizeSingleValue(value, executionParameters);
+					// Assume here that a node always atomizes to a singlevalue. This will not work
+					// anymore when schema support will be imlemented.
+					const stringValue = stringValueSequence.first();
 					if (isSubtypeOf(value.type, 'attribute()')) {
 						return castToType(stringValue, 'xs:string');
 					}
