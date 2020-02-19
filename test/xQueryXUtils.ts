@@ -1,10 +1,36 @@
-import { evaluateXPath, evaluateXPathToBoolean, evaluateXPathToNodes } from 'fontoxpath';
-import { parse } from 'fontoxpath/parsing/xPathParser';
-import { parseAst } from '../demo/parseAst';
 import * as chai from 'chai';
-import { sync, slimdom } from 'slimdom-sax-parser';
+import {
+	evaluateXPath,
+	evaluateXPathToBoolean,
+	evaluateXPathToNodes,
+	parseScript,
+	Language
+} from 'fontoxpath';
+import { slimdom, sync } from 'slimdom-sax-parser';
 
-export function buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, onActualParsed) {
+function removeInsignificantWhitespace(root) {
+	const nonSignificantWhitespace = evaluateXPathToNodes<slimdom.Node>(
+		'//*/text()',
+		root,
+		null,
+		null,
+		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+	);
+	for (const node of nonSignificantWhitespace) {
+		node.data = node.data.trim();
+		if (node.data.length === 0) {
+			node.parentNode.removeChild(node);
+		}
+	}
+}
+
+export function buildTestCase(
+	testCase: string,
+	loadXQuery: () => Promise<string>,
+	loadXQueryX: () => Promise<string>,
+	skippableTests: string[],
+	onActualParsed: (actual: any) => void
+): void {
 	it(testCase, async function() {
 		let xQuery = await loadXQuery();
 		if (!xQuery) {
@@ -12,33 +38,26 @@ export function buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests,
 			throw new Error('XQuery script could not be found!');
 		}
 		xQuery = xQuery.replace(/\r/g, '');
-
-		let jsonMl;
+		let astElement: slimdom.Element;
 		try {
-			jsonMl = parse(xQuery, { xquery: true, outputDebugInfo: false });
+			astElement = parseScript(
+				xQuery,
+				{ language: Language.XQUERY_UPDATE_3_1_LANGUAGE },
+				new slimdom.Document()
+			);
 		} catch (err) {
-			if (err.location) {
-				const start = err.location.start.offset;
+			if (err.message.includes('XPST0003')) {
 				skippableTests.push(`${testCase},Parse error`);
-				chai.assert.fail(
-					'Parse error',
-					'No parse error',
-					xQuery.substring(0, start) + '[HERE]' + xQuery.substring(start)
-				);
+				chai.assert.fail('Parse error', 'No parse error');
 			} else {
-				skippableTests.push(`${testCase},Parser related error`);
+				skippableTests.push(`${testCase},Parser related error, ${err}`);
 				throw err;
 			}
 			this.skip();
 		}
 
 		const actual = new slimdom.Document();
-		try {
-			actual.appendChild(parseAst(actual, jsonMl));
-		} catch (e) {
-			skippableTests.push(`${testCase},Parser resulted in invalid JsonML`);
-			throw e;
-		}
+		actual.appendChild(astElement);
 		actual.normalize();
 		onActualParsed(actual);
 
@@ -46,21 +65,14 @@ export function buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests,
 		try {
 			const rawFile = (await loadXQueryX()).replace(/\r/g, '');
 			expected = sync(rawFile);
+			expected.normalize();
 		} catch (e) {
 			skippableTests.push(`${testCase},Expected XML could not be parsed`);
 			throw e;
 		}
-		const nonSignificantWhitespace = evaluateXPathToNodes<slimdom.Node>(
-			'//*/text()[starts-with(., "&#xA;") and normalize-space(.)=""]',
-			expected,
-			null,
-			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-		);
-		for (const node of nonSignificantWhitespace) {
-			node.parentNode.removeChild(node);
-		}
 
+		removeInsignificantWhitespace(actual);
+		removeInsignificantWhitespace(expected);
 		// Compare contents as a quick fail. Use
 		// contents because we can assume that
 		// the outer element is the same, but it may contain random attributes we should ignore.
@@ -71,7 +83,7 @@ export function buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests,
 		const expectedInnerHtml = new slimdom.XMLSerializer().serializeToString(
 			expected.documentElement.firstElementChild
 		);
-		if (actualInnerHtml.replace(/></g, '>\n<') === expectedInnerHtml.replace(/></g, '>\n<')) {
+		if (actualInnerHtml.replace(/></g, '><') === expectedInnerHtml.replace(/></g, '><')) {
 			return;
 		}
 
@@ -85,10 +97,10 @@ export function buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests,
 				chai.assert.equal(
 					new slimdom.XMLSerializer()
 						.serializeToString(actual.documentElement)
-						.replace(/></g, '>\n<'),
+						.replace(/></g, '\n><'),
 					new slimdom.XMLSerializer()
 						.serializeToString(expected.documentElement)
-						.replace(/></g, '>\n<'),
+						.replace(/></g, '\n><'),
 					'Expected the XML to be deep-equal'
 				);
 			} catch (e) {
