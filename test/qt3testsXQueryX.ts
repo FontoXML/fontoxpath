@@ -23,35 +23,35 @@ function run() {
 		}
 
 		const xml = sync(await testFs.readFile(testFilePath));
-		const xQueries = evaluateXPathToMap(
+		const xqueries = evaluateXPathToMap(
 			'(/descendant::test-case/map:entry(@name, (test/@file/string(), test/string())[1])) => map:merge()',
 			xml
 		);
 
-		for (const key of Object.keys(xQueries)) {
-			const value = xQueries[key];
+		for (const key of Object.keys(xqueries)) {
+			const value = xqueries[key];
 
 			if (value.substring(value.length - 3) === '.xq') {
 				const xQueryPath = path.join(testDirectory, value);
 				if (testFs.existsSync(xQueryPath)) {
-					xQueries[key] = normalizeEndOfLines(await testFs.readFile(xQueryPath));
+					xqueries[key] = normalizeEndOfLines(await testFs.readFile(xQueryPath));
 				} else {
-					xQueries[key] = null;
+					xqueries[key] = null;
 				}
 			} else {
-				xQueries[key] = normalizeEndOfLines(value);
+				xqueries[key] = normalizeEndOfLines(value);
 			}
 		}
 
-		return xQueries;
+		return xqueries;
 	}
 
-	const xQueries = [];
+	const xqueries = [];
 	async function tryGetXQuery(directory, testName, testCase) {
-		let queries = xQueries[testName];
+		let queries = xqueries[testName];
 		if (!queries) {
 			queries = await getXQueries(directory, testName);
-			xQueries[testName] = queries;
+			xqueries[testName] = queries;
 		}
 
 		return queries && queries[testCase];

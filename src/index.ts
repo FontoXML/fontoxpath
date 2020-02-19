@@ -3,7 +3,7 @@ import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
-import evaluateXPath, { Language, Options, EvaluateXPath, Logger } from './evaluateXPath';
+import evaluateXPath, { EvaluateXPath, Language, Logger, Options } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -17,12 +17,14 @@ import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
+import parseScript from './parseScript';
 import astHelper from './parsing/astHelper';
 import compileAstToExpression from './parsing/compileAstToExpression';
 import {
 	getAnyStaticCompilationResultFromCache,
 	storeHalfCompiledCompilationResultInCache
 } from './parsing/compiledExpressionCache';
+import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import parseExpression from './parsing/parseExpression';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
@@ -38,7 +40,6 @@ import {
 	ProcessingInstruction,
 	Text
 } from './types/Types';
-import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
@@ -166,5 +167,6 @@ export {
 	getBucketsForNode,
 	precompileXPath,
 	registerCustomXPathFunction,
-	registerXQueryModule
+	registerXQueryModule,
+	parseScript
 };
