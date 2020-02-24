@@ -15,6 +15,7 @@ const resultText = document.getElementById('resultText');
 const updateResult = document.getElementById('updateResult');
 const xmlSource = document.getElementById('xmlSource');
 const xpathField = document.getElementById('xpathField');
+const traceOutput = document.getElementById('traceOutput');
 
 const domParser = new DOMParser();
 
@@ -122,7 +123,13 @@ function jsonXmlReplacer(_key: string, value: any): any {
 async function runUpdatingXQuery(script: string) {
 	const result = await fontoxpath.evaluateUpdatingExpression(script, xmlDoc, null, null, {
 		debug: true,
-		disableCache: true
+		disableCache: true,
+		logger: {
+			trace: m => {
+				traceOutput.textContent = m;
+				console.log(m);
+			}
+		}
 	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
@@ -137,7 +144,13 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 		disableCache: true,
 		language: asXQuery
 			? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
-			: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE
+			: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
+		logger: {
+			trace: m => {
+				traceOutput.textContent = m;
+				console.log(m);
+			}
+		}
 	});
 
 	for (let item = await it.next(); !item.done; item = await it.next()) {
@@ -153,6 +166,7 @@ async function rerunXPath() {
 	log.innerText = '';
 	resultText.innerText = '';
 	updateResult.innerText = '';
+	traceOutput.innerText = '';
 
 	const xpath = xpathField.innerText;
 

@@ -13,12 +13,20 @@ import { Node } from './types/Types';
 /**
  * @public
  */
+export type Logger = {
+	trace: (message: string) => void;
+};
+
+/**
+ * @public
+ */
 export type Options = {
 	currentContext?: any;
 	debug?: boolean;
-	documentWriter?: IDocumentWriter;
 	disableCache?: boolean;
+	documentWriter?: IDocumentWriter;
 	language?: Language;
+	logger?: Logger;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
 	nodesFactory?: INodesFactory;

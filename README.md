@@ -51,6 +51,8 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
     * `evaluateXPath.XQUERY_3_1_LANGUAGE` Evaluate `xpathExpression` according the [XQuery spec](https://www.w3.org/TR/xquery-31/).
   * `moduleImports` `<Object<string, string>`
   * `debug` `<boolean>` If a debug trace should be tracked, see [debugging](#debugging) for more information.
+  * `logger` `<Object>` Object with functions used to override the standard logger.
+    * `trace: <function(string):void>` The logger for the `trace()` function. The argument is the string of the original message.
 
 ### Example
 
