@@ -97,10 +97,10 @@ export function buildTestCase(
 				chai.assert.equal(
 					new slimdom.XMLSerializer()
 						.serializeToString(actual.documentElement)
-						.replace(/></g, '\n><'),
+						.replace(/></g, '>\n<'),
 					new slimdom.XMLSerializer()
 						.serializeToString(expected.documentElement)
-						.replace(/></g, '\n><'),
+						.replace(/></g, '>\n<'),
 					'Expected the XML to be deep-equal'
 				);
 			} catch (e) {

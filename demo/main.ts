@@ -1,7 +1,4 @@
 import * as fontoxpath from '../src/index';
-import { IAST } from '../src/parsing/astHelper';
-import parseExpression from '../src/parsing/parseExpression';
-import { parseAst } from './parseAst';
 
 const allowXQuery = document.getElementById('allowXQuery') as HTMLInputElement;
 const allowXQueryUpdateFacility = document.getElementById(
@@ -28,6 +25,54 @@ function setCookie() {
 	document.cookie = `xpath-editor-state=${allowXQuery.checked ? 1 : 0}${
 		allowXQueryUpdateFacility.checked ? 1 : 0
 	}${source.length}~${source}${xpath};max-age=${60 * 60 * 24 * 7}`;
+}
+
+function serializeAsJsonMl(node: Node): any[] | string {
+	switch (node.nodeType) {
+		case Node.TEXT_NODE:
+			return (node as Text).nodeValue;
+		case Node.COMMENT_NODE:
+			return (node as Comment).data ? ['!', (node as Comment).data] : ['!'];
+		case Node.PROCESSING_INSTRUCTION_NODE:
+			return (node as ProcessingInstruction).data
+				? [
+						'?' + (node as ProcessingInstruction).target,
+						(node as ProcessingInstruction).data
+				  ]
+				: ['?' + (node as ProcessingInstruction).target];
+		case Node.DOCUMENT_TYPE_NODE:
+			return [
+				'!DOCTYPE',
+				(node as DocumentType).name,
+				(node as DocumentType).publicId,
+				(node as DocumentType).systemId
+			];
+		default:
+			// Serialize element
+			const jsonml = [node.nodeName] as any[];
+
+			if ((node as Element).attributes && (node as Element).attributes.length) {
+				const attributes = {};
+
+				for (let i = 0, l = (node as Element).attributes.length; i < l; ++i) {
+					const attr = (node as Element).attributes[i];
+					attributes[attr.name] = attr.value;
+				}
+
+				jsonml[1] = attributes;
+			}
+
+			// Serialize child nodes
+			for (
+				let childNode: Node = (node as Element).firstChild;
+				childNode;
+				childNode = childNode.nextSibling
+			) {
+				jsonml.push(serializeAsJsonMl(childNode));
+			}
+
+			return jsonml;
+	}
 }
 
 function stringifyJsonMl(what: any, indent: number, n: number) {
@@ -172,14 +217,18 @@ async function rerunXPath() {
 
 	try {
 		// First try to get the AST as it has a higher change of succeeding
-		const ast = parseExpression(xpath, {
-			allowXQuery: true,
-			debug: false
-		}) as IAST;
-		astJsonMl.innerText = stringifyJsonMl(ast, 0, 0);
-
 		const document = new Document();
-		document.appendChild(parseAst(document, ast) as Node);
+		const ast = fontoxpath.parseScript<Element>(
+			xpath,
+			{
+				language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE,
+				debug: false
+			},
+			document
+		);
+		const astInJsonMl = serializeAsJsonMl(ast);
+		astJsonMl.innerText = stringifyJsonMl(astInJsonMl, 0, 0);
+		document.appendChild(ast);
 		document.documentElement.setAttributeNS(
 			'http://www.w3.org/2001/XMLSchema-instance',
 			'xsi:schemaLocation',
