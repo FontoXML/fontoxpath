@@ -1,11 +1,9 @@
-import IDocumentWriter from './documentWriter/IDocumentWriter';
-import INodesFactory from './nodesFactory/INodesFactory';
-import parseExpression from './parsing/parseExpression';
-import { Options, Language } from './evaluateXPath';
-import { ConcreteNode, ConcreteParentNode } from './domFacade/ConcreteNode';
-import DomBackedNodesFactory from './nodesFactory/DomBackedNodesFactory';
 import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
-import { Element, Node, CharacterData, Text } from './types/Types';
+import IDocumentWriter from './documentWriter/IDocumentWriter';
+import { Language, Options } from './evaluateXPath';
+import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
+import parseExpression from './parsing/parseExpression';
+import { Element, Text } from './types/Types';
 
 const XQUERYX_UPDATING_NAMESPACE_URI = 'http://www.w3.org/2007/xquery-update-10';
 
@@ -22,14 +20,15 @@ const PREFERRED_PREFIX_BY_NAMESPACEURI = {
  *
  * JsonML is always expected to be a JavaScript structure. If you have a string of JSON, use JSON.parse first.
  *
- * @param   document -  The document to use to create nodes
+ * @param   documentWriter -  Used to place nodes in the DOM
+ * @param   simpleNodesFactory   -  Used to construct nodes
  * @param   jsonml   -  The JsonML fragment to parse
  *
  * @return  The root node of the constructed DOM fragment
  */
-export function parseNode(
+function parseNode(
 	documentWriter: IDocumentWriter,
-	nodesFactory: INodesFactory,
+	simpleNodesFactory: ISimpleNodesFactory,
 	jsonml: any[] | string,
 	parentUri: string | null
 ): Text | Element {
@@ -37,7 +36,7 @@ export function parseNode(
 		if (jsonml.length === 0) {
 			return null;
 		}
-		return nodesFactory.createTextNode(jsonml);
+		return simpleNodesFactory.createTextNode(jsonml);
 	}
 
 	if (!Array.isArray(jsonml)) {
@@ -78,7 +77,7 @@ export function parseNode(
 			break;
 	}
 	// Node must be a normal element
-	const element = nodesFactory.createElementNS(
+	const element = simpleNodesFactory.createElementNS(
 		namespaceUri,
 		PREFERRED_PREFIX_BY_NAMESPACEURI[namespaceUri] + ':' + name
 	);
@@ -101,7 +100,7 @@ export function parseNode(
 	for (let i = firstChildIndex, l = jsonml.length; i < l; ++i) {
 		const node = parseNode(
 			documentWriter,
-			nodesFactory,
+			simpleNodesFactory,
 			jsonml[i] as any[] | string,
 			namespaceUri
 		);
@@ -140,16 +139,20 @@ export function parseNode(
  * @public
  *
  * @param script - The script to parse
+ *
  * @param options - Additional options for parsing. Can be used to switch between parsing XPath or
  * XQuery update facility
- * @param  nodesFactory - A NodesFactory will be used to create the DOM. This can be a reference to
- * the document in which the XQueryX will be created
- * @param  documentWriter - The documentWrite will be used to append children
+ *
+ * @param simpleNodesFactory - A NodesFactory will be used to create the DOM. This can be a
+ * reference to the document in which the XQueryX will be created
+ *
+ * @param documentWriter - The documentWriter will be used to append children to the newly created
+ * dom
  */
 export default function parseScript<TElement extends Element>(
 	script: string,
 	options: Options,
-	nodesFactory: INodesFactory,
+	simpleNodesFactory: ISimpleNodesFactory,
 	documentWriter: IDocumentWriter = domBackedDocumentWriter
 ): TElement {
 	const ast = parseExpression(script, {
@@ -157,5 +160,5 @@ export default function parseScript<TElement extends Element>(
 		debug: options.debug
 	});
 
-	return parseNode(documentWriter, nodesFactory, ast, null) as TElement;
+	return parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;
 }
