@@ -17,6 +17,7 @@ import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
 import getBucketsForNode from './getBucketsForNode';
 import INodesFactory from './nodesFactory/INodesFactory';
+import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseScript from './parseScript';
 import astHelper from './parsing/astHelper';
 import compileAstToExpression from './parsing/compileAstToExpression';
@@ -137,6 +138,7 @@ export {
 	IDocumentWriter,
 	IDomFacade,
 	INodesFactory,
+	ISimpleNodesFactory,
 	IReturnTypes,
 	Language,
 	Logger,
