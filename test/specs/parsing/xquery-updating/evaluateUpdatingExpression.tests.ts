@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import { evaluateUpdatingExpression, evaluateXPath, executePendingUpdateList } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
-let documentNode;
+let documentNode: slimdom.Document;
 beforeEach(() => {
 	documentNode = new slimdom.Document();
 });
@@ -62,7 +62,7 @@ describe('evaluateUpdatingExpression', () => {
 		},
 		createDocument: () => {
 			createDocumentCalled = true;
-			return documentNode.implementation.createDocument();
+			return documentNode.implementation.createDocument('', '');
 		},
 		createElementNS: (namespaceURI, localName) => {
 			createElementNSCalled = true;
@@ -158,6 +158,84 @@ describe('evaluateUpdatingExpression', () => {
 		chai.assert.isFalse(setDataCalled, 'setDataCalled');
 
 		chai.assert.isTrue(createElementNSCalled, 'createElementNSCalled');
+		chai.assert.isFalse(createAttributeNSCalled, 'createAttributeNSCalled');
+		chai.assert.isFalse(createCDATASectionCalled, 'createCDATASectionCalled');
+		chai.assert.isFalse(createCommentCalled, 'createCommentCalled');
+		chai.assert.isFalse(createDocumentCalled, 'createDocumentCalled');
+		chai.assert.isFalse(createProcessingInstructionCalled, 'createProcessingInstructionCalled');
+		chai.assert.isTrue(createTextNodeCalled, 'createTextNodeCalled');
+	});
+
+	it('uses the passed documentWriter for attribute insertions', async () => {
+		documentNode.appendChild(documentNode.createElement('ele'));
+
+		const result = await evaluateUpdatingExpression(
+			'insert node attribute {"a"} {"5"} into $doc/ele',
+			null,
+			null,
+			{
+				doc: documentNode
+			},
+			{
+				documentWriter: stubbedDocumentWriter,
+				nodesFactory: stubbedNodesFactory
+			}
+		);
+
+		executePendingUpdateList(
+			result.pendingUpdateList,
+			null,
+			stubbedNodesFactory,
+			stubbedDocumentWriter
+		);
+
+		chai.assert.isFalse(insertBeforeCalled, 'insertBeforeCalled');
+		chai.assert.isFalse(removeChildCalled, 'removeChildCalled');
+		chai.assert.isFalse(removeAttributeNSCalled, 'removeAttributeNSCalled');
+		chai.assert.isTrue(setAttributeNSCalled, 'setAttributeNSCalled');
+		chai.assert.isFalse(setDataCalled, 'setDataCalled');
+
+		chai.assert.isFalse(createElementNSCalled, 'createElementNSCalled');
+		chai.assert.isTrue(createAttributeNSCalled, 'createAttributeNSCalled');
+		chai.assert.isFalse(createCDATASectionCalled, 'createCDATASectionCalled');
+		chai.assert.isFalse(createCommentCalled, 'createCommentCalled');
+		chai.assert.isFalse(createDocumentCalled, 'createDocumentCalled');
+		chai.assert.isFalse(createProcessingInstructionCalled, 'createProcessingInstructionCalled');
+		chai.assert.isFalse(createTextNodeCalled, 'createTextNodeCalled');
+	});
+
+	it('uses the passed documentWriter for setting data', async () => {
+		documentNode
+			.appendChild(documentNode.createElement('ele'))
+			.appendChild(documentNode.createTextNode('test'));
+
+		const result = await evaluateUpdatingExpression(
+			'replace value of node $doc/ele/text() with "CHANGED"',
+			null,
+			null,
+			{
+				doc: documentNode
+			},
+			{
+				documentWriter: stubbedDocumentWriter,
+				nodesFactory: stubbedNodesFactory
+			}
+		);
+
+		executePendingUpdateList(
+			result.pendingUpdateList,
+			null,
+			stubbedNodesFactory,
+			stubbedDocumentWriter
+		);
+
+		chai.assert.isFalse(insertBeforeCalled, 'insertBeforeCalled');
+		chai.assert.isFalse(removeChildCalled, 'removeChildCalled');
+		chai.assert.isFalse(removeAttributeNSCalled, 'removeAttributeNSCalled');
+		chai.assert.isFalse(setAttributeNSCalled, 'setAttributeNSCalled');
+		chai.assert.isTrue(setDataCalled, 'setDataCalled');
+
+		chai.assert.isFalse(createElementNSCalled, 'createElementNSCalled');
 		chai.assert.isFalse(createAttributeNSCalled, 'createAttributeNSCalled');
 		chai.assert.isFalse(createCDATASectionCalled, 'createCDATASectionCalled');
 		chai.assert.isFalse(createCommentCalled, 'createCommentCalled');
