@@ -28,28 +28,26 @@ export function atomizeSingleValue(
 		return sequenceFactory.create(value);
 	}
 
+	const domFacade = executionParameters.domFacade;
+
 	if (isSubtypeOf(value.type, 'node()')) {
 		const /** Node */ node = value.value;
 
-		// TODO: Mix in types, by default get string value
-		if (isSubtypeOf(value.type, 'attribute()')) {
-			return sequenceFactory.create(createAtomicValue(node.value, 'xs:untypedAtomic'));
-		}
-
+		// TODO: Mix in types, by default get string value.
+		// Attributes should return their value.
 		// Text nodes and documents should return their text, as untyped atomic
-		if (isSubtypeOf(value.type, 'text()')) {
+		if (isSubtypeOf(value.type, 'attribute()') || isSubtypeOf(value.type, 'text()')) {
 			return sequenceFactory.create(
-				createAtomicValue(executionParameters.domFacade.getData(node), 'xs:untypedAtomic')
+				createAtomicValue(domFacade.getData(node), 'xs:untypedAtomic')
 			);
 		}
+
 		// comments and PIs are string
 		if (
 			isSubtypeOf(value.type, 'comment()') ||
 			isSubtypeOf(value.type, 'processing-instruction()')
 		) {
-			return sequenceFactory.create(
-				createAtomicValue(executionParameters.domFacade.getData(node), 'xs:string')
-			);
+			return sequenceFactory.create(createAtomicValue(domFacade.getData(node), 'xs:string'));
 		}
 
 		// This is an element or a document node. Because we do not know the specific type of this element.
@@ -63,7 +61,7 @@ export function atomizeSingleValue(
 				allTextNodes.push(aNode);
 				return;
 			}
-			executionParameters.domFacade.getChildNodes(aNode, null).forEach(childNode => {
+			domFacade.getChildNodes(aNode, null).forEach(childNode => {
 				getTextNodes(childNode);
 			});
 		})(node);
@@ -72,7 +70,7 @@ export function atomizeSingleValue(
 			createAtomicValue(
 				allTextNodes
 					.map(textNode => {
-						return executionParameters.domFacade.getData(textNode);
+						return domFacade.getData(textNode);
 					})
 					.join(''),
 				'xs:untypedAtomic'

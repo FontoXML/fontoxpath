@@ -135,11 +135,13 @@ describe('evaluateUpdatingExpression', () => {
 		}
 	});
 
-	it('uses the passed documentWriter for replacements', async () => {
-		documentNode.appendChild(documentNode.createElement('ele'));
+	it('uses the passed documentWriter for replace', async () => {
+		const ele = documentNode.createElement('ele');
+		ele.setAttribute('attr', 'value');
+		documentNode.appendChild(ele);
 
-		await evaluateUpdatingExpression(
-			'replace node $doc/ele with <ele>text</ele>',
+		const result = await evaluateUpdatingExpression(
+			'replace node $doc/ele/@attr with <ele xmlns:xxx="YYY" xxx:attr="123"/>/@*',
 			null,
 			null,
 			{
@@ -158,12 +160,25 @@ describe('evaluateUpdatingExpression', () => {
 		chai.assert.isFalse(setDataCalled, 'setDataCalled');
 
 		chai.assert.isTrue(createElementNSCalled, 'createElementNSCalled');
-		chai.assert.isFalse(createAttributeNSCalled, 'createAttributeNSCalled');
+		chai.assert.isTrue(createAttributeNSCalled, 'createAttributeNSCalled');
 		chai.assert.isFalse(createCDATASectionCalled, 'createCDATASectionCalled');
 		chai.assert.isFalse(createCommentCalled, 'createCommentCalled');
 		chai.assert.isFalse(createDocumentCalled, 'createDocumentCalled');
 		chai.assert.isFalse(createProcessingInstructionCalled, 'createProcessingInstructionCalled');
-		chai.assert.isTrue(createTextNodeCalled, 'createTextNodeCalled');
+		chai.assert.isFalse(createTextNodeCalled, 'createTextNodeCalled');
+
+		executePendingUpdateList(
+			result.pendingUpdateList,
+			null,
+			stubbedNodesFactory,
+			stubbedDocumentWriter
+		);
+
+		chai.assert.isFalse(insertBeforeCalled, 'insertBeforeCalled');
+		chai.assert.isFalse(removeChildCalled, 'removeChildCalled');
+		chai.assert.isTrue(removeAttributeNSCalled, 'removeAttributeNSCalled');
+		chai.assert.isTrue(setAttributeNSCalled, 'setAttributeNSCalled');
+		chai.assert.isFalse(setDataCalled, 'setDataCalled');
 	});
 
 	it('uses the passed documentWriter for attribute insertions', async () => {
