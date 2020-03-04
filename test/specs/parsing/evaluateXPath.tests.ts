@@ -13,7 +13,8 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
-	evaluateXPathToStrings
+	evaluateXPathToStrings,
+	getBucketForSelector
 } from 'fontoxpath';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
@@ -355,6 +356,33 @@ describe('evaluateXPath', () => {
 					'xs:QName("something-without-a-prefix") => namespace-uri-from-QName() eq "http://example.com/ns"',
 					ele
 				)
+			);
+		});
+
+		it('can correctly cache everything when using the default resolver', () => {
+			const nameSpaceDocument = new slimdom.Document();
+			const namespaceElement = nameSpaceDocument.createElementNS('http://test.com', 'name');
+			namespaceElement.textContent = 'name1';
+			nameSpaceDocument.appendChild(namespaceElement);
+
+			chai.assert.equal(evaluateXPathToString('/name/text()', nameSpaceDocument), 'name1');
+
+			const slimdomDocument = new slimdom.Document();
+			const nameElement = slimdomDocument.createElement('name');
+			nameElement.textContent = 'name2';
+			slimdomDocument.appendChild(nameElement);
+			chai.assert.equal(evaluateXPathToString('/name/text()', slimdomDocument), 'name2');
+		});
+
+		it('can correctly cache everything when first determining buckets', () => {
+			getBucketForSelector('/name/text() (:from-this-test:)');
+			const slimdomDocument = new slimdom.Document();
+			const nameElement = slimdomDocument.createElement('name');
+			nameElement.textContent = 'name';
+			slimdomDocument.appendChild(nameElement);
+			chai.assert.equal(
+				evaluateXPathToString('/name/text() (:from-this-test:)', slimdomDocument),
+				'name'
 			);
 		});
 

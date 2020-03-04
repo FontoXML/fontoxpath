@@ -100,11 +100,9 @@ export function getStaticCompilationResultFromCache(
 	const languageKey = generateLanguageKey(language, debug);
 	const cachesForLanguage = cachesForExpression[languageKey];
 	if (!cachesForLanguage) {
-		const halfCompiledExpressionFromCache = getAnyStaticCompilationResultFromCache(
-			selectorString,
-			language,
-			debug
-		);
+		const halfCompiledExpressionFromCache =
+			halfCompiledExpressionCache[selectorString] &&
+			halfCompiledExpressionCache[selectorString][languageKey];
 		if (halfCompiledExpressionFromCache) {
 			return {
 				expression: halfCompiledExpressionFromCache,
@@ -126,11 +124,9 @@ export function getStaticCompilationResultFromCache(
 	);
 
 	if (!cacheWithCorrectContext) {
-		const halfCompiledExpressionFromCache = getAnyStaticCompilationResultFromCache(
-			selectorString,
-			language,
-			debug
-		);
+		const halfCompiledExpressionFromCache =
+			halfCompiledExpressionCache[selectorString] &&
+			halfCompiledExpressionCache[selectorString][languageKey];
 		if (halfCompiledExpressionFromCache) {
 			return {
 				expression: halfCompiledExpressionFromCache,
