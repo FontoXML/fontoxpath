@@ -188,7 +188,6 @@ sooner if you can help!](./CONTRIBUTING.md)):
 * Collation related functions (`fn:compare#3`)
 * functions using patterns
 * Some other miscellaneous functions
-* The `?` lookup operator for maps and arrays
 * XML parsing
 * The `treat as` operator
 
