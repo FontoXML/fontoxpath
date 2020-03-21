@@ -75,7 +75,7 @@
 		"node-static": "^0.7.11",
 		"nyc": "^15.0.0",
 		"pegjs": "^0.10.0",
-		"prettier": "^1.19.1",
+		"prettier": "^2.0.0",
 		"sinon": "^8.1.1",
 		"sinon-chai": "^3.4.0",
 		"slimdom": "^2.3.2",
