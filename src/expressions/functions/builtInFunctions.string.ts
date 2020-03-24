@@ -55,23 +55,31 @@ const fnCompare: FunctionDefinitionType = function(
 	return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
 };
 
-const fnConcat: FunctionDefinitionType = function(
+const fnConcat: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
-	_staticContext
-) {
-	let stringSequences = Array.from(arguments).slice(3);
-	stringSequences = stringSequences.map(function(sequence) {
-		return atomize(sequence, executionParameters);
+	_staticContext,
+	...stringSequences: ISequence[]
+) => {
+	stringSequences = stringSequences.map(sequence => {
+		return atomize(sequence, executionParameters).mapAll(allValues => {
+			return sequenceFactory.singleton(
+				createAtomicValue(
+					allValues
+						.map(stringValue =>
+							stringValue === null ? '' : castToType(stringValue, 'xs:string').value
+						)
+						.join(''),
+					'xs:string'
+				)
+			);
+		});
 	});
-	return zipSingleton(stringSequences, function(stringValues) {
+
+	return zipSingleton(stringSequences, stringValues => {
 		return sequenceFactory.singleton(
 			createAtomicValue(
-				stringValues
-					.map(stringValue =>
-						stringValue === null ? '' : castToType(stringValue, 'xs:string').value
-					)
-					.join(''),
+				stringValues.map(stringValue => stringValue.value).join(''),
 				'xs:string'
 			)
 		);

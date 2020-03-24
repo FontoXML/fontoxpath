@@ -190,7 +190,7 @@ describe('functions over strings', () => {
 
 		it('regards CDATA nodes as text nodes', () => {
 			const document = new slimdom.Document();
-			var element = document.appendChild(document.createElement('test'));
+			const element = document.appendChild(document.createElement('test'));
 			element.appendChild(document.createTextNode('Some '));
 			element.appendChild(document.createCDATASection('<CDATA>'));
 			chai.assert.equal(
@@ -201,7 +201,7 @@ describe('functions over strings', () => {
 
 		it('regards CDATA childnodes as text nodes', () => {
 			const document = new slimdom.Document();
-			var element = document.appendChild(document.createElement('test'));
+			const element = document.appendChild(document.createElement('test'));
 			element.appendChild(document.createTextNode('Some '));
 			element.appendChild(document.createCDATASection('<CDATA>'));
 			chai.assert.equal(evaluateXPathToString('string()', document), 'Some <CDATA>');
@@ -254,6 +254,18 @@ describe('functions over strings', () => {
 		it('concats multiple strings', () =>
 			chai.assert.equal(
 				evaluateXPathToString('concat("a","b","c","d","e")', documentNode),
+				'abcde'
+			));
+
+		it('concats array integer values', () =>
+			chai.assert.equal(
+				evaluateXPathToString('concat([1,2],[3,4,5])', documentNode),
+				'12345'
+			));
+
+		it('concats array string values', () =>
+			chai.assert.equal(
+				evaluateXPathToString('concat(["a","b"],["c","d","e"])', documentNode),
 				'abcde'
 			));
 	});
