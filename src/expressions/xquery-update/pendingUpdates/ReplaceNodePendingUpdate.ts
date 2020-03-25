@@ -11,7 +11,7 @@ export class ReplaceNodePendingUpdate extends IPendingUpdate {
 		return {
 			['type']: this.type,
 			['target']: this.target,
-			['replacement']: this.replacement
+			['replacement']: this.replacement,
 		};
 	}
 }

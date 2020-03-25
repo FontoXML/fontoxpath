@@ -33,7 +33,7 @@ class AttributeConstructor extends Expression {
 		childExpressions = childExpressions.concat((name as any).expr || []);
 		super(new Specificity({}), childExpressions, {
 			canBeStaticallyEvaluated: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
 		});
 
 		if ((name as any).expr) {
@@ -104,26 +104,26 @@ class AttributeConstructor extends Expression {
 					const valueExprParts = (this._value as any).valueExprParts as Expression[];
 					if (!valueIterator) {
 						valueIterator = concatSequences(
-							valueExprParts.map(expr => {
+							valueExprParts.map((expr) => {
 								return atomize(
 									expr.evaluate(dynamicContext, executionParameters),
 									executionParameters
-								).mapAll(allValues =>
+								).mapAll((allValues) =>
 									sequenceFactory.singleton(
 										createAtomicValue(
-											allValues.map(val => val.value).join(' '),
+											allValues.map((val) => val.value).join(' '),
 											'xs:string'
 										)
 									)
 								);
 							})
-						).mapAll(allValueParts =>
+						).mapAll((allValueParts) =>
 							sequenceFactory.singleton(
 								createNodeValue(
 									createAttribute(
 										nodesFactory,
 										name,
-										allValueParts.map(val => val.value).join('')
+										allValueParts.map((val) => val.value).join('')
 									)
 								)
 							)
@@ -137,7 +137,7 @@ class AttributeConstructor extends Expression {
 				return ready(
 					createNodeValue(createAttribute(nodesFactory, name, (this._value as any).value))
 				);
-			}
+			},
 		});
 	}
 

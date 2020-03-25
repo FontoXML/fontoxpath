@@ -18,7 +18,7 @@ import {
 	IterationHint,
 	IterationResult,
 	notReady,
-	ready
+	ready,
 } from '../util/iterators';
 import builtInFunctionsNode from './builtInFunctions.node';
 
@@ -54,7 +54,7 @@ function asyncGenerateEvery<T>(
 				return ready(true);
 			}
 			return DONE_TOKEN;
-		}
+		},
 	};
 }
 
@@ -181,7 +181,7 @@ function sequenceDeepEqual(
 				item2 = null;
 			}
 			return DONE_TOKEN;
-		}
+		},
 	};
 }
 
@@ -196,8 +196,8 @@ function mapTypeDeepEqual(
 		return createSingleValueIterator(false);
 	}
 
-	return asyncGenerateEvery(item1.keyValuePairs, mapEntry1 => {
-		const mapEntry2 = item2.keyValuePairs.find(entry =>
+	return asyncGenerateEvery(item1.keyValuePairs, (mapEntry1) => {
+		const mapEntry2 = item2.keyValuePairs.find((entry) =>
 			anyAtomicTypeDeepEqual(
 				dynamicContext,
 				executionParameters,
@@ -302,15 +302,15 @@ function elementNodeDeepEqual(
 	);
 	const attributes1 = executionParameters.domFacade
 		.getAllAttributes(item1.value)
-		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
+		.filter((attr) => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 		.sort((attrA, attrB) => (attrA.name > attrB.name ? 1 : -1))
-		.map(attr => createNodeValue(attr));
+		.map((attr) => createNodeValue(attr));
 
 	const attributes2 = executionParameters.domFacade
 		.getAllAttributes(item2.value)
-		.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
+		.filter((attr) => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
 		.sort((attrA, attrB) => (attrA.name > attrB.name ? 1 : -1))
-		.map(attr => createNodeValue(attr));
+		.map((attr) => createNodeValue(attr));
 
 	const attributesDeepEqualGenerator = sequenceDeepEqual(
 		dynamicContext,
@@ -349,7 +349,7 @@ function elementNodeDeepEqual(
 			}
 			done = true;
 			return contentsEqualResult;
-		}
+		},
 	};
 }
 
@@ -405,7 +405,7 @@ function atomicTypeNodeDeepEqual(
 					atomizeSingleValue(item2, executionParameters).first()
 				)
 			);
-		}
+		},
 	};
 }
 

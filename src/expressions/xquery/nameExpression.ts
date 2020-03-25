@@ -21,7 +21,7 @@ const NC_NAME_CHAR = new RegExp(
 );
 const NC_NAME = new RegExp(`${NC_NAME_START_CHAR.source}${NC_NAME_CHAR.source}*`, 'g');
 
-const isValidNCName = name => {
+const isValidNCName = (name) => {
 	const matches = name.match(NC_NAME);
 	return matches ? matches.length === 1 : false;
 };
@@ -32,7 +32,7 @@ export function evaluateNCNameExpression(
 ): IAsyncIterator<Value> {
 	const name = atomize(nameSequence, executionParameters);
 	return name.switchCases({
-		singleton: seq => {
+		singleton: (seq) => {
 			const nameValue = seq.first();
 			if (
 				isSubtypeOf(nameValue.type, 'xs:string') ||
@@ -47,7 +47,7 @@ export function evaluateNCNameExpression(
 		},
 		default: () => {
 			throw nameExprErr();
-		}
+		},
 	}).value;
 }
 
@@ -58,7 +58,7 @@ export function evaluateQNameExpression(
 ): IAsyncIterator<Value> {
 	const name = atomize(nameSequence, executionParameters);
 	return name.switchCases({
-		singleton: seq => {
+		singleton: (seq) => {
 			const nameValue = seq.first();
 			if (isSubtypeOf(nameValue.type, 'xs:QName')) {
 				return sequenceFactory.singleton(nameValue);
@@ -85,13 +85,13 @@ export function evaluateQNameExpression(
 				}
 				return sequenceFactory.singleton({
 					type: 'xs:QName',
-					value: new QName(prefix, namespaceURI, localName)
+					value: new QName(prefix, namespaceURI, localName),
 				});
 			}
 			throw nameExprErr();
 		},
 		default: () => {
 			throw nameExprErr();
-		}
+		},
 	}).value;
 }

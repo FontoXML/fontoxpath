@@ -36,6 +36,6 @@ export default function sequenceEvery(
 				}
 			}
 			return DONE_TOKEN;
-		}
+		},
 	});
 }

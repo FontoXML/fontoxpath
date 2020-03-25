@@ -4,7 +4,7 @@ import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const opTo: FunctionDefinitionType = function(
+const opTo: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	staticContext,
@@ -30,7 +30,7 @@ const opTo: FunctionDefinitionType = function(
 		// By providing a length, we do not have to hold an end condition into account
 		return sequenceFactory.create(
 			{
-				next: () => ready(createAtomicValue(fromValue++, 'xs:integer'))
+				next: () => ready(createAtomicValue(fromValue++, 'xs:integer')),
 			},
 			toValue - fromValue + 1
 		);
@@ -61,7 +61,7 @@ const opTo: FunctionDefinitionType = function(
 				return DONE_TOKEN;
 			}
 			return ready(createAtomicValue(fromValue++, 'xs:integer'));
-		}
+		},
 	});
 };
 
@@ -72,10 +72,10 @@ export default {
 			localName: 'to',
 			argumentTypes: ['xs:integer?', 'xs:integer?'],
 			returnType: 'xs:integer*',
-			callFunction: opTo
-		}
+			callFunction: opTo,
+		},
 	],
 	functions: {
-		to: opTo
-	}
+		to: opTo,
+	},
 };

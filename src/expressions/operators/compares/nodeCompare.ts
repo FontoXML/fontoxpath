@@ -48,7 +48,7 @@ export default function nodeCompare(
 								throw new Error('Unexpected operator');
 						}
 					});
-				}
-			})
+				},
+			}),
 	});
 }

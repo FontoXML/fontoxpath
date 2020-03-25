@@ -25,8 +25,8 @@ describe('ReplaceExpression', () => {
 			{
 				replacementXML: ['<ele/>'],
 				target: ele,
-				type: 'replaceNode'
-			}
+				type: 'replaceNode',
+			},
 		]);
 	});
 
@@ -46,8 +46,8 @@ describe('ReplaceExpression', () => {
 			{
 				replacementXML: ['attrReplace="value"'],
 				target: ele.getAttributeNode('attr'),
-				type: 'replaceNode'
-			}
+				type: 'replaceNode',
+			},
 		]);
 	});
 
@@ -67,8 +67,8 @@ describe('ReplaceExpression', () => {
 			{
 				stringValue: 'instruction',
 				target: ele.getAttributeNode('attr'),
-				type: 'replaceValue'
-			}
+				type: 'replaceValue',
+			},
 		]);
 	});
 
@@ -87,8 +87,8 @@ describe('ReplaceExpression', () => {
 			{
 				replacementXML: ['<ele/>'],
 				target: ele,
-				type: 'replaceNode'
-			}
+				type: 'replaceNode',
+			},
 		]);
 	});
 
@@ -407,23 +407,23 @@ describe('ReplaceExpression', () => {
 			{
 				stringValue: '6',
 				target: list.getAttributeNode('count'),
-				type: 'replaceValue'
+				type: 'replaceValue',
 			},
 			{
 				replacementXML: ['<list-item i="1"/>', '<list-item i="1"/>'],
 				target: listItem1,
-				type: 'replaceNode'
+				type: 'replaceNode',
 			},
 			{
 				replacementXML: ['<list-item i="2"/>', '<list-item i="2"/>'],
 				target: listItem2,
-				type: 'replaceNode'
+				type: 'replaceNode',
 			},
 			{
 				replacementXML: ['<list-item i="3"/>', '<list-item i="3"/>'],
 				target: listItem3,
-				type: 'replaceNode'
-			}
+				type: 'replaceNode',
+			},
 		]);
 	});
 
@@ -448,8 +448,8 @@ replace value of node fontoxpath:sleep(/element, 100) with fontoxpath:sleep("100
 			{
 				target: element,
 				text: '100',
-				type: 'replaceElementContent'
-			}
+				type: 'replaceElementContent',
+			},
 		]);
 	});
 
@@ -474,8 +474,8 @@ replace node fontoxpath:sleep(/element, 100) with fontoxpath:sleep(<newElement/>
 			{
 				replacementXML: ['<newElement/>'],
 				target: element,
-				type: 'replaceNode'
-			}
+				type: 'replaceNode',
+			},
 		]);
 	});
 
@@ -500,8 +500,8 @@ replace node /element with /
 			{
 				replacementXML: ['<element/>', '<!--comment-->'],
 				target: element,
-				type: 'replaceNode'
-			}
+				type: 'replaceNode',
+			},
 		]);
 	});
 });

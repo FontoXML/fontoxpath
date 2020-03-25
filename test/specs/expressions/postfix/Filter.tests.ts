@@ -10,7 +10,7 @@ describe('Filter', () => {
 	beforeEach(() => {
 		equalExpression = {
 			specificity: new Specificity({}),
-			equals: sinon.stub().returns(true)
+			equals: sinon.stub().returns(true),
 		};
 	});
 

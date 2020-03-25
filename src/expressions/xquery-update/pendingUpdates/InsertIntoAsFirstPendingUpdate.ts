@@ -1,7 +1,7 @@
 import {
 	ConcreteChildNode,
 	ConcreteDocumentNode,
-	ConcreteElementNode
+	ConcreteElementNode,
 } from '../../../domFacade/ConcreteNode';
 import { InsertPendingUpdate } from './InsertPendingUpdate';
 export class InsertIntoAsFirstPendingUpdate extends InsertPendingUpdate {

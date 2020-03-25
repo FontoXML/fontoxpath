@@ -3,7 +3,7 @@ import {
 	ConcreteChildNode,
 	ConcreteDocumentNode,
 	ConcreteElementNode,
-	ConcreteTextNode
+	ConcreteTextNode,
 } from '../../domFacade/ConcreteNode';
 import QName from '../dataTypes/valueTypes/QName';
 import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';

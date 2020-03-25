@@ -2,7 +2,7 @@ import {
 	ConcreteAttributeNode,
 	ConcreteChildNode,
 	ConcreteNode,
-	NODE_TYPES
+	NODE_TYPES,
 } from '../../domFacade/ConcreteNode';
 import IDomFacade from '../../domFacade/IDomFacade';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
@@ -155,7 +155,7 @@ function compareNodePositionsWithTieBreaker(tieBreakerArr, domFacade, node1, nod
 	return compareElements(tieBreakerArr, domFacade, value1, value2);
 }
 
-export const compareNodePositions = function(domFacade, node1, node2) {
+export const compareNodePositions = function (domFacade, node1, node2) {
 	return compareNodePositionsWithTieBreaker(
 		domFacade.orderOfDetachedNodes,
 		domFacade,
@@ -179,7 +179,7 @@ export const sortNodeValues = function sortNodeValues(
 	nodeValues: Value[]
 ): Value[] {
 	return nodeValues
-		.sort(function(node1, node2) {
+		.sort(function (node1, node2) {
 			return compareNodePositionsWithTieBreaker(
 				domFacade.orderOfDetachedNodes,
 				domFacade,
@@ -187,7 +187,7 @@ export const sortNodeValues = function sortNodeValues(
 				node2
 			);
 		})
-		.filter(function(nodeValue, i, sortedNodes) {
+		.filter(function (nodeValue, i, sortedNodes) {
 			if (i === 0) {
 				return true;
 			}

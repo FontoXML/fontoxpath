@@ -5,7 +5,7 @@ import {
 	Document,
 	Element,
 	ProcessingInstruction,
-	Text
+	Text,
 } from '../types/Types';
 
 export const enum NODE_TYPES {
@@ -17,7 +17,7 @@ export const enum NODE_TYPES {
 	COMMENT_NODE = 8,
 	DOCUMENT_NODE = 9,
 	DOCUMENT_TYPE_NODE = 10,
-	DOCUMENT_FRAGMENT_NODE = 11
+	DOCUMENT_FRAGMENT_NODE = 11,
 }
 
 export type ConcreteTextNode = Text & { nodeType: NODE_TYPES.TEXT_NODE };

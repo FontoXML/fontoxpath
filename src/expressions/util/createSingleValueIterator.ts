@@ -9,6 +9,6 @@ export default function createSingleValueIterator<T>(onlyValue: T): IAsyncIterat
 			}
 			hasPassed = true;
 			return ready(onlyValue);
-		}
+		},
 	};
 }

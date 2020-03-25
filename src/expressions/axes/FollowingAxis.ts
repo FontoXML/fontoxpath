@@ -64,7 +64,7 @@ function createFollowingGenerator(
 			}
 
 			return DONE_TOKEN;
-		}
+		},
 	};
 }
 
@@ -75,7 +75,7 @@ class FollowingAxis extends Expression {
 			resultOrder: RESULT_ORDERINGS.SORTED,
 			peer: true,
 			subtree: false,
-			canBeStaticallyEvaluated: false
+			canBeStaticallyEvaluated: false,
 		});
 
 		this._testExpression = testExpression;
@@ -97,7 +97,7 @@ class FollowingAxis extends Expression {
 					this._testExpression.getBucket()
 				)
 			)
-			.filter(item => {
+			.filter((item) => {
 				return this._testExpression.evaluateToBoolean(dynamicContext, item);
 			});
 	}

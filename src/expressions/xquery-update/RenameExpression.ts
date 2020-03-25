@@ -101,7 +101,7 @@ class RenameExpression extends UpdatingExpression {
 	constructor(targetExpression: Expression, newNameExpression: Expression) {
 		super(new Specificity({}), [targetExpression, newNameExpression], {
 			canBeStaticallyEvaluated: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
 		});
 
 		this._targetExpression = targetExpression;
@@ -148,9 +148,9 @@ class RenameExpression extends UpdatingExpression {
 						[rename(target.value, qName)],
 						tv.value.pendingUpdateList,
 						nnv.value.pendingUpdateList
-					)
+					),
 				});
-			}
+			},
 		};
 	}
 

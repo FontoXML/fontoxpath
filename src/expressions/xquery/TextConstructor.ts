@@ -12,7 +12,7 @@ class TextConstructor extends Expression {
 	constructor(expr: Expression | null) {
 		super(expr ? expr.specificity : new Specificity({}), expr ? [expr] : [], {
 			canBeStaticallyEvaluated: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
 		});
 
 		this._expr = expr;
@@ -24,11 +24,11 @@ class TextConstructor extends Expression {
 			return sequenceFactory.empty();
 		}
 		const sequence = this._expr.evaluateMaybeStatically(dynamicContext, executionParameters);
-		return atomize(sequence, executionParameters).mapAll(items => {
+		return atomize(sequence, executionParameters).mapAll((items) => {
 			if (items.length === 0) {
 				return sequenceFactory.empty();
 			}
-			const content = items.map(item => castToType(item, 'xs:string').value).join(' ');
+			const content = items.map((item) => castToType(item, 'xs:string').value).join(' ');
 
 			return sequenceFactory.singleton(createNodeValue(nodesFactory.createTextNode(content)));
 		});

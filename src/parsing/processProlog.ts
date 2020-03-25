@@ -15,7 +15,7 @@ import {
 	errXQST0047,
 	errXQST0060,
 	errXQST0066,
-	errXQST0070
+	errXQST0070,
 } from '../expressions/xquery/XQueryErrors';
 import astHelper, { IAST } from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
@@ -29,7 +29,7 @@ const RESERVED_FUNCTION_NAMESPACE_URIS = [
 	'http://www.w3.org/2005/xpath-functions/math',
 	'http://www.w3.org/2012/xquery',
 	'http://www.w3.org/2005/xpath-functions/array',
-	'http://www.w3.org/2005/xpath-functions/map'
+	'http://www.w3.org/2005/xpath-functions/map',
 ];
 
 export type FunctionDeclaration = {
@@ -53,7 +53,7 @@ export default function processProlog(
 	}[] = [];
 
 	const compiledFunctionDeclarations: FunctionDeclaration[] = [];
-	astHelper.getChildren(prolog, '*').forEach(feature => {
+	astHelper.getChildren(prolog, '*').forEach((feature) => {
 		switch (feature[0]) {
 			case 'moduleImport':
 			case 'namespaceDecl':
@@ -70,7 +70,7 @@ export default function processProlog(
 
 	// First, let's import modules
 	const importedModuleNamespaces = new Set<string>();
-	astHelper.getChildren(prolog, 'moduleImport').forEach(moduleImport => {
+	astHelper.getChildren(prolog, 'moduleImport').forEach((moduleImport) => {
 		const moduleImportPrefix = astHelper.getTextContent(
 			astHelper.getFirstChild(moduleImport, 'namespacePrefix')
 		);
@@ -87,7 +87,7 @@ export default function processProlog(
 		enhanceStaticContextWithModule(staticContext, moduleImportNamespaceURI);
 	});
 
-	astHelper.getChildren(prolog, 'namespaceDecl').forEach(namespaceDecl => {
+	astHelper.getChildren(prolog, 'namespaceDecl').forEach((namespaceDecl) => {
 		const prefix = astHelper.getTextContent(astHelper.getFirstChild(namespaceDecl, 'prefix'));
 		const namespaceURI = astHelper.getTextContent(
 			astHelper.getFirstChild(namespaceDecl, 'uri')
@@ -110,7 +110,7 @@ export default function processProlog(
 	// Default function namespace declaration
 	const defaultNamespaceFunctionDecl = astHelper
 		.getChildren(prolog, 'defaultNamespaceDecl')
-		.filter(child => {
+		.filter((child) => {
 			const type = astHelper.getTextContent(
 				astHelper.getFirstChild(child, 'defaultNamespaceCategory')
 			);
@@ -143,7 +143,7 @@ export default function processProlog(
 		throw errXQST0066();
 	}
 
-	astHelper.getChildren(prolog, 'functionDecl').forEach(declaration => {
+	astHelper.getChildren(prolog, 'functionDecl').forEach((declaration) => {
 		const functionName = astHelper.getFirstChild(declaration, 'functionName');
 		const declarationPrefix = astHelper.getAttribute(functionName, 'prefix');
 		let declarationNamespaceURI = astHelper.getAttribute(functionName, 'URI');
@@ -167,14 +167,14 @@ export default function processProlog(
 		// Functions are public unless they're private
 		const annotations = astHelper
 			.getChildren(declaration, 'annotation')
-			.map(annotation => astHelper.getFirstChild(annotation, 'annotationName'));
+			.map((annotation) => astHelper.getFirstChild(annotation, 'annotationName'));
 		const isPublicDeclaration = annotations.every(
-			annotationName =>
+			(annotationName) =>
 				!astHelper.getAttribute(annotationName, 'URI') &&
 				astHelper.getTextContent(annotationName) !== 'private'
 		);
 		const isUpdatingFunction = annotations.some(
-			annotationName =>
+			(annotationName) =>
 				!astHelper.getAttribute(annotationName, 'URI') &&
 				astHelper.getTextContent(annotationName) === 'updating'
 		);
@@ -197,8 +197,8 @@ export default function processProlog(
 			astHelper.getFirstChild(declaration, 'paramList'),
 			'param'
 		);
-		const paramNames = params.map(param => astHelper.getFirstChild(param, 'varName'));
-		const paramTypes = params.map(param => astHelper.getTypeDeclaration(param));
+		const paramNames = params.map((param) => astHelper.getFirstChild(param, 'varName'));
+		const paramTypes = params.map((param) => astHelper.getTypeDeclaration(param));
 
 		if (
 			staticContext.lookupFunction(
@@ -214,11 +214,11 @@ export default function processProlog(
 
 		const compiledFunctionBody = compileAstToExpression(body as IAST, {
 			allowUpdating: false,
-			allowXQuery: true
+			allowXQuery: true,
 		});
 
 		const staticContextLeaf = new StaticContext(staticContext);
-		const parameterBindingNames = paramNames.map(param => {
+		const parameterBindingNames = paramNames.map((param) => {
 			let namespaceURI = astHelper.getAttribute(param, 'URI');
 			const prefix = astHelper.getAttribute(param, 'prefix');
 			const localName = astHelper.getTextContent(param);
@@ -258,7 +258,7 @@ export default function processProlog(
 				isUpdating: true,
 				localName: declarationLocalName,
 				namespaceURI: declarationNamespaceURI,
-				returnType
+				returnType,
 			};
 		} else {
 			const executeFunction: FunctionDefinitionType = (
@@ -288,7 +288,7 @@ export default function processProlog(
 				isUpdating: false,
 				localName: declarationLocalName,
 				namespaceURI: declarationNamespaceURI,
-				returnType
+				returnType,
 			};
 		}
 
@@ -300,7 +300,7 @@ export default function processProlog(
 		);
 		staticallyCompilableExpressions.push({
 			expression: compiledFunctionBody,
-			staticContextLeaf
+			staticContextLeaf,
 		});
 
 		if (isPublicDeclaration) {
@@ -310,13 +310,13 @@ export default function processProlog(
 				expression: compiledFunctionBody,
 				functionDefinition,
 				localName: declarationLocalName,
-				namespaceURI: declarationNamespaceURI
+				namespaceURI: declarationNamespaceURI,
 			});
 		}
 	});
 
 	const registeredVariables: { localName: string; namespaceURI: null | string }[] = [];
-	astHelper.getChildren(prolog, 'varDecl').forEach(varDecl => {
+	astHelper.getChildren(prolog, 'varDecl').forEach((varDecl) => {
 		const varName = astHelper.getQName(astHelper.getFirstChild(varDecl, 'varName'));
 		let declarationNamespaceURI = varName.namespaceURI;
 		if (declarationNamespaceURI === null) {
@@ -348,13 +348,13 @@ export default function processProlog(
 		if (varValue) {
 			compiledFunctionAsExpression = compileAstToExpression(varValue as IAST, {
 				allowUpdating: false,
-				allowXQuery: true
+				allowXQuery: true,
 			});
 		}
 
 		if (
 			registeredVariables.some(
-				registered =>
+				(registered) =>
 					registered.namespaceURI === declarationNamespaceURI &&
 					registered.localName === varName.localName
 			)
@@ -391,7 +391,7 @@ export default function processProlog(
 			);
 			staticallyCompilableExpressions.push({
 				expression: compiledFunctionAsExpression,
-				staticContextLeaf: staticContext
+				staticContextLeaf: staticContext,
 			});
 
 			registeredVariables.push(varName);
@@ -402,7 +402,7 @@ export default function processProlog(
 		expression.performStaticEvaluation(staticContextLeaf);
 	});
 
-	compiledFunctionDeclarations.forEach(compiledFunctionDeclaration => {
+	compiledFunctionDeclarations.forEach((compiledFunctionDeclaration) => {
 		if (
 			!compiledFunctionDeclaration.functionDefinition.isUpdating &&
 			compiledFunctionDeclaration.expression.isUpdating
@@ -414,6 +414,6 @@ export default function processProlog(
 	});
 
 	return {
-		functionDeclarations: compiledFunctionDeclarations
+		functionDeclarations: compiledFunctionDeclarations,
 	};
 }

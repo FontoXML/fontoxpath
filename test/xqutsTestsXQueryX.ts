@@ -5,7 +5,7 @@ import testFs from 'test-helpers/testFs';
 
 function run() {
 	const skippableTests = getSkippedTests('failingXQUTSXQueryXTestNames.csv');
-	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
+	const skippableTestNames = skippableTests.map((result) => result.split(',')[0]);
 
 	const baseDir = path.join('XQUTS', 'Queries');
 
@@ -17,11 +17,11 @@ function run() {
 	function buildTestCases(testPath) {
 		const xQueryXPath = path.join(baseDir, 'XQueryX', ...testPath);
 
-		testFs.readdirSync(xQueryXPath).forEach(candidate => {
+		testFs.readdirSync(xQueryXPath).forEach((candidate) => {
 			const candidatePath = path.join(xQueryXPath, candidate);
 			if (testFs.lstatSync(candidatePath).isDirectory()) {
 				testPath.push(candidate);
-				describe(candidate, function() {
+				describe(candidate, function () {
 					buildTestCases(testPath);
 				});
 				testPath.pop();
@@ -45,7 +45,7 @@ function run() {
 				const loadXQueryX = async () =>
 					normalizeEndOfLines(await testFs.readFile(xQueryXPath));
 
-				buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, actual => {
+				buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, (actual) => {
 					actual.documentElement.setAttributeNS(
 						'http://www.w3.org/2001/XMLSchema-instance',
 						'xsi:schemaLocation',

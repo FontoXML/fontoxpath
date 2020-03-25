@@ -26,8 +26,8 @@ describe('RenameExpression', () => {
 			{
 				type: 'rename',
 				target: element,
-				newName: { prefix: '', namespaceURI: null, localName: 'elem' }
-			}
+				newName: { prefix: '', namespaceURI: null, localName: 'elem' },
+			},
 		]);
 	});
 
@@ -47,18 +47,18 @@ describe('RenameExpression', () => {
 			{
 				type: 'rename',
 				target: element,
-				newName: { prefix: '', namespaceURI: null, localName: 'elem' }
+				newName: { prefix: '', namespaceURI: null, localName: 'elem' },
 			},
 			{
 				type: 'rename',
 				target: element,
-				newName: { prefix: '', namespaceURI: null, localName: 'a' }
+				newName: { prefix: '', namespaceURI: null, localName: 'a' },
 			},
 			{
 				type: 'rename',
 				target: element,
-				newName: { prefix: '', namespaceURI: null, localName: 'b' }
-			}
+				newName: { prefix: '', namespaceURI: null, localName: 'b' },
+			},
 		]);
 	});
 
@@ -84,8 +84,8 @@ rename node fontoxpath:sleep(/element/@attr, 100) as fontoxpath:sleep("at", 1)
 			{
 				type: 'rename',
 				target: attribute,
-				newName: { prefix: '', namespaceURI: null, localName: 'at' }
-			}
+				newName: { prefix: '', namespaceURI: null, localName: 'at' },
+			},
 		]);
 	});
 
@@ -109,8 +109,8 @@ rename node fontoxpath:sleep(/element, 100) as fontoxpath:sleep("elem", 1)
 			{
 				type: 'rename',
 				target: element,
-				newName: { prefix: '', namespaceURI: null, localName: 'elem' }
-			}
+				newName: { prefix: '', namespaceURI: null, localName: 'elem' },
+			},
 		]);
 	});
 
@@ -136,8 +136,8 @@ rename node fontoxpath:sleep(/processing-instruction(), 100) as fontoxpath:sleep
 			{
 				type: 'rename',
 				target: element,
-				newName: { prefix: '', namespaceURI: null, localName: 'new-name' }
-			}
+				newName: { prefix: '', namespaceURI: null, localName: 'new-name' },
+			},
 		]);
 	});
 });

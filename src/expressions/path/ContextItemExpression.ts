@@ -6,7 +6,7 @@ import Specificity from '../Specificity';
 class ContextItemExpression extends Expression {
 	constructor() {
 		super(new Specificity({}), [], {
-			resultOrder: RESULT_ORDERINGS.SORTED
+			resultOrder: RESULT_ORDERINGS.SORTED,
 		});
 	}
 

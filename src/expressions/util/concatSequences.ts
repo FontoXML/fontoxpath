@@ -23,6 +23,6 @@ export default function concatSequences(sequences: ISequence[]): ISequence {
 				return value;
 			}
 			return DONE_TOKEN;
-		}
+		},
 	});
 }

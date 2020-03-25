@@ -2,7 +2,7 @@ import {
 	ConcreteChildNode,
 	ConcreteNode,
 	ConcreteParentNode,
-	NODE_TYPES
+	NODE_TYPES,
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import createNodeValue from '../dataTypes/createNodeValue';
@@ -73,7 +73,7 @@ export default function createDescendantGenerator(
 					return DONE_TOKEN;
 				}
 				return ready(createNodeValue(currentNode));
-			}
+			},
 		};
 	}
 
@@ -94,6 +94,6 @@ export default function createDescendantGenerator(
 			// Iterator over these children next
 			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value, bucket));
 			return ready(createNodeValue(value.value));
-		}
+		},
 	};
 }

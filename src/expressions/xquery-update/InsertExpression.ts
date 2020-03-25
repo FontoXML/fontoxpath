@@ -16,7 +16,7 @@ import {
 	insertBefore,
 	insertInto,
 	insertIntoAsFirst,
-	insertIntoAsLast
+	insertIntoAsLast,
 } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
@@ -29,7 +29,7 @@ import {
 	errXUTY0004,
 	errXUTY0005,
 	errXUTY0006,
-	errXUTY0022
+	errXUTY0022,
 } from './XQueryUpdateFacilityErrors';
 const ELEMENT_NODE = 1;
 
@@ -38,7 +38,7 @@ export enum TargetChoice {
 	INSERT_BEFORE = 2,
 	INSERT_INTO = 3,
 	INSERT_INTO_AS_FIRST = 4,
-	INSERT_INTO_AS_LAST = 5
+	INSERT_INTO_AS_LAST = 5,
 }
 
 function testNamespaceURIForAttribute(targetElement, attributeNode: Attr, namespaceBindings): void {
@@ -138,7 +138,7 @@ class InsertExpression extends UpdatingExpression {
 	) {
 		super(new Specificity({}), [sourceExpression, targetExpression], {
 			canBeStaticallyEvaluated: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
 		});
 
 		this._sourceExpression = sourceExpression;
@@ -280,9 +280,9 @@ class InsertExpression extends UpdatingExpression {
 						),
 						sourceUpdates,
 						targetUpdates
-					)
+					),
 				});
-			}
+			},
 		};
 	}
 }

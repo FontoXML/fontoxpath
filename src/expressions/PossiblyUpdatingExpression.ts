@@ -56,7 +56,7 @@ export function separateXDMValueFromUpdatingExpressionResult(
 				return DONE_TOKEN;
 			}
 			return ready(allValues[i++]);
-		}
+		},
 	});
 }
 
@@ -73,7 +73,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		super(specificity, childExpressions, optimizationOptions, true);
 
 		this.isUpdating = this._childExpressions.some(
-			childExpression => childExpression.isUpdating
+			(childExpression) => childExpression.isUpdating
 		);
 	}
 
@@ -81,7 +81,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		return this.performFunctionalEvaluation(
 			dynamicContext,
 			executionParameters,
-			this._childExpressions.map(expr => (innerDynamicContext: DynamicContext) =>
+			this._childExpressions.map((expr) => (innerDynamicContext: DynamicContext) =>
 				expr.evaluate(innerDynamicContext, executionParameters)
 			)
 		);
@@ -96,7 +96,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		const sequence = this.performFunctionalEvaluation(
 			dynamicContext,
 			executionParameters,
-			this._childExpressions.map(expr => {
+			this._childExpressions.map((expr) => {
 				if (!expr.isUpdating) {
 					return (innerDynamicContext: DynamicContext) =>
 						expr.evaluate(innerDynamicContext, executionParameters);
@@ -109,7 +109,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 					);
 					return separateXDMValueFromUpdatingExpressionResult(
 						updateListAndValue,
-						pendingUpdates => (updateList = mergeUpdates(updateList, pendingUpdates))
+						(pendingUpdates) => (updateList = mergeUpdates(updateList, pendingUpdates))
 					);
 				};
 			})
@@ -129,7 +129,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 				}
 				done = true;
 				return ready(new UpdatingExpressionResult(allValues.value, updateList));
-			}
+			},
 		};
 	}
 
@@ -150,7 +150,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 	 * evaluation. Propagate this
 	 */
 	protected determineUpdatingness() {
-		if (this._childExpressions.some(expr => expr.isUpdating)) {
+		if (this._childExpressions.some((expr) => expr.isUpdating)) {
 			this.isUpdating = true;
 		}
 	}

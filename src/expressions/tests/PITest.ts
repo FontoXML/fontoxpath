@@ -8,7 +8,7 @@ class PITest extends TestAbstractExpression {
 	constructor(target: string) {
 		super(
 			new Specificity({
-				[Specificity.NODENAME_KIND]: 1
+				[Specificity.NODENAME_KIND]: 1,
 			})
 		);
 

@@ -34,7 +34,7 @@ function adaptItemToXPathValue(value: any): Value | null {
 			}
 			if (Array.isArray(value)) {
 				return new ArrayValue(
-					value.map(arrayItem => {
+					value.map((arrayItem) => {
 						if (arrayItem === undefined) {
 							return () => sequenceFactory.empty();
 						}
@@ -51,8 +51,8 @@ function adaptItemToXPathValue(value: any): Value | null {
 			// Make it a map
 			return new MapValue(
 				Object.keys(value)
-					.filter(key => value[key] !== undefined)
-					.map(key => {
+					.filter((key) => value[key] !== undefined)
+					.map((key) => {
 						const adaptedValue = adaptItemToXPathValue(value[key]);
 						const adaptedSequence =
 							adaptedValue === null
@@ -61,7 +61,7 @@ function adaptItemToXPathValue(value: any): Value | null {
 
 						return {
 							key: createAtomicValue(key, 'xs:string'),
-							value: createDoublyIterableSequence(adaptedSequence)
+							value: createDoublyIterableSequence(adaptedSequence),
 						};
 					})
 			);
@@ -141,7 +141,7 @@ export default function adaptJavaScriptValueToXPathValue(
 		case '*': {
 			const convertedValues = value.map(adaptJavaScriptValueToXPath.bind(null, type));
 			return sequenceFactory.create(
-				convertedValues.filter(convertedValue => convertedValue !== null)
+				convertedValues.filter((convertedValue) => convertedValue !== null)
 			);
 		}
 

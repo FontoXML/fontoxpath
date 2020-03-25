@@ -33,21 +33,23 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 			specificity,
 			[
 				argExpression,
-				...caseClauses.map(clause => clause.caseClauseExpression),
-				defaultExpression
+				...caseClauses.map((clause) => clause.caseClauseExpression),
+				defaultExpression,
 			].concat(
-				...caseClauses.map(clause => clause.typeTests.map(typetest => typetest.typeTest))
+				...caseClauses.map((clause) =>
+					clause.typeTests.map((typetest) => typetest.typeTest)
+				)
 			),
 			{
 				canBeStaticallyEvaluated: false,
 				peer: false,
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
-				subtree: false
+				subtree: false,
 			}
 		);
 		this._argExpression = argExpression;
 		this._amountOfCases = caseClauses.length;
-		this._typeTestsByCase = caseClauses.map(clause => clause.typeTests);
+		this._typeTestsByCase = caseClauses.map((clause) => clause.typeTests);
 	}
 
 	public performFunctionalEvaluation(
@@ -59,13 +61,13 @@ class TypeSwitchExpression extends PossiblyUpdatingExpression {
 		const evaluatedExpression = sequenceCallbacks[0](dynamicContext);
 
 		// Map over all values the type test, and return the result.
-		return evaluatedExpression.mapAll(allValues => {
+		return evaluatedExpression.mapAll((allValues) => {
 			for (let i = 0; i < this._amountOfCases; i++) {
 				const typeTests = this._typeTestsByCase[i];
 				// First, we check if the multiplicity is correct.
 				// By default, we assume that "no explicit multiplicity == one element".
 				if (
-					typeTests.some(typeTest => {
+					typeTests.some((typeTest) => {
 						switch (typeTest.occurrenceIndicator) {
 							case '?':
 								if (allValues.length > 1) {

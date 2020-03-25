@@ -7,21 +7,21 @@ import sequenceFactory from '../../dataTypes/sequenceFactory';
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,
-	subtractDuration as subtractDurationFromDateTime
+	subtractDuration as subtractDurationFromDateTime,
 } from '../../dataTypes/valueTypes/DateTime';
 import {
 	add as dayTimeDurationAdd,
 	divide as dayTimeDurationDivide,
 	divideByDayTimeDuration as dayTimeDurationDivideByDayTimeDuration,
 	multiply as dayTimeDurationMultiply,
-	subtract as dayTimeDurationSubtract
+	subtract as dayTimeDurationSubtract,
 } from '../../dataTypes/valueTypes/DayTimeDuration';
 import {
 	add as yearMonthDurationAdd,
 	divide as yearMonthDurationDivide,
 	divideByYearMonthDuration as yearMonthDurationDivideByYearMonthDuration,
 	multiply as yearMonthDurationMultiply,
-	subtract as yearMonthDurationSubtract
+	subtract as yearMonthDurationSubtract,
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 import Expression from '../../Expression';
 
@@ -43,18 +43,18 @@ function generateBinaryOperatorFunction(operator, typeA: ValueType, typeB: Value
 	let castFunctionForValueB = null;
 
 	if (isSubtypeOf(typeA, 'xs:untypedAtomic')) {
-		castFunctionForValueA = value => castToType(value, 'xs:double');
+		castFunctionForValueA = (value) => castToType(value, 'xs:double');
 		typeA = 'xs:double';
 	}
 	if (isSubtypeOf(typeB, 'xs:untypedAtomic')) {
-		castFunctionForValueB = value => castToType(value, 'xs:double');
+		castFunctionForValueB = (value) => castToType(value, 'xs:double');
 		typeB = 'xs:double';
 	}
 
 	function applyCastFunctions(valueA, valueB) {
 		return {
 			castA: castFunctionForValueA ? castFunctionForValueA(valueA) : valueA,
-			castB: castFunctionForValueB ? castFunctionForValueB(valueB) : valueB
+			castB: castFunctionForValueB ? castFunctionForValueB(valueB) : valueB,
 		};
 	}
 
@@ -420,7 +420,7 @@ class BinaryOperator extends Expression {
 			firstValueExpr.specificity.add(secondValueExpr.specificity),
 			[firstValueExpr, secondValueExpr],
 			{
-				canBeStaticallyEvaluated: false
+				canBeStaticallyEvaluated: false,
 			}
 		);
 		this._firstValueExpr = firstValueExpr;
@@ -434,7 +434,7 @@ class BinaryOperator extends Expression {
 			this._firstValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 			executionParameters
 		);
-		return firstValueSequence.mapAll(firstValues => {
+		return firstValueSequence.mapAll((firstValues) => {
 			if (firstValues.length === 0) {
 				// Shortcut, if the first part is empty, we can return empty.
 				// As per spec, we do not have to evaluate the second part, though we could.
@@ -444,7 +444,7 @@ class BinaryOperator extends Expression {
 				this._secondValueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 				executionParameters
 			);
-			return secondValueSequence.mapAll(secondValues => {
+			return secondValueSequence.mapAll((secondValues) => {
 				if (secondValues.length === 0) {
 					return sequenceFactory.empty();
 				}

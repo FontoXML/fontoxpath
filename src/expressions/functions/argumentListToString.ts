@@ -2,7 +2,7 @@ import ISequence from '../dataTypes/ISequence';
 
 export default function argumentListToString(argumentList: ISequence[]) {
 	return argumentList
-		.map(function(argument) {
+		.map(function (argument) {
 			if (argument === null) {
 				return 'placeholder';
 			}
@@ -15,6 +15,6 @@ export default function argumentListToString(argumentList: ISequence[]) {
 			}
 			return argument.first().type + '+';
 		})
-		.map(types => `${types}`)
+		.map((types) => `${types}`)
 		.join(', ');
 }

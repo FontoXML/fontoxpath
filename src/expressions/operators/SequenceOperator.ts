@@ -13,15 +13,15 @@ import concatSequences from '../util/concatSequences';
 class SequenceOperator extends PossiblyUpdatingExpression {
 	constructor(expressions: Expression[]) {
 		super(
-			expressions.reduce(function(specificity, selector) {
+			expressions.reduce(function (specificity, selector) {
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
 			expressions,
 			{
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				canBeStaticallyEvaluated: expressions.every(
-					selector => selector.canBeStaticallyEvaluated
-				)
+					(selector) => selector.canBeStaticallyEvaluated
+				),
 			}
 		);
 	}
@@ -34,7 +34,7 @@ class SequenceOperator extends PossiblyUpdatingExpression {
 		if (!sequenceCallbacks.length) {
 			return sequenceFactory.empty();
 		}
-		return concatSequences(sequenceCallbacks.map(cb => cb(dynamicContext)));
+		return concatSequences(sequenceCallbacks.map((cb) => cb(dynamicContext)));
 	}
 }
 

@@ -15,7 +15,7 @@ export const staticallyKnownNamespaceByPrefix: { [prefix: string]: string } = {
 	['array']: ARRAY_NAMESPACE_URI,
 	['math']: MATH_NAMESPACE_URI,
 	['fontoxpath']: FONTOXPATH_NAMESPACE_URI,
-	['local']: LOCAL_NAMESPACE_URI
+	['local']: LOCAL_NAMESPACE_URI,
 };
 
 export function registerStaticallyKnownNamespace(prefix: string, namespaceURI: string) {

@@ -54,7 +54,7 @@ const sequenceFactory = {
 
 	singletonFalseSequence: () => {
 		return create(falseBoolean);
-	}
+	},
 };
 
 export default sequenceFactory;

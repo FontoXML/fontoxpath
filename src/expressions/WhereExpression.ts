@@ -19,7 +19,7 @@ class WhereExpression extends PossiblyUpdatingExpression {
 			canBeStaticallyEvaluated: false,
 			peer: false,
 			resultOrder: RESULT_ORDERINGS.UNSORTED,
-			subtree: false
+			subtree: false,
 		});
 
 		this._testExpression = testExpression;
@@ -48,7 +48,7 @@ class WhereExpression extends PossiblyUpdatingExpression {
 					resultIterator = resultSequence.value;
 				}
 				return resultIterator.next(hint);
-			}
+			},
 		});
 	}
 

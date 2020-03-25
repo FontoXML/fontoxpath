@@ -6,7 +6,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
-	evaluateXPath
+	evaluateXPath,
 } from 'fontoxpath';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
@@ -21,20 +21,22 @@ describe('registerCustomXPath', () => {
 	});
 
 	before(() => {
-		registerCustomXPathFunction('test:custom-function1', ['xs:string?'], 'xs:boolean', function(
-			dynamicContext,
-			string
-		) {
-			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
-			chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
-			return string === null || string === 'test';
-		});
+		registerCustomXPathFunction(
+			'test:custom-function1',
+			['xs:string?'],
+			'xs:boolean',
+			function (dynamicContext, string) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
+				return string === null || string === 'test';
+			}
+		);
 
 		registerCustomXPathFunction(
 			'test:custom-function2',
 			['xs:string', 'xs:boolean'],
 			'xs:boolean',
-			function(dynamicContext, string, boolean) {
+			function (dynamicContext, string, boolean) {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
@@ -42,7 +44,7 @@ describe('registerCustomXPath', () => {
 			}
 		);
 
-		registerCustomXPathFunction('test:custom-function3', ['item()*'], 'item()', function(
+		registerCustomXPathFunction('test:custom-function3', ['item()*'], 'item()', function (
 			dynamicContext,
 			input
 		) {
@@ -52,19 +54,21 @@ describe('registerCustomXPath', () => {
 			return input[0] || null;
 		});
 
-		registerCustomXPathFunction('test:custom-function4', ['xs:string*'], 'xs:string*', function(
-			dynamicContext,
-			stringArray
-		) {
-			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
-			chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
+		registerCustomXPathFunction(
+			'test:custom-function4',
+			['xs:string*'],
+			'xs:string*',
+			function (dynamicContext, stringArray) {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
-			return stringArray.map(function(string) {
-				return string + '-test';
-			});
-		});
+				return stringArray.map(function (string) {
+					return string + '-test';
+				});
+			}
+		);
 
-		registerCustomXPathFunction('test:custom-date-function', [], 'xs:date', function(
+		registerCustomXPathFunction('test:custom-date-function', [], 'xs:date', function (
 			dynamicContext
 		) {
 			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -73,7 +77,7 @@ describe('registerCustomXPath', () => {
 			return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
 		});
 
-		registerCustomXPathFunction('test:custom-time-function', [], 'xs:time', function(
+		registerCustomXPathFunction('test:custom-time-function', [], 'xs:time', function (
 			dynamicContext
 		) {
 			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -82,7 +86,7 @@ describe('registerCustomXPath', () => {
 			return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
 		});
 
-		registerCustomXPathFunction('test:custom-dateTime-function', [], 'xs:dateTime', function(
+		registerCustomXPathFunction('test:custom-dateTime-function', [], 'xs:dateTime', function (
 			dynamicContext
 		) {
 			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -95,7 +99,7 @@ describe('registerCustomXPath', () => {
 			'test:custom-gYearMonth-function',
 			[],
 			'xs:gYearMonth',
-			function(dynamicContext) {
+			function (dynamicContext) {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 
@@ -103,7 +107,7 @@ describe('registerCustomXPath', () => {
 			}
 		);
 
-		registerCustomXPathFunction('test:custom-gYear-function', [], 'xs:gYear', function(
+		registerCustomXPathFunction('test:custom-gYear-function', [], 'xs:gYear', function (
 			dynamicContext
 		) {
 			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -112,7 +116,7 @@ describe('registerCustomXPath', () => {
 			return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
 		});
 
-		registerCustomXPathFunction('test:custom-gMonthDay-function', [], 'xs:gMonthDay', function(
+		registerCustomXPathFunction('test:custom-gMonthDay-function', [], 'xs:gMonthDay', function (
 			dynamicContext
 		) {
 			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -121,7 +125,7 @@ describe('registerCustomXPath', () => {
 			return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
 		});
 
-		registerCustomXPathFunction('test:custom-gMonth-function', [], 'xs:gMonth', function(
+		registerCustomXPathFunction('test:custom-gMonth-function', [], 'xs:gMonth', function (
 			dynamicContext
 		) {
 			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -130,7 +134,7 @@ describe('registerCustomXPath', () => {
 			return new Date(Date.UTC(2018, 5, 22, 10, 25, 30));
 		});
 
-		registerCustomXPathFunction('test:custom-gDay-function', [], 'xs:gDay', function(
+		registerCustomXPathFunction('test:custom-gDay-function', [], 'xs:gDay', function (
 			dynamicContext
 		) {
 			chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -170,7 +174,7 @@ describe('registerCustomXPath', () => {
 			{ namespaceURI: 'http://www.example.com/customFunctionTest', localName: 'test' },
 			[],
 			'xs:boolean',
-			function(dynamicContext) {
+			function (dynamicContext) {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
 				chai.assert.equal(dynamicContext.currentContext.nodeId, '123456789');
@@ -180,8 +184,8 @@ describe('registerCustomXPath', () => {
 		);
 		const options = {
 			currentContext: {
-				nodeId: '123456789'
-			}
+				nodeId: '123456789',
+			},
 		};
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(`Q{${namespaceURI}}test()`, null, null, null, options),
@@ -274,7 +278,7 @@ describe('registerCustomXPath', () => {
 			'test:custom-function-keeps-the-dom-facade',
 			[],
 			'xs:boolean',
-			function(dynamicContext, string) {
+			function (dynamicContext, string) {
 				chai.assert.equal(outerDomFacade, dynamicContext.domFacade);
 				return true;
 			}
@@ -294,7 +298,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-date-function-param',
 				['xs:date'],
 				'xs:date',
-				function(dynamicContext, date) {
+				function (dynamicContext, date) {
 					chai.assert.isTrue(
 						date instanceof Date,
 						'Parameter is not of type javascript date'
@@ -307,7 +311,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-date-function-optional-param',
 				['xs:date?'],
 				'xs:date?',
-				function(dynamicContext, date) {
+				function (dynamicContext, date) {
 					chai.assert.isTrue(
 						date === null || date instanceof Date,
 						'Parameter is not null or of type javascript date'
@@ -320,7 +324,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-date-function-zero-to-many-param',
 				['xs:date*'],
 				'xs:date*',
-				function(dynamicContext, dates) {
+				function (dynamicContext, dates) {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
 					for (const date of dates) {
@@ -337,7 +341,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-date-function-one-to-many-param',
 				['xs:date+'],
 				'xs:date*',
-				function(dynamicContext, dates) {
+				function (dynamicContext, dates) {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
 					for (const date of dates) {
@@ -354,7 +358,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-time-param-function',
 				['xs:time'],
 				'xs:time',
-				function(dynamicContext, time) {
+				function (dynamicContext, time) {
 					chai.assert.isTrue(
 						time instanceof Date,
 						'Parameter is not of type javascript date'
@@ -367,7 +371,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-dateTime-param-function',
 				['xs:dateTime'],
 				'xs:dateTime',
-				function(dynamicContext, dateTime) {
+				function (dynamicContext, dateTime) {
 					chai.assert.isTrue(
 						dateTime instanceof Date,
 						'Parameter is not of type javascript date'
@@ -380,7 +384,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-gYearMonth-param-function',
 				['xs:gYearMonth'],
 				'xs:gYearMonth',
-				function(dynamicContext, gYearMonth) {
+				function (dynamicContext, gYearMonth) {
 					chai.assert.isTrue(
 						gYearMonth instanceof Date,
 						'Parameter is not of type javascript date'
@@ -393,7 +397,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-gYear-param-function',
 				['xs:gYear'],
 				'xs:gYear',
-				function(dynamicContext, gYear) {
+				function (dynamicContext, gYear) {
 					chai.assert.isTrue(
 						gYear instanceof Date,
 						'Parameter is not of type javascript date'
@@ -406,7 +410,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-gMonthDay-param-function',
 				['xs:gMonthDay'],
 				'xs:gMonthDay',
-				function(dynamicContext, gMonthDay) {
+				function (dynamicContext, gMonthDay) {
 					chai.assert.isTrue(
 						gMonthDay instanceof Date,
 						'Parameter is not of type javascript date'
@@ -419,7 +423,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-gMonth-param-function',
 				['xs:gMonth'],
 				'xs:gMonth',
-				function(dynamicContext, gMonth) {
+				function (dynamicContext, gMonth) {
 					chai.assert.isTrue(
 						gMonth instanceof Date,
 						'Parameter is not of type javascript date'
@@ -432,7 +436,7 @@ describe('registerCustomXPath', () => {
 				'test:custom-gDay-param-function',
 				['xs:gDay'],
 				'xs:gDay',
-				function(dynamicContext, gDay) {
+				function (dynamicContext, gDay) {
 					chai.assert.isTrue(
 						gDay instanceof Date,
 						'Parameter is not of type javascript date'

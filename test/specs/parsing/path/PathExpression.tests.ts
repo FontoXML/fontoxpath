@@ -10,7 +10,7 @@ import {
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
-	evaluateXPathToString
+	evaluateXPathToString,
 } from 'fontoxpath';
 
 let documentNode;
@@ -22,7 +22,7 @@ describe('relative paths', () => {
 	it('supports relative paths', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode']], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('someChildNode', documentNode.documentElement), [
-			documentNode.documentElement.firstChild
+			documentNode.documentElement.firstChild,
 		]);
 	});
 
@@ -49,7 +49,7 @@ describe('relative paths', () => {
 				['someChildElement', 'A piece of text'],
 				['someChildElement', 'A piece of text'],
 				['someChildElement', 'A piece of text'],
-				['someChildElement', 'A piece of text']
+				['someChildElement', 'A piece of text'],
 			],
 			documentNode
 		);
@@ -145,7 +145,7 @@ describe('relative paths', () => {
 				'someNode',
 				['someChildNode', ['someGrandChildA1'], ['someGrandChildA2']],
 				['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
-				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']]
+				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']],
 			],
 			documentNode
 		);
@@ -164,7 +164,7 @@ describe('relative paths', () => {
 				'someNode',
 				['someChildNode', ['someGrandChildA1'], ['someGrandChildA2']],
 				['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
-				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']]
+				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']],
 			],
 			documentNode
 		);
@@ -196,7 +196,7 @@ describe('relative paths', () => {
 				'someNode',
 				['someChildNode', ['someGrandChildA1'], ['someGrandChildA2']],
 				['someChildNode', ['someGrandChildB1'], ['someGrandChildB2']],
-				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']]
+				['someChildNode', ['someGrandChildC1'], ['someGrandChildC2']],
 			],
 			documentNode
 		);
@@ -216,18 +216,22 @@ describe('relative paths', () => {
 				[
 					'someChildNode',
 					['someGrandChildA1', ['someGrandGrandChildA1-1'], ['someGrandGrandChildA1-2']],
-					['someGrandChildA2', ['someGrandGrandChildA2-1'], ['someGrandGrandChildA2-2']]
+					['someGrandChildA2', ['someGrandGrandChildA2-1'], ['someGrandGrandChildA2-2']],
 				],
 				[
 					'someChildNode',
 					['someGrandChildB1', ['someGrandGrandChildB1-1'], ['someGrandGrandChildB1-2']],
-					['someGrandChildB2', ['someGrandGrandChildB2-1'], ['someGrandGrandChildB2-2']]
+					['someGrandChildB2', ['someGrandGrandChildB2-1'], ['someGrandGrandChildB2-2']],
 				],
 				[
 					'someChildNode',
 					['someGrandChildC1', ['someGrandGrandChildC1-1'], ['someGrandGrandChildC1-2']],
-					['someGrandChildC2', ['someGrandGrandChild1C2-1'], ['someGrandGrandChild1C2-2']]
-				]
+					[
+						'someGrandChildC2',
+						['someGrandGrandChild1C2-1'],
+						['someGrandGrandChild1C2-2'],
+					],
+				],
 			],
 			documentNode
 		);
@@ -246,7 +250,7 @@ describe('relative paths', () => {
 				'someNode',
 				['someChildNodeA', ['someGrandChild'], ['someGrandChild']],
 				['someChildNodeB', ['someGrandChild'], ['someGrandChild']],
-				['someChildNodeC', ['someGrandChild'], ['someGrandChild']]
+				['someChildNodeC', ['someGrandChild'], ['someGrandChild']],
 			],
 			documentNode
 		);
@@ -265,7 +269,7 @@ describe('relative paths', () => {
 				'someNode',
 				['someChildNodeA', ['someGrandChildA1'], ['someGrandChildA2']],
 				['someChildNodeB', ['someGrandChildB1'], ['someGrandChildB2']],
-				['someChildNodeC', ['someGrandChildC1'], ['someGrandChildC2']]
+				['someChildNodeC', ['someGrandChildC1'], ['someGrandChildC2']],
 			],
 			documentNode
 		);
@@ -283,7 +287,7 @@ describe('relative paths', () => {
 			[
 				'someNode',
 				{ AsomeAttribute: 'someValue', BsomeOtherAttribute: 'someOtherValue' },
-				['someChildNode']
+				['someChildNode'],
 			],
 			documentNode
 		);
@@ -297,7 +301,7 @@ describe('relative paths', () => {
 		);
 	});
 
-	it('allows mixed pathseparators and abbreviated steps', function() {
+	it('allows mixed pathseparators and abbreviated steps', function () {
 		jsonMlMapper.parse(['someNode', ['someChildNode', ['someGrandChild']]], documentNode);
 		chai.assert.deepEqual(
 			evaluateXPathToFirstNode(
@@ -312,7 +316,7 @@ describe('relative paths', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode', ['someGrandChild']]], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('.//*', documentNode.documentElement), [
 			documentNode.documentElement.firstChild,
-			documentNode.documentElement.firstChild.firstChild
+			documentNode.documentElement.firstChild.firstChild,
 		]);
 	});
 

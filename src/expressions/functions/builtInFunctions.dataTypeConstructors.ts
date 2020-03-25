@@ -22,7 +22,7 @@ function genericDataTypeConstructor(
 	return sequenceFactory.singleton(castToType(sequence.first(), dataType));
 }
 
-const xsQName: FunctionDefinitionType = function(
+const xsQName: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	staticContext,
@@ -71,7 +71,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:untypedAtomic'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -81,7 +81,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:error'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		// AnySimpleType cannot be instantiated
 		// AnyAtomicType cannot be instantiated
@@ -93,7 +93,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:string'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -103,7 +103,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:boolean'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -113,7 +113,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:decimal'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -123,7 +123,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:float'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -133,7 +133,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:double'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -143,7 +143,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:duration'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -153,7 +153,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:dateTime'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -163,21 +163,27 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:dateTimeStamp'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'time',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:time?',
-			callFunction: genericDataTypeConstructor.bind(null, 'xs:time') as FunctionDefinitionType
+			callFunction: genericDataTypeConstructor.bind(
+				null,
+				'xs:time'
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'date',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:date?',
-			callFunction: genericDataTypeConstructor.bind(null, 'xs:date') as FunctionDefinitionType
+			callFunction: genericDataTypeConstructor.bind(
+				null,
+				'xs:date'
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -187,7 +193,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:gYearMonth'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -197,7 +203,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:gYear'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -207,14 +213,17 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:gMonthDay'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'gDay',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:gDay?',
-			callFunction: genericDataTypeConstructor.bind(null, 'xs:gDay') as FunctionDefinitionType
+			callFunction: genericDataTypeConstructor.bind(
+				null,
+				'xs:gDay'
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -224,7 +233,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:gMonth'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -234,7 +243,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:hexBinary'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -244,14 +253,14 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:base64Binary'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'QName',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:QName?',
-			callFunction: xsQName
+			callFunction: xsQName,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -261,7 +270,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:anyURI'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		// NOTATION cannot be instantiated
 		{
@@ -272,7 +281,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:normalizedString'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -282,7 +291,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:token'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -292,7 +301,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:language'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -302,7 +311,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:NMTOKEN'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -312,14 +321,17 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:NMTOKENS'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'Name',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:Name?',
-			callFunction: genericDataTypeConstructor.bind(null, 'xs:Name') as FunctionDefinitionType
+			callFunction: genericDataTypeConstructor.bind(
+				null,
+				'xs:Name'
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -329,14 +341,14 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:NCName'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'ID',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:ID?',
-			callFunction: genericDataTypeConstructor.bind(null, 'xs:ID') as FunctionDefinitionType
+			callFunction: genericDataTypeConstructor.bind(null, 'xs:ID') as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -346,7 +358,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:IDREF'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -356,7 +368,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:IDREFS'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -366,7 +378,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:ENTITY'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -376,7 +388,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:ENTITIES'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -386,7 +398,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:integer'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -396,7 +408,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:nonPositiveInteger'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -406,21 +418,24 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:negativeInteger'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'long',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:long?',
-			callFunction: genericDataTypeConstructor.bind(null, 'xs:long') as FunctionDefinitionType
+			callFunction: genericDataTypeConstructor.bind(
+				null,
+				'xs:long'
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'int',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:int?',
-			callFunction: genericDataTypeConstructor.bind(null, 'xs:int') as FunctionDefinitionType
+			callFunction: genericDataTypeConstructor.bind(null, 'xs:int') as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -430,14 +445,17 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:short'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 			localName: 'byte',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:byte?',
-			callFunction: genericDataTypeConstructor.bind(null, 'xs:byte') as FunctionDefinitionType
+			callFunction: genericDataTypeConstructor.bind(
+				null,
+				'xs:byte'
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -447,7 +465,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:nonNegativeInteger'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -457,7 +475,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:unsignedLong'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -467,7 +485,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:unsignedInt'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -477,7 +495,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:unsignedShort'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -487,7 +505,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:unsignedByte'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -497,7 +515,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:positiveInteger'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -507,7 +525,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:yearMonthDuration'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -517,7 +535,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:dayTimeDuration'
-			) as FunctionDefinitionType
+			) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
@@ -527,7 +545,7 @@ export default {
 			callFunction: genericDataTypeConstructor.bind(
 				null,
 				'xs:dateTimeStamp'
-			) as FunctionDefinitionType
-		}
-	]
+			) as FunctionDefinitionType,
+		},
+	],
 };

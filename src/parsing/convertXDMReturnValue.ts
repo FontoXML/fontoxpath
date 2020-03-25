@@ -10,7 +10,7 @@ import ExecutionParameters from '../expressions/ExecutionParameters';
 import { IterationHint } from '../expressions/util/iterators';
 import transformXPathItemToJavascriptObject, {
 	transformArrayToArray,
-	transformMapToObject
+	transformMapToObject,
 } from '../transformXPathItemToJavascriptObject';
 import { Node } from '../types/Types';
 
@@ -28,7 +28,7 @@ export enum ReturnType {
 	MAP = 11,
 	ARRAY = 12,
 	NUMBERS = 13,
-	ASYNC_ITERATOR = 99
+	ASYNC_ITERATOR = 99,
 }
 
 /**
@@ -76,7 +76,7 @@ export default function convertXDMReturnValue<
 			}
 			// Atomize to convert (attribute)nodes to be strings
 			return allValues.value
-				.map(value => castToType(value, 'xs:string').value)
+				.map((value) => castToType(value, 'xs:string').value)
 				.join(' ') as IReturnTypes<TNode>[TReturnType];
 		}
 		case ReturnType.STRINGS: {
@@ -88,7 +88,7 @@ export default function convertXDMReturnValue<
 				return [] as IReturnTypes<TNode>[TReturnType];
 			}
 			// Atomize all parts
-			return allValues.value.map(value => {
+			return allValues.value.map((value) => {
 				return value.value + '';
 			}) as IReturnTypes<TNode>[TReturnType];
 		}
@@ -130,7 +130,7 @@ export default function convertXDMReturnValue<
 			}
 
 			if (
-				!allResults.value.every(value => {
+				!allResults.value.every((value) => {
 					return isSubtypeOf(value.type, 'node()');
 				})
 			) {
@@ -138,7 +138,7 @@ export default function convertXDMReturnValue<
 					'Expected XPath ' + expression + ' to resolve to a sequence of Nodes.'
 				);
 			}
-			return allResults.value.map(nodeValue => {
+			return allResults.value.map((nodeValue) => {
 				return nodeValue.value;
 			}) as IReturnTypes<TNode>[TReturnType];
 		}
@@ -194,7 +194,7 @@ export default function convertXDMReturnValue<
 			if (!allValues.ready) {
 				throw new Error(`The expression ${expression} can not be resolved synchronously.`);
 			}
-			return allValues.value.map(value => {
+			return allValues.value.map((value) => {
 				if (!isSubtypeOf(value.type, 'xs:numeric')) {
 					throw new Error('Expected XPath ' + expression + ' to resolve to numbers');
 				}
@@ -230,7 +230,7 @@ export default function convertXDMReturnValue<
 				}
 				return Promise.resolve({
 					done: true,
-					value: null
+					value: null,
 				});
 			};
 			let toReturn: AsyncIterableIterator<any>;
@@ -240,16 +240,16 @@ export default function convertXDMReturnValue<
 						return this;
 					},
 					next: () =>
-						new Promise<IteratorResult<any>>(resolve => resolve(getNextResult())).catch(
-							error => {
-								printAndRethrowError(expression, error);
-								throw error;
-							}
-						)
+						new Promise<IteratorResult<any>>((resolve) =>
+							resolve(getNextResult())
+						).catch((error) => {
+							printAndRethrowError(expression, error);
+							throw error;
+						}),
 				};
 			} else {
 				toReturn = {
-					next: () => new Promise(resolve => resolve(getNextResult()))
+					next: () => new Promise((resolve) => resolve(getNextResult())),
 				} as AsyncIterableIterator<any>;
 			}
 			return toReturn as IReturnTypes<TNode>[TReturnType];
@@ -260,14 +260,14 @@ export default function convertXDMReturnValue<
 			if (!allValues.ready) {
 				throw new Error('The XPath ' + expression + ' can not be resolved synchronously.');
 			}
-			const allValuesAreNodes = allValues.value.every(value => {
+			const allValuesAreNodes = allValues.value.every((value) => {
 				return isSubtypeOf(value.type, 'node()') && !isSubtypeOf(value.type, 'attribute()');
 			});
 			if (allValuesAreNodes) {
 				if (allValues.value.length === 1) {
 					return allValues.value[0].value;
 				}
-				return allValues.value.map(nodeValue => {
+				return allValues.value.map((nodeValue) => {
 					return nodeValue.value;
 				}) as IReturnTypes<TNode>[TReturnType];
 			}
@@ -300,7 +300,7 @@ export default function convertXDMReturnValue<
 
 			return atomize(sequenceFactory.create(allValues.value), executionParameters)
 				.getAllValues()
-				.map(atomizedValue => {
+				.map((atomizedValue) => {
 					return atomizedValue.value;
 				}) as IReturnTypes<TNode>[TReturnType];
 		}

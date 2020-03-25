@@ -16,7 +16,7 @@ describe('Context related functions', () => {
 			chai.assert.isTrue(evaluateXPathToBoolean('current-dateTime() eq current-dateTime()')));
 		it('returns different values for different queries', async () => {
 			const dateTime = evaluateXPathToString('current-dateTime()');
-			const dateTimeLater = await new Promise(resolve =>
+			const dateTimeLater = await new Promise((resolve) =>
 				setTimeout(() => resolve(evaluateXPathToString('current-dateTime()')), 100)
 			);
 

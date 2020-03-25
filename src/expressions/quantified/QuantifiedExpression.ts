@@ -15,15 +15,15 @@ class QuantifiedExpression extends Expression {
 	public _satisfiesExpr: Expression;
 
 	constructor(quantifier: string, inClauses: InClause[], satisfiesExpr: Expression) {
-		const inClauseExpressions = inClauses.map(inClause => inClause.sourceExpr);
-		const inClauseNames = inClauses.map(inClause => inClause.name);
+		const inClauseExpressions = inClauses.map((inClause) => inClause.sourceExpr);
+		const inClauseNames = inClauses.map((inClause) => inClause.name);
 
 		const specificity = inClauseExpressions.reduce(
 			(specificity, inClause) => specificity.add(inClause.specificity),
 			satisfiesExpr.specificity
 		);
 		super(specificity, inClauseExpressions.concat(satisfiesExpr), {
-			canBeStaticallyEvaluated: false
+			canBeStaticallyEvaluated: false,
 		});
 
 		this._quantifier = quantifier;
@@ -42,7 +42,7 @@ class QuantifiedExpression extends Expression {
 					.evaluateMaybeStatically(scopingContext, executionParameters)
 					.getAllValues();
 				scopingContext = dynamicContext.scopeWithVariableBindings({
-					[variableBinding]: () => sequenceFactory.create(allValuesInInClause)
+					[variableBinding]: () => sequenceFactory.create(allValuesInInClause),
 				});
 
 				return allValuesInInClause;
@@ -51,7 +51,7 @@ class QuantifiedExpression extends Expression {
 
 		// If any item of evaluatedInClauses is empty stop
 		if (
-			evaluatedInClauses.some(items => {
+			evaluatedInClauses.some((items) => {
 				return items.length === 0;
 			})
 		) {

@@ -53,7 +53,7 @@ class FunctionValue<T = ISequence> extends Value {
 		localName,
 		namespaceURI,
 		returnType,
-		value
+		value,
 	}: {
 		argumentTypes: (TypeDeclaration | RestArgument)[];
 		arity: number;
@@ -82,7 +82,7 @@ class FunctionValue<T = ISequence> extends Value {
 	public applyArguments(appliedArguments) {
 		const fn = this.value;
 
-		const argumentSequenceCreators = appliedArguments.map(arg => {
+		const argumentSequenceCreators = appliedArguments.map((arg) => {
 			if (arg === null) {
 				return null;
 			}
@@ -92,7 +92,7 @@ class FunctionValue<T = ISequence> extends Value {
 		// fn (dynamicContext, ...arg)
 		function curriedFunction(dynamicContext, executionParameters, staticContext) {
 			const newArguments = Array.from(arguments).slice(3);
-			const allArguments = argumentSequenceCreators.map(function(createArgumentSequence) {
+			const allArguments = argumentSequenceCreators.map(function (createArgumentSequence) {
 				// If createArgumentSequence === null, it is a placeholder, so use a provided one
 				if (createArgumentSequence === null) {
 					return newArguments.shift();
@@ -122,7 +122,7 @@ class FunctionValue<T = ISequence> extends Value {
 			localName: 'boundFunction',
 			namespaceURI: this._namespaceURI,
 			returnType: this._returnType,
-			value: curriedFunction
+			value: curriedFunction,
 		});
 
 		return sequenceFactory.singleton(functionItem);

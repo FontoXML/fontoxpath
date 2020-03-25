@@ -10,14 +10,14 @@ class AttributeAxis extends Expression {
 	constructor(attributeTestExpression: TestAbstractExpression) {
 		super(
 			new Specificity({
-				[Specificity.ATTRIBUTE_KIND]: 1
+				[Specificity.ATTRIBUTE_KIND]: 1,
 			}),
 			[attributeTestExpression],
 			{
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				subtree: true,
 				peer: true,
-				canBeStaticallyEvaluated: false
+				canBeStaticallyEvaluated: false,
 			}
 		);
 
@@ -43,9 +43,11 @@ class AttributeAxis extends Expression {
 		// but does not include namespace declarations (because they are not attributes).
 		const matchingAttributes = domFacade
 			.getAllAttributes(contextItem.value, this._attributeTestExpression.getBucket())
-			.filter(attr => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
-			.map(attribute => createNodeValue(attribute))
-			.filter(item => this._attributeTestExpression.evaluateToBoolean(dynamicContext, item));
+			.filter((attr) => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
+			.map((attribute) => createNodeValue(attribute))
+			.filter((item) =>
+				this._attributeTestExpression.evaluateToBoolean(dynamicContext, item)
+			);
 		return sequenceFactory.create(matchingAttributes);
 	}
 

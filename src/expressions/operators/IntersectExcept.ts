@@ -13,8 +13,8 @@ function ensureSortedSequence(
 	sequence: ISequence,
 	expectedResultOrder: any
 ): ISequence {
-	return sequence.mapAll(values => {
-		if (values.some(value => !isSubtypeOf(value.type, 'node()'))) {
+	return sequence.mapAll((values) => {
+		if (values.some((value) => !isSubtypeOf(value.type, 'node()'))) {
 			throw new Error(
 				`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`
 			);
@@ -45,7 +45,7 @@ class IntersectExcept extends Expression {
 				: expression2.specificity;
 		super(maxSpecificity, [expression1, expression2], {
 			canBeStaticallyEvaluated:
-				expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated
+				expression1.canBeStaticallyEvaluated && expression2.canBeStaticallyEvaluated,
 		});
 
 		this._intersectOrExcept = intersectOrExcept;
@@ -145,7 +145,7 @@ class IntersectExcept extends Expression {
 				// Since X ∩ ∅ = ∅, we are done.
 				done = true;
 				return DONE_TOKEN;
-			}
+			},
 		});
 	}
 }

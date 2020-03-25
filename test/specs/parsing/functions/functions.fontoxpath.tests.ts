@@ -3,7 +3,7 @@ import {
 	domFacade,
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
-	evaluateXPathToString
+	evaluateXPathToString,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
@@ -71,8 +71,8 @@ describe('extension functions', () => {
 					domFacade,
 					{},
 					{
-						namespaceResolver: prefix =>
-							({ fun: 'http://www.w3.org/2005/xpath-functions' }[prefix])
+						namespaceResolver: (prefix) =>
+							({ fun: 'http://www.w3.org/2005/xpath-functions' }[prefix]),
 					}
 				)
 			);

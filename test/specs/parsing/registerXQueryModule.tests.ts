@@ -13,8 +13,8 @@ declare %public function test:hello($a) {
 
 		const result = evaluateXPath('test:hello("World")', null, null, null, null, {
 			moduleImports: {
-				test: 'https://www.example.org/test1'
-			}
+				test: 'https://www.example.org/test1',
+			},
 		});
 
 		chai.assert.equal(result, 'Hello World');
@@ -34,8 +34,8 @@ declare %public function test:is-odd ($n) {
 
 		const result = evaluateXPath('test:is-odd(5)', null, null, null, null, {
 			moduleImports: {
-				test: 'https://www.example.org/test2'
-			}
+				test: 'https://www.example.org/test2',
+			},
 		});
 
 		chai.assert.equal(result, true);
@@ -59,8 +59,8 @@ declare %public function test:hello ($a) {
 
 		const result = evaluateXPath('test:hello("World")', null, null, null, null, {
 			moduleImports: {
-				test: 'https://www.example.org/test3/mainModule'
-			}
+				test: 'https://www.example.org/test3/mainModule',
+			},
 		});
 
 		chai.assert.equal(result, 'Hello World!!!');

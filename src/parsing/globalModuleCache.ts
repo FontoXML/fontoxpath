@@ -6,7 +6,7 @@ export const loadModuleFile = (uri: string, moduleContents: { functionDeclaratio
 	let loadedModuleContents = loadedModulesByNamespaceURI[uri];
 	if (!loadedModuleContents) {
 		loadedModuleContents = loadedModulesByNamespaceURI[uri] = {
-			functionDeclarations: []
+			functionDeclarations: [],
 		};
 	}
 

@@ -61,7 +61,7 @@ export function atomizeSingleValue(
 				allTextNodes.push(aNode);
 				return;
 			}
-			domFacade.getChildNodes(aNode, null).forEach(childNode => {
+			domFacade.getChildNodes(aNode, null).forEach((childNode) => {
 				getTextNodes(childNode);
 			});
 		})(node);
@@ -69,7 +69,7 @@ export function atomizeSingleValue(
 		return sequenceFactory.create(
 			createAtomicValue(
 				allTextNodes
-					.map(textNode => {
+					.map((textNode) => {
 						return domFacade.getData(textNode);
 					})
 					.join(''),
@@ -86,7 +86,7 @@ export function atomizeSingleValue(
 	if (isSubtypeOf(value.type, 'array(*)')) {
 		const arrayValue = value as ArrayValue;
 		return concatSequences(
-			arrayValue.members.map(getMemberSequence =>
+			arrayValue.members.map((getMemberSequence) =>
 				atomize(getMemberSequence(), executionParameters)
 			)
 		);
@@ -131,6 +131,6 @@ export default function atomize(
 			}
 
 			return DONE_TOKEN;
-		}
+		},
 	});
 }

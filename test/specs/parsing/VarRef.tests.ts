@@ -7,7 +7,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNumber,
-	evaluateXPathToString
+	evaluateXPathToString,
 } from 'fontoxpath';
 
 let documentNode;
@@ -42,7 +42,7 @@ describe('varRef', () => {
 		it('can reference variables: nodes', () =>
 			chai.assert.equal(
 				evaluateXPathToFirstNode('$x("a")/self::node()', documentNode, null, {
-					x: { a: documentNode }
+					x: { a: documentNode },
 				}),
 				documentNode
 			));
@@ -64,7 +64,7 @@ describe('varRef', () => {
 		it('can reference variables: maps with undefined values (undefined means absent)', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean('$x("x") => empty()', documentNode, null, {
-					x: { x: undefined }
+					x: { x: undefined },
 				})
 			));
 		it('can reference variables: arrays with null values', () =>

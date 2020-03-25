@@ -25,13 +25,13 @@ class PIConstructor extends Expression {
 	) {
 		const expressions = target.targetExpr ? [target.targetExpr].concat(dataExpr) : [dataExpr];
 		super(
-			expressions.reduce(function(specificity, selector) {
+			expressions.reduce(function (specificity, selector) {
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
 			expressions,
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED,
 			}
 		);
 
@@ -45,8 +45,8 @@ class PIConstructor extends Expression {
 			dynamicContext,
 			executionParameters
 		);
-		return atomize(dataSequence, executionParameters).mapAll(items => {
-			const data = items.map(item => castToType(item, 'xs:string').value).join(' ');
+		return atomize(dataSequence, executionParameters).mapAll((items) => {
+			const data = items.map((item) => castToType(item, 'xs:string').value).join(' ');
 
 			if (data.indexOf('?>') !== -1) {
 				throw new Error(
@@ -80,7 +80,7 @@ class PIConstructor extends Expression {
 					return ready(
 						createNodeValue(nodesFactory.createProcessingInstruction(target, data))
 					);
-				}
+				},
 			});
 		});
 	}

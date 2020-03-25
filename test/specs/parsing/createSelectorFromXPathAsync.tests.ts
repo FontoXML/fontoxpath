@@ -10,7 +10,7 @@ describe('createExpressionFromXPathAsync', () => {
 	});
 
 	it('can compile a selector asynchronously', () => {
-		return precompileXPath('1 + 1').then(function(selector) {
+		return precompileXPath('1 + 1').then(function (selector) {
 			// Assume selector to be ok
 			chai.expect(evaluateXPathToNumber(selector, documentNode)).to.equal(2);
 		});
@@ -18,7 +18,7 @@ describe('createExpressionFromXPathAsync', () => {
 
 	it('can compile a new, unique selector asynchronously', () => {
 		const now = Date.now();
-		return precompileXPath(`1 + ${now}`).then(function(selector) {
+		return precompileXPath(`1 + ${now}`).then(function (selector) {
 			// Assume selector to be ok
 			chai.assert.equal(evaluateXPathToNumber(selector, documentNode), now + 1);
 		});

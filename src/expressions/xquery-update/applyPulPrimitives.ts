@@ -4,7 +4,7 @@ import {
 	ConcreteChildNode,
 	ConcreteElementNode,
 	ConcreteProcessingInstructionNode,
-	NODE_TYPES
+	NODE_TYPES,
 } from '../../domFacade/ConcreteNode';
 import IDomFacade from '../../domFacade/IDomFacade';
 import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
@@ -57,7 +57,7 @@ export const insertAfter = (
 	const parent = domFacade.getParentNode(target);
 	const nextSibling = domFacade.getNextSibling(target);
 
-	content.forEach(node => {
+	content.forEach((node) => {
 		documentWriter.insertBefore(parent as Element, node, nextSibling);
 	});
 };
@@ -79,7 +79,7 @@ export const insertBefore = (
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNode(target);
 
-	content.forEach(node => {
+	content.forEach((node) => {
 		documentWriter.insertBefore(parent as Element, node, target);
 	});
 };
@@ -114,7 +114,7 @@ export const insertIntoAsFirst = (
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	const firstChild = domFacade.getFirstChild(target);
-	content.forEach(node => {
+	content.forEach((node) => {
 		documentWriter.insertBefore(target, node, firstChild);
 	});
 };
@@ -131,7 +131,7 @@ export const insertIntoAsLast = (
 	content: Node[],
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	content.forEach(node => {
+	content.forEach((node) => {
 		documentWriter.insertBefore(target, node, null);
 	});
 };
@@ -150,7 +150,7 @@ export const insertAttributes = (
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	content.forEach(attr => {
+	content.forEach((attr) => {
 		if (domFacade.getAttribute(target, attr.name)) {
 			throw errXUDY0021(`An attribute ${attr.name} already exists.`);
 		}
@@ -189,7 +189,7 @@ export const rename = (
 				newName.buildPrefixedName()
 			);
 
-			attributes.forEach(attribute => {
+			attributes.forEach((attribute) => {
 				documentWriter.setAttributeNS(
 					replacement as Element,
 					attribute.namespaceURI,
@@ -197,7 +197,7 @@ export const rename = (
 					attribute.value
 				);
 			});
-			childNodes.forEach(childNode => {
+			childNodes.forEach((childNode) => {
 				documentWriter.insertBefore(replacement, childNode, null);
 			});
 			break;
@@ -240,7 +240,7 @@ export const replaceElementContent = (
 	domFacade: (IDomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	domFacade.getChildNodes(target).forEach(child => documentWriter.removeChild(target, child));
+	domFacade.getChildNodes(target).forEach((child) => documentWriter.removeChild(target, child));
 	if (text) {
 		documentWriter.insertBefore(target, text, null);
 	}
@@ -265,7 +265,7 @@ export const replaceNode = (
 
 	if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
 		// All replacement must consist of attribute nodes.
-		if (replacement.some(candidate => candidate.nodeType !== NODE_TYPES.ATTRIBUTE_NODE)) {
+		if (replacement.some((candidate) => candidate.nodeType !== NODE_TYPES.ATTRIBUTE_NODE)) {
 			throw new Error(
 				'Constraint "If $target is an attribute node, $replacement must consist of zero or more attribute nodes." failed.'
 			);
@@ -290,7 +290,7 @@ export const replaceNode = (
 	) {
 		const following = domFacade.getNextSibling(target);
 		documentWriter.removeChild(parent as Document | Element, target);
-		replacement.forEach(newNode => {
+		replacement.forEach((newNode) => {
 			documentWriter.insertBefore(parent as Document | Element, newNode, following);
 		});
 	}

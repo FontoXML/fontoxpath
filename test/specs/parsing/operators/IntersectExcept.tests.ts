@@ -23,7 +23,7 @@ describe('intersect', () => {
 			[
 				'someNode',
 				['a', { someAttribute: 'someValue' }],
-				['b', { someAttribute: 'someOtherValue' }]
+				['b', { someAttribute: 'someOtherValue' }],
 			],
 			documentNode
 		);
@@ -39,7 +39,7 @@ describe('intersect', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('($A except $B, $B except $A)', documentNode, null, {
 				A: nodeA,
-				B: nodeB
+				B: nodeB,
 			}),
 			[nodeA, nodeB]
 		);
@@ -61,7 +61,7 @@ describe('except', () => {
 			[
 				'someNode',
 				['a', { someAttribute: 'someValue' }],
-				['b', { someAttribute: 'someOtherValue' }]
+				['b', { someAttribute: 'someOtherValue' }],
 			],
 			documentNode
 		);
@@ -77,7 +77,7 @@ describe('except', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('($A intersect $B, $B intersect $A)', documentNode, null, {
 				A: nodeA,
-				B: nodeB
+				B: nodeB,
 			}),
 			[]
 		);

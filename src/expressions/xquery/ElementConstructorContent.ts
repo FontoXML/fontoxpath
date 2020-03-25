@@ -22,7 +22,7 @@ function parseChildNodes(
 			if (isSubtypeOf(childNode.type, 'array(*)')) {
 				const arrayValue = childNode as ArrayValue;
 				// Flatten out arrays
-				arrayValue.members.forEach(member =>
+				arrayValue.members.forEach((member) =>
 					member()
 						.getAllValues()
 						.forEach((item: Value) => flattenArray(convertedChildNodes, item))
@@ -62,7 +62,7 @@ function parseChildNodes(
 
 			if (isSubtypeOf(childNode.type, 'document()')) {
 				const docChildNodes = [];
-				childNode.value.childNodes.forEach(node =>
+				childNode.value.childNodes.forEach((node) =>
 					docChildNodes.push(createNodeValue(node))
 				);
 				attributesDone = parseChildNodes(
@@ -105,7 +105,7 @@ export default function parseContent(
 
 	let attributesDone = false;
 	// Plonk all childNodes, these are special though
-	allChildNodes.forEach(childNodes => {
+	allChildNodes.forEach((childNodes) => {
 		attributesDone = parseChildNodes(
 			childNodes,
 			executionParameters,

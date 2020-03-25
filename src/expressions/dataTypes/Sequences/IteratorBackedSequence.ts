@@ -5,7 +5,7 @@ import {
 	IAsyncResult,
 	IterationHint,
 	notReady,
-	ready
+	ready,
 } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
@@ -48,7 +48,7 @@ export default class IteratorBackedSequence implements ISequence {
 				}
 				this._currentPosition++;
 				return value;
-			}
+			},
 		};
 
 		this._cacheAllValues = false;
@@ -81,7 +81,7 @@ export default class IteratorBackedSequence implements ISequence {
 					value = iterator.next(hint);
 				}
 				return value;
-			}
+			},
 		});
 	}
 
@@ -136,7 +136,7 @@ export default class IteratorBackedSequence implements ISequence {
 						return value;
 					}
 					return ready(callback(value.value, i++, this));
-				}
+				},
 			},
 			this._length
 		);
@@ -171,7 +171,7 @@ export default class IteratorBackedSequence implements ISequence {
 					return notReady(readyPromise);
 				}
 				return mappedResultsIterator.next(IterationHint.NONE);
-			}
+			},
 		});
 	}
 
@@ -215,7 +215,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 				setResultIterator(cases.multiple ? cases.multiple(this) : cases.default(this));
 				return resultIterator.next(hint);
-			}
+			},
 		});
 	}
 

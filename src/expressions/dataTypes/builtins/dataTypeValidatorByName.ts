@@ -193,5 +193,5 @@ export default {
 	'xs:integer': isValidInteger,
 
 	'xs:yearMonthDuration': isValidYearMonthDuration,
-	'xs:dayTimeDuration': isValidDayTimeDuration
+	'xs:dayTimeDuration': isValidDayTimeDuration,
 };

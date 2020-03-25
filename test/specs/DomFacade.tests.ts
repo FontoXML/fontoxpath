@@ -16,10 +16,10 @@ describe('DomFacade', () => {
 			[
 				'someElement',
 				{
-					someAttribute: 'someValue'
+					someAttribute: 'someValue',
 				},
 				['someChildElement'],
-				['someChildElement']
+				['someChildElement'],
 			],
 			documentNode
 		);

@@ -3,7 +3,7 @@ import {
 	ConcreteDocumentNode,
 	ConcreteElementNode,
 	ConcreteNode,
-	NODE_TYPES
+	NODE_TYPES,
 } from '../../domFacade/ConcreteNode';
 import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
 import INodesFactory from '../../nodesFactory/INodesFactory';
@@ -47,7 +47,7 @@ function deepCloneNode(
 			const cloneElem = nodesFactory.createElementNS(node.namespaceURI, node.nodeName);
 			domFacade
 				.getAllAttributes(node)
-				.forEach(attr =>
+				.forEach((attr) =>
 					documentWriter.setAttributeNS(
 						cloneElem,
 						attr.namespaceURI,
@@ -113,7 +113,7 @@ class TransformExpression extends UpdatingExpression {
 			),
 			{
 				canBeStaticallyEvaluated: false,
-				resultOrder: RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED,
 			}
 		);
 		this._variableBindings = variableBindings;
@@ -176,7 +176,7 @@ class TransformExpression extends UpdatingExpression {
 						// The variable name is bound to the top-level copied node generated in the previous step. The scope of this variable binding includes all subexpressions of the containing copy modify expression that appear after the variable binding clause, including the source expressions of later variable bindings, but it does not include the source expression to which the current variable name is bound.
 						dynamicContext = dynamicContext.scopeWithVariableBindings({
 							[variableBinding.registeredVariable]: () =>
-								sequenceFactory.singleton(copiedNodes)
+								sequenceFactory.singleton(copiedNodes),
 						});
 					}
 				}
@@ -197,7 +197,7 @@ class TransformExpression extends UpdatingExpression {
 					modifyPul = mv.value.pendingUpdateList;
 				}
 
-				modifyPul.forEach(pu => {
+				modifyPul.forEach((pu) => {
 					// If the target node of any update primitive in $pul is a node that was not newly created in Step 1, a dynamic error is raised [err:XUDY0014].
 					if (pu.target && !isCreatedNode(pu.target, createdNodes, domFacade)) {
 						throw errXUDY0014(pu.target);
@@ -227,16 +227,16 @@ class TransformExpression extends UpdatingExpression {
 				//  The result of the copy modify expression is the XDM instance returned, as well as a pending update list constructed by merging the pending update lists returned by any of the copy modify expression's copy or return clause operand expressions using upd:mergeUpdates. During evaluation of the return clause, changes applied to copied nodes by the preceding step are visible.
 				return ready({
 					xdmValue: rv.value.xdmValue,
-					pendingUpdateList: mergeUpdates(rv.value.pendingUpdateList, ...toMergePuls)
+					pendingUpdateList: mergeUpdates(rv.value.pendingUpdateList, ...toMergePuls),
 				});
-			}
+			},
 		};
 	}
 
 	public performStaticEvaluation(staticContext: StaticContext) {
 		staticContext.introduceScope();
 		this._variableBindings.forEach(
-			variableBinding =>
+			(variableBinding) =>
 				(variableBinding.registeredVariable = staticContext.registerVariable(
 					variableBinding.varRef.namespaceURI,
 					variableBinding.varRef.localName
@@ -251,7 +251,7 @@ class TransformExpression extends UpdatingExpression {
 		// If any of the copy modify expression's copy or return clauses have operand expressions
 		// that are updating expressions, then the copy modify expression is a updating expression.
 		this.isUpdating =
-			this._variableBindings.some(varBinding => varBinding.sourceExpr.isUpdating) ||
+			this._variableBindings.some((varBinding) => varBinding.sourceExpr.isUpdating) ||
 			this._returnExpr.isUpdating;
 	}
 
@@ -265,7 +265,7 @@ class TransformExpression extends UpdatingExpression {
 			dynamicContext,
 			executionParameters
 		);
-		return separateXDMValueFromUpdatingExpressionResult(pendingUpdateIterator, _pul => {});
+		return separateXDMValueFromUpdatingExpressionResult(pendingUpdateIterator, (_pul) => {});
 	}
 }
 

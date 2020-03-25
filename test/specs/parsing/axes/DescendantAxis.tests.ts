@@ -14,7 +14,7 @@ describe('descendant', () => {
 	it('parses descendant::', () => {
 		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('descendant::someElement', documentNode), [
-			documentNode.firstChild.firstChild
+			documentNode.firstChild.firstChild,
 		]);
 	});
 
@@ -33,7 +33,7 @@ describe('descendant', () => {
 				console.log(node.nodeName);
 				chai.assert.equal(expectedBucket, bucket);
 				return node.nextSibling;
-			}
+			},
 		} as any;
 
 		evaluateXPathToNodes('descendant::childElement', documentNode.firstChild, testDomFacade);
@@ -79,7 +79,7 @@ describe('descendant-or-self', () => {
 				documentNode.documentElement,
 				documentNode.documentElement.firstChild,
 				documentNode.documentElement.firstChild.firstChild,
-				documentNode.documentElement.firstChild.firstChild.firstChild
+				documentNode.documentElement.firstChild.firstChild.firstChild,
 			]
 		);
 	});

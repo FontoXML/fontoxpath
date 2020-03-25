@@ -8,18 +8,18 @@ import {
 	evaluateXPathToNodes,
 	evaluateXPathToString,
 	executePendingUpdateList,
-	EvaluateXPath
+	EvaluateXPath,
 } from 'fontoxpath';
 import * as path from 'path';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
 
-(global as any).atob = function(b64Encoded) {
+(global as any).atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
 };
 
-(global as any).btoa = function(str) {
+(global as any).btoa = function (str) {
 	return new Buffer(str, 'binary').toString('base64');
 };
 
@@ -36,18 +36,18 @@ type ExpressionArguments = [
 ];
 
 const parser = {
-	parseFromString: xmlString => {
+	parseFromString: (xmlString) => {
 		try {
 			return sync(xmlString.trim());
 		} catch (e) {
 			console.log(`Error parsing the string ${xmlString}.`, e);
 			throw e;
 		}
-	}
+	},
 };
 
 const unrunnableTestCases = getSkippedTests('unrunnableXQUTSTestCases.csv');
-const unrunnableTestCasesByName = unrunnableTestCases.map(testCase => testCase.split(',')[0]);
+const unrunnableTestCasesByName = unrunnableTestCases.map((testCase) => testCase.split(',')[0]);
 
 const cachedFiles = Object.create(null);
 function getFile(filename) {
@@ -118,7 +118,7 @@ function assertXml(actual, expected) {
 	if (
 		evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
 			a: actual,
-			b: expected
+			b: expected,
 		})
 	) {
 		return;
@@ -131,10 +131,10 @@ function assertXml(actual, expected) {
 function assertFragment(actualNodes, expectedString) {
 	const actual = parser.parseFromString(`<root/>`);
 	actualNodes
-		.map(node => (node.cloneNode ? node.cloneNode(true) : actual.createTextNode(node)))
-		.forEach(node => {
+		.map((node) => (node.cloneNode ? node.cloneNode(true) : actual.createTextNode(node)))
+		.forEach((node) => {
 			if (node.nodeType === node.DOCUMENT_NODE) {
-				node.childNodes.forEach(childNode =>
+				node.childNodes.forEach((childNode) =>
 					actual.documentElement.appendChild(childNode.cloneNode(true))
 				);
 			} else {
@@ -149,7 +149,7 @@ function assertFragment(actualNodes, expectedString) {
 
 async function runAssertions(expectedErrors, outputFiles, args: ExpressionArguments, isUpdating) {
 	const failed = [];
-	const catchAssertion = assertion => {
+	const catchAssertion = (assertion) => {
 		try {
 			assertion();
 		} catch (e) {
@@ -172,14 +172,14 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 		function runQuery(returnType) {
 			const it = evaluateUpdatingExpressionSync(args[0], args[1], args[2], args[3], {
 				...args[4],
-				returnType
+				returnType,
 			});
 			xdmValue = it.xdmValue;
 			if (it.pendingUpdateList) {
 				executePul(it.pendingUpdateList, args);
 			}
 			if (Array.isArray(xdmValue)) {
-				xdmValue.forEach(nodeValue => {
+				xdmValue.forEach((nodeValue) => {
 					if (nodeValue.normalize) {
 						nodeValue.normalize();
 					}
@@ -222,7 +222,7 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 	}
 
 	if (failed.length === expectedErrors.length + outputFiles.length) {
-		throw new Error(failed.map(e => e.message).join(' or '));
+		throw new Error(failed.map((e) => e.message).join(' or '));
 	}
 }
 
@@ -272,7 +272,7 @@ async function runTestCase(testName, testCase) {
 		const state = entry.value;
 		const query = getFile(path.join('Queries', 'XQuery', state.query));
 		const variables = {};
-		state['input-files'].forEach(inputFile => {
+		state['input-files'].forEach((inputFile) => {
 			const xmlDoc =
 				loadedInputFiles[inputFile.file] ||
 				(loadedInputFiles[inputFile.file] = parser.parseFromString(
@@ -288,7 +288,7 @@ async function runTestCase(testName, testCase) {
 			new slimdom.Document(),
 			null,
 			variables,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, returnType: evaluateXPath.STRING_TYPE }
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, returnType: evaluateXPath.STRING_TYPE },
 		];
 
 		try {
@@ -308,12 +308,7 @@ async function runTestCase(testName, testCase) {
 				throw e;
 			}
 
-			unrunnableTestCases.push(
-				`${testName},${e
-					.toString()
-					.replace(/\r?\n/g, ' ')
-					.trim()}`
-			);
+			unrunnableTestCases.push(`${testName},${e.toString().replace(/\r?\n/g, ' ').trim()}`);
 
 			// And rethrow the error
 			throw e;
@@ -325,7 +320,7 @@ async function runTestCase(testName, testCase) {
 
 function buildTestCases(testGroup) {
 	(evaluateXPathToNodes('test-group | test-case', testGroup) as slimdom.Element[]).forEach(
-		test => {
+		(test) => {
 			switch (test.localName) {
 				case 'test-group': {
 					const groupName = evaluateXPathToString(
@@ -356,7 +351,7 @@ function buildTestCases(testGroup) {
 
 const catalog = parser.parseFromString(getFile('XQUTSCatalog.xml'));
 
-describe('xml query update test suite', function() {
+describe('xml query update test suite', function () {
 	// Especially the CI can be slow, up the timeout to 60s.
 	this.timeout(60000);
 

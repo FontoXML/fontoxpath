@@ -8,7 +8,7 @@ function validateEnumeration(value, enumeration) {
 	return enumeration.includes(value);
 }
 function validateEnumerationList(value, enumeration) {
-	return value.split(' ').every(function(val) {
+	return value.split(' ').every(function (val) {
 		return enumeration.includes(val);
 	});
 }
@@ -107,7 +107,7 @@ export default {
 		length: createLengthFacet(getStringLength),
 		minLength: createMinLengthFacet(getStringLength),
 		maxLength: createMaxLengthFacet(getStringLength),
-		enumeration: validateEnumeration
+		enumeration: validateEnumeration,
 	},
 	'xs:boolean': {},
 	'xs:float': {
@@ -115,14 +115,14 @@ export default {
 		maxInclusive: createMaxInclusiveFacet(doubleComparator),
 		maxExclusive: createMaxExclusiveFacet(doubleComparator),
 		minInclusive: createMinInclusiveFacet(doubleComparator),
-		minExclusive: createMinExclusiveFacet(doubleComparator)
+		minExclusive: createMinExclusiveFacet(doubleComparator),
 	},
 	'xs:double': {
 		enumeration: validateEnumeration,
 		maxInclusive: createMaxInclusiveFacet(doubleComparator),
 		maxExclusive: createMaxExclusiveFacet(doubleComparator),
 		minInclusive: createMinInclusiveFacet(doubleComparator),
-		minExclusive: createMinExclusiveFacet(doubleComparator)
+		minExclusive: createMinExclusiveFacet(doubleComparator),
 	},
 	'xs:decimal': {
 		totalDigits: validateTotalDigits,
@@ -131,14 +131,14 @@ export default {
 		maxInclusive: createMaxInclusiveFacet(decimalComparator),
 		maxExclusive: createMaxExclusiveFacet(decimalComparator),
 		minInclusive: createMinInclusiveFacet(decimalComparator),
-		minExclusive: createMinExclusiveFacet(decimalComparator)
+		minExclusive: createMinExclusiveFacet(decimalComparator),
 	},
 	'xs:duration': {
 		enumeration: validateEnumeration,
 		maxInclusive: createMaxInclusiveFacet(durationComparator),
 		maxExclusive: createMaxExclusiveFacet(durationComparator),
 		minInclusive: createMinInclusiveFacet(durationComparator),
-		minExclusive: createMinExclusiveFacet(durationComparator)
+		minExclusive: createMinExclusiveFacet(durationComparator),
 	},
 	'xs:dateTime': {
 		enumeration: validateEnumeration,
@@ -146,7 +146,7 @@ export default {
 		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
 		minInclusive: createMinInclusiveFacet(dateTimeComparator),
 		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
+		explicitTimezone: validateExplicitTimeZone,
 	},
 	'xs:time': {
 		enumeration: validateEnumeration,
@@ -154,7 +154,7 @@ export default {
 		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
 		minInclusive: createMinInclusiveFacet(dateTimeComparator),
 		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
+		explicitTimezone: validateExplicitTimeZone,
 	},
 	'xs:date': {
 		enumeration: validateEnumeration,
@@ -162,7 +162,7 @@ export default {
 		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
 		minInclusive: createMinInclusiveFacet(dateTimeComparator),
 		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
+		explicitTimezone: validateExplicitTimeZone,
 	},
 	'xs:gYearMonth': {
 		enumeration: validateEnumeration,
@@ -170,7 +170,7 @@ export default {
 		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
 		minInclusive: createMinInclusiveFacet(dateTimeComparator),
 		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
+		explicitTimezone: validateExplicitTimeZone,
 	},
 	'xs:gYear': {
 		enumeration: validateEnumeration,
@@ -178,7 +178,7 @@ export default {
 		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
 		minInclusive: createMinInclusiveFacet(dateTimeComparator),
 		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
+		explicitTimezone: validateExplicitTimeZone,
 	},
 	'xs:gMonthDay': {
 		enumeration: validateEnumeration,
@@ -186,7 +186,7 @@ export default {
 		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
 		minInclusive: createMinInclusiveFacet(dateTimeComparator),
 		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
+		explicitTimezone: validateExplicitTimeZone,
 	},
 	'xs:gDay': {
 		enumeration: validateEnumeration,
@@ -194,7 +194,7 @@ export default {
 		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
 		minInclusive: createMinInclusiveFacet(dateTimeComparator),
 		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
+		explicitTimezone: validateExplicitTimeZone,
 	},
 	'xs:gMonth': {
 		enumeration: validateEnumeration,
@@ -202,39 +202,39 @@ export default {
 		maxExclusive: createMaxExclusiveFacet(dateTimeComparator),
 		minInclusive: createMinInclusiveFacet(dateTimeComparator),
 		minExclusive: createMinExclusiveFacet(dateTimeComparator),
-		explicitTimezone: validateExplicitTimeZone
+		explicitTimezone: validateExplicitTimeZone,
 	},
 	'xs:hexBinary': {
 		length: createLengthFacet(getHexBinaryLength),
 		minLength: createMinLengthFacet(getHexBinaryLength),
 		maxLength: createMaxLengthFacet(getHexBinaryLength),
-		enumeration: validateEnumeration
+		enumeration: validateEnumeration,
 	},
 	'xs:base64Binary': {
 		length: createLengthFacet(getBase64Length),
 		minLength: createMinLengthFacet(getBase64Length),
 		maxLength: createMaxLengthFacet(getBase64Length),
-		enumeration: validateEnumeration
+		enumeration: validateEnumeration,
 	},
 	'xs:anyURI': {
 		length: createLengthFacet(getStringLength),
 		minLength: createMinLengthFacet(getStringLength),
 		maxLength: createMaxLengthFacet(getStringLength),
-		enumeration: validateEnumeration
+		enumeration: validateEnumeration,
 	},
 	'xs:QName': {
-		enumeration: validateEnumeration
+		enumeration: validateEnumeration,
 	},
 	'xs:NOTATION': {
-		enumeration: validateEnumeration
+		enumeration: validateEnumeration,
 	},
 	list: {
 		length: createLengthFacet(getListLength),
 		minLength: createMinLengthFacet(getListLength),
 		maxLength: createMaxLengthFacet(getListLength),
-		enumeration: validateEnumerationList
+		enumeration: validateEnumerationList,
 	},
 	union: {
-		enumeration: validateEnumeration
-	}
+		enumeration: validateEnumeration,
+	},
 };

@@ -8,7 +8,7 @@ import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import {
 	registerStaticallyKnownNamespace,
-	staticallyKnownNamespaceByPrefix
+	staticallyKnownNamespaceByPrefix,
 } from './expressions/staticallyKnownNamespaces';
 import transformXPathItemToJavascriptObject from './transformXPathItemToJavascriptObject';
 import { IterationHint } from './expressions/util/iterators';
@@ -33,7 +33,7 @@ function adaptXPathValueToJavascriptValue(
 
 		case '*':
 		case '+':
-			return valueSequence.getAllValues().map(function(value) {
+			return valueSequence.getAllValues().map(function (value) {
 				if (isSubtypeOf(value.type, 'attribute()')) {
 					throw new Error('Cannot pass attribute nodes to custom functions');
 				}
@@ -68,7 +68,7 @@ function splitFunctionName(
 	// Register this prefix to a random namespace uri
 	return {
 		localName,
-		namespaceURI: namespaceURIForPrefix
+		namespaceURI: namespaceURIForPrefix,
 	};
 }
 
@@ -93,7 +93,7 @@ export default function registerCustomXPathFunction(
 ): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
 
-	const callFunction = function(
+	const callFunction = function (
 		_dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
 		_staticContext: any
@@ -103,7 +103,7 @@ export default function registerCustomXPathFunction(
 
 		args.splice(0, 3);
 
-		const newArguments = args.map(function(argument, index) {
+		const newArguments = args.map(function (argument, index) {
 			return adaptXPathValueToJavascriptValue(argument, signature[index]);
 		});
 
@@ -111,7 +111,7 @@ export default function registerCustomXPathFunction(
 		// Since the interface for domFacade (IDomFacade) is marked as extern, it will not be changed
 		const dynamicContextAdapter: DynamicContextAdapter = {
 			['currentContext']: executionParameters.currentContext,
-			['domFacade']: executionParameters.domFacade.unwrap()
+			['domFacade']: executionParameters.domFacade.unwrap(),
 		};
 
 		const jsResult = callback.apply(undefined, [dynamicContextAdapter, ...newArguments]);

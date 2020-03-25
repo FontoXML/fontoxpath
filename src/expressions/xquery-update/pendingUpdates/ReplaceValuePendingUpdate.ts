@@ -12,7 +12,7 @@ export class ReplaceValuePendingUpdate extends IPendingUpdate {
 		return {
 			['type']: this.type,
 			['target']: this.target,
-			['string-value']: this.stringValue
+			['string-value']: this.stringValue,
 		};
 	}
 }

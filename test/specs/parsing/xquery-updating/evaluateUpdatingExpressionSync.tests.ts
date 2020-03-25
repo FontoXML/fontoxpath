@@ -43,7 +43,7 @@ describe('evaluateUpdatingExpressionSync', () => {
 		setData: (node, data) => {
 			setDataCalled = true;
 			return null;
-		}
+		},
 	};
 
 	const stubbedNodesFactory = {
@@ -52,12 +52,12 @@ describe('evaluateUpdatingExpressionSync', () => {
 			return documentNode.createAttributeNS(namespaceURI, localName);
 		},
 
-		createCDATASection: contents => {
+		createCDATASection: (contents) => {
 			createCDATASectionCalled = true;
 			return documentNode.createCDATASection(contents);
 		},
 
-		createComment: contents => {
+		createComment: (contents) => {
 			createCommentCalled = true;
 			return documentNode.createComment(contents);
 		},
@@ -73,10 +73,10 @@ describe('evaluateUpdatingExpressionSync', () => {
 			createProcessingInstructionCalled = true;
 			return documentNode.createProcessingInstruction(target, data);
 		},
-		createTextNode: data => {
+		createTextNode: (data) => {
 			createTextNodeCalled = true;
 			return documentNode.createTextNode(data);
-		}
+		},
 	};
 
 	beforeEach(() => {
@@ -137,11 +137,11 @@ describe('evaluateUpdatingExpressionSync', () => {
 			null,
 			null,
 			{
-				doc: documentNode
+				doc: documentNode,
 			},
 			{
 				documentWriter: stubbedDocumentWriter,
-				nodesFactory: stubbedNodesFactory
+				nodesFactory: stubbedNodesFactory,
 			}
 		);
 
@@ -168,11 +168,11 @@ describe('evaluateUpdatingExpressionSync', () => {
 			null,
 			null,
 			{
-				doc: documentNode
+				doc: documentNode,
 			},
 			{
 				documentWriter: stubbedDocumentWriter,
-				nodesFactory: stubbedNodesFactory
+				nodesFactory: stubbedNodesFactory,
 			}
 		);
 

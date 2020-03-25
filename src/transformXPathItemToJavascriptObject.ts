@@ -20,12 +20,12 @@ export function transformMapToObject(map: MapValue): IAsyncIterator<object> {
 					const val = map.keyValuePairs[i]
 						.value()
 						.switchCases({
-							default: seq => seq,
+							default: (seq) => seq,
 							multiple: () => {
 								throw new Error(
 									'Serialization error: The value of an entry in a map is expected to be a singleton sequence.'
 								);
-							}
+							},
 						})
 						.tryGetFirst();
 					if (!val.ready) {
@@ -49,7 +49,7 @@ export function transformMapToObject(map: MapValue): IAsyncIterator<object> {
 			}
 			done = true;
 			return ready(mapObj);
-		}
+		},
 	};
 }
 
@@ -67,12 +67,12 @@ export function transformArrayToArray(array: ArrayValue): IAsyncIterator<any[]> 
 				if (!transformedMemberGenerator) {
 					const val = array.members[i]()
 						.switchCases({
-							default: seq => seq,
+							default: (seq) => seq,
 							multiple: () => {
 								throw new Error(
 									'Serialization error: The value of an entry in an array is expected to be a singleton sequence.'
 								);
-							}
+							},
 						})
 						.tryGetFirst();
 					if (!val.ready) {
@@ -93,7 +93,7 @@ export function transformArrayToArray(array: ArrayValue): IAsyncIterator<any[]> 
 			}
 			done = true;
 			return ready(arr);
-		}
+		},
 	};
 }
 
@@ -106,7 +106,7 @@ export default function transformXPathItemToJavascriptObject(value: Value): IAsy
 	}
 	if (isSubtypeOf(value.type, 'xs:QName')) {
 		return {
-			next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localName}`)
+			next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localName}`),
 		};
 	}
 
@@ -120,12 +120,12 @@ export default function transformXPathItemToJavascriptObject(value: Value): IAsy
 		case 'xs:gMonth':
 		case 'xs:gDay':
 			return {
-				next: () => ready(value.value.toJavaScriptDate())
+				next: () => ready(value.value.toJavaScriptDate()),
 			};
 
 		default:
 			return {
-				next: () => ready(value.value)
+				next: () => ready(value.value),
 			};
 	}
 }

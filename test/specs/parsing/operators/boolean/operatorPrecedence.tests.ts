@@ -14,7 +14,7 @@ describe('operators', () => {
 		jsonMlMapper.parse(
 			[
 				'someParentElement',
-				['someMiddleElement', { someAttribute: 'someValue' }, ['someOtherElement']]
+				['someMiddleElement', { someAttribute: 'someValue' }, ['someOtherElement']],
 			],
 			documentNode
 		);

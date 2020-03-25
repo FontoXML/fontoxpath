@@ -18,7 +18,7 @@ class Filter extends Expression {
 					selector.canBeStaticallyEvaluated && filterExpression.canBeStaticallyEvaluated,
 				peer: selector.peer,
 				resultOrder: selector.expectedResultOrder,
-				subtree: selector.subtree
+				subtree: selector.subtree,
 			}
 		);
 
@@ -73,7 +73,7 @@ class Filter extends Expression {
 							done = true;
 						}
 						return DONE_TOKEN;
-					}
+					},
 				});
 			}
 			// If all the items resolve to true, we can return all items, or none if vice versa
@@ -145,7 +145,7 @@ class Filter extends Expression {
 				}
 
 				return iteratorItem;
-			}
+			},
 		});
 	}
 

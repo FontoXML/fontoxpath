@@ -1,7 +1,7 @@
 export default [
 	{
 		variety: 'primitive',
-		name: 'item()'
+		name: 'item()',
 	},
 
 	// anyAtomicType
@@ -10,22 +10,22 @@ export default [
 		name: 'xs:anyAtomicType',
 		parent: 'item()',
 		restrictions: {
-			whiteSpace: 'preserve'
-		}
+			whiteSpace: 'preserve',
+		},
 	},
 
 	// untypedAtomic
 	{
 		variety: 'primitive',
 		name: 'xs:untypedAtomic',
-		parent: 'xs:anyAtomicType'
+		parent: 'xs:anyAtomicType',
 	},
 
 	// string
 	{
 		variety: 'primitive',
 		name: 'xs:string',
-		parent: 'xs:anyAtomicType'
+		parent: 'xs:anyAtomicType',
 	},
 
 	// boolean
@@ -34,8 +34,8 @@ export default [
 		name: 'xs:boolean',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// decimal
@@ -44,8 +44,8 @@ export default [
 		name: 'xs:decimal',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// float
@@ -54,8 +54,8 @@ export default [
 		name: 'xs:float',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// double
@@ -64,8 +64,8 @@ export default [
 		name: 'xs:double',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// duration
@@ -74,8 +74,8 @@ export default [
 		name: 'xs:duration',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// dateTime
@@ -85,8 +85,8 @@ export default [
 		parent: 'xs:anyAtomicType',
 		restrictions: {
 			explicitTimezone: 'optional',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// time
@@ -96,8 +96,8 @@ export default [
 		parent: 'xs:anyAtomicType',
 		restrictions: {
 			explicitTimezone: 'optional',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// date
@@ -107,8 +107,8 @@ export default [
 		parent: 'xs:anyAtomicType',
 		restrictions: {
 			explicitTimezone: 'optional',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// gYearMonth
@@ -118,8 +118,8 @@ export default [
 		parent: 'xs:anyAtomicType',
 		restrictions: {
 			explicitTimezone: 'optional',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// gYear
@@ -129,8 +129,8 @@ export default [
 		parent: 'xs:anyAtomicType',
 		restrictions: {
 			explicitTimezone: 'optional',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// gMonthDay
@@ -140,8 +140,8 @@ export default [
 		parent: 'xs:anyAtomicType',
 		restrictions: {
 			explicitTimezone: 'optional',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// gDay
@@ -151,8 +151,8 @@ export default [
 		parent: 'xs:anyAtomicType',
 		restrictions: {
 			explicitTimezone: 'optional',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// gMonth
@@ -162,8 +162,8 @@ export default [
 		parent: 'xs:anyAtomicType',
 		restrictions: {
 			explicitTimezone: 'optional',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// hexBinary
@@ -172,8 +172,8 @@ export default [
 		name: 'xs:hexBinary',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// base64Binary
@@ -182,8 +182,8 @@ export default [
 		name: 'xs:base64Binary',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// anyURI
@@ -192,8 +192,8 @@ export default [
 		name: 'xs:anyURI',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// QName
@@ -202,8 +202,8 @@ export default [
 		name: 'xs:QName',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// NOTATION
@@ -212,8 +212,8 @@ export default [
 		name: 'xs:NOTATION',
 		parent: 'xs:anyAtomicType',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// dateTimeStamp
@@ -223,8 +223,8 @@ export default [
 		base: 'xs:dateTime',
 		restrictions: {
 			whiteSpace: 'collapse', // fixed
-			explicitTimezone: 'required' // fixed
-		}
+			explicitTimezone: 'required', // fixed
+		},
 	},
 
 	// normalizedString
@@ -233,8 +233,8 @@ export default [
 		name: 'xs:normalizedString',
 		base: 'xs:string',
 		restrictions: {
-			whiteSpace: 'replace'
-		}
+			whiteSpace: 'replace',
+		},
 	},
 
 	// token
@@ -243,8 +243,8 @@ export default [
 		name: 'xs:token',
 		base: 'xs:normalizedString',
 		restrictions: {
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// language (TODO: implement pattern)
@@ -253,8 +253,8 @@ export default [
 		name: 'xs:language',
 		base: 'xs:token',
 		restrictions: {
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// NMTOKEN (TODO: implement pattern)
@@ -263,8 +263,8 @@ export default [
 		name: 'xs:NMTOKEN',
 		base: 'xs:token',
 		restrictions: {
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// NMTOKENS
@@ -274,8 +274,8 @@ export default [
 		type: 'NMTOKEN',
 		restrictions: {
 			minLength: 1,
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// Name (TODO: implement pattern)
@@ -284,8 +284,8 @@ export default [
 		name: 'xs:Name',
 		base: 'xs:token',
 		restrictions: {
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// NCName (TODO: implement pattern)
@@ -294,8 +294,8 @@ export default [
 		name: 'xs:NCName',
 		base: 'xs:Name',
 		restrictions: {
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// ID (TODO: implement pattern)
@@ -304,8 +304,8 @@ export default [
 		name: 'xs:ID',
 		base: 'xs:NCName',
 		restrictions: {
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// IDREF (TODO: implement pattern)
@@ -314,8 +314,8 @@ export default [
 		name: 'xs:IDREF',
 		base: 'xs:NCName',
 		restrictions: {
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// IDREFS
@@ -325,8 +325,8 @@ export default [
 		type: 'IDREF',
 		restrictions: {
 			minLength: 1,
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// ENTITY (TODO: implement pattern)
@@ -335,8 +335,8 @@ export default [
 		name: 'xs:ENTITY',
 		base: 'xs:NCName',
 		restrictions: {
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// ENTITIES
@@ -346,8 +346,8 @@ export default [
 		type: 'ENTITY',
 		restrictions: {
 			minLength: 1,
-			whiteSpace: 'collapse'
-		}
+			whiteSpace: 'collapse',
+		},
 	},
 
 	// integer (TODO: implement pattern)
@@ -357,8 +357,8 @@ export default [
 		parent: 'xs:decimal',
 		restrictions: {
 			fractionDigits: 0, // fixed
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// nonPositiveInteger (TODO: implement pattern)
@@ -369,8 +369,8 @@ export default [
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '0',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// negativeInteger (TODO: implement pattern)
@@ -381,8 +381,8 @@ export default [
 		restrictions: {
 			fractionDigits: 0, // fixed
 			maxInclusive: '-1',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// long (TODO: implement pattern)
@@ -394,8 +394,8 @@ export default [
 			fractionDigits: 0, // fixed
 			maxInclusive: '9223372036854775807',
 			minInclusive: '-9223372036854775808',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// int (TODO: implement pattern)
@@ -407,8 +407,8 @@ export default [
 			fractionDigits: 0, // fixed
 			maxInclusive: '2147483647',
 			minInclusive: '-2147483648',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// short (TODO: implement pattern)
@@ -420,8 +420,8 @@ export default [
 			fractionDigits: 0, // fixed
 			maxInclusive: '32767',
 			minInclusive: '-32768',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// byte (TODO: implement pattern)
@@ -433,8 +433,8 @@ export default [
 			fractionDigits: 0, // fixed
 			maxInclusive: '127',
 			minInclusive: '-128',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// nonNegativeInteger (TODO: implement pattern)
@@ -445,8 +445,8 @@ export default [
 		restrictions: {
 			fractionDigits: 0, // fixed
 			minInclusive: '0',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// unsignedLong (TODO: implement pattern)
@@ -458,8 +458,8 @@ export default [
 			fractionDigits: 0, // fixed
 			maxInclusive: '18446744073709551615',
 			minInclusive: '0',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// unsignedInt (TODO: implement pattern)
@@ -471,8 +471,8 @@ export default [
 			fractionDigits: 0, // fixed
 			maxInclusive: '4294967295',
 			minInclusive: '0',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// unsignedShort (TODO: implement pattern)
@@ -484,8 +484,8 @@ export default [
 			fractionDigits: 0, // fixed
 			maxInclusive: '65535',
 			minInclusive: '0',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// unsignedByte (TODO: implement pattern)
@@ -497,8 +497,8 @@ export default [
 			fractionDigits: 0, // fixed
 			maxInclusive: '255',
 			minInclusive: '0',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// positiveInteger (TODO: implement pattern)
@@ -509,8 +509,8 @@ export default [
 		restrictions: {
 			fractionDigits: 0, // fixed
 			minInclusive: '1',
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// yearMonthDuration (TODO: implement pattern)
@@ -519,8 +519,8 @@ export default [
 		name: 'xs:yearMonthDuration',
 		base: 'xs:duration',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	// dayTimeDuration (TODO: implement pattern)
@@ -529,79 +529,79 @@ export default [
 		name: 'xs:dayTimeDuration',
 		base: 'xs:duration',
 		restrictions: {
-			whiteSpace: 'collapse' // fixed
-		}
+			whiteSpace: 'collapse', // fixed
+		},
 	},
 
 	{
 		variety: 'derived',
 		name: 'function(*)',
-		base: 'item()'
+		base: 'item()',
 	},
 
 	{
 		variety: 'union',
 		name: 'xs:error',
-		memberTypes: []
+		memberTypes: [],
 	},
 
 	{
 		variety: 'derived',
 		name: 'map(*)',
-		base: 'function(*)'
+		base: 'function(*)',
 	},
 
 	{
 		variety: 'derived',
 		name: 'array(*)',
-		base: 'function(*)'
+		base: 'function(*)',
 	},
 
 	{
 		variety: 'primitive',
 		name: 'node()',
-		parent: 'item()'
+		parent: 'item()',
 	},
 
 	{
 		variety: 'derived',
 		name: 'element()',
-		base: 'node()'
+		base: 'node()',
 	},
 
 	{
 		variety: 'derived',
 		name: 'comment()',
-		base: 'node()'
+		base: 'node()',
 	},
 
 	{
 		variety: 'derived',
 		name: 'attribute()',
-		base: 'node()'
+		base: 'node()',
 	},
 
 	{
 		variety: 'derived',
 		name: 'text()',
-		base: 'node()'
+		base: 'node()',
 	},
 
 	{
 		variety: 'derived',
 		name: 'processing-instruction()',
-		base: 'node()'
+		base: 'node()',
 	},
 
 	{
 		variety: 'derived',
 		name: 'document()',
-		base: 'node()'
+		base: 'node()',
 	},
 
 	{
 		variety: 'union',
 		name: 'xs:numeric',
-		memberTypes: ['xs:decimal', 'xs:integer', 'xs:float', 'xs:double']
-	}
+		memberTypes: ['xs:decimal', 'xs:integer', 'xs:float', 'xs:double'],
+	},
 ];

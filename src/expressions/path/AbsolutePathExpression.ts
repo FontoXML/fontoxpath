@@ -14,7 +14,7 @@ class AbsolutePathExpression extends Expression {
 				resultOrder: RESULT_ORDERINGS.SORTED,
 				subtree: false,
 				peer: false,
-				canBeStaticallyEvaluated: false
+				canBeStaticallyEvaluated: false,
 			}
 		);
 

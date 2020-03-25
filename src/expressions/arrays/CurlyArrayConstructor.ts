@@ -10,11 +10,13 @@ class CurlyArrayConstructor extends Expression {
 	constructor(members: Expression[]) {
 		super(
 			new Specificity({
-				[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1,
 			}),
 			members,
 			{
-				canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
+				canBeStaticallyEvaluated: members.every(
+					(member) => member.canBeStaticallyEvaluated
+				),
 			}
 		);
 
@@ -27,10 +29,10 @@ class CurlyArrayConstructor extends Expression {
 		}
 		return this._members[0]
 			.evaluateMaybeStatically(dynamicContext, executionParameters)
-			.mapAll(allValues =>
+			.mapAll((allValues) =>
 				sequenceFactory.singleton(
 					new ArrayValue(
-						allValues.map(item =>
+						allValues.map((item) =>
 							createDoublyIterableSequence(sequenceFactory.singleton(item))
 						)
 					)

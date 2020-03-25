@@ -8,7 +8,7 @@ import {
 	evaluateXPathToNodes,
 	evaluateXPathToString,
 	getBucketForSelector,
-	IDomFacade
+	IDomFacade,
 } from 'fontoxpath';
 
 let documentNode;
@@ -26,10 +26,10 @@ describe('preceding', () => {
 			evaluateXPathToNodes(
 				'preceding::someOtherElement',
 				documentNode.documentElement.lastChild
-			).map(node => (node as slimdom.Element).outerHTML),
+			).map((node) => (node as slimdom.Element).outerHTML),
 			[
 				(documentNode.documentElement.firstChild as slimdom.Element).outerHTML,
-				(documentNode.documentElement.firstChild.firstChild as slimdom.Element).outerHTML
+				(documentNode.documentElement.firstChild.firstChild as slimdom.Element).outerHTML,
 			]
 		);
 	});
@@ -81,7 +81,7 @@ return map{
 			[
 				'someParentElement',
 				['someNonMatchingElement', ['someNonMatchingElement']],
-				['someElement']
+				['someElement'],
 			],
 			documentNode
 		);
@@ -100,7 +100,7 @@ return map{
 				'someParentElement',
 				['someNonMatchingElement', ['someSiblingElement', { position: 'first' }]],
 				['someNonMatchingElement', ['someSiblingElement', { position: 'second' }]],
-				['someElement']
+				['someElement'],
 			],
 			documentNode
 		);
@@ -145,7 +145,7 @@ return map{
 			getPreviousSibling: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return node.previousSibling;
-			}
+			},
 		} as any;
 
 		evaluateXPathToNodes('preceding::firstChildElement', secondChildNode, testDomFacade);

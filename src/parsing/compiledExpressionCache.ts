@@ -66,7 +66,7 @@ export function storeHalfCompiledCompilationResultInCache(
 	const languageKey = generateLanguageKey(language, debug);
 	if (!halfCompiledExpressionCache[selectorString]) {
 		halfCompiledExpressionCache[selectorString] = {
-			[languageKey]: expressionInstance
+			[languageKey]: expressionInstance,
 		};
 		return;
 	}
@@ -92,7 +92,7 @@ export function getStaticCompilationResultFromCache(
 		if (halfCompiledExpressionFromCache) {
 			return {
 				expression: halfCompiledExpressionFromCache,
-				requiresStaticCompilation: true
+				requiresStaticCompilation: true,
 			};
 		}
 		return null;
@@ -106,20 +106,20 @@ export function getStaticCompilationResultFromCache(
 		if (halfCompiledExpressionFromCache) {
 			return {
 				expression: halfCompiledExpressionFromCache,
-				requiresStaticCompilation: true
+				requiresStaticCompilation: true,
 			};
 		}
 		return null;
 	}
 
 	const cacheWithCorrectContext = cachesForLanguage.find(
-		cache =>
+		(cache) =>
 			cache.referredNamespaces.every(
-				nsRef => namespaceResolver(nsRef.prefix) === nsRef.namespaceURI
+				(nsRef) => namespaceResolver(nsRef.prefix) === nsRef.namespaceURI
 			) &&
-			cache.referredVariables.every(varRef => variables[varRef.name] !== undefined) &&
+			cache.referredVariables.every((varRef) => variables[varRef.name] !== undefined) &&
 			cache.moduleImports.every(
-				moduleImport => moduleImports[moduleImport.prefix] === moduleImport.namespaceURI
+				(moduleImport) => moduleImports[moduleImport.prefix] === moduleImport.namespaceURI
 			)
 	);
 
@@ -130,7 +130,7 @@ export function getStaticCompilationResultFromCache(
 		if (halfCompiledExpressionFromCache) {
 			return {
 				expression: halfCompiledExpressionFromCache,
-				requiresStaticCompilation: true
+				requiresStaticCompilation: true,
 			};
 		}
 		return null;
@@ -138,7 +138,7 @@ export function getStaticCompilationResultFromCache(
 
 	return {
 		expression: cacheWithCorrectContext.compiledExpression,
-		requiresStaticCompilation: false
+		requiresStaticCompilation: false,
 	};
 }
 
@@ -184,9 +184,9 @@ export function storeStaticCompilationResultInCache(
 			executionStaticContext.getReferredNamespaces(),
 			executionStaticContext.getReferredVariables(),
 			compiledExpression,
-			Object.keys(moduleImports).map(moduleImportPrefix => ({
+			Object.keys(moduleImports).map((moduleImportPrefix) => ({
 				namespaceURI: moduleImports[moduleImportPrefix],
-				prefix: moduleImportPrefix
+				prefix: moduleImportPrefix,
 			}))
 		)
 	);

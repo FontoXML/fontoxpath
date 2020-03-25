@@ -33,7 +33,7 @@ describe('Simple map operator', () => {
 		chai.assert.deepEqual(evaluateXPathToStrings('(1, 2, 3) ! string()', documentNode), [
 			'1',
 			'2',
-			'3'
+			'3',
 		]));
 
 	it('accepts a sequence as second expression: "abc" ! (concat("123", .), concat(., "123"))', () =>

@@ -58,21 +58,21 @@ export function getAlternativesAsStringFor(functionName: string): string {
 	if (!registeredFunctionsByName[functionName]) {
 		// Get closest functions by levenstein distance
 		alternativeFunctions = Object.keys(registeredFunctionsByName)
-			.map(alternativeName => {
+			.map((alternativeName) => {
 				// Remove the namespace uri part of the cache key
 				return {
 					name: alternativeName,
 					distance: computeLevenshteinDistance(
 						functionName,
 						alternativeName.slice(alternativeName.lastIndexOf(':') + 1)
-					)
+					),
 				};
 			})
 			.sort((a, b) => a.distance - b.distance)
 			.slice(0, 5)
 			// If we need to change more than half the string, it cannot be a match
 			.filter(
-				alternativeNameWithScore =>
+				(alternativeNameWithScore) =>
 					alternativeNameWithScore.distance < functionName.length / 2
 			)
 			.reduce(
@@ -92,11 +92,11 @@ export function getAlternativesAsStringFor(functionName: string): string {
 	return (
 		alternativeFunctions
 			.map(
-				functionDeclaration =>
+				(functionDeclaration) =>
 					`"Q{${functionDeclaration.namespaceURI}}${
 						functionDeclaration.localName
 					} (${functionDeclaration.argumentTypes
-						.map(argumentType =>
+						.map((argumentType) =>
 							(argumentType as RestArgument).isRestArgument
 								? '...'
 								: (argumentType as TypeDeclaration).type +
@@ -125,9 +125,9 @@ export function getFunctionByArity(
 		return null;
 	}
 
-	const matchingFunction = matchingFunctions.find(functionDeclaration => {
+	const matchingFunction = matchingFunctions.find((functionDeclaration) => {
 		const hasRestArgument = functionDeclaration.argumentTypes.some(
-			argument => (argument as RestArgument).isRestArgument
+			(argument) => (argument as RestArgument).isRestArgument
 		);
 		if (hasRestArgument) {
 			return functionDeclaration.argumentTypes.length - 1 <= arity;
@@ -146,7 +146,7 @@ export function getFunctionByArity(
 		isUpdating: matchingFunction.isUpdating,
 		localName: functionLocalName,
 		namespaceURI: functionNamespaceURI,
-		returnType: matchingFunction.returnType
+		returnType: matchingFunction.returnType,
 	};
 }
 
@@ -155,7 +155,7 @@ function splitType(type: string): TypeDeclaration {
 	const parts = type.match(/^(.*[^+?*])([+*?])?$/);
 	return {
 		type: parts[1] as ValueType,
-		occurrence: (parts[2] as '?' | '+' | '*' | '') || null
+		occurrence: (parts[2] as '?' | '+' | '*' | '') || null,
 	};
 }
 
@@ -173,12 +173,12 @@ export function registerFunction(namespaceURI, localName, argumentTypes, returnT
 		isUpdating: false,
 		localName,
 		namespaceURI,
-		returnType: splitType(returnType)
+		returnType: splitType(returnType),
 	});
 }
 
 export default {
 	getAlternativesAsStringFor,
 	getFunctionByArity,
-	registerFunction
+	registerFunction,
 };

@@ -4,7 +4,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
-	evaluateXPathToStrings
+	evaluateXPathToStrings,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
@@ -130,7 +130,7 @@ describe('functions over arrays', () => {
 				1,
 				2,
 				3,
-				4
+				4,
 			]));
 		it('can be called with an array which resolves async', async () =>
 			chai.assert.equal(
@@ -217,19 +217,19 @@ describe('functions over arrays', () => {
 		it('removes the first item from an array', () =>
 			chai.assert.deepEqual(evaluateXPathToArray('array:remove([1,2,3], 1)', documentNode), [
 				2,
-				3
+				3,
 			]));
 
 		it('removes a middle item from the array', () =>
 			chai.assert.deepEqual(evaluateXPathToArray('array:remove([1,2,3], 2)', documentNode), [
 				1,
-				3
+				3,
 			]));
 
 		it('removes the last item from the array', () =>
 			chai.assert.deepEqual(evaluateXPathToArray('array:remove([1,2,3], 3)', documentNode), [
 				1,
-				2
+				2,
 			]));
 
 		it('removes multiple items', () =>
@@ -369,7 +369,7 @@ describe('functions over arrays', () => {
 		it('returns the tail of an array', () =>
 			chai.assert.deepEqual(evaluateXPathToArray('array:tail([1,2,3])', documentNode), [
 				2,
-				3
+				3,
 			]));
 
 		it('can be called with an array which resolves async', async () =>
@@ -394,7 +394,7 @@ describe('functions over arrays', () => {
 				4,
 				3,
 				2,
-				1
+				1,
 			]));
 
 		it('can be called with an array which resolves async', async () =>
@@ -738,7 +738,7 @@ array:for-each-pair(
 			chai.assert.deepEqual(evaluateXPathToArray('array:sort([3,2,1])', documentNode), [
 				1,
 				2,
-				3
+				3,
 			]));
 
 		it('can be called with an array which resolves async', async () =>
@@ -802,11 +802,11 @@ array:for-each-pair(
 			const jsonMlFragment = [
 				'someElement',
 				{
-					some: 'attributes'
+					some: 'attributes',
 				},
 				'Some data',
 				['childElement', { with: 'attributes' }, 'and text'],
-				'And some more data'
+				'And some more data',
 			];
 			jsonMlMapper.parse(jsonMlFragment as any, documentNode);
 			const xpath = `

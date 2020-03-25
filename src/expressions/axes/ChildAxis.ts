@@ -11,7 +11,7 @@ class ChildAxis extends Expression {
 			resultOrder: RESULT_ORDERINGS.SORTED,
 			subtree: true,
 			peer: true,
-			canBeStaticallyEvaluated: false
+			canBeStaticallyEvaluated: false,
 		});
 
 		this._childExpression = childExpression;
@@ -28,7 +28,7 @@ class ChildAxis extends Expression {
 			.getChildNodes(contextNode, this._childExpression.getBucket())
 			.map(createNodeValue);
 		const childContextSequence = sequenceFactory.create(nodeValues);
-		return childContextSequence.filter(item => {
+		return childContextSequence.filter((item) => {
 			return this._childExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

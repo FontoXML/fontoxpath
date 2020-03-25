@@ -17,8 +17,8 @@ export class RenamePendingUpdate extends IPendingUpdate {
 			['newName']: {
 				['prefix']: this.newName.prefix,
 				['namespaceURI']: this.newName.namespaceURI,
-				['localName']: this.newName.localName
-			}
+				['localName']: this.newName.localName,
+			},
 		};
 	}
 }

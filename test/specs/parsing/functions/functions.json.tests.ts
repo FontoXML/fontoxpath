@@ -5,7 +5,7 @@ import {
 	domFacade,
 	evaluateXPathToArray,
 	evaluateXPathToMap,
-	evaluateXPathToBoolean
+	evaluateXPathToBoolean,
 } from 'fontoxpath';
 
 let documentNode;

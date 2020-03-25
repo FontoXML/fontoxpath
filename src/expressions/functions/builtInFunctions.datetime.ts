@@ -4,7 +4,7 @@ import DateTime from '../dataTypes/valueTypes/DateTime';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnDateTime: FunctionDefinitionType = function(
+const fnDateTime: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -52,7 +52,7 @@ const fnDateTime: FunctionDefinitionType = function(
 	return sequenceFactory.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
 };
 
-const fnYearFromDateTime: FunctionDefinitionType = function(
+const fnYearFromDateTime: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -66,7 +66,7 @@ const fnYearFromDateTime: FunctionDefinitionType = function(
 	);
 };
 
-const fnMonthFromDateTime: FunctionDefinitionType = function(
+const fnMonthFromDateTime: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -80,7 +80,7 @@ const fnMonthFromDateTime: FunctionDefinitionType = function(
 	);
 };
 
-const fnDayFromDateTime: FunctionDefinitionType = function(
+const fnDayFromDateTime: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -94,7 +94,7 @@ const fnDayFromDateTime: FunctionDefinitionType = function(
 	);
 };
 
-const fnHoursFromDateTime: FunctionDefinitionType = function(
+const fnHoursFromDateTime: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -108,7 +108,7 @@ const fnHoursFromDateTime: FunctionDefinitionType = function(
 	);
 };
 
-const fnMinutesFromDateTime: FunctionDefinitionType = function(
+const fnMinutesFromDateTime: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -122,7 +122,7 @@ const fnMinutesFromDateTime: FunctionDefinitionType = function(
 	);
 };
 
-const fnSecondsFromDateTime: FunctionDefinitionType = function(
+const fnSecondsFromDateTime: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -135,7 +135,7 @@ const fnSecondsFromDateTime: FunctionDefinitionType = function(
 		createAtomicValue(sequence.first().value.getFullSeconds(), 'xs:decimal')
 	);
 };
-const fnTimezoneFromDateTime: FunctionDefinitionType = function(
+const fnTimezoneFromDateTime: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -160,112 +160,112 @@ export default {
 			localName: 'dateTime',
 			argumentTypes: ['xs:date?', 'xs:time?'],
 			returnType: 'xs:dateTime?',
-			callFunction: fnDateTime
+			callFunction: fnDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'year-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
-			callFunction: fnYearFromDateTime
+			callFunction: fnYearFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'month-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
-			callFunction: fnMonthFromDateTime
+			callFunction: fnMonthFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'day-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
-			callFunction: fnDayFromDateTime
+			callFunction: fnDayFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'hours-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
-			callFunction: fnHoursFromDateTime
+			callFunction: fnHoursFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'minutes-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:integer?',
-			callFunction: fnMinutesFromDateTime
+			callFunction: fnMinutesFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'seconds-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:decimal?',
-			callFunction: fnSecondsFromDateTime
+			callFunction: fnSecondsFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'timezone-from-dateTime',
 			argumentTypes: ['xs:dateTime?'],
 			returnType: 'xs:dayTimeDuration?',
-			callFunction: fnTimezoneFromDateTime
+			callFunction: fnTimezoneFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'year-from-date',
 			argumentTypes: ['xs:date?'],
 			returnType: 'xs:integer?',
-			callFunction: fnYearFromDateTime
+			callFunction: fnYearFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'month-from-date',
 			argumentTypes: ['xs:date?'],
 			returnType: 'xs:integer?',
-			callFunction: fnMonthFromDateTime
+			callFunction: fnMonthFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'day-from-date',
 			argumentTypes: ['xs:date?'],
 			returnType: 'xs:integer?',
-			callFunction: fnDayFromDateTime
+			callFunction: fnDayFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'timezone-from-date',
 			argumentTypes: ['xs:date?'],
 			returnType: 'xs:dayTimeDuration?',
-			callFunction: fnTimezoneFromDateTime
+			callFunction: fnTimezoneFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'hours-from-time',
 			argumentTypes: ['xs:time?'],
 			returnType: 'xs:integer?',
-			callFunction: fnHoursFromDateTime
+			callFunction: fnHoursFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'minutes-from-time',
 			argumentTypes: ['xs:time?'],
 			returnType: 'xs:integer?',
-			callFunction: fnMinutesFromDateTime
+			callFunction: fnMinutesFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'seconds-from-time',
 			argumentTypes: ['xs:time?'],
 			returnType: 'xs:decimal?',
-			callFunction: fnSecondsFromDateTime
+			callFunction: fnSecondsFromDateTime,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'timezone-from-time',
 			argumentTypes: ['xs:time?'],
 			returnType: 'xs:dayTimeDuration?',
-			callFunction: fnTimezoneFromDateTime
-		}
-	]
+			callFunction: fnTimezoneFromDateTime,
+		},
+	],
 };

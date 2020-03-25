@@ -7,7 +7,7 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPathToBoolean,
 	evaluateXPathToStrings,
-	evaluateXPathToString
+	evaluateXPathToString,
 } from 'fontoxpath';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
@@ -149,8 +149,8 @@ describe('functions', () => {
 				[
 					'someElement',
 					{
-						id: 'some-id'
-					}
+						id: 'some-id',
+					},
 				],
 				documentNode
 			);
@@ -162,13 +162,13 @@ describe('functions', () => {
 				[
 					'someElement',
 					{
-						id: 'some-id'
-					}
+						id: 'some-id',
+					},
 				],
 				documentNode
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id", .)', documentNode), [
-				documentNode.documentElement
+				documentNode.documentElement,
 			]);
 		});
 
@@ -179,20 +179,20 @@ describe('functions', () => {
 					[
 						'someElement',
 						{
-							id: 'some-id'
-						}
+							id: 'some-id',
+						},
 					],
 					[
 						'someElement',
 						{
-							id: 'some-id'
-						}
-					]
+							id: 'some-id',
+						},
+					],
 				],
 				documentNode
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id", .)', documentNode), [
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			]);
 		});
 
@@ -203,20 +203,20 @@ describe('functions', () => {
 					[
 						'someElement',
 						{
-							id: 'some-id'
-						}
+							id: 'some-id',
+						},
 					],
 					[
 						'someElement',
 						{
-							id: 'some-id'
-						}
-					]
+							id: 'some-id',
+						},
+					],
 				],
 				documentNode
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id")', documentNode), [
-				documentNode.documentElement.firstChild
+				documentNode.documentElement.firstChild,
 			]);
 		});
 
@@ -227,15 +227,15 @@ describe('functions', () => {
 					[
 						'someElement',
 						{
-							id: 'some-id'
-						}
+							id: 'some-id',
+						},
 					],
 					[
 						'someElement',
 						{
-							id: 'some-other-id'
-						}
-					]
+							id: 'some-other-id',
+						},
+					],
 				],
 				documentNode
 			);
@@ -252,15 +252,15 @@ describe('functions', () => {
 					[
 						'someElement',
 						{
-							id: 'some-id'
-						}
+							id: 'some-id',
+						},
 					],
 					[
 						'someElement',
 						{
-							id: 'some-other-id'
-						}
-					]
+							id: 'some-other-id',
+						},
+					],
 				],
 				documentNode
 			);
@@ -275,14 +275,14 @@ describe('functions', () => {
 				[
 					'someParentElement',
 					{
-						id: 'some-id'
+						id: 'some-id',
 					},
 					[
 						'someElement',
 						{
-							id: 'some-other-id'
-						}
-					]
+							id: 'some-other-id',
+						},
+					],
 				],
 				documentNode
 			);
@@ -299,13 +299,13 @@ describe('functions', () => {
 				[
 					'someElement',
 					{
-						idref: 'some-id'
-					}
+						idref: 'some-id',
+					},
 				],
 				documentNode
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('idref("some-id", .)', documentNode), [
-				documentNode.documentElement
+				documentNode.documentElement,
 			]);
 		});
 
@@ -314,13 +314,13 @@ describe('functions', () => {
 				[
 					'someElement',
 					{
-						idref: 'some-other-id some-id yet-some-other-id'
-					}
+						idref: 'some-other-id some-id yet-some-other-id',
+					},
 				],
 				documentNode
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('idref("some-id", .)', documentNode), [
-				documentNode.documentElement
+				documentNode.documentElement,
 			]);
 		});
 
@@ -331,15 +331,15 @@ describe('functions', () => {
 					[
 						'someElement',
 						{
-							idref: 'some-id yet-some-other-id'
-						}
+							idref: 'some-id yet-some-other-id',
+						},
 					],
 					[
 						'someElement',
 						{
-							idref: 'some-other-id'
-						}
-					]
+							idref: 'some-other-id',
+						},
+					],
 				],
 				documentNode
 			);
@@ -356,15 +356,15 @@ describe('functions', () => {
 					[
 						'someElement',
 						{
-							idref: 'some-id yet-some-other-id'
-						}
+							idref: 'some-id yet-some-other-id',
+						},
 					],
 					[
 						'someElement',
 						{
-							idref: 'some-other-id'
-						}
-					]
+							idref: 'some-other-id',
+						},
+					],
 				],
 				documentNode
 			);

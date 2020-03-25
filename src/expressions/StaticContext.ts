@@ -90,14 +90,14 @@ export default class StaticContext implements IContext {
 					Object.create(null),
 					contextAtThisPoint._registeredNamespaceURIByPrefix[0],
 					this._registeredNamespaceURIByPrefix[i]
-				)
+				),
 			];
 			contextAtThisPoint.registeredVariableBindingByHashKey = [
 				Object.assign(
 					Object.create(null),
 					contextAtThisPoint.registeredVariableBindingByHashKey[0],
 					this.registeredVariableBindingByHashKey[i]
-				)
+				),
 			];
 			contextAtThisPoint._registeredFunctionsByHash = Object.assign(
 				Object.create(null),

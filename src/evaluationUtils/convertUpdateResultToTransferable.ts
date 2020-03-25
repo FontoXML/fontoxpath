@@ -14,12 +14,12 @@ export default function convertUpdateResultToTransferable<
 	executionParameters: ExecutionParameters
 ): { pendingUpdateList: object[]; xdmValue: IReturnTypes<TNode>[TReturnType] } {
 	return {
-		['pendingUpdateList']: result.pendingUpdateList.map(update => update.toTransferable()),
+		['pendingUpdateList']: result.pendingUpdateList.map((update) => update.toTransferable()),
 		['xdmValue']: convertXDMReturnValue(
 			script,
 			sequenceFactory.create(result.xdmValue),
 			returnType,
 			executionParameters
-		)
+		),
 	};
 }

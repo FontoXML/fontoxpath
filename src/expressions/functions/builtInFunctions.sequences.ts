@@ -52,7 +52,7 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 				i++;
 
 				return val;
-			}
+			},
 		},
 		newSequenceLength
 	);
@@ -64,7 +64,7 @@ function subSequence(sequence: ISequence, start: number, length: number) {
  */
 function convertItemsToCommonType(items) {
 	if (
-		items.every(item => {
+		items.every((item) => {
 			// xs:integer is the only numeric type with inherits from another numeric type
 			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:decimal');
 		})
@@ -85,24 +85,24 @@ function convertItemsToCommonType(items) {
 
 	// If each value is an instance of one of the types xs:string or xs:anyURI, then all the values are cast to type xs:string
 	if (
-		items.every(item => {
+		items.every((item) => {
 			return isSubtypeOf(item.type, 'xs:string') || isSubtypeOf(item.type, 'xs:anyURI');
 		})
 	) {
-		return items.map(item => castToType(item, 'xs:string'));
+		return items.map((item) => castToType(item, 'xs:string'));
 	}
 
 	// If each value is an instance of one of the types xs:decimal or xs:float, then all the values are cast to type xs:float.
 	if (
-		items.every(item => {
+		items.every((item) => {
 			return isSubtypeOf(item.type, 'xs:decimal') || isSubtypeOf(item.type, 'xs:float');
 		})
 	) {
-		return items.map(item => castToType(item, 'xs:float'));
+		return items.map((item) => castToType(item, 'xs:float'));
 	}
 	// If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all the values are cast to type xs:double.
 	if (
-		items.every(item => {
+		items.every((item) => {
 			return (
 				isSubtypeOf(item.type, 'xs:decimal') ||
 				isSubtypeOf(item.type, 'xs:float') ||
@@ -110,7 +110,7 @@ function convertItemsToCommonType(items) {
 			);
 		})
 	) {
-		return items.map(item => castToType(item, 'xs:double'));
+		return items.map((item) => castToType(item, 'xs:double'));
 	}
 
 	// Otherwise, a type error is raised [err:FORG0006].
@@ -118,7 +118,7 @@ function convertItemsToCommonType(items) {
 }
 
 function castUntypedItemsToDouble(items) {
-	return items.map(item => {
+	return items.map((item) => {
 		if (isSubtypeOf(item.type, 'xs:untypedAtomic')) {
 			return castToType(item, 'xs:double');
 		}
@@ -131,7 +131,7 @@ function castItemsForMinMax(items) {
 	items = castUntypedItemsToDouble(items);
 
 	if (
-		items.some(item => {
+		items.some((item) => {
 			return Number.isNaN(item.value);
 		})
 	) {
@@ -150,7 +150,7 @@ const fnEmpty: FunctionDefinitionType = (
 	return sequence.switchCases({
 		empty: () => sequenceFactory.singletonTrueSequence(),
 		multiple: () => sequenceFactory.singletonFalseSequence(),
-		singleton: () => sequenceFactory.singletonFalseSequence()
+		singleton: () => sequenceFactory.singletonFalseSequence(),
 	});
 };
 
@@ -163,7 +163,7 @@ const fnExists: FunctionDefinitionType = (
 	return sequence.switchCases({
 		empty: () => sequenceFactory.singletonFalseSequence(),
 		multiple: () => sequenceFactory.singletonTrueSequence(),
-		singleton: () => sequenceFactory.singletonTrueSequence()
+		singleton: () => sequenceFactory.singletonTrueSequence(),
 	});
 };
 
@@ -242,7 +242,7 @@ const fnReverse: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.mapAll(allValues => sequenceFactory.create(allValues.reverse()));
+	return sequence.mapAll((allValues) => sequenceFactory.create(allValues.reverse()));
 };
 
 const fnSubsequence: FunctionDefinitionType = (
@@ -305,7 +305,7 @@ const fnIndexOf: FunctionDefinitionType = (
 					? createAtomicValue(i + 1, 'xs:integer')
 					: createAtomicValue(-1, 'xs:integer');
 			})
-			.filter(indexValue => {
+			.filter((indexValue) => {
 				return indexValue.value !== -1;
 			})
 	);
@@ -338,7 +338,7 @@ const fnDeepEqual: FunctionDefinitionType = (
 			}
 			hasPassed = true;
 			return ready(createAtomicValue(result.value, 'xs:boolean'));
-		}
+		},
 	});
 };
 
@@ -360,7 +360,7 @@ const fnCount: FunctionDefinitionType = (
 			}
 			hasPassed = true;
 			return ready(createAtomicValue(length.value, 'xs:integer'));
-		}
+		},
 	});
 };
 
@@ -377,7 +377,7 @@ const fnAvg: FunctionDefinitionType = (
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	let items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
-	if (!items.every(item => isSubtypeOf(item.type, 'xs:numeric'))) {
+	if (!items.every((item) => isSubtypeOf(item.type, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
@@ -387,7 +387,7 @@ const fnAvg: FunctionDefinitionType = (
 		}, 0) / items.length;
 
 	if (
-		items.every(item => {
+		items.every((item) => {
 			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
 		})
 	) {
@@ -395,7 +395,7 @@ const fnAvg: FunctionDefinitionType = (
 	}
 
 	if (
-		items.every(item => {
+		items.every((item) => {
 			return isSubtypeOf(item.type, 'xs:decimal');
 		})
 	) {
@@ -459,7 +459,7 @@ const fnSum: FunctionDefinitionType = (
 
 	let items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
-	if (!items.every(item => isSubtypeOf(item.type, 'xs:numeric'))) {
+	if (!items.every((item) => isSubtypeOf(item.type, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
@@ -468,7 +468,7 @@ const fnSum: FunctionDefinitionType = (
 	}, 0);
 
 	if (
-		items.every(item => {
+		items.every((item) => {
 			return isSubtypeOf(item.type, 'xs:integer');
 		})
 	) {
@@ -476,7 +476,7 @@ const fnSum: FunctionDefinitionType = (
 	}
 
 	if (
-		items.every(item => {
+		items.every((item) => {
 			return isSubtypeOf(item.type, 'xs:double');
 		})
 	) {
@@ -484,7 +484,7 @@ const fnSum: FunctionDefinitionType = (
 	}
 
 	if (
-		items.every(item => {
+		items.every((item) => {
 			return isSubtypeOf(item.type, 'xs:decimal');
 		})
 	) {
@@ -551,7 +551,7 @@ const fnFilter: FunctionDefinitionType = (
 		throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 	}
 
-	return sequence.filter(item => {
+	return sequence.filter((item) => {
 		// Transform argument
 		const transformedArgument = performFunctionConversion(
 			callbackArgumentTypes[0] as TypeDeclaration,
@@ -630,7 +630,7 @@ const fnForEach: FunctionDefinitionType = (
 				}
 				innerIterator = null;
 			}
-		}
+		},
 	});
 };
 
@@ -652,7 +652,7 @@ const fnFoldLeft: FunctionDefinitionType = (
 		throw new Error(`XPTY0004: signature of function passed to fn:fold-left is incompatible.`);
 	}
 
-	return sequence.mapAll(values =>
+	return sequence.mapAll((values) =>
 		values.reduce((previous, current) => {
 			const previousArg = performFunctionConversion(
 				callbackArgumentTypes[0] as TypeDeclaration,
@@ -698,7 +698,7 @@ const fnFoldRight: FunctionDefinitionType = (
 		throw new Error(`XPTY0004: signature of function passed to fn:fold-right is incompatible.`);
 	}
 
-	return sequence.mapAll(values =>
+	return sequence.mapAll((values) =>
 		values.reduceRight((previous, current) => {
 			const previousArg = performFunctionConversion(
 				callbackArgumentTypes[0] as TypeDeclaration,
@@ -733,7 +733,7 @@ export default {
 			callFunction: fnEmpty,
 			localName: 'empty',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean'
+			returnType: 'xs:boolean',
 		},
 
 		{
@@ -741,7 +741,7 @@ export default {
 			callFunction: fnExists,
 			localName: 'exists',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean'
+			returnType: 'xs:boolean',
 		},
 
 		{
@@ -749,7 +749,7 @@ export default {
 			callFunction: fnHead,
 			localName: 'head',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()?'
+			returnType: 'item()?',
 		},
 
 		{
@@ -757,7 +757,7 @@ export default {
 			callFunction: fnTail,
 			localName: 'tail',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -765,7 +765,7 @@ export default {
 			callFunction: fnInsertBefore,
 			localName: 'insert-before',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -773,7 +773,7 @@ export default {
 			callFunction: fnRemove,
 			localName: 'remove',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -781,7 +781,7 @@ export default {
 			callFunction: fnReverse,
 			localName: 'reverse',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -797,7 +797,7 @@ export default {
 				),
 			localName: 'subsequence',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -805,7 +805,7 @@ export default {
 			callFunction: fnSubsequence,
 			localName: 'subsequence',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -813,7 +813,7 @@ export default {
 			callFunction: fnUnordered,
 			localName: 'unordered',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -821,7 +821,7 @@ export default {
 			callFunction: fnIndexOf,
 			localName: 'index-of',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer*'
+			returnType: 'xs:integer*',
 		},
 
 		{
@@ -831,7 +831,7 @@ export default {
 			},
 			localName: 'index-of',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer*'
+			returnType: 'xs:integer*',
 		},
 
 		{
@@ -839,7 +839,7 @@ export default {
 			callFunction: fnDeepEqual,
 			localName: 'deep-equal',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean'
+			returnType: 'xs:boolean',
 		},
 
 		{
@@ -849,7 +849,7 @@ export default {
 			},
 			localName: 'deep-equal',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean'
+			returnType: 'xs:boolean',
 		},
 
 		{
@@ -857,7 +857,7 @@ export default {
 			callFunction: fnCount,
 			localName: 'count',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer'
+			returnType: 'xs:integer',
 		},
 
 		{
@@ -865,7 +865,7 @@ export default {
 			callFunction: fnAvg,
 			localName: 'avg',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?'
+			returnType: 'xs:anyAtomicType?',
 		},
 
 		{
@@ -873,7 +873,7 @@ export default {
 			callFunction: fnMax,
 			localName: 'max',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?'
+			returnType: 'xs:anyAtomicType?',
 		},
 
 		{
@@ -883,7 +883,7 @@ export default {
 			},
 			localName: 'max',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?'
+			returnType: 'xs:anyAtomicType?',
 		},
 
 		{
@@ -891,7 +891,7 @@ export default {
 			callFunction: fnMin,
 			localName: 'min',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?'
+			returnType: 'xs:anyAtomicType?',
 		},
 
 		{
@@ -901,7 +901,7 @@ export default {
 			},
 			localName: 'min',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?'
+			returnType: 'xs:anyAtomicType?',
 		},
 
 		{
@@ -917,7 +917,7 @@ export default {
 			},
 			localName: 'sum',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType'
+			returnType: 'xs:anyAtomicType',
 		},
 
 		{
@@ -925,7 +925,7 @@ export default {
 			callFunction: fnSum,
 			localName: 'sum',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType?'
+			returnType: 'xs:anyAtomicType?',
 		},
 
 		{
@@ -933,7 +933,7 @@ export default {
 			callFunction: fnZeroOrOne,
 			localName: 'zero-or-one',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()?'
+			returnType: 'item()?',
 		},
 
 		{
@@ -941,7 +941,7 @@ export default {
 			callFunction: fnOneOrMore,
 			localName: 'one-or-more',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()+'
+			returnType: 'item()+',
 		},
 
 		{
@@ -949,7 +949,7 @@ export default {
 			callFunction: fnExactlyOne,
 			localName: 'exactly-one',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()'
+			returnType: 'item()',
 		},
 
 		{
@@ -957,7 +957,7 @@ export default {
 			callFunction: fnFilter,
 			localName: 'filter',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -965,7 +965,7 @@ export default {
 			callFunction: fnForEach,
 			localName: 'for-each',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -973,7 +973,7 @@ export default {
 			callFunction: fnFoldLeft,
 			localName: 'fold-left',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 
 		{
@@ -981,8 +981,8 @@ export default {
 			callFunction: fnFoldRight,
 			localName: 'fold-right',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
-		}
+			returnType: 'item()*',
+		},
 	],
 	functions: {
 		avg: fnAvg,
@@ -990,6 +990,6 @@ export default {
 		max: fnMax,
 		min: fnMin,
 		reverse: fnReverse,
-		sum: fnSum
-	}
+		sum: fnSum,
+	},
 };

@@ -9,7 +9,7 @@ import {
 	evaluateXPathToStrings,
 	evaluateXPathToNumbers,
 	evaluateXPathToNumber,
-	evaluateXPathToAsyncIterator
+	evaluateXPathToAsyncIterator,
 } from 'fontoxpath';
 
 let documentNode;
@@ -89,8 +89,8 @@ return $fib-entries
 				{
 					someAttribute1: 'someValue1',
 					someAttribute2: 'someValue2',
-					someAttribute3: 'someValue3'
-				}
+					someAttribute3: 'someValue3',
+				},
 			],
 			documentNode
 		);
@@ -163,8 +163,8 @@ describe('function argument transformation', () => {
 			[
 				'someElement',
 				{
-					attr: 'a b c'
-				}
+					attr: 'a b c',
+				},
 			],
 			documentNode
 		);
@@ -179,14 +179,14 @@ describe('function argument transformation', () => {
 			[
 				'someElement',
 				{
-					attr: '1'
-				}
+					attr: '1',
+				},
 			],
 			documentNode
 		);
 		chai.assert.deepEqual(evaluateXPathToNumbers('@attr to 2', documentNode.firstChild), [
 			1,
-			2
+			2,
 		]);
 	});
 
@@ -208,7 +208,7 @@ return $ret instance of xs:string and $ret = "XXX"
 				null,
 				{
 					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
-					nodesFactory: documentNode
+					nodesFactory: documentNode,
 				}
 			),
 			true
@@ -220,8 +220,8 @@ return $ret instance of xs:string and $ret = "XXX"
 			[
 				'someElement',
 				{
-					attr: 'not something numerical'
-				}
+					attr: 'not something numerical',
+				},
 			],
 			documentNode
 		);

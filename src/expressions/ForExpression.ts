@@ -37,7 +37,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 			clauseExpression.specificity.add(returnExpression.specificity),
 			[clauseExpression, returnExpression],
 			{
-				canBeStaticallyEvaluated: false
+				canBeStaticallyEvaluated: false,
 			}
 		);
 
@@ -85,7 +85,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 
 						const variables = {
 							[this._variableBindingKey]: () =>
-								sequenceFactory.singleton(currentClauseValue.value)
+								sequenceFactory.singleton(currentClauseValue.value),
 						};
 
 						if (this._positionalVariableBindingKey) {
@@ -105,7 +105,7 @@ class ForExpression extends PossiblyUpdatingExpression {
 					return returnValue;
 				}
 				return DONE_TOKEN;
-			}
+			},
 		});
 	}
 

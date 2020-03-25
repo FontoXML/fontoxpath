@@ -5,7 +5,7 @@ import {
 	ConcreteElementNode,
 	ConcreteNode,
 	ConcreteParentNode,
-	NODE_TYPES
+	NODE_TYPES,
 } from './ConcreteNode';
 import IDomFacade from './IDomFacade';
 import IWrappingDomFacade from './IWrappingDomFacade';
@@ -47,7 +47,7 @@ class DomFacade implements IWrappingDomFacade {
 			return childNodes as ConcreteChildNode[];
 		}
 		return childNodes.filter(
-			childNode => childNode.nodeType !== NODE_TYPES.DOCUMENT_TYPE_NODE
+			(childNode) => childNode.nodeType !== NODE_TYPES.DOCUMENT_TYPE_NODE
 		) as ConcreteChildNode[];
 	}
 

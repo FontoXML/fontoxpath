@@ -16,7 +16,7 @@ function createSiblingGenerator(domFacade: IDomFacade, node: Node, bucket: strin
 			}
 
 			return ready(createNodeValue(node));
-		}
+		},
 	};
 }
 
@@ -27,7 +27,7 @@ class FollowingSiblingAxis extends Expression {
 			resultOrder: RESULT_ORDERINGS.SORTED,
 			peer: true,
 			subtree: false,
-			canBeStaticallyEvaluated: false
+			canBeStaticallyEvaluated: false,
 		});
 
 		this._siblingExpression = siblingExpression;
@@ -49,7 +49,7 @@ class FollowingSiblingAxis extends Expression {
 					this._siblingExpression.getBucket()
 				)
 			)
-			.filter(item => {
+			.filter((item) => {
 				return this._siblingExpression.evaluateToBoolean(dynamicContext, item);
 			});
 	}

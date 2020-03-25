@@ -7,7 +7,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression, {
-	separateXDMValueFromUpdatingExpressionResult
+	separateXDMValueFromUpdatingExpressionResult,
 } from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
@@ -78,7 +78,7 @@ function callFunction(
 	staticContext: StaticContext
 ): ISequence {
 	let argumentOffset = 0;
-	const evaluatedArgs = isGapByOffset.map(isGap => {
+	const evaluatedArgs = isGapByOffset.map((isGap) => {
 		if (isGap) {
 			return null;
 		}
@@ -101,7 +101,7 @@ function callFunction(
 		dynamicContext,
 		executionParameters,
 		staticContext,
-		...transformedArguments
+		...transformedArguments,
 	]);
 
 	return performFunctionConversion(
@@ -128,20 +128,20 @@ class FunctionCall extends PossiblyUpdatingExpression {
 	constructor(functionReference: Expression, args: (Expression | null)[]) {
 		super(
 			new Specificity({
-				[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1,
 			}),
-			[functionReference].concat(args.filter(arg => !!arg)),
+			[functionReference].concat(args.filter((arg) => !!arg)),
 			{
 				resultOrder: RESULT_ORDERINGS.UNSORTED,
 				peer: false,
 				subtree: false,
-				canBeStaticallyEvaluated: false // args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
+				canBeStaticallyEvaluated: false, // args.every(arg => arg.canBeStaticallyEvaluated) && functionReference.canBeStaticallyEvaluated
 			}
 		);
 
 		this._callArity = args.length;
 
-		this._isGapByOffset = args.map(arg => arg === null);
+		this._isGapByOffset = args.map((arg) => arg === null);
 
 		this._staticContext = null;
 
@@ -172,7 +172,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 					staticContext,
 					...args
 				),
-				pendingUpdates => {
+				(pendingUpdates) => {
 					pendingUpdateList = mergeUpdates(pendingUpdateList, pendingUpdates);
 				}
 			);
@@ -184,7 +184,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 			dynamicContext,
 			executionParameters,
 			this._isGapByOffset,
-			this._argumentExpressions.map(expr => () => {
+			this._argumentExpressions.map((expr) => () => {
 				if (!expr.isUpdating) {
 					return expr.evaluateMaybeStatically(dynamicContext, executionParameters);
 				}
@@ -193,7 +193,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 						dynamicContext,
 						executionParameters
 					),
-					pendingUpdates => {
+					(pendingUpdates) => {
 						pendingUpdateList = mergeUpdates(pendingUpdateList, pendingUpdates);
 					}
 				);
@@ -214,9 +214,9 @@ class FunctionCall extends PossiblyUpdatingExpression {
 				done = true;
 				return ready({
 					pendingUpdateList,
-					xdmValue: allValues.value
+					xdmValue: allValues.value,
 				});
-			}
+			},
 		};
 	}
 
@@ -265,7 +265,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 						this._staticContext
 					);
 				});
-			}
+			},
 		});
 	}
 

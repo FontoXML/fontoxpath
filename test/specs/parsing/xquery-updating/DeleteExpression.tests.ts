@@ -26,12 +26,12 @@ describe('DeleteExpression', () => {
 		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'delete',
-				target: element
+				target: element,
 			},
 			{
 				type: 'delete',
-				target: a
-			}
+				target: a,
+			},
 		]);
 	});
 
@@ -54,8 +54,8 @@ delete node fontoxpath:sleep(/element, 100)
 		assertUpdateList(result.pendingUpdateList, [
 			{
 				type: 'delete',
-				target: element
-			}
+				target: element,
+			},
 		]);
 	});
 });

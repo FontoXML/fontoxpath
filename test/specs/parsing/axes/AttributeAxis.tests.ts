@@ -6,7 +6,7 @@ import {
 	evaluateXPathToString,
 	evaluateXPathToStrings,
 	getBucketForSelector,
-	IDomFacade
+	IDomFacade,
 } from 'fontoxpath';
 
 let documentNode;
@@ -56,7 +56,7 @@ describe('attribute', () => {
 		);
 		chai.assert.equal(
 			evaluateXPathToString('attribute::someNamespace:someAttribute', element, null, null, {
-				namespaceResolver: () => 'http://fontoxml.com/ns/'
+				namespaceResolver: () => 'http://fontoxml.com/ns/',
 			}),
 			'someValue'
 		);
@@ -102,7 +102,7 @@ describe('attribute', () => {
 		);
 		chai.assert.equal(
 			evaluateXPathToString('@someNamespace:someAttribute="someValue"', element, null, null, {
-				namespaceResolver: () => 'http://fontoxml.com/ns/'
+				namespaceResolver: () => 'http://fontoxml.com/ns/',
 			}),
 			'true'
 		);
@@ -163,7 +163,7 @@ describe('attribute', () => {
 			getAllAttributes: (node, bucket: string | null) => {
 				chai.assert.equal(bucket, expectedBucket);
 				return node.attributes;
-			}
+			},
 		} as any;
 
 		evaluateXPathToString('@xxx', element, testDomFacade);

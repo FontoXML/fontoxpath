@@ -4,15 +4,15 @@ import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import {
 	equal as dateTimeEqual,
 	greaterThan as dateTimeGreaterThan,
-	lessThan as dateTimeLessThan
+	lessThan as dateTimeLessThan,
 } from '../../dataTypes/valueTypes/DateTime';
 import {
 	greaterThan as dayTimeDurationGreaterThan,
-	lessThan as dayTimeDurationLessThan
+	lessThan as dayTimeDurationLessThan,
 } from '../../dataTypes/valueTypes/DayTimeDuration';
 import {
 	greaterThan as yearMonthDurationGreaterThan,
-	lessThan as yearMonthDurationLessThan
+	lessThan as yearMonthDurationLessThan,
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 
 import AtomicValue from '../../dataTypes/AtomicValue';
@@ -38,17 +38,17 @@ function generateCompareFunction(
 	if (isSubtypeOf(typeA, 'xs:untypedAtomic') && isSubtypeOf(typeB, 'xs:untypedAtomic')) {
 		typeA = typeB = 'xs:string';
 	} else if (isSubtypeOf(typeA, 'xs:untypedAtomic')) {
-		castFunctionForValueA = val => castToType(val, typeB);
+		castFunctionForValueA = (val) => castToType(val, typeB);
 		typeA = typeB;
 	} else if (isSubtypeOf(typeB, 'xs:untypedAtomic')) {
-		castFunctionForValueB = val => castToType(val, typeA);
+		castFunctionForValueB = (val) => castToType(val, typeA);
 		typeB = typeA;
 	}
 
 	function applyCastFunctions(valA, valB) {
 		return {
 			castA: castFunctionForValueA ? castFunctionForValueA(valA) : valA,
-			castB: castFunctionForValueB ? castFunctionForValueB(valB) : valB
+			castB: castFunctionForValueB ? castFunctionForValueB(valB) : valB,
 		};
 	}
 
@@ -317,7 +317,7 @@ function generateCompareFunction(
 
 const comparatorsByTypingKey = Object.create(null);
 
-export default function(
+export default function (
 	operator: string,
 	valueA: AtomicValue,
 	valueB: AtomicValue,

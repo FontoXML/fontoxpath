@@ -292,7 +292,7 @@ class DateTime {
 // gMonthDay   |       --mm-dd            (Z|[+-]hh:mm)
 // gDay        |         ---dd            (Z|[+-]hh:mm)
 // gMonth      |       --mm               (Z|[+-]hh:mm)
-DateTime.fromString = function(string: string): DateTime {
+DateTime.fromString = function (string: string): DateTime {
 	const regex = /^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
 	const match = regex.exec(string);
 

@@ -16,7 +16,7 @@ import {
 	IterationHint,
 	IterationResult,
 	notReady,
-	ready
+	ready,
 } from '../util/iterators';
 
 function isSameNodeValue(a: Value, b: Value) {
@@ -70,7 +70,7 @@ function concatSortedSequences(sequences: IAsyncIterator<ISequence>): ISequence 
 			} while (value.done || isSameNodeValue(value.value, previousValue));
 			previousValue = value.value;
 			return value;
-		}
+		},
 	});
 }
 
@@ -97,7 +97,7 @@ function mergeSortedSequences(
 			const iterator = val.value.value;
 			const mappedIterator: IMappedIterator = {
 				current: iterator.next(IterationHint.NONE),
-				next: (hint: IterationHint) => iterator.next(hint)
+				next: (hint: IterationHint) => iterator.next(hint),
 			};
 			if (!mappedIterator.current.done) {
 				allIterators.push(mappedIterator);
@@ -123,7 +123,7 @@ function mergeSortedSequences(
 				allSequencesAreSorted = true;
 
 				if (
-					allIterators.every(iterator =>
+					allIterators.every((iterator) =>
 						isSubtypeOf(iterator.current.value.type, 'node()')
 					)
 				) {
@@ -184,14 +184,14 @@ function mergeSortedSequences(
 			} while (isSameNodeValue(consumedValue.value, previousNode));
 			previousNode = consumedValue.value;
 			return consumedValue;
-		}
+		},
 	});
 }
 
 function sortResults(domFacade: IWrappingDomFacade, result: Value[]) {
 	let resultContainsNodes = false;
 	let resultContainsNonNodes = false;
-	result.forEach(resultValue => {
+	result.forEach((resultValue) => {
 		if (isSubtypeOf(resultValue.type, 'node()')) {
 			resultContainsNodes = true;
 		} else {
@@ -215,8 +215,8 @@ class PathExpression extends Expression {
 	private _stepExpressions: Expression[];
 
 	constructor(stepExpressions: Expression[], requireSortedResults: boolean) {
-		const pathResultsInPeerSequence = stepExpressions.every(selector => selector.peer);
-		const pathResultsInSubtreeSequence = stepExpressions.every(selector => selector.subtree);
+		const pathResultsInPeerSequence = stepExpressions.every((selector) => selector.peer);
+		const pathResultsInSubtreeSequence = stepExpressions.every((selector) => selector.subtree);
 		super(
 			stepExpressions.reduce((specificity, selector) => {
 				// Implicit AND, so sum
@@ -229,7 +229,7 @@ class PathExpression extends Expression {
 				resultOrder: requireSortedResults
 					? RESULT_ORDERINGS.SORTED
 					: RESULT_ORDERINGS.UNSORTED,
-				subtree: pathResultsInSubtreeSequence
+				subtree: pathResultsInSubtreeSequence,
 			}
 		);
 
@@ -274,7 +274,7 @@ class PathExpression extends Expression {
 								executionParameters
 							)
 						);
-					}
+					},
 				};
 				// Assume nicely sorted
 				let sortedResultSequence: ISequence;
@@ -294,11 +294,11 @@ class PathExpression extends Expression {
 										return res;
 									}
 									return ready(
-										res.value.mapAll(items =>
+										res.value.mapAll((items) =>
 											sequenceFactory.create(items.reverse())
 										)
 									);
-								}
+								},
 							};
 							// Fallthrough for merges
 						}
@@ -320,7 +320,7 @@ class PathExpression extends Expression {
 							const concattedSequence = concatSortedSequences(
 								resultValuesInOrderOfEvaluation
 							);
-							return concattedSequence.mapAll(allValues =>
+							return concattedSequence.mapAll((allValues) =>
 								sequenceFactory.create(
 									sortResults(executionParameters.domFacade, allValues)
 								)

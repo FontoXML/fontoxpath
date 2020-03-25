@@ -20,7 +20,7 @@ export default class ArrayBackedSequence implements ISequence {
 					return DONE_TOKEN;
 				}
 				return ready(_values[i]);
-			}
+			},
 		};
 	}
 
@@ -42,7 +42,7 @@ export default class ArrayBackedSequence implements ISequence {
 				}
 
 				return ready(this._values[i]);
-			}
+			},
 		});
 	}
 
@@ -78,7 +78,7 @@ export default class ArrayBackedSequence implements ISequence {
 					return ++i >= this._values.length
 						? DONE_TOKEN
 						: ready(callback(this._values[i], i, this));
-				}
+				},
 			},
 			this._values.length
 		);

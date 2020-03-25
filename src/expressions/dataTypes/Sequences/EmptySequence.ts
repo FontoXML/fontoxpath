@@ -7,7 +7,7 @@ export default class EmptySequence implements ISequence {
 
 	constructor() {
 		this.value = {
-			next: () => DONE_TOKEN
+			next: () => DONE_TOKEN,
 		};
 	}
 

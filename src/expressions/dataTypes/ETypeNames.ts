@@ -58,7 +58,7 @@ enum ETypeNames {
 	ATTRIBUTE = 'attribute()',
 	PROCESSINGINSTRUCTION = 'processing-instruction()',
 	DOCUMENT = 'document()',
-	XSNUMERIC = 'xs:numeric'
+	XSNUMERIC = 'xs:numeric',
 }
 
 export default ETypeNames;
