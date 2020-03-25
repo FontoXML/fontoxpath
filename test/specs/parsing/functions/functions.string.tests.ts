@@ -312,6 +312,12 @@ describe('functions over strings', () => {
 
 		it('returns the empty string when joining the empty sequence', () =>
 			chai.assert.equal(evaluateXPathToString('string-join((), "X")', documentNode), ''));
+
+		it('converts its arguments', () =>
+			chai.assert.equal(
+				evaluateXPathToString('fn:string-join(1 to 9)', documentNode),
+				'123456789'
+			));
 	});
 
 	describe('upper-case()', () => {

@@ -30,13 +30,13 @@ function contextItemAsFirstArgument(fn, dynamicContext, executionParameters, _st
 	);
 }
 
-const fnCompare: FunctionDefinitionType = function(
+const fnCompare: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg1,
 	arg2
-) {
+) => {
 	if (arg1.isEmpty() || arg2.isEmpty()) {
 		return sequenceFactory.empty();
 	}
@@ -86,13 +86,13 @@ const fnConcat: FunctionDefinitionType = (
 	});
 };
 
-const fnContains: FunctionDefinitionType = function(
+const fnContains: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg1,
 	arg2
-) {
+) => {
 	const stringToTest = !arg1.isEmpty() ? arg1.first().value : '';
 	const contains = !arg2.isEmpty() ? arg2.first().value : '';
 	if (contains.length === 0) {
@@ -110,13 +110,13 @@ const fnContains: FunctionDefinitionType = function(
 	return sequenceFactory.singletonFalseSequence();
 };
 
-const fnStartsWith: FunctionDefinitionType = function(
+const fnStartsWith: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg1,
 	arg2
-) {
+) => {
 	const startsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (startsWith.length === 0) {
 		return sequenceFactory.singletonTrueSequence();
@@ -132,13 +132,13 @@ const fnStartsWith: FunctionDefinitionType = function(
 	return sequenceFactory.singletonFalseSequence();
 };
 
-const fnEndsWith: FunctionDefinitionType = function(
+const fnEndsWith: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg1,
 	arg2
-) {
+) => {
 	const endsWith = !arg2.isEmpty() ? arg2.first().value : '';
 	if (endsWith.length === 0) {
 		return sequenceFactory.singletonTrueSequence();
@@ -154,12 +154,12 @@ const fnEndsWith: FunctionDefinitionType = function(
 	return sequenceFactory.singletonFalseSequence();
 };
 
-const fnString: FunctionDefinitionType = function(
+const fnString: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.switchCases({
 		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string')),
 		default: () =>
@@ -179,15 +179,15 @@ const fnString: FunctionDefinitionType = function(
 	});
 };
 
-const fnStringJoin: FunctionDefinitionType = function(
+const fnStringJoin: FunctionDefinitionType = (
 	_dynamicContext,
-	_executionParameters,
+	executionParameters,
 	_staticContext,
 	sequence,
 	separator
-) {
+) => {
 	return zipSingleton([separator], ([separatorString]) =>
-		sequence.mapAll(allStrings => {
+		atomize(sequence, executionParameters).mapAll(allStrings => {
 			const joinedString = allStrings
 				.map(stringValue => castToType(stringValue, 'xs:string').value)
 				.join(separatorString.value);
@@ -196,12 +196,12 @@ const fnStringJoin: FunctionDefinitionType = function(
 	);
 };
 
-const fnStringLength: FunctionDefinitionType = function(
+const fnStringLength: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
 	}
@@ -212,13 +212,13 @@ const fnStringLength: FunctionDefinitionType = function(
 	);
 };
 
-const fnSubstringBefore: FunctionDefinitionType = function(
+const fnSubstringBefore: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg1,
 	arg2
-) {
+) => {
 	let strArg1;
 	if (arg1.isEmpty()) {
 		strArg1 = '';
@@ -244,13 +244,13 @@ const fnSubstringBefore: FunctionDefinitionType = function(
 	);
 };
 
-const fnSubstringAfter: FunctionDefinitionType = function(
+const fnSubstringAfter: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg1,
 	arg2
-) {
+) => {
 	let strArg1;
 	if (arg1.isEmpty()) {
 		strArg1 = '';
@@ -276,14 +276,14 @@ const fnSubstringAfter: FunctionDefinitionType = function(
 	);
 };
 
-const fnSubstring: FunctionDefinitionType = function(
+const fnSubstring: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	sourceString,
 	start,
 	length
-) {
+) => {
 	const roundedStart = fnRound(
 		false,
 		dynamicContext,
@@ -357,55 +357,55 @@ const fnSubstring: FunctionDefinitionType = function(
 	});
 };
 
-const fnTokenize: FunctionDefinitionType = function(
+const fnTokenize: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	input,
 	pattern
-) {
+) => {
 	if (input.isEmpty() || input.first().value.length === 0) {
 		return sequenceFactory.empty();
 	}
-	const string = input.first().value,
-		patternString = pattern.first().value;
+	const inputString: string = input.first().value;
+	const patternString: string = pattern.first().value;
 	return sequenceFactory.create(
-		string.split(new RegExp(patternString)).map(function(token) {
-			return createAtomicValue(token, 'xs:string');
-		})
+		inputString
+			.split(new RegExp(patternString))
+			.map((token: string) => createAtomicValue(token, 'xs:string'))
 	);
 };
 
-const fnUpperCase: FunctionDefinitionType = function(
+const fnUpperCase: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	stringSequence
-) {
+) => {
 	if (stringSequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
 	return stringSequence.map(string => createAtomicValue(string.value.toUpperCase(), 'xs:string'));
 };
 
-const fnLowerCase: FunctionDefinitionType = function(
+const fnLowerCase: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	stringSequence
-) {
+) => {
 	if (stringSequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
 	return stringSequence.map(string => createAtomicValue(string.value.toLowerCase(), 'xs:string'));
 };
 
-const fnNormalizeSpace: FunctionDefinitionType = function(
+const fnNormalizeSpace: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
-) {
+) => {
 	if (arg.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
@@ -653,14 +653,6 @@ export default {
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'string-join',
-			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
-			returnType: 'xs:string',
-			callFunction: fnStringJoin
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring',
 			argumentTypes: ['xs:string?', 'xs:double'],
 			returnType: 'xs:string',
@@ -694,7 +686,15 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-join',
-			argumentTypes: ['xs:string*'],
+			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
+			returnType: 'xs:string',
+			callFunction: fnStringJoin
+		},
+
+		{
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			localName: 'string-join',
+			argumentTypes: ['xs:anyAtomicType*'],
 			returnType: 'xs:string',
 			callFunction(dynamicContext, executionParameters, staticContext, arg1) {
 				return fnStringJoin(
