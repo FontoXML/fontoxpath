@@ -1,6 +1,8 @@
+import QName from '../valueTypes/QName';
+
 export default function castToStringLikeType(
-	instanceOf: (string) => boolean
-): (Value) => { successful: true; value: any } | { error: Error; successful: false } {
+	instanceOf: (t: string) => boolean
+): (value: any) => { successful: true; value: any } | { error: Error; successful: false } {
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
 		return value => ({
 			successful: true,
@@ -14,10 +16,12 @@ export default function castToStringLikeType(
 		});
 	}
 	if (instanceOf('xs:QName')) {
-		return value => ({
-			successful: true,
-			value: value.prefix ? `${value.prefix}:${value.localName}` : value.localName
-		});
+		return (value: QName) => {
+			return {
+				successful: true,
+				value: value.prefix ? `${value.prefix}:${value.localName}` : value.localName
+			};
+		};
 	}
 	if (instanceOf('xs:NOTATION')) {
 		return value => ({

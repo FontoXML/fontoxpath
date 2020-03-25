@@ -4149,8 +4149,6 @@ fo-test-math-exp-006,AssertionError: Expected XPath          math:exp(math:pi())
 fo-test-fn-compare-002,AssertionError: Expected XPath          fn:compare('Strasse', 'Straße')        to (deep equally) resolve to 0: expected false to be true
 fo-test-fn-compare-003,Error: FOCH0002: No collations are supported
 fo-test-fn-compare-004,AssertionError: Expected XPath          fn:compare('Strassen', 'Straße')        to (deep equally) resolve to 1: expected false to be true
-fo-test-fn-string-join-001,Error: XPTY0004 Unable to cast argument of type xs:integer to type xs:string while calling string-join
-fo-test-fn-string-join-006,Error: XPTY0004 Unable to cast argument of type xs:QName to type xs:string while calling string-join
 fo-test-fn-encode-for-uri-001,Error: XPST0017: Function fn:encode-for-uri with arity of 1 not registered. No similar functions found.
 fo-test-fn-encode-for-uri-002,Error: XPST0017: Function encode-for-uri with arity of 1 not registered. No similar functions found.
 fo-test-fn-encode-for-uri-003,Error: XPST0017: Function encode-for-uri with arity of 1 not registered. No similar functions found.
