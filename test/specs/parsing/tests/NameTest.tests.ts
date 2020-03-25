@@ -23,7 +23,7 @@ describe('nameTests', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'ns:someElement');
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('self::someNs:*', element, null, null, {
-				namespaceResolver: () => 'http://fontoxml.com/ns/'
+				namespaceResolver: () => 'http://fontoxml.com/ns/',
 			})
 		);
 	});
@@ -32,7 +32,7 @@ describe('nameTests', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'ns:someElement');
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('self::*:someElement', element, null, null, {
-				namespaceResolver: () => 'http://fontoxml.com/ns/'
+				namespaceResolver: () => 'http://fontoxml.com/ns/',
 			})
 		);
 	});
@@ -41,7 +41,7 @@ describe('nameTests', () => {
 		const element = documentNode.createElementNS('http://fontoxml.com/ns/', 'someElement');
 		chai.assert.equal(
 			evaluateXPathToFirstNode('self::someNamespace:someElement', element, null, null, {
-				namespaceResolver: () => 'http://fontoxml.com/ns/'
+				namespaceResolver: () => 'http://fontoxml.com/ns/',
 			}),
 			element
 		);

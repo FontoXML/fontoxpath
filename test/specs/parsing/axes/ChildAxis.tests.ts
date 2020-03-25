@@ -6,7 +6,7 @@ import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	getBucketForSelector,
-	IDomFacade
+	IDomFacade,
 } from 'fontoxpath';
 
 let documentNode;
@@ -36,9 +36,9 @@ describe('child', () => {
 			[
 				'someParentElement',
 				{
-					someAttribute: 'someValue'
+					someAttribute: 'someValue',
 				},
-				['someElement']
+				['someElement'],
 			],
 			documentNode
 		);
@@ -69,7 +69,7 @@ describe('child', () => {
 			getChildNodes: (node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return [];
-			}
+			},
 		} as any;
 
 		evaluateXPathToNodes('child::childElement', parent, testDomFacade);

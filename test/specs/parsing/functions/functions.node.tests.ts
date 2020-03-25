@@ -4,7 +4,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToString,
-	evaluateXPathToStrings
+	evaluateXPathToStrings,
 } from 'fontoxpath';
 
 import { sync } from 'slimdom-sax-parser';
@@ -374,7 +374,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'Q{http://www.w3.org/2005/xpath-functions}root()'
@@ -394,7 +394,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'Q{http://www.w3.org/2005/xpath-functions}root()/@Q{http://www.w3.org/XML/1998/namespace}id'
@@ -414,7 +414,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{}empnr[1]'
@@ -432,7 +432,7 @@ return $node/root() = $element`,
 
 			chai.assert.deepEqual(
 				evaluateXPathToString(`let $e := . return fn:path($e)`, documentNode, null, null, {
-					language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 				}),
 				'/'
 			);
@@ -454,7 +454,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'/Q{http://example.com/one}p[1]'
@@ -478,7 +478,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'/Q{http://example.com/one}p[1]/@Q{http://www.w3.org/XML/1998/namespace}lang'
@@ -502,7 +502,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'/Q{http://example.com/one}p[1]/@author'
@@ -528,7 +528,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'/Q{http://example.com/one}p[1]/Q{http://example.com/one}br[2]'
@@ -552,7 +552,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'/Q{http://example.com/one}p[1]/text()[2]'
@@ -562,7 +562,7 @@ return $node/root() = $element`,
 		it('returns "empty sequence" for no argument', () => {
 			chai.assert.deepEqual(
 				evaluateXPathToStrings(`fn:path(())`, documentNode, null, null, {
-					language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 				}),
 				[]
 			);
@@ -580,7 +580,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test2}a[1]'
@@ -599,7 +599,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'Q{http://www.w3.org/2005/xpath-functions}root()/Q{http://test}a[2]'
@@ -623,7 +623,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'/Q{}xml[1]/processing-instruction(canAlsoBeLowerCaps)[1]'
@@ -647,7 +647,7 @@ return $node/root() = $element`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'/Q{}xml[1]/processing-instruction(TARGET)[3]'

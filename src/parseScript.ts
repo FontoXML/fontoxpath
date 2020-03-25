@@ -11,7 +11,7 @@ const XQUERYX_NAMESPACE_URI = 'http://www.w3.org/2005/XQueryX';
 
 const PREFERRED_PREFIX_BY_NAMESPACEURI = {
 	[XQUERYX_NAMESPACE_URI]: 'xqx',
-	[XQUERYX_UPDATING_NAMESPACE_URI]: 'xquf'
+	[XQUERYX_UPDATING_NAMESPACE_URI]: 'xquf',
 };
 
 /**
@@ -157,7 +157,7 @@ export default function parseScript<TElement extends Element>(
 ): TElement {
 	const ast = parseExpression(script, {
 		allowXQuery: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
-		debug: options.debug
+		debug: options.debug,
 	});
 
 	return parseNode(documentWriter, simpleNodesFactory, ast, null) as TElement;

@@ -7,7 +7,7 @@ import {
 	evaluateXPathToMap,
 	evaluateXPathToNodes,
 	getBucketForSelector,
-	IDomFacade
+	IDomFacade,
 } from 'fontoxpath';
 
 let documentNode;
@@ -28,7 +28,7 @@ describe('following', () => {
 			),
 			[
 				documentNode.documentElement.lastChild,
-				documentNode.documentElement.lastChild.lastChild
+				documentNode.documentElement.lastChild.lastChild,
 			]
 		);
 	});
@@ -80,7 +80,7 @@ return map{
 			[
 				'someParentElement',
 				['someElement'],
-				['someNonMatchingElement', ['someNonMatchingElement']]
+				['someNonMatchingElement', ['someNonMatchingElement']],
 			],
 			documentNode
 		);
@@ -125,7 +125,7 @@ return map{
 			getParentNode: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return node.parentNode;
-			}
+			},
 		} as any;
 
 		evaluateXPathToNodes('following::secondChildElement', firstChildNode, testDomFacade);

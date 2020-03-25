@@ -11,7 +11,7 @@ class ParentAxis extends Expression {
 			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
 			peer: true,
 			subtree: true,
-			canBeStaticallyEvaluated: false
+			canBeStaticallyEvaluated: false,
 		});
 
 		this._parentExpression = parentExpression;

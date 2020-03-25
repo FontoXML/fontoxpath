@@ -12,7 +12,7 @@ const OPERATOR_TRANSLATION = {
 	['lessThanOrEqualOp']: 'leOp',
 	['lessThanOp']: 'ltOp',
 	['greaterThanOrEqualOp']: 'geOp',
-	['greaterThanOp']: 'gtOp'
+	['greaterThanOp']: 'gtOp',
 };
 
 export default function generalCompare(
@@ -24,9 +24,9 @@ export default function generalCompare(
 	// Change operator to equivalent valueCompare operator
 	operator = OPERATOR_TRANSLATION[operator];
 
-	return secondSequence.mapAll(allSecondValues =>
+	return secondSequence.mapAll((allSecondValues) =>
 		firstSequence
-			.filter(firstValue => {
+			.filter((firstValue) => {
 				for (let i = 0, l = allSecondValues.length; i < l; ++i) {
 					// General comapres are value compare, with one difference:
 					// If exactly one of the atomic values is an instance of xs:untypedAtomic, it is
@@ -75,7 +75,7 @@ export default function generalCompare(
 			})
 			.switchCases({
 				default: () => sequenceFactory.singletonTrueSequence(),
-				empty: () => sequenceFactory.singletonFalseSequence()
+				empty: () => sequenceFactory.singletonFalseSequence(),
 			})
 	);
 }

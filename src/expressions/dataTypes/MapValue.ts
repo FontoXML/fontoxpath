@@ -21,7 +21,7 @@ class MapValue extends FunctionValue<ISequence> {
 					sequenceFactory.singleton(this),
 					key
 				),
-			returnType: { type: 'item()', occurrence: '*' }
+			returnType: { type: 'item()', occurrence: '*' },
 		});
 		this.type = 'map(*)';
 		this.keyValuePairs = keyValuePairs;

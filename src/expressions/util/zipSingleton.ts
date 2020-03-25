@@ -7,10 +7,10 @@ import Value from '../dataTypes/Value';
 type CallbackType = (values: Value[]) => ISequence;
 
 export default function zipSingleton(sequences: ISequence[], callback: CallbackType): ISequence {
-	const firstValues = sequences.map(seq => seq.tryGetFirst());
-	if (firstValues.every(val => val.ready)) {
+	const firstValues = sequences.map((seq) => seq.tryGetFirst());
+	if (firstValues.every((val) => val.ready)) {
 		// Skip sequence if we can resolve immediately
-		return callback(firstValues.map(seq => seq.value));
+		return callback(firstValues.map((seq) => seq.value));
 	}
 
 	let iterator: IAsyncIterator<Value> = null;
@@ -29,10 +29,10 @@ export default function zipSingleton(sequences: ISequence[], callback: CallbackT
 					}
 				}
 				if (allReady) {
-					iterator = callback(firstValues.map(seq => seq.value)).value;
+					iterator = callback(firstValues.map((seq) => seq.value)).value;
 				}
 			}
 			return iterator.next(hint);
-		}
+		},
 	});
 }

@@ -7,7 +7,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function findDescendants(domFacade, node, isMatch) {
-	const results = domFacade.getChildNodes(node).reduce(function(matchingNodes, childNode) {
+	const results = domFacade.getChildNodes(node).reduce(function (matchingNodes, childNode) {
 		Array.prototype.push.apply(matchingNodes, findDescendants(domFacade, childNode, isMatch));
 		return matchingNodes;
 	}, []);
@@ -17,7 +17,7 @@ function findDescendants(domFacade, node, isMatch) {
 	return results;
 }
 
-const fnId: FunctionDefinitionType = function(
+const fnId: FunctionDefinitionType = function (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
@@ -32,8 +32,8 @@ const fnId: FunctionDefinitionType = function(
 	// TODO: Index ids to optimize this lookup
 	const isMatchingIdById: { [s: string]: boolean } = idrefSequence
 		.getAllValues()
-		.reduce(function(byId, idrefValue) {
-			idrefValue.value.split(/\s+/).forEach(function(id) {
+		.reduce(function (byId, idrefValue) {
+			idrefValue.value.split(/\s+/).forEach(function (id) {
 				byId[id] = true;
 			});
 			return byId;
@@ -43,7 +43,7 @@ const fnId: FunctionDefinitionType = function(
 			? targetNodeValue.value
 			: targetNodeValue.value.ownerDocument;
 
-	const matchingNodes = findDescendants(domFacade, documentNode, function(node) {
+	const matchingNodes = findDescendants(domFacade, documentNode, function (node) {
 		// TODO: use the is-id property of attributes / elements
 		if (node.nodeType !== node.ELEMENT_NODE) {
 			return false;
@@ -62,7 +62,7 @@ const fnId: FunctionDefinitionType = function(
 	return sequenceFactory.create(matchingNodes.map(createNodeValue));
 };
 
-const fnIdref: FunctionDefinitionType = function(
+const fnIdref: FunctionDefinitionType = function (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
@@ -75,7 +75,7 @@ const fnIdref: FunctionDefinitionType = function(
 	}
 	const domFacade = executionParameters.domFacade;
 
-	const isMatchingIdRefById = idSequence.getAllValues().reduce(function(byId, idValue) {
+	const isMatchingIdRefById = idSequence.getAllValues().reduce(function (byId, idValue) {
 		byId[idValue.value] = true;
 		return byId;
 	}, Object.create(null));
@@ -85,7 +85,7 @@ const fnIdref: FunctionDefinitionType = function(
 			: targetNodeValue.value.ownerDocument;
 
 	// TODO: Index idrefs to optimize this lookup
-	const matchingNodes = findDescendants(domFacade, documentNode, function(node) {
+	const matchingNodes = findDescendants(domFacade, documentNode, function (node) {
 		// TODO: use the is-idrefs property of attributes / elements
 		if (node.nodeType !== node.ELEMENT_NODE) {
 			return false;
@@ -95,7 +95,7 @@ const fnIdref: FunctionDefinitionType = function(
 			return false;
 		}
 		const idRefs = idAttribute.split(/\s+/);
-		return idRefs.some(function(idRef) {
+		return idRefs.some(function (idRef) {
 			return isMatchingIdRefById[idRef];
 		});
 	});
@@ -109,7 +109,7 @@ export default {
 			localName: 'id',
 			argumentTypes: ['xs:string*', 'node()'],
 			returnType: 'element()*',
-			callFunction: fnId
+			callFunction: fnId,
 		},
 
 		{
@@ -125,7 +125,7 @@ export default {
 					strings,
 					sequenceFactory.singleton(dynamicContext.contextItem)
 				);
-			}
+			},
 		},
 
 		{
@@ -133,7 +133,7 @@ export default {
 			localName: 'idref',
 			argumentTypes: ['xs:string*', 'node()'],
 			returnType: 'node()*',
-			callFunction: fnIdref
+			callFunction: fnIdref,
 		},
 
 		{
@@ -149,11 +149,11 @@ export default {
 					strings,
 					sequenceFactory.singleton(dynamicContext.contextItem)
 				);
-			}
-		}
+			},
+		},
 	],
 	functions: {
 		id: fnId,
-		idref: fnIdref
-	}
+		idref: fnIdref,
+	},
 };

@@ -47,9 +47,9 @@ abstract class UpdatingExpression extends Expression {
 					}
 					return ready({
 						pendingUpdateList: [],
-						xdmValue: allValues.value
+						xdmValue: allValues.value,
 					});
-				}
+				},
 			};
 		};
 	}

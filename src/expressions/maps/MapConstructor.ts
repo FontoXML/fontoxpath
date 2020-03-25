@@ -14,21 +14,21 @@ class MapConstructor extends Expression {
 	constructor(entries: { key: Expression; value: Expression }[]) {
 		super(
 			new Specificity({
-				[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1,
 			}),
 			entries.reduce(
 				(allExpressions, { key, value }) => allExpressions.concat(key, value),
 				[]
 			),
 			{
-				canBeStaticallyEvaluated: false
+				canBeStaticallyEvaluated: false,
 			}
 		);
 		this._entries = entries;
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
-		const keySequences = this._entries.map(kvp =>
+		const keySequences = this._entries.map((kvp) =>
 			atomize(
 				kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters),
 				executionParameters
@@ -38,11 +38,11 @@ class MapConstructor extends Expression {
 						'XPTY0004: A key of a map should be a single atomizable value.'
 					);
 				},
-				singleton: seq => seq
+				singleton: (seq) => seq,
 			})
 		);
 
-		return zipSingleton(keySequences, keys =>
+		return zipSingleton(keySequences, (keys) =>
 			sequenceFactory.singleton(
 				new MapValue(
 					keys.map((key, keyIndex) => ({
@@ -52,7 +52,7 @@ class MapConstructor extends Expression {
 								dynamicContext,
 								executionParameters
 							)
-						)
+						),
 					}))
 				)
 			)

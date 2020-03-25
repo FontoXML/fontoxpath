@@ -32,8 +32,8 @@ xxx(/)
 			{
 				type: 'insertInto',
 				source: "<a>I've been inserted</a>",
-				target: documentNode
-			}
+				target: documentNode,
+			},
 		]);
 	});
 
@@ -59,8 +59,8 @@ xxx(insert node <a>I've been inserted.</a> into /)
 			{
 				type: 'insertInto',
 				source: "<a>I've been inserted</a>",
-				target: documentNode
-			}
+				target: documentNode,
+			},
 		]);
 	});
 
@@ -86,8 +86,8 @@ xxx(insert node <a>I've been inserted.</a> into /)
 			{
 				type: 'insertInto',
 				source: "<a>I've been inserted</a>",
-				target: documentNode
-			}
+				target: documentNode,
+			},
 		]);
 	});
 
@@ -114,8 +114,8 @@ return $xxx(insert node <a>I've been inserted.</a> into /)
 			{
 				type: 'insertInto',
 				source: "<a>I've been inserted</a>",
-				target: documentNode
-			}
+				target: documentNode,
+			},
 		]);
 	});
 
@@ -188,8 +188,8 @@ test:xxx(/)
 			{
 				type: 'insertInto',
 				source: "<a>I've been inserted</a>",
-				target: documentNode
-			}
+				target: documentNode,
+			},
 		]);
 	});
 

@@ -8,7 +8,7 @@ describe('showStackTraceOnError', () => {
 		consoleErrorStub.restore();
 	});
 	before(() => {
-		consoleErrorStub = sinon.stub(console, 'error').callsFake(_message => {
+		consoleErrorStub = sinon.stub(console, 'error').callsFake((_message) => {
 			// No errors in the console :)
 		});
 	});
@@ -54,7 +54,7 @@ Error: XPST0008, The variable non-existing-map is not in scope.
 	it('shows a stack trace for a dynamic error in an updating expression', async () => {
 		try {
 			await evaluateUpdatingExpression('replace node /r with <r/>', null, null, null, {
-				debug: true
+				debug: true,
 			});
 		} catch (error) {
 			chai.assert.equal(
@@ -72,7 +72,7 @@ Error: XPDY0002: context is absent, it needs to be present to use paths.
 	it('shows a stack trace for a static error in an updating expression', async () => {
 		try {
 			await evaluateUpdatingExpression('replace node $node with <r/>', null, null, null, {
-				debug: true
+				debug: true,
 			});
 		} catch (error) {
 			chai.assert.equal(
@@ -179,13 +179,13 @@ Error: XPST0008, The variable map is not in scope.
 			end: {
 				column: 12,
 				line: 7,
-				offset: 41
+				offset: 41,
 			},
 			start: {
 				column: 1,
 				line: 7,
-				offset: 30
-			}
+				offset: 30,
+			},
 		};
 		try {
 			const lines = Array(10).fill('(::)');

@@ -24,14 +24,14 @@ describe('quantified expressions', () => {
 		it('allows usage of global variables inside the satisfies clause', () =>
 			chai.assert(
 				evaluateXPathToBoolean('every $x in true() satisfies $x = $y', documentNode, null, {
-					y: true
+					y: true,
 				})
 			));
 
 		it('overwrites global variables inside the satisfies clause', () =>
 			chai.assert(
 				evaluateXPathToBoolean('every $x in true() satisfies $x', documentNode, null, {
-					x: false
+					x: false,
 				})
 			));
 
@@ -98,14 +98,14 @@ describe('quantified expressions', () => {
 		it('allows usage of global variables inside the satisfies clause', () =>
 			chai.assert(
 				evaluateXPathToBoolean('some $x in true() satisfies $x = $y', documentNode, null, {
-					y: true
+					y: true,
 				})
 			));
 
 		it('overwrites global variables inside the satisfies clause', () =>
 			chai.assert(
 				evaluateXPathToBoolean('some $x in true() satisfies $x', documentNode, null, {
-					x: false
+					x: false,
 				})
 			));
 

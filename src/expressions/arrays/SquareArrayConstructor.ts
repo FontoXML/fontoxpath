@@ -10,11 +10,13 @@ class SquareArrayConstructor extends Expression {
 	constructor(members: Expression[]) {
 		super(
 			new Specificity({
-				[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1,
 			}),
 			members,
 			{
-				canBeStaticallyEvaluated: members.every(member => member.canBeStaticallyEvaluated)
+				canBeStaticallyEvaluated: members.every(
+					(member) => member.canBeStaticallyEvaluated
+				),
 			}
 		);
 
@@ -24,7 +26,7 @@ class SquareArrayConstructor extends Expression {
 	public evaluate(dynamicContext, executionParameters) {
 		return sequenceFactory.singleton(
 			new ArrayValue(
-				this._members.map(entry =>
+				this._members.map((entry) =>
 					createDoublyIterableSequence(
 						entry.evaluateMaybeStatically(dynamicContext, executionParameters)
 					)

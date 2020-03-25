@@ -27,7 +27,7 @@ class DynamicContext {
 		temporalContext: TemporalContext | undefined = {
 			currentDateTime: null,
 			implicitTimezone: null,
-			isInitialized: false
+			isInitialized: false,
 		}
 	) {
 		this._temporalContext = temporalContext;
@@ -62,7 +62,7 @@ class DynamicContext {
 					return notReady(value.promise);
 				}
 				return ready(this.scopeWithFocus(i++, value.value, contextSequence));
-			}
+			},
 		};
 	}
 
@@ -96,7 +96,7 @@ class DynamicContext {
 				contextItem,
 				contextItemIndex,
 				contextSequence: contextSequence || this.contextSequence,
-				variableBindings: this.variableBindings
+				variableBindings: this.variableBindings,
 			},
 			this._temporalContext
 		);
@@ -114,7 +114,7 @@ class DynamicContext {
 					Object.create(null),
 					this.variableBindings,
 					variableBindings
-				)
+				),
 			},
 			this._temporalContext
 		);

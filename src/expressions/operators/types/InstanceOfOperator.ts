@@ -32,7 +32,7 @@ class InstanceOfOperator extends Expression {
 			},
 			multiple: () => {
 				if (this._multiplicity === '+' || this._multiplicity === '*') {
-					return sequenceEvery(evaluatedExpression, value => {
+					return sequenceEvery(evaluatedExpression, (value) => {
 						const contextItem = sequenceFactory.singleton(value);
 						const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
 						return this._typeTest.evaluateMaybeStatically(
@@ -44,7 +44,7 @@ class InstanceOfOperator extends Expression {
 				return sequenceFactory.singletonFalseSequence();
 			},
 			singleton: () => {
-				return sequenceEvery(evaluatedExpression, value => {
+				return sequenceEvery(evaluatedExpression, (value) => {
 					const contextItem = sequenceFactory.singleton(value);
 					const scopedContext = dynamicContext.scopeWithFocus(0, value, contextItem);
 					return this._typeTest.evaluateMaybeStatically(
@@ -52,7 +52,7 @@ class InstanceOfOperator extends Expression {
 						executionParameters
 					);
 				});
-			}
+			},
 		});
 	}
 }

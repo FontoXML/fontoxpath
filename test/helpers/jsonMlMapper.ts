@@ -5,7 +5,7 @@ import {
 	Comment,
 	ProcessingInstruction,
 	Element,
-	DocumentType
+	DocumentType,
 } from 'slimdom';
 
 // Format used is JsonML (http://www.jsonml.org/)
@@ -135,7 +135,7 @@ export function serialize(node: Node): JsonML | string {
 			return (node as ProcessingInstruction).data
 				? [
 						'?' + (node as ProcessingInstruction).target,
-						(node as ProcessingInstruction).data
+						(node as ProcessingInstruction).data,
 				  ]
 				: ['?' + (node as ProcessingInstruction).target];
 		case Node.DOCUMENT_TYPE_NODE:
@@ -143,7 +143,7 @@ export function serialize(node: Node): JsonML | string {
 				'!DOCTYPE',
 				(node as DocumentType).name,
 				(node as DocumentType).publicId,
-				(node as DocumentType).systemId
+				(node as DocumentType).systemId,
 			];
 		default:
 			// Serialize element
@@ -175,5 +175,5 @@ export function serialize(node: Node): JsonML | string {
 export default {
 	parse,
 	parseNode,
-	serialize
+	serialize,
 };

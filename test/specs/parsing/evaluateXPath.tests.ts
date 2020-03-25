@@ -14,7 +14,7 @@ import {
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
-	getBucketForSelector
+	getBucketForSelector,
 } from 'fontoxpath';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
@@ -38,7 +38,7 @@ describe('evaluateXPath', () => {
 	it('Keeps maps maps', () =>
 		chai.assert.deepEqual(evaluateXPath('map{1:2,"a":"b"}', documentNode, domFacade), {
 			1: 2,
-			a: 'b'
+			a: 'b',
 		}));
 
 	it('returns the correct number of results', () => {
@@ -177,7 +177,7 @@ describe('evaluateXPath', () => {
 		it('Stringifies numeric types', () =>
 			chai.assert.deepEqual(evaluateXPathToStrings('(42, 42)', documentNode, domFacade), [
 				'42',
-				'42'
+				'42',
 			]));
 
 		it('returns an empty array when it resolves to the empty sequence', () =>
@@ -210,8 +210,8 @@ describe('evaluateXPath', () => {
 				[
 					'someElement',
 					{
-						someAttribute: 'someValue'
-					}
+						someAttribute: 'someValue',
+					},
 				],
 				documentNode
 			);
@@ -233,14 +233,14 @@ describe('evaluateXPath', () => {
 	describe('toNodes', () => {
 		it('Keeps nodes nodes', () =>
 			chai.assert.deepEqual(evaluateXPathToNodes('.', documentNode, domFacade), [
-				documentNode
+				documentNode,
 			]));
 
 		it('Returns all nodes', () =>
 			chai.assert.deepEqual(evaluateXPathToNodes('(., ., .)', documentNode, domFacade), [
 				documentNode,
 				documentNode,
-				documentNode
+				documentNode,
 			]));
 
 		it('Returns null when the xpath resolves to the empty sequence', () =>
@@ -255,8 +255,8 @@ describe('evaluateXPath', () => {
 				[
 					'someElement',
 					{
-						someAttribute: 'someValue'
-					}
+						someAttribute: 'someValue',
+					},
 				],
 				documentNode
 			);
@@ -419,7 +419,7 @@ describe('evaluateXPath', () => {
 				createProcessingInstruction: sinon
 					.spy(slimdomDocument, 'createProcessingInstruction')
 					.bind(slimdomDocument),
-				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument)
+				createTextNode: sinon.spy(slimdomDocument, 'createTextNode').bind(slimdomDocument),
 			};
 
 			evaluateXPathToBoolean(
@@ -491,7 +491,7 @@ describe('evaluateXPath', () => {
 		it('Does not error when passed a non-node with a nodetype but without the constructor functions', () => {
 			chai.assert.doesNotThrow(() =>
 				evaluateXPathToBoolean('true()', { nodeType: 1 }, null, null, {
-					language: evaluateXPath.XQUERY_3_1_LANGUAGE
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 				})
 			);
 		});

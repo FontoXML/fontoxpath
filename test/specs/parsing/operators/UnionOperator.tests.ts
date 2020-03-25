@@ -23,7 +23,7 @@ describe('union', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode']], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('(//someNode|//someChildNode)', documentNode), [
 			documentNode.firstChild,
-			documentNode.firstChild.firstChild
+			documentNode.firstChild.firstChild,
 		]);
 	});
 
@@ -50,7 +50,7 @@ describe('union', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode']], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('(//* | //*)', documentNode), [
 			documentNode.firstChild,
-			documentNode.firstChild.firstChild
+			documentNode.firstChild.firstChild,
 		]);
 	});
 

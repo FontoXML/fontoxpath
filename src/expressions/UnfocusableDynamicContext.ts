@@ -9,7 +9,7 @@ export default class UnfocusableDynamicContext extends DynamicContext {
 			contextItem: null,
 			contextItemIndex: -1,
 			contextSequence: sequenceFactory.empty(),
-			variableBindings: bindings.variableBindings
+			variableBindings: bindings.variableBindings,
 		});
 	}
 }

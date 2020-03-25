@@ -11,7 +11,7 @@ import Expression from '../expressions/Expression';
 
 import {
 	getStaticCompilationResultFromCache,
-	storeStaticCompilationResultInCache
+	storeStaticCompilationResultInCache,
 } from './compiledExpressionCache';
 
 export default function staticallyCompileXPath(
@@ -75,7 +75,7 @@ export default function staticallyCompileXPath(
 	}
 
 	if (fromCache === null || fromCache.requiresStaticCompilation) {
-		Object.keys(moduleImports).forEach(modulePrefix => {
+		Object.keys(moduleImports).forEach((modulePrefix) => {
 			const moduleURI = moduleImports[modulePrefix];
 			enhanceStaticContextWithModule(rootStaticContext, moduleURI);
 

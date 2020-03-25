@@ -1,7 +1,7 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const arrayGet: FunctionDefinitionType = function(
+const arrayGet: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,

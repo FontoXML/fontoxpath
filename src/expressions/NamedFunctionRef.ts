@@ -26,11 +26,11 @@ class NamedFunctionRef extends Expression {
 	) {
 		super(
 			new Specificity({
-				[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1,
 			}),
 			[],
 			{
-				canBeStaticallyEvaluated: true
+				canBeStaticallyEvaluated: true,
 			}
 		);
 
@@ -48,7 +48,7 @@ class NamedFunctionRef extends Expression {
 			localName: this._functionProperties.localName,
 			namespaceURI: this._functionProperties.namespaceURI,
 			returnType: this._functionProperties.returnType,
-			value: this._functionProperties.callFunction
+			value: this._functionProperties.callFunction,
 		});
 		return sequenceFactory.singleton(functionItem);
 	}

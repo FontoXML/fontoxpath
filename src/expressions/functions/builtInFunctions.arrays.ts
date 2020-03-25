@@ -57,7 +57,7 @@ const arrayAppend: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([arraySequence], ([array]) => {
 		const newMembers = (array as ArrayValue).members.concat([
-			createDoublyIterableSequence(itemSequence)
+			createDoublyIterableSequence(itemSequence),
 		]);
 		return sequenceFactory.singleton(new ArrayValue(newMembers));
 	});
@@ -106,9 +106,9 @@ const arrayRemove: FunctionDefinitionType = (
 	positionSequence
 ) => {
 	return zipSingleton([arraySequence], ([array]) =>
-		positionSequence.mapAll(allIndices => {
+		positionSequence.mapAll((allIndices) => {
 			const indicesToRemove = allIndices
-				.map(value => value.value)
+				.map((value) => value.value)
 				// Sort them in reverse order, to keep them stable
 				.sort((a, b) => b - a)
 				.filter((item, i, all) => all[i - 1] !== item);
@@ -165,7 +165,7 @@ const arrayJoin: FunctionDefinitionType = (
 	_staticContext,
 	arraySequence
 ) => {
-	return arraySequence.mapAll(allArrays => {
+	return arraySequence.mapAll((allArrays) => {
 		const newMembers = allArrays.reduce(
 			(joinedMembers, array) => joinedMembers.concat((array as ArrayValue).members),
 			[]
@@ -186,7 +186,7 @@ const arrayForEach: FunctionDefinitionType = (
 		if (itemFunctionValue.getArity() !== 1) {
 			throw errXPTY0004('The callback passed into array:for-each has a wrong arity.');
 		}
-		const newMembers = (array as ArrayValue).members.map(member => {
+		const newMembers = (array as ArrayValue).members.map((member) => {
 			return createDoublyIterableSequence(
 				itemFunctionValue.value.call(
 					undefined,
@@ -218,7 +218,7 @@ const arrayFilter: FunctionDefinitionType = (
 		if (itemFunctionValue.getArity() !== 1) {
 			throw errXPTY0004('The callback passed into array:filter has a wrong arity.');
 		}
-		const filterResultSequences: ISequence[] = (array as ArrayValue).members.map(member => {
+		const filterResultSequences: ISequence[] = (array as ArrayValue).members.map((member) => {
 			const castArgument = transformArgumentList(
 				itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
 				[member()],
@@ -257,10 +257,10 @@ const arrayFilter: FunctionDefinitionType = (
 				if (!allReady) {
 					return notReady(
 						Promise.all(
-							effectiveBooleanValues.map(filterResult =>
+							effectiveBooleanValues.map((filterResult) =>
 								filterResult.ready ? Promise.resolve() : filterResult.promise
 							)
-						).then(_ => undefined)
+						).then((_) => undefined)
 					);
 				}
 				const newMembers = (array as ArrayValue).members.filter(
@@ -268,7 +268,7 @@ const arrayFilter: FunctionDefinitionType = (
 				);
 				done = true;
 				return ready(new ArrayValue(newMembers));
-			}
+			},
 		});
 	});
 };
@@ -400,18 +400,18 @@ const arraySort: FunctionDefinitionType = (
 	arraySequence
 ) => {
 	return zipSingleton([arraySequence], ([array]) => {
-		const atomizedMembers = (array as ArrayValue).members.map(createSequence =>
+		const atomizedMembers = (array as ArrayValue).members.map((createSequence) =>
 			atomize(createSequence(), executionParameters)
 		);
 
-		return zipSingleton(atomizedMembers, atomizeditems => {
+		return zipSingleton(atomizedMembers, (atomizeditems) => {
 			const permutations = (array as ArrayValue).members
 				.map((_, i) => i)
 				.sort((indexA, indexB) =>
 					atomizeditems[indexA].value > atomizeditems[indexB].value ? 1 : -1
 				);
 			return sequenceFactory.singleton(
-				new ArrayValue(permutations.map(i => (array as ArrayValue).members[i]))
+				new ArrayValue(permutations.map((i) => (array as ArrayValue).members[i]))
 			);
 		});
 	});
@@ -423,12 +423,12 @@ const arrayFlatten: FunctionDefinitionType = (
 	_staticContext,
 	itemSequence
 ) => {
-	return itemSequence.mapAll(items =>
+	return itemSequence.mapAll((items) =>
 		items.reduce(function flattenitem(flatteneditems, item) {
 			if (isSubtypeOf(item.type, 'array(*)')) {
 				return (item as ArrayValue).members.reduce(
 					(flatteneditemsOfMember, member) =>
-						member().mapAll(allValues =>
+						member().mapAll((allValues) =>
 							allValues.reduce(flattenitem, flatteneditemsOfMember)
 						),
 					flatteneditems
@@ -446,7 +446,7 @@ export default {
 			localName: 'size',
 			argumentTypes: ['array(*)'],
 			returnType: 'xs:integer',
-			callFunction: arraySize
+			callFunction: arraySize,
 		},
 
 		{
@@ -454,7 +454,7 @@ export default {
 			localName: 'get',
 			argumentTypes: ['array(*)', 'xs:integer'],
 			returnType: 'item()*',
-			callFunction: arrayGet
+			callFunction: arrayGet,
 		},
 
 		{
@@ -462,7 +462,7 @@ export default {
 			localName: 'put',
 			argumentTypes: ['array(*)', 'xs:integer', 'item()*'],
 			returnType: 'array(*)',
-			callFunction: arrayPut
+			callFunction: arrayPut,
 		},
 
 		{
@@ -470,7 +470,7 @@ export default {
 			localName: 'append',
 			argumentTypes: ['array(*)', 'item()*'],
 			returnType: 'array(*)',
-			callFunction: arrayAppend
+			callFunction: arrayAppend,
 		},
 
 		{
@@ -478,7 +478,7 @@ export default {
 			localName: 'subarray',
 			argumentTypes: ['array(*)', 'xs:integer', 'xs:integer'],
 			returnType: 'array(*)',
-			callFunction: arraySubarray
+			callFunction: arraySubarray,
 		},
 
 		{
@@ -507,7 +507,7 @@ export default {
 					startSequence,
 					lengthSequence
 				);
-			}
+			},
 		},
 
 		{
@@ -515,7 +515,7 @@ export default {
 			localName: 'remove',
 			argumentTypes: ['array(*)', 'xs:integer*'],
 			returnType: 'array(*)',
-			callFunction: arrayRemove
+			callFunction: arrayRemove,
 		},
 
 		{
@@ -523,7 +523,7 @@ export default {
 			localName: 'insert-before',
 			argumentTypes: ['array(*)', 'xs:integer', 'item()*'],
 			returnType: 'array(*)',
-			callFunction: arrayInsertBefore
+			callFunction: arrayInsertBefore,
 		},
 
 		{
@@ -539,7 +539,7 @@ export default {
 					arraySequence,
 					sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
 				);
-			}
+			},
 		},
 
 		{
@@ -555,7 +555,7 @@ export default {
 					arraySequence,
 					sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
 				);
-			}
+			},
 		},
 
 		{
@@ -563,7 +563,7 @@ export default {
 			localName: 'reverse',
 			argumentTypes: ['array(*)'],
 			returnType: 'array(*)',
-			callFunction: arrayReverse
+			callFunction: arrayReverse,
 		},
 
 		{
@@ -571,7 +571,7 @@ export default {
 			localName: 'join',
 			argumentTypes: ['array(*)*'],
 			returnType: 'array(*)',
-			callFunction: arrayJoin
+			callFunction: arrayJoin,
 		},
 
 		{
@@ -581,7 +581,7 @@ export default {
 			// argumentTypes: ['array(*)', '(item()*) as item()*)]
 			argumentTypes: ['array(*)', 'function(*)'],
 			returnType: 'array(*)',
-			callFunction: arrayForEach
+			callFunction: arrayForEach,
 		},
 
 		{
@@ -591,7 +591,7 @@ export default {
 			// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
 			argumentTypes: ['array(*)', 'function(*)'],
 			returnType: 'array(*)',
-			callFunction: arrayFilter
+			callFunction: arrayFilter,
 		},
 
 		{
@@ -601,7 +601,7 @@ export default {
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 			argumentTypes: ['array(*)', 'item()*', 'function(*)'],
 			returnType: 'item()*',
-			callFunction: arrayFoldLeft
+			callFunction: arrayFoldLeft,
 		},
 
 		{
@@ -611,7 +611,7 @@ export default {
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 			argumentTypes: ['array(*)', 'item()*', 'function(*)'],
 			returnType: 'item()*',
-			callFunction: arrayFoldRight
+			callFunction: arrayFoldRight,
 		},
 
 		{
@@ -621,7 +621,7 @@ export default {
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 			argumentTypes: ['array(*)', 'array(*)', 'function(*)'],
 			returnType: 'array(*)',
-			callFunction: arrayForEachPair
+			callFunction: arrayForEachPair,
 		},
 
 		{
@@ -629,7 +629,7 @@ export default {
 			localName: 'sort',
 			argumentTypes: ['array(*)'],
 			returnType: 'array(*)',
-			callFunction: arraySort
+			callFunction: arraySort,
 		},
 
 		{
@@ -637,8 +637,8 @@ export default {
 			localName: 'flatten',
 			argumentTypes: ['item()*'],
 			returnType: 'item()*',
-			callFunction: arrayFlatten
-		}
+			callFunction: arrayFlatten,
+		},
 	],
 	s: {
 		append: arrayAppend,
@@ -656,6 +656,6 @@ export default {
 		reverse: arrayReverse,
 		size: arraySize,
 		sort: arraySort,
-		subArray: arraySubarray
-	}
+		subArray: arraySubarray,
+	},
 };

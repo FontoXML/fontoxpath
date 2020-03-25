@@ -22,7 +22,7 @@ import { Node } from '../types/Types';
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
 // bootstrap builtin functions
-builtInFunctions.forEach(builtInFunction => {
+builtInFunctions.forEach((builtInFunction) => {
 	registerFunction(
 		builtInFunction.namespaceURI,
 		builtInFunction.localName,
@@ -34,9 +34,9 @@ builtInFunctions.forEach(builtInFunction => {
 
 function createDefaultNamespaceResolver(contextItem: any): (s: string) => string {
 	if (!contextItem || typeof contextItem !== 'object' || !('lookupNamespaceURI' in contextItem)) {
-		return _prefix => null;
+		return (_prefix) => null;
 	}
-	return prefix => (contextItem as Node)['lookupNamespaceURI'](prefix || null);
+	return (prefix) => (contextItem as Node)['lookupNamespaceURI'](prefix || null);
 }
 
 function normalizeEndOfLines(xpathString: string) {
@@ -71,7 +71,7 @@ export default function buildEvaluationContext(
 			logger: externalOptions['logger'] || { trace: console.log.bind(console) },
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
-			nodesFactory: externalOptions['nodesFactory']
+			nodesFactory: externalOptions['nodesFactory'],
 		};
 	} else {
 		internalOptions = {
@@ -79,7 +79,7 @@ export default function buildEvaluationContext(
 			logger: { trace: console.log.bind(console) },
 			moduleImports: {},
 			namespaceResolver: null,
-			nodesFactory: null
+			nodesFactory: null,
 		};
 	}
 	const wrappedDomFacade: IWrappingDomFacade = new DomFacade(
@@ -134,7 +134,7 @@ export default function buildEvaluationContext(
 		contextItem: contextSequence.first(),
 		contextItemIndex: 0,
 		contextSequence,
-		variableBindings
+		variableBindings,
 	});
 
 	const executionParameters = new ExecutionParameters(
@@ -148,6 +148,6 @@ export default function buildEvaluationContext(
 	return {
 		dynamicContext,
 		executionParameters,
-		expression: expressionAndStaticContext.expression
+		expression: expressionAndStaticContext.expression,
 	};
 }

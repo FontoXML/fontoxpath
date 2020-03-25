@@ -17,8 +17,8 @@ describe('argumentListToString()', () => {
 		var argumentList = [
 			sequenceFactory.create([
 				{ type: 'xs:anyAtomicType', value: null },
-				{ type: 'xs:anyAtomicType', value: null }
-			])
+				{ type: 'xs:anyAtomicType', value: null },
+			]),
 		];
 		chai.assert.equal(argumentListToString(argumentList), 'xs:anyAtomicType+');
 	});
@@ -29,8 +29,8 @@ describe('argumentListToString()', () => {
 			sequenceFactory.create([{ type: 'xs:anyAtomicType', value: null }]),
 			sequenceFactory.create([
 				{ type: 'xs:anyAtomicType', value: null },
-				{ type: 'xs:anyAtomicType', value: null }
-			])
+				{ type: 'xs:anyAtomicType', value: null },
+			]),
 		];
 		chai.assert.equal(
 			argumentListToString(argumentList),

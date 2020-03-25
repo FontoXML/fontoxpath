@@ -4,17 +4,17 @@ import CastResult from './CastResult';
 
 export default function castToDecimal(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:integer')) {
-		return value => ({
+		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value, 'xs:decimal')
+			value: createAtomicValue(value, 'xs:decimal'),
 		});
 	}
 	if (instanceOf('xs:float') || instanceOf('xs:double')) {
-		return value => {
+		return (value) => {
 			if (isNaN(value) || !isFinite(value)) {
 				return {
 					successful: false,
-					error: new Error(`FOCA0002: Can not cast ${value} to xs:decimal`)
+					error: new Error(`FOCA0002: Can not cast ${value} to xs:decimal`),
 				};
 			}
 			if (Math.abs(value) > Number.MAX_VALUE) {
@@ -22,34 +22,34 @@ export default function castToDecimal(instanceOf: (string) => boolean): (Value) 
 					successful: false,
 					error: new Error(
 						`FOAR0002: Can not cast ${value} to xs:decimal, it is out of bounds for JavaScript numbers`
-					)
+					),
 				};
 			}
 			return {
 				successful: true,
-				value: createAtomicValue(value, 'xs:decimal')
+				value: createAtomicValue(value, 'xs:decimal'),
 			};
 		};
 	}
 	if (instanceOf('xs:boolean')) {
-		return value => ({
+		return (value) => ({
 			successful: true,
-			value: createAtomicValue(value ? 1 : 0, 'xs:decimal')
+			value: createAtomicValue(value ? 1 : 0, 'xs:decimal'),
 		});
 	}
 
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
-		return value => {
+		return (value) => {
 			const decimalValue = parseFloat(value);
 			if (!isNaN(decimalValue) || isFinite(decimalValue)) {
 				return {
 					successful: true,
-					value: createAtomicValue(decimalValue, 'xs:decimal')
+					value: createAtomicValue(decimalValue, 'xs:decimal'),
 				};
 			}
 			return {
 				successful: false,
-				error: new Error(`FORG0001: Can not cast ${value} to xs:decimal`)
+				error: new Error(`FORG0001: Can not cast ${value} to xs:decimal`),
 			};
 		};
 	}
@@ -58,6 +58,6 @@ export default function castToDecimal(instanceOf: (string) => boolean): (Value) 
 		successful: false,
 		error: new Error(
 			'XPTY0004: Casting not supported from given type to xs:decimal or any of its derived types.'
-		)
+		),
 	});
 }

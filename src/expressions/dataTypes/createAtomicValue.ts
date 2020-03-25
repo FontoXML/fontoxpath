@@ -22,7 +22,7 @@ export default function createAtomicValue(value: any, type: ValueType): AtomicVa
 	// }
 	return {
 		type,
-		value
+		value,
 	};
 }
 

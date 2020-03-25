@@ -2,7 +2,7 @@ import {
 	getPrimitiveTypeName,
 	normalizeWhitespace,
 	validatePattern,
-	validateRestrictions
+	validateRestrictions,
 } from '../typeHelpers';
 
 import isSubtypeOf from '../isSubtypeOf';
@@ -37,12 +37,12 @@ import CastResult from './CastResult';
 const TREAT_AS_PRIMITIVE = ['xs:integer', 'xs:dayTimeDuration', 'xs:yearMonthDuration'];
 
 function castToPrimitiveType(from: string, to: string): (AtomicValueDataType) => CastResult {
-	const instanceOf = type => isSubtypeOf(from, type);
+	const instanceOf = (type) => isSubtypeOf(from, type);
 
 	if (to === 'xs:error') {
 		return () => ({
 			successful: false,
-			error: new Error('FORG0001: Casting to xs:error is always invalid.')
+			error: new Error('FORG0001: Casting to xs:error is always invalid.'),
 		});
 	}
 
@@ -95,7 +95,7 @@ function castToPrimitiveType(from: string, to: string): (AtomicValueDataType) =>
 
 	return () => ({
 		successful: false,
-		error: new Error(`XPTY0004: Casting not supported from ${from} to ${to}.`)
+		error: new Error(`XPTY0004: Casting not supported from ${from} to ${to}.`),
 	});
 }
 
@@ -103,40 +103,40 @@ const precomputedCastFunctorsByTypeString = Object.create(null);
 
 function createCastingFunction(from, to) {
 	if (from === 'xs:untypedAtomic' && to === 'xs:string') {
-		return val => ({ successful: true, value: createAtomicValue(val, 'xs:string') });
+		return (val) => ({ successful: true, value: createAtomicValue(val, 'xs:string') });
 	}
 	if (to === 'xs:NOTATION') {
-		return _val => ({
+		return (_val) => ({
 			successful: false,
-			error: new Error('XPST0080: Casting to xs:NOTATION is not permitted.')
+			error: new Error('XPST0080: Casting to xs:NOTATION is not permitted.'),
 		});
 	}
 
 	if (to === 'xs:error') {
-		return _val => ({
+		return (_val) => ({
 			successful: false,
-			error: new Error('FORG0001: Casting to xs:error is not permitted.')
+			error: new Error('FORG0001: Casting to xs:error is not permitted.'),
 		});
 	}
 
 	if (from === 'xs:anySimpleType' || to === 'xs:anySimpleType') {
-		return _val => ({
+		return (_val) => ({
 			successful: false,
-			error: new Error('XPST0080: Casting from or to xs:anySimpleType is not permitted.')
+			error: new Error('XPST0080: Casting from or to xs:anySimpleType is not permitted.'),
 		});
 	}
 
 	if (from === 'xs:anyAtomicType' || to === 'xs:anyAtomicType') {
-		return _val => ({
+		return (_val) => ({
 			successful: false,
-			error: new Error('XPST0080: Casting from or to xs:anyAtomicType is not permitted.')
+			error: new Error('XPST0080: Casting from or to xs:anyAtomicType is not permitted.'),
 		});
 	}
 
 	if (isSubtypeOf(from, 'function(*)') && to === 'xs:string') {
-		return _val => ({
+		return (_val) => ({
 			successful: false,
-			error: new Error('FOTY0014: Casting from function item to xs:string is not permitted.')
+			error: new Error('FOTY0014: Casting from function item to xs:string is not permitted.'),
 		});
 	}
 
@@ -144,28 +144,28 @@ function createCastingFunction(from, to) {
 	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
 
 	if (!primitiveTo || !primitiveFrom) {
-		return _val => ({
+		return (_val) => ({
 			successful: false,
-			error: new Error(`XPST0081: Can not cast: type ${primitiveTo ? from : to} is unknown.`)
+			error: new Error(`XPST0081: Can not cast: type ${primitiveTo ? from : to} is unknown.`),
 		});
 	}
 	const converters = [];
 
 	if (primitiveFrom === 'xs:string' || primitiveFrom === 'xs:untypedAtomic') {
 		// We are dealing with string-like types. Check whitespace / pattern
-		converters.push(value => {
+		converters.push((value) => {
 			const strValue = normalizeWhitespace(value, to);
 			if (!validatePattern(strValue, to)) {
 				return {
 					successful: false,
 					error: new Error(
 						`FORG0001: Cannot cast ${value} to ${to}, pattern validation failed.`
-					)
+					),
 				};
 			}
 			return {
 				successful: true,
-				value: strValue
+				value: strValue,
 			};
 		});
 	}
@@ -173,52 +173,52 @@ function createCastingFunction(from, to) {
 	// Actually cast downwards
 	if (primitiveFrom !== primitiveTo) {
 		converters.push(castToPrimitiveType(primitiveFrom, primitiveTo));
-		converters.push(value => ({
+		converters.push((value) => ({
 			successful: true,
-			value: value.value
+			value: value.value,
 		}));
 	}
 	if (primitiveTo === 'xs:untypedAtomic' || primitiveTo === 'xs:string') {
-		converters.push(typedValue => {
+		converters.push((typedValue) => {
 			if (!validatePattern(typedValue, to)) {
 				return {
 					successful: false,
 					error: new Error(
 						`FORG0001: Cannot cast ${typedValue} to ${to}, pattern validation failed.`
-					)
+					),
 				};
 			}
 			return {
 				successful: true,
-				value: typedValue
+				value: typedValue,
 			};
 		});
 	}
-	converters.push(typedValue => {
+	converters.push((typedValue) => {
 		if (!validateRestrictions(typedValue, to)) {
 			return {
 				successful: false,
 				error: new Error(
 					`FORG0001: Cannot cast "${typedValue}" to ${to}, restriction validation failed.`
-				)
+				),
 			};
 		}
 		return {
 			successful: true,
-			value: typedValue
+			value: typedValue,
 		};
 	});
 
 	// assume we can just use the primitive datatype
-	converters.push(typedValue => ({
+	converters.push((typedValue) => ({
 		successful: true,
 		value: {
 			type: to,
-			value: typedValue
-		}
+			value: typedValue,
+		},
 	}));
 
-	return value => {
+	return (value) => {
 		let result = { successful: true, value };
 		for (let i = 0, l = converters.length; i < l; ++i) {
 			result = converters[i].call(undefined, result.value);

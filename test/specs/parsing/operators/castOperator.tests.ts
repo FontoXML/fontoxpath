@@ -6,7 +6,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
-	evaluateXPathToString
+	evaluateXPathToString,
 } from 'fontoxpath';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';

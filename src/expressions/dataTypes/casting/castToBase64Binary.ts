@@ -1,7 +1,7 @@
 import createAtomicValue from '../createAtomicValue';
 import CastResult from './CastResult';
 
-const createBase64BinaryValue = value => createAtomicValue(value, 'xs:base64Binary');
+const createBase64BinaryValue = (value) => createAtomicValue(value, 'xs:base64Binary');
 
 function hexToString(hex) {
 	let text = '';
@@ -16,21 +16,21 @@ declare var btoa: (s: string) => string;
 
 export default function castToBase64Binary(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:hexBinary')) {
-		return value => ({
+		return (value) => ({
 			successful: true,
-			value: createBase64BinaryValue(btoa(hexToString(value)))
+			value: createBase64BinaryValue(btoa(hexToString(value))),
 		});
 	}
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
-		return value => ({
+		return (value) => ({
 			successful: true,
-			value: createBase64BinaryValue(value)
+			value: createBase64BinaryValue(value),
 		});
 	}
 	return () => ({
 		error: new Error(
 			'XPTY0004: Casting not supported from given type to xs:base64Binary or any of its derived types.'
 		),
-		successful: false
+		successful: false,
 	});
 }

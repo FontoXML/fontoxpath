@@ -9,7 +9,7 @@ import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 export enum RESULT_ORDERINGS {
 	SORTED = 'sorted',
 	REVERSE_SORTED = 'reverse-sorted',
-	UNSORTED = 'unsorted'
+	UNSORTED = 'unsorted',
 }
 
 export type OptimizationOptions = {
@@ -38,7 +38,7 @@ abstract class Expression {
 			canBeStaticallyEvaluated: false,
 			peer: false,
 			resultOrder: RESULT_ORDERINGS.UNSORTED,
-			subtree: false
+			subtree: false,
 		},
 		canBeUpdating: boolean = false
 	) {
@@ -89,10 +89,12 @@ abstract class Expression {
 	}
 
 	public performStaticEvaluation(staticContext: StaticContext): void {
-		this._childExpressions.forEach(selector => selector.performStaticEvaluation(staticContext));
+		this._childExpressions.forEach((selector) =>
+			selector.performStaticEvaluation(staticContext)
+		);
 		if (
 			!this._canBeUpdating &&
-			this._childExpressions.some(childExpression => childExpression.isUpdating)
+			this._childExpressions.some((childExpression) => childExpression.isUpdating)
 		) {
 			throw errXUST0001();
 		}

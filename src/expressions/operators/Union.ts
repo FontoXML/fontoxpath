@@ -21,8 +21,8 @@ class Union extends Expression {
 		}, new Specificity({}));
 		super(maxSpecificity, expressions, {
 			canBeStaticallyEvaluated: expressions.every(
-				expression => expression.canBeStaticallyEvaluated
-			)
+				(expression) => expression.canBeStaticallyEvaluated
+			),
 		});
 
 		this._subExpressions = expressions;
@@ -30,11 +30,11 @@ class Union extends Expression {
 
 	public evaluate(dynamicContext, executionParameters) {
 		return concatSequences(
-			this._subExpressions.map(expression =>
+			this._subExpressions.map((expression) =>
 				expression.evaluateMaybeStatically(dynamicContext, executionParameters)
 			)
-		).mapAll(allValues => {
-			if (allValues.some(nodeValue => !isSubtypeOf(nodeValue.type, 'node()'))) {
+		).mapAll((allValues) => {
+			if (allValues.some((nodeValue) => !isSubtypeOf(nodeValue.type, 'node()'))) {
 				throw new Error('XPTY0004: The sequences to union are not of type node()*');
 			}
 			const sortedValues = sortNodeValues(executionParameters.domFacade, allValues);

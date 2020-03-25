@@ -3,7 +3,7 @@ import * as path from 'path';
 
 if (!fs.promises) {
 	(fs as any).promises = {
-		readFile: fs.readFileSync
+		readFile: fs.readFileSync,
 	};
 }
 

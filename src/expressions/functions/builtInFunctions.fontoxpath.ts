@@ -47,7 +47,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				delete variables['.'];
 
 				const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
-					prefix => staticContext.resolveNamespace(prefix),
+					(prefix) => staticContext.resolveNamespace(prefix),
 					Object.keys(variables).reduce((vars, varName) => {
 						vars[varName] = varName;
 						return vars;
@@ -64,12 +64,12 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				const queryBodyContents = astHelper.followPath(ast, [
 					'mainModule',
 					'queryBody',
-					'*'
+					'*',
 				]);
 
 				const selector = compileAstToExpression(queryBodyContents, {
 					allowUpdating: false,
-					allowXQuery: true
+					allowXQuery: true,
 				});
 
 				selector.performStaticEvaluation(innerStaticContext);
@@ -89,13 +89,13 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 							contextItem: null,
 							contextItemIndex: -1,
 							contextSequence: contextItemSequence,
-							variableBindings
+							variableBindings,
 					  }
 					: {
 							contextItem: contextItemSequence.first(),
 							contextItemIndex: 0,
 							contextSequence: contextItemSequence,
-							variableBindings
+							variableBindings,
 					  };
 
 				const innerDynamicContext = new DynamicContext(context);
@@ -103,7 +103,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				resultIterator = selector.evaluate(innerDynamicContext, executionParameters).value;
 			}
 			return resultIterator.next(IterationHint.NONE);
-		}
+		},
 	});
 };
 
@@ -127,7 +127,7 @@ const fontoxpathSleep: FunctionDefinitionType = (
 				if (!time.ready) {
 					return notReady(readyPromise);
 				}
-				readyPromise = new Promise(resolve =>
+				readyPromise = new Promise((resolve) =>
 					setTimeout(() => {
 						doneWithSleep = true;
 						resolve();
@@ -138,7 +138,7 @@ const fontoxpathSleep: FunctionDefinitionType = (
 				return notReady(readyPromise);
 			}
 			return valueIterator.next(hint);
-		}
+		},
 	});
 };
 
@@ -175,9 +175,9 @@ const fontoxpathFetch: FunctionDefinitionType = (
 				}
 
 				readyPromise = fetch(urlValue.value.value)
-					.then(response => response.text())
-					.then(text => new DOMParser().parseFromString(text, 'application/xml'))
-					.then(doc => {
+					.then((response) => response.text())
+					.then((text) => new DOMParser().parseFromString(text, 'application/xml'))
+					.then((doc) => {
 						doneWithFetch = true;
 						result = doc;
 					});
@@ -190,7 +190,7 @@ const fontoxpathFetch: FunctionDefinitionType = (
 				return ready(createNodeValue(result));
 			}
 			return DONE_TOKEN;
-		}
+		},
 	});
 };
 
@@ -201,42 +201,42 @@ export default {
 			callFunction: fontoxpathEvaluate,
 			localName: 'evaluate',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 		{
 			argumentTypes: ['item()*', 'xs:numeric'],
 			callFunction: fontoxpathSleep,
 			localName: 'sleep',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 		{
 			argumentTypes: ['item()*'],
 			callFunction: fontoxpathSleep,
 			localName: 'sleep',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 		{
 			argumentTypes: ['xs:string', 'map(*)'],
 			callFunction: fontoxpathFetch,
 			localName: 'fetch',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 		{
 			argumentTypes: ['xs:string'],
 			callFunction: fontoxpathFetch,
 			localName: 'fetch',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 		{
 			argumentTypes: [],
 			callFunction: fontoxpathVersion,
 			localName: 'version',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'xs:string'
-		}
-	]
+			returnType: 'xs:string',
+		},
+	],
 };

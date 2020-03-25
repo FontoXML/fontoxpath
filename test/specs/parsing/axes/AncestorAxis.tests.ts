@@ -7,7 +7,7 @@ import {
 	evaluateXPathToStrings,
 	getBucketForSelector,
 	getBucketsForNode,
-	IDomFacade
+	IDomFacade,
 } from 'fontoxpath';
 
 let documentNode;
@@ -54,7 +54,7 @@ describe('ancestor', () => {
 			getParentNode: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(bucket, expectedBucket);
 				return null;
-			}
+			},
 		} as any;
 
 		evaluateXPathToNodes('ancestor::parentElement', childNode, testDomFacade);

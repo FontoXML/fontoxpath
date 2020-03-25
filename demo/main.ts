@@ -37,7 +37,7 @@ function serializeAsJsonMl(node: Node): any[] | string {
 			return (node as ProcessingInstruction).data
 				? [
 						'?' + (node as ProcessingInstruction).target,
-						(node as ProcessingInstruction).data
+						(node as ProcessingInstruction).data,
 				  ]
 				: ['?' + (node as ProcessingInstruction).target];
 		case Node.DOCUMENT_TYPE_NODE:
@@ -45,7 +45,7 @@ function serializeAsJsonMl(node: Node): any[] | string {
 				'!DOCTYPE',
 				(node as DocumentType).name,
 				(node as DocumentType).publicId,
-				(node as DocumentType).systemId
+				(node as DocumentType).systemId,
 			];
 		default:
 			// Serialize element
@@ -76,9 +76,7 @@ function serializeAsJsonMl(node: Node): any[] | string {
 }
 
 function stringifyJsonMl(what: any, indent: number, n: number) {
-	const filler = Array(indent)
-		.fill(' ')
-		.join('');
+	const filler = Array(indent).fill(' ').join('');
 	switch (typeof what) {
 		case 'object': {
 			if (Array.isArray(what)) {
@@ -91,7 +89,7 @@ function stringifyJsonMl(what: any, indent: number, n: number) {
 				console.warn('Attributes at the wrong place!!!');
 			}
 			return Object.keys(what)
-				.map(k => `${filler}⤷${k}: ${what[k] === null ? 'null' : `"${what[k]}"`}`)
+				.map((k) => `${filler}⤷${k}: ${what[k] === null ? 'null' : `"${what[k]}"`}`)
 				.join('\n');
 		}
 		default: {
@@ -107,7 +105,7 @@ function indentXml(document: Document): string {
 	let depth = 0;
 	const elements = document.documentElement.outerHTML.split(/></g);
 	const prettiedXml = [];
-	elements.forEach(element => {
+	elements.forEach((element) => {
 		let indent: string;
 		let row = '<' + element + '>';
 		if (element === elements[0]) {
@@ -117,9 +115,7 @@ function indentXml(document: Document): string {
 		}
 
 		if (row.substring(row.length - 2) === '/>') {
-			indent = Array(depth)
-				.fill('  ')
-				.join('');
+			indent = Array(depth).fill('  ').join('');
 		} else {
 			switch (row.search(/<\//g)) {
 				case -1:
@@ -133,9 +129,7 @@ function indentXml(document: Document): string {
 						.join('');
 					break;
 				default:
-					indent = Array(depth)
-						.fill('  ')
-						.join('');
+					indent = Array(depth).fill('  ').join('');
 					break;
 			}
 		}
@@ -170,11 +164,11 @@ async function runUpdatingXQuery(script: string) {
 		debug: true,
 		disableCache: true,
 		logger: {
-			trace: m => {
+			trace: (m) => {
 				traceOutput.textContent = m;
 				console.log(m);
-			}
-		}
+			},
+		},
 	});
 
 	resultText.innerText = JSON.stringify(result, jsonXmlReplacer, '  ');
@@ -191,11 +185,11 @@ async function runNormalXPath(script: string, asXQuery: boolean) {
 			? fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE
 			: fontoxpath.evaluateXPath.XPATH_3_1_LANGUAGE,
 		logger: {
-			trace: m => {
+			trace: (m) => {
 				traceOutput.textContent = m;
 				console.log(m);
-			}
-		}
+			},
+		},
 	});
 
 	for (let item = await it.next(); !item.done; item = await it.next()) {
@@ -222,7 +216,7 @@ async function rerunXPath() {
 			xpath,
 			{
 				language: fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE,
-				debug: false
+				debug: false,
 			},
 			document
 		);
@@ -264,7 +258,7 @@ async function rerunXPath() {
 		: fontoxpath.getBucketForSelector(xpath);
 }
 
-xmlSource.oninput = _evt => {
+xmlSource.oninput = (_evt) => {
 	xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
 	setCookie();
 	if (fontoxpath.evaluateXPathToBoolean('//parseerror', xmlDoc, fontoxpath.domFacade)) {
@@ -275,7 +269,7 @@ xmlSource.oninput = _evt => {
 	rerunXPath();
 };
 
-xpathField.oninput = _evt => {
+xpathField.oninput = (_evt) => {
 	setCookie();
 	try {
 		xmlDoc = domParser.parseFromString(xmlSource.innerText, 'text/xml');
@@ -287,7 +281,7 @@ xpathField.oninput = _evt => {
 };
 
 function loadFromCookie() {
-	const cookie = document.cookie.split(/;\s/g).find(c => c.startsWith('xpath-editor-state='));
+	const cookie = document.cookie.split(/;\s/g).find((c) => c.startsWith('xpath-editor-state='));
 
 	if (!cookie) {
 		xmlSource.innerText = `<xml>

@@ -26,7 +26,7 @@ class LetExpression extends PossiblyUpdatingExpression {
 				canBeStaticallyEvaluated: false,
 				peer: returnExpression.peer,
 				resultOrder: returnExpression.expectedResultOrder,
-				subtree: returnExpression.subtree
+				subtree: returnExpression.subtree,
 			}
 		);
 
@@ -52,7 +52,7 @@ class LetExpression extends PossiblyUpdatingExpression {
 		const scopedContext = dynamicContext.scopeWithVariableBindings({
 			[this._variableBinding]: createDoublyIterableSequence(
 				createBindingSequence(dynamicContext)
-			)
+			),
 		});
 
 		return createReturnExpression(scopedContext);

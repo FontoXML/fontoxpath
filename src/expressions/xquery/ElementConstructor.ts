@@ -32,7 +32,7 @@ class ElementConstructor extends Expression {
 	) {
 		super(new Specificity({}), contents.concat(attributes).concat((name as any).expr || []), {
 			canBeStaticallyEvaluated: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
 		});
 
 		if ((name as any).expr) {
@@ -86,7 +86,7 @@ class ElementConstructor extends Expression {
 				if (!attributePhaseDone) {
 					if (!attributesSequence) {
 						attributesSequence = concatSequences(
-							this._attributes.map(attr =>
+							this._attributes.map((attr) =>
 								attr.evaluateMaybeStatically(dynamicContext, executionParameters)
 							)
 						);
@@ -103,7 +103,7 @@ class ElementConstructor extends Expression {
 				if (!childNodesPhaseDone) {
 					if (!childNodesSequences) {
 						// Accumulate all children
-						childNodesSequences = this._contents.map(contentExpression =>
+						childNodesSequences = this._contents.map((contentExpression) =>
 							contentExpression.evaluateMaybeStatically(
 								dynamicContext,
 								executionParameters
@@ -160,13 +160,13 @@ class ElementConstructor extends Expression {
 				);
 
 				// Plonk all attribute on the element
-				attributeNodes.forEach(attr => {
+				attributeNodes.forEach((attr) => {
 					element.setAttributeNodeNS(attr.value);
 				});
 
 				// Plonk all childNodes, these are special though
 				const parsedContent = parseContent(allChildNodes, executionParameters, errXQTY0024);
-				parsedContent.attributes.forEach(attrNode => {
+				parsedContent.attributes.forEach((attrNode) => {
 					// The contents may include attributes, 'clone' them and set them on the element
 					if (element.hasAttributeNS(attrNode.namespaceURI, attrNode.localName)) {
 						throw errXQDY0025(attrNode.name);
@@ -179,7 +179,7 @@ class ElementConstructor extends Expression {
 						attrNode.value
 					);
 				});
-				parsedContent.contentNodes.forEach(childNode => {
+				parsedContent.contentNodes.forEach((childNode) => {
 					element.appendChild(childNode);
 				});
 
@@ -188,18 +188,18 @@ class ElementConstructor extends Expression {
 				done = true;
 
 				return ready(createNodeValue(element));
-			}
+			},
 		});
 	}
 
 	public performStaticEvaluation(staticContext) {
 		// Register namespace related things
 		staticContext.introduceScope();
-		Object.keys(this._namespacesInScope).forEach(prefix =>
+		Object.keys(this._namespacesInScope).forEach((prefix) =>
 			staticContext.registerNamespace(prefix, this._namespacesInScope[prefix])
 		);
 
-		this._childExpressions.forEach(subselector =>
+		this._childExpressions.forEach((subselector) =>
 			subselector.performStaticEvaluation(staticContext)
 		);
 

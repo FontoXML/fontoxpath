@@ -10,7 +10,7 @@ class SelfAxis extends Expression {
 			resultOrder: RESULT_ORDERINGS.SORTED,
 			subtree: true,
 			peer: true,
-			canBeStaticallyEvaluated: false
+			canBeStaticallyEvaluated: false,
 		});
 
 		this._selector = selector;

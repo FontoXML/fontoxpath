@@ -29,35 +29,35 @@ function createValidNumericType(type: string, transformedValue: number) {
 	return createAtomicValue(transformedValue, 'xs:decimal');
 }
 
-const fnAbs: FunctionDefinitionType = function(
+const fnAbs: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue =>
+	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value))
 	);
 };
 
-const fnCeiling: FunctionDefinitionType = function(
+const fnCeiling: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue =>
+	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value))
 	);
 };
 
-const fnFloor: FunctionDefinitionType = function(
+const fnFloor: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue =>
+	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.floor(onlyValue.value))
 	);
 };
@@ -135,7 +135,7 @@ function fnRound(
 			}
 
 			const originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(
-				function(type) {
+				function (type) {
 					return isSubtypeOf(item.type, type);
 				}
 			);
@@ -163,11 +163,11 @@ function fnRound(
 				case 'xs:integer':
 					return ready(createAtomicValue(roundedNumber, 'xs:integer'));
 			}
-		}
+		},
 	});
 }
 
-const fnNumber: FunctionDefinitionType = function(
+const fnNumber: FunctionDefinitionType = function (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
@@ -184,11 +184,11 @@ const fnNumber: FunctionDefinitionType = function(
 		},
 		multiple: () => {
 			throw new Error('fn:number may only be called with zero or one values');
-		}
+		},
 	});
 };
 
-const returnRandomItemFromSequence: FunctionDefinitionType = function(
+const returnRandomItemFromSequence: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -203,7 +203,7 @@ const returnRandomItemFromSequence: FunctionDefinitionType = function(
 	return sequenceFactory.singleton(sequenceValue[index]);
 };
 
-const fnRandomNumberGenerator: FunctionDefinitionType = function(
+const fnRandomNumberGenerator: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -215,7 +215,7 @@ const fnRandomNumberGenerator: FunctionDefinitionType = function(
 			{
 				key: createAtomicValue('number', 'xs:string'),
 				value: () =>
-					sequenceFactory.singleton(createAtomicValue(Math.random(), 'xs:double'))
+					sequenceFactory.singleton(createAtomicValue(Math.random(), 'xs:double')),
 			},
 			{
 				key: createAtomicValue('next', 'xs:string'),
@@ -228,9 +228,9 @@ const fnRandomNumberGenerator: FunctionDefinitionType = function(
 							namespaceURI: '',
 							argumentTypes: [],
 							arity: 0,
-							returnType: { type: 'map(*)', occurrence: null }
+							returnType: { type: 'map(*)', occurrence: null },
 						})
-					)
+					),
 			},
 			{
 				key: createAtomicValue('permute', 'xs:string'),
@@ -243,10 +243,10 @@ const fnRandomNumberGenerator: FunctionDefinitionType = function(
 							namespaceURI: '',
 							argumentTypes: [{ type: 'item()', occurrence: '*' }],
 							arity: 1,
-							returnType: { type: 'item()', occurrence: '*' }
+							returnType: { type: 'item()', occurrence: '*' },
 						})
-					)
-			}
+					),
+			},
 		])
 	);
 };
@@ -258,7 +258,7 @@ export default {
 			localName: 'abs',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
-			callFunction: fnAbs
+			callFunction: fnAbs,
 		},
 
 		{
@@ -266,7 +266,7 @@ export default {
 			localName: 'ceiling',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
-			callFunction: fnCeiling
+			callFunction: fnCeiling,
 		},
 
 		{
@@ -274,7 +274,7 @@ export default {
 			localName: 'floor',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
-			callFunction: fnFloor
+			callFunction: fnFloor,
 		},
 
 		{
@@ -282,7 +282,7 @@ export default {
 			localName: 'round',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
-			callFunction: fnRound.bind(null, false)
+			callFunction: fnRound.bind(null, false),
 		},
 
 		{
@@ -290,7 +290,7 @@ export default {
 			localName: 'round',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric?',
-			callFunction: fnRound.bind(null, false)
+			callFunction: fnRound.bind(null, false),
 		},
 
 		{
@@ -298,7 +298,7 @@ export default {
 			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?'],
 			returnType: 'xs:numeric?',
-			callFunction: fnRound.bind(null, true)
+			callFunction: fnRound.bind(null, true),
 		},
 
 		{
@@ -306,7 +306,7 @@ export default {
 			localName: 'round-half-to-even',
 			argumentTypes: ['xs:numeric?', 'xs:integer'],
 			returnType: 'xs:numeric?',
-			callFunction: fnRound.bind(null, true)
+			callFunction: fnRound.bind(null, true),
 		},
 
 		{
@@ -314,7 +314,7 @@ export default {
 			localName: 'number',
 			argumentTypes: ['xs:anyAtomicType?'],
 			returnType: 'xs:double',
-			callFunction: fnNumber
+			callFunction: fnNumber,
 		},
 
 		{
@@ -341,7 +341,7 @@ export default {
 					staticContext,
 					atomizedContextItem
 				);
-			}
+			},
 		},
 
 		{
@@ -349,7 +349,7 @@ export default {
 			localName: 'random-number-generator',
 			argumentTypes: [],
 			returnType: 'map(*)',
-			callFunction: fnRandomNumberGenerator
+			callFunction: fnRandomNumberGenerator,
 		},
 
 		{
@@ -359,11 +359,11 @@ export default {
 			returnType: 'map(*)',
 			callFunction: () => {
 				throw new Error('Not implemented: Specifying a seed is not supported');
-			}
-		}
+			},
+		},
 	],
 	functions: {
 		number: fnNumber,
-		round: fnRound
-	}
+		round: fnRound,
+	},
 };

@@ -59,7 +59,7 @@ describe('preceding-sibling', () => {
 			getPreviousSibling: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(bucket, expectedBucket);
 				return node.previousSibling;
-			}
+			},
 		} as any;
 
 		evaluateXPathToNodes(

@@ -4,7 +4,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToNodes,
 	parseScript,
-	Language
+	Language,
 } from 'fontoxpath';
 import { slimdom, sync } from 'slimdom-sax-parser';
 
@@ -31,7 +31,7 @@ export function buildTestCase(
 	skippableTests: string[],
 	onActualParsed: (actual: any) => void
 ): void {
-	it(testCase, async function() {
+	it(testCase, async function () {
 		let xQuery = await loadXQuery();
 		if (!xQuery) {
 			skippableTests.push(`${testCase},XQuery script could not be found`);
@@ -90,7 +90,7 @@ export function buildTestCase(
 		if (
 			!evaluateXPathToBoolean('deep-equal($expected, $actual)', null, null, {
 				expected,
-				actual
+				actual,
 			})
 		) {
 			try {

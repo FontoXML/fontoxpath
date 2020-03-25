@@ -7,7 +7,7 @@ import zipSingleton from '../util/zipSingleton';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnQName: FunctionDefinitionType = function(
+const fnQName: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -45,7 +45,7 @@ const fnQName: FunctionDefinitionType = function(
 	});
 };
 
-const fnPrefixFromQName: FunctionDefinitionType = function(
+const fnPrefixFromQName: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -63,25 +63,25 @@ const fnPrefixFromQName: FunctionDefinitionType = function(
 	});
 };
 
-const fnNamespaceURIFromQName: FunctionDefinitionType = function(
+const fnNamespaceURIFromQName: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
 ) {
-	return arg.map(qname => {
+	return arg.map((qname) => {
 		const qnameValue = qname.value;
 		return createAtomicValue(qnameValue.namespaceURI || '', 'xs:anyURI');
 	});
 };
 
-const fnLocalNameFromQName: FunctionDefinitionType = function(
+const fnLocalNameFromQName: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
 ) {
-	return arg.map(qname => {
+	return arg.map((qname) => {
 		const qnameValue = qname.value;
 		return createAtomicValue(qnameValue.localName, 'xs:NCName');
 	});
@@ -94,28 +94,28 @@ export default {
 			localName: 'QName',
 			argumentTypes: ['xs:string?', 'xs:string'],
 			returnType: 'xs:QName',
-			callFunction: fnQName
+			callFunction: fnQName,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'prefix-from-QName',
 			argumentTypes: ['xs:QName?'],
 			returnType: 'xs:NCName?',
-			callFunction: fnPrefixFromQName
+			callFunction: fnPrefixFromQName,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'local-name-from-QName',
 			argumentTypes: ['xs:QName?'],
 			returnType: 'xs:NCName?',
-			callFunction: fnLocalNameFromQName
+			callFunction: fnLocalNameFromQName,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'namespace-uri-from-QName',
 			argumentTypes: ['xs:QName?'],
 			returnType: 'xs:anyURI?',
-			callFunction: fnNamespaceURIFromQName
-		}
-	]
+			callFunction: fnNamespaceURIFromQName,
+		},
+	],
 };

@@ -21,7 +21,7 @@ export default class SingletonSequence implements ISequence {
 				}
 				hasPassed = true;
 				return ready(_onlyValue);
-			}
+			},
 		};
 		this._effectiveBooleanValue = null;
 	}

@@ -17,7 +17,7 @@ function generateAncestors(domFacade: IDomFacade, contextNode: Node, bucket: str
 			ancestor = previousAncestor && domFacade.getParentNode(previousAncestor, bucket);
 
 			return ready(createNodeValue(previousAncestor));
-		}
+		},
 	};
 }
 
@@ -33,7 +33,7 @@ class AncestorAxis extends Expression {
 			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
 			peer: false,
 			subtree: false,
-			canBeStaticallyEvaluated: false
+			canBeStaticallyEvaluated: false,
 		});
 
 		this._ancestorExpression = ancestorExpression;
@@ -60,7 +60,7 @@ class AncestorAxis extends Expression {
 					ancestorExpressionBucket
 				)
 			)
-			.filter(item => {
+			.filter((item) => {
 				return this._ancestorExpression.evaluateToBoolean(dynamicContext, item);
 			});
 	}

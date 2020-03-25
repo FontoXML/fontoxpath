@@ -7,7 +7,7 @@ export default function castToUntypedAtomic(
 	instanceOf: (string) => boolean
 ): (Value) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
-	return value => {
+	return (value) => {
 		const castResult = caster(value);
 		if (!castResult.successful) {
 			return castResult;
@@ -15,7 +15,7 @@ export default function castToUntypedAtomic(
 
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, 'xs:untypedAtomic')
+			value: createAtomicValue(castResult.value, 'xs:untypedAtomic'),
 		};
 	};
 }

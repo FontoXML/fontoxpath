@@ -13,9 +13,9 @@ const fnTrace: FunctionDefinitionType = (
 	arg,
 	label
 ) => {
-	return arg.mapAll(allItems => {
+	return arg.mapAll((allItems) => {
 		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
-			.map(value => castToType(value, 'xs:string'))
+			.map((value) => castToType(value, 'xs:string'))
 			.getAllValues();
 
 		let newMessage = '';
@@ -43,14 +43,14 @@ export default {
 			callFunction: fnTrace,
 			localName: 'trace',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
+			returnType: 'item()*',
 		},
 		{
 			argumentTypes: ['item()*', 'xs:string'],
 			callFunction: fnTrace,
 			localName: 'trace',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*'
-		}
-	]
+			returnType: 'item()*',
+		},
+	],
 };

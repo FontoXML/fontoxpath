@@ -13,14 +13,14 @@ describe('absolute paths', () => {
 	it('supports absolute paths', () => {
 		jsonMlMapper.parse(['someNode'], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('/someNode', documentNode), [
-			documentNode.documentElement
+			documentNode.documentElement,
 		]);
 	});
 
 	it('supports chaining from absolute paths', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode']], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('/someNode/someChildNode', documentNode), [
-			documentNode.documentElement.firstChild
+			documentNode.documentElement.firstChild,
 		]);
 	});
 
@@ -42,21 +42,21 @@ describe('absolute paths', () => {
 	it('allows / union', () => {
 		jsonMlMapper.parse(['union'], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('/ union', documentNode), [
-			documentNode.documentElement
+			documentNode.documentElement,
 		]);
 	});
 
 	it('allows // as root', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode']], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('//someChildNode', documentNode), [
-			documentNode.documentElement.firstChild
+			documentNode.documentElement.firstChild,
 		]);
 	});
 
 	it('targets descendants with //', () => {
 		jsonMlMapper.parse(['someNode', ['someChildNode', ['someDescendantNode']]], documentNode);
 		chai.assert.deepEqual(evaluateXPathToNodes('//someDescendantNode', documentNode), [
-			documentNode.documentElement.firstChild.firstChild
+			documentNode.documentElement.firstChild.firstChild,
 		]);
 	});
 });

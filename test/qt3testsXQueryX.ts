@@ -7,7 +7,7 @@ import testFs from 'test-helpers/testFs';
 
 function run() {
 	const skippableTests = getSkippedTests('failingXQueryXTestNames.csv');
-	const skippableTestNames = skippableTests.map(result => result.split(',')[0]);
+	const skippableTestNames = skippableTests.map((result) => result.split(',')[0]);
 
 	const baseDir = 'QT3TS';
 
@@ -57,14 +57,14 @@ function run() {
 		return queries && queries[testCase];
 	}
 
-	testFs.readdirSync(path.join(baseDir, 'xqueryx')).forEach(directory => {
+	testFs.readdirSync(path.join(baseDir, 'xqueryx')).forEach((directory) => {
 		const directoryPath = path.join(baseDir, 'xqueryx', directory);
 
 		if (!testFs.lstatSync(directoryPath).isDirectory()) {
 			return;
 		}
 
-		testFs.readdirSync(directoryPath).forEach(subDirectory => {
+		testFs.readdirSync(directoryPath).forEach((subDirectory) => {
 			const subDirectoryPath = path.join(directoryPath, subDirectory);
 			if (!testFs.lstatSync(subDirectoryPath).isDirectory()) {
 				throw new Error('Only sub directories are expected.');
@@ -72,10 +72,10 @@ function run() {
 
 			// Sub directories are the test name prefixed with "{parent directory}-"
 			const testName = subDirectory.substring(directory.length + 1);
-			describe(directory + '/' + testName, function() {
+			describe(directory + '/' + testName, function () {
 				// Tests are slow in CI
 				this.timeout(60000);
-				testFs.readdirSync(subDirectoryPath).forEach(testCase => {
+				testFs.readdirSync(subDirectoryPath).forEach((testCase) => {
 					const testCasePath = path.join(subDirectoryPath, testCase);
 					if (testFs.lstatSync(testCasePath).isDirectory()) {
 						throw new Error('Test cases should be files.');
@@ -93,7 +93,7 @@ function run() {
 						await tryGetXQuery(directory, testName, testCase);
 					const loadXQueryX = async () => await testFs.readFile(testCasePath);
 
-					buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, actual => {
+					buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, (actual) => {
 						actual.documentElement.setAttributeNS(
 							'http://www.w3.org/2001/XMLSchema-instance',
 							'xsi:schemaLocation',

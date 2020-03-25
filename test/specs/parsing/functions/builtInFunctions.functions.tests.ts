@@ -17,7 +17,7 @@ describe('functions over functions', () => {
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				),
 				'bcd'
@@ -35,7 +35,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -49,7 +49,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -65,7 +65,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -79,7 +79,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -93,7 +93,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -107,7 +107,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -121,7 +121,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -135,7 +135,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -151,7 +151,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -165,7 +165,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);
@@ -179,7 +179,7 @@ function-lookup(QName("ns", "myFunc"), 0) => exists()`,
 					null,
 					null,
 					{
-						language: evaluateXPath.XQUERY_3_1_LANGUAGE
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 					}
 				)
 			);

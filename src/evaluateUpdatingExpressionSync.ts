@@ -53,7 +53,7 @@ export default function evaluateUpdatingExpressionSync<
 				allowUpdating: true,
 				allowXQuery: true,
 				debug: !!options['debug'],
-				disableCache: !!options['disableCache']
+				disableCache: !!options['disableCache'],
 			}
 		);
 		dynamicContext = context.dynamicContext;
@@ -76,7 +76,7 @@ export default function evaluateUpdatingExpressionSync<
 				variables,
 				options.returnType as any,
 				{ ...options, ['language']: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE }
-			)
+			),
 		};
 	}
 

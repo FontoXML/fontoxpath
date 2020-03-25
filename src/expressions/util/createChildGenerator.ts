@@ -11,7 +11,7 @@ export default function createChildGenerator(
 		return {
 			next: () => {
 				return DONE_TOKEN;
-			}
+			},
 		};
 	}
 
@@ -24,6 +24,6 @@ export default function createChildGenerator(
 			const current = childNode;
 			childNode = domFacade.getNextSibling(childNode, bucket);
 			return ready(current);
-		}
+		},
 	};
 }

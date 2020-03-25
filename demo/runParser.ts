@@ -65,9 +65,7 @@ function parseNode(document, jsonml) {
 }
 
 function printJsonMl(what, indent, n) {
-	const filler = Array(indent)
-		.fill(' ')
-		.join('');
+	const filler = Array(indent).fill(' ').join('');
 	switch (typeof what) {
 		case 'object': {
 			if (Array.isArray(what)) {
@@ -80,7 +78,7 @@ function printJsonMl(what, indent, n) {
 				console.warn('Attributes at the wrong place!!!');
 			}
 			return Object.keys(what)
-				.map(k => `${filler}⤷${k}: ${what[k] === null ? 'null' : `"${what[k]}"`}`)
+				.map((k) => `${filler}⤷${k}: ${what[k] === null ? 'null' : `"${what[k]}"`}`)
 				.join('\n');
 		}
 		default: {
@@ -96,7 +94,7 @@ function printXml(document) {
 	let depth = 0;
 	const elements = document.documentElement.outerHTML.split(/></g);
 	const prettiedXml = [];
-	elements.forEach(element => {
+	elements.forEach((element) => {
 		let indent;
 		let row = '<' + element + '>';
 		if (element === elements[0]) {
@@ -106,9 +104,7 @@ function printXml(document) {
 		}
 
 		if (row.substring(row.length - 2) === '/>') {
-			indent = Array(depth)
-				.fill('  ')
-				.join('');
+			indent = Array(depth).fill('  ').join('');
 		} else {
 			switch (row.search(/<\//g)) {
 				case -1:
@@ -122,9 +118,7 @@ function printXml(document) {
 						.join('');
 					break;
 				default:
-					indent = Array(depth)
-						.fill('  ')
-						.join('');
+					indent = Array(depth).fill('  ').join('');
 					break;
 			}
 		}

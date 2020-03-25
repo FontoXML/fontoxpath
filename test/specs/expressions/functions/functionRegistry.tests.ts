@@ -4,16 +4,16 @@ import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry'
 
 describe('functionRegistry.getFunctionByArity', () => {
 	before(() => {
-		registerCustomXPathFunction('fonto:functionName', [], 'xs:boolean', function() {});
+		registerCustomXPathFunction('fonto:functionName', [], 'xs:boolean', function () {});
 
 		registerCustomXPathFunction(
 			'fonto:functionName',
 			['xs:boolean'],
 			'xs:boolean',
-			function() {}
+			function () {}
 		);
 
-		registerCustomXPathFunction('fonto:otherFunctionName', [], 'xs:boolean', function() {});
+		registerCustomXPathFunction('fonto:otherFunctionName', [], 'xs:boolean', function () {});
 	});
 
 	it('return null if a custom function cannot be found', () => {

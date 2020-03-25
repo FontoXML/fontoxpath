@@ -42,7 +42,7 @@ describe('evaluateUpdatingExpression', () => {
 		setData: (node, data) => {
 			setDataCalled = true;
 			return null;
-		}
+		},
 	};
 
 	const stubbedNodesFactory = {
@@ -51,12 +51,12 @@ describe('evaluateUpdatingExpression', () => {
 			return documentNode.createAttributeNS(namespaceURI, localName);
 		},
 
-		createCDATASection: contents => {
+		createCDATASection: (contents) => {
 			createCDATASectionCalled = true;
 			return documentNode.createCDATASection(contents);
 		},
 
-		createComment: contents => {
+		createComment: (contents) => {
 			createCommentCalled = true;
 			return documentNode.createComment(contents);
 		},
@@ -72,10 +72,10 @@ describe('evaluateUpdatingExpression', () => {
 			createProcessingInstructionCalled = true;
 			return documentNode.createProcessingInstruction(target, data);
 		},
-		createTextNode: data => {
+		createTextNode: (data) => {
 			createTextNodeCalled = true;
 			return documentNode.createTextNode(data);
-		}
+		},
 	};
 
 	beforeEach(() => {
@@ -145,11 +145,11 @@ describe('evaluateUpdatingExpression', () => {
 			null,
 			null,
 			{
-				doc: documentNode
+				doc: documentNode,
 			},
 			{
 				documentWriter: stubbedDocumentWriter,
-				nodesFactory: stubbedNodesFactory
+				nodesFactory: stubbedNodesFactory,
 			}
 		);
 
@@ -189,11 +189,11 @@ describe('evaluateUpdatingExpression', () => {
 			null,
 			null,
 			{
-				doc: documentNode
+				doc: documentNode,
 			},
 			{
 				documentWriter: stubbedDocumentWriter,
-				nodesFactory: stubbedNodesFactory
+				nodesFactory: stubbedNodesFactory,
 			}
 		);
 
@@ -229,11 +229,11 @@ describe('evaluateUpdatingExpression', () => {
 			null,
 			null,
 			{
-				doc: documentNode
+				doc: documentNode,
 			},
 			{
 				documentWriter: stubbedDocumentWriter,
-				nodesFactory: stubbedNodesFactory
+				nodesFactory: stubbedNodesFactory,
 			}
 		);
 
@@ -267,11 +267,11 @@ describe('evaluateUpdatingExpression', () => {
 			null,
 			null,
 			{
-				doc: documentNode
+				doc: documentNode,
 			},
 			{
 				documentWriter: stubbedDocumentWriter,
-				nodesFactory: stubbedNodesFactory
+				nodesFactory: stubbedNodesFactory,
 			}
 		);
 

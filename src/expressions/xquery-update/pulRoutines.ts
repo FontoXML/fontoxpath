@@ -14,7 +14,7 @@ import {
 	rename,
 	replaceElementContent,
 	replaceNode,
-	replaceValue
+	replaceValue,
 } from './applyPulPrimitives';
 import { IPendingUpdate } from './IPendingUpdate';
 import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';
@@ -44,8 +44,8 @@ export const applyUpdates = (
 	// 2. The semantics of all update primitives on $pul, other than upd:put primitives, are made effective in the following order:
 	// a. First, all upd:insertInto, upd:insertAttributes, upd:replaceValue, and upd:rename primitives are applied.
 	pul.filter(
-		pu => ['insertInto', 'insertAttributes', 'replaceValue', 'rename'].indexOf(pu.type) !== -1
-	).forEach(pu => {
+		(pu) => ['insertInto', 'insertAttributes', 'replaceValue', 'rename'].indexOf(pu.type) !== -1
+	).forEach((pu) => {
 		switch (pu.type) {
 			case 'insertInto':
 				const insertPu = pu as InsertIntoPendingUpdate;
@@ -78,11 +78,11 @@ export const applyUpdates = (
 
 	// b. Next, all upd:insertBefore, upd:insertAfter, upd:insertIntoAsFirst, and upd:insertIntoAsLast primitives are applied.
 	pul.filter(
-		pu =>
+		(pu) =>
 			['insertBefore', 'insertAfter', 'insertIntoAsFirst', 'insertIntoAsLast'].indexOf(
 				pu.type
 			) !== -1
-	).forEach(pu => {
+	).forEach((pu) => {
 		switch (pu.type) {
 			case 'insertAfter':
 				const insertAfterPu = pu as InsertAfterPendingUpdate;
@@ -114,19 +114,19 @@ export const applyUpdates = (
 	});
 
 	// c. Next, all upd:replaceNode primitives are applied.
-	pul.filter(pu => pu.type === 'replaceNode').forEach(pu => {
+	pul.filter((pu) => pu.type === 'replaceNode').forEach((pu) => {
 		const replacePu = pu as ReplaceNodePendingUpdate;
 		replaceNode(replacePu.target, replacePu.replacement, domFacade, documentWriter);
 	});
 
 	// d. Next, all upd:replaceElementContent primitives are applied.
-	pul.filter(pu => pu.type === 'replaceElementContent').forEach(pu => {
+	pul.filter((pu) => pu.type === 'replaceElementContent').forEach((pu) => {
 		const replacePu = pu as ReplaceElementContentPendingUpdate;
 		replaceElementContent(replacePu.target, replacePu.text, domFacade, documentWriter);
 	});
 
 	// e. Next, all upd:delete primitives are applied.
-	pul.filter(pu => pu.type === 'delete').forEach(pu => {
+	pul.filter((pu) => pu.type === 'delete').forEach((pu) => {
 		const deletePendingUpdate = pu as DeletePendingUpdate;
 		deletePu(deletePendingUpdate.target, domFacade, documentWriter);
 	});
@@ -134,7 +134,7 @@ export const applyUpdates = (
 	// Point 3. to 7. are either not necessary or should be done by the caller.
 
 	// 8. As the final step, all upd:put primitives on $pul are applied.
-	if (pul.some(pu => pu.type === 'put')) {
+	if (pul.some((pu) => pu.type === 'put')) {
 		throw new Error(
 			'Not implemented: the execution for pendingUpdate "put" is not yet implemented.'
 		);
@@ -144,9 +144,9 @@ export const applyUpdates = (
 const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 	function findDuplicateTargets(type, onFoundDuplicate) {
 		const targets = new Set();
-		pul.filter(pu => pu.type === type)
-			.map(pu => pu.target)
-			.forEach(target => {
+		pul.filter((pu) => pu.type === type)
+			.map((pu) => pu.target)
+			.forEach((target) => {
 				if (targets.has(target)) {
 					onFoundDuplicate(target);
 				}
@@ -157,22 +157,22 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 	// A dynamic error if any of the following conditions are detected:
 
 	// 1. Two or more upd:rename primitives in $pul have the same target node [err:XUDY0015].
-	findDuplicateTargets('rename', target => {
+	findDuplicateTargets('rename', (target) => {
 		throw errXUDY0015(target);
 	});
 
 	// 2. Two or more upd:replaceNode primitives in $pul have the same target node [err:XUDY0016].
-	findDuplicateTargets('replaceNode', target => {
+	findDuplicateTargets('replaceNode', (target) => {
 		throw errXUDY0016(target);
 	});
 
 	// 3. Two or more upd:replaceValue primitives in $pul have the same target node [err:XUDY0017].
-	findDuplicateTargets('replaceValue', target => {
+	findDuplicateTargets('replaceValue', (target) => {
 		throw errXUDY0017(target);
 	});
 
 	// 4. Two or more upd:replaceElementContent primitives in $pul have the same target node [err:XUDY0017].
-	findDuplicateTargets('replaceElementContent', target => {
+	findDuplicateTargets('replaceElementContent', (target) => {
 		throw errXUDY0017(target);
 	});
 
@@ -181,14 +181,14 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 	// 6. Two or more primitives in $pul create conflicting namespace bindings for the same element node [err:XUDY0024].
 	// The following kinds of primitives create namespace bindings:
 	const newQNamesByElement = new Map();
-	const getAttributeName = attribute =>
+	const getAttributeName = (attribute) =>
 		new QName(attribute.prefix, attribute.namespaceURI, attribute.localName);
 	// a. upd:insertAttributes creates one namespace binding on the $target element corresponding to
 	//    the implied namespace binding of the name of each attribute node in $content.
 	// b. upd:replaceNode creates one namespace binding on the $target element corresponding to the
 	//    implied namespace binding of the name of each attribute node in $replacement.
 	pul.filter(
-		pu => pu.type === 'replaceNode' && pu.target.nodeType === NODE_TYPES.ATTRIBUTE_NODE
+		(pu) => pu.type === 'replaceNode' && pu.target.nodeType === NODE_TYPES.ATTRIBUTE_NODE
 	).forEach((pu: ReplaceNodePendingUpdate) => {
 		const element = domFacade.getParentNode(pu.target);
 		const qNames = newQNamesByElement.get(element);
@@ -201,7 +201,7 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 	// c. upd:rename creates a namespace binding on $target, or on the parent (if any) of $target if
 	//    $target is an attribute node, corresponding to the implied namespace binding of $newName.
 	pul.filter(
-		pu => pu.type === 'rename' && pu.target.nodeType === NODE_TYPES.ATTRIBUTE_NODE
+		(pu) => pu.type === 'rename' && pu.target.nodeType === NODE_TYPES.ATTRIBUTE_NODE
 	).forEach((pu: RenamePendingUpdate) => {
 		const element = domFacade.getParentNode(pu.target);
 		if (!element) {
@@ -217,7 +217,7 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 
 	newQNamesByElement.forEach((qNames, _element) => {
 		const prefixes = {};
-		qNames.forEach(qName => {
+		qNames.forEach((qName) => {
 			if (!prefixes[qName.prefix]) {
 				prefixes[qName.prefix] = qName.namespaceURI;
 			}

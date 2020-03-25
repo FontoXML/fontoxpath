@@ -11,7 +11,7 @@ export class ReplaceElementContentPendingUpdate extends IPendingUpdate {
 		return {
 			['type']: this.type,
 			['target']: this.target,
-			['text']: this.text
+			['text']: this.text,
 		};
 	}
 }

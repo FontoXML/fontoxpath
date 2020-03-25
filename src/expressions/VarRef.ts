@@ -18,7 +18,7 @@ class VarRef extends Expression {
 	constructor(prefix: string, namespaceURI: string | null, variableName: string) {
 		super(new Specificity({}), [], {
 			canBeStaticallyEvaluated: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
 		});
 
 		this._variableName = variableName;

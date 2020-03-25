@@ -5,7 +5,7 @@ import ExecutionParameters from './ExecutionParameters';
 import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
 import {
 	FUNCTIONS_NAMESPACE_URI,
-	staticallyKnownNamespaceByPrefix
+	staticallyKnownNamespaceByPrefix,
 } from './staticallyKnownNamespaces';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
@@ -92,7 +92,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		const bindingName = this._variableBindingByName[localName];
 		if (!this._referredVariableByName[localName]) {
 			this._referredVariableByName[localName] = {
-				name: localName
+				name: localName,
 			};
 		}
 		return bindingName;
@@ -110,7 +110,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		if (!this._referredNamespaceByName[prefix]) {
 			this._referredNamespaceByName[prefix] = {
 				namespaceURI: uri,
-				prefix
+				prefix,
 			};
 		}
 

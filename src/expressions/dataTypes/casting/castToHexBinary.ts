@@ -1,6 +1,6 @@
 import createAtomicValue from '../createAtomicValue';
 
-const createHexBinaryValue = value => createAtomicValue(value, 'xs:hexBinary');
+const createHexBinaryValue = (value) => createAtomicValue(value, 'xs:hexBinary');
 
 import CastResult from './CastResult';
 
@@ -17,21 +17,21 @@ declare var atob: (s: string) => string;
 
 export default function castToGDay(instanceOf: (string) => boolean): (Value) => CastResult {
 	if (instanceOf('xs:base64Binary')) {
-		return value => ({
+		return (value) => ({
 			successful: true,
-			value: createHexBinaryValue(stringToHex(atob(value)))
+			value: createHexBinaryValue(stringToHex(atob(value))),
 		});
 	}
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
-		return value => ({
+		return (value) => ({
 			successful: true,
-			value: createHexBinaryValue(value)
+			value: createHexBinaryValue(value),
 		});
 	}
 	return () => ({
 		successful: false,
 		error: new Error(
 			'XPTY0004: Casting not supported from given type to xs:hexBinary or any of its derived types.'
-		)
+		),
 	});
 }

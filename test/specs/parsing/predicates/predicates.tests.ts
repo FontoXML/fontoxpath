@@ -7,7 +7,7 @@ import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
-	evaluateXPathToNumbers
+	evaluateXPathToNumbers,
 } from 'fontoxpath';
 
 let documentNode;

@@ -5,7 +5,7 @@ import {
 	ConcreteChildNode,
 	ConcreteElementNode,
 	ConcreteNode,
-	ConcreteParentNode
+	ConcreteParentNode,
 } from './ConcreteNode';
 import IDomFacade from './IDomFacade';
 

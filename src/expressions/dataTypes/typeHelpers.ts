@@ -65,18 +65,20 @@ export function validateRestrictions(value: string, typeName: string): boolean {
 			continue;
 		}
 
-		const matchesRestrictions = Object.keys(type.restrictionsByName).every(restrictionName => {
-			if (restrictionName === 'whiteSpace') {
-				// whiteSpace will be handled separately
-				return true;
-			}
+		const matchesRestrictions = Object.keys(type.restrictionsByName).every(
+			(restrictionName) => {
+				if (restrictionName === 'whiteSpace') {
+					// whiteSpace will be handled separately
+					return true;
+				}
 
-			const validationFunction = getHandlerForFacet(type, restrictionName);
-			if (!validationFunction) {
-				return true;
+				const validationFunction = getHandlerForFacet(type, restrictionName);
+				if (!validationFunction) {
+					return true;
+				}
+				return validationFunction(value, type.restrictionsByName[restrictionName]);
 			}
-			return validationFunction(value, type.restrictionsByName[restrictionName]);
-		});
+		);
 
 		if (!matchesRestrictions) {
 			return false;

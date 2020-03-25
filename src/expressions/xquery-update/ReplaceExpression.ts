@@ -20,7 +20,7 @@ import {
 	errXUDY0027,
 	errXUTY0008,
 	errXUTY0010,
-	errXUTY0011
+	errXUTY0011,
 } from './XQueryUpdateFacilityErrors';
 
 function evaluateReplaceNode(
@@ -149,9 +149,9 @@ function evaluateReplaceNode(
 					[replaceNode(target.value, rlist.attributes.concat(rlist.contentNodes))],
 					rlistUpdates,
 					targetUpdates
-				)
+				),
 			});
-		}
+		},
 	};
 }
 
@@ -187,11 +187,11 @@ function evaluateReplaceNodeValue(
 				const atomized = atomize(
 					sequenceFactory.create(rl.value.xdmValue),
 					executionParameters
-				).map(value => castToType(value, 'xs:string'));
+				).map((value) => castToType(value, 'xs:string'));
 
 				const textContent = atomized
 					.getAllValues()
-					.map(value => value.value)
+					.map((value) => value.value)
 					.join(' ');
 				text =
 					textContent.length === 0
@@ -250,7 +250,7 @@ function evaluateReplaceNodeValue(
 						[replaceElementContent(target.value, text)],
 						rlistUpdates,
 						targetUpdates
-					)
+					),
 				});
 			}
 
@@ -299,10 +299,10 @@ function evaluateReplaceNodeValue(
 						[replaceValue(target.value, string)],
 						rlistUpdates,
 						targetUpdates
-					)
+					),
 				});
 			}
-		}
+		},
 	};
 }
 
@@ -314,7 +314,7 @@ class ReplaceExpression extends UpdatingExpression {
 	constructor(valueOf: boolean, targetExpression: Expression, replacementExpression: Expression) {
 		super(new Specificity({}), [targetExpression, replacementExpression], {
 			canBeStaticallyEvaluated: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
 		});
 
 		this._valueOf = valueOf;

@@ -3,7 +3,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnYearsFromDuration: FunctionDefinitionType = function(
+const fnYearsFromDuration: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -17,7 +17,7 @@ const fnYearsFromDuration: FunctionDefinitionType = function(
 	);
 };
 
-const fnMonthsFromDuration: FunctionDefinitionType = function(
+const fnMonthsFromDuration: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -31,7 +31,7 @@ const fnMonthsFromDuration: FunctionDefinitionType = function(
 	);
 };
 
-const fnDaysFromDuration: FunctionDefinitionType = function(
+const fnDaysFromDuration: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -45,7 +45,7 @@ const fnDaysFromDuration: FunctionDefinitionType = function(
 	);
 };
 
-const fnHoursFromDuration: FunctionDefinitionType = function(
+const fnHoursFromDuration: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -59,7 +59,7 @@ const fnHoursFromDuration: FunctionDefinitionType = function(
 	);
 };
 
-const fnMinutesFromDuration: FunctionDefinitionType = function(
+const fnMinutesFromDuration: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -73,7 +73,7 @@ const fnMinutesFromDuration: FunctionDefinitionType = function(
 	);
 };
 
-const fnSecondsFromDuration: FunctionDefinitionType = function(
+const fnSecondsFromDuration: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -94,42 +94,42 @@ export default {
 			localName: 'years-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
-			callFunction: fnYearsFromDuration
+			callFunction: fnYearsFromDuration,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'months-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
-			callFunction: fnMonthsFromDuration
+			callFunction: fnMonthsFromDuration,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'days-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
-			callFunction: fnDaysFromDuration
+			callFunction: fnDaysFromDuration,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'hours-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
-			callFunction: fnHoursFromDuration
+			callFunction: fnHoursFromDuration,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'minutes-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:integer?',
-			callFunction: fnMinutesFromDuration
+			callFunction: fnMinutesFromDuration,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'seconds-from-duration',
 			argumentTypes: ['xs:duration?'],
 			returnType: 'xs:decimal?',
-			callFunction: fnSecondsFromDuration
-		}
-	]
+			callFunction: fnSecondsFromDuration,
+		},
+	],
 };

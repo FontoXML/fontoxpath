@@ -29,7 +29,7 @@ const fnFunctionLookup: FunctionDefinitionType = (
 			localName: name.value.localName,
 			namespaceURI: name.value.namespaceURI,
 			returnType: functionProperties.returnType,
-			value: functionProperties.callFunction
+			value: functionProperties.callFunction,
 		});
 
 		return sequenceFactory.singleton(functionItem);
@@ -68,7 +68,7 @@ export default {
 			callFunction: fnFunctionLookup,
 			localName: 'function-lookup',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'function(*)?'
+			returnType: 'function(*)?',
 		},
 
 		{
@@ -76,7 +76,7 @@ export default {
 			callFunction: fnFunctionName,
 			localName: 'function-name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:QName?'
+			returnType: 'xs:QName?',
 		},
 
 		{
@@ -84,7 +84,7 @@ export default {
 			callFunction: fnFunctionArity,
 			localName: 'function-arity',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer'
-		}
-	]
+			returnType: 'xs:integer',
+		},
+	],
 };

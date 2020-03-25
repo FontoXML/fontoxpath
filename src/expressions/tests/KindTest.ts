@@ -6,7 +6,7 @@ class KindTest extends TestAbstractExpression {
 	constructor(nodeType: number) {
 		super(
 			new Specificity({
-				[Specificity.NODETYPE_KIND]: 1
+				[Specificity.NODETYPE_KIND]: 1,
 			})
 		);
 

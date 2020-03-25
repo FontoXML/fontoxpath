@@ -6,7 +6,7 @@ describe('getBucketsForNode', () => {
 	it('returns the correct buckets for elements', () => {
 		chai.assert.deepEqual(getBucketsForNode(doc.createElement('element')), [
 			'type-1',
-			'name-element'
+			'name-element',
 		]);
 	});
 	it('returns the correct buckets for text nodes', () => {

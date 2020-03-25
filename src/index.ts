@@ -23,7 +23,7 @@ import astHelper from './parsing/astHelper';
 import compileAstToExpression from './parsing/compileAstToExpression';
 import {
 	getAnyStaticCompilationResultFromCache,
-	storeHalfCompiledCompilationResultInCache
+	storeHalfCompiledCompilationResultInCache,
 } from './parsing/compiledExpressionCache';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import parseExpression from './parsing/parseExpression';
@@ -39,7 +39,7 @@ import {
 	Element,
 	Node,
 	ProcessingInstruction,
-	Text
+	Text,
 } from './types/Types';
 
 function parseXPath(xpathString: string) {
@@ -57,7 +57,7 @@ function parseXPath(xpathString: string) {
 
 	const expression = compileAstToExpression(queryBody, {
 		allowUpdating: false,
-		allowXQuery: false
+		allowXQuery: false,
 	});
 
 	storeHalfCompiledCompilationResultInCache(xpathString, 'XPath', expression, false);
@@ -170,5 +170,5 @@ export {
 	precompileXPath,
 	registerCustomXPathFunction,
 	registerXQueryModule,
-	parseScript
+	parseScript,
 };

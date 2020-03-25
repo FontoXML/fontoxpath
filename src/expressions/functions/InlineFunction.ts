@@ -25,13 +25,13 @@ class InlineFunction extends Expression {
 	) {
 		super(
 			new Specificity({
-				[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1,
 			}),
 			[functionBody],
 			{
 				// inline functions may never be statically evaluated because the domfacade may be used in the function body to resolve dom relations
 				canBeStaticallyEvaluated: false,
-				resultOrder: RESULT_ORDERINGS.UNSORTED
+				resultOrder: RESULT_ORDERINGS.UNSORTED,
 			}
 		);
 
@@ -79,14 +79,14 @@ class InlineFunction extends Expression {
 			localName: 'dynamic-function',
 			namespaceURI: '',
 			returnType: this._returnType,
-			value: executeFunction
+			value: executeFunction,
 		});
 		return sequenceFactory.singleton(functionItem);
 	}
 
 	public performStaticEvaluation(staticContext: StaticContext) {
 		staticContext.introduceScope();
-		this._parameterBindingNames = this._parameterNames.map(name => {
+		this._parameterBindingNames = this._parameterNames.map((name) => {
 			let namespaceURI = name.namespaceURI;
 			const prefix = name.prefix;
 			const localName = name.localName;

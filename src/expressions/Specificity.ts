@@ -11,11 +11,11 @@ class Specificity {
 	private _counts: number[];
 
 	constructor(countsByKind: { [s: string]: number }) {
-		this._counts = SPECIFICITY_DIMENSIONS.map(specificityKind => {
+		this._counts = SPECIFICITY_DIMENSIONS.map((specificityKind) => {
 			return countsByKind[specificityKind] || 0;
 		});
 
-		if (Object.keys(countsByKind).some(kind => !SPECIFICITY_DIMENSIONS.includes(kind))) {
+		if (Object.keys(countsByKind).some((kind) => !SPECIFICITY_DIMENSIONS.includes(kind))) {
 			throw new Error('Invalid specificity kind passed');
 		}
 	}

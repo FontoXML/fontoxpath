@@ -8,7 +8,7 @@ export class DeletePendingUpdate extends IPendingUpdate {
 	public toTransferable() {
 		return {
 			['type']: this.type,
-			['target']: this.target
+			['target']: this.target,
 		};
 	}
 }

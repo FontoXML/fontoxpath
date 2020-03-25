@@ -11,7 +11,7 @@ class UnaryLookup extends Expression {
 	constructor(keySpecifier: '*' | Expression) {
 		super(
 			new Specificity({
-				[Specificity.EXTERNAL_KIND]: 1
+				[Specificity.EXTERNAL_KIND]: 1,
 			}),
 			keySpecifier === '*' ? [] : [keySpecifier],
 			{ canBeStaticallyEvaluated: false }

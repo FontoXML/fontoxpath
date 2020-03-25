@@ -63,7 +63,7 @@ function createPrecedingGenerator(
 			}
 
 			return DONE_TOKEN;
-		}
+		},
 	};
 }
 
@@ -74,7 +74,7 @@ class PrecedingAxis extends Expression {
 			canBeStaticallyEvaluated: false,
 			peer: true,
 			resultOrder: RESULT_ORDERINGS.REVERSE_SORTED,
-			subtree: false
+			subtree: false,
 		});
 
 		this._testExpression = testExpression;
@@ -96,7 +96,7 @@ class PrecedingAxis extends Expression {
 					this._testExpression.getBucket()
 				)
 			)
-			.filter(item => {
+			.filter((item) => {
 				return this._testExpression.evaluateToBoolean(dynamicContext, item);
 			});
 	}

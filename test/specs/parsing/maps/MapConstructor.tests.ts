@@ -26,7 +26,7 @@ describe('map constructor', () => {
 	it('creates a map which can be returned by evaluateXPathToMap', () =>
 		chai.assert.deepEqual(evaluateXPathToMap('map {"a": 1, "b":2}', documentNode), {
 			a: 1,
-			b: 2
+			b: 2,
 		}));
 
 	it('can use attribute nodes as keys', () =>
@@ -37,7 +37,7 @@ describe('map constructor', () => {
 
 	it('can use nodes as keys', () =>
 		chai.assert.deepEqual(evaluateXPathToMap('map {*: 1}', documentNode), {
-			'A piece of text': 1
+			'A piece of text': 1,
 		}));
 
 	it('is parsed using longest substring (map{x:a:b} is map{{(x:a):b})', () => {
@@ -55,14 +55,14 @@ describe('map constructor', () => {
 		const namespacesByPrefix = {
 			a: 'aaa',
 			x: 'xxx',
-			'': null
+			'': null,
 		};
 		chai.assert.deepEqual(
 			evaluateXPathToMap('map {x:a:b}', element, null, null, {
-				namespaceResolver: prefix => namespacesByPrefix[prefix]
+				namespaceResolver: (prefix) => namespacesByPrefix[prefix],
 			}),
 			{
-				a: expectedElement
+				a: expectedElement,
 			}
 		);
 	});

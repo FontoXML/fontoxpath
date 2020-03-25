@@ -4,7 +4,7 @@ import {
 	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
 	evaluateXPathToNodes,
-	IDomFacade
+	IDomFacade,
 } from 'fontoxpath';
 import ExternalDomFacade from 'fontoxpath/domFacade/ExternalDomFacade';
 import * as slimdom from 'slimdom';
@@ -130,12 +130,12 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		nodes.sort(node => (node.nodeName === 'bar' ? 1 : -1));
+		nodes.sort((node) => (node.nodeName === 'bar' ? 1 : -1));
 
 		chai.assert.deepEqual(
 			nodes,
 			evaluateXPathToNodes<slimdom.Element>('(root/foo, <bar/>)', documentNode, null, null, {
-				language: evaluateXPath.XQUERY_3_1_LANGUAGE
+				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 			})
 		);
 
@@ -148,12 +148,12 @@ describe('uses hints', () => {
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
 
-		nodes.sort(node => (node.nodeName === 'bar' ? 1 : -1));
+		nodes.sort((node) => (node.nodeName === 'bar' ? 1 : -1));
 
 		chai.assert.deepEqual(
 			nodes,
 			evaluateXPathToNodes<slimdom.Element>('(root/foo, <bar/>)', documentNode, null, null, {
-				language: evaluateXPath.XQUERY_3_1_LANGUAGE
+				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
 			})
 		);
 	});
@@ -348,7 +348,7 @@ describe('uses hints', () => {
 			buildDomFacade(descendant),
 			null,
 			{
-				debug: true
+				debug: true,
 			}
 		);
 

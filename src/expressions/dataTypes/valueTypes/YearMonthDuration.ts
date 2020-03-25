@@ -46,7 +46,7 @@ class YearMonthDuration extends AbstractDuration {
 	}
 }
 
-YearMonthDuration.fromParts = function(
+YearMonthDuration.fromParts = function (
 	years: number,
 	months: number,
 	isPositive: boolean
@@ -58,7 +58,7 @@ YearMonthDuration.fromParts = function(
 	return new YearMonthDuration(isPositive || totalMonths === 0 ? totalMonths : -totalMonths);
 };
 
-YearMonthDuration.fromString = function(string: string): YearMonthDuration | null {
+YearMonthDuration.fromString = function (string: string): YearMonthDuration | null {
 	const regex = /^(-)?P(\d+Y)?(\d+M)?(\d+D)?(?:T(\d+H)?(\d+M)?(\d+(\.\d*)?S)?)?$/;
 	const match = regex.exec(string);
 

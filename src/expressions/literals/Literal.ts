@@ -13,7 +13,7 @@ class Literal extends Expression {
 	constructor(jsValue: string, type: string) {
 		super(new Specificity({}), [], {
 			canBeStaticallyEvaluated: true,
-			resultOrder: RESULT_ORDERINGS.SORTED
+			resultOrder: RESULT_ORDERINGS.SORTED,
 		});
 		this._type = type;
 

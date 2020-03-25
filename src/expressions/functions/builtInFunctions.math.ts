@@ -4,7 +4,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const mathPi: FunctionDefinitionType = function(
+const mathPi: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext
@@ -12,45 +12,47 @@ const mathPi: FunctionDefinitionType = function(
 	return sequenceFactory.singleton(createAtomicValue(Math.PI, 'xs:double'));
 };
 
-const mathExp: FunctionDefinitionType = function(
+const mathExp: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue =>
+	return sequence.map((onlyValue) =>
 		createAtomicValue(Math.pow(Math.E, onlyValue.value), 'xs:double')
 	);
 };
 
-const mathExp10: FunctionDefinitionType = function(
+const mathExp10: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.pow(10, onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.pow(10, onlyValue.value), 'xs:double')
+	);
 };
 
-const mathLog: FunctionDefinitionType = function(
+const mathLog: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.log(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.log(onlyValue.value), 'xs:double'));
 };
 
-const mathLog10: FunctionDefinitionType = function(
+const mathLog10: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.log10(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.log10(onlyValue.value), 'xs:double'));
 };
 
-const mathPow: FunctionDefinitionType = function(
+const mathPow: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -59,7 +61,7 @@ const mathPow: FunctionDefinitionType = function(
 ) {
 	// Note: base is double?, exponent is numeric. In the base is empty case, return empty.
 	return exponent.mapAll(([valueY]) =>
-		base.map(valueX => {
+		base.map((valueX) => {
 			// isFinite is false for +Infinity, -Infinity and NaN
 			if (Math.abs(valueX.value) === 1 && !Number.isFinite(valueY.value)) {
 				return createAtomicValue(1, 'xs:double');
@@ -69,70 +71,70 @@ const mathPow: FunctionDefinitionType = function(
 	);
 };
 
-const mathSqrt: FunctionDefinitionType = function(
+const mathSqrt: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.sqrt(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.sqrt(onlyValue.value), 'xs:double'));
 };
 
-const mathSin: FunctionDefinitionType = function(
+const mathSin: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.sin(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.sin(onlyValue.value), 'xs:double'));
 };
 
-const mathCos: FunctionDefinitionType = function(
+const mathCos: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.cos(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.cos(onlyValue.value), 'xs:double'));
 };
 
-const mathTan: FunctionDefinitionType = function(
+const mathTan: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.tan(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.tan(onlyValue.value), 'xs:double'));
 };
 
-const mathAsin: FunctionDefinitionType = function(
+const mathAsin: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.asin(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.asin(onlyValue.value), 'xs:double'));
 };
 
-const mathAcos: FunctionDefinitionType = function(
+const mathAcos: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.acos(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.acos(onlyValue.value), 'xs:double'));
 };
 
-const mathAtan: FunctionDefinitionType = function(
+const mathAtan: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
 ) {
-	return sequence.map(onlyValue => createAtomicValue(Math.atan(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) => createAtomicValue(Math.atan(onlyValue.value), 'xs:double'));
 };
 
-const mathAtan2: FunctionDefinitionType = function(
+const mathAtan2: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -141,7 +143,7 @@ const mathAtan2: FunctionDefinitionType = function(
 ) {
 	// Note that x is the double? argument, y is double.
 	return y.mapAll(([onlyYValue]) =>
-		x.map(onlyXValue =>
+		x.map((onlyXValue) =>
 			createAtomicValue(Math.atan2(onlyXValue.value, onlyYValue.value), 'xs:double')
 		)
 	);
@@ -154,7 +156,7 @@ export default {
 			localName: 'pi',
 			argumentTypes: [],
 			returnType: 'xs:double',
-			callFunction: mathPi
+			callFunction: mathPi,
 		},
 
 		{
@@ -162,7 +164,7 @@ export default {
 			localName: 'exp',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathExp
+			callFunction: mathExp,
 		},
 
 		{
@@ -170,7 +172,7 @@ export default {
 			localName: 'exp10',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathExp10
+			callFunction: mathExp10,
 		},
 
 		{
@@ -178,7 +180,7 @@ export default {
 			localName: 'log',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathLog
+			callFunction: mathLog,
 		},
 
 		{
@@ -186,7 +188,7 @@ export default {
 			localName: 'log10',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathLog10
+			callFunction: mathLog10,
 		},
 
 		{
@@ -194,7 +196,7 @@ export default {
 			localName: 'pow',
 			argumentTypes: ['xs:double?', 'xs:numeric'],
 			returnType: 'xs:double?',
-			callFunction: mathPow
+			callFunction: mathPow,
 		},
 
 		{
@@ -202,7 +204,7 @@ export default {
 			localName: 'sqrt',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathSqrt
+			callFunction: mathSqrt,
 		},
 
 		{
@@ -210,7 +212,7 @@ export default {
 			localName: 'sin',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathSin
+			callFunction: mathSin,
 		},
 
 		{
@@ -218,7 +220,7 @@ export default {
 			localName: 'cos',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathCos
+			callFunction: mathCos,
 		},
 
 		{
@@ -226,7 +228,7 @@ export default {
 			localName: 'tan',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathTan
+			callFunction: mathTan,
 		},
 
 		{
@@ -234,7 +236,7 @@ export default {
 			localName: 'asin',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathAsin
+			callFunction: mathAsin,
 		},
 
 		{
@@ -242,7 +244,7 @@ export default {
 			localName: 'acos',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathAcos
+			callFunction: mathAcos,
 		},
 
 		{
@@ -250,7 +252,7 @@ export default {
 			localName: 'atan',
 			argumentTypes: ['xs:double?'],
 			returnType: 'xs:double?',
-			callFunction: mathAtan
+			callFunction: mathAtan,
 		},
 
 		{
@@ -258,7 +260,7 @@ export default {
 			localName: 'atan2',
 			argumentTypes: ['xs:double?', 'xs:double'],
 			returnType: 'xs:double?',
-			callFunction: mathAtan2
-		}
-	]
+			callFunction: mathAtan2,
+		},
+	],
 };

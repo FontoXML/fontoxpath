@@ -7,7 +7,7 @@ import {
 	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
-	evaluateXPathToNumbers
+	evaluateXPathToNumbers,
 } from 'fontoxpath';
 
 let documentNode;
@@ -64,18 +64,18 @@ describe('for expressions', () => {
 				[
 					'someElement',
 					['someElement', { someAttribute: 'someValue' }],
-					['someElement', { someAttribute: 'someValue' }]
+					['someElement', { someAttribute: 'someValue' }],
 				],
 				[
 					'someElement',
 					['someElement', { someAttribute: 'someValue' }],
-					['someElement', { someAttribute: 'someValue' }]
+					['someElement', { someAttribute: 'someValue' }],
 				],
 				[
 					'someElement',
 					['someElement', { someAttribute: 'someValue' }],
-					['someElement', { someAttribute: 'someValue' }]
-				]
+					['someElement', { someAttribute: 'someValue' }],
+				],
 			],
 			documentNode
 		);

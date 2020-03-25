@@ -5,7 +5,7 @@ import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
-const fnNot: FunctionDefinitionType = function(
+const fnNot: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -29,11 +29,11 @@ const fnNot: FunctionDefinitionType = function(
 			}
 			done = true;
 			return ready(ebv.value === false ? trueBoolean : falseBoolean);
-		}
+		},
 	});
 };
 
-const fnBoolean: FunctionDefinitionType = function(
+const fnBoolean: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -57,15 +57,15 @@ const fnBoolean: FunctionDefinitionType = function(
 			}
 			done = true;
 			return ready(ebv.value ? trueBoolean : falseBoolean);
-		}
+		},
 	});
 };
 
-const fnTrue: FunctionDefinitionType = function() {
+const fnTrue: FunctionDefinitionType = function () {
 	return sequenceFactory.singletonTrueSequence();
 };
 
-const fnFalse: FunctionDefinitionType = function() {
+const fnFalse: FunctionDefinitionType = function () {
 	return sequenceFactory.singletonFalseSequence();
 };
 
@@ -76,7 +76,7 @@ export default {
 			localName: 'boolean',
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
-			callFunction: fnBoolean
+			callFunction: fnBoolean,
 		},
 
 		{
@@ -84,7 +84,7 @@ export default {
 			localName: 'true',
 			argumentTypes: [],
 			returnType: 'xs:boolean',
-			callFunction: fnTrue
+			callFunction: fnTrue,
 		},
 
 		{
@@ -92,7 +92,7 @@ export default {
 			localName: 'not',
 			argumentTypes: ['item()*'],
 			returnType: 'xs:boolean',
-			callFunction: fnNot
+			callFunction: fnNot,
 		},
 
 		{
@@ -100,13 +100,13 @@ export default {
 			localName: 'false',
 			argumentTypes: [],
 			returnType: 'xs:boolean',
-			callFunction: fnFalse
-		}
+			callFunction: fnFalse,
+		},
 	],
 	functions: {
 		boolean: fnBoolean,
 		true: fnTrue,
 		false: fnFalse,
-		not: fnNot
-	}
+		not: fnNot,
+	},
 };

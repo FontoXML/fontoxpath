@@ -7,11 +7,11 @@ class UniversalExpression extends Expression {
 	constructor() {
 		super(
 			new Specificity({
-				[Specificity.UNIVERSAL_KIND]: 1
+				[Specificity.UNIVERSAL_KIND]: 1,
 			}),
 			[],
 			{
-				canBeStaticallyEvaluated: true
+				canBeStaticallyEvaluated: true,
 			}
 		);
 	}

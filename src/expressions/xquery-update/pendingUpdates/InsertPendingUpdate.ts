@@ -12,7 +12,7 @@ export class InsertPendingUpdate extends IPendingUpdate {
 		return {
 			['type']: this.type,
 			['target']: this.target,
-			['content']: this.content
+			['content']: this.content,
 		};
 	}
 }

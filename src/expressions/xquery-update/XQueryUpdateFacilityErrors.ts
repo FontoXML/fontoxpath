@@ -23,7 +23,7 @@ export const errXUTY0008 = () =>
 	new Error(
 		'XUTY0008: The target of a replace expression must be a single element, attribute, text, comment, or processing instruction node.'
 	);
-export const errXUDY0009 = target =>
+export const errXUDY0009 = (target) =>
 	new Error(`XUDY0009: The target ${target.outerHTML} for replacing a node must have a parent.`);
 export const errXUTY0010 = () =>
 	new Error(
@@ -41,23 +41,23 @@ export const errXUTY0013 = () =>
 	new Error(
 		'XUTY0013: The source expression of a copy modify expression must return a single node.'
 	);
-export const errXUDY0014 = target =>
+export const errXUDY0014 = (target) =>
 	new Error(
 		`XUDY0014: The target ${target.outerHTML} must be a node created by the copy clause.`
 	);
-export const errXUDY0015 = target =>
+export const errXUDY0015 = (target) =>
 	new Error(
 		`XUDY0015: The target ${target.outerHTML} is used in more than one rename expression.`
 	);
-export const errXUDY0016 = target =>
+export const errXUDY0016 = (target) =>
 	new Error(
 		`XUDY0016: The target ${target.outerHTML} is used in more than one replace expression.`
 	);
-export const errXUDY0017 = target =>
+export const errXUDY0017 = (target) =>
 	new Error(
 		`XUDY0017: The target ${target.outerHTML} is used in more than one replace value of expression.`
 	);
-export const errXUDY0021 = constraint =>
+export const errXUDY0021 = (constraint) =>
 	new Error(
 		`XUDY0021: Applying the updates will result in the XDM instance violating constraint: '${constraint}'`
 	);
@@ -73,7 +73,7 @@ export const errXUDY0027 = () =>
 	new Error(
 		'XUDY0027: The target for an insert, replace, or rename expression expression should not be empty.'
 	);
-export const errXUDY0029 = target =>
+export const errXUDY0029 = (target) =>
 	new Error(
 		`XUDY0029: The target ${target.outerHTML} for inserting a node before or after must have a parent.`
 	);

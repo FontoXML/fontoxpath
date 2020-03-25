@@ -14,7 +14,7 @@ function convert(obj: any): ISequence {
 			if (Array.isArray(obj)) {
 				return sequenceFactory.singleton(
 					new ArrayValue(
-						obj.map(subObject => createDoublyIterableSequence(convert(subObject)))
+						obj.map((subObject) => createDoublyIterableSequence(convert(subObject)))
 					)
 				);
 			}
@@ -24,10 +24,10 @@ function convert(obj: any): ISequence {
 			// Normal object
 			return sequenceFactory.singleton(
 				new MapValue(
-					Object.keys(obj as Object).map(key => {
+					Object.keys(obj as Object).map((key) => {
 						return {
 							key: createAtomicValue(key, 'xs:string'),
-							value: createDoublyIterableSequence(convert((obj as Object)[key]))
+							value: createDoublyIterableSequence(convert((obj as Object)[key])),
 						};
 					})
 				)
@@ -45,7 +45,7 @@ function convert(obj: any): ISequence {
 	}
 }
 
-const fnParseJson: FunctionDefinitionType = function(
+const fnParseJson: FunctionDefinitionType = function (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
@@ -68,10 +68,10 @@ export default {
 			localName: 'parse-json',
 			argumentTypes: ['xs:string'],
 			returnType: 'item()?',
-			callFunction: fnParseJson
-		}
+			callFunction: fnParseJson,
+		},
 	],
 	functions: {
-		parseJson: fnParseJson
-	}
+		parseJson: fnParseJson,
+	},
 };

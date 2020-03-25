@@ -22,7 +22,7 @@ class DeleteExpression extends UpdatingExpression {
 	constructor(targetExpression: Expression) {
 		super(new Specificity({}), [targetExpression], {
 			canBeStaticallyEvaluated: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED
+			resultOrder: RESULT_ORDERINGS.UNSORTED,
 		});
 
 		this._targetExpression = targetExpression;
@@ -49,7 +49,7 @@ class DeleteExpression extends UpdatingExpression {
 					}
 
 					// The result must be a sequence of zero or more nodes; otherwise a type error is raised [err:XUTY0007].
-					if (tv.value.xdmValue.some(entry => !isSubTypeOf(entry.type, 'node()'))) {
+					if (tv.value.xdmValue.some((entry) => !isSubTypeOf(entry.type, 'node()'))) {
 						throw errXUTY0007();
 					}
 
@@ -59,17 +59,17 @@ class DeleteExpression extends UpdatingExpression {
 				}
 
 				// 2. If any node in $tlist has no parent, it is removed from $tlist (and is thus ignored in the following step).
-				tlist = tlist.filter(node => domFacade.getParentNode(node.value));
+				tlist = tlist.filter((node) => domFacade.getParentNode(node.value));
 
 				// 3. A new pending update list is created. For each node $tnode in $tlist, the following update primitive is appended to the pending update list: upd:delete($tnode). The resulting pending update list is merged with the pending update list returned by the TargetExpr using upd:mergeUpdates, and together with an empty XDM instance forms the result of the delete expression.
 				return ready({
 					pendingUpdateList: mergeUpdates(
-						tlist.map(node => deletePu(node.value)),
+						tlist.map((node) => deletePu(node.value)),
 						tlistUpdates
 					),
-					xdmValue: []
+					xdmValue: [],
 				});
-			}
+			},
 		};
 	}
 }

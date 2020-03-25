@@ -7,7 +7,7 @@ import {
 	evaluateXPathToMap,
 	evaluateXPathToNumber,
 	evaluateXPathToBoolean,
-	evaluateXPathToStrings
+	evaluateXPathToStrings,
 } from 'fontoxpath';
 
 let documentNode;
@@ -343,7 +343,7 @@ map:merge((
 
 		it('does nothing if the key is not present', () =>
 			chai.assert.deepEqual(evaluateXPathToMap('map:remove(map{"a":1}, "b")', documentNode), {
-				a: 1
+				a: 1,
 			}));
 
 		it('removes multiple items if multiple keys are passed', () =>

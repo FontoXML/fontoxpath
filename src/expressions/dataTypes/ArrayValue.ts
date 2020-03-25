@@ -20,7 +20,7 @@ class ArrayValue extends FunctionValue {
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			argumentTypes: [{ type: 'xs:integer', isRestArgument: false }],
 			arity: 1,
-			returnType: { type: 'item()', occurrence: '*' }
+			returnType: { type: 'item()', occurrence: '*' },
 		});
 		this.type = 'array(*)';
 		this.members = members;

@@ -25,7 +25,7 @@ class Unary extends Expression {
 		return atomize(
 			this._valueExpr.evaluateMaybeStatically(dynamicContext, executionParameters),
 			executionParameters
-		).mapAll(atomizedValues => {
+		).mapAll((atomizedValues) => {
 			if (atomizedValues.length === 0) {
 				// Return the empty sequence when inputted the empty sequence
 				return sequenceFactory.empty();

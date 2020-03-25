@@ -28,18 +28,18 @@ describe('InsertExpression', () => {
 			{
 				type: 'insertInto',
 				source: element,
-				target: element
+				target: element,
 			},
 			{
 				type: 'insertInto',
 				source: a,
-				target: element
+				target: element,
 			},
 			{
 				type: 'insertInto',
 				source: b,
-				target: element
-			}
+				target: element,
+			},
 		]);
 	});
 
@@ -51,7 +51,7 @@ describe('InsertExpression', () => {
 			documentNode,
 			null,
 			{
-				node: element
+				node: element,
 			},
 			{}
 		);
@@ -72,7 +72,7 @@ describe('InsertExpression', () => {
 			documentNode,
 			null,
 			{
-				node: element
+				node: element,
 			},
 			{}
 		);
@@ -106,8 +106,8 @@ insert node fontoxpath:sleep(/element, 100) into fontoxpath:sleep(/element, 1)
 			{
 				type: 'insertInto',
 				source: element,
-				target: element
-			}
+				target: element,
+			},
 		]);
 	});
 });

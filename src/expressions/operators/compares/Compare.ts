@@ -16,7 +16,7 @@ class Compare extends Expression {
 			firstExpression.specificity.add(secondExpression.specificity),
 			[firstExpression, secondExpression],
 			{
-				canBeStaticallyEvaluated: false
+				canBeStaticallyEvaluated: false,
 			}
 		);
 		this._firstExpression = firstExpression;
@@ -106,13 +106,13 @@ class Compare extends Expression {
 											throw new Error(
 												'XPTY0004: Sequences to compare are not singleton.'
 											);
-										}
+										},
 									}),
 								default: () => {
 									throw new Error(
 										'XPTY0004: Sequences to compare are not singleton.'
 									);
-								}
+								},
 							});
 						}
 						// Only generalCompare left
@@ -122,8 +122,8 @@ class Compare extends Expression {
 							secondAtomizedSequence,
 							dynamicContext
 						);
-					}
-				})
+					},
+				}),
 		});
 	}
 }

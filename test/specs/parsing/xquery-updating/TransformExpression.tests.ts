@@ -33,17 +33,17 @@ return $a
 			{
 				replacementXML: ['<replacement/>'],
 				target: element,
-				type: 'replaceNode'
+				type: 'replaceNode',
 			},
 			{
 				newName: {
 					localName: 'renamed',
 					namespaceURI: null,
-					prefix: ''
+					prefix: '',
 				},
 				target: element,
-				type: 'rename'
-			}
+				type: 'rename',
+			},
 		]);
 	});
 
@@ -59,7 +59,7 @@ return ($a, replace node element with <replacement/>)
 			null,
 			{},
 			{
-				returnType: evaluateXPath.NODES_TYPE
+				returnType: evaluateXPath.NODES_TYPE,
 			}
 		);
 		chai.assert.equal(result.xdmValue.length, 1);
@@ -69,8 +69,8 @@ return ($a, replace node element with <replacement/>)
 			{
 				type: 'replaceNode',
 				target: element,
-				replacementXML: ['<replacement/>']
-			}
+				replacementXML: ['<replacement/>'],
+			},
 		]);
 	});
 
@@ -87,7 +87,7 @@ return ($a)
 			{},
 			evaluateXPath.NODES_TYPE,
 			{
-				language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE
+				language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE,
 			}
 		);
 		chai.assert.equal(result.length, 1);
@@ -224,7 +224,7 @@ return ($a)
 			getNextSibling: () => null,
 			getParentNode: (node: slimdom.Node) =>
 				node === a ? xml : node === xml ? documentNode : null,
-			getPreviousSibling: () => null
+			getPreviousSibling: () => null,
 		};
 
 		const result = await evaluateUpdatingExpression(

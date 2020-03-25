@@ -5,7 +5,7 @@ import CastResult from './CastResult';
 
 export default function castToString(instanceOf: (string) => boolean): (Value) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
-	return value => {
+	return (value) => {
 		const castResult = caster(value);
 		if (!castResult.successful) {
 			return castResult;
@@ -13,7 +13,7 @@ export default function castToString(instanceOf: (string) => boolean): (Value) =
 
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, 'xs:string')
+			value: createAtomicValue(castResult.value, 'xs:string'),
 		};
 	};
 }

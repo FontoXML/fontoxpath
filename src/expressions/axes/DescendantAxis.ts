@@ -18,7 +18,7 @@ function createInclusiveDescendantGenerator(
 	bucket: string | null
 ): IAsyncIterator<Value> {
 	const descendantIteratorStack: IAsyncIterator<ConcreteChildNode>[] = [
-		createSingleValueIterator(node)
+		createSingleValueIterator(node),
 	];
 	return {
 		next: (hint: IterationHint) => {
@@ -44,7 +44,7 @@ function createInclusiveDescendantGenerator(
 			// Iterator over these children next
 			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value, bucket));
 			return ready(createNodeValue(value.value));
-		}
+		},
 	};
 }
 
@@ -60,7 +60,7 @@ class DescendantAxis extends Expression {
 			canBeStaticallyEvaluated: false,
 			peer: false,
 			resultOrder: RESULT_ORDERINGS.SORTED,
-			subtree: true
+			subtree: true,
 		});
 
 		this._descendantExpression = descendantExpression;
@@ -85,7 +85,7 @@ class DescendantAxis extends Expression {
 			iterator.next(IterationHint.NONE);
 		}
 		const descendantSequence = sequenceFactory.create(iterator);
-		return descendantSequence.filter(item => {
+		return descendantSequence.filter((item) => {
 			return this._descendantExpression.evaluateToBoolean(dynamicContext, item);
 		});
 	}

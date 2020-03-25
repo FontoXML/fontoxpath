@@ -22,7 +22,7 @@ export default function createDoublyIterableSequence(sequence: ISequence): () =>
 				}
 				savedValues[i++] = val;
 				return val;
-			}
+			},
 		});
 	};
 }

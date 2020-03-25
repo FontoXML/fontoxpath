@@ -14,7 +14,7 @@ const MONTHS_TO_MIN_MAX_VALUES = [
 	[273, 276],
 	[303, 306],
 	[334, 337],
-	[365, 366]
+	[365, 366],
 ];
 
 function computeMinDays(duration) {
@@ -160,18 +160,18 @@ class Duration extends AbstractDuration {
 	}
 }
 
-Duration.fromString = function(string: string): Duration | null {
+Duration.fromString = function (string: string): Duration | null {
 	return new Duration(YearMonthDuration.fromString(string), DayTimeDuration.fromString(string));
 };
 
-Duration.fromYearMonthDuration = function(yearMonthDuration: YearMonthDuration): Duration {
+Duration.fromYearMonthDuration = function (yearMonthDuration: YearMonthDuration): Duration {
 	return new Duration(
 		yearMonthDuration,
 		new DayTimeDuration(yearMonthDuration.isPositive() ? 0 : -0)
 	);
 };
 
-Duration.fromDayTimeDuration = function(dayTimeDuration: DayTimeDuration): Duration {
+Duration.fromDayTimeDuration = function (dayTimeDuration: DayTimeDuration): Duration {
 	return new Duration(
 		new YearMonthDuration(dayTimeDuration.isPositive() ? 0 : -0),
 		dayTimeDuration

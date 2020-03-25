@@ -21,13 +21,13 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 			end: {
 				column: location['end']['column'],
 				line: location['end']['line'],
-				offset: location['end']['offset']
+				offset: location['end']['offset'],
 			},
 			start: {
 				column: location['start']['column'],
 				line: location['start']['line'],
-				offset: location['start']['offset']
-			}
+				offset: location['start']['offset'],
+			},
 		};
 	}
 
@@ -50,7 +50,7 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 				} catch (error) {
 					throw new StackTraceEntry(this._location, this._innerExpressionType, error);
 				}
-			}
+			},
 		});
 	}
 

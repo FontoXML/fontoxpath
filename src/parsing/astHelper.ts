@@ -79,7 +79,7 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 		return { type: 'item()', occurrence: '*' };
 	}
 
-	const determineType = typeAst => {
+	const determineType = (typeAst) => {
 		switch (typeAst[0]) {
 			case 'documentTest':
 				return 'document()';
@@ -133,7 +133,7 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 
 	return {
 		occurrence,
-		type
+		type,
 	};
 }
 
@@ -166,7 +166,7 @@ function getQName(ast: IAST): QName {
 	return {
 		localName: getTextContent(ast),
 		namespaceURI: getAttribute(ast, 'URI'),
-		prefix: getAttribute(ast, 'prefix') || ''
+		prefix: getAttribute(ast, 'prefix') || '',
 	};
 }
 
@@ -177,5 +177,5 @@ export default {
 	getFirstChild,
 	getQName,
 	getTextContent,
-	getTypeDeclaration
+	getTypeDeclaration,
 };

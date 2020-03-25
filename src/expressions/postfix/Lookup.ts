@@ -12,7 +12,7 @@ class Lookup extends Expression {
 		super(selector.specificity, [selector].concat(keySpecifier === '*' ? [] : [keySpecifier]), {
 			canBeStaticallyEvaluated: selector.canBeStaticallyEvaluated,
 			resultOrder: selector.expectedResultOrder,
-			subtree: selector.subtree
+			subtree: selector.subtree,
 		});
 
 		this._selector = selector;
@@ -24,7 +24,7 @@ class Lookup extends Expression {
 			dynamicContext,
 			executionParameters
 		);
-		return sequence.mapAll(items => {
+		return sequence.mapAll((items) => {
 			return items.reduce((toReturn, item) => {
 				return evaluateLookup(
 					item,

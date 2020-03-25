@@ -5,7 +5,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import {
 	evaluateXPathToArray,
 	evaluateXPathToAsyncIterator,
-	evaluateXPathToString
+	evaluateXPathToString,
 } from 'fontoxpath';
 
 let documentNode;
@@ -38,7 +38,7 @@ describe('array constructor', () => {
 			chai.assert.deepEqual(evaluateXPathToArray('array {("a", "b"), "c"}', documentNode), [
 				'a',
 				'b',
-				'c'
+				'c',
 			]));
 	});
 

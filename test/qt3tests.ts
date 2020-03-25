@@ -8,7 +8,7 @@ import {
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToString,
-	registerXQueryModule
+	registerXQueryModule,
 } from 'fontoxpath';
 
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
@@ -17,23 +17,23 @@ import testFs from 'test-helpers/testFs';
 import * as mocha from 'mocha';
 import { sync, slimdom } from 'slimdom-sax-parser';
 
-(global as any).atob = function(b64Encoded) {
+(global as any).atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
 };
 
-(global as any).btoa = function(str) {
+(global as any).btoa = function (str) {
 	return new Buffer(str, 'binary').toString('base64');
 };
 
 const parser = {
-	parseFromString: xmlString => {
+	parseFromString: (xmlString) => {
 		try {
 			return sync(xmlString);
 		} catch (e) {
 			console.log(`Error parsing the string ${xmlString}.`, e);
 			throw e;
 		}
-	}
+	},
 };
 
 let shouldRunTestByName;
@@ -46,7 +46,7 @@ if (indexOfGrep >= 0) {
 	shouldRunTestByName = testFs
 		.readFileSync('runnableTestSets.csv')
 		.split(/\r?\n/)
-		.map(line => line.split(','))
+		.map((line) => line.split(','))
 		.reduce(
 			(accum, [name, run]) => Object.assign(accum, { [name]: run === 'true' }),
 			Object.create(null)
@@ -54,7 +54,7 @@ if (indexOfGrep >= 0) {
 }
 const unrunnableTestCases = getSkippedTests('unrunnableTestCases.csv');
 const unrunnableTestCasesByName = unrunnableTestCases
-	.map(line => line.split(','))
+	.map((line) => line.split(','))
 	.reduce(
 		(accum, [name, ...runInfo]) => Object.assign(accum, { [name]: runInfo.join(',') }),
 		Object.create(null)
@@ -83,7 +83,7 @@ function getFile(fileName) {
 		content = `<xml>${content}</xml>`;
 		const parsedContents = Array.from(parser.parseFromString(content).firstChild.childNodes);
 		const documentFragment = globalDocument.createDocumentFragment(null, null);
-		parsedContents.forEach(node => documentFragment.appendChild(node));
+		parsedContents.forEach((node) => documentFragment.appendChild(node));
 		return (instantiatedDocumentByAbsolutePath[fileName] = documentFragment);
 	}
 	if (fileName.includes('.xq')) {
@@ -108,25 +108,25 @@ function createAsserter(baseUrl, assertNode, language) {
 		createProcessingInstruction: assertNode.ownerDocument.createProcessingInstruction.bind(
 			assertNode.ownerDocument
 		),
-		createTextNode: assertNode.ownerDocument.createTextNode.bind(assertNode.ownerDocument)
+		createTextNode: assertNode.ownerDocument.createTextNode.bind(assertNode.ownerDocument),
 	};
 
 	switch (assertNode.localName) {
 		case 'all-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode).map(innerAssertNode =>
+			const asserts = evaluateXPathToNodes('*', assertNode).map((innerAssertNode) =>
 				createAsserter(baseUrl, innerAssertNode, language)
 			);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) =>
-				asserts.forEach(a => a(xpath, contextNode, variablesInScope, namespaceResolver));
+				asserts.forEach((a) => a(xpath, contextNode, variablesInScope, namespaceResolver));
 		}
 		case 'any-of': {
-			const asserts = evaluateXPathToNodes('*', assertNode).map(innerAssertNode =>
+			const asserts = evaluateXPathToNodes('*', assertNode).map((innerAssertNode) =>
 				createAsserter(baseUrl, innerAssertNode, language)
 			);
 			return (xpath, contextNode, variablesInScope, namespaceResolver) => {
 				const errors = [];
 				chai.assert(
-					asserts.some(a => {
+					asserts.some((a) => {
 						try {
 							a(xpath, contextNode, variablesInScope, namespaceResolver);
 						} catch (error) {
@@ -158,7 +158,7 @@ function createAsserter(baseUrl, assertNode, language) {
 						evaluateXPathToString(xpath, contextNode, null, variablesInScope, {
 							namespaceResolver,
 							nodesFactory,
-							language
+							language,
 						});
 					},
 					errorCode === '*' ? /.*/ : new RegExp(errorCode),
@@ -186,7 +186,7 @@ function createAsserter(baseUrl, assertNode, language) {
 					evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, {
 						namespaceResolver,
 						nodesFactory,
-						language
+						language,
 					}),
 					`Expected XPath ${xpath} to resolve to true`
 				);
@@ -236,7 +236,7 @@ function createAsserter(baseUrl, assertNode, language) {
 					evaluateXPathToBoolean(xpath, contextNode, null, variablesInScope, {
 						namespaceResolver,
 						nodesFactory,
-						language
+						language,
 					}),
 					`Expected XPath ${xpath} to resolve to false`
 				);
@@ -284,19 +284,19 @@ function createAsserter(baseUrl, assertNode, language) {
 				const result = evaluateXPathToNodes(xpath, contextNode, null, variablesInScope, {
 					namespaceResolver,
 					nodesFactory,
-					language
+					language,
 				});
 				chai.assert(
 					evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
 						a: result,
-						b: Array.from(parsedFragment.childNodes)
+						b: Array.from(parsedFragment.childNodes),
 					}),
 					`Expected XPath ${xpath} to resolve to the given XML. Expected ${result
-						.map(result => new slimdom.XMLSerializer().serializeToString(result))
+						.map((result) => new slimdom.XMLSerializer().serializeToString(result))
 						.join(' ')} to equal ${
 						parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE
 							? parsedFragment.childNodes
-									.map(n => new slimdom.XMLSerializer().serializeToString(n))
+									.map((n) => new slimdom.XMLSerializer().serializeToString(n))
 									.join(' ')
 							: parsedFragment.innerHTML
 					}`
@@ -310,7 +310,7 @@ function createAsserter(baseUrl, assertNode, language) {
 					evaluateXPathToString(`${xpath}`, contextNode, null, variablesInScope, {
 						namespaceResolver,
 						nodesFactory,
-						language
+						language,
 					}),
 					expectedString,
 					xpath
@@ -336,13 +336,13 @@ function createEnvironment(cwd, environmentNode) {
 			Object.assign(varsByName, {
 				[evaluateXPathToString('@role', variable).substr(1)]: getFile(
 					(cwd ? cwd + '/' : '') + evaluateXPathToString('@file', variable)
-				)
+				),
 			}),
 		{}
 	);
 
 	// Params area also variables. But different
-	evaluateXPathToNodes('param', environmentNode).forEach(paramNode => {
+	evaluateXPathToNodes('param', environmentNode).forEach((paramNode) => {
 		variables[evaluateXPathToString('@name', paramNode)] = evaluateXPath(
 			evaluateXPathToString('@select', paramNode)
 		);
@@ -356,8 +356,8 @@ function createEnvironment(cwd, environmentNode) {
 
 	return {
 		contextNode: fileName ? getFile((cwd ? cwd + '/' : '') + fileName) : null,
-		namespaceResolver: Object.keys(namespaces).length ? prefix => namespaces[prefix] : null,
-		variables
+		namespaceResolver: Object.keys(namespaces).length ? (prefix) => namespaces[prefix] : null,
+		variables,
 	};
 }
 
@@ -367,13 +367,13 @@ const environmentsByName = evaluateXPathToNodes('/catalog/environment', catalog)
 			[evaluateXPathToString('@name', environmentNode)]: createEnvironment(
 				'',
 				environmentNode
-			)
+			),
 		});
 	},
 	{
 		empty: {
-			contextNode: emptyDoc
-		}
+			contextNode: emptyDoc,
+		},
 	}
 );
 
@@ -382,9 +382,9 @@ const registeredModuleURIByFileName = Object.create(null);
 describe('qt3 test set', () => {
 	const log = unrunnableTestCases;
 	evaluateXPathToNodes('/catalog/test-set', catalog)
-		.filter(testSetNode => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
-		.map(testSetNode => evaluateXPathToString('@file', testSetNode))
-		.forEach(testSetFileName => {
+		.filter((testSetNode) => shouldRunTestByName[evaluateXPathToString('@name', testSetNode)])
+		.map((testSetNode) => evaluateXPathToString('@file', testSetNode))
+		.forEach((testSetFileName) => {
 			const testSet = getFile(testSetFileName);
 
 			const testSetName = evaluateXPathToString('/test-set/@name', testSet);
@@ -428,7 +428,7 @@ describe('qt3 test set', () => {
 					'/test-set/@name || /test-set/description!(if (string()) then "~" || . else "")',
 					testSet
 				),
-				function() {
+				function () {
 					this.timeout(60000);
 					for (const testCase of testCases) {
 						try {
@@ -480,7 +480,7 @@ describe('qt3 test set', () => {
 								);
 
 								const localNamespaceResolver = Object.keys(namespaces).length
-									? prefix => namespaces[prefix]
+									? (prefix) => namespaces[prefix]
 									: null;
 								let namespaceResolver = localNamespaceResolver;
 								let variablesInScope;
@@ -504,10 +504,10 @@ describe('qt3 test set', () => {
 
 								const contextNode = env.contextNode;
 								namespaceResolver = localNamespaceResolver
-									? prefix =>
+									? (prefix) =>
 											localNamespaceResolver(prefix) ||
 											env.namespaceResolver(prefix)
-									: prefix =>
+									: (prefix) =>
 											env.namespaceResolver
 												? env.namespaceResolver(prefix)
 												: prefix === ''
@@ -527,10 +527,10 @@ describe('qt3 test set', () => {
 										testCase,
 										null,
 										{
-											baseUrl: baseUrl
+											baseUrl: baseUrl,
 										}
 									);
-									moduleImports.forEach(moduleImport => {
+									moduleImports.forEach((moduleImport) => {
 										const targetNamespace =
 											registeredModuleURIByFileName[moduleImport.file] ||
 											registerXQueryModule(getFile(moduleImport.file));
@@ -552,10 +552,7 @@ describe('qt3 test set', () => {
 									}
 
 									log.push(
-										`${testName},${e
-											.toString()
-											.replace(/\n/g, ' ')
-											.trim()}`
+										`${testName},${e.toString().replace(/\n/g, ' ').trim()}`
 									);
 
 									// And rethrow the error

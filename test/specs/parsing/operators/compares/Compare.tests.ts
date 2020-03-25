@@ -54,8 +54,8 @@ describe('Value compares', () => {
 				'someNode',
 				{
 					a: 'value',
-					b: 'value'
-				}
+					b: 'value',
+				},
 			],
 			documentNode
 		);
@@ -67,8 +67,8 @@ describe('Value compares', () => {
 			[
 				'someNode',
 				{
-					a: 'value'
-				}
+					a: 'value',
+				},
 			],
 			documentNode
 		);
@@ -84,8 +84,8 @@ describe('Value compares', () => {
 				'someNode',
 				{
 					a: 'value',
-					b: 'value'
-				}
+					b: 'value',
+				},
 			],
 			documentNode
 		);

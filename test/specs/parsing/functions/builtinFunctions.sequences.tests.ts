@@ -9,7 +9,7 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
 	evaluateXPathToString,
-	evaluateXPathToStrings
+	evaluateXPathToStrings,
 } from 'fontoxpath';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
@@ -582,7 +582,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someEqualElement', 'Some equal text.'],
-							['someEqualElement', 'Some equal text.']
+							['someEqualElement', 'Some equal text.'],
 						],
 						documentNode
 					);
@@ -598,7 +598,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someEqualElement', 'Some equal text.'],
-							['someUnequalElement', 'Some equal text.']
+							['someUnequalElement', 'Some equal text.'],
 						],
 						documentNode
 					);
@@ -614,7 +614,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someEqualElement', 'Some equal text.'],
-							['someEqualElement', 'Some unequal text.']
+							['someEqualElement', 'Some unequal text.'],
 						],
 						documentNode
 					);
@@ -674,7 +674,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someElement', { someAttribute: 'value' }],
-							['someElement', { someAttribute: 'value' }]
+							['someElement', { someAttribute: 'value' }],
 						],
 						documentNode
 					);
@@ -690,7 +690,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someElement', { someAttribute: 'value1' }],
-							['someElement', { someAttribute: 'value2' }]
+							['someElement', { someAttribute: 'value2' }],
 						],
 						documentNode
 					);
@@ -706,7 +706,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someEqualElement', { attr1: 'A' }],
-							['someEqualElement', { attr1: 'B' }]
+							['someEqualElement', { attr1: 'B' }],
 						],
 						documentNode
 					);
@@ -722,7 +722,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someEqualElement', { attr1: 'someAttributeValue', attr2: 'hah' }],
-							['someEqualElement', { attr1: 'someAttributeValue' }]
+							['someEqualElement', { attr1: 'someAttributeValue' }],
 						],
 						documentNode
 					);
@@ -738,7 +738,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someEqualElement', { attr1: 'someAttributeValue' }],
-							['someEqualElement', { attr1: 'someAttributeValue', attr2: 'hah' }]
+							['someEqualElement', { attr1: 'someAttributeValue', attr2: 'hah' }],
 						],
 						documentNode
 					);
@@ -754,7 +754,7 @@ describe('Functions and operators on sequences', () => {
 						[
 							'someElement',
 							['someEqualElement', { AAAA: 'someAttributeValue' }],
-							['someEqualElement', { BBBB: 'someAttributeValue' }]
+							['someEqualElement', { BBBB: 'someAttributeValue' }],
 						],
 						documentNode
 					);
@@ -1079,7 +1079,7 @@ describe('Functions and operators on sequences', () => {
 					[
 						'someElement',
 						['someEqualElement', 'Some equal text.'],
-						['someEqualElement', 'Some equal text.']
+						['someEqualElement', 'Some equal text.'],
 					],
 					documentNode
 				);
@@ -1095,7 +1095,7 @@ describe('Functions and operators on sequences', () => {
 					[
 						'someElement',
 						['someEqualElement', 'Some equal text.'],
-						['someUnequalElement', 'Some equal text.']
+						['someUnequalElement', 'Some equal text.'],
 					],
 					documentNode
 				);
@@ -1111,7 +1111,7 @@ describe('Functions and operators on sequences', () => {
 					[
 						'someElement',
 						['someEqualElement', 'Some equal text.'],
-						['someEqualElement', 'Some unequal text.']
+						['someEqualElement', 'Some unequal text.'],
 					],
 					documentNode
 				);
@@ -1129,7 +1129,7 @@ describe('Functions and operators on sequences', () => {
 					[
 						'someElement',
 						['someElement', { someAttribute: 'value' }],
-						['someElement', { someAttribute: 'value' }]
+						['someElement', { someAttribute: 'value' }],
 					],
 					documentNode
 				);
@@ -1145,7 +1145,7 @@ describe('Functions and operators on sequences', () => {
 					[
 						'someElement',
 						['someElement', { someAttribute: 'value1' }],
-						['someElement', { someAttribute: 'value2' }]
+						['someElement', { someAttribute: 'value2' }],
 					],
 					documentNode
 				);

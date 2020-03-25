@@ -28,14 +28,14 @@ function fillDocument(document, element, depth) {
 }
 function runTests(document) {
 	let fullTraversalCost;
-	before(function() {
+	before(function () {
 		this.timeout(30000);
 		fillDocument(document, document.appendChild(document.createElement('root')), 5);
 
 		fullTraversalCost = timeXPath('/descendant::element() => count() > 10', document);
 	});
 
-	it('Makes queries exit early by streaming them and only consuming the first item', function() {
+	it('Makes queries exit early by streaming them and only consuming the first item', function () {
 		this.timeout(10000);
 		chai.assert.isAtMost(
 			timeXPath('(/descendant::element()["4" = @depth]) => head() => count() = 1', document),
@@ -44,7 +44,7 @@ function runTests(document) {
 		);
 	});
 
-	it('Saves variable results', function() {
+	it('Saves variable results', function () {
 		this.timeout(10000);
 		const timeWithoutExtraSteps = timeXPath('(/descendant::*) => count() > 10', document);
 		// Variables should only be evaluated once, not n times

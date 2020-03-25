@@ -30,7 +30,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 				thenExpression.expectedResultOrder === elseExpression.expectedResultOrder
 					? thenExpression.expectedResultOrder
 					: RESULT_ORDERINGS.UNSORTED,
-			subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree
+			subtree: thenExpression.subtree === elseExpression.subtree && thenExpression.subtree,
 		});
 
 		this._testExpression = testExpression;
@@ -58,7 +58,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 					resultIterator = resultSequence.value;
 				}
 				return resultIterator.next(hint);
-			}
+			},
 		});
 	}
 

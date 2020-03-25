@@ -20,8 +20,8 @@ class OrOperator extends Expression {
 
 		super(maxSpecificity, expressions, {
 			canBeStaticallyEvaluated: expressions.every(
-				selector => selector.canBeStaticallyEvaluated
-			)
+				(selector) => selector.canBeStaticallyEvaluated
+			),
 		});
 
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.
@@ -92,7 +92,7 @@ class OrOperator extends Expression {
 					return ready(falseBoolean);
 				}
 				return DONE_TOKEN;
-			}
+			},
 		});
 	}
 

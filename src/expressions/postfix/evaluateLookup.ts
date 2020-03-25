@@ -23,7 +23,7 @@ function performLookup(
 	if (isSubtypeOf(contextItem.type, 'array(*)')) {
 		const arrayItem = contextItem as ArrayValue;
 		if (lookup === '*') {
-			sequences.push(...arrayItem.members.map(member => member()));
+			sequences.push(...arrayItem.members.map((member) => member()));
 		} else if (!isSubtypeOf(lookup.type, 'xs:integer')) {
 			throw errXPTY0004('The key specifier is not an integer.');
 		} else {
@@ -36,9 +36,9 @@ function performLookup(
 	} else if (isSubtypeOf(contextItem.type, 'map(*)')) {
 		const mapItem = contextItem as MapValue;
 		if (lookup === '*') {
-			sequences.push(...mapItem.keyValuePairs.map(keyValuePair => keyValuePair.value()));
+			sequences.push(...mapItem.keyValuePairs.map((keyValuePair) => keyValuePair.value()));
 		} else {
-			const matchingPair = mapItem.keyValuePairs.find(keyValuePair =>
+			const matchingPair = mapItem.keyValuePairs.find((keyValuePair) =>
 				isSameMapKey(keyValuePair.key, lookup)
 			);
 			if (matchingPair) {
@@ -68,7 +68,7 @@ export default function evaluateLookup(
 	);
 	const createLookupSequence = createDoublyIterableSequence(lookupSequence);
 
-	const deepSequence = createLookupSequence().mapAll(lookups =>
+	const deepSequence = createLookupSequence().mapAll((lookups) =>
 		lookups.reduce((sequenceToReturn, lookup) => {
 			return performLookup(contextItem, lookup, sequenceToReturn);
 		}, new EmptySequence())
