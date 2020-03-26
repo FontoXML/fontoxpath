@@ -363,6 +363,21 @@ describe('castable as', () => {
 			));
 	});
 
+	describe('as xs:duration', () => {
+		it('can not cast invalid untypedAtomics to xs:duration', () =>
+			chai.assert.isFalse(
+				evaluateXPathToBoolean('xs:untypedAtomic("not a duration") castable as xs:duration')
+			));
+		it('can not cast invalid strings to xs:duration', () =>
+			chai.assert.isFalse(
+				evaluateXPathToBoolean('"not a duration" castable as xs:duration')
+			));
+		it('can cast xs:duration to xs:duration', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('xs:duration("P3YT2H") castable as xs:duration')
+			));
+	});
+
 	describe('as xs:ENTITY', () => {
 		it('can cast strings to xs:ENTITY', () =>
 			chai.assert.isTrue(
