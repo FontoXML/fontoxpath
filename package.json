@@ -65,7 +65,7 @@
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^13.5.0",
 		"@types/node-static": "^0.7.3",
-		"@types/sinon": "^7.5.2",
+		"@types/sinon": "^9.0.0",
 		"chai": "^4.2.0",
 		"concurrently": "^5.1.0",
 		"coveralls": "^3.0.11",
