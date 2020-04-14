@@ -153,6 +153,7 @@ FontoXPath contains different test sets:
 |The QT3 XQueryX tests|`npm run qt3testsxqueryx`|
 |The XQUTS tests|`npm run xqutstests`|
 |The XQUTS XQueryX tests|`npm run xqutstestsxqueryx`|
+|The QT3 performance tests|`npm run performance`|
 
 They all run in Node. By running the tests with the `--inspect` flag,
 they can be debugged by the browser: `npm run test -- --inspect
@@ -183,6 +184,17 @@ tests. Use `git` to find differences.
 If you are adding a new feature, don't forget to edit the file
 `test/runnableTestSets.csv`. This file disables tests for features we
 have not yet implemented.
+
+To check the performance of fontoxpath we pick a random subset of the
+qt3tests as running all will take too long (hours). This random subset
+is not checked in but can be generated using
+`npm run performance -- --regenerate [<number-of-tests>]`, this will create
+and populate `test/runnablePerformanceTestNames.csv`. You can manually
+edit this file to run specific tests. By storing these in a file you can
+run the same set even when switching between different commits. With the
+generated file present you can run the tests using `npm run performance`,
+this will run a benchmark for each qt3 test using
+[benchmarkjs](https://benchmarkjs.com/).
 
 ### Building
 

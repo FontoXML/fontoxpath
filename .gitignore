@@ -2,6 +2,7 @@
 /node_modules
 /test/assets/QT3TS
 /test/assets/XQUTS
+/test/assets/runnablePerformanceTestNames.csv
 /test/built
 /built
 /demo/built
