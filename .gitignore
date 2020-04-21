@@ -1,5 +1,6 @@
 /coverage
 /node_modules
+/performance/lib
 /test/assets/QT3TS
 /test/assets/XQUTS
 /test/assets/runnablePerformanceTestNames.csv
