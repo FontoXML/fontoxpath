@@ -6,7 +6,7 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPath,
 } from '../src/index';
-import runner from './BenchmarkRunner';
+import runner from './benchmarkRunner/BenchmarkRunner';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
 import content from './assets/XMarkAuction';
 
@@ -39,7 +39,7 @@ runner.compareBenchmarks(
 	}
 );
 
-runner.compareBenchmarks(
+runner.only.compareBenchmarks(
 	'count 3190 text elements',
 	() => {
 		document = slimdomSaxParser.sync(content);

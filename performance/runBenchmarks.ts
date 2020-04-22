@@ -1,4 +1,4 @@
-import runner from './BenchmarkRunner';
+import runner from './benchmarkRunner/BenchmarkRunner';
 import loadBenchmarks from './loadBenchmarks';
 
 async function run() {

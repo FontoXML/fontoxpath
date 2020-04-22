@@ -1,6 +1,6 @@
 import { Document } from 'slimdom';
 import { domFacade, evaluateXPath } from '../src/index';
-import runner from './BenchmarkRunner';
+import runner from './benchmarkRunner/BenchmarkRunner';
 
 let document: Document;
 

@@ -19,7 +19,7 @@ export default function importBenchmarks() {
 				imports += `import '${i}';`;
 			}
 
-			return `import runner from './BenchmarkRunner';
+			return `import runner from './benchmarkRunner/BenchmarkRunner';
 			${imports}
 			runner.run();`;
 		}
