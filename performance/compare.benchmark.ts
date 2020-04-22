@@ -39,7 +39,7 @@ runner.compareBenchmarks(
 	}
 );
 
-runner.only.compareBenchmarks(
+runner.compareBenchmarks(
 	'count 3190 text elements',
 	() => {
 		document = slimdomSaxParser.sync(content);

@@ -6,7 +6,6 @@ export default function importBenchmarks() {
 		name: 'import-benchmarks',
 
 		load(id) {
-			console.log(id);
 			if (!id.endsWith('runBenchmarks.js')) {
 				return null;
 			}
