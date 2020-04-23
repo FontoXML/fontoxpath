@@ -8,7 +8,9 @@ import {
 } from '../src/index';
 import runner from './benchmarkRunner/BenchmarkRunner';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
-import loadFile from './assets/loadFile';
+import loadFile from './loadFile';
+
+const testDocumentFilename = 'test/assets/QT3TS/app/XMark/XMarkAuction.xml';
 
 let document: Document;
 
@@ -42,7 +44,7 @@ runner.compareBenchmarks(
 runner.compareBenchmarks(
 	'count 3190 text elements',
 	async () => {
-		const content = await loadFile('XMarkAuction.xml');
+		const content = await loadFile(testDocumentFilename);
 		document = slimdomSaxParser.sync(content);
 	},
 	undefined,
@@ -74,7 +76,7 @@ runner.compareBenchmarks(
 runner.compareBenchmarks(
 	'XMark-Q14, this is one of the more expensive tests in the qt3ts',
 	async () => {
-		const content = await loadFile('XMarkAuction.xml');
+		const content = await loadFile(testDocumentFilename);
 		document = slimdomSaxParser.sync(content);
 	},
 	undefined,
