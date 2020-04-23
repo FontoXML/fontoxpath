@@ -1,15 +1,20 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { evaluateXPath, evaluateXPathToBoolean, evaluateXPathToFirstNode } from 'fontoxpath';
+import {
+	evaluateXPath,
+	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode,
+	evaluateXPathToString,
+} from 'fontoxpath';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 
-let documentNode;
-beforeEach(() => {
-	documentNode = new slimdom.Document();
-});
-
 describe('ElementConstructor', () => {
+	let documentNode;
+	beforeEach(() => {
+		documentNode = new slimdom.Document();
+	});
+
 	it('can create an element', () => {
 		chai.assert.equal(
 			evaluateXPathToFirstNode(
@@ -193,6 +198,102 @@ describe('ElementConstructor', () => {
 				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 			).outerHTML,
 			'<e><a/><b/><c/></e>'
+		);
+	});
+
+	it('correctly handles nested elements', () => {
+		chai.assert.equal(
+			evaluateXPathToFirstNode<slimdom.Element>(
+				`<e>
+					<!-- my comment -->
+					<d attr="v-a-l-u-e">
+						<c>
+							<?PITarget PIContent?>
+							<b>
+								<a>hey text node!</a>
+							</b>
+						</c>
+					</d>
+				</e>`,
+				documentNode,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			).outerHTML,
+			`<e><!-- my comment --><d attr="v-a-l-u-e"><c><?PITarget PIContent?><b><a>hey text node!</a></b></c></d></e>`
+		);
+	});
+
+	it('clones nodes when it is needed', () => {
+		const a = documentNode.createElement('a');
+		const b = documentNode.createElement('b');
+		a.appendChild(b);
+		documentNode.appendChild(a);
+
+		chai.assert.isFalse(
+			evaluateXPathToBoolean(
+				`let $bb := a/b[1]
+				return <c>{$bb}</c>/b[1] is a/b[1]`,
+				documentNode,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'clone node b.'
+		);
+
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`let $bb := a/b[1]
+				return $bb is a/b[1]`,
+				documentNode,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'does not clone node b.'
+		);
+
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`. is ./parent::*/child::*[1]`,
+				b,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'The node b is the first child of its parent.'
+		);
+
+		chai.assert.isTrue(
+			evaluateXPathToBoolean(
+				`let $aa := a, $bb := a/b[1], $x := <x>{$aa}{$bb}</x>
+				return $x/a/parent::* is $x/b/parent::*`,
+				documentNode,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'create all dom only once.'
+		);
+	});
+
+	it('returns data of the node', () => {
+		const title = documentNode.createElement('title');
+		const textNode = documentNode.createTextNode('Hello World!');
+		title.appendChild(textNode);
+		documentNode.appendChild(title);
+
+		chai.assert.equal(
+			evaluateXPathToString(
+				`string(.)`,
+				title,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			),
+			'Hello World!',
+			'Returns "Hello World!"'
 		);
 	});
 

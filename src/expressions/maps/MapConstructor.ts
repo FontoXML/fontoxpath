@@ -5,6 +5,8 @@ import Expression from '../Expression';
 import Specificity from '../Specificity';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import zipSingleton from '../util/zipSingleton';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 
 class MapConstructor extends Expression {
 	private _entries: { key: Expression; value: Expression }[];
@@ -27,7 +29,7 @@ class MapConstructor extends Expression {
 		this._entries = entries;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const keySequences = this._entries.map((kvp) =>
 			atomize(
 				kvp.key.evaluateMaybeStatically(dynamicContext, executionParameters),

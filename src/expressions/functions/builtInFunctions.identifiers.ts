@@ -1,16 +1,22 @@
-import createNodeValue from '../dataTypes/createNodeValue';
+import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function findDescendants(domFacade, node, isMatch) {
-	const results = domFacade.getChildNodes(node).reduce(function (matchingNodes, childNode) {
-		Array.prototype.push.apply(matchingNodes, findDescendants(domFacade, childNode, isMatch));
-		return matchingNodes;
-	}, []);
+	const results = domFacade
+		.getChildNodePointers(node)
+		.reduce(function (matchingNodes, childNode) {
+			Array.prototype.push.apply(
+				matchingNodes,
+				findDescendants(domFacade, childNode, isMatch)
+			);
+			return matchingNodes;
+		}, []);
 	if (isMatch(node)) {
 		results.unshift(node);
 	}
@@ -38,14 +44,18 @@ const fnId: FunctionDefinitionType = function (
 			});
 			return byId;
 		}, Object.create(null));
-	const documentNode =
-		targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE
-			? targetNodeValue.value
-			: targetNodeValue.value.ownerDocument;
 
-	const matchingNodes = findDescendants(domFacade, documentNode, function (node) {
+	let documentNode = targetNodeValue.value;
+	while (domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE) {
+		documentNode = domFacade.getParentNodePointer(documentNode);
+		if (documentNode === null) {
+			throw new Error('FODC0001: the root node of the target node is not a document node.');
+		}
+	}
+
+	const matchingNodes = findDescendants(domFacade, documentNode, (node) => {
 		// TODO: use the is-id property of attributes / elements
-		if (node.nodeType !== node.ELEMENT_NODE) {
+		if (domFacade.getNodeType(node) !== NODE_TYPES.ELEMENT_NODE) {
 			return false;
 		}
 		const idAttribute = domFacade.getAttribute(node, 'id');
@@ -59,7 +69,7 @@ const fnId: FunctionDefinitionType = function (
 		isMatchingIdById[idAttribute] = false;
 		return true;
 	});
-	return sequenceFactory.create(matchingNodes.map(createNodeValue));
+	return sequenceFactory.create(matchingNodes.map((node) => createPointerValue(node, domFacade)));
 };
 
 const fnIdref: FunctionDefinitionType = function (
@@ -79,15 +89,19 @@ const fnIdref: FunctionDefinitionType = function (
 		byId[idValue.value] = true;
 		return byId;
 	}, Object.create(null));
-	const documentNode =
-		targetNodeValue.value.nodeType === targetNodeValue.value.DOCUMENT_NODE
-			? targetNodeValue.value
-			: targetNodeValue.value.ownerDocument;
+
+	let documentNode = targetNodeValue.value;
+	while (domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE) {
+		documentNode = domFacade.getParentNodePointer(documentNode);
+		if (documentNode === null) {
+			throw new Error('FODC0001: the root node of the context node is not a document node.');
+		}
+	}
 
 	// TODO: Index idrefs to optimize this lookup
 	const matchingNodes = findDescendants(domFacade, documentNode, function (node) {
 		// TODO: use the is-idrefs property of attributes / elements
-		if (node.nodeType !== node.ELEMENT_NODE) {
+		if (domFacade.getNodeType(node) !== NODE_TYPES.ELEMENT_NODE) {
 			return false;
 		}
 		const idAttribute = domFacade.getAttribute(node, 'idref');
@@ -99,7 +113,7 @@ const fnIdref: FunctionDefinitionType = function (
 			return isMatchingIdRefById[idRef];
 		});
 	});
-	return sequenceFactory.create(matchingNodes.map(createNodeValue));
+	return sequenceFactory.create(matchingNodes.map((node) => createPointerValue(node, domFacade)));
 };
 
 export default {

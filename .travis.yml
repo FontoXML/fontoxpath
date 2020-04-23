@@ -1,5 +1,5 @@
 language: node_js
-node_js: "node"
+node_js: 'node'
 cache: npm
 
 # Greenkeeper wants to install new versions of pckages, often
@@ -7,19 +7,18 @@ cache: npm
 install: case $TRAVIS_BRANCH in greenkeeper*) npm i;; *) npm ci;; esac;
 
 before_script:
-  - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
-  - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
-  - curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
-  - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
+    - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+    - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+    - curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+    - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
 
 script:
-    - travis_wait timeout 600 npm run lint;
-    - travis_wait timeout 600 npm run ci-test -- --reporter dot;
-    - travis_wait timeout 600 npm run ci-qt3tests -- --reporter dot;
-    - travis_wait timeout 600 npm run integrationtests -- --dist --reporter dot;
-    - travis_wait timeout 600 npm run qt3tests -- --dist --reporter dot;
-    - travis_wait timeout 600 npm run ci-qt3testsxqueryx -- --reporter dot;
-    - travis_wait timeout 600 npm run ci-xqutstests -- --reporter dot;
-    - travis_wait timeout 600 npm run ci-xqutstestsxqueryx -- --reporter dot;
+    - travis_wait 60 npm run ci-test -- --reporter dot;
+    - travis_wait 60 npm run ci-qt3tests -- --reporter dot;
+    - travis_wait 60 npm run integrationtests -- --dist --reporter dot;
+    - travis_wait 60 npm run qt3tests -- --dist --reporter dot;
+    - travis_wait 60 npm run qt3testsxqueryx -- --reporter dot;
+    - travis_wait 60 npm run ci-xqutstests -- --reporter dot;
+    - travis_wait 60 npm run xqutstestsxqueryx -- --reporter dot;
 
 after_success: npm run coverage

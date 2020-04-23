@@ -1,6 +1,8 @@
 import atomize from '../dataTypes/atomize';
+import { TextNodePointer, TinyTextNode } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import castToType from '../dataTypes/castToType';
-import createNodeValue from '../dataTypes/createNodeValue';
+import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -19,7 +21,6 @@ class TextConstructor extends Expression {
 	}
 
 	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
-		const nodesFactory = executionParameters.nodesFactory;
 		if (!this._expr) {
 			return sequenceFactory.empty();
 		}
@@ -30,7 +31,16 @@ class TextConstructor extends Expression {
 			}
 			const content = items.map((item) => castToType(item, 'xs:string').value).join(' ');
 
-			return sequenceFactory.singleton(createNodeValue(nodesFactory.createTextNode(content)));
+			const tinyTextNode: TinyTextNode = {
+				data: content,
+				isTinyNode: true,
+				nodeType: NODE_TYPES.TEXT_NODE
+			};
+			const textNodePointer = { node: tinyTextNode, graftAncestor: null };
+
+			return sequenceFactory.singleton(
+				createPointerValue(textNodePointer, executionParameters.domFacade)
+			);
 		});
 	}
 }

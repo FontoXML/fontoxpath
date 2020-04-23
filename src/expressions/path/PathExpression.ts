@@ -1,6 +1,6 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
+import DomFacade from '../../domFacade/DomFacade';
 import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -8,6 +8,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import arePointersEqual from '../operators/compares/arePointersEqual';
 import Specificity from '../Specificity';
 import createSingleValueIterator from '../util/createSingleValueIterator';
 import {
@@ -27,7 +28,8 @@ function isSameNodeValue(a: Value, b: Value) {
 		return false;
 	}
 
-	return a.value === b.value;
+	return arePointersEqual(a.value, b.value);
+	// a.value === b.value;
 }
 
 function concatSortedSequences(sequences: IAsyncIterator<ISequence>): ISequence {
@@ -79,7 +81,7 @@ interface IMappedIterator extends IAsyncIterator<Value> {
 }
 
 function mergeSortedSequences(
-	domFacade: IWrappingDomFacade,
+	domFacade: DomFacade,
 	sequences: IAsyncIterator<ISequence>
 ): ISequence {
 	const allIterators: IMappedIterator[] = [];
@@ -188,7 +190,7 @@ function mergeSortedSequences(
 	});
 }
 
-function sortResults(domFacade: IWrappingDomFacade, result: Value[]) {
+function sortResults(domFacade: DomFacade, result: Value[]) {
 	let resultContainsNodes = false;
 	let resultContainsNonNodes = false;
 	result.forEach((resultValue) => {

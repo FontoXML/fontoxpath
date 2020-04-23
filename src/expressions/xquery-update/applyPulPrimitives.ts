@@ -1,15 +1,18 @@
 import IDocumentWriter from '../../documentWriter/IDocumentWriter';
 import {
-	ConcreteAttributeNode,
-	ConcreteChildNode,
-	ConcreteElementNode,
-	ConcreteProcessingInstructionNode,
-	NODE_TYPES,
-} from '../../domFacade/ConcreteNode';
-import IDomFacade from '../../domFacade/IDomFacade';
+	AttributeNodePointer,
+	ChildNodePointer,
+	DocumentNodePointer,
+	ElementNodePointer,
+	NodePointer,
+	ProcessingInstructionNodePointer,
+	TinyElementNode,
+} from '../../domClone/Pointer';
+import { NODE_TYPES, ConcreteElementNode } from '../../domFacade/ConcreteNode';
+import DomFacade from '../../domFacade/DomFacade';
 import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
 import INodesFactory from '../../nodesFactory/INodesFactory';
-import { Attr, Document, Element, Node, ProcessingInstruction } from '../../types/Types';
+import { Attr, Document, Element } from '../../types/Types';
 import QName from '../dataTypes/valueTypes/QName';
 import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
 
@@ -21,20 +24,21 @@ import { errXUDY0021 } from './XQueryUpdateFacilityErrors';
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const deletePu = (
-	target: ConcreteAttributeNode | ConcreteChildNode,
-	domFacade: (IDomFacade | null) | undefined,
+	target: AttributeNodePointer | ChildNodePointer,
+	domFacade: (DomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	const parent = domFacade.getParentNode(target);
+	const parentPointer = domFacade.getParentNodePointer(target);
+	const parent = parentPointer ? parentPointer.node : null;
 	if (parent) {
-		if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
+		if (domFacade.getNodeType(target) === NODE_TYPES.ATTRIBUTE_NODE) {
 			documentWriter.removeAttributeNS(
 				parent as Element,
-				target.namespaceURI,
-				(target as Attr).name
+				domFacade.getNamespaceURI(target as AttributeNodePointer),
+				domFacade.getNodeName(target as AttributeNodePointer)
 			);
 		} else {
-			documentWriter.removeChild(parent as Document | Element, target);
+			documentWriter.removeChild(parent as Document | Element, target.node);
 		}
 	}
 };
@@ -48,17 +52,17 @@ export const deletePu = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const insertAfter = (
-	target: ConcreteChildNode,
-	content: Node[],
-	domFacade: (IDomFacade | null) | undefined,
+	target: ChildNodePointer,
+	content: NodePointer[],
+	domFacade: (DomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	// The parent must exist or an error has been raised.
-	const parent = domFacade.getParentNode(target);
-	const nextSibling = domFacade.getNextSibling(target);
+	const parent = domFacade.getParentNodePointer(target).node;
+	const nextSibling = domFacade.getNextSiblingPointer(target).node;
 
-	content.forEach((node) => {
-		documentWriter.insertBefore(parent as Element, node, nextSibling);
+	content.forEach((pointer) => {
+		documentWriter.insertBefore(parent as Element, pointer.node, nextSibling);
 	});
 };
 
@@ -71,16 +75,16 @@ export const insertAfter = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const insertBefore = (
-	target: ConcreteChildNode,
-	content: Node[],
-	domFacade: (IDomFacade | null) | undefined,
+	target: ChildNodePointer,
+	content: NodePointer[],
+	domFacade: (DomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	// The parent must exist or an error has been raised.
-	const parent = domFacade.getParentNode(target);
+	const parent = domFacade.getParentNodePointer(target).node;
 
-	content.forEach((node) => {
-		documentWriter.insertBefore(parent as Element, node, target);
+	content.forEach((pointer) => {
+		documentWriter.insertBefore(parent as Element, pointer.node, target.node);
 	});
 };
 
@@ -92,8 +96,8 @@ export const insertBefore = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const insertInto = (
-	target: Element | Document,
-	content: Node[],
+	target: ElementNodePointer | DocumentNodePointer,
+	content: NodePointer[],
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	insertIntoAsLast(target, content, documentWriter);
@@ -108,14 +112,15 @@ export const insertInto = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const insertIntoAsFirst = (
-	target: Element | Document,
-	content: Node[],
-	domFacade: (IDomFacade | null) | undefined,
+	target: ElementNodePointer | DocumentNodePointer,
+	content: NodePointer[],
+	domFacade: (DomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	const firstChild = domFacade.getFirstChild(target);
-	content.forEach((node) => {
-		documentWriter.insertBefore(target, node, firstChild);
+	const firstChildPointer = domFacade.getFirstChildPointer(target);
+	const firstChild = firstChildPointer ? firstChildPointer.node : null;
+	content.forEach((pointer) => {
+		documentWriter.insertBefore(target.node, pointer.node, firstChild);
 	});
 };
 
@@ -127,12 +132,12 @@ export const insertIntoAsFirst = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const insertIntoAsLast = (
-	target: Element | Document,
-	content: Node[],
+	target: ElementNodePointer | DocumentNodePointer,
+	content: NodePointer[],
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	content.forEach((node) => {
-		documentWriter.insertBefore(target, node, null);
+	content.forEach((pointer) => {
+		documentWriter.insertBefore(target.node, pointer.node, null);
 	});
 };
 
@@ -145,16 +150,22 @@ export const insertIntoAsLast = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const insertAttributes = (
-	target: Element,
-	content: Attr[],
-	domFacade: (IDomFacade | null) | undefined,
+	target: ElementNodePointer,
+	content: AttributeNodePointer[],
+	domFacade: (DomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	content.forEach((attr) => {
-		if (domFacade.getAttribute(target, attr.name)) {
-			throw errXUDY0021(`An attribute ${attr.name} already exists.`);
+	content.forEach((attributeNodePointer) => {
+		const attrName = domFacade.getNodeName(attributeNodePointer);
+		if (domFacade.getAttribute(target as any, attrName)) {
+			throw errXUDY0021(`An attribute ${attrName} already exists.`);
 		}
-		documentWriter.setAttributeNS(target, attr.namespaceURI, attr.name, attr.value);
+		documentWriter.setAttributeNS(
+			target.node,
+			domFacade.getNamespaceURI(attributeNodePointer),
+			attrName,
+			domFacade.getDataFromPointer(attributeNodePointer)
+		);
 	});
 };
 
@@ -168,58 +179,67 @@ export const insertAttributes = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const rename = (
-	target: ConcreteAttributeNode | ConcreteElementNode | ConcreteProcessingInstructionNode,
+	target: AttributeNodePointer | ElementNodePointer | ProcessingInstructionNodePointer,
 	newName: QName | null,
-	domFacade: (IDomFacade | null) | undefined,
+	domFacade: (DomFacade | null) | undefined,
 	nodesFactory: (INodesFactory | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	if (!nodesFactory) {
-		nodesFactory = new DomBackedNodesFactory(target);
+		nodesFactory = new DomBackedNodesFactory(target ? target.node : null);
 	}
 
 	let replacement;
 
-	switch (target.nodeType) {
+	switch (domFacade.getNodeType(target)) {
 		case NODE_TYPES.ELEMENT_NODE: {
-			const attributes = domFacade.getAllAttributes(target as Element);
-			const childNodes = domFacade.getChildNodes(target as Element);
-			replacement = nodesFactory.createElementNS(
+			const attributes = domFacade.getAllAttributes(
+				target.node as ConcreteElementNode | TinyElementNode
+			);
+			const childNodes = domFacade.getChildNodes(
+				target.node as ConcreteElementNode | TinyElementNode
+			);
+			const replacementNode = nodesFactory.createElementNS(
 				newName.namespaceURI,
 				newName.buildPrefixedName()
 			);
+			replacement = { node: replacementNode, graftAncestor: null };
 
 			attributes.forEach((attribute) => {
 				documentWriter.setAttributeNS(
-					replacement as Element,
+					replacementNode,
 					attribute.namespaceURI,
-					attribute.name,
+					attribute.nodeName,
 					attribute.value
 				);
 			});
 			childNodes.forEach((childNode) => {
-				documentWriter.insertBefore(replacement, childNode, null);
+				documentWriter.insertBefore(replacementNode, childNode, null);
 			});
 			break;
 		}
 		case NODE_TYPES.ATTRIBUTE_NODE: {
-			replacement = nodesFactory.createAttributeNS(
+			const replacementAttr = nodesFactory.createAttributeNS(
 				newName.namespaceURI,
 				newName.buildPrefixedName()
 			);
-			replacement.value = (target as Attr).value;
+			replacementAttr.value = domFacade.getDataFromPointer(target as AttributeNodePointer);
+			replacement = { node: replacementAttr, graftAncestor: null };
 			break;
 		}
 		case NODE_TYPES.PROCESSING_INSTRUCTION_NODE: {
-			replacement = nodesFactory.createProcessingInstruction(
-				newName.buildPrefixedName(),
-				(target as ProcessingInstruction).data
-			);
+			replacement = {
+				node: nodesFactory.createProcessingInstruction(
+					newName.buildPrefixedName(),
+					domFacade.getDataFromPointer(target as ProcessingInstructionNodePointer)
+				),
+				graftAncestor: null,
+			};
 			break;
 		}
 	}
 
-	if (!domFacade.getParentNode(target)) {
+	if (!domFacade.getParentNodePointer(target)) {
 		throw new Error('Not supported: renaming detached nodes.');
 	}
 
@@ -235,14 +255,16 @@ export const rename = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const replaceElementContent = (
-	target: Element | Document,
-	text: Node | null,
-	domFacade: (IDomFacade | null) | undefined,
+	target: ElementNodePointer | DocumentNodePointer,
+	text: NodePointer | null,
+	domFacade: (DomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	domFacade.getChildNodes(target).forEach((child) => documentWriter.removeChild(target, child));
+	domFacade
+		.getChildNodes(target.node)
+		.forEach((child) => documentWriter.removeChild(target.node, child));
 	if (text) {
-		documentWriter.insertBefore(target, text, null);
+		documentWriter.insertBefore(target.node, text.node, null);
 	}
 };
 
@@ -255,43 +277,60 @@ export const replaceElementContent = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const replaceNode = (
-	target: ConcreteAttributeNode | ConcreteChildNode,
-	replacement: (ConcreteAttributeNode | ConcreteChildNode)[],
-	domFacade: (IDomFacade | null) | undefined,
+	target: AttributeNodePointer | ChildNodePointer,
+	replacement: (AttributeNodePointer | ChildNodePointer)[],
+	domFacade: (DomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
 	// The parent must exist or an error has been raised.
-	const parent = domFacade.getParentNode(target);
+	const parent = domFacade.getParentNodePointer(target);
+	const targetNodeType = domFacade.getNodeType(target);
 
-	if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
+	if (targetNodeType === NODE_TYPES.ATTRIBUTE_NODE) {
+		const attrTarget = target as AttributeNodePointer;
 		// All replacement must consist of attribute nodes.
-		if (replacement.some((candidate) => candidate.nodeType !== NODE_TYPES.ATTRIBUTE_NODE)) {
+		if (
+			replacement.some(
+				(candidate) => domFacade.getNodeType(candidate) !== NODE_TYPES.ATTRIBUTE_NODE
+			)
+		) {
 			throw new Error(
 				'Constraint "If $target is an attribute node, $replacement must consist of zero or more attribute nodes." failed.'
 			);
 		}
 
-		const element: Element = parent as Element;
+		const element: Element = parent ? (parent.node as Element) : null;
 
-		documentWriter.removeAttributeNS(element, target.namespaceURI, (target as Attr).name);
-		replacement.forEach((attr: Attr) => {
-			if (domFacade.getAttribute(element, attr.name)) {
-				throw errXUDY0021(`An attribute ${attr.name} already exists.`);
+		documentWriter.removeAttributeNS(
+			element,
+			domFacade.getNamespaceURI(attrTarget),
+			domFacade.getNodeName(attrTarget)
+		);
+		replacement.forEach((attr: AttributeNodePointer) => {
+			const name = domFacade.getNodeName(attr);
+			if (domFacade.getAttribute(parent as ElementNodePointer, name)) {
+				throw errXUDY0021(`An attribute ${name} already exists.`);
 			}
-			documentWriter.setAttributeNS(element, attr.namespaceURI, attr.name, attr.value);
+			documentWriter.setAttributeNS(
+				element,
+				domFacade.getNamespaceURI(attr),
+				name,
+				domFacade.getDataFromPointer(attr)
+			);
 		});
 	}
 
 	if (
-		target.nodeType === NODE_TYPES.ELEMENT_NODE ||
-		target.nodeType === NODE_TYPES.TEXT_NODE ||
-		target.nodeType === NODE_TYPES.COMMENT_NODE ||
-		target.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
+		targetNodeType === NODE_TYPES.ELEMENT_NODE ||
+		targetNodeType === NODE_TYPES.TEXT_NODE ||
+		targetNodeType === NODE_TYPES.COMMENT_NODE ||
+		targetNodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
 	) {
-		const following = domFacade.getNextSibling(target);
-		documentWriter.removeChild(parent as Document | Element, target);
+		const followingPointer = domFacade.getNextSiblingPointer(target);
+		const following = followingPointer ? followingPointer.node : null;
+		documentWriter.removeChild(parent.node as Document | Element, target.node);
 		replacement.forEach((newNode) => {
-			documentWriter.insertBefore(parent as Document | Element, newNode, following);
+			documentWriter.insertBefore(parent.node as Document | Element, newNode.node, following);
 		});
 	}
 };
@@ -305,19 +344,24 @@ export const replaceNode = (
  * @param  documentWriter  The documentWriter for writing changes.
  */
 export const replaceValue = (
-	target: ConcreteElementNode | ConcreteAttributeNode,
+	target: ElementNodePointer | AttributeNodePointer,
 	stringValue: string,
-	domFacade: (IDomFacade | null) | undefined,
+	domFacade: (DomFacade | null) | undefined,
 	documentWriter: (IDocumentWriter | null) | undefined
 ) => {
-	if (target.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
-		const element = domFacade.getParentNode(target) as Element;
+	if (domFacade.getNodeType(target) === NODE_TYPES.ATTRIBUTE_NODE) {
+		const element = domFacade.getParentNodePointer(target) as ElementNodePointer;
 		if (element) {
-			documentWriter.setAttributeNS(element, target.namespaceURI, target.name, stringValue);
+			documentWriter.setAttributeNS(
+				element.node,
+				domFacade.getNamespaceURI(target),
+				domFacade.getNodeName(target),
+				stringValue
+			);
 		} else {
-			target.value = stringValue;
+			(target.node as Attr).value = stringValue;
 		}
 	} else {
-		documentWriter.setData(target, stringValue);
+		documentWriter.setData(target.node, stringValue);
 	}
 };

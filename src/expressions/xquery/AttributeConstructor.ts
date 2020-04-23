@@ -1,11 +1,13 @@
 import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import createNodeValue from '../dataTypes/createNodeValue';
+import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
+import { TinyAttributeNode } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
@@ -13,10 +15,18 @@ import { errXPST0081 } from '../XPathErrors';
 import { evaluateQNameExpression } from './nameExpression';
 import { errXQDY0044 } from './XQueryErrors';
 
-function createAttribute(nodesFactory, name, value) {
-	const attr = nodesFactory.createAttributeNS(name.namespaceURI, name.buildPrefixedName());
-	attr.value = value;
-	return attr;
+function createAttribute(name, value) {
+	const tinyAttributeNode: TinyAttributeNode = {
+		nodeType: NODE_TYPES.ATTRIBUTE_NODE,
+		isTinyNode: true,
+		nodeName: name.buildPrefixedName(),
+		namespaceURI: name.namespaceURI,
+		prefix: name.prefix,
+		localName: name.localName,
+		name: name.buildPrefixedName(),
+		value,
+	};
+	return { node: tinyAttributeNode, graftAncestor: null };
 }
 
 class AttributeConstructor extends Expression {
@@ -50,7 +60,6 @@ class AttributeConstructor extends Expression {
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
-		const nodesFactory = executionParameters.nodesFactory;
 		let nameIterator: IAsyncIterator<Value>;
 		let name: QName;
 
@@ -119,12 +128,12 @@ class AttributeConstructor extends Expression {
 							})
 						).mapAll((allValueParts) =>
 							sequenceFactory.singleton(
-								createNodeValue(
+								createPointerValue(
 									createAttribute(
-										nodesFactory,
 										name,
 										allValueParts.map((val) => val.value).join('')
-									)
+									),
+									executionParameters.domFacade
 								)
 							)
 						).value;
@@ -135,7 +144,10 @@ class AttributeConstructor extends Expression {
 				done = true;
 
 				return ready(
-					createNodeValue(createAttribute(nodesFactory, name, (this._value as any).value))
+					createPointerValue(
+						createAttribute(name, (this._value as any).value),
+						executionParameters.domFacade
+					)
 				);
 			},
 		});

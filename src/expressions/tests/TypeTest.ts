@@ -1,6 +1,9 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Specificity from '../Specificity';
 import TestAbstractExpression from './TestAbstractExpression';
+import DynamicContext from '../DynamicContext';
+import Value from '../dataTypes/Value';
+import ExecutionParameters from '../ExecutionParameters';
 
 class TypeTest extends TestAbstractExpression {
 	public _type: { localName: string; namespaceURI: string; prefix: string };
@@ -10,7 +13,11 @@ class TypeTest extends TestAbstractExpression {
 		this._type = type;
 	}
 
-	public evaluateToBoolean(_dynamicContext, item) {
+	public evaluateToBoolean(
+		_dynamicContext: DynamicContext,
+		item: Value,
+		_executionParameters: ExecutionParameters
+	) {
 		return isSubtypeOf(
 			item.type,
 			this._type.prefix

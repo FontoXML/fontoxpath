@@ -6,6 +6,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
+import arePointersEqual from './compares/arePointersEqual';
 
 function ensureSortedSequence(
 	intersectOrExcept: string,
@@ -105,7 +106,7 @@ class IntersectExcept extends Expression {
 						secondValue = itrResult.value;
 					}
 
-					if (firstValue.value === secondValue.value) {
+					if (arePointersEqual(firstValue.value, secondValue.value)) {
 						const toReturn = ready(firstValue);
 						firstValue = null;
 						secondValue = null;

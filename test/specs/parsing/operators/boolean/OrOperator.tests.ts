@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import { evaluateXPathToBoolean } from 'fontoxpath';
 

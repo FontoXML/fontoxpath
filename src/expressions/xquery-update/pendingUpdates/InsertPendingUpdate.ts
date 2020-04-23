@@ -1,18 +1,18 @@
-import { ConcreteChildNode, ConcreteNode } from '../../../domFacade/ConcreteNode';
+import realizeDom from '../../../domClone/realizeDom';
+import { ChildNodePointer, NodePointer } from '../../../domClone/Pointer';
+import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import { IPendingUpdate } from '../IPendingUpdate';
 export class InsertPendingUpdate extends IPendingUpdate {
-	constructor(
-		readonly target: ConcreteNode,
-		readonly content: ConcreteChildNode[],
-		type: string
-	) {
+	constructor(readonly target: NodePointer, readonly content: ChildNodePointer[], type: string) {
 		super(type);
 	}
-	public toTransferable() {
+	public toTransferable(executionParameters: ExecutionParameters) {
 		return {
 			['type']: this.type,
-			['target']: this.target,
-			['content']: this.content,
+			['target']: realizeDom(this.target, executionParameters, false),
+			['content']: this.content.map((pointer) =>
+				realizeDom(pointer, executionParameters, true)
+			),
 		};
 	}
 }

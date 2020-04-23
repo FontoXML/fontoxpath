@@ -1,92 +1,29 @@
-import IDocumentWriter from '../../documentWriter/IDocumentWriter';
-import {
-	ConcreteDocumentNode,
-	ConcreteElementNode,
-	ConcreteNode,
-	NODE_TYPES,
-} from '../../domFacade/ConcreteNode';
-import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
-import INodesFactory from '../../nodesFactory/INodesFactory';
-import createNodeValue from '../dataTypes/createNodeValue';
+import deepCloneNode from '../../domClone/deepCloneNode';
+import createPointerValue from '../dataTypes/createPointerValue';
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value from '../dataTypes/Value';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
+import arePointersEqual from '../operators/compares/arePointersEqual';
+import { separateXDMValueFromUpdatingExpressionResult } from '../PossiblyUpdatingExpression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
+import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import createPendingUpdateFromTransferable from './createPendingUpdateFromTransferable';
+import { IPendingUpdate } from './IPendingUpdate';
 import { applyUpdates, mergeUpdates } from './pulRoutines';
 import UpdatingExpression from './UpdatingExpression';
 import { errXUDY0014, errXUDY0037, errXUTY0013 } from './XQueryUpdateFacilityErrors';
-import { IPendingUpdate } from './IPendingUpdate';
-import ISequence from '../dataTypes/ISequence';
-import { separateXDMValueFromUpdatingExpressionResult } from '../PossiblyUpdatingExpression';
-
-function deepCloneNode(
-	node: ConcreteNode,
-	domFacade: IWrappingDomFacade,
-	nodesFactory: INodesFactory,
-	documentWriter: IDocumentWriter
-) {
-	// Each copied node receives a new node identity. The parent, children, and attributes properties of the copied nodes are set so as to preserve their inter-node relationships. The parent property of the copy of $node is set to empty. Other properties of the copied nodes are determined as follows:
-
-	// For a copied document node, the document-uri property is set to empty.
-	// For a copied element node, the type-name property is set to xs:untyped, and the nilled, is-id, and is-idrefs properties are set to false.
-	// For a copied attribute node, the type-name property is set to xs:untypedAtomic and the is-idrefs property is set to false. The is-id property is set to true if the qualified name of the attribute node is xml:id; otherwise it is set to false.
-	// The string-value of each copied element and attribute node remains unchanged, and its typed value becomes equal to its string value as an instance of xs:untypedAtomic.
-	// 	Note:Implementations that store only the typed value of a node are required at this point to convert the typed value to a string form.
-	// If copy-namespaces mode in the static context specifies preserve, all in-scope-namespaces of the original element are retained in the new copy. If copy-namespaces mode specifies no-preserve, the new copy retains only those in-scope namespaces of the original element that are used in the names of the element and its attributes.
-	// All other properties of the copied nodes are preserved.
-
-	switch (node.nodeType) {
-		case NODE_TYPES.ELEMENT_NODE:
-			const cloneElem = nodesFactory.createElementNS(node.namespaceURI, node.nodeName);
-			domFacade
-				.getAllAttributes(node)
-				.forEach((attr) =>
-					documentWriter.setAttributeNS(
-						cloneElem,
-						attr.namespaceURI,
-						attr.name,
-						attr.value
-					)
-				);
-			for (const child of domFacade.getChildNodes(node)) {
-				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
-				documentWriter.insertBefore(cloneElem as ConcreteElementNode, descendant, null);
-			}
-			return cloneElem;
-		case NODE_TYPES.ATTRIBUTE_NODE:
-			const cloneAttr = nodesFactory.createAttributeNS(node.namespaceURI, node.nodeName);
-			cloneAttr.value = node.value;
-			return cloneAttr;
-		case NODE_TYPES.CDATA_SECTION_NODE:
-			return nodesFactory.createCDATASection(node.data);
-		case NODE_TYPES.COMMENT_NODE:
-			return nodesFactory.createComment(node.data);
-		case NODE_TYPES.DOCUMENT_NODE:
-			const cloneDoc = nodesFactory.createDocument();
-			for (const child of domFacade.getChildNodes(node)) {
-				const descendant = deepCloneNode(child, domFacade, nodesFactory, documentWriter);
-				documentWriter.insertBefore(cloneDoc as ConcreteDocumentNode, descendant, null);
-			}
-			return cloneDoc;
-		case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
-			return nodesFactory.createProcessingInstruction(node.target, node.data);
-		case NODE_TYPES.TEXT_NODE:
-			return nodesFactory.createTextNode(node.data);
-	}
-}
 
 function isCreatedNode(node, createdNodes, domFacade) {
-	if (createdNodes.includes(node)) {
+	if (createdNodes.find((cNode) => arePointersEqual(cNode, node))) {
 		return true;
 	}
-	const parent = domFacade.getParentNode(node);
+	const parent = domFacade.getParentNodePointer(node);
 	return parent ? isCreatedNode(parent, createdNodes, domFacade) : false;
 }
 
@@ -119,6 +56,19 @@ class TransformExpression extends UpdatingExpression {
 		this._variableBindings = variableBindings;
 		this._modifyExpr = modifyExpr;
 		this._returnExpr = returnExpr;
+	}
+
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
+		// If we were updating, the calling code would have called the evaluateWithUpdateList
+		// method. We can assume we're not actually updating
+		const pendingUpdateIterator = this.evaluateWithUpdateList(
+			dynamicContext,
+			executionParameters
+		);
+		return separateXDMValueFromUpdatingExpressionResult(pendingUpdateIterator, (_pul) => {});
 	}
 
 	public evaluateWithUpdateList(
@@ -167,8 +117,9 @@ class TransformExpression extends UpdatingExpression {
 						const node = sv.value.xdmValue[0];
 
 						// A new copy is made of $node and all nodes that have $node as an ancestor, collectively referred to as copied nodes.
-						const copiedNodes = createNodeValue(
-							deepCloneNode(node.value, domFacade, nodesFactory, documentWriter)
+						const copiedNodes = createPointerValue(
+							deepCloneNode(node.value, executionParameters),
+							domFacade
 						);
 						createdNodes.push(copiedNodes.value);
 						toMergePuls.push(sv.value.pendingUpdateList);
@@ -209,8 +160,13 @@ class TransformExpression extends UpdatingExpression {
 					}
 				});
 
+				const pul = modifyPul.map((update) => {
+					const transferable = update.toTransferable(executionParameters);
+					return createPendingUpdateFromTransferable(transferable);
+				});
+
 				// Let $revalidation-mode be the value of the revalidation mode in the static context of the library or main module containing the copy modify expression, and $inherit-namespaces be the value of inherit-namespaces in the static context of the copy modify expression. The following update operation is invoked: upd:applyUpdates($pul, $revalidation-mode, $inherit-namespaces).
-				applyUpdates(modifyPul, null, null, domFacade, nodesFactory, documentWriter);
+				applyUpdates(pul, null, null, domFacade, nodesFactory, documentWriter);
 
 				// The return clause is evaluated, resulting in a pending update list and an XDM instance.
 				if (!returnValueIterator) {
@@ -253,19 +209,6 @@ class TransformExpression extends UpdatingExpression {
 		this.isUpdating =
 			this._variableBindings.some((varBinding) => varBinding.sourceExpr.isUpdating) ||
 			this._returnExpr.isUpdating;
-	}
-
-	public evaluate(
-		dynamicContext: DynamicContext,
-		executionParameters: ExecutionParameters
-	): ISequence {
-		// If we were updating, the calling code would have called the evaluateWithUpdateList
-		// method. We can assume we're not actually updating
-		const pendingUpdateIterator = this.evaluateWithUpdateList(
-			dynamicContext,
-			executionParameters
-		);
-		return separateXDMValueFromUpdatingExpressionResult(pendingUpdateIterator, (_pul) => {});
 	}
 }
 

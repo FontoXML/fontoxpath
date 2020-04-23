@@ -1,6 +1,9 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Specificity from '../Specificity';
 import TestAbstractExpression from './TestAbstractExpression';
+import Value from '../dataTypes/Value';
+import ExecutionParameters from '../ExecutionParameters';
+import DynamicContext from '../DynamicContext';
 
 class NameTest extends TestAbstractExpression {
 	public _kind: number;
@@ -30,7 +33,12 @@ class NameTest extends TestAbstractExpression {
 		this._kind = options.kind;
 	}
 
-	public evaluateToBoolean(_dynamicContext, node) {
+	public evaluateToBoolean(
+		_dynamicContext: DynamicContext,
+		node: Value,
+		executionParameters: ExecutionParameters
+	) {
+		const domFacade = executionParameters.domFacade;
 		const nodeIsElement = isSubtypeOf(node.type, 'element()');
 		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');
 		if (!nodeIsElement && !nodeIsAttribute) {
@@ -50,10 +58,10 @@ class NameTest extends TestAbstractExpression {
 			if (this._localName === '*') {
 				return true;
 			}
-			return this._localName === node.value.localName;
+			return this._localName === domFacade.getLocalName(node.value);
 		}
 		if (this._localName !== '*') {
-			if (this._localName !== node.value.localName) {
+			if (this._localName !== domFacade.getLocalName(node.value)) {
 				return false;
 			}
 		}
@@ -73,7 +81,7 @@ class NameTest extends TestAbstractExpression {
 			resolvedNamespaceURI = this._namespaceURI || null;
 		}
 
-		return node.value.namespaceURI === resolvedNamespaceURI;
+		return domFacade.getNamespaceURI(node.value) === resolvedNamespaceURI;
 	}
 
 	public getBucket() {

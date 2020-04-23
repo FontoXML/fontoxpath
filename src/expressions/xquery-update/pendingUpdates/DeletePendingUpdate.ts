@@ -1,14 +1,16 @@
-import { ConcreteAttributeNode, ConcreteChildNode } from '../../../domFacade/ConcreteNode';
+import realizeDom from '../../../domClone/realizeDom';
+import { AttributeNodePointer, ChildNodePointer } from '../../../domClone/Pointer';
+import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import { IPendingUpdate } from '../IPendingUpdate';
 export class DeletePendingUpdate extends IPendingUpdate {
 	public readonly type: 'delete';
-	constructor(readonly target: ConcreteAttributeNode | ConcreteChildNode) {
+	constructor(readonly target: AttributeNodePointer | ChildNodePointer) {
 		super('delete');
 	}
-	public toTransferable() {
+	public toTransferable(executionParameters: ExecutionParameters) {
 		return {
 			['type']: this.type,
-			['target']: this.target,
+			['target']: realizeDom(this.target, executionParameters, false),
 		};
 	}
 }

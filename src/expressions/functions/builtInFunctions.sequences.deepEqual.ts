@@ -1,7 +1,7 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
-import createNodeValue from '../dataTypes/createNodeValue';
+import createPointerValue from '../dataTypes/createPointerValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
@@ -21,6 +21,9 @@ import {
 	ready,
 } from '../util/iterators';
 import builtInFunctionsNode from './builtInFunctions.node';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import { TextNodePointer } from '../../domClone/Pointer';
+import DomFacade from '../../domFacade/DomFacade';
 
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
@@ -58,8 +61,9 @@ function asyncGenerateEvery<T>(
 	};
 }
 
-function filterElementAndTextNodes(node) {
-	return node.nodeType === node.ELEMENT_NODE || node.nodeType === node.TEXT_NODE;
+function filterElementAndTextNodes(node, domFacade: DomFacade) {
+	const nodeType = domFacade.getNodeType(node);
+	return nodeType === NODE_TYPES.ELEMENT_NODE || nodeType === NODE_TYPES.TEXT_NODE;
 }
 
 function anyAtomicTypeDeepEqual(
@@ -120,6 +124,54 @@ function anyAtomicTypeDeepEqual(
 	return item1.value === item2.value;
 }
 
+function compareNormalizedTextNodes(
+	dynamicContext: DynamicContext,
+	executionParameters: ExecutionParameters,
+	staticContext: StaticContext,
+	textValues1: Value[],
+	textValues2: Value[]
+) {
+	const [atomicValue1, atomicValue2] = [textValues1, textValues2].map((textValues) => {
+		const value = textValues.reduce((wholeValue, textValue) => {
+			wholeValue =
+				wholeValue + atomizeSingleValue(textValue, executionParameters).first().value;
+
+			return wholeValue;
+		}, '');
+		return {
+			type: 'xs:string',
+			value,
+		};
+	});
+
+	return ready(
+		anyAtomicTypeDeepEqual(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			atomicValue1,
+			atomicValue2
+		)
+	);
+}
+
+function takeConsecutiveTextValues(
+	item: IterationResult<Value>,
+	textValues: Value[],
+	iterator: IAsyncIterator<Value>,
+	domFacade: DomFacade
+): IterationResult<Value> {
+	while (item.value && isSubtypeOf(item.value.type, 'text()')) {
+		textValues.push(item.value);
+		const nextSibling = domFacade.getNextSiblingPointer(item.value.value as TextNodePointer);
+		item = iterator.next(IterationHint.NONE);
+		if (nextSibling && domFacade.getNodeType(nextSibling) !== NODE_TYPES.TEXT_NODE) {
+			break;
+		}
+	}
+	return item;
+}
+
 function sequenceDeepEqual(
 	dynamicContext: DynamicContext,
 	executionParameters: ExecutionParameters,
@@ -127,21 +179,27 @@ function sequenceDeepEqual(
 	sequence1: ISequence,
 	sequence2: ISequence
 ): IAsyncIterator<boolean> {
+	const domFacade = executionParameters.domFacade;
 	const it1 = sequence1.value;
 	const it2 = sequence2.value;
 	let item1: IterationResult<Value> = null;
 	let item2: IterationResult<Value> = null;
 	let comparisonGenerator: IAsyncIterator<boolean> = null;
 	let done: boolean;
+	const textValues1: Value[] = [];
+	const textValues2: Value[] = [];
 	return {
 		next: (_hint: IterationHint) => {
 			while (!done) {
 				if (!item1) {
 					item1 = it1.next(IterationHint.NONE);
 				}
+				item1 = takeConsecutiveTextValues(item1, textValues1, it1, domFacade);
+
 				if (!item2) {
 					item2 = it2.next(IterationHint.NONE);
 				}
+				item2 = takeConsecutiveTextValues(item2, textValues2, it2, domFacade);
 
 				if (!item1.ready) {
 					const oldItem = item1;
@@ -154,10 +212,30 @@ function sequenceDeepEqual(
 					return notReady(oldItem.promise);
 				}
 
+				if (textValues1.length || textValues2.length) {
+					const textComparisonResult = compareNormalizedTextNodes(
+						dynamicContext,
+						executionParameters,
+						staticContext,
+						textValues1,
+						textValues2
+					);
+					textValues1.length = 0;
+					textValues2.length = 0;
+					if (textComparisonResult.value === false) {
+						done = true;
+						return textComparisonResult;
+					}
+
+					// We compare the textNodes so far, we should continue as normal.
+					continue;
+				}
+
 				if (item1.done || item2.done) {
 					done = true;
 					return ready(item1.done === item2.done);
 				}
+
 				if (!comparisonGenerator) {
 					comparisonGenerator = itemDeepEqual(
 						dynamicContext,
@@ -176,6 +254,7 @@ function sequenceDeepEqual(
 					done = true;
 					return comparisonResult;
 				}
+
 				// Compare next one
 				item1 = null;
 				item2 = null;
@@ -251,14 +330,22 @@ function nodeDeepEqual(
 	item1: Value,
 	item2: Value
 ): IAsyncIterator<boolean> {
-	let item1Nodes = executionParameters.domFacade.getChildNodes(item1.value);
-	let item2Nodes = executionParameters.domFacade.getChildNodes(item2.value);
+	let item1Nodes = executionParameters.domFacade.getChildNodePointers(item1.value);
+	let item2Nodes = executionParameters.domFacade.getChildNodePointers(item2.value);
 
-	item1Nodes = item1Nodes.filter(filterElementAndTextNodes);
-	item2Nodes = item2Nodes.filter(filterElementAndTextNodes);
+	item1Nodes = item1Nodes.filter((item1Node) =>
+		filterElementAndTextNodes(item1Node, executionParameters.domFacade)
+	);
+	item2Nodes = item2Nodes.filter((item2Node) =>
+		filterElementAndTextNodes(item2Node, executionParameters.domFacade)
+	);
 
-	const item1NodesSeq = sequenceFactory.create(item1Nodes.map(createNodeValue));
-	const item2NodesSeq = sequenceFactory.create(item2Nodes.map(createNodeValue));
+	const item1NodesSeq = sequenceFactory.create(
+		item1Nodes.map((node) => createPointerValue(node, executionParameters.domFacade))
+	);
+	const item2NodesSeq = sequenceFactory.create(
+		item2Nodes.map((node) => createPointerValue(node, executionParameters.domFacade))
+	);
 
 	return sequenceDeepEqual(
 		dynamicContext,
@@ -300,17 +387,22 @@ function elementNodeDeepEqual(
 		item1,
 		item2
 	);
-	const attributes1 = executionParameters.domFacade
-		.getAllAttributes(item1.value)
-		.filter((attr) => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
-		.sort((attrA, attrB) => (attrA.name > attrB.name ? 1 : -1))
-		.map((attr) => createNodeValue(attr));
+	const domFacade = executionParameters.domFacade;
+	const attributes1 = domFacade
+		.getAllAttributePointers(item1.value)
+		.filter((attr) => domFacade.getNamespaceURI(attr) !== 'http://www.w3.org/2000/xmlns/')
+		.sort((attrA, attrB) =>
+			domFacade.getNodeName(attrA) > domFacade.getNodeName(attrB) ? 1 : -1
+		)
+		.map((attr) => createPointerValue(attr, executionParameters.domFacade));
 
 	const attributes2 = executionParameters.domFacade
-		.getAllAttributes(item2.value)
-		.filter((attr) => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
-		.sort((attrA, attrB) => (attrA.name > attrB.name ? 1 : -1))
-		.map((attr) => createNodeValue(attr));
+		.getAllAttributePointers(item2.value)
+		.filter((attr) => domFacade.getNamespaceURI(attr) !== 'http://www.w3.org/2000/xmlns/')
+		.sort((attrA, attrB) =>
+			domFacade.getNodeName(attrA) > domFacade.getNodeName(attrB) ? 1 : -1
+		)
+		.map((attr) => createPointerValue(attr, executionParameters.domFacade));
 
 	const attributesDeepEqualGenerator = sequenceDeepEqual(
 		dynamicContext,
@@ -491,11 +583,8 @@ function itemDeepEqual(
 			);
 		}
 
-		// Text nodes, or comment nodes
-		if (
-			(isSubtypeOf(item1.type, 'text()') || isSubtypeOf(item1.type, 'comment()')) &&
-			(isSubtypeOf(item2.type, 'text()') || isSubtypeOf(item2.type, 'comment()'))
-		) {
+		// Comment nodes
+		if (isSubtypeOf(item1.type, 'comment()') && isSubtypeOf(item2.type, 'comment()')) {
 			return atomicTypeNodeDeepEqual(
 				dynamicContext,
 				executionParameters,
@@ -504,6 +593,8 @@ function itemDeepEqual(
 				item2
 			);
 		}
+
+		// TextNodes
 	}
 
 	return createSingleValueIterator(false);

@@ -1,3 +1,13 @@
+import {
+	AttributeNodePointer,
+	ChildNodePointer,
+	DocumentNodePointer,
+	ElementNodePointer,
+	NodePointer,
+	TinyNode,
+	TextNodePointer
+} from '../../domClone/Pointer';
+import { ConcreteNode } from '../../domFacade/ConcreteNode';
 import { IPendingUpdate } from './IPendingUpdate';
 import { DeletePendingUpdate } from './pendingUpdates/DeletePendingUpdate';
 import { InsertAfterPendingUpdate } from './pendingUpdates/InsertAfterPendingUpdate';
@@ -14,44 +24,73 @@ import { ReplaceValuePendingUpdate } from './pendingUpdates/ReplaceValuePendingU
 export default function fromTransferable(transferable: object): IPendingUpdate {
 	switch (transferable['type']) {
 		case 'delete':
-			return new DeletePendingUpdate(transferable['target']);
+			return new DeletePendingUpdate({
+				node: transferable['target'],
+				graftAncestor: null
+			});
 		case 'insertAfter':
-			return new InsertAfterPendingUpdate(transferable['target'], transferable['content']);
+			return new InsertAfterPendingUpdate(
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map(contentNode => {
+					return { node: contentNode, graftAncestor: null };
+				})
+			);
 		case 'insertBefore':
-			return new InsertBeforePendingUpdate(transferable['target'], transferable['content']);
+			return new InsertBeforePendingUpdate(
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map(contentNode => {
+					return { node: contentNode, graftAncestor: null };
+				})
+			);
 		case 'insertInto':
-			return new InsertIntoPendingUpdate(transferable['target'], transferable['content']);
+			return new InsertIntoPendingUpdate(
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map(contentNode => {
+					return { node: contentNode, graftAncestor: null };
+				})
+			);
 		case 'insertIntoAsFirst':
 			return new InsertIntoAsFirstPendingUpdate(
-				transferable['target'],
-				transferable['content']
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map(contentNode => {
+					return { node: contentNode, graftAncestor: null };
+				})
 			);
 		case 'insertIntoAsLast':
 			return new InsertIntoAsLastPendingUpdate(
-				transferable['target'],
-				transferable['content']
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map(contentNode => {
+					return { node: contentNode, graftAncestor: null };
+				})
 			);
 		case 'insertAttributes':
 			return new InsertAttributesPendingUpdate(
-				transferable['target'],
-				transferable['content']
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['content'].map(contentNode => {
+					return { node: contentNode, graftAncestor: null };
+				})
 			);
 		case 'rename':
-			return new RenamePendingUpdate(transferable['target'], transferable['newName']);
+			return new RenamePendingUpdate(
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['newName']
+			);
 		case 'replaceNode':
 			return new ReplaceNodePendingUpdate(
-				transferable['target'],
-				transferable['replacement']
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['replacement'].map(contentNode => {
+					return { node: contentNode, graftAncestor: null };
+				})
 			);
 		case 'replaceValue':
 			return new ReplaceValuePendingUpdate(
-				transferable['target'],
+				{ node: transferable['target'], graftAncestor: null },
 				transferable['string-value']
 			);
 		case 'replaceElementContent':
 			return new ReplaceElementContentPendingUpdate(
-				transferable['target'],
-				transferable['text']
+				{ node: transferable['target'], graftAncestor: null },
+				transferable['text'] ? { node: transferable['text'], graftAncestor: null } : null
 			);
 		default:
 			throw new Error(

@@ -1,7 +1,10 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import createNodeValue from '../dataTypes/createNodeValue';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
 
 class AbsolutePathExpression extends Expression {
@@ -21,14 +24,27 @@ class AbsolutePathExpression extends Expression {
 		this._relativePathExpression = relativePathExpression;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use paths.');
 		}
 		const node = dynamicContext.contextItem.value;
-		const documentNode = node.nodeType === node.DOCUMENT_NODE ? node : node.ownerDocument;
+		const domFacade = executionParameters.domFacade;
+
+		let documentNode = node;
+		while (domFacade.getNodeType(documentNode) !== NODE_TYPES.DOCUMENT_NODE) {
+			documentNode = domFacade.getParentNodePointer(documentNode);
+			if (documentNode === null) {
+				throw new Error(
+					'XPDY0050: the root node of the context node is not a document node.'
+				);
+			}
+		}
+
 		// Assume this is the start, so only one node
-		const contextSequence = sequenceFactory.singleton(createNodeValue(documentNode));
+		const contextSequence = sequenceFactory.singleton(
+			createPointerValue(documentNode, domFacade)
+		);
 		return this._relativePathExpression
 			? this._relativePathExpression.evaluateMaybeStatically(
 					dynamicContext.scopeWithFocus(0, contextSequence.first(), contextSequence),

@@ -1,7 +1,12 @@
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+
 export const errXPTY0004 = (message: string) => new Error(`XPTY0004: ${message}`);
-export const errXQTY0024 = (node) => {
+
+export const errXQTY0024 = (node, domFacade) => {
 	const nodeString =
-		node.nodeType === node.ATTRIBUTE_NODE ? `${node.name}="${node.value}"` : node.outerHTML;
+		domFacade.getNodeType(node) === NODE_TYPES.ATTRIBUTE_NODE
+			? `${domFacade.getNodeName(node)}="${domFacade.getDataFromPointer(node)}"`
+			: node.outerHTML;
 	return new Error(
 		`XQTY0024: The node ${nodeString} follows a node that is not an attribute node or a namespace node.`
 	);

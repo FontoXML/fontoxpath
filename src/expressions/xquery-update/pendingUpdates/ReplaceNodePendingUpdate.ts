@@ -1,17 +1,21 @@
-import { ConcreteAttributeNode, ConcreteChildNode } from '../../../domFacade/ConcreteNode';
+import realizeDom from '../../../domClone/realizeDom';
+import { AttributeNodePointer, ChildNodePointer } from '../../../domClone/Pointer';
+import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import { IPendingUpdate } from '../IPendingUpdate';
 export class ReplaceNodePendingUpdate extends IPendingUpdate {
 	constructor(
-		readonly target: ConcreteAttributeNode | ConcreteChildNode,
-		readonly replacement: (ConcreteAttributeNode | ConcreteChildNode)[]
+		readonly target: AttributeNodePointer | ChildNodePointer,
+		readonly replacement: (AttributeNodePointer | ChildNodePointer)[]
 	) {
 		super('replaceNode');
 	}
-	public toTransferable() {
+	public toTransferable(executionParameters: ExecutionParameters) {
 		return {
 			['type']: this.type,
-			['target']: this.target,
-			['replacement']: this.replacement,
+			['target']: realizeDom(this.target, executionParameters, false),
+			['replacement']: this.replacement.map((pointer) =>
+				realizeDom(pointer, executionParameters, true)
+			),
 		};
 	}
 }

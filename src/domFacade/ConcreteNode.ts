@@ -4,6 +4,7 @@ import {
 	Comment,
 	Document,
 	Element,
+	Node,
 	ProcessingInstruction,
 	Text,
 } from '../types/Types';
@@ -20,34 +21,26 @@ export const enum NODE_TYPES {
 	DOCUMENT_FRAGMENT_NODE = 11,
 }
 
+// Concretes
 export type ConcreteTextNode = Text & { nodeType: NODE_TYPES.TEXT_NODE };
-
+export type ConcreteElementNode = Element & { nodeType: NODE_TYPES.ELEMENT_NODE };
+export type ConcreteCommentNode = Comment & { nodeType: NODE_TYPES.COMMENT_NODE };
+export type ConcreteCDATASectionNode = CDATASection & { nodeType: NODE_TYPES.CDATA_SECTION_NODE };
+export type ConcreteAttributeNode = Attr & { nodeType: NODE_TYPES.ATTRIBUTE_NODE };
+export type ConcreteDocumentNode = Document & { nodeType: NODE_TYPES.DOCUMENT_NODE };
+export type ConcreteProcessingInstructionNode = ProcessingInstruction & {
+	nodeType: NODE_TYPES.PROCESSING_INSTRUCTION_NODE;
+};
 export type ConcreteParentNode = ConcreteElementNode | ConcreteDocumentNode;
-
 export type ConcreteChildNode =
 	| ConcreteElementNode
 	| ConcreteTextNode
 	| ConcreteProcessingInstructionNode
 	| ConcreteCommentNode
 	| ConcreteCDATASectionNode;
-
-export type ConcreteElementNode = Element & { nodeType: NODE_TYPES.ELEMENT_NODE };
-
 export type ConcreteCharacterDataNode =
 	| ConcreteTextNode
+	| ConcreteCDATASectionNode
 	| ConcreteProcessingInstructionNode
 	| ConcreteCommentNode;
-
-export type ConcreteProcessingInstructionNode = ProcessingInstruction & {
-	nodeType: NODE_TYPES.PROCESSING_INSTRUCTION_NODE;
-};
-
-export type ConcreteCommentNode = Comment & { nodeType: NODE_TYPES.COMMENT_NODE };
-
-export type ConcreteCDATASectionNode = CDATASection & { nodeType: NODE_TYPES.CDATA_SECTION_NODE };
-
-export type ConcreteAttributeNode = Attr & { nodeType: NODE_TYPES.ATTRIBUTE_NODE };
-
-export type ConcreteDocumentNode = Document & { nodeType: NODE_TYPES.DOCUMENT_NODE };
-
 export type ConcreteNode = ConcreteChildNode | ConcreteParentNode | ConcreteAttributeNode;

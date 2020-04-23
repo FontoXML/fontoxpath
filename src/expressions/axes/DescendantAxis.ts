@@ -1,6 +1,6 @@
-import { ConcreteChildNode } from '../../domFacade/ConcreteNode';
-import IDomFacade from '../../domFacade/IDomFacade';
-import createNodeValue from '../dataTypes/createNodeValue';
+import { ChildNodePointer } from '../../domClone/Pointer';
+import DomFacade from '../../domFacade/DomFacade';
+import createPointerValue from '../dataTypes/createPointerValue';
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
@@ -13,11 +13,11 @@ import createSingleValueIterator from '../util/createSingleValueIterator';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
 
 function createInclusiveDescendantGenerator(
-	domFacade: IDomFacade,
-	node: ConcreteChildNode,
+	domFacade: DomFacade,
+	node: ChildNodePointer,
 	bucket: string | null
 ): IAsyncIterator<Value> {
-	const descendantIteratorStack: IAsyncIterator<ConcreteChildNode>[] = [
+	const descendantIteratorStack: IAsyncIterator<ChildNodePointer>[] = [
 		createSingleValueIterator(node),
 	];
 	return {
@@ -43,7 +43,7 @@ function createInclusiveDescendantGenerator(
 			}
 			// Iterator over these children next
 			descendantIteratorStack.unshift(createChildGenerator(domFacade, value.value, bucket));
-			return ready(createNodeValue(value.value));
+			return ready(createPointerValue(value.value, domFacade));
 		},
 	};
 }
@@ -86,7 +86,11 @@ class DescendantAxis extends Expression {
 		}
 		const descendantSequence = sequenceFactory.create(iterator);
 		return descendantSequence.filter((item) => {
-			return this._descendantExpression.evaluateToBoolean(dynamicContext, item);
+			return this._descendantExpression.evaluateToBoolean(
+				dynamicContext,
+				item,
+				executionParameters
+			);
 		});
 	}
 }

@@ -6,7 +6,6 @@ import {
 	evaluateXPathToNodes,
 	evaluateXPathToStrings,
 	getBucketForSelector,
-	getBucketsForNode,
 	IDomFacade,
 } from 'fontoxpath';
 

@@ -1,9 +1,9 @@
 import * as chai from 'chai';
-import { evaluateUpdatingExpression, evaluateXPath, Language } from 'fontoxpath';
+import { evaluateUpdatingExpression, evaluateXPath } from 'fontoxpath';
 import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
 import { Document } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
-import IDomFacade from '../../../../src/domFacade/IDomFacade';
+import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 import assertUpdateList from './assertUpdateList';
 
 let documentNode: Document;
@@ -255,7 +255,7 @@ return ($a)
 			error = err;
 		}
 
-		chai.assert.match(error!.message, new RegExp('XUDY0014'));
+		chai.assert.match(error.message, new RegExp('XUDY0014'));
 	});
 
 	it('transforms something with something asynchronous', async () => {

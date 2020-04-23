@@ -639,7 +639,7 @@ describe('Functions and operators on sequences', () => {
 					);
 
 					chai.assert.isTrue(
-						evaluateXPathToBoolean('deep-equal(/xml/*[1], /xml/*[2])', dom),
+						evaluateXPathToBoolean('deep-equal(./*[1], ./*[2])', dom),
 						'both elements must be equal'
 					);
 				});

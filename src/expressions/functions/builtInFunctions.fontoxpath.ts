@@ -3,7 +3,7 @@ import compileAstToExpression from '../../parsing/compileAstToExpression';
 import parseExpression from '../../parsing/parseExpression';
 import processProlog from '../../parsing/processProlog';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import createNodeValue from '../dataTypes/createNodeValue';
+import createPointerValue from '../dataTypes/createPointerValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
@@ -157,7 +157,7 @@ declare var fetch;
 
 const fontoxpathFetch: FunctionDefinitionType = (
 	_dynamicContext,
-	_executionParameters,
+	executionParameters,
 	_staticContext,
 	url
 ) => {
@@ -187,7 +187,7 @@ const fontoxpathFetch: FunctionDefinitionType = (
 			}
 			if (!done) {
 				done = true;
-				return ready(createNodeValue(result));
+				return ready(createPointerValue(result, executionParameters.domFacade));
 			}
 			return DONE_TOKEN;
 		},

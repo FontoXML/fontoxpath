@@ -1,11 +1,11 @@
 import {
-	Node,
-	Document,
-	Text,
 	Comment,
-	ProcessingInstruction,
-	Element,
+	Document,
 	DocumentType,
+	Element,
+	Node,
+	ProcessingInstruction,
+	Text,
 } from 'slimdom';
 
 // Format used is JsonML (http://www.jsonml.org/)
@@ -25,7 +25,7 @@ interface JsonML extends Array<string | object | JsonML> {
  *
  * @return  The root node of the constructed DOM fragment
  */
-export function parseNode(document: Document, jsonml: JsonML | string): Node {
+function parseNode(document: Document, jsonml: JsonML | string): Node {
 	if (typeof jsonml === 'string') {
 		return document.createTextNode(jsonml);
 	}
@@ -103,7 +103,7 @@ export function parseNode(document: Document, jsonml: JsonML | string): Node {
  *
  * @return  The given document, with the parse result appended
  */
-export function parse(jsonml: JsonML | string, document: Document): Document {
+function parse(jsonml: JsonML | string, document: Document): Document {
 	const root = parseNode(document, jsonml);
 
 	document.appendChild(root);
@@ -125,7 +125,7 @@ export function parse(jsonml: JsonML | string, document: Document): Document {
  *
  * @return  {JsonML}
  */
-export function serialize(node: Node): JsonML | string {
+function serialize(node: Node): JsonML | string {
 	switch (node.nodeType) {
 		case Node.TEXT_NODE:
 			return (node as Text).nodeValue;

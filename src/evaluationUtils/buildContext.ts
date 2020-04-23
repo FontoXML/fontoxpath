@@ -4,7 +4,6 @@ import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWr
 import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
-import IWrappingDomFacade from '../domFacade/IWrappingDomFacade';
 import { Options } from '../evaluateXPath';
 import adaptJavaScriptValueToXPathValue from '../expressions/adaptJavaScriptValueToXPathValue';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
@@ -69,6 +68,7 @@ export default function buildEvaluationContext(
 		internalOptions = {
 			// tslint:disable-next-line:no-console
 			logger: externalOptions['logger'] || { trace: console.log.bind(console) },
+			documentWriter: externalOptions['documentWriter'],
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
 			nodesFactory: externalOptions['nodesFactory'],
@@ -80,9 +80,10 @@ export default function buildEvaluationContext(
 			moduleImports: {},
 			namespaceResolver: null,
 			nodesFactory: null,
+			documentWriter: null,
 		};
 	}
-	const wrappedDomFacade: IWrappingDomFacade = new DomFacade(
+	const wrappedDomFacade: DomFacade = new DomFacade(
 		domFacade === null ? new ExternalDomFacade() : domFacade
 	);
 
@@ -101,7 +102,7 @@ export default function buildEvaluationContext(
 	);
 
 	const contextSequence = contextItem
-		? adaptJavaScriptValueToXPathValue(contextItem)
+		? adaptJavaScriptValueToXPathValue(wrappedDomFacade, contextItem)
 		: sequenceFactory.empty();
 
 	const nodesFactory: INodesFactory =
@@ -115,7 +116,7 @@ export default function buildEvaluationContext(
 
 	const variableBindings = Object.keys(variables).reduce((typedVariableByName, variableName) => {
 		typedVariableByName[generateGlobalVariableBindingName(variableName)] = () =>
-			adaptJavaScriptValueToXPathValue(variables[variableName]);
+			adaptJavaScriptValueToXPathValue(wrappedDomFacade, variables[variableName]);
 		return typedVariableByName;
 	}, Object.create(null));
 
@@ -142,6 +143,7 @@ export default function buildEvaluationContext(
 		nodesFactory,
 		documentWriter,
 		externalOptions['currentContext'],
+		new Map(),
 		internalOptions.logger
 	);
 

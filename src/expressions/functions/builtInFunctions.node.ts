@@ -1,15 +1,17 @@
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import {
-	ConcreteChildNode,
-	ConcreteElementNode,
-	ConcreteNode,
-	ConcreteParentNode,
-	ConcreteProcessingInstructionNode,
-	NODE_TYPES,
-} from '../../domFacade/ConcreteNode';
-import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
+	AttributeNodePointer,
+	ChildNodePointer,
+	ElementNodePointer,
+	NodePointer,
+	ParentNodePointer,
+	ProcessingInstructionNodePointer,
+} from '../../domClone/Pointer';
+
+import DomFacade from '../../domFacade/DomFacade';
 import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import createNodeValue from '../dataTypes/createNodeValue';
+import createPointerValue from '../dataTypes/createPointerValue';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
@@ -18,6 +20,7 @@ import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import arePointersEqual from '../operators/compares/arePointersEqual';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { IterationHint } from '../util/iterators';
@@ -48,31 +51,45 @@ function contextItemAsFirstArgument(
 
 const fnNodeName: FunctionDefinitionType = (
 	_dynamicContext,
-	_executionParameters,
+	executionParameters,
 	_staticContext,
 	sequence
 ) => {
-	return zipSingleton([sequence], ([nodeValue]) => {
-		if (nodeValue === null) {
+	return zipSingleton([sequence], ([pointerValue]) => {
+		if (pointerValue === null) {
 			return sequenceFactory.empty();
 		}
-
-		const node: ConcreteNode = nodeValue.value;
-		switch (node.nodeType) {
+		const domFacade = executionParameters.domFacade;
+		const pointer: NodePointer = pointerValue.value;
+		switch (domFacade.getNodeType(pointer)) {
 			case NODE_TYPES.ELEMENT_NODE:
 			case NODE_TYPES.ATTRIBUTE_NODE:
 				// element or attribute
+				const attrOrElPointer = pointer as AttributeNodePointer | ElementNodePointer;
 				return sequenceFactory.singleton(
 					createAtomicValue(
-						new QName(node.prefix, node.namespaceURI, node.localName),
+						new QName(
+							domFacade.getPrefix(
+								pointer as AttributeNodePointer | ElementNodePointer
+							),
+							domFacade.getNamespaceURI(
+								pointer as AttributeNodePointer | ElementNodePointer
+							),
+							domFacade.getLocalName(
+								pointer as AttributeNodePointer | ElementNodePointer
+							)
+						),
 						'xs:QName'
 					)
 				);
 			case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
 				// A processing instruction's target is its nodename (https://www.w3.org/TR/xpath-functions-31/#func-node-name)
-				const processingInstruction = node;
+				const processingInstruction = pointer as ProcessingInstructionNodePointer;
 				return sequenceFactory.singleton(
-					createAtomicValue(new QName('', '', processingInstruction.target), 'xs:QName')
+					createAtomicValue(
+						new QName('', '', domFacade.getTarget(processingInstruction)),
+						'xs:QName'
+					)
 				);
 			default:
 				// All other nodes have no name
@@ -114,28 +131,37 @@ const fnHasChildren: FunctionDefinitionType = (
 	_staticContext,
 	nodeSequence: ISequence
 ) => {
-	return zipSingleton([nodeSequence], ([nodeValue]: (Value | null)[]) => {
-		const node: ConcreteParentNode = nodeValue ? nodeValue.value : null;
+	return zipSingleton([nodeSequence], ([pointerValue]: (Value | null)[]) => {
+		const pointer: ParentNodePointer = pointerValue ? pointerValue.value : null;
 
-		if (node !== null && executionParameters.domFacade.getFirstChild(node, null)) {
+		if (pointer !== null && executionParameters.domFacade.getFirstChildPointer(pointer, null)) {
 			return sequenceFactory.singletonTrueSequence();
 		}
 		return sequenceFactory.singletonFalseSequence();
 	});
 };
 
-function areSameNode(nodeA: ConcreteChildNode, nodeB: ConcreteChildNode): boolean {
-	if (nodeA.nodeType !== nodeB.nodeType) {
+function areSameNode(
+	nodeA: ChildNodePointer,
+	nodeB: ChildNodePointer,
+	domFacade: DomFacade
+): boolean {
+	if (domFacade.getNodeType(nodeA) !== domFacade.getNodeType(nodeB)) {
 		return false;
 	}
-	if (nodeB.nodeType === NODE_TYPES.ELEMENT_NODE) {
+	if (domFacade.getNodeType(nodeB) === NODE_TYPES.ELEMENT_NODE) {
 		return (
-			nodeB.localName === (nodeA as ConcreteElementNode).localName &&
-			nodeB.namespaceURI === (nodeA as ConcreteElementNode).namespaceURI
+			domFacade.getLocalName(nodeB as ElementNodePointer) ===
+				domFacade.getLocalName(nodeA as ElementNodePointer) &&
+			domFacade.getNamespaceURI(nodeB as ElementNodePointer) ===
+				domFacade.getNamespaceURI(nodeA as ElementNodePointer)
 		);
 	}
-	if (nodeB.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE) {
-		return nodeB.target === (nodeA as ConcreteProcessingInstructionNode).target;
+	if (domFacade.getNodeType(nodeB) === NODE_TYPES.PROCESSING_INSTRUCTION_NODE) {
+		return (
+			domFacade.getTarget(nodeB as ProcessingInstructionNodePointer) ===
+			domFacade.getTarget(nodeA as ProcessingInstructionNodePointer)
+		);
 	}
 
 	return true;
@@ -147,62 +173,65 @@ const fnPath: FunctionDefinitionType = (
 	_staticContext,
 	nodeSequence: ISequence
 ) => {
-	return zipSingleton([nodeSequence], ([nodeValue]: (Value | null)[]) => {
-		if (nodeValue === null) {
+	return zipSingleton([nodeSequence], ([pointerValue]: (Value | null)[]) => {
+		if (pointerValue === null) {
 			return sequenceFactory.empty();
 		}
 
-		const node: ConcreteNode = nodeValue.value;
+		const pointer: NodePointer = pointerValue.value;
+		const domFacade: DomFacade = executionParameters.domFacade;
 
 		let result = '';
 
-		function getChildIndex(child: ConcreteChildNode): number {
+		function getChildIndex(child: ChildNodePointer): number {
 			let i = 0;
 			let otherChild = child;
 			while (otherChild !== null) {
-				if (areSameNode(child, otherChild)) {
+				if (areSameNode(child, otherChild, domFacade)) {
 					i++;
 				}
-				otherChild = executionParameters.domFacade.getPreviousSibling(otherChild, null);
+				otherChild = domFacade.getPreviousSiblingPointer(otherChild, null);
 			}
 			return i;
 		}
-		let ancestor: ConcreteNode;
+		let ancestor;
 		for (
-			ancestor = node;
-			executionParameters.domFacade.getParentNode(ancestor as ConcreteChildNode, null) !==
-			null;
-			ancestor = executionParameters.domFacade.getParentNode(
-				ancestor as ConcreteChildNode,
+			ancestor = pointer;
+			executionParameters.domFacade.getParentNodePointer(
+				ancestor as ChildNodePointer,
 				null
-			) as ConcreteNode
+			) !== null;
+			ancestor = executionParameters.domFacade.getParentNodePointer(
+				ancestor as ChildNodePointer,
+				null
+			)
 		) {
-			switch (ancestor.nodeType) {
+			switch (domFacade.getNodeType(ancestor)) {
 				case NODE_TYPES.ELEMENT_NODE:
-					result = `/Q{${ancestor.namespaceURI || ''}}${
-						ancestor.localName
-					}[${getChildIndex(ancestor)}]${result}`;
+					result = `/Q{${
+						domFacade.getNamespaceURI(ancestor) || ''
+					}}${domFacade.getLocalName(ancestor)}[${getChildIndex(ancestor)}]${result}`;
 					break;
 				case NODE_TYPES.ATTRIBUTE_NODE:
-					const attributeNameSpace = ancestor.namespaceURI
-						? `Q{${ancestor.namespaceURI}}`
+					const attributeNameSpace = domFacade.getNamespaceURI(ancestor)
+						? `Q{${domFacade.getNamespaceURI(ancestor)}}`
 						: '';
-					result = `/@${attributeNameSpace}${ancestor.localName}${result}`;
+					result = `/@${attributeNameSpace}${domFacade.getLocalName(ancestor)}${result}`;
 					break;
 				case NODE_TYPES.TEXT_NODE:
 					result = `/text()[${getChildIndex(ancestor)}]${result}`;
 					break;
 				case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
-					result = `/processing-instruction(${ancestor.nodeName})[${getChildIndex(
+					result = `/processing-instruction(${domFacade.getTarget(
 						ancestor
-					)}]${result}`;
+					)})[${getChildIndex(ancestor)}]${result}`;
 					break;
 				case NODE_TYPES.COMMENT_NODE:
 					result = `/comment()[${getChildIndex(ancestor)}]${result}`;
 					break;
 			}
 		}
-		if (ancestor.nodeType === NODE_TYPES.DOCUMENT_NODE) {
+		if (domFacade.getNodeType(ancestor) === NODE_TYPES.DOCUMENT_NODE) {
 			return sequenceFactory.create(createAtomicValue(result || '/', 'xs:string'));
 		}
 		result = 'Q{http://www.w3.org/2005/xpath-functions}root()' + result;
@@ -212,50 +241,52 @@ const fnPath: FunctionDefinitionType = (
 
 const fnNamespaceURI: FunctionDefinitionType = (
 	_dynamicContext,
-	_executionParameters,
+	executionParameters,
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((node) => createAtomicValue(node.value.namespaceURI || '', 'xs:anyURI'));
+	return sequence.map((node) =>
+		createAtomicValue(
+			executionParameters.domFacade.getNamespaceURI(node.value) || '',
+			'xs:anyURI'
+		)
+	);
 };
 
 const fnLocalName: FunctionDefinitionType = (
 	_dynamicContext,
-	_executionParameters,
+	executionParameters,
 	_staticContext,
 	sequence
 ) => {
+	const domFacade = executionParameters.domFacade;
 	return sequence.switchCases({
 		default: () => {
 			return sequence.map((node) => {
-				if (node.value.nodeType === 7) {
-					const pi: ConcreteProcessingInstructionNode = node.value;
-					return createAtomicValue(pi.target, 'xs:string');
+				if (domFacade.getNodeType(node.value) === 7) {
+					const pi: ProcessingInstructionNodePointer = node.value;
+					return createAtomicValue(domFacade.getTarget(pi), 'xs:string');
 				}
 
-				return createAtomicValue(node.value.localName || '', 'xs:string');
+				return createAtomicValue(domFacade.getLocalName(node.value) || '', 'xs:string');
 			});
 		},
 		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string')),
 	});
 };
 
-function contains(
-	domFacade: IWrappingDomFacade,
-	ancestor: ConcreteNode,
-	descendant: ConcreteNode
-): boolean {
-	if (ancestor.nodeType === NODE_TYPES.ATTRIBUTE_NODE) {
-		return ancestor === descendant;
+function contains(domFacade: DomFacade, ancestor: NodePointer, descendant: NodePointer): boolean {
+	if (domFacade.getNodeType(ancestor) === NODE_TYPES.ATTRIBUTE_NODE) {
+		return arePointersEqual(ancestor, descendant);
 	}
 	while (descendant) {
-		if (ancestor === descendant) {
+		if (arePointersEqual(ancestor, descendant)) {
 			return true;
 		}
-		if (descendant.nodeType === NODE_TYPES.DOCUMENT_NODE) {
+		if (domFacade.getNodeType(descendant) === NODE_TYPES.DOCUMENT_NODE) {
 			return false;
 		}
-		descendant = domFacade.getParentNode(descendant as ConcreteChildNode, null);
+		descendant = domFacade.getParentNodePointer(descendant as ChildNodePointer, null);
 	}
 	return false;
 }
@@ -347,9 +378,9 @@ const fnRoot: FunctionDefinitionType = (
 		let parent = node.value;
 		while (parent) {
 			ancestor = parent;
-			parent = executionParameters.domFacade.getParentNode(ancestor, null);
+			parent = executionParameters.domFacade.getParentNodePointer(ancestor, null);
 		}
-		return createNodeValue(ancestor);
+		return createPointerValue(ancestor, executionParameters.domFacade);
 	});
 };
 

@@ -29,10 +29,20 @@ describe('descendant', () => {
 				chai.assert.equal(expectedBucket, bucket);
 				return node.firstChild;
 			},
+			getChildNodes: (node: slimdom.Node, bucket: string | null) => {
+				console.log(node.nodeName);
+				chai.assert.equal(expectedBucket, bucket);
+				return node.childNodes;
+			},
 			getNextSibling: (node: slimdom.Node, bucket: string | null) => {
 				console.log(node.nodeName);
 				chai.assert.equal(expectedBucket, bucket);
 				return node.nextSibling;
+			},
+			getParentNode: (node: slimdom.Node, bucket: string | null) => {
+				console.log(node.nodeName);
+				chai.assert.equal(expectedBucket, bucket);
+				return node.parentNode;
 			},
 		} as any;
 

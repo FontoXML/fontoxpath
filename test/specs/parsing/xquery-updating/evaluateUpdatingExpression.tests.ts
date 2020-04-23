@@ -159,7 +159,8 @@ describe('evaluateUpdatingExpression', () => {
 		chai.assert.isFalse(setAttributeNSCalled, 'setAttributeNSCalled');
 		chai.assert.isFalse(setDataCalled, 'setDataCalled');
 
-		chai.assert.isTrue(createElementNSCalled, 'createElementNSCalled');
+		// TODO: Recheck this carefully
+		chai.assert.isFalse(createElementNSCalled, 'createElementNSCalled');
 		chai.assert.isTrue(createAttributeNSCalled, 'createAttributeNSCalled');
 		chai.assert.isFalse(createCDATASectionCalled, 'createCDATASectionCalled');
 		chai.assert.isFalse(createCommentCalled, 'createCommentCalled');
@@ -275,14 +276,15 @@ describe('evaluateUpdatingExpression', () => {
 			}
 		);
 
-		chai.assert.isFalse(insertBeforeCalled, 'insertBeforeCalled');
+		chai.assert.isTrue(insertBeforeCalled, 'insertBeforeCalled');
 		chai.assert.isFalse(removeChildCalled, 'removeChildCalled');
 		chai.assert.isFalse(removeAttributeNSCalled, 'removeAttributeNSCalled');
-		chai.assert.isFalse(setAttributeNSCalled, 'setAttributeNSCalled');
+		chai.assert.isTrue(setAttributeNSCalled, 'setAttributeNSCalled');
 		chai.assert.isFalse(setDataCalled, 'setDataCalled');
 
 		chai.assert.isTrue(createElementNSCalled, 'createElementNSCalled');
-		chai.assert.isTrue(createAttributeNSCalled, 'createAttributeNSCalled');
+		// We set the attribute while realizing, that's why we did not create it.
+		chai.assert.isFalse(createAttributeNSCalled, 'createAttributeNSCalled');
 		chai.assert.isFalse(createCDATASectionCalled, 'createCDATASectionCalled');
 		chai.assert.isTrue(createCommentCalled, 'createCommentCalled');
 		chai.assert.isFalse(createDocumentCalled, 'createDocumentCalled');
@@ -299,7 +301,7 @@ describe('evaluateUpdatingExpression', () => {
 		chai.assert.isTrue(insertBeforeCalled, 'insertBeforeCalled');
 		chai.assert.isFalse(removeChildCalled, 'removeChildCalled');
 		chai.assert.isFalse(removeAttributeNSCalled, 'removeAttributeNSCalled');
-		chai.assert.isFalse(setAttributeNSCalled, 'setAttributeNSCalled');
+		chai.assert.isTrue(setAttributeNSCalled, 'setAttributeNSCalled');
 		chai.assert.isFalse(setDataCalled, 'setDataCalled');
 	});
 });

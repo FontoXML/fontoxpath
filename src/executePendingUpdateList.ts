@@ -23,7 +23,7 @@ export default function executePendingUpdateList(
 	nodesFactory?: INodesFactory,
 	documentWriter?: IDocumentWriter
 ): void {
-	domFacade = new DomFacade(domFacade ? domFacade : new ExternalDomFacade());
+	const newDomFacade = new DomFacade(domFacade ? domFacade : new ExternalDomFacade());
 
 	documentWriter = documentWriter
 		? wrapExternalDocumentWriter(documentWriter)
@@ -32,5 +32,5 @@ export default function executePendingUpdateList(
 	nodesFactory = nodesFactory ? (nodesFactory = wrapExternalNodesFactory(nodesFactory)) : null;
 
 	const pul = pendingUpdateList.map(createPendingUpdateFromTransferable);
-	applyUpdates(pul, null, null, domFacade, nodesFactory, documentWriter);
+	applyUpdates(pul, null, null, newDomFacade, nodesFactory, documentWriter);
 }

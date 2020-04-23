@@ -1,17 +1,18 @@
-import { ConcreteElementNode } from '../../../domFacade/ConcreteNode';
-import { Attr } from '../../../types/Types';
+import realizeDom from '../../../domClone/realizeDom';
+import { AttributeNodePointer, ElementNodePointer } from '../../../domClone/Pointer';
+import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import { IPendingUpdate } from '../IPendingUpdate';
 
 export class InsertAttributesPendingUpdate extends IPendingUpdate {
 	public readonly type: 'insertAttributes';
-	constructor(readonly target: ConcreteElementNode, readonly content: Attr[]) {
+	constructor(readonly target: ElementNodePointer, readonly content: AttributeNodePointer[]) {
 		super('insertAttributes');
 	}
-	public toTransferable() {
+	public toTransferable(executionParameters: ExecutionParameters) {
 		return {
 			['type']: this.type,
-			['target']: this.target,
-			content: this.content,
+			['target']: realizeDom(this.target, executionParameters, false),
+			content: this.content.map((pointer) => realizeDom(pointer, executionParameters, true)),
 		};
 	}
 }

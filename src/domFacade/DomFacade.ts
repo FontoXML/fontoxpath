@@ -1,20 +1,59 @@
 import {
+	AttributeNodePointer,
+	TinyAttributeNode,
+	CharacterDataNodePointer,
+	TinyCharacterDataNode,
+	ChildNodePointer,
+	ElementNodePointer,
+	isTinyNode,
+	TinyElementNode,
+	NodePointer,
+	ParentNodePointer,
+	TinyParentNode,
+	ProcessingInstructionNodePointer,
+	TinyChildNode,
+	GraftPoint,
+	TinyNode,
+} from '../domClone/Pointer';
+import { Node } from '../types/Types';
+import {
 	ConcreteAttributeNode,
-	ConcreteCharacterDataNode,
 	ConcreteChildNode,
-	ConcreteElementNode,
-	ConcreteNode,
 	ConcreteParentNode,
+	ConcreteNode,
+	ConcreteCharacterDataNode,
 	NODE_TYPES,
+	ConcreteElementNode,
 } from './ConcreteNode';
 import IDomFacade from './IDomFacade';
-import IWrappingDomFacade from './IWrappingDomFacade';
+
+function createPointer<TPointer extends NodePointer>(
+	node: ConcreteNode | TinyNode,
+	parent: ParentNodePointer | null,
+	offset: string | number
+): TPointer {
+	let graftAncestor: GraftPoint = null;
+	if (parent) {
+		if (isTinyNode(parent.node)) {
+			graftAncestor = {
+				graftAncestor: parent.graftAncestor,
+				offset,
+				parent: parent.node,
+			};
+		} else if (parent.graftAncestor) {
+			graftAncestor = parent.graftAncestor;
+		}
+	}
+
+	const newPointer = { node, graftAncestor };
+	return newPointer as TPointer;
+}
 
 /**
  * Adapter for the DOM, can be used to use a different DOM implementation
  */
-class DomFacade implements IWrappingDomFacade {
-	public orderOfDetachedNodes: ConcreteNode[];
+class DomFacade {
+	public orderOfDetachedNodes: Node[];
 
 	constructor(private readonly _domFacade: IDomFacade) {
 		/**
@@ -23,84 +62,213 @@ class DomFacade implements IWrappingDomFacade {
 		this.orderOfDetachedNodes = [];
 	}
 
-	public getAllAttributes(
-		node: ConcreteElementNode,
+	public getAllAttributePointers(
+		pointer: ElementNodePointer,
 		bucket: string | null = null
-	): ConcreteAttributeNode[] {
-		return this._domFacade['getAllAttributes'](node, bucket);
+	): AttributeNodePointer[] {
+		return this.getAllAttributes(
+			pointer.node,
+			bucket
+		).map((attributeNode: ConcreteAttributeNode | TinyAttributeNode) =>
+			createPointer(attributeNode, pointer, attributeNode.nodeName)
+		);
 	}
 
-	public getAttribute(node: ConcreteElementNode, attributeName: string): string {
-		const value = this._domFacade['getAttribute'](node, attributeName);
-		if (!value) {
-			return null;
+	public getAllAttributes(
+		node: ConcreteElementNode | TinyElementNode,
+		bucket: string | null = null
+	): (ConcreteAttributeNode | TinyAttributeNode)[] {
+		return isTinyNode(node)
+			? node.attributes
+			: this._domFacade['getAllAttributes'](node, bucket);
+	}
+
+	public getAttribute(pointer: ElementNodePointer, attributeName: string): string {
+		const node = pointer.node;
+		if (isTinyNode(node)) {
+			const attributeNode = node.attributes.find((attr) => attributeName === attr.name);
+			return attributeNode ? attributeNode.value : null;
+		} else {
+			const value = this._domFacade['getAttribute'](node, attributeName);
+			return value ? value : null;
 		}
-		return value;
+	}
+
+	public getChildNodePointers(
+		parentPointer: ParentNodePointer,
+		bucket: string | null = null
+	): ChildNodePointer[] {
+		return this.getChildNodes(
+			parentPointer.node,
+			bucket
+		).map((childNode: ConcreteChildNode | TinyChildNode, index) =>
+			createPointer(childNode, parentPointer, index)
+		);
 	}
 
 	public getChildNodes(
-		node: ConcreteParentNode,
+		parentNode: ConcreteParentNode | TinyParentNode,
 		bucket: string | null = null
-	): ConcreteChildNode[] {
-		const childNodes = this._domFacade['getChildNodes'](node, bucket);
-		if (node.nodeType !== NODE_TYPES.DOCUMENT_NODE) {
-			return childNodes as ConcreteChildNode[];
-		}
-		return childNodes.filter(
-			(childNode) => childNode.nodeType !== NODE_TYPES.DOCUMENT_TYPE_NODE
-		) as ConcreteChildNode[];
-	}
+	): (ConcreteChildNode | TinyChildNode)[] {
+		const childNodes = isTinyNode(parentNode)
+			? parentNode.childNodes
+			: this._domFacade['getChildNodes'](parentNode, bucket);
 
-	public getData(node: ConcreteAttributeNode | ConcreteCharacterDataNode): string {
-		if (node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE) {
-			return node.value;
+		if (parentNode.nodeType === NODE_TYPES.DOCUMENT_NODE) {
+			return childNodes.filter(
+				(childNode) => childNode['nodeType'] !== NODE_TYPES.DOCUMENT_TYPE_NODE
+			) as (ConcreteChildNode | TinyChildNode)[];
 		}
 
-		return this._domFacade['getData'](node) || '';
+		return childNodes as (ConcreteChildNode | TinyChildNode)[];
 	}
 
-	public getFirstChild(
-		node: ConcreteParentNode,
+	public getData(
+		node:
+			| ConcreteAttributeNode
+			| TinyAttributeNode
+			| TinyCharacterDataNode
+			| ConcreteCharacterDataNode
+	): string {
+		return node.nodeType === NODE_TYPES.ATTRIBUTE_NODE
+			? node.value
+			: isTinyNode(node)
+			? (node as ConcreteCharacterDataNode | TinyCharacterDataNode).data
+			: this._domFacade['getData'](node) || '';
+	}
+
+	/**
+	 * Get the node or tiny node children of a given node or tiny node. Do not use if from those
+	 * children a new (upwards) traversal will be started since the parent relationship might be lost.
+	 */
+
+	public getDataFromPointer(pointer: AttributeNodePointer | CharacterDataNodePointer): string {
+		return this.getData(pointer.node);
+	}
+
+	public getFirstChildPointer(
+		parentPointer: ParentNodePointer,
 		bucket: string | null = null
-	): ConcreteChildNode {
-		const firstChild = this._domFacade['getFirstChild'](node, bucket);
-		if (!firstChild) {
-			return null;
-		}
-		if (firstChild.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
-			return this.getNextSibling(firstChild as any);
-		}
-		return firstChild as ConcreteChildNode;
-	}
+	): ChildNodePointer {
+		const parentNode = parentPointer.node;
+		let firstChild: ConcreteChildNode | TinyChildNode;
 
-	public getLastChild(node: ConcreteParentNode, bucket: string | null = null): ConcreteChildNode {
-		const lastChild = this._domFacade['getLastChild'](node, bucket);
-		if (!lastChild) {
-			return null;
-		}
-		if (lastChild.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
-			return this.getPreviousSibling(lastChild as any);
-		}
-		return lastChild as ConcreteChildNode;
-	}
-
-	public getNextSibling(
-		node: ConcreteChildNode,
-		bucket: string | null = null
-	): ConcreteChildNode {
-		for (
-			let node2 = this._domFacade['getNextSibling'](node, bucket);
-			node2;
-			node2 = this._domFacade['getNextSibling'](node2, bucket)
-		) {
-			if (node2.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
-				continue;
+		if (isTinyNode(parentNode)) {
+			firstChild = parentNode.childNodes[0];
+		} else {
+			let child = this._domFacade['getFirstChild'](parentNode, bucket);
+			if (child && child.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
+				child = this._domFacade['getNextSibling'](child);
 			}
-			return node2 as ConcreteChildNode;
+			firstChild = child as ConcreteChildNode;
 		}
-		return null;
+
+		return firstChild ? createPointer(firstChild, parentPointer, 0) : null;
 	}
 
+	public getLastChildPointer(
+		parentPointer: ParentNodePointer,
+		bucket: string | null = null
+	): ChildNodePointer {
+		const parentNode = parentPointer.node;
+		let lastChild: ConcreteChildNode | TinyChildNode;
+		let lastIndex: number;
+		if (isTinyNode(parentNode)) {
+			lastIndex = parentNode.childNodes.length - 1;
+			lastChild = parentNode.childNodes[lastIndex];
+		} else {
+			let child = this._domFacade['getLastChild'](parentNode, bucket);
+			if (child && child.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
+				child = this._domFacade['getPreviousSibling'](child);
+			}
+			lastChild = child as ConcreteChildNode;
+			lastIndex = this.getChildNodes(parentPointer.node, bucket).length - 1;
+		}
+
+		return lastChild ? createPointer(lastChild, parentPointer, lastIndex) : null;
+	}
+
+	public getLocalName(pointer: ElementNodePointer | AttributeNodePointer): string {
+		return pointer.node.localName;
+	}
+
+	public getNamespaceURI(pointer: ElementNodePointer | AttributeNodePointer): string {
+		return pointer.node.namespaceURI;
+	}
+
+	public getNextSiblingPointer(
+		pointer: ChildNodePointer,
+		bucket: string | null = null
+	): ChildNodePointer {
+		const node = pointer.node;
+		let nextSibling;
+		const graftAncestor = pointer.graftAncestor;
+		let nextSiblingIndex;
+		if (isTinyNode(node)) {
+			if (graftAncestor) {
+				nextSiblingIndex = (graftAncestor.offset as number) + 1;
+				nextSibling = graftAncestor.parent.childNodes[nextSiblingIndex];
+			}
+		} else {
+			if (graftAncestor) {
+				// This is a clone, use the ancestor anyway
+				nextSiblingIndex = (graftAncestor.offset as number) + 1;
+				if (isTinyNode(graftAncestor.parent)) {
+					nextSibling = graftAncestor.parent.childNodes[nextSiblingIndex];
+				} else {
+					const parentPointer = this.getParentNodePointer(pointer, null);
+					nextSibling = createPointer(
+						this.getChildNodes(parentPointer.node, bucket)[nextSiblingIndex],
+						parentPointer,
+						nextSiblingIndex
+					);
+				}
+			} else {
+				nextSibling = node;
+				while (nextSibling) {
+					nextSibling = this._domFacade['getNextSibling'](nextSibling, bucket);
+					if (nextSibling && nextSibling.nodeType !== NODE_TYPES.DOCUMENT_TYPE_NODE) {
+						break;
+					}
+				}
+
+				return nextSibling
+					? {
+							node: nextSibling,
+							graftAncestor: null,
+					  }
+					: null;
+			}
+		}
+
+		return nextSibling
+			? createPointer(
+					nextSibling,
+					this.getParentNodePointer(pointer, bucket),
+					nextSiblingIndex
+			  )
+			: null;
+	}
+
+	public getNodeName(pointer: ElementNodePointer | AttributeNodePointer): string {
+		return pointer.node.nodeName;
+	}
+
+	public getNodeType(pointer: NodePointer): NODE_TYPES {
+		return pointer.node.nodeType;
+	}
+
+	/**
+	 * Get the raw parent node of a concrete node.
+	 *
+	 * Note that this code should not be called with node that comes from a pointer with a graft,
+	 * since that graft will not be used.
+	 *
+	 * Also, tinyNodes do not have a logical parent, so that will also not work.
+	 *
+	 * This method can be used to more performantly get the parent of a node, to for instance more
+	 * quickly determine the ancestry of a node that is not created nor cloned into another node.
+	 */
 	public getParentNode(
 		node: ConcreteChildNode,
 		bucket: string | null = null
@@ -108,26 +276,114 @@ class DomFacade implements IWrappingDomFacade {
 		return this._domFacade['getParentNode'](node, bucket) as ConcreteParentNode;
 	}
 
-	public getPreviousSibling(
-		node: ConcreteChildNode,
+	public getParentNodePointer(
+		pointer: ChildNodePointer,
 		bucket: string | null = null
-	): ConcreteChildNode {
-		for (
-			let node2 = this._domFacade['getPreviousSibling'](node, bucket);
-			node2;
-			node2 = this._domFacade['getPreviousSibling'](node2, bucket)
-		) {
-			if (node2.nodeType === NODE_TYPES.DOCUMENT_TYPE_NODE) {
-				continue;
+	): ParentNodePointer {
+		const childNode = pointer.node;
+		const graftAncestor = pointer.graftAncestor;
+		let parentNode;
+		let newGraftAncestor;
+
+		if (!graftAncestor) {
+			// check dom, or null if tinyNode
+			if (isTinyNode(childNode)) {
+				return null;
 			}
-			return node2 as ConcreteChildNode;
+			parentNode = this.getParentNode(childNode, bucket);
+			newGraftAncestor = null;
+		} else if (
+			// check the child at graftAncestor is that node
+			(typeof graftAncestor.offset === 'number' &&
+				childNode === graftAncestor.parent.childNodes[graftAncestor.offset]) ||
+			(typeof graftAncestor.offset === 'string' &&
+				childNode ===
+					(graftAncestor.parent as TinyElementNode).attributes.find(
+						(e) => graftAncestor.offset === e.nodeName
+					))
+		) {
+			parentNode = graftAncestor.parent as TinyParentNode | ConcreteParentNode;
+			newGraftAncestor = graftAncestor.graftAncestor;
+		} else {
+			// if not, go to the dom
+			parentNode = this.getParentNode(childNode, bucket);
+			newGraftAncestor = graftAncestor;
 		}
-		return null;
+
+		return parentNode ? { node: parentNode, graftAncestor: newGraftAncestor } : null;
+	}
+
+	public getPrefix(pointer: AttributeNodePointer | ElementNodePointer): string {
+		return pointer.node.prefix;
+	}
+
+	public getPreviousSiblingPointer(
+		pointer: ChildNodePointer,
+		bucket: string | null = null
+	): ChildNodePointer {
+		const node = pointer.node;
+		let previousSibling;
+		const graftAncestor = pointer.graftAncestor;
+		let previousSiblingIndex;
+		if (isTinyNode(node)) {
+			if (graftAncestor) {
+				previousSiblingIndex = (graftAncestor.offset as number) - 1;
+				previousSibling = graftAncestor.parent.childNodes[previousSiblingIndex];
+			}
+		} else {
+			if (graftAncestor) {
+				// This is a clone, use the ancestor anyway
+				previousSiblingIndex = (graftAncestor.offset as number) + 1;
+				if (isTinyNode(graftAncestor.parent)) {
+					previousSibling = graftAncestor.parent.childNodes[previousSiblingIndex];
+				} else {
+					const parentPointer = this.getParentNodePointer(pointer, null);
+					previousSibling = createPointer(
+						this.getChildNodes(parentPointer.node, bucket)[previousSiblingIndex],
+						parentPointer,
+						previousSiblingIndex
+					);
+				}
+			} else {
+				previousSibling = node;
+				while (previousSibling) {
+					previousSibling = this._domFacade['getPreviousSibling'](
+						previousSibling,
+						bucket
+					);
+					if (
+						previousSibling &&
+						previousSibling.nodeType !== NODE_TYPES.DOCUMENT_TYPE_NODE
+					) {
+						break;
+					}
+				}
+
+				return previousSibling
+					? {
+							node: previousSibling,
+							graftAncestor: null,
+					  }
+					: null;
+			}
+		}
+
+		return previousSibling
+			? createPointer(
+					previousSibling,
+					this.getParentNodePointer(pointer, bucket),
+					previousSiblingIndex
+			  )
+			: null;
 	}
 
 	// Can be used to create an extra frame when tracking dependencies
 	public getRelatedNodes(node, callback) {
 		return callback(node, this);
+	}
+
+	public getTarget(pointer: ProcessingInstructionNodePointer): string {
+		return pointer.node.target;
 	}
 
 	public unwrap(): IDomFacade {

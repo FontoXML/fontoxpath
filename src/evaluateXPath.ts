@@ -5,7 +5,7 @@ import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
-import getBucketsForNode from './getBucketsForNode';
+import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import { Node } from './types/Types';

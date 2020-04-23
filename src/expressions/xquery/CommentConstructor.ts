@@ -1,6 +1,8 @@
 import atomize from '../dataTypes/atomize';
+import { CommentNodePointer, TinyCommentNode } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import castToType from '../dataTypes/castToType';
-import createNodeValue from '../dataTypes/createNodeValue';
+import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
@@ -17,9 +19,16 @@ class CommentConstructor extends Expression {
 	}
 
 	public evaluate(_dynamicContext, executionParameters) {
-		const nodesFactory = executionParameters.nodesFactory;
+		const tinyCommentNode: TinyCommentNode = {
+			data: '',
+			isTinyNode: true,
+			nodeType: NODE_TYPES.COMMENT_NODE
+		};
+		const commentNodePointer = { node: tinyCommentNode, graftAncestor: null };
 		if (!this._expr) {
-			return sequenceFactory.singleton(createNodeValue(nodesFactory.createComment('')));
+			return sequenceFactory.singleton(
+				createPointerValue(commentNodePointer, executionParameters.domFacade)
+			);
 		}
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
 		return atomize(sequence, executionParameters).mapAll((items) => {
@@ -31,7 +40,11 @@ class CommentConstructor extends Expression {
 				);
 			}
 
-			return sequenceFactory.singleton(createNodeValue(nodesFactory.createComment(content)));
+			tinyCommentNode.data = content;
+
+			return sequenceFactory.singleton(
+				createPointerValue(commentNodePointer, executionParameters.domFacade)
+			);
 		});
 	}
 }

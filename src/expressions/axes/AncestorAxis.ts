@@ -1,22 +1,27 @@
-import IDomFacade from '../../domFacade/IDomFacade';
-import { Node } from '../../types/Types';
-import createNodeValue from '../dataTypes/createNodeValue';
+import { ChildNodePointer, ParentNodePointer } from '../../domClone/Pointer';
+import DomFacade from '../../domFacade/DomFacade';
+import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-function generateAncestors(domFacade: IDomFacade, contextNode: Node, bucket: string | null) {
-	let ancestor = contextNode;
+function generateAncestors(
+	domFacade: DomFacade,
+	contextPointer: ChildNodePointer,
+	bucket: string | null
+) {
+	let ancestor = contextPointer as ParentNodePointer;
 	return {
 		next: () => {
 			if (!ancestor) {
 				return DONE_TOKEN;
 			}
-			const previousAncestor = ancestor;
-			ancestor = previousAncestor && domFacade.getParentNode(previousAncestor, bucket);
 
-			return ready(createNodeValue(previousAncestor));
+			const previousAncestor = ancestor;
+			ancestor = domFacade.getParentNodePointer(previousAncestor as ChildNodePointer, bucket);
+
+			return ready(createPointerValue(previousAncestor, domFacade));
 		},
 	};
 }
@@ -48,20 +53,24 @@ class AncestorAxis extends Expression {
 
 		const domFacade = executionParameters.domFacade;
 
-		const contextNode = contextItem.value;
+		const contextPointer = contextItem.value;
 		const ancestorExpressionBucket = this._ancestorExpression.getBucket();
 		return sequenceFactory
 			.create(
 				generateAncestors(
 					domFacade,
 					this._isInclusive
-						? contextNode
-						: domFacade.getParentNode(contextNode, ancestorExpressionBucket),
+						? contextPointer
+						: domFacade.getParentNodePointer(contextPointer, ancestorExpressionBucket),
 					ancestorExpressionBucket
 				)
 			)
 			.filter((item) => {
-				return this._ancestorExpression.evaluateToBoolean(dynamicContext, item);
+				return this._ancestorExpression.evaluateToBoolean(
+					dynamicContext,
+					item,
+					executionParameters
+				);
 			});
 	}
 }

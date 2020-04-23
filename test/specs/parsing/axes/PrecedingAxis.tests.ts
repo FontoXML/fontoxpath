@@ -134,6 +134,10 @@ return map{
 		const expectedBucket = getBucketForSelector('self::firstChildElement');
 
 		const testDomFacade: IDomFacade = {
+			getChildNodes: (node: slimdom.Node, bucket: string | null) => {
+				chai.assert.equal(expectedBucket, bucket);
+				return node.childNodes;
+			},
 			getLastChild: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return node.lastChild;

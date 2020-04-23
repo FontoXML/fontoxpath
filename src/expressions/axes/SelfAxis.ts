@@ -16,14 +16,15 @@ class SelfAxis extends Expression {
 		this._selector = selector;
 	}
 
-	public evaluate(dynamicContext, _executionParameters) {
+	public evaluate(dynamicContext, executionParameters) {
 		if (dynamicContext.contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
 
 		const isMatch = this._selector.evaluateToBoolean(
 			dynamicContext,
-			dynamicContext.contextItem
+			dynamicContext.contextItem,
+			executionParameters
 		);
 		return isMatch
 			? sequenceFactory.singleton(dynamicContext.contextItem)

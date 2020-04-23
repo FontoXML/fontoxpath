@@ -1,21 +1,21 @@
-import IDomFacade from '../../domFacade/IDomFacade';
-import { Node } from '../../types/Types';
+import DomFacade from '../../domFacade/DomFacade';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 
-import createNodeValue from '../dataTypes/createNodeValue';
+import { ChildNodePointer, NodePointer } from '../../domClone/Pointer';
+import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-function createSiblingGenerator(domFacade: IDomFacade, node: Node, bucket: string | null) {
+function createSiblingGenerator(domFacade: DomFacade, node: NodePointer, bucket: string | null) {
 	return {
 		next: () => {
-			node = node && domFacade.getPreviousSibling(node, bucket);
+			node = node && domFacade.getPreviousSiblingPointer(node as ChildNodePointer, bucket);
 			if (!node) {
 				return DONE_TOKEN;
 			}
 
-			return ready(createNodeValue(node));
+			return ready(createPointerValue(node, domFacade));
 		},
 	};
 }
@@ -39,17 +39,20 @@ class PrecedingSiblingAxis extends Expression {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
 		}
 
-		const domFacade = executionParameters.domFacade;
 		return sequenceFactory
 			.create(
 				createSiblingGenerator(
-					domFacade,
+					executionParameters.domFacade,
 					contextItem.value,
 					this._siblingExpression.getBucket()
 				)
 			)
 			.filter((item) => {
-				return this._siblingExpression.evaluateToBoolean(dynamicContext, item);
+				return this._siblingExpression.evaluateToBoolean(
+					dynamicContext,
+					item,
+					executionParameters
+				);
 			});
 	}
 }

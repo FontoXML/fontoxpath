@@ -1,5 +1,5 @@
-import { ConcreteChildNode, ConcreteNode } from '../../domFacade/ConcreteNode';
-import { Attr, Element } from '../../types/Types';
+import { AttributeNodePointer, ChildNodePointer, ElementNodePointer } from '../../domClone/Pointer';
+import DomFacade from '../../domFacade/DomFacade';
 import isSubTypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -41,29 +41,35 @@ export enum TargetChoice {
 	INSERT_INTO_AS_LAST = 5,
 }
 
-function testNamespaceURIForAttribute(targetElement, attributeNode: Attr, namespaceBindings): void {
-	const prefix = attributeNode.prefix || '';
+function testNamespaceURIForAttribute(
+	targetElement,
+	attributeNode: AttributeNodePointer,
+	namespaceBindings,
+	domFacade: DomFacade
+): void {
+	const prefix = domFacade.getPrefix(attributeNode as any) || '';
+	const namespaceURI = domFacade.getNamespaceURI(attributeNode as any);
 
 	// b. No attribute node in $alist may have a QName whose implied namespace binding conflicts with a namespace binding in the "namespaces" property of $target [err:XUDY0023].
-	const boundNamespaceURI = prefix ? targetElement.lookupNamespaceURI(prefix) : null;
-	if (boundNamespaceURI && boundNamespaceURI !== attributeNode.namespaceURI) {
-		throw errXUDY0023(attributeNode.namespaceURI);
+	const boundNamespaceURI = prefix ? targetElement.node.lookupNamespaceURI(prefix) : null;
+	if (boundNamespaceURI && boundNamespaceURI !== namespaceURI) {
+		throw errXUDY0023(namespaceURI);
 	}
 	// c. Multiple attribute nodes in $alist may not have QNames whose implied namespace bindings conflict with each other [err:XUDY0024].
 	const alreadyDeclaredNamespace = namespaceBindings[prefix];
 	if (alreadyDeclaredNamespace) {
-		if (attributeNode.namespaceURI !== alreadyDeclaredNamespace) {
-			throw errXUDY0024(attributeNode.namespaceURI);
+		if (namespaceURI !== alreadyDeclaredNamespace) {
+			throw errXUDY0024(namespaceURI);
 		}
 	}
 }
 
 function buildPendingUpdates(
 	targetChoice: TargetChoice,
-	target: Element,
-	parent: Element,
-	alist: Attr[],
-	clist: ConcreteChildNode[]
+	target: ElementNodePointer,
+	parent: ElementNodePointer,
+	alist: AttributeNodePointer[],
+	clist: ChildNodePointer[]
 ) {
 	const updates = [];
 	switch (targetChoice) {
@@ -158,9 +164,10 @@ class InsertExpression extends UpdatingExpression {
 			dynamicContext,
 			executionParameters
 		);
+		const domFacade = executionParameters.domFacade;
 
-		let alist: Attr[];
-		let clist: ConcreteChildNode[];
+		let alist: AttributeNodePointer[];
+		let clist: ChildNodePointer[];
 		let sourceUpdates: IPendingUpdate[];
 
 		let target: Value;
@@ -182,8 +189,12 @@ class InsertExpression extends UpdatingExpression {
 					);
 
 					// Let $alist be the sequence of attribute nodes in the insertion sequence. Let $clist be the remainder of the insertion sequence, in its original order.
-					alist = insertionSequence.attributes;
-					clist = insertionSequence.contentNodes;
+					alist = insertionSequence.attributes.map((attr) => {
+						return { node: attr, graftAncestor: null };
+					});
+					clist = insertionSequence.contentNodes.map((contentNode) => {
+						return { node: contentNode, graftAncestor: null };
+					});
 					sourceUpdates = sv.value.pendingUpdateList;
 				}
 
@@ -225,10 +236,7 @@ class InsertExpression extends UpdatingExpression {
 						}
 
 						// d. If before or after is specified, the node returned by the target expression must have a non-empty parent property [err:XUDY0029].
-						parent = executionParameters.domFacade.getParentNode(
-							tv.value.xdmValue[0].value,
-							null
-						);
+						parent = domFacade.getParentNodePointer(tv.value.xdmValue[0].value, null);
 						if (parent === null) {
 							throw errXUDY0029(tv.value.xdmValue[0].value);
 						}
@@ -248,21 +256,22 @@ class InsertExpression extends UpdatingExpression {
 						}
 					} else {
 						// a. parent($target) must be an element node [err:XUDY0030].
-						if (parent.nodeType !== ELEMENT_NODE) {
+						if (domFacade.getNodeType(parent) !== ELEMENT_NODE) {
 							throw errXUDY0030();
 						}
 					}
 
 					alist.reduce((namespaceBindings, attributeNode) => {
-						const prefix = attributeNode.prefix || '';
+						const prefix = domFacade.getPrefix(attributeNode as any) || '';
 
 						testNamespaceURIForAttribute(
 							target.value,
 							attributeNode,
-							namespaceBindings
+							namespaceBindings,
+							domFacade
 						);
 
-						namespaceBindings[prefix] = attributeNode.namespaceURI;
+						namespaceBindings[prefix] = domFacade.getNamespaceURI(attributeNode as any);
 						return namespaceBindings;
 					}, []);
 				}

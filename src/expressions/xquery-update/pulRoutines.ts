@@ -1,7 +1,7 @@
+import DomFacade from '../../domFacade/DomFacade';
 import IDocumentWriter from '../../documentWriter/IDocumentWriter';
-import IDomFacade from '../../domFacade/IDomFacade';
-import INodesFactory from '../../nodesFactory/INodesFactory';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import INodesFactory from '../../nodesFactory/INodesFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import {
 	deletePu,
@@ -23,18 +23,18 @@ import { InsertAttributesPendingUpdate } from './pendingUpdates/InsertAttributes
 import { InsertBeforePendingUpdate } from './pendingUpdates/InsertBeforePendingUpdate';
 import { InsertIntoAsFirstPendingUpdate } from './pendingUpdates/InsertIntoAsFirstPendingUpdate';
 import { InsertIntoAsLastPendingUpdate } from './pendingUpdates/InsertIntoAsLastPendingUpdate';
+import { InsertIntoPendingUpdate } from './pendingUpdates/InsertIntoPendingUpdate';
 import { RenamePendingUpdate } from './pendingUpdates/RenamePendingUpdate';
 import { ReplaceElementContentPendingUpdate } from './pendingUpdates/ReplaceElementContentPendingUpdate';
 import { ReplaceNodePendingUpdate } from './pendingUpdates/ReplaceNodePendingUpdate';
 import { ReplaceValuePendingUpdate } from './pendingUpdates/ReplaceValuePendingUpdate';
 import { errXUDY0015, errXUDY0016, errXUDY0017, errXUDY0024 } from './XQueryUpdateFacilityErrors';
-import { InsertIntoPendingUpdate } from './pendingUpdates/InsertIntoPendingUpdate';
 
 export const applyUpdates = (
 	pul: IPendingUpdate[],
 	_revalidationModule,
 	_inheritNamespaces,
-	domFacade: IDomFacade,
+	domFacade: DomFacade,
 	nodesFactory: INodesFactory,
 	documentWriter: IDocumentWriter
 ) => {
@@ -141,16 +141,17 @@ export const applyUpdates = (
 	}
 };
 
-const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
+const compatibilityCheck = (pul: IPendingUpdate[], domFacade: DomFacade) => {
 	function findDuplicateTargets(type, onFoundDuplicate) {
 		const targets = new Set();
 		pul.filter((pu) => pu.type === type)
 			.map((pu) => pu.target)
 			.forEach((target) => {
-				if (targets.has(target)) {
-					onFoundDuplicate(target);
+				const targetNode = target ? target.node : null;
+				if (targets.has(targetNode)) {
+					onFoundDuplicate(targetNode);
 				}
-				targets.add(target);
+				targets.add(targetNode);
 			});
 	}
 
@@ -182,15 +183,22 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 	// The following kinds of primitives create namespace bindings:
 	const newQNamesByElement = new Map();
 	const getAttributeName = (attribute) =>
-		new QName(attribute.prefix, attribute.namespaceURI, attribute.localName);
+		new QName(
+			domFacade.getPrefix(attribute),
+			domFacade.getNamespaceURI(attribute),
+			domFacade.getLocalName(attribute)
+		);
 	// a. upd:insertAttributes creates one namespace binding on the $target element corresponding to
 	//    the implied namespace binding of the name of each attribute node in $content.
 	// b. upd:replaceNode creates one namespace binding on the $target element corresponding to the
 	//    implied namespace binding of the name of each attribute node in $replacement.
 	pul.filter(
-		(pu) => pu.type === 'replaceNode' && pu.target.nodeType === NODE_TYPES.ATTRIBUTE_NODE
+		(pu) =>
+			pu.type === 'replaceNode' &&
+			domFacade.getNodeType(pu.target) === NODE_TYPES.ATTRIBUTE_NODE
 	).forEach((pu: ReplaceNodePendingUpdate) => {
-		const element = domFacade.getParentNode(pu.target);
+		const elementPointer = domFacade.getParentNodePointer(pu.target);
+		const element = elementPointer ? elementPointer.node : null;
 		const qNames = newQNamesByElement.get(element);
 		if (qNames) {
 			qNames.push(...pu.replacement.map(getAttributeName));
@@ -201,12 +209,14 @@ const compatibilityCheck = (pul: IPendingUpdate[], domFacade) => {
 	// c. upd:rename creates a namespace binding on $target, or on the parent (if any) of $target if
 	//    $target is an attribute node, corresponding to the implied namespace binding of $newName.
 	pul.filter(
-		(pu) => pu.type === 'rename' && pu.target.nodeType === NODE_TYPES.ATTRIBUTE_NODE
+		(pu) =>
+			pu.type === 'rename' && domFacade.getNodeType(pu.target) === NODE_TYPES.ATTRIBUTE_NODE
 	).forEach((pu: RenamePendingUpdate) => {
-		const element = domFacade.getParentNode(pu.target);
-		if (!element) {
+		const elementPointer = domFacade.getParentNodePointer(pu.target);
+		if (!elementPointer) {
 			return;
 		}
+		const element = elementPointer.node;
 		const qNames = newQNamesByElement.get(element);
 		if (qNames) {
 			qNames.push(pu.newName);

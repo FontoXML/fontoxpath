@@ -28,6 +28,7 @@ function evaluateReplaceNode(
 	targetValueIterator: IAsyncIterator<UpdatingExpressionResult>,
 	replacementValueIterator: IAsyncIterator<UpdatingExpressionResult>
 ) {
+	const domFacade = executionParameters.domFacade;
 	let rlist;
 	let rlistUpdates;
 	let parent;
@@ -48,7 +49,15 @@ function evaluateReplaceNode(
 				// document node is replaced in $rlist by its
 				// children.
 				const allChildNodes = [rl.value.xdmValue];
-				rlist = parseContent(allChildNodes, executionParameters, errXUDY0024);
+				const parsedContent = parseContent(allChildNodes, executionParameters, errXUDY0024);
+				rlist = {
+					attributes: parsedContent.attributes.map((attr) => {
+						return { node: attr, graftAncestor: null };
+					}),
+					contentNodes: parsedContent.contentNodes.map((contentNode) => {
+						return { node: contentNode, graftAncestor: null };
+					}),
+				};
 				rlistUpdates = rl.value.pendingUpdateList;
 			}
 
@@ -82,7 +91,10 @@ function evaluateReplaceNode(
 
 			// If the result consists of a node whose parent
 			// property is empty, [err:XUDY0009] is raised.
-			parent = executionParameters.domFacade.getParentNode(tv.value.xdmValue[0].value, null);
+			parent = executionParameters.domFacade.getParentNodePointer(
+				tv.value.xdmValue[0].value,
+				null
+			);
 			if (parent === null) {
 				throw errXUDY0009(tv.value.xdmValue[0].value);
 			}
@@ -110,16 +122,17 @@ function evaluateReplaceNode(
 					throw errXUTY0011();
 				}
 
-				rlist.attributes.reduce((namespaceBindings, attributeNode) => {
-					const prefix = attributeNode.prefix || '';
+				rlist.attributes.reduce((namespaceBindings, attributePointer) => {
+					const prefix = domFacade.getPrefix(attributePointer) || '';
+					const namespaceURI = domFacade.getNamespaceURI(attributePointer);
 
 					// No attribute node in $rlist may have a QName
 					// whose implied namespace binding conflicts with
 					// a namespace binding in the "namespaces"
 					// property of $parent [err:XUDY0023].
-					const boundNamespaceURI = parent.lookupNamespaceURI(prefix);
-					if (boundNamespaceURI && boundNamespaceURI !== attributeNode.namespaceURI) {
-						throw errXUDY0023(attributeNode.namespaceURI);
+					const boundNamespaceURI = parent.node.lookupNamespaceURI(prefix);
+					if (boundNamespaceURI && boundNamespaceURI !== namespaceURI) {
+						throw errXUDY0023(namespaceURI);
 					}
 
 					// Multiple attribute nodes in $rlist may not have
@@ -127,14 +140,14 @@ function evaluateReplaceNode(
 					// conflict with each other [err:XUDY0024].
 					const alreadyDeclaredNamespace = namespaceBindings[prefix];
 					if (alreadyDeclaredNamespace) {
-						if (attributeNode.namespaceURI !== alreadyDeclaredNamespace) {
-							throw errXUDY0024(attributeNode.namespaceURI);
+						if (namespaceURI !== alreadyDeclaredNamespace) {
+							throw errXUDY0024(namespaceURI);
 						}
 					}
 
-					namespaceBindings[prefix] = attributeNode.namespaceURI;
+					namespaceBindings[prefix] = namespaceURI;
 					return namespaceBindings;
-				}, []);
+				}, {});
 			}
 
 			// The result of the replace expression is an empty
@@ -196,7 +209,10 @@ function evaluateReplaceNodeValue(
 				text =
 					textContent.length === 0
 						? null
-						: executionParameters.nodesFactory.createTextNode(textContent);
+						: {
+								node: executionParameters.nodesFactory.createTextNode(textContent),
+								graftAncestor: null,
+						  };
 				rlistUpdates = rl.value.pendingUpdateList;
 			}
 
@@ -265,7 +281,7 @@ function evaluateReplaceNodeValue(
 				isSubTypeOf(target.type, 'comment()') ||
 				isSubTypeOf(target.type, 'processing-instruction()')
 			) {
-				const string = text ? text.data : '';
+				const string = text ? executionParameters.domFacade.getDataFromPointer(text) : '';
 
 				// If $target is a comment node, and $string contains
 				// two adjacent hyphens or ends with a hyphen, a

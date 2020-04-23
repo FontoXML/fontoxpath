@@ -56,7 +56,7 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 			).next(IterationHint.NONE).value.value;
 
 			// If the namespace binding of $QName conflicts with any namespace binding in the namespaces property of $target, a dynamic error is raised [err:XUDY0023].
-			const boundNamespaceURI = target.value.lookupNamespaceURI(qName.prefix);
+			const boundNamespaceURI = target.value.node.lookupNamespaceURI(qName.prefix);
 			if (boundNamespaceURI && boundNamespaceURI !== qName.namespaceURI) {
 				throw errXUDY0023(qName.namespaceURI);
 			}
@@ -73,7 +73,7 @@ function evaluateNewName(staticContext, executionParameters, newNameXdmValue, ta
 
 			// If $QName has a non-absent namespace URI, and if the namespace binding of $QName conflicts with any namespace binding in the namespaces property of the parent (if any) of $target, a dynamic error is raised [err:XUDY0023].
 			if (qName.namespaceURI) {
-				const boundNamespaceURI = target.value.lookupNamespaceURI(qName.prefix);
+				const boundNamespaceURI = target.value.node.lookupNamespaceURI(qName.prefix);
 				if (boundNamespaceURI && boundNamespaceURI !== qName.namespaceURI) {
 					throw errXUDY0023(qName.namespaceURI);
 				}

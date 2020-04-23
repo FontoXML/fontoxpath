@@ -1,9 +1,9 @@
-import { ConcreteChildNode } from '../../../domFacade/ConcreteNode';
+import { ChildNodePointer } from '../../../domClone/Pointer';
 import { InsertPendingUpdate } from './InsertPendingUpdate';
 export class InsertAfterPendingUpdate extends InsertPendingUpdate {
-	public readonly target: ConcreteChildNode;
+	public readonly target: ChildNodePointer;
 	public readonly type: 'insertAfter';
-	constructor(target: ConcreteChildNode, content: ConcreteChildNode[]) {
+	constructor(target: ChildNodePointer, content: ChildNodePointer[]) {
 		super(target, content, 'insertAfter');
 	}
 }

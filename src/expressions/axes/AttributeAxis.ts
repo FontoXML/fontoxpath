@@ -1,9 +1,11 @@
-import createNodeValue from '../dataTypes/createNodeValue';
+import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
+import ExecutionParameters from '../ExecutionParameters';
+import DynamicContext from '../DynamicContext';
 
 class AttributeAxis extends Expression {
 	private _attributeTestExpression: TestAbstractExpression;
@@ -24,7 +26,7 @@ class AttributeAxis extends Expression {
 		this._attributeTestExpression = attributeTestExpression;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
@@ -42,11 +44,15 @@ class AttributeAxis extends Expression {
 		// This includes all of the "special" attributes (xml:lang, xml:space, xsi:type, etc.)
 		// but does not include namespace declarations (because they are not attributes).
 		const matchingAttributes = domFacade
-			.getAllAttributes(contextItem.value, this._attributeTestExpression.getBucket())
-			.filter((attr) => attr.namespaceURI !== 'http://www.w3.org/2000/xmlns/')
-			.map((attribute) => createNodeValue(attribute))
+			.getAllAttributePointers(contextItem.value, this._attributeTestExpression.getBucket())
+			.filter((attr) => domFacade.getNamespaceURI(attr) !== 'http://www.w3.org/2000/xmlns/')
+			.map((attribute) => createPointerValue(attribute, executionParameters.domFacade))
 			.filter((item) =>
-				this._attributeTestExpression.evaluateToBoolean(dynamicContext, item)
+				this._attributeTestExpression.evaluateToBoolean(
+					dynamicContext,
+					item,
+					executionParameters
+				)
 			);
 		return sequenceFactory.create(matchingAttributes);
 	}

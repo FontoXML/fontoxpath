@@ -1,6 +1,7 @@
-import { ConcreteChildNode, ConcreteDocumentNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
-import IWrappingDomFacade from '../../domFacade/IWrappingDomFacade';
-import createNodeValue from '../dataTypes/createNodeValue';
+import { ChildNodePointer } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import DomFacade from '../../domFacade/DomFacade';
+import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
@@ -8,18 +9,18 @@ import createDescendantGenerator from '../util/createDescendantGenerator';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
 function createPrecedingGenerator(
-	domFacade: IWrappingDomFacade,
-	node: ConcreteChildNode,
+	domFacade: DomFacade,
+	node: ChildNodePointer,
 	bucket: string | null
 ) {
 	const nodeStack = [];
 
 	for (
-		let ancestorNode: ConcreteChildNode | ConcreteDocumentNode = node;
-		ancestorNode && ancestorNode.nodeType !== NODE_TYPES.DOCUMENT_NODE;
-		ancestorNode = domFacade.getParentNode(ancestorNode, bucket)
+		let ancestorNode = node;
+		ancestorNode && domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_NODE;
+		ancestorNode = domFacade.getParentNodePointer(ancestorNode, bucket) as ChildNodePointer
 	) {
-		const previousSibling = domFacade.getPreviousSibling(ancestorNode, bucket);
+		const previousSibling = domFacade.getPreviousSiblingPointer(ancestorNode, bucket);
 		if (previousSibling === null) {
 			continue;
 		}
@@ -46,8 +47,8 @@ function createPrecedingGenerator(
 					nephewGenerator = null;
 
 					// Set the focus to the concurrent sibling of this node
-					const nextNode = domFacade.getPreviousSibling(nodeStack[0], bucket);
-					const toReturn = ready(createNodeValue(nodeStack[0]));
+					const nextNode = domFacade.getPreviousSiblingPointer(nodeStack[0], bucket);
+					const toReturn = ready(createPointerValue(nodeStack[0], domFacade));
 					if (nextNode === null) {
 						// This is the last sibling, we can continue with a child of the current
 						// node (an uncle of the original node) in the next iteration
@@ -97,7 +98,11 @@ class PrecedingAxis extends Expression {
 				)
 			)
 			.filter((item) => {
-				return this._testExpression.evaluateToBoolean(dynamicContext, item);
+				return this._testExpression.evaluateToBoolean(
+					dynamicContext,
+					item,
+					executionParameters
+				);
 			});
 	}
 }

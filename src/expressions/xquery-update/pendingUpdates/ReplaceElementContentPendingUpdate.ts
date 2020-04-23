@@ -1,17 +1,18 @@
-import { ConcreteElementNode } from '../../../domFacade/ConcreteNode';
-import { Text } from '../../../types/Types';
+import realizeDom from '../../../domClone/realizeDom';
+import { ElementNodePointer, TextNodePointer } from '../../../domClone/Pointer';
+import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import { IPendingUpdate } from '../IPendingUpdate';
 
 export class ReplaceElementContentPendingUpdate extends IPendingUpdate {
 	public readonly type: 'replaceElementContent';
-	constructor(readonly target: ConcreteElementNode, readonly text: Text) {
+	constructor(readonly target: ElementNodePointer, readonly text: TextNodePointer | null) {
 		super('replaceElementContent');
 	}
-	public toTransferable() {
+	public toTransferable(executionParameters: ExecutionParameters) {
 		return {
 			['type']: this.type,
-			['target']: this.target,
-			['text']: this.text,
+			['target']: realizeDom(this.target, executionParameters, false),
+			['text']: this.text ? realizeDom(this.text, executionParameters, true) : null,
 		};
 	}
 }

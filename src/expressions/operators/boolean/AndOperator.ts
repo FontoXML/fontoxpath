@@ -1,4 +1,4 @@
-import getBucketsForNode from '../../../getBucketsForNode';
+import { getBucketsForPointer } from '../../../getBuckets';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
@@ -31,7 +31,10 @@ class AndOperator extends Expression {
 		if (dynamicContext !== null) {
 			const contextItem = dynamicContext.contextItem;
 			if (contextItem !== null && isSubtypeOf(contextItem.type, 'node()')) {
-				contextItemBuckets = getBucketsForNode(contextItem.value);
+				contextItemBuckets = getBucketsForPointer(
+					contextItem.value,
+					executionParameters.domFacade
+				);
 			}
 		}
 		return sequenceFactory.create({

@@ -2,15 +2,16 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import {
-	registerCustomXPathFunction,
+	evaluateXPath,
 	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
-	evaluateXPath,
+	registerCustomXPathFunction,
 } from 'fontoxpath';
 
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 describe('registerCustomXPath', () => {
 	let documentNode;
@@ -169,7 +170,7 @@ describe('registerCustomXPath', () => {
 	});
 
 	it('functions can be registered using a namespace', () => {
-		var namespaceURI = 'http://www.example.com/customFunctionTest';
+		const namespaceURI = 'http://www.example.com/customFunctionTest';
 		registerCustomXPathFunction(
 			{ namespaceURI: 'http://www.example.com/customFunctionTest', localName: 'test' },
 			[],
@@ -290,6 +291,52 @@ describe('registerCustomXPath', () => {
 				outerDomFacade
 			)
 		);
+	});
+
+	it('can get node without wrapping by pointers', () => {
+		const myNode = evaluateXPathToFirstNode<slimdom.Element>(
+			`<myNode myAttribute="myValue"/>`,
+			documentNode,
+			undefined,
+			{},
+			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+		);
+		const blueprint = ({
+			getAttribute(element, attrName) {
+				const attr = element.attributes.find((attr) => attr.localName === attrName);
+				return attr.value;
+			},
+			getParentNode(element) {
+				return element.parentNode;
+			},
+		} as unknown) as IDomFacade;
+		registerCustomXPathFunction(
+			'test:my-custom-func-msc',
+			['node()'],
+			'node()',
+			(dynamicContext, node) => {
+				chai.assert.equal(
+					dynamicContext.domFacade.getAttribute(node, 'myAttribute'),
+					'myValue'
+				);
+				chai.assert.equal(myNode, node);
+				return node;
+			}
+		);
+
+		/*
+		Another test case
+		`<xml><a/></xml>`
+		`let $a := xml/a
+		return xml/a/parent::* ne <b>{$a}</b>/parent::*`;
+		*/
+
+		const myNodeAfterFunction = evaluateXPathToFirstNode<slimdom.Element>(
+			'test:my-custom-func-msc(.)',
+			myNode,
+			blueprint
+		);
+		chai.assert.equal(myNodeAfterFunction.outerHTML, myNode.outerHTML);
 	});
 
 	describe('Custom functions are given the correct javascript type', () => {

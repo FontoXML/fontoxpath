@@ -1,3 +1,4 @@
+import realizeDom from '../domClone/realizeDom';
 import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
 import ArrayValue from '../expressions/dataTypes/ArrayValue';
 import atomize, { atomizeSingleValue } from '../expressions/dataTypes/atomize';
@@ -120,7 +121,12 @@ export default function convertXDMReturnValue<
 					'Expected XPath ' + expression + ' to resolve to Node. Got ' + first.value.type
 				);
 			}
-			return first.value.value as IReturnTypes<TNode>[TReturnType];
+			// over here: unravel pointers. if they point to actual nodes:return them. if they point
+			// to lightweights, really make them, if they point to clones, clone them etc
+
+			return realizeDom(first.value.value, executionParameters, false) as IReturnTypes<
+				TNode
+			>[TReturnType];
 		}
 
 		case ReturnType.NODES: {
@@ -139,7 +145,7 @@ export default function convertXDMReturnValue<
 				);
 			}
 			return allResults.value.map((nodeValue) => {
-				return nodeValue.value;
+				return realizeDom(nodeValue.value, executionParameters, false) as unknown;
 			}) as IReturnTypes<TNode>[TReturnType];
 		}
 
@@ -156,7 +162,10 @@ export default function convertXDMReturnValue<
 			if (!isSubtypeOf(first.type, 'map(*)')) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to a map');
 			}
-			const transformedMap = transformMapToObject(first as MapValue).next(IterationHint.NONE);
+			const transformedMap = transformMapToObject(
+				first as MapValue,
+				executionParameters
+			).next(IterationHint.NONE);
 			if (!transformedMap.ready) {
 				throw new Error(
 					'Expected XPath ' + expression + ' to synchronously resolve to a map'
@@ -178,9 +187,10 @@ export default function convertXDMReturnValue<
 			if (!isSubtypeOf(first.type, 'array(*)')) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to an array');
 			}
-			const transformedArray = transformArrayToArray(first as ArrayValue).next(
-				IterationHint.NONE
-			);
+			const transformedArray = transformArrayToArray(
+				first as ArrayValue,
+				executionParameters
+			).next(IterationHint.NONE);
 			if (!transformedArray.ready) {
 				throw new Error(
 					'Expected XPath ' + expression + ' to synchronously resolve to a map'
@@ -218,7 +228,8 @@ export default function convertXDMReturnValue<
 							return value.promise.then(getNextResult);
 						}
 						transformedValueGenerator = transformXPathItemToJavascriptObject(
-							value.value
+							value.value,
+							executionParameters
 						);
 					}
 					const transformedValue = transformedValueGenerator.next();
@@ -264,19 +275,22 @@ export default function convertXDMReturnValue<
 				return isSubtypeOf(value.type, 'node()') && !isSubtypeOf(value.type, 'attribute()');
 			});
 			if (allValuesAreNodes) {
-				if (allValues.value.length === 1) {
-					return allValues.value[0].value;
-				}
-				return allValues.value.map((nodeValue) => {
-					return nodeValue.value;
+				const allResults = allValues.value.map((nodeValue) => {
+					return realizeDom(nodeValue.value, executionParameters, false);
 				}) as IReturnTypes<TNode>[TReturnType];
+
+				if (allResults.length === 1) {
+					return allResults[0];
+				}
+				return allResults;
 			}
 			if (allValues.value.length === 1) {
 				const first = allValues.value[0];
 				if (isSubtypeOf(first.type, 'array(*)')) {
-					const transformedArray = transformArrayToArray(first as ArrayValue).next(
-						IterationHint.NONE
-					);
+					const transformedArray = transformArrayToArray(
+						first as ArrayValue,
+						executionParameters
+					).next(IterationHint.NONE);
 					if (!transformedArray.ready) {
 						throw new Error(
 							'Expected XPath ' + expression + ' to synchronously resolve to an array'
@@ -285,9 +299,10 @@ export default function convertXDMReturnValue<
 					return transformedArray.value as IReturnTypes<TNode>[TReturnType];
 				}
 				if (isSubtypeOf(first.type, 'map(*)')) {
-					const transformedMap = transformMapToObject(first as MapValue).next(
-						IterationHint.NONE
-					);
+					const transformedMap = transformMapToObject(
+						first as MapValue,
+						executionParameters
+					).next(IterationHint.NONE);
 					if (!transformedMap.ready) {
 						throw new Error(
 							'Expected XPath ' + expression + ' to synchronously resolve to a map'

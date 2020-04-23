@@ -3,9 +3,9 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
-	evaluateXPathToNodes,
-	evaluateXPathToFirstNode,
 	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode,
+	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToNumbers,
 } from 'fontoxpath';
