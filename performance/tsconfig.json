@@ -1,0 +1,13 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"baseUrl": "..",
+		"esModuleInterop": true,
+		"lib": ["dom"],
+		"module": "commonjs",
+		"outDir": "lib",
+		"sourceMap": false,
+		"target": "esnext"
+	},
+	"include": ["../src/**/*", "**/*"]
+}
