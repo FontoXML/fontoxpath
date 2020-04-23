@@ -4,7 +4,8 @@
 		"module": "esnext",
 		"outDir": "lib",
 		"paths": {
-			"*": ["performance/types/*"]
+			"slimdom": ["node_modules/slimdom/dist/slimdom.d.ts"],
+			"slimdom-sax-parser": ["node_modules/slimdom-sax-parser/index.js"]
 		},
 		"strict": false
 	}

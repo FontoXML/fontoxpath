@@ -1,4 +1,4 @@
-export default `<?xml version="1.0" standalone="yes"?>
+<?xml version="1.0" standalone="yes"?>
 <site>
 <regions>
 <africa>
@@ -61466,4 +61466,3 @@ soft converse isabel signior eyeballs husbandry gentleness hop ass drinks mechan
 </closed_auction>
 </closed_auctions>
 </site>
-`;

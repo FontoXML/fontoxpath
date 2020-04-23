@@ -3,7 +3,7 @@ import loadBenchmarks from './loadBenchmarks';
 
 async function run() {
 	await loadBenchmarks();
-	runner.run();
+	await runner.run();
 }
 
 run();

@@ -9,6 +9,7 @@ export default class OnlyBenchmarks extends BenchmarkCollection {
 	}[] {
 		return this._benchmarks;
 	}
+
 	public getComparisons(): {
 		benchmarks: Benchmark[];
 		name: string;
@@ -17,6 +18,7 @@ export default class OnlyBenchmarks extends BenchmarkCollection {
 	}[] {
 		return this._comparisons;
 	}
+
 	public hasBenchmarks(): boolean {
 		return this._benchmarks.length !== 0 || this._comparisons.length !== 0;
 	}

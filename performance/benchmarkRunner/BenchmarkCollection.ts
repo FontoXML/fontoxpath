@@ -1,22 +1,28 @@
 import Benchmark from 'benchmark';
 
+type testFunction = () => void;
+type setupFunction = () => void | Promise<void>;
+type teardownFunction = () => void | Promise<void>;
+
 export default abstract class BenchmarkCollection {
 	protected readonly _benchmarks: {
 		benchmark: Benchmark;
-		setup?: () => void;
-		teardown?: () => void;
+		setup?: setupFunction;
+		teardown?: teardownFunction;
 	}[] = [];
+
 	protected readonly _comparisons: {
 		benchmarks: Benchmark[];
 		name: string;
-		setup?: () => void;
-		teardown?: () => void;
+		setup?: setupFunction;
+		teardown?: teardownFunction;
 	}[] = [];
+
 	public addBenchmark(
 		name: string,
-		test: () => void,
-		setup?: () => void,
-		teardown?: () => void
+		test: testFunction,
+		setup?: setupFunction,
+		teardown?: teardownFunction
 	): void {
 		this._benchmarks.push({
 			benchmark: new Benchmark(name, test),
@@ -26,13 +32,14 @@ export default abstract class BenchmarkCollection {
 			teardown,
 		});
 	}
+
 	public compareBenchmarks(
 		name: string,
-		setup?: () => void,
-		teardown?: () => void,
+		setup?: setupFunction,
+		teardown?: teardownFunction,
 		...benchmarks: {
 			name: string;
-			test: () => void;
+			test: testFunction;
 		}[]
 	): void {
 		// We do not use the setup and teardown which is offered within the API of benchmarkjs

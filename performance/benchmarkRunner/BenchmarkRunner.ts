@@ -8,7 +8,7 @@ class BenchmarkRunner extends BenchmarkCollection {
 		return this._only;
 	}
 
-	public run(): void {
+	public async run(): Promise<void> {
 		let benchmarks = this._benchmarks;
 		let comparisons = this._comparisons;
 		if (this._only.hasBenchmarks()) {
@@ -45,7 +45,7 @@ class BenchmarkRunner extends BenchmarkCollection {
 			const operationsPerSecond: { name: string; ops: number }[] = [];
 			for (const benchmark of comparison.benchmarks) {
 				if (comparison.setup !== undefined) {
-					comparison.setup();
+					await comparison.setup();
 				}
 
 				benchmark.on('complete', (event: Event) => {
@@ -65,7 +65,7 @@ class BenchmarkRunner extends BenchmarkCollection {
 				benchmark.run({ async: false });
 
 				if (comparison.teardown !== undefined) {
-					comparison.teardown();
+					await comparison.teardown();
 				}
 			}
 
