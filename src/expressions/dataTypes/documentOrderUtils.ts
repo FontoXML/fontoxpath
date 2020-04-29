@@ -24,10 +24,6 @@ function compareSiblingElements(
 	node1: NodePointer,
 	node2: NodePointer
 ): number {
-	if (arePointersEqual(node1, node2)) {
-		return 0;
-	}
-
 	const parentNode = domFacade.getParentNodePointer(node1 as ChildNodePointer, null);
 	const childNodes = domFacade.getChildNodePointers(parentNode, null);
 	for (let i = 0, l = childNodes.length; i < l; ++i) {
@@ -39,7 +35,6 @@ function compareSiblingElements(
 			return 1;
 		}
 	}
-	throw new Error('Nodes are not in same tree');
 }
 
 /**
@@ -149,9 +144,6 @@ function compareElements(
 			return 1;
 		}
 
-		if (actualAncestorA === actualAncestorB) {
-			return 0;
-		}
 		// Compare positions under the common ancestor
 		const parentNode = actualAncestorsB[y - 1];
 		const childNodes = domFacade.getChildNodes(parentNode as ConcreteParentNode, null);
@@ -164,7 +156,6 @@ function compareElements(
 				return 1;
 			}
 		}
-		throw new Error('Nodes are not in same tree');
 	} else {
 		if (arePointersEqual(nodeA, nodeB)) {
 			return 0;

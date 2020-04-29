@@ -8,7 +8,6 @@ import {
 	ElementNodePointer,
 	isTinyNode,
 	NodePointer,
-	Pointer,
 	ProcessingInstructionNodePointer,
 	TextNodePointer,
 	ParentNodePointer,
@@ -17,11 +16,7 @@ import {
 import deepCloneNode from './deepCloneNode';
 import { Node } from '../types/Types';
 
-function createNewNode(
-	pointer: NodePointer,
-	executionParameters: ExecutionParameters,
-	forceCreateClone: boolean
-) {
+function createNewNode(pointer: NodePointer, executionParameters: ExecutionParameters) {
 	const documentWriter = executionParameters.documentWriter;
 	const nodesFactory = executionParameters.nodesFactory;
 	const domFacade: DomFacade = executionParameters.domFacade;
@@ -51,11 +46,7 @@ function createNewNode(
 					prefix ? prefix + ':' + localName : localName
 				);
 				domFacade.getChildNodePointers(elementNodePointer).forEach((childPointer) => {
-					const newChildNode = createNewNode(
-						childPointer,
-						executionParameters,
-						forceCreateClone
-					);
+					const newChildNode = createNewNode(childPointer, executionParameters);
 					documentWriter.insertBefore(element, newChildNode, null);
 				});
 				domFacade
@@ -82,13 +73,8 @@ function createNewNode(
 				);
 		}
 	} else {
-		// we need to set a rule to create clone or use same node.
-		const graftAncestor = pointer.graftAncestor;
-		if (forceCreateClone || graftAncestor) {
-			return deepCloneNode(pointer, executionParameters).node;
-		} else {
-			return node;
-		}
+		// This is always a grafted actual node pointer, so it must be cloned.
+		return deepCloneNode(pointer, executionParameters).node;
 	}
 }
 
@@ -145,27 +131,23 @@ export default function realizeDom(
 	forceCreateClone: boolean
 ): Node {
 	const node = pointer.node;
-	if (!isTinyNode(node)) {
-		// we need to set a rule to create clone or use same node.
-		const graftAncestor = pointer.graftAncestor;
-		if (forceCreateClone || graftAncestor) {
-			// forceCreateClone is used to create a pendingUpdateList in which the content always
-			// needs to be cloned
-			return deepCloneNode(pointer, executionParameters).node;
-		} else {
-			return node;
-		}
+	if (!(isTinyNode(node) || forceCreateClone || pointer.graftAncestor)) {
+		// the pointer is an actual node pointer and not grafted.
+		// forceCreateClone is used to create a pendingUpdateList in which the content always
+		// needs to be cloned.
+		// So the node should not be cloned.
+		return node;
 	}
-	const newRootPointerByRootPointer = executionParameters.rootPointerByDescendantPointerMap;
+	const rootPointerByRootNode = executionParameters.rootPointerByRootNodeMap;
 	const pathToNodeFromRoot = [];
 	const rootPointer = getRootPointer(pointer, pathToNodeFromRoot, executionParameters.domFacade);
-	let newRootPointer = newRootPointerByRootPointer.get(rootPointer);
+	let newRootPointer = rootPointerByRootNode.get(rootPointer.node);
 	if (!newRootPointer) {
 		newRootPointer = {
-			node: createNewNode(rootPointer, executionParameters, forceCreateClone),
+			node: createNewNode(rootPointer, executionParameters),
 			graftAncestor: null,
 		};
-		newRootPointerByRootPointer.set(rootPointer, newRootPointer);
+		rootPointerByRootNode.set(rootPointer.node, newRootPointer);
 	}
 	return getNodeFromRoot(newRootPointer, pathToNodeFromRoot, executionParameters.domFacade);
 }

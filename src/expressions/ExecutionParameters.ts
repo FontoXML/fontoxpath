@@ -2,7 +2,8 @@ import IDocumentWriter from '../documentWriter/IDocumentWriter';
 import DomFacade from '../domFacade/DomFacade';
 import INodesFactory from '../nodesFactory/INodesFactory';
 import { Logger } from '../evaluateXPath';
-import { NodePointer } from '../domClone/Pointer';
+import { NodePointer, TinyNode } from '../domClone/Pointer';
+import { ConcreteNode } from '../domFacade/ConcreteNode';
 
 export default class ExecutionParameters {
 	constructor(
@@ -10,7 +11,7 @@ export default class ExecutionParameters {
 		public readonly nodesFactory: INodesFactory,
 		public readonly documentWriter: IDocumentWriter,
 		public readonly currentContext: any,
-		public readonly rootPointerByDescendantPointerMap: Map<NodePointer, NodePointer>,
+		public readonly rootPointerByRootNodeMap: Map<ConcreteNode | TinyNode, NodePointer>,
 		public readonly logger?: Logger
 	) {}
 }

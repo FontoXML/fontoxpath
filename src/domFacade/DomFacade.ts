@@ -86,6 +86,8 @@ class DomFacade {
 	public getAttribute(pointer: ElementNodePointer, attributeName: string): string {
 		const node = pointer.node;
 		if (isTinyNode(node)) {
+			// The lines can be hit when fn:id or fn:idref functions are run with a target node
+			// whose root node is created by the document constructor.
 			const attributeNode = node.attributes.find((attr) => attributeName === attr.name);
 			return attributeNode ? attributeNode.value : null;
 		} else {
@@ -202,8 +204,9 @@ class DomFacade {
 	): ChildNodePointer {
 		const node = pointer.node;
 		let nextSibling;
-		const graftAncestor = pointer.graftAncestor;
+		let parentPointer;
 		let nextSiblingIndex;
+		const graftAncestor = pointer.graftAncestor;
 		if (isTinyNode(node)) {
 			if (graftAncestor) {
 				nextSiblingIndex = (graftAncestor.offset as number) + 1;
@@ -213,16 +216,8 @@ class DomFacade {
 			if (graftAncestor) {
 				// This is a clone, use the ancestor anyway
 				nextSiblingIndex = (graftAncestor.offset as number) + 1;
-				if (isTinyNode(graftAncestor.parent)) {
-					nextSibling = graftAncestor.parent.childNodes[nextSiblingIndex];
-				} else {
-					const parentPointer = this.getParentNodePointer(pointer, null);
-					nextSibling = createPointer(
-						this.getChildNodes(parentPointer.node, bucket)[nextSiblingIndex],
-						parentPointer,
-						nextSiblingIndex
-					);
-				}
+				parentPointer = this.getParentNodePointer(pointer, null);
+				nextSibling = this.getChildNodes(parentPointer.node, bucket)[nextSiblingIndex];
 			} else {
 				nextSibling = node;
 				while (nextSibling) {
@@ -244,7 +239,7 @@ class DomFacade {
 		return nextSibling
 			? createPointer(
 					nextSibling,
-					this.getParentNodePointer(pointer, bucket),
+					parentPointer || this.getParentNodePointer(pointer, bucket),
 					nextSiblingIndex
 			  )
 			: null;
@@ -323,6 +318,7 @@ class DomFacade {
 	): ChildNodePointer {
 		const node = pointer.node;
 		let previousSibling;
+		let parentPointer;
 		const graftAncestor = pointer.graftAncestor;
 		let previousSiblingIndex;
 		if (isTinyNode(node)) {
@@ -333,17 +329,11 @@ class DomFacade {
 		} else {
 			if (graftAncestor) {
 				// This is a clone, use the ancestor anyway
-				previousSiblingIndex = (graftAncestor.offset as number) + 1;
-				if (isTinyNode(graftAncestor.parent)) {
-					previousSibling = graftAncestor.parent.childNodes[previousSiblingIndex];
-				} else {
-					const parentPointer = this.getParentNodePointer(pointer, null);
-					previousSibling = createPointer(
-						this.getChildNodes(parentPointer.node, bucket)[previousSiblingIndex],
-						parentPointer,
-						previousSiblingIndex
-					);
-				}
+				previousSiblingIndex = (graftAncestor.offset as number) - 1;
+				parentPointer = this.getParentNodePointer(pointer, null);
+				previousSibling = this.getChildNodes(parentPointer.node, bucket)[
+					previousSiblingIndex
+				];
 			} else {
 				previousSibling = node;
 				while (previousSibling) {
@@ -371,7 +361,7 @@ class DomFacade {
 		return previousSibling
 			? createPointer(
 					previousSibling,
-					this.getParentNodePointer(pointer, bucket),
+					parentPointer || this.getParentNodePointer(pointer, bucket),
 					previousSiblingIndex
 			  )
 			: null;

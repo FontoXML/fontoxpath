@@ -144,7 +144,31 @@ describe('functions', () => {
 		it('returns nothing if nothing matches', () =>
 			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id")', documentNode), []));
 
-		it('returns nothing if the second parameter is not a node', () => {
+		it('it defaults to the context item when the $node argument is omitted', () => {
+			jsonMlMapper.parse(
+				[
+					'someParentElement',
+					[
+						'someElement',
+						{
+							id: 'some-id',
+						},
+					],
+					[
+						'someElement',
+						{
+							id: 'some-id',
+						},
+					],
+				],
+				documentNode
+			);
+			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id")', documentNode), [
+				documentNode.documentElement.firstChild,
+			]);
+		});
+
+		it('throws error nothing if the context item is not a node when the $node argument is not omitted', () => {
 			jsonMlMapper.parse(
 				[
 					'someElement',
@@ -154,7 +178,26 @@ describe('functions', () => {
 				],
 				documentNode
 			);
-			chai.assert.deepEqual(evaluateXPathToNodes('(1)!id("some-id")', documentNode), []);
+			chai.assert.throws(
+				() => evaluateXPathToNodes('(1)!id("some-id")', documentNode),
+				'XPTY0004'
+			);
+		});
+
+		it('throws error nothing if the context item is absent when the $node argument is not omitted', () => {
+			jsonMlMapper.parse(
+				[
+					'someElement',
+					{
+						id: 'some-id',
+					},
+				],
+				documentNode
+			);
+			chai.assert.throws(
+				() => evaluateXPathToNodes('(function() { id("some-id") })()', documentNode),
+				'XPDY0002'
+			);
 		});
 
 		it('returns an element with the given id', () => {
@@ -192,30 +235,6 @@ describe('functions', () => {
 				documentNode
 			);
 			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id", .)', documentNode), [
-				documentNode.documentElement.firstChild,
-			]);
-		});
-
-		it('it defaults to the context item when the $node argument is omitted', () => {
-			jsonMlMapper.parse(
-				[
-					'someParentElement',
-					[
-						'someElement',
-						{
-							id: 'some-id',
-						},
-					],
-					[
-						'someElement',
-						{
-							id: 'some-id',
-						},
-					],
-				],
-				documentNode
-			);
-			chai.assert.deepEqual(evaluateXPathToNodes('id("some-id")', documentNode), [
 				documentNode.documentElement.firstChild,
 			]);
 		});
@@ -291,9 +310,76 @@ describe('functions', () => {
 				[documentNode.documentElement, documentNode.documentElement.firstChild]
 			);
 		});
+
+		it('it throws error when the root node of the target node is not a document node', () => {
+			const someElement = documentNode.createElement('someElement');
+			someElement.setAttribute('id', 'some-id');
+
+			chai.assert.throws(
+				() => evaluateXPathToNodes('id(("some-id", .))', someElement),
+				'FODC0001'
+			);
+		});
 	});
 
 	describe('idref', () => {
+		it('uses the context item is the $node argument is missing', () => {
+			jsonMlMapper.parse(
+				[
+					'someElement',
+					[
+						'someElement',
+						{
+							idref: 'some-id yet-some-other-id',
+						},
+					],
+					[
+						'someElement',
+						{
+							idref: 'some-other-id',
+						},
+					],
+				],
+				documentNode
+			);
+			chai.assert.deepEqual(
+				evaluateXPathToNodes('idref(("some-id", "some-other-id"))', documentNode),
+				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]
+			);
+		});
+
+		it('throws error nothing if the context item is not a node when the $node argument is not omitted', () => {
+			jsonMlMapper.parse(
+				[
+					'someElement',
+					{
+						id: 'some-id',
+					},
+				],
+				documentNode
+			);
+			chai.assert.throws(
+				() => evaluateXPathToNodes('(1)!idref("some-id")', documentNode),
+				'XPTY0004'
+			);
+		});
+
+		it('throws error nothing if the context item is absent when the $node argument is not omitted', () => {
+			jsonMlMapper.parse(
+				[
+					'someElement',
+					{
+						id: 'some-id',
+					},
+				],
+				documentNode
+			);
+			chai.assert.throws(
+				() => evaluateXPathToNodes('(function() { idref("some-id") })()', documentNode),
+				'XPDY0002'
+			);
+		});
+
 		it('returns an element with the given idref', () => {
 			jsonMlMapper.parse(
 				[
@@ -349,28 +435,13 @@ describe('functions', () => {
 			);
 		});
 
-		it('uses the context item is the $node argument is missing', () => {
-			jsonMlMapper.parse(
-				[
-					'someElement',
-					[
-						'someElement',
-						{
-							idref: 'some-id yet-some-other-id',
-						},
-					],
-					[
-						'someElement',
-						{
-							idref: 'some-other-id',
-						},
-					],
-				],
-				documentNode
-			);
-			chai.assert.deepEqual(
-				evaluateXPathToNodes('idref(("some-id", "some-other-id"))', documentNode),
-				[documentNode.documentElement.firstChild, documentNode.documentElement.lastChild]
+		it('it throws error when the root node of the target node is not a document node', () => {
+			const someElement = documentNode.createElement('someElement');
+			someElement.setAttribute('idref', 'some-id');
+
+			chai.assert.throws(
+				() => evaluateXPathToNodes('idref(("some-id", .))', someElement),
+				'FODC0001'
 			);
 		});
 	});

@@ -17,8 +17,8 @@ script:
     - travis_wait 60 npm run ci-qt3tests -- --reporter dot;
     - travis_wait 60 npm run integrationtests -- --dist --reporter dot;
     - travis_wait 60 npm run qt3tests -- --dist --reporter dot;
-    - travis_wait 60 npm run qt3testsxqueryx -- --reporter dot;
+    - travis_wait 60 npm run ci-qt3testsxqueryx -- --reporter dot;
     - travis_wait 60 npm run ci-xqutstests -- --reporter dot;
-    - travis_wait 60 npm run xqutstestsxqueryx -- --reporter dot;
+    - travis_wait 60 npm run ci-xqutstestsxqueryx -- --reporter dot;
 
 after_success: npm run coverage

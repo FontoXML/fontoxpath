@@ -209,11 +209,8 @@ class ElementConstructor extends Expression {
 						continue;
 					}
 
-					if (currentChildNode.data === '') {
-						tinyElementNode.childNodes.splice(i, 1);
-						i--;
-						continue;
-					}
+					// no child nodes can be an empty text node, because if the data is empty,
+					// ElementConstructorContent will not add it as a child node of the element
 
 					const previousChildNode = tinyElementNode.childNodes[i - 1];
 					if (

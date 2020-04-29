@@ -6,6 +6,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToString,
+	evaluateXPathToArray,
 } from 'fontoxpath';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 
@@ -276,6 +277,38 @@ describe('ElementConstructor', () => {
 			),
 			'create all dom only once.'
 		);
+
+		chai.assert.equal(
+			evaluateXPathToFirstNode<slimdom.Attr>(
+				`<c attr="value"/>/attribute::*`,
+				documentNode,
+				undefined,
+				{},
+				{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+			).value,
+			'value',
+			'clone attribute.'
+		);
+	});
+
+	it('generates a dom tree only once', () => {
+		const a = documentNode.createElement('a');
+		documentNode.appendChild(a);
+
+		const nodes = evaluateXPathToArray(
+			`
+		let $clone := .,
+		$c := <a>{$clone}</a>/* return [$c, $c/parent::*]
+		`,
+			a,
+			null,
+			null,
+			{
+				language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+			}
+		);
+
+		chai.assert.equal(nodes[0].parentNode, nodes[1]);
 	});
 
 	it('returns data of the node', () => {

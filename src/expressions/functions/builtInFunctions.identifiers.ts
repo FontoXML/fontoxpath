@@ -1,6 +1,7 @@
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -31,9 +32,15 @@ const fnId: FunctionDefinitionType = function (
 	targetNodeSequence
 ) {
 	const targetNodeValue = targetNodeSequence.first();
-	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
-		return sequenceFactory.empty();
+	if (!targetNodeValue) {
+		throw XPDY0002('The context is absent, it needs to be present to use id function.');
 	}
+	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
+		throw errXPTY0004(
+			'The context item is not a node, it needs to be node to use id function.'
+		);
+	}
+
 	const domFacade = executionParameters.domFacade;
 	// TODO: Index ids to optimize this lookup
 	const isMatchingIdById: { [s: string]: boolean } = idrefSequence
@@ -80,9 +87,15 @@ const fnIdref: FunctionDefinitionType = function (
 	targetNodeSequence
 ) {
 	const targetNodeValue = targetNodeSequence.first();
-	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
-		return sequenceFactory.empty();
+	if (!targetNodeValue) {
+		throw XPDY0002('The context is absent, it needs to be present to use idref function.');
 	}
+	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
+		throw errXPTY0004(
+			'The context item is not a node, it needs to be node to use idref function.'
+		);
+	}
+
 	const domFacade = executionParameters.domFacade;
 
 	const isMatchingIdRefById = idSequence.getAllValues().reduce(function (byId, idValue) {

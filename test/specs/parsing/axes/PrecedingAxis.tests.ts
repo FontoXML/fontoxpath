@@ -35,15 +35,19 @@ describe('preceding', () => {
 	});
 
 	it('returns all the preceding nodes', () => {
+		jsonMlMapper.parse(['nodeToBeCloned', { expectedPreceding: 'true' }], documentNode);
+
 		const result = evaluateXPathToMap(
 			`
-let $dom := <element>
+let $cloneNode := ./nodeToBeCloned,
+$dom := <element>
 	<uncle expectedPreceding="true">
 		<nephew expectedPreceding="true">
 			<nephew expectedPreceding="true"/>
 		</nephew>
 	</uncle>
 	<parent>
+		{$cloneNode}
 		<sibling expectedPreceding="true">
 			<nephew expectedPreceding="true"/>
 		</sibling>
@@ -71,8 +75,8 @@ return map{
 			null,
 			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 		);
-		chai.assert.equal(result.got.length, 5);
-		chai.assert.equal(result.expected.length, 5);
+		chai.assert.equal(result.got.length, 6);
+		chai.assert.equal(result.expected.length, 6);
 		chai.assert.deepEqual(result.got, result.expected);
 	});
 

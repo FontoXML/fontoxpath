@@ -192,11 +192,18 @@ describe('evaluateXPath', () => {
 	});
 
 	describe('toFirstNode', () => {
-		it('Keeps nodes nodes', () =>
+		it('Keeps nodes nodes', () => {
+			chai.assert.equal(evaluateXPathToFirstNode('.', documentNode, domFacade), documentNode);
+
+			const documentType = new slimdom.DocumentType('html');
+			chai.assert.equal(evaluateXPathToFirstNode('.', documentType, domFacade), documentType);
+
+			const documentFragment = documentNode.createDocumentFragment();
 			chai.assert.equal(
-				evaluateXPathToFirstNode('.', documentNode, domFacade),
-				documentNode
-			));
+				evaluateXPathToFirstNode('.', documentFragment, domFacade),
+				documentFragment
+			);
+		});
 
 		it('Only returns the first node', () =>
 			chai.assert.equal(
