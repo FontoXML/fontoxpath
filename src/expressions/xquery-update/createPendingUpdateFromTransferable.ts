@@ -5,7 +5,7 @@ import {
 	ElementNodePointer,
 	NodePointer,
 	TinyNode,
-	TextNodePointer
+	TextNodePointer,
 } from '../../domClone/Pointer';
 import { ConcreteNode } from '../../domFacade/ConcreteNode';
 import { IPendingUpdate } from './IPendingUpdate';
@@ -26,47 +26,47 @@ export default function fromTransferable(transferable: object): IPendingUpdate {
 		case 'delete':
 			return new DeletePendingUpdate({
 				node: transferable['target'],
-				graftAncestor: null
+				graftAncestor: null,
 			});
 		case 'insertAfter':
 			return new InsertAfterPendingUpdate(
 				{ node: transferable['target'], graftAncestor: null },
-				transferable['content'].map(contentNode => {
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertBefore':
 			return new InsertBeforePendingUpdate(
 				{ node: transferable['target'], graftAncestor: null },
-				transferable['content'].map(contentNode => {
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertInto':
 			return new InsertIntoPendingUpdate(
 				{ node: transferable['target'], graftAncestor: null },
-				transferable['content'].map(contentNode => {
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertIntoAsFirst':
 			return new InsertIntoAsFirstPendingUpdate(
 				{ node: transferable['target'], graftAncestor: null },
-				transferable['content'].map(contentNode => {
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertIntoAsLast':
 			return new InsertIntoAsLastPendingUpdate(
 				{ node: transferable['target'], graftAncestor: null },
-				transferable['content'].map(contentNode => {
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
 		case 'insertAttributes':
 			return new InsertAttributesPendingUpdate(
 				{ node: transferable['target'], graftAncestor: null },
-				transferable['content'].map(contentNode => {
+				transferable['content'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);
@@ -78,7 +78,7 @@ export default function fromTransferable(transferable: object): IPendingUpdate {
 		case 'replaceNode':
 			return new ReplaceNodePendingUpdate(
 				{ node: transferable['target'], graftAncestor: null },
-				transferable['replacement'].map(contentNode => {
+				transferable['replacement'].map((contentNode) => {
 					return { node: contentNode, graftAncestor: null };
 				})
 			);

@@ -148,7 +148,7 @@ export default function transformXPathItemToJavascriptObject(
 		case 'processing-instruction()':
 		case 'comment()':
 			return {
-				next: () => ready(realizeDom(value.value, executionParameters, false))
+				next: () => ready(realizeDom(value.value, executionParameters, false)),
 			};
 
 		default:

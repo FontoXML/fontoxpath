@@ -17,7 +17,6 @@ const traceOutput = document.getElementById('traceOutput');
 const domParser = new DOMParser();
 
 let xmlDoc: Document;
-
 function setCookie() {
 	const source = encodeURIComponent(xmlSource.innerText);
 	const xpath = encodeURIComponent(xpathField.innerText);

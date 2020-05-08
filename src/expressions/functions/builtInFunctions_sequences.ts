@@ -13,7 +13,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { performFunctionConversion } from './argumentHelper';
-import sequenceDeepEqual from './builtInFunctions.sequences.deepEqual';
+import sequenceDeepEqual from './builtInFunctions_sequences_deepEqual';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function subSequence(sequence: ISequence, start: number, length: number) {

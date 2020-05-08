@@ -12,7 +12,7 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { errXPTY0004 } from '../XPathErrors';
-import arrayGet from './builtInFunctions.arrays.get';
+import arrayGet from './builtInFunctions_arrays_get';
 import { transformArgumentList } from './FunctionCall';
 import FunctionDefinitionType from './FunctionDefinitionType';
 

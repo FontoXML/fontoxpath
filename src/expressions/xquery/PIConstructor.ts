@@ -5,7 +5,7 @@ import Specificity from '../Specificity';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import {
 	ProcessingInstructionNodePointer,
-	TinyProcessingInstructionNode
+	TinyProcessingInstructionNode,
 } from '../../domClone/Pointer';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
@@ -26,7 +26,7 @@ function createPIPointer(target: string, data: string) {
 		isTinyNode: true,
 		nodeName: target,
 		nodeType: NODE_TYPES.PROCESSING_INSTRUCTION_NODE,
-		target
+		target,
 	};
 	return { node: tinyPINode, graftAncestor: null };
 }

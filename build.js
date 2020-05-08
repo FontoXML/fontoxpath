@@ -16,30 +16,30 @@ function doPegJsBuild() {
 			err ? reject(err) : resolve(file)
 		)
 	)
-		.then(pegJsString =>
+		.then((pegJsString) =>
 			peg.generate(pegJsString, {
 				cache: true,
 				output: 'source',
 				format: 'globals',
-				exportVar: 'xPathParser'
+				exportVar: 'xPathParser',
 			})
 		)
-		.then(parserString => {
+		.then((parserString) => {
 			const uglified = UglifyJS.minify(parserString);
 			if (uglified.error) {
-				fs.writeFileSync('./src/parsing/xPathParser.raw.ts', parserString);
+				fs.writeFileSync('./src/parsing/xPathParser_raw.ts', parserString);
 				throw uglified.error;
 			}
 			return uglified.code;
 		})
-		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
-		.then(parserString =>
+		.then((parserString) => `export default () => ${JSON.stringify(parserString)};`)
+		.then((parserString) =>
 			Promise.all([
 				new Promise((resolve, reject) =>
-					fs.writeFile('./src/parsing/xPathParser.raw.ts', parserString, err =>
+					fs.writeFile('./src/parsing/xPathParser_raw.ts', parserString, (err) =>
 						err ? reject(err) : resolve()
 					)
-				)
+				),
 			])
 		)
 		.then(() => console.info('Parser generator done'));
@@ -54,7 +54,7 @@ function outputDeclarations() {
 		target: 'es2017',
 		module: 'commonjs',
 		declaration: true,
-		emitDeclarationOnly: true
+		emitDeclarationOnly: true,
 	};
 
 	const host = ts.createCompilerHost(options);
@@ -73,7 +73,7 @@ function doTSCCBuild() {
 	tscc(
 		{
 			modules: {
-				'dist/fontoxpath': 'src/index.ts'
+				'dist/fontoxpath': 'src/index.ts',
 			},
 			prefix: './',
 			compilerFlags: {
@@ -83,27 +83,29 @@ function doTSCCBuild() {
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD
-		define([], factory);
+		define(['xspattern'], factory);
 	} else if (typeof exports === 'object') {
 		// Node, CommonJS-like
-		module.exports = factory();
+		module.exports = factory(require('xspattern'));
 	} else {
 		// Browser globals (root is window)
-		root.fontoxpath = factory();
+		root.fontoxpath = factory(root.xspattern);
 	}
-})(this, function () {
+})(this, function (xspattern) {
 	var window = {};
+	window.xspattern = xspattern;
 	var VERSION='${require('./package.json').version}';
 	%output%
 	return window;
 });
 //# sourceMappingURL=./fontoxpath.js.map
-`
-			}
+`,
+			},
+			external: { xspattern: 'xspattern' },
 		},
 		'./tsconfig.json',
 		{
-			declaration: false
+			declaration: false,
 		}
 	).then(() => console.log('Done'));
 }
@@ -118,7 +120,7 @@ if (!skipClosureBuild) {
 	chain = chain.then(doTSCCBuild);
 }
 
-chain.catch(err => {
+chain.catch((err) => {
 	console.error('Err: ' + err);
 	process.exit(1);
 });

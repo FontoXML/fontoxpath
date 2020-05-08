@@ -25,7 +25,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { IterationHint } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
-import builtinStringFunctions from './builtInFunctions.string';
+import builtinStringFunctions from './builtInFunctions_string';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnString = builtinStringFunctions.functions.string;

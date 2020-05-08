@@ -186,7 +186,6 @@ sooner if you can help!](./CONTRIBUTING.md)):
 
 * Some DateTime related functions
 * Collation related functions (`fn:compare#3`)
-* functions using patterns
 * Some other miscellaneous functions
 * XML parsing
 * The `treat as` operator

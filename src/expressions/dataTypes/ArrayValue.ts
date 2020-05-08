@@ -1,4 +1,4 @@
-import arrayGet from '../functions/builtInFunctions.arrays.get';
+import arrayGet from '../functions/builtInFunctions_arrays_get';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';

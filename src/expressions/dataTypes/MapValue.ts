@@ -1,4 +1,4 @@
-import mapGet from '../functions/builtInFunctions.maps.get';
+import mapGet from '../functions/builtInFunctions_maps_get';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
