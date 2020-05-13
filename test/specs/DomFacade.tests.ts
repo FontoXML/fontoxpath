@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import * as sinon from 'sinon';
 import * as slimdom from 'slimdom';
 
 import { AttributeNodePointer } from 'fontoxpath/domClone/Pointer';
@@ -11,6 +12,7 @@ describe('DomFacade', () => {
 	let domFacade;
 	let attributeNode: slimdom.Attr;
 	let attributeNodePointer: AttributeNodePointer;
+	let textNode: slimdom.Text;
 
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
@@ -33,6 +35,7 @@ describe('DomFacade', () => {
 
 		attributeNode = documentNode.documentElement.getAttributeNode('someAttribute');
 		attributeNodePointer = { node: attributeNode, graftAncestor: null };
+		textNode = documentNode.createTextNode('someText');
 		domFacade = new DomFacade(adaptingDomFacade);
 	});
 
@@ -194,6 +197,25 @@ describe('DomFacade', () => {
 					.map(({ name, value }) => ({ name, value })),
 				[{ name: 'someAttribute', value: 'someValue' }]
 			);
+		});
+	});
+
+	describe('getData()', () => {
+		let spy: sinon.SinonSpy;
+		beforeEach(() => {
+			spy = sinon.spy(adaptingDomFacade, 'getData');
+		});
+		afterEach(() => {
+			spy.restore();
+		});
+
+		it('returns the data for attribute nodes', () => {
+			chai.assert.equal(domFacade.getData(attributeNode), 'someValue');
+			chai.assert.isTrue(spy.called);
+		});
+		it('returns the data for text nodes', () => {
+			chai.assert.equal(domFacade.getData(textNode), 'someText');
+			chai.assert.isTrue(spy.called);
 		});
 	});
 
