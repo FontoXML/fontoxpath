@@ -132,11 +132,10 @@ class DomFacade {
 			| TinyCharacterDataNode
 			| ConcreteCharacterDataNode
 	): string {
-		return node.nodeType === NODE_TYPES.ATTRIBUTE_NODE
-			? node.value
-			: isTinyNode(node)
-			? (node as ConcreteCharacterDataNode | TinyCharacterDataNode).data
-			: this._domFacade['getData'](node) || '';
+		if (isTinyNode(node)) {
+			return node.nodeType === NODE_TYPES.ATTRIBUTE_NODE ? node.value : node.data;
+		}
+		return this._domFacade['getData'](node) || '';
 	}
 
 	/**

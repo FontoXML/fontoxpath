@@ -7,6 +7,7 @@ import {
 	evaluateXPathToStrings,
 	getBucketForSelector,
 	IDomFacade,
+	Attr,
 } from 'fontoxpath';
 
 let documentNode;
@@ -164,6 +165,7 @@ describe('attribute', () => {
 				chai.assert.equal(bucket, expectedBucket);
 				return node.attributes;
 			},
+			getData: (attribute: Attr) => attribute.value,
 		} as any;
 
 		evaluateXPathToString('@xxx', element, testDomFacade);

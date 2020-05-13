@@ -19,7 +19,7 @@ export default class ExternalDomFacade implements IDomFacade {
 		return Array.from(node['childNodes']);
 	}
 	public ['getData'](node: Attr | CharacterData): string {
-		return node['data'];
+		return node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE ? node['value'] : node['data'];
 	}
 	public ['getFirstChild'](node: Node): Node {
 		return node['firstChild'] as Node;
