@@ -5,7 +5,7 @@ import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import zipSingleton from '../util/zipSingleton';
-import mapGet from './builtInFunctions.maps.get';
+import mapGet from './builtInFunctions_maps_get';
 import isSameMapKey from './isSameMapKey';
 
 import FunctionDefinitionType from './FunctionDefinitionType';

@@ -1,5 +1,5 @@
 import { IAST } from './astHelper';
-import xPathParserRaw from './xPathParser.raw';
+import xPathParserRaw from './xPathParser_raw';
 
 const xpathModule: any = {};
 

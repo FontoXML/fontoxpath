@@ -138,9 +138,12 @@ have three forms:
 ### Debugging
 
 You can run a [demo page (http://localhost:8080)](http://localhost:8080)
-which can be used for debugging. You only have to start the server
-with `npm run start`. This script runs the typescript compiler in
-watch mode and serves a simple test application.
+which can be used for debugging. This page is in it's own subpackage
+in the demo folder. This page aims to do as little code transpilation as
+possible in order to make debugging easy. Run it by cd-ing into it,
+running `npm install`, followed by an `npm start`.
+
+This script runs the typescript compiler in watch mode and serves a simple test application.
 
 ### Running the tests
 

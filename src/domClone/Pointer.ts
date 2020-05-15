@@ -9,7 +9,7 @@ import {
 	ConcreteNode,
 	ConcreteParentNode,
 	ConcreteProcessingInstructionNode,
-	ConcreteTextNode
+	ConcreteTextNode,
 } from '../domFacade/ConcreteNode';
 
 // TinyNodes

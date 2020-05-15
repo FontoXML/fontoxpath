@@ -1,3 +1,4 @@
+import { compile, MatchFn } from 'xspattern';
 import atomize, { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createAtomicValue from '../dataTypes/createAtomicValue';
@@ -7,7 +8,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
-import builtInNumericFunctions from './builtInFunctions.numeric';
+import builtInNumericFunctions from './builtInFunctions_numeric';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnRound = builtInNumericFunctions.functions.round;
@@ -524,6 +525,33 @@ const fnCodepointEqual: FunctionDefinitionType = (
 	});
 };
 
+const cachedPatterns: Map<string, MatchFn> = new Map();
+
+const fnMatches: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	inputSequence: ISequence,
+	patternSequence: ISequence
+) => {
+	return zipSingleton([inputSequence, patternSequence], ([inputValue, patternValue]) => {
+		const input = inputValue ? inputValue.value : '';
+		const pattern = patternValue.value;
+		let compiledPattern = cachedPatterns.get(pattern);
+		if (!compiledPattern) {
+			try {
+				compiledPattern = compile(patternValue.value, { language: 'xpath' });
+				cachedPatterns.set(pattern, compiledPattern);
+			} catch (error) {
+				throw new Error('FORX0002: ' + error);
+			}
+		}
+		return compiledPattern(input)
+			? sequenceFactory.singletonTrueSequence()
+			: sequenceFactory.singletonFalseSequence();
+	});
+};
+
 export default {
 	declarations: [
 		{
@@ -807,6 +835,14 @@ export default {
 			localName: 'codepoint-equal',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			returnType: 'xs:boolean?',
+		},
+
+		{
+			argumentTypes: ['xs:string?', 'xs:string'],
+			callFunction: fnMatches,
+			localName: 'matches',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:boolean',
 		},
 	],
 	functions: {

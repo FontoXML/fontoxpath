@@ -465,6 +465,13 @@ describe('functions over strings', () => {
 			));
 	});
 
+	describe('matches()', () => {
+		it('a|b matches "a"', () =>
+			chai.assert.isTrue(evaluateXPathToBoolean('matches("a", "a|b")')));
+		it('a matches "xax"', () =>
+			chai.assert.isTrue(evaluateXPathToBoolean('matches("xax", "a")')));
+	});
+
 	describe('codepoint-equal()', () => {
 		it('Returns empty sequence for an empty sequence as an first argument', () =>
 			chai.assert.isTrue(

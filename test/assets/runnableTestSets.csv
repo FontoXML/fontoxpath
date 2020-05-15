@@ -117,8 +117,8 @@ fn-load-xquery-module,false
 fn-local-name,false
 fn-local-name-from-QName,true
 fn-lower-case,true
-fn-matches,false
-fn-matches.re,false
+fn-matches,true
+fn-matches.re,true
 fn-max,true
 fn-min,true
 fn-minutes-from-dateTime,true

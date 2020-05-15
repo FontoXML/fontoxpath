@@ -20,7 +20,7 @@ import {
 	notReady,
 	ready,
 } from '../util/iterators';
-import builtInFunctionsNode from './builtInFunctions.node';
+import builtInFunctionsNode from './builtInFunctions_node';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import { TextNodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';

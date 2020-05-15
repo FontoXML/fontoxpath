@@ -1,6 +1,5 @@
 import * as chai from 'chai';
-import { evaluateXPath } from 'fontoxpath';
-import evaluateXPathToString from 'fontoxpath/evaluateXPathToString';
+import { evaluateXPath, evaluateXPathToString } from 'fontoxpath';
 
 import * as slimdom from 'slimdom';
 

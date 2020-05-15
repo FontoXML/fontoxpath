@@ -22,7 +22,7 @@ class CommentConstructor extends Expression {
 		const tinyCommentNode: TinyCommentNode = {
 			data: '',
 			isTinyNode: true,
-			nodeType: NODE_TYPES.COMMENT_NODE
+			nodeType: NODE_TYPES.COMMENT_NODE,
 		};
 		const commentNodePointer = { node: tinyCommentNode, graftAncestor: null };
 		if (!this._expr) {

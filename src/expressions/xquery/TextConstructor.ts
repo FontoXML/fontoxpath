@@ -34,7 +34,7 @@ class TextConstructor extends Expression {
 			const tinyTextNode: TinyTextNode = {
 				data: content,
 				isTinyNode: true,
-				nodeType: NODE_TYPES.TEXT_NODE
+				nodeType: NODE_TYPES.TEXT_NODE,
 			};
 			const textNodePointer = { node: tinyTextNode, graftAncestor: null };
 
