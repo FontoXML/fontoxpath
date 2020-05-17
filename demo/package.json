@@ -4,7 +4,7 @@
 		"start": "concurrently -k -p \"[{name}]\" -n \"tsc,server\" \"ttsc --watch\" servor --reload"
 	},
 	"dependencies": {
-		"fontoxpath": "^3.11.1",
+		"fontoxpath": "^3.12.0",
 		"xspattern": "^1.2.1"
 	},
 	"devDependencies": {
