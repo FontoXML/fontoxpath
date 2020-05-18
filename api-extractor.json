@@ -7,7 +7,9 @@
 		"enabled": false
 	},
 	"docModel": {
-		"enabled": false
+		"enabled": true,
+		"apiJsonFilePath": "dist/fontoxpath.api.json"
+
 	},
 	"mainEntryPointFilePath": "built/index.d.ts",
 	"dtsRollup": {
