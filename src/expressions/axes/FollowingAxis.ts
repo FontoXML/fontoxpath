@@ -19,7 +19,8 @@ function createFollowingGenerator(
 	for (
 		let ancestorNode = node as ParentNodePointer;
 		ancestorNode && domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_NODE;
-		ancestorNode = domFacade.getParentNodePointer(ancestorNode as ChildNodePointer, bucket)
+		// Any parent can contain the node we want
+		ancestorNode = domFacade.getParentNodePointer(ancestorNode as ChildNodePointer, null)
 	) {
 		const previousSibling = domFacade.getNextSiblingPointer(
 			ancestorNode as ChildNodePointer,
@@ -38,7 +39,7 @@ function createFollowingGenerator(
 					nephewGenerator = createDescendantGenerator(
 						domFacade,
 						nodeStack[0],
-						null,
+						false,
 						bucket
 					);
 
@@ -73,7 +74,9 @@ function createFollowingGenerator(
 }
 
 class FollowingAxis extends Expression {
+	private _bucket: string;
 	private _testExpression: TestAbstractExpression;
+
 	constructor(testExpression: TestAbstractExpression) {
 		super(testExpression.specificity, [testExpression], {
 			resultOrder: RESULT_ORDERINGS.SORTED,
@@ -83,6 +86,12 @@ class FollowingAxis extends Expression {
 		});
 
 		this._testExpression = testExpression;
+
+		// Like the DescendantAxis, elements can only be contained in other elements.
+		const testBucket = this._testExpression.getBucket();
+		const onlyElementDescendants =
+			testBucket && (testBucket.startsWith('name-') || testBucket === 'type-1');
+		this._bucket = onlyElementDescendants ? 'type-1' : null;
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
@@ -94,13 +103,7 @@ class FollowingAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		return sequenceFactory
-			.create(
-				createFollowingGenerator(
-					domFacade,
-					contextItem.value,
-					this._testExpression.getBucket()
-				)
-			)
+			.create(createFollowingGenerator(domFacade, contextItem.value, this._bucket))
 			.filter((item) => {
 				return this._testExpression.evaluateToBoolean(
 					dynamicContext,

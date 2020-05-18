@@ -135,23 +135,23 @@ return map{
 		);
 
 		const secondChildNode = documentNode.firstChild.lastChild;
-		const expectedBucket = getBucketForSelector('self::firstChildElement');
+		const expectedBucket = getBucketForSelector('self::element()');
 
 		const testDomFacade: IDomFacade = {
 			getChildNodes: (node: slimdom.Node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.childNodes;
 			},
 			getLastChild: (node: slimdom.Node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.lastChild;
 			},
 			getParentNode: (node: slimdom.Node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, null);
 				return node.parentNode;
 			},
 			getPreviousSibling: (node: slimdom.Node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.previousSibling;
 			},
 		} as any;

@@ -3,6 +3,8 @@ import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createDescendantGenerator from '../util/createDescendantGenerator';
@@ -18,7 +20,8 @@ function createPrecedingGenerator(
 	for (
 		let ancestorNode = node;
 		ancestorNode && domFacade.getNodeType(ancestorNode) !== NODE_TYPES.DOCUMENT_NODE;
-		ancestorNode = domFacade.getParentNodePointer(ancestorNode, bucket) as ChildNodePointer
+		// Any parent can contain the node we want. documents AND elements
+		ancestorNode = domFacade.getParentNodePointer(ancestorNode, null) as ChildNodePointer
 	) {
 		const previousSibling = domFacade.getPreviousSiblingPointer(ancestorNode, bucket);
 		if (previousSibling === null) {
@@ -69,7 +72,9 @@ function createPrecedingGenerator(
 }
 
 class PrecedingAxis extends Expression {
+	private _bucket: string;
 	private _testExpression: TestAbstractExpression;
+
 	constructor(testExpression: TestAbstractExpression) {
 		super(testExpression.specificity, [testExpression], {
 			canBeStaticallyEvaluated: false,
@@ -79,9 +84,13 @@ class PrecedingAxis extends Expression {
 		});
 
 		this._testExpression = testExpression;
+		const testBucket = this._testExpression.getBucket();
+		const onlyElementDescendants =
+			testBucket && (testBucket.startsWith('name-') || testBucket === 'type-1');
+		this._bucket = onlyElementDescendants ? 'type-1' : null;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const contextItem = dynamicContext.contextItem;
 		if (contextItem === null) {
 			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
@@ -90,13 +99,7 @@ class PrecedingAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		return sequenceFactory
-			.create(
-				createPrecedingGenerator(
-					domFacade,
-					contextItem.value,
-					this._testExpression.getBucket()
-				)
-			)
+			.create(createPrecedingGenerator(domFacade, contextItem.value, this._bucket))
 			.filter((item) => {
 				return this._testExpression.evaluateToBoolean(
 					dynamicContext,
