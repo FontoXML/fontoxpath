@@ -49,8 +49,10 @@ function createInclusiveDescendantGenerator(
 }
 
 class DescendantAxis extends Expression {
+	private _descendantBucket: string;
 	private _descendantExpression: TestAbstractExpression;
 	private _isInclusive: boolean;
+
 	constructor(
 		descendantExpression: TestAbstractExpression,
 		options: { inclusive: boolean } | undefined
@@ -65,6 +67,17 @@ class DescendantAxis extends Expression {
 
 		this._descendantExpression = descendantExpression;
 		this._isInclusive = !!options.inclusive;
+
+		// Only elements and document nodes can contain other elements. Document nodes can never be
+		// contained in any other node.  Knowing this, if we are looking for an element, we can
+		// safely ignore everything that is not an element (comments, textnodes and processing
+		// instructions). Specifying this allows an external system to minimize the dependencies of
+		// an expression with the form 'descendant:ele' to only be invalidated by element
+		// insertions/deletions, not by textnode insertions/deletions.
+		const testBucket = this._descendantExpression.getBucket();
+		const onlyElementDescendants =
+			testBucket && (testBucket.startsWith('name-') || testBucket === 'type-1');
+		this._descendantBucket = onlyElementDescendants ? 'type-1' : null;
 	}
 
 	public evaluate(
@@ -76,10 +89,11 @@ class DescendantAxis extends Expression {
 		}
 
 		const inclusive = this._isInclusive;
+
 		const iterator = createInclusiveDescendantGenerator(
 			executionParameters.domFacade,
 			dynamicContext.contextItem.value,
-			null
+			this._descendantBucket
 		);
 		if (!inclusive) {
 			iterator.next(IterationHint.NONE);

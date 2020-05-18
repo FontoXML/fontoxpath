@@ -21,7 +21,7 @@ describe('descendant', () => {
 	it('passes buckets for descendant', () => {
 		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
-		const expectedBucket = null;
+		const expectedBucket = 'type-1';
 
 		const testDomFacade: IDomFacade = {
 			getFirstChild: (node: slimdom.Node, bucket: string | null) => {
