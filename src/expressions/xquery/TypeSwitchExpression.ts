@@ -20,8 +20,8 @@ export type TypeSwitchCaseClause = {
 
 class TypeSwitchExpression extends PossiblyUpdatingExpression {
 	private _amountOfCases: number;
-	private _typeTestsByCase: TypeTest[][];
 	private _argExpression: Expression;
+	private _typeTestsByCase: TypeTest[][];
 
 	constructor(
 		argExpression: Expression,

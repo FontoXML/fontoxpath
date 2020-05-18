@@ -79,7 +79,7 @@ export default async function evaluateUpdatingExpression(
 		// scripts. Copy/modify/transform expressions are examples of updating expressions that are
 		// not really updating
 		const resultItems = [];
-		let it = evaluateXPathToAsyncIterator(updateScript, contextItem, domFacade, variables, {
+		const it = evaluateXPathToAsyncIterator(updateScript, contextItem, domFacade, variables, {
 			...options,
 			language: Language.XQUERY_UPDATE_3_1_LANGUAGE,
 		});

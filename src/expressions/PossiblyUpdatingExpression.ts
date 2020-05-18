@@ -144,6 +144,10 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		_executionParameters: ExecutionParameters,
 		_sequenceCallbacks: SequenceCallbacks
 	): ISequence;
+	public performStaticEvaluation(staticContext: StaticContext): void {
+		super.performStaticEvaluation(staticContext);
+		this.determineUpdatingness();
+	}
 
 	/**
 	 * Some expressions (mainly function calls) determine their updatingness during static
@@ -153,9 +157,5 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		if (this._childExpressions.some((expr) => expr.isUpdating)) {
 			this.isUpdating = true;
 		}
-	}
-	public performStaticEvaluation(staticContext: StaticContext): void {
-		super.performStaticEvaluation(staticContext);
-		this.determineUpdatingness();
 	}
 }

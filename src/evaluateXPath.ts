@@ -67,6 +67,65 @@ export type EvaluateXPath = {
 	): IReturnTypes<TNode>[TReturnType];
 
 	/**
+	 * Returns the result of the query, can be anything depending on the
+	 * query. Note that the return type is determined dynamically, not
+	 * statically: XPaths returning empty sequences will return empty
+	 * arrays and not null, like one might expect.
+	 */
+	ANY_TYPE: ReturnType.ANY;
+
+	ARRAY_TYPE: ReturnType.ARRAY;
+
+	ASYNC_ITERATOR_TYPE: ReturnType.ASYNC_ITERATOR;
+
+	/**
+	 * Resolves to true or false, uses the effective boolean value to
+	 * determine the result. count(1) resolves to true, count(())
+	 * resolves to false
+	 */
+	BOOLEAN_TYPE: ReturnType.BOOLEAN;
+
+	/**
+	 * Resolves to the first node.NODES_TYPE would have resolved to.
+	 */
+	FIRST_NODE_TYPE: ReturnType.FIRST_NODE;
+
+	/**
+	 * Resolve to an object, as a map
+	 */
+	MAP_TYPE: ReturnType.MAP;
+
+	/**
+	 * Resolve to all nodes the XPath resolves to. Returns nodes in the
+	 * order the XPath would. Meaning (//a, //b) resolves to all A nodes,
+	 * followed by all B nodes. //*[self::a or self::b] resolves to A and
+	 * B nodes in document order.
+	 */
+	NODES_TYPE: ReturnType.NODES;
+
+	/**
+	 * Resolve to a number, like count((1,2,3)) resolves to 3.
+	 */
+	NUMBER_TYPE: ReturnType.NUMBER;
+
+	/**
+
+	 * Resolve to an array of numbers
+	 */
+	NUMBERS_TYPE: ReturnType.NUMBERS;
+
+	/**
+	 * Resolve to a string, like //someElement[1] resolves to the text
+	 * content of the first someElement
+	 */
+	STRING_TYPE: ReturnType.STRING;
+
+	/**
+	 * Resolve to an array of strings
+	 */
+	STRINGS_TYPE: ReturnType.STRINGS;
+
+	/**
 	 * Can be used to signal an XPath program should executed
 	 */
 	XPATH_3_1_LANGUAGE: Language.XPATH_3_1_LANGUAGE;
@@ -83,65 +142,6 @@ export type EvaluateXPath = {
 	 * To catch pending updates, use {@link evaluateUpdatingExpression}
 	 */
 	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE;
-
-	/**
-	 * Returns the result of the query, can be anything depending on the
-	 * query. Note that the return type is determined dynamically, not
-	 * statically: XPaths returning empty sequences will return empty
-	 * arrays and not null, like one might expect.
-	 */
-	ANY_TYPE: ReturnType.ANY;
-
-	/**
-	 * Resolve to a number, like count((1,2,3)) resolves to 3.
-	 */
-	NUMBER_TYPE: ReturnType.NUMBER;
-
-	/**
-	 * Resolve to a string, like //someElement[1] resolves to the text
-	 * content of the first someElement
-	 */
-	STRING_TYPE: ReturnType.STRING;
-
-	/**
-	 * Resolves to true or false, uses the effective boolean value to
-	 * determine the result. count(1) resolves to true, count(())
-	 * resolves to false
-	 */
-	BOOLEAN_TYPE: ReturnType.BOOLEAN;
-
-	/**
-	 * Resolve to all nodes the XPath resolves to. Returns nodes in the
-	 * order the XPath would. Meaning (//a, //b) resolves to all A nodes,
-	 * followed by all B nodes. //*[self::a or self::b] resolves to A and
-	 * B nodes in document order.
-	 */
-	NODES_TYPE: ReturnType.NODES;
-
-	/**
-	 * Resolves to the first node.NODES_TYPE would have resolved to.
-	 */
-	FIRST_NODE_TYPE: ReturnType.FIRST_NODE;
-
-	/**
-	 * Resolve to an array of strings
-	 */
-	STRINGS_TYPE: ReturnType.STRINGS;
-
-	/**
-	 * Resolve to an object, as a map
-	 */
-	MAP_TYPE: ReturnType.MAP;
-
-	ARRAY_TYPE: ReturnType.ARRAY;
-
-	ASYNC_ITERATOR_TYPE: ReturnType.ASYNC_ITERATOR;
-
-	/**
-
-	 * Resolve to an array of numbers
-	 */
-	NUMBERS_TYPE: ReturnType.NUMBERS;
 };
 let evaluateXPath = function evaluateXPath<
 	TNode extends Node,
@@ -222,7 +222,7 @@ export enum Language {
 	XQUERY_UPDATE_3_1_LANGUAGE = 'XQueryUpdate3.1',
 }
 
-evaluateXPath = Object.assign(evaluateXPath, {
+Object.assign(evaluateXPath, {
 	ANY_TYPE: ReturnType.ANY,
 	NUMBER_TYPE: ReturnType.NUMBER,
 	STRING_TYPE: ReturnType.STRING,

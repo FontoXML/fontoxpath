@@ -36,8 +36,8 @@ function expandRestArgumentToArity(argumentTypes, arity) {
 }
 
 class FunctionValue<T = ISequence> extends Value {
-	public readonly value: FunctionSignature<T>;
 	public readonly isUpdating: boolean;
+	public readonly value: FunctionSignature<T>;
 	private readonly _argumentTypes: (TypeDeclaration | RestArgument)[];
 	private readonly _arity: number;
 	private readonly _isAnonymous: boolean;

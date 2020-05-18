@@ -27,9 +27,9 @@ abstract class Expression {
 	public peer: boolean;
 	public specificity: Specificity;
 	public subtree: boolean;
-	private _canBeUpdating: boolean;
 	protected _childExpressions: Expression[];
 	protected _eagerlyEvaluatedValue: () => ISequence;
+	private _canBeUpdating: boolean;
 
 	constructor(
 		specificity: Specificity,
