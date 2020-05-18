@@ -111,19 +111,19 @@ return map{
 		);
 
 		const firstChildNode = documentNode.firstChild.firstChild;
-		const expectedBucket = getBucketForSelector('self::secondChildElement');
+		const expectedBucket = getBucketForSelector('self::element()');
 
 		const testDomFacade: IDomFacade = {
 			getFirstChild: (node: slimdom.Node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.firstChild;
 			},
 			getNextSibling: (node: slimdom.Node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, expectedBucket);
 				return node.nextSibling;
 			},
 			getParentNode: (node: slimdom.Node, bucket: string | null) => {
-				chai.assert.equal(expectedBucket, bucket);
+				chai.assert.equal(bucket, null);
 				return node.parentNode;
 			},
 		} as any;
