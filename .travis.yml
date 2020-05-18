@@ -13,6 +13,7 @@ before_script:
     - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
 
 script:
+    - npm run lint;
     - travis_wait 60 npm run ci-test -- --reporter dot;
     - travis_wait 60 npm run ci-qt3tests -- --reporter dot;
     - travis_wait 60 npm run integrationtests -- --dist --reporter dot;
