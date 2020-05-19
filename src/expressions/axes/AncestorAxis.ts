@@ -54,15 +54,23 @@ class AncestorAxis extends Expression {
 		const domFacade = executionParameters.domFacade;
 
 		const contextPointer = contextItem.value;
+		// Similar to the optimization for the Descendant axis, we know that only elements and
+		// document nodes can contain other elements. Therefore, if we are looking for a specific
+		// ancestor element, we only need to visit element ancestors. Because of this, we can pass
+		// the 'type-1' bucket for each parent in that case.
 		const ancestorExpressionBucket = this._ancestorExpression.getBucket();
+		const onlyElementAncestors =
+			ancestorExpressionBucket &&
+			(ancestorExpressionBucket.startsWith('name-') || ancestorExpressionBucket === 'type-1');
+		const ancestorAxisBucket = onlyElementAncestors ? 'type-1' : null;
 		return sequenceFactory
 			.create(
 				generateAncestors(
 					domFacade,
 					this._isInclusive
 						? contextPointer
-						: domFacade.getParentNodePointer(contextPointer, ancestorExpressionBucket),
-					ancestorExpressionBucket
+						: domFacade.getParentNodePointer(contextPointer, ancestorAxisBucket),
+					ancestorAxisBucket
 				)
 			)
 			.filter((item) => {
