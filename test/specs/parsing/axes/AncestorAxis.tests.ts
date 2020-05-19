@@ -47,7 +47,7 @@ describe('ancestor', () => {
 		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
 		const childNode = documentNode.firstChild.firstChild;
-		const expectedBucket = getBucketForSelector('self::parentElement');
+		const expectedBucket = getBucketForSelector('self::element()');
 
 		const testDomFacade: IDomFacade = {
 			getParentNode: (node: slimdom.Node, bucket: string | null) => {
@@ -57,6 +57,17 @@ describe('ancestor', () => {
 		} as any;
 
 		evaluateXPathToNodes('ancestor::parentElement', childNode, testDomFacade);
+	});
+
+	it('can move up more than a single step', () => {
+		jsonMlMapper.parse(
+			['works', ['employee'], ['employee', ['overtime', ['day'], ['day']]]],
+			documentNode
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes('/works/employee/overtime/day/ancestor::employee', documentNode),
+			[documentNode.documentElement.lastChild]
+		);
 	});
 });
 
@@ -100,6 +111,20 @@ describe('ancestor-or-self', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToNodes('//someElement/ancestor::*[last()]', documentNode),
 			[documentNode.documentElement]
+		);
+	});
+
+	it('can move up more than a single step', () => {
+		jsonMlMapper.parse(
+			['works', ['employee'], ['employee', ['overtime', ['day'], ['day']]]],
+			documentNode
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'/works/employee/overtime/day/ancestor-or-self::employee',
+				documentNode
+			),
+			[documentNode.documentElement.lastChild]
 		);
 	});
 });
