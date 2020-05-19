@@ -192,11 +192,9 @@ have not yet implemented.
 FontoXPath has 2 options to run benchmarks.
 
 In one we run benchmarks over scenarios defined in javascript which are located in the directory
-`/performance`. These can be run using `npm run performance` which will run the benchmarks in the
-console. Or you can start a server which hosts them using `npm run performance-server` which allows
-you to test the performance in different browsers. Some of these benchmarks are set up as a
-comparison which indicates the performance overhead of FontoXPath. Note that some tests use assets
-from the QT3TS, see the steps in [Setting up a development environment](#setting-up-a-development-environment).
+`/performance`. These can be run using [fonto-benchmark-runner commands](https://www.npmjs.com/package/@fontoxml/fonto-benchmark-runner)
+which will run the benchmarks in the console. Note that some tests use assets from the QT3TS, see
+the steps in [Setting up a development environment](#setting-up-a-development-environment).
 
 To check the performance of fontoxpath with the qt3tests, we pick a random subset of the qt3tests as
 running all will take too long (hours). This random subset is not checked in but can be generated

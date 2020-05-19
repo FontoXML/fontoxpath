@@ -1,8 +1,8 @@
-declare var window: Window;
+declare var window: any;
 
 export default async function loadFile(filename: string): Promise<string> {
 	if (typeof window !== 'undefined' && window.fetch) {
-		const request = new Request(`${window.location}${filename}`);
+		const request = new window.Request(`${window.location}${filename}`);
 		const response = await window.fetch(request);
 		return response.text();
 	} else {

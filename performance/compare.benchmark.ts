@@ -6,15 +6,16 @@ import {
 	evaluateXPathToNumber,
 	evaluateXPath,
 } from '../src/index';
-import runner from './benchmarkRunner/BenchmarkRunner';
+
+import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
-import loadFile from './loadFile';
+import loadFile from './utils/loadFile';
 
 const testDocumentFilename = 'test/assets/QT3TS/app/XMark/XMarkAuction.xml';
 
 let document: Document;
 
-runner.compareBenchmarks(
+benchmarkRunner.compareBenchmarks(
 	'simple traversal to first descendant',
 	() => {
 		document = new Document();
@@ -41,7 +42,7 @@ runner.compareBenchmarks(
 	}
 );
 
-runner.compareBenchmarks(
+benchmarkRunner.compareBenchmarks(
 	'count 3190 text elements',
 	async () => {
 		const content = await loadFile(testDocumentFilename);
@@ -73,7 +74,7 @@ runner.compareBenchmarks(
 	}
 );
 
-runner.compareBenchmarks(
+benchmarkRunner.compareBenchmarks(
 	'XMark-Q14, this is one of the more expensive tests in the qt3ts',
 	async () => {
 		const content = await loadFile(testDocumentFilename);

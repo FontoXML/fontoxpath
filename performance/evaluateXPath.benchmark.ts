@@ -1,6 +1,6 @@
 import { Document } from 'slimdom';
 import { domFacade, evaluateXPath } from '../src/index';
-import runner from './benchmarkRunner/BenchmarkRunner';
+import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 
 let document: Document;
 
@@ -8,7 +8,7 @@ function setup() {
 	document = new Document();
 }
 
-runner.addBenchmark(
+benchmarkRunner.addBenchmark(
 	'evaluateXPath',
 	() => {
 		evaluateXPath('true()', document, domFacade);

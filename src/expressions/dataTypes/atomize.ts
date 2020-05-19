@@ -19,7 +19,7 @@ import {
 	TinyNode,
 	TinyParentNode,
 	TinyCharacterDataNode,
-} from 'src/domClone/Pointer';
+} from '../../domClone/Pointer';
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters
