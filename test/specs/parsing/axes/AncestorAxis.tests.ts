@@ -46,9 +46,7 @@ describe('ancestor', () => {
 	it('passes buckets for ancestor', () => {
 		jsonMlMapper.parse(['parentElement', ['childElement']], documentNode);
 
-		const childNode = documentNode.firstChild.firstChild;
-		const expectedBucket = getBucketForSelector('self::element()');
-
+		let expectedBucket = getBucketForSelector('self::element()');
 		const testDomFacade: IDomFacade = {
 			getParentNode: (node: slimdom.Node, bucket: string | null) => {
 				chai.assert.equal(bucket, expectedBucket);
@@ -56,7 +54,11 @@ describe('ancestor', () => {
 			},
 		} as any;
 
+		const childNode = documentNode.firstChild.firstChild;
 		evaluateXPathToNodes('ancestor::parentElement', childNode, testDomFacade);
+
+		expectedBucket = null;
+		evaluateXPathToNodes('ancestor::*', childNode, testDomFacade);
 	});
 
 	it('can move up more than a single step', () => {
@@ -116,7 +118,7 @@ describe('ancestor-or-self', () => {
 
 	it('can move up more than a single step', () => {
 		jsonMlMapper.parse(
-			['works', ['employee'], ['employee', ['overtime', ['day'], ['day']]]],
+			['works', ['employee'], ['employee', ['overtime', ['day', 'text'], ['day']]]],
 			documentNode
 		);
 		chai.assert.deepEqual(
@@ -125,6 +127,20 @@ describe('ancestor-or-self', () => {
 				documentNode
 			),
 			[documentNode.documentElement.lastChild]
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'/works/employee/overtime/day/text()/ancestor-or-self::text()',
+				documentNode
+			),
+			[documentNode.documentElement.lastChild.firstChild.firstChild.firstChild]
+		);
+		chai.assert.deepEqual(
+			evaluateXPathToNodes(
+				'/works/employee/overtime/day/ancestor-or-self::document-node()',
+				documentNode
+			),
+			[documentNode]
 		);
 	});
 });
