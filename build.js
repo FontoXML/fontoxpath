@@ -70,14 +70,17 @@ function outputDeclarations() {
 }
 
 function doTSCCBuild() {
-	tscc(
+	return tscc(
 		{
 			modules: {
 				'dist/fontoxpath': 'src/index.ts'
 			},
 			prefix: './',
 			compilerFlags: {
+				language_out: 'ECMASCRIPT_NEXT',
 				assume_function_wrapper: true,
+				rewrite_polyfills: false,
+				debug: true,
 				compilation_level: 'ADVANCED',
 				output_wrapper: `
 (function (root, factory) {
@@ -89,15 +92,20 @@ function doTSCCBuild() {
 		module.exports = factory(require('xspattern'));
 	} else {
 		// Browser globals (root is window)
-		root.fontoxpath = factory(root.xspattern);
+		// Maybe it is in scope:
+		if (typeof xspattern === 'object') {
+			return factory(xspattern)
+		} else {
+			root.fontoxpath = factory(root.xspattern);
+		}
 	}
 })(this, function (xspattern) {
-	var window = {};
+	const window = {};
 	window.xspattern = xspattern;
 	var VERSION='${require('./package.json').version}';
 	%output%
 	return window;
-});
+})
 //# sourceMappingURL=./fontoxpath.js.map
 `
 			},
@@ -125,7 +133,7 @@ function doModuleBuild() {
 	const umdModule = fs.readFileSync('./dist/fontoxpath.js', 'utf8');
 	const fullModule = `
 import * as xspattern from 'xspattern';
-const fontoxpath = ${umdModule}
+const fontoxpath = (${umdModule});
 
 ${exports.join('\n')};
 

@@ -245,24 +245,24 @@ export default function convertXDMReturnValue<
 				});
 			};
 			let toReturn: AsyncIterableIterator<any>;
-			if ('asyncIterator' in Symbol) {
-				toReturn = {
-					[Symbol.asyncIterator]() {
-						return this;
-					},
-					next: () =>
-						new Promise<IteratorResult<any>>((resolve) =>
-							resolve(getNextResult())
-						).catch((error) => {
-							printAndRethrowError(expression, error);
-							throw error;
-						}),
-				};
-			} else {
-				toReturn = {
-					next: () => new Promise((resolve) => resolve(getNextResult())),
-				} as AsyncIterableIterator<any>;
-			}
+			// if ('asyncIterator' in Symbol) {
+			// 	toReturn = {
+			// 		[Symbol.asyncIterator]() {
+			// 			return this;
+			// 		},
+			// 		next: () =>
+			// 			new Promise<IteratorResult<any>>((resolve) =>
+			// 				resolve(getNextResult())
+			// 			).catch((error) => {
+			// 				printAndRethrowError(expression, error);
+			// 				throw error;
+			// 			}),
+			// 	};
+			// } else {
+			toReturn = {
+				next: () => new Promise((resolve) => resolve(getNextResult())),
+			} as AsyncIterableIterator<any>;
+			// }
 			return toReturn as IReturnTypes<TNode>[TReturnType];
 		}
 
