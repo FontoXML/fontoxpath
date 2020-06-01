@@ -270,23 +270,19 @@ export function sortNodeValues(domFacade: DomFacade, nodeValues: Value[]): Value
 	});
 }
 
-
 type Comparer<T> = (value1: T, value2: T) => number;
 const defaultComparer: Comparer<any> = (value1, value2) => (value1 < value2 ? -1 : 0);
 
 /**
  * Runs a merge sort across the provided array either using the provided comparer or the default.
- * 
+ *
  * @param array The array to sort
  * @param comparer Function used to determine the order of the elements. It is expected to return
  * a negative value if first argument is less than second argument.
- * 
+ *
  * @return The array sorted by the comparer
  */
-export function mergeSort<T>(
-	array: T[],
-	comparer: Comparer<T> = defaultComparer
-): T[] {
+export function mergeSort<T>(array: T[], comparer: Comparer<T> = defaultComparer): T[] {
 	if (array.length <= 1) return array;
 
 	const mid = Math.floor(array.length / 2);
@@ -296,11 +292,7 @@ export function mergeSort<T>(
 	return merge(left, right, comparer);
 }
 
-function merge<T>(
-	leftArray: T[],
-	rightArray: T[],
-	comparer: Comparer<T>
-): T[] {
+function merge<T>(leftArray: T[], rightArray: T[], comparer: Comparer<T>): T[] {
 	const sorted = new Array<T>();
 
 	while (leftArray.length && rightArray.length) {
