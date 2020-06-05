@@ -133,14 +133,18 @@ function doModuleBuild() {
 	const umdModule = fs.readFileSync('./dist/fontoxpath.js', 'utf8');
 	const fullModule = `
 import * as xspattern from 'xspattern';
-const fontoxpath = (${umdModule});
-
+let fontoxpath;
+(function() {
+// Hide exports to make the UMD work
+const exports = undefined;
+fontoxpath = (${umdModule});
+})();
 ${exports.join('\n')};
 
 export default fontoxpath;
 `;
 
-	fs.writeFileSync('./dist/fontoxpath.mjs', fullModule, 'utf8');
+	fs.writeFileSync('./dist/fontoxpath.esm.js', fullModule, 'utf8');
 }
 
 let chain = Promise.resolve();

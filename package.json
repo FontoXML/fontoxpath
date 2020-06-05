@@ -22,7 +22,7 @@
 		"qt3performance": "ts-node -P test/tsconfig.json -r tsconfig-paths/register test/qt3testsBenchmark.ts",
 		"qt3tests": "ts-mocha --paths -p test/tsconfig.json test/qt3tests.ts",
 		"qt3testsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/qt3testsXQueryX.ts",
-		"test": "ts-mocha --require test/testhook.js \"test/specs/**/*.ts\" --extension ts",
+		"test": "ts-mocha --require test/testhook.js \"test/specs/**/*.ts\" --project test/tsconfig.json",
 		"xqutstests": "ts-mocha --paths -p test/tsconfig.json test/xqutsTests.ts",
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.ts",
 		"browsertests": "karma start",
