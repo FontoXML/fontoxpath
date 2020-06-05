@@ -24,6 +24,7 @@
 		"test": "ts-mocha --require test/testhook.js \"test/specs/**/*.ts\" --extension ts",
 		"xqutstests": "ts-mocha --paths -p test/tsconfig.json test/xqutsTests.ts",
 		"xqutstestsxqueryx": "ts-mocha --paths -p test/tsconfig.json test/xqutsTestsXQueryX.ts",
+		"browsertests": "karma start",
 		"lint": "tslint \"./src/**/*.ts\" --project . && prettier \"./src/**/*.ts\" --list-different"
 	},
 	"repository": {
@@ -72,6 +73,12 @@
 		"coveralls": "^3.0.11",
 		"cross-env": "^7.0.2",
 		"fs-extra": "^9.0.0",
+		"karma": "^5.0.9",
+		"karma-chai": "^0.1.0",
+		"karma-chrome-launcher": "^3.1.0",
+		"karma-firefox-launcher": "^1.3.0",
+		"karma-mocha": "^2.0.1",
+		"karma-typescript": "^5.0.3",
 		"mocha": "^7.1.1",
 		"node-static": "^0.7.11",
 		"nyc": "^15.0.0",

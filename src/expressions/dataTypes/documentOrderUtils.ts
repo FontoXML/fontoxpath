@@ -234,7 +234,6 @@ function compareNodePositionsWithTieBreaker(tieBreakerArr, domFacade, node1, nod
 		value1 = node1.value;
 		value2 = node2.value;
 	}
-
 	return compareElements(tieBreakerArr, domFacade, value1, value2);
 }
 
@@ -258,22 +257,51 @@ export function compareNodePositions(domFacade, node1, node2) {
  * @return  The sorted nodes
  */
 export function sortNodeValues(domFacade: DomFacade, nodeValues: Value[]): Value[] {
-	return nodeValues
-		.sort((node1, node2) =>
-			compareNodePositionsWithTieBreaker(
-				domFacade.orderOfDetachedNodes,
-				domFacade,
-				node1,
-				node2
-			)
-		)
-		.filter((nodeValue, i, sortedNodes) => {
-			if (i === 0) {
-				return true;
-			}
-			return !arePointersEqual(
-				nodeValue.value as NodePointer,
-				sortedNodes[i - 1].value as NodePointer
-			);
-		});
+	return mergeSort(nodeValues, (node1, node2) =>
+		compareNodePositionsWithTieBreaker(domFacade.orderOfDetachedNodes, domFacade, node1, node2)
+	).filter((nodeValue, i, sortedNodes) => {
+		if (i === 0) {
+			return true;
+		}
+		return !arePointersEqual(
+			nodeValue.value as NodePointer,
+			sortedNodes[i - 1].value as NodePointer
+		);
+	});
+}
+
+type Comparer<T> = (value1: T, value2: T) => number;
+const defaultComparer: Comparer<any> = (value1, value2) => (value1 < value2 ? -1 : 0);
+
+/**
+ * Runs a merge sort across the provided array either using the provided comparer or the default.
+ *
+ * @param array The array to sort
+ * @param comparer Function used to determine the order of the elements. It is expected to return
+ * a negative value if first argument is less than second argument.
+ *
+ * @return The array sorted by the comparer
+ */
+export function mergeSort<T>(array: T[], comparer: Comparer<T> = defaultComparer): T[] {
+	if (array.length <= 1) return array;
+
+	const mid = Math.floor(array.length / 2);
+	const left = mergeSort(array.slice(0, mid), comparer);
+	const right = mergeSort(array.slice(mid), comparer);
+
+	return merge(left, right, comparer);
+}
+
+function merge<T>(leftArray: T[], rightArray: T[], comparer: Comparer<T>): T[] {
+	const sorted = new Array<T>();
+
+	while (leftArray.length && rightArray.length) {
+		if (comparer(leftArray[0], rightArray[0]) < 0) {
+			sorted.push(leftArray.shift());
+		} else {
+			sorted.push(rightArray.shift());
+		}
+	}
+
+	return sorted.concat(leftArray.concat(rightArray));
 }
