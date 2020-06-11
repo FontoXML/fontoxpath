@@ -77,10 +77,10 @@ function doTSCCBuild() {
 			},
 			prefix: './',
 			compilerFlags: {
+				language_in: 'ECMASCRIPT_NEXT',
 				language_out: 'ECMASCRIPT_NEXT',
 				assume_function_wrapper: true,
 				rewrite_polyfills: false,
-				debug: true,
 				compilation_level: 'ADVANCED',
 				output_wrapper: `
 (function (root, factory) {
