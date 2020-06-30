@@ -42,7 +42,9 @@ export const errXQST0049 = (namespaceURI, localName) =>
 		`XQST0049: The function or variable "Q{${namespaceURI}}${localName}" is declared more than once.`
 	);
 export const errXQST0060 = () =>
-	new Error('XQST0060: Functions declared in a module must reside in a namespace.');
+	new Error(
+		'XQST0060: Functions declared in a module or as an external function must reside in a namespace.'
+	);
 export const errXQST0066 = () =>
 	new Error('XQST0066: A Prolog may contain at most one default function namespace declaration.');
 export const errXQST0070 = () =>

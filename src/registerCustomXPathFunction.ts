@@ -1,16 +1,16 @@
-import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
-import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
-import { registerFunction } from './expressions/functions/functionRegistry';
-
 import IDomFacade from './domFacade/IDomFacade';
+import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
 import ISequence from './expressions/dataTypes/ISequence';
+import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
+import { registerFunction } from './expressions/functions/functionRegistry';
 import {
 	registerStaticallyKnownNamespace,
 	staticallyKnownNamespaceByPrefix,
 } from './expressions/staticallyKnownNamespaces';
 import { IterationHint } from './expressions/util/iterators';
+import { errXQST0060 } from './expressions/xquery/XQueryErrors';
 import transformXPathItemToJavascriptObject from './transformXPathItemToJavascriptObject';
 
 type DynamicContextAdapter = {
@@ -35,7 +35,7 @@ function adaptXPathValueToJavascriptValue(
 
 		case '*':
 		case '+':
-			return valueSequence.getAllValues().map(function (value) {
+			return valueSequence.getAllValues().map((value) => {
 				if (isSubtypeOf(value.type, 'attribute()')) {
 					throw new Error('Cannot pass attribute nodes to custom functions');
 				}
@@ -97,6 +97,10 @@ export default function registerCustomXPathFunction(
 	) => any
 ): void {
 	const { namespaceURI, localName } = splitFunctionName(name);
+
+	if (!namespaceURI) {
+		throw errXQST0060();
+	}
 
 	// tslint:disable-next-line: only-arrow-functions
 	const callFunction = function (
