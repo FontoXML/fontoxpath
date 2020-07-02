@@ -58,7 +58,11 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
   * `evaluateXPath.ASYNC_ITERATOR_TYPE`
   * `evaluateXPath.NUMBERS_TYPE` Resolve to an array of numbers `number[]`.
 * `options` `<Object>` Options used to modify the behavior. The following options are available:
-  * `namespaceResolver` `<function(string):string?>`
+  * `namespaceResolver` `<function(string):string?>` By default, the namespaces in scope of the
+    context item (if it is a node) are used. This is fine for most queries if you can assume how
+    your XML uses prefixes. Use this function to override those namespaces to remove that
+    assumption. This function will be called with a prefix (the empty string for the default
+    namespaceURI) and should return a namespaceURI (or null for the null namespace).
   * `nodesFactory` `INodesFactory` A [INodesFactory](src/nodesFactory/INodesFactory.ts)
     implementation which will be used for creating nodes.
   * `language` `string` The query language to use. Defaults to
