@@ -59,7 +59,8 @@ export const insertAfter = (
 ) => {
 	// The parent must exist or an error has been raised.
 	const parent = domFacade.getParentNodePointer(target).node;
-	const nextSibling = domFacade.getNextSiblingPointer(target).node;
+	const nextSiblingPointer = domFacade.getNextSiblingPointer(target);
+	const nextSibling = nextSiblingPointer ? nextSiblingPointer.node : null;
 
 	content.forEach((pointer) => {
 		documentWriter.insertBefore(parent as Element, pointer.node, nextSibling);

@@ -62,6 +62,29 @@ describe('InsertExpression', () => {
 		chai.assert.equal(element.childNodes.length, 0);
 	});
 
+	it('can insert a node at the end', async () => {
+		const parent = documentNode.appendChild(documentNode.createElement('parent'));
+		const firstChild = parent.appendChild(documentNode.createElement('child'));
+
+		const result = await evaluateUpdatingExpression(
+			`insert node <child>second</child> after $node`,
+			documentNode,
+			null,
+			{
+				node: firstChild,
+			},
+			{}
+		);
+
+		chai.assert.deepEqual(result.xdmValue, []);
+
+		chai.assert.equal(result.pendingUpdateList.length, 1);
+
+		executePendingUpdateList(result.pendingUpdateList);
+
+		chai.assert.isOk(firstChild.nextSibling);
+	});
+
 	it('can insert attribute nodes in the null namespace', async () => {
 		const element = documentNode.appendChild(
 			documentNode.createElementNS('http://www.example.com/ns', 'element')
