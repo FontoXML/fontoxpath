@@ -129,8 +129,6 @@ Besides errors, the `fn:trace` function can be used to output information to the
 
 ### Modifying XML
 
-Note: the use of XQuery Update Facility 3.0 is in preview and subject to change.
-
 To modify XML you can use [XQuery Update Facility 3.0](https://www.w3.org/TR/xquery-update-30/) as
 following
 
