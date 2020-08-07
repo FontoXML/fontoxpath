@@ -70,35 +70,25 @@ function outputDeclarations() {
 }
 
 function doTSCCBuild() {
-	tscc(
+	return tscc(
 		{
 			modules: {
-				'dist/fontoxpath': 'src/index.ts',
+				'dist/fontoxpath-raw': 'src/index.ts',
 			},
 			prefix: './',
 			compilerFlags: {
+				language_in: 'ECMASCRIPT_NEXT',
+				language_out: 'ECMASCRIPT_NEXT',
 				assume_function_wrapper: true,
+				rewrite_polyfills: false,
 				compilation_level: 'ADVANCED',
-				output_wrapper: `
-(function (root, factory) {
-	if (typeof define === 'function' && define.amd) {
-		// AMD
-		define(['xspattern'], factory);
-	} else if (typeof exports === 'object') {
-		// Node, CommonJS-like
-		module.exports = factory(require('xspattern'));
-	} else {
-		// Browser globals (root is window)
-		root.fontoxpath = factory(root.xspattern);
-	}
-})(this, function (xspattern) {
-	var window = {};
+				output_wrapper: `function (xspattern) {
+	const window = {};
 	window.xspattern = xspattern;
 	var VERSION='${require('./package.json').version}';
 	%output%
 	return window;
-});
-//# sourceMappingURL=./fontoxpath.js.map
+}
 `,
 			},
 			external: { xspattern: 'xspattern' },
@@ -110,6 +100,46 @@ function doTSCCBuild() {
 	).then(() => console.log('Done'));
 }
 
+function doModuleBuild() {
+	// Feels dirty but works like a charm: get the public exports of the bundle from the typings and generate a bundle that wraps the umd
+	const api = JSON.parse(fs.readFileSync('dist/fontoxpath.api.json', 'utf-8'));
+	const fontoxpathAPI = api.members.find((member) => member.kind === 'EntryPoint');
+	const members = fontoxpathAPI.members.filter(
+		(member) => member.kind === 'Function' || member.kind === 'Variable'
+	);
+
+	const exports = members.map(
+		(member) => `export const ${member.name} = fontoxpath.${member.name};`
+	);
+
+	const fontoxpathFunction = fs.readFileSync('./dist/fontoxpath-raw.js', 'utf8');
+	const fullModule = `import * as xspattern from 'xspattern';
+const fontoxpath = (${fontoxpathFunction})(xspattern);
+${exports.join('\n')};
+export default fontoxpath;
+`;
+
+	const umdModule = `(function (root, factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD
+		define(['xspattern'], factory);
+	} else if (typeof exports === 'object') {
+		// Node, CommonJS-like
+		module.exports = factory(require('xspattern'));
+	} else {
+		// Browser globals (root is window)
+		// Maybe it is in scope:
+		root.fontoxpath = factory(root.xspattern);
+	}
+})(this, function (xspattern) {
+	return (${fontoxpathFunction})(xspattern);
+});
+`;
+
+	fs.writeFileSync('./dist/fontoxpath.esm.js', fullModule, 'utf8');
+	fs.writeFileSync('./dist/fontoxpath.js', umdModule, 'utf8');
+}
+
 let chain = Promise.resolve();
 if (!skipParserBuild) {
 	chain = chain.then(doPegJsBuild);
@@ -118,6 +148,7 @@ if (!skipParserBuild) {
 if (!skipClosureBuild) {
 	chain = chain.then(outputDeclarations);
 	chain = chain.then(doTSCCBuild);
+	chain = chain.then(doModuleBuild);
 }
 
 chain.catch((err) => {

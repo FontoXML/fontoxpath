@@ -126,6 +126,7 @@ if (typeof window !== 'undefined') {
 	window['precompileXPath'] = precompileXPath;
 	window['registerXQueryModule'] = registerXQueryModule;
 	window['registerCustomXPathFunction'] = registerCustomXPathFunction;
+	window['parseScript'] = parseScript;
 }
 
 export {

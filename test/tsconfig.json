@@ -8,9 +8,8 @@
 			"test-helpers/*": ["test/helpers/*"]
 		},
 		"strict": false,
+		"allowJs": true,
 		"inlineSources": true,
 		"types": ["mocha", "node"]
-	},
-	"include": ["../src/**/*", "**/*"],
-	"exclude": ["./assets", "./built"]
+	}
 }
