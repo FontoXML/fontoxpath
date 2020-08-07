@@ -14,7 +14,7 @@
 				"transform": "ts-transform-import-path-rewrite",
 				"import": "transform",
 				"alias": {
-					"^(fontoxpath)$": "/web_modules/fontoxpath.js",
+					"^(fontoxpath)$": "/src",
 					"^(xspattern)$": "/web_modules/xspattern.js"
 				},
 				"after": true,
