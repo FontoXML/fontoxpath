@@ -21,9 +21,11 @@ class NameTest extends TestAbstractExpression {
 		if (localName !== '*') {
 			specificity[Specificity.NODENAME_KIND] = 1;
 		}
-		if (options.kind !== null) {
-			specificity[Specificity.NODETYPE_KIND] = 1;
-		}
+
+		// We have a special specificity: we will match either attributes or elements. this counts
+		// as a specificity: self::type[parent::*] is more specific than self::type
+		specificity[Specificity.NODETYPE_KIND] = 1;
+
 		super(new Specificity(specificity));
 
 		this._localName = localName;
