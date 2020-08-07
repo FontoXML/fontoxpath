@@ -16,15 +16,15 @@ function doPegJsBuild() {
 			err ? reject(err) : resolve(file)
 		)
 	)
-		.then(pegJsString =>
+		.then((pegJsString) =>
 			peg.generate(pegJsString, {
 				cache: true,
 				output: 'source',
 				format: 'globals',
-				exportVar: 'xPathParser'
+				exportVar: 'xPathParser',
 			})
 		)
-		.then(parserString => {
+		.then((parserString) => {
 			const uglified = UglifyJS.minify(parserString);
 			if (uglified.error) {
 				fs.writeFileSync('./src/parsing/xPathParser_raw.ts', parserString);
@@ -32,14 +32,14 @@ function doPegJsBuild() {
 			}
 			return uglified.code;
 		})
-		.then(parserString => `export default () => ${JSON.stringify(parserString)};`)
-		.then(parserString =>
+		.then((parserString) => `export default () => ${JSON.stringify(parserString)};`)
+		.then((parserString) =>
 			Promise.all([
 				new Promise((resolve, reject) =>
-					fs.writeFile('./src/parsing/xPathParser_raw.ts', parserString, err =>
+					fs.writeFile('./src/parsing/xPathParser_raw.ts', parserString, (err) =>
 						err ? reject(err) : resolve()
 					)
-				)
+				),
 			])
 		)
 		.then(() => console.info('Parser generator done'));
@@ -54,7 +54,7 @@ function outputDeclarations() {
 		target: 'es2017',
 		module: 'commonjs',
 		declaration: true,
-		emitDeclarationOnly: true
+		emitDeclarationOnly: true,
 	};
 
 	const host = ts.createCompilerHost(options);
@@ -73,7 +73,7 @@ function doTSCCBuild() {
 	return tscc(
 		{
 			modules: {
-				'dist/fontoxpath-raw': 'src/index.ts'
+				'dist/fontoxpath-raw': 'src/index.ts',
 			},
 			prefix: './',
 			compilerFlags: {
@@ -89,13 +89,13 @@ function doTSCCBuild() {
 	%output%
 	return window;
 }
-`
+`,
 			},
-			external: { xspattern: 'xspattern' }
+			external: { xspattern: 'xspattern' },
 		},
 		'./tsconfig.json',
 		{
-			declaration: false
+			declaration: false,
 		}
 	).then(() => console.log('Done'));
 }
@@ -103,13 +103,13 @@ function doTSCCBuild() {
 function doModuleBuild() {
 	// Feels dirty but works like a charm: get the public exports of the bundle from the typings and generate a bundle that wraps the umd
 	const api = JSON.parse(fs.readFileSync('dist/fontoxpath.api.json', 'utf-8'));
-	const fontoxpathAPI = api.members.find(member => member.kind === 'EntryPoint');
+	const fontoxpathAPI = api.members.find((member) => member.kind === 'EntryPoint');
 	const members = fontoxpathAPI.members.filter(
-		member => member.kind === 'Function' || member.kind === 'Variable'
+		(member) => member.kind === 'Function' || member.kind === 'Variable'
 	);
 
 	const exports = members.map(
-		member => `export const ${member.name} = fontoxpath.${member.name};`
+		(member) => `export const ${member.name} = fontoxpath.${member.name};`
 	);
 
 	const fontoxpathFunction = fs.readFileSync('./dist/fontoxpath-raw.js', 'utf8');
@@ -151,7 +151,7 @@ if (!skipClosureBuild) {
 	chain = chain.then(doModuleBuild);
 }
 
-chain.catch(err => {
+chain.catch((err) => {
 	console.error('Err: ' + err);
 	process.exit(1);
 });
