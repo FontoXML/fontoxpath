@@ -494,6 +494,28 @@ const fnStringToCodepoints: FunctionDefinitionType = (
 	});
 };
 
+
+const fnEncodeForUri: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	stringSequence: ISequence
+) => {
+	return zipSingleton([stringSequence], ([str]) => {
+		
+		if (str === null || str.value.length === 0) {
+			return sequenceFactory.create(createAtomicValue("", 'xs:string'));
+		}
+
+		// Adhering RFC 3986 which reserves !, ', (, ), and *
+		return sequenceFactory.create(
+			createAtomicValue(encodeURIComponent(str.value).replace(/[!'()*]/g, function(c) {
+				return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+			  }), 'xs:string')
+		);
+	});
+};
+
 const fnCodepointEqual: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
@@ -828,7 +850,13 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			returnType: 'xs:integer*',
 		},
-
+		{
+			argumentTypes: ['xs:string?'],
+			callFunction: fnEncodeForUri,
+			localName: 'encode-for-uri',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string?',
+		},
 		{
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			callFunction: fnCodepointEqual,
