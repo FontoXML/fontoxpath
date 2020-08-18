@@ -512,12 +512,16 @@ describe('functions over strings', () => {
 
 	describe('encode-for-uri()', () => {
 		it('Returns the correct example for the example in the specs', () => {
-			chai.assert.equal(evaluateXPathToString('encode-for-uri("http://www.example.com/00/Weather/CA/Los%20Angeles#ocean")'), "http%3A%2F%2Fwww.example.com%2F00%2FWeather%2FCA%2FLos%2520Angeles%23ocean")
+			chai.assert.equal(
+				evaluateXPathToString(
+					'encode-for-uri("http://www.example.com/00/Weather/CA/Los%20Angeles#ocean")'
+				),
+				'http%3A%2F%2Fwww.example.com%2F00%2FWeather%2FCA%2FLos%2520Angeles%23ocean'
+			);
+		});
 
-		})
-		
-		it('Returns empty for an empty sequence', () => {
-			chai.assert.isTrue(evaluateXPathToBoolean('empty(encode-for-uri(()))'))
-		})
-	})
+		it('If $uri-part is the empty sequence, the function returns the zero-length string.', () => {
+			chai.assert.equal(evaluateXPathToBoolean('empty(encode-for-uri(()))'), "");
+		});
+	});
 });
