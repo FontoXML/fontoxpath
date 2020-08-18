@@ -13,7 +13,12 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 	private _location: SourceRange;
 
 	constructor(location: SourceRange, innerExpressionType: string, innerExpression: Expression) {
-		super(innerExpression.specificity, [innerExpression], {});
+		super(innerExpression.specificity, [innerExpression], {
+			canBeStaticallyEvaluated: innerExpression.canBeStaticallyEvaluated,
+			peer: innerExpression.peer,
+			resultOrder: innerExpression.expectedResultOrder,
+			subtree: innerExpression.subtree,
+		});
 
 		this._innerExpressionType = innerExpressionType;
 
