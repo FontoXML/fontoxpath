@@ -525,7 +525,7 @@ describe('functions over strings', () => {
 		});
 	});
 
-	describe.only('iri-to-uri()', () => {
+	describe('iri-to-uri()', () => {
 		it('Returns the correct example for the example in the specs', () => {
 			chai.assert.equal(
 				evaluateXPathToString('iri-to-uri("http://www.example.com/~bébé")'),
