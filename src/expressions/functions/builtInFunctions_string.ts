@@ -176,7 +176,7 @@ const fnString: FunctionDefinitionType = (
 					return stringValue;
 				}
 				return castToType(value, 'xs:string');
-			})
+			}),
 	});
 };
 
@@ -354,7 +354,7 @@ const fnSubstring: FunctionDefinitionType = (
 					'xs:string'
 				)
 			);
-		}
+		},
 	});
 };
 
@@ -494,7 +494,6 @@ const fnStringToCodepoints: FunctionDefinitionType = (
 	});
 };
 
-
 const fnEncodeForUri: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
@@ -502,16 +501,41 @@ const fnEncodeForUri: FunctionDefinitionType = (
 	stringSequence: ISequence
 ) => {
 	return zipSingleton([stringSequence], ([str]) => {
-
 		if (str === null || str.value.length === 0) {
 			return sequenceFactory.create(createAtomicValue('', 'xs:string'));
 		}
 
 		// Adhering RFC 3986 which reserves !, ', (, ), and *
 		return sequenceFactory.create(
-			createAtomicValue(encodeURIComponent(str.value).replace(/[!'()*]/g, (c) => {
-				return '%' + c.charCodeAt(0).toString(16).toUpperCase();
-			}), 'xs:string')
+			createAtomicValue(
+				encodeURIComponent(str.value).replace(/[!'()*]/g, (c) => {
+					return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+				}),
+				'xs:string'
+			)
+		);
+	});
+};
+
+const fnIriToUri: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	stringSequence: ISequence
+) => {
+	return zipSingleton([stringSequence], ([str]) => {
+		if (str === null || str.value.length === 0) {
+			return sequenceFactory.create(createAtomicValue('', 'xs:string'));
+		}
+
+		return sequenceFactory.create(
+			createAtomicValue(
+				str.value.replace(
+					/([\u00A0-\uD7FF\uE000-\uFDCF\uFDF0-\uFFEF "<>{}|\\^`/\n\u007f\u0080-\u009f]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g,
+					(a) => encodeURI(a)
+				),
+				'xs:string'
+			)
 		);
 	});
 };
@@ -581,7 +605,7 @@ export default {
 			localName: 'compare',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:integer?',
-			callFunction: fnCompare
+			callFunction: fnCompare,
 		},
 
 		{
@@ -589,7 +613,7 @@ export default {
 			localName: 'compare',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
 			returnType: 'xs:integer?',
-			callFunction: collationError
+			callFunction: collationError,
 		},
 
 		{
@@ -597,7 +621,7 @@ export default {
 			localName: 'concat',
 			argumentTypes: ['xs:anyAtomicType?', 'xs:anyAtomicType?', '...'],
 			returnType: 'xs:string',
-			callFunction: fnConcat
+			callFunction: fnConcat,
 		},
 
 		{
@@ -605,7 +629,7 @@ export default {
 			localName: 'contains',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
-			callFunction: collationError
+			callFunction: collationError,
 		},
 
 		{
@@ -613,7 +637,7 @@ export default {
 			localName: 'contains',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
-			callFunction: fnContains
+			callFunction: fnContains,
 		},
 
 		{
@@ -621,7 +645,7 @@ export default {
 			localName: 'ends-with',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
-			callFunction: fnEndsWith
+			callFunction: fnEndsWith,
 		},
 
 		{
@@ -629,7 +653,7 @@ export default {
 			localName: 'ends-with',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
 			returnType: 'xs:boolean',
-			callFunction: collationError
+			callFunction: collationError,
 		},
 
 		{
@@ -637,7 +661,7 @@ export default {
 			localName: 'normalize-space',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:string',
-			callFunction: fnNormalizeSpace
+			callFunction: fnNormalizeSpace,
 		},
 
 		{
@@ -654,7 +678,7 @@ export default {
 						staticContext,
 						fnString(dynamicContext, executionParameters, staticContext, contextItem)
 					)
-			)
+			),
 		},
 
 		{
@@ -662,7 +686,7 @@ export default {
 			localName: 'starts-with',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:boolean',
-			callFunction: fnStartsWith
+			callFunction: fnStartsWith,
 		},
 
 		{
@@ -670,7 +694,7 @@ export default {
 			localName: 'starts-with',
 			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
 			returnType: 'xs:boolean',
-			callFunction: collationError
+			callFunction: collationError,
 		},
 
 		{
@@ -678,7 +702,7 @@ export default {
 			localName: 'string',
 			argumentTypes: ['item()?'],
 			returnType: 'xs:string',
-			callFunction: fnString
+			callFunction: fnString,
 		},
 
 		{
@@ -686,7 +710,7 @@ export default {
 			localName: 'string',
 			argumentTypes: [],
 			returnType: 'xs:string',
-			callFunction: contextItemAsFirstArgument.bind(null, fnString)
+			callFunction: contextItemAsFirstArgument.bind(null, fnString),
 		},
 
 		{
@@ -694,7 +718,7 @@ export default {
 			localName: 'substring-before',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:string',
-			callFunction: fnSubstringBefore
+			callFunction: fnSubstringBefore,
 		},
 
 		{
@@ -702,7 +726,7 @@ export default {
 			localName: 'substring-after',
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			returnType: 'xs:string',
-			callFunction: fnSubstringAfter
+			callFunction: fnSubstringAfter,
 		},
 
 		{
@@ -710,7 +734,7 @@ export default {
 			localName: 'substring',
 			argumentTypes: ['xs:string?', 'xs:double'],
 			returnType: 'xs:string',
-			callFunction: fnSubstring
+			callFunction: fnSubstring,
 		},
 
 		{
@@ -718,7 +742,7 @@ export default {
 			localName: 'substring',
 			argumentTypes: ['xs:string?', 'xs:double', 'xs:double'],
 			returnType: 'xs:string',
-			callFunction: fnSubstring
+			callFunction: fnSubstring,
 		},
 
 		{
@@ -726,7 +750,7 @@ export default {
 			localName: 'upper-case',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:string',
-			callFunction: fnUpperCase
+			callFunction: fnUpperCase,
 		},
 
 		{
@@ -734,7 +758,7 @@ export default {
 			localName: 'lower-case',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:string',
-			callFunction: fnLowerCase
+			callFunction: fnLowerCase,
 		},
 
 		{
@@ -742,7 +766,7 @@ export default {
 			localName: 'string-join',
 			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
 			returnType: 'xs:string',
-			callFunction: fnStringJoin
+			callFunction: fnStringJoin,
 		},
 
 		{
@@ -758,7 +782,7 @@ export default {
 					arg1,
 					sequenceFactory.singleton(createAtomicValue('', 'xs:string'))
 				);
-			}
+			},
 		},
 
 		{
@@ -766,7 +790,7 @@ export default {
 			localName: 'string-length',
 			argumentTypes: ['xs:string?'],
 			returnType: 'xs:integer',
-			callFunction: fnStringLength
+			callFunction: fnStringLength,
 		},
 
 		{
@@ -783,7 +807,7 @@ export default {
 						staticContext,
 						fnString(dynamicContext, executionParameters, staticContext, contextItem)
 					)
-			)
+			),
 		},
 
 		{
@@ -800,7 +824,7 @@ export default {
 				_flags
 			) {
 				throw new Error('Not implemented: Using flags in tokenize is not supported');
-			}
+			},
 		},
 
 		{
@@ -808,7 +832,7 @@ export default {
 			localName: 'tokenize',
 			argumentTypes: ['xs:string?', 'xs:string'],
 			returnType: 'xs:string*',
-			callFunction: fnTokenize
+			callFunction: fnTokenize,
 		},
 
 		{
@@ -824,7 +848,7 @@ export default {
 					fnNormalizeSpace(dynamicContext, executionParameters, staticContext, input),
 					sequenceFactory.singleton(createAtomicValue(' ', 'xs:string'))
 				);
-			}
+			},
 		},
 
 		{
@@ -832,7 +856,7 @@ export default {
 			callFunction: fnTranslate,
 			localName: 'translate',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string'
+			returnType: 'xs:string',
 		},
 
 		{
@@ -840,7 +864,7 @@ export default {
 			callFunction: fnCodepointsToString,
 			localName: 'codepoints-to-string',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string'
+			returnType: 'xs:string',
 		},
 
 		{
@@ -848,21 +872,31 @@ export default {
 			callFunction: fnStringToCodepoints,
 			localName: 'string-to-codepoints',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer*'
+			returnType: 'xs:integer*',
 		},
+
 		{
 			argumentTypes: ['xs:string?'],
 			callFunction: fnEncodeForUri,
 			localName: 'encode-for-uri',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string'
+			returnType: 'xs:string',
 		},
+
+		{
+			argumentTypes: ['xs:string?'],
+			callFunction: fnIriToUri,
+			localName: 'iri-to-uri',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string',
+		},
+
 		{
 			argumentTypes: ['xs:string?', 'xs:string?'],
 			callFunction: fnCodepointEqual,
 			localName: 'codepoint-equal',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean?'
+			returnType: 'xs:boolean?',
 		},
 
 		{
@@ -870,8 +904,8 @@ export default {
 			callFunction: fnMatches,
 			localName: 'matches',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean'
-		}
+			returnType: 'xs:boolean',
+		},
 	],
 	functions: {
 		concat: fnConcat,
@@ -881,6 +915,6 @@ export default {
 		string: fnString,
 		stringJoin: fnStringJoin,
 		stringLength: fnStringLength,
-		tokenize: fnTokenize
-	}
+		tokenize: fnTokenize,
+	},
 };

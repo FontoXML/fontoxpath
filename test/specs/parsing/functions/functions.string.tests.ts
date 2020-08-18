@@ -520,8 +520,60 @@ describe('functions over strings', () => {
 			);
 		});
 
-		it('If $uri-part is the empty sequence, the function returns the zero-length string.', () => {
-			chai.assert.equal(evaluateXPathToBoolean('empty(encode-for-uri(()))'), "");
+		it('Returns the zero-length string if the uri-part is the empty sequence', () => {
+			chai.assert.equal(evaluateXPathToString('encode-for-uri(())'), '');
+		});
+	});
+
+	describe.only('iri-to-uri()', () => {
+		it('Returns the correct example for the example in the specs', () => {
+			chai.assert.equal(
+				evaluateXPathToString('iri-to-uri("http://www.example.com/~bébé")'),
+				'http://www.example.com/~b%C3%A9b%C3%A9'
+			);
+		});
+
+		it('Returns the zero-length string if the uri-part is the empty sequence', () => {
+			chai.assert.equal(evaluateXPathToString('iri-to-uri(())'), '');
+		});
+
+		it('qt3tests 1', () => {
+			chai.assert.equal(
+				evaluateXPathToString('iri-to-uri("example[example")'),
+				'example[example'
+			);
+		});
+
+		it('qt3tests 2', () => {
+			chai.assert.equal(
+				evaluateXPathToString('iri-to-uri("example]example")'),
+				'example]example'
+			);
+		});
+
+		it('qt3tests 3', () => {
+			chai.assert.equal(
+				evaluateXPathToString('iri-to-uri("example example")'),
+				'example%20example'
+			);
+		});
+
+		it('qt3tests 4', () => {
+			chai.assert.equal(
+				evaluateXPathToString('iri-to-uri("<> ""{}|\\^`")'),
+				'%3C%3E%20%22%7B%7D%7C%5C%5E%60'
+			);
+		});
+
+		it('qt3tests 5', () => {
+			chai.assert.equal(evaluateXPathToString('iri-to-uri("\n")'), '%0A');
+		});
+
+		it('qt3tests 6', () => {
+			chai.assert.equal(
+				evaluateXPathToString('iri-to-uri(codepoints-to-string(32 to 294))'),
+				"%20!%22#$%&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[%5C]%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F%C2%80%C2%81%C2%82%C2%83%C2%84%C2%85%C2%86%C2%87%C2%88%C2%89%C2%8A%C2%8B%C2%8C%C2%8D%C2%8E%C2%8F%C2%90%C2%91%C2%92%C2%93%C2%94%C2%95%C2%96%C2%97%C2%98%C2%99%C2%9A%C2%9B%C2%9C%C2%9D%C2%9E%C2%9F%C2%A0%C2%A1%C2%A2%C2%A3%C2%A4%C2%A5%C2%A6%C2%A7%C2%A8%C2%A9%C2%AA%C2%AB%C2%AC%C2%AD%C2%AE%C2%AF%C2%B0%C2%B1%C2%B2%C2%B3%C2%B4%C2%B5%C2%B6%C2%B7%C2%B8%C2%B9%C2%BA%C2%BB%C2%BC%C2%BD%C2%BE%C2%BF%C3%80%C3%81%C3%82%C3%83%C3%84%C3%85%C3%86%C3%87%C3%88%C3%89%C3%8A%C3%8B%C3%8C%C3%8D%C3%8E%C3%8F%C3%90%C3%91%C3%92%C3%93%C3%94%C3%95%C3%96%C3%97%C3%98%C3%99%C3%9A%C3%9B%C3%9C%C3%9D%C3%9E%C3%9F%C3%A0%C3%A1%C3%A2%C3%A3%C3%A4%C3%A5%C3%A6%C3%A7%C3%A8%C3%A9%C3%AA%C3%AB%C3%AC%C3%AD%C3%AE%C3%AF%C3%B0%C3%B1%C3%B2%C3%B3%C3%B4%C3%B5%C3%B6%C3%B7%C3%B8%C3%B9%C3%BA%C3%BB%C3%BC%C3%BD%C3%BE%C3%BF%C4%80%C4%81%C4%82%C4%83%C4%84%C4%85%C4%86%C4%87%C4%88%C4%89%C4%8A%C4%8B%C4%8C%C4%8D%C4%8E%C4%8F%C4%90%C4%91%C4%92%C4%93%C4%94%C4%95%C4%96%C4%97%C4%98%C4%99%C4%9A%C4%9B%C4%9C%C4%9D%C4%9E%C4%9F%C4%A0%C4%A1%C4%A2%C4%A3%C4%A4%C4%A5%C4%A6"
+			);
 		});
 	});
 });
