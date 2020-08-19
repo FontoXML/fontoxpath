@@ -9,6 +9,7 @@ const halfCompiledExpressionCache: { [s: string]: { [s: string]: Expression } } 
 
 class CacheEntry {
 	public compiledExpression: Expression;
+	public defaultFunctionNamespaceURI: string;
 	public moduleImports: { namespaceURI: string; prefix: string }[];
 	public referredNamespaces: { namespaceURI: string; prefix: string }[];
 	public referredVariables: { name: string }[];
@@ -19,12 +20,14 @@ class CacheEntry {
 		compiledExpression: Expression,
 		moduleImports:
 			| { namespaceURI: any; prefix: string }[]
-			| { namespaceURI: string; prefix: string }[]
+			| { namespaceURI: string; prefix: string }[],
+		defaultFunctionNamespaceURI: string
 	) {
 		this.compiledExpression = compiledExpression;
 		this.moduleImports = moduleImports;
 		this.referredNamespaces = referredNamespaces;
 		this.referredVariables = referredVariables;
+		this.defaultFunctionNamespaceURI = defaultFunctionNamespaceURI;
 	}
 }
 
@@ -79,7 +82,8 @@ export function getStaticCompilationResultFromCache(
 	namespaceResolver: (namespace: string) => string | null,
 	variables: object,
 	moduleImports: { [x: string]: string },
-	debug: boolean
+	debug: boolean,
+	defaultFunctionNamespaceURI: string
 ) {
 	const cachesForExpression = compiledExpressionCache[selectorString];
 
@@ -114,6 +118,7 @@ export function getStaticCompilationResultFromCache(
 
 	const cacheWithCorrectContext = cachesForLanguage.find(
 		(cache) =>
+			cache.defaultFunctionNamespaceURI === defaultFunctionNamespaceURI &&
 			cache.referredNamespaces.every(
 				(nsRef) => namespaceResolver(nsRef.prefix) === nsRef.namespaceURI
 			) &&
@@ -164,7 +169,8 @@ export function storeStaticCompilationResultInCache(
 	executionStaticContext: ExecutionSpecificStaticContext,
 	moduleImports: { [x: string]: any },
 	compiledExpression: Expression,
-	debug: boolean
+	debug: boolean,
+	defaultFunctionNamespaceURI: string
 ) {
 	removeHalfCompiledExpression(selectorString, language, debug, compiledExpression);
 
@@ -187,7 +193,8 @@ export function storeStaticCompilationResultInCache(
 			Object.keys(moduleImports).map((moduleImportPrefix) => ({
 				namespaceURI: moduleImports[moduleImportPrefix],
 				prefix: moduleImportPrefix,
-			}))
+			})),
+			defaultFunctionNamespaceURI
 		)
 	);
 }

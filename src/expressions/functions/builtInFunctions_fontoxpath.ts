@@ -9,7 +9,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
-import { FONTOXPATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
@@ -51,7 +51,8 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 					Object.keys(variables).reduce((vars, varName) => {
 						vars[varName] = varName;
 						return vars;
-					}, {})
+					}, {}),
+					FUNCTIONS_NAMESPACE_URI
 				);
 				const innerStaticContext = new StaticContext(executionSpecificStaticContext);
 
