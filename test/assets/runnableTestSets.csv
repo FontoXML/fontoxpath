@@ -73,7 +73,7 @@ fn-doc-available,false
 fn-document-uri,false
 fn-element-with-id,false
 fn-empty,true
-fn-encode-for-uri,false
+fn-encode-for-uri,true
 fn-ends-with,true
 fn-environment-variable,false
 fn-error,false
@@ -108,7 +108,7 @@ fn-in-scope-prefixes,false
 fn-index-of,true
 fn-innermost,true
 fn-insert-before,true
-fn-iri-to-uri,false
+fn-iri-to-uri,true
 fn-json-doc,false
 fn-json-to-xml,false
 fn-lang,false

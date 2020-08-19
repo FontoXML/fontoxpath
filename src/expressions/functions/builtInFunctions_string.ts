@@ -494,6 +494,52 @@ const fnStringToCodepoints: FunctionDefinitionType = (
 	});
 };
 
+const fnEncodeForUri: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	stringSequence: ISequence
+) => {
+	return zipSingleton([stringSequence], ([str]) => {
+		if (str === null || str.value.length === 0) {
+			return sequenceFactory.create(createAtomicValue('', 'xs:string'));
+		}
+
+		// Adhering RFC 3986 which reserves !, ', (, ), and *
+		return sequenceFactory.create(
+			createAtomicValue(
+				encodeURIComponent(str.value).replace(/[!'()*]/g, (c) => {
+					return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+				}),
+				'xs:string'
+			)
+		);
+	});
+};
+
+const fnIriToUri: FunctionDefinitionType = (
+	_dynamicContext,
+	_executionParameters,
+	_staticContext,
+	stringSequence: ISequence
+) => {
+	return zipSingleton([stringSequence], ([str]) => {
+		if (str === null || str.value.length === 0) {
+			return sequenceFactory.create(createAtomicValue('', 'xs:string'));
+		}
+
+		return sequenceFactory.create(
+			createAtomicValue(
+				str.value.replace(
+					/([\u00A0-\uD7FF\uE000-\uFDCF\uFDF0-\uFFEF "<>{}|\\^`/\n\u007f\u0080-\u009f]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g,
+					(a) => encodeURI(a)
+				),
+				'xs:string'
+			)
+		);
+	});
+};
+
 const fnCodepointEqual: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
@@ -827,6 +873,22 @@ export default {
 			localName: 'string-to-codepoints',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			returnType: 'xs:integer*',
+		},
+
+		{
+			argumentTypes: ['xs:string?'],
+			callFunction: fnEncodeForUri,
+			localName: 'encode-for-uri',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string',
+		},
+
+		{
+			argumentTypes: ['xs:string?'],
+			callFunction: fnIriToUri,
+			localName: 'iri-to-uri',
+			namespaceURI: FUNCTIONS_NAMESPACE_URI,
+			returnType: 'xs:string',
 		},
 
 		{
