@@ -34,7 +34,7 @@
 	},
 	"files": [
 		"dist/fontoxpath.js",
-		"dist/fontoxpath.m.js",
+		"dist/fontoxpath.esm.js",
 		"dist/fontoxpath.d.ts"
 	],
 	"keywords": [
