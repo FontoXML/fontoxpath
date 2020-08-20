@@ -1,6 +1,6 @@
 {
 	"name": "fontoxpath",
-	"version": "3.13.0",
+	"version": "3.13.1",
 	"description": "A minimalistic XPath 3.1 engine in JavaScript",
 	"main": "dist/fontoxpath.js",
 	"module": "dist/fontoxpath.esm.js",
