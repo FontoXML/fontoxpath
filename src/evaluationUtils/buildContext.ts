@@ -17,6 +17,7 @@ import INodesFactory from '../nodesFactory/INodesFactory';
 import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
 import { Node } from '../types/Types';
+import { FUNCTIONS_NAMESPACE_URI } from '../expressions/staticallyKnownNamespaces';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
@@ -93,12 +94,17 @@ export default function buildEvaluationContext(
 
 	const namespaceResolver =
 		internalOptions.namespaceResolver || createDefaultNamespaceResolver(contextItem);
+
+	const defaultFunctionNamespaceURI =
+		externalOptions['defaultFunctionNamespaceURI'] || FUNCTIONS_NAMESPACE_URI;
+
 	const expressionAndStaticContext = staticallyCompileXPath(
 		expressionString,
 		compilationOptions,
 		namespaceResolver,
 		variables,
-		moduleImports
+		moduleImports,
+		defaultFunctionNamespaceURI
 	);
 
 	const contextSequence = contextItem

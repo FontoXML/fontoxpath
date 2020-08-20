@@ -77,6 +77,7 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
   * `logger` `<Object>` Object with functions used to override the standard logger.
     * `trace: <function(string):void>` The logger for the `trace()` function. The argument is the
       string of the original message.
+  * `defaultFunctionNamespaceURI` `<string>` To modify or change the default function namespaceURI. Defaults to `http://www.w3.org/2005/xpath-functions`. Defining the default function namespaceURI in the xpath expression overwrites this option.
 
 ### Example
 
@@ -85,8 +86,10 @@ const {
 	evaluateXPath,
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
-	evaluateXPathToFirstNode
+	evaluateXPathToFirstNode,
+	evaluateXPathToNumber,
 } = require('fontoxpath');
+
 const documentNode = new DOMParser().parseFromString('<xml/>', 'text/xml');
 
 console.log(evaluateXPathToBoolean('/xml => exists()', documentNode));
@@ -98,6 +101,10 @@ console.log(evaluateXPathToString('$foo', null, null, {'foo': 'bar'}));
 // We pass the documentNode so the default INodesFactory can be used.
 console.log(evaluateXPathToFirstNode('<foo>bar</foo>', documentNode, null, null, {language: evaluateXPath.XQUERY_3_1_LANGUAGE}).outerHTML);
 // Outputs: "<foo>bar</foo>"
+
+// We pass the Math namespaceURI for the pi() function to be used
+console.log(evaluateXPathToNumber('pi()', documentNode, undefined, {}, { language: evaluateXPath.XQUERY_3_1_LANGUAGE, defaultFunctionNamespaceURI: 'http://www.w3.org/2005/xpath-functions/math'}));
+// Outputs: Math.PI (3.14...)
 ```
 
 ### Debugging

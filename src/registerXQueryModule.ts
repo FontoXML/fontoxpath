@@ -5,6 +5,7 @@ import astHelper from './parsing/astHelper';
 import { loadModuleFile } from './parsing/globalModuleCache';
 import parseExpression from './parsing/parseExpression';
 import processProlog, { FunctionDeclaration } from './parsing/processProlog';
+import { FUNCTIONS_NAMESPACE_URI } from './expressions/staticallyKnownNamespaces';
 
 /**
  * Register an XQuery module
@@ -33,7 +34,7 @@ export default function registerXQueryModule(
 	const moduleTargetPrefix = astHelper.getTextContent(prefixNode);
 
 	const staticContext = new StaticContext(
-		new ExecutionSpecificStaticContext(() => null, Object.create(null))
+		new ExecutionSpecificStaticContext(() => null, Object.create(null), FUNCTIONS_NAMESPACE_URI)
 	);
 
 	staticContext.registerNamespace(moduleTargetPrefix, moduleTargetNamespaceURI);

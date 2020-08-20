@@ -87,3 +87,68 @@ describe('DefaultFunctionDeclaration', () => {
 		);
 	});
 });
+
+describe('Using Javascript API to set a new default function namespace', () => {
+	it('Set a new default function namespace via options', () => {
+		chai.assert.equal(
+			evaluateXPathToNumber(
+				'pi()',
+				documentNode,
+				undefined,
+				{},
+				{
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+					defaultFunctionNamespaceURI: 'http://www.w3.org/2005/xpath-functions/math',
+				}
+			),
+			Math.PI
+		);
+	});
+
+	it('Checking if the declared default namespace is used instead of the one passed in options', () => {
+		chai.assert.equal(
+			evaluateXPathToNumber(
+				'declare default function namespace "http://www.w3.org/2005/xpath-functions/math"; pi()',
+				documentNode,
+				undefined,
+				{},
+				{
+					language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+					defaultFunctionNamespaceURI: 'testNamespace',
+				}
+			),
+			Math.PI
+		);
+	});
+
+	it('Checking Empty String defaultFunctionNamespaceURI case throws error', () => {
+		chai.assert.throws(
+			() =>
+				evaluateXPathToNumber(
+					'pi()',
+					documentNode,
+					undefined,
+					{},
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE, defaultFunctionNamespaceURI: '' }
+				),
+			'XPST0017: Function pi with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/math}pi ()"?'
+		);
+	});
+
+	it('Checking Empty String defaultFunctionNamespaceURI case throws error', () => {
+		chai.assert.throws(
+			() =>
+				evaluateXPathToNumber(
+					'pi()',
+					documentNode,
+					undefined,
+					{},
+					{
+						language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+						defaultFunctionNamespaceURI: null,
+					}
+				),
+			'XPST0017: Function pi with arity of 0 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/math}pi ()"?'
+		);
+	});
+});

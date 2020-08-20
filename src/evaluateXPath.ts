@@ -23,6 +23,7 @@ export type Logger = {
 export type Options = {
 	currentContext?: any;
 	debug?: boolean;
+	defaultFunctionNamespaceURI?: string;
 	disableCache?: boolean;
 	documentWriter?: IDocumentWriter;
 	language?: Language;

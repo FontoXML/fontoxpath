@@ -24,7 +24,8 @@ export default function staticallyCompileXPath(
 	},
 	namespaceResolver: (namespace: string) => string | null,
 	variables: object,
-	moduleImports: { [namespaceURI: string]: string }
+	moduleImports: { [namespaceURI: string]: string },
+	defaultFunctionNamespaceURI: string
 ): { expression: Expression; staticContext: StaticContext } {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
@@ -36,12 +37,14 @@ export default function staticallyCompileXPath(
 				namespaceResolver,
 				variables,
 				moduleImports,
-				compilationOptions.debug
+				compilationOptions.debug,
+				defaultFunctionNamespaceURI
 		  );
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 		namespaceResolver,
-		variables
+		variables,
+		defaultFunctionNamespaceURI
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
@@ -91,7 +94,8 @@ export default function staticallyCompileXPath(
 				executionSpecificStaticContext,
 				moduleImports,
 				expression,
-				compilationOptions.debug
+				compilationOptions.debug,
+				defaultFunctionNamespaceURI
 			);
 		}
 	}
