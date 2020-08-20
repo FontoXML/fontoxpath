@@ -34,8 +34,8 @@
 	},
 	"files": [
 		"dist/fontoxpath.js",
-		"dist/fontoxpath.d.ts",
-		"dist/fontoxpath.js.map"
+		"dist/fontoxpath.m.js",
+		"dist/fontoxpath.d.ts"
 	],
 	"keywords": [
 		"FontoXPath",
