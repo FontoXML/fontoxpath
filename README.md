@@ -87,7 +87,7 @@ const {
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
 	evaluateXPathToFirstNode,
-    evaluateXPathToNumber,
+        evaluateXPathToNumber,
 } = require('fontoxpath');
 
 const documentNode = new DOMParser().parseFromString('<xml/>', 'text/xml');
