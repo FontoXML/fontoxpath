@@ -23,6 +23,7 @@
 		"no-var-keyword": true,
 		"prefer-for-of": false,
 		"semicolon": [true, "always", "ignore-bound-class-methods"],
-		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
+		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+		"ordered-imports": true
 	}
 }
