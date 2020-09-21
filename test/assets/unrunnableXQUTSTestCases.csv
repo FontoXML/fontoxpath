@@ -69,11 +69,11 @@ id-insert-expr-083-no-inherit,Error: Not implemented: only module imports, names
 id-insert-expr-084-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-insert-expr-085-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-insert-expr-086-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-complex-deletes-q12,Error: Not implemented: orderByClause is not implemented yet.
+complex-deletes-q12,Error: More than one order spec is not supported for the order by clause.
 id-replace-expr-045,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-replace-expr-045-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-complex-replacevalues-q11,Error: Not implemented: orderByClause is not implemented yet.
-complex-replacevalues-q12,Error: Not implemented: orderByClause is not implemented yet.
+complex-replacevalues-q11,Error: More than one order spec is not supported for the order by clause.
+complex-replacevalues-q12,Error: More than one order spec is not supported for the order by clause.
 id-rename-expr-033,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-rename-expr-034,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-rename-expr-033-no-inherit,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
@@ -81,9 +81,9 @@ id-rename-expr-034-no-inherit,Error: Not implemented: only module imports, names
 id-rename-expr-035,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-rename-expr-036,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-rename-expr-037,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-complex-renames-q6,Error: Not implemented: orderByClause is not implemented yet.
-complex-renames-q7,Error: Not implemented: orderByClause is not implemented yet.
-complex-renames-q8,Error: Not implemented: orderByClause is not implemented yet.
+complex-renames-q6,Error: More than one order spec is not supported for the order by clause.
+complex-renames-q7,Error: More than one order spec is not supported for the order by clause.
+complex-renames-q8,Error: More than one order spec is not supported for the order by clause.
 id-transform-expr-06,Error: XUTY0013: The source expression of a copy modify expression must return a single node.
 id-transform-expr-09,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 id-transform-expr-041,Error: Not supported: renaming detached nodes.
@@ -100,11 +100,6 @@ id-transform-expr-051,Error: Not implemented: only module imports, namespace dec
 id-transform-expr-052,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-transform-expr-053,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
 id-transform-expr-054,Error: Not implemented: only module imports, namespace declarations, and function declarations are implemented in XQuery modules
-id-flwor-expr-04,Error: expected 'Not implemented: orderByClause is not implemented yet.' to match /XUST0001/
-id-flwor-expr-08,Error: expected 'Not implemented: orderByClause is not implemented yet.' to match /XUST0001/
-id-flwor-expr-012,Error: expected 'Not implemented: orderByClause is not implemented yet.' to match /XUST0001/
-id-flwor-expr-016,Error: expected 'Not implemented: orderByClause is not implemented yet.' to match /XUST0001/
-id-flwor-expr-020,Error: Not implemented: orderByClause is not implemented yet.
 id-typeswitch-expr-04,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
 id-typeswitch-expr-05,Error: expected 'XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?' to match /FOER0000/
 id-typeswitch-expr-011,Error: XPST0017: Function fn:error with arity of 1 not registered. Did you mean "Q{http://www.w3.org/2001/XMLSchema}error (xs:anyAtomicType?)"?
@@ -144,9 +139,9 @@ fn-put-011,Error: expected 'No selector counterpart for: computedDocumentConstru
 fn-put-012,Error: expected 'No selector counterpart for: computedDocumentConstructor.' to match /XUDY0031/
 fn-put-013,Error: No selector counterpart for: computedDocumentConstructor.
 fn-put-014,Error: expected 'No selector counterpart for: computedDocumentConstructor.' to match /XUDY0031/
-put-001,Error: XPST0017: Function put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?
-fn-put-002,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?
-fn-put-010,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?
+put-001,Error: XPST0017: Function put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?
+fn-put-002,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?
+fn-put-010,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?
 namespace-errors-q9,Error: Should throw error XUDY0024.
 namespace-errors-q10,Error: Should throw error XUDY0024.
 namespace-errors-q14,Error: Should throw error XUDY0024.
@@ -286,14 +281,14 @@ stf-rename-04,Error: Should throw error XPTY0004.
 stf-transform-01,Error: Should throw error XUTY0013.
 stf-transform-02,Error: Should throw error XUTY0013.
 stf-transform-03,Error: Should throw error XUTY0013.
-fn-put-003,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?
-fn-put-003-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?' to match /FOUP0001/
-fn-put-004,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?
-fn-put-004-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?' to match /FOUP0001/
-fn-put-005,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?
-fn-put-005-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?' to match /FOUP0001/
-fn-put-006,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?
-fn-put-006-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)"?' to match /FOUP0001/
+fn-put-003,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?
+fn-put-003-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?' to match /FOUP0001/
+fn-put-004,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?
+fn-put-004-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?' to match /FOUP0001/
+fn-put-005,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?
+fn-put-005-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?' to match /FOUP0001/
+fn-put-006,Error: XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?
+fn-put-006-fail,Error: expected 'XPST0017: Function fn:put with arity of 2 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}put (array(*), xs:integer, item()*)" or "Q{http://www.w3.org/2005/xpath-functions/map}put (map(*), xs:anyAtomicType, item()*)"?' to match /FOUP0001/
 relational-data-q5-2,Error: expected '<root><bid_tuple><userid>U07</userid><itemno>1007</itemno><bid>247.50000000000003</bid><bid_date>1999-02-01</bid_date></bid_tuple></root>' to equal '<root><bid_tuple><userid>U07</userid><itemno>1007</itemno><bid>247.5</bid><bid_date>1999-02-01</bid_date></bid_tuple></root>'
 relational-data-q7,Error: expected '<root><item_tuple>\n  <itemno>1002</itemno>\n  <description>Motorcycle</description>\n  <offered_by>U02</offered_by>\n  <start_date>1999-02-11</start_date>\n  <end_date>1999-03-15</end_date>\n  <reserve_price>500</reserve_price>\n <comment>This is a bargain !</comment><comment>This is a bargain !</comment></item_tuple></root>' to equal '<root><item_tuple>\n  <itemno>1002</itemno>\n  <description>Motorcycle</description>\n  <offered_by>U02</offered_by>\n  <start_date>1999-02-11</start_date>\n  <end_date>1999-03-15</end_date>\n  <reserve_price>500</reserve_price>\n <comment>This is a bargain !</comment></item_tuple></root>'
 relational-data-q8,Error: Expected XPath (: Test - relational-data-q8 :) (: Description - Update Use Case #8  :)  (: insert-start :) declare variable $users external; declare variable $bids external; (: insert-end :)  let $uid := $users/users/user_tuple[name="Annabel Lee"]/userid return fn:count(($bids/bids/bid_tuple[userid=$uid])) to resolve to a sequence of Nodes.

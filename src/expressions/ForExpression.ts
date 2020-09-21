@@ -4,12 +4,13 @@ import Value from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression from './Expression';
+import FlworExpression from './FlworExpression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import StaticContext from './StaticContext';
-import { DONE_TOKEN, IAsyncIterator, IterationHint } from './util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
 import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
-class ForExpression extends PossiblyUpdatingExpression {
+class ForExpression extends FlworExpression {
 	private _clauseExpression: Expression;
 	private _localName: string;
 	private _namespaceURI: string;
@@ -20,7 +21,6 @@ class ForExpression extends PossiblyUpdatingExpression {
 	} | null;
 	private _positionalVariableBindingKey: string | null;
 	private _prefix: string;
-	private _returnExpression: Expression;
 	private _variableBindingKey: string | null;
 
 	constructor(
@@ -31,14 +31,15 @@ class ForExpression extends PossiblyUpdatingExpression {
 			namespaceURI: string | null;
 			prefix: string;
 		} | null,
-		returnExpression: Expression
+		returnExpression: PossiblyUpdatingExpression | FlworExpression
 	) {
 		super(
 			clauseExpression.specificity.add(returnExpression.specificity),
 			[clauseExpression, returnExpression],
 			{
 				canBeStaticallyEvaluated: false,
-			}
+			},
+			returnExpression
 		);
 
 		this._prefix = rangeVariable.prefix;
@@ -51,60 +52,58 @@ class ForExpression extends PossiblyUpdatingExpression {
 		this._positionalVariableBindingKey = null;
 
 		this._clauseExpression = clauseExpression;
-		this._returnExpression = returnExpression;
 	}
 
-	public performFunctionalEvaluation(
+	public doFlworExpression(
 		dynamicContext: DynamicContext,
+		dynamicContextIterator: IAsyncIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		[_createBindingSequence, createReturnExpression]: ((
-			dynamicContext: DynamicContext
-		) => ISequence)[]
-	) {
-		const clauseIterator = this._clauseExpression.evaluateMaybeStatically(
-			dynamicContext,
-			executionParameters
-		).value;
-		let returnIterator: IAsyncIterator<Value> | null = null;
-		let done = false;
+		createReturnSequence: (dynamicContextIterator: IAsyncIterator<DynamicContext>) => ISequence
+	): ISequence {
+		let clauseIterator = null;
+		let currentDynamicContext: DynamicContext = null;
+
 		let position = 0;
-		return sequenceFactory.create({
+		return createReturnSequence({
 			next: (hint: IterationHint) => {
-				while (!done) {
-					if (returnIterator === null) {
-						const currentClauseValue = clauseIterator.next(IterationHint.NONE);
-						if (!currentClauseValue.ready) {
-							return currentClauseValue;
+				while (true) {
+					if (!clauseIterator) {
+						const temp = dynamicContextIterator.next(IterationHint.NONE);
+						if (temp.done) {
+							return DONE_TOKEN;
 						}
-						if (currentClauseValue.done) {
-							done = true;
-							break;
-						}
+						currentDynamicContext = temp.value;
 
-						position++;
+						position = 0;
 
-						const variables = {
-							[this._variableBindingKey]: () =>
-								sequenceFactory.singleton(currentClauseValue.value),
-						};
-
-						if (this._positionalVariableBindingKey) {
-							variables[this._positionalVariableBindingKey] = () =>
-								sequenceFactory.singleton(new Value('xs:integer', position));
-						}
-						const nestedContext = dynamicContext.scopeWithVariableBindings(variables);
-
-						returnIterator = createReturnExpression(nestedContext).value;
+						clauseIterator = this._clauseExpression.evaluateMaybeStatically(
+							currentDynamicContext,
+							executionParameters
+						).value;
 					}
-					const returnValue = returnIterator.next(hint);
-					if (returnValue.done) {
-						returnIterator = null;
-						// Get the next one
+
+					const currentClauseValue = clauseIterator.next(IterationHint.NONE);
+					if (!currentClauseValue.ready) {
+						return currentClauseValue;
+					}
+					if (currentClauseValue.done) {
+						clauseIterator = null;
 						continue;
 					}
-					return returnValue;
+
+					position++;
+
+					const variables = {
+						[this._variableBindingKey]: () =>
+							sequenceFactory.singleton(currentClauseValue.value),
+					};
+
+					if (this._positionalVariableBindingKey) {
+						variables[this._positionalVariableBindingKey] = () =>
+							sequenceFactory.singleton(new Value('xs:integer', position));
+					}
+					return ready(currentDynamicContext.scopeWithVariableBindings(variables));
 				}
-				return DONE_TOKEN;
 			},
 		});
 	}
@@ -152,10 +151,11 @@ class ForExpression extends PossiblyUpdatingExpression {
 		this._returnExpression.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
 
-		this.determineUpdatingness();
-
 		if (this._clauseExpression.isUpdating) {
 			throw errXUST0001();
+		}
+		if (this._returnExpression.isUpdating) {
+			this.isUpdating = true;
 		}
 	}
 }

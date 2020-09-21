@@ -9,7 +9,7 @@ import StaticContext from '../StaticContext';
 import { errXUST0001 } from '../xquery-update/XQueryUpdateFacilityErrors';
 
 type TypeTest = {
-	occurrenceIndicator: '*' | '?' | '+';
+	occurrenceIndicator: '*' | '?' | '+' | '';
 	typeTest: Expression;
 };
 

@@ -6,7 +6,6 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
 import Value from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -14,6 +13,7 @@ import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../u
 import zipSingleton from '../util/zipSingleton';
 import { performFunctionConversion } from './argumentHelper';
 import sequenceDeepEqual from './builtInFunctions_sequences_deepEqual';
+import convertItemsToCommonType from './convertItemsToCommonType';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function subSequence(sequence: ISequence, start: number, length: number) {
@@ -58,65 +58,6 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 	);
 }
 
-/**
- * Promote all given (numeric) items to single common type
- * https://www.w3.org/TR/xpath-31/#promotion
- */
-function convertItemsToCommonType(items) {
-	if (
-		items.every((item) => {
-			// xs:integer is the only numeric type with inherits from another numeric type
-			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:decimal');
-		})
-	) {
-		// They are all integers, we do not have to convert them to decimals
-		return items;
-	}
-	const commonTypeName = items
-		.map((item: { type: string }) => getPrimitiveTypeName(item.type))
-		.reduce((commonTypeName, itemType) => {
-			return itemType === commonTypeName ? commonTypeName : null;
-		});
-
-	if (commonTypeName !== null) {
-		// All items are already of the same type
-		return items;
-	}
-
-	// If each value is an instance of one of the types xs:string or xs:anyURI, then all the values are cast to type xs:string
-	if (
-		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:string') || isSubtypeOf(item.type, 'xs:anyURI');
-		})
-	) {
-		return items.map((item) => castToType(item, 'xs:string'));
-	}
-
-	// If each value is an instance of one of the types xs:decimal or xs:float, then all the values are cast to type xs:float.
-	if (
-		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:decimal') || isSubtypeOf(item.type, 'xs:float');
-		})
-	) {
-		return items.map((item) => castToType(item, 'xs:float'));
-	}
-	// If each value is an instance of one of the types xs:decimal, xs:float, or xs:double, then all the values are cast to type xs:double.
-	if (
-		items.every((item) => {
-			return (
-				isSubtypeOf(item.type, 'xs:decimal') ||
-				isSubtypeOf(item.type, 'xs:float') ||
-				isSubtypeOf(item.type, 'xs:double')
-			);
-		})
-	) {
-		return items.map((item) => castToType(item, 'xs:double'));
-	}
-
-	// Otherwise, a type error is raised [err:FORG0006].
-	throw new Error('FORG0006: Incompatible types to be converted to a common type');
-}
-
 function castUntypedItemsToDouble(items) {
 	return items.map((item) => {
 		if (isSubtypeOf(item.type, 'xs:untypedAtomic')) {
@@ -138,7 +79,13 @@ function castItemsForMinMax(items) {
 		return [createAtomicValue(NaN, 'xs:double')];
 	}
 
-	return convertItemsToCommonType(items);
+	const convertResult = convertItemsToCommonType(items);
+
+	if (!convertResult) {
+		throw new Error('FORG0006: Incompatible types to be converted to a common type');
+	}
+
+	return convertResult;
 }
 
 const fnEmpty: FunctionDefinitionType = (
@@ -377,6 +324,10 @@ const fnAvg: FunctionDefinitionType = (
 	// TODO: throw FORG0006 if the items contain both yearMonthDurations and dayTimeDurations
 	let items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
+	if (!items) {
+		throw new Error('FORG0006: Incompatible types to be converted to a common type');
+	}
+
 	if (!items.every((item) => isSubtypeOf(item.type, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
@@ -459,6 +410,10 @@ const fnSum: FunctionDefinitionType = (
 
 	let items = castUntypedItemsToDouble(sequence.getAllValues());
 	items = convertItemsToCommonType(items);
+	if (!items) {
+		throw new Error('FORG0006: Incompatible types to be converted to a common type');
+	}
+
 	if (!items.every((item) => isSubtypeOf(item.type, 'xs:numeric'))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}

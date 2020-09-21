@@ -144,6 +144,7 @@ export default abstract class PossiblyUpdatingExpression extends Expression {
 		_executionParameters: ExecutionParameters,
 		_sequenceCallbacks: SequenceCallbacks
 	): ISequence;
+
 	public performStaticEvaluation(staticContext: StaticContext): void {
 		super.performStaticEvaluation(staticContext);
 		this.determineUpdatingness();

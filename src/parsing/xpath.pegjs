@@ -497,7 +497,9 @@ OrderSpec
 
 // 68
 OrderModifier
- = kind:("ascending" / "descending")? _ empty:("empty" _ ("greatest" {return "empty greatest"}/ "least" {return "empty least"}))? _ collation:("collation" URILiteral)?
+ = kind:("ascending" / "descending")? _
+     empty:("empty" _ emptyValue:("greatest" {return "empty greatest"}/ "least" {return "empty least"}) { return emptyValue; })? _
+     collation:("collation" URILiteral)?
    {
      if (!kind && ! empty && !collation) {
         return null;

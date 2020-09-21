@@ -365,7 +365,7 @@ prod-DirElemContent.namespace,true
 prod-DirElemContent.whitespace,true
 prod-DirectConstructor,true
 prod-EQName,true
-prod-EmptyOrderDecl,false
+prod-EmptyOrderDecl,true
 prod-ExtensionExpr,false
 prod-FLWORExpr,false
 prod-FLWORExpr.static-typing,false
@@ -396,7 +396,7 @@ prod-OptionDecl,false
 prod-OptionDecl.serialization,false
 prod-OrExpr,true
 prod-OrderByClause,true
-prod-OrderingModeDecl,false
+prod-OrderingModeDecl,true
 prod-ParenthesizedExpr,true
 prod-PathExpr,true
 prod-PositionalVar,true

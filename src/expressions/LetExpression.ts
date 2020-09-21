@@ -1,23 +1,25 @@
+import ISequence from './dataTypes/ISequence';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression from './Expression';
-import PossiblyUpdatingExpression, { SequenceCallbacks } from './PossiblyUpdatingExpression';
+import FlworExpression from './FlworExpression';
+import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import StaticContext from './StaticContext';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
 import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
-class LetExpression extends PossiblyUpdatingExpression {
+class LetExpression extends FlworExpression {
 	public _bindingSequence: Expression;
 	public _localName: string;
 	public _namespaceURI: string | null;
 	public _prefix: string;
-	public _returnExpression: Expression;
 	public _variableBinding: string | null;
 
 	constructor(
 		rangeVariable: { localName: string; namespaceURI: string | null; prefix: string },
 		bindingSequence: Expression,
-		returnExpression: Expression
+		returnExpression: PossiblyUpdatingExpression | FlworExpression
 	) {
 		super(
 			bindingSequence.specificity.add(returnExpression.specificity),
@@ -27,7 +29,8 @@ class LetExpression extends PossiblyUpdatingExpression {
 				peer: returnExpression.peer,
 				resultOrder: returnExpression.expectedResultOrder,
 				subtree: returnExpression.subtree,
-			}
+			},
+			returnExpression
 		);
 
 		if (rangeVariable.prefix || rangeVariable.namespaceURI) {
@@ -39,23 +42,36 @@ class LetExpression extends PossiblyUpdatingExpression {
 		this._localName = rangeVariable.localName;
 
 		this._bindingSequence = bindingSequence;
-		this._returnExpression = returnExpression;
 
 		this._variableBinding = null;
 	}
 
-	public performFunctionalEvaluation(
-		dynamicContext: DynamicContext,
-		_executionParameters: ExecutionParameters,
-		[createBindingSequence, createReturnExpression]: SequenceCallbacks
-	) {
-		const scopedContext = dynamicContext.scopeWithVariableBindings({
-			[this._variableBinding]: createDoublyIterableSequence(
-				createBindingSequence(dynamicContext)
-			),
-		});
+	public doFlworExpression(
+		_dynamicContext: DynamicContext,
+		dynamicContextIterator: IAsyncIterator<DynamicContext>,
+		executionParameters: ExecutionParameters,
+		createReturnSequence: (dynamicContextIterator: IAsyncIterator<DynamicContext>) => ISequence
+	): ISequence {
+		return createReturnSequence({
+			next: (_hint) => {
+				let currentDynamicContext: DynamicContext = null;
+				const temp = dynamicContextIterator.next(IterationHint.NONE);
+				if (temp.done) {
+					return DONE_TOKEN;
+				}
 
-		return createReturnExpression(scopedContext);
+				currentDynamicContext = temp.value;
+				const scopedContext = currentDynamicContext.scopeWithVariableBindings({
+					[this._variableBinding]: createDoublyIterableSequence(
+						this._bindingSequence.evaluateMaybeStatically(
+							currentDynamicContext,
+							executionParameters
+						)
+					),
+				});
+				return ready(scopedContext);
+			},
+		});
 	}
 
 	public performStaticEvaluation(staticContext: StaticContext) {
@@ -76,7 +92,7 @@ class LetExpression extends PossiblyUpdatingExpression {
 		this._returnExpression.performStaticEvaluation(staticContext);
 		staticContext.removeScope();
 
-		this.determineUpdatingness();
+		this.isUpdating = this._returnExpression.isUpdating;
 
 		if (this._bindingSequence.isUpdating) {
 			throw errXUST0001();

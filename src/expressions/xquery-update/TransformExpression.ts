@@ -56,6 +56,9 @@ class TransformExpression extends UpdatingExpression {
 		this._variableBindings = variableBindings;
 		this._modifyExpr = modifyExpr;
 		this._returnExpr = returnExpr;
+
+		// TransformExpressions do not know whether they are updating before the static phase is done for any variable references
+		this.isUpdating = null;
 	}
 
 	public evaluate(
