@@ -1,63 +1,80 @@
 import ISequence from './dataTypes/ISequence';
-import sequenceFactory from './dataTypes/sequenceFactory';
-import Value from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from './Expression';
+import FlworExpression from './FlworExpression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Specificity from './Specificity';
-import StaticContext from './StaticContext';
-import { IAsyncIterator, IterationHint, notReady } from './util/iterators';
-import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from './util/iterators';
 
-class WhereExpression extends PossiblyUpdatingExpression {
+class WhereExpression extends FlworExpression {
 	private _testExpression: Expression;
 
-	constructor(testExpression: Expression, returnExpression: Expression) {
+	constructor(
+		testExpression: Expression,
+		returnExpression: PossiblyUpdatingExpression | FlworExpression
+	) {
 		const specificity = new Specificity({});
-		super(specificity, [testExpression, returnExpression], {
-			canBeStaticallyEvaluated: false,
-			peer: false,
-			resultOrder: RESULT_ORDERINGS.UNSORTED,
-			subtree: false,
-		});
+		super(
+			specificity,
+			[testExpression, returnExpression],
+			{
+				canBeStaticallyEvaluated: false,
+				peer: false,
+				resultOrder: RESULT_ORDERINGS.UNSORTED,
+				subtree: false,
+			},
+			returnExpression
+		);
 
 		this._testExpression = testExpression;
 	}
 
-	public performFunctionalEvaluation(
-		dynamicContext: DynamicContext,
-		_executionParameters: ExecutionParameters,
-		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
-	) {
-		let resultIterator: IAsyncIterator<Value> | null = null;
-		const whereExpressioResultSequence = sequenceCallbacks[0](dynamicContext);
-
-		return sequenceFactory.create({
-			next: (hint: IterationHint) => {
-				if (!resultIterator) {
-					const whereExpressionResult = whereExpressioResultSequence.tryGetEffectiveBooleanValue();
-
-					if (!whereExpressionResult.ready) {
-						return notReady(whereExpressionResult.promise);
+	public doFlworExpression(
+		_dynamicContext: DynamicContext,
+		dynamicContextIterator: IAsyncIterator<DynamicContext>,
+		executionParameters: ExecutionParameters,
+		createReturnSequence: (dynamicContextIterator: IAsyncIterator<DynamicContext>) => ISequence
+	): ISequence {
+		let currentDynamicContext: DynamicContext = null;
+		let testExpressionResult: ISequence = null;
+		return createReturnSequence({
+			next: () => {
+				while (true) {
+					if (!testExpressionResult) {
+						const currentDynamicContextValue = dynamicContextIterator.next(
+							IterationHint.NONE
+						);
+						if (!currentDynamicContextValue.ready) {
+							return notReady(currentDynamicContextValue.promise);
+						}
+						if (currentDynamicContextValue.done) {
+							return DONE_TOKEN;
+						}
+						currentDynamicContext = currentDynamicContextValue.value;
+						testExpressionResult = this._testExpression.evaluateMaybeStatically(
+							currentDynamicContext,
+							executionParameters
+						);
 					}
 
-					const resultSequence = whereExpressionResult.value
-						? sequenceCallbacks[1](dynamicContext)
-						: sequenceFactory.empty();
-					resultIterator = resultSequence.value;
+					const effectiveBooleanValue = testExpressionResult.tryGetEffectiveBooleanValue();
+
+					if (!effectiveBooleanValue.ready) {
+						return notReady(effectiveBooleanValue.promise);
+					}
+					// Prepare for next iteration
+					const dynamicContextToReturn = currentDynamicContext;
+					currentDynamicContext = null;
+					testExpressionResult = null;
+
+					if (!effectiveBooleanValue.value) {
+						continue;
+					}
+					return ready(dynamicContextToReturn);
 				}
-				return resultIterator.next(hint);
 			},
 		});
-	}
-
-	public performStaticEvaluation(staticContext: StaticContext) {
-		super.performStaticEvaluation(staticContext);
-
-		if (this._testExpression.isUpdating) {
-			throw errXUST0001();
-		}
 	}
 }
 
