@@ -5,6 +5,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import Value from '../dataTypes/Value';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -12,10 +13,9 @@ import { DONE_TOKEN, IterationHint, notReady, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { errXPTY0004 } from '../XPathErrors';
 import arrayGet from './builtInFunctions_arrays_get';
+import sequenceDeepEqual, { itemDeepEqual } from './builtInFunctions_sequences_deepEqual';
 import { transformArgumentList } from './FunctionCall';
 import FunctionDefinitionType from './FunctionDefinitionType';
-import sequenceDeepEqual, { itemDeepEqual } from './builtInFunctions_sequences_deepEqual';
-import Value from '../dataTypes/Value';
 
 const arraySize: FunctionDefinitionType = (
 	_dynamicContext,
@@ -402,17 +402,6 @@ const isString = (type: string): boolean => {
 	);
 };
 
-const stringCompare = (arg1: string, arg2: string) => {
-	if (arg1 > arg2) {
-		return 1;
-	}
-
-	if (arg1 < arg2) {
-		return -1;
-	}
-
-	return 0;
-};
 const deepLessThan = (
 	dynamicContext,
 	executionParameters,
@@ -439,7 +428,7 @@ const deepLessThan = (
 			valuesA.slice(1),
 			valuesB.slice(1)
 		);
-	} else if (isNaN(valuesA[0].value)) {
+	} else if (valuesA[0].value !== valuesA[0].value) {
 		return true;
 	} else if (isString(valuesA[0].type) && valuesB.length !== 0 && isString(valuesB[0].type)) {
 		return valuesA[0].value < valuesB[0].value;
