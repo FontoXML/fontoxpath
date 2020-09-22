@@ -78,6 +78,7 @@ function doTSCCBuild() {
 			prefix: './',
 			compilerFlags: {
 				assume_function_wrapper: true,
+				language_out: 'ECMASCRIPT_NEXT',
 				compilation_level: 'ADVANCED',
 				output_wrapper: `function (xspattern) {
 const VERSION='${require('./package.json').version}';
