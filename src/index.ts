@@ -99,34 +99,34 @@ function compareSpecificity(xpathStringA: string, xpathStringB: string): -1 | 0 
 const domFacade = new ExternalDomFacade() as IDomFacade;
 
 // This declaration is needed, as we don't depend anymore on lib.dom.
-declare var window;
+declare var fontoxpathGlobal;
 
 /* istanbul ignore next */
-if (typeof window !== 'undefined') {
-	window['compareSpecificity'] = compareSpecificity;
-	window['domFacade'] = domFacade;
-	window['evaluateXPath'] = evaluateXPath;
-	window['evaluateXPathToArray'] = evaluateXPathToArray;
-	window['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
-	window['evaluateXPathToAsyncIterator'] = evaluateXPathToAsyncIterator;
-	window['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
-	window['evaluateXPathToMap'] = evaluateXPathToMap;
-	window['evaluateXPathToNodes'] = evaluateXPathToNodes;
-	window['evaluateXPathToNumber'] = evaluateXPathToNumber;
-	window['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
-	window['evaluateXPathToString'] = evaluateXPathToString;
-	window['evaluateXPathToStrings'] = evaluateXPathToStrings;
-	window['evaluateUpdatingExpression'] = evaluateUpdatingExpression;
-	window['evaluateUpdatingExpressionSync'] = evaluateUpdatingExpressionSync;
-	window['executePendingUpdateList'] = executePendingUpdateList;
-	window['getBucketForSelector'] = getBucketForSelector;
-	window['getBucketsForNode'] = getBucketsForNode;
+if (typeof fontoxpathGlobal !== 'undefined') {
+	fontoxpathGlobal['compareSpecificity'] = compareSpecificity;
+	fontoxpathGlobal['domFacade'] = domFacade;
+	fontoxpathGlobal['evaluateXPath'] = evaluateXPath;
+	fontoxpathGlobal['evaluateXPathToArray'] = evaluateXPathToArray;
+	fontoxpathGlobal['evaluateXPathToBoolean'] = evaluateXPathToBoolean;
+	fontoxpathGlobal['evaluateXPathToAsyncIterator'] = evaluateXPathToAsyncIterator;
+	fontoxpathGlobal['evaluateXPathToFirstNode'] = evaluateXPathToFirstNode;
+	fontoxpathGlobal['evaluateXPathToMap'] = evaluateXPathToMap;
+	fontoxpathGlobal['evaluateXPathToNodes'] = evaluateXPathToNodes;
+	fontoxpathGlobal['evaluateXPathToNumber'] = evaluateXPathToNumber;
+	fontoxpathGlobal['evaluateXPathToNumbers'] = evaluateXPathToNumbers;
+	fontoxpathGlobal['evaluateXPathToString'] = evaluateXPathToString;
+	fontoxpathGlobal['evaluateXPathToStrings'] = evaluateXPathToStrings;
+	fontoxpathGlobal['evaluateUpdatingExpression'] = evaluateUpdatingExpression;
+	fontoxpathGlobal['evaluateUpdatingExpressionSync'] = evaluateUpdatingExpressionSync;
+	fontoxpathGlobal['executePendingUpdateList'] = executePendingUpdateList;
+	fontoxpathGlobal['getBucketForSelector'] = getBucketForSelector;
+	fontoxpathGlobal['getBucketsForNode'] = getBucketsForNode;
 	/** @suppress {deprecated} */
 	// @ts-ignore We still need to expose this deprecated API
-	window['precompileXPath'] = precompileXPath;
-	window['registerXQueryModule'] = registerXQueryModule;
-	window['registerCustomXPathFunction'] = registerCustomXPathFunction;
-	window['parseScript'] = parseScript;
+	fontoxpathGlobal['precompileXPath'] = precompileXPath;
+	fontoxpathGlobal['registerXQueryModule'] = registerXQueryModule;
+	fontoxpathGlobal['registerCustomXPathFunction'] = registerCustomXPathFunction;
+	fontoxpathGlobal['parseScript'] = parseScript;
 }
 
 export {
