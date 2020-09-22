@@ -444,17 +444,17 @@ const arraySort: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([arraySequence], ([array]: [ArrayValue]) => {
 		const allValues = array.members
-			.map((i) => i().getAllValues())
+			.map((i) => i().tryGetAllValues())
 			.sort((valuesA, valuesB) => {
-				if (
-					sequenceDeepEqual(
-						dynamicContext,
-						executionParameters,
-						staticContext,
-						sequenceFactory.create(valuesA),
-						sequenceFactory.create(valuesB)
-					).next(IterationHint.NONE).value
-				) {
+				const areSequencesEqual = sequenceDeepEqual(
+					dynamicContext,
+					executionParameters,
+					staticContext,
+					sequenceFactory.create(valuesA.value),
+					sequenceFactory.create(valuesB.value)
+				).next(IterationHint.NONE).value;
+
+				if (areSequencesEqual) {
 					return 0;
 				}
 
@@ -462,15 +462,15 @@ const arraySort: FunctionDefinitionType = (
 					dynamicContext,
 					executionParameters,
 					staticContext,
-					valuesA,
-					valuesB
+					valuesA.value,
+					valuesB.value
 				)
 					? -1
 					: 1;
 			});
 
 		return sequenceFactory.singleton(
-			new ArrayValue(allValues.map((item) => () => sequenceFactory.create(item)))
+			new ArrayValue(allValues.map((item) => () => sequenceFactory.create(item.value)))
 		);
 	});
 };
