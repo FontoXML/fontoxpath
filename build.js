@@ -80,11 +80,10 @@ function doTSCCBuild() {
 				assume_function_wrapper: true,
 				compilation_level: 'ADVANCED',
 				output_wrapper: `function (xspattern) {
-	const window = {};
-	window.xspattern = xspattern;
-	var VERSION='${require('./package.json').version}';
-	%output%
-	return window;
+const VERSION='${require('./package.json').version}';
+const fontoxpathGlobal = {};
+%output%
+return fontoxpathGlobal;
 }
 `,
 			},
