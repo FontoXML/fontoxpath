@@ -78,7 +78,6 @@ function doTSCCBuild() {
 			prefix: './',
 			compilerFlags: {
 				assume_function_wrapper: true,
-				language_out: 'ECMASCRIPT_NEXT',
 				compilation_level: 'ADVANCED',
 				output_wrapper: `function (xspattern) {
 const VERSION='${require('./package.json').version}';
@@ -111,7 +110,8 @@ function doModuleBuild() {
 
 	const fontoxpathFunction = fs.readFileSync('./dist/fontoxpath-raw.js', 'utf8');
 	const fullModule = `import * as xspattern from 'xspattern';
-const fontoxpath = (${fontoxpathFunction})(xspattern);
+const fontoxpath = (${fontoxpathFunction})
+	.call(typeof window === 'undefined' ? undefined : window, xspattern);
 ${exports.join('\n')};
 export default fontoxpath;
 `;
