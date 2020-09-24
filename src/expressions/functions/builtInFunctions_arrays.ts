@@ -1,18 +1,29 @@
 import ArrayValue from '../dataTypes/ArrayValue';
-import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import {
+	DONE_TOKEN,
+	IAsyncIterator,
+	IAsyncResult,
+	IterationHint,
+	notReady,
+	ready,
+} from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { errXPTY0004 } from '../XPathErrors';
 import arrayGet from './builtInFunctions_arrays_get';
+import sequenceDeepEqual, { itemDeepEqual } from './builtInFunctions_sequences_deepEqual';
 import { transformArgumentList } from './FunctionCall';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -393,26 +404,123 @@ const arrayForEachPair: FunctionDefinitionType = (
 	);
 };
 
-const arraySort: FunctionDefinitionType = (
-	_dynamicContext,
+const isString = (type: string): boolean => {
+	return (
+		isSubtypeOf(type, 'xs:string') ||
+		isSubtypeOf(type, 'xs:anyURI') ||
+		isSubtypeOf(type, 'xs:untypedAtomic')
+	);
+};
+
+const deepLessThan = (
+	dynamicContext,
 	executionParameters,
-	_staticContext,
+	staticContext,
+	valuesA: Value[],
+	valuesB: Value[]
+): boolean => {
+	if (valuesA.length === 0) {
+		return valuesB.length !== 0;
+	} else if (
+		valuesB.length !== 0 &&
+		itemDeepEqual(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			valuesA[0],
+			valuesB[0]
+		).next(IterationHint.NONE).value
+	) {
+		return deepLessThan(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			valuesA.slice(1),
+			valuesB.slice(1)
+		);
+	} else if (valuesA[0].value !== valuesA[0].value) {
+		return true;
+	} else if (isString(valuesA[0].type) && valuesB.length !== 0 && isString(valuesB[0].type)) {
+		return valuesA[0].value < valuesB[0].value;
+	} else {
+		return valuesB.length === 0 ? false : valuesA[0].value < valuesB[0].value;
+	}
+};
+
+const arraySortCallback = (
+	dynamicContext: DynamicContext,
+	executionParameters: ExecutionParameters,
+	staticContext: StaticContext,
+	allValues: IAsyncResult<Value[]>[]
+) => {
+	allValues.sort((valuesA, valuesB) => {
+		const areSequencesEqual = sequenceDeepEqual(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			sequenceFactory.create(valuesA.value),
+			sequenceFactory.create(valuesB.value)
+		).next(IterationHint.NONE).value;
+
+		if (areSequencesEqual) {
+			return 0;
+		}
+
+		return deepLessThan(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			valuesA.value,
+			valuesB.value
+		)
+			? -1
+			: 1;
+	});
+
+	return sequenceFactory.singleton(
+		new ArrayValue(allValues.map((item) => () => sequenceFactory.create(item.value)))
+	);
+};
+const arraySort: FunctionDefinitionType = (
+	dynamicContext,
+	executionParameters,
+	staticContext,
 	arraySequence
 ) => {
-	return zipSingleton([arraySequence], ([array]) => {
-		const atomizedMembers = (array as ArrayValue).members.map((createSequence) =>
-			atomize(createSequence(), executionParameters)
-		);
+	return zipSingleton([arraySequence], ([array]: [ArrayValue]) => {
+		const allValues: IAsyncResult<Value[]>[] = array.members.map((i) => i().tryGetAllValues());
 
-		return zipSingleton(atomizedMembers, (atomizeditems) => {
-			const permutations = (array as ArrayValue).members
-				.map((_, i) => i)
-				.sort((indexA, indexB) =>
-					atomizeditems[indexA].value > atomizeditems[indexB].value ? 1 : -1
-				);
-			return sequenceFactory.singleton(
-				new ArrayValue(permutations.map((i) => (array as ArrayValue).members[i]))
-			);
+		// If all values are ready, resolve immediately
+		if (allValues.every((val) => val.ready)) {
+			return arraySortCallback(dynamicContext, executionParameters, staticContext, allValues);
+		}
+
+		let iterator: IAsyncIterator<Value> = null;
+		return sequenceFactory.create({
+			next: (hint: IterationHint) => {
+				if (iterator === null) {
+					let allReady = true;
+					for (let i = 0, l = allValues.length; i < l; ++i) {
+						if (allValues[i].ready) {
+							continue;
+						}
+						const val = (allValues[i] = array.members[i]().tryGetAllValues());
+						if (!val.ready) {
+							allReady = false;
+							return notReady(val.promise);
+						}
+					}
+					if (allReady) {
+						iterator = arraySortCallback(
+							dynamicContext,
+							executionParameters,
+							staticContext,
+							allValues
+						).value;
+					}
+				}
+				return iterator.next(hint);
+			},
 		});
 	});
 };

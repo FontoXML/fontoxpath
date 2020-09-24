@@ -501,7 +501,7 @@ function atomicTypeNodeDeepEqual(
 	};
 }
 
-function itemDeepEqual(
+export function itemDeepEqual(
 	dynamicContext: DynamicContext,
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
