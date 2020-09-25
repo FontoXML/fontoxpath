@@ -1,13 +1,13 @@
 import * as chai from 'chai';
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import * as slimdom from 'slimdom';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
+	evaluateXPathToBoolean,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
-	evaluateXPathToBoolean,
-	evaluateXPathToStrings,
 	evaluateXPathToString,
+	evaluateXPathToStrings,
 } from 'fontoxpath';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';

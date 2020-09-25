@@ -11,8 +11,8 @@ import {
 import { getSkippedTests } from './getSkippedTests';
 import testFs from './testFs';
 
+import { Document, DocumentFragment, Node } from 'slimdom';
 import { sync } from 'slimdom-sax-parser';
-import { Node, Document, DocumentFragment } from 'slimdom';
 
 const ALL_TESTS_QUERY = `
 /test-set/test-case[

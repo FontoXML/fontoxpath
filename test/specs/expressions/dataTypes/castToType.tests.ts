@@ -3,9 +3,9 @@ import castToType from 'fontoxpath/expressions/dataTypes/castToType';
 import createAtomicValue from 'fontoxpath/expressions/dataTypes/createAtomicValue';
 
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
+import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTimeDuration';
 import Duration from 'fontoxpath/expressions/dataTypes/valueTypes/Duration';
 import YearMonthDuration from 'fontoxpath/expressions/dataTypes/valueTypes/YearMonthDuration';
-import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTimeDuration';
 
 // Y = can be cast to target
 // N = can not be cast to target
@@ -39,13 +39,8 @@ import DayTimeDuration from 'fontoxpath/expressions/dataTypes/valueTypes/DayTime
 describe('castToType()', () => {
 	before(() => {
 		if (typeof (global as any).atob === 'undefined') {
-			(global as any).atob = function (b64Encoded) {
-				return new Buffer(b64Encoded, 'base64').toString();
-			};
-
-			(global as any).btoa = function (str) {
-				return new Buffer(str).toString('base64');
-			};
+			(global as any).atob = (b64Encoded) => new Buffer(b64Encoded, 'base64').toString();
+			(global as any).btoa = (str) => new Buffer(str).toString('base64');
 		}
 	});
 

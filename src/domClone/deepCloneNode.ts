@@ -14,8 +14,8 @@ import {
 } from '../domClone/Pointer';
 import { ConcreteDocumentNode, ConcreteElementNode, NODE_TYPES } from '../domFacade/ConcreteNode';
 import DomFacade from '../domFacade/DomFacade';
-import INodesFactory from '../nodesFactory/INodesFactory';
 import ExecutionParameters from '../expressions/ExecutionParameters';
+import INodesFactory from '../nodesFactory/INodesFactory';
 
 export default function deepCloneNode(
 	pointer: NodePointer,

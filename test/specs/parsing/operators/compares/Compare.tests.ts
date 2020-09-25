@@ -1,10 +1,13 @@
 import * as chai from 'chai';
+import {
+	evaluateXPath,
+	evaluateXPathToBoolean,
+	evaluateXPathToNodes,
+	evaluateXPathToNumber,
+} from 'fontoxpath';
 import * as slimdom from 'slimdom';
-
-import { domFacade, evaluateXPath } from 'fontoxpath';
-import { evaluateXPathToNodes, evaluateXPathToNumber, evaluateXPathToBoolean } from 'fontoxpath';
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {

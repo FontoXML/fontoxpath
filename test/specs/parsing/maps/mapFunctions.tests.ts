@@ -4,9 +4,9 @@ import * as slimdom from 'slimdom';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 
 import {
+	evaluateXPathToBoolean,
 	evaluateXPathToMap,
 	evaluateXPathToNumber,
-	evaluateXPathToBoolean,
 	evaluateXPathToStrings,
 } from 'fontoxpath';
 

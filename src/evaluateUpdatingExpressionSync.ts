@@ -10,8 +10,8 @@ import Expression from './expressions/Expression';
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
-import { Node } from './types/Types';
 import { IReturnTypes } from './parsing/convertXDMReturnValue';
+import { Node } from './types/Types';
 
 /**
  * Evaluates an update script to a pending update list. See

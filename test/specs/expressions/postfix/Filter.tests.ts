@@ -1,8 +1,8 @@
 import * as chai from 'chai';
-import * as sinon from 'sinon';
+import Expression from 'fontoxpath/expressions/Expression';
 import Filter from 'fontoxpath/expressions/postfix/Filter';
 import Specificity from 'fontoxpath/expressions/Specificity';
-import Expression from 'fontoxpath/expressions/Expression';
+import * as sinon from 'sinon';
 
 describe('Filter', () => {
 	let equalExpression;

@@ -1,9 +1,9 @@
 import * as chai from 'chai';
+import DomFacade from 'fontoxpath/domFacade/DomFacade';
 import adaptJavaScriptValueToXPathValue from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import * as slimdom from 'slimdom';
 import { domFacade as adaptingDomFacade } from '../../../src';
-import DomFacade from 'fontoxpath/domFacade/DomFacade';
 
 describe('adaptJavaScriptValueToXPathValue', () => {
 	it('turns numbers into integers', () => {

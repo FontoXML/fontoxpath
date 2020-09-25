@@ -1,9 +1,9 @@
 import { evaluateXPathToMap } from 'fontoxpath';
 import * as path from 'path';
 import { sync } from 'slimdom-sax-parser';
-import { buildTestCase } from './xQueryXUtils';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
+import { buildTestCase } from './xQueryXUtils';
 
 function run() {
 	const skippableTests = getSkippedTests('failingXQueryXTestNames.csv');
@@ -90,8 +90,8 @@ function run() {
 					}
 
 					const loadXQuery = async () =>
-						await tryGetXQuery(directory, testName, testCase);
-					const loadXQueryX = async () => await testFs.readFile(testCasePath);
+						tryGetXQuery(directory, testName, testCase);
+					const loadXQueryX = async () => testFs.readFile(testCasePath);
 
 					buildTestCase(testCase, loadXQuery, loadXQueryX, skippableTests, (actual) => {
 						actual.documentElement.setAttributeNS(

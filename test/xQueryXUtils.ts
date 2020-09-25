@@ -3,8 +3,8 @@ import {
 	evaluateXPath,
 	evaluateXPathToBoolean,
 	evaluateXPathToNodes,
-	parseScript,
 	Language,
+	parseScript,
 } from 'fontoxpath';
 import { slimdom, sync } from 'slimdom-sax-parser';
 

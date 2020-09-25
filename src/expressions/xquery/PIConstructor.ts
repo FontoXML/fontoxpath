@@ -1,18 +1,18 @@
-import atomize from '../dataTypes/atomize';
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import { evaluateNCNameExpression } from './nameExpression';
-import Specificity from '../Specificity';
-import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import {
 	ProcessingInstructionNodePointer,
 	TinyProcessingInstructionNode,
 } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import { IterationHint, ready } from '../util/iterators';
+import { evaluateNCNameExpression } from './nameExpression';
 
 function assertValidTarget(target) {
 	if (/^xml$/i.test(target)) {

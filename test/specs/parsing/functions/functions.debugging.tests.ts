@@ -1,6 +1,6 @@
 import * as chai from 'chai';
-import * as sinon from 'sinon';
 import { evaluateXPathToBoolean } from 'fontoxpath';
+import * as sinon from 'sinon';
 
 describe('debugging functions', () => {
 	describe('fn:trace', () => {

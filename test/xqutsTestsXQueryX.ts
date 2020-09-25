@@ -1,7 +1,7 @@
 import * as path from 'path';
-import { buildTestCase } from './xQueryXUtils';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
+import { buildTestCase } from './xQueryXUtils';
 
 function run() {
 	const skippableTests = getSkippedTests('failingXQUTSXQueryXTestNames.csv');
@@ -40,7 +40,7 @@ function run() {
 					if (!testFs.existsSync(xQueryPath)) {
 						return null;
 					}
-					return await testFs.readFile(xQueryPath);
+					return testFs.readFile(xQueryPath);
 				};
 				const loadXQueryX = async () =>
 					normalizeEndOfLines(await testFs.readFile(xQueryXPath));

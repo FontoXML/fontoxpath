@@ -1,6 +1,7 @@
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
+import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import ISequence from './ISequence';
 import RestArgument from './RestArgument';
@@ -8,7 +9,6 @@ import sequenceFactory from './sequenceFactory';
 import TypeDeclaration from './TypeDeclaration';
 import Value from './Value';
 import QName from './valueTypes/QName';
-import UpdatingExpressionResult from '../UpdatingExpressionResult';
 
 export type FunctionSignature<T> = (
 	dynamicContext: DynamicContext,

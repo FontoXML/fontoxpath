@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { evaluateXPathToNumbers, evaluateXPathToBoolean } from 'fontoxpath';
+import { evaluateXPathToBoolean, evaluateXPathToNumbers } from 'fontoxpath';
 
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 

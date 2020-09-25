@@ -1,7 +1,7 @@
-import { Document } from 'slimdom';
-import { domFacade, evaluateXPath } from '../src/index';
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
+import { Document } from 'slimdom';
 import { sync } from 'slimdom-sax-parser';
+import { domFacade, evaluateXPath } from '../src/index';
 
 let document: Document;
 

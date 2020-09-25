@@ -1,11 +1,11 @@
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
+import { FUNCTIONS_NAMESPACE_URI } from './expressions/staticallyKnownNamespaces';
 import StaticContext from './expressions/StaticContext';
 import astHelper from './parsing/astHelper';
 import { loadModuleFile } from './parsing/globalModuleCache';
 import parseExpression from './parsing/parseExpression';
 import processProlog, { FunctionDeclaration } from './parsing/processProlog';
-import { FUNCTIONS_NAMESPACE_URI } from './expressions/staticallyKnownNamespaces';
 
 /**
  * Register an XQuery module

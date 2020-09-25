@@ -2,19 +2,19 @@ import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import DomFacade from '../domFacade/DomFacade';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import arePointersEqual from '../expressions/operators/compares/arePointersEqual';
+import { Node } from '../types/Types';
+import deepCloneNode from './deepCloneNode';
 import {
 	AttributeNodePointer,
+	ChildNodePointer,
 	CommentNodePointer,
 	ElementNodePointer,
 	isTinyNode,
 	NodePointer,
+	ParentNodePointer,
 	ProcessingInstructionNodePointer,
 	TextNodePointer,
-	ParentNodePointer,
-	ChildNodePointer,
 } from './Pointer';
-import deepCloneNode from './deepCloneNode';
-import { Node } from '../types/Types';
 
 function createNewNode(pointer: NodePointer, executionParameters: ExecutionParameters) {
 	const documentWriter = executionParameters.documentWriter;

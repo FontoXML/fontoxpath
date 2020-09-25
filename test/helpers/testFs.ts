@@ -33,7 +33,7 @@ export default new (class testFs {
 		if (this.existsSync(overridePath)) {
 			filePath = overridePath;
 		}
-		return await fs.promises.readFile(createAssetPath(filePath), 'utf-8');
+		return fs.promises.readFile(createAssetPath(filePath), 'utf-8');
 	}
 
 	readFileSync(filePath) {

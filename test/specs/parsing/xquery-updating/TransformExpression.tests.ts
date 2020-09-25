@@ -1,9 +1,9 @@
 import * as chai from 'chai';
 import { evaluateUpdatingExpression, evaluateXPath } from 'fontoxpath';
+import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
 import { Document } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
-import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 import assertUpdateList from './assertUpdateList';
 
 let documentNode: Document;

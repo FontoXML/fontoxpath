@@ -1,11 +1,12 @@
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import { errXPST0081 } from '../XPathErrors';
-import { errXQDY0096, errXQST0040, errXQTY0024, errXQDY0025 } from './XQueryErrors';
+import { errXQDY0025, errXQDY0096, errXQST0040, errXQTY0024 } from './XQueryErrors';
 
 import { isTinyNode, TinyElementNode } from '../../domClone/Pointer';
 import { ConcreteAttributeNode, ConcreteChildNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
+import createPointerValue from '../dataTypes/createPointerValue';
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
@@ -15,7 +16,6 @@ import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterat
 import AttributeConstructor from './AttributeConstructor';
 import parseContent from './ElementConstructorContent';
 import { evaluateQNameExpression } from './nameExpression';
-import createPointerValue from '../dataTypes/createPointerValue';
 
 class ElementConstructor extends Expression {
 	private _attributes: AttributeConstructor[];

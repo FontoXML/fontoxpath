@@ -144,17 +144,14 @@ export type EvaluateXPath = {
 	 */
 	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE;
 };
-let evaluateXPath = function evaluateXPath<
-	TNode extends Node,
-	TReturnType extends keyof IReturnTypes<TNode>
->(
+const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	returnType?: TReturnType,
 	options?: Options | null
-): IReturnTypes<TNode>[TReturnType] {
+): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
 	if (!selector || typeof selector !== 'string') {
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");

@@ -12,12 +12,12 @@ import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import builtInFunctions from '../expressions/functions/builtInFunctions';
 import { registerFunction } from '../expressions/functions/functionRegistry';
+import { FUNCTIONS_NAMESPACE_URI } from '../expressions/staticallyKnownNamespaces';
 import DomBackedNodesFactory from '../nodesFactory/DomBackedNodesFactory';
 import INodesFactory from '../nodesFactory/INodesFactory';
 import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
 import staticallyCompileXPath from '../parsing/staticallyCompileXPath';
 import { Node } from '../types/Types';
-import { FUNCTIONS_NAMESPACE_URI } from '../expressions/staticallyKnownNamespaces';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 

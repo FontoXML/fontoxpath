@@ -1,18 +1,18 @@
 import { Suite } from 'benchmark';
 
 import {
+	Document,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToString,
 	Language,
-	Document,
 } from 'fontoxpath';
 
-import { ALL_TESTS_QUERY, getAllTestSets, getArguments, getFile } from 'test-helpers/qt3TestsTools';
+import { Element, Node } from 'slimdom';
 import getPerformanceTests from 'test-helpers/getPerformanceTests';
-import { Node, Element } from 'slimdom';
+import { ALL_TESTS_QUERY, getAllTestSets, getArguments, getFile } from 'test-helpers/qt3TestsTools';
 
 const suite: Suite = new Suite();
 

@@ -3,9 +3,9 @@ import * as sinon from 'sinon';
 import * as slimdom from 'slimdom';
 
 import { AttributeNodePointer } from 'fontoxpath/domClone/Pointer';
+import DomFacade from 'fontoxpath/domFacade/DomFacade';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import { domFacade as adaptingDomFacade } from '../../src';
-import DomFacade from 'fontoxpath/domFacade/DomFacade';
 
 describe('DomFacade', () => {
 	let documentNode: slimdom.Document;

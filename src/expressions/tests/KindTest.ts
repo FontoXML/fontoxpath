@@ -1,9 +1,9 @@
-import Specificity from '../Specificity';
-import TestAbstractExpression from './TestAbstractExpression';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
-import ExecutionParameters from '../ExecutionParameters';
 import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import Specificity from '../Specificity';
+import TestAbstractExpression from './TestAbstractExpression';
 
 class KindTest extends TestAbstractExpression {
 	private _nodeType: number;

@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateXPathToNumber, evaluateXPathToBoolean } from 'fontoxpath';
+import { evaluateXPathToBoolean, evaluateXPathToNumber } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
 function timeXPath(xpath, document) {
@@ -17,7 +17,7 @@ function fillDocument(document, element, depth) {
 	if (depth === 0) {
 		return element;
 	}
-	var prototypeElement = element.appendChild(
+	const prototypeElement = element.appendChild(
 		fillDocument(document, document.createElement('ele'), depth - 1)
 	);
 

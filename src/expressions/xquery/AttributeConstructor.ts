@@ -1,3 +1,5 @@
+import { TinyAttributeNode } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import createPointerValue from '../dataTypes/createPointerValue';
@@ -6,8 +8,6 @@ import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
-import { TinyAttributeNode } from '../../domClone/Pointer';
-import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';

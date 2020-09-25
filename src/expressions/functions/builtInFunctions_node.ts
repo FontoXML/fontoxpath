@@ -1,4 +1,3 @@
-import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import {
 	AttributeNodePointer,
 	ChildNodePointer,
@@ -7,6 +6,7 @@ import {
 	ParentNodePointer,
 	ProcessingInstructionNodePointer,
 } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 
 import DomFacade from '../../domFacade/DomFacade';
 import atomize from '../dataTypes/atomize';
