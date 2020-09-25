@@ -1,6 +1,6 @@
+import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import { Document } from 'slimdom';
 import { domFacade, evaluateXPath } from '../src/index';
-import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 
 let document: Document;
 

@@ -1,5 +1,4 @@
 import * as chai from 'chai';
-import { slimdom } from 'slimdom-sax-parser';
 import {
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
@@ -9,8 +8,9 @@ import {
 	evaluateXPathToString,
 	registerXQueryModule,
 } from 'fontoxpath';
+import { slimdom } from 'slimdom-sax-parser';
 
-import testFs from 'test-helpers/testFs';
+import { Node } from 'slimdom';
 import {
 	ALL_TESTS_QUERY,
 	getAllTestSets,
@@ -20,7 +20,7 @@ import {
 	unrunnableTestCases,
 	unrunnableTestCasesByName,
 } from 'test-helpers/qt3TestsTools';
-import { Node } from 'slimdom';
+import testFs from 'test-helpers/testFs';
 
 function createAsserter(baseUrl, assertNode, language) {
 	const nodesFactory = {

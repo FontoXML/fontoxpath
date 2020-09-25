@@ -1,6 +1,6 @@
+import { NodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';
 import Value from './Value';
-import { NodePointer } from '../../domClone/Pointer';
 
 function getNodeSubType(pointer: NodePointer, domFacade: DomFacade) {
 	switch (domFacade.getNodeType(pointer)) {

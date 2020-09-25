@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { getBucketForSelector, evaluateXPathToBoolean, evaluateXPathToFirstNode } from 'fontoxpath';
+import { evaluateXPathToBoolean, evaluateXPathToFirstNode, getBucketForSelector } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {

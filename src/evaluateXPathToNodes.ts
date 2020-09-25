@@ -1,7 +1,7 @@
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateXPath, { Options } from './evaluateXPath';
-import { Node } from './types/Types';
 import { ReturnType } from './parsing/convertXDMReturnValue';
+import { Node } from './types/Types';
 
 /**
  * Evaluates an XPath on the given contextNode. Returns the first node result.

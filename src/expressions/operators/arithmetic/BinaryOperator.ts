@@ -1,9 +1,9 @@
 import atomize from '../../dataTypes/atomize';
-import { ValueType } from '../../dataTypes/Value';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { ValueType } from '../../dataTypes/Value';
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,

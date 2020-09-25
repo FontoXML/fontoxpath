@@ -2,9 +2,9 @@ import { Document, Node } from 'slimdom';
 import * as slimdomSaxParser from 'slimdom-sax-parser';
 import {
 	domFacade,
+	evaluateXPath,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNumber,
-	evaluateXPath,
 } from '../src/index';
 
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';

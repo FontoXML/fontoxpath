@@ -5,12 +5,12 @@ import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
+import StaticContext from './StaticContext';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from './util/iterators';
+import { IPendingUpdate } from './xquery-update/IPendingUpdate';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
-import { IPendingUpdate } from './xquery-update/IPendingUpdate';
-import StaticContext from './StaticContext';
 
 export type SequenceCallbacks = ((dynamicContext: DynamicContext) => ISequence)[];
 

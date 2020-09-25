@@ -8,7 +8,7 @@ import {
 	ProcessingInstructionNodePointer,
 	TinyElementNode,
 } from '../../domClone/Pointer';
-import { NODE_TYPES, ConcreteElementNode } from '../../domFacade/ConcreteNode';
+import { ConcreteElementNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import DomBackedNodesFactory from '../../nodesFactory/DomBackedNodesFactory';
 import INodesFactory from '../../nodesFactory/INodesFactory';

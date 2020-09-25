@@ -1,15 +1,15 @@
 import * as chai from 'chai';
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import * as slimdom from 'slimdom';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import {
 	evaluateXPath,
+	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
+	evaluateXPathToNumber,
+	evaluateXPathToNumbers,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
-	evaluateXPathToNumbers,
-	evaluateXPathToNumber,
-	evaluateXPathToAsyncIterator,
 } from 'fontoxpath';
 
 let documentNode;

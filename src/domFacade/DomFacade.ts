@@ -1,29 +1,29 @@
 import {
 	AttributeNodePointer,
-	TinyAttributeNode,
 	CharacterDataNodePointer,
-	TinyCharacterDataNode,
 	ChildNodePointer,
 	ElementNodePointer,
+	GraftPoint,
 	isTinyNode,
-	TinyElementNode,
 	NodePointer,
 	ParentNodePointer,
-	TinyParentNode,
 	ProcessingInstructionNodePointer,
+	TinyAttributeNode,
+	TinyCharacterDataNode,
 	TinyChildNode,
-	GraftPoint,
+	TinyElementNode,
 	TinyNode,
+	TinyParentNode,
 } from '../domClone/Pointer';
 import { Node } from '../types/Types';
 import {
 	ConcreteAttributeNode,
-	ConcreteChildNode,
-	ConcreteParentNode,
-	ConcreteNode,
 	ConcreteCharacterDataNode,
-	NODE_TYPES,
+	ConcreteChildNode,
 	ConcreteElementNode,
+	ConcreteNode,
+	ConcreteParentNode,
+	NODE_TYPES,
 } from './ConcreteNode';
 import IDomFacade from './IDomFacade';
 

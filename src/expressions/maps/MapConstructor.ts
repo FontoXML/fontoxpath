@@ -1,12 +1,12 @@
 import atomize from '../dataTypes/atomize';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
 import Specificity from '../Specificity';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import zipSingleton from '../util/zipSingleton';
-import DynamicContext from '../DynamicContext';
-import ExecutionParameters from '../ExecutionParameters';
 
 class MapConstructor extends Expression {
 	private _entries: { key: Expression; value: Expression }[];

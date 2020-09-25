@@ -1,12 +1,12 @@
 import { TinyAttributeNode, TinyChildNode, TinyTextNode } from '../../domClone/Pointer';
 import { ConcreteAttributeNode, ConcreteChildNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
+import ArrayValue from '../dataTypes/ArrayValue';
 import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
-import ArrayValue from '../dataTypes/ArrayValue';
 function createTinyTextNode(content): TinyTextNode {
 	const tinyTextNode: TinyTextNode = {
 		data: content,

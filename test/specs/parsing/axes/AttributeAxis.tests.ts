@@ -2,12 +2,12 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import {
+	Attr,
 	evaluateXPathToBoolean,
 	evaluateXPathToString,
 	evaluateXPathToStrings,
 	getBucketForSelector,
 	IDomFacade,
-	Attr,
 } from 'fontoxpath';
 
 let documentNode;

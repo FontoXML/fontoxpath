@@ -1,7 +1,7 @@
+import { getBucketsForNode } from '../getBuckets';
 import { Attr, CharacterData, Node } from '../types/Types';
 import { NODE_TYPES } from './ConcreteNode';
 import IDomFacade from './IDomFacade';
-import { getBucketsForNode } from '../getBuckets';
 
 export default class ExternalDomFacade implements IDomFacade {
 	public ['getAllAttributes'](node: Node, bucket: string | null = null): Attr[] {

@@ -1,12 +1,12 @@
-import { evaluateXPathToNodes, evaluateXPathToString, evaluateXPathToFirstNode } from 'fontoxpath';
+import { evaluateXPathToFirstNode, evaluateXPathToNodes, evaluateXPathToString } from 'fontoxpath';
 
-import testFs from './testFs';
 import {
 	ALL_TESTS_QUERY,
 	getAllTestSets,
 	getFile,
 	unrunnableTestCasesByName,
 } from './qt3TestsTools';
+import testFs from './testFs';
 
 const PERFORMANCE_TESTS_FILE = 'runnablePerformanceTestNames.csv';
 const DEFAULT_NUMBER_OF_TEST = 50;

@@ -4,8 +4,8 @@ import * as slimdom from 'slimdom';
 import {
 	domFacade,
 	evaluateXPathToArray,
-	evaluateXPathToMap,
 	evaluateXPathToBoolean,
+	evaluateXPathToMap,
 } from 'fontoxpath';
 
 let documentNode;

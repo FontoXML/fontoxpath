@@ -1,11 +1,11 @@
 import {
 	AttributeNodePointer,
 	ChildNodePointer,
-	NodePointer,
 	isTinyNode,
+	NodePointer,
 } from '../../domClone/Pointer';
+import { ConcreteChildNode, ConcreteNode, ConcreteParentNode } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
-import { ConcreteNode, ConcreteChildNode, ConcreteParentNode } from '../../domFacade/ConcreteNode';
 import arePointersEqual from '../operators/compares/arePointersEqual';
 import isSubtypeOf from './isSubtypeOf';
 import Value from './Value';

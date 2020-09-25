@@ -1,11 +1,11 @@
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
-import ExecutionParameters from '../ExecutionParameters';
-import DynamicContext from '../DynamicContext';
 
 class AttributeAxis extends Expression {
 	private _attributeTestExpression: TestAbstractExpression;

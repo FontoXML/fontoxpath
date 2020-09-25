@@ -1,3 +1,4 @@
+import ISequence from '../dataTypes/ISequence';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { OptimizationOptions } from '../Expression';
@@ -5,7 +6,6 @@ import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { IAsyncIterator, notReady, ready } from '../util/iterators';
 import { errXUST0001 } from './XQueryUpdateFacilityErrors';
-import ISequence from '../dataTypes/ISequence';
 
 abstract class UpdatingExpression extends Expression {
 	constructor(

@@ -4,8 +4,8 @@ import {
 	DocumentNodePointer,
 	ElementNodePointer,
 	NodePointer,
-	TinyNode,
 	TextNodePointer,
+	TinyNode,
 } from '../../domClone/Pointer';
 import { ConcreteNode } from '../../domFacade/ConcreteNode';
 import { IPendingUpdate } from './IPendingUpdate';

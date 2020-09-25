@@ -1,6 +1,6 @@
-import DomFacade from '../../domFacade/DomFacade';
 import IDocumentWriter from '../../documentWriter/IDocumentWriter';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import DomFacade from '../../domFacade/DomFacade';
 import INodesFactory from '../../nodesFactory/INodesFactory';
 import QName from '../dataTypes/valueTypes/QName';
 import {

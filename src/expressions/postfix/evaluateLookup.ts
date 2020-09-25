@@ -3,15 +3,15 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import EmptySequence from '../dataTypes/Sequences/EmptySequence';
+import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
+import { errFOAY0001 } from '../functions/FunctionOperationErrors';
 import isSameMapKey from '../functions/isSameMapKey';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import Value from '../dataTypes/Value';
 import { errXPTY0004 } from '../xquery/XQueryErrors';
-import { errFOAY0001 } from '../functions/FunctionOperationErrors';
 
 function performLookup(
 	contextItem: Value,

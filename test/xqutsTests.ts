@@ -2,13 +2,13 @@ import * as chai from 'chai';
 import {
 	evaluateUpdatingExpressionSync,
 	evaluateXPath,
+	EvaluateXPath,
 	evaluateXPathToAsyncIterator,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	evaluateXPathToString,
 	executePendingUpdateList,
-	EvaluateXPath,
 } from 'fontoxpath';
 import * as path from 'path';
 import { slimdom, sync } from 'slimdom-sax-parser';

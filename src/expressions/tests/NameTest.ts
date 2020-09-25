@@ -1,9 +1,9 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
 import TestAbstractExpression from './TestAbstractExpression';
-import Value from '../dataTypes/Value';
-import ExecutionParameters from '../ExecutionParameters';
-import DynamicContext from '../DynamicContext';
 
 class NameTest extends TestAbstractExpression {
 	public _kind: number;

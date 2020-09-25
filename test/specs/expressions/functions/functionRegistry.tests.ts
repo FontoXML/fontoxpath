@@ -1,6 +1,6 @@
 import * as chai from 'chai';
-import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
 import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry';
+import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
 
 describe('functionRegistry.getFunctionByArity', () => {
 	before(() => {

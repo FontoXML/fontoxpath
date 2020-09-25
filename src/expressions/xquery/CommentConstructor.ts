@@ -1,6 +1,6 @@
-import atomize from '../dataTypes/atomize';
 import { CommentNodePointer, TinyCommentNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';

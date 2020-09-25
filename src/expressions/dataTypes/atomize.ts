@@ -1,25 +1,25 @@
+import {
+	TinyCharacterDataNode,
+	TinyChildNode,
+	TinyNode,
+	TinyParentNode,
+} from '../../domClone/Pointer';
+import {
+	ConcreteCharacterDataNode,
+	ConcreteChildNode,
+	ConcreteNode,
+	ConcreteParentNode,
+	NODE_TYPES,
+} from '../../domFacade/ConcreteNode';
+import ExecutionParameters from '../ExecutionParameters';
 import concatSequences from '../util/concatSequences';
-import { IAsyncIterator, IterationHint, notReady, DONE_TOKEN } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady } from '../util/iterators';
 import ArrayValue from './ArrayValue';
 import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
-import {
-	NODE_TYPES,
-	ConcreteChildNode,
-	ConcreteNode,
-	ConcreteParentNode,
-	ConcreteCharacterDataNode,
-} from '../../domFacade/ConcreteNode';
-import ExecutionParameters from '../ExecutionParameters';
 import Value from './Value';
-import {
-	TinyChildNode,
-	TinyNode,
-	TinyParentNode,
-	TinyCharacterDataNode,
-} from '../../domClone/Pointer';
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters

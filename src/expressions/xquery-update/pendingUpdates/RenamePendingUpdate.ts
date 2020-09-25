@@ -1,5 +1,5 @@
-import realizeDom from '../../../domClone/realizeDom';
 import { ElementNodePointer } from '../../../domClone/Pointer';
+import realizeDom from '../../../domClone/realizeDom';
 import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import QName from '../../dataTypes/valueTypes/QName';
 import { IPendingUpdate } from '../IPendingUpdate';

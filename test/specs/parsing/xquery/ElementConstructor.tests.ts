@@ -3,10 +3,10 @@ import * as slimdom from 'slimdom';
 
 import {
 	evaluateXPath,
+	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
 	evaluateXPathToString,
-	evaluateXPathToArray,
 } from 'fontoxpath';
 import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 

@@ -1,3 +1,6 @@
+import { TextNodePointer } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import DomFacade from '../../domFacade/DomFacade';
 import ArrayValue from '../dataTypes/ArrayValue';
 import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
@@ -21,9 +24,6 @@ import {
 	ready,
 } from '../util/iterators';
 import builtInFunctionsNode from './builtInFunctions_node';
-import { NODE_TYPES } from '../../domFacade/ConcreteNode';
-import { TextNodePointer } from '../../domClone/Pointer';
-import DomFacade from '../../domFacade/DomFacade';
 
 const nodeName = builtInFunctionsNode.functions.nodeName;
 

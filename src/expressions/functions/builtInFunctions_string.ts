@@ -42,8 +42,8 @@ const fnCompare: FunctionDefinitionType = (
 		return sequenceFactory.empty();
 	}
 
-	const arg1Value = arg1.first().value,
-		arg2Value = arg2.first().value;
+	const arg1Value = arg1.first().value;
+	const arg2Value = arg2.first().value;
 
 	if (arg1Value > arg2Value) {
 		return sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'));
@@ -220,18 +220,9 @@ const fnSubstringBefore: FunctionDefinitionType = (
 	arg1,
 	arg2
 ) => {
-	let strArg1;
-	if (arg1.isEmpty()) {
-		strArg1 = '';
-	} else {
-		strArg1 = arg1.first().value;
-	}
-	let strArg2;
-	if (arg2.isEmpty()) {
-		strArg2 = '';
-	} else {
-		strArg2 = arg2.first().value;
-	}
+	const strArg1 = arg1.isEmpty() ? '' : arg1.first().value;
+
+	const strArg2 = arg2.isEmpty() ? '' : arg2.first().value;
 
 	if (strArg2 === '') {
 		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
@@ -252,18 +243,9 @@ const fnSubstringAfter: FunctionDefinitionType = (
 	arg1,
 	arg2
 ) => {
-	let strArg1;
-	if (arg1.isEmpty()) {
-		strArg1 = '';
-	} else {
-		strArg1 = arg1.first().value;
-	}
-	let strArg2;
-	if (arg2.isEmpty()) {
-		strArg2 = '';
-	} else {
-		strArg2 = arg2.first().value;
-	}
+	const strArg1 = arg1.isEmpty() ? '' : arg1.first().value;
+
+	const strArg2 = arg2.isEmpty() ? '' : arg2.first().value;
 
 	if (strArg2 === '') {
 		return sequenceFactory.singleton(createAtomicValue(strArg1, 'xs:string'));
@@ -386,8 +368,8 @@ const fnUpperCase: FunctionDefinitionType = (
 	if (stringSequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
-	return stringSequence.map((string) =>
-		createAtomicValue(string.value.toUpperCase(), 'xs:string')
+	return stringSequence.map((stringValue) =>
+		createAtomicValue(stringValue.value.toUpperCase(), 'xs:string')
 	);
 };
 
@@ -400,8 +382,8 @@ const fnLowerCase: FunctionDefinitionType = (
 	if (stringSequence.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
-	return stringSequence.map((string) =>
-		createAtomicValue(string.value.toLowerCase(), 'xs:string')
+	return stringSequence.map((stringValue) =>
+		createAtomicValue(stringValue.value.toLowerCase(), 'xs:string')
 	);
 };
 
@@ -414,8 +396,10 @@ const fnNormalizeSpace: FunctionDefinitionType = (
 	if (arg.isEmpty()) {
 		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
 	}
-	const string = arg.first().value.trim();
-	return sequenceFactory.singleton(createAtomicValue(string.replace(/\s+/g, ' '), 'xs:string'));
+	const stringValue = arg.first().value.trim();
+	return sequenceFactory.singleton(
+		createAtomicValue(stringValue.replace(/\s+/g, ' '), 'xs:string')
+	);
 };
 
 const fnTranslate: FunctionDefinitionType = (

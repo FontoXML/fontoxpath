@@ -1,9 +1,9 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import Value from '../dataTypes/Value';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
 import TestAbstractExpression from './TestAbstractExpression';
-import DynamicContext from '../DynamicContext';
-import Value from '../dataTypes/Value';
-import ExecutionParameters from '../ExecutionParameters';
 
 class TypeTest extends TestAbstractExpression {
 	public _type: { localName: string; namespaceURI: string; prefix: string };

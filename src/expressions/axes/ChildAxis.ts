@@ -3,9 +3,9 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import TestAbstractExpression from '../tests/TestAbstractExpression';
-import ExecutionParameters from '../ExecutionParameters';
 import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import TestAbstractExpression from '../tests/TestAbstractExpression';
 
 class ChildAxis extends Expression {
 	private _childExpression: TestAbstractExpression;
