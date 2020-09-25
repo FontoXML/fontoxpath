@@ -9,9 +9,9 @@ builtinModels.forEach((model, index) => {
 	const restrictionsByName = model.restrictions || {};
 
 	if (model.variety === 'primitive') {
-		const parent = model.parent ? builtinDataTypesByName[model.parent] : null,
-			validator = dataTypeValidatorByName[name] || null,
-			facetHandlers = facetHandlersByDataTypeName[name];
+		const parent = model.parent ? builtinDataTypesByName[model.parent] : null;
+		const validator = dataTypeValidatorByName[name] || null;
+		const facetHandlers = facetHandlersByDataTypeName[name];
 		builtinDataTypesByName[name] = {
 			variety: 'primitive',
 			name,
@@ -22,8 +22,8 @@ builtinModels.forEach((model, index) => {
 			memberTypes: [],
 		};
 	} else if (model.variety === 'derived') {
-		const base = builtinDataTypesByName[model.base],
-			validator = dataTypeValidatorByName[name] || null;
+		const base = builtinDataTypesByName[model.base];
+		const validator = dataTypeValidatorByName[name] || null;
 		builtinDataTypesByName[name] = {
 			variety: 'derived',
 			name,
