@@ -73,11 +73,7 @@ class NameTest extends TestAbstractExpression {
 			// An unprefixed QName, when used as a name test on an axis whose principal node kind is element,
 			//    has the namespace URI of the default element/type namespace in the expression context;
 			//    otherwise, it has no namespace URI.
-			if (nodeIsElement) {
-				resolvedNamespaceURI = this._namespaceURI || null;
-			} else {
-				resolvedNamespaceURI = null;
-			}
+			resolvedNamespaceURI = nodeIsElement ? this._namespaceURI || null : null;
 		} else {
 			// We have a prefixed name test.
 			resolvedNamespaceURI = this._namespaceURI || null;
@@ -89,7 +85,7 @@ class NameTest extends TestAbstractExpression {
 	public getBucket() {
 		if (this._localName === '*') {
 			if (this._kind === null) {
-				return null;
+				return 'type-1-or-type-2';
 			}
 			return `type-${this._kind}`;
 		}

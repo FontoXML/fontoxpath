@@ -97,8 +97,8 @@ describe('nameTests', () => {
 	});
 
 	describe('bucketing', () => {
-		it('returns null if the selector is "self::*"', () => {
-			chai.assert.isNull(getBucketForSelector('self::*'));
+		it('returns type-1-or-type-2 if the selector is "self::*"', () => {
+			chai.assert.equal(getBucketForSelector('self::*'), 'type-1-or-type-2');
 		});
 		it('returns null if the selector is "self::*[@attr]"', () => {
 			chai.assert.isNull(getBucketForSelector('self::*[@attr]'));
