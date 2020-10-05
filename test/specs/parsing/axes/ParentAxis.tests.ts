@@ -8,6 +8,7 @@ import {
 	getBucketForSelector,
 	IDomFacade,
 } from 'fontoxpath';
+import { Node } from 'slimdom';
 
 let documentNode;
 beforeEach(() => {
@@ -55,5 +56,21 @@ describe('parent', () => {
 
 	it('throws the correct error if context is absent', () => {
 		chai.assert.throws(() => evaluateXPathToNodes('parent::*', null), 'XPDY0002');
+	});
+
+	it('returns nothing when parent specified in selector does not exist', () => {
+		jsonMlMapper.parse(['parentElement', ['childElement'], ['secondChild']], documentNode);
+
+		chai.assert.deepEqual(
+			evaluateXPathToNodes('/parentElement/childElement/parent::z', documentNode, ({
+				getParentNode(node: Node, bucket?: string | null): Node | null {
+					return node.parentNode;
+				},
+				getChildNodes(node: Node, bucket?: string | null): Node[] {
+					return node.childNodes;
+				},
+			} as unknown) as IDomFacade),
+			[]
+		);
 	});
 });
