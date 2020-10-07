@@ -5,6 +5,7 @@ const doc = new slimdom.Document();
 describe('getBucketsForNode', () => {
 	it('returns the correct buckets for elements', () => {
 		chai.assert.deepEqual(getBucketsForNode(doc.createElement('element')), [
+			'type-1-or-type-2',
 			'type-1',
 			'name-element',
 		]);

@@ -6,6 +6,10 @@ import { Attr, Element, Node } from './types/Types';
 function createBuckets(nodeType: NODE_TYPES, localName?: string): string[] {
 	const buckets = [];
 
+	if (nodeType === NODE_TYPES.ATTRIBUTE_NODE || nodeType === NODE_TYPES.ELEMENT_NODE) {
+		buckets.push('type-1-or-type-2');
+	}
+
 	buckets.push('type-' + nodeType);
 
 	if (localName) {
@@ -39,6 +43,7 @@ export function getBucketsForPointer(pointer: NodePointer, domFacade: DomFacade)
 export function getBucketsForNode(node: Node): string[] {
 	const nodeType = node.nodeType;
 	let localName;
+
 	if (nodeType === NODE_TYPES.ATTRIBUTE_NODE || nodeType === NODE_TYPES.ELEMENT_NODE) {
 		localName = (node as Attr | Element).localName;
 	}

@@ -1,17 +1,16 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
-
 import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 	getBucketForSelector,
 	IDomFacade,
 } from 'fontoxpath';
+import { Document, Node } from 'slimdom';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
-	documentNode = new slimdom.Document();
+	documentNode = new Document();
 });
 
 describe('parent', () => {
@@ -44,7 +43,7 @@ describe('parent', () => {
 		const expectedBucket = getBucketForSelector('self::parentElement');
 
 		const testDomFacade: IDomFacade = {
-			getParentNode: (node: slimdom.Node, bucket: string | null) => {
+			getParentNode: (_node: Node, bucket: string | null) => {
 				chai.assert.equal(expectedBucket, bucket);
 				return null;
 			},
@@ -55,5 +54,21 @@ describe('parent', () => {
 
 	it('throws the correct error if context is absent', () => {
 		chai.assert.throws(() => evaluateXPathToNodes('parent::*', null), 'XPDY0002');
+	});
+
+	it('returns nothing when parent specified in selector does not exist', () => {
+		jsonMlMapper.parse(['parentElement', ['childElement'], ['secondChild']], documentNode);
+
+		chai.assert.deepEqual(
+			evaluateXPathToNodes('/parentElement/childElement/parent::z', documentNode, ({
+				getParentNode(node: Node, _bucket?: string | null): Node | null {
+					return node.parentNode;
+				},
+				getChildNodes(node: Node, _bucket?: string | null): Node[] {
+					return node.childNodes;
+				},
+			} as unknown) as IDomFacade),
+			[]
+		);
 	});
 });
