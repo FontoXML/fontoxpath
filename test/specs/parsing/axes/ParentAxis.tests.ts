@@ -6,8 +6,8 @@ import {
 	IDomFacade,
 } from 'fontoxpath';
 import { Document, Node } from 'slimdom';
-import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import { sync } from 'slimdom-sax-parser';
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
