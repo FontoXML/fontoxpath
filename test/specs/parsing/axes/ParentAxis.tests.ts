@@ -6,6 +6,7 @@ import {
 	IDomFacade,
 } from 'fontoxpath';
 import { Document, Node } from 'slimdom';
+import { sync } from 'slimdom-sax-parser';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
@@ -34,6 +35,12 @@ describe('parent', () => {
 			documentNode
 		);
 		chai.assert.deepEqual(evaluateXPathToNodes('parent::node()', documentNode), []);
+	});
+
+	it.only('returns nothing for absent parent node encore', () => {
+		const xml = sync('<root><element /></root>');
+		const parentNode = evaluateXPathToFirstNode('parent::element()', xml);
+		chai.assert.isNull(parentNode);
 	});
 
 	it('passes buckets for getParentNode', () => {
