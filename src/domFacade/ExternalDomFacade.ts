@@ -67,11 +67,15 @@ export default class ExternalDomFacade implements IDomFacade {
 
 		return null;
 	}
-	public ['getParentNode'](node: Node, bucket: string | null = null): Node {
+	public ['getParentNode'](node: Node, bucket: string | null = null): Node | null {
 		const parentNode =
 			node['nodeType'] === NODE_TYPES.ATTRIBUTE_NODE
 				? node['ownerElement']
 				: (node['parentNode'] as Node);
+
+		if (!parentNode) {
+			return null;
+		}
 
 		if (bucket === null || getBucketsForNode(parentNode).includes(bucket)) {
 			return parentNode;
