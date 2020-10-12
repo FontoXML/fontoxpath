@@ -37,7 +37,7 @@ describe('parent', () => {
 		chai.assert.deepEqual(evaluateXPathToNodes('parent::node()', documentNode), []);
 	});
 
-	it.only('returns nothing for absent parent node encore', () => {
+	it('returns nothing for absent parent node encore', () => {
 		const xml = sync('<root><element /></root>');
 		const parentNode = evaluateXPathToFirstNode('parent::element()', xml);
 		chai.assert.isNull(parentNode);
