@@ -61,7 +61,7 @@
 	"license": "MIT",
 	"homepage": "https://github.com/FontoXML/fontoxpath",
 	"devDependencies": {
-		"@fontoxml/fonto-benchmark-runner": "0.0.4",
+		"@fontoxml/fonto-benchmark-runner": "0.1.0",
 		"@microsoft/api-extractor": "^7.8.0",
 		"@tscc/tscc": "^0.4.8",
 		"@types/chai": "^4.2.11",

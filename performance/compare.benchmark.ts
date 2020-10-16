@@ -75,7 +75,7 @@ benchmarkRunner.compareBenchmarks(
 );
 
 benchmarkRunner.compareBenchmarks(
-	'XMark-Q14, this is one of the more expensive tests in the qt3ts',
+	'XMark-Q14 ~ this is one of the more expensive tests in the qt3ts',
 	async () => {
 		const content = await loadFile(testDocumentFilename);
 		document = slimdomSaxParser.sync(content);
