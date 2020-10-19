@@ -41,6 +41,7 @@ import {
 	ProcessingInstruction,
 	Text,
 } from './types/Types';
+import { profiler, XPathPerformanceMeasurement } from './performance';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
@@ -127,6 +128,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['registerXQueryModule'] = registerXQueryModule;
 	fontoxpathGlobal['registerCustomXPathFunction'] = registerCustomXPathFunction;
 	fontoxpathGlobal['parseScript'] = parseScript;
+	fontoxpathGlobal['profiler'] = profiler;
 }
 
 export {
@@ -172,4 +174,6 @@ export {
 	registerCustomXPathFunction,
 	registerXQueryModule,
 	parseScript,
+	profiler,
+	XPathPerformanceMeasurement,
 };

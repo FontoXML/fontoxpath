@@ -8,6 +8,7 @@ import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
+import { markXPathEnd, markXPathStart } from './performance';
 import { Node } from './types/Types';
 
 /**
@@ -110,7 +111,6 @@ export type EvaluateXPath = {
 	NUMBER_TYPE: ReturnType.NUMBER;
 
 	/**
-
 	 * Resolve to an array of numbers
 	 */
 	NUMBERS_TYPE: ReturnType.NUMBERS;
@@ -204,14 +204,25 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	}
 
 	try {
+		markXPathStart(selector);
 		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
-		return convertXDMReturnValue(selector, rawResults, returnType, executionParameters);
+		const toReturn = convertXDMReturnValue<TNode, TReturnType>(
+			selector,
+			rawResults,
+			returnType,
+			executionParameters
+		);
+		markXPathEnd(selector);
+
+		return toReturn;
 	} catch (error) {
 		printAndRethrowError(selector, error);
 	}
 };
 
 /**
+ * Specifies which language to use.
+ *
  * @public
  */
 export enum Language {
