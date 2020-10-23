@@ -1,6 +1,8 @@
 const useDist = process.argv.includes('--dist');
 
-console.log(useDist);
+console.log(
+	useDist ? 'Running tests against dist build' : 'Running tests against development bundle'
+);
 
 const tsConfig = require('./tsconfig.json');
 
