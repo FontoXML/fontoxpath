@@ -11,7 +11,7 @@ let performance: Performance = null;
  * See {@link profiler}.
  * @public
  */
-export type XPathPerformanceMeasurement = {
+export declare type XPathPerformanceMeasurement = {
 	average: number;
 	times: number;
 	totalDuration: number;
@@ -24,7 +24,7 @@ export type XPathPerformanceMeasurement = {
  * Note that Javascript custom functions are also included in the profile. If they call new XPaths
  * themselves, they may overlap in measurement.
  *
- * For example, the xpath `app:custom-funtion("a", "b")` calls a new XPath, the total time taken for
+ * For example, the xpath `app:custom-function("a", "b")` calls a new XPath, the total time taken for
  * that outer XPath will include the time taken for the inner one as well.
  *
  * @example
@@ -45,10 +45,10 @@ export type XPathPerformanceMeasurement = {
  *
  * @public
  */
-export const profiler = {
+export declare type Profiler = {
 	/**
-	 * Get the performance metrics of executed XPaths between the {@link profiler.startProfiling}
-	 * and {@link profiler.stopProfiling} calls.
+	 * Get the performance metrics of executed XPaths between the {@link Profiler.startProfiling}
+	 * and {@link Profiler.stopProfiling} calls.
 	 *
 	 * @returns Returns an array of {@link XPathPerformanceMeasurement} items which can be
 	 * coverted into a csv to paste in your favorite spreadsheet editor. Results are ordered by their total duration.
@@ -57,30 +57,62 @@ export const profiler = {
 	 * const summary = profiler.getPerformanceSummary();
 	 * const csv = summary.map(item =\>
 	 *     `${item.xpath},${item.times},${item.average},${item.totalDuration}`);
-	 * await navigator.clipboard.write(csv);
+	 * await navigator.clipboard.writeText(csv);
 	 *
 	 * @public
 	 *
 	 */
+	getPerformanceSummary(): XPathPerformanceMeasurement[];
+
+	/**
+	 * Set the impormentation of the Performance API object. this should implement the Performance interface.
+	 *
+	 * This is usually either window.performance (in the Browser) or global.performance (for NodeJS)
+	 *
+	 * @public
+	 */
+	setPerformanceImplementation(performance: Performance): void;
+
+	/**
+	 * Start profiling XPaths. All marks are cleared. Use {@link Profiler.stopProfiling} to stop it again.
+	 *
+	 * @public
+	 */
+	startProfiling(): void;
+
+	/**
+	 * Stop profiling XPaths, use the {@link Profiler.getPerformanceSummary} function to get hold of the
+	 * summarized results.
+	 *
+	 * @public
+	 */
+	stopProfiling(): void;
+};
+
+/**
+ * @public
+ */
+export const profiler: Profiler = {
 	getPerformanceSummary() {
 		const xpathEntries = performance.getEntriesByType('measure').filter((entry) => {
-			return entry.name.startsWith('xpath: ');
+			return entry.name.startsWith('XPath: ');
 		});
 
 		return Array.from(
 			xpathEntries
 				.reduce((summedMeasurements, measurement) => {
-					const xpath = measurement.name.substring('xpath: '.length);
+					const xpath = measurement.name.substring('XPath: '.length);
 					if (summedMeasurements.has(xpath)) {
 						const summedMeasurement = summedMeasurements.get(xpath);
 						summedMeasurement.times++;
 						summedMeasurement.totalDuration += measurement.duration;
 					} else {
-						summedMeasurements[xpath] = {
+						summedMeasurements.set(xpath, {
 							xpath,
 							times: 1,
 							totalDuration: measurement.duration,
-						};
+							average: 0,
+						});
 					}
 
 					return summedMeasurements;
@@ -96,22 +128,10 @@ export const profiler = {
 			});
 	},
 
-	/**
-	 * Set the impormentation of the Performance API object. this should implement the Performance interface.
-	 *
-	 * This is usually either window.performance (in the Browser) or global.performance (for NodeJS)
-	 *
-	 * @public
-	 */
 	setPerformanceImplementation(newPerformanceImplementation: Performance) {
 		performance = newPerformanceImplementation;
 	},
 
-	/**
-	 * Start profiling XPaths. All marks are cleared. Use {@link profiler.stopProfiling} to stop it again.
-	 *
-	 * @public
-	 */
 	startProfiling() {
 		if (performance === null) {
 			throw new Error(
@@ -122,28 +142,29 @@ export const profiler = {
 		profilingEnabled = true;
 	},
 
-	/**
-	 * Stop profiling XPaths, use the {@link profiler.getPerformanceSummary} function to get hold of the
-	 * summarized results.
-	 *
-	 * @public
-	 */
 	stopProfiling() {
 		profilingEnabled = false;
 	},
 };
 
+let xpathDepth = 0;
+function buildKey(xpath) {
+	return `xpath${xpathDepth === 0 ? '' : '@' + xpathDepth}`;
+}
 export function markXPathStart(xpath: string) {
 	if (!profilingEnabled) {
 		return;
 	}
-	performance.mark(xpath);
+	performance.mark(buildKey(xpath));
+	xpathDepth++;
 }
 export function markXPathEnd(xpath: string) {
 	if (!profilingEnabled) {
 		return;
 	}
 	// Replace the mark with a measure of the time spent
-	performance.measure(`xpath: ${xpath}`, xpath, undefined);
+	const xpathPerfEntry = buildKey(xpath);
+	performance.measure(`XPath: ${xpath}`, xpathPerfEntry, undefined);
+	xpathDepth--;
 	performance.clearMarks(xpath);
 }

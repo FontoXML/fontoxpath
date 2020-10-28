@@ -27,6 +27,7 @@ import {
 } from './parsing/compiledExpressionCache';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import parseExpression from './parsing/parseExpression';
+import { Profiler, profiler, XPathPerformanceMeasurement } from './performance';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
@@ -41,7 +42,6 @@ import {
 	ProcessingInstruction,
 	Text,
 } from './types/Types';
-import { profiler, XPathPerformanceMeasurement } from './performance';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
@@ -174,6 +174,7 @@ export {
 	registerCustomXPathFunction,
 	registerXQueryModule,
 	parseScript,
+	Profiler,
 	profiler,
 	XPathPerformanceMeasurement,
 };
