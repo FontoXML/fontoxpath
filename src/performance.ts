@@ -104,7 +104,7 @@ export const profiler: Profiler = {
 					const xpath = measurement.name.substring('XPath: '.length);
 					if (summedMeasurements.has(xpath)) {
 						const summedMeasurement = summedMeasurements.get(xpath);
-						summedMeasurement.times++;
+						summedMeasurement.times += 1;
 						summedMeasurement.totalDuration += measurement.duration;
 					} else {
 						summedMeasurements.set(xpath, {
@@ -148,8 +148,8 @@ export const profiler: Profiler = {
 };
 
 let xpathDepth = 0;
-function buildKey(xpath) {
-	return `xpath${xpathDepth === 0 ? '' : '@' + xpathDepth}`;
+function buildKey(xpath: string) {
+	return `${xpath}${xpathDepth === 0 ? '' : '@' + xpathDepth}`;
 }
 export function markXPathStart(xpath: string) {
 	if (!profilingEnabled) {
@@ -163,8 +163,8 @@ export function markXPathEnd(xpath: string) {
 		return;
 	}
 	// Replace the mark with a measure of the time spent
+	xpathDepth--;
 	const xpathPerfEntry = buildKey(xpath);
 	performance.measure(`XPath: ${xpath}`, xpathPerfEntry, undefined);
-	xpathDepth--;
-	performance.clearMarks(xpath);
+	performance.clearMarks(xpathPerfEntry);
 }
