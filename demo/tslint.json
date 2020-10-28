@@ -1,6 +1,30 @@
 {
-	"extends": ["../tslint.json"],
+	"defaultSeverity": "warning",
+	"extends": ["tslint:latest", "tslint-config-prettier"],
 	"rules": {
+		"array-type": [true, "array"],
+		"class-name": true,
+		"comment-format": [true, "check-space"],
+		"interface-name": true,
+		"interface-over-type-literal": false,
+		"match-default-export-name": true,
+		"member-ordering": [
+			true,
+			{
+				"alphabetize": true,
+				"order": "fields-first"
+			}
+		],
+		"no-bitwise": false,
+		"no-string-literal": false,
+		"no-unnecessary-qualifier": true,
+		"no-unnecessary-type-assertion": true,
+		"no-unused-expression": true,
+		"no-var-keyword": true,
+		"prefer-for-of": false,
+		"semicolon": [true, "always", "ignore-bound-class-methods"],
+		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+		"ordered-imports": true,
 		"no-console": false
 	}
 }
