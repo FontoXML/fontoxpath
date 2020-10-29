@@ -24,6 +24,7 @@
 		"prefer-for-of": false,
 		"semicolon": [true, "always", "ignore-bound-class-methods"],
 		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
-		"ordered-imports": true
+		"ordered-imports": true,
+		"no-implicit-dependencies": [true, "dev"]
 	}
 }
