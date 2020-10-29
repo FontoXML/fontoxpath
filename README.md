@@ -134,6 +134,32 @@ Error: FORG0003: The argument passed to fn:zero-or-one contained more than one i
 
 Besides errors, the `fn:trace` function can be used to output information to the developer console.
 
+### Performance
+
+FontoXPath can use the Performance API to provide some insight in the speed of XPaths. To use it,
+first give FontoXPath an implementation of the Performance interface:
+
+```js
+import {profiler} from "fontoxpath";
+
+profiler.setPerformanceImplementation(window.performance); // or global.performance or self.performance, depending on you surroundings
+
+// And start profiling all XPath / XQuery usage
+
+profiler.startProfiling();
+```
+
+At some point, you may want to get a summary of all evaluated XPaths:
+
+```js
+const summary = profiler.getPerformanceSummary();
+```
+
+This summary contains an array of XPaths, their execution times, their total runtime and their
+average runtime. Starting a performance profile will also output measurements on the timeline of the
+performance profiler of the browser.
+
+
 ### Modifying XML
 
 To modify XML you can use [XQuery Update Facility 3.0](https://www.w3.org/TR/xquery-update-30/) as
@@ -182,6 +208,34 @@ evaluateUpdatingExpression('replace node /xml with <foo/>', documentNode)
 		// Outputs: "<foo/>"
 	});
 ```
+
+An example of using XQUF with XQuery modules:
+
+```js
+registerXQueryModule(`
+module namespace my-custom-namespace = "my-custom-uri";
+(:~
+	Insert attribute somewhere
+	~:)
+declare %public %updating function my-custom-namespace:do-something ($ele as element()) as xs:boolean {
+	if ($ele/@done) then false() else
+	(insert node
+	attribute done {"true"}
+	into $ele, true())
+};
+`)
+// At some point:
+const contextNode = null;
+const pendingUpdatesAndXdmValue = evaluateUpdatingExpressionSync('ns:do-something(.)', contextNode, null, null, {moduleImports: {'ns': 'my-custom-uri'}})
+
+console.log(pendingUpdatesAndXdmValue.xdmValue); // this is true or false, see function
+
+executePendingUpdateList(pendingUpdatesAndXdmValue.pendingUpdateList, null, null, null);
+
+// At this point the context node will have its attribute set
+
+```
+
 
 ### Global functions
 
