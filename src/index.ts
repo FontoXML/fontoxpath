@@ -27,6 +27,7 @@ import {
 } from './parsing/compiledExpressionCache';
 import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import parseExpression from './parsing/parseExpression';
+import { Profiler, profiler, XPathPerformanceMeasurement } from './performance';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
@@ -127,6 +128,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['registerXQueryModule'] = registerXQueryModule;
 	fontoxpathGlobal['registerCustomXPathFunction'] = registerCustomXPathFunction;
 	fontoxpathGlobal['parseScript'] = parseScript;
+	fontoxpathGlobal['profiler'] = profiler;
 }
 
 export {
@@ -172,4 +174,7 @@ export {
 	registerCustomXPathFunction,
 	registerXQueryModule,
 	parseScript,
+	Profiler,
+	profiler,
+	XPathPerformanceMeasurement,
 };

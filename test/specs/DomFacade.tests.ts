@@ -1,11 +1,10 @@
 import * as chai from 'chai';
-import * as sinon from 'sinon';
-import * as slimdom from 'slimdom';
-
+import { domFacade as adaptingDomFacade } from 'fontoxpath';
 import { AttributeNodePointer } from 'fontoxpath/domClone/Pointer';
 import DomFacade from 'fontoxpath/domFacade/DomFacade';
+import * as sinon from 'sinon';
+import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import { domFacade as adaptingDomFacade } from '../../src';
 
 describe('DomFacade', () => {
 	let documentNode: slimdom.Document;

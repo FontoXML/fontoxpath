@@ -168,8 +168,8 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 	for (const outputFile of outputFiles) {
 		const expectedString = getFile(path.join('ExpectedTestResults', outputFile.file));
 
-		let xdmValue;
-		function runQuery(returnType) {
+		let xdmValue: Node;
+		const runQuery = (returnType: number) => {
 			const it = evaluateUpdatingExpressionSync(args[0], args[1], args[2], args[3], {
 				...args[4],
 				returnType,
@@ -190,7 +190,7 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 			}
 
 			return xdmValue;
-		}
+		};
 
 		switch (outputFile.compare) {
 			case 'XML': {
@@ -226,7 +226,7 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 	}
 }
 
-async function runTestCase(testName, testCase) {
+async function runTestCase(testName: string, testCase: Node) {
 	const states = evaluateXPathToAsyncIterator(
 		`declare function local:parse-input($state as element())
 	{
@@ -272,7 +272,7 @@ async function runTestCase(testName, testCase) {
 		const state = entry.value;
 		const query = getFile(path.join('Queries', 'XQuery', state.query));
 		const variables = {};
-		state['input-files'].forEach((inputFile) => {
+		state['input-files'].forEach((inputFile: { file: string; variable: string }) => {
 			const xmlDoc =
 				loadedInputFiles[inputFile.file] ||
 				(loadedInputFiles[inputFile.file] = parser.parseFromString(

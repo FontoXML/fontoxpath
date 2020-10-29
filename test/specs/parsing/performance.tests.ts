@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateXPathToBoolean, evaluateXPathToNumber } from 'fontoxpath';
+import { evaluateXPathToBoolean, profiler, registerCustomXPathFunction } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
 function timeXPath(xpath, document) {
@@ -66,4 +66,116 @@ function runTests(document) {
 
 describe('performance of descendant axis', () => {
 	describe('in slimdom', () => runTests(new slimdom.Document()));
+});
+
+describe('measuring performance', () => {
+	let now;
+	before(() => {
+		registerCustomXPathFunction(
+			'perftest:syncsleep',
+			['item()'],
+			'item()?',
+			(_, shouldRecurse) => {
+				now++;
+				if (shouldRecurse) {
+					const toReturn = evaluateXPathToBoolean(
+						'perftest:syncsleep($shouldRecurse)',
+						null,
+						null,
+						{
+							shouldRecurse: !shouldRecurse,
+						}
+					);
+					now++;
+					return toReturn;
+				}
+				return shouldRecurse;
+			}
+		);
+	});
+	beforeEach(() => {
+		now = 0;
+		const marks = new Map<string, PerformanceEntry>();
+		const measures = new Set<PerformanceEntry>();
+		const perfImplementationStub: Performance = ({
+			getEntriesByType(_typeString: string) {
+				return Array.from(measures.values());
+			},
+			mark(key: string) {
+				marks.set(key, {
+					name: key,
+					startTime: now,
+					entryType: 'mark',
+					duration: 0,
+					toJSON: () => '',
+				});
+			},
+			clearMarks(key: string) {
+				if (key === undefined) {
+					marks.clear();
+				}
+				marks.delete(key);
+			},
+			measure(newKey: string, startMark: string) {
+				const startTime = marks.get(startMark).startTime;
+				measures.add({
+					name: newKey,
+					startTime,
+					entryType: 'measure',
+					duration: now - startTime,
+					toJSON: () => '',
+				});
+			},
+		} as unknown) as Performance;
+		profiler.setPerformanceImplementation(perfImplementationStub);
+	});
+
+	after(() => {
+		profiler.stopProfiling();
+	});
+	it('correctly measures xpaths', () => {
+		profiler.startProfiling();
+		chai.assert.isFalse(evaluateXPathToBoolean('perftest:syncsleep(false())'));
+		profiler.stopProfiling();
+		const summ = profiler.getPerformanceSummary();
+
+		chai.assert.equal(summ.length, 1, 'length');
+		chai.assert.equal(summ[0].xpath, 'perftest:syncsleep(false())', 'name of xpath');
+		chai.assert.equal(summ[0].times, 1, 'times executed');
+		chai.assert.equal(summ[0].average, 1, 'average time taken');
+		chai.assert.equal(summ[0].totalDuration, 1, 'total time taken');
+	});
+
+	it('correctly measures adjacent xpaths', () => {
+		profiler.startProfiling();
+		chai.assert.isFalse(evaluateXPathToBoolean('perftest:syncsleep(false())'));
+		chai.assert.isFalse(evaluateXPathToBoolean('perftest:syncsleep(false())'));
+		chai.assert.isFalse(evaluateXPathToBoolean('perftest:syncsleep(false())'));
+		chai.assert.isFalse(evaluateXPathToBoolean('perftest:syncsleep(false())'));
+		profiler.stopProfiling();
+		const summ = profiler.getPerformanceSummary();
+
+		chai.assert.equal(summ.length, 1, 'length');
+		chai.assert.equal(summ[0].xpath, 'perftest:syncsleep(false())', 'name of xpath');
+		chai.assert.equal(summ[0].times, 4, 'times executed');
+		chai.assert.equal(summ[0].average, 1, 'average time taken');
+		chai.assert.equal(summ[0].totalDuration, 4, 'total time taken');
+	});
+
+	it('correctly measures nested xpaths', () => {
+		profiler.startProfiling();
+		chai.assert.isFalse(
+			evaluateXPathToBoolean('perftest:syncsleep($shouldRecurse)', null, null, {
+				shouldRecurse: true,
+			})
+		);
+		profiler.stopProfiling();
+		const summ = profiler.getPerformanceSummary();
+
+		chai.assert.equal(summ.length, 1, 'length');
+		chai.assert.equal(summ[0].xpath, 'perftest:syncsleep($shouldRecurse)', 'name of xpath');
+		chai.assert.equal(summ[0].times, 2, 'times executed');
+		chai.assert.equal(summ[0].average, 2, 'average time taken. outer takes 2, inner 1');
+		chai.assert.equal(summ[0].totalDuration, 4, 'total time taken. outer takes 2, inner 1');
+	});
 });
