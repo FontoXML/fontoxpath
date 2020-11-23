@@ -165,6 +165,6 @@ export function markXPathEnd(xpath: string) {
 	// Replace the mark with a measure of the time spent
 	xpathDepth--;
 	const xpathPerfEntry = buildKey(xpath);
-	performance.measure(`XPath: ${xpath}`, xpathPerfEntry, undefined);
+	performance.measure(`XPath: ${xpath}`, xpathPerfEntry);
 	performance.clearMarks(xpathPerfEntry);
 }
