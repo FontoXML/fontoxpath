@@ -110,6 +110,9 @@ describe('measuring performance', () => {
 					toJSON: () => '',
 				});
 			},
+			clearMeasures() {
+				measures.clear();
+			},
 			clearMarks(key: string) {
 				if (key === undefined) {
 					marks.clear();
@@ -144,6 +147,29 @@ describe('measuring performance', () => {
 		chai.assert.equal(summ[0].times, 1, 'times executed');
 		chai.assert.equal(summ[0].average, 1, 'average time taken');
 		chai.assert.equal(summ[0].totalDuration, 1, 'total time taken');
+	});
+
+	it('correctly measures xpaths after a stop/start cycle', () => {
+		profiler.startProfiling();
+		chai.assert.isFalse(evaluateXPathToBoolean('perftest:syncsleep(false())'));
+		profiler.stopProfiling();
+		const summ = profiler.getPerformanceSummary();
+
+		chai.assert.equal(summ.length, 1, 'length');
+		chai.assert.equal(summ[0].xpath, 'perftest:syncsleep(false())', 'name of xpath');
+		chai.assert.equal(summ[0].times, 1, 'times executed');
+		chai.assert.equal(summ[0].average, 1, 'average time taken');
+		chai.assert.equal(summ[0].totalDuration, 1, 'total time taken');
+
+		profiler.startProfiling();
+		chai.assert.isFalse(evaluateXPathToBoolean('perftest:syncsleep(false())'));
+		profiler.stopProfiling();
+		const summ2 = profiler.getPerformanceSummary();
+		chai.assert.equal(summ2.length, 1, 'length');
+		chai.assert.equal(summ2[0].xpath, 'perftest:syncsleep(false())', 'name of xpath');
+		chai.assert.equal(summ2[0].times, 1, 'times executed');
+		chai.assert.equal(summ2[0].average, 1, 'average time taken');
+		chai.assert.equal(summ2[0].totalDuration, 1, 'total time taken');
 	});
 
 	it('correctly measures adjacent xpaths', () => {

@@ -139,6 +139,7 @@ export const profiler: Profiler = {
 			);
 		}
 		performance.clearMarks();
+		performance.clearMeasures();
 		profilingEnabled = true;
 	},
 
