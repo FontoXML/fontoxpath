@@ -76,8 +76,6 @@ d1e41590,Parse error
 d1e42207,Parse error
 d1e42362,Parser related error, TypeError: JsonML element should be an array or string
 d1e78807b,XQuery script could not be found
-XMark-All,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-XMark-Q19,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 array-filter-001,XQuery script could not be found
 array-filter-002,XQuery script could not be found
 array-filter-003,XQuery script could not be found
@@ -1099,7 +1097,7 @@ XQST0046_02,result was not equal
 XQST0046_09,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 XQST0046_10,result was not equal
 XQST0046_11,result was not equal
-XQST0046_12,Parse error
+XQST0046_12,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 XQST0047,result was not equal
 XQST0057,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 XQST0059_1,result was not equal
@@ -1107,7 +1105,7 @@ XQST0059_2,result was not equal
 XQST0059_6,result was not equal
 XQST0068,Expected XML could not be parsed
 XQST0069,result was not equal
-XQST0076,Parse error
+XQST0076,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 XQST0079,Parse error
 XQST0088_2,result was not equal
 XQST0125_1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
@@ -1674,14 +1672,14 @@ emptyorderdecl-19,result was not equal
 emptyorderdecl-2,result was not equal
 emptyorderdecl-20,result was not equal
 emptyorderdecl-21,result was not equal
-emptyorderdecl-22,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-emptyorderdecl-23,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-emptyorderdecl-24,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-emptyorderdecl-25,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-emptyorderdecl-26,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-emptyorderdecl-27,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-emptyorderdecl-28,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-emptyorderdecl-29,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+emptyorderdecl-22,result was not equal
+emptyorderdecl-23,result was not equal
+emptyorderdecl-24,result was not equal
+emptyorderdecl-25,result was not equal
+emptyorderdecl-26,result was not equal
+emptyorderdecl-27,result was not equal
+emptyorderdecl-28,result was not equal
+emptyorderdecl-29,result was not equal
 emptyorderdecl-3,result was not equal
 emptyorderdecl-4,result was not equal
 emptyorderdecl-5,result was not equal
@@ -1808,7 +1806,6 @@ ForExprType071,result was not equal
 ForExprType072,result was not equal
 ForExprType073,result was not equal
 K2-ForExprWith-1,result was not equal
-K2-ForExprWithout-10,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K2-ForExprWithout-8,result was not equal
 FunctionCall-003,result was not equal
 FunctionCall-005,result was not equal
@@ -1938,20 +1935,16 @@ Serialization-034,Parser related error, TypeError: JsonML element should be an a
 Serialization-035,Parser related error, TypeError: JsonML element should be an array or string
 Serialization-036,Parser related error, TypeError: JsonML element should be an array or string
 Serialization-037,Parser related error, TypeError: JsonML element should be an array or string
-K2-OrderbyExprWithout-1,Parse error
-K2-OrderbyExprWithout-2,Parse error
-K2-OrderbyExprWithout-3,Parse error
-K2-OrderbyExprWithout-46,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-K2-OrderbyExprWithout-47,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-K2-OrderbyExprWithout-48,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-K2-OrderbyExprWithout-49,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-orderBy60,Parse error
-orderBy61,Parse error
-orderBy62,Parse error
-orderBy64,Parse error
-orderBy65,Parse error
+K2-OrderbyExprWithout-1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K2-OrderbyExprWithout-2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+K2-OrderbyExprWithout-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+orderBy60,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+orderBy61,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+orderBy62,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+orderBy64,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+orderBy65,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 orderBy66,Parse error
-orderbylocal-60,Parse error
+orderbylocal-60,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 orderDecl-17,Parse error
 orderDecl-18,Parse error
 Parenexpr-20,result was not equal
@@ -2302,10 +2295,10 @@ extvardef-016b,Parser related error, TypeError: JsonML element should be an arra
 K-VersionProlog-5-v3,Parser related error, TypeError: JsonML element should be an array or string
 K2-VersionProlog-3-v4,result was not equal
 K2-VersionProlog-6,result was not equal
-prolog-version-6-v3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-prolog-version-6-v31,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-prolog-version-7-v3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-prolog-version-7-v31,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+prolog-version-6-v3,result was not equal
+prolog-version-6-v31,result was not equal
+prolog-version-7-v3,result was not equal
+prolog-version-7-v31,result was not equal
 version_declaration-005,Parser related error, TypeError: JsonML element should be an array or string
 version_declaration-021,result was not equal
 version_declaration-023-v3,result was not equal

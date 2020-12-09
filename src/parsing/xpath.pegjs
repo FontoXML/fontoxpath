@@ -499,7 +499,7 @@ OrderSpec
 OrderModifier
  = kind:("ascending" / "descending")? _
      empty:("empty" _ emptyValue:("greatest" {return "empty greatest"}/ "least" {return "empty least"}) { return emptyValue; })? _
-     collation:("collation" URILiteral)?
+     collation:("collation" _ URILiteral)?
    {
      if (!kind && ! empty && !collation) {
         return null;
