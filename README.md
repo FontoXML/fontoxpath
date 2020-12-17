@@ -351,6 +351,12 @@ The following features are unavailable at this moment, but will be implemented a
 For all available features, see the unit tests, or just try it out on the [Demo
 page](https://xpath.playground.fontoxml.com).
 
+## Extensions to the spec
+
+FontoXPath implements a single function that is public API: `fontoxpath:version() as xs:string`. It
+resides in the 'http://fontoxml.com/fontoxpath' namespace. Call it to check what version of
+FontoXPath you are running.
+
 ## Compatibility
 
 This engine is pretty DOM-agnostic, it has a good track record with the browser DOM implementations
