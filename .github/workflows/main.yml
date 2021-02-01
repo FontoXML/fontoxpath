@@ -1,0 +1,30 @@
+name: CI
+on:
+    - push
+    - pull_request
+jobs:
+    test:
+        name: Tests on node.js ${{ matrix.node-version }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                node-version:
+                    - 15
+                    - 14
+                    - 12
+        steps:
+            - uses: actions/checkout@v2
+            - uses: ./.github/workflows/download-qt3
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - run: npm install
+            - run: npm run lint;
+            - run: npm run ci-test -- --reporter dot;
+            - run: npm run ci-qt3tests -- --reporter dot;
+            - run: npm run integrationtests -- --dist --reporter dot;
+            - run: npm run qt3tests -- --dist --reporter dot;
+            - run: npm run ci-qt3testsxqueryx -- --reporter dot;
+            - run: npm run ci-xqutstests -- --reporter dot;
+            - run: npm run ci-xqutstestsxqueryx -- --reporter dot;
