@@ -107,6 +107,29 @@ console.log(evaluateXPathToNumber('pi()', documentNode, undefined, {}, { languag
 // Outputs: Math.PI (3.14...)
 ```
 
+### Creating typed values
+
+When having to pass JavaScript values as variables to an `evaluateXPath` call you can create a typed
+value of it to ensure it will be used as that specific type.
+
+If you do not do this and instead pass a plain JavaScript value as variable it will get converted
+automatically into a type which fits but you will not be able to control the exact type.
+
+```js
+const integerValueFactory = createTypedValueFactory('xs:integer');
+const integerValue = integerValueFactory(123, domFacade);
+
+// Will return true as we specified it to be an xs:integer
+evaluateXPathToBoolean('$value instance of xs:integer', null, null, {
+	value: typedValue,
+}),
+
+// Will return false as JavaScript numbers are by default converted to an xs:double
+evaluateXPathToBoolean('$value instance of xs:integer', null, null, {
+	value: 123,
+}),
+```
+
 ### Debugging
 
 FontoXPath can output a basic trace for an error if the `debug` option is set to `true`. This is

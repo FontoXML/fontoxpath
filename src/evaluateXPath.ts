@@ -9,6 +9,7 @@ import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import { markXPathEnd, markXPathStart } from './performance';
+import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Node } from './types/Types';
 
 /**
@@ -148,7 +149,9 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	selector: string,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
-	variables?: { [s: string]: any } | null,
+	variables?: {
+		[s: string]: TypedExternalValue | UntypedExternalValue;
+	} | null,
 	returnType?: TReturnType,
 	options?: Options | null
 ): IReturnTypes<TNode>[TReturnType] => {

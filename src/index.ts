@@ -31,6 +31,13 @@ import { Profiler, profiler, XPathPerformanceMeasurement } from './performance';
 import precompileXPath from './precompileXPath';
 import registerCustomXPathFunction from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
+// We do want to deviate from the actual name which is used internally as we do not want to expose
+// the types which it uses in the public API
+// tslint:disable-next-line: match-default-export-name
+import internalCreateTypedValueFactory, {
+	UntypedExternalValue,
+	ValidValue,
+} from './types/createTypedValueFactory';
 import {
 	Attr,
 	CDATASection,
@@ -129,7 +136,26 @@ if (typeof fontoxpathGlobal !== 'undefined') {
 	fontoxpathGlobal['registerCustomXPathFunction'] = registerCustomXPathFunction;
 	fontoxpathGlobal['parseScript'] = parseScript;
 	fontoxpathGlobal['profiler'] = profiler;
+	fontoxpathGlobal['createTypedValueFactory'] = internalCreateTypedValueFactory;
 }
+
+/**
+ * Creates a factory to convert values into a specific type.
+ *
+ * @param type - The type into which to convert the values.
+ *
+ * @public
+ */
+type ExternalTypedValueFactory = (
+	type: string
+) => (value: UntypedExternalValue, domFacade: IDomFacade) => unknown;
+
+/**
+ * Creates a factory to convert values into a specific type.
+ *
+ * @public
+ */
+export const createTypedValueFactory = internalCreateTypedValueFactory as ExternalTypedValueFactory;
 
 export {
 	Attr,
@@ -177,4 +203,7 @@ export {
 	Profiler,
 	profiler,
 	XPathPerformanceMeasurement,
+	ExternalTypedValueFactory,
+	ValidValue,
+	UntypedExternalValue as ValidValueSequence,
 };

@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import {
+	createTypedValueFactory,
 	evaluateXPath,
 	evaluateXPathToBoolean,
 	evaluateXPathToFirstNode,
@@ -19,6 +20,7 @@ describe('registerCustomXPathFunction', () => {
 	}
 
 	let documentNode;
+	const stringValueFactory = createTypedValueFactory('xs:string?');
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
 
@@ -72,6 +74,24 @@ describe('registerCustomXPathFunction', () => {
 				return stringArray.map((stringValue) => {
 					return stringValue + '-test';
 				});
+			}
+		);
+
+		registerCustomXPathFunction(
+			{ namespaceURI: 'test', localName: 'custom-function5' },
+			['xs:string?'],
+			'xs:string?',
+			(dynamicContext, stringValue) => {
+				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
+				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
+
+				if (stringValue === 'returnNull') {
+					return null;
+				} else if (stringValue === null) {
+					return 'nullIsPassed';
+				} else {
+					return stringValueFactory('test', dynamicContext.domFacade);
+				}
 			}
 		);
 
@@ -282,6 +302,58 @@ describe('registerCustomXPathFunction', () => {
 				namespaceResolver: identityNamespaceResolver,
 			}),
 			[]
+		);
+	});
+
+	it('the registered function can return a null value', () => {
+		chai.assert.equal(
+			evaluateXPathToString('test:custom-function5("returnNull")', documentNode, null, null, {
+				namespaceResolver: identityNamespaceResolver,
+			}),
+			''
+		);
+	});
+
+	it('the registered function can return a value constructed with a typeValueConstructor', () => {
+		chai.assert.equal(
+			evaluateXPathToString('test:custom-function5("abc")', documentNode, null, null, {
+				namespaceResolver: identityNamespaceResolver,
+			}),
+			'test'
+		);
+	});
+
+	it('the registered function accepts a null value', () => {
+		chai.assert.equal(
+			evaluateXPathToString(
+				'test:custom-function5($str)',
+				documentNode,
+				null,
+				{
+					str: null,
+				},
+				{
+					namespaceResolver: identityNamespaceResolver,
+				}
+			),
+			'nullIsPassed'
+		);
+	});
+
+	it('the registered function accepts a value constructed with a typeValueConstructor', () => {
+		chai.assert.equal(
+			evaluateXPathToString(
+				'test:custom-function5($str)',
+				documentNode,
+				null,
+				{
+					str: stringValueFactory('returnNull', documentNode),
+				},
+				{
+					namespaceResolver: identityNamespaceResolver,
+				}
+			),
+			''
 		);
 	});
 

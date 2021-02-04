@@ -1,7 +1,8 @@
 import IDomFacade from './domFacade/IDomFacade';
-import adaptJavaScriptValueToXPathValue from './expressions/adaptJavaScriptValueToXPathValue';
+import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptValueToXPathValue';
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
+import sequenceFactory from './expressions/dataTypes/sequenceFactory';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -12,6 +13,7 @@ import {
 import { IterationHint } from './expressions/util/iterators';
 import { errXQST0060 } from './expressions/xquery/XQueryErrors';
 import transformXPathItemToJavascriptObject from './transformXPathItemToJavascriptObject';
+import { IS_XPATH_VALUE_SYMBOL, TypedExternalValue } from './types/createTypedValueFactory';
 
 type DynamicContextAdapter = {
 	currentContext: any;
@@ -129,7 +131,15 @@ export default function registerCustomXPathFunction(
 		};
 
 		const jsResult = callback.apply(undefined, [dynamicContextAdapter, ...newArguments]);
-		const xpathResult = adaptJavaScriptValueToXPathValue(
+
+		if (jsResult && typeof jsResult === 'object' && IS_XPATH_VALUE_SYMBOL in jsResult) {
+			// If this symbol is present, the value has already undergone type conversion.
+			const castedObject = jsResult as TypedExternalValue;
+			return sequenceFactory.create(castedObject.convertedValue);
+		}
+
+		// The value is not converted yet. Do it just in time.
+		const xpathResult = adaptJavaScriptValueToSequence(
 			executionParameters.domFacade,
 			jsResult,
 			returnType

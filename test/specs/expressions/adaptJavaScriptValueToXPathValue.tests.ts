@@ -1,13 +1,13 @@
 import * as chai from 'chai';
 import DomFacade from 'fontoxpath/domFacade/DomFacade';
-import adaptJavaScriptValueToXPathValue from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
+import { adaptJavaScriptValueToSequence } from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import * as slimdom from 'slimdom';
 import { domFacade as adaptingDomFacade } from '../../../src';
 
-describe('adaptJavaScriptValueToXPathValue', () => {
+describe('adaptJavaScriptValueToSequence', () => {
 	it('turns numbers into integers', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, 1, 'xs:integer');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, 1, 'xs:integer');
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === 'xs:integer', 'is an integer');
 		chai.assert.equal(xpathSequence.first().value, 1, 'is 1');
@@ -15,13 +15,13 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 
 	it('does not support unknown types', () => {
 		chai.assert.throws(
-			() => adaptJavaScriptValueToXPathValue(null, 1, 'fonto:theBestType'),
+			() => adaptJavaScriptValueToSequence(null, 1, 'fonto:theBestType'),
 			' can not be adapted to equivalent XPath values'
 		);
 	});
 
 	it('turns numbers into doubles', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, 1.0, 'xs:double');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, 'xs:double');
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === 'xs:double', 'is a double');
 		chai.assert.equal(xpathSequence.first().value, 1.0, 'is 1.0');
@@ -29,41 +29,41 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 
 	it('turns nodes into nodes', () => {
 		const domFacade = new DomFacade(adaptingDomFacade);
-		const xpathSequence = adaptJavaScriptValueToXPathValue(domFacade, new slimdom.Document());
+		const xpathSequence = adaptJavaScriptValueToSequence(domFacade, new slimdom.Document());
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === 'document()', 'is a document');
 	});
 
 	it('turns numbers into decimals', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, 1.0, 'xs:decimal');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, 'xs:decimal');
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === 'xs:decimal', 'is a decimal');
 		chai.assert.equal(xpathSequence.first().value, 1.0, 'is 1.0');
 	});
 
 	it('turns numbers into floats', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, 1.0, 'xs:float');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, 'xs:float');
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === 'xs:float', 'is a float');
 		chai.assert.equal(xpathSequence.first().value, 1.0, 'is 1.0');
 	});
 
 	it('turns booleans into booleans', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, false, 'xs:boolean');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, false, 'xs:boolean');
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === 'xs:boolean', 'is a boolean');
 		chai.assert.equal(xpathSequence.first().value, false, 'is false');
 	});
 
 	it('turns strings into xs:string?', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, 'a', 'xs:string?');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, 'a', 'xs:string?');
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type === 'xs:string', 'is a string');
 		chai.assert.equal(xpathSequence.first().value, 'a', 'is the same string');
 	});
 
 	it('turns strings into xs:string+', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, ['a', 'b', 'c'], 'xs:string+');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, ['a', 'b', 'c'], 'xs:string+');
 		chai.assert.equal(xpathSequence.tryGetLength().value, 3, 'is a sequence with length 3');
 		const values = xpathSequence.getAllValues();
 		chai.assert(xpathSequence.first().type === 'xs:string', 'first is a string');
@@ -75,7 +75,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns strings into xs:string*', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, ['a', 'b', 'c'], 'xs:string*');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, ['a', 'b', 'c'], 'xs:string*');
 		chai.assert.equal(xpathSequence.tryGetLength().value, 3, 'is a sequence with length 3');
 		const values = xpathSequence.getAllValues();
 		chai.assert(xpathSequence.first().type === 'xs:string', 'first is a string');
@@ -87,12 +87,12 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns null into string? (empty sequence)', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(null, null, 'xs:string?');
+		const xpathSequence = adaptJavaScriptValueToSequence(null, null, 'xs:string?');
 		chai.assert(xpathSequence.isEmpty(), 'is a singleton sequence');
 	});
 
 	it('turns date into xs:date', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(
+		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			'xs:date'
@@ -107,7 +107,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns date into xs:time', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(
+		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			'xs:time'
@@ -122,7 +122,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns date into xs:dateTime', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(
+		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			'xs:dateTime'
@@ -137,7 +137,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns date into xs:gYearMonth', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(
+		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			'xs:gYearMonth'
@@ -152,7 +152,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns date into xs:gYear', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(
+		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			'xs:gYear'
@@ -163,7 +163,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns date into xs:gMonthDay', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(
+		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			'xs:gMonthDay'
@@ -178,7 +178,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns date into xs:gMonth', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(
+		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			'xs:gMonth'
@@ -189,7 +189,7 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 	});
 
 	it('turns date into xs:gDay', () => {
-		const xpathSequence = adaptJavaScriptValueToXPathValue(
+		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
 			'xs:gDay'
@@ -205,39 +205,39 @@ describe('adaptJavaScriptValueToXPathValue', () => {
 
 	describe('converting to item()', () => {
 		it('can automatically convert numbers', () => {
-			const xpathSequence = adaptJavaScriptValueToXPathValue(null, 1.0, 'item()');
+			const xpathSequence = adaptJavaScriptValueToSequence(null, 1.0, 'item()');
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === 'xs:double', 'is a double');
 			chai.assert.equal(xpathSequence.first().value, 1.0, 'is 1.0');
 		});
 
 		it('can automatically convert strings', () => {
-			const xpathSequence = adaptJavaScriptValueToXPathValue(null, 'a', 'item()');
+			const xpathSequence = adaptJavaScriptValueToSequence(null, 'a', 'item()');
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === 'xs:string', 'is a string');
 			chai.assert.equal(xpathSequence.first().value, 'a', 'is "a"');
 		});
 
 		it('can automatically convert booleans', () => {
-			const xpathSequence = adaptJavaScriptValueToXPathValue(null, true, 'item()');
+			const xpathSequence = adaptJavaScriptValueToSequence(null, true, 'item()');
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === 'xs:boolean', 'is a boolean');
 			chai.assert.equal(xpathSequence.first().value, true, 'is true');
 		});
 
 		it('can automatically convert objects', () => {
-			const xpathSequence = adaptJavaScriptValueToXPathValue(null, {}, 'item()');
+			const xpathSequence = adaptJavaScriptValueToSequence(null, {}, 'item()');
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === 'map(*)', 'is a map');
 		});
 
 		it('can automatically convert null to the empty sequence', () => {
-			const xpathSequence = adaptJavaScriptValueToXPathValue(null, null);
+			const xpathSequence = adaptJavaScriptValueToSequence(null, null);
 			chai.assert(xpathSequence.isEmpty(), 'is the empty sequence');
 		});
 
 		it('can automatically convert arrays', () => {
-			const xpathSequence = adaptJavaScriptValueToXPathValue(null, [], 'item()');
+			const xpathSequence = adaptJavaScriptValueToSequence(null, [], 'item()');
 			chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 			chai.assert(xpathSequence.first().type === 'array(*)', 'is an array');
 		});

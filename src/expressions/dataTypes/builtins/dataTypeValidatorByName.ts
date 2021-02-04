@@ -1,6 +1,8 @@
 // Validators for all XML-schema built-in types.
 // Implemented by spec: http://www.w3.org/TR/xmlschema-2/
 
+import { ValueType } from '../Value';
+
 function isValidAnySimpleType(_value: string): boolean {
 	return true;
 }
@@ -156,7 +158,11 @@ function isValidDayTimeDuration(value: string): boolean {
 	return /^-?P([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9]+)?S)?)?$/.test(value);
 }
 
-export default {
+export function getValidatorForType(type: ValueType): (value: string) => boolean {
+	return dataTypeValidatorByName[type];
+}
+
+const dataTypeValidatorByName: { [s: string]: (value: string) => boolean } = {
 	'xs:anySimpleType': isValidAnySimpleType,
 	'xs:anyAtomicType': isValidAnyAtomicType,
 
@@ -195,3 +201,5 @@ export default {
 	'xs:yearMonthDuration': isValidYearMonthDuration,
 	'xs:dayTimeDuration': isValidDayTimeDuration,
 };
+
+export default dataTypeValidatorByName;
