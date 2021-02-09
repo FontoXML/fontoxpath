@@ -1,0 +1,11 @@
+runs:
+  using: "composite"
+  steps:
+    - run: mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+      shell: bash
+    - run: curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+      shell: bash
+    - run: curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+      shell: bash
+    - run: unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
+      shell: bash
