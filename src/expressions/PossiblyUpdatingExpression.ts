@@ -64,13 +64,13 @@ export function separateXDMValueFromUpdatingExpressionResult(
  * Base class for All XQuery expressions that _may_ be updating, such as FunctionCalls,
  * SequenceExpressions, etc.
  */
-export default abstract class PossiblyUpdatingExpression extends Expression {
+export default abstract class PossiblyUpdatingExpression extends UpdatingExpression {
 	constructor(
 		specificity: Specificity,
 		childExpressions: Expression[],
 		optimizationOptions: OptimizationOptions
 	) {
-		super(specificity, childExpressions, optimizationOptions, true);
+		super(specificity, childExpressions, optimizationOptions);
 
 		this.isUpdating = this._childExpressions.some(
 			(childExpression) => childExpression.isUpdating
