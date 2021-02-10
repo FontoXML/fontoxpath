@@ -8,9 +8,8 @@ import {
 	evaluateXPathToString,
 	registerXQueryModule,
 } from 'fontoxpath';
+import { Element, Node, XMLSerializer } from 'slimdom';
 import { slimdom } from 'slimdom-sax-parser';
-
-import { Node } from 'slimdom';
 import {
 	ALL_TESTS_QUERY,
 	getAllTestSets,
@@ -79,7 +78,7 @@ function createAsserter(baseUrl, assertNode, language) {
 			const errorCode = evaluateXPathToString('@code', assertNode);
 			return (
 				xpath: string,
-				contextNode: slimdom.Element,
+				contextNode: Element,
 				variablesInScope: object,
 				namespaceResolver: (str: string) => string
 			) =>
@@ -215,14 +214,14 @@ function createAsserter(baseUrl, assertNode, language) {
 					namespaceResolver,
 					nodesFactory,
 					language,
-				});
+				}) as Node[];
 				chai.assert(
 					evaluateXPathToBoolean('deep-equal($a, $b)', null, null, {
 						a: results,
 						b: Array.from(parsedFragment.childNodes),
 					}),
 					`Expected XPath ${xpath} to resolve to the given XML. Expected ${results
-						.map((result) => new slimdom.XMLSerializer().serializeToString(result))
+						.map((result) => new XMLSerializer().serializeToString(result))
 						.join(' ')} to equal ${
 						parsedFragment.nodeType === parsedFragment.DOCUMENT_FRAGMENT_NODE
 							? parsedFragment.childNodes

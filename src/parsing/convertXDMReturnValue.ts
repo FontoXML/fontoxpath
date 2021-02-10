@@ -124,9 +124,11 @@ export default function convertXDMReturnValue<
 			// over here: unravel pointers. if they point to actual nodes:return them. if they point
 			// to lightweights, really make them, if they point to clones, clone them etc
 
-			return realizeDom(first.value.value, executionParameters, false) as IReturnTypes<
-				TNode
-			>[TReturnType];
+			return realizeDom(
+				first.value.value,
+				executionParameters,
+				false
+			) as IReturnTypes<TNode>[TReturnType];
 		}
 
 		case ReturnType.NODES: {
