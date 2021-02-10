@@ -6,16 +6,13 @@ import {
 	Language,
 	parseScript,
 } from 'fontoxpath';
+import { Element, Text } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
 
 function removeInsignificantWhitespace(root) {
-	const nonSignificantWhitespace = evaluateXPathToNodes<slimdom.Node>(
-		'//*/text()',
-		root,
-		null,
-		null,
-		{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-	);
+	const nonSignificantWhitespace = evaluateXPathToNodes<Text>('//*/text()', root, null, null, {
+		language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+	});
 	for (const node of nonSignificantWhitespace) {
 		node.data = node.data.trim();
 		if (node.data.length === 0) {
@@ -38,7 +35,7 @@ export function buildTestCase(
 			throw new Error('XQuery script could not be found!');
 		}
 		xQuery = xQuery.replace(/\r/g, '');
-		let astElement: slimdom.Element;
+		let astElement: Element;
 		try {
 			astElement = parseScript(
 				xQuery,

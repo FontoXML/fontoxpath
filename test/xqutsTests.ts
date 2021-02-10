@@ -14,6 +14,7 @@ import * as path from 'path';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
+import { Node, Element } from 'slimdom';
 
 (global as any).atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
@@ -168,7 +169,7 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 	for (const outputFile of outputFiles) {
 		const expectedString = getFile(path.join('ExpectedTestResults', outputFile.file));
 
-		let xdmValue: Node;
+		let xdmValue: unknown;
 		const runQuery = (returnType: number) => {
 			const it = evaluateUpdatingExpressionSync(args[0], args[1], args[2], args[3], {
 				...args[4],
@@ -185,8 +186,8 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 					}
 				});
 			}
-			if (xdmValue.normalize) {
-				xdmValue.normalize();
+			if (typeof xdmValue === 'object' && 'normalize' in xdmValue) {
+				(xdmValue as Node).normalize();
 			}
 
 			return xdmValue;
@@ -194,7 +195,7 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 
 		switch (outputFile.compare) {
 			case 'XML': {
-				const actual = runQuery(evaluateXPath.FIRST_NODE_TYPE);
+				const actual = runQuery(evaluateXPath.FIRST_NODE_TYPE) as Node;
 				const expected =
 					actual.nodeType === actual.DOCUMENT_NODE
 						? parser.parseFromString(expectedString)
@@ -204,13 +205,13 @@ async function runAssertions(expectedErrors, outputFiles, args: ExpressionArgume
 				break;
 			}
 			case 'Fragment': {
-				const actualNodes = runQuery(evaluateXPath.NODES_TYPE);
+				const actualNodes = runQuery(evaluateXPath.NODES_TYPE) as Node[];
 
 				catchAssertion(() => assertFragment(actualNodes, expectedString));
 				break;
 			}
 			case 'Text': {
-				const actual = runQuery(evaluateXPath.STRING_TYPE);
+				const actual = runQuery(evaluateXPath.STRING_TYPE) as string;
 				const actualNodes = [new slimdom.Document().createTextNode(actual)];
 
 				catchAssertion(() => assertFragment(actualNodes, expectedString));
@@ -319,34 +320,29 @@ async function runTestCase(testName: string, testCase: Node) {
 }
 
 function buildTestCases(testGroup) {
-	(evaluateXPathToNodes('test-group | test-case', testGroup) as slimdom.Element[]).forEach(
-		(test) => {
-			switch (test.localName) {
-				case 'test-group': {
-					const groupName = evaluateXPathToString(
-						'(@name, string(GroupInfo/title), string(GroupInfo/description))[. != ""][1]',
-						test
-					);
-					describe(groupName, () => buildTestCases(test));
-					break;
-				}
-				case 'test-case': {
-					const testName = evaluateXPathToString(
-						'(@name, description)[. != ""][1]',
-						test
-					);
+	(evaluateXPathToNodes('test-group | test-case', testGroup) as Element[]).forEach((test) => {
+		switch (test.localName) {
+			case 'test-group': {
+				const groupName = evaluateXPathToString(
+					'(@name, string(GroupInfo/title), string(GroupInfo/description))[. != ""][1]',
+					test
+				);
+				describe(groupName, () => buildTestCases(test));
+				break;
+			}
+			case 'test-case': {
+				const testName = evaluateXPathToString('(@name, description)[. != ""][1]', test);
 
-					if (unrunnableTestCasesByName.includes(testName)) {
-						it.skip(testName);
-						return;
-					}
-
-					it(testName, async () => runTestCase(testName, test));
-					break;
+				if (unrunnableTestCasesByName.includes(testName)) {
+					it.skip(testName);
+					return;
 				}
+
+				it(testName, async () => runTestCase(testName, test));
+				break;
 			}
 		}
-	);
+	});
 }
 
 const catalog = parser.parseFromString(getFile('XQUTSCatalog.xml'));

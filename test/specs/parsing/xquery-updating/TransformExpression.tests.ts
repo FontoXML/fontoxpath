@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import { evaluateUpdatingExpression, evaluateXPath } from 'fontoxpath';
 import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 import DomBackedNodesFactory from 'fontoxpath/nodesFactory/DomBackedNodesFactory';
-import { Document } from 'slimdom';
+import { Document, Node, XMLSerializer } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import assertUpdateList from './assertUpdateList';
 
@@ -75,8 +75,8 @@ return ($a, replace node element with <replacement/>)
 	});
 
 	it('can be used in evaluateXPath', async () => {
-		const element = documentNode.appendChild(documentNode.createElement('element'));
-		const result = await evaluateXPath(
+		documentNode.appendChild(documentNode.createElement('element'));
+		const result = evaluateXPath(
 			`
 copy $a := element
 modify replace value of node $a with "content"
@@ -89,9 +89,9 @@ return ($a)
 			{
 				language: evaluateXPath.XQUERY_UPDATE_3_1_LANGUAGE,
 			}
-		);
+		) as Node[];
 		chai.assert.equal(result.length, 1);
-		const actualXml = new slimdom.XMLSerializer().serializeToString(result[0]);
+		const actualXml = new XMLSerializer().serializeToString(result[0]);
 		chai.assert.equal(actualXml, '<element>content</element>');
 	});
 
@@ -212,18 +212,17 @@ return ($a)
 		const a = documentNode.createElement('a');
 
 		// <xml><a/></xml>
-		const getChildNode = (node: slimdom.Node) =>
+		const getChildNode = (node: Node) =>
 			node === documentNode ? xml : node === xml ? a : null;
 		const myDomFacade: IDomFacade = {
 			getAllAttributes: () => [],
 			getAttribute: () => null,
-			getChildNodes: (node: slimdom.Node) => (getChildNode(node) ? [getChildNode(node)] : []),
+			getChildNodes: (node: Node) => (getChildNode(node) ? [getChildNode(node)] : []),
 			getData: () => '',
 			getFirstChild: getChildNode,
 			getLastChild: getChildNode,
 			getNextSibling: () => null,
-			getParentNode: (node: slimdom.Node) =>
-				node === a ? xml : node === xml ? documentNode : null,
+			getParentNode: (node: Node) => (node === a ? xml : node === xml ? documentNode : null),
 			getPreviousSibling: () => null,
 		};
 
