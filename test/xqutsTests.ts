@@ -15,7 +15,6 @@ import { Element, Node } from 'slimdom';
 import { slimdom, sync } from 'slimdom-sax-parser';
 import { getSkippedTests } from 'test-helpers/getSkippedTests';
 import testFs from 'test-helpers/testFs';
-import { Node, Element } from 'slimdom';
 
 (global as any).atob = function (b64Encoded) {
 	return new Buffer(b64Encoded, 'base64').toString('binary');
