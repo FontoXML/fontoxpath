@@ -327,7 +327,7 @@ export const replaceNode = (
 		targetNodeType === NODE_TYPES.COMMENT_NODE ||
 		targetNodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
 	) {
-		const followingPointer = domFacade.getNextSiblingPointer(target);
+		const followingPointer = domFacade.getNextSiblingPointer(target as ChildNodePointer);
 		const following = followingPointer ? followingPointer.node : null;
 		documentWriter.removeChild(parent.node as Document | Element, target.node);
 		replacement.forEach((newNode) => {

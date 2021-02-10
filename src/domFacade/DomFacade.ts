@@ -264,14 +264,14 @@ class DomFacade {
 	 * quickly determine the ancestry of a node that is not created nor cloned into another node.
 	 */
 	public getParentNode(
-		node: ConcreteChildNode,
+		node: ConcreteChildNode | ConcreteAttributeNode,
 		bucket: string | null = null
 	): ConcreteParentNode {
 		return this._domFacade['getParentNode'](node, bucket) as ConcreteParentNode;
 	}
 
 	public getParentNodePointer(
-		pointer: ChildNodePointer,
+		pointer: ChildNodePointer | AttributeNodePointer,
 		bucket: string | null = null
 	): ParentNodePointer {
 		const childNode = pointer.node;

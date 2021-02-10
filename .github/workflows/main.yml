@@ -19,12 +19,38 @@ jobs:
             - uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node-version }}
-            - run: npm install
-            - run: npm run lint;
-            - run: npm run ci-test -- --reporter dot;
-            - run: npm run ci-qt3tests -- --reporter dot;
-            - run: npm run integrationtests -- --dist --reporter dot;
-            - run: npm run qt3tests -- --dist --reporter dot;
-            - run: npm run ci-qt3testsxqueryx -- --reporter dot;
-            - run: npm run ci-xqutstests -- --reporter dot;
-            - run: npm run ci-xqutstestsxqueryx -- --reporter dot;
+            - name: Install dependencies
+              run: npm ci
+            - name: Linter
+              run: npm run lint;
+            - name: Unit tests agains source
+              run: npm run ci-test -- --reporter dot;
+            - name: QT3 tests against source
+              run: npm run ci-qt3tests -- --reporter dot;
+            - name: Unit tests agains bundle
+              run: npm run integrationtests -- --dist --reporter dot;
+            - name: QT3 tests against bundle
+              run: npm run qt3tests -- --dist --reporter dot;
+            - name: Parser tests
+              run: npm run ci-qt3testsxqueryx -- --reporter dot;
+            - name: Update Facility tests
+              run: npm run ci-xqutstests -- --reporter dot;
+            - name: Update Facility parser tests
+              run: npm run ci-xqutstestsxqueryx -- --reporter dot;
+            - name: Combine coverage
+              run: npm run coverage
+            - name: Coveralls Parallel
+              uses: coverallsapp/github-action@master
+              with:
+                github-token: ${{ secrets.github_token }}
+                flag-name: run-${{ matrix.test_number }}
+                parallel: true
+    finish:
+      needs: test
+      runs-on: ubuntu-latest
+      steps:
+        - name: Coveralls
+          uses: coverallsapp/github-action@master
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            parallel-finished: true

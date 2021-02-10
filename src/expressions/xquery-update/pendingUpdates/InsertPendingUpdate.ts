@@ -1,9 +1,13 @@
-import { ChildNodePointer, NodePointer } from '../../../domClone/Pointer';
+import { AttributeNodePointer, ChildNodePointer, NodePointer } from '../../../domClone/Pointer';
 import realizeDom from '../../../domClone/realizeDom';
 import ExecutionParameters from '../../../expressions/ExecutionParameters';
 import { IPendingUpdate } from '../IPendingUpdate';
 export class InsertPendingUpdate extends IPendingUpdate {
-	constructor(readonly target: NodePointer, readonly content: ChildNodePointer[], type: string) {
+	constructor(
+		readonly target: NodePointer,
+		readonly content: (ChildNodePointer | AttributeNodePointer)[],
+		type: string
+	) {
 		super(type);
 	}
 	public toTransferable(executionParameters: ExecutionParameters) {

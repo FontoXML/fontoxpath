@@ -6,7 +6,8 @@
 	],
 	"reporter": [
 		"text-summary",
-		"html"
+		"html",
+		"lcov"
 	],
 	"instrument": true,
 	"sourceMap": true,
