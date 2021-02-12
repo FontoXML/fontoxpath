@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateXPathToBoolean, evaluateXPathToNumbers } from 'fontoxpath';
+import { evaluateXPathToBoolean, evaluateXPathToNumbers, evaluateXPath } from 'fontoxpath';
 import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
@@ -86,5 +86,22 @@ return $index-of-node($perm, $nodes[2])), (2,5,7))
 			documentNode
 		);
 		chai.assert.deepEqual(result, true);
+	});
+
+	it('does not regard all nodes as the same', () => {
+		debugger;
+		chai.assert.throws(
+			() =>
+				evaluateXPath(
+					`let $key := <!-- comment --> return
+function ($key as item()*) as attribute() { $key }($key)`,
+					documentNode,
+					null,
+					null,
+					null,
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				),
+			'XPTY0004'
+		);
 	});
 });

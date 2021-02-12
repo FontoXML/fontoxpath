@@ -217,7 +217,7 @@ class InsertExpression extends UpdatingExpression {
 						}
 						if (
 							!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'document()')
+							!isSubTypeOf(tv.value.xdmValue[0].type, 'document-node()')
 						) {
 							throw errXUTY0005();
 						}

@@ -14,8 +14,9 @@ import StaticContext from '../StaticContext';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import { performFunctionConversion } from './argumentHelper';
 import FunctionDefinitionType from './FunctionDefinitionType';
+import { ValueType } from '../dataTypes/Value';
 
-function createValidNumericType(type: string, transformedValue: number) {
+function createValidNumericType(type: ValueType, transformedValue: number) {
 	if (isSubtypeOf(type, 'xs:integer')) {
 		return createAtomicValue(transformedValue, 'xs:integer');
 	}
@@ -135,7 +136,7 @@ function fnRound(
 			}
 
 			const originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(
-				function (type) {
+				function (type: ValueType) {
 					return isSubtypeOf(item.type, type);
 				}
 			);

@@ -1108,17 +1108,10 @@ XQST0069,result was not equal
 XQST0076,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 XQST0079,Parse error
 XQST0088_2,result was not equal
-XQST0125_1,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-XQST0125_2,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-function-item-12,result was not equal
-function-item-13,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-function-item-14,result was not equal
 function-item-15,result was not equal
-function-item-16,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-function-item-17,result was not equal
+function-item-16,result was not equal
 hof-012,result was not equal
 hof-013,result was not equal
-hof-026,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 hof-034,Parse error
 hof-035,Parse error
 hof-036,result was not equal
@@ -1131,11 +1124,8 @@ hof-048,result was not equal
 hof-049,result was not equal
 hof-053,Parse error
 hof-911,result was not equal
-inline-function-3,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-inline-function-4,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-inline-function-5,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-inline-function-6,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-inline-function-7,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
+inline-function-6,result was not equal
+inline-function-7,result was not equal
 inline-function-9,result was not equal
 xqhof1,Parse error
 xqhof12,result was not equal
@@ -1809,40 +1799,16 @@ K2-ForExprWith-1,result was not equal
 K2-ForExprWithout-8,result was not equal
 FunctionCall-003,result was not equal
 FunctionCall-005,result was not equal
-FunctionCall-006,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 FunctionCall-007,result was not equal
 FunctionCall-008,result was not equal
-FunctionCall-014,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-017,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-020,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-028,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-029,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-030,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-031,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-032,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-033,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-034,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-035,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-039,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-040,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-041,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-042,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-043,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-047,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-FunctionCall-048,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K2-FunctionProlog-14,result was not equal
 function-declaration-010,result was not equal
 function-declaration-016,result was not equal
 GenCompEq-22,result was not equal
 CondExpr20,Parse error
 CondExpr21,Parse error
-inline-fn-012,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-inline-fn-012a,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-inline-fn-013,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-inline-fn-014,result was not equal
 inline-fn-015,Parse error
 inline-fn-025,result was not equal
-inline-fn-033,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K2-SeqExprInstanceOf-100,result was not equal
 K2-SeqExprInstanceOf-99,result was not equal
 instanceof132,result was not equal
@@ -1856,18 +1822,6 @@ Lookup-023,result was not equal
 Lookup-120,result was not equal
 Lookup-149,result was not equal
 MapConstructor-035,Parse error
-MapTest-020,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-040,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-041,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-042,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-043,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-044,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-045,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-050,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-051,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-052,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-053,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
-MapTest-054,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName
 K-ModuleImport-1,result was not equal
 K-ModuleImport-2,result was not equal
 module-URIs-11,result was not equal
@@ -2764,4 +2718,3 @@ xs-error-050,XQuery script could not be found
 xs-error-051,XQuery script could not be found
 xs-error-052,XQuery script could not be found
 xs-error-053,XQuery script could not be found
-xs-numeric-019,Parser related error, InvalidCharacterError: InvalidCharacterError: The qualified name is not a valid Name or QName

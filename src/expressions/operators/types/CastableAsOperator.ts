@@ -3,11 +3,12 @@ import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
+import { ValueType } from '../../dataTypes/Value';
 
 class CastableAsOperator extends Expression {
 	public _allowsEmptySequence: boolean;
 	public _expression: Expression;
-	public _targetType: string;
+	public _targetType: ValueType;
 
 	constructor(
 		expression: Expression,
@@ -16,9 +17,9 @@ class CastableAsOperator extends Expression {
 	) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
 
-		this._targetType = targetType.prefix
+		this._targetType = (targetType.prefix
 			? `${targetType.prefix}:${targetType.localName}`
-			: targetType.localName;
+			: targetType.localName) as ValueType;
 		if (
 			this._targetType === 'xs:anyAtomicType' ||
 			this._targetType === 'xs:anySimpleType' ||

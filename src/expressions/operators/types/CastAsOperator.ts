@@ -1,12 +1,13 @@
 import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class CastAsOperator extends Expression {
 	public _allowsEmptySequence: boolean;
 	public _expression: Expression;
-	public _targetType: string;
+	public _targetType: ValueType;
 
 	constructor(
 		expression: Expression,
@@ -14,9 +15,9 @@ class CastAsOperator extends Expression {
 		allowsEmptySequence: boolean
 	) {
 		super(expression.specificity, [expression], { canBeStaticallyEvaluated: false });
-		this._targetType = targetType.prefix
+		this._targetType = (targetType.prefix
 			? `${targetType.prefix}:${targetType.localName}`
-			: targetType.localName;
+			: targetType.localName) as ValueType;
 		if (
 			this._targetType === 'xs:anyAtomicType' ||
 			this._targetType === 'xs:anySimpleType' ||
