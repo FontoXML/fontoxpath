@@ -144,7 +144,7 @@ function adaptJavaScriptValueToXPath(
 			);
 		case 'node()':
 		case 'attribute()':
-		case 'document()':
+		case 'document-node()':
 		case 'element()':
 		case 'text()':
 		case 'processing-instruction()':

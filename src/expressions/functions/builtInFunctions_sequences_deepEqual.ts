@@ -543,7 +543,10 @@ export function itemDeepEqual(
 	// Nodes
 	if (isSubtypeOf(item1.type, 'node()') && isSubtypeOf(item2.type, 'node()')) {
 		// Document nodes
-		if (isSubtypeOf(item1.type, 'document()') && isSubtypeOf(item2.type, 'document()')) {
+		if (
+			isSubtypeOf(item1.type, 'document-node()') &&
+			isSubtypeOf(item2.type, 'document-node()')
+		) {
 			return nodeDeepEqual(dynamicContext, executionParameters, staticContext, item1, item2);
 		}
 

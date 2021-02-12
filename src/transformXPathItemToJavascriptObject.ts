@@ -143,7 +143,7 @@ export default function transformXPathItemToJavascriptObject(
 		case 'attribute()':
 		case 'node()':
 		case 'element()':
-		case 'document()':
+		case 'document-node()':
 		case 'text()':
 		case 'processing-instruction()':
 		case 'comment()':

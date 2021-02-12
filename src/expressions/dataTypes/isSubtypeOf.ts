@@ -1,4 +1,5 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
+import { ValueType } from './Value';
 
 function isSubtypeOfType(subType, superType) {
 	if (superType.variety === 'union') {
@@ -25,7 +26,7 @@ function isSubtypeOfType(subType, superType) {
  * xs:decimal is a subtype of xs:numeric
  * xs:NMTOKENS is a subtype of xs:NM TOKEN
  */
-export default function isSubtypeOf(subTypeName: string, superTypeName: string): boolean {
+export default function isSubtypeOf(subTypeName: ValueType, superTypeName: ValueType): boolean {
 	if (subTypeName === superTypeName) {
 		return true;
 	}

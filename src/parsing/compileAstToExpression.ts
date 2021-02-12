@@ -675,64 +675,25 @@ function namedFunctionRef(ast: IAST, _compilationOptions: CompilationOptions) {
 	return new NamedFunctionRef(astHelper.getQName(functionName), parseInt(arity, 10));
 }
 
-function typeDeclarationToType(typeDeclarationAst: IAST): TypeDeclaration {
-	const rawType = astHelper.getFirstChild(typeDeclarationAst, '*');
-	let typeName: ValueType;
-	switch (rawType[0]) {
-		case 'atomicType': {
-			const returnTypeQName = astHelper.getQName(rawType);
-			typeName = returnTypeQName.prefix
-				? ((returnTypeQName.prefix + ':' + returnTypeQName.localName) as ValueType)
-				: (returnTypeQName.localName as ValueType);
-			break;
-		}
-		case 'anyKindTest':
-			typeName = 'node()';
-			break;
-		case 'anyItemType':
-			typeName = 'item()';
-			break;
-		case 'textTest':
-			typeName = 'text()';
-			break;
-		default:
-			throw new Error(`Unrecognized type "${rawType[0]}".`);
-	}
-	const occurrence = astHelper.getFirstChild(typeDeclarationAst, 'occurrenceIndicator');
-
-	return {
-		occurrence: occurrence
-			? (astHelper.getTextContent(occurrence) as '' | '?' | '+' | '*')
-			: '',
-		type: typeName,
-	};
-}
-
 function inlineFunction(
 	ast: IAST,
 	compilationOptions: { allowUpdating?: boolean; allowXQuery?: boolean }
 ) {
 	const params = astHelper.getChildren(astHelper.getFirstChild(ast, 'paramList'), '*');
-	const returnTypeDecl = astHelper.getFirstChild(ast, 'typeDeclaration');
 	const functionBody = astHelper.followPath(ast, ['functionBody', '*']);
 
 	return new InlineFunction(
 		params.map((param) => {
-			const paramTypeDecl = astHelper.getFirstChild(param, 'typeDeclaration');
 			const td: {
 				name: QName;
 				type: TypeDeclaration;
 			} = {
 				name: astHelper.getQName(astHelper.getFirstChild(param, 'varName')),
-				type: paramTypeDecl
-					? typeDeclarationToType(paramTypeDecl)
-					: { type: 'item()', occurrence: '*' },
+				type: astHelper.getTypeDeclaration(param),
 			};
 			return td;
 		}),
-		returnTypeDecl
-			? typeDeclarationToType(returnTypeDecl)
-			: { type: 'item()', occurrence: '*' },
+		astHelper.getTypeDeclaration(ast),
 		functionBody
 			? (compile(functionBody, compilationOptions) as PossiblyUpdatingExpression)
 			: new SequenceOperator([])

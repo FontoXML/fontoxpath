@@ -33,11 +33,13 @@ import castToYearMonthDuration from './castToYearMonthDuration';
 
 import AtomicValue from '../AtomicValue';
 import CastResult from './CastResult';
+import { ValueType } from '../Value';
 
 const TREAT_AS_PRIMITIVE = ['xs:integer', 'xs:dayTimeDuration', 'xs:yearMonthDuration'];
 
-function castToPrimitiveType(from: string, to: string): (AtomicValueDataType) => CastResult {
-	const instanceOf = (type) => isSubtypeOf(from, type);
+function castToPrimitiveType(from: string, to: string): (value: AtomicValue) => CastResult {
+	// TODO: Move type cast to the users of this API
+	const instanceOf = (type: ValueType) => isSubtypeOf(from as ValueType, type);
 
 	if (to === 'xs:error') {
 		return () => ({
@@ -101,7 +103,7 @@ function castToPrimitiveType(from: string, to: string): (AtomicValueDataType) =>
 
 const precomputedCastFunctorsByTypeString = Object.create(null);
 
-function createCastingFunction(from, to) {
+function createCastingFunction(from: ValueType, to: ValueType) {
 	if (from === 'xs:untypedAtomic' && to === 'xs:string') {
 		return (val) => ({ successful: true, value: createAtomicValue(val, 'xs:string') });
 	}
@@ -230,7 +232,7 @@ function createCastingFunction(from, to) {
 	};
 }
 
-export default function tryCastToType(valueTuple: AtomicValue, type: string): CastResult {
+export default function tryCastToType(valueTuple: AtomicValue, type: ValueType): CastResult {
 	let prefabConverter = precomputedCastFunctorsByTypeString[`${valueTuple.type}~${type}`];
 
 	if (!prefabConverter) {
