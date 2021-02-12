@@ -1,8 +1,8 @@
 import { NodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';
-import Value from './Value';
+import Value, { ValueType } from './Value';
 
-function getNodeSubType(pointer: NodePointer, domFacade: DomFacade) {
+function getNodeSubType(pointer: NodePointer, domFacade: DomFacade): ValueType {
 	switch (domFacade.getNodeType(pointer)) {
 		case 2:
 			return 'attribute()';
@@ -16,7 +16,7 @@ function getNodeSubType(pointer: NodePointer, domFacade: DomFacade) {
 		case 8:
 			return 'comment()';
 		case 9:
-			return 'document()';
+			return 'document-node()';
 		default:
 			return 'node()';
 	}

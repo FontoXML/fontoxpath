@@ -1,4 +1,16 @@
-export default [
+import { ValueType } from '../Value';
+
+type TypeDeclaration = {
+	variety: string;
+	name: ValueType;
+	base?: ValueType;
+	parent?: ValueType;
+	type?: ValueType;
+	restrictions?: { [s: string]: string | number };
+	memberTypes?: ValueType[];
+};
+
+const types: TypeDeclaration[] = [
 	{
 		variety: 'primitive',
 		name: 'item()',
@@ -271,7 +283,7 @@ export default [
 	{
 		variety: 'list',
 		name: 'xs:NMTOKENS',
-		type: 'NMTOKEN',
+		type: 'xs:NMTOKEN',
 		restrictions: {
 			minLength: 1,
 			whiteSpace: 'collapse',
@@ -322,7 +334,7 @@ export default [
 	{
 		variety: 'list',
 		name: 'xs:IDREFS',
-		type: 'IDREF',
+		type: 'xs:IDREF',
 		restrictions: {
 			minLength: 1,
 			whiteSpace: 'collapse',
@@ -343,7 +355,7 @@ export default [
 	{
 		variety: 'list',
 		name: 'xs:ENTITIES',
-		type: 'ENTITY',
+		type: 'xs:ENTITY',
 		restrictions: {
 			minLength: 1,
 			whiteSpace: 'collapse',
@@ -595,7 +607,7 @@ export default [
 
 	{
 		variety: 'derived',
-		name: 'document()',
+		name: 'document-node()',
 		base: 'node()',
 	},
 
@@ -605,3 +617,5 @@ export default [
 		memberTypes: ['xs:decimal', 'xs:integer', 'xs:float', 'xs:double'],
 	},
 ];
+
+export default types;

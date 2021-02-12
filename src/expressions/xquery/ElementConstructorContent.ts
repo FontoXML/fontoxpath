@@ -76,7 +76,7 @@ function parseChildNodes(
 				}
 				return;
 			}
-			if (isSubtypeOf(childNode.type, 'document()')) {
+			if (isSubtypeOf(childNode.type, 'document-node()')) {
 				const docChildNodes = [];
 				domFacade
 					.getChildNodePointers(childNode.value)

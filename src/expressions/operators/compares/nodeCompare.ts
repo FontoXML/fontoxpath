@@ -36,7 +36,7 @@ export default function nodeCompare(
 										(first.type === 'attribute()' ||
 											first.type === 'node()' ||
 											first.type === 'element()' ||
-											first.type === 'document()' ||
+											first.type === 'document-node()' ||
 											first.type === 'text()' ||
 											first.type === 'processing-instruction()' ||
 											first.type === 'comment()') &&

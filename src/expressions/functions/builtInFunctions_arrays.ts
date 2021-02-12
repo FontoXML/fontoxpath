@@ -5,7 +5,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import Value from '../dataTypes/Value';
+import Value, { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -404,7 +404,7 @@ const arrayForEachPair: FunctionDefinitionType = (
 	);
 };
 
-const isString = (type: string): boolean => {
+const isString = (type: ValueType): boolean => {
 	return (
 		isSubtypeOf(type, 'xs:string') ||
 		isSubtypeOf(type, 'xs:anyURI') ||

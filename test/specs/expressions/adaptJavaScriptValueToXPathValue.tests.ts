@@ -31,7 +31,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const domFacade = new DomFacade(adaptingDomFacade);
 		const xpathSequence = adaptJavaScriptValueToSequence(domFacade, new slimdom.Document());
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
-		chai.assert(xpathSequence.first().type === 'document()', 'is a document');
+		chai.assert(xpathSequence.first().type === 'document-node()', 'is a document');
 	});
 
 	it('turns numbers into decimals', () => {

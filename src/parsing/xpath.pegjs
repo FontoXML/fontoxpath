@@ -1139,12 +1139,12 @@ NamedFunctionRef
 
 // 169
 InlineFunctionExpr
- = annotations:Annotation* _ "function" _ "(" _ params:ParamList? _ ")" _ typeDeclaration:( "as" S t:SequenceType _ {return [t]})? body:FunctionBody
+	= annotations:Annotation* _ "function" _ "(" _ params:ParamList? _ ")" _ typeDeclaration:( "as" S sequenceTypeContent:SequenceType _ {return ["typeDeclaration"].concat(sequenceTypeContent)})? body:FunctionBody
  {
    return ["inlineFunctionExpr"]
      .concat(annotations)
      .concat([["paramList"].concat(params || [])])
-     .concat(typeDeclaration ? ["sequenceType"].concat(typeDeclaration) : [])
+		 .concat(typeDeclaration ? [typeDeclaration] : [])
      .concat([["functionBody", body]])
  }
 

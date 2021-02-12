@@ -17,6 +17,7 @@ import {
 
 import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
+import { ValueType } from '../../../expressions/dataTypes/Value';
 
 // Use partial application to get to a comparer faster
 function areBothStringOrAnyURI(a, b) {
@@ -28,8 +29,8 @@ function areBothStringOrAnyURI(a, b) {
 
 function generateCompareFunction(
 	operator: string,
-	typeA: string,
-	typeB: string,
+	typeA: ValueType,
+	typeB: ValueType,
 	dynamicContext: DynamicContext
 ): (valA: any, valB: any) => boolean {
 	let castFunctionForValueA = null;

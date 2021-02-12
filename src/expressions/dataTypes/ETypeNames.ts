@@ -57,7 +57,7 @@ enum ETypeNames {
 	COMMENT = 'comment()',
 	ATTRIBUTE = 'attribute()',
 	PROCESSINGINSTRUCTION = 'processing-instruction()',
-	DOCUMENT = 'document()',
+	DOCUMENT = 'document-node()',
 	XSNUMERIC = 'xs:numeric',
 }
 

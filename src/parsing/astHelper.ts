@@ -1,5 +1,6 @@
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
+import { ValueType } from 'src/expressions/dataTypes/Value';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
@@ -79,10 +80,10 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 		return { type: 'item()', occurrence: '*' };
 	}
 
-	const determineType = (typeAst) => {
+	const determineType = (typeAst: IAST): ValueType => {
 		switch (typeAst[0]) {
 			case 'documentTest':
-				return 'document()';
+				return 'document-node()';
 			case 'elementTest':
 				return 'element()';
 			case 'attributeTest':
@@ -108,7 +109,9 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 			case 'typedArrayTest':
 				return 'array(*)';
 			case 'atomicType':
-				return [getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':');
+				return [getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(
+					':'
+				) as ValueType;
 			case 'parenthesizedItemType':
 				return determineType(getFirstChild(typeAst, '*'));
 			case 'schemaElementTest':
