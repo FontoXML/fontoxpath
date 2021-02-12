@@ -11,6 +11,7 @@ import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/conve
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Node } from './types/Types';
+import TypeResolver from './expressions/dataTypes/TypeResolver';
 
 /**
  * @public
@@ -32,6 +33,7 @@ export type Options = {
 	logger?: Logger;
 	moduleImports?: { [s: string]: string };
 	namespaceResolver?: (s: string) => string | null;
+	resolveType?: TypeResolver;
 	nodesFactory?: INodesFactory;
 };
 

@@ -4,6 +4,7 @@ import { ConcreteNode } from '../domFacade/ConcreteNode';
 import DomFacade from '../domFacade/DomFacade';
 import { Logger } from '../evaluateXPath';
 import INodesFactory from '../nodesFactory/INodesFactory';
+import TypeResolver from './dataTypes/TypeResolver';
 
 export default class ExecutionParameters {
 	constructor(
@@ -12,6 +13,7 @@ export default class ExecutionParameters {
 		public readonly documentWriter: IDocumentWriter,
 		public readonly currentContext: any,
 		public readonly rootPointerByRootNodeMap: Map<ConcreteNode | TinyNode, NodePointer>,
-		public readonly logger?: Logger
+		public readonly logger: Logger,
+		public readonly resolveType: TypeResolver
 	) {}
 }

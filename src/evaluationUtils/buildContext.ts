@@ -13,7 +13,10 @@ import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import builtInFunctions from '../expressions/functions/builtInFunctions';
 import { registerFunction } from '../expressions/functions/functionRegistry';
-import { FUNCTIONS_NAMESPACE_URI } from '../expressions/staticallyKnownNamespaces';
+import {
+	FUNCTIONS_NAMESPACE_URI,
+	XMLSCHEMA_NAMESPACE_URI,
+} from '../expressions/staticallyKnownNamespaces';
 import DomBackedNodesFactory from '../nodesFactory/DomBackedNodesFactory';
 import INodesFactory from '../nodesFactory/INodesFactory';
 import wrapExternalNodesFactory from '../nodesFactory/wrapExternalNodesFactory';
@@ -24,6 +27,7 @@ import {
 	UntypedExternalValue,
 } from '../types/createTypedValueFactory';
 import { Node } from '../types/Types';
+import { NODE_TYPES } from '../domFacade/ConcreteNode';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
@@ -50,12 +54,12 @@ function normalizeEndOfLines(xpathString: string) {
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xa));
 }
 
-export default function buildEvaluationContext(
+export default function buildEvaluationContext<TNode extends Node>(
 	expressionString: string,
 	contextItem: TypedExternalValue | UntypedExternalValue,
 	domFacade: IDomFacade | null,
 	variables: { [s: string]: TypedExternalValue | UntypedExternalValue },
-	externalOptions: Options,
+	externalOptions: Options<TNode>,
 	compilationOptions: {
 		allowUpdating: boolean;
 		allowXQuery: boolean;
@@ -70,7 +74,24 @@ export default function buildEvaluationContext(
 	if (variables === null || variables === undefined) {
 		variables = variables || {};
 	}
-	let internalOptions: Options;
+
+	function defaultTypeResolver(node: TNode) {
+		if (
+			node.nodeType === NODE_TYPES.COMMENT_NODE ||
+			node.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
+		) {
+			return {
+				namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+				localName: 'string',
+			};
+		}
+		return {
+			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
+			localName: 'anyAtomicType',
+		};
+	}
+
+	let internalOptions: Options<TNode>;
 	if (externalOptions) {
 		internalOptions = {
 			// tslint:disable-next-line:no-console
@@ -79,6 +100,7 @@ export default function buildEvaluationContext(
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
 			nodesFactory: externalOptions['nodesFactory'],
+			resolveType: externalOptions['resolveType'] || defaultTypeResolver,
 		};
 	} else {
 		internalOptions = {
@@ -88,6 +110,7 @@ export default function buildEvaluationContext(
 			namespaceResolver: null,
 			nodesFactory: null,
 			documentWriter: null,
+			resolveType: defaultTypeResolver,
 		};
 	}
 	const wrappedDomFacade: DomFacade = new DomFacade(
@@ -173,7 +196,8 @@ export default function buildEvaluationContext(
 		documentWriter,
 		externalOptions['currentContext'],
 		new Map(),
-		internalOptions.logger
+		internalOptions.logger,
+		internalOptions.resolveType
 	);
 
 	return {

@@ -3,6 +3,13 @@ import {
 	TinyChildNode,
 	TinyNode,
 	TinyParentNode,
+	NodePointer,
+	isTinyNode,
+	TextNodePointer,
+	AttributeNodePointer,
+	CommentNodePointer,
+	ProcessingInstructionNodePointer,
+	ParentNodePointer,
 } from '../../domClone/Pointer';
 import {
 	ConcreteCharacterDataNode,
@@ -10,6 +17,8 @@ import {
 	ConcreteNode,
 	ConcreteParentNode,
 	NODE_TYPES,
+	ConcreteTextNode,
+	ConcreteAttributeNode,
 } from '../../domFacade/ConcreteNode';
 import ExecutionParameters from '../ExecutionParameters';
 import concatSequences from '../util/concatSequences';
@@ -19,7 +28,79 @@ import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
 import isSubtypeOf from './isSubtypeOf';
 import sequenceFactory from './sequenceFactory';
-import Value from './Value';
+import Value, { ValueType } from './Value';
+import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import castToType from './castToType';
+
+function determineActualType(
+	node: NodePointer,
+	executionParameters: ExecutionParameters
+): ValueType {
+	if (isTinyNode(node.node)) {
+		return 'xs:untypedAtomic';
+	}
+
+	const actualType = executionParameters.resolveType(node.node);
+
+	if (actualType.namespaceURI !== XMLSCHEMA_NAMESPACE_URI) {
+		throw new Error('External types are not supported yet');
+	}
+
+	return `xs:${actualType.localName}` as ValueType;
+}
+
+function determineStringValue(
+	pointer: NodePointer,
+	executionParameters: ExecutionParameters
+): string {
+	const domFacade = executionParameters.domFacade;
+
+	if (
+		pointer.node.nodeType === NODE_TYPES.ATTRIBUTE_NODE ||
+		pointer.node.nodeType === NODE_TYPES.TEXT_NODE ||
+		pointer.node.nodeType === NODE_TYPES.COMMENT_NODE ||
+		pointer.node.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
+	) {
+		return domFacade.getDataFromPointer(
+			pointer as
+				| AttributeNodePointer
+				| TextNodePointer
+				| CommentNodePointer
+				| ProcessingInstructionNodePointer
+		);
+	}
+
+	pointer = pointer as ParentNodePointer;
+
+	const allTexts = [];
+	(function getTextNodes(aNode: ConcreteNode | TinyNode) {
+		if (
+			pointer.node.nodeType === NODE_TYPES.COMMENT_NODE ||
+			pointer.node.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
+		) {
+			return;
+		}
+		const aNodeType = aNode['nodeType'];
+
+		if (aNodeType === NODE_TYPES.TEXT_NODE || aNodeType === NODE_TYPES.CDATA_SECTION_NODE) {
+			allTexts.push(
+				domFacade.getData(aNode as ConcreteCharacterDataNode | TinyCharacterDataNode)
+			);
+			return;
+		}
+		if (aNodeType === NODE_TYPES.ELEMENT_NODE || aNodeType === NODE_TYPES.DOCUMENT_NODE) {
+			const children: (ConcreteChildNode | TinyChildNode)[] = domFacade.getChildNodes(
+				aNode as ConcreteParentNode | TinyParentNode
+			);
+			children.forEach((child) => {
+				getTextNodes(child);
+			});
+		}
+	})(pointer.node);
+
+	return allTexts.join('');
+}
+
 export function atomizeSingleValue(
 	value: Value,
 	executionParameters: ExecutionParameters
@@ -39,61 +120,18 @@ export function atomizeSingleValue(
 		return sequenceFactory.create(value);
 	}
 
-	const domFacade = executionParameters.domFacade;
-
 	if (isSubtypeOf(value.type, 'node()')) {
-		const pointer = value.value;
+		const nodeValue = value.value as NodePointer;
 
-		// TODO: Mix in types, by default get string value.
-		// Attributes should return their value.
-		// Text nodes and documents should return their text, as untyped atomic
-		if (
-			pointer.node.nodeType === NODE_TYPES.ATTRIBUTE_NODE ||
-			pointer.node.nodeType === NODE_TYPES.TEXT_NODE
-		) {
-			return sequenceFactory.create(
-				createAtomicValue(domFacade.getDataFromPointer(pointer), 'xs:untypedAtomic')
-			);
+		const typeName = determineActualType(nodeValue, executionParameters);
+		const stringValue = determineStringValue(nodeValue, executionParameters);
+		if (typeName === 'xs:anyAtomicType') {
+			return sequenceFactory.create(createAtomicValue(stringValue, 'xs:untypedAtomic'));
 		}
 
-		// comments and PIs are string
-		if (
-			pointer.node.nodeType === NODE_TYPES.COMMENT_NODE ||
-			pointer.node.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
-		) {
-			return sequenceFactory.create(
-				createAtomicValue(domFacade.getDataFromPointer(pointer), 'xs:string')
-			);
-		}
-		// This is an element or a document node. Because we do not know the specific type of this element.
-		// Documents should always be an untypedAtomic, of elements, we do not know the type, so they are untypedAtomic too
-		const allTexts = [];
-		(function getTextNodes(aNode: ConcreteNode | TinyNode) {
-			if (
-				pointer.node.nodeType === NODE_TYPES.COMMENT_NODE ||
-				pointer.node.nodeType === NODE_TYPES.PROCESSING_INSTRUCTION_NODE
-			) {
-				return;
-			}
-			const aNodeType = aNode['nodeType'];
-
-			if (aNodeType === NODE_TYPES.TEXT_NODE || aNodeType === NODE_TYPES.CDATA_SECTION_NODE) {
-				allTexts.push(
-					domFacade.getData(aNode as ConcreteCharacterDataNode | TinyCharacterDataNode)
-				);
-				return;
-			}
-			if (aNodeType === NODE_TYPES.ELEMENT_NODE || aNodeType === NODE_TYPES.DOCUMENT_NODE) {
-				const children: (ConcreteChildNode | TinyChildNode)[] = domFacade.getChildNodes(
-					aNode as ConcreteParentNode | TinyParentNode
-				);
-				children.forEach((child) => {
-					getTextNodes(child);
-				});
-			}
-		})(pointer.node);
-
-		return sequenceFactory.create(createAtomicValue(allTexts.join(''), 'xs:untypedAtomic'));
+		return sequenceFactory.create(
+			castToType(createAtomicValue(stringValue, 'xs:untypedAtomic'), typeName)
+		);
 	}
 	// (function || map) && !array
 	if (isSubtypeOf(value.type, 'function(*)') && !isSubtypeOf(value.type, 'array(*)')) {
