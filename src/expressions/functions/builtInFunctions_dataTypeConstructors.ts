@@ -22,12 +22,12 @@ function genericDataTypeConstructor(
 	return sequenceFactory.singleton(castToType(sequence.first(), dataType));
 }
 
-const xsQName: FunctionDefinitionType = function (
+const xsQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -44,9 +44,9 @@ const xsQName: FunctionDefinitionType = function (
 	}
 	if (!lexicalQName.includes(':')) {
 		// Only a local part
-		const namespaceURI = staticContext.resolveNamespace('');
+		const resolvedDefaultNamespaceURI = staticContext.resolveNamespace('');
 		return sequenceFactory.singleton(
-			createAtomicValue(new QName('', namespaceURI, lexicalQName), 'xs:QName')
+			createAtomicValue(new QName('', resolvedDefaultNamespaceURI, lexicalQName), 'xs:QName')
 		);
 	}
 	const [prefix, localName] = lexicalQName.split(':');

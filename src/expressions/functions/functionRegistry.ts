@@ -104,11 +104,12 @@ export function getAlternativesAsStringFor(functionName: string): string {
 						)
 						.join(', ')})"`
 			)
-			.reduce((accumulator, functionName, index, array) => {
+			.reduce((accumulator, alternativeFunctionName, index, array) => {
 				if (index === 0) {
-					return accumulator + functionName;
+					return accumulator + alternativeFunctionName;
 				}
-				return (accumulator += (index !== array.length - 1 ? ', ' : ' or ') + functionName);
+				return (accumulator +=
+					(index !== array.length - 1 ? ', ' : ' or ') + alternativeFunctionName);
 			}, 'Did you mean ') + '?'
 	);
 }

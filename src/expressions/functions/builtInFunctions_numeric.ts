@@ -72,8 +72,8 @@ function getNumberOfDecimalDigits(value: number) {
 		return 0;
 	}
 
-	const result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(value + ''),
-		decimals = result[1] ? result[1].length : 0;
+	const result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(value + '');
+	const decimals = result[1] ? result[1].length : 0;
 
 	if (result[3]) {
 		if (result[2]) {
@@ -83,6 +83,16 @@ function getNumberOfDecimalDigits(value: number) {
 		return returnVal < 0 ? 0 : returnVal;
 	}
 	return decimals;
+}
+
+function determineRoundedNumber(itemAsDecimal: number, halfToEven: boolean, scaling: number) {
+	if (halfToEven && isHalf(itemAsDecimal, scaling)) {
+		if (Math.floor(itemAsDecimal * scaling) % 2 === 0) {
+			return Math.floor(itemAsDecimal * scaling) / scaling;
+		}
+		return Math.ceil(itemAsDecimal * scaling) / scaling;
+	}
+	return Math.round(itemAsDecimal * scaling) / scaling;
 }
 
 function fnRound(
@@ -142,18 +152,7 @@ function fnRound(
 			);
 			const itemAsDecimal = castToType(item, 'xs:decimal');
 			const scaling = Math.pow(10, scalingPrecision);
-			let roundedNumber = 0;
-
-			if (halfToEven && isHalf(itemAsDecimal.value, scaling)) {
-				if (Math.floor(itemAsDecimal.value * scaling) % 2 === 0) {
-					roundedNumber = Math.floor(itemAsDecimal.value * scaling) / scaling;
-				} else {
-					roundedNumber = Math.ceil(itemAsDecimal.value * scaling) / scaling;
-				}
-			} else {
-				roundedNumber = Math.round(itemAsDecimal.value * scaling) / scaling;
-			}
-
+			const roundedNumber = determineRoundedNumber(itemAsDecimal.value, halfToEven, scaling);
 			switch (originalType) {
 				case 'xs:decimal':
 					return ready(createAtomicValue(roundedNumber, 'xs:decimal'));

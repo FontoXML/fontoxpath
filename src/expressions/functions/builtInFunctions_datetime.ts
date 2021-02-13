@@ -1,16 +1,17 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DateTime from '../dataTypes/valueTypes/DateTime';
+import DayTimeDuration from '../dataTypes/valueTypes/DayTimeDuration';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnDateTime: FunctionDefinitionType = function (
+const fnDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence,
 	arg2
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -23,7 +24,7 @@ const fnDateTime: FunctionDefinitionType = function (
 
 	const dateTimezone = date.getTimezone();
 	const timeTimezone = time.getTimezone();
-	let timezoneToUse;
+	let timezoneToUse: DayTimeDuration | null;
 
 	if (!dateTimezone && !timeTimezone) {
 		timezoneToUse = null;
@@ -52,12 +53,12 @@ const fnDateTime: FunctionDefinitionType = function (
 	return sequenceFactory.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
 };
 
-const fnYearFromDateTime: FunctionDefinitionType = function (
+const fnYearFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -66,12 +67,12 @@ const fnYearFromDateTime: FunctionDefinitionType = function (
 	);
 };
 
-const fnMonthFromDateTime: FunctionDefinitionType = function (
+const fnMonthFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -80,12 +81,12 @@ const fnMonthFromDateTime: FunctionDefinitionType = function (
 	);
 };
 
-const fnDayFromDateTime: FunctionDefinitionType = function (
+const fnDayFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -94,12 +95,12 @@ const fnDayFromDateTime: FunctionDefinitionType = function (
 	);
 };
 
-const fnHoursFromDateTime: FunctionDefinitionType = function (
+const fnHoursFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -108,12 +109,12 @@ const fnHoursFromDateTime: FunctionDefinitionType = function (
 	);
 };
 
-const fnMinutesFromDateTime: FunctionDefinitionType = function (
+const fnMinutesFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -122,12 +123,12 @@ const fnMinutesFromDateTime: FunctionDefinitionType = function (
 	);
 };
 
-const fnSecondsFromDateTime: FunctionDefinitionType = function (
+const fnSecondsFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -135,12 +136,12 @@ const fnSecondsFromDateTime: FunctionDefinitionType = function (
 		createAtomicValue(sequence.first().value.getFullSeconds(), 'xs:decimal')
 	);
 };
-const fnTimezoneFromDateTime: FunctionDefinitionType = function (
+const fnTimezoneFromDateTime: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}

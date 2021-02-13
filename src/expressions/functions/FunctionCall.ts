@@ -65,7 +65,7 @@ function validateFunctionItem(item: Value, callArity: number) {
 
 function callFunction(
 	functionItem: FunctionValue<any>,
-	callFunction: (
+	functionCall: (
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
 		staticContext: StaticContext,
@@ -97,7 +97,7 @@ function callFunction(
 		return functionItem.applyArguments(transformedArguments);
 	}
 
-	const toReturn = callFunction.apply(undefined, [
+	const toReturn = functionCall.apply(undefined, [
 		dynamicContext,
 		executionParameters,
 		staticContext,
@@ -160,15 +160,15 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		}
 		let pendingUpdateList: IPendingUpdate[] = [];
 		const functionCall = (
-			dynamicContext: DynamicContext,
-			executionParameters: ExecutionParameters,
+			innerDynamicContext: DynamicContext,
+			innerExecutionParameters: ExecutionParameters,
 			staticContext: StaticContext,
 			...args: ISequence[]
 		) => {
 			return separateXDMValueFromUpdatingExpressionResult(
 				(this._functionReference as UpdatingFunctionValue).value(
-					dynamicContext,
-					executionParameters,
+					innerDynamicContext,
+					innerExecutionParameters,
 					staticContext,
 					...args
 				),
@@ -229,10 +229,10 @@ class FunctionCall extends PossiblyUpdatingExpression {
 			// We can assume this function is not updating
 			return callFunction(
 				this._functionReference,
-				(dynamicContext, executionParameters, staticContext, ...args) =>
+				(innerDynamicContext, innerExecutionParameters, staticContext, ...args) =>
 					(this._functionReference as FunctionValue<ISequence>).value(
-						dynamicContext,
-						executionParameters,
+						innerDynamicContext,
+						innerExecutionParameters,
 						staticContext,
 						...args
 					),

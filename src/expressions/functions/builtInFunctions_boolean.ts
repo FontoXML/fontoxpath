@@ -5,12 +5,12 @@ import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
-const fnNot: FunctionDefinitionType = function (
+const fnNot: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
 		return ebv.value === false
@@ -23,22 +23,22 @@ const fnNot: FunctionDefinitionType = function (
 			if (done) {
 				return DONE_TOKEN;
 			}
-			const ebv = sequence.tryGetEffectiveBooleanValue();
-			if (!ebv.ready) {
-				return notReady(ebv.promise);
+			const ebvAttempt = sequence.tryGetEffectiveBooleanValue();
+			if (!ebvAttempt.ready) {
+				return notReady(ebvAttempt.promise);
 			}
 			done = true;
-			return ready(ebv.value === false ? trueBoolean : falseBoolean);
+			return ready(ebvAttempt.value === false ? trueBoolean : falseBoolean);
 		},
 	});
 };
 
-const fnBoolean: FunctionDefinitionType = function (
+const fnBoolean: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	const ebv = sequence.tryGetEffectiveBooleanValue();
 	if (ebv.ready) {
 		return ebv.value
@@ -51,21 +51,21 @@ const fnBoolean: FunctionDefinitionType = function (
 			if (done) {
 				return DONE_TOKEN;
 			}
-			const ebv = sequence.tryGetEffectiveBooleanValue();
-			if (!ebv.ready) {
-				return notReady(ebv.promise);
+			const ebvAttempt = sequence.tryGetEffectiveBooleanValue();
+			if (!ebvAttempt.ready) {
+				return notReady(ebvAttempt.promise);
 			}
 			done = true;
-			return ready(ebv.value ? trueBoolean : falseBoolean);
+			return ready(ebvAttempt.value ? trueBoolean : falseBoolean);
 		},
 	});
 };
 
-const fnTrue: FunctionDefinitionType = function () {
+const fnTrue: FunctionDefinitionType = () => {
 	return sequenceFactory.singletonTrueSequence();
 };
 
-const fnFalse: FunctionDefinitionType = function () {
+const fnFalse: FunctionDefinitionType = () => {
 	return sequenceFactory.singletonFalseSequence();
 };
 

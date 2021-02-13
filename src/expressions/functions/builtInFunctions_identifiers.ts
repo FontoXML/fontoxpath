@@ -9,28 +9,23 @@ import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function findDescendants(domFacade, node, isMatch) {
-	const results = domFacade
-		.getChildNodePointers(node)
-		.reduce(function (matchingNodes, childNode) {
-			Array.prototype.push.apply(
-				matchingNodes,
-				findDescendants(domFacade, childNode, isMatch)
-			);
-			return matchingNodes;
-		}, []);
+	const results = domFacade.getChildNodePointers(node).reduce((matchingNodes, childNode) => {
+		Array.prototype.push.apply(matchingNodes, findDescendants(domFacade, childNode, isMatch));
+		return matchingNodes;
+	}, []);
 	if (isMatch(node)) {
 		results.unshift(node);
 	}
 	return results;
 }
 
-const fnId: FunctionDefinitionType = function (
+const fnId: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	idrefSequence,
 	targetNodeSequence
-) {
+) => {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use id function.');
@@ -45,8 +40,8 @@ const fnId: FunctionDefinitionType = function (
 	// TODO: Index ids to optimize this lookup
 	const isMatchingIdById: { [s: string]: boolean } = idrefSequence
 		.getAllValues()
-		.reduce(function (byId, idrefValue) {
-			idrefValue.value.split(/\s+/).forEach(function (id) {
+		.reduce((byId, idrefValue) => {
+			idrefValue.value.split(/\s+/).forEach((id) => {
 				byId[id] = true;
 			});
 			return byId;
@@ -79,13 +74,13 @@ const fnId: FunctionDefinitionType = function (
 	return sequenceFactory.create(matchingNodes.map((node) => createPointerValue(node, domFacade)));
 };
 
-const fnIdref: FunctionDefinitionType = function (
+const fnIdref: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	idSequence,
 	targetNodeSequence
-) {
+) => {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use idref function.');
@@ -98,7 +93,7 @@ const fnIdref: FunctionDefinitionType = function (
 
 	const domFacade = executionParameters.domFacade;
 
-	const isMatchingIdRefById = idSequence.getAllValues().reduce(function (byId, idValue) {
+	const isMatchingIdRefById = idSequence.getAllValues().reduce((byId, idValue) => {
 		byId[idValue.value] = true;
 		return byId;
 	}, Object.create(null));
@@ -112,7 +107,7 @@ const fnIdref: FunctionDefinitionType = function (
 	}
 
 	// TODO: Index idrefs to optimize this lookup
-	const matchingNodes = findDescendants(domFacade, documentNode, function (node) {
+	const matchingNodes = findDescendants(domFacade, documentNode, (node) => {
 		// TODO: use the is-idrefs property of attributes / elements
 		if (domFacade.getNodeType(node) !== NODE_TYPES.ELEMENT_NODE) {
 			return false;
@@ -122,7 +117,7 @@ const fnIdref: FunctionDefinitionType = function (
 			return false;
 		}
 		const idRefs = idAttribute.split(/\s+/);
-		return idRefs.some(function (idRef) {
+		return idRefs.some((idRef) => {
 			return isMatchingIdRefById[idRef];
 		});
 	});

@@ -1,6 +1,6 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
-import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -80,11 +80,11 @@ function evaluateReplaceNode(
 				throw errXUTY0008();
 			}
 			if (
-				!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
-				!isSubTypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
-				!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
-				!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
-				!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
+				!isSubtypeOf(tv.value.xdmValue[0].type, 'element()') &&
+				!isSubtypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
+				!isSubtypeOf(tv.value.xdmValue[0].type, 'text()') &&
+				!isSubtypeOf(tv.value.xdmValue[0].type, 'comment()') &&
+				!isSubtypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
 			) {
 				throw errXUTY0008();
 			}
@@ -109,7 +109,7 @@ function evaluateReplaceNode(
 			// consist exclusively of zero or more element, text,
 			// comment, or processing instruction nodes
 			// [err:XUTY0010].
-			if (!isSubTypeOf(target.type, 'attribute()')) {
+			if (!isSubtypeOf(target.type, 'attribute()')) {
 				if (rlist.attributes.length) {
 					throw errXUTY0010();
 				}
@@ -236,11 +236,11 @@ function evaluateReplaceNodeValue(
 					throw errXUTY0008();
 				}
 				if (
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
-					!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
+					!isSubtypeOf(tv.value.xdmValue[0].type, 'element()') &&
+					!isSubtypeOf(tv.value.xdmValue[0].type, 'attribute()') &&
+					!isSubtypeOf(tv.value.xdmValue[0].type, 'text()') &&
+					!isSubtypeOf(tv.value.xdmValue[0].type, 'comment()') &&
+					!isSubtypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
 				) {
 					throw errXUTY0008();
 				}
@@ -258,7 +258,7 @@ function evaluateReplaceNodeValue(
 			// expression following the keyword with with the
 			// following update primitives using upd:mergeUpdates:
 			// upd:replaceElementContent($target, $text)
-			if (isSubTypeOf(target.type, 'element()')) {
+			if (isSubtypeOf(target.type, 'element()')) {
 				done = true;
 				return ready({
 					xdmValue: [],
@@ -276,28 +276,33 @@ function evaluateReplaceNodeValue(
 			// 1 did not construct a text node, let $string be a
 			// zero-length string. Then:
 			if (
-				isSubTypeOf(target.type, 'attribute()') ||
-				isSubTypeOf(target.type, 'text()') ||
-				isSubTypeOf(target.type, 'comment()') ||
-				isSubTypeOf(target.type, 'processing-instruction()')
+				isSubtypeOf(target.type, 'attribute()') ||
+				isSubtypeOf(target.type, 'text()') ||
+				isSubtypeOf(target.type, 'comment()') ||
+				isSubtypeOf(target.type, 'processing-instruction()')
 			) {
-				const string = text ? executionParameters.domFacade.getDataFromPointer(text) : '';
+				const stringValue = text
+					? executionParameters.domFacade.getDataFromPointer(text)
+					: '';
 
 				// If $target is a comment node, and $string contains
 				// two adjacent hyphens or ends with a hyphen, a
 				// dynamic error is raised [err:XQDY0072].
 				if (
-					isSubTypeOf(target.type, 'comment()') &&
-					(string.includes('--') || string.endsWith('-'))
+					isSubtypeOf(target.type, 'comment()') &&
+					(stringValue.includes('--') || stringValue.endsWith('-'))
 				) {
-					throw errXQDY0072(string);
+					throw errXQDY0072(stringValue);
 				}
 
 				// If $target is a processing instruction node, and
 				// $string contains the substring "?>", a dynamic
 				// error is raised [err:XQDY0026].
-				if (isSubTypeOf(target.type, 'processing-instruction()') && string.includes('?>')) {
-					throw errXQDY0026(string);
+				if (
+					isSubtypeOf(target.type, 'processing-instruction()') &&
+					stringValue.includes('?>')
+				) {
+					throw errXQDY0026(stringValue);
 				}
 
 				// In the absence of errors, the result of a replace
@@ -312,7 +317,7 @@ function evaluateReplaceNodeValue(
 				return ready({
 					xdmValue: [],
 					pendingUpdateList: mergeUpdates(
-						[replaceValue(target.value, string)],
+						[replaceValue(target.value, stringValue)],
 						rlistUpdates,
 						targetUpdates
 					),

@@ -33,9 +33,8 @@ import castToYearMonthDuration from './castToYearMonthDuration';
 
 const TREAT_AS_PRIMITIVE = ['xs:integer', 'xs:dayTimeDuration', 'xs:yearMonthDuration'];
 
-function castToPrimitiveType(from: string, to: string): (value: AtomicValue) => CastResult {
-	// TODO: Move type cast to the users of this API
-	const instanceOf = (type: ValueType) => isSubtypeOf(from as ValueType, type);
+function castToPrimitiveType(from: ValueType, to: ValueType): (value: AtomicValue) => CastResult {
+	const instanceOf = (type: ValueType) => isSubtypeOf(from, type);
 
 	if (to === 'xs:error') {
 		return () => ({

@@ -1,12 +1,13 @@
 import castToType from '../dataTypes/castToType';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { getPrimitiveTypeName } from '../dataTypes/typeHelpers';
+import Value from '../dataTypes/Value';
 
 /**
  * Promote all given (numeric) items to single common type
  * https://www.w3.org/TR/xpath-31/#promotion
  */
-export default function convertItemsToCommonType(items) {
+export default function convertItemsToCommonType(items: (Value | null)[]) {
 	if (
 		items.every((item) => {
 			// xs:integer is the only numeric type with inherits from another numeric type
@@ -21,7 +22,7 @@ export default function convertItemsToCommonType(items) {
 		return items;
 	}
 	const commonTypeName = items
-		.map((item: { type: string } | null) => (item ? getPrimitiveTypeName(item.type) : null))
+		.map((item) => (item ? getPrimitiveTypeName(item.type) : null))
 		.reduce((typeName, itemType) => {
 			if (itemType === null) {
 				return typeName;

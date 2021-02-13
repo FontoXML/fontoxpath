@@ -1,3 +1,4 @@
+import { ValueType } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -6,25 +7,25 @@ function parseMatch(match: string | undefined): number | null {
 }
 
 function convertYearToString(year: number): string {
-	let string = year + '';
-	const isNegative = string.startsWith('-');
+	let yearString = year + '';
+	const isNegative = yearString.startsWith('-');
 	if (isNegative) {
-		string = string.substring(1);
+		yearString = yearString.substring(1);
 	}
-	return (isNegative ? '-' : '') + string.padStart(4, '0');
+	return (isNegative ? '-' : '') + yearString.padStart(4, '0');
 }
 
 function convertToTwoCharString(value: number): string {
-	const string = value + '';
-	return string.padStart(2, '0');
+	const valueString = value + '';
+	return valueString.padStart(2, '0');
 }
 
 function convertSecondsToString(seconds: number): string {
-	let string = seconds + '';
-	if (string.split('.')[0].length === 1) {
-		string = string.padStart(string.length + 1, '0');
+	let secondsString = seconds + '';
+	if (secondsString.split('.')[0].length === 1) {
+		secondsString = secondsString.padStart(secondsString.length + 1, '0');
 	}
-	return string;
+	return secondsString;
 }
 
 function isUTC(timezone: DayTimeDuration): boolean {
@@ -45,7 +46,7 @@ function timezoneToString(timezone: DayTimeDuration): string {
 }
 
 class DateTime {
-	public static fromString: (string: any) => DateTime;
+	public static fromString: (str: any) => DateTime;
 	public secondFraction: number;
 	public type: string;
 	protected _days: number;
@@ -77,7 +78,7 @@ class DateTime {
 		this.type = type;
 	}
 
-	public convertToType(type) {
+	public convertToType(type: ValueType) {
 		// xs:date       xxxx-xx-xxT00:00:00
 		// xs:time       1972-12-31Txx:xx:xx
 		// xs:gYearMonth xxxx-xx-01T00:00:00
@@ -197,7 +198,7 @@ class DateTime {
 		return this._years >= 0;
 	}
 
-	public toJavaScriptDate(implicitTimezone = undefined): Date {
+	public toJavaScriptDate(implicitTimezone?: DayTimeDuration): Date {
 		const timezoneToUse =
 			this._timezone || implicitTimezone || DayTimeDuration.fromTimezoneString('Z');
 		return new Date(
@@ -292,9 +293,9 @@ class DateTime {
 // gMonthDay   |       --mm-dd            (Z|[+-]hh:mm)
 // gDay        |         ---dd            (Z|[+-]hh:mm)
 // gMonth      |       --mm               (Z|[+-]hh:mm)
-DateTime.fromString = function (string: string): DateTime {
+DateTime.fromString = (dateString: string): DateTime => {
 	const regex = /^(?:(-?\d{4,}))?(?:--?(\d\d))?(?:-{1,3}(\d\d))?(T)?(?:(\d\d):(\d\d):(\d\d))?(\.\d+)?(Z|(?:[+-]\d\d:\d\d))?$/;
-	const match = regex.exec(string);
+	const match = regex.exec(dateString);
 
 	const years = match[1] ? parseInt(match[1], 10) : null;
 	const months = parseMatch(match[2]);
@@ -373,7 +374,7 @@ DateTime.fromString = function (string: string): DateTime {
 export function compare(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone: DayTimeDuration | null = undefined
+	implicitTimezone?: DayTimeDuration | null
 ): number {
 	const jsTime1 = dateTime1.toJavaScriptDate(implicitTimezone).getTime();
 	const jsTime2 = dateTime2.toJavaScriptDate(implicitTimezone).getTime();
@@ -399,7 +400,7 @@ export function compare(
 export function equal(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone: DayTimeDuration | null = undefined
+	implicitTimezone?: DayTimeDuration | null
 ): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) === 0;
 }
@@ -407,7 +408,7 @@ export function equal(
 export function lessThan(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone: DayTimeDuration | null = undefined
+	implicitTimezone?: DayTimeDuration | null
 ): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) < 0;
 }
@@ -415,7 +416,7 @@ export function lessThan(
 export function greaterThan(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone: DayTimeDuration | null = undefined
+	implicitTimezone?: DayTimeDuration | null
 ): boolean {
 	return compare(dateTime1, dateTime2, implicitTimezone) > 0;
 }
@@ -423,7 +424,7 @@ export function greaterThan(
 export function subtract(
 	dateTime1: DateTime,
 	dateTime2: DateTime,
-	implicitTimezone: DayTimeDuration | null = undefined
+	implicitTimezone?: DayTimeDuration | null
 ): DayTimeDuration {
 	// Divided by 1000 because date subtraction results in milliseconds
 	const secondsOfDuration =

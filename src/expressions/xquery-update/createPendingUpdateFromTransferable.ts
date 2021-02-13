@@ -21,7 +21,7 @@ import { ReplaceElementContentPendingUpdate } from './pendingUpdates/ReplaceElem
 import { ReplaceNodePendingUpdate } from './pendingUpdates/ReplaceNodePendingUpdate';
 import { ReplaceValuePendingUpdate } from './pendingUpdates/ReplaceValuePendingUpdate';
 
-export default function fromTransferable(transferable: object): IPendingUpdate {
+export default function createPendingUpdateFromTransferable(transferable: object): IPendingUpdate {
 	switch (transferable['type']) {
 		case 'delete':
 			return new DeletePendingUpdate({

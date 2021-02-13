@@ -71,7 +71,9 @@ class TransformExpression extends UpdatingExpression {
 			dynamicContext,
 			executionParameters
 		);
-		return separateXDMValueFromUpdatingExpressionResult(pendingUpdateIterator, (_pul) => {});
+		return separateXDMValueFromUpdatingExpressionResult(pendingUpdateIterator, (_pul) => {
+			/* Ignore the PUL part */
+		});
 	}
 
 	public evaluateWithUpdateList(

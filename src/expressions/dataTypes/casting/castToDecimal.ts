@@ -1,8 +1,10 @@
 import createAtomicValue from '../createAtomicValue';
-
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
-export default function castToDecimal(instanceOf: (string) => boolean): (Value) => CastResult {
+export default function castToDecimal(
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	if (instanceOf('xs:integer')) {
 		return (value) => ({
 			successful: true,

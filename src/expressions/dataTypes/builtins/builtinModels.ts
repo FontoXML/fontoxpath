@@ -10,7 +10,7 @@ type TypeDeclaration = {
 	variety: string;
 };
 
-const types: TypeDeclaration[] = [
+const builtinModels: TypeDeclaration[] = [
 	{
 		variety: 'primitive',
 		name: 'item()',
@@ -618,4 +618,4 @@ const types: TypeDeclaration[] = [
 	},
 ];
 
-export default types;
+export default builtinModels;

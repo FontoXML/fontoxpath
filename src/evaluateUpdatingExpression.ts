@@ -2,7 +2,7 @@ import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
 import { Language, Logger } from './evaluateXPath';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
-import buildContext from './evaluationUtils/buildContext';
+import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
@@ -54,7 +54,7 @@ export default async function evaluateUpdatingExpression(
 	let executionParameters: ExecutionParameters;
 	let expression: Expression;
 	try {
-		const context = buildContext(
+		const context = buildEvaluationContext(
 			updateScript,
 			contextItem,
 			domFacade || null,

@@ -35,15 +35,15 @@ function mapItem(
 	}
 	if (isSubtypeOf(argumentItem.type, 'xs:untypedAtomic')) {
 		// We might be able to cast this to the wished type
-		const item = castToType(argumentItem, type);
-		if (!item) {
+		const convertedItem = castToType(argumentItem, type);
+		if (!convertedItem) {
 			throw new Error(
 				`XPTY0004 Unable to convert ${isReturn ? 'return' : 'argument'} of type ${
 					argumentItem.type
 				} to type ${type} while calling ${functionName}`
 			);
 		}
-		return item;
+		return convertedItem;
 	}
 
 	// We need to promote this

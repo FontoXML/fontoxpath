@@ -114,15 +114,15 @@ class ElementConstructor extends Expression {
 						);
 					}
 
-					const childNodes: Value[][] = [];
+					const newChildNodes: Value[][] = [];
 					for (let i = 0; i < childNodesSequences.length; i++) {
 						const allValues = childNodesSequences[i].tryGetAllValues();
 						if (!allValues.ready) {
 							return allValues;
 						}
-						childNodes.push(allValues.value);
+						newChildNodes.push(allValues.value);
 					}
-					allChildNodes = childNodes;
+					allChildNodes = newChildNodes;
 					childNodesPhaseDone = true;
 				}
 
