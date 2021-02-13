@@ -1,11 +1,11 @@
 import * as chai from 'chai';
-import { evaluateXPathToBoolean, evaluateXPathToNumbers, evaluateXPath } from 'fontoxpath';
-import * as slimdom from 'slimdom';
+import { evaluateXPath, evaluateXPathToBoolean } from 'fontoxpath';
+import { Document } from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-let documentNode;
+let documentNode: Document;
 beforeEach(() => {
-	documentNode = new slimdom.Document();
+	documentNode = new Document();
 });
 
 describe('inline functions', () => {
@@ -89,7 +89,6 @@ return $index-of-node($perm, $nodes[2])), (2,5,7))
 	});
 
 	it('does not regard all nodes as the same', () => {
-		debugger;
 		chai.assert.throws(
 			() =>
 				evaluateXPath(

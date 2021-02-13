@@ -1,14 +1,14 @@
+import AtomicValue from '../AtomicValue';
+import createAtomicValue from '../createAtomicValue';
+import isSubtypeOf from '../isSubtypeOf';
 import {
 	getPrimitiveTypeName,
 	normalizeWhitespace,
 	validatePattern,
 	validateRestrictions,
 } from '../typeHelpers';
-
-import isSubtypeOf from '../isSubtypeOf';
-
-import createAtomicValue from '../createAtomicValue';
-
+import { ValueType } from '../Value';
+import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
 import castToBoolean from './castToBoolean';
@@ -30,10 +30,6 @@ import castToString from './castToString';
 import castToTime from './castToTime';
 import castToUntypedAtomic from './castToUntypedAtomic';
 import castToYearMonthDuration from './castToYearMonthDuration';
-
-import AtomicValue from '../AtomicValue';
-import CastResult from './CastResult';
-import { ValueType } from '../Value';
 
 const TREAT_AS_PRIMITIVE = ['xs:integer', 'xs:dayTimeDuration', 'xs:yearMonthDuration'];
 

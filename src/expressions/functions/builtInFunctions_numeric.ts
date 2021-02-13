@@ -7,6 +7,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -14,7 +15,6 @@ import StaticContext from '../StaticContext';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import { performFunctionConversion } from './argumentHelper';
 import FunctionDefinitionType from './FunctionDefinitionType';
-import { ValueType } from '../dataTypes/Value';
 
 function createValidNumericType(type: ValueType, transformedValue: number) {
 	if (isSubtypeOf(type, 'xs:integer')) {
@@ -30,34 +30,34 @@ function createValidNumericType(type: ValueType, transformedValue: number) {
 	return createAtomicValue(transformedValue, 'xs:decimal');
 }
 
-const fnAbs: FunctionDefinitionType = function (
+const fnAbs: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value))
 	);
 };
 
-const fnCeiling: FunctionDefinitionType = function (
+const fnCeiling: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value))
 	);
 };
 
-const fnFloor: FunctionDefinitionType = function (
+const fnFloor: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.floor(onlyValue.value))
 	);
@@ -136,7 +136,7 @@ function fnRound(
 			}
 
 			const originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(
-				function (type: ValueType) {
+				(type: ValueType) => {
 					return isSubtypeOf(item.type, type);
 				}
 			);
@@ -168,12 +168,12 @@ function fnRound(
 	});
 }
 
-const fnNumber: FunctionDefinitionType = function (
+const fnNumber: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return atomize(sequence, executionParameters).switchCases({
 		empty: () => sequenceFactory.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
@@ -189,12 +189,12 @@ const fnNumber: FunctionDefinitionType = function (
 	});
 };
 
-const returnRandomItemFromSequence: FunctionDefinitionType = function (
+const returnRandomItemFromSequence: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -204,12 +204,12 @@ const returnRandomItemFromSequence: FunctionDefinitionType = function (
 	return sequenceFactory.singleton(sequenceValue[index]);
 };
 
-const fnRandomNumberGenerator: FunctionDefinitionType = function (
+const fnRandomNumberGenerator: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	_sequence
-) {
+) => {
 	// Ignore the optional seed, as Math.random does not support a seed
 	return sequenceFactory.singleton(
 		new MapValue([

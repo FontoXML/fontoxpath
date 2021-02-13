@@ -1,13 +1,13 @@
 import { ValueType } from '../Value';
 
 type TypeDeclaration = {
-	variety: string;
-	name: ValueType;
 	base?: ValueType;
-	parent?: ValueType;
-	type?: ValueType;
-	restrictions?: { [s: string]: string | number };
 	memberTypes?: ValueType[];
+	name: ValueType;
+	parent?: ValueType;
+	restrictions?: { [s: string]: string | number };
+	type?: ValueType;
+	variety: string;
 };
 
 const types: TypeDeclaration[] = [
