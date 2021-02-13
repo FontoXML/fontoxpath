@@ -1,7 +1,7 @@
 import IDomFacade from './domFacade/IDomFacade';
 import { UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateXPath from './evaluateXPath';
-import buildContext from './evaluationUtils/buildContext';
+import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
@@ -43,7 +43,7 @@ export default function evaluateUpdatingExpressionSync<
 	let executionParameters: ExecutionParameters;
 	let expression: Expression;
 	try {
-		const context = buildContext(
+		const context = buildEvaluationContext(
 			updateScript,
 			contextItem,
 			domFacade || null,

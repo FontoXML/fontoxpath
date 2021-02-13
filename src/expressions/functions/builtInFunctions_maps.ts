@@ -10,13 +10,13 @@ import isSameMapKey from './isSameMapKey';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const mapMerge: FunctionDefinitionType = function (
+const mapMerge: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	mapSequence,
 	optionMap
-) {
+) => {
 	const duplicateKey = sequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
@@ -33,12 +33,10 @@ const mapMerge: FunctionDefinitionType = function (
 		sequenceFactory.singleton(
 			new MapValue(
 				allValues.reduce((resultingKeyValuePairs, map) => {
-					(map as MapValue).keyValuePairs.forEach(function (keyValuePair) {
-						const existingPairIndex = resultingKeyValuePairs.findIndex(function (
-							existingPair
-						) {
-							return isSameMapKey(existingPair.key, keyValuePair.key);
-						});
+					(map as MapValue).keyValuePairs.forEach((keyValuePair) => {
+						const existingPairIndex = resultingKeyValuePairs.findIndex((existingPair) =>
+							isSameMapKey(existingPair.key, keyValuePair.key)
+						);
 
 						if (existingPairIndex >= 0) {
 							// Duplicate keys, use options to determine what to do
@@ -83,19 +81,19 @@ const mapMerge: FunctionDefinitionType = function (
 	);
 };
 
-const mapPut: FunctionDefinitionType = function (
+const mapPut: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	mapSequence,
 	keySequence,
 	newValueSequence
-) {
+) => {
 	return zipSingleton([mapSequence, keySequence], ([map, newKey]) => {
 		const resultingKeyValuePairs = (map as MapValue).keyValuePairs.concat();
-		const indexOfExistingPair = resultingKeyValuePairs.findIndex(function (existingPair) {
-			return isSameMapKey(existingPair.key, newKey);
-		});
+		const indexOfExistingPair = resultingKeyValuePairs.findIndex((existingPair) =>
+			isSameMapKey(existingPair.key, newKey)
+		);
 		if (indexOfExistingPair >= 0) {
 			// Duplicate keys, use options to determine what to do
 			resultingKeyValuePairs.splice(indexOfExistingPair, 1, {
@@ -112,47 +110,47 @@ const mapPut: FunctionDefinitionType = function (
 	});
 };
 
-const mapEntry: FunctionDefinitionType = function (
+const mapEntry: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	keySequence,
 	value
-) {
+) => {
 	return keySequence.map(
 		(onlyKey) => new MapValue([{ key: onlyKey, value: createDoublyIterableSequence(value) }])
 	);
 };
 
-const mapSize: FunctionDefinitionType = function (
+const mapSize: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	mapSequence
-) {
+) => {
 	return mapSequence.map((onlyMap) =>
 		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, 'xs:integer')
 	);
 };
 
-const mapKeys: FunctionDefinitionType = function (
+const mapKeys: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	mapSequence
-) {
+) => {
 	return zipSingleton([mapSequence], ([map]) =>
 		sequenceFactory.create((map as MapValue).keyValuePairs.map((pair) => pair.key))
 	);
 };
 
-const mapContains: FunctionDefinitionType = function (
+const mapContains: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	mapSequence,
 	keySequence
-) {
+) => {
 	return zipSingleton([mapSequence, keySequence], ([map, key]) => {
 		const doesContain = (map as MapValue).keyValuePairs.some((pair) =>
 			isSameMapKey(pair.key, key)
@@ -163,17 +161,17 @@ const mapContains: FunctionDefinitionType = function (
 	});
 };
 
-const mapRemove: FunctionDefinitionType = function (
+const mapRemove: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	mapSequence,
 	keySequence
-) {
+) => {
 	return zipSingleton([mapSequence], ([map]) => {
 		const resultingKeyValuePairs = (map as MapValue).keyValuePairs.concat();
 		return keySequence.mapAll((keys) => {
-			keys.forEach(function (key) {
+			keys.forEach((key) => {
 				const indexOfExistingPair = resultingKeyValuePairs.findIndex((existingPair) =>
 					isSameMapKey(existingPair.key, key)
 				);
@@ -186,27 +184,27 @@ const mapRemove: FunctionDefinitionType = function (
 	});
 };
 
-const mapForEach: FunctionDefinitionType = function (
+const mapForEach: FunctionDefinitionType = (
 	dynamicContext,
 	executionParameters,
 	staticContext,
 	mapSequence,
-	functionItemSequence
-) {
-	return zipSingleton([mapSequence, functionItemSequence], ([map, functionItem]) => {
-		return concatSequences(
-			(map as MapValue).keyValuePairs.map(function (keyValuePair) {
-				return functionItem.value.call(
+	itemSequence
+) => {
+	return zipSingleton([mapSequence, itemSequence], ([map, item]) =>
+		concatSequences(
+			(map as MapValue).keyValuePairs.map((keyValuePair) =>
+				item.value.call(
 					undefined,
 					dynamicContext,
 					executionParameters,
 					staticContext,
 					sequenceFactory.singleton(keyValuePair.key),
 					keyValuePair.value()
-				);
-			})
-		);
-	});
+				)
+			)
+		)
+	);
 };
 
 export default {
@@ -231,8 +229,8 @@ export default {
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'for-each',
 			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['map(*)', 'function(xs:anyAtomicType, item()*) as item()*'],
-			argumentTypes: ['map(*)', 'function(*)'],
+			// argumentTypes: ['map(*)', '(xs:anyAtomicType, item()*) as item()*'],
+			argumentTypes: ['map(*)', 'item()*'],
 			returnType: 'item()*',
 			callFunction: mapForEach,
 		},

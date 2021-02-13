@@ -13,7 +13,7 @@ import concatSequences from '../util/concatSequences';
 class SequenceOperator extends PossiblyUpdatingExpression {
 	constructor(expressions: Expression[]) {
 		super(
-			expressions.reduce(function (specificity, selector) {
+			expressions.reduce((specificity, selector) => {
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
 			expressions,

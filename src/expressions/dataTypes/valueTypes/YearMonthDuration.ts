@@ -2,9 +2,9 @@ import AbstractDuration from './AbstractDuration';
 
 class YearMonthDuration extends AbstractDuration {
 	public static fromParts: (years: any, months: any, isPositive: any) => YearMonthDuration;
-	public static fromString: (string: any) => YearMonthDuration;
+	public static fromString: (yearMonthDurationString: any) => YearMonthDuration;
 	public months: number;
-	constructor(months) {
+	constructor(months: number) {
 		super();
 
 		if (months > Number.MAX_SAFE_INTEGER || months < Number.MIN_SAFE_INTEGER) {
@@ -46,11 +46,11 @@ class YearMonthDuration extends AbstractDuration {
 	}
 }
 
-YearMonthDuration.fromParts = function (
+YearMonthDuration.fromParts = (
 	years: number,
 	months: number,
 	isPositive: boolean
-): YearMonthDuration {
+): YearMonthDuration => {
 	const totalMonths = years * 12 + months;
 	if (totalMonths > Number.MAX_SAFE_INTEGER || !Number.isFinite(totalMonths)) {
 		throw new Error('FODT0002: Value overflow while constructing xs:yearMonthDuration');
@@ -58,9 +58,9 @@ YearMonthDuration.fromParts = function (
 	return new YearMonthDuration(isPositive || totalMonths === 0 ? totalMonths : -totalMonths);
 };
 
-YearMonthDuration.fromString = function (string: string): YearMonthDuration | null {
+YearMonthDuration.fromString = (yearMonthDurationString: string): YearMonthDuration | null => {
 	const regex = /^(-)?P(\d+Y)?(\d+M)?(\d+D)?(?:T(\d+H)?(\d+M)?(\d+(\.\d*)?S)?)?$/;
-	const match = regex.exec(string);
+	const match = regex.exec(yearMonthDurationString);
 
 	if (!match) {
 		return null;

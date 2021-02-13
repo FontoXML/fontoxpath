@@ -1,9 +1,11 @@
 import createAtomicValue from '../createAtomicValue';
+import { ValueType } from '../Value';
+import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
-import CastResult from './CastResult';
-
-export default function castToString(instanceOf: (string) => boolean): (Value) => CastResult {
+export default function castToString(
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	const caster = castToStringLikeType(instanceOf);
 	return (value) => {
 		const castResult = caster(value);

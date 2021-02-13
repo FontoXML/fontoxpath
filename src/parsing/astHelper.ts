@@ -1,6 +1,6 @@
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
+import { ValueType } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
-import { ValueType } from 'src/expressions/dataTypes/Value';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
 
@@ -65,7 +65,7 @@ function getTextContent(ast: IAST): string {
 	if (typeof ast[1] === 'object') {
 		return (ast[2] || '') as string;
 	}
-	return (ast[1] as string) || '';
+	return ast[1] || '';
 }
 
 /**

@@ -1,11 +1,13 @@
 import createAtomicValue from '../createAtomicValue';
+import { ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
-
 import CastResult from './CastResult';
 
 const createGMonthValue = (value) => createAtomicValue(value, 'xs:gMonth');
 
-export default function castToGMonth(instanceOf: (string) => boolean): (Value) => CastResult {
+export default function castToGMonth(
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
 		return (value) => ({
 			successful: true,

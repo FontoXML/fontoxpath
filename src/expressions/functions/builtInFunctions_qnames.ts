@@ -7,13 +7,13 @@ import zipSingleton from '../util/zipSingleton';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnQName: FunctionDefinitionType = function (
+const fnQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	paramURI,
 	paramQName
-) {
+) => {
 	return zipSingleton([paramURI, paramQName], ([uriValue, lexicalQNameValue]) => {
 		const lexicalQName = lexicalQNameValue.value;
 		if (!validatePattern(lexicalQName, 'xs:QName')) {
@@ -45,12 +45,12 @@ const fnQName: FunctionDefinitionType = function (
 	});
 };
 
-const fnPrefixFromQName: FunctionDefinitionType = function (
+const fnPrefixFromQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
-) {
+) => {
 	return zipSingleton([arg], ([qname]) => {
 		if (qname === null) {
 			return sequenceFactory.empty();
@@ -63,24 +63,24 @@ const fnPrefixFromQName: FunctionDefinitionType = function (
 	});
 };
 
-const fnNamespaceURIFromQName: FunctionDefinitionType = function (
+const fnNamespaceURIFromQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
-) {
+) => {
 	return arg.map((qname) => {
 		const qnameValue = qname.value;
 		return createAtomicValue(qnameValue.namespaceURI || '', 'xs:anyURI');
 	});
 };
 
-const fnLocalNameFromQName: FunctionDefinitionType = function (
+const fnLocalNameFromQName: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arg
-) {
+) => {
 	return arg.map((qname) => {
 		const qnameValue = qname.value;
 		return createAtomicValue(qnameValue.localName, 'xs:NCName');

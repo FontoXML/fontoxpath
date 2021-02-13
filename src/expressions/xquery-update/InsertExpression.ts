@@ -1,6 +1,6 @@
 import { AttributeNodePointer, ChildNodePointer, ElementNodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';
-import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -216,8 +216,8 @@ class InsertExpression extends UpdatingExpression {
 							throw errXUTY0005();
 						}
 						if (
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'document-node()')
+							!isSubtypeOf(tv.value.xdmValue[0].type, 'element()') &&
+							!isSubtypeOf(tv.value.xdmValue[0].type, 'document-node()')
 						) {
 							throw errXUTY0005();
 						}
@@ -227,10 +227,10 @@ class InsertExpression extends UpdatingExpression {
 							throw errXUTY0006();
 						}
 						if (
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'element()') &&
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'text()') &&
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'comment()') &&
-							!isSubTypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
+							!isSubtypeOf(tv.value.xdmValue[0].type, 'element()') &&
+							!isSubtypeOf(tv.value.xdmValue[0].type, 'text()') &&
+							!isSubtypeOf(tv.value.xdmValue[0].type, 'comment()') &&
+							!isSubtypeOf(tv.value.xdmValue[0].type, 'processing-instruction()')
 						) {
 							throw errXUTY0006();
 						}
@@ -251,7 +251,7 @@ class InsertExpression extends UpdatingExpression {
 				if (alist.length) {
 					if (this._targetChoice >= TargetChoice.INSERT_INTO) {
 						// a. $target must be an element node [err:XUTY0022].
-						if (!isSubTypeOf(target.type, 'element()')) {
+						if (!isSubtypeOf(target.type, 'element()')) {
 							throw errXUTY0022();
 						}
 					} else {

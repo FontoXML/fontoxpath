@@ -10,8 +10,8 @@ class DayTimeDuration extends AbstractDuration {
 		secondFraction: any,
 		isPositive: any
 	) => DayTimeDuration;
-	public static fromString: (string: any) => DayTimeDuration;
-	public static fromTimezoneString: (string: any) => DayTimeDuration;
+	public static fromString: (str: string) => DayTimeDuration;
+	public static fromTimezoneString: (str: string) => DayTimeDuration;
 	public seconds: number;
 	constructor(seconds: number) {
 		super();
@@ -69,21 +69,21 @@ class DayTimeDuration extends AbstractDuration {
 	}
 }
 
-DayTimeDuration.fromParts = function (
+DayTimeDuration.fromParts = (
 	days: number,
 	hours: number,
 	minutes: number,
 	seconds: number,
 	secondFraction: number,
 	isPositive: boolean
-): DayTimeDuration {
+): DayTimeDuration => {
 	const totalSeconds = days * 86400 + hours * 3600 + minutes * 60 + seconds + secondFraction;
 	return new DayTimeDuration(isPositive || totalSeconds === 0 ? totalSeconds : -totalSeconds);
 };
 
-DayTimeDuration.fromString = function (string: string): DayTimeDuration | null {
+DayTimeDuration.fromString = (dayTimeDurationString: string): DayTimeDuration | null => {
 	const regex = /^(-)?P(\d+Y)?(\d+M)?(\d+D)?(?:T(\d+H)?(\d+M)?(\d+(\.\d*)?S)?)?$/;
-	const match = regex.exec(string);
+	const match = regex.exec(dayTimeDurationString);
 
 	if (!match) {
 		return null;
@@ -99,9 +99,9 @@ DayTimeDuration.fromString = function (string: string): DayTimeDuration | null {
 	return DayTimeDuration.fromParts(days, hours, minutes, seconds, secondFraction, isPositive);
 };
 
-DayTimeDuration.fromTimezoneString = function (string: string): DayTimeDuration {
+DayTimeDuration.fromTimezoneString = (timezoneString: string): DayTimeDuration => {
 	const regex = /^(Z)|([+-])([01]\d):([0-5]\d)$/;
-	const match = regex.exec(string);
+	const match = regex.exec(timezoneString);
 
 	if (match[1] === 'Z') {
 		return DayTimeDuration.fromParts(0, 0, 0, 0, 0, true);
@@ -114,7 +114,7 @@ DayTimeDuration.fromTimezoneString = function (string: string): DayTimeDuration 
 	return DayTimeDuration.fromParts(0, hours, minutes, 0, 0, isPositive);
 };
 
-DayTimeDuration.fromJavascriptDateTimezone = function (date: Date): DayTimeDuration {
+DayTimeDuration.fromJavascriptDateTimezone = (date: Date): DayTimeDuration => {
 	const minutes = date.getTimezoneOffset();
 	const isPositive = minutes > -1;
 

@@ -1,6 +1,7 @@
-import builtinDataTypesByName from './builtins/builtinDataTypesByName';
+import builtinDataTypesByName, { TypeModel } from './builtins/builtinDataTypesByName';
+import { ValueType } from './Value';
 
-export function getPrimitiveTypeName(typeName: string): string | null {
+export function getPrimitiveTypeName(typeName: ValueType): ValueType | null {
 	let type = builtinDataTypesByName[typeName];
 	while (type && type.variety !== 'primitive') {
 		type = type.parent;
@@ -8,56 +9,56 @@ export function getPrimitiveTypeName(typeName: string): string | null {
 	return !type ? null : type.name;
 }
 
-export function normalizeWhitespace(string: string, typeName: string): string {
+export function normalizeWhitespace(input: string, typeName: ValueType): string {
 	const type = builtinDataTypesByName[typeName];
 	const restrictionsByName = type.restrictionsByName;
 	if (!restrictionsByName || !restrictionsByName.whiteSpace) {
 		if (!type.parent) {
-			return string;
+			return input;
 		}
-		return normalizeWhitespace(string, type.parent.name);
+		return normalizeWhitespace(input, type.parent.name);
 	}
 	const whiteSpaceType = type.restrictionsByName.whiteSpace;
 	switch (whiteSpaceType) {
 		case 'preserve':
-			return string;
+			return input;
 		case 'replace':
-			return string.replace(/[\u0009\u000A\u000D]/g, ' ');
+			return input.replace(/[\u0009\u000A\u000D]/g, ' ');
 
 		case 'collapse':
-			return string
+			return input
 				.replace(/[\u0009\u000A\u000D]/g, ' ')
 				.replace(/ {2,}/g, ' ')
 				.replace(/^ | $/g, '');
 	}
-	return string;
+	return input;
 }
 
-export function validatePattern(string: string, typeName: string): boolean {
-	let type = builtinDataTypesByName[typeName];
-	while (type && type.validator === null) {
-		if (type.variety === 'list' || type.variety === 'union') {
+export function validatePattern(input: string, typeName: ValueType): boolean {
+	let typeModel = builtinDataTypesByName[typeName];
+	while (typeModel && typeModel.validator === null) {
+		if (typeModel.variety === 'list' || typeModel.variety === 'union') {
 			return true;
 		}
-		type = type.parent;
+		typeModel = typeModel.parent;
 	}
-	if (!type) {
+	if (!typeModel) {
 		return true;
 	}
-	return type.validator(string);
+	return typeModel.validator(input);
 }
 
-function getHandlerForFacet(type, facetName) {
-	while (type) {
-		if (type.facetHandlers && type.facetHandlers[facetName]) {
-			return type.facetHandlers[facetName];
+function getHandlerForFacet(typeModel: TypeModel, facetName: string) {
+	while (typeModel) {
+		if (typeModel.facetHandlers && typeModel.facetHandlers[facetName]) {
+			return typeModel.facetHandlers[facetName];
 		}
-		type = type.parent;
+		typeModel = typeModel.parent;
 	}
 	return () => true;
 }
 
-export function validateRestrictions(value: string, typeName: string): boolean {
+export function validateRestrictions(value: string, typeName: ValueType): boolean {
 	let type = builtinDataTypesByName[typeName];
 	while (type) {
 		if (!type.restrictionsByName) {

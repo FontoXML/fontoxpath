@@ -1,7 +1,8 @@
+import { ValueType } from '../Value';
 import QName from '../valueTypes/QName';
 
 export default function castToStringLikeType(
-	instanceOf: (t: string) => boolean
+	instanceOf: (t: ValueType) => boolean
 ): (value: any) => { successful: true; value: any } | { error: Error; successful: false } {
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
 		return (value) => ({

@@ -6,7 +6,7 @@ import UpdatingExpression from './UpdatingExpression';
 import { deletePu } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
-import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
 
 import Value from '../dataTypes/Value';
@@ -49,7 +49,7 @@ class DeleteExpression extends UpdatingExpression {
 					}
 
 					// The result must be a sequence of zero or more nodes; otherwise a type error is raised [err:XUTY0007].
-					if (tv.value.xdmValue.some((entry) => !isSubTypeOf(entry.type, 'node()'))) {
+					if (tv.value.xdmValue.some((entry) => !isSubtypeOf(entry.type, 'node()'))) {
 						throw errXUTY0007();
 					}
 

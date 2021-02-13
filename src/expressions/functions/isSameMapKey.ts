@@ -1,5 +1,7 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-export default function isSameKey(k1, k2) {
+import Value from '../dataTypes/Value';
+
+export default function isSameMapKey(k1: Value, k2: Value) {
 	const k1IsStringLike =
 		isSubtypeOf(k1.type, 'xs:string') ||
 		isSubtypeOf(k1.type, 'xs:anyURI') ||

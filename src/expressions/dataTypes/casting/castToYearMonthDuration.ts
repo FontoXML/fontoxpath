@@ -1,13 +1,13 @@
 import createAtomicValue from '../createAtomicValue';
+import { ValueType } from '../Value';
 import YearMonthDuration from '../valueTypes/YearMonthDuration';
-
 import CastResult from './CastResult';
 
 const createYearMonthDurationValue = (value) => createAtomicValue(value, 'xs:yearMonthDuration');
 
 export default function castToYearMonthDuration(
-	instanceOf: (string) => boolean
-): (Value) => CastResult {
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	if (instanceOf('xs:duration') && !instanceOf('xs:dayTimeDuration')) {
 		return (value) => ({
 			successful: true,

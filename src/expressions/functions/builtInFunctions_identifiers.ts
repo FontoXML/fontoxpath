@@ -1,21 +1,30 @@
+import { ElementNodePointer, NodePointer, ParentNodePointer } from '../../domClone/Pointer';
+import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { errXPTY0004, XPDY0002 } from '../XPathErrors';
-
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-
-import { NODE_TYPES } from '../../domFacade/ConcreteNode';
+import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-function findDescendants(domFacade, node, isMatch) {
+function findDescendants(
+	domFacade: DomFacade,
+	node: NodePointer,
+	isMatch: (node: NodePointer) => boolean
+): Node[] {
+	if (
+		node.node.nodeType !== NODE_TYPES.ELEMENT_NODE &&
+		node.node.nodeType !== NODE_TYPES.DOCUMENT_NODE
+	) {
+		return [];
+	}
 	const results = domFacade
-		.getChildNodePointers(node)
-		.reduce(function (matchingNodes, childNode) {
-			Array.prototype.push.apply(
-				matchingNodes,
-				findDescendants(domFacade, childNode, isMatch)
-			);
+		.getChildNodePointers(node as ParentNodePointer)
+		.reduce((matchingNodes, childNode) => {
+			for (const descendant of findDescendants(domFacade, childNode, isMatch)) {
+				matchingNodes.push(descendant);
+			}
 			return matchingNodes;
 		}, []);
 	if (isMatch(node)) {
@@ -24,13 +33,13 @@ function findDescendants(domFacade, node, isMatch) {
 	return results;
 }
 
-const fnId: FunctionDefinitionType = function (
+const fnId: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	idrefSequence,
 	targetNodeSequence
-) {
+) => {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use id function.');
@@ -45,8 +54,8 @@ const fnId: FunctionDefinitionType = function (
 	// TODO: Index ids to optimize this lookup
 	const isMatchingIdById: { [s: string]: boolean } = idrefSequence
 		.getAllValues()
-		.reduce(function (byId, idrefValue) {
-			idrefValue.value.split(/\s+/).forEach(function (id) {
+		.reduce((byId, idrefValue) => {
+			idrefValue.value.split(/\s+/).forEach((id) => {
 				byId[id] = true;
 			});
 			return byId;
@@ -60,12 +69,14 @@ const fnId: FunctionDefinitionType = function (
 		}
 	}
 
-	const matchingNodes = findDescendants(domFacade, documentNode, (node) => {
+	// Note the cast: The filter is only matching element node pointers
+	const matchingNodes = (findDescendants(domFacade, documentNode, (node) => {
 		// TODO: use the is-id property of attributes / elements
 		if (domFacade.getNodeType(node) !== NODE_TYPES.ELEMENT_NODE) {
 			return false;
 		}
-		const idAttribute = domFacade.getAttribute(node, 'id');
+		const elementNode = node as ElementNodePointer;
+		const idAttribute = domFacade.getAttribute(elementNode, 'id');
 		if (!idAttribute) {
 			return false;
 		}
@@ -75,17 +86,17 @@ const fnId: FunctionDefinitionType = function (
 		// Only return the first match, per id
 		isMatchingIdById[idAttribute] = false;
 		return true;
-	});
+	}) as unknown) as ElementNodePointer[];
 	return sequenceFactory.create(matchingNodes.map((node) => createPointerValue(node, domFacade)));
 };
 
-const fnIdref: FunctionDefinitionType = function (
+const fnIdref: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	idSequence,
 	targetNodeSequence
-) {
+) => {
 	const targetNodeValue = targetNodeSequence.first();
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use idref function.');
@@ -98,7 +109,7 @@ const fnIdref: FunctionDefinitionType = function (
 
 	const domFacade = executionParameters.domFacade;
 
-	const isMatchingIdRefById = idSequence.getAllValues().reduce(function (byId, idValue) {
+	const isMatchingIdRefById = idSequence.getAllValues().reduce((byId, idValue) => {
 		byId[idValue.value] = true;
 		return byId;
 	}, Object.create(null));
@@ -111,21 +122,23 @@ const fnIdref: FunctionDefinitionType = function (
 		}
 	}
 
+	// Note the cast: The filter is only matching element node pointers
 	// TODO: Index idrefs to optimize this lookup
-	const matchingNodes = findDescendants(domFacade, documentNode, function (node) {
+	const matchingNodes = (findDescendants(domFacade, documentNode, (node) => {
 		// TODO: use the is-idrefs property of attributes / elements
 		if (domFacade.getNodeType(node) !== NODE_TYPES.ELEMENT_NODE) {
 			return false;
 		}
-		const idAttribute = domFacade.getAttribute(node, 'idref');
+		const element = node as ElementNodePointer;
+		const idAttribute = domFacade.getAttribute(element, 'idref');
 		if (!idAttribute) {
 			return false;
 		}
 		const idRefs = idAttribute.split(/\s+/);
-		return idRefs.some(function (idRef) {
+		return idRefs.some((idRef) => {
 			return isMatchingIdRefById[idRef];
 		});
-	});
+	}) as unknown) as ElementNodePointer[];
 	return sequenceFactory.create(matchingNodes.map((node) => createPointerValue(node, domFacade)));
 };
 

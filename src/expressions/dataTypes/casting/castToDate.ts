@@ -1,10 +1,13 @@
 import createAtomicValue from '../createAtomicValue';
+import { ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
 const createDateValue = (value) => createAtomicValue(value, 'xs:date');
 
-export default function castToDate(instanceOf: (string) => boolean): (Value) => CastResult {
+export default function castToDate(
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	if (instanceOf('xs:dateTime')) {
 		return (value) => ({
 			successful: true,
