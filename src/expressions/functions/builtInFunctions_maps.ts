@@ -232,7 +232,7 @@ export default {
 			localName: 'for-each',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['map(*)', '(xs:anyAtomicType, item()*) as item()*'],
-			argumentTypes: ['map(*)', '(*)'],
+			argumentTypes: ['map(*)', 'item()*'],
 			returnType: 'item()*',
 			callFunction: mapForEach,
 		},

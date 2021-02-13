@@ -74,7 +74,7 @@ class NameTest extends TestAbstractExpression {
 		const resolvedNamespaceURI =
 			this._prefix === '' ? (nodeIsElement ? this._namespaceURI : null) : this._namespaceURI;
 
-		return domFacade.getNamespaceURI(node.value) === resolvedNamespaceURI;
+		return (domFacade.getNamespaceURI(node.value) || null) === (resolvedNamespaceURI || null);
 	}
 
 	public getBucket() {
@@ -89,7 +89,7 @@ class NameTest extends TestAbstractExpression {
 
 	public performStaticEvaluation(staticContext) {
 		if (this._namespaceURI === null && this._prefix !== '*') {
-			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '');
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '') || null;
 
 			if (!this._namespaceURI && this._prefix) {
 				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);
