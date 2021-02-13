@@ -1,5 +1,5 @@
-import { ValueType } from '../expressions/dataTypes/Value';
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
+import { ValueType } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
