@@ -24,10 +24,10 @@ function convert(obj: any): ISequence {
 			// Normal object
 			return sequenceFactory.singleton(
 				new MapValue(
-					Object.keys(obj as Object).map((key) => {
+					Object.keys(obj as object).map((key) => {
 						return {
 							key: createAtomicValue(key, 'xs:string'),
-							value: createDoublyIterableSequence(convert((obj as Object)[key])),
+							value: createDoublyIterableSequence(convert((obj as object)[key])),
 						};
 					})
 				)
@@ -45,12 +45,12 @@ function convert(obj: any): ISequence {
 	}
 }
 
-const fnParseJson: FunctionDefinitionType = function (
+const fnParseJson: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	jsonString
-) {
+) => {
 	let jsObject: any;
 	try {
 		jsObject = JSON.parse(jsonString.first().value);

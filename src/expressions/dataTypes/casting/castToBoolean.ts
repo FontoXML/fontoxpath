@@ -1,7 +1,10 @@
 import { falseBoolean, trueBoolean } from '../createAtomicValue';
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
-export default function castToBoolean(instanceOf: (string) => boolean): (Value) => CastResult {
+export default function castToBoolean(
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	if (instanceOf('xs:numeric')) {
 		return (value) => ({
 			successful: true,

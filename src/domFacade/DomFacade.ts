@@ -53,7 +53,7 @@ function createPointer<TPointer extends NodePointer>(
  * Adapter for the DOM, can be used to use a different DOM implementation
  */
 class DomFacade {
-	public orderOfDetachedNodes: Node[];
+	public orderOfDetachedNodes: NodePointer[];
 
 	constructor(private readonly _domFacade: IDomFacade) {
 		/**

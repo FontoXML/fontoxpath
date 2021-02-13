@@ -125,8 +125,8 @@ function compareElements(
 			return index1 - index2;
 		}
 
-		let y, z;
-		for (y = 1, z = Math.min(actualAncestorsA.length, actualAncestorsB.length); y < z; ++y) {
+		let y = 1;
+		for (const z = Math.min(actualAncestorsA.length, actualAncestorsB.length); y < z; ++y) {
 			if (actualAncestorsA[y] !== actualAncestorsB[y]) {
 				break;
 			}
@@ -179,8 +179,8 @@ function compareElements(
 		}
 
 		// Skip common ancestors
-		let i, l;
-		for (i = 1, l = Math.min(ancestors1.length, ancestors2.length); i < l; ++i) {
+		let i = 1;
+		for (const l = Math.min(ancestors1.length, ancestors2.length); i < l; ++i) {
 			if (!arePointersEqual(ancestors1[i], ancestors2[i])) {
 				break;
 			}
@@ -198,10 +198,16 @@ function compareElements(
 		return compareSiblingElements(domFacade, ancestors1[i], ancestors2[i]);
 	}
 }
-function compareNodePositionsWithTieBreaker(tieBreakerArr, domFacade, node1, node2) {
+function compareNodePositionsWithTieBreaker(
+	tieBreakerArr: NodePointer[],
+	domFacade: DomFacade,
+	node1: Value,
+	node2: Value
+) {
 	const isNode1SubtypeOfAttribute = isSubtypeOf(node1.type, 'attribute()');
 	const isNode2SubtypeOfAttribute = isSubtypeOf(node2.type, 'attribute()');
-	let value1, value2;
+	let value1: NodePointer;
+	let value2: NodePointer;
 	if (isNode1SubtypeOfAttribute && !isNode2SubtypeOfAttribute) {
 		value1 = domFacade.getParentNodePointer(node1.value);
 		value2 = node2.value;
@@ -237,7 +243,7 @@ function compareNodePositionsWithTieBreaker(tieBreakerArr, domFacade, node1, nod
 	return compareElements(tieBreakerArr, domFacade, value1, value2);
 }
 
-export function compareNodePositions(domFacade, node1, node2) {
+export function compareNodePositions(domFacade: DomFacade, node1: Value, node2: Value) {
 	return compareNodePositionsWithTieBreaker(
 		domFacade.orderOfDetachedNodes,
 		domFacade,

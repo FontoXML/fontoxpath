@@ -1,4 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
 const createBase64BinaryValue = (value) => createAtomicValue(value, 'xs:base64Binary');
@@ -14,7 +15,9 @@ function hexToString(hex) {
 // This declaration is needed, as we don't depend anymore on lib.dom.
 declare var btoa: (s: string) => string;
 
-export default function castToBase64Binary(instanceOf: (string) => boolean): (Value) => CastResult {
+export default function castToBase64Binary(
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	if (instanceOf('xs:hexBinary')) {
 		return (value) => ({
 			successful: true,

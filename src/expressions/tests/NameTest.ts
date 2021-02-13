@@ -68,18 +68,13 @@ class NameTest extends TestAbstractExpression {
 			}
 		}
 
-		let resolvedNamespaceURI;
-		if (this._prefix === '') {
-			// An unprefixed QName, when used as a name test on an axis whose principal node kind is element,
-			//    has the namespace URI of the default element/type namespace in the expression context;
-			//    otherwise, it has no namespace URI.
-			resolvedNamespaceURI = nodeIsElement ? this._namespaceURI || null : null;
-		} else {
-			// We have a prefixed name test.
-			resolvedNamespaceURI = this._namespaceURI || null;
-		}
+		// An unprefixed QName, when used as a name test on an axis whose principal node kind is element,
+		//    has the namespace URI of the default element/type namespace in the expression context;
+		//    otherwise, it has no namespace URI.
+		const resolvedNamespaceURI =
+			this._prefix === '' ? (nodeIsElement ? this._namespaceURI : null) : this._namespaceURI;
 
-		return domFacade.getNamespaceURI(node.value) === resolvedNamespaceURI;
+		return (domFacade.getNamespaceURI(node.value) || null) === (resolvedNamespaceURI || null);
 	}
 
 	public getBucket() {
@@ -94,7 +89,7 @@ class NameTest extends TestAbstractExpression {
 
 	public performStaticEvaluation(staticContext) {
 		if (this._namespaceURI === null && this._prefix !== '*') {
-			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '');
+			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '') || null;
 
 			if (!this._namespaceURI && this._prefix) {
 				throw new Error(`XPST0081: The prefix ${this._prefix} could not be resolved.`);

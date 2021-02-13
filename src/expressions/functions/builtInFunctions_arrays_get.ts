@@ -1,13 +1,13 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const arrayGet: FunctionDefinitionType = function (
+const arrayGet: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	arraySequence,
 	positionSequence
-) {
+) => {
 	return positionSequence.mapAll(([position]) =>
 		arraySequence.mapAll(([array]) => {
 			const positionValue = position.value;

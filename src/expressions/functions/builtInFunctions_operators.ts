@@ -4,13 +4,13 @@ import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const opTo: FunctionDefinitionType = function (
+const opTo: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
-	staticContext,
+	_staticContext,
 	fromSequence,
 	toSequence
-) {
+) => {
 	// shortcut the non-trivial case of both values being known
 	// RangeExpr is inclusive: 1 to 3 will make (1,2,3)
 	const from = fromSequence.tryGetFirst();
@@ -38,24 +38,24 @@ const opTo: FunctionDefinitionType = function (
 	return sequenceFactory.create({
 		next: () => {
 			if (fromValue === null) {
-				const from = fromSequence.tryGetFirst();
-				if (!from.ready) {
-					return notReady(from.promise);
+				const fromAttempt = fromSequence.tryGetFirst();
+				if (!fromAttempt.ready) {
+					return notReady(fromAttempt.promise);
 				}
-				if (from.value === null) {
+				if (fromAttempt.value === null) {
 					return DONE_TOKEN;
 				}
-				fromValue = from.value.value;
+				fromValue = fromAttempt.value.value;
 			}
 			if (toValue === null) {
-				const to = toSequence.tryGetFirst();
-				if (!to.ready) {
-					return notReady(to.promise);
+				const toAttempt = toSequence.tryGetFirst();
+				if (!toAttempt.ready) {
+					return notReady(toAttempt.promise);
 				}
-				if (to.value === null) {
+				if (toAttempt.value === null) {
 					return DONE_TOKEN;
 				}
-				toValue = to.value.value;
+				toValue = toAttempt.value.value;
 			}
 			if (fromValue > toValue) {
 				return DONE_TOKEN;

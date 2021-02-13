@@ -11,9 +11,9 @@ class OrOperator extends Expression {
 	private _subExpressions: Expression[];
 
 	constructor(expressions: Expression[]) {
-		const maxSpecificity = expressions.reduce((maxSpecificity, selector) => {
-			if (maxSpecificity.compareTo(selector.specificity) > 0) {
-				return maxSpecificity;
+		const maxSpecificity = expressions.reduce((currentMaxSpecificity, selector) => {
+			if (currentMaxSpecificity.compareTo(selector.specificity) > 0) {
+				return currentMaxSpecificity;
 			}
 			return selector.specificity;
 		}, new Specificity({}));
@@ -25,7 +25,7 @@ class OrOperator extends Expression {
 		});
 
 		// If all subExpressions define the same bucket: use that one, else, use no bucket.
-		let bucket;
+		let bucket: string;
 		for (let i = 0; i < expressions.length; ++i) {
 			if (bucket === undefined) {
 				bucket = expressions[i].getBucket();

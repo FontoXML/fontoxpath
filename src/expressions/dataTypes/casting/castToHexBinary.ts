@@ -1,13 +1,13 @@
 import createAtomicValue from '../createAtomicValue';
+import { ValueType } from '../Value';
+import CastResult from './CastResult';
 
 const createHexBinaryValue = (value) => createAtomicValue(value, 'xs:hexBinary');
 
-import CastResult from './CastResult';
-
-function stringToHex(string) {
+function stringToHex(s: string) {
 	let hex = '';
-	for (let i = 0, l = string.length; i < l; i++) {
-		hex += Number(string.charCodeAt(i)).toString(16);
+	for (let i = 0, l = s.length; i < l; i++) {
+		hex += Number(s.charCodeAt(i)).toString(16);
 	}
 	return hex.toUpperCase();
 }
@@ -15,7 +15,9 @@ function stringToHex(string) {
 // This declaration is needed, as we don't depend anymore on lib.dom.
 declare var atob: (s: string) => string;
 
-export default function castToGDay(instanceOf: (string) => boolean): (Value) => CastResult {
+export default function castToHexBinary(
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	if (instanceOf('xs:base64Binary')) {
 		return (value) => ({
 			successful: true,

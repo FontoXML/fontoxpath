@@ -2,8 +2,8 @@ import atomize from '../../dataTypes/atomize';
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import Expression from '../../Expression';
 import { ValueType } from '../../dataTypes/Value';
+import Expression from '../../Expression';
 
 class CastableAsOperator extends Expression {
 	public _allowsEmptySequence: boolean;

@@ -35,9 +35,9 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 		{
 			next: (hint: IterationHint) => {
 				while (i < start) {
-					const val = iterator.next(hint);
-					if (!val.ready) {
-						return val;
+					const tooEarlyVal = iterator.next(hint);
+					if (!tooEarlyVal.ready) {
+						return tooEarlyVal;
 					}
 					i++;
 				}
@@ -45,20 +45,20 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 					return DONE_TOKEN;
 				}
 
-				const val = iterator.next(hint);
-				if (!val.ready) {
-					return val;
+				const returnableVal = iterator.next(hint);
+				if (!returnableVal.ready) {
+					return returnableVal;
 				}
 				i++;
 
-				return val;
+				return returnableVal;
 			},
 		},
 		newSequenceLength
 	);
 }
 
-function castUntypedItemsToDouble(items) {
+function castUntypedItemsToDouble(items: Value[]) {
 	return items.map((item) => {
 		if (isSubtypeOf(item.type, 'xs:untypedAtomic')) {
 			return castToType(item, 'xs:double');
@@ -67,7 +67,7 @@ function castUntypedItemsToDouble(items) {
 	});
 }
 
-function castItemsForMinMax(items) {
+function castItemsForMinMax(items: Value[]) {
 	// Values of type xs:untypedAtomic in $arg are cast to xs:double.
 	items = castUntypedItemsToDouble(items);
 
@@ -741,7 +741,7 @@ export default {
 
 		{
 			argumentTypes: ['item()*', 'xs:double'],
-			callFunction: (dynamicContext, executionParameters, _staticContext, sequence, start) =>
+			callFunction: ((dynamicContext, executionParameters, _staticContext, sequence, start) =>
 				fnSubsequence(
 					dynamicContext,
 					executionParameters,
@@ -749,7 +749,7 @@ export default {
 					sequence,
 					start,
 					sequenceFactory.empty()
-				),
+				)) as FunctionDefinitionType,
 			localName: 'subsequence',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			returnType: 'item()*',
@@ -861,7 +861,7 @@ export default {
 
 		{
 			argumentTypes: ['xs:anyAtomicType*'],
-			callFunction(dynamicContext, executionParameters, _staticContext, sequence) {
+			callFunction: ((dynamicContext, executionParameters, _staticContext, sequence) => {
 				return fnSum(
 					dynamicContext,
 					executionParameters,
@@ -869,7 +869,7 @@ export default {
 					sequence,
 					sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'))
 				);
-			},
+			}) as FunctionDefinitionType,
 			localName: 'sum',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			returnType: 'xs:anyAtomicType',

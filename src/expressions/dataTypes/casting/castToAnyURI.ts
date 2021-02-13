@@ -1,10 +1,12 @@
 import createAtomicValue from '../createAtomicValue';
-
+import { ValueType } from '../Value';
 import CastResult from './CastResult';
 
 const createAnyURIValue = (value) => createAtomicValue(value, 'xs:anyURI');
 
-export default function castToAnyURI(instanceOf: (string) => boolean): (Value) => CastResult {
+export default function castToAnyURI(
+	instanceOf: (typeName: ValueType) => boolean
+): (value) => CastResult {
 	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
 		return (value) => ({
 			successful: true,

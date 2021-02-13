@@ -1,16 +1,16 @@
 import { ValueType } from '../Value';
 
-type TypeDeclaration = {
-	variety: string;
-	name: ValueType;
+type BuildinModelTypeDeclaration = {
 	base?: ValueType;
-	parent?: ValueType;
-	type?: ValueType;
-	restrictions?: { [s: string]: string | number };
 	memberTypes?: ValueType[];
+	name: ValueType;
+	parent?: ValueType;
+	restrictions?: { [s: string]: string | number };
+	type?: ValueType;
+	variety: string;
 };
 
-const types: TypeDeclaration[] = [
+const builtinModels: BuildinModelTypeDeclaration[] = [
 	{
 		variety: 'primitive',
 		name: 'item()',
@@ -618,4 +618,4 @@ const types: TypeDeclaration[] = [
 	},
 ];
 
-export default types;
+export default builtinModels;

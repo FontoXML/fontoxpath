@@ -2,13 +2,13 @@ import decimalComparator from './comparators/decimalComparator';
 
 // fractionDigits
 function validateFractionDigits(value, fractionDigits) {
-	const string = value.toString();
-	if (string.indexOf('.') > -1 && fractionDigits === 0) {
+	const stringValue = value.toString();
+	if (stringValue.indexOf('.') > -1 && fractionDigits === 0) {
 		return false;
 	}
 
-	const regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/,
-		match = regex.exec(string);
+	const regex = /^[-+]?0*([1-9]\d*)?(?:\.((?:\d*[1-9])*)0*)?$/;
+	const match = regex.exec(stringValue);
 
 	if (!match[2]) {
 		return true;

@@ -1,6 +1,6 @@
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
-import buildContext from './evaluationUtils/buildContext';
+import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
@@ -166,7 +166,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	let executionParameters: ExecutionParameters;
 	let expression: Expression;
 	try {
-		const context = buildContext(
+		const context = buildEvaluationContext(
 			selector,
 			contextItem,
 			domFacade || null,

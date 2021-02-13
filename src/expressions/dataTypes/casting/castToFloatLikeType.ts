@@ -1,7 +1,9 @@
+import { ValueType } from '../Value';
+
 export default function castToFloatLikeType(
-	instanceOf: (string) => boolean,
-	to: string
-): (Value) => { successful: true; value: any } | { error: Error; successful: false } {
+	instanceOf: (typeName: ValueType) => boolean,
+	to: ValueType
+): (value) => { successful: true; value: number } | { error: Error; successful: false } {
 	if (instanceOf('xs:numeric')) {
 		return (value) => ({
 			successful: true,

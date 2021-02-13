@@ -79,7 +79,7 @@ class FunctionValue<T = ISequence> extends Value {
 	/**
 	 * Apply these arguments to curry them into a new function
 	 */
-	public applyArguments(appliedArguments) {
+	public applyArguments(appliedArguments: (ISequence | null)[]) {
 		const fn = this.value;
 
 		const argumentSequenceCreators = appliedArguments.map((arg) => {
@@ -90,9 +90,13 @@ class FunctionValue<T = ISequence> extends Value {
 		});
 
 		// fn (dynamicContext, ...arg)
-		function curriedFunction(dynamicContext, executionParameters, staticContext) {
+		function curriedFunction(
+			dynamicContext: DynamicContext,
+			executionParameters: ExecutionParameters,
+			staticContext: StaticContext
+		) {
 			const newArguments = Array.from(arguments).slice(3);
-			const allArguments = argumentSequenceCreators.map(function (createArgumentSequence) {
+			const allArguments = argumentSequenceCreators.map((createArgumentSequence) => {
 				// If createArgumentSequence === null, it is a placeholder, so use a provided one
 				if (createArgumentSequence === null) {
 					return newArguments.shift();
@@ -105,12 +109,12 @@ class FunctionValue<T = ISequence> extends Value {
 			);
 		}
 		const argumentTypes = appliedArguments.reduce(
-			((indices, arg, index) => {
+			(indices: (TypeDeclaration | RestArgument)[], arg: ISequence | null, index: number) => {
 				if (arg === null) {
 					indices.push(this._argumentTypes[index]);
 				}
 				return indices;
-			}).bind(this),
+			},
 			[]
 		);
 

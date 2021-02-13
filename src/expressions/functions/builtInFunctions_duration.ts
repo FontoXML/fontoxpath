@@ -3,12 +3,12 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnYearsFromDuration: FunctionDefinitionType = function (
+const fnYearsFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -17,12 +17,12 @@ const fnYearsFromDuration: FunctionDefinitionType = function (
 	);
 };
 
-const fnMonthsFromDuration: FunctionDefinitionType = function (
+const fnMonthsFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -31,12 +31,12 @@ const fnMonthsFromDuration: FunctionDefinitionType = function (
 	);
 };
 
-const fnDaysFromDuration: FunctionDefinitionType = function (
+const fnDaysFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -45,12 +45,12 @@ const fnDaysFromDuration: FunctionDefinitionType = function (
 	);
 };
 
-const fnHoursFromDuration: FunctionDefinitionType = function (
+const fnHoursFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -59,12 +59,12 @@ const fnHoursFromDuration: FunctionDefinitionType = function (
 	);
 };
 
-const fnMinutesFromDuration: FunctionDefinitionType = function (
+const fnMinutesFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -73,12 +73,12 @@ const fnMinutesFromDuration: FunctionDefinitionType = function (
 	);
 };
 
-const fnSecondsFromDuration: FunctionDefinitionType = function (
+const fnSecondsFromDuration: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}

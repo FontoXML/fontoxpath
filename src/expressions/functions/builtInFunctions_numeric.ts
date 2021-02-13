@@ -7,6 +7,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -14,7 +15,6 @@ import StaticContext from '../StaticContext';
 import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import { performFunctionConversion } from './argumentHelper';
 import FunctionDefinitionType from './FunctionDefinitionType';
-import { ValueType } from '../dataTypes/Value';
 
 function createValidNumericType(type: ValueType, transformedValue: number) {
 	if (isSubtypeOf(type, 'xs:integer')) {
@@ -30,34 +30,34 @@ function createValidNumericType(type: ValueType, transformedValue: number) {
 	return createAtomicValue(transformedValue, 'xs:decimal');
 }
 
-const fnAbs: FunctionDefinitionType = function (
+const fnAbs: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.abs(onlyValue.value))
 	);
 };
 
-const fnCeiling: FunctionDefinitionType = function (
+const fnCeiling: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.ceil(onlyValue.value))
 	);
 };
 
-const fnFloor: FunctionDefinitionType = function (
+const fnFloor: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return sequence.map((onlyValue) =>
 		createValidNumericType(onlyValue.type, Math.floor(onlyValue.value))
 	);
@@ -72,8 +72,8 @@ function getNumberOfDecimalDigits(value: number) {
 		return 0;
 	}
 
-	const result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(value + ''),
-		decimals = result[1] ? result[1].length : 0;
+	const result = /\d+(?:\.(\d*))?(?:[Ee](-)?(\d+))*/.exec(value + '');
+	const decimals = result[1] ? result[1].length : 0;
 
 	if (result[3]) {
 		if (result[2]) {
@@ -83,6 +83,16 @@ function getNumberOfDecimalDigits(value: number) {
 		return returnVal < 0 ? 0 : returnVal;
 	}
 	return decimals;
+}
+
+function determineRoundedNumber(itemAsDecimal: number, halfToEven: boolean, scaling: number) {
+	if (halfToEven && isHalf(itemAsDecimal, scaling)) {
+		if (Math.floor(itemAsDecimal * scaling) % 2 === 0) {
+			return Math.floor(itemAsDecimal * scaling) / scaling;
+		}
+		return Math.ceil(itemAsDecimal * scaling) / scaling;
+	}
+	return Math.round(itemAsDecimal * scaling) / scaling;
 }
 
 function fnRound(
@@ -136,24 +146,13 @@ function fnRound(
 			}
 
 			const originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(
-				function (type: ValueType) {
+				(type: ValueType) => {
 					return isSubtypeOf(item.type, type);
 				}
 			);
 			const itemAsDecimal = castToType(item, 'xs:decimal');
 			const scaling = Math.pow(10, scalingPrecision);
-			let roundedNumber = 0;
-
-			if (halfToEven && isHalf(itemAsDecimal.value, scaling)) {
-				if (Math.floor(itemAsDecimal.value * scaling) % 2 === 0) {
-					roundedNumber = Math.floor(itemAsDecimal.value * scaling) / scaling;
-				} else {
-					roundedNumber = Math.ceil(itemAsDecimal.value * scaling) / scaling;
-				}
-			} else {
-				roundedNumber = Math.round(itemAsDecimal.value * scaling) / scaling;
-			}
-
+			const roundedNumber = determineRoundedNumber(itemAsDecimal.value, halfToEven, scaling);
 			switch (originalType) {
 				case 'xs:decimal':
 					return ready(createAtomicValue(roundedNumber, 'xs:decimal'));
@@ -168,12 +167,12 @@ function fnRound(
 	});
 }
 
-const fnNumber: FunctionDefinitionType = function (
+const fnNumber: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	return atomize(sequence, executionParameters).switchCases({
 		empty: () => sequenceFactory.singleton(createAtomicValue(NaN, 'xs:double')),
 		singleton: () => {
@@ -189,12 +188,12 @@ const fnNumber: FunctionDefinitionType = function (
 	});
 };
 
-const returnRandomItemFromSequence: FunctionDefinitionType = function (
+const returnRandomItemFromSequence: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	sequence
-) {
+) => {
 	if (sequence.isEmpty()) {
 		return sequence;
 	}
@@ -204,12 +203,12 @@ const returnRandomItemFromSequence: FunctionDefinitionType = function (
 	return sequenceFactory.singleton(sequenceValue[index]);
 };
 
-const fnRandomNumberGenerator: FunctionDefinitionType = function (
+const fnRandomNumberGenerator: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	_sequence
-) {
+) => {
 	// Ignore the optional seed, as Math.random does not support a seed
 	return sequenceFactory.singleton(
 		new MapValue([

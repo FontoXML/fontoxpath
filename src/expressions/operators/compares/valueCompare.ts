@@ -15,9 +15,9 @@ import {
 	lessThan as yearMonthDurationLessThan,
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 
+import { ValueType } from '../../../expressions/dataTypes/Value';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
-import { ValueType } from '../../../expressions/dataTypes/Value';
 
 // Use partial application to get to a comparer faster
 function areBothStringOrAnyURI(a, b) {

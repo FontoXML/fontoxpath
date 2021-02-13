@@ -35,15 +35,15 @@ function mapItem(
 	}
 	if (isSubtypeOf(argumentItem.type, 'xs:untypedAtomic')) {
 		// We might be able to cast this to the wished type
-		const item = castToType(argumentItem, type);
-		if (!item) {
+		const convertedItem = castToType(argumentItem, type);
+		if (!convertedItem) {
 			throw new Error(
 				`XPTY0004 Unable to convert ${isReturn ? 'return' : 'argument'} of type ${
 					argumentItem.type
 				} to type ${type} while calling ${functionName}`
 			);
 		}
-		return item;
+		return convertedItem;
 	}
 
 	// We need to promote this
@@ -72,7 +72,7 @@ export const performFunctionConversion = (
 		case '?':
 			return argument.switchCases({
 				default: () =>
-					argument.map(value =>
+					argument.map((value) =>
 						mapItem(
 							value,
 							argumentType.type,
@@ -85,10 +85,11 @@ export const performFunctionConversion = (
 					throw new Error(
 						`XPTY0004: Multiplicity of ${
 							isReturn ? 'function return value' : 'function argument'
-						} of type ${argumentType.type}${argumentType.occurrence ||
-							''} for ${functionName} is incorrect. Expected "?", but got "+".`
+						} of type ${argumentType.type}${
+							argumentType.occurrence || ''
+						} for ${functionName} is incorrect. Expected "?", but got "+".`
 					);
-				}
+				},
 			});
 		case '+':
 			return argument.switchCases({
@@ -96,12 +97,13 @@ export const performFunctionConversion = (
 					throw new Error(
 						`XPTY0004: Multiplicity of ${
 							isReturn ? 'function return value' : 'function argument'
-						} of type ${argumentType.type}${argumentType.occurrence ||
-							''} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
+						} of type ${argumentType.type}${
+							argumentType.occurrence || ''
+						} for ${functionName} is incorrect. Expected "+", but got "empty-sequence()"`
 					);
 				},
 				default: () =>
-					argument.map(value =>
+					argument.map((value) =>
 						mapItem(
 							value,
 							argumentType.type,
@@ -109,17 +111,17 @@ export const performFunctionConversion = (
 							functionName,
 							isReturn
 						)
-					)
+					),
 			});
 		case '*':
-			return argument.map(value =>
+			return argument.map((value) =>
 				mapItem(value, argumentType.type, executionParameters, functionName, isReturn)
 			);
 		default:
 			// excactly one
 			return argument.switchCases({
 				singleton: () =>
-					argument.map(value =>
+					argument.map((value) =>
 						mapItem(
 							value,
 							argumentType.type,
@@ -132,10 +134,11 @@ export const performFunctionConversion = (
 					throw new Error(
 						`XPTY0004: Multiplicity of ${
 							isReturn ? 'function return value' : 'function argument'
-						} of type ${argumentType.type}${argumentType.occurrence ||
-							''} for ${functionName} is incorrect. Expected exactly one`
+						} of type ${argumentType.type}${
+							argumentType.occurrence || ''
+						} for ${functionName} is incorrect. Expected exactly one`
 					);
-				}
+				},
 			});
 	}
 };

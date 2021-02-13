@@ -7,7 +7,7 @@ type FunctionDefinitionType<FunctionReturnType = ISequence> = (
 	dynamicContext: DynamicContext,
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
-	...Sequence: ISequence[]
+	...sequences: ISequence[]
 ) => FunctionReturnType;
 
 export default FunctionDefinitionType;

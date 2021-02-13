@@ -5,7 +5,7 @@ import { DONE_TOKEN, notReady, ready } from '../util/iterators';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
-const fnLast: FunctionDefinitionType = function (dynamicContext) {
+const fnLast: FunctionDefinitionType = (dynamicContext) => {
 	if (dynamicContext.contextItem === null) {
 		throw new Error(
 			'XPDY0002: The fn:last() function depends on dynamic context, which is absent.'
@@ -31,7 +31,7 @@ const fnLast: FunctionDefinitionType = function (dynamicContext) {
 	);
 };
 
-const fnPosition: FunctionDefinitionType = function (dynamicContext) {
+const fnPosition: FunctionDefinitionType = (dynamicContext) => {
 	if (dynamicContext.contextItem === null) {
 		throw new Error(
 			'XPDY0002: The fn:position() function depends on dynamic context, which is absent.'
@@ -43,25 +43,25 @@ const fnPosition: FunctionDefinitionType = function (dynamicContext) {
 	);
 };
 
-const fnCurrentDateTime: FunctionDefinitionType = function (dynamicContext) {
+const fnCurrentDateTime: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp')
 	);
 };
 
-const fnCurrentDate: FunctionDefinitionType = function (dynamicContext) {
+const fnCurrentDate: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date')
 	);
 };
 
-const fnCurrentTime: FunctionDefinitionType = function (dynamicContext) {
+const fnCurrentTime: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time')
 	);
 };
 
-const fnImplicitTimezone: FunctionDefinitionType = function (dynamicContext) {
+const fnImplicitTimezone: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
 		createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration')
 	);

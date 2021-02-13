@@ -6,7 +6,7 @@ import UpdatingExpression from './UpdatingExpression';
 import { rename } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
-import isSubTypeOf from '../dataTypes/isSubtypeOf';
+import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import QName from '../dataTypes/valueTypes/QName';
 import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
 import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
@@ -31,9 +31,9 @@ function evaluateTarget(targetXdmValue) {
 		throw errXUTY0012();
 	}
 	if (
-		!isSubTypeOf(targetXdmValue[0].type, 'element()') &&
-		!isSubTypeOf(targetXdmValue[0].type, 'attribute()') &&
-		!isSubTypeOf(targetXdmValue[0].type, 'processing-instruction()')
+		!isSubtypeOf(targetXdmValue[0].type, 'element()') &&
+		!isSubtypeOf(targetXdmValue[0].type, 'attribute()') &&
+		!isSubtypeOf(targetXdmValue[0].type, 'processing-instruction()')
 	) {
 		throw errXUTY0012();
 	}

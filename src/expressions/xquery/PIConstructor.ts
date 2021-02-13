@@ -1,7 +1,4 @@
-import {
-	ProcessingInstructionNodePointer,
-	TinyProcessingInstructionNode,
-} from '../../domClone/Pointer';
+import { TinyProcessingInstructionNode } from '../../domClone/Pointer';
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
@@ -41,7 +38,7 @@ class PIConstructor extends Expression {
 	) {
 		const expressions = target.targetExpr ? [target.targetExpr].concat(dataExpr) : [dataExpr];
 		super(
-			expressions.reduce(function (specificity, selector) {
+			expressions.reduce((specificity, selector) => {
 				return specificity.add(selector.specificity);
 			}, new Specificity({})),
 			expressions,

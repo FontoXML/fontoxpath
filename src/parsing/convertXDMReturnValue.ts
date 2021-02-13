@@ -257,13 +257,12 @@ export default function convertXDMReturnValue<
 							resolve(getNextResult())
 						).catch((error) => {
 							printAndRethrowError(expression, error);
-							throw error;
 						}),
 				};
 			} else {
-				toReturn = {
+				toReturn = ({
 					next: () => new Promise((resolve) => resolve(getNextResult())),
-				} as AsyncIterableIterator<any>;
+				} as unknown) as AsyncIterableIterator<any>;
 			}
 			return toReturn as IReturnTypes<TNode>[TReturnType];
 		}
