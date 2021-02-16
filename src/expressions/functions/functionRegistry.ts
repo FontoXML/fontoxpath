@@ -151,7 +151,7 @@ export function getFunctionByArity(
 	};
 }
 
-function splitType(type: string): TypeDeclaration {
+export function splitType(type: string): TypeDeclaration {
 	// argumentType is something like 'xs:string?' or 'map(*)'
 	const parts = type.match(/^(.*[^+?*])([+*?])?$/);
 	return {
@@ -160,7 +160,13 @@ function splitType(type: string): TypeDeclaration {
 	};
 }
 
-export function registerFunction(namespaceURI, localName, argumentTypes, returnType, callFunction) {
+export function registerFunction(
+	namespaceURI: string,
+	localName: string,
+	argumentTypes: ValueType[],
+	returnType: ValueType,
+	callFunction: FunctionSignature<ISequence>
+): void {
 	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {
 		registeredFunctionsByName[namespaceURI + ':' + localName] = [];
 	}

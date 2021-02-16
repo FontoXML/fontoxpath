@@ -1,7 +1,19 @@
+/**
+ * A single value in XPath
+ *
+ * For internal use
+ *
+ * @public
+ */
 export default class Value {
 	constructor(public type: ValueType, readonly value: any) {}
 }
 
+/**
+ * All implemented types in XPath
+ *
+ * @public
+ */
 export type ValueType =
 	| 'xs:boolean'
 	| 'xs:string'

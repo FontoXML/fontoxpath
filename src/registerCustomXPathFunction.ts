@@ -1,8 +1,11 @@
 import IDomFacade from './domFacade/IDomFacade';
+import { ResolvedQualifiedName } from './evaluateXPath';
 import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptValueToXPathValue';
+import { FunctionSignature } from './expressions/dataTypes/FunctionValue';
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
+import { ValueType } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -10,10 +13,15 @@ import {
 	registerStaticallyKnownNamespace,
 	staticallyKnownNamespaceByPrefix,
 } from './expressions/staticallyKnownNamespaces';
+import StaticContext from './expressions/StaticContext';
 import { IterationHint } from './expressions/util/iterators';
 import { errXQST0060 } from './expressions/xquery/XQueryErrors';
 import transformXPathItemToJavascriptObject from './transformXPathItemToJavascriptObject';
-import { IS_XPATH_VALUE_SYMBOL, TypedExternalValue } from './types/createTypedValueFactory';
+import {
+	IS_XPATH_VALUE_SYMBOL,
+	TypedExternalValue,
+	UntypedExternalValue,
+} from './types/createTypedValueFactory';
 
 type DynamicContextAdapter = {
 	currentContext: any;
@@ -80,45 +88,38 @@ function splitFunctionName(
 }
 
 /**
- * Add a custom test for use in xpath-serialized expressions.
+ * The definition of an external function. Called with however many arguments the original arity was
  *
  * @public
- *
- * @param  name - The name of this custom function. The string overload is deprecated, please register functions using the object overload
- * @param  signature - The signature of the test, as array of strings (e.g. ['item()', 'node()?', 'xs:numeric'])
- * @param  returnType - The return type of the test, as sequence type (e.g. 'xs:boolean()')
- * @param  callback - The test itself, which gets the dynamicContext and arguments passed
  */
-export default function registerCustomXPathFunction(
-	name: string | { localName: string; namespaceURI: string },
-	signature: string[],
-	returnType: string,
-	callback: (
-		domFacade: { currentContext: any; domFacade: IDomFacade },
-		...functionArgs: any[]
-	) => any
-): void {
-	const { namespaceURI, localName } = splitFunctionName(name);
+export type ExternalFunctionDefinition = {
+	callback: ExternalFunctionCall;
+	name: ResolvedQualifiedName;
+	returnType: string;
+	signature: string[];
+};
 
-	if (!namespaceURI) {
-		throw errXQST0060();
-	}
+/**
+ * @public
+ */
+export type ExternalFunctionCall = (
+	domFacade: { currentContext: any; domFacade: IDomFacade },
+	...functionArgs: any[]
+) => TypedExternalValue | UntypedExternalValue;
 
-	// tslint:disable-next-line: only-arrow-functions
-	const callFunction = function (
+export function transformExternalFunction(
+	externalFunctionDefinition: ExternalFunctionDefinition
+): FunctionSignature<ISequence> {
+	return (
 		_dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
-		_staticContext: any
-	) {
-		// Make arguments a real array instead of a array-like object
-		const args = Array.from(arguments);
-
-		args.splice(0, 3);
-
+		_staticContext: StaticContext,
+		...args: ISequence[]
+	) => {
 		const newArguments = args.map((argument, index) => {
 			return adaptXPathValueToJavascriptValue(
 				argument,
-				signature[index],
+				externalFunctionDefinition.signature[index],
 				executionParameters
 			);
 		});
@@ -130,7 +131,10 @@ export default function registerCustomXPathFunction(
 			['domFacade']: executionParameters.domFacade.unwrap(),
 		};
 
-		const jsResult = callback.apply(undefined, [dynamicContextAdapter, ...newArguments]);
+		const jsResult = externalFunctionDefinition.callback.apply(undefined, [
+			dynamicContextAdapter,
+			...newArguments,
+		]);
 
 		if (jsResult && typeof jsResult === 'object' && IS_XPATH_VALUE_SYMBOL in jsResult) {
 			// If this symbol is present, the value has already undergone type conversion.
@@ -142,11 +146,41 @@ export default function registerCustomXPathFunction(
 		const xpathResult = adaptJavaScriptValueToSequence(
 			executionParameters.domFacade,
 			jsResult,
-			returnType
+			externalFunctionDefinition.returnType
 		);
 
 		return xpathResult;
 	};
+}
+
+/**
+ * Add a custom test for use in xpath-serialized expressions.
+ *
+ * @public
+ *
+ * @param  name - The name of this custom function. The string overload is deprecated, please register functions using the object overload
+ * @param  signature - The signature of the test, as array of strings (e.g. ['item()', 'node()?', 'xs:numeric'])
+ * @param  returnType - The return type of the test, as sequence type (e.g. 'xs:boolean()')
+ * @param  callback - The test itself, which gets the dynamicContext and arguments passed
+ */
+export default function registerCustomXPathFunction(
+	name: string | ResolvedQualifiedName,
+	signature: ValueType[],
+	returnType: ValueType,
+	callback: ExternalFunctionCall
+): void {
+	const { namespaceURI, localName } = splitFunctionName(name);
+
+	if (!namespaceURI) {
+		throw errXQST0060();
+	}
+
+	const callFunction = transformExternalFunction({
+		callback,
+		name: { namespaceURI, localName },
+		returnType,
+		signature,
+	});
 
 	registerFunction(namespaceURI, localName, signature, returnType, callFunction);
 }

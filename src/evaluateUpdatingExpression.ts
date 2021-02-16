@@ -13,6 +13,7 @@ import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import INodesFactory from './nodesFactory/INodesFactory';
 import { ReturnType } from './parsing/convertXDMReturnValue';
+import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 
 /**
  * @public
@@ -43,7 +44,7 @@ export type UpdatingOptions = {
  */
 export default async function evaluateUpdatingExpression(
 	updateScript: string,
-	contextItem?: any | null,
+	contextItem?: TypedExternalValue | UntypedExternalValue | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: UpdatingOptions | null

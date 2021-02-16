@@ -792,4 +792,31 @@ describe('registerCustomXPathFunction', () => {
 			);
 		});
 	});
+
+	describe('JIT passed external functions', () => {
+		it('allows one to pass a function that is only available in this call', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('Q{very-random}indeed()', null, null, null, {
+					externalFunctionResolver: ({ namespaceURI, localName }, arity) => {
+						chai.assert.equal(namespaceURI, 'very-random');
+						chai.assert.equal(localName, 'indeed');
+						chai.assert.equal(arity, 0);
+
+						const extVal = createTypedValueFactory('xs:string')('prrrt', null);
+
+						const vals = extVal.convertedValue;
+						vals[0].type
+
+						return {
+							arity: 1,
+							name: { namespaceURI, localName },
+							signature: [],
+							returnType: 'xs:boolean',
+							callback: () => true,
+						};
+					},
+				})
+			);
+		});
+	});
 });

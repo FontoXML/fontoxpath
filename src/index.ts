@@ -3,7 +3,13 @@ import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
-import evaluateXPath, { EvaluateXPath, Language, Logger, Options } from './evaluateXPath';
+import evaluateXPath, {
+	EvaluateXPath,
+	Language,
+	Logger,
+	Options,
+	ResolvedQualifiedName,
+} from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -29,7 +35,10 @@ import { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import parseExpression from './parsing/parseExpression';
 import { Profiler, profiler, XPathPerformanceMeasurement } from './performance';
 import precompileXPath from './precompileXPath';
-import registerCustomXPathFunction from './registerCustomXPathFunction';
+import registerCustomXPathFunction, {
+	ExternalFunctionDefinition,
+	ExternalFunctionCall,
+} from './registerCustomXPathFunction';
 import registerXQueryModule from './registerXQueryModule';
 // We do want to deviate from the actual name which is used internally as we do not want to expose
 // the types which it uses in the public API
@@ -37,6 +46,7 @@ import registerXQueryModule from './registerXQueryModule';
 import internalCreateTypedValueFactory, {
 	UntypedExternalValue,
 	ValidValue,
+	TypedExternalValue,
 } from './types/createTypedValueFactory';
 import {
 	Attr,
@@ -49,6 +59,7 @@ import {
 	ProcessingInstruction,
 	Text,
 } from './types/Types';
+import Value, { ValueType } from './expressions/dataTypes/Value';
 
 function parseXPath(xpathString: string) {
 	const cachedExpression = getAnyStaticCompilationResultFromCache(xpathString, 'XPath', false);
@@ -148,7 +159,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
  */
 type ExternalTypedValueFactory = (
 	type: string
-) => (value: UntypedExternalValue, domFacade: IDomFacade) => unknown;
+) => (value: UntypedExternalValue, domFacade: IDomFacade) => TypedExternalValue;
 
 /**
  * Creates a factory to convert values into a specific type.
@@ -158,30 +169,41 @@ type ExternalTypedValueFactory = (
 export const createTypedValueFactory = internalCreateTypedValueFactory as ExternalTypedValueFactory;
 
 export {
+	Value,
+	ValueType,
 	Attr,
 	CDATASection,
 	CharacterData,
 	Comment,
 	Document,
 	Element,
+	EvaluateXPath,
+	ExternalFunctionCall,
+	ExternalFunctionDefinition,
+	ExternalTypedValueFactory,
 	IDocumentWriter,
 	IDomFacade,
 	INodesFactory,
-	ISimpleNodesFactory,
 	IReturnTypes,
+	ISimpleNodesFactory,
 	Language,
 	Logger,
 	Node,
 	Options,
 	ProcessingInstruction,
+	Profiler,
+	ResolvedQualifiedName,
 	ReturnType,
 	Text,
+	TypedExternalValue,
+	UntypedExternalValue as ValidValueSequence,
 	UpdatingOptions,
+	ValidValue,
+	XPathPerformanceMeasurement,
 	compareSpecificity,
 	domFacade,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,
-	EvaluateXPath,
 	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToAsyncIterator,
@@ -196,14 +218,9 @@ export {
 	executePendingUpdateList,
 	getBucketForSelector,
 	getBucketsForNode,
+	parseScript,
 	precompileXPath,
+	profiler,
 	registerCustomXPathFunction,
 	registerXQueryModule,
-	parseScript,
-	Profiler,
-	profiler,
-	XPathPerformanceMeasurement,
-	ExternalTypedValueFactory,
-	ValidValue,
-	UntypedExternalValue as ValidValueSequence,
 };

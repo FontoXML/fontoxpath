@@ -1,18 +1,22 @@
+import { ResolvedQualifiedName } from '../evaluateXPath';
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
-import StaticContext from '../expressions/StaticContext';
-import compileAstToExpression from './compileAstToExpression';
-import { enhanceStaticContextWithModule } from './globalModuleCache';
-import parseExpression from './parseExpression';
-import processProlog from './processProlog';
-
-import astHelper from './astHelper';
-
 import Expression from '../expressions/Expression';
-
+import StaticContext from '../expressions/StaticContext';
+import { ExternalFunctionDefinition } from '../registerCustomXPathFunction';
+import astHelper from './astHelper';
+import compileAstToExpression from './compileAstToExpression';
 import {
 	getStaticCompilationResultFromCache,
 	storeStaticCompilationResultInCache,
 } from './compiledExpressionCache';
+import { enhanceStaticContextWithModule } from './globalModuleCache';
+import parseExpression from './parseExpression';
+import processProlog from './processProlog';
+
+export type ExternalFunctionResolver = (
+	qname: ResolvedQualifiedName,
+	arity: number
+) => ExternalFunctionDefinition;
 
 export default function staticallyCompileXPath(
 	xpathString: string,
@@ -25,7 +29,8 @@ export default function staticallyCompileXPath(
 	namespaceResolver: (namespace: string) => string | null,
 	variables: object,
 	moduleImports: { [namespaceURI: string]: string },
-	defaultFunctionNamespaceURI: string
+	defaultFunctionNamespaceURI: string,
+	externalFunctionResolver: ExternalFunctionResolver
 ): { expression: Expression; staticContext: StaticContext } {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
@@ -44,7 +49,8 @@ export default function staticallyCompileXPath(
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 		namespaceResolver,
 		variables,
-		defaultFunctionNamespaceURI
+		defaultFunctionNamespaceURI,
+		externalFunctionResolver
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 

@@ -76,18 +76,20 @@ export default function buildEvaluationContext(
 			// tslint:disable-next-line:no-console
 			logger: externalOptions['logger'] || { trace: console.log.bind(console) },
 			documentWriter: externalOptions['documentWriter'],
+			externalFunctionResolver: externalOptions['externalFunctionResolver'] || ((_) => null),
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
 			nodesFactory: externalOptions['nodesFactory'],
 		};
 	} else {
 		internalOptions = {
+			documentWriter: null,
+			externalFunctionResolver: (_) => null,
 			// tslint:disable-next-line:no-console
 			logger: { trace: console.log.bind(console) },
 			moduleImports: {},
 			namespaceResolver: null,
 			nodesFactory: null,
-			documentWriter: null,
 		};
 	}
 	const wrappedDomFacade: DomFacade = new DomFacade(
@@ -110,7 +112,8 @@ export default function buildEvaluationContext(
 		namespaceResolver,
 		variables,
 		moduleImports,
-		defaultFunctionNamespaceURI
+		defaultFunctionNamespaceURI,
+		externalOptions.externalFunctionResolver || (() => null)
 	);
 
 	const contextSequence = contextItem

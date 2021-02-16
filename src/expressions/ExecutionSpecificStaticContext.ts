@@ -1,8 +1,10 @@
+import { ExternalFunctionResolver } from '../parsing/staticallyCompileXPath';
+import { transformExternalFunction } from '../registerCustomXPathFunction';
 import IContext from './Context';
 import ISequence from './dataTypes/ISequence';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
-import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
+import { FunctionProperties, getFunctionByArity, splitType } from './functions/functionRegistry';
 import {
 	FUNCTIONS_NAMESPACE_URI,
 	staticallyKnownNamespaceByPrefix,
@@ -31,6 +33,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		) => ISequence;
 	} = Object.create(null);
 
+	private _externalFunctionResolver: ExternalFunctionResolver;
 	private _namespaceResolver: (namespaceURI: string) => null | string;
 
 	// The static compilation step depends on the prefix -> namespaceURI pairs in the namespace resolver
@@ -47,7 +50,8 @@ export default class ExecutionSpecificStaticContext implements IContext {
 	constructor(
 		namespaceResolver: (prefix: string) => string | null,
 		variableByName: object,
-		defaultFunctionNamespaceURI: string
+		defaultFunctionNamespaceURI: string,
+		externalFunctionResolver: ExternalFunctionResolver
 	) {
 		this._namespaceResolver = namespaceResolver;
 		this.registeredDefaultFunctionNamespace = defaultFunctionNamespaceURI;
@@ -67,6 +71,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		this._referredNamespaceByName = Object.create(null);
 
 		this._variableValueByName = variableByName;
+		this._externalFunctionResolver = externalFunctionResolver;
 
 		/**
 		 * This flag will be set to true if this EvaluationContext was used while statically
@@ -83,9 +88,36 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		return Object.values(this._referredVariableByName);
 	}
 
-	public lookupFunction(namespaceURI, localName, arity): FunctionProperties {
-		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
-		return getFunctionByArity(namespaceURI, localName, arity);
+	public lookupFunction(
+		namespaceURI: string,
+		localName: string,
+		arity: number
+	): FunctionProperties {
+		const builtinFunction = getFunctionByArity(namespaceURI, localName, arity);
+		if (builtinFunction) {
+			return builtinFunction;
+		}
+		const externalFunction = this._externalFunctionResolver(
+			{ ['namespaceURI']: namespaceURI, ['localName']: localName },
+			arity
+		);
+		if (!externalFunction) {
+			return null;
+		}
+
+		// Convert the function just in time
+
+		// TODO: Make this a step _before_ this: force users to already transform the function
+		// before returning it here so they can do it only once
+		return {
+			argumentTypes: externalFunction.signature.map(splitType),
+			arity,
+			callFunction: transformExternalFunction(externalFunction),
+			isUpdating: false,
+			localName,
+			namespaceURI,
+			returnType: splitType(externalFunction.returnType),
+		};
 	}
 
 	public lookupVariable(namespaceURI: string, localName: string) {

@@ -9,6 +9,7 @@ import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import { markXPathEnd, markXPathStart } from './performance';
+import { ExternalFunctionDefinition } from './registerCustomXPathFunction';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Node } from './types/Types';
 
@@ -20,18 +21,105 @@ export type Logger = {
 };
 
 /**
+ * A qualified name
+ *
+ * @public
+ */
+export type ResolvedQualifiedName = {
+	localName: string;
+	namespaceURI: string;
+};
+
+/**
  * @public
  */
 export type Options = {
+	/**
+	 * The current context for a query. Will be passed whenever an extension function is called. Can be
+	 * used to implement the current function in XSLT.
+	 *
+	 * Undefined by default.
+	 *
+	 * @public
+	 */
 	currentContext?: any;
+
+	/**
+	 * Whether the query is ran in debug mode. Queries in debug mode output better stacktraces but
+	 * are slower
+	 *
+	 * @public
+	 */
 	debug?: boolean;
+
+	/**
+	 * The default function namespace uri.
+	 *
+	 * Defaults to the fn namespace ('http://www.w3.org/2005/xpath-functions').
+	 *
+	 * @public
+	 */
 	defaultFunctionNamespaceURI?: string;
+
+	/**
+	 * Disables caching the compilation result of this expression. For internal use
+	 *
+	 * @public
+	 */
 	disableCache?: boolean;
+
+	/**
+	 * A facade that can be used to intercept any methods that will change a document in XQuery
+	 * Update Facility when using the copy/transform syntax.
+	 *
+	 * Defaults to just changing the document.
+	 *
+	 * @public
+	 */
 	documentWriter?: IDocumentWriter;
+
+	/**
+	 * Hook that is called whenever a function will be called. Functions that are registered in a
+	 * module that is already available will take precedence. Meaning `fn:abs()` will always call
+	 * the `abs` function that is implemented in FontoXPath.
+	 *
+	 * @public
+	 *
+	 * @param qname - The qualified name of the function the needs resolving
+	 * @param  arity - The arity of the function.
+	 *
+	 * @returns The function, or null. Return null if there is no such function.
+	 */
+	externalFunctionResolver?: (
+		qname: ResolvedQualifiedName,
+		arity: number
+	) => ExternalFunctionDefinition | null;
+
+	/**
+	 * The language to use. Can be XPath, XQuery or XQuery Update Facility.
+	 */
 	language?: Language;
+
+	/**
+	 * Called whenever the `fn:trace()` function is called. Defaults to `console#log`
+	 */
 	logger?: Logger;
+
+	/**
+	 * Additional modules to import. Imported modules are always statically known
+	 */
 	moduleImports?: { [s: string]: string };
+
+	/**
+	 * How to resolve element namespaces. Defaults to returning `null`, which is the default
+	 * namespace uri _or_ an error when resolving a prefix.
+	 */
 	namespaceResolver?: (s: string) => string | null;
+
+	/**
+	 * How to create new elements when using XQuery or XQuery Update Facility. Defaults to creating
+	 * elements using the document implementation related to the passed context node.
+	 */
 	nodesFactory?: INodesFactory;
 };
 
@@ -62,7 +150,7 @@ export type EvaluateXPath = {
 	 */
 	<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
 		selector: string,
-		contextItem?: any | null,
+		contextItem?: TypedExternalValue | UntypedExternalValue | null,
 		domFacade?: IDomFacade | null,
 		variables?: { [s: string]: any } | null,
 		returnType?: TReturnType,
@@ -147,7 +235,7 @@ export type EvaluateXPath = {
 };
 const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
 	selector: string,
-	contextItem?: any | null,
+	contextItem?: TypedExternalValue | UntypedExternalValue | null,
 	domFacade?: IDomFacade | null,
 	variables?: {
 		[s: string]: TypedExternalValue | UntypedExternalValue;
@@ -197,7 +285,12 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	// Shortcut: if the xpathExpression defines buckets, the
 	// contextItem is a node and we are evaluating to a bucket, we can
 	// use it to return false if we are sure it won't match.
-	if (returnType === ReturnType.BOOLEAN && contextItem && 'nodeType' in contextItem) {
+	if (
+		returnType === ReturnType.BOOLEAN &&
+		contextItem &&
+		typeof contextItem === 'object' &&
+		'nodeType' in contextItem
+	) {
 		const selectorBucket = expression.getBucket();
 		const bucketsForNode = getBucketsForNode(contextItem);
 		if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {

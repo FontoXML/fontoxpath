@@ -1,5 +1,6 @@
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateXPath, { Options } from './evaluateXPath';
+import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 
 /**
  * Evaluates an XPath on the given contextNode. Returns the result as a map, if the result is an XPath map.
@@ -19,7 +20,7 @@ import evaluateXPath, { Options } from './evaluateXPath';
  */
 export default function evaluateXPathToMap(
 	selector: string,
-	contextItem?: any | null,
+	contextItem?: TypedExternalValue | UntypedExternalValue | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null

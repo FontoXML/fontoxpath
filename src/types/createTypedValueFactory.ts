@@ -21,9 +21,19 @@ export const IS_XPATH_VALUE_SYMBOL = Symbol('IS_XPATH_VALUE_SYMBOL');
 /**
  * A value converted to a specific type. When passed in other usage of fontoxpath calls it will
  * be handled as the type.
+ *
+ * Do not use any of the properties. The contents of this type is private
+ *
+ * @public
  */
 export type TypedExternalValue = {
+	/**
+	 * @internal
+	 */
 	[IS_XPATH_VALUE_SYMBOL]: true;
+	/**
+	 * @internal
+	 */
 	convertedValue: Value[];
 };
 

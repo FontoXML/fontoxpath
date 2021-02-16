@@ -1,6 +1,7 @@
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateXPath, { Options } from './evaluateXPath';
 import { ReturnType } from './parsing/convertXDMReturnValue';
+import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Node } from './types/Types';
 
 /**
@@ -18,7 +19,7 @@ import { Node } from './types/Types';
  */
 export default function evaluateXPathToFirstNode<T extends Node>(
 	selector: string,
-	contextItem?: any | null,
+	contextItem?: TypedExternalValue | UntypedExternalValue | null,
 	domFacade?: IDomFacade | null,
 	variables?: { [s: string]: any } | null,
 	options?: Options | null
