@@ -83,7 +83,12 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		return Object.values(this._referredVariableByName);
 	}
 
-	public lookupFunction(namespaceURI, localName, arity): FunctionProperties {
+	public lookupFunction(
+		namespaceURI: string,
+		localName: string,
+		arity: number,
+		_skipExternal?: boolean
+	): FunctionProperties | null {
 		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
 		return getFunctionByArity(namespaceURI, localName, arity);
 	}
