@@ -27,6 +27,7 @@ export type GenericFunctionDefinition<isUpdating, callFunctionType> = {
 	argumentTypes: TypeDeclaration[];
 	arity: number;
 	callFunction: callFunctionType;
+	isExternal: boolean;
 	isUpdating: isUpdating;
 	localName: string;
 	namespaceURI: string;
@@ -56,7 +57,10 @@ export default class StaticContext implements IContext {
 			executionParameters: ExecutionParameters
 		) => ISequence;
 	};
-	private _registeredFunctionsByHash: any;
+	private _registeredFunctionsByHash: Record<
+		string,
+		FunctionDefinition | UpdatingFunctionDefinition
+	>;
 	private _registeredNamespaceURIByPrefix: any[];
 	private _scopeCount: number;
 	private _scopeDepth: number;
@@ -131,17 +135,23 @@ export default class StaticContext implements IContext {
 	public lookupFunction(
 		namespaceURI: string,
 		localName: string,
-		arity: number
+		arity: number,
+		skipExternal: boolean = false
 	): FunctionProperties | null {
 		const hashKey = createHashKey(namespaceURI, localName) + '~' + arity;
 		const foundFunction = this._registeredFunctionsByHash[hashKey];
 		if (foundFunction) {
-			return foundFunction;
+			if (!skipExternal || !foundFunction.isExternal) {
+				// TODO: clean up FunctionProperties vs. (Updating)FunctionDefinition
+				// These are almost identical and were "converted" into each other here by going
+				// through an "any".
+				return foundFunction as FunctionProperties;
+			}
 		}
 
 		return this.parentContext === null
 			? null
-			: this.parentContext.lookupFunction(namespaceURI, localName, arity);
+			: this.parentContext.lookupFunction(namespaceURI, localName, arity, skipExternal);
 	}
 
 	public lookupVariable(namespaceURI: string, localName: string): string {
