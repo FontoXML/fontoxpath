@@ -1,7 +1,8 @@
+import { PositionedError } from '../../evaluationUtils/PositionedError';
 import { SourceRange } from './StackTraceGenerator';
 export class StackTraceEntry {
 	public innerExpressionType: string;
-	public innerTrace: Error | StackTraceEntry;
+	public innerTrace: Error | PositionedError | StackTraceEntry;
 	public location: SourceRange;
 
 	constructor(
@@ -21,10 +22,15 @@ export class StackTraceEntry {
 	}
 
 	public makeStackTrace(): string[] {
-		const innerStackTrace =
-			this.innerTrace instanceof Error
-				? [this.innerTrace.toString()]
-				: this.innerTrace.makeStackTrace();
+		let innerStackTrace: string[];
+		if ('position' in this.innerTrace) {
+			// We are dealing with a nested positioned error
+			innerStackTrace = ['Inner error:', this.innerTrace.message];
+		} else if (this.innerTrace instanceof Error) {
+			innerStackTrace = [this.innerTrace.toString()];
+		} else {
+			innerStackTrace = this.innerTrace.makeStackTrace();
+		}
 		innerStackTrace.push(
 			`  at <${this.innerExpressionType}>:${this.location.start.line}:${this.location.start.column} - ${this.location.end.line}:${this.location.end.column}`
 		);

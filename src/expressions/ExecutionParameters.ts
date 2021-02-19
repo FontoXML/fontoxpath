@@ -7,6 +7,7 @@ import { Logger } from '../types/Options';
 
 export default class ExecutionParameters {
 	constructor(
+		public readonly debug: boolean,
 		public readonly domFacade: DomFacade,
 		public readonly nodesFactory: INodesFactory,
 		public readonly documentWriter: IDocumentWriter,

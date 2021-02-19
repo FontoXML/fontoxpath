@@ -1,11 +1,15 @@
 import * as chai from 'chai';
 import {
 	domFacade,
+	evaluateXPath,
 	evaluateXPathToBoolean,
 	evaluateXPathToNumber,
 	evaluateXPathToString,
+	registerCustomXPathFunction,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
+
+import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
 beforeEach(() => {
@@ -23,6 +27,48 @@ describe('extension functions', () => {
 		});
 	});
 	describe('fontoxpath:evaluate()', () => {
+		function identityNamespaceResolver(prefix) {
+			return prefix;
+		}
+
+		before(() => {
+			registerCustomXPathFunction(
+				{ namespaceURI: 'test', localName: 'custom-function-static-string-func-error' },
+				[],
+				'xs:string',
+				(_dynamicContext) => {
+					// This query will throw an error during static evaluation
+					return '"prefix-" || string("bla", "bliep") || "-postfix"';
+				}
+			);
+
+			registerCustomXPathFunction(
+				{
+					namespaceURI: 'test',
+					localName: 'custom-function-dynamic-string-func-error',
+				},
+				[],
+				'xs:string',
+				(_dynamicContext) => {
+					// This query will throw an error immediately during evaluation
+					return '"prefix-" || string(./descendant::text()) || "-postfix"';
+				}
+			);
+
+			registerCustomXPathFunction(
+				{
+					namespaceURI: 'test',
+					localName: 'custom-function-lazy-dynamic-string-func-error',
+				},
+				[],
+				'xs:string',
+				(_dynamicContext) => {
+					// This query will throw an error during evaluation when advancing the iterator
+					return 'string(./descendant::text())';
+				}
+			);
+		});
+
 		it('can run inline functions', () =>
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
@@ -92,5 +138,100 @@ describe('extension functions', () => {
 				),
 				1000
 			));
+
+		it('throws for an invalid expression during static evaluation and preserves debug details', () => {
+			// Execute a query which executes our registered custom xpath function
+			// Test if the error contains the actual failing XPath query
+
+			chai.assert.throws(
+				() =>
+					evaluateXPathToString(
+						'test:custom-function-static-string-func-error() => fontoxpath:evaluate(map{".": .})',
+						documentNode,
+						null,
+						null,
+						{
+							namespaceResolver: identityNamespaceResolver,
+							debug: true,
+						}
+					),
+				// We expect the error message to contain the errored Query which is evaluated by
+				// fontoxpath:evaluate
+				`1: test:custom-function-static-string-func-error() => fontoxpath:evaluate(map{".": .})
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Inner error:
+1: "prefix-" || string("bla", "bliep") || "-postfix"
+                ^^^^^^^^^^^^^^^^^^^^^^
+
+Error: XPST0017`
+			);
+		});
+
+		it('throws for an invalid expression during evaluation and preserves debug details', () => {
+			documentNode = new slimdom.Document();
+			jsonMlMapper.parse(['xml', ['a', 'foo'], ['b', 'bar']], documentNode);
+
+			// Execute a query which executes our registered custom xpath function
+			// Test if the error contains the actual failing XPath query
+
+			chai.assert.throws(
+				() =>
+					evaluateXPathToString(
+						`test:custom-function-dynamic-string-func-error() => fontoxpath:evaluate(map{".": .})`,
+						documentNode,
+						null,
+						null,
+						{
+							language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+							namespaceResolver: identityNamespaceResolver,
+							debug: true,
+						}
+					),
+				// We expect the error message to contain the errored Query which is evaluated by
+				// fontoxpath:evaluate
+				`1: test:custom-function-dynamic-string-func-error() => fontoxpath:evaluate(map{".": .})
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Inner error:
+1: "prefix-" || string(./descendant::text()) || "-postfix"
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: XPTY0004`
+			);
+		});
+
+		it('throws for an invalid expression during evaluation and preserves debug details when advancing the iterator', () => {
+			documentNode = new slimdom.Document();
+			jsonMlMapper.parse(['xml', ['a', 'foo'], ['b', 'bar']], documentNode);
+
+			// Execute a query which executes our registered custom xpath function
+			// Test if the error contains the actual failing XPath query
+
+			chai.assert.throws(
+				() =>
+					evaluateXPathToString(
+						`test:custom-function-lazy-dynamic-string-func-error() => fontoxpath:evaluate(map{".": .})`,
+						documentNode,
+						null,
+						null,
+						{
+							language: evaluateXPath.XQUERY_3_1_LANGUAGE,
+							namespaceResolver: identityNamespaceResolver,
+							debug: true,
+						}
+					),
+				// We expect the error message to contain the errored Query which is evaluated by
+				// fontoxpath:evaluate
+				`1: test:custom-function-lazy-dynamic-string-func-error() => fontoxpath:evaluate(map{".": .})
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Inner error:
+1: string(./descendant::text())
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: XPTY0004`
+			);
+		});
 	});
 });

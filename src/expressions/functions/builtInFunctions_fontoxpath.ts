@@ -15,6 +15,8 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
+import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
+
 const fontoxpathEvaluate: FunctionDefinitionType = (
 	_dynamicContext,
 	executionParameters,
@@ -57,7 +59,10 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 				);
 				const innerStaticContext = new StaticContext(executionSpecificStaticContext);
 
-				const ast = parseExpression(queryString, { allowXQuery: false });
+				const ast = parseExpression(queryString, {
+					allowXQuery: false,
+					debug: executionParameters.debug,
+				});
 
 				const prolog = astHelper.followPath(ast, ['mainModule', 'prolog']);
 				if (prolog) {
@@ -74,7 +79,11 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 					allowXQuery: true,
 				});
 
-				selector.performStaticEvaluation(innerStaticContext);
+				try {
+					selector.performStaticEvaluation(innerStaticContext);
+				} catch (error) {
+					printAndRethrowError(queryString, error);
+				}
 
 				const variableBindings = Object.keys(variables).reduce(
 					(variablesByBindingKey, varName) => {
@@ -102,9 +111,19 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 
 				const innerDynamicContext = new DynamicContext(context);
 
-				resultIterator = selector.evaluate(innerDynamicContext, executionParameters).value;
+				try {
+					resultIterator = selector.evaluate(innerDynamicContext, executionParameters)
+						.value;
+				} catch (error) {
+					printAndRethrowError(queryString, error);
+				}
 			}
-			return resultIterator.next(IterationHint.NONE);
+
+			try {
+				return resultIterator.next(IterationHint.NONE);
+			} catch (error) {
+				printAndRethrowError(queryString, error);
+			}
 		},
 	});
 };
