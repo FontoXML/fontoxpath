@@ -303,13 +303,13 @@ op-same-key,false
 op-string-equal,true
 op-string-greater-than,true
 op-string-less-than,true
-op-subtract-dateTimes,false
-op-subtract-dates,false
+op-subtract-dateTimes,true
+op-subtract-dates,true
 op-subtract-dayTimeDuration-from-date,false
 op-subtract-dayTimeDuration-from-dateTime,false
 op-subtract-dayTimeDuration-from-time,false
 op-subtract-dayTimeDurations,true
-op-subtract-times,false
+op-subtract-times,true
 op-subtract-yearMonthDuration-from-date,false
 op-subtract-yearMonthDuration-from-dateTime,false
 op-subtract-yearMonthDurations,true
@@ -367,7 +367,7 @@ prod-DirectConstructor,true
 prod-EQName,true
 prod-EmptyOrderDecl,true
 prod-ExtensionExpr,false
-prod-FLWORExpr,false
+prod-FLWORExpr,true
 prod-FLWORExpr.static-typing,false
 prod-ForClause,true
 prod-FunctionCall,true
@@ -420,7 +420,7 @@ prod-VarDecl,true
 prod-VarDecl.external,true
 prod-VarDefaultValue,true
 prod-VersionDecl,true
-prod-WhereClause,false
+prod-WhereClause,true
 prod-WindowClause,false
 xs-anyURI,true
 xs-base64Binary,true

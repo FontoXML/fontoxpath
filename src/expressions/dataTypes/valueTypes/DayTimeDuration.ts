@@ -59,13 +59,23 @@ class DayTimeDuration extends AbstractDuration {
 		const hours = Math.abs(this.getHours());
 		const minutes = Math.abs(this.getMinutes());
 		const seconds = Math.abs(this.getSeconds());
-		const stringValue =
-			`${days ? `${days}DT` : 'T'}` +
-			`${hours ? `${hours}H` : ''}` +
-			`${minutes ? `${minutes}M` : ''}` +
-			`${seconds ? `${seconds}S` : ''}`;
+		const dayPart = `${days ? `${days}D` : ''}`;
+		const timePart =
+			(hours ? `${hours}H` : '') +
+			(minutes ? `${minutes}M` : '') +
+			(seconds ? `${seconds}S` : '');
 
-		return stringValue === 'T' ? 'T0S' : stringValue;
+		if (dayPart && timePart) {
+			return `${dayPart}T${timePart}`;
+		}
+		if (dayPart) {
+			return dayPart;
+		}
+		if (timePart) {
+			return `T${timePart}`;
+		}
+
+		return 'T0S';
 	}
 }
 
