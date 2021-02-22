@@ -52,7 +52,8 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 						vars[varName] = varName;
 						return vars;
 					}, {}),
-					FUNCTIONS_NAMESPACE_URI
+					FUNCTIONS_NAMESPACE_URI,
+					null
 				);
 				const innerStaticContext = new StaticContext(executionSpecificStaticContext);
 

@@ -1,4 +1,3 @@
-import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
 import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
@@ -6,34 +5,11 @@ import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
-import INodesFactory from './nodesFactory/INodesFactory';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
+import { Language, Options } from './types/Options';
 import { Node } from './types/Types';
-
-/**
- * @public
- */
-export type Logger = {
-	trace: (message: string) => void;
-};
-
-/**
- * @public
- */
-export type Options = {
-	currentContext?: any;
-	debug?: boolean;
-	defaultFunctionNamespaceURI?: string;
-	disableCache?: boolean;
-	documentWriter?: IDocumentWriter;
-	language?: Language;
-	logger?: Logger;
-	moduleImports?: { [s: string]: string };
-	namespaceResolver?: (s: string) => string | null;
-	nodesFactory?: INodesFactory;
-};
 
 /**
  * @public
@@ -222,17 +198,6 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		printAndRethrowError(selector, error);
 	}
 };
-
-/**
- * Specifies which language to use.
- *
- * @public
- */
-export enum Language {
-	XPATH_3_1_LANGUAGE = 'XPath3.1',
-	XQUERY_3_1_LANGUAGE = 'XQuery3.1',
-	XQUERY_UPDATE_3_1_LANGUAGE = 'XQueryUpdate3.1',
-}
 
 Object.assign(evaluateXPath, {
 	ANY_TYPE: ReturnType.ANY,

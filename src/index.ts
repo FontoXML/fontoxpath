@@ -3,7 +3,7 @@ import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
 import evaluateUpdatingExpression, { UpdatingOptions } from './evaluateUpdatingExpression';
 import evaluateUpdatingExpressionSync from './evaluateUpdatingExpressionSync';
-import evaluateXPath, { EvaluateXPath, Language, Logger, Options } from './evaluateXPath';
+import evaluateXPath, { EvaluateXPath } from './evaluateXPath';
 import evaluateXPathToArray from './evaluateXPathToArray';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import evaluateXPathToBoolean from './evaluateXPathToBoolean';
@@ -38,6 +38,14 @@ import internalCreateTypedValueFactory, {
 	UntypedExternalValue,
 	ValidValue,
 } from './types/createTypedValueFactory';
+import {
+	FunctionNameResolver,
+	Language,
+	LexicalQualifiedName,
+	Logger,
+	Options,
+	ResolvedQualifiedName,
+} from './types/Options';
 import {
 	Attr,
 	CDATASection,
@@ -164,24 +172,32 @@ export {
 	Comment,
 	Document,
 	Element,
+	EvaluateXPath,
+	ExternalTypedValueFactory,
+	FunctionNameResolver,
 	IDocumentWriter,
 	IDomFacade,
 	INodesFactory,
-	ISimpleNodesFactory,
 	IReturnTypes,
+	ISimpleNodesFactory,
 	Language,
+	LexicalQualifiedName,
 	Logger,
 	Node,
 	Options,
 	ProcessingInstruction,
+	Profiler,
+	ResolvedQualifiedName,
 	ReturnType,
 	Text,
+	UntypedExternalValue as ValidValueSequence,
 	UpdatingOptions,
+	ValidValue,
+	XPathPerformanceMeasurement,
 	compareSpecificity,
 	domFacade,
 	evaluateUpdatingExpression,
 	evaluateUpdatingExpressionSync,
-	EvaluateXPath,
 	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToAsyncIterator,
@@ -196,14 +212,9 @@ export {
 	executePendingUpdateList,
 	getBucketForSelector,
 	getBucketsForNode,
+	parseScript,
 	precompileXPath,
+	profiler,
 	registerCustomXPathFunction,
 	registerXQueryModule,
-	parseScript,
-	Profiler,
-	profiler,
-	XPathPerformanceMeasurement,
-	ExternalTypedValueFactory,
-	ValidValue,
-	UntypedExternalValue as ValidValueSequence,
 };

@@ -1,6 +1,5 @@
 import IDocumentWriter from './documentWriter/IDocumentWriter';
 import IDomFacade from './domFacade/IDomFacade';
-import { Language, Logger } from './evaluateXPath';
 import evaluateXPathToAsyncIterator from './evaluateXPathToAsyncIterator';
 import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateResultToTransferable';
@@ -13,6 +12,7 @@ import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import INodesFactory from './nodesFactory/INodesFactory';
 import { ReturnType } from './parsing/convertXDMReturnValue';
+import { Language, Logger } from './types/Options';
 
 /**
  * @public

@@ -455,4 +455,63 @@ describe('functions', () => {
 				'starts-with'
 			));
 	});
+
+	describe('resolving function names', () => {
+		it('can resolve a function using an injected function name resolver', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('bleep:bloop()', null, null, null, {
+					functionNameResolver: ({ localName, prefix }, arity) => {
+						chai.assert.equal(localName, 'bloop');
+						chai.assert.equal(prefix, 'bleep');
+						chai.assert.equal(arity, 0);
+
+						return {
+							namespaceURI: 'http://www.w3.org/2005/xpath-functions',
+							localName: 'true',
+						};
+					},
+				})
+			));
+
+		it('can resolve a function w/o a prefix using an injected function name resolver', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('bloop()', null, null, null, {
+					functionNameResolver: ({ localName, prefix }, arity) => {
+						chai.assert.equal(localName, 'bloop');
+						chai.assert.equal(prefix, '');
+						chai.assert.equal(arity, 0);
+
+						return {
+							namespaceURI: 'http://www.w3.org/2005/xpath-functions',
+							localName: 'true',
+						};
+					},
+				})
+			));
+
+		it('Throws the correct error when resolving fails', () =>
+			chai.assert.throws(
+				() =>
+					evaluateXPathToBoolean('blurp()', null, null, null, {
+						functionNameResolver: ({ localName, prefix }, arity) => {
+							chai.assert.equal(localName, 'blurp');
+							chai.assert.equal(prefix, '');
+							chai.assert.equal(arity, 0);
+							return null;
+						},
+					}),
+				'XPST0017'
+			));
+
+		it('can resolve a function with a bogus prefix using the injected namespace resolver', () =>
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('bogus:true()', null, null, null, {
+					namespaceResolver: (prefix) => {
+						chai.assert.equal(prefix, 'bogus');
+
+						return 'http://www.w3.org/2005/xpath-functions';
+					},
+				})
+			));
+	});
 });

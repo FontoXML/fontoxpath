@@ -55,32 +55,35 @@ class NamedFunctionRef extends Expression {
 
 	public performStaticEvaluation(staticContext: StaticContext) {
 		let namespaceURI = this._functionReference.namespaceURI;
+		let localName = this._functionReference.localName;
+		const prefix = this._functionReference.prefix;
 		if (!namespaceURI) {
-			if (!this._functionReference.prefix) {
-				namespaceURI = staticContext.registeredDefaultFunctionNamespace;
-			} else {
-				namespaceURI = staticContext.resolveNamespace(this._functionReference.prefix);
-				if (namespaceURI === null) {
-					throw new Error(
-						`XPST0017: There is no uri registered for prefix ${this._functionReference.prefix}.`
-					);
-				}
+			const functionName = staticContext.resolveFunctionName(
+				{ localName, prefix },
+				this._arity
+			);
+
+			if (!functionName) {
+				// Resolving failed
+				throw new Error(
+					`XPST0017: The function ${prefix ? prefix + ':' : ''}${localName} with arity ${
+						this._arity
+					} could not be resolved. ${getAlternativesAsStringFor(localName)}`
+				);
 			}
+			namespaceURI = functionName.namespaceURI;
+			localName = functionName.localName;
 		}
 
 		this._functionProperties =
-			staticContext.lookupFunction(
-				namespaceURI,
-				this._functionReference.localName,
-				this._arity
-			) || null;
+			staticContext.lookupFunction(namespaceURI, localName, this._arity) || null;
 
 		if (!this._functionProperties) {
 			throw new Error(
 				`XPST0017: Function ${buildFormattedFunctionName(
 					this._functionReference
 				)} with arity of ${this._arity} not registered. ${getAlternativesAsStringFor(
-					this._functionReference.localName
+					localName
 				)}`
 			);
 		}

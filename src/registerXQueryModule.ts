@@ -34,7 +34,12 @@ export default function registerXQueryModule(
 	const moduleTargetPrefix = astHelper.getTextContent(prefixNode);
 
 	const staticContext = new StaticContext(
-		new ExecutionSpecificStaticContext(() => null, Object.create(null), FUNCTIONS_NAMESPACE_URI)
+		new ExecutionSpecificStaticContext(
+			() => null,
+			Object.create(null),
+			FUNCTIONS_NAMESPACE_URI,
+			null
+		)
 	);
 
 	staticContext.registerNamespace(moduleTargetPrefix, moduleTargetNamespaceURI);

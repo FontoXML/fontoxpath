@@ -4,7 +4,6 @@ import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWr
 import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
-import { Options } from '../evaluateXPath';
 import { adaptJavaScriptValueToSequence } from '../expressions/adaptJavaScriptValueToXPathValue';
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
@@ -23,6 +22,7 @@ import {
 	TypedExternalValue,
 	UntypedExternalValue,
 } from '../types/createTypedValueFactory';
+import { Options } from '../types/Options';
 import { Node } from '../types/Types';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
@@ -78,6 +78,7 @@ export default function buildEvaluationContext(
 			documentWriter: externalOptions['documentWriter'],
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
+			functionNameResolver: externalOptions['functionNameResolver'],
 			nodesFactory: externalOptions['nodesFactory'],
 		};
 	} else {
@@ -96,6 +97,8 @@ export default function buildEvaluationContext(
 
 	expressionString = normalizeEndOfLines(expressionString);
 
+	const functionNameResolver = internalOptions.functionNameResolver;
+
 	const moduleImports = internalOptions.moduleImports || Object.create(null);
 
 	const namespaceResolver =
@@ -110,7 +113,8 @@ export default function buildEvaluationContext(
 		namespaceResolver,
 		variables,
 		moduleImports,
-		defaultFunctionNamespaceURI
+		defaultFunctionNamespaceURI,
+		functionNameResolver
 	);
 
 	const contextSequence = contextItem

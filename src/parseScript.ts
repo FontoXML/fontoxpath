@@ -1,9 +1,9 @@
 import domBackedDocumentWriter from './documentWriter/domBackedDocumentWriter';
 import IDocumentWriter from './documentWriter/IDocumentWriter';
-import { Language, Options } from './evaluateXPath';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
 import parseExpression from './parsing/parseExpression';
-import { Document, Element, Text } from './types/Types';
+import { Language, Options } from './types/Options';
+import { Element, Text } from './types/Types';
 
 const XQUERYX_UPDATING_NAMESPACE_URI = 'http://www.w3.org/2007/xquery-update-10';
 
