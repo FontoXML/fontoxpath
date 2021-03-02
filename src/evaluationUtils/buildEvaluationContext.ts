@@ -55,10 +55,7 @@ function normalizeEndOfLines(xpathString: string) {
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xa));
 }
 
-export function createDefaultFunctionNameResolver(
-	defaultFunctionNamespaceURI: string,
-	resolveNamespace: NamespaceResolver
-) {
+export function createDefaultFunctionNameResolver(defaultFunctionNamespaceURI: string) {
 	return (
 		{ prefix, localName }: LexicalQualifiedName,
 		_arity: number
@@ -66,13 +63,6 @@ export function createDefaultFunctionNameResolver(
 		if (!prefix) {
 			return {
 				namespaceURI: defaultFunctionNamespaceURI,
-				localName,
-			};
-		}
-		const namespaceURI = resolveNamespace(prefix);
-		if (namespaceURI) {
-			return {
-				namespaceURI,
 				localName,
 			};
 		}
@@ -137,7 +127,7 @@ export default function buildEvaluationContext(
 
 	const functionNameResolver =
 		internalOptions.functionNameResolver ||
-		createDefaultFunctionNameResolver(defaultFunctionNamespaceURI, namespaceResolver);
+		createDefaultFunctionNameResolver(defaultFunctionNamespaceURI);
 
 	const expressionAndStaticContext = staticallyCompileXPath(
 		expressionString,

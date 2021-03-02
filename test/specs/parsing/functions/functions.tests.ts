@@ -534,7 +534,8 @@ describe('functions', () => {
 				'XPST0017'
 			));
 
-		it('can resolve a function with a bogus prefix using the injected namespace resolver', () =>
+		it('can resolve a function with a bogus prefix using the injected namespace resolver', () => {
+			debugger;
 			chai.assert.isTrue(
 				evaluateXPathToBoolean('bogus:true()', null, null, null, {
 					namespaceResolver: (prefix) => {
@@ -543,6 +544,28 @@ describe('functions', () => {
 						return 'http://www.w3.org/2005/xpath-functions';
 					},
 				})
-			));
+			);
+		});
+		it('Allows the usage of both a namespaceresolver and a functionnameresolver', () => {
+			debugger;
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('bogus:true()', null, null, null, {
+					namespaceResolver: (prefix) => {
+						chai.assert.equal(prefix, 'bogus');
+
+						return 'BOGUS';
+					},
+					functionNameResolver: ({ localName, prefix }, arity) => {
+						chai.assert.equal(localName, 'true');
+						chai.assert.equal(prefix, 'bogus');
+						chai.assert.equal(arity, 0);
+						return {
+							namespaceURI: 'http://www.w3.org/2005/xpath-functions',
+							localName: 'true',
+						};
+					},
+				})
+			);
+		});
 	});
 });

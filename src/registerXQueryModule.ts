@@ -40,7 +40,7 @@ export default function registerXQueryModule(
 			namespaceResolver,
 			Object.create(null),
 			FUNCTIONS_NAMESPACE_URI,
-			createDefaultFunctionNameResolver(FUNCTIONS_NAMESPACE_URI, namespaceResolver)
+			createDefaultFunctionNameResolver(FUNCTIONS_NAMESPACE_URI)
 		)
 	);
 

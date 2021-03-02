@@ -238,7 +238,10 @@ export default class StaticContext implements IContext {
 				namespaceURI: this.registeredDefaultFunctionNamespaceURI,
 			};
 		} else if (prefix) {
-			const namespaceURI = this.resolveNamespace(prefix);
+			// Try to resolve the NS. Note: do not go to the outside to resolve that
+			// namespace. There is special config for function name resolveing that should have its
+			// turn
+			const namespaceURI = this.resolveNamespace(prefix, false);
 			if (namespaceURI) {
 				return { localName, namespaceURI };
 			}
@@ -248,12 +251,12 @@ export default class StaticContext implements IContext {
 		return this.parentContext.resolveFunctionName(lexicalQName, arity);
 	}
 
-	public resolveNamespace(prefix: string): string {
+	public resolveNamespace(prefix: string, useExternalResolver: boolean = true): string {
 		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix);
 		if (uri === undefined) {
 			return this.parentContext === null
 				? undefined
-				: this.parentContext.resolveNamespace(prefix);
+				: this.parentContext.resolveNamespace(prefix, useExternalResolver);
 		}
 		return uri;
 	}

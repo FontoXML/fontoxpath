@@ -21,5 +21,5 @@ export default interface IContext {
 	): FunctionProperties | null;
 	lookupVariable(namespaceURI: string | null, localName: string): string | null;
 	resolveFunctionName(lexicalQName: LexicalQualifiedName, arity: number): ResolvedQualifiedName;
-	resolveNamespace(prefix: string): string | null;
+	resolveNamespace(prefix: string, useExternalResolver?: boolean): string | null;
 }

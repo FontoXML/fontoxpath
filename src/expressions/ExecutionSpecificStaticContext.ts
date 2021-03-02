@@ -140,12 +140,26 @@ export default class ExecutionSpecificStaticContext implements IContext {
 				arity,
 				resolvedQName,
 			});
+		} else {
+			// Maybe the namespaceResolver can shine some light:
+			const namespaceURI = this.resolveNamespace(lexicalQName.prefix, true);
+			if (namespaceURI) {
+				return {
+					namespaceURI,
+					localName: lexicalQName.localName,
+				};
+			}
 		}
 
 		return resolvedQName;
 	}
 
-	public resolveNamespace(prefix: string) {
+	public resolveNamespace(prefix: string, useExternalResolver: boolean = true) {
+		if (!useExternalResolver) {
+			// For function lookups, do not go to the outside to resolve a function namespace uri
+			// There is separate config especially for that
+			return null;
+		}
 		// See if it 'globally' known:
 		if (staticallyKnownNamespaceByPrefix[prefix]) {
 			return staticallyKnownNamespaceByPrefix[prefix];
