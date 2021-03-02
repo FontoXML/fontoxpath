@@ -50,6 +50,13 @@ export type FunctionNameResolver = (
 ) => ResolvedQualifiedName;
 
 /**
+ * Resolves a namespace prefix to its URI
+ *
+ * @public
+ */
+export type NamespaceResolver = (prefix: string) => string | null;
+
+/**
  * @public
  */
 export type Options = {
@@ -137,7 +144,7 @@ export type Options = {
 	 * How to resolve element namespaces. Defaults to returning `null`, which is the default
 	 * namespace uri _or_ an error when resolving a prefix.
 	 */
-	namespaceResolver?: (s: string) => string | null;
+	namespaceResolver?: NamespaceResolver;
 
 	/**
 	 * How to create new elements when using XQuery or XQuery Update Facility. Defaults to creating

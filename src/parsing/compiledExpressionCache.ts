@@ -1,5 +1,8 @@
-import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
+import ExecutionSpecificStaticContext, {
+	ResolvedFunction,
+} from '../expressions/ExecutionSpecificStaticContext';
 import Expression from '../expressions/Expression';
+import { FunctionNameResolver } from '../types/Options';
 
 const compiledExpressionCache: { [s: string]: { [s: string]: CacheEntry[] } } = Object.create(null);
 
@@ -8,27 +11,16 @@ const halfCompiledExpressionCache: { [s: string]: { [s: string]: Expression } } 
 );
 
 class CacheEntry {
-	public compiledExpression: Expression;
-	public defaultFunctionNamespaceURI: string;
-	public moduleImports: { namespaceURI: string; prefix: string }[];
-	public referredNamespaces: { namespaceURI: string; prefix: string }[];
-	public referredVariables: { name: string }[];
-
 	constructor(
-		referredNamespaces: { namespaceURI: string; prefix: string }[],
-		referredVariables: { name: string }[],
-		compiledExpression: Expression,
-		moduleImports:
+		public readonly referredNamespaces: { namespaceURI: string; prefix: string }[],
+		public readonly referredVariables: { name: string }[],
+		public readonly compiledExpression: Expression,
+		public readonly moduleImports:
 			| { namespaceURI: any; prefix: string }[]
 			| { namespaceURI: string; prefix: string }[],
-		defaultFunctionNamespaceURI: string
-	) {
-		this.compiledExpression = compiledExpression;
-		this.moduleImports = moduleImports;
-		this.referredNamespaces = referredNamespaces;
-		this.referredVariables = referredVariables;
-		this.defaultFunctionNamespaceURI = defaultFunctionNamespaceURI;
-	}
+		public readonly defaultFunctionNamespaceURI: string,
+		public readonly resolvedFunctions: ResolvedFunction[]
+	) {}
 }
 
 function generateLanguageKey(language: string, debug: boolean): string {
@@ -83,7 +75,8 @@ export function getStaticCompilationResultFromCache(
 	variables: object,
 	moduleImports: { [x: string]: string },
 	debug: boolean,
-	defaultFunctionNamespaceURI: string
+	defaultFunctionNamespaceURI: string,
+	functionNameResolver: FunctionNameResolver
 ) {
 	const cachesForExpression = compiledExpressionCache[selectorString];
 
@@ -125,7 +118,19 @@ export function getStaticCompilationResultFromCache(
 			cache.referredVariables.every((varRef) => variables[varRef.name] !== undefined) &&
 			cache.moduleImports.every(
 				(moduleImport) => moduleImports[moduleImport.prefix] === moduleImport.namespaceURI
-			)
+			) &&
+			cache.resolvedFunctions.every((resolvedFunction) => {
+				const newResolvedFunction = functionNameResolver(
+					resolvedFunction.lexicalQName,
+					resolvedFunction.arity
+				);
+				return (
+					newResolvedFunction &&
+					newResolvedFunction.namespaceURI ===
+						resolvedFunction.resolvedQName.namespaceURI &&
+					newResolvedFunction.localName === resolvedFunction.resolvedQName.localName
+				);
+			})
 	);
 
 	if (!cacheWithCorrectContext) {
@@ -194,7 +199,8 @@ export function storeStaticCompilationResultInCache(
 				namespaceURI: moduleImports[moduleImportPrefix],
 				prefix: moduleImportPrefix,
 			})),
-			defaultFunctionNamespaceURI
+			defaultFunctionNamespaceURI,
+			executionStaticContext.getResolvedFunctions()
 		)
 	);
 }

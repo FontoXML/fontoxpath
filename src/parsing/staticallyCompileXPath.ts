@@ -37,7 +37,8 @@ export default function staticallyCompileXPath(
 				variables,
 				moduleImports,
 				compilationOptions.debug,
-				defaultFunctionNamespaceURI
+				defaultFunctionNamespaceURI,
+				functionNameResolver
 		  );
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(

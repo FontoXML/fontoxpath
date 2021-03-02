@@ -489,6 +489,37 @@ describe('functions', () => {
 				})
 			));
 
+		it('does not erronously cache function resolving', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('bloop()', null, null, null, {
+					functionNameResolver: ({ localName, prefix }, arity) => {
+						chai.assert.equal(localName, 'bloop');
+						chai.assert.equal(prefix, '');
+						chai.assert.equal(arity, 0);
+
+						return {
+							namespaceURI: 'http://www.w3.org/2005/xpath-functions',
+							localName: 'true',
+						};
+					},
+				})
+			);
+			chai.assert.isFalse(
+				evaluateXPathToBoolean('bloop()', null, null, null, {
+					functionNameResolver: ({ localName, prefix }, arity) => {
+						chai.assert.equal(localName, 'bloop');
+						chai.assert.equal(prefix, '');
+						chai.assert.equal(arity, 0);
+
+						return {
+							namespaceURI: 'http://www.w3.org/2005/xpath-functions',
+							localName: 'false',
+						};
+					},
+				})
+			);
+		});
+
 		it('Throws the correct error when resolving fails', () =>
 			chai.assert.throws(
 				() =>

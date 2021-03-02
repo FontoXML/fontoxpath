@@ -43,6 +43,7 @@ import {
 	Language,
 	LexicalQualifiedName,
 	Logger,
+	NamespaceResolver,
 	Options,
 	ResolvedQualifiedName,
 } from './types/Options';
@@ -183,6 +184,7 @@ export {
 	Language,
 	LexicalQualifiedName,
 	Logger,
+	NamespaceResolver,
 	Node,
 	Options,
 	ProcessingInstruction,

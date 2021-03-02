@@ -53,7 +53,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 						return vars;
 					}, {}),
 					FUNCTIONS_NAMESPACE_URI,
-					null
+					(lexicalName, arity) => staticContext.resolveFunctionName(lexicalName, arity)
 				);
 				const innerStaticContext = new StaticContext(executionSpecificStaticContext);
 

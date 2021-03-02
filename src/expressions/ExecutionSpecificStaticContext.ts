@@ -12,6 +12,12 @@ import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
+export type ResolvedFunction = {
+	arity: number;
+	lexicalQName: LexicalQualifiedName;
+	resolvedQName: ResolvedQualifiedName;
+};
+
 /**
  * XPaths in FontoXPath know of two separate contexts: the static one and the context at evaluation.
  *
@@ -44,6 +50,9 @@ export default class ExecutionSpecificStaticContext implements IContext {
 	private _referredVariableByName: {
 		[variable: string]: { name: string };
 	};
+
+	private _resolvedFunctions: ResolvedFunction[];
+
 	private _variableBindingByName: { [variableName: string]: string };
 
 	constructor(
@@ -69,26 +78,10 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		this._referredNamespaceByName = Object.create(null);
 
 		this.registeredDefaultFunctionNamespaceURI = defaultFunctionNamespaceURI;
-		if (!functionNameResolver) {
-			functionNameResolver = ({ prefix, localName }, _arity) => {
-				if (!prefix) {
-					return {
-						namespaceURI: defaultFunctionNamespaceURI,
-						localName,
-					};
-				}
-				const namespaceURI = this.resolveNamespace(prefix);
-				if (namespaceURI) {
-					return {
-						namespaceURI,
-						localName,
-					};
-				}
-				return null;
-			};
-		}
 
 		this._functionNameResolver = functionNameResolver;
+
+		this._resolvedFunctions = [];
 
 		/**
 		 * This flag will be set to true if this EvaluationContext was used while statically
@@ -103,6 +96,10 @@ export default class ExecutionSpecificStaticContext implements IContext {
 
 	public getReferredVariables(): { name: string }[] {
 		return Object.values(this._referredVariableByName);
+	}
+
+	public getResolvedFunctions(): ResolvedFunction[] {
+		return this._resolvedFunctions;
 	}
 
 	public lookupFunction(
@@ -135,7 +132,17 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		lexicalQName: LexicalQualifiedName,
 		arity: number
 	): ResolvedQualifiedName {
-		return this._functionNameResolver(lexicalQName, arity);
+		const resolvedQName = this._functionNameResolver(lexicalQName, arity);
+
+		if (resolvedQName) {
+			this._resolvedFunctions.push({
+				lexicalQName,
+				arity,
+				resolvedQName,
+			});
+		}
+
+		return resolvedQName;
 	}
 
 	public resolveNamespace(prefix: string) {

@@ -1,9 +1,11 @@
 import * as chai from 'chai';
-import { compareSpecificity } from 'fontoxpath';
+import { compareSpecificity, evaluateXPath } from 'fontoxpath';
+import { slimdom } from 'slimdom-sax-parser';
 
 describe('compareSpecificity', () => {
-	it('returns 0 for the same xpath', () =>
-		chai.assert.equal(compareSpecificity('self::*', 'self::*'), 0));
+	it('returns 0 for the same xpath', () => {
+		chai.assert.equal(compareSpecificity('self::*', 'self::*'), 0);
+	});
 	it('nodeType > universal', () =>
 		chai.assert.equal(compareSpecificity('self::element()', 'self::node()'), 1));
 	it('name > nodeType', () =>

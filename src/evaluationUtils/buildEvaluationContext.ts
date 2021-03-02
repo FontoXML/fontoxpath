@@ -22,7 +22,12 @@ import {
 	TypedExternalValue,
 	UntypedExternalValue,
 } from '../types/createTypedValueFactory';
-import { Options } from '../types/Options';
+import {
+	LexicalQualifiedName,
+	NamespaceResolver,
+	Options,
+	ResolvedQualifiedName,
+} from '../types/Options';
 import { Node } from '../types/Types';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
@@ -48,6 +53,31 @@ function createDefaultNamespaceResolver(contextItem: any): (s: string) => string
 function normalizeEndOfLines(xpathString: string) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xa));
+}
+
+export function createDefaultFunctionNameResolver(
+	defaultFunctionNamespaceURI: string,
+	resolveNamespace: NamespaceResolver
+) {
+	return (
+		{ prefix, localName }: LexicalQualifiedName,
+		_arity: number
+	): ResolvedQualifiedName | null => {
+		if (!prefix) {
+			return {
+				namespaceURI: defaultFunctionNamespaceURI,
+				localName,
+			};
+		}
+		const namespaceURI = resolveNamespace(prefix);
+		if (namespaceURI) {
+			return {
+				namespaceURI,
+				localName,
+			};
+		}
+		return null;
+	};
 }
 
 export default function buildEvaluationContext(
@@ -97,8 +127,6 @@ export default function buildEvaluationContext(
 
 	expressionString = normalizeEndOfLines(expressionString);
 
-	const functionNameResolver = internalOptions.functionNameResolver;
-
 	const moduleImports = internalOptions.moduleImports || Object.create(null);
 
 	const namespaceResolver =
@@ -106,6 +134,10 @@ export default function buildEvaluationContext(
 
 	const defaultFunctionNamespaceURI =
 		externalOptions['defaultFunctionNamespaceURI'] || FUNCTIONS_NAMESPACE_URI;
+
+	const functionNameResolver =
+		internalOptions.functionNameResolver ||
+		createDefaultFunctionNameResolver(defaultFunctionNamespaceURI, namespaceResolver);
 
 	const expressionAndStaticContext = staticallyCompileXPath(
 		expressionString,

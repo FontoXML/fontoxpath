@@ -78,6 +78,7 @@ evaluateXPathToStrings(xpathExpression, contextNode, domFacade, variables, optio
     * `trace: <function(string):void>` The logger for the `trace()` function. The argument is the
       string of the original message.
   * `defaultFunctionNamespaceURI` `<string>` To modify or change the default function namespaceURI. Defaults to `http://www.w3.org/2005/xpath-functions`. Defining the default function namespaceURI in the xpath expression overwrites this option.
+  * `functionNameResolver` `<({prefix, localName}, arity) => {namespaceURI, localName}>` To influence the function name resolving algorithm. Useful to extend the protected namespaces, such as the `fn` namespace.
 
 ### Example
 
@@ -383,9 +384,12 @@ FontoXPath you are running.
 ## Compatibility
 
 This engine is pretty DOM-agnostic, it has a good track record with the browser DOM implementations
-and [slimdom.js](https://github.com/bwrrp/slimdom.js). There are a number of known issues with
-[xmldom](https://github.com/jindw/xmldom) because it does not follow the DOM spec on some features
-including namespaces.
+and [slimdom.js](https://github.com/bwrrp/slimdom.js). There are a number of known issues with other
+DOM implementations such as [xmldom](https://github.com/jindw/xmldom) because it does not follow the
+DOM spec on some features including namespaces.
+
+When using namespaces in general, be sure to not use the HTML DOM since it does not always implement
+namespaces how you'd expect!
 
 ## Contribution
 
