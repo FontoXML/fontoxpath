@@ -2,8 +2,8 @@ import IDocumentWriter from '../documentWriter/IDocumentWriter';
 import { NodePointer, TinyNode } from '../domClone/Pointer';
 import { ConcreteNode } from '../domFacade/ConcreteNode';
 import DomFacade from '../domFacade/DomFacade';
-import { Logger } from '../evaluateXPath';
 import INodesFactory from '../nodesFactory/INodesFactory';
+import { Logger } from '../types/Options';
 
 export default class ExecutionParameters {
 	constructor(

@@ -6,6 +6,7 @@ import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';
 import FunctionDefinitionType from '../expressions/functions/FunctionDefinitionType';
 import { getAlternativesAsStringFor } from '../expressions/functions/functionRegistry';
+import { FUNCTIONS_NAMESPACE_URI } from '../expressions/staticallyKnownNamespaces';
 import StaticContext, { GenericFunctionDefinition } from '../expressions/StaticContext';
 import createDoublyIterableSequence from '../expressions/util/createDoublyIterableSequence';
 import UpdatingExpression from '../expressions/xquery-update/UpdatingExpression';
@@ -144,7 +145,7 @@ export default function processProlog(
 			throw errXQST0070();
 		}
 
-		staticContext.registeredDefaultFunctionNamespace = namespaceURI;
+		staticContext.registeredDefaultFunctionNamespaceURI = namespaceURI;
 	} else if (defaultNamespaceFunctionDecl.length > 1) {
 		throw errXQST0066();
 	}
@@ -156,9 +157,11 @@ export default function processProlog(
 		const declarationLocalName = astHelper.getTextContent(functionName);
 
 		if (declarationNamespaceURI === null) {
+			// Note: Never use the function namespace resolver to resolve the name of a function
+			// declaration.
 			declarationNamespaceURI =
 				declarationPrefix === null
-					? staticContext.registeredDefaultFunctionNamespace
+					? staticContext.registeredDefaultFunctionNamespaceURI || FUNCTIONS_NAMESPACE_URI
 					: staticContext.resolveNamespace(declarationPrefix);
 
 			if (!declarationNamespaceURI && declarationPrefix) {

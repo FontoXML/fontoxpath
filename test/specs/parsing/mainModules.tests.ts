@@ -107,4 +107,20 @@ prrt:true()
 
 		chai.assert.equal(result, true);
 	});
+
+	it('Throws the correct error when registering functions in no namespace', () => {
+		chai.assert.throws(
+			() =>
+				evaluateXPath(
+					`
+declare function fn () external; 1`,
+					null,
+					null,
+					null,
+					null,
+					{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
+				),
+			'XQST0045'
+		);
+	});
 });

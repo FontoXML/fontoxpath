@@ -4,7 +4,6 @@ import wrapExternalDocumentWriter from '../documentWriter/wrapExternalDocumentWr
 import DomFacade from '../domFacade/DomFacade';
 import ExternalDomFacade from '../domFacade/ExternalDomFacade';
 import IDomFacade from '../domFacade/IDomFacade';
-import { Options } from '../evaluateXPath';
 import { adaptJavaScriptValueToSequence } from '../expressions/adaptJavaScriptValueToXPathValue';
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
@@ -23,6 +22,12 @@ import {
 	TypedExternalValue,
 	UntypedExternalValue,
 } from '../types/createTypedValueFactory';
+import {
+	LexicalQualifiedName,
+	NamespaceResolver,
+	Options,
+	ResolvedQualifiedName,
+} from '../types/Options';
 import { Node } from '../types/Types';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
@@ -48,6 +53,21 @@ function createDefaultNamespaceResolver(contextItem: any): (s: string) => string
 function normalizeEndOfLines(xpathString: string) {
 	// Replace all character sequences of 0xD followed by 0xA and all 0xD not followed by 0xA with 0xA.
 	return xpathString.replace(/(\x0D\x0A)|(\x0D(?!\x0A))/g, String.fromCharCode(0xa));
+}
+
+export function createDefaultFunctionNameResolver(defaultFunctionNamespaceURI: string) {
+	return (
+		{ prefix, localName }: LexicalQualifiedName,
+		_arity: number
+	): ResolvedQualifiedName | null => {
+		if (!prefix) {
+			return {
+				namespaceURI: defaultFunctionNamespaceURI,
+				localName,
+			};
+		}
+		return null;
+	};
 }
 
 export default function buildEvaluationContext(
@@ -78,6 +98,7 @@ export default function buildEvaluationContext(
 			documentWriter: externalOptions['documentWriter'],
 			moduleImports: externalOptions['moduleImports'],
 			namespaceResolver: externalOptions['namespaceResolver'],
+			functionNameResolver: externalOptions['functionNameResolver'],
 			nodesFactory: externalOptions['nodesFactory'],
 		};
 	} else {
@@ -104,13 +125,18 @@ export default function buildEvaluationContext(
 	const defaultFunctionNamespaceURI =
 		externalOptions['defaultFunctionNamespaceURI'] || FUNCTIONS_NAMESPACE_URI;
 
+	const functionNameResolver =
+		internalOptions.functionNameResolver ||
+		createDefaultFunctionNameResolver(defaultFunctionNamespaceURI);
+
 	const expressionAndStaticContext = staticallyCompileXPath(
 		expressionString,
 		compilationOptions,
 		namespaceResolver,
 		variables,
 		moduleImports,
-		defaultFunctionNamespaceURI
+		defaultFunctionNamespaceURI,
+		functionNameResolver
 	);
 
 	const contextSequence = contextItem

@@ -1,14 +1,22 @@
+import {
+	FunctionNameResolver,
+	LexicalQualifiedName,
+	ResolvedQualifiedName,
+} from '../types/Options';
 import IContext from './Context';
 import ISequence from './dataTypes/ISequence';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import { FunctionProperties, getFunctionByArity } from './functions/functionRegistry';
-import {
-	FUNCTIONS_NAMESPACE_URI,
-	staticallyKnownNamespaceByPrefix,
-} from './staticallyKnownNamespaces';
+import { staticallyKnownNamespaceByPrefix } from './staticallyKnownNamespaces';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
+
+export type ResolvedFunction = {
+	arity: number;
+	lexicalQName: LexicalQualifiedName;
+	resolvedQName: ResolvedQualifiedName;
+};
 
 /**
  * XPaths in FontoXPath know of two separate contexts: the static one and the context at evaluation.
@@ -22,7 +30,7 @@ const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variab
  */
 export default class ExecutionSpecificStaticContext implements IContext {
 	public executionContextWasRequired: boolean;
-	public registeredDefaultFunctionNamespace: string = FUNCTIONS_NAMESPACE_URI;
+	public registeredDefaultFunctionNamespaceURI: string | null;
 	public registeredVariableBindingByHashKey: any[] = [Object.create(null)];
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
@@ -31,6 +39,7 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		) => ISequence;
 	} = Object.create(null);
 
+	private _functionNameResolver: FunctionNameResolver;
 	private _namespaceResolver: (namespaceURI: string) => null | string;
 
 	// The static compilation step depends on the prefix -> namespaceURI pairs in the namespace resolver
@@ -41,16 +50,18 @@ export default class ExecutionSpecificStaticContext implements IContext {
 	private _referredVariableByName: {
 		[variable: string]: { name: string };
 	};
+
+	private _resolvedFunctions: ResolvedFunction[];
+
 	private _variableBindingByName: { [variableName: string]: string };
-	private _variableValueByName: any;
 
 	constructor(
 		namespaceResolver: (prefix: string) => string | null,
 		variableByName: object,
-		defaultFunctionNamespaceURI: string
+		defaultFunctionNamespaceURI: string,
+		functionNameResolver: FunctionNameResolver
 	) {
 		this._namespaceResolver = namespaceResolver;
-		this.registeredDefaultFunctionNamespace = defaultFunctionNamespaceURI;
 
 		this._variableBindingByName = Object.keys(variableByName).reduce(
 			(bindings, variableName) => {
@@ -66,7 +77,11 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		this._referredVariableByName = Object.create(null);
 		this._referredNamespaceByName = Object.create(null);
 
-		this._variableValueByName = variableByName;
+		this.registeredDefaultFunctionNamespaceURI = defaultFunctionNamespaceURI;
+
+		this._functionNameResolver = functionNameResolver;
+
+		this._resolvedFunctions = [];
 
 		/**
 		 * This flag will be set to true if this EvaluationContext was used while statically
@@ -83,11 +98,15 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		return Object.values(this._referredVariableByName);
 	}
 
+	public getResolvedFunctions(): ResolvedFunction[] {
+		return this._resolvedFunctions;
+	}
+
 	public lookupFunction(
 		namespaceURI: string,
 		localName: string,
 		arity: number,
-		_skipExternal?: boolean
+		_skipExternal: boolean
 	): FunctionProperties | null {
 		// It is impossible to inject functions at execution time, so we can always return a globally defined one.
 		return getFunctionByArity(namespaceURI, localName, arity);
@@ -109,7 +128,38 @@ export default class ExecutionSpecificStaticContext implements IContext {
 		return bindingName;
 	}
 
-	public resolveNamespace(prefix: string) {
+	public resolveFunctionName(
+		lexicalQName: LexicalQualifiedName,
+		arity: number
+	): ResolvedQualifiedName {
+		const resolvedQName = this._functionNameResolver(lexicalQName, arity);
+
+		if (resolvedQName) {
+			this._resolvedFunctions.push({
+				lexicalQName,
+				arity,
+				resolvedQName,
+			});
+		} else {
+			// Maybe the namespaceResolver can shine some light:
+			const namespaceURI = this.resolveNamespace(lexicalQName.prefix, true);
+			if (namespaceURI) {
+				return {
+					namespaceURI,
+					localName: lexicalQName.localName,
+				};
+			}
+		}
+
+		return resolvedQName;
+	}
+
+	public resolveNamespace(prefix: string, useExternalResolver: boolean = true) {
+		if (!useExternalResolver) {
+			// For function lookups, do not go to the outside to resolve a function namespace uri
+			// There is separate config especially for that
+			return null;
+		}
 		// See if it 'globally' known:
 		if (staticallyKnownNamespaceByPrefix[prefix]) {
 			return staticallyKnownNamespaceByPrefix[prefix];

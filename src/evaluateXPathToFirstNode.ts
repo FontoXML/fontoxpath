@@ -1,6 +1,7 @@
 import IDomFacade from './domFacade/IDomFacade';
-import evaluateXPath, { Options } from './evaluateXPath';
+import evaluateXPath from './evaluateXPath';
 import { ReturnType } from './parsing/convertXDMReturnValue';
+import { Options } from './types/Options';
 import { Node } from './types/Types';
 
 /**

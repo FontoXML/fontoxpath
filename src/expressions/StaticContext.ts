@@ -1,3 +1,4 @@
+import { LexicalQualifiedName, ResolvedQualifiedName } from '../types/Options';
 import IContext from './Context';
 import ISequence from './dataTypes/ISequence';
 import TypeDeclaration from './dataTypes/TypeDeclaration';
@@ -49,7 +50,7 @@ export type UpdatingFunctionDefinition = GenericFunctionDefinition<
  */
 export default class StaticContext implements IContext {
 	public parentContext: IContext;
-	public registeredDefaultFunctionNamespace: string;
+	public registeredDefaultFunctionNamespaceURI: string;
 	public registeredVariableBindingByHashKey: any[];
 	public registeredVariableDeclarationByHashKey: {
 		[hash: string]: (
@@ -75,8 +76,8 @@ export default class StaticContext implements IContext {
 
 		// Functions may never be added for only a closure
 		this._registeredFunctionsByHash = Object.create(null);
+		this.registeredDefaultFunctionNamespaceURI = null;
 
-		this.registeredDefaultFunctionNamespace = parentContext.registeredDefaultFunctionNamespace;
 		this.registeredVariableDeclarationByHashKey =
 			parentContext.registeredVariableDeclarationByHashKey;
 		this.registeredVariableBindingByHashKey = parentContext.registeredVariableBindingByHashKey;
@@ -108,7 +109,7 @@ export default class StaticContext implements IContext {
 				this._registeredFunctionsByHash
 			);
 			contextAtThisPoint.registeredVariableDeclarationByHashKey = this.registeredVariableDeclarationByHashKey;
-			contextAtThisPoint.registeredDefaultFunctionNamespace = this.registeredDefaultFunctionNamespace;
+			contextAtThisPoint.registeredDefaultFunctionNamespaceURI = this.registeredDefaultFunctionNamespaceURI;
 		}
 
 		return contextAtThisPoint;
@@ -225,12 +226,37 @@ export default class StaticContext implements IContext {
 		this._scopeDepth--;
 	}
 
-	public resolveNamespace(prefix: string): string {
+	public resolveFunctionName(
+		lexicalQName: LexicalQualifiedName,
+		arity: number
+	): ResolvedQualifiedName {
+		const { prefix, localName } = lexicalQName;
+		// First consider local definitions
+		if (!prefix && this.registeredDefaultFunctionNamespaceURI) {
+			return {
+				localName,
+				namespaceURI: this.registeredDefaultFunctionNamespaceURI,
+			};
+		} else if (prefix) {
+			// Try to resolve the NS. Note: do not go to the outside to resolve that
+			// namespace. There is special config for function name resolveing that should have its
+			// turn
+			const namespaceURI = this.resolveNamespace(prefix, false);
+			if (namespaceURI) {
+				return { localName, namespaceURI };
+			}
+		}
+
+		// Then consider the parent context
+		return this.parentContext.resolveFunctionName(lexicalQName, arity);
+	}
+
+	public resolveNamespace(prefix: string, useExternalResolver: boolean = true): string {
 		const uri = lookupInOverrides(this._registeredNamespaceURIByPrefix, prefix);
 		if (uri === undefined) {
 			return this.parentContext === null
 				? undefined
-				: this.parentContext.resolveNamespace(prefix);
+				: this.parentContext.resolveNamespace(prefix, useExternalResolver);
 		}
 		return uri;
 	}

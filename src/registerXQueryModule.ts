@@ -1,3 +1,4 @@
+import { createDefaultFunctionNameResolver } from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import ExecutionSpecificStaticContext from './expressions/ExecutionSpecificStaticContext';
 import { FUNCTIONS_NAMESPACE_URI } from './expressions/staticallyKnownNamespaces';
@@ -33,8 +34,14 @@ export default function registerXQueryModule(
 	const prefixNode = astHelper.getFirstChild(moduleDecl, 'prefix')!;
 	const moduleTargetPrefix = astHelper.getTextContent(prefixNode);
 
+	const namespaceResolver = () => null;
 	const staticContext = new StaticContext(
-		new ExecutionSpecificStaticContext(() => null, Object.create(null), FUNCTIONS_NAMESPACE_URI)
+		new ExecutionSpecificStaticContext(
+			namespaceResolver,
+			Object.create(null),
+			FUNCTIONS_NAMESPACE_URI,
+			createDefaultFunctionNameResolver(FUNCTIONS_NAMESPACE_URI)
+		)
 	);
 
 	staticContext.registerNamespace(moduleTargetPrefix, moduleTargetNamespaceURI);
