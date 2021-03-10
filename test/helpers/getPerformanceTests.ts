@@ -61,7 +61,7 @@ const createNewRunnableTests = (numberOfTest) => {
 		newRunnableTests.add(randomTestName);
 	}
 
-	testFs.writeFileSync(PERFORMANCE_TESTS_FILE, [...Array.from(newRunnableTests)].join('\n'));
+	testFs.writeFileSync(PERFORMANCE_TESTS_FILE, Array.from(newRunnableTests).join('\n'));
 };
 
 export default function getPerformanceTests() {
