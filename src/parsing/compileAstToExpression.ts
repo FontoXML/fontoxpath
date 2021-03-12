@@ -755,6 +755,7 @@ function anyItemTest() {
 	return new TypeTest({ prefix: '', namespaceURI: null, localName: 'item()' });
 }
 
+/// JARIVM: PathExpr
 function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const rawSteps = astHelper.getChildren(ast, 'stepExpr');
 	let hasAxisStep = false;

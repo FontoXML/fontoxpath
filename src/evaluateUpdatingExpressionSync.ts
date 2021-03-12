@@ -6,12 +6,12 @@ import convertUpdateResultToTransferable from './evaluationUtils/convertUpdateRe
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
-import Expression from './expressions/Expression';
 import PossiblyUpdatingExpression from './expressions/PossiblyUpdatingExpression';
 import UpdatingExpressionResult from './expressions/UpdatingExpressionResult';
 import { IterationHint, IterationResult } from './expressions/util/iterators';
 import { IReturnTypes } from './parsing/convertXDMReturnValue';
 import { Node } from './types/Types';
+import { CompiledXPath, TargetKinds } from './parsing/compiledXPath';
 
 /**
  * Evaluates an update script to a pending update list. See
@@ -41,7 +41,7 @@ export default function evaluateUpdatingExpressionSync<
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;
-	let expression: Expression;
+	let expression: CompiledXPath;
 	try {
 		const context = buildEvaluationContext(
 			updateScript,
@@ -63,7 +63,11 @@ export default function evaluateUpdatingExpressionSync<
 		printAndRethrowError(updateScript, error);
 	}
 
-	if (!expression.isUpdating) {
+	if (expression.kind !== TargetKinds.EXPRESSION) {
+		throw new Error('TODO: This kind of expression can not be evaluated as an updating expression.');
+	}
+
+	if (!expression.value.isUpdating) {
 		// Non updating expressions should also be allowed to be executed as updating
 		// scripts. Copy/modify/transform expressions are examples of updating expressions that are
 		// not really updating
@@ -82,7 +86,7 @@ export default function evaluateUpdatingExpressionSync<
 
 	let attempt: IterationResult<UpdatingExpressionResult>;
 	try {
-		const resultIterator = (expression as PossiblyUpdatingExpression).evaluateWithUpdateList(
+		const resultIterator = (expression.value as PossiblyUpdatingExpression).evaluateWithUpdateList(
 			dynamicContext,
 			executionParameters
 		);

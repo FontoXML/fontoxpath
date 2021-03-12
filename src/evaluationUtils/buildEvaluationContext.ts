@@ -29,6 +29,7 @@ import {
 	ResolvedQualifiedName,
 } from '../types/Options';
 import { Node } from '../types/Types';
+import { CompiledXPath } from '../parsing/compiledXPath';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
@@ -85,7 +86,7 @@ export default function buildEvaluationContext(
 ): {
 	dynamicContext: DynamicContext;
 	executionParameters: ExecutionParameters;
-	expression: Expression;
+	expression: CompiledXPath;
 } {
 	if (variables === null || variables === undefined) {
 		variables = variables || {};
@@ -129,7 +130,7 @@ export default function buildEvaluationContext(
 		internalOptions.functionNameResolver ||
 		createDefaultFunctionNameResolver(defaultFunctionNamespaceURI);
 
-	const expressionAndStaticContext = staticallyCompileXPath(
+	const compiledXPathAndStaticContext = staticallyCompileXPath(
 		expressionString,
 		compilationOptions,
 		namespaceResolver,
@@ -176,10 +177,10 @@ export default function buildEvaluationContext(
 	);
 
 	let dynamicContext;
-	for (const binding of expressionAndStaticContext.staticContext.getVariableBindings()) {
+	for (const binding of compiledXPathAndStaticContext.staticContext.getVariableBindings()) {
 		if (!variableBindings[binding]) {
 			variableBindings[binding] = () =>
-				expressionAndStaticContext.staticContext.getVariableDeclaration(binding)(
+				compiledXPathAndStaticContext.staticContext.getVariableDeclaration(binding)(
 					dynamicContext,
 					executionParameters
 				);
@@ -205,6 +206,6 @@ export default function buildEvaluationContext(
 	return {
 		dynamicContext,
 		executionParameters,
-		expression: expressionAndStaticContext.expression,
+		expression: compiledXPathAndStaticContext.expression,
 	};
 }

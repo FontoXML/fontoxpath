@@ -1,9 +1,10 @@
 import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStaticContext';
-import Expression from '../expressions/Expression';
 import StaticContext from '../expressions/StaticContext';
 import { FunctionNameResolver } from '../types/Options';
 import astHelper from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
+import compileAstToJavaScript from './compileAstToJavaScript';
+import { TargetKinds, CompiledXPath } from './compiledXPath';
 import {
 	getStaticCompilationResultFromCache,
 	storeStaticCompilationResultInCache,
@@ -25,21 +26,21 @@ export default function staticallyCompileXPath(
 	moduleImports: { [namespaceURI: string]: string },
 	defaultFunctionNamespaceURI: string,
 	functionNameResolver: FunctionNameResolver
-): { expression: Expression; staticContext: StaticContext } {
+): { expression: CompiledXPath; staticContext: StaticContext } {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
 	const fromCache = compilationOptions.disableCache
 		? null
 		: getStaticCompilationResultFromCache(
-				xpathString,
-				language,
-				namespaceResolver,
-				variables,
-				moduleImports,
-				compilationOptions.debug,
-				defaultFunctionNamespaceURI,
-				functionNameResolver
-		  );
+			xpathString,
+			language,
+			namespaceResolver,
+			variables,
+			moduleImports,
+			compilationOptions.debug,
+			defaultFunctionNamespaceURI,
+			functionNameResolver
+		);
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 		namespaceResolver,
@@ -49,10 +50,10 @@ export default function staticallyCompileXPath(
 	);
 	const rootStaticContext = new StaticContext(executionSpecificStaticContext);
 
-	let expression: Expression;
+	let expression: CompiledXPath;
 
 	if (fromCache !== null) {
-		expression = fromCache.expression;
+		expression = { kind: TargetKinds.EXPRESSION, value: fromCache.expression };
 	} else {
 		// We can not use anything from the cache, parse + compile
 		const ast = parseExpression(xpathString, compilationOptions);
@@ -75,10 +76,11 @@ export default function staticallyCompileXPath(
 			processProlog(prolog, rootStaticContext);
 		}
 
-		expression = compileAstToExpression(queryBodyContents, compilationOptions);
+		// expression = compileAstToJavaScript(queryBodyContents);
+		expression = { kind: TargetKinds.EXPRESSION, value: compileAstToExpression(queryBodyContents, compilationOptions) };
 	}
 
-	if (fromCache === null || fromCache.requiresStaticCompilation) {
+	if (expression.kind === TargetKinds.EXPRESSION && (fromCache === null || fromCache.requiresStaticCompilation)) {
 		Object.keys(moduleImports).forEach((modulePrefix) => {
 			const moduleURI = moduleImports[modulePrefix];
 			enhanceStaticContextWithModule(rootStaticContext, moduleURI);
@@ -86,7 +88,7 @@ export default function staticallyCompileXPath(
 			rootStaticContext.registerNamespace(modulePrefix, moduleURI);
 		});
 
-		expression.performStaticEvaluation(rootStaticContext);
+		expression.value.performStaticEvaluation(rootStaticContext);
 
 		if (!compilationOptions.disableCache) {
 			storeStaticCompilationResultInCache(
@@ -94,7 +96,7 @@ export default function staticallyCompileXPath(
 				language,
 				executionSpecificStaticContext,
 				moduleImports,
-				expression,
+				expression.value,
 				compilationOptions.debug,
 				defaultFunctionNamespaceURI
 			);

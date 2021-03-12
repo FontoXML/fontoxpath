@@ -3,13 +3,13 @@ import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
-import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Language, Options } from './types/Options';
 import { Node } from './types/Types';
+import { CompiledXPath, TargetKinds } from './parsing/compiledXPath';
 
 /**
  * @public
@@ -140,7 +140,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 
 	let dynamicContext: DynamicContext;
 	let executionParameters: ExecutionParameters;
-	let expression: Expression;
+	let expression: CompiledXPath;
 	try {
 		const context = buildEvaluationContext(
 			selector,
@@ -164,27 +164,32 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		printAndRethrowError(selector, error);
 	}
 
-	if (expression.isUpdating) {
-		throw new Error(
-			'XUST0001: Updating expressions should be evaluated as updating expressions'
-		);
-	}
+	/// TODO: maybe this comparison is incorrect.
+	if (expression.kind === TargetKinds.EXPRESSION) {
+		if (expression.value.isUpdating) {
+			throw new Error(
+				'XUST0001: Updating expressions should be evaluated as updating expressions'
+			);
+		}
 
-	// Shortcut: if the xpathExpression defines buckets, the
-	// contextItem is a node and we are evaluating to a bucket, we can
-	// use it to return false if we are sure it won't match.
-	if (returnType === ReturnType.BOOLEAN && contextItem && 'nodeType' in contextItem) {
-		const selectorBucket = expression.getBucket();
-		const bucketsForNode = getBucketsForNode(contextItem);
-		if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {
-			// We are sure that this selector will never match, without even running it
-			return false as IReturnTypes<TNode>[TReturnType];
+		/// TODO: this counts for buckets as well. these only exist on Expressions
+		// (for now).
+		// Shortcut: if the xpathExpression defines buckets, the
+		// contextItem is a node and we are evaluating to a bucket, we can
+		// use it to return false if we are sure it won't match.
+		if (returnType === ReturnType.BOOLEAN && contextItem && 'nodeType' in contextItem) {
+			const selectorBucket = expression.value.getBucket();
+			const bucketsForNode = getBucketsForNode(contextItem);
+			if (selectorBucket !== null && !bucketsForNode.includes(selectorBucket)) {
+				// We are sure that this selector will never match, without even running it
+				return false as IReturnTypes<TNode>[TReturnType];
+			}
 		}
 	}
 
 	try {
 		markXPathStart(selector);
-		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
+		const rawResults = expression.value.evaluateMaybeStatically(dynamicContext, executionParameters);
 		const toReturn = convertXDMReturnValue<TNode, TReturnType>(
 			selector,
 			rawResults,
