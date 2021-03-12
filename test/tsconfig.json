@@ -6,6 +6,8 @@
 			"fontoxpath/*": ["../src/*"],
 			"test-helpers/*": ["./helpers/*"]
 		},
+		"lib": ["es6", "es2017", "esnext.asynciterable"],
+		"target": "es2017",
 		"strict": false,
 		"allowJs": true,
 		"types": ["mocha", "node"],

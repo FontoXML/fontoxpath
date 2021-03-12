@@ -61,6 +61,11 @@ export type NamespaceResolver = (prefix: string) => string | null;
  */
 export type Options = {
 	/**
+	 * What compiler backend to use (experimental).
+	 */
+	backend?: 'expression' | 'js-codegen';
+
+	/**
 	 * The current context for a query. Will be passed whenever an extension function is called. Can be
 	 * used to implement the current function in XSLT.
 	 *

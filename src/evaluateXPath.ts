@@ -1,11 +1,22 @@
+import DomFacade from './domFacade/DomFacade';
+import ExternalDomFacade from './domFacade/ExternalDomFacade';
 import IDomFacade from './domFacade/IDomFacade';
-import buildEvaluationContext from './evaluationUtils/buildEvaluationContext';
+import buildEvaluationContext, {
+	normalizeEndOfLines,
+} from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
+import compileAstToJavaScript from './jsCodegen/compileAstToJavaScript';
+import {
+	getCompiledJavaScriptFromCache,
+	storeCompiledJavaScriptInCache,
+} from './jsCodegen/compiledJavaScriptCache';
+import astHelper from './parsing/astHelper';
 import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/convertXDMReturnValue';
+import parseExpression from './parsing/parseExpression';
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Language, Options } from './types/Options';
@@ -136,6 +147,110 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
 
+	if (options && options.backend === 'js-codegen') {
+		return evaluateWithJsCodegenBackend(selector, contextItem, domFacade, returnType, options);
+	} else if (options && options.backend === 'expression') {
+		return evaluateWithExpressionBackend(
+			selector,
+			contextItem,
+			domFacade,
+			variables,
+			returnType,
+			options
+		);
+	} else {
+		try {
+			return evaluateWithJsCodegenBackend(
+				selector,
+				contextItem,
+				domFacade,
+				returnType,
+				options
+			);
+		} catch (error) {
+			try {
+				return evaluateWithExpressionBackend(
+					selector,
+					contextItem,
+					domFacade,
+					variables,
+					returnType,
+					options
+				);
+			} catch (error) {
+				printAndRethrowError(selector, error);
+			}
+		}
+	}
+};
+
+const evaluateWithJsCodegenBackend = <
+	TNode extends Node,
+	TReturnType extends keyof IReturnTypes<TNode>
+>(
+	selector: string,
+	contextItem?: any | null,
+	domFacade?: IDomFacade | null,
+	returnType?: TReturnType,
+	options?: Options | null
+): IReturnTypes<TNode>[TReturnType] => {
+	const expressionString = normalizeEndOfLines(selector);
+
+	const compilationOptions = {
+		allowUpdating: options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+		allowXQuery:
+			options['language'] === Language.XQUERY_3_1_LANGUAGE ||
+			options['language'] === Language.XQUERY_UPDATE_3_1_LANGUAGE,
+		debug: !!options['debug'],
+		disableCache: !!options['disableCache'],
+	};
+
+	let compiledJavaScript = compilationOptions.disableCache
+		? null
+		: getCompiledJavaScriptFromCache(expressionString, returnType);
+
+	if (!compiledJavaScript) {
+		const ast = parseExpression(expressionString, compilationOptions);
+		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
+
+		if (!mainModule) {
+			// This must be a library module
+			throw new Error('Can not execute a library module.');
+		}
+
+		const prolog = astHelper.getFirstChild(mainModule, 'prolog');
+		const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
+
+		if (prolog) {
+			throw new Error('Unsupported: XQuery in codegen backend');
+		}
+
+		compiledJavaScript = compileAstToJavaScript(queryBodyContents, returnType);
+		storeCompiledJavaScriptInCache(expressionString, returnType, compiledJavaScript);
+	}
+	const wrappedDomFacade: DomFacade = new DomFacade(
+		domFacade === null ? new ExternalDomFacade() : domFacade
+	);
+
+	return compiledJavaScript.evaluate(
+		{ type: 'document-node()', value: { node: contextItem } },
+		wrappedDomFacade
+	);
+};
+
+const evaluateWithExpressionBackend = <
+	TNode extends Node,
+	TReturnType extends keyof IReturnTypes<TNode>
+>(
+	selector: string,
+	contextItem?: any | null,
+	domFacade?: IDomFacade | null,
+	variables?: {
+		[s: string]: TypedExternalValue | UntypedExternalValue;
+	} | null,
+	returnType?: TReturnType,
+	options?: Options | null
+): IReturnTypes<TNode>[TReturnType] => {
 	options = options || {};
 
 	let dynamicContext: DynamicContext;
@@ -182,21 +297,17 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		}
 	}
 
-	try {
-		markXPathStart(selector);
-		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
-		const toReturn = convertXDMReturnValue<TNode, TReturnType>(
-			selector,
-			rawResults,
-			returnType,
-			executionParameters
-		);
-		markXPathEnd(selector);
+	markXPathStart(selector);
+	const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
+	const toReturn = convertXDMReturnValue<TNode, TReturnType>(
+		selector,
+		rawResults,
+		returnType,
+		executionParameters
+	);
+	markXPathEnd(selector);
 
-		return toReturn;
-	} catch (error) {
-		printAndRethrowError(selector, error);
-	}
+	return toReturn;
 };
 
 Object.assign(evaluateXPath, {
