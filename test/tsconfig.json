@@ -8,7 +8,8 @@
 		},
 		"strict": false,
 		"allowJs": true,
-		"types": ["mocha", "node"]
+		"types": ["mocha", "node"],
+		"target": "es2020"
 	},
 	"include": ["../src/**/*.ts", "./**/*.ts"]
 }
