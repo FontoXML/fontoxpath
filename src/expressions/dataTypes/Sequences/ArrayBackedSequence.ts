@@ -99,14 +99,6 @@ export default class ArrayBackedSequence implements ISequence {
 		return ready(this.getAllValues());
 	}
 
-	public tryGetEffectiveBooleanValue(): IAsyncResult<boolean> {
-		return ready(this.getEffectiveBooleanValue());
-	}
-
-	public tryGetFirst(): IAsyncResult<Value> {
-		return ready(this.first());
-	}
-
 	public tryGetLength(): IAsyncResult<number> {
 		return ready(this._values.length);
 	}

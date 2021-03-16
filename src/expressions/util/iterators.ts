@@ -1,18 +1,11 @@
 export class IterationResult<T> {
 	public done: boolean;
 	public promise: Promise<void> | undefined;
-	public ready: boolean;
 	public value: T | undefined | null;
-	constructor(
-		done: boolean,
-		value: T | undefined,
-		promise: Promise<void> | undefined,
-		isReady: boolean
-	) {
+	constructor(done: boolean, value: T | undefined, promise: Promise<void> | undefined) {
 		this.done = done;
 		this.value = value;
 		this.promise = promise;
-		this.ready = isReady;
 	}
 }
 
@@ -21,11 +14,9 @@ export enum IterationHint {
 	SKIP_DESCENDANTS = 1 << 0,
 }
 
-export const DONE_TOKEN = new IterationResult(true, undefined, undefined, true);
-export const notReady = (promise: Promise<void> | undefined) =>
-	new IterationResult(false, undefined, promise, false);
+export const DONE_TOKEN = new IterationResult(true, undefined, undefined);
 export function ready<T>(value: T) {
-	return new IterationResult(false, value, undefined, true);
+	return new IterationResult(false, value, undefined);
 }
 
 export interface IAsyncIterator<T> {
@@ -34,6 +25,5 @@ export interface IAsyncIterator<T> {
 
 export interface IAsyncResult<T> {
 	promise: Promise<void> | undefined;
-	ready: boolean;
 	value: T | undefined;
 }

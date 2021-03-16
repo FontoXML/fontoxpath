@@ -44,9 +44,6 @@ class DeleteExpression extends UpdatingExpression {
 				if (!tlist) {
 					// 1. TargetExpr is evaluated.
 					const tv = targetValueIterator.next(IterationHint.NONE);
-					if (!tv.ready) {
-						return tv;
-					}
 
 					// The result must be a sequence of zero or more nodes; otherwise a type error is raised [err:XUTY0007].
 					if (tv.value.xdmValue.some((entry) => !isSubtypeOf(entry.type, 'node()'))) {

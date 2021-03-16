@@ -83,10 +83,10 @@ class PIConstructor extends Expression {
 			return sequenceFactory.create({
 				next: () => {
 					const tv = targetIterator.next(IterationHint.NONE);
-					if (tv.done || !tv.ready) {
+					if (tv.done) {
 						return tv;
 					}
-					const target = tv.value.value;
+					const target = tv.value.value as string;
 
 					assertValidTarget(target);
 					return ready(

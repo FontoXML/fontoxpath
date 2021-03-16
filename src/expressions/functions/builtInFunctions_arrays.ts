@@ -1,6 +1,6 @@
 import ArrayValue from '../dataTypes/ArrayValue';
 import createAtomicValue from '../dataTypes/createAtomicValue';
-import FunctionValue from '../dataTypes/FunctionValue';
+import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
@@ -12,14 +12,7 @@ import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import {
-	DONE_TOKEN,
-	IAsyncIterator,
-	IAsyncResult,
-	IterationHint,
-	notReady,
-	ready,
-} from '../util/iterators';
+import { DONE_TOKEN, IAsyncResult, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { errXPTY0004 } from '../XPathErrors';
 import arrayGet from './builtInFunctions_arrays_get';
@@ -237,45 +230,24 @@ const arrayFilter: FunctionDefinitionType = (
 				'array:filter'
 			)[0];
 
-			return item.value.call(
-				undefined,
-				dynamicContext,
-				executionParameters,
-				staticContext,
-				castArgument
-			);
+			const callFunction = item.value as FunctionSignature<ISequence>;
+			return callFunction(dynamicContext, executionParameters, staticContext, castArgument);
 		});
 
-		const effectiveBooleanValues = [];
+		const effectiveBooleanValues: boolean[] = [];
 		let done = false;
 		return sequenceFactory.create({
 			next: () => {
 				if (done) {
 					return DONE_TOKEN;
 				}
-				let allReady = true;
 				for (let i = 0, l = (array as ArrayValue).members.length; i < l; ++i) {
-					if (effectiveBooleanValues[i] && effectiveBooleanValues[i].ready) {
-						continue;
-					}
 					const filterResult = filterResultSequences[i];
-					const ebv = filterResult.tryGetEffectiveBooleanValue();
-					if (!ebv.ready) {
-						allReady = false;
-					}
+					const ebv = filterResult.getEffectiveBooleanValue();
 					effectiveBooleanValues[i] = ebv;
 				}
-				if (!allReady) {
-					return notReady(
-						Promise.all(
-							effectiveBooleanValues.map((filterResult) =>
-								filterResult.ready ? Promise.resolve() : filterResult.promise
-							)
-						).then((_) => undefined)
-					);
-				}
 				const newMembers = (array as ArrayValue).members.filter(
-					(_, i) => effectiveBooleanValues[i].value
+					(_, i) => effectiveBooleanValues[i]
 				);
 				done = true;
 				return ready(new ArrayValue(newMembers));
@@ -490,38 +462,7 @@ const arraySort: FunctionDefinitionType = (
 	return zipSingleton([arraySequence], ([array]: [ArrayValue]) => {
 		const allValues: IAsyncResult<Value[]>[] = array.members.map((i) => i().tryGetAllValues());
 
-		// If all values are ready, resolve immediately
-		if (allValues.every((val) => val.ready)) {
-			return arraySortCallback(dynamicContext, executionParameters, staticContext, allValues);
-		}
-
-		let iterator: IAsyncIterator<Value> = null;
-		return sequenceFactory.create({
-			next: (hint: IterationHint) => {
-				if (iterator === null) {
-					let allReady = true;
-					for (let i = 0, l = allValues.length; i < l; ++i) {
-						if (allValues[i].ready) {
-							continue;
-						}
-						const val = (allValues[i] = array.members[i]().tryGetAllValues());
-						if (!val.ready) {
-							allReady = false;
-							return notReady(val.promise);
-						}
-					}
-					if (allReady) {
-						iterator = arraySortCallback(
-							dynamicContext,
-							executionParameters,
-							staticContext,
-							allValues
-						).value;
-					}
-				}
-				return iterator.next(hint);
-			},
-		});
+		return arraySortCallback(dynamicContext, executionParameters, staticContext, allValues);
 	});
 };
 

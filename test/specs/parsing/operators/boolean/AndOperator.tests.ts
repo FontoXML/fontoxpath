@@ -34,10 +34,4 @@ describe('and operator', () => {
 
 	it('can parse a concatenation of ands', () =>
 		chai.assert.isFalse(evaluateXPathToBoolean('true() and true() and true() and false()')));
-
-	it('works with async params', async () => {
-		chai.assert.isTrue(
-			await evaluateXPathToAsyncSingleton('true() => fontoxpath:sleep() and true()')
-		);
-	});
 });

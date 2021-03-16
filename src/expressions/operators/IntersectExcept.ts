@@ -84,9 +84,6 @@ class IntersectExcept extends Expression {
 				while (!secondIteratorDone) {
 					if (!firstValue) {
 						const itrResult = firstIterator.next(IterationHint.NONE);
-						if (!itrResult.ready) {
-							return itrResult;
-						}
 						if (itrResult.done) {
 							// Since ∅ \ X = ∅ and ∅ ∩ X = ∅, we are done.
 							done = true;
@@ -96,9 +93,6 @@ class IntersectExcept extends Expression {
 					}
 					if (!secondValue) {
 						const itrResult = secondIterator.next(IterationHint.NONE);
-						if (!itrResult.ready) {
-							return itrResult;
-						}
 						if (itrResult.done) {
 							secondIteratorDone = true;
 							break;

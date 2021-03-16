@@ -102,14 +102,6 @@ export default interface ISequence {
 
 	tryGetAllValues(): IAsyncResult<Value[]>;
 	/**
-	 * Get the effective boolean value of this sequence. If it is not ready, a notReady() token will be returned. Pass this along to the calling code.
-	 */
-	tryGetEffectiveBooleanValue(): IAsyncResult<boolean>;
-	/**
-	 * Get the first value of this sequence. If it is not ready, a notReady() token will be returned. Pass this along to the calling code.
-	 */
-	tryGetFirst(): IAsyncResult<Value | null>;
-	/**
 	 * Try to get the length of this sequence. If it is not ready, a notReady() token will be returned. Pass this along to the calling code.
 	 *
 	 * @param onlyIfCheap In some cases, the length of a sequence is known. This can be used for optimization purposes.

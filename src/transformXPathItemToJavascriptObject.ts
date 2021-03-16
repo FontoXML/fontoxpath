@@ -1,4 +1,4 @@
-import { DONE_TOKEN, IAsyncIterator, notReady, ready } from './expressions/util/iterators';
+import { DONE_TOKEN, IAsyncIterator, ready } from './expressions/util/iterators';
 
 import realizeDom from './domClone/realizeDom';
 import ArrayValue from './expressions/dataTypes/ArrayValue';
@@ -6,6 +6,9 @@ import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import MapValue from './expressions/dataTypes/MapValue';
 import Value from './expressions/dataTypes/Value';
 import ExecutionParameters from './expressions/ExecutionParameters';
+import QName from './expressions/dataTypes/valueTypes/QName';
+import DateTime from './expressions/dataTypes/valueTypes/DateTime';
+import { NodePointer } from './domClone/Pointer';
 
 export function transformMapToObject(
 	map: MapValue,
@@ -21,6 +24,9 @@ export function transformMapToObject(
 				return DONE_TOKEN;
 			}
 			while (i < map.keyValuePairs.length) {
+				// Assume the keys for a map are strings.
+				const key = map.keyValuePairs[i].key.value as string;
+
 				if (!transformedValueIterator) {
 					const val = map.keyValuePairs[i]
 						.value()
@@ -32,27 +38,21 @@ export function transformMapToObject(
 								);
 							},
 						})
-						.tryGetFirst();
-					if (!val.ready) {
-						return notReady(val.promise);
-					}
-					if (val.value === null) {
-						mapObj[map.keyValuePairs[i].key.value] = null;
+						.first();
+					if (val === null) {
+						mapObj[key] = null;
 						i++;
 						continue;
 					}
 
 					transformedValueIterator = transformXPathItemToJavascriptObject(
-						val.value,
+						val,
 						executionParameters
 					);
 				}
 				const transformedValue = transformedValueIterator.next();
-				if (!transformedValue.ready) {
-					return transformedValue;
-				}
 				transformedValueIterator = null;
-				mapObj[map.keyValuePairs[i].key.value] = transformedValue.value;
+				mapObj[key] = transformedValue.value;
 				i++;
 			}
 			done = true;
@@ -85,23 +85,17 @@ export function transformArrayToArray(
 								);
 							},
 						})
-						.tryGetFirst();
-					if (!val.ready) {
-						return notReady(val.promise);
-					}
-					if (val.value === null) {
+						.first();
+					if (val === null) {
 						arr[i++] = null;
 						continue;
 					}
 					transformedMemberGenerator = transformXPathItemToJavascriptObject(
-						val.value,
+						val,
 						executionParameters
 					);
 				}
 				const transformedValue = transformedMemberGenerator.next();
-				if (!transformedValue.ready) {
-					return transformedValue;
-				}
 				transformedMemberGenerator = null;
 				arr[i++] = transformedValue.value;
 			}
@@ -122,8 +116,9 @@ export default function transformXPathItemToJavascriptObject(
 		return transformArrayToArray(value as ArrayValue, executionParameters);
 	}
 	if (isSubtypeOf(value.type, 'xs:QName')) {
+		const qualifiedName = value.value as QName;
 		return {
-			next: () => ready(`Q{${value.value.namespaceURI || ''}}${value.value.localName}`),
+			next: () => ready(`Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`),
 		};
 	}
 
@@ -136,20 +131,24 @@ export default function transformXPathItemToJavascriptObject(
 		case 'xs:gYear':
 		case 'xs:gMonthDay':
 		case 'xs:gMonth':
-		case 'xs:gDay':
+		case 'xs:gDay': {
+			const temporalValue = value.value as DateTime;
 			return {
-				next: () => ready(value.value.toJavaScriptDate()),
+				next: () => ready(temporalValue.toJavaScriptDate()),
 			};
+		}
 		case 'attribute()':
 		case 'node()':
 		case 'element()':
 		case 'document-node()':
 		case 'text()':
 		case 'processing-instruction()':
-		case 'comment()':
+		case 'comment()': {
+			const nodeValue = value.value as NodePointer;
 			return {
-				next: () => ready(realizeDom(value.value, executionParameters, false)),
+				next: () => ready(realizeDom(nodeValue, executionParameters, false)),
 			};
+		}
 
 		default:
 			return {

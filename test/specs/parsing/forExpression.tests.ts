@@ -87,17 +87,6 @@ describe('for expressions', () => {
 			18
 		);
 	});
-	it('can be chained, including asyncness', async () => {
-		const it = evaluateXPathToAsyncIterator(
-			`
-(for $i in ((1 to 10)), $x in (1 to 10 => fontoxpath:sleep(1))
-		return ("blerp" || $i || "~" || $x) ) => count()
-`,
-			documentNode
-		);
-		chai.assert.equal((await it.next()).value, 100);
-		chai.assert.isTrue((await it.next()).done);
-	});
 
 	it('defined prefixless variables in the empty namespace', () => {
 		chai.assert.isTrue(

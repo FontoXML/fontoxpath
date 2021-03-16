@@ -38,17 +38,6 @@ describe('functions over qnames', () => {
 				)
 			);
 		});
-		it('allows async parameters', async () => {
-			documentNode
-				.appendChild(documentNode.createElementNS('http://example.com/ns', 'someElement'))
-				.setAttributeNS('http://example.com/ns', 'ns:someAttribute', 'someValue');
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'local-name-from-QName(node-name(//@*) => fontoxpath:sleep(1)) eq "someAttribute"',
-					documentNode
-				)
-			);
-		});
 	});
 
 	describe('prefix-from-QName()', () => {
@@ -78,17 +67,6 @@ describe('functions over qnames', () => {
 				evaluateXPathToBoolean('prefix-from-QName(node-name(//@*)) = "ns"', documentNode)
 			);
 		});
-		it('allows async parameters', async () => {
-			documentNode
-				.appendChild(documentNode.createElementNS('http://example.com/ns', 'someElement'))
-				.setAttributeNS('http://example.com/ns', 'ns:someAttribute', 'someValue');
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'prefix-from-QName(node-name(//@*) => fontoxpath:sleep(1)) eq "ns"',
-					documentNode
-				)
-			);
-		});
 	});
 
 	describe('namespace-uri-from-QName()', () => {
@@ -115,17 +93,6 @@ describe('functions over qnames', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean(
 					'namespace-uri-from-QName(node-name((//@*)[1])) = "http://example.com/ns"',
-					documentNode
-				)
-			);
-		});
-		it('allows async parameters', async () => {
-			documentNode
-				.appendChild(documentNode.createElementNS('http://example.com/ns', 'someElement'))
-				.setAttributeNS('http://example.com/ns', 'ns:someAttribute', 'someValue');
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'namespace-uri-from-QName(node-name(//@*) => fontoxpath:sleep(1)) eq "http://example.com/ns"',
 					documentNode
 				)
 			);

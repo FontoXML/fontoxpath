@@ -4,7 +4,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { OptimizationOptions } from '../Expression';
 import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { IAsyncIterator, notReady, ready } from '../util/iterators';
+import { IAsyncIterator, ready } from '../util/iterators';
 import { errXUST0001 } from './XQueryUpdateFacilityErrors';
 
 abstract class UpdatingExpression extends Expression {
@@ -47,9 +47,6 @@ abstract class UpdatingExpression extends Expression {
 			return {
 				next: () => {
 					const allValues = sequence.tryGetAllValues();
-					if (!allValues.ready) {
-						return notReady(allValues.promise);
-					}
 					return ready({
 						pendingUpdateList: [],
 						xdmValue: allValues.value,

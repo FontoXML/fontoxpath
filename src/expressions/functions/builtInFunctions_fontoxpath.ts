@@ -12,7 +12,7 @@ import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
@@ -30,9 +30,6 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 		next: () => {
 			if (!resultIterator) {
 				const queryValue = query.value.next(IterationHint.NONE);
-				if (!queryValue.ready) {
-					return queryValue;
-				}
 				queryString = queryValue.value.value;
 				const variables = (args.first() as MapValue).keyValuePairs.reduce(
 					(expandedArgs, arg) => {
@@ -128,41 +125,6 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 	});
 };
 
-const fontoxpathSleep: FunctionDefinitionType = (
-	_dynamicContext,
-	_executionParameters,
-	_staticContext,
-	val,
-	howLong
-) => {
-	let doneWithSleep = false;
-	let readyPromise: Promise<void>;
-
-	const valueIterator = val.value;
-	return sequenceFactory.create({
-		next: (hint: IterationHint) => {
-			if (!readyPromise) {
-				const time = howLong
-					? howLong.tryGetFirst()
-					: ready(createAtomicValue(0, 'xs:integer'));
-				if (!time.ready) {
-					return notReady(readyPromise);
-				}
-				readyPromise = new Promise((resolve) =>
-					setTimeout(() => {
-						doneWithSleep = true;
-						resolve();
-					}, time.value.value)
-				);
-			}
-			if (!doneWithSleep) {
-				return notReady(readyPromise);
-			}
-			return valueIterator.next(hint);
-		},
-	});
-};
-
 declare const VERSION: string | undefined;
 
 const fontoxpathVersion: FunctionDefinitionType = () => {
@@ -172,83 +134,12 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 	return sequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
 };
 
-// TODO: implement a domparser instead of using the global one from the browser
-declare var DOMParser;
-declare var fetch;
-
-const fontoxpathFetch: FunctionDefinitionType = (
-	_dynamicContext,
-	executionParameters,
-	_staticContext,
-	url
-) => {
-	let doneWithFetch = false;
-	let result = null;
-	let done = false;
-	let readyPromise = null;
-
-	return sequenceFactory.create({
-		next: () => {
-			if (!readyPromise) {
-				const urlValue = url.value.next(IterationHint.NONE);
-				if (!urlValue.ready) {
-					return urlValue;
-				}
-
-				readyPromise = fetch(urlValue.value.value)
-					.then((response) => response.text())
-					.then((text) => new DOMParser().parseFromString(text, 'application/xml'))
-					.then((doc) => {
-						doneWithFetch = true;
-						result = doc;
-					});
-			}
-			if (!doneWithFetch) {
-				return notReady(readyPromise);
-			}
-			if (!done) {
-				done = true;
-				return ready(createPointerValue(result, executionParameters.domFacade));
-			}
-			return DONE_TOKEN;
-		},
-	});
-};
-
 export default {
 	declarations: [
 		{
 			argumentTypes: ['xs:string', 'map(*)'],
 			callFunction: fontoxpathEvaluate,
 			localName: 'evaluate',
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-		{
-			argumentTypes: ['item()*', 'xs:numeric'],
-			callFunction: fontoxpathSleep,
-			localName: 'sleep',
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fontoxpathSleep,
-			localName: 'sleep',
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-		{
-			argumentTypes: ['xs:string', 'map(*)'],
-			callFunction: fontoxpathFetch,
-			localName: 'fetch',
-			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*',
-		},
-		{
-			argumentTypes: ['xs:string'],
-			callFunction: fontoxpathFetch,
-			localName: 'fetch',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
 			returnType: 'item()*',
 		},

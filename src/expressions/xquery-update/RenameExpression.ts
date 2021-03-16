@@ -125,15 +125,9 @@ class RenameExpression extends UpdatingExpression {
 		return {
 			next: () => {
 				const tv = targetValueIterator.next(IterationHint.NONE);
-				if (!tv.ready) {
-					return tv;
-				}
 				const target = evaluateTarget(tv.value.xdmValue);
 
 				const nnv = newNameValueIterator.next(IterationHint.NONE);
-				if (!nnv.ready) {
-					return nnv;
-				}
 				const qName = evaluateNewName(
 					this._staticContext,
 					executionParameters,

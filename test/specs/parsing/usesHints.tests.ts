@@ -318,26 +318,6 @@ describe('uses hints', () => {
 		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
 	});
 
-	it('skips the subtree for outermost() with async', async () => {
-		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
-		const descendant = documentNode.documentElement.firstChild.firstChild;
-		// It is successful when the dom facade does not throw
-		const iterator = evaluateXPathToAsyncIterator(
-			'outermost(fontoxpath:sleep(descendant::foo, 1))',
-			documentNode,
-			buildDomFacade(descendant),
-			null,
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-		);
-
-		const nodes = [];
-		for (let item = await iterator.next(); !item.done; item = await iterator.next()) {
-			nodes.push(item.value);
-		}
-
-		chai.assert.deepEqual(nodes, [documentNode.documentElement.firstChild]);
-	});
-
 	it('skips the subtree for outermost() in debug mode', () => {
 		jsonMlMapper.parse(['root', ['foo', ['foo']]], documentNode);
 		const descendant = documentNode.documentElement.firstChild.firstChild;

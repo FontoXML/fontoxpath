@@ -12,7 +12,7 @@ import PossiblyUpdatingExpression, {
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { DONE_TOKEN, IAsyncIterator, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, ready } from '../util/iterators';
 import { errXPTY0004 } from '../XPathErrors';
 import { IPendingUpdate } from '../xquery-update/IPendingUpdate';
 import { mergeUpdates } from '../xquery-update/pulRoutines';
@@ -208,9 +208,6 @@ class FunctionCall extends PossiblyUpdatingExpression {
 					return DONE_TOKEN;
 				}
 				const allValues = returnSequence.tryGetAllValues();
-				if (!allValues.ready) {
-					return notReady(allValues.promise);
-				}
 				done = true;
 				return ready({
 					pendingUpdateList,

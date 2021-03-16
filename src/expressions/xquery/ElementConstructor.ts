@@ -96,9 +96,6 @@ class ElementConstructor extends Expression {
 					}
 
 					const allAttributes = attributesSequence.tryGetAllValues();
-					if (!allAttributes.ready) {
-						return allAttributes;
-					}
 					attributeNodes = allAttributes.value;
 					attributePhaseDone = true;
 				}
@@ -117,9 +114,6 @@ class ElementConstructor extends Expression {
 					const newChildNodes: Value[][] = [];
 					for (let i = 0; i < childNodesSequences.length; i++) {
 						const allValues = childNodesSequences[i].tryGetAllValues();
-						if (!allValues.ready) {
-							return allValues;
-						}
 						newChildNodes.push(allValues.value);
 					}
 					allChildNodes = newChildNodes;
@@ -139,9 +133,6 @@ class ElementConstructor extends Expression {
 						);
 					}
 					const nv = nameIterator.next(IterationHint.NONE);
-					if (!nv.ready) {
-						return nv;
-					}
 					this._name = nv.value.value;
 				}
 

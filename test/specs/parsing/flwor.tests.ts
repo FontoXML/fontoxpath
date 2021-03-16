@@ -39,21 +39,6 @@ describe('FLWOR', () => {
 			'Hello'
 		));
 
-	it('run flwor with async where', async () =>
-		chai.assert.equal(
-			await evaluateXPathToAsyncSingleton(
-				`for $i in (1,2,3)
-				where fontoxpath:sleep($i) > 2
-				return $i
-				`,
-				null,
-				null,
-				null,
-				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-			),
-			3
-		));
-
 	it('runs flwor expressions with order by', () => {
 		chai.assert.deepEqual(
 			evaluateXPathToStrings(
@@ -65,11 +50,7 @@ describe('FLWOR', () => {
 				null,
 				{ debug: true, language: evaluateXPath.XQUERY_3_1_LANGUAGE }
 			),
-			[
-				'A',
-				'B',
-				'C'
-			]
+			['A', 'B', 'C']
 		);
 	});
 });

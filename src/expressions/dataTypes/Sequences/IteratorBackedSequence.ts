@@ -4,7 +4,6 @@ import {
 	IAsyncIterator,
 	IAsyncResult,
 	IterationHint,
-	notReady,
 	ready,
 } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
@@ -35,9 +34,6 @@ export default class IteratorBackedSequence implements ISequence {
 					return ready(this._cachedValues[this._currentPosition++]);
 				}
 				const value = valueIterator.next(hint);
-				if (!value.ready) {
-					return value;
-				}
 				if (value.done) {
 					const length = this._currentPosition;
 					this._length = length;
@@ -70,9 +66,6 @@ export default class IteratorBackedSequence implements ISequence {
 				i++;
 				let value = iterator.next(hint);
 				while (!value.done) {
-					if (!value.ready) {
-						return value;
-					}
 					if (callback(value.value, i, this)) {
 						return value;
 					}
@@ -86,42 +79,60 @@ export default class IteratorBackedSequence implements ISequence {
 	}
 
 	public first(): Value | null {
-		const first = this.tryGetFirst();
-		if (!first.ready) {
-			throw new Error('First value is async.');
+		if (this._cachedValues[0] !== undefined) {
+			return this._cachedValues[0];
 		}
-		return first.value;
+
+		const iterator = this.value;
+		// No first cache value, the current position must have been 0
+		const firstValue = iterator.next(IterationHint.NONE);
+
+		this.reset();
+
+		if (firstValue.done) {
+			return null;
+		}
+		return firstValue.value;
 	}
 
 	public getAllValues(): Value[] {
 		const values = this.tryGetAllValues();
-		if (!values.ready) {
-			throw new Error('Sequence contains async values.');
-		}
 		return values.value;
 	}
 
 	public getEffectiveBooleanValue(): boolean {
-		const effectiveBooleanValue = this.tryGetEffectiveBooleanValue();
-		if (!effectiveBooleanValue.ready) {
-			throw new Error('Sequence contains async values.');
+		const iterator = this.value;
+		const oldPosition = this._currentPosition;
+
+		this.reset();
+		const it = iterator.next(IterationHint.NONE);
+		if (it.done) {
+			this.reset(oldPosition);
+			return false;
 		}
-		return effectiveBooleanValue.value;
+		const firstValue = it.value;
+
+		if (isSubtypeOf(firstValue.type, 'node()')) {
+			this.reset(oldPosition);
+			return true;
+		}
+
+		const secondValue = iterator.next(IterationHint.NONE);
+		if (!secondValue.done) {
+			throw errFORG0006();
+		}
+
+		this.reset(oldPosition);
+		return getEffectiveBooleanValue(firstValue);
 	}
 
 	public isEmpty(): boolean {
 		const isEmpty = this.tryIsEmpty();
-		if (!isEmpty.ready) {
-			throw new Error('First value is async.');
-		}
 		return isEmpty.value;
 	}
 
 	public isSingleton(): boolean {
 		const isSingleton = this.tryIsSingleton();
-		if (!isSingleton.ready) {
-			throw new Error('Sequence has async values.');
-		}
 		return isSingleton.value;
 	}
 
@@ -132,9 +143,10 @@ export default class IteratorBackedSequence implements ISequence {
 			{
 				next: (hint: IterationHint) => {
 					const value = iterator.next(hint);
-					if (value.done || !value.ready) {
-						return value;
+					if (value.done) {
+						return DONE_TOKEN;
 					}
+
 					return ready(callback(value.value, i++, this));
 				},
 			},
@@ -146,8 +158,6 @@ export default class IteratorBackedSequence implements ISequence {
 		const iterator = this.value;
 		let mappedResultsIterator: IAsyncIterator<Value>;
 		const allResults: Value[] = [];
-		let isReady = false;
-		let readyPromise = null;
 		let isFirst = true;
 		(function processNextResult() {
 			for (
@@ -155,21 +165,13 @@ export default class IteratorBackedSequence implements ISequence {
 				!value.done;
 				value = iterator.next(hint)
 			) {
-				if (!value.ready) {
-					readyPromise = value.promise.then(processNextResult);
-					return;
-				}
 				isFirst = false;
 				allResults.push(value.value);
 			}
 			mappedResultsIterator = callback(allResults).value;
-			isReady = true;
 		})();
 		return this._sequenceFactory.create({
 			next: (_hint: IterationHint) => {
-				if (!isReady) {
-					return notReady(readyPromise);
-				}
 				return mappedResultsIterator.next(IterationHint.NONE);
 			},
 		});
@@ -182,7 +184,7 @@ export default class IteratorBackedSequence implements ISequence {
 			resultIterator = resultSequence.value;
 			// Try to mirror through length;
 			const resultSequenceLength = resultSequence.tryGetLength(true);
-			if (resultSequenceLength.ready && resultSequenceLength.value !== -1) {
+			if (resultSequenceLength.value !== -1) {
 				this._length = resultSequenceLength.value;
 			}
 		};
@@ -194,18 +196,12 @@ export default class IteratorBackedSequence implements ISequence {
 				}
 
 				const isEmpty = this.tryIsEmpty();
-				if (!isEmpty.ready) {
-					return notReady(isEmpty.promise);
-				}
 				if (isEmpty.value) {
 					setResultIterator(cases.empty ? cases.empty(this) : cases.default(this));
 					return resultIterator.next(hint);
 				}
 
 				const isSingleton = this.tryIsSingleton();
-				if (!isSingleton.ready) {
-					return notReady(isSingleton.promise);
-				}
 				if (isSingleton.value) {
 					setResultIterator(
 						cases.singleton ? cases.singleton(this) : cases.default(this)
@@ -233,65 +229,9 @@ export default class IteratorBackedSequence implements ISequence {
 			let val = iterator.next(IterationHint.NONE);
 			!val.done;
 			val = iterator.next(IterationHint.NONE)
-		) {
-			if (!val.ready) {
-				return notReady(val.promise);
-			}
-		}
+		) {}
 
 		return ready(this._cachedValues);
-	}
-
-	public tryGetEffectiveBooleanValue(): IAsyncResult<boolean> {
-		const iterator = this.value;
-		const oldPosition = this._currentPosition;
-
-		this.reset();
-		const it = iterator.next(IterationHint.NONE);
-		if (!it.ready) {
-			return notReady(it.promise);
-		}
-		if (it.done) {
-			this.reset(oldPosition);
-			return ready(false);
-		}
-		const firstValue = it.value;
-
-		if (isSubtypeOf(firstValue.type, 'node()')) {
-			this.reset(oldPosition);
-			return ready(true);
-		}
-
-		const secondValue = iterator.next(IterationHint.NONE);
-		if (!secondValue.ready) {
-			return notReady(secondValue.promise);
-		}
-		if (!secondValue.done) {
-			throw errFORG0006();
-		}
-
-		this.reset(oldPosition);
-		return ready(getEffectiveBooleanValue(firstValue));
-	}
-
-	public tryGetFirst(): IAsyncResult<Value> {
-		if (this._cachedValues[0] !== undefined) {
-			return ready(this._cachedValues[0]);
-		}
-
-		const iterator = this.value;
-		// No first cache value, the current position must have been 0
-		const firstValue = iterator.next(IterationHint.NONE);
-		if (!firstValue.ready) {
-			return firstValue;
-		}
-
-		this.reset();
-
-		if (firstValue.done) {
-			return ready(null);
-		}
-		return firstValue;
 	}
 
 	public tryGetLength(onlyIfCheap = false): IAsyncResult<number> {
@@ -303,10 +243,8 @@ export default class IteratorBackedSequence implements ISequence {
 		}
 
 		const oldPosition = this._currentPosition;
-		const values = this.tryGetAllValues();
-		if (!values.ready) {
-			return notReady(values.promise);
-		}
+
+		this.tryGetAllValues();
 
 		this.reset(oldPosition);
 		return ready(this._length);
@@ -320,11 +258,8 @@ export default class IteratorBackedSequence implements ISequence {
 		if (this._length === 0) {
 			return ready(true);
 		}
-		const firstValue = this.tryGetFirst();
-		if (!firstValue.ready) {
-			return notReady(firstValue.promise);
-		}
-		return ready(firstValue.value === null);
+		const firstValue = this.first();
+		return ready(firstValue === null);
 	}
 
 	private tryIsSingleton(): IAsyncResult<boolean> {
@@ -338,18 +273,12 @@ export default class IteratorBackedSequence implements ISequence {
 		// Check there is at least one value
 		this.reset();
 		const it = iterator.next(IterationHint.NONE);
-		if (!it.ready) {
-			return notReady(it.promise);
-		}
 		if (it.done) {
 			this.reset(oldPosition);
 			return ready(false);
 		}
 
 		const secondValue = iterator.next(IterationHint.NONE);
-		if (!secondValue.ready) {
-			return notReady(secondValue.promise);
-		}
 		this.reset(oldPosition);
 		return ready(secondValue.done);
 	}

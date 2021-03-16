@@ -1,5 +1,3 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-
 import DomFacade from '../../domFacade/DomFacade';
 import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
@@ -8,9 +6,10 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import createSingleValueIterator from '../util/createSingleValueIterator';
-import { IAsyncIterator, IterationHint, IterationResult, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
 import { concatSortedSequences, mergeSortedSequences } from '../util/sortedSequenceUtils';
 
 function sortResults(domFacade: DomFacade, result: Value[]) {
@@ -78,12 +77,9 @@ class PathExpression extends Expression {
 				let resultValuesInOrderOfEvaluation: IAsyncIterator<ISequence> = {
 					next: (hint: IterationHint) => {
 						const childContext = childContextIterator.next(hint);
-						if (!childContext.ready) {
-							return notReady(childContext.promise);
-						}
 
 						if (childContext.done) {
-							return childContext;
+							return DONE_TOKEN;
 						}
 						if (
 							childContext.value.contextItem !== null &&
@@ -112,9 +108,6 @@ class PathExpression extends Expression {
 							resultValuesInOrderOfEvaluation = {
 								next: (hint: IterationHint) => {
 									const res = resultValuesInReverseOrder.next(hint);
-									if (!res.ready) {
-										return res;
-									}
 									if (res.done) {
 										return res;
 									}

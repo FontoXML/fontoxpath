@@ -7,7 +7,7 @@ import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
 import StaticContext from './StaticContext';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from './util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
 import { IPendingUpdate } from './xquery-update/IPendingUpdate';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
@@ -30,34 +30,10 @@ export function separateXDMValueFromUpdatingExpressionResult(
 	outputPUL: (updates: IPendingUpdate[]) => void
 ): ISequence {
 	let allValues: Value[];
-	let i = 0;
 	let itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
-	// Shortcut for synchronous values. Forces the PUL to be immediately available
-	if (itResult.ready) {
-		outputPUL(itResult.value.pendingUpdateList);
-		allValues = itResult.value.xdmValue;
-		return sequenceFactory.create(allValues);
-	}
-	return sequenceFactory.create({
-		next: () => {
-			if (!allValues) {
-				if (!itResult) {
-					itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
-				}
-				if (!itResult.ready) {
-					const toReturn = notReady(itResult.promise);
-					itResult = null;
-					return toReturn;
-				}
-				outputPUL(itResult.value.pendingUpdateList);
-				allValues = itResult.value.xdmValue;
-			}
-			if (i >= allValues.length) {
-				return DONE_TOKEN;
-			}
-			return ready(allValues[i++]);
-		},
-	});
+	outputPUL(itResult.value.pendingUpdateList);
+	allValues = itResult.value.xdmValue;
+	return sequenceFactory.create(allValues);
 }
 
 /**
@@ -124,9 +100,6 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 				// Ensure we fully exhaust the inner expression so that the pending update list is
 				// filled
 				const allValues = sequence.tryGetAllValues();
-				if (!allValues.ready) {
-					return notReady(allValues.promise);
-				}
 				done = true;
 				return ready(new UpdatingExpressionResult(allValues.value, updateList));
 			},

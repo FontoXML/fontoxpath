@@ -67,21 +67,4 @@ describe('Simple map operator', () => {
 			evaluateXPathToStrings('("a", "b", "c")!position()!string()', documentNode),
 			['1', '2', '3']
 		));
-
-	it('can map to async functions', async () =>
-		chai.assert.equal(
-			await evaluateXPathToAsyncSingleton(
-				'("a", "b", "c")!fontoxpath:sleep(., 1) => string-join()',
-				documentNode
-			),
-			'abc'
-		));
-	it('can map an async filled sequence', async () =>
-		chai.assert.equal(
-			await evaluateXPathToAsyncSingleton(
-				'("a" => fontoxpath:sleep(1), "b", "c" => fontoxpath:sleep(1))!string() => string-join()',
-				documentNode
-			),
-			'abc'
-		));
 });

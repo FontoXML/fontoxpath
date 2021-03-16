@@ -1,6 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -20,11 +20,8 @@ const fnLast: FunctionDefinitionType = (dynamicContext) => {
 					return DONE_TOKEN;
 				}
 				const length = dynamicContext.contextSequence.tryGetLength(false);
-				if (length.ready) {
-					done = true;
-					return ready(createAtomicValue(length.value, 'xs:integer'));
-				}
-				return notReady(length.promise);
+				done = true;
+				return ready(createAtomicValue(length.value, 'xs:integer'));
 			},
 		},
 		1

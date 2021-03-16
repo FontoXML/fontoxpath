@@ -26,46 +26,10 @@ describe('boolean functions', () => {
 				true
 			);
 		});
-		it('accepts async params to true', async () => {
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'fn:boolean(1 => fontoxpath:sleep())',
-					documentNode,
-					domFacade
-				)
-			);
-		});
-		it('accepts async params to false', async () => {
-			chai.assert.isFalse(
-				await evaluateXPathToAsyncSingleton(
-					'fn:boolean(0 => fontoxpath:sleep())',
-					documentNode,
-					domFacade
-				)
-			);
-		});
 	});
 	describe('fn:not()', () => {
 		it('accepts true', () => {
 			chai.assert.isFalse(evaluateXPathToBoolean('not(true())', documentNode, domFacade));
-		});
-		it('accepts async params to true', async () => {
-			chai.assert.isFalse(
-				await evaluateXPathToAsyncSingleton(
-					'not(true() => fontoxpath:sleep())',
-					documentNode,
-					domFacade
-				)
-			);
-		});
-		it('accepts async params to false', async () => {
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'not(false() => fontoxpath:sleep())',
-					documentNode,
-					domFacade
-				)
-			);
 		});
 	});
 });

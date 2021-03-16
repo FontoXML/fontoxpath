@@ -86,9 +86,6 @@ class AttributeConstructor extends Expression {
 							);
 						}
 						const nv = nameIterator.next(IterationHint.NONE);
-						if (!nv.ready) {
-							return nv;
-						}
 						name = nv.value.value;
 					} else {
 						name = this.name;

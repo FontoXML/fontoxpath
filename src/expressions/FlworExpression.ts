@@ -11,7 +11,7 @@ import Specificity from './Specificity';
 import StaticContext from './StaticContext';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
 import createSingleValueIterator from './util/createSingleValueIterator';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from './util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
@@ -107,9 +107,6 @@ abstract class FlworExpression extends Expression {
 				// Ensure we fully exhaust the inner expression so that the pending update list is
 				// filled
 				const allValues = sequence.tryGetAllValues();
-				if (!allValues.ready) {
-					return notReady(allValues.promise);
-				}
 				done = true;
 				return ready(new UpdatingExpressionResult(allValues.value, updateList));
 			},
@@ -214,10 +211,6 @@ abstract class FlworExpression extends Expression {
 							if (!currentSequenceIterator) {
 								const temp = dynamicContextIterator.next(IterationHint.NONE);
 
-								if (!temp.ready) {
-									return notReady(temp.promise);
-								}
-
 								if (temp.done) {
 									return DONE_TOKEN;
 								}
@@ -228,9 +221,6 @@ abstract class FlworExpression extends Expression {
 							}
 
 							const nextValue = currentSequenceIterator.next();
-							if (!nextValue.ready) {
-								return notReady(nextValue.promise);
-							}
 							if (nextValue.done) {
 								currentSequenceIterator = null;
 								continue;

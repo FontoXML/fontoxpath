@@ -14,9 +14,6 @@ export default function createDoublyIterableSequence(sequence: ISequence): () =>
 					return savedValues[i++];
 				}
 				const val = backingIterator.next(IterationHint.NONE);
-				if (!val.ready) {
-					return val;
-				}
 				if (val.done) {
 					return val;
 				}

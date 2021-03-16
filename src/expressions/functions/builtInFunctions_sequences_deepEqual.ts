@@ -20,7 +20,6 @@ import {
 	IAsyncIterator,
 	IterationHint,
 	IterationResult,
-	notReady,
 	ready,
 } from '../util/iterators';
 import builtInFunctionsNode from './builtInFunctions_node';
@@ -43,9 +42,6 @@ function asyncGenerateEvery<T>(
 						filterGenerator = callback(items[i], i, items);
 					}
 					const filterResult = filterGenerator.next(IterationHint.NONE);
-					if (!filterResult.ready) {
-						return filterResult;
-					}
 					filterGenerator = null;
 					if (filterResult.value) {
 						i++;
@@ -201,17 +197,6 @@ function sequenceDeepEqual(
 				}
 				item2 = takeConsecutiveTextValues(item2, textValues2, it2, domFacade);
 
-				if (!item1.ready) {
-					const oldItem = item1;
-					item1 = null;
-					return notReady(oldItem.promise);
-				}
-				if (!item2.ready) {
-					const oldItem = item2;
-					item2 = null;
-					return notReady(oldItem.promise);
-				}
-
 				if (textValues1.length || textValues2.length) {
 					const textComparisonResult = compareNormalizedTextNodes(
 						dynamicContext,
@@ -246,9 +231,6 @@ function sequenceDeepEqual(
 					);
 				}
 				const comparisonResult = comparisonGenerator.next(IterationHint.NONE);
-				if (!comparisonResult.ready) {
-					return comparisonResult;
-				}
 				comparisonGenerator = null;
 				if (comparisonResult.value === false) {
 					done = true;
@@ -418,27 +400,18 @@ function elementNodeDeepEqual(
 				return DONE_TOKEN;
 			}
 			const namesAreEqualResult = namesAreEqualResultGenerator.next(IterationHint.NONE);
-			if (!namesAreEqualResult.ready) {
-				return namesAreEqualResult;
-			}
 			if (!namesAreEqualResult.done && namesAreEqualResult.value === false) {
 				done = true;
 				return namesAreEqualResult;
 			}
 
 			const attributesEqualResult = attributesDeepEqualGenerator.next(IterationHint.NONE);
-			if (!attributesEqualResult.ready) {
-				return attributesEqualResult;
-			}
 			if (!attributesEqualResult.done && attributesEqualResult.value === false) {
 				done = true;
 				return attributesEqualResult;
 			}
 
 			const contentsEqualResult = nodeDeepEqualGenerator.next(IterationHint.NONE);
-			if (!contentsEqualResult.ready) {
-				return contentsEqualResult;
-			}
 			done = true;
 			return contentsEqualResult;
 		},
@@ -476,9 +449,6 @@ function atomicTypeNodeDeepEqual(
 				return DONE_TOKEN;
 			}
 			const namesAreEqualResult = namesAreEqualResultGenerator.next(IterationHint.NONE);
-			if (!namesAreEqualResult.ready) {
-				return namesAreEqualResult;
-			}
 			if (!namesAreEqualResult.done) {
 				if (namesAreEqualResult.value === false) {
 					done = true;

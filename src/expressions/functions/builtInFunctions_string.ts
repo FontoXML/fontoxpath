@@ -10,6 +10,7 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import builtInNumericFunctions from './builtInFunctions_numeric';
 import FunctionDefinitionType from './FunctionDefinitionType';
+import Value from '../dataTypes/Value';
 
 const fnRound = builtInNumericFunctions.functions.round;
 
@@ -281,20 +282,16 @@ const fnSubstring: FunctionDefinitionType = (
 			: null;
 
 	let done = false;
-	let sourceStringItem = null;
-	let startItem = null;
-	let lengthItem = null;
+	let sourceStringItem: Value = null;
+	let startItem: Value = null;
+	let lengthItem: Value = null;
 	return sequenceFactory.create({
 		next: () => {
 			if (done) {
 				return DONE_TOKEN;
 			}
 			if (!sourceStringItem) {
-				sourceStringItem = sourceString.tryGetFirst();
-				if (!sourceStringItem.ready) {
-					sourceStringItem = null;
-					return sourceStringItem;
-				}
+				sourceStringItem = sourceString.first();
 
 				if (sourceStringItem.value === null) {
 					// The first argument can be the empty sequence
@@ -304,33 +301,25 @@ const fnSubstring: FunctionDefinitionType = (
 			}
 
 			if (!startItem) {
-				startItem = roundedStart.tryGetFirst();
-				if (!startItem.ready) {
-					const toReturn = startItem;
-					startItem = null;
-					return toReturn;
-				}
+				startItem = roundedStart.first();
 			}
 
 			if (!lengthItem && length) {
 				lengthItem = null;
-				lengthItem = roundedLength.tryGetFirst();
-				if (!lengthItem.ready) {
-					const toReturn = lengthItem;
-					lengthItem = null;
-					return toReturn;
-				}
+				lengthItem = roundedLength.first();
 			}
 
 			done = true;
 
-			const strValue = sourceStringItem.value.value;
+			const strValue = sourceStringItem.value as string;
 			return ready(
 				createAtomicValue(
 					Array.from(strValue)
 						.slice(
-							Math.max(startItem.value.value - 1, 0),
-							length ? startItem.value.value + lengthItem.value.value - 1 : undefined
+							Math.max((startItem.value as number) - 1, 0),
+							length
+								? (startItem.value as number) + (lengthItem.value as number) - 1
+								: undefined
 						)
 						.join(''),
 					'xs:string'

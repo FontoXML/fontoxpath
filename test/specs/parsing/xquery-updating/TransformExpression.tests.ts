@@ -256,31 +256,4 @@ return ($a)
 
 		chai.assert.match(error.message, new RegExp('XUDY0014'));
 	});
-
-	it('transforms something with something asynchronous', async () => {
-		documentNode.appendChild(documentNode.createElement('element'));
-
-		const result = await evaluateUpdatingExpression(
-			`
-declare namespace fontoxpath="http://fontoxml.com/fontoxpath";
-
-copy $a := fontoxpath:sleep(/element, 100),
-     $b := fontoxpath:sleep(/element, 100)
-modify (fontoxpath:sleep(replace value of node $a with "content of a", 100),
-        fontoxpath:sleep(replace value of node $b with "content of b", 100))
-return fontoxpath:sleep(($a, $b), 100)
-`,
-			documentNode,
-			null,
-			{},
-			{}
-		);
-
-		chai.assert.equal(result.xdmValue.length, 2);
-		const actualA = new slimdom.XMLSerializer().serializeToString(result.xdmValue[0]);
-		const actualB = new slimdom.XMLSerializer().serializeToString(result.xdmValue[1]);
-		chai.assert.equal(actualA, '<element>content of a</element>');
-		chai.assert.equal(actualB, '<element>content of b</element>');
-		assertUpdateList(result.pendingUpdateList, []);
-	});
 });

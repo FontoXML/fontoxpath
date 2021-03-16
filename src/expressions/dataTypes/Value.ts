@@ -1,5 +1,8 @@
+// The actual type is type ValueValue = NodePointer | Function | string | number | boolean | QName | Duration | DateTime; but doing that gives us thousands of errors.
+type ValueValue = any;
+
 export default class Value {
-	constructor(public type: ValueType, readonly value: any) {}
+	constructor(public type: ValueType, readonly value: ValueValue) {}
 }
 
 export type ValueType =

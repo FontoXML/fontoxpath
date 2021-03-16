@@ -354,19 +354,4 @@ describe('ElementConstructor', () => {
 			)
 		);
 	});
-	it('can create an element with asynchronous', async () => {
-		const element = await evaluateXPathToAsyncSingleton(
-			`
-		declare namespace fontoxpath="http://fontoxml.com/fontoxpath";
-		element {fontoxpath:sleep("elem", 100)} {fontoxpath:sleep("content", 100)}`,
-			documentNode,
-			undefined,
-			{},
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-		);
-
-		chai.assert.equal(element.nodeType, 1);
-		chai.assert.equal(element.localName, 'elem');
-		chai.assert.equal(element.firstChild.data, 'content');
-	});
 });

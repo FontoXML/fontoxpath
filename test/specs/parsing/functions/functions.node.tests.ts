@@ -38,17 +38,6 @@ describe('functions over nodes', () => {
 				'someElement'
 			);
 		});
-
-		it('it accepts async parameters', async () => {
-			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'node-name(. => fontoxpath:sleep()) => string()',
-					documentNode.firstChild
-				),
-				'someElement'
-			);
-		});
 	});
 
 	describe('local-name()', () => {
@@ -76,17 +65,6 @@ describe('functions over nodes', () => {
 			chai.assert.equal(
 				evaluateXPathToString('local-name(.)', documentNode.firstChild),
 				'somePi'
-			);
-		});
-
-		it('it accepts async parameters', async () => {
-			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'local-name(. => fontoxpath:sleep())',
-					documentNode.firstChild
-				),
-				'someElement'
 			);
 		});
 	});
@@ -136,17 +114,6 @@ describe('functions over nodes', () => {
 
 		it('it returns the empty string for documents', () =>
 			chai.assert.equal(evaluateXPathToString('name(.)', documentNode), ''));
-
-		it('it accepts async parameters', async () => {
-			jsonMlMapper.parse(['someElement', 'Some text.'], documentNode);
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'name(. => fontoxpath:sleep())',
-					documentNode.firstChild
-				),
-				'someElement'
-			);
-		});
 	});
 
 	describe('root()', () => {
@@ -231,17 +198,6 @@ return $node/root() = $element`,
 
 		it('returns the empty sequence when passed the empty sequence', () =>
 			chai.assert.deepEqual(evaluateXPathToStrings('outermost(())', documentNode), []));
-
-		it('accepts async parameters', async () => {
-			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(
-					'array{(/root//* => fontoxpath:sleep() => outermost())!name()}',
-					documentNode
-				),
-				['child', 'child']
-			);
-		});
 	});
 
 	describe('innermost()', () => {
@@ -322,17 +278,6 @@ return $node/root() = $element`,
 
 		it('returns the empty sequence when passed the empty sequence', () =>
 			chai.assert.deepEqual(evaluateXPathToStrings('innermost(())', documentNode), []));
-
-		it('accepts async parameters', async () => {
-			jsonMlMapper.parse(['root', ['child'], ['child', ['descendant']]], documentNode);
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(
-					'array{(/root//* => fontoxpath:sleep() => innermost())!name()}',
-					documentNode
-				),
-				['child', 'descendant']
-			);
-		});
 	});
 
 	describe('has-children()', () => {
@@ -571,7 +516,7 @@ return $node/root() = $element`,
 		it('returns "fn:root()/Q{http://test2}a[1]" for the duplicate namespace URIs', () => {
 			chai.assert.deepEqual(
 				evaluateXPathToString(
-					`let $dom := 
+					`let $dom :=
 					<xml>
 						<a:a xmlns:a="http://test"/>
 						<a:a xmlns:a="http://test2"/>
@@ -590,7 +535,7 @@ return $node/root() = $element`,
 		it('returns "fn:root()/Q{http://test}a[2]" for the duplicate namespace URIs', () => {
 			chai.assert.deepEqual(
 				evaluateXPathToString(
-					`let $dom := 
+					`let $dom :=
 					<xml>
 						<a:a xmlns:a="http://test"/>
 						<b:a xmlns:b="http://test"/>

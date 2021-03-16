@@ -18,12 +18,6 @@ describe('or operator', () => {
 		chai.assert.isFalse(evaluateXPathToBoolean('false() or false()'));
 	});
 
-	it('works with async params', async () => {
-		chai.assert.isTrue(
-			await evaluateXPathToAsyncSingleton('false() => fontoxpath:sleep() or true()')
-		);
-	});
-
 	it('can parse an "or" selector with different buckets', () => {
 		jsonMlMapper.parse(['someParentElement', ['someElement']], documentNode);
 		chai.assert.isTrue(

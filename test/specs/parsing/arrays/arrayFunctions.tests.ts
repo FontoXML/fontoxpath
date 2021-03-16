@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import {
+	evaluateXPath,
 	evaluateXPathToArray,
 	evaluateXPathToBoolean,
 	evaluateXPathToNumbers,
@@ -7,7 +8,6 @@ import {
 	evaluateXPathToStrings,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
-import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
@@ -19,13 +19,6 @@ describe('functions over arrays', () => {
 	describe('array:size', () => {
 		it('returns the size of an array', () =>
 			chai.assert.isTrue(evaluateXPathToBoolean('array:size([1,2,3]) eq 3', documentNode)));
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'array:size([1,2,3] => fontoxpath:sleep(1)) eq 3',
-					documentNode
-				)
-			));
 		it('returns 0 for an empty array', () =>
 			chai.assert.isTrue(evaluateXPathToBoolean('array:size([]) eq 0', documentNode)));
 	});
@@ -54,14 +47,6 @@ describe('functions over arrays', () => {
 
 		it('is aliased to "calling the array"', () =>
 			chai.assert.isTrue(evaluateXPathToBoolean('[1,2,3](1) eq 1', documentNode)));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'array:get([1,2,3] => fontoxpath:sleep(1), 3) eq 3',
-					documentNode
-				)
-			));
 	});
 
 	describe('array:put', () => {
@@ -94,31 +79,6 @@ describe('functions over arrays', () => {
 				() => evaluateXPathToArray('array:put([1,2,3], 0, "a")', documentNode),
 				'FOAY0001'
 			));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:put([1,2,3] => fontoxpath:sleep(1), 3, "a") => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'12a'
-			));
-		it('can be called with a position which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:put([1,2,3], 3 => fontoxpath:sleep(1), "a") => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'12a'
-			));
-		it('can be called with an item which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:put([1,2,3], 3, "a" => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'12a'
-			));
 	});
 
 	describe('array:append', () => {
@@ -132,22 +92,6 @@ describe('functions over arrays', () => {
 				3,
 				4,
 			]));
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:append([1,2,3] => fontoxpath:sleep(1), 4) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'1234'
-			));
-		it('can be called with an item which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:append([1,2,3], 4 => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'1234'
-			));
 	});
 
 	describe('array:subarray', () => {
@@ -185,31 +129,6 @@ describe('functions over arrays', () => {
 			chai.assert.throws(
 				() => evaluateXPathToArray('array:subarray([1,2,3], 1, 9001)', documentNode),
 				'FOAY0001'
-			));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:subarray([1,2,3,4] => fontoxpath:sleep(1), 2, 2) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'23'
-			));
-		it('can be called with a start which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:subarray([1,2,3,4], 2 => fontoxpath:sleep(1), 2) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'23'
-			));
-		it('can be called with an end which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:subarray([1,2,3,4], 2, 2 => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'23'
 			));
 	});
 
@@ -255,22 +174,6 @@ describe('functions over arrays', () => {
 				() => evaluateXPathToArray('array:remove([1,2,3], 9001)', documentNode),
 				'FOAY0001'
 			));
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:remove([1,2,3] => fontoxpath:sleep(1), 1) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'23'
-			));
-		it('can be called with a removal sequence which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:remove([1,2,3], (1,2=>fontoxpath:sleep(1))) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'3'
-			));
 	});
 
 	describe('array:insert-before', () => {
@@ -309,30 +212,6 @@ describe('functions over arrays', () => {
 				() => evaluateXPathToArray('array:insert-before([1,2,3], 5, "a")', documentNode),
 				'FOAY0001'
 			));
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:insert-before([1,2,3] => fontoxpath:sleep(1), 4, "a") => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'123a'
-			));
-		it('can be called with a position which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:insert-before([1,2,3], 4 => fontoxpath:sleep(1), "a") => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'123a'
-			));
-		it('can be called with an item which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:insert-before([1,2,3], 4, "a" => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'123a'
-			));
 	});
 
 	describe('array:head', () => {
@@ -344,14 +223,6 @@ describe('functions over arrays', () => {
 
 		it('returns the first item', () =>
 			chai.assert.isTrue(evaluateXPathToBoolean('array:head([1]) eq 1', documentNode)));
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:head([1,2,3] => fontoxpath:sleep(1))',
-					documentNode
-				),
-				1
-			));
 	});
 
 	describe('array:tail', () => {
@@ -371,15 +242,6 @@ describe('functions over arrays', () => {
 				2,
 				3,
 			]));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:tail([1,2,3] => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'23'
-			));
 	});
 
 	describe('array:reverse', () => {
@@ -396,15 +258,6 @@ describe('functions over arrays', () => {
 				2,
 				1,
 			]));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:reverse([1,2,3] => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'321'
-			));
 	});
 
 	describe('array:join', () => {
@@ -418,15 +271,6 @@ describe('functions over arrays', () => {
 			chai.assert.deepEqual(
 				evaluateXPathToArray('array:join(([1,2,3],["a","b","c"]))', documentNode),
 				[1, 2, 3, 'a', 'b', 'c']
-			));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:join(([1,2,3] => fontoxpath:sleep(1), ["a", "b", "c"])) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'123abc'
 			));
 	});
 
@@ -453,33 +297,6 @@ describe('functions over arrays', () => {
 					documentNode
 				)
 			));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:for-each(["a", "b", "c"] => fontoxpath:sleep(1), upper-case#1) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'ABC'
-			));
-
-		it('can be called with a callback which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:for-each(["a", "b", "c"], upper-case#1 => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'ABC'
-			));
-
-		it('can be called with a callback which returns async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:for-each(["a", "b", "c"], fontoxpath:sleep(?, 1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'abc'
-			));
 	});
 
 	describe('array:filter', () => {
@@ -493,40 +310,6 @@ describe('functions over arrays', () => {
 			chai.assert.deepEqual(
 				evaluateXPathToArray('array:filter([1, 0, 1, 0, true()], boolean#1)', documentNode),
 				[1, 1, true]
-			));
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:filter(["a", "b", "c"] => fontoxpath:sleep(1), boolean#1) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'abc'
-			));
-		it('can be called with a callback which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:filter(["a", "b", "c"], boolean#1 => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'abc'
-			));
-
-		it('can be called with a callback which returns async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:filter([1,0,1,0], fontoxpath:sleep(?, 1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'11'
-			));
-
-		it('can be called with a callback which returns async with extra delay', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:filter([1,0,1,0], function ($a) { fontoxpath:sleep($a = 1, $a + 1)}) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'11'
 			));
 	});
 
@@ -564,42 +347,6 @@ describe('functions over arrays', () => {
 				evaluateXPathToString('array:fold-left([], "zero", concat#2)', documentNode),
 				'zero'
 			));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:fold-left([1,2,3] => fontoxpath:sleep(1), "", concat#2)',
-					documentNode
-				),
-				'123'
-			));
-
-		it('can be called with a zero which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:fold-left([1,2,3], "" => fontoxpath:sleep(1), concat#2)',
-					documentNode
-				),
-				'123'
-			));
-
-		it('can be called with a callback which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:fold-left([1,2,3], "", concat#2 => fontoxpath:sleep(1))',
-					documentNode
-				),
-				'123'
-			));
-
-		it('can be called with a callback which returns async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:fold-left([1,2,3], 0, function ($accum, $item) {fontoxpath:sleep($accum + $item, 1)})',
-					documentNode
-				),
-				'6'
-			));
 	});
 
 	describe('array:fold-right', () => {
@@ -636,33 +383,6 @@ describe('functions over arrays', () => {
 				evaluateXPathToString('array:fold-right([], "zero", concat#2)', documentNode),
 				'zero'
 			));
-
-		it('can be called with a zero which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:fold-right([1,2,3], "" => fontoxpath:sleep(1), concat#2)',
-					documentNode
-				),
-				'321'
-			));
-
-		it('can be called with a callback which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:fold-right([1,2,3], "", concat#2 => fontoxpath:sleep(1))',
-					documentNode
-				),
-				'321'
-			));
-
-		it('can be called with a callback which returns async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:fold-right([1,2,3], 0, function ($accum, $item) {fontoxpath:sleep($accum + $item, 1)})',
-					documentNode
-				),
-				'6'
-			));
 	});
 
 	describe('array:for-each-pair', () => {
@@ -686,48 +406,6 @@ describe('functions over arrays', () => {
 				evaluateXPathToArray('array:for-each-pair(["a", "b"], [], concat#2)', documentNode),
 				[]
 			));
-
-		it('can be called with an arrayA which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:for-each-pair([1,2,3] => fontoxpath:sleep(1), ["a", "b", "c"], concat#2) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'1a2b3c'
-			));
-
-		it('can be called with an arrayB which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:for-each-pair([1,2,3], ["a", "b", "c"] => fontoxpath:sleep(1), concat#2) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'1a2b3c'
-			));
-
-		it('can be called with a callback which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:for-each-pair([1,2,3], ["a", "b", "c"], concat#2 => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'1a2b3c'
-			));
-
-		it('can be called with a callback which returns async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					`
-array:for-each-pair(
-	[1,2,3],
-	["a", "b", "c"],
-	function ($accum, $item) {fontoxpath:sleep($accum || $item, 1)}
-) => array:fold-left("", concat#2)
-`,
-					documentNode
-				),
-				'1a2b3c'
-			));
 	});
 
 	describe('array:sort', () => {
@@ -740,24 +418,6 @@ array:for-each-pair(
 				2,
 				3,
 			]));
-
-		it('can be called with an array which resolves async', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:sort([2,1,3] => fontoxpath:sleep(1)) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'123'
-			));
-
-		it('can be called with an array with async entries', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:sort([2,1,3] => array:for-each(fontoxpath:sleep(?, 1))) => array:fold-left("", concat#2)',
-					documentNode
-				),
-				'123'
-			));
 	});
 
 	describe('array:flatten', () => {
@@ -777,15 +437,6 @@ array:for-each-pair(
 				evaluateXPathToStrings('array:flatten(["a", ["b", "c"], "d"])', documentNode),
 				['a', 'b', 'c', 'd']
 			));
-
-		it('can be called with an array with async entries', async () =>
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					'array:flatten([1,2,3,[4,5,[6]],7] => array:for-each(fontoxpath:sleep(?, 1)))!string() => string-join("")',
-					documentNode
-				),
-				'1234567'
-			));
 	});
 
 	describe('atomizing arrays', () => {
@@ -798,7 +449,7 @@ array:for-each-pair(
 	});
 
 	describe('complex queries', () => {
-		it('can build jsonml', async () => {
+		it('can build jsonml', () => {
 			const jsonMlFragment = [
 				'someElement',
 				{
@@ -819,10 +470,7 @@ let $processDescendants := function ($recurse, $node) {
 }
 return $processDescendants($processDescendants, /*)
 `;
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(xpath, documentNode),
-				jsonMlFragment
-			);
+			chai.assert.deepEqual(evaluateXPath(xpath, documentNode), jsonMlFragment);
 		});
 	});
 });
