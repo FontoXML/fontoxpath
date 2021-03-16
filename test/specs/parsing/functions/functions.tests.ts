@@ -39,12 +39,6 @@ describe('functions', () => {
 			chai.assert.equal(evaluateXPathToNumber('(1,2,3)[. > 2][last()]', documentNode), 3));
 		it('can target the second to last item', () =>
 			chai.assert.equal(evaluateXPathToNumber('(1,2,3)[last() - 1]', documentNode), 2));
-		it('works in async sequences', async () => {
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton('((1,2,3) => fontoxpath:sleep(1))[last()]'),
-				3
-			);
-		});
 	});
 
 	describe('position()', () => {
@@ -75,12 +69,6 @@ describe('functions', () => {
 				() => evaluateXPathToNumber('number(concat#2)', documentNode),
 				'FOTY0013'
 			));
-		it('allows async input', async () => {
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton('number(fontoxpath:sleep(10, 10))'),
-				10
-			);
-		});
 	});
 
 	describe('boolean', () => {
@@ -535,7 +523,6 @@ describe('functions', () => {
 			));
 
 		it('can resolve a function with a bogus prefix using the injected namespace resolver', () => {
-			debugger;
 			chai.assert.isTrue(
 				evaluateXPathToBoolean('bogus:true()', null, null, null, {
 					namespaceResolver: (prefix) => {
@@ -547,7 +534,6 @@ describe('functions', () => {
 			);
 		});
 		it('Allows the usage of both a namespaceresolver and a functionnameresolver', () => {
-			debugger;
 			chai.assert.isTrue(
 				evaluateXPathToBoolean('bogus:true()', null, null, null, {
 					namespaceResolver: (prefix) => {

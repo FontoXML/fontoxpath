@@ -6,7 +6,7 @@ import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
-import { IAsyncIterator } from '../util/iterators';
+import { IIterator } from '../util/iterators';
 import { errXPTY0004 } from '../XPathErrors';
 import { errXQDY0041, errXQDY0074 } from './XQueryErrors';
 
@@ -29,7 +29,7 @@ const isValidNCName = (name) => {
 export function evaluateNCNameExpression(
 	executionParameters: ExecutionParameters,
 	nameSequence: ISequence
-): IAsyncIterator<Value> {
+): IIterator<Value> {
 	const name = atomize(nameSequence, executionParameters);
 	return name.switchCases({
 		singleton: (seq) => {
@@ -55,7 +55,7 @@ export function evaluateQNameExpression(
 	staticContext: StaticContext,
 	executionParameters: ExecutionParameters,
 	nameSequence: ISequence
-): IAsyncIterator<Value> {
+): IIterator<Value> {
 	const name = atomize(nameSequence, executionParameters);
 	return name.switchCases({
 		singleton: (seq) => {

@@ -13,13 +13,7 @@ import convertItemsToCommonType from './functions/convertItemsToCommonType';
 import valueCompare from './operators/compares/valueCompare';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Specificity from './Specificity';
-import {
-	DONE_TOKEN,
-	IAsyncIterator,
-	IterationHint,
-	IterationResult,
-	ready,
-} from './util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from './util/iterators';
 import { errXPTY0004 } from './xquery/XQueryErrors';
 
 function getFirstPrimitiveType(values: Value[]): string | null {
@@ -65,9 +59,9 @@ class OrderByExpression extends FlworExpression {
 
 	public doFlworExpression(
 		dynamicContext: DynamicContext,
-		dynamicContextIterator: IAsyncIterator<DynamicContext>,
+		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IAsyncIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
 	): ISequence {
 		// More than one order spec is not supported for now.
 		if (this._orderSpecs[1]) {
@@ -80,7 +74,7 @@ class OrderByExpression extends FlworExpression {
 		let values: Value[];
 		let indices: number[];
 
-		let returnValueIterator: IAsyncIterator<Value> = null;
+		let returnValueIterator: IIterator<Value> = null;
 
 		const orderSpec = this._orderSpecs[0];
 

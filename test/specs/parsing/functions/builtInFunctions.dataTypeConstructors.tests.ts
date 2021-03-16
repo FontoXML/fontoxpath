@@ -271,14 +271,6 @@ describe('Data type constructors', () => {
 					() => evaluateXPathToBoolean('fn:QName((), "abc:abc")', documentNode),
 					'FOCA0002'
 				));
-			it('accepts async params', async () => {
-				chai.assert.isTrue(
-					await evaluateXPathToAsyncSingleton(
-						'fn:QName("http://example.com/ns" => fontoxpath:sleep(1), "xs:abc" => fontoxpath:sleep(1)) instance of xs:QName',
-						documentNode
-					)
-				);
-			});
 		});
 	});
 

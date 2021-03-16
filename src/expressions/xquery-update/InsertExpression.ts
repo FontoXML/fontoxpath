@@ -7,7 +7,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IIterator, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 import { IPendingUpdate } from './IPendingUpdate';
 import {
@@ -155,7 +155,7 @@ class InsertExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		const sourceValueIterator = this.ensureUpdateListWrapper(this._sourceExpression)(
 			dynamicContext,
 			executionParameters
@@ -178,9 +178,6 @@ class InsertExpression extends UpdatingExpression {
 				if (!alist) {
 					// 1. SourceExpr is evaluated as though it were an enclosed expression in an element constructor (see Rule 1e in Section 3.9.1.3 Content XQ30). The result of this step is either an error or a sequence of nodes to be inserted, called the insertion sequence. If the insertion sequence contains a document node, the document node is replaced in the insertion sequence by its children. If the insertion sequence contains an attribute node following a node that is not an attribute node, a type error is raised [err:XUTY0004].
 					const sv = sourceValueIterator.next(IterationHint.NONE);
-					if (!sv.ready) {
-						return sv;
-					}
 					const allChildNodes = [sv.value.xdmValue];
 					const insertionSequence = parseContent(
 						allChildNodes,
@@ -201,9 +198,6 @@ class InsertExpression extends UpdatingExpression {
 				if (!target) {
 					// 2. TargetExpr is evaluated and checked as follows:
 					const tv = targetValueIterator.next(IterationHint.NONE);
-					if (!tv.ready) {
-						return tv;
-					}
 
 					// a. If the result is an empty sequence, [err:XUDY0027] is raised.
 					if (tv.value.xdmValue.length === 0) {

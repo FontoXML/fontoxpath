@@ -7,7 +7,7 @@ import { deletePu } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IIterator, IterationHint, ready } from '../util/iterators';
 
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -31,8 +31,8 @@ class DeleteExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
-		const targetValueIterator: IAsyncIterator<UpdatingExpressionResult> = this.ensureUpdateListWrapper(
+	): IIterator<UpdatingExpressionResult> {
+		const targetValueIterator: IIterator<UpdatingExpressionResult> = this.ensureUpdateListWrapper(
 			this._targetExpression
 		)(dynamicContext, executionParameters);
 		const domFacade = executionParameters.domFacade;
@@ -44,9 +44,6 @@ class DeleteExpression extends UpdatingExpression {
 				if (!tlist) {
 					// 1. TargetExpr is evaluated.
 					const tv = targetValueIterator.next(IterationHint.NONE);
-					if (!tv.ready) {
-						return tv;
-					}
 
 					// The result must be a sequence of zero or more nodes; otherwise a type error is raised [err:XUTY0007].
 					if (tv.value.xdmValue.some((entry) => !isSubtypeOf(entry.type, 'node()'))) {

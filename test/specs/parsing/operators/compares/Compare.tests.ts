@@ -6,7 +6,6 @@ import {
 	evaluateXPathToNumber,
 } from 'fontoxpath';
 import * as slimdom from 'slimdom';
-import evaluateXPathToAsyncSingleton from 'test-helpers/evaluateXPathToAsyncSingleton';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 let documentNode;
@@ -17,11 +16,6 @@ beforeEach(() => {
 describe('Value compares', () => {
 	it('works over singleton sequences', () => {
 		chai.assert.isTrue(evaluateXPathToBoolean('true() eq true()'));
-	});
-	it('works with async parameters', async () => {
-		chai.assert.isTrue(
-			await evaluateXPathToAsyncSingleton('true() eq (true() => fontoxpath:sleep())')
-		);
 	});
 	it('works over empty sequences', () => {
 		chai.assert.deepEqual(evaluateXPathToNodes('() eq ()'), []);
@@ -240,11 +234,6 @@ describe('General compares', () => {
 	it('Compares over sets', () => chai.assert.isTrue(evaluateXPathToBoolean('(1, 2, 3) = 3')));
 	it('Compares over sets by comparing each and every value', () =>
 		chai.assert.isTrue(evaluateXPathToBoolean('(1, 2, 3) = (5, 4, 3)')));
-	it('works with async parameters', async () => {
-		chai.assert.isTrue(
-			await evaluateXPathToAsyncSingleton('true() = (true() => fontoxpath:sleep())')
-		);
-	});
 	it('is symetrical for dates / untyped values', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean(
@@ -306,11 +295,6 @@ describe('Node compares', () => {
 			chai.assert.throws(
 				() => evaluateXPathToBoolean('(., .) is .', documentNode),
 				'XPTY0004'
-			);
-		});
-		it('works with async parameters', async () => {
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton('. is (. => fontoxpath:sleep())', documentNode)
 			);
 		});
 	});

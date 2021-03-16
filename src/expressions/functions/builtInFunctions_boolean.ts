@@ -1,6 +1,6 @@
 import { falseBoolean, trueBoolean } from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -11,26 +11,10 @@ const fnNot: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	const ebv = sequence.tryGetEffectiveBooleanValue();
-	if (ebv.ready) {
-		return ebv.value === false
-			? sequenceFactory.singletonTrueSequence()
-			: sequenceFactory.singletonFalseSequence();
-	}
-	let done = false;
-	return sequenceFactory.create({
-		next: () => {
-			if (done) {
-				return DONE_TOKEN;
-			}
-			const ebvAttempt = sequence.tryGetEffectiveBooleanValue();
-			if (!ebvAttempt.ready) {
-				return notReady(ebvAttempt.promise);
-			}
-			done = true;
-			return ready(ebvAttempt.value === false ? trueBoolean : falseBoolean);
-		},
-	});
+	const ebv = sequence.getEffectiveBooleanValue();
+	return ebv === false
+		? sequenceFactory.singletonTrueSequence()
+		: sequenceFactory.singletonFalseSequence();
 };
 
 const fnBoolean: FunctionDefinitionType = (
@@ -39,26 +23,8 @@ const fnBoolean: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	const ebv = sequence.tryGetEffectiveBooleanValue();
-	if (ebv.ready) {
-		return ebv.value
-			? sequenceFactory.singletonTrueSequence()
-			: sequenceFactory.singletonFalseSequence();
-	}
-	let done = false;
-	return sequenceFactory.create({
-		next: () => {
-			if (done) {
-				return DONE_TOKEN;
-			}
-			const ebvAttempt = sequence.tryGetEffectiveBooleanValue();
-			if (!ebvAttempt.ready) {
-				return notReady(ebvAttempt.promise);
-			}
-			done = true;
-			return ready(ebvAttempt.value ? trueBoolean : falseBoolean);
-		},
-	});
+	const ebv = sequence.getEffectiveBooleanValue();
+	return ebv ? sequenceFactory.singletonTrueSequence() : sequenceFactory.singletonFalseSequence();
 };
 
 const fnTrue: FunctionDefinitionType = () => {

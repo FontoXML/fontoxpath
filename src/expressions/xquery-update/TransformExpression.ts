@@ -12,7 +12,7 @@ import { separateXDMValueFromUpdatingExpressionResult } from '../PossiblyUpdatin
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IIterator, IterationHint, ready } from '../util/iterators';
 import createPendingUpdateFromTransferable from './createPendingUpdateFromTransferable';
 import { IPendingUpdate } from './IPendingUpdate';
 import { applyUpdates, mergeUpdates } from './pulRoutines';
@@ -79,12 +79,12 @@ class TransformExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		const { domFacade, nodesFactory, documentWriter } = executionParameters;
 
-		const sourceValueIterators: IAsyncIterator<UpdatingExpressionResult>[] = [];
-		let modifyValueIterator: IAsyncIterator<UpdatingExpressionResult>;
-		let returnValueIterator: IAsyncIterator<UpdatingExpressionResult>;
+		const sourceValueIterators: IIterator<UpdatingExpressionResult>[] = [];
+		let modifyValueIterator: IIterator<UpdatingExpressionResult>;
+		let returnValueIterator: IIterator<UpdatingExpressionResult>;
 
 		let modifyPul: IPendingUpdate[];
 		const createdNodes = [];
@@ -96,7 +96,7 @@ class TransformExpression extends UpdatingExpression {
 					// The copy clause contains one or more variable bindings, each of which consists of a variable name and an expression called the source expression.
 					for (let i = createdNodes.length; i < this._variableBindings.length; i++) {
 						const variableBinding = this._variableBindings[i];
-						let sourceValueIterator: IAsyncIterator<UpdatingExpressionResult> =
+						let sourceValueIterator: IIterator<UpdatingExpressionResult> =
 							sourceValueIterators[i];
 
 						// Each variable binding is processed as follows:
@@ -108,9 +108,6 @@ class TransformExpression extends UpdatingExpression {
 							)(dynamicContext, executionParameters);
 						}
 						const sv = sourceValueIterator.next(IterationHint.NONE);
-						if (!sv.ready) {
-							return sv;
-						}
 
 						// The result of evaluating the source expression must be a single node [err:XUTY0013]. Let $node be this single node.
 						if (
@@ -146,9 +143,6 @@ class TransformExpression extends UpdatingExpression {
 						);
 					}
 					const mv = modifyValueIterator.next(IterationHint.NONE);
-					if (!mv.ready) {
-						return mv;
-					}
 					// resulting in a pending update list (denoted $pul) and an XDM instance. The XDM instance is discarded, and does not form part of the result of the copy modify expression.
 					modifyPul = mv.value.pendingUpdateList;
 				}
@@ -181,9 +175,6 @@ class TransformExpression extends UpdatingExpression {
 					);
 				}
 				const rv = returnValueIterator.next(IterationHint.NONE);
-				if (!rv.ready) {
-					return rv;
-				}
 
 				//  The result of the copy modify expression is the XDM instance returned, as well as a pending update list constructed by merging the pending update lists returned by any of the copy modify expression's copy or return clause operand expressions using upd:mergeUpdates. During evaluation of the return clause, changes applied to copied nodes by the preceding step are visible.
 				return ready({

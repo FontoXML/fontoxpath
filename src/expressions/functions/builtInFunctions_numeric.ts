@@ -12,7 +12,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
-import { DONE_TOKEN, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, ready } from '../util/iterators';
 import { performFunctionConversion } from './argumentHelper';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -109,48 +109,43 @@ function fnRound(
 			if (done) {
 				return DONE_TOKEN;
 			}
-			const firstValue = sequence.tryGetFirst();
-			if (!firstValue.ready) {
-				return notReady(firstValue.promise);
-			}
-			if (!firstValue.value) {
+			const firstValue = sequence.first();
+			if (!firstValue) {
 				// Empty sequence
 				done = true;
 				return DONE_TOKEN;
 			}
 
-			const item = firstValue.value;
-			const value = item.value;
-
 			if (
-				(isSubtypeOf(item.type, 'xs:float') || isSubtypeOf(item.type, 'xs:double')) &&
-				(value === 0 || isNaN(value) || value === +Infinity || value === -Infinity)
+				(isSubtypeOf(firstValue.type, 'xs:float') ||
+					isSubtypeOf(firstValue.type, 'xs:double')) &&
+				(firstValue.value === 0 ||
+					isNaN(firstValue.value as number) ||
+					firstValue.value === +Infinity ||
+					firstValue.value === -Infinity)
 			) {
 				done = true;
-				return ready(item);
+				return ready(firstValue);
 			}
 			let scalingPrecision;
 			if (precision) {
-				const sp = precision.tryGetFirst();
-				if (!sp.ready) {
-					return notReady(sp.promise);
-				}
-				scalingPrecision = sp.value.value;
+				const sp = precision.first();
+				scalingPrecision = sp.value;
 			} else {
 				scalingPrecision = 0;
 			}
 			done = true;
 
-			if (getNumberOfDecimalDigits(value) < scalingPrecision) {
-				return ready(item);
+			if (getNumberOfDecimalDigits(firstValue.value as number) < scalingPrecision) {
+				return ready(firstValue);
 			}
 
 			const originalType = ['xs:integer', 'xs:decimal', 'xs:double', 'xs:float'].find(
 				(type: ValueType) => {
-					return isSubtypeOf(item.type, type);
+					return isSubtypeOf(firstValue.type, type);
 				}
 			);
-			const itemAsDecimal = castToType(item, 'xs:decimal');
+			const itemAsDecimal = castToType(firstValue, 'xs:decimal');
 			const scaling = Math.pow(10, scalingPrecision);
 			const roundedNumber = determineRoundedNumber(itemAsDecimal.value, halfToEven, scaling);
 			switch (originalType) {

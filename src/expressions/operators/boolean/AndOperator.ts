@@ -1,10 +1,14 @@
+import { NodePointer } from '../../../domClone/Pointer';
 import { getBucketsForPointer } from '../../../getBuckets';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
+import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
-import { DONE_TOKEN, notReady, ready } from '../../util/iterators';
+import { DONE_TOKEN, ready } from '../../util/iterators';
 
 class AndOperator extends Expression {
 	private _subExpressions: Expression[];
@@ -23,16 +27,19 @@ class AndOperator extends Expression {
 		this._subExpressions = expressions;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
 		let i = 0;
-		let resultSequence = null;
+		let resultSequence: ISequence = null;
 		let done = false;
-		let contextItemBuckets = null;
+		let contextItemBuckets: string[] | null = null;
 		if (dynamicContext !== null) {
 			const contextItem = dynamicContext.contextItem;
 			if (contextItem !== null && isSubtypeOf(contextItem.type, 'node()')) {
 				contextItemBuckets = getBucketsForPointer(
-					contextItem.value,
+					contextItem.value as NodePointer,
 					executionParameters.domFacade
 				);
 			}
@@ -57,11 +64,8 @@ class AndOperator extends Expression {
 								executionParameters
 							);
 						}
-						const ebv = resultSequence.tryGetEffectiveBooleanValue();
-						if (!ebv.ready) {
-							return notReady(ebv.promise);
-						}
-						if (ebv.value === false) {
+						const ebv = resultSequence.getEffectiveBooleanValue();
+						if (ebv === false) {
 							done = true;
 							return ready(falseBoolean);
 						}

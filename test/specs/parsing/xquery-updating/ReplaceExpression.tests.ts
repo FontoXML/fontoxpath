@@ -1,7 +1,11 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import { evaluateUpdatingExpression, executePendingUpdateList } from 'fontoxpath';
+import {
+	evaluateUpdatingExpression,
+	executePendingUpdateList,
+	evaluateUpdatingExpressionSync,
+} from 'fontoxpath';
 import assertUpdateList from './assertUpdateList';
 
 let documentNode;
@@ -10,9 +14,9 @@ beforeEach(() => {
 });
 
 describe('ReplaceExpression', () => {
-	it('can replace a node and generate the correct update list', async () => {
+	it('can replace a node and generate the correct update list', () => {
 		const ele = documentNode.appendChild(documentNode.createElement('ele'));
-		const result = await evaluateUpdatingExpression(
+		const result = evaluateUpdatingExpressionSync(
 			'replace node ele with <ele/>',
 			documentNode,
 			null,
@@ -30,10 +34,10 @@ describe('ReplaceExpression', () => {
 		]);
 	});
 
-	it('can replace an attribute node and generate the correct update list', async () => {
+	it('can replace an attribute node and generate the correct update list', () => {
 		const ele = documentNode.appendChild(documentNode.createElement('ele'));
 		ele.setAttribute('attr', 'value1');
-		const result = await evaluateUpdatingExpression(
+		const result = evaluateUpdatingExpressionSync(
 			'replace node ele/@attr with <ele attrReplace="value" />/@value',
 			documentNode,
 			null,
@@ -51,10 +55,10 @@ describe('ReplaceExpression', () => {
 		]);
 	});
 
-	it('can replace the value of an attribute node with a PI', async () => {
+	it('can replace the value of an attribute node with a PI', () => {
 		const ele = documentNode.appendChild(documentNode.createElement('ele'));
 		ele.setAttribute('attr', 'value1');
-		const result = await evaluateUpdatingExpression(
+		const result = evaluateUpdatingExpressionSync(
 			'replace value of node ele/@attr with <?processing instruction?>',
 			documentNode,
 			null,
@@ -72,9 +76,9 @@ describe('ReplaceExpression', () => {
 		]);
 	});
 
-	it('can have a replace expression in a conditional expression', async () => {
+	it('can have a replace expression in a conditional expression', () => {
 		const ele = documentNode.appendChild(documentNode.createElement('ele'));
-		const result = await evaluateUpdatingExpression(
+		const result = evaluateUpdatingExpressionSync(
 			'if (true()) then replace node ele with <ele/> else ()',
 			documentNode,
 			null,
@@ -92,10 +96,10 @@ describe('ReplaceExpression', () => {
 		]);
 	});
 
-	it('disallows replacing the empty sequence', async () => {
+	it('disallows replacing the empty sequence', () => {
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace node () with <ele />',
 				documentNode,
 				null,
@@ -115,11 +119,11 @@ describe('ReplaceExpression', () => {
 		}, 'XUDY0027');
 	});
 
-	it('disallows replacing elements with attributes', async () => {
+	it('disallows replacing elements with attributes', () => {
 		documentNode.appendChild(documentNode.createElement('element'));
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace node /element with <ele attr="value"/>/@attr',
 				documentNode,
 				null,
@@ -139,14 +143,14 @@ describe('ReplaceExpression', () => {
 		}, 'XUTY0010');
 	});
 
-	it('disallows replacing attributes with elements', async () => {
+	it('disallows replacing attributes with elements', () => {
 		documentNode
 			.appendChild(documentNode.createElement('element'))
 			.setAttribute('attr', 'value');
 
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace node /element/@attr with <ele/>',
 				documentNode,
 				null,
@@ -166,14 +170,14 @@ describe('ReplaceExpression', () => {
 		}, 'XUTY0011');
 	});
 
-	it('disallows an attribute with multiple attributes with the same prefix but different namespaces', async () => {
+	it('disallows an attribute with multiple attributes with the same prefix but different namespaces', () => {
 		documentNode
 			.appendChild(documentNode.createElement('element'))
 			.setAttribute('attr', '1234');
 
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace node /element/@attr with (<ele xmlns:xxx="YYY" xxx:attr="123"/>, <ele xmlns:xxx="ZZZ" xxx:attr="123"/>)/@*',
 				documentNode,
 				null,
@@ -193,14 +197,14 @@ describe('ReplaceExpression', () => {
 		}, 'XUDY0024');
 	});
 
-	it('disallows attributes with attributes with the same prefix but different namespaces', async () => {
+	it('disallows attributes with attributes with the same prefix but different namespaces', () => {
 		const element = documentNode.appendChild(documentNode.createElement('element'));
 		element.setAttribute('attr1', '1234');
 		element.setAttribute('attr2', '5678');
 
 		let error;
 		try {
-			const result = await evaluateUpdatingExpression(
+			const result = evaluateUpdatingExpressionSync(
 				`replace node /element/@attr1 with <ele xmlns:xxx="YYY" xxx:attr="123"/>/@*,
 				replace node /element/@attr2 with <ele xmlns:xxx="ZZZ" xxx:attr="123"/>/@*`,
 				documentNode,
@@ -222,10 +226,10 @@ describe('ReplaceExpression', () => {
 		}, 'XUDY0024');
 	});
 
-	it('disallows replacing multiple nodes at once', async () => {
+	it('disallows replacing multiple nodes at once', () => {
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace node (/, /) with <ele />',
 				documentNode,
 				null,
@@ -245,10 +249,10 @@ describe('ReplaceExpression', () => {
 		}, 'XUTY0008');
 	});
 
-	it('disallows replacing the document node', async () => {
+	it('disallows replacing the document node', () => {
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace node . with <ele></ele>',
 				documentNode,
 				null,
@@ -268,10 +272,10 @@ describe('ReplaceExpression', () => {
 		}, 'XUTY0008');
 	});
 
-	it('disallows replacing the value of a document node', async () => {
+	it('disallows replacing the value of a document node', () => {
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace value of node . with <ele></ele>',
 				documentNode,
 				null,
@@ -291,10 +295,10 @@ describe('ReplaceExpression', () => {
 		}, 'XUTY0008');
 	});
 
-	it('disallows replacing detached nodes', async () => {
+	it('disallows replacing detached nodes', () => {
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace node <ele /> with <ele />',
 				documentNode,
 				null,
@@ -314,10 +318,10 @@ describe('ReplaceExpression', () => {
 		}, 'XUDY0009');
 	});
 
-	it('disallows replacing the value of the empty sequence', async () => {
+	it('disallows replacing the value of the empty sequence', () => {
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace value of node () with <ele />',
 				documentNode,
 				null,
@@ -337,10 +341,10 @@ describe('ReplaceExpression', () => {
 		}, 'XUDY0027');
 	});
 
-	it('disallows replacing the value of multiple nodes at once', async () => {
+	it('disallows replacing the value of multiple nodes at once', () => {
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace value of node (/, /) with <ele />',
 				documentNode,
 				null,
@@ -360,10 +364,10 @@ describe('ReplaceExpression', () => {
 		}, 'XUTY0008');
 	});
 
-	it('disallows replacing the value of multiple nodes at once', async () => {
+	it('disallows replacing the value of multiple nodes at once', () => {
 		let error;
 		try {
-			await evaluateUpdatingExpression(
+			evaluateUpdatingExpressionSync(
 				'replace value of node (/, /) with <ele />',
 				documentNode,
 				null,
@@ -383,7 +387,7 @@ describe('ReplaceExpression', () => {
 		}, 'XUTY0008');
 	});
 
-	it('allows nested replaces', async () => {
+	it('allows nested replaces', () => {
 		const list = documentNode.appendChild(documentNode.createElement('list'));
 		list.setAttribute('count', '3');
 		const listItem1 = list.appendChild(documentNode.createElement('list-item'));
@@ -394,7 +398,7 @@ describe('ReplaceExpression', () => {
 		listItem3.setAttribute('i', '3');
 
 		// Duplicate all list items and set the @count attribute to the new count of items, in a very roundabout way
-		const result = await evaluateUpdatingExpression(
+		const result = evaluateUpdatingExpressionSync(
 			'replace value of node list/@count with sum(for $list-item in list/* return (replace node $list-item with ($list-item, $list-item), 2))',
 			documentNode,
 			null,
@@ -427,63 +431,11 @@ describe('ReplaceExpression', () => {
 		]);
 	});
 
-	it('allows replacing the value of something with something asynchronous', async () => {
+	it('allows replacing something with a whole document', () => {
 		const element = documentNode.appendChild(documentNode.createElement('element'));
 
 		// Duplicate all list items and set the @count attribute to the new count of items, in a very roundabout way
-		const result = await evaluateUpdatingExpression(
-			`
-declare namespace fontoxpath="http://fontoxml.com/fontoxpath";
-
-replace value of node fontoxpath:sleep(/element, 100) with fontoxpath:sleep("100", 1)
-`,
-			documentNode,
-			null,
-			{},
-			{}
-		);
-
-		chai.assert.deepEqual(result.xdmValue, []);
-		assertUpdateList(result.pendingUpdateList, [
-			{
-				target: element,
-				text: '100',
-				type: 'replaceElementContent',
-			},
-		]);
-	});
-
-	it('allows replacing something with something asynchronous', async () => {
-		const element = documentNode.appendChild(documentNode.createElement('element'));
-
-		// Duplicate all list items and set the @count attribute to the new count of items, in a very roundabout way
-		const result = await evaluateUpdatingExpression(
-			`
-declare namespace fontoxpath="http://fontoxml.com/fontoxpath";
-
-replace node fontoxpath:sleep(/element, 100) with fontoxpath:sleep(<newElement/>, 1)
-`,
-			documentNode,
-			null,
-			{},
-			{}
-		);
-
-		chai.assert.deepEqual(result.xdmValue, []);
-		assertUpdateList(result.pendingUpdateList, [
-			{
-				replacementXML: ['<newElement/>'],
-				target: element,
-				type: 'replaceNode',
-			},
-		]);
-	});
-
-	it('allows replacing something with a whole document', async () => {
-		const element = documentNode.appendChild(documentNode.createElement('element'));
-
-		// Duplicate all list items and set the @count attribute to the new count of items, in a very roundabout way
-		const result = await evaluateUpdatingExpression(
+		const result = evaluateUpdatingExpressionSync(
 			`
 declare namespace fontoxpath="http://fontoxml.com/fontoxpath";
 

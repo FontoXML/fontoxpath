@@ -5,9 +5,9 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import arePointersEqual from '../operators/compares/arePointersEqual';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, IterationResult, notReady } from './iterators';
+import { DONE_TOKEN, IIterator, IterationHint, IterationResult } from './iterators';
 
-interface IMappedIterator extends IAsyncIterator<Value> {
+interface IMappedIterator extends IIterator<Value> {
 	current: IterationResult<Value>;
 }
 
@@ -29,24 +29,17 @@ function isSameNodeValue(a: Value, b: Value) {
  * @param domFacade The domFacade to use to compare node positions
  * @param sequences The sequences to sort. MUST be locally sorted
  */
-function concatSortedSequences(sequences: IAsyncIterator<ISequence>): ISequence {
+function concatSortedSequences(sequences: IIterator<ISequence>): ISequence {
 	let currentSequence = sequences.next(IterationHint.NONE);
 	if (currentSequence.done) {
 		return sequenceFactory.empty();
 	}
-	let currentIterator: IAsyncIterator<Value> = null;
+	let currentIterator: IIterator<Value> = null;
 	let previousValue: Value = null;
 	return sequenceFactory.create({
 		next(hint: IterationHint) {
-			if (!currentSequence.ready) {
-				return notReady(
-					currentSequence.promise.then(() => {
-						currentSequence = sequences.next(IterationHint.NONE);
-					})
-				);
-			}
 			if (currentSequence.done) {
-				return currentSequence;
+				return DONE_TOKEN;
 			}
 			if (!currentIterator) {
 				currentIterator = currentSequence.value.value;
@@ -56,9 +49,6 @@ function concatSortedSequences(sequences: IAsyncIterator<ISequence>): ISequence 
 			// Scan to the next value
 			do {
 				value = currentIterator.next(hint);
-				if (!value.ready) {
-					return value;
-				}
 				if (value.done) {
 					currentSequence = sequences.next(IterationHint.NONE);
 					if (currentSequence.done) {
@@ -79,22 +69,13 @@ function concatSortedSequences(sequences: IAsyncIterator<ISequence>): ISequence 
  * @param domFacade The domFacade to use to compare node positions
  * @param sequences The sequences to sort. MUST be locally sorted
  */
-function mergeSortedSequences(
-	domFacade: DomFacade,
-	sequences: IAsyncIterator<ISequence>
-): ISequence {
+function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequence>): ISequence {
 	const allIterators: IMappedIterator[] = [];
 	// Because the sequences are sorted locally, but unsorted globally, we first need to sort all the iterators.
 	// For that, we need to know all of them
-	let allSequencesLoaded = false;
-	let allSequencesLoadedPromise = null;
 	(function loadSequences() {
 		let val = sequences.next(IterationHint.NONE);
 		while (!val.done) {
-			if (!val.ready) {
-				allSequencesLoadedPromise = val.promise.then(loadSequences);
-				return allSequencesLoadedPromise;
-			}
 			const iterator = val.value.value;
 			const mappedIterator: IMappedIterator = {
 				current: iterator.next(IterationHint.NONE),
@@ -105,8 +86,6 @@ function mergeSortedSequences(
 			}
 			val = sequences.next(IterationHint.NONE);
 		}
-		allSequencesLoaded = true;
-		return undefined;
 	})();
 	let previousNode = null;
 
@@ -115,11 +94,7 @@ function mergeSortedSequences(
 		[Symbol.iterator]() {
 			return this;
 		},
-		next: (hint: IterationHint) => {
-			if (!allSequencesLoaded) {
-				return notReady(allSequencesLoadedPromise);
-			}
-
+		next: (_hint: IterationHint) => {
 			if (!allSequencesAreSorted) {
 				allSequencesAreSorted = true;
 
@@ -151,9 +126,6 @@ function mergeSortedSequences(
 				if (!isSubtypeOf(consumedValue.value.type, 'node()')) {
 					// Sorting does not matter
 					return consumedValue;
-				}
-				if (!consumedIterator.current.ready) {
-					return consumedIterator.current;
 				}
 				if (!consumedIterator.current.done) {
 					// Make the iterators sorted again

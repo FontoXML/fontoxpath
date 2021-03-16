@@ -100,10 +100,6 @@ export default async function evaluateUpdatingExpression(
 		);
 
 		attempt = resultIterator.next(IterationHint.NONE);
-		while (!attempt.ready) {
-			await attempt.promise;
-			attempt = resultIterator.next(IterationHint.NONE);
-		}
 	} catch (error) {
 		printAndRethrowError(updateScript, error);
 	}

@@ -10,7 +10,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import { errXPST0081 } from '../XPathErrors';
 import { evaluateQNameExpression } from './nameExpression';
 import { errXQDY0044 } from './XQueryErrors';
@@ -60,10 +60,10 @@ class AttributeConstructor extends Expression {
 	}
 
 	public evaluate(dynamicContext, executionParameters) {
-		let nameIterator: IAsyncIterator<Value>;
+		let nameIterator: IIterator<Value>;
 		let name: QName;
 
-		let valueIterator: IAsyncIterator<Value>;
+		let valueIterator: IIterator<Value>;
 
 		let done = false;
 		return sequenceFactory.create({
@@ -86,9 +86,6 @@ class AttributeConstructor extends Expression {
 							);
 						}
 						const nv = nameIterator.next(IterationHint.NONE);
-						if (!nv.ready) {
-							return nv;
-						}
 						name = nv.value.value;
 					} else {
 						name = this.name;

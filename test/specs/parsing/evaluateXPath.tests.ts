@@ -51,11 +51,7 @@ describe('evaluateXPath', () => {
 		);
 		chai.assert.equal(evaluateXPath('//@*', documentNode, domFacade), 'someValue');
 	});
-	it('throws for async results', () =>
-		chai.assert.throws(
-			() => evaluateXPath('fontoxpath:sleep(())', documentNode, domFacade),
-			'can not be resolved synchronously'
-		));
+
 	it('Can not evaluate updating expressions', () =>
 		chai.assert.throws(
 			() =>
@@ -96,11 +92,6 @@ describe('evaluateXPath', () => {
 
 		it('Throws when unable to convert the result to a boolean', () =>
 			chai.assert.throws(() => evaluateXPathToBoolean('(1,2,3)', documentNode, domFacade)));
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToBoolean('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
-			));
 	});
 
 	describe('toNumber', () => {
@@ -112,12 +103,6 @@ describe('evaluateXPath', () => {
 
 		it('Returns NaN when unable to convert the result to a number', () =>
 			chai.assert.isNaN(evaluateXPathToNumber('"fortytwo"', documentNode, domFacade)));
-
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToNumber('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
-			));
 	});
 
 	describe('toNumbers', () => {
@@ -128,12 +113,6 @@ describe('evaluateXPath', () => {
 			chai.assert.throws(
 				() => evaluateXPathToNumbers('"fortytwo"', documentNode, domFacade),
 				'to resolve to numbers'
-			));
-
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToNumbers('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
 			));
 	});
 
@@ -158,11 +137,6 @@ describe('evaluateXPath', () => {
 
 		it('Returns the empty string when resolving to the empty sequence', () =>
 			chai.assert.equal(evaluateXPathToString('()', documentNode, domFacade), ''));
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToString('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
-			));
 	});
 
 	describe('toStrings', () => {
@@ -184,11 +158,6 @@ describe('evaluateXPath', () => {
 
 		it('returns an empty array when it resolves to the empty sequence', () =>
 			chai.assert.deepEqual(evaluateXPathToStrings('()', documentNode, domFacade), []));
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToStrings('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
-			));
 	});
 
 	describe('toFirstNode', () => {
@@ -232,11 +201,6 @@ describe('evaluateXPath', () => {
 		it('Throws when the xpath resolves to not a node', () => {
 			chai.assert.throws(() => evaluateXPathToFirstNode('1', documentNode, domFacade));
 		});
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToFirstNode('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
-			));
 	});
 
 	describe('toNodes', () => {
@@ -274,11 +238,6 @@ describe('evaluateXPath', () => {
 				documentNode.documentElement.attributes
 			);
 		});
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToNodes('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
-			));
 	});
 
 	describe('toArray', () => {
@@ -297,11 +256,6 @@ describe('evaluateXPath', () => {
 				'Serialization error'
 			);
 		});
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToArray('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
-			));
 	});
 
 	describe('toMap', () => {
@@ -317,11 +271,6 @@ describe('evaluateXPath', () => {
 		it('throws for maps with sequences', () => {
 			chai.assert.throws(() => evaluateXPathToMap('map{1:(2,3)}'), 'Serialization error');
 		});
-		it('throws for async results', () =>
-			chai.assert.throws(
-				() => evaluateXPathToMap('fontoxpath:sleep(())', documentNode, domFacade),
-				'can not be resolved synchronously'
-			));
 	});
 
 	describe('namespaceResolver', () => {

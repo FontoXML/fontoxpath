@@ -7,7 +7,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
 import { replaceElementContent, replaceNode, replaceValue } from './pulPrimitives';
@@ -25,8 +25,8 @@ import {
 
 function evaluateReplaceNode(
 	executionParameters: ExecutionParameters,
-	targetValueIterator: IAsyncIterator<UpdatingExpressionResult>,
-	replacementValueIterator: IAsyncIterator<UpdatingExpressionResult>
+	targetValueIterator: IIterator<UpdatingExpressionResult>,
+	replacementValueIterator: IIterator<UpdatingExpressionResult>
 ) {
 	const domFacade = executionParameters.domFacade;
 	let rlist;
@@ -41,9 +41,6 @@ function evaluateReplaceNode(
 				// 1e in Section 3.9.1.3 Content XQ30).
 
 				const rl = replacementValueIterator.next(IterationHint.NONE);
-				if (!rl.ready) {
-					return rl;
-				}
 				// Let $rlist be the node sequence that results
 				// from this evaluation. If $rlist contains a document node, the
 				// document node is replaced in $rlist by its
@@ -63,9 +60,6 @@ function evaluateReplaceNode(
 
 			// TargetExpr is evaluated and checked as follows:
 			const tv = targetValueIterator.next(IterationHint.NONE);
-			if (!tv.ready) {
-				return tv;
-			}
 			// If the result is an empty sequence,
 			// [err:XUDY0027] is raised.
 			if (tv.value.xdmValue.length === 0) {
@@ -170,8 +164,8 @@ function evaluateReplaceNode(
 
 function evaluateReplaceNodeValue(
 	executionParameters: ExecutionParameters,
-	targetValueIterator: IAsyncIterator<UpdatingExpressionResult>,
-	replacementValueIterator: IAsyncIterator<UpdatingExpressionResult>
+	targetValueIterator: IIterator<UpdatingExpressionResult>,
+	replacementValueIterator: IIterator<UpdatingExpressionResult>
 ) {
 	let target;
 	let targetUpdates;
@@ -191,9 +185,6 @@ function evaluateReplaceNodeValue(
 				// [XQuery 3.0: An XML Query Language].)
 
 				const rl = replacementValueIterator.next(IterationHint.NONE);
-				if (!rl.ready) {
-					return rl;
-				}
 				// The result of this step, in the absence of errors,
 				// is either a single text node or an empty sequence.
 				// Let $text be the result of this step.
@@ -219,9 +210,6 @@ function evaluateReplaceNodeValue(
 			if (!target) {
 				// TargetExpr is evaluated and checked as follows:
 				const tv = targetValueIterator.next(IterationHint.NONE);
-				if (!tv.ready) {
-					return tv;
-				}
 				// If the result is an empty sequence,
 				// [err:XUDY0027] is raised.
 				if (tv.value.xdmValue.length === 0) {
@@ -346,7 +334,7 @@ class ReplaceExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters

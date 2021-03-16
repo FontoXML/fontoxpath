@@ -1,10 +1,11 @@
 import { getBucketsForPointer } from '../../../getBuckets';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
+import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
-import { DONE_TOKEN, notReady, ready } from '../../util/iterators';
+import { DONE_TOKEN, ready } from '../../util/iterators';
 
 class OrOperator extends Expression {
 	private _bucket: string;
@@ -47,7 +48,7 @@ class OrOperator extends Expression {
 
 	public evaluate(dynamicContext, executionParameters) {
 		let i = 0;
-		let resultSequence = null;
+		let resultSequence: ISequence = null;
 		let done = false;
 
 		let contextItemBuckets = null;
@@ -80,11 +81,8 @@ class OrOperator extends Expression {
 								executionParameters
 							);
 						}
-						const ebv = resultSequence.tryGetEffectiveBooleanValue();
-						if (!ebv.ready) {
-							return notReady(ebv.promise);
-						}
-						if (ebv.value === true) {
+						const ebv = resultSequence.getEffectiveBooleanValue();
+						if (ebv === true) {
 							done = true;
 							return ready(trueBoolean);
 						}

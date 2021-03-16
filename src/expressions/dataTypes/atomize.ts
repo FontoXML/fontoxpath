@@ -13,7 +13,7 @@ import {
 } from '../../domFacade/ConcreteNode';
 import ExecutionParameters from '../ExecutionParameters';
 import concatSequences from '../util/concatSequences';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint } from '../util/iterators';
 import ArrayValue from './ArrayValue';
 import createAtomicValue from './createAtomicValue';
 import ISequence from './ISequence';
@@ -116,15 +116,12 @@ export default function atomize(
 	// Generate the atomized items one by one to prevent getting all items
 	let done = false;
 	const it = sequence.value;
-	let currentOutput: IAsyncIterator<Value> = null;
+	let currentOutput: IIterator<Value> = null;
 	return sequenceFactory.create({
 		next: () => {
 			while (!done) {
 				if (!currentOutput) {
 					const inputItem = it.next(IterationHint.NONE);
-					if (!inputItem.ready) {
-						return notReady(inputItem.promise);
-					}
 					if (inputItem.done) {
 						done = true;
 						break;
@@ -133,9 +130,6 @@ export default function atomize(
 					currentOutput = outputSequence.value;
 				}
 				const itemToOutput = currentOutput.next(IterationHint.NONE);
-				if (!itemToOutput.ready) {
-					return notReady(itemToOutput.promise);
-				}
 				if (itemToOutput.done) {
 					currentOutput = null;
 					continue;

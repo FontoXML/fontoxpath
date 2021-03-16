@@ -43,11 +43,6 @@ class SimpleMapOperator extends Expression {
 							done = true;
 							return childContext;
 						}
-						if (!childContext.ready) {
-							const returnableValue = childContext;
-							childContext = null;
-							return returnableValue;
-						}
 					}
 
 					// Now that we have moved an item in the input, start generating mapped items

@@ -76,22 +76,6 @@ describe('functions over maps', () => {
 				evaluateXPathToNumber('(map {"a": map{1:1}})("a")(1)', documentNode),
 				1
 			));
-
-		it('works with async params', async () => {
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					`
-(map {
-	"a" => fontoxpath:sleep(): map{
-		1: 1 => fontoxpath:sleep()
-	} => fontoxpath:sleep()
-})("a")(1 => fontoxpath:sleep())
-`,
-					documentNode
-				),
-				1
-			);
-		});
 	});
 
 	describe('map:merge', () => {
@@ -100,15 +84,6 @@ describe('functions over maps', () => {
 				evaluateXPathToMap('map:merge((map {"a": 1}, map{"b":2}))', documentNode),
 				{ a: 1, b: 2 }
 			));
-
-		it('can merge two maps asynchronously', async () => {
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(
-					'map:merge((map {"a": 1}, map{"b":2} => fontoxpath:sleep()))'
-				),
-				{ a: 1, b: 2 }
-			);
-		});
 
 		it('can handle duplicates: use-first', () =>
 			chai.assert.deepEqual(
@@ -223,31 +198,6 @@ map:merge((
 				),
 				{ a: 1 }
 			));
-
-		it('can put an item into a map which is resolved asynchronously', async () => {
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(
-					'map:put(map {"a": 1} => fontoxpath:sleep(), "b", 2)'
-				),
-				{ a: 1, b: 2 }
-			);
-		});
-		it('can put an item into a map whereby the key is resolved asynchronously', async () => {
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(
-					'map:put(map {"a": 1}, "b" => fontoxpath:sleep(), 2)'
-				),
-				{ a: 1, b: 2 }
-			);
-		});
-		it('can put an item into a map whereby the value is resolved asynchronously', async () => {
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(
-					'map:put(map {"a": 1}, "b", 2 => fontoxpath:sleep())'
-				),
-				{ a: 1, b: 2 }
-			);
-		});
 	});
 
 	describe('map:entry', () => {
@@ -261,22 +211,6 @@ map:merge((
 
 		it('returns 2 for a map with two values', () =>
 			chai.assert.equal(evaluateXPathToNumber('map:size(map{1:1, 2:2})', documentNode), 2));
-
-		it('works with async params', async () => {
-			chai.assert.equal(
-				await evaluateXPathToAsyncSingleton(
-					`
-(map {
-	"a" => fontoxpath:sleep(): map{
-		1: 1 => fontoxpath:sleep()
-	} => fontoxpath:sleep()
-})("a")(1 => fontoxpath:sleep())
-`,
-					documentNode
-				),
-				1
-			);
-		});
 	});
 
 	describe('map:keys', () => {
@@ -295,14 +229,6 @@ map:merge((
 					documentNode
 				)
 			));
-		it('works with async params', async () => {
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'let $result := map:keys(map{"a": 1, "b": 2} => fontoxpath:sleep()) return $result = "a"',
-					documentNode
-				)
-			);
-		});
 	});
 
 	describe('map:contains', () => {
@@ -313,15 +239,6 @@ map:merge((
 			chai.assert.isTrue(
 				evaluateXPathToBoolean('map:contains(map{"a":1}, "a")', documentNode)
 			));
-
-		it('works with async params', async () => {
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'map:contains(map{"a":1} => fontoxpath:sleep(), "a")',
-					documentNode
-				)
-			);
-		});
 	});
 
 	describe('map:remove', () => {
@@ -330,16 +247,6 @@ map:merge((
 				evaluateXPathToMap('map:remove(map{"a": 1}, "a")', documentNode),
 				{}
 			));
-
-		it('works with async params', async () => {
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(
-					'map:remove(map{"a":1} => fontoxpath:sleep(), "a")',
-					documentNode
-				),
-				{}
-			);
-		});
 
 		it('does nothing if the key is not present', () =>
 			chai.assert.deepEqual(evaluateXPathToMap('map:remove(map{"a":1}, "b")', documentNode), {
@@ -364,15 +271,6 @@ map:merge((
 					documentNode
 				),
 				['ab', 'bc']
-			);
-		});
-		it('works with async params', async () => {
-			chai.assert.deepEqual(
-				await evaluateXPathToAsyncSingleton(
-					'array{map:for-each(map{"a":1, "b": 2} => fontoxpath:sleep(), function ($key, $val) {$key || $val})}',
-					documentNode
-				),
-				['a1', 'b2']
 			);
 		});
 	});

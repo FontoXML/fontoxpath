@@ -1,9 +1,10 @@
+import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression from '../Expression';
-import { DONE_TOKEN, IterationHint, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 
 class Filter extends Expression {
 	private _filterExpression: Expression;
@@ -62,9 +63,6 @@ class Filter extends Expression {
 								!value.done;
 								value = iterator.next(IterationHint.NONE)
 							) {
-								if (!value.ready) {
-									return value;
-								}
 								if (requestedIndex-- === 1) {
 									done = true;
 									return value;
@@ -87,7 +85,7 @@ class Filter extends Expression {
 		const iteratorToFilter = valuesToFilter.value;
 		let iteratorItem = null;
 		let i = 0;
-		let filterResultSequence = null;
+		let filterResultSequence: ISequence = null;
 		return sequenceFactory.create({
 			next: (hint: IterationHint) => {
 				// We should only apply the hint the first time we call the nested iterator
@@ -102,11 +100,6 @@ class Filter extends Expression {
 					if (iteratorItem.done) {
 						return iteratorItem;
 					}
-					if (!iteratorItem.ready) {
-						const itemToReturn = iteratorItem;
-						iteratorItem = null;
-						return itemToReturn;
-					}
 					if (!filterResultSequence) {
 						filterResultSequence = this._filterExpression.evaluateMaybeStatically(
 							dynamicContext.scopeWithFocus(i, iteratorItem.value, valuesToFilter),
@@ -114,24 +107,18 @@ class Filter extends Expression {
 						);
 					}
 
-					const first = filterResultSequence.tryGetFirst();
-					if (!first.ready) {
-						return notReady(first.promise);
-					}
-					let shouldReturnCurrentValue;
-					if (first.value === null) {
+					const first = filterResultSequence.first();
+					let shouldReturnCurrentValue: boolean;
+					if (first === null) {
 						// Actually empty, very falsy indeed
 						// Continue to next
 						shouldReturnCurrentValue = false;
-					} else if (isSubtypeOf(first.value.type, 'xs:numeric')) {
+					} else if (isSubtypeOf(first.type, 'xs:numeric')) {
 						// Remember: XPath is one-based
-						shouldReturnCurrentValue = first.value.value === i + 1;
+						shouldReturnCurrentValue = first.value === i + 1;
 					} else {
-						const ebv = filterResultSequence.tryGetEffectiveBooleanValue();
-						if (!ebv.ready) {
-							return notReady(ebv.promise);
-						}
-						shouldReturnCurrentValue = ebv.value;
+						const ebv = filterResultSequence.getEffectiveBooleanValue();
+						shouldReturnCurrentValue = ebv;
 					}
 					// Prepare awaiting the next one
 					filterResultSequence = null;

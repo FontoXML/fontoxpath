@@ -30,40 +30,4 @@ describe('range', () => {
 
 	it('creates an empty sequence when passed 1 to ()', () =>
 		chai.assert.deepEqual(evaluateXPathToNumbers('1 to ()'), []));
-
-	it('allows async parameters', async () => {
-		chai.assert.equal(
-			await evaluateXPathToAsyncSingleton(
-				'(fontoxpath:sleep(1, 1) to fontoxpath:sleep(5, 2))!string() => string-join()'
-			),
-			'12345'
-		);
-	});
-
-	it('allows async parameters, from resolves to ()', async () => {
-		chai.assert.equal(
-			await evaluateXPathToAsyncSingleton(
-				'(fontoxpath:sleep((), 1) to fontoxpath:sleep(5, 2))'
-			),
-			null
-		);
-	});
-
-	it('allows async parameters, end resolves to ()', async () => {
-		chai.assert.equal(
-			await evaluateXPathToAsyncSingleton(
-				'(fontoxpath:sleep(1, 1) to fontoxpath:sleep((), 2))'
-			),
-			null
-		);
-	});
-
-	it('allows async parameters, end resolves to lower than from', async () => {
-		chai.assert.equal(
-			await evaluateXPathToAsyncSingleton(
-				'(fontoxpath:sleep(10, 1) to fontoxpath:sleep((), 2))'
-			),
-			null
-		);
-	});
 });

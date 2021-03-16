@@ -9,7 +9,7 @@ import TypeDeclaration from '../dataTypes/TypeDeclaration';
 import Value from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, notReady, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { performFunctionConversion } from './argumentHelper';
 import sequenceDeepEqual from './builtInFunctions_sequences_deepEqual';
@@ -21,24 +21,21 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 	let i = 1;
 	const iterator = sequence.value;
 
-	const predictedLength = sequence.tryGetLength(true);
+	const predictedLength = sequence.getLength(true);
 	let newSequenceLength = null;
 	const startIndex = Math.max(start - 1, 0);
-	if (predictedLength.ready && predictedLength.value !== -1) {
+	if (predictedLength !== -1) {
 		const endIndex =
 			length === null
-				? predictedLength.value
-				: Math.max(0, Math.min(predictedLength.value, length + (start - 1)));
+				? predictedLength
+				: Math.max(0, Math.min(predictedLength, length + (start - 1)));
 		newSequenceLength = Math.max(0, endIndex - startIndex);
 	}
 	return sequenceFactory.create(
 		{
 			next: (hint: IterationHint) => {
 				while (i < start) {
-					const tooEarlyVal = iterator.next(hint);
-					if (!tooEarlyVal.ready) {
-						return tooEarlyVal;
-					}
+					iterator.next(hint);
 					i++;
 				}
 				if (length !== null && i >= start + length) {
@@ -46,9 +43,6 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 				}
 
 				const returnableVal = iterator.next(hint);
-				if (!returnableVal.ready) {
-					return returnableVal;
-				}
 				i++;
 
 				return returnableVal;
@@ -280,7 +274,7 @@ const fnDeepEqual: FunctionDefinitionType = (
 				return DONE_TOKEN;
 			}
 			const result = deepEqualityIterator.next(IterationHint.NONE);
-			if (!result.ready || result.done) {
+			if (result.done) {
 				return result;
 			}
 			hasPassed = true;
@@ -301,12 +295,9 @@ const fnCount: FunctionDefinitionType = (
 			if (hasPassed) {
 				return DONE_TOKEN;
 			}
-			const length = sequence.tryGetLength(false);
-			if (!length.ready) {
-				return notReady(length.promise);
-			}
+			const length = sequence.getLength();
 			hasPassed = true;
-			return ready(createAtomicValue(length.value, 'xs:integer'));
+			return ready(createAtomicValue(length, 'xs:integer'));
 		},
 	});
 };
@@ -550,14 +541,14 @@ const fnForEach: FunctionDefinitionType = (
 	}
 
 	const outerIterator = sequence.value;
-	let innerIterator: IAsyncIterator<Value>;
+	let innerIterator: IIterator<Value>;
 	return sequenceFactory.create({
 		next: (hint: IterationHint) => {
 			while (true) {
 				if (!innerIterator) {
 					const item = outerIterator.next(IterationHint.NONE);
 
-					if (!item.ready || item.done) {
+					if (item.done) {
 						return item;
 					}
 

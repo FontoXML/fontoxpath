@@ -78,13 +78,6 @@ describe('cast as', () => {
 					'let $r := 0 cast as xs:boolean return $r instance of xs:boolean and $r = false()'
 				)
 			));
-		it('allows casting async params', async () => {
-			chai.assert.isTrue(
-				await evaluateXPathToAsyncSingleton(
-					'let $r := 0 => fontoxpath:sleep() cast as xs:boolean return $r instance of xs:boolean and $r = false()'
-				)
-			);
-		});
 	});
 
 	describe('to xs:integer', () => {

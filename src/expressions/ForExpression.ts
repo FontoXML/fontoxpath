@@ -7,7 +7,7 @@ import Expression from './Expression';
 import FlworExpression from './FlworExpression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import StaticContext from './StaticContext';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from './util/iterators';
 import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
 class ForExpression extends FlworExpression {
@@ -55,17 +55,17 @@ class ForExpression extends FlworExpression {
 	}
 
 	public doFlworExpression(
-		dynamicContext: DynamicContext,
-		dynamicContextIterator: IAsyncIterator<DynamicContext>,
+		_dynamicContext: DynamicContext,
+		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IAsyncIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
 	): ISequence {
 		let clauseIterator = null;
 		let currentDynamicContext: DynamicContext = null;
 
 		let position = 0;
 		return createReturnSequence({
-			next: (hint: IterationHint) => {
+			next: (_hint: IterationHint) => {
 				while (true) {
 					if (!clauseIterator) {
 						const temp = dynamicContextIterator.next(IterationHint.NONE);
@@ -83,9 +83,6 @@ class ForExpression extends FlworExpression {
 					}
 
 					const currentClauseValue = clauseIterator.next(IterationHint.NONE);
-					if (!currentClauseValue.ready) {
-						return currentClauseValue;
-					}
 					if (currentClauseValue.done) {
 						clauseIterator = null;
 						continue;

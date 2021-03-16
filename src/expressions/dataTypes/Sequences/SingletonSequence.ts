@@ -1,11 +1,11 @@
-import { DONE_TOKEN, IAsyncIterator, IAsyncResult, ready } from '../../util/iterators';
+import { DONE_TOKEN, IIterator, ready } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import sequenceFactory from '../sequenceFactory';
 import Value from '../Value';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class SingletonSequence implements ISequence {
-	public value: IAsyncIterator<Value>;
+	public value: IIterator<Value>;
 
 	private _effectiveBooleanValue: boolean;
 
@@ -49,6 +49,10 @@ export default class SingletonSequence implements ISequence {
 		return this._effectiveBooleanValue;
 	}
 
+	public getLength(): number {
+		return 1;
+	}
+
 	public isEmpty(): boolean {
 		return false;
 	}
@@ -70,21 +74,5 @@ export default class SingletonSequence implements ISequence {
 			return cases.singleton(this);
 		}
 		return cases.default(this);
-	}
-
-	public tryGetAllValues(): IAsyncResult<Value[]> {
-		return ready(this.getAllValues());
-	}
-
-	public tryGetEffectiveBooleanValue(): IAsyncResult<boolean> {
-		return ready(this.getEffectiveBooleanValue());
-	}
-
-	public tryGetFirst(): IAsyncResult<Value> {
-		return ready(this.first());
-	}
-
-	public tryGetLength(): IAsyncResult<number> {
-		return ready(1);
 	}
 }

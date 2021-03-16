@@ -1,4 +1,4 @@
-import { IAsyncIterator, IAsyncResult, IterationHint } from '../util/iterators';
+import { IIterator, IterationHint } from '../util/iterators';
 import Value from './Value';
 
 type SwitchCasesCaseEmpty = {
@@ -37,13 +37,10 @@ export type SwitchCasesCases =
 /**
  * A sequence is the central dataType in (Fonto)XPath: an ordered set of 'things'.
  *
- * It is usually consumed lazily: only when needed. It may also generate its items asynchronously. See the IAsyncResult type for more information.
- *
- * @see IAsyncResult
  * @see sequenceFactory to create Sequences.
  */
 export default interface ISequence {
-	value: IAsyncIterator<Value>;
+	value: IIterator<Value>;
 
 	expandSequence(): ISequence;
 
@@ -68,9 +65,17 @@ export default interface ISequence {
 	getEffectiveBooleanValue(): boolean;
 
 	/**
+	 * Try to get the length of this sequence.
+	 *
+	 * @param onlyIfCheap In some cases, the length of a sequence is known. This can be used for optimization purposes.
+	 */
+	getLength(onlyIfCheap?: boolean): number;
+
+	/**
 	 * Synchronously get whether this sequence is empty. Prefer to use the tryGet* functions
 	 */
 	isEmpty(): boolean;
+
 	/**
 	 * Synchronously get whether this sequence is a singleton sequence. Prefer to use the tryGet* functions
 	 */
@@ -99,20 +104,4 @@ export default interface ISequence {
 	 * @return A sequence that will yield all items of the sequence returned in the called callback.
 	 */
 	switchCases(cases: SwitchCasesCases): ISequence;
-
-	tryGetAllValues(): IAsyncResult<Value[]>;
-	/**
-	 * Get the effective boolean value of this sequence. If it is not ready, a notReady() token will be returned. Pass this along to the calling code.
-	 */
-	tryGetEffectiveBooleanValue(): IAsyncResult<boolean>;
-	/**
-	 * Get the first value of this sequence. If it is not ready, a notReady() token will be returned. Pass this along to the calling code.
-	 */
-	tryGetFirst(): IAsyncResult<Value | null>;
-	/**
-	 * Try to get the length of this sequence. If it is not ready, a notReady() token will be returned. Pass this along to the calling code.
-	 *
-	 * @param onlyIfCheap In some cases, the length of a sequence is known. This can be used for optimization purposes.
-	 */
-	tryGetLength(onlyIfCheap?: boolean): IAsyncResult<number>;
 }

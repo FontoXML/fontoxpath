@@ -88,9 +88,6 @@ export default function evaluateUpdatingExpressionSync<
 		);
 
 		attempt = resultIterator.next(IterationHint.NONE);
-		if (!attempt.ready) {
-			throw new Error('This script could not be evaluated in a not synchronous manner');
-		}
 	} catch (error) {
 		printAndRethrowError(updateScript, error);
 	}

@@ -1,8 +1,10 @@
+import { AttributeNodePointer, ElementNodePointer } from '../../domClone/Pointer';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Specificity from '../Specificity';
+import StaticContext from '../StaticContext';
 import TestAbstractExpression from './TestAbstractExpression';
 
 class NameTest extends TestAbstractExpression {
@@ -37,15 +39,18 @@ class NameTest extends TestAbstractExpression {
 
 	public evaluateToBoolean(
 		_dynamicContext: DynamicContext,
-		node: Value,
+		value: Value,
 		executionParameters: ExecutionParameters
 	) {
 		const domFacade = executionParameters.domFacade;
-		const nodeIsElement = isSubtypeOf(node.type, 'element()');
-		const nodeIsAttribute = isSubtypeOf(node.type, 'attribute()');
+		const nodeIsElement = isSubtypeOf(value.type, 'element()');
+		const nodeIsAttribute = isSubtypeOf(value.type, 'attribute()');
 		if (!nodeIsElement && !nodeIsAttribute) {
 			return false;
 		}
+
+		const node = value.value as AttributeNodePointer | ElementNodePointer;
+
 		if (
 			this._kind !== null &&
 			((this._kind === 1 && !nodeIsElement) || (this._kind === 2 && !nodeIsAttribute))
@@ -60,10 +65,10 @@ class NameTest extends TestAbstractExpression {
 			if (this._localName === '*') {
 				return true;
 			}
-			return this._localName === domFacade.getLocalName(node.value);
+			return this._localName === domFacade.getLocalName(node);
 		}
 		if (this._localName !== '*') {
-			if (this._localName !== domFacade.getLocalName(node.value)) {
+			if (this._localName !== domFacade.getLocalName(node)) {
 				return false;
 			}
 		}
@@ -74,7 +79,7 @@ class NameTest extends TestAbstractExpression {
 		const resolvedNamespaceURI =
 			this._prefix === '' ? (nodeIsElement ? this._namespaceURI : null) : this._namespaceURI;
 
-		return (domFacade.getNamespaceURI(node.value) || null) === (resolvedNamespaceURI || null);
+		return (domFacade.getNamespaceURI(node) || null) === (resolvedNamespaceURI || null);
 	}
 
 	public getBucket() {
@@ -87,7 +92,7 @@ class NameTest extends TestAbstractExpression {
 		return 'name-' + this._localName;
 	}
 
-	public performStaticEvaluation(staticContext) {
+	public performStaticEvaluation(staticContext: StaticContext) {
 		if (this._namespaceURI === null && this._prefix !== '*') {
 			this._namespaceURI = staticContext.resolveNamespace(this._prefix || '') || null;
 

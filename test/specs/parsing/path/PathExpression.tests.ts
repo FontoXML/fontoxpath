@@ -330,16 +330,4 @@ describe('relative paths', () => {
 			[documentNode.documentElement.firstChild.firstChild]
 		);
 	});
-
-	it('allows delayed execution', async () => {
-		jsonMlMapper.parse(['someNode', ['someChildNode', ['someGrandChild']]], documentNode);
-		const it = evaluateXPathToAsyncIterator(
-			'/someNode[fontoxpath:sleep(true(), 1)]',
-			documentNode
-		);
-
-		const val = await it.next();
-
-		chai.assert(val.value === documentNode.documentElement);
-	});
 });

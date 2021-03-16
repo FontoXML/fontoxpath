@@ -6,7 +6,7 @@ import FlworExpression from './FlworExpression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import StaticContext from './StaticContext';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from './util/iterators';
 import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
 class LetExpression extends FlworExpression {
@@ -48,9 +48,9 @@ class LetExpression extends FlworExpression {
 
 	public doFlworExpression(
 		_dynamicContext: DynamicContext,
-		dynamicContextIterator: IAsyncIterator<DynamicContext>,
+		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IAsyncIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
 	): ISequence {
 		return createReturnSequence({
 			next: (_hint) => {

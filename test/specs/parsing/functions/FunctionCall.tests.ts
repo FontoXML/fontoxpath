@@ -45,16 +45,6 @@ describe('Dynamic function call', () => {
 			100
 		));
 
-	it('allows async recursion', async () => {
-		const it = evaluateXPathToAsyncIterator(
-			'let $fn := function ($recurse, $i) {if ($i < 100) then fontoxpath:sleep($recurse($recurse, $i + 1), 1) else $i } return $fn($fn, 0)',
-			documentNode
-		);
-
-		chai.assert.equal((await it.next()).value, 100);
-		chai.assert.equal((await it.next()).done, true);
-	});
-
 	it('Fibonacci', async () => {
 		const it = evaluateXPathToAsyncIterator(
 			`

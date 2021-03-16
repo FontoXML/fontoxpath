@@ -23,19 +23,4 @@ describe('AttributeConstructor', () => {
 		chai.assert.equal(attribute.name, 'attr');
 		chai.assert.equal(attribute.value, 'val');
 	});
-	it('can create an attribute with asynchronous', async () => {
-		const attribute = await evaluateXPathToAsyncSingleton(
-			`
-		declare namespace fontoxpath="http://fontoxml.com/fontoxpath";
-		attribute {fontoxpath:sleep("attr", 100)} {fontoxpath:sleep("val", 100)}`,
-			documentNode,
-			undefined,
-			{},
-			{ language: evaluateXPath.XQUERY_3_1_LANGUAGE }
-		);
-
-		chai.assert.equal(attribute.nodeType, 2);
-		chai.assert.equal(attribute.name, 'attr');
-		chai.assert.equal(attribute.value, 'val');
-	});
 });
