@@ -1,6 +1,42 @@
 import * as chai from 'chai';
-import { evaluateUpdatingExpression, evaluateXPath, registerXQueryModule } from 'fontoxpath';
-import sinon = require('sinon');
+import {
+	evaluateUpdatingExpression,
+	evaluateXPath,
+	evaluateXPathToString,
+	registerCustomXPathFunction,
+	registerXQueryModule,
+} from 'fontoxpath';
+import * as sinon from 'sinon';
+
+function a() {
+	throw new Error('Test error');
+}
+function b() {
+	a();
+}
+function c() {
+	b();
+}
+
+function d() {
+	return evaluateXPathToString(
+		'if(true() and Q{test}boom-abc()) then "steve" else "bob"',
+		null,
+		null,
+		null,
+		{
+			debug: true,
+		}
+	);
+}
+
+function e() {
+	d();
+}
+
+function f() {
+	e();
+}
 
 describe('showStackTraceOnError', () => {
 	let consoleErrorStub: sinon.SinonStub<[any?, ...any[]], void>;
@@ -11,6 +47,29 @@ describe('showStackTraceOnError', () => {
 		consoleErrorStub = sinon.stub(console, 'error').callsFake((_message) => {
 			// No errors in the console :)
 		});
+
+		// This function will call 3 nested JS functions which we expect in our call stack
+		registerCustomXPathFunction(
+			{ namespaceURI: 'test', localName: 'boom-abc' },
+			[],
+			'xs:string',
+			(_dynamicContext) => {
+				// This will throw an error so no need for a return
+				c();
+			}
+		);
+
+		// This function will call 3 nested JS functions which we expect in our call stack as well
+		// as the call stack of boom-abc
+		registerCustomXPathFunction(
+			{ namespaceURI: 'test', localName: 'boom-def' },
+			[],
+			'xs:string',
+			(_dynamicContext) => {
+				// This will throw an error so no need for a return
+				f();
+			}
+		);
 	});
 
 	it('shows a stack trace for a dynamic error', () => {
@@ -194,5 +253,103 @@ Error: XPST0008, The variable map is not in scope.
 		} catch (error) {
 			chai.assert.deepEqual(error.position, position);
 		}
+	});
+
+	it('shows the JS stack trace for error in a custom xpath function', () => {
+		try {
+			evaluateXPath('Q{test}boom-abc()', null, null, null, null, { debug: true });
+			chai.assert.fail('The custom xpath function must throw an error');
+		} catch (error) {
+			// We compare separate lines of the error message as the stack trace contains
+			// machine specific data e.g. your user name
+			chai.assert.include(
+				error.message,
+				`1: Q{test}boom-abc()
+   ^^^^^^^^^^^^^^^^^
+
+Error: Custom XPath function Q{test}boom-abc raised:
+Test error
+    at a (`
+			);
+
+			const errorMessageLines = error.message.split('\n');
+
+			// Check the error message lines containing our JS call stack contain function name,
+			// filename, and line number. We only check these as the full error message is machine
+			// specific (may contain user name in the full file paths)
+			chai.assert.include(errorMessageLines[5], '    at a (');
+			chai.assert.include(errorMessageLines[5], 'stackTrace.tests.ts:12:8)');
+
+			chai.assert.include(errorMessageLines[6], '    at b (');
+			chai.assert.include(errorMessageLines[6], 'stackTrace.tests.ts:15:2)');
+
+			chai.assert.include(errorMessageLines[7], '    at c (');
+			chai.assert.include(errorMessageLines[7], 'stackTrace.tests.ts:18:2)');
+
+			chai.assert.equal(errorMessageLines[15], '  at <functionCallExpr>:1:1 - 1:18');
+		}
+	});
+
+	it('shows the JS stack trace for error in nested custom xpath functions', () => {
+		try {
+			evaluateXPath('Q{test}boom-def()', null, null, null, null, { debug: true });
+			chai.assert.fail('The custom xpath function must throw an error');
+		} catch (error) {
+			chai.assert.include(
+				error.message,
+				`1: Q{test}boom-def()
+   ^^^^^^^^^^^^^^^^^
+
+Error: Custom XPath function Q{test}boom-def raised:
+1: if(true() and Q{test}boom-abc()) then "steve" else "bob"
+                 ^^^^^^^^^^^^^^^^^
+
+Error: Custom XPath function Q{test}boom-abc raised:
+Test error
+    at a (`
+			);
+
+			// Check the error message lines containing our JS call stack contain function name,
+			// filename, and line number. We only check these as the full error message is machine
+			// specific (may contain user name in the full file paths)
+			chai.assert.include(error.message, '    at a (');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:12:8)');
+
+			chai.assert.include(error.message, '    at b (');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:15:2)');
+
+			chai.assert.include(error.message, '    at c (');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:18:2)');
+
+			chai.assert.include(error.message, '  at <functionCallExpr>:1:15 - 1:32');
+			chai.assert.include(error.message, '  at <andOp>:1:4 - 1:32');
+			chai.assert.include(error.message, '  at <ifThenElseExpr>:1:1 - 1:57');
+
+			chai.assert.include(error.message, '    at d (');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:22:9)');
+
+			chai.assert.include(error.message, '    at e (');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:34:2)');
+
+			chai.assert.include(error.message, '    at f (');
+			chai.assert.include(error.message, 'stackTrace.tests.ts:38:2)');
+
+			chai.assert.include(error.message, '  at <functionCallExpr>:1:1 - 1:18');
+		}
+	});
+
+	it('does not show a JS stack trace for a regular XQuery error', () => {
+		chai.assert.throws(
+			() => {
+				evaluateXPath('$map("key"), Q{foo}boom-abc()', null, null, null, null, {
+					debug: true,
+				});
+			},
+			`1: $map("key"), Q{foo}boom-abc()
+   ^^^^^^^^^^^
+
+Error: XPST0008, The variable map is not in scope.
+  at <pathExpr>:1:1 - 1:12`
+		);
 	});
 });

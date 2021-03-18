@@ -269,6 +269,19 @@ describe('registerCustomXPathFunction', () => {
 		);
 	});
 
+	it('disallows registering in the default namespace', () => {
+		chai.assert.throws(
+			() =>
+				registerCustomXPathFunction(
+					'custom-function-in-no-ns',
+					[],
+					'xs:boolean',
+					() => true
+				),
+			'Do not register custom functions in the default function namespace'
+		);
+	});
+
 	it('disallows attributes as parameters', () => {
 		chai.assert.throws(
 			() =>

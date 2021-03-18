@@ -1,4 +1,5 @@
 import IDomFacade from './domFacade/IDomFacade';
+import { PositionedError } from './evaluationUtils/PositionedError';
 import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptValueToXPathValue';
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
@@ -19,6 +20,41 @@ type DynamicContextAdapter = {
 	currentContext: any;
 	domFacade: IDomFacade;
 };
+
+class CustomXPathFunctionError extends Error {
+	constructor(innerError: Error | PositionedError, localName: string, namespaceURI: string) {
+		let stack = innerError.stack;
+		if (stack) {
+			// On some browsers, error.stack includes error.message, on others it does not. We make sure
+			// we only have the stack without message
+			if (stack.includes(innerError.message)) {
+				stack = stack
+					.substr(stack.indexOf(innerError.message) + innerError.message.length)
+					.trim();
+			}
+
+			// Some browsers show the entire call stack and some browsers only include the last 10
+			// calls. We force it at the last 10 calls to prevent that recursive custom xpath
+			// functions include the full call stack multiple times.
+			let stackLines = stack.split('\n');
+			stackLines.splice(10);
+
+			// We always indent our XQuery stack trace lines with 2 spaces. For easier readability
+			// we ensure these are indented with 4 spaces (some browsers already do this)
+			stackLines = stackLines.map((line) => {
+				if (line.startsWith('    ') || line.startsWith('\t')) {
+					return line;
+				}
+				return `    ${line}`;
+			});
+
+			stack = stackLines.join('\n');
+		}
+
+		const message = `Custom XPath function Q{${namespaceURI}}${localName} raised:\n${innerError.message}\n${stack}`;
+		super(message);
+	}
+}
 
 function adaptXPathValueToJavascriptValue(
 	valueSequence: ISequence,
@@ -130,7 +166,14 @@ export default function registerCustomXPathFunction(
 			['domFacade']: executionParameters.domFacade.unwrap(),
 		};
 
-		const jsResult = callback.apply(undefined, [dynamicContextAdapter, ...newArguments]);
+		let jsResult;
+		try {
+			jsResult = callback.apply(undefined, [dynamicContextAdapter, ...newArguments]);
+		} catch (error) {
+			// We throw our own error here so we can keep the JS stack only for custom XPath
+			// functions
+			throw new CustomXPathFunctionError(error, localName, namespaceURI);
+		}
 
 		if (jsResult && typeof jsResult === 'object' && IS_XPATH_VALUE_SYMBOL in jsResult) {
 			// If this symbol is present, the value has already undergone type conversion.
