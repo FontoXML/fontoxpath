@@ -175,7 +175,7 @@ export default function registerCustomXPathFunction(
 			throw new CustomXPathFunctionError(error, localName, namespaceURI);
 		}
 
-		if (jsResult && typeof jsResult === 'object' && IS_XPATH_VALUE_SYMBOL in jsResult) {
+		if (jsResult && typeof jsResult === 'object' && Object.getOwnPropertySymbols(jsResult).includes(IS_XPATH_VALUE_SYMBOL)) {
 			// If this symbol is present, the value has already undergone type conversion.
 			const castedObject = jsResult as TypedExternalValue;
 			return sequenceFactory.create(castedObject.convertedValue);
