@@ -1,11 +1,11 @@
 import { getBucketsForPointer } from '../../../getBuckets';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
+import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
 import { DONE_TOKEN, ready } from '../../util/iterators';
-import ISequence from 'src/expressions/dataTypes/ISequence';
 
 class OrOperator extends Expression {
 	private _bucket: string;

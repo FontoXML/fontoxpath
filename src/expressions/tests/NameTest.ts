@@ -1,4 +1,4 @@
-import { AttributeNodePointer, ElementNodePointer } from 'src/domClone/Pointer';
+import { AttributeNodePointer, ElementNodePointer } from '../../domClone/Pointer';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';

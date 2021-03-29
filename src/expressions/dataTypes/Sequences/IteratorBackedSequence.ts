@@ -225,11 +225,11 @@ export default class IteratorBackedSequence implements ISequence {
 
 		const iterator = this.value;
 		this._cacheAllValues = true;
-		for (
-			let val = iterator.next(IterationHint.NONE);
-			!val.done;
-			val = iterator.next(IterationHint.NONE)
-		) {}
+
+		let val = iterator.next(IterationHint.NONE);
+		while (!val.done) {
+			val = iterator.next(IterationHint.NONE);
+		}
 
 		return ready(this._cachedValues);
 	}

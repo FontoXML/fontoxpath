@@ -1,14 +1,14 @@
+import { NodePointer } from '../../../domClone/Pointer';
 import { getBucketsForPointer } from '../../../getBuckets';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
+import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import DynamicContext from '../../DynamicContext';
+import ExecutionParameters from '../../ExecutionParameters';
 import Expression from '../../Expression';
 import Specificity from '../../Specificity';
 import { DONE_TOKEN, ready } from '../../util/iterators';
-import ISequence from 'src/expressions/dataTypes/ISequence';
-import DynamicContext from 'src/expressions/DynamicContext';
-import ExecutionParameters from 'src/expressions/ExecutionParameters';
-import { NodePointer } from 'src/domClone/Pointer';
 
 class AndOperator extends Expression {
 	private _subExpressions: Expression[];

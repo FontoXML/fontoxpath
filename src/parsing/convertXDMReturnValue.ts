@@ -1,3 +1,4 @@
+import { NodePointer } from '../domClone/Pointer';
 import realizeDom from '../domClone/realizeDom';
 import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
 import ArrayValue from '../expressions/dataTypes/ArrayValue';
@@ -14,7 +15,6 @@ import transformXPathItemToJavascriptObject, {
 	transformMapToObject,
 } from '../transformXPathItemToJavascriptObject';
 import { Node } from '../types/Types';
-import { NodePointer } from 'src/domClone/Pointer';
 
 /**
  * @public

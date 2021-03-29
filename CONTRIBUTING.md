@@ -116,11 +116,10 @@ the most to do with the function you'd like to implement.
 
 ### Datastructures
 
-FontoXPath uses lazy evaluation and we are moving towards asynchronous
-evaluation. This means the main datastructure (`Sequence`) is
+FontoXPath uses lazy evaluation. This means the main datastructure (`Sequence`) is
 basically a generator. It has a number of functions which can easily
 get the first item, all items, the effective boolean value, etc. We
-tend to use the methods like `tryGetFirst()`, `tryGetLength()`,
+tend to use the methods like `first()`, `length()`,
 `mapCases()` and `map()` for new code. The array functions located
 at `src/selectors/functions/builtInFunctions.arrays.ts` are a good
 example for new functions.
@@ -128,12 +127,8 @@ example for new functions.
 An iteration item (obtained by iterating over `Sequence#value`) can
 have three forms:
 
-- `{ ready: false, promise: Promise<void> }`: This means the iteration
-  result will be available at a later time. This may be the case if
-  the iteration requires something asynchronous.
-- `{ ready: true, done: false, value: <any> }`: We have a value that
-  can be worked with.
-- `{ ready: true, done: true }`: We are done iterating.
+- `{ done: false, value: <any> }`: We have a value.
+- `{ done: true }`: We are done iterating.
 
 ### Debugging
 

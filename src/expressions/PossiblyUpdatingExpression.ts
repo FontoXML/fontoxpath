@@ -30,7 +30,7 @@ export function separateXDMValueFromUpdatingExpressionResult(
 	outputPUL: (updates: IPendingUpdate[]) => void
 ): ISequence {
 	let allValues: Value[];
-	let itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
+	const itResult = updatingExpressionResultIterator.next(IterationHint.NONE);
 	outputPUL(itResult.value.pendingUpdateList);
 	allValues = itResult.value.xdmValue;
 	return sequenceFactory.create(allValues);

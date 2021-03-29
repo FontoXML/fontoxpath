@@ -18,7 +18,7 @@ const opTo: FunctionDefinitionType = (
 		return sequenceFactory.empty();
 	}
 	let fromValue = from.value as number;
-	let toValue = to.value as number;
+	const toValue = to.value as number;
 	if (fromValue > toValue) {
 		return sequenceFactory.empty();
 	}

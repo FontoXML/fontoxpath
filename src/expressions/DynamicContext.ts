@@ -2,7 +2,7 @@ import ISequence from './dataTypes/ISequence';
 import Value from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import DayTimeDuration from './dataTypes/valueTypes/DayTimeDuration';
-import { IAsyncIterator, IterationHint, ready, DONE_TOKEN } from './util/iterators';
+import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
 
 type TemporalContext = {
 	currentDateTime: DateTime | null;

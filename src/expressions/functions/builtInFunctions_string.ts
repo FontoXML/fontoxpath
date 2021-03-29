@@ -5,12 +5,12 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import Value from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import builtInNumericFunctions from './builtInFunctions_numeric';
 import FunctionDefinitionType from './FunctionDefinitionType';
-import Value from '../dataTypes/Value';
 
 const fnRound = builtInNumericFunctions.functions.round;
 

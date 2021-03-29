@@ -1,14 +1,13 @@
-import { DONE_TOKEN, IAsyncIterator, ready } from './expressions/util/iterators';
-
+import { NodePointer } from './domClone/Pointer';
 import realizeDom from './domClone/realizeDom';
 import ArrayValue from './expressions/dataTypes/ArrayValue';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import MapValue from './expressions/dataTypes/MapValue';
 import Value from './expressions/dataTypes/Value';
-import ExecutionParameters from './expressions/ExecutionParameters';
-import QName from './expressions/dataTypes/valueTypes/QName';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
-import { NodePointer } from './domClone/Pointer';
+import QName from './expressions/dataTypes/valueTypes/QName';
+import ExecutionParameters from './expressions/ExecutionParameters';
+import { DONE_TOKEN, IAsyncIterator, ready } from './expressions/util/iterators';
 
 export function transformMapToObject(
 	map: MapValue,

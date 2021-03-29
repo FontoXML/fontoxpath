@@ -1,10 +1,10 @@
 import * as chai from 'chai';
 import { evaluateXPathToBoolean } from 'fontoxpath';
-import * as slimdom from 'slimdom';
+import { Document } from 'slimdom';
 
 let documentNode: Document;
 beforeEach(() => {
-	documentNode = new slimdom.Document();
+	documentNode = new Document();
 });
 
 describe('castable as', () => {
