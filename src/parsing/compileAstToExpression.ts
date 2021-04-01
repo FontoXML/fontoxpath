@@ -761,8 +761,6 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 	const steps = rawSteps.map((step) => {
 		const axis = astHelper.getFirstChild(step, 'xpathAxis');
 
-		const predicates = astHelper.getFirstChild(step, 'predicates');
-		const lookups = astHelper.getChildren(step, 'lookup');
 		let stepExpression: Expression;
 
 		if (axis) {
@@ -834,22 +832,33 @@ function pathExpr(ast: IAST, compilationOptions: CompilationOptions) {
 			stepExpression = compile(filterExpr, disallowUpdating(compilationOptions));
 		}
 
-		if (predicates) {
-			return astHelper
-				.getChildren(predicates, '*')
-				.reduce(
-					(innerStep, predicate) =>
-						new Filter(
-							innerStep,
-							compile(predicate, disallowUpdating(compilationOptions))
-						),
-					stepExpression
-				);
+		const children = astHelper.getChildren(step, '*');
+
+		for (const child of children) {
+			switch (child[0]) {
+				case 'lookup':
+					stepExpression = new Lookup(
+						stepExpression,
+						compileLookup(child, compilationOptions)
+					);
+					break;
+				case 'predicate':
+				case 'predicates':
+					stepExpression = astHelper
+						.getChildren(child, '*')
+						.reduce(
+							(innerStep, predicate) =>
+								new Filter(
+									innerStep,
+									compile(predicate, disallowUpdating(compilationOptions))
+								),
+							stepExpression
+						);
+					break;
+			}
 		}
 
-		return lookups.reduce((innerStep, lookup) => {
-			return new Lookup(innerStep, compileLookup(lookup, compilationOptions));
-		}, stepExpression);
+		return stepExpression;
 	});
 
 	const isAbsolute = astHelper.getFirstChild(ast, 'rootExpr');
