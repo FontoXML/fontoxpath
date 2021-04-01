@@ -12,7 +12,7 @@ import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
@@ -24,7 +24,7 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 	query,
 	args
 ) => {
-	let resultIterator: IAsyncIterator<Value>;
+	let resultIterator: IIterator<Value>;
 	let queryString: string;
 	return sequenceFactory.create({
 		next: () => {

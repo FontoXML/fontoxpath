@@ -12,7 +12,7 @@ import PossiblyUpdatingExpression, {
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { DONE_TOKEN, IAsyncIterator, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, ready } from '../util/iterators';
 import { errXPTY0004 } from '../XPathErrors';
 import { IPendingUpdate } from '../xquery-update/IPendingUpdate';
 import { mergeUpdates } from '../xquery-update/pulRoutines';
@@ -152,7 +152,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		if (!this._functionReference || !this._functionReference.isUpdating) {
 			// The function reference can not be updating at this point
 			// We need to call the performFunctionalEvaluation, using the base implementation of evaluateWithUpdateList
@@ -207,11 +207,11 @@ class FunctionCall extends PossiblyUpdatingExpression {
 				if (done) {
 					return DONE_TOKEN;
 				}
-				const allValues = returnSequence.tryGetAllValues();
+				const allValues = returnSequence.getAllValues();
 				done = true;
 				return ready({
 					pendingUpdateList,
-					xdmValue: allValues.value,
+					xdmValue: allValues,
 				});
 			},
 		};

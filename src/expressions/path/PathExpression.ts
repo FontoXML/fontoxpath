@@ -9,7 +9,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import createSingleValueIterator from '../util/createSingleValueIterator';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import { concatSortedSequences, mergeSortedSequences } from '../util/sortedSequenceUtils';
 
 function sortResults(domFacade: DomFacade, result: Value[]) {
@@ -65,7 +65,7 @@ class PathExpression extends Expression {
 		let sequenceHasPeerProperty = true;
 		const result = this._stepExpressions.reduce<ISequence>(
 			(intermediateResultNodesSequence, selector) => {
-				let childContextIterator: IAsyncIterator<DynamicContext>;
+				let childContextIterator: IIterator<DynamicContext>;
 				if (intermediateResultNodesSequence === null) {
 					// first call, we should use the current dynamic context
 					childContextIterator = createSingleValueIterator(dynamicContext);
@@ -74,7 +74,7 @@ class PathExpression extends Expression {
 						intermediateResultNodesSequence
 					);
 				}
-				let resultValuesInOrderOfEvaluation: IAsyncIterator<ISequence> = {
+				let resultValuesInOrderOfEvaluation: IIterator<ISequence> = {
 					next: (hint: IterationHint) => {
 						const childContext = childContextIterator.next(hint);
 

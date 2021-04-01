@@ -66,22 +66,22 @@ export default function convertXDMReturnValue<
 		}
 
 		case ReturnType.STRING: {
-			const allValues = atomize(rawResults, executionParameters).tryGetAllValues();
-			if (!allValues.value.length) {
+			const allValues = atomize(rawResults, executionParameters).getAllValues();
+			if (!allValues.length) {
 				return '' as IReturnTypes<TNode>[TReturnType];
 			}
 			// Atomize to convert (attribute)nodes to be strings
-			return allValues.value
+			return allValues
 				.map((value) => castToType(value, 'xs:string').value)
 				.join(' ') as IReturnTypes<TNode>[TReturnType];
 		}
 		case ReturnType.STRINGS: {
-			const allValues = atomize(rawResults, executionParameters).tryGetAllValues();
-			if (!allValues.value.length) {
+			const allValues = atomize(rawResults, executionParameters).getAllValues();
+			if (!allValues.length) {
 				return [] as IReturnTypes<TNode>[TReturnType];
 			}
 			// Atomize all parts
-			return allValues.value.map((value) => {
+			return allValues.map((value) => {
 				return value.value + '';
 			}) as IReturnTypes<TNode>[TReturnType];
 		}
@@ -118,10 +118,10 @@ export default function convertXDMReturnValue<
 		}
 
 		case ReturnType.NODES: {
-			const allResults = rawResults.tryGetAllValues();
+			const allResults = rawResults.getAllValues();
 
 			if (
-				!allResults.value.every((value) => {
+				!allResults.every((value) => {
 					return isSubtypeOf(value.type, 'node()');
 				})
 			) {
@@ -129,7 +129,7 @@ export default function convertXDMReturnValue<
 					'Expected XPath ' + expression + ' to resolve to a sequence of Nodes.'
 				);
 			}
-			return allResults.value.map((nodeValue) => {
+			return allResults.map((nodeValue) => {
 				return realizeDom(
 					nodeValue.value as NodePointer,
 					executionParameters,
@@ -139,12 +139,12 @@ export default function convertXDMReturnValue<
 		}
 
 		case ReturnType.MAP: {
-			const allValues = rawResults.tryGetAllValues();
+			const allValues = rawResults.getAllValues();
 
-			if (allValues.value.length !== 1) {
+			if (allValues.length !== 1) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to a single map.');
 			}
-			const first = allValues.value[0];
+			const first = allValues[0];
 			if (!isSubtypeOf(first.type, 'map(*)')) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to a map');
 			}
@@ -173,8 +173,8 @@ export default function convertXDMReturnValue<
 		}
 
 		case ReturnType.NUMBERS: {
-			const allValues = rawResults.tryGetAllValues();
-			return allValues.value.map((value) => {
+			const allValues = rawResults.getAllValues();
+			return allValues.map((value) => {
 				if (!isSubtypeOf(value.type, 'xs:numeric')) {
 					throw new Error('Expected XPath ' + expression + ' to resolve to numbers');
 				}

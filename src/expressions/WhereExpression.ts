@@ -5,7 +5,7 @@ import Expression, { RESULT_ORDERINGS } from './Expression';
 import FlworExpression from './FlworExpression';
 import PossiblyUpdatingExpression from './PossiblyUpdatingExpression';
 import Specificity from './Specificity';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from './util/iterators';
 
 class WhereExpression extends FlworExpression {
 	private _testExpression: Expression;
@@ -32,9 +32,9 @@ class WhereExpression extends FlworExpression {
 
 	public doFlworExpression(
 		_dynamicContext: DynamicContext,
-		dynamicContextIterator: IAsyncIterator<DynamicContext>,
+		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IAsyncIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
 	): ISequence {
 		let currentDynamicContext: DynamicContext = null;
 		let testExpressionResult: ISequence = null;

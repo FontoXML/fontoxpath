@@ -10,14 +10,14 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createChildGenerator from '../util/createChildGenerator';
 import createSingleValueIterator from '../util/createSingleValueIterator';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 
 function createInclusiveDescendantGenerator(
 	domFacade: DomFacade,
 	node: ChildNodePointer,
 	bucket: string | null
-): IAsyncIterator<Value> {
-	const descendantIteratorStack: IAsyncIterator<ChildNodePointer>[] = [
+): IIterator<Value> {
+	const descendantIteratorStack: IIterator<ChildNodePointer>[] = [
 		createSingleValueIterator(node),
 	];
 	return {

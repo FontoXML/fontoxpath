@@ -7,12 +7,12 @@ import Value from './expressions/dataTypes/Value';
 import DateTime from './expressions/dataTypes/valueTypes/DateTime';
 import QName from './expressions/dataTypes/valueTypes/QName';
 import ExecutionParameters from './expressions/ExecutionParameters';
-import { DONE_TOKEN, IAsyncIterator, ready } from './expressions/util/iterators';
+import { DONE_TOKEN, IIterator, ready } from './expressions/util/iterators';
 
 export function transformMapToObject(
 	map: MapValue,
 	executionParameters: ExecutionParameters
-): IAsyncIterator<object> {
+): IIterator<object> {
 	const mapObj = {};
 	let i = 0;
 	let done = false;
@@ -63,7 +63,7 @@ export function transformMapToObject(
 export function transformArrayToArray(
 	array: ArrayValue,
 	executionParameters: ExecutionParameters
-): IAsyncIterator<any[]> {
+): IIterator<any[]> {
 	const arr = [];
 	let i = 0;
 	let done = false;
@@ -107,7 +107,7 @@ export function transformArrayToArray(
 export default function transformXPathItemToJavascriptObject(
 	value: Value,
 	executionParameters: ExecutionParameters
-): IAsyncIterator<any> {
+): IIterator<any> {
 	if (isSubtypeOf(value.type, 'map(*)')) {
 		return transformMapToObject(value as MapValue, executionParameters);
 	}

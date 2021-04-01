@@ -12,7 +12,7 @@ import { separateXDMValueFromUpdatingExpressionResult } from '../PossiblyUpdatin
 import Specificity from '../Specificity';
 import StaticContext from '../StaticContext';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IIterator, IterationHint, ready } from '../util/iterators';
 import createPendingUpdateFromTransferable from './createPendingUpdateFromTransferable';
 import { IPendingUpdate } from './IPendingUpdate';
 import { applyUpdates, mergeUpdates } from './pulRoutines';
@@ -79,12 +79,12 @@ class TransformExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		const { domFacade, nodesFactory, documentWriter } = executionParameters;
 
-		const sourceValueIterators: IAsyncIterator<UpdatingExpressionResult>[] = [];
-		let modifyValueIterator: IAsyncIterator<UpdatingExpressionResult>;
-		let returnValueIterator: IAsyncIterator<UpdatingExpressionResult>;
+		const sourceValueIterators: IIterator<UpdatingExpressionResult>[] = [];
+		let modifyValueIterator: IIterator<UpdatingExpressionResult>;
+		let returnValueIterator: IIterator<UpdatingExpressionResult>;
 
 		let modifyPul: IPendingUpdate[];
 		const createdNodes = [];
@@ -96,7 +96,7 @@ class TransformExpression extends UpdatingExpression {
 					// The copy clause contains one or more variable bindings, each of which consists of a variable name and an expression called the source expression.
 					for (let i = createdNodes.length; i < this._variableBindings.length; i++) {
 						const variableBinding = this._variableBindings[i];
-						let sourceValueIterator: IAsyncIterator<UpdatingExpressionResult> =
+						let sourceValueIterator: IIterator<UpdatingExpressionResult> =
 							sourceValueIterators[i];
 
 						// Each variable binding is processed as follows:

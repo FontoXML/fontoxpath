@@ -6,7 +6,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import PossiblyUpdatingExpression from '../PossiblyUpdatingExpression';
 import StaticContext from '../StaticContext';
-import { IAsyncIterator, IterationHint } from '../util/iterators';
+import { IIterator, IterationHint } from '../util/iterators';
 import { errXUST0001 } from '../xquery-update/XQueryUpdateFacilityErrors';
 
 class IfExpression extends PossiblyUpdatingExpression {
@@ -41,7 +41,7 @@ class IfExpression extends PossiblyUpdatingExpression {
 		_executionParameters: ExecutionParameters,
 		sequenceCallbacks: ((dynamicContext: DynamicContext) => ISequence)[]
 	) {
-		let resultIterator: IAsyncIterator<Value> | null = null;
+		let resultIterator: IIterator<Value> | null = null;
 		const ifExpressionResultSequence = sequenceCallbacks[0](dynamicContext);
 
 		return sequenceFactory.create({

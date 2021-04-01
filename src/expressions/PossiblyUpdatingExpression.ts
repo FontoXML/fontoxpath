@@ -7,7 +7,7 @@ import Expression, { OptimizationOptions } from './Expression';
 import Specificity from './Specificity';
 import StaticContext from './StaticContext';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from './util/iterators';
 import { IPendingUpdate } from './xquery-update/IPendingUpdate';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import UpdatingExpression from './xquery-update/UpdatingExpression';
@@ -26,7 +26,7 @@ export type SequenceCallbacks = ((dynamicContext: DynamicContext) => ISequence)[
  * @return The XDMValue, as an ISequence
  */
 export function separateXDMValueFromUpdatingExpressionResult(
-	updatingExpressionResultIterator: IAsyncIterator<UpdatingExpressionResult>,
+	updatingExpressionResultIterator: IIterator<UpdatingExpressionResult>,
 	outputPUL: (updates: IPendingUpdate[]) => void
 ): ISequence {
 	let allValues: Value[];
@@ -66,7 +66,7 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		let updateList = [];
 
 		const sequence = this.performFunctionalEvaluation(
@@ -99,9 +99,9 @@ export default abstract class PossiblyUpdatingExpression extends UpdatingExpress
 				}
 				// Ensure we fully exhaust the inner expression so that the pending update list is
 				// filled
-				const allValues = sequence.tryGetAllValues();
+				const allValues = sequence.getAllValues();
 				done = true;
-				return ready(new UpdatingExpressionResult(allValues.value, updateList));
+				return ready(new UpdatingExpressionResult(allValues, updateList));
 			},
 		};
 	}

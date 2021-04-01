@@ -11,7 +11,7 @@ import Specificity from './Specificity';
 import StaticContext from './StaticContext';
 import UpdatingExpressionResult from './UpdatingExpressionResult';
 import createSingleValueIterator from './util/createSingleValueIterator';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from './util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from './util/iterators';
 import { mergeUpdates } from './xquery-update/pulRoutines';
 import { errXUST0001 } from './xquery-update/XQueryUpdateFacilityErrors';
 
@@ -32,16 +32,16 @@ abstract class FlworExpression extends Expression {
 
 	public abstract doFlworExpression(
 		dynamicContext: DynamicContext,
-		dynamicContextIterator: IAsyncIterator<DynamicContext>,
+		dynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters,
-		createReturnSequence: (dynamicContextIterator: IAsyncIterator<DynamicContext>) => ISequence
+		createReturnSequence: (dynamicContextIterator: IIterator<DynamicContext>) => ISequence
 	): ISequence;
 
 	public doFlworExpressionUpdating(
 		outerDynamicContext: DynamicContext,
-		outerDynamicContextIterator: IAsyncIterator<DynamicContext>,
+		outerDynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		let updateList = [];
 		const sequence = this.doFlworExpression(
 			outerDynamicContext,
@@ -62,7 +62,7 @@ abstract class FlworExpression extends Expression {
 					);
 				}
 				// We are transitioning to a non-FLWOR expression. Also apply all looping here
-				let currentReturnValueGenerator: IAsyncIterator<Value> = null;
+				let currentReturnValueGenerator: IIterator<Value> = null;
 				return sequenceFactory.create({
 					next: (_hint) => {
 						while (true) {
@@ -106,9 +106,9 @@ abstract class FlworExpression extends Expression {
 				}
 				// Ensure we fully exhaust the inner expression so that the pending update list is
 				// filled
-				const allValues = sequence.tryGetAllValues();
+				const allValues = sequence.getAllValues();
 				done = true;
-				return ready(new UpdatingExpressionResult(allValues.value, updateList));
+				return ready(new UpdatingExpressionResult(allValues, updateList));
 			},
 		};
 	}
@@ -121,7 +121,7 @@ abstract class FlworExpression extends Expression {
 			dynamicContext,
 			createSingleValueIterator(dynamicContext),
 			executionParameters,
-			(dynamicContextIterator: IAsyncIterator<DynamicContext>) => {
+			(dynamicContextIterator: IIterator<DynamicContext>) => {
 				if (this._returnExpression instanceof FlworExpression) {
 					// We are in a FLWOR, the return is also a FLWOR, keep piping dynamiccontext generators
 					return this._returnExpression.doFlworExpressionInternal(
@@ -163,7 +163,7 @@ abstract class FlworExpression extends Expression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		return this.doFlworExpressionUpdating(
 			dynamicContext,
 			createSingleValueIterator(dynamicContext),
@@ -189,14 +189,14 @@ abstract class FlworExpression extends Expression {
 
 	private doFlworExpressionInternal(
 		outerDynamicContext: DynamicContext,
-		outerDynamicContextIterator: IAsyncIterator<DynamicContext>,
+		outerDynamicContextIterator: IIterator<DynamicContext>,
 		executionParameters: ExecutionParameters
 	): ISequence {
 		return this.doFlworExpression(
 			outerDynamicContext,
 			outerDynamicContextIterator,
 			executionParameters,
-			(dynamicContextIterator: IAsyncIterator<DynamicContext>) => {
+			(dynamicContextIterator: IIterator<DynamicContext>) => {
 				if (this._returnExpression instanceof FlworExpression) {
 					return this._returnExpression.doFlworExpressionInternal(
 						outerDynamicContext,

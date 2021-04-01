@@ -7,7 +7,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { IIterator, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 import { IPendingUpdate } from './IPendingUpdate';
 import {
@@ -155,7 +155,7 @@ class InsertExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		const sourceValueIterator = this.ensureUpdateListWrapper(this._sourceExpression)(
 			dynamicContext,
 			executionParameters

@@ -15,25 +15,19 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import StaticContext from '../StaticContext';
 import createSingleValueIterator from '../util/createSingleValueIterator';
-import {
-	DONE_TOKEN,
-	IAsyncIterator,
-	IterationHint,
-	IterationResult,
-	ready,
-} from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, IterationResult, ready } from '../util/iterators';
 import builtInFunctionsNode from './builtInFunctions_node';
 
 const nodeName = builtInFunctionsNode.functions.nodeName;
 
 function asyncGenerateEvery<T>(
 	items: T[],
-	callback: (item: T, index: number, all: T[]) => IAsyncIterator<boolean>
-): IAsyncIterator<boolean> {
+	callback: (item: T, index: number, all: T[]) => IIterator<boolean>
+): IIterator<boolean> {
 	let i = 0;
 	const l = items.length;
 	let done = false;
-	let filterGenerator: IAsyncIterator<boolean> = null;
+	let filterGenerator: IIterator<boolean> = null;
 	return {
 		next: () => {
 			if (!done) {
@@ -154,7 +148,7 @@ function compareNormalizedTextNodes(
 function takeConsecutiveTextValues(
 	item: IterationResult<Value>,
 	textValues: Value[],
-	iterator: IAsyncIterator<Value>,
+	iterator: IIterator<Value>,
 	domFacade: DomFacade
 ): IterationResult<Value> {
 	while (item.value && isSubtypeOf(item.value.type, 'text()')) {
@@ -174,13 +168,13 @@ function sequenceDeepEqual(
 	staticContext: StaticContext,
 	sequence1: ISequence,
 	sequence2: ISequence
-): IAsyncIterator<boolean> {
+): IIterator<boolean> {
 	const domFacade = executionParameters.domFacade;
 	const it1 = sequence1.value;
 	const it2 = sequence2.value;
 	let item1: IterationResult<Value> = null;
 	let item2: IterationResult<Value> = null;
-	let comparisonGenerator: IAsyncIterator<boolean> = null;
+	let comparisonGenerator: IIterator<boolean> = null;
 	let done: boolean;
 	const textValues1: Value[] = [];
 	const textValues2: Value[] = [];
@@ -252,7 +246,7 @@ function mapTypeDeepEqual(
 	staticContext: StaticContext,
 	item1: MapValue,
 	item2: MapValue
-): IAsyncIterator<boolean> {
+): IIterator<boolean> {
 	if (item1.keyValuePairs.length !== item2.keyValuePairs.length) {
 		return createSingleValueIterator(false);
 	}
@@ -288,7 +282,7 @@ function arrayTypeDeepEqual(
 	staticContext: StaticContext,
 	item1: ArrayValue,
 	item2: ArrayValue
-): IAsyncIterator<boolean> {
+): IIterator<boolean> {
 	if (item1.members.length !== item2.members.length) {
 		return createSingleValueIterator(false);
 	}
@@ -311,7 +305,7 @@ function nodeDeepEqual(
 	staticContext: StaticContext,
 	item1: Value,
 	item2: Value
-): IAsyncIterator<boolean> {
+): IIterator<boolean> {
 	let item1Nodes = executionParameters.domFacade.getChildNodePointers(item1.value);
 	let item2Nodes = executionParameters.domFacade.getChildNodePointers(item2.value);
 
@@ -344,7 +338,7 @@ function elementNodeDeepEqual(
 	staticContext: StaticContext,
 	item1: Value,
 	item2: Value
-): IAsyncIterator<boolean> {
+): IIterator<boolean> {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
@@ -424,7 +418,7 @@ function atomicTypeNodeDeepEqual(
 	staticContext: StaticContext,
 	item1: Value,
 	item2: Value
-): IAsyncIterator<boolean> {
+): IIterator<boolean> {
 	const namesAreEqualResultGenerator = sequenceDeepEqual(
 		dynamicContext,
 		executionParameters,
@@ -477,7 +471,7 @@ export function itemDeepEqual(
 	staticContext: StaticContext,
 	item1: Value,
 	item2: Value
-): IAsyncIterator<boolean> {
+): IIterator<boolean> {
 	// All atomic types
 	if (
 		isSubtypeOf(item1.type, 'xs:anyAtomicType') &&

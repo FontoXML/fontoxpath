@@ -7,7 +7,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import parseContent from '../xquery/ElementConstructorContent';
 import { errXQDY0026, errXQDY0072 } from '../xquery/XQueryErrors';
 import { replaceElementContent, replaceNode, replaceValue } from './pulPrimitives';
@@ -25,8 +25,8 @@ import {
 
 function evaluateReplaceNode(
 	executionParameters: ExecutionParameters,
-	targetValueIterator: IAsyncIterator<UpdatingExpressionResult>,
-	replacementValueIterator: IAsyncIterator<UpdatingExpressionResult>
+	targetValueIterator: IIterator<UpdatingExpressionResult>,
+	replacementValueIterator: IIterator<UpdatingExpressionResult>
 ) {
 	const domFacade = executionParameters.domFacade;
 	let rlist;
@@ -164,8 +164,8 @@ function evaluateReplaceNode(
 
 function evaluateReplaceNodeValue(
 	executionParameters: ExecutionParameters,
-	targetValueIterator: IAsyncIterator<UpdatingExpressionResult>,
-	replacementValueIterator: IAsyncIterator<UpdatingExpressionResult>
+	targetValueIterator: IIterator<UpdatingExpressionResult>,
+	replacementValueIterator: IIterator<UpdatingExpressionResult>
 ) {
 	let target;
 	let targetUpdates;
@@ -334,7 +334,7 @@ class ReplaceExpression extends UpdatingExpression {
 	public evaluateWithUpdateList(
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult> {
+	): IIterator<UpdatingExpressionResult> {
 		const targetValueIterator = this.ensureUpdateListWrapper(this._targetExpression)(
 			dynamicContext,
 			executionParameters

@@ -1,9 +1,9 @@
-import { DONE_TOKEN, IAsyncIterator, IAsyncResult, ready } from '../../util/iterators';
+import { DONE_TOKEN, IIterator } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import Value from '../Value';
 
 export default class EmptySequence implements ISequence {
-	public value: IAsyncIterator<Value>;
+	public value: IIterator<Value>;
 
 	constructor() {
 		this.value = {
@@ -31,6 +31,10 @@ export default class EmptySequence implements ISequence {
 		return false;
 	}
 
+	public getLength(): number {
+		return 0;
+	}
+
 	public isEmpty(): boolean {
 		return true;
 	}
@@ -52,13 +56,5 @@ export default class EmptySequence implements ISequence {
 			return cases.empty(this);
 		}
 		return cases.default(this);
-	}
-
-	public tryGetAllValues(): IAsyncResult<Value[]> {
-		return ready(this.getAllValues());
-	}
-
-	public tryGetLength(): IAsyncResult<number> {
-		return ready(0);
 	}
 }

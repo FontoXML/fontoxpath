@@ -1,8 +1,3 @@
-import Expression, { RESULT_ORDERINGS } from '../Expression';
-import Specificity from '../Specificity';
-import { errXPST0081 } from '../XPathErrors';
-import { errXQDY0025, errXQDY0096, errXQST0040, errXQTY0024 } from './XQueryErrors';
-
 import { isTinyNode, TinyElementNode } from '../../domClone/Pointer';
 import { ConcreteAttributeNode, ConcreteChildNode, NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
@@ -11,11 +6,17 @@ import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
+import DynamicContext from '../DynamicContext';
+import ExecutionParameters from '../ExecutionParameters';
+import Expression, { RESULT_ORDERINGS } from '../Expression';
+import Specificity from '../Specificity';
 import concatSequences from '../util/concatSequences';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
+import { errXPST0081 } from '../XPathErrors';
 import AttributeConstructor from './AttributeConstructor';
 import parseContent from './ElementConstructorContent';
 import { evaluateQNameExpression } from './nameExpression';
+import { errXQDY0025, errXQDY0096, errXQST0040, errXQTY0024 } from './XQueryErrors';
 
 class ElementConstructor extends Expression {
 	private _attributes: AttributeConstructor[];
@@ -67,18 +68,18 @@ class ElementConstructor extends Expression {
 		this._staticContext = undefined;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
 		const domFacade: DomFacade = executionParameters.domFacade;
 
 		let attributePhaseDone = false;
-		let attributesSequence;
-		let attributeNodes;
+		let attributesSequence: ISequence;
+		let attributeNodes: Value[];
 
 		let childNodesPhaseDone = false;
 		let childNodesSequences: ISequence[];
 		let allChildNodes: Value[][];
 
-		let nameIterator: IAsyncIterator<Value>;
+		let nameIterator: IIterator<Value>;
 
 		let done = false;
 		return sequenceFactory.create({
@@ -95,8 +96,8 @@ class ElementConstructor extends Expression {
 						);
 					}
 
-					const allAttributes = attributesSequence.tryGetAllValues();
-					attributeNodes = allAttributes.value;
+					const allAttributes = attributesSequence.getAllValues();
+					attributeNodes = allAttributes;
 					attributePhaseDone = true;
 				}
 
@@ -113,8 +114,8 @@ class ElementConstructor extends Expression {
 
 					const newChildNodes: Value[][] = [];
 					for (let i = 0; i < childNodesSequences.length; i++) {
-						const allValues = childNodesSequences[i].tryGetAllValues();
-						newChildNodes.push(allValues.value);
+						const allValues = childNodesSequences[i].getAllValues();
+						newChildNodes.push(allValues);
 					}
 					allChildNodes = newChildNodes;
 					childNodesPhaseDone = true;

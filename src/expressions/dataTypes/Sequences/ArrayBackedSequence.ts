@@ -1,12 +1,12 @@
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
-import { DONE_TOKEN, IAsyncIterator, IAsyncResult, ready } from '../../util/iterators';
+import { DONE_TOKEN, IIterator, ready } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
 import Value from '../Value';
 
 export default class ArrayBackedSequence implements ISequence {
-	public value: IAsyncIterator<Value>;
+	public value: IIterator<Value>;
 
 	constructor(
 		private readonly _sequenceFactory: typeof sequenceFactory,
@@ -62,6 +62,10 @@ export default class ArrayBackedSequence implements ISequence {
 		throw errFORG0006();
 	}
 
+	public getLength(): number {
+		return this._values.length;
+	}
+
 	public isEmpty(): boolean {
 		return false;
 	}
@@ -93,13 +97,5 @@ export default class ArrayBackedSequence implements ISequence {
 			return cases.multiple(this);
 		}
 		return cases.default(this);
-	}
-
-	public tryGetAllValues(): IAsyncResult<Value[]> {
-		return ready(this.getAllValues());
-	}
-
-	public tryGetLength(): IAsyncResult<number> {
-		return ready(this._values.length);
 	}
 }

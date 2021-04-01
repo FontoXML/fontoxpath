@@ -4,7 +4,7 @@ import ExecutionParameters from '../ExecutionParameters';
 import Expression, { OptimizationOptions } from '../Expression';
 import Specificity from '../Specificity';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
-import { IAsyncIterator, ready } from '../util/iterators';
+import { IIterator, ready } from '../util/iterators';
 import { errXUST0001 } from './XQueryUpdateFacilityErrors';
 
 abstract class UpdatingExpression extends Expression {
@@ -28,14 +28,14 @@ abstract class UpdatingExpression extends Expression {
 	public abstract evaluateWithUpdateList(
 		_dynamicContext: DynamicContext | null,
 		_executionParameters: ExecutionParameters
-	): IAsyncIterator<UpdatingExpressionResult>;
+	): IIterator<UpdatingExpressionResult>;
 
 	protected ensureUpdateListWrapper(
 		expression: Expression
 	): (
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters
-	) => IAsyncIterator<UpdatingExpressionResult> {
+	) => IIterator<UpdatingExpressionResult> {
 		if (expression.isUpdating) {
 			const updatingExpression = expression as UpdatingExpression;
 			return (dynamicContext: DynamicContext, executionParameters: ExecutionParameters) =>
@@ -46,10 +46,10 @@ abstract class UpdatingExpression extends Expression {
 			const sequence = expression.evaluate(dynamicContext, executionParameters);
 			return {
 				next: () => {
-					const allValues = sequence.tryGetAllValues();
+					const allValues = sequence.getAllValues();
 					return ready({
 						pendingUpdateList: [],
-						xdmValue: allValues.value,
+						xdmValue: allValues,
 					});
 				},
 			};

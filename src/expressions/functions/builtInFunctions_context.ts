@@ -19,9 +19,9 @@ const fnLast: FunctionDefinitionType = (dynamicContext) => {
 				if (done) {
 					return DONE_TOKEN;
 				}
-				const length = dynamicContext.contextSequence.tryGetLength(false);
+				const length = dynamicContext.contextSequence.getLength();
 				done = true;
-				return ready(createAtomicValue(length.value, 'xs:integer'));
+				return ready(createAtomicValue(length, 'xs:integer'));
 			},
 		},
 		1

@@ -12,7 +12,7 @@ import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import { DONE_TOKEN, IAsyncResult, IterationHint, ready } from '../util/iterators';
+import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { errXPTY0004 } from '../XPathErrors';
 import arrayGet from './builtInFunctions_arrays_get';
@@ -423,34 +423,28 @@ const arraySortCallback = (
 	dynamicContext: DynamicContext,
 	executionParameters: ExecutionParameters,
 	staticContext: StaticContext,
-	allValues: IAsyncResult<Value[]>[]
+	allValues: Value[][]
 ) => {
 	allValues.sort((valuesA, valuesB) => {
 		const areSequencesEqual = sequenceDeepEqual(
 			dynamicContext,
 			executionParameters,
 			staticContext,
-			sequenceFactory.create(valuesA.value),
-			sequenceFactory.create(valuesB.value)
+			sequenceFactory.create(valuesA),
+			sequenceFactory.create(valuesB)
 		).next(IterationHint.NONE).value;
 
 		if (areSequencesEqual) {
 			return 0;
 		}
 
-		return deepLessThan(
-			dynamicContext,
-			executionParameters,
-			staticContext,
-			valuesA.value,
-			valuesB.value
-		)
+		return deepLessThan(dynamicContext, executionParameters, staticContext, valuesA, valuesB)
 			? -1
 			: 1;
 	});
 
 	return sequenceFactory.singleton(
-		new ArrayValue(allValues.map((item) => () => sequenceFactory.create(item.value)))
+		new ArrayValue(allValues.map((item) => () => sequenceFactory.create(item)))
 	);
 };
 const arraySort: FunctionDefinitionType = (
@@ -460,32 +454,31 @@ const arraySort: FunctionDefinitionType = (
 	arraySequence
 ) => {
 	return zipSingleton([arraySequence], ([array]: [ArrayValue]) => {
-		const allValues: IAsyncResult<Value[]>[] = array.members.map((i) => i().tryGetAllValues());
+		const allValues: Value[][] = array.members.map((i) => i().getAllValues());
 
 		return arraySortCallback(dynamicContext, executionParameters, staticContext, allValues);
 	});
 };
 
+function flattenItem(flatteneditems: ISequence, item: Value) {
+	if (isSubtypeOf(item.type, 'array(*)')) {
+		return (item as ArrayValue).members.reduce(
+			(flatteneditemsOfMember, member) =>
+				member().mapAll((allValues) =>
+					allValues.reduce(flattenItem, flatteneditemsOfMember)
+				),
+			flatteneditems
+		);
+	}
+	return concatSequences([flatteneditems, sequenceFactory.singleton(item)]);
+}
 const arrayFlatten: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
 	_staticContext,
 	itemSequence
 ) => {
-	return itemSequence.mapAll((items) =>
-		items.reduce(function flattenitem(flatteneditems, item) {
-			if (isSubtypeOf(item.type, 'array(*)')) {
-				return (item as ArrayValue).members.reduce(
-					(flatteneditemsOfMember, member) =>
-						member().mapAll((allValues) =>
-							allValues.reduce(flattenitem, flatteneditemsOfMember)
-						),
-					flatteneditems
-				);
-			}
-			return concatSequences([flatteneditems, sequenceFactory.singleton(item)]);
-		}, sequenceFactory.empty())
-	);
+	return itemSequence.mapAll((items) => items.reduce(flattenItem, sequenceFactory.empty()));
 };
 
 export default {

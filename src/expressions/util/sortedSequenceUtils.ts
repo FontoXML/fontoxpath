@@ -5,9 +5,9 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import arePointersEqual from '../operators/compares/arePointersEqual';
-import { DONE_TOKEN, IAsyncIterator, IterationHint, IterationResult } from './iterators';
+import { DONE_TOKEN, IIterator, IterationHint, IterationResult } from './iterators';
 
-interface IMappedIterator extends IAsyncIterator<Value> {
+interface IMappedIterator extends IIterator<Value> {
 	current: IterationResult<Value>;
 }
 
@@ -29,12 +29,12 @@ function isSameNodeValue(a: Value, b: Value) {
  * @param domFacade The domFacade to use to compare node positions
  * @param sequences The sequences to sort. MUST be locally sorted
  */
-function concatSortedSequences(sequences: IAsyncIterator<ISequence>): ISequence {
+function concatSortedSequences(sequences: IIterator<ISequence>): ISequence {
 	let currentSequence = sequences.next(IterationHint.NONE);
 	if (currentSequence.done) {
 		return sequenceFactory.empty();
 	}
-	let currentIterator: IAsyncIterator<Value> = null;
+	let currentIterator: IIterator<Value> = null;
 	let previousValue: Value = null;
 	return sequenceFactory.create({
 		next(hint: IterationHint) {
@@ -69,10 +69,7 @@ function concatSortedSequences(sequences: IAsyncIterator<ISequence>): ISequence 
  * @param domFacade The domFacade to use to compare node positions
  * @param sequences The sequences to sort. MUST be locally sorted
  */
-function mergeSortedSequences(
-	domFacade: DomFacade,
-	sequences: IAsyncIterator<ISequence>
-): ISequence {
+function mergeSortedSequences(domFacade: DomFacade, sequences: IIterator<ISequence>): ISequence {
 	const allIterators: IMappedIterator[] = [];
 	// Because the sequences are sorted locally, but unsorted globally, we first need to sort all the iterators.
 	// For that, we need to know all of them

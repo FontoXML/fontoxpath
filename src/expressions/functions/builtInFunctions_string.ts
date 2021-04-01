@@ -293,7 +293,7 @@ const fnSubstring: FunctionDefinitionType = (
 			if (!sourceStringItem) {
 				sourceStringItem = sourceString.first();
 
-				if (sourceStringItem.value === null) {
+				if (sourceStringItem === null) {
 					// The first argument can be the empty sequence
 					done = true;
 					return ready(createAtomicValue('', 'xs:string'));

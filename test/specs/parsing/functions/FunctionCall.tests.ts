@@ -45,7 +45,7 @@ describe('Dynamic function call', () => {
 			100
 		));
 
-	it('Fibonacci', async () => {
+	it.skip('Fibonacci', async () => {
 		const it = evaluateXPathToAsyncIterator(
 			`
 let $fib := function ($recurse, $a, $b) {

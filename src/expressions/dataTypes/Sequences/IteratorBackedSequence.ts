@@ -1,11 +1,5 @@
 import { errFORG0006 } from '../../functions/FunctionOperationErrors';
-import {
-	DONE_TOKEN,
-	IAsyncIterator,
-	IAsyncResult,
-	IterationHint,
-	ready,
-} from '../../util/iterators';
+import { DONE_TOKEN, IIterator, IterationHint, ready } from '../../util/iterators';
 import ISequence, { SwitchCasesCases } from '../ISequence';
 import isSubtypeOf from '../isSubtypeOf';
 import sequenceFactory from '../sequenceFactory';
@@ -13,7 +7,7 @@ import Value from '../Value';
 import getEffectiveBooleanValue from './getEffectiveBooleanValue';
 
 export default class IteratorBackedSequence implements ISequence {
-	public value: IAsyncIterator<Value>;
+	public value: IIterator<Value>;
 
 	private _cacheAllValues: boolean;
 	private _cachedValues: Value[];
@@ -22,7 +16,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 	constructor(
 		private readonly _sequenceFactory: typeof sequenceFactory,
-		valueIterator: IAsyncIterator<Value>,
+		valueIterator: IIterator<Value>,
 		predictedLength: number = null
 	) {
 		this.value = {
@@ -96,8 +90,22 @@ export default class IteratorBackedSequence implements ISequence {
 	}
 
 	public getAllValues(): Value[] {
-		const values = this.tryGetAllValues();
-		return values.value;
+		if (
+			this._currentPosition > this._cachedValues.length &&
+			this._length !== this._cachedValues.length
+		) {
+			throw new Error('Implementation error: Sequence Iterator has progressed.');
+		}
+
+		const iterator = this.value;
+		this._cacheAllValues = true;
+
+		let val = iterator.next(IterationHint.NONE);
+		while (!val.done) {
+			val = iterator.next(IterationHint.NONE);
+		}
+
+		return this._cachedValues;
 	}
 
 	public getEffectiveBooleanValue(): boolean {
@@ -126,14 +134,50 @@ export default class IteratorBackedSequence implements ISequence {
 		return getEffectiveBooleanValue(firstValue);
 	}
 
+	public getLength(onlyIfCheap: boolean = false): number {
+		if (this._length !== null) {
+			return this._length;
+		}
+
+		if (onlyIfCheap) {
+			return -1;
+		}
+
+		const oldPosition = this._currentPosition;
+
+		const length = this.getAllValues().length;
+
+		this.reset(oldPosition);
+		return length;
+	}
+
 	public isEmpty(): boolean {
-		const isEmpty = this.tryIsEmpty();
-		return isEmpty.value;
+		if (this._length === 0) {
+			return true;
+		}
+		const firstValue = this.first();
+		return firstValue === null;
 	}
 
 	public isSingleton(): boolean {
-		const isSingleton = this.tryIsSingleton();
-		return isSingleton.value;
+		if (this._length !== null) {
+			return this._length === 1;
+		}
+
+		const iterator = this.value;
+		const oldPosition = this._currentPosition;
+
+		// Check there is at least one value
+		this.reset();
+		const it = iterator.next(IterationHint.NONE);
+		if (it.done) {
+			this.reset(oldPosition);
+			return false;
+		}
+
+		const secondValue = iterator.next(IterationHint.NONE);
+		this.reset(oldPosition);
+		return secondValue.done;
 	}
 
 	public map(callback: (value: Value, i: number, sequence: ISequence) => Value): ISequence {
@@ -156,7 +200,7 @@ export default class IteratorBackedSequence implements ISequence {
 
 	public mapAll(callback: (allValues: Value[]) => ISequence, hint: IterationHint): ISequence {
 		const iterator = this.value;
-		let mappedResultsIterator: IAsyncIterator<Value>;
+		let mappedResultsIterator: IIterator<Value>;
 		const allResults: Value[] = [];
 		let isFirst = true;
 		(function processNextResult() {
@@ -178,14 +222,14 @@ export default class IteratorBackedSequence implements ISequence {
 	}
 
 	public switchCases(cases: SwitchCasesCases): ISequence {
-		let resultIterator: IAsyncIterator<Value> = null;
+		let resultIterator: IIterator<Value> = null;
 
 		const setResultIterator = (resultSequence: ISequence) => {
 			resultIterator = resultSequence.value;
 			// Try to mirror through length;
-			const resultSequenceLength = resultSequence.tryGetLength(true);
-			if (resultSequenceLength.value !== -1) {
-				this._length = resultSequenceLength.value;
+			const resultSequenceLength = resultSequence.getLength(true);
+			if (resultSequenceLength !== -1) {
+				this._length = resultSequenceLength;
 			}
 		};
 
@@ -195,14 +239,14 @@ export default class IteratorBackedSequence implements ISequence {
 					return resultIterator.next(hint);
 				}
 
-				const isEmpty = this.tryIsEmpty();
-				if (isEmpty.value) {
+				const isEmpty = this.isEmpty();
+				if (isEmpty) {
 					setResultIterator(cases.empty ? cases.empty(this) : cases.default(this));
 					return resultIterator.next(hint);
 				}
 
-				const isSingleton = this.tryIsSingleton();
-				if (isSingleton.value) {
+				const isSingleton = this.isSingleton();
+				if (isSingleton) {
 					setResultIterator(
 						cases.singleton ? cases.singleton(this) : cases.default(this)
 					);
@@ -215,71 +259,7 @@ export default class IteratorBackedSequence implements ISequence {
 		});
 	}
 
-	public tryGetAllValues(): IAsyncResult<Value[]> {
-		if (
-			this._currentPosition > this._cachedValues.length &&
-			this._length !== this._cachedValues.length
-		) {
-			throw new Error('Implementation error: Sequence Iterator has progressed.');
-		}
-
-		const iterator = this.value;
-		this._cacheAllValues = true;
-
-		let val = iterator.next(IterationHint.NONE);
-		while (!val.done) {
-			val = iterator.next(IterationHint.NONE);
-		}
-
-		return ready(this._cachedValues);
-	}
-
-	public tryGetLength(onlyIfCheap = false): IAsyncResult<number> {
-		if (this._length !== null) {
-			return ready(this._length);
-		}
-		if (onlyIfCheap) {
-			return ready(-1);
-		}
-
-		const oldPosition = this._currentPosition;
-
-		this.tryGetAllValues();
-
-		this.reset(oldPosition);
-		return ready(this._length);
-	}
-
 	private reset(to = 0) {
 		this._currentPosition = to;
-	}
-
-	private tryIsEmpty(): IAsyncResult<boolean> {
-		if (this._length === 0) {
-			return ready(true);
-		}
-		const firstValue = this.first();
-		return ready(firstValue === null);
-	}
-
-	private tryIsSingleton(): IAsyncResult<boolean> {
-		if (this._length !== null) {
-			return ready(this._length === 1);
-		}
-
-		const iterator = this.value;
-		const oldPosition = this._currentPosition;
-
-		// Check there is at least one value
-		this.reset();
-		const it = iterator.next(IterationHint.NONE);
-		if (it.done) {
-			this.reset(oldPosition);
-			return ready(false);
-		}
-
-		const secondValue = iterator.next(IterationHint.NONE);
-		this.reset(oldPosition);
-		return ready(secondValue.done);
 	}
 }

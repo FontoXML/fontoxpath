@@ -421,10 +421,11 @@ describe('functions over arrays', () => {
 	});
 
 	describe('array:flatten', () => {
-		it('returns an empty array is the inputted array is empty', () =>
+		it('returns an empty array is the inputted array is empty', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean('array:flatten([]) => count() eq 0', documentNode)
-			));
+			);
+		});
 
 		it('flattens the array', () =>
 			chai.assert.deepEqual(

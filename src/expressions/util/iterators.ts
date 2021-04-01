@@ -19,11 +19,6 @@ export function ready<T>(value: T) {
 	return new IterationResult(false, value, undefined);
 }
 
-export interface IAsyncIterator<T> {
+export interface IIterator<T> {
 	next(hint: IterationHint): IterationResult<T>;
-}
-
-export interface IAsyncResult<T> {
-	promise: Promise<void> | undefined;
-	value: T | undefined;
 }
