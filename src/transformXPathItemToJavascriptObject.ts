@@ -22,13 +22,14 @@ export function transformMapToObject(
 			}
 			while (i < map.keyValuePairs.length) {
 				if (!transformedValueIterator) {
-					const val = map.keyValuePairs[i]
+					const keyValuePair = map.keyValuePairs[i];
+					const val = keyValuePair
 						.value()
 						.switchCases({
 							default: (seq) => seq,
 							multiple: () => {
 								throw new Error(
-									'Serialization error: The value of an entry in a map is expected to be a singleton sequence.'
+									`Serialization error: The value of an entry in a map is expected to be a single item or an empty sequence. Use arrays when putting multiple values in a map. The value of the key ${keyValuePair.key.value} holds multiple items`
 								);
 							},
 						})
@@ -81,7 +82,7 @@ export function transformArrayToArray(
 							default: (seq) => seq,
 							multiple: () => {
 								throw new Error(
-									'Serialization error: The value of an entry in an array is expected to be a singleton sequence.'
+									`Serialization error: The value of an entry in an array is expected to be a single item or an empty sequence. Use nested arrays when putting multiple values in an array.`
 								);
 							},
 						})
