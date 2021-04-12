@@ -5,7 +5,7 @@ import { Options } from './types/Options';
 import { Node } from './types/Types';
 
 /**
- * Evaluates an XPath on the given contextNode. Returns the first node result.
+ * Evaluates an XPath on the given contextNode. Returns all nodes the XPath resolves to.
  * Returns result in the order defined in the XPath. The path operator ('/'), the union operator ('union' and '|') will sort.
  * This implies (//A, //B) resolves to all A nodes, followed by all B nodes, both in document order, but not merged.
  * However: (//A | //B) resolves to all A and B nodes in document order.
