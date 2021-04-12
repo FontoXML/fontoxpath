@@ -65,7 +65,7 @@ export default interface ISequence {
 	getEffectiveBooleanValue(): boolean;
 
 	/**
-	 * Try to get the length of this sequence. If it is not ready, a notReady() token will be returned. Pass this along to the calling code.
+	 * Try to get the length of this sequence.
 	 *
 	 * @param onlyIfCheap In some cases, the length of a sequence is known. This can be used for optimization purposes.
 	 */
