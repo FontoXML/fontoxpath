@@ -146,3 +146,33 @@ benchmarkRunner.compareBenchmarks(
 		},
 	}
 );
+
+const filterWithAndExpressionQuery = "self::*[parent::chapter and self::element(paragraph)]"
+benchmarkRunner.compareBenchmarks(
+	`evaluateXPathToBoolean => ${filterWithAndExpressionQuery}`,
+	async () => {
+		document = new Document();
+		jsonMlMapper.parse(['chapter', ['paragraph', 'Hello, world!']], document);
+	},
+	undefined,
+	{
+		name: 'Expression Backend',
+		test: () => {
+			const chapter: Node = document.firstChild;
+			const paragraph: Node = chapter.firstChild;
+			evaluateXPathToBoolean(filterWithAndExpressionQuery, paragraph, null, null, {
+				backend: 'expression',
+			});
+		},
+	},
+	{
+		name: 'JS Codegen Backend',
+		test: () => {
+			const chapter: Node = document.firstChild;
+			const paragraph: Node = chapter.firstChild;
+			evaluateXPathToBoolean(filterWithAndExpressionQuery, paragraph, null, null, {
+				backend: 'js-codegen',
+			});
+		},
+	}
+);
