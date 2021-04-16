@@ -147,9 +147,9 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
 
-	if (options && options.backend === 'js-codegen') {
-		return evaluateWithJsCodegenBackend(selector, contextItem, domFacade, returnType, options);
-	} else if (options && options.backend === 'expression') {
+	const backend = options && options.backend ? options.backend : 'expression';
+
+	if (backend === 'expression') {
 		return evaluateWithExpressionBackend(
 			selector,
 			contextItem,
@@ -158,7 +158,9 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 			returnType,
 			options
 		);
-	} else {
+	} else if (backend === 'js-codegen') {
+		return evaluateWithJsCodegenBackend(selector, contextItem, domFacade, returnType, options);
+	} else if (backend === 'auto') {
 		try {
 			return evaluateWithJsCodegenBackend(
 				selector,
