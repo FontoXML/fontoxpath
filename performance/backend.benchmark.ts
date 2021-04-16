@@ -117,7 +117,7 @@ benchmarkRunner.compareBenchmarks(
 	}
 );
 
-const filterExpressionQuery = "self::*[parent::chapter]"
+const filterExpressionQuery = 'self::*[parent::chapter]';
 benchmarkRunner.compareBenchmarks(
 	`evaluateXPathToBoolean => ${filterExpressionQuery}`,
 	async () => {
@@ -147,7 +147,7 @@ benchmarkRunner.compareBenchmarks(
 	}
 );
 
-const filterWithAndExpressionQuery = "self::*[parent::chapter and self::element(paragraph)]"
+const filterWithAndExpressionQuery = 'self::*[parent::chapter and self::element(paragraph)]';
 benchmarkRunner.compareBenchmarks(
 	`evaluateXPathToBoolean => ${filterWithAndExpressionQuery}`,
 	async () => {

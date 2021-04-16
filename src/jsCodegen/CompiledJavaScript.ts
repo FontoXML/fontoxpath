@@ -20,6 +20,7 @@ class CompiledJavaScript {
 	}
 
 	public evaluate(dynamicContext: Value, domFacade: DomFacade) {
+		console.log(this.compiledJavaScript);
 		return this.fn(dynamicContext, domFacade, this.runtimeLibrary);
 	}
 }
