@@ -89,9 +89,9 @@ benchmarkRunner.compareBenchmarks(
 				<XMark-result-Q14> {
 					let $auction := (/) return
 					for $i in $auction/site//item
-						where contains(string(exactly-one($i/description)), "gold")
+					where contains(string(exactly-one($i/description)), "gold")
 					return $i/name/text() }
-					</XMark-result-Q14>`,
+				</XMark-result-Q14>`,
 				document,
 				domFacade,
 				{},
