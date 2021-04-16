@@ -1,8 +1,8 @@
+import { NODE_TYPES } from '../domFacade/ConcreteNode';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
 import { errFORG0006 } from '../expressions/functions/FunctionOperationErrors';
 import { DONE_TOKEN, ready } from '../expressions/util/iterators';
-import { NODE_TYPES } from '../domFacade/ConcreteNode';
 
 function determinePredicateTruthValue(iterator) {
 	// TODO: maybe handle this in generated code instead?
