@@ -7,7 +7,7 @@ import evaluateXPathToBoolean from '../../src/evaluateXPathToBoolean';
 import evaluateXPathToNodes from '../../src/evaluateXPathToNodes';
 
 describe('js codegen backend', () => {
-	let document = new slimdom.Document();
+	const document = new slimdom.Document();
 	jsonMlMapper.parse(
 		[
 			'xml',
