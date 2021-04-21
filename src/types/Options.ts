@@ -62,7 +62,7 @@ export type NamespaceResolver = (prefix: string) => string | null;
 export type Options = {
 	/**
 	 *
-	 * What compiler backend to use. 
+	 * What compiler backend to use.
 	 *
 	 * Defaults to the stable 'expression' backend.
 	 *
@@ -73,7 +73,7 @@ export type Options = {
 	 * backend is used instead.
 	 *
 	 * The 'js-codegen' option only enabled the experimental backend. This
-	 * should be used for TESTING PURPOSES ONLY. 
+	 * should be used for TESTING PURPOSES ONLY.
 	 *
 	 * @beta
 	 */

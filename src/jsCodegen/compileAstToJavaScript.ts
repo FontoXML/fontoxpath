@@ -388,7 +388,7 @@ function compileToLazyCode(ast: IAST, identifier: string): string {
 const runtimeLibImports = `
 const { NODE_TYPES, DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue } = runtimeLibrary;
 `;
-const compiledXPathIdentifier = 'compiledExpression';
+const compiledXPathIdentifier = 'compiledXPathExpression';
 
 // Return all matching nodes.
 function compileAstToReturnNodes(ast: IAST) {

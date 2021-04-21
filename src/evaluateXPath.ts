@@ -5,6 +5,7 @@ import buildEvaluationContext, {
 	normalizeEndOfLines,
 } from './evaluationUtils/buildEvaluationContext';
 import { printAndRethrowError } from './evaluationUtils/printAndRethrowError';
+import { adaptJavaScriptValueToArrayOfXPathValues } from './expressions/adaptJavaScriptValueToXPathValue';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
@@ -233,11 +234,12 @@ const evaluateWithJsCodegenBackend = <
 	const wrappedDomFacade: DomFacade = new DomFacade(
 		domFacade === null ? new ExternalDomFacade() : domFacade
 	);
-
-	return compiledJavaScript.evaluate(
-		{ type: 'document-node()', value: { node: contextItem } },
-		wrappedDomFacade
+	const contextArray = adaptJavaScriptValueToArrayOfXPathValues(
+		wrappedDomFacade,
+		contextItem,
+		'item()?'
 	);
+	return compiledJavaScript.evaluate(contextArray[0], wrappedDomFacade);
 };
 
 const evaluateWithExpressionBackend = <
