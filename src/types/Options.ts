@@ -61,20 +61,21 @@ export type NamespaceResolver = (prefix: string) => string | null;
  */
 export type Options = {
 	/**
-	 * WARNING: THIS OPTION ENABLES EXPERIMENTAL BEHAVIOR.
 	 *
 	 * What compiler backend to use. 
 	 *
 	 * Defaults to the stable 'expression' backend.
 	 *
-	 * FontoXPath has two backends: the older 'expression' backend and the
-	 * experimental 'js-codegen' backend. The js-codegen backend can be a lot
-	 * faster than the expression backend. If you want to try it out, use the
-	 * 'auto' option. This ensures that, if the js-codegen fails to compile a
-	 * given query, the expression backend is used instead. WARNING: this is
-	 * experimental.
+	 * An experimental backend is in development. This backend compiles XPath to
+	 * JavaScript, which can give a significant boost to query performance. To
+	 * try this experimental backend, specify 'auto'. If a given query is can
+	 * not be compiled by the experimental backend, the default 'expression'
+	 * backend is used instead.
 	 *
-	 * The 'js-codegen' option is used for TESTING ONLY. 
+	 * The 'js-codegen' option only enabled the experimental backend. This
+	 * should be used for TESTING PURPOSES ONLY. 
+	 *
+	 * @beta
 	 */
 	backend?: 'expression' | 'js-codegen' | 'auto';
 
