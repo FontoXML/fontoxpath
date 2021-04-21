@@ -16,40 +16,38 @@ describe('js codegen backend', () => {
 		],
 		document
 	);
-	it('evaluates to boolean', () => {
-		chai.assert.isTrue(
-			evaluateXPathToBoolean('/element()/element()/text()', document, null, null, {
-				backend: 'js-codegen',
-			})
-		);
-		chai.assert.isFalse(
-			evaluateXPathToBoolean('/text()', document, null, null, {
-				backend: 'js-codegen',
-			})
-		);
-		chai.assert.isFalse(
-			evaluateXPathToBoolean('/element()/element(tips)/text()', document, null, null, {
-				backend: 'js-codegen',
-			})
-		);
+	describe('return values', () => {
+		it('evaluates to boolean', () => {
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('/xml/element()/text()', document, null, null, {
+					backend: 'js-codegen',
+				})
+			);
+			chai.assert.isFalse(
+				evaluateXPathToBoolean('/xml/element(tips)/text()', document, null, null, {
+					backend: 'js-codegen',
+				})
+			);
+		});
+		it('evaluates to nodes', () => {
+			const results = evaluateXPathToNodes(
+				'/element()/element()/element()/text()',
+				document,
+				null,
+				null,
+				{ backend: 'js-codegen' }
+			);
+			chai.assert.equal(results.length, 3);
+		});
 	});
-	it('evaluates to nodes', () => {
-		const results = evaluateXPathToNodes(
-			'/element()/element()/element()/text()',
-			document,
-			null,
-			null,
-			{ backend: 'js-codegen' }
-		);
-		chai.assert.equal(results.length, 3);
-	});
-	it('evaluates name test to boolean', () => {
-		chai.assert.isTrue(
-			evaluateXPathToBoolean('/xml', document, null, null, { backend: 'js-codegen' })
-		);
-		chai.assert.isFalse(
-			evaluateXPathToBoolean('/html', document, null, null, { backend: 'js-codegen' })
-		);
+	describe('tests', () => {
+		it('does not select non-text nodes', () => {
+			chai.assert.isFalse(
+				evaluateXPathToBoolean('/text()', document, null, null, {
+					backend: 'js-codegen',
+				})
+			);
+		});
 	});
 	describe('wildcard', () => {
 		it('selects elements', () => {
@@ -66,45 +64,22 @@ describe('js codegen backend', () => {
 			);
 		});
 	});
-	it('evaluates self axis', () => {
-		const xmlNode: slimdom.Node = document.firstChild;
-		chai.assert.isTrue(
-			evaluateXPathToBoolean('self::element()', xmlNode, null, null, {
-				backend: 'js-codegen',
-			})
-		);
-		chai.assert.isFalse(
-			evaluateXPathToBoolean('self::text()', xmlNode, null, null, {
-				backend: 'js-codegen',
-			})
-		);
-		chai.assert.isTrue(
-			evaluateXPathToBoolean('self::xml', xmlNode, null, null, {
-				backend: 'js-codegen',
-			})
-		);
-		chai.assert.isFalse(
-			evaluateXPathToBoolean('self::p', xmlNode, null, null, {
-				backend: 'js-codegen',
-			})
-		);
+	describe('axes', () => {
+		it('evaluates self axis', () => {
+			const xmlNode: slimdom.Node = document.firstChild;
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('self::xml', xmlNode, null, null, {
+					backend: 'js-codegen',
+				})
+			);
+			chai.assert.isFalse(
+				evaluateXPathToBoolean('self::p', xmlNode, null, null, {
+					backend: 'js-codegen',
+				})
+			);
+		});
 	});
 	describe('filter expressions', () => {
-		let document = new slimdom.Document();
-		jsonMlMapper.parse(
-			[
-				'xml',
-				['title', 'Tips'],
-				['extra'],
-				[
-					'tips',
-					['tip', 'Make it work'],
-					['tip', 'Make it right'],
-					['tip', 'Make it fast'],
-				],
-			],
-			document
-		);
 		it('evaluates basic filter expressions', () => {
 			chai.assert.isTrue(
 				evaluateXPathToBoolean('/xml/tips[parent::element()]', document, null, null, {
@@ -134,7 +109,7 @@ describe('js codegen backend', () => {
 				)
 			);
 		});
-		it('compiles filter expressions with and "and" expression', () => {
+		it('compiles filter expressions with "and" expressions', () => {
 			const results = evaluateXPathToNodes(
 				'/element()/element()[parent::element(xml) and child::element(tip)]',
 				document,
@@ -146,7 +121,7 @@ describe('js codegen backend', () => {
 			);
 			chai.assert.equal(results.length, 1);
 		});
-		it('compiles filter expressions with and "or" expression', () => {
+		it('compiles filter expressions with "or" expressions', () => {
 			const results = evaluateXPathToNodes(
 				'/xml/element()[child::element() or self::element(title)]',
 				document,
@@ -158,7 +133,7 @@ describe('js codegen backend', () => {
 			);
 			chai.assert.equal(results.length, 2);
 		});
-		it('compiles filter expressions with "and" and "or" expressions', () => {
+		it('compiles filter expressions with a combination of "and" and "or" expressions', () => {
 			const results = evaluateXPathToNodes(
 				'/xml/element()[child::text() and self::element(title) or self::element(tips)]',
 				document,
