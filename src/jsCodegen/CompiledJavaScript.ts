@@ -6,7 +6,7 @@ class CompiledJavaScript {
 	private fn: any;
 	private runtimeLibrary: any;
 
-	constructor(compiledJavaScript: string, runtimeLibrary) {
+	constructor(compiledJavaScript: string, runtimeLibrary: any) {
 		this.compiledJavaScript = compiledJavaScript;
 		this.runtimeLibrary = runtimeLibrary;
 
