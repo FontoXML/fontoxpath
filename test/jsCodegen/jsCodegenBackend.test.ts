@@ -79,6 +79,16 @@ describe('js codegen backend', () => {
 			);
 		});
 	});
+	describe('logical operators', () => {
+		it('evaluates and and or base expressions', () => {
+			const xmlNode: slimdom.Node = document.firstChild;
+			chai.assert.isTrue(
+				evaluateXPathToBoolean('self::p or self::xml', xmlNode, null, null, {
+					backend: 'js-codegen',
+				})
+			);
+		});
+	});
 	describe('filter expressions', () => {
 		it('evaluates basic filter expressions', () => {
 			chai.assert.isTrue(
