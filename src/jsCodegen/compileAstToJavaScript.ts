@@ -12,35 +12,37 @@ const compileAstByReturnValue = {
 const runtimeLibImports = `
 const { NODE_TYPES, DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue } = runtimeLibrary;
 `;
-const compiledXPathIdentifier = 'compiledXPathExpression';
 
 // Return all matching nodes.
-function compileAstToReturnNodes(ast: IAST) {
+function compileAstToReturnNodes(identifier: string) {
 	const transformToNodesCode = `
 	const nodes = [];
-	for (const node of ${compiledXPathIdentifier}(contextItem)) {
+	for (const node of ${identifier}(contextItem)) {
 		nodes.push(node.value.node);
 	}
 	return nodes;`;
 
-	return emitBaseExpression(ast, compiledXPathIdentifier) + transformToNodesCode;
+	return transformToNodesCode;
 }
 
 // Get effective boolean value.
-function compileAstToReturnBoolean(ast: IAST) {
+function compileAstToReturnBoolean(identifier: string) {
 	const transformToBooleanCode = `
-	return determinePredicateTruthValue(${compiledXPathIdentifier}(contextItem));
+	return determinePredicateTruthValue(${identifier}(contextItem));
 	`;
 
-	return emitBaseExpression(ast, compiledXPathIdentifier) + transformToBooleanCode;
+	return transformToBooleanCode;
 }
 
+const compiledXPathIdentifier = 'compiledXPathExpression';
 export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaScript {
-	const compile = compileAstByReturnValue[returnType];
-
-	if (compile === undefined) {
+	const compileExpression = compileAstByReturnValue[returnType];
+	if (compileExpression === undefined) {
 		throw new Error(`Unsupported return type: ${returnType}`);
 	}
 
-	return new CompiledJavaScript(runtimeLibImports + compile(xPathAst), runtimeLibrary);
+	const compiledBaseExpression = emitBaseExpression(xPathAst, compiledXPathIdentifier);
+	const variables = compiledBaseExpression.variables.join("\n");
+
+	return new CompiledJavaScript(runtimeLibImports + variables + compiledBaseExpression.code + compileExpression(compiledXPathIdentifier), runtimeLibrary);
 }

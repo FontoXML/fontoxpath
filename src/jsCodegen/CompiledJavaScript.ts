@@ -1,6 +1,11 @@
 import DomFacade from '../domFacade/DomFacade';
 import Value from '../expressions/dataTypes/Value';
 
+export type EmittedJavaScriptCode = {
+	code: string;
+	variables: string[];
+};
+
 class CompiledJavaScript {
 	private compiledJavaScript: string;
 	private fn: any;

@@ -11,6 +11,7 @@ describe('js codegen backend', () => {
 	jsonMlMapper.parse(
 		[
 			'xml',
+			{ id: "yes" }, 
 			['title', 'Tips'],
 			['tips', ['tip', 'Make it work'], ['tip', 'Make it right'], ['tip', 'Make it fast']],
 		],
@@ -154,6 +155,19 @@ describe('js codegen backend', () => {
 				}
 			);
 			chai.assert.equal(results.length, 2);
+		});
+	});
+	describe("attributes + equal operator", () => {
+		it("evaluates element with the matching id to true", () => {
+			chai.assert.isTrue(evaluateXPathToBoolean(
+				'/xml/@id',
+				document,
+				null,
+				null,
+				{
+					backend: 'js-codegen',
+				}
+			));
 		});
 	});
 });

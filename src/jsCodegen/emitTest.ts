@@ -54,13 +54,21 @@ function emitElementTest(ast: IAST, identifier: string) {
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
+//
+// [Definition: Every axis has a principal node kind. If an axis can contain
+// elements, then the principal node kind is element; otherwise, it is the kind
+// of nodes that the axis can contain.] Thus:
+//
+// TODO
+// - For the attribute axis, the principal node kind is attribute.
+// - For other things, it's element.
 function emitNameTest(ast: IAST, identifier: string) {
 	const qName = astHelper.getQName(ast);
 	if (qName.namespaceURI === '') {
 		throw new Error("Unsupported: empty namespaceURI's");
 	}
 
-	return `${identifier}.nodeType === NODE_TYPES.ELEMENT_NODE && ${identifier}.localName === "${qName.localName}"`;
+	return `${identifier}.localName === "${qName.localName}"`;
 }
 
 // select all element children of the context node
