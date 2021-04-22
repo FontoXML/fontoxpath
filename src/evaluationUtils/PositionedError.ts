@@ -5,16 +5,16 @@ export class PositionedError extends Error {
 
 	constructor(message: string, position: SourceRange) {
 		super(message);
-		this['position'] = {
-			['end']: {
-				['column']: position.end.column,
-				['line']: position.end.line,
-				['offset']: position.end.offset,
+		this.position = {
+			end: {
+				column: position.end.column,
+				line: position.end.line,
+				offset: position.end.offset,
 			},
-			['start']: {
-				['column']: position.start.column,
-				['line']: position.start.line,
-				['offset']: position.start.offset,
+			start: {
+				column: position.start.column,
+				line: position.start.line,
+				offset: position.start.offset,
 			},
 		};
 	}

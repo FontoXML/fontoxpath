@@ -1338,7 +1338,7 @@ ParenthesizedItemType = "(" _ type:ItemType _ ")" {return ["parenthesizedItemTyp
 URILiteral = StringLiteral
 
 // 218
-EQName = uri:URIQualifiedName {return [{prefix: null, URI: uri[0]}, uri[1]]}
+EQName = uri:URIQualifiedName {return [{['prefix']: null, ['URI']: uri[0]}, uri[1]]}
  / QName
 
 // 219
@@ -1481,7 +1481,7 @@ WhitespaceCharacter
  / Comment // Note: comments can occur anywhere where whitespace is allowed: https://www.w3.org/TR/xpath-3/#DefaultWhitespaceHandling
 
 // XML Types
-PrefixedName = prefix:XMLPrefix ":" local:LocalPart {return [{prefix: prefix}, local]}
+PrefixedName = prefix:XMLPrefix ":" local:LocalPart {return [{['prefix']: prefix}, local]}
 
 UnprefixedName = local:LocalPart {return [local]}
 

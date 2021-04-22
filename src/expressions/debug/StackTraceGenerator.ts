@@ -24,14 +24,14 @@ export default class StackTraceGenerator extends PossiblyUpdatingExpression {
 
 		this._location = {
 			end: {
-				column: location['end']['column'],
-				line: location['end']['line'],
-				offset: location['end']['offset'],
+				column: location.end.column,
+				line: location.end.line,
+				offset: location.end.offset,
 			},
 			start: {
-				column: location['start']['column'],
-				line: location['start']['line'],
-				offset: location['start']['offset'],
+				column: location.start.column,
+				line: location.start.line,
+				offset: location.start.offset,
 			},
 		};
 	}

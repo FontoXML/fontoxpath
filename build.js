@@ -26,9 +26,21 @@ function doPegJsBuild() {
 	// Note the ts-nocheck, the output of pegJs is not valid TypeScript. The tslint-disable disables linter errors.
 		.then((parserString) => `// @ts-nocheck
 /* tslint:disable */
+
+// HACK: PegJS uses a single object with keys that are later indexed using strings,
+//  this is incompatible with the closure compiler.
+// Annotate this object with the following interface to prevent renaming.
+declare interface pegjs_internal {
+	literal: unknown,
+	'class': unknown,
+	any: unknown,
+	end: unknown,
+	other: unknown,
+}
+
 export default function(globalThis) {
 (function() {
-${parserString}
+${parserString.replace('var DESCRIBE_EXPECTATION_FNS = ', 'var DESCRIBE_EXPECTATION_FNS: pegjs_internal = ')}
 }).call(globalThis);
 };`)
 		.then((parserString) =>
@@ -75,7 +87,7 @@ function doTSCCBuild() {
 			},
 			prefix: './',
 			compilerFlags: {
-				debug: false,
+				debug: true,
 				assume_function_wrapper: true,
 				compilation_level: 'ADVANCED',
 				output_wrapper: `function (xspattern) {
