@@ -59,7 +59,11 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScriptCode {
 	const initialCompiledSteps: EmittedJavaScriptCode = { variables: [], code: '' };
 
 	const compiledSteps = stepsAst.reduceRight(
-		({ variables, code: accumulatedStepsCode }: EmittedJavaScriptCode, step: IAST, index: number) => {
+		(
+			{ variables, code: accumulatedStepsCode }: EmittedJavaScriptCode,
+			step: IAST,
+			index: number
+		) => {
 			const nestLevel = index + 1;
 
 			const predicatesAst = astHelper.getFirstChild(step, 'predicates');
@@ -146,7 +150,11 @@ function emitPathExpression(ast: IAST, identifier: string): EmittedJavaScriptCod
 const firstOp = 'firstOperand';
 const secondOp = 'secondOperand';
 
-function emitCompiledOperand(ast: IAST, identifier: string, operandKind: string): EmittedJavaScriptCode {
+function emitCompiledOperand(
+	ast: IAST,
+	identifier: string,
+	operandKind: string
+): EmittedJavaScriptCode {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const expressionAst = astHelper.getFirstChild(operand, baseExpressions);
 

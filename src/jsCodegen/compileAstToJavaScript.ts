@@ -42,7 +42,13 @@ export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaSc
 	}
 
 	const compiledBaseExpression = emitBaseExpression(xPathAst, compiledXPathIdentifier);
-	const variables = compiledBaseExpression.variables.join("\n");
+	const variables = compiledBaseExpression.variables.join('\n');
 
-	return new CompiledJavaScript(runtimeLibImports + variables + compiledBaseExpression.code + compileExpression(compiledXPathIdentifier), runtimeLibrary);
+	return new CompiledJavaScript(
+		runtimeLibImports +
+			variables +
+			compiledBaseExpression.code +
+			compileExpression(compiledXPathIdentifier),
+		runtimeLibrary
+	);
 }

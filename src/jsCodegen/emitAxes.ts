@@ -1,4 +1,4 @@
-import { EmittedJavaScriptCode } from "./CompiledJavaScript";
+import { EmittedJavaScriptCode } from './CompiledJavaScript';
 
 const axisNodeNames = {
 	ATTRIBUTE: 'attribute',
@@ -154,4 +154,3 @@ function emitSingleNodeAxis(
 		variables: [`let i${nestLevel} = 0;`],
 	};
 }
-
