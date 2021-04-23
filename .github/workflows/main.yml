@@ -23,11 +23,11 @@ jobs:
               run: npm ci
             - name: Linter
               run: npm run lint;
-            - name: Unit tests agains source
+            - name: Unit tests against source
               run: npm run ci-test -- --reporter dot;
             - name: QT3 tests against source
               run: npm run ci-qt3tests -- --reporter dot;
-            - name: Unit tests agains bundle
+            - name: Unit tests against bundle
               run: npm run integrationtests -- --dist --reporter dot;
             - name: QT3 tests against bundle
               run: npm run qt3tests -- --dist --reporter dot;
