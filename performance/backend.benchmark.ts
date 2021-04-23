@@ -3,14 +3,14 @@ import * as slimdomSaxParser from 'slimdom-sax-parser';
 import { evaluateXPathToNodes, evaluateXPathToBoolean } from '../src/index';
 
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
-import loadFile from './utils/loadFile';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
+import loadFile from './utils/loadFile';
 
-const testDocumentFilename = 'test/assets/QT3TS/app/XMark/XMarkAuction.xml';
 
 // Comparisons between the js-codegen and expression backend.
 
 let document: Document;
+const testDocumentFilename = 'test/assets/QT3TS/app/XMark/XMarkAuction.xml';
 
 const selfPQuery = 'self::p';
 benchmarkRunner.compareBenchmarks(
