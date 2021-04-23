@@ -1,4 +1,4 @@
-import CompiledJavaScript from '../jsCodegen/CompiledJavaScript';
+import CompiledJavaScript, { CompiledJavaScriptResult } from '../jsCodegen/CompiledJavaScript';
 import { IAST } from '../parsing/astHelper';
 import { ReturnType } from '../parsing/convertXDMReturnValue';
 import { emitBaseExpression } from './emitBaseExpression';
@@ -35,20 +35,32 @@ function compileAstToReturnBoolean(identifier: string) {
 }
 
 const compiledXPathIdentifier = 'compiledXPathExpression';
-export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaScript {
-	const compileExpression = compileAstByReturnValue[returnType];
-	if (compileExpression === undefined) {
-		throw new Error(`Unsupported return type: ${returnType}`);
+export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaScriptResult {
+	const emitReturnTypeConversion = compileAstByReturnValue[returnType];
+	if (emitReturnTypeConversion === undefined) {
+		return {
+			isAstAccepted: false,
+			reason: `Return type ${returnType} is unsupported by the JS codegen backend.`,
+		};
 	}
 
-	const compiledBaseExpression = emitBaseExpression(xPathAst, compiledXPathIdentifier);
-	const variables = compiledBaseExpression.variables.join('\n');
+	const emittedBaseExpression = emitBaseExpression(xPathAst, compiledXPathIdentifier);
+	if (emittedBaseExpression.isAstAccepted === false) {
+		return emittedBaseExpression;
+	}
 
-	return new CompiledJavaScript(
-		runtimeLibImports +
-			variables +
-			compiledBaseExpression.code +
-			compileExpression(compiledXPathIdentifier),
-		runtimeLibrary
-	);
+	const emittedVariables = emittedBaseExpression.variables
+		? emittedBaseExpression.variables.join('\n')
+		: '';
+
+	return {
+		isAstAccepted: true,
+		result: new CompiledJavaScript(
+			runtimeLibImports +
+				emittedVariables +
+				emittedBaseExpression.code +
+				emitReturnTypeConversion(compiledXPathIdentifier),
+			runtimeLibrary
+		),
+	};
 }

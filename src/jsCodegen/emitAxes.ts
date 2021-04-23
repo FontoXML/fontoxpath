@@ -1,4 +1,4 @@
-import { EmittedJavaScriptCode } from './CompiledJavaScript';
+import { acceptAst, EmittedJavaScript } from './EmittedJavaScript';
 
 const axisNodeNames = {
 	ATTRIBUTE: 'attribute',
@@ -25,22 +25,19 @@ function emitChildAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): EmittedJavaScriptCode {
+): EmittedJavaScript {
 	const contextNodesCode = `const ${childAxisContextNodesIdentifier}${nestLevel} = domFacade.getChildNodes(contextItem${
 		nestLevel - 1
 	});`;
 
-	const compiledAxis = emitMultipleNodeAxis(
+	return emitMultipleNodeAxis(
 		test,
 		predicates,
 		nestLevel,
 		nestedCode,
-		childAxisContextNodesIdentifier
+		childAxisContextNodesIdentifier,
+		contextNodesCode
 	);
-
-	compiledAxis.code = contextNodesCode + compiledAxis.code;
-
-	return compiledAxis;
 }
 
 // the attribute axis contains the attributes of the context node,
@@ -50,22 +47,19 @@ function emitAttributeAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): EmittedJavaScriptCode {
+): EmittedJavaScript {
 	const contextNodesCode = `const ${attributeAxisContextNodesIdentifier}${nestLevel} = domFacade.getAllAttributes(contextItem${
 		nestLevel - 1
 	});`;
 
-	const compiledAxis = emitMultipleNodeAxis(
+	return emitMultipleNodeAxis(
 		test,
 		predicates,
 		nestLevel,
 		nestedCode,
-		attributeAxisContextNodesIdentifier
+		attributeAxisContextNodesIdentifier,
+		contextNodesCode
 	);
-
-	compiledAxis.code = contextNodesCode + compiledAxis.code;
-
-	return compiledAxis;
 }
 
 // self::para selects the context node if it is a para element, and otherwise
@@ -75,14 +69,10 @@ function emitSelfAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): EmittedJavaScriptCode {
+): EmittedJavaScript {
 	const contextNodeCode = `const contextItem${nestLevel} = contextItem${nestLevel - 1};`;
 
-	const compiledAxis = emitSingleNodeAxis(test, predicates, nestLevel, nestedCode);
-
-	compiledAxis.code = contextNodeCode + compiledAxis.code;
-
-	return compiledAxis;
+	return emitSingleNodeAxis(test, predicates, nestLevel, nestedCode, contextNodeCode);
 }
 
 // parent::node() selects the parent of the context node. If the context node is
@@ -93,16 +83,12 @@ function emitParentAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string
-): EmittedJavaScriptCode {
+): EmittedJavaScript {
 	const contextNodeCode = `
 	const contextItem${nestLevel} = domFacade.getParentNode(contextItem${nestLevel - 1});
 	`;
 
-	const compiledParentAxis = emitSingleNodeAxis(test, predicates, nestLevel, nestedCode);
-
-	compiledParentAxis.code = contextNodeCode + compiledParentAxis.code;
-
-	return compiledParentAxis;
+	return emitSingleNodeAxis(test, predicates, nestLevel, nestedCode, contextNodeCode);
 }
 
 function formatConditionCode(condition: string) {
@@ -114,12 +100,14 @@ function emitMultipleNodeAxis(
 	predicates: string,
 	nestLevel: number,
 	nestedCode: string,
-	contextItemsIdentifier: string
-): EmittedJavaScriptCode {
+	contextItemsIdentifier: string,
+	contextNodeCode: string
+): EmittedJavaScript {
 	const indexReset = nestLevel !== 1 ? `i${nestLevel} = 0;` : ``;
 	const predicateConditionCode = formatConditionCode(predicates);
 
 	const axisCode = `
+	${contextNodeCode}
 	while (i${nestLevel} < ${contextItemsIdentifier}${nestLevel}.length) {
 		const contextItem${nestLevel} = ${contextItemsIdentifier}${nestLevel}[i${nestLevel}];
 		if (!(${test} ${predicateConditionCode})) {
@@ -131,7 +119,7 @@ function emitMultipleNodeAxis(
 	${indexReset}
 	`;
 
-	return { code: axisCode, variables: [`let i${nestLevel} = 0;`] };
+	return acceptAst(axisCode, [`let i${nestLevel} = 0;`]);
 }
 
 // Emit code for an axis made up of exactly one node, that should only be
@@ -140,17 +128,19 @@ function emitSingleNodeAxis(
 	test: string,
 	predicates: string,
 	nestLevel: number,
-	nestedCode: string
-): EmittedJavaScriptCode {
+	nestedCode: string,
+	contextNodeCode: string
+): EmittedJavaScript {
 	const testEvaluatationCode = formatConditionCode(test);
 	const predicateEvaluationCode = formatConditionCode(predicates);
 
-	return {
-		code: `
+	return acceptAst(
+		`
+		${contextNodeCode}
 		if (i${nestLevel} == 0 ${testEvaluatationCode} ${predicateEvaluationCode}) {
 			${nestedCode}
 		}
 		`,
-		variables: [`let i${nestLevel} = 0;`],
-	};
+		[`let i${nestLevel} = 0;`]
+	);
 }

@@ -11,6 +11,7 @@ import ExecutionParameters from './expressions/ExecutionParameters';
 import Expression from './expressions/Expression';
 import { getBucketsForNode } from './getBuckets';
 import compileAstToJavaScript from './jsCodegen/compileAstToJavaScript';
+import { CompiledJavaScriptResult } from './jsCodegen/CompiledJavaScript';
 import {
 	getCompiledJavaScriptFromCache,
 	storeCompiledJavaScriptInCache,
@@ -151,52 +152,60 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	const backend = options && options.backend ? options.backend : 'expression';
 
 	if (backend === 'expression') {
-		return evaluateWithExpressionBackend(
-			selector,
-			contextItem,
-			domFacade,
-			variables,
-			returnType,
-			options
-		);
-	} else if (backend === 'js-codegen') {
-		return evaluateWithJsCodegenBackend(selector, contextItem, domFacade, returnType, options);
-	} else if (backend === 'auto') {
 		try {
-			return evaluateWithJsCodegenBackend(
+			return evaluateWithExpressionBackend(
 				selector,
 				contextItem,
 				domFacade,
+				variables,
 				returnType,
 				options
 			);
 		} catch (error) {
-			try {
-				return evaluateWithExpressionBackend(
-					selector,
-					contextItem,
-					domFacade,
-					variables,
-					returnType,
-					options
-				);
-			} catch (error) {
-				printAndRethrowError(selector, error);
+			printAndRethrowError(selector, error);
+		}
+	} else if (backend === 'js-codegen' || backend === 'auto') {
+		const compiledJavaScriptResult = compileWithJsCodegenBackend(selector, returnType, options);
+
+		if (!compiledJavaScriptResult.isAstAccepted) {
+			if (backend === 'auto') {
+				try {
+					return evaluateWithExpressionBackend(
+						selector,
+						contextItem,
+						domFacade,
+						variables,
+						returnType,
+						options
+					);
+				} catch (error) {
+					printAndRethrowError(selector, error);
+				}
+			} else {
+				throw new Error('Failed compiling the given query with the js-codegen backend.');
 			}
+		} else {
+			const wrappedDomFacade: DomFacade = new DomFacade(
+				domFacade === null ? new ExternalDomFacade() : domFacade
+			);
+			const contextArray = adaptJavaScriptValueToArrayOfXPathValues(
+				wrappedDomFacade,
+				contextItem,
+				'item()?'
+			);
+			return compiledJavaScriptResult.result.evaluate(contextArray[0], wrappedDomFacade);
 		}
 	}
 };
 
-const evaluateWithJsCodegenBackend = <
+const compileWithJsCodegenBackend = <
 	TNode extends Node,
 	TReturnType extends keyof IReturnTypes<TNode>
 >(
 	selector: string,
-	contextItem?: any | null,
-	domFacade?: IDomFacade | null,
 	returnType?: TReturnType,
 	options?: Options | null
-): IReturnTypes<TNode>[TReturnType] => {
+): CompiledJavaScriptResult => {
 	const expressionString = normalizeEndOfLines(selector);
 
 	const compilationOptions = {
@@ -208,11 +217,11 @@ const evaluateWithJsCodegenBackend = <
 		disableCache: !!options['disableCache'],
 	};
 
-	let compiledJavaScript = compilationOptions.disableCache
+	let compiledJavaScriptResult = compilationOptions.disableCache
 		? null
 		: getCompiledJavaScriptFromCache(expressionString, returnType);
 
-	if (!compiledJavaScript) {
+	if (!compiledJavaScriptResult) {
 		const ast = parseExpression(expressionString, compilationOptions);
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 
@@ -228,18 +237,10 @@ const evaluateWithJsCodegenBackend = <
 			throw new Error('Unsupported: XQuery in codegen backend');
 		}
 
-		compiledJavaScript = compileAstToJavaScript(queryBodyContents, returnType);
-		storeCompiledJavaScriptInCache(expressionString, returnType, compiledJavaScript);
+		compiledJavaScriptResult = compileAstToJavaScript(queryBodyContents, returnType);
+		storeCompiledJavaScriptInCache(expressionString, returnType, compiledJavaScriptResult);
 	}
-	const wrappedDomFacade: DomFacade = new DomFacade(
-		domFacade === null ? new ExternalDomFacade() : domFacade
-	);
-	const contextArray = adaptJavaScriptValueToArrayOfXPathValues(
-		wrappedDomFacade,
-		contextItem,
-		'item()?'
-	);
-	return compiledJavaScript.evaluate(contextArray[0], wrappedDomFacade);
+	return compiledJavaScriptResult;
 };
 
 const evaluateWithExpressionBackend = <

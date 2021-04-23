@@ -1,12 +1,11 @@
 import DomFacade from '../domFacade/DomFacade';
 import Value from '../expressions/dataTypes/Value';
 
-export type EmittedJavaScriptCode = {
-	code: string;
-	variables: string[];
-};
+export type CompiledJavaScriptResult =
+	| { isAstAccepted: true; result: CompiledJavaScript }
+	| { isAstAccepted: false; reason: string };
 
-class CompiledJavaScript {
+export default class CompiledJavaScript {
 	private compiledJavaScript: string;
 	private fn: any;
 	private runtimeLibrary: any;
@@ -28,5 +27,3 @@ class CompiledJavaScript {
 		return this.fn(dynamicContext, domFacade, this.runtimeLibrary);
 	}
 }
-
-export default CompiledJavaScript;

@@ -1,5 +1,6 @@
 import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
+import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
 
 const kindTestNodeNames = {
 	TEXT_TEST: 'textTest',
@@ -36,52 +37,44 @@ export function determineTypeFromTest(testAst: IAST): ValueType {
 
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
-function emitTextTest(_ast: IAST, identifier: string) {
-	return `${identifier}.nodeType === NODE_TYPES.TEXT_NODE`;
+function emitTextTest(_ast: IAST, identifier: string): EmittedJavaScript {
+	return acceptAst(`${identifier}.nodeType === NODE_TYPES.TEXT_NODE`);
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-ElementTest
-function emitElementTest(ast: IAST, identifier: string) {
+function emitElementTest(ast: IAST, identifier: string): EmittedJavaScript {
 	const elementName = astHelper.getFirstChild(ast, 'elementName');
 	const star = elementName && astHelper.getFirstChild(elementName, 'star');
 	const isElementCode = `${identifier}.nodeType === NODE_TYPES.ELEMENT_NODE`;
-	if (!elementName || star) {
-		return isElementCode;
+	if (elementName === null || star) {
+		return acceptAst(isElementCode);
 	}
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));
-	return `${isElementCode} && ${identifier}.localName === "${qName.localName}"`;
+	return acceptAst(`${isElementCode} && ${identifier}.localName === "${qName.localName}"`);
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
-//
-// [Definition: Every axis has a principal node kind. If an axis can contain
-// elements, then the principal node kind is element; otherwise, it is the kind
-// of nodes that the axis can contain.] Thus:
-//
-// TODO
-// - For the attribute axis, the principal node kind is attribute.
-// - For other things, it's element.
 function emitNameTest(ast: IAST, identifier: string) {
 	const qName = astHelper.getQName(ast);
 	if (qName.namespaceURI === '') {
-		throw new Error("Unsupported: empty namespaceURI's");
+		return rejectAst("Empty namespace URI's are unsupported.");
 	}
 
-	return `${identifier}.localName === "${qName.localName}"`;
+	return acceptAst(`${identifier}.localName === "${qName.localName}"`);
 }
 
 // select all element children of the context node
 // for example: child::*.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-Wildcard
-function emitWildcard(ast: IAST, identifier: string): string {
+function emitWildcard(ast: IAST, identifier: string): EmittedJavaScript {
 	if (astHelper.getChildren(ast, 'Wildcard').length !== 0) {
-		throw new Error('Unsupported: the provided wildcard');
+		return rejectAst('Unsupported: the provided wildcard');
 	}
 	return emitElementTest(ast, identifier);
 }
 
-function emitTest(ast: IAST, identifier: string): string {
+export default function emitTest(ast: IAST, identifier: string): EmittedJavaScript {
 	const test = ast[0];
 	const emittedTest = testEmittersByNodeName[test](ast, identifier);
 
@@ -90,5 +83,3 @@ function emitTest(ast: IAST, identifier: string): string {
 	}
 	return emittedTest;
 }
-
-export default emitTest;

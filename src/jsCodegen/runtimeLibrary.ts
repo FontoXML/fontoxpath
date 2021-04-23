@@ -4,7 +4,7 @@ import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffe
 import { errFORG0006 } from '../expressions/functions/FunctionOperationErrors';
 import { DONE_TOKEN, ready } from '../expressions/util/iterators';
 
-function determinePredicateTruthValue(iterator) {
+export function determinePredicateTruthValue(iterator) {
 	// TODO: maybe handle this in generated code instead?
 	if (typeof iterator === 'boolean') {
 		return iterator;
@@ -26,11 +26,4 @@ function determinePredicateTruthValue(iterator) {
 	return getEffectiveBooleanValue(firstResult.value);
 }
 
-export {
-	NODE_TYPES,
-	ready,
-	DONE_TOKEN,
-	isSubtypeOf,
-	getEffectiveBooleanValue,
-	determinePredicateTruthValue,
-};
+export { NODE_TYPES, ready, DONE_TOKEN, isSubtypeOf, getEffectiveBooleanValue };

@@ -1,6 +1,6 @@
 import astHelper, { IAST } from '../parsing/astHelper';
-import { EmittedJavaScriptCode } from './CompiledJavaScript';
 import { stepEmittersByAxis } from './emitAxes';
+import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
 import emitTest, { determineTypeFromTest, kindTestNames } from './emitTest';
 
 const baseExpressionNames = {
@@ -18,9 +18,13 @@ const baseEmittersByExpression = {
 	[baseExpressionNames.OR_OP]: emitOrExpression,
 };
 
-function emitPredicates(predicatesAst: IAST, nestLevel: number): EmittedJavaScriptCode {
+function emitPredicates(predicatesAst: IAST, nestLevel: number): EmittedJavaScript {
 	let evaluatePredicateConditionCode = '';
 	const functionDeclarations = [];
+
+	if (!predicatesAst) {
+		return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
+	}
 
 	const children = astHelper.getChildren(predicatesAst, '*');
 	for (let i = 0; i < children.length; i++) {
@@ -37,104 +41,109 @@ function emitPredicates(predicatesAst: IAST, nestLevel: number): EmittedJavaScri
 		}
 
 		const compiledPredicate = emitBaseExpression(predicate, predicateFunctionIdentifier);
-
-		functionDeclarations.push(compiledPredicate.code);
+		if (compiledPredicate.isAstAccepted) {
+			functionDeclarations.push(compiledPredicate.code);
+		} else {
+			return compiledPredicate;
+		}
 	}
-	return { variables: functionDeclarations, code: evaluatePredicateConditionCode };
+	return acceptAst(evaluatePredicateConditionCode, functionDeclarations);
 }
 
-function emitSteps(stepsAst: IAST[]): EmittedJavaScriptCode {
+function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 	if (stepsAst.length === 0) {
-		return {
-			variables: ['let hasReturned = false;'],
-			code: `
+		return acceptAst(
+			`
 			if (!hasReturned) {
 				hasReturned = true;
 				return ready(contextItem);
 			}
 			`,
-		};
+			['let hasReturned = false;']
+		);
 	}
 
-	const initialCompiledSteps: EmittedJavaScriptCode = { variables: [], code: '' };
+	const emittedSteps = { variables: [], code: '' };
+	for (let i = stepsAst.length - 1; i >= 0; i--) {
+		const step = stepsAst[i];
+		const nestLevel = i + 1;
 
-	const compiledSteps = stepsAst.reduceRight(
-		(
-			{ variables, code: accumulatedStepsCode }: EmittedJavaScriptCode,
-			step: IAST,
-			index: number
-		) => {
-			const nestLevel = index + 1;
+		const predicatesAst = astHelper.getFirstChild(step, 'predicates');
+		const emittedPredicates = emitPredicates(predicatesAst, nestLevel);
+		if (!emittedPredicates.isAstAccepted) {
+			return emittedPredicates;
+		}
 
-			const predicatesAst = astHelper.getFirstChild(step, 'predicates');
-			const predicates = predicatesAst ? emitPredicates(predicatesAst, nestLevel) : undefined;
+		const axisAst = astHelper.getFirstChild(step, ['xpathAxis']);
+		if (axisAst) {
+			const axis = astHelper.getTextContent(axisAst);
 
-			const axisAst = astHelper.getFirstChild(step, ['xpathAxis']);
-			if (axisAst) {
-				const axis = astHelper.getTextContent(axisAst);
-
-				let nestedCode: string;
-				const testAst = astHelper.getFirstChild(step, kindTestNames);
-				if (index === stepsAst.length - 1) {
-					const returnType = determineTypeFromTest(testAst);
-					nestedCode = `i${nestLevel}++;\nreturn ready({ type: "${returnType}", value: { node: contextItem${nestLevel} }});`;
-				} else {
-					nestedCode = `${accumulatedStepsCode}\ni${nestLevel}++;`;
-				}
-
-				const testCode = emitTest(testAst, `contextItem${nestLevel}`);
-
-				const emitStep = stepEmittersByAxis[axis];
-
-				if (emitStep === undefined) {
-					throw new Error(`Unsupported: the ${axis} axis.`);
-				}
-
-				const emittedStep = emitStep(
-					testCode,
-					predicates ? predicates.code : '',
-					nestLevel,
-					nestedCode
-				);
-
-				variables.push(
-					...emittedStep.variables,
-					...(predicates ? predicates.variables : [])
-				);
-				accumulatedStepsCode = emittedStep.code;
+			const emittedStepsCode = emittedSteps.code;
+			let nestedCode: string;
+			const testAst = astHelper.getFirstChild(step, kindTestNames);
+			if (i === stepsAst.length - 1) {
+				// Infer return type from the used test.
+				const returnType = determineTypeFromTest(testAst);
+				nestedCode = `i${nestLevel}++;\nreturn ready({ type: "${returnType}", value: { node: contextItem${nestLevel} }});`;
 			} else {
-				throw new Error('Unsupported: no axis AST.');
+				nestedCode = `${emittedStepsCode}\ni${nestLevel}++;`;
 			}
 
-			const lookups = astHelper.getChildren(step, 'lookup');
-			if (lookups.length > 0) {
-				throw new Error('Unsupported: lookups.');
+			const emittedTest = emitTest(testAst, `contextItem${nestLevel}`);
+			if (!emittedTest.isAstAccepted) {
+				return emittedTest;
 			}
 
-			return { variables, code: accumulatedStepsCode };
-		},
-		initialCompiledSteps
-	) as EmittedJavaScriptCode;
+			const emitStep = stepEmittersByAxis[axis];
+			if (emitStep === undefined) {
+				return rejectAst(`Unsupported: the ${axis} axis.`);
+			}
 
-	compiledSteps.code = 'const contextItem0 = contextItem.value.node;' + compiledSteps.code;
+			const emittedStep = emitStep(
+				emittedTest.code,
+				emittedPredicates.code,
+				nestLevel,
+				nestedCode
+			);
 
-	return compiledSteps;
+			if (!emittedStep.isAstAccepted) {
+				return emittedStep;
+			}
+
+			emittedSteps.variables.push(...emittedStep.variables, ...emittedPredicates.variables);
+			emittedSteps.code = emittedStep.code;
+		} else {
+			return rejectAst('Unsupported: no axis AST.');
+		}
+
+		const lookups = astHelper.getChildren(step, 'lookup');
+		if (lookups.length > 0) {
+			return rejectAst('Unsupported: lookups.');
+		}
+	}
+	const contextDeclaration = 'const contextItem0 = contextItem.value.node;';
+	emittedSteps.code = contextDeclaration + emittedSteps.code;
+
+	return acceptAst(emittedSteps.code, emittedSteps.variables);
 }
 
 // A path expression can be used to locate nodes within trees. A path expression
 // consists of a series of one or more steps.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-PathExpr
-function emitPathExpression(ast: IAST, identifier: string): EmittedJavaScriptCode {
-	const compiledSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'));
+function emitPathExpression(ast: IAST, identifier: string): EmittedJavaScript {
+	const emittedSteps = emitSteps(astHelper.getChildren(ast, 'stepExpr'));
+	if (!emittedSteps.isAstAccepted) {
+		return emittedSteps;
+	}
 
 	const pathExpressionCode = `
 	function ${identifier}(contextItem) {
 		if (!isSubtypeOf(contextItem.type, "node()")) {
 			throw new Error("Context item must be subtype of node().");
 		}
-		${compiledSteps.variables.join('\n')}
+		${emittedSteps.variables.join('\n')}
 		const next = () => {
-			${compiledSteps.code}
+			${emittedSteps.code}
 			return DONE_TOKEN;
 		};
 		return {
@@ -144,43 +153,43 @@ function emitPathExpression(ast: IAST, identifier: string): EmittedJavaScriptCod
 	}
 	`;
 
-	return { code: pathExpressionCode, variables: [] };
+	return acceptAst(pathExpressionCode);
 }
 
-const firstOp = 'firstOperand';
-const secondOp = 'secondOperand';
+const firstOperandIdentifier = 'firstOperand';
+const secondOperandIdentifier = 'secondOperand';
 
 function emitCompiledOperand(
 	ast: IAST,
 	identifier: string,
 	operandKind: string
-): EmittedJavaScriptCode {
+): EmittedJavaScript {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const expressionAst = astHelper.getFirstChild(operand, baseExpressions);
 
 	const expressionIdentifier = identifier + operandKind;
 
 	const compiledExpression = emitBaseExpression(expressionAst, expressionIdentifier);
+	if (!compiledExpression.isAstAccepted) {
+		return compiledExpression;
+	}
 
-	return {
-		code: `determinePredicateTruthValue(${expressionIdentifier}(contextItem))`,
-		variables: [compiledExpression.code],
-	};
-}
-
-function emitCompiledOperands(ast: IAST, identifier: string) {
-	return [
-		emitCompiledOperand(ast, identifier, firstOp),
-		emitCompiledOperand(ast, identifier, secondOp),
-	];
+	return acceptAst(`determinePredicateTruthValue(${expressionIdentifier}(contextItem))`, [
+		compiledExpression.code,
+	]);
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-AndExpr
-function emitAndExpression(ast: IAST, identifier: string): EmittedJavaScriptCode {
-	const [firstCompiledExpression, secondCompiledExpression] = emitCompiledOperands(
-		ast,
-		identifier
-	);
+function emitAndExpression(ast: IAST, identifier: string): EmittedJavaScript {
+	const firstCompiledExpression = emitCompiledOperand(ast, identifier, firstOperandIdentifier);
+	if (!firstCompiledExpression.isAstAccepted) {
+		return firstCompiledExpression;
+	}
+
+	const secondCompiledExpression = emitCompiledOperand(ast, identifier, secondOperandIdentifier);
+	if (!secondCompiledExpression.isAstAccepted) {
+		return secondCompiledExpression;
+	}
 
 	const andOpCode = `
 	function ${identifier}(contextItem) {
@@ -189,15 +198,20 @@ function emitAndExpression(ast: IAST, identifier: string): EmittedJavaScriptCode
 		return ${firstCompiledExpression.code} && ${secondCompiledExpression.code}
 	}
 	`;
-	return { code: andOpCode, variables: [] };
+	return acceptAst(andOpCode);
 }
 
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-OrExpr
-function emitOrExpression(ast: IAST, identifier: string): EmittedJavaScriptCode {
-	const [firstCompiledExpression, secondCompiledExpression] = emitCompiledOperands(
-		ast,
-		identifier
-	);
+function emitOrExpression(ast: IAST, identifier: string): EmittedJavaScript {
+	const firstCompiledExpression = emitCompiledOperand(ast, identifier, firstOperandIdentifier);
+	if (!firstCompiledExpression.isAstAccepted) {
+		return firstCompiledExpression;
+	}
+
+	const secondCompiledExpression = emitCompiledOperand(ast, identifier, secondOperandIdentifier);
+	if (!secondCompiledExpression.isAstAccepted) {
+		return secondCompiledExpression;
+	}
 
 	const orOpCode = `
 	function ${identifier}(contextItem) {
@@ -206,14 +220,14 @@ function emitOrExpression(ast: IAST, identifier: string): EmittedJavaScriptCode 
 		return ${firstCompiledExpression.code} || ${secondCompiledExpression.code}
 	}
 	`;
-	return { code: orOpCode, variables: [] };
+	return acceptAst(orOpCode);
 }
 
-export function emitBaseExpression(ast: IAST, identifier: string): EmittedJavaScriptCode {
+export function emitBaseExpression(ast: IAST, identifier: string): EmittedJavaScript {
 	const name = ast[0];
 	const baseExpressionToEmit = baseEmittersByExpression[name];
 	if (baseExpressionToEmit === undefined) {
-		throw new Error(`Unsupported: base expression ${name}`);
+		return rejectAst(`Unsupported: base expression ${name}`);
 	}
 	return baseExpressionToEmit(ast, identifier);
 }
