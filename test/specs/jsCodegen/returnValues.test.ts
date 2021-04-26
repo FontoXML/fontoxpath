@@ -4,8 +4,8 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import evaluateXPathToBoolean from '../../../src/evaluateXPathToBoolean';
-import evaluateXPathToNodes from '../../../src/evaluateXPathToNodes';
 import evaluateXPathToFirstNode from '../../../src/evaluateXPathToFirstNode';
+import evaluateXPathToNodes from '../../../src/evaluateXPathToNodes';
 
 describe('return values', () => {
 	const document = new slimdom.Document();
@@ -41,13 +41,13 @@ describe('return values', () => {
 		chai.assert.equal(results.length, 3);
 	});
 	it('evaluates to first node', () => {
-		const node: slimdom.Node = evaluateXPathToFirstNode(
-			'/element()/element()/element()/text()',
+		const node: slimdom.Text = evaluateXPathToFirstNode(
+			'/element()',
 			document,
 			null,
 			null,
 			{ backend: 'js-codegen' }
 		);
-		chai.assert.equal(node.F, 'Make it work');
+		chai.assert.equal(node, document.firstChild);
 	});
 });
