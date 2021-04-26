@@ -119,6 +119,9 @@ function parseNode(
  * The precise generated XQueryX may change in the future when progress is made on supporting the
  * XQueryX test set provided with the [QT3 test suite](https://dev.w3.org/2011/QT3-test-suite/).
  *
+ * Note that the parseScript function returns a detached element: it is not added to the passed
+ * document.
+ *
  * @example
  * Parse "self::element" to an XQueryX element and access it
  * ```
@@ -132,7 +135,7 @@ function parseNode(
  *
  * // Get the nametest element
  * const nameTestElement = evaluateXPathToFirstNode(
- *   '//Q{http://www.w3.org/2005/XQueryX}nameTest',
+ *   'descendant-or-self::Q{http://www.w3.org/2005/XQueryX}nameTest',
  *   xqueryx)
  * ```
  *
