@@ -1,7 +1,7 @@
 import benchmarkRunner from '@fontoxml/fonto-benchmark-runner';
 import { Document, Node } from 'slimdom';
 import * as slimdomSaxParser from 'slimdom-sax-parser';
-import { evaluateXPathToNodes, evaluateXPathToBoolean } from '../src/index';
+import { evaluateXPathToBoolean, evaluateXPathToNodes } from '../src/index';
 import jsonMlMapper from '../test/helpers/jsonMlMapper';
 import loadFile from './utils/loadFile';
 
