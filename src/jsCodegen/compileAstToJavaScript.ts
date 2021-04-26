@@ -7,6 +7,7 @@ import * as runtimeLibrary from './runtimeLibrary';
 const compileAstByReturnValue = {
 	[ReturnType.NODES]: compileAstToReturnNodes,
 	[ReturnType.BOOLEAN]: compileAstToReturnBoolean,
+	[ReturnType.FIRST_NODE]: compileAstToReturnFirstNode,
 };
 
 const runtimeLibImports = `
@@ -29,6 +30,14 @@ function compileAstToReturnNodes(identifier: string) {
 function compileAstToReturnBoolean(identifier: string) {
 	const transformToBooleanCode = `
 	return determinePredicateTruthValue(${identifier}(contextItem));
+	`;
+
+	return transformToBooleanCode;
+}
+
+function compileAstToReturnFirstNode(identifier: string) {
+	const transformToBooleanCode = `
+	return ${identifier}(contextItem).next().value.value.node;
 	`;
 
 	return transformToBooleanCode;

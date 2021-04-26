@@ -151,40 +151,10 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 
 	const backend = options && options.backend ? options.backend : 'expression';
 
-	if (backend === 'expression') {
-		try {
-			return evaluateWithExpressionBackend(
-				selector,
-				contextItem,
-				domFacade,
-				variables,
-				returnType,
-				options
-			);
-		} catch (error) {
-			printAndRethrowError(selector, error);
-		}
-	} else if (backend === 'js-codegen' || backend === 'auto') {
+	if (backend === 'js-codegen' || backend === 'auto') {
 		const compiledJavaScriptResult = compileWithJsCodegenBackend(selector, returnType, options);
 
-		if (!compiledJavaScriptResult.isAstAccepted) {
-			if (backend === 'auto') {
-				try {
-					return evaluateWithExpressionBackend(
-						selector,
-						contextItem,
-						domFacade,
-						variables,
-						returnType,
-						options
-					);
-				} catch (error) {
-					printAndRethrowError(selector, error);
-				}
-			} else {
-				throw new Error('Failed compiling the given query with the js-codegen backend.');
-			}
-		} else {
+		if (compiledJavaScriptResult.isAstAccepted === true) {
 			const wrappedDomFacade: DomFacade = new DomFacade(
 				domFacade === null ? new ExternalDomFacade() : domFacade
 			);
@@ -194,7 +164,26 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 				'item()?'
 			);
 			return compiledJavaScriptResult.result.evaluate(contextArray[0], wrappedDomFacade);
+		} else if (backend !== 'auto') {
+			// When only using the js-codegen backend, we should not proceed if
+			// it fails.
+			throw new Error(
+				`Failed compiling the given query with the js-codegen backend. Reason: ${compiledJavaScriptResult.reason}`
+			);
 		}
+	}
+
+	try {
+		return evaluateWithExpressionBackend(
+			selector,
+			contextItem,
+			domFacade,
+			variables,
+			returnType,
+			options
+		);
+	} catch (error) {
+		printAndRethrowError(selector, error);
 	}
 };
 
