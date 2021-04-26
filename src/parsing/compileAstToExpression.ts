@@ -328,18 +328,18 @@ function unwrapBinaryOperator(
 ) {
 	const compiledAstNodes = [];
 	function unwrapInner(innerAst: IAST) {
-		const firstOperand = astHelper.getFirstChild(innerAst, 'firstOperand')[1] as IAST;
-		const secondOperand = astHelper.getFirstChild(innerAst, 'secondOperand')[1] as IAST;
+		const firstOperand = astHelper.followPath(innerAst, ['firstOperand', '*']);
+		const secondOperand = astHelper.followPath(innerAst, ['secondOperand', '*']);
 
 		if (firstOperand[0] === operatorName) {
 			unwrapInner(firstOperand);
 		} else {
-			compiledAstNodes.push(compile(firstOperand as IAST, compilationOptions));
+			compiledAstNodes.push(compile(firstOperand, compilationOptions));
 		}
 		if (secondOperand[0] === operatorName) {
 			unwrapInner(secondOperand);
 		} else {
-			compiledAstNodes.push(compile(secondOperand as IAST, compilationOptions));
+			compiledAstNodes.push(compile(secondOperand, compilationOptions));
 		}
 	}
 	unwrapInner(ast);

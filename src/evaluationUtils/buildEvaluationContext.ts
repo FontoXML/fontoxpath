@@ -22,13 +22,8 @@ import {
 	TypedExternalValue,
 	UntypedExternalValue,
 } from '../types/createTypedValueFactory';
-import {
-	LexicalQualifiedName,
-	NamespaceResolver,
-	Options,
-	ResolvedQualifiedName,
-} from '../types/Options';
-import { Node } from '../types/Types';
+import { LexicalQualifiedName, Options, ResolvedQualifiedName } from '../types/Options';
+import { Element, Node } from '../types/Types';
 
 const generateGlobalVariableBindingName = (variableName: string) => `Q{}${variableName}[0]`;
 
@@ -71,7 +66,7 @@ export function createDefaultFunctionNameResolver(defaultFunctionNamespaceURI: s
 }
 
 export default function buildEvaluationContext(
-	expressionString: string,
+	expression: string | Element,
 	contextItem: TypedExternalValue | UntypedExternalValue,
 	domFacade: IDomFacade | null,
 	variables: { [s: string]: TypedExternalValue | UntypedExternalValue },
@@ -115,7 +110,9 @@ export default function buildEvaluationContext(
 		domFacade === null ? new ExternalDomFacade() : domFacade
 	);
 
-	expressionString = normalizeEndOfLines(expressionString);
+	if (typeof expression === 'string') {
+		expression = normalizeEndOfLines(expression);
+	}
 
 	const moduleImports = internalOptions.moduleImports || Object.create(null);
 
@@ -130,7 +127,7 @@ export default function buildEvaluationContext(
 		createDefaultFunctionNameResolver(defaultFunctionNamespaceURI);
 
 	const expressionAndStaticContext = staticallyCompileXPath(
-		expressionString,
+		expression,
 		compilationOptions,
 		namespaceResolver,
 		variables,

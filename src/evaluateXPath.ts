@@ -9,7 +9,7 @@ import convertXDMReturnValue, { IReturnTypes, ReturnType } from './parsing/conve
 import { markXPathEnd, markXPathStart } from './performance';
 import { TypedExternalValue, UntypedExternalValue } from './types/createTypedValueFactory';
 import { Language, Options } from './types/Options';
-import { Node } from './types/Types';
+import { Node, Element } from './types/Types';
 
 /**
  * @public
@@ -37,7 +37,7 @@ export type EvaluateXPath = {
 	 * @returns The result of executing this XPath
 	 */
 	<TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
-		selector: string,
+		selector: string|Element,
 		contextItem?: any | null,
 		domFacade?: IDomFacade | null,
 		variables?: { [s: string]: any } | null,
@@ -122,7 +122,7 @@ export type EvaluateXPath = {
 	XQUERY_UPDATE_3_1_LANGUAGE: Language.XQUERY_UPDATE_3_1_LANGUAGE;
 };
 const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnTypes<TNode>>(
-	selector: string,
+	selector: string|Element,
 	contextItem?: any | null,
 	domFacade?: IDomFacade | null,
 	variables?: {
@@ -132,7 +132,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	options?: Options | null
 ): IReturnTypes<TNode>[TReturnType] => {
 	returnType = returnType || (ReturnType.ANY as any);
-	if (!selector || typeof selector !== 'string') {
+	if (!selector || (typeof selector !== 'string' && !('nodeType' in selector))) {
 		throw new TypeError("Failed to execute 'evaluateXPath': xpathExpression must be a string.");
 	}
 
@@ -161,7 +161,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 		executionParameters = context.executionParameters;
 		expression = context.expression;
 	} catch (error) {
-		printAndRethrowError(selector, error);
+		printAndRethrowError(selector as any, error);
 	}
 
 	if (expression.isUpdating) {
@@ -183,19 +183,19 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 	}
 
 	try {
-		markXPathStart(selector);
+		markXPathStart(selector as any);
 		const rawResults = expression.evaluateMaybeStatically(dynamicContext, executionParameters);
 		const toReturn = convertXDMReturnValue<TNode, TReturnType>(
-			selector,
+			selector as any,
 			rawResults,
 			returnType,
 			executionParameters
 		);
-		markXPathEnd(selector);
+		markXPathEnd(selector as any);
 
 		return toReturn;
 	} catch (error) {
-		printAndRethrowError(selector, error);
+		printAndRethrowError(selector as any, error);
 	}
 };
 

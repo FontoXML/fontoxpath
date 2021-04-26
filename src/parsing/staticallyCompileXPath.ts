@@ -2,7 +2,7 @@ import ExecutionSpecificStaticContext from '../expressions/ExecutionSpecificStat
 import Expression from '../expressions/Expression';
 import StaticContext from '../expressions/StaticContext';
 import { FunctionNameResolver } from '../types/Options';
-import astHelper from './astHelper';
+import astHelper, { IAST } from './astHelper';
 import compileAstToExpression from './compileAstToExpression';
 import {
 	getStaticCompilationResultFromCache,
@@ -11,9 +11,34 @@ import {
 import { enhanceStaticContextWithModule } from './globalModuleCache';
 import parseExpression from './parseExpression';
 import processProlog from './processProlog';
+import { NODE_TYPES } from '../domFacade/ConcreteNode';
+
+function serializeToJsonMl(ast: Element): IAST;
+function serializeToJsonMl(ast: Node): IAST | string {
+	switch (ast.nodeType) {
+		case NODE_TYPES.ELEMENT_NODE:
+			const astElement = ast as Element;
+			return [
+				astElement.localName,
+
+				Array.from(astElement.attributes).reduce(
+					(allAttributes, attribute) =>
+						(allAttributes[attribute.localName] = attribute.value),
+					{}
+				),
+			].concat(Array.from(astElement.childNodes).map(serializeToJsonMl));
+		case NODE_TYPES.TEXT_NODE:
+			return (ast as Text).data;
+
+		default:
+			throw new Error(
+				`Unsupported node type ${ast.nodeType}. Only pass elements containig elements and text nodes.`
+			);
+	}
+}
 
 export default function staticallyCompileXPath(
-	xpathString: string,
+	scriptStringOrAst: string | Element,
 	compilationOptions: {
 		allowUpdating: boolean | undefined;
 		allowXQuery: boolean | undefined;
@@ -28,18 +53,19 @@ export default function staticallyCompileXPath(
 ): { expression: Expression; staticContext: StaticContext } {
 	const language = compilationOptions.allowXQuery ? 'XQuery' : 'XPath';
 
-	const fromCache = compilationOptions.disableCache
-		? null
-		: getStaticCompilationResultFromCache(
-				xpathString,
-				language,
-				namespaceResolver,
-				variables,
-				moduleImports,
-				compilationOptions.debug,
-				defaultFunctionNamespaceURI,
-				functionNameResolver
-		  );
+	const fromCache =
+		typeof scriptStringOrAst !== 'string' || compilationOptions.disableCache
+			? null
+			: getStaticCompilationResultFromCache(
+					scriptStringOrAst,
+					language,
+					namespaceResolver,
+					variables,
+					moduleImports,
+					compilationOptions.debug,
+					defaultFunctionNamespaceURI,
+					functionNameResolver
+			  );
 
 	const executionSpecificStaticContext = new ExecutionSpecificStaticContext(
 		namespaceResolver,
@@ -55,7 +81,10 @@ export default function staticallyCompileXPath(
 		expression = fromCache.expression;
 	} else {
 		// We can not use anything from the cache, parse + compile
-		const ast = parseExpression(xpathString, compilationOptions);
+		const ast =
+			typeof scriptStringOrAst === 'string'
+				? parseExpression(scriptStringOrAst, compilationOptions)
+				: serializeToJsonMl(scriptStringOrAst);
 
 		const mainModule = astHelper.getFirstChild(ast, 'mainModule');
 		if (!mainModule) {
@@ -88,9 +117,9 @@ export default function staticallyCompileXPath(
 
 		expression.performStaticEvaluation(rootStaticContext);
 
-		if (!compilationOptions.disableCache) {
+		if (!compilationOptions.disableCache && typeof scriptStringOrAst === 'string') {
 			storeStaticCompilationResultInCache(
-				xpathString,
+				scriptStringOrAst,
 				language,
 				executionSpecificStaticContext,
 				moduleImports,
