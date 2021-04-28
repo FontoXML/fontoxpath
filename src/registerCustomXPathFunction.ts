@@ -4,6 +4,7 @@ import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptVal
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
+import { BaseType } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -74,7 +75,7 @@ function adaptXPathValueToJavascriptValue(
 		case '*':
 		case '+':
 			return valueSequence.getAllValues().map((value) => {
-				if (isSubtypeOf(value.type, 'attribute()')) {
+				if (isSubtypeOf(value.type, { kind: BaseType.ATTRIBUTE })) {
 					throw new Error('Cannot pass attribute nodes to custom functions');
 				}
 				return transformXPathItemToJavascriptObject(value, executionParameters).next(
