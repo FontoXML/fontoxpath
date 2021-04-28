@@ -1,0 +1,77 @@
+image: node:latest
+
+stages:
+    - lint
+    - test
+
+lint:
+    stage: lint
+    script:
+        - npm ci
+        - npm run lint
+
+ci-test:
+    stage: test
+    script:
+        - npm ci
+        - npm run ci-test -- --reporter dot
+
+ci-qt3tests:
+    stage: test
+    script:
+        - npm ci
+        - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+        - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+        - curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+        - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
+        - npm run ci-qt3tests -- --reporter dot
+
+integration-tests:
+    stage: test
+    script:
+        - npm ci
+        - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+        - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+        - curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+        - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
+        - npm run integrationtests -- --dist --reporter dot
+
+bundle-qt3tests:
+    stage: test
+    script:
+        - npm ci
+        - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+        - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+        - curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+        - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
+        - npm run qt3tests -- --dist --reporter dot
+
+parser-tests:
+    stage: test
+    script:
+        - npm ci
+        - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+        - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+        - curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+        - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
+        - npm run ci-qt3testsxqueryx -- --reporter dot
+
+update-facility-tests:
+    stage: test
+    script:
+        - npm ci
+        - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+        - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+        - curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+        - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
+        - npm run ci-xqutstests -- --reporter dot
+
+update-facility-parser-tests:
+    stage: test
+    script:
+        - npm ci
+        - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
+        - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz | tar -xz -C ./test/assets/QT3TS --strip-components=1
+        - curl -L https://github.com/LeoWoerteler/XQUTS/archive/master.tar.gz | tar -xz -C ./test/assets/XQUTS --strip-components=1
+        - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
+        - npm run ci-xqutstestsxqueryx -- --reporter dot

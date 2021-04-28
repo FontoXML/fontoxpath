@@ -1,0 +1,36 @@
+{
+	"$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+	"compiler": {
+		"tsconfigFilePath": "./tsconfig.json"
+	},
+	"apiReport": {
+		"enabled": false
+	},
+	"docModel": {
+		"enabled": true,
+		"apiJsonFilePath": "dist/fontoxpath.api.json"
+
+	},
+	"mainEntryPointFilePath": "built/index.d.ts",
+	"dtsRollup": {
+		"enabled": true,
+		"untrimmedFilePath": "dist/fontoxpath.d.ts"
+	},
+	"messages": {
+		"compilerMessageReporting": {
+			"default": {
+				"logLevel": "warning"
+			}
+		},
+		"extractorMessageReporting": {
+			"default": {
+				"logLevel": "warning"
+			}
+		},
+		"tsdocMessageReporting": {
+			"default": {
+				"logLevel": "warning"
+			}
+		}
+	}
+}
