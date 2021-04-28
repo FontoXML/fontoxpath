@@ -1,20 +1,20 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { ValueType, BaseType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
-const createGMonthDayValue = (value) => createAtomicValue(value, 'xs:gMonthDay');
+const createGMonthDayValue = (value) => createAtomicValue(value, { kind: BaseType.XSGMONTHDAY });
 
 export default function castToGMonthDay(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value) => CastResult {
-	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
+	if (instanceOf({ kind: BaseType.XSDATE }) || instanceOf({ kind: BaseType.XSDATETIME })) {
 		return (value) => ({
 			successful: true,
-			value: createGMonthDayValue(value.convertToType('xs:gMonthDay')),
+			value: createGMonthDayValue(value.convertToType({ kind: BaseType.XSGMONTHDAY })),
 		});
 	}
-	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
+	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {
 		return (value) => ({
 			successful: true,
 			value: createGMonthDayValue(DateTime.fromString(value)),

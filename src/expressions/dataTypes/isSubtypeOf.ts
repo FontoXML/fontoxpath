@@ -31,8 +31,8 @@ export default function isSubtypeOf(subTypeName: ValueType, superTypeName: Value
 		return true;
 	}
 
-	const superType = builtinDataTypesByName[superTypeName];
-	const subType = builtinDataTypesByName[subTypeName];
+	const superType = builtinDataTypesByName[superTypeName.kind];
+	const subType = builtinDataTypesByName[subTypeName.kind];
 
 	if (!superType) {
 		if (!superTypeName.startsWith('xs:')) {

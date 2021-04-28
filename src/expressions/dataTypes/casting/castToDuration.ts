@@ -1,32 +1,32 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { ValueType, BaseType } from '../Value';
 import Duration from '../valueTypes/Duration';
 import CastResult from './CastResult';
 
-const createDurationValue = (value) => createAtomicValue(value, 'xs:duration');
+const createDurationValue = (value) => createAtomicValue(value, { kind: BaseType.XSDURATION });
 
 export default function castToDuration(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value) => CastResult {
-	if (instanceOf('xs:yearMonthDuration')) {
+	if (instanceOf({ kind: BaseType.XSYEARMONTHDURATION })) {
 		return (value) => ({
 			successful: true,
 			value: createDurationValue(Duration.fromYearMonthDuration(value)),
 		});
 	}
-	if (instanceOf('xs:dayTimeDuration')) {
+	if (instanceOf({ kind: BaseType.XSDAYTIMEDURATION })) {
 		return (value) => ({
 			successful: true,
 			value: createDurationValue(Duration.fromDayTimeDuration(value)),
 		});
 	}
-	if (instanceOf('xs:duration')) {
+	if (instanceOf({ kind: BaseType.XSDURATION })) {
 		return (value) => ({
 			successful: true,
 			value: createDurationValue(value),
 		});
 	}
-	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
+	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {
 		return (value) => {
 			const parsedDuration = Duration.fromString(value);
 			if (parsedDuration) {

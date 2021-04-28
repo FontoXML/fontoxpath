@@ -1,19 +1,19 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { ValueType, BaseType } from '../Value';
 import CastResult from './CastResult';
 
-const createIntegerValue = (value) => createAtomicValue(value, 'xs:integer');
+const createIntegerValue = (value) => createAtomicValue(value, { kind: BaseType.XSINTEGER });
 
 export default function castToInteger(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value) => CastResult {
-	if (instanceOf('xs:boolean')) {
+	if (instanceOf({ kind: BaseType.XSBOOLEAN })) {
 		return (value) => ({
 			successful: true,
 			value: createIntegerValue(value ? 1 : 0),
 		});
 	}
-	if (instanceOf('xs:numeric')) {
+	if (instanceOf({ kind: BaseType.XSNUMERIC })) {
 		return (value) => {
 			const integerValue = Math.trunc(value);
 			if (!isFinite(integerValue) || isNaN(integerValue)) {
@@ -38,7 +38,7 @@ export default function castToInteger(
 			};
 		};
 	}
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf({ kind: BaseType.XSSTRING }) || instanceOf({ kind: BaseType.XSUNTYPEDATOMIC })) {
 		return (value) => {
 			const integerValue = parseInt(value, 10);
 			if (isNaN(integerValue)) {
