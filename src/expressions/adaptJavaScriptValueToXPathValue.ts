@@ -8,7 +8,7 @@ import createPointerValue from './dataTypes/createPointerValue';
 import ISequence from './dataTypes/ISequence';
 import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value, { ValueType } from './dataTypes/Value';
+import Value, { BaseType, ValueType } from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
@@ -28,9 +28,9 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 		case 'boolean':
 			return value ? trueBoolean : falseBoolean;
 		case 'number':
-			return createAtomicValue(value, 'xs:double');
+			return createAtomicValue(value, { kind: BaseType.XSDOUBLE });
 		case 'string':
-			return createAtomicValue(value, 'xs:string');
+			return createAtomicValue(value, { kind: BaseType.XSSTRING });
 		case 'object':
 			// Test if it is a node
 			if ('nodeType' in value) {
@@ -65,7 +65,7 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 								: sequenceFactory.singleton(adaptedValue);
 
 						return {
-							key: createAtomicValue(key, 'xs:string'),
+							key: createAtomicValue(key, { kind: BaseType.XSSTRING }),
 							value: createDoublyIterableSequence(adaptedSequence),
 						};
 					})
@@ -78,7 +78,7 @@ function adaptSingleJavaScriptValue(value: ValidValue, domFacade: DomFacade): Va
 	);
 }
 
-function checkNumericType(value: ValidValue, type: ValueType): asserts value is number {
+function checkNumericType(value: ValidValue, type: BaseType): asserts value is number {
 	if (typeof value === 'number') {
 		return;
 	}
@@ -107,32 +107,32 @@ function adaptJavaScriptValueToXPath(
 	if (value === null) {
 		return null;
 	}
-	switch (type) {
-		case 'xs:boolean':
+	switch (type.kind) {
+		case BaseType.XSDATETIME:
 			return value ? trueBoolean : falseBoolean;
-		case 'xs:string':
-			return createAtomicValue(value + '', 'xs:string');
-		case 'xs:double':
-		case 'xs:numeric':
-			checkNumericType(value, 'xs:double');
-			return createAtomicValue(+value, 'xs:double');
-		case 'xs:decimal':
-			checkNumericType(value, type);
-			return createAtomicValue(+value, 'xs:decimal');
-		case 'xs:integer':
-			checkNumericType(value, type);
-			return createAtomicValue(value | 0, 'xs:integer');
-		case 'xs:float':
-			checkNumericType(value, type);
-			return createAtomicValue(+value, 'xs:float');
-		case 'xs:date':
-		case 'xs:time':
-		case 'xs:dateTime':
-		case 'xs:gYearMonth':
-		case 'xs:gYear':
-		case 'xs:gMonthDay':
-		case 'xs:gMonth':
-		case 'xs:gDay':
+		case BaseType.XSSTRING:
+			return createAtomicValue(value + '', { kind: BaseType.XSSTRING });
+		case BaseType.XSDOUBLE:
+		case BaseType.XSNUMERIC:
+			checkNumericType(value, BaseType.XSNUMERIC);
+			return createAtomicValue(+value, { kind: BaseType.XSDOUBLE });
+		case BaseType.XSDECIMAL:
+			checkNumericType(value, type.kind);
+			return createAtomicValue(+value, { kind: BaseType.XSDECIMAL });
+		case BaseType.XSINTEGER:
+			checkNumericType(value, type.kind);
+			return createAtomicValue(value | 0, { kind: BaseType.XSINTEGER });
+		case BaseType.XSFLOAT:
+			checkNumericType(value, type.kind);
+			return createAtomicValue(+value, { kind: BaseType.XSFLOAT });
+		case BaseType.XSDATE:
+		case BaseType.XSTIME:
+		case BaseType.XSDATETIME:
+		case BaseType.XSGYEARMONTH:
+		case BaseType.XSGYEAR:
+		case BaseType.XSGMONTHDAY:
+		case BaseType.XSGMONTH:
+		case BaseType.XSGDAY:
 			if (!(value instanceof Date)) {
 				throw new Error(
 					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${type}.`
@@ -142,13 +142,13 @@ function adaptJavaScriptValueToXPath(
 				DateTime.fromString(value.toISOString()).convertToType(type),
 				type
 			);
-		case 'node()':
-		case 'attribute()':
-		case 'document-node()':
-		case 'element()':
-		case 'text()':
-		case 'processing-instruction()':
-		case 'comment()':
+		case BaseType.NODE:
+		case BaseType.ATTRIBUTE:
+		case BaseType.DOCUMENTNODE:
+		case BaseType.ELEMENT:
+		case BaseType.TEXT:
+		case BaseType.PROCESSINGINSTRUCTION:
+		case BaseType.COMMENT:
 			if (!(typeof value === 'object') || !('nodeType' in value)) {
 				throw new Error(
 					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${type}.`
@@ -156,7 +156,7 @@ function adaptJavaScriptValueToXPath(
 			}
 			const pointer: NodePointer = { node: value, graftAncestor: null };
 			return createPointerValue(pointer, domFacade);
-		case 'item()':
+		case BaseType.ITEM:
 			return adaptSingleJavaScriptValue(value, domFacade);
 		default:
 			throw new Error(

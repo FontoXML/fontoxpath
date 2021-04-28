@@ -1,7 +1,7 @@
 import facetHandlersByDataTypeName from '../facets/facetsByDataTypeName';
 import { ValueType, BaseType } from '../Value';
 import builtinModels from './builtinModels';
-import dataTypeValidatorByName from './dataTypeValidatorByName';
+import { getValidatorForType } from './dataTypeValidatorByName';
 
 export type TypeModel = {
 	facetHandlers: object;
@@ -21,7 +21,7 @@ builtinModels.forEach((model) => {
 
 	if (model.variety === 'primitive') {
 		const parent = model.parent ? builtinDataTypesByName[model.parent.kind] : null;
-		const validator = dataTypeValidatorByName[name.kind] || null;
+		const validator = getValidatorForType(name.kind) || null;
 		const facetHandlers = facetHandlersByDataTypeName[name.kind];
 		builtinDataTypesByName[name.kind] = {
 			variety: 'primitive',
@@ -34,7 +34,7 @@ builtinModels.forEach((model) => {
 		};
 	} else if (model.variety === 'derived') {
 		const base = builtinDataTypesByName[model.base.kind];
-		const validator = dataTypeValidatorByName[name.kind] || null;
+		const validator = getValidatorForType(name.kind) || null;
 		builtinDataTypesByName[name.kind] = {
 			variety: 'derived',
 			name,
