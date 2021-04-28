@@ -1,0 +1,66 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch current file w/ mocha",
+			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+			"env": {
+				"TS_NODE_PROJECT": "test/tsconfig.json"
+			},
+			"args": [
+				"--timeout",
+				"4000",
+				"--colors",
+				"--require",
+				"ts-node/register",
+				"--require",
+				"tsconfig-paths/register",
+				"${relativeFile}"
+			],
+			"skipFiles": [
+				"node_modules/**/*.js",
+				"lib/**/*.js",
+				"async_hooks.js",
+				"inspector_async_hook.js",
+				"fs.js",
+				"loader.js"
+			],
+			// smartStep can be enabled again once [Microsoft/vscode#68616](https://github.com/Microsoft/vscode/issues/68616) is fixed. TLDR; smartStep causes parts of code to not be highlighted when debugging unit tests.
+			"smartStep": false,
+			"cwd": "${workspaceRoot}",
+			"internalConsoleOptions": "openOnSessionStart"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Run all the tests",
+			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+			"env": {
+				"TS_NODE_PROJECT": "test/tsconfig.json"
+			},
+			"args": [
+				"--timeout",
+				"4000",
+				"--colors",
+				"--require",
+				"ts-node/register",
+				"--require",
+				"tsconfig-paths/register",
+				"test/specs/**/*.tests.ts",
+				"--allow-uncaught"
+			],
+			"skipFiles": [
+				"node_modules/**/*.js",
+				"lib/**/*.js",
+				"async_hooks.js",
+				"inspector_async_hook.js",
+				"fs.js",
+				"loader.js"
+			],
+			"cwd": "${workspaceRoot}",
+			"internalConsoleOptions": "openOnSessionStart"
+		}
+	]
+}

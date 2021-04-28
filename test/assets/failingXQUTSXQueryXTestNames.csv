@@ -1,0 +1,172 @@
+id-transform-expr-051,Wraps contextItemExpr in a pathExpr which isn't required
+id-transform-expr-052,Wraps contextItemExpr in a pathExpr which isn't required
+id-transform-expr-053,Wraps contextItemExpr in a pathExpr which isn't required
+id-transform-expr-054,Wraps contextItemExpr in a pathExpr which isn't required
+id-insert-expr-052,Wraps contextItemExpr in a pathExpr which isn't required
+id-insert-expr-053,Wraps contextItemExpr in a pathExpr which isn't required
+id-insert-expr-077,Wraps contextItemExpr in a pathExpr which isn't required
+id-insert-expr-078,Wraps contextItemExpr in a pathExpr which isn't required
+id-insert-expr-080,Wraps contextItemExpr in a pathExpr which isn't required
+id-insert-expr-093-test,Wraps contextItemExpr in a pathExpr which isn't required
+complex-deletes-q1,Wraps contextItemExpr in a pathExpr which isn't required
+complex-deletes-q13-test2,Wraps contextItemExpr in a pathExpr which isn't required
+complex-deletes-q2,Wraps contextItemExpr in a pathExpr which isn't required
+id-delete-expr-013,Wraps contextItemExpr in a pathExpr which isn't required
+id-delete-expr-014,Wraps contextItemExpr in a pathExpr which isn't required
+=====================TESTS ABOVE HAVE BEEN MARKED MANUALLY=====================
+id-comma-expr-011-test,XQuery script could not be found
+id-comma-expr-012-test,XQuery script could not be found
+id-comma-expr-018-test,XQuery script could not be found
+id-conditional-expr-035-test,XQuery script could not be found
+id-function-declaration-01,result was not equal
+id-function-declaration-010,result was not equal
+id-function-declaration-012,result was not equal
+id-function-declaration-013-test,XQuery script could not be found
+id-function-declaration-014,result was not equal
+id-function-declaration-015,result was not equal
+id-function-declaration-016,result was not equal
+id-function-declaration-017,result was not equal
+id-function-declaration-03,result was not equal
+id-function-declaration-04,result was not equal
+id-function-declaration-05,result was not equal
+id-function-declaration-06,result was not equal
+id-function-declaration-08,result was not equal
+function-declaration-02,result was not equal
+function-declaration-03,result was not equal
+function-declaration-04,result was not equal
+revalidation-declaration-01,Parse error
+revalidation-declaration-02,Parse error
+revalidation-declaration-03,Parse error
+revalidation-declaration-04,Parse error
+revalidation-declaration-05,Parse error
+revalidation-declaration-06,Parse error
+id-replace-expr-022-test,XQuery script could not be found
+id-typeswitch-expr-012-test,XQuery script could not be found
+id-typeswitch-expr-026-test,XQuery script could not be found
+id-typeswitch-expr-029,result was not equal
+id-typeswitch-expr-05-test,XQuery script could not be found
+applyUpdates-023-test,XQuery script could not be found
+applyUpdates-024-test,XQuery script could not be found
+propagateNamespaces01,result was not equal
+propagateNamespaces02,result was not equal
+propagateNamespaces03,result was not equal
+propagateNamespaces04,result was not equal
+propagateNamespaces05,result was not equal
+propagateNamespaces06,result was not equal
+namespace-q1-test,XQuery script could not be found
+nil-q1-test,XQuery script could not be found
+parts-q3-2,result was not equal
+relational-data-q5-test,XQuery script could not be found
+relational-data-q5,XQuery script could not be found
+revalidate-vallax-del-002-test,Parse error
+revalidate-vallax-del-004-test,Parse error
+revalidate-vallax-ins-003-test,Parse error
+revalidate-vallax-ins-005-test,Parse error
+revalidate-vallax-ins-007-test,Parse error
+revalidate-vallax-ren-003-test,Parse error
+revalidate-vallax-repnode-003-test,Parse error
+vallax-del-001,Parse error
+vallax-del-002,Parse error
+vallax-del-003,Parse error
+vallax-del-004,Parse error
+vallax-ins-001,Parse error
+vallax-ins-002,Parse error
+vallax-ins-003,Parse error
+vallax-ins-004,Parse error
+vallax-ins-005,Parse error
+vallax-ins-006,Parse error
+vallax-ins-007,Parse error
+vallax-ren-001,Parse error
+vallax-ren-002,Parse error
+vallax-ren-003,Parse error
+vallax-repnode-001,Parse error
+vallax-repnode-002,Parse error
+vallax-repnode-003,Parse error
+removeType-valskip-del-001-test,Parse error
+removeType-valskip-del-002-test,Parse error
+removeType-valskip-del-003-test,Parse error
+removeType-valskip-del-004-test,Parse error
+removeType-valskip-del-005-test,Parse error
+removeType-valskip-ins-001-test,Parse error
+removeType-valskip-ins-002-test,Parse error
+removeType-valskip-ins-003-test,Parse error
+removeType-valskip-ins-004-test,Parse error
+removeType-valskip-ins-005-test,Parse error
+removeType-valskip-ins-006-test,Parse error
+removeType-valskip-ins-007-test,Parse error
+removeType-valskip-ins-008-test,Parse error
+removeType-valskip-ins-009-test,Parse error
+removeType-valskip-ins-010-test,Parse error
+removeType-valskip-ins-011-test,Parse error
+removeType-valskip-ins-012-test,Parse error
+removeType-valskip-ins-013-test,Parse error
+removeType-valskip-ins-014-test,Parse error
+removeType-valskip-ren-001-test,Parse error
+removeType-valskip-ren-002-test,Parse error
+removeType-valskip-ren-003-test,Parse error
+removeType-valskip-ren-005-test,Parse error
+removeType-valskip-repnode-001-test,Parse error
+removeType-valskip-repnode-002-test,Parse error
+removeType-valskip-repnode-003-test,Parse error
+removeType-valskip-repnode-004-test,Parse error
+removeType-valskip-repnode-005-test,Parse error
+removeType-valskip-repnode-006-test,Parse error
+valskip-del-001,Parse error
+valskip-del-002,Parse error
+valskip-del-003,Parse error
+valskip-del-004,Parse error
+valskip-del-005,Parse error
+valskip-ins-001,Parse error
+valskip-ins-002,Parse error
+valskip-ins-003,Parse error
+valskip-ins-004,Parse error
+valskip-ins-005,Parse error
+valskip-ins-006,Parse error
+valskip-ins-007,Parse error
+valskip-ins-008,Parse error
+valskip-ins-009,Parse error
+valskip-ins-010,Parse error
+valskip-ins-011,Parse error
+valskip-ins-012,Parse error
+valskip-ins-013,Parse error
+valskip-ins-014,Parse error
+valskip-ren-001,Parse error
+valskip-ren-002,Parse error
+valskip-ren-003,Parse error
+valskip-ren-004,Parse error
+valskip-ren-005,Parse error
+valskip-ren-006,Parse error
+valskip-repnode-001,Parse error
+valskip-repnode-002,Parse error
+valskip-repnode-003,Parse error
+valskip-repnode-004,Parse error
+valskip-repnode-005,Parse error
+valskip-repnode-006,Parse error
+revalidate-valstrict-del-002-test,Parse error
+revalidate-valstrict-del-004-test,Parse error
+revalidate-valstrict-ins-003-test,Parse error
+revalidate-valstrict-ins-005-test,Parse error
+revalidate-valstrict-ins-007-test,Parse error
+revalidate-valstrict-ren-003-test,Parse error
+revalidate-valstrict-repnode-003-test,Parse error
+valstrict-del-001,Parse error
+valstrict-del-002,Parse error
+valstrict-del-003,Parse error
+valstrict-del-004,Parse error
+valstrict-ins-001,Parse error
+valstrict-ins-002,Parse error
+valstrict-ins-003,Parse error
+valstrict-ins-004,Parse error
+valstrict-ins-005,Parse error
+valstrict-ins-006,Parse error
+valstrict-ins-007,Parse error
+valstrict-ren-001,Parse error
+valstrict-ren-002,Parse error
+valstrict-ren-003,Parse error
+valstrict-repnode-001,Parse error
+valstrict-repnode-002,Parse error
+valstrict-repnode-003,Parse error
+valtrans-ins-001,Parse error
+valtrans-ins-002,Parse error
+valtrans-ins-003-mod1,Parse error
+valtrans-ins-003,Parse error

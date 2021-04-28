@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<title>fontoxpath</title>
+		<meta charset="utf-8" />
+		<link
+			rel="stylesheet"
+			href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/default.min.css"
+		/>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+		<script src="./built/demo/main.js" type="module"></script>
+		<style>
+			#xmlFile * {
+				all: initial;
+				display: block;
+				margin: 5px;
+				border: 1px solid black;
+				min-height: 5px;
+			}
+			#xpathField {
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<h4>Edit the XML here</h4>
+			<sub>Note: Highlighting will only update on page reload.</sub>
+			<pre id="xmlSource" contenteditable="true"></pre>
+			<h4>Edit the XPath here:</h4>
+			<label><input id="allowXQuery" type="checkbox" />XQuery</label>
+			<label
+				><input id="allowXQueryUpdateFacility" type="checkbox" />XQuery Update
+				Facility</label
+			>
+			<pre
+				type="text"
+				contenteditable="true"
+				id="xpathField"
+				value="//*"
+				style="min-height:100px"
+			></pre>
+			<h4>The bucket for this selector</h4>
+			<pre id="bucketField"></pre>
+		</div>
+		<hr />
+		<div>
+			<pre id="log"></pre>
+			<h4>Result, as text</h4>
+			<pre id="resultText"></pre>
+			<h4>Updated document</h4>
+			<pre id="updateResult"></pre>
+			<h4>AST, as JsonML</h4>
+			<pre id="astJsonMl"></pre>
+			<h4>AST, as XML</h4>
+			<pre id="astXml"></pre>
+			<h4>Trace Output</h4>
+			<pre id="traceOutput"></pre>
+		</div>
+	</body>
+</html>

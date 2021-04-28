@@ -1,0 +1,31 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"lib": ["dom"],
+		"outDir": "./built",
+		"baseUrl": "..",
+		"target": "es2017",
+		"module": "esnext",
+		"inlineSourceMap": true,
+		"inlineSources": true,
+		"moduleResolution": "node",
+		"plugins": [
+			{
+				"transform": "ts-transform-import-path-rewrite",
+				"import": "transform",
+				"alias": {
+					"^(fontoxpath)$": "/src",
+					"^(xspattern)$": "/web_modules/xspattern.js"
+				},
+				"after": true,
+				"afterDeclarations": true,
+				"type": "config"
+			},
+			{
+				"transform": "@zoltu/typescript-transformer-append-js-extension/output/index.js",
+				"after": true
+			}
+		]
+	},
+	"include": ["../src/**/*", "./main.ts"]
+}
