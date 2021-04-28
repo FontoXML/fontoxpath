@@ -13,6 +13,7 @@ import {
 
 import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
+import { BaseType } from 'fontoxpath/expressions/dataTypes/Value';
 
 describe('registerCustomXPathFunction', () => {
 	function identityNamespaceResolver(prefix) {
@@ -20,7 +21,10 @@ describe('registerCustomXPathFunction', () => {
 	}
 
 	let documentNode;
-	const stringValueFactory = createTypedValueFactory('xs:string?');
+	const stringValueFactory = createTypedValueFactory({
+		kind: BaseType.NULLABLE,
+		item: { kind: BaseType.XSSTRING },
+	});
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
 
@@ -30,8 +34,8 @@ describe('registerCustomXPathFunction', () => {
 	before(() => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function1' },
-			['xs:string?'],
-			'xs:boolean',
+			[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			{ kind: BaseType.XSBOOLEAN },
 			(dynamicContext, stringValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -41,8 +45,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function2' },
-			['xs:string', 'xs:boolean'],
-			'xs:boolean',
+			[{ kind: BaseType.XSSTRING }, { kind: BaseType.XSBOOLEAN }],
+			{ kind: BaseType.XSBOOLEAN },
 			(dynamicContext, stringValue, booleanValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -53,8 +57,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function3' },
-			['item()*'],
-			'item()',
+			[{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+			{ kind: BaseType.ITEM },
 			(dynamicContext, input) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -65,8 +69,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function4' },
-			['xs:string*'],
-			'xs:string*',
+			[{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }],
+			{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } },
 			(dynamicContext, stringArray) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -79,8 +83,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function5' },
-			['xs:string?'],
-			'xs:string?',
+			[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			(dynamicContext, stringValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -98,7 +102,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-date-function' },
 			[],
-			'xs:date',
+			{ kind: BaseType.XSDATE },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -110,7 +114,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-time-function' },
 			[],
-			'xs:time',
+			{ kind: BaseType.XSTIME },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -122,7 +126,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-dateTime-function' },
 			[],
-			'xs:dateTime',
+			{ kind: BaseType.XSDATETIME },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -134,7 +138,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gYearMonth-function' },
 			[],
-			'xs:gYearMonth',
+			{ kind: BaseType.XSGYEARMONTH },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -146,7 +150,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gYear-function' },
 			[],
-			'xs:gYear',
+			{ kind: BaseType.XSGYEAR },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -158,7 +162,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gMonthDay-function' },
 			[],
-			'xs:gMonthDay',
+			{ kind: BaseType.XSGMONTHDAY },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -170,7 +174,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gMonth-function' },
 			[],
-			'xs:gMonth',
+			{ kind: BaseType.XSGMONTH },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -182,7 +186,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-gDay-function' },
 			[],
-			'xs:gDay',
+			{ kind: BaseType.XSGDAY },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -249,7 +253,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'http://www.example.com/customFunctionTest', localName: 'test' },
 			[],
-			'xs:boolean',
+			{ kind: BaseType.XSBOOLEAN },
 			(dynamicContext) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -275,7 +279,7 @@ describe('registerCustomXPathFunction', () => {
 				registerCustomXPathFunction(
 					'custom-function-in-no-ns',
 					[],
-					'xs:boolean',
+					{ kind: BaseType.XSBOOLEAN },
 					() => true
 				),
 			'Do not register custom functions in the default function namespace'
@@ -447,7 +451,7 @@ describe('registerCustomXPathFunction', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function-keeps-the-dom-facade' },
 			[],
-			'xs:boolean',
+			{ kind: BaseType.XSBOOLEAN },
 			(dynamicContext) => {
 				chai.assert.equal(outerDomFacade, dynamicContext.domFacade);
 				return true;
@@ -470,7 +474,7 @@ describe('registerCustomXPathFunction', () => {
 				registerCustomXPathFunction(
 					{ namespaceURI: '', localName: 'empty-uri' },
 					[],
-					'xs:boolean',
+					{ kind: BaseType.XSBOOLEAN },
 					(dynamicContext) => true
 				),
 			'XQST0060'
@@ -480,7 +484,7 @@ describe('registerCustomXPathFunction', () => {
 				registerCustomXPathFunction(
 					{ namespaceURI: null, localName: 'empty-uri' },
 					[],
-					'xs:boolean',
+					{ kind: BaseType.XSBOOLEAN },
 					(dynamicContext) => true
 				),
 			'XQST0060'
@@ -508,8 +512,8 @@ describe('registerCustomXPathFunction', () => {
 		} as unknown) as IDomFacade;
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'my-custom-func-msc' },
-			['node()'],
-			'node()',
+			[{ kind: BaseType.NODE }],
+			{ kind: BaseType.NODE },
 			(dynamicContext, node) => {
 				chai.assert.equal(
 					dynamicContext.domFacade.getAttribute(node, 'myAttribute'),
@@ -541,8 +545,8 @@ describe('registerCustomXPathFunction', () => {
 		before(() => {
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-param' },
-				['xs:date'],
-				'xs:date',
+				[{ kind: BaseType.XSDATE }],
+				{ kind: BaseType.XSDATE },
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date instanceof Date,
@@ -554,8 +558,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-optional-param' },
-				['xs:date?'],
-				'xs:date?',
+				[{ kind: BaseType.SOME, item: { kind: BaseType.XSDATE } }],
+				{ kind: BaseType.SOME, item: { kind: BaseType.XSDATE } },
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date === null || date instanceof Date,
@@ -567,8 +571,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-zero-to-many-param' },
-				['xs:date*'],
-				'xs:date*',
+				[{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } }],
+				{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } },
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
@@ -584,8 +588,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-one-to-many-param' },
-				['xs:date+'],
-				'xs:date*',
+				[{ kind: BaseType.SOME, item: { kind: BaseType.XSDATE } }],
+				{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } },
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
@@ -601,8 +605,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-time-param-function' },
-				['xs:time'],
-				'xs:time',
+				[{ kind: BaseType.XSTIME }],
+				{ kind: BaseType.XSTIME },
 				(dynamicContext, time) => {
 					chai.assert.isTrue(
 						time instanceof Date,
@@ -614,8 +618,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-dateTime-param-function' },
-				['xs:dateTime'],
-				'xs:dateTime',
+				[{ kind: BaseType.XSDATETIME }],
+				{ kind: BaseType.XSDATETIME },
 				(dynamicContext, dateTime) => {
 					chai.assert.isTrue(
 						dateTime instanceof Date,
@@ -627,8 +631,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gYearMonth-param-function' },
-				['xs:gYearMonth'],
-				'xs:gYearMonth',
+				[{ kind: BaseType.XSGYEARMONTH }],
+				{ kind: BaseType.XSGYEARMONTH },
 				(dynamicContext, gYearMonth) => {
 					chai.assert.isTrue(
 						gYearMonth instanceof Date,
@@ -640,8 +644,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gYear-param-function' },
-				['xs:gYear'],
-				'xs:gYear',
+				[{ kind: BaseType.XSGYEAR }],
+				{ kind: BaseType.XSGYEAR },
 				(dynamicContext, gYear) => {
 					chai.assert.isTrue(
 						gYear instanceof Date,
@@ -653,8 +657,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gMonthDay-param-function' },
-				['xs:gMonthDay'],
-				'xs:gMonthDay',
+				[{ kind: BaseType.XSGMONTHDAY }],
+				{ kind: BaseType.XSGMONTHDAY },
 				(dynamicContext, gMonthDay) => {
 					chai.assert.isTrue(
 						gMonthDay instanceof Date,
@@ -666,8 +670,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gMonth-param-function' },
-				['xs:gMonth'],
-				'xs:gMonth',
+				[{ kind: BaseType.XSGMONTH }],
+				{ kind: BaseType.XSGMONTH },
 				(dynamicContext, gMonth) => {
 					chai.assert.isTrue(
 						gMonth instanceof Date,
@@ -679,8 +683,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-gDay-param-function' },
-				['xs:gDay'],
-				'xs:gDay',
+				[{ kind: BaseType.XSGDAY }],
+				{ kind: BaseType.XSGDAY },
 				(dynamicContext, gDay) => {
 					chai.assert.isTrue(
 						gDay instanceof Date,

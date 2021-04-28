@@ -69,6 +69,9 @@ export enum BaseType {
 	FUNCTION,
 	MAP,
 	ARRAY,
+	NULLABLE,
+	ANY,
+	SOME,
 }
 
 export type ValueType =
@@ -134,5 +137,7 @@ export type ValueType =
 	| { kind: BaseType.ITEM }
 	| { kind: BaseType.FUNCTION; returnType: ValueType | undefined; param: ValueType[] }
 	| { kind: BaseType.MAP; items: [ValueType, ValueType][] }
-	| { kind: BaseType.ARRAY; items: ValueType[] };
-
+	| { kind: BaseType.ARRAY; items: ValueType[] }
+	| { kind: BaseType.NULLABLE; item: ValueType }
+	| { kind: BaseType.ANY; item: ValueType }
+	| { kind: BaseType.SOME; item: ValueType };

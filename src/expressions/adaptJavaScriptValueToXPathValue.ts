@@ -168,39 +168,31 @@ function adaptJavaScriptValueToXPath(
 export function adaptJavaScriptValueToArrayOfXPathValues(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: string
+	expectedType: ValueType
 ): Value[] {
-	const parts = expectedType.match(/^([^+?*]*)([\+\*\?])?$/);
-	const type = parts[1] as ValueType;
-	const multiplicity = parts[2];
-
-	switch (multiplicity) {
-		case '?': {
-			const converted = adaptJavaScriptValueToXPath(type, value, domFacade);
-			return converted === null ? [] : [converted];
-		}
-		case '+':
-		case '*': {
-			if (!Array.isArray(value)) {
-				throw new Error(
-					`The JavaScript value ${value} should be an array if it is to be converted to ${expectedType}.`
-				);
-			}
-			return value
-				.map((val) => adaptJavaScriptValueToXPath(type, val, domFacade))
-				.filter((val: Value | null) => val !== null);
-		}
-
-		default: {
-			const adaptedValue = adaptJavaScriptValueToXPath(type, value, domFacade);
-			if (adaptedValue === null) {
-				throw new Error(
-					`The JavaScript value ${value} should be an single entry if it is to be converted to ${expectedType}.`
-				);
-			}
-			return [adaptedValue];
-		}
+	if (expectedType.kind == BaseType.NULLABLE) {
+		const converted = adaptJavaScriptValueToXPath(expectedType.item, value, domFacade);
+		return converted === null ? [] : [converted];
 	}
+
+	if (expectedType.kind == BaseType.ANY || expectedType.kind == BaseType.SOME) {
+		if (!Array.isArray(value)) {
+			throw new Error(
+				`The JavaScript value ${value} should be an array if it is to be converted to ${expectedType}.`
+			);
+		}
+		return value
+			.map((val) => adaptJavaScriptValueToXPath(expectedType.item, val, domFacade))
+			.filter((val: Value | null) => val !== null);
+	}
+
+	const adaptedValue = adaptJavaScriptValueToXPath(expectedType, value, domFacade);
+	if (adaptedValue === null) {
+		throw new Error(
+			`The JavaScript value ${value} should be an single entry if it is to be converted to ${expectedType}.`
+		);
+	}
+	return [adaptedValue];
 }
 
 /**
@@ -216,7 +208,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 export function adaptJavaScriptValueToSequence(
 	domFacade: DomFacade,
 	value: UntypedExternalValue,
-	expectedType: string = 'item()?'
+	expectedType: ValueType = { kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } }
 ): ISequence {
 	return sequenceFactory.create(
 		adaptJavaScriptValueToArrayOfXPathValues(domFacade, value, expectedType)

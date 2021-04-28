@@ -15,6 +15,7 @@ import evaluateXPathToNumbers from './evaluateXPathToNumbers';
 import evaluateXPathToString from './evaluateXPathToString';
 import evaluateXPathToStrings from './evaluateXPathToStrings';
 import executePendingUpdateList from './executePendingUpdateList';
+import { ValueType } from './expressions/dataTypes/Value';
 import { getBucketsForNode } from './getBuckets';
 import INodesFactory from './nodesFactory/INodesFactory';
 import ISimpleNodesFactory from './nodesFactory/ISimpleNodesFactory';
@@ -156,7 +157,7 @@ if (typeof fontoxpathGlobal !== 'undefined') {
  * @public
  */
 type ExternalTypedValueFactory = (
-	type: string
+	type: ValueType
 ) => (value: UntypedExternalValue, domFacade: IDomFacade) => unknown;
 
 /**

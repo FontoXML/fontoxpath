@@ -5,7 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -47,14 +47,14 @@ const fnCompare: FunctionDefinitionType = (
 	const arg2Value = arg2.first().value;
 
 	if (arg1Value > arg2Value) {
-		return sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }));
 	}
 
 	if (arg1Value < arg2Value) {
-		return sequenceFactory.singleton(createAtomicValue(-1, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(-1, { kind: BaseType.XSINTEGER }));
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
+	return sequenceFactory.singleton(createAtomicValue(0, { kind: BaseType.XSINTEGER }));
 };
 
 const fnConcat: FunctionDefinitionType = (
@@ -205,12 +205,12 @@ const fnStringLength: FunctionDefinitionType = (
 	sequence
 ) => {
 	if (sequence.isEmpty()) {
-		return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(0, { kind: BaseType.XSINTEGER }));
 	}
 	const stringValue = sequence.first().value;
 	// In ES6, Array.from(💩).length === 1
 	return sequenceFactory.singleton(
-		createAtomicValue(Array.from(stringValue).length, 'xs:integer')
+		createAtomicValue(Array.from(stringValue).length, { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -462,7 +462,9 @@ const fnStringToCodepoints: FunctionDefinitionType = (
 		}
 
 		return sequenceFactory.create(
-			characters.map((character) => createAtomicValue(character.codePointAt(0), 'xs:integer'))
+			characters.map((character) =>
+				createAtomicValue(character.codePointAt(0), { kind: BaseType.XSINTEGER })
+			)
 		);
 	});
 };
@@ -762,7 +764,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-length',
 			argumentTypes: ['xs:string?'],
-			returnType: 'xs:integer',
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: fnStringLength,
 		},
 
@@ -770,7 +772,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-length',
 			argumentTypes: [],
-			returnType: 'xs:integer',
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: contextItemAsFirstArgument.bind(
 				null,
 				(dynamicContext, executionParameters, staticContext, contextItem) =>
@@ -786,7 +788,7 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'tokenize',
-			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
+			argumentTypes: ['xs:string?', { kind: BaseType.XSSTRING }, { kind: BaseType.XSSTRING }],
 			returnType: 'xs:string*',
 			callFunction(
 				_dynamicContext,
