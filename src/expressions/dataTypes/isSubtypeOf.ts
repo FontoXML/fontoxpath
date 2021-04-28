@@ -1,5 +1,7 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
-import { ValueType } from './Value';
+import { BaseType, ValueType } from './Value';
+import builtinModels from './builtins/builtinModels'
+
 
 function isSubtypeOfType(subType, superType) {
 	if (superType.variety === 'union') {
@@ -8,12 +10,12 @@ function isSubtypeOfType(subType, superType) {
 	}
 
 	while (subType) {
-		if (subType.name === superType.name) {
+		if (subType.name.kind === superType.name.kind) {
 			return true;
 		}
 		if (subType.variety === 'union') {
 			return !!subType.memberTypes.find((memberType) =>
-				isSubtypeOfType(memberType, superType)
+				isSubtypeOf(memberType, superType)
 			);
 		}
 		subType = subType.parent;
@@ -31,16 +33,19 @@ export default function isSubtypeOf(subTypeName: ValueType, superTypeName: Value
 		return true;
 	}
 
-	const superType = builtinDataTypesByName[superTypeName];
-	const subType = builtinDataTypesByName[subTypeName];
+	const superType = builtinDataTypesByName[superTypeName.kind];  
+	const subType = builtinDataTypesByName[subTypeName.kind]; 
 
-	if (!superType) {
-		if (!superTypeName.startsWith('xs:')) {
-			// Note that 'xs' is the only namespace currently supported
-			throw new Error(`XPST0081: The type ${superTypeName} could not be found.`);
-		}
-		throw new Error(`XPST0051: The type ${superTypeName} could not be found.`);
-	}
+	
+
+	// if (!superType) {
+	// 	if (!superTypeName.startsWith('xs:')) {
+	// 		// Note that 'xs' is the only namespace currently supported
+	// 		throw new Error(`XPST0081: The type ${superTypeName} could not be found.`);
+	// 	}
+	// 	throw new Error(`XPST0051: The type ${superTypeName} could not be found.`);
+	// }
 
 	return isSubtypeOfType(subType, superType);
 }
+
