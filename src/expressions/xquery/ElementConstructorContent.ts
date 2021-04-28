@@ -5,7 +5,7 @@ import { atomizeSingleValue } from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
-import Value from '../dataTypes/Value';
+import Value, { BaseType } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 function createTinyTextNode(content): TinyTextNode {
 	const tinyTextNode: TinyTextNode = {
@@ -27,7 +27,7 @@ function parseChildNodes(
 	// Plonk all childNodes, these are special though
 	childNodes
 		.reduce(function flattenArray(convertedChildNodes: Value[], childNode: Value) {
-			if (isSubtypeOf(childNode.type, 'array(*)')) {
+			if (isSubtypeOf(childNode.type, { kind: BaseType.ARRAY, items: [] })) {
 				const arrayValue = childNode as ArrayValue;
 				// Flatten out arrays
 				arrayValue.members.forEach((member) =>
@@ -41,7 +41,7 @@ function parseChildNodes(
 			return convertedChildNodes;
 		}, [])
 		.forEach((childNode, i, atomizedChildNodes) => {
-			if (isSubtypeOf(childNode.type, 'attribute()')) {
+			if (isSubtypeOf(childNode.type, { kind: BaseType.ATTRIBUTE })) {
 				if (attributesDone) {
 					throw attributeError(childNode.value, domFacade);
 				}
@@ -50,21 +50,24 @@ function parseChildNodes(
 				return;
 			}
 			if (
-				isSubtypeOf(childNode.type, 'xs:anyAtomicType') ||
-				(isSubtypeOf(childNode.type, 'node()') &&
+				isSubtypeOf(childNode.type, { kind: BaseType.XSANYATOMICTYPE }) ||
+				(isSubtypeOf(childNode.type, { kind: BaseType.NODE }) &&
 					domFacade.getNodeType(childNode.value) === NODE_TYPES.TEXT_NODE)
 			) {
 				// childNode is a textnode-like
-				const atomizedValue = isSubtypeOf(childNode.type, 'xs:anyAtomicType')
-					? castToType(
-							atomizeSingleValue(childNode, executionParameters).first(),
-							'xs:string'
-					  ).value
+				const atomizedValue = isSubtypeOf(childNode.type, {
+					kind: BaseType.XSANYATOMICTYPE,
+				})
+					? castToType(atomizeSingleValue(childNode, executionParameters).first(), {
+							kind: BaseType.XSSTRING,
+					  }).value
 					: domFacade.getDataFromPointer(childNode.value);
 				if (
 					i !== 0 &&
-					isSubtypeOf(atomizedChildNodes[i - 1].type, 'xs:anyAtomicType') &&
-					isSubtypeOf(childNode.type, 'xs:anyAtomicType')
+					isSubtypeOf(atomizedChildNodes[i - 1].type, {
+						kind: BaseType.XSANYATOMICTYPE,
+					}) &&
+					isSubtypeOf(childNode.type, { kind: BaseType.XSANYATOMICTYPE })
 				) {
 					contentNodes.push(createTinyTextNode(' ' + atomizedValue));
 					attributesDone = true;
@@ -76,7 +79,7 @@ function parseChildNodes(
 				}
 				return;
 			}
-			if (isSubtypeOf(childNode.type, 'document-node()')) {
+			if (isSubtypeOf(childNode.type, { kind: BaseType.DOCUMENTNODE })) {
 				const docChildNodes = [];
 				domFacade
 					.getChildNodePointers(childNode.value)
@@ -91,7 +94,7 @@ function parseChildNodes(
 				);
 				return;
 			}
-			if (isSubtypeOf(childNode.type, 'node()')) {
+			if (isSubtypeOf(childNode.type, { kind: BaseType.NODE })) {
 				// Deep clone child elements
 				// TODO: skip copy if the childNode has already been created in the expression
 				contentNodes.push(childNode.value.node);
@@ -100,7 +103,13 @@ function parseChildNodes(
 			}
 			// We now only have unatomizable types left
 			// (function || map)
-			if (isSubtypeOf(childNode.type, 'function(*)')) {
+			if (
+				isSubtypeOf(childNode.type, {
+					kind: BaseType.FUNCTION,
+					returnType: undefined,
+					param: [],
+				})
+			) {
 				throw new Error(`FOTY0013: Atomization is not supported for ${childNode.type}.`);
 			}
 			throw new Error(`Atomizing ${childNode.type} is not implemented.`);

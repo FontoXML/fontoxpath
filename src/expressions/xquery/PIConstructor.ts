@@ -4,6 +4,7 @@ import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
@@ -58,7 +59,9 @@ class PIConstructor extends Expression {
 			executionParameters
 		);
 		return atomize(dataSequence, executionParameters).mapAll((items) => {
-			const data = items.map((item) => castToType(item, 'xs:string').value).join(' ');
+			const data = items
+				.map((item) => castToType(item, { kind: BaseType.XSSTRING }).value)
+				.join(' ');
 
 			if (data.indexOf('?>') !== -1) {
 				throw new Error(
