@@ -16,7 +16,7 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { BaseType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -79,7 +79,7 @@ const fnNodeName: FunctionDefinitionType = (
 								pointer as AttributeNodePointer | ElementNodePointer
 							)
 						),
-						'xs:QName'
+						{ kind: BaseType.XSQNAME }
 					)
 				);
 			case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
@@ -88,7 +88,7 @@ const fnNodeName: FunctionDefinitionType = (
 				return sequenceFactory.singleton(
 					createAtomicValue(
 						new QName('', '', domFacade.getTarget(processingInstruction)),
-						'xs:QName'
+						{ kind: BaseType.XSQNAME }
 					)
 				);
 			default:
@@ -232,10 +232,12 @@ const fnPath: FunctionDefinitionType = (
 			}
 		}
 		if (domFacade.getNodeType(ancestor) === NODE_TYPES.DOCUMENT_NODE) {
-			return sequenceFactory.create(createAtomicValue(result || '/', 'xs:string'));
+			return sequenceFactory.create(
+				createAtomicValue(result || '/', { kind: BaseType.XSSTRING })
+			);
 		}
 		result = 'Q{http://www.w3.org/2005/xpath-functions}root()' + result;
-		return sequenceFactory.create(createAtomicValue(result, 'xs:string'));
+		return sequenceFactory.create(createAtomicValue(result, { kind: BaseType.XSSTRING }));
 	});
 };
 
@@ -246,10 +248,9 @@ const fnNamespaceURI: FunctionDefinitionType = (
 	sequence
 ) => {
 	return sequence.map((node) =>
-		createAtomicValue(
-			executionParameters.domFacade.getNamespaceURI(node.value) || '',
-			'xs:anyURI'
-		)
+		createAtomicValue(executionParameters.domFacade.getNamespaceURI(node.value) || '', {
+			kind: BaseType.XSANYURI,
+		})
 	);
 };
 
@@ -265,13 +266,15 @@ const fnLocalName: FunctionDefinitionType = (
 			return sequence.map((node) => {
 				if (domFacade.getNodeType(node.value) === 7) {
 					const pi: ProcessingInstructionNodePointer = node.value;
-					return createAtomicValue(domFacade.getTarget(pi), 'xs:string');
+					return createAtomicValue(domFacade.getTarget(pi), { kind: BaseType.XSSTRING });
 				}
 
-				return createAtomicValue(domFacade.getLocalName(node.value) || '', 'xs:string');
+				return createAtomicValue(domFacade.getLocalName(node.value) || '', {
+					kind: BaseType.XSSTRING,
+				});
 			});
 		},
-		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string')),
+		empty: () => sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING })),
 	});
 };
 
@@ -370,7 +373,7 @@ const fnRoot: FunctionDefinitionType = (
 	nodeSequence
 ) => {
 	return nodeSequence.map((node) => {
-		if (!isSubtypeOf(node.type, 'node()')) {
+		if (!isSubtypeOf(node.type, { kind: BaseType.NODE })) {
 			throw new Error('XPTY0004 Argument passed to fn:root() should be of the type node()');
 		}
 

@@ -3,6 +3,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { normalizeWhitespace, validatePattern } from '../dataTypes/typeHelpers';
+import { BaseType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -32,21 +33,35 @@ const xsQName: FunctionDefinitionType = (
 		return sequence;
 	}
 	const value = sequence.first();
-	if (isSubtypeOf(value.type, 'xs:numeric')) {
+	if (
+		isSubtypeOf(value.type, {
+			kind: BaseType.XSNUMERIC,
+		})
+	) {
 		// This won't ever work
 		throw new Error('XPTY0004: The provided QName is not a string-like value.');
 	}
-	let lexicalQName = castToType(value, 'xs:string').value;
+	let lexicalQName = castToType(value, {
+		kind: BaseType.XSSTRING,
+	}).value;
 	// Test lexical scope
-	lexicalQName = normalizeWhitespace(lexicalQName, 'xs:QName');
-	if (!validatePattern(lexicalQName, 'xs:QName')) {
+	lexicalQName = normalizeWhitespace(lexicalQName, {
+		kind: BaseType.XSQNAME,
+	});
+	if (
+		!validatePattern(lexicalQName, {
+			kind: BaseType.XSQNAME,
+		})
+	) {
 		throw new Error('FORG0001: The provided QName is invalid.');
 	}
 	if (!lexicalQName.includes(':')) {
 		// Only a local part
 		const resolvedDefaultNamespaceURI = staticContext.resolveNamespace('');
 		return sequenceFactory.singleton(
-			createAtomicValue(new QName('', resolvedDefaultNamespaceURI, lexicalQName), 'xs:QName')
+			createAtomicValue(new QName('', resolvedDefaultNamespaceURI, lexicalQName), {
+				kind: BaseType.XSQNAME,
+			})
 		);
 	}
 	const [prefix, localName] = lexicalQName.split(':');
@@ -57,7 +72,7 @@ const xsQName: FunctionDefinitionType = (
 		);
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(new QName(prefix, namespaceURI, localName), 'xs:QName')
+		createAtomicValue(new QName(prefix, namespaceURI, localName), { kind: BaseType.XSQNAME })
 	);
 };
 

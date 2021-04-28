@@ -15,7 +15,7 @@ export enum IterationHint {
 }
 
 export const DONE_TOKEN = new IterationResult(true, undefined, undefined);
-export function ready<T>(value: T) {
+export function ready<T>(value: T): IterationResult<T> {
 	return new IterationResult(false, value, undefined);
 }
 

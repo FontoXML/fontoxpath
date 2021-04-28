@@ -1,5 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import DateTime from '../dataTypes/valueTypes/DateTime';
 import DayTimeDuration from '../dataTypes/valueTypes/DayTimeDuration';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -50,7 +51,7 @@ const fnDateTime: FunctionDefinitionType = (
 		time.getSecondFraction(),
 		timezoneToUse
 	);
-	return sequenceFactory.singleton(createAtomicValue(dateTime, 'xs:dateTime'));
+	return sequenceFactory.singleton(createAtomicValue(dateTime, { kind: BaseType.XSDATETIME }));
 };
 
 const fnYearFromDateTime: FunctionDefinitionType = (
@@ -63,7 +64,7 @@ const fnYearFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getYear(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getYear(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -77,7 +78,7 @@ const fnMonthFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMonth(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getMonth(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -91,7 +92,7 @@ const fnDayFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getDay(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getDay(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -105,7 +106,7 @@ const fnHoursFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getHours(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getHours(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -119,7 +120,7 @@ const fnMinutesFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getMinutes(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -133,7 +134,7 @@ const fnSecondsFromDateTime: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getFullSeconds(), 'xs:decimal')
+		createAtomicValue(sequence.first().value.getFullSeconds(), { kind: BaseType.XSDECIMAL })
 	);
 };
 const fnTimezoneFromDateTime: FunctionDefinitionType = (
@@ -151,7 +152,9 @@ const fnTimezoneFromDateTime: FunctionDefinitionType = (
 		return sequenceFactory.empty();
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(timezone, 'xs:dayTimeDuration'));
+	return sequenceFactory.singleton(
+		createAtomicValue(timezone, { kind: BaseType.XSDAYTIMEDURATION })
+	);
 };
 
 export default {

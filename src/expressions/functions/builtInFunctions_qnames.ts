@@ -1,6 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { validatePattern } from '../dataTypes/typeHelpers';
+import { BaseType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
@@ -16,7 +17,7 @@ const fnQName: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([paramURI, paramQName], ([uriValue, lexicalQNameValue]) => {
 		const lexicalQName = lexicalQNameValue.value;
-		if (!validatePattern(lexicalQName, 'xs:QName')) {
+		if (!validatePattern(lexicalQName, { kind: BaseType.XSQNAME })) {
 			throw new Error('FOCA0002: The provided QName is invalid.');
 		}
 		const uri = uriValue ? uriValue.value || null : null;
@@ -29,18 +30,18 @@ const fnQName: FunctionDefinitionType = (
 
 		if (paramURI.isEmpty()) {
 			return sequenceFactory.singleton(
-				createAtomicValue(new QName('', null, lexicalQName), 'xs:QName')
+				createAtomicValue(new QName('', null, lexicalQName), { kind: BaseType.XSQNAME })
 			);
 		}
 		if (!lexicalQName.includes(':')) {
 			// Only a local part
 			return sequenceFactory.singleton(
-				createAtomicValue(new QName('', uri, lexicalQName), 'xs:QName')
+				createAtomicValue(new QName('', uri, lexicalQName), { kind: BaseType.XSQNAME })
 			);
 		}
 		const [prefix, localName] = lexicalQName.split(':');
 		return sequenceFactory.singleton(
-			createAtomicValue(new QName(prefix, uri, localName), 'xs:QName')
+			createAtomicValue(new QName(prefix, uri, localName), { kind: BaseType.XSQNAME })
 		);
 	});
 };
@@ -59,7 +60,9 @@ const fnPrefixFromQName: FunctionDefinitionType = (
 		if (!qnameValue.prefix) {
 			return sequenceFactory.empty();
 		}
-		return sequenceFactory.singleton(createAtomicValue(qnameValue.prefix, 'xs:NCName'));
+		return sequenceFactory.singleton(
+			createAtomicValue(qnameValue.prefix, { kind: BaseType.XSNCNAME })
+		);
 	});
 };
 
@@ -71,7 +74,7 @@ const fnNamespaceURIFromQName: FunctionDefinitionType = (
 ) => {
 	return arg.map((qname) => {
 		const qnameValue = qname.value;
-		return createAtomicValue(qnameValue.namespaceURI || '', 'xs:anyURI');
+		return createAtomicValue(qnameValue.namespaceURI || '', { kind: BaseType.XSANYURI });
 	});
 };
 
@@ -83,7 +86,7 @@ const fnLocalNameFromQName: FunctionDefinitionType = (
 ) => {
 	return arg.map((qname) => {
 		const qnameValue = qname.value;
-		return createAtomicValue(qnameValue.localName, 'xs:NCName');
+		return createAtomicValue(qnameValue.localName, { kind: BaseType.XSNCNAME });
 	});
 };
 

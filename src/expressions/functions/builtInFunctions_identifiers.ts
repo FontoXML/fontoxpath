@@ -4,6 +4,7 @@ import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -44,7 +45,7 @@ const fnId: FunctionDefinitionType = (
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use id function.');
 	}
-	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
+	if (!isSubtypeOf(targetNodeValue.type, { kind: BaseType.NODE })) {
 		throw errXPTY0004(
 			'The context item is not a node, it needs to be node to use id function.'
 		);
@@ -101,7 +102,7 @@ const fnIdref: FunctionDefinitionType = (
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use idref function.');
 	}
-	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
+	if (!isSubtypeOf(targetNodeValue.type, { kind: BaseType.NODE })) {
 		throw errXPTY0004(
 			'The context item is not a node, it needs to be node to use idref function.'
 		);

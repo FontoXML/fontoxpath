@@ -9,6 +9,7 @@ import mapGet from './builtInFunctions_maps_get';
 import isSameMapKey from './isSameMapKey';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
+import { BaseType } from '../dataTypes/Value';
 
 const mapMerge: FunctionDefinitionType = (
 	dynamicContext,
@@ -17,7 +18,9 @@ const mapMerge: FunctionDefinitionType = (
 	mapSequence,
 	optionMap
 ) => {
-	const duplicateKey = sequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
+	const duplicateKey = sequenceFactory.singleton(
+		createAtomicValue('duplicates', { kind: BaseType.XSSTRING })
+	);
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
 		executionParameters,
@@ -129,7 +132,7 @@ const mapSize: FunctionDefinitionType = (
 	mapSequence
 ) => {
 	return mapSequence.map((onlyMap) =>
-		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, 'xs:integer')
+		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -273,10 +276,10 @@ export default {
 					sequenceFactory.singleton(
 						new MapValue([
 							{
-								key: createAtomicValue('duplicates', 'xs:string'),
+								key: createAtomicValue('duplicates', { kind: BaseType.XSSTRING }),
 								value: () =>
 									sequenceFactory.singleton(
-										createAtomicValue('use-first', 'xs:string')
+										createAtomicValue('use-first', { kind: BaseType.XSSTRING })
 									),
 							},
 						])

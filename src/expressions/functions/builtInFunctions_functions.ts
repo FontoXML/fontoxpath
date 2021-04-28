@@ -1,6 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -46,7 +47,9 @@ const fnFunctionName: FunctionDefinitionType = (
 		if (functionValue.isAnonymous()) {
 			return sequenceFactory.empty();
 		}
-		return sequenceFactory.singleton(createAtomicValue(functionValue.getQName(), 'xs:QName'));
+		return sequenceFactory.singleton(
+			createAtomicValue(functionValue.getQName(), { kind: BaseType.XSQNAME })
+		);
 	});
 };
 
@@ -57,7 +60,9 @@ const fnFunctionArity: FunctionDefinitionType = (
 	functionItem
 ) => {
 	return zipSingleton([functionItem], ([functionValue]: FunctionValue[]) => {
-		return sequenceFactory.singleton(createAtomicValue(functionValue.getArity(), 'xs:integer'));
+		return sequenceFactory.singleton(
+			createAtomicValue(functionValue.getArity(), { kind: BaseType.XSINTEGER })
+		);
 	});
 };
 

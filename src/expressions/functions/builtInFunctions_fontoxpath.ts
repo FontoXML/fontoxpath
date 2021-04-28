@@ -6,7 +6,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import createPointerValue from '../dataTypes/createPointerValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { BaseType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -131,7 +131,7 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 	let version: string;
 	// TODO: Refactor when https://github.com/google/closure-compiler/issues/1601 is fixed
 	version = typeof VERSION === 'undefined' ? 'devbuild' : VERSION;
-	return sequenceFactory.singleton(createAtomicValue(version, 'xs:string'));
+	return sequenceFactory.singleton(createAtomicValue(version, { kind: BaseType.XSSTRING }));
 };
 
 export default {

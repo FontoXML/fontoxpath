@@ -1,5 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -13,7 +14,7 @@ const fnYearsFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getYears(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getYears(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -27,7 +28,7 @@ const fnMonthsFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMonths(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getMonths(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -41,7 +42,7 @@ const fnDaysFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getDays(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getDays(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -55,7 +56,7 @@ const fnHoursFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getHours(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getHours(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -69,7 +70,7 @@ const fnMinutesFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getMinutes(), 'xs:integer')
+		createAtomicValue(sequence.first().value.getMinutes(), { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -83,7 +84,7 @@ const fnSecondsFromDuration: FunctionDefinitionType = (
 		return sequence;
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(sequence.first().value.getSeconds(), 'xs:decimal')
+		createAtomicValue(sequence.first().value.getSeconds(), { kind: BaseType.XSDECIMAL })
 	);
 };
 
