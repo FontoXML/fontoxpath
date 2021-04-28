@@ -133,5 +133,5 @@ export type ValueType =
 	| { kind: BaseType.COMMENT }
 	| { kind: BaseType.ITEM }
 	| { kind: BaseType.FUNCTION; returnType: ValueType; param: ValueType[] }
-	| { kind: BaseType.MAP; items: [ValueType, ValueType] }
+	| { kind: BaseType.MAP; items: [ValueType, ValueType][] }
 	| { kind: BaseType.ARRAY; items: ValueType[] };
