@@ -2,7 +2,7 @@ import atomize from '../../dataTypes/atomize';
 import canCastToType from '../../dataTypes/canCastToType';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { ValueType } from '../../dataTypes/Value';
+import { BaseType, ValueType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class CastableAsOperator extends Expression {
@@ -21,9 +21,9 @@ class CastableAsOperator extends Expression {
 			? `${targetType.prefix}:${targetType.localName}`
 			: targetType.localName) as ValueType;
 		if (
-			this._targetType === 'xs:anyAtomicType' ||
-			this._targetType === 'xs:anySimpleType' ||
-			this._targetType === 'xs:NOTATION'
+			this._targetType === { kind: BaseType.XSANYATOMICTYPE } ||
+			this._targetType === { kind: BaseType.XSANYSIMPLETYPE } ||
+			this._targetType === { kind: BaseType.XSNOTATION }
 		) {
 			throw new Error(
 				'XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.'

@@ -15,15 +15,16 @@ import {
 	lessThan as yearMonthDurationLessThan,
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 
-import { ValueType } from '../../../expressions/dataTypes/Value';
+import { BaseType, ValueType } from '../../../expressions/dataTypes/Value';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
 
 // Use partial application to get to a comparer faster
 function areBothStringOrAnyURI(a, b) {
 	return (
-		(isSubtypeOf(a, 'xs:string') || isSubtypeOf(a, 'xs:anyURI')) &&
-		(isSubtypeOf(b, 'xs:string') || isSubtypeOf(b, 'xs:anyURI'))
+		(isSubtypeOf(a, { kind: BaseType.XSSTRING }) ||
+			isSubtypeOf(a, { kind: BaseType.XSANYURI })) &&
+		(isSubtypeOf(b, { kind: BaseType.XSSTRING }) || isSubtypeOf(b, { kind: BaseType.XSANYURI }))
 	);
 }
 
@@ -36,12 +37,15 @@ function generateCompareFunction(
 	let castFunctionForValueA = null;
 	let castFunctionForValueB = null;
 
-	if (isSubtypeOf(typeA, 'xs:untypedAtomic') && isSubtypeOf(typeB, 'xs:untypedAtomic')) {
-		typeA = typeB = 'xs:string';
-	} else if (isSubtypeOf(typeA, 'xs:untypedAtomic')) {
+	if (
+		isSubtypeOf(typeA, { kind: BaseType.XSUNTYPEDATOMIC }) &&
+		isSubtypeOf(typeB, { kind: BaseType.XSUNTYPEDATOMIC })
+	) {
+		typeA = typeB = { kind: BaseType.XSSTRING };
+	} else if (isSubtypeOf(typeA, { kind: BaseType.XSUNTYPEDATOMIC })) {
 		castFunctionForValueA = (val) => castToType(val, typeB);
 		typeA = typeB;
-	} else if (isSubtypeOf(typeB, 'xs:untypedAtomic')) {
+	} else if (isSubtypeOf(typeB, { kind: BaseType.XSUNTYPEDATOMIC })) {
 		castFunctionForValueB = (val) => castToType(val, typeA);
 		typeB = typeA;
 	}
@@ -53,7 +57,10 @@ function generateCompareFunction(
 		};
 	}
 
-	if (isSubtypeOf(typeA, 'xs:QName') && isSubtypeOf(typeB, 'xs:QName')) {
+	if (
+		isSubtypeOf(typeA, { kind: BaseType.XSQNAME }) &&
+		isSubtypeOf(typeB, { kind: BaseType.XSQNAME })
+	) {
 		if (operator === 'eqOp') {
 			return (a, b) => {
 				const { castA, castB } = applyCastFunctions(a, b);
