@@ -107,7 +107,7 @@ function parseChildNodes(
 				isSubtypeOf(childNode.type, {
 					kind: BaseType.FUNCTION,
 					returnType: undefined,
-					param: [],
+					params: [],
 				})
 			) {
 				throw new Error(`FOTY0013: Atomization is not supported for ${childNode.type}.`);

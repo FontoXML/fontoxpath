@@ -20,13 +20,14 @@ import builtInStringFunctions from './builtInFunctions_string';
 import builtInFontoxpathFunctions from './builtInFunctions_fontoxpath';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
+import { ValueType } from 'src';
 
 const builtInFunctions: {
-	argumentTypes: string[];
+	argumentTypes: ValueType[];
 	callFunction: FunctionDefinitionType;
 	localName: string;
 	namespaceURI: string;
-	returnType: string;
+	returnType: ValueType;
 }[] = [].concat(
 	builtInArrayFunctions.declarations,
 	builtInBooleanFunctions.declarations,

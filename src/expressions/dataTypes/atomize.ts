@@ -103,7 +103,7 @@ export function atomizeSingleValue(
 	}
 	// (function || map) && !array
 	if (
-		isSubtypeOf(value.type, { kind: BaseType.FUNCTION, returnType: undefined, param: [] }) &&
+		isSubtypeOf(value.type, { kind: BaseType.FUNCTION, returnType: undefined, params: [] }) &&
 		!isSubtypeOf(value.type, { kind: BaseType.ARRAY, items: [] })
 	) {
 		throw new Error(`FOTY0013: Atomization is not supported for ${value.type}.`);

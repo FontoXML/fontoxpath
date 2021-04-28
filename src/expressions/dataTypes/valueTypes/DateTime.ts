@@ -1,4 +1,4 @@
-import { ValueType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import AbstractDuration from './AbstractDuration';
 import DayTimeDuration from './DayTimeDuration';
 
@@ -87,14 +87,14 @@ class DateTime {
 		// xs:gMonth     1972-xx-01T00:00:00
 		// xs:gDay       1972-12-xxT00:00:00
 
-		switch (type) {
-			case 'xs:gDay':
+		switch (type.kind) {
+			case BaseType.XSGDAY:
 				return new DateTime(1972, 12, this._days, 0, 0, 0, 0, this._timezone, 'xs:gDay');
-			case 'xs:gMonth':
+			case BaseType.XSGMONTH:
 				return new DateTime(1972, this._months, 1, 0, 0, 0, 0, this._timezone, 'xs:gMonth');
-			case 'xs:gYear':
+			case BaseType.XSGYEAR:
 				return new DateTime(this._years, 1, 1, 0, 0, 0, 0, this._timezone, 'xs:gYear');
-			case 'xs:gMonthDay':
+			case BaseType.XSGMONTHDAY:
 				return new DateTime(
 					1972,
 					this._months,
@@ -106,7 +106,7 @@ class DateTime {
 					this._timezone,
 					'xs:gMonthDay'
 				);
-			case 'xs:gYearMonth':
+			case BaseType.XSGYEARMONTH:
 				return new DateTime(
 					this._years,
 					this._months,
@@ -118,7 +118,7 @@ class DateTime {
 					this._timezone,
 					'xs:gYearMonth'
 				);
-			case 'xs:time':
+			case BaseType.XSTIME:
 				return new DateTime(
 					1972,
 					12,
@@ -130,7 +130,7 @@ class DateTime {
 					this._timezone,
 					'xs:time'
 				);
-			case 'xs:date':
+			case BaseType.XSDATE:
 				return new DateTime(
 					this._years,
 					this._months,
@@ -142,7 +142,7 @@ class DateTime {
 					this._timezone,
 					'xs:date'
 				);
-			case 'xs:dateTime':
+			case BaseType.XSDATETIME:
 			default:
 				return new DateTime(
 					this._years,

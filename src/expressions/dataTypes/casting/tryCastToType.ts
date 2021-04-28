@@ -31,7 +31,11 @@ import castToTime from './castToTime';
 import castToUntypedAtomic from './castToUntypedAtomic';
 import castToYearMonthDuration from './castToYearMonthDuration';
 
-const TREAT_AS_PRIMITIVE = ['xs:integer', 'xs:dayTimeDuration', 'xs:yearMonthDuration'];
+const TREAT_AS_PRIMITIVE = [
+	{ kind: BaseType.XSINTEGER },
+	{ kind: BaseType.XSDAYTIMEDURATION },
+	{ kind: BaseType.XSYEARMONTHDURATION },
+];
 
 function castToPrimitiveType(from: ValueType, to: ValueType): (value: AtomicValue) => CastResult {
 	const instanceOf = (type: ValueType) => isSubtypeOf(from, type);
@@ -133,7 +137,7 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 	}
 
 	if (
-		isSubtypeOf(from, { kind: BaseType.FUNCTION, returnType: undefined, param: [] }) &&
+		isSubtypeOf(from, { kind: BaseType.FUNCTION, returnType: undefined, params: [] }) &&
 		to === { kind: BaseType.XSSTRING }
 	) {
 		return (_val) => ({
