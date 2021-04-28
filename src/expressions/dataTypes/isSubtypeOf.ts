@@ -1,5 +1,6 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
-import { BaseType, ValueType } from './Value';
+import { BaseType, ValueType, startWithXS } from './Value';
+import ETypeNames from './ETypeNames'
 import builtinModels from './builtins/builtinModels'
 
 
@@ -38,13 +39,13 @@ export default function isSubtypeOf(subTypeName: ValueType, superTypeName: Value
 
 	
 
-	// if (!superType) {
-	// 	if (!superTypeName.startsWith('xs:')) {
-	// 		// Note that 'xs' is the only namespace currently supported
-	// 		throw new Error(`XPST0081: The type ${superTypeName} could not be found.`);
-	// 	}
-	// 	throw new Error(`XPST0051: The type ${superTypeName} could not be found.`);
-	// }
+	if (!superType) {
+		if (!startWithXS(superTypeName.kind)) {
+			// Note that 'xs' is the only namespace currently supported
+			throw new Error(`XPST0081: The type ${superTypeName} could not be found.`);
+		}
+		throw new Error(`XPST0051: The type ${superTypeName} could not be found.`);
+	}
 
 	return isSubtypeOfType(subType, superType);
 }
