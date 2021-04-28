@@ -7,7 +7,7 @@ import {
 	validatePattern,
 	validateRestrictions,
 } from '../typeHelpers';
-import { ValueType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
@@ -36,57 +36,56 @@ const TREAT_AS_PRIMITIVE = ['xs:integer', 'xs:dayTimeDuration', 'xs:yearMonthDur
 function castToPrimitiveType(from: ValueType, to: ValueType): (value: AtomicValue) => CastResult {
 	const instanceOf = (type: ValueType) => isSubtypeOf(from, type);
 
-	if (to === 'xs:error') {
+	if (to === { kind: BaseType.XSERROR }) {
 		return () => ({
 			successful: false,
 			error: new Error('FORG0001: Casting to xs:error is always invalid.'),
 		});
 	}
-
 	switch (to) {
-		case 'xs:untypedAtomic':
+		case { kind: BaseType.XSUNTYPEDATOMIC }:
 			return castToUntypedAtomic(instanceOf);
-		case 'xs:string':
+		case { kind: BaseType.XSSTRING }:
 			return castToString(instanceOf);
-		case 'xs:float':
+		case { kind: BaseType.XSFLOAT }:
 			return castToFloat(instanceOf);
-		case 'xs:double':
+		case { kind: BaseType.XSDOUBLE }:
 			return castToDouble(instanceOf);
-		case 'xs:decimal':
+		case { kind: BaseType.XSDECIMAL }:
 			return castToDecimal(instanceOf);
-		case 'xs:integer':
+		case { kind: BaseType.XSINTEGER }:
 			return castToInteger(instanceOf);
-		case 'xs:duration':
+		case { kind: BaseType.XSDURATION }:
 			return castToDuration(instanceOf);
-		case 'xs:yearMonthDuration':
+		case { kind: BaseType.XSYEARMONTHDURATION }:
 			return castToYearMonthDuration(instanceOf);
-		case 'xs:dayTimeDuration':
+		case { kind: BaseType.XSDAYTIMEDURATION }:
 			return castToDayTimeDuration(instanceOf);
-		case 'xs:dateTime':
+		case { kind: BaseType.XSDATETIME }:
 			return castToDateTime(instanceOf);
-		case 'xs:time':
+		case { kind: BaseType.XSTIME }:
 			return castToTime(instanceOf);
-		case 'xs:date':
+		case { kind: BaseType.XSDATE }:
 			return castToDate(instanceOf);
-		case 'xs:gYearMonth':
+		case { kind: BaseType.XSGYEARMONTH }:
 			return castToGYearMonth(instanceOf);
-		case 'xs:gYear':
+		case { kind: BaseType.XSGYEAR }:
 			return castToGYear(instanceOf);
-		case 'xs:gMonthDay':
+		case { kind: BaseType.XSGMONTHDAY }:
 			return castToGMonthDay(instanceOf);
-		case 'xs:gDay':
+		case { kind: BaseType.XSGDAY }:
 			return castToGDay(instanceOf);
-		case 'xs:gMonth':
+		case { kind: BaseType.XSGMONTH }:
 			return castToGMonth(instanceOf);
-		case 'xs:boolean':
+		case { kind: BaseType.XSBOOLEAN }:
 			return castToBoolean(instanceOf);
-		case 'xs:base64Binary':
+		case { kind: BaseType.XSBASE64BINARY }:
 			return castToBase64Binary(instanceOf);
-		case 'xs:hexBinary':
+		case { kind: BaseType.XSHEXBINARY }:
 			return castToHexBinary(instanceOf);
-		case 'xs:anyURI':
+		case { kind: BaseType.XSANYURI }:
 			return castToAnyURI(instanceOf);
-		case 'xs:QName':
+		case { kind: BaseType.XSQNAME }:
 			throw new Error('Casting to xs:QName is not implemented.');
 	}
 
@@ -99,38 +98,44 @@ function castToPrimitiveType(from: ValueType, to: ValueType): (value: AtomicValu
 const precomputedCastFunctorsByTypeString = Object.create(null);
 
 function createCastingFunction(from: ValueType, to: ValueType) {
-	if (from === 'xs:untypedAtomic' && to === 'xs:string') {
-		return (val) => ({ successful: true, value: createAtomicValue(val, 'xs:string') });
+	if (from === { kind: BaseType.XSUNTYPEDATOMIC } && to === { kind: BaseType.XSSTRING }) {
+		return (val) => ({
+			successful: true,
+			value: createAtomicValue(val, { kind: BaseType.XSSTRING }),
+		});
 	}
-	if (to === 'xs:NOTATION') {
+	if (to === { kind: BaseType.XSNOTATION }) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting to xs:NOTATION is not permitted.'),
 		});
 	}
 
-	if (to === 'xs:error') {
+	if (to === { kind: BaseType.XSERROR }) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('FORG0001: Casting to xs:error is not permitted.'),
 		});
 	}
 
-	if (from === 'xs:anySimpleType' || to === 'xs:anySimpleType') {
+	if (from === { kind: BaseType.XSANYSIMPLETYPE } || to === { kind: BaseType.XSANYSIMPLETYPE }) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anySimpleType is not permitted.'),
 		});
 	}
 
-	if (from === 'xs:anyAtomicType' || to === 'xs:anyAtomicType') {
+	if (from === { kind: BaseType.XSANYATOMICTYPE } || to === { kind: BaseType.XSANYATOMICTYPE }) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anyAtomicType is not permitted.'),
 		});
 	}
 
-	if (isSubtypeOf(from, 'function(*)') && to === 'xs:string') {
+	if (
+		isSubtypeOf(from, { kind: BaseType.FUNCTION, returnType: undefined, param: [] }) &&
+		to === { kind: BaseType.XSSTRING }
+	) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('FOTY0014: Casting from function item to xs:string is not permitted.'),
@@ -148,7 +153,10 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 	}
 	const converters = [];
 
-	if (primitiveFrom === 'xs:string' || primitiveFrom === 'xs:untypedAtomic') {
+	if (
+		primitiveFrom === { kind: BaseType.XSSTRING } ||
+		primitiveFrom === { kind: BaseType.XSUNTYPEDATOMIC }
+	) {
 		// We are dealing with string-like types. Check whitespace / pattern
 		converters.push((value) => {
 			const strValue = normalizeWhitespace(value, to);
@@ -175,7 +183,10 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 			value: value.value,
 		}));
 	}
-	if (primitiveTo === 'xs:untypedAtomic' || primitiveTo === 'xs:string') {
+	if (
+		primitiveTo === { kind: BaseType.XSUNTYPEDATOMIC } ||
+		primitiveTo === { kind: BaseType.XSSTRING }
+	) {
 		converters.push((typedValue) => {
 			if (!validatePattern(typedValue, to)) {
 				return {
