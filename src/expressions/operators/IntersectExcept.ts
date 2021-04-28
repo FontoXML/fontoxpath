@@ -7,6 +7,7 @@ import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import arePointersEqual from './compares/arePointersEqual';
+import { BaseType } from '../dataTypes/Value';
 
 function ensureSortedSequence(
 	intersectOrExcept: string,
@@ -15,7 +16,7 @@ function ensureSortedSequence(
 	expectedResultOrder: any
 ): ISequence {
 	return sequence.mapAll((values) => {
-		if (values.some((value) => !isSubtypeOf(value.type, 'node()'))) {
+		if (values.some((value) => !isSubtypeOf(value.type, { kind: BaseType.NODE }))) {
 			throw new Error(
 				`XPTY0004: Sequences given to ${intersectOrExcept} should only contain nodes.`
 			);

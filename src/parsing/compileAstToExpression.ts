@@ -63,7 +63,7 @@ import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 import TransformExpression from '../expressions/xquery-update/TransformExpression';
 
 import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
-import { ValueType } from '../expressions/dataTypes/Value';
+import { BaseType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import FlworExpression from '../expressions/FlworExpression';
 import OrderByExpression from '../expressions/OrderByExpression';
@@ -375,7 +375,9 @@ function compileLookup(ast: IAST, compilationOptions: CompilationOptions): '*' |
 	const keyExpression = astHelper.getFirstChild(ast, '*');
 	switch (keyExpression[0]) {
 		case 'NCName':
-			return new Literal(astHelper.getTextContent(keyExpression), 'xs:string');
+			return new Literal(astHelper.getTextContent(keyExpression), {
+				kind: BaseType.XSSTRING,
+			});
 		case 'star':
 			return '*';
 		default:
@@ -716,31 +718,27 @@ function instanceOf(
 }
 
 function integerConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		'xs:integer'
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		kind: BaseType.XSINTEGER,
+	});
 }
 
 function stringConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		'xs:string'
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		kind: BaseType.XSSTRING,
+	});
 }
 
 function decimalConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		'xs:decimal'
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		kind: BaseType.XSDECIMAL,
+	});
 }
 
 function doubleConstantExpr(ast: IAST, _compilationOptions: CompilationOptions) {
-	return new Literal(
-		astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')),
-		'xs:double'
-	);
+	return new Literal(astHelper.getTextContent(astHelper.getFirstChild(ast, 'value')), {
+		kind: BaseType.XSDOUBLE,
+	});
 }
 
 function nameTest(ast: IAST, _compilationOptions: CompilationOptions) {
@@ -1154,7 +1152,7 @@ function dirElementConstructor(ast: IAST, compilationOptions: CompilationOptions
 
 function CDataSection(ast: IAST, _compilationOptions: CompilationOptions) {
 	// Walks like a stringliteral, talks like a stringliteral, it's a stringliteral
-	return new Literal(astHelper.getTextContent(ast), 'xs:string');
+	return new Literal(astHelper.getTextContent(ast), { kind: BaseType.XSSTRING });
 }
 
 function attributeConstructor(ast: IAST, compilationOptions: CompilationOptions) {
