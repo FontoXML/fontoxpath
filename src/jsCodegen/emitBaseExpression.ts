@@ -1,5 +1,5 @@
 import astHelper, { IAST } from '../parsing/astHelper';
-import { stepEmittersByAxis } from './emitAxes';
+import { axisEmittersByAxis } from './emitAxis';
 import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
 import emitTest, { determineTypeFromTest, kindTestNames } from './emitTest';
 
@@ -94,12 +94,12 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 				return emittedTest;
 			}
 
-			const emitStep = stepEmittersByAxis[axis];
-			if (emitStep === undefined) {
+			const emitAxis = axisEmittersByAxis[axis];
+			if (emitAxis === undefined) {
 				return rejectAst(`Unsupported: the ${axis} axis.`);
 			}
 
-			const emittedStep = emitStep(
+			const emittedStep = emitAxis(
 				emittedTest.code,
 				emittedPredicates.code,
 				nestLevel,

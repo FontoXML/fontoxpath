@@ -7,7 +7,7 @@ const axisNodeNames = {
 	SELF: 'self',
 };
 
-export const stepEmittersByAxis = {
+export const axisEmittersByAxis = {
 	[axisNodeNames.ATTRIBUTE]: emitAttributeAxis,
 	[axisNodeNames.CHILD]: emitChildAxis,
 	[axisNodeNames.PARENT]: emitParentAxis,
