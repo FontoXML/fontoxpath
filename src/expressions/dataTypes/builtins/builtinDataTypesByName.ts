@@ -1,5 +1,5 @@
 import facetHandlersByDataTypeName from '../facets/facetsByDataTypeName';
-import { ValueType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import builtinModels from './builtinModels';
 import dataTypeValidatorByName from './dataTypeValidatorByName';
 
@@ -13,7 +13,7 @@ export type TypeModel = {
 	variety: 'primitive' | 'derived' | 'list' | 'union';
 };
 
-const builtinDataTypesByName: { [typeName in ValueType]: TypeModel } = Object.create(null);
+const builtinDataTypesByName: { [typeName in BaseType]: TypeModel } = Object.create(null);
 
 builtinModels.forEach((model) => {
 	const name = model.name;
@@ -47,7 +47,7 @@ builtinModels.forEach((model) => {
 	} else if (model.variety === 'list') {
 		const type = builtinDataTypesByName[model.type];
 		builtinDataTypesByName[name] = {
-			variety: 'union',
+			variety: 'union', //why not list?
 			name,
 			restrictionsByName,
 			parent: type,
@@ -55,7 +55,7 @@ builtinModels.forEach((model) => {
 			facetHandlers: facetHandlersByDataTypeName.list,
 			memberTypes: [],
 		};
-	} else if (model.variety === 'union') {
+	} else {
 		const memberTypes = model.memberTypes.map(
 			(memberTypeRef) => builtinDataTypesByName[memberTypeRef]
 		);
