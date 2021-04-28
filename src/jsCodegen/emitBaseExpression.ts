@@ -7,7 +7,6 @@ const baseExpressionNames = {
 	PATH_EXPR: 'pathExpr',
 	AND_OP: 'andOp',
 	OR_OP: 'orOp',
-	EQUAL_OP: 'equalOp',
 };
 
 const baseExpressions = Object.values(baseExpressionNames);
