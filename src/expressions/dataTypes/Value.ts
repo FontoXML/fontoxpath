@@ -5,6 +5,10 @@ export default class Value {
 	constructor(public type: ValueType, readonly value: ValueValue) {}
 }
 
+/**
+ * The base type
+ * @public
+ */
 export enum BaseType {
 	XSBOOLEAN,
 	XSSTRING,
@@ -72,8 +76,13 @@ export enum BaseType {
 	NULLABLE,
 	ANY,
 	SOME,
+	ELLIPSIS,
 }
 
+/**
+ * The composite type containing more info
+ * @public
+ */
 export type ValueType =
 	| { kind: BaseType.XSBOOLEAN }
 	| { kind: BaseType.XSSTRING }
@@ -135,9 +144,10 @@ export type ValueType =
 	| { kind: BaseType.PROCESSINGINSTRUCTION }
 	| { kind: BaseType.COMMENT }
 	| { kind: BaseType.ITEM }
-	| { kind: BaseType.FUNCTION; returnType: ValueType | undefined; param: ValueType[] }
+	| { kind: BaseType.FUNCTION; returnType: ValueType | undefined; params: ValueType[] }
 	| { kind: BaseType.MAP; items: [ValueType, ValueType][] }
 	| { kind: BaseType.ARRAY; items: ValueType[] }
 	| { kind: BaseType.NULLABLE; item: ValueType }
 	| { kind: BaseType.ANY; item: ValueType }
-	| { kind: BaseType.SOME; item: ValueType };
+	| { kind: BaseType.SOME; item: ValueType }
+	| { kind: BaseType.ELLIPSIS };

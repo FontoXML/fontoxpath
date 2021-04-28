@@ -5,8 +5,7 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import Value from '../dataTypes/Value';
+import Value, { BaseType, ValueType } from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -54,8 +53,8 @@ function subSequence(sequence: ISequence, start: number, length: number) {
 
 function castUntypedItemsToDouble(items: Value[]) {
 	return items.map((item) => {
-		if (isSubtypeOf(item.type, 'xs:untypedAtomic')) {
-			return castToType(item, 'xs:double');
+		if (isSubtypeOf(item.type, { kind: BaseType.XSUNTYPEDATOMIC })) {
+			return castToType(item, { kind: BaseType.XSDOUBLE });
 		}
 		return item;
 	});
@@ -70,7 +69,7 @@ function castItemsForMinMax(items: Value[]) {
 			return Number.isNaN(item.value);
 		})
 	) {
-		return [createAtomicValue(NaN, 'xs:double')];
+		return [createAtomicValue(NaN, { kind: BaseType.XSDOUBLE })];
 	}
 
 	const convertResult = convertItemsToCommonType(items);
@@ -243,8 +242,8 @@ const fnIndexOf: FunctionDefinitionType = (
 		atomize(sequence, executionParameters)
 			.map((element, i) => {
 				return valueCompare('eqOp', element, onlySearchValue, dynamicContext)
-					? createAtomicValue(i + 1, 'xs:integer')
-					: createAtomicValue(-1, 'xs:integer');
+					? createAtomicValue(i + 1, { kind: BaseType.XSINTEGER })
+					: createAtomicValue(-1, { kind: BaseType.XSINTEGER });
 			})
 			.filter((indexValue) => {
 				return indexValue.value !== -1;
@@ -278,7 +277,7 @@ const fnDeepEqual: FunctionDefinitionType = (
 				return result;
 			}
 			hasPassed = true;
-			return ready(createAtomicValue(result.value, 'xs:boolean'));
+			return ready(createAtomicValue(result.value, { kind: BaseType.XSBOOLEAN }));
 		},
 	});
 };
@@ -297,7 +296,7 @@ const fnCount: FunctionDefinitionType = (
 			}
 			const length = sequence.getLength();
 			hasPassed = true;
-			return ready(createAtomicValue(length, 'xs:integer'));
+			return ready(createAtomicValue(length, { kind: BaseType.XSINTEGER }));
 		},
 	});
 };
@@ -319,7 +318,7 @@ const fnAvg: FunctionDefinitionType = (
 		throw new Error('FORG0006: Incompatible types to be converted to a common type');
 	}
 
-	if (!items.every((item) => isSubtypeOf(item.type, 'xs:numeric'))) {
+	if (!items.every((item) => isSubtypeOf(item.type, { kind: BaseType.XSNUMERIC }))) {
 		throw new Error('FORG0006: items passed to fn:avg are not all numeric.');
 	}
 
@@ -330,21 +329,28 @@ const fnAvg: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:integer') || isSubtypeOf(item.type, 'xs:double');
+			return (
+				isSubtypeOf(item.type, { kind: BaseType.XSINTEGER }) ||
+				isSubtypeOf(item.type, { kind: BaseType.XSDOUBLE })
+			);
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
+		return sequenceFactory.singleton(
+			createAtomicValue(resultValue, { kind: BaseType.XSDOUBLE })
+		);
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:decimal');
+			return isSubtypeOf(item.type, { kind: BaseType.XSDECIMAL });
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
+		return sequenceFactory.singleton(
+			createAtomicValue(resultValue, { kind: BaseType.XSDECIMAL })
+		);
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
+	return sequenceFactory.singleton(createAtomicValue(resultValue, { kind: BaseType.XSFLOAT }));
 };
 
 const fnMax: FunctionDefinitionType = (
@@ -405,7 +411,7 @@ const fnSum: FunctionDefinitionType = (
 		throw new Error('FORG0006: Incompatible types to be converted to a common type');
 	}
 
-	if (!items.every((item) => isSubtypeOf(item.type, 'xs:numeric'))) {
+	if (!items.every((item) => isSubtypeOf(item.type, { kind: BaseType.XSNUMERIC }))) {
 		throw new Error('FORG0006: items passed to fn:sum are not all numeric.');
 	}
 
@@ -415,29 +421,35 @@ const fnSum: FunctionDefinitionType = (
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:integer');
+			return isSubtypeOf(item.type, { kind: BaseType.XSINTEGER });
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:integer'));
+		return sequenceFactory.singleton(
+			createAtomicValue(resultValue, { kind: BaseType.XSINTEGER })
+		);
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:double');
+			return isSubtypeOf(item.type, { kind: BaseType.XSDOUBLE });
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:double'));
+		return sequenceFactory.singleton(
+			createAtomicValue(resultValue, { kind: BaseType.XSDOUBLE })
+		);
 	}
 
 	if (
 		items.every((item) => {
-			return isSubtypeOf(item.type, 'xs:decimal');
+			return isSubtypeOf(item.type, { kind: BaseType.XSDECIMAL });
 		})
 	) {
-		return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:decimal'));
+		return sequenceFactory.singleton(
+			createAtomicValue(resultValue, { kind: BaseType.XSDECIMAL })
+		);
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(resultValue, 'xs:float'));
+	return sequenceFactory.singleton(createAtomicValue(resultValue, { kind: BaseType.XSFLOAT }));
 };
 
 const fnZeroOrOne: FunctionDefinitionType = (
@@ -500,7 +512,7 @@ const fnFilter: FunctionDefinitionType = (
 	return sequence.filter((item) => {
 		// Transform argument
 		const transformedArgument = performFunctionConversion(
-			callbackArgumentTypes[0] as TypeDeclaration,
+			callbackArgumentTypes[0] as ValueType,
 			sequenceFactory.singleton(item),
 			executionParameters,
 			'fn:filter',
@@ -515,7 +527,7 @@ const fnFilter: FunctionDefinitionType = (
 		);
 		if (
 			!functionCallResult.isSingleton() ||
-			!isSubtypeOf(functionCallResult.first().type, 'xs:boolean')
+			!isSubtypeOf(functionCallResult.first().type, { kind: BaseType.XSBOOLEAN })
 		) {
 			throw new Error(`XPTY0004: signature of function passed to fn:filter is incompatible.`);
 		}
@@ -553,7 +565,7 @@ const fnForEach: FunctionDefinitionType = (
 					}
 
 					const transformedArgument = performFunctionConversion(
-						callbackArgumentTypes[0] as TypeDeclaration,
+						callbackArgumentTypes[0] as ValueType,
 						sequenceFactory.singleton(item.value),
 						executionParameters,
 						'fn:for-each',
@@ -601,14 +613,14 @@ const fnFoldLeft: FunctionDefinitionType = (
 	return sequence.mapAll((values) =>
 		values.reduce((previous, current) => {
 			const previousArg = performFunctionConversion(
-				callbackArgumentTypes[0] as TypeDeclaration,
+				callbackArgumentTypes[0] as ValueType,
 				previous,
 				executionParameters,
 				'fn:fold-left',
 				false
 			);
 			const currentArg = performFunctionConversion(
-				callbackArgumentTypes[1] as TypeDeclaration,
+				callbackArgumentTypes[1] as ValueType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-left',
@@ -647,14 +659,14 @@ const fnFoldRight: FunctionDefinitionType = (
 	return sequence.mapAll((values) =>
 		values.reduceRight((previous, current) => {
 			const previousArg = performFunctionConversion(
-				callbackArgumentTypes[0] as TypeDeclaration,
+				callbackArgumentTypes[0] as ValueType,
 				previous,
 				executionParameters,
 				'fn:fold-right',
 				false
 			);
 			const currentArg = performFunctionConversion(
-				callbackArgumentTypes[1] as TypeDeclaration,
+				callbackArgumentTypes[1] as ValueType,
 				sequenceFactory.singleton(current),
 				executionParameters,
 				'fn:fold-right',
@@ -858,7 +870,7 @@ export default {
 					executionParameters,
 					_staticContext,
 					sequence,
-					sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'))
+					sequenceFactory.singleton(createAtomicValue(0, { kind: BaseType.XSINTEGER }))
 				);
 			}) as FunctionDefinitionType,
 			localName: 'sum',

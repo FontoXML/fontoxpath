@@ -1,17 +1,16 @@
 import { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import { ValueType } from '../dataTypes/Value';
+import Value, { BaseType, ValueType } from '../dataTypes/Value';
 
 export type FunctionProperties = {
-	argumentTypes: (TypeDeclaration | RestArgument)[];
+	argumentTypes: (ValueType | RestArgument)[];
 	arity: number;
 	callFunction: FunctionSignature<ISequence>;
 	isUpdating: boolean;
 	localName: string;
 	namespaceURI: string;
-	returnType: TypeDeclaration;
+	returnType: ValueType;
 };
 
 const registeredFunctionsByName: { [s: string]: FunctionProperties[] } = Object.create(null);
@@ -89,6 +88,7 @@ export function getAlternativesAsStringFor(functionName: string): string {
 		return 'No similar functions found.';
 	}
 
+	//TODO: FIX THIS
 	return (
 		alternativeFunctions
 			.map(
@@ -99,8 +99,8 @@ export function getAlternativesAsStringFor(functionName: string): string {
 						.map((argumentType) =>
 							(argumentType as RestArgument).isRestArgument
 								? '...'
-								: (argumentType as TypeDeclaration).type +
-								  ((argumentType as TypeDeclaration).occurrence || '')
+								: (argumentType as ValueType).type +
+								  ((argumentType as ValueType).occurrence || '')
 						)
 						.join(', ')})"`
 			)
@@ -151,30 +151,27 @@ export function getFunctionByArity(
 	};
 }
 
-function splitType(type: string): TypeDeclaration {
-	// argumentType is something like 'xs:string?' or 'map(*)'
-	const parts = type.match(/^(.*[^+?*])([+*?])?$/);
-	return {
-		type: parts[1] as ValueType,
-		occurrence: (parts[2] as '?' | '+' | '*' | '') || null,
-	};
-}
-
-export function registerFunction(namespaceURI, localName, argumentTypes, returnType, callFunction) {
+export function registerFunction(
+	namespaceURI,
+	localName,
+	argumentTypes: ValueType[],
+	returnType: ValueType,
+	callFunction
+) {
 	if (!registeredFunctionsByName[namespaceURI + ':' + localName]) {
 		registeredFunctionsByName[namespaceURI + ':' + localName] = [];
 	}
 
 	registeredFunctionsByName[namespaceURI + ':' + localName].push({
-		argumentTypes: argumentTypes.map((argumentType: string) =>
-			argumentType === '...' ? REST_ARGUMENT_INSTANCE : splitType(argumentType)
+		argumentTypes: argumentTypes.map((argumentType: ValueType) =>
+			argumentType.kind === BaseType.ELLIPSIS ? REST_ARGUMENT_INSTANCE : argumentType
 		),
 		arity: argumentTypes.length,
 		callFunction,
 		isUpdating: false,
 		localName,
 		namespaceURI,
-		returnType: splitType(returnType),
+		returnType: returnType,
 	});
 }
 

@@ -9,7 +9,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { BaseType } from '../dataTypes/Value';
 import { equal } from '../dataTypes/valueTypes/DateTime';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -551,7 +551,10 @@ export function itemDeepEqual(
 		}
 
 		// Comment nodes
-		if (isSubtypeOf(item1.type, 'comment()') && isSubtypeOf(item2.type, 'comment()')) {
+		if (
+			isSubtypeOf(item1.type, { kind: BaseType.COMMENT }) &&
+			isSubtypeOf(item2.type, { kind: BaseType.COMMENT })
+		) {
 			return atomicTypeNodeDeepEqual(
 				dynamicContext,
 				executionParameters,

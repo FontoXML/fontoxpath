@@ -1,4 +1,3 @@
-import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 import { ValueType, BaseType } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
@@ -74,10 +73,10 @@ function getTextContent(ast: IAST): string {
  * @param   ast  The parent
  * @return  The type declaration
  */
-function getTypeDeclaration(ast: IAST): TypeDeclaration {
+function getTypeDeclaration(ast: IAST): ValueType {
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { type: { kind: BaseType.ITEM }, occurrence: '*' };
+		return { kind: BaseType.ANY, item: { kind: BaseType.ITEM } };
 	}
 
 	const determineType = (typeAst: IAST): ValueType => {
@@ -101,7 +100,7 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 			case 'anyFunctionTest':
 			case 'functionTest':
 			case 'typedFunctionTest':
-				return { kind: BaseType.FUNCTION, returnType: undefined, param: [] };
+				return { kind: BaseType.FUNCTION, returnType: undefined, params: [] };
 			case 'anyMapTest':
 			case 'typedMapTest':
 				return { kind: BaseType.MAP, items: [] };
@@ -134,10 +133,16 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 		occurrence = getTextContent(occurrenceNode);
 	}
 
-	return {
-		occurrence,
-		type,
-	};
+	switch (occurrence) {
+		case '*':
+			return { kind: BaseType.ANY, item: type };
+		case '?':
+			return { kind: BaseType.NULLABLE, item: type };
+		case '+':
+			return { kind: BaseType.SOME, item: type };
+		case '':
+			return type;
+	}
 }
 
 /**

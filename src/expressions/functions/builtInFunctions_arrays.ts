@@ -4,8 +4,7 @@ import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
-import Value, { ValueType } from '../dataTypes/Value';
+import Value, { BaseType, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -28,7 +27,7 @@ const arraySize: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([arraySequence], ([array]) =>
 		sequenceFactory.singleton(
-			createAtomicValue((array as ArrayValue).members.length, 'xs:integer')
+			createAtomicValue((array as ArrayValue).members.length, { kind: BaseType.XSINTEGER })
 		)
 	);
 };
@@ -198,7 +197,7 @@ const arrayForEach: FunctionDefinitionType = (
 					executionParameters,
 					staticContext,
 					transformArgumentList(
-						itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+						itemFunctionValue.getArgumentTypes() as ValueType[],
 						[member()],
 						executionParameters,
 						'array:for-each'
@@ -224,7 +223,7 @@ const arrayFilter: FunctionDefinitionType = (
 		}
 		const filterResultSequences: ISequence[] = (array as ArrayValue).members.map((member) => {
 			const castArgument = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+				itemFunctionValue.getArgumentTypes() as ValueType[],
 				[member()],
 				executionParameters,
 				'array:filter'
@@ -272,7 +271,7 @@ const arrayFoldLeft: FunctionDefinitionType = (
 
 		return (array as ArrayValue).members.reduce((accum, member) => {
 			const castMember = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+				itemFunctionValue.getArgumentTypes() as ValueType[],
 				[member()],
 				executionParameters,
 				'array:fold-left'
@@ -306,7 +305,7 @@ const arrayFoldRight: FunctionDefinitionType = (
 
 		return (array as ArrayValue).members.reduceRight((accum, member) => {
 			const castMember = transformArgumentList(
-				itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+				itemFunctionValue.getArgumentTypes() as ValueType[],
 				[member()],
 				executionParameters,
 				'array:fold-right'
@@ -353,7 +352,7 @@ const arrayForEachPair: FunctionDefinitionType = (
 				++i
 			) {
 				const [argumentA, argumentB] = transformArgumentList(
-					itemFunctionValue.getArgumentTypes() as TypeDeclaration[],
+					itemFunctionValue.getArgumentTypes() as ValueType[],
 					[(arrayA as ArrayValue).members[i](), (arrayB as ArrayValue).members[i]()],
 					executionParameters,
 					'array:for-each-pair'
@@ -378,9 +377,9 @@ const arrayForEachPair: FunctionDefinitionType = (
 
 const isString = (type: ValueType): boolean => {
 	return (
-		isSubtypeOf(type, 'xs:string') ||
-		isSubtypeOf(type, 'xs:anyURI') ||
-		isSubtypeOf(type, 'xs:untypedAtomic')
+		isSubtypeOf(type, { kind: BaseType.XSSTRING }) ||
+		isSubtypeOf(type, { kind: BaseType.XSANYURI }) ||
+		isSubtypeOf(type, { kind: BaseType.XSUNTYPEDATOMIC })
 	);
 };
 
@@ -461,7 +460,7 @@ const arraySort: FunctionDefinitionType = (
 };
 
 function flattenItem(flatteneditems: ISequence, item: Value) {
-	if (isSubtypeOf(item.type, 'array(*)')) {
+	if (isSubtypeOf(item.type, { kind: BaseType.ARRAY, items: [] })) {
 		return (item as ArrayValue).members.reduce(
 			(flatteneditemsOfMember, member) =>
 				member().mapAll((allValues) =>
@@ -538,7 +537,7 @@ export default {
 				const lengthSequence = sequenceFactory.singleton(
 					createAtomicValue(
 						arraySequence.first().members.length - startSequence.first().value + 1,
-						'xs:integer'
+						{ kind: BaseType.XSINTEGER }
 					)
 				);
 				return arraySubarray(
@@ -579,7 +578,7 @@ export default {
 					executionParameters,
 					_staticContext,
 					arraySequence,
-					sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
+					sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }))
 				);
 			},
 		},
@@ -595,7 +594,7 @@ export default {
 					executionParameters,
 					_staticContext,
 					arraySequence,
-					sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'))
+					sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }))
 				);
 			},
 		},

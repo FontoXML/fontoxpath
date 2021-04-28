@@ -1,7 +1,7 @@
+import { ValueType } from 'src';
 import { LexicalQualifiedName, ResolvedQualifiedName } from '../types/Options';
 import IContext from './Context';
 import ISequence from './dataTypes/ISequence';
-import TypeDeclaration from './dataTypes/TypeDeclaration';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import FunctionDefinitionType from './functions/FunctionDefinitionType';
@@ -25,14 +25,14 @@ function lookupInOverrides(overrides: any[] | { [x: string]: any }[], key: strin
 }
 
 export type GenericFunctionDefinition<isUpdating, callFunctionType> = {
-	argumentTypes: TypeDeclaration[];
+	argumentTypes: ValueType[];
 	arity: number;
 	callFunction: callFunctionType;
 	isExternal: boolean;
 	isUpdating: isUpdating;
 	localName: string;
 	namespaceURI: string;
-	returnType: TypeDeclaration;
+	returnType: ValueType;
 };
 export type FunctionDefinition = GenericFunctionDefinition<false, FunctionDefinitionType>;
 export type UpdatingFunctionDefinition = GenericFunctionDefinition<

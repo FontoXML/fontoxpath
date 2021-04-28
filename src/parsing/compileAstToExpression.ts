@@ -62,7 +62,6 @@ import RenameExpression from '../expressions/xquery-update/RenameExpression';
 import ReplaceExpression from '../expressions/xquery-update/ReplaceExpression';
 import TransformExpression from '../expressions/xquery-update/TransformExpression';
 
-import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
 import { BaseType, ValueType } from '../expressions/dataTypes/Value';
 import QName from '../expressions/dataTypes/valueTypes/QName';
 import FlworExpression from '../expressions/FlworExpression';
@@ -688,7 +687,7 @@ function inlineFunction(
 		params.map((param) => {
 			const td: {
 				name: QName;
-				type: TypeDeclaration;
+				type: ValueType;
 			} = {
 				name: astHelper.getQName(astHelper.getFirstChild(param, 'varName')),
 				type: astHelper.getTypeDeclaration(param),
