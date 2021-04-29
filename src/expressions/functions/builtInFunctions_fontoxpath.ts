@@ -16,6 +16,7 @@ import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
+import { basename } from 'path';
 
 const fontoxpathEvaluate: FunctionDefinitionType = (
 	_dynamicContext,
@@ -94,17 +95,17 @@ const fontoxpathEvaluate: FunctionDefinitionType = (
 
 				const context = contextItemSequence.isEmpty()
 					? {
-							contextItem: null,
-							contextItemIndex: -1,
-							contextSequence: contextItemSequence,
-							variableBindings,
-					  }
+						contextItem: null,
+						contextItemIndex: -1,
+						contextSequence: contextItemSequence,
+						variableBindings,
+					}
 					: {
-							contextItem: contextItemSequence.first(),
-							contextItemIndex: 0,
-							contextSequence: contextItemSequence,
-							variableBindings,
-					  };
+						contextItem: contextItemSequence.first(),
+						contextItemIndex: 0,
+						contextSequence: contextItemSequence,
+						variableBindings,
+					};
 
 				const innerDynamicContext = new DynamicContext(context);
 
@@ -137,18 +138,18 @@ const fontoxpathVersion: FunctionDefinitionType = () => {
 export default {
 	declarations: [
 		{
-			argumentTypes: ['xs:string', 'map(*)'],
+			argumentTypes: [{ kind: BaseType.XSSTRING }, { kind: BaseType.MAP, items: [] }],
 			callFunction: fontoxpathEvaluate,
 			localName: 'evaluate',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'item()*',
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 		},
 		{
 			argumentTypes: [],
 			callFunction: fontoxpathVersion,
 			localName: 'version',
 			namespaceURI: FONTOXPATH_NAMESPACE_URI,
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 		},
 	],
 };

@@ -69,27 +69,27 @@ const fnFunctionArity: FunctionDefinitionType = (
 export default {
 	declarations: [
 		{
-			argumentTypes: ['xs:QName', 'xs:integer'],
+			argumentTypes: [{ kind: BaseType.XSQNAME }, { kind: BaseType.XSINTEGER }],
 			callFunction: fnFunctionLookup,
 			localName: 'function-lookup',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'function(*)?',
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.FUNCTION, returnType: undefined, params: [] } },
 		},
 
 		{
-			argumentTypes: ['function(*)'],
+			argumentTypes: [{ kind: BaseType.FUNCTION, returnType: undefined, params: [] }],
 			callFunction: fnFunctionName,
 			localName: 'function-name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:QName?',
+			returnType: {kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME }},
 		},
 
 		{
-			argumentTypes: ['function(*)'],
+			argumentTypes: [{ kind: BaseType.FUNCTION, returnType: undefined, params: [] }],
 			callFunction: fnFunctionArity,
 			localName: 'function-arity',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer',
+			returnType: { kind: BaseType.XSINTEGER },
 		},
 	],
 };
