@@ -12,7 +12,7 @@ export default function castToGMonth(
 	if (instanceOf({ kind: BaseType.XSDATE }) || instanceOf({ kind: BaseType.XSDATETIME })) {
 		return (value) => ({
 			successful: true,
-			value: createGMonthValue(value.convertToType('xs:gMonth')),
+			value: createGMonthValue(value.convertToType({ kind: BaseType.XSGMONTH })),
 		});
 	}
 	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {

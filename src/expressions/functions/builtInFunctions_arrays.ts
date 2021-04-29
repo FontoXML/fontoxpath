@@ -485,48 +485,59 @@ export default {
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'size',
-			argumentTypes: ['array(*)'],
-			returnType: 'xs:integer',
+			argumentTypes: [{ kind: BaseType.ARRAY }],
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: arraySize,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'get',
-			argumentTypes: ['array(*)', 'xs:integer'],
-			returnType: 'item()*',
+			argumentTypes: [{ kind: BaseType.ARRAY }, { kind: BaseType.XSINTEGER }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: arrayGet,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'put',
-			argumentTypes: ['array(*)', 'xs:integer', 'item()*'],
-			returnType: 'array(*)',
+			argumentTypes: [
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.XSINTEGER },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayPut,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'append',
-			argumentTypes: ['array(*)', 'item()*'],
-			returnType: 'array(*)',
+			argumentTypes: [
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayAppend,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'subarray',
-			argumentTypes: ['array(*)', 'xs:integer', 'xs:integer'],
-			returnType: 'array(*)',
+			argumentTypes: [
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.XSINTEGER },
+				{ kind: BaseType.XSINTEGER },
+			],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arraySubarray,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'subarray',
-			argumentTypes: ['array(*)', 'xs:integer'],
-			returnType: 'array(*)',
+			argumentTypes: [{ kind: BaseType.ARRAY }, { kind: BaseType.XSINTEGER }],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction(
 				dynamicContext,
 				executionParameters,
@@ -554,24 +565,31 @@ export default {
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'remove',
-			argumentTypes: ['array(*)', 'xs:integer*'],
-			returnType: 'array(*)',
+			argumentTypes: [
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
+			],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayRemove,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'insert-before',
-			argumentTypes: ['array(*)', 'xs:integer', 'item()*'],
-			returnType: 'array(*)',
+			argumentTypes: [
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.XSINTEGER },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayInsertBefore,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'head',
-			argumentTypes: ['array(*)'],
-			returnType: 'item()*',
+			argumentTypes: [{ kind: BaseType.ARRAY }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 				return arrayGet(
 					dynamicContext,
@@ -586,8 +604,8 @@ export default {
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'tail',
-			argumentTypes: ['array(*)'],
-			returnType: 'item()*',
+			argumentTypes: [{ kind: BaseType.ARRAY }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 				return arrayRemove(
 					dynamicContext,
@@ -602,16 +620,16 @@ export default {
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'reverse',
-			argumentTypes: ['array(*)'],
-			returnType: 'array(*)',
+			argumentTypes: [{ kind: BaseType.ARRAY }],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayReverse,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'join',
-			argumentTypes: ['array(*)*'],
-			returnType: 'array(*)',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ARRAY }],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayJoin,
 		},
 
@@ -620,8 +638,8 @@ export default {
 			localName: 'for-each',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', '(item()*) as item()*)]
-			argumentTypes: ['array(*)', 'function(*)'],
-			returnType: 'array(*)',
+			argumentTypes: [{ kind: BaseType.ARRAY }, { kind: BaseType.FUNCTION }],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayForEach,
 		},
 
@@ -630,8 +648,8 @@ export default {
 			localName: 'filter',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
-			argumentTypes: ['array(*)', 'function(*)'],
-			returnType: 'array(*)',
+			argumentTypes: [{ kind: BaseType.ARRAY }, { kind: BaseType.FUNCTION }],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayFilter,
 		},
 
@@ -640,8 +658,12 @@ export default {
 			localName: 'fold-left',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: ['array(*)', 'item()*', 'function(*)'],
-			returnType: 'item()*',
+			argumentTypes: [
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+				{ kind: BaseType.FUNCTION },
+			],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: arrayFoldLeft,
 		},
 
@@ -650,8 +672,12 @@ export default {
 			localName: 'fold-right',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: ['array(*)', 'item()*', 'function(*)'],
-			returnType: 'item()*',
+			argumentTypes: [
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+				{ kind: BaseType.FUNCTION },
+			],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: arrayFoldRight,
 		},
 
@@ -660,24 +686,28 @@ export default {
 			localName: 'for-each-pair',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: ['array(*)', 'array(*)', 'function(*)'],
-			returnType: 'array(*)',
+			argumentTypes: [
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.FUNCTION },
+			],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arrayForEachPair,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'sort',
-			argumentTypes: ['array(*)'],
-			returnType: 'array(*)',
+			argumentTypes: [{ kind: BaseType.ARRAY }],
+			returnType: { kind: BaseType.ARRAY },
 			callFunction: arraySort,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'flatten',
-			argumentTypes: ['item()*'],
-			returnType: 'item()*',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: arrayFlatten,
 		},
 	],
