@@ -37,8 +37,11 @@ export default {
 		{
 			namespaceURI: 'http://fontoxpath/operators',
 			localName: 'to',
-			argumentTypes: ['xs:integer?', 'xs:integer?'],
-			returnType: 'xs:integer*',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+			],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
 			callFunction: opTo,
 		},
 	],

@@ -390,11 +390,11 @@ const fnRoot: FunctionDefinitionType = (
 export default {
 	declarations: [
 		{
-			argumentTypes: ['node()?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
 			callFunction: fnName,
 			localName: 'name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string?',
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 		},
 
 		{
@@ -402,15 +402,15 @@ export default {
 			callFunction: contextItemAsFirstArgument.bind(null, fnName),
 			localName: 'name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 		},
 
 		{
-			argumentTypes: ['node()'],
+			argumentTypes: [{ kind: BaseType.NODE }],
 			callFunction: fnNamespaceURI,
 			localName: 'namespace-uri',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyURI',
+			returnType: { kind: BaseType.XSANYURI },
 		},
 
 		{
@@ -418,31 +418,33 @@ export default {
 			callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI),
 			localName: 'namespace-uri',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyURI',
+			returnType: { kind: BaseType.XSANYURI },
 		},
 
 		{
-			argumentTypes: ['node()*'],
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.NODE } }],
 			callFunction: fnInnermost,
 			localName: 'innermost',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'node()*',
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
 		},
 
 		{
-			argumentTypes: ['node()*'],
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.NODE } }],
 			callFunction: fnOutermost,
 			localName: 'outermost',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'node()*',
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
 		},
 
 		{
-			argumentTypes: ['node()?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
 			callFunction: fnHasChildren,
 			localName: 'has-children',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
+			returnType: {
+				kind: BaseType.XSBOOLEAN,
+			},
 		},
 
 		{
@@ -450,15 +452,15 @@ export default {
 			callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren),
 			localName: 'has-children',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 		},
 
 		{
-			argumentTypes: ['node()?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
 			callFunction: fnPath,
 			localName: 'path',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string?',
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 		},
 
 		{
@@ -466,15 +468,15 @@ export default {
 			callFunction: contextItemAsFirstArgument.bind(null, fnPath),
 			localName: 'path',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string?',
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 		},
 
 		{
-			argumentTypes: ['node()?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
 			callFunction: fnNodeName,
 			localName: 'node-name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:QName?',
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
 		},
 
 		{
@@ -482,15 +484,15 @@ export default {
 			callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
 			localName: 'node-name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:QName?',
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
 		},
 
 		{
-			argumentTypes: ['node()?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
 			callFunction: fnLocalName,
 			localName: 'local-name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 		},
 
 		{
@@ -498,15 +500,15 @@ export default {
 			callFunction: contextItemAsFirstArgument.bind(null, fnLocalName),
 			localName: 'local-name',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 		},
 
 		{
-			argumentTypes: ['node()?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
 			callFunction: fnRoot,
 			localName: 'root',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'node()?',
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } },
 		},
 
 		{
@@ -514,7 +516,7 @@ export default {
 			callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
 			localName: 'root',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'node()?',
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } },
 		},
 
 		{
@@ -522,14 +524,14 @@ export default {
 			callFunction: contextItemAsFirstArgument.bind(null, fnData),
 			localName: 'data',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType*',
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
 		},
 		{
-			argumentTypes: ['item()*'],
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
 			callFunction: fnData,
 			localName: 'data',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType*',
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
 		},
 	],
 	functions: {

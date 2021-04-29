@@ -136,7 +136,7 @@ function compareNormalizedTextNodes(
 			return wholeValue;
 		}, '');
 		return {
-			type: 'xs:string',
+			type: { kind: BaseType.XSSTRING },
 			value,
 		};
 	});
