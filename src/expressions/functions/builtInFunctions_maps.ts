@@ -9,6 +9,7 @@ import mapGet from './builtInFunctions_maps_get';
 import isSameMapKey from './isSameMapKey';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
+import { BaseType } from '../dataTypes/Value';
 
 const mapMerge: FunctionDefinitionType = (
 	dynamicContext,
@@ -17,7 +18,9 @@ const mapMerge: FunctionDefinitionType = (
 	mapSequence,
 	optionMap
 ) => {
-	const duplicateKey = sequenceFactory.singleton(createAtomicValue('duplicates', 'xs:string'));
+	const duplicateKey = sequenceFactory.singleton(
+		createAtomicValue('duplicates', { kind: BaseType.XSSTRING })
+	);
 	const duplicationHandlingValueSequence = mapGet(
 		dynamicContext,
 		executionParameters,
@@ -129,7 +132,7 @@ const mapSize: FunctionDefinitionType = (
 	mapSequence
 ) => {
 	return mapSequence.map((onlyMap) =>
-		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, 'xs:integer')
+		createAtomicValue((onlyMap as MapValue).keyValuePairs.length, { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -212,16 +215,19 @@ export default {
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'contains',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType'],
-			returnType: 'xs:boolean',
+			argumentTypes: [{ kind: BaseType.MAP }, { kind: BaseType.XSANYATOMICTYPE }],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: mapContains,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'entry',
-			argumentTypes: ['xs:anyAtomicType', 'item()*'],
-			returnType: 'map(*)',
+			argumentTypes: [
+				{ kind: BaseType.XSANYATOMICTYPE },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction: mapEntry,
 		},
 
@@ -229,41 +235,48 @@ export default {
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'for-each',
 			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['map(*)', '(xs:anyAtomicType, item()*) as item()*'],
-			argumentTypes: ['map(*)', 'item()*'],
-			returnType: 'item()*',
+			// argumentTypes: [{ kind: BaseType.MAP, items: [] }, '({ kind: BaseType.XSANYATOMICTYPE ,
+			// { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }) as { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }'],
+			argumentTypes: [
+				{ kind: BaseType.MAP, items: [] },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: mapForEach,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'get',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType'],
-			returnType: 'item()*',
+			argumentTypes: [{ kind: BaseType.MAP, items: [] }, { kind: BaseType.XSANYATOMICTYPE }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: mapGet,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'keys',
-			argumentTypes: ['map(*)'],
-			returnType: 'xs:anyAtomicType*',
+			argumentTypes: [{ kind: BaseType.MAP, items: [] }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
 			callFunction: mapKeys,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'merge',
-			argumentTypes: ['map(*)*', 'map(*)'],
-			returnType: 'map(*)',
+			argumentTypes: [
+				{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } },
+				{ kind: BaseType.MAP, items: [] },
+			],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction: mapMerge,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'merge',
-			argumentTypes: ['map(*)*'],
-			returnType: 'map(*)',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } }],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction(dynamicContext, executionParameters, staticContext, maps) {
 				return mapMerge(
 					dynamicContext,
@@ -273,10 +286,10 @@ export default {
 					sequenceFactory.singleton(
 						new MapValue([
 							{
-								key: createAtomicValue('duplicates', 'xs:string'),
+								key: createAtomicValue('duplicates', { kind: BaseType.XSSTRING }),
 								value: () =>
 									sequenceFactory.singleton(
-										createAtomicValue('use-first', 'xs:string')
+										createAtomicValue('use-first', { kind: BaseType.XSSTRING })
 									),
 							},
 						])
@@ -288,24 +301,31 @@ export default {
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'put',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType', 'item()*'],
-			returnType: 'map(*)',
+			argumentTypes: [
+				{ kind: BaseType.MAP, items: [] },
+				{ kind: BaseType.XSANYATOMICTYPE },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction: mapPut,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'remove',
-			argumentTypes: ['map(*)', 'xs:anyAtomicType*'],
-			returnType: 'map(*)',
+			argumentTypes: [
+				{ kind: BaseType.MAP, items: [] },
+				{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+			],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction: mapRemove,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'size',
-			argumentTypes: ['map(*)'],
-			returnType: 'xs:integer',
+			argumentTypes: [{ kind: BaseType.MAP, items: [] }],
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: mapSize,
 		},
 	],

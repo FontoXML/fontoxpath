@@ -3,7 +3,7 @@ import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import Value from './Value';
+import Value, { BaseType } from './Value';
 
 class MapValue extends FunctionValue<ISequence> {
 	public keyValuePairs: { key: Value; value: () => ISequence }[];
@@ -23,7 +23,7 @@ class MapValue extends FunctionValue<ISequence> {
 				),
 			returnType: { type: 'item()', occurrence: '*' },
 		});
-		this.type = 'map(*)';
+		this.type = { kind: BaseType.MAP, items: [] };
 		this.keyValuePairs = keyValuePairs;
 	}
 }

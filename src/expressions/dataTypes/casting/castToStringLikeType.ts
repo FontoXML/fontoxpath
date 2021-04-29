@@ -1,22 +1,22 @@
-import { ValueType } from '../Value';
+import { ValueType, BaseType } from '../Value';
 import QName from '../valueTypes/QName';
 
 export default function castToStringLikeType(
 	instanceOf: (t: ValueType) => boolean
 ): (value: any) => { successful: true; value: any } | { error: Error; successful: false } {
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf({ kind: BaseType.XSSTRING }) || instanceOf({ kind: BaseType.XSUNTYPEDATOMIC })) {
 		return (value) => ({
 			successful: true,
 			value: value + '',
 		});
 	}
-	if (instanceOf('xs:anyURI')) {
+	if (instanceOf({ kind: BaseType.XSANYURI })) {
 		return (value) => ({
 			successful: true,
 			value,
 		});
 	}
-	if (instanceOf('xs:QName')) {
+	if (instanceOf({ kind: BaseType.XSQNAME })) {
 		return (value: QName) => {
 			return {
 				successful: true,
@@ -24,20 +24,20 @@ export default function castToStringLikeType(
 			};
 		};
 	}
-	if (instanceOf('xs:NOTATION')) {
+	if (instanceOf({ kind: BaseType.XSNOTATION })) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:numeric')) {
-		if (instanceOf('xs:integer') || instanceOf('xs:decimal')) {
+	if (instanceOf({ kind: BaseType.XSNUMERIC })) {
+		if (instanceOf({ kind: BaseType.XSINTEGER }) || instanceOf({ kind: BaseType.XSDECIMAL })) {
 			return (value) => ({
 				successful: true,
 				value: (value + '').replace('e', 'E'),
 			});
 		}
-		if (instanceOf('xs:float') || instanceOf('xs:double')) {
+		if (instanceOf({ kind: BaseType.XSFLOAT }) || instanceOf({ kind: BaseType.XSDOUBLE })) {
 			return (value) => {
 				if (isNaN(value)) {
 					return {
@@ -67,39 +67,39 @@ export default function castToStringLikeType(
 		}
 	}
 	if (
-		instanceOf('xs:dateTime') ||
-		instanceOf('xs:date') ||
-		instanceOf('xs:time') ||
-		instanceOf('xs:gDay') ||
-		instanceOf('xs:gMonth') ||
-		instanceOf('xs:gMonthDay') ||
-		instanceOf('xs:gYear') ||
-		instanceOf('xs:gYearMonth')
+		instanceOf({ kind: BaseType.XSDATETIME }) ||
+		instanceOf({ kind: BaseType.XSDATE }) ||
+		instanceOf({ kind: BaseType.XSTIME }) ||
+		instanceOf({ kind: BaseType.XSGDAY }) ||
+		instanceOf({ kind: BaseType.XSGMONTH }) ||
+		instanceOf({ kind: BaseType.XSGMONTHDAY }) ||
+		instanceOf({ kind: BaseType.XSGYEAR }) ||
+		instanceOf({ kind: BaseType.XSGYEARMONTH })
 	) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:yearMonthDuration')) {
+	if (instanceOf({ kind: BaseType.XSYEARMONTHDURATION })) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:dayTimeDuration')) {
+	if (instanceOf({ kind: BaseType.XSDAYTIMEDURATION })) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:duration')) {
+	if (instanceOf({ kind: BaseType.XSDURATION })) {
 		return (value) => ({
 			successful: true,
 			value: value.toString(),
 		});
 	}
-	if (instanceOf('xs:hexBinary')) {
+	if (instanceOf({ kind: BaseType.XSHEXBINARY })) {
 		return (value) => ({
 			successful: true,
 			value: value.toUpperCase(),

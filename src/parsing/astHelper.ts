@@ -1,5 +1,4 @@
-import TypeDeclaration from '../expressions/dataTypes/TypeDeclaration';
-import { ValueType } from '../expressions/dataTypes/Value';
+import { ValueType, BaseType } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
@@ -74,40 +73,40 @@ function getTextContent(ast: IAST): string {
  * @param   ast  The parent
  * @return  The type declaration
  */
-function getTypeDeclaration(ast: IAST): TypeDeclaration {
+function getTypeDeclaration(ast: IAST): ValueType {
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { type: 'item()', occurrence: '*' };
+		return { kind: BaseType.ANY, item: { kind: BaseType.ITEM } };
 	}
 
 	const determineType = (typeAst: IAST): ValueType => {
 		switch (typeAst[0]) {
 			case 'documentTest':
-				return 'document-node()';
+				return { kind: BaseType.DOCUMENTNODE };
 			case 'elementTest':
-				return 'element()';
+				return { kind: BaseType.ELEMENT };
 			case 'attributeTest':
-				return 'attribute()';
+				return { kind: BaseType.ATTRIBUTE };
 			case 'piTest':
-				return 'processing-instruction()';
+				return { kind: BaseType.PROCESSINGINSTRUCTION };
 			case 'commentTest':
-				return 'comment()';
+				return { kind: BaseType.COMMENT };
 			case 'textTest':
-				return 'text()';
+				return { kind: BaseType.TEXT };
 			case 'anyKindTest':
-				return 'node()';
+				return { kind: BaseType.NODE };
 			case 'anyItemType':
-				return 'item()';
+				return { kind: BaseType.ITEM };
 			case 'anyFunctionTest':
 			case 'functionTest':
 			case 'typedFunctionTest':
-				return 'function(*)';
+				return { kind: BaseType.FUNCTION, returnType: undefined, params: [] };
 			case 'anyMapTest':
 			case 'typedMapTest':
-				return 'map(*)';
+				return { kind: BaseType.MAP, items: [] };
 			case 'anyArrayTest':
 			case 'typedArrayTest':
-				return 'array(*)';
+				return { kind: BaseType.ARRAY, items: [] };
 			case 'atomicType':
 				return [getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(
 					':'
@@ -134,10 +133,16 @@ function getTypeDeclaration(ast: IAST): TypeDeclaration {
 		occurrence = getTextContent(occurrenceNode);
 	}
 
-	return {
-		occurrence,
-		type,
-	};
+	switch (occurrence) {
+		case '*':
+			return { kind: BaseType.ANY, item: type };
+		case '?':
+			return { kind: BaseType.NULLABLE, item: type };
+		case '+':
+			return { kind: BaseType.SOME, item: type };
+		case '':
+			return type;
+	}
 }
 
 /**

@@ -1,20 +1,20 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { ValueType, BaseType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 
-const createGYearValue = (value) => createAtomicValue(value, 'xs:gYear');
+const createGYearValue = (value) => createAtomicValue(value, { kind: BaseType.XSGYEAR });
 
 export default function castToGYear(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
-	if (instanceOf('xs:date') || instanceOf('xs:dateTime')) {
+): (value: DateTime) => CastResult {
+	if (instanceOf({ kind: BaseType.XSDATE }) || instanceOf({ kind: BaseType.XSDATETIME })) {
 		return (value) => ({
 			successful: true,
-			value: createGYearValue(value.convertToType('xs:gYear')),
+			value: createGYearValue(value.convertToType({ kind: BaseType.XSGYEAR })),
 		});
 	}
-	if (instanceOf('xs:untypedAtomic') || instanceOf('xs:string')) {
+	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {
 		return (value) => ({
 			successful: true,
 			value: createGYearValue(DateTime.fromString(value)),

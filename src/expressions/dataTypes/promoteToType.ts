@@ -1,28 +1,29 @@
 import createAtomicValue from './createAtomicValue';
 import isSubtypeOf from './isSubtypeOf';
+import { BaseType, ValueType } from './Value';
 
-export default function promoteToType(value, type) {
-	if (isSubtypeOf(value.type, 'xs:numeric')) {
-		if (isSubtypeOf(value.type, 'xs:float')) {
-			if (type === 'xs:double') {
-				return createAtomicValue(value.value, 'xs:double');
+export default function promoteToType(value, type: ValueType) {
+	if (isSubtypeOf(value.type, { kind: BaseType.XSNUMERIC })) {
+		if (isSubtypeOf(value.type, { kind: BaseType.XSFLOAT })) {
+			if (type.kind === BaseType.XSDOUBLE) {
+				return createAtomicValue(value.value, { kind: BaseType.XSDOUBLE });
 			}
 			return null;
 		}
-		if (isSubtypeOf(value.type, 'xs:decimal')) {
-			if (type === 'xs:float') {
-				return createAtomicValue(value.value, 'xs:float');
+		if (isSubtypeOf(value.type, { kind: BaseType.XSDECIMAL })) {
+			if (type.kind === BaseType.XSFLOAT) {
+				return createAtomicValue(value.value, { kind: BaseType.XSFLOAT });
 			}
-			if (type === 'xs:double') {
-				return createAtomicValue(value.value, 'xs:double');
+			if (type.kind === BaseType.XSDOUBLE) {
+				return createAtomicValue(value.value, { kind: BaseType.XSDOUBLE });
 			}
 		}
 		return null;
 	}
 
-	if (isSubtypeOf(value.type, 'xs:anyURI')) {
-		if (type === 'xs:string') {
-			return createAtomicValue(value.value, 'xs:string');
+	if (isSubtypeOf(value.type, { kind: BaseType.XSANYURI })) {
+		if (type.kind === BaseType.XSSTRING) {
+			return createAtomicValue(value.value, { kind: BaseType.XSSTRING });
 		}
 	}
 	return null;

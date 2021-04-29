@@ -16,6 +16,7 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { errXUDY0023, errXUDY0027, errXUTY0012 } from './XQueryUpdateFacilityErrors';
+import { BaseType } from '../dataTypes/Value';
 
 function evaluateTarget(targetXdmValue) {
 	// TargetExpr is evaluated and checked as follows:
@@ -31,9 +32,9 @@ function evaluateTarget(targetXdmValue) {
 		throw errXUTY0012();
 	}
 	if (
-		!isSubtypeOf(targetXdmValue[0].type, 'element()') &&
-		!isSubtypeOf(targetXdmValue[0].type, 'attribute()') &&
-		!isSubtypeOf(targetXdmValue[0].type, 'processing-instruction()')
+		!isSubtypeOf(targetXdmValue[0].type, { kind: BaseType.ELEMENT }) &&
+		!isSubtypeOf(targetXdmValue[0].type, { kind: BaseType.ATTRIBUTE }) &&
+		!isSubtypeOf(targetXdmValue[0].type, { kind: BaseType.PROCESSINGINSTRUCTION })
 	) {
 		throw errXUTY0012();
 	}

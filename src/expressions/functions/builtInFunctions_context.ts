@@ -4,6 +4,7 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
+import { BaseType } from '../dataTypes/Value';
 
 const fnLast: FunctionDefinitionType = (dynamicContext) => {
 	if (dynamicContext.contextItem === null) {
@@ -21,7 +22,7 @@ const fnLast: FunctionDefinitionType = (dynamicContext) => {
 				}
 				const length = dynamicContext.contextSequence.getLength();
 				done = true;
-				return ready(createAtomicValue(length, 'xs:integer'));
+				return ready(createAtomicValue(length, { kind: BaseType.XSINTEGER }));
 			},
 		},
 		1
@@ -36,31 +37,41 @@ const fnPosition: FunctionDefinitionType = (dynamicContext) => {
 	}
 	// Note: +1 because XPath is one-based
 	return sequenceFactory.singleton(
-		createAtomicValue(dynamicContext.contextItemIndex + 1, 'xs:integer')
+		createAtomicValue(dynamicContext.contextItemIndex + 1, { kind: BaseType.XSINTEGER })
 	);
 };
 
 const fnCurrentDateTime: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
-		createAtomicValue(dynamicContext.getCurrentDateTime(), 'xs:dateTimeStamp')
+		createAtomicValue(dynamicContext.getCurrentDateTime(), { kind: BaseType.XSDATETIMESTAMP })
 	);
 };
 
 const fnCurrentDate: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
-		createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:date'), 'xs:date')
+		createAtomicValue(
+			dynamicContext.getCurrentDateTime().convertToType({ kind: BaseType.XSDATE }),
+			{
+				kind: BaseType.XSDATE,
+			}
+		)
 	);
 };
 
 const fnCurrentTime: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
-		createAtomicValue(dynamicContext.getCurrentDateTime().convertToType('xs:time'), 'xs:time')
+		createAtomicValue(
+			dynamicContext.getCurrentDateTime().convertToType({ kind: BaseType.XSTIME }),
+			{ kind: BaseType.XSTIME }
+		)
 	);
 };
 
 const fnImplicitTimezone: FunctionDefinitionType = (dynamicContext) => {
 	return sequenceFactory.singleton(
-		createAtomicValue(dynamicContext.getImplicitTimezone(), 'xs:dayTimeDuration')
+		createAtomicValue(dynamicContext.getImplicitTimezone(), {
+			kind: BaseType.XSDAYTIMEDURATION,
+		})
 	);
 };
 
@@ -70,7 +81,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'last',
 			argumentTypes: [],
-			returnType: 'xs:integer',
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: fnLast,
 		},
 
@@ -78,7 +89,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'position',
 			argumentTypes: [],
-			returnType: 'xs:integer',
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: fnPosition,
 		},
 
@@ -86,7 +97,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'current-dateTime',
 			argumentTypes: [],
-			returnType: 'xs:dateTimeStamp',
+			returnType: { kind: BaseType.XSDATETIMESTAMP },
 			callFunction: fnCurrentDateTime,
 		},
 
@@ -94,7 +105,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'current-date',
 			argumentTypes: [],
-			returnType: 'xs:date',
+			returnType: { kind: BaseType.XSDATE },
 			callFunction: fnCurrentDate,
 		},
 
@@ -102,15 +113,14 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'current-time',
 			argumentTypes: [],
-			returnType: 'xs:time',
+			returnType: { kind: BaseType.XSTIME },
 			callFunction: fnCurrentTime,
 		},
-
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'implicit-timezone',
 			argumentTypes: [],
-			returnType: 'xs:dayTimeDuration',
+			returnType: { kind: BaseType.XSDAYTIMEDURATION },
 			callFunction: fnImplicitTimezone,
 		},
 	],

@@ -7,6 +7,7 @@ import ISequence from '../dataTypes/ISequence';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import FunctionDefinitionType from './FunctionDefinitionType';
+import { BaseType } from '../dataTypes/Value';
 
 function convert(obj: any): ISequence {
 	switch (typeof obj) {
@@ -26,16 +27,16 @@ function convert(obj: any): ISequence {
 				new MapValue(
 					Object.keys(obj as object).map((key) => {
 						return {
-							key: createAtomicValue(key, 'xs:string'),
+							key: createAtomicValue(key, { kind: BaseType.XSSTRING }),
 							value: createDoublyIterableSequence(convert((obj as object)[key])),
 						};
 					})
 				)
 			);
 		case 'number':
-			return sequenceFactory.singleton(createAtomicValue(obj, 'xs:double'));
+			return sequenceFactory.singleton(createAtomicValue(obj, { kind: BaseType.XSDOUBLE }));
 		case 'string':
-			return sequenceFactory.singleton(createAtomicValue(obj, 'xs:string'));
+			return sequenceFactory.singleton(createAtomicValue(obj, { kind: BaseType.XSSTRING }));
 		case 'boolean':
 			return obj
 				? sequenceFactory.singletonTrueSequence()
@@ -66,8 +67,8 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'parse-json',
-			argumentTypes: ['xs:string'],
-			returnType: 'item()?',
+			argumentTypes: [{ kind: BaseType.XSSTRING }],
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } },
 			callFunction: fnParseJson,
 		},
 	],

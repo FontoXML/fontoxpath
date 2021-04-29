@@ -1,5 +1,6 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import { ready } from '../util/iterators';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -25,7 +26,7 @@ const opTo: FunctionDefinitionType = (
 	// By providing a length, we do not have to hold an end condition into account
 	return sequenceFactory.create(
 		{
-			next: () => ready(createAtomicValue(fromValue++, 'xs:integer')),
+			next: () => ready(createAtomicValue(fromValue++, { kind: BaseType.XSINTEGER })),
 		},
 		toValue - fromValue + 1
 	);
@@ -36,8 +37,11 @@ export default {
 		{
 			namespaceURI: 'http://fontoxpath/operators',
 			localName: 'to',
-			argumentTypes: ['xs:integer?', 'xs:integer?'],
-			returnType: 'xs:integer*',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+			],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
 			callFunction: opTo,
 		},
 	],

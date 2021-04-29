@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import {
+	BaseType,
 	evaluateUpdatingExpression,
 	evaluateXPath,
 	evaluateXPathToString,
@@ -52,7 +53,7 @@ describe('showStackTraceOnError', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'boom-abc' },
 			[],
-			'xs:string',
+			{ kind: BaseType.XSSTRING },
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				c();
@@ -64,7 +65,7 @@ describe('showStackTraceOnError', () => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'boom-def' },
 			[],
-			'xs:string',
+			{ kind: BaseType.XSSTRING },
 			(_dynamicContext) => {
 				// This will throw an error so no need for a return
 				f();

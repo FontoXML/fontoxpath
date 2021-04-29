@@ -1,6 +1,6 @@
 import ISequence from './dataTypes/ISequence';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value from './dataTypes/Value';
+import Value, { BaseType } from './dataTypes/Value';
 import DynamicContext from './DynamicContext';
 import ExecutionParameters from './ExecutionParameters';
 import Expression from './Expression';
@@ -97,7 +97,9 @@ class ForExpression extends FlworExpression {
 
 					if (this._positionalVariableBindingKey) {
 						variables[this._positionalVariableBindingKey] = () =>
-							sequenceFactory.singleton(new Value('xs:integer', position));
+							sequenceFactory.singleton(
+								new Value({ kind: BaseType.XSINTEGER }, position)
+							);
 					}
 					return ready(currentDynamicContext.scopeWithVariableBindings(variables));
 				}

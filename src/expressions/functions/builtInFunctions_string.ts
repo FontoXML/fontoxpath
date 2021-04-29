@@ -5,7 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -47,14 +47,14 @@ const fnCompare: FunctionDefinitionType = (
 	const arg2Value = arg2.first().value;
 
 	if (arg1Value > arg2Value) {
-		return sequenceFactory.singleton(createAtomicValue(1, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }));
 	}
 
 	if (arg1Value < arg2Value) {
-		return sequenceFactory.singleton(createAtomicValue(-1, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(-1, { kind: BaseType.XSINTEGER }));
 	}
 
-	return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
+	return sequenceFactory.singleton(createAtomicValue(0, { kind: BaseType.XSINTEGER }));
 };
 
 const fnConcat: FunctionDefinitionType = (
@@ -69,10 +69,12 @@ const fnConcat: FunctionDefinitionType = (
 				createAtomicValue(
 					allValues
 						.map((stringValue) =>
-							stringValue === null ? '' : castToType(stringValue, 'xs:string').value
+							stringValue === null
+								? ''
+								: castToType(stringValue, { kind: BaseType.XSSTRING }).value
 						)
 						.join(''),
-					'xs:string'
+					{ kind: BaseType.XSSTRING }
 				)
 			);
 		});
@@ -80,10 +82,9 @@ const fnConcat: FunctionDefinitionType = (
 
 	return zipSingleton(stringSequences, (stringValues) => {
 		return sequenceFactory.singleton(
-			createAtomicValue(
-				stringValues.map((stringValue) => stringValue.value).join(''),
-				'xs:string'
-			)
+			createAtomicValue(stringValues.map((stringValue) => stringValue.value).join(''), {
+				kind: BaseType.XSSTRING,
+			})
 		);
 	});
 };
@@ -163,20 +164,20 @@ const fnString: FunctionDefinitionType = (
 	sequence
 ) => {
 	return sequence.switchCases({
-		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string')),
+		empty: () => sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING })),
 		default: () =>
 			sequence.map((value) => {
-				if (isSubtypeOf(value.type, 'node()')) {
+				if (isSubtypeOf(value.type, { kind: BaseType.NODE })) {
 					const stringValueSequence = atomizeSingleValue(value, executionParameters);
 					// Assume here that a node always atomizes to a singlevalue. This will not work
 					// anymore when schema support will be imlemented.
 					const stringValue = stringValueSequence.first();
-					if (isSubtypeOf(value.type, 'attribute()')) {
-						return castToType(stringValue, 'xs:string');
+					if (isSubtypeOf(value.type, { kind: BaseType.ATTRIBUTE })) {
+						return castToType(stringValue, { kind: BaseType.XSSTRING });
 					}
 					return stringValue;
 				}
-				return castToType(value, 'xs:string');
+				return castToType(value, { kind: BaseType.XSSTRING });
 			}),
 	});
 };
@@ -191,9 +192,11 @@ const fnStringJoin: FunctionDefinitionType = (
 	return zipSingleton([separator], ([separatorString]) =>
 		atomize(sequence, executionParameters).mapAll((allStrings) => {
 			const joinedString = allStrings
-				.map((stringValue) => castToType(stringValue, 'xs:string').value)
+				.map((stringValue) => castToType(stringValue, { kind: BaseType.XSSTRING }).value)
 				.join(separatorString.value);
-			return sequenceFactory.singleton(createAtomicValue(joinedString, 'xs:string'));
+			return sequenceFactory.singleton(
+				createAtomicValue(joinedString, { kind: BaseType.XSSTRING })
+			);
 		})
 	);
 };
@@ -205,12 +208,12 @@ const fnStringLength: FunctionDefinitionType = (
 	sequence
 ) => {
 	if (sequence.isEmpty()) {
-		return sequenceFactory.singleton(createAtomicValue(0, 'xs:integer'));
+		return sequenceFactory.singleton(createAtomicValue(0, { kind: BaseType.XSINTEGER }));
 	}
 	const stringValue = sequence.first().value;
 	// In ES6, Array.from(💩).length === 1
 	return sequenceFactory.singleton(
-		createAtomicValue(Array.from(stringValue).length, 'xs:integer')
+		createAtomicValue(Array.from(stringValue).length, { kind: BaseType.XSINTEGER })
 	);
 };
 
@@ -226,14 +229,14 @@ const fnSubstringBefore: FunctionDefinitionType = (
 	const strArg2 = arg2.isEmpty() ? '' : arg2.first().value;
 
 	if (strArg2 === '') {
-		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING }));
 	}
 	const startIndex = strArg1.indexOf(strArg2);
 	if (startIndex === -1) {
-		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING }));
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(strArg1.substring(0, startIndex), 'xs:string')
+		createAtomicValue(strArg1.substring(0, startIndex), { kind: BaseType.XSSTRING })
 	);
 };
 
@@ -249,14 +252,16 @@ const fnSubstringAfter: FunctionDefinitionType = (
 	const strArg2 = arg2.isEmpty() ? '' : arg2.first().value;
 
 	if (strArg2 === '') {
-		return sequenceFactory.singleton(createAtomicValue(strArg1, 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue(strArg1, { kind: BaseType.XSSTRING }));
 	}
 	const startIndex = strArg1.indexOf(strArg2);
 	if (startIndex === -1) {
-		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING }));
 	}
 	return sequenceFactory.singleton(
-		createAtomicValue(strArg1.substring(startIndex + strArg2.length), 'xs:string')
+		createAtomicValue(strArg1.substring(startIndex + strArg2.length), {
+			kind: BaseType.XSSTRING,
+		})
 	);
 };
 
@@ -296,7 +301,7 @@ const fnSubstring: FunctionDefinitionType = (
 				if (sourceStringItem === null) {
 					// The first argument can be the empty sequence
 					done = true;
-					return ready(createAtomicValue('', 'xs:string'));
+					return ready(createAtomicValue('', { kind: BaseType.XSSTRING }));
 				}
 			}
 
@@ -322,7 +327,7 @@ const fnSubstring: FunctionDefinitionType = (
 								: undefined
 						)
 						.join(''),
-					'xs:string'
+					{ kind: BaseType.XSSTRING }
 				)
 			);
 		},
@@ -344,7 +349,7 @@ const fnTokenize: FunctionDefinitionType = (
 	return sequenceFactory.create(
 		inputString
 			.split(new RegExp(patternString))
-			.map((token: string) => createAtomicValue(token, 'xs:string'))
+			.map((token: string) => createAtomicValue(token, { kind: BaseType.XSSTRING }))
 	);
 };
 
@@ -355,10 +360,10 @@ const fnUpperCase: FunctionDefinitionType = (
 	stringSequence
 ) => {
 	if (stringSequence.isEmpty()) {
-		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING }));
 	}
 	return stringSequence.map((stringValue) =>
-		createAtomicValue(stringValue.value.toUpperCase(), 'xs:string')
+		createAtomicValue(stringValue.value.toUpperCase(), { kind: BaseType.XSSTRING })
 	);
 };
 
@@ -369,10 +374,10 @@ const fnLowerCase: FunctionDefinitionType = (
 	stringSequence
 ) => {
 	if (stringSequence.isEmpty()) {
-		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING }));
 	}
 	return stringSequence.map((stringValue) =>
-		createAtomicValue(stringValue.value.toLowerCase(), 'xs:string')
+		createAtomicValue(stringValue.value.toLowerCase(), { kind: BaseType.XSSTRING })
 	);
 };
 
@@ -383,11 +388,11 @@ const fnNormalizeSpace: FunctionDefinitionType = (
 	arg
 ) => {
 	if (arg.isEmpty()) {
-		return sequenceFactory.singleton(createAtomicValue('', 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING }));
 	}
 	const stringValue = arg.first().value.trim();
 	return sequenceFactory.singleton(
-		createAtomicValue(stringValue.replace(/\s+/g, ' '), 'xs:string')
+		createAtomicValue(stringValue.replace(/\s+/g, ' '), { kind: BaseType.XSSTRING })
 	);
 };
 
@@ -416,7 +421,9 @@ const fnTranslate: FunctionDefinitionType = (
 					return letter;
 				}
 			});
-			return sequenceFactory.singleton(createAtomicValue(result.join(''), 'xs:string'));
+			return sequenceFactory.singleton(
+				createAtomicValue(result.join(''), { kind: BaseType.XSSTRING })
+			);
 		}
 	);
 };
@@ -445,7 +452,7 @@ const fnCodepointsToString: FunctionDefinitionType = (
 				}
 			})
 			.join('');
-		return sequenceFactory.singleton(createAtomicValue(str, 'xs:string'));
+		return sequenceFactory.singleton(createAtomicValue(str, { kind: BaseType.XSSTRING }));
 	});
 };
 
@@ -462,7 +469,9 @@ const fnStringToCodepoints: FunctionDefinitionType = (
 		}
 
 		return sequenceFactory.create(
-			characters.map((character) => createAtomicValue(character.codePointAt(0), 'xs:integer'))
+			characters.map((character) =>
+				createAtomicValue(character.codePointAt(0), { kind: BaseType.XSINTEGER })
+			)
 		);
 	});
 };
@@ -475,7 +484,7 @@ const fnEncodeForUri: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([stringSequence], ([str]) => {
 		if (str === null || str.value.length === 0) {
-			return sequenceFactory.create(createAtomicValue('', 'xs:string'));
+			return sequenceFactory.create(createAtomicValue('', { kind: BaseType.XSSTRING }));
 		}
 
 		// Adhering RFC 3986 which reserves !, ', (, ), and *
@@ -484,7 +493,7 @@ const fnEncodeForUri: FunctionDefinitionType = (
 				encodeURIComponent(str.value).replace(/[!'()*]/g, (c) => {
 					return '%' + c.charCodeAt(0).toString(16).toUpperCase();
 				}),
-				'xs:string'
+				{ kind: BaseType.XSSTRING }
 			)
 		);
 	});
@@ -498,7 +507,7 @@ const fnIriToUri: FunctionDefinitionType = (
 ) => {
 	return zipSingleton([stringSequence], ([str]) => {
 		if (str === null || str.value.length === 0) {
-			return sequenceFactory.create(createAtomicValue('', 'xs:string'));
+			return sequenceFactory.create(createAtomicValue('', { kind: BaseType.XSSTRING }));
 		}
 
 		return sequenceFactory.create(
@@ -507,7 +516,7 @@ const fnIriToUri: FunctionDefinitionType = (
 					/([\u00A0-\uD7FF\uE000-\uFDCF\uFDF0-\uFFEF "<>{}|\\^`/\n\u007f\u0080-\u009f]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g,
 					(a) => encodeURI(a)
 				),
-				'xs:string'
+				{ kind: BaseType.XSSTRING }
 			)
 		);
 	});
@@ -576,64 +585,89 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'compare',
-			argumentTypes: ['xs:string?', 'xs:string?'],
-			returnType: 'xs:integer?',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			],
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
 			callFunction: fnCompare,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'compare',
-			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
-			returnType: 'xs:integer?',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSSTRING },
+			],
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
 			callFunction: collationError,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'concat',
-			argumentTypes: ['xs:anyAtomicType?', 'xs:anyAtomicType?', '...'],
-			returnType: 'xs:string',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
+				{ kind: BaseType.ELLIPSIS },
+			],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnConcat,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'contains',
-			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string?'],
-			returnType: 'xs:boolean',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: collationError,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'contains',
-			argumentTypes: ['xs:string?', 'xs:string?'],
-			returnType: 'xs:boolean',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnContains,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'ends-with',
-			argumentTypes: ['xs:string?', 'xs:string?'],
-			returnType: 'xs:boolean',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnEndsWith,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'ends-with',
-			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
-			returnType: 'xs:boolean',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSSTRING },
+			],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: collationError,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'normalize-space',
-			argumentTypes: ['xs:string?'],
-			returnType: 'xs:string',
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnNormalizeSpace,
 		},
 
@@ -641,7 +675,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'normalize-space',
 			argumentTypes: [],
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: contextItemAsFirstArgument.bind(
 				null,
 				(dynamicContext, executionParameters, staticContext, contextItem) =>
@@ -657,24 +691,31 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'starts-with',
-			argumentTypes: ['xs:string?', 'xs:string?'],
-			returnType: 'xs:boolean',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnStartsWith,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'starts-with',
-			argumentTypes: ['xs:string?', 'xs:string?', 'xs:string'],
-			returnType: 'xs:boolean',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSSTRING },
+			],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: collationError,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string',
-			argumentTypes: ['item()?'],
-			returnType: 'xs:string',
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } }],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnString,
 		},
 
@@ -682,78 +723,94 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string',
 			argumentTypes: [],
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: contextItemAsFirstArgument.bind(null, fnString),
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring-before',
-			argumentTypes: ['xs:string?', 'xs:string?'],
-			returnType: 'xs:string',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnSubstringBefore,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring-after',
-			argumentTypes: ['xs:string?', 'xs:string?'],
-			returnType: 'xs:string',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnSubstringAfter,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring',
-			argumentTypes: ['xs:string?', 'xs:double'],
-			returnType: 'xs:string',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSDOUBLE },
+			],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnSubstring,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring',
-			argumentTypes: ['xs:string?', 'xs:double', 'xs:double'],
-			returnType: 'xs:string',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSDOUBLE },
+				{ kind: BaseType.XSDOUBLE },
+			],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnSubstring,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'upper-case',
-			argumentTypes: ['xs:string?'],
-			returnType: 'xs:string',
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnUpperCase,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'lower-case',
-			argumentTypes: ['xs:string?'],
-			returnType: 'xs:string',
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnLowerCase,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-join',
-			argumentTypes: ['xs:anyAtomicType*', 'xs:string'],
-			returnType: 'xs:string',
+			argumentTypes: [
+				{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+				{ kind: BaseType.XSSTRING },
+			],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnStringJoin,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-join',
-			argumentTypes: ['xs:anyAtomicType*'],
-			returnType: 'xs:string',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } }],
+			returnType: { kind: BaseType.XSSTRING },
 			callFunction(dynamicContext, executionParameters, staticContext, arg1) {
 				return fnStringJoin(
 					dynamicContext,
 					executionParameters,
 					staticContext,
 					arg1,
-					sequenceFactory.singleton(createAtomicValue('', 'xs:string'))
+					sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING }))
 				);
 			},
 		},
@@ -761,8 +818,8 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-length',
-			argumentTypes: ['xs:string?'],
-			returnType: 'xs:integer',
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: fnStringLength,
 		},
 
@@ -770,7 +827,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-length',
 			argumentTypes: [],
-			returnType: 'xs:integer',
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: contextItemAsFirstArgument.bind(
 				null,
 				(dynamicContext, executionParameters, staticContext, contextItem) =>
@@ -786,8 +843,17 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'tokenize',
-			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
-			returnType: 'xs:string*',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSSTRING },
+				{ kind: BaseType.XSSTRING },
+			],
+			returnType: {
+				kind: BaseType.ANY,
+				item: {
+					kind: BaseType.XSSTRING,
+				},
+			},
 			callFunction(
 				_dynamicContext,
 				_executionParameters,
@@ -803,81 +869,121 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'tokenize',
-			argumentTypes: ['xs:string?', 'xs:string'],
-			returnType: 'xs:string*',
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSSTRING },
+			],
+			returnType: {
+				kind: BaseType.ANY,
+				item: {
+					kind: BaseType.XSSTRING,
+				},
+			},
 			callFunction: fnTokenize,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'tokenize',
-			argumentTypes: ['xs:string?'],
-			returnType: 'xs:string*',
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			returnType: {
+				kind: BaseType.ANY,
+				item: {
+					kind: BaseType.XSSTRING,
+				},
+			},
 			callFunction(dynamicContext, executionParameters, staticContext, input) {
 				return fnTokenize(
 					dynamicContext,
 					executionParameters,
 					staticContext,
 					fnNormalizeSpace(dynamicContext, executionParameters, staticContext, input),
-					sequenceFactory.singleton(createAtomicValue(' ', 'xs:string'))
+					sequenceFactory.singleton(createAtomicValue(' ', { kind: BaseType.XSSTRING }))
 				);
 			},
 		},
 
 		{
-			argumentTypes: ['xs:string?', 'xs:string', 'xs:string'],
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSSTRING },
+				{ kind: BaseType.XSSTRING },
+			],
 			callFunction: fnTranslate,
 			localName: 'translate',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 		},
 
 		{
-			argumentTypes: ['xs:integer*'],
+			argumentTypes: [
+				{
+					kind: BaseType.ANY,
+					item: {
+						kind: BaseType.XSINTEGER,
+					},
+				},
+			],
 			callFunction: fnCodepointsToString,
 			localName: 'codepoints-to-string',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 		},
 
 		{
-			argumentTypes: ['xs:string?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			callFunction: fnStringToCodepoints,
 			localName: 'string-to-codepoints',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer*',
+			returnType: {
+				kind: BaseType.ANY,
+				item: {
+					kind: BaseType.XSINTEGER,
+				},
+			},
 		},
 
 		{
-			argumentTypes: ['xs:string?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			callFunction: fnEncodeForUri,
 			localName: 'encode-for-uri',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 		},
 
 		{
-			argumentTypes: ['xs:string?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			callFunction: fnIriToUri,
 			localName: 'iri-to-uri',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
+			returnType: { kind: BaseType.XSSTRING },
 		},
 
 		{
-			argumentTypes: ['xs:string?', 'xs:string?'],
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			],
 			callFunction: fnCodepointEqual,
 			localName: 'codepoint-equal',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean?',
+			returnType: {
+				kind: BaseType.NULLABLE,
+				item: {
+					kind: BaseType.XSBOOLEAN,
+				},
+			},
 		},
 
 		{
-			argumentTypes: ['xs:string?', 'xs:string'],
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.XSSTRING },
+			],
 			callFunction: fnMatches,
 			localName: 'matches',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 		},
 	],
 	functions: {

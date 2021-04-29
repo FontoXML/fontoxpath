@@ -1,3 +1,4 @@
+import { BaseType } from 'src/expressions/dataTypes/Value';
 import { NodePointer } from '../../../domClone/Pointer';
 import { getBucketsForPointer } from '../../../getBuckets';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
@@ -37,7 +38,12 @@ class AndOperator extends Expression {
 		let contextItemBuckets: string[] | null = null;
 		if (dynamicContext !== null) {
 			const contextItem = dynamicContext.contextItem;
-			if (contextItem !== null && isSubtypeOf(contextItem.type, 'node()')) {
+			if (
+				contextItem !== null &&
+				isSubtypeOf(contextItem.type, {
+					kind: BaseType.NODE,
+				})
+			) {
 				contextItemBuckets = getBucketsForPointer(
 					contextItem.value as NodePointer,
 					executionParameters.domFacade

@@ -1,3 +1,4 @@
+import { BaseType } from 'src/expressions/dataTypes/Value';
 import { NodePointer } from '../domClone/Pointer';
 import realizeDom from '../domClone/realizeDom';
 import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';
@@ -72,7 +73,7 @@ export default function convertXDMReturnValue<
 			}
 			// Atomize to convert (attribute)nodes to be strings
 			return allValues
-				.map((value) => castToType(value, 'xs:string').value)
+				.map((value) => castToType(value, { kind: BaseType.XSSTRING }).value)
 				.join(' ') as IReturnTypes<TNode>[TReturnType];
 		}
 		case ReturnType.STRINGS: {
@@ -91,7 +92,7 @@ export default function convertXDMReturnValue<
 			if (first === null) {
 				return NaN as IReturnTypes<TNode>[TReturnType];
 			}
-			if (!isSubtypeOf(first.type, 'xs:numeric')) {
+			if (!isSubtypeOf(first.type, { kind: BaseType.XSNUMERIC })) {
 				return NaN as IReturnTypes<TNode>[TReturnType];
 			}
 			return first.value as IReturnTypes<TNode>[TReturnType];
@@ -102,7 +103,7 @@ export default function convertXDMReturnValue<
 			if (first === null) {
 				return null as IReturnTypes<TNode>[TReturnType];
 			}
-			if (!isSubtypeOf(first.type, 'node()')) {
+			if (!isSubtypeOf(first.type, { kind: BaseType.NODE })) {
 				throw new Error(
 					'Expected XPath ' + expression + ' to resolve to Node. Got ' + first.type
 				);
@@ -122,7 +123,7 @@ export default function convertXDMReturnValue<
 
 			if (
 				!allResults.every((value) => {
-					return isSubtypeOf(value.type, 'node()');
+					return isSubtypeOf(value.type, { kind: BaseType.NODE });
 				})
 			) {
 				throw new Error(
@@ -145,7 +146,7 @@ export default function convertXDMReturnValue<
 				throw new Error('Expected XPath ' + expression + ' to resolve to a single map.');
 			}
 			const first = allValues[0];
-			if (!isSubtypeOf(first.type, 'map(*)')) {
+			if (!isSubtypeOf(first.type, { kind: BaseType.MAP, items: [] })) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to a map');
 			}
 			const transformedMap = transformMapToObject(
@@ -162,7 +163,7 @@ export default function convertXDMReturnValue<
 				throw new Error('Expected XPath ' + expression + ' to resolve to a single array.');
 			}
 			const first = allValues[0];
-			if (!isSubtypeOf(first.type, 'array(*)')) {
+			if (!isSubtypeOf(first.type, { kind: BaseType.ARRAY, items: [] })) {
 				throw new Error('Expected XPath ' + expression + ' to resolve to an array');
 			}
 			const transformedArray = transformArrayToArray(
@@ -175,7 +176,7 @@ export default function convertXDMReturnValue<
 		case ReturnType.NUMBERS: {
 			const allValues = rawResults.getAllValues();
 			return allValues.map((value) => {
-				if (!isSubtypeOf(value.type, 'xs:numeric')) {
+				if (!isSubtypeOf(value.type, { kind: BaseType.XSNUMERIC })) {
 					throw new Error('Expected XPath ' + expression + ' to resolve to numbers');
 				}
 				return value.value;
@@ -232,7 +233,10 @@ export default function convertXDMReturnValue<
 		default: {
 			const allValues = rawResults.getAllValues();
 			const allValuesAreNodes = allValues.every((value) => {
-				return isSubtypeOf(value.type, 'node()') && !isSubtypeOf(value.type, 'attribute()');
+				return (
+					isSubtypeOf(value.type, { kind: BaseType.NODE }) &&
+					!isSubtypeOf(value.type, { kind: BaseType.ATTRIBUTE })
+				);
 			});
 			if (allValuesAreNodes) {
 				const allResults = allValues.map((nodeValue) => {
@@ -246,14 +250,14 @@ export default function convertXDMReturnValue<
 			}
 			if (allValues.length === 1) {
 				const first = allValues[0];
-				if (isSubtypeOf(first.type, 'array(*)')) {
+				if (isSubtypeOf(first.type, { kind: BaseType.ARRAY, items: [] })) {
 					const transformedArray = transformArrayToArray(
 						first as ArrayValue,
 						executionParameters
 					).next(IterationHint.NONE);
 					return transformedArray.value as IReturnTypes<TNode>[TReturnType];
 				}
-				if (isSubtypeOf(first.type, 'map(*)')) {
+				if (isSubtypeOf(first.type, { kind: BaseType.MAP, items: [] })) {
 					const transformedMap = transformMapToObject(
 						first as MapValue,
 						executionParameters

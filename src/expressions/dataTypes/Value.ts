@@ -5,6 +5,10 @@ export default class Value {
 	constructor(public type: ValueType, readonly value: ValueValue) {}
 }
 
+/**
+ * The base type
+ * @public
+ */
 export enum BaseType {
 	XSBOOLEAN,
 	XSSTRING,	
@@ -69,7 +73,11 @@ export enum BaseType {
 	FUNCTION,
 	MAP,
 	ARRAY,
-};
+	NULLABLE,
+	ANY,
+	SOME,
+	ELLIPSIS,
+}
 
 export function startWithXS(inType: BaseType): boolean {
 	return a[inType]
@@ -139,8 +147,12 @@ let a = new Map([
 	[ BaseType.FUNCTION, false ],
 	[ BaseType.MAP, false ],
 	[ BaseType.ARRAY, false ],
-	])
+	]);
 
+/**
+ * The composite type containing more info
+ * @public
+ */
 export type ValueType =
 	| { kind: BaseType.XSBOOLEAN }
 	| { kind: BaseType.XSSTRING }
@@ -202,13 +214,17 @@ export type ValueType =
 	| { kind: BaseType.PROCESSINGINSTRUCTION }
 	| { kind: BaseType.COMMENT }
 	| { kind: BaseType.ITEM }
-	| { kind: BaseType.FUNCTION; returnType: ValueType | undefined; param: ValueType[] }
+	| { kind: BaseType.FUNCTION; returnType: ValueType | undefined; params: ValueType[] }
 	| { kind: BaseType.MAP; items: [ValueType, ValueType][] }
-	| { kind: BaseType.ARRAY; items: ValueType[] };
+	| { kind: BaseType.ARRAY; items: ValueType[] }
+	| { kind: BaseType.NULLABLE; item: ValueType }
+	| { kind: BaseType.ANY; item: ValueType }
+	| { kind: BaseType.SOME; item: ValueType }
+	| { kind: BaseType.ELLIPSIS };
 
 /**
  * Maps the string representation of the types to the ValueType object.
- *  
+ *
  * @param input type string of the form "xs:<type>".
  * @returns the corresponding ValueType object.
  * @throws Error if the type cannot be mapped from string to ValueType.
@@ -336,7 +352,7 @@ export function stringToValueType(input: string): ValueType {
 		case 'item()':
 			return { kind: BaseType.ITEM };
 		case 'function(*)':
-			return { kind: BaseType.FUNCTION, returnType: undefined, param: [] };
+			return { kind: BaseType.FUNCTION, returnType: undefined, params: [] };
 		case 'map(*)':
 			return { kind: BaseType.MAP, items: [] };
 		case 'array(*)':

@@ -1,6 +1,7 @@
 import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
@@ -15,7 +16,7 @@ const fnTrace: FunctionDefinitionType = (
 ) => {
 	return arg.mapAll((allItems) => {
 		const argumentAsStrings = atomize(sequenceFactory.create(allItems), executionParameters)
-			.map((value) => castToType(value, 'xs:string'))
+			.map((value) => castToType(value, { kind: BaseType.XSSTRING }))
 			.getAllValues();
 
 		let newMessage = '';
@@ -39,18 +40,18 @@ const fnTrace: FunctionDefinitionType = (
 export default {
 	declarations: [
 		{
-			argumentTypes: ['item()*'],
+			argumentTypes: [{kind: BaseType.ANY, item: BaseType.ITEM}],
 			callFunction: fnTrace,
 			localName: 'trace',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
+			returnType: {kind: BaseType.ANY, item: BaseType.ITEM},
 		},
 		{
-			argumentTypes: ['item()*', 'xs:string'],
+			argumentTypes: [{kind: BaseType.ANY, item: BaseType.ITEM}, {kind: BaseType.XSSTRING}],
 			callFunction: fnTrace,
 			localName: 'trace',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
+			returnType: {kind: BaseType.ANY, item: BaseType.ITEM},
 		},
 	],
 };
