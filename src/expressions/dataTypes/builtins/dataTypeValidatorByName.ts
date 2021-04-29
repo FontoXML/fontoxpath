@@ -159,6 +159,7 @@ function isValidDayTimeDuration(value: string): boolean {
 }
 
 export function getValidatorForType(type: BaseType): (value: string) => boolean {
+	//TODO: This can be replaced by a map lookup later
 	switch (type) {
 		case BaseType.XSANYSIMPLETYPE:
 			return isValidAnySimpleType;
