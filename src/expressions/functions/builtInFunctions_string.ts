@@ -586,10 +586,10 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'compare',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			],
-			returnType: { kind: BaseType.SOME, item: { kind: BaseType.XSINTEGER } },
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
 			callFunction: fnCompare,
 		},
 
@@ -597,11 +597,11 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'compare',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 			],
-			returnType: { kind: BaseType.SOME, item: { kind: BaseType.XSINTEGER } },
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
 			callFunction: collationError,
 		},
 
@@ -621,9 +621,9 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'contains',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			],
 			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: collationError,
@@ -633,8 +633,8 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'contains',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			],
 			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnContains,
@@ -644,8 +644,8 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'ends-with',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			],
 			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnEndsWith,
@@ -655,8 +655,8 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'ends-with',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 			],
 			returnType: { kind: BaseType.XSBOOLEAN },
@@ -666,7 +666,7 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'normalize-space',
-			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnNormalizeSpace,
 		},
@@ -692,8 +692,8 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'starts-with',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			],
 			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnStartsWith,
@@ -703,8 +703,8 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'starts-with',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 			],
 			returnType: { kind: BaseType.XSBOOLEAN },
@@ -731,8 +731,8 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring-before',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnSubstringBefore,
@@ -742,8 +742,8 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring-after',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnSubstringAfter,
@@ -753,7 +753,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSDOUBLE },
 			],
 			returnType: { kind: BaseType.XSSTRING },
@@ -764,7 +764,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'substring',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSDOUBLE },
 				{ kind: BaseType.XSDOUBLE },
 			],
@@ -775,7 +775,7 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'upper-case',
-			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnUpperCase,
 		},
@@ -783,7 +783,7 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'lower-case',
-			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnLowerCase,
 		},
@@ -818,7 +818,7 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-length',
-			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: fnStringLength,
 		},
@@ -844,7 +844,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'tokenize',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 				{ kind: BaseType.XSSTRING },
 			],
@@ -870,7 +870,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'tokenize',
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 			],
 			returnType: {
@@ -885,7 +885,7 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'tokenize',
-			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			returnType: {
 				kind: BaseType.ANY,
 				item: {
@@ -905,7 +905,7 @@ export default {
 
 		{
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 				{ kind: BaseType.XSSTRING },
 			],
@@ -931,7 +931,7 @@ export default {
 		},
 
 		{
-			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			callFunction: fnStringToCodepoints,
 			localName: 'string-to-codepoints',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -944,7 +944,7 @@ export default {
 		},
 
 		{
-			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			callFunction: fnEncodeForUri,
 			localName: 'encode-for-uri',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -952,7 +952,7 @@ export default {
 		},
 
 		{
-			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
 			callFunction: fnIriToUri,
 			localName: 'iri-to-uri',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -961,8 +961,8 @@ export default {
 
 		{
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 			],
 			callFunction: fnCodepointEqual,
 			localName: 'codepoint-equal',
@@ -977,7 +977,7 @@ export default {
 
 		{
 			argumentTypes: [
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 			],
 			callFunction: fnMatches,

@@ -112,14 +112,14 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'local-name-from-QName',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
 			callFunction: fnLocalNameFromQName,
 		},
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'namespace-uri-from-QName',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
 			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYURI } },
 			callFunction: fnNamespaceURIFromQName,
 		},

@@ -106,7 +106,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 	it('turns null into string? (empty sequence)', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, null, {
 			kind: BaseType.NULLABLE,
-			item: { kind: BaseType.ITEM },
+			item: { kind: BaseType.XSSTRING },
 		});
 		chai.assert(xpathSequence.isEmpty(), 'is a singleton sequence');
 	});
