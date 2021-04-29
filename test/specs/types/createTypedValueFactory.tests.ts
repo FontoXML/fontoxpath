@@ -40,7 +40,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`he JavaScript value true with type boolean is not a valid type to be converted to an XPath xs:date.`
+			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath xs:date.`
 		);
 	});
 
@@ -49,7 +49,7 @@ describe('createTypedValueFactory', () => {
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
-			`he JavaScript value true with type boolean is not a valid type to be converted to an XPath node().`
+			`The JavaScript value true with type boolean is not a valid type to be converted to an XPath node().`
 		);
 	});
 

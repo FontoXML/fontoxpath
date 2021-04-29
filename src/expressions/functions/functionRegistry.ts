@@ -173,7 +173,7 @@ export function registerFunction(
 		isUpdating: false,
 		localName,
 		namespaceURI,
-		returnType: returnType,
+		returnType,
 	});
 }
 

@@ -8,7 +8,7 @@ import createPointerValue from './dataTypes/createPointerValue';
 import ISequence from './dataTypes/ISequence';
 import MapValue from './dataTypes/MapValue';
 import sequenceFactory from './dataTypes/sequenceFactory';
-import Value, { BaseType, ValueType } from './dataTypes/Value';
+import Value, { BaseType, baseTypeToString, ValueType, valueTypeToString } from './dataTypes/Value';
 import DateTime from './dataTypes/valueTypes/DateTime';
 import createDoublyIterableSequence from './util/createDoublyIterableSequence';
 
@@ -89,7 +89,7 @@ function checkNumericType(value: ValidValue, type: BaseType): asserts value is n
 		}
 	}
 	throw new Error(
-		`Cannot convert JavaScript value '${value}' to the XPath type ${type} since it is not valid.`
+		`Cannot convert JavaScript value '${value}' to the XPath type ${baseTypeToString(type)} since it is not valid.`
 	);
 }
 
@@ -170,15 +170,15 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	value: UntypedExternalValue,
 	expectedType: ValueType
 ): Value[] {
-	if (expectedType.kind == BaseType.NULLABLE) {
+	if (expectedType.kind === BaseType.NULLABLE) {
 		const converted = adaptJavaScriptValueToXPath(expectedType.item, value, domFacade);
 		return converted === null ? [] : [converted];
 	}
 
-	if (expectedType.kind == BaseType.ANY || expectedType.kind == BaseType.SOME) {
+	if (expectedType.kind === BaseType.ANY || expectedType.kind === BaseType.SOME) {
 		if (!Array.isArray(value)) {
 			throw new Error(
-				`The JavaScript value ${value} should be an array if it is to be converted to ${expectedType}.`
+				`The JavaScript value ${value} should be an array if it is to be converted to ${valueTypeToString(expectedType)}.`
 			);
 		}
 		return value
@@ -189,7 +189,7 @@ export function adaptJavaScriptValueToArrayOfXPathValues(
 	const adaptedValue = adaptJavaScriptValueToXPath(expectedType, value, domFacade);
 	if (adaptedValue === null) {
 		throw new Error(
-			`The JavaScript value ${value} should be an single entry if it is to be converted to ${expectedType}.`
+			`The JavaScript value ${value} should be an single entry if it is to be converted to ${valueTypeToString(expectedType)}.`
 		);
 	}
 	return [adaptedValue];

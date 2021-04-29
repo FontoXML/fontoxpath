@@ -1,8 +1,7 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
 import { BaseType, ValueType, startWithXS } from './Value';
-import ETypeNames from './ETypeNames'
-import builtinModels from './builtins/builtinModels'
-
+import ETypeNames from './ETypeNames';
+import builtinModels from './builtins/builtinModels';
 
 function isSubtypeOfType(subType, superType) {
 	if (superType.variety === 'union') {
@@ -15,9 +14,7 @@ function isSubtypeOfType(subType, superType) {
 			return true;
 		}
 		if (subType.variety === 'union') {
-			return !!subType.memberTypes.find((memberType) =>
-				isSubtypeOf(memberType, superType)
-			);
+			return !!subType.memberTypes.find((memberType) => isSubtypeOf(memberType, superType));
 		}
 		subType = subType.parent;
 	}
@@ -47,4 +44,3 @@ export default function isSubtypeOf(subTypeName: ValueType, superTypeName: Value
 
 	return isSubtypeOfType(subType, superType);
 }
-

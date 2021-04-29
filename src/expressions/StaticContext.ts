@@ -1,4 +1,4 @@
-import { ValueType } from 'src';
+import { ValueType } from '../expressions/dataTypes/Value';
 import { LexicalQualifiedName, ResolvedQualifiedName } from '../types/Options';
 import IContext from './Context';
 import ISequence from './dataTypes/ISequence';

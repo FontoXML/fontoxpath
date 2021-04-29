@@ -1,4 +1,4 @@
-import { ValueType } from 'src';
+import { ValueType } from '../expressions/dataTypes/Value';
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
 import DynamicContext from '../expressions/DynamicContext';

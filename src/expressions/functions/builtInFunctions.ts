@@ -20,7 +20,7 @@ import builtInStringFunctions from './builtInFunctions_string';
 import builtInFontoxpathFunctions from './builtInFunctions_fontoxpath';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
-import { ValueType } from 'src';
+import { ValueType } from '../dataTypes/Value';
 
 const builtInFunctions: {
 	argumentTypes: ValueType[];

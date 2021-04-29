@@ -62,7 +62,7 @@ function adaptXPathValueToJavascriptValue(
 	sequenceType: ValueType,
 	executionParameters: ExecutionParameters
 ): any | null | any[] {
-	if (sequenceType.kind == BaseType.NULLABLE) {
+	if (sequenceType.kind === BaseType.NULLABLE) {
 		if (valueSequence.isEmpty()) {
 			return null;
 		}
@@ -72,7 +72,7 @@ function adaptXPathValueToJavascriptValue(
 		).next(IterationHint.NONE).value;
 	}
 
-	if (sequenceType.kind == BaseType.ANY || sequenceType.kind == BaseType.SOME) {
+	if (sequenceType.kind === BaseType.ANY || sequenceType.kind === BaseType.SOME) {
 		return valueSequence.getAllValues().map((value) => {
 			if (isSubtypeOf(value.type, { kind: BaseType.ATTRIBUTE })) {
 				throw new Error('Cannot pass attribute nodes to custom functions');

@@ -218,17 +218,170 @@ export type ValueType =
 	| { kind: BaseType.PROCESSINGINSTRUCTION }
 	| { kind: BaseType.COMMENT }
 	| { kind: BaseType.ITEM }
-	| { kind: BaseType.FUNCTION; returnType: ValueType | undefined; params: ValueType[] }
-	| { kind: BaseType.MAP; items: [ValueType, ValueType][] }
-	| { kind: BaseType.ARRAY; items: ValueType[] }
-	| { kind: BaseType.NULLABLE; item: ValueType }
-	| { kind: BaseType.ANY; item: ValueType }
-	| { kind: BaseType.SOME; item: ValueType }
+	| { kind: BaseType.FUNCTION; params: ValueType[]; returnType: ValueType | undefined }
+	| { items: [ValueType, ValueType][]; kind: BaseType.MAP }
+	| { items: ValueType[]; kind: BaseType.ARRAY }
+	| { item: ValueType; kind: BaseType.NULLABLE }
+	| { item: ValueType; kind: BaseType.ANY }
+	| { item: ValueType; kind: BaseType.SOME }
 	| { kind: BaseType.ELLIPSIS };
 
 export function valueTypeHash(type: ValueType): number {
-	//TODO: incorporate item, returntype, ...
+	// TODO: incorporate item, returntype, ...
 	return type.kind as number;
+}
+
+export function baseTypeToString(input: BaseType): string {
+	switch (input) {
+		case BaseType.XSBOOLEAN:
+			return 'xs:boolean';
+		case BaseType.XSSTRING:
+			return 'xs:string';
+		case BaseType.XSNUMERIC:
+			return 'xs:numeric';
+		case BaseType.XSDOUBLE:
+			return 'xs:double';
+		case BaseType.XSDECIMAL:
+			return 'xs:decimal';
+		case BaseType.XSINTEGER:
+			return 'xs:integer';
+		case BaseType.XSFLOAT:
+			return 'xs:float';
+		case BaseType.XSDATE:
+			return 'xs:date';
+		case BaseType.XSTIME:
+			return 'xs:time';
+		case BaseType.XSDATETIME:
+			return 'xs:dateTime';
+		case BaseType.XSDATETIMESTAMP:
+			return 'xs:dateTimeStamp';
+		case BaseType.XSGYEARMONTH:
+			return 'xs:gYearMonth';
+		case BaseType.XSGYEAR:
+			return 'xs:gYear';
+		case BaseType.XSGMONTHDAY:
+			return 'xs:gMonthDay';
+		case BaseType.XSGMONTH:
+			return 'xs:gMonth';
+		case BaseType.XSGDAY:
+			return 'xs:gDay';
+		case BaseType.XSYEARMONTHDURATION:
+			return 'xs:yearMonthDuration';
+		case BaseType.XSDAYTIMEDURATION:
+			return 'xs:dayTimeDuration';
+		case BaseType.XSDURATION:
+			return 'xs:duration';
+		case BaseType.XSUNTYPEDATOMIC:
+			return 'xs:untypedAtomic';
+		case BaseType.XSANYURI:
+			return 'xs:anyURI';
+		case BaseType.XSBASE64BINARY:
+			return 'xs:base64Binary';
+		case BaseType.XSHEXBINARY:
+			return 'xs:hexBinary';
+		case BaseType.XSQNAME:
+			return 'xs:QName';
+		case BaseType.XSNCNAME:
+			return 'xs:NCName';
+		case BaseType.XSNAME:
+			return 'xs:Name';
+		case BaseType.XSENTITY:
+			return 'xs:ENTITY';
+		case BaseType.XSNONPOSITIVEINTEGER:
+			return 'xs:nonPositiveInteger';
+		case BaseType.XSNEGATIVEINTEGER:
+			return 'xs:negativeInteger';
+		case BaseType.XSPOSITIVEINTEGER:
+			return 'xs:positiveInteger';
+		case BaseType.XSNONNEGATIVEINTEGER:
+			return 'xs:nonNegativeInteger';
+		case BaseType.XSLONG:
+			return 'xs:long';
+		case BaseType.XSINT:
+			return 'xs:int';
+		case BaseType.XSSHORT:
+			return 'xs:short';
+		case BaseType.XSBYTE:
+			return 'xs:byte';
+		case BaseType.XSUNSIGNEDINT:
+			return 'xs:unsignedInt';
+		case BaseType.XSUNSIGNEDLONG:
+			return 'xs:unsignedLong';
+		case BaseType.XSUNSIGNEDBYTE:
+			return 'xs:unsignedByte';
+		case BaseType.XSUNSIGNEDSHORT:
+			return 'xs:unsignedShort';
+		case BaseType.XSERROR:
+			return 'xs:error';
+		case BaseType.XSENTITIES:
+			return 'xs:ENTITIES';
+		case BaseType.XSIDREF:
+			return 'xs:IDREF';
+		case BaseType.XSID:
+			return 'xs:ID';
+		case BaseType.XSIDREFS:
+			return 'xs:IDFREFS';
+		case BaseType.XSNOTATION:
+			return 'xs:NOTATION';
+		case BaseType.XSANYSIMPLETYPE:
+			return 'xs:anySimpleType';
+		case BaseType.XSANYATOMICTYPE:
+			return 'xs:anyAtomicType';
+		case BaseType.ATTRIBUTE:
+			return 'attribute()';
+		case BaseType.XSNORMALIZEDSTRING:
+			return 'xs:normalizedString';
+		case BaseType.XSNMTOKENS:
+			return 'xs:NMTOKENS';
+		case BaseType.XSNMTOKEN:
+			return 'xs:NMTOKEN';
+		case BaseType.XSLANGUAGE:
+			return 'xs:language';
+		case BaseType.XSTOKEN:
+			return 'xs:token';
+		case BaseType.NODE:
+			return 'node()';
+		case BaseType.ELEMENT:
+			return 'element()';
+		case BaseType.DOCUMENTNODE:
+			return 'document-node()';
+		case BaseType.TEXT:
+			return 'text()';
+		case BaseType.PROCESSINGINSTRUCTION:
+			return 'processing-instruction()';
+		case BaseType.COMMENT:
+			return 'comment()';
+		case BaseType.ITEM:
+			return 'item()';
+		case BaseType.FUNCTION:
+			return 'function(*)';
+		case BaseType.MAP:
+			return 'map(*)';
+		case BaseType.ARRAY:
+			return 'array(*)';
+		case BaseType.ELLIPSIS:
+			return '...';
+	}
+}
+
+/**
+ * Converts a ValueType to the correct string representation
+ *
+ * @param input the ValueType
+ * @returns the correct string representation of the type
+ */
+export function valueTypeToString(input: ValueType): string {
+	if (input.kind === BaseType.ANY) {
+		return valueTypeToString(input.item) + '*';
+	}
+	if (input.kind === BaseType.SOME) {
+		return valueTypeToString(input.item) + '+';
+	}
+	if (input.kind === BaseType.NULLABLE) {
+		return valueTypeToString(input.item) + '?';
+	}
+
+	return baseTypeToString(input.kind);
 }
 
 /**
