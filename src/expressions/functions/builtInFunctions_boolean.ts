@@ -1,10 +1,9 @@
-import { falseBoolean, trueBoolean } from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { DONE_TOKEN, ready } from '../util/iterators';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
+import { BaseType } from '../dataTypes/Value';
 const fnNot: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
@@ -40,8 +39,8 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'boolean',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:boolean',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnBoolean,
 		},
 
@@ -49,15 +48,15 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'true',
 			argumentTypes: [],
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnTrue,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'not',
-			argumentTypes: ['item()*'],
-			returnType: 'xs:boolean',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnNot,
 		},
 
@@ -65,7 +64,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'false',
 			argumentTypes: [],
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnFalse,
 		},
 	],

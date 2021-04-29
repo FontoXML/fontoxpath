@@ -48,7 +48,7 @@ function timezoneToString(timezone: DayTimeDuration): string {
 class DateTime {
 	public static fromString: (str: any) => DateTime;
 	public secondFraction: number;
-	public type: string;
+	public type: ValueType;
 	protected _days: number;
 	protected _hours: number;
 	protected _minutes: number;
@@ -65,7 +65,7 @@ class DateTime {
 		seconds: number,
 		secondFraction: number,
 		timezone: DayTimeDuration,
-		type = 'xs:dateTime'
+		type: ValueType = { kind: BaseType.XSDATETIME }
 	) {
 		this._years = years;
 		this._months = months;
@@ -89,35 +89,25 @@ class DateTime {
 
 		switch (type.kind) {
 			case BaseType.XSGDAY:
-				return new DateTime(1972, 12, this._days, 0, 0, 0, 0, this._timezone, 'xs:gDay');
+				return new DateTime(1972, 12, this._days, 0, 0, 0, 0, this._timezone, {
+					kind: BaseType.XSGDAY,
+				});
 			case BaseType.XSGMONTH:
-				return new DateTime(1972, this._months, 1, 0, 0, 0, 0, this._timezone, 'xs:gMonth');
+				return new DateTime(1972, this._months, 1, 0, 0, 0, 0, this._timezone, {
+					kind: BaseType.XSGMONTH,
+				});
 			case BaseType.XSGYEAR:
-				return new DateTime(this._years, 1, 1, 0, 0, 0, 0, this._timezone, 'xs:gYear');
+				return new DateTime(this._years, 1, 1, 0, 0, 0, 0, this._timezone, {
+					kind: BaseType.XSGYEAR,
+				});
 			case BaseType.XSGMONTHDAY:
-				return new DateTime(
-					1972,
-					this._months,
-					this._days,
-					0,
-					0,
-					0,
-					0,
-					this._timezone,
-					'xs:gMonthDay'
-				);
+				return new DateTime(1972, this._months, this._days, 0, 0, 0, 0, this._timezone, {
+					kind: BaseType.XSGMONTHDAY,
+				});
 			case BaseType.XSGYEARMONTH:
-				return new DateTime(
-					this._years,
-					this._months,
-					1,
-					0,
-					0,
-					0,
-					0,
-					this._timezone,
-					'xs:gYearMonth'
-				);
+				return new DateTime(this._years, this._months, 1, 0, 0, 0, 0, this._timezone, {
+					kind: BaseType.XSGYEARMONTH,
+				});
 			case BaseType.XSTIME:
 				return new DateTime(
 					1972,
@@ -128,7 +118,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					'xs:time'
+					{ kind: BaseType.XSTIME }
 				);
 			case BaseType.XSDATE:
 				return new DateTime(
@@ -140,7 +130,7 @@ class DateTime {
 					0,
 					0,
 					this._timezone,
-					'xs:date'
+					{ kind: BaseType.XSDATE }
 				);
 			case BaseType.XSDATETIME:
 			default:
@@ -153,7 +143,7 @@ class DateTime {
 					this._seconds,
 					this.secondFraction,
 					this._timezone,
-					'xs:dateTime'
+					{ kind: BaseType.XSDATETIME }
 				);
 		}
 	}
@@ -214,8 +204,8 @@ class DateTime {
 	}
 
 	public toString() {
-		switch (this.type) {
-			case 'xs:dateTime':
+		switch (this.type.kind) {
+			case BaseType.XSDATETIME:
 				return (
 					convertYearToString(this._years) +
 					'-' +
@@ -230,7 +220,7 @@ class DateTime {
 					convertSecondsToString(this._seconds + this.secondFraction) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case 'xs:date':
+			case BaseType.XSDATE:
 				return (
 					convertYearToString(this._years) +
 					'-' +
@@ -239,7 +229,7 @@ class DateTime {
 					convertToTwoCharString(this._days) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case 'xs:time':
+			case BaseType.XSTIME:
 				return (
 					convertToTwoCharString(this._hours) +
 					':' +
@@ -248,19 +238,19 @@ class DateTime {
 					convertSecondsToString(this._seconds + this.secondFraction) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case 'xs:gDay':
+			case BaseType.XSGDAY:
 				return (
 					'---' +
 					convertToTwoCharString(this._days) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case 'xs:gMonth':
+			case BaseType.XSGMONTH:
 				return (
 					'--' +
 					convertToTwoCharString(this._months) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case 'xs:gMonthDay':
+			case BaseType.XSGMONTHDAY:
 				return (
 					'--' +
 					convertToTwoCharString(this._months) +
@@ -268,12 +258,12 @@ class DateTime {
 					convertToTwoCharString(this._days) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case 'xs:gYear':
+			case BaseType.XSGYEAR:
 				return (
 					convertYearToString(this._years) +
 					(this._timezone ? timezoneToString(this._timezone) : '')
 				);
-			case 'xs:gYearMonth':
+			case BaseType.XSGYEARMONTH:
 				return (
 					convertYearToString(this._years) +
 					'-' +
@@ -323,52 +313,48 @@ DateTime.fromString = (dateString: string): DateTime => {
 			seconds,
 			secondFraction,
 			timezone,
-			'xs:dateTime'
+			{ kind: BaseType.XSDATETIME }
 		);
 	}
 
 	if (hours !== null && minutes !== null && seconds !== null) {
 		// There is no T separator, but there is a time component -> time
-		return new DateTime(
-			1972,
-			12,
-			31,
-			hours,
-			minutes,
-			seconds,
-			secondFraction,
-			timezone,
-			'xs:time'
-		);
+		return new DateTime(1972, 12, 31, hours, minutes, seconds, secondFraction, timezone, {
+			kind: BaseType.XSTIME,
+		});
 	}
 
 	if (years !== null && months !== null && days !== null) {
 		// There is no T separator, but there is a complete date component -> date
-		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, 'xs:date');
+		return new DateTime(years, months, days, 0, 0, 0, 0, timezone, { kind: BaseType.XSDATE });
 	}
 
 	if (years !== null && months !== null) {
 		// There is no complete date component, but there is a year and a month -> gYearMonth
-		return new DateTime(years, months, 1, 0, 0, 0, 0, timezone, 'xs:gYearMonth');
+		return new DateTime(years, months, 1, 0, 0, 0, 0, timezone, {
+			kind: BaseType.XSGYEARMONTH,
+		});
 	}
 
 	if (months !== null && days !== null) {
 		// There is no complete date component, but there is a month and a day -> gMonthDay
-		return new DateTime(1972, months, days, 0, 0, 0, 0, timezone, 'xs:gMonthDay');
+		return new DateTime(1972, months, days, 0, 0, 0, 0, timezone, {
+			kind: BaseType.XSGMONTHDAY,
+		});
 	}
 
 	if (years !== null) {
 		// There is only a year -> gYear
-		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, 'xs:gYear');
+		return new DateTime(years, 1, 1, 0, 0, 0, 0, timezone, { kind: BaseType.XSGYEAR });
 	}
 
 	if (months !== null) {
 		// There is only a month -> gMonth
-		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, 'xs:gMonth');
+		return new DateTime(1972, months, 1, 0, 0, 0, 0, timezone, { kind: BaseType.XSGMONTH });
 	}
 
 	// There is only one option left -> gDay
-	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, 'xs:gDay');
+	return new DateTime(1972, 12, days, 0, 0, 0, 0, timezone, { kind: BaseType.XSGDAY });
 };
 
 export function compare(

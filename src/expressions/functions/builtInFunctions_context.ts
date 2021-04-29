@@ -81,7 +81,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'last',
 			argumentTypes: [],
-			returnType: 'xs:integer',
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: fnLast,
 		},
 
@@ -89,7 +89,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'position',
 			argumentTypes: [],
-			returnType: 'xs:integer',
+			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: fnPosition,
 		},
 
@@ -97,7 +97,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'current-dateTime',
 			argumentTypes: [],
-			returnType: 'xs:dateTimeStamp',
+			returnType: { kind: BaseType.XSDATETIMESTAMP },
 			callFunction: fnCurrentDateTime,
 		},
 
@@ -105,7 +105,7 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'current-date',
 			argumentTypes: [],
-			returnType: 'xs:date',
+			returnType: { kind: BaseType.XSDATE },
 			callFunction: fnCurrentDate,
 		},
 
@@ -113,15 +113,14 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'current-time',
 			argumentTypes: [],
-			returnType: 'xs:time',
+			returnType: { kind: BaseType.XSTIME },
 			callFunction: fnCurrentTime,
 		},
-
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'implicit-timezone',
 			argumentTypes: [],
-			returnType: 'xs:dayTimeDuration',
+			returnType: { kind: BaseType.XSDAYTIMEDURATION },
 			callFunction: fnImplicitTimezone,
 		},
 	],
