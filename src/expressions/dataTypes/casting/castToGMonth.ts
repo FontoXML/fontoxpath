@@ -1,3 +1,4 @@
+import AtomicValue from '../AtomicValue';
 import createAtomicValue from '../createAtomicValue';
 import { ValueType, BaseType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
@@ -7,7 +8,7 @@ const createGMonthValue = (value) => createAtomicValue(value, { kind: BaseType.X
 
 export default function castToGMonth(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
+): (value: DateTime) => CastResult {
 	if (instanceOf({ kind: BaseType.XSDATE }) || instanceOf({ kind: BaseType.XSDATETIME })) {
 		return (value) => ({
 			successful: true,

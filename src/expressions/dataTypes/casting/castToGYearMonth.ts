@@ -7,7 +7,7 @@ const createGYearMonthValue = (value) => createAtomicValue(value, { kind: BaseTy
 
 export default function castToGYearMonth(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
+): (value: DateTime) => CastResult {
 	if (instanceOf({ kind: BaseType.XSDATE }) || instanceOf({ kind: BaseType.XSDATETIME })) {
 		return (value) => ({
 			successful: true,

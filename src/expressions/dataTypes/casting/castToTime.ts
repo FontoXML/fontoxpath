@@ -7,11 +7,11 @@ const createTimeValue = (value) => createAtomicValue(value, { kind: BaseType.XST
 
 export default function castToTime(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
+): (value: DateTime) => CastResult {
 	if (instanceOf({ kind: BaseType.XSDATETIME })) {
 		return (value) => ({
 			successful: true,
-			value: createTimeValue(value.convertToType('xs:time')),
+			value: createTimeValue(value.convertToType({ kind: BaseType.XSTIME })),
 		});
 	}
 	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {

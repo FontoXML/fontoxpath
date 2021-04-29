@@ -7,7 +7,7 @@ const createDateValue = (value) => createAtomicValue(value, { kind: BaseType.XSD
 
 export default function castToDate(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
+): (value: DateTime) => CastResult {
 	if (instanceOf({ kind: BaseType.XSDATETIME })) {
 		return (value) => ({
 			successful: true,

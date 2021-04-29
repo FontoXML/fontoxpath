@@ -7,11 +7,11 @@ const createGDayValue = (value) => createAtomicValue(value, { kind: BaseType.XSG
 
 export default function castToGDay(
 	instanceOf: (typeName: ValueType) => boolean
-): (value) => CastResult {
+): (value: DateTime) => CastResult {
 	if (instanceOf({ kind: BaseType.XSDATE }) || instanceOf({ kind: BaseType.XSDATETIME })) {
 		return (value) => ({
 			successful: true,
-			value: createGDayValue(value.convertToType('xs:gDay')),
+			value: createGDayValue(value.convertToType({ kind: BaseType.XSGDAY })),
 		});
 	}
 	if (instanceOf({ kind: BaseType.XSUNTYPEDATOMIC }) || instanceOf({ kind: BaseType.XSSTRING })) {
