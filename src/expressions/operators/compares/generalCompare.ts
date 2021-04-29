@@ -5,7 +5,7 @@ import valueCompare from './valueCompare';
 
 import ISequence from '../../dataTypes/ISequence';
 import DynamicContext from '../../DynamicContext';
-import { BaseType } from 'src/expressions/dataTypes/Value';
+import { BaseType } from '../../dataTypes/Value';
 
 const OPERATOR_TRANSLATION = {
 	['equalOp']: 'eqOp',

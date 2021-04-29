@@ -1,11 +1,7 @@
 import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
-import {
-	BaseType,
-	createTypedValueFactory,
-	evaluateXPathToBoolean,
-} from 'fontoxpath';
+import { BaseType, createTypedValueFactory, evaluateXPathToBoolean } from 'fontoxpath';
 
 let documentNode;
 beforeEach(() => {
@@ -85,7 +81,10 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting an array', () => {
-		const typedValueFactory = createTypedValueFactory({ kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER });
+		const typedValueFactory = createTypedValueFactory({
+			kind: BaseType.ANY,
+			item: { kind: BaseType.XSINTEGER },
+		});
 
 		chai.assert.throws(
 			() => typedValueFactory(123, documentNode),

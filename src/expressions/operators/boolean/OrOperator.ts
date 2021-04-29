@@ -1,4 +1,4 @@
-import { BaseType } from 'src/expressions/dataTypes/Value';
+import { BaseType } from '../../dataTypes/Value';
 import { getBucketsForPointer } from '../../../getBuckets';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';
 import ISequence from '../../dataTypes/ISequence';

@@ -1,4 +1,4 @@
-import { BaseType } from 'src/expressions/dataTypes/Value';
+import { BaseType } from '../../dataTypes/Value';
 import { NodePointer } from '../../../domClone/Pointer';
 import { getBucketsForPointer } from '../../../getBuckets';
 import { falseBoolean, trueBoolean } from '../../dataTypes/createAtomicValue';

@@ -1,4 +1,4 @@
-import { BaseType } from 'src/expressions/dataTypes/Value';
+import { BaseType } from '../../dataTypes/Value';
 import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';

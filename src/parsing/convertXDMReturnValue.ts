@@ -1,4 +1,4 @@
-import { BaseType } from 'src/expressions/dataTypes/Value';
+import { BaseType } from '../expressions/dataTypes/Value';
 import { NodePointer } from '../domClone/Pointer';
 import realizeDom from '../domClone/realizeDom';
 import { printAndRethrowError } from '../evaluationUtils/printAndRethrowError';

@@ -547,7 +547,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	{
 		variety: 'derived',
-		name: { kind: BaseType.FUNCTION , returnType: undefined, param: [] },
+		name: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		base: { kind: BaseType.ITEM },
 	},
 
@@ -560,19 +560,19 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	{
 		variety: 'derived',
 		name: { kind: BaseType.MAP, items: [] },
-		base: { kind: BaseType.FUNCTION , returnType: undefined, param: [] },
+		base: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 	},
 
 	{
 		variety: 'derived',
 		name: { kind: BaseType.ARRAY, items: [] },
-		base: { kind: BaseType.FUNCTION , returnType: undefined, param: [] },
+		base: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 	},
 
 	{
 		variety: 'primitive',
 		name: { kind: BaseType.NODE },
-		parent: { kind: BaseType.ITEM},
+		parent: { kind: BaseType.ITEM },
 	},
 
 	{
@@ -583,19 +583,19 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	{
 		variety: 'derived',
-		name: { kind: BaseType.COMMENT},
+		name: { kind: BaseType.COMMENT },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
 		variety: 'derived',
-		name: { kind: BaseType.ATTRIBUTE},
+		name: { kind: BaseType.ATTRIBUTE },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
 		variety: 'derived',
-		name: { kind: BaseType.TEXT},
+		name: { kind: BaseType.TEXT },
 		base: { kind: BaseType.NODE },
 	},
 
@@ -607,15 +607,19 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	{
 		variety: 'derived',
-		name: {kind: BaseType.DOCUMENTNODE},
+		name: { kind: BaseType.DOCUMENTNODE },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
 		variety: 'union',
 		name: { kind: BaseType.XSNUMERIC },
-		memberTypes: [{ kind: BaseType.XSDECIMAL }, { kind: BaseType.XSINTEGER }, 
-			{ kind: BaseType.XSFLOAT }, { kind: BaseType.XSDOUBLE }],
+		memberTypes: [
+			{ kind: BaseType.XSDECIMAL },
+			{ kind: BaseType.XSINTEGER },
+			{ kind: BaseType.XSFLOAT },
+			{ kind: BaseType.XSDOUBLE },
+		],
 	},
 ];
 

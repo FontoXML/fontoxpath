@@ -32,12 +32,12 @@ import castToUntypedAtomic from './castToUntypedAtomic';
 import castToYearMonthDuration from './castToYearMonthDuration';
 
 const TREAT_AS_PRIMITIVE = [
-	{ kind: BaseType.XSINTEGER },
-	{ kind: BaseType.XSDAYTIMEDURATION },
-	{ kind: BaseType.XSYEARMONTHDURATION },
+	BaseType.XSINTEGER,
+	BaseType.XSDAYTIMEDURATION,
+	BaseType.XSYEARMONTHDURATION,
 ];
 
-function castToPrimitiveType(from: ValueType, to: ValueType): (value: AtomicValue) => CastResult {
+function castToPrimitiveType(from: ValueType, to: ValueType): (value) => CastResult {
 	const instanceOf = (type: ValueType) => isSubtypeOf(from, type);
 
 	if (to === { kind: BaseType.XSERROR }) {
@@ -102,34 +102,34 @@ function castToPrimitiveType(from: ValueType, to: ValueType): (value: AtomicValu
 const precomputedCastFunctorsByTypeString = Object.create(null);
 
 function createCastingFunction(from: ValueType, to: ValueType) {
-	if (from === { kind: BaseType.XSUNTYPEDATOMIC } && to === { kind: BaseType.XSSTRING }) {
+	if (from.kind === BaseType.XSUNTYPEDATOMIC && to.kind === BaseType.XSSTRING) {
 		return (val) => ({
 			successful: true,
 			value: createAtomicValue(val, { kind: BaseType.XSSTRING }),
 		});
 	}
-	if (to === { kind: BaseType.XSNOTATION }) {
+	if (to.kind === BaseType.XSNOTATION) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting to xs:NOTATION is not permitted.'),
 		});
 	}
 
-	if (to === { kind: BaseType.XSERROR }) {
+	if (to.kind === BaseType.XSERROR) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('FORG0001: Casting to xs:error is not permitted.'),
 		});
 	}
 
-	if (from === { kind: BaseType.XSANYSIMPLETYPE } || to === { kind: BaseType.XSANYSIMPLETYPE }) {
+	if (from.kind === BaseType.XSANYSIMPLETYPE || to.kind === BaseType.XSANYSIMPLETYPE) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anySimpleType is not permitted.'),
 		});
 	}
 
-	if (from === { kind: BaseType.XSANYATOMICTYPE } || to === { kind: BaseType.XSANYATOMICTYPE }) {
+	if (from.kind === BaseType.XSANYATOMICTYPE || to.kind === BaseType.XSANYATOMICTYPE) {
 		return (_val) => ({
 			successful: false,
 			error: new Error('XPST0080: Casting from or to xs:anyAtomicType is not permitted.'),
@@ -138,7 +138,7 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 
 	if (
 		isSubtypeOf(from, { kind: BaseType.FUNCTION, returnType: undefined, params: [] }) &&
-		to === { kind: BaseType.XSSTRING }
+		to.kind === BaseType.XSSTRING
 	) {
 		return (_val) => ({
 			successful: false,
@@ -146,8 +146,10 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 		});
 	}
 
-	const primitiveFrom = TREAT_AS_PRIMITIVE.includes(from) ? from : getPrimitiveTypeName(from);
-	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to) ? to : getPrimitiveTypeName(to);
+	const primitiveFrom = TREAT_AS_PRIMITIVE.includes(from.kind)
+		? from
+		: getPrimitiveTypeName(from);
+	const primitiveTo = TREAT_AS_PRIMITIVE.includes(to.kind) ? to : getPrimitiveTypeName(to);
 
 	if (!primitiveTo || !primitiveFrom) {
 		return (_val) => ({
@@ -158,8 +160,8 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 	const converters = [];
 
 	if (
-		primitiveFrom === { kind: BaseType.XSSTRING } ||
-		primitiveFrom === { kind: BaseType.XSUNTYPEDATOMIC }
+		primitiveFrom.kind === BaseType.XSSTRING ||
+		primitiveFrom.kind === BaseType.XSUNTYPEDATOMIC
 	) {
 		// We are dealing with string-like types. Check whitespace / pattern
 		converters.push((value) => {
@@ -180,17 +182,14 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 	}
 
 	// Actually cast downwards
-	if (primitiveFrom !== primitiveTo) {
+	if (primitiveFrom.kind !== primitiveTo.kind) {
 		converters.push(castToPrimitiveType(primitiveFrom, primitiveTo));
 		converters.push((value) => ({
 			successful: true,
 			value: value.value,
 		}));
 	}
-	if (
-		primitiveTo === { kind: BaseType.XSUNTYPEDATOMIC } ||
-		primitiveTo === { kind: BaseType.XSSTRING }
-	) {
+	if (primitiveTo.kind === BaseType.XSUNTYPEDATOMIC || primitiveTo.kind === BaseType.XSSTRING) {
 		converters.push((typedValue) => {
 			if (!validatePattern(typedValue, to)) {
 				return {

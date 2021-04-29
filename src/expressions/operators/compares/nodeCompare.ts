@@ -1,4 +1,4 @@
-import { BaseType } from 'src/expressions/dataTypes/Value';
+import { BaseType } from '../../dataTypes/Value';
 import { compareNodePositions } from '../../dataTypes/documentOrderUtils';
 import ISequence from '../../dataTypes/ISequence';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';

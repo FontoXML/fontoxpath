@@ -1,4 +1,4 @@
-import { ValueType, BaseType } from '../expressions/dataTypes/Value';
+import { ValueType, BaseType, stringToValueType } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
@@ -108,9 +108,9 @@ function getTypeDeclaration(ast: IAST): ValueType {
 			case 'typedArrayTest':
 				return { kind: BaseType.ARRAY, items: [] };
 			case 'atomicType':
-				return [getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(
-					':'
-				) as ValueType;
+				return stringToValueType(
+					[getAttribute(typeAst, 'prefix'), getTextContent(typeAst)].join(':')
+				);
 			case 'parenthesizedItemType':
 				return determineType(getFirstChild(typeAst, '*'));
 			case 'schemaElementTest':
