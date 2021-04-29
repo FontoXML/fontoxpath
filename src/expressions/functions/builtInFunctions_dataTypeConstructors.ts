@@ -421,10 +421,9 @@ export default {
 			localName: 'int',
 			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
 			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINT } },
-			callFunction: genericDataTypeConstructor.bind(
-				null,
-				BaseType.XSINT
-			) as FunctionDefinitionType,
+			callFunction: genericDataTypeConstructor.bind(null, {
+				kind: BaseType.XSINT,
+			}) as FunctionDefinitionType,
 		},
 		{
 			namespaceURI: XMLSCHEMA_NAMESPACE_URI,
