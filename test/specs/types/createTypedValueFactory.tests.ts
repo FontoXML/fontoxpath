@@ -2,11 +2,9 @@ import * as chai from 'chai';
 import * as slimdom from 'slimdom';
 
 import {
+	BaseType,
 	createTypedValueFactory,
-	evaluateXPath,
 	evaluateXPathToBoolean,
-	evaluateXPathToNodes,
-	evaluateXPathToNumber,
 } from 'fontoxpath';
 
 let documentNode;
@@ -16,7 +14,7 @@ beforeEach(() => {
 
 describe('createTypedValueFactory', () => {
 	it('creates an xs:integer value', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.XSINTEGER });
 
 		const typedValue = typedValueFactory(123, documentNode);
 
@@ -29,7 +27,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('creates an xs:integer value from a string', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.XSINTEGER });
 
 		const typedValue = typedValueFactory('123', documentNode);
 
@@ -42,7 +40,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a Date value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory('xs:date');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.XSDATE });
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
@@ -51,7 +49,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a node() value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory('node()');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.NODE });
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
@@ -60,7 +58,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a number value but reiving a boolean', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.XSINTEGER });
 
 		chai.assert.throws(
 			() => typedValueFactory(true, documentNode),
@@ -69,7 +67,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a number value but reiving a string', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.XSINTEGER });
 
 		chai.assert.throws(
 			() => typedValueFactory('foo', documentNode),
@@ -78,7 +76,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting a number value but reiving null', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.XSINTEGER });
 
 		chai.assert.throws(
 			() => typedValueFactory(null, documentNode),
@@ -87,7 +85,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when expecting an array', () => {
-		const typedValueFactory = createTypedValueFactory('xs:integer*');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER });
 
 		chai.assert.throws(
 			() => typedValueFactory(123, documentNode),
@@ -96,7 +94,7 @@ describe('createTypedValueFactory', () => {
 	});
 
 	it('throws when trying to convert a Symbol', () => {
-		const typedValueFactory = createTypedValueFactory('item()');
+		const typedValueFactory = createTypedValueFactory({ kind: BaseType.ITEM });
 
 		chai.assert.throws(
 			() => typedValueFactory((Symbol('foo') as unknown) as string, documentNode),

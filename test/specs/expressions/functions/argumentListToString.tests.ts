@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import { BaseType } from 'fontoxpath';
 import sequenceFactory from 'fontoxpath/expressions/dataTypes/sequenceFactory';
 import argumentListToString from 'fontoxpath/expressions/functions/argumentListToString';
 
@@ -9,15 +10,17 @@ describe('argumentListToString()', () => {
 	});
 
 	it('returns type when given a Sequence with 1 item', () => {
-		const argumentList = [sequenceFactory.create([{ type: 'xs:anyAtomicType', value: null }])];
+		const argumentList = [
+			sequenceFactory.create([{ type: { kind: BaseType.XSANYATOMICTYPE }, value: null }]),
+		];
 		chai.assert.equal(argumentListToString(argumentList), 'xs:anyAtomicType');
 	});
 
 	it('returns type when given a Sequence with multiple items', () => {
 		const argumentList = [
 			sequenceFactory.create([
-				{ type: 'xs:anyAtomicType', value: null },
-				{ type: 'xs:anyAtomicType', value: null },
+				{ type: { kind: BaseType.XSANYATOMICTYPE }, value: null },
+				{ type: { kind: BaseType.XSANYATOMICTYPE }, value: null },
 			]),
 		];
 		chai.assert.equal(argumentListToString(argumentList), 'xs:anyAtomicType+');
@@ -26,10 +29,10 @@ describe('argumentListToString()', () => {
 	it('returns a type list when given multiple Sequences', () => {
 		const argumentList = [
 			sequenceFactory.create([]),
-			sequenceFactory.create([{ type: 'xs:anyAtomicType', value: null }]),
+			sequenceFactory.create([{ type: { kind: BaseType.XSANYATOMICTYPE }, value: null }]),
 			sequenceFactory.create([
-				{ type: 'xs:anyAtomicType', value: null },
-				{ type: 'xs:anyAtomicType', value: null },
+				{ type: { kind: BaseType.XSANYATOMICTYPE }, value: null },
+				{ type: { kind: BaseType.XSANYATOMICTYPE }, value: null },
 			]),
 		];
 		chai.assert.equal(

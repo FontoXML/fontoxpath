@@ -1,19 +1,30 @@
 import * as chai from 'chai';
+import { BaseType } from 'fontoxpath/expressions/dataTypes/Value';
 import functionRegistry from 'fontoxpath/expressions/functions/functionRegistry';
 import registerCustomXPathFunction from 'fontoxpath/registerCustomXPathFunction';
 
 describe('functionRegistry.getFunctionByArity', () => {
 	before(() => {
-		registerCustomXPathFunction('fonto:functionName', [], 'xs:boolean', function () {});
-
 		registerCustomXPathFunction(
 			'fonto:functionName',
-			['xs:boolean'],
-			'xs:boolean',
+			[],
+			{ kind: BaseType.XSBOOLEAN },
 			function () {}
 		);
 
-		registerCustomXPathFunction('fonto:otherFunctionName', [], 'xs:boolean', function () {});
+		registerCustomXPathFunction(
+			'fonto:functionName',
+			[{ kind: BaseType.XSBOOLEAN }],
+			{ kind: BaseType.XSBOOLEAN },
+			function () {}
+		);
+
+		registerCustomXPathFunction(
+			'fonto:otherFunctionName',
+			[],
+			{ kind: BaseType.XSBOOLEAN },
+			function () {}
+		);
 	});
 
 	it('return null if a custom function cannot be found', () => {
