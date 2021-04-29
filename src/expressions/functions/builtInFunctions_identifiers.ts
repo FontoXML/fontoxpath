@@ -148,16 +148,16 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'id',
-			argumentTypes: ['xs:string*', 'node()'],
-			returnType: 'element()*',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }, { kind: BaseType.NODE }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ELEMENT } },
 			callFunction: fnId,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'id',
-			argumentTypes: ['xs:string*'],
-			returnType: 'element()*',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ELEMENT } },
 			callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 				return fnId(
 					dynamicContext,
@@ -172,16 +172,16 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'idref',
-			argumentTypes: ['xs:string*', 'node()'],
-			returnType: 'node()*',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }, { kind: BaseType.NODE }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
 			callFunction: fnIdref,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'idref',
-			argumentTypes: ['xs:string*'],
-			returnType: 'node()*',
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }],
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
 			callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 				return fnIdref(
 					dynamicContext,

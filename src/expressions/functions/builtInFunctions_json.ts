@@ -67,8 +67,8 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'parse-json',
-			argumentTypes: ['xs:string'],
-			returnType: 'item()?',
+			argumentTypes: [{ kind: BaseType.XSSTRING }],
+			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } },
 			callFunction: fnParseJson,
 		},
 	],
