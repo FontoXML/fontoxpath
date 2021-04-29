@@ -112,12 +112,12 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 			emittedSteps.variables.push(...emittedStep.variables, ...emittedPredicates.variables);
 			emittedSteps.code = emittedStep.code;
 		} else {
-			return rejectAst('Unsupported: no axis AST.');
+			return rejectAst('Unsupported: Filter expressions');
 		}
 
 		const lookups = astHelper.getChildren(step, 'lookup');
 		if (lookups.length > 0) {
-			return rejectAst('Unsupported: lookups.');
+			return rejectAst('Unsupported: Lookups');
 		}
 	}
 	const contextDeclaration = 'const contextItem0 = contextItem.value.node;';
