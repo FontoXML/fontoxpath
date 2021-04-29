@@ -485,7 +485,7 @@ export default {
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'size',
-			argumentTypes: [{ kind: BaseType.ARRAY }],
+			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
 			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: arraySize,
 		},
@@ -493,7 +493,7 @@ export default {
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'get',
-			argumentTypes: [{ kind: BaseType.ARRAY }, { kind: BaseType.XSINTEGER }],
+			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
 			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: arrayGet,
 		},
@@ -502,11 +502,11 @@ export default {
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'put',
 			argumentTypes: [
-				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ARRAY, items: [] },
 				{ kind: BaseType.XSINTEGER },
 				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			],
-			returnType: { kind: BaseType.ARRAY },
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayPut,
 		},
 
@@ -514,10 +514,10 @@ export default {
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'append',
 			argumentTypes: [
-				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ARRAY, items: [] },
 				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			],
-			returnType: { kind: BaseType.ARRAY },
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayAppend,
 		},
 
@@ -525,19 +525,19 @@ export default {
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'subarray',
 			argumentTypes: [
-				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ARRAY, items: [] },
 				{ kind: BaseType.XSINTEGER },
 				{ kind: BaseType.XSINTEGER },
 			],
-			returnType: { kind: BaseType.ARRAY },
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arraySubarray,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'subarray',
-			argumentTypes: [{ kind: BaseType.ARRAY }, { kind: BaseType.XSINTEGER }],
-			returnType: { kind: BaseType.ARRAY },
+			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction(
 				dynamicContext,
 				executionParameters,
@@ -566,10 +566,10 @@ export default {
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'remove',
 			argumentTypes: [
-				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ARRAY, items: [] },
 				{ kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
 			],
-			returnType: { kind: BaseType.ARRAY },
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayRemove,
 		},
 
@@ -577,18 +577,18 @@ export default {
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'insert-before',
 			argumentTypes: [
-				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ARRAY, items: [] },
 				{ kind: BaseType.XSINTEGER },
 				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			],
-			returnType: { kind: BaseType.ARRAY },
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayInsertBefore,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'head',
-			argumentTypes: [{ kind: BaseType.ARRAY }],
+			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
 			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 				return arrayGet(
@@ -604,7 +604,7 @@ export default {
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'tail',
-			argumentTypes: [{ kind: BaseType.ARRAY }],
+			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
 			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 				return arrayRemove(
@@ -620,16 +620,16 @@ export default {
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'reverse',
-			argumentTypes: [{ kind: BaseType.ARRAY }],
-			returnType: { kind: BaseType.ARRAY },
+			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayReverse,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'join',
-			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ARRAY }],
-			returnType: { kind: BaseType.ARRAY },
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ARRAY, items: [] } }],
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayJoin,
 		},
 
@@ -638,8 +638,11 @@ export default {
 			localName: 'for-each',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', '(item()*) as item()*)]
-			argumentTypes: [{ kind: BaseType.ARRAY }, { kind: BaseType.FUNCTION }],
-			returnType: { kind: BaseType.ARRAY },
+			argumentTypes: [
+				{ kind: BaseType.ARRAY, items: [] },
+				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			],
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayForEach,
 		},
 
@@ -648,8 +651,11 @@ export default {
 			localName: 'filter',
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
-			argumentTypes: [{ kind: BaseType.ARRAY }, { kind: BaseType.FUNCTION }],
-			returnType: { kind: BaseType.ARRAY },
+			argumentTypes: [
+				{ kind: BaseType.ARRAY, items: [] },
+				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			],
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayFilter,
 		},
 
@@ -659,9 +665,9 @@ export default {
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 			argumentTypes: [
-				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ARRAY, items: [] },
 				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-				{ kind: BaseType.FUNCTION },
+				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 			],
 			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: arrayFoldLeft,
@@ -673,9 +679,9 @@ export default {
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 			argumentTypes: [
-				{ kind: BaseType.ARRAY },
+				{ kind: BaseType.ARRAY, items: [] },
 				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-				{ kind: BaseType.FUNCTION },
+				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 			],
 			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: arrayFoldRight,
@@ -687,19 +693,19 @@ export default {
 			// TODO: reimplement type checking by parsing the types
 			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 			argumentTypes: [
-				{ kind: BaseType.ARRAY },
-				{ kind: BaseType.ARRAY },
-				{ kind: BaseType.FUNCTION },
+				{ kind: BaseType.ARRAY, items: [] },
+				{ kind: BaseType.ARRAY, items: [] },
+				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 			],
-			returnType: { kind: BaseType.ARRAY },
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arrayForEachPair,
 		},
 
 		{
 			namespaceURI: ARRAY_NAMESPACE_URI,
 			localName: 'sort',
-			argumentTypes: [{ kind: BaseType.ARRAY }],
-			returnType: { kind: BaseType.ARRAY },
+			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
+			returnType: { kind: BaseType.ARRAY, items: [] },
 			callFunction: arraySort,
 		},
 

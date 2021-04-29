@@ -223,8 +223,11 @@ export default {
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'entry',
-			argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE }, { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-			returnType: { kind: BaseType.MAP },
+			argumentTypes: [
+				{ kind: BaseType.XSANYATOMICTYPE },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction: mapEntry,
 		},
 
@@ -232,9 +235,12 @@ export default {
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'for-each',
 			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: [{ kind: BaseType.MAP }, '({ kind: BaseType.XSANYATOMICTYPE , 
+			// argumentTypes: [{ kind: BaseType.MAP, items: [] }, '({ kind: BaseType.XSANYATOMICTYPE ,
 			// { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }) as { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }'],
-			argumentTypes: [{ kind: BaseType.MAP }, { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+			argumentTypes: [
+				{ kind: BaseType.MAP, items: [] },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
 			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: mapForEach,
 		},
@@ -242,7 +248,7 @@ export default {
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'get',
-			argumentTypes: [{ kind: BaseType.MAP }, { kind: BaseType.XSANYATOMICTYPE }],
+			argumentTypes: [{ kind: BaseType.MAP, items: [] }, { kind: BaseType.XSANYATOMICTYPE }],
 			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 			callFunction: mapGet,
 		},
@@ -250,7 +256,7 @@ export default {
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'keys',
-			argumentTypes: [{ kind: BaseType.MAP }],
+			argumentTypes: [{ kind: BaseType.MAP, items: [] }],
 			returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
 			callFunction: mapKeys,
 		},
@@ -258,8 +264,11 @@ export default {
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'merge',
-			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } }, { kind: BaseType.MAP }],
-			returnType: { kind: BaseType.MAP },
+			argumentTypes: [
+				{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } },
+				{ kind: BaseType.MAP, items: [] },
+			],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction: mapMerge,
 		},
 
@@ -267,7 +276,7 @@ export default {
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'merge',
 			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } }],
-			returnType: { kind: BaseType.MAP },
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction(dynamicContext, executionParameters, staticContext, maps) {
 				return mapMerge(
 					dynamicContext,
@@ -292,23 +301,30 @@ export default {
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'put',
-			argumentTypes: [{ kind: BaseType.MAP }, { kind: BaseType.XSANYATOMICTYPE }, { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-			returnType: { kind: BaseType.MAP },
+			argumentTypes: [
+				{ kind: BaseType.MAP, items: [] },
+				{ kind: BaseType.XSANYATOMICTYPE },
+				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction: mapPut,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'remove',
-			argumentTypes: [{ kind: BaseType.MAP }, { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } }],
-			returnType: { kind: BaseType.MAP },
+			argumentTypes: [
+				{ kind: BaseType.MAP, items: [] },
+				{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+			],
+			returnType: { kind: BaseType.MAP, items: [] },
 			callFunction: mapRemove,
 		},
 
 		{
 			namespaceURI: MAP_NAMESPACE_URI,
 			localName: 'size',
-			argumentTypes: [{ kind: BaseType.MAP }],
+			argumentTypes: [{ kind: BaseType.MAP, items: [] }],
 			returnType: { kind: BaseType.XSINTEGER },
 			callFunction: mapSize,
 		},
