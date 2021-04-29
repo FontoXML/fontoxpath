@@ -132,7 +132,7 @@ describe('adaptJavaScriptValueToSequence', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(
 			null,
 			new Date(Date.UTC(2018, 5, 22, 9, 10, 20)),
-			{ kind: BaseType.ITEM }
+			{ kind: BaseType.XSTIME }
 		);
 		chai.assert(xpathSequence.isSingleton(), 'is a singleton sequence');
 		chai.assert(xpathSequence.first().type.kind === BaseType.XSTIME, 'is a time');
