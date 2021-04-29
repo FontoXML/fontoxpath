@@ -1,5 +1,5 @@
 import facetHandlersByDataTypeName from '../facets/facetsByDataTypeName';
-import { ValueType, BaseType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import builtinModels from './builtinModels';
 import { getValidatorForType } from './dataTypeValidatorByName';
 
@@ -45,9 +45,9 @@ builtinModels.forEach((model) => {
 			memberTypes: [],
 		};
 	} else if (model.variety === 'list') {
-		const type = builtinDataTypesByName[model.type.kind];
-		builtinDataTypesByName[name.kind] = {
-			variety: 'union',
+		const type = builtinDataTypesByName[model.type];
+		builtinDataTypesByName[name] = {
+			variety: 'union', // TODO: why not list?
 			name,
 			restrictionsByName,
 			parent: type,
@@ -55,7 +55,7 @@ builtinModels.forEach((model) => {
 			facetHandlers: facetHandlersByDataTypeName.list,
 			memberTypes: [],
 		};
-	} else if (model.variety === 'union') {
+	} else {
 		const memberTypes = model.memberTypes.map(
 			(memberTypeRef) => builtinDataTypesByName[memberTypeRef.kind]
 		);

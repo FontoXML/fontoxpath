@@ -1,5 +1,8 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
-import { ValueType } from './Value';
+import { BaseType, ValueType, startWithXS } from './Value';
+import ETypeNames from './ETypeNames'
+import builtinModels from './builtins/builtinModels'
+
 
 function isSubtypeOfType(subType, superType) {
 	if (superType.variety === 'union') {
@@ -8,12 +11,12 @@ function isSubtypeOfType(subType, superType) {
 	}
 
 	while (subType) {
-		if (subType.name === superType.name) {
+		if (subType.name.kind === superType.name.kind) {
 			return true;
 		}
 		if (subType.variety === 'union') {
 			return !!subType.memberTypes.find((memberType) =>
-				isSubtypeOfType(memberType, superType)
+				isSubtypeOf(memberType, superType)
 			);
 		}
 		subType = subType.parent;
@@ -35,7 +38,7 @@ export default function isSubtypeOf(subTypeName: ValueType, superTypeName: Value
 	const subType = builtinDataTypesByName[subTypeName.kind];
 
 	if (!superType) {
-		if (!superTypeName.startsWith('xs:')) {
+		if (!startWithXS(superTypeName.kind)) {
 			// Note that 'xs' is the only namespace currently supported
 			throw new Error(`XPST0081: The type ${superTypeName} could not be found.`);
 		}
@@ -44,3 +47,4 @@ export default function isSubtypeOf(subTypeName: ValueType, superTypeName: Value
 
 	return isSubtypeOfType(subType, superType);
 }
+

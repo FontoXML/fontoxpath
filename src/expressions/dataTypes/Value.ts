@@ -11,7 +11,7 @@ export default class Value {
  */
 export enum BaseType {
 	XSBOOLEAN,
-	XSSTRING,
+	XSSTRING,	
 	XSNUMERIC,
 	XSDOUBLE,
 	XSDECIMAL,
@@ -78,6 +78,76 @@ export enum BaseType {
 	SOME,
 	ELLIPSIS,
 }
+
+export function startWithXS(inType: BaseType): boolean {
+	return a[inType]
+};
+
+let a = new Map([
+	[ BaseType.XSBOOLEAN, true ],
+	[ BaseType.XSSTRING, true ],
+	[ BaseType.XSNUMERIC, true ],
+	[ BaseType.XSDOUBLE, true ],
+	[ BaseType.XSDECIMAL, true ],
+	[ BaseType.XSINTEGER, true ],
+	[ BaseType.XSFLOAT, true ],
+	[ BaseType.XSDATE, true ],
+	[ BaseType.XSTIME, true ],
+	[ BaseType.XSDATETIME, true ],
+	[ BaseType.XSDATETIMESTAMP, true ],
+	[ BaseType.XSGYEARMONTH, true ],
+	[ BaseType.XSGYEAR, true ],
+	[ BaseType.XSGMONTHDAY, true ],
+	[ BaseType.XSGMONTH, true ],
+	[ BaseType.XSGDAY, true ],
+	[ BaseType.XSYEARMONTHDURATION, true ],
+	[ BaseType.XSDAYTIMEDURATION, true ],
+	[ BaseType.XSDURATION, true ],
+	[ BaseType.XSUNTYPEDATOMIC, true ],
+	[ BaseType.XSANYURI, true ],
+	[ BaseType.XSBASE64BINARY, true ],
+	[ BaseType.XSHEXBINARY, true ],
+	[ BaseType.XSQNAME, true ],
+	[ BaseType.XSNCNAME, true ],
+	[ BaseType.XSNAME, true ],
+	[ BaseType.XSENTITY, true ],
+	[ BaseType.XSNONPOSITIVEINTEGER, true ],
+	[ BaseType.XSNEGATIVEINTEGER, true ],
+	[ BaseType.XSPOSITIVEINTEGER, true ],
+	[ BaseType.XSNONNEGATIVEINTEGER, true ],
+	[ BaseType.XSLONG, true ],
+	[ BaseType.XSINT, true ],
+	[ BaseType.XSSHORT, true ],
+	[ BaseType.XSBYTE, true ],
+	[ BaseType.XSUNSIGNEDINT, true ],
+	[ BaseType.XSUNSIGNEDLONG, true ],
+	[ BaseType.XSUNSIGNEDBYTE, true ],
+	[ BaseType.XSUNSIGNEDSHORT, true ],
+	[ BaseType.XSERROR, true ],
+	[ BaseType.XSENTITIES, true ],
+	[ BaseType.XSIDREF, true ],
+	[ BaseType.XSID, true ],
+	[ BaseType.XSIDREFS, true ],
+	[ BaseType.XSNOTATION, true ],
+	[ BaseType.XSANYSIMPLETYPE, true ],
+	[ BaseType.XSANYATOMICTYPE, true ],
+	[ BaseType.ATTRIBUTE, false ],
+	[ BaseType.XSNORMALIZEDSTRING, true ],
+	[ BaseType.XSNMTOKENS, true ],
+	[ BaseType.XSNMTOKEN, true ],
+	[ BaseType.XSLANGUAGE, true ],
+	[ BaseType.XSTOKEN, true ],
+	[ BaseType.NODE, false ],
+	[ BaseType.ELEMENT, false ],
+	[ BaseType.DOCUMENTNODE, false ],
+	[ BaseType.TEXT, false ],
+	[ BaseType.PROCESSINGINSTRUCTION, false ],
+	[ BaseType.COMMENT, false ],
+	[ BaseType.ITEM, false ],
+	[ BaseType.FUNCTION, false ],
+	[ BaseType.MAP, false ],
+	[ BaseType.ARRAY, false ],
+	]);
 
 /**
  * The composite type containing more info
@@ -282,7 +352,7 @@ export function stringToValueType(input: string): ValueType {
 		case 'item()':
 			return { kind: BaseType.ITEM };
 		case 'function(*)':
-			return { kind: BaseType.FUNCTION, returnType: undefined, param: [] };
+			return { kind: BaseType.FUNCTION, returnType: undefined, params: [] };
 		case 'map(*)':
 			return { kind: BaseType.MAP, items: [] };
 		case 'array(*)':
