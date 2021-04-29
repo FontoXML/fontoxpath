@@ -183,8 +183,10 @@ export function getValidatorForType(type: BaseType): (value: string) => boolean 
 			return isValidTime;
 		case BaseType.XSDATE:
 			return isValidDate;
-		case BaseType.XSYEARMONTHDURATION:
+		case BaseType.XSGYEARMONTH:
 			return isValidGYearMonth;
+		case BaseType.XSGYEAR:
+			return isValidGYear;
 		case BaseType.XSGMONTHDAY:
 			return isValidGMonthDay;
 		case BaseType.XSGDAY:
@@ -197,7 +199,7 @@ export function getValidatorForType(type: BaseType): (value: string) => boolean 
 			return isValidBase64Binary;
 		case BaseType.XSANYURI:
 			return isValidAnyURI;
-		case BaseType.XSQNAME:
+		case BaseType.XSNOTATION:
 			return isValidQName;
 		case BaseType.XSNORMALIZEDSTRING:
 			return isValidNormalizedString;

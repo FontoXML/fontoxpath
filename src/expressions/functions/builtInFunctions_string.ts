@@ -608,7 +608,11 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'concat',
-			argumentTypes: ['xs:anyAtomicType?', 'xs:anyAtomicType?', '...'],
+			argumentTypes: [
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
+				{ kind: BaseType.ELLIPSIS },
+			],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnConcat,
 		},
@@ -621,7 +625,7 @@ export default {
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 			],
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: collationError,
 		},
 
@@ -632,7 +636,7 @@ export default {
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 			],
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnContains,
 		},
 
@@ -643,7 +647,7 @@ export default {
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 			],
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnEndsWith,
 		},
 
@@ -655,7 +659,7 @@ export default {
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 			],
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: collationError,
 		},
 
@@ -691,7 +695,7 @@ export default {
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 			],
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: fnStartsWith,
 		},
 
@@ -703,14 +707,14 @@ export default {
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 			],
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 			callFunction: collationError,
 		},
 
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string',
-			argumentTypes: ['item()?'],
+			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } }],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnString,
 		},
@@ -750,7 +754,7 @@ export default {
 			localName: 'substring',
 			argumentTypes: [
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				'xs:double',
+				{ kind: BaseType.XSDOUBLE },
 			],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnSubstring,
@@ -761,8 +765,8 @@ export default {
 			localName: 'substring',
 			argumentTypes: [
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
-				'xs:double',
-				'xs:double',
+				{ kind: BaseType.XSDOUBLE },
+				{ kind: BaseType.XSDOUBLE },
 			],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnSubstring,
@@ -787,7 +791,10 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-join',
-			argumentTypes: ['xs:anyAtomicType*', { kind: BaseType.XSSTRING }],
+			argumentTypes: [
+				{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+				{ kind: BaseType.XSSTRING },
+			],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction: fnStringJoin,
 		},
@@ -795,7 +802,7 @@ export default {
 		{
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'string-join',
-			argumentTypes: ['xs:anyAtomicType*'],
+			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } }],
 			returnType: { kind: BaseType.XSSTRING },
 			callFunction(dynamicContext, executionParameters, staticContext, arg1) {
 				return fnStringJoin(
@@ -841,7 +848,12 @@ export default {
 				{ kind: BaseType.XSSTRING },
 				{ kind: BaseType.XSSTRING },
 			],
-			returnType: 'xs:string*',
+			returnType: {
+				kind: BaseType.ANY,
+				item: {
+					kind: BaseType.XSSTRING,
+				},
+			},
 			callFunction(
 				_dynamicContext,
 				_executionParameters,
@@ -861,7 +873,12 @@ export default {
 				{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } },
 				{ kind: BaseType.XSSTRING },
 			],
-			returnType: 'xs:string*',
+			returnType: {
+				kind: BaseType.ANY,
+				item: {
+					kind: BaseType.XSSTRING,
+				},
+			},
 			callFunction: fnTokenize,
 		},
 
@@ -869,7 +886,12 @@ export default {
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
 			localName: 'tokenize',
 			argumentTypes: [{ kind: BaseType.SOME, item: { kind: BaseType.XSSTRING } }],
-			returnType: 'xs:string*',
+			returnType: {
+				kind: BaseType.ANY,
+				item: {
+					kind: BaseType.XSSTRING,
+				},
+			},
 			callFunction(dynamicContext, executionParameters, staticContext, input) {
 				return fnTokenize(
 					dynamicContext,
@@ -894,7 +916,14 @@ export default {
 		},
 
 		{
-			argumentTypes: ['xs:integer*'],
+			argumentTypes: [
+				{
+					kind: BaseType.ANY,
+					item: {
+						kind: BaseType.XSINTEGER,
+					},
+				},
+			],
 			callFunction: fnCodepointsToString,
 			localName: 'codepoints-to-string',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -906,7 +935,12 @@ export default {
 			callFunction: fnStringToCodepoints,
 			localName: 'string-to-codepoints',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:integer*',
+			returnType: {
+				kind: BaseType.ANY,
+				item: {
+					kind: BaseType.XSINTEGER,
+				},
+			},
 		},
 
 		{
@@ -933,7 +967,12 @@ export default {
 			callFunction: fnCodepointEqual,
 			localName: 'codepoint-equal',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean?',
+			returnType: {
+				kind: BaseType.NULLABLE,
+				item: {
+					kind: BaseType.XSBOOLEAN,
+				},
+			},
 		},
 
 		{
@@ -944,7 +983,7 @@ export default {
 			callFunction: fnMatches,
 			localName: 'matches',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
+			returnType: { kind: BaseType.XSBOOLEAN },
 		},
 	],
 	functions: {

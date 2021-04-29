@@ -115,7 +115,7 @@ export default function transformXPathItemToJavascriptObject(
 	if (isSubtypeOf(value.type, { kind: BaseType.ARRAY, items: [] })) {
 		return transformArrayToArray(value as ArrayValue, executionParameters);
 	}
-	if (isSubtypeOf(value.type, { kind: BaseType.XSNAME })) {
+	if (isSubtypeOf(value.type, { kind: BaseType.XSQNAME })) {
 		const qualifiedName = value.value as QName;
 		return {
 			next: () => ready(`Q{${qualifiedName.namespaceURI || ''}}${qualifiedName.localName}`),

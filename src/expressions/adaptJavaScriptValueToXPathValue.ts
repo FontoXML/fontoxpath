@@ -108,13 +108,13 @@ function adaptJavaScriptValueToXPath(
 		return null;
 	}
 	switch (type.kind) {
-		case BaseType.XSDATETIME:
+		case BaseType.XSBOOLEAN:
 			return value ? trueBoolean : falseBoolean;
 		case BaseType.XSSTRING:
 			return createAtomicValue(value + '', { kind: BaseType.XSSTRING });
 		case BaseType.XSDOUBLE:
 		case BaseType.XSNUMERIC:
-			checkNumericType(value, BaseType.XSNUMERIC);
+			checkNumericType(value, BaseType.XSDOUBLE);
 			return createAtomicValue(+value, { kind: BaseType.XSDOUBLE });
 		case BaseType.XSDECIMAL:
 			checkNumericType(value, type.kind);

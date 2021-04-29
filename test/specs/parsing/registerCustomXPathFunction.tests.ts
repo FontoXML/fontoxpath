@@ -558,8 +558,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-optional-param' },
-				[{ kind: BaseType.SOME, item: { kind: BaseType.XSDATE } }],
-				{ kind: BaseType.SOME, item: { kind: BaseType.XSDATE } },
+				[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } }],
+				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } },
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date === null || date instanceof Date,
