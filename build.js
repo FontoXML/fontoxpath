@@ -87,7 +87,7 @@ function doTSCCBuild() {
 			},
 			prefix: './',
 			compilerFlags: {
-				debug: true,
+				debug: false,
 				assume_function_wrapper: true,
 				compilation_level: 'ADVANCED',
 				output_wrapper: `function (xspattern) {
