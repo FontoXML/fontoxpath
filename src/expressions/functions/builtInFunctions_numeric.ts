@@ -151,14 +151,14 @@ function fnRound(
 			const itemAsDecimal = castToType(firstValue, { kind: BaseType.XSDECIMAL });
 			const scaling = Math.pow(10, scalingPrecision);
 			const roundedNumber = determineRoundedNumber(itemAsDecimal.value, halfToEven, scaling);
-			switch (originalType) {
-				case { kind: BaseType.XSDECIMAL }:
+			switch (originalType.kind) {
+				case BaseType.XSDECIMAL:
 					return ready(createAtomicValue(roundedNumber, { kind: BaseType.XSDECIMAL }));
-				case { kind: BaseType.XSDOUBLE }:
+				case BaseType.XSDOUBLE:
 					return ready(createAtomicValue(roundedNumber, { kind: BaseType.XSDOUBLE }));
-				case { kind: BaseType.XSFLOAT }:
+				case BaseType.XSFLOAT:
 					return ready(createAtomicValue(roundedNumber, { kind: BaseType.XSFLOAT }));
-				case { kind: BaseType.XSINTEGER }:
+				case BaseType.XSINTEGER:
 					return ready(createAtomicValue(roundedNumber, { kind: BaseType.XSINTEGER }));
 			}
 		},

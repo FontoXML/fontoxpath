@@ -30,7 +30,7 @@ function isSubtypeOfType(subType, superType) {
  * xs:NMTOKENS is a subtype of xs:NM TOKEN
  */
 export default function isSubtypeOf(subTypeName: ValueType, superTypeName: ValueType): boolean {
-	if (subTypeName === superTypeName) {
+	if (subTypeName.kind === superTypeName.kind) {
 		return true;
 	}
 

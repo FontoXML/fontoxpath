@@ -7,7 +7,7 @@ import {
 	validatePattern,
 	validateRestrictions,
 } from '../typeHelpers';
-import { BaseType, ValueType } from '../Value';
+import { BaseType, ValueType, valueTypeHash } from '../Value';
 import CastResult from './CastResult';
 import castToAnyURI from './castToAnyURI';
 import castToBase64Binary from './castToBase64Binary';
@@ -46,50 +46,50 @@ function castToPrimitiveType(from: ValueType, to: ValueType): (value) => CastRes
 			error: new Error('FORG0001: Casting to xs:error is always invalid.'),
 		});
 	}
-	switch (to) {
-		case { kind: BaseType.XSUNTYPEDATOMIC }:
+	switch (to.kind) {
+		case BaseType.XSUNTYPEDATOMIC:
 			return castToUntypedAtomic(instanceOf);
-		case { kind: BaseType.XSSTRING }:
+		case BaseType.XSSTRING:
 			return castToString(instanceOf);
-		case { kind: BaseType.XSFLOAT }:
+		case BaseType.XSFLOAT:
 			return castToFloat(instanceOf);
-		case { kind: BaseType.XSDOUBLE }:
+		case BaseType.XSDOUBLE:
 			return castToDouble(instanceOf);
-		case { kind: BaseType.XSDECIMAL }:
+		case BaseType.XSDECIMAL:
 			return castToDecimal(instanceOf);
-		case { kind: BaseType.XSINTEGER }:
+		case BaseType.XSINTEGER:
 			return castToInteger(instanceOf);
-		case { kind: BaseType.XSDURATION }:
+		case BaseType.XSDURATION:
 			return castToDuration(instanceOf);
-		case { kind: BaseType.XSYEARMONTHDURATION }:
+		case BaseType.XSYEARMONTHDURATION:
 			return castToYearMonthDuration(instanceOf);
-		case { kind: BaseType.XSDAYTIMEDURATION }:
+		case BaseType.XSDAYTIMEDURATION:
 			return castToDayTimeDuration(instanceOf);
-		case { kind: BaseType.XSDATETIME }:
+		case BaseType.XSDATETIME:
 			return castToDateTime(instanceOf);
-		case { kind: BaseType.XSTIME }:
+		case BaseType.XSTIME:
 			return castToTime(instanceOf);
-		case { kind: BaseType.XSDATE }:
+		case BaseType.XSDATE:
 			return castToDate(instanceOf);
-		case { kind: BaseType.XSGYEARMONTH }:
+		case BaseType.XSGYEARMONTH:
 			return castToGYearMonth(instanceOf);
-		case { kind: BaseType.XSGYEAR }:
+		case BaseType.XSGYEAR:
 			return castToGYear(instanceOf);
-		case { kind: BaseType.XSGMONTHDAY }:
+		case BaseType.XSGMONTHDAY:
 			return castToGMonthDay(instanceOf);
-		case { kind: BaseType.XSGDAY }:
+		case BaseType.XSGDAY:
 			return castToGDay(instanceOf);
-		case { kind: BaseType.XSGMONTH }:
+		case BaseType.XSGMONTH:
 			return castToGMonth(instanceOf);
-		case { kind: BaseType.XSBOOLEAN }:
+		case BaseType.XSBOOLEAN:
 			return castToBoolean(instanceOf);
-		case { kind: BaseType.XSBASE64BINARY }:
+		case BaseType.XSBASE64BINARY:
 			return castToBase64Binary(instanceOf);
-		case { kind: BaseType.XSHEXBINARY }:
+		case BaseType.XSHEXBINARY:
 			return castToHexBinary(instanceOf);
-		case { kind: BaseType.XSANYURI }:
+		case BaseType.XSANYURI:
 			return castToAnyURI(instanceOf);
-		case { kind: BaseType.XSQNAME }:
+		case BaseType.XSQNAME:
 			throw new Error('Casting to xs:QName is not implemented.');
 	}
 
@@ -242,11 +242,12 @@ function createCastingFunction(from: ValueType, to: ValueType) {
 }
 
 export default function tryCastToType(valueTuple: AtomicValue, type: ValueType): CastResult {
-	let prefabConverter = precomputedCastFunctorsByTypeString[`${valueTuple.type}~${type}`];
+	const index = valueTypeHash(valueTuple.type) + valueTypeHash(type) * 10000;
+	let prefabConverter = precomputedCastFunctorsByTypeString[index];
 
 	if (!prefabConverter) {
 		prefabConverter = precomputedCastFunctorsByTypeString[
-			`${valueTuple.type}~${type}`
+			index
 		] = createCastingFunction(valueTuple.type, type);
 	}
 	return prefabConverter.call(undefined, valueTuple.value, type);

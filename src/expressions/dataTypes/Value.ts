@@ -147,6 +147,10 @@ const a = new Map([
 	[BaseType.FUNCTION, false],
 	[BaseType.MAP, false],
 	[BaseType.ARRAY, false],
+	[BaseType.NULLABLE, false],
+	[BaseType.ANY, false],
+	[BaseType.SOME, false],
+	[BaseType.ELLIPSIS, false],
 ]);
 
 /**
@@ -221,6 +225,11 @@ export type ValueType =
 	| { kind: BaseType.ANY; item: ValueType }
 	| { kind: BaseType.SOME; item: ValueType }
 	| { kind: BaseType.ELLIPSIS };
+
+export function valueTypeHash(type: ValueType): number {
+	//TODO: incorporate item, returntype, ...
+	return type.kind as number;
+}
 
 /**
  * Maps the string representation of the types to the ValueType object.
