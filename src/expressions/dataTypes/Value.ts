@@ -205,3 +205,143 @@ export type ValueType =
 	| { kind: BaseType.FUNCTION; returnType: ValueType | undefined; param: ValueType[] }
 	| { kind: BaseType.MAP; items: [ValueType, ValueType][] }
 	| { kind: BaseType.ARRAY; items: ValueType[] };
+
+/**
+ * Maps the string representation of the types to the ValueType object.
+ *  
+ * @param input type string of the form "xs:<type>".
+ * @returns the corresponding ValueType object.
+ * @throws Error if the type cannot be mapped from string to ValueType.
+ */
+export function stringToValueType(input: string): ValueType {
+	switch (input) {
+		case 'xs:boolean':
+			return { kind: BaseType.XSBOOLEAN };
+		case 'xs:string':
+			return { kind: BaseType.XSSTRING };
+		case 'xs:numeric':
+			return { kind: BaseType.XSNUMERIC };
+		case 'xs:double':
+			return { kind: BaseType.XSDOUBLE };
+		case 'xs:decimal':
+			return { kind: BaseType.XSDECIMAL };
+		case 'xs:integer':
+			return { kind: BaseType.XSINTEGER };
+		case 'xs:float':
+			return { kind: BaseType.XSFLOAT };
+		case 'xs:date':
+			return { kind: BaseType.XSDATE };
+		case 'xs:time':
+			return { kind: BaseType.XSTIME };
+		case 'xs:dateTime':
+			return { kind: BaseType.XSDATETIME };
+		case 'xs:dateTimeStamp':
+			return { kind: BaseType.XSDATETIMESTAMP };
+		case 'xs:gYearMonth':
+			return { kind: BaseType.XSGYEARMONTH };
+		case 'xs:gYear':
+			return { kind: BaseType.XSGYEAR };
+		case 'xs:gMonthDay':
+			return { kind: BaseType.XSGMONTHDAY };
+		case 'xs:gMonth':
+			return { kind: BaseType.XSGMONTH };
+		case 'xs:gDay':
+			return { kind: BaseType.XSGDAY };
+		case 'xs:yearMonthDuration':
+			return { kind: BaseType.XSYEARMONTHDURATION };
+		case 'xs:dayTimeDuration':
+			return { kind: BaseType.XSDAYTIMEDURATION };
+		case 'xs:duration':
+			return { kind: BaseType.XSDURATION };
+		case 'xs:untypedAtomic':
+			return { kind: BaseType.XSUNTYPEDATOMIC };
+		case 'xs:anyURI':
+			return { kind: BaseType.XSANYURI };
+		case 'xs:base64Binary':
+			return { kind: BaseType.XSBASE64BINARY };
+		case 'xs:hexBinary':
+			return { kind: BaseType.XSHEXBINARY };
+		case 'xs:QName':
+			return { kind: BaseType.XSQNAME };
+		case 'xs:NCName':
+			return { kind: BaseType.XSNCNAME };
+		case 'xs:Name':
+			return { kind: BaseType.XSNAME };
+		case 'xs:ENTITY':
+			return { kind: BaseType.XSENTITY };
+		case 'xs:nonPositiveInteger':
+			return { kind: BaseType.XSNONPOSITIVEINTEGER };
+		case 'xs:negativeInteger':
+			return { kind: BaseType.XSNEGATIVEINTEGER };
+		case 'xs:positiveInteger':
+			return { kind: BaseType.XSPOSITIVEINTEGER };
+		case 'xs:nonNegativeInteger':
+			return { kind: BaseType.XSNONNEGATIVEINTEGER };
+		case 'xs:long':
+			return { kind: BaseType.XSLONG };
+		case 'xs:int':
+			return { kind: BaseType.XSINT };
+		case 'xs:short':
+			return { kind: BaseType.XSSHORT };
+		case 'xs:byte':
+			return { kind: BaseType.XSBYTE };
+		case 'xs:unsignedInt':
+			return { kind: BaseType.XSUNSIGNEDINT };
+		case 'xs:unsignedLong':
+			return { kind: BaseType.XSUNSIGNEDLONG };
+		case 'xs:unsignedByte':
+			return { kind: BaseType.XSUNSIGNEDBYTE };
+		case 'xs:unsignedShort':
+			return { kind: BaseType.XSUNSIGNEDSHORT };
+		case 'xs:error':
+			return { kind: BaseType.XSERROR };
+		case 'xs:ENTITIES':
+			return { kind: BaseType.XSENTITIES };
+		case 'xs:IDREF':
+			return { kind: BaseType.XSIDREF };
+		case 'xs:ID':
+			return { kind: BaseType.XSID };
+		case 'xs:IDREFS':
+			return { kind: BaseType.XSIDREFS };
+		case 'xs:NOTATION':
+			return { kind: BaseType.XSNOTATION };
+		case 'xs:anySimpleType':
+			return { kind: BaseType.XSANYSIMPLETYPE };
+		case 'xs:anyAtomicType':
+			return { kind: BaseType.XSANYATOMICTYPE };
+		case 'attribute()':
+			return { kind: BaseType.ATTRIBUTE };
+		case 'xs:normalizedString':
+			return { kind: BaseType.XSNORMALIZEDSTRING };
+		case 'xs:NMTOKENS':
+			return { kind: BaseType.XSNMTOKENS };
+		case 'xs:NMTOKEN':
+			return { kind: BaseType.XSNMTOKEN };
+		case 'xs:language':
+			return { kind: BaseType.XSLANGUAGE };
+		case 'xs:token':
+			return { kind: BaseType.XSTOKEN };
+		case 'node()':
+			return { kind: BaseType.NODE };
+		case 'element()':
+			return { kind: BaseType.ELEMENT };
+		case 'document-node()':
+			return { kind: BaseType.DOCUMENTNODE };
+		case 'text()':
+			return { kind: BaseType.TEXT };
+		case 'processing-instruction()':
+			return { kind: BaseType.PROCESSINGINSTRUCTION };
+		case 'comment()':
+			return { kind: BaseType.COMMENT };
+		case 'item()':
+			return { kind: BaseType.ITEM };
+		case 'function(*)':
+			return { kind: BaseType.FUNCTION, returnType: undefined, param: [] };
+		case 'map(*)':
+			return { kind: BaseType.MAP, items: [] };
+		case 'array(*)':
+			return { kind: BaseType.ARRAY, items: [] };
+		default:
+			throw new Error(`Cannot convert String of type "${input}" to ValueType`);
+	}
+}
