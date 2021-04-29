@@ -40,18 +40,18 @@ const fnTrace: FunctionDefinitionType = (
 export default {
 	declarations: [
 		{
-			argumentTypes: ['item()*'],
+			argumentTypes: [{kind: BaseType.ANY, item: BaseType.ITEM}],
 			callFunction: fnTrace,
 			localName: 'trace',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
+			returnType: {kind: BaseType.ANY, item: BaseType.ITEM},
 		},
 		{
-			argumentTypes: ['item()*', 'xs:string'],
+			argumentTypes: [{kind: BaseType.ANY, item: BaseType.ITEM}, {kind: BaseType.XSSTRING}],
 			callFunction: fnTrace,
 			localName: 'trace',
 			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'item()*',
+			returnType: {kind: BaseType.ANY, item: BaseType.ITEM},
 		},
 	],
 };
