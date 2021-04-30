@@ -221,6 +221,8 @@ export type ValueType =
 	| { kind: BaseType.FUNCTION; params: ValueType[]; returnType: ValueType | undefined }
 	| { items: [ValueType, ValueType][]; kind: BaseType.MAP }
 	| { items: ValueType[]; kind: BaseType.ARRAY }
+	// item types, sequence types, function args = seq + "..."
+	// zero or one, exactly one, one or more, empty, singleton, multiple
 	| { item: ValueType; kind: BaseType.NULLABLE }
 	| { item: ValueType; kind: BaseType.ANY }
 	| { item: ValueType; kind: BaseType.SOME }

@@ -47,7 +47,7 @@ builtinModels.forEach((model) => {
 	} else if (model.variety === 'list') {
 		const type = builtinDataTypesByName[model.type.kind];
 		builtinDataTypesByName[name.kind] = {
-			variety: 'union', // TODO: why not list?
+			variety: 'list',
 			name,
 			restrictionsByName,
 			parent: type,
