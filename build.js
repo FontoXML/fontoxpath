@@ -27,7 +27,7 @@ function doPegJsBuild() {
 	// linter errors. Also, don't measure code coverage on this file. It is generated.
 		.then((parserString) => `// @ts-nocheck
 /* tslint:disable */
-// @coverage(false)
+/* istanbul ignore file */
 
 // HACK: PegJS uses a single object with keys that are later indexed using strings,
 //  this is incompatible with the closure compiler.
