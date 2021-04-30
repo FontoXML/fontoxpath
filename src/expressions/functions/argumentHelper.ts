@@ -3,7 +3,7 @@ import castToType from '../dataTypes/castToType';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import promoteToType from '../dataTypes/promoteToType';
-import Value, { BaseType, ValueType } from '../dataTypes/Value';
+import Value, { BaseType, ValueType, valueTypeToString } from '../dataTypes/Value';
 import ExecutionParameters from '../ExecutionParameters';
 
 function mapItem(
@@ -40,9 +40,11 @@ function mapItem(
 		const convertedItem = castToType(argumentItem, type);
 		if (!convertedItem) {
 			throw new Error(
-				`XPTY0004 Unable to convert ${isReturn ? 'return' : 'argument'} of type ${
-					argumentItem.type
-				} to type ${type} while calling ${functionName}`
+				`XPTY0004 Unable to convert ${
+					isReturn ? 'return' : 'argument'
+				} of type ${valueTypeToString(argumentItem.type)} to type ${valueTypeToString(
+					type
+				)} while calling ${functionName}`
 			);
 		}
 		return convertedItem;
@@ -52,9 +54,11 @@ function mapItem(
 	const item = promoteToType(argumentItem, type);
 	if (!item) {
 		throw new Error(
-			`XPTY0004 Unable to cast ${isReturn ? 'return' : 'argument'} of type ${
-				argumentItem.type
-			} to type ${type} while calling ${functionName}`
+			`XPTY0004 Unable to cast ${
+				isReturn ? 'return' : 'argument'
+			} of type ${valueTypeToString(argumentItem.type)} to type ${valueTypeToString(
+				type
+			)} while calling ${functionName}`
 		);
 	}
 	return item;
