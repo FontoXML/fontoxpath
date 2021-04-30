@@ -7,7 +7,7 @@ import Value, { BaseType } from '../dataTypes/Value';
  * Promote all given (numeric) items to single common type
  * https://www.w3.org/TR/xpath-31/#promotion
  */
-export default function convertItemsToCommonType(items: (Value | null)[]) {
+export default function convertItemsToCommonType(items: (Value | null)[]): (Value | null)[] {
 	if (
 		items.every((item) => {
 			// xs:integer is the only numeric type with inherits from another numeric type

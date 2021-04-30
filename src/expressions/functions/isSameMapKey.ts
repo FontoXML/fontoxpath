@@ -1,7 +1,7 @@
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import Value, { BaseType } from '../dataTypes/Value';
 
-export default function isSameMapKey(k1: Value, k2: Value) {
+export default function isSameMapKey(k1: Value, k2: Value): boolean {
 	const k1IsStringLike =
 		isSubtypeOf(k1.type, { kind: BaseType.XSSTRING }) ||
 		isSubtypeOf(k1.type, { kind: BaseType.XSANYURI }) ||
