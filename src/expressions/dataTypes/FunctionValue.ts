@@ -15,10 +15,10 @@ export type FunctionSignature<T> = (
 	...args: ISequence[]
 ) => T;
 
-function expandRestArgumentToArity(argumentTypes, arity) {
+function expandRestArgumentToArity(argumentTypes: (ValueType | RestArgument)[], arity: number) {
 	let indexOfRest = -1;
 	for (let i = 0; i < argumentTypes.length; i++) {
-		if (argumentTypes[i].isRestArgument) {
+		if ((argumentTypes[i] as RestArgument).isRestArgument) {
 			indexOfRest = i;
 		}
 	}
