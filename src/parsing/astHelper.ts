@@ -1,4 +1,4 @@
-import { ValueType, BaseType, stringToValueType } from '../expressions/dataTypes/Value';
+import { BaseType, stringToValueType, ValueType } from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };

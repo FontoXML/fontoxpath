@@ -73,7 +73,10 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnFunctionLookup,
 		localName: 'function-lookup',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.FUNCTION, returnType: undefined, params: [] } },
+		returnType: {
+			kind: BaseType.NULLABLE,
+			item: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+		},
 	},
 
 	{
@@ -81,7 +84,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnFunctionName,
 		localName: 'function-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: {kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME }},
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
 	},
 
 	{

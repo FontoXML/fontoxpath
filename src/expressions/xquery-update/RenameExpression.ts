@@ -7,6 +7,7 @@ import { rename } from './pulPrimitives';
 import { mergeUpdates } from './pulRoutines';
 
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
+import { BaseType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import { IIterator, IterationHint, ready } from '../util/iterators';
 import { evaluateNCNameExpression, evaluateQNameExpression } from '../xquery/nameExpression';
@@ -16,7 +17,6 @@ import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import UpdatingExpressionResult from '../UpdatingExpressionResult';
 import { errXUDY0023, errXUDY0027, errXUTY0012 } from './XQueryUpdateFacilityErrors';
-import { BaseType } from '../dataTypes/Value';
 
 function evaluateTarget(targetXdmValue) {
 	// TargetExpr is evaluated and checked as follows:

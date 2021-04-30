@@ -19,8 +19,8 @@ import builtInStringFunctions from './builtInFunctions_string';
 
 import builtInFontoxpathFunctions from './builtInFunctions_fontoxpath';
 
-import FunctionDefinitionType from './FunctionDefinitionType';
 import { ValueType } from '../dataTypes/Value';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 export type BuiltinDeclarationType = {
 	argumentTypes: ValueType[];

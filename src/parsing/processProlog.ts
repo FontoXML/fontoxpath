@@ -1,6 +1,6 @@
-import { ValueType } from '../expressions/dataTypes/Value';
 import ISequence from '../expressions/dataTypes/ISequence';
 import sequenceFactory from '../expressions/dataTypes/sequenceFactory';
+import { ValueType } from '../expressions/dataTypes/Value';
 import DynamicContext from '../expressions/DynamicContext';
 import ExecutionParameters from '../expressions/ExecutionParameters';
 import Expression from '../expressions/Expression';

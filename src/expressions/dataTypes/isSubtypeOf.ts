@@ -1,7 +1,5 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
-import { BaseType, ValueType, startWithXS } from './Value';
-import ETypeNames from './ETypeNames';
-import builtinModels from './builtins/builtinModels';
+import { startWithXS, ValueType } from './Value';
 
 function isSubtypeOfType(subType, superType) {
 	if (superType.variety === 'union') {

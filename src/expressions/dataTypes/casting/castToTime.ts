@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType, BaseType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import DateTime from '../valueTypes/DateTime';
 import CastResult from './CastResult';
 

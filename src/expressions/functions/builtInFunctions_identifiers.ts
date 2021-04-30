@@ -148,7 +148,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }, { kind: BaseType.NODE }],
+		argumentTypes: [
+			{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } },
+			{ kind: BaseType.NODE },
+		],
 		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ELEMENT } },
 		callFunction: fnId,
 	},
@@ -172,7 +175,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }, { kind: BaseType.NODE }],
+		argumentTypes: [
+			{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } },
+			{ kind: BaseType.NODE },
+		],
 		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
 		callFunction: fnIdref,
 	},

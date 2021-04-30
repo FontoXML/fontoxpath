@@ -1,6 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -8,9 +9,8 @@ import zipSingleton from '../util/zipSingleton';
 import mapGet from './builtInFunctions_maps_get';
 import isSameMapKey from './isSameMapKey';
 
-import FunctionDefinitionType from './FunctionDefinitionType';
-import { BaseType } from '../dataTypes/Value';
 import { BuiltinDeclarationType } from './builtInFunctions';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 const mapMerge: FunctionDefinitionType = (
 	dynamicContext,
