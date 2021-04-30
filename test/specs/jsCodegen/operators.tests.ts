@@ -4,8 +4,6 @@ import * as slimdom from 'slimdom';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
 import evaluateXPathToBoolean from '../../../src/evaluateXPathToBoolean';
-import evaluateXPathToFirstNode from '../../../src/evaluateXPathToFirstNode';
-import evaluateXPathToNodes from '../../../src/evaluateXPathToNodes';
 
 describe('operators', () => {
 	const document = new slimdom.Document();
