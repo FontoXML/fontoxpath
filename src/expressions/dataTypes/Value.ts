@@ -234,7 +234,7 @@ export type ValueType =
  * @returns A hash number
  */
 export function valueTypeHash(type: ValueType): number {
-	let prime = 31;
+	const prime = 31;
 	let result = type.kind as number;
 
 	switch (type.kind) {
@@ -242,18 +242,18 @@ export function valueTypeHash(type: ValueType): number {
 			result =
 				prime * result +
 				(type.returnType === undefined ? 0 : valueTypeHash(type.returnType));
-			for (let param of type.params) {
+			for (const param of type.params) {
 				result = prime * result + valueTypeHash(param);
 			}
 			break;
 		case BaseType.MAP:
-			for (let keyVal of type.items) {
+			for (const keyVal of type.items) {
 				result = prime * result + valueTypeHash(keyVal[0]);
 				result = prime * result + valueTypeHash(keyVal[1]);
 			}
 			break;
 		case BaseType.ARRAY:
-			for (let item of type.items) {
+			for (const item of type.items) {
 				result = prime * result + valueTypeHash(item);
 			}
 			break;
@@ -344,7 +344,7 @@ export function baseTypeToString(input: BaseType): string {
 		[BaseType.SOME]: '+',
 	};
 
-	var stringVal = typeToStringMap[input];
+	const stringVal = typeToStringMap[input];
 	if (stringVal === undefined || stringVal === null) {
 		throw new Error(`Cannot convert BaseType of type "${input}" to a string`);
 	}
@@ -444,7 +444,7 @@ export function stringToValueType(input: string): ValueType {
 		'array(*)': { kind: BaseType.ARRAY, items: [] },
 	};
 
-	var typeVal = stringToTypeMap[input];
+	const typeVal = stringToTypeMap[input];
 	if (typeVal === undefined || typeVal === null) {
 		throw new Error(`Cannot convert String of type "${input}" to ValueType`);
 	}
