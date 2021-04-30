@@ -21,9 +21,9 @@ class CastAsOperator extends Expression {
 				: targetType.localName
 		);
 		if (
-			this._targetType === { kind: BaseType.XSANYATOMICTYPE } ||
-			this._targetType === { kind: BaseType.XSANYSIMPLETYPE } ||
-			this._targetType === { kind: BaseType.XSNOTATION }
+			this._targetType.kind === BaseType.XSANYATOMICTYPE ||
+			this._targetType.kind === BaseType.XSANYSIMPLETYPE ||
+			this._targetType.kind === BaseType.XSNOTATION
 		) {
 			throw new Error(
 				'XPST0080: Casting to xs:anyAtomicType, xs:anySimpleType or xs:NOTATION is not permitted.'

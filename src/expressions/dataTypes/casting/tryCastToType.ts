@@ -40,7 +40,7 @@ const TREAT_AS_PRIMITIVE = [
 function castToPrimitiveType(from: ValueType, to: ValueType): (value) => CastResult {
 	const instanceOf = (type: ValueType) => isSubtypeOf(from, type);
 
-	if (to === { kind: BaseType.XSERROR }) {
+	if (to.kind === BaseType.XSERROR) {
 		return () => ({
 			successful: false,
 			error: new Error('FORG0001: Casting to xs:error is always invalid.'),

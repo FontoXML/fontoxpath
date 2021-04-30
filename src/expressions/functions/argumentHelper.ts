@@ -32,7 +32,7 @@ function mapItem(
 	}
 
 	// Everything is an anyAtomicType, so no casting necessary.
-	if (type === { kind: BaseType.XSANYATOMICTYPE }) {
+	if (type.kind === BaseType.XSANYATOMICTYPE) {
 		return argumentItem;
 	}
 	if (isSubtypeOf(argumentItem.type, { kind: BaseType.XSUNTYPEDATOMIC })) {
