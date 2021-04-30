@@ -23,9 +23,11 @@ function doPegJsBuild() {
 				exportVar: 'xPathParser',
 			})
 			 )
-	// Note the ts-nocheck, the output of pegJs is not valid TypeScript. The tslint-disable disables linter errors.
+	// Note the ts-nocheck, the output of pegJs is not valid TypeScript. The tslint-disable disables
+	// linter errors. Also, don't measure code coverage on this file. It is generated.
 		.then((parserString) => `// @ts-nocheck
 /* tslint:disable */
+// @coverage(false)
 
 // HACK: PegJS uses a single object with keys that are later indexed using strings,
 //  this is incompatible with the closure compiler.
