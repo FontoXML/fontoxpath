@@ -1,20 +1,20 @@
 import astHelper, { IAST } from '../parsing/astHelper';
 import { axisEmittersByAxis } from './emitAxis';
 import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
-import emitTest, { determineTypeFromTest, kindTestNames } from './emitTest';
+import emitTest, { kindTestNames } from './emitTest';
 
-const baseExpressionNames = {
+const baseExpressionAstNames = {
 	PATH_EXPR: 'pathExpr',
 	AND_OP: 'andOp',
 	OR_OP: 'orOp',
 };
 
-const baseExpressions = Object.values(baseExpressionNames);
+const baseExpressions = Object.values(baseExpressionAstNames);
 
 const baseEmittersByExpression = {
-	[baseExpressionNames.PATH_EXPR]: emitPathExpression,
-	[baseExpressionNames.AND_OP]: emitAndExpression,
-	[baseExpressionNames.OR_OP]: emitOrExpression,
+	[baseExpressionAstNames.PATH_EXPR]: emitPathExpression,
+	[baseExpressionAstNames.AND_OP]: emitAndExpression,
+	[baseExpressionAstNames.OR_OP]: emitOrExpression,
 };
 
 function emitPredicates(predicatesAst: IAST, nestLevel: number): EmittedJavaScript {
@@ -78,15 +78,13 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 			const axis = astHelper.getTextContent(axisAst);
 
 			const emittedStepsCode = emittedSteps.code;
-			let nestedCode: string;
 			const testAst = astHelper.getFirstChild(step, kindTestNames);
-			if (i === stepsAst.length - 1) {
-				// Infer return type from the used test.
-				const returnType = determineTypeFromTest(testAst);
-				nestedCode = `i${nestLevel}++;\nreturn ready({ type: "${returnType}", value: { node: contextItem${nestLevel} }});`;
-			} else {
-				nestedCode = `${emittedStepsCode}\ni${nestLevel}++;`;
-			}
+
+			// Only the innermost nested step returns a value.
+			const nestedCode =
+				i === stepsAst.length - 1
+					? `i${nestLevel}++;\nreturn ready(adaptSingleJavaScriptValue(contextItem${nestLevel}, domFacade));`
+					: `${emittedStepsCode}\ni${nestLevel}++;`;
 
 			const emittedTest = emitTest(testAst, `contextItem${nestLevel}`);
 			if (!emittedTest.isAstAccepted) {

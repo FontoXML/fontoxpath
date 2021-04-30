@@ -1,39 +1,21 @@
-import { ValueType } from '../expressions/dataTypes/Value';
 import astHelper, { IAST } from '../parsing/astHelper';
 import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
 
-const kindTestNodeNames = {
+const testAstNames = {
 	TEXT_TEST: 'textTest',
 	ELEMENT_TEST: 'elementTest',
 	NAME_TEST: 'nameTest',
 	WILDCARD: 'Wildcard',
 };
 
-export const kindTestNames = Object.values(kindTestNodeNames);
+export const kindTestNames = Object.values(testAstNames);
 
 const testEmittersByNodeName = {
-	[kindTestNodeNames.TEXT_TEST]: emitTextTest,
-	[kindTestNodeNames.NAME_TEST]: emitNameTest,
-	[kindTestNodeNames.ELEMENT_TEST]: emitElementTest,
-	[kindTestNodeNames.WILDCARD]: emitWildcard,
+	[testAstNames.TEXT_TEST]: emitTextTest,
+	[testAstNames.NAME_TEST]: emitNameTest,
+	[testAstNames.ELEMENT_TEST]: emitElementTest,
+	[testAstNames.WILDCARD]: emitWildcard,
 };
-
-const typesByNodeName = {
-	[kindTestNodeNames.TEXT_TEST]: 'text()',
-	[kindTestNodeNames.NAME_TEST]: 'element()',
-	[kindTestNodeNames.ELEMENT_TEST]: 'element()',
-	[kindTestNodeNames.WILDCARD]: 'element()',
-};
-
-export function determineTypeFromTest(testAst: IAST): ValueType {
-	const testType = testAst[0];
-	const type = typesByNodeName[testType] as ValueType;
-
-	if (type === undefined) {
-		throw new Error(`Unsupported test type: ${testAst[0]}`);
-	}
-	return type;
-}
 
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest

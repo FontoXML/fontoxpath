@@ -11,7 +11,8 @@ const compileAstByReturnValue = {
 };
 
 const runtimeLibImports = `
-const { NODE_TYPES, DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue } = runtimeLibrary;
+const { NODE_TYPES, DONE_TOKEN, ready, isSubtypeOf, determinePredicateTruthValue,
+		adaptSingleJavaScriptValue } = runtimeLibrary;
 `;
 
 // Return all matching nodes.
