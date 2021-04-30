@@ -228,9 +228,43 @@ export type ValueType =
 	| { item: ValueType; kind: BaseType.SOME }
 	| { kind: BaseType.ELLIPSIS };
 
+/**
+ * Recursively creates a hash for a type and its potential subtypes
+ * @param type Input type to get the hash from
+ * @returns A hash number
+ */
 export function valueTypeHash(type: ValueType): number {
-	// TODO: incorporate item, returntype, ...
-	return type.kind as number;
+	let prime = 31;
+	let result = type.kind as number;
+
+	switch (type.kind) {
+		case BaseType.FUNCTION:
+			result =
+				prime * result +
+				(type.returnType === undefined ? 0 : valueTypeHash(type.returnType));
+			for (let param of type.params) {
+				result = prime * result + valueTypeHash(param);
+			}
+			break;
+		case BaseType.MAP:
+			for (let keyVal of type.items) {
+				result = prime * result + valueTypeHash(keyVal[0]);
+				result = prime * result + valueTypeHash(keyVal[1]);
+			}
+			break;
+		case BaseType.ARRAY:
+			for (let item of type.items) {
+				result = prime * result + valueTypeHash(item);
+			}
+			break;
+		case BaseType.NULLABLE:
+		case BaseType.ANY:
+		case BaseType.SOME:
+			result = prime * result + valueTypeHash(type.item);
+			break;
+	}
+
+	return result;
 }
 
 export function baseTypeToString(input: BaseType): string {
