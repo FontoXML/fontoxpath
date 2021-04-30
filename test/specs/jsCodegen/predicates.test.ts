@@ -6,7 +6,7 @@ import jsonMlMapper from 'test-helpers/jsonMlMapper';
 import evaluateXPathToBoolean from '../../../src/evaluateXPathToBoolean';
 import evaluateXPathToNodes from '../../../src/evaluateXPathToNodes';
 
-describe('filter expressions', () => {
+describe('predicates', () => {
 	const document = new slimdom.Document();
 	jsonMlMapper.parse(
 		[
@@ -17,7 +17,7 @@ describe('filter expressions', () => {
 		],
 		document
 	);
-	it('compiles filter expressions', () => {
+	it('compiles predicates', () => {
 		chai.assert.isTrue(
 			evaluateXPathToBoolean('/xml/tips[parent::element()]', document, null, null, {
 				backend: 'js-codegen',
@@ -40,7 +40,7 @@ describe('filter expressions', () => {
 			)
 		);
 	});
-	it('compiles filter expressions with a combination of "and" and "or" expressions', () => {
+	it('compiles predicates with a combination of "and" and "or" expressions', () => {
 		const results = evaluateXPathToNodes(
 			'/xml/element()[child::text() and self::element(title) or self::element(tips)]',
 			document,
