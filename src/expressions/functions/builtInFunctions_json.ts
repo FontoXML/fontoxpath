@@ -8,6 +8,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import FunctionDefinitionType from './FunctionDefinitionType';
 import { BaseType } from '../dataTypes/Value';
+import { BuiltinDeclarationType } from './builtInFunctions';
 
 function convert(obj: any): ISequence {
 	switch (typeof obj) {
@@ -62,16 +63,18 @@ const fnParseJson: FunctionDefinitionType = (
 	return convert(jsObject);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'parse-json',
+		argumentTypes: [{ kind: BaseType.XSSTRING }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } },
+		callFunction: fnParseJson,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'parse-json',
-			argumentTypes: [{ kind: BaseType.XSSTRING }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } },
-			callFunction: fnParseJson,
-		},
-	],
+	declarations,
 	functions: {
 		parseJson: fnParseJson,
 	},

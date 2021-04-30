@@ -14,6 +14,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import { performFunctionConversion } from './argumentHelper';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function createValidNumericType(type: ValueType, transformedValue: number) {
@@ -259,128 +260,130 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 	);
 };
 
-export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'abs',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-			callFunction: fnAbs,
-		},
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'abs',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		callFunction: fnAbs,
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'ceiling',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-			callFunction: fnCeiling,
-		},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'ceiling',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		callFunction: fnCeiling,
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'floor',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-			callFunction: fnFloor,
-		},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'floor',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		callFunction: fnFloor,
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'round',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-			callFunction: fnRound.bind(null, false),
-		},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'round',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		callFunction: fnRound.bind(null, false),
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'round',
-			argumentTypes: [
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-				{ kind: BaseType.XSINTEGER },
-			],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-			callFunction: fnRound.bind(null, false),
-		},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'round',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+			{ kind: BaseType.XSINTEGER },
+		],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		callFunction: fnRound.bind(null, false),
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'round-half-to-even',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-			callFunction: fnRound.bind(null, true),
-		},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'round-half-to-even',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		callFunction: fnRound.bind(null, true),
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'round-half-to-even',
-			argumentTypes: [
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-				{ kind: BaseType.XSINTEGER },
-			],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
-			callFunction: fnRound.bind(null, true),
-		},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'round-half-to-even',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+			{ kind: BaseType.XSINTEGER },
+		],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		callFunction: fnRound.bind(null, true),
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'number',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-			returnType: { kind: BaseType.XSDOUBLE },
-			callFunction: fnNumber,
-		},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'number',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
+		returnType: { kind: BaseType.XSDOUBLE },
+		callFunction: fnNumber,
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'number',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSDOUBLE },
-			callFunction: (dynamicContext, executionParameters, staticContext) => {
-				const atomizedContextItem =
-					dynamicContext.contextItem &&
-					performFunctionConversion(
-						{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
-						sequenceFactory.singleton(dynamicContext.contextItem),
-						executionParameters,
-						'fn:number',
-						false
-					);
-				if (!atomizedContextItem) {
-					throw new Error('XPDY0002: fn:number needs an atomizable context item.');
-				}
-				return fnNumber(
-					dynamicContext,
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'number',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSDOUBLE },
+		callFunction: (dynamicContext, executionParameters, staticContext) => {
+			const atomizedContextItem =
+				dynamicContext.contextItem &&
+				performFunctionConversion(
+					{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
+					sequenceFactory.singleton(dynamicContext.contextItem),
 					executionParameters,
-					staticContext,
-					atomizedContextItem
+					'fn:number',
+					false
 				);
-			},
+			if (!atomizedContextItem) {
+				throw new Error('XPDY0002: fn:number needs an atomizable context item.');
+			}
+			return fnNumber(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				atomizedContextItem
+			);
 		},
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'random-number-generator',
-			argumentTypes: [],
-			returnType: { kind: BaseType.MAP, items: [] },
-			callFunction: fnRandomNumberGenerator,
-		},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'random-number-generator',
+		argumentTypes: [],
+		returnType: { kind: BaseType.MAP, items: [] },
+		callFunction: fnRandomNumberGenerator,
+	},
 
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'random-number-generator',
-			argumentTypes: [
-				{
-					kind: BaseType.NULLABLE,
-					item: { kind: BaseType.XSANYATOMICTYPE },
-				},
-			],
-			returnType: { kind: BaseType.MAP, items: [] },
-			callFunction: () => {
-				throw new Error('Not implemented: Specifying a seed is not supported');
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'random-number-generator',
+		argumentTypes: [
+			{
+				kind: BaseType.NULLABLE,
+				item: { kind: BaseType.XSANYATOMICTYPE },
 			},
+		],
+		returnType: { kind: BaseType.MAP, items: [] },
+		callFunction: () => {
+			throw new Error('Not implemented: Specifying a seed is not supported');
 		},
-	],
+	},
+];
+
+export default {
+	declarations,
 	functions: {
 		number: fnNumber,
 		round: fnRound,

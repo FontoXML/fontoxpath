@@ -4,6 +4,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 import { BaseType } from '../dataTypes/Value';
+import { BuiltinDeclarationType } from './builtInFunctions';
 const fnNot: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,
@@ -34,40 +35,42 @@ const fnFalse: FunctionDefinitionType = () => {
 	return sequenceFactory.singletonFalseSequence();
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'boolean',
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		returnType: { kind: BaseType.XSBOOLEAN },
+		callFunction: fnBoolean,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'true',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSBOOLEAN },
+		callFunction: fnTrue,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'not',
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		returnType: { kind: BaseType.XSBOOLEAN },
+		callFunction: fnNot,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'false',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSBOOLEAN },
+		callFunction: fnFalse,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'boolean',
-			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-			returnType: { kind: BaseType.XSBOOLEAN },
-			callFunction: fnBoolean,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'true',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSBOOLEAN },
-			callFunction: fnTrue,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'not',
-			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-			returnType: { kind: BaseType.XSBOOLEAN },
-			callFunction: fnNot,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'false',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSBOOLEAN },
-			callFunction: fnFalse,
-		},
-	],
+	declarations,
 	functions: {
 		boolean: fnBoolean,
 		true: fnTrue,

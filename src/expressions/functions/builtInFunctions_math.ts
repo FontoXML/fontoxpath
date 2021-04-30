@@ -3,6 +3,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { BaseType } from '../dataTypes/Value';
 
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const mathPi: FunctionDefinitionType = (_dynamicContext, _executionParameters, _staticContext) => {
@@ -168,124 +169,126 @@ const mathAtan2: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'pi',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSDOUBLE },
+		callFunction: mathPi,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'exp',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathExp,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'exp10',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathExp10,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'log',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathLog,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'log10',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathLog10,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'pow',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+			{ kind: BaseType.XSNUMERIC },
+		],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathPow,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'sqrt',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathSqrt,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'sin',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathSin,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'cos',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathCos,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'tan',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathTan,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'asin',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathAsin,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'acos',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathAcos,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'atan',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathAtan,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'atan2',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+			{ kind: BaseType.XSDOUBLE },
+		],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathAtan2,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'pi',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSDOUBLE },
-			callFunction: mathPi,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'exp',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathExp,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'exp10',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathExp10,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'log',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathLog,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'log10',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathLog10,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'pow',
-			argumentTypes: [
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-				{ kind: BaseType.XSNUMERIC },
-			],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathPow,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'sqrt',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathSqrt,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'sin',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathSin,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'cos',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathCos,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'tan',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathTan,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'asin',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathAsin,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'acos',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathAcos,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'atan',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathAtan,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'atan2',
-			argumentTypes: [
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-				{ kind: BaseType.XSDOUBLE },
-			],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
-			callFunction: mathAtan2,
-		},
-	],
+	declarations
 };

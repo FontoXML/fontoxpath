@@ -5,6 +5,7 @@ import { DONE_TOKEN, ready } from '../util/iterators';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionDefinitionType from './FunctionDefinitionType';
 import { BaseType } from '../dataTypes/Value';
+import { BuiltinDeclarationType } from './builtInFunctions';
 
 const fnLast: FunctionDefinitionType = (dynamicContext) => {
 	if (dynamicContext.contextItem === null) {
@@ -75,55 +76,56 @@ const fnImplicitTimezone: FunctionDefinitionType = (dynamicContext) => {
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'last',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSINTEGER },
+		callFunction: fnLast,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'position',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSINTEGER },
+		callFunction: fnPosition,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'current-dateTime',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSDATETIMESTAMP },
+		callFunction: fnCurrentDateTime,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'current-date',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSDATE },
+		callFunction: fnCurrentDate,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'current-time',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSTIME },
+		callFunction: fnCurrentTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'implicit-timezone',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSDAYTIMEDURATION },
+		callFunction: fnImplicitTimezone,
+	},
+];
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'last',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSINTEGER },
-			callFunction: fnLast,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'position',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSINTEGER },
-			callFunction: fnPosition,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'current-dateTime',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSDATETIMESTAMP },
-			callFunction: fnCurrentDateTime,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'current-date',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSDATE },
-			callFunction: fnCurrentDate,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'current-time',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSTIME },
-			callFunction: fnCurrentTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'implicit-timezone',
-			argumentTypes: [],
-			returnType: { kind: BaseType.XSDAYTIMEDURATION },
-			callFunction: fnImplicitTimezone,
-		},
-	],
+	declarations,
 	functions: {
 		last: fnLast,
 		position: fnPosition,

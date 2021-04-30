@@ -4,6 +4,7 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 import { BaseType } from '../dataTypes/Value';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BuiltinDeclarationType } from './builtInFunctions';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -37,21 +38,26 @@ const fnTrace: FunctionDefinitionType = (
 	});
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		callFunction: fnTrace,
+		localName: 'trace',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+	},
+	{
+		argumentTypes: [
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.XSSTRING },
+		],
+		callFunction: fnTrace,
+		localName: 'trace',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+	},
+];
+
 export default {
-	declarations: [
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: BaseType.ITEM}],
-			callFunction: fnTrace,
-			localName: 'trace',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.ANY, item: BaseType.ITEM},
-		},
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: BaseType.ITEM}, {kind: BaseType.XSSTRING}],
-			callFunction: fnTrace,
-			localName: 'trace',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.ANY, item: BaseType.ITEM},
-		},
-	],
+	declarations,
 };

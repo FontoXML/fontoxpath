@@ -10,6 +10,7 @@ import isSameMapKey from './isSameMapKey';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 import { BaseType } from '../dataTypes/Value';
+import { BuiltinDeclarationType } from './builtInFunctions';
 
 const mapMerge: FunctionDefinitionType = (
 	dynamicContext,
@@ -210,125 +211,127 @@ const mapForEach: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'contains',
+		argumentTypes: [{ kind: BaseType.MAP, items: [] }, { kind: BaseType.XSANYATOMICTYPE }],
+		returnType: { kind: BaseType.XSBOOLEAN },
+		callFunction: mapContains,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'entry',
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE },
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		],
+		returnType: { kind: BaseType.MAP, items: [] },
+		callFunction: mapEntry,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'for-each',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: [{ kind: BaseType.MAP, items: [] }, '({ kind: BaseType.XSANYATOMICTYPE ,
+		// { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }) as { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }'],
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [] },
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		callFunction: mapForEach,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'get',
+		argumentTypes: [{ kind: BaseType.MAP, items: [] }, { kind: BaseType.XSANYATOMICTYPE }],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		callFunction: mapGet,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'keys',
+		argumentTypes: [{ kind: BaseType.MAP, items: [] }],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+		callFunction: mapKeys,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'merge',
+		argumentTypes: [
+			{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } },
+			{ kind: BaseType.MAP, items: [] },
+		],
+		returnType: { kind: BaseType.MAP, items: [] },
+		callFunction: mapMerge,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'merge',
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } }],
+		returnType: { kind: BaseType.MAP, items: [] },
+		callFunction(dynamicContext, executionParameters, staticContext, maps) {
+			return mapMerge(
+				dynamicContext,
+				executionParameters,
+				staticContext,
+				maps,
+				sequenceFactory.singleton(
+					new MapValue([
+						{
+							key: createAtomicValue('duplicates', { kind: BaseType.XSSTRING }),
+							value: () =>
+								sequenceFactory.singleton(
+									createAtomicValue('use-first', { kind: BaseType.XSSTRING })
+								),
+						},
+					])
+				)
+			);
+		},
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'put',
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [] },
+			{ kind: BaseType.XSANYATOMICTYPE },
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		],
+		returnType: { kind: BaseType.MAP, items: [] },
+		callFunction: mapPut,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'remove',
+		argumentTypes: [
+			{ kind: BaseType.MAP, items: [] },
+			{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+		],
+		returnType: { kind: BaseType.MAP, items: [] },
+		callFunction: mapRemove,
+	},
+
+	{
+		namespaceURI: MAP_NAMESPACE_URI,
+		localName: 'size',
+		argumentTypes: [{ kind: BaseType.MAP, items: [] }],
+		returnType: { kind: BaseType.XSINTEGER },
+		callFunction: mapSize,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'contains',
-			argumentTypes: [{ kind: BaseType.MAP }, { kind: BaseType.XSANYATOMICTYPE }],
-			returnType: { kind: BaseType.XSBOOLEAN },
-			callFunction: mapContains,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'entry',
-			argumentTypes: [
-				{ kind: BaseType.XSANYATOMICTYPE },
-				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			],
-			returnType: { kind: BaseType.MAP, items: [] },
-			callFunction: mapEntry,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'for-each',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: [{ kind: BaseType.MAP, items: [] }, '({ kind: BaseType.XSANYATOMICTYPE ,
-			// { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }) as { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }'],
-			argumentTypes: [
-				{ kind: BaseType.MAP, items: [] },
-				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			callFunction: mapForEach,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'get',
-			argumentTypes: [{ kind: BaseType.MAP, items: [] }, { kind: BaseType.XSANYATOMICTYPE }],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			callFunction: mapGet,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'keys',
-			argumentTypes: [{ kind: BaseType.MAP, items: [] }],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
-			callFunction: mapKeys,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'merge',
-			argumentTypes: [
-				{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } },
-				{ kind: BaseType.MAP, items: [] },
-			],
-			returnType: { kind: BaseType.MAP, items: [] },
-			callFunction: mapMerge,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'merge',
-			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } }],
-			returnType: { kind: BaseType.MAP, items: [] },
-			callFunction(dynamicContext, executionParameters, staticContext, maps) {
-				return mapMerge(
-					dynamicContext,
-					executionParameters,
-					staticContext,
-					maps,
-					sequenceFactory.singleton(
-						new MapValue([
-							{
-								key: createAtomicValue('duplicates', { kind: BaseType.XSSTRING }),
-								value: () =>
-									sequenceFactory.singleton(
-										createAtomicValue('use-first', { kind: BaseType.XSSTRING })
-									),
-							},
-						])
-					)
-				);
-			},
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'put',
-			argumentTypes: [
-				{ kind: BaseType.MAP, items: [] },
-				{ kind: BaseType.XSANYATOMICTYPE },
-				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			],
-			returnType: { kind: BaseType.MAP, items: [] },
-			callFunction: mapPut,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'remove',
-			argumentTypes: [
-				{ kind: BaseType.MAP, items: [] },
-				{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
-			],
-			returnType: { kind: BaseType.MAP, items: [] },
-			callFunction: mapRemove,
-		},
-
-		{
-			namespaceURI: MAP_NAMESPACE_URI,
-			localName: 'size',
-			argumentTypes: [{ kind: BaseType.MAP, items: [] }],
-			returnType: { kind: BaseType.XSINTEGER },
-			callFunction: mapSize,
-		},
-	],
+	declarations,
 	functions: {
 		get: mapGet,
 		merge: mapMerge,
