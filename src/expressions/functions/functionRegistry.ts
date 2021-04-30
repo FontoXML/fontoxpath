@@ -88,7 +88,6 @@ export function getAlternativesAsStringFor(functionName: string): string {
 		return 'No similar functions found.';
 	}
 
-	//TODO: FIX THIS
 	return (
 		alternativeFunctions
 			.map(
