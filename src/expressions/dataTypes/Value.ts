@@ -267,6 +267,12 @@ export function valueTypeHash(type: ValueType): number {
 	return result;
 }
 
+/**
+ * Creates a string value from a base type, generally follows the 'xs:type' notation, where
+ * xs stands for XML Schema
+ * @param input The base type to get the string of
+ * @returns A string corresponding to that base type.
+ */
 export function baseTypeToString(input: BaseType): string {
 	switch (input) {
 		case BaseType.XSBOOLEAN:
