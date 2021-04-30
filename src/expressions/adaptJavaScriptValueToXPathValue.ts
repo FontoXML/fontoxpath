@@ -135,7 +135,9 @@ function adaptJavaScriptValueToXPath(
 		case BaseType.XSGDAY:
 			if (!(value instanceof Date)) {
 				throw new Error(
-					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${type}.`
+					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${valueTypeToString(
+						type
+					)}.`
 				);
 			}
 			return createAtomicValue(
@@ -151,7 +153,9 @@ function adaptJavaScriptValueToXPath(
 		case BaseType.COMMENT:
 			if (!(typeof value === 'object') || !('nodeType' in value)) {
 				throw new Error(
-					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${type}.`
+					`The JavaScript value ${value} with type ${typeof value} is not a valid type to be converted to an XPath ${valueTypeToString(
+						type
+					)}.`
 				);
 			}
 			const pointer: NodePointer = { node: value, graftAncestor: null };
