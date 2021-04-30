@@ -141,6 +141,7 @@ function getTypeDeclaration(ast: IAST): ValueType {
 		case '+':
 			return { kind: BaseType.SOME, item: type };
 		case '':
+		case null:
 			return type;
 	}
 }
