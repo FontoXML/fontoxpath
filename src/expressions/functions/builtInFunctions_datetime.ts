@@ -4,6 +4,7 @@ import { BaseType } from '../dataTypes/Value';
 import DateTime from '../dataTypes/valueTypes/DateTime';
 import DayTimeDuration from '../dataTypes/valueTypes/DayTimeDuration';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnDateTime: FunctionDefinitionType = (
@@ -157,119 +158,124 @@ const fnTimezoneFromDateTime: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'dateTime',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } },
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME } },
+		],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } },
+		callFunction: fnDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'year-from-dateTime',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnYearFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'month-from-dateTime',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnMonthFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'day-from-dateTime',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnDayFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'hours-from-dateTime',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnHoursFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'minutes-from-dateTime',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnMinutesFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'seconds-from-dateTime',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDECIMAL } },
+		callFunction: fnSecondsFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'timezone-from-dateTime',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDAYTIMEDURATION } },
+		callFunction: fnTimezoneFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'year-from-date',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnYearFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'month-from-date',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnMonthFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'day-from-date',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnDayFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'timezone-from-date',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDAYTIMEDURATION } },
+		callFunction: fnTimezoneFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'hours-from-time',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnHoursFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'minutes-from-time',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnMinutesFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'seconds-from-time',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDECIMAL } },
+		callFunction: fnSecondsFromDateTime,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'timezone-from-time',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDAYTIMEDURATION } },
+		callFunction: fnTimezoneFromDateTime,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'dateTime',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE }} , { kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME }},
-			callFunction: fnDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'year-from-dateTime',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnYearFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'month-from-dateTime',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnMonthFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'day-from-dateTime',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnDayFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'hours-from-dateTime',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnHoursFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'minutes-from-dateTime',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnMinutesFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'seconds-from-dateTime',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDECIMAL }},
-			callFunction: fnSecondsFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'timezone-from-dateTime',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDAYTIMEDURATION }},
-			callFunction: fnTimezoneFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'year-from-date',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnYearFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'month-from-date',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnMonthFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'day-from-date',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnDayFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'timezone-from-date',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDAYTIMEDURATION }},
-			callFunction: fnTimezoneFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'hours-from-time',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnHoursFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'minutes-from-time',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER }},
-			callFunction: fnMinutesFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'seconds-from-time',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDECIMAL }},
-			callFunction: fnSecondsFromDateTime,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'timezone-from-time',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME }}],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDAYTIMEDURATION }},
-			callFunction: fnTimezoneFromDateTime,
-		},
-	],
+	declarations
 };

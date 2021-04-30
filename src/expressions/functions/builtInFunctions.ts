@@ -22,13 +22,15 @@ import builtInFontoxpathFunctions from './builtInFunctions_fontoxpath';
 import FunctionDefinitionType from './FunctionDefinitionType';
 import { ValueType } from '../dataTypes/Value';
 
-const builtInFunctions: {
+export type BuiltinDeclarationType = {
 	argumentTypes: ValueType[];
 	callFunction: FunctionDefinitionType;
 	localName: string;
 	namespaceURI: string;
 	returnType: ValueType;
-}[] = [].concat(
+};
+
+const builtInFunctions: BuiltinDeclarationType[] = [].concat(
 	builtInArrayFunctions.declarations,
 	builtInBooleanFunctions.declarations,
 	builtInContextFunctions.declarations,

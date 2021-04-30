@@ -5,6 +5,7 @@ import { BaseType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
+import { BuiltinDeclarationType } from './builtInFunctions';
 
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -90,38 +91,40 @@ const fnLocalNameFromQName: FunctionDefinitionType = (
 	});
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'QName',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			{ kind: BaseType.XSSTRING },
+		],
+		returnType: { kind: BaseType.XSQNAME },
+		callFunction: fnQName,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'prefix-from-QName',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNCNAME } },
+		callFunction: fnPrefixFromQName,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'local-name-from-QName',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+		callFunction: fnLocalNameFromQName,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'namespace-uri-from-QName',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYURI } },
+		callFunction: fnNamespaceURIFromQName,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'QName',
-			argumentTypes: [
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
-				{ kind: BaseType.XSSTRING },
-			],
-			returnType: { kind: BaseType.XSQNAME },
-			callFunction: fnQName,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'prefix-from-QName',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNCNAME } },
-			callFunction: fnPrefixFromQName,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'local-name-from-QName',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
-			callFunction: fnLocalNameFromQName,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'namespace-uri-from-QName',
-			argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
-			returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYURI } },
-			callFunction: fnNamespaceURIFromQName,
-		},
-	],
+	declarations,
 };

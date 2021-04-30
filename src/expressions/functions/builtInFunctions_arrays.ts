@@ -14,6 +14,7 @@ import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { errXPTY0004 } from '../XPathErrors';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import arrayGet from './builtInFunctions_arrays_get';
 import sequenceDeepEqual, { itemDeepEqual } from './builtInFunctions_sequences_deepEqual';
 import { transformArgumentList } from './FunctionCall';
@@ -480,243 +481,244 @@ const arrayFlatten: FunctionDefinitionType = (
 	return itemSequence.mapAll((items) => items.reduce(flattenItem, sequenceFactory.empty()));
 };
 
-export default {
-	declarations: [
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'size',
-			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-			returnType: { kind: BaseType.XSINTEGER },
-			callFunction: arraySize,
-		},
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'size',
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
+		returnType: { kind: BaseType.XSINTEGER },
+		callFunction: arraySize,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'get',
-			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			callFunction: arrayGet,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'get',
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		callFunction: arrayGet,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'put',
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.XSINTEGER },
-				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayPut,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'put',
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.XSINTEGER },
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayPut,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'append',
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayAppend,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'append',
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayAppend,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'subarray',
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.XSINTEGER },
-				{ kind: BaseType.XSINTEGER },
-			],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arraySubarray,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'subarray',
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.XSINTEGER },
+			{ kind: BaseType.XSINTEGER },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arraySubarray,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'subarray',
-			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction(
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'subarray',
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction(
+			dynamicContext,
+			executionParameters,
+			staticContext,
+			arraySequence,
+			startSequence
+		) {
+			const lengthSequence = sequenceFactory.singleton(
+				createAtomicValue(arraySequence.getLength() - startSequence.first().value + 1, {
+					kind: BaseType.XSINTEGER,
+				})
+			);
+			return arraySubarray(
 				dynamicContext,
 				executionParameters,
 				staticContext,
 				arraySequence,
-				startSequence
-			) {
-				const lengthSequence = sequenceFactory.singleton(
-					createAtomicValue(
-						arraySequence.first().members.length - startSequence.first().value + 1,
-						{ kind: BaseType.XSINTEGER }
-					)
-				);
-				return arraySubarray(
-					dynamicContext,
-					executionParameters,
-					staticContext,
-					arraySequence,
-					startSequence,
-					lengthSequence
-				);
-			},
+				startSequence,
+				lengthSequence
+			);
 		},
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'remove',
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
-			],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayRemove,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'remove',
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayRemove,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'insert-before',
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.XSINTEGER },
-				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayInsertBefore,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'insert-before',
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.XSINTEGER },
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayInsertBefore,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'head',
-			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
-				return arrayGet(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					arraySequence,
-					sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }))
-				);
-			},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'head',
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
+			return arrayGet(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				arraySequence,
+				sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }))
+			);
 		},
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'tail',
-			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
-				return arrayRemove(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					arraySequence,
-					sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }))
-				);
-			},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'tail',
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
+			return arrayRemove(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				arraySequence,
+				sequenceFactory.singleton(createAtomicValue(1, { kind: BaseType.XSINTEGER }))
+			);
 		},
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'reverse',
-			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayReverse,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'reverse',
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayReverse,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'join',
-			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ARRAY, items: [] } }],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayJoin,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'join',
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ARRAY, items: [] } }],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayJoin,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'for-each',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', '(item()*) as item()*)]
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
-			],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayForEach,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'for-each',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', '(item()*) as item()*)]
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayForEach,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'filter',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
-			],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayFilter,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'filter',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', '(item()*) as xs:boolean)]
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayFilter,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'fold-left',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
-			],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			callFunction: arrayFoldLeft,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'fold-left',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+		],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		callFunction: arrayFoldLeft,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'fold-right',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
-			],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			callFunction: arrayFoldRight,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'fold-right',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+		],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		callFunction: arrayFoldRight,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'for-each-pair',
-			// TODO: reimplement type checking by parsing the types
-			// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
-			argumentTypes: [
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.ARRAY, items: [] },
-				{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
-			],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arrayForEachPair,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'for-each-pair',
+		// TODO: reimplement type checking by parsing the types
+		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
+		argumentTypes: [
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.ARRAY, items: [] },
+			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+		],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arrayForEachPair,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'sort',
-			argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-			returnType: { kind: BaseType.ARRAY, items: [] },
-			callFunction: arraySort,
-		},
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'sort',
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
+		returnType: { kind: BaseType.ARRAY, items: [] },
+		callFunction: arraySort,
+	},
 
-		{
-			namespaceURI: ARRAY_NAMESPACE_URI,
-			localName: 'flatten',
-			argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
-			callFunction: arrayFlatten,
-		},
-	],
+	{
+		namespaceURI: ARRAY_NAMESPACE_URI,
+		localName: 'flatten',
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		callFunction: arrayFlatten,
+	},
+];
+
+export default {
+	declarations,
 	s: {
 		append: arrayAppend,
 		flatten: arrayFlatten,
