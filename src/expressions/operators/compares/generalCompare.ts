@@ -1,11 +1,11 @@
 import castToType from '../../dataTypes/castToType';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { BaseType } from '../../dataTypes/Value';
 import valueCompare from './valueCompare';
 
 import ISequence from '../../dataTypes/ISequence';
 import DynamicContext from '../../DynamicContext';
-import { BaseType } from '../../dataTypes/Value';
 
 const OPERATOR_TRANSLATION = {
 	['equalOp']: 'eqOp',

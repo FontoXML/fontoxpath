@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType, BaseType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import CastResult from './CastResult';
 
 const createHexBinaryValue = (value) => createAtomicValue(value, { kind: BaseType.XSHEXBINARY });

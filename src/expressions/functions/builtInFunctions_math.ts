@@ -290,5 +290,5 @@ const declarations: BuiltinDeclarationType[] = [
 ];
 
 export default {
-	declarations
+	declarations,
 };

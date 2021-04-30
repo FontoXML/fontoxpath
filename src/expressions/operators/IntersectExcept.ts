@@ -5,9 +5,9 @@ import { compareNodePositions, sortNodeValues } from '../dataTypes/documentOrder
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import { DONE_TOKEN, IterationHint, ready } from '../util/iterators';
 import arePointersEqual from './compares/arePointersEqual';
-import { BaseType } from '../dataTypes/Value';
 
 function ensureSortedSequence(
 	intersectOrExcept: string,

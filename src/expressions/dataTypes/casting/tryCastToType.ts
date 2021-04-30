@@ -246,9 +246,10 @@ export default function tryCastToType(valueTuple: AtomicValue, type: ValueType):
 	let prefabConverter = precomputedCastFunctorsByTypeString[index];
 
 	if (!prefabConverter) {
-		prefabConverter = precomputedCastFunctorsByTypeString[
-			index
-		] = createCastingFunction(valueTuple.type, type);
+		prefabConverter = precomputedCastFunctorsByTypeString[index] = createCastingFunction(
+			valueTuple.type,
+			type
+		);
 	}
 	return prefabConverter.call(undefined, valueTuple.value, type);
 }

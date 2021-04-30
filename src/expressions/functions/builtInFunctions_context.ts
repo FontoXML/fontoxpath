@@ -2,10 +2,10 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { DONE_TOKEN, ready } from '../util/iterators';
 
-import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
-import FunctionDefinitionType from './FunctionDefinitionType';
 import { BaseType } from '../dataTypes/Value';
+import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { BuiltinDeclarationType } from './builtInFunctions';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnLast: FunctionDefinitionType = (dynamicContext) => {
 	if (dynamicContext.contextItem === null) {

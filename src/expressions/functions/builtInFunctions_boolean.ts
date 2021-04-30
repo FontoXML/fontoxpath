@@ -2,9 +2,10 @@ import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 
-import FunctionDefinitionType from './FunctionDefinitionType';
 import { BaseType } from '../dataTypes/Value';
 import { BuiltinDeclarationType } from './builtInFunctions';
+import FunctionDefinitionType from './FunctionDefinitionType';
+
 const fnNot: FunctionDefinitionType = (
 	_dynamicContext,
 	_executionParameters,

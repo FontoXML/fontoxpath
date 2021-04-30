@@ -4,11 +4,11 @@ import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import ISequence from '../dataTypes/ISequence';
+import { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
-import FunctionDefinitionType from './FunctionDefinitionType';
-import { BaseType } from '../dataTypes/Value';
 import { BuiltinDeclarationType } from './builtInFunctions';
+import FunctionDefinitionType from './FunctionDefinitionType';
 
 function convert(obj: any): ISequence {
 	switch (typeof obj) {

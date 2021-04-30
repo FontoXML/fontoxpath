@@ -1,9 +1,9 @@
-import { BaseType } from '../../dataTypes/Value';
 import atomize from '../../dataTypes/atomize';
 import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
+import { BaseType } from '../../dataTypes/Value';
 import Expression from '../../Expression';
 
 class Unary extends Expression {
