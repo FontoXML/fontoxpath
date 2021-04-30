@@ -16,7 +16,6 @@ import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 import { printAndRethrowError } from '../../evaluationUtils/printAndRethrowError';
-import { basename } from 'path';
 import { BuiltinDeclarationType } from './builtInFunctions';
 
 const fontoxpathEvaluate: FunctionDefinitionType = (
