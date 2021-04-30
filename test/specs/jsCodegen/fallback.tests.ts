@@ -3,7 +3,7 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import { evaluateXPath, evaluateXPathToString, evaluateXPathToFirstNode } from 'fontoxpath';
+import { evaluateXPath, evaluateXPathToFirstNode, evaluateXPathToString } from 'fontoxpath';
 
 describe("rejecting unsupported AST's (js-codegen)", () => {
 	const document = new slimdom.Document();
