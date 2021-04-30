@@ -342,11 +342,11 @@ export default function processProlog(
 				}
 
 				if (
-					actualFunctionProperties.returnType !== returnType ||
+					actualFunctionProperties.returnType.kind !== returnType.kind ||
 					actualFunctionProperties.argumentTypes.some(
 						// TODO: what do we do with any RestArguments here?
 						// It seems that callFunction in FunctionCall.ts performs a similar cast...
-						(type, i) => (type as ValueType) !== paramTypes[i]
+						(type, i) => (type as ValueType).kind !== paramTypes[i].kind
 					)
 				) {
 					throw new Error(
