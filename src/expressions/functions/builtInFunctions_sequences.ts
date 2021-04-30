@@ -11,6 +11,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
 import { performFunctionConversion } from './argumentHelper';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import sequenceDeepEqual from './builtInFunctions_sequences_deepEqual';
 import convertItemsToCommonType from './convertItemsToCommonType';
 import FunctionDefinitionType from './FunctionDefinitionType';
@@ -684,264 +685,266 @@ const fnFoldRight: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnEmpty,
+		localName: 'empty',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.XSBOOLEAN},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnExists,
+		localName: 'exists',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.XSBOOLEAN},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnHead,
+		localName: 'head',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnTail,
+		localName: 'tail',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSINTEGER}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnInsertBefore,
+		localName: 'insert-before',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSINTEGER}],
+		callFunction: fnRemove,
+		localName: 'remove',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnReverse,
+		localName: 'reverse',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSDOUBLE}],
+		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence, start) =>
+			fnSubsequence(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				sequence,
+				start,
+				sequenceFactory.empty()
+			)) as FunctionDefinitionType,
+		localName: 'subsequence',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSDOUBLE}, {kind: BaseType.XSDOUBLE}],
+		callFunction: fnSubsequence,
+		localName: 'subsequence',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnUnordered,
+		localName: 'unordered',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.XSANYATOMICTYPE}],
+		callFunction: fnIndexOf,
+		localName: 'index-of',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.ANY, item: {kind: BaseType.XSINTEGER}} ,
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.XSANYATOMICTYPE}, {kind: BaseType.XSSTRING}],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+		localName: 'index-of',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.ANY, item: {kind: BaseType.XSINTEGER}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnDeepEqual,
+		localName: 'deep-equal',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.XSBOOLEAN},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSSTRING}],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+		localName: 'deep-equal',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.XSBOOLEAN},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnCount,
+		localName: 'count',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.XSINTEGER},
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}],
+		callFunction: fnAvg,
+		localName: 'avg',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}],
+		callFunction: fnMax,
+		localName: 'max',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.XSSTRING}],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+		localName: 'max',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}],
+		callFunction: fnMin,
+		localName: 'min',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.XSSTRING}],
+		callFunction() {
+			throw new Error('FOCH0002: No collations are supported');
+		},
+		localName: 'min',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}],
+		callFunction: ((dynamicContext, executionParameters, _staticContext, sequence) => {
+			return fnSum(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				sequence,
+				sequenceFactory.singleton(createAtomicValue(0, { kind: BaseType.XSINTEGER }))
+			);
+		}) as FunctionDefinitionType,
+		localName: 'sum',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.XSANYATOMICTYPE},
+	},
+
+	{
+		argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}}],
+		callFunction: fnSum,
+		localName: 'sum',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnZeroOrOne,
+		localName: 'zero-or-one',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnOneOrMore,
+		localName: 'one-or-more',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.SOME, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
+		callFunction: fnExactlyOne,
+		localName: 'exactly-one',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ITEM},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.FUNCTION, returnType: undefined, params: []}],
+		callFunction: fnFilter,
+		localName: 'filter',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.FUNCTION, returnType: undefined, params: []}],
+		callFunction: fnForEach,
+		localName: 'for-each',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.FUNCTION, returnType: undefined, params: []}],
+		callFunction: fnFoldLeft,
+		localName: 'fold-left',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.FUNCTION, returnType: undefined, params: []}],
+		callFunction: fnFoldRight,
+		localName: 'fold-right',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
+	},
+];
+
 export default {
-	declarations: [
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnEmpty,
-			localName: 'empty',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.XSBOOLEAN},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnExists,
-			localName: 'exists',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.XSBOOLEAN},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnHead,
-			localName: 'head',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.NULLABLE, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnTail,
-			localName: 'tail',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSINTEGER}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnInsertBefore,
-			localName: 'insert-before',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSINTEGER}],
-			callFunction: fnRemove,
-			localName: 'remove',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnReverse,
-			localName: 'reverse',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSDOUBLE}],
-			callFunction: ((dynamicContext, executionParameters, _staticContext, sequence, start) =>
-				fnSubsequence(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					sequence,
-					start,
-					sequenceFactory.empty()
-				)) as FunctionDefinitionType,
-			localName: 'subsequence',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSDOUBLE}, {kind: BaseType.XSDOUBLE}],
-			callFunction: fnSubsequence,
-			localName: 'subsequence',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnUnordered,
-			localName: 'unordered',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.XSANYATOMICTYPE}],
-			callFunction: fnIndexOf,
-			localName: 'index-of',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.ANY, item: {kind: BaseType.XSINTEGER}} ,
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.XSANYATOMICTYPE}, {kind: BaseType.XSSTRING}],
-			callFunction() {
-				throw new Error('FOCH0002: No collations are supported');
-			},
-			localName: 'index-of',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.ANY, item: {kind: BaseType.XSINTEGER}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnDeepEqual,
-			localName: 'deep-equal',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.XSBOOLEAN},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, {kind: BaseType.XSSTRING}],
-			callFunction() {
-				throw new Error('FOCH0002: No collations are supported');
-			},
-			localName: 'deep-equal',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.XSBOOLEAN},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnCount,
-			localName: 'count',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.XSINTEGER},
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}],
-			callFunction: fnAvg,
-			localName: 'avg',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}],
-			callFunction: fnMax,
-			localName: 'max',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.XSSTRING}],
-			callFunction() {
-				throw new Error('FOCH0002: No collations are supported');
-			},
-			localName: 'max',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}],
-			callFunction: fnMin,
-			localName: 'min',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.XSSTRING}],
-			callFunction() {
-				throw new Error('FOCH0002: No collations are supported');
-			},
-			localName: 'min',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}],
-			callFunction: ((dynamicContext, executionParameters, _staticContext, sequence) => {
-				return fnSum(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					sequence,
-					sequenceFactory.singleton(createAtomicValue(0, { kind: BaseType.XSINTEGER }))
-				);
-			}) as FunctionDefinitionType,
-			localName: 'sum',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.XSANYATOMICTYPE},
-		},
-
-		{
-			argumentTypes: [{kind: BaseType.ANY, item: {kind: BaseType.XSANYATOMICTYPE}}, {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}}],
-			callFunction: fnSum,
-			localName: 'sum',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: {kind: BaseType.NULLABLE, item: {kind: BaseType.XSANYATOMICTYPE}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnZeroOrOne,
-			localName: 'zero-or-one',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.NULLABLE, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnOneOrMore,
-			localName: 'one-or-more',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.SOME, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}],
-			callFunction: fnExactlyOne,
-			localName: 'exactly-one',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ITEM},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.FUNCTION, returnType: undefined, params: []}],
-			callFunction: fnFilter,
-			localName: 'filter',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.FUNCTION, returnType: undefined, params: []}],
-			callFunction: fnForEach,
-			localName: 'for-each',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.FUNCTION, returnType: undefined, params: []}],
-			callFunction: fnFoldLeft,
-			localName: 'fold-left',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-
-		{
-			argumentTypes: [{ kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}}, { kind: BaseType.FUNCTION, returnType: undefined, params: []}],
-			callFunction: fnFoldRight,
-			localName: 'fold-right',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: { kind: BaseType.ANY, item:{ kind: BaseType.ITEM}},
-		},
-	],
+	declarations,
 	functions: {
 		avg: fnAvg,
 		count: fnCount,

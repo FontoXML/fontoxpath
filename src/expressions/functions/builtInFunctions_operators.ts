@@ -2,6 +2,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { BaseType } from '../dataTypes/Value';
 import { ready } from '../util/iterators';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const opTo: FunctionDefinitionType = (
@@ -32,19 +33,21 @@ const opTo: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: 'http://fontoxpath/operators',
+		localName: 'to',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
+		callFunction: opTo,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: 'http://fontoxpath/operators',
-			localName: 'to',
-			argumentTypes: [
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
-			],
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
-			callFunction: opTo,
-		},
-	],
+	declarations,
 	functions: {
 		to: opTo,
 	},

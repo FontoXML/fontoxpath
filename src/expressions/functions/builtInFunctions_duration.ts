@@ -2,6 +2,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const fnYearsFromDuration: FunctionDefinitionType = (
@@ -88,49 +89,51 @@ const fnSecondsFromDuration: FunctionDefinitionType = (
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'years-from-duration',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnYearsFromDuration,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'months-from-duration',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnMonthsFromDuration,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'days-from-duration',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnDaysFromDuration,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'hours-from-duration',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnHoursFromDuration,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'minutes-from-duration',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		callFunction: fnMinutesFromDuration,
+	},
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'seconds-from-duration',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDECIMAL } },
+		callFunction: fnSecondsFromDuration,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'years-from-duration',
-			argumentTypes: [{kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION}}],
-			returnType: {kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER}},
-			callFunction: fnYearsFromDuration,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'months-from-duration',
-			argumentTypes: [{kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION}}],
-			returnType: {kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER}},
-			callFunction: fnMonthsFromDuration,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'days-from-duration',
-			argumentTypes: [{kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION}}],
-			returnType: {kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER}},
-			callFunction: fnDaysFromDuration,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'hours-from-duration',
-			argumentTypes: [{kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION}}],
-			returnType: {kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER}},
-			callFunction: fnHoursFromDuration,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'minutes-from-duration',
-			argumentTypes: [{kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION}}],
-			returnType: {kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER}},
-			callFunction: fnMinutesFromDuration,
-		},
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'seconds-from-duration',
-			argumentTypes: [{kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION}}],
-			returnType: {kind: BaseType.NULLABLE, item: { kind: BaseType.XSDECIMAL}},
-			callFunction: fnSecondsFromDuration,
-		},
-	],
+	declarations,
 };

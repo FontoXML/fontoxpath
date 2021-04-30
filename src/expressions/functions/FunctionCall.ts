@@ -49,7 +49,7 @@ export function transformArgumentList(
 	return transformedArguments;
 }
 
-function validateFunctionItem(item: Value, callArity: number) {
+function validateFunctionItem(item: Value, callArity: number): FunctionValue {
 	if (!isSubtypeOf(item.type, { kind: BaseType.FUNCTION, returnType: undefined, params: [] })) {
 		throw errXPTY0004('Expected base expression to evaluate to a function item');
 	}
@@ -220,7 +220,7 @@ class FunctionCall extends PossiblyUpdatingExpression {
 		dynamicContext: DynamicContext,
 		executionParameters: ExecutionParameters,
 		[createFunctionReferenceSequence, ...createArgumentSequences]
-	) {
+	): ISequence {
 		if (this._functionReference) {
 			// We can assume this function is not updating
 			return callFunction(
