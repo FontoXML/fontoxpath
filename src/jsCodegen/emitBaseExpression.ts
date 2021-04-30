@@ -1,20 +1,20 @@
 import astHelper, { IAST } from '../parsing/astHelper';
-import { axisEmittersByAxis } from './emitAxis';
+import { axisEmittersByAstNodeName } from './emitAxis';
 import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
-import emitTest, { kindTestNames } from './emitTest';
+import emitTest, { testAstNodes } from './emitTest';
 
-const baseExpressionAstNames = {
+const baseExpressionAstNodeNames = {
 	PATH_EXPR: 'pathExpr',
 	AND_OP: 'andOp',
 	OR_OP: 'orOp',
 };
 
-const baseExpressions = Object.values(baseExpressionAstNames);
+const baseExpressionAstNodes = Object.values(baseExpressionAstNodeNames);
 
-const baseEmittersByExpression = {
-	[baseExpressionAstNames.PATH_EXPR]: emitPathExpression,
-	[baseExpressionAstNames.AND_OP]: emitAndExpression,
-	[baseExpressionAstNames.OR_OP]: emitOrExpression,
+const baseExpressionEmittersByAstNodeName = {
+	[baseExpressionAstNodeNames.PATH_EXPR]: emitPathExpression,
+	[baseExpressionAstNodeNames.AND_OP]: emitAndExpression,
+	[baseExpressionAstNodeNames.OR_OP]: emitOrExpression,
 };
 
 function emitPredicates(predicatesAst: IAST, nestLevel: number): EmittedJavaScript {
@@ -78,7 +78,7 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 			const axis = astHelper.getTextContent(axisAst);
 
 			const emittedStepsCode = emittedSteps.code;
-			const testAst = astHelper.getFirstChild(step, kindTestNames);
+			const testAst = astHelper.getFirstChild(step, testAstNodes);
 
 			// Only the innermost nested step returns a value.
 			const nestedCode =
@@ -91,7 +91,7 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 				return emittedTest;
 			}
 
-			const emitAxis = axisEmittersByAxis[axis];
+			const emitAxis = axisEmittersByAstNodeName[axis];
 			if (emitAxis === undefined) {
 				return rejectAst(`Unsupported: the ${axis} axis.`);
 			}
@@ -162,7 +162,7 @@ function emitCompiledOperand(
 	operandKind: string
 ): EmittedJavaScript {
 	const operand = astHelper.getFirstChild(ast, operandKind);
-	const expressionAst = astHelper.getFirstChild(operand, baseExpressions);
+	const expressionAst = astHelper.getFirstChild(operand, baseExpressionAstNodes);
 
 	const expressionIdentifier = identifier + operandKind;
 
@@ -222,7 +222,7 @@ function emitOrExpression(ast: IAST, identifier: string): EmittedJavaScript {
 
 export function emitBaseExpression(ast: IAST, identifier: string): EmittedJavaScript {
 	const name = ast[0];
-	const baseExpressionToEmit = baseEmittersByExpression[name];
+	const baseExpressionToEmit = baseExpressionEmittersByAstNodeName[name];
 	if (baseExpressionToEmit === undefined) {
 		return rejectAst(`Unsupported: base expression ${name}`);
 	}

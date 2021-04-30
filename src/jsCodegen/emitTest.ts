@@ -1,26 +1,52 @@
 import astHelper, { IAST } from '../parsing/astHelper';
 import { acceptAst, EmittedJavaScript, rejectAst } from './EmittedJavaScript';
 
-const testAstNames = {
+const testAstNodeNames = {
 	TEXT_TEST: 'textTest',
 	ELEMENT_TEST: 'elementTest',
 	NAME_TEST: 'nameTest',
 	WILDCARD: 'Wildcard',
 };
 
-export const kindTestNames = Object.values(testAstNames);
+export const testAstNodes = Object.values(testAstNodeNames);
 
-const testEmittersByNodeName = {
-	[testAstNames.TEXT_TEST]: emitTextTest,
-	[testAstNames.NAME_TEST]: emitNameTest,
-	[testAstNames.ELEMENT_TEST]: emitElementTest,
-	[testAstNames.WILDCARD]: emitWildcard,
+const testEmittersByAstNodeName = {
+	[testAstNodeNames.TEXT_TEST]: emitTextTest,
+	[testAstNodeNames.NAME_TEST]: emitNameTest,
+	[testAstNodeNames.ELEMENT_TEST]: emitElementTest,
+	[testAstNodeNames.WILDCARD]: emitWildcard,
 };
 
 // text() matches any text node.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-TextTest
 function emitTextTest(_ast: IAST, identifier: string): EmittedJavaScript {
 	return acceptAst(`${identifier}.nodeType === NODE_TYPES.TEXT_NODE`);
+}
+
+type QName = { localName: string; namespaceURI: string; prefix: string };
+
+function emitNameTestFromQName(
+	identifier: string,
+	{ prefix, namespaceURI, localName }: QName
+): EmittedJavaScript {
+	const conditionCode = `(${identifier}.nodeType === NODE_TYPES.ELEMENT_NODE || ${identifier}.nodeType === NODE_TYPES.ATTRIBUTE_NODE)`;
+
+	if (prefix === null && namespaceURI !== '' && localName === '*') {
+		return acceptAst(conditionCode);
+	}
+
+	if (prefix === '*') {
+		if (localName === '*') {
+			return acceptAst(conditionCode);
+		}
+		return acceptAst(`${conditionCode} && ${identifier}.localName === "${localName}"`);
+	}
+
+	if (localName !== '*') {
+		return acceptAst(`${conditionCode} && ${identifier}.localName === "${localName}"`);
+	}
+
+	return rejectAst('Unsupported: name tests with a namespaceURI.');
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
@@ -32,18 +58,16 @@ function emitElementTest(ast: IAST, identifier: string): EmittedJavaScript {
 	if (elementName === null || star) {
 		return acceptAst(isElementCode);
 	}
+
 	const qName = astHelper.getQName(astHelper.getFirstChild(elementName, 'QName'));
-	return acceptAst(`${isElementCode} && ${identifier}.localName === "${qName.localName}"`);
+
+	return emitNameTestFromQName(identifier, qName);
 }
 
+// A node test that consists only of an EQName or a Wildcard is called a name test.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-NameTest
 function emitNameTest(ast: IAST, identifier: string) {
-	const qName = astHelper.getQName(ast);
-	if (qName.namespaceURI === '') {
-		return rejectAst("Empty namespace URI's are unsupported.");
-	}
-
-	return acceptAst(`${identifier}.localName === "${qName.localName}"`);
+	return emitNameTestFromQName(identifier, astHelper.getQName(ast));
 }
 
 // select all element children of the context node
@@ -53,12 +77,12 @@ function emitWildcard(ast: IAST, identifier: string): EmittedJavaScript {
 	if (astHelper.getChildren(ast, 'Wildcard').length !== 0) {
 		return rejectAst('Unsupported: the provided wildcard');
 	}
-	return emitElementTest(ast, identifier);
+	return emitNameTestFromQName(identifier, { localName: '*', namespaceURI: null, prefix: '*' });
 }
 
 export default function emitTest(ast: IAST, identifier: string): EmittedJavaScript {
 	const test = ast[0];
-	const emittedTest = testEmittersByNodeName[test](ast, identifier);
+	const emittedTest = testEmittersByAstNodeName[test](ast, identifier);
 
 	if (emittedTest === undefined) {
 		return rejectAst('This test is not supported');

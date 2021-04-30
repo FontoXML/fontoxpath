@@ -4,7 +4,7 @@ import { ReturnType } from '../parsing/convertXDMReturnValue';
 import { emitBaseExpression } from './emitBaseExpression';
 import * as runtimeLibrary from './runtimeLibrary';
 
-const compileAstByReturnValue = {
+const astCompilersByReturnValue = {
 	[ReturnType.NODES]: compileAstToReturnNodes,
 	[ReturnType.BOOLEAN]: compileAstToReturnBoolean,
 	[ReturnType.FIRST_NODE]: compileAstToReturnFirstNode,
@@ -46,7 +46,7 @@ function compileAstToReturnFirstNode(identifier: string) {
 
 const compiledXPathIdentifier = 'compiledXPathExpression';
 export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaScriptResult {
-	const emitReturnTypeConversion = compileAstByReturnValue[returnType];
+	const emitReturnTypeConversion = astCompilersByReturnValue[returnType];
 	if (emitReturnTypeConversion === undefined) {
 		return {
 			isAstAccepted: false,

@@ -17,7 +17,7 @@ describe('wildcard', () => {
 		],
 		document
 	);
-	it('selects elements (allows all namespaces)', () => {
+	it('selects elements (non-specified namespace)', () => {
 		const results = evaluateXPathToNodes('/xml/*', document, null, null, {
 			backend: 'js-codegen',
 		});

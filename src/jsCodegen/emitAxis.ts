@@ -1,17 +1,17 @@
 import { acceptAst, EmittedJavaScript } from './EmittedJavaScript';
 
-const axisNodeNames = {
+const axisAstNodeNames = {
 	ATTRIBUTE: 'attribute',
 	CHILD: 'child',
 	PARENT: 'parent',
 	SELF: 'self',
 };
 
-export const axisEmittersByAxis = {
-	[axisNodeNames.ATTRIBUTE]: emitAttributeAxis,
-	[axisNodeNames.CHILD]: emitChildAxis,
-	[axisNodeNames.PARENT]: emitParentAxis,
-	[axisNodeNames.SELF]: emitSelfAxis,
+export const axisEmittersByAstNodeName = {
+	[axisAstNodeNames.ATTRIBUTE]: emitAttributeAxis,
+	[axisAstNodeNames.CHILD]: emitChildAxis,
+	[axisAstNodeNames.PARENT]: emitParentAxis,
+	[axisAstNodeNames.SELF]: emitSelfAxis,
 };
 
 // The child axis contains the children of the context node.
