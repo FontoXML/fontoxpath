@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { evaluateXPathToString, registerCustomXPathFunction } from 'fontoxpath';
+import { BaseType, evaluateXPathToString, registerCustomXPathFunction } from 'fontoxpath';
 import { slimdom, sync } from 'slimdom-sax-parser';
 
 describe('Browser tests', function () {
@@ -9,15 +9,15 @@ describe('Browser tests', function () {
 			const secondDocument = sync('<xml>2nd Document</xml>');
 			const thirdDocument = sync('<xml>3rd Document</xml>');
 
-			registerCustomXPathFunction('cf:firstDocument', [], 'item()', () => {
+			registerCustomXPathFunction('cf:firstDocument', [], { kind: BaseType.ITEM }, () => {
 				return firstDocument.documentElement;
 			});
 
-			registerCustomXPathFunction('cf:secondDocument', [], 'item()', () => {
+			registerCustomXPathFunction('cf:secondDocument', [], { kind: BaseType.ITEM }, () => {
 				return secondDocument.documentElement;
 			});
 
-			registerCustomXPathFunction('cf:thirdDocument', [], 'item()', () => {
+			registerCustomXPathFunction('cf:thirdDocument', [], { kind: BaseType.ITEM }, () => {
 				return thirdDocument.documentElement;
 			});
 
