@@ -1,5 +1,10 @@
 import * as chai from 'chai';
-import { evaluateXPathToBoolean, profiler, registerCustomXPathFunction } from 'fontoxpath';
+import {
+	BaseType,
+	evaluateXPathToBoolean,
+	profiler,
+	registerCustomXPathFunction,
+} from 'fontoxpath';
 import * as slimdom from 'slimdom';
 
 function timeXPath(xpath, document) {
@@ -73,8 +78,8 @@ describe('measuring performance', () => {
 	before(() => {
 		registerCustomXPathFunction(
 			'perftest:syncsleep',
-			['item()'],
-			'item()?',
+			[{ kind: BaseType.ITEM }],
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } },
 			(_, shouldRecurse) => {
 				now++;
 				if (shouldRecurse) {
