@@ -1,7 +1,7 @@
 import { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import RestArgument, { REST_ARGUMENT_INSTANCE } from '../dataTypes/RestArgument';
-import Value, { BaseType, ValueType } from '../dataTypes/Value';
+import Value, { BaseType, ValueType, valueTypeToString } from '../dataTypes/Value';
 
 export type FunctionProperties = {
 	argumentTypes: (ValueType | RestArgument)[];
@@ -53,67 +53,63 @@ function computeLevenshteinDistance(a, b) {
 }
 
 export function getAlternativesAsStringFor(functionName: string): string {
-	// TODO: Fix this!
-	return '';
-	// let alternativeFunctions: FunctionProperties[];
-	// if (!registeredFunctionsByName[functionName]) {
-	// 	// Get closest functions by levenstein distance
-	// 	alternativeFunctions = Object.keys(registeredFunctionsByName)
-	// 		.map((alternativeName) => {
-	// 			// Remove the namespace uri part of the cache key
-	// 			return {
-	// 				name: alternativeName,
-	// 				distance: computeLevenshteinDistance(
-	// 					functionName,
-	// 					alternativeName.slice(alternativeName.lastIndexOf(':') + 1)
-	// 				),
-	// 			};
-	// 		})
-	// 		.sort((a, b) => a.distance - b.distance)
-	// 		.slice(0, 5)
-	// 		// If we need to change more than half the string, it cannot be a match
-	// 		.filter(
-	// 			(alternativeNameWithScore) =>
-	// 				alternativeNameWithScore.distance < functionName.length / 2
-	// 		)
-	// 		.reduce(
-	// 			(alternatives, alternativeNameWithScore) =>
-	// 				alternatives.concat(registeredFunctionsByName[alternativeNameWithScore.name]),
-	// 			[]
-	// 		)
-	// 		.slice(0, 5);
-	// } else {
-	// 	alternativeFunctions = registeredFunctionsByName[functionName];
-	// }
+	let alternativeFunctions: FunctionProperties[];
+	if (!registeredFunctionsByName[functionName]) {
+		// Get closest functions by levenstein distance
+		alternativeFunctions = Object.keys(registeredFunctionsByName)
+			.map((alternativeName) => {
+				// Remove the namespace uri part of the cache key
+				return {
+					name: alternativeName,
+					distance: computeLevenshteinDistance(
+						functionName,
+						alternativeName.slice(alternativeName.lastIndexOf(':') + 1)
+					),
+				};
+			})
+			.sort((a, b) => a.distance - b.distance)
+			.slice(0, 5)
+			// If we need to change more than half the string, it cannot be a match
+			.filter(
+				(alternativeNameWithScore) =>
+					alternativeNameWithScore.distance < functionName.length / 2
+			)
+			.reduce(
+				(alternatives, alternativeNameWithScore) =>
+					alternatives.concat(registeredFunctionsByName[alternativeNameWithScore.name]),
+				[]
+			)
+			.slice(0, 5);
+	} else {
+		alternativeFunctions = registeredFunctionsByName[functionName];
+	}
 
-	// if (!alternativeFunctions.length) {
-	// 	return 'No similar functions found.';
-	// }
+	if (!alternativeFunctions.length) {
+		return 'No similar functions found.';
+	}
 
-	// //TODO: FIX THIS
-	// return (
-	// 	alternativeFunctions
-	// 		.map(
-	// 			(functionDeclaration) =>
-	// 				`"Q{${functionDeclaration.namespaceURI}}${
-	// 					functionDeclaration.localName
-	// 				} (${functionDeclaration.argumentTypes
-	// 					.map((argumentType) =>
-	// 						(argumentType as RestArgument).isRestArgument
-	// 							? '...'
-	// 							: (argumentType as ValueType).type +
-	// 							  ((argumentType as ValueType).occurrence || '')
-	// 					)
-	// 					.join(', ')})"`
-	// 		)
-	// 		.reduce((accumulator, alternativeFunctionName, index, array) => {
-	// 			if (index === 0) {
-	// 				return accumulator + alternativeFunctionName;
-	// 			}
-	// 			return (accumulator +=
-	// 				(index !== array.length - 1 ? ', ' : ' or ') + alternativeFunctionName);
-	// 		}, 'Did you mean ') + '?'
-	// );
+	return (
+		alternativeFunctions
+			.map(
+				(functionDeclaration) =>
+					`"Q{${functionDeclaration.namespaceURI}}${
+						functionDeclaration.localName
+					} (${functionDeclaration.argumentTypes
+						.map((argumentType) =>
+							(argumentType as RestArgument).isRestArgument
+								? '...'
+								: valueTypeToString(argumentType as ValueType)
+						)
+						.join(', ')})"`
+			)
+			.reduce((accumulator, alternativeFunctionName, index, array) => {
+				if (index === 0) {
+					return accumulator + alternativeFunctionName;
+				}
+				return (accumulator +=
+					(index !== array.length - 1 ? ', ' : ' or ') + alternativeFunctionName);
+			}, 'Did you mean ') + '?'
+	);
 }
 
 export function getFunctionByArity(
