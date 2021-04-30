@@ -394,134 +394,76 @@ export function valueTypeToString(input: ValueType): string {
  * @throws Error if the type cannot be mapped from string to ValueType.
  */
 export function stringToValueType(input: string): ValueType {
-	switch (input) {
-		case 'xs:boolean':
-			return { kind: BaseType.XSBOOLEAN };
-		case 'xs:string':
-			return { kind: BaseType.XSSTRING };
-		case 'xs:numeric':
-			return { kind: BaseType.XSNUMERIC };
-		case 'xs:double':
-			return { kind: BaseType.XSDOUBLE };
-		case 'xs:decimal':
-			return { kind: BaseType.XSDECIMAL };
-		case 'xs:integer':
-			return { kind: BaseType.XSINTEGER };
-		case 'xs:float':
-			return { kind: BaseType.XSFLOAT };
-		case 'xs:date':
-			return { kind: BaseType.XSDATE };
-		case 'xs:time':
-			return { kind: BaseType.XSTIME };
-		case 'xs:dateTime':
-			return { kind: BaseType.XSDATETIME };
-		case 'xs:dateTimeStamp':
-			return { kind: BaseType.XSDATETIMESTAMP };
-		case 'xs:gYearMonth':
-			return { kind: BaseType.XSGYEARMONTH };
-		case 'xs:gYear':
-			return { kind: BaseType.XSGYEAR };
-		case 'xs:gMonthDay':
-			return { kind: BaseType.XSGMONTHDAY };
-		case 'xs:gMonth':
-			return { kind: BaseType.XSGMONTH };
-		case 'xs:gDay':
-			return { kind: BaseType.XSGDAY };
-		case 'xs:yearMonthDuration':
-			return { kind: BaseType.XSYEARMONTHDURATION };
-		case 'xs:dayTimeDuration':
-			return { kind: BaseType.XSDAYTIMEDURATION };
-		case 'xs:duration':
-			return { kind: BaseType.XSDURATION };
-		case 'xs:untypedAtomic':
-			return { kind: BaseType.XSUNTYPEDATOMIC };
-		case 'xs:anyURI':
-			return { kind: BaseType.XSANYURI };
-		case 'xs:base64Binary':
-			return { kind: BaseType.XSBASE64BINARY };
-		case 'xs:hexBinary':
-			return { kind: BaseType.XSHEXBINARY };
-		case 'xs:QName':
-			return { kind: BaseType.XSQNAME };
-		case 'xs:NCName':
-			return { kind: BaseType.XSNCNAME };
-		case 'xs:Name':
-			return { kind: BaseType.XSNAME };
-		case 'xs:ENTITY':
-			return { kind: BaseType.XSENTITY };
-		case 'xs:nonPositiveInteger':
-			return { kind: BaseType.XSNONPOSITIVEINTEGER };
-		case 'xs:negativeInteger':
-			return { kind: BaseType.XSNEGATIVEINTEGER };
-		case 'xs:positiveInteger':
-			return { kind: BaseType.XSPOSITIVEINTEGER };
-		case 'xs:nonNegativeInteger':
-			return { kind: BaseType.XSNONNEGATIVEINTEGER };
-		case 'xs:long':
-			return { kind: BaseType.XSLONG };
-		case 'xs:int':
-			return { kind: BaseType.XSINT };
-		case 'xs:short':
-			return { kind: BaseType.XSSHORT };
-		case 'xs:byte':
-			return { kind: BaseType.XSBYTE };
-		case 'xs:unsignedInt':
-			return { kind: BaseType.XSUNSIGNEDINT };
-		case 'xs:unsignedLong':
-			return { kind: BaseType.XSUNSIGNEDLONG };
-		case 'xs:unsignedByte':
-			return { kind: BaseType.XSUNSIGNEDBYTE };
-		case 'xs:unsignedShort':
-			return { kind: BaseType.XSUNSIGNEDSHORT };
-		case 'xs:error':
-			return { kind: BaseType.XSERROR };
-		case 'xs:ENTITIES':
-			return { kind: BaseType.XSENTITIES };
-		case 'xs:IDREF':
-			return { kind: BaseType.XSIDREF };
-		case 'xs:ID':
-			return { kind: BaseType.XSID };
-		case 'xs:IDREFS':
-			return { kind: BaseType.XSIDREFS };
-		case 'xs:NOTATION':
-			return { kind: BaseType.XSNOTATION };
-		case 'xs:anySimpleType':
-			return { kind: BaseType.XSANYSIMPLETYPE };
-		case 'xs:anyAtomicType':
-			return { kind: BaseType.XSANYATOMICTYPE };
-		case 'attribute()':
-			return { kind: BaseType.ATTRIBUTE };
-		case 'xs:normalizedString':
-			return { kind: BaseType.XSNORMALIZEDSTRING };
-		case 'xs:NMTOKENS':
-			return { kind: BaseType.XSNMTOKENS };
-		case 'xs:NMTOKEN':
-			return { kind: BaseType.XSNMTOKEN };
-		case 'xs:language':
-			return { kind: BaseType.XSLANGUAGE };
-		case 'xs:token':
-			return { kind: BaseType.XSTOKEN };
-		case 'node()':
-			return { kind: BaseType.NODE };
-		case 'element()':
-			return { kind: BaseType.ELEMENT };
-		case 'document-node()':
-			return { kind: BaseType.DOCUMENTNODE };
-		case 'text()':
-			return { kind: BaseType.TEXT };
-		case 'processing-instruction()':
-			return { kind: BaseType.PROCESSINGINSTRUCTION };
-		case 'comment()':
-			return { kind: BaseType.COMMENT };
-		case 'item()':
-			return { kind: BaseType.ITEM };
-		case 'function(*)':
-			return { kind: BaseType.FUNCTION, returnType: undefined, params: [] };
-		case 'map(*)':
-			return { kind: BaseType.MAP, items: [] };
-		case 'array(*)':
-			return { kind: BaseType.ARRAY, items: [] };
-		default:
-			throw new Error(`Cannot convert String of type "${input}" to ValueType`);
+	const stringToTypeMap: { [key: string]: ValueType } = {
+		'xs:boolean': { kind: BaseType.XSBOOLEAN },
+		'xs:string': { kind: BaseType.XSSTRING },
+		'xs:numeric': { kind: BaseType.XSNUMERIC },
+		'xs:double': { kind: BaseType.XSDOUBLE },
+		'xs:decimal': { kind: BaseType.XSDECIMAL },
+		'xs:integer': { kind: BaseType.XSINTEGER },
+		'xs:float': { kind: BaseType.XSFLOAT },
+		'xs:date': { kind: BaseType.XSDATE },
+		'xs:time': { kind: BaseType.XSTIME },
+		'xs:dateTime': { kind: BaseType.XSDATETIME },
+		'xs:dateTimeStamp': { kind: BaseType.XSDATETIMESTAMP },
+		'xs:gYearMonth': { kind: BaseType.XSGYEARMONTH },
+		'xs:gYear': { kind: BaseType.XSGYEAR },
+		'xs:gMonthDay': { kind: BaseType.XSGMONTHDAY },
+		'xs:gMonth': { kind: BaseType.XSGMONTH },
+		'xs:gDay': { kind: BaseType.XSGDAY },
+		'xs:yearMonthDuration': { kind: BaseType.XSYEARMONTHDURATION },
+		'xs:dayTimeDuration': { kind: BaseType.XSDAYTIMEDURATION },
+		'xs:duration': { kind: BaseType.XSDURATION },
+		'xs:untypedAtomic': { kind: BaseType.XSUNTYPEDATOMIC },
+		'xs:anyURI': { kind: BaseType.XSANYURI },
+		'xs:base64Binary': { kind: BaseType.XSBASE64BINARY },
+		'xs:hexBinary': { kind: BaseType.XSHEXBINARY },
+		'xs:QName': { kind: BaseType.XSQNAME },
+		'xs:NCName': { kind: BaseType.XSNCNAME },
+		'xs:Name': { kind: BaseType.XSNAME },
+		'xs:ENTITY': { kind: BaseType.XSENTITY },
+		'xs:nonPositiveInteger': { kind: BaseType.XSNONPOSITIVEINTEGER },
+		'xs:negativeInteger': { kind: BaseType.XSNEGATIVEINTEGER },
+		'xs:positiveInteger': { kind: BaseType.XSPOSITIVEINTEGER },
+		'xs:nonNegativeInteger': { kind: BaseType.XSNONNEGATIVEINTEGER },
+		'xs:long': { kind: BaseType.XSLONG },
+		'xs:int': { kind: BaseType.XSINT },
+		'xs:short': { kind: BaseType.XSSHORT },
+		'xs:byte': { kind: BaseType.XSBYTE },
+		'xs:unsignedInt': { kind: BaseType.XSUNSIGNEDINT },
+		'xs:unsignedLong': { kind: BaseType.XSUNSIGNEDLONG },
+		'xs:unsignedByte': { kind: BaseType.XSUNSIGNEDBYTE },
+		'xs:unsignedShort': { kind: BaseType.XSUNSIGNEDSHORT },
+		'xs:error': { kind: BaseType.XSERROR },
+		'xs:ENTITIES': { kind: BaseType.XSENTITIES },
+		'xs:IDREF': { kind: BaseType.XSIDREF },
+		'xs:ID': { kind: BaseType.XSID },
+		'xs:IDREFS': { kind: BaseType.XSIDREFS },
+		'xs:NOTATION': { kind: BaseType.XSNOTATION },
+		'xs:anySimpleType': { kind: BaseType.XSANYSIMPLETYPE },
+		'xs:anyAtomicType': { kind: BaseType.XSANYATOMICTYPE },
+		'attribute()': { kind: BaseType.ATTRIBUTE },
+		'xs:normalizedString': { kind: BaseType.XSNORMALIZEDSTRING },
+		'xs:NMTOKENS': { kind: BaseType.XSNMTOKENS },
+		'xs:NMTOKEN': { kind: BaseType.XSNMTOKEN },
+		'xs:language': { kind: BaseType.XSLANGUAGE },
+		'xs:token': { kind: BaseType.XSTOKEN },
+		'node()': { kind: BaseType.NODE },
+		'element()': { kind: BaseType.ELEMENT },
+		'document-node()': { kind: BaseType.DOCUMENTNODE },
+		'text()': { kind: BaseType.TEXT },
+		'processing-instruction()': { kind: BaseType.PROCESSINGINSTRUCTION },
+		'comment()': { kind: BaseType.COMMENT },
+		'item()': { kind: BaseType.ITEM },
+		'function(*)': { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+		'map(*)': { kind: BaseType.MAP, items: [] },
+		'array(*)': { kind: BaseType.ARRAY, items: [] },
+	};
+
+	var typeVal = stringToTypeMap[input];
+	if (typeVal === undefined || typeVal === null) {
+		throw new Error(`Cannot convert String of type "${input}" to ValueType`);
 	}
+	return typeVal;
 }
+
