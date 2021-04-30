@@ -1,9 +1,9 @@
 import { NODE_TYPES } from '../domFacade/ConcreteNode';
+import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueToXPathValue';
 import isSubtypeOf from '../expressions/dataTypes/isSubtypeOf';
 import getEffectiveBooleanValue from '../expressions/dataTypes/Sequences/getEffectiveBooleanValue';
 import { errFORG0006 } from '../expressions/functions/FunctionOperationErrors';
 import { DONE_TOKEN, ready } from '../expressions/util/iterators';
-import { adaptSingleJavaScriptValue } from '../expressions/adaptJavaScriptValueToXPathValue';
 
 export function determinePredicateTruthValue(iterator) {
 	// TODO: maybe handle this in generated code instead?
