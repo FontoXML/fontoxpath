@@ -15,7 +15,7 @@ import {
 	lessThan as yearMonthDurationLessThan,
 } from '../../dataTypes/valueTypes/YearMonthDuration';
 
-import { BaseType, ValueType } from '../../../expressions/dataTypes/Value';
+import { BaseType, ValueType, valueTypeHash } from '../../../expressions/dataTypes/Value';
 import AtomicValue from '../../dataTypes/AtomicValue';
 import DynamicContext from '../../DynamicContext';
 
@@ -332,7 +332,7 @@ export default function (
 	dynamicContext: DynamicContext
 ): boolean {
 	// https://www.w3.org/TR/xpath-3/#doc-xpath31-ValueComp
-	const typingKey = `${valueA.type}~${valueB.type}~${operator}`;
+	const typingKey = `${valueTypeHash(valueA.type)}~${valueTypeHash(valueB.type)}~${operator}`;
 	let prefabComparator = comparatorsByTypingKey[typingKey];
 	if (!prefabComparator) {
 		prefabComparator = comparatorsByTypingKey[typingKey] = generateCompareFunction(
