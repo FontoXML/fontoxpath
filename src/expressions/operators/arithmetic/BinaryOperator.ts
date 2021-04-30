@@ -3,7 +3,7 @@ import castToType from '../../dataTypes/castToType';
 import createAtomicValue from '../../dataTypes/createAtomicValue';
 import isSubtypeOf from '../../dataTypes/isSubtypeOf';
 import sequenceFactory from '../../dataTypes/sequenceFactory';
-import { BaseType, ValueType } from '../../dataTypes/Value';
+import { BaseType, ValueType, valueTypeHash } from '../../dataTypes/Value';
 import {
 	addDuration as addDurationToDateTime,
 	subtract as dateTimeSubtract,
@@ -487,7 +487,10 @@ class BinaryOperator extends Expression {
 
 				const firstValue = firstValues[0];
 				const secondValue = secondValues[0];
-				const typingKey = `${firstValue.type}~${secondValue.type}~${this._operator}`;
+				// TODO: Find a more errorproof solution, hash collisions can occur here
+				const typingKey = `${valueTypeHash(firstValue.type)}~${valueTypeHash(
+					secondValue.type
+				)}~${this._operator}`;
 				let prefabOperator = operatorsByTypingKey[typingKey];
 				if (!prefabOperator) {
 					prefabOperator = operatorsByTypingKey[
