@@ -79,7 +79,7 @@ export default function emitTest(ast: IAST, identifier: string): EmittedJavaScri
 	const emittedTest = testEmittersByNodeName[test](ast, identifier);
 
 	if (emittedTest === undefined) {
-		throw new Error('This test is not supported');
+		return rejectAst('This test is not supported');
 	}
 	return emittedTest;
 }
