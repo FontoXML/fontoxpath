@@ -8,15 +8,11 @@ npm:
         - type-inference
     script:
         - npm ci
+        - npm run build
     cache:
         paths:
             - node_modules/
             - built/
-    artifacts:
-        expire_in: 1 days
-        when: on_success
-        paths:
-            - node_modules/
 
 test:
     stage: test
