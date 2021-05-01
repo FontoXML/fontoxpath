@@ -2,6 +2,12 @@ stages:
     - npm
     - test
 
+cache:
+    key: modules
+    paths:
+        - node_modules/
+        - built/
+
 npm:
     stage: npm
     tags:
@@ -10,6 +16,7 @@ npm:
         - npm ci
         - npm run build
     cache:
+        key: modules
         paths:
             - node_modules/
             - built/
@@ -23,3 +30,9 @@ test:
     script:
         - ls node_modules/
         - npm test
+    cache:
+        key: modules
+        paths:
+            - node_modules/
+            - built/
+        policy: pull
