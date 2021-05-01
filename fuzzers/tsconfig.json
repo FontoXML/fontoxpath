@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"fontoxpath": [
+				"../src/index.ts"
+			],
+			"fontoxpath/*": [
+				"../src/*"
+			]
+		},
+		"strict": false,
+		"allowJs": true,
+		"types": [
+			"mocha",
+			"node"
+		],
+		"target": "es2020",
+		"esModuleInterop": true
+	},
+	"include": [
+		"../src/**/*.ts",
+		"./**/*.ts"
+	]
+}
