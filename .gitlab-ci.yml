@@ -7,10 +7,11 @@ npm:
     tags:
         - type-inference
     script:
-        - npm install
+        - npm ci
     cache:
         paths:
             - node_modules/
+            - built/
     artifacts:
         expire_in: 1 days
         when: on_success
