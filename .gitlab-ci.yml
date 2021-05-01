@@ -1,26 +1,23 @@
-cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-        - node_modules/
-        - .npm/
-
 stages:
-    - build
-    - lint
+    - npm
+    - test
 
-build:
-    stage: build
-    tags:
-        - type-inference
+npm:
+    stage: npm
     script:
-        - npm ci --cache .npm --prefer-offline
+        - npm install
+    cache:
+        paths:
+            - node_modules/
+    artifacts:
+        expire_in: 1 days
+        when: on_success
+        paths:
+            - node_modules/
 
-lint:
-    stage: lint
-    needs:
-        - build
-    tags:
-        - type-inference
+test:
+    stage: test
+    dependencies:
+        - npm
     script:
-        - ls node_modules/
-        - npm --cache .npm run lint
+        - npm test
