@@ -4,6 +4,8 @@ stages:
 
 npm:
     stage: npm
+    tags:
+        - type-inference
     script:
         - npm install
     cache:
@@ -17,6 +19,8 @@ npm:
 
 test:
     stage: test
+    tags:
+        - type-inference
     dependencies:
         - npm
     script:
