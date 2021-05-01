@@ -21,4 +21,5 @@ test:
     dependencies:
         - npm
     script:
+        - ls node_modules/
         - npm test
