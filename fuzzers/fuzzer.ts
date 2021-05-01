@@ -27,9 +27,9 @@
 //
 
 import { evaluateXPath } from 'fontoxpath';
-import { sync } from 'slimdom-sax-parser';
 import process from 'process';
 import readline from 'readline';
+import { sync } from 'slimdom-sax-parser';
 
 function rand(upper: number): number {
 	return Math.floor(Math.random() * upper);
@@ -55,7 +55,7 @@ function mutateCharactersInPlace(input: string): string {
 }
 
 function mutateString(input: string): string {
-	var arr = input.split('');
+	let arr = input.split('');
 	// 1 in 20 chance to reverse the input
 	if (rand(20) === 0) {
 		arr = arr.reverse();
