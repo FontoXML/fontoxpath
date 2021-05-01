@@ -1,4 +1,8 @@
-image: node:latest
+cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+        - node_modules/
+        - .npm/
 
 stages:
     - build
@@ -9,7 +13,7 @@ build:
     tags:
         - type-inference
     script:
-        - npm ci
+        - npm ci --cache .npm --prefer-offline
 
 lint:
     stage: lint
@@ -18,4 +22,5 @@ lint:
     tags:
         - type-inference
     script:
-        - npm run lint
+        - ls node_modules/
+        - npm --cache .npm run lint
