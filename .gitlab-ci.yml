@@ -7,6 +7,7 @@ cache:
     paths:
         - node_modules/
         - built/
+        - src/parsing/
 
 npm:
     stage: npm
@@ -20,6 +21,7 @@ npm:
         paths:
             - node_modules/
             - built/
+            - src/parsing/
 
 test:
     stage: test
@@ -35,4 +37,5 @@ test:
         paths:
             - node_modules/
             - built/
+            - src/parsing/
         policy: pull
