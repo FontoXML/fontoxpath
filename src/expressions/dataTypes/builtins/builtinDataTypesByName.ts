@@ -22,7 +22,7 @@ builtinModels.forEach((model) => {
 	if (model.variety === 'primitive') {
 		const parent = model.parent ? builtinDataTypesByName[model.parent.kind] : null;
 		const validator = getValidatorForType(name.kind) || null;
-		const facetHandlers = facetHandlersByDataTypeName[name.kind];
+		const facetHandlers = facetHandlersByDataTypeName.getFacetByDataType(name.kind);
 		builtinDataTypesByName[name.kind] = {
 			variety: 'primitive',
 			name,

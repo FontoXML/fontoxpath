@@ -113,7 +113,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'local-name-from-QName',
 		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNCNAME } },
 		callFunction: fnLocalNameFromQName,
 	},
 	{

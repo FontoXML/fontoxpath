@@ -4196,3 +4196,11 @@ fo-test-array-subarray-006,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-subarray-007,Error: FOAY0001: subarray start out of bounds.
 fo-test-array-fold-right-003,AssertionError: Expected XPath          array:fold-right([1,2,3], [], function($x, $y){[$x, $y]})        to (deep equally) resolve to [1, [2, [3, []]]]: expected false to be true
 fo-test-array-sort-002,Error: XPST0017: Function array:sort with arity of 3 not registered. Did you mean "Q{http://www.w3.org/2005/xpath-functions/array}sort (array(*))", "Q{http://www.w3.org/2001/XMLSchema}short (xs:anyAtomicType?)" or "Q{http://www.w3.org/2005/xpath-functions/math}sqrt (xs:double?)"?
+fn-function-lookup-804,AssertionError: function-lookup(fn:QName('http://www.w3.org/2005/xpath-functions/array', 'subarray'), 2)(["a", "b", "c", "d"], 2): expected false to be true
+array-subarray-301,AssertionError: array:subarray(["a", "b", "c", "d"], 2): expected false to be true
+K-SeqExprCast-8,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Cannot convert String of type "prefixDoesNotExist:integer" to ValueType'
+FunctionCall-012,AssertionError: expected [Function] to throw error matching /XPTY0004/ but got 'XPST0081: Can not cast: type [object Object] is unknown.'
+K-SeqExprInstanceOf-49,AssertionError: expected [Function] to throw error matching /XPST0081/ but got 'Cannot convert String of type "prefixDoesNotExist:integer" to ValueType'
+K-SeqExprInstanceOf-50,AssertionError: expected [Function] to throw error matching /XPST0051/ but got 'Cannot convert String of type "xs:doesNotExist" to ValueType'
+K-SeqExprInstanceOf-51,AssertionError: expected [Function] to throw error matching /XPST0051/ but got 'Cannot convert String of type "xs:qname" to ValueType'
+fo-test-array-subarray-001,AssertionError: Expected XPath          array:subarray(["a", "b", "c", "d"], 2)        to (deep equally) resolve to ["b", "c", "d"]: expected false to be true

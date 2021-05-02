@@ -33,7 +33,7 @@ export default function nodeCompare(
 						switch (operator) {
 							case 'isOp':
 								return first === second ||
-									(first.type === second.type &&
+									(first.type.kind === second.type.kind &&
 										(first.type.kind === BaseType.ATTRIBUTE ||
 											first.type.kind === BaseType.NODE ||
 											first.type.kind === BaseType.ELEMENT ||
