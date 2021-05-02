@@ -12,25 +12,13 @@ cache:
         - test/assets/QT3TS
         - test/assets/XQUTS
 
-setup-npm:
+setup:
     stage: setup
     tags:
         - type-inference
     script:
         - npm ci
         - npm run build
-    cache:
-        key: modules
-        paths:
-            - node_modules/
-            - built/
-            - src/parsing/
-
-setup-qt3:
-    stage: setup
-    tags:
-        - type-inference
-    script:
         - mkdir -p ./test/assets/XQUTS ./test/assets/QT3TS
         - curl -L https://github.com/LeoWoerteler/QT3TS/archive/master.tar.gz > temp.tar.gz
         - tar -xf temp.tar.gz -C ./test/assets/QT3TS/ --strip-components=1
@@ -40,15 +28,17 @@ setup-qt3:
         - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
     cache:
         key: modules
-        policy: pull-push
         paths:
+            - node_modules/
+            - built/
+            - src/parsing/
             - test/assets/QT3TS
             - test/assets/XQUTS
 
 lint:
     stage: lint
     needs:
-        - setup-npm
+        - setup
     tags:
         - type-inference
     script:
@@ -62,7 +52,7 @@ lint:
 test:
     stage: tests
     needs:
-        - setup-npm
+        - setup
     tags:
         - type-inference
     script:
