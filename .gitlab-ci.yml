@@ -40,6 +40,7 @@ setup-qt3:
         - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
     cache:
         key: modules
+        policy: pull-push
         paths:
             - test/assets/QT3TS
             - test/assets/XQUTS
@@ -74,4 +75,3 @@ test:
             - built/
             - src/parsing/
         policy: pull
-
