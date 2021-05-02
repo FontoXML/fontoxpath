@@ -56,7 +56,7 @@ ci-test:
     tags:
         - type-inference
     script:
-        - npm ci-test
+        - npm run ci-test
     cache:
         key: modules
         paths:
