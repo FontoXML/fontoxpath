@@ -49,15 +49,110 @@ lint:
             - node_modules/
         policy: pull
 
-test:
+ci-test:
     stage: tests
     needs:
         - setup
     tags:
         - type-inference
     script:
-        - ls node_modules/
-        - npm test
+        - npm ci-test
+    cache:
+        key: modules
+        paths:
+            - node_modules/
+            - built/
+            - src/parsing/
+        policy: pull
+
+ci-qt3tests:
+    stage: tests
+    needs:
+        - setup
+    tags:
+        - type-inference
+    script:
+        - npm run ci-qt3tests
+    cache:
+        key: modules
+        paths:
+            - node_modules/
+            - built/
+            - src/parsing/
+        policy: pull
+
+integrationtests:
+    stage: tests
+    needs:
+        - setup
+    tags:
+        - type-inference
+    script:
+        - npm run integrationtests
+    cache:
+        key: modules
+        paths:
+            - node_modules/
+            - built/
+            - src/parsing/
+        policy: pull
+
+qt3tests:
+    stage: tests
+    needs:
+        - setup
+    tags:
+        - type-inference
+    script:
+        - npm run qt3tests
+    cache:
+        key: modules
+        paths:
+            - node_modules/
+            - built/
+            - src/parsing/
+        policy: pull
+
+ci-qt3testsxqueryx:
+    stage: tests
+    needs:
+        - setup
+    tags:
+        - type-inference
+    script:
+        - npm run ci-qt3testsxqueryx
+    cache:
+        key: modules
+        paths:
+            - node_modules/
+            - built/
+            - src/parsing/
+        policy: pull
+
+ci-xqutstests:
+    stage: tests
+    needs:
+        - setup
+    tags:
+        - type-inference
+    script:
+        - npm run ci-xqutstests
+    cache:
+        key: modules
+        paths:
+            - node_modules/
+            - built/
+            - src/parsing/
+        policy: pull
+
+ci-xqutstestsxqueryx:
+    stage: tests
+    needs:
+        - setup
+    tags:
+        - type-inference
+    script:
+        - npm run ci-xqutstestsxqueryx
     cache:
         key: modules
         paths:
