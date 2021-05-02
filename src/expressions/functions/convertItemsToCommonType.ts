@@ -27,7 +27,7 @@ export default function convertItemsToCommonType(items: (Value | null)[]): (Valu
 			if (itemType === null) {
 				return typeName;
 			}
-			return itemType === typeName ? typeName : null;
+			return (itemType && typeName && itemType.kind === typeName.kind) ? typeName : null;
 		});
 
 	if (commonTypeName !== null) {
