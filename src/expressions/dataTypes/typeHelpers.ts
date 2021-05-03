@@ -1,9 +1,10 @@
 import builtinDataTypesByName, { TypeModel } from './builtins/builtinDataTypesByName';
 import { ValueType } from './Value';
+import { Variety } from './Variety'
 
 export function getPrimitiveTypeName(typeName: ValueType): ValueType | null {
 	let type = builtinDataTypesByName[typeName.kind];
-	while (type && type.variety !== 'primitive') {
+	while (type && type.variety !== Variety.PRIMITIVE) {
 		type = type.parent;
 	}
 	return !type ? null : type.name;
@@ -37,7 +38,7 @@ export function normalizeWhitespace(input: string, typeName: ValueType): string 
 export function validatePattern(input: string, typeName: ValueType): boolean {
 	let typeModel = builtinDataTypesByName[typeName.kind];
 	while (typeModel && typeModel.validator === null) {
-		if (typeModel.variety === 'list' || typeModel.variety === 'union') {
+		if (typeModel.variety === Variety.LIST || typeModel.variety === Variety.UNION) {
 			return true;
 		}
 		typeModel = typeModel.parent;

@@ -1,4 +1,5 @@
 import { BaseType, ValueType } from '../Value';
+import { Variety } from '../Variety';
 
 type BuildinModelTypeDeclaration = {
 	base?: ValueType;
@@ -7,18 +8,18 @@ type BuildinModelTypeDeclaration = {
 	parent?: ValueType;
 	restrictions?: { [s: string]: string | number };
 	type?: ValueType;
-	variety: string;
+	variety: Variety;
 };
 
 const builtinModels: BuildinModelTypeDeclaration[] = [
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.ITEM },
 	},
 
 	// anyAtomicType
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSANYATOMICTYPE },
 		parent: { kind: BaseType.ITEM },
 		restrictions: {
@@ -28,21 +29,21 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// untypedAtomic
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSUNTYPEDATOMIC },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 	},
 
 	// string
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSSTRING },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 	},
 
 	// boolean
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSBOOLEAN },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -52,7 +53,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// decimal
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSDECIMAL },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -62,7 +63,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// float
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSFLOAT },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -72,7 +73,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// double
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSDOUBLE },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -82,7 +83,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// duration
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSDURATION },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -92,7 +93,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// dateTime
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSDATETIME },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -103,7 +104,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// time
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSTIME },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -114,7 +115,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// date
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSDATE },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -125,7 +126,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// gYearMonth
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSGYEARMONTH },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -136,7 +137,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// gYear
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSGYEAR },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -147,7 +148,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// gMonthDay
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSGMONTHDAY },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -158,7 +159,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// gDay
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSGDAY },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -169,7 +170,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// gMonth
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSGMONTH },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -180,7 +181,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// hexBinary
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSHEXBINARY },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -190,7 +191,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// base64Binary
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSBASE64BINARY },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -200,7 +201,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// anyURI
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSANYURI },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -210,7 +211,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// QName
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSQNAME },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -220,7 +221,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// NOTATION
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSNOTATION },
 		parent: { kind: BaseType.XSANYATOMICTYPE },
 		restrictions: {
@@ -230,7 +231,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// dateTimeStamp
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSDATETIMESTAMP },
 		base: { kind: BaseType.XSDATETIME },
 		restrictions: {
@@ -241,7 +242,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// normalizedString
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSNORMALIZEDSTRING },
 		base: { kind: BaseType.XSSTRING },
 		restrictions: {
@@ -251,7 +252,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// token
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSTOKEN },
 		base: { kind: BaseType.XSNORMALIZEDSTRING },
 		restrictions: {
@@ -261,7 +262,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// language (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSLANGUAGE },
 		base: { kind: BaseType.XSTOKEN },
 		restrictions: {
@@ -271,7 +272,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// NMTOKEN (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSNMTOKEN },
 		base: { kind: BaseType.XSTOKEN },
 		restrictions: {
@@ -281,7 +282,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// NMTOKENS
 	{
-		variety: 'list',
+		variety: Variety.LIST,
 		name: { kind: BaseType.XSNMTOKENS },
 		type: { kind: BaseType.XSNMTOKENS },
 		restrictions: {
@@ -292,7 +293,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// Name (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSNAME },
 		base: { kind: BaseType.XSTOKEN },
 		restrictions: {
@@ -302,7 +303,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// NCName (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSNCNAME },
 		base: { kind: BaseType.XSNAME },
 		restrictions: {
@@ -312,7 +313,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// ID (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSID },
 		base: { kind: BaseType.XSNCNAME },
 		restrictions: {
@@ -322,7 +323,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// IDREF (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSIDREF },
 		base: { kind: BaseType.XSNCNAME },
 		restrictions: {
@@ -332,7 +333,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// IDREFS
 	{
-		variety: 'list',
+		variety: Variety.LIST,
 		name: { kind: BaseType.XSIDREFS },
 		type: { kind: BaseType.XSIDREF },
 		restrictions: {
@@ -343,7 +344,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// ENTITY (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSENTITY },
 		base: { kind: BaseType.XSNCNAME },
 		restrictions: {
@@ -353,7 +354,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// ENTITIES
 	{
-		variety: 'list',
+		variety: Variety.LIST,
 		name: { kind: BaseType.XSENTITIES },
 		type: { kind: BaseType.XSENTITY },
 		restrictions: {
@@ -364,7 +365,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// integer (TODO: implement pattern)
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.XSINTEGER },
 		parent: { kind: BaseType.XSDECIMAL },
 		restrictions: {
@@ -375,7 +376,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// nonPositiveInteger (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSNONPOSITIVEINTEGER },
 		base: { kind: BaseType.XSINTEGER },
 		restrictions: {
@@ -387,7 +388,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// negativeInteger (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSNEGATIVEINTEGER },
 		base: { kind: BaseType.XSNONPOSITIVEINTEGER },
 		restrictions: {
@@ -399,7 +400,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// long (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSLONG },
 		base: { kind: BaseType.XSINTEGER },
 		restrictions: {
@@ -412,7 +413,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// int (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSINT },
 		base: { kind: BaseType.XSLONG },
 		restrictions: {
@@ -425,7 +426,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// short (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSSHORT },
 		base: { kind: BaseType.XSINT },
 		restrictions: {
@@ -438,7 +439,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// byte (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSBYTE },
 		base: { kind: BaseType.XSSHORT },
 		restrictions: {
@@ -451,7 +452,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// nonNegativeInteger (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSNONNEGATIVEINTEGER },
 		base: { kind: BaseType.XSINTEGER },
 		restrictions: {
@@ -463,7 +464,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// unsignedLong (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSUNSIGNEDLONG },
 		base: { kind: BaseType.XSNONNEGATIVEINTEGER },
 		restrictions: {
@@ -476,7 +477,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// unsignedInt (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSUNSIGNEDINT },
 		base: { kind: BaseType.XSUNSIGNEDLONG },
 		restrictions: {
@@ -489,7 +490,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// unsignedShort (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSUNSIGNEDSHORT },
 		base: { kind: BaseType.XSUNSIGNEDINT },
 		restrictions: {
@@ -502,7 +503,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// unsignedByte (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSUNSIGNEDBYTE },
 		base: { kind: BaseType.XSUNSIGNEDSHORT },
 		restrictions: {
@@ -515,7 +516,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// positiveInteger (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSPOSITIVEINTEGER },
 		base: { kind: BaseType.XSNONNEGATIVEINTEGER },
 		restrictions: {
@@ -527,7 +528,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// yearMonthDuration (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSYEARMONTHDURATION },
 		base: { kind: BaseType.XSDURATION },
 		restrictions: {
@@ -537,7 +538,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 
 	// dayTimeDuration (TODO: implement pattern)
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.XSDAYTIMEDURATION },
 		base: { kind: BaseType.XSDURATION },
 		restrictions: {
@@ -546,73 +547,73 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		base: { kind: BaseType.ITEM },
 	},
 
 	{
-		variety: 'union',
+		variety: Variety.UNION,
 		name: { kind: BaseType.XSERROR },
 		memberTypes: [],
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.MAP, items: [] },
 		base: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.ARRAY, items: [] },
 		base: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 	},
 
 	{
-		variety: 'primitive',
+		variety: Variety.PRIMITIVE,
 		name: { kind: BaseType.NODE },
 		parent: { kind: BaseType.ITEM },
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.ELEMENT },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.COMMENT },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.ATTRIBUTE },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.TEXT },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.PROCESSINGINSTRUCTION },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
-		variety: 'derived',
+		variety: Variety.DERIVED,
 		name: { kind: BaseType.DOCUMENTNODE },
 		base: { kind: BaseType.NODE },
 	},
 
 	{
-		variety: 'union',
+		variety: Variety.UNION,
 		name: { kind: BaseType.XSNUMERIC },
 		memberTypes: [
 			{ kind: BaseType.XSDECIMAL },
