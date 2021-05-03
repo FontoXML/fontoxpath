@@ -5,6 +5,7 @@ import {
 	profiler,
 	registerCustomXPathFunction,
 } from 'fontoxpath';
+import { OccurrenceIndicator } from 'fontoxpath/expressions/dataTypes/Value';
 import * as slimdom from 'slimdom';
 
 function timeXPath(xpath, document) {
