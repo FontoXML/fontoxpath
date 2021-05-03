@@ -283,7 +283,7 @@ const builtinModels: BuildinModelTypeDeclaration[] = [
 	{
 		variety: 'list',
 		name: { kind: BaseType.XSNMTOKENS },
-		type: { kind: BaseType.XSNMTOKENS },
+		type: { kind: BaseType.XSNMTOKEN },
 		restrictions: {
 			minLength: 1,
 			whiteSpace: 'collapse',
