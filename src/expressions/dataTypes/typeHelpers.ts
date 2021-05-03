@@ -1,8 +1,8 @@
-import builtinDataTypesByName, { TypeModel } from './builtins/builtinDataTypesByName';
+import builtinDataTypesByType, { TypeModel } from './builtins/builtinDataTypesByType';
 import { ValueType } from './Value';
 
 export function getPrimitiveTypeName(typeName: ValueType): ValueType | null {
-	let type = builtinDataTypesByName[typeName.kind];
+	let type = builtinDataTypesByType[typeName.kind];
 	while (type && type.variety !== 'primitive') {
 		type = type.parent;
 	}
@@ -10,7 +10,7 @@ export function getPrimitiveTypeName(typeName: ValueType): ValueType | null {
 }
 
 export function normalizeWhitespace(input: string, typeName: ValueType): string {
-	const type = builtinDataTypesByName[typeName.kind];
+	const type = builtinDataTypesByType[typeName.kind];
 	const restrictionsByName = type.restrictionsByName;
 	if (!restrictionsByName || !restrictionsByName.whiteSpace) {
 		if (!type.parent) {
@@ -35,7 +35,7 @@ export function normalizeWhitespace(input: string, typeName: ValueType): string 
 }
 
 export function validatePattern(input: string, typeName: ValueType): boolean {
-	let typeModel = builtinDataTypesByName[typeName.kind];
+	let typeModel = builtinDataTypesByType[typeName.kind];
 	while (typeModel && typeModel.validator === null) {
 		if (typeModel.variety === 'list' || typeModel.variety === 'union') {
 			return true;
@@ -59,7 +59,7 @@ function getHandlerForFacet(typeModel: TypeModel, facetName: string) {
 }
 
 export function validateRestrictions(value: string, typeName: ValueType): boolean {
-	let type = builtinDataTypesByName[typeName.kind];
+	let type = builtinDataTypesByType[typeName.kind];
 	while (type) {
 		if (!type.restrictionsByName) {
 			type = type.parent;

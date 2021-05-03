@@ -13,17 +13,17 @@ export type TypeModel = {
 	variety: 'primitive' | 'derived' | 'list' | 'union';
 };
 
-const builtinDataTypesByName: { [typeName in BaseType]: TypeModel } = Object.create(null);
+const builtinDataTypesByType: { [typeName in BaseType]: TypeModel } = Object.create(null);
 
 builtinModels.forEach((model) => {
 	const name = model.name;
 	const restrictionsByName = model.restrictions || {};
 
 	if (model.variety === 'primitive') {
-		const parent = model.parent ? builtinDataTypesByName[model.parent.kind] : null;
+		const parent = model.parent ? builtinDataTypesByType[model.parent.kind] : null;
 		const validator = getValidatorForType(name.kind) || null;
 		const facetHandlers = facetHandlersByDataTypeName.getFacetByDataType(name.kind);
-		builtinDataTypesByName[name.kind] = {
+		builtinDataTypesByType[name.kind] = {
 			variety: 'primitive',
 			name,
 			restrictionsByName,
@@ -33,9 +33,9 @@ builtinModels.forEach((model) => {
 			memberTypes: [],
 		};
 	} else if (model.variety === 'derived') {
-		const base = builtinDataTypesByName[model.base.kind];
+		const base = builtinDataTypesByType[model.base.kind];
 		const validator = getValidatorForType(name.kind) || null;
-		builtinDataTypesByName[name.kind] = {
+		builtinDataTypesByType[name.kind] = {
 			variety: 'derived',
 			name,
 			restrictionsByName,
@@ -45,8 +45,8 @@ builtinModels.forEach((model) => {
 			memberTypes: [],
 		};
 	} else if (model.variety === 'list') {
-		const type = builtinDataTypesByName[model.type.kind];
-		builtinDataTypesByName[name.kind] = {
+		const type = builtinDataTypesByType[model.type.kind];
+		builtinDataTypesByType[name.kind] = {
 			variety: 'list',
 			name,
 			restrictionsByName,
@@ -57,9 +57,9 @@ builtinModels.forEach((model) => {
 		};
 	} else {
 		const memberTypes = model.memberTypes.map(
-			(memberTypeRef) => builtinDataTypesByName[memberTypeRef.kind]
+			(memberTypeRef) => builtinDataTypesByType[memberTypeRef.kind]
 		);
-		builtinDataTypesByName[name.kind] = {
+		builtinDataTypesByType[name.kind] = {
 			variety: 'union',
 			name,
 			restrictionsByName,
@@ -71,4 +71,4 @@ builtinModels.forEach((model) => {
 	}
 });
 
-export default builtinDataTypesByName;
+export default builtinDataTypesByType;

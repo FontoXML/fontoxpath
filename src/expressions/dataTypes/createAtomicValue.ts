@@ -1,10 +1,10 @@
-import builtinDataTypesByName from './builtins/builtinDataTypesByName';
+import builtinDataTypesByType from './builtins/builtinDataTypesByType';
 
 import AtomicValue from './AtomicValue';
 import { BaseType, ValueType } from './Value';
 
 export default function createAtomicValue(value: any, type: ValueType): AtomicValue {
-	if (!builtinDataTypesByName[type.kind]) {
+	if (!builtinDataTypesByType[type.kind]) {
 		throw new Error('Unknown type');
 	}
 
