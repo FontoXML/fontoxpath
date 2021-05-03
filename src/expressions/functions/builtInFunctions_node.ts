@@ -16,7 +16,7 @@ import { sortNodeValues } from '../dataTypes/documentOrderUtils';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value from '../dataTypes/Value';
+import Value, { BaseType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -25,6 +25,7 @@ import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import StaticContext from '../StaticContext';
 import { IterationHint } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import builtinStringFunctions from './builtInFunctions_string';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
@@ -79,7 +80,7 @@ const fnNodeName: FunctionDefinitionType = (
 								pointer as AttributeNodePointer | ElementNodePointer
 							)
 						),
-						'xs:QName'
+						{ kind: BaseType.XSQNAME }
 					)
 				);
 			case NODE_TYPES.PROCESSING_INSTRUCTION_NODE:
@@ -88,7 +89,7 @@ const fnNodeName: FunctionDefinitionType = (
 				return sequenceFactory.singleton(
 					createAtomicValue(
 						new QName('', '', domFacade.getTarget(processingInstruction)),
-						'xs:QName'
+						{ kind: BaseType.XSQNAME }
 					)
 				);
 			default:
@@ -232,10 +233,12 @@ const fnPath: FunctionDefinitionType = (
 			}
 		}
 		if (domFacade.getNodeType(ancestor) === NODE_TYPES.DOCUMENT_NODE) {
-			return sequenceFactory.create(createAtomicValue(result || '/', 'xs:string'));
+			return sequenceFactory.create(
+				createAtomicValue(result || '/', { kind: BaseType.XSSTRING })
+			);
 		}
 		result = 'Q{http://www.w3.org/2005/xpath-functions}root()' + result;
-		return sequenceFactory.create(createAtomicValue(result, 'xs:string'));
+		return sequenceFactory.create(createAtomicValue(result, { kind: BaseType.XSSTRING }));
 	});
 };
 
@@ -246,10 +249,9 @@ const fnNamespaceURI: FunctionDefinitionType = (
 	sequence
 ) => {
 	return sequence.map((node) =>
-		createAtomicValue(
-			executionParameters.domFacade.getNamespaceURI(node.value) || '',
-			'xs:anyURI'
-		)
+		createAtomicValue(executionParameters.domFacade.getNamespaceURI(node.value) || '', {
+			kind: BaseType.XSANYURI,
+		})
 	);
 };
 
@@ -265,13 +267,15 @@ const fnLocalName: FunctionDefinitionType = (
 			return sequence.map((node) => {
 				if (domFacade.getNodeType(node.value) === 7) {
 					const pi: ProcessingInstructionNodePointer = node.value;
-					return createAtomicValue(domFacade.getTarget(pi), 'xs:string');
+					return createAtomicValue(domFacade.getTarget(pi), { kind: BaseType.XSSTRING });
 				}
 
-				return createAtomicValue(domFacade.getLocalName(node.value) || '', 'xs:string');
+				return createAtomicValue(domFacade.getLocalName(node.value) || '', {
+					kind: BaseType.XSSTRING,
+				});
 			});
 		},
-		empty: () => sequenceFactory.singleton(createAtomicValue('', 'xs:string')),
+		empty: () => sequenceFactory.singleton(createAtomicValue('', { kind: BaseType.XSSTRING })),
 	});
 };
 
@@ -370,7 +374,7 @@ const fnRoot: FunctionDefinitionType = (
 	nodeSequence
 ) => {
 	return nodeSequence.map((node) => {
-		if (!isSubtypeOf(node.type, 'node()')) {
+		if (!isSubtypeOf(node.type, { kind: BaseType.NODE })) {
 			throw new Error('XPTY0004 Argument passed to fn:root() should be of the type node()');
 		}
 
@@ -384,151 +388,155 @@ const fnRoot: FunctionDefinitionType = (
 	});
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		callFunction: fnName,
+		localName: 'name',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+	},
+
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, fnName),
+		localName: 'name',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.XSSTRING },
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.NODE }],
+		callFunction: fnNamespaceURI,
+		localName: 'namespace-uri',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.XSANYURI },
+	},
+
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI),
+		localName: 'namespace-uri',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.XSANYURI },
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.NODE } }],
+		callFunction: fnInnermost,
+		localName: 'innermost',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.NODE } }],
+		callFunction: fnOutermost,
+		localName: 'outermost',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		callFunction: fnHasChildren,
+		localName: 'has-children',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: {
+			kind: BaseType.XSBOOLEAN,
+		},
+	},
+
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren),
+		localName: 'has-children',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.XSBOOLEAN },
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		callFunction: fnPath,
+		localName: 'path',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+	},
+
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, fnPath),
+		localName: 'path',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		callFunction: fnNodeName,
+		localName: 'node-name',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+	},
+
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
+		localName: 'node-name',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		callFunction: fnLocalName,
+		localName: 'local-name',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.XSSTRING },
+	},
+
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, fnLocalName),
+		localName: 'local-name',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.XSSTRING },
+	},
+
+	{
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		callFunction: fnRoot,
+		localName: 'root',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } },
+	},
+
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
+		localName: 'root',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } },
+	},
+
+	{
+		argumentTypes: [],
+		callFunction: contextItemAsFirstArgument.bind(null, fnData),
+		localName: 'data',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+	},
+	{
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		callFunction: fnData,
+		localName: 'data',
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+	},
+];
+
 export default {
-	declarations: [
-		{
-			argumentTypes: ['node()?'],
-			callFunction: fnName,
-			localName: 'name',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string?',
-		},
-
-		{
-			argumentTypes: [],
-			callFunction: contextItemAsFirstArgument.bind(null, fnName),
-			localName: 'name',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
-		},
-
-		{
-			argumentTypes: ['node()'],
-			callFunction: fnNamespaceURI,
-			localName: 'namespace-uri',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyURI',
-		},
-
-		{
-			argumentTypes: [],
-			callFunction: contextItemAsFirstArgument.bind(null, fnNamespaceURI),
-			localName: 'namespace-uri',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyURI',
-		},
-
-		{
-			argumentTypes: ['node()*'],
-			callFunction: fnInnermost,
-			localName: 'innermost',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'node()*',
-		},
-
-		{
-			argumentTypes: ['node()*'],
-			callFunction: fnOutermost,
-			localName: 'outermost',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'node()*',
-		},
-
-		{
-			argumentTypes: ['node()?'],
-			callFunction: fnHasChildren,
-			localName: 'has-children',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
-		},
-
-		{
-			argumentTypes: [],
-			callFunction: contextItemAsFirstArgument.bind(null, fnHasChildren),
-			localName: 'has-children',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:boolean',
-		},
-
-		{
-			argumentTypes: ['node()?'],
-			callFunction: fnPath,
-			localName: 'path',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string?',
-		},
-
-		{
-			argumentTypes: [],
-			callFunction: contextItemAsFirstArgument.bind(null, fnPath),
-			localName: 'path',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string?',
-		},
-
-		{
-			argumentTypes: ['node()?'],
-			callFunction: fnNodeName,
-			localName: 'node-name',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:QName?',
-		},
-
-		{
-			argumentTypes: [],
-			callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
-			localName: 'node-name',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:QName?',
-		},
-
-		{
-			argumentTypes: ['node()?'],
-			callFunction: fnLocalName,
-			localName: 'local-name',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
-		},
-
-		{
-			argumentTypes: [],
-			callFunction: contextItemAsFirstArgument.bind(null, fnLocalName),
-			localName: 'local-name',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:string',
-		},
-
-		{
-			argumentTypes: ['node()?'],
-			callFunction: fnRoot,
-			localName: 'root',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'node()?',
-		},
-
-		{
-			argumentTypes: [],
-			callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
-			localName: 'root',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'node()?',
-		},
-
-		{
-			argumentTypes: [],
-			callFunction: contextItemAsFirstArgument.bind(null, fnData),
-			localName: 'data',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType*',
-		},
-		{
-			argumentTypes: ['item()*'],
-			callFunction: fnData,
-			localName: 'data',
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			returnType: 'xs:anyAtomicType*',
-		},
-	],
+	declarations,
 	functions: {
 		name: fnName,
 		nodeName: fnNodeName,

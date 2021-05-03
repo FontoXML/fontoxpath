@@ -1,22 +1,22 @@
-import { ValueType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 
 export default function castToFloatLikeType(
 	instanceOf: (typeName: ValueType) => boolean,
 	to: ValueType
 ): (value) => { successful: true; value: number } | { error: Error; successful: false } {
-	if (instanceOf('xs:numeric')) {
+	if (instanceOf({ kind: BaseType.XSNUMERIC })) {
 		return (value) => ({
 			successful: true,
 			value,
 		});
 	}
-	if (instanceOf('xs:boolean')) {
+	if (instanceOf({ kind: BaseType.XSBOOLEAN })) {
 		return (value) => ({
 			successful: true,
 			value: value ? 1 : 0,
 		});
 	}
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf({ kind: BaseType.XSSTRING }) || instanceOf({ kind: BaseType.XSUNTYPEDATOMIC })) {
 		return (value) => {
 			switch (value) {
 				case 'NaN':

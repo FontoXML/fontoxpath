@@ -1,5 +1,5 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
-import { ValueType } from './Value';
+import { startWithXS, ValueType } from './Value';
 
 function isSubtypeOfType(subType, superType) {
 	if (superType.variety === 'union') {
@@ -8,13 +8,11 @@ function isSubtypeOfType(subType, superType) {
 	}
 
 	while (subType) {
-		if (subType.name === superType.name) {
+		if (subType.name.kind === superType.name.kind) {
 			return true;
 		}
 		if (subType.variety === 'union') {
-			return !!subType.memberTypes.find((memberType) =>
-				isSubtypeOfType(memberType, superType)
-			);
+			return !!subType.memberTypes.find((memberType) => isSubtypeOf(memberType, superType));
 		}
 		subType = subType.parent;
 	}
@@ -27,15 +25,15 @@ function isSubtypeOfType(subType, superType) {
  * xs:NMTOKENS is a subtype of xs:NM TOKEN
  */
 export default function isSubtypeOf(subTypeName: ValueType, superTypeName: ValueType): boolean {
-	if (subTypeName === superTypeName) {
+	if (subTypeName.kind === superTypeName.kind) {
 		return true;
 	}
 
-	const superType = builtinDataTypesByName[superTypeName];
-	const subType = builtinDataTypesByName[subTypeName];
+	const superType = builtinDataTypesByName[superTypeName.kind];
+	const subType = builtinDataTypesByName[subTypeName.kind];
 
 	if (!superType) {
-		if (!superTypeName.startsWith('xs:')) {
+		if (!startWithXS(superTypeName.kind)) {
 			// Note that 'xs' is the only namespace currently supported
 			throw new Error(`XPST0081: The type ${superTypeName} could not be found.`);
 		}

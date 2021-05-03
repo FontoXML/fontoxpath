@@ -1,17 +1,17 @@
 import { falseBoolean, trueBoolean } from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import CastResult from './CastResult';
 
 export default function castToBoolean(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value) => CastResult {
-	if (instanceOf('xs:numeric')) {
+	if (instanceOf({ kind: BaseType.XSNUMERIC })) {
 		return (value) => ({
 			successful: true,
 			value: value === 0 || isNaN(value) ? falseBoolean : trueBoolean,
 		});
 	}
-	if (instanceOf('xs:string') || instanceOf('xs:untypedAtomic')) {
+	if (instanceOf({ kind: BaseType.XSSTRING }) || instanceOf({ kind: BaseType.XSUNTYPEDATOMIC })) {
 		return (value) => {
 			switch (value) {
 				case 'true':

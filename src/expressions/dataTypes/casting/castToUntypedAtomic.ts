@@ -1,5 +1,5 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import CastResult from './CastResult';
 import castToStringLikeType from './castToStringLikeType';
 
@@ -15,7 +15,7 @@ export default function castToUntypedAtomic(
 
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, 'xs:untypedAtomic'),
+			value: createAtomicValue(castResult.value, { kind: BaseType.XSUNTYPEDATOMIC }),
 		};
 	};
 }

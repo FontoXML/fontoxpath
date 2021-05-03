@@ -1,7 +1,7 @@
 import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import TypeDeclaration from '../dataTypes/TypeDeclaration';
+import { ValueType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -15,12 +15,12 @@ class InlineFunction extends Expression {
 	private _functionBody: PossiblyUpdatingExpression;
 	private _parameterBindingNames: string[];
 	private _parameterNames: QName[];
-	private _parameterTypes: TypeDeclaration[];
-	private _returnType: TypeDeclaration;
+	private _parameterTypes: ValueType[];
+	private _returnType: ValueType;
 
 	constructor(
-		paramDescriptions: { name: QName; type: TypeDeclaration }[],
-		returnType: TypeDeclaration,
+		paramDescriptions: { name: QName; type: ValueType }[],
+		returnType: ValueType,
 		functionBody: PossiblyUpdatingExpression
 	) {
 		super(
@@ -43,7 +43,7 @@ class InlineFunction extends Expression {
 		this._functionBody = functionBody;
 	}
 
-	public evaluate(dynamicContext, executionParameters) {
+	public evaluate(dynamicContext, executionParameters): ISequence {
 		/**
 		 * @param  _unboundDynamicContext  The dynamic context at the moment of the function call. This will not be used because the context of a function is the context at the moment of declaration.
 		 *                                                                  This shall not be used

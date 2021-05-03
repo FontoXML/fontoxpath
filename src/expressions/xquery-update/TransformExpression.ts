@@ -3,6 +3,7 @@ import createPointerValue from '../dataTypes/createPointerValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
@@ -112,7 +113,7 @@ class TransformExpression extends UpdatingExpression {
 						// The result of evaluating the source expression must be a single node [err:XUTY0013]. Let $node be this single node.
 						if (
 							sv.value.xdmValue.length !== 1 ||
-							!isSubtypeOf(sv.value.xdmValue[0].type, 'node()')
+							!isSubtypeOf(sv.value.xdmValue[0].type, { kind: BaseType.NODE })
 						) {
 							throw errXUTY0013();
 						}

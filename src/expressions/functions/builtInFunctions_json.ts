@@ -4,8 +4,10 @@ import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 
 import ISequence from '../dataTypes/ISequence';
+import { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function convert(obj: any): ISequence {
@@ -26,16 +28,16 @@ function convert(obj: any): ISequence {
 				new MapValue(
 					Object.keys(obj as object).map((key) => {
 						return {
-							key: createAtomicValue(key, 'xs:string'),
+							key: createAtomicValue(key, { kind: BaseType.XSSTRING }),
 							value: createDoublyIterableSequence(convert((obj as object)[key])),
 						};
 					})
 				)
 			);
 		case 'number':
-			return sequenceFactory.singleton(createAtomicValue(obj, 'xs:double'));
+			return sequenceFactory.singleton(createAtomicValue(obj, { kind: BaseType.XSDOUBLE }));
 		case 'string':
-			return sequenceFactory.singleton(createAtomicValue(obj, 'xs:string'));
+			return sequenceFactory.singleton(createAtomicValue(obj, { kind: BaseType.XSSTRING }));
 		case 'boolean':
 			return obj
 				? sequenceFactory.singletonTrueSequence()
@@ -61,16 +63,18 @@ const fnParseJson: FunctionDefinitionType = (
 	return convert(jsObject);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'parse-json',
+		argumentTypes: [{ kind: BaseType.XSSTRING }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } },
+		callFunction: fnParseJson,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'parse-json',
-			argumentTypes: ['xs:string'],
-			returnType: 'item()?',
-			callFunction: fnParseJson,
-		},
-	],
+	declarations,
 	functions: {
 		parseJson: fnParseJson,
 	},

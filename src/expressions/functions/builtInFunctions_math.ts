@@ -1,11 +1,13 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 
 import { MATH_NAMESPACE_URI } from '../staticallyKnownNamespaces';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 const mathPi: FunctionDefinitionType = (_dynamicContext, _executionParameters, _staticContext) => {
-	return sequenceFactory.singleton(createAtomicValue(Math.PI, 'xs:double'));
+	return sequenceFactory.singleton(createAtomicValue(Math.PI, { kind: BaseType.XSDOUBLE }));
 };
 
 const mathExp: FunctionDefinitionType = (
@@ -15,7 +17,7 @@ const mathExp: FunctionDefinitionType = (
 	sequence
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.pow(Math.E, onlyValue.value), 'xs:double')
+		createAtomicValue(Math.pow(Math.E, onlyValue.value), { kind: BaseType.XSDOUBLE })
 	);
 };
 
@@ -26,7 +28,7 @@ const mathExp10: FunctionDefinitionType = (
 	sequence
 ) => {
 	return sequence.map((onlyValue) =>
-		createAtomicValue(Math.pow(10, onlyValue.value), 'xs:double')
+		createAtomicValue(Math.pow(10, onlyValue.value), { kind: BaseType.XSDOUBLE })
 	);
 };
 
@@ -36,7 +38,9 @@ const mathLog: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.log(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.log(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathLog10: FunctionDefinitionType = (
@@ -45,7 +49,9 @@ const mathLog10: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.log10(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.log10(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathPow: FunctionDefinitionType = (
@@ -60,9 +66,11 @@ const mathPow: FunctionDefinitionType = (
 		base.map((valueX) => {
 			// isFinite is false for +Infinity, -Infinity and NaN
 			if (Math.abs(valueX.value) === 1 && !Number.isFinite(valueY.value)) {
-				return createAtomicValue(1, 'xs:double');
+				return createAtomicValue(1, { kind: BaseType.XSDOUBLE });
 			}
-			return createAtomicValue(Math.pow(valueX.value, valueY.value), 'xs:double');
+			return createAtomicValue(Math.pow(valueX.value, valueY.value), {
+				kind: BaseType.XSDOUBLE,
+			});
 		})
 	);
 };
@@ -73,7 +81,9 @@ const mathSqrt: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.sqrt(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.sqrt(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathSin: FunctionDefinitionType = (
@@ -82,7 +92,9 @@ const mathSin: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.sin(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.sin(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathCos: FunctionDefinitionType = (
@@ -91,7 +103,9 @@ const mathCos: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.cos(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.cos(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathTan: FunctionDefinitionType = (
@@ -100,7 +114,9 @@ const mathTan: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.tan(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.tan(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathAsin: FunctionDefinitionType = (
@@ -109,7 +125,9 @@ const mathAsin: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.asin(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.asin(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathAcos: FunctionDefinitionType = (
@@ -118,7 +136,9 @@ const mathAcos: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.acos(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.acos(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathAtan: FunctionDefinitionType = (
@@ -127,7 +147,9 @@ const mathAtan: FunctionDefinitionType = (
 	_staticContext,
 	sequence
 ) => {
-	return sequence.map((onlyValue) => createAtomicValue(Math.atan(onlyValue.value), 'xs:double'));
+	return sequence.map((onlyValue) =>
+		createAtomicValue(Math.atan(onlyValue.value), { kind: BaseType.XSDOUBLE })
+	);
 };
 
 const mathAtan2: FunctionDefinitionType = (
@@ -140,123 +162,133 @@ const mathAtan2: FunctionDefinitionType = (
 	// Note that x is the double? argument, y is double.
 	return y.mapAll(([onlyYValue]) =>
 		x.map((onlyXValue) =>
-			createAtomicValue(Math.atan2(onlyXValue.value, onlyYValue.value), 'xs:double')
+			createAtomicValue(Math.atan2(onlyXValue.value, onlyYValue.value), {
+				kind: BaseType.XSDOUBLE,
+			})
 		)
 	);
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'pi',
+		argumentTypes: [],
+		returnType: { kind: BaseType.XSDOUBLE },
+		callFunction: mathPi,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'exp',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathExp,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'exp10',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathExp10,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'log',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathLog,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'log10',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathLog10,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'pow',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+			{ kind: BaseType.XSNUMERIC },
+		],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathPow,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'sqrt',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathSqrt,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'sin',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathSin,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'cos',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathCos,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'tan',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathTan,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'asin',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathAsin,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'acos',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathAcos,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'atan',
+		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } }],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathAtan,
+	},
+
+	{
+		namespaceURI: MATH_NAMESPACE_URI,
+		localName: 'atan2',
+		argumentTypes: [
+			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+			{ kind: BaseType.XSDOUBLE },
+		],
+		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		callFunction: mathAtan2,
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'pi',
-			argumentTypes: [],
-			returnType: 'xs:double',
-			callFunction: mathPi,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'exp',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathExp,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'exp10',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathExp10,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'log',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathLog,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'log10',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathLog10,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'pow',
-			argumentTypes: ['xs:double?', 'xs:numeric'],
-			returnType: 'xs:double?',
-			callFunction: mathPow,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'sqrt',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathSqrt,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'sin',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathSin,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'cos',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathCos,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'tan',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathTan,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'asin',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathAsin,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'acos',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathAcos,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'atan',
-			argumentTypes: ['xs:double?'],
-			returnType: 'xs:double?',
-			callFunction: mathAtan,
-		},
-
-		{
-			namespaceURI: MATH_NAMESPACE_URI,
-			localName: 'atan2',
-			argumentTypes: ['xs:double?', 'xs:double'],
-			returnType: 'xs:double?',
-			callFunction: mathAtan2,
-		},
-	],
+	declarations,
 };

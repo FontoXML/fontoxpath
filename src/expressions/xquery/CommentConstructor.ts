@@ -4,6 +4,7 @@ import atomize from '../dataTypes/atomize';
 import castToType from '../dataTypes/castToType';
 import createPointerValue from '../dataTypes/createPointerValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import Specificity from '../Specificity';
 
@@ -32,7 +33,9 @@ class CommentConstructor extends Expression {
 		}
 		const sequence = this._expr.evaluateMaybeStatically(_dynamicContext, executionParameters);
 		return atomize(sequence, executionParameters).mapAll((items) => {
-			const content = items.map((item) => castToType(item, 'xs:string').value).join(' ');
+			const content = items
+				.map((item) => castToType(item, { kind: BaseType.XSSTRING }).value)
+				.join(' ');
 
 			if (content.indexOf('-->') !== -1) {
 				throw new Error(

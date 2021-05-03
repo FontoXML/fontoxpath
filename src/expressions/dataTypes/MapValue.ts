@@ -3,13 +3,14 @@ import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import Value from './Value';
+import Value, { BaseType } from './Value';
 
 class MapValue extends FunctionValue<ISequence> {
 	public keyValuePairs: { key: Value; value: () => ISequence }[];
 	constructor(keyValuePairs: { key: Value; value: () => ISequence }[]) {
 		super({
-			argumentTypes: [{ type: 'item()', isRestArgument: false }],
+			// argumentTypes: [{ type: 'item()', isRestArgument: false }],
+			argumentTypes: [{ kind: BaseType.ITEM }],
 			arity: 1,
 			localName: 'get',
 			namespaceURI: MAP_NAMESPACE_URI,
@@ -21,9 +22,9 @@ class MapValue extends FunctionValue<ISequence> {
 					sequenceFactory.singleton(this),
 					key
 				),
-			returnType: { type: 'item()', occurrence: '*' },
+			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
 		});
-		this.type = 'map(*)';
+		this.type = { kind: BaseType.MAP, items: [] };
 		this.keyValuePairs = keyValuePairs;
 	}
 }

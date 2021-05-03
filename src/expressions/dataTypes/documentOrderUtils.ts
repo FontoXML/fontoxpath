@@ -8,7 +8,7 @@ import { ConcreteChildNode, ConcreteNode, ConcreteParentNode } from '../../domFa
 import DomFacade from '../../domFacade/DomFacade';
 import arePointersEqual from '../operators/compares/arePointersEqual';
 import isSubtypeOf from './isSubtypeOf';
-import Value from './Value';
+import Value, { BaseType } from './Value';
 
 /**
  * Compares positions of given nodes in the given state, assuming they share a common parent
@@ -204,8 +204,8 @@ function compareNodePositionsWithTieBreaker(
 	node1: Value,
 	node2: Value
 ) {
-	const isNode1SubtypeOfAttribute = isSubtypeOf(node1.type, 'attribute()');
-	const isNode2SubtypeOfAttribute = isSubtypeOf(node2.type, 'attribute()');
+	const isNode1SubtypeOfAttribute = isSubtypeOf(node1.type, { kind: BaseType.ATTRIBUTE });
+	const isNode2SubtypeOfAttribute = isSubtypeOf(node2.type, { kind: BaseType.ATTRIBUTE });
 	let value1: NodePointer;
 	let value2: NodePointer;
 	if (isNode1SubtypeOfAttribute && !isNode2SubtypeOfAttribute) {

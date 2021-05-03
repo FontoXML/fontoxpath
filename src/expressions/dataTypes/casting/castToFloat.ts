@@ -1,12 +1,12 @@
 import createAtomicValue from '../createAtomicValue';
-import { ValueType } from '../Value';
+import { BaseType, ValueType } from '../Value';
 import CastResult from './CastResult';
 import castToFloatLikeType from './castToFloatLikeType';
 
 export default function castToFloat(
 	instanceOf: (typeName: ValueType) => boolean
 ): (value) => CastResult {
-	const caster = castToFloatLikeType(instanceOf, 'xs:float');
+	const caster = castToFloatLikeType(instanceOf, { kind: BaseType.XSFLOAT });
 	return (value) => {
 		const castResult = caster(value);
 		if (!castResult.successful) {
@@ -14,7 +14,7 @@ export default function castToFloat(
 		}
 		return {
 			successful: true,
-			value: createAtomicValue(castResult.value, 'xs:float'),
+			value: createAtomicValue(castResult.value, { kind: BaseType.XSFLOAT }),
 		};
 	};
 }

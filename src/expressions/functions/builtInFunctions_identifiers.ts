@@ -4,8 +4,10 @@ import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
+import { BaseType } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { errXPTY0004, XPDY0002 } from '../XPathErrors';
+import { BuiltinDeclarationType } from './builtInFunctions';
 import FunctionDefinitionType from './FunctionDefinitionType';
 
 function findDescendants(
@@ -44,7 +46,7 @@ const fnId: FunctionDefinitionType = (
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use id function.');
 	}
-	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
+	if (!isSubtypeOf(targetNodeValue.type, { kind: BaseType.NODE })) {
 		throw errXPTY0004(
 			'The context item is not a node, it needs to be node to use id function.'
 		);
@@ -101,7 +103,7 @@ const fnIdref: FunctionDefinitionType = (
 	if (!targetNodeValue) {
 		throw XPDY0002('The context is absent, it needs to be present to use idref function.');
 	}
-	if (!isSubtypeOf(targetNodeValue.type, 'node()')) {
+	if (!isSubtypeOf(targetNodeValue.type, { kind: BaseType.NODE })) {
 		throw errXPTY0004(
 			'The context item is not a node, it needs to be node to use idref function.'
 		);
@@ -142,56 +144,64 @@ const fnIdref: FunctionDefinitionType = (
 	return sequenceFactory.create(matchingNodes.map((node) => createPointerValue(node, domFacade)));
 };
 
+const declarations: BuiltinDeclarationType[] = [
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'id',
+		argumentTypes: [
+			{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } },
+			{ kind: BaseType.NODE },
+		],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ELEMENT } },
+		callFunction: fnId,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'id',
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ELEMENT } },
+		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
+			return fnId(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				strings,
+				sequenceFactory.singleton(dynamicContext.contextItem)
+			);
+		},
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'idref',
+		argumentTypes: [
+			{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } },
+			{ kind: BaseType.NODE },
+		],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
+		callFunction: fnIdref,
+	},
+
+	{
+		namespaceURI: FUNCTIONS_NAMESPACE_URI,
+		localName: 'idref',
+		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }],
+		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
+		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
+			return fnIdref(
+				dynamicContext,
+				executionParameters,
+				_staticContext,
+				strings,
+				sequenceFactory.singleton(dynamicContext.contextItem)
+			);
+		},
+	},
+];
+
 export default {
-	declarations: [
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'id',
-			argumentTypes: ['xs:string*', 'node()'],
-			returnType: 'element()*',
-			callFunction: fnId,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'id',
-			argumentTypes: ['xs:string*'],
-			returnType: 'element()*',
-			callFunction(dynamicContext, executionParameters, _staticContext, strings) {
-				return fnId(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					strings,
-					sequenceFactory.singleton(dynamicContext.contextItem)
-				);
-			},
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'idref',
-			argumentTypes: ['xs:string*', 'node()'],
-			returnType: 'node()*',
-			callFunction: fnIdref,
-		},
-
-		{
-			namespaceURI: FUNCTIONS_NAMESPACE_URI,
-			localName: 'idref',
-			argumentTypes: ['xs:string*'],
-			returnType: 'node()*',
-			callFunction(dynamicContext, executionParameters, _staticContext, strings) {
-				return fnIdref(
-					dynamicContext,
-					executionParameters,
-					_staticContext,
-					strings,
-					sequenceFactory.singleton(dynamicContext.contextItem)
-				);
-			},
-		},
-	],
+	declarations,
 	functions: {
 		id: fnId,
 		idref: fnIdref,
