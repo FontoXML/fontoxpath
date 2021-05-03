@@ -609,8 +609,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'concat',
 		argumentTypes: [
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 			{ kind: BaseType.ELLIPSIS },
 		],
 		returnType: { kind: BaseType.XSSTRING },
@@ -714,7 +714,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } }],
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE }],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction: fnString,
 	},
@@ -957,10 +957,8 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'codepoint-equal',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
-			kind: BaseType.NULLABLE,
-			item: {
-				kind: BaseType.XSBOOLEAN,
-			},
+			kind: BaseType.XSBOOLEAN,
+			occurrence: OccurrenceIndicator.NULLABLE,
 		},
 	},
 

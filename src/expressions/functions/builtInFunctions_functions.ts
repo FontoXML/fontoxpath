@@ -74,8 +74,8 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'function-lookup',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
-			kind: OccurrenceIndicator.NULLABLE,
-			item: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
+			occurrence: OccurrenceIndicator.NULLABLE,
+			kind: BaseType.FUNCTION, returnType: undefined, params: [],
 		},
 	},
 

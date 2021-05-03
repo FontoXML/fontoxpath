@@ -390,7 +390,7 @@ const fnRoot: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnName,
 		localName: 'name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -456,7 +456,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [ { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY  }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnPath,
 		localName: 'path',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -472,7 +472,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [ { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY  }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnNodeName,
 		localName: 'node-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -488,7 +488,7 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnLocalName,
 		localName: 'local-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -504,11 +504,11 @@ const declarations: BuiltinDeclarationType[] = [
 	},
 
 	{
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } }],
+		argumentTypes: [{ kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE }],
 		callFunction: fnRoot,
 		localName: 'root',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -516,7 +516,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnRoot),
 		localName: 'root',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.NODE } },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{

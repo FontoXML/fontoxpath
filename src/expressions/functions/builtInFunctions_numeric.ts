@@ -261,32 +261,32 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'abs',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
+		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: fnAbs,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'ceiling',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
+		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: fnCeiling,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'floor',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
+		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: fnFloor,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
+		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: fnRound.bind(null, false),
 	},
 
@@ -294,18 +294,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round',
 		argumentTypes: [
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+			{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 			{ kind: BaseType.XSINTEGER },
 		],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: fnRound.bind(null, false),
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round-half-to-even',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		argumentTypes: [{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE }],
+		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: fnRound.bind(null, true),
 	},
 
@@ -313,17 +313,17 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'round-half-to-even',
 		argumentTypes: [
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+			{ kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 			{ kind: BaseType.XSINTEGER },
 		],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNUMERIC } },
+		returnType: { kind: BaseType.XSNUMERIC, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: fnRound.bind(null, true),
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'number',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE }],
 		returnType: { kind: BaseType.XSDOUBLE },
 		callFunction: fnNumber,
 	},
@@ -337,7 +337,7 @@ const declarations: BuiltinDeclarationType[] = [
 			const atomizedContextItem =
 				dynamicContext.contextItem &&
 				performFunctionConversion(
-					{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
+					{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 					sequenceFactory.singleton(dynamicContext.contextItem),
 					executionParameters,
 					'fn:number',
@@ -368,8 +368,8 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'random-number-generator',
 		argumentTypes: [
 			{
-				kind: BaseType.NULLABLE,
-				item: { kind: BaseType.XSANYATOMICTYPE },
+				kind: BaseType.XSANYATOMICTYPE,
+				occurrence: OccurrenceIndicator.NULLABLE
 			},
 		],
 		returnType: { kind: BaseType.MAP, items: [] },
