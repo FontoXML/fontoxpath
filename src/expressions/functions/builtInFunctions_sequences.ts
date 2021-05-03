@@ -5,7 +5,7 @@ import FunctionValue from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, ValueType } from '../dataTypes/Value';
+import Value, { BaseType, OccurrenceIndicator, ValueType } from '../dataTypes/Value';
 import valueCompare from '../operators/compares/valueCompare';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
@@ -687,7 +687,7 @@ const fnFoldRight: FunctionDefinitionType = (
 
 const declarations: BuiltinDeclarationType[] = [
 	{
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
 		callFunction: fnEmpty,
 		localName: 'empty',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
@@ -936,7 +936,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnOneOrMore,
 		localName: 'one-or-more',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.SOME, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.SOME },
 	},
 
 	{

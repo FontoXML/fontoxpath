@@ -4,7 +4,7 @@ import { adaptJavaScriptValueToSequence } from './expressions/adaptJavaScriptVal
 import ISequence from './expressions/dataTypes/ISequence';
 import isSubtypeOf from './expressions/dataTypes/isSubtypeOf';
 import sequenceFactory from './expressions/dataTypes/sequenceFactory';
-import { BaseType, ValueType } from './expressions/dataTypes/Value';
+import { BaseType, OccurrenceIndicator, ValueType } from './expressions/dataTypes/Value';
 import DynamicContext from './expressions/DynamicContext';
 import ExecutionParameters from './expressions/ExecutionParameters';
 import { registerFunction } from './expressions/functions/functionRegistry';
@@ -62,7 +62,7 @@ function adaptXPathValueToJavascriptValue(
 	sequenceType: ValueType,
 	executionParameters: ExecutionParameters
 ): any | null | any[] {
-	if (sequenceType.kind === BaseType.NULLABLE) {
+	if (sequenceType.occurrence === OccurrenceIndicator.NULLABLE) {
 		if (valueSequence.isEmpty()) {
 			return null;
 		}
@@ -72,7 +72,10 @@ function adaptXPathValueToJavascriptValue(
 		).next(IterationHint.NONE).value;
 	}
 
-	if (sequenceType.kind === BaseType.ANY || sequenceType.kind === BaseType.SOME) {
+	if (
+		sequenceType.occurrence === OccurrenceIndicator.ANY ||
+		sequenceType.occurrence === OccurrenceIndicator.SOME
+	) {
 		return valueSequence.getAllValues().map((value) => {
 			if (isSubtypeOf(value.type, { kind: BaseType.ATTRIBUTE })) {
 				throw new Error('Cannot pass attribute nodes to custom functions');
