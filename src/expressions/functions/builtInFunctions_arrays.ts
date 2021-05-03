@@ -4,7 +4,7 @@ import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, ValueType, OccurrenceIndicator } from '../dataTypes/Value';
+import Value, { BaseType, OccurrenceIndicator, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -627,7 +627,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'join',
-		argumentTypes: [{ kind: BaseType.ARRAY, items: [] , occurrence: OccurrenceIndicator.ANY}],
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [], occurrence: OccurrenceIndicator.ANY }],
 		returnType: { kind: BaseType.ARRAY, items: [] },
 		callFunction: arrayJoin,
 	},

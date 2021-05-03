@@ -84,7 +84,7 @@ export enum BaseType {
  * Exactly one, empty, singleton, multiple.
  * @public
  */
- export enum OccurrenceIndicator {
+export enum OccurrenceIndicator {
 	// Nullable refers to the '?' symbol: zero or one occurance
 	NULLABLE,
 	// Some refers to the '+' symbol: one or more occurances
@@ -231,20 +231,18 @@ export type ValueType =
 	| { kind: BaseType.ITEM; occurrence?: OccurrenceIndicator }
 	| {
 			kind: BaseType.FUNCTION;
+			occurrence?: OccurrenceIndicator;
 			params: ValueType[];
 			returnType: ValueType | undefined;
-			occurrence?: OccurrenceIndicator;
 	  }
 	| {
-			kind: BaseType.MAP;
 			items: [ValueType, ValueType][];
+			kind: BaseType.MAP;
 			occurrence?: OccurrenceIndicator;
 	  }
-	| { kind: BaseType.ARRAY; items: ValueType[]; occurrence?: OccurrenceIndicator }
+	| { items: ValueType[]; kind: BaseType.ARRAY; occurrence?: OccurrenceIndicator }
 	// item types, sequence types, function args = seq + "..."
 	| { kind: BaseType.ELLIPSIS; occurrence?: OccurrenceIndicator };
-
-
 
 /**
  * Recursively creates a hash for a type and its potential subtypes
