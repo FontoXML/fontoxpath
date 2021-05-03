@@ -7,7 +7,7 @@ import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType, ValueType } from '../dataTypes/Value';
+import { BaseType, OccurrenceIndicator, ValueType } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -243,15 +243,12 @@ const fnRandomNumberGenerator: FunctionDefinitionType = (
 							localName: '',
 							namespaceURI: '',
 							argumentTypes: [
-								{
-									kind: BaseType.ANY,
-									item: { kind: BaseType.ITEM },
-								},
+								{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 							],
 							arity: 1,
 							returnType: {
-								kind: BaseType.ANY,
-								item: { kind: BaseType.ITEM },
+								kind: BaseType.ITEM,
+								occurrence: OccurrenceIndicator.ANY,
 							},
 						})
 					),

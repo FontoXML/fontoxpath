@@ -81,7 +81,7 @@ function getTextContent(ast: IAST): string {
 function getTypeDeclaration(ast: IAST): ValueType {
 	const typeDeclarationAst = getFirstChild(ast, 'typeDeclaration');
 	if (!typeDeclarationAst || getFirstChild(typeDeclarationAst, 'voidSequenceType')) {
-		return { kind: BaseType.ANY, item: { kind: BaseType.ITEM } };
+		return { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY };
 	}
 
 	const determineType = (typeAst: IAST): ValueType => {

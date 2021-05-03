@@ -5,7 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -792,7 +792,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-join',
 		argumentTypes: [
-			{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: { kind: BaseType.XSSTRING },
@@ -802,7 +802,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string-join',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } }],
+		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY }],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction(dynamicContext, executionParameters, staticContext, arg1) {
 			return fnStringJoin(
@@ -849,10 +849,8 @@ const declarations: BuiltinDeclarationType[] = [
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: {
-			kind: BaseType.ANY,
-			item: {
-				kind: BaseType.XSSTRING,
-			},
+			kind: BaseType.XSSTRING,
+			occurrence: OccurrenceIndicator.ANY,
 		},
 		callFunction(
 			_dynamicContext,
@@ -874,10 +872,8 @@ const declarations: BuiltinDeclarationType[] = [
 			{ kind: BaseType.XSSTRING },
 		],
 		returnType: {
-			kind: BaseType.ANY,
-			item: {
-				kind: BaseType.XSSTRING,
-			},
+			kind: BaseType.XSSTRING,
+			occurrence: OccurrenceIndicator.ANY,
 		},
 		callFunction: fnTokenize,
 	},
@@ -887,10 +883,8 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'tokenize',
 		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
 		returnType: {
-			kind: BaseType.ANY,
-			item: {
-				kind: BaseType.XSSTRING,
-			},
+			kind: BaseType.XSSTRING,
+			occurrence: OccurrenceIndicator.ANY,
 		},
 		callFunction(dynamicContext, executionParameters, staticContext, input) {
 			return fnTokenize(
@@ -918,10 +912,8 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		argumentTypes: [
 			{
-				kind: BaseType.ANY,
-				item: {
-					kind: BaseType.XSINTEGER,
-				},
+				kind: BaseType.XSINTEGER,
+				occurrence: OccurrenceIndicator.ANY,
 			},
 		],
 		callFunction: fnCodepointsToString,
@@ -936,10 +928,7 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'string-to-codepoints',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
-			kind: BaseType.ANY,
-			item: {
-				kind: BaseType.XSINTEGER,
-			},
+				kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.ANY 
 		},
 	},
 

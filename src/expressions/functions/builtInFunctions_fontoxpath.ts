@@ -6,7 +6,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import createPointerValue from '../dataTypes/createPointerValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionSpecificStaticContext from '../ExecutionSpecificStaticContext';
 import { FONTOXPATH_NAMESPACE_URI, FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -141,7 +141,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fontoxpathEvaluate,
 		localName: 'evaluate',
 		namespaceURI: FONTOXPATH_NAMESPACE_URI,
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 	},
 	{
 		argumentTypes: [],

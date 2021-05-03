@@ -91,8 +91,8 @@ describe('adaptJavaScriptValueToSequence', () => {
 
 	it('turns strings into xs:string*', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, ['a', 'b', 'c'], {
-			kind: BaseType.ANY,
-			item: { kind: BaseType.XSSTRING },
+			kind: BaseType.XSSTRING,
+			occurrence: OccurrenceIndicator.ANY,
 		});
 		chai.assert.equal(xpathSequence.getLength(), 3, 'is a sequence with length 3');
 		const values = xpathSequence.getAllValues();

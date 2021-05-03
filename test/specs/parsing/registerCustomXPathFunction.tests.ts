@@ -57,7 +57,7 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function3' },
-			[{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
+			[{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
 			{ kind: BaseType.ITEM },
 			(dynamicContext, input) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -69,8 +69,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function4' },
-			[{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }],
-			{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } },
+			[{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY }],
+			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY },
 			(dynamicContext, stringArray) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -571,8 +571,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-zero-to-many-param' },
-				[{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } }],
-				{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } },
+				[{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.ANY }],
+				{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.ANY },
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 
@@ -589,7 +589,7 @@ describe('registerCustomXPathFunction', () => {
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-one-to-many-param' },
 				[{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.SOME }],
-				{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } },
+				{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.ANY },
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');
 

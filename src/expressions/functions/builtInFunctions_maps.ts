@@ -1,7 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import MapValue from '../dataTypes/MapValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import concatSequences from '../util/concatSequences';
 import createDoublyIterableSequence from '../util/createDoublyIterableSequence';
@@ -225,7 +225,7 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'entry',
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		],
 		returnType: { kind: BaseType.MAP, items: [] },
 		callFunction: mapEntry,
@@ -236,12 +236,12 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'for-each',
 		// TODO: reimplement type checking by parsing the types
 		// argumentTypes: [{ kind: BaseType.MAP, items: [] }, '({ kind: BaseType.XSANYATOMICTYPE ,
-		// { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }) as { kind: BaseType.ANY, item: { kind: BaseType.ITEM } }'],
+		// { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }) as { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }'],
 		argumentTypes: [
 			{ kind: BaseType.MAP, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		callFunction: mapForEach,
 	},
 
@@ -249,7 +249,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'get',
 		argumentTypes: [{ kind: BaseType.MAP, items: [] }, { kind: BaseType.XSANYATOMICTYPE }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		callFunction: mapGet,
 	},
 
@@ -257,7 +257,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'keys',
 		argumentTypes: [{ kind: BaseType.MAP, items: [] }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+		returnType: { kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
 		callFunction: mapKeys,
 	},
 
@@ -265,7 +265,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'merge',
 		argumentTypes: [
-			{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } },
+			{ kind: BaseType.MAP, items: [], occurrence: OccurrenceIndicator.ANY },
 			{ kind: BaseType.MAP, items: [] },
 		],
 		returnType: { kind: BaseType.MAP, items: [] },
@@ -275,7 +275,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: MAP_NAMESPACE_URI,
 		localName: 'merge',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.MAP, items: [] } }],
+		argumentTypes: [{ kind: BaseType.MAP, items: [], occurrence: OccurrenceIndicator.ANY }],
 		returnType: { kind: BaseType.MAP, items: [] },
 		callFunction(dynamicContext, executionParameters, staticContext, maps) {
 			return mapMerge(
@@ -304,7 +304,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.MAP, items: [] },
 			{ kind: BaseType.XSANYATOMICTYPE },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		],
 		returnType: { kind: BaseType.MAP, items: [] },
 		callFunction: mapPut,
@@ -315,7 +315,7 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'remove',
 		argumentTypes: [
 			{ kind: BaseType.MAP, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.XSANYATOMICTYPE } },
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.ANY },
 		],
 		returnType: { kind: BaseType.MAP, items: [] },
 		callFunction: mapRemove,
