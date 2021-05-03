@@ -60,7 +60,7 @@ builtinModels.forEach((model) => {
 		const memberTypes = model.memberTypes.map(
 			(memberTypeRef) => builtinDataTypesByType[memberTypeRef.kind]
 		);
-builtinDataTypesByType[name.kind] = {
+		builtinDataTypesByType[name.kind] = {
 			variety: Variety.UNION,
 			name,
 			restrictionsByName,
