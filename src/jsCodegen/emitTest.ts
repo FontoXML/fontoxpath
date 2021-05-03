@@ -29,24 +29,17 @@ function emitNameTestFromQName(
 	identifier: string,
 	{ prefix, namespaceURI, localName }: QName
 ): EmittedJavaScript {
-	const conditionCode = `(${identifier}.nodeType === NODE_TYPES.ELEMENT_NODE || ${identifier}.nodeType === NODE_TYPES.ATTRIBUTE_NODE)`;
+	const conditionCode = `${identifier}.nodeType && (${identifier}.nodeType === NODE_TYPES.ELEMENT_NODE || ${identifier}.nodeType === NODE_TYPES.ATTRIBUTE_NODE)`;
 
-	if (prefix === null && namespaceURI !== '' && localName === '*') {
+	if (prefix === '*' && localName === '*') {
 		return acceptAst(conditionCode);
-	}
-
-	if (prefix === '*') {
-		if (localName === '*') {
-			return acceptAst(conditionCode);
-		}
-		return acceptAst(`${conditionCode} && ${identifier}.localName === "${localName}"`);
 	}
 
 	if (localName !== '*') {
 		return acceptAst(`${conditionCode} && ${identifier}.localName === "${localName}"`);
 	}
 
-	return rejectAst('Unsupported: name tests with a namespaceURI.');
+	return rejectAst('Unsupported: the provided name test. Namespace URI is not supported.');
 }
 
 // element() and element(*) match any single element node, regardless of its name or type annotation.
@@ -74,10 +67,15 @@ function emitNameTest(ast: IAST, identifier: string) {
 // for example: child::*.
 // https://www.w3.org/TR/xpath-31/#doc-xpath31-Wildcard
 function emitWildcard(ast: IAST, identifier: string): EmittedJavaScript {
-	if (astHelper.getChildren(ast, 'Wildcard').length !== 0) {
-		return rejectAst('Unsupported: the provided wildcard');
+	if (!astHelper.getFirstChild(ast, 'star')) {
+		return emitNameTestFromQName(identifier, {
+			localName: '*',
+			namespaceURI: null,
+			prefix: '*',
+		});
 	}
-	return emitNameTestFromQName(identifier, { localName: '*', namespaceURI: null, prefix: '*' });
+
+	return rejectAst('Unsupported: the given wildcard.');
 }
 
 export default function emitTest(ast: IAST, identifier: string): EmittedJavaScript {
@@ -85,7 +83,7 @@ export default function emitTest(ast: IAST, identifier: string): EmittedJavaScri
 	const emittedTest = testEmittersByAstNodeName[test](ast, identifier);
 
 	if (emittedTest === undefined) {
-		return rejectAst('This test is not supported');
+		return rejectAst(`Unsupported: the test '${test}'.`);
 	}
 	return emittedTest;
 }

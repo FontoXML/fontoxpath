@@ -4,7 +4,7 @@ import { ReturnType } from '../parsing/convertXDMReturnValue';
 import { emitBaseExpression } from './emitBaseExpression';
 import * as runtimeLibrary from './runtimeLibrary';
 
-const astCompilersByReturnValue = {
+const compilersByReturnValue = {
 	[ReturnType.NODES]: compileAstToReturnNodes,
 	[ReturnType.BOOLEAN]: compileAstToReturnBoolean,
 	[ReturnType.FIRST_NODE]: compileAstToReturnFirstNode,
@@ -46,11 +46,11 @@ function compileAstToReturnFirstNode(identifier: string) {
 
 const compiledXPathIdentifier = 'compiledXPathExpression';
 export default function (xPathAst: IAST, returnType: ReturnType): CompiledJavaScriptResult {
-	const emitReturnTypeConversion = astCompilersByReturnValue[returnType];
+	const emitReturnTypeConversion = compilersByReturnValue[returnType];
 	if (emitReturnTypeConversion === undefined) {
 		return {
 			isAstAccepted: false,
-			reason: `Return type ${returnType} is unsupported by the JS codegen backend.`,
+			reason: `Unsupported: the return type '${returnType}'.`,
 		};
 	}
 

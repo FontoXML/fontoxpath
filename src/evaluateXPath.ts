@@ -168,7 +168,7 @@ const evaluateXPath = <TNode extends Node, TReturnType extends keyof IReturnType
 			// When only using the js-codegen backend, we should not proceed if
 			// it fails.
 			throw new Error(
-				`Failed compiling the given query with the js-codegen backend. Reason: ${compiledJavaScriptResult.reason}`
+				`Failed compiling the given XPath with the js-codegen backend. ${compiledJavaScriptResult.reason}`
 			);
 		}
 	}
@@ -223,7 +223,7 @@ const compileWithJsCodegenBackend = <
 		const queryBodyContents = astHelper.followPath(mainModule, ['queryBody', '*']);
 
 		if (prolog) {
-			throw new Error('Unsupported: XQuery in codegen backend');
+			throw new Error('Unsupported: XQuery.');
 		}
 
 		compiledJavaScriptResult = compileAstToJavaScript(queryBodyContents, returnType);

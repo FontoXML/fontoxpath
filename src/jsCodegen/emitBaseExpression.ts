@@ -79,6 +79,9 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 
 			const emittedStepsCode = emittedSteps.code;
 			const testAst = astHelper.getFirstChild(step, testAstNodes);
+			if (!testAst) {
+				return rejectAst(`Unsupported: the step '${step}'.`);
+			}
 
 			// Only the innermost nested step returns a value.
 			const nestedCode =
@@ -92,8 +95,8 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 			}
 
 			const emitAxis = axisEmittersByAstNodeName[axis];
-			if (emitAxis === undefined) {
-				return rejectAst(`Unsupported: the ${axis} axis.`);
+			if (!emitAxis) {
+				return rejectAst(`Unsupported: the axis '${axis}'.`);
 			}
 
 			const emittedStep = emitAxis(
@@ -110,12 +113,12 @@ function emitSteps(stepsAst: IAST[]): EmittedJavaScript {
 			emittedSteps.variables.push(...emittedStep.variables, ...emittedPredicates.variables);
 			emittedSteps.code = emittedStep.code;
 		} else {
-			return rejectAst('Unsupported: Filter expressions');
+			return rejectAst('Unsupported: filter expressions.');
 		}
 
 		const lookups = astHelper.getChildren(step, 'lookup');
 		if (lookups.length > 0) {
-			return rejectAst('Unsupported: Lookups');
+			return rejectAst('Unsupported: lookups.');
 		}
 	}
 	const contextDeclaration = 'const contextItem0 = contextItem.value.node;';
@@ -135,6 +138,10 @@ function emitPathExpression(ast: IAST, identifier: string): EmittedJavaScript {
 
 	const pathExpressionCode = `
 	function ${identifier}(contextItem) {
+		if (!contextItem) {
+			throw XPDY0002("Context is needed to evaluate a given path expression.");
+		}
+
 		if (!isSubtypeOf(contextItem.type, "node()")) {
 			throw new Error("Context item must be subtype of node().");
 		}
@@ -163,6 +170,10 @@ function emitCompiledOperand(
 ): EmittedJavaScript {
 	const operand = astHelper.getFirstChild(ast, operandKind);
 	const expressionAst = astHelper.getFirstChild(operand, baseExpressionAstNodes);
+
+	if (!expressionAst) {
+		return rejectAst('Unsupported: operands without expressions.');
+	}
 
 	const expressionIdentifier = identifier + operandKind;
 
@@ -224,7 +235,7 @@ export function emitBaseExpression(ast: IAST, identifier: string): EmittedJavaSc
 	const name = ast[0];
 	const baseExpressionToEmit = baseExpressionEmittersByAstNodeName[name];
 	if (baseExpressionToEmit === undefined) {
-		return rejectAst(`Unsupported: base expression ${name}`);
+		return rejectAst(`Unsupported: the base expression '${name}'.`);
 	}
 	return baseExpressionToEmit(ast, identifier);
 }

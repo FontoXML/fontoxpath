@@ -3,7 +3,11 @@ import * as slimdom from 'slimdom';
 
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
 
-import { evaluateXPath, evaluateXPathToFirstNode, evaluateXPathToString } from 'fontoxpath';
+import {
+	evaluateXPath,
+	evaluateXPathToFirstNode,
+	evaluateXPathToString,
+} from 'fontoxpath';
 
 describe("rejecting unsupported AST's (js-codegen)", () => {
 	const document = new slimdom.Document();
@@ -33,53 +37,69 @@ describe("rejecting unsupported AST's (js-codegen)", () => {
 			'Hello'
 		);
 	});
-	it('rejects unsupported forward axes', () => {
+	it('rejects unsupported forward axes in predicates', () => {
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/descendant', document, null, null, {
+			evaluateXPathToFirstNode('/[descendant::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
 		});
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/descendant-or-self::element(xml)', document, null, null, {
+			evaluateXPathToFirstNode('/[descendant-or-self::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
 		});
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/following-sibling::element(xml)', document, null, null, {
+			evaluateXPathToFirstNode('/[following-sibling::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
 		});
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/following::element(xml)', document, null, null, {
+			evaluateXPathToFirstNode('/[following::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
 		});
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/namespace::element(xml)', document, null, null, {
+			evaluateXPathToFirstNode('/[namespace::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
 		});
 	});
 	it('rejects unsupported reverse axes', () => {
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/ancestor::element(xml)', document, null, null, {
+			evaluateXPathToFirstNode('/[ancestor::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
 		});
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/preceding-sibling::element(xml)', document, null, null, {
+			evaluateXPathToFirstNode('/[preceding-sibling::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
 		});
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/preceding::element(xml)', document, null, null, {
+			evaluateXPathToFirstNode('/[preceding::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
 		});
 		chai.assert.throws(() => {
-			evaluateXPathToFirstNode('/ancestor-or-self::element(xml)', document, null, null, {
+			evaluateXPathToFirstNode('/[ancestor-or-self::element(xml)]', document, null, null, {
 				backend: 'js-codegen',
 			});
+		});
+	});
+	it('rejects wildcard with uri', () => {
+		chai.assert.throws(() => evaluateXPathToFirstNode('/zoink:*', document, null, null, {
+			backend: 'js-codegen',
+		}));
+	});
+	it('rejects library modules', () => {
+		chai.assert.throws(() => {
+			evaluateXPathToFirstNode(`
+module namespace test = "http://www.example.org/mainmodules.tests#1";
+
+declare %public function test:hello($a) {
+"Hello " || $a
+};
+`);
 		});
 	});
 });
