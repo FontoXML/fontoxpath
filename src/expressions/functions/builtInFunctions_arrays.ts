@@ -4,7 +4,7 @@ import FunctionValue, { FunctionSignature } from '../dataTypes/FunctionValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType, ValueType } from '../dataTypes/Value';
+import Value, { BaseType, ValueType, OccurrenceIndicator } from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import { ARRAY_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -494,7 +494,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'get',
 		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }, { kind: BaseType.XSINTEGER }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		callFunction: arrayGet,
 	},
 
@@ -504,7 +504,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.ARRAY, items: [] },
 			{ kind: BaseType.XSINTEGER },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		],
 		returnType: { kind: BaseType.ARRAY, items: [] },
 		callFunction: arrayPut,
@@ -515,7 +515,7 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'append',
 		argumentTypes: [
 			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		],
 		returnType: { kind: BaseType.ARRAY, items: [] },
 		callFunction: arrayAppend,
@@ -566,7 +566,7 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'remove',
 		argumentTypes: [
 			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
+			{ kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.ANY },
 		],
 		returnType: { kind: BaseType.ARRAY, items: [] },
 		callFunction: arrayRemove,
@@ -578,7 +578,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.ARRAY, items: [] },
 			{ kind: BaseType.XSINTEGER },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		],
 		returnType: { kind: BaseType.ARRAY, items: [] },
 		callFunction: arrayInsertBefore,
@@ -588,7 +588,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'head',
 		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 			return arrayGet(
 				dynamicContext,
@@ -604,7 +604,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'tail',
 		argumentTypes: [{ kind: BaseType.ARRAY, items: [] }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		callFunction(dynamicContext, executionParameters, _staticContext, arraySequence) {
 			return arrayRemove(
 				dynamicContext,
@@ -627,7 +627,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'join',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ARRAY, items: [] } }],
+		argumentTypes: [{ kind: BaseType.ARRAY, items: [] , occurrence: OccurrenceIndicator.ANY}],
 		returnType: { kind: BaseType.ARRAY, items: [] },
 		callFunction: arrayJoin,
 	},
@@ -665,10 +665,10 @@ const declarations: BuiltinDeclarationType[] = [
 		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 		argumentTypes: [
 			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		callFunction: arrayFoldLeft,
 	},
 
@@ -679,10 +679,10 @@ const declarations: BuiltinDeclarationType[] = [
 		// argumentTypes: ['array(*)', 'item()*', '(item()*, item()*) as item())]
 		argumentTypes: [
 			{ kind: BaseType.ARRAY, items: [] },
-			{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 			{ kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		callFunction: arrayFoldRight,
 	},
 
@@ -711,8 +711,8 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: ARRAY_NAMESPACE_URI,
 		localName: 'flatten',
-		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.ITEM } }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY }],
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 		callFunction: arrayFlatten,
 	},
 ];
