@@ -69,6 +69,7 @@
 		"@types/node": "^14.0.1",
 		"@types/node-static": "^0.7.6",
 		"@types/sinon": "^9.0.10",
+		"bundlemon": "^0.3.2",
 		"chai": "^4.2.0",
 		"concurrently": "^5.3.0",
 		"coveralls": "^3.1.0",
