@@ -1,6 +1,6 @@
 import builtinDataTypesByName, { TypeModel } from './builtins/builtinDataTypesByName';
 import { ValueType } from './Value';
-import { Variety } from './Variety'
+import { Variety } from './Variety';
 
 export function getPrimitiveTypeName(typeName: ValueType): ValueType | null {
 	let type = builtinDataTypesByName[typeName.kind];

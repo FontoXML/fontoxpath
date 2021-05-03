@@ -1,6 +1,6 @@
 import builtinDataTypesByName from './builtins/builtinDataTypesByName';
 import { startWithXS, ValueType } from './Value';
-import { Variety } from './Variety'
+import { Variety } from './Variety';
 
 function isSubtypeOfType(subType, superType) {
 	if (superType.variety === Variety.UNION) {

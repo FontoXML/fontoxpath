@@ -3,8 +3,8 @@
  */
 
 export enum Variety {
-    PRIMITIVE,
-    DERIVED,
-    LIST,
-    UNION,
+	PRIMITIVE,
+	DERIVED,
+	LIST,
+	UNION,
 }
