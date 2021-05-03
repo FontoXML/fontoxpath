@@ -546,9 +546,12 @@ const declarations: BuiltinDeclarationType[] = [
 			startSequence
 		) {
 			const lengthSequence = sequenceFactory.singleton(
-				createAtomicValue(arraySequence.getLength() - startSequence.first().value + 1, {
-					kind: BaseType.XSINTEGER,
-				})
+				createAtomicValue(
+					arraySequence.first().value.length - startSequence.first().value + 1,
+					{
+						kind: BaseType.XSINTEGER,
+					}
+				)
 			);
 			return arraySubarray(
 				dynamicContext,
