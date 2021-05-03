@@ -1,7 +1,7 @@
 import createAtomicValue from '../dataTypes/createAtomicValue';
 import FunctionValue from '../dataTypes/FunctionValue';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import zipSingleton from '../util/zipSingleton';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -74,7 +74,7 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'function-lookup',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
-			kind: BaseType.NULLABLE,
+			kind: OccurrenceIndicator.NULLABLE,
 			item: { kind: BaseType.FUNCTION, returnType: undefined, params: [] },
 		},
 	},
@@ -84,7 +84,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnFunctionName,
 		localName: 'function-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+		returnType: { kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{

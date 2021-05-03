@@ -34,7 +34,7 @@ describe('registerCustomXPathFunction', () => {
 	before(() => {
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function1' },
-			[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
+			[{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
 			{ kind: BaseType.XSBOOLEAN },
 			(dynamicContext, stringValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
@@ -83,8 +83,8 @@ describe('registerCustomXPathFunction', () => {
 
 		registerCustomXPathFunction(
 			{ namespaceURI: 'test', localName: 'custom-function5' },
-			[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } }],
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+			[{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE }],
+			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 			(dynamicContext, stringValue) => {
 				chai.assert.isOk(dynamicContext, 'A dynamic context has not been passed');
 				chai.assert.isOk(dynamicContext.domFacade, 'A domFacade has not been passed');
@@ -558,8 +558,8 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-optional-param' },
-				[{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } }],
-				{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } },
+				[{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE }],
+				{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE },
 				(dynamicContext, date) => {
 					chai.assert.isTrue(
 						date === null || date instanceof Date,

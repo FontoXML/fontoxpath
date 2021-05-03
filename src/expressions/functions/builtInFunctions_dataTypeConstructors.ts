@@ -3,7 +3,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import { normalizeWhitespace, validatePattern } from '../dataTypes/typeHelpers';
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import QName from '../dataTypes/valueTypes/QName';
 
 import { XMLSCHEMA_NAMESPACE_URI } from '../staticallyKnownNamespaces';
@@ -81,8 +81,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'untypedAtomic',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSUNTYPEDATOMIC } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSUNTYPEDATOMIC, occurrence:OccurrenceIndicator.NULLABLE } ,
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSUNTYPEDATOMIC,
 		}) as FunctionDefinitionType,
@@ -90,10 +92,12 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'error',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
 		returnType: {
-			kind: BaseType.NULLABLE,
-			item: { kind: BaseType.XSERROR },
+			kind: BaseType.XSERROR,
+			occurrence: OccurrenceIndicator.NULLABLE,
 		},
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSERROR,
@@ -104,8 +108,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'string',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSSTRING,
 		}) as FunctionDefinitionType,
@@ -113,8 +119,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'boolean',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSBOOLEAN } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSBOOLEAN, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSBOOLEAN,
 		}) as FunctionDefinitionType,
@@ -122,8 +130,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'decimal',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDECIMAL } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSDECIMAL, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSDECIMAL,
 		}) as FunctionDefinitionType,
@@ -131,8 +141,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'float',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSFLOAT } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSFLOAT, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSFLOAT,
 		}) as FunctionDefinitionType,
@@ -140,8 +152,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'double',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDOUBLE } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSDOUBLE, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSDOUBLE,
 		}) as FunctionDefinitionType,
@@ -149,8 +163,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'duration',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDURATION } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSDURATION, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSDURATION,
 		}) as FunctionDefinitionType,
@@ -158,8 +174,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTime',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSDATETIME,
 		}) as FunctionDefinitionType,
@@ -167,9 +185,11 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTimeStamp',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
 		// TODO: this seems like a bug not sure though: xs:datetime instead of xs:datetimestamp
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIME } },
+		returnType: { kind: BaseType.XSDATETIME, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSDATETIMESTAMP,
 		}) as FunctionDefinitionType,
@@ -177,8 +197,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'time',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSTIME } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSTIME, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSTIME,
 		}) as FunctionDefinitionType,
@@ -186,8 +208,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'date',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATE } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSDATE,
 		}) as FunctionDefinitionType,
@@ -195,8 +219,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gYearMonth',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSGYEARMONTH } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSGYEARMONTH, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSGYEARMONTH,
 		}) as FunctionDefinitionType,
@@ -204,8 +230,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gYear',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSGYEAR } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSGYEAR, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSGYEAR,
 		}) as FunctionDefinitionType,
@@ -213,8 +241,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gMonthDay',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSGMONTHDAY } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSGMONTHDAY, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSGMONTHDAY,
 		}) as FunctionDefinitionType,
@@ -222,8 +252,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gDay',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSGDAY } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSGDAY, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSGDAY,
 		}) as FunctionDefinitionType,
@@ -231,8 +263,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'gMonth',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSGMONTH } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSGMONTH, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSGMONTH,
 		}) as FunctionDefinitionType,
@@ -240,8 +274,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'hexBinary',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSHEXBINARY } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSHEXBINARY, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSHEXBINARY,
 		}) as FunctionDefinitionType,
@@ -249,8 +285,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'base64Binary',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSBASE64BINARY } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSBASE64BINARY, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSBASE64BINARY,
 		}) as FunctionDefinitionType,
@@ -258,15 +296,19 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'QName',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: xsQName,
 	},
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'anyURI',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYURI } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSANYURI, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSANYURI,
 		}) as FunctionDefinitionType,
@@ -275,8 +317,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'normalizedString',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNORMALIZEDSTRING } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSNORMALIZEDSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNORMALIZEDSTRING,
 		}) as FunctionDefinitionType,
@@ -284,8 +328,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'token',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSTOKEN } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSTOKEN, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSTOKEN,
 		}) as FunctionDefinitionType,
@@ -293,8 +339,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'language',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSLANGUAGE } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSLANGUAGE, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSLANGUAGE,
 		}) as FunctionDefinitionType,
@@ -302,8 +350,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NMTOKEN',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNMTOKEN } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSNMTOKEN, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNMTOKEN,
 		}) as FunctionDefinitionType,
@@ -311,8 +361,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NMTOKENS',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSNMTOKENS } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSNMTOKENS, occurrence:OccurrenceIndicator.ANY },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNMTOKENS,
 		}) as FunctionDefinitionType,
@@ -320,8 +372,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'Name',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNAME } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSNAME, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNAME,
 		}) as FunctionDefinitionType,
@@ -329,8 +383,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'NCName',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNCNAME } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSNCNAME, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNCNAME,
 		}) as FunctionDefinitionType,
@@ -338,8 +394,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ID',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSID } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSID, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSID,
 		}) as FunctionDefinitionType,
@@ -347,8 +405,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'IDREF',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSIDREF } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSIDREF, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSIDREF,
 		}) as FunctionDefinitionType,
@@ -356,8 +416,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'IDREFS',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSIDREFS } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSIDREFS, occurrence: OccurrenceIndicator.ANY },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSIDREFS,
 		}) as FunctionDefinitionType,
@@ -365,8 +427,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ENTITY',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSENTITY } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSENTITY, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSENTITY,
 		}) as FunctionDefinitionType,
@@ -374,8 +438,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'ENTITIES',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSENTITIES } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSENTITIES, occurrence:OccurrenceIndicator.ANY },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSENTITIES,
 		}) as FunctionDefinitionType,
@@ -383,8 +449,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'integer',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSINTEGER,
 		}) as FunctionDefinitionType,
@@ -392,8 +460,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'nonPositiveInteger',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNONPOSITIVEINTEGER } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSNONPOSITIVEINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNONPOSITIVEINTEGER,
 		}) as FunctionDefinitionType,
@@ -401,8 +471,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'negativeInteger',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNEGATIVEINTEGER } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSNEGATIVEINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNEGATIVEINTEGER,
 		}) as FunctionDefinitionType,
@@ -410,8 +482,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'long',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSLONG } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSLONG, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSLONG,
 		}) as FunctionDefinitionType,
@@ -419,8 +493,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'int',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSINT } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSINT, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSINT,
 		}) as FunctionDefinitionType,
@@ -428,8 +504,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'short',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSHORT } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSSHORT, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSSHORT,
 		}) as FunctionDefinitionType,
@@ -437,8 +515,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'byte',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSBYTE } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSBYTE, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSBYTE,
 		}) as FunctionDefinitionType,
@@ -446,8 +526,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'nonNegativeInteger',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSNONNEGATIVEINTEGER } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSNONNEGATIVEINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNONNEGATIVEINTEGER,
 		}) as FunctionDefinitionType,
@@ -455,8 +537,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedLong',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSUNSIGNEDLONG } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSUNSIGNEDLONG, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSUNSIGNEDLONG,
 		}) as FunctionDefinitionType,
@@ -464,8 +548,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedInt',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSUNSIGNEDINT } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSUNSIGNEDINT, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSUNSIGNEDINT,
 		}) as FunctionDefinitionType,
@@ -473,8 +559,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedShort',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSUNSIGNEDSHORT } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSUNSIGNEDSHORT, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSUNSIGNEDSHORT,
 		}) as FunctionDefinitionType,
@@ -482,8 +570,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'unsignedByte',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSUNSIGNEDBYTE } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSUNSIGNEDBYTE, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSUNSIGNEDBYTE,
 		}) as FunctionDefinitionType,
@@ -491,8 +581,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'positiveInteger',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSPOSITIVEINTEGER } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSPOSITIVEINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSPOSITIVEINTEGER,
 		}) as FunctionDefinitionType,
@@ -500,8 +592,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'yearMonthDuration',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSYEARMONTHDURATION } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSYEARMONTHDURATION, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSYEARMONTHDURATION,
 		}) as FunctionDefinitionType,
@@ -509,8 +603,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dayTimeDuration',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDAYTIMEDURATION } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSDAYTIMEDURATION, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSDAYTIMEDURATION,
 		}) as FunctionDefinitionType,
@@ -518,8 +614,10 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: XMLSCHEMA_NAMESPACE_URI,
 		localName: 'dateTimeStamp',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } }],
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSDATETIMESTAMP } },
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
+		returnType: { kind: BaseType.XSDATETIMESTAMP, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSDATETIMESTAMP,
 		}) as FunctionDefinitionType,
