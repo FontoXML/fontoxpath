@@ -4,7 +4,7 @@ stages:
     - tests
 
 cache:
-    key: modules
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
         - node_modules/
         - built/
@@ -27,7 +27,7 @@ setup:
         - rm -f temp.tar.gz
         - unzip -q test/assets/QT3TS/xqueryx.zip -d ./test/assets/QT3TS/
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
             - built/
@@ -44,7 +44,7 @@ lint:
     script:
         - npm run lint
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
         policy: pull
@@ -58,7 +58,7 @@ ci-test:
     script:
         - npm run ci-test
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
             - built/
@@ -74,7 +74,7 @@ ci-qt3tests:
     script:
         - npm run ci-qt3tests
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
             - built/
@@ -90,7 +90,7 @@ integrationtests:
     script:
         - npm run integrationtests
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
             - built/
@@ -106,7 +106,7 @@ qt3tests:
     script:
         - npm run qt3tests
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
             - built/
@@ -122,7 +122,7 @@ ci-qt3testsxqueryx:
     script:
         - npm run ci-qt3testsxqueryx
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
             - built/
@@ -138,7 +138,7 @@ ci-xqutstests:
     script:
         - npm run ci-xqutstests
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
             - built/
@@ -154,7 +154,7 @@ ci-xqutstestsxqueryx:
     script:
         - npm run ci-xqutstestsxqueryx
     cache:
-        key: modules
+        key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
             - built/
