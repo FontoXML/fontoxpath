@@ -1,12 +1,14 @@
 import { ChildNodePointer, NodePointer } from '../../domClone/Pointer';
 import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
+import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import DynamicContext from '../DynamicContext';
 import ExecutionParameters from '../ExecutionParameters';
 import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import { DONE_TOKEN, ready } from '../util/iterators';
+import validateContextNode from './validateContextNode';
 
 function createSiblingGenerator(domFacade: DomFacade, node: NodePointer, bucket: string | null) {
 	return {
@@ -34,17 +36,18 @@ class FollowingSiblingAxis extends Expression {
 		this._siblingExpression = siblingExpression;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
-		const contextItem = dynamicContext.contextItem;
-		if (contextItem === null) {
-			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
-		}
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
+		const domFacade = executionParameters.domFacade;
+		const contextPointer = validateContextNode(dynamicContext.contextItem);
 
 		return sequenceFactory
 			.create(
 				createSiblingGenerator(
-					executionParameters.domFacade,
-					contextItem.value,
+					domFacade,
+					contextPointer,
 					this._siblingExpression.getBucket()
 				)
 			)
