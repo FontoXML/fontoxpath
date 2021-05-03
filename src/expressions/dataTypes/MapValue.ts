@@ -3,7 +3,7 @@ import { MAP_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import FunctionValue from './FunctionValue';
 import ISequence from './ISequence';
 import sequenceFactory from './sequenceFactory';
-import Value, { BaseType } from './Value';
+import Value, { BaseType, OccurenceIndicator } from './Value';
 
 class MapValue extends FunctionValue<ISequence> {
 	public keyValuePairs: { key: Value; value: () => ISequence }[];
@@ -22,7 +22,7 @@ class MapValue extends FunctionValue<ISequence> {
 					sequenceFactory.singleton(this),
 					key
 				),
-			returnType: { kind: BaseType.ANY, item: { kind: BaseType.ITEM } },
+			returnType: { kind: BaseType.ITEM, occurence: OccurenceIndicator.ANY },
 		});
 		this.type = { kind: BaseType.MAP, items: [] };
 		this.keyValuePairs = keyValuePairs;
