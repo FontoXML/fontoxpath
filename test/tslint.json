@@ -8,6 +8,15 @@
 		"interface-name": true,
 		"interface-over-type-literal": false,
 		"match-default-export-name": true,
+		"no-implicit-dependencies": [true, "dev"],
+		"no-bitwise": false,
+		"no-implicit-dependencies": false,
+		"no-string-literal": false,
+		"no-submodule-imports": false,
+		"no-unnecessary-qualifier": true,
+		"no-unnecessary-type-assertion": true,
+		"no-unused-expression": true,
+		"no-var-keyword": true,
 		"member-ordering": [
 			true,
 			{
@@ -15,17 +24,9 @@
 				"order": "fields-first"
 			}
 		],
-		"no-bitwise": false,
-		"no-string-literal": false,
-		"no-unnecessary-qualifier": true,
-		"no-unnecessary-type-assertion": true,
-		"no-unused-expression": true,
-		"no-var-keyword": true,
+		"ordered-imports": true,
 		"prefer-for-of": false,
 		"semicolon": [true, "always", "ignore-bound-class-methods"],
-		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
-		"ordered-imports": true,
-		"no-implicit-dependencies": false,
-		"no-submodule-imports": false
+		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
 	}
 }

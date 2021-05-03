@@ -1,7 +1,6 @@
 import * as chai from 'chai';
-import * as slimdom from 'slimdom';
-
 import { evaluateXPathToNumber, precompileXPath } from 'fontoxpath';
+import * as slimdom from 'slimdom';
 
 describe('createExpressionFromXPathAsync', () => {
 	let documentNode;
