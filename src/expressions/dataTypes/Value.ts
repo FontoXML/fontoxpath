@@ -76,6 +76,23 @@ export enum BaseType {
 	ELLIPSIS,
 }
 
+/**
+ * Handles the occurances in the XPath specs.
+ * Zero or one '?' maps to NULLABLE;
+ * One or more '+' maps to SOME;
+ * Zero or more '*' maps to ANY;
+ * Exactly one, empty, singleton, multiple.
+ * @public
+ */
+ export enum OccurrenceIndicator {
+	// Nullable refers to the '?' symbol: zero or one occurance
+	NULLABLE,
+	// Some refers to the '+' symbol: one or more occurances
+	SOME,
+	// Any refers to the '*' zero or more occurances
+	ANY,
+}
+
 export function startWithXS(inType: BaseType): boolean {
 	return a[inType];
 }
@@ -227,21 +244,7 @@ export type ValueType =
 	// item types, sequence types, function args = seq + "..."
 	| { kind: BaseType.ELLIPSIS; occurrence?: OccurrenceIndicator };
 
-/**
- * Handles the occurances in the XPath specs.
- * Zero or one '?' => NULLABLE;
- * One or more '+' => SOME;
- * Zero or more '*' => ANY;
- * Exactly one, empty, singleton, multiple.
- */
-export enum OccurrenceIndicator {
-	// Nullable refers to the '?' symbol: zero or one occurance
-	NULLABLE,
-	// Some refers to the '+' symbol: one or more occurances
-	SOME,
-	// Any refers to the '*' zero or more occurances
-	ANY,
-}
+
 
 /**
  * Recursively creates a hash for a type and its potential subtypes
