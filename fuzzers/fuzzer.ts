@@ -322,23 +322,23 @@ const corpus = [
 	"ancestor-or-self::*[self::list and @list-type = 'dash'][1]"
 ];
 
-const unique_stacks = new Set();
+const uniqueStacks = new Set();
 
-let total_cases = 0;
-const start_time = process.hrtime();
+let totalCases = 0;
+const startTime = process.hrtime();
 function worker(tid: number) {
 	while (true) {
 		// Record and print progress
-		if (tid === 0 && total_cases % 1000 === 0) {
-			const elapsed = process.hrtime(start_time);
-			const fcps = (total_cases / elapsed[0]).toFixed(2);
+		if (tid === 0 && totalCases % 1000 === 0) {
+			const elapsed = process.hrtime(startTime);
+			const fcps = (totalCases / elapsed[0]).toFixed(2);
 			readline.clearLine(process.stdout, 0);
 			readline.cursorTo(process.stdout, 0, null);
 			process.stdout.write(
-				`\t[Total cases: ${total_cases}] [fcps: ${fcps}] [Unique crashes: ${unique_stacks.size}]`
+				`\t[Total cases: ${totalCases}] [fcps: ${fcps}] [Unique crashes: ${uniqueStacks.size}]`
 			);
 		}
-		total_cases += 1;
+		totalCases += 1;
 
 		// Select an expression from the corpus
 		let expression = corpus[rand(corpus.length)];
@@ -346,7 +346,7 @@ function worker(tid: number) {
 		// Mutate the input using a simple character mutation
 		expression = mutateString(expression);
 		expression = mutateCharactersInPlace(expression);
-		// if (total_cases % 100 === 0) {
+		// if (totalCases % 100 === 0) {
 		// 	process.stdout.write(`${expression}\n`);
 		// }
 
@@ -368,10 +368,10 @@ function worker(tid: number) {
 			}
 
 			// Not interested in duplicate stack traces
-			if (unique_stacks.has(error.stack)) {
+			if (uniqueStacks.has(error.stack)) {
 				continue;
 			}
-			unique_stacks.add(error.stack);
+			uniqueStacks.add(error.stack);
 
 			// Print the error
 			process.stdout.write(
