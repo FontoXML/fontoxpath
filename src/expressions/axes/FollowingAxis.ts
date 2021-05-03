@@ -2,6 +2,7 @@ import { ChildNodePointer, NodePointer, ParentNodePointer } from '../../domClone
 import { NODE_TYPES } from '../../domFacade/ConcreteNode';
 import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
+import ISequence from '../dataTypes/ISequence';
 import sequenceFactory from '../dataTypes/sequenceFactory';
 import Value from '../dataTypes/Value';
 import DynamicContext from '../DynamicContext';
@@ -10,6 +11,7 @@ import Expression, { RESULT_ORDERINGS } from '../Expression';
 import TestAbstractExpression from '../tests/TestAbstractExpression';
 import createDescendantGenerator from '../util/createDescendantGenerator';
 import { DONE_TOKEN, IIterator, IterationHint, ready } from '../util/iterators';
+import validateContextNode from './validateContextNode';
 
 function createFollowingGenerator(
 	domFacade: DomFacade,
@@ -99,16 +101,21 @@ class FollowingAxis extends Expression {
 		this._bucket = onlyElementDescendants ? 'type-1' : null;
 	}
 
-	public evaluate(dynamicContext: DynamicContext, executionParameters: ExecutionParameters) {
-		const contextItem = dynamicContext.contextItem;
-		if (contextItem === null) {
-			throw new Error('XPDY0002: context is absent, it needs to be present to use axes.');
-		}
-
+	public evaluate(
+		dynamicContext: DynamicContext,
+		executionParameters: ExecutionParameters
+	): ISequence {
 		const domFacade = executionParameters.domFacade;
+		const contextPointer = validateContextNode(dynamicContext.contextItem);
 
 		return sequenceFactory
-			.create(createFollowingGenerator(domFacade, contextItem.value, this._bucket))
+			.create(
+				createFollowingGenerator(
+					domFacade,
+					contextPointer as ChildNodePointer,
+					this._bucket
+				)
+			)
 			.filter((item) => {
 				return this._testExpression.evaluateToBoolean(
 					dynamicContext,
