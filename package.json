@@ -71,7 +71,7 @@
 		"@types/sinon": "^9.0.10",
 		"bundlemon": "^0.3.2",
 		"chai": "^4.2.0",
-		"concurrently": "^5.3.0",
+		"concurrently": "^6.0.2",
 		"coveralls": "^3.1.0",
 		"cross-env": "^7.0.3",
 		"fs-extra": "^9.1.0",
