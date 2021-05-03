@@ -5,7 +5,7 @@ import createAtomicValue from '../dataTypes/createAtomicValue';
 import ISequence from '../dataTypes/ISequence';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import Value, { BaseType } from '../dataTypes/Value';
+import Value, { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { DONE_TOKEN, ready } from '../util/iterators';
 import zipSingleton from '../util/zipSingleton';
@@ -609,8 +609,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'concat',
 		argumentTypes: [
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSANYATOMICTYPE } },
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 			{ kind: BaseType.ELLIPSIS },
 		],
 		returnType: { kind: BaseType.XSSTRING },
@@ -714,7 +714,7 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'string',
-		argumentTypes: [{ kind: BaseType.NULLABLE, item: { kind: BaseType.ITEM } }],
+		argumentTypes: [{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.NULLABLE }],
 		returnType: { kind: BaseType.XSSTRING },
 		callFunction: fnString,
 	},
@@ -968,10 +968,8 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'codepoint-equal',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
-			kind: BaseType.NULLABLE,
-			item: {
-				kind: BaseType.XSBOOLEAN,
-			},
+			kind: BaseType.XSBOOLEAN,
+			occurrence: OccurrenceIndicator.NULLABLE,
 		},
 	},
 

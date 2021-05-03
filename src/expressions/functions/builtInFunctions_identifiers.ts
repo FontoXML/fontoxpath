@@ -4,7 +4,7 @@ import DomFacade from '../../domFacade/DomFacade';
 import createPointerValue from '../dataTypes/createPointerValue';
 import isSubtypeOf from '../dataTypes/isSubtypeOf';
 import sequenceFactory from '../dataTypes/sequenceFactory';
-import { BaseType } from '../dataTypes/Value';
+import { BaseType, OccurrenceIndicator } from '../dataTypes/Value';
 import { FUNCTIONS_NAMESPACE_URI } from '../staticallyKnownNamespaces';
 import { errXPTY0004, XPDY0002 } from '../XPathErrors';
 import { BuiltinDeclarationType } from './builtInFunctions';
@@ -179,7 +179,7 @@ const declarations: BuiltinDeclarationType[] = [
 			{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } },
 			{ kind: BaseType.NODE },
 		],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: fnIdref,
 	},
 
@@ -187,7 +187,7 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
 		argumentTypes: [{ kind: BaseType.ANY, item: { kind: BaseType.XSSTRING } }],
-		returnType: { kind: BaseType.ANY, item: { kind: BaseType.NODE } },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnIdref(
 				dynamicContext,

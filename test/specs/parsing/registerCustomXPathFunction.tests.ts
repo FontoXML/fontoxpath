@@ -22,8 +22,8 @@ describe('registerCustomXPathFunction', () => {
 
 	let documentNode;
 	const stringValueFactory = createTypedValueFactory({
-		kind: BaseType.NULLABLE,
-		item: { kind: BaseType.XSSTRING },
+		kind: BaseType.XSSTRING,
+		occurrence: OccurrenceIndicator.NULLABLE
 	});
 	beforeEach(() => {
 		documentNode = new slimdom.Document();
