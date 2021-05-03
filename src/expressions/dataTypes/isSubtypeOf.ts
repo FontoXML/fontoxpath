@@ -1,4 +1,4 @@
-import builtinDataTypesByName from './builtins/builtinDataTypesByName';
+import builtinDataTypesByType from './builtins/builtinDataTypesByType';
 import { startWithXS, ValueType } from './Value';
 import { Variety } from './Variety';
 
@@ -30,8 +30,8 @@ export default function isSubtypeOf(subTypeName: ValueType, superTypeName: Value
 		return true;
 	}
 
-	const superType = builtinDataTypesByName[superTypeName.kind];
-	const subType = builtinDataTypesByName[subTypeName.kind];
+	const superType = builtinDataTypesByType[superTypeName.kind];
+	const subType = builtinDataTypesByType[subTypeName.kind];
 
 	if (!superType) {
 		if (!startWithXS(superTypeName.kind)) {
