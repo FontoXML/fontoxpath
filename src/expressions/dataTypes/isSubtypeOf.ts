@@ -1,8 +1,9 @@
 import builtinDataTypesByType from './builtins/builtinDataTypesByType';
 import { startWithXS, ValueType } from './Value';
+import { Variety } from './Variety';
 
 function isSubtypeOfType(subType, superType) {
-	if (superType.variety === 'union') {
+	if (superType.variety === Variety.UNION) {
 		// It is a union type, which can only be the topmost types
 		return !!superType.memberTypes.find((memberType) => isSubtypeOfType(subType, memberType));
 	}
@@ -11,7 +12,7 @@ function isSubtypeOfType(subType, superType) {
 		if (subType.name.kind === superType.name.kind) {
 			return true;
 		}
-		if (subType.variety === 'union') {
+		if (subType.variety === Variety.UNION) {
 			return !!subType.memberTypes.find((memberType) => isSubtypeOf(memberType, superType));
 		}
 		subType = subType.parent;
