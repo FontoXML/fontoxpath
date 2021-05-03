@@ -394,7 +394,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnName,
 		localName: 'name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+		returnType: { kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -460,7 +460,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnPath,
 		localName: 'path',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+		returnType: { kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -468,7 +468,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnPath),
 		localName: 'path',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSSTRING } },
+		returnType: { kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -476,7 +476,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnNodeName,
 		localName: 'node-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+		returnType: { kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{
@@ -484,7 +484,7 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: contextItemAsFirstArgument.bind(null, fnNodeName),
 		localName: 'node-name',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.NULLABLE, item: { kind: BaseType.XSQNAME } },
+		returnType: { kind: BaseType.XSQNAME, occurrence: OccurrenceIndicator.NULLABLE },
 	},
 
 	{

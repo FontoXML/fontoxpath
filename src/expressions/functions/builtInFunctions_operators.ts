@@ -38,8 +38,8 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: 'http://fontoxpath/operators',
 		localName: 'to',
 		argumentTypes: [
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
-			{ kind: BaseType.NULLABLE, item: { kind: BaseType.XSINTEGER } },
+			{ kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+			{ kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
 		],
 		returnType: { kind: BaseType.ANY, item: { kind: BaseType.XSINTEGER } },
 		callFunction: opTo,
