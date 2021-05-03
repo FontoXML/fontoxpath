@@ -73,9 +73,6 @@ export enum BaseType {
 	FUNCTION,
 	MAP,
 	ARRAY,
-	NULLABLE,
-	ANY,
-	SOME,
 	ELLIPSIS,
 }
 
@@ -147,9 +144,6 @@ const a = new Map([
 	[BaseType.FUNCTION, false],
 	[BaseType.MAP, false],
 	[BaseType.ARRAY, false],
-	[BaseType.NULLABLE, false],
-	[BaseType.ANY, false],
-	[BaseType.SOME, false],
 	[BaseType.ELLIPSIS, false],
 ]);
 
@@ -278,11 +272,6 @@ export function valueTypeHash(type: ValueType): number {
 				result = prime * result + valueTypeHash(item);
 			}
 			break;
-		case BaseType.NULLABLE:
-		case BaseType.ANY:
-		case BaseType.SOME:
-			result = prime * result + valueTypeHash(type.item);
-			break;
 	}
 
 	return result;
@@ -360,9 +349,6 @@ export function baseTypeToString(input: BaseType): string {
 		[BaseType.MAP]: 'map(*)',
 		[BaseType.ARRAY]: 'array(*)',
 		[BaseType.ELLIPSIS]: '...',
-		[BaseType.NULLABLE]: '?',
-		[BaseType.ANY]: '*',
-		[BaseType.SOME]: '+',
 	};
 
 	const stringVal = typeToStringMap[input];
