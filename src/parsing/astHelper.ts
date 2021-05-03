@@ -1,4 +1,9 @@
-import { BaseType, stringToValueType, ValueType } from '../expressions/dataTypes/Value';
+import {
+	BaseType,
+	OccurrenceIndicator,
+	stringToValueType,
+	ValueType,
+} from '../expressions/dataTypes/Value';
 import { SourceRange } from '../expressions/debug/StackTraceGenerator';
 
 type QName = { localName: string; namespaceURI: string | null; prefix: string };
@@ -135,11 +140,14 @@ function getTypeDeclaration(ast: IAST): ValueType {
 
 	switch (occurrence) {
 		case '*':
-			return { kind: BaseType.ANY, item: type };
+			type.occurrence = OccurrenceIndicator.ANY;
+			return type;
 		case '?':
-			return { kind: BaseType.NULLABLE, item: type };
+			type.occurrence = OccurrenceIndicator.NULLABLE;
+			return type;
 		case '+':
-			return { kind: BaseType.SOME, item: type };
+			type.occurrence = OccurrenceIndicator.SOME;
+			return type;
 		case '':
 		case null:
 			return type;
