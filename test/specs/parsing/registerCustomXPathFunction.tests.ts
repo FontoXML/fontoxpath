@@ -13,7 +13,7 @@ import {
 
 import IDomFacade from 'fontoxpath/domFacade/IDomFacade';
 import jsonMlMapper from 'test-helpers/jsonMlMapper';
-import { BaseType } from 'fontoxpath/expressions/dataTypes/Value';
+import { BaseType, OccurrenceIndicator } from 'fontoxpath/expressions/dataTypes/Value';
 
 describe('registerCustomXPathFunction', () => {
 	function identityNamespaceResolver(prefix) {
@@ -588,7 +588,7 @@ describe('registerCustomXPathFunction', () => {
 
 			registerCustomXPathFunction(
 				{ namespaceURI: 'test', localName: 'custom-date-function-one-to-many-param' },
-				[{ kind: BaseType.SOME, item: { kind: BaseType.XSDATE } }],
+				[{ kind: BaseType.XSDATE, occurrence: OccurrenceIndicator.SOME }],
 				{ kind: BaseType.ANY, item: { kind: BaseType.XSDATE } },
 				(dynamicContext, dates) => {
 					chai.assert.isTrue(Array.isArray(dates), 'Parameter is not an array');

@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import { BaseType } from 'fontoxpath';
 import DomFacade from 'fontoxpath/domFacade/DomFacade';
 import { adaptJavaScriptValueToSequence } from 'fontoxpath/expressions/adaptJavaScriptValueToXPathValue';
+import { OccurrenceIndicator } from 'fontoxpath/expressions/dataTypes/Value';
 import DateTime from 'fontoxpath/expressions/dataTypes/valueTypes/DateTime';
 import * as slimdom from 'slimdom';
 import { domFacade as adaptingDomFacade } from '../../../src';
@@ -75,8 +76,8 @@ describe('adaptJavaScriptValueToSequence', () => {
 
 	it('turns strings into xs:string+', () => {
 		const xpathSequence = adaptJavaScriptValueToSequence(null, ['a', 'b', 'c'], {
-			kind: BaseType.SOME,
-			item: { kind: BaseType.XSSTRING },
+			kind: BaseType.XSSTRING,
+			occurrence: OccurrenceIndicator.SOME,
 		});
 		chai.assert.equal(xpathSequence.getLength(), 3, 'is a sequence with length 3');
 		const values = xpathSequence.getAllValues();
