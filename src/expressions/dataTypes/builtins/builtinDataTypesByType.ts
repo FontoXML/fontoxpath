@@ -1,4 +1,4 @@
-import facetHandlersByDataTypeName from '../facets/facetsByDataTypeName';
+import facetHandlersByDataTypeName from '../facets/facetsByDataType';
 import { BaseType, ValueType } from '../Value';
 import builtinModels from './builtinModels';
 import { getValidatorForType } from './dataTypeValidatorByType';
