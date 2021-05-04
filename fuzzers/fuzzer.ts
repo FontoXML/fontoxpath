@@ -373,7 +373,7 @@ function worker(tid: number) {
 		try {
 			evaluateXPath(expression, documentNode, null, null, null, {
 				disableCache: true,
-				language: language
+				language
 			});
 		} catch (error) {
 			// Not interested in static errors, we're looking for crashes
