@@ -323,7 +323,9 @@ const declarations: BuiltinDeclarationType[] = [
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'number',
-		argumentTypes: [{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE }],
+		argumentTypes: [
+			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
+		],
 		returnType: { kind: BaseType.XSDOUBLE },
 		callFunction: fnNumber,
 	},
@@ -369,7 +371,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{
 				kind: BaseType.XSANYATOMICTYPE,
-				occurrence: OccurrenceIndicator.NULLABLE
+				occurrence: OccurrenceIndicator.NULLABLE,
 			},
 		],
 		returnType: { kind: BaseType.MAP, items: [] },

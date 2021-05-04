@@ -149,18 +149,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
 		argumentTypes: [
-			 { kind: BaseType.XSSTRING , occurrence: OccurrenceIndicator.ANY  },
+			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY },
 			{ kind: BaseType.NODE },
 		],
-		returnType: { kind: BaseType.ELEMENT , occurrence: OccurrenceIndicator.ANY  },
+		returnType: { kind: BaseType.ELEMENT, occurrence: OccurrenceIndicator.ANY },
 		callFunction: fnId,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'id',
-		argumentTypes: [{ kind: BaseType.XSSTRING , occurrence: OccurrenceIndicator.ANY  }],
-		returnType:  { kind: BaseType.ELEMENT , occurrence: OccurrenceIndicator.ANY  },
+		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY }],
+		returnType: { kind: BaseType.ELEMENT, occurrence: OccurrenceIndicator.ANY },
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnId(
 				dynamicContext,
@@ -176,18 +176,18 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
 		argumentTypes: [
-			 { kind: BaseType.XSSTRING , occurrence: OccurrenceIndicator.ANY  },
+			{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY },
 			{ kind: BaseType.NODE },
 		],
-		returnType:  { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY  },
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY },
 		callFunction: fnIdref,
 	},
 
 	{
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		localName: 'idref',
-		argumentTypes: [{ kind: BaseType.XSSTRING , occurrence: OccurrenceIndicator.ANY  }],
-		returnType: { kind: BaseType.NODE , occurrence: OccurrenceIndicator.ANY  },
+		argumentTypes: [{ kind: BaseType.XSSTRING, occurrence: OccurrenceIndicator.ANY }],
+		returnType: { kind: BaseType.NODE, occurrence: OccurrenceIndicator.ANY },
 		callFunction(dynamicContext, executionParameters, _staticContext, strings) {
 			return fnIdref(
 				dynamicContext,

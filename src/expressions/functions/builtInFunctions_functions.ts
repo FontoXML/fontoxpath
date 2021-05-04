@@ -75,7 +75,9 @@ const declarations: BuiltinDeclarationType[] = [
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
 			occurrence: OccurrenceIndicator.NULLABLE,
-			kind: BaseType.FUNCTION, returnType: undefined, params: [],
+			kind: BaseType.FUNCTION,
+			returnType: undefined,
+			params: [],
 		},
 	},
 

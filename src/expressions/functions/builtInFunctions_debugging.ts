@@ -44,17 +44,17 @@ const declarations: BuiltinDeclarationType[] = [
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType:  { kind: BaseType.ITEM , occurrence: OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 	},
 	{
 		argumentTypes: [
-			 { kind: BaseType.ITEM , occurrence: OccurrenceIndicator.ANY  },
+			{ kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 			{ kind: BaseType.XSSTRING },
 		],
 		callFunction: fnTrace,
 		localName: 'trace',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
-		returnType: { kind: BaseType.ITEM , occurrence: OccurrenceIndicator.ANY  },
+		returnType: { kind: BaseType.ITEM, occurrence: OccurrenceIndicator.ANY },
 	},
 ];
 

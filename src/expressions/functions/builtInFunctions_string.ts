@@ -928,7 +928,8 @@ const declarations: BuiltinDeclarationType[] = [
 		localName: 'string-to-codepoints',
 		namespaceURI: FUNCTIONS_NAMESPACE_URI,
 		returnType: {
-				kind: BaseType.XSINTEGER, occurrence: OccurrenceIndicator.ANY 
+			kind: BaseType.XSINTEGER,
+			occurrence: OccurrenceIndicator.ANY,
 		},
 	},
 

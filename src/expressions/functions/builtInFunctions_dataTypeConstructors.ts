@@ -84,7 +84,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 		],
-		returnType: { kind: BaseType.XSUNTYPEDATOMIC, occurrence:OccurrenceIndicator.NULLABLE } ,
+		returnType: { kind: BaseType.XSUNTYPEDATOMIC, occurrence: OccurrenceIndicator.NULLABLE },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSUNTYPEDATOMIC,
 		}) as FunctionDefinitionType,
@@ -364,7 +364,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 		],
-		returnType: { kind: BaseType.XSNMTOKENS, occurrence:OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.XSNMTOKENS, occurrence: OccurrenceIndicator.ANY },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNMTOKENS,
 		}) as FunctionDefinitionType,
@@ -441,7 +441,7 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 		],
-		returnType: { kind: BaseType.XSENTITIES, occurrence:OccurrenceIndicator.ANY },
+		returnType: { kind: BaseType.XSENTITIES, occurrence: OccurrenceIndicator.ANY },
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSENTITIES,
 		}) as FunctionDefinitionType,
@@ -463,7 +463,10 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 		],
-		returnType: { kind: BaseType.XSNONPOSITIVEINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: {
+			kind: BaseType.XSNONPOSITIVEINTEGER,
+			occurrence: OccurrenceIndicator.NULLABLE,
+		},
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNONPOSITIVEINTEGER,
 		}) as FunctionDefinitionType,
@@ -529,7 +532,10 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 		],
-		returnType: { kind: BaseType.XSNONNEGATIVEINTEGER, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: {
+			kind: BaseType.XSNONNEGATIVEINTEGER,
+			occurrence: OccurrenceIndicator.NULLABLE,
+		},
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSNONNEGATIVEINTEGER,
 		}) as FunctionDefinitionType,
@@ -595,7 +601,10 @@ const declarations: BuiltinDeclarationType[] = [
 		argumentTypes: [
 			{ kind: BaseType.XSANYATOMICTYPE, occurrence: OccurrenceIndicator.NULLABLE },
 		],
-		returnType: { kind: BaseType.XSYEARMONTHDURATION, occurrence: OccurrenceIndicator.NULLABLE },
+		returnType: {
+			kind: BaseType.XSYEARMONTHDURATION,
+			occurrence: OccurrenceIndicator.NULLABLE,
+		},
 		callFunction: genericDataTypeConstructor.bind(null, {
 			kind: BaseType.XSYEARMONTHDURATION,
 		}) as FunctionDefinitionType,
