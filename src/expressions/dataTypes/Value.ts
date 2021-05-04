@@ -6,7 +6,8 @@ export default class Value {
 }
 
 /**
- * The base type
+ * The BaseTypes;
+ * Previously represented by strings.
  * @public
  */
 export enum BaseType {
@@ -94,10 +95,10 @@ export enum OccurrenceIndicator {
 }
 
 export function startWithXS(inType: BaseType): boolean {
-	return a[inType];
+	return startWithXSLookupTable[inType];
 }
 
-const a = new Map([
+const startWithXSLookupTable = new Map([
 	[BaseType.XSBOOLEAN, true],
 	[BaseType.XSSTRING, true],
 	[BaseType.XSNUMERIC, true],
@@ -165,7 +166,8 @@ const a = new Map([
 ]);
 
 /**
- * The composite type containing more info
+ * The composite type which containing BaseType under the filed kind
+ * and OccurrenceIndicator under the optional field occurrence.
  * @public
  */
 export type ValueType =
@@ -358,6 +360,7 @@ export function baseTypeToString(input: BaseType): string {
 	}
 	return stringVal;
 }
+
 /**
  * Converts a ValueType to the correct string representation
  *
