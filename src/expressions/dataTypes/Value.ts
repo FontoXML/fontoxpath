@@ -378,6 +378,10 @@ export function valueTypeToString(input: ValueType): string {
  * @throws Error if the type cannot be mapped from string to ValueType.
  */
 export function stringToValueType(input: string): ValueType {
+	if (!input.startsWith('xs:') && input.indexOf(':') >= 0) {
+		throw new Error('XPST0081: Invalid prefix for input ' + input);
+	}
+
 	const stringToTypeMap: { [key: string]: ValueType } = {
 		'xs:boolean': { kind: BaseType.XSBOOLEAN },
 		'xs:string': { kind: BaseType.XSSTRING },
